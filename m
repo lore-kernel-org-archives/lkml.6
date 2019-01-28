@@ -7,50 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D666C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE334C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 520ED2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AF892147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691658;
-	bh=/vRaWQKw3q55s8Tz0v2d2naK21I5seaKk7U91gRvlNw=;
+	s=default; t=1548691661;
+	bh=plehLW++cCBs67mqYGqkjRQlhcZgJMYE72FXx4W1ogQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m3p+IEeS00UxHkv2MAAKbnblwlTHKbdQo0+81bHvuJ8h26nKz+5TjjUzlwF7nSqSI
-	 xdvr7jsrk2cEb4k2ZOj3dO3/xHeNQcO706F0Cij7i3h4xljnoECcGsgHoagUvfCiRd
-	 mwmblEMrdhbCAp26KAKFUq0ucUWu60MBAYdqhyNE=
+	b=EVnSyDsvD2sAITelRPHpieQRmjANE/rxBbuEhWYK6XB4Uto6ZZ5Fcrk+fkUllclGO
+	 qtDJCG7m+tJmkRCJLwA/5MaolQeZCoKPEQ6mPKqGX+vpWgn03gDIsbFNHHMbwf9C47
+	 SYQmoQj9OL24roVoWcezJMrAQYG69gsBN9xf4YiU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732240AbfA1QHg (ORCPT
+        id S1732256AbfA1QHk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:07:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58358 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:07:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732220AbfA1QHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:07:32 -0500
+        id S1731680AbfA1QHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:07:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3BA421738;
-        Mon, 28 Jan 2019 16:07:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E046B2171F;
+        Mon, 28 Jan 2019 16:07:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691652;
-        bh=/vRaWQKw3q55s8Tz0v2d2naK21I5seaKk7U91gRvlNw=;
+        s=default; t=1548691654;
+        bh=plehLW++cCBs67mqYGqkjRQlhcZgJMYE72FXx4W1ogQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DtIZi24ngf9Rk0MYsnmb/8saaeN6QmL16/CdLAqaKW29FEBZ04CwNMNlw4X/HYmOR
-         qo3qiI5hlLuNnE4BtRg2auzx5bPYmdpy7aD+U+f7HLtiQF+pKAThT3x4zFQxbkwuwO
-         O+i2Fz7O9t5+aIq70PEtWooOcKTxBPZiwtmcWw7g=
+        b=2p9lt5TFaIT/BwkdkN8FwiD919p0kO8hgC47eVr4Z84HmcHKPOr1YXvMCV4QUj2RV
+         +c4dXHolyxHf7uPp/3JWd1CSvY2Sy/KAojq9e0JYL+hMIQazgHZyqmwySE6V8waR1O
+         ELxZ8vEW+WycdSwV9Y19bkJe4Dhd9JbWWQLP+csU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
-        live-patching@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 174/258] livepatch: check kzalloc return values
-Date:   Mon, 28 Jan 2019 10:58:00 -0500
-Message-Id: <20190128155924.51521-174-sashal@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sasha Levin <sashal@kernel.org>, kvmarm@lists.cs.columbia.edu
+Subject: [PATCH AUTOSEL 4.19 175/258] arm64: KVM: Skip MMIO insn after emulation
+Date:   Mon, 28 Jan 2019 10:58:01 -0500
+Message-Id: <20190128155924.51521-175-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,59 +60,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit 5f30b2e823484ce6a79f2b59901b6351c15effa6 ]
+[ Upstream commit 0d640732dbebed0f10f18526de21652931f0b2f2 ]
 
-kzalloc() return should always be checked - notably in example code
-where this may be seen as reference. On failure of allocation in
-livepatch_fix1_dummy_alloc() respectively dummy_alloc() previous
-allocation is freed (thanks to Petr Mladek <pmladek@suse.com> for
-catching this) and NULL returned.
+When we emulate an MMIO instruction, we advance the CPU state within
+decode_hsr(), before emulating the instruction effects.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 439e7271dc2b ("livepatch: introduce shadow variable API")
-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Miroslav Benes <mbenes@suse.cz>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Having this logic in decode_hsr() is opaque, and advancing the state
+before emulation is problematic. It gets in the way of applying
+consistent single-step logic, and it prevents us from being able to fail
+an MMIO instruction with a synchronous exception.
+
+Clean this up by only advancing the CPU state *after* the effects of the
+instruction are emulated.
+
+Cc: Peter Maydell <peter.maydell@linaro.org>
+Reviewed-by: Alex Bennée <alex.bennee@linaro.org>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- samples/livepatch/livepatch-shadow-fix1.c | 5 +++++
- samples/livepatch/livepatch-shadow-mod.c  | 4 ++++
- 2 files changed, 9 insertions(+)
+ virt/kvm/arm/mmio.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
-index 49b13553eaae..e8f1bd6b29b1 100644
---- a/samples/livepatch/livepatch-shadow-fix1.c
-+++ b/samples/livepatch/livepatch-shadow-fix1.c
-@@ -89,6 +89,11 @@ struct dummy *livepatch_fix1_dummy_alloc(void)
- 	 * pointer to handle resource release.
- 	 */
- 	leak = kzalloc(sizeof(int), GFP_KERNEL);
-+	if (!leak) {
-+		kfree(d);
-+		return NULL;
-+	}
+diff --git a/virt/kvm/arm/mmio.c b/virt/kvm/arm/mmio.c
+index dac7ceb1a677..08443a15e6be 100644
+--- a/virt/kvm/arm/mmio.c
++++ b/virt/kvm/arm/mmio.c
+@@ -117,6 +117,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ 		vcpu_set_reg(vcpu, vcpu->arch.mmio_decode.rt, data);
+ 	}
+ 
++	/*
++	 * The MMIO instruction is emulated and should not be re-executed
++	 * in the guest.
++	 */
++	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
 +
- 	klp_shadow_alloc(d, SV_LEAK, sizeof(leak), GFP_KERNEL,
- 			 shadow_leak_ctor, leak);
+ 	return 0;
+ }
  
-diff --git a/samples/livepatch/livepatch-shadow-mod.c b/samples/livepatch/livepatch-shadow-mod.c
-index 4c54b250332d..4aa8a88d3cd6 100644
---- a/samples/livepatch/livepatch-shadow-mod.c
-+++ b/samples/livepatch/livepatch-shadow-mod.c
-@@ -118,6 +118,10 @@ noinline struct dummy *dummy_alloc(void)
+@@ -144,11 +150,6 @@ static int decode_hsr(struct kvm_vcpu *vcpu, bool *is_write, int *len)
+ 	vcpu->arch.mmio_decode.sign_extend = sign_extend;
+ 	vcpu->arch.mmio_decode.rt = rt;
  
- 	/* Oops, forgot to save leak! */
- 	leak = kzalloc(sizeof(int), GFP_KERNEL);
-+	if (!leak) {
-+		kfree(d);
-+		return NULL;
-+	}
+-	/*
+-	 * The MMIO instruction is emulated and should not be re-executed
+-	 * in the guest.
+-	 */
+-	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
+ 	return 0;
+ }
  
- 	pr_info("%s: dummy @ %p, expires @ %lx\n",
- 		__func__, d, d->jiffies_expire);
 -- 
 2.19.1
 
