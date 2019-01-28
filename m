@@ -2,116 +2,148 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 688FDC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 059E8C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 387B92087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:44:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gx3mesPg"
+	by mail.kernel.org (Postfix) with ESMTP id D2AD22087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:44:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfA1NoP (ORCPT
+        id S1726853AbfA1No0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:44:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59112 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfA1NoP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:44:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=t7sRyqFD8zaElsWAyTkdV/A/de2tWj31e5vDAsus3RY=; b=Gx3mesPgnK5Ve3gM75gM5zcxn
-        3vpEoKJtIKjrFMtU13XkK3y5QTDnPAdoVpRBZGcNhwzJv4tZ61g9K1LkJkayc2n70E2C2GFYkLeSY
-        b68vlLgcCbcZ1qkvdFJ5cEvE7PgmILWvXWC79izp+qn6BKvMm32a3/UXhIC8tyD4mBDVHOl6mPex9
-        FJQ5eLCVVpk+QlirSBNJL5S7OmvKpznA70GGDASvLsOsvLYKPx0WVugUCvJiTYqmbtUYh2eH79hCS
-        kv4XDS55uV+Rgl2OaHXhUGXw5Dvel5qtPnTgQKp9HI21aLKsDK9Vvu8PzygRclCYXaASDGeuWe/PS
-        1sZeblWEQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1go7Cv-0004Lm-5e; Mon, 28 Jan 2019 13:44:13 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6530825E16E01; Mon, 28 Jan 2019 14:44:10 +0100 (CET)
-Date:   Mon, 28 Jan 2019 14:44:10 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Stefan Liebler <stli@linux.ibm.com>
-Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggered
-Message-ID: <20190128134410.GA28485@hirez.programming.kicks-ass.net>
-References: <20181127081115.GB3625@osiris>
- <alpine.DEB.2.21.1811281526430.1532@nanos.tec.linutronix.de>
- <20181129112321.GB3449@osiris>
+        Mon, 28 Jan 2019 08:44:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45650 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726647AbfA1NoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 08:44:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A4753AB42;
+        Mon, 28 Jan 2019 13:44:23 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 392191E3FEF; Mon, 28 Jan 2019 14:44:23 +0100 (CET)
+Date:   Mon, 28 Jan 2019 14:44:23 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-nvdimm@lists.01.org
+Subject: Re: [PATCH] MAINTAINERS: Update filesystem-dax and NVDIMM entries
+Message-ID: <20190128134423.GE27972@quack2.suse.cz>
+References: <154835747897.2884847.389054528444820204.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181129112321.GB3449@osiris>
+In-Reply-To: <154835747897.2884847.389054528444820204.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 12:23:21PM +0100, Heiko Carstens wrote:
-
-> And indeed, if I run only this test case in an endless loop and do
-> some parallel work (like kernel compile) it currently seems to be
-> possible to reproduce the warning:
+On Thu 24-01-19 11:17:59, Dan Williams wrote:
+> Ross has moved on to other areas.
 > 
-> while true; do time ./testrun.sh nptl/tst-robustpi8 --direct ; done
+> Matthew and Jan are trusted reviewers for DAX.
 > 
-> within the build directory of glibc (2.28).
+> Dan is now coordinating filesystem-dax pull requests.
+> 
+> Ira and Keith are now involved with the NVDIMM and Device-DAX
+> sub-systems.
+> 
+> The linux-nvdimm mailing hosts a patchwork instance for both DAX and
+> NVDIMM patches.
+> 
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-Right; so that reproduces for me.
+Acked-by: Jan Kara <jack@suse.cz>
 
-After staring at all that for a while; trying to remember how it all
-worked (or supposed to work rather), I became suspiscous of commit:
-
-  56222b212e8e ("futex: Drop hb->lock before enqueueing on the rtmutex")
-
-And indeed, when I revert that; the above reproducer no longer works (as
-in, it no longer triggers in minutes and has -- so far -- held up for an
-hour+ or so).
-
-That patch in particular allows futex_unlock_pi() to 'start' early:
-
-
-futex_lock_pi()				futex_unlock_pi()
-  lock hb
-  queue
-  lock wait_lock
-  unlock hb
-					lock hb
-					futex_top_waiter
-					get_pi_state
-					lock wait_lock
-  rt_mutex_proxy_start // fail
-  unlock wait_lock
-					// acquired wait_lock
-					wake_futex_pi()
-					rt_mutex_next_owner() // whoops, no waiter
-					WARN
-
-  lock hb
-  unqueue_me_pi
+								Honza
 
 
-
-So reverting that patch should cure things, because then there is no hb
-lock break between queue/unqueue and futex_unlock_pi() cannot observe
-this half-arsed state.
-
-Now obviously reverting that makes RT unhappy; let me see what the
-options are.
-
-(concurrently tglx generated a trace that corroborates)
+> ---
+>  MAINTAINERS |   17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 51029a425dbe..5f43ee438a74 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4535,10 +4535,11 @@ S:	Maintained
+>  F:	drivers/i2c/busses/i2c-diolan-u2c.c
+>  
+>  FILESYSTEM DIRECT ACCESS (DAX)
+> -M:	Matthew Wilcox <willy@infradead.org>
+> -M:	Ross Zwisler <zwisler@kernel.org>
+> -M:	Jan Kara <jack@suse.cz>
+> +M:	Dan Williams <dan.j.williams@intel.com>
+> +R:	Matthew Wilcox <willy@infradead.org>
+> +R:	Jan Kara <jack@suse.cz>
+>  L:	linux-fsdevel@vger.kernel.org
+> +L:	linux-nvdimm@lists.01.org
+>  S:	Supported
+>  F:	fs/dax.c
+>  F:	include/linux/dax.h
+> @@ -4546,9 +4547,9 @@ F:	include/trace/events/fs_dax.h
+>  
+>  DEVICE DIRECT ACCESS (DAX)
+>  M:	Dan Williams <dan.j.williams@intel.com>
+> -M:	Dave Jiang <dave.jiang@intel.com>
+> -M:	Ross Zwisler <zwisler@kernel.org>
+>  M:	Vishal Verma <vishal.l.verma@intel.com>
+> +M:	Keith Busch <keith.busch@intel.com>
+> +M:	Dave Jiang <dave.jiang@intel.com>
+>  L:	linux-nvdimm@lists.01.org
+>  S:	Supported
+>  F:	drivers/dax/
+> @@ -8641,7 +8642,6 @@ S:	Maintained
+>  F:	tools/lib/lockdep/
+>  
+>  LIBNVDIMM BLK: MMIO-APERTURE DRIVER
+> -M:	Ross Zwisler <zwisler@kernel.org>
+>  M:	Dan Williams <dan.j.williams@intel.com>
+>  M:	Vishal Verma <vishal.l.verma@intel.com>
+>  M:	Dave Jiang <dave.jiang@intel.com>
+> @@ -8654,7 +8654,6 @@ F:	drivers/nvdimm/region_devs.c
+>  LIBNVDIMM BTT: BLOCK TRANSLATION TABLE
+>  M:	Vishal Verma <vishal.l.verma@intel.com>
+>  M:	Dan Williams <dan.j.williams@intel.com>
+> -M:	Ross Zwisler <zwisler@kernel.org>
+>  M:	Dave Jiang <dave.jiang@intel.com>
+>  L:	linux-nvdimm@lists.01.org
+>  Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
+> @@ -8662,7 +8661,6 @@ S:	Supported
+>  F:	drivers/nvdimm/btt*
+>  
+>  LIBNVDIMM PMEM: PERSISTENT MEMORY DRIVER
+> -M:	Ross Zwisler <zwisler@kernel.org>
+>  M:	Dan Williams <dan.j.williams@intel.com>
+>  M:	Vishal Verma <vishal.l.verma@intel.com>
+>  M:	Dave Jiang <dave.jiang@intel.com>
+> @@ -8681,9 +8679,10 @@ F:	Documentation/devicetree/bindings/pmem/pmem-region.txt
+>  
+>  LIBNVDIMM: NON-VOLATILE MEMORY DEVICE SUBSYSTEM
+>  M:	Dan Williams <dan.j.williams@intel.com>
+> -M:	Ross Zwisler <zwisler@kernel.org>
+>  M:	Vishal Verma <vishal.l.verma@intel.com>
+>  M:	Dave Jiang <dave.jiang@intel.com>
+> +M:	Keith Busch <keith.busch@intel.com>
+> +M:	Ira Weiny <ira.weiny@intel.com>
+>  L:	linux-nvdimm@lists.01.org
+>  Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
