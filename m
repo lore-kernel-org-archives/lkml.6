@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C25C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD761C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31D7820879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A0C12147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692114;
-	bh=VIsxkGvIyGt2M+AYosVAvOZVFFLQhQ4/rpb/+2fjB3k=;
+	s=default; t=1548692120;
+	bh=rwAhjjQ25Dfht0kjHiQgliMPwf3KEIuYPmPB5Hsjvw4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=G+JL6qiskybCks4PlN21VSIMghCjxu8560Zc+nuMuk9+Be0wpMtomrQx9rSZGAL7w
-	 62YBijAXKyFr0+5ZgD1thQtVeciI1qHef/TYIgIPfnNhQ3GwnGASoWniIKe1xltWsX
-	 JmxTYXFJ5Y7U3NlNIv+sFUeC+u9/5YYbN1Nyoc70=
+	b=YJGnY2UYdN2yWx/I70fVN/zItiD1Rdp7YWFTp9egV+ulpCqKvi1CJUHfxVCNN08q+
+	 HsBHubtUL7Pt+vI1esGlJAPQsvhd4SnnMdUphV8OVppkMSNoQmGahamWkVJ8vT4nnH
+	 Dnw7DgtmvCXhUQL2c1zi+vAFfC/sBllHiAjTRRP4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387744AbfA1QPM (ORCPT
+        id S2387773AbfA1QPS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:15:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44792 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:15:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387727AbfA1QPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:09 -0500
+        id S2387752AbfA1QPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FE3B2175B;
-        Mon, 28 Jan 2019 16:15:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FCBE2148E;
+        Mon, 28 Jan 2019 16:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692108;
-        bh=VIsxkGvIyGt2M+AYosVAvOZVFFLQhQ4/rpb/+2fjB3k=;
+        s=default; t=1548692114;
+        bh=rwAhjjQ25Dfht0kjHiQgliMPwf3KEIuYPmPB5Hsjvw4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L0pQ3ahQOYfoM0yJ2312bJNFI+n0CYJljHsBp2K8HWwz7SCG7Cd5i3W9dsNkAiPGo
-         Ca50gwKztf+tGwG9zotie5dk62SHBIaWs5cMmISzBMydQrVm59ez4TCMjMqiEcYh+R
-         4L7UOYkvC9/740vxMUsD+9dEE0aSE+qzgjJZmnQY=
+        b=RbQC7LNZOWgKmd/5VqZYodYy/t0Rsmg8tp7YJHb3rDvSZMLS9uUufaIxsU/8aiv1l
+         RAX7C3tPYVJqDVn0pk7gZ/DReQmCRPN5m7cp9lYUo4CZrcie4zdWdQcoVkgcR+VOcm
+         ++o7FRaNpPoTVSNvy66XUvwaLZZHUHHy6A8HAU5E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Rajnoha <prajnoha@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 071/170] kobject: return error code if writing /sys/.../uevent fails
-Date:   Mon, 28 Jan 2019 11:10:21 -0500
-Message-Id: <20190128161200.55107-71-sashal@kernel.org>
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 074/170] pinctrl: sx150x: handle failure case of devm_kstrdup
+Date:   Mon, 28 Jan 2019 11:10:24 -0500
+Message-Id: <20190128161200.55107-74-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,95 +57,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Rajnoha <prajnoha@redhat.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit df44b479654f62b478c18ee4d8bc4e9f897a9844 ]
+[ Upstream commit a9d9f6b83f1bb05da849b3540e6d1f70ef1c2343 ]
 
-Propagate error code back to userspace if writing the /sys/.../uevent
-file fails. Before, the write operation always returned with success,
-even if we failed to recognize the input string or if we failed to
-generate the uevent itself.
+devm_kstrdup() may return NULL if internal allocation failed.
+Thus using  label, name  is unsafe without checking. Therefor
+in the unlikely case of allocation failure, sx150x_probe() simply
+returns -ENOMEM.
 
-With the error codes properly propagated back to userspace, we are
-able to react in userspace accordingly by not assuming and awaiting
-a uevent that is not delivered.
-
-Signed-off-by: Peter Rajnoha <prajnoha@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/bus.c  | 12 ++++++++----
- drivers/base/core.c |  8 +++++++-
- kernel/module.c     |  6 ++++--
- 3 files changed, 19 insertions(+), 7 deletions(-)
+ drivers/pinctrl/pinctrl-sx150x.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 1cf1460f8c90..3464c49dad0d 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -616,8 +616,10 @@ static void remove_probe_files(struct bus_type *bus)
- static ssize_t uevent_store(struct device_driver *drv, const char *buf,
- 			    size_t count)
- {
--	kobject_synth_uevent(&drv->p->kobj, buf, count);
--	return count;
-+	int rc;
-+
-+	rc = kobject_synth_uevent(&drv->p->kobj, buf, count);
-+	return rc ? rc : count;
- }
- static DRIVER_ATTR_WO(uevent);
+diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+index 70a0228f4e7f..2d0f4f760326 100644
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -1166,7 +1166,6 @@ static int sx150x_probe(struct i2c_client *client,
+ 	}
  
-@@ -833,8 +835,10 @@ static void klist_devices_put(struct klist_node *n)
- static ssize_t bus_uevent_store(struct bus_type *bus,
- 				const char *buf, size_t count)
- {
--	kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
--	return count;
-+	int rc;
+ 	/* Register GPIO controller */
+-	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
+ 	pctl->gpio.base = -1;
+ 	pctl->gpio.ngpio = pctl->data->npins;
+ 	pctl->gpio.get_direction = sx150x_gpio_get_direction;
+@@ -1180,6 +1179,10 @@ static int sx150x_probe(struct i2c_client *client,
+ 	pctl->gpio.of_node = dev->of_node;
+ #endif
+ 	pctl->gpio.can_sleep = true;
++	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
++	if (!pctl->gpio.label)
++		return -ENOMEM;
 +
-+	rc = kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
-+	return rc ? rc : count;
- }
- static BUS_ATTR(uevent, S_IWUSR, NULL, bus_uevent_store);
+ 	/*
+ 	 * Setting multiple pins is not safe when all pins are not
+ 	 * handled by the same regmap register. The oscio pin (present
+@@ -1200,13 +1203,15 @@ static int sx150x_probe(struct i2c_client *client,
  
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 3f463a61f8cf..d0c67512854c 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -991,8 +991,14 @@ static ssize_t uevent_show(struct device *dev, struct device_attribute *attr,
- static ssize_t uevent_store(struct device *dev, struct device_attribute *attr,
- 			    const char *buf, size_t count)
- {
--	if (kobject_synth_uevent(&dev->kobj, buf, count))
-+	int rc;
-+
-+	rc = kobject_synth_uevent(&dev->kobj, buf, count);
-+
-+	if (rc) {
- 		dev_err(dev, "uevent: failed to send synthetic uevent\n");
-+		return rc;
-+	}
+ 	/* Add Interrupt support if an irq is specified */
+ 	if (client->irq > 0) {
+-		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
+-						   GFP_KERNEL);
+ 		pctl->irq_chip.irq_mask = sx150x_irq_mask;
+ 		pctl->irq_chip.irq_unmask = sx150x_irq_unmask;
+ 		pctl->irq_chip.irq_set_type = sx150x_irq_set_type;
+ 		pctl->irq_chip.irq_bus_lock = sx150x_irq_bus_lock;
+ 		pctl->irq_chip.irq_bus_sync_unlock = sx150x_irq_bus_sync_unlock;
++		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
++						   GFP_KERNEL);
++		if (!pctl->irq_chip.name)
++			return -ENOMEM;
  
- 	return count;
- }
-diff --git a/kernel/module.c b/kernel/module.c
-index 2a44c515f0d7..94528b891027 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1201,8 +1201,10 @@ static ssize_t store_uevent(struct module_attribute *mattr,
- 			    struct module_kobject *mk,
- 			    const char *buffer, size_t count)
- {
--	kobject_synth_uevent(&mk->kobj, buffer, count);
--	return count;
-+	int rc;
-+
-+	rc = kobject_synth_uevent(&mk->kobj, buffer, count);
-+	return rc ? rc : count;
- }
- 
- struct module_attribute module_uevent =
+ 		pctl->irq.masked = ~0;
+ 		pctl->irq.sense = 0;
 -- 
 2.19.1
 
