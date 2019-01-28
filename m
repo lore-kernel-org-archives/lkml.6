@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A283C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB086C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE6120811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C4ED20811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693421;
-	bh=L/z9AzkPPCaSA0RgojVr+F08SP13FjSvuaXE2YjmIwk=;
+	s=default; t=1548693425;
+	bh=NSQsw2C72TWmnIJlcmD+IDLfvpUc6iK2l0RJ5B8X7ZE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iR5KwBy6w88S6obdtvG75vmzfbBYxQzGwcl0xsJDL5WwjfFwsfD26wswYE7WvegVD
-	 lt4yAojFXxqsM+EQoF2kuzgJorfH3uNmbdv+l7w//CWLGl+AGVl7lfYIxkU55HMZS0
-	 whEVxMpSp44ZxKsFi9rDNZgyWulecGcBY5h47Yg4=
+	b=KJi4Z0wC7urlrdsFJ21mIwujSfSRAUk1QqAO2AWljLcD9d8qCDwg3Qjwsg2cxLZ7R
+	 JIfmHA7xGpw3kJviRUhKhDR7qHxsBOZTREPk8OvwfLE+kzF3tafBxDAdEwUG4sS/2h
+	 9Hn14DqXP+ziGwRWJqc5nijQ5KEMAckDF3euOeh4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389871AbfA1QZL (ORCPT
+        id S1729360AbfA1QhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:25:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33798 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:37:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389833AbfA1QZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:01 -0500
+        id S2388985AbfA1QZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2AC32171F;
-        Mon, 28 Jan 2019 16:24:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A30A2147A;
+        Mon, 28 Jan 2019 16:25:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692700;
-        bh=L/z9AzkPPCaSA0RgojVr+F08SP13FjSvuaXE2YjmIwk=;
+        s=default; t=1548692709;
+        bh=NSQsw2C72TWmnIJlcmD+IDLfvpUc6iK2l0RJ5B8X7ZE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DUtpqbY+5rCec9vN3P5UZozg11+KV/lbwQAitDIiNQ6WJ4V6BPsouRHilfj0CR6hh
-         eVbqQB5zW57A/HfiiRvdUp6AyPU/AepsROcmlDaUzFJQhO5e7RGmCESRox+hgRDlo1
-         53l45+38hYtmftyO8CHAUra9u3f5lwbR9xnItSdY=
+        b=Chs9knbpaCUzJP9DtlELyexxveuKMIWTtSZISmTbfjNhd4wI1HF7zf56eq16ikzMQ
+         6RA/8S63gI6n5o4MtigwlE3q86PRXAgHlntngm7DUtnuoYuzngJ/oi2WlVo4pTQ/dp
+         9acIMX3i05dXQsdJX0xplxxfRIStZ4j7CDHpZcbo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.4 35/80] iommu/arm-smmu-v3: Use explicit mb() when moving cons pointer
-Date:   Mon, 28 Jan 2019 11:23:16 -0500
-Message-Id: <20190128162401.58841-35-sashal@kernel.org>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 42/80] ASoC: fsl: Fix SND_SOC_EUKREA_TLV320 build error on i.MX8M
+Date:   Mon, 28 Jan 2019 11:23:23 -0500
+Message-Id: <20190128162401.58841-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -59,48 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+From: Fabio Estevam <festevam@gmail.com>
 
-[ Upstream commit a868e8530441286342f90c1fd9c5f24de3aa2880 ]
+[ Upstream commit add6883619a9e3bf9658eaff1a547354131bbcd9 ]
 
-After removing an entry from a queue (e.g. reading an event in
-arm_smmu_evtq_thread()) it is necessary to advance the MMIO consumer
-pointer to free the queue slot back to the SMMU. A memory barrier is
-required here so that all reads targetting the queue entry have
-completed before the consumer pointer is updated.
+eukrea-tlv320.c machine driver runs on non-DT platforms
+and include <asm/mach-types.h> header file in order to be able
+to use some machine_is_eukrea_xxx() macros.
 
-The implementation of queue_inc_cons() relies on a writel() to complete
-the previous reads, but this is incorrect because writel() is only
-guaranteed to complete prior writes. This patch replaces the call to
-writel() with an mb(); writel_relaxed() sequence, which gives us the
-read->write ordering which we require.
+Building it for ARM64 causes the following build error:
 
-Cc: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+sound/soc/fsl/eukrea-tlv320.c:28:10: fatal error: asm/mach-types.h: No such file or directory
+
+Avoid this error by not allowing to build the SND_SOC_EUKREA_TLV320
+driver when ARM64 is selected.
+
+This is needed in preparation for the i.MX8M support.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ sound/soc/fsl/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index fc6eb752ab35..eb9937225d64 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -683,7 +683,13 @@ static void queue_inc_cons(struct arm_smmu_queue *q)
- 	u32 cons = (Q_WRP(q, q->cons) | Q_IDX(q, q->cons)) + 1;
+diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
+index 14dfdee05fd5..3066e068aae5 100644
+--- a/sound/soc/fsl/Kconfig
++++ b/sound/soc/fsl/Kconfig
+@@ -219,7 +219,7 @@ config SND_SOC_PHYCORE_AC97
  
- 	q->cons = Q_OVF(q, q->cons) | Q_WRP(q, cons) | Q_IDX(q, cons);
--	writel(q->cons, q->cons_reg);
-+
-+	/*
-+	 * Ensure that all CPU accesses (reads and writes) to the queue
-+	 * are complete before we update the cons pointer.
-+	 */
-+	mb();
-+	writel_relaxed(q->cons, q->cons_reg);
- }
- 
- static int queue_sync_prod(struct arm_smmu_queue *q)
+ config SND_SOC_EUKREA_TLV320
+ 	tristate "Eukrea TLV320"
+-	depends on ARCH_MXC && I2C
++	depends on ARCH_MXC && !ARM64 && I2C
+ 	select SND_SOC_TLV320AIC23_I2C
+ 	select SND_SOC_IMX_AUDMUX
+ 	select SND_SOC_IMX_SSI
 -- 
 2.19.1
 
