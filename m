@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E4AC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99215C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66C9C20811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:34:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5963C20811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:34:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693256;
-	bh=enTrz7iaJzsPQV7JbCw9163l/PH33UAa9ZSvKhineEA=;
+	s=default; t=1548693265;
+	bh=Gzyeu7neu68PbQir2lRhlHmao3Em4XafQgNrKV7LYco=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O7L5MPLgNcrQ9S0pqR/ybWvLI/MOw/xq61qPBW8Rohxx8NAIJAHYHzqk4Yb1lHJFA
-	 xWRzqXRaq8RQeO979B+NeO2nLuxitDa8GaNqg55EmO/m6GNdwzlRzuV0Xay6/zmVjv
-	 E9W74xnEy7N2YWamJr89iKwcNIcS7kq9m+N2YR90=
+	b=Fk+eTwI7Lc+NVrCfkMqkQEi+WIsH4NlTWY9OX03yqotiQF4K6NaXvPW0h2AUO/8V+
+	 X7a4iUWCWrzC2jWbCGlXtp1VlPejAndjbf7/NcI19KE22jbtNuNC1DD3PSkie4O8Fs
+	 slz53XwzJiwp/Cx7JkXhuiPcpKoUwV46iLWLU+3M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390122AbfA1Q0K (ORCPT
+        id S2388860AbfA1QeX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:26:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35234 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:34:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389588AbfA1Q0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:07 -0500
+        id S2389344AbfA1Q0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84B232147A;
-        Mon, 28 Jan 2019 16:26:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 631A12147A;
+        Mon, 28 Jan 2019 16:26:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692766;
-        bh=enTrz7iaJzsPQV7JbCw9163l/PH33UAa9ZSvKhineEA=;
+        s=default; t=1548692764;
+        bh=Gzyeu7neu68PbQir2lRhlHmao3Em4XafQgNrKV7LYco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WcjiwNv5i5+iC7NFgqheTaNg+wdAFp8/cY7Jktz4TzM8kPcO3GNoMfHYioGYPuxfw
-         zfWWysqmD0EuFjORpAJXl5c6xqnfhjYaN4YaJBcL9Aj1Hq0s8pehDDQZgySRC6mWOd
-         6H8iYSpL8ErYNsD6GwUE6U6k1woaUuFYr+qJ5QcY=
+        b=VFd9Vw+pOA8uq7M9onIb8bwvaOkwqDKGu7jt2ELJ7BghLt8WO+sN/P0oPvQ3oJH32
+         bJQt6TSwACWO+NumDdWQypNxm61WoXMy/QI5aL3+CNVxQKKs/RAJKDHXRQYJ+0LS7P
+         /gLWDeqWtf/Ql8LG3/BQWEXkTaW7rZxxDbUMmknk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 71/80] scripts/decode_stacktrace: only strip base path when a prefix of the path
-Date:   Mon, 28 Jan 2019 11:23:52 -0500
-Message-Id: <20190128162401.58841-71-sashal@kernel.org>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 70/80] niu: fix missing checks of niu_pci_eeprom_read
+Date:   Mon, 28 Jan 2019 11:23:51 -0500
+Message-Id: <20190128162401.58841-70-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -60,47 +58,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit 67a28de47faa83585dd644bd4c31e5a1d9346c50 ]
+[ Upstream commit 26fd962bde0b15e54234fe762d86bc0349df1de4 ]
 
-Running something like:
+niu_pci_eeprom_read() may fail, so we should check its return value
+before using the read data.
 
-	decodecode vmlinux .
-
-leads to interested results where not only the leading "." gets stripped
-from the displayed paths, but also anywhere in the string, displaying
-something like:
-
-	kvm_vcpu_check_block (arch/arm64/kvm/virt/kvm/kvm_mainc:2141)
-
-which doesn't help further processing.
-
-Fix it by only stripping the base path if it is a prefix of the path.
-
-Link: http://lkml.kernel.org/r/20181210174659.31054-3-marc.zyngier@arm.com
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Shannon Nelson <shannon.lee.nelson@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/decode_stacktrace.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/sun/niu.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index 00d6d53c2681..ffc46c7c3afb 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -64,7 +64,7 @@ parse_symbol() {
- 	fi
+diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
+index ccebf89aa1e4..85f3a2c0d4dd 100644
+--- a/drivers/net/ethernet/sun/niu.c
++++ b/drivers/net/ethernet/sun/niu.c
+@@ -8121,6 +8121,8 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
+ 		start += 3;
  
- 	# Strip out the base of the path
--	code=${code//$basepath/""}
-+	code=${code//^$basepath/""}
+ 		prop_len = niu_pci_eeprom_read(np, start + 4);
++		if (prop_len < 0)
++			return prop_len;
+ 		err = niu_pci_vpd_get_propname(np, start + 5, namebuf, 64);
+ 		if (err < 0)
+ 			return err;
+@@ -8165,8 +8167,12 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
+ 			netif_printk(np, probe, KERN_DEBUG, np->dev,
+ 				     "VPD_SCAN: Reading in property [%s] len[%d]\n",
+ 				     namebuf, prop_len);
+-			for (i = 0; i < prop_len; i++)
+-				*prop_buf++ = niu_pci_eeprom_read(np, off + i);
++			for (i = 0; i < prop_len; i++) {
++				err = niu_pci_eeprom_read(np, off + i);
++				if (err >= 0)
++					*prop_buf = err;
++				++prop_buf;
++			}
+ 		}
  
- 	# In the case of inlines, move everything to same line
- 	code=${code//$'\n'/' '}
+ 		start += len;
 -- 
 2.19.1
 
