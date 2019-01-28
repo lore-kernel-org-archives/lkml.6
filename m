@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC511C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6EBC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7538D20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8A2720879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692717;
-	bh=PeYhArc2G4o8zT0zwE0n9g1wENLjYzdCMNWh9KDLk+A=;
+	s=default; t=1548692725;
+	bh=weP5wNqF3syjXpJOod6mfYe7aPJClX9NCQ4XhvJVZVc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=e3aFUX2Ob0djfn1t5avAnsh8PYEGuOXrrVMsjkztf/NGTlMn9puWU5K5zJG+r5q00
-	 yxdUG6BZ0my443aUXO6x/11bv73jrVvfwHG2pls54rHyUkTkGFyOUD+6L4mxTH860f
-	 07QytUq0MAJoINLiL96wCU+hXUlEVJQSqRtexjNs=
+	b=KHMMmb3RQ9v4NQZ8NfV8J5eyAcAl5o27If/3u+SDMhmlSp9zJkV4dO5sp2xeqmLbr
+	 0B5IFbGT2CEsXWMRFBjO9gJdYdl21C4IVXPWyOwpj5acE755wf4LyJoHK++1lmy2sS
+	 JrDnkmHT+68vZTpZYY3C2LOmo8OM3p9UgRTmwlos=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389890AbfA1QZQ (ORCPT
+        id S2389915AbfA1QZX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:25:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33910 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:25:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389853AbfA1QZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:07 -0500
+        id S2388483AbfA1QZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C5D72147A;
-        Mon, 28 Jan 2019 16:25:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 421142147A;
+        Mon, 28 Jan 2019 16:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692706;
-        bh=PeYhArc2G4o8zT0zwE0n9g1wENLjYzdCMNWh9KDLk+A=;
+        s=default; t=1548692719;
+        bh=weP5wNqF3syjXpJOod6mfYe7aPJClX9NCQ4XhvJVZVc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G7g1e4cwregtKIzAcVpdPLocMOeaYzgQ6pw/t1GKnyKZH/urpMlzodxW1VKJEuP2m
-         zd5MuUcVua8vRUABNZ3QHOWAycyTS8rMQholJ4sZunKzRf30GBT8v7coL7uRHsPLsg
-         O6XAiQ6eXBvtUlgE1Bj3nGT9z5ndHPkUYieDruww=
+        b=tBWHMbukVzfODVLAFWCqG+nOjAVYYgrPoa1tU19Jsp4A11/lAgnPSagbMDmkpi68x
+         IDwOiQAmbZxF6bk9+6jEp/ujuSkb9CFICP4Ah/shsmANZpewhpTLpvFskCN012kwh5
+         bQE/lOcT+coxpuW3dkuU1iG6mY/Kq1qVC+yuv7dk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 40/80] udf: Fix BUG on corrupted inode
-Date:   Mon, 28 Jan 2019 11:23:21 -0500
-Message-Id: <20190128162401.58841-40-sashal@kernel.org>
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 44/80] memstick: Prevent memstick host from getting runtime suspended during card detection
+Date:   Mon, 28 Jan 2019 11:23:25 -0500
+Message-Id: <20190128162401.58841-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -56,38 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit d288d95842f1503414b7eebce3773bac3390457e ]
+[ Upstream commit e03e303edf1c63e6dd455ccd568c74e93ef3ba8c ]
 
-When inode is corrupted so that extent type is invalid, some functions
-(such as udf_truncate_extents()) will just BUG. Check that extent type
-is valid when loading the inode to memory.
+We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
+helpers to let memstick host support runtime pm.
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+The rpm count may go down to zero before the memstick host powers on, so
+the host can be runtime suspended.
+
+So before doing card detection, increment the rpm count to avoid the
+host gets runtime suspended. Balance the rpm count after card detection
+is done.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/udf/inode.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/memstick/core/memstick.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 0e659d9c69a1..613193c6bb42 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -1364,6 +1364,12 @@ static int udf_read_inode(struct inode *inode, bool hidden_inode)
+diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
+index a0547dbf9806..4d673a626db4 100644
+--- a/drivers/memstick/core/memstick.c
++++ b/drivers/memstick/core/memstick.c
+@@ -18,6 +18,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/pm_runtime.h>
  
- 	iinfo->i_alloc_type = le16_to_cpu(fe->icbTag.flags) &
- 							ICBTAG_FLAG_AD_MASK;
-+	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_SHORT &&
-+	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_LONG &&
-+	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
-+		ret = -EIO;
-+		goto out;
-+	}
- 	iinfo->i_unique = 0;
- 	iinfo->i_lenEAttr = 0;
- 	iinfo->i_lenExtents = 0;
+ #define DRIVER_NAME "memstick"
+ 
+@@ -436,6 +437,7 @@ static void memstick_check(struct work_struct *work)
+ 	struct memstick_dev *card;
+ 
+ 	dev_dbg(&host->dev, "memstick_check started\n");
++	pm_runtime_get_noresume(host->dev.parent);
+ 	mutex_lock(&host->lock);
+ 	if (!host->card) {
+ 		if (memstick_power_on(host))
+@@ -479,6 +481,7 @@ static void memstick_check(struct work_struct *work)
+ 		host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
+ 
+ 	mutex_unlock(&host->lock);
++	pm_runtime_put(host->dev.parent);
+ 	dev_dbg(&host->dev, "memstick_check finished\n");
+ }
+ 
 -- 
 2.19.1
 
