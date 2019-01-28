@@ -2,91 +2,85 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31235C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF641C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B55120989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADB2D20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:24:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfA1NY2 (ORCPT
+        id S1726845AbfA1NYn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:24:28 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38856 "EHLO huawei.com"
+        Mon, 28 Jan 2019 08:24:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42464 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726647AbfA1NY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:24:27 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D0AB047B67543F56BF28;
-        Mon, 28 Jan 2019 21:24:24 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Mon, 28 Jan 2019
- 21:24:15 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
-        <hkallweit1@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] mdio_bus: Fix PTR_ERR() usage after initialization to constant
-Date:   Mon, 28 Jan 2019 21:24:09 +0800
-Message-ID: <20190128132409.17736-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+        id S1726784AbfA1NYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 08:24:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6EEA4AD23;
+        Mon, 28 Jan 2019 13:24:41 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 14:24:40 +0100
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH 2/7] MIPS: SGI-IP27: clean up bridge access and header
+ files
+Message-Id: <20190128142440.591d2115ac7844863713aa77@suse.de>
+In-Reply-To: <20190128132003.GA744@infradead.org>
+References: <20190124174728.28812-1-tbogendoerfer@suse.de>
+        <20190124174728.28812-3-tbogendoerfer@suse.de>
+        <20190128132003.GA744@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix coccinelle warning:
+On Mon, 28 Jan 2019 05:20:03 -0800
+Christoph Hellwig <hch@infradead.org> wrote:
 
-./drivers/net/phy/mdio_bus.c:51:5-12: ERROR: PTR_ERR applied after initialization to constant on line 44
-./drivers/net/phy/mdio_bus.c:52:5-12: ERROR: PTR_ERR applied after initialization to constant on line 44
+> On Thu, Jan 24, 2019 at 06:47:23PM +0100, Thomas Bogendoerfer wrote:
+> >  #ifndef __ASSEMBLY__
+> > +/* Address translation entry for mapped pci32 accesses */
+> > +union bridge_ate {
+> > +	u64	ent;
+> > +	struct ate_s {
+> > +		u64	rmf:16;
+> > +		u64	addr:36;
+> > +		u64	targ:4;
+> > +		u64	reserved:3;
+> > +		u64	barrier:1;
+> > +		u64	prefetch:1;
+> > +		u64	precise:1;
+> > +		u64	coherent:1;
+> > +		u64	valid:1;
+> > +	} field;
+> 
+> Note that we generally try to avoid using bitfields for hardware
+> descriptions and instead use masking/shifting, possibly hidden in
+> macros.  The portability argument for that doesn't really apply
+> here as the code is obviously MIPS/big endian specific, but I think
+> it generally is a good example and more readable as well.
 
-fix this by using IS_ERR before PTR_ERR
+I totally agreed. I only moved the original defintion around while cleaning
+up the header file. Right now there is no code using it. Should I remove it
+and access macros as soon there is a need for it ?
 
-Fixes: bafbdd527d56 ("phylib: Add device reset GPIO support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/phy/mdio_bus.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Thomas.
 
-diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-index 3d31358..802716a 100644
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -42,17 +42,20 @@
- static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
- {
- 	struct gpio_desc *gpiod = NULL;
-+	int ret;
- 
- 	/* Deassert the optional reset signal */
- 	if (mdiodev->dev.of_node)
- 		gpiod = fwnode_get_named_gpiod(&mdiodev->dev.of_node->fwnode,
- 					       "reset-gpios", 0, GPIOD_OUT_LOW,
- 					       "PHY reset");
--	if (PTR_ERR(gpiod) == -ENOENT ||
--	    PTR_ERR(gpiod) == -ENOSYS)
--		gpiod = NULL;
--	else if (IS_ERR(gpiod))
--		return PTR_ERR(gpiod);
-+	if (IS_ERR(gpiod)) {
-+		ret = PTR_ERR(gpiod);
-+		if (ret == -ENOENT || ret == -ENOSYS)
-+			gpiod = NULL;
-+		else
-+			return ret;
-+	}
- 
- 	mdiodev->reset = gpiod;
- 
 -- 
-2.7.4
-
-
+SUSE Linux GmbH
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
