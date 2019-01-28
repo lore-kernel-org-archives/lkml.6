@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA56AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B72CC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A38282084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53DD82147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692450;
-	bh=khEciF1J8C5dG2EQcIl21l4X5RDmspjmIGFXJSMYwDs=;
+	s=default; t=1548692453;
+	bh=DD7pO8kgTBqXWdncyZactYpc6HD+lX8vmS9/4utg3bk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oWqfQTXgvl5vNuAJkLyANkDzQqqwtKm7p0b3On0i5V225nLb4vp4X+KNunoK4Tw0K
-	 a1f3CNQOqpdFrJk2n55bK6EV3ASWkRiwHVe7XrqV9Dbwoqt5jUK076bFMBjbDHGVUf
-	 48BH50k7BcG6dKQpFsCeieEPU7l5agFnUCGMQ3Nk=
+	b=lzAw+jTwhI9ZH9SpzufgT4OWpMe8xsh/7hDZHd5//+xOnXS7b4AbA+dEYDo+4IX4x
+	 Kw7IYWInCKhlGNzwtH5uTMwnxGxpLuBbgXKGHj27m4WTwbR/8LJ5Qa3e57Ln6vym4M
+	 DL3xKXcTLrJZgGuQ3ggje3UO9QEWHHlX3QVWqfG4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388896AbfA1QUs (ORCPT
+        id S2388909AbfA1QUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:20:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56400 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:20:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388872AbfA1QUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:20:45 -0500
+        id S2388895AbfA1QUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:20:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEEF82147A;
-        Mon, 28 Jan 2019 16:20:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99DED2084A;
+        Mon, 28 Jan 2019 16:20:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692445;
-        bh=khEciF1J8C5dG2EQcIl21l4X5RDmspjmIGFXJSMYwDs=;
+        s=default; t=1548692448;
+        bh=DD7pO8kgTBqXWdncyZactYpc6HD+lX8vmS9/4utg3bk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VhNU5x+UjOOk/lfozUJv4Nb2miv7P3NAfQTC9HxfapCLRf7i+Dl5xtpfB/kxyg42M
-         64E8UB1N3i8x3UMzeXgwI6J9gzzXDGPHwAn+s6AntDhYjTwUukZvvONKkqrfXwn+GC
-         m0pqd3kuM8f/LDvuzf/hVIe7tDkMs96LwvIHTerM=
+        b=qPb5KzBVZn1DNUP7z2ZcYfCKtRcXTrbqgcjhWOKAgSoRqaCLmvI/C7P21tPxvHWVt
+         Hj0Nqa3MeSXdwWXFd4D0ojxlpq7/0fZrpGVgOUXqHTS2Dh3cWlOODnCLwVzzzi2nnD
+         614NVT33hTfg4x0ZNJXXPajnjvuz1WYLrsCAJUcE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 022/107] media: mtk-vcodec: Release device nodes in mtk_vcodec_init_enc_pm()
-Date:   Mon, 28 Jan 2019 11:18:22 -0500
-Message-Id: <20190128161947.57405-22-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        dmaengine@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 023/107] dmaengine: xilinx_dma: Remove __aligned attribute on zynqmp_dma_desc_ll
+Date:   Mon, 28 Jan 2019 11:18:23 -0500
+Message-Id: <20190128161947.57405-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -59,62 +57,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 8ea0f2ba0fa3f91ea1b8d823a54b042026ada6b3 ]
+[ Upstream commit aeaebcc17cdf37065d2693865eeb1ff1c7dc5bf3 ]
 
-of_parse_phandle() returns the device node with refcount incremented.
-There are two nodes that are used temporary in mtk_vcodec_init_enc_pm(),
-but their refcounts are not decremented.
+Clang warns:
 
-The patch adds one of_node_put() and fixes returning error codes.
+drivers/dma/xilinx/zynqmp_dma.c:166:4: warning: attribute 'aligned' is
+ignored, place it after "struct" to apply attribute to type declaration
+[-Wignored-attributes]
+}; __aligned(64)
+   ^
+./include/linux/compiler_types.h:200:38: note: expanded from macro
+'__aligned'
+                                               ^
+1 warning generated.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+As Nick pointed out in the previous version of this patch, the author
+likely intended for this struct to be 8-byte (64-bit) aligned, not
+64-byte, which is the default. Remove the hanging __aligned attribute.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: b0cc417c1637 ("dmaengine: Add Xilinx zynqmp dma engine driver support")
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/dma/xilinx/zynqmp_dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-index 3e73e9db781f..7c025045ea90 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-@@ -41,25 +41,27 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
- 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 0);
- 	if (!node) {
- 		mtk_v4l2_err("no mediatek,larb found");
--		return -1;
-+		return -ENODEV;
- 	}
- 	pdev = of_find_device_by_node(node);
-+	of_node_put(node);
- 	if (!pdev) {
- 		mtk_v4l2_err("no mediatek,larb device found");
--		return -1;
-+		return -ENODEV;
- 	}
- 	pm->larbvenc = &pdev->dev;
+diff --git a/drivers/dma/xilinx/zynqmp_dma.c b/drivers/dma/xilinx/zynqmp_dma.c
+index 22658057fe27..9069fb854319 100644
+--- a/drivers/dma/xilinx/zynqmp_dma.c
++++ b/drivers/dma/xilinx/zynqmp_dma.c
+@@ -159,7 +159,7 @@ struct zynqmp_dma_desc_ll {
+ 	u32 ctrl;
+ 	u64 nxtdscraddr;
+ 	u64 rsvd;
+-}; __aligned(64)
++};
  
- 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 1);
- 	if (!node) {
- 		mtk_v4l2_err("no mediatek,larb found");
--		return -1;
-+		return -ENODEV;
- 	}
- 
- 	pdev = of_find_device_by_node(node);
-+	of_node_put(node);
- 	if (!pdev) {
- 		mtk_v4l2_err("no mediatek,larb device found");
--		return -1;
-+		return -ENODEV;
- 	}
- 
- 	pm->larbvenclt = &pdev->dev;
+ /**
+  * struct zynqmp_dma_desc_sw - Per Transaction structure
 -- 
 2.19.1
 
