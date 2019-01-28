@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E80C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB99C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 409DD20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AC0520881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:46:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697576;
-	bh=IVKk5xWO+nAh0Eu4mNo5PS6NOKrWEJ/nDEWCYkQxLkQ=;
+	s=default; t=1548697585;
+	bh=8y57kNr7hTFcVKtpwIZUf9EX/+x04QxM+Ab3q3pbpWg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mifbfHfqNEIWSUUaOKJ/WZk42MzYz4M9WVVRKHIUFxpmyQbcCy0mRbz8tUif5nE9q
-	 uPqfJJ49ldWRwZ87j7FUjQndrBn7zZ4m66pcm/t7UF71bvBxhrz2SlizETfVV7JtPs
-	 CtJeqOqrgS3E8jo0HOYUPQ6WzAaQGvZxSHIB7REg=
+	b=lMsNxXjFn3BTNkHazqV1avQZscOU+xI6EdTzTtM946kchFeQ9j7o211fJA3OXSMYf
+	 4tCU75y9ywoVVfef7R7YrR+aMxAvhJyT1P9gKjKBJny4lQYCjHjzcVrCdXsYfdb8h9
+	 i/PlNGHhrhrazxziTzofi5nq9miT5O8ZaA9q2k7s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbfA1RqO (ORCPT
+        id S1728538AbfA1RqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:46:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60848 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:46:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728278AbfA1PrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:47:19 -0500
+        id S1726914AbfA1PrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:47:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3397A21741;
-        Mon, 28 Jan 2019 15:47:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D6E62175B;
+        Mon, 28 Jan 2019 15:47:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690439;
-        bh=IVKk5xWO+nAh0Eu4mNo5PS6NOKrWEJ/nDEWCYkQxLkQ=;
+        s=default; t=1548690435;
+        bh=8y57kNr7hTFcVKtpwIZUf9EX/+x04QxM+Ab3q3pbpWg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O5UPXSGIbhV5jCDklMjHfmc0NK965e+eFVQ6zZ78sJ/ie8tSv2MVcuk7QrGwgNkdB
-         jD2xNmysnTI16CRKNHhWpi8dRmAygJ7VVQbqP8UkHVeAJNems54gqTtYvysn117SLj
-         pHtGtMopOt8mXtGl5TA7sJ3XSDoeWRz2HYrA0+Bg=
+        b=AlC5pR4SrzvYeUqiSpw2QeHpw2lZupVIrjUt6Qth9/uFm1HaIPR37xd3pqEzy+csj
+         yQFH+MlS6r2XcMbIiGBzg3bPRdHRwGJLcMWEvuLTK9K+tK41UcHVM084YxhDCQADPq
+         Yr/4JenPM9HmnRkd48J3cDa5ujLOqsD53VZBDD+M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>,
+Cc:     Yunlong Song <yunlong.song@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.20 087/304] f2fs: avoid build warn of fall_through
-Date:   Mon, 28 Jan 2019 10:40:04 -0500
-Message-Id: <20190128154341.47195-87-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 085/304] f2fs: avoid GC causing encrypted file corrupted
+Date:   Mon, 28 Jan 2019 10:40:02 -0500
+Message-Id: <20190128154341.47195-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,43 +59,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Yunlong Song <yunlong.song@huawei.com>
 
-[ Upstream commit f5d5510e7389fa264337fb524346bac9eb93adc8 ]
+[ Upstream commit 9bf1a3f73927492c8be127b642197125e9d52be8 ]
 
-After merging the f2fs tree, today's linux-next build
- (x86_64_allmodconfig) produced this warning:
+The encrypted file may be corrupted by GC in following case:
 
- In file included from fs/f2fs/dir.c:11:
- fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
- fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    if (set)
-       ^
- fs/f2fs/f2fs.h:2390:2: note: here
-   case FI_DATA_EXIST:
-   ^~~~
+Time 1: | segment 1 blkaddr = A |  GC -> | segment 2 blkaddr = B |
+Encrypted block 1 is moved from blkaddr A of segment 1 to blkaddr B of
+segment 2,
 
- Exposed by my use of -Wimplicit-fallthrough
+Time 2: | segment 1 blkaddr = B |  GC -> | segment 3 blkaddr = C |
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Before page 1 is written back and if segment 2 become a victim, then
+page 1 is moved from blkaddr B of segment 2 to blkaddr Cof segment 3,
+during the GC process of Time 2, f2fs should wait for page 1 written back
+before reading it, or move_data_block will read a garbage block from
+blkaddr B since page is not written back to blkaddr B yet.
+
+Commit 6aa58d8a ("f2fs: readahead encrypted block during GC") introduce
+ra_data_block to read encrypted block, but it forgets to add
+f2fs_wait_on_page_writeback to avoid racing between GC and flush.
+
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/gc.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 1e031971a466..ebad864c031c 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2370,6 +2370,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
- 	case FI_NEW_INODE:
- 		if (set)
- 			return;
-+		/* fall through */
- 	case FI_DATA_EXIST:
- 	case FI_INLINE_DOTS:
- 	case FI_PIN_FILE:
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index a07241fb8537..c96e7c6354ef 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -658,6 +658,14 @@ got_it:
+ 	fio.page = page;
+ 	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
+ 
++	/*
++	 * don't cache encrypted data into meta inode until previous dirty
++	 * data were writebacked to avoid racing between GC and flush.
++	 */
++	f2fs_wait_on_page_writeback(page, DATA, true);
++
++	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
++
+ 	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(sbi),
+ 					dn.data_blkaddr,
+ 					FGP_LOCK | FGP_CREAT, GFP_NOFS);
+@@ -745,6 +753,8 @@ static int move_data_block(struct inode *inode, block_t bidx,
+ 	 */
+ 	f2fs_wait_on_page_writeback(page, DATA, true);
+ 
++	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
++
+ 	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni);
+ 	if (err)
+ 		goto put_out;
 -- 
 2.19.1
 
