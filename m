@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D957EC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A179C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA1C42173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3A3121738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692381;
-	bh=TTuK3QqcQkUFe9aAzqj+Vy3POPJDwDhPtLu3943eglA=;
+	s=default; t=1548692384;
+	bh=ygUXDbSyYF7BQsTB/ZjuEbHNg9pe5gC/4jiQUvfil2Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OkpDooleVhXiC/ew05nXs49SDElTNMOqiJkK0L1FkF2P6B/OZpyQhukrLqsPVcXvP
-	 Fz71UtFSJVoxfbeKznkqhI0UT9CO+YgSmbBbgb5SGw7pPfKWZ9Fx+kEDGvXGI0Vdpa
-	 huWhTv07yzBpDp8vwRHW8aEmR78hFRc2Rl3RIOss=
+	b=VCCn8aIcV3X57ax8xGQ+DWg3RKPT4SwStmkDSRvtF8rBxMcMd3jtwFo2hNrF0Lg31
+	 MHoPlYhnbmETP4D8VtEcLCPaguYQCzGtA0cZucQcRV97EEeqQU7DqHQB//bBZc4Zja
+	 K3zjUuQtESx9aprm6qvvmN0+s8nIebywpXRGscP4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388243AbfA1QTk (ORCPT
+        id S2387968AbfA1QTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:19:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54432 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:19:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388631AbfA1QTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:19:37 -0500
+        id S2388641AbfA1QTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:19:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B53D2171F;
-        Mon, 28 Jan 2019 16:19:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D633E20663;
+        Mon, 28 Jan 2019 16:19:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692376;
-        bh=TTuK3QqcQkUFe9aAzqj+Vy3POPJDwDhPtLu3943eglA=;
+        s=default; t=1548692379;
+        bh=ygUXDbSyYF7BQsTB/ZjuEbHNg9pe5gC/4jiQUvfil2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G8GxDscAa4l//CSbyUumm3hNE0bZHEnSYuqgx6f3D+ezUIRL/OB8+MkY3xd9/6bKU
-         GbuDfhXcljdiytVlZh1pBSSroxE5AohePH3uf1svaVjnq9mdqpjXV0NT1WnbKw5Bd9
-         hEHSgfgahgN86qzN2bgXStC1DyrYmXJgUNnhgFio=
+        b=XYT4txNXA0r2Omk2tQsnUqB+w2Z/TNxKlYIodj6Mxjv2wcd2ZrfCEV1ntkDV8Iuwk
+         BYQxpjwtQxq7yARus+mvtoQqf4Jskb5cWuvQWO8ckW9ZiGBi7xIFNvCeLO/6mZSsQr
+         DgwoTdF3OXU/pUPvUDSBKj9+6SrMMb/+vIultXNY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Liu, Chuansheng" <chuansheng.liu@intel.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+Cc:     Davidlohr Bueso <dave@stgolabs.net>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 167/170] kernel/hung_task.c: force console verbose before panic
-Date:   Mon, 28 Jan 2019 11:11:57 -0500
-Message-Id: <20190128161200.55107-167-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 168/170] fs/epoll: drop ovflist branch prediction
+Date:   Mon, 28 Jan 2019 11:11:58 -0500
+Message-Id: <20190128161200.55107-168-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -60,77 +62,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Liu, Chuansheng" <chuansheng.liu@intel.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-[ Upstream commit 168e06f7937d96c7222037d8a05565e8a6eb00fe ]
+[ Upstream commit 76699a67f3041ff4c7af6d6ee9be2bfbf1ffb671 ]
 
-Based on commit 401c636a0eeb ("kernel/hung_task.c: show all hung tasks
-before panic"), we could get the call stack of hung task.
+The ep->ovflist is a secondary ready-list to temporarily store events
+that might occur when doing sproc without holding the ep->wq.lock.  This
+accounts for every time we check for ready events and also send events
+back to userspace; both callbacks, particularly the latter because of
+copy_to_user, can account for a non-trivial time.
 
-However, if the console loglevel is not high, we still can not see the
-useful panic information in practice, and in most cases users don't set
-console loglevel to high level.
+As such, the unlikely() check to see if the pointer is being used, seems
+both misleading and sub-optimal.  In fact, we go to an awful lot of
+trouble to sync both lists, and populating the ovflist is far from an
+uncommon scenario.
 
-This patch is to force console verbose before system panic, so that the
-real useful information can be seen in the console, instead of being
-like the following, which doesn't have hung task information.
+For example, profiling a concurrent epoll_wait(2) benchmark, with
+CONFIG_PROFILE_ANNOTATED_BRANCHES shows that for a two threads a 33%
+incorrect rate was seen; and when incrementally increasing the number of
+epoll instances (which is used, for example for multiple queuing load
+balancing models), up to a 90% incorrect rate was seen.
 
-  INFO: task init:1 blocked for more than 120 seconds.
-        Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
-  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-  Kernel panic - not syncing: hung_task: blocked tasks
-  CPU: 2 PID: 479 Comm: khungtaskd Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
-  Call Trace:
-   dump_stack+0x4f/0x65
-   panic+0xde/0x231
-   watchdog+0x290/0x410
-   kthread+0x12c/0x150
-   ret_from_fork+0x35/0x40
-  reboot: panic mode set: p,w
-  Kernel Offset: 0x34000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+Similarly, by deleting the prediction, 3% throughput boost was seen
+across incremental threads.
 
-Link: http://lkml.kernel.org/r/27240C0AC20F114CBF8149A2696CBE4A6015B675@SHSMSX101.ccr.corp.intel.com
-Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Link: http://lkml.kernel.org/r/20181108051006.18751-4-dave@stgolabs.net
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jason Baron <jbaron@akamai.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/hung_task.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ fs/eventpoll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index 0cec1241e26f..f9aaf4994062 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -103,8 +103,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
- 
- 	trace_sched_process_hang(t);
- 
--	if (!sysctl_hung_task_warnings && !sysctl_hung_task_panic)
--		return;
-+	if (sysctl_hung_task_panic) {
-+		console_verbose();
-+		hung_task_show_lock = true;
-+		hung_task_call_panic = true;
-+	}
- 
- 	/*
- 	 * Ok, the task did not get scheduled for more than 2 minutes,
-@@ -126,11 +129,6 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
- 	}
- 
- 	touch_nmi_watchdog();
--
--	if (sysctl_hung_task_panic) {
--		hung_task_show_lock = true;
--		hung_task_call_panic = true;
--	}
- }
- 
- /*
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 2fabd19cdeea..c291bf61afb9 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -1167,7 +1167,7 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
+ 	 * semantics). All the events that happen during that period of time are
+ 	 * chained in ep->ovflist and requeued later on.
+ 	 */
+-	if (unlikely(ep->ovflist != EP_UNACTIVE_PTR)) {
++	if (ep->ovflist != EP_UNACTIVE_PTR) {
+ 		if (epi->next == EP_UNACTIVE_PTR) {
+ 			epi->next = ep->ovflist;
+ 			ep->ovflist = epi;
 -- 
 2.19.1
 
