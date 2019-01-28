@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1D9C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D26EEC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C40882082E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:16:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2CB22082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695785;
-	bh=kp46RGjIv2Zg0nbml9IvWJ8ey7CexgAkB8yxNjuzTlQ=;
+	s=default; t=1548695788;
+	bh=kXdt6UGzGUpD9Wk6kxDIfLA9UIO+/ipOdmLbqafxQe8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UP13LtOiNuwoJwzO7sAg/Hpi6j/ETRgvemHQ3OIYKBFpZt99nlCdgu11JvUn7QgXA
-	 EK/eJWj7azv2IVViZFoc92HAFzrY8A76pin2iz6d4r6VXrgsvo+MqXLV7l68mdbMgW
-	 H9+yjvtSivkH5JgCpDaCr8EMiFum9o556Shd3R4w=
+	b=VS4BUCtU0Rt+s4vO05thoSCnjerzKqlGNs+VNy87Bq8uxw99BDKI505o2iE4rJ/N+
+	 sNuuYqWhKmCV3g8o0PyyfBaAJiuZNPPXPI7MZu1g3cQtX4fI0f9Xa9WBNilvE+19N8
+	 6rTPSVkDkDp6wnk4fCqBCtKq8jPMTp1LRv0FUzmY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732017AbfA1QGY (ORCPT
+        id S1732327AbfA1RQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:06:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54718 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:16:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731983AbfA1QGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:06:15 -0500
+        id S1732019AbfA1QGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:06:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B9EC21738;
-        Mon, 28 Jan 2019 16:06:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 996F82147A;
+        Mon, 28 Jan 2019 16:06:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691575;
-        bh=kp46RGjIv2Zg0nbml9IvWJ8ey7CexgAkB8yxNjuzTlQ=;
+        s=default; t=1548691584;
+        bh=kXdt6UGzGUpD9Wk6kxDIfLA9UIO+/ipOdmLbqafxQe8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sXutsrLsXXZRhGe8auWLnUKOOyt7nl33a28MLs+c0D60lQv+SHBkherYr/E9jwZF0
-         3GUE/Mv2JlMOoEUkBB/z/itEc26Ne4x56SR2EgwWDVsEupOzw5/d40fnYbZQiqOPjO
-         +S8ocStf7tVjUmhOInMUBjAE8u9jyCbVxo83fQzc=
+        b=RA6KN2bNu1Yggl+pKsIg8tuJbqML8lBY86898CkBtsWkKBvFRAAS+naTrPLfh6WC7
+         yVLFnmaCEvOr+bDwe8G3zLasdS4hdQcnS+33mERfPCa3+pxISIH8dSpIjNQ16VE/zm
+         haVm/P5NRG2IQUgXem6OmzU3r8RsFHtuBbP1zeVc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 148/258] ASoC: fsl: Fix SND_SOC_EUKREA_TLV320 build error on i.MX8M
-Date:   Mon, 28 Jan 2019 10:57:34 -0500
-Message-Id: <20190128155924.51521-148-sashal@kernel.org>
+Cc:     Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Sasha Levin <sashal@kernel.org>, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 150/258] KVM: PPC: Book3S: Only report KVM_CAP_SPAPR_TCE_VFIO on powernv machines
+Date:   Mon, 28 Jan 2019 10:57:36 -0500
+Message-Id: <20190128155924.51521-150-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,45 +58,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+From: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
 
-[ Upstream commit add6883619a9e3bf9658eaff1a547354131bbcd9 ]
+[ Upstream commit 693ac10a88a2219bde553b2e8460dbec97e594e6 ]
 
-eukrea-tlv320.c machine driver runs on non-DT platforms
-and include <asm/mach-types.h> header file in order to be able
-to use some machine_is_eukrea_xxx() macros.
+The kvm capability KVM_CAP_SPAPR_TCE_VFIO is used to indicate the
+availability of in kernel tce acceleration for vfio. However it is
+currently the case that this is only available on a powernv machine,
+not for a pseries machine.
 
-Building it for ARM64 causes the following build error:
+Thus make this capability dependent on having the cpu feature
+CPU_FTR_HVMODE.
 
-sound/soc/fsl/eukrea-tlv320.c:28:10: fatal error: asm/mach-types.h: No such file or directory
+[paulus@ozlabs.org - fixed compilation for Book E.]
 
-Avoid this error by not allowing to build the SND_SOC_EUKREA_TLV320
-driver when ARM64 is selected.
-
-This is needed in preparation for the i.MX8M support.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/fsl/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kvm/powerpc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
-index 6ec19fb4a934..2e75b5bc5f1d 100644
---- a/sound/soc/fsl/Kconfig
-+++ b/sound/soc/fsl/Kconfig
-@@ -221,7 +221,7 @@ config SND_SOC_PHYCORE_AC97
- 
- config SND_SOC_EUKREA_TLV320
- 	tristate "Eukrea TLV320"
--	depends on ARCH_MXC && I2C
-+	depends on ARCH_MXC && !ARM64 && I2C
- 	select SND_SOC_TLV320AIC23_I2C
- 	select SND_SOC_IMX_AUDMUX
- 	select SND_SOC_IMX_SSI
+diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
+index eba5756d5b41..79b79408d92e 100644
+--- a/arch/powerpc/kvm/powerpc.c
++++ b/arch/powerpc/kvm/powerpc.c
+@@ -543,8 +543,11 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ #ifdef CONFIG_PPC_BOOK3S_64
+ 	case KVM_CAP_SPAPR_TCE:
+ 	case KVM_CAP_SPAPR_TCE_64:
+-		/* fallthrough */
++		r = 1;
++		break;
+ 	case KVM_CAP_SPAPR_TCE_VFIO:
++		r = !!cpu_has_feature(CPU_FTR_HVMODE);
++		break;
+ 	case KVM_CAP_PPC_RTAS:
+ 	case KVM_CAP_PPC_FIXUP_HCALL:
+ 	case KVM_CAP_PPC_ENABLE_HCALL:
 -- 
 2.19.1
 
