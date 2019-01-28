@@ -2,108 +2,116 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF64C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC98AC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0CB321738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEE2F2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548691578;
+	bh=TX2RVyBpNtJhgxBzPH4bVXlcdgCrdL+sNEHjEdklIHM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Oe0m9X8uRXQxg+Z7d7ESN1jGAWmveWsa4/TzLT9ypdvd4dEIzQyd86Ln6nMOYv3lB
+	 fiQY7mqA+vGj1Uqx7mSF469uDQTnQJ21jiH6gUrOIHUE8RKmu4bWcmRnyI0E3WLZzI
+	 4LfjgrESD/6A06K/+3dPSP1Mt7O0md11zEIkSqrc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731978AbfA1QGM (ORCPT
+        id S1732008AbfA1QGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:06:12 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2687 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731956AbfA1QGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:06:08 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B7849267FA9724854A59;
-        Tue, 29 Jan 2019 00:06:02 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.43) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Tue, 29 Jan 2019
- 00:05:53 +0800
-Subject: Re: [PATCH] block: set rq->cmd_flags with bio->opf instead of
- data->cmd_flags when bio is not Null
-To:     Christoph Hellwig <hch@infradead.org>
-References: <1548337430-66690-1-git-send-email-chenxiang66@hisilicon.com>
- <1c34d6f9-8c3c-a7ff-a956-46e9dc3c2298@hisilicon.com>
- <20190128140716.GA18162@infradead.org>
- <55972c1a-051a-1396-6796-84f349830a35@huawei.com>
- <20190128155752.GA29076@infradead.org>
-CC:     "chenxiang (M)" <chenxiang66@hisilicon.com>,
-        <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <linuxarm@huawei.com>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <axboe@kernel.dk>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <872f8c26-1c88-fe50-ffec-01c1e882245b@huawei.com>
-Date:   Mon, 28 Jan 2019 16:05:47 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Mon, 28 Jan 2019 11:06:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731969AbfA1QGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:06:11 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 533D620989;
+        Mon, 28 Jan 2019 16:06:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691570;
+        bh=TX2RVyBpNtJhgxBzPH4bVXlcdgCrdL+sNEHjEdklIHM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SzLjUxEsnW2+O47copvfaD6p4z29J3VbWAR4iE6o3FUgrnRlNeEgEbI329N4p172+
+         yMHOIn9T1eogZSL6Ep3MPKnyA78pCidO4gf3VWsxm+HSXu3LBphcPW0SlMQqVxav3C
+         jvCfFHaTRR7ccTgPMhDV3d/tkU4RM0OepwwPDoXk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Stanislav Fomichev <sdf@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 146/258] selftests/bpf: use __bpf_constant_htons in test_prog.c
+Date:   Mon, 28 Jan 2019 10:57:32 -0500
+Message-Id: <20190128155924.51521-146-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190128155752.GA29076@infradead.org>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/01/2019 15:57, Christoph Hellwig wrote:
-> On Mon, Jan 28, 2019 at 03:36:58PM +0000, John Garry wrote:
->> As I understood, the problem is the scenario of calling
->> blk_mq_make_request()->bio_integrity_prep() where we then allocate a bio
->> integrity payload in calling bio_integrity_alloc().
->>
->> In this case, bio_integrity_alloc() sets bio->bi_opf |= REQ_INTEGRITY, which
->> is no longer consistent with data.cmd_flags.
->
-> I don't see how that could happen:
->
-> static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
-> {
-> 	...
->
-> 	if (!bio_integrity_prep(bio))
-> 		return BLK_QC_T_NONE;
->
-> 	...
->
-> 	data.cmd_flags = bio->bi_opf;
->         rq = blk_mq_get_request(q, bio, &data);
->
->
+From: Stanislav Fomichev <sdf@google.com>
 
-Your code is different to mine, then I see that this has been fixed in 
-5.0-rc3:
+[ Upstream commit a0517a0f7ef23550b4484c37e2b9c2d32abebf64 ]
 
-commit 7809167da5c86fd6bf309b33dee7a797e263342f
-Author: Ming Lei <ming.lei@redhat.com>
-Date:   Wed Jan 16 19:08:15 2019 +0800
+For some reason, my older GCC (< 4.8) isn't smart enough to optimize the
+!__builtin_constant_p() branch in bpf_htons, I see:
+  error: implicit declaration of function '__builtin_bswap16'
 
-     block: don't lose track of REQ_INTEGRITY flag
+Let's use __bpf_constant_htons as suggested by Daniel Borkmann.
 
-     We need to pass bio->bi_opf after bio intergrity preparing, otherwise
-     the flag of REQ_INTEGRITY may not be set on the allocated request, then
-     breaks block integrity.
+I tried to use simple htons, but it produces the following:
+  test_progs.c:54:17: error: braced-group within expression allowed only
+  inside a function
+    .eth.h_proto = htons(ETH_P_IP),
 
-     Fixes: f9afca4d367b ("blk-mq: pass in request/bio flags to queue 
-mapping")
-     Cc: Hannes Reinecke <hare@suse.com>
-     Cc: Keith Busch <keith.busch@intel.com>
-     Signed-off-by: Ming Lei <ming.lei@redhat.com>
-     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/testing/selftests/bpf/test_progs.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-
-Sorry for the noise,
-John
-
-> .
->
-
+diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
+index 0ef68204c84b..d029cad08cbd 100644
+--- a/tools/testing/selftests/bpf/test_progs.c
++++ b/tools/testing/selftests/bpf/test_progs.c
+@@ -51,10 +51,10 @@ static struct {
+ 	struct iphdr iph;
+ 	struct tcphdr tcp;
+ } __packed pkt_v4 = {
+-	.eth.h_proto = bpf_htons(ETH_P_IP),
++	.eth.h_proto = __bpf_constant_htons(ETH_P_IP),
+ 	.iph.ihl = 5,
+ 	.iph.protocol = 6,
+-	.iph.tot_len = bpf_htons(MAGIC_BYTES),
++	.iph.tot_len = __bpf_constant_htons(MAGIC_BYTES),
+ 	.tcp.urg_ptr = 123,
+ };
+ 
+@@ -64,9 +64,9 @@ static struct {
+ 	struct ipv6hdr iph;
+ 	struct tcphdr tcp;
+ } __packed pkt_v6 = {
+-	.eth.h_proto = bpf_htons(ETH_P_IPV6),
++	.eth.h_proto = __bpf_constant_htons(ETH_P_IPV6),
+ 	.iph.nexthdr = 6,
+-	.iph.payload_len = bpf_htons(MAGIC_BYTES),
++	.iph.payload_len = __bpf_constant_htons(MAGIC_BYTES),
+ 	.tcp.urg_ptr = 123,
+ };
+ 
+-- 
+2.19.1
 
