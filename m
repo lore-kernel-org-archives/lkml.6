@@ -2,187 +2,99 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C46F4C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B552C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A4192086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692032;
-	bh=2iOzjgFImtob/PdK2+l+LReU0m5O77N/5dLfDxaKJmA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QEEMgEAPhfhKKKt52o/pWCSc4isJRa0J3YeSetpAtzWkddWHQ1xP32uJTvvAULKXT
-	 kIvJUawfyuocsAeyC8fKgDjZLaOfoVAUg+yDUVvpOna5Y3BpP6nlueZJioCdbXGpOJ
-	 7InEzBgaCo7XKrCmoW3A23VMFEBBSj9zabjO1IKE=
+	by mail.kernel.org (Postfix) with ESMTP id 29F6D20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kg0Gf4/2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387500AbfA1QNu (ORCPT
+        id S2387520AbfA1QNx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:13:53 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46986 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387491AbfA1QNu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 11:13:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732549AbfA1QNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:13:46 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D56F2148E;
-        Mon, 28 Jan 2019 16:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692025;
-        bh=2iOzjgFImtob/PdK2+l+LReU0m5O77N/5dLfDxaKJmA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=az/kk8aDcsh2A2dgHKnTuCjd9vLPmMcu2hGAMZm/YQHzpYdWS7ERfy4WujH4vQdIV
-         n0/0AotKtoqQfW2MIudlTe3d/pd8aEWarLVQKa8XVoiH0dt7L3mznOVOiAF6gQuQBL
-         lOqn4lCvuJwMY+Ryn4ZnZVd9ik44P1Ts/9NM+lSw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 042/170] media: adv*/tc358743/ths8200: fill in min width/height/pixelclock
-Date:   Mon, 28 Jan 2019 11:09:52 -0500
-Message-Id: <20190128161200.55107-42-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
-References: <20190128161200.55107-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Received: by mail-wr1-f67.google.com with SMTP id l9so18631549wrt.13;
+        Mon, 28 Jan 2019 08:13:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=1zfoc6CoBhTv79t1tVnJWGGdH9udjSmsd+rMCNx1WR0=;
+        b=Kg0Gf4/2msvShoD5YIrJ53NWsRTrporTZyCnFfSqPX5kahvwtrRIBeSzcg3R7G028y
+         cEun3loSxKs/5IeRgKxgCq37y/p7GGkG7VlNjkU+opoWHHOjoZABCNWgF9RvhBh/sEYA
+         EGv5kiVA51/Pwdgh3Gpk/y+eViJKweY15MXngM5ASBERzekan5CO3edeeK1WhmP8p95B
+         sTsjqQFg9ell8Wfc1uPxDiwAwaiK8bSGJlSfubjdBequUULcoXydsilBB+BhztdbSziw
+         BP6O8C9PaYzjlbVPohpXNog2tpUtFP/hCn3YuCk9kbcZcyUUVnlwWDIqHUz3dbcafpEh
+         8mjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references;
+        bh=1zfoc6CoBhTv79t1tVnJWGGdH9udjSmsd+rMCNx1WR0=;
+        b=Mv3Q3Nuix+e4pkU+LOjmvQyFLi+Qf1Bve65bcVw/xacYNI+cxHhigjkttdg+OMXo6H
+         THqNfne+w+M+GnDwQurNZrNe/bqmlTb+0R+3rm+IpCJdSAg0CZRwCpARKwWb6RPMtlla
+         ROZja9ZGrs8bV9Yi2QQNSYTCSbYvwSW462lyTBBsBuTa4oIEmq/Uep9ud4Btofd98/iZ
+         dGcMRqEqxSdsZ4IuRdVIV37nJHyDk8rE/1HWH2SbTJEVUghEQEGQgz9Bid8FufIoWAVw
+         HGqmD0tavMr/V8nYOxo+O08ISwyqBEncGq440I4I/vDZdbkLKN2ZR1BbxGbzhnhc7PTi
+         k5zA==
+X-Gm-Message-State: AJcUukePDrKA5FPOeLeCwhXpelZ+s8k9rU83jw8m4EfcRK+ebXTnus/O
+        xL5femnVRCx/JmUStsRW/qI=
+X-Google-Smtp-Source: ALg8bN75uN+qIYmUdIl09AGHrB3vPkV/b5pMzaXkadQqJV9MQZi55toiIsYm156ySHFijMWczG2pbA==
+X-Received: by 2002:a5d:664a:: with SMTP id f10mr22109476wrw.311.1548692028868;
+        Mon, 28 Jan 2019 08:13:48 -0800 (PST)
+Received: from Sarah.corp.lairdtech.com ([109.174.151.67])
+        by smtp.gmail.com with ESMTPSA id l20sm246445944wrb.93.2019.01.28.08.13.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 08:13:48 -0800 (PST)
+From:   Ben Whitten <ben.whitten@gmail.com>
+X-Google-Original-From: Ben Whitten <ben.whitten@lairdtech.com>
+To:     afaerber@suse.de
+Cc:     linux-lpwan@lists.infradead.org,
+        Ben Whitten <ben.whitten@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH lora-next 03/11] net: lora: sx130x: add CHRS to volatile register list
+Date:   Mon, 28 Jan 2019 16:12:57 +0000
+Message-Id: <20190128161306.27805-4-ben.whitten@lairdtech.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190128161306.27805-1-ben.whitten@lairdtech.com>
+References: <20190128161306.27805-1-ben.whitten@lairdtech.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Ben Whitten <ben.whitten@gmail.com>
 
-[ Upstream commit 2912289a518077ddb8214e05336700148e97e235 ]
+The CHRS register is used in transactions to the MCU within the SX130x,
+we need to always write to it.
 
-The v4l2_dv_timings_cap struct is used to do sanity checks when setting and
-enumerating DV timings, ensuring that only valid timings as per the HW
-capabilities are allowed.
-
-However, many drivers just filled in 0 for the minimum width, height or
-pixelclock frequency. This can cause timings with e.g. 0 as width and height
-to be accepted, which will in turn lead to a potential division by zero.
-
-Fill in proper values are minimum boundaries. 640x350 was chosen since it is
-the smallest resolution in v4l2-dv-timings.h. Same for 13 MHz as the lowest
-pixelclock frequency (it's slightly below the minimum of 13.5 MHz in the
-v4l2-dv-timings.h header).
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
 ---
- drivers/media/i2c/ad9389b.c  | 2 +-
- drivers/media/i2c/adv7511.c  | 2 +-
- drivers/media/i2c/adv7604.c  | 4 ++--
- drivers/media/i2c/adv7842.c  | 4 ++--
- drivers/media/i2c/tc358743.c | 2 +-
- drivers/media/i2c/ths8200.c  | 2 +-
- 6 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/lora/sx130x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/i2c/ad9389b.c b/drivers/media/i2c/ad9389b.c
-index a056d6cdaaaa..f0b200ae2127 100644
---- a/drivers/media/i2c/ad9389b.c
-+++ b/drivers/media/i2c/ad9389b.c
-@@ -590,7 +590,7 @@ static const struct v4l2_dv_timings_cap ad9389b_timings_cap = {
- 	.type = V4L2_DV_BT_656_1120,
- 	/* keep this initialization for compatibility with GCC < 4.4.6 */
- 	.reserved = { 0 },
--	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
-+	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
- 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
- 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
- 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
-diff --git a/drivers/media/i2c/adv7511.c b/drivers/media/i2c/adv7511.c
-index 2817bafc67bf..80c20404334a 100644
---- a/drivers/media/i2c/adv7511.c
-+++ b/drivers/media/i2c/adv7511.c
-@@ -142,7 +142,7 @@ static const struct v4l2_dv_timings_cap adv7511_timings_cap = {
- 	.type = V4L2_DV_BT_656_1120,
- 	/* keep this initialization for compatibility with GCC < 4.4.6 */
- 	.reserved = { 0 },
--	V4L2_INIT_BT_TIMINGS(0, ADV7511_MAX_WIDTH, 0, ADV7511_MAX_HEIGHT,
-+	V4L2_INIT_BT_TIMINGS(640, ADV7511_MAX_WIDTH, 350, ADV7511_MAX_HEIGHT,
- 		ADV7511_MIN_PIXELCLOCK, ADV7511_MAX_PIXELCLOCK,
- 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
- 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
-diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
-index f289b8aca1da..d2108aad3c65 100644
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -778,7 +778,7 @@ static const struct v4l2_dv_timings_cap adv7604_timings_cap_analog = {
- 	.type = V4L2_DV_BT_656_1120,
- 	/* keep this initialization for compatibility with GCC < 4.4.6 */
- 	.reserved = { 0 },
--	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
-+	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
- 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
- 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
- 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
-@@ -789,7 +789,7 @@ static const struct v4l2_dv_timings_cap adv76xx_timings_cap_digital = {
- 	.type = V4L2_DV_BT_656_1120,
- 	/* keep this initialization for compatibility with GCC < 4.4.6 */
- 	.reserved = { 0 },
--	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 225000000,
-+	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 225000000,
- 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
- 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
- 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
-diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
-index 65f34e7e146f..f9c23173c9fa 100644
---- a/drivers/media/i2c/adv7842.c
-+++ b/drivers/media/i2c/adv7842.c
-@@ -676,7 +676,7 @@ static const struct v4l2_dv_timings_cap adv7842_timings_cap_analog = {
- 	.type = V4L2_DV_BT_656_1120,
- 	/* keep this initialization for compatibility with GCC < 4.4.6 */
- 	.reserved = { 0 },
--	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
-+	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
- 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
- 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
- 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
-@@ -687,7 +687,7 @@ static const struct v4l2_dv_timings_cap adv7842_timings_cap_digital = {
- 	.type = V4L2_DV_BT_656_1120,
- 	/* keep this initialization for compatibility with GCC < 4.4.6 */
- 	.reserved = { 0 },
--	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 225000000,
-+	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 225000000,
- 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
- 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
- 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
-diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
-index e6f5c363ccab..c9647e24a4a3 100644
---- a/drivers/media/i2c/tc358743.c
-+++ b/drivers/media/i2c/tc358743.c
-@@ -70,7 +70,7 @@ static const struct v4l2_dv_timings_cap tc358743_timings_cap = {
- 	/* keep this initialization for compatibility with GCC < 4.4.6 */
- 	.reserved = { 0 },
- 	/* Pixel clock from REF_01 p. 20. Min/max height/width are unknown */
--	V4L2_INIT_BT_TIMINGS(1, 10000, 1, 10000, 0, 165000000,
-+	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 13000000, 165000000,
- 			V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
- 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
- 			V4L2_DV_BT_CAP_PROGRESSIVE |
-diff --git a/drivers/media/i2c/ths8200.c b/drivers/media/i2c/ths8200.c
-index 498ad2368cbc..f5ee28058ea2 100644
---- a/drivers/media/i2c/ths8200.c
-+++ b/drivers/media/i2c/ths8200.c
-@@ -49,7 +49,7 @@ static const struct v4l2_dv_timings_cap ths8200_timings_cap = {
- 	.type = V4L2_DV_BT_656_1120,
- 	/* keep this initialization for compatibility with GCC < 4.4.6 */
- 	.reserved = { 0 },
--	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1080, 25000000, 148500000,
-+	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1080, 25000000, 148500000,
- 		V4L2_DV_BT_STD_CEA861, V4L2_DV_BT_CAP_PROGRESSIVE)
- };
+diff --git a/drivers/net/lora/sx130x.c b/drivers/net/lora/sx130x.c
+index 70cfb4532b51..529ca6622878 100644
+--- a/drivers/net/lora/sx130x.c
++++ b/drivers/net/lora/sx130x.c
+@@ -134,6 +134,7 @@ static bool sx130x_volatile_reg(struct device *dev, unsigned int reg)
+ 	case SX1301_MPD:
+ 	case SX1301_AGCSTS:
  
++	case SX1301_CHRS:
+ 	case SX1301_MCU_CTRL:
+ 
+ 	case SX1301_RADIO_A_SPI_DATA_RB:
 -- 
-2.19.1
+2.17.1
 
