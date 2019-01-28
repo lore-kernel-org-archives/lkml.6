@@ -2,128 +2,72 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B97C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B32A6C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1090321741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:05:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77D7E21741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:05:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azGyiivK"
+	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="WwCKj7zt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387529AbfA1RFG (ORCPT
+        id S2388164AbfA1RFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:05:06 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45673 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731037AbfA1QNs (ORCPT
+        Mon, 28 Jan 2019 12:05:24 -0500
+Received: from sender-pp-092.zoho.com ([135.84.80.237]:25429 "EHLO
+        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387661AbfA1RFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:13:48 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t6so18654318wrr.12;
-        Mon, 28 Jan 2019 08:13:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2+sJQfhRPX6mgylgaohdp6BE3uFottGVMdhI97In/E4=;
-        b=azGyiivKbCzx3Bvy+KIIjB2yZfo2+rITf8W3lChR2G2ZxvIivU9DclhzliIDCRkNfB
-         3djqkW/od2EwAeDq9yMKepogcPGIWr1DaxqWrI4Pv9yQ+ko1njFBmzzy5L4wgUQjVoAm
-         JHFDXHCJl/5Hkc1OMgCyL+wOT/1YX7h1yV945cZIeTeRfd0ZHOcTzzNKHNwzSnWhBvrj
-         mF/M6vmE1ZpZC0sLSOnNFDQGKvvkDVQJkXzj5M6jSXejrq7wGKDnDe9gApJUm3OThOcv
-         OKR1+e0PCq3M/dC7ylXRN3bZJ1VY3ZpVM/Zy/knYQRDxSnw/gp62yZ23FC1Bcb7prF7s
-         6AWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=2+sJQfhRPX6mgylgaohdp6BE3uFottGVMdhI97In/E4=;
-        b=DlegejmrDMIsqJAEsdQJU8MrFUXHmVaWIIB8aGbrQqpkvUauaLwOjFS43q10BohhVU
-         KRUbYrXHFp8I8ZRnYIE/pL0IvkiY0MzCOLKxjaO0s5kV0XAWHywQm8iscS1yluf84ktI
-         spIdletnmbUE9wv9ejVJyNXSjP6uVQabjWHNpVTBtLv/9u1fdX9u/jPTeeNQhn65iwpM
-         V/RZfBiK/PWNrIyqvAdAYH5J2QHkRHuJwROhYxhx7cd4T8a/5BLX08HbpyLk1z21m7/1
-         g5KE24Ny+5i5QgZ6SB89hqWpB4TVKxkllYwZWIsjqkJSQkX/W5Y7YchMDfpSHSjkogCR
-         zZOw==
-X-Gm-Message-State: AJcUukdc4nGmtsmzOAQGDW5zjOj1ZeTSajERI1FH2PtS3hbtlP1JJxKo
-        KO4D5c92ffqbzH8c7cDpbkQ=
-X-Google-Smtp-Source: ALg8bN5uddej6N91AE+Kg95AktnFUdX/H201nmBnlH0aAKU35B6K35IvD0280V1sLCyRuC5f1taG5Q==
-X-Received: by 2002:adf:900f:: with SMTP id h15mr22393334wrh.18.1548692026370;
-        Mon, 28 Jan 2019 08:13:46 -0800 (PST)
-Received: from Sarah.corp.lairdtech.com ([109.174.151.67])
-        by smtp.gmail.com with ESMTPSA id l20sm246445944wrb.93.2019.01.28.08.13.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 08:13:45 -0800 (PST)
-From:   Ben Whitten <ben.whitten@gmail.com>
-X-Google-Original-From: Ben Whitten <ben.whitten@lairdtech.com>
-To:     afaerber@suse.de
-Cc:     linux-lpwan@lists.infradead.org,
-        Ben Whitten <ben.whitten@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH lora-next 01/11] dt-bindings: net: lora: sx130x: add power lut binding
-Date:   Mon, 28 Jan 2019 16:12:55 +0000
-Message-Id: <20190128161306.27805-2-ben.whitten@lairdtech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190128161306.27805-1-ben.whitten@lairdtech.com>
-References: <20190128161306.27805-1-ben.whitten@lairdtech.com>
+        Mon, 28 Jan 2019 12:05:22 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1548695106; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=MAE/JjBl4Jc/PAVplJ+KTNgglncS6Xq+zFvGCAnLuL3inBh84uOSzxZLAFxGzLNZdS7ISW0BRxBjIS1hEiqVqLnBTzusBVBVfgO0UcCC3gJSojix3/Uwo2oMGNW2RScpNIEFg/R1mFtye3jgaO0aqH9M81cPRtmCvNYOuN0kgwk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1548695106; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=WkTNFu8vnmPor/+WSZwPOqsAXvLDg8nbVLIOYlWMj8g=; 
+        b=GkMAEK0tjdiABlA+p3mb7CVAuvL2Ym2bsJvAUBl3TBXfC449LVhsbIk0rChHz40uAw/o+Io8r413OWv3KDH6jbHCQYKb9MAUt7YxgdVugZgUx3gbLZ4vzS4RZITk9OURmqZkl0KboW4d6mJI8F6Ey1rCQdlFKGqwuzPm1o0mBq4=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
+  b=Nkf+P82bD2RhShO+JEjIcP3XQE8YCC4psFD1Ox74ifZ4YqXRif7uzHTm6b6hBMewOfVVW/9bgtUd
+    VwwcXwsu4WgyYuLAKFjy2rYqz2Zw4aGl15eNCVjr2Ghb9yQQWSJM  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548695106;
+        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; l=100;
+        bh=WkTNFu8vnmPor/+WSZwPOqsAXvLDg8nbVLIOYlWMj8g=;
+        b=WwCKj7ztdoVJGBczfJYw6LYp18KcJj4Has0bcn9mXcsGqo4aXxYen2srxS98W7vJ
+        +XwzllcjZMxZjTSiKl6qRsSavdZJrX9H6At6ZLg5Pmtg+W/YkXBM8HtVcZN3f+EP/p0
+        smib+xRArKK5gADFouLw0kQzw5TaroXrgOt7E+7w=
+Received: from localhost.localdomain (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
+        with SMTPS id 1548695104299105.85452309761104; Mon, 28 Jan 2019 09:05:04 -0800 (PST)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        paul.burton@mips.com, gregkh@linuxfoundation.org, jslaby@suse.com,
+        mark.rutland@arm.com, syq@debian.org, jiaxun.yang@flygoat.com,
+        772753199@qq.com
+Subject: Add Ingenic X1000 serial support
+Date:   Tue, 29 Jan 2019 01:03:47 +0800
+Message-Id: <1548695029-11900-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548667176-119830-1-git-send-email-zhouyanjie@zoho.com>
+References: <1548667176-119830-1-git-send-email-zhouyanjie@zoho.com>
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Whitten <ben.whitten@gmail.com>
+v1->v2: Remove unnecessary "EARLYCON_DECLARE".
+v2->v3: Use different subject line for each patch.
 
-Adding power lookup table for the concentrator specified in DT.
-
-These values are calibrated for the hardware and are unique to hardware
-designs and certifications.
-
-First byte is signed power in dBm measured at the rf connector.
-Second byte is unsigned value for DIGITAL gain.
-Third byte is unsigned value for PA gain, 2 bits only.
-Fourth byte is unsigned value for DAC gain, 2 bits only.
-Fifth byte is unsigned value for MIXER gain, 4 bits only.
-
-Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
----
- .../bindings/net/lora/semtech,sx130x.yaml           | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml b/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-index 24fad1218735..187fa2090a0b 100644
---- a/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-+++ b/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-@@ -37,6 +37,15 @@ properties:
-     maxItems: 1
-     description: A connection of the reset gpio line.
- 
-+  power-lut:
-+    description: Power lookup table for the concentrator.
-+      Consisting of maximum 16 entries, each entry having the following format;
-+      First byte is signed power in dBm measured at the rf connector.
-+      Second byte is unsigned value for DIGITAL gain.
-+      Third byte is unsigned value for PA gain, 2 bits only.
-+      Fourth byte is unsigned value for DAC gain, 2 bits only.
-+      Fifth byte is unsigned value for MIXER gain, 4 bits only.
-+
-   radio-spi:
-     type: object
-     description: The concentrator can have two radios connected which are
-@@ -83,6 +92,10 @@ examples:
-         reset-gpios = <&pioB 27 GPIO_ACTIVE_HIGH>;
-         spi-max-frequency = <8000000>;
- 
-+	power-lut =   [	00 00 00 03 09
-+			03 00 00 03 0C
-+			04 00 00 03 0D ];
-+
-         radio-spi {
-           #address-cells = <1>;
-           #size-cells = <0>;
--- 
-2.17.1
 
