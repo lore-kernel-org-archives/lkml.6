@@ -2,115 +2,94 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFEFC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6397FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 503FC2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BF662147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692898;
-	bh=hwrj11TB4591vREZS9kM3RYGLIRkWB31samHa+xefAE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xM3IuouFtYVeRV5cfG5/yWJ8nD6oiifc4RL+4BUDo0M2XaKxuzvK1A8C6T8VCc6AV
-	 7hDuKwKpdXztJjMp3Sedm5HmSqo2K/Rtyf/1TAte7RQW88+QEmj76SyurYIScaOtyD
-	 F/LGc1b6ZcMvTYq0LPDqPsmC+IIwa+EFh7RXUY5I=
+	s=default; t=1548692901;
+	bh=qELQnGLLa8WB/zPJAI7lnArdb26J3dlFSSCaOgi+gqQ=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=IpyDHAj9t+c6NwhRuLHliB9CqEhw+GxK62n+T9xqbveyiTOD7yca7oBg5G003lBp9
+	 xcnfNOIowLdyVFY6uutQMiX8bohIXkewAWpvqgOySz0VQnBUxMmt2P2K4WWnRb5JJ2
+	 blwogZG7SH4Lu+CaB6g77OZslCTf0C7DiImJP39w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390629AbfA1Q2Q (ORCPT
+        id S2390620AbfA1Q2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:28:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38850 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:28:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733074AbfA1Q2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:28:13 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S2389824AbfA1Q2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:28:12 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 380872147A;
-        Mon, 28 Jan 2019 16:28:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 241912175B;
+        Mon, 28 Jan 2019 16:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1548692892;
-        bh=hwrj11TB4591vREZS9kM3RYGLIRkWB31samHa+xefAE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VpxrnHBf8k80890qWJqyOM+dtAEVjIY4qfjXF7gPmGqYpa+TcL05ZNvQi8yGbwMah
-         8F6vsk0v3keqOe7+HEv5o2rMc/gFOWgfSyuH3HvdYbxF0ZbvGCUsaatDVbhPc8fLEU
-         /efkr3Q1FBSdUe6fAH7Ufyr8wRk+X60CA6hketys=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jason Baron <jbaron@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 60/61] fs/epoll: drop ovflist branch prediction
-Date:   Mon, 28 Jan 2019 11:26:22 -0500
-Message-Id: <20190128162623.59854-60-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
-References: <20190128162623.59854-1-sashal@kernel.org>
+        bh=qELQnGLLa8WB/zPJAI7lnArdb26J3dlFSSCaOgi+gqQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=xEBzvdm9mX7/NlX9bFaEd/h0rGMGaBXM/NreHP+N9FXqnPYneEZszgF8veXU8bi3H
+         +yOqpE6qwz1xQoFq46/OwIdw9AJQEwlfxr34DLVntLvRFg8lndMoNU153OTV2cuwbO
+         jvtIPwlpbyJZ7FXjwTae9YXPryb4tvmro16u8dxA=
+Subject: Re: [PATCH 1/4] selftests: lib: allow to override CC in the top-level
+ Makefile
+To:     Denys Dmytriyenko <denys@ti.com>
+Cc:     =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>,
+        Fathi Boudra <fathi.boudra@linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        shuah <shuah@kernel.org>
+References: <20190116174320.14938-1-daniel.diaz@linaro.org>
+ <7d75f420-d624-d53d-4fa1-3827c90fa608@kernel.org>
+ <CAEUSe7_eYmMSovO4JAabh+83CtY2L8eeMoCVKKS5P-fs7zVhjg@mail.gmail.com>
+ <a68c3fdd-081a-74ea-8d98-30eaf3d70446@kernel.org>
+ <20190128154242.GB15002@beryl>
+From:   shuah <shuah@kernel.org>
+Message-ID: <4a5fc384-ee96-54ba-02f5-fc5ab7c79c47@kernel.org>
+Date:   Mon, 28 Jan 2019 09:28:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
+In-Reply-To: <20190128154242.GB15002@beryl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+On 1/28/19 8:42 AM, Denys Dmytriyenko wrote:
+> On Mon, Jan 28, 2019 at 08:01:15AM -0700, shuah wrote:
+>> Hi Daniel,
+>>
+>> On 1/18/19 10:54 AM, Daniel Díaz wrote:
+>>> Hello!
+>>>
+>>> On Wed, 16 Jan 2019 at 15:56, shuah <shuah@kernel.org> wrote:
+>>>>
+>>>> On 1/16/19 10:43 AM, Daniel Díaz wrote:
+>>>>> From: Fathi Boudra <fathi.boudra@linaro.org>
 
-[ Upstream commit 76699a67f3041ff4c7af6d6ee9be2bfbf1ffb671 ]
+This is the problem. It says, it came from Fathi Boudra 
+<fathi.boudra@linaro.org>
 
-The ep->ovflist is a secondary ready-list to temporarily store events
-that might occur when doing sproc without holding the ep->wq.lock.  This
-accounts for every time we check for ready events and also send events
-back to userspace; both callbacks, particularly the latter because of
-copy_to_user, can account for a non-trivial time.
 
-As such, the unlikely() check to see if the pointer is being used, seems
-both misleading and sub-optimal.  In fact, we go to an awful lot of
-trouble to sync both lists, and populating the ovflist is far from an
-uncommon scenario.
+>>>>>
+>>>>> Relax CC assignment to allow to override CC in the top-level Makefile.
+>>>>>
+>>>>> Signed-off-by: Denys Dmytriyenko <denys@ti.com>
+> 
+> ^^^ I am the original author of the patch and this is my signed-off line.
+> 
 
-For example, profiling a concurrent epoll_wait(2) benchmark, with
-CONFIG_PROFILE_ANNOTATED_BRANCHES shows that for a two threads a 33%
-incorrect rate was seen; and when incrementally increasing the number of
-epoll instances (which is used, for example for multiple queuing load
-balancing models), up to a 90% incorrect rate was seen.
-
-Similarly, by deleting the prediction, 3% throughput boost was seen
-across incremental threads.
-
-Link: http://lkml.kernel.org/r/20181108051006.18751-4-dave@stgolabs.net
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jason Baron <jbaron@akamai.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/eventpoll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 2b5285c40b40..8e50ef617d85 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1037,7 +1037,7 @@ static int ep_poll_callback(wait_queue_t *wait, unsigned mode, int sync, void *k
- 	 * semantics). All the events that happen during that period of time are
- 	 * chained in ep->ovflist and requeued later on.
- 	 */
--	if (unlikely(ep->ovflist != EP_UNACTIVE_PTR)) {
-+	if (ep->ovflist != EP_UNACTIVE_PTR) {
- 		if (epi->next == EP_UNACTIVE_PTR) {
- 			epi->next = ep->ovflist;
- 			ep->ovflist = epi;
--- 
-2.19.1
-
+thanks,
+-- Shuah
