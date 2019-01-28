@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A01C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C25C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C419A2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D7820879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692109;
-	bh=NiU+fKxxjAJwJWAOHX8DOnTRU8rjh/xsh3EXRdvZyyQ=;
+	s=default; t=1548692114;
+	bh=VIsxkGvIyGt2M+AYosVAvOZVFFLQhQ4/rpb/+2fjB3k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XmILapCg8tiNpmh8sJSWEd+uXEnLqyaIA4fENq1UCWVsg8dKuMCyj2oYGnAZA9rUi
-	 GCF5ld5Tvb6u+m7mUCOC1GRV4dowGLRrNgOUlzb1Chg1ew2IUIG3VPpM5wXTyfnwbX
-	 lPWxGLSj/b/Uf+QjYyb43zSU96lkxwU07vufTQnI=
+	b=G+JL6qiskybCks4PlN21VSIMghCjxu8560Zc+nuMuk9+Be0wpMtomrQx9rSZGAL7w
+	 62YBijAXKyFr0+5ZgD1thQtVeciI1qHef/TYIgIPfnNhQ3GwnGASoWniIKe1xltWsX
+	 JmxTYXFJ5Y7U3NlNIv+sFUeC+u9/5YYbN1Nyoc70=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387723AbfA1QPI (ORCPT
+        id S2387744AbfA1QPM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:15:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44696 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:15:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732968AbfA1QPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:05 -0500
+        id S2387727AbfA1QPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 398AF2148E;
-        Mon, 28 Jan 2019 16:15:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FE3B2175B;
+        Mon, 28 Jan 2019 16:15:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692104;
-        bh=NiU+fKxxjAJwJWAOHX8DOnTRU8rjh/xsh3EXRdvZyyQ=;
+        s=default; t=1548692108;
+        bh=VIsxkGvIyGt2M+AYosVAvOZVFFLQhQ4/rpb/+2fjB3k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sRDQ0OyFn2e/Zb96qxRjAU2o3PUr+qhgS4VCT27BFBcMegXGdrFY4bua2/LJ44V0l
-         Rq4jXRyuzxhCyhueC5TpLLTkrzEfZ69eQvvRWyWqW7LCY8atMI4SVn3TmOJHoDQdM9
-         1GhciGXlik1NZBTF2cBE59rS7JY+autpMJQvB7Nw=
+        b=L0pQ3ahQOYfoM0yJ2312bJNFI+n0CYJljHsBp2K8HWwz7SCG7Cd5i3W9dsNkAiPGo
+         Ca50gwKztf+tGwG9zotie5dk62SHBIaWs5cMmISzBMydQrVm59ez4TCMjMqiEcYh+R
+         4L7UOYkvC9/740vxMUsD+9dEE0aSE+qzgjJZmnQY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 069/170] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for all audio module clocks
-Date:   Mon, 28 Jan 2019 11:10:19 -0500
-Message-Id: <20190128161200.55107-69-sashal@kernel.org>
+Cc:     Peter Rajnoha <prajnoha@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 071/170] kobject: return error code if writing /sys/.../uevent fails
+Date:   Mon, 28 Jan 2019 11:10:21 -0500
+Message-Id: <20190128161200.55107-71-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,53 +58,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Peter Rajnoha <prajnoha@redhat.com>
 
-[ Upstream commit 6e6da2039c82271dd873b9ad2b902a692a7dd554 ]
+[ Upstream commit df44b479654f62b478c18ee4d8bc4e9f897a9844 ]
 
-All the audio interfaces on Allwinner SoCs need to change their module
-clocks during operation, to switch between support for 44.1 kHz and 48
-kHz family sample rates. The clock rate for the module clocks is
-governed by their upstream audio PLL. The module clocks themselves only
-have a gate, and sometimes a divider or mux. Thus any rate changes need
-to be propagated upstream.
+Propagate error code back to userspace if writing the /sys/.../uevent
+file fails. Before, the write operation always returned with success,
+even if we failed to recognize the input string or if we failed to
+generate the uevent itself.
 
-Set the CLK_SET_RATE_PARENT flag for all audio module clocks to achieve
-this.
+With the error codes properly propagated back to userspace, we are
+able to react in userspace accordingly by not assuming and awaiting
+a uevent that is not delivered.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Peter Rajnoha <prajnoha@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/base/bus.c  | 12 ++++++++----
+ drivers/base/core.c |  8 +++++++-
+ kernel/module.c     |  6 ++++--
+ 3 files changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 13eb5b23c5e7..c40d572a7602 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -366,10 +366,10 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
- static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
- 					    "pll-audio-2x", "pll-audio" };
- static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
--			       0x0b0, 16, 2, BIT(31), 0);
-+			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 1cf1460f8c90..3464c49dad0d 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -616,8 +616,10 @@ static void remove_probe_files(struct bus_type *bus)
+ static ssize_t uevent_store(struct device_driver *drv, const char *buf,
+ 			    size_t count)
+ {
+-	kobject_synth_uevent(&drv->p->kobj, buf, count);
+-	return count;
++	int rc;
++
++	rc = kobject_synth_uevent(&drv->p->kobj, buf, count);
++	return rc ? rc : count;
+ }
+ static DRIVER_ATTR_WO(uevent);
  
- static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
--			       0x0b4, 16, 2, BIT(31), 0);
-+			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+@@ -833,8 +835,10 @@ static void klist_devices_put(struct klist_node *n)
+ static ssize_t bus_uevent_store(struct bus_type *bus,
+ 				const char *buf, size_t count)
+ {
+-	kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
+-	return count;
++	int rc;
++
++	rc = kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
++	return rc ? rc : count;
+ }
+ static BUS_ATTR(uevent, S_IWUSR, NULL, bus_uevent_store);
  
- /* TODO: the parent for most of the USB clocks is not known */
- static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
-@@ -446,7 +446,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
- static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
- 		      0x140, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
--		      0x140, BIT(30), 0);
-+		      0x140, BIT(30), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 		      0x144, BIT(31), 0);
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 3f463a61f8cf..d0c67512854c 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -991,8 +991,14 @@ static ssize_t uevent_show(struct device *dev, struct device_attribute *attr,
+ static ssize_t uevent_store(struct device *dev, struct device_attribute *attr,
+ 			    const char *buf, size_t count)
+ {
+-	if (kobject_synth_uevent(&dev->kobj, buf, count))
++	int rc;
++
++	rc = kobject_synth_uevent(&dev->kobj, buf, count);
++
++	if (rc) {
+ 		dev_err(dev, "uevent: failed to send synthetic uevent\n");
++		return rc;
++	}
  
+ 	return count;
+ }
+diff --git a/kernel/module.c b/kernel/module.c
+index 2a44c515f0d7..94528b891027 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1201,8 +1201,10 @@ static ssize_t store_uevent(struct module_attribute *mattr,
+ 			    struct module_kobject *mk,
+ 			    const char *buffer, size_t count)
+ {
+-	kobject_synth_uevent(&mk->kobj, buffer, count);
+-	return count;
++	int rc;
++
++	rc = kobject_synth_uevent(&mk->kobj, buffer, count);
++	return rc ? rc : count;
+ }
+ 
+ struct module_attribute module_uevent =
 -- 
 2.19.1
 
