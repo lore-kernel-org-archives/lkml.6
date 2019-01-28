@@ -2,54 +2,52 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21472C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BBD7C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E599420989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFFFB21738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691679;
-	bh=xOOexK0JwCHXU7nVo0ZbJJvTa6GB7rzc4Q7yatnD4nQ=;
+	s=default; t=1548691682;
+	bh=BR4bgx02wSokLcF3yBUwOQMqeVuy81dkNLRPZ2aJkN4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=r1cpgFGor03b9Kyt97LWwLFgkg8P62tK0HHvStQfYsYmbfRdGJgA/mLY5xh5xAB4A
-	 fTJH6qHSGkZPc/xKpOhacz93DO7ug28QGweONGIazSCl1NHfdYEPuASqtJF1+hGsok
-	 fn//UBLFId6N+b7WCDcPM7NPU7tdb73VkccbAMf4=
+	b=1TVVfv4SfSLsZXJJhaCRHPBtnSJMIboClB5slciTpuAhpLDrO0kxqHRIVs0Xja5Z2
+	 mCm0YrHmuGqSy5RJLIZiNWy8j2FAlbFzVyCgncxxvpeniAYHPevKzVPSDPbECmjsBJ
+	 DIb1gWLrQNludui/CWJDO2KMOIJ0H3vYqYm2Y1rs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732292AbfA1QH5 (ORCPT
+        id S1732309AbfA1QIA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:07:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59116 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:08:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732274AbfA1QHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:07:55 -0500
+        id S1732293AbfA1QH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:07:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EFB920989;
-        Mon, 28 Jan 2019 16:07:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7F802147A;
+        Mon, 28 Jan 2019 16:07:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691674;
-        bh=xOOexK0JwCHXU7nVo0ZbJJvTa6GB7rzc4Q7yatnD4nQ=;
+        s=default; t=1548691677;
+        bh=BR4bgx02wSokLcF3yBUwOQMqeVuy81dkNLRPZ2aJkN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fwk3S8+LGhRm6cDuy9iJXVHpTDlT0QtqvONzDVh5KWwYtm6IErEhrhnPK66xzVJ85
-         bpgdQYLWLu6fG5GId83H+8MKENgngkJ92freHahkc5SmkUESEK4iH6zxHspVhtqyu6
-         cpohPZn82BBdbpQY3g/SMcJ2Kqf+3UsdQck74Jzk=
+        b=CFCbisH1zqrSVYaaiICGSqAMgXK2byRjfTWVxuHfr/aouWmWPF+5E4jL2+C6z8dd0
+         hGveIxDyboycCJz44b/IWT3Dps6YkA30jlOaCoqyapmFbSDWDgWi8mjV9oZ4qm4rlL
+         YXNKJw5EyAnUzvmyKTL3OfTpsuf67tloACdKiT5Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Guo Ren <ren_guo@c-sky.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 181/258] tools uapi asm: Update asm-generic/unistd.h copy
-Date:   Mon, 28 Jan 2019 10:58:07 -0500
-Message-Id: <20190128155924.51521-181-sashal@kernel.org>
+Cc:     Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 182/258] net: hns3: fix incomplete uninitialization of IRQ in the hns3_nic_uninit_vector_data()
+Date:   Mon, 28 Jan 2019 10:58:08 -0500
+Message-Id: <20190128155924.51521-182-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -61,59 +59,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Huazhong Tan <tanhuazhong@huawei.com>
 
-[ Upstream commit 89a0948984896352cac1ebe079cb3d64d6c3adc6 ]
+[ Upstream commit ae6017a71115ebc4e5c1a3f0f451319ab3f5c447 ]
 
-To get the change in:
+In the hns3_nic_uninit_vector_data(), the procedure of uninitializing
+the tqp_vector's IRQ has not set affinity_notify to NULL and changes
+its init flag. This patch fixes it. And for simplificaton, local
+variable tqp_vector is used instead of priv->tqp_vector[i].
 
-  b7d624ab4312 ("asm-generic: unistd.h: fixup broken macro include.")
-
-That doesn't imply in any changes in the tools.
-
-This silences the following perf build warning:
-
-  Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/unistd.h' differs from latest version at 'include/uapi/asm-generic/unistd.h'
-  diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Guo Ren <ren_guo@c-sky.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-2e7xwm5i2qcc88jp2lyawdyd@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 424eb834a9be ("net: hns3: Unified HNS3 {VF|PF} Ethernet Driver for hip08 SoC")
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/include/uapi/asm-generic/unistd.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
-index df4bedb9b01c..1e4e48355eda 100644
---- a/tools/include/uapi/asm-generic/unistd.h
-+++ b/tools/include/uapi/asm-generic/unistd.h
-@@ -758,8 +758,10 @@ __SYSCALL(__NR_rseq, sys_rseq)
- #define __NR_ftruncate __NR3264_ftruncate
- #define __NR_lseek __NR3264_lseek
- #define __NR_sendfile __NR3264_sendfile
-+#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
- #define __NR_newfstatat __NR3264_fstatat
- #define __NR_fstat __NR3264_fstat
-+#endif
- #define __NR_mmap __NR3264_mmap
- #define __NR_fadvise64 __NR3264_fadvise64
- #ifdef __NR3264_stat
-@@ -774,8 +776,10 @@ __SYSCALL(__NR_rseq, sys_rseq)
- #define __NR_ftruncate64 __NR3264_ftruncate
- #define __NR_llseek __NR3264_lseek
- #define __NR_sendfile64 __NR3264_sendfile
-+#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
- #define __NR_fstatat64 __NR3264_fstatat
- #define __NR_fstat64 __NR3264_fstat
-+#endif
- #define __NR_mmap2 __NR3264_mmap
- #define __NR_fadvise64_64 __NR3264_fadvise64
- #ifdef __NR3264_stat
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index b7b2f8254ce1..d5f15d8d18a9 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2760,12 +2760,12 @@ static int hns3_nic_uninit_vector_data(struct hns3_nic_priv *priv)
+ 
+ 		hns3_free_vector_ring_chain(tqp_vector, &vector_ring_chain);
+ 
+-		if (priv->tqp_vector[i].irq_init_flag == HNS3_VECTOR_INITED) {
+-			(void)irq_set_affinity_hint(
+-				priv->tqp_vector[i].vector_irq,
+-						    NULL);
+-			free_irq(priv->tqp_vector[i].vector_irq,
+-				 &priv->tqp_vector[i]);
++		if (tqp_vector->irq_init_flag == HNS3_VECTOR_INITED) {
++			irq_set_affinity_notifier(tqp_vector->vector_irq,
++						  NULL);
++			irq_set_affinity_hint(tqp_vector->vector_irq, NULL);
++			free_irq(tqp_vector->vector_irq, tqp_vector);
++			tqp_vector->irq_init_flag = HNS3_VECTOR_NOT_INITED;
+ 		}
+ 
+ 		priv->ring_data[i].ring->irq_init_flag = HNS3_VECTOR_NOT_INITED;
 -- 
 2.19.1
 
