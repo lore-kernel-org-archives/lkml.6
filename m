@@ -2,117 +2,150 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3314BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAC0C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F302921917
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:55:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD16C21738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:56:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BFuvZ8YD"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cBR6t+WC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfA1MzW (ORCPT
+        id S1726848AbfA1M4E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:55:22 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:33800 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbfA1MzW (ORCPT
+        Mon, 28 Jan 2019 07:56:04 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:32994 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbfA1M4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:55:22 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0SCSYxo026326;
-        Mon, 28 Jan 2019 12:54:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=ty+oDqCF72Ap8JwvZRllH7Lg7RZJslz8F/8pyO958aU=;
- b=BFuvZ8YD3NGfXoSw1YzJwi7TCjDxCP067fqOulXvovAVfM5TTskWlfU/YSI2OK6mBVvB
- zWzw/aq2mwPpQolkOUQ6ybvDm+Pm22dpxTFLZyT5MTmSn82wbdnmKbhjNb9c+wiSj9w7
- 5xb1IADw7B2FiSlBRAec5LeeOnz8zKyxxaR3n6vx6WWizZDbjw9yMMq3DS47k+AurpDb
- yDH5qPgOsqjXwcQsJr3jzBKnmfxePdn4bfjfqcOJS099oX0ZYKb4NKDuW2/kUKmQds0P
- mHIhIe1uc5uB+UD8fWJeR9/Wx3zMUFt5zGKM7p1BCtajmy1r6Wlh5pe1hDZhpiNSL5Oe 5A== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2q8d2dx3b9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Jan 2019 12:54:46 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0SCsebZ028645
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Jan 2019 12:54:40 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0SCsdRP023335;
-        Mon, 28 Jan 2019 12:54:39 GMT
-Received: from kadam (/197.157.34.178)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 28 Jan 2019 04:54:39 -0800
-Date:   Mon, 28 Jan 2019 15:54:26 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Renato Lui Geh <renatogeh@gmail.com>
-Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        stefan.popa@analog.com, alexandru.Ardelean@analog.com,
-        giuliano.belinassi@usp.br, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        kernel-usp@googlegroups.com
-Subject: Re: [PATCH v2 2/2] staging: iio: ad7780: moving ad7780 out of staging
-Message-ID: <20190128125426.GG1795@kadam>
-References: <20190127203344.ofryhhrae2wjn6j2@renatolg>
+        Mon, 28 Jan 2019 07:56:03 -0500
+Received: by mail-lf1-f65.google.com with SMTP id i26so11786452lfc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 04:56:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KtYsgjFGu6fAODHL+RAHV/6ZYs/aiT/WhaxSVGIhloY=;
+        b=cBR6t+WC2Ukh0PB0s//+SgVjRTKp7lnA/rRGXo03WZVKUuHGu6/DLdFX2AkSL4ybNi
+         iMYuiCnYZLpqX6fv57yFvC7Asckg/d4M5WtacC9LVEr8iUmpDKgD8fCcOoIHIC961lYu
+         dKUfbEUelx4JnDjVjjZeRk8GcHlnWF2xSXfmc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KtYsgjFGu6fAODHL+RAHV/6ZYs/aiT/WhaxSVGIhloY=;
+        b=NgpSqnv0U+GRtCbYaWZ6deHQa6c+ogr57ehGGtIkg70ezuoJM/tWOP7iDbzVWwkWVY
+         e+BBX6BT6WDqlDYtSu4fIuadopuqz4OA9g/XnV5qKGkikb7X1LVh2PERWnNzJvg3/2A1
+         ldIixdzD49NHXjxFqwuE/cqHLRqml0MmoztWyukxf7NKAlK7eEfnPxEtnyZh/DWR6qGd
+         54FOKl9Cm1tb3CwiiVXZ8VTGkMoV7UhpPAO5A9hAfA3Dlx9VnEEZIwo9dh/EGM/KDSTe
+         pkvGThcC9jJ6jVqEz4A3jQTIIw7s1w0BLKkvRTbL1yKXdLimD89z3KsxWH7kqySNrTrC
+         ZL9w==
+X-Gm-Message-State: AJcUukfU7J9fGYpeW+ATOcM/lg3rJ9f0IEArsJAKXwhJH8OAJ/4ogs11
+        ErjKt4PPJFVi+qAadESoqcBWprgnnD15bZJN3xxRYg==
+X-Google-Smtp-Source: ALg8bN4Lnb5MlosMti7CxpmKM3ix2ZEAcCkA3F0gobYMeVRgLDOQw63GJDaJubA7rFK8iKZqQyzebGdCxn+kPCGWyjA=
+X-Received: by 2002:a19:db82:: with SMTP id t2mr16199018lfi.130.1548680161599;
+ Mon, 28 Jan 2019 04:56:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190127203344.ofryhhrae2wjn6j2@renatolg>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9149 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=608
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901280100
+References: <20190125110509.GA29310@localhost.localdomain>
+In-Reply-To: <20190125110509.GA29310@localhost.localdomain>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 28 Jan 2019 13:55:48 +0100
+Message-ID: <CACRpkdYTUB8vPiCF=s5-TARhv=DsPDQHVyCwP7fMc27gyDvKSg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 07/10] gpio: Initial support for ROHM bd70528 GPIO block
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-rtc@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 27, 2019 at 06:33:52PM -0200, Renato Lui Geh wrote:
-> +	st->reg = devm_regulator_get(&spi->dev, "avdd");
-> +	if (IS_ERR(st->reg))
-> +		return PTR_ERR(st->reg);
-> +
-> +	ret = regulator_enable(st->reg);
-> +	if (ret) {
-> +		dev_err(&spi->dev, "Failed to enable specified AVdd supply\n");
-> +		goto error_disable_reg;
-> +	}
+Hi Matti!
 
-We don't need to disable the regulator if enabling it failed (probably,
-I haven't looked at the code).
+Thanks for your patch!
 
+On Fri, Jan 25, 2019 at 12:05 PM Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
 
-> +
-> +	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
-> +	if (ret)
-> +		goto error_disable_reg;
-> +
-> +	ret = iio_device_register(indio_dev);
-> +	if (ret)
-> +		goto error_cleanup_buffer_and_trigger;
-> +
-> +	return 0;
-> +
-> +error_cleanup_buffer_and_trigger:
-> +	ad_sd_cleanup_buffer_and_trigger(indio_dev);
-> +error_disable_reg:
-> +	regulator_disable(st->reg);
-> +
+> ROHM BD70528 PMIC has 4 GPIO pins. Allow them to be
+> controlled by GPIO framework.
+>
+> IRQs are handled by regmap-irq and GPIO driver is not
+> aware of the irq usage.
+>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 
-Well chosen label names, btw.  Very easy to review.
+This is overall a very nicely written driver.
 
-> +	return ret;
+Just small comments:
+
+> +#include <linux/gpio/driver.h>
+> +#include <linux/interrupt.h>
+
+Why interrupt? You do not use it.
+
+> +static int bd70528_get_direction(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
+> +       int val, ret;
+> +
+> +       /* Do we need to do something to IRQs here? */
+
+Well you don't support IRQs yet so no problem as long as they're masked?
+
+> +       ret = regmap_read(bdgpio->chip.regmap, GPIO_OUT_REG(offset), &val);
+> +       if (ret) {
+> +               dev_err(bdgpio->chip.dev, "Could not read gpio direction\n");
+> +               return ret;
+> +       }
+> +
+> +       return !(val & BD70528_GPIO_OUT_EN_MASK);
 > +}
 > +
+> +static int bd70528_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+> +                                  unsigned long config)
 
-regards,
-dan carpenter
+This is very nice. With Thomas Petazzoni's ongoing work you will be
+able to also support pull up/down if you need it.
+
+> +static int bd70528_direction_input(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +       struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
+> +
+> +       /* Do we need to do something to IRQs here? */
+
+Hmmm?
+
+Apart from that it looks good. Feel free to add:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+on the next iteration.
+
+Yours,
+Linus Walleij
