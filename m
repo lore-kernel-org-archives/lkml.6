@@ -2,91 +2,119 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AC4C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9FCC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E0E20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:27:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 041D220880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:28:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbfA1J1r convert rfc822-to-8bit (ORCPT
+        id S1726805AbfA1J2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:27:47 -0500
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:42091 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfA1J1q (ORCPT
+        Mon, 28 Jan 2019 04:28:06 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:42538 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726369AbfA1J2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:27:46 -0500
-X-Originating-IP: 90.88.29.206
-Received: from xps13 (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id BD00F1BF206;
-        Mon, 28 Jan 2019 09:27:41 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 10:27:39 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
-Cc:     "robh@kernel.org" <robh@kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "martin.lund@keep-it-simple.com" <martin.lund@keep-it-simple.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>,
-        Michal Simek <michals@xilinx.com>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>
-Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
- Arasan NAND Flash Controller
-Message-ID: <20190128102720.70a52da7@xps13>
-In-Reply-To: <MWHPR02MB262328DF62906C01DCDF18E5AF960@MWHPR02MB2623.namprd02.prod.outlook.com>
-References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <20181120120244.7d2442b5@bbrezillon>
-        <20181120133624.3fa4742d@xps13>
-        <MWHPR02MB26238A2271B33470ABFA1023AFD40@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <MWHPR02MB26239C2B2A7050310BEF1E9CAFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20181212091135.1d0cc9a6@xps13>
-        <MWHPR02MB26236CEF8A2110B20C825198AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20181212100931.149b0cac@xps13>
-        <MWHPR02MB2623EDA15BE59304795F3034AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20181212141825.69711c57@xps13>
-        <MWHPR02MB26235AE6567A06EF4C6362E6AFBC0@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20181217174114.24196d17@xps13>
-        <MWHPR02MB26237B932D7F3CCEE0476FE0AFBD0@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <20181219152647.76f77711@xps13>
-        <MWHPR02MB262396FFF946A95D7821D61BAFB80@MWHPR02MB2623.namprd02.prod.outlook.com>
-        <MWHPR02MB262328DF62906C01DCDF18E5AF960@MWHPR02MB2623.namprd02.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 28 Jan 2019 04:28:06 -0500
+X-UUID: 863d28cdc2af469cb5d87e6ffaa7e7bc-20190128
+X-UUID: 863d28cdc2af469cb5d87e6ffaa7e7bc-20190128
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1465889627; Mon, 28 Jan 2019 17:27:58 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 28 Jan 2019 17:27:55 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 28 Jan 2019 17:27:56 +0800
+Message-ID: <1548667676.10401.17.camel@mtksdaap41>
+Subject: Re: [PATCH V3,0/8] make mt7623 clock of HDMI stable
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Wangyan Wang <wangyan.wang@mediatek.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        "Colin Ian King" <colin.king@canonical.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <jitao.shi@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <srv_heupstream@mediatek.com>
+Date:   Mon, 28 Jan 2019 17:27:56 +0800
+In-Reply-To: <20190125040205.5451-1-wangyan.wang@mediatek.com>
+References: <20190125040205.5451-1-wangyan.wang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 13C157F7FD1C1FE845342FFC67C91DCB7AFB3126B8FEBB6A239CD4F9D45860B62000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Naga,
+Hi, Wangyan:
 
-Naga Sureshkumar Relli <nagasure@xilinx.com> wrote on Mon, 28 Jan 2019
-06:04:53 +0000:
+How do you prove that this series would make mt7623 HDMI clock more
+stable? By experience result? I would like to prove it by the source
+code.
 
-> Hi Boris & Miquel,
+Does 'stable' means that hardware could generate the frequency most
+close to the target frequency? If it does, I think you could compare the
+frequency generated by original code and applying this series for all
+the usually-used frequency. I also need you to show the clock tree and
+all setting of each divider so we could review that is this series good
+enough. Also, describe these in cover latter.
+
+You have mail to dri-devel [1] and linux-mediatek [2], but these patches
+does not show in web site. Maybe your mail is not plain text, please fix
+this and resend patches.
+
+[1] https://lists.freedesktop.org/archives/dri-devel/
+[2] http://lists.infradead.org/pipermail/linux-mediatek/
+
+Regards,
+CK
+
+On Fri, 2019-01-25 at 12:01 +0800, Wangyan Wang wrote:
+> V3 adopt maintainer's suggestion.
+> Here is the change list between V2 & V3:
+> 1. add "Signed-off-by: wangyan wang <wangyan.wang@mediatek.com>"
+> in commit message
 > 
-> Could you please provide your thoughts on this driver to support HW-ECC?
-> As I said previously, there is no way to detect errors beyond N bit.
-> I am ok to update the driver based on your inputs.
+> 2. add modify description in patch 
+> "drm/mediatek: fix the rate and divder ..."
+>  
+> chunhui dai (8):
+>   drm/mediatek: recalculate hdmi phy clock of MT2701 by querying
+>     hardware
+>   drm/mediatek: move the setting of fixed divider
+>   drm/mediatek: using different flags of clk for HDMI phy
+>   drm/mediatek: fix the rate and divder of hdmi phy for MT2701
+>   clk: mediatek: add MUX_GATE_FLAGS_2
+>   clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
+>   drm/mediatek: using new factor for tvdpll in MT2701
+>   drm/mediatek: fix the rate of parent for hdmi phy in MT2701
+> 
+>  drivers/clk/mediatek/clk-mt2701.c             |  4 +-
+>  drivers/clk/mediatek/clk-mtk.c                |  2 +-
+>  drivers/clk/mediatek/clk-mtk.h                | 20 +++++--
+>  drivers/gpu/drm/mediatek/mtk_dpi.c            |  8 +--
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c       | 34 +++--------
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h       |  7 +--
+>  .../gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c    | 56 +++++++++++++++++--
+>  .../gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c    | 23 ++++++++
+>  8 files changed, 102 insertions(+), 52 deletions(-)
+> 
 
-We won't support the ECC engine. It simply cannot be used reliably.
 
-I am working on a generic ECC engine object. It's gonna take a few
-months until it gets merged but after that you could update the
-controller driver to drop any ECC-related function. Although the ECC
-engine part is blocking, raw access still look wrong and the driver
-still needs changes.
-
-
-Thanks,
-Miquèl
