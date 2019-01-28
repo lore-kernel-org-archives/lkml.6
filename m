@@ -2,51 +2,53 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A25C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A5FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1ED02147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1CCB2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692555;
-	bh=weP5wNqF3syjXpJOod6mfYe7aPJClX9NCQ4XhvJVZVc=;
+	s=default; t=1548692558;
+	bh=DUqp5VbQXriBvxgCc3B8dU0tFhbEwz6uTnK8B/bQVzk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GW/57o4I0tbsAEpf2a0obueLrAtFOyrAWVeF9Yr4kwUyeR6ldzUxcJiTrY1cIBzop
-	 jXs0Fd8Vxzm7ly0Nmc8rHIbtDpPzylfe50wKGUBix0/JKLNOZ6+0FThSZ7X6P+Ij9s
-	 f7da41AowqgpcXwEay/+EPQLmXL9NAhoCmoApb/c=
+	b=VQNCm5B43njj+jgvGYDM3AERdBvcZmKOGeDOaZeqEoqtvpTatL+zv0U8ugiL26DPt
+	 IOSmgVNY1TJWA2lJG4Yr5L7ebEnOBNLJ8SuY6Q1eC3NKlqzlATSYHbx5RUaOJJTR/G
+	 osQ3nn1oSjAZYpKVJwvUSXRzdmUJpzu3Eh3S+dqE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389229AbfA1QWd (ORCPT
+        id S2388591AbfA1QWh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:22:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58530 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:22:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389219AbfA1QWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:30 -0500
+        id S2388263AbfA1QWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:22:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 793BD20663;
-        Mon, 28 Jan 2019 16:22:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F04B20663;
+        Mon, 28 Jan 2019 16:22:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692550;
-        bh=weP5wNqF3syjXpJOod6mfYe7aPJClX9NCQ4XhvJVZVc=;
+        s=default; t=1548692554;
+        bh=DUqp5VbQXriBvxgCc3B8dU0tFhbEwz6uTnK8B/bQVzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v8mDQsya04v0MMRR3gjqIvhka6IjNQMsvlKPpALeUQ42KROI4mhhhAiFaA/h3tMlA
-         exUR/dP2XajIVpkY1Kz2L0Pthp6KErN+4om1+JspCl8NmpP/9jPLrvPTL19P6aTZCx
-         sDLq6OBk/gyVsjPEXFhvk4pj/uhY/dslLSh6aGME=
+        b=0HtybbOgXHJJFutDSieYFkJtFL635NVfuq/ONlcGOhB3iVTtcNyOBmF0n3PE9/Cdb
+         le/U35aQ6RTtbKEMdVHodz81omjl+mgFIZytwHuFdRFhQIJOtGMqRR7L6Fyt7Pd6t2
+         ZhoI32jLS/eGdV9Oz2NcGL8tB4sDrGo0iB46VGdw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 058/107] memstick: Prevent memstick host from getting runtime suspended during card detection
-Date:   Mon, 28 Jan 2019 11:18:58 -0500
-Message-Id: <20190128161947.57405-58-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 060/107] perf header: Fix unchecked usage of strncpy()
+Date:   Mon, 28 Jan 2019 11:19:00 -0500
+Message-Id: <20190128161947.57405-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -58,56 +60,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit e03e303edf1c63e6dd455ccd568c74e93ef3ba8c ]
+[ Upstream commit 7572588085a13d5db02bf159542189f52fdb507e ]
 
-We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
-helpers to let memstick host support runtime pm.
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-The rpm count may go down to zero before the memstick host powers on, so
-the host can be runtime suspended.
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-So before doing card detection, increment the rpm count to avoid the
-host gets runtime suspended. Balance the rpm count after card detection
-is done.
+  util/header.c: In function 'perf_event__synthesize_event_update_unit':
+  util/header.c:3586:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+    strncpy(ev->data, evsel->unit, size);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  util/header.c:3579:16: note: length computed here
+    size_t size = strlen(evsel->unit);
+                  ^~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: a6e5281780d1 ("perf tools: Add event_update event unit type")
+Link: https://lkml.kernel.org/n/tip-fiikh5nay70bv4zskw2aa858@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memstick/core/memstick.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/header.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
-index a0547dbf9806..4d673a626db4 100644
---- a/drivers/memstick/core/memstick.c
-+++ b/drivers/memstick/core/memstick.c
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/pm_runtime.h>
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index ab36aa5585b4..a11f6760cce8 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -2988,7 +2988,7 @@ perf_event__synthesize_event_update_unit(struct perf_tool *tool,
+ 	if (ev == NULL)
+ 		return -ENOMEM;
  
- #define DRIVER_NAME "memstick"
- 
-@@ -436,6 +437,7 @@ static void memstick_check(struct work_struct *work)
- 	struct memstick_dev *card;
- 
- 	dev_dbg(&host->dev, "memstick_check started\n");
-+	pm_runtime_get_noresume(host->dev.parent);
- 	mutex_lock(&host->lock);
- 	if (!host->card) {
- 		if (memstick_power_on(host))
-@@ -479,6 +481,7 @@ static void memstick_check(struct work_struct *work)
- 		host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
- 
- 	mutex_unlock(&host->lock);
-+	pm_runtime_put(host->dev.parent);
- 	dev_dbg(&host->dev, "memstick_check finished\n");
- }
- 
+-	strncpy(ev->data, evsel->unit, size);
++	strlcpy(ev->data, evsel->unit, size + 1);
+ 	err = process(tool, (union perf_event *)ev, NULL, NULL);
+ 	free(ev);
+ 	return err;
 -- 
 2.19.1
 
