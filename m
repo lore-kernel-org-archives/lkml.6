@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E478C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09051C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 602A82171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF0DF2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691749;
-	bh=s94euxNWC6HlDDQgcnJrIZwNuaOfdkLMdIHtf3K5oOY=;
+	s=default; t=1548691752;
+	bh=VJHfTeWE69BzaokekwoAcSIM5OmZnXbFokFQuWGBqaQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k6m0nPuEYr6XYv/FSCyXX+QljKSe88UsPdYNtBVn+7zGV2MZaN0gl0eooH367i7mj
-	 6svMsRezRtSM5RkpK3P6YgGjkyDkf/Pbvw4jU9A40dymXqq5kacnn1w2kP797AkhmL
-	 P1L3dz4WY3E9IrSXdMRlcGvYw0EhrWMKB+wybd9E=
+	b=N1m4R4Oz7hfrfdzGqCOsPS2Q6ydzQRMNo697JxKbpJ5TYaLuLoy6sn4EwRueRqyEB
+	 /YO6k0tqEqv+82FyJsM3aPRc7oZBpeqoKYVdg4S062ZvhUoM16rO9o/zA2AuEBlLrL
+	 gQoG2L+DGEov6NNNOSwJ3aF6vI31O64W5odDk5Ow=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732543AbfA1QJH (ORCPT
+        id S1731844AbfA1QJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:09:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33274 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:09:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732536AbfA1QJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:09:04 -0500
+        id S1731941AbfA1QJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:09:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F4F12084A;
-        Mon, 28 Jan 2019 16:09:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3D282084A;
+        Mon, 28 Jan 2019 16:09:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691743;
-        bh=s94euxNWC6HlDDQgcnJrIZwNuaOfdkLMdIHtf3K5oOY=;
+        s=default; t=1548691747;
+        bh=VJHfTeWE69BzaokekwoAcSIM5OmZnXbFokFQuWGBqaQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YeYBLqLm9TnIdCqJd+FE6SsVGwXO9MHiWTl2LrqYsWI1yKxkuLww66NPrSAjLL/SC
-         KgkhQ0GB2ELR3UyDoIrEHwELe2/uHdggdHuU8F0JG1SHmGA7lAZTZD6Ezlys0QdL/Z
-         9bIEyDBCfIhbJTeepJ9lnEz8rXkTTP1BBostBQgc=
+        b=forGuKRLbmYT/NB65GziIVIBTf8TUuCxBm9yzE8td2+9Nuozvx3cAnb5+0W9LESJA
+         IW8F5xF19bvHufJ5vNN+6vDDZYkIWe1P5iqOojOvlMt+WwLrE9gtdvP+NFTnDzl7+L
+         LV45rWF3EYxvBM8Y1Mo5HNlPHvuvEGHVZSxElvR8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wenjing Liu <Wenjing.Liu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 203/258] drm/amd/display: validate extended dongle caps
-Date:   Mon, 28 Jan 2019 10:58:29 -0500
-Message-Id: <20190128155924.51521-203-sashal@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 204/258] video: clps711x-fb: release disp device node in probe()
+Date:   Mon, 28 Jan 2019 10:58:30 -0500
+Message-Id: <20190128155924.51521-204-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,44 +60,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenjing Liu <Wenjing.Liu@amd.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 99b922f9ed6a6313c0d2247cde8aa1e4a0bd67e4 ]
+[ Upstream commit fdac751355cd76e049f628afe6acb8ff4b1399f7 ]
 
-[why]
-Some dongle doesn't have a valid extended dongle caps,
-but we still set the extended dongle caps to be valid.
-This causes validation fails for all timing.
+clps711x_fb_probe() increments refcnt of disp device node by
+of_parse_phandle() and leaves it undecremented on both
+successful and error paths.
 
-[how]
-If no dp_hdmi_max_pixel_clk is provided,
-don't use extended dongle caps.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Signed-off-by: Wenjing Liu <Wenjing.Liu@amd.com>
-Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
-Reviewed-by: Jun Lei <Jun.Lei@amd.com>
-Acked-by: Abdoulaye Berthe <Abdoulaye.Berthe@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/clps711x-fb.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-index a7553b6d59c2..05840f5bddd5 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
-@@ -2240,7 +2240,8 @@ static void get_active_converter_info(
- 					translate_dpcd_max_bpc(
- 						hdmi_color_caps.bits.MAX_BITS_PER_COLOR_COMPONENT);
+diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
+index ff561073ee4e..42f909618f04 100644
+--- a/drivers/video/fbdev/clps711x-fb.c
++++ b/drivers/video/fbdev/clps711x-fb.c
+@@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
+ 	}
  
--				link->dpcd_caps.dongle_caps.extendedCapValid = true;
-+				if (link->dpcd_caps.dongle_caps.dp_hdmi_max_pixel_clk != 0)
-+					link->dpcd_caps.dongle_caps.extendedCapValid = true;
- 			}
+ 	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
+-	if (ret)
++	if (ret) {
++		of_node_put(disp);
+ 		goto out_fb_release;
++	}
  
- 			break;
+ 	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
+ 	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
+ 
+ 	ret = of_property_read_u32(disp, "bits-per-pixel",
+ 				   &info->var.bits_per_pixel);
++	of_node_put(disp);
+ 	if (ret)
+ 		goto out_fb_release;
+ 
 -- 
 2.19.1
 
