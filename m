@@ -2,182 +2,226 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC47C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3FBC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9D52177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:19:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548706748;
-	bh=fwOJJyyfG7B3jNYhWhwXkha9XAPieyz387NvxVyl80g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jW9Qytuqs4Elu+jS2Y+tZjA5/VgjSEB3uJMgg8bAopUCFo+NKYy2Ftj1UK/XAoPiO
-	 MKIcPHFICWrd1xFXXoUbS1MazDdfjO3KGm5IX0hHCKiKWLiUmTrkoW7tf0B9waaGDT
-	 dnH5r6azYEC5NJFphgQZKqn9K/GUXk+b9T8fh1SU=
+	by mail.kernel.org (Postfix) with ESMTP id 381BC2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:21:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="mGkSZf5i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfA1UTG (ORCPT
+        id S1727368AbfA1UVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 15:19:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41898 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726792AbfA1UTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 15:19:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0C148AF74;
-        Mon, 28 Jan 2019 20:19:04 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 21:19:02 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vratislav Bendel <vbendel@redhat.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
-        Minchan Kim <minchan@kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH v1] mm: migrate: don't rely on PageMovable() of newpage
- after unlocking it
-Message-ID: <20190128201902.GW18811@dhcp22.suse.cz>
-References: <20190128160403.16657-1-david@redhat.com>
- <e3247625-b25c-a18a-a494-f1e9a0148932@redhat.com>
+        Mon, 28 Jan 2019 15:21:02 -0500
+Received: from cock.li ([185.100.85.212]:44152 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726862AbfA1UVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 15:21:02 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e3247625-b25c-a18a-a494-f1e9a0148932@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1548706854; bh=hQqzoR6y846174OLej1BFg0xa8Rk3HY28LDSTYFgGKA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=mGkSZf5iTsVDwQJoSB1Ry5Kp6kir5hvtFiRkDqrL63EiAEs4EcyiRWiZtAPABd8O0
+         GL9DD1qaG9niKGch1STW00ERhXgO0TV+Q1Hs0WotS6UBg04G7Y7GSclgZirtbASS1+
+         emzeL19XqbUc6JWO7KN0/o3w1S3BPtYsqrhyOKHZHbqTSrkDcBIkHWewM6EcrhO6hs
+         uU9tza+p4wKwC52PO/EI0WFn4lFunBMkjN994G22XAi+dQhfMhhlr0jmxK0y+OEyJx
+         gmFw/gt8ToW3oyRfEpurD44FDViTkmwN0jQNCTS4vsYI6dxQH4oGNgE+sOT63D+KI+
+         t8uOYfESwOtaQ==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 28 Jan 2019 20:20:54 +0000
+From:   linuxgpletc@redchan.it
+To:     editor@lulz.com, editor@lwn.net, news@theregister.co.uk
+Cc:     misc@openbsd.org, freebsd-chat@freebsd.org,
+        linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org
+Subject: Author of GPC-Slots2 promises to sue "John Doe" who violated GPL
+ recission.
+In-Reply-To: <CAAaskFDMjUzonLeHPmiy_VcB=jvQfF9giEaWcmNLKHDTqQt4BA@mail.gmail.com>
+References: <fe8a4e103943d671ff0ce2c4f09609f9@redchan.it>
+ <CAAaskFDMjUzonLeHPmiy_VcB=jvQfF9giEaWcmNLKHDTqQt4BA@mail.gmail.com>
+Message-ID: <51e3ecf49ad66e03d4c5dfab252f31de@redchan.it>
+X-Sender: linuxgpletc@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 28-01-19 21:02:52, David Hildenbrand wrote:
-> On 28.01.19 17:04, David Hildenbrand wrote:
-> > While debugging some crashes related to virtio-balloon deflation that
-> > happened under the old balloon migration code, I stumbled over a race
-> > that still exists today.
-> > 
-> > What we experienced:
-> > 
-> > drivers/virtio/virtio_balloon.c:release_pages_balloon():
-> > - WARNING: CPU: 13 PID: 6586 at lib/list_debug.c:59 __list_del_entry+0xa1/0xd0
-> > - list_del corruption. prev->next should be ffffe253961090a0, but was dead000000000100
-> > 
-> > Turns out after having added the page to a local list when dequeuing,
-> > the page would suddenly be moved to an LRU list before we would free it
-> > via the local list, corrupting both lists. So a page we own and that is
-> > !LRU was moved to an LRU list.
-> > 
-> > In __unmap_and_move(), we lock the old and newpage and perform the
-> > migration. In case of vitio-balloon, the new page will become
-> > movable, the old page will no longer be movable.
-> > 
-> > However, after unlocking newpage, there is nothing stopping the newpage
-> > from getting dequeued and freed by virtio-balloon. This
-> > will result in the newpage
-> > 1. No longer having PageMovable()
-> > 2. Getting moved to the local list before finally freeing it (using
-> >    page->lru)
-> > 
-> > Back in the migration thread in __unmap_and_move(), we would after
-> > unlocking the newpage suddenly no longer have PageMovable(newpage) and
-> > will therefore call putback_lru_page(newpage), modifying page->lru
-> > although that list is still in use by virtio-balloon.
-> > 
-> > To summarize, we have a race between migrating the newpage and checking
-> > for PageMovable(newpage). Instead of checking PageMovable(newpage), we
-> > can simply rely on is_lru of the original page.
-> > 
-> > Looks like this was introduced by d6d86c0a7f8d ("mm/balloon_compaction:
-> > redesign ballooned pages management"), which was backported up to 3.12.
-> > Old compaction code used PageBalloon() via -_is_movable_balloon_page()
-> > instead of PageMovable(), however with the same semantics.
-> > 
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Mel Gorman <mgorman@techsingularity.net>
-> > Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Andrea Arcangeli <aarcange@redhat.com>
-> > Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: Vratislav Bendel <vbendel@redhat.com>
-> > Cc: Rafael Aquini <aquini@redhat.com>
-> > Cc: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
-> > Cc: Minchan Kim <minchan@kernel.org>
-> > Cc: stable@vger.kernel.org # 3.12+
-> > Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages management")
-> > Reported-by: Vratislav Bendel <vbendel@redhat.com>
-> > Acked-by: Michal Hocko <mhocko@suse.com>
-> > Acked-by: Rafael Aquini <aquini@redhat.com>
-> > Signed-off-by: David Hildenbrand <david@redhat.com>
-> > ---
-> >  mm/migrate.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/mm/migrate.c b/mm/migrate.c
-> > index 4512afab46ac..31e002270b05 100644
-> > --- a/mm/migrate.c
-> > +++ b/mm/migrate.c
-> > @@ -1135,10 +1135,12 @@ static int __unmap_and_move(struct page *page, struct page *newpage,
-> >  	 * If migration is successful, decrease refcount of the newpage
-> >  	 * which will not free the page because new page owner increased
-> >  	 * refcounter. As well, if it is LRU page, add the page to LRU
-> > -	 * list in here.
-> > +	 * list in here. Don't rely on PageMovable(newpage), as that could
-> > +	 * already have changed after unlocking newpage (e.g.
-> > +	 * virtio-balloon deflation).
-> >  	 */
-> >  	if (rc == MIGRATEPAGE_SUCCESS) {
-> > -		if (unlikely(__PageMovable(newpage)))
-> > +		if (unlikely(!is_lru))
-> >  			put_page(newpage);
-> >  		else
-> >  			putback_lru_page(newpage);
-> > 
-> 
-> Vratislav just pointed out that this issue should not happen on upstream
-> as __PageMovable(newpage) will still return true even after
-> __ClearPageMovable(newpage). Only PageMovable(newpage) would actually
-> return false.
-> 
-> (not sure if I am happy about this, this is horribly confusing and
-> complicated)
+Author of GPC-Slots2 threatens to sue "John Doe" who violated GPL 
+recission.
+(And who also added a "Code of Conduct", which Author of GPC-Slots2 is 
+opposed to on principal,
+and who decided to impersonate Author aswell, registering a false 
+address in his nom-de-guerre)
 
-It is confusing as hell! __ClearPageMovable is a misnomer and I have to
-admit I have misread the implementation to actually ~PAGE_MAPPING_MOVABLE.
 
-> I am not 100% sure yet, but I guess Vratislav is right. So it was
-> effectively fixed by
-> 
-> b1123ea6d3b3 ("mm: balloon: use general non-lru movable page feature"),
-> which checks for __PageMovable(newpage) instead of
-> __is_movable_balloon_page(newpage).
+http://8ch.net/tech/res/1018729.html#1024398
 
-So this is not just a clean up. Sigh!
 
-> Anybody wanting to fix stable kernels either has to backport something
-> proposed in this patch or b1123ea6d3b3.
+Anonymous  01/27/19 (Sun) 01:46:44 No.1023699
 
-I think we should go with a simple patch for stable so this patch sounds
-like a good thing. *PageMovable thingy needs a much better documentation
-and ideally a cleaner implementation as well. The current state is just
-incomprehensible. 
+>> 1023661
 
-David, could you reformulate the changelog accordingly please? My ack
-still holds.
--- 
-Michal Hocko
-SUSE Labs
+> You can't revoke, though :^)
+
+Yes I can, and have.
+
+It is MY property. NOT YOURS.
+
+I CAN TELL YOU THAT YOUR LICENSE IS REVOKED.
+
+Infact, you, whomever you are: Your license is revoked.
+
+You paid me nothing, there is not contract between you and I.
+
+It is a bare license, without an attached interest.
+
+You're license is revoked, and I will sue you if you modify, use, or 
+distribute the game.
+
+Understand >>1023661
+
+Anonymous  01/28/19 (Mon) 15:29:22 No.1024316
+
+
+
+
+
+
+>> 1023699
+
+oh no no no
+
+https://github.com/MikeeUSA/GPC-Slots-2
+
+
+
+
+
+
+>> 1024316
+
+And now you're violating copyright law, if you're the same "John Doe" 
+etc.
+
+Anonymous  01/28/19 (Mon) 19:56:29 No.1024380
+
+And if I ever find out who you are, I will sue you.
+
+Anonymous  01/28/19 (Mon) 19:57:45 No.1024382
+
+
+
+
+
+
+>> 1024328
+
+compiles better ;^)
+
+Anonymous  01/28/19 (Mon) 20:02:05 No.1024384
+
+
+
+
+
+
+>> 1024380
+
+do it faggot
+
+protip: you can't
+
+Anonymous  01/28/19 (Mon) 20:06:36 No.1024390
+
+
+
+
+
+
+>> 1024379
+
+How am I violating copyright law? The code is licensed under the GPLv2+. 
+I don't think I'm violating any requirements. If I do please tell me and 
+I'll fix it.
+
+Anonymous  01/28/19 (Mon) 20:07:37 No.1024391
+
+
+
+
+
+>> 1024316
+
+Probably same 8channer who made the fake account on linux game data 
+base. I guess I could try to get discovery from them...
+
+
+
+
+
+>> 1024384
+
+Yes I can. The code is MY property, NOT yours, and I have rescinded 
+permission to modify, make derivative works, and redistribute it FROM 
+you (assuming you are the same John Doe). I can sue you for copyright.
+
+IF... I can find out who you are (well I could sue "John Doe" and try to 
+find out in discovery)
+
+>> 1024382
+
+You're still a moron. That is also a spot where a switch statement would 
+be pointless. You could count the "string length", but that would take 
+more computational time since PERL would have to convert it to a string, 
+then count, rather than just comparing an int.
+
+Anonymous  01/28/19 (Mon) 20:09:01 No.1024395
+
+
+
+
+
+
+>> 1024390
+
+Your license was rescinded by author.
+
+You did not author anything, so you cannot hold him to the "terms".
+
+In the USA he can and has rescinded permission from you.
+
+Anonymous  01/28/19 (Mon) 20:09:55 No.1024396
+
+
+
+
+
+
+>> 1024390
+
+*(You did not  pay author anything, so you cannot hold him to the 
+"terms".)
+
+(There is no contract between you and him)
+
+Anonymous  01/28/19 (Mon) 20:11:37 No.1024398
+
+
+
+
+
+
+>> 1024390
+
+1) I rescind your permission to modify, make derivative works, 
+distribute the program. The GPL license you "have" been granted from me, 
+is revoked.
+
+2) you are impersonating me.
