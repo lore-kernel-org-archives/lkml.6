@@ -4,99 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9FBC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 02:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 966DAC282CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 02:10:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 173812084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 02:09:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 629A420856
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 02:10:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="bCiJQ+bW"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="CVlusiE6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbfA1CJz (ORCPT
+        id S1726744AbfA1CJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 21:09:55 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:35540 "EHLO
+        Sun, 27 Jan 2019 21:09:58 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:35666 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfA1CJz (ORCPT
+        with ESMTP id S1726630AbfA1CJ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 21:09:55 -0500
+        Sun, 27 Jan 2019 21:09:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1548641391; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1548641394; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:references;
-        bh=dP4bfONEBe24sSvghBGzictW5EcUL1UipMDgMUEqHUo=;
-        b=bCiJQ+bWnsyX7jms2TAg7CrOUcoSvtPB6R87Q7nde+v68B7676oab776rsroTQ+eDfRxml
-        MFfCbrYlFbg11FuGj2z1BuXkuTb0qsMmJw12ES9LLszFXrfDmflaMqXxEMcF7593PmvV/T
-        dgNZ88M1KDYKnt/7kPvYmkAkLuHV4pI=
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=7+kwgUX7wf/tpEbY0Uzxr09I/Lj4s4J6Y3D3Z9/ZwKE=;
+        b=CVlusiE6ExyjyKozMRQCT0mPvrlMGN2FxjgNb510BDqH29Xsnyu92yhth04yt3eTcB2etT
+        I3P99YQUsE5ezL+B6OwVgWCgk84JZk0QaHpzaKeFkAq3YckKjUoexsmC4Mo5rQ5N7f/Vff
+        +a1CbCF6zrVEhgj8k4F1MUFhXJr9cI4=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     Maarten ter Huurne <maarten@treewalker.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Paul Cercueil <paul@crapouillou.net>, stable@vger.kernel.org
-Subject: [PATCH 1/2] clk: ingenic: Fix round_rate misbehaving with non-integer dividers
-Date:   Sun, 27 Jan 2019 23:09:20 -0300
-Message-Id: <20190128020921.16309-1-paul@crapouillou.net>
+Subject: [PATCH 2/2] clk: ingenic: Fix doc of ingenic_cgu_div_info
+Date:   Sun, 27 Jan 2019 23:09:21 -0300
+Message-Id: <20190128020921.16309-2-paul@crapouillou.net>
+In-Reply-To: <20190128020921.16309-1-paul@crapouillou.net>
+References: <20190128020921.16309-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Take a parent rate of 180 MHz, and a requested rate of 4.285715 MHz.
-This results in a theorical divider of 41.999993 which is then rounded
-up to 42. The .round_rate function would then return (180 MHz / 42) as
-the clock, rounded down, so 4.285714 MHz.
-
-Calling clk_set_rate on 4.285714 MHz would round the rate again, and
-give a theorical divider of 42,0000028, now rounded up to 43, and the
-rate returned would be (180 MHz / 43) which is 4.186046 MHz, aka. not
-what we requested.
-
-Fix this by rounding up the divisions.
+The 'div' field does not represent a number of bits used to divide
+(understand: right-shift) the divider, but a number itself used to
+divide the divider.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Maarten ter Huurne <maarten@treewalker.org>
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
 Cc: <stable@vger.kernel.org>
 ---
- drivers/clk/ingenic/cgu.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/ingenic/cgu.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index 5ef7d9ba2195..b40160eb3372 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -426,16 +426,16 @@ ingenic_clk_round_rate(struct clk_hw *hw, unsigned long req_rate,
- 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
- 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
- 	const struct ingenic_cgu_clk_info *clk_info;
--	long rate = *parent_rate;
-+	unsigned int div = 1;
- 
- 	clk_info = &cgu->clock_info[ingenic_clk->idx];
- 
- 	if (clk_info->type & CGU_CLK_DIV)
--		rate /= ingenic_clk_calc_div(clk_info, *parent_rate, req_rate);
-+		div = ingenic_clk_calc_div(clk_info, *parent_rate, req_rate);
- 	else if (clk_info->type & CGU_CLK_FIXDIV)
--		rate /= clk_info->fixdiv.div;
-+		div = clk_info->fixdiv.div;
- 
--	return rate;
-+	return DIV_ROUND_UP(*parent_rate, div);
- }
- 
- static int
-@@ -455,7 +455,7 @@ ingenic_clk_set_rate(struct clk_hw *hw, unsigned long req_rate,
- 
- 	if (clk_info->type & CGU_CLK_DIV) {
- 		div = ingenic_clk_calc_div(clk_info, parent_rate, req_rate);
--		rate = parent_rate / div;
-+		rate = DIV_ROUND_UP(parent_rate, div);
- 
- 		if (rate != req_rate)
- 			return -EINVAL;
+diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+index 502bcbb61b04..e12716d8ce3c 100644
+--- a/drivers/clk/ingenic/cgu.h
++++ b/drivers/clk/ingenic/cgu.h
+@@ -80,7 +80,7 @@ struct ingenic_cgu_mux_info {
+  * @reg: offset of the divider control register within the CGU
+  * @shift: number of bits to left shift the divide value by (ie. the index of
+  *         the lowest bit of the divide value within its control register)
+- * @div: number of bits to divide the divider value by (i.e. if the
++ * @div: number to divide the divider value by (i.e. if the
+  *	 effective divider value is the value written to the register
+  *	 multiplied by some constant)
+  * @bits: the size of the divide value in bits
 -- 
 2.20.1.495.gaa96b0ce6b
 
