@@ -2,142 +2,93 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5E0C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC59C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26A242087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:41:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD0C520989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:43:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="LL/nI9BA"
+	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="oSzgRQq0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfA1Old (ORCPT
+        id S1726845AbfA1OnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:41:33 -0500
-Received: from mout02.posteo.de ([185.67.36.66]:51841 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726266AbfA1Olc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:41:32 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id 6D6BB2400FF
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 15:41:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1548686489; bh=78zSCAFqEXwMnvzKrGeKAP95cmc72vwf2d7Yy5hAJDg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LL/nI9BAFu0W+CakexYe5nqPEM99XYnrcOMihXm2BrYlKz6rLGKCfVm14oczgRjPK
-         3kelN6OLAi/Jxr1O6IQMA5JFApTHSSDXI6cxZX3JhJqgyVq9B6Nt3BWhnyuj7q/SHu
-         s6por0RLnsSxVL33ivRkB+m94Bu+1xnJd9pBdv3OCqXpnk5Pki9iB/fLU/JFk1Ns2+
-         jiCp5gQJsF3ucb46WIgCdyra2U5CBgEdraKLVqoWpjmH0ubLLA0mP06HiOo6XFua9b
-         DJ22vImXreJMmV97fQ4ImvZy+9fAQd1tYTUVEmsAA/2Fz98JmZm4l8W+IJc+Cmm68T
-         Drd8vDkwhU3kg==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 43pC4R2Hpyz9rxB;
-        Mon, 28 Jan 2019 15:41:27 +0100 (CET)
-From:   Martin Kepplinger <martink@posteo.de>
-To:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        robin@protonic.nl
-Cc:     ulf.hansson@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH v4] mmc: mxs-mmc: Introduce regulator support
-Date:   Mon, 28 Jan 2019 15:41:19 +0100
-Message-Id: <20190128144119.10092-1-martink@posteo.de>
-X-Mailer: git-send-email 2.20.1
+        Mon, 28 Jan 2019 09:43:22 -0500
+Received: from sender-pp-092.zoho.com ([135.84.80.237]:25483 "EHLO
+        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726266AbfA1OnV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 09:43:21 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1548686584; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=cMczlve8Bex5B+yLjN5e9xf060MfmuJ9JY4lX339+QgrN4F2DIiXntmUPiRV1sfQIQNUhTRYbhmc9YvOc4JlcuTjCFdclujDrbU8lS+5T172MiJ4yHAgY67Y0t47xiLwACkVaZe2Hh0Up2QnmhKYuKgJupR2Or1r3SUXCGy/fqI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1548686584; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=ZgZtxHJ6LEtr0BkDiqHgRQZH6s3FtIHS4V4O7wcBBKA=; 
+        b=bvd6OJKvf/9gyZ9Y5YJmDDfPaua8Vavp0UvQq1nISVKcAQ811k8gBsWN862GzUwGVhgyaBwFvUFwD2NKMBkjXy1VkdEXIKdTCSw6df5n1MxB1APx6RS0ackGnO+ZtjKZdEbQzjJJirq9HfPU0yAJviRdYCENp2bpEnf3paXp4K8=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
+  b=imWEDmqwJsLlqXPMW6+mB84T4KjrCkrbf3p5J4Q8MjMT59DgNx2k1+3/ro7YvxOB7nUOOG65nSfh
+    U6a2Hg0uWreq0VaoWEhThGk9ya0FaTeEKTO4+RtxbuHbMHgnmP5Q  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548686584;
+        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        l=560; bh=ZgZtxHJ6LEtr0BkDiqHgRQZH6s3FtIHS4V4O7wcBBKA=;
+        b=oSzgRQq0UgdnAFXi1/WdfX1dOR0Fq/3TSAET9ljM6gUOIZBFvwLG5+JMsOEl6yuR
+        KIOeAFY9pzhKWhg8Ie8tgfJEfQYNAOS8wpDC5gCiQR4Ecxi9B2qXbJbpEoqef0KiLc9
+        4OSArhBSrKtdv33aG65NHqi+8wBOVT4qUydFEAdI=
+Received: from [192.168.88.133] (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
+        with SMTPS id 1548686582123671.5794415177415; Mon, 28 Jan 2019 06:43:02 -0800 (PST)
+Subject: Re: [PATCH RESEND 1/4] Pinctrl: Ingenic: Fix bugs caused by
+ differences between JZ4770 and JZ4780.
+To:     Linus Walleij <linus.walleij@linaro.org>
+References: <1548410393-6981-1-git-send-email-zhouyanjie@zoho.com>
+ <1548410393-6981-2-git-send-email-zhouyanjie@zoho.com>
+ <CACRpkdYe2NsBFC-KBQXhmsSJ-S7wN9cZZuEPKHSfQe4HZUXTPg@mail.gmail.com>
+Cc:     linux-mips@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Paul Cercueil <paul@crapouillou.net>, syq@debian.org,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>, 772753199@qq.com
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+Message-ID: <5C4F14E9.7030203@zoho.com>
+Date:   Mon, 28 Jan 2019 22:42:49 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdYe2NsBFC-KBQXhmsSJ-S7wN9cZZuEPKHSfQe4HZUXTPg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Thank you for your reply. I am working on v2, and I have removed the=20
+fourth patch in v2,
+so there will be no warnings at compile time. But this will cause some=20
+warning messages
+when checkpatch, I am confused whether I can ignore these warnings.
 
-This adds support for explicitly switching the mmc's power on and off
-which is needed for example for WL1837 WL1271 wifi controllers on imx28.
-
-While the wifi's vmmc-supply regulator can be configured in devicetree,
-"ip link set wlan0 down" doesn't turn off the VMMC regulator which leads
-to hangs when loading firmware, for example.
-
-Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
----
-
-
-revision history                                                               
-----------------                                                               
-v4: re-added forgotten regulator_enable() during probe
-v3: improve API usage as suggested by Ulf
-v2: tested patch with changes suggested by Robin                               
-v1: question, why https://patchwork.kernel.org/patch/4365751/ didn't get in
+On 2019=E5=B9=B401=E6=9C=8828=E6=97=A5 21:59, Linus Walleij wrote:
+> This series looks good to me, but it would be nice if you could
+> fix the warning pointed out by Paul, and I would also
+> like some ACK from Paul C on the patches so I know this is
+> fine with him.
+>
+> Yours,
+> Linus Walleij
 
 
- drivers/mmc/host/mxs-mmc.c | 34 +++++++++++++++++++++++++---------
- 1 file changed, 25 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
-index add1e70195ea..23d275269d61 100644
---- a/drivers/mmc/host/mxs-mmc.c
-+++ b/drivers/mmc/host/mxs-mmc.c
-@@ -517,6 +517,22 @@ static void mxs_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	else
- 		host->bus_width = 0;
- 
-+	switch (ios->power_mode) {
-+	case MMC_POWER_OFF:
-+		if (!IS_ERR(host->mmc->supply.vmmc))
-+			mmc_regulator_set_ocr(host->mmc,
-+					      host->mmc->supply.vmmc, 0);
-+		break;
-+	case MMC_POWER_UP:
-+		if (!IS_ERR(host->mmc->supply.vmmc))
-+			mmc_regulator_set_ocr(host->mmc,
-+					      host->mmc->supply.vmmc,
-+					      ios->vdd);
-+		break;
-+	default:
-+		break;
-+	}
-+
- 	if (ios->clock)
- 		mxs_ssp_set_clk_rate(&host->ssp, ios->clock);
- }
-@@ -588,7 +604,6 @@ static int mxs_mmc_probe(struct platform_device *pdev)
- 	struct mmc_host *mmc;
- 	struct resource *iores;
- 	int ret = 0, irq_err;
--	struct regulator *reg_vmmc;
- 	struct mxs_ssp *ssp;
- 
- 	irq_err = platform_get_irq(pdev, 0);
-@@ -614,14 +629,15 @@ static int mxs_mmc_probe(struct platform_device *pdev)
- 	host->mmc = mmc;
- 	host->sdio_irq_en = 0;
- 
--	reg_vmmc = devm_regulator_get(&pdev->dev, "vmmc");
--	if (!IS_ERR(reg_vmmc)) {
--		ret = regulator_enable(reg_vmmc);
--		if (ret) {
--			dev_err(&pdev->dev,
--				"Failed to enable vmmc regulator: %d\n", ret);
--			goto out_mmc_free;
--		}
-+	ret = mmc_regulator_get_supply(mmc);
-+	if (ret == -EPROBE_DEFER)
-+		goto out_mmc_free;
-+
-+	ret = regulator_enable(mmc->supply.vmmc);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"Failed to enable vmmc regulator: %d\n", ret);
-+		goto out_mmc_free;
- 	}
- 
- 	ssp->clk = devm_clk_get(&pdev->dev, NULL);
--- 
-2.20.1
 
