@@ -2,120 +2,119 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54324C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2231C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C9572177B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 824B82147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548690369;
+	bh=RxptdGV+4lXa+UrJ0V0gXU2CCI3yBbOLulbz1uCUKWk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=inqY/aPsGeuEl6FdWl7DsKn4wu84OpNIasLHbktmOjDwhrHDJzx8knxQeuYxnOn5v
+	 Xoa4CKYJNFBI+uO9bMCoPXcf8LgkrsDRB8zlAVEcml7fcu1xckrxcyWtsbmjzHfVDC
+	 dKj336WH3d7vn/rlHnn1kCvUC6GMsOpWPBn9kGXE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfA1PqE convert rfc822-to-8bit (ORCPT
+        id S1727946AbfA1PqI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:46:04 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54822 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727911AbfA1PqB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:46:01 -0500
-Received: from mail-pf1-f199.google.com ([209.85.210.199])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1go96l-0001vE-Aj
-        for linux-kernel@vger.kernel.org; Mon, 28 Jan 2019 15:45:59 +0000
-Received: by mail-pf1-f199.google.com with SMTP id a23so14375063pfo.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 07:45:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nq6JTSJH6G0iYSpP6totTHMc42vImfy4GfVb8SES63U=;
-        b=EyiuMNpW/zjpDkqnjcmGMMJj1c/JFJVaZqPHEIuhwaTarlfEUvpUFQPXEbq8vkrsVi
-         MgIpvxeEBmpBF6wvPiGEegEIX97rCrx1hn4KoW011hjXgAlAU26m+5U7aZ1opCRD+d9Y
-         AaOLciY4D7cL2MJnQ/IgTg9rl5uwXRUjSBJrzRCC325KNaBIRSxBcIjZ+TdjoSh0Ix6K
-         n+oUA8LnpNrok7rzwtYHRUp/CgGqtQdi/uEmvkHGK9EDUHa37s0hr0Xq7/l66rz/eMNn
-         mjXLPmGwugMqz+qRKTs4MFi2XbuO0GcvMxAjCDJPrDtUzvekm0If5Htie4eDc8htTNNA
-         aK4g==
-X-Gm-Message-State: AJcUukdd8cBvHyXbQ5vzFVJGSqm12LfQ/L17En1y2RqH/iitU8/s+mwj
-        ikw4dBQgYdetRkum7z8E8ofW0ZlAkjYZsnKmV67AifTx1RL8NZ4kc+X2I3g4jatRXuB25YuLckI
-        KJgd4qcWRZQkKXiRlgUNEIi4FjKJolfJCwPGABn9H+A==
-X-Received: by 2002:a17:902:b707:: with SMTP id d7mr21277236pls.29.1548690358009;
-        Mon, 28 Jan 2019 07:45:58 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN5djhrjhS6e/Z9ND7S+hfMKONeH/4W5zEJzENe+/VvshX4sO3pRu2nJf8vPJilNtYlfE8hRjA==
-X-Received: by 2002:a17:902:b707:: with SMTP id d7mr21277208pls.29.1548690357520;
-        Mon, 28 Jan 2019 07:45:57 -0800 (PST)
-Received: from [192.168.1.215] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id d6sm47420772pgc.89.2019.01.28.07.45.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 07:45:56 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: ipu3-imgu 0000:00:05.0: required queues are disabled
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <ac9cd5cd-82af-48c7-5b12-adacb540480c@ideasonboard.com>
-Date:   Mon, 28 Jan 2019 23:45:52 +0800
-Cc:     sakari.ailus@linux.intel.com, bingbu.cao@intel.com,
-        yong.zhi@intel.com, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        LibCamera Devel <libcamera-devel@lists.libcamera.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <76CB59A0-D8F2-4C01-A600-60138ED5E785@canonical.com>
-References: <7F8ED1B6-5070-437A-A745-AE017D8CE0DF@canonical.com>
- <ac9cd5cd-82af-48c7-5b12-adacb540480c@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Mon, 28 Jan 2019 10:46:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727105AbfA1PqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:46:02 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B01CF2177E;
+        Mon, 28 Jan 2019 15:45:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548690361;
+        bh=RxptdGV+4lXa+UrJ0V0gXU2CCI3yBbOLulbz1uCUKWk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fQQ/s8UZLB7i0a6drN72Y+p/e/ayMVIKFAs3rxbUs0Xk5QzaLs0XV0KqO/meUuT0k
+         VNqQ1ti2xb59IlVLLKHRItmcveXl8lL3EH/McLEWjdEvfLzio6by6VB/aZkNqwpPXq
+         4xmkbav9xDumtaK/mMTyz2qsKycUy7J9tZIEEqrQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 064/304] media: video-i2c: avoid accessing released memory area when removing driver
+Date:   Mon, 28 Jan 2019 10:39:41 -0500
+Message-Id: <20190128154341.47195-64-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+From: Akinobu Mita <akinobu.mita@gmail.com>
 
-> On Jan 28, 2019, at 4:48 PM, Kieran Bingham <kieran.bingham@ideasonboard.com> wrote:
-> 
-> Hi Kai-Heng,
-> 
-> On 27/01/2019 05:56, Kai-Heng Feng wrote:
->> Hi,
->> 
->> We have a bug report [1] that the ipu3 doesn’t work.
->> Does ipu3 need special userspace to work?
-> 
-> Yes, it will need further userspace support to configure the pipeline,
-> and to provide 3A algorithms for white balance, focus, and exposure
-> times to the sensor.
-> 
-> We are developing a stack called libcamera [0] to support this, but it's
-> still in active development and not yet ready for use. Fortunately
-> however, IPU3 is one of our primary initial targets.
+[ Upstream commit c764da98a600a4b068d25c77164f092f159cecec ]
 
-Thanks for the info.
+The video device release() callback for video-i2c driver frees the whole
+struct video_i2c_data.  If there is no user left for the video device
+when video_unregister_device() is called, the release callback is executed.
 
-> 
-> [0] https://www.libcamera.org/
-> 
->> [1] https://bugs.launchpad.net/bugs/1812114
-> 
-> I have reported similar information to the launchpad bug entry.
-> 
-> It might help if we can get hold of a Dell 7275 sometime although I
-> think Mauro at least has one ?
-> 
-> If this is a priority for Canonical, please contact us directly.
+However, in video_i2c_remove() some fields (v4l2_dev, lock, and queue_lock)
+in struct video_i2c_data are still accessed after video_unregister_device()
+is called.
 
-Not really, just raise issues from Launchpad to appropriate mailing list.
+This fixes the use after free by moving the code from video_i2c_remove()
+to the release() callback.
 
-Kai-Heng
+Fixes: 5cebaac60974 ("media: video-i2c: add video-i2c driver")
 
-> 
->> Kai-Heng
-> --
-> Regards
-> 
-> Kieran
+Reviewed-by: Matt Ranostay <matt.ranostay@konsulko.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/i2c/video-i2c.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/i2c/video-i2c.c b/drivers/media/i2c/video-i2c.c
+index 4d49af86c15e..ec0758dca2fc 100644
+--- a/drivers/media/i2c/video-i2c.c
++++ b/drivers/media/i2c/video-i2c.c
+@@ -510,7 +510,12 @@ static const struct v4l2_ioctl_ops video_i2c_ioctl_ops = {
+ 
+ static void video_i2c_release(struct video_device *vdev)
+ {
+-	kfree(video_get_drvdata(vdev));
++	struct video_i2c_data *data = video_get_drvdata(vdev);
++
++	v4l2_device_unregister(&data->v4l2_dev);
++	mutex_destroy(&data->lock);
++	mutex_destroy(&data->queue_lock);
++	kfree(data);
+ }
+ 
+ static int video_i2c_probe(struct i2c_client *client,
+@@ -608,10 +613,6 @@ static int video_i2c_remove(struct i2c_client *client)
+ 	struct video_i2c_data *data = i2c_get_clientdata(client);
+ 
+ 	video_unregister_device(&data->vdev);
+-	v4l2_device_unregister(&data->v4l2_dev);
+-
+-	mutex_destroy(&data->lock);
+-	mutex_destroy(&data->queue_lock);
+ 
+ 	return 0;
+ }
+-- 
+2.19.1
 
