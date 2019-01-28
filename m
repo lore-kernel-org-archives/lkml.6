@@ -2,143 +2,157 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6698AC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD6FC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39ED22175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 590242177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:07:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="XJCcbq/a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728111AbfA1WDj (ORCPT
+        id S1727128AbfA1WHd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 17:03:39 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52546 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbfA1WDj (ORCPT
+        Mon, 28 Jan 2019 17:07:33 -0500
+Received: from mail.efficios.com ([167.114.142.138]:59266 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726766AbfA1WHc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 17:03:39 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5F5F2A17;
-        Mon, 28 Jan 2019 22:03:37 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 14:03:36 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] psi: fix aggregation idle shut-off
-Message-Id: <20190128140336.25854cb97c25924f4bfc26c7@linux-foundation.org>
-In-Reply-To: <20190116193501.1910-1-hannes@cmpxchg.org>
-References: <20190116193501.1910-1-hannes@cmpxchg.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 28 Jan 2019 17:07:32 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 02336B5129;
+        Mon, 28 Jan 2019 17:07:31 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id mGuANfzHZQGj; Mon, 28 Jan 2019 17:07:30 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 14538B5125;
+        Mon, 28 Jan 2019 17:07:30 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 14538B5125
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1548713250;
+        bh=4i9gHC6mzIhOhNC9SpQ9y0NhUZbNoVEBdTrxi8zOQWI=;
+        h=From:To:Date:Message-Id;
+        b=XJCcbq/a6/KwdSZsIv/ZU0wrvT1I+JkzMwDZdoeZg8168inhdScbwDdD8Gnz8jc57
+         JsUBTkuS7vYnXPRCz1L8VzCbmMyOne7/jwgCqu8I0P/s+jLorNwK9fbNCc1OY4X1tD
+         hin36zYjdIt3LythFCexXzNjkkbqtgsBPbD2Jch4FizjiFRvJZUZoIcBFyZYALxXpA
+         Q0OMLeSXXTN0qaN3b0c2bPJcxztvNfRrI+1FU2HkrlOjer5DxTv4RAMgLZ3esxDkuR
+         BD3kHKKWv8s0PBy7dMPuqor0XYqHnJBx7vImW4Kq3zyjd+bv/KeAFzqP7I5yow5Puq
+         BXjRyJ8srVbow==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id uixpMHszirlh; Mon, 28 Jan 2019 17:07:30 -0500 (EST)
+Received: from localhost.localdomain (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id A064AB5120;
+        Mon, 28 Jan 2019 17:07:29 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Jann Horn <jannh@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Avi Kivity <avi@scylladb.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, David Sehr <sehr@google.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Maged Michael <maged.michael@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Will Deacon <will.deacon@arm.com>, stable@vger.kernel.org
+Subject: [PATCH] Fix: membarrier: racy access to p->mm in membarrier_global_expedited()
+Date:   Mon, 28 Jan 2019 17:07:07 -0500
+Message-Id: <20190128220707.30774-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Jan 2019 14:35:01 -0500 Johannes Weiner <hannes@cmpxchg.org> wrote:
+Jann Horn identified a racy access to p->mm in the global expedited
+command of the membarrier system call.
 
-> psi has provisions to shut off the periodic aggregation worker when
-> there is a period of no task activity - and thus no data that needs
-> aggregating. However, while developing psi monitoring, Suren noticed
-> that the aggregation clock currently won't stay shut off for good.
-> 
-> Debugging this revealed a flaw in the idle design: an aggregation run
-> will see no task activity and decide to go to sleep; shortly
-> thereafter, the kworker thread that executed the aggregation will go
-> idle and cause a scheduling change, during which the psi callback will
-> kick the !pending worker again. This will ping-pong forever, and is
-> equivalent to having no shut-off logic at all (but with more code!)
-> 
-> Fix this by exempting aggregation workers from psi's clock waking
-> logic when the state change is them going to sleep. To do this, tag
-> workers with the last work function they executed, and if in psi we
-> see a worker going to sleep after aggregating psi data, we will not
-> reschedule the aggregation work item.
-> 
-> What if the worker is also executing other items before or after?
-> 
-> Any psi state times that were incurred by work items preceding the
-> aggregation work will have been collected from the per-cpu buckets
-> during the aggregation itself. If there are work items following the
-> aggregation work, the worker's last_func tag will be overwritten and
-> the aggregator will be kept alive to process this genuine new activity.
-> 
-> If the aggregation work is the last thing the worker does, and we
-> decide to go idle, the brief period of non-idle time incurred between
-> the aggregation run and the kworker's dequeue will be stranded in the
-> per-cpu buckets until the clock is woken by later activity. But that
-> should not be a problem. The buckets can hold 4s worth of time, and
-> future activity will wake the clock with a 2s delay, giving us 2s
-> worth of data we can leave behind when disabling aggregation. If it
-> takes a worker more than two seconds to go idle after it finishes its
-> last work item, we likely have bigger problems in the system, and
-> won't notice one sample that was averaged with a bogus per-CPU weight.
+The suggested fix is to hold the task_lock() around the accesses to
+p->mm and to the mm_struct membarrier_state field to guarantee the
+existence of the mm_struct.
 
-Did we ever hear back from Suren about the testing?
+Link: https://lore.kernel.org/lkml/CAG48ez2G8ctF8dHS42TF37pThfr3y0RNOOYTmxvACm4u8Yu3cw@mail.gmail.com
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Tested-by: Jann Horn <jannh@google.com>
+CC: Jann Horn <jannh@google.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Peter Zijlstra (Intel) <peterz@infradead.org>
+CC: Ingo Molnar <mingo@kernel.org>
+CC: Andrea Parri <parri.andrea@gmail.com>
+CC: Andy Lutomirski <luto@kernel.org>
+CC: Avi Kivity <avi@scylladb.com>
+CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+CC: Boqun Feng <boqun.feng@gmail.com>
+CC: Dave Watson <davejwatson@fb.com>
+CC: David Sehr <sehr@google.com>
+CC: H. Peter Anvin <hpa@zytor.com>
+CC: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Maged Michael <maged.michael@gmail.com>
+CC: Michael Ellerman <mpe@ellerman.id.au>
+CC: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+CC: Paul Mackerras <paulus@samba.org>
+CC: Russell King <linux@armlinux.org.uk>
+CC: Will Deacon <will.deacon@arm.com>
+CC: stable@vger.kernel.org # v4.16+
+CC: linux-api@vger.kernel.org
+---
+ kernel/sched/membarrier.c | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
-Some words here about the new wq_worker_last_func() would be
-appropriate.
-
-It's an ugly-looking thing :(  Tejun, did you check this change?
-
-
-> --- a/kernel/sched/psi.c
-> +++ b/kernel/sched/psi.c
-> @@ -124,6 +124,7 @@
->   * sampling of the aggregate task states would be.
->   */
->  
-> +#include "../workqueue_internal.h"
-
-"Only to be included by workqueue and core kernel subsystems"
-
-I'm not sure that psi qualifies.  Perhaps wq_worker_last_func() should
-be declared in include/linux/workqueue.h.
-
-And perhaps implemented there as well.  It's similar to
-current_wq_worker(), which is inlined and wq_worker_last_func() is
-small enough to justify inlining.
-
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -909,6 +909,26 @@ struct task_struct *wq_worker_sleeping(struct task_struct *task)
->  	return to_wakeup ? to_wakeup->task : NULL;
->  }
->  
-> +/**
-> + * wq_worker_last_func - retrieve worker's last work function
-> + *
-> + * Determine the last function a worker executed. This is called from
-> + * the scheduler to get a worker's last known identity.
-> + *
-> + * CONTEXT:
-> + * spin_lock_irq(rq->lock)
-> + *
-> + * Return:
-> + * The last work function %current executed as a worker, NULL if it
-> + * hasn't executed any work yet.
-> + */
-> +work_func_t wq_worker_last_func(struct task_struct *task)
-> +{
-> +	struct worker *worker = kthread_data(task);
-> +
-> +	return worker->last_func;
-> +}
-
-The semantics are troublesome.  What guarantees that worker->last_func
-won't change under the caller's feet?  The caller should hold some lock
-(presumably worker->pool->lock) in order to stabilize the
-wq_worker_last_func() return value?
-
-Also, the comment isn't really true - this is called from PSI, which is
-hardly "the scheduler"?
-
+diff --git a/kernel/sched/membarrier.c b/kernel/sched/membarrier.c
+index 76e0eaf4654e..305fdcc4c5f7 100644
+--- a/kernel/sched/membarrier.c
++++ b/kernel/sched/membarrier.c
+@@ -81,12 +81,27 @@ static int membarrier_global_expedited(void)
+ 
+ 		rcu_read_lock();
+ 		p = task_rcu_dereference(&cpu_rq(cpu)->curr);
+-		if (p && p->mm && (atomic_read(&p->mm->membarrier_state) &
+-				   MEMBARRIER_STATE_GLOBAL_EXPEDITED)) {
+-			if (!fallback)
+-				__cpumask_set_cpu(cpu, tmpmask);
+-			else
+-				smp_call_function_single(cpu, ipi_mb, NULL, 1);
++		/*
++		 * Skip this CPU if the runqueue's current task is NULL or if
++		 * it is a kernel thread.
++		 */
++		if (p && READ_ONCE(p->mm)) {
++			bool mm_match;
++
++			/*
++			 * Read p->mm and access membarrier_state while holding
++			 * the task lock to ensure existence of mm.
++			 */
++			task_lock(p);
++			mm_match = p->mm && (atomic_read(&p->mm->membarrier_state) &
++					     MEMBARRIER_STATE_GLOBAL_EXPEDITED);
++			task_unlock(p);
++			if (mm_match) {
++				if (!fallback)
++					__cpumask_set_cpu(cpu, tmpmask);
++				else
++					smp_call_function_single(cpu, ipi_mb, NULL, 1);
++			}
+ 		}
+ 		rcu_read_unlock();
+ 	}
+-- 
+2.17.1
 
