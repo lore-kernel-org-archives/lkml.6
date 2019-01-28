@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E23C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1216C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA89321738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:04:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C35FC2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691495;
-	bh=QC6pCkMHdSBJyWG+XHJCYH2xeRVFQKj8Ivy+sqeDsq4=;
+	s=default; t=1548691498;
+	bh=qVUGKLn1oZlGkSYc7fAkk1MSkxd/5KT9j5a6K6ebgIo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U8/dRXc9SQOSVPYXGYO/H0HQXO8B2lzf737o0hgSItNdvdalF26hhY7dLq8ZRus2i
-	 ayS1AOakL3PdLCKMHZp7OSYY/Wh8Gb6tkgrf6dZAp6myoy9NLYeut0T/4mIWcLCQiK
-	 D7bqQbd7svpKmS6VLrkZ8kLCCl7szr1ahsIoWoB4=
+	b=U6P4YdeCklbZp5kOgagSPvsIINOatJfO5ZmkF46ELSW0mlONPQfJaX/9DEDkWLG4C
+	 JuXh1U4cocT48rbtMzQEsjoiq7VXZZrufhVI+I8ypGKEb/wRnplw3+Ec2ZreeDMxOu
+	 HVHYfYp1VuNzXFlJhHTHBTWQ4tymgw5u2CPpVx2U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731697AbfA1QEx (ORCPT
+        id S1731712AbfA1QE5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:04:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50754 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:04:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731223AbfA1QEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:04:50 -0500
+        id S1730579AbfA1QEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:04:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E91A920989;
-        Mon, 28 Jan 2019 16:04:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5AD32171F;
+        Mon, 28 Jan 2019 16:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691489;
-        bh=QC6pCkMHdSBJyWG+XHJCYH2xeRVFQKj8Ivy+sqeDsq4=;
+        s=default; t=1548691493;
+        bh=qVUGKLn1oZlGkSYc7fAkk1MSkxd/5KT9j5a6K6ebgIo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bDu7Tak8kM7XT37F4XveQHxalwrbn15C5xL1k+olZ6yTW/2jwi+BdanI+NVC7a/cr
-         +F9aBRWRt+sksbhmN/4OtsM6Q88Dc9yK9ts3KmGqhSyv8PmjTuZC9s+eaRqjkEXE/Z
-         RBYMVjbtTOit6DrA1Jba4AN6ldIrZ7D06F+SKkb0=
+        b=MiSVaW08uXhJ1XSYAuhbj2Ey7dzLEAL1tUdXA/7mr2hakAiPxLf4tQHkrpksqPLke
+         hUXJXkd60L602KeDkgDTo8xz8Q6/ktAexsYXHlK/eQktgtsYEjxLksZFFHzvR0/J9i
+         33EJBnqIqXFjZkJ0JdeiqPEfrHE2CQYa0HOi3y6c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Rajnoha <prajnoha@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 112/258] kobject: return error code if writing /sys/.../uevent fails
-Date:   Mon, 28 Jan 2019 10:56:58 -0500
-Message-Id: <20190128155924.51521-112-sashal@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 114/258] usb: dwc3: trace: add missing break statement to make compiler happy
+Date:   Mon, 28 Jan 2019 10:57:00 -0500
+Message-Id: <20190128155924.51521-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,95 +59,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Rajnoha <prajnoha@redhat.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit df44b479654f62b478c18ee4d8bc4e9f897a9844 ]
+[ Upstream commit 54d48183d21e03f780053d7129312049cb5dd591 ]
 
-Propagate error code back to userspace if writing the /sys/.../uevent
-file fails. Before, the write operation always returned with success,
-even if we failed to recognize the input string or if we failed to
-generate the uevent itself.
+The missed break statement in the outer switch makes the code fall through
+always and thus always same value will be printed.
 
-With the error codes properly propagated back to userspace, we are
-able to react in userspace accordingly by not assuming and awaiting
-a uevent that is not delivered.
+Besides that, compiler warns about missed fall through marker:
 
-Signed-off-by: Peter Rajnoha <prajnoha@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+drivers/usb/dwc3/./trace.h: In function ‘trace_raw_output_dwc3_log_trb’:
+drivers/usb/dwc3/./trace.h:246:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    switch (pcm) {
+    ^~~~~~
+
+Add the missing break statement to work correctly without compilation
+warnings.
+
+Fixes: fa8d965d736b ("usb: dwc3: trace: pretty print high-bandwidth transfers too")
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/bus.c  | 12 ++++++++----
- drivers/base/core.c |  8 +++++++-
- kernel/module.c     |  6 ++++--
- 3 files changed, 19 insertions(+), 7 deletions(-)
+ drivers/usb/dwc3/trace.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 585e2e1c9c8f..e06a57936cc9 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -614,8 +614,10 @@ static void remove_probe_files(struct bus_type *bus)
- static ssize_t uevent_store(struct device_driver *drv, const char *buf,
- 			    size_t count)
- {
--	kobject_synth_uevent(&drv->p->kobj, buf, count);
--	return count;
-+	int rc;
-+
-+	rc = kobject_synth_uevent(&drv->p->kobj, buf, count);
-+	return rc ? rc : count;
- }
- static DRIVER_ATTR_WO(uevent);
- 
-@@ -831,8 +833,10 @@ static void klist_devices_put(struct klist_node *n)
- static ssize_t bus_uevent_store(struct bus_type *bus,
- 				const char *buf, size_t count)
- {
--	kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
--	return count;
-+	int rc;
-+
-+	rc = kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
-+	return rc ? rc : count;
- }
- static BUS_ATTR(uevent, S_IWUSR, NULL, bus_uevent_store);
- 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 04bbcd779e11..92e2c32c2227 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -1067,8 +1067,14 @@ static ssize_t uevent_show(struct device *dev, struct device_attribute *attr,
- static ssize_t uevent_store(struct device *dev, struct device_attribute *attr,
- 			    const char *buf, size_t count)
- {
--	if (kobject_synth_uevent(&dev->kobj, buf, count))
-+	int rc;
-+
-+	rc = kobject_synth_uevent(&dev->kobj, buf, count);
-+
-+	if (rc) {
- 		dev_err(dev, "uevent: failed to send synthetic uevent\n");
-+		return rc;
-+	}
- 
- 	return count;
- }
-diff --git a/kernel/module.c b/kernel/module.c
-index 6746c85511fe..38bf28b5cc20 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1207,8 +1207,10 @@ static ssize_t store_uevent(struct module_attribute *mattr,
- 			    struct module_kobject *mk,
- 			    const char *buffer, size_t count)
- {
--	kobject_synth_uevent(&mk->kobj, buffer, count);
--	return count;
-+	int rc;
-+
-+	rc = kobject_synth_uevent(&mk->kobj, buffer, count);
-+	return rc ? rc : count;
- }
- 
- struct module_attribute module_uevent =
+diff --git a/drivers/usb/dwc3/trace.h b/drivers/usb/dwc3/trace.h
+index f22714cce070..f27c5cbe285c 100644
+--- a/drivers/usb/dwc3/trace.h
++++ b/drivers/usb/dwc3/trace.h
+@@ -251,9 +251,11 @@ DECLARE_EVENT_CLASS(dwc3_log_trb,
+ 				s = "2x ";
+ 				break;
+ 			case 3:
++			default:
+ 				s = "3x ";
+ 				break;
+ 			}
++			break;
+ 		default:
+ 			s = "";
+ 		} s; }),
 -- 
 2.19.1
 
