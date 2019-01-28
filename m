@@ -2,125 +2,192 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8400DC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED12C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5346720881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:54:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548662047;
-	bh=iCvL//YYetpelVpJxCLBTUxzIFukhm4CIFEVSBjgM68=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FgzWUFeczLCuvGoK3hvMIJdvWjz5i/HzA+K4iYBice03R1Vxi0ozpyu+aT8g2Vo0d
-	 gaT5Zx7dxmy//iiKDCW4kbS+3bh64zDtKE0cC8Fmvt14sEu5nUUx29gGZrlV5p7yv9
-	 aBATCh3PXX6W2Za7wzkyT9R6sywy22yoF5XOQWA8=
+	by mail.kernel.org (Postfix) with ESMTP id ACB2620881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:54:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="C1eZRpAC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfA1HyF (ORCPT
+        id S1726914AbfA1Hyu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:54:05 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38990 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfA1HyF (ORCPT
+        Mon, 28 Jan 2019 02:54:50 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15316 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbfA1Hyu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:54:05 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t9-v6so13328726ljh.6;
-        Sun, 27 Jan 2019 23:54:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5d5z7YJ+QIkJKJh8YBd60GvrST4LwX3jt6JysFLbk5s=;
-        b=JKbkBiMaVXeg2FZo8QoDsB+/dTUwUSLUzCwynb0WGNmnM4WilUq8MJRAo0BXT0VIO/
-         yMlOdydpYbwsJC1lnfHlxEAvFN2wD3Pal8jwaYWY108pPk95q/PGIZwhVZGazQ4l4asN
-         FjCxpmdwvrsipQXJvRK4kp1owrj2p0UaXyfoq1grUCw+yiGDpeyUOgZYf14JtQ16GzdA
-         2rvyxCmv9OCknZF3Z/LeVTaVYCEgu8+s8zn8Vo3xtXP0HwpT2Hlyt3cZ+Zho2FLqOesS
-         vKz9b0r/zGkKPVL5LkcA8+N3faWi6jjbRVksbf1FJcOizpY1jqJWskGuQX/j7/Bw8Pp8
-         b6bw==
-X-Gm-Message-State: AHQUAubn/D6S+ObvQ+MuyIRwqaCXdphh0YxoU7aYir+ZbQ7P0eK+47GB
-        vPrOC8m5jS1OQVxUv6W7j9w=
-X-Google-Smtp-Source: ALg8bN73fJOi2eofDlj80GGnYATJ5GUYo8XbxHNaQEAY6LjFGAzeEbqeFkzH7v5WAMWEM8u4A6DQpQ==
-X-Received: by 2002:a2e:6a13:: with SMTP id f19-v6mr10174995ljc.41.1548662042946;
-        Sun, 27 Jan 2019 23:54:02 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id u11sm2801357lfb.85.2019.01.27.23.54.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 23:54:02 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1go1jw-0000PT-8i; Mon, 28 Jan 2019 08:53:56 +0100
-Date:   Mon, 28 Jan 2019 08:53:56 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        letux-kernel@openphoenux.org
-Subject: Re: [PATCH] arm: dts: gta04: add gps support
-Message-ID: <20190128075356.GJ3691@localhost>
-References: <20190125194310.11170-1-andreas@kemnade.info>
+        Mon, 28 Jan 2019 02:54:50 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4eb52d0000>; Sun, 27 Jan 2019 23:54:21 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sun, 27 Jan 2019 23:54:48 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sun, 27 Jan 2019 23:54:48 -0800
+Received: from [10.19.108.140] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
+ 2019 07:54:46 +0000
+Subject: Re: [PATCH 2/6] usb: host: xhci-tegra: Selectively program IPFS
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Mathias Nyman <mathias.nyman@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, <linux-usb@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190125113013.11447-1-thierry.reding@gmail.com>
+ <20190125113013.11447-2-thierry.reding@gmail.com>
+From:   jckuo <jckuo@nvidia.com>
+Message-ID: <b65fa749-1ac1-0889-e889-579d42fc3074@nvidia.com>
+Date:   Mon, 28 Jan 2019 15:54:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125194310.11170-1-andreas@kemnade.info>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190125113013.11447-2-thierry.reding@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548662061; bh=g4DEb9POZJcJ7LvyFccGVYKJtK27t2K/OKqijCpCOcU=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=C1eZRpACjDWWswmepQ8DWHc+3zy9ORuaqhf+6/yCTxkqr/PkDE984fhbXvLIWGlaa
+         eyBO/oQdOTH+zMmmuyR5TSUoocpKzVUNljfrHbu3BtW5KVGzsQjWVJPXarmIiZUItp
+         2Pud64btVPXQ7XT+P08Jy54rkUZMex2vlgI1wMrXpaHRVge2kNYZBAyluAz/N4UDIn
+         /kh4S737kxT3P0dvzzirEFn19d3mNNWOLV8OOP4by0kyl7Y1ifBcEqUoqf6W6kLAbo
+         uUI8FjYaGi0SgtTlm06duOge7UprhvPV/zGj4KPFesXiMQDaCv5oZMlH4Pfr4u8R+1
+         qkd+MgHd9krsA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 08:43:10PM +0100, Andreas Kemnade wrote:
-> The GTA04 has a w2sg0004 or w2sg0084 gps chip. Not detectable
-> which one is mounted so use the compatibility entry for w2sg0004
-> for all which will work for both.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Reviewed-by: JC Kuo <jckuo@nvidia.com>
+
+On 1/25/19 7:30 PM, Thierry Reding wrote:
+> From: JC Kuo <jckuo@nvidia.com>
+>
+> Starting with Tegra186, the XUSB controller no longer has the IPFS
+> wrapper. This commit adds a "has_ipfs" field to struct tegra_xusb_soc
+> that can be used to declare the existence of the IPFS wrapper.
+>
+> For the existing chips (i.e. Tegra124 and Tegra210), the new field is
+> set to true. A future patch adding support for Tegra186 will set it to
+> false.
+>
+> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
-> w2sg0004 bindings (together with the corresponding support is in
-> https://git.kernel.org/pub/scm/linux/kernel/git/johan/gnss gnss-next)
->  arch/arm/boot/dts/omap3-gta04.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-> index e53d32691308..d58c117e429f 100644
-> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
-> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-> @@ -312,6 +312,12 @@
->  		>;
->         };
->  
-> +	gps_pins: pinmux_gps_pins {
-> +		pinctrl-single,pins = <
-> +			OMAP3_CORE1_IOPAD(0x2176, PIN_OUTPUT_PULLDOWN | MUX_MODE4) /* gpio145 */
-> +		>;
-> +	};
-> +
->  	hdq_pins: hdq_pins {
->  		pinctrl-single,pins = <
->  			OMAP3_CORE1_IOPAD(0x21c6, PIN_INPUT_PULLUP | MUX_MODE0) /* i2c3_sda.hdq */
-> @@ -644,6 +650,13 @@
->  &uart2 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&uart2_pins>;
-> +	gps: gps {
-
-The node should be named "gnss" as per the binding.
-
-> +		compatible = "wi2wi,w2sg0004";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&gps_pins>;
-> +		sirf,onoff-gpios = <&gpio5 17 GPIO_ACTIVE_HIGH>;
-> +		lna-supply = <&vsim>;
-
-Also, the vcc-supply is a required property.
-
-> +	};
->  };
->  
->  &uart3 {
-
-Johan
+>   drivers/usb/host/xhci-tegra.c | 43 +++++++++++++++++++++--------------
+>   1 file changed, 26 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+> index 938ff06c0349..49e033f953a2 100644
+> --- a/drivers/usb/host/xhci-tegra.c
+> +++ b/drivers/usb/host/xhci-tegra.c
+> @@ -161,6 +161,7 @@ struct tegra_xusb_soc {
+>   	} ports;
+>   
+>   	bool scale_ss_clock;
+> +	bool has_ipfs;
+>   };
+>   
+>   struct tegra_xusb {
+> @@ -637,16 +638,18 @@ static irqreturn_t tegra_xusb_mbox_thread(int irq, void *data)
+>   	return IRQ_HANDLED;
+>   }
+>   
+> -static void tegra_xusb_ipfs_config(struct tegra_xusb *tegra,
+> -				   struct resource *regs)
+> +static void tegra_xusb_config(struct tegra_xusb *tegra,
+> +			      struct resource *regs)
+>   {
+>   	u32 value;
+>   
+> -	value = ipfs_readl(tegra, IPFS_XUSB_HOST_CONFIGURATION_0);
+> -	value |= IPFS_EN_FPCI;
+> -	ipfs_writel(tegra, value, IPFS_XUSB_HOST_CONFIGURATION_0);
+> +	if (tegra->soc->has_ipfs) {
+> +		value = ipfs_readl(tegra, IPFS_XUSB_HOST_CONFIGURATION_0);
+> +		value |= IPFS_EN_FPCI;
+> +		ipfs_writel(tegra, value, IPFS_XUSB_HOST_CONFIGURATION_0);
+>   
+> -	usleep_range(10, 20);
+> +		usleep_range(10, 20);
+> +	}
+>   
+>   	/* Program BAR0 space */
+>   	value = fpci_readl(tegra, XUSB_CFG_4);
+> @@ -661,13 +664,15 @@ static void tegra_xusb_ipfs_config(struct tegra_xusb *tegra,
+>   	value |= XUSB_IO_SPACE_EN | XUSB_MEM_SPACE_EN | XUSB_BUS_MASTER_EN;
+>   	fpci_writel(tegra, value, XUSB_CFG_1);
+>   
+> -	/* Enable interrupt assertion */
+> -	value = ipfs_readl(tegra, IPFS_XUSB_HOST_INTR_MASK_0);
+> -	value |= IPFS_IP_INT_MASK;
+> -	ipfs_writel(tegra, value, IPFS_XUSB_HOST_INTR_MASK_0);
+> +	if (tegra->soc->has_ipfs) {
+> +		/* Enable interrupt assertion */
+> +		value = ipfs_readl(tegra, IPFS_XUSB_HOST_INTR_MASK_0);
+> +		value |= IPFS_IP_INT_MASK;
+> +		ipfs_writel(tegra, value, IPFS_XUSB_HOST_INTR_MASK_0);
+>   
+> -	/* Set hysteresis */
+> -	ipfs_writel(tegra, 0x80, IPFS_XUSB_HOST_CLKGATE_HYSTERESIS_0);
+> +		/* Set hysteresis */
+> +		ipfs_writel(tegra, 0x80, IPFS_XUSB_HOST_CLKGATE_HYSTERESIS_0);
+> +	}
+>   }
+>   
+>   static int tegra_xusb_clk_enable(struct tegra_xusb *tegra)
+> @@ -1015,10 +1020,12 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>   	if (IS_ERR(tegra->fpci_base))
+>   		return PTR_ERR(tegra->fpci_base);
+>   
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+> -	tegra->ipfs_base = devm_ioremap_resource(&pdev->dev, res);
+> -	if (IS_ERR(tegra->ipfs_base))
+> -		return PTR_ERR(tegra->ipfs_base);
+> +	if (tegra->soc->has_ipfs) {
+> +		res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+> +		tegra->ipfs_base = devm_ioremap_resource(&pdev->dev, res);
+> +		if (IS_ERR(tegra->ipfs_base))
+> +			return PTR_ERR(tegra->ipfs_base);
+> +	}
+>   
+>   	tegra->xhci_irq = platform_get_irq(pdev, 0);
+>   	if (tegra->xhci_irq < 0)
+> @@ -1208,7 +1215,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+>   		goto disable_rpm;
+>   	}
+>   
+> -	tegra_xusb_ipfs_config(tegra, regs);
+> +	tegra_xusb_config(tegra, regs);
+>   
+>   	err = tegra_xusb_load_firmware(tegra);
+>   	if (err < 0) {
+> @@ -1380,6 +1387,7 @@ static const struct tegra_xusb_soc tegra124_soc = {
+>   		.usb3 = { .offset = 0, .count = 2, },
+>   	},
+>   	.scale_ss_clock = true,
+> +	.has_ipfs = true,
+>   };
+>   MODULE_FIRMWARE("nvidia/tegra124/xusb.bin");
+>   
+> @@ -1411,6 +1419,7 @@ static const struct tegra_xusb_soc tegra210_soc = {
+>   		.usb3 = { .offset = 0, .count = 4, },
+>   	},
+>   	.scale_ss_clock = false,
+> +	.has_ipfs = true,
+>   };
+>   MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
+>   
