@@ -7,49 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 155B7C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D05C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D236D20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8039D20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693184;
-	bh=eTEmKxgmC6+wG87loMUu5xm36Z1oWKvJhjUnn2qlP5w=;
+	s=default; t=1548693189;
+	bh=zfRLjzX8AU9XQhk8XfiS2dQB97gju7zgQ9GrDoCJC7k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ENUeK0QuyFCgNpa00f8VI5Bb3Q9cNVMyL79ziTL7R9OWsDUC0lrOqQG0i51xrEvlh
-	 88jb298obqcrBeWVxDs1d0DILfYmQnA4EBieVDk5K4VLa5YR3m2KHoq/GFVoRiFqqd
-	 AoM23jm8FRa9vS2DbVvZwfUwuJXbjl34ufbw/12w=
+	b=RpERYQWkraeB0COPJjwuUzOs8juPuEisbt7k/esgb4NHYuCbVHmLmbvhYGMInhTtl
+	 odXnM/IBxnaCv3H6f7GOgKx1dQGDCS5mam4wRnOYQ8pdW5FNVWu2FZfYP7YfO/NlRj
+	 RBRCpZuPilqwidyYUqsJmrL0Q7e6NuzdnukRNO/U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390452AbfA1QdD (ORCPT
+        id S2388673AbfA1Q0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:33:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35936 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:26:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390235AbfA1Q0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:34 -0500
+        id S2390189AbfA1Q02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92FFA2171F;
-        Mon, 28 Jan 2019 16:26:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 096172173C;
+        Mon, 28 Jan 2019 16:26:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692794;
-        bh=eTEmKxgmC6+wG87loMUu5xm36Z1oWKvJhjUnn2qlP5w=;
+        s=default; t=1548692787;
+        bh=zfRLjzX8AU9XQhk8XfiS2dQB97gju7zgQ9GrDoCJC7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U+Cmd3AwH/yjyRII6beJRK+nHm2tAqS/ZE4V3GC1N7CvZ/Lp/EKr+ML89LKaJld9z
-         09IZYdjqf974zZ8QHBd/OiSjH8A2fGiTMnLdV0nMQsg6bU5ILfOO5Ra01AL9p6m4KS
-         I8viwOgby51M5doaNWnc6OWbYwWoNVnLU+2YW56g=
+        b=zIJg1YnMFJ0z/XQB0a1pMI40Iv/xhJlN7MiRJ0Qy+NwiZJaQIf/3Bq41iVaa/SOoB
+         Bd2gU5AmQWbOYNTHJBlme0BE1mOew0EkAKsxwm+ZaevVZp926zEDUwxYOB1RWoocZT
+         E0sYosaTjlKYR2qF/qj1wP17kN4yw+XVZlvFqCds=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Frank Rowand <frank.rowand@sony.com>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 3.18 07/61] powerpc/pseries: add of_node_put() in dlpar_detach_node()
-Date:   Mon, 28 Jan 2019 11:25:29 -0500
-Message-Id: <20190128162623.59854-7-sashal@kernel.org>
+Cc:     =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@gmail.com>,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 03/61] platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
+Date:   Mon, 28 Jan 2019 11:25:25 -0500
+Message-Id: <20190128162623.59854-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,45 +62,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: João Paulo Rechi Vita <jprvita@gmail.com>
 
-[ Upstream commit 5b3f5c408d8cc59b87e47f1ab9803dbd006e4a91 ]
+[ Upstream commit b3f2f3799a972d3863d0fdc2ab6287aef6ca631f ]
 
-The previous commit, "of: overlay: add missing of_node_get() in
-__of_attach_node_sysfs" added a missing of_node_get() to
-__of_attach_node_sysfs().  This results in a refcount imbalance
-for nodes attached with dlpar_attach_node().  The calling sequence
-from dlpar_attach_node() to __of_attach_node_sysfs() is:
+When the OS registers to handle events from the display off hotkey the
+EC will send a notification with 0x35 for every key press, independent
+of the backlight state.
 
-   dlpar_attach_node()
-      of_attach_node()
-         __of_attach_node_sysfs()
+The behavior of this key on Windows, with the ATKACPI driver from Asus
+installed, is turning off the backlight of all connected displays with a
+fading effect, and any cursor input or key press turning the backlight
+back on. The key press or cursor input that wakes up the display is also
+passed through to the application under the cursor or under focus.
 
-For more detailed description of the node refcount, see
-commit 68baf692c435 ("powerpc/pseries: Fix of_node_put() underflow
-during DLPAR remove").
+The key that matches this behavior the closest is KEY_SCREENLOCK.
 
-Tested-by: Alan Tull <atull@kernel.org>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/pseries/dlpar.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/platform/x86/asus-nb-wmi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
-index 80d175dca68e..85bd29475987 100644
---- a/arch/powerpc/platforms/pseries/dlpar.c
-+++ b/arch/powerpc/platforms/pseries/dlpar.c
-@@ -299,6 +299,8 @@ int dlpar_detach_node(struct device_node *dn)
- 	if (rc)
- 		return rc;
- 
-+	of_node_put(dn);
-+
- 	return 0;
- }
- 
+diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+index f13b5b95c00f..b46a3653e6ab 100644
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -314,6 +314,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
+ 	{ KE_KEY, 0x32, { KEY_MUTE } },
+ 	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
+ 	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
++	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
+ 	{ KE_KEY, 0x40, { KEY_PREVIOUSSONG } },
+ 	{ KE_KEY, 0x41, { KEY_NEXTSONG } },
+ 	{ KE_KEY, 0x43, { KEY_STOPCD } }, /* Stop/Eject */
 -- 
 2.19.1
 
