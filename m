@@ -5,108 +5,97 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E09A2C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FF3C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B258B20882
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:31:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 691EC20882
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:34:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrkEZvke"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DY4F9gyO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfA1Gb4 (ORCPT
+        id S1726667AbfA1Gej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 01:31:56 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33177 "EHLO
+        Mon, 28 Jan 2019 01:34:39 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35567 "EHLO
         mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbfA1Gbz (ORCPT
+        with ESMTP id S1725782AbfA1Gej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 01:31:55 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v1-v6so13225532ljd.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 22:31:54 -0800 (PST)
+        Mon, 28 Jan 2019 01:34:39 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x85-v6so13213231ljb.2
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 22:34:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Xo1XRWo+UsOWJB0j8DeP+bJpW8d+zCzkO/oslyAm+ZY=;
-        b=SrkEZvkewK8wCGCd4tU8le3LqMBD4FgqPce3jh4E0ohaqyKSaIfEK/T5MsQOsvOG0O
-         VUtaLhraTkB6Od+YDPTqiH42Wp4M/w3QE51Rm7pYkn8HUzajXjGk9IOY8oGo7nUnqp1z
-         ySB4RLtrTZByVloU5g9dGD/tLdVrksFbZKMYIkEII/XeruQrgsVAlXp/PXsxUC+TV+tA
-         PyQGdNzEBr7b3vmqZu3B0hVsLpi9WoapymNWZXcdUIbMO18OmpqSs5kddu6kb+hRLJvD
-         vz4Lui3WBETrIqEuQvkPe/deSUL4doBbTdWHuwAxyD4+tfL+NumMNwKyFzWTQDfenQaM
-         mraQ==
+        bh=QHgLGG8mEEUNiU9mEp4wmCyZjP0X29GG9+uZhXvM/LQ=;
+        b=DY4F9gyOoziHc/0zvo2HvQqk7zi0Fl+eUe0M4zqI6oHJNScV1za79IW7dDuVbr1eFr
+         1JyzSNjKtiaBVN2cv349SxrOuxTKpwabzvXigxZ3W8BJvTHRoHErnzcqOBZ8QQc/EKz9
+         RaX3smqYDyHchDD7AOjgY8lakicp314+zFYGVjHONwr4eq1OtKBr3y7WQ4DDqGl3dUYc
+         dv4KmZaMLyhY1HapcSuzUX+WopbjvxPP0owas6VmMAKHVKyOki2RQPqhXxtdg/jdt8Z2
+         9fzR1vxGXwXoaDtNfT985wMzpsSZsQr0YLI7Yx54JotwqlRzOvmzXqsjMpJeOeapdS6T
+         fakg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Xo1XRWo+UsOWJB0j8DeP+bJpW8d+zCzkO/oslyAm+ZY=;
-        b=Je3eWmM6eoKaZZAa4mstrMuNyQEr8dzq0fZeS6bIoWhxh8M5LeDb/yshDB3ntXhe2r
-         CLDfrbRmc+ECN1Ro+SANlPlvqrMpAgi8nRQ59XvWDAGw0u3mAC6TcCqzQYLd/i+G3mnC
-         qn2SNvx7YowkheW0LJqnbz7o+XfeGyIyMeg6DwKSF07U+ZC84PZqQdR8n4ZDI1BXU7c8
-         ai15KWLV4rUY1TCWv1ln04Rhq2SfDC6CAvAblug0T9aC6Wur4jHzzWFe2E92kpTlqJf8
-         kE7OYkeGMNjXzT5Fj4ygbvt2q6f8A48HnmsfwJU5/u/AdFujXBCjQwPEvcJ08X0ntP82
-         0KOA==
-X-Gm-Message-State: AJcUukduoDbMM1hHX3NjBRCrO6iXhsQrYQIgVchXxxhEzLjRW4VwCdw1
-        lRI2PZ3ZuzXfvFCiYUxoy1UDJV4gtabBjSXIR1Y=
-X-Google-Smtp-Source: ALg8bN7TnNqZso0t9ffTuek7639g3w1wEhMAxY4Zlyx88OaxeFSK82GVVYlDyXhzq513Dmj5SeO5IHfNEBVREoEcoCw=
-X-Received: by 2002:a05:651c:14e:: with SMTP id c14mr16469993ljd.20.1548657113701;
- Sun, 27 Jan 2019 22:31:53 -0800 (PST)
+        bh=QHgLGG8mEEUNiU9mEp4wmCyZjP0X29GG9+uZhXvM/LQ=;
+        b=WVcLlup1H2ytDIM6akhACrxwwQKfAFPPrIphEJPFVQr4326ELe9cXcxXDDIvjbtDda
+         VDzYmkRquHqEiho8xJ/v/5ekO/uDpiF9W2Go1DfgQ3aDjm1T81cWFPnqVwOz3gBJ92ru
+         gyJUCg8ceUNYlj4XdMb0cVOko6vHi2t8dFhkF8vNKTmn/HnQKpxTyyIn0uOqHAdU6h19
+         kroWWbjtELQRW58So0sdrK40N5uVBEte43aGIhFoO5BgA0aU3KjNnqpDArBPh7IqZakG
+         ifE6NrI69IWsehutFP4MB68qNAKBiiZW1bg/OQzt/+BPH9thEASBaMRVI50tCBJ/rwkP
+         ub7Q==
+X-Gm-Message-State: AJcUukfFno/PoBrzMTxMPzDQrV0IeR2CiD67wvriBvxg25One+8iYp83
+        f4kWp0B5+RjkWJMFgfyRnKuocuev0u2dVTDjnkI=
+X-Google-Smtp-Source: ALg8bN4ASS6RJ6hXYxOAQPKuxhUc9rkHC3J3n8gXstmaeNandY6V+2Nh5M8XdAMpLXp53RUYIN/6yl2XQycoSn/m/H0=
+X-Received: by 2002:a2e:8643:: with SMTP id i3-v6mr17361424ljj.43.1548657277194;
+ Sun, 27 Jan 2019 22:34:37 -0800 (PST)
 MIME-Version: 1.0
-References: <20190111151110.GA2798@jordon-HP-15-Notebook-PC>
-In-Reply-To: <20190111151110.GA2798@jordon-HP-15-Notebook-PC>
+References: <20190107173719.GA30197@jordon-HP-15-Notebook-PC> <eab5c59d-cfb4-bd2a-de07-7db827830472@gmail.com>
+In-Reply-To: <eab5c59d-cfb4-bd2a-de07-7db827830472@gmail.com>
 From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 28 Jan 2019 12:01:42 +0530
-Message-ID: <CAFqt6zYhudeTdj02Ex6jaLYoUQ-2YhmwTvJ6+nHRcAJN7NZ99w@mail.gmail.com>
-Subject: Re: [PATCH 6/9] iommu/dma-iommu.c: Convert to use vm_insert_range
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, joro@8bytes.org,
+Date:   Mon, 28 Jan 2019 12:04:25 +0530
+Message-ID: <CAFqt6zb0cU3TjAs0LO-DL3Ut98-7=b7cP9+hZ+bUxDLD2EN2vA@mail.gmail.com>
+Subject: Re: [Xen-devel] [PATCH] arch/arm/xen: Remove duplicate header
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc:     sstabellini@kernel.org,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>
+        xen-devel@lists.xenproject.org,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 8:37 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+On Mon, Jan 14, 2019 at 4:08 PM Oleksandr Andrushchenko
+<andr2000@gmail.com> wrote:
 >
-> Convert to use vm_insert_range() to map range of kernel
-> memory to user vma.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> On 1/7/19 7:37 PM, Souptick Joarder wrote:
+> > Remove duplicate header which is included twice.
+> >
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Any comment on this patch ?
-> ---
->  drivers/iommu/dma-iommu.c | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
->
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index d1b0475..802de67 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -622,17 +622,7 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
->
->  int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma)
->  {
-> -       unsigned long uaddr = vma->vm_start;
-> -       unsigned int i, count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> -       int ret = -ENXIO;
-> -
-> -       for (i = vma->vm_pgoff; i < count && uaddr < vma->vm_end; i++) {
-> -               ret = vm_insert_page(vma, uaddr, pages[i]);
-> -               if (ret)
-> -                       break;
-> -               uaddr += PAGE_SIZE;
-> -       }
-> -       return ret;
-> +       return vm_insert_range(vma, pages, PAGE_ALIGN(size) >> PAGE_SHIFT);
->  }
->
->  static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
-> --
-> 1.9.1
+Can we get this patch in queue for 5.1 ?
+> > ---
+> >   arch/arm/xen/mm.c | 1 -
+> >   1 file changed, 1 deletion(-)
+> >
+> > diff --git a/arch/arm/xen/mm.c b/arch/arm/xen/mm.c
+> > index cb44aa2..e1d44b9 100644
+> > --- a/arch/arm/xen/mm.c
+> > +++ b/arch/arm/xen/mm.c
+> > @@ -7,7 +7,6 @@
+> >   #include <linux/of_address.h>
+> >   #include <linux/slab.h>
+> >   #include <linux/types.h>
+> > -#include <linux/dma-mapping.h>
+> >   #include <linux/vmalloc.h>
+> >   #include <linux/swiotlb.h>
+> >
 >
