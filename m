@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3961FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B29C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00B7421783
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A3A72183F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690972;
-	bh=lLMz3wPd3HhBhwdzUjg+kMYT4fN2D2jscQXkEkV7hj8=;
+	s=default; t=1548690975;
+	bh=kpG2va2UuuVIoujxQaCdO0RvF2LF3QJtU3l2Y8G7nN4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nqDQ5LkAauj7Yh9yy4ztlYg361SDj6U7N6aPEbJbCsqIj3pE34YHxj3l+DPsiLrKf
-	 DdpnjBLnSKZOMLw1Z6ZDIX6XjNgGB8+9kl3cZbIuJsT/lIrpGYuVxCGmhkneUSRWx0
-	 tSSuj3Az8mt97QlLrmtz6DhkmyxYY9qOG/0uxK9Y=
+	b=S1hNKxfz9RC9wTRcXCS3FeVTg+bUXDm2G+fHIoFZKhCE0dKd06S6lFu65XcVY2ERQ
+	 3WOjjDVu8Pp2Fu8oEhdOOp/1X2wPR1Ll6Ya3sThhflxwx4/zL6lp3JfmRkZi0U0v6+
+	 QA/Z/zMl3mKft+PxqPD9IVo/lBQNdDQDBNCRSM5Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbfA1P4J (ORCPT
+        id S1730058AbfA1P4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:56:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41888 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:56:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730018AbfA1P4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:56:05 -0500
+        id S1730049AbfA1P4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:56:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A887F2183F;
-        Mon, 28 Jan 2019 15:56:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DCCB2183F;
+        Mon, 28 Jan 2019 15:56:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690964;
-        bh=lLMz3wPd3HhBhwdzUjg+kMYT4fN2D2jscQXkEkV7hj8=;
+        s=default; t=1548690969;
+        bh=kpG2va2UuuVIoujxQaCdO0RvF2LF3QJtU3l2Y8G7nN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S3NRVPY9rWs3ZGp7w+8oEbzQKFeu62dWQw12PFbKYuBwnxODklQIv3aGW3/JkSLPh
-         ANVAv1eBbkSG4IlpGnrk4RIGbl5ApI0TJ387iuHHDO2aDOVBHb2GqGhH3LSDogJKRd
-         YAdS2ZvhtlYGvyarHw/hy2bHt/QrokABbb2eWpGg=
+        b=2na0IEsUKs1oWYkpPHsIGqUpxpIvjNVjBBQXiqoQnK4ePZUEHya3a/aoYlb0/TYZw
+         t/PkjDAE7kt7jIyzK2m2nJtCPREt5ywgGa4vHjc4lHlHZ60reDD4Qf8cwLUh+Kf41T
+         OUqSZQXQ3tKg6lTDCxZ9+FbL7t20j/mbONzX653M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Young Xiao <YangX92@hotmail.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 248/304] ice: Do not enable NAPI on q_vectors that have no rings
-Date:   Mon, 28 Jan 2019 10:42:45 -0500
-Message-Id: <20190128154341.47195-248-sashal@kernel.org>
+Cc:     Lenny Szubowicz <lszubowi@redhat.com>,
+        David Arcari <darcari@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 250/304] ACPI/APEI: Clear GHES block_status before panic()
+Date:   Mon, 28 Jan 2019 10:42:47 -0500
+Message-Id: <20190128154341.47195-250-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,61 +59,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Young Xiao <YangX92@hotmail.com>
+From: Lenny Szubowicz <lszubowi@redhat.com>
 
-[ Upstream commit eec903769b4ea476591ffff73bb7359f14f38c51 ]
+[ Upstream commit 98cff8b23ed1c763a029ee81ea300df0d153d07d ]
 
-If ice driver has q_vectors w/ active NAPI that has no rings,
-then this will result in a divide by zero error. To correct it
-I am updating the driver code so that we only support NAPI on
-q_vectors that have 1 or more rings allocated to them.
+In __ghes_panic() clear the block status in the APEI generic
+error status block for that generic hardware error source before
+calling panic() to prevent a second panic() in the crash kernel
+for exactly the same fatal error.
 
-See commit 13a8cd191a2b ("i40e: Do not enable NAPI on q_vectors
-that have no rings") for detail.
+Otherwise ghes_probe(), running in the crash kernel, would see
+an unhandled error in the APEI generic error status block and
+panic again, thereby precluding any crash dump.
 
-Signed-off-by: Young Xiao <YangX92@hotmail.com>
-Acked-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+Signed-off-by: David Arcari <darcari@redhat.com>
+Tested-by: Tyler Baicar <baicar.tyler@gmail.com>
+Acked-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ice/ice_main.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/acpi/apei/ghes.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index 333312a1d595..945000449279 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -2563,8 +2563,12 @@ static void ice_napi_enable_all(struct ice_vsi *vsi)
- 	if (!vsi->netdev)
- 		return;
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 02c6fd9caff7..f008ba7c9ced 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -691,6 +691,8 @@ static void __ghes_panic(struct ghes *ghes)
+ {
+ 	__ghes_print_estatus(KERN_EMERG, ghes->generic, ghes->estatus);
  
--	for (q_idx = 0; q_idx < vsi->num_q_vectors; q_idx++)
--		napi_enable(&vsi->q_vectors[q_idx]->napi);
-+	for (q_idx = 0; q_idx < vsi->num_q_vectors; q_idx++) {
-+		struct ice_q_vector *q_vector = vsi->q_vectors[q_idx];
++	ghes_clear_estatus(ghes);
 +
-+		if (q_vector->rx.ring || q_vector->tx.ring)
-+			napi_enable(&q_vector->napi);
-+	}
- }
- 
- /**
-@@ -2931,8 +2935,12 @@ static void ice_napi_disable_all(struct ice_vsi *vsi)
- 	if (!vsi->netdev)
- 		return;
- 
--	for (q_idx = 0; q_idx < vsi->num_q_vectors; q_idx++)
--		napi_disable(&vsi->q_vectors[q_idx]->napi);
-+	for (q_idx = 0; q_idx < vsi->num_q_vectors; q_idx++) {
-+		struct ice_q_vector *q_vector = vsi->q_vectors[q_idx];
-+
-+		if (q_vector->rx.ring || q_vector->tx.ring)
-+			napi_disable(&q_vector->napi);
-+	}
- }
- 
- /**
+ 	/* reboot to log the error! */
+ 	if (!panic_timeout)
+ 		panic_timeout = ghes_panic_timeout;
 -- 
 2.19.1
 
