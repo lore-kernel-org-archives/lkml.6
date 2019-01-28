@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD2DC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A25C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCB1D2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1ED02147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692551;
-	bh=RC0HaOz30PXc7k321NRweQMJ83Pp6Z+Y15NBU5+2CVs=;
+	s=default; t=1548692555;
+	bh=weP5wNqF3syjXpJOod6mfYe7aPJClX9NCQ4XhvJVZVc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d1Y4+lPWpTymtmk/aTZUhugQ5lOnyR8kc8UDUMjLdlziocdrnNungGw/Z2wcetm7S
-	 tbvz0F7r4g2tYLGFd2lAHx3nqnX+CSDGDtMfgN92FRoWRwlNi81cWLS+bNY3x5liWE
-	 4JBNykJdX7sJl3gGyTKIZlRZb7tq/qbxQ5V3X0ds=
+	b=GW/57o4I0tbsAEpf2a0obueLrAtFOyrAWVeF9Yr4kwUyeR6ldzUxcJiTrY1cIBzop
+	 jXs0Fd8Vxzm7ly0Nmc8rHIbtDpPzylfe50wKGUBix0/JKLNOZ6+0FThSZ7X6P+Ij9s
+	 f7da41AowqgpcXwEay/+EPQLmXL9NAhoCmoApb/c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389220AbfA1QWa (ORCPT
+        id S2389229AbfA1QWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:22:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58498 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:22:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388064AbfA1QW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:29 -0500
+        id S2389219AbfA1QWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:22:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3037A2084A;
-        Mon, 28 Jan 2019 16:22:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 793BD20663;
+        Mon, 28 Jan 2019 16:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692547;
-        bh=RC0HaOz30PXc7k321NRweQMJ83Pp6Z+Y15NBU5+2CVs=;
+        s=default; t=1548692550;
+        bh=weP5wNqF3syjXpJOod6mfYe7aPJClX9NCQ4XhvJVZVc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c7I5xgCOKA0kPkMuorIWt3esuEDOfwImjD0Pcmfa1zpae98xjxOcBhDyA9J/hY1xa
-         tRGKMzldBLipC3MkQ6BrgRDFkKsbIY4QyISp+KpZwX11dz9qtwuLIR4VtazNuu9MAN
-         /6ZDb14/h/WU3APfgyhRHEyzhISg2O6mM/8isYMg=
+        b=v8mDQsya04v0MMRR3gjqIvhka6IjNQMsvlKPpALeUQ42KROI4mhhhAiFaA/h3tMlA
+         exUR/dP2XajIVpkY1Kz2L0Pthp6KErN+4om1+JspCl8NmpP/9jPLrvPTL19P6aTZCx
+         sDLq6OBk/gyVsjPEXFhvk4pj/uhY/dslLSh6aGME=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 057/107] ARM: mmp: fix timer_init calls
-Date:   Mon, 28 Jan 2019 11:18:57 -0500
-Message-Id: <20190128161947.57405-57-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 058/107] memstick: Prevent memstick host from getting runtime suspended during card detection
+Date:   Mon, 28 Jan 2019 11:18:58 -0500
+Message-Id: <20190128161947.57405-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -57,112 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit 12d3a30db4a3b3df5fbadf5974b9cf50544a9950 ]
+[ Upstream commit e03e303edf1c63e6dd455ccd568c74e93ef3ba8c ]
 
-The change to passing the timer frequency as a function argument
-was a good idea, but caused a build failure for one user that
-was missed in the update:
+We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
+helpers to let memstick host support runtime pm.
 
-arch/arm/mach-mmp/time.c: In function 'mmp_dt_init_timer':
-arch/arm/mach-mmp/time.c:242:2: error: implicit declaration of function 'timer_init'; did you mean 'hrtimer_init'? [-Werror=implicit-function-declaration]
+The rpm count may go down to zero before the memstick host powers on, so
+the host can be runtime suspended.
 
-Change that as well to fix the build error, and rename the
-function to put it into a proper namespace and make it clearer
-what is actually going on.
+So before doing card detection, increment the rpm count to avoid the
+host gets runtime suspended. Balance the rpm count after card detection
+is done.
 
-I saw that the high 6500000 HZ frequency was previously only
-set with CONFIG_MMP2, but is now also used with MMP (pxa910),
-so I'm changing that back here. Please make sure that the
-frequencies are all correct now.
-
-Fixes: f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-mmp/common.h | 2 +-
- arch/arm/mach-mmp/mmp2.c   | 2 +-
- arch/arm/mach-mmp/pxa168.c | 2 +-
- arch/arm/mach-mmp/pxa910.c | 2 +-
- arch/arm/mach-mmp/time.c   | 4 ++--
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/memstick/core/memstick.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
-index 9ffc0e4a87bf..f0f5170cacf0 100644
---- a/arch/arm/mach-mmp/common.h
-+++ b/arch/arm/mach-mmp/common.h
-@@ -1,7 +1,7 @@
- #include <linux/reboot.h>
- #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
+index a0547dbf9806..4d673a626db4 100644
+--- a/drivers/memstick/core/memstick.c
++++ b/drivers/memstick/core/memstick.c
+@@ -18,6 +18,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/pm_runtime.h>
  
--extern void timer_init(int irq, unsigned long rate);
-+extern void mmp_timer_init(int irq, unsigned long rate);
+ #define DRIVER_NAME "memstick"
  
- extern void __init mmp_map_io(void);
- extern void mmp_restart(enum reboot_mode, const char *);
-diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
-index fb3e7e32c882..726c1a642dea 100644
---- a/arch/arm/mach-mmp/mmp2.c
-+++ b/arch/arm/mach-mmp/mmp2.c
-@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
- 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
- 	__raw_writel(clk_rst, APBC_TIMERS);
+@@ -436,6 +437,7 @@ static void memstick_check(struct work_struct *work)
+ 	struct memstick_dev *card;
  
--	timer_init(IRQ_MMP2_TIMER1, 6500000);
-+	mmp_timer_init(IRQ_MMP2_TIMER1, 6500000);
+ 	dev_dbg(&host->dev, "memstick_check started\n");
++	pm_runtime_get_noresume(host->dev.parent);
+ 	mutex_lock(&host->lock);
+ 	if (!host->card) {
+ 		if (memstick_power_on(host))
+@@ -479,6 +481,7 @@ static void memstick_check(struct work_struct *work)
+ 		host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
+ 
+ 	mutex_unlock(&host->lock);
++	pm_runtime_put(host->dev.parent);
+ 	dev_dbg(&host->dev, "memstick_check finished\n");
  }
  
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
-index 77a358165a56..cdcf65ace3f9 100644
---- a/arch/arm/mach-mmp/pxa168.c
-+++ b/arch/arm/mach-mmp/pxa168.c
-@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
- 	/* 3.25MHz, bus/functional clock enabled, release reset */
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA168_TIMER1, 6500000);
-+	mmp_timer_init(IRQ_PXA168_TIMER1, 3250000);
- }
- 
- void pxa168_clear_keypad_wakeup(void)
-diff --git a/arch/arm/mach-mmp/pxa910.c b/arch/arm/mach-mmp/pxa910.c
-index 1ccbba9ac495..d30a7d12bc98 100644
---- a/arch/arm/mach-mmp/pxa910.c
-+++ b/arch/arm/mach-mmp/pxa910.c
-@@ -116,7 +116,7 @@ void __init pxa910_timer_init(void)
- 	__raw_writel(APBC_APBCLK | APBC_RST, APBC_TIMERS);
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA910_AP1_TIMER1);
-+	mmp_timer_init(IRQ_PXA910_AP1_TIMER1, 3250000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-index 5f849cb996c7..c03ca8ffb92f 100644
---- a/arch/arm/mach-mmp/time.c
-+++ b/arch/arm/mach-mmp/time.c
-@@ -184,7 +184,7 @@ static struct irqaction timer_irq = {
- 	.dev_id		= &ckevt,
- };
- 
--void __init timer_init(int irq, unsigned long rate)
-+void __init mmp_timer_init(int irq, unsigned long rate)
- {
- 	timer_config();
- 
-@@ -239,7 +239,7 @@ void __init mmp_dt_init_timer(void)
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	timer_init(irq, rate);
-+	mmp_timer_init(irq, rate);
- 	return;
- out:
- 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
 -- 
 2.19.1
 
