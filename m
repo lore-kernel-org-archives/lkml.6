@@ -2,113 +2,153 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFDFC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF5CC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1047220989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:22:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="eIpQPffV"
+	by mail.kernel.org (Postfix) with ESMTP id 4A9B020989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548696180;
+	bh=QO0Z/ugaU9XCwato60uHHqSOeQSYOYfR4+uT1EqhkAE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=pHL+EaBBsdtEURJV6WJb2XHEtOCuO0iKhq5lZl/SCCfJM6o0/vKpLY45C7y0dWhNV
+	 CV3kddkJJIcs9HHBjn4ajNqpvYxWrn7FOYbtBSpl1hAFcmasPyohnXhFXMwOxdEr4W
+	 vEpl8ZKGFdCXr4PGaJLUAn4OBd8mX3p2BdI/4Mi4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731537AbfA1RWs (ORCPT
+        id S1731555AbfA1RW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:22:48 -0500
-Received: from mail-yb1-f174.google.com ([209.85.219.174]:37488 "EHLO
-        mail-yb1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730145AbfA1RWq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:22:46 -0500
-Received: by mail-yb1-f174.google.com with SMTP id 2so6988301ybw.4
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 09:22:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=AM9RpxkGBW+7XEPrSlC6CHVHJx/N04UabApqCOfk8XQ=;
-        b=eIpQPffVfxWr8E9yEMG3n0ynn3souEVAqDMvhCDryU50yKrbIpNetlBt3VoYaoyPUk
-         LF10fkm4gH6A9Fa58g8EoXcbtB9qogyY4EVpjtPzp3kcu/yL/74AAVAx57wwPp/4/8Rn
-         UrfcMDOGHii4dtnXYeEHe8H1/i962cJG4m0+lU8R5RlzafxoaETi9fVq2xnftuf91c3m
-         WSCsCGm/WwzX/TkB32vfcjHehPm8zF01H1uJXzUcHUmTLAzfR4BMvKocYgxHmJpLHVHj
-         LntedwSFKNnehqZSLKAArolfqAehbmnZRj+Yw9TLIcY/kWajBlK6cz24rEnqBkqvJHI9
-         qcNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=AM9RpxkGBW+7XEPrSlC6CHVHJx/N04UabApqCOfk8XQ=;
-        b=oKVbc7ceKjbbthZKMfy0H/nFsoYRthfwbrSp4yArGuxSkKX47sszE+OBDMQlGBIeXU
-         F/52DhYZQcrsm6LKGGN2RRNCys/Wkrr1NFJ/K3FYUBTCZ24oeXTINozS4XDWLeWzmDda
-         4X47TDOjnNOLRK5o99/cbX1GX5+q81Yy3NWHlsTKAAMpSNwmdZZJeK+7y/XwQ9u+FhaI
-         8uF4Ei5Da84Wt2Yxeim6xZGAiN7Bs2ROkvG84JLAlap7yXF808FOO+ksftsQSXhv7arn
-         t4wVcDWOPD4JDdxMG6OD+iYXxW/uBrCFesakuER1k1DMWD3/FaKK6nSuaK+k5x+3ox9V
-         H0yA==
-X-Gm-Message-State: AJcUukcqp7i6VFrPGRXvQo6gNY/HmPVZvvid/EEC36NpZFV5uwO5GkJw
-        atqcIDS4jmccs5qvaerCrhkzKw==
-X-Google-Smtp-Source: AHgI3IZM1o+tnMWKnNc4fk/XGgJqN4m/F5bj+p0HNH6ZsqJIhHGKhBrlICXkVaJkIlQHWg5C0p3RVQ==
-X-Received: by 2002:a25:b1a6:: with SMTP id h38mr4475201ybj.58.1548696164804;
-        Mon, 28 Jan 2019 09:22:44 -0800 (PST)
-Received: from cisco ([2601:282:901:dd7b:4cb8:dc46:1786:8038])
-        by smtp.gmail.com with ESMTPSA id f62sm14397783ywd.68.2019.01.28.09.22.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 09:22:43 -0800 (PST)
-Date:   Mon, 28 Jan 2019 10:22:42 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: 4.14 revert "seccomp: add a selftest for get_metadata"
-Message-ID: <20190128172242.GA4170@cisco>
-References: <8d246df3cdf19608cb6a043bf1dabe8f0adcae6d.camel@nokia.com>
+        Mon, 28 Jan 2019 12:22:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731322AbfA1QDK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:03:10 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E14821916;
+        Mon, 28 Jan 2019 16:03:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691389;
+        bh=QO0Z/ugaU9XCwato60uHHqSOeQSYOYfR4+uT1EqhkAE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Vs55CTczDUyEYtt+ljqGKHYcLWD1nuzNNCz7E/lAKUjZ2ia7YoX8uinpqmJMsM0UE
+         e6Kx/HvttimreOdoh67MRda7JJ08r+ZAWd//UT93UKNeqTqJeOvxBmyeKb7rg7e/lG
+         BLpyBpVgwavlUmsAKuYbJo3h/mXyjRc7qBwIPJek=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 077/258] arm64: io: Ensure calls to delay routines are ordered against prior readX()
+Date:   Mon, 28 Jan 2019 10:56:23 -0500
+Message-Id: <20190128155924.51521-77-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8d246df3cdf19608cb6a043bf1dabe8f0adcae6d.camel@nokia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 05:13:11PM +0000, Rantala, Tommi T. (Nokia - FI/Espoo) wrote:
-> Hi Greg,
-> 
-> Can you please revert this commit in 4.14?
-> 
-> commit e65cd9a20343ea90f576c24c38ee85ab6e7d5fec
-> Author: Tycho Andersen <tycho@tycho.ws>
-> Date:   Tue Feb 20 19:47:47 2018 -0700
-> 
->     seccomp: add a selftest for get_metadata
->     
->     [ Upstream commit d057dc4e35e16050befa3dda943876dab39cbf80 ]
->     
->     Let's test that we get the flags correctly, and that we preserve
-> the filter
->     index across the ptrace(PTRACE_SECCOMP_GET_METADATA) correctly.
-> 
-> 
-> 
-> PTRACE_SECCOMP_GET_METADATA was only added in 4.16
-> (26500475ac1b499d8636ff281311d633909f5d20)
-> 
-> 
-> And it's also breaking seccomp_bpf.c compilation for me:
-> 
-> seccomp_bpf.c: In function ‘get_metadata’:
-> seccomp_bpf.c:2878:26: error: storage size of ‘md’ isn’t known
->   struct seccomp_metadata md;
+From: Will Deacon <will.deacon@arm.com>
 
-Yes, agreed. The get_metadata() stuff went in for 4.16, so anything
-before that won't have the struct. Sorry if I missed the stable commit
-before.
+[ Upstream commit 6460d32014717686d3b7963595950ba2c6d1bb5e ]
 
-Cheers,
+A relatively standard idiom for ensuring that a pair of MMIO writes to a
+device arrive at that device with a specified minimum delay between them
+is as follows:
 
-Tycho
+	writel_relaxed(42, dev_base + CTL1);
+	readl(dev_base + CTL1);
+	udelay(10);
+	writel_relaxed(42, dev_base + CTL2);
+
+the intention being that the read-back from the device will push the
+prior write to CTL1, and the udelay will hold up the write to CTL1 until
+at least 10us have elapsed.
+
+Unfortunately, on arm64 where the underlying delay loop is implemented
+as a read of the architected counter, the CPU does not guarantee
+ordering from the readl() to the delay loop and therefore the delay loop
+could in theory be speculated and not provide the desired interval
+between the two writes.
+
+Fix this in a similar manner to PowerPC by introducing a dummy control
+dependency on the output of readX() which, combined with the ISB in the
+read of the architected counter, guarantees that a subsequent delay loop
+can not be executed until the readX() has returned its result.
+
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm64/include/asm/io.h | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+index 35b2e50f17fb..b2bc7dbc1fa6 100644
+--- a/arch/arm64/include/asm/io.h
++++ b/arch/arm64/include/asm/io.h
+@@ -106,7 +106,22 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+ }
+ 
+ /* IO barriers */
+-#define __iormb()		rmb()
++#define __iormb(v)							\
++({									\
++	unsigned long tmp;						\
++									\
++	rmb();								\
++									\
++	/*								\
++	 * Create a dummy control dependency from the IO read to any	\
++	 * later instructions. This ensures that a subsequent call to	\
++	 * udelay() will be ordered due to the ISB in get_cycles().	\
++	 */								\
++	asm volatile("eor	%0, %1, %1\n"				\
++		     "cbnz	%0, ."					\
++		     : "=r" (tmp) : "r" (v) : "memory");		\
++})
++
+ #define __iowmb()		wmb()
+ 
+ #define mmiowb()		do { } while (0)
+@@ -131,10 +146,10 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+  * following Normal memory access. Writes are ordered relative to any prior
+  * Normal memory access.
+  */
+-#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
+-#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
+-#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
+-#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(); __v; })
++#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(__v); __v; })
++#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(__v); __v; })
++#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(__v); __v; })
++#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(__v); __v; })
+ 
+ #define writeb(v,c)		({ __iowmb(); writeb_relaxed((v),(c)); })
+ #define writew(v,c)		({ __iowmb(); writew_relaxed((v),(c)); })
+@@ -185,9 +200,9 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
+ /*
+  * io{read,write}{16,32,64}be() macros
+  */
+-#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(); __v; })
+-#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(); __v; })
+-#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(); __v; })
++#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(__v); __v; })
++#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(__v); __v; })
++#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(__v); __v; })
+ 
+ #define iowrite16be(v,p)	({ __iowmb(); __raw_writew((__force __u16)cpu_to_be16(v), p); })
+ #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
+-- 
+2.19.1
+
