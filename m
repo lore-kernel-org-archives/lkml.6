@@ -7,45 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39698C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0914FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F36D82171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE9CE2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692780;
-	bh=CUhsIb/Rcezh3hqxk9oVOpXk6KMo5uI8+8fEERLhdw4=;
+	s=default; t=1548692786;
+	bh=IlzvApaPnI9hHmS0btNgT0ReY1au1QD7DmJ3NqSFxzg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zCWPGVYy6t+Vl1Xr1KuIK2X0r2fHxpiNR5/BOQhEsRgbCSYtF9kEgzChQUqpeYNSn
-	 TLfIfDhqMIJX9zEP9dKjczrWYDvGlvq1gW1kcorE04w1GysB/BwkaKz14JewE2HOy0
-	 5py7r1R6/zBQYLIBO1SkvEl55HPgNy74y5qGz17Y=
+	b=OI+Om5xTiilm2aI7xz6W4Hqu4bSm1EkrhkQkHr81MiiGvHjwktWqXy8vmTzNBE110
+	 e/mYMYluoRvdleUyK4aA8mO54JCj/oRzdlU6pUj1MEA40bzsg4dbVmR5VR5UAd4Zq1
+	 nUFRZwElQyF6ObVDBRT9HqOLEiztkX4qNezDATuk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390165AbfA1Q0S (ORCPT
+        id S2390185AbfA1Q0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:26:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35454 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:26:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390152AbfA1Q0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:15 -0500
+        id S2389735AbfA1Q0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B97D20879;
-        Mon, 28 Jan 2019 16:26:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8EFB2147A;
+        Mon, 28 Jan 2019 16:26:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692774;
-        bh=CUhsIb/Rcezh3hqxk9oVOpXk6KMo5uI8+8fEERLhdw4=;
+        s=default; t=1548692779;
+        bh=IlzvApaPnI9hHmS0btNgT0ReY1au1QD7DmJ3NqSFxzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h7cPWsGKPWZzHB8DpjeDO7rQ4u/4qRte362sEgRSBRyChydWe97Levd9QYLHgOhhC
-         9LtTgaIN3AXw1WtGrVcJC42D+bCBVDthi3i0Z4QqZr5ee6vz+husS0fblRsrLz0/kE
-         1A0S1YtrKiDu2IrAn2L39iMegm+SZPpM8HTy+Fe4=
+        b=1+AnnAemTe2Lq9qke0t7ySBQbm2lWtWQlf07aLpknbUjoh9JU+O3i6aO8PrBAQEsm
+         wwKfXY2Q1roR+ZaxLsQvlbzgEC6e8er/3FxgOrqf9UGNAne7ZS5aHkooVzEM9ZJKk6
+         TNwSronr29drKkPtUVYGtfGCSoTYMqMJ5KjL+j6E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wenwen Wang <wang6495@umn.edu>, Jens Axboe <axboe@kernel.dk>,
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 75/80] gdrom: fix a memory leak bug
-Date:   Mon, 28 Jan 2019 11:23:56 -0500
-Message-Id: <20190128162401.58841-75-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 78/80] kernel/hung_task.c: break RCU locks based on jiffies
+Date:   Mon, 28 Jan 2019 11:23:59 -0500
+Message-Id: <20190128162401.58841-78-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -57,39 +64,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit 093c48213ee37c3c3ff1cf5ac1aa2a9d8bc66017 ]
+[ Upstream commit 304ae42739b108305f8d7b3eb3c1aec7c2b643a9 ]
 
-In probe_gdrom(), the buffer pointed by 'gd.cd_info' is allocated through
-kzalloc() and is used to hold the information of the gdrom device. To
-register and unregister the device, the pointer 'gd.cd_info' is passed to
-the functions register_cdrom() and unregister_cdrom(), respectively.
-However, this buffer is not freed after it is used, which can cause a
-memory leak bug.
+check_hung_uninterruptible_tasks() is currently calling rcu_lock_break()
+for every 1024 threads.  But check_hung_task() is very slow if printk()
+was called, and is very fast otherwise.
 
-This patch simply frees the buffer 'gd.cd_info' in exit_gdrom() to fix the
-above issue.
+If many threads within some 1024 threads called printk(), the RCU grace
+period might be extended enough to trigger RCU stall warnings.
+Therefore, calling rcu_lock_break() for every some fixed jiffies will be
+safer.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Link: http://lkml.kernel.org/r/1544800658-11423-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cdrom/gdrom.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/hung_task.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-index e2808fefbb78..1852d19d0d7b 100644
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -882,6 +882,7 @@ static void __exit exit_gdrom(void)
- 	platform_device_unregister(pd);
- 	platform_driver_unregister(&gdrom_driver);
- 	kfree(gd.toc);
-+	kfree(gd.cd_info);
- }
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index e0f90c2b57aa..cc05b97ba569 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -30,7 +30,7 @@ int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
+  * is disabled during the critical section. It also controls the size of
+  * the RCU grace period. So it needs to be upper-bound.
+  */
+-#define HUNG_TASK_BATCHING 1024
++#define HUNG_TASK_LOCK_BREAK (HZ / 10)
  
- module_init(init_gdrom);
+ /*
+  * Zero means infinite timeout - no checking done:
+@@ -158,7 +158,7 @@ static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
+ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ {
+ 	int max_count = sysctl_hung_task_check_count;
+-	int batch_count = HUNG_TASK_BATCHING;
++	unsigned long last_break = jiffies;
+ 	struct task_struct *g, *t;
+ 
+ 	/*
+@@ -172,10 +172,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 	for_each_process_thread(g, t) {
+ 		if (!max_count--)
+ 			goto unlock;
+-		if (!--batch_count) {
+-			batch_count = HUNG_TASK_BATCHING;
++		if (time_after(jiffies, last_break + HUNG_TASK_LOCK_BREAK)) {
+ 			if (!rcu_lock_break(g, t))
+ 				goto unlock;
++			last_break = jiffies;
+ 		}
+ 		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
+ 		if (t->state == TASK_UNINTERRUPTIBLE)
 -- 
 2.19.1
 
