@@ -2,168 +2,99 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD28EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB49C282CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 956AF20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:50:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 995C320880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbfA1IuL (ORCPT
+        id S1726746AbfA1Iwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:50:11 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:54270 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfA1IuL (ORCPT
+        Mon, 28 Jan 2019 03:52:33 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:50568 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726556AbfA1Iwd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:50:11 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 23ABA180C0;
-        Mon, 28 Jan 2019 09:50:09 +0100 (CET)
-X-Axis-User: NO
-X-Axis-NonUser: YES
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id gby93N2I57df; Mon, 28 Jan 2019 09:50:08 +0100 (CET)
-Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 261B4183E8;
-        Mon, 28 Jan 2019 09:50:08 +0100 (CET)
-Received: from boulder02.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B40771A069;
-        Mon, 28 Jan 2019 09:50:07 +0100 (CET)
-Received: from boulder02.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A84031A067;
-        Mon, 28 Jan 2019 09:50:07 +0100 (CET)
-Received: from seth.se.axis.com (unknown [10.0.2.172])
-        by boulder02.se.axis.com (Postfix) with ESMTP;
-        Mon, 28 Jan 2019 09:50:07 +0100 (CET)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by seth.se.axis.com (Postfix) with ESMTP id 9BDFDF8;
-        Mon, 28 Jan 2019 09:50:07 +0100 (CET)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id 9874F80126; Mon, 28 Jan 2019 09:50:07 +0100 (CET)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     akpm@linux-foundation.org
-Cc:     mcgrof@kernel.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH v2] sysctl: Add panic-fatal-signals
-Date:   Mon, 28 Jan 2019 09:49:59 +0100
-Message-Id: <20190128084959.13060-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.20.0
+        Mon, 28 Jan 2019 03:52:33 -0500
+X-UUID: 5856478060624a52b168cce05c68252f-20190128
+X-UUID: 5856478060624a52b168cce05c68252f-20190128
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1259753091; Mon, 28 Jan 2019 16:52:21 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 28 Jan 2019 16:52:20 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 28 Jan 2019 16:52:20 +0800
+Message-ID: <1548665540.10401.0.camel@mtksdaap41>
+Subject: Re: [PATCH V3,4/8] drm/mediatek: fix the rate and divder of hdmi
+ phy for MT2701
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Wangyan Wang <wangyan.wang@mediatek.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        "Colin Ian King" <colin.king@canonical.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <jitao.shi@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <srv_heupstream@mediatek.com>,
+        chunhui dai <chunhui.dai@mediatek.com>
+Date:   Mon, 28 Jan 2019 16:52:20 +0800
+In-Reply-To: <20190125040205.5451-5-wangyan.wang@mediatek.com>
+References: <20190125040205.5451-1-wangyan.wang@mediatek.com>
+         <20190125040205.5451-5-wangyan.wang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a sysctl which asks the kernel to panic when any userspace process
-receives a fatal signal which would trigger a core dump.  This has
-proven to be quite useful when debugging problems seen during testing of
-embedded systems:  When combined with kernel core dumps (saved due to
-the panic), it allows easier debugging of crashes which have their
-origin in system-wide problems such as buggy drivers or other kernel or
-hardware-related issues.
+On Fri, 2019-01-25 at 12:02 +0800, Wangyan Wang wrote:
+> From: chunhui dai <chunhui.dai@mediatek.com>
+> 
+> Due to a clerical error,there is one zero less for 12800000.
+> Fix it for 128000000.
+> 
 
-The crashing process's core dump can be extracted from the kernel core
-dump using tools such as the crash utility's gcore extension.
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
-v2: Put the sysctl behind a config option
+> Fixes: 0fc721b2968e ("drm/mediatek: add hdmi driver for MT2701 and MT7623")
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> Signed-off-by: wangyan wang <wangyan.wang@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> index 43bc058d5528..88dd9e812ca0 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> @@ -114,8 +114,8 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  
+>  	if (rate <= 64000000)
+>  		pos_div = 3;
+> -	else if (rate <= 12800000)
+> -		pos_div = 1;
+> +	else if (rate <= 128000000)
+> +		pos_div = 2;
+>  	else
+>  		pos_div = 1;
+>  
 
- include/linux/signal.h |  1 +
- init/Kconfig           | 14 ++++++++++++++
- kernel/signal.c        |  5 ++++-
- kernel/sysctl.c        |  9 +++++++++
- 4 files changed, 28 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/signal.h b/include/linux/signal.h
-index cc7e2c1cd444..109efd1432e9 100644
---- a/include/linux/signal.h
-+++ b/include/linux/signal.h
-@@ -10,6 +10,7 @@ struct task_struct;
- 
- /* for sysctl */
- extern int print_fatal_signals;
-+extern int panic_fatal_signals;
- 
- static inline void copy_siginfo(kernel_siginfo_t *to,
- 				const kernel_siginfo_t *from)
-diff --git a/init/Kconfig b/init/Kconfig
-index d47cb77a220e..875442f6ab53 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1242,6 +1242,20 @@ config SYSCTL_SYSCALL
- 
- 	  If unsure say N here.
- 
-+config SYSCTL_PANIC_FATAL_SIGNALS
-+	bool "panic-fatal-signals sysctl" if EXPERT
-+	depends on PROC_SYSCTL
-+	help
-+	  If you say Y here, a kernel.panic-fatal-signals sysctl will be
-+	  offered.  If this sysctl is turned on, the kernel will panic if any
-+	  userspace process receives a fatal signal which would trigger a core
-+	  dump.
-+
-+	  When used together with kernel core dumps, this can be useful for
-+	  debugging some system-wide problems, primarily on embedded systems.
-+
-+	  If unsure, say N.
-+
- config FHANDLE
- 	bool "open by fhandle syscalls" if EXPERT
- 	select EXPORTFS
-diff --git a/kernel/signal.c b/kernel/signal.c
-index e1d7ad8e6ab1..83c6877b0182 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -59,6 +59,7 @@
- static struct kmem_cache *sigqueue_cachep;
- 
- int print_fatal_signals __read_mostly;
-+int panic_fatal_signals __read_mostly;
- 
- static void __user *sig_handler(struct task_struct *t, int sig)
- {
-@@ -2497,8 +2498,10 @@ bool get_signal(struct ksignal *ksig)
- 		current->flags |= PF_SIGNALED;
- 
- 		if (sig_kernel_coredump(signr)) {
--			if (print_fatal_signals)
-+			if (print_fatal_signals || panic_fatal_signals)
- 				print_fatal_signal(ksig->info.si_signo);
-+			if (panic_fatal_signals)
-+				panic("Fatal signal and panic_fatal_signals=1");
- 			proc_coredump_connector(current);
- 			/*
- 			 * If it was able to dump core, this kills all
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ba4d9e85feb8..48023bad5b08 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -557,6 +557,15 @@ static struct ctl_table kern_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
- 	},
-+#ifdef CONFIG_SYSCTL_PANIC_FATAL_SIGNALS
-+	{
-+		.procname	= "panic-fatal-signals",
-+		.data		= &panic_fatal_signals,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+#endif
- #ifdef CONFIG_SPARC
- 	{
- 		.procname	= "reboot-cmd",
--- 
-2.20.0
 
