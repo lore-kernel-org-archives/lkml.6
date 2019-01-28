@@ -2,231 +2,108 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C64C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B011C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1649D21741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00FF92173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548694396;
+	bh=HyMAqaFJwl6HiEL4HU+bZrxP9e1YDEIkXQIbeN9mQAE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=v8YQ2nevduCC8vNd/jge2HK/mx/ISGkth4K83mmIHuL+0BLH69XOjhqN04qqGnv3i
+	 P/mAzoQAGy1ZYaXU5GgrU+F41H2cC1m+DarPIvdESIBYY4gaDc1L5hpO63hNWrd+H+
+	 XAkpO8FWiH1cp7V05pGwRBdx382m37T+CqiNrtqY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388752AbfA1QxI (ORCPT
+        id S2388394AbfA1QSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:53:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49166 "EHLO mx1.redhat.com"
+        Mon, 28 Jan 2019 11:18:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388410AbfA1QxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:53:05 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2388366AbfA1QSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:18:12 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 86E451556B;
-        Mon, 28 Jan 2019 16:53:04 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-120-147.rdu2.redhat.com [10.10.120.147])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6DFCF60BEC;
-        Mon, 28 Jan 2019 16:53:02 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Joe Mario <jmario@redhat.com>, Jiri Kosina <jikos@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, kvm@vger.kernel.org,
-        Igor Mammedov <imammedo@redhat.com>
-Subject: [PATCH] cpu/hotplug: Fix "SMT disabled by BIOS" detection for KVM
-Date:   Mon, 28 Jan 2019 10:52:56 -0600
-Message-Id: <92bb3175ad0fa9200baae41707ad39a56c05732d.1548694307.git.jpoimboe@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 28 Jan 2019 16:53:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 817612148E;
+        Mon, 28 Jan 2019 16:18:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692292;
+        bh=HyMAqaFJwl6HiEL4HU+bZrxP9e1YDEIkXQIbeN9mQAE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BOziMM/AyeVFzSZ6OYpQjaFafgiN/b28HlQ3LsSp40RsmbcSSjmx2j3drbT/hlNB9
+         A0XvPuo82Wf9nuhTuiZ2RSBbYjxNuqW4MzFGWRBITsQFqF5yDE87trma3QUNfdM5uR
+         4PBgzDi9bxir9XYqzvjO3L2/8CLTJl4Fk7lqwWz8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Kangjie Lu <kjlu@umn.edu>, Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 142/170] hwmon: (lm80) fix a missing check of bus read in lm80 probe
+Date:   Mon, 28 Jan 2019 11:11:32 -0500
+Message-Id: <20190128161200.55107-142-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
+References: <20190128161200.55107-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the following commit:
+From: Kangjie Lu <kjlu@umn.edu>
 
-  73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
+[ Upstream commit 9aa3aa15f4c2f74f47afd6c5db4b420fadf3f315 ]
 
-... the hotplug code attempted to detect when SMT was disabled by BIOS,
-in which case it reported SMT as permanently disabled.  However, that
-code broke a virt hotplug scenario, where the guest is booted with only
-primary CPU threads, and a sibling is brought online later.
+In lm80_probe(), if lm80_read_value() fails, it returns a negative
+error number which is stored to data->fan[f_min] and will be further
+used. We should avoid using the data if the read fails.
 
-The problem is that there doesn't seem to be a way to reliably
-distinguish between the HW "SMT disabled by BIOS" case and the virt
-"sibling not yet brought online" case.  So the above-mentioned commit
-was a bit misguided, as it permanently disabled SMT for both cases,
-preventing future virt sibling hotplugs.
+The fix checks if lm80_read_value() fails, and if so, returns with the
+error number.
 
-Going back and reviewing the original problems which were attempted to
-be solved by that commit, when SMT was disabled in BIOS:
-
-  1) /sys/devices/system/cpu/smt/control showed "on" instead of
-     "notsupported"; and
-
-  2) vmx_vm_init() was incorrectly showing the L1TF_MSG_SMT warning.
-
-I'd propose that we instead consider #1 above to not actually be a
-problem.  Because, at least in the virt case, it's possible that SMT
-wasn't disabled by BIOS and a sibling thread could be brought online
-later.  So it makes sense to just always default the smt control to "on"
-to allow for that possibility (assuming cpuid indicates that the CPU
-supports SMT).
-
-The real problem is #2, which has a simple fix: change vmx_vm_init() to
-query the actual current SMT state -- i.e., whether any siblings are
-currently online -- instead of looking at the SMT "control" sysfs value.
-
-So fix it by:
-
-  a) reverting the original "fix" and its followup fix:
-
-     73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
-     bc2d8d262cba ("cpu/hotplug: Fix SMT supported evaluation")
-
-     and
-
-  b) changing vmx_vm_init() to query the actual current SMT state --
-     instead of the sysfs control value -- to determine whether the L1TF
-     warning is needed.
-
-Fixes: 73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
-Reported-by: Igor Mammedov <imammedo@redhat.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/bugs.c |  2 +-
- arch/x86/kvm/vmx/vmx.c     |  3 ++-
- include/linux/cpu.h        |  2 --
- kernel/cpu.c               | 32 ++++----------------------------
- kernel/smp.c               |  2 --
- 5 files changed, 7 insertions(+), 34 deletions(-)
+ drivers/hwmon/lm80.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 1de0f4170178..01874d54f4fd 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -71,7 +71,7 @@ void __init check_bugs(void)
- 	 * identify_boot_cpu() initialized SMT support information, let the
- 	 * core code know.
- 	 */
--	cpu_smt_check_topology_early();
-+	cpu_smt_check_topology();
+diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
+index 04f9df0d2341..0e30fa00204c 100644
+--- a/drivers/hwmon/lm80.c
++++ b/drivers/hwmon/lm80.c
+@@ -628,6 +628,7 @@ static int lm80_probe(struct i2c_client *client,
+ 	struct device *dev = &client->dev;
+ 	struct device *hwmon_dev;
+ 	struct lm80_data *data;
++	int rv;
  
- 	if (!IS_ENABLED(CONFIG_SMP)) {
- 		pr_info("CPU: ");
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index f6915f10e584..e2d6fa3c60d5 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -26,6 +26,7 @@
- #include <linux/mod_devicetable.h>
- #include <linux/mm.h>
- #include <linux/sched.h>
-+#include <linux/sched/smt.h>
- #include <linux/slab.h>
- #include <linux/tboot.h>
- #include <linux/trace_events.h>
-@@ -6816,7 +6817,7 @@ static int vmx_vm_init(struct kvm *kvm)
- 			 * Warn upon starting the first VM in a potentially
- 			 * insecure environment.
- 			 */
--			if (cpu_smt_control == CPU_SMT_ENABLED)
-+			if (sched_smt_active())
- 				pr_warn_once(L1TF_MSG_SMT);
- 			if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER)
- 				pr_warn_once(L1TF_MSG_L1D);
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index 218df7f4d3e1..5041357d0297 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -180,12 +180,10 @@ enum cpuhp_smt_control {
- #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
- extern enum cpuhp_smt_control cpu_smt_control;
- extern void cpu_smt_disable(bool force);
--extern void cpu_smt_check_topology_early(void);
- extern void cpu_smt_check_topology(void);
- #else
- # define cpu_smt_control		(CPU_SMT_ENABLED)
- static inline void cpu_smt_disable(bool force) { }
--static inline void cpu_smt_check_topology_early(void) { }
- static inline void cpu_smt_check_topology(void) { }
- #endif
+ 	data = devm_kzalloc(dev, sizeof(struct lm80_data), GFP_KERNEL);
+ 	if (!data)
+@@ -640,8 +641,14 @@ static int lm80_probe(struct i2c_client *client,
+ 	lm80_init_client(client);
  
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 34e40ef2f6e0..05d359e4173a 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -387,8 +387,6 @@ void __weak arch_smt_update(void) { }
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
- EXPORT_SYMBOL_GPL(cpu_smt_control);
+ 	/* A few vars need to be filled upon startup */
+-	data->fan[f_min][0] = lm80_read_value(client, LM80_REG_FAN_MIN(1));
+-	data->fan[f_min][1] = lm80_read_value(client, LM80_REG_FAN_MIN(2));
++	rv = lm80_read_value(client, LM80_REG_FAN_MIN(1));
++	if (rv < 0)
++		return rv;
++	data->fan[f_min][0] = rv;
++	rv = lm80_read_value(client, LM80_REG_FAN_MIN(2));
++	if (rv < 0)
++		return rv;
++	data->fan[f_min][1] = rv;
  
--static bool cpu_smt_available __read_mostly;
--
- void __init cpu_smt_disable(bool force)
- {
- 	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
-@@ -406,25 +404,11 @@ void __init cpu_smt_disable(bool force)
- 
- /*
-  * The decision whether SMT is supported can only be done after the full
-- * CPU identification. Called from architecture code before non boot CPUs
-- * are brought up.
-- */
--void __init cpu_smt_check_topology_early(void)
--{
--	if (!topology_smt_supported())
--		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
--}
--
--/*
-- * If SMT was disabled by BIOS, detect it here, after the CPUs have been
-- * brought online. This ensures the smt/l1tf sysfs entries are consistent
-- * with reality. cpu_smt_available is set to true during the bringup of non
-- * boot CPUs when a SMT sibling is detected. Note, this may overwrite
-- * cpu_smt_control's previous setting.
-+ * CPU identification. Called from architecture code.
-  */
- void __init cpu_smt_check_topology(void)
- {
--	if (!cpu_smt_available)
-+	if (!topology_smt_supported())
- 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
- }
- 
-@@ -437,18 +421,10 @@ early_param("nosmt", smt_cmdline_disable);
- 
- static inline bool cpu_smt_allowed(unsigned int cpu)
- {
--	if (topology_is_primary_thread(cpu))
-+	if (cpu_smt_control == CPU_SMT_ENABLED)
- 		return true;
- 
--	/*
--	 * If the CPU is not a 'primary' thread and the booted_once bit is
--	 * set then the processor has SMT support. Store this information
--	 * for the late check of SMT support in cpu_smt_check_topology().
--	 */
--	if (per_cpu(cpuhp_state, cpu).booted_once)
--		cpu_smt_available = true;
--
--	if (cpu_smt_control == CPU_SMT_ENABLED)
-+	if (topology_is_primary_thread(cpu))
- 		return true;
- 
- 	/*
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 163c451af42e..f4cf1b0bb3b8 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -584,8 +584,6 @@ void __init smp_init(void)
- 		num_nodes, (num_nodes > 1 ? "s" : ""),
- 		num_cpus,  (num_cpus  > 1 ? "s" : ""));
- 
--	/* Final decision about SMT support */
--	cpu_smt_check_topology();
- 	/* Any cleanup work */
- 	smp_cpus_done(setup_max_cpus);
- }
+ 	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
+ 							   data, lm80_groups);
 -- 
-2.17.2
+2.19.1
 
