@@ -2,127 +2,101 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66945C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A947FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 353E12148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:32:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="roTtRAOA"
+	by mail.kernel.org (Postfix) with ESMTP id 6B5352147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548696732;
+	bh=egtrxuTDIdsMrWXjlfGnnLruwQgaXadpfPw93jZnMYY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=kRb/da7OzwVeY5Btnl5u6z/9N/DJp7I2eT60uSlHct10gqyKTqnKXwOl/i5rzfDDO
+	 dTAUYOvz7p7YgCSlPI/Dd/cbKp5pje02+GCCDEvsYclP6ZVOVDMVS902ZitTgZkeck
+	 tK4zfEx2vtC0WiDMsdB0Py6LoyOZaTV5/yjBfQgw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730736AbfA1RcB (ORCPT
+        id S1730296AbfA1P5w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:32:01 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25433 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730136AbfA1Rb6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:31:58 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548696679; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=ddMIIsv9TA/YQJhNlRNL4OYLTZLcZFZP+WEMImEYp85m0B0sUvuEhc2vgc+UlaxhVqMMdAHwdsLGxjaPpjstaJ2ZMfvx/wVewHcJox+bnDZjQg5/jXy8jFOTxZ4+xspLjlwj62zu6Pz8N/ok7EEBxvRcsPkgzNadwLM6vMxwI7k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548696679; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=JCIEz/20JAonFJ+lboQH2xyKwW1qYqwbsPE71m3Y2k0=; 
-        b=YJRTygTIaVCPQUjy1j9TrY0nztm4GmIWa3NQo5uTkMuQIdJOevm83EK6UPPFoomwozWfxlFitU2w1DBwqJ+Id3JYCHkDy2kQkQcYfgMk1XMeCHTl000BuKkhcipfL7UaSekuWaDxWUAYNyRQf3iLlJ1KpygO3LPIDeMnHt7Hg2Q=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=smANOio4TH2jiVojIGPISEbZpufJcvfD/kCHh3VBWwhC3MZpYRGljVdIf7+Iz6Is0V3Xu0fXP56j
-    RFeVtvutw/eNphoQeEy0ewhtn2SejDi8QK+RqmKhfIUwa9Qj3oec  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548696679;
-        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=1728; bh=JCIEz/20JAonFJ+lboQH2xyKwW1qYqwbsPE71m3Y2k0=;
-        b=roTtRAOA1FESPif0vHEHcJ0ttLFbKYqDG2y/rEvNUoEfOzJVO55097PZzQknEw2F
-        RN3r0ECNUnkfyEJuP9treBxM8y3xkYpdG9Yki8h1EgFtquZGeAayOo1BVeYPYUBtmhN
-        4Ov0jTdGO72pl0Nbe2dPDVb8O9BXlh5kNR2OufXw=
-Received: from localhost.localdomain (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
-        with SMTPS id 1548696678305861.8532035662225; Mon, 28 Jan 2019 09:31:18 -0800 (PST)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
-        paul.burton@mips.com, mark.rutland@arm.com, syq@debian.org,
-        jiaxun.yang@flygoat.com, 772753199@qq.com
-Subject: [PATCH 1/3] RTC: Ingenic: Add support for the X1000.
-Date:   Tue, 29 Jan 2019 01:29:57 +0800
-Message-Id: <1548696599-53639-2-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548696599-53639-1-git-send-email-zhouyanjie@zoho.com>
-References: <1548696599-53639-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+        Mon, 28 Jan 2019 10:57:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43222 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730283AbfA1P5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:57:48 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 229A421783;
+        Mon, 28 Jan 2019 15:57:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691067;
+        bh=egtrxuTDIdsMrWXjlfGnnLruwQgaXadpfPw93jZnMYY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=2p4e5d8LwiV+q661sute+a1NJkmpA67mTiGUX/QUTdPTyoYO9eVNJBYgchU5OkEX/
+         tuAxhV3Ds2AN+k7Y/CgLNlkAcRJ/ni3XwcO++ThYiKZcqMf8ciVWVChypsmR7vRLt7
+         5lLeOBoHubYvCnqf6m1jL22SXE4NVYhjVeOmSBNc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Miles Chen <miles.chen@mediatek.com>,
+        Joe Perches <joe@perches.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.20 278/304] mm/page_owner: clamp read count to PAGE_SIZE
+Date:   Mon, 28 Jan 2019 10:43:15 -0500
+Message-Id: <20190128154341.47195-278-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for probing the rtc-jz4740 driver on the
-X1000 Soc from Ingenic.
+From: Miles Chen <miles.chen@mediatek.com>
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+[ Upstream commit c8f61cfc871fadfb73ad3eacd64fda457279e911 ]
+
+The (root-only) page owner read might allocate a large size of memory with
+a large read count.  Allocation fails can easily occur when doing high
+order allocations.
+
+Clamp buffer size to PAGE_SIZE to avoid arbitrary size allocation
+and avoid allocation fails due to high order allocation.
+
+[akpm@linux-foundation.org: use min_t()]
+Link: http://lkml.kernel.org/r/1541091607-27402-1-git-send-email-miles.chen@mediatek.com
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-jz4740.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ mm/page_owner.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rtc/rtc-jz4740.c b/drivers/rtc/rtc-jz4740.c
-index d0a8917..0c7ae65 100644
---- a/drivers/rtc/rtc-jz4740.c
-+++ b/drivers/rtc/rtc-jz4740.c
-@@ -34,7 +34,7 @@
- #define JZ_REG_RTC_RESET_COUNTER	0x28
- #define JZ_REG_RTC_SCRATCHPAD	0x34
+diff --git a/mm/page_owner.c b/mm/page_owner.c
+index 87bc0dfdb52b..28b06524939f 100644
+--- a/mm/page_owner.c
++++ b/mm/page_owner.c
+@@ -351,6 +351,7 @@ print_page_owner(char __user *buf, size_t count, unsigned long pfn,
+ 		.skip = 0
+ 	};
  
--/* The following are present on the jz4780 */
-+/* The following are present on the jz4780 and x1000 */
- #define JZ_REG_RTC_WENR	0x3C
- #define JZ_RTC_WENR_WEN	BIT(31)
- 
-@@ -46,7 +46,7 @@
- #define JZ_RTC_CTRL_AE		BIT(2)
- #define JZ_RTC_CTRL_ENABLE	BIT(0)
- 
--/* Magic value to enable writes on jz4780 */
-+/* Magic value to enable writes on jz4780 and x1000 */
- #define JZ_RTC_WENR_MAGIC	0xA55A
- 
- #define JZ_RTC_WAKEUP_FILTER_MASK	0x0000FFE0
-@@ -55,6 +55,7 @@
- enum jz4740_rtc_type {
- 	ID_JZ4740,
- 	ID_JZ4780,
-+	ID_X1000,
- };
- 
- struct jz4740_rtc {
-@@ -301,6 +302,7 @@ static void jz4740_rtc_power_off(void)
- static const struct of_device_id jz4740_rtc_of_match[] = {
- 	{ .compatible = "ingenic,jz4740-rtc", .data = (void *)ID_JZ4740 },
- 	{ .compatible = "ingenic,jz4780-rtc", .data = (void *)ID_JZ4780 },
-+	{ .compatible = "ingenic,x1000-rtc", .data = (void *)ID_X1000 },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, jz4740_rtc_of_match);
-@@ -429,6 +431,7 @@ static const struct dev_pm_ops jz4740_pm_ops = {
- static const struct platform_device_id jz4740_rtc_ids[] = {
- 	{ "jz4740-rtc", ID_JZ4740 },
- 	{ "jz4780-rtc", ID_JZ4780 },
-+	{ "x1000-rtc", ID_X1000 },
- 	{}
- };
- MODULE_DEVICE_TABLE(platform, jz4740_rtc_ids);
++	count = min_t(size_t, count, PAGE_SIZE);
+ 	kbuf = kmalloc(count, GFP_KERNEL);
+ 	if (!kbuf)
+ 		return -ENOMEM;
 -- 
-2.7.4
-
+2.19.1
 
