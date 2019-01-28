@@ -2,116 +2,161 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 069BCC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89061C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C91F4214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:58:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qRolODtY"
+	by mail.kernel.org (Postfix) with ESMTP id 60DC421738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfA1L6c (ORCPT
+        id S1726843AbfA1L7i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:58:32 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44108 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbfA1L6b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:58:31 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u6so7870823pfh.11
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 03:58:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5y+OwHy8ExdG4LYMZEjHHJUF2SaskHXsVe2GWcV06zk=;
-        b=qRolODtYN1zJsGDVt3HOz6l8wrc6GUAlMzXQnL3tq1xgr67ZhdtLbF728uoKIRgkZR
-         UTxKYqJWP0r/ELVFtWDU7NKjE6wdAlQZ2AlbkPo+GEWmOUSU+v7ehGLKgiZxJJc9N+j8
-         s7R9Fswa5tCpJxSt1NyhLP+L3Sir0USfrbXVSN9Si9lwvsg2hWh6d9FaC7V71I2+2k+0
-         rvB/bQLWXgMzXCnwTbfPS9VFyM/WdT6X+zED5eBEclvKiHluGYbJos1oaYQQLbO+KXVa
-         xOQAbPHB1ra/dQi01B0U83r4H77lCd2E191gwmr+Tpoxy/Xjg6T6K0ublkOplFG52EEJ
-         x+cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5y+OwHy8ExdG4LYMZEjHHJUF2SaskHXsVe2GWcV06zk=;
-        b=RZ9WK7bo8jQwBs6m1ZQyQ7Y/bQirkgKsv0wTksCvD5loqARMM5aaUU1EZm0VjxVihT
-         +s+tVVsBjzonY2BONI8V/Ojpd/hrOWWB2YRXMwDQt238IRhyZgOn+e0x8QDmdf5NDboF
-         QQJaZHASE0PJ6sy+lJCAmyMvmQ3faiHiQU2BsOhu+AA+xRN6qR9b5TA4tJW3CEA8UFon
-         ECFW3XrwrcfL/OsPtnsl4tMEuXQKH6rbJcOXk1wiqBgWMHrJYTbUk4m0Z6y1ivSiO3bF
-         wo6x2Swtu50vNBFqR50NnOl0ANxQXmJbPCpX8KApMqN88m2nIkl3+VZ+/NsUzVZ1uGvc
-         h4AA==
-X-Gm-Message-State: AJcUukfj8q2QlT1mzSx1uofRL3/Q8bqdni5uKOkcQMFkqFlO3LCMmJlA
-        X+WUVwTSpXUja+cw/hqA1C5s+x8sjsYqZv2vKTgCwKEw
-X-Google-Smtp-Source: ALg8bN4xDB0Uunb4gcRy/OS9OBPiAg4ka1u7aWN8LBwC77ktBv3gyOd36Vw+hsHQT0w9svWN2P0f0IY/LEzayM61UeI=
-X-Received: by 2002:a62:5793:: with SMTP id i19mr21763806pfj.49.1548676711010;
- Mon, 28 Jan 2019 03:58:31 -0800 (PST)
-MIME-Version: 1.0
-References: <20190128113619.19025-1-bp@alien8.de>
-In-Reply-To: <20190128113619.19025-1-bp@alien8.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 28 Jan 2019 13:58:19 +0200
-Message-ID: <CAHp75VdVFGoJxGzszoGXZ0h-bteDwYA+FbWob0soZPPPQbJFSA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Add Andy and Darren as arch/x86/platform/ reviewers
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 28 Jan 2019 06:59:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:44210 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726648AbfA1L7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 06:59:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D896EBD;
+        Mon, 28 Jan 2019 03:59:37 -0800 (PST)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B19DB3F59C;
+        Mon, 28 Jan 2019 03:59:34 -0800 (PST)
+Date:   Mon, 28 Jan 2019 11:59:36 +0000
+Message-ID: <86wompuh5j.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <daniel.thompson@linaro.org>,
+        <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
+        <james.morse@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH v9 20/26] irqchip/gic-v3: Handle pseudo-NMIs
+In-Reply-To: <1548084825-8803-21-git-send-email-julien.thierry@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-21-git-send-email-julien.thierry@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 1:36 PM Borislav Petkov <bp@alien8.de> wrote:
->
-> From: Borislav Petkov <bp@suse.de>
->
-> ... so that they can get CCed on platform patches.
->
-
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: Darren Hart <dvhart@infradead.org>
-> Cc: Andy Shevchenko <andy@infradead.org>
-> Cc: x86@kernel.org
+On Mon, 21 Jan 2019 15:33:39 +0000,
+Julien Thierry <julien.thierry@arm.com> wrote:
+> 
+> Provide a higher priority to be used for pseudo-NMIs. When such an
+> interrupt is received, keep interrupts fully disabled at CPU level to
+> prevent receiving other pseudo-NMIs while handling the current one.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
 > ---
->  MAINTAINERS | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cef2104d5f2c..825cad5e01e8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16652,6 +16652,15 @@ S:     Maintained
->  F:     drivers/platform/x86/
->  F:     drivers/platform/olpc/
->
-> +X86 PLATFORM DRIVERS - ARCH
-> +R:     Darren Hart <dvhart@infradead.org>
-> +R:     Andy Shevchenko <andy@infradead.org>
-> +L:     platform-driver-x86@vger.kernel.org
-> +L:     x86@kernel.org
-> +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
-> +S:     Maintained
-> +F:     arch/x86/platform
+>  drivers/irqchip/irq-gic-v3.c | 42 ++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 36 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 5374b43..4df1e94 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -41,6 +41,8 @@
+>  
+>  #include "irq-gic-common.h"
+>  
+> +#define GICD_INT_NMI_PRI	(GICD_INT_DEF_PRI & ~0x80)
 > +
->  X86 VDSO
->  M:     Andy Lutomirski <luto@kernel.org>
->  L:     linux-kernel@vger.kernel.org
-> --
-> 2.19.1
->
+>  #define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
+>  
+>  struct redist_region {
+> @@ -381,12 +383,45 @@ static u64 gic_mpidr_to_affinity(unsigned long mpidr)
+>  	return aff;
+>  }
+>  
+> +static inline void gic_deactivate_unexpected_irq(u32 irqnr)
 
+Same remark as on some other patches: you should be able to drop the
+inline attribute without any ill effect. I'd also like this to be
+renamed "gic_deactivate_spurious", or something similar.
+
+> +{
+> +	if (static_branch_likely(&supports_deactivate_key)) {
+> +		if (irqnr < 8192)
+> +			gic_write_dir(irqnr);
+> +	} else {
+> +		gic_write_eoir(irqnr);
+> +	}
+> +}
+> +
+> +static inline void gic_handle_nmi(u32 irqnr, struct pt_regs *regs)
+> +{
+> +	int err;
+> +
+> +	if (static_branch_likely(&supports_deactivate_key))
+> +		gic_write_eoir(irqnr);
+> +	/*
+> +	 * Leave the PSR.I bit set to prevent other NMIs to be
+> +	 * received while handling this one.
+> +	 * PSR.I will be restored when we ERET to the
+> +	 * interrupted context.
+> +	 */
+> +	err = handle_domain_nmi(gic_data.domain, irqnr, regs);
+
+So this is the point where we start having a dependency on the NMI
+series. We definitely need to start talking merge strategy.
+
+> +	if (err)
+> +		gic_deactivate_unexpected_irq(irqnr);
+> +}
+> +
+>  static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+>  {
+>  	u32 irqnr;
+>  
+>  	irqnr = gic_read_iar();
+>  
+> +	if (gic_supports_nmi() &&
+> +	    unlikely(gic_read_rpr() == GICD_INT_NMI_PRI)) {
+> +		gic_handle_nmi(irqnr, regs);
+> +		return;
+> +	}
+> +
+>  	if (gic_prio_masking_enabled()) {
+>  		gic_pmr_mask_irqs();
+>  		gic_arch_enable_irqs();
+> @@ -403,12 +438,7 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
+>  		err = handle_domain_irq(gic_data.domain, irqnr, regs);
+>  		if (err) {
+>  			WARN_ONCE(true, "Unexpected interrupt received!\n");
+> -			if (static_branch_likely(&supports_deactivate_key)) {
+> -				if (irqnr < 8192)
+> -					gic_write_dir(irqnr);
+> -			} else {
+> -				gic_write_eoir(irqnr);
+> -			}
+> +			gic_deactivate_unexpected_irq(irqnr);
+>  		}
+>  		return;
+>  	}
+> -- 
+> 1.9.1
+> 
+
+With the above addressed,
+
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+
+	M.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Jazz is not dead, it just smell funny.
