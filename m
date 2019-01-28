@@ -2,133 +2,86 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 085B7C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E6C2C4151A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB0AD21841
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691079;
-	bh=tNKOX75pnekJKf/gmlhYfUmfvUg4FxLKHyeykOYjtaY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oEtAKzVSI5MOcazlsvLGpyHvjRa+xM3kHICAs9xdM/NGKgIHUce+0ALZla1SZKRKc
-	 oQYr1P7WMeN6VW9fe5BVcWIKWDQYgSrOvehmaTvXDA6HIK4cFNXWArOcjpza5JCNVc
-	 y6BZXxrtKA4pztcBttMM5oCPXUyV3L/0rofbLECc=
+	by mail.kernel.org (Postfix) with ESMTP id 032B721852
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B2KFs0uY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730348AbfA1P56 (ORCPT
+        id S1730363AbfA1P6C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:57:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730316AbfA1P55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:57:57 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E1F421783;
-        Mon, 28 Jan 2019 15:57:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691076;
-        bh=tNKOX75pnekJKf/gmlhYfUmfvUg4FxLKHyeykOYjtaY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uyXmcAPdQEfKf6oB5g5K+6KE6XzNBngKYxB71Gpkx3tbo13KkmGyV/8NlIjBZ3HnD
-         WLZ+PyGEcTLEXtCXT0RSlGLUuQEAeyd4wEs8GxuXpnYctNLQQrAdqNfNz6WSRXnEI2
-         kYP4BtUZ2SxQew++slCcbHphqpKkGkc1aruhYlVY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Larry Chen <lchen@suse.com>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 280/304] ocfs2: improve ocfs2 Makefile
-Date:   Mon, 28 Jan 2019 10:43:17 -0500
-Message-Id: <20190128154341.47195-280-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 10:58:02 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:50660 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729738AbfA1P6B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:58:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nKhBdv+Igs+P4UaZkx5EvY+zcrwZHuUbBgT3qdyrWfs=; b=B2KFs0uYk6Z2cMJtTiOz0FZvk
+        y+i/NS8nc82gKsCjTl8y2jVXutywB+HEslfb1G6HO1yCP81BNZpGdCO5gm/jOTrDnM32YoPXgRFoC
+        uyNFejzTKEx8nTPiOtWZBvuM94KiKeGUHDRpfJ57XVf9SudaYQJPdgDDIla1QbyisC6+Fu1H6IuCN
+        PYgG32Z57QUW3OPvwShHmgHnQ6rnnN7wPv6uKlhjT7rt0X94KBjWcLRB8e0lwiohVakxGoXka+vQ2
+        RkV/nxS3Pfq/lE6Cpf8JzdVS5jYXuuO8hwY37wZiU0ssyqT8MjPjs655sm0WHHM/MTizTm8ne7G3D
+        ctHVUmkLQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1go9IG-0007oc-T1; Mon, 28 Jan 2019 15:57:52 +0000
+Date:   Mon, 28 Jan 2019 07:57:52 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "chenxiang (M)" <chenxiang66@hisilicon.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linuxarm@huawei.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, axboe@kernel.dk,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [PATCH] block: set rq->cmd_flags with bio->opf instead of
+ data->cmd_flags when bio is not Null
+Message-ID: <20190128155752.GA29076@infradead.org>
+References: <1548337430-66690-1-git-send-email-chenxiang66@hisilicon.com>
+ <1c34d6f9-8c3c-a7ff-a956-46e9dc3c2298@hisilicon.com>
+ <20190128140716.GA18162@infradead.org>
+ <55972c1a-051a-1396-6796-84f349830a35@huawei.com>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55972c1a-051a-1396-6796-84f349830a35@huawei.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Chen <lchen@suse.com>
+On Mon, Jan 28, 2019 at 03:36:58PM +0000, John Garry wrote:
+> As I understood, the problem is the scenario of calling
+> blk_mq_make_request()->bio_integrity_prep() where we then allocate a bio
+> integrity payload in calling bio_integrity_alloc().
+> 
+> In this case, bio_integrity_alloc() sets bio->bi_opf |= REQ_INTEGRITY, which
+> is no longer consistent with data.cmd_flags.
 
-[ Upstream commit 9e6aea22802b5684c7e1d69822aeb0844dd01953 ]
+I don't see how that could happen:
 
-Included file path was hard-wired in the ocfs2 makefile, which might
-causes some confusion when compiling ocfs2 as an external module.
+static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
+{
+	...
 
-Say if we compile ocfs2 module as following.
-cp -r /kernel/tree/fs/ocfs2 /other/dir/ocfs2
-cd /other/dir/ocfs2
-make -C /path/to/kernel_source M=`pwd` modules
+	if (!bio_integrity_prep(bio))
+		return BLK_QC_T_NONE;
 
-Acutally, the compiler wil try to find included file in
-/kernel/tree/fs/ocfs2, rather than the directory /other/dir/ocfs2.
+	...
 
-To fix this little bug, we introduce the var $(src) provided by kbuild.
-$(src) means the absolute path of the running kbuild file.
-
-Link: http://lkml.kernel.org/r/20181108085546.15149-1-lchen@suse.com
-Signed-off-by: Larry Chen <lchen@suse.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ocfs2/Makefile       | 2 +-
- fs/ocfs2/dlm/Makefile   | 2 +-
- fs/ocfs2/dlmfs/Makefile | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ocfs2/Makefile b/fs/ocfs2/Makefile
-index 99ee093182cb..cc9b32b9db7c 100644
---- a/fs/ocfs2/Makefile
-+++ b/fs/ocfs2/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--ccflags-y := -Ifs/ocfs2
-+ccflags-y := -I$(src)
- 
- obj-$(CONFIG_OCFS2_FS) += 	\
- 	ocfs2.o			\
-diff --git a/fs/ocfs2/dlm/Makefile b/fs/ocfs2/dlm/Makefile
-index bd1aab1f49a4..ef2854422a6e 100644
---- a/fs/ocfs2/dlm/Makefile
-+++ b/fs/ocfs2/dlm/Makefile
-@@ -1,4 +1,4 @@
--ccflags-y := -Ifs/ocfs2
-+ccflags-y := -I$(src)/..
- 
- obj-$(CONFIG_OCFS2_FS_O2CB) += ocfs2_dlm.o
- 
-diff --git a/fs/ocfs2/dlmfs/Makefile b/fs/ocfs2/dlmfs/Makefile
-index eed3db8c5b49..33431a0296a3 100644
---- a/fs/ocfs2/dlmfs/Makefile
-+++ b/fs/ocfs2/dlmfs/Makefile
-@@ -1,4 +1,4 @@
--ccflags-y := -Ifs/ocfs2
-+ccflags-y := -I$(src)/..
- 
- obj-$(CONFIG_OCFS2_FS) += ocfs2_dlmfs.o
- 
--- 
-2.19.1
+	data.cmd_flags = bio->bi_opf;
+        rq = blk_mq_get_request(q, bio, &data);
 
