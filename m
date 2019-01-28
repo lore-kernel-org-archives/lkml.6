@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98444C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E81D5C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6432320881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B41252175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697722;
-	bh=d/Bf4LUC8RVEHryUovEHlCKsUc+6pTOP4DFtJngc3P0=;
+	s=default; t=1548697727;
+	bh=VO1xttr0KEnwEWECtrZweLaQqLab3ASJdmHCmU4mRmk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=poWVbOAOgraEhLgcL+DQgIP6GGOhepLTA2N2RGDgVBAjZpxVhUrmfbKkucnbdAC29
-	 c77o8Wrhr52PtyoNA577lN0NT0zYmAboL2Pb7L3Uw70w3OFHKPjYDjxa9mV0ZjYy5p
-	 2tT6LQF/fLhQxZ6dZGBgczqTpJ3ee2BjjPgHwfj4=
+	b=Dgfh/Qbr6iojF5wAxJC3W42xCrmGpF0fKxN2WHLQpkoMjdWCu19m/5ogdzKtTGTMt
+	 XtLfTv1wD7CpcpkUHSQ+pzCa+9xld2RU0k7SV7j1dkpWS6bSbbJaz88rsxWaw5Y6Ce
+	 RgUBZbKvd1UFp+pJ9nn7cg4/8m50zE/83FPaBXU8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbfA1Rsk (ORCPT
+        id S1727770AbfA1Pp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:48:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58850 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:45:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbfA1Pp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:45:28 -0500
+        id S1726920AbfA1PpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:45:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7C062177B;
-        Mon, 28 Jan 2019 15:45:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 682322147A;
+        Mon, 28 Jan 2019 15:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690328;
-        bh=d/Bf4LUC8RVEHryUovEHlCKsUc+6pTOP4DFtJngc3P0=;
+        s=default; t=1548690319;
+        bh=VO1xttr0KEnwEWECtrZweLaQqLab3ASJdmHCmU4mRmk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q6+egxLWLxetWGdHHRWe7i231dj9mGPpY52iShfdoko0yCGvrHrMxZ/uORojQeD/c
-         LLAp1kL9nADBr++4MijmBJkXADJ3Rr+e45HCx/JeAw6JY8fA5KMmK4qTOwqYOlVunY
-         pKJrCaZhSpeto5cccLIYLdyad6Yd7jbDIa5ZWVTY=
+        b=joqJabaCJCGFMVKqq/Vy+ogClHSKGXpYFdHxaGLzxPn271uXYu+7uSssqs0vPHK+C
+         Luc2A738kFJOOtxi/Um8vjP1+rBMDPxu0Cg62+n07M7M/pgdN2K9v0EVL2Kq4VaWKz
+         VhKUfiq/5hQFKx3lQzc+4w0npMKNTAlq7vcmbsWs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Damian Kos <dkos@cadence.com>, Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.20 053/304] drm/rockchip: fix for mailbox read size
-Date:   Mon, 28 Jan 2019 10:39:30 -0500
-Message-Id: <20190128154341.47195-53-sashal@kernel.org>
+Cc:     Alan Brady <alan.brady@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 049/304] i40e: prevent overlapping tx_timeout recover
+Date:   Mon, 28 Jan 2019 10:39:26 -0500
+Message-Id: <20190128154341.47195-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,45 +58,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Damian Kos <dkos@cadence.com>
+From: Alan Brady <alan.brady@intel.com>
 
-[ Upstream commit fa68d4f8476bea4cdf441062b614b41bb85ef1da ]
+[ Upstream commit d5585b7b6846a6d0f9517afe57be3843150719da ]
 
-Some of the functions (like cdn_dp_dpcd_read, cdn_dp_get_edid_block)
-allow to read 64KiB, but the cdn_dp_mailbox_read_receive, that is
-used by them, can read only up to 255 bytes at once. Normally, it's
-not a big issue as DPCD or EDID reads won't (hopefully) exceed that
-value.
-The real issue here is the revocation list read during the HDCP
-authentication process. (problematic use case:
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4/drivers/gpu/drm/rockchip/cdn-dp-reg.c#1152)
-The list can reach 127*5+4 bytes (num devs * 5 bytes per ID/Bksv +
-4 bytes of an additional info).
-In other words - CTSes with HDCP Repeater won't pass without this
-fix. Oh, and the driver will most likely stop working (best case
-scenario).
+If a TX hang occurs, we attempt to recover by incrementally resetting.
+If we're starved for CPU time, it's possible the reset doesn't actually
+complete (or even fire) before another tx_timeout fires causing us to
+fly through the different resets without actually doing them.
 
-Signed-off-by: Damian Kos <dkos@cadence.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/1541518625-25984-1-git-send-email-dkos@cadence.com
+This adds a bit to set and check if a timeout recovery is already
+pending and, if so, bail out of tx_timeout.  The bit will get cleared at
+the end of i40e_rebuild when reset is complete.
+
+Signed-off-by: Alan Brady <alan.brady@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/rockchip/cdn-dp-reg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/i40e/i40e.h      | 1 +
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-index 3105965fc260..5a485489a1e2 100644
---- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-+++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-@@ -147,7 +147,7 @@ static int cdn_dp_mailbox_validate_receive(struct cdn_dp_device *dp,
+diff --git a/drivers/net/ethernet/intel/i40e/i40e.h b/drivers/net/ethernet/intel/i40e/i40e.h
+index 876cac317e79..8245ff12fd64 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e.h
++++ b/drivers/net/ethernet/intel/i40e/i40e.h
+@@ -122,6 +122,7 @@ enum i40e_state_t {
+ 	__I40E_MDD_EVENT_PENDING,
+ 	__I40E_VFLR_EVENT_PENDING,
+ 	__I40E_RESET_RECOVERY_PENDING,
++	__I40E_TIMEOUT_RECOVERY_PENDING,
+ 	__I40E_MISC_IRQ_REQUESTED,
+ 	__I40E_RESET_INTR_RECEIVED,
+ 	__I40E_REINIT_REQUESTED,
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 0e5dc74b4ef2..419cf3faada6 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -338,6 +338,10 @@ static void i40e_tx_timeout(struct net_device *netdev)
+ 		      (pf->tx_timeout_last_recovery + netdev->watchdog_timeo)))
+ 		return;   /* don't do any new action before the next timeout */
+ 
++	/* don't kick off another recovery if one is already pending */
++	if (test_and_set_bit(__I40E_TIMEOUT_RECOVERY_PENDING, pf->state))
++		return;
++
+ 	if (tx_ring) {
+ 		head = i40e_get_head(tx_ring);
+ 		/* Read interrupt register */
+@@ -9632,6 +9636,7 @@ end_core_reset:
+ 	clear_bit(__I40E_RESET_FAILED, pf->state);
+ clear_recovery:
+ 	clear_bit(__I40E_RESET_RECOVERY_PENDING, pf->state);
++	clear_bit(__I40E_TIMEOUT_RECOVERY_PENDING, pf->state);
  }
  
- static int cdn_dp_mailbox_read_receive(struct cdn_dp_device *dp,
--				       u8 *buff, u8 buff_size)
-+				       u8 *buff, u16 buff_size)
- {
- 	u32 i;
- 	int ret;
+ /**
 -- 
 2.19.1
 
