@@ -2,443 +2,110 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CFAC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F60C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DE412173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:00:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SiE0cST9"
+	by mail.kernel.org (Postfix) with ESMTP id 3F6AD2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfA1NAH (ORCPT
+        id S1726805AbfA1NCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:00:07 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42417 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbfA1NAH (ORCPT
+        Mon, 28 Jan 2019 08:02:03 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:46801 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbfA1NCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:00:07 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q18so17926906wrx.9
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 05:00:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=F1kXDxN9SgU3Gy4DpvLOYRSgLn1+0pgCe+JxFuZTAzk=;
-        b=SiE0cST9qoxXY5YKpQ6cO8bV6ODwDGRiLjNJEnhvZJxiqu/Ft/HeClD9KhraxlGhbu
-         QSbqe9MRVhSd5WFqy9JzoZkfFF65PR5c5cairH9vzuwuvjSvkwnqR8jHoE/55XsW1LcD
-         yNwa16sSzcNcox+giTRIcNM2sUXda2EMvD5aA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=F1kXDxN9SgU3Gy4DpvLOYRSgLn1+0pgCe+JxFuZTAzk=;
-        b=D2JLgHoIUkjN9nK4JvxlPIXDwyxN9XX9VfM3ceAVn4lx8dpRVq0MvmYnoMRo9Gj6NX
-         nk2rtkw+406vD/tFrHCcFtBiyOVVncMpIs/5fV53p/WhI0oMuaQZJn/Kxbv26BC/ZRi+
-         ZorCnRHbDoWxQtDbFnIB8XGBnQu73xaBhvkmFGH88VdoDb+d90Y0hYCEHkfbEIKyPU3H
-         xiyZ7O36sFqiwD8d86rt/sxSC5mMvQbzbFYKLyVAWf8LjYtVw3ob+SELLHLJU/r8egCG
-         4zR0lUON4hwhFlom1gDYlc09mz+K6bIlzqwBPQWaWs+Vq6s16FzEYZREW+WYxOtyfN2F
-         OJ2w==
-X-Gm-Message-State: AJcUukeAqHw9yNiH40lSogiRtJG59V0TOpfkRzGoWMmke/iovsJyx1B+
-        7vD5hOhKcbYWmbSUnJJVwOQyNf7zv9E=
-X-Google-Smtp-Source: ALg8bN4XBjVrB//fIVFuVbWckoJGAy2w/hd17ldlqpu2pOneY0eXBBXvevDsijvTJ8yr0RQ73GwW2Q==
-X-Received: by 2002:adf:92a4:: with SMTP id 33mr21532140wrn.11.1548680403537;
-        Mon, 28 Jan 2019 05:00:03 -0800 (PST)
-Received: from [192.168.0.41] (167.126.130.77.rev.sfr.net. [77.130.126.167])
-        by smtp.googlemail.com with ESMTPSA id r200sm6317760wmb.36.2019.01.28.05.00.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 05:00:02 -0800 (PST)
-Subject: Re: [PATCH V2 2/6] clocksource: tegra: add Tegra210 timer driver
-To:     Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-References: <20190128091815.7040-1-josephl@nvidia.com>
- <20190128091815.7040-3-josephl@nvidia.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <fa03140e-4f7f-ac9a-bb54-26b1efe2dc3d@linaro.org>
-Date:   Mon, 28 Jan 2019 14:00:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 28 Jan 2019 08:02:02 -0500
+X-Originating-IP: 91.192.165.7
+Received: from pc.localdomain (unknown [91.192.165.7])
+        (Authenticated sender: contact@artur-rojek.eu)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 9847A1C0003;
+        Mon, 28 Jan 2019 13:01:57 +0000 (UTC)
+From:   Artur Rojek <contact@artur-rojek.eu>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Artur Rojek <contact@artur-rojek.eu>
+Subject: [PATCH 1/3] dt-bindings: iio/adc: Add docs for Ingenic JZ47xx SoCs ADC.
+Date:   Mon, 28 Jan 2019 14:02:39 +0100
+Message-Id: <20190128130241.5027-1-contact@artur-rojek.eu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190128091815.7040-3-josephl@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/01/2019 10:18, Joseph Lo wrote:
-> Add support for the Tegra210 timer that runs at oscillator clock
-> (TMR10-TMR13). We need these timers to work as clock event device and to
-> replace the ARMv8 architected timer due to it can't survive across the
-> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
-> source when CPU suspends in power down state.
-> 
-> Based on the work of Antti P Miettinen <amiettinen@nvidia.com>
-> 
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
-> v2:
->  * add error clean-up code
-> ---
->  drivers/clocksource/Kconfig          |   3 +
->  drivers/clocksource/Makefile         |   1 +
->  drivers/clocksource/timer-tegra210.c | 268 +++++++++++++++++++++++++++
->  include/linux/cpuhotplug.h           |   1 +
->  4 files changed, 273 insertions(+)
->  create mode 100644 drivers/clocksource/timer-tegra210.c
-> 
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index a9e26f6a81a1..e6e3e64b6320 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -135,6 +135,9 @@ config TEGRA_TIMER
->  	help
->  	  Enables support for the Tegra driver.
->  
-> +config TEGRA210_TIMER
-> +	def_bool ARCH_TEGRA_210_SOC
-> +
+Add documentation for the ADC controller on JZ47xx SoCs,
+used by the ingenic-adc driver.
 
-Please make the option consistent with the option below (VT8500_TIMER or
-similar).
+Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+---
+ .../bindings/iio/adc/ingenic,adc.txt          | 48 +++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt
 
->  config VT8500_TIMER
->  	bool "VT8500 timer driver" if COMPILE_TEST
->  	depends on HAS_IOMEM
-> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-> index cdd210ff89ea..95de59c8a47b 100644
-> --- a/drivers/clocksource/Makefile
-> +++ b/drivers/clocksource/Makefile
-> @@ -36,6 +36,7 @@ obj-$(CONFIG_SUN4I_TIMER)	+= timer-sun4i.o
->  obj-$(CONFIG_SUN5I_HSTIMER)	+= timer-sun5i.o
->  obj-$(CONFIG_MESON6_TIMER)	+= timer-meson6.o
->  obj-$(CONFIG_TEGRA_TIMER)	+= timer-tegra20.o
-> +obj-$(CONFIG_TEGRA210_TIMER)	+= timer-tegra210.o
->  obj-$(CONFIG_VT8500_TIMER)	+= timer-vt8500.o
->  obj-$(CONFIG_NSPIRE_TIMER)	+= timer-zevio.o
->  obj-$(CONFIG_BCM_KONA_TIMER)	+= bcm_kona_timer.o
-> diff --git a/drivers/clocksource/timer-tegra210.c b/drivers/clocksource/timer-tegra210.c
-> new file mode 100644
-> index 000000000000..477b164e540b
-> --- /dev/null
-> +++ b/drivers/clocksource/timer-tegra210.c
-> @@ -0,0 +1,268 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2014-2019, NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clockchips.h>
-> +#include <linux/cpu.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/err.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/io.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/percpu.h>
-> +#include <linux/syscore_ops.h>
-> +
-> +static u32 tegra210_timer_freq;
-> +static void __iomem *tegra210_timer_reg_base;
-> +static u32 usec_config;
-> +
-> +#define TIMER_PTV		0x0
-> +#define TIMER_PTV_EN		BIT(31)
-> +#define TIMER_PTV_PER		BIT(30)
-> +#define TIMER_PCR		0x4
-> +#define TIMER_PCR_INTR_CLR	BIT(30)
-> +#define TIMERUS_CNTR_1US	0x10
-> +#define TIMERUS_USEC_CFG	0x14
-> +
-> +#define TIMER10_OFFSET		0x90
-> +#define TIMER10_IRQ_IDX		10
-> +
-> +#define TIMER_FOR_CPU(cpu) (TIMER10_OFFSET + (cpu) * 8)
-> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
-> +
-> +struct tegra210_clockevent {
-> +	struct clock_event_device evt;
-> +	char name[20];
-> +	void __iomem *reg_base;
-> +};
-> +#define to_tegra_cevt(p) (container_of(p, struct tegra210_clockevent, evt))
-> +
-> +static struct tegra210_clockevent __percpu *tegra210_evt;
-> +
-> +static int tegra210_timer_set_next_event(unsigned long cycles,
-> +					 struct clock_event_device *evt)
-> +{
-> +	struct tegra210_clockevent *tevt;
-> +
-> +	tevt = to_tegra_cevt(evt);
-> +	writel(TIMER_PTV_EN |
-> +	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
-> +	       tevt->reg_base + TIMER_PTV);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline void timer_shutdown(struct tegra210_clockevent *tevt)
-> +{
-> +	writel(0, tevt->reg_base + TIMER_PTV);
-> +}
-> +
-> +static int tegra210_timer_shutdown(struct clock_event_device *evt)
-> +{
-> +	struct tegra210_clockevent *tevt;
-> +
-> +	tevt = to_tegra_cevt(evt);
-> +	timer_shutdown(tevt);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra210_timer_set_periodic(struct clock_event_device *evt)
-> +{
-> +	struct tegra210_clockevent *tevt;
-> +
-> +	tevt = to_tegra_cevt(evt);
-> +	writel(TIMER_PTV_EN | TIMER_PTV_PER | ((tegra210_timer_freq / HZ) - 1),
-> +	       tevt->reg_base + TIMER_PTV);
-> +
-> +	return 0;
-> +}
-> +
-> +static irqreturn_t tegra210_timer_isr(int irq, void *dev_id)
-> +{
-> +	struct tegra210_clockevent *tevt;
-> +
-> +	tevt = dev_id;
-> +	writel(TIMER_PCR_INTR_CLR, tevt->reg_base + TIMER_PCR);
-> +	tevt->evt.event_handler(&tevt->evt);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int tegra210_timer_setup(unsigned int cpu)
-> +{
-> +	struct tegra210_clockevent *tevt = per_cpu_ptr(tegra210_evt, cpu);
-> +
-> +	irq_force_affinity(tevt->evt.irq, cpumask_of(cpu));
-> +	enable_irq(tevt->evt.irq);
-> +
-> +	clockevents_config_and_register(&tevt->evt, tegra210_timer_freq,
-> +					1, /* min */
-> +					0x1fffffff); /* 29 bits */
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra210_timer_stop(unsigned int cpu)
-> +{
-> +	struct tegra210_clockevent *tevt = per_cpu_ptr(tegra210_evt, cpu);
-> +
-> +	tevt->evt.set_state_shutdown(&tevt->evt);
-> +	disable_irq_nosync(tevt->evt.irq);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_timer_suspend(void)
-> +{
-> +	int cpu;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		void __iomem *reg_base = tegra210_timer_reg_base +
-> +					 TIMER_FOR_CPU(cpu);
-> +		writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void tegra_timer_resume(void)
-> +{
-> +	writel(usec_config, tegra210_timer_reg_base + TIMERUS_USEC_CFG);
-> +}
-> +
-> +static struct syscore_ops tegra_timer_syscore_ops = {
-> +	.suspend = tegra_timer_suspend,
-> +	.resume = tegra_timer_resume,
-> +};
-> +
-> +static int __init tegra210_timer_init(struct device_node *np)
-> +{
-> +	int cpu, ret = 0;
-> +	struct tegra210_clockevent *tevt;
-> +	struct clk *clk;
-> +
-> +	tegra210_evt = alloc_percpu(struct tegra210_clockevent);
-> +	if (!tegra210_evt) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	tegra210_timer_reg_base = of_iomap(np, 0);
-> +	if (!tegra210_timer_reg_base) {
-> +		ret = -ENXIO;
-> +		goto out_free_mem;
-> +	}
-> +
-> +	clk = of_clk_get(np, 0);
-> +	if (IS_ERR(clk)) {
-> +		ret = -EINVAL;
-> +		goto out_iounmap;
-> +	}
-> +
-> +	clk_prepare_enable(clk);
-> +	tegra210_timer_freq = clk_get_rate(clk);
-
-
-Use the timer-of API for each CPU.
-
-> +	for_each_possible_cpu(cpu) {
-
-
-No cpu loop for the initialization, use the tegra210_timer_setup for
-this (cf. armada 370 timer).
-
-> +		tevt = per_cpu_ptr(tegra210_evt, cpu);
-> +		tevt->reg_base = tegra210_timer_reg_base + TIMER_FOR_CPU(cpu);
-> +		tevt->evt.irq = irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
-> +		if (!tevt->evt.irq) {
-> +			pr_err("%s: can't map IRQ for CPU%d\n",
-> +			       __func__, cpu);
-> +			ret = -EINVAL;
-> +			goto out_clk;
-> +		}
-> +
-> +		snprintf(tevt->name, ARRAY_SIZE(tevt->name),
-> +			 "tegra210_timer%d", cpu);
-> +		tevt->evt.name = tevt->name;
-> +		tevt->evt.cpumask = cpumask_of(cpu);
-> +		tevt->evt.set_next_event = tegra210_timer_set_next_event;
-> +		tevt->evt.set_state_shutdown = tegra210_timer_shutdown;
-> +		tevt->evt.set_state_periodic = tegra210_timer_set_periodic;
-> +		tevt->evt.set_state_oneshot = tegra210_timer_shutdown;
-> +		tevt->evt.tick_resume = tegra210_timer_shutdown;
-> +		tevt->evt.features = CLOCK_EVT_FEAT_PERIODIC |
-> +			CLOCK_EVT_FEAT_ONESHOT;
-> +		tevt->evt.rating = 460;
-> +		irq_set_status_flags(tevt->evt.irq, IRQ_NOAUTOEN);
-
-Why do you need to prevent the interrupt to be enabled ? If the timer is
-stopped and cleared, no spurious interrupt will occur no ?
-
-> +		ret = request_irq(tevt->evt.irq, tegra210_timer_isr,
-> +				  IRQF_TIMER | IRQF_NOBALANCING,
-> +				  tevt->name, tevt);
-> +		if (ret) {
-> +			pr_err("%s: cannot setup irq %d for CPU%d\n",
-> +				__func__, tevt->evt.irq, cpu);
-> +			ret = -EINVAL;
-> +			goto out_irq;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Configure microsecond timers to have 1MHz clock
-> +	 * Config register is 0xqqww, where qq is "dividend", ww is "divisor"
-
-Did you mean 0xwwqq ?
-
-> +	 * Uses n+1 scheme
-> +	 */
-> +	switch (tegra210_timer_freq) {
-> +	case 12000000:
-> +		usec_config = 0x000b; /* (11+1)/(0+1) */
-> +		break;
-> +	case 12800000:
-> +		usec_config = 0x043f; /* (63+1)/(4+1) */
-> +		break;
-> +	case 13000000:
-> +		usec_config = 0x000c; /* (12+1)/(0+1) */
-> +		break;
-> +	case 16800000:
-> +		usec_config = 0x0453; /* (83+1)/(4+1) */
-> +		break;
-> +	case 19200000:
-> +		usec_config = 0x045f; /* (95+1)/(4+1) */
-> +		break;
-> +	case 26000000:
-> +		usec_config = 0x0019; /* (25+1)/(0+1) */
-> +		break;
-> +	case 38400000:
-> +		usec_config = 0x04bf; /* (191+1)/(4+1) */
-> +		break;
-> +	case 48000000:
-> +		usec_config = 0x002f; /* (47+1)/(0+1) */
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +		goto out_irq;
-> +	}
-> +
-> +	writel(usec_config, tegra210_timer_reg_base + TIMERUS_USEC_CFG);
-> +
-> +	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
-> +			  "AP_TEGRA_TIMER_STARTING", tegra210_timer_setup,
-> +			  tegra210_timer_stop);
-> +
-> +	register_syscore_ops(&tegra_timer_syscore_ops);
-> +
-> +	return ret;
-> +
-> +out_irq:
-> +	for_each_possible_cpu(cpu) {
-> +		tevt = per_cpu_ptr(tegra210_evt, cpu);
-> +		if (tevt->evt.irq) {
-> +			free_irq(tevt->evt.irq, tevt);
-> +			irq_dispose_mapping(tevt->evt.irq);
-> +		}
-> +	}
-> +out_clk:
-> +	clk_put(clk);
-> +out_iounmap:
-> +	iounmap(tegra210_timer_reg_base);
-> +out_free_mem:
-> +	free_percpu(tegra210_evt);
-> +out:
-> +	return ret;
-> +}
-> +
-> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_timer_init);
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index fd586d0301e7..e78281d07b70 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -121,6 +121,7 @@ enum cpuhp_state {
->  	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
->  	CPUHP_AP_ARM_TWD_STARTING,
->  	CPUHP_AP_QCOM_TIMER_STARTING,
-> +	CPUHP_AP_TEGRA_TIMER_STARTING,
->  	CPUHP_AP_ARMADA_TIMER_STARTING,
->  	CPUHP_AP_MARCO_TIMER_STARTING,
->  	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
-> 
-
-
+diff --git a/Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt b/Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt
+new file mode 100644
+index 000000000000..884f459bb9b9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt
+@@ -0,0 +1,48 @@
++* Ingenic JZ47xx ADC controller IIO bindings
++
++Required properties:
++
++- compatible: Should be one of:
++  * ingenic,jz4725b-adc
++  * ingenic,jz4740-adc
++- reg: ADC controller registers location and length.
++- clocks: phandle to the SoC's ADC clock.
++- clock-names: Must be set to "adc".
++- #io-channel-cells: Must be set to <1> to indicate channels are selected
++  by index.
++
++ADC clients must use the format described in iio-bindings.txt, giving
++a phandle and IIO specifier pair ("io-channels") to the ADC controller.
++
++Example:
++
++#include <dt-bindings/iio/adc/ingenic,adc.h>
++
++adc: adc@10070000 {
++	compatible = "ingenic,jz4740-adc";
++	#io-channel-cells = <1>;
++
++	reg = <0x10070000 0x30>;
++
++	clocks = <&cgu JZ4740_CLK_ADC>;
++	clock-names = "adc";
++
++	interrupt-parent = <&intc>;
++	interrupts = <18>;
++};
++
++adc-keys {
++	...
++	compatible = "adc-keys";
++	io-channels = <&adc INGENIC_ADC_AUX>;
++	io-channel-names = "buttons";
++	...
++};
++
++battery {
++	...
++	compatible = "ingenic,jz4740-battery",
++	io-channels = <&adc INGENIC_ADC_BATTERY>;
++	io-channel-names = "battery";
++	...
++};
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.20.1
 
