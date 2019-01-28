@@ -2,163 +2,144 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF59FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E59C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5B8321736
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:16:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA5F620844
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:18:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="fLrWpxxN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfA1JQc (ORCPT
+        id S1726752AbfA1JS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:16:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58400 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726654AbfA1JQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:16:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5677FAD17;
-        Mon, 28 Jan 2019 09:16:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id F21CF1E3FEF; Mon, 28 Jan 2019 10:16:27 +0100 (CET)
-Date:   Mon, 28 Jan 2019 10:16:27 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     valdis.kletnieks@vt.edu
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@osdl.org>, vbabka@suse.cz,
-        aarcange@redhat.com, rientjes@google.com, mhocko@kernel.org,
-        zi.yan@cs.rutgers.edu, hannes@cmpxchg.org, jack@suse.cz
-Subject: Re: [regression -next0117] What is kcompactd and why is he eating
- 100% of my cpu?
-Message-ID: <20190128091627.GA27972@quack2.suse.cz>
-References: <20190126200005.GB27513@amd>
- <12171.1548557813@turing-police.cc.vt.edu>
- <20190127141556.GB9565@techsingularity.net>
- <20190127160027.GA9340@amd>
- <13417.1548624994@turing-police.cc.vt.edu>
+        Mon, 28 Jan 2019 04:18:28 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:7835 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbfA1JS2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:18:28 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4ec8e30001>; Mon, 28 Jan 2019 01:18:27 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 28 Jan 2019 01:18:27 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 28 Jan 2019 01:18:27 -0800
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
+ 2019 09:18:26 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Mon, 28 Jan 2019 09:18:27 +0000
+Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c4ec8e10000>; Mon, 28 Jan 2019 01:18:26 -0800
+From:   Joseph Lo <josephl@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Joseph Lo <josephl@nvidia.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH V2 1/6] dt-bindings: timer: add Tegra210 timer
+Date:   Mon, 28 Jan 2019 17:18:10 +0800
+Message-ID: <20190128091815.7040-2-josephl@nvidia.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190128091815.7040-1-josephl@nvidia.com>
+References: <20190128091815.7040-1-josephl@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="J2SCkAp4GZ/dPZZf"
-Content-Disposition: inline
-In-Reply-To: <13417.1548624994@turing-police.cc.vt.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548667107; bh=u95jrV41KeNMrvbLIFcQbZKpHTl6eJam1oRyS/T1Xns=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+         Content-Transfer-Encoding:Content-Type;
+        b=fLrWpxxNI/705bfxJr75K/pNwthy1Ues+GION8hHfvdSpFGXe8t2dfNIs/QVwqG0e
+         4HIzm/19DjtUFuDUw2r+5OdkkWKgABUFxRPeAZSOpX2pXrb5DzDQhx5QF8Wo9scQKF
+         eJF1Bk/SPu2PHbB0olmY8y9fTVaKqGvt0qSAUgXvc4iY2xGLbv+Te9jOY62To06hWj
+         nRJOxQ2Cw8QO9RDiNMWW/qkSdqiK2DYs6Tr97vIk21lFSzjn09PeKdiaW5VkY3HX5l
+         EXv+6xhNKKGa2T2sQv21wKVddWsgn3/X+EYhWJtTqZDrAyj1t+Xn49TWeHXvxzvScf
+         4Gugyi4ybLUqA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+(TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
+or watchdog interrupts.
 
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sun 27-01-19 16:36:34, valdis.kletnieks@vt.edu wrote:
-> On Sun, 27 Jan 2019 17:00:27 +0100, Pavel Machek said:
-> > > > I've noticed this as well on earlier kernels (next-20181224 to 20190115)
-> > > > Some more info:
-> > > > 1) echo 3 > /proc/sys/vm/drop_caches  unwedges kcompactd in 1-3 seconds.
-> > > This aspect is curious as it indicates that kcompactd could potentially
-> > > be infinite looping but it's not something I've experienced myself. By
-> > > any chance is there a preditable reproduction case for this?
-> >
-> > I seen it exactly once, so not sure how reproducible this is. x86-32
-> > machine, running chromium browser, so yes, there was some swapping
-> > involved.
-> 
-> I don't have a surefire replicator, but my laptop (x86_64, so it's not a 32-bit
-> only issue) triggers it fairly often, up to multiple times a day. Doesn't seem to
-> be just the Chrome browser that triggers it - usually I'm doing other stuff as
-> well, like a compile or similar.  The fact that 'drop_caches' clears it  makes me
-> wonder if we're hitting a corner case where cache data isn't being automatically
-> cleared and clogging something up.
-
-So my buffer_migrate_page_norefs() is certainly buggy in its current
-incarnation (as a result block device page cache is not migratable at all).
-I've sent Andrew a patch over week ago but so far it got ignored. The patch
-is attached, can you give it a try whether it changes something for you?
-Thanks!
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
---J2SCkAp4GZ/dPZZf
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0001-mm-migrate-Make-buffer_migrate_page_norefs-actually-.patch"
-
-From 59ab3a8504c35e2215af6c251bdb2a8a1caca1dd Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Wed, 16 Jan 2019 11:02:48 +0100
-Subject: [PATCH] mm: migrate: Make buffer_migrate_page_norefs() actually
- succeed
-
-Currently, buffer_migrate_page_norefs() was constantly failing because
-buffer_migrate_lock_buffers() grabbed reference on each buffer. In fact,
-there's no reason for buffer_migrate_lock_buffers() to grab any buffer
-references as the page is locked during all our operation and thus
-nobody can reclaim buffers from the page. So remove grabbing of buffer
-references which also makes buffer_migrate_page_norefs() succeed.
-
-Fixes: 89cb0888ca14 "mm: migrate: provide buffer_migrate_page_norefs()"
-Signed-off-by: Jan Kara <jack@suse.cz>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- mm/migrate.c | 5 -----
- 1 file changed, 5 deletions(-)
+v2:
+ * list all the interrupts that are supported by tegra210 timers block
+ * add RB tag from Rob.
+---
+ .../bindings/timer/nvidia,tegra210-timer.txt  | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210=
+-timer.txt
 
-Andrew, can you please merge this patch? Sadly my previous testing only tested
-that page migration in general didn't get broken but I forgot to test whether
-the new migrate page callback actually results in more successful migrations
-for block device pages. So the bug got only revealed by customer testing. Now
-I've reproduced the workload internally and verified that the patch indeed
-fixes the issue.
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.=
+txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+new file mode 100644
+index 000000000000..032cda96fe0d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+@@ -0,0 +1,36 @@
++NVIDIA Tegra210 timer
++
++The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
++timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
++from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
++(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
++or watchdog interrupts.
++
++Required properties:
++- compatible : "nvidia,tegra210-timer".
++- reg : Specifies base physical address and size of the registers.
++- interrupts : A list of 14 interrupts; one per each timer channels 0 thro=
+ugh
++  13.
++- clocks : Must contain one entry, for the module clock.
++  See ../clocks/clock-bindings.txt for details.
++
++timer@60005000 {
++	compatible =3D "nvidia,tegra210-timer";
++	reg =3D <0x0 0x60005000 0x0 0x400>;
++	interrupts =3D <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
++	clocks =3D <&tegra_car TEGRA210_CLK_TIMER>;
++	clock-names =3D "timer";
++};
+--=20
+2.20.1
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index a16b15090df3..712b231a7376 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -709,7 +709,6 @@ static bool buffer_migrate_lock_buffers(struct buffer_head *head,
- 	/* Simple case, sync compaction */
- 	if (mode != MIGRATE_ASYNC) {
- 		do {
--			get_bh(bh);
- 			lock_buffer(bh);
- 			bh = bh->b_this_page;
- 
-@@ -720,18 +719,15 @@ static bool buffer_migrate_lock_buffers(struct buffer_head *head,
- 
- 	/* async case, we cannot block on lock_buffer so use trylock_buffer */
- 	do {
--		get_bh(bh);
- 		if (!trylock_buffer(bh)) {
- 			/*
- 			 * We failed to lock the buffer and cannot stall in
- 			 * async migration. Release the taken locks
- 			 */
- 			struct buffer_head *failed_bh = bh;
--			put_bh(failed_bh);
- 			bh = head;
- 			while (bh != failed_bh) {
- 				unlock_buffer(bh);
--				put_bh(bh);
- 				bh = bh->b_this_page;
- 			}
- 			return false;
-@@ -818,7 +814,6 @@ static int __buffer_migrate_page(struct address_space *mapping,
- 	bh = head;
- 	do {
- 		unlock_buffer(bh);
--		put_bh(bh);
- 		bh = bh->b_this_page;
- 
- 	} while (bh != head);
--- 
-2.16.4
-
-
---J2SCkAp4GZ/dPZZf--
