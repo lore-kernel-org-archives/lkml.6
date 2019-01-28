@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F14C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4175C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 424BA20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A8FB2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697702;
-	bh=N+FyKejrxPe3KVocsSadp7TI6FSQvnMhFiFsz5FaOwk=;
+	s=default; t=1548697717;
+	bh=7i13Zz+9iuHQLVh439EvUq7Ce1S5bG7zfXTU7lEvDIc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=apSgnLAW2QPVKIlrrut4L2kgpfPHysg1cbIsFxk0afaFkaI78yXVbOWM/kquBLcaB
-	 wqvZ3WQfCJyAnQaM6aSa1T05a7SEKJtJcKwPPZwqmv2Sx8t5mmxqnlMGG38JUMfYGy
-	 e/E+craLbP2QZLewPXpvWNo58EdjOV2X3w+bCsds=
+	b=zDYrZpikeE5ag5uK5XHh74nZsPV/hR+JUwIjph0I6WSbNEOuXOAsayibKyJKcThxT
+	 sIl58eJAd5gGb9PnBPyuHiEaoKn6PeOkG2OSOhjlRwYQjnzq8Q0RqG/BUzGc3pB8U1
+	 oYp7iYgsRK4xI1efT1fVyNl4fCP4HSPNoFXE+A94=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728359AbfA1RsV (ORCPT
+        id S1727789AbfA1Pp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:48:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59080 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:45:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727000AbfA1Ppl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:45:41 -0500
+        id S1727742AbfA1PpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:45:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DF592147A;
-        Mon, 28 Jan 2019 15:45:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 411DA21741;
+        Mon, 28 Jan 2019 15:45:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690340;
-        bh=N+FyKejrxPe3KVocsSadp7TI6FSQvnMhFiFsz5FaOwk=;
+        s=default; t=1548690323;
+        bh=7i13Zz+9iuHQLVh439EvUq7Ce1S5bG7zfXTU7lEvDIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OiyNAPWSpLIC2fYk39yPjjoQ91LEBbV3vkqy7CTxjFq0+8kfRZL4VpYDsJiY7njy9
-         r9hGjHAUVgfORQmrnH28xJyT9HQKEcI/cQ0WS8Zr3QLARrLDtPaMd6VCw/1Up2KzFc
-         X2r3XaiN3skuamY2o5sk5Sj7iUoQmUAW+Zr+VcOg=
+        b=j27Zbm6l+lyNQTfCQTrI1MYh7zr9fYlBIb1ioWBtFMlb10wpshnvhVlaGnd41uMJe
+         IjFFdHizNLi1ieYzmO1Lmo2LpyckxP73vTnLM5GUws2JqrlEp8DYQaSwR0GBVQ7Z+e
+         hoO7DjYy5P97cin216Ugp8PrERzccmJy8iRJJe2s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 057/304] bpf: libbpf: retry map creation without the name
-Date:   Mon, 28 Jan 2019 10:39:34 -0500
-Message-Id: <20190128154341.47195-57-sashal@kernel.org>
+Cc:     Renato Lui Geh <renatogeh@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.20 051/304] staging: iio: ad7780: update voltage on read
+Date:   Mon, 28 Jan 2019 10:39:28 -0500
+Message-Id: <20190128154341.47195-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,55 +59,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stanislav Fomichev <sdf@google.com>
+From: Renato Lui Geh <renatogeh@gmail.com>
 
-[ Upstream commit 23499442c319412aa8e54e7a939e2eb531bdd77d ]
+[ Upstream commit 336650c785b62c3bea7c8cf6061c933a90241f67 ]
 
-Since commit 88cda1c9da02 ("bpf: libbpf: Provide basic API support
-to specify BPF obj name"), libbpf unconditionally sets bpf_attr->name
-for maps. Pre v4.14 kernels don't know about map names and return an
-error about unexpected non-zero data. Retry sys_bpf without a map
-name to cover older kernels.
+The ad7780 driver previously did not read the correct device output, as
+it read an outdated value set at initialization. It now updates its
+voltage on read.
 
-v2 changes:
-* check for errno == EINVAL as suggested by Daniel Borkmann
-
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
+Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/bpf/bpf.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/staging/iio/adc/ad7780.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/tools/lib/bpf/bpf.c b/tools/lib/bpf/bpf.c
-index 03f9bcc4ef50..961e1b9fc592 100644
---- a/tools/lib/bpf/bpf.c
-+++ b/tools/lib/bpf/bpf.c
-@@ -69,6 +69,7 @@ int bpf_create_map_xattr(const struct bpf_create_map_attr *create_attr)
+diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
+index b67412db0318..c7cb05cedbbc 100644
+--- a/drivers/staging/iio/adc/ad7780.c
++++ b/drivers/staging/iio/adc/ad7780.c
+@@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
+ 			   long m)
  {
- 	__u32 name_len = create_attr->name ? strlen(create_attr->name) : 0;
- 	union bpf_attr attr;
-+	int ret;
+ 	struct ad7780_state *st = iio_priv(indio_dev);
++	int voltage_uv;
  
- 	memset(&attr, '\0', sizeof(attr));
- 
-@@ -86,7 +87,15 @@ int bpf_create_map_xattr(const struct bpf_create_map_attr *create_attr)
- 	attr.map_ifindex = create_attr->map_ifindex;
- 	attr.inner_map_fd = create_attr->inner_map_fd;
- 
--	return sys_bpf(BPF_MAP_CREATE, &attr, sizeof(attr));
-+	ret = sys_bpf(BPF_MAP_CREATE, &attr, sizeof(attr));
-+	if (ret < 0 && errno == EINVAL && create_attr->name) {
-+		/* Retry the same syscall, but without the name.
-+		 * Pre v4.14 kernels don't support map names.
-+		 */
-+		memset(attr.map_name, 0, sizeof(attr.map_name));
-+		return sys_bpf(BPF_MAP_CREATE, &attr, sizeof(attr));
-+	}
-+	return ret;
- }
- 
- int bpf_create_map_node(enum bpf_map_type map_type, const char *name,
+ 	switch (m) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
+ 	case IIO_CHAN_INFO_SCALE:
+-		*val = st->int_vref_mv * st->gain;
++		voltage_uv = regulator_get_voltage(st->reg);
++		if (voltage_uv < 0)
++			return voltage_uv;
++		*val = (voltage_uv / 1000) * st->gain;
+ 		*val2 = chan->scan_type.realbits - 1;
+ 		return IIO_VAL_FRACTIONAL_LOG2;
+ 	case IIO_CHAN_INFO_OFFSET:
 -- 
 2.19.1
 
