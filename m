@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08012C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CF5C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:15:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB0E12082E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:15:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98B0F20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:15:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695747;
-	bh=0ReZJLp+6Zdsk9K0ZuGkqTQRlgPouPm6ynB9K7ngDa4=;
+	s=default; t=1548695759;
+	bh=yzklis1qP1ua7rltG5gDUCmqKN/vZQ7FGUFiHg/pBV0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BDsEct2hIoooAk/MuaO6ED/SMUpXLRkIcl06zRifFkvaFsleTVBvxZtI3P0WSv6H5
-	 r5NHz/5hba7wG3b9IHbJoIYJas2JpOCDKxI8ixBICPl140Kg551MSPEkG+M9BwGcMj
-	 rfWYDaUKkMeA1XAhJ2l10ujlafKeAjewRoM9Ppag=
+	b=NINbsZbe0a8Nm2pc4IWt2aFcV+PtKy5S1FyVJ9q5unn7KV1f7HsYYFvf8Db/DIX2P
+	 0qHa6kar8yyIBNOEsESikkKZnaEKe9JrXu13DzVbwrRvdU2ZIxObr/xRjAZPR6NHQg
+	 Bw/B/JruSW7zkFVk/TF8cl7/xV2DknyxUPqYz9DM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732258AbfA1RPq (ORCPT
+        id S1732367AbfA1RP5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:15:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56756 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:15:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732066AbfA1QG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:06:57 -0500
+        id S1731634AbfA1QGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:06:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 473E62171F;
-        Mon, 28 Jan 2019 16:06:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4838320989;
+        Mon, 28 Jan 2019 16:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691616;
-        bh=0ReZJLp+6Zdsk9K0ZuGkqTQRlgPouPm6ynB9K7ngDa4=;
+        s=default; t=1548691611;
+        bh=yzklis1qP1ua7rltG5gDUCmqKN/vZQ7FGUFiHg/pBV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jeRnMzy2HcrnZRk9UCsmfcbJUmXjEcCQDNSlPU7T47Ui1AWYhhUjNQ50jV8ZxVh8r
-         KQ1q3bpm6We3Jjv5GC+mGBerJPGOGxSPDJvTVEoN4lLLp4F1rXXP0Xht/yelbAoYAb
-         3JvIVcfY+7DZ1+Fcm3dqRcf5qMuoeevqujQBZWxY=
+        b=ga4ylq47lICVz+niQWAA7pX0yv5SVbvihRpcgFUT9gXYxydARMTIPHCZ+WQDDZoiN
+         DBd1YThqLAuj0RED71Bdf+m0/LWletYZQkj3hESnYjki70u0IvSFTHyFevMGpBIs0b
+         MOt5dsmAyFrZwQhhs/zhT3evjWoBqgEf2aLL2igE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 160/258] btrfs: harden agaist duplicate fsid on scanned devices
-Date:   Mon, 28 Jan 2019 10:57:46 -0500
-Message-Id: <20190128155924.51521-160-sashal@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        linux-mips@linux-mips.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 158/258] mmc: jz4740: Get CD/WP GPIOs from descriptors
+Date:   Mon, 28 Jan 2019 10:57:44 -0500
+Message-Id: <20190128155924.51521-158-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,116 +60,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit a9261d4125c97ce8624e9941b75dee1b43ad5df9 ]
+[ Upstream commit 0c901c0566fb4edc2631c3786e5085a037be91f8 ]
 
-It's not that impossible to imagine that a device OR a btrfs image is
-copied just by using the dd or the cp command. Which in case both the
-copies of the btrfs will have the same fsid. If on the system with
-automount enabled, the copied FS gets scanned.
+Modifty the JZ4740 driver to retrieve card detect and write
+protect GPIO pins from GPIO descriptors instead of hard-coded
+global numbers. Augment the only board file using this in the
+process and cut down on passed in platform data.
 
-We have a known bug in btrfs, that we let the device path be changed
-after the device has been mounted. So using this loop hole the new
-copied device would appears as if its mounted immediately after it's
-been copied.
+Preserve the code setting the caps2 flags for CD and WP
+as active low or high since the slot GPIO code currently
+ignores the gpiolib polarity inversion semantice and uses
+the raw accessors to read the GPIO lines, but set the right
+polarity flags in the descriptor table for jz4740.
 
-For example:
-
-Initially.. /dev/mmcblk0p4 is mounted as /
-
-  $ lsblk
-  NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-  mmcblk0     179:0    0 29.2G  0 disk
-  |-mmcblk0p4 179:4    0    4G  0 part /
-  |-mmcblk0p2 179:2    0  500M  0 part /boot
-  |-mmcblk0p3 179:3    0  256M  0 part [SWAP]
-  `-mmcblk0p1 179:1    0  256M  0 part /boot/efi
-
-  $ btrfs fi show
-     Label: none  uuid: 07892354-ddaa-4443-90ea-f76a06accaba
-     Total devices 1 FS bytes used 1.40GiB
-     devid    1 size 4.00GiB used 3.00GiB path /dev/mmcblk0p4
-
-Copy mmcblk0 to sda
-
-  $ dd if=/dev/mmcblk0 of=/dev/sda
-
-And immediately after the copy completes the change in the device
-superblock is notified which the automount scans using btrfs device scan
-and the new device sda becomes the mounted root device.
-
-  $ lsblk
-  NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-  sda           8:0    1 14.9G  0 disk
-  |-sda4        8:4    1    4G  0 part /
-  |-sda2        8:2    1  500M  0 part
-  |-sda3        8:3    1  256M  0 part
-  `-sda1        8:1    1  256M  0 part
-  mmcblk0     179:0    0 29.2G  0 disk
-  |-mmcblk0p4 179:4    0    4G  0 part
-  |-mmcblk0p2 179:2    0  500M  0 part /boot
-  |-mmcblk0p3 179:3    0  256M  0 part [SWAP]
-  `-mmcblk0p1 179:1    0  256M  0 part /boot/efi
-
-  $ btrfs fi show /
-    Label: none  uuid: 07892354-ddaa-4443-90ea-f76a06accaba
-    Total devices 1 FS bytes used 1.40GiB
-    devid    1 size 4.00GiB used 3.00GiB path /dev/sda4
-
-The bug is quite nasty that you can't either unmount /dev/sda4 or
-/dev/mmcblk0p4. And the problem does not get solved until you take sda
-out of the system on to another system to change its fsid using the
-'btrfstune -u' command.
-
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: linux-mips@linux-mips.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Paul Burton <paul.burton@mips.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/volumes.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ .../mips/include/asm/mach-jz4740/jz4740_mmc.h |  2 --
+ arch/mips/jz4740/board-qi_lb60.c              | 12 ++++++++---
+ drivers/mmc/host/jz4740_mmc.c                 | 20 +++++++++----------
+ 3 files changed, 19 insertions(+), 15 deletions(-)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 0ee1cd4b56fb..285f64f2de5f 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -850,6 +850,35 @@ static noinline struct btrfs_device *device_list_add(const char *path,
- 			return ERR_PTR(-EEXIST);
- 		}
+diff --git a/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h b/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h
+index e9cc62cfac99..ff50aeb1a933 100644
+--- a/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h
++++ b/arch/mips/include/asm/mach-jz4740/jz4740_mmc.h
+@@ -4,8 +4,6 @@
  
-+		/*
-+		 * We are going to replace the device path for a given devid,
-+		 * make sure it's the same device if the device is mounted
-+		 */
-+		if (device->bdev) {
-+			struct block_device *path_bdev;
+ struct jz4740_mmc_platform_data {
+ 	int gpio_power;
+-	int gpio_card_detect;
+-	int gpio_read_only;
+ 	unsigned card_detect_active_low:1;
+ 	unsigned read_only_active_low:1;
+ 	unsigned power_active_low:1;
+diff --git a/arch/mips/jz4740/board-qi_lb60.c b/arch/mips/jz4740/board-qi_lb60.c
+index af0c8ace0141..705593d40d12 100644
+--- a/arch/mips/jz4740/board-qi_lb60.c
++++ b/arch/mips/jz4740/board-qi_lb60.c
+@@ -43,7 +43,6 @@
+ #include "clock.h"
+ 
+ /* GPIOs */
+-#define QI_LB60_GPIO_SD_CD		JZ_GPIO_PORTD(0)
+ #define QI_LB60_GPIO_SD_VCC_EN_N	JZ_GPIO_PORTD(2)
+ 
+ #define QI_LB60_GPIO_KEYOUT(x)		(JZ_GPIO_PORTC(10) + (x))
+@@ -386,12 +385,18 @@ static struct platform_device qi_lb60_gpio_keys = {
+ };
+ 
+ static struct jz4740_mmc_platform_data qi_lb60_mmc_pdata = {
+-	.gpio_card_detect	= QI_LB60_GPIO_SD_CD,
+-	.gpio_read_only		= -1,
+ 	.gpio_power		= QI_LB60_GPIO_SD_VCC_EN_N,
+ 	.power_active_low	= 1,
+ };
+ 
++static struct gpiod_lookup_table qi_lb60_mmc_gpio_table = {
++	.dev_id = "jz4740-mmc.0",
++	.table = {
++		GPIO_LOOKUP("GPIOD", 0, "cd", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
 +
-+			path_bdev = lookup_bdev(path);
-+			if (IS_ERR(path_bdev)) {
-+				mutex_unlock(&fs_devices->device_list_mutex);
-+				return ERR_CAST(path_bdev);
-+			}
-+
-+			if (device->bdev != path_bdev) {
-+				bdput(path_bdev);
-+				mutex_unlock(&fs_devices->device_list_mutex);
-+				btrfs_warn_in_rcu(device->fs_info,
-+			"duplicate device fsid:devid for %pU:%llu old:%s new:%s",
-+					disk_super->fsid, devid,
-+					rcu_str_deref(device->name), path);
-+				return ERR_PTR(-EEXIST);
-+			}
-+			bdput(path_bdev);
-+			btrfs_info_in_rcu(device->fs_info,
-+				"device fsid %pU devid %llu moved old:%s new:%s",
-+				disk_super->fsid, devid,
-+				rcu_str_deref(device->name), path);
-+		}
-+
- 		name = rcu_string_strdup(path, GFP_NOFS);
- 		if (!name) {
- 			mutex_unlock(&fs_devices->device_list_mutex);
+ /* beeper */
+ static struct pwm_lookup qi_lb60_pwm_lookup[] = {
+ 	PWM_LOOKUP("jz4740-pwm", 4, "pwm-beeper", NULL, 0,
+@@ -500,6 +505,7 @@ static int __init qi_lb60_init_platform_devices(void)
+ 	gpiod_add_lookup_table(&qi_lb60_audio_gpio_table);
+ 	gpiod_add_lookup_table(&qi_lb60_nand_gpio_table);
+ 	gpiod_add_lookup_table(&qi_lb60_spigpio_gpio_table);
++	gpiod_add_lookup_table(&qi_lb60_mmc_gpio_table);
+ 
+ 	spi_register_board_info(qi_lb60_spi_board_info,
+ 				ARRAY_SIZE(qi_lb60_spi_board_info));
+diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
+index 993386c9ea50..864338e308e2 100644
+--- a/drivers/mmc/host/jz4740_mmc.c
++++ b/drivers/mmc/host/jz4740_mmc.c
+@@ -983,17 +983,17 @@ static int jz4740_mmc_request_gpios(struct mmc_host *mmc,
+ 	if (!pdata->read_only_active_low)
+ 		mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
+ 
+-	if (gpio_is_valid(pdata->gpio_card_detect)) {
+-		ret = mmc_gpio_request_cd(mmc, pdata->gpio_card_detect, 0);
+-		if (ret)
+-			return ret;
+-	}
++	/*
++	 * Get optional card detect and write protect GPIOs,
++	 * only back out on probe deferral.
++	 */
++	ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0, NULL);
++	if (ret == -EPROBE_DEFER)
++		return ret;
+ 
+-	if (gpio_is_valid(pdata->gpio_read_only)) {
+-		ret = mmc_gpio_request_ro(mmc, pdata->gpio_read_only);
+-		if (ret)
+-			return ret;
+-	}
++	ret = mmc_gpiod_request_ro(mmc, "wp", 0, false, 0, NULL);
++	if (ret == -EPROBE_DEFER)
++		return ret;
+ 
+ 	return jz4740_mmc_request_gpio(&pdev->dev, pdata->gpio_power,
+ 			"MMC read only", true, pdata->power_active_low);
 -- 
 2.19.1
 
