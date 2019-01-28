@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C326BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0BDC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92DD621741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9324F21741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695250;
-	bh=U0X9FgZimIjCcs6PbcZXK38k1lpZZLe3iFPD8GcePQE=;
+	s=default; t=1548695255;
+	bh=sk1RafSFJDYo0AMn5wSFwG1OgBWeJlKRV4xSfAVGAzc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y18GWJIOgVMrO1+NJBJhKfgKGQMZga+yn9p+AK+wJ9srqxoa6W0KuSkvD2WzwRv7f
-	 VvMW+nQciH8HaBRUZ/KDCW5qmBPKscIqfc2zsHgLxTZ88UIJztb5jZ1l6Ke9qBu8uV
-	 yZttq0TW+flr0y0RArkcPrMt+2cfWkbLD0XP/CjA=
+	b=gOZ87B5CS2CRZOPoJwIL51qtTOfjS5uLtOyfBx6Znu6baoReG7mL5D/RnMWnnZfjV
+	 QT2k9xPBNwEpgC3Hqt5neyuZLP6JV6rAuj+h5P9eepnk6Oy6u1TpO5a4WA7a7hNzQR
+	 aUhthok/dhIUUYRZnm37fW5T8lh8anhrp83rxXX8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387553AbfA1RH3 (ORCPT
+        id S1733209AbfA1QMr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:07:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733208AbfA1QMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 11:12:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41124 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733200AbfA1QMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:12:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A919A2148E;
-        Mon, 28 Jan 2019 16:12:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 196912177E;
+        Mon, 28 Jan 2019 16:12:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691966;
-        bh=U0X9FgZimIjCcs6PbcZXK38k1lpZZLe3iFPD8GcePQE=;
+        s=default; t=1548691962;
+        bh=sk1RafSFJDYo0AMn5wSFwG1OgBWeJlKRV4xSfAVGAzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=01gsrGH7gJzHibxDVFck35LV8tkp12SY9DQelSauCVSItle9r6VR3V4WysKu2kCdz
-         AscJYUqeC3EJWVYK/N63ALZFxBpKHrk+r76Nk68WFflTOT+4vVI+5hQfJsnbfUFVzY
-         iiExQ/+OhV7BoAmRIcTaSLASBt4BjjVJ1IpVteLQ=
+        b=JFwD2hjskL7/8k+HnSZnZOuAWcQK2113zM5nNlHWZlErZa3rD3IWK1TZeGlx16bBO
+         6pPSSBI5vlzbm8dPiY3M1RLu8hvRzv3/XX3O4E1lNR/KLwAkIJL5PIgWPpFYGMR/UP
+         BBZBame8Xv8BePYwD0HyPUgRDGSORzQml/wkLFLk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 019/170] drm/vc4: ->x_scaling[1] should never be set to VC4_SCALING_NONE
-Date:   Mon, 28 Jan 2019 11:09:29 -0500
-Message-Id: <20190128161200.55107-19-sashal@kernel.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 017/170] srcu: Prevent __call_srcu() counter wrap with read-side critical section
+Date:   Mon, 28 Jan 2019 11:09:27 -0500
+Message-Id: <20190128161200.55107-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,54 +56,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-[ Upstream commit 0560054da5673b25d56bea6c57c8d069673af73b ]
+[ Upstream commit 0607ba8403c4cdb253f8c5200ecf654dfb7790cc ]
 
-For the YUV conversion to work properly, ->x_scaling[1] should never
-be set to VC4_SCALING_NONE, but vc4_get_scaling_mode() might return
-VC4_SCALING_NONE if the horizontal scaling ratio exactly matches the
-horizontal subsampling factor. Add a test to turn VC4_SCALING_NONE
-into VC4_SCALING_PPF when that happens.
+Ever since cdf7abc4610a ("srcu: Allow use of Tiny/Tree SRCU from
+both process and interrupt context"), it has been permissible
+to use SRCU read-side critical sections in interrupt context.
+This allows __call_srcu() to use SRCU read-side critical sections to
+prevent a new SRCU grace period from ending before the call to either
+srcu_funnel_gp_start() or srcu_funnel_exp_start completes, thus preventing
+SRCU grace-period counter overflow during that time.
 
-The old ->x_scaling[0] adjustment is dropped as I couldn't find any
-mention to this constraint in the spec and it's proven to be
-unnecessary (I tested various multi-planar YUV formats with scaling
-disabled, and all of them worked fine without this adjustment).
+Note that this does not permit removal of the counter-wrap checks in
+srcu_gp_end().  These check are necessary to handle the case where
+a given CPU does not interact at all with SRCU for an extended time
+period.
 
-Fixes: fc04023fafec ("drm/vc4: Add support for YUV planes.")
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181109102633.32603-1-boris.brezillon@bootlin.com
+This commit therefore adds an SRCU read-side critical section to
+__call_srcu() in order to prevent grace period counter wrap during
+the funnel-locking process.
+
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/vc4/vc4_plane.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ kernel/rcu/srcutree.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
-index 5bd3c2ef0067..6277a3f2d5d1 100644
---- a/drivers/gpu/drm/vc4/vc4_plane.c
-+++ b/drivers/gpu/drm/vc4/vc4_plane.c
-@@ -347,12 +347,14 @@ static int vc4_plane_setup_clipping_and_scaling(struct drm_plane_state *state)
- 			vc4_get_scaling_mode(vc4_state->src_h[1],
- 					     vc4_state->crtc_h);
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 6d5880089ff6..a3ab10e385e2 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -815,6 +815,7 @@ void __call_srcu(struct srcu_struct *sp, struct rcu_head *rhp,
+ 		 rcu_callback_t func, bool do_norm)
+ {
+ 	unsigned long flags;
++	int idx;
+ 	bool needexp = false;
+ 	bool needgp = false;
+ 	unsigned long s;
+@@ -828,6 +829,7 @@ void __call_srcu(struct srcu_struct *sp, struct rcu_head *rhp,
+ 		return;
+ 	}
+ 	rhp->func = func;
++	idx = srcu_read_lock(sp);
+ 	local_irq_save(flags);
+ 	sdp = this_cpu_ptr(sp->sda);
+ 	raw_spin_lock_rcu_node(sdp);
+@@ -849,6 +851,7 @@ void __call_srcu(struct srcu_struct *sp, struct rcu_head *rhp,
+ 		srcu_funnel_gp_start(sp, sdp, s, do_norm);
+ 	else if (needexp)
+ 		srcu_funnel_exp_start(sp, sdp->mynode, s);
++	srcu_read_unlock(sp, idx);
+ }
  
--		/* YUV conversion requires that horizontal scaling be enabled,
--		 * even on a plane that's otherwise 1:1. Looks like only PPF
--		 * works in that case, so let's pick that one.
-+		/* YUV conversion requires that horizontal scaling be enabled
-+		 * on the UV plane even if vc4_get_scaling_mode() returned
-+		 * VC4_SCALING_NONE (which can happen when the down-scaling
-+		 * ratio is 0.5). Let's force it to VC4_SCALING_PPF in this
-+		 * case.
- 		 */
--		if (vc4_state->is_unity)
--			vc4_state->x_scaling[0] = VC4_SCALING_PPF;
-+		if (vc4_state->x_scaling[1] == VC4_SCALING_NONE)
-+			vc4_state->x_scaling[1] = VC4_SCALING_PPF;
- 	} else {
- 		vc4_state->is_yuv = false;
- 		vc4_state->x_scaling[1] = VC4_SCALING_NONE;
+ /**
 -- 
 2.19.1
 
