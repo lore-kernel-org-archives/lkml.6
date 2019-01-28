@@ -2,112 +2,209 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5272C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA4BC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D51620880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:33:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20D3320880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:34:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xi7zWxHw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbfA1Jdj (ORCPT
+        id S1726818AbfA1JeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:33:39 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59289 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfA1Jdi (ORCPT
+        Mon, 28 Jan 2019 04:34:01 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35277 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbfA1JeB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:33:38 -0500
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1go3IK-00083N-2i; Mon, 28 Jan 2019 10:33:32 +0100
-Message-ID: <7a3c2f812b7529e23a0007c70949a02e86a4f4f2.camel@pengutronix.de>
-Subject: Re: [PATCH v5 4/5] dmaengine: imx-sdma: add a test for imx8mq multi
- sdma devices
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
-Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
-        dmaengine@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Mon, 28 Jan 2019 10:33:31 +0100
-In-Reply-To: <20190128060840.31695-5-angus@akkea.ca>
-References: <20190120023150.17138-1-angus@akkea.ca>
-         <20190128060840.31695-1-angus@akkea.ca>
-         <20190128060840.31695-5-angus@akkea.ca>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 28 Jan 2019 04:34:01 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p8so7495559plo.2;
+        Mon, 28 Jan 2019 01:34:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mJ5Cg8m5AuiE6k8X70rqtyhMp/Uyh1+t2vNRSuissbo=;
+        b=Xi7zWxHwv6cnMpacp6pvZLhUh+qK1vcLRE/JGPvZqU5Mcx5LC7pKRJx0z8WyMHb/Ni
+         1tbyccdU77PpePH4xN+huZm1x5HdMCI++biC5fy75SMBlPQke/H/i5Y/YVI5SjpQpVaZ
+         xzYusnQG8NrAxkMs551/a093SQaay6u0eNFqVQyCoFG6CmmI/kvifUiIK2OPR9m6wfEO
+         7LY3i59odNt38SxmmewoADXvmVBMt5e97keq/36hg+Ic6qpxUFBvYR4L5vW2wXM6WBWo
+         TqEkOGAxNMC+aUW/6cVjiVmfyfH9luQUzgDSd6Vtlxopi3UFkIu4Ma47qThqEsWFXeuO
+         +CgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mJ5Cg8m5AuiE6k8X70rqtyhMp/Uyh1+t2vNRSuissbo=;
+        b=pAZ2BtOP/NsF1w0Ve1Kh0s25WLjnoQuQGN9hoypT/JTy/d6dlqaCiH1U+ah8YKVCQ2
+         8ZTelMZo2ZR/681REACatorAlKihIdOdrks6vZiBE7mRgY/92d1bCNKzsj4tX4S00xBX
+         j1GtO4wa3zmP78PmdI6Z3wE5/5ZKJD8Q+AZHHrxQ9DtFPY08Z1cl6hVn2glnFZtxzvsy
+         bMR1b/oWn1gJS6LhRYsn+PZRA37pU0OExZt34usR9HXuwY7Bl5mKJVfGMMsS59e9bH/q
+         4L3tKeP98S7vAf2yAcgjG4OkknSoznGS3Jc94qd2Ae3Nui5ahTWh/2g0TXeHoy+1SgCX
+         mx7w==
+X-Gm-Message-State: AJcUukc3QJS5Hnb2XFsaCUOCYiJo7I3Ps4qBtjsr5zeCFHSO7nmJmgKM
+        ZDh14+LxWRzpW64bbKaeDJ/vEovy
+X-Google-Smtp-Source: ALg8bN5OgfP3qzQAS9q/zJnfGhB0X3ocjS+9CkFLC5neOi5O9x8uhxk8zm9HuHlClGB1OsC0BfCtmg==
+X-Received: by 2002:a17:902:bf44:: with SMTP id u4mr21298557pls.5.1548668039959;
+        Mon, 28 Jan 2019 01:33:59 -0800 (PST)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id y6sm37665727pfl.187.2019.01.28.01.33.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 28 Jan 2019 01:33:59 -0800 (PST)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH RESEND] KVM: MMU: Introduce single thread to zap collapsible sptes
+Date:   Mon, 28 Jan 2019 17:33:55 +0800
+Message-Id: <1548668035-17639-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Sonntag, den 27.01.2019, 23:08 -0700 schrieb Angus Ainslie (Purism):
-> On i.mx8mq, there are two sdma instances, and the common dma framework
-> will get a channel dynamically from any available sdma instance whether
-> it's the first sdma device or the second sdma device. Some IPs like
-> SAI only work with sdma2 not sdma1. To make sure the sdma channel is from
-> the correct sdma device, use the node pointer to match.
-> 
-> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+From: Wanpeng Li <wanpengli@tencent.com>
 
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Last year guys from huawei reported that the call of memory_global_dirty_log_start/stop() 
+takes 13s for 4T memory and cause guest freeze too long which increases the unacceptable 
+migration downtime. [1] [2]
 
-> ---
->  drivers/dma/imx-sdma.c                | 6 ++++++
->  include/linux/platform_data/dma-imx.h | 1 +
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> index c4db4fe6bcc9..d5f86becf59e 100644
-> --- a/drivers/dma/imx-sdma.c
-> +++ b/drivers/dma/imx-sdma.c
-> @@ -1918,11 +1918,16 @@ static int sdma_init(struct sdma_engine *sdma)
->  static bool sdma_filter_fn(struct dma_chan *chan, void *fn_param)
->  {
->  	struct sdma_channel *sdmac = to_sdma_chan(chan);
-> +	struct sdma_engine *sdma = sdmac->sdma;
->  	struct imx_dma_data *data = fn_param;
->  
->  	if (!imx_dma_is_general_purpose(chan))
->  		return false;
->  
-> +	/* return false if it's not the right device */
-> +	if (sdma->dev->of_node != data->of_node)
-> +		return false;
-> +
->  	sdmac->data = *data;
->  	chan->private = &sdmac->data;
->  
-> @@ -1950,6 +1955,7 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
->  	 * be set to sdmac->event_id1.
->  	 */
->  	data.dma_request2 = 0;
-> +	data.of_node = ofdma->of_node;
->  
->  	return dma_request_channel(mask, sdma_filter_fn, &data);
->  }
-> diff --git a/include/linux/platform_data/dma-imx.h b/include/linux/platform_data/dma-imx.h
-> index 7d964e787299..9daea8d42a10 100644
-> --- a/include/linux/platform_data/dma-imx.h
-> +++ b/include/linux/platform_data/dma-imx.h
-> @@ -55,6 +55,7 @@ struct imx_dma_data {
->  	int dma_request2; /* secondary DMA request line */
->  	enum sdma_peripheral_type peripheral_type;
->  	int priority;
-> +	struct device_node *of_node;
->  };
->  
->  static inline int imx_dma_is_ipu(struct dma_chan *chan)
+Guangrong pointed out:
+
+| collapsible_sptes zaps 4k mappings to make memory-read happy, it is not
+| required by the semanteme of KVM_SET_USER_MEMORY_REGION and it is not
+| urgent for vCPU's running, it could be done in a separate thread and use
+| lock-break technology.
+
+Several TB memory guest is common now after NVDIMM is deployed in cloud environment.
+This patch utilizes worker thread to zap collapsible sptes in order to lazy collapse 
+small sptes into large sptes during roll-back after live migration fails.
+
+[1] https://lists.gnu.org/archive/html/qemu-devel/2017-04/msg05249.html
+[2] https://www.mail-archive.com/qemu-devel@nongnu.org/msg449994.html
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+Note:
+I ever consider to add a list of memslots to be zapped, delete from the list
+and add in kvm_mmu_zap_collapsible_sptes(). However, i observe a lot of races 
+here, the memslot can disappear/modify underneath before the worker thread
+start to zap even if i introduce lock to protect the list. This patch delays 
+the worker thread by 60s(to assume memory_global_dirty_log_stop can absolutely 
+complete) to coalesce all the zap requirements after live migration fails.
+
+ arch/x86/include/asm/kvm_host.h |  3 +++
+ arch/x86/kvm/mmu.c              | 37 ++++++++++++++++++++++++++++++++-----
+ arch/x86/kvm/x86.c              |  4 ++++
+ 3 files changed, 39 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index fbda5a9..dde32f9 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -892,6 +892,8 @@ struct kvm_arch {
+ 	u64 master_cycle_now;
+ 	struct delayed_work kvmclock_update_work;
+ 	struct delayed_work kvmclock_sync_work;
++	struct delayed_work kvm_mmu_zap_collapsible_sptes_work;
++	bool zap_in_progress;
+ 
+ 	struct kvm_xen_hvm_config xen_hvm_config;
+ 
+@@ -1247,6 +1249,7 @@ void kvm_mmu_zap_all(struct kvm *kvm);
+ void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, struct kvm_memslots *slots);
+ unsigned int kvm_mmu_calculate_mmu_pages(struct kvm *kvm);
+ void kvm_mmu_change_mmu_pages(struct kvm *kvm, unsigned int kvm_nr_mmu_pages);
++void zap_collapsible_sptes_fn(struct work_struct *work);
+ 
+ int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3);
+ bool pdptrs_changed(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 7c03c0f..fe87dd3 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -5679,14 +5679,41 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
+ 	return need_tlb_flush;
+ }
+ 
++void zap_collapsible_sptes_fn(struct work_struct *work)
++{
++	struct kvm_memory_slot *memslot;
++	struct kvm_memslots *slots;
++	struct delayed_work *dwork = to_delayed_work(work);
++	struct kvm_arch *ka = container_of(dwork, struct kvm_arch,
++					   kvm_mmu_zap_collapsible_sptes_work);
++	struct kvm *kvm = container_of(ka, struct kvm, arch);
++	int i;
++
++	mutex_lock(&kvm->slots_lock);
++	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
++		spin_lock(&kvm->mmu_lock);
++		slots = __kvm_memslots(kvm, i);
++		kvm_for_each_memslot(memslot, slots) {
++			slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
++				kvm_mmu_zap_collapsible_spte, true);
++			if (need_resched() || spin_needbreak(&kvm->mmu_lock))
++				cond_resched_lock(&kvm->mmu_lock);
++		}
++		spin_unlock(&kvm->mmu_lock);
++	}
++	kvm->arch.zap_in_progress = false;
++	mutex_unlock(&kvm->slots_lock);
++}
++
++#define KVM_MMU_ZAP_DELAYED (60 * HZ)
+ void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
+ 				   const struct kvm_memory_slot *memslot)
+ {
+-	/* FIXME: const-ify all uses of struct kvm_memory_slot.  */
+-	spin_lock(&kvm->mmu_lock);
+-	slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
+-			 kvm_mmu_zap_collapsible_spte, true);
+-	spin_unlock(&kvm->mmu_lock);
++	if (!kvm->arch.zap_in_progress) {
++		kvm->arch.zap_in_progress = true;
++		schedule_delayed_work(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work,
++			KVM_MMU_ZAP_DELAYED);
++	}
+ }
+ 
+ void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index d029377..c2af289 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9019,6 +9019,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ 
+ 	INIT_DELAYED_WORK(&kvm->arch.kvmclock_update_work, kvmclock_update_fn);
+ 	INIT_DELAYED_WORK(&kvm->arch.kvmclock_sync_work, kvmclock_sync_fn);
++	INIT_DELAYED_WORK(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work,
++			zap_collapsible_sptes_fn);
++	kvm->arch.zap_in_progress = false;
+ 
+ 	kvm_hv_init_vm(kvm);
+ 	kvm_page_track_init(kvm);
+@@ -9064,6 +9067,7 @@ void kvm_arch_sync_events(struct kvm *kvm)
+ {
+ 	cancel_delayed_work_sync(&kvm->arch.kvmclock_sync_work);
+ 	cancel_delayed_work_sync(&kvm->arch.kvmclock_update_work);
++	cancel_delayed_work_sync(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work);
+ 	kvm_free_pit(kvm);
+ }
+ 
+-- 
+2.7.4
 
