@@ -2,109 +2,775 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092A2C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5079C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB3E72184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:06:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XRjhuUbr"
+	by mail.kernel.org (Postfix) with ESMTP id 7AC4A20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:08:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfA1HG4 (ORCPT
+        id S1726803AbfA1HIo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:06:56 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12676 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbfA1HGz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:06:55 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c4ea9f40000>; Sun, 27 Jan 2019 23:06:28 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 27 Jan 2019 23:06:54 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 27 Jan 2019 23:06:54 -0800
-Received: from [10.19.108.140] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
- 2019 07:06:53 +0000
-Subject: Re: [PATCH 2/5] phy: tegra: xusb: Skip single function lane
- programming
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-CC:     Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190125112525.10697-1-thierry.reding@gmail.com>
- <20190125112525.10697-2-thierry.reding@gmail.com>
-From:   jckuo <jckuo@nvidia.com>
-Message-ID: <7afb7753-39d2-69b9-3666-e159d3e85ae0@nvidia.com>
-Date:   Mon, 28 Jan 2019 15:06:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Mon, 28 Jan 2019 02:08:44 -0500
+Received: from mga03.intel.com ([134.134.136.65]:54203 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726612AbfA1HIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 02:08:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2019 23:08:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,533,1539673200"; 
+   d="scan'208";a="117971566"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 27 Jan 2019 23:08:42 -0800
+Received: from [10.125.252.29] (abudanko-mobl.ccr.corp.intel.com [10.125.252.29])
+        by linux.intel.com (Postfix) with ESMTP id 29DB158028E;
+        Sun, 27 Jan 2019 23:08:39 -0800 (PST)
+Subject: [PATCH v2 2/4] perf record: implement -z=<level> and
+ --mmap-flush=<thres> options
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <191ae22d-0340-f420-e44b-4ed18a4a4a0c@linux.intel.com>
+Date:   Mon, 28 Jan 2019 10:08:39 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190125112525.10697-2-thierry.reding@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548659188; bh=yPcMza5oiR2ZVuvA2oPLMM45+NWW6Z0V0gb5DeuFucg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=XRjhuUbrwT6yQGF7k2nzfxedzZDbnrh6trwACpMqBkV6oBo+iPUoRUO85J73APWni
-         vngtpAj9Y70bQSuzeo6QyTMh+BFz8hFy1KUHrTvuzKoHm/zDa5JDPOCrdZ65Mishaz
-         3nLf+tvp8TYs8QD9tphrubIQ1+tqStFvDDeypqPB9uAGAhEoa0QZyER3Si5lrYvggo
-         Z+up/HJgbfqHlO0GNtoPRnRLrd4Jv0e3Pnkb/3SbaCgYa++E6uF4VDUgp7IAanMcku
-         c6WvpjlAOvgo+219+8zY+N3hvt6jC4IQf3UzZyGj9hWEqohMpP4mfs75IHy4oOTueE
-         Piu+CCrEXPqRw==
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: JC Kuo <jckuo@nvidia.com>
 
-On 1/25/19 7:25 PM, Thierry Reding wrote:
-> From: JC Kuo <jckuo@nvidia.com>
->
-> Tegra186 USB2 pads and USB3 pads do not have hardware mux for changing
-> the pad function. For such "lanes", we can skip the lane mux register
-> programming.
->
-> Signed-off-by: JC Kuo <jckuo@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->   drivers/phy/tegra/xusb.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> index 5b3b8863363e..e3bc60cfe6a1 100644
-> --- a/drivers/phy/tegra/xusb.c
-> +++ b/drivers/phy/tegra/xusb.c
-> @@ -1,5 +1,5 @@
->   /*
-> - * Copyright (c) 2014-2015, NVIDIA CORPORATION.  All rights reserved.
-> + * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
->    *
->    * This program is free software; you can redistribute it and/or modify it
->    * under the terms and conditions of the GNU General Public License,
-> @@ -313,6 +313,10 @@ static void tegra_xusb_lane_program(struct tegra_xusb_lane *lane)
->   	const struct tegra_xusb_lane_soc *soc = lane->soc;
->   	u32 value;
->   
-> +	/* skip single function lanes */
-> +	if (soc->num_funcs < 2)
-> +		return;
-> +
->   	/* choose function */
->   	value = padctl_readl(padctl, soc->offset);
->   	value &= ~(soc->mask << soc->shift);
+Implement -z,--compression_level=<n> and --mmap-flush=<dump_least_size>
+options as well as a special PERF_RECORD_COMPRESSED record that contains
+compressed parts of kernel data buffer.
+
+Because compression requires auxiliary memory to implement encoding of
+kernel data record->opts.nr_cblocks == -1 signifies to allocate single
+AIO data buffer aio.data[0] without accompanying AIO control blocks.
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v2:
+- enabled allocation aio data buffers for compression
+---
+ tools/perf/Documentation/perf-record.txt |   9 ++
+ tools/perf/builtin-record.c              | 110 ++++++++++++++++++----
+ tools/perf/perf.h                        |   2 +
+ tools/perf/util/env.h                    |  10 ++
+ tools/perf/util/event.c                  |   1 +
+ tools/perf/util/event.h                  |   7 ++
+ tools/perf/util/evlist.c                 |   6 +-
+ tools/perf/util/evlist.h                 |   2 +-
+ tools/perf/util/header.c                 |  45 ++++++++-
+ tools/perf/util/header.h                 |   1 +
+ tools/perf/util/mmap.c                   | 112 ++++++++++++++---------
+ tools/perf/util/mmap.h                   |   7 +-
+ tools/perf/util/session.h                |   2 +
+ 13 files changed, 246 insertions(+), 68 deletions(-)
+
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index d232b13ea713..3ecd94ce8d7f 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -440,6 +440,15 @@ Use <n> control blocks in asynchronous (Posix AIO) trace writing mode (default:
+ Asynchronous mode is supported only when linking Perf tool with libc library
+ providing implementation for Posix AIO API.
+ 
++-z::
++--compression-level=n::
++Produce compressed trace file using specified level n to save storage space (no compression: 0 - default,
++fastest compression: 1, smallest trace file: 22)
++
++--mmap-flush=n::
++Minimal number of bytes accumulated in kernel buffer that is flushed to trace file (default: 1).
++Maximal allowed value is a quater of kernel buffer size.
++
+ --all-kernel::
+ Configure all used events to run in kernel space.
+ 
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 88ea11d57c6f..2618d809675d 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -287,18 +287,20 @@ static int record__aio_parse(const struct option *opt,
+ 
+ 	if (unset) {
+ 		opts->nr_cblocks = 0;
+-	} else {
+-		if (str)
+-			opts->nr_cblocks = strtol(str, NULL, 0);
+-		if (!opts->nr_cblocks)
+-			opts->nr_cblocks = nr_cblocks_default;
++		return 0;
+ 	}
+ 
++	if (str)
++		opts->nr_cblocks = strtol(str, NULL, 0);
++	if (!opts->nr_cblocks)
++		opts->nr_cblocks = nr_cblocks_default;
++
++	if (opts->nr_cblocks > nr_cblocks_max)
++		opts->nr_cblocks = nr_cblocks_max;
++
+ 	return 0;
+ }
+ #else /* HAVE_AIO_SUPPORT */
+-static int nr_cblocks_max = 0;
+-
+ static int record__aio_sync(struct perf_mmap *md __maybe_unused, bool sync_all __maybe_unused)
+ {
+ 	return -1;
+@@ -329,6 +331,35 @@ static int record__aio_enabled(struct record *rec)
+ 	return rec->opts.nr_cblocks > 0;
+ }
+ 
++#define MMAP_FLUSH_DEFAULT 1
++
++static int record__comp_enabled(struct record *rec)
++{
++	return rec->opts.comp_level > 0;
++}
++
++static int record__mmap_flush_parse(const struct option *opt,
++				    const char *str,
++				    int unset)
++{
++	int mmap_len;
++	struct record_opts *opts = (struct record_opts *)opt->value;
++
++	if (unset)
++		return 0;
++
++	if (str)
++		opts->mmap_flush = strtol(str, NULL, 0);
++	if (!opts->mmap_flush)
++		opts->mmap_flush = MMAP_FLUSH_DEFAULT;
++
++	mmap_len = perf_evlist__mmap_size(opts->mmap_pages);
++	if (opts->mmap_flush > mmap_len / 4)
++		opts->mmap_flush = mmap_len / 4;
++
++	return 0;
++}
++
+ static int process_synthesized_event(struct perf_tool *tool,
+ 				     union perf_event *event,
+ 				     struct perf_sample *sample __maybe_unused,
+@@ -534,7 +565,8 @@ static int record__mmap_evlist(struct record *rec,
+ 
+ 	if (perf_evlist__mmap_ex(evlist, opts->mmap_pages,
+ 				 opts->auxtrace_mmap_pages,
+-				 opts->auxtrace_snapshot_mode, opts->nr_cblocks) < 0) {
++				 opts->auxtrace_snapshot_mode,
++				 opts->nr_cblocks, opts->mmap_flush) < 0) {
+ 		if (errno == EPERM) {
+ 			pr_err("Permission error mapping pages.\n"
+ 			       "Consider increasing "
+@@ -724,7 +756,7 @@ static struct perf_event_header finished_round_event = {
+ };
+ 
+ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
+-				    bool overwrite)
++				    bool overwrite, bool sync)
+ {
+ 	u64 bytes_written = rec->bytes_written;
+ 	int i;
+@@ -747,11 +779,18 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+ 		off = record__aio_get_pos(trace_fd);
+ 
+ 	for (i = 0; i < evlist->nr_mmaps; i++) {
++		u64 flush = MMAP_FLUSH_DEFAULT;
+ 		struct perf_mmap *map = &maps[i];
+ 
+ 		if (map->base) {
++			if (sync) {
++				flush = map->flush;
++				map->flush = MMAP_FLUSH_DEFAULT;
++			}
+ 			if (!record__aio_enabled(rec)) {
+ 				if (perf_mmap__push(map, rec, record__pushfn) != 0) {
++					if (sync)
++						map->flush = flush;
+ 					rc = -1;
+ 					goto out;
+ 				}
+@@ -764,10 +803,14 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+ 				idx = record__aio_sync(map, false);
+ 				if (perf_mmap__aio_push(map, rec, idx, record__aio_pushfn, &off) != 0) {
+ 					record__aio_set_pos(trace_fd, off);
++					if (sync)
++						map->flush = flush;
+ 					rc = -1;
+ 					goto out;
+ 				}
+ 			}
++			if (sync)
++				map->flush = flush;
+ 		}
+ 
+ 		if (map->auxtrace_mmap.base && !rec->opts.auxtrace_snapshot_mode &&
+@@ -793,15 +836,15 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+ 	return rc;
+ }
+ 
+-static int record__mmap_read_all(struct record *rec)
++static int record__mmap_read_all(struct record *rec, bool sync)
+ {
+ 	int err;
+ 
+-	err = record__mmap_read_evlist(rec, rec->evlist, false);
++	err = record__mmap_read_evlist(rec, rec->evlist, false, sync);
+ 	if (err)
+ 		return err;
+ 
+-	return record__mmap_read_evlist(rec, rec->evlist, true);
++	return record__mmap_read_evlist(rec, rec->evlist, true, sync);
+ }
+ 
+ static void record__init_features(struct record *rec)
+@@ -827,6 +870,9 @@ static void record__init_features(struct record *rec)
+ 	if (!(rec->opts.use_clockid && rec->opts.clockid_res_ns))
+ 		perf_header__clear_feat(&session->header, HEADER_CLOCKID);
+ 
++	if (!record__comp_enabled(rec))
++		perf_header__clear_feat(&session->header, HEADER_COMPRESSED);
++
+ 	perf_header__clear_feat(&session->header, HEADER_STAT);
+ }
+ 
+@@ -1136,6 +1182,10 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 	fd = perf_data__fd(data);
+ 	rec->session = session;
+ 
++	rec->opts.comp_level = 0;
++	session->header.env.comp_level = rec->opts.comp_level;
++	session->header.env.comp_type = PERF_COMP_NONE;
++
+ 	record__init_features(rec);
+ 
+ 	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
+@@ -1165,6 +1215,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		err = -1;
+ 		goto out_child;
+ 	}
++	session->header.env.comp_mmap_len = session->evlist->mmap_len;
+ 
+ 	err = bpf__apply_obj_config();
+ 	if (err) {
+@@ -1300,7 +1351,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		if (trigger_is_hit(&switch_output_trigger) || done || draining)
+ 			perf_evlist__toggle_bkw_mmap(rec->evlist, BKW_MMAP_DATA_PENDING);
+ 
+-		if (record__mmap_read_all(rec) < 0) {
++		if (record__mmap_read_all(rec, false) < 0) {
+ 			trigger_error(&auxtrace_snapshot_trigger);
+ 			trigger_error(&switch_output_trigger);
+ 			err = -1;
+@@ -1401,8 +1452,17 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+ 		record__synthesize_workload(rec, true);
+ 
+ out_child:
++	record__mmap_read_all(rec, true);
+ 	record__aio_mmap_read_sync(rec);
+ 
++	if (!quiet && rec->session->bytes_transferred && rec->session->bytes_compressed) {
++		float ratio = (float)rec->session->bytes_transferred/(float)rec->session->bytes_compressed;
++
++		session->header.env.comp_ratio = ratio + 0.5;
++		fprintf(stderr,	"[ perf record: Compressed %.3f MB to %.3f MB, ratio is %.3f ]\n",
++			rec->session->bytes_transferred / 1024.0 / 1024.0, rec->session->bytes_compressed / 1024.0 / 1024.0, ratio);
++	}
++
+ 	if (forks) {
+ 		int exit_status;
+ 
+@@ -1788,6 +1848,7 @@ static struct record record = {
+ 			.uses_mmap   = true,
+ 			.default_per_cpu = true,
+ 		},
++		.mmap_flush          = MMAP_FLUSH_DEFAULT,
+ 	},
+ 	.tool = {
+ 		.sample		= process_sample_event,
+@@ -1953,6 +2014,13 @@ static struct option __record_options[] = {
+ 		     &nr_cblocks_default, "n", "Use <n> control blocks in asynchronous trace writing mode (default: 1, max: 4)",
+ 		     record__aio_parse),
+ #endif
++#ifdef HAVE_ZSTD_SUPPORT
++	OPT_UINTEGER('z', "compression-level", &record.opts.comp_level,
++		     "Produce compressed trace file (default: 0, fastest: 1, smallest: 22)"),
++#endif
++	OPT_CALLBACK(0, "mmap-flush", &record.opts, "num",
++		     "Minimal number of bytes in kernel buffer that is flushed to trace file (default: 1)",
++		     record__mmap_flush_parse),
+ 	OPT_END()
+ };
+ 
+@@ -2145,10 +2213,18 @@ int cmd_record(int argc, const char **argv)
+ 		goto out;
+ 	}
+ 
+-	if (rec->opts.nr_cblocks > nr_cblocks_max)
+-		rec->opts.nr_cblocks = nr_cblocks_max;
+-	if (verbose > 0)
+-		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
++	if (rec->opts.comp_level > 22)
++		rec->opts.comp_level = 0;
++	if (record__comp_enabled(rec) && !rec->opts.nr_cblocks) {
++		 /*
++		  * Allocate aio.data[0] buffer for compression.
++		  */
++		rec->opts.nr_cblocks = -1;
++	}
++
++	pr_debug("nr_cblocks: %d\n", rec->opts.nr_cblocks);
++	pr_debug("comp level: %d\n", rec->opts.comp_level);
++	pr_debug("mmap flush: %d\n", rec->opts.mmap_flush);
+ 
+ 	err = __cmd_record(&record, argc, argv);
+ out:
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 5941fb6eccfc..306ec46bdf2d 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -84,6 +84,8 @@ struct record_opts {
+ 	clockid_t    clockid;
+ 	u64          clockid_res_ns;
+ 	int	     nr_cblocks;
++	unsigned int comp_level;
++	int	     mmap_flush;
+ };
+ 
+ struct option;
+diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
+index d01b8355f4ca..fa5dc9b87029 100644
+--- a/tools/perf/util/env.h
++++ b/tools/perf/util/env.h
+@@ -64,6 +64,16 @@ struct perf_env {
+ 	struct memory_node	*memory_nodes;
+ 	unsigned long long	 memory_bsize;
+ 	u64                     clockid_res_ns;
++	u32			comp_type;
++	u32			comp_level;
++	u32			comp_ratio;
++	u32			comp_mmap_len;
++};
++
++enum perf_compress_type {
++	PERF_COMP_NONE = 0,
++	PERF_COMP_ZSTD,
++	PERF_COMP_MAX
+ };
+ 
+ extern struct perf_env perf_env;
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 1b5091a3d14f..d93e89f791de 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -66,6 +66,7 @@ static const char *perf_event__names[] = {
+ 	[PERF_RECORD_EVENT_UPDATE]		= "EVENT_UPDATE",
+ 	[PERF_RECORD_TIME_CONV]			= "TIME_CONV",
+ 	[PERF_RECORD_HEADER_FEATURE]		= "FEATURE",
++	[PERF_RECORD_COMPRESSED]		= "COMPRESSED",
+ };
+ 
+ static const char *perf_ns__names[] = {
+diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+index feba1aa819b4..71b438fae227 100644
+--- a/tools/perf/util/event.h
++++ b/tools/perf/util/event.h
+@@ -254,6 +254,7 @@ enum perf_user_event_type { /* above any possible kernel type */
+ 	PERF_RECORD_EVENT_UPDATE		= 78,
+ 	PERF_RECORD_TIME_CONV			= 79,
+ 	PERF_RECORD_HEADER_FEATURE		= 80,
++	PERF_RECORD_COMPRESSED			= 81,
+ 	PERF_RECORD_HEADER_MAX
+ };
+ 
+@@ -625,6 +626,11 @@ struct feature_event {
+ 	char				data[];
+ };
+ 
++struct compressed_event {
++	struct perf_event_header	header;
++	char				data[];
++};
++
+ union perf_event {
+ 	struct perf_event_header	header;
+ 	struct mmap_event		mmap;
+@@ -658,6 +664,7 @@ union perf_event {
+ 	struct feature_event		feat;
+ 	struct ksymbol_event		ksymbol_event;
+ 	struct bpf_event		bpf_event;
++	struct compressed_event		pack;
+ };
+ 
+ void perf_event__print_totals(void);
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 8c902276d4b4..c82d4fd32dcf 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1022,7 +1022,7 @@ int perf_evlist__parse_mmap_pages(const struct option *opt, const char *str,
+  */
+ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 			 unsigned int auxtrace_pages,
+-			 bool auxtrace_overwrite, int nr_cblocks)
++			 bool auxtrace_overwrite, int nr_cblocks, int flush)
+ {
+ 	struct perf_evsel *evsel;
+ 	const struct cpu_map *cpus = evlist->cpus;
+@@ -1032,7 +1032,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 	 * Its value is decided by evsel's write_backward.
+ 	 * So &mp should not be passed through const pointer.
+ 	 */
+-	struct mmap_params mp = { .nr_cblocks = nr_cblocks };
++	struct mmap_params mp = { .nr_cblocks = nr_cblocks, .flush = flush };
+ 
+ 	if (!evlist->mmap)
+ 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
+@@ -1064,7 +1064,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 
+ int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages)
+ {
+-	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0);
++	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0, 1);
+ }
+ 
+ int perf_evlist__create_maps(struct perf_evlist *evlist, struct target *target)
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index 00ab43c6dd15..8825b43bb321 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -165,7 +165,7 @@ unsigned long perf_event_mlock_kb_in_pages(void);
+ 
+ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 			 unsigned int auxtrace_pages,
+-			 bool auxtrace_overwrite, int nr_cblocks);
++			 bool auxtrace_overwrite, int nr_cblocks, int flush);
+ int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages);
+ void perf_evlist__munmap(struct perf_evlist *evlist);
+ 
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index dec6d218c31c..5ad3a27a042f 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -1463,6 +1463,21 @@ static int write_mem_topology(struct feat_fd *ff __maybe_unused,
+ 	return ret;
+ }
+ 
++static int write_compressed(struct feat_fd *ff __maybe_unused,
++			    struct perf_evlist *evlist __maybe_unused)
++{
++	int ret;
++	u64 compression_info = ((u64)ff->ph->env.comp_type  << 32) | ff->ph->env.comp_level;
++
++	ret = do_write(ff, &compression_info, sizeof(compression_info));
++	if (ret)
++		return ret;
++
++	compression_info = ((u64)ff->ph->env.comp_ratio << 32) | ff->ph->env.comp_mmap_len;
++
++	return do_write(ff, &compression_info, sizeof(compression_info));
++}
++
+ static void print_hostname(struct feat_fd *ff, FILE *fp)
+ {
+ 	fprintf(fp, "# hostname : %s\n", ff->ph->env.hostname);
+@@ -1750,6 +1765,13 @@ static void print_cache(struct feat_fd *ff, FILE *fp __maybe_unused)
+ 	}
+ }
+ 
++static void print_compressed(struct feat_fd *ff, FILE *fp)
++{
++	fprintf(fp, "# compressed : %s, level = %d, ratio = %d\n",
++		ff->ph->env.comp_type == PERF_COMP_ZSTD ? "Zstd" : "Unknown",
++		ff->ph->env.comp_level, ff->ph->env.comp_ratio);
++}
++
+ static void print_pmu_mappings(struct feat_fd *ff, FILE *fp)
+ {
+ 	const char *delimiter = "# pmu mappings: ";
+@@ -2592,6 +2614,26 @@ static int process_clockid(struct feat_fd *ff,
+ 	return 0;
+ }
+ 
++static int process_compressed(struct feat_fd *ff,
++			      void *data __maybe_unused)
++{
++	u64 compression_info;
++
++	if (do_read_u64(ff, &compression_info))
++		return -1;
++
++	ff->ph->env.comp_type  = (compression_info >> 32) & 0xffffffffULL;
++	ff->ph->env.comp_level = compression_info & 0xffffffffULL;
++
++	if (do_read_u64(ff, &compression_info))
++		return -1;
++
++	ff->ph->env.comp_ratio = (compression_info >> 32) & 0xffffffffULL;
++	ff->ph->env.comp_mmap_len = compression_info & 0xffffffffULL;
++
++	return 0;
++}
++
+ struct feature_ops {
+ 	int (*write)(struct feat_fd *ff, struct perf_evlist *evlist);
+ 	void (*print)(struct feat_fd *ff, FILE *fp);
+@@ -2651,7 +2693,8 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
+ 	FEAT_OPN(CACHE,		cache,		true),
+ 	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
+ 	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
+-	FEAT_OPR(CLOCKID,       clockid,        false)
++	FEAT_OPR(CLOCKID,       clockid,        false),
++	FEAT_OPR(COMPRESSED,	compressed,	false)
+ };
+ 
+ struct header_print_data {
+diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
+index 0d553ddca0a3..ee867075dc64 100644
+--- a/tools/perf/util/header.h
++++ b/tools/perf/util/header.h
+@@ -39,6 +39,7 @@ enum {
+ 	HEADER_SAMPLE_TIME,
+ 	HEADER_MEM_TOPOLOGY,
+ 	HEADER_CLOCKID,
++	HEADER_COMPRESSED,
+ 	HEADER_LAST_FEATURE,
+ 	HEADER_FEAT_BITS	= 256,
+ };
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 8fc39311a30d..a9c8eeb584dd 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -154,55 +154,89 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ }
+ 
+ #ifdef HAVE_AIO_SUPPORT
+-static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
++static int perf_mmap__aio_mmap_blocks(struct perf_mmap *map)
+ {
+ 	int delta_max, i, prio;
+ 
++	map->aio.aiocb = calloc(map->aio.nr_cblocks, sizeof(struct aiocb *));
++	if (!map->aio.aiocb) {
++		pr_debug2("failed to allocate aiocb for data buffer, error %m\n");
++		return -1;
++	}
++	map->aio.cblocks = calloc(map->aio.nr_cblocks, sizeof(struct aiocb));
++	if (!map->aio.cblocks) {
++		pr_debug2("failed to allocate cblocks for data buffer, error %m\n");
++		return -1;
++	}
++	delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
++	for (i = 0; i < map->aio.nr_cblocks; ++i) {
++		/*
++		 * Use cblock.aio_fildes value different from -1
++		 * to denote started aio write operation on the
++		 * cblock so it requires explicit record__aio_sync()
++		 * call prior the cblock may be reused again.
++		 */
++		map->aio.cblocks[i].aio_fildes = -1;
++		/*
++		 * Allocate cblocks with priority delta to have
++		 * faster aio write system calls because queued requests
++		 * are kept in separate per-prio queues and adding
++		 * a new request will iterate thru shorter per-prio
++		 * list. Blocks with numbers higher than
++		 *  _SC_AIO_PRIO_DELTA_MAX go with priority 0.
++		 */
++		prio = delta_max - i;
++		map->aio.cblocks[i].aio_reqprio = prio >= 0 ? prio : 0;
++	}
++
++	return 0;
++}
++
++static void perf_mmap__aio_munmap_blocks(struct perf_mmap *map)
++{
++	zfree(&map->aio.cblocks);
++	zfree(&map->aio.aiocb);
++}
++#else /* !HAVE_AIO_SUPPORT */
++static int perf_mmap__aio_mmap_blocks(struct perf_mmap *map __maybe_unused)
++{
++	return 0;
++}
++
++static void perf_mmap__aio_munmap_blocks(struct perf_mmap *map __maybe_unused)
++{
++}
++#endif
++
++static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
++{
++	int i, ret = 0, init_blocks = 1;
++
+ 	map->aio.nr_cblocks = mp->nr_cblocks;
++	if (map->aio.nr_cblocks == -1) {
++		map->aio.nr_cblocks = 1;
++		init_blocks = 0;
++	}
++
+ 	if (map->aio.nr_cblocks) {
+-		map->aio.aiocb = calloc(map->aio.nr_cblocks, sizeof(struct aiocb *));
+-		if (!map->aio.aiocb) {
+-			pr_debug2("failed to allocate aiocb for data buffer, error %m\n");
+-			return -1;
+-		}
+-		map->aio.cblocks = calloc(map->aio.nr_cblocks, sizeof(struct aiocb));
+-		if (!map->aio.cblocks) {
+-			pr_debug2("failed to allocate cblocks for data buffer, error %m\n");
+-			return -1;
+-		}
+ 		map->aio.data = calloc(map->aio.nr_cblocks, sizeof(void *));
+ 		if (!map->aio.data) {
+ 			pr_debug2("failed to allocate data buffer, error %m\n");
+ 			return -1;
+ 		}
+-		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
+ 		for (i = 0; i < map->aio.nr_cblocks; ++i) {
+ 			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
+ 			if (!map->aio.data[i]) {
+ 				pr_debug2("failed to allocate data buffer area, error %m");
+ 				return -1;
+ 			}
+-			/*
+-			 * Use cblock.aio_fildes value different from -1
+-			 * to denote started aio write operation on the
+-			 * cblock so it requires explicit record__aio_sync()
+-			 * call prior the cblock may be reused again.
+-			 */
+-			map->aio.cblocks[i].aio_fildes = -1;
+-			/*
+-			 * Allocate cblocks with priority delta to have
+-			 * faster aio write system calls because queued requests
+-			 * are kept in separate per-prio queues and adding
+-			 * a new request will iterate thru shorter per-prio
+-			 * list. Blocks with numbers higher than
+-			 *  _SC_AIO_PRIO_DELTA_MAX go with priority 0.
+-			 */
+-			prio = delta_max - i;
+-			map->aio.cblocks[i].aio_reqprio = prio >= 0 ? prio : 0;
+ 		}
++
++		if (init_blocks)
++			ret = perf_mmap__aio_mmap_blocks(map);
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static void perf_mmap__aio_munmap(struct perf_mmap *map)
+@@ -213,10 +247,10 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
+ 		zfree(&map->aio.data[i]);
+ 	if (map->aio.data)
+ 		zfree(&map->aio.data);
+-	zfree(&map->aio.cblocks);
+-	zfree(&map->aio.aiocb);
++	perf_mmap__aio_munmap_blocks(map);
+ }
+ 
++#ifdef HAVE_AIO_SUPPORT
+ int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
+ 			int push(void *to, struct aiocb *cblock, void *buf, size_t size, off_t off),
+ 			off_t *off)
+@@ -290,16 +324,6 @@ int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
+ 
+ 	return rc;
+ }
+-#else
+-static int perf_mmap__aio_mmap(struct perf_mmap *map __maybe_unused,
+-			       struct mmap_params *mp __maybe_unused)
+-{
+-	return 0;
+-}
+-
+-static void perf_mmap__aio_munmap(struct perf_mmap *map __maybe_unused)
+-{
+-}
+ #endif
+ 
+ void perf_mmap__munmap(struct perf_mmap *map)
+@@ -347,6 +371,8 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
+ 				&mp->auxtrace_mp, map->base, fd))
+ 		return -1;
+ 
++	map->flush = mp->flush;
++
+ 	return perf_mmap__aio_mmap(map, mp);
+ }
+ 
+@@ -395,7 +421,7 @@ static int __perf_mmap__read_init(struct perf_mmap *md)
+ 	md->start = md->overwrite ? head : old;
+ 	md->end = md->overwrite ? old : head;
+ 
+-	if (md->start == md->end)
++	if ((md->end - md->start) < md->flush)
+ 		return -EAGAIN;
+ 
+ 	size = md->end - md->start;
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index aeb6942fdb00..387bfac7fcdb 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -30,14 +30,15 @@ struct perf_mmap {
+ 	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
+-#ifdef HAVE_AIO_SUPPORT
++	u64		 flush;
+ 	struct {
+ 		void		 **data;
++#ifdef HAVE_AIO_SUPPORT
+ 		struct aiocb	 *cblocks;
+ 		struct aiocb	 **aiocb;
++#endif
+ 		int		 nr_cblocks;
+ 	} aio;
+-#endif
+ };
+ 
+ /*
+@@ -69,7 +70,7 @@ enum bkw_mmap_state {
+ };
+ 
+ struct mmap_params {
+-	int			    prot, mask, nr_cblocks;
++	int			    prot, mask, nr_cblocks, flush;
+ 	struct auxtrace_mmap_params auxtrace_mp;
+ };
+ 
+diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+index d96eccd7d27f..0e14884f28b2 100644
+--- a/tools/perf/util/session.h
++++ b/tools/perf/util/session.h
+@@ -35,6 +35,8 @@ struct perf_session {
+ 	struct ordered_events	ordered_events;
+ 	struct perf_data	*data;
+ 	struct perf_tool	*tool;
++	u64			bytes_transferred;
++	u64			bytes_compressed;
+ };
+ 
+ struct perf_tool;
