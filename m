@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B1CC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F70CC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 795322084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41E0820879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692633;
-	bh=yKsmlZx/Z4GFK26nt0bFCgk8J8ErEy32WhXyNwX7F30=;
+	s=default; t=1548692636;
+	bh=vNGjbw7LC6HYlUIHZ6diKg8EF6tV4uJg2mI5GdI/Rqc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xZFJIGL/07JGeJQA9OHLGhWRpehnYNPPgV3rvyl+ptwASirusD9GUC/DG8l2CpUnS
-	 sMeniXUwUIdgKDLQnh5tzTQ4nei7A5oDKpu3yF0lo+HTSYdZ6oVZZgCbGY9o0/r85R
-	 TwiIjSdxb2AT7D/A8Ghc3w6C+1zFJ0wmx7XQmYXw=
+	b=RCJkdydN/XfKKcW+XMor4zcJj1B7dUQRTFWXG83MAIXK7+N0sqicY4tjF7NCtHy3v
+	 oapr9USu9p2kH/JbMB4iuSUbQxyPKt/ZTh37ovaj0/69EPF7dlTm5ffcBNt6/Ali/g
+	 vPG0O+4lTi0uV+wRgEOEw5olXvil4lBLqTd6ABp4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388370AbfA1QXw (ORCPT
+        id S2389555AbfA1QXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:23:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60102 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:23:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389514AbfA1QXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:23:47 -0500
+        id S2389522AbfA1QXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:23:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC8C12084A;
-        Mon, 28 Jan 2019 16:23:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E4C62171F;
+        Mon, 28 Jan 2019 16:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692626;
-        bh=yKsmlZx/Z4GFK26nt0bFCgk8J8ErEy32WhXyNwX7F30=;
+        s=default; t=1548692628;
+        bh=vNGjbw7LC6HYlUIHZ6diKg8EF6tV4uJg2mI5GdI/Rqc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=11ydRsvMZh0/MfXYsBPgIsYz6VcZnM+45s1jtqjyW7aVSiZ/XnAfE6VNeG7gU7TDD
-         jjdVCDs9H8SxoAPDCYFYcDyK73FkdLnmDk2JTneFfNX5ATesDiaGpKKPL0yvysim5t
-         B3emZA7jAVc4ecMajLGDYsNfQF37S4hGrrb1AcAs=
+        b=NqQKWIswmNLEmGhAZdKdIpQHStR99TjP4pOsHygxcwaw71ZK0d2SOAAhhsXXyLdii
+         HA59NuWkemkj8maX1XsMYH0/rbTtQQLUxhVP1MyaCnotwuOW6C8hHRqoNvL5rz9CIu
+         dCbq3a/8XDKNLZRuC/6U4ucYCAsgoMZ21ledaZkc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Finn Thain <fthain@telegraphics.com.au>,
-        linuxppc-dev@lists.ozlabs.org, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 100/107] block/swim3: Fix -EBUSY error when re-opening device after unmount
-Date:   Mon, 28 Jan 2019 11:19:40 -0500
-Message-Id: <20190128161947.57405-100-sashal@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 101/107] thermal: generic-adc: Fix adc to temp interpolation
+Date:   Mon, 28 Jan 2019 11:19:41 -0500
+Message-Id: <20190128161947.57405-101-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -58,42 +59,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-[ Upstream commit 296dcc40f2f2e402facf7cd26cf3f2c8f4b17d47 ]
+[ Upstream commit 9d216211fded20fff301d0317af3238d8383634c ]
 
-When the block device is opened with FMODE_EXCL, ref_count is set to -1.
-This value doesn't get reset when the device is closed which means the
-device cannot be opened again. Fix this by checking for refcount <= 0
-in the release method.
+First correct the edge case to return the last element if we're
+outside the range, rather than at the last element, so that
+interpolation is not omitted for points between the two last entries in
+the table.
 
-Reported-and-tested-by: Stan Johnson <userm57@yahoo.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: linuxppc-dev@lists.ozlabs.org
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Then correct the formula to perform linear interpolation based the two
+points surrounding the read ADC value. The indices for temp are kept as
+"hi" and "lo" to pair with the adc indices, but there's no requirement
+that the temperature is provided in descendent order. mult_frac() is
+used to prevent issues with overflowing the int.
+
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/swim3.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/thermal/thermal-generic-adc.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
-index c264f2d284a7..2e0a9e2531cb 100644
---- a/drivers/block/swim3.c
-+++ b/drivers/block/swim3.c
-@@ -1027,7 +1027,11 @@ static void floppy_release(struct gendisk *disk, fmode_t mode)
- 	struct swim3 __iomem *sw = fs->swim3;
+diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
+index 73f55d6a1721..ad601e5b4175 100644
+--- a/drivers/thermal/thermal-generic-adc.c
++++ b/drivers/thermal/thermal-generic-adc.c
+@@ -26,7 +26,7 @@ struct gadc_thermal_info {
  
- 	mutex_lock(&swim3_mutex);
--	if (fs->ref_count > 0 && --fs->ref_count == 0) {
-+	if (fs->ref_count > 0)
-+		--fs->ref_count;
-+	else if (fs->ref_count == -1)
-+		fs->ref_count = 0;
-+	if (fs->ref_count == 0) {
- 		swim3_action(fs, MOTOR_OFF);
- 		out_8(&sw->control_bic, 0xff);
- 		swim3_select(fs, RELAX);
+ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
+ {
+-	int temp, adc_hi, adc_lo;
++	int temp, temp_hi, temp_lo, adc_hi, adc_lo;
+ 	int i;
+ 
+ 	for (i = 0; i < gti->nlookup_table; i++) {
+@@ -36,13 +36,17 @@ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
+ 
+ 	if (i == 0) {
+ 		temp = gti->lookup_table[0];
+-	} else if (i >= (gti->nlookup_table - 1)) {
++	} else if (i >= gti->nlookup_table) {
+ 		temp = gti->lookup_table[2 * (gti->nlookup_table - 1)];
+ 	} else {
+ 		adc_hi = gti->lookup_table[2 * i - 1];
+ 		adc_lo = gti->lookup_table[2 * i + 1];
+-		temp = gti->lookup_table[2 * i];
+-		temp -= ((val - adc_lo) * 1000) / (adc_hi - adc_lo);
++
++		temp_hi = gti->lookup_table[2 * i - 2];
++		temp_lo = gti->lookup_table[2 * i];
++
++		temp = temp_hi + mult_frac(temp_lo - temp_hi, val - adc_hi,
++					   adc_lo - adc_hi);
+ 	}
+ 
+ 	return temp;
 -- 
 2.19.1
 
