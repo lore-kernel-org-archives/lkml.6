@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C02C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D1BC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58D3B21741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96E9B2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690829;
-	bh=fL8fM8Zn9wO43EM3TUK57B/Gcf+ZpV2JMfYJADboTW8=;
+	s=default; t=1548690834;
+	bh=f2bfUr/EtzNT43pnnLIalrWvmm4G99uDBUZcdRjpS2I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LrxtC3adHfJF9wtwNDjCAZVr0EOeglBPzW7CD/u6U8UC18DzWr/TWac3SkuZPsy56
-	 07rhl5fLEc4qn89pGXP7OEt5RwuPLy0ikaqy0Au4Vngg5e4uAHjyJF5u6e8r4tpGPd
-	 D9x96ofVaNSLLxj9WJvcDUSpY4RTT6OYmlsbwpRI=
+	b=KUaGU0uUjBkHRJX+0+Hwf8gSidqo1wgKz8Nm7l+ivMqmGlg5xakPfwhzn3Vgkq807
+	 5mjiqPwANknDkpFrK42jRhkWAkxhtRLFnSMMAUgwMDolg0xVuj1u/lGSlvBpCiwzId
+	 O7+Y7nKLTPC74IFeTorxQM5mLY+PfrpvVLB9S57s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729127AbfA1Pxr (ORCPT
+        id S1729558AbfA1Pxw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:53:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40040 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:53:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729474AbfA1Pxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:53:43 -0500
+        id S1729532AbfA1Pxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:53:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41BD42147A;
-        Mon, 28 Jan 2019 15:53:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 183D320880;
+        Mon, 28 Jan 2019 15:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690822;
-        bh=fL8fM8Zn9wO43EM3TUK57B/Gcf+ZpV2JMfYJADboTW8=;
+        s=default; t=1548690828;
+        bh=f2bfUr/EtzNT43pnnLIalrWvmm4G99uDBUZcdRjpS2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=giAeEXAYi3bbVoYduvf7yfZ+xU+0ApNIb4EjfNgZpEKttRBUwINfX66vbFc9MrXRg
-         FfmBvNod5OnPZDYBmy4qLeG1z2HfTq8IoSpTn32Dq7rsr0w+toMzy8hNt5eG8ebDT8
-         RKI2zR2wkkLphPEMO6j8BokoRqhz7v6CffdrsV0s=
+        b=NgkbhgaNBz0dYbf29EUlnafUHiCd3QOPZS6oKBmmwauziNrBNMPLg0fqupXVP7F7m
+         FrNBYMF6BX00r2Ees7tJUJXFN6afeXT3Il5cnRRAVyv29PiG3s/3dSZSOWJMlrQaHs
+         4mSfANOlCo/6y8pBGsB2yZuo0+kGg9vQAM1kZv0A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michael Chan <michael.chan@broadcom.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 203/304] bnxt_en: Disable MSIX before re-reserving NQs/CMPL rings.
-Date:   Mon, 28 Jan 2019 10:42:00 -0500
-Message-Id: <20190128154341.47195-203-sashal@kernel.org>
+Cc:     Doug Smythies <doug.smythies@gmail.com>,
+        Doug Smythies <dsmythies@telus.net>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 205/304] tools/power/x86/intel_pstate_tracer: Fix non root execution for post processing a trace file
+Date:   Mon, 28 Jan 2019 10:42:02 -0500
+Message-Id: <20190128154341.47195-205-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,66 +59,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Doug Smythies <doug.smythies@gmail.com>
 
-[ Upstream commit 36d65be9a88052cdfc8524eb591baf0e6c878408 ]
+[ Upstream commit 663546903c835fe46308b1b1e53d32d1f2b33da9 ]
 
-When bringing up a device, the code checks to see if the number of
-MSIX has changed.  pci_disable_msix() should be called first before
-changing the number of reserved NQs/CMPL rings.  This ensures that
-the MSIX vectors associated with the NQs/CMPL rings are still
-properly mapped when pci_disable_msix() masks the vectors.
+This script is supposed to be allowed to run with regular user
+privileges if a previously captured trace is being post processed.
 
-This patch will prevent errors when RDMA support is added for the new
-57500 chips.  When the RDMA driver shuts down, the number of NQs is
-decreased and we must use the new sequence to prevent MSIX errors.
+Commit fbe313884d7d (tools/power/x86/intel_pstate_tracer: Free the
+trace buffer memory) introduced a bug that breaks that option.
 
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Commit 35459105deb2 (tools/power/x86/intel_pstate_tracer: Add
+optional setting of trace buffer memory allocation) moved the code
+but kept the bug.
+
+This patch fixes the issue.
+
+Fixes: 35459105deb2 (tools/power/x86/intel_pstate_tracer: Add optional ...)
+Signed-off-by: Doug Smythies <dsmythies@telus.net>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 5d21c14853ac..50a4c3ddf977 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -7203,23 +7203,26 @@ static void bnxt_clear_int_mode(struct bnxt *bp)
- int bnxt_reserve_rings(struct bnxt *bp)
- {
- 	int tcs = netdev_get_num_tc(bp->dev);
-+	bool reinit_irq = false;
- 	int rc;
+diff --git a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
+index 84e2b648e622..2fa3c5757bcb 100755
+--- a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
++++ b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
+@@ -585,9 +585,9 @@ current_max_cpu = 0
  
- 	if (!bnxt_need_reserve_rings(bp))
- 		return 0;
+ read_trace_data(filename)
  
--	rc = __bnxt_reserve_rings(bp);
--	if (rc) {
--		netdev_err(bp->dev, "ring reservation failure rc: %d\n", rc);
--		return rc;
--	}
- 	if (BNXT_NEW_RM(bp) && (bnxt_get_num_msix(bp) != bp->total_irqs)) {
- 		bnxt_ulp_irq_stop(bp);
- 		bnxt_clear_int_mode(bp);
--		rc = bnxt_init_int_mode(bp);
-+		reinit_irq = true;
-+	}
-+	rc = __bnxt_reserve_rings(bp);
-+	if (reinit_irq) {
-+		if (!rc)
-+			rc = bnxt_init_int_mode(bp);
- 		bnxt_ulp_irq_restart(bp, rc);
--		if (rc)
--			return rc;
-+	}
-+	if (rc) {
-+		netdev_err(bp->dev, "ring reservation/IRQ init failure rc: %d\n", rc);
-+		return rc;
- 	}
- 	if (tcs && (bp->tx_nr_rings_per_tc * tcs != bp->tx_nr_rings)) {
- 		netdev_err(bp->dev, "tx ring reservation failure\n");
+-clear_trace_file()
+-# Free the memory
+ if interval:
++    clear_trace_file()
++    # Free the memory
+     free_trace_buffer()
+ 
+ if graph_data_present == False:
 -- 
 2.19.1
 
