@@ -2,138 +2,91 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61356C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8D6C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 333262084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:45:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693934;
-	bh=4nC/d55yvoV6EJPIWhpgpX1g+jLAEzErrsNeHk839J0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qqGfKvEMvns55cQ6isuzpgB1ar0JrO5NwqE2z7VpjHH9Aq960pBMOH5hsxUN53BV6
-	 QpUWelXV8UJGxOtb18R39ehagNYB+UWqZVF/cgD6xcAxsl4rWqzW33VaWdzd7/KQwK
-	 ggNf9bGGCw4/Pwn6pZJTHM4EIS8AXuyj1t2QT400=
+	by mail.kernel.org (Postfix) with ESMTP id E2AAA20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:45:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="QkwceJg2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389490AbfA1Qpc (ORCPT
+        id S2389921AbfA1Qph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:45:37 -0500
+Received: from sender-pp-092.zoho.com ([135.84.80.237]:25306 "EHLO
+        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389463AbfA1Qpc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 11:45:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389282AbfA1QWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:51 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9648C20663;
-        Mon, 28 Jan 2019 16:22:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692570;
-        bh=4nC/d55yvoV6EJPIWhpgpX1g+jLAEzErrsNeHk839J0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RUGeiJa9BHRsXiLoaBeq4APVZzlp7LJiKng3s9bU9OPxkrMCYkTwcKZZvzG227BcL
-         pww3I1oiCgs3Mr0QqtNURL0ztwXisqEOakk7YTtsGMhwQo55jQCSocM5E9SN/Xoobr
-         qW74got+FmioYrTZ2gkfu5Q0k6Yc1tuUudTT7/qw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roland Kammerer <roland.kammerer@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 071/107] drbd: narrow rcu_read_lock in drbd_sync_handshake
-Date:   Mon, 28 Jan 2019 11:19:11 -0500
-Message-Id: <20190128161947.57405-71-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
-References: <20190128161947.57405-1-sashal@kernel.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1548693911; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=LuxZqiAhTmrEGYf100dkixk9HR9OLtx3zxJFF8Mes8uIiFheGfzaavoIf1ef+Ou1+XNGPXxWgAOoM4NMjpLP+z1R5xxZfCPYaubNCoPcOej7iUKp07epDoYjBzhfHDmGkG7bn8UZHjkHq968wa8FYpnYMq62L7+a19zZKe0R4nY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1548693911; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=/ocmoCVAUwgmUREFsy+ld0mubWacyF6BNsUB4nzEnmM=; 
+        b=PaYDgHQg03751fxq+BzUdH3Rptrp4MXFeziU4giLy0wboiFdEm1NvaO8IjsE8azPLGHsHJpd6QMxYqqmJyi/CCnJv+K17x2jOtqbrk9G7/dFWDkZt6xNNcfsSUnzKc7SmYXPZH38R1hSUmBb6EWDxNBVoCkhnMSjkdQh8cMOlIY=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
+  b=a++7rL1uovTb5js/K0Vwmq202gyHEmGuXNbVbFeNAN1AJYqTum1+f4gZ2zkYL7ZmU0Pgq2eMV9/f
+    aSdk2DyxYhMuj/hd/dS0ZRvw3dmiN3XUihTmdfmlJoxnrUQO/oyQ  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548693911;
+        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        l=501; bh=/ocmoCVAUwgmUREFsy+ld0mubWacyF6BNsUB4nzEnmM=;
+        b=QkwceJg2FNzhMKqiRe39Tk3If49ThFr4cKHl29IqkzHx329ZvhNq4Lsw6ZJDLV4/
+        G8qyGwW1LZkg+XnMu74hAZseH20FKIML+NCUGHlULX+5rG/UHsVFpg40BshZ3PNeCh/
+        HhprqXdPx5WcMw0/mOotpa7S9vOS3oACQ+7I++34=
+Received: from [192.168.88.133] (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
+        with SMTPS id 1548693909299708.5010229795901; Mon, 28 Jan 2019 08:45:09 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] Serial: Ingenic: Add X1000 suppor for the UART
+ driver.
+To:     Greg KH <gregkh@linuxfoundation.org>
+References: <1548667176-119830-1-git-send-email-zhouyanjie@zoho.com>
+ <1548683821-120924-1-git-send-email-zhouyanjie@zoho.com>
+ <1548683821-120924-2-git-send-email-zhouyanjie@zoho.com>
+ <20190128162245.GA25853@kroah.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com, jslaby@suse.com,
+        mark.rutland@arm.com, syq@debian.org, jiaxun.yang@flygoat.com,
+        772753199@qq.com
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+Message-ID: <5C4F318C.20505@zoho.com>
+Date:   Tue, 29 Jan 2019 00:45:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190128162245.GA25853@kroah.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roland Kammerer <roland.kammerer@linbit.com>
+I am very sorry, I understood wrong before.
 
-[ Upstream commit d29e89e34952a9ad02c77109c71a80043544296e ]
+On 2019=E5=B9=B401=E6=9C=8829=E6=97=A5 00:22, Greg KH wrote:
+> On Mon, Jan 28, 2019 at 09:57:00PM +0800, Zhou Yanjie wrote:
+>> Add support for probing the 8250_ingenic driver on the
+>> X1000 Soc from Ingenic.
+>>
+>> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+>> ---
+>>   drivers/tty/serial/8250/8250_ingenic.c | 13 +++++++++----
+>>   1 file changed, 9 insertions(+), 4 deletions(-)
+> Your subject lines are still identical for both patches :(
 
-So far there was the possibility that we called
-genlmsg_new(GFP_NOIO)/mutex_lock() while holding an rcu_read_lock().
 
-This included cases like:
-
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      drbd_bcast_event
-        genlmsg_new(GFP_NOIO) --> may sleep
-
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      notify_helper
-        genlmsg_new(GFP_NOIO) --> may sleep
-
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      notify_helper
-        mutex_lock --> may sleep
-
-While using GFP_ATOMIC whould have been possible in the first two cases,
-the real fix is to narrow the rcu_read_lock.
-
-Reported-by: Jia-Ju Bai <baijiaju1990@163.com>
-Reviewed-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/block/drbd/drbd_receiver.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 942384f34e22..77d0f80f62f9 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3421,7 +3421,7 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 	enum drbd_conns rv = C_MASK;
- 	enum drbd_disk_state mydisk;
- 	struct net_conf *nc;
--	int hg, rule_nr, rr_conflict, tentative;
-+	int hg, rule_nr, rr_conflict, tentative, always_asbp;
- 
- 	mydisk = device->state.disk;
- 	if (mydisk == D_NEGOTIATING)
-@@ -3472,8 +3472,12 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 
- 	rcu_read_lock();
- 	nc = rcu_dereference(peer_device->connection->net_conf);
-+	always_asbp = nc->always_asbp;
-+	rr_conflict = nc->rr_conflict;
-+	tentative = nc->tentative;
-+	rcu_read_unlock();
- 
--	if (hg == 100 || (hg == -100 && nc->always_asbp)) {
-+	if (hg == 100 || (hg == -100 && always_asbp)) {
- 		int pcount = (device->state.role == R_PRIMARY)
- 			   + (peer_role == R_PRIMARY);
- 		int forced = (hg == -100);
-@@ -3512,9 +3516,6 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 			     "Sync from %s node\n",
- 			     (hg < 0) ? "peer" : "this");
- 	}
--	rr_conflict = nc->rr_conflict;
--	tentative = nc->tentative;
--	rcu_read_unlock();
- 
- 	if (hg == -100) {
- 		/* FIXME this log message is not correct if we end up here
--- 
-2.19.1
 
