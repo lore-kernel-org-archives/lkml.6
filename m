@@ -4,49 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA2EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 376FFC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF4FE21738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:04:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0926F2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:04:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691462;
-	bh=e3V2iQYi92n+TqFefdoCc3GErkHwkxQYgrvUSOHzA+c=;
+	s=default; t=1548691465;
+	bh=41BvhBWtOTeFFGZmfcU5CdTz8ga1TmWQcE1yi7m43YU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lgZA32nmxvGKK7anoyW0EoWD113TCl56lSV4tLRxXM1H6i/bGi8l60R6r5lsdDK9k
-	 qULppjw+V2vIL4/eqSTGFX0l1BS1tSed7SruOKi4E5eMx72bzNAOoJyz+R56597tdC
-	 0NFD7GWMjdBjGdkDub4S6vVF+q9TyBkNGTTEyYBU=
+	b=f7a7tIggQ2R4Odu0M3ymdXEgJJDQeFNfvWrRElamfkWRlbWbgWWHpJRbK7zs/MZTB
+	 /JCBqjexrcGViZPJ/tiY46NzpYFDAgaBTPMnQYAOD5xbx3mP4udLoO6j7oQsMvKibl
+	 jXccayPEFYg6cBcnajnE4/iQaHl9nms2iDTj5TOE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731548AbfA1QEV (ORCPT
+        id S1731562AbfA1QEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:04:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49696 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:04:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730856AbfA1QER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:04:17 -0500
+        id S1731550AbfA1QEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:04:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 456B22147A;
-        Mon, 28 Jan 2019 16:04:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9C7A2184D;
+        Mon, 28 Jan 2019 16:04:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691456;
-        bh=e3V2iQYi92n+TqFefdoCc3GErkHwkxQYgrvUSOHzA+c=;
+        s=default; t=1548691461;
+        bh=41BvhBWtOTeFFGZmfcU5CdTz8ga1TmWQcE1yi7m43YU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0WdIceaDuetSB7P4RECT8uuMUsExZBBgZk4dkeRRyiKq679xL6cDPjwbH+7IRRQKn
-         t3pCW5amtXD0E33DvzCPRfHerhrwIl4alWqVEgXEvPdqEs66nzKx8mUxJHBnfsSqpr
-         u/NqK5TH3ap3CWzlv1yRjoJ5lYodLDkyCGcaIXtQ=
+        b=1AhmUYpkDxx/6bZSQGRIhNnxwYokQ5zlxFbkaTzGJfBNxYxFy7ZQDTxOQZuOta+d6
+         LqOFIqWNQ2PNS9+FLd4wXxeuRE8lP34ckl0Sc9quQ7ItHmRKJZsGuP0DTvi+wAo9n2
+         vObX+b2VfaqTsU9V+nETsohUKL9keBDoUThJ2Hz0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 098/258] media: i2c: TDA1997x: select CONFIG_HDMI
-Date:   Mon, 28 Jan 2019 10:56:44 -0500
-Message-Id: <20190128155924.51521-98-sashal@kernel.org>
+Cc:     Zoran Markovic <zmarkovic@sierrawireless.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 100/258] smack: fix access permissions for keyring
+Date:   Mon, 28 Jan 2019 10:56:46 -0500
+Message-Id: <20190128155924.51521-100-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,44 +61,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Zoran Markovic <zmarkovic@sierrawireless.com>
 
-[ Upstream commit 79e89e36dc8a47ef965a35b484d737a5227feed1 ]
+[ Upstream commit 5b841bfab695e3b8ae793172a9ff7990f99cc3e2 ]
 
-Without CONFIG_HDMI, we get a link error for this driver:
+Function smack_key_permission() only issues smack requests for the
+following operations:
+ - KEY_NEED_READ (issues MAY_READ)
+ - KEY_NEED_WRITE (issues MAY_WRITE)
+ - KEY_NEED_LINK (issues MAY_WRITE)
+ - KEY_NEED_SETATTR (issues MAY_WRITE)
+A blank smack request is issued in all other cases, resulting in
+smack access being granted if there is any rule defined between
+subject and object, or denied with -EACCES otherwise.
 
-drivers/media/i2c/tda1997x.o: In function `tda1997x_parse_infoframe':
-tda1997x.c:(.text+0x2195): undefined reference to `hdmi_infoframe_unpack'
-tda1997x.c:(.text+0x21b6): undefined reference to `hdmi_infoframe_log'
-drivers/media/i2c/tda1997x.o: In function `tda1997x_log_infoframe':
-tda1997x.c:(.text.unlikely+0x13d3): undefined reference to `hdmi_infoframe_unpack'
-tda1997x.c:(.text.unlikely+0x1426): undefined reference to `hdmi_infoframe_log'
+Request MAY_READ access for KEY_NEED_SEARCH and KEY_NEED_VIEW.
+Fix the logic in the unlikely case when both MAY_READ and
+MAY_WRITE are needed. Validate access permission field for valid
+contents.
 
-All other drivers in this directory that use HDMI select CONFIG_HDMI,
-so do the same here:
-
-Fixes: 9ac0038db9a7 ("media: i2c: Add TDA1997x HDMI receiver driver")
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ security/smack/smack_lsm.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 82af97430e5b..041a777dfdee 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -61,6 +61,7 @@ config VIDEO_TDA1997X
- 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
- 	depends on SND_SOC
- 	select SND_PCM
-+	select HDMI
- 	---help---
- 	  V4L2 subdevice driver for the NXP TDA1997x HDMI receivers.
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 70d3066e69fe..017c47eb795e 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4333,6 +4333,12 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	int request = 0;
+ 	int rc;
  
++	/*
++	 * Validate requested permissions
++	 */
++	if (perm & ~KEY_NEED_ALL)
++		return -EINVAL;
++
+ 	keyp = key_ref_to_ptr(key_ref);
+ 	if (keyp == NULL)
+ 		return -EINVAL;
+@@ -4356,10 +4362,10 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	ad.a.u.key_struct.key = keyp->serial;
+ 	ad.a.u.key_struct.key_desc = keyp->description;
+ #endif
+-	if (perm & KEY_NEED_READ)
+-		request = MAY_READ;
++	if (perm & (KEY_NEED_READ | KEY_NEED_SEARCH | KEY_NEED_VIEW))
++		request |= MAY_READ;
+ 	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
+-		request = MAY_WRITE;
++		request |= MAY_WRITE;
+ 	rc = smk_access(tkp, keyp->security, request, &ad);
+ 	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
+ 	return rc;
 -- 
 2.19.1
 
