@@ -2,100 +2,174 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DATE_IN_PAST_12_24,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0FFC282CA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 03:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FB7C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 03:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9149A2177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 03:39:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A44F92175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 03:45:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="l1WT+Gby"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbfA2Dj6 (ORCPT
+        id S1727048AbfA2DpI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 22:39:58 -0500
-Received: from mga07.intel.com ([134.134.136.100]:37683 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbfA2Dj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 22:39:57 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 19:39:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="138698371"
-Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
-  by fmsmga002.fm.intel.com with ESMTP; 28 Jan 2019 19:39:54 -0800
-Date:   Mon, 28 Jan 2019 18:33:45 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     rkrcmar@redhat.com, sean.j.christopherson@intel.com,
-        jmattson@google.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, mst@redhat.com, yu-cheng.yu@intel.com,
-        yi.z.zhang@intel.com, hjl.tools@gmail.com,
-        Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Subject: Re: [PATCH v2 1/7] KVM:VMX: Define CET VMCS fields and bits
-Message-ID: <20190128103345.GA29895@local-michael-cet-test.sh.intel.com>
-References: <20190122205909.24165-1-weijiang.yang@intel.com>
- <20190122205909.24165-2-weijiang.yang@intel.com>
- <5a31eef0-2b6c-bdc2-c54b-5dc4cecf084d@redhat.com>
+        Mon, 28 Jan 2019 22:45:08 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40930 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726843AbfA2DpH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 22:45:07 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u18so8734249plq.7
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 19:45:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ag/OoE0BZaOYWPHi7HQ6/y8oewTzFELmcmGVsk453bY=;
+        b=l1WT+GbyMVebD6hUdWHWK+jR6+XM4eatD4OqeYxM7/ILHY2fN4dkAjW4e6yqBVGJJG
+         9PKth5DG5D7luIBBa8vUmmqIuD+mshcgGPc83cbG90jkMtSFEpPjsgtv9zC9oZnJhugO
+         mF3ZmSMgxVrNr12L9bkEJAagqUxx/KRjpzUS/EBDoWf5JGXCvG6WVulcTkG3cY4XzhLy
+         E4b8fktMP5+Gm4x5QrquCoW5fBvPlp9vlqvdNf5yBB/mv92gRMi2OppWymRE3jeqfWxw
+         L6Jq7Gy4ZMhEIOCOA7TWIAR3WHF3ZEdhWWE4XgJ8RPI6/8fZ8Z87wLFPWKEOTuih0HNQ
+         kulQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ag/OoE0BZaOYWPHi7HQ6/y8oewTzFELmcmGVsk453bY=;
+        b=TkL+RzUDmblYRw5xwFO0tXn5nr14Y1KKaCZrKQYSvh09hfIAhtq2RZ0KGZg+cYHryO
+         LkF8kNwO68ptwR71TwijdLDD1xdD7lV2/jp/1HemN/WAVP4rR/2b6BQ8bK3Qfgb15KBw
+         xjXkuiLQe7imHtoa73XQI/CK7xNm2dBytz2K5sK7k+69uI3RfUMJwViCUPw0sTwyPi1d
+         ZVkzLz89VWPVjVKR84AyZgpIA7k9dQPiXR1dPXb/fOQxRwp75GeGDsGdFMFhUWy6ahQP
+         OQJ+2pLUjgn4odp7+REW7MfvWFCcVKEq1KNvsFtXMDyvjDDbemIpI6pzUe+YVx9xuNnt
+         eTEg==
+X-Gm-Message-State: AJcUukdGOl3IH2C7Pg95CE2IFruRhvUAqfeMKuXWGPQoyvAcjSnEb9qE
+        F3yvwhv7TXUUaDEwHfPqGP7Xyg==
+X-Google-Smtp-Source: ALg8bN7BRmYmIOVCFQI6foHo5ZmMj8ynyHdKzDj7EMqRLQboNl8YgzUxqUeTxjHGGtzNLa+U08P4yQ==
+X-Received: by 2002:a17:902:6946:: with SMTP id k6mr24873902plt.101.1548733506641;
+        Mon, 28 Jan 2019 19:45:06 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id l185sm48710558pfl.54.2019.01.28.19.45.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 19:45:05 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1goKKf-0004wg-61; Mon, 28 Jan 2019 20:45:05 -0700
+Date:   Mon, 28 Jan 2019 20:45:05 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc:     dledford@redhat.com, linux-rdma@vger.kernel.org,
+        lijun_nudt@163.com, oulijun@huawei.com, liudongdong3@huawei.com,
+        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        xavier_huwei@163.com
+Subject: Re: [PATCH V2 rdma-next 2/3] RDMA/hns: Fix the chip hanging caused
+ by sending mailbox&CMQ during reset
+Message-ID: <20190129034505.GK25106@ziepe.ca>
+References: <1547868967-115951-1-git-send-email-xavier.huwei@huawei.com>
+ <1547868967-115951-3-git-send-email-xavier.huwei@huawei.com>
+ <20190123224041.GA11605@ziepe.ca>
+ <5C492D59.8030707@huawei.com>
+ <20190124183120.GD17167@ziepe.ca>
+ <5C4A714C.2070109@huawei.com>
+ <20190125215018.GF23001@ziepe.ca>
+ <5C4BBC3E.2000004@huawei.com>
+ <20190128182759.GA25106@ziepe.ca>
+ <5C4FB800.3060506@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5a31eef0-2b6c-bdc2-c54b-5dc4cecf084d@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5C4FB800.3060506@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 07:02:37PM +0100, Paolo Bonzini wrote:
-> On 22/01/19 21:59, Yang Weijiang wrote:
-> > On processors that support CET, VMX saves/restores
-> > the states of IA32_S_CET, SSP and IA32_INTERRUPT_SSP_TABLE_ADDR MSR
-> > to the VMCS area for Guest/Host unconditionally.
-> > 
-> > If VM_EXIT_LOAD_HOST_CET_STATE = 1, the host CET MSRs are
-> > restored from VMCS host-state area at VM exit as follows:
-> > 
-> > - HOST_IA32_S_CET: Host supervisor mode IA32_S_CET MSR is loaded
-> >                    from this field.
-> > 
-> > - HOST_SSP : Host SSP is loaded from this field.
-> > 
-> > - HOST_INTR_SSP_TABLE_ADDR : Host IA32_INTERRUPT_SSP_TABLE_ADDR
-> >                              MSR is loaded from this field.
-> > 
-> > If VM_ENTRY_LOAD_GUEST_CET_STATE = 1, the guest CET MSRs are loaded
-> > from VMCS guest-state area at VM entry as follows:
-> > 
-> > - GUEST_IA32_S_CET : Guest supervisor mode IA32_S_CET MSR is loaded
-> >                      from this field.
-> > 
-> > - GUEST_SSP : Guest SSP is loaded from this field.
-> > 
-> > - GUEST_INTR_SSP_TABL_ADDR : Guest IA32_INTERRUPT_SSP_TABLE_ADDR
-> >                              MSR is loaded from this field.
->
-Thanks for review.
-
-> There is no code in this series to pass these fields to and from
-> userspace, and also to save/restore U_CET, INT_SSP_TAB, PL0_SSP and
-> PL3_SSP across context switches.
+On Tue, Jan 29, 2019 at 10:18:40AM +0800, Wei Hu (Xavier) wrote:
 > 
-The kernel consumes these MSRs, please see kernel CET patch:
-https://lkml.org/lkml/fancy/2018/11/20/225
-
-> In addition, PL1_SSP and PL2_SSP should be supported even if the guest
-> doesn't use them.  It makes sense to avoid intercepting them, but they
-> should still be supported and switched (possibly only if nonzero).
 > 
-> Am I missing something, for example a dependency on host CET support?
-> If not, how was this series tested?
+> On 2019/1/29 2:27, Jason Gunthorpe wrote:
+> > On Sat, Jan 26, 2019 at 09:47:42AM +0800, Wei Hu (Xavier) wrote:
+> >>
+> >> On 2019/1/26 5:50, Jason Gunthorpe wrote:
+> >>> On Fri, Jan 25, 2019 at 10:15:40AM +0800, Wei Hu (Xavier) wrote:
+> >>>> On 2019/1/25 2:31, Jason Gunthorpe wrote:
+> >>>>> On Thu, Jan 24, 2019 at 11:13:29AM +0800, Wei Hu (Xavier) wrote:
+> >>>>>> On 2019/1/24 6:40, Jason Gunthorpe wrote:
+> >>>>>>> On Sat, Jan 19, 2019 at 11:36:06AM +0800, Wei Hu (Xavier) wrote:
+> >>>>>>>
+> >>>>>>>> +static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
+> >>>>>>>> +					unsigned long instance_stage,
+> >>>>>>>> +					unsigned long reset_stage)
+> >>>>>>>> +{
+> >>>>>>>> +	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
+> >>>>>>>> +	struct hnae3_handle *handle = priv->handle;
+> >>>>>>>> +	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
+> >>>>>>>> +	unsigned long end;
+> >>>>>>>> +
+> >>>>>>>> +	/* When hardware reset is detected, we should stop sending mailbox&cmq
+> >>>>>>>> +	 * to hardware, and wait until hardware reset finished. If now
+> >>>>>>>> +	 * in .init_instance() function, we should exit with error. If now at
+> >>>>>>>> +	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
+> >>>>>>>> +	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
+> >>>>>>>> +	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
+> >>>>>>>> +	 * related process will exit with error to notify NIC driver to
+> >>>>>>>> +	 * reschedule soft reset process once again.
+> >>>>>>>> +	 */
+> >>>>>>>> +	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
+> >>>>>>>> +	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
+> >>>>>>>> +		udelay(1);
+> >>>>>>> I thought you were getting rid of these loops?
+> >>>>>> Hi, Jason
+> >>>>>>
+> >>>>>>     Upper applications maybe notify driver to issue mailbox or CMD
+> >>>>>>     commands to hardware, some commands used to cancel resources,
+> >>>>>>     destory bt/destory cq/unreg mr/destory qp etc. when such
+> >>>>>>     commands are executed successfully, the hardware engine will
+> >>>>>>     no longer access some memory registered by the driver.
+> >>>>>>
+> >>>>>>     When reset occurs, it is possible for upper applications notify driver
+> >>>>>>     to issue mailbox or CMD commands, we need to wait until hardware
+> >>>>>>     reset finished to ensure that hardware no longer accesses related
+> >>>>>> memory.
+> >>>>> You should not wait for things using loops like the above.
+> >>>> Hi, Jason
+> >>>>
+> >>>>     Are your comments foucsing on udelay? If not, thanks for your detail
+> >>>> information.
+> >>>>     In hns3 RoCE driver, some CMQ/mailbox operation are called inside
+> >>>> the lock,
+> >>>>     we can't use msleep in the lock, otherwise it will cause deadlock.
+> >>>>     When reset occurs, RDMA service cannot be provided normally, I think
+> >>>> in this
+> >>>>     case using udelay will not have a great impact.
+> >>> You should not use any kind of sleep call in a loop like this.
+> >> Hi, Jason
+> >>
+> >>     OK, I got your opinion and will modify it in v3 patch as below:   
+> >>
+> >>     end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
+> >>     while (time_before(jiffies, end))
+> >>         if (!ops->get_hw_reset_stat(handle))
+> >>             break;           
+> > You shouldn't be looping like this at all, a busy loop is worse, don't
+> > try and open code spinlocks.
+> Hi, Jason
+>    
+>         OK,  we will modify some places calling CMQ/mailbox operation,
+>         replace spinlock with mutex, and add msleep here:
 > 
-The guest CET feature is tested with kernel CET patches on internal
-virtual platform.
+>     end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
+>     while (time_before(jiffies, end)) {
+>         if (!ops->get_hw_reset_stat(handle))
+>             break;
+> 	msleep(20); 
+>     }
 
-> Paolo
+How many more times do I have to say not to code spin loops like
+this???? Use proper locking!
+
+Jason
