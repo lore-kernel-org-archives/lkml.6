@@ -2,251 +2,159 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B75C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0252CC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C4C2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB27020880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:21:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="MxE3nnrT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWvyczFc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbfA2LTj (ORCPT
+        id S1727637AbfA2LV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:19:39 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44442 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726298AbfA2LTi (ORCPT
+        Tue, 29 Jan 2019 06:21:26 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46620 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725772AbfA2LV0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:19:38 -0500
-Received: by mail-ed1-f66.google.com with SMTP id y56so15636077edd.11
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 03:19:37 -0800 (PST)
+        Tue, 29 Jan 2019 06:21:26 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f5so14286587lfc.13;
+        Tue, 29 Jan 2019 03:21:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=9i9eAUgWflppVTmiDfndhnzBZxiyuF1nqA+hUre2yK8=;
-        b=MxE3nnrTH2+f2qZP6YSSdPN38irnOzDa0WHF0XbxO6LqiMPqNzJyD4V9nhc5ZcOR3q
-         UxiLuBJtNc5M6Vp6vUeBgTGKgKS7d4tFniXnVfQmdB0nQlBWJHfl03jVD2r7N3Fhd6Kg
-         XXJSkJCE5QMCTjQ/uwn2Zz/VqOpTygaZVMF1nIoc0VQDSo0ba9hrjVY2WXMCE0Y03MPi
-         m7JJk//rqPEWp5xZd22vlDJfEoW7AWN6C9rIKp37W4SzwPA/jDe2bNh8uTTDX6jIC789
-         +0lLcRil+BObZkxGChcqUfy2xTXuMYwjaiPO7DOpgf9RGjbl4y1m0QAfKAJC8X87Y/sJ
-         MMqw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=obbIV9ABf/0+goGHM9FTRO8md90YYbPQIVK7d4z+iMY=;
+        b=jWvyczFc0kN3SQWA7GphIozdZ7HJAgrWZjmSj8IKn08XNT2ja1AUCvQZcm0VHExc/J
+         a1llm6JTX+DuImlPu2X8h+jgGVlgwrtm0/I5svinDyuodNgguFzgIdEIoh+j3VuXPKgI
+         jK1+7saTsAGMEI5NejQgPFu02tLH/PxnhMtfDEQ5uiJ5DTFekvcraspG99RpBapw/evl
+         IHask95Cp+hNT7uQU9pW5tMHqI/L8YuHvvjMlvW83lG6Lj7SrbQbfnCQO3Ini6q6sfTK
+         40I5kSTLqkoKf5iIcUug809BWvbFuJL5iDEs5lGpibULgd87B4lOhaASIdIzGgJzkwTM
+         AgzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=9i9eAUgWflppVTmiDfndhnzBZxiyuF1nqA+hUre2yK8=;
-        b=DRQ8nxybBzNtywy6R4n5TiUMhdr1tFXp0lN3CNXolZj3u4ecs6dEExr3awmlMlnsZB
-         K9m1gVkV4lrXkYSbj832hAJiisbMonLEAZn3GW8WDuLqQ+QPzPCkX8X0AbUO4FbhJQ4p
-         BBvHcPf/pLuKkuWnFkFyGqJh+XWchFRDaLJi0mwxyYyCWR2NB5qdyvOIFDlq7RJTLv8O
-         tuBihJaYmGViLX0Z9KckyhM978Fhi/eLUPfdOwAzcuHCxCvV1z6PvejshBTkBWnUR+zZ
-         mCFPlgtNc7ch+RcSa2cLAudBAKawljQqCPZDB6CdBXXVCX68ZwX6EJqfYptf8UH855+W
-         dx+A==
-X-Gm-Message-State: AJcUuke3GCL8t3Ms4OIanPUyyIY9o15RH/dB+cABq8ilU/dRinKr692s
-        J7F0wDpdXtObYqDfQYrRsroQNA==
-X-Google-Smtp-Source: ALg8bN7SzyMAJ2AEsRtMB8fMU/QhvFx36zLx8m2TyXOgtM5VNPfRnZWKYWHKTRaFvwrCdc1yp0mrOQ==
-X-Received: by 2002:a17:906:3b09:: with SMTP id g9mr20865299ejf.166.1548760776648;
-        Tue, 29 Jan 2019 03:19:36 -0800 (PST)
-Received: from [192.168.1.85] (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
-        by smtp.gmail.com with ESMTPSA id w24-v6sm8203745eja.71.2019.01.29.03.19.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 03:19:35 -0800 (PST)
-From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <FDFE70E2-CA70-456F-8507-94BF822BF9A7@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_66F76678-C49B-4C9F-AD43-A7FC3EC594B6";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] lightnvm: pblk: extend line wp balance check
-Date:   Tue, 29 Jan 2019 12:19:34 +0100
-In-Reply-To: <20190129084737.718-1-hans@owltronix.com>
-Cc:     =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        Zhoujie Wu <zjwu@marvell.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-To:     Hans Holmberg <hans@owltronix.com>
-References: <20190129084737.718-1-hans@owltronix.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=obbIV9ABf/0+goGHM9FTRO8md90YYbPQIVK7d4z+iMY=;
+        b=YckQ8y3HAFiCO6VNKf7KCwfofXrOnsb11fgrdgZafJprgvCwurE4fitR/PX4w+bGQO
+         w3gnxZHEfA9cFKSgVnsMbUoWgSeJgtWw6RfZZTVxeZqjvE20UZi0MLaxYfJvRqNY2j8H
+         VUsm1Yk8RBMbit/Q2vjbg9x1wWDB+IooppjqSO/tVuih++TFSQBUm7kG1nENgdfh81SS
+         wzriGd1cHVb+vNyLwGswtnw9UeH8/VsyTki2NMxytWAVYF9AvewT1n7nKwSsXZY071uL
+         O9Br/+TqM8wQC9Fua2CiIzxhBMaB9R7kyHydrTQf9ixzr2vFFx4+0yt0dQrAVDfA1dXg
+         YQaA==
+X-Gm-Message-State: AJcUukd+6D856XsPNKxCoPOibJZ8DQ6NMNNjnQpGZqnBMGQ3rfmmHp6m
+        ZVA4IEU3ooP5g4mEFGDgNUk=
+X-Google-Smtp-Source: ALg8bN4kLyGNj2b8LWzE1WIXq1TzEyj6b7UDCwHrbsDZBDMjcHouvxVP7pkE9dQxWSTz887R9B4abA==
+X-Received: by 2002:ac2:53bc:: with SMTP id j28mr19056446lfh.86.1548760883019;
+        Tue, 29 Jan 2019 03:21:23 -0800 (PST)
+Received: from dimatab (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.gmail.com with ESMTPSA id j5sm3448649lfh.35.2019.01.29.03.21.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 03:21:22 -0800 (PST)
+Date:   Tue, 29 Jan 2019 14:21:40 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH V3 2/3] i2c: tegra: Update transfer timeout
+Message-ID: <20190129142140.5ebdd9f1@dimatab>
+In-Reply-To: <20190129101652.GB28850@ulmo>
+References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
+        <1548475073-12408-2-git-send-email-skomatineni@nvidia.com>
+        <0cf91475-f77d-7453-deb6-3dd91b63aeb6@gmail.com>
+        <BYAPR12MB3398E9D32B57B0E2FC2A6466C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+        <c0b36535-6767-7327-5dc5-612e6957a769@gmail.com>
+        <BYAPR12MB339837E896774531B0D11A98C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+        <2f3cab66-7424-1b33-976f-826877623726@gmail.com>
+        <20190129101505.GA28850@ulmo>
+        <20190129101652.GB28850@ulmo>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+=D0=92 Tue, 29 Jan 2019 11:16:52 +0100
+Thierry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
---Apple-Mail=_66F76678-C49B-4C9F-AD43-A7FC3EC594B6
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+> On Tue, Jan 29, 2019 at 11:15:05AM +0100, Thierry Reding wrote:
+> > On Tue, Jan 29, 2019 at 01:27:09AM +0300, Dmitry Osipenko wrote: =20
+> > > 29.01.2019 1:15, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82: =
+=20
+> > > >=20
+> > > >  =20
+> > > >>>>> Update I2C transfer timeout based on transfer bytes and I2C
+> > > >>>>> bus rate to allow enough time during max transfer size
+> > > >>>>> based on the speed. =20
+> > > >>>>
+> > > >>>> Could it be that I2C device is busy and just slowly handling
+> > > >>>> the transfer requests? Maybe better to leave the timeout
+> > > >>>> as-is and assume the worst case scenario?=20
+> > > >>> This change includes min transfer time out of 100ms in
+> > > >>> addition to computed timeout based on transfer bytes and
+> > > >>> speed which can account in cases of slave devices running at
+> > > >>> slower speed. Also Tegra I2C Master supports Clock stretching
+> > > >>> by the slave. =20
+> > > >>
+> > > >> Okay, I suppose in reality this shouldn't break anything.
+> > > >>
+> > > >> Please explain what benefits this change brings. Does it fix
+> > > >> or improve anything? The commit message only describes changes
+> > > >> done in the patch and has no word on justification of those
+> > > >> changes. Transfer timeout is an extreme case that doesn't
+> > > >> happen often and > > when it happens, usually only the fact of
+> > > >> timeout matters. If there is no real value in shortening of
+> > > >> the timeout, why bother then? =20
+> > > >=20
+> > > > Original transfer timeout in existing driver is 1Sec and
+> > > > incases of transfer size more than 10Kbytes at STD bus rate,
+> > > > timeout is not sufficient. Also Tegra194 platform supports max
+> > > > of 64K bytes of transfer and to allow full transfer size at
+> > > > lowest bus rate it takes almost ~5.8 Sec. In cases if large
+> > > > transfer at low bus rates 1 Sec timeout is not enough and in
+> > > > those cases transfers will timeout before it waits for complete
+> > > > transfer to happen.
+> > > >=20
+> > > > So this patch uses transfer time based on transfer bytes and
+> > > > bus rate.=20
+> > >=20
+> > > Please add that to the commit message.
+> > >=20
+> > > And then seems you also need to set I2C adapter timeout to a some
+> > > larger value. Currently Tegra's I2C doesn't explicitly specify the
+> > > "adapter.timeout" and I2C core sets it to 1 second if it is 0. =20
+> >=20
+> > I don't think adapter.timeout is the same thing as the timeout that
+> > we're dealing with here. adapter.timeout is only used as a way to
+> > retry on arbitration lost conditions. So, as far as I understand,
+> > if we try to send a message to an I2C slave and we loose
+> > arbitration, we'll keep retrying for one second before finally
+> > failing. I wouldn't expect these arbitration lost conditions to
+> > happen right in the middle of a transfer, but rather at the
+> > beginning already, so I'm not sure arbitration could even be lost
+> > after, say, 2 seconds into a very large transfer.
+> >=20
+> > All of that said, it seems like i2c-tegra doesn't respect the
+> > protocol for making this arbitration loss retry work in the first
+> > place. We should be returning -EAGAIN if we detect arbitration
+> > loss, but I don't see that we ever return that. We should probably
+> > fix that in another patch. =20
+>=20
+> Scratch that. Sowjanya's "bus clear" patch already takes care of that.
 
+I'd also suggest to collect those I2C patches into a single patchset.
 
-> On 29 Jan 2019, at 09.47, hans@owltronix.com wrote:
->=20
-> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
->=20
-> pblk stripes writes of minimal write size across all non-offline =
-chunks
-> in a line, which means that the maximum write pointer delta should not
-> exceed the minimal write size. Extend the line write pointer balance =
-check
-> to cover this case.
->=20
-> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> ---
->=20
-> This patch applies on top of Zhoujie's V3 of
-> "lightnvm: pblk: ignore bad block wp for pblk_line_wp_is_unbalanced
->=20
-> drivers/lightnvm/pblk-recovery.c | 60 ++++++++++++++++++++------------
-> 1 file changed, 37 insertions(+), 23 deletions(-)
->=20
-> diff --git a/drivers/lightnvm/pblk-recovery.c =
-b/drivers/lightnvm/pblk-recovery.c
-> index 02d466e6925e..d86f580036d3 100644
-> --- a/drivers/lightnvm/pblk-recovery.c
-> +++ b/drivers/lightnvm/pblk-recovery.c
-> @@ -302,41 +302,55 @@ static int pblk_pad_distance(struct pblk *pblk, =
-struct pblk_line *line)
-> 	return (distance > line->left_msecs) ? line->left_msecs : =
-distance;
-> }
->=20
-> -static int pblk_line_wp_is_unbalanced(struct pblk *pblk,
-> -				      struct pblk_line *line)
-> +/* Return a chunk belonging to a line by stripe(write order) index */
-> +static struct nvm_chk_meta *pblk_get_stripe_chunk(struct pblk *pblk,
-> +						  struct pblk_line =
-*line,
-> +						  int index)
-> {
-> 	struct nvm_tgt_dev *dev =3D pblk->dev;
-> 	struct nvm_geo *geo =3D &dev->geo;
-> -	struct pblk_line_meta *lm =3D &pblk->lm;
-> 	struct pblk_lun *rlun;
-> -	struct nvm_chk_meta *chunk;
-> 	struct ppa_addr ppa;
-> -	u64 line_wp;
-> -	int pos, i, bit;
-> +	int pos;
->=20
-> -	bit =3D find_first_zero_bit(line->blk_bitmap, lm->blk_per_line);
-> -	if (bit >=3D lm->blk_per_line)
-> -		return 0;
-> -	rlun =3D &pblk->luns[bit];
-> +	rlun =3D &pblk->luns[index];
-> 	ppa =3D rlun->bppa;
-> 	pos =3D pblk_ppa_to_pos(geo, ppa);
-> -	chunk =3D &line->chks[pos];
->=20
-> -	line_wp =3D chunk->wp;
-> +	return &line->chks[pos];
-> +}
->=20
-> -	for (i =3D bit + 1; i < lm->blk_per_line; i++) {
-> -		rlun =3D &pblk->luns[i];
-> -		ppa =3D rlun->bppa;
-> -		pos =3D pblk_ppa_to_pos(geo, ppa);
-> -		chunk =3D &line->chks[pos];
-> +static int pblk_line_wps_are_unbalanced(struct pblk *pblk,
-> +				      struct pblk_line *line)
-> +{
-> +	struct pblk_line_meta *lm =3D &pblk->lm;
-> +	int blk_in_line =3D lm->blk_per_line;
-> +	struct nvm_chk_meta *chunk;
-> +	u64 max_wp, min_wp;
-> +	int i;
->=20
-> -		if (chunk->state & NVM_CHK_ST_OFFLINE)
-> -			continue;
-> +	i =3D find_first_zero_bit(line->blk_bitmap, blk_in_line);
-> +
-> +	/* If there is one or zero good chunks in the line,
-> +	 * the write pointers can't be unbalanced.
-> +	 */
-> +	if (i >=3D (blk_in_line - 1))
-> +		return 0;
->=20
-> -		if (chunk->wp > line_wp)
-> +	chunk =3D pblk_get_stripe_chunk(pblk, line, i);
-> +	max_wp =3D chunk->wp;
-> +	if (max_wp > pblk->max_write_pgs)
-> +		min_wp =3D max_wp - pblk->max_write_pgs;
-> +	else
-> +		min_wp =3D 0;
-> +
-> +	i =3D find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
-> +	while (i < blk_in_line) {
-> +		chunk =3D pblk_get_stripe_chunk(pblk, line, i);
-> +		if (chunk->wp > max_wp || chunk->wp < min_wp)
-> 			return 1;
-> -		else if (chunk->wp < line_wp)
-> -			line_wp =3D chunk->wp;
-> +
-> +		i =3D find_next_zero_bit(line->blk_bitmap, blk_in_line, =
-i + 1);
-> 	}
->=20
-> 	return 0;
-> @@ -362,7 +376,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, =
-struct pblk_line *line,
-> 	int ret;
-> 	u64 left_ppas =3D pblk_sec_in_open_line(pblk, line) - =
-lm->smeta_sec;
->=20
-> -	if (pblk_line_wp_is_unbalanced(pblk, line))
-> +	if (pblk_line_wps_are_unbalanced(pblk, line))
-> 		pblk_warn(pblk, "recovering unbalanced line (%d)\n", =
-line->id);
->=20
-> 	ppa_list =3D p.ppa_list;
-> --
-> 2.17.1
-
-If I am understanding correctly, you want to protect against the case
-where a pfail has broken the ws_min partition of a chunk, right? I say
-this because there is a guarantee that the minimal write size and pblk's
-write size align with ws_min and ws_opt. Even if we have grown bad
-blocks on pfail for the current line (which is a bigger problem because
-we have potentially lost data), this guarantee would remain.
-
-If this is the case, my first reaction would be to say that the
-controller is responsible for guaranteeing atomicity for both scalar and
-vector I/Os. If this is not guaranteed, we have bigger problems than
-this (e.g., for the write error recovery path).
-
-Are you thinking of a different case?
-
-Javier
-
-
---Apple-Mail=_66F76678-C49B-4C9F-AD43-A7FC3EC594B6
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlxQNsYACgkQPEYBfS0l
-eOAHKA//ZdwEi6/OmPUsioc86jsAt5LJ9SPUNVONqsVFu+cdPIs4kDBEHxycgSad
-faqaCQ47i/+83G5DMeQ9fDr6C1v3JjmVht78nWQgH+Tw8RUwX2+ALPpBaA6nxcM5
-rkJsNtJE0X0/btK2EN2dAgjq7XDQ5WhjWCPTXRziXNhkLLFB5v72TnVKi+gcFF2Y
-bYsqjaDS49FhJ4C7Wr0jPG65RcMls7M7IA3ODObUPNvs5zV3LlsEiW7rk4UACLvM
-QsYvrCVqrTEXPxf+ld+KlEtSqwSLeyv/WiBwQcPRVIXEvluEL5C1M2rtwPL8niTu
-mrRYdYpu0g4d26P1E8RS4ZhPSESk60bEX70mOJ3w0FwP0BFhPSOEcC5SYIwGxu+8
-iRBh4B71Rr6yxCewfSqPdP33t4uQqaroPMZ8zCR/49Ysp25/f64Qh4ltknJWIQcl
-hxKhMTfP5kZKP5I9K67vlY30YTwM70DXZCR56uo+W3Dywex7rOwF3f8CNrT8Q4Dw
-LbTov3rcNLVr1Kjakj6nZg8HQ+tcCHiv5ulLLvgnRilE4xp/SWhS46WXaGdhrayn
-zygAvJ7xLVB/U+Ep8tAo379DC8hA/BtzoUSncpv5tXxLWc/aauK6H1KXJsYi6dIm
-F1OSoRtiZzHYytDNjGNabahSKQfiSxuqLJ6k6Ag66aFvnErXnW8=
-=HHKe
------END PGP SIGNATURE-----
-
---Apple-Mail=_66F76678-C49B-4C9F-AD43-A7FC3EC594B6--
