@@ -2,101 +2,158 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1783CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74488C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3946214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:31:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F2FC214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:32:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="US3Y+l4t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727908AbfA2Jbx (ORCPT
+        id S1728106AbfA2JcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:31:53 -0500
-Received: from ozlabs.org ([203.11.71.1]:59757 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725298AbfA2Jbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:31:52 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Tue, 29 Jan 2019 04:32:04 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:40766 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfA2JcE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:32:04 -0500
+Received: from mailhost.synopsys.com (unknown [10.12.135.161])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43ph8k4Qm4z9sDB;
-        Tue, 29 Jan 2019 20:31:50 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Tyrel Datwyler <turtle.in.the.kernel@gmail.com>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Juliet Kim <minkim@us.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Subject: Re: [RFC 1/6] powerpc:/drc Define interface to acquire arch-specific drc info
-In-Reply-To: <e7030879-59e4-88fd-3785-fdd98b7f0a3b@gmail.com>
-References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com> <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com> <e7030879-59e4-88fd-3785-fdd98b7f0a3b@gmail.com>
-Date:   Tue, 29 Jan 2019 20:31:49 +1100
-Message-ID: <87a7jjstbu.fsf@concordia.ellerman.id.au>
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id 4353624E1EDF;
+        Tue, 29 Jan 2019 01:32:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1548754323; bh=T8xt9DV4Evb83hu3XlaYtwGmgqnA01LowFK5T6MxA+g=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=US3Y+l4tk65am5djE6ojNK9ky4inwssLNsuM4kRMyJnrJ3HsjawMmMEkGiBigTnRm
+         g4Oy7OvHmatmVDOtqCJ6lvgOt5cNlOnSsMEnRi2/EuZx+GG2V90Bjp14gl8fd5voox
+         wUhrmXZBN8ue7DV5f88DbjJYoktsWrj/lqwfz1y4blj+IHj9QbnxdKJOZZc3h7QIE8
+         CTmsc5sM7gstam/Sp4vKadIOjSra+Y+vgmIQjg7Sw3jOMlzx9TUWuExq3q59ji6xDX
+         G6cbJT6SKnnDtMuepC6Q8ijiE0xh3Pojvil9JGb6SvFpa96g+XS4ZmkuC17Q9lRHVE
+         HeH9H5Ju4b+5Q==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id E060EA00A7;
+        Tue, 29 Jan 2019 09:32:00 +0000 (UTC)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 29 Jan 2019 01:30:03 -0800
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 29 Jan 2019 10:30:02 +0100
+Received: from [10.107.25.131] (10.107.25.131) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 29 Jan 2019 10:30:02 +0100
+Subject: Re: [PATCH 18/24] PCI: dwc: Fix dw_pcie_ep_find_capability to return
+ correct capability offset
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Lorenzo Pieralisi" <lorenzo.pieralisi@arm.com>
+CC:     Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arm-kernel@axis.com" <linux-arm-kernel@axis.com>
+References: <20190114132424.6445-1-kishon@ti.com>
+ <20190114132424.6445-19-kishon@ti.com>
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <13501c15-8f3d-604b-c4fc-bde3fb208745@synopsys.com>
+Date:   Tue, 29 Jan 2019 09:25:09 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190114132424.6445-19-kishon@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.25.131]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tyrel Datwyler <turtle.in.the.kernel@gmail.com> writes:
-> On 12/14/2018 12:50 PM, Michael Bringmann wrote:
->> Define interface to acquire arch-specific drc info to match against
->> hotpluggable devices.  The current implementation exposes several
->> pseries-specific dynamic memory properties in generic kernel code.
->> This patch set provides an interface to pull that code out of the
->> generic kernel.
->> 
->> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
->> ---
->>  include/linux/topology.h |    9 +++++++++
->>  1 file changed, 9 insertions(+)
->> 
->> diff --git a/include/linux/topology.h b/include/linux/topology.h
->> index cb0775e..df97f5f 100644
->> --- a/include/linux/topology.h
->> +++ b/include/linux/topology.h
->> @@ -44,6 +44,15 @@
->
-> As far as I know pseries is the only platform that uses DR connectors, and I
-> highly doubt that any other powerpc platform or arch ever will. So, I'm not sure
-> that this is really generic enough to belong in topology.h.
+Hi Kishon,
 
-Right. This does not belong in include/linux.
+On 14/01/2019 13:24, Kishon Vijay Abraham I wrote:
+> commit beb4641a787df79a ("PCI: dwc: Add MSI-X callbacks handler") while
+> adding MSI-X callback handler, introduced dw_pcie_ep_find_capability and
+> __dw_pcie_ep_find_next_cap for finding the MSI and MSIX capability.
+> 
+> However if MSI or MSIX capability is the last capability (i.e there are
+> no additional items in the capabilities list and the Next Capability
+> Pointer is set to '0'), __dw_pcie_ep_find_next_cap will return '0'
+> even though MSI or MSIX capability may be present. This is because of
+> incorrect ordering of "next_cap_ptr" check. Fix it here.
+> 
+> Fixes: beb4641a787df79a142 ("PCI: dwc: Add MSI-X callbacks handler")
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-ep.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index d5144781005b..cd51b008858c 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -46,16 +46,19 @@ static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+>  	u8 cap_id, next_cap_ptr;
+>  	u16 reg;
+>  
+> +	if (!cap_ptr)
+> +		return 0;
+> +
 
-> If anything I would
-> suggest putting this in an include in arch/powerpc/include/ named something like
-> drcinfo.h or pseries-drc.h. That will make it visible to modules like rpaphp
-> that want/need to use this functionality.
+Supposedly this was already verified by the function that calls this one.
 
-Yeah that would make more sense.
+>  	reg = dw_pcie_readw_dbi(pci, cap_ptr);
+> -	next_cap_ptr = (reg & 0xff00) >> 8;
+>  	cap_id = (reg & 0x00ff);
+>  
+> -	if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
+> +	if (cap_id > PCI_CAP_ID_MAX)
+>  		return 0;
+>  
+>  	if (cap_id == cap)
+>  		return cap_ptr;
+>  
+> +	next_cap_ptr = (reg & 0xff00) >> 8;
 
-Using "arch" in the name is wrong, it's pseries specific so
-pseries_find_drc_match() would be more appropriate.
+This fix seems to be a bit overdone, especially when you only need to swap the
+if blocks order to achieve the desired goal.
 
->> +int arch_find_drc_match(struct device_node *dn,
->> +			bool (*usercb)(struct device_node *dn,
->> +				u32 drc_index, char *drc_name,
->> +				char *drc_type, u32 drc_power_domain,
->> +				void *data),
->> +			char *opt_drc_type, char *opt_drc_name,
->> +			bool match_drc_index, bool ck_php_type,
->> +			void *data);
+>  	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+>  }
+>  
+> @@ -67,9 +70,6 @@ static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
+>  	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
+>  	next_cap_ptr = (reg & 0x00ff);
+>  
+> -	if (!next_cap_ptr)
+> -		return 0;
+> -
 
-This function signature is kind of insane.
+Why remove it?
+If pointer is null, why to jump to another function to check is the the same
+pointer is null?
 
-You end with calls like:
+>  	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+>  }
+>  
+> 
 
-+	return arch_find_drc_match(dn, rpaphp_add_slot_cb,
-+			NULL, NULL, false, true, NULL);
-
-Which is impossible to parse.
-
-I feel like maybe this isn't the right level of abstraction.
-
-cheers
