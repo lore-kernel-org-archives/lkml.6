@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8402C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2F6C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A628320880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F35420881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763430;
-	bh=9geIYlQ5pEJ9E400xQE0q26sLrQhdpv80mVlz1+FkGY=;
+	s=default; t=1548763441;
+	bh=GHgedVjATHK59ZfXQYFiHgIKJZUDtR8L/SyJJoU7mvg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CvuOPEx4BxAJvX8/Fh0aMPiczn/fJzRaKc8KHuuKhw3hwF8K6pYH0QYupOlvFQ8E7
-	 qCbP1LBlk1byeJIzEpopLE4sF8D7qjn7u7O9UxkbeZvf/mvZACbTBpmFfNvBP9ZiFd
-	 P+uUrenhe3zc1RG33400urpQIjEbCZ7JPZGK9uHQ=
+	b=rR/BBW1gwtR9AQ/8/ehiO05jWprBJBr01/aLMe1BOPU/Dc8ZzZf1KWxvTojknQ023
+	 jrQ3sOsZ7T/BvYlHGaaoKh0I56Wd35ivLUHaM/YjuTcpVLk5+rnDVcaKVejV5hAuLL
+	 x1MERFUaI2aJLf8Yrkf0SHg4P5h+IurySO5KO4K0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730559AbfA2MDt (ORCPT
+        id S1730303AbfA2LnY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:03:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33478 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:43:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729519AbfA2Lnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:43:33 -0500
+        id S1730286AbfA2LnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:43:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1103320856;
-        Tue, 29 Jan 2019 11:43:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D740A20857;
+        Tue, 29 Jan 2019 11:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762212;
-        bh=9geIYlQ5pEJ9E400xQE0q26sLrQhdpv80mVlz1+FkGY=;
+        s=default; t=1548762200;
+        bh=GHgedVjATHK59ZfXQYFiHgIKJZUDtR8L/SyJJoU7mvg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qHKY7H6fAqOUuhkatZj+3mJq3gCrssoecpgR1wdua47jId4td0d6cmrNMq8d0gcRX
-         kgeNp0rmkVgu4EMPdjlrNvHFTJ/Bx3rleK84w6QCsSUqGozANujGZGVLsG6IMI0R81
-         8OsBFmcTxGsUi6D8QqUm5n5nqMYdXJgxNYzBgWIU=
+        b=YW+B5Hk2hxzAGDGYa75xI6f08fzT1hSM04Hd/1l+YJhE38/8T+/ZOmrgaQk/KeacD
+         ikiSTeif16USn2fRk387uzlzrzVfuIUEBSfRKGxnZkFskDtgZvSqYYITV3sFgHcoIA
+         8/leuMs8Z+D/8ahz9QvZy7qKN7fU+ZLMDpQA8xNE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 4.19 022/103] mei: me: mark LBG devices as having dma support
-Date:   Tue, 29 Jan 2019 12:34:59 +0100
-Message-Id: <20190129113200.883509672@linuxfoundation.org>
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 007/103] net/sched: act_tunnel_key: fix memory leak in case of action replace
+Date:   Tue, 29 Jan 2019 12:34:44 +0100
+Message-Id: <20190129113159.964228453@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -65,31 +66,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Usyskin <alexander.usyskin@intel.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-commit 173436ba800d01178a8b19e5de4a8cb02c0db760 upstream.
+[ Upstream commit 9174c3df1cd181c14913138d50ccbe539bb08335 ]
 
-The LBG server platform sports DMA support.
+running the following TDC test cases:
 
-Cc: <stable@vger.kernel.org> #v5.0+
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+ 7afc - Replace tunnel_key set action with all parameters
+ 364d - Replace tunnel_key set action with all parameters and cookie
+
+it's possible to trigger kmemleak warnings like:
+
+  unreferenced object 0xffff94797127ab40 (size 192):
+  comm "tc", pid 3248, jiffies 4300565293 (age 1006.862s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 c0 93 f9 8a ff ff ff ff  ................
+    41 84 ee 89 ff ff ff ff 00 00 00 00 00 00 00 00  A...............
+  backtrace:
+    [<000000001e85b61c>] tunnel_key_init+0x31d/0x820 [act_tunnel_key]
+    [<000000007f3f6ee7>] tcf_action_init_1+0x384/0x4c0
+    [<00000000e89e3ded>] tcf_action_init+0x12b/0x1a0
+    [<00000000c1c8c0f8>] tcf_action_add+0x73/0x170
+    [<0000000095a9fc28>] tc_ctl_action+0x122/0x160
+    [<000000004bebeac5>] rtnetlink_rcv_msg+0x263/0x2d0
+    [<000000009fd862dd>] netlink_rcv_skb+0x4a/0x110
+    [<00000000b55199e7>] netlink_unicast+0x1a0/0x250
+    [<000000004996cd21>] netlink_sendmsg+0x2c1/0x3c0
+    [<000000004d6a94b4>] sock_sendmsg+0x36/0x40
+    [<000000005d9f0208>] ___sys_sendmsg+0x280/0x2f0
+    [<00000000dec19023>] __sys_sendmsg+0x5e/0xa0
+    [<000000004b82ac81>] do_syscall_64+0x5b/0x180
+    [<00000000a0f1209a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+    [<000000002926b2ab>] 0xffffffffffffffff
+
+when the tunnel_key action is replaced, the kernel forgets to release the
+dst metadata: ensure they are released by tunnel_key_init(), the same way
+it's done in tunnel_key_release().
+
+Fixes: d0f6dd8a914f4 ("net/sched: Introduce act_tunnel_key")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/misc/mei/pci-me.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sched/act_tunnel_key.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
---- a/drivers/misc/mei/pci-me.c
-+++ b/drivers/misc/mei/pci-me.c
-@@ -88,7 +88,7 @@ static const struct pci_device_id mei_me
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_2, MEI_ME_PCH8_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_H, MEI_ME_PCH8_SPS_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_H_2, MEI_ME_PCH8_SPS_CFG)},
--	{MEI_PCI_DEVICE(MEI_DEV_ID_LBG, MEI_ME_PCH8_CFG)},
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_LBG, MEI_ME_PCH12_CFG)},
+--- a/net/sched/act_tunnel_key.c
++++ b/net/sched/act_tunnel_key.c
+@@ -197,6 +197,15 @@ static const struct nla_policy tunnel_ke
+ 	[TCA_TUNNEL_KEY_ENC_TTL]      = { .type = NLA_U8 },
+ };
  
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_BXT_M, MEI_ME_PCH8_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_APL_I, MEI_ME_PCH8_CFG)},
++static void tunnel_key_release_params(struct tcf_tunnel_key_params *p)
++{
++	if (!p)
++		return;
++	if (p->tcft_action == TCA_TUNNEL_KEY_ACT_SET)
++		dst_release(&p->tcft_enc_metadata->dst);
++	kfree_rcu(p, rcu);
++}
++
+ static int tunnel_key_init(struct net *net, struct nlattr *nla,
+ 			   struct nlattr *est, struct tc_action **a,
+ 			   int ovr, int bind, bool rtnl_held,
+@@ -360,8 +369,7 @@ static int tunnel_key_init(struct net *n
+ 	rcu_swap_protected(t->params, params_new,
+ 			   lockdep_is_held(&t->tcf_lock));
+ 	spin_unlock_bh(&t->tcf_lock);
+-	if (params_new)
+-		kfree_rcu(params_new, rcu);
++	tunnel_key_release_params(params_new);
+ 
+ 	if (ret == ACT_P_CREATED)
+ 		tcf_idr_insert(tn, *a);
+@@ -385,12 +393,7 @@ static void tunnel_key_release(struct tc
+ 	struct tcf_tunnel_key_params *params;
+ 
+ 	params = rcu_dereference_protected(t->params, 1);
+-	if (params) {
+-		if (params->tcft_action == TCA_TUNNEL_KEY_ACT_SET)
+-			dst_release(&params->tcft_enc_metadata->dst);
+-
+-		kfree_rcu(params, rcu);
+-	}
++	tunnel_key_release_params(params);
+ }
+ 
+ static int tunnel_key_geneve_opts_dump(struct sk_buff *skb,
 
 
