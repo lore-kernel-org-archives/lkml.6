@@ -2,107 +2,203 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EC2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C6EC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31AF020989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F2A42184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:45:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="GBqCsC1K"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="OJ4dtljH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729102AbfA2Soa (ORCPT
+        id S1729179AbfA2Spt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:44:30 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38369 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbfA2Soa (ORCPT
+        Tue, 29 Jan 2019 13:45:49 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39649 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726846AbfA2Spt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:44:30 -0500
-Received: by mail-qt1-f193.google.com with SMTP id p17so23432162qtl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:44:29 -0800 (PST)
+        Tue, 29 Jan 2019 13:45:49 -0500
+Received: by mail-qk1-f193.google.com with SMTP id c21so12150191qkl.6
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:45:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3HznCahcR9PJC4DfXzGXeZgIhzUTceviPpPfD0Lwqqg=;
-        b=GBqCsC1Kkv1tH4l3FfUrLYKxSQi/1ZMoGK1QVrakqcnrzvoBgWpdCcWQv3SRR+DzyV
-         979pbeFgq3fad/EX9WL2MGpt34MvXUSDee+Joge0ORw7rbg/jpcJaOEy9pkYUoyuBiw6
-         SnuY618hW8XR/HZFG5uHwyLMIIfkuyE1udAfd77fTrp0nPh0YVfqkLqAeGRy8g0cSTJw
-         A9gMIV0IN1fiOnVulShM8SyfLDoxXGQyoPBJ2szNhkE2OvEqFP+7GvNNS72DG/tswiMX
-         sthbLfII+ln9/2MiyA3dU8+RwcqE/QR4ByeDTV9l0I4geGItOgPTg+kt7fPpIeerunVk
-         9afw==
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=iEbt3vOpW1vSXw8Y1FUZOQX7cwVTiCMvjhJS6q091Dw=;
+        b=OJ4dtljHU/GaBSQ1XRjhb/W9DwqesGympfaceTTQ9inAck7wQDCx6/0GoiFpqBG9Ak
+         VYht6J9mQuugLbztmDbaDXbdaMSH3GQdZwOpPYXp39L0kOoDEdu4+zGBUQykG0BU6D0o
+         yAiQ3nqKdBxlWsj8RkHOLbd2s5x2opM6bBm6ekQUKqtyxsawGEuUQapk8NJaZ1vwBlQz
+         S+fd+Wt0GldHZbPodclvSu+H4xCKBBNIaGyIfs/tT7avBzmJAI3sfOOU68MbpfkC+k40
+         5C0pWlSojO3qEAx/7bvpZf6rJlQNvUPHilysxSjvNMqu9u3GJKVwQiS4FzLnWEd2as7g
+         VPFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3HznCahcR9PJC4DfXzGXeZgIhzUTceviPpPfD0Lwqqg=;
-        b=ZEpp7UoH/O2k9p1vm+ScTCqeL8nTohe6HmzygOc+W3GN7pvvBW2qYk5BZKIeTIeZHj
-         xl62vUpinB2EDMO3EeHnsVue7upKDwDVjTaabwY5DooATdieXqDJYGmJRvScBIYPP4bn
-         CnHfQirvEgnrTuEeVQ5ePL6ihZRuxcb7aoxl6F3F+XBeKXoUSdAfpKdXNjB/TTry0ONB
-         rA/NL8KLjojoZvvuqxQ81cx0ECwfRqaRcjHABKLdZaYJd1WSkzkRnSvTEwIidjBUZem+
-         eVbFoZ3WjnStHclgvqz9ot4SfNj2eGVFyu4Jo6sSJud8k9+Gey5sr1pLYLchDfGG2RRE
-         lJ3Q==
-X-Gm-Message-State: AJcUukf6oQ21/azy1Ug2oAxJzVbbPvOPe37vFawdmcK4nKIL6ui4pjBg
-        EWYcedIZe62f+6QoxEuBRYlTuA==
-X-Google-Smtp-Source: ALg8bN6w0eciTPm/Xv/pVG10jpw4y8z3tOJGMYpOHVWFs6fdWdyPR9KxuNLh7Htz2vMM61A5qBxnBA==
-X-Received: by 2002:a0c:fa46:: with SMTP id k6mr25062176qvo.36.1548787468744;
-        Tue, 29 Jan 2019 10:44:28 -0800 (PST)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id n72sm92516793qki.26.2019.01.29.10.44.27
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iEbt3vOpW1vSXw8Y1FUZOQX7cwVTiCMvjhJS6q091Dw=;
+        b=Xt9gmSaZPN/HIRrxEqpy54BQ1uaAxy6Dsux7d8QdJ+NlIeVapicyTyM9rB9MpZ5yJi
+         /4AhnFsZapSRM4LV04UnzywAxm0aX17kNvdpdlObvJ3PqdCbp5E7rHFt6oAlIcZXSeK9
+         ft2GwGISzVP0vsgIDewmGoZRplFE2HNBdBc8gNbEbnENrEbPT9KM2Fr1XVFdLhoOsxsW
+         URT+eSZ+SIrXy8C/O5kxQm+zrLqBV/4JPsL04ZM/3rH/M1PUsrJahFQTyh/hnRV3GOII
+         fQE3V5QEkehZRdBbyy1p2ZZopVB7dr4aGKoxgdYvvK/2eM5JNT3puvyPWE1MKZTt1Igz
+         4DCA==
+X-Gm-Message-State: AJcUukcESog2pANDyaktYH0NSW3ua3iDRAkqUuiefSXN2C4nUoN9JWwK
+        iY76q1vKOtqW8lfmbcAQS/NkHQ==
+X-Google-Smtp-Source: ALg8bN45Y/qnFMooUeuMv0mD+Z0m46goUL1Y3DSegIXG5W/cVMF9mYtAvtUCifDRv6J9anakjWR2Mg==
+X-Received: by 2002:ae9:d804:: with SMTP id u4mr25088511qkf.322.1548787547783;
+        Tue, 29 Jan 2019 10:45:47 -0800 (PST)
+Received: from ovpn-120-54.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id e4sm94874234qka.31.2019.01.29.10.45.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 10:44:28 -0800 (PST)
-Date:   Tue, 29 Jan 2019 13:44:26 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] btrfs: move to fn pointers for get/put workspaces
-Message-ID: <20190129184425.itcwgyrvqdwfmzjx@MacBook-Pro-91.local>
-References: <20190128212437.11597-1-dennis@kernel.org>
- <20190128212437.11597-8-dennis@kernel.org>
- <20190129181716.hstuxkdzai4qiist@MacBook-Pro-91.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129181716.hstuxkdzai4qiist@MacBook-Pro-91.local>
-User-Agent: NeoMutt/20180716
+        Tue, 29 Jan 2019 10:45:47 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     catalin.marinas@arm.com, cl@linux.com, iamjoonsoo.kim@lge.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        penberg@kernel.org, rientjes@google.com, Qian Cai <cai@lca.pw>
+Subject: [RESEND PATCH] slab: kmemleak no scan alien caches
+Date:   Tue, 29 Jan 2019 13:45:18 -0500
+Message-Id: <20190129184518.39808-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 01:17:17PM -0500, Josef Bacik wrote:
-> On Mon, Jan 28, 2019 at 04:24:33PM -0500, Dennis Zhou wrote:
-> > The previous patch added generic helpers for get_workspace() and
-> > put_workspace(). Now, we can migrate ownership of the workspace_manager
-> > to be in the compression type code as the compression code itself
-> > doesn't care beyond being able to get a workspace. The init/cleanup
-> > and get/put methods are abstracted so each compression algorithm can
-> > decide how they want to manage their workspaces.
-> > 
-> > Signed-off-by: Dennis Zhou <dennis@kernel.org>
-> 
-> We're doing this to have special handling for extra workspaces to be free'd at
-> some point in the future if they are unused.  This is fine by me, but why not
-> just add a shrinker and let it be handled by memory pressure?  Then we avoid all
-> this abstraction and allow for ztsd to have its shrinker for its extra
-> workspaces.  You can even use the list_lru stuff to make it super simple, then
-> you don't have to worry about all the infrastructure.  Thanks,
-> 
+Kmemleak throws endless warnings during boot due to in
+__alloc_alien_cache(),
 
-Nevermind, I missed that you also change the get side to lookup the workspace
-for the compression level instead of cycling through the idle_ws list.  In that
-case this is fine by me.
+alc = kmalloc_node(memsize, gfp, node);
+init_arraycache(&alc->ac, entries, batch);
+kmemleak_no_scan(ac);
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Kmemleak does not track the array cache (alc->ac) but the alien cache
+(alc) instead, so let it track the later by lifting kmemleak_no_scan()
+out of init_arraycache().
 
-Thanks,
+There is another place calls init_arraycache(), but
+alloc_kmem_cache_cpus() uses the percpu allocation where will never be
+considered as a leak.
 
-Josef
+[   32.258841] kmemleak: Found object by alias at 0xffff8007b9aa7e38
+[   32.258847] CPU: 190 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc2+ #2
+[   32.258851] Call trace:
+[   32.258858]  dump_backtrace+0x0/0x168
+[   32.258863]  show_stack+0x24/0x30
+[   32.258868]  dump_stack+0x88/0xb0
+[   32.258873]  lookup_object+0x84/0xac
+[   32.258877]  find_and_get_object+0x84/0xe4
+[   32.258882]  kmemleak_no_scan+0x74/0xf4
+[   32.258887]  setup_kmem_cache_node+0x2b4/0x35c
+[   32.258892]  __do_tune_cpucache+0x250/0x2d4
+[   32.258896]  do_tune_cpucache+0x4c/0xe4
+[   32.258901]  enable_cpucache+0xc8/0x110
+[   32.258905]  setup_cpu_cache+0x40/0x1b8
+[   32.258909]  __kmem_cache_create+0x240/0x358
+[   32.258913]  create_cache+0xc0/0x198
+[   32.258918]  kmem_cache_create_usercopy+0x158/0x20c
+[   32.258922]  kmem_cache_create+0x50/0x64
+[   32.258928]  fsnotify_init+0x58/0x6c
+[   32.258932]  do_one_initcall+0x194/0x388
+[   32.258937]  kernel_init_freeable+0x668/0x688
+[   32.258941]  kernel_init+0x18/0x124
+[   32.258946]  ret_from_fork+0x10/0x18
+[   32.258950] kmemleak: Object 0xffff8007b9aa7e00 (size 256):
+[   32.258954] kmemleak:   comm "swapper/0", pid 1, jiffies 4294697137
+[   32.258958] kmemleak:   min_count = 1
+[   32.258962] kmemleak:   count = 0
+[   32.258965] kmemleak:   flags = 0x1
+[   32.258969] kmemleak:   checksum = 0
+[   32.258972] kmemleak:   backtrace:
+[   32.258977]      kmemleak_alloc+0x84/0xb8
+[   32.258982]      kmem_cache_alloc_node_trace+0x31c/0x3a0
+[   32.258987]      __kmalloc_node+0x58/0x78
+[   32.258991]      setup_kmem_cache_node+0x26c/0x35c
+[   32.258996]      __do_tune_cpucache+0x250/0x2d4
+[   32.259001]      do_tune_cpucache+0x4c/0xe4
+[   32.259005]      enable_cpucache+0xc8/0x110
+[   32.259010]      setup_cpu_cache+0x40/0x1b8
+[   32.259014]      __kmem_cache_create+0x240/0x358
+[   32.259018]      create_cache+0xc0/0x198
+[   32.259022]      kmem_cache_create_usercopy+0x158/0x20c
+[   32.259026]      kmem_cache_create+0x50/0x64
+[   32.259031]      fsnotify_init+0x58/0x6c
+[   32.259035]      do_one_initcall+0x194/0x388
+[   32.259039]      kernel_init_freeable+0x668/0x688
+[   32.259043]      kernel_init+0x18/0x124
+[   32.259048] kmemleak: Not scanning unknown object at 0xffff8007b9aa7e38
+[   32.259052] CPU: 190 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc2+ #2
+[   32.259056] Call trace:
+[   32.259060]  dump_backtrace+0x0/0x168
+[   32.259065]  show_stack+0x24/0x30
+[   32.259070]  dump_stack+0x88/0xb0
+[   32.259074]  kmemleak_no_scan+0x90/0xf4
+[   32.259078]  setup_kmem_cache_node+0x2b4/0x35c
+[   32.259083]  __do_tune_cpucache+0x250/0x2d4
+[   32.259088]  do_tune_cpucache+0x4c/0xe4
+[   32.259092]  enable_cpucache+0xc8/0x110
+[   32.259096]  setup_cpu_cache+0x40/0x1b8
+[   32.259100]  __kmem_cache_create+0x240/0x358
+[   32.259104]  create_cache+0xc0/0x198
+[   32.259108]  kmem_cache_create_usercopy+0x158/0x20c
+[   32.259112]  kmem_cache_create+0x50/0x64
+[   32.259116]  fsnotify_init+0x58/0x6c
+[   32.259120]  do_one_initcall+0x194/0x388
+[   32.259125]  kernel_init_freeable+0x668/0x688
+[   32.259129]  kernel_init+0x18/0x124
+[   32.259133]  ret_from_fork+0x10/0x18
+
+Fixes: 1fe00d50a9e8 (slab: factor out initialization of array cache)
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ mm/slab.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/mm/slab.c b/mm/slab.c
+index 78eb8c5bf4e4..0aff454f007b 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -550,14 +550,6 @@ static void start_cpu_timer(int cpu)
+ 
+ static void init_arraycache(struct array_cache *ac, int limit, int batch)
+ {
+-	/*
+-	 * The array_cache structures contain pointers to free object.
+-	 * However, when such objects are allocated or transferred to another
+-	 * cache the pointers are not cleared and they could be counted as
+-	 * valid references during a kmemleak scan. Therefore, kmemleak must
+-	 * not scan such objects.
+-	 */
+-	kmemleak_no_scan(ac);
+ 	if (ac) {
+ 		ac->avail = 0;
+ 		ac->limit = limit;
+@@ -573,6 +565,14 @@ static struct array_cache *alloc_arraycache(int node, int entries,
+ 	struct array_cache *ac = NULL;
+ 
+ 	ac = kmalloc_node(memsize, gfp, node);
++	/*
++	 * The array_cache structures contain pointers to free object.
++	 * However, when such objects are allocated or transferred to another
++	 * cache the pointers are not cleared and they could be counted as
++	 * valid references during a kmemleak scan. Therefore, kmemleak must
++	 * not scan such objects.
++	 */
++	kmemleak_no_scan(ac);
+ 	init_arraycache(ac, entries, batchcount);
+ 	return ac;
+ }
+@@ -667,6 +667,7 @@ static struct alien_cache *__alloc_alien_cache(int node, int entries,
+ 
+ 	alc = kmalloc_node(memsize, gfp, node);
+ 	if (alc) {
++		kmemleak_no_scan(alc);
+ 		init_arraycache(&alc->ac, entries, batch);
+ 		spin_lock_init(&alc->lock);
+ 	}
+-- 
+2.17.2 (Apple Git-113)
+
