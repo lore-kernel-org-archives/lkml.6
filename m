@@ -2,85 +2,287 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE92BC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3174CC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE1422087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:03:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D79B02087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:04:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mosJRJMb"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="nhfcvP2T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728683AbfA2RDb (ORCPT
+        id S1728740AbfA2REJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:03:31 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:59539 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbfA2RDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:03:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=vQDEDpnY+NosLatKVPFvS3iHeR7W2O+OOVyMbYnCJCY=; b=mosJRJMb46TSBIQmbbOIO5+sW7
-        kV1MmQx/p9R0W/j0VgNcrnbaXP0IasXrxU2F9B1YmmZOh157ZGlsWFxN1aqL4AtpQ3AYls9ZwOLqg
-        3YVLMO5XLkJr9v3rq78jKr9Wnb5KSO1KAzq+vB3igGFaMzvL4Mqcuv/RioOSBravt16c=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1goWnG-0002vw-EX; Tue, 29 Jan 2019 18:03:26 +0100
-Date:   Tue, 29 Jan 2019 18:03:26 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        Holger =?iso-8859-1?Q?Hoffst=E4tte?= 
-        <holger@applied-asynchrony.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Scott Wood <oss@buserror.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH 4.19 006/103] net: phy: phy driver features are mandatory
-Message-ID: <20190129170326.GE13334@lunn.ch>
-References: <20190129113159.567154026@linuxfoundation.org>
- <20190129113159.909710200@linuxfoundation.org>
- <2f2aa129-e9fb-c75a-1b60-1821863986bf@applied-asynchrony.com>
- <VI1PR04MB4799457AC9ECABE4EE8E5021F2970@VI1PR04MB4799.eurprd04.prod.outlook.com>
- <20190129163321.GA21868@kroah.com>
+        Tue, 29 Jan 2019 12:04:09 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35207 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728398AbfA2REJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 12:04:09 -0500
+Received: by mail-pg1-f196.google.com with SMTP id s198so9002908pgs.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 09:04:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VV29xB00rXAvBPnOigrMJNqshqo3bC1j9EeEF+HMUno=;
+        b=nhfcvP2TxdnZN9xbwSrI15JOAP/kbT54fpb0kysxy1Ck6JcaCOMnXa3XG15L8LW4Yt
+         rg+A9YZLOttrpv6lotsweo7NS7Mpg0XA8UAPg1BvZFCJpmMZf8tyntT9yE2z8ijvKmOD
+         YjD9/NvOmJzAQiEorJ115Nq29NtG0hpSa3ZKDqwahfC/BNHes9xmIX+1v28uM4eg1Fyo
+         pz5++Lf/EyXLG9VzoDQkvpiQZiCWScHse7aQmivAwAp+rs0RcvwnXFUVIMIScN3aLhTn
+         PvM5gibVPP5/5p8miAiCyjG77abUcfqTwd5qHOgxfH/Z25eqZEvWJs6H9fOmGfZ0lI/i
+         ZISg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VV29xB00rXAvBPnOigrMJNqshqo3bC1j9EeEF+HMUno=;
+        b=CPH1RWk8A31QP22qz+FZbNLGO/sCDKUSSZcwaFJvVvfAWk1FJgZCB8KilMQxmFkh2X
+         wo4CKAk7lT9Vf49GUtcYmZl/JoP3SwraZu+XgxMNw2NVVgljpxZdXI2KUILPagO9vQub
+         loUXFzhiPM3tu5nj07oyM9WgPTEVHhL21LRg2Uj3ywDGrcXTMzDxbsyri3i1ghKiXwt1
+         7zM5vemQmQp5UQJh3W9OTLskL8RBvCa/Uw65jyEyKiqKCZg6CrPeAFkN22az/RdvWugF
+         xXq0omoeNKaOK0u4s4zrUY93/sx8vHELU+NizRt9LmSpz4vfceRG/81ohZ7y8wx1oHwy
+         tDpg==
+X-Gm-Message-State: AJcUukdKCwciIicolFlholNgDhTES2G6tGKjeXu7MOgH20n5HBejxESk
+        dz4jQizbmp5Rda3VFAMajKFpqg==
+X-Google-Smtp-Source: ALg8bN7AxF3xoqsuG/93xSoZ+cRG7a8tyhRZlL24OqrBTYhU6jme9FBFjiBzWS6Haq2KiW/HN/k8Rw==
+X-Received: by 2002:a63:34c3:: with SMTP id b186mr23539295pga.184.1548781447762;
+        Tue, 29 Jan 2019 09:04:07 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id c67sm67656941pfg.170.2019.01.29.09.04.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 09:04:06 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1goWnu-0003HW-72; Tue, 29 Jan 2019 10:04:06 -0700
+Date:   Tue, 29 Jan 2019 10:04:06 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Joel Nider <joeln@il.ibm.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] RDMA/uverbs: add UVERBS_METHOD_REG_REMOTE_MR
+Message-ID: <20190129170406.GD10094@ziepe.ca>
+References: <1548768386-28289-1-git-send-email-joeln@il.ibm.com>
+ <1548768386-28289-6-git-send-email-joeln@il.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129163321.GA21868@kroah.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1548768386-28289-6-git-send-email-joeln@il.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Hi
-> > 
-> > This points to an issue with the Generic 10G PHY driver. The following patch seems to be missing from the 4.19 stable tree and should be merged:
-> > f802912 net: phy: genphy_10g_driver: Avoid NULL pointer dereference
+On Tue, Jan 29, 2019 at 03:26:26PM +0200, Joel Nider wrote:
+> Add a new handler for new uverb reg_remote_mr. The purpose is to register
+> a memory region in a different address space (i.e. process) than the
+> caller.
 > 
-> But that patch says it:
-> Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
+> The main use case which motivated this change is post-copy container
+> migration. When a migration manager (i.e. CRIU) starts a migration, it
+> must have an open connection for handling any page faults that occur
+> in the container after restoration on the target machine. Even though
+> CRIU establishes and maintains the connection, ultimately the memory
+> is copied from the container being migrated (i.e. a remote address
+> space). This container must remain passive -- meaning it cannot have
+> any knowledge of the RDMA connection; therefore the migration manager
+> must have the ability to register a remote memory region. This remote
+> memory region will serve as the source for any memory pages that must
+> be copied (on-demand or otherwise) during the migration.
 > 
-> Which is not in 4.19.y, it showed up in 4.20.
+> Signed-off-by: Joel Nider <joeln@il.ibm.com>
+>  drivers/infiniband/core/uverbs_std_types_mr.c | 129 +++++++++++++++++++++++++-
+>  include/rdma/ib_verbs.h                       |   8 ++
+>  include/uapi/rdma/ib_user_ioctl_cmds.h        |  13 +++
+>  3 files changed, 149 insertions(+), 1 deletion(-)
 > 
-> Ah, wait, I think that there was a patch backported to the 4.19.y queue
-> that should not have, specifically:
-> 	3e64cf7a435e ("net: phy: phy driver features are mandatory")
-> which said it too fixes:
-> 	719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
+> diff --git a/drivers/infiniband/core/uverbs_std_types_mr.c b/drivers/infiniband/core/uverbs_std_types_mr.c
+> index 4d4be0c..bf7b4b2 100644
+> +++ b/drivers/infiniband/core/uverbs_std_types_mr.c
+> @@ -150,6 +150,99 @@ static int UVERBS_HANDLER(UVERBS_METHOD_DM_MR_REG)(
+>  	return ret;
+>  }
+>  
+> +static int UVERBS_HANDLER(UVERBS_METHOD_REG_REMOTE_MR)(
+> +	struct uverbs_attr_bundle *attrs)
+> +{
 
-Hi Greg
+I think this should just be REG_MR with an optional remote PID
+argument
 
-None of these patches should be backported to v4.19. All the link mode
-and features stuff is v4.20 and later.
+> +	struct pid *owner_pid;
+> +	struct ib_reg_remote_mr_attr attr = {};
+> +	struct ib_uobject *uobj =
+> +		uverbs_attr_get_uobject(attrs,
+> +					UVERBS_ATTR_REG_REMOTE_MR_HANDLE);
+> +	struct ib_pd *pd =
+> +		uverbs_attr_get_obj(attrs, UVERBS_ATTR_REG_REMOTE_MR_PD_HANDLE);
+> +
+> +	struct ib_mr *mr;
+> +	int ret;
+> +
+> +	ret = uverbs_copy_from(&attr.start, attrs,
+> +				UVERBS_ATTR_REG_REMOTE_MR_START);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = uverbs_copy_from(&attr.length, attrs,
+> +				UVERBS_ATTR_REG_REMOTE_MR_LENGTH);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = uverbs_copy_from(&attr.hca_va, attrs,
+> +				UVERBS_ATTR_REG_REMOTE_MR_HCA_VA);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = uverbs_copy_from(&attr.owner, attrs,
+> +				UVERBS_ATTR_REG_REMOTE_MR_OWNER);
+> +	if (ret)
+> +		return ret;
 
-Thanks
-	Andrew
+Maybe these should use the const version, it is becoming intended for
+small integers, then we can do sensible things like use uintptr_t to
+store pointer values, and size_t to store sizes - the code will
+automatically bounds check the user input if it is done like this.
+
+> +	ret = uverbs_get_flags32(&attr.access_flags, attrs,
+> +				 UVERBS_ATTR_REG_REMOTE_MR_ACCESS_FLAGS,
+> +				 IB_ACCESS_SUPPORTED);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* ensure the offsets are identical */
+> +	if ((attr.start & ~PAGE_MASK) != (attr.hca_va & ~PAGE_MASK))
+> +		return -EINVAL;
+> +
+> +	ret = ib_check_mr_access(attr.access_flags);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (attr.access_flags & IB_ACCESS_ON_DEMAND) {
+> +		if (!(pd->device->attrs.device_cap_flags &
+> +		      IB_DEVICE_ON_DEMAND_PAGING)) {
+> +			pr_debug("ODP support not available\n");
+> +			ret = -EINVAL;
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/* get the owner's pid struct before something happens to it */
+> +	owner_pid = find_get_pid(attr.owner);
+
+security? Match what ptrace does?
+
+> +	mr = pd->device->ops.reg_user_mr(pd, attr.start, attr.length,
+> +		attr.hca_va, attr.access_flags, owner_pid, NULL);
+> +	if (IS_ERR(mr))
+> +		return PTR_ERR(mr);
+> +
+> +	mr->device  = pd->device;
+> +	mr->pd      = pd;
+> +	mr->dm	    = NULL;
+> +	mr->uobject = uobj;
+> +	atomic_inc(&pd->usecnt);
+> +	mr->res.type = RDMA_RESTRACK_MR;
+> +	mr->res.task = get_pid_task(owner_pid, PIDTYPE_PID);
+> +	rdma_restrack_kadd(&mr->res);
+> +
+> +	uobj->object = mr;
+> +
+> +	ret = uverbs_copy_to(attrs, UVERBS_ATTR_REG_REMOTE_MR_RESP_LKEY,
+> +		   &mr->lkey, sizeof(mr->lkey));
+> +	if (ret)
+> +		goto err_dereg;
+> +
+> +	ret = uverbs_copy_to(attrs, UVERBS_ATTR_REG_REMOTE_MR_RESP_RKEY,
+> +			&mr->rkey, sizeof(mr->rkey));
+> +	if (ret)
+> +		goto err_dereg;
+> +
+> +	return 0;
+> +
+> +err_dereg:
+> +	ib_dereg_mr(mr);
+> +
+> +	return ret;
+> +}
+> +
+>  DECLARE_UVERBS_NAMED_METHOD(
+>  	UVERBS_METHOD_ADVISE_MR,
+>  	UVERBS_ATTR_IDR(UVERBS_ATTR_ADVISE_MR_PD_HANDLE,
+> @@ -203,12 +296,46 @@ DECLARE_UVERBS_NAMED_METHOD_DESTROY(
+>  			UVERBS_ACCESS_DESTROY,
+>  			UA_MANDATORY));
+>  
+> +DECLARE_UVERBS_NAMED_METHOD(
+> +	UVERBS_METHOD_REG_REMOTE_MR,
+> +	UVERBS_ATTR_IDR(UVERBS_ATTR_REG_REMOTE_MR_HANDLE,
+> +			UVERBS_OBJECT_MR,
+> +			UVERBS_ACCESS_NEW,
+> +			UA_MANDATORY),
+> +	UVERBS_ATTR_IDR(UVERBS_ATTR_REG_REMOTE_MR_PD_HANDLE,
+> +			UVERBS_OBJECT_PD,
+> +			UVERBS_ACCESS_READ,
+> +			UA_MANDATORY),
+> +	UVERBS_ATTR_PTR_IN(UVERBS_ATTR_REG_REMOTE_MR_START,
+> +			   UVERBS_ATTR_TYPE(u64),
+> +			   UA_MANDATORY),
+> +	UVERBS_ATTR_PTR_IN(UVERBS_ATTR_REG_REMOTE_MR_LENGTH,
+> +			   UVERBS_ATTR_TYPE(u64),
+> +			   UA_MANDATORY),
+> +	UVERBS_ATTR_PTR_IN(UVERBS_ATTR_REG_REMOTE_MR_HCA_VA,
+> +			   UVERBS_ATTR_TYPE(u64),
+> +			   UA_MANDATORY),
+> +	UVERBS_ATTR_FLAGS_IN(UVERBS_ATTR_REG_REMOTE_MR_ACCESS_FLAGS,
+> +			     enum ib_access_flags),
+> +	UVERBS_ATTR_PTR_IN(UVERBS_ATTR_REG_REMOTE_MR_OWNER,
+> +			   UVERBS_ATTR_TYPE(u32),
+> +			   UA_MANDATORY),
+> +	UVERBS_ATTR_PTR_OUT(UVERBS_ATTR_REG_REMOTE_MR_RESP_LKEY,
+> +			    UVERBS_ATTR_TYPE(u32),
+> +			    UA_MANDATORY),
+> +	UVERBS_ATTR_PTR_OUT(UVERBS_ATTR_REG_REMOTE_MR_RESP_RKEY,
+> +			    UVERBS_ATTR_TYPE(u32),
+> +			    UA_MANDATORY),
+> +);
+> +
+>  DECLARE_UVERBS_NAMED_OBJECT(
+>  	UVERBS_OBJECT_MR,
+>  	UVERBS_TYPE_ALLOC_IDR(uverbs_free_mr),
+>  	&UVERBS_METHOD(UVERBS_METHOD_DM_MR_REG),
+>  	&UVERBS_METHOD(UVERBS_METHOD_MR_DESTROY),
+> -	&UVERBS_METHOD(UVERBS_METHOD_ADVISE_MR));
+> +	&UVERBS_METHOD(UVERBS_METHOD_ADVISE_MR),
+> +	&UVERBS_METHOD(UVERBS_METHOD_REG_REMOTE_MR),
+> +);
+
+I'm kind of surprised this compiles with the trailing comma?
+
+>  const struct uapi_definition uverbs_def_obj_mr[] = {
+>  	UAPI_DEF_CHAIN_OBJ_TREE_NAMED(UVERBS_OBJECT_MR,
+> diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
+> index 3432404..dcf5edc 100644
+> +++ b/include/rdma/ib_verbs.h
+> @@ -334,6 +334,14 @@ struct ib_dm_alloc_attr {
+>  	u32	flags;
+>  };
+>  
+> +struct ib_reg_remote_mr_attr {
+> +	u64      start;
+> +	u64      length;
+> +	u64      hca_va;
+> +	u32      access_flags;
+> +	u32      owner;
+> +};
+
+Why? Why here?
+
+Jason
