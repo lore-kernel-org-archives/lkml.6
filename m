@@ -2,98 +2,212 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F75C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D368C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA67C2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE0F22147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:25:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbfA2HZ3 (ORCPT
+        id S1726752AbfA2HZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 02:25:29 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:49298 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbfA2HZ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 02:25:28 -0500
-Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id C4C8D6AC471;
-        Tue, 29 Jan 2019 08:25:24 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
- (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 29 Jan
- 2019 08:25:24 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Tue, 29 Jan 2019 08:25:24 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mark Brown <broonie@kernel.org>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <bbrezillon@kernel.org>
-Subject: Re: linux-next: build warning after merge of the spi tree
-Thread-Topic: linux-next: build warning after merge of the spi tree
-Thread-Index: AQHUt3d+5IRg0ClEmk+Kz6f2xRdpC6XFwDSAgAAHsYA=
-Date:   Tue, 29 Jan 2019 07:25:24 +0000
-Message-ID: <384775b2-bf1c-3b85-9929-d883196fb90a@kontron.de>
-References: <20190129130237.677e5ac8@canb.auug.org.au>
- <VI1PR04MB57262F1ADEEC151C11E0F48499970@VI1PR04MB5726.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB57262F1ADEEC151C11E0F48499970@VI1PR04MB5726.eurprd04.prod.outlook.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.43]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EB92287712B47E4D91F967EF50D9DA77@snt-world.com>
-Content-Transfer-Encoding: base64
+        Tue, 29 Jan 2019 02:25:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42114 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725554AbfA2HZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 02:25:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AE066ADD7;
+        Tue, 29 Jan 2019 07:25:55 +0000 (UTC)
+Subject: Re: [PATCH 11/11] btrfs: add zstd compression level support
+To:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>
+Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Omar Sandoval <osandov@fb.com>
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190128212437.11597-12-dennis@kernel.org>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c92b0233-5406-42a8-4444-a5ab503f726f@suse.com>
+Date:   Tue, 29 Jan 2019 09:25:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: C4C8D6AC471.AF04B
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: bbrezillon@kernel.org, broonie@kernel.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        sfr@canb.auug.org.au, yogeshnarayan.gaur@nxp.com
+In-Reply-To: <20190128212437.11597-12-dennis@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjkuMDEuMTkgMDc6NTcsIFlvZ2VzaCBOYXJheWFuIEdhdXIgd3JvdGU6DQo+IEhpLA0KPiAN
-Cj4+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+PiBGcm9tOiBTdGVwaGVuIFJvdGh3ZWxs
-IFttYWlsdG86c2ZyQGNhbmIuYXV1Zy5vcmcuYXVdDQo+PiBTZW50OiBUdWVzZGF5LCBKYW51YXJ5
-IDI5LCAyMDE5IDc6MzMgQU0NCj4+IFRvOiBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+
-DQo+PiBDYzogTGludXggTmV4dCBNYWlsaW5nIExpc3QgPGxpbnV4LW5leHRAdmdlci5rZXJuZWwu
-b3JnPjsgTGludXggS2VybmVsIE1haWxpbmcNCj4+IExpc3QgPGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmc+OyBZb2dlc2ggTmFyYXlhbiBHYXVyDQo+PiA8eW9nZXNobmFyYXlhbi5nYXVyQG54
-cC5jb20+OyBGcmllZGVyIFNjaHJlbXBmDQo+PiA8ZnJpZWRlci5zY2hyZW1wZkBrb250cm9uLmRl
-PjsgQm9yaXMgQnJlemlsbG9uIDxiYnJlemlsbG9uQGtlcm5lbC5vcmc+Ow0KPj4gQXNoaXNoIEt1
-bWFyIDxhc2hpc2gua3VtYXJAbnhwLmNvbT4NCj4+IFN1YmplY3Q6IGxpbnV4LW5leHQ6IGJ1aWxk
-IHdhcm5pbmcgYWZ0ZXIgbWVyZ2Ugb2YgdGhlIHNwaSB0cmVlDQo+Pg0KPj4gSGkgYWxsLA0KPj4N
-Cj4+IEFmdGVyIG1lcmdpbmcgdGhlIHNwaSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQg
-KEtDT05GSUdfTkFNRSkgcHJvZHVjZWQNCj4+IHRoaXMgd2FybmluZzoNCj4+DQo+PiBXQVJOSU5H
-OiBtb2Rwb3N0OiBtaXNzaW5nIE1PRFVMRV9MSUNFTlNFKCkgaW4gZHJpdmVycy9zcGkvc3BpLW54
-cC1mc3BpLm8NCj4+IHNlZSBpbmNsdWRlL2xpbnV4L21vZHVsZS5oIGZvciBtb3JlIGluZm9ybWF0
-aW9uDQo+Pg0KPiBDYW4gc29tZW9uZSBoZWxwIGluIHBvaW50aW5nIG91dCB0aGF0IHdoeSBhYm92
-ZSB3YXJuaW5nIG1lc3NhZ2UgaXMgY29taW5nIGZvciBtZW50aW9uZWQgY29tbWl0Lg0KPiBCZWxv
-dyBNT0RVTEVfTElDRU5TRSBzdHJpbmcgaXMgcHJlc2VudCBpbiB0aGUgYWJvdmUgbWVudGlvbmVk
-IGZpbGUsIGRyaXZlcnMvc3BpL3NwaS1ueHAtZnNwaS5jLg0KPiAgICAgIE1PRFVMRV9MSUNFTlNF
-KCJHUEwgdjIiKTsNCg0KTm8sIGl0IGlzIG5vdCBwcmVzZW50LiBMb29rIGF0IHlvdXIgcGF0Y2hl
-cyBbMV0gb3IgYXQgc3BpLW5leHQgWzJdLiANCk1PRFVMRV9MSUNFTlNFIGlzIGRlZmluaXRlbHkg
-bWlzc2luZy4NCg0KSW4gcGF0Y2h3b3JrIHRoZSBtaXNzaW5nIGxpbmUgd2FzIGFwcGVuZGVkIHRv
-IHRoZSBjb21taXQgbWVzc2FnZSBpbnN0ZWFkIA0Kb2YgdGhlIGFjdHVhbCBwYXRjaCBmb3Igc29t
-ZSByZWFzb24uDQoNClsxXSBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzEwNzY0
-MzQ3Lw0KWzJdIA0KaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9n
-aXQvYnJvb25pZS9zcGkuZ2l0L2NvbW1pdC8/aD1mb3ItbmV4dCZpZD1hNTM1NmFlZjZhOTA3YzJl
-MmFlZDBjYWFhMmI4OGI2MDIxMzk0NDcx
+
+
+On 28.01.19 г. 23:24 ч., Dennis Zhou wrote:
+> Zstd compression requires different amounts of memory for each level of
+> compression. The prior patches implemented indirection to allow for each
+> compression type to manage their workspaces independently. This patch
+> uses this indirection to implement compression level support for zstd.
+> 
+> As mentioned above, a requirement that differs zstd from zlib is that
+> higher levels of compression require more memory. To manage this, each
+> compression level has its own queue of workspaces. A global LRU is used
+> to help with reclaim. To guarantee forward progress, a max level
+> workspace is preallocated and hidden from the LRU.
+> 
+> When getting a workspace, it uses a bitmap to identify the levels that
+> are populated and scans up. If it finds a workspace that is greater than
+> it, it uses it, but does not update the last_used time and the
+> corresponding place in the LRU. This provides a mechanism to decrease
+> memory utilization as we only keep around workspaces that are sized
+> appropriately for the in use compression levels.
+> 
+> By knowing which compression levels have available workspaces, we can
+> recycle rather than always create new workspaces as well as take
+> advantage of the preallocated max level for forward progress. If we hit
+> memory pressure, we sleep on the max level workspace. We continue to
+> rescan in case we can use a smaller workspace, but eventually should be
+> able to obtain the max level workspace or allocate one again should
+> memory pressure subside. The memory requirement for decompression is the
+> same as level 1, and therefore can use any of available workspace.
+> 
+> The number of workspaces is bound by an upper limit of the workqueue's
+> limit which currently is 2 (percpu limit). Second, a reclaim timer is
+> used to free inactive/improperly sized workspaces. The reclaim timer is
+> set to 67s to avoid colliding with transaction commit (every 30s) and
+> attempts to reclaim any unused workspace older than 45s.
+> 
+> Repeating the experiment from v2 [1], the Silesia corpus was copied to a
+> btrfs filesystem 10 times and then read back after dropping the caches.
+> The btrfs filesystem was on an SSD.
+> 
+> Level   Ratio   Compression (MB/s)  Decompression (MB/s)
+> 1       2.658        438.47                910.51
+> 2       2.744        364.86                886.55
+> 3       2.801        336.33                828.41
+> 4       2.858        286.71                886.55
+> 5       2.916        212.77                556.84
+> 6       2.363        119.82                990.85
+> 7       3.000        154.06                849.30
+> 8       3.011        159.54                875.03
+> 9       3.025        100.51                940.15
+> 10      3.033        118.97                616.26
+> 11      3.036         94.19                802.11
+> 12      3.037         73.45                931.49
+> 13      3.041         55.17                835.26
+> 14      3.087         44.70                716.78
+> 15      3.126         37.30                878.84
+> 
+> [1] https://lore.kernel.org/linux-btrfs/20181031181108.289340-1-terrelln@fb.com/
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
+> Cc: Nick Terrell <terrelln@fb.com>
+> Cc: Omar Sandoval <osandov@fb.com>
+> ---
+>  fs/btrfs/super.c |   6 +-
+>  fs/btrfs/zstd.c  | 229 +++++++++++++++++++++++++++++++++++++++++++++--
+>  2 files changed, 226 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index b28dff207383..0ecc513cb56c 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -544,9 +544,13 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+>  				btrfs_clear_opt(info->mount_opt, NODATASUM);
+>  				btrfs_set_fs_incompat(info, COMPRESS_LZO);
+>  				no_compress = 0;
+> -			} else if (strcmp(args[0].from, "zstd") == 0) {
+> +			} else if (strncmp(args[0].from, "zstd", 4) == 0) {
+>  				compress_type = "zstd";
+>  				info->compress_type = BTRFS_COMPRESS_ZSTD;
+> +				info->compress_level =
+> +					btrfs_compress_str2level(
+> +							 BTRFS_COMPRESS_ZSTD,
+> +							 args[0].from + 4);
+>  				btrfs_set_opt(info->mount_opt, COMPRESS);
+>  				btrfs_clear_opt(info->mount_opt, NODATACOW);
+>  				btrfs_clear_opt(info->mount_opt, NODATASUM);
+> diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
+> index a951d4fe77f7..ce9b466c197f 100644
+> --- a/fs/btrfs/zstd.c
+> +++ b/fs/btrfs/zstd.c
+> @@ -6,20 +6,27 @@
+>   */
+>  
+>  #include <linux/bio.h>
+> +#include <linux/bitmap.h>
+>  #include <linux/err.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+>  #include <linux/mm.h>
+> +#include <linux/sched/mm.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/refcount.h>
+>  #include <linux/sched.h>
+>  #include <linux/slab.h>
+>  #include <linux/zstd.h>
+>  #include "compression.h"
+> +#include "ctree.h"
+>  
+>  #define ZSTD_BTRFS_MAX_WINDOWLOG 17
+>  #define ZSTD_BTRFS_MAX_INPUT (1 << ZSTD_BTRFS_MAX_WINDOWLOG)
+>  #define ZSTD_BTRFS_DEFAULT_LEVEL 3
+> +#define ZSTD_BTRFS_MAX_LEVEL 15
+> +#define ZSTD_BTRFS_RECLAIM_NS (45 * NSEC_PER_SEC)
+> +/* 67s to avoid clashing with transaction commit (every 30s) */
+> +#define ZSTD_BTRFS_RECLAIM_JIFFIES (67 * HZ)
+
+This is valid provided that transaction commit time is not overriden by
+Opt_commit_interval. If it is such a problem to not clash with trans
+commit maybe this should be calculated upon mount?
+
+<snip>
