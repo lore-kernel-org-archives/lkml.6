@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52ACEC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94313C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC7C20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:08:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 689DC20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763717;
-	bh=a6VxHywM7xMTi1n5qa9ZzYMlRBGHCTPE4KWq/Jz9GdM=;
+	s=default; t=1548763727;
+	bh=iWWXhKvygdYJIatNjdMBxoPxMJzwu02f4giOkYEfpD4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WZHdr8cKMuxFWWzllkgILkzoMxWTkahJO28qEu1RMD/XGH1rtZ++yKxmmnOHV3+Kx
-	 +fkEEvaQLhgNikFywwQf97ezlNSjEkvoUJJn0Zk3xuyashXurFOwe9EFwDpD10pOkH
-	 JW1Y5wxomETtpNg/Q/h/ivntkFBCbCccs1EUM6Hs=
+	b=qJ5UAP1g1xaRfMwU1/+yVFoiB8kS4SZcwmw4v2Gm5VBw2OmB2JjHL9YjfOhWtgGqo
+	 byhDZ6gyuiJ3KNphGv/hdmoCVqXEFG26EwOS9ff5cQdDjLnbC/uCdN4QAWHia/0hZs
+	 BC8322tcutVCVXAOKhJnRdsUHhYSH5r23CdFf/eE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729432AbfA2MIg (ORCPT
+        id S1729547AbfA2MIp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:08:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55986 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:08:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729407AbfA2LjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:39:19 -0500
+        id S1729385AbfA2LjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:39:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0BF620844;
-        Tue, 29 Jan 2019 11:39:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2020820857;
+        Tue, 29 Jan 2019 11:39:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761958;
-        bh=a6VxHywM7xMTi1n5qa9ZzYMlRBGHCTPE4KWq/Jz9GdM=;
+        s=default; t=1548761952;
+        bh=iWWXhKvygdYJIatNjdMBxoPxMJzwu02f4giOkYEfpD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PmRrxSbMXsny2sM7vRBgh60K7R8gKgA/ygErJFJ9oXXrQ0Xo4DKlHpLuYlnW8k/QI
-         sVPnVIhJ7kU3Cr+Jr8gylypt24MXaPBekDDcJiA+m4KL+WHbE42sT4qfoRNkXAj43T
-         MrpzxXjeJV0OwpJOkezsMqezWMCe2w4W/JYoz4MA=
+        b=LyhvGD9AYXbakuix5ejG+i1PVhvFcV1SL6tIeXqN4R8p0UFh78Pe/fpun2YZofclN
+         OsTfPZX21ZOHwetZAxOovi39Pksc6qSpl3/jP7r69pRfY+0H9QLk678zV2OcssTPgq
+         nutZNdGypL0HvSzojx+IFu/yn3HW5fnMaQ0Dneww=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 059/117] Drivers: hv: vmbus: Check for ring when getting debug info
-Date:   Tue, 29 Jan 2019 12:35:10 +0100
-Message-Id: <20190129113210.622231028@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Fulghum <paulkf@microgate.com>,
+        syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.20 057/117] tty/n_hdlc: fix __might_sleep warning
+Date:   Tue, 29 Jan 2019 12:35:08 +0100
+Message-Id: <20190129113210.513361385@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -68,283 +68,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Paul Fulghum <paulkf@microgate.com>
 
-commit ba50bf1ce9a51fc97db58b96d01306aa70bc3979 upstream.
+commit fc01d8c61ce02c034e67378cd3e645734bc18c8c upstream.
 
-fc96df16a1ce is good and can already fix the "return stack garbage" issue,
-but let's also improve hv_ringbuffer_get_debuginfo(), which would silently
-return stack garbage, if people forget to check channel->state or
-ring_info->ring_buffer, when using the function in the future.
+Fix __might_sleep warning[1] in tty/n_hdlc.c read due to copy_to_user
+call while current is TASK_INTERRUPTIBLE.  This is a false positive
+since the code path does not depend on current state remaining
+TASK_INTERRUPTIBLE.  The loop breaks out and sets TASK_RUNNING after
+calling copy_to_user.
 
-Having an error check in the function would eliminate the potential risk.
+This patch supresses the warning by setting TASK_RUNNING before calling
+copy_to_user.
 
-Add a Fixes tag to indicate the patch depdendency.
+[1] https://syzkaller.appspot.com/bug?id=17d5de7f1fcab794cb8c40032f893f52de899324
 
-Fixes: fc96df16a1ce ("Drivers: hv: vmbus: Return -EINVAL for the sys files for unopened channels")
-Cc: stable@vger.kernel.org
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Paul Fulghum <paulkf@microgate.com>
+Reported-by: syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hv/ring_buffer.c |   29 +++++++-------
- drivers/hv/vmbus_drv.c   |   91 +++++++++++++++++++++++++++++++----------------
- include/linux/hyperv.h   |    5 +-
- 3 files changed, 78 insertions(+), 47 deletions(-)
+ drivers/tty/n_hdlc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/hv/ring_buffer.c
-+++ b/drivers/hv/ring_buffer.c
-@@ -164,26 +164,25 @@ hv_get_ringbuffer_availbytes(const struc
- }
- 
- /* Get various debug metrics for the specified ring buffer. */
--void hv_ringbuffer_get_debuginfo(const struct hv_ring_buffer_info *ring_info,
--				 struct hv_ring_buffer_debug_info *debug_info)
-+int hv_ringbuffer_get_debuginfo(const struct hv_ring_buffer_info *ring_info,
-+				struct hv_ring_buffer_debug_info *debug_info)
- {
- 	u32 bytes_avail_towrite;
- 	u32 bytes_avail_toread;
- 
--	if (ring_info->ring_buffer) {
--		hv_get_ringbuffer_availbytes(ring_info,
--					&bytes_avail_toread,
--					&bytes_avail_towrite);
-+	if (!ring_info->ring_buffer)
-+		return -EINVAL;
- 
--		debug_info->bytes_avail_toread = bytes_avail_toread;
--		debug_info->bytes_avail_towrite = bytes_avail_towrite;
--		debug_info->current_read_index =
--			ring_info->ring_buffer->read_index;
--		debug_info->current_write_index =
--			ring_info->ring_buffer->write_index;
--		debug_info->current_interrupt_mask =
--			ring_info->ring_buffer->interrupt_mask;
--	}
-+	hv_get_ringbuffer_availbytes(ring_info,
-+				     &bytes_avail_toread,
-+				     &bytes_avail_towrite);
-+	debug_info->bytes_avail_toread = bytes_avail_toread;
-+	debug_info->bytes_avail_towrite = bytes_avail_towrite;
-+	debug_info->current_read_index = ring_info->ring_buffer->read_index;
-+	debug_info->current_write_index = ring_info->ring_buffer->write_index;
-+	debug_info->current_interrupt_mask
-+		= ring_info->ring_buffer->interrupt_mask;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(hv_ringbuffer_get_debuginfo);
- 
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -313,12 +313,16 @@ static ssize_t out_intr_mask_show(struct
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info outbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound,
-+					  &outbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", outbound.current_interrupt_mask);
- }
- static DEVICE_ATTR_RO(out_intr_mask);
-@@ -328,12 +332,15 @@ static ssize_t out_read_index_show(struc
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info outbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound,
-+					  &outbound);
-+	if (ret < 0)
-+		return ret;
- 	return sprintf(buf, "%d\n", outbound.current_read_index);
- }
- static DEVICE_ATTR_RO(out_read_index);
-@@ -344,12 +351,15 @@ static ssize_t out_write_index_show(stru
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info outbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound,
-+					  &outbound);
-+	if (ret < 0)
-+		return ret;
- 	return sprintf(buf, "%d\n", outbound.current_write_index);
- }
- static DEVICE_ATTR_RO(out_write_index);
-@@ -360,12 +370,15 @@ static ssize_t out_read_bytes_avail_show
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info outbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound,
-+					  &outbound);
-+	if (ret < 0)
-+		return ret;
- 	return sprintf(buf, "%d\n", outbound.bytes_avail_toread);
- }
- static DEVICE_ATTR_RO(out_read_bytes_avail);
-@@ -376,12 +389,15 @@ static ssize_t out_write_bytes_avail_sho
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info outbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound,
-+					  &outbound);
-+	if (ret < 0)
-+		return ret;
- 	return sprintf(buf, "%d\n", outbound.bytes_avail_towrite);
- }
- static DEVICE_ATTR_RO(out_write_bytes_avail);
-@@ -391,12 +407,15 @@ static ssize_t in_intr_mask_show(struct
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info inbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", inbound.current_interrupt_mask);
- }
- static DEVICE_ATTR_RO(in_intr_mask);
-@@ -406,12 +425,15 @@ static ssize_t in_read_index_show(struct
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info inbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", inbound.current_read_index);
- }
- static DEVICE_ATTR_RO(in_read_index);
-@@ -421,12 +443,15 @@ static ssize_t in_write_index_show(struc
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info inbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", inbound.current_write_index);
- }
- static DEVICE_ATTR_RO(in_write_index);
-@@ -437,12 +462,15 @@ static ssize_t in_read_bytes_avail_show(
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info inbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", inbound.bytes_avail_toread);
- }
- static DEVICE_ATTR_RO(in_read_bytes_avail);
-@@ -453,12 +481,15 @@ static ssize_t in_write_bytes_avail_show
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info inbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", inbound.bytes_avail_towrite);
- }
- static DEVICE_ATTR_RO(in_write_bytes_avail);
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -1176,8 +1176,9 @@ struct hv_ring_buffer_debug_info {
- 	u32 bytes_avail_towrite;
- };
- 
--void hv_ringbuffer_get_debuginfo(const struct hv_ring_buffer_info *ring_info,
--			    struct hv_ring_buffer_debug_info *debug_info);
-+
-+int hv_ringbuffer_get_debuginfo(const struct hv_ring_buffer_info *ring_info,
-+				struct hv_ring_buffer_debug_info *debug_info);
- 
- /* Vmbus interface */
- #define vmbus_driver_register(driver)	\
+--- a/drivers/tty/n_hdlc.c
++++ b/drivers/tty/n_hdlc.c
+@@ -597,6 +597,7 @@ static ssize_t n_hdlc_tty_read(struct tt
+ 				/* too large for caller's buffer */
+ 				ret = -EOVERFLOW;
+ 			} else {
++				__set_current_state(TASK_RUNNING);
+ 				if (copy_to_user(buf, rbuf->buf, rbuf->count))
+ 					ret = -EFAULT;
+ 				else
 
 
