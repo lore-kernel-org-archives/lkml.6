@@ -2,105 +2,87 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C2EC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE78C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D9CE20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763319;
-	bh=wOby97sO9Ix52Ye95VqDFizR/OBJJJ5ICEjzatY+BHE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EiqG8nK+HHUHmm/0wX95fN6oaZ1opjv5jRnnmvT+Zq+Fy4xxx00ek4puMGTznvHQK
-	 JsulWsnUJBiMuuy1kltbYxV/2aotDBgs2mSNmSBivVly35tPVXe3Ua3DFI777hrFnR
-	 Fq829SCNvRaOIXVeQ6VFhlmQjz8aA2Y1OUY31E5Q=
+	by mail.kernel.org (Postfix) with ESMTP id 67B6220880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729935AbfA2LpP (ORCPT
+        id S1730733AbfA2MCK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:45:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35638 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728979AbfA2LpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:45:12 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5893820882;
-        Tue, 29 Jan 2019 11:45:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762311;
-        bh=wOby97sO9Ix52Ye95VqDFizR/OBJJJ5ICEjzatY+BHE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RUSRKvM4ojH5V9kkTW7DfIcoslFa04J1U9WUSwTS7J8Xs2xcFg11kmz99BBVE5z9Z
-         6uQAZ1s9NepNIrIXJF/naW2cenGXGJ2R68Aw2i+WYC4nbhgENjp/G5SPjXm2Molx0m
-         Qq8+Z5YuLzdaG1jD5rQJ0uvcF1VjtdrLJepW+CGU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, b-ak <anur.bhargav@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.19 030/103] ASoC: tlv320aic32x4: Kernel OOPS while entering DAPM standby mode
-Date:   Tue, 29 Jan 2019 12:35:07 +0100
-Message-Id: <20190129113201.376872508@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
-References: <20190129113159.567154026@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Tue, 29 Jan 2019 07:02:10 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:44301 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727589AbfA2MCH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 07:02:07 -0500
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1goS5J-0002OX-OX; Tue, 29 Jan 2019 13:01:45 +0100
+Date:   Tue, 29 Jan 2019 13:01:45 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Hannes Reinecke <hare@suse.com>
+cc:     John Garry <john.garry@huawei.com>, Christoph Hellwig <hch@lst.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        SCSI Mailing List <linux-scsi@vger.kernel.org>
+Subject: Re: Question on handling managed IRQs when hotplugging CPUs
+In-Reply-To: <5bff8227-16fd-6bca-c16e-3992ef6bec5a@suse.com>
+Message-ID: <alpine.DEB.2.21.1901291257590.1513@nanos.tec.linutronix.de>
+References: <f6f6e031-8b79-439d-c2af-8d3e76f30710@huawei.com> <5bff8227-16fd-6bca-c16e-3992ef6bec5a@suse.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Tue, 29 Jan 2019, Hannes Reinecke wrote:
+> That actually is a very good question, and I have been wondering about this
+> for quite some time.
+> 
+> I find it a bit hard to envision a scenario where the IRQ affinity is
+> automatically (and, more importantly, atomically!) re-routed to one of the
+> other CPUs.
+> And even it it were, chances are that there are checks in the driver
+> _preventing_ them from handling those requests, seeing that they should have
+> been handled by another CPU ...
+> 
+> I guess the safest bet is to implement a 'cleanup' worker queue which is
+> responsible of looking through all the outstanding commands (on all hardware
+> queues), and then complete those for which no corresponding CPU / irqhandler
+> can be found.
+> 
+> But I defer to the higher authorities here; maybe I'm totally wrong and it's
+> already been taken care of.
 
-------------------
+TBH, I don't know. I merily was involved in the genirq side of this. But
+yes, in order to make this work correctly the basic contract for CPU
+hotplug case must be:
 
-From: b-ak <anur.bhargav@gmail.com>
+If the last CPU which is associated to a queue (and the corresponding
+interrupt) goes offline, then the subsytem/driver code has to make sure
+that:
 
-commit 667e9334fa64da2273e36ce131b05ac9e47c5769 upstream.
+   1) No more requests can be queued on that queue
 
-During the bootup of the kernel, the DAPM bias level is in the OFF
-state. As soon as the DAPM framework kicks in it pushes the codec
-into STANDBY state.
+   2) All outstanding of that queue have been completed or redirected
+      (don't know if that's possible at all) to some other queue.
 
-The probe function doesn't prepare the clock, and STANDBY state
-does a clk_disable_unprepare() without checking the previous state.
-This leads to an OOPS.
+That has to be done in that order obviously. Whether any of the
+subsystems/drivers actually implements this, I can't tell.
 
-Not transitioning from an OFF state to the STANDBY state fixes the
-problem.
+Thanks,
 
-Signed-off-by: b-ak <anur.bhargav@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- sound/soc/codecs/tlv320aic32x4.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- a/sound/soc/codecs/tlv320aic32x4.c
-+++ b/sound/soc/codecs/tlv320aic32x4.c
-@@ -822,6 +822,10 @@ static int aic32x4_set_bias_level(struct
- 	case SND_SOC_BIAS_PREPARE:
- 		break;
- 	case SND_SOC_BIAS_STANDBY:
-+		/* Initial cold start */
-+		if (snd_soc_component_get_bias_level(component) == SND_SOC_BIAS_OFF)
-+			break;
-+
- 		/* Switch off BCLK_N Divider */
- 		snd_soc_component_update_bits(component, AIC32X4_BCLKN,
- 				    AIC32X4_BCLKEN, 0);
-
-
+	tglx
