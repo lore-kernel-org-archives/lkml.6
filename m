@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EA0C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF697C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64A1020882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:05:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D53D20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:05:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763544;
-	bh=6VFtdQw4qwy7yAXXoBOnkyupi9BgYoNKbVskiX40HfY=;
+	s=default; t=1548763556;
+	bh=YiirqLleZl1GFyISGs66NxHY8TDgUTCGPKLrft/+wU0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IFAprRi28r73DapUATBhiVRYA5XcWkXTB3TkIx8E84r6ICxtxnkY8cymogDdwMJOO
-	 qAXxHR8IU3Edd5uQoPKehpycTnjlh3arT3Ze85Efn6OIZ/tWiQvMSbL7K0LjytOMSM
-	 1oUocqz0qeX1I9rJoJtZiWX04Aycuj2pEiAcu2No=
+	b=DmmcrzcHPK/qlo9WF0PBjAI3UxJgzJkOUjsnCEGYz+WID8/m6ycbYbyXaEuM257Wv
+	 2p20aAadlZqJ195r1+xYHcsuT4r+MIZrmzUMgj/EHNewsFupwSB6tKSr/QuaNTtDlm
+	 jhPEawlzD+ibmCaqCIMV4pnd1eMuXdkf184OdejU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729880AbfA2MFm (ORCPT
+        id S1729988AbfA2MFy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:05:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59268 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:05:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729189AbfA2Llt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:41:49 -0500
+        id S1729875AbfA2Llg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:41:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73E66214DA;
-        Tue, 29 Jan 2019 11:41:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85C3720857;
+        Tue, 29 Jan 2019 11:41:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762108;
-        bh=6VFtdQw4qwy7yAXXoBOnkyupi9BgYoNKbVskiX40HfY=;
+        s=default; t=1548762096;
+        bh=YiirqLleZl1GFyISGs66NxHY8TDgUTCGPKLrft/+wU0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1B3qyKNaEDCddvFVag+e9kH8uuq6bXFrcFjIY/duF5tQT/TfxkLqyDFh6jkIc3Du5
-         N/3RN8ay0ZjePLRLmdauxmDCvmMCPORMKcXlwfg1NrkZQMMrQyDlp9MkMsF4csI5XU
-         5OW/IUHfk5D+7uUz6YiuVsJhkN3Up7MWu1MzbOHQ=
+        b=A6x8bJFPXZNCs89BXRoNp9QYlSBF1eefC1dyqgz3mVre1ws6mDu4rpINZ26VwtFVq
+         QRscy92LBS6A/3kJ4c9TjS4IKKNKwsGiNhbofRcU3HykbB/SqMCYMvT2/HaaY8NIHc
+         VOUJ6TWUhGtuFCb4AU+GvMJPImlHt6JaSGMzfq+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stanislaw Gruszka <sgruszka@redhat.com>,
-        Felix Fietkau <nbd@nbd.name>
-Subject: [PATCH 4.20 112/117] mt76x02: run calibration after scanning
-Date:   Tue, 29 Jan 2019 12:36:03 +0100
-Message-Id: <20190129113212.949210337@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Robert Shteynfeld <robert.shteynfeld@gmail.com>,
+        stable@kernel.org, Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 108/117] Revert "mm, memory_hotplug: initialize struct pages for the full memory section"
+Date:   Tue, 29 Jan 2019 12:35:59 +0100
+Message-Id: <20190129113212.758340171@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -65,96 +67,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stanislaw Gruszka <sgruszka@redhat.com>
+From: Michal Hocko <mhocko@suse.com>
 
-commit f1b8ee35fec4a070b7760a99709fc98f237c2b86 upstream.
+commit 4aa9fc2a435abe95a1e8d7f8c7b3d6356514b37a upstream.
 
-If we are associated and scanning is performed, sw_scan_complete callback
-is done after we get back to operating channel, so we do not perform
-queue cal work. Fix this queue cal work from sw_scan_complete().
+This reverts commit 2830bf6f05fb3e05bc4743274b806c821807a684.
 
-On mt76x0 we have to restore gain in MT_BBP(AGC, 8) register after
-scanning, as it was multiple times modified by channel switch code.
-So queue cal work without any delay to set AGC gain value.
+The underlying assumption that one sparse section belongs into a single
+numa node doesn't hold really. Robert Shteynfeld has reported a boot
+failure. The boot log was not captured but his memory layout is as
+follows:
 
-Similar like in mt76x2 init AGC gain only when set operating channel
-and just check before queuing cal work in sw_scan_complete() if
-initialization was already done.
+  Early memory node ranges
+    node   1: [mem 0x0000000000001000-0x0000000000090fff]
+    node   1: [mem 0x0000000000100000-0x00000000dbdf8fff]
+    node   1: [mem 0x0000000100000000-0x0000001423ffffff]
+    node   0: [mem 0x0000001424000000-0x0000002023ffffff]
 
-Fixes: bbd10586f0df ("mt76x0: phy: do not run calibration during channel switch")
-Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+This means that node0 starts in the middle of a memory section which is
+also in node1.  memmap_init_zone tries to initialize padding of a
+section even when it is outside of the given pfn range because there are
+code paths (e.g.  memory hotplug) which assume that the full worth of
+memory section is always initialized.
+
+In this particular case, though, such a range is already intialized and
+most likely already managed by the page allocator.  Scribbling over
+those pages corrupts the internal state and likely blows up when any of
+those pages gets used.
+
+Reported-by: Robert Shteynfeld <robert.shteynfeld@gmail.com>
+Fixes: 2830bf6f05fb ("mm, memory_hotplug: initialize struct pages for the full memory section")
+Cc: stable@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/net/wireless/mediatek/mt76/mt76x0/main.c     |    3 +++
- drivers/net/wireless/mediatek/mt76/mt76x0/phy.c      |    2 +-
- drivers/net/wireless/mediatek/mt76/mt76x02.h         |    1 +
- drivers/net/wireless/mediatek/mt76/mt76x02_phy.c     |    1 +
- drivers/net/wireless/mediatek/mt76/mt76x2/usb_main.c |    3 +++
- 5 files changed, 9 insertions(+), 1 deletion(-)
+ mm/page_alloc.c |   12 ------------
+ 1 file changed, 12 deletions(-)
 
---- a/drivers/net/wireless/mediatek/mt76/mt76x0/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x0/main.c
-@@ -138,6 +138,9 @@ void mt76x0_sw_scan_complete(struct ieee
- 	struct mt76x02_dev *dev = hw->priv;
- 
- 	clear_bit(MT76_SCANNING, &dev->mt76.state);
-+
-+	if (dev->cal.gain_init_done)
-+		ieee80211_queue_delayed_work(hw, &dev->cal_work, 0);
- }
- EXPORT_SYMBOL_GPL(mt76x0_sw_scan_complete);
- 
---- a/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
-@@ -720,7 +720,6 @@ int mt76x0_phy_set_channel(struct mt76x0
- 
- 	mt76x0_read_rx_gain(dev);
- 	mt76x0_phy_set_chan_bbp_params(dev, rf_bw_band);
--	mt76x02_init_agc_gain(dev);
- 
- 	if (mt76_is_usb(dev)) {
- 		mt76x0_vco_cal(dev, channel);
-@@ -732,6 +731,7 @@ int mt76x0_phy_set_channel(struct mt76x0
- 	if (scan)
- 		return 0;
- 
-+	mt76x02_init_agc_gain(dev);
- 	if (mt76_is_mmio(dev))
- 		mt76x0_phy_calibrate(dev, false);
- 	mt76x0_phy_set_txpower(dev);
---- a/drivers/net/wireless/mediatek/mt76/mt76x02.h
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x02.h
-@@ -63,6 +63,7 @@ struct mt76x02_calibration {
- 	bool tssi_comp_pending;
- 	bool dpd_cal_done;
- 	bool channel_cal_done;
-+	bool gain_init_done;
- };
- 
- struct mt76x02_dev {
---- a/drivers/net/wireless/mediatek/mt76/mt76x02_phy.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x02_phy.c
-@@ -254,5 +254,6 @@ void mt76x02_init_agc_gain(struct mt76x0
- 	memcpy(dev->cal.agc_gain_cur, dev->cal.agc_gain_init,
- 	       sizeof(dev->cal.agc_gain_cur));
- 	dev->cal.low_gain = -1;
-+	dev->cal.gain_init_done = true;
- }
- EXPORT_SYMBOL_GPL(mt76x02_init_agc_gain);
---- a/drivers/net/wireless/mediatek/mt76/mt76x2/usb_main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2/usb_main.c
-@@ -156,6 +156,9 @@ mt76x2u_sw_scan_complete(struct ieee8021
- 	struct mt76x02_dev *dev = hw->priv;
- 
- 	clear_bit(MT76_SCANNING, &dev->mt76.state);
-+
-+	if (dev->cal.gain_init_done)
-+		ieee80211_queue_delayed_work(hw, &dev->cal_work, 0);
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5542,18 +5542,6 @@ void __meminit memmap_init_zone(unsigned
+ 			cond_resched();
+ 		}
+ 	}
+-#ifdef CONFIG_SPARSEMEM
+-	/*
+-	 * If the zone does not span the rest of the section then
+-	 * we should at least initialize those pages. Otherwise we
+-	 * could blow up on a poisoned page in some paths which depend
+-	 * on full sections being initialized (e.g. memory hotplug).
+-	 */
+-	while (end_pfn % PAGES_PER_SECTION) {
+-		__init_single_page(pfn_to_page(end_pfn), end_pfn, zone, nid);
+-		end_pfn++;
+-	}
+-#endif
  }
  
- const struct ieee80211_ops mt76x2u_ops = {
+ #ifdef CONFIG_ZONE_DEVICE
 
 
