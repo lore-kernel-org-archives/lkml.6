@@ -2,124 +2,172 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51311C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FA6C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15E932177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:57:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="XmAXoRnD"
+	by mail.kernel.org (Postfix) with ESMTP id 31D8D2148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726198AbfA2G5z (ORCPT
+        id S1726341AbfA2G6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 01:57:55 -0500
-Received: from mail-eopbgr50059.outbound.protection.outlook.com ([40.107.5.59]:54880
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725267AbfA2G5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 01:57:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H1ly/XyXbRR1V6GpDzsMp0ihwXxe9lk5dqoP78bwlXY=;
- b=XmAXoRnDNA0yG0LB9h1s88gMbjdLHQwMvbTc37hjrD0/KL3TJaP0aNjRspf2mUCC8uEqxt30aa+5GYodWCFMCrS11NfaxQeAJfN1yMHpRFPoTdd+OLu+UFdRMCfKbNPoLZEigMfIOMl2JyNrCO+MZNEuOWYATpiApDqXlDX6VsM=
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
- VI1PR04MB4573.eurprd04.prod.outlook.com (20.177.55.219) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.21; Tue, 29 Jan 2019 06:57:51 +0000
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::a1c2:cc79:80f3:3bcb]) by VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::a1c2:cc79:80f3:3bcb%5]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
- 06:57:51 +0000
-From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mark Brown <broonie@kernel.org>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Boris Brezillon <bbrezillon@kernel.org>
-Subject: RE: linux-next: build warning after merge of the spi tree
-Thread-Topic: linux-next: build warning after merge of the spi tree
-Thread-Index: AQHUt3a62Ee70mxZo0K+W97/inGmg6XFz85Q
-Date:   Tue, 29 Jan 2019 06:57:51 +0000
-Message-ID: <VI1PR04MB57262F1ADEEC151C11E0F48499970@VI1PR04MB5726.eurprd04.prod.outlook.com>
-References: <20190129130237.677e5ac8@canb.auug.org.au>
-In-Reply-To: <20190129130237.677e5ac8@canb.auug.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-originating-ip: [92.120.0.7]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4573;6:tk95TelleNSn619VjU3L0uegPek+DRjrYnbmMlNJkKgGHY2plb9M6YCZWSXKDoZ6WSOYWXgZxIx/pLwy+XBX5xNq0nw6icKesKAUCQK1e69dluvMGqYUYZ2n99lLzUQRrjYZFBePH4sfR0OP8OMs6yfckqGQoKneRnJa0f7k8sEGesbcdj3NnxjpzYzuNwuHf+wgiqf+URg9LF2aVFwpGK4jmlXDHi2g9QmodlI0tuAgvBhBfyxr79mcRYE0tX0iJb70S1vz5/4xusl4335nOA3DGz8Gm3LrM66VqgeoNhkwrPlKMt7agv+KuDvII9N5PenR9f58fk0ROuGKCeJ0y36f8KbOfQwuBrCPSm7idXAbrenjqDVrCdHLX8lEA0n/Mf9GxHz2Hzmlq88K7BqeG80ZbcZMnGHrR0C4uWvkkZDHiVGqHYMM2/FfPzQPpQ1rXCDnkMWI5DxBSgSjpmaMrg==;5:pA5dn7TB7djZsVfYKkHz7MPPVNZ4Y5nqpUWZdxYp3Q57/HVn2ohLRixVEk3pMZinSzbdnbqMZyGip2zUI+m5WF+VEdY5N7AtTmMU/pWMn62qCsU9iAhIvAdRJoD7tN6K2hOjIqwA+Xr2L3fXSubPoLamVPEnCrMkTSa8M/3FDERC9bQdsKDQ1gxhB2oZWSFc7aDAeNcz6oX5RgM8+ti6rw==;7:JvwbC10Ma/j8+RFmxHgUIsNX2Ro/8FwKdQW3Ubeij5EYWtUF6U27UlJ7Aj+L5KsGKkswWI5Dn0JT5BPK2Lva2dTXp9qZKqpCd4pEHytr2mj9lfF5wxyyZqXZIUBxotOymQpv9Qo+7vaeb9dYhyWcDQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: e8b7bdfd-6a00-46ef-8544-08d685b7160b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4573;
-x-ms-traffictypediagnostic: VI1PR04MB4573:
-x-microsoft-antispam-prvs: <VI1PR04MB45734A569D683766A653882199970@VI1PR04MB4573.eurprd04.prod.outlook.com>
-x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(136003)(39860400002)(366004)(189003)(199004)(13464003)(53754006)(74316002)(99286004)(305945005)(14454004)(66066001)(316002)(7736002)(3846002)(71190400001)(110136005)(54906003)(2906002)(26005)(33656002)(7696005)(76176011)(102836004)(71200400001)(6246003)(53936002)(53546011)(6506007)(105586002)(97736004)(106356001)(186003)(68736007)(11346002)(229853002)(8676002)(4744005)(55016002)(476003)(14444005)(486006)(4326008)(6436002)(478600001)(256004)(9686003)(86362001)(25786009)(8936002)(446003)(81156014)(6116002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4573;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Uzl1jejUcrvgTuwAHLjL8/AnhzfwexOKmk1z++oVOYswpXZbnPvj1TvN8ndUpj8Y8nyausGKElQK4F1XqhDiHfrEG5GifL1gk8NMLqwUZqCHfxtc+XCi8dHC5rH2jTqyQ9mWWjgSIJA8pg9duRV3g2GB0m41NNGX4TWxjDNNosJs+gDVY9SCB7OlwtXs+OU5y1OEiWahpo2+0B6vpEzufBlnsTfaRU6pybyCDS/Pvvu7SSU+8+6CLcl9yVaeGtwGwT0Gn3SISIJaujw40Q9BQPFFtsS/8l4hI+QErUByeyvmd6oGSzlXXUHWypRkgL0zftZ5AnGkpROOQlC7ZyV8zpPjrePd/rNDY6VaADtBn9OgI3WUlcCM7CDqw+YQ+pv9NcLqR6/GrFTTmzLG6Oc90xvJA8rKQjz+ioIGt7k66T8=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 29 Jan 2019 01:58:19 -0500
+Received: from gateway30.websitewelcome.com ([192.185.184.48]:13016 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725267AbfA2G6T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 01:58:19 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 9F5075600
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:58:17 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id oNLdgalV24FKpoNLdgyIVg; Tue, 29 Jan 2019 00:58:17 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=60598 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1goNKS-000VwN-94; Tue, 29 Jan 2019 00:58:17 -0600
+Subject: Re: [PATCH] drivers: qcom: rpmh: use struct_size() in kzalloc()
+To:     Amit Kucheria <amit.kucheria@verdurent.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181224062235.GA27815@embeddedor.com>
+ <CAHLCerMrJ9VB7+zNzhj5WUiM6nOGT=GbrDEHzvPTp7fsfi3f8g@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <c8fc7bfc-122a-14a8-8916-0e020c485c2d@embeddedor.com>
+Date:   Tue, 29 Jan 2019 00:57:02 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8b7bdfd-6a00-46ef-8544-08d685b7160b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 06:57:51.3566
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4573
+In-Reply-To: <CAHLCerMrJ9VB7+zNzhj5WUiM6nOGT=GbrDEHzvPTp7fsfi3f8g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1goNKS-000VwN-94
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:60598
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Tuesday, January 29, 2019 7:33 AM
-> To: Mark Brown <broonie@kernel.org>
-> Cc: Linux Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel Ma=
-iling
-> List <linux-kernel@vger.kernel.org>; Yogesh Narayan Gaur
-> <yogeshnarayan.gaur@nxp.com>; Frieder Schrempf
-> <frieder.schrempf@kontron.de>; Boris Brezillon <bbrezillon@kernel.org>;
-> Ashish Kumar <ashish.kumar@nxp.com>
-> Subject: linux-next: build warning after merge of the spi tree
->=20
-> Hi all,
->=20
-> After merging the spi tree, today's linux-next build (KCONFIG_NAME) produ=
-ced
-> this warning:
->=20
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/spi/spi-nxp-fspi.o
-> see include/linux/module.h for more information
->=20
-Can someone help in pointing out that why above warning message is coming f=
-or mentioned commit.
-Below MODULE_LICENSE string is present in the above mentioned file, drivers=
-/spi/spi-nxp-fspi.c.
-    MODULE_LICENSE("GPL v2");
+
+On 1/28/19 11:26 PM, Amit Kucheria wrote:
+> On Mon, Dec 24, 2018 at 11:52 AM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>> One of the more common cases of allocation size calculations is finding
+>> the size of a structure that has a zero-sized array at the end, along
+>> with memory for some number of elements for that array. For example:
+>>
+>> struct foo {
+>>     int stuff;
+>>     void *entry[];
+>> };
+>>
+>> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+>>
+>> Instead of leaving these open-coded and prone to type mistakes, we can
+>> now use the new struct_size() helper:
+>>
+>> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>>
+>> This issue was detected with the help of Coccinelle.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+> 
+
+Thanks, Amit.
 
 --
-Regards,
-Yogesh Gaur
-> Introduced by commit
->=20
->   a5356aef6a90 ("spi: spi-mem: Add driver for NXP FlexSPI controller")
->=20
-> --
-> Cheers,
-> Stephen Rothwell
+Gustavo
+
+>> ---
+>>  drivers/soc/qcom/rpmh.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+>> index c7beb6841289..12c057a0b325 100644
+>> --- a/drivers/soc/qcom/rpmh.c
+>> +++ b/drivers/soc/qcom/rpmh.c
+>> @@ -362,8 +362,7 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
+>>         if (!count)
+>>                 return -EINVAL;
+>>
+>> -       req = kzalloc(sizeof(*req) + count * sizeof(req->rpm_msgs[0]),
+>> -                     GFP_ATOMIC);
+>> +       req = kzalloc(struct_size(req, rpm_msgs, count), GFP_ATOMIC);
+>>         if (!req)
+>>                 return -ENOMEM;
+>>         req->count = count;
+>> --
+>> 2.17.0
+>>
