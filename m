@@ -2,165 +2,200 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE7CC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F30C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D831820823
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:33:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2215C2082C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:34:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbfA2Xdw (ORCPT
+        id S1729837AbfA2Xea (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 18:33:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58538 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbfA2Xdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 18:33:52 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C191C132699;
-        Tue, 29 Jan 2019 23:33:51 +0000 (UTC)
-Received: from [10.36.116.48] (ovpn-116-48.ams2.redhat.com [10.36.116.48])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 679D7112C1B6;
-        Tue, 29 Jan 2019 23:33:46 +0000 (UTC)
-Subject: Re: [PATCH v1] mm: migrate: don't rely on PageMovable() of newpage
- after unlocking it
-To:     Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vratislav Bendel <vbendel@redhat.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
-        Minchan Kim <minchan@kernel.org>, stable@vger.kernel.org
-References: <20190128160403.16657-1-david@redhat.com>
- <20190129231601.A97972175B@mail.kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <9049df9c-296e-0ec7-5ee0-1a6978063ae7@redhat.com>
-Date:   Wed, 30 Jan 2019 00:33:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 29 Jan 2019 18:34:30 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.212]:14409 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727006AbfA2Xea (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 18:34:30 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id CFB4B400D31F7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 17:34:28 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id octggFWM42qH7octggqK3m; Tue, 29 Jan 2019 17:34:28 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=54974 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1goctg-0037cW-1C; Tue, 29 Jan 2019 17:34:28 -0600
+Date:   Tue, 29 Jan 2019 17:34:26 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] lib: zstd: Mark expected switch fall-throughs
+Message-ID: <20190129233426.GA7999@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20190129231601.A97972175B@mail.kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 29 Jan 2019 23:33:52 +0000 (UTC)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1goctg-0037cW-1C
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:54974
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 1
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30.01.19 00:16, Sasha Levin wrote:
-> Hi,
-> 
-> [This is an automated email]
-> 
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: d6d86c0a7f8d mm/balloon_compaction: redesign ballooned pages management.
-> 
-> The bot has tested the following trees: v4.20.5, v4.19.18, v4.14.96, v4.9.153, v4.4.172, v3.18.133.
-> 
-> v4.20.5: Build OK!
-> v4.19.18: Build OK!
-> v4.14.96: Build OK!
-> v4.9.153: Build OK!
-> v4.4.172: Failed to apply! Possible dependencies:
->     1031bc589228 ("lib/vsprintf: add %*pg format specifier")
->     14e0a214d62d ("tools, perf: make gfp_compact_table up to date")
->     1f7866b4aebd ("mm, tracing: make show_gfp_flags() up to date")
->     420adbe9fc1a ("mm, tracing: unify mm flags handling in tracepoints and printk")
->     53f9263baba6 ("mm: rework mapcount accounting to enable 4k mapping of THPs")
->     7cd12b4abfd2 ("mm, page_owner: track and print last migrate reason")
->     7d2eba0557c1 ("mm: add tracepoint for scanning pages")
->     c6c919eb90e0 ("mm: use put_page() to free page instead of putback_lru_page()")
->     d435edca9288 ("mm, page_owner: copy page owner info during migration")
->     d8c1bdeb5d6b ("page-flags: trivial cleanup for PageTrans* helpers")
->     eca56ff906bd ("mm, shmem: add internal shmem resident memory accounting")
->     edf14cdbf9a0 ("mm, printk: introduce new format string for flags")
-> 
-> v3.18.133: Failed to apply! Possible dependencies:
->     2847cf95c68f ("mm/debug-pagealloc: cleanup page guard code")
->     48c96a368579 ("mm/page_owner: keep track of page owners")
->     7cd12b4abfd2 ("mm, page_owner: track and print last migrate reason")
->     94f759d62b2c ("mm/page_owner.c: remove unnecessary stack_trace field")
->     c6c919eb90e0 ("mm: use put_page() to free page instead of putback_lru_page()")
->     d435edca9288 ("mm, page_owner: copy page owner info during migration")
->     e2cfc91120fa ("mm/page_owner: set correct gfp_mask on page_owner")
->     e30825f1869a ("mm/debug-pagealloc: prepare boottime configurable on/off")
->     eefa864b701d ("mm/page_ext: resurrect struct page extending code for debugging")
-> 
-> 
-> How should we proceed with this patch?
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-I just sent a v2 and will send separate backports for 4.4 and 3.18 once
-we agreed on the new patch. Thanks!
+This patch fixes the following warnings:
 
-> 
-> --
-> Thanks,
-> Sasha
-> 
+lib/zstd/bitstream.h:261:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+lib/zstd/bitstream.h:262:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+lib/zstd/bitstream.h:263:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+lib/zstd/bitstream.h:264:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+lib/zstd/bitstream.h:265:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+lib/zstd/compress.c:3183:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+lib/zstd/decompress.c:1770:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+lib/zstd/decompress.c:2376:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+lib/zstd/decompress.c:2404:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+lib/zstd/decompress.c:2435:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+lib/zstd/huf_compress.c: In function ‘HUF_compress1X_usingCTable’:
+lib/zstd/huf_compress.c:535:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  if (sizeof((stream)->bitContainer) * 8 < HUF_TABLELOG_MAX * 4 + 7) \
+     ^
+lib/zstd/huf_compress.c:558:54: note: in expansion of macro ‘HUF_FLUSHBITS_2’
+  case 3: HUF_encodeSymbol(&bitC, ip[n + 2], CTable); HUF_FLUSHBITS_2(&bitC);
+                                                      ^~~~~~~~~~~~~~~
+lib/zstd/huf_compress.c:559:2: note: here
+  case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bitC);
+  ^~~~
+lib/zstd/huf_compress.c:531:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  if (sizeof((stream)->bitContainer) * 8 < HUF_TABLELOG_MAX * 2 + 7) \
+     ^
+lib/zstd/huf_compress.c:559:54: note: in expansion of macro ‘HUF_FLUSHBITS_1’
+  case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bitC);
+                                                      ^~~~~~~~~~~~~~~
+lib/zstd/huf_compress.c:560:2: note: here
+  case 1: HUF_encodeSymbol(&bitC, ip[n + 0], CTable); HUF_FLUSHBITS(&bitC);
+  ^~~~
+  AR      lib/zstd//built-in.a
 
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
+This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ lib/zstd/bitstream.h    | 5 +++++
+ lib/zstd/compress.c     | 1 +
+ lib/zstd/decompress.c   | 5 ++++-
+ lib/zstd/huf_compress.c | 2 ++
+ 4 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/lib/zstd/bitstream.h b/lib/zstd/bitstream.h
+index a826b99e1d63..3a49784d5c61 100644
+--- a/lib/zstd/bitstream.h
++++ b/lib/zstd/bitstream.h
+@@ -259,10 +259,15 @@ ZSTD_STATIC size_t BIT_initDStream(BIT_DStream_t *bitD, const void *srcBuffer, s
+ 		bitD->bitContainer = *(const BYTE *)(bitD->start);
+ 		switch (srcSize) {
+ 		case 7: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[6]) << (sizeof(bitD->bitContainer) * 8 - 16);
++			/* fall through */
+ 		case 6: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[5]) << (sizeof(bitD->bitContainer) * 8 - 24);
++			/* fall through */
+ 		case 5: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[4]) << (sizeof(bitD->bitContainer) * 8 - 32);
++			/* fall through */
+ 		case 4: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[3]) << 24;
++			/* fall through */
+ 		case 3: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[2]) << 16;
++			/* fall through */
+ 		case 2: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[1]) << 8;
+ 		default:;
+ 		}
+diff --git a/lib/zstd/compress.c b/lib/zstd/compress.c
+index f9166cf4f7a9..5e0b67003e55 100644
+--- a/lib/zstd/compress.c
++++ b/lib/zstd/compress.c
+@@ -3182,6 +3182,7 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream *zcs, void *dst, size_t *
+ 				zcs->outBuffFlushedSize = 0;
+ 				zcs->stage = zcss_flush; /* pass-through to flush stage */
+ 			}
++			/* fall through */
+ 
+ 		case zcss_flush: {
+ 			size_t const toFlush = zcs->outBuffContentSize - zcs->outBuffFlushedSize;
+diff --git a/lib/zstd/decompress.c b/lib/zstd/decompress.c
+index b17846725ca0..269ee9a796c1 100644
+--- a/lib/zstd/decompress.c
++++ b/lib/zstd/decompress.c
+@@ -1768,6 +1768,7 @@ size_t ZSTD_decompressContinue(ZSTD_DCtx *dctx, void *dst, size_t dstCapacity, c
+ 			return 0;
+ 		}
+ 		dctx->expected = 0; /* not necessary to copy more */
++		/* fall through */
+ 
+ 	case ZSTDds_decodeFrameHeader:
+ 		memcpy(dctx->headerBuffer + ZSTD_frameHeaderSize_prefix, src, dctx->expected);
+@@ -2375,7 +2376,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZSTD_outBuffer *output, ZSTD_inB
+ 			}
+ 			zds->stage = zdss_read;
+ 		}
+-		/* pass-through */
++		/* fall through */
+ 
+ 		case zdss_read: {
+ 			size_t const neededInSize = ZSTD_nextSrcSizeToDecompress(zds->dctx);
+@@ -2404,6 +2405,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZSTD_outBuffer *output, ZSTD_inB
+ 			zds->stage = zdss_load;
+ 			/* pass-through */
+ 		}
++		/* fall through */
+ 
+ 		case zdss_load: {
+ 			size_t const neededInSize = ZSTD_nextSrcSizeToDecompress(zds->dctx);
+@@ -2436,6 +2438,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZSTD_outBuffer *output, ZSTD_inB
+ 				/* pass-through */
+ 			}
+ 		}
++		/* fall through */
+ 
+ 		case zdss_flush: {
+ 			size_t const toFlushSize = zds->outEnd - zds->outStart;
+diff --git a/lib/zstd/huf_compress.c b/lib/zstd/huf_compress.c
+index 40055a7016e6..e727812d12aa 100644
+--- a/lib/zstd/huf_compress.c
++++ b/lib/zstd/huf_compress.c
+@@ -556,7 +556,9 @@ size_t HUF_compress1X_usingCTable(void *dst, size_t dstSize, const void *src, si
+ 	n = srcSize & ~3; /* join to mod 4 */
+ 	switch (srcSize & 3) {
+ 	case 3: HUF_encodeSymbol(&bitC, ip[n + 2], CTable); HUF_FLUSHBITS_2(&bitC);
++		/* fall through */
+ 	case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bitC);
++		/* fall through */
+ 	case 1: HUF_encodeSymbol(&bitC, ip[n + 0], CTable); HUF_FLUSHBITS(&bitC);
+ 	case 0:
+ 	default:;
 -- 
+2.20.1
 
-Thanks,
-
-David / dhildenb
