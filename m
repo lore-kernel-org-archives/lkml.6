@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 618E6C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0A5C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3160F2083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F132B2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762941;
-	bh=AgfoL3IFu1DflmBe8d6paLFyT7XAQdzHEHETgF8um5Y=;
+	s=default; t=1548762954;
+	bh=j6lpeb85W1yXKENEsHOYHPleFwOVE1whC72evYNtveA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1OibDhXJWxTQ7gvX/ifhKh2LgfszqbELIo5n0pBL+5+s2Z9B/7HzKofb1TExy4jYb
-	 NCblUQGM10GagONprRDOZVUkDJKzeL4lICQ3PIhebI1YuDXn+XJe7RyYR+nl8nbJcR
-	 mzaDz5tDFmE8JHTQFwEE1+R4fiZEDdxeq62H9ndw=
+	b=eYY/i9UQMqV6lxcQm0sCeWUz94pdKyABLx2XRD1OXMeX6Z/H3PAh6zNsVu2kGzqqz
+	 74PAFKVNK2Tw9W5yT+WOx8ZeT55qnL2gOs2ETqLnWWWv4Vtvzk6qK0ZeecMHjpSZGP
+	 SLQYM79ehmqXIvpFgCqXSy3EL6co31jLzjAPLMjw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731726AbfA2Lzj (ORCPT
+        id S1731649AbfA2LuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:55:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41866 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730979AbfA2Lua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:30 -0500
+        id S1731242AbfA2LuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:50:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2DD72083B;
-        Tue, 29 Jan 2019 11:50:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEA7D2148E;
+        Tue, 29 Jan 2019 11:50:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762630;
-        bh=AgfoL3IFu1DflmBe8d6paLFyT7XAQdzHEHETgF8um5Y=;
+        s=default; t=1548762618;
+        bh=j6lpeb85W1yXKENEsHOYHPleFwOVE1whC72evYNtveA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jxoCYRCF9kk0TEpmwtW4GH7CMLxaR7IaHz0Va/aCj9M4SdfRYpgY14GvxoYLk1/1r
-         vmYV7aTq25MxUQ+YJwNyegT15zNnb6v4hmaZYV3Jl6w7r/0o+A3z9oHhn9qaYBFjcU
-         i9A8hvOGIPqTZAQyzuigBp0OcImWh+RptbICHli4=
+        b=PRqIP3GQClqwRXUOhz3HVfjbdevi6kwxS56LEsdr2NnqfjCo++J7rg/YMTqcS68l1
+         RSgBEpOe6wrJb7glSxbIahYNSg6Ko1NNznc56fp+9yp506zI2r1w7R6Du1fBHs2v23
+         GKvQl9+peUmzvnYPMM4g0Nmcq1Eq2p/QI8GuuG9E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Popov <alex.popov@linux.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 41/68] KVM: x86: Fix single-step debugging
-Date:   Tue, 29 Jan 2019 12:36:03 +0100
-Message-Id: <20190129113135.219179922@linuxfoundation.org>
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 67/68] btrfs: fix error handling in btrfs_dev_replace_start
+Date:   Tue, 29 Jan 2019 12:36:29 +0100
+Message-Id: <20190129113138.293057527@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -65,43 +66,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Popov <alex.popov@linux.com>
+From: Jeff Mahoney <jeffm@suse.com>
 
-commit 5cc244a20b86090c087073c124284381cdf47234 upstream.
+commit 5c06147128fbbdf7a84232c5f0d808f53153defe upstream.
 
-The single-step debugging of KVM guests on x86 is broken: if we run
-gdb 'stepi' command at the breakpoint when the guest interrupts are
-enabled, RIP always jumps to native_apic_mem_write(). Then other
-nasty effects follow.
+When we fail to start a transaction in btrfs_dev_replace_start, we leave
+dev_replace->replace_start set to STARTED but clear ->srcdev and
+->tgtdev.  Later, that can result in an Oops in
+btrfs_dev_replace_progress when having state set to STARTED or SUSPENDED
+implies that ->srcdev is valid.
 
-Long investigation showed that on Jun 7, 2017 the
-commit c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
-introduced the kvm_run.debug corruption: kvm_vcpu_do_singlestep() can
-be called without X86_EFLAGS_TF set.
+Also fix error handling when the state is already STARTED or SUSPENDED
+while starting.  That, too, will clear ->srcdev and ->tgtdev even though
+it doesn't own them.  This should be an impossible case to hit since we
+should be protected by the BTRFS_FS_EXCL_OP bit being set.  Let's add an
+ASSERT there while we're at it.
 
-Let's fix it. Please consider that for -stable.
-
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
-Cc: stable@vger.kernel.org
-Fixes: c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: e93c89c1aaaaa (Btrfs: add new sources for device replace code)
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kvm/x86.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/btrfs/dev-replace.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5923,8 +5923,7 @@ restart:
- 		toggle_interruptibility(vcpu, ctxt->interruptibility);
- 		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
- 		kvm_rip_write(vcpu, ctxt->eip);
--		if (r == EMULATE_DONE &&
--		    (ctxt->tf || (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)))
-+		if (r == EMULATE_DONE && ctxt->tf)
- 			kvm_vcpu_do_singlestep(vcpu, &r);
- 		if (!ctxt->have_exception ||
- 		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
+--- a/fs/btrfs/dev-replace.c
++++ b/fs/btrfs/dev-replace.c
+@@ -351,6 +351,7 @@ int btrfs_dev_replace_start(struct btrfs
+ 		break;
+ 	case BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED:
+ 	case BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED:
++		ASSERT(0);
+ 		ret = BTRFS_IOCTL_DEV_REPLACE_RESULT_ALREADY_STARTED;
+ 		goto leave;
+ 	}
+@@ -395,6 +396,10 @@ int btrfs_dev_replace_start(struct btrfs
+ 	if (IS_ERR(trans)) {
+ 		ret = PTR_ERR(trans);
+ 		btrfs_dev_replace_lock(dev_replace, 1);
++		dev_replace->replace_state =
++			BTRFS_IOCTL_DEV_REPLACE_STATE_NEVER_STARTED;
++		dev_replace->srcdev = NULL;
++		dev_replace->tgtdev = NULL;
+ 		goto leave;
+ 	}
+ 
+@@ -416,8 +421,6 @@ int btrfs_dev_replace_start(struct btrfs
+ 	return ret;
+ 
+ leave:
+-	dev_replace->srcdev = NULL;
+-	dev_replace->tgtdev = NULL;
+ 	btrfs_dev_replace_unlock(dev_replace, 1);
+ 	btrfs_destroy_dev_replace_tgtdev(fs_info, tgt_device);
+ 	return ret;
 
 
