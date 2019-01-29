@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0164C282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E28C5C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CB802083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B57802086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762929;
-	bh=qUeY3TLOD1nhZHflAkqzhX5VzFKQqFHmTs+Wvc4bol4=;
+	s=default; t=1548762935;
+	bh=fM/EF/vhevlw+kPOI1r8eU13aaCZWoNlk0rwEn+3e/E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jJu4WNOJvVp5JKz+zecF80QMDXuGcAl5sF1s6gRvDfvffwh7Q0u82deEUdhFaHBi8
-	 FBgLMyO0gZ236bRHncA4fK4DQVghmR7XKkiDBsYaio1HccovPwbMfb2wTiv7zRC/Cs
-	 lcJnMsdsFJ6pwbNYCbMUq5zvOMTNz+mUH+Jf1awE=
+	b=lz1r/xHlFL6/0bkZu/8Ex4J7gCIgonDjwnFJDA3qrB6NkHENDdBKt0bZpPB2rCA/x
+	 Zmx6YQ5T5BaxQC1Flo8/C2+9ygi+gJRU3qk0gXYW6oojA/OABxG24MwjCeR4dQ4MHB
+	 556BtRO1cLFKy6xXux6cIfFX4KJawRLhoROm6SQY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731723AbfA2Luq (ORCPT
+        id S1731701AbfA2Lui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:50:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42086 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730992AbfA2Lum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:42 -0500
+        id S1731423AbfA2Lue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:50:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B92120882;
-        Tue, 29 Jan 2019 11:50:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B0302083B;
+        Tue, 29 Jan 2019 11:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762642;
-        bh=qUeY3TLOD1nhZHflAkqzhX5VzFKQqFHmTs+Wvc4bol4=;
+        s=default; t=1548762632;
+        bh=fM/EF/vhevlw+kPOI1r8eU13aaCZWoNlk0rwEn+3e/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o1s8oWmD4QXTC7nCPgmlPByCNxuvK/RlLkWJRz22VpJH80FdEmDZdjrvPCzuxS5GC
-         P8k10hUBkLi6rGTd2BBCKrR2LiiW3C9MJRG7lRIO4nYLJZo1aM8S8r2YJ5OFIslA4Y
-         Tecg+Ot54Yc+L1Xol4HSzxAPwtMh8doFDz5HUgWo=
+        b=FUxt8yKPRTcgTYC+ekwtZb9Mzgafl2iH5b9m0nGg0Ao0VUYNprV9gbVRcgiKR5+Mr
+         cfogF213dpwlbRUxDQ5zpfes8vC6eXJ2IMFE7CnHVoxvOCHNhWxbT/7tiqRKC1JAIW
+         S22scfeQPkIqVssn74/70bhjJaSqFBwu7BaFhD5g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 68/68] btrfs: dev-replace: go back to suspended state if target device is missing
-Date:   Tue, 29 Jan 2019 12:36:30 +0100
-Message-Id: <20190129113138.407120647@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
+        hpa@zytor.com, peterz@infradead.org, mpe@ellerman.id.au,
+        will.deacon@arm.com, luto@kernel.org, jroedel@suse.de
+Subject: [PATCH 4.14 42/68] x86/pkeys: Properly copy pkey state at fork()
+Date:   Tue, 29 Jan 2019 12:36:04 +0100
+Message-Id: <20190129113135.437349823@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -66,40 +67,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 0d228ece59a35a9b9e8ff0d40653234a6d90f61e upstream.
+commit a31e184e4f69965c99c04cc5eb8a4920e0c63737 upstream.
 
-At the time of forced unmount we place the running replace to
-BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED state, so when the system comes
-back and expect the target device is missing.
+Memory protection key behavior should be the same in a child as it was
+in the parent before a fork.  But, there is a bug that resets the
+state in the child at fork instead of preserving it.
 
-Then let the replace state continue to be in
-BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED state instead of
-BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED as there isn't any matching scrub
-running as part of replace.
+The creation of new mm's is a bit convoluted.  At fork(), the code
+does:
 
-Fixes: e93c89c1aaaa ("Btrfs: add new sources for device replace code")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+  1. memcpy() the parent mm to initialize child
+  2. mm_init() to initalize some select stuff stuff
+  3. dup_mmap() to create true copies that memcpy() did not do right
+
+For pkeys two bits of state need to be preserved across a fork:
+'execute_only_pkey' and 'pkey_allocation_map'.
+
+Those are preserved by the memcpy(), but mm_init() invokes
+init_new_context() which overwrites 'execute_only_pkey' and
+'pkey_allocation_map' with "new" values.
+
+The author of the code erroneously believed that init_new_context is *only*
+called at execve()-time.  But, alas, init_new_context() is used at execve()
+and fork().
+
+The result is that, after a fork(), the child's pkey state ends up looking
+like it does after an execve(), which is totally wrong.  pkeys that are
+already allocated can be allocated again, for instance.
+
+To fix this, add code called by dup_mmap() to copy the pkey state from
+parent to child explicitly.  Also add a comment above init_new_context() to
+make it more clear to the next poor sod what this code is used for.
+
+Fixes: e8c24d3a23a ("x86/pkeys: Allocation/free syscalls")
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: peterz@infradead.org
+Cc: mpe@ellerman.id.au
+Cc: will.deacon@arm.com
+Cc: luto@kernel.org
+Cc: jroedel@suse.de
+Cc: stable@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Joerg Roedel <jroedel@suse.de>
+Link: https://lkml.kernel.org/r/20190102215655.7A69518C@viggo.jf.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/dev-replace.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -804,6 +804,8 @@ int btrfs_resume_dev_replace_async(struc
- 			   "cannot continue dev_replace, tgtdev is missing");
- 		btrfs_info(fs_info,
- 			   "you may cancel the operation after 'mount -o degraded'");
-+		dev_replace->replace_state =
-+					BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED;
- 		btrfs_dev_replace_unlock(dev_replace, 1);
- 		return 0;
- 	}
+---
+ arch/x86/include/asm/mmu_context.h |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -182,6 +182,10 @@ static inline void switch_ldt(struct mm_
+ 
+ void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk);
+ 
++/*
++ * Init a new mm.  Used on mm copies, like at fork()
++ * and on mm's that are brand-new, like at execve().
++ */
+ static inline int init_new_context(struct task_struct *tsk,
+ 				   struct mm_struct *mm)
+ {
+@@ -232,8 +236,22 @@ do {						\
+ } while (0)
+ #endif
+ 
++static inline void arch_dup_pkeys(struct mm_struct *oldmm,
++				  struct mm_struct *mm)
++{
++#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
++	if (!cpu_feature_enabled(X86_FEATURE_OSPKE))
++		return;
++
++	/* Duplicate the oldmm pkey state in mm: */
++	mm->context.pkey_allocation_map = oldmm->context.pkey_allocation_map;
++	mm->context.execute_only_pkey   = oldmm->context.execute_only_pkey;
++#endif
++}
++
+ static inline int arch_dup_mmap(struct mm_struct *oldmm, struct mm_struct *mm)
+ {
++	arch_dup_pkeys(oldmm, mm);
+ 	paravirt_arch_dup_mmap(oldmm, mm);
+ 	return ldt_dup_context(oldmm, mm);
+ }
 
 
