@@ -2,213 +2,88 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD63C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CEE7C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAD882148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:22:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E83A82177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:24:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="nJwp9grW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbfA2KW3 (ORCPT
+        id S1728360AbfA2KYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:22:29 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:56353 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbfA2KW2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:22:28 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 3B86A18549;
-        Tue, 29 Jan 2019 11:22:25 +0100 (CET)
-X-Axis-User: NO
-X-Axis-NonUser: YES
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id C2nL-iU0KsNZ; Tue, 29 Jan 2019 11:22:23 +0100 (CET)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 2C55018538;
-        Tue, 29 Jan 2019 11:22:23 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E433F1E08F;
-        Tue, 29 Jan 2019 11:22:22 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CDB291E088;
-        Tue, 29 Jan 2019 11:22:22 +0100 (CET)
-Received: from thoth.se.axis.com (unknown [10.0.2.173])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Tue, 29 Jan 2019 11:22:22 +0100 (CET)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by thoth.se.axis.com (Postfix) with ESMTP id E92CD2B7E;
-        Tue, 29 Jan 2019 11:22:08 +0100 (CET)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id E486680C1C; Tue, 29 Jan 2019 11:22:08 +0100 (CET)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     gregkh@linuxfoundation.org, arnd@arndb.de
-Cc:     sudeep.dutt@intel.com, ashutosh.dixit@intel.com,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, tiwei.bie@intel.com,
-        luto@kernel.org, Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH] mic: vop: Fix broken virtqueues
-Date:   Tue, 29 Jan 2019 11:22:07 +0100
-Message-Id: <20190129102207.9577-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.20.0
+        Tue, 29 Jan 2019 05:24:03 -0500
+Received: from mout02.posteo.de ([185.67.36.66]:44919 "EHLO mout02.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726752AbfA2KYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 05:24:02 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id 4C1722400FC
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:24:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1548757440; bh=DY6aMhdu6hrdcEZWqhPjCrorr3VltracxCXw0bMyUpc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nJwp9grW7woHb4P5dl+vYp89xaWZB2pYUxQ59KG5+Ylv36gG1OmpveMLEP/3k8FTt
+         W/FaDFRvdhohueyoj0/cv/2OtTWVMBkR+OgjjDrA1xN4AvJsPFOxOOV3ct208sTLpG
+         5ppJ0a9JPs2PfehuTq3wRjbcjELLo7iJA2XckW2y/oL8S5MXFO0Et3RM7XuTOLtfDC
+         ZwUwAQU37InU8GdkpWM16rpB/vq2Y9Mdl6fHc1b4Z9JEEcRZqBwnQseg0iZOd2lU6O
+         HEu2mJdrc+nJ1FYe91GikK5unZNwT1K106ll9u1z5nMxqz6LuRfH0n0z5YGeuQi2OX
+         IYebUhXyoPFug==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 43pjJv0JCNz9rxd;
+        Tue, 29 Jan 2019 11:23:58 +0100 (CET)
+From:   Martin Kepplinger <martink@posteo.de>
+To:     devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: [PATCH 1/2] dt-bindings: input: sitronix-st1232: document optional reset-gpios property
+Date:   Tue, 29 Jan 2019 11:23:46 +0100
+Message-Id: <20190129102347.27754-1-martink@posteo.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VOP is broken in mainline since commit 1ce9e6055fa0a9043 ("virtio_ring:
-introduce packed ring support"); attempting to use the virtqueues leads
-to various kernel crashes.  I'm testing it with my not-yet-merged
-loopback patches, but even the in-tree MIC hardware cannot work.
+From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 
-The problem is not in the referenced commit per se, but is due to the
-following hack in vop_find_vq() which depends on the layout of private
-structures in other source files, which that commit happened to change:
+The st1232 driver reads this via gpiod.
 
-  /*
-   * To reassign the used ring here we are directly accessing
-   * struct vring_virtqueue which is a private data structure
-   * in virtio_ring.c. At the minimum, a BUILD_BUG_ON() in
-   * vring_new_virtqueue() would ensure that
-   *  (&vq->vring == (struct vring *) (&vq->vq + 1));
-   */
-  vr = (struct vring *)(vq + 1);
-  vr->used = used;
-
-Fix vop by using __vring_new_virtqueue() to create the needed vring
-layout from the start, instead of attempting to patch in the used ring
-later.  __vring_new_virtqueue() was added way back in commit
-2a2d1382fe9dcc ("virtio: Add improved queue allocation API") in order to
-address mic's usecase, according to the commit message.
-
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 ---
- drivers/misc/mic/vop/vop_main.c | 60 +++++++++++++++++++--------------
- 1 file changed, 34 insertions(+), 26 deletions(-)
+ .../devicetree/bindings/input/touchscreen/sitronix-st1232.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/mic/vop/vop_main.c b/drivers/misc/mic/vop/vop_main.c
-index d2b9782eee87..fef45bf6d519 100644
---- a/drivers/misc/mic/vop/vop_main.c
-+++ b/drivers/misc/mic/vop/vop_main.c
-@@ -284,6 +284,26 @@ static void vop_del_vqs(struct virtio_device *dev)
- 		vop_del_vq(vq, idx++);
- }
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt b/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
+index e73e826e0f2a..365b32d30d4b 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
++++ b/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
+@@ -8,7 +8,7 @@ Required properties:
+ - interrupts: interrupt to which the chip is connected
  
-+static struct virtqueue *vop_new_virtqueue(unsigned int index,
-+				      unsigned int num,
-+				      struct virtio_device *vdev,
-+				      bool context,
-+				      void *pages,
-+				      bool (*notify)(struct virtqueue *vq),
-+				      void (*callback)(struct virtqueue *vq),
-+				      const char *name,
-+				      void *used)
-+{
-+	bool weak_barriers = false;
-+	struct vring vring;
-+
-+	vring_init(&vring, num, pages, MIC_VIRTIO_RING_ALIGN);
-+	vring.used = used;
-+
-+	return __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
-+				     notify, callback, name);
-+}
-+
- /*
-  * This routine will assign vring's allocated in host/io memory. Code in
-  * virtio_ring.c however continues to access this io memory as if it were local
-@@ -303,7 +323,6 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
- 	struct _mic_vring_info __iomem *info;
- 	void *used;
- 	int vr_size, _vr_size, err, magic;
--	struct vring *vr;
- 	u8 type = ioread8(&vdev->desc->type);
+ Optional properties:
+-- gpios: a phandle to the reset GPIO
++- reset-gpios: a phandle to the reset GPIO
  
- 	if (index >= ioread8(&vdev->desc->num_vq))
-@@ -322,17 +341,7 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
- 		return ERR_PTR(-ENOMEM);
- 	vdev->vr[index] = va;
- 	memset_io(va, 0x0, _vr_size);
--	vq = vring_new_virtqueue(
--				index,
--				le16_to_cpu(config.num), MIC_VIRTIO_RING_ALIGN,
--				dev,
--				false,
--				ctx,
--				(void __force *)va, vop_notify, callback, name);
--	if (!vq) {
--		err = -ENOMEM;
--		goto unmap;
--	}
-+
- 	info = va + _vr_size;
- 	magic = ioread32(&info->magic);
+ Example:
  
-@@ -341,7 +350,6 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
- 		goto unmap;
- 	}
+@@ -19,7 +19,7 @@ Example:
+ 			compatible = "sitronix,st1232";
+ 			reg = <0x55>;
+ 			interrupts = <2 0>;
+-			gpios = <&gpio1 166 0>;
++			reset-gpios = <&gpio1 166 0>;
+ 		};
  
--	/* Allocate and reassign used ring now */
- 	vdev->used_size[index] = PAGE_ALIGN(sizeof(__u16) * 3 +
- 					     sizeof(struct vring_used_elem) *
- 					     le16_to_cpu(config.num));
-@@ -351,8 +359,17 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
- 		err = -ENOMEM;
- 		dev_err(_vop_dev(vdev), "%s %d err %d\n",
- 			__func__, __LINE__, err);
--		goto del_vq;
-+		goto unmap;
-+	}
-+
-+	vq = vop_new_virtqueue(index, le16_to_cpu(config.num), dev, ctx,
-+			       (void __force *)va, vop_notify, callback,
-+			       name, used);
-+	if (!vq) {
-+		err = -ENOMEM;
-+		goto free_used;
- 	}
-+
- 	vdev->used[index] = dma_map_single(&vpdev->dev, used,
- 					    vdev->used_size[index],
- 					    DMA_BIDIRECTIONAL);
-@@ -360,26 +377,17 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
- 		err = -ENOMEM;
- 		dev_err(_vop_dev(vdev), "%s %d err %d\n",
- 			__func__, __LINE__, err);
--		goto free_used;
-+		goto del_vq;
- 	}
- 	writeq(vdev->used[index], &vqconfig->used_address);
--	/*
--	 * To reassign the used ring here we are directly accessing
--	 * struct vring_virtqueue which is a private data structure
--	 * in virtio_ring.c. At the minimum, a BUILD_BUG_ON() in
--	 * vring_new_virtqueue() would ensure that
--	 *  (&vq->vring == (struct vring *) (&vq->vq + 1));
--	 */
--	vr = (struct vring *)(vq + 1);
--	vr->used = used;
- 
- 	vq->priv = vdev;
- 	return vq;
-+del_vq:
-+	vring_del_virtqueue(vq);
- free_used:
- 	free_pages((unsigned long)used,
- 		   get_order(vdev->used_size[index]));
--del_vq:
--	vring_del_virtqueue(vq);
- unmap:
- 	vpdev->hw_ops->unmap(vpdev, vdev->vr[index]);
- 	return ERR_PTR(err);
+ 		/* ... */
 -- 
-2.20.0
+2.20.1
 
