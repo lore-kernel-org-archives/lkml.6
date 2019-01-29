@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 911CBC282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 566CAC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6662020882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2690820882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763239;
-	bh=tr6OSySOEwpEA71WJ/d2UcalR5cWz8F/bZjIz+aNTIk=;
+	s=default; t=1548763242;
+	bh=O8TLu6bC3g81VzutmNfdMadr1upHh2hoS3LDEE1XhbI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=osxL8cdDo3tqY91U8PwJUiTpJXvjua98cghFNLSUgrpO/lOE+LiTNGUX0tJ2rY5mT
-	 vP3F6QlsFK1n17VtYyj6YReehUAOT3e2vksNm8Y7P2NvOWqfBIVVAvhwEiTgqG6YEU
-	 Fy/5f7YHwxCsS1vTbUOu3KG2rXAUfRayPUgctfrQ=
+	b=SvVxr4HLhhBzbrlpoDHJwa7a0CndBa0TAMGTUS4bbX40tavn3PuTKveAZKkm/CVBa
+	 foyY1/uRN30tpMpR/wI/ao0aSQoJD5wpiWvCxvZGMLutrxQAsdTePMzUJVEKkxxLry
+	 ZvmfbZHhGWVzNrFYbYscRuAOBpfk6KeC4+IwyXjM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730940AbfA2LqH (ORCPT
+        id S1731160AbfA2MAk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:46:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36620 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:00:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730899AbfA2LqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:46:03 -0500
+        id S1729690AbfA2LqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:46:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 848162083B;
-        Tue, 29 Jan 2019 11:46:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 937882083B;
+        Tue, 29 Jan 2019 11:46:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762363;
-        bh=tr6OSySOEwpEA71WJ/d2UcalR5cWz8F/bZjIz+aNTIk=;
+        s=default; t=1548762372;
+        bh=O8TLu6bC3g81VzutmNfdMadr1upHh2hoS3LDEE1XhbI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MQ4X8U9yu73rjIzEx718YkBt+ckNny57/spZQqIQQ1hNFsIxBNfwufVUEoA8YLfbC
-         sJp3dbfnDsD6fA3DS5yiTWoWvglBYM0lGQURsWLbcUWi2MR6U5pnOCsriH5sFm/0vC
-         2iZTkEsClqowKAViWn4Oadi6bEcAJQdqOjNbLtwQ=
+        b=CfBFXRo0IO/0BXH/aOpOUss8uz/1Vw/rCN6CB1s8rw+5khZtvXUH+6F9O1h19Rqhd
+         4lZecVsYujpCNPSOjfVL+UnBQ9Sp4ONaecaWExQNHhdnNbFh+dn2ZMN1O9zfJBirTO
+         4FhVX1mffoQkAN/WWXVUJdyXgldwtB7foQHnGoSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Pitre <nico@linaro.org>
-Subject: [PATCH 4.19 082/103] vt: make vt_console_print() compatible with the unicode screen buffer
-Date:   Tue, 29 Jan 2019 12:35:59 +0100
-Message-Id: <20190129113206.341986367@linuxfoundation.org>
+        stable@vger.kernel.org, Tony McKahan <tonymckahan@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.19 085/103] drm/meson: Fix atomic mode switching regression
+Date:   Tue, 29 Jan 2019 12:36:02 +0100
+Message-Id: <20190129113206.615402776@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -64,119 +67,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-commit 6609cff65c5b184ab889880ef5d41189611ea05f upstream.
+commit ce0210c12433031aba3bbacd75f4c02ab77f2004 upstream.
 
-When kernel messages are printed to the console, they appear blank on
-the unicode screen. This is because vt_console_print() is lacking a call
-to vc_uniscr_putc(). However the later function assumes vc->vc_x is
-always up to date when called, which is not the case here as
-vt_console_print() uses it to mark the beginning of the display update.
+Since commit 2bcd3ecab773 when switching mode from X11 (ubuntu mate for
+example) the display gets blurry, looking like an invalid framebuffer width.
 
-This patch reworks (and simplifies) vt_console_print() so that vc->vc_x
-is always valid and keeps the start of display update in a local variable
-instead, which finally allows for adding the missing vc_uniscr_putc()
-call.
+This commit fixed atomic crtc modesetting in a totally wrong way and
+introduced a local unnecessary ->enabled crtc state.
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
-Cc: stable@vger.kernel.org # v4.19+
+This commit reverts the crctc _begin() and _enable() changes and simply
+adds drm_atomic_helper_commit_tail_rpm as helper.
+
+Reported-by: Tony McKahan <tonymckahan@gmail.com>
+Suggested-by: Daniel Vetter <daniel@ffwll.ch>
+Fixes: 2bcd3ecab773 ("drm/meson: Fixes for drm_crtc_vblank_on/off support")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+[narmstrong: fixed blank line issue from checkpatch]
+Link: https://patchwork.freedesktop.org/patch/msgid/20190114153118.8024-1-narmstrong@baylibre.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt.c |   47 +++++++++++++++--------------------------------
- 1 file changed, 15 insertions(+), 32 deletions(-)
+ drivers/gpu/drm/meson/meson_crtc.c |   23 ++---------------------
+ drivers/gpu/drm/meson/meson_drv.c  |    5 +++++
+ 2 files changed, 7 insertions(+), 21 deletions(-)
 
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -2887,8 +2887,7 @@ static void vt_console_print(struct cons
- 	unsigned char c;
- 	static DEFINE_SPINLOCK(printing_lock);
- 	const ushort *start;
--	ushort cnt = 0;
--	ushort myx;
-+	ushort start_x, cnt;
- 	int kmsg_console;
+--- a/drivers/gpu/drm/meson/meson_crtc.c
++++ b/drivers/gpu/drm/meson/meson_crtc.c
+@@ -45,7 +45,6 @@ struct meson_crtc {
+ 	struct drm_crtc base;
+ 	struct drm_pending_vblank_event *event;
+ 	struct meson_drm *priv;
+-	bool enabled;
+ };
+ #define to_meson_crtc(x) container_of(x, struct meson_crtc, base)
  
- 	/* console busy or not yet initialized */
-@@ -2901,10 +2900,6 @@ static void vt_console_print(struct cons
- 	if (kmsg_console && vc_cons_allocated(kmsg_console - 1))
- 		vc = vc_cons[kmsg_console - 1].d;
+@@ -81,7 +80,8 @@ static const struct drm_crtc_funcs meson
  
--	/* read `x' only after setting currcons properly (otherwise
--	   the `x' macro will read the x of the foreground console). */
--	myx = vc->vc_x;
+ };
+ 
+-static void meson_crtc_enable(struct drm_crtc *crtc)
++static void meson_crtc_atomic_enable(struct drm_crtc *crtc,
++				     struct drm_crtc_state *old_state)
+ {
+ 	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
+ 	struct drm_crtc_state *crtc_state = crtc->state;
+@@ -103,20 +103,6 @@ static void meson_crtc_enable(struct drm
+ 
+ 	drm_crtc_vblank_on(crtc);
+ 
+-	meson_crtc->enabled = true;
+-}
 -
- 	if (!vc_cons_allocated(fg_console)) {
- 		/* impossible */
- 		/* printk("vt_console_print: tty %d not allocated ??\n", currcons+1); */
-@@ -2919,53 +2914,41 @@ static void vt_console_print(struct cons
- 		hide_cursor(vc);
- 
- 	start = (ushort *)vc->vc_pos;
+-static void meson_crtc_atomic_enable(struct drm_crtc *crtc,
+-				     struct drm_crtc_state *old_state)
+-{
+-	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
+-	struct meson_drm *priv = meson_crtc->priv;
 -
--	/* Contrived structure to try to emulate original need_wrap behaviour
--	 * Problems caused when we have need_wrap set on '\n' character */
-+	start_x = vc->vc_x;
-+	cnt = 0;
- 	while (count--) {
- 		c = *b++;
- 		if (c == 10 || c == 13 || c == 8 || vc->vc_need_wrap) {
--			if (cnt > 0) {
--				if (con_is_visible(vc))
--					vc->vc_sw->con_putcs(vc, start, cnt, vc->vc_y, vc->vc_x);
--				vc->vc_x += cnt;
--				if (vc->vc_need_wrap)
--					vc->vc_x--;
--				cnt = 0;
--			}
-+			if (cnt && con_is_visible(vc))
-+				vc->vc_sw->con_putcs(vc, start, cnt, vc->vc_y, start_x);
-+			cnt = 0;
- 			if (c == 8) {		/* backspace */
- 				bs(vc);
- 				start = (ushort *)vc->vc_pos;
--				myx = vc->vc_x;
-+				start_x = vc->vc_x;
- 				continue;
- 			}
- 			if (c != 13)
- 				lf(vc);
- 			cr(vc);
- 			start = (ushort *)vc->vc_pos;
--			myx = vc->vc_x;
-+			start_x = vc->vc_x;
- 			if (c == 10 || c == 13)
- 				continue;
- 		}
-+		vc_uniscr_putc(vc, c);
- 		scr_writew((vc->vc_attr << 8) + c, (unsigned short *)vc->vc_pos);
- 		notify_write(vc, c);
- 		cnt++;
--		if (myx == vc->vc_cols - 1) {
--			vc->vc_need_wrap = 1;
--			continue;
--		}
--		vc->vc_pos += 2;
--		myx++;
--	}
--	if (cnt > 0) {
--		if (con_is_visible(vc))
--			vc->vc_sw->con_putcs(vc, start, cnt, vc->vc_y, vc->vc_x);
--		vc->vc_x += cnt;
--		if (vc->vc_x == vc->vc_cols) {
--			vc->vc_x--;
-+		if (vc->vc_x == vc->vc_cols - 1) {
- 			vc->vc_need_wrap = 1;
-+		} else {
-+			vc->vc_pos += 2;
-+			vc->vc_x++;
- 		}
+-	DRM_DEBUG_DRIVER("\n");
+-
+-	if (!meson_crtc->enabled)
+-		meson_crtc_enable(crtc);
+-
+ 	priv->viu.osd1_enabled = true;
+ }
+ 
+@@ -142,8 +128,6 @@ static void meson_crtc_atomic_disable(st
+ 
+ 		crtc->state->event = NULL;
  	}
-+	if (cnt && con_is_visible(vc))
-+		vc->vc_sw->con_putcs(vc, start, cnt, vc->vc_y, start_x);
- 	set_cursor(vc);
- 	notify_update(vc);
+-
+-	meson_crtc->enabled = false;
+ }
+ 
+ static void meson_crtc_atomic_begin(struct drm_crtc *crtc,
+@@ -152,9 +136,6 @@ static void meson_crtc_atomic_begin(stru
+ 	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
+ 	unsigned long flags;
+ 
+-	if (crtc->state->enable && !meson_crtc->enabled)
+-		meson_crtc_enable(crtc);
+-
+ 	if (crtc->state->event) {
+ 		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
+ 
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -82,6 +82,10 @@ static const struct drm_mode_config_func
+ 	.fb_create           = drm_gem_fb_create,
+ };
+ 
++static const struct drm_mode_config_helper_funcs meson_mode_config_helpers = {
++	.atomic_commit_tail = drm_atomic_helper_commit_tail_rpm,
++};
++
+ static irqreturn_t meson_irq(int irq, void *arg)
+ {
+ 	struct drm_device *dev = arg;
+@@ -246,6 +250,7 @@ static int meson_drv_bind_master(struct
+ 	drm->mode_config.max_width = 3840;
+ 	drm->mode_config.max_height = 2160;
+ 	drm->mode_config.funcs = &meson_mode_config_funcs;
++	drm->mode_config.helper_private	= &meson_mode_config_helpers;
+ 
+ 	/* Hardware Initialization */
  
 
 
