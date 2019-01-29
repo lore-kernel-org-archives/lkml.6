@@ -2,189 +2,114 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CB3C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 000ACC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E04320844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:50:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="VAifM9Xd"
+	by mail.kernel.org (Postfix) with ESMTP id CF6A920844
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbfA2SuR (ORCPT
+        id S1729190AbfA2Suf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:50:17 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37715 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727269AbfA2SuR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:50:17 -0500
-Received: by mail-qk1-f193.google.com with SMTP id g125so12156999qke.4
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:50:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Q6joBr0fqtyC412CkUtub58bUqRUjZG+AFn6kz8B8N4=;
-        b=VAifM9XdWSBqRuh4BwNdOiCm9wC0UPiKzpr3h/hBmK7h7DACgaGRFo2kVmBxkXYBUq
-         jy8wTe7ggvdm4KREJPe2zIaIbq6iH+ZYSu2PIBApbHpSAMaioKnAtnYhOHBXnOK/p30g
-         wG//3s8TLbJys7F+bmZkyY7+rGjNnI/cPT8FBFNrRg7qlruuv+avqqGNXqNBbNa6S/ez
-         S8vovjxgLSkmt4vtjxV/Fpdfs4Hguy3qTpf5zJd8AVPAcAMY5OseEnwglRJ37CSTZHe6
-         FBksNVpPHDXUDb1eeqTkKTTHQ1BNKaczf0hY434RESNSxAEm8u+fZ8hdyYuyYisN8iDW
-         iL0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Q6joBr0fqtyC412CkUtub58bUqRUjZG+AFn6kz8B8N4=;
-        b=DKKjGapQkBKKVMle0ky6Amgg6VmAlQQcUc8d/0ycZN/4jX1DBJ4vqeGVvZR5m3ROvN
-         7wH/D3OG6pu5S9kxwukpQS5dRzIi/ZU227YSEeQlpWMyLnKwZrZgJbduTsCheUYm0izl
-         L1WMUfnEe9OYK6ZdqFBb/ZHtX7/BZHROzbQeLgWGjneALpF0e+LtWG+/tiDhTF8Frl2v
-         laMZW8aDlV7LAe/1pY3H/jDXxq+XIUtE2ls0xu9RsU5+rQGsGCaOYp7uXsZVjN7FSsQj
-         gYO0TpT/G5vsOsZF78lfEVHJPi12S58/B4sybb1P5W2f+ANWV3WBl5bHzhPbSRFkNEyU
-         r6pA==
-X-Gm-Message-State: AJcUukd7/ZJo0pte2BEVjaA03i/iiSJFSG1jJFVFohUGUSHf1bZxNPYq
-        V4V5b5vcY/zXYGpSiRC76VIpeg==
-X-Google-Smtp-Source: ALg8bN42/fnTkMMeAZa4S8DsLtE0U02Gvv2OAeXF7Nxtgibm5ePdLvE+kgauPoNJcl6HtXG4pnCdbg==
-X-Received: by 2002:a37:7b01:: with SMTP id w1mr24870367qkc.122.1548787815512;
-        Tue, 29 Jan 2019 10:50:15 -0800 (PST)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id l195sm49637515qke.58.2019.01.29.10.50.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 10:50:14 -0800 (PST)
-Date:   Tue, 29 Jan 2019 13:50:13 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Andrea Righi <righi.andrea@gmail.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>, Dennis Zhou <dennis@kernel.org>,
-        cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
-Message-ID: <20190129185012.jieed26ddcbz7jmb@MacBook-Pro-91.local>
-References: <20190118103127.325-1-righi.andrea@gmail.com>
- <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
- <20190118184403.GB1535@xps-13>
- <20190118194652.gg5j2yz3h2llecpj@macbook-pro-91.dhcp.thefacebook.com>
- <20190119100827.GA1630@xps-13>
- <20190121214715.GA27713@redhat.com>
- <20190128174129.GB8272@xps-13>
- <20190128192620.GB10240@redhat.com>
- <20190129183938.GA2960@xps-13>
+        Tue, 29 Jan 2019 13:50:35 -0500
+Received: from mga18.intel.com ([134.134.136.126]:7114 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727245AbfA2Suf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 13:50:35 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 10:50:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
+   d="scan'208";a="295436405"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga005.jf.intel.com with ESMTP; 29 Jan 2019 10:50:34 -0800
+Date:   Tue, 29 Jan 2019 10:50:05 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Davidlohr Bueso <dave@stgolabs.net>, akpm@linux-foundation.org,
+        dledford@redhat.com, jack@suse.de, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        dennis.dalessandro@intel.com, mike.marciniszyn@intel.com,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 3/6] drivers/IB,qib: do not use mmap_sem
+Message-ID: <20190129185005.GC10129@iweiny-DESK2.sc.intel.com>
+References: <20190121174220.10583-1-dave@stgolabs.net>
+ <20190121174220.10583-4-dave@stgolabs.net>
+ <20190128233140.GA12530@ziepe.ca>
+ <20190129044607.GL25106@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190129183938.GA2960@xps-13>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190129044607.GL25106@ziepe.ca>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 07:39:38PM +0100, Andrea Righi wrote:
-> On Mon, Jan 28, 2019 at 02:26:20PM -0500, Vivek Goyal wrote:
-> > On Mon, Jan 28, 2019 at 06:41:29PM +0100, Andrea Righi wrote:
-> > > Hi Vivek,
+On Mon, Jan 28, 2019 at 09:46:07PM -0700, Jason Gunthorpe wrote:
+> On Mon, Jan 28, 2019 at 04:31:40PM -0700, Jason Gunthorpe wrote:
+> > On Mon, Jan 21, 2019 at 09:42:17AM -0800, Davidlohr Bueso wrote:
+> > > The driver uses mmap_sem for both pinned_vm accounting and
+> > > get_user_pages(). By using gup_fast() and letting the mm handle
+> > > the lock if needed, we can no longer rely on the semaphore and
+> > > simplify the whole thing as the pinning is decoupled from the lock.
 > > > 
-> > > sorry for the late reply.
+> > > This also fixes a bug that __qib_get_user_pages was not taking into
+> > > account the current value of pinned_vm.
 > > > 
-> > > On Mon, Jan 21, 2019 at 04:47:15PM -0500, Vivek Goyal wrote:
-> > > > On Sat, Jan 19, 2019 at 11:08:27AM +0100, Andrea Righi wrote:
-> > > > 
-> > > > [..]
-> > > > > Alright, let's skip the root cgroup for now. I think the point here is
-> > > > > if we want to provide sync() isolation among cgroups or not.
-> > > > > 
-> > > > > According to the manpage:
-> > > > > 
-> > > > >        sync()  causes  all  pending  modifications  to filesystem metadata and cached file data to be
-> > > > >        written to the underlying filesystems.
-> > > > > 
-> > > > > And:
-> > > > >        According to the standard specification (e.g., POSIX.1-2001), sync() schedules the writes, but
-> > > > >        may  return  before  the actual writing is done.  However Linux waits for I/O completions, and
-> > > > >        thus sync() or syncfs() provide the same guarantees as fsync called on every file in the  sys‐
-> > > > >        tem or filesystem respectively.
-> > > > > 
-> > > > > Excluding the root cgroup, do you think a sync() issued inside a
-> > > > > specific cgroup should wait for I/O completions only for the writes that
-> > > > > have been generated by that cgroup?
-> > > > 
-> > > > Can we account I/O towards the cgroup which issued "sync" only if write
-> > > > rate of sync cgroup is higher than cgroup to which page belongs to. Will
-> > > > that solve problem, assuming its doable?
-> > > 
-> > > Maybe this would mitigate the problem, in part, but it doesn't solve it.
-> > > 
-> > > The thing is, if a dirty page belongs to a slow cgroup and a fast cgroup
-> > > issues "sync", the fast cgroup needs to wait a lot, because writeback is
-> > > happening at the speed of the slow cgroup.
+> > > Cc: dennis.dalessandro@intel.com
+> > > Cc: mike.marciniszyn@intel.com
+> > > Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> > > Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> > >  drivers/infiniband/hw/qib/qib_user_pages.c | 67 ++++++++++--------------------
+> > >  1 file changed, 22 insertions(+), 45 deletions(-)
 > > 
-> > Hi Andrea,
+> > I need you to respin this patch/series against the latest rdma tree:
 > > 
-> > But that's true only for I/O which has already been submitted to block
-> > layer, right? Any new I/O yet to be submitted could still be attributed
-> > to faster cgroup requesting sync.
-> 
-> Right. If we could bump up the new I/O yet to be submitted I think we
-> could effectively prevent the priority inversion problem (the ongoing
-> writeback I/O should be negligible).
-> 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git
 > > 
-> > Until and unless cgroups limits are absurdly low, it should not take very
-> > long for already submitted I/O to finish. If yes, then in practice, it
-> > might not be a big problem?
+> > branch for-next
+> > 
+> > > diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
+> > > -static int __qib_get_user_pages(unsigned long start_page, size_t num_pages,
+> > > -				struct page **p)
+> > > -{
+> > > -	unsigned long lock_limit;
+> > > -	size_t got;
+> > > -	int ret;
+> > > -
+> > > -	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+> > > -
+> > > -	if (num_pages > lock_limit && !capable(CAP_IPC_LOCK)) {
+> > > -		ret = -ENOMEM;
+> > > -		goto bail;
+> > > -	}
+> > > -
+> > > -	for (got = 0; got < num_pages; got += ret) {
+> > > -		ret = get_user_pages(start_page + got * PAGE_SIZE,
+> > > -				     num_pages - got,
+> > > -				     FOLL_WRITE | FOLL_FORCE,
+> > > -				     p + got, NULL);
+> > 
+> > As this has been rightly changed to get_user_pages_longterm, and I
+> > think the right answer to solve the conflict is to discard some of
+> > this patch?
 > 
-> I was actually doing my tests with a very low limit (1MB/s both for rbps
-> and wbps), but this shows the problem very well I think.
-> 
-> Here's what I'm doing:
-> 
->  [ slow cgroup (1Mbps read/write) ]
-> 
->    $ cat /sys/fs/cgroup/unified/cg1/io.max
->    259:0 rbps=1048576 wbps=1048576 riops=max wiops=max
->    $ cat /proc/self/cgroup
->    0::/cg1
-> 
->    $ fio --rw=write --bs=1M --size=32M --numjobs=16 --name=writer --time_based --runtime=30
-> 
->  [ fast cgroup (root cgroup, no limitation) ]
-> 
->    # cat /proc/self/cgroup
->    0::/
-> 
->    # time sync
->    real	9m32,618s
->    user	0m0,000s
->    sys	0m0,018s
-> 
-> With this simple test I can easily trigger hung task timeout warnings
-> and make the whole system totally sluggish (even the processes running
-> in the root cgroup).
-> 
-> When fio ends, writeback is still taking forever to complete, as you can
-> see by the insane amount that sync takes to complete.
-> 
+> .. and I'm looking at some of the other conversions here.. *most
+> likely* any caller that is manipulating rlimit for get_user_pages
+> should really be calling get_user_pages_longterm, so they should not
+> be converted to use _fast?
 
-Yeah sync() needs to be treated differently, but its kind of special too.  We
-don't want slow to run sync() and backup fast doing sync() because we make all
-of the io go based on the submitting cgroup.  The problem here is we don't know
-who's more important until we get to the blk cgroup layer, and even then
-sometimes we can't tell (different hierarchies would make this tricky with
-io.weight or io.latency).
+Is this a question?  I'm not sure I understand the meaning here?
 
-We could treat it like REQ_META and just let everything go through and back
-charge.  This feels like a way for the slow group to cheat though, unless we
-just throttle the shit out of him before returning to user space.  I'll have to
-think about this some more.  Thanks,
+Ira
 
-Josef
+> 
+> Jason
