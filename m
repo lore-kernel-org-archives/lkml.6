@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2592AC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD48C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2616214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B918214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762012;
-	bh=CvqD9gYrN0/OTWZxOdslRm1nrCveMkJ9LuR/1EBQi7c=;
+	s=default; t=1548762014;
+	bh=Gkkr3lIfbRiGzEY0XXR6thmqvPdwKeZVkZ8Yz6IhHuU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pkfI4n8rtB8zTkcmEaCFOQkGy3KBP0Gr3xpZJn5CbyRkORuqLrr0PuEd233RBdCJE
-	 RxdNKR9pb7Kdxv5MGIfOMyK/qaoVFkgRUxVNYwncVFfh35696h35Lg8ezO0dZE138O
-	 vVk+WbTe0u2Y+e5UlbO6z6Vme4LN4FJQyZip/wI0=
+	b=kaFM7I6GpozgqLoWPkM7tJ7D8C3wnnBRVP63DnLxzmUPhSla/Ffb2B9ry/IYC5WFV
+	 ngcZmUJ+gIOR9s9srYjFv62WSacJtGlzfThyQY74vvXt4b7se6IbvP85WPPGx6meYF
+	 vtd0lvJ03Z53nXapSRtZYj3xTkE34s4G5LLcf348=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729577AbfA2LkJ (ORCPT
+        id S1729590AbfA2LkN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:40:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57038 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:40:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728677AbfA2LkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:40:07 -0500
+        id S1729572AbfA2LkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:40:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9A9520857;
-        Tue, 29 Jan 2019 11:40:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87D7C20882;
+        Tue, 29 Jan 2019 11:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762006;
-        bh=CvqD9gYrN0/OTWZxOdslRm1nrCveMkJ9LuR/1EBQi7c=;
+        s=default; t=1548762009;
+        bh=Gkkr3lIfbRiGzEY0XXR6thmqvPdwKeZVkZ8Yz6IhHuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vGEPJA6BqDvHvZVCjveMTElp1mehd3C/I1m1mgqAfkbkDAeFpyci+tvUJhbKP8v+t
-         RBhUPbAdH8QhSIZyTrEwSBxDA2qmtfFoLwvvDpqGcXB5NNAcJ25y0sP1ZKHonb6inU
-         UwTXdHz2A55U0BYE2qy+5D1ZpJ/RFUYo5KEbAnwM=
+        b=VcIACgv/viXPHQN1wtXiKpX80IimAMtkwgOAvW7aax/vHCvDXAff0JWXRJvJ7WJB8
+         CZNbfY0Y8RudJIkawj0QJqVy3yPOA9g74nnSLMkktyvt1y4LgC67BbNnjAc/roFH+7
+         hkQhIZLdIybJMqIUyhHnPPyjQsi60rVgWIoSNZFs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.20 077/117] KVM: x86: Fix PV IPIs for 32-bit KVM host
-Date:   Tue, 29 Jan 2019 12:35:28 +0100
-Message-Id: <20190129113211.340319742@linuxfoundation.org>
+Subject: [PATCH 4.20 078/117] KVM: x86: WARN_ONCE if sending a PV IPI returns a fatal error
+Date:   Tue, 29 Jan 2019 12:35:29 +0100
+Message-Id: <20190129113211.380506565@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -67,15 +67,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Christopherson <sean.j.christopherson@intel.com>
 
-commit 1ed199a41c70ad7bfaee8b14f78e791fcf43b278 upstream.
+commit de81c2f912ef57917bdc6d63b410c534c3e07982 upstream.
 
-The recognition of the KVM_HC_SEND_IPI hypercall was unintentionally
-wrapped in "#ifdef CONFIG_X86_64", causing 32-bit KVM hosts to reject
-any and all PV IPI requests despite advertising the feature.  This
-results in all KVM paravirtualized guests hanging during SMP boot due
-to IPIs never being delivered.
+KVM hypercalls return a negative value error code in case of a fatal
+error, e.g. when the hypercall isn't supported or was made with invalid
+parameters.  WARN_ONCE on fatal errors when sending PV IPIs as any such
+error all but guarantees an SMP system will hang due to a missing IPI.
 
-Fixes: 4180bf1b655a ("KVM: X86: Implement "send IPI" hypercall")
+Fixes: aaffcfd1e82d ("KVM: X86: Implement PV IPIs in linux guest")
 Cc: stable@vger.kernel.org
 Cc: Wanpeng Li <wanpengli@tencent.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
@@ -83,22 +82,40 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/kvm.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6997,10 +6997,10 @@ int kvm_emulate_hypercall(struct kvm_vcp
- 	case KVM_HC_CLOCK_PAIRING:
- 		ret = kvm_pv_clock_pairing(vcpu, a0, a1);
- 		break;
-+#endif
- 	case KVM_HC_SEND_IPI:
- 		ret = kvm_pv_send_ipi(vcpu->kvm, a0, a1, a2, a3, op_64_bit);
- 		break;
--#endif
- 	default:
- 		ret = -KVM_ENOSYS;
- 		break;
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -457,6 +457,7 @@ static void __send_ipi_mask(const struct
+ #else
+ 	u64 ipi_bitmap = 0;
+ #endif
++	long ret;
+ 
+ 	if (cpumask_empty(mask))
+ 		return;
+@@ -482,8 +483,9 @@ static void __send_ipi_mask(const struct
+ 		} else if (apic_id < min + KVM_IPI_CLUSTER_SIZE) {
+ 			max = apic_id < max ? max : apic_id;
+ 		} else {
+-			kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
++			ret = kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
+ 				(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, icr);
++			WARN_ONCE(ret < 0, "KVM: failed to send PV IPI: %ld", ret);
+ 			min = max = apic_id;
+ 			ipi_bitmap = 0;
+ 		}
+@@ -491,8 +493,9 @@ static void __send_ipi_mask(const struct
+ 	}
+ 
+ 	if (ipi_bitmap) {
+-		kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
++		ret = kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
+ 			(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, icr);
++		WARN_ONCE(ret < 0, "KVM: failed to send PV IPI: %ld", ret);
+ 	}
+ 
+ 	local_irq_restore(flags);
 
 
