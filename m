@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F777C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF5DC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF502086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 737332083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762668;
-	bh=+rJoEsnSlb22IA9vqzEzbU7c/EWn90PE3NC+1y69dFQ=;
+	s=default; t=1548762670;
+	bh=ulIaSQ7WDourKgAzF6dIjVqN23ayMTYQtybZwtLgpws=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=soepCr4dieDEvVql1RBsFbRF6rL+50dkUASbu020kw+JZYK19eqULJbCEbRx+SX3s
-	 lHOQPQIUA7NO3Z6y+6gSVSczJzZRpu93UT4pr4BUN3Z1h7c1Fksv/0QLdsUe9cEwDA
-	 flC7MfVKDiJWH8tcgdWTBKDln4we8g8CvsSBCQ74=
+	b=FoTxkGdWBHl+5RJK9kDK+Fmsu+5TFPqMiqn6Lhft45y6EvV/+fD5x2eJLE+/3cahs
+	 WtfYYU4pmSa24a8DBAP1ZdCY7M1o7i4Fi+dCA+AWB27wGVZx8jF+XiR31q59k98SSS
+	 gDitB34vm8wkjV1QA2CVbKMivQ0OYboIhzdwNCZI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731817AbfA2LvG (ORCPT
+        id S1731829AbfA2LvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:51:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42524 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:51:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731795AbfA2LvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:51:04 -0500
+        id S1731795AbfA2LvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:51:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F338B2086C;
-        Tue, 29 Jan 2019 11:51:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF1C32083B;
+        Tue, 29 Jan 2019 11:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762663;
-        bh=+rJoEsnSlb22IA9vqzEzbU7c/EWn90PE3NC+1y69dFQ=;
+        s=default; t=1548762666;
+        bh=ulIaSQ7WDourKgAzF6dIjVqN23ayMTYQtybZwtLgpws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gPKFVgZG0XCBVBRY7sDxX3wIs9izPijaR7QdJWnT7C6IIIufuM4FBoTh2/dYBeAaJ
-         CLXAW2mzHeFsbXHVkAWr6AFQQVfQiR+yuRfIYff6lH7PSbRcMnuEkeM0/ZhqvbAUAx
-         9F2TcuXSNLGzaYIfrxkZU7Jy7y5LM7iifC3onP0c=
+        b=GGVOm9vQlNIsY8peKT2DMiB/nzNVhH2ZK+CfzELaNkwueGZXk/5Co3wovlJobB0lv
+         R23jwBn5fqmvEVqCvCkQR3eJVXq+kWg/R9AvwzsQarViz3hILZ3t6JtZrjzOTANJDB
+         JXGZgUdAz5x/9/5WR1BWHlUEzvk5nyvQSETdVQVM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Pravin B Shelar <pshelar@ovn.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 02/44] net: Fix usage of pskb_trim_rcsum
-Date:   Tue, 29 Jan 2019 12:35:57 +0100
-Message-Id: <20190129113140.084104122@linuxfoundation.org>
+Subject: [PATCH 4.9 03/44] openvswitch: Avoid OOB read when parsing flow nlattrs
+Date:   Tue, 29 Jan 2019 12:35:58 +0100
+Message-Id: <20190129113140.209520729@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -67,73 +68,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-[ Upstream commit 6c57f0458022298e4da1729c67bd33ce41c14e7a ]
+[ Upstream commit 04a4af334b971814eedf4e4a413343ad3287d9a9 ]
 
-In certain cases, pskb_trim_rcsum() may change skb pointers.
-Reinitialize header pointers afterwards to avoid potential
-use-after-frees. Add a note in the documentation of
-pskb_trim_rcsum(). Found by KASAN.
+For nested and variable attributes, the expected length of an attribute
+is not known and marked by a negative number.  This results in an OOB
+read when the expected length is later used to check if the attribute is
+all zeros. Fix this by using the actual length of the attribute rather
+than the expected length.
 
 Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Acked-by: Pravin B Shelar <pshelar@ovn.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ppp/pppoe.c                  |    1 +
- include/linux/skbuff.h                   |    1 +
- net/bridge/br_netfilter_ipv6.c           |    1 +
- net/bridge/netfilter/nft_reject_bridge.c |    1 +
- net/ipv4/ip_input.c                      |    1 +
- 5 files changed, 5 insertions(+)
+ net/openvswitch/flow_netlink.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ppp/pppoe.c
-+++ b/drivers/net/ppp/pppoe.c
-@@ -442,6 +442,7 @@ static int pppoe_rcv(struct sk_buff *skb
- 	if (pskb_trim_rcsum(skb, len))
- 		goto drop;
- 
-+	ph = pppoe_hdr(skb);
- 	pn = pppoe_pernet(dev_net(dev));
- 
- 	/* Note that get_item does a sock_hold(), so sk_pppox(po)
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -2962,6 +2962,7 @@ int pskb_trim_rcsum_slow(struct sk_buff
-  *
-  *	This is exactly the same as pskb_trim except that it ensures the
-  *	checksum of received packets are still valid after the operation.
-+ *	It can change skb pointers.
-  */
- 
- static inline int pskb_trim_rcsum(struct sk_buff *skb, unsigned int len)
---- a/net/bridge/br_netfilter_ipv6.c
-+++ b/net/bridge/br_netfilter_ipv6.c
-@@ -131,6 +131,7 @@ int br_validate_ipv6(struct net *net, st
- 					IPSTATS_MIB_INDISCARDS);
- 			goto drop;
+--- a/net/openvswitch/flow_netlink.c
++++ b/net/openvswitch/flow_netlink.c
+@@ -409,7 +409,7 @@ static int __parse_flow_nlattrs(const st
+ 			return -EINVAL;
  		}
-+		hdr = ipv6_hdr(skb);
- 	}
- 	if (hdr->nexthdr == NEXTHDR_HOP && br_nf_check_hbh_len(skb))
- 		goto drop;
---- a/net/bridge/netfilter/nft_reject_bridge.c
-+++ b/net/bridge/netfilter/nft_reject_bridge.c
-@@ -236,6 +236,7 @@ static bool reject6_br_csum_ok(struct sk
- 	    pskb_trim_rcsum(skb, ntohs(ip6h->payload_len) + sizeof(*ip6h)))
- 		return false;
  
-+	ip6h = ipv6_hdr(skb);
- 	thoff = ipv6_skip_exthdr(skb, ((u8*)(ip6h+1) - skb->data), &proto, &fo);
- 	if (thoff < 0 || thoff >= skb->len || (fo & htons(~0x7)) != 0)
- 		return false;
---- a/net/ipv4/ip_input.c
-+++ b/net/ipv4/ip_input.c
-@@ -475,6 +475,7 @@ int ip_rcv(struct sk_buff *skb, struct n
- 		goto drop;
- 	}
- 
-+	iph = ip_hdr(skb);
- 	skb->transport_header = skb->network_header + iph->ihl*4;
- 
- 	/* Remove any debris in the socket control block */
+-		if (!nz || !is_all_zero(nla_data(nla), expected_len)) {
++		if (!nz || !is_all_zero(nla_data(nla), nla_len(nla))) {
+ 			attrs |= 1 << type;
+ 			a[type] = nla;
+ 		}
 
 
