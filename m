@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A0CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C58C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A0C32086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4477B20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762634;
-	bh=2Q/FZL17kG2HxpErKH14YkgJzzZRLf2a+d4B7gBOuQ0=;
+	s=default; t=1548762642;
+	bh=4Pv58Jq6ZeA1KyDARshtLME1gtWK55L0gKuaylBLPWI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=e/F3cYy1MJm2FRw3ZnGNRDlG6icin2IR94aw+M8WIjgDQUleDPjp1j+hB1+5ewodi
-	 mdtVADlflmr7QcExjeb/2dpQVnCWwyNU8oUBqc69oAZ3dlYq6apYpa/GWkEYF3N7MH
-	 yrEKHS0NDYKqL4JIWDFBxFEzPnOIVWs8F7vgczGE=
+	b=jovMyhli5EXBHKx/a4hSJiOdlyXsWn2MU586wNXYJQJTv7PBEWYUYVAvuuvzLJttA
+	 H9LdYg6bX+rpnvU/5cpaIFMU3HNRrlWQc27UIWlFKeJ/oy75NFHfyl8DTOG9m3W8gr
+	 r21AyGMTVDcuaZcJsHH6IKKCAnGlUJdcD1RrvcNc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731692AbfA2Luc (ORCPT
+        id S1730949AbfA2Luk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:50:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41804 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731423AbfA2Lu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:27 -0500
+        id S1731352AbfA2Luh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:50:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 417122148E;
-        Tue, 29 Jan 2019 11:50:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C9D12086C;
+        Tue, 29 Jan 2019 11:50:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762626;
-        bh=2Q/FZL17kG2HxpErKH14YkgJzzZRLf2a+d4B7gBOuQ0=;
+        s=default; t=1548762636;
+        bh=4Pv58Jq6ZeA1KyDARshtLME1gtWK55L0gKuaylBLPWI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PvdiHTt7Ho30tj2VXsz0hx07rzaNZSVnNf32R3OEmL9DQ+JEl+Y0S6muxBJTJ3en3
-         S7OpChrucGvCm9KXXiFwXRg7uUkU3P2QSVjJ5ntjaqpgLvefG23TImHGddDmArbpRw
-         Aa+WYpgAMFhfpb3Cx+Np4ow+93yhj9gGiSakujj8=
+        b=juzmuMaPpFKJ8cXWQBiug5MoNHDahKu78PhPfIqcB+HzfUW+SqF0bvCHTjaH9g6X/
+         H546OsmLJIwQdHdqgHqTZoIo0p3g3qFIvB/Y8gqtn+4A+gnTJZHWkkVGoHcDCGQBiw
+         a4wj3knRcpOO0G1DZSYiwV9CDPTH8/el1UJ9Gk18=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Milan Broz <gmazyland@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.14 40/68] dm crypt: fix parsing of extended IV arguments
-Date:   Tue, 29 Jan 2019 12:36:02 +0100
-Message-Id: <20190129113135.067117978@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
+        hpa@zytor.com, peterz@infradead.org, mpe@ellerman.id.au,
+        will.deacon@arm.com, luto@kernel.org, jroedel@suse.de
+Subject: [PATCH 4.14 43/68] x86/selftests/pkeys: Fork() to check for state being preserved
+Date:   Tue, 29 Jan 2019 12:36:05 +0100
+Message-Id: <20190129113135.544858501@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -65,84 +67,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Milan Broz <gmazyland@gmail.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 1856b9f7bcc8e9bdcccc360aabb56fbd4dd6c565 upstream.
+commit e1812933b17be7814f51b6c310c5d1ced7a9a5f5 upstream.
 
-The dm-crypt cipher specification in a mapping table is defined as:
-  cipher[:keycount]-chainmode-ivmode[:ivopts]
-or (new crypt API format):
-  capi:cipher_api_spec-ivmode[:ivopts]
+There was a bug where the per-mm pkey state was not being preserved across
+fork() in the child.  fork() is performed in the pkey selftests, but all of
+the pkey activity is performed in the parent.  The child does not perform
+any actions sensitive to pkey state.
 
-For ESSIV, the parameter includes hash specification, for example:
-aes-cbc-essiv:sha256
+To make the test more sensitive to these kinds of bugs, add a fork() where
+the parent exits, and execution continues in the child.
 
-The implementation expected that additional IV option to never include
-another dash '-' character.
+To achieve this let the key exhaustion test not terminate at the first
+allocation failure and fork after 2*NR_PKEYS loops and continue in the
+child.
 
-But, with SHA3, there are names like sha3-256; so the mapping table
-parser fails:
-
-dmsetup create test --table "0 8 crypt aes-cbc-essiv:sha3-256 9c1185a5c5e9fc54612808977ee8f5b9e 0 /dev/sdb 0"
-  or (new crypt API format)
-dmsetup create test --table "0 8 crypt capi:cbc(aes)-essiv:sha3-256 9c1185a5c5e9fc54612808977ee8f5b9e 0 /dev/sdb 0"
-
-  device-mapper: crypt: Ignoring unexpected additional cipher options
-  device-mapper: table: 253:0: crypt: Error creating IV
-  device-mapper: ioctl: error adding target to table
-
-Fix the dm-crypt constructor to ignore additional dash in IV options and
-also remove a bogus warning (that is ignored anyway).
-
-Cc: stable@vger.kernel.org # 4.12+
-Signed-off-by: Milan Broz <gmazyland@gmail.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: peterz@infradead.org
+Cc: mpe@ellerman.id.au
+Cc: will.deacon@arm.com
+Cc: luto@kernel.org
+Cc: jroedel@suse.de
+Cc: stable@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Joerg Roedel <jroedel@suse.de>
+Link: https://lkml.kernel.org/r/20190102215657.585704B7@viggo.jf.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-crypt.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ tools/testing/selftests/x86/protection_keys.c |   41 +++++++++++++++++++-------
+ 1 file changed, 31 insertions(+), 10 deletions(-)
 
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -2413,9 +2413,21 @@ static int crypt_ctr_cipher_new(struct d
- 	 * capi:cipher_api_spec-iv:ivopts
- 	 */
- 	tmp = &cipher_in[strlen("capi:")];
--	cipher_api = strsep(&tmp, "-");
--	*ivmode = strsep(&tmp, ":");
--	*ivopts = tmp;
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -1133,6 +1133,21 @@ void test_pkey_syscalls_bad_args(int *pt
+ 	pkey_assert(err);
+ }
+ 
++void become_child(void)
++{
++	pid_t forkret;
 +
-+	/* Separate IV options if present, it can contain another '-' in hash name */
-+	*ivopts = strrchr(tmp, ':');
-+	if (*ivopts) {
-+		**ivopts = '\0';
-+		(*ivopts)++;
++	forkret = fork();
++	pkey_assert(forkret >= 0);
++	dprintf3("[%d] fork() ret: %d\n", getpid(), forkret);
++
++	if (!forkret) {
++		/* in the child */
++		return;
 +	}
-+	/* Parse IV mode */
-+	*ivmode = strrchr(tmp, '-');
-+	if (*ivmode) {
-+		**ivmode = '\0';
-+		(*ivmode)++;
-+	}
-+	/* The rest is crypto API spec */
-+	cipher_api = tmp;
++	exit(0);
++}
++
+ /* Assumes that all pkeys other than 'pkey' are unallocated */
+ void test_pkey_alloc_exhaust(int *ptr, u16 pkey)
+ {
+@@ -1141,7 +1156,7 @@ void test_pkey_alloc_exhaust(int *ptr, u
+ 	int nr_allocated_pkeys = 0;
+ 	int i;
  
- 	if (*ivmode && !strcmp(*ivmode, "lmk"))
- 		cc->tfms_count = 64;
-@@ -2485,11 +2497,8 @@ static int crypt_ctr_cipher_old(struct d
- 		goto bad_mem;
+-	for (i = 0; i < NR_PKEYS*2; i++) {
++	for (i = 0; i < NR_PKEYS*3; i++) {
+ 		int new_pkey;
+ 		dprintf1("%s() alloc loop: %d\n", __func__, i);
+ 		new_pkey = alloc_pkey();
+@@ -1152,21 +1167,27 @@ void test_pkey_alloc_exhaust(int *ptr, u
+ 		if ((new_pkey == -1) && (errno == ENOSPC)) {
+ 			dprintf2("%s() failed to allocate pkey after %d tries\n",
+ 				__func__, nr_allocated_pkeys);
+-			break;
++		} else {
++			/*
++			 * Ensure the number of successes never
++			 * exceeds the number of keys supported
++			 * in the hardware.
++			 */
++			pkey_assert(nr_allocated_pkeys < NR_PKEYS);
++			allocated_pkeys[nr_allocated_pkeys++] = new_pkey;
+ 		}
+-		pkey_assert(nr_allocated_pkeys < NR_PKEYS);
+-		allocated_pkeys[nr_allocated_pkeys++] = new_pkey;
++
++		/*
++		 * Make sure that allocation state is properly
++		 * preserved across fork().
++		 */
++		if (i == NR_PKEYS*2)
++			become_child();
+ 	}
  
- 	chainmode = strsep(&tmp, "-");
--	*ivopts = strsep(&tmp, "-");
--	*ivmode = strsep(&*ivopts, ":");
--
--	if (tmp)
--		DMWARN("Ignoring unexpected additional cipher options");
-+	*ivmode = strsep(&tmp, ":");
-+	*ivopts = tmp;
+ 	dprintf3("%s()::%d\n", __func__, __LINE__);
  
  	/*
- 	 * For compatibility with the original dm-crypt mapping format, if
+-	 * ensure it did not reach the end of the loop without
+-	 * failure:
+-	 */
+-	pkey_assert(i < NR_PKEYS*2);
+-
+-	/*
+ 	 * There are 16 pkeys supported in hardware.  Three are
+ 	 * allocated by the time we get here:
+ 	 *   1. The default key (0)
 
 
