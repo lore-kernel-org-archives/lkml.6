@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E89C2C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1583BC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80D32147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:09:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2E7A2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:09:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763777;
-	bh=OTQX3yQ8cD4bN36v1aipQ4nUuVx2XYb9yT5Tgg2Ikyc=;
+	s=default; t=1548763782;
+	bh=2Kr17yZq/oU9Coudx0+IqU8jWEN8qWgaCYjfFlFyspk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cjlAI+nNpp39QhwscQuarZwvhVuKSigPqOzRka6E5Fdym7keWqJ8xii4bqy1ySZg8
-	 HVqiBE1Ppthti6Zxr5pwLKoOIRjuU6OYvRom/5OHxQP19sPOycoTEDX0mO0+PtKtVH
-	 JyCYkNClkxwYm1I4asXhl8yRWATgXd6fXinqV6Bk=
+	b=cBFNdzrO9C/paTIyusiILBnOHAU3aE3LIv2+0Up1Gngsjsu6dWLzCd8rUAW1/OBxb
+	 KtylPPbxkxiImOZ6NGm06QB61pWhRENBzwrG7FE1d5ObemkIw+wl6TBYuvv+2GyAnG
+	 Ya1cVL2qMX9fFrDlM0lfZdV4C0OsCJ+lyWD77OYQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728648AbfA2Lia (ORCPT
+        id S1729128AbfA2LiZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:38:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55134 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:38:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729099AbfA2Li2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:38:28 -0500
+        id S1729090AbfA2LiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:38:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FCB020844;
-        Tue, 29 Jan 2019 11:38:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40C5620844;
+        Tue, 29 Jan 2019 11:38:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761907;
-        bh=OTQX3yQ8cD4bN36v1aipQ4nUuVx2XYb9yT5Tgg2Ikyc=;
+        s=default; t=1548761901;
+        bh=2Kr17yZq/oU9Coudx0+IqU8jWEN8qWgaCYjfFlFyspk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zCdtTwc209NnWwOgjGsaAUF2ND4ttjZWmeCTh5cEJx7i6EawLWS2grCX6cTQy5CGx
-         B9odhtX6nUGowCQh15oJGVYHuq0MRubNobFCyLvE4QXZ9T4UARJMbUHwkcxjnzWEfq
-         AEDXYKsuAWDbI74N2JZ+89MdBeJ/Lr1LjD5AEVSk=
+        b=FeDJKX3/8YK19gxvcWixgWiqvT5Y+9mpUWr0/T7DzEl17caDjdlkLiOGCd8/DLxOw
+         3p0rZgP81hhxNYwiSmj96nCUWoS9G0yhDXyvOuFgmY6iOx9Kl9G6p27yB3jcUlf4sA
+         9xTal+QGQsMwzEP2oQyi7qapiFTPlBLiet0zqwa0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
         Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.20 043/117] ARC: perf: map generic branches to correct hardware condition
-Date:   Tue, 29 Jan 2019 12:34:54 +0100
-Message-Id: <20190129113209.752734309@linuxfoundation.org>
+Subject: [PATCH 4.20 041/117] ARCv2: lib: memeset: fix doing prefetchw outside of buffer
+Date:   Tue, 29 Jan 2019 12:34:52 +0100
+Message-Id: <20190129113209.656069313@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -68,39 +68,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-commit 3affbf0e154ee351add6fcc254c59c3f3947fa8f upstream.
+commit e6a72b7daeeb521753803550f0ed711152bb2555 upstream.
 
-So far we've mapped branches to "ijmp" which also counts conditional
-branches NOT taken. This makes us different from other architectures
-such as ARM which seem to be counting only taken branches.
+ARCv2 optimized memset uses PREFETCHW instruction for prefetching the
+next cache line but doesn't ensure that the line is not past the end of
+the buffer. PRETECHW changes the line ownership and marks it dirty,
+which can cause issues in SMP config when next line was already owned by
+other core. Fix the issue by avoiding the PREFETCHW
 
-So use "ijmptak" hardware condition which only counts (all jump
-instructions that are taken)
+Some more details:
 
-'ijmptak' event is available on both ARCompact and ARCv2 ISA based
-cores.
+The current code has 3 logical loops (ignroing the unaligned part)
+  (a) Big loop for doing aligned 64 bytes per iteration with PREALLOC
+  (b) Loop for 32 x 2 bytes with PREFETCHW
+  (c) any left over bytes
+
+loop (a) was already eliding the last 64 bytes, so PREALLOC was
+safe. The fix was removing PREFETCW from (b).
+
+Another potential issue (applicable to configs with 32 or 128 byte L1
+cache line) is that PREALLOC assumes 64 byte cache line and may not do
+the right thing specially for 32b. While it would be easy to adapt,
+there are no known configs with those lie sizes, so for now, just
+compile out PREALLOC in such cases.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: stable@vger.kernel.org
+Cc: stable@vger.kernel.org #4.4+
 Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-[vgupta: reworked changelog]
+[vgupta: rewrote changelog, used asm .macro vs. "C" macro]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/include/asm/perf_event.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arc/lib/memset-archs.S |   40 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 32 insertions(+), 8 deletions(-)
 
---- a/arch/arc/include/asm/perf_event.h
-+++ b/arch/arc/include/asm/perf_event.h
-@@ -103,7 +103,8 @@ static const char * const arc_pmu_ev_hw_
+--- a/arch/arc/lib/memset-archs.S
++++ b/arch/arc/lib/memset-archs.S
+@@ -7,11 +7,39 @@
+  */
  
- 	/* counts condition */
- 	[PERF_COUNT_HW_INSTRUCTIONS] = "iall",
--	[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] = "ijmp", /* Excludes ZOL jumps */
-+	/* All jump instructions that are taken */
-+	[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] = "ijmptak",
- 	[PERF_COUNT_ARC_BPOK]         = "bpok",	  /* NP-NT, PT-T, PNT-NT */
- #ifdef CONFIG_ISA_ARCV2
- 	[PERF_COUNT_HW_BRANCH_MISSES] = "bpmp",
+ #include <linux/linkage.h>
++#include <asm/cache.h>
+ 
+-#undef PREALLOC_NOT_AVAIL
++/*
++ * The memset implementation below is optimized to use prefetchw and prealloc
++ * instruction in case of CPU with 64B L1 data cache line (L1_CACHE_SHIFT == 6)
++ * If you want to implement optimized memset for other possible L1 data cache
++ * line lengths (32B and 128B) you should rewrite code carefully checking
++ * we don't call any prefetchw/prealloc instruction for L1 cache lines which
++ * don't belongs to memset area.
++ */
++
++#if L1_CACHE_SHIFT == 6
++
++.macro PREALLOC_INSTR	reg, off
++	prealloc	[\reg, \off]
++.endm
++
++.macro PREFETCHW_INSTR	reg, off
++	prefetchw	[\reg, \off]
++.endm
++
++#else
++
++.macro PREALLOC_INSTR
++.endm
++
++.macro PREFETCHW_INSTR
++.endm
++
++#endif
+ 
+ ENTRY_CFI(memset)
+-	prefetchw [r0]		; Prefetch the write location
++	PREFETCHW_INSTR	r0, 0	; Prefetch the first write location
+ 	mov.f	0, r2
+ ;;; if size is zero
+ 	jz.d	[blink]
+@@ -48,11 +76,8 @@ ENTRY_CFI(memset)
+ 
+ 	lpnz	@.Lset64bytes
+ 	;; LOOP START
+-#ifdef PREALLOC_NOT_AVAIL
+-	prefetchw [r3, 64]	;Prefetch the next write location
+-#else
+-	prealloc  [r3, 64]
+-#endif
++	PREALLOC_INSTR	r3, 64	; alloc next line w/o fetching
++
+ #ifdef CONFIG_ARC_HAS_LL64
+ 	std.ab	r4, [r3, 8]
+ 	std.ab	r4, [r3, 8]
+@@ -85,7 +110,6 @@ ENTRY_CFI(memset)
+ 	lsr.f	lp_count, r2, 5 ;Last remaining  max 124 bytes
+ 	lpnz	.Lset32bytes
+ 	;; LOOP START
+-	prefetchw   [r3, 32]	;Prefetch the next write location
+ #ifdef CONFIG_ARC_HAS_LL64
+ 	std.ab	r4, [r3, 8]
+ 	std.ab	r4, [r3, 8]
 
 
