@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22361C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40983C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC36E20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05F8D20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761898;
-	bh=7bj5jtkY5PtTm5DRLbzQex9pitepWEky4hV5g1bQ4q4=;
+	s=default; t=1548761902;
+	bh=0uynyqNaPeNVnMEm2lB1VhEnM+5doSQMskXa+4MRJXs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YetNwGbyKvHLaaN44c0PfclQxyyGjJ6DzoV0cPCeiukeoXEYQ1XvYIR7BwgKh0Y58
-	 u+kaoXnGexFsEkM1QVuS9nFQkzZBDgqLHr/0bT0XK78xcREWyoU3Guty3NMXP63jjr
-	 l+mK5jCvTyIMaq/KD++0+iKWDlMgLWHPDU8ASPkA=
+	b=pAAz9MQ54oBd/ToMKKxKRQqiUsig/3hrHCiIyEI4cyXOm1dEZbdZg7Tmy8Is+3svW
+	 Ddg2UUB1T13BlLn6yTqxY8W5LTPw+9LxY9FtmKQvStdCDgUnWPBQqiWJVMqyNgLcjw
+	 i8RV5W28rc5dTyjxKFQxgLebhZyGp183Ed2xurxw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbfA2LiR (ORCPT
+        id S1729113AbfA2LiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:38:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54904 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:38:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729077AbfA2LiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:38:14 -0500
+        id S1729090AbfA2LiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:38:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 148A7214DA;
-        Tue, 29 Jan 2019 11:38:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1B47214DA;
+        Tue, 29 Jan 2019 11:38:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761893;
-        bh=7bj5jtkY5PtTm5DRLbzQex9pitepWEky4hV5g1bQ4q4=;
+        s=default; t=1548761896;
+        bh=0uynyqNaPeNVnMEm2lB1VhEnM+5doSQMskXa+4MRJXs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R8lsbZyP7PQtySyarhQOb6iwdPb2uGWig1fh6rlS8Amfwf+WWBzA8F+ddrKvRJBNL
-         sZqxVg8VHTaNmumcB/eAnj1U5BtdTpX/irX2s0wrfFsD8DhINK0KR58yYEfzDazRXF
-         vo63tAE2ssqyWLG2121Df2Ka4kpil4hUxpeTtaH8=
+        b=xfziku7tzsgMBrN3C5FnY4zFha/bJiTHkxWm0QK2CuHD/oJsjwjTClaNJzhHL/r7I
+         iadmo5rwxvdG3Aci2O0bitbe7E88eTBxAn/2P5X0EbmmiwLj9clztKkz+aC5nYOLyu
+         WfwJQK6tg2S82TjQ094xXieGpHzgqvVuAHBoygIk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.20 038/117] inotify: Fix fd refcount leak in inotify_add_watch().
-Date:   Tue, 29 Jan 2019 12:34:49 +0100
-Message-Id: <20190129113209.511602872@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.20 039/117] ALSA: hda/realtek - Fix typo for ALC225 model
+Date:   Tue, 29 Jan 2019 12:34:50 +0100
+Message-Id: <20190129113209.563542487@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -66,38 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Kailang Yang <kailang@realtek.com>
 
-commit 125892edfe69915a227d8d125ff0e1cd713178f4 upstream.
+commit 82aa0d7e09840704d9a37434fef1770179d663fb upstream.
 
-Commit 4d97f7d53da7dc83 ("inotify: Add flag IN_MASK_CREATE for
-inotify_add_watch()") forgot to call fdput() before bailing out.
+Fix typo for model alc255-dell1 to alc225-dell1.
 
-Fixes: 4d97f7d53da7dc83 ("inotify: Add flag IN_MASK_CREATE for inotify_add_watch()")
-CC: stable@vger.kernel.org
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Enable headset mode support for new WYSE NB platform.
+
+Fixes: a26d96c7802e ("ALSA: hda/realtek - Comprehensive model list for ALC259 & co")
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/notify/inotify/inotify_user.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ sound/pci/hda/patch_realtek.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -724,8 +724,10 @@ SYSCALL_DEFINE3(inotify_add_watch, int,
- 		return -EBADF;
- 
- 	/* IN_MASK_ADD and IN_MASK_CREATE don't make sense together */
--	if (unlikely((mask & IN_MASK_ADD) && (mask & IN_MASK_CREATE)))
--		return -EINVAL;
-+	if (unlikely((mask & IN_MASK_ADD) && (mask & IN_MASK_CREATE))) {
-+		ret = -EINVAL;
-+		goto fput_and_out;
-+	}
- 
- 	/* verify that this is indeed an inotify instance */
- 	if (unlikely(f.file->f_op != &inotify_fops)) {
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6842,7 +6842,7 @@ static const struct hda_model_fixup alc2
+ 	{.id = ALC293_FIXUP_LENOVO_SPK_NOISE, .name = "lenovo-spk-noise"},
+ 	{.id = ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY, .name = "lenovo-hotkey"},
+ 	{.id = ALC255_FIXUP_DELL_SPK_NOISE, .name = "dell-spk-noise"},
+-	{.id = ALC225_FIXUP_DELL1_MIC_NO_PRESENCE, .name = "alc255-dell1"},
++	{.id = ALC225_FIXUP_DELL1_MIC_NO_PRESENCE, .name = "alc225-dell1"},
+ 	{.id = ALC295_FIXUP_DISABLE_DAC3, .name = "alc295-disable-dac3"},
+ 	{.id = ALC280_FIXUP_HP_HEADSET_MIC, .name = "alc280-hp-headset"},
+ 	{.id = ALC221_FIXUP_HP_FRONT_MIC, .name = "alc221-hp-mic"},
 
 
