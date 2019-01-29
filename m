@@ -2,128 +2,92 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0C6C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6FDC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5F9E21473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:27:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56FED21473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:27:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbfA2P1j (ORCPT
+        id S1728412AbfA2P1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:27:39 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3236 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725730AbfA2P1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:27:39 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8CCB182AC72F5AC071DE;
-        Tue, 29 Jan 2019 23:27:35 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.43) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Tue, 29 Jan 2019
- 23:27:26 +0800
-Subject: Re: Question on handling managed IRQs when hotplugging CPUs
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Hannes Reinecke <hare@suse.com>
-References: <f6f6e031-8b79-439d-c2af-8d3e76f30710@huawei.com>
- <5bff8227-16fd-6bca-c16e-3992ef6bec5a@suse.com>
- <alpine.DEB.2.21.1901291257590.1513@nanos.tec.linutronix.de>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        SCSI Mailing List <linux-scsi@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <bdd457db-6898-a085-bfaf-99d29d81467d@huawei.com>
-Date:   Tue, 29 Jan 2019 15:27:20 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Tue, 29 Jan 2019 10:27:49 -0500
+Received: from foss.arm.com ([217.140.101.70]:38600 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbfA2P1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 10:27:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F574A78;
+        Tue, 29 Jan 2019 07:27:48 -0800 (PST)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 913D23F557;
+        Tue, 29 Jan 2019 07:27:45 -0800 (PST)
+Date:   Tue, 29 Jan 2019 15:27:35 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org, liviu.dudau@arm.com,
+        lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, nm@ti.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        dietmar.eggemann@arm.com, Sudeep Holla <sudeep.holla@arm.com>,
+        mka@chromium.org
+Subject: Re: [PATCH 6/7] arm64: dts: juno: Add cpu dynamic-power-coefficient
+ information
+Message-ID: <20190129152735.GA24772@e107155-lin>
+References: <20190128165522.31749-1-quentin.perret@arm.com>
+ <20190128165522.31749-7-quentin.perret@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1901291257590.1513@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190128165522.31749-7-quentin.perret@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hannes, Thomas,
-
-On 29/01/2019 12:01, Thomas Gleixner wrote:
-> On Tue, 29 Jan 2019, Hannes Reinecke wrote:
->> That actually is a very good question, and I have been wondering about this
->> for quite some time.
->>
->> I find it a bit hard to envision a scenario where the IRQ affinity is
->> automatically (and, more importantly, atomically!) re-routed to one of the
->> other CPUs.
-
-Isn't this what happens today for non-managed IRQs?
-
->> And even it it were, chances are that there are checks in the driver
->> _preventing_ them from handling those requests, seeing that they should have
->> been handled by another CPU ...
-
-Really? I would not think that it matters which CPU we service the 
-interrupt on.
-
->>
->> I guess the safest bet is to implement a 'cleanup' worker queue which is
->> responsible of looking through all the outstanding commands (on all hardware
->> queues), and then complete those for which no corresponding CPU / irqhandler
->> can be found.
->>
->> But I defer to the higher authorities here; maybe I'm totally wrong and it's
->> already been taken care of.
+On Mon, Jan 28, 2019 at 04:55:21PM +0000, Quentin Perret wrote:
+> From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 >
-> TBH, I don't know. I merily was involved in the genirq side of this. But
-> yes, in order to make this work correctly the basic contract for CPU
-> hotplug case must be:
+> A CPUfreq driver, like the scpi driver used on Juno boards, which
+> provide the Energy Model with power cost information via the PM_OPP
+> of_dev_pm_opp_get_cpu_power() function, do need the
+> dynamic-power-coefficient (C) in the device tree.
 >
-> If the last CPU which is associated to a queue (and the corresponding
-> interrupt) goes offline, then the subsytem/driver code has to make sure
-> that:
+> Method used to obtain the C value:
+> C is computed by measuring energy (E) consumption of a frequency domain
+> (FD) over a 10s runtime (t) sysbench workload running at each Operating
+> Performance Point (OPP) affine to 1 or 2 CPUs of that FD while the other
+> CPUs of the system are hotplugged out.
+> By definition all CPUs of a FD have the the same micro-architecture. An
+> OPP is characterized by a certain frequency (f) and voltage (V) value.
+> The corresponding power values (P) are calculated by dividing the delta
+> of the E values between the runs with 2 and 1 CPUs by t.
 >
->    1) No more requests can be queued on that queue
+> With n data tuples (P, f, V), n equal to number of OPPs for this
+> frequency domain, we can solve C by:
 >
->    2) All outstanding of that queue have been completed or redirected
->       (don't know if that's possible at all) to some other queue.
-
-This may not be possible. For the HW I deal with, we have symmetrical 
-delivery and completion queues, and a command delivered on DQx will 
-always complete on CQx. Each completion queue has a dedicated IRQ.
-
+> P = Pstat + Pdyn
 >
-> That has to be done in that order obviously. Whether any of the
-> subsystems/drivers actually implements this, I can't tell.
-
-Going back to c5cb83bb337c25, it seems to me that the change was made 
-with the idea that we can maintain the affinity for the IRQ as we're 
-shutting it down as no interrupts should occur.
-
-However I don't see why we can't instead keep the IRQ up and set the 
-affinity to all online CPUs in offline path, and restore the original 
-affinity in online path. The reason we set the queue affinity to 
-specific CPUs is for performance, but I would not say that this matters 
-for handling residual IRQs.
-
-Thanks,
-John
-
+> P = Pstat + CV²f
 >
-> Thanks,
+> Cx = (Px - P1)/(Vx²fx - V1²f1) with x = {2, ..., n}
 >
-> 	tglx
+> The C value is the arithmetic mean out of {C2, ..., Cn}.
 >
-> .
+> Since DVFS is broken on Juno r1, no dynamic-power-coefficient
+> information has been added to its dts file.
 >
 
+Since the binding for "dynamic-power-coefficient" property already exist,
+and I don't see any dependency for this and the next patch(TC2) on this
+series, I will apply them. Please shout if for any reason that's not true.
 
+--
+Regards,
+Sudeep
