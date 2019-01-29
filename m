@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6D9C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87898C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEA6D2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:08:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48BE12084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:08:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dtSOU/Wk"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bbEl1Xzg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728026AbfA2LHF (ORCPT
+        id S1727445AbfA2LHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:07:05 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37843 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbfA2LHB (ORCPT
+        Tue, 29 Jan 2019 06:07:04 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51794 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727176AbfA2LHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:07:01 -0500
-Received: by mail-wm1-f65.google.com with SMTP id g67so17260894wmd.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 03:06:59 -0800 (PST)
+        Tue, 29 Jan 2019 06:07:02 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b11so17358024wmj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 03:07:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KqztSqIPzKKBWIFY2MqAio0w3pO/+CETJ20qHxYP8sU=;
-        b=dtSOU/WkVIhSYUqeW3JTn3QUufABzxHPLxowScogLO1dE4ZwITfBQdRm0f+ZtddNKB
-         UXUi1A/1zNrj6MnKUUu6LpqcGQ1WdyfuVgpmnqma4bCJGWtcxZaEfLgdfbanuGNMHgWo
-         vhkVrylJKJu+zYCvMj/ntuM4/9rogp/gl39Lk=
+        bh=sfh0pAFFntluWsfkKiHNCWmGd04mxXjXMAOMMF2nCLo=;
+        b=bbEl1Xzgyv62vtDcTw804jba5WzfBOVjKpHPxC3U5g2tcPH4HKqtB+uTCqHcWc7xfx
+         WgdKQhwnUJws1yCsxGdrqh5MOEpOUBRGDkjY7U14LxizTJ5yiae2dwFGTATB4rNJdjbr
+         bf7Ph+MwLgcCr8DcYkS2jIlYcoixT+wlG6DFU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KqztSqIPzKKBWIFY2MqAio0w3pO/+CETJ20qHxYP8sU=;
-        b=JLOuJn9TGrvoRmlFYHxHUKB5sjjks4jJOBX9exDsRzzlIBXeQ6fmQqbqVLuFYCQRTl
-         hbbqDegRWJtIR+1LG3qMF7mVHrN0rAMRnQKViTzOS7W45hrBfn+sP/s017LDuQsoXQV8
-         wWzYbdirXvTAOQ3y3Nm/CH40D8AHVMCbbtN0nmLCyKdFzk9eaRFrFcJ3e5KL+FdeiLhb
-         ZrOO0awaRS378kPRvGPQOetn+hpQHOhRw6XnkIvEK1PTpgyrCDv6lG3bV55aBeUAWRyO
-         D8orWA/fcSH4um2Xs0goKRfX1dKrkIZNofUrynJXSXoGP9stjsrt34DeeAyebMYBICBb
-         80KQ==
-X-Gm-Message-State: AJcUukfqXGzfgLebIfYdXZfPbBO26oGf0tfCCwoK9xVkBgX+QomtaBJE
-        f7Ip4E+TgqpF77eonoystcTkVA==
-X-Google-Smtp-Source: ALg8bN700krUAVlb9TYy54/s/Am6FyVeMUw5idUjzm72ZYoxaexT8Ki6r4Ds4SZLdVhuJamsIraEfg==
-X-Received: by 2002:a1c:c87:: with SMTP id 129mr19704056wmm.116.1548760018406;
-        Tue, 29 Jan 2019 03:06:58 -0800 (PST)
+        bh=sfh0pAFFntluWsfkKiHNCWmGd04mxXjXMAOMMF2nCLo=;
+        b=nWK423gzkGbBoSpUVyMYeLO90vH0t3psZYSBsay9AkJpgkySj18sAaATegAP/8dMGJ
+         J8NTAXpB4iIfWXO6rHq5bC8bKEfHJL/R85VyH+DFPJsqlkOl0FMsUoRcgK12WWo5ipCK
+         Qtlk3isN8+N+DFphRBkNZpNKnWxD8HH2LHO7vvDvbkWqTh2ccbWznYnvPBJTMUsbw5Hn
+         4zWWy64xeu4K6lXxFMfJmiFqzWdv9eyXnP60WTioqxuEpSBNr7gEATtMRqGl4+++pid7
+         NaHNAd70MQrU1JfYFaJB4IGETk/0WPhjaCnUaSDQA+Rl2cuYwEKWPepH354PJO6hBNBn
+         5XmA==
+X-Gm-Message-State: AJcUukffD9ogsEgrYNCWSY8wTg+M2IAlQ+m5srkZw7GMEvA+9dETC8DA
+        3DdyxK95TkaS7UMO8ppzsLdNsw==
+X-Google-Smtp-Source: ALg8bN6fqF+RgUuq/0rqhbPXf1ZmTs5ioSHxjm84uvoeXP1aKMG7HS0sWrkM0S7RuGoVGc5WY3pyjA==
+X-Received: by 2002:a1c:8b09:: with SMTP id n9mr20820350wmd.38.1548760020924;
+        Tue, 29 Jan 2019 03:07:00 -0800 (PST)
 Received: from localhost.localdomain ([88.147.67.218])
-        by smtp.gmail.com with ESMTPSA id s132sm2066112wmf.28.2019.01.29.03.06.57
+        by smtp.gmail.com with ESMTPSA id s132sm2066112wmf.28.2019.01.29.03.06.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 03:06:57 -0800 (PST)
+        Tue, 29 Jan 2019 03:07:00 -0800 (PST)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -60,9 +60,9 @@ Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         broonie@kernel.org, bfq-iosched@googlegroups.com,
         oleksandr@natalenko.name, mancha@tower-research.com,
         Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX IMPROVEMENT 01/14] block, bfq: do not consider interactive queues in srt filtering
-Date:   Tue, 29 Jan 2019 12:06:25 +0100
-Message-Id: <20190129110638.12652-2-paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX IMPROVEMENT 03/14] block, bfq: make sure queue budgets are not below service received
+Date:   Tue, 29 Jan 2019 12:06:27 +0100
+Message-Id: <20190129110638.12652-4-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129110638.12652-1-paolo.valente@linaro.org>
 References: <20190129110638.12652-1-paolo.valente@linaro.org>
@@ -73,95 +73,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The speed at which a bfq_queue receives I/O is one of the parameters
-by which bfq decides whether the queue is soft real-time (i.e.,
-whether the queue contains the I/O of a soft real-time
-application). In particular, when a bfq_queue remains without
-outstanding I/O requests, bfq computes the minimum time instant, named
-soft_rt_next_start, at which the next request of the queue may arrive
-for the queue to be deemed as soft real time.
-
-Unfortunately this filtering may cause problems with a queue in
-interactive weight raising. In fact, such a queue may be conveying the
-I/O needed to load a soft real-time application. The latter will
-actually exhibit a soft real-time I/O pattern after it finally starts
-doing its job. But, if soft_rt_next_start is updated for an
-interactive bfq_queue, and the queue has received a lot of service
-before remaining with no outstanding request (likely to happen on a
-fast device), then soft_rt_next_start is assigned such a high value
-that, for a very long time, the queue is prevented from being possibly
-considered as soft real time.
-
-This commit removes the updating of soft_rt_next_start for bfq_queues
-in interactive weight raising.
+With some unlucky sequences of events, the function
+bfq_updated_next_req updates the current budget of a bfq_queue to a
+lower value than the service received by the queue using such a
+budget. Unfortunately, if this happens, then the return value of the
+function bfq_bfqq_budget_left becomes inconsistent.  This commit
+solves this problem by lower-bounding the budget computed in
+bfq_updated_next_req to the service currently charged to the queue.
 
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- block/bfq-iosched.c | 39 +++++++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 10 deletions(-)
+ block/bfq-iosched.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index cd307767a134..c7a4a15c7c19 100644
+index 9ea2c4f42501..b0e8006475be 100644
 --- a/block/bfq-iosched.c
 +++ b/block/bfq-iosched.c
-@@ -3274,16 +3274,32 @@ void bfq_bfqq_expire(struct bfq_data *bfqd,
- 		 * requests, then the request pattern is isochronous
- 		 * (see the comments on the function
- 		 * bfq_bfqq_softrt_next_start()). Thus we can compute
--		 * soft_rt_next_start. If, instead, the queue still
--		 * has outstanding requests, then we have to wait for
--		 * the completion of all the outstanding requests to
--		 * discover whether the request pattern is actually
--		 * isochronous.
-+		 * soft_rt_next_start. And we do it, unless bfqq is in
-+		 * interactive weight raising. We do not do it in the
-+		 * latter subcase, for the following reason. bfqq may
-+		 * be conveying the I/O needed to load a soft
-+		 * real-time application. Such an application will
-+		 * actually exhibit a soft real-time I/O pattern after
-+		 * it finally starts doing its job. But, if
-+		 * soft_rt_next_start is computed here for an
-+		 * interactive bfqq, and bfqq had received a lot of
-+		 * service before remaining with no outstanding
-+		 * request (likely to happen on a fast device), then
-+		 * soft_rt_next_start would be assigned such a high
-+		 * value that, for a very long time, bfqq would be
-+		 * prevented from being possibly considered as soft
-+		 * real time.
-+		 *
-+		 * If, instead, the queue still has outstanding
-+		 * requests, then we have to wait for the completion
-+		 * of all the outstanding requests to discover whether
-+		 * the request pattern is actually isochronous.
+@@ -907,8 +907,10 @@ static void bfq_updated_next_req(struct bfq_data *bfqd,
  		 */
--		if (bfqq->dispatched == 0)
-+		if (bfqq->dispatched == 0 &&
-+		    bfqq->wr_coeff != bfqd->bfq_wr_coeff)
- 			bfqq->soft_rt_next_start =
- 				bfq_bfqq_softrt_next_start(bfqd, bfqq);
--		else {
-+		else if (bfqq->dispatched > 0) {
- 			/*
- 			 * Schedule an update of soft_rt_next_start to when
- 			 * the task may be discovered to be isochronous.
-@@ -4834,11 +4850,14 @@ static void bfq_completed_request(struct bfq_queue *bfqq, struct bfq_data *bfqd)
- 	 * isochronous, and both requisites for this condition to hold
- 	 * are now satisfied, then compute soft_rt_next_start (see the
- 	 * comments on the function bfq_bfqq_softrt_next_start()). We
--	 * schedule this delayed check when bfqq expires, if it still
--	 * has in-flight requests.
-+	 * do not compute soft_rt_next_start if bfqq is in interactive
-+	 * weight raising (see the comments in bfq_bfqq_expire() for
-+	 * an explanation). We schedule this delayed update when bfqq
-+	 * expires, if it still has in-flight requests.
- 	 */
- 	if (bfq_bfqq_softrt_update(bfqq) && bfqq->dispatched == 0 &&
--	    RB_EMPTY_ROOT(&bfqq->sort_list))
-+	    RB_EMPTY_ROOT(&bfqq->sort_list) &&
-+	    bfqq->wr_coeff != bfqd->bfq_wr_coeff)
- 		bfqq->soft_rt_next_start =
- 			bfq_bfqq_softrt_next_start(bfqd, bfqq);
+ 		return;
  
+-	new_budget = max_t(unsigned long, bfqq->max_budget,
+-			   bfq_serv_to_charge(next_rq, bfqq));
++	new_budget = max_t(unsigned long,
++			   max_t(unsigned long, bfqq->max_budget,
++				 bfq_serv_to_charge(next_rq, bfqq)),
++			   entity->service);
+ 	if (entity->budget != new_budget) {
+ 		entity->budget = new_budget;
+ 		bfq_log_bfqq(bfqd, bfqq, "updated next rq: new budget %lu",
 -- 
 2.20.1
 
