@@ -2,82 +2,67 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25DD9C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E38EEC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E77FC2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:12:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548771139;
-	bh=8ulksRhjsVkMkrrdYCunxbwodo9oHxsqIazhDJdb/e8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=OGidVkGW+NCr+4/6dAHkSBCyk1XmRZEUSCplqNertUfNQx/BqJmWYzNXxMERpL7kH
-	 luf/KJjbec00vDRg3eK6EMarbEYAZ6xTjJAxnQ+qoQofxnxoDxc9WfQDcACZ8u+0KP
-	 e8XxbKuy7vyjgx/syGO0EHnSW4EEk2M8xPmtmnCY=
+	by mail.kernel.org (Postfix) with ESMTP id C01802147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:15:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbfA2OMS (ORCPT
+        id S1727930AbfA2OPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 09:12:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbfA2OMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 09:12:17 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32AFD20823;
-        Tue, 29 Jan 2019 14:12:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548771137;
-        bh=8ulksRhjsVkMkrrdYCunxbwodo9oHxsqIazhDJdb/e8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aCxJtXXYMp7+a250ixn/s8KqSzd5CMQFUapfhl0UChY3rQAe9baZmhyerHownTRwy
-         xDLhK4AUzfI31gErd5j3q8l4R6pp0Hu9JBe2coU0S604RjunSXxyVnTN0uQ5X0go6q
-         wtoS2EiKNf+KEccS/a8kkbWlUL0bzD7Lr9HyJPLs=
-Date:   Tue, 29 Jan 2019 15:12:09 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Brian Norris <computersforpeace@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: linux-next: manual merge of the mtd tree with Linus' tree
-Message-ID: <20190129151209.16bf37f4@bbrezillon>
-In-Reply-To: <20190129111700.7d50e369@canb.auug.org.au>
-References: <20190129111700.7d50e369@canb.auug.org.au>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 29 Jan 2019 09:15:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38948 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727009AbfA2OPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 09:15:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0EEA4AE72;
+        Tue, 29 Jan 2019 14:15:04 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 06:14:45 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     akpm@linux-foundation.org, dledford@redhat.com, jack@suse.de,
+        ira.weiny@intel.com, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        dennis.dalessandro@intel.com, mike.marciniszyn@intel.com,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 3/6] drivers/IB,qib: do not use mmap_sem
+Message-ID: <20190129141445.kch4jxr2ps62ohcw@linux-r8p5>
+Mail-Followup-To: Jason Gunthorpe <jgg@ziepe.ca>, akpm@linux-foundation.org,
+        dledford@redhat.com, jack@suse.de, ira.weiny@intel.com,
+        linux-rdma@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, dennis.dalessandro@intel.com,
+        mike.marciniszyn@intel.com, Davidlohr Bueso <dbueso@suse.de>
+References: <20190121174220.10583-1-dave@stgolabs.net>
+ <20190121174220.10583-4-dave@stgolabs.net>
+ <20190128233140.GA12530@ziepe.ca>
+ <20190129044607.GL25106@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190129044607.GL25106@ziepe.ca>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Jan 2019 11:17:00 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, 28 Jan 2019, Jason Gunthorpe wrote:
 
-> Hi all,
-> 
-> Today's linux-next merge of the mtd tree got a conflict in:
-> 
->   drivers/mtd/mtdpart.c
-> 
-> between commit:
-> 
->   2b6f0090a333 ("mtd: Check add_mtd_device() ret code")
-> 
-> from Linus' tree and commit:
-> 
->   2c24c9af0f38 ("mtd: rework partitions handling")
+>.. and I'm looking at some of the other conversions here.. *most
+>likely* any caller that is manipulating rlimit for get_user_pages
+>should really be calling get_user_pages_longterm, so they should not
+>be converted to use _fast?
 
-I dropped this patch for now. I'll merge -rc2 before applying them next
-time.
+Yeah this was something that crossed my mind could come up when I
+first sent the series. I'll send a v3 where I leave the gup() calls
+alone for rdma drivers; and we can at least convert the mmap_sem to
+reader.
 
-Thanks for the report.
-
-Boris
+Thanks,
+Davidlohr
