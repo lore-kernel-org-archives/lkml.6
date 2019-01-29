@@ -2,155 +2,418 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19194C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F88C282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB6372175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D2BD2175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:12:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lo2rbil7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbfA2AMc (ORCPT
+        id S1727467AbfA2AMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:12:32 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36358 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfA2AMb (ORCPT
+        Mon, 28 Jan 2019 19:12:49 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45103 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfA2AMt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:12:31 -0500
-Received: by mail-lj1-f195.google.com with SMTP id g11-v6so15926025ljk.3;
-        Mon, 28 Jan 2019 16:12:28 -0800 (PST)
+        Mon, 28 Jan 2019 19:12:49 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a14so8477705plm.12;
+        Mon, 28 Jan 2019 16:12:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4NgeQNZ4vPngV2sQj6BLhbbxNM1HeU5RZ+98XZpRmdI=;
+        b=Lo2rbil7Yx/K3aTIYuTMMuCZWU1r6xPDOqpfxfbf7sC9qCUpIsouhHvIT7dUrXDQL1
+         YbwYpOk2S6+SL0WXTpC2SygfW5y9qaBV6Wh5J6QMxr4JHiAe0DPJeRPkDHNaFHtlSGgE
+         REQQwrYV10671EVK+35+zy0KS4Vnc8tRGkdcTyheg36kSNlzP+/WxHjIxmfI/UBy7z8U
+         7PHRcvug6/Ybe9ol9Od4WtLnFl4rIIUaUajxE+Jqn/IQ/t+PdmuQjGBIFcUPwEHZLuyw
+         5SmQHKLddBcn30etFXwg952KV7IqPrVxFo0CPfaecntI8aNtkVJLnh8mgGQcdaqg6LGY
+         ZUbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ZbnSJMurLj8BNQYytJBUO+GTsAvTERR77Xowzcjxf6U=;
-        b=ibc2HEsttJngVDPKKCzLK4nHa7agApIiRNg32D/9xD8H0d9yF5ht0/4bnPupLzLYlq
-         kUcfTSIQXc3dMpzJvKj5cwi1dGuAeeZ++Zb+pERYSVWJY1iJPtl9FWLC85i1lYdh7Ewh
-         IFrPPLnlyerHFv54nsdnzkBPFFA+sBETA2IMo8S3Vr/hxwQqhl+2Zz6pDZeSLQt7+5Ye
-         +0pGu4MYySXt7nw26OBZHRRGN3RrCCkfiQMM/mDl76Ir4ZO1khIxWlpFZu4ZPmuYd8QY
-         jabIQNQkIyZC329ebFu3y3oH9pwSFspxmFOz4jayQEUmZuK9ezpqfs+dbZYBl18xPzrx
-         f7ig==
-X-Gm-Message-State: AJcUukdkAsQAsrxAW9wnjMBDlrXkbC55tnVcOpzAE7rklc7Xk79usgT9
-        CR/tXWypR0so9exTxkEuTWQ=
-X-Google-Smtp-Source: ALg8bN7stDrH2CqQuY0B3RQYZuC7ccWFVr0KUPp1UnTxiXJjsgOqvC25P0WS7lOaf7LQDZ9JOZ4qbA==
-X-Received: by 2002:a2e:8187:: with SMTP id e7-v6mr18527787ljg.67.1548720747585;
-        Mon, 28 Jan 2019 16:12:27 -0800 (PST)
-Received: from [192.168.1.183] (128-68-180-17.broadband.corbina.ru. [128.68.180.17])
-        by smtp.gmail.com with ESMTPSA id m1sm3205465lfb.56.2019.01.28.16.12.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 16:12:26 -0800 (PST)
-Reply-To: alex.popov@linux.com
-Subject: Re: [PATCH 0/3] gcc-plugins: Introduce stackinit plugin
-To:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Laura Abbott <labbott@redhat.com>,
-        xen-devel@lists.xenproject.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dev@openvswitch.org, linux-kbuild@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Edwin Zimmerman <edwin@211mainstreet.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-References: <20190123110349.35882-1-keescook@chromium.org>
-From:   Alexander Popov <alex.popov@linux.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
- 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
- jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
-Message-ID: <874b8c23-068b-f8e7-2168-12947c06e145@linux.com>
-Date:   Tue, 29 Jan 2019 03:12:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4NgeQNZ4vPngV2sQj6BLhbbxNM1HeU5RZ+98XZpRmdI=;
+        b=CZOVCTSNQT5tuIL9W0uG8uHUP3dkVtpvy9OfHH56yQgldmkVxrZ5QZ6MLJde6jdCgh
+         4SvWCXgcbx2whiq7+oUO/7Kmf7JaWI9Ai7BUIBWRfaMtnTJVvppTfVOZRK5f8SDV/k1X
+         qT+iIn2V07xrMPXDUXXcP5/NTC/C6CUsC9wUhZ8dRK2INTmeLosYXZ3TCIQEB4TAvenE
+         OCQu3wl+p2IGxUAXi6zCkBkNXyWYQudCZfKRPWmoR5jq+EHXQmUz8R+BMOnLZeXT7Ik0
+         imtLWEIPW9wgzX8hixFCgAEQrNrYy3EiM67m60rlShvvzNXNSRhOYgxTVje1v/YAda+S
+         LFuA==
+X-Gm-Message-State: AJcUukeDraJ7d6J2coT8ISd6HYIAgW6YUDZT58Qeovv8qL3GD1919/s7
+        AYsmXlDbyq0JrJwu71qoKg4=
+X-Google-Smtp-Source: ALg8bN61hhhvF3OPGwZ5bdGv7JQkSQmIroZwVI34AMOTDp0msS9aUe1KXJH3a+Km7SCzm9uyscmhiA==
+X-Received: by 2002:a17:902:9045:: with SMTP id w5mr22927507plz.32.1548720767223;
+        Mon, 28 Jan 2019 16:12:47 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id 64sm50093705pff.101.2019.01.28.16.12.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 16:12:46 -0800 (PST)
+Date:   Mon, 28 Jan 2019 16:12:44 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Richard Leitner <richard.leitner@skidata.com>
+Cc:     mark.rutland@arm.com, robh+dt@kernel.org,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v2 6/8] Input: sx8654 - add sx8650 support
+Message-ID: <20190129001244.GG34692@dtor-ws>
+References: <20181218083606.25795-1-richard.leitner@skidata.com>
+ <20181218083931.11549-1-richard.leitner@skidata.com>
 MIME-Version: 1.0
-In-Reply-To: <20190123110349.35882-1-keescook@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181218083931.11549-1-richard.leitner@skidata.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.01.2019 14:03, Kees Cook wrote:
-> This adds a new plugin "stackinit" that attempts to perform unconditional
-> initialization of all stack variables
+Hi Richard,
 
-Hello Kees! Hello everyone!
+On Tue, Dec 18, 2018 at 09:39:31AM +0100, Richard Leitner wrote:
+> The sx8654 and sx8650 are quite similar, therefore add support for the
+> sx8650 within the sx8654 driver.
+> 
+> Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
+> ---
+>  drivers/input/touchscreen/sx8654.c | 193 +++++++++++++++++++++++++++++++++----
+>  1 file changed, 173 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
+> index afa4da138fe9..4939863efbef 100644
+> --- a/drivers/input/touchscreen/sx8654.c
+> +++ b/drivers/input/touchscreen/sx8654.c
+> @@ -29,7 +29,7 @@
+>  
+>  #include <linux/input.h>
+>  #include <linux/module.h>
+> -#include <linux/of.h>
+> +#include <linux/of_device.h>
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/irq.h>
+> @@ -44,9 +44,11 @@
+>  #define I2C_REG_IRQSRC			0x23
+>  #define I2C_REG_SOFTRESET		0x3f
+>  
+> +#define I2C_REG_SX8650_STAT		0x05
+> +#define SX8650_STAT_CONVIRQ		0x80
+> +
+>  /* commands */
+>  #define CMD_READ_REGISTER		0x40
+> -#define CMD_MANUAL			0xc0
+>  #define CMD_PENTRG			0xe0
+>  
+>  /* value for I2C_REG_SOFTRESET */
+> @@ -58,6 +60,7 @@
+>  
+>  /* bits for RegTouch1 */
+>  #define CONDIRQ				0x20
+> +#define RPDNT_100K			0x00
+>  #define FILT_7SA			0x03
+>  
+>  /* bits for I2C_REG_CHANMASK */
+> @@ -71,14 +74,122 @@
+>  /* power delay: lower nibble of CTRL0 register */
+>  #define POWDLY_1_1MS			0x0b
+>  
+> +/* for sx8650, as we have no pen release IRQ there: timeout in ns following the
+> + * last PENIRQ after which we assume the pen is lifted.
+> + */
+> +#define SX8650_PENIRQ_TIMEOUT		msecs_to_jiffies(10)
+> +
+>  #define MAX_12BIT			((1 << 12) - 1)
+> +#define MAX_I2C_READ_LEN		10 /* see datasheet section 5.1.5 */
+> +
+> +/* channel definition */
+> +#define CH_X				0x00
+> +#define CH_Y				0x01
+> +
+> +struct sx865x_data {
+> +	u8 cmd_manual;
+> +	u8 chan_mask;
+> +	u8 has_irq_penrelease;
+> +	u8 has_reg_irqmask;
 
-I was curious about the performance impact of the initialization of all stack
-variables. So I did a very brief test with this plugin on top of 4.20.5.
+I changed these 2 to bools.
 
-hackbench on Intel Core i7-4770 showed ~0.7% slowdown.
-hackbench on Kirin 620 (ARM Cortex-A53 Octa-core 1.2GHz) showed ~1.3% slowdown.
+> +	irq_handler_t irqh;
+> +};
+>  
+>  struct sx8654 {
+>  	struct input_dev *input;
+>  	struct i2c_client *client;
+>  	struct gpio_desc *gpio_reset;
+> +
+> +	spinlock_t		lock; /* for input reporting from irq/timer */
+> +	struct timer_list	timer;
+> +
+> +	const struct sx865x_data *data;
+>  };
+>  
+> +static inline void sx865x_penrelease(struct sx8654 *ts)
+> +{
+> +	struct input_dev *input_dev = ts->input;
+> +
+> +	input_report_key(input_dev, BTN_TOUCH, 0);
+> +	input_sync(input_dev);
+> +}
+> +
+> +static void sx865x_penrelease_timer_handler(struct timer_list *t)
+> +{
+> +	struct sx8654 *ts = from_timer(ts, t, timer);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&ts->lock, flags);
+> +	sx865x_penrelease(ts);
+> +	spin_unlock_irqrestore(&ts->lock, flags);
+> +	dev_dbg(&ts->client->dev, "penrelease by timer\n");
+> +}
+> +
+> +static irqreturn_t sx8650_irq(int irq, void *handle)
+> +{
+> +	struct sx8654 *ts = handle;
+> +	struct device *dev = &ts->client->dev;
+> +	int len, i;
+> +	unsigned long flags;
+> +	u8 stat;
+> +	u16 x, y;
+> +	u8 data[MAX_I2C_READ_LEN];
+> +	u16 ch;
+> +	u16 chdata;
+> +	u8 readlen = hweight32(ts->data->chan_mask) * 2;
+> +
+> +	stat = i2c_smbus_read_byte_data(ts->client, CMD_READ_REGISTER
+> +						    | I2C_REG_SX8650_STAT);
+> +
+> +	if (!(stat & SX8650_STAT_CONVIRQ)) {
+> +		dev_dbg(dev, "%s ignore stat [0x%02x]", __func__, stat);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	len = i2c_master_recv(ts->client, data, readlen);
+> +	if (len != readlen) {
+> +		dev_dbg(dev, "ignore short recv (%d)\n", len);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	spin_lock_irqsave(&ts->lock, flags);
+> +
+> +	x = 0;
+> +	y = 0;
+> +	for (i = 0; (i + 1) < len; i++) {
+> +		chdata = data[i] << 8;
+> +		i++;
+> +		chdata += data[i];
 
-This test involves the kernel scheduler and allocator. I can't say whether they
-use stack aggressively. Maybe performance tests of other subsystems (e.g.
-network subsystem) can show different numbers. Did you try?
+So you reading be16 form the wire. I annotated data array as such and
+used be16_to_cpu() here.
 
-I've heard a hypothesis that the initialization of all stack variables would
-pollute CPU caches, which is critical for some types of computations. Maybe some
-micro-benchmarks can disprove/confirm that?
+> +
+> +		if (unlikely(chdata == 0xFFFF)) {
+> +			dev_dbg(dev, "invalid qualified data @ %d\n", i);
+> +			continue;
+> +		} else if (unlikely(chdata & 0x8000)) {
+> +			dev_warn(dev, "hibit @ %d [0x%04x]\n", i, chdata);
+> +			continue;
+> +		}
+> +
+> +		ch = chdata >> 12;
+> +		if      (ch == CH_X)
+> +			x = chdata & MAX_12BIT;
+> +		else if (ch == CH_Y)
+> +			y = chdata & MAX_12BIT;
+> +		else
+> +			dev_warn(dev, "unknown channel %d [0x%04x]\n", ch,
+> +				 chdata);
+> +	}
+> +
+> +	input_report_abs(ts->input, ABS_X, x);
+> +	input_report_abs(ts->input, ABS_Y, y);
+> +	input_report_key(ts->input, BTN_TOUCH, 1);
+> +	input_sync(ts->input);
+> +	dev_dbg(dev, "point(%4d,%4d)\n", x, y);
+> +
+> +	mod_timer(&ts->timer, jiffies + SX8650_PENIRQ_TIMEOUT);
+> +	spin_unlock_irqrestore(&ts->lock, flags);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+>  static irqreturn_t sx8654_irq(int irq, void *handle)
+>  {
+>  	struct sx8654 *sx8654 = handle;
+> @@ -127,6 +238,22 @@ static irqreturn_t sx8654_irq(int irq, void *handle)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static const struct sx865x_data sx8650_data = {
+> +	.cmd_manual = 0xb0,
+> +	.has_irq_penrelease = 0,
+> +	.has_reg_irqmask = 0,
 
-Thanks!
-Best regards,
-Alexander
+Changed both to false.
+
+> +	.chan_mask = (CONV_X | CONV_Y),
+> +	.irqh = sx8650_irq,
+> +};
+> +
+> +static const struct sx865x_data sx8654_data = {
+> +	.cmd_manual = 0xc0,
+> +	.has_irq_penrelease = 1,
+> +	.has_reg_irqmask = 1,
+
+Changed both to true.
+
+> +	.chan_mask = (CONV_X | CONV_Y),
+> +	.irqh = sx8654_irq,
+> +};
+> +
+
+Moved the structures closer to where they are used.
+
+>  static int sx8654_reset(struct sx8654 *ts)
+>  {
+>  	int err;
+> @@ -182,13 +309,13 @@ static void sx8654_close(struct input_dev *dev)
+>  	disable_irq(client->irq);
+>  
+>  	/* enable manual mode mode */
+> -	error = i2c_smbus_write_byte(client, CMD_MANUAL);
+> +	error = i2c_smbus_write_byte(client, sx8654->data->cmd_manual);
+>  	if (error) {
+>  		dev_err(&client->dev, "writing command CMD_MANUAL failed");
+>  		return;
+>  	}
+>  
+> -	error = i2c_smbus_write_byte_data(client, I2C_REG_TOUCH0, 0);
+> +	error = i2c_smbus_write_byte_data(client, I2C_REG_TOUCH0, RATE_MANUAL);
+>  	if (error) {
+>  		dev_err(&client->dev, "writing to I2C_REG_TOUCH0 failed");
+>  		return;
+> @@ -221,6 +348,20 @@ static int sx8654_probe(struct i2c_client *client,
+>  	}
+>  	dev_dbg(&client->dev, "got GPIO reset pin\n");
+>  
+> +	sx8654->data = of_device_get_match_data(&client->dev);
+
+Changed to device_get_match_data() in case someone would use it on
+non-OF platform.
+
+> +	if (!sx8654->data)
+> +		sx8654->data = (const struct sx865x_data *)id->driver_data;
+> +	if (!sx8654->data) {
+> +		dev_err(&client->dev, "invalid or missing device data\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!sx8654->data->has_irq_penrelease) {
+> +		dev_dbg(&client->dev, "use timer for penrelease\n");
+> +		timer_setup(&sx8654->timer, sx865x_penrelease_timer_handler, 0);
+> +		spin_lock_init(&sx8654->lock);
+
+You should also make sure the timer is not running when you are tearing
+down the device. I added del_timer_sync() call to sx8654_close().
+
+> +	}
+> +
+>  	input = devm_input_allocate_device(&client->dev);
+>  	if (!input)
+>  		return -ENOMEM;
+> @@ -248,29 +389,31 @@ static int sx8654_probe(struct i2c_client *client,
+>  	}
+>  
+>  	error = i2c_smbus_write_byte_data(client, I2C_REG_CHANMASK,
+> -					  CONV_X | CONV_Y);
+> +					  sx8654->data->chan_mask);
+>  	if (error) {
+>  		dev_err(&client->dev, "writing to I2C_REG_CHANMASK failed");
+>  		return error;
+>  	}
+>  
+> -	error = i2c_smbus_write_byte_data(client, I2C_REG_IRQMASK,
+> -					  IRQ_PENTOUCH_TOUCHCONVDONE |
+> -						IRQ_PENRELEASE);
+> -	if (error) {
+> -		dev_err(&client->dev, "writing to I2C_REG_IRQMASK failed");
+> -		return error;
+> +	if (sx8654->data->has_reg_irqmask) {
+> +		error = i2c_smbus_write_byte_data(client, I2C_REG_IRQMASK,
+> +						  IRQ_PENTOUCH_TOUCHCONVDONE |
+> +							IRQ_PENRELEASE);
+> +		if (error) {
+> +			dev_err(&client->dev, "writing I2C_REG_IRQMASK failed");
+> +			return error;
+> +		}
+>  	}
+>  
+>  	error = i2c_smbus_write_byte_data(client, I2C_REG_TOUCH1,
+> -					  CONDIRQ | FILT_7SA);
+> +					  CONDIRQ | RPDNT_100K | FILT_7SA);
+>  	if (error) {
+>  		dev_err(&client->dev, "writing to I2C_REG_TOUCH1 failed");
+>  		return error;
+>  	}
+>  
+>  	error = devm_request_threaded_irq(&client->dev, client->irq,
+> -					  NULL, sx8654_irq,
+> +					  NULL, sx8654->data->irqh,
+>  					  IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+>  					  client->name, sx8654);
+>  	if (error) {
+> @@ -292,18 +435,28 @@ static int sx8654_probe(struct i2c_client *client,
+>  
+>  #ifdef CONFIG_OF
+>  static const struct of_device_id sx8654_of_match[] = {
+> -	{ .compatible = "semtech,sx8654", },
+> -	{ .compatible = "semtech,sx8655", },
+> -	{ .compatible = "semtech,sx8656", },
+> -	{ },
+> +	{
+> +		.compatible = "semtech,sx8650",
+> +		.data = &sx8650_data,
+> +	}, {
+> +		.compatible = "semtech,sx8654",
+> +		.data = &sx8654_data,
+> +	}, {
+> +		.compatible = "semtech,sx8655",
+> +		.data = &sx8654_data,
+> +	}, {
+> +		.compatible = "semtech,sx8656",
+> +		.data = &sx8654_data,
+> +	}, {},
+>  };
+>  MODULE_DEVICE_TABLE(of, sx8654_of_match);
+>  #endif
+>  
+>  static const struct i2c_device_id sx8654_id_table[] = {
+> -	{ "semtech_sx8654", 0 },
+> -	{ "semtech_sx8655", 0 },
+> -	{ "semtech_sx8656", 0 },
+> +	{ .name = "semtech_sx8650", .driver_data = (long)&sx8650_data },
+> +	{ .name = "semtech_sx8654", .driver_data = (long)&sx8654_data },
+> +	{ .name = "semtech_sx8655", .driver_data = (long)&sx8654_data },
+> +	{ .name = "semtech_sx8656", .driver_data = (long)&sx8654_data },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(i2c, sx8654_id_table);
+> -- 
+> 2.11.0
+> 
+
+Applied with above mentioned changes, please take a look in case I
+messed up.
+
+Thanks.
+
+-- 
+Dmitry
