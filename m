@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB730C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52506C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2A8D20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F92320880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763266;
-	bh=QgJD/T9lCWiyWoChVaStS+gbKGCQyMsC6biQZm/qqu0=;
+	s=default; t=1548763275;
+	bh=EyQIbdoO9Rrfzjie4evC+SVcZCJqYzMlgMcmbWPG100=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ft57itp4n5BkNHl42TjnVoWoZgavh9bm/kOVKi1Wqqq4s9/ksM/hPzj3bndGztzvJ
-	 wKc9A1OacEKoei30etTXoZU3xIFayEr/8v/yZNIh+2PkMtXIu6LVLRyV1ame4ey1gC
-	 gtck2kk0NAorIp+ikbAOiEq6hY03Xtqxa7YDG+bE=
+	b=mfL9L+sUXMAO6AlfKxtQPut25fS0t97iX93XW7QEMxIRrpgvRtDaiXuCsZhAebKfL
+	 nCjuTMGVa2Z3Ns53QCrIZ989t2vmIht7aYfsdsRmLkj5OOF7XL+gfh7Qj5j7Z3fADG
+	 qZqKj1Wvk6tWMH+lUFr/1Ph6wda3zh5fEkhI77JU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730856AbfA2Lpv (ORCPT
+        id S1730819AbfA2Lpm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:45:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36302 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:45:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729523AbfA2Lpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:45:47 -0500
+        id S1730808AbfA2Lpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:45:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFEF22083B;
-        Tue, 29 Jan 2019 11:45:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4150A2083B;
+        Tue, 29 Jan 2019 11:45:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762347;
-        bh=QgJD/T9lCWiyWoChVaStS+gbKGCQyMsC6biQZm/qqu0=;
+        s=default; t=1548762338;
+        bh=EyQIbdoO9Rrfzjie4evC+SVcZCJqYzMlgMcmbWPG100=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x0dK/9XsRppiO5cpzqHUqOBGdJsiEGx4P8p6fu78s/yjsd+SxIg5WCkEeMrf5FMZL
-         gm1mtQMMocTmNdXDUY7Y0aybyxSUuuhazF/Lepl7Pe5NIOeCwlZJcrua4kvCH4BX1L
-         LQPEY+sN8IhTlJIrrVG512vQCN1QSvn8FUe6B6Iw=
+        b=gipOiUFmvW7cI9nH2isKc3Winksycv3EgvQ0aP+ZqcrUUVY5/Bnin5TQLbAT7+9Wy
+         XfxcoaEcVVhOKJQb0QVz3Z9YbYdpJs48ewowWIC/SNWNivKBp1Txap9Ja0077VAe5n
+         P56f4Xt4OeMGQCXtTLfJJVHbHjcmEPz1z+vt4iw4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 059/103] Input: input_event - provide override for sparc64
-Date:   Tue, 29 Jan 2019 12:35:36 +0100
-Message-Id: <20190129113204.233323662@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
+        hpa@zytor.com, linux@endlessm.com
+Subject: [PATCH 4.19 074/103] x86/kaslr: Fix incorrect i8254 outb() parameters
+Date:   Tue, 29 Jan 2019 12:35:51 +0100
+Message-Id: <20190129113205.188529390@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,53 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Deepa Dinamani <deepa.kernel@gmail.com>
+From: Daniel Drake <drake@endlessm.com>
 
-commit 2e746942ebacf1565caa72cf980745e5ce297c48 upstream.
+commit 7e6fc2f50a3197d0e82d1c0e86282976c9e6c8a4 upstream.
 
-The usec part of the timeval is defined as
-__kernel_suseconds_t	tv_usec; /* microseconds */
+The outb() function takes parameters value and port, in that order.  Fix
+the parameters used in the kalsr i8254 fallback code.
 
-Arnd noticed that sparc64 is the only architecture that defines
-__kernel_suseconds_t as int rather than long.
-
-This breaks the current y2038 fix for kernel as we only access and define
-the timeval struct for non-kernel use cases.  But, this was hidden by an
-another typo in the use of __KERNEL__ qualifier.
-
-Fix the typo, and provide an override for sparc64.
-
-Fixes: 152194fe9c3f ("Input: extend usable life of event timestamps to 2106 on 32 bit systems")
-Reported-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Fixes: 5bfce5ef55cb ("x86, kaslr: Provide randomness functions")
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: linux@endlessm.com
 Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Link: https://lkml.kernel.org/r/20190107034024.15005-1-drake@endlessm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/input.h |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/x86/lib/kaslr.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/uapi/linux/input.h
-+++ b/include/uapi/linux/input.h
-@@ -26,13 +26,17 @@
-  */
+--- a/arch/x86/lib/kaslr.c
++++ b/arch/x86/lib/kaslr.c
+@@ -36,8 +36,8 @@ static inline u16 i8254(void)
+ 	u16 status, timer;
  
- struct input_event {
--#if (__BITS_PER_LONG != 32 || !defined(__USE_TIME_BITS64)) && !defined(__KERNEL)
-+#if (__BITS_PER_LONG != 32 || !defined(__USE_TIME_BITS64)) && !defined(__KERNEL__)
- 	struct timeval time;
- #define input_event_sec time.tv_sec
- #define input_event_usec time.tv_usec
- #else
- 	__kernel_ulong_t __sec;
-+#ifdef CONFIG_SPARC64
-+	unsigned int __usec;
-+#else
- 	__kernel_ulong_t __usec;
-+#endif
- #define input_event_sec  __sec
- #define input_event_usec __usec
- #endif
+ 	do {
+-		outb(I8254_PORT_CONTROL,
+-		     I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
++		outb(I8254_CMD_READBACK | I8254_SELECT_COUNTER0,
++		     I8254_PORT_CONTROL);
+ 		status = inb(I8254_PORT_COUNTER0);
+ 		timer  = inb(I8254_PORT_COUNTER0);
+ 		timer |= inb(I8254_PORT_COUNTER0) << 8;
 
 
