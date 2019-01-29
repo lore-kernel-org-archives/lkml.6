@@ -2,67 +2,103 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1CDC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D6FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB4DF214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:34:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23C332087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:38:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="Z1Xes2KC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbfA2QeR (ORCPT
+        id S1728164AbfA2Qh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:34:17 -0500
-Received: from verein.lst.de ([213.95.11.211]:47166 "EHLO newverein.lst.de"
+        Tue, 29 Jan 2019 11:37:58 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:16136 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726117AbfA2QeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:34:16 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 65E9768CEC; Tue, 29 Jan 2019 17:34:15 +0100 (CET)
-Date:   Tue, 29 Jan 2019 17:34:15 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Zigotzky <chzigotzky@xenosoft.de>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        id S1726374AbfA2Qh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 11:37:57 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43pscL3tdWz9v1Xk;
+        Tue, 29 Jan 2019 17:37:54 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Z1Xes2KC; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id dcQhRji0CZ3x; Tue, 29 Jan 2019 17:37:54 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43pscL2sZ8z9v1Xj;
+        Tue, 29 Jan 2019 17:37:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548779874; bh=sqSx4oWkiovAOVBEY1k06Y7t8tBRTTzLF/3wvnUZXQ0=;
+        h=From:Subject:To:Cc:Date:From;
+        b=Z1Xes2KCvQoMGCW+htHjbBbTD9788/tTsgVIj/R+Uj9LinLgzK+EZwZ6NIuRlwASE
+         0K7MYJ3xQeoKZPdoHm3VoLw9u2T4qZfiyNXG7ebS4l5HGbgl/LqxXfAlWwWskWQ+gh
+         2slfQaIsRqZ563RbUXB/GgXSgcNasgtou+kR5Axk=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id EB53F8B7E9;
+        Tue, 29 Jan 2019 17:37:55 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 0KQ-WO2hD5et; Tue, 29 Jan 2019 17:37:55 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BDDEC8B755;
+        Tue, 29 Jan 2019 17:37:55 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 9801F72DF1; Tue, 29 Jan 2019 16:37:55 +0000 (UTC)
+Message-Id: <5aa3c84a675405ac99382a5893406ef7e8dfd455.1548779831.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2] powerpc/traps: fix the message printed when stack
+ overflows
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: use generic DMA mapping code in powerpc V4
-Message-ID: <20190129163415.GA14529@lst.de>
-References: <20190119140452.GA25198@lst.de> <bfe4adcc-01c1-7b46-f40a-8e020ff77f58@xenosoft.de> <8434e281-eb85-51d9-106f-f4faa559e89c@xenosoft.de> <4d8d4854-dac9-a78e-77e5-0455e8ca56c4@xenosoft.de> <1dec2fbe-f654-dac7-392a-93a5d20e3602@xenosoft.de> <20190128070422.GA2772@lst.de> <20190128162256.GA11737@lst.de> <D64B1ED5-46F9-43CF-9B21-FABB2807289B@xenosoft.de> <6f2d6bc9-696b-2cb1-8a4e-df3da2bd6c0a@xenosoft.de> <20190129161411.GA14022@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129161411.GA14022@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 29 Jan 2019 16:37:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 05:14:11PM +0100, Christoph Hellwig wrote:
-> On Tue, Jan 29, 2019 at 04:03:32PM +0100, Christian Zigotzky wrote:
-> > Hi Christoph,
-> >
-> > I compiled kernels for the X5000 and X1000 from your new branch 
-> > 'powerpc-dma.6-debug.2' today. The kernels boot and the P.A. Semi Ethernet 
-> > works!
-> 
-> Thanks for testing!  I'll prepare a new series that adds the other
-> patches on top of this one.
+Today's message is useless:
 
-And that was easier than I thought - we just had a few patches left
-in powerpc-dma.6, so I've rebased that branch on top of
-powerpc-dma.6-debug.2:
+[   42.253267] Kernel stack overflow in process (ptrval), r1=c65500b0
 
-    git://git.infradead.org/users/hch/misc.git powerpc-dma.6
+This patch fixes it:
 
-Gitweb:
+[   66.905235] Kernel stack overflow in process sh[356], r1=c65560b0
 
-    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+Fixes: ad67b74d2469 ("printk: hash addresses printed with %p")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v2: make checkpatch happy :)
 
-I hope the other patches are simple enough, so just testing the full
-branch checkout should be fine for now.
+ arch/powerpc/kernel/traps.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index 5e917a84f949..a3dc6872d5aa 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -1535,8 +1535,8 @@ void alignment_exception(struct pt_regs *regs)
+ 
+ void StackOverflow(struct pt_regs *regs)
+ {
+-	printk(KERN_CRIT "Kernel stack overflow in process %p, r1=%lx\n",
+-	       current, regs->gpr[1]);
++	pr_crit("Kernel stack overflow in process %s[%d], r1=%lx\n",
++		current->comm, current->pid, regs->gpr[1]);
+ 	debugger(regs);
+ 	show_regs(regs);
+ 	panic("kernel stack overflow");
+-- 
+2.13.3
+
