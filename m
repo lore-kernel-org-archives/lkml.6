@@ -2,163 +2,196 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D54B7C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B13A7C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B03262084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:55:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 802B02087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:56:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5NKlV/d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729477AbfA2Ty7 (ORCPT
+        id S1729264AbfA2T4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:54:59 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41554 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728975AbfA2Ty6 (ORCPT
+        Tue, 29 Jan 2019 14:56:54 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53537 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726984AbfA2T4y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:54:58 -0500
-Received: by mail-qk1-f193.google.com with SMTP id 189so12288711qkj.8;
-        Tue, 29 Jan 2019 11:54:57 -0800 (PST)
+        Tue, 29 Jan 2019 14:56:54 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d15so19212530wmb.3;
+        Tue, 29 Jan 2019 11:56:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DbE1GrRmgpsPkMb62kQRgfWSg0dLU9+SDcD6byWUaX4=;
+        b=m5NKlV/dlJdtECUzkiGCYY9gRyekiXv+dVEOYxQq18wuAaE3Om/1m+T04tVbdZQwod
+         fyQxO6w+Fvpcp1gDkG/ee+h/mMu9zmZU8uEpucCEKMBVZWkRd+QYu28jAUmL94H9xpVd
+         zFuL9ORWYfV9HxA81s3uQigQw1RkT3960FlX30SQOtSJPesSr8de9IJHqeWTYWUFhQwi
+         Eo6liZ4HFhKSDXZOkGF2n1nF/IuoU+czgnAUWbkvgDZ0KYVumZDidPEpBl5KViJQ+dM+
+         X2jDfIF4A1h6ZQQF2z0oLs/KQ33CoIJqDHDxopqg5CCtmRNacwtQYK4fUyuyd930nyVQ
+         S5tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:organization:content-transfer-encoding;
-        bh=H2zEvdVTOJICHXPBMAI1W22X3IkRf9LxQWOWo6ZMP3Q=;
-        b=Z4bE5uoHMNbqY5sdMOdW2mnA4FLcCTAuHOPoJ+qHnr/Vk7PDNUxQsLjRwjjlsfNW6Q
-         8ynu3d1lcgxLkRMmeUyqsiBpus1ClD23rB2V/Uj/X2SHOb5vJmsZr/0laoqPlyfYsjgr
-         uEvY8qLMXaRtKCRmihPbgymDaF7fdmtZbd14DQNnp7SEyxBQzrkavm89K2xHN9fVK15o
-         z7oiMnV7+mIyBkjhDJqEZJsc5+9owN0lV+hu03VZUR3N/PxBtzHOW8ChXDAYjQoLrVpL
-         pTiFXF9YRGt9MTP/+mFlxyjVwXdPmwPh6bSbtptQmzERkK7zvZNLlQ+4F58LSbEhna/I
-         TPjg==
-X-Gm-Message-State: AJcUukeSQJkL5OpIgnVA9WuUzGf8gYqPKpdFlrqYW0cRn7AXDjKp+g8Q
-        vFcjOULkDEyrqpVYRFS/LQ4=
-X-Google-Smtp-Source: ALg8bN5c/9oPbcZ7NQS6kBvonzoKu1QLMDpvt5AACYpcDDUgg8r3PXrLzJZtDfH4sDyAFWAxF80gaA==
-X-Received: by 2002:a37:7003:: with SMTP id l3mr25512071qkc.80.1548791697221;
-        Tue, 29 Jan 2019 11:54:57 -0800 (PST)
-Received: from localhost.localdomain ([181.220.86.121])
-        by smtp.gmail.com with ESMTPSA id y12sm104050456qta.13.2019.01.29.11.54.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 11:54:56 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Tue, 29 Jan 2019 17:54:50 -0200
-From:   Otavio Salvador <otavio@ossystems.com.br>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Jason Zhu <jason.zhu@rock-chips.com>,
-        Vicent Chi <vicent.chi@rock-chips.com>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Tomsic <philipp.tomsich@theobroma-systems.com>,
-        Tony Xie <tony.xie@rock-chips.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4/4] ARM: dts: rockchip: rv1108-evb: Use the correct regulator properties
-Date:   Tue, 29 Jan 2019 17:54:24 -0200
-Message-Id: <20190129195424.10161-4-otavio@ossystems.com.br>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129195424.10161-1-otavio@ossystems.com.br>
-References: <20190129195424.10161-1-otavio@ossystems.com.br>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DbE1GrRmgpsPkMb62kQRgfWSg0dLU9+SDcD6byWUaX4=;
+        b=labQHZu9jQkAKFipP6JUgkit/ukDq/qC3yqUKhBVRE5rHD1UE9eAuJdFHmXO5uVqg5
+         uRTLsp9sGdCSNKDQEQuebMkOfVAUGI1jZjJJuXEE9mktdnTuOYjSjpUAkRlBfoPS8N/D
+         9z7O1MZL2TPV/7Ob4XtYvWIaezkhWXwVCyAz8eM9XPidp9MVcdI0/UHRf18Oem/6HsJ7
+         T5i7PI230Xv1NqjMEAORypNgmdGKvoRXOkRbIihuM+FBaGSDtOMf06MKiiriB/jQAZ/E
+         HJeEjo7rt5YhZAYiAtYpfQ+1/D6o+/dUDx5klJlYq7Sakixj8emZcDAPKVgNQN5DKoCm
+         SI7Q==
+X-Gm-Message-State: AJcUukfWnzDPE5oZYUtY1hRWEGPxPuqPjk5wQ4XJ0g1av4LwXTiE+pVG
+        8f0xFLGSURiC8eT/WkGgOrDd030/rlWIBsfY5fI=
+X-Google-Smtp-Source: ALg8bN5FtxNkNjW599qrUzEnetIRTAX187hhjUN5bTMbybWCmuHZS8mhBUhWb+uBJPDX1krcjBMM/76FizLN9vWBbTg=
+X-Received: by 2002:a7b:c8d7:: with SMTP id f23mr22060809wml.121.1548791811117;
+ Tue, 29 Jan 2019 11:56:51 -0800 (PST)
 MIME-Version: 1.0
-Organization: O.S. Systems Software LTDA.
-Content-Transfer-Encoding: 8bit
+References: <20190129174728.6430-1-jglisse@redhat.com> <20190129174728.6430-2-jglisse@redhat.com>
+In-Reply-To: <20190129174728.6430-2-jglisse@redhat.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 29 Jan 2019 14:56:38 -0500
+Message-ID: <CADnq5_N8QLA_80j+iCtMHvSZhc-WFpzdZhpk6jR9yhoNoUDFZA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/5] pci/p2p: add a function to test peer to peer capability
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm <linux-mm@kvack.org>, Joerg Roedel <jroedel@suse.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, Christoph Hellwig <hch@lst.de>,
+        iommu@lists.linux-foundation.org,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following properties:
+On Tue, Jan 29, 2019 at 12:47 PM <jglisse@redhat.com> wrote:
+>
+> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>
+> device_test_p2p() return true if two devices can peer to peer to
+> each other. We add a generic function as different inter-connect
+> can support peer to peer and we want to genericaly test this no
+> matter what the inter-connect might be. However this version only
+> support PCIE for now.
+>
 
-- regulator-state-enabled
-- regulator-state-disabled
-- regulator-state-uv
+What about something like these patches:
+https://cgit.freedesktop.org/~deathsimple/linux/commit/?h=3Dp2p&id=3D4fab9f=
+f69cb968183f717551441b475fabce6c1c
+https://cgit.freedesktop.org/~deathsimple/linux/commit/?h=3Dp2p&id=3Df90b12=
+d41c277335d08c9dab62433f27c0fadbe5
+They are a bit more thorough.
 
-are not valid ones as per
-Documentation/devicetree/bindings/regulator/regulator.txt
+Alex
 
-Fix it by using the correct properties as per the dt bindings.
-
-Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
----
-
- arch/arm/boot/dts/rv1108-evb.dts | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/boot/dts/rv1108-evb.dts b/arch/arm/boot/dts/rv1108-evb.dts
-index 203d83e3bbf5..30f3d0470ad9 100644
---- a/arch/arm/boot/dts/rv1108-evb.dts
-+++ b/arch/arm/boot/dts/rv1108-evb.dts
-@@ -97,8 +97,8 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
--					regulator-state-enabled;
--					regulator-state-uv = <900000>;
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <900000>;
- 				};
- 			};
- 
-@@ -107,7 +107,7 @@
- 				regulator-min-microvolt = <700000>;
- 				regulator-max-microvolt = <2000000>;
- 				regulator-state-mem {
--					regulator-state-disabled;
-+					regulator-off-in-suspend;
- 				};
- 			};
- 
-@@ -116,7 +116,7 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
--					regulator-state-enabled;
-+					regulator-on-in-suspend;
- 				};
- 			};
- 
-@@ -127,8 +127,8 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
--					regulator-state-enabled;
--					regulator-state-uv = <3300000>;
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <3300000>;
- 				};
- 			};
- 
-@@ -139,7 +139,7 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
--					regulator-state-disabled;
-+					regulator-off-in-suspend;
- 				};
- 			};
- 
-@@ -150,7 +150,7 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
--					regulator-state-disabled;
-+					regulator-off-in-suspend;
- 				};
- 			};
- 
-@@ -161,8 +161,8 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-state-mem {
--					regulator-state-enabled;
--					regulator-state-uv = <1000000>;
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1000000>;
- 				};
- 			};
- 		};
--- 
-2.20.1
-
+> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Logan Gunthorpe <logang@deltatee.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Rafael J. Wysocki <rafael@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Christian Koenig <christian.koenig@amd.com>
+> Cc: Felix Kuehling <Felix.Kuehling@amd.com>
+> Cc: Jason Gunthorpe <jgg@mellanox.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Joerg Roedel <jroedel@suse.de>
+> Cc: iommu@lists.linux-foundation.org
+> ---
+>  drivers/pci/p2pdma.c       | 27 +++++++++++++++++++++++++++
+>  include/linux/pci-p2pdma.h |  6 ++++++
+>  2 files changed, 33 insertions(+)
+>
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index c52298d76e64..620ac60babb5 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -797,3 +797,30 @@ ssize_t pci_p2pdma_enable_show(char *page, struct pc=
+i_dev *p2p_dev,
+>         return sprintf(page, "%s\n", pci_name(p2p_dev));
+>  }
+>  EXPORT_SYMBOL_GPL(pci_p2pdma_enable_show);
+> +
+> +bool pci_test_p2p(struct device *devA, struct device *devB)
+> +{
+> +       struct pci_dev *pciA, *pciB;
+> +       bool ret;
+> +       int tmp;
+> +
+> +       /*
+> +        * For now we only support PCIE peer to peer but other inter-conn=
+ect
+> +        * can be added.
+> +        */
+> +       pciA =3D find_parent_pci_dev(devA);
+> +       pciB =3D find_parent_pci_dev(devB);
+> +       if (pciA =3D=3D NULL || pciB =3D=3D NULL) {
+> +               ret =3D false;
+> +               goto out;
+> +       }
+> +
+> +       tmp =3D upstream_bridge_distance(pciA, pciB, NULL);
+> +       ret =3D tmp < 0 ? false : true;
+> +
+> +out:
+> +       pci_dev_put(pciB);
+> +       pci_dev_put(pciA);
+> +       return false;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_test_p2p);
+> diff --git a/include/linux/pci-p2pdma.h b/include/linux/pci-p2pdma.h
+> index bca9bc3e5be7..7671cc499a08 100644
+> --- a/include/linux/pci-p2pdma.h
+> +++ b/include/linux/pci-p2pdma.h
+> @@ -36,6 +36,7 @@ int pci_p2pdma_enable_store(const char *page, struct pc=
+i_dev **p2p_dev,
+>                             bool *use_p2pdma);
+>  ssize_t pci_p2pdma_enable_show(char *page, struct pci_dev *p2p_dev,
+>                                bool use_p2pdma);
+> +bool pci_test_p2p(struct device *devA, struct device *devB);
+>  #else /* CONFIG_PCI_P2PDMA */
+>  static inline int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar,
+>                 size_t size, u64 offset)
+> @@ -97,6 +98,11 @@ static inline ssize_t pci_p2pdma_enable_show(char *pag=
+e,
+>  {
+>         return sprintf(page, "none\n");
+>  }
+> +
+> +static inline bool pci_test_p2p(struct device *devA, struct device *devB=
+)
+> +{
+> +       return false;
+> +}
+>  #endif /* CONFIG_PCI_P2PDMA */
+>
+>
+> --
+> 2.17.2
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
