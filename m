@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC55C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C87C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C51A20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29C5120844
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761873;
-	bh=slsWp9ZBq9WA9GmO2ylpUj0J2vmmJ0y7MLhlYdRkQTw=;
+	s=default; t=1548761876;
+	bh=HQETttAHQZPL7+/CxhA2OjLZM/SFNnKdXT47fKAAoNo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uk2OSCcJCJXygAvqiGh8yl/I2WpMsXzvWhfyDd3XR02JXD6q7C0GP+EFwQX7OYcWL
-	 usLxjLhq7dV8reR49TYgwExk16aHMn6L+Jw2vUluiUv8yNfKgVhumkXhmdghU/azyR
-	 u7td2rFUcaIPAgLeauVk3xH9Qo8TiJLlMVr/1hvQ=
+	b=akdWo4JlxonYY65pe8zlJDTGL4lp0TqrLKb6xwNfbdY/Xl+Yu4kXnU/sQluRgFZT2
+	 sGA3w4qzEthTKm31TOag8TgRJNYRzU9HsIP7UuGhsCgLXFuxn3fRatoaTy76X8evWG
+	 cD/CHz3AXZiIrhTg7D48ZyaA1UM6EPpz7X40PLlM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbfA2Lhv (ORCPT
+        id S1728970AbfA2Lhz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:37:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54462 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:37:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728939AbfA2Lht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:37:49 -0500
+        id S1728939AbfA2Lhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:37:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF7D620989;
-        Tue, 29 Jan 2019 11:37:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7095A20844;
+        Tue, 29 Jan 2019 11:37:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761869;
-        bh=slsWp9ZBq9WA9GmO2ylpUj0J2vmmJ0y7MLhlYdRkQTw=;
+        s=default; t=1548761871;
+        bh=HQETttAHQZPL7+/CxhA2OjLZM/SFNnKdXT47fKAAoNo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DbCXW8J2OL2Rh9PcsdFLoVXuIX9/dKsVEj6gfi6hfvfbkp21wJoasztgKKoRw40B5
-         /I9Gk7OExYzvfFayYNxEfx7PUEPrJC4CWO5w+/EqXXaq6PyHrQUyf9VUGdTM6hkgAf
-         cajTjzi0EPE/Ch9Vv5HNaTPkKhr0V18dd/uNyvSI=
+        b=whw1ClrT1DLZCaH96Xg4ZoFp5HmtnVnO/AjRet/UCbVSIf3dqmotsookPGSH/da6b
+         VueB5LjZyl2xuRGEq+WLtsgquTWGS3v0cLh+oyuMWvDY4opBBiSrbxDjssKLCJl+g0
+         OayK1NbBjlZekKovIytKspww8Tm/NctUdhVRR4Oo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Wood <oss@buserror.net>,
-        Camelia Groza <camelia.groza@nxp.com>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 006/117] net: phy: phy driver features are mandatory
-Date:   Tue, 29 Jan 2019 12:34:17 +0100
-Message-Id: <20190129113207.840573969@linuxfoundation.org>
+Subject: [PATCH 4.20 007/117] net/sched: act_tunnel_key: fix memory leak in case of action replace
+Date:   Tue, 29 Jan 2019 12:34:18 +0100
+Message-Id: <20190129113207.891704150@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -66,52 +66,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Camelia Groza <camelia.groza@nxp.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 3e64cf7a435ed0500e3adaa8aada2272d3ae8abc ]
+[ Upstream commit 9174c3df1cd181c14913138d50ccbe539bb08335 ]
 
-Since phy driver features became a link_mode bitmap, phy drivers that
-don't have a list of features configured will cause the kernel to crash
-when probed.
+running the following TDC test cases:
 
-Prevent the phy driver from registering if the features field is missing.
+ 7afc - Replace tunnel_key set action with all parameters
+ 364d - Replace tunnel_key set action with all parameters and cookie
 
-Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
-Reported-by: Scott Wood <oss@buserror.net>
-Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
+it's possible to trigger kmemleak warnings like:
+
+  unreferenced object 0xffff94797127ab40 (size 192):
+  comm "tc", pid 3248, jiffies 4300565293 (age 1006.862s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 c0 93 f9 8a ff ff ff ff  ................
+    41 84 ee 89 ff ff ff ff 00 00 00 00 00 00 00 00  A...............
+  backtrace:
+    [<000000001e85b61c>] tunnel_key_init+0x31d/0x820 [act_tunnel_key]
+    [<000000007f3f6ee7>] tcf_action_init_1+0x384/0x4c0
+    [<00000000e89e3ded>] tcf_action_init+0x12b/0x1a0
+    [<00000000c1c8c0f8>] tcf_action_add+0x73/0x170
+    [<0000000095a9fc28>] tc_ctl_action+0x122/0x160
+    [<000000004bebeac5>] rtnetlink_rcv_msg+0x263/0x2d0
+    [<000000009fd862dd>] netlink_rcv_skb+0x4a/0x110
+    [<00000000b55199e7>] netlink_unicast+0x1a0/0x250
+    [<000000004996cd21>] netlink_sendmsg+0x2c1/0x3c0
+    [<000000004d6a94b4>] sock_sendmsg+0x36/0x40
+    [<000000005d9f0208>] ___sys_sendmsg+0x280/0x2f0
+    [<00000000dec19023>] __sys_sendmsg+0x5e/0xa0
+    [<000000004b82ac81>] do_syscall_64+0x5b/0x180
+    [<00000000a0f1209a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+    [<000000002926b2ab>] 0xffffffffffffffff
+
+when the tunnel_key action is replaced, the kernel forgets to release the
+dst metadata: ensure they are released by tunnel_key_init(), the same way
+it's done in tunnel_key_release().
+
+Fixes: d0f6dd8a914f4 ("net/sched: Introduce act_tunnel_key")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy_device.c |    5 +++++
- include/linux/phy.h          |    4 ++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ net/sched/act_tunnel_key.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -2196,6 +2196,11 @@ int phy_driver_register(struct phy_drive
- {
- 	int retval;
+--- a/net/sched/act_tunnel_key.c
++++ b/net/sched/act_tunnel_key.c
+@@ -197,6 +197,15 @@ static const struct nla_policy tunnel_ke
+ 	[TCA_TUNNEL_KEY_ENC_TTL]      = { .type = NLA_U8 },
+ };
  
-+	if (WARN_ON(!new_driver->features)) {
-+		pr_err("%s: Driver features are missing\n", new_driver->name);
-+		return -EINVAL;
-+	}
++static void tunnel_key_release_params(struct tcf_tunnel_key_params *p)
++{
++	if (!p)
++		return;
++	if (p->tcft_action == TCA_TUNNEL_KEY_ACT_SET)
++		dst_release(&p->tcft_enc_metadata->dst);
++	kfree_rcu(p, rcu);
++}
 +
- 	new_driver->mdiodrv.flags |= MDIO_DEVICE_IS_PHY;
- 	new_driver->mdiodrv.driver.name = new_driver->name;
- 	new_driver->mdiodrv.driver.bus = &mdio_bus_type;
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -502,8 +502,8 @@ struct phy_device {
-  *   only works for PHYs with IDs which match this field
-  * name: The friendly name of this PHY type
-  * phy_id_mask: Defines the important bits of the phy_id
-- * features: A list of features (speed, duplex, etc) supported
-- *   by this PHY
-+ * features: A mandatory list of features (speed, duplex, etc)
-+ *   supported by this PHY
-  * flags: A bitfield defining certain other features this PHY
-  *   supports (like interrupts)
-  *
+ static int tunnel_key_init(struct net *net, struct nlattr *nla,
+ 			   struct nlattr *est, struct tc_action **a,
+ 			   int ovr, int bind, bool rtnl_held,
+@@ -360,8 +369,7 @@ static int tunnel_key_init(struct net *n
+ 	rcu_swap_protected(t->params, params_new,
+ 			   lockdep_is_held(&t->tcf_lock));
+ 	spin_unlock_bh(&t->tcf_lock);
+-	if (params_new)
+-		kfree_rcu(params_new, rcu);
++	tunnel_key_release_params(params_new);
+ 
+ 	if (ret == ACT_P_CREATED)
+ 		tcf_idr_insert(tn, *a);
+@@ -385,12 +393,7 @@ static void tunnel_key_release(struct tc
+ 	struct tcf_tunnel_key_params *params;
+ 
+ 	params = rcu_dereference_protected(t->params, 1);
+-	if (params) {
+-		if (params->tcft_action == TCA_TUNNEL_KEY_ACT_SET)
+-			dst_release(&params->tcft_enc_metadata->dst);
+-
+-		kfree_rcu(params, rcu);
+-	}
++	tunnel_key_release_params(params);
+ }
+ 
+ static int tunnel_key_geneve_opts_dump(struct sk_buff *skb,
 
 
