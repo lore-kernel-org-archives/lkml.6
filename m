@@ -2,185 +2,448 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBE9C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 485F6C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 876D02087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3FB220989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:42:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="tqu5iUkL"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tJRi9Qgm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729534AbfA2Uki (ORCPT
+        id S1727621AbfA2Umx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:40:38 -0500
-Received: from mail-eopbgr760052.outbound.protection.outlook.com ([40.107.76.52]:24800
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727308AbfA2Ukh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:40:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qOprgopWaThs2RZVQAxl3VL9bMTAW5QLsOWAa5YF6qc=;
- b=tqu5iUkLXYAI1IcAE2J6FUsgP/dXaTlWxWCFrVTX6uql3wRfu3MUsoldD+Vf5OrCmCJCIby8lEMNf0foxhW+X1lC+YUi7b80tQuwgheEfX3Y9jU0/MntE2jpJ417Qf2Ai6N695hT7/g071OsL3O9ZxSQf7Q8m8Q9Dkps7hhQA0Q=
-Received: from MWHPR0201CA0036.namprd02.prod.outlook.com
- (2603:10b6:301:74::49) by BYAPR02MB5015.namprd02.prod.outlook.com
- (2603:10b6:a03:71::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1558.21; Tue, 29 Jan
- 2019 20:38:54 +0000
-Received: from BL2NAM02FT053.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::207) by MWHPR0201CA0036.outlook.office365.com
- (2603:10b6:301:74::49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1558.18 via Frontend
- Transport; Tue, 29 Jan 2019 20:38:54 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT053.mail.protection.outlook.com (10.152.76.225) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1580.10
- via Frontend Transport; Tue, 29 Jan 2019 20:38:53 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1goa9l-0007ir-5w; Tue, 29 Jan 2019 12:38:53 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1goa9g-0007aV-24; Tue, 29 Jan 2019 12:38:48 -0800
-Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x0TKcaDj023880;
-        Tue, 29 Jan 2019 12:38:36 -0800
-Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <jollys@xilinx.com>)
-        id 1goa9U-0007YY-G6; Tue, 29 Jan 2019 12:38:36 -0800
-From:   Jolly Shah <jolly.shah@xilinx.com>
-To:     <matthias.bgg@gmail.com>, <andy.gross@linaro.org>,
-        <shawnguo@kernel.org>, <geert+renesas@glider.be>,
-        <bjorn.andersson@linaro.org>, <sean.wang@mediatek.com>,
-        <m.szyprowski@samsung.com>, <michal.simek@xilinx.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <rajanv@xilinx.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Rajan Vaja <rajan.vaja@xilinx.com>,
-        Jolly Shah <jollys@xilinx.com>
-Subject: [PATCH v6 1/3] dt-bindings: soc: Add ZynqMP PM bindings
-Date:   Tue, 29 Jan 2019 12:38:19 -0800
-Message-ID: <1548794301-30483-2-git-send-email-jollys@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548794301-30483-1-git-send-email-jollys@xilinx.com>
-References: <1548794301-30483-1-git-send-email-jollys@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(396003)(346002)(2980300002)(199004)(189003)(110136005)(54906003)(50466002)(9786002)(14444005)(356004)(6666004)(36386004)(26005)(336012)(77096007)(186003)(51416003)(47776003)(48376002)(76176011)(7696005)(2201001)(426003)(106002)(72206003)(2906002)(81166006)(81156014)(39060400002)(8936002)(4326008)(478600001)(63266004)(36756003)(126002)(486006)(50226002)(16586007)(11346002)(476003)(305945005)(7416002)(44832011)(446003)(8676002)(106466001)(316002)(2616005)(107886003)(921003)(107986001)(83996005)(2101003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB5015;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT053;1:POCAFKSG6rtF1FWIp+NTOASiJja8UpN4s9wSs+Sy7D0ApXaweFHQYd59oAXk0Rk8P2U1W4Hl7iWYbE5hVcpfE9g2rlKJM1Gdob9B2zTVylS9NGlBG1VVqZ24aootFmC4a/R8RMLMAfnJjykwdgCvLfws76AKPNYfE6Di1Oq5nOI=
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2f1bb559-a50a-495c-43e1-08d68629c8bf
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060);SRVR:BYAPR02MB5015;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5015;3:xqulMMTqnNMFMki4o5EtrJPUX9ljzrrxX6eqzXMdjP23rDFlOkTFv9S4yicSImkS+LVr11CoOYSh4npNSydvOMH8c58Idnbw9oeguBQKorFWK1FROhKKHekI1fFnP0m77ngEPOV4QgmwCx24MCeaXtIeTEcsAosoUxxiftcwfJez0jCH4c16g09Qwb3wpR2TL/6ggGoBnGr08DuT88vpQ4Hoo7U8JXfZuC7s1jL+xWGPONP4I6dExRi7c5A+Cv3O37kpK6hTpFQ3m7AId2sKytisNY2zbktJ10XXCxJZH7DVDsWknrp2RFMRD1UcwnDxSqhxu0JOWAIoGYK69bnPt1cHmXi1pyHmUqO4kmlz5hPMedn7cgUMe5trfeCJbSRq;25:UWclD4c8eFVGiZWTTo78n+dcrNGbJkBXX0Q4syJL3KMI+j4DvUXeTSNfGr16XdeIQ2WfjWHjE721pcsUvslZ/WT9bt+d85PFFjGVPmyZpwtFqAu2eADPXxPVSY64LTc9FafI9S8dJwxYKtN8xJXjC4NmqGSvMQVTIrTs3Jy+yoICxiG+oWMdTze9TCS7ju7KZYWTf7rqP0/Uyt9GNsapcd4yrVG6Oaa5Xnz4/+LB+MQgVZ/IO3wZ3Nkp0sikYUt8hwiAyvoPOAtjolEzDRL7KjOMTvQJ6+SkwcEYpHw7EkJqkc/r47Dj1QSCTfF/px9RGb/qucpH1ruzsaONyBh2OQ==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB5015:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5015;31:FIyUNL5eHqKqjLDVaavhk/QWxbCs8pvVhFv/Z0lhDimwOO406ra6FyVo4WdFxVY1760+ym0tMEsWk2bulKYDlpg/JNulK+LOWSP9zVSRil1Ax+7loThT2+Dhd1LbahgydIjBOW5Le+CFKk5aEA3HUvM7OAg94PZGvjQKfEIVJ+T78+uKeovCVDD0IFuFnoEv+SVLNoabPP6fKMtj0AabOA1R8RpMCv2aX24vTXRzEsM=;20:2rbvtEwNXvU3U+auaTm/a1RaMS73Vn4Nim8NayGrbiW8iXzqlpGxz51VCWBc96BMV/TRbGUv68tMAs/NKokO5hLityZvg3PjlGVqaEmywE7OXjVfbnrrB3Ls+lQkSeWTHgAuqOTTCjBFaVbEumz9gtZnY+cqtjp9Wrq6rO69iLbLLgNtL7WLQKe/whjGMyNXpmuGtoNsHVvXlF5vd66XR5LwZ1eWezMJ+O3dZCWiTqxGYuErNRbjBnz4KYqVKqK9gKEyP//0L1RptF9QHlykfnSjE8RUn3T+p9UjdU6nfUPtNGmr4xujZ+cvcM9FPQNFzOjXKnSyXPKSz1XrqefL5aYTSaYbcidYATXFEtEG2aGBIbIK4JFctW66KaRieGAgXuul/clrhb9tKTHSysGpLoT+BCj62jJ2QhJt0umh+BXJ8JnQ1CIKn89KsIszK1ISJa1Q2Hop2QeJHTAir6DOfOIApNNlix+qhBjGgEDGt7MmhBi2x93H4uPoXgG5c7u+
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB5015A4896B4789ADDC52B629B8970@BYAPR02MB5015.namprd02.prod.outlook.com>
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5015;4:71QEsivvk1w11vxpk2XKeQBl0xh0MXWHnh5FBP4mmt/+VFENH1ZDe4YqbEngOPrlYZrpybq+I6bKsXANWwdXJAaFTpDY+9Oh+D4WNQOS97Iu5C7Qbi0udaZnecKMLAUwdbEC1msy3oxJeA6pQ/iqvH5NmT5M5vxRTDL+S5a3yJv0lLGX5Yg4qDi4rv9yQDFk5I3SatJkhxBat72kFjVhNhJmU/zWk/0eWiPCglj65b2OAY9YlqGaswKWNf5/0D3JvcHQpnhZHD3FMIWtmMqdyUXoek/Ro+ChFqmQrXzm9EZf3ytlJdC58zzgTPah7AJr
-X-Forefront-PRVS: 093290AD39
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB5015;23:sCjkHXAjrszm/JgxEAfSFNGaUKQbz1sDG0vaTp9p5?=
- =?us-ascii?Q?TL+JGV48KZI0dMQv8e+j9c7LS2g2oGFEh4gqKbnmzBu+zJpuK5yzkUXReT5v?=
- =?us-ascii?Q?QtNqtmKYbQbVPA7Jy5VxOVY/Q75mEKk0jxyRQFvVpQ/0BnRyyT8Qi8ygrzBC?=
- =?us-ascii?Q?2GcYryrPZaRHcm8DoQ1/MlBkDjrltJBaBLR2ri8c0t78MtQrMfZDTG6V9XWG?=
- =?us-ascii?Q?LWkJdEi5qorPZ5Uonteb+kiMwNW3GzdG4Zj3/km6xC9ZA++V986UnSzduN91?=
- =?us-ascii?Q?Pt176qGQ8N7AYJvB8qAogo5/BhPKY71OV2COvPo0yA0XJtFoc5puOHHNBAs4?=
- =?us-ascii?Q?/3qnljDhsVOyKtxbLUMcydfolHvs4/vNaWkvb8PApdHcBg1Mh85FeWFty5es?=
- =?us-ascii?Q?jOnKWc0v4fSyo+31gnC1iLG8mU7ePNaHwWeLwCdPDvpSb8PIUuCqsq9xJShR?=
- =?us-ascii?Q?qkoXLUoN8p0BzWWtUtEVBxxXGLhSfcDTnxH05TV2q9nwHtfj9CQStujVSmGZ?=
- =?us-ascii?Q?AJ4wtQ+Y7X7nriJlhhd/nErDX2G5WxgwpZUzDs+GdhTgo++vDEIBuhzLlUif?=
- =?us-ascii?Q?RKN11J10eb+/FKydiwrGsvOQv/GCmQwlTsyFZwuZGxsrTGzcW9lvHMd5H3El?=
- =?us-ascii?Q?9/aDaQSxZ2zX3zBd/ADIY36ITdaxyYIeXYrPvGGUKkRY+4028mlnwgUncb7M?=
- =?us-ascii?Q?xhP2gMA2zxKBI+Nzp859nO7An/Hv5tqpXqEDGbvE+kxIuIIIJy+mMCVPAIz+?=
- =?us-ascii?Q?eA8lkwVgBHh206NRDIUi9JmyXdh3QfDNB3amMGXLoVxYbUbhMXofUtibqJZV?=
- =?us-ascii?Q?E9qelfpR4y1b42jRDOV0pnYpJnLchfI+wOKXYZWbYDoe1RgYBmMo1vnxVyih?=
- =?us-ascii?Q?hDo3bXpVgZqJoH7utmCbyr7tZlcQH+pjm9Rr8mMr0JBqFnJD1ws8j9J/3EtV?=
- =?us-ascii?Q?hGbPsB7FVhJelWRXhXBteZauxxxeHZ3/cyB40eK3pfwH9DhbEz8uF01DmRmT?=
- =?us-ascii?Q?//YBPtFl2gfXPS9u1zVuXM8+zZ5N+ZQBhTktQNAqrVy5m7YVbKUr2HK86kUo?=
- =?us-ascii?Q?DgD5oLohigeeCVGLxCR8lPdUbn9ZZiaF6W91z1BQcq+NdJg7htVULZQjGGF5?=
- =?us-ascii?Q?vstJvvq5lKdt9y9U2yRIvZSDe7P6fCRzjNhPxWOqkxv8ekWVP0wLOxIghKzu?=
- =?us-ascii?Q?0uiY2dkCVua1gVN43vcsXVEinC27Q4VDt8DaXsAQqlo/h5NY8Xd+BIRNgDcS?=
- =?us-ascii?Q?KubUoVFHnxDBFElD0ScRwQOU87WjR/Ruivy8Sqp?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: Lz9uBC17GnLo2+WJIwuyBSpCbFN+776JYKzos1ZZA//vAWnv+OvJalq+sAUb0VGBYLsTk36V9VffRdpBlzpc+zVY5B5ZiEsscyBqWMIsJh5yMDwaVApRzxJHyip1wr7roylBOQcizisqXzey1vAf6YbD9j4CSMnGH7ygZYLBJtkgX0oQs7YkzwRfRjSCDlY+NI5yxp+blNmJBJjf40IpD/69PWkLrGGAmPaJBOP2h6KUSKoHAUkiT8XdPq37bPrc5sXbpKMGfHIjQNjNgwL4k44sI2ov1bJ9ZBu5+P4MT+vfVpjJRSuJCHK4QlkhCR6Ils2P3IdzRWW3GiVYpO0l624CgwjMV8/yzeFlBsDiNAVrN0yY18aheqAivjAmuidbOXI334kEFhBmuv5jQdSqi9pkRgGoddzrPF2xqdWBGn0=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB5015;6:rgMjsvJB6osaP2MhHiLCGLrBtWl5m7oK7KPbDW+Q701/L/EJpMTr96TdKjmpaQLFPjhpjlFOP95Ya5duSX69to3iHJ+fH3Yj6y9fZ56UgV+axinof0jsTlqJC37iz+4ec2IoezZQrg5WEprdCVjfk9BCOGZntCP5HBhArq+RbCv7PfzikteaVxHNaEtFO2PzwalBkQkNuiDs5NxO23WMR+qAg21fknV24VPwjzmwUJ1msaMVAWxfqaPJcoAdoUPOfb294toIDYVOhcfLpoBjm0puAP6shJowAXXCu3knKLtdb6GDQCRJCarfTThALFmcbQQuWBjDPTgNqMt88NeMLU0VEhdo5PogdaE9Siefa+f4qz+emMMpMZ1eClDk6rA7PLD26Wu4mNFJWgSuvV+dSuAaQYMyx1HVfrz6Uemy7hNFwlUt6NgWVWQfVGZ2Wlq0eNrMTb+siNrun+j6BKrThw==;5:bLLx/goqcrM4QW7bM971L0psO2vgFGRlE24Cc5DufbuxTUdxeQzgyRRSEzuXtNEsuiZMvKRMPHTW2GDaXYR2crh+7zxTrvh+P0C75lnAik3iG6WXrAFs5XbeZgN8VKhKNPrWH2D1HTHZyc1b98c/Qtx8sI1RZnbKY5CaLANyP1EfOp4JMLAWdH0BrFg5GOm3Fz+uzz9rUIGbifCs1381sQ==;7:H0vZEW1aX/AQZTZR5r7ao02SlVEIoHVKL0S22FFHN00FyTWT4CGTS8WIMTX0oeyz1sWzvS9uDohomXImU683ga63MrfknVKNIB9JtzadDo04gLrVR/XcpBgkyYAGQbQwpNQkaPoQZgs+kMvWwBhrfg==
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2019 20:38:53.7511
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f1bb559-a50a-495c-43e1-08d68629c8bf
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5015
+        Tue, 29 Jan 2019 15:42:53 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:59867 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726945AbfA2Umw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 15:42:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version
+        :Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=NeloGiv4rgAWZH23AMg/7pLSLtiIxofOAMKF3+SUdwo=; b=tJRi9Qgmt4JeMX5WTPtHEfOt2b
+        i965MrGgdRrl05ZJfRt/Z2C54/DBol29bYZ3HvUMAEYdHNQRtBk9zuAUhWI/n1Yq2PHG2geHH1wWw
+        7d/jPm9HgklOpHGMt/Tz0KcBdagwKKWCPvFL7oMCYDQAHPsm3W1ihfCX8JadDnkpkwR4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1goaDH-0004gE-Fl; Tue, 29 Jan 2019 21:42:31 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Emeric Dupont <emeric.dupont@zii.aero>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH v4] mfd: tqmx86: IO controller with i2c, wachdog and gpio
+Date:   Tue, 29 Jan 2019 21:42:24 +0100
+Message-Id: <20190129204224.17951-1-andrew@lunn.ch>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+The QMX86 is a PLD present on some TQ-Systems ComExpress modules. It
+provides 1 or 2 I2C bus masters, 8 GPIOs and a watchdog timer. Add an
+MFD which will instantiate the individual drivers.
 
-Add documentation to describe Xilinx ZynqMP power management
-bindings.
-
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 ---
- .../bindings/power/reset/xlnx,zynqmp-power.txt     | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.txt
+v2:
 
-diff --git a/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.txt b/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.txt
+Drop setting i2c bus speed, which removes the build dependencies on
+the i2c ocores patches. This can be added back later.
+
+v3:
+
+Fix indentation of help
+Fix SPDX to match MODULE_LICENSE
+Remove warranty text
+Add my Copyright
+Sort include files
+Add _REG_ to register defines
+Add #defines for all resources
+Replace magic numbers with #defines
+Rename pld_clock to pld_clock_rate
+Remove wrapper around ioread8()/iowrite8()
+Scatter const keyword in a few places
+Remove enum for calls
+Implement lookup for board in tq_board_if
+Rename ioeic to io_ext_int_val to make is more readable
+Handle optional calls in a different way
+Better group code and structures
+Kill all the sysfs attributes
+Use devm_mfd_add_devices()
+Don't exist silently for unknown board ID
+
+Not addressed, waiting for answers:
+MODULE_PARM for GPIO interrupts
+Not using regmap, intel IO not supported by regmap
+Setting GPIO irq on resource structure
+Global tqmx86_pdev
+Jumping through hoops
+
+v4
+
+RFC 3676 specifies that an signature should be separated from the body
+of the using "-- \n". Version 3 of this patch used "--\n" in the body
+of the text, but apparently some email clients are broken and consider
+this as an signature separator. Remove all instances of -- as a
+workaround.
+
+No Changes to the action code.
+---
+ drivers/mfd/Kconfig  |   8 ++
+ drivers/mfd/Makefile |   1 +
+ drivers/mfd/tqmx86.c | 303 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 312 insertions(+)
+ create mode 100644 drivers/mfd/tqmx86.c
+
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index f461460a2aeb..2694552cf4be 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1677,6 +1677,14 @@ config MFD_TC6393XB
+ 	help
+ 	  Support for Toshiba Mobile IO Controller TC6393XB
+ 
++config MFD_TQMX86
++       tristate "TQ-Systems IO controller TQMX86"
++       select MFD_CORE
++       help
++	  Say yes here to enable support for various functions of the
++	  TQ-Systems IO controller and watchdog device, found on their
++	  ComExpress CPU modules.
++
+ config MFD_VX855
+ 	tristate "VIA VX855/VX875 integrated south bridge"
+ 	depends on PCI
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 12980a4ad460..7f4790662988 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_MFD_TC3589X)	+= tc3589x.o
+ obj-$(CONFIG_MFD_T7L66XB)	+= t7l66xb.o tmio_core.o
+ obj-$(CONFIG_MFD_TC6387XB)	+= tc6387xb.o tmio_core.o
+ obj-$(CONFIG_MFD_TC6393XB)	+= tc6393xb.o tmio_core.o
++obj-$(CONFIG_MFD_TQMX86)	+= tqmx86.o
+ 
+ obj-$(CONFIG_MFD_ARIZONA)	+= arizona-core.o
+ obj-$(CONFIG_MFD_ARIZONA)	+= arizona-irq.o
+diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
 new file mode 100644
-index 0000000..d366f1e
+index 000000000000..144c176cf2bc
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.txt
-@@ -0,0 +1,25 @@
-+--------------------------------------------------------------------
-+Device Tree Bindings for the Xilinx Zynq MPSoC Power Management
-+--------------------------------------------------------------------
-+The zynqmp-power node describes the power management configurations.
-+It will control remote suspend/shutdown interfaces.
++++ b/drivers/mfd/tqmx86.c
+@@ -0,0 +1,303 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * TQ-Systems PLD MFD core driver, based on vendor driver by
++ * Vadim V.Vlasov <vvlasov@dev.rtsoft.ru>
++ *
++ * Copyright (c) 2015 TQ-Systems GmbH
++ * Copyright (c) 2019 Andrew Lunn <andrew@lunn.ch>
++ */
 +
-+Required properties:
-+ - compatible:		Must contain:	"xlnx,zynqmp-power"
-+ - interrupts:		Interrupt specifier
++#include <linux/delay.h>
++#include <linux/dmi.h>
++#include <linux/i2c.h>
++#include <linux/io.h>
++#include <linux/mfd/core.h>
++#include <linux/module.h>
++#include <linux/platform_data/i2c-ocores.h>
++#include <linux/platform_device.h>
 +
-+-------
-+Example
-+-------
++#define TQMX86_IOBASE	0x160
++#define TQMX86_IOSIZE	0x3f
++#define TQMX86_IOBASE_I2C	0x1a0
++#define TQMX86_IOSIZE_I2C	0xa
++#define TQMX86_IOBASE_WATCHDOG	0x18b
++#define TQMX86_IOSIZE_WATCHDOG	0x2
++#define TQMX86_IOBASE_GPIO	0x18d
++#define TQMX86_IOSIZE_GPIO	0x4
 +
-+firmware {
-+	zynqmp_firmware: zynqmp-firmware {
-+		compatible = "xlnx,zynqmp-firmware";
-+		method = "smc";
++#define TQMX86_REG_BOARD_ID	0x20
++#define TQMX86_REG_BOARD_REV	0x21
++#define TQMX86_REG_IO_EXT_INT	0x26
++#define TQMX86_REG_IO_EXT_INT_MASK		0x3
++#define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
++#define TQMX86_REG_I2C_DETECT	0x47
++#define TQMX86_REG_I2C_DETECT_SOFT		0xa5
++#define TQMX86_REG_I2C_INT_EN	0x49
 +
-+		zynqmp_power: zynqmp-power {
-+			compatible = "xlnx,zynqmp-power";
-+			interrupts = <0 35 4>;
-+		};
-+	};
++#define I2C_KIND_SOFT	1	/* Ocores I2C soft controller */
++#define I2C_KIND_HARD	2	/* Machxo2 I2C hard controller */
++
++/**
++ * struct tqmx86_device_data - Internal representation of the PLD device
++ * @io_base:		Pointer to the IO memory
++ * @pld_clock_rate:	PLD clock frequency
++ * @dev:		Pointer to kernel device structure
++ * @i2c_type:		Hard of soft I2C hardware macro
++ */
++struct tqmx86_device_ddata {
++	void __iomem	*io_base;
++	u32		pld_clock_rate;
++	u32		i2c_type;
 +};
++
++/**
++ * struct tqmx86_platform_data - PLD hardware configuration structure
++ * @ioresource:		IO addresses of the PLD
++ */
++struct tqmx86_platform_ddata {
++	struct resource	*ioresource;
++};
++
++static uint gpio_irq;
++module_param(gpio_irq, uint, 0);
++MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (7, 9, 12)");
++
++static const u8 i2c_irq_ctl[] = {
++	[7] = 1,
++	[9] = 2,
++	[12] = 3
++};
++
++static const struct resource tqmx_i2c_soft_resources[] = {
++	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
++};
++
++static const struct resource tqmx_watchdog_resources[] = {
++	DEFINE_RES_IO(TQMX86_IOBASE_WATCHDOG, TQMX86_IOSIZE_WATCHDOG),
++};
++
++static struct resource tqmx_gpio_resources[] = {
++	DEFINE_RES_IO(TQMX86_IOBASE_GPIO, TQMX86_IOSIZE_GPIO),
++	DEFINE_RES_IRQ(0)
++};
++
++static struct i2c_board_info tqmx86_i2c_devices[] = {
++	{
++		/* 4K EEPROM at 0x50 */
++		I2C_BOARD_INFO("24c32", 0x50),
++	},
++};
++
++static struct ocores_i2c_platform_data ocores_platfom_ddata = {
++	.num_devices = ARRAY_SIZE(tqmx86_i2c_devices),
++	.devices = tqmx86_i2c_devices,
++};
++
++static const struct mfd_cell tqmx86_devs[] = {
++	{
++		.name = "ocores-i2c",
++		.platform_data = &ocores_platfom_ddata,
++		.pdata_size = sizeof(ocores_platfom_ddata),
++		.resources = tqmx_i2c_soft_resources,
++		.num_resources = ARRAY_SIZE(tqmx_i2c_soft_resources),
++	},
++	{
++		.name = "tqmx86-wdt",
++		.resources = tqmx_watchdog_resources,
++		.num_resources = 1,
++		.ignore_resource_conflicts = 1,
++	},
++	{
++		.name = "tqmx86-gpio",
++		.resources = tqmx_gpio_resources,
++		.num_resources = ARRAY_SIZE(tqmx_gpio_resources),
++		.ignore_resource_conflicts = 1,
++	},
++};
++
++static const struct tq_board_info {
++	u8 board_id;
++	char *name;
++	u32 pld_clock_rate;
++} tq_board_info[] = {
++	{ 0, "", 0 },
++	{ 1, "TQMxE38M", 33000 },
++	{ 2, "TQMx50UC", 24000 },
++	{ 3, "TQMxE38C", 33000 },
++	{ 4, "TQMx60EB", 24000 },
++	{ 5, "TQMxE39M", 25000 },
++	{ 6, "TQMxE39C", 25000 },
++	{ 7, "TQMxE39x", 25000 },
++	{ 8, "TQMx70EB", 24000 },
++	{ 9, "TQMx80UC", 24000 },
++	{10, "TQMx90UC", 24000 }
++};
++
++static int tqmx86_probe(struct platform_device *pdev)
++{
++	u8 board_id, rev, i2c_det, i2c_ien, io_ext_int_val;
++	struct device *dev = &pdev->dev;
++	struct tqmx86_device_ddata *pld;
++	struct resource *ioport;
++	int i;
++
++	pld = devm_kzalloc(dev, sizeof(*pld), GFP_KERNEL);
++	if (!pld)
++		return -ENOMEM;
++
++	ioport = platform_get_resource(pdev, IORESOURCE_IO, 0);
++	if (!ioport)
++		return -EINVAL;
++
++	pld->io_base = devm_ioport_map(dev, ioport->start,
++				       resource_size(ioport));
++	if (!pld->io_base)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, pld);
++
++	board_id = ioread8(pld->io_base + TQMX86_REG_BOARD_ID);
++	for (i = 0; i < ARRAY_SIZE(tq_board_info); i++)
++		if (tq_board_info[i].board_id == board_id)
++			break;
++
++	if (i == ARRAY_SIZE(tq_board_info)) {
++		dev_info(&pdev->dev,
++			 "Board ID %d not supported by this driver\n",
++			 board_id);
++		return -ENODEV;
++	}
++
++	rev = ioread8(pld->io_base + TQMX86_REG_BOARD_REV);
++
++	dev_info(&pdev->dev,
++		 "Found %s - Board ID %d, PCB Revision %d, PLD Revision %d\n",
++		 tq_board_info[i].name, board_id, rev >> 4, rev & 0xf);
++
++	pld->pld_clock_rate = tq_board_info[i].pld_clock_rate;
++
++	i2c_det = ioread8(pld->io_base + TQMX86_REG_I2C_DETECT);
++	i2c_ien = ioread8(pld->io_base + TQMX86_REG_I2C_INT_EN);
++
++	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT)
++		pld->i2c_type = I2C_KIND_SOFT;
++	else
++		pld->i2c_type = I2C_KIND_HARD;
++
++	io_ext_int_val =
++		(i2c_irq_ctl[gpio_irq] & TQMX86_REG_IO_EXT_INT_MASK) <<
++		TQMX86_REG_IO_EXT_INT_GPIO_SHIFT;
++
++	if (io_ext_int_val) {
++		iowrite8(io_ext_int_val, pld->io_base + TQMX86_REG_IO_EXT_INT);
++		if (ioread8(pld->io_base + TQMX86_REG_IO_EXT_INT) !=
++		    io_ext_int_val) {
++			dev_warn(&pdev->dev,
++				 "gpio interrupts not supported.\n");
++			gpio_irq = 0;
++		}
++	}
++
++	ocores_platfom_ddata.clock_khz = pld->pld_clock_rate;
++	tqmx_gpio_resources[1].start = gpio_irq;
++
++	if (pld->i2c_type == I2C_KIND_SOFT)
++		return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
++					    tqmx86_devs,
++					    ARRAY_SIZE(tqmx86_devs),
++					    NULL, 0, NULL);
++
++	/* Skip the soft I2C cell */
++	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
++				    &tqmx86_devs[1],
++				    ARRAY_SIZE(tqmx86_devs) - 1,
++				    NULL, 0, NULL);
++}
++
++static struct resource tqmx86_ioresource[] = {
++	DEFINE_RES_IO(TQMX86_IOBASE, TQMX86_IOSIZE),
++};
++
++static const struct tqmx86_platform_ddata tqmx86_platform_ddata_generic = {
++	.ioresource	= &tqmx86_ioresource[0],
++};
++
++static struct platform_device *tqmx86_pdev;
++
++static int tqmx86_create_platform_device(const struct dmi_system_id *id)
++{
++	struct tqmx86_platform_ddata *pdata = id->driver_data;
++	int ret;
++
++	tqmx86_pdev = platform_device_alloc("tqmx86", -1);
++	if (!tqmx86_pdev)
++		return -ENOMEM;
++
++	ret = platform_device_add_data(tqmx86_pdev, pdata, sizeof(*pdata));
++	if (ret)
++		goto err;
++
++	ret = platform_device_add_resources(tqmx86_pdev, pdata->ioresource, 1);
++	if (ret)
++		goto err;
++
++	ret = platform_device_add(tqmx86_pdev);
++	if (ret)
++		goto err;
++
++	return 0;
++err:
++	platform_device_put(tqmx86_pdev);
++	return ret;
++}
++
++static const struct dmi_system_id tqmx86_dmi_table[] __initconst = {
++	{
++		.ident = "TQMX86",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "TQ-Group"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "TQMx"),
++		},
++		.driver_data = (void *)&tqmx86_platform_ddata_generic,
++		.callback = tqmx86_create_platform_device,
++	},
++	{}
++};
++MODULE_DEVICE_TABLE(dmi, tqmx86_dmi_table);
++
++static struct platform_driver tqmx86_driver = {
++	.driver		= {
++		.name	= "tqmx86",
++	},
++	.probe		= tqmx86_probe,
++};
++
++static int __init tqmx86_init(void)
++{
++	if (gpio_irq != 0 && gpio_irq != 7 &&
++	    gpio_irq != 9 && gpio_irq != 12) {
++		pr_warn("tqmx86: Invalid GPIO IRQ (%d)\n", gpio_irq);
++		gpio_irq = 0;
++	}
++
++	if (!dmi_check_system(tqmx86_dmi_table))
++		return -ENODEV;
++
++	return platform_driver_register(&tqmx86_driver);
++}
++
++static void __exit tqmx86_exit(void)
++{
++	if (tqmx86_pdev)
++		platform_device_unregister(tqmx86_pdev);
++
++	platform_driver_unregister(&tqmx86_driver);
++}
++
++module_init(tqmx86_init);
++module_exit(tqmx86_exit);
++
++MODULE_DESCRIPTION("TQx86 PLD Core Driver");
++MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch>");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:tqmx86");
 -- 
-2.7.4
+2.20.1
 
