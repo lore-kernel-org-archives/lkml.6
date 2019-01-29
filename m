@@ -2,149 +2,144 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5D5C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 287F9C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A9020882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:44:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OGDVVpef"
+	by mail.kernel.org (Postfix) with ESMTP id EF51020882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:45:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729400AbfA2Vot (ORCPT
+        id S1729527AbfA2VpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 16:44:49 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:47730 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726982AbfA2Vot (ORCPT
+        Tue, 29 Jan 2019 16:45:16 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60108 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726982AbfA2VpQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 16:44:49 -0500
-Received: from mailhost.synopsys.com (dc2-mailhost1.synopsys.com [10.12.135.161])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id B772310C1382;
-        Tue, 29 Jan 2019 13:44:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1548798288; bh=DRprCnG4eBsABgj4bMUuvy1aRMokWEQjtv2TWu5cWXU=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=OGDVVpefWMcbcyickIoADp9uB2H/dGfT+ooQEnN4nK65qBX5htGJijOkxZgCkbrX7
-         dTZT3iYqyfHs6VsyaorRuuI112Jnduiulo3LWGRUJmCrKitcjHrrZGJx1xoZqaqt8G
-         2KfW2YGrsrnDGVvCArb434qsCAl1bnr3nSmVuLV7B5AVha1O9ZFxXRPmdnO/yhUZjS
-         LAMZN+/JgnE8yDVLKd1qrXqizAMYISi2iV1zNCkvqvHvQvGjf19PURwNGOD1GfsVoe
-         FE6sALQ2RQqaglGRTPwhfCazL1h00Dfdf/hgYe2qOhlRyZ9fI+oCR7yEhttXwHrbxC
-         Ghxd/orvhtugA==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 6209DA008B;
-        Tue, 29 Jan 2019 21:44:47 +0000 (UTC)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by us01wehtc1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Tue,
- 29 Jan 2019 13:44:45 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <alexey.brodkin@synopsys.com>
-Subject: Re: [PATCH 2/5] ARCv2: introduce unaligned access under a Kconfig
- option
-Thread-Topic: [PATCH 2/5] ARCv2: introduce unaligned access under a Kconfig
- option
-Thread-Index: AQHUt8BdV97GEf2KMUGRvvMb2YNphA==
-Date:   Tue, 29 Jan 2019 21:44:44 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014642D58D@US01WEMBX2.internal.synopsys.com>
-References: <20190129104942.31705-1-Eugeniy.Paltsev@synopsys.com>
- <20190129104942.31705-3-Eugeniy.Paltsev@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 29 Jan 2019 16:45:16 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 61692801C0; Tue, 29 Jan 2019 22:45:07 +0100 (CET)
+Date:   Tue, 29 Jan 2019 22:45:13 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Vesa =?iso-8859-1?B?SuTkc2tlbORpbmVu?= <dachaac@gmail.com>,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org
+Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB
+ LED driver
+Message-ID: <20190129214513.GA8692@amd>
+References: <4a20b14c-9514-25b8-affe-20f9ede4d4d8@ti.com>
+ <8fac6aeb-28a8-d136-c654-9d1b5d4f7ddb@gmail.com>
+ <27318c48-f84a-5129-ac88-545edd549101@gmail.com>
+ <21d3e21a-e50e-ee46-6f81-5a22db878c15@ti.com>
+ <1c7680d3-6926-d837-dcd9-254aca23df39@gmail.com>
+ <3e804986-89ef-2465-51ad-86e793b39b7e@ti.com>
+ <f7ad8d5a-2998-f6f0-be4b-b47237b3397f@gmail.com>
+ <4d80cc7f-1f18-ec5b-d312-a6a0da2a4506@ti.com>
+ <ca8b4251-afd4-ddde-96f2-6e3fc72e3b55@gmail.com>
+ <a097bfc8-cdee-67bb-6c30-6a31142d01ab@ti.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Content-Disposition: inline
+In-Reply-To: <a097bfc8-cdee-67bb-6c30-6a31142d01ab@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/29/19 2:49 AM, Eugeniy Paltsev wrote:=0A=
-> As of today we enable unaligned access unconditionally on ARCv2.=0A=
-> Lets move it under Kconfig option so we can disable it in case of=0A=
-> using HW configuration which lacks of it.=0A=
->=0A=
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
-> ---=0A=
->  arch/arc/Kconfig                      | 8 ++++++++=0A=
->  arch/arc/include/asm/irqflags-arcv2.h | 4 ++++=0A=
->  arch/arc/kernel/intc-arcv2.c          | 4 +++-=0A=
->  3 files changed, 15 insertions(+), 1 deletion(-)=0A=
->=0A=
-> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig=0A=
-> index 376366a7db81..37c8aeefa3a5 100644=0A=
-> --- a/arch/arc/Kconfig=0A=
-> +++ b/arch/arc/Kconfig=0A=
-> @@ -387,6 +387,14 @@ config ARC_HAS_SWAPE=0A=
->  =0A=
->  if ISA_ARCV2=0A=
->  =0A=
-> +config ARC_USE_UNALIGNED_MEM_ACCESS=0A=
-> +	bool "Handle unaligned access in HW and use it"=0A=
-> +	default y=0A=
-> +	help=0A=
-> +	  The ARC HS architecture supports unaligned memory access=0A=
-> +	  which is disabled by default. Enable unaligned access in=0A=
-> +	  hardware and use it in software.=0A=
-> +=0A=
->  config ARC_HAS_LL64=0A=
->  	bool "Insn: 64bit LDD/STD"=0A=
->  	help=0A=
-> diff --git a/arch/arc/include/asm/irqflags-arcv2.h b/arch/arc/include/asm=
-/irqflags-arcv2.h=0A=
-> index 8a4f77ea3238..9b911e2c6b31 100644=0A=
-> --- a/arch/arc/include/asm/irqflags-arcv2.h=0A=
-> +++ b/arch/arc/include/asm/irqflags-arcv2.h=0A=
-> @@ -44,8 +44,12 @@=0A=
->  #define ARCV2_IRQ_DEF_PRIO	1=0A=
->  =0A=
->  /* seed value for status register */=0A=
-> +#ifdef CONFIG_ARC_USE_UNALIGNED_MEM_ACCESS=0A=
->  #define ISA_INIT_STATUS_BITS	(STATUS_IE_MASK | STATUS_AD_MASK | \=0A=
->  					(ARCV2_IRQ_DEF_PRIO << 1))=0A=
-> +#else=0A=
-> +#define ISA_INIT_STATUS_BITS	(STATUS_IE_MASK | (ARCV2_IRQ_DEF_PRIO << 1)=
-)=0A=
-> +#endif /* CONFIG_ARC_USE_UNALIGNED_MEM_ACCESS */=0A=
-=0A=
-I'd prefer to change the define of STATUS_AD_MASK itself and keep all of th=
-is=0A=
-unchanged !=0A=
-=0A=
->  =0A=
->  #ifndef __ASSEMBLY__=0A=
->  =0A=
-> diff --git a/arch/arc/kernel/intc-arcv2.c b/arch/arc/kernel/intc-arcv2.c=
-=0A=
-> index 067ea362fb3e..84b1c7157d1b 100644=0A=
-> --- a/arch/arc/kernel/intc-arcv2.c=0A=
-> +++ b/arch/arc/kernel/intc-arcv2.c=0A=
-> @@ -93,7 +93,9 @@ void arc_init_IRQ(void)=0A=
->  =0A=
->  	/* setup status32, don't enable intr yet as kernel doesn't want */=0A=
->  	tmp =3D read_aux_reg(ARC_REG_STATUS32);=0A=
-> -	tmp |=3D STATUS_AD_MASK | (ARCV2_IRQ_DEF_PRIO << 1);=0A=
-> +	if (IS_ENABLED(ARC_USE_UNALIGNED_MEM_ACCESS))=0A=
-> +		tmp |=3D STATUS_AD_MASK;=0A=
-> +	tmp |=3D ARCV2_IRQ_DEF_PRIO << 1;=0A=
-=0A=
-This will change after rebase as we just need to delete the code here, done=
- in head.S=0A=
-=0A=
->  	tmp &=3D ~STATUS_IE_MASK;=0A=
->  	asm volatile("kflag %0	\n"::"r"(tmp));=0A=
->  }=0A=
-=0A=
+
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+Could you, trim the parts of email you do not need in the reply? This
+is quite annoying to follow:
+
+On Tue 2019-01-29 14:26:20, Dan Murphy wrote:
+> Jacek
+>=20
+> On 1/29/19 2:19 PM, Jacek Anaszewski wrote:
+> > Hi Dan,
+> >=20
+> > On 1/29/19 2:56 PM, Dan Murphy wrote:
+> >> Jacek
+> >>
+> >> On 1/24/19 3:55 PM, Jacek Anaszewski wrote:
+> >>> Dan
+> >>>
+> >>> On 1/24/19 10:00 PM, Dan Murphy wrote:
+> >>>> Jacek
+> >>>>
+> >>>> On 1/23/19 3:52 PM, Jacek Anaszewski wrote:
+> >>>>> Dan,
+> >>>>>
+> >>>>> On 1/22/19 11:44 PM, Dan Murphy wrote:
+> >>>>>> Jacek
+> >>>>>>
+> >>>>>> On 1/22/19 3:39 PM, Jacek Anaszewski wrote:
+> >>>>>>> Hi all,
+> >>>>>>>
+> >>>>>>> On 1/20/19 7:42 AM, Vesa J=E4=E4skel=E4inen wrote:
+> >>>>>>>> Hi Dan,
+> >>>>>>>>
+> >>>>>>>> On 18/01/2019 15.58, Dan Murphy wrote:
+> >>>>>>>>> Jacek
+> >>>>>>>>>
+> >>>>>>>>> On 1/18/19 7:45 AM, Dan Murphy wrote:
+> >>>>>>>>>> Jacek
+> >>>>>>>>>>
+> >>>>>>>>>> On 1/17/19 3:10 PM, Jacek Anaszewski wrote:
+> >>>>>>>>>>> Hi Dan,
+> >>>>>>>>>>>
+> >>>>>>>>>>> On 1/16/19 7:41 PM, Dan Murphy wrote:
+> >>>>>>>>>>>> Hello
+> >>>>>>>>>>>>
+> >>>>>>>>>>>> On 1/16/19 4:55 AM, Pavel Machek wrote:
+> >>>>>>>>>>>>> Hi!
+> >>>>>>>>>>>>>
+> >>>>>>>>>>>>>> On 1/15/19 4:22 PM, Pavel Machek wrote:
+> >>>>>>>>>>>>>>> Hi!
+> >>>>>>>>>>>>>>>
+=2E..
+
+> >> If this is OK I can post the patch with this update.
+> >>
+> >> But I would rather put the file creation in a class and have the color=
+s directory.
+> >=20
+> > Yes, please post your work when it is ready.
+>=20
+> OK.  I will derive the class and try to post it by the EOW.
+
+You can do that, but if you post the description of kernel<->user
+interface, first, you may save yourself a bit of coding...
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--IS0zKkzwUGydFO0o
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxQyWkACgkQMOfwapXb+vIp/gCfbUBqz6gwMGWI5ujgrmfa1JrA
+nOAAn3QHSZiCoOTcMk4k1JthV2KhyZNs
+=/cY7
+-----END PGP SIGNATURE-----
+
+--IS0zKkzwUGydFO0o--
