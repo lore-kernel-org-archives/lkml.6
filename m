@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 133C4C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C70C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D407520882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79B102083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762523;
-	bh=YGtAW5dPNGmI4FMT2/U/RsvudpJXFcTUg4priwPfcko=;
+	s=default; t=1548762531;
+	bh=O1oML94p9jdakQP/mcPiKy/t7hYH/AenvUIDAnOxxKI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KiUXeAu3DIVdsgYMuAi41ZbzCsrUo+qx0zafrUaA0oXAGrEvcRGVyJ3uLA1yIRWYa
-	 5Ss69OQQq/Z502CLgG4xgqxiC8gyuVO/cGKIqp5/J8YEaWMjbgh7YZZRo5W1TzZhix
-	 ym7++IyVemEv1nEwCm3fYHyL4uSe9O/8L73fM1cE=
+	b=rTF535pD7WZdBA9rs9Lj778Mxa251wMZulfoIR6SFmln98Gp65lWgeUJBwg7AG663
+	 dBv0ChIl41hj2Gq2hfTIN9oZ5Hok4VGvNx9kemFee4mhgeTaj47fyoh8xHiUnH8GVz
+	 /+mde7s4xbVJpMchM3zYSPi+vAKwOXWeEJA15HC8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731370AbfA2Lsl (ORCPT
+        id S1731384AbfA2Lst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:48:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39516 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:48:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731169AbfA2Lsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:38 -0500
+        id S1730846AbfA2Lsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:48:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4F442083B;
-        Tue, 29 Jan 2019 11:48:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79E472083B;
+        Tue, 29 Jan 2019 11:48:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762517;
-        bh=YGtAW5dPNGmI4FMT2/U/RsvudpJXFcTUg4priwPfcko=;
+        s=default; t=1548762520;
+        bh=O1oML94p9jdakQP/mcPiKy/t7hYH/AenvUIDAnOxxKI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n+v1512EFG/I8QvWh5r76I3R8N4Tjewl/ZUNroxxQ6616twPH5izWSNkVpQav2qyh
-         367zjx/vONnsH6f22dh8P0IapviUSNMggRELYC+f187lItuA7Odwj5e7AHO9jE09CX
-         Zj1sYOGOY5aXqkizZ5uSB1PT4RnusiTR9DTYpJVs=
+        b=Jqfanum13ZOdD5lc5JyaeMDV5LiEqtAilPkwPxIu8E02reCyxChnLyW17vKDazWCT
+         Lgx1Z1FPxEs4lD7ZY1wdBbCSEif+GRK8luatGBzxoq+ZzA5W7t2zTP88VmezKH+hvg
+         Jq0Uqz/HIuX4zSAlt7NYX6Cf2KuH0Kj/0th/oUxQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
         Ronnie Sahlberg <lsahlber@redhat.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.14 31/68] CIFS: Fix credits calculations for reads with errors
-Date:   Tue, 29 Jan 2019 12:35:53 +0100
-Message-Id: <20190129113134.197266701@linuxfoundation.org>
+Subject: [PATCH 4.14 32/68] CIFS: Fix credit calculation for encrypted reads with errors
+Date:   Tue, 29 Jan 2019 12:35:54 +0100
+Message-Id: <20190129113134.258089600@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -68,12 +68,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit 8004c78c68e894e4fd5ac3c22cc22eb7dc24cabc upstream.
+commit ec678eae746dd25766a61c4095e2b649d3b20b09 upstream.
 
-Currently we mark MID as malformed if we get an error from server
-in a read response. This leads to not properly processing credits
-in the readv callback. Fix this by marking such a response as
-normal received response and process it appropriately.
+We do need to account for credits received in error responses
+to read requests on encrypted sessions.
 
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
@@ -82,80 +80,51 @@ Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifssmb.c |   35 +++++++++++++++++++++++------------
- 1 file changed, 23 insertions(+), 12 deletions(-)
+ fs/cifs/smb2ops.c |   24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -1445,18 +1445,26 @@ cifs_discard_remaining_data(struct TCP_S
- }
- 
- static int
--cifs_readv_discard(struct TCP_Server_Info *server, struct mid_q_entry *mid)
-+__cifs_readv_discard(struct TCP_Server_Info *server, struct mid_q_entry *mid,
-+		     bool malformed)
- {
- 	int length;
--	struct cifs_readdata *rdata = mid->callback_data;
- 
- 	length = cifs_discard_remaining_data(server);
--	dequeue_mid(mid, rdata->result);
-+	dequeue_mid(mid, malformed);
- 	mid->resp_buf = server->smallbuf;
- 	server->smallbuf = NULL;
- 	return length;
- }
- 
-+static int
-+cifs_readv_discard(struct TCP_Server_Info *server, struct mid_q_entry *mid)
-+{
-+	struct cifs_readdata *rdata = mid->callback_data;
-+
-+	return  __cifs_readv_discard(server, mid, rdata->result);
-+}
-+
- int
- cifs_readv_receive(struct TCP_Server_Info *server, struct mid_q_entry *mid)
- {
-@@ -1496,12 +1504,23 @@ cifs_readv_receive(struct TCP_Server_Inf
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -2531,11 +2531,23 @@ handle_read_data(struct TCP_Server_Info
+ 			server->ops->is_status_pending(buf, server, 0))
  		return -1;
- 	}
  
-+	/* set up first two iov for signature check and to get credits */
+-	rdata->result = server->ops->map_error(buf, false);
++	/* set up first two iov to get credits */
 +	rdata->iov[0].iov_base = buf;
 +	rdata->iov[0].iov_len = 4;
 +	rdata->iov[1].iov_base = buf + 4;
-+	rdata->iov[1].iov_len = server->total_read - 4;
++	rdata->iov[1].iov_len =
++		min_t(unsigned int, buf_len, server->vals->read_rsp_size) - 4;
 +	cifs_dbg(FYI, "0: iov_base=%p iov_len=%zu\n",
 +		 rdata->iov[0].iov_base, rdata->iov[0].iov_len);
 +	cifs_dbg(FYI, "1: iov_base=%p iov_len=%zu\n",
 +		 rdata->iov[1].iov_base, rdata->iov[1].iov_len);
 +
- 	/* Was the SMB read successful? */
- 	rdata->result = server->ops->map_error(buf, false);
++	rdata->result = server->ops->map_error(buf, true);
  	if (rdata->result != 0) {
  		cifs_dbg(FYI, "%s: server returned error %d\n",
  			 __func__, rdata->result);
--		return cifs_readv_discard(server, mid);
+-		dequeue_mid(mid, rdata->result);
 +		/* normal error on read response */
-+		return __cifs_readv_discard(server, mid, false);
++		dequeue_mid(mid, false);
+ 		return 0;
  	}
  
- 	/* Is there enough to get to the rest of the READ_RSP header? */
-@@ -1544,14 +1563,6 @@ cifs_readv_receive(struct TCP_Server_Inf
- 		server->total_read += length;
+@@ -2605,14 +2617,6 @@ handle_read_data(struct TCP_Server_Info
+ 		return 0;
  	}
  
 -	/* set up first iov for signature check */
 -	rdata->iov[0].iov_base = buf;
 -	rdata->iov[0].iov_len = 4;
 -	rdata->iov[1].iov_base = buf + 4;
--	rdata->iov[1].iov_len = server->total_read - 4;
--	cifs_dbg(FYI, "0: iov_base=%p iov_len=%u\n",
--		 rdata->iov[0].iov_base, server->total_read);
+-	rdata->iov[1].iov_len = server->vals->read_rsp_size - 4;
+-	cifs_dbg(FYI, "0: iov_base=%p iov_len=%zu\n",
+-		 rdata->iov[0].iov_base, server->vals->read_rsp_size);
 -
- 	/* how much data is in the response? */
- 	data_len = server->ops->read_data_length(buf);
- 	if (data_offset + data_len > buflen) {
+ 	length = rdata->copy_into_pages(server, rdata, &iter);
+ 
+ 	kfree(bvec);
 
 
