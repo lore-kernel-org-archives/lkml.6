@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F22E2C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8055C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C21B920857
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9699120989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762003;
-	bh=Sfp03ZHFKRX2R7j/xFVN69ckJlfkI00kMDlxMXYYWEw=;
+	s=default; t=1548762007;
+	bh=XumBGVzIHw9Xqu6DXa86f2Cq5kXpQgfmYHrBR0CE+Yo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cUKXcdu/IQ8cUy3VtnOFVS0TUtoW7d1xpI3YTMWv0ibpOmw4ORGG9OaHXyf4VYIKl
-	 IzcdT79OwsTtlTegdpVLez7D0AKCqWn8SAfkOsllChmIfastPwc9W+BaQGGDV9Kp+v
-	 ziukKOiwC6jEI8pbeJ7BZVh+eayBi1HOZmNVnsvU=
+	b=rc0oB63nsPQX8jqH0NGzIBSlS5qKY3QwImmdIpjvYCJQ/mDAMopSPm5TooTh/R17+
+	 texpjQIMZEPkdMt6vBIRl3j51hbnis69E9LfUN2aAqx1kTH421eh+hS3s3ySrOCUT7
+	 NXG1utA6Xbtx7q9yDwiD6m3pcuxiWiEgwH4Z4FpQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729549AbfA2LkC (ORCPT
+        id S1729565AbfA2LkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:40:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56862 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:40:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729531AbfA2Lj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:39:57 -0500
+        id S1729039AbfA2LkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:40:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A16920989;
-        Tue, 29 Jan 2019 11:39:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DA1F20989;
+        Tue, 29 Jan 2019 11:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761997;
-        bh=Sfp03ZHFKRX2R7j/xFVN69ckJlfkI00kMDlxMXYYWEw=;
+        s=default; t=1548762002;
+        bh=XumBGVzIHw9Xqu6DXa86f2Cq5kXpQgfmYHrBR0CE+Yo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DCA2KLQrm6MIPqoAAK9P2d26JUvWEz+jTi+TolsKKvjapGsWxF36z3pAx8yR+b0gf
-         EqYsbchJbG3vxVkTz+VHI7W2a4YnwRZZYmcVW7Q0oiWgQuHAIKATd1IdayAF5M8aae
-         ggm9icVuTdjh04RvZ3ynO5bjPHf437T7K9qdTxiE=
+        b=MiLpwlDft9hXgu3M4JfWn0o7PCoI+hX37w6AsBjW0T31vmfXTD3z0r8po64cy7Y98
+         vSeTAC0ZAOUDd8gUI4s+Jra3bIZF1P049Hqc6zlqK5NcNjQYyqdvSteu0eDNZhPl4i
+         EE2E5biAEoavQFniLL8RvwSIBqxIz71yVsODRzuo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Qu <Jim.Qu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.20 074/117] drm/amdgpu: Add APTX quirk for Lenovo laptop
-Date:   Tue, 29 Jan 2019 12:35:25 +0100
-Message-Id: <20190129113211.213830528@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Popov <alex.popov@linux.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.20 076/117] KVM: x86: Fix single-step debugging
+Date:   Tue, 29 Jan 2019 12:35:27 +0100
+Message-Id: <20190129113211.299489269@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -64,31 +64,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Alexander Popov <alex.popov@linux.com>
 
-commit f15f3eb26e8d9d25ea2330ed1273473df2f039df upstream.
+commit 5cc244a20b86090c087073c124284381cdf47234 upstream.
 
-Needs ATPX rather than _PR3 for dGPU power control.
+The single-step debugging of KVM guests on x86 is broken: if we run
+gdb 'stepi' command at the breakpoint when the guest interrupts are
+enabled, RIP always jumps to native_apic_mem_write(). Then other
+nasty effects follow.
 
-Bug: https://bugzilla.kernel.org/show_bug.cgi?id=202263
-Reviewed-by: Jim Qu <Jim.Qu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Long investigation showed that on Jun 7, 2017 the
+commit c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
+introduced the kvm_run.debug corruption: kvm_vcpu_do_singlestep() can
+be called without X86_EFLAGS_TF set.
+
+Let's fix it. Please consider that for -stable.
+
+Signed-off-by: Alexander Popov <alex.popov@linux.com>
 Cc: stable@vger.kernel.org
+Fixes: c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/x86.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-@@ -576,6 +576,7 @@ static const struct amdgpu_px_quirk amdg
- 	{ 0x1002, 0x6900, 0x1028, 0x0812, AMDGPU_PX_QUIRK_FORCE_ATPX },
- 	{ 0x1002, 0x6900, 0x1028, 0x0813, AMDGPU_PX_QUIRK_FORCE_ATPX },
- 	{ 0x1002, 0x6900, 0x1025, 0x125A, AMDGPU_PX_QUIRK_FORCE_ATPX },
-+	{ 0x1002, 0x6900, 0x17AA, 0x3806, AMDGPU_PX_QUIRK_FORCE_ATPX },
- 	{ 0, 0, 0, 0, 0 },
- };
- 
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6407,8 +6407,7 @@ restart:
+ 		toggle_interruptibility(vcpu, ctxt->interruptibility);
+ 		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
+ 		kvm_rip_write(vcpu, ctxt->eip);
+-		if (r == EMULATE_DONE &&
+-		    (ctxt->tf || (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)))
++		if (r == EMULATE_DONE && ctxt->tf)
+ 			kvm_vcpu_do_singlestep(vcpu, &r);
+ 		if (!ctxt->have_exception ||
+ 		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
 
 
