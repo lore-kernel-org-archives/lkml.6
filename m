@@ -7,207 +7,213 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA786C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF67BC282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A768320870
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88850214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:56:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Q1DMDQkq"
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="FA5LS+P4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfA2AzA (ORCPT
+        id S1727572AbfA2A4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:55:00 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:48588 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbfA2Ay7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:54:59 -0500
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190129005457epoutp02778d6cfa74f8cbfeb4be129b4d7fa3dd~_K6JNlgTz2317923179epoutp020
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:54:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190129005457epoutp02778d6cfa74f8cbfeb4be129b4d7fa3dd~_K6JNlgTz2317923179epoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1548723297;
-        bh=zLAibsdoFvMmWEbacdodHxeeG2Y32JVatu5Ty0jm96E=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Q1DMDQkqnLsbQXzLxVcBPVAMlpDoEx6/2XCDVpRvaynye8xF63Iv/sgUlRmq4v4OF
-         P5ZvVvvI5Wo+tNoq6gAPT1AbAY/yTfJ/9RrQBb0QLDe/F+5DqZhKjKraWi5Q/e+ZRQ
-         Cl+DswuXDKnQDjBD88llaG+2AaizZUgQupvtAA68=
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.157]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190129005450epcas1p32077770357f698a7c0b6ba2aade77fe5~_K6CEphDz0449004490epcas1p3v;
-        Tue, 29 Jan 2019 00:54:50 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        53.A0.04206.A54AF4C5; Tue, 29 Jan 2019 09:54:50 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190129005449epcas1p25ed3cb1e476f164d6720f9c34aa49b7a~_K6BizHHD0902409024epcas1p2f;
-        Tue, 29 Jan 2019 00:54:49 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190129005449epsmtrp23b61f0098ebecda13b6c4a6fc447d60a~_K6Bem85x1829418294epsmtrp2r;
-        Tue, 29 Jan 2019 00:54:49 +0000 (GMT)
-X-AuditID: b6c32a39-d7dff7000000106e-52-5c4fa45a8549
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AA.A4.03601.954AF4C5; Tue, 29 Jan 2019 09:54:49 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190129005449epsmtip19de1b48c94645808bbbef57bd8b95e46~_K6BQ6K2b1774017740epsmtip1w;
-        Tue, 29 Jan 2019 00:54:49 +0000 (GMT)
-Subject: Re: [PATCH 1/8] clk: samsung: add needed IDs for DMC clocks in
- Exynos5420
-To:     Lukasz Luba <l.luba@partner.samsung.com>,
-        devicetree@vger.kernel.org
-Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
-        krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <d6cbbeac-c15f-91b8-caf3-b22b8715665a@samsung.com>
-Date:   Tue, 29 Jan 2019 09:54:49 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <1548703299-15806-2-git-send-email-l.luba@partner.samsung.com>
+        Mon, 28 Jan 2019 19:56:31 -0500
+Received: from mail-eopbgr1320095.outbound.protection.outlook.com ([40.107.132.95]:63625
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726884AbfA2A4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 19:56:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JqiXLgk/RxXLZ8u+/BPCvj09wUGTSz8Y4k7etPJB4QA=;
+ b=FA5LS+P4m+Mty6fcFjCp8CL0ITyNkT/lW2fONQeNpneS4bosYJ5l8n1dxsmGbICXGLGQgl0rQ2+bA/49IOybQczuvG63uaH45/z3ky3PtAzWXM4N9pKrnE2yL67tWwpyUnTwNtme6BSGo3TKa5gdZYt7fv+tfyfrnkei6aasjWE=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0172.APCP153.PROD.OUTLOOK.COM (10.170.189.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.4; Tue, 29 Jan 2019 00:56:18 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::7822:a20:e63c:de2f]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::7822:a20:e63c:de2f%9]) with mapi id 15.20.1601.008; Tue, 29 Jan 2019
+ 00:56:18 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+CC:     Josh Poulson <jopoulso@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "driverdev-devel@linuxdriverproject.org" 
+        <driverdev-devel@linuxdriverproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>
+Subject: [PATCH v2] nfit: add Hyper-V NVDIMM DSM command set to white list
+Thread-Topic: [PATCH v2] nfit: add Hyper-V NVDIMM DSM command set to white
+ list
+Thread-Index: AdS3bN9R4nkrWGwLQkueB3AG7WN74A==
+Date:   Tue, 29 Jan 2019 00:56:17 +0000
+Message-ID: <PU1P153MB01690EDA138D3ABDE5B4A482BF970@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIJsWRmVeSWpSXmKPExsWy7bCmgW7UEv8Yg67zPBYbZ6xntZh/5Byr
-        Rf/j18wW589vYLe41SBjsenxNVaLy7vmsFnMOL+PyWLp9YtMFrcbV7BZtO49wm5x+E07qwOP
-        x5p5axg9Nq3qZPPYvKTe4+C7PUwefVtWMXp83iQXwBaVbZORmpiSWqSQmpecn5KZl26r5B0c
-        7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdKKSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4
-        xFYptSAlp8CyQK84Mbe4NC9dLzk/18rQwMDIFKgwITtjy9fLLAV3xCr+Nz5kbmB8INTFyMkh
-        IWAiMeX3P6YuRi4OIYEdjBJ7Lt2Ccj4xSpyc3c4G4XxjlLizdCkLTMvZ1xNZIRJ7GSVe/r3P
-        BpIQEnjPKPFrqg2ILSwQIrF9xR52EFtEwEPi9ecprCA2s8BJJommySYgNpuAlsT+FzfAevkF
-        FCWu/njMCGLzCthJnPu+ixnEZhFQlbg2dy8TiC0qECFxuPcdVI2gxMmZT8AO4hTwllj0bx8T
-        xHxxiVtP5kPZ8hLNW2czgxwqITCPXeLf24VMEB+4SPzf854dwhaWeHV8C5QtJfH53V42CLta
-        YuXJI2wQzR2MElv2X2CFSBhL7F86GWgQB9AGTYn1u/QhlvFJvPvawwoSlhDglehog4avssTl
-        B3eh1kpKLG7vhBrvIbFiUjPLBEbFWUjemYXkhVlIXpiFsGwBI8sqRrHUguLc9NRiwwJT5Nje
-        xAhOvlqWOxiPnfM5xCjAwajEw2vA5h8jxJpYVlyZe4hRgoNZSYR36nW/GCHelMTKqtSi/Pii
-        0pzU4kOMpsDQnsgsJZqcD8wMeSXxhqZGxsbGFiaGZqaGhkrivOsdnGOEBNITS1KzU1MLUotg
-        +pg4OKUaGI9vlfDrOsR9vOJUtP+sV2kXqlj22E4yt2s6p/9Qtu6ixanQ4z6Sxm9kbKLufcr5
-        9+1NxY1fa65mbf384BpD1p/dzidtvE3ECoW9lE7ovylK2Pqb83ap6+Ir9y60FtvXWR5ydhC+
-        v8i7OCWoxWiTh0o9R/BnkdZCB77TVa8iJMMKGRTsb5dvV2Ipzkg01GIuKk4EAOS/RZLUAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSnG7kEv8Yg6kblC02zljPajH/yDlW
-        i/7Hr5ktzp/fwG5xq0HGYtPja6wWl3fNYbOYcX4fk8XS6xeZLG43rmCzaN17hN3i8Jt2Vgce
-        jzXz1jB6bFrVyeaxeUm9x8F3e5g8+rasYvT4vEkugC2KyyYlNSezLLVI3y6BK2PL18ssBXfE
-        Kv43PmRuYHwg1MXIySEhYCJx9vVE1i5GLg4hgd2MEo9nvWOHSEhKTLt4lLmLkQPIFpY4fLgY
-        ouYto8SPv3vAaoQFQiS2r4CwRQQ8JF5/ngI2iFngJJNE87tJjCAJIYH7jBI7PimA2GwCWhL7
-        X9xgA7H5BRQlrv54DFbDK2Ance77LmYQm0VAVeLa3L1MILaoQITEx6f7mCBqBCVOznzCAmJz
-        CnhLLPoHEWcWUJf4M+8SM4QtLnHryXyouLxE89bZzBMYhWchaZ+FpGUWkpZZSFoWMLKsYpRM
-        LSjOTc8tNiwwykst1ytOzC0uzUvXS87P3cQIjkMtrR2MJ07EH2IU4GBU4uE1YPOPEWJNLCuu
-        zD3EKMHBrCTCO/W6X4wQb0piZVVqUX58UWlOavEhRmkOFiVxXvn8Y5FCAumJJanZqakFqUUw
-        WSYOTqkGRuFsl23xv2Ln7uUIVNjNHDKX19YwYc/cj3ur455/rXm7q09pS+v23+2fr1g5C4Wf
-        Z3ddaf3n2vWp6nduHA3LlRfQ0S682jbh1a8duXMZ60L/TT739NnaysaW6/1PIhpXGs9997Ke
-        ze3u3oTIT4ceB65Ljtpca9Y399rhX4kXmaSWx9qwPd319LQSS3FGoqEWc1FxIgCpKem1vwIA
-        AA==
-X-CMS-MailID: 20190129005449epcas1p25ed3cb1e476f164d6720f9c34aa49b7a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190128192151eucas1p1754d1286ff0f46e8e98796d7583d8e96
-References: <1548703299-15806-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190128192151eucas1p1754d1286ff0f46e8e98796d7583d8e96@eucas1p1.samsung.com>
-        <1548703299-15806-2-git-send-email-l.luba@partner.samsung.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-01-29T00:56:15.4358205Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=f6050e14-20e3-4365-ba9f-ca5f36679c0c;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:0:e877:ce4c:61e9:a83a]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;PU1P153MB0172;6:06bLupMTBUwd+/96aG3AF9uWr4bhsHHW1aOkvko9okixI5zh3Diq+fxDIhd55I+cY7pMLs+8UxYQMoeP8unecDFx+oPHa29NR5LTigxOekhCSyfpvp15LK23nmwH9gl75WhiYNpo9OyHG8JZyVK0kajZJjKYu1UPHojbZNF3mp4V5UYx5a6TGCbIPbCmxJYl/Fhcpw5ZLT4hPU77XiviD2h0iry82LxTEHKKpKwE3kEHe9TEpzgdNQBZKac2oKKVTb4OYLVG1HRDUuTSox2xmqNsoFUDlaAZoPMb5tOIkf/hr+dx34oXGE859pS4LykMoc5M5TG2vg8sWML5OWmxEoqxw5ZDdbGbheEIGXGgN1P+TcIZ1vZoNdffh8VQ/XI8ZbMmsQa/r6TkBHG/F+mhcOXHjQ8DQMPOz4rE31dApEmKBbJjnqxWQfk+0942oQ+dC00CbhKDM7wRDYp55LHmcA==;5:wqTMYrPrlAAKUtbrJQ5naRnsMSoeDV4jWYA2ldKva6HLbCUDWP8+ckIvt/oHgZ71OqothEzUs+CsEO/j3E3YfbkunMSD9fH3sZe+L/wlDJeNvlpQEFmZe4D1dYIxhWjVf5ASPsbBw5eIK5FOdsDDi64/iZOZcowt7Me4C7q1rANXlIyb302WK4PyJ0pCDu8t4L6MUb2UzyB8AczrK7X16w==;7:fCuoav9JM6Q0LHGmuQOlKs7tgBIfGGS+4NKn+EaZQZsAmXsrYKVZbu60GNT8WWq738dYxkj1mWQCEQ2dCk6S4CIZKjtH2w99PHpAel0nZ9nJHESxEfX1IpkPlo/tKDh02Gn12EG1WApLh5qasVtbFQ==
+x-ms-office365-filtering-correlation-id: 5bd4797c-0364-4113-edf7-08d6858493f3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0172;
+x-ms-traffictypediagnostic: PU1P153MB0172:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <PU1P153MB01727BFD30F49CA0778C311BBF970@PU1P153MB0172.APCP153.PROD.OUTLOOK.COM>
+x-forefront-prvs: 093290AD39
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39860400002)(346002)(136003)(396003)(199004)(189003)(54534003)(81156014)(10090500001)(6306002)(4326008)(186003)(305945005)(8676002)(9686003)(106356001)(55016002)(81166006)(7736002)(6116002)(25786009)(74316002)(53936002)(8936002)(107886003)(33656002)(68736007)(6506007)(8990500004)(102836004)(7416002)(46003)(2906002)(71190400001)(71200400001)(22452003)(110136005)(54906003)(2501003)(316002)(256004)(14444005)(217873002)(97736004)(2201001)(486006)(6436002)(86362001)(478600001)(10290500003)(105586002)(86612001)(14454004)(476003)(966005)(7696005)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0172;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: +8zprCaooNtoHeaosIiYTtZgXZN5SuZSCLjtHoU4hE0ZJYqMQMbeYoJWIqQTv9+RfGe4gEYEEVti2bsDoMDnDyjn9PjCGx9ZncHW3ev8WpGTlu5seZ3vCpHhQxEdwFc8H8tH0fzlhkGbHP7XVinqr//fTg2mZ6RCtwoMWXeB8AJD63QxF2zPadLCOZPJcc7VB1ycVI5deBpGNNNh78aOf35QUbKYewKzBujnPFeaH4tJB0Jgn9h3cPGDq+yjukbqW+emZCeBA+ArxzgbyqkrrisPUTeGo7Uk/EUyRFpNbmi6+/mLmZHEbneH6RQb1J56Ildg+kwlIqIbtcaWxyNQbXObGezBIt658V7W72sdLrZlNnGxrBk8ptSh4Znq1lmyD0fBw4W8hPoNjyFpHwfN0RpJYEHtPxyDw2Q7oC7bodE=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5bd4797c-0364-4113-edf7-08d6858493f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 00:56:17.9210
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukasz,
 
-This patchset don't contain the cover-letter. Please send the
-cover-letter which explains what to do on this patchset.
+Add the Hyper-V _DSM command set to the white list of NVDIMM command
+sets.
 
-And is it supporting all Exynos5 for both 32bit(5420,5422)
-and 64bit(5433) or only Exynos542x(32bit)? If it only support
-the Exynos 542x series, you have to change the driver name
-from 'exynos5-dmc.c' to 'exynos5420-dmc.c' or 'exynos5422-dmc.c'
-in order to prevent the confusion according to the driver name.
+This command set is documented at http://www.uefi.org/RFIC_LIST
+(see "Virtual NVDIMM 0x1901").
 
+Thanks Dan Williams <dan.j.williams@intel.com> for writing the
+comment change.
 
-On 19. 1. 29. 오전 4:21, Lukasz Luba wrote:
-> Define new IDs for clocks used by Dynamic Memory Controller in
-> Exynos5422 SoC.
-> 
-> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> CC: Chanwoo Choi <cw00.choi@samsung.com>
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: Mark Rutland <mark.rutland@arm.com>
-> CC: Kukjin Kim <kgene@kernel.org>
-> CC: Krzysztof Kozlowski <krzk@kernel.org>
-> CC: linux-samsung-soc@vger.kernel.org
-> CC: devicetree@vger.kernel.org
-> CC: linux-arm-kernel@lists.infradead.org
-> CC: linux-kernel@vger.kernel.org
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  include/dt-bindings/clock/exynos5420.h | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-> index 355f469..1827a64 100644
-> --- a/include/dt-bindings/clock/exynos5420.h
-> +++ b/include/dt-bindings/clock/exynos5420.h
-> @@ -60,6 +60,7 @@
->  #define CLK_MAU_EPLL		159
->  #define CLK_SCLK_HSIC_12M	160
->  #define CLK_SCLK_MPHY_IXTAL24	161
-> +#define CLK_SCLK_BPLL		162
->  
->  /* gate clocks */
->  #define CLK_UART0		257
-> @@ -195,6 +196,16 @@
->  #define CLK_ACLK432_CAM		518
->  #define CLK_ACLK_FL1550_CAM	519
->  #define CLK_ACLK550_CAM		520
-> +#define CLK_CLKM_PHY0		521
-> +#define CLK_CLKM_PHY1		522
-> +#define CLK_ACLK_PPMU_DREX0_0	523
-> +#define CLK_ACLK_PPMU_DREX0_1	524
-> +#define CLK_ACLK_PPMU_DREX1_0	525
-> +#define CLK_ACLK_PPMU_DREX1_1	526
-> +#define CLK_PCLK_PPMU_DREX0_0	527
-> +#define CLK_PCLK_PPMU_DREX0_1	528
-> +#define CLK_PCLK_PPMU_DREX1_0	529
-> +#define CLK_PCLK_PPMU_DREX1_1	530
->  
->  /* mux clocks */
->  #define CLK_MOUT_HDMI		640
-> @@ -217,6 +228,10 @@
->  #define CLK_MOUT_EPLL		657
->  #define CLK_MOUT_MAU_EPLL	658
->  #define CLK_MOUT_USER_MAU_EPLL	659
-> +#define CLK_MOUT_DPLL		660
-> +#define CLK_MOUT_ACLK_G3D	661
-> +#define CLK_MOUT_SCLK_SPLL	662
-> +#define CLK_MOUT_MX_MSPLL_CCORE_PHY	663
->  
->  /* divider clocks */
->  #define CLK_DOUT_PIXEL		768
-> @@ -248,8 +263,9 @@
->  #define CLK_DOUT_CCLK_DREX0	794
->  #define CLK_DOUT_CLK2X_PHY0	795
->  #define CLK_DOUT_PCLK_CORE_MEM	796
-> +#define CLK_FF_DOUT_SPLL2	797
->  
->  /* must be greater than maximal clock id */
-> -#define CLK_NR_CLKS		797
-> +#define CLK_NR_CLKS		798
->  
->  #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
-> 
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+---
 
+Changes in v2:
+    Updated the comment and changelog (Thanks, Dan!)
+    Rebased to the tag libnvdimm-fixes-5.0-rc4 of the nvdimm tree.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+ drivers/acpi/nfit/core.c   | 17 ++++++++++++++---
+ drivers/acpi/nfit/nfit.h   |  6 +++++-
+ include/uapi/linux/ndctl.h |  1 +
+ 3 files changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index e18ade5d74e9..a9270c99be72 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -1861,9 +1861,17 @@ static int acpi_nfit_add_dimm(struct acpi_nfit_desc =
+*acpi_desc,
+ 	dev_set_drvdata(&adev_dimm->dev, nfit_mem);
+=20
+ 	/*
+-	 * Until standardization materializes we need to consider 4
+-	 * different command sets.  Note, that checking for function0 (bit0)
+-	 * tells us if any commands are reachable through this GUID.
++	 * There are 4 "legacy" NVDIMM command sets
++	 * (NVDIMM_FAMILY_{INTEL,MSFT,HPE1,HPE2}) that were created before
++	 * an EFI working group was established to constrain this
++	 * proliferation. The nfit driver probes for the supported command
++	 * set by GUID. Note, if you're a platform developer looking to add
++	 * a new command set to this probe, consider using an existing set,
++	 * or otherwise seek approval to publish the command set at
++	 * http://www.uefi.org/RFIC_LIST.
++	 *
++	 * Note, that checking for function0 (bit0) tells us if any commands
++	 * are reachable through this GUID.
+ 	 */
+ 	for (i =3D 0; i <=3D NVDIMM_FAMILY_MAX; i++)
+ 		if (acpi_check_dsm(adev_dimm->handle, to_nfit_uuid(i), 1, 1))
+@@ -1886,6 +1894,8 @@ static int acpi_nfit_add_dimm(struct acpi_nfit_desc *=
+acpi_desc,
+ 			dsm_mask &=3D ~(1 << 8);
+ 	} else if (nfit_mem->family =3D=3D NVDIMM_FAMILY_MSFT) {
+ 		dsm_mask =3D 0xffffffff;
++	} else if (nfit_mem->family =3D=3D NVDIMM_FAMILY_HYPERV) {
++		dsm_mask =3D 0x1f;
+ 	} else {
+ 		dev_dbg(dev, "unknown dimm command family\n");
+ 		nfit_mem->family =3D -1;
+@@ -3729,6 +3739,7 @@ static __init int nfit_init(void)
+ 	guid_parse(UUID_NFIT_DIMM_N_HPE1, &nfit_uuid[NFIT_DEV_DIMM_N_HPE1]);
+ 	guid_parse(UUID_NFIT_DIMM_N_HPE2, &nfit_uuid[NFIT_DEV_DIMM_N_HPE2]);
+ 	guid_parse(UUID_NFIT_DIMM_N_MSFT, &nfit_uuid[NFIT_DEV_DIMM_N_MSFT]);
++	guid_parse(UUID_NFIT_DIMM_N_HYPERV, &nfit_uuid[NFIT_DEV_DIMM_N_HYPERV]);
+=20
+ 	nfit_wq =3D create_singlethread_workqueue("nfit");
+ 	if (!nfit_wq)
+diff --git a/drivers/acpi/nfit/nfit.h b/drivers/acpi/nfit/nfit.h
+index 33691aecfcee..4de167b4f76f 100644
+--- a/drivers/acpi/nfit/nfit.h
++++ b/drivers/acpi/nfit/nfit.h
+@@ -34,11 +34,14 @@
+ /* https://msdn.microsoft.com/library/windows/hardware/mt604741 */
+ #define UUID_NFIT_DIMM_N_MSFT "1ee68b36-d4bd-4a1a-9a16-4f8e53d46e05"
+=20
++/* http://www.uefi.org/RFIC_LIST (see "Virtual NVDIMM 0x1901") */
++#define UUID_NFIT_DIMM_N_HYPERV "5746c5f2-a9a2-4264-ad0e-e4ddc9e09e80"
++
+ #define ACPI_NFIT_MEM_FAILED_MASK (ACPI_NFIT_MEM_SAVE_FAILED \
+ 		| ACPI_NFIT_MEM_RESTORE_FAILED | ACPI_NFIT_MEM_FLUSH_FAILED \
+ 		| ACPI_NFIT_MEM_NOT_ARMED | ACPI_NFIT_MEM_MAP_FAILED)
+=20
+-#define NVDIMM_FAMILY_MAX NVDIMM_FAMILY_MSFT
++#define NVDIMM_FAMILY_MAX NVDIMM_FAMILY_HYPERV
+=20
+ #define NVDIMM_STANDARD_CMDMASK \
+ (1 << ND_CMD_SMART | 1 << ND_CMD_SMART_THRESHOLD | 1 << ND_CMD_DIMM_FLAGS =
+\
+@@ -94,6 +97,7 @@ enum nfit_uuids {
+ 	NFIT_DEV_DIMM_N_HPE1 =3D NVDIMM_FAMILY_HPE1,
+ 	NFIT_DEV_DIMM_N_HPE2 =3D NVDIMM_FAMILY_HPE2,
+ 	NFIT_DEV_DIMM_N_MSFT =3D NVDIMM_FAMILY_MSFT,
++	NFIT_DEV_DIMM_N_HYPERV =3D NVDIMM_FAMILY_HYPERV,
+ 	NFIT_SPA_VOLATILE,
+ 	NFIT_SPA_PM,
+ 	NFIT_SPA_DCR,
+diff --git a/include/uapi/linux/ndctl.h b/include/uapi/linux/ndctl.h
+index f57c9e434d2d..de5d90212409 100644
+--- a/include/uapi/linux/ndctl.h
++++ b/include/uapi/linux/ndctl.h
+@@ -243,6 +243,7 @@ struct nd_cmd_pkg {
+ #define NVDIMM_FAMILY_HPE1 1
+ #define NVDIMM_FAMILY_HPE2 2
+ #define NVDIMM_FAMILY_MSFT 3
++#define NVDIMM_FAMILY_HYPERV 4
+=20
+ #define ND_IOCTL_CALL			_IOWR(ND_IOCTL, ND_CMD_CALL,\
+ 					struct nd_cmd_pkg)
+--=20
+2.19.1
+
