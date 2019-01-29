@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0D8C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5CAC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B122083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DFBD2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:53:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762819;
-	bh=tXmPTtHm5SrKhJvgK9PbWQF4qxXBfq1CQzXKtEEqAmI=;
+	s=default; t=1548762827;
+	bh=r66JSJ/5jvCyC8sRnxqQnTSvfRm/kPYiE/PwCg1gi/w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YRDBYaUVVnnrE2FiRk6Key+IEqaPDVuDiDeeZAMbilkI+uBsD5ZhntFMIUdJ6ZZ37
-	 JKkXvshos3/g7EjCY5P7d/HzumyYWtHbHq3yw+fyVGfF3ru8UQgnBRvgna8XyA3r04
-	 D0m6NgJh3VgOELMMoO6h6D3YPRtNyiK8pHsBF+B0=
+	b=ISY7+tEf7UmL7QAs0cqK3U5VDuhLfAjG6tfObMpFWfMSG+0z4tnNy97dydSt3wDfz
+	 Ch+X7+8EwWZ8nepCHpwRQivRjJDbOaRNkADwJRpU33AXPaGORoZZm/RroXqeTT0pgp
+	 IOV7hl3I8qB/hgwEWImh+bFy/wGQJlxCp+88MQvA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731827AbfA2Lxi (ORCPT
+        id S1731833AbfA2Lxq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:53:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43862 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:53:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732014AbfA2LwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:52:10 -0500
+        id S1731066AbfA2Lvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:51:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCF932083B;
-        Tue, 29 Jan 2019 11:52:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97A452086C;
+        Tue, 29 Jan 2019 11:51:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762729;
-        bh=tXmPTtHm5SrKhJvgK9PbWQF4qxXBfq1CQzXKtEEqAmI=;
+        s=default; t=1548762702;
+        bh=r66JSJ/5jvCyC8sRnxqQnTSvfRm/kPYiE/PwCg1gi/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YkoVpUoD6ExNHLkz9JRcED+5FqJCsYtxY3Br5CM+Tb1L2J1L8uW+agHh7Z5eLNYcq
-         cdv3ft8dQHKtL6fe9+rBEnwcs7mZ9M8O63muu+ZKyGk+jqvjZrcmtTCF+p4KQ8rjNT
-         ixo++MGNeO5S2hMID6K41V5Kg2ocOyktUmTWRaCM=
+        b=cwcVIp4rXgyZUHaZfRjhzjgs/rCRFSf/LBr4jZ0C4Rwa6z3jl1B+EIHcnao7brKoF
+         MViT3OGo4guzlw+AtMAxglEQ53CQQSeeUhDRyXyjWaeY1xkWox4F0TUsOQoun0M6yj
+         RqaKuO8szbBybyC3BoxqIJZRKZqUW/H8GKWsA7B0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.9 38/44] irqchip/gic-v3-its: Align PCI Multi-MSI allocation on their size
-Date:   Tue, 29 Jan 2019 12:36:33 +0100
-Message-Id: <20190129113143.037142661@linuxfoundation.org>
+        stable@vger.kernel.org, ryan.p.norwood@gmail.com,
+        Joe Thornber <ejt@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.9 29/44] dm thin: fix passdown_double_checking_shared_status()
+Date:   Tue, 29 Jan 2019 12:36:24 +0100
+Message-Id: <20190129113142.227792123@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -65,83 +66,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Joe Thornber <ejt@redhat.com>
 
-commit 8208d1708b88b412ca97f50a6d951242c88cbbac upstream.
+commit d445bd9cec1a850c2100fcf53684c13b3fd934f2 upstream.
 
-The way we allocate events works fine in most cases, except
-when multiple PCI devices share an ITS-visible DevID, and that
-one of them is trying to use MultiMSI allocation.
+Commit 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next
+stage processing") changed process_prepared_discard_passdown_pt1() to
+increment all the blocks being discarded until after the passdown had
+completed to avoid them being prematurely reused.
 
-In that case, our allocation is not guaranteed to be zero-based
-anymore, and we have to make sure we allocate it on a boundary
-that is compatible with the PCI Multi-MSI constraints.
+IO issued to a thin device that breaks sharing with a snapshot, followed
+by a discard issued to snapshot(s) that previously shared the block(s),
+results in passdown_double_checking_shared_status() being called to
+iterate through the blocks double checking their reference count is zero
+and issuing the passdown if so.  So a side effect of commit 00a0ea33b495
+is passdown_double_checking_shared_status() was broken.
 
-Fix this by allocating the full region upfront instead of iterating
-over the number of MSIs. MSI-X are always allocated one by one,
-so this shouldn't change anything on that front.
+Fix this by checking if the block reference count is greater than 1.
+Also, rename dm_pool_block_is_used() to dm_pool_block_is_shared().
 
-Fixes: b48ac83d6bbc2 ("irqchip: GICv3: ITS: MSI support")
-Cc: stable@vger.kernel.org
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-[ardb: rebased onto v4.9.153, should apply cleanly onto v4.4.y as well]
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fixes: 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next stage processing")
+Cc: stable@vger.kernel.org # 4.9+
+Reported-by: ryan.p.norwood@gmail.com
+Signed-off-by: Joe Thornber <ejt@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/irqchip/irq-gic-v3-its.c |   25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ drivers/md/dm-thin-metadata.c |    4 ++--
+ drivers/md/dm-thin-metadata.h |    2 +-
+ drivers/md/dm-thin.c          |   10 +++++-----
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1372,13 +1372,14 @@ static void its_free_device(struct its_d
- 	kfree(its_dev);
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -1689,7 +1689,7 @@ int dm_thin_remove_range(struct dm_thin_
+ 	return r;
  }
  
--static int its_alloc_device_irq(struct its_device *dev, irq_hw_number_t *hwirq)
-+static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number_t *hwirq)
+-int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
++int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
  {
- 	int idx;
+ 	int r;
+ 	uint32_t ref_count;
+@@ -1697,7 +1697,7 @@ int dm_pool_block_is_used(struct dm_pool
+ 	down_read(&pmd->root_lock);
+ 	r = dm_sm_get_count(pmd->data_sm, b, &ref_count);
+ 	if (!r)
+-		*result = (ref_count != 0);
++		*result = (ref_count > 1);
+ 	up_read(&pmd->root_lock);
  
--	idx = find_first_zero_bit(dev->event_map.lpi_map,
--				  dev->event_map.nr_lpis);
--	if (idx == dev->event_map.nr_lpis)
-+	idx = bitmap_find_free_region(dev->event_map.lpi_map,
-+				      dev->event_map.nr_lpis,
-+				      get_count_order(nvecs));
-+	if (idx < 0)
- 		return -ENOSPC;
+ 	return r;
+--- a/drivers/md/dm-thin-metadata.h
++++ b/drivers/md/dm-thin-metadata.h
+@@ -195,7 +195,7 @@ int dm_pool_get_metadata_dev_size(struct
  
- 	*hwirq = dev->event_map.lpi_base + idx;
-@@ -1464,20 +1465,20 @@ static int its_irq_domain_alloc(struct i
- 	int err;
- 	int i;
+ int dm_pool_get_data_dev_size(struct dm_pool_metadata *pmd, dm_block_t *result);
  
--	for (i = 0; i < nr_irqs; i++) {
--		err = its_alloc_device_irq(its_dev, &hwirq);
--		if (err)
--			return err;
-+	err = its_alloc_device_irq(its_dev, nr_irqs, &hwirq);
-+	if (err)
-+		return err;
+-int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
++int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
  
--		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq);
-+	for (i = 0; i < nr_irqs; i++) {
-+		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq + i);
- 		if (err)
- 			return err;
+ int dm_pool_inc_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
+ int dm_pool_dec_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -1017,7 +1017,7 @@ static void passdown_double_checking_sha
+ 	 * passdown we have to check that these blocks are now unused.
+ 	 */
+ 	int r = 0;
+-	bool used = true;
++	bool shared = true;
+ 	struct thin_c *tc = m->tc;
+ 	struct pool *pool = tc->pool;
+ 	dm_block_t b = m->data_block, e, end = m->data_block + m->virt_end - m->virt_begin;
+@@ -1027,11 +1027,11 @@ static void passdown_double_checking_sha
+ 	while (b != end) {
+ 		/* find start of unmapped run */
+ 		for (; b < end; b++) {
+-			r = dm_pool_block_is_used(pool->pmd, b, &used);
++			r = dm_pool_block_is_shared(pool->pmd, b, &shared);
+ 			if (r)
+ 				goto out;
  
- 		irq_domain_set_hwirq_and_chip(domain, virq + i,
--					      hwirq, &its_irq_chip, its_dev);
-+					      hwirq + i, &its_irq_chip, its_dev);
- 		pr_debug("ID:%d pID:%d vID:%d\n",
--			 (int)(hwirq - its_dev->event_map.lpi_base),
--			 (int) hwirq, virq + i);
-+			 (int)(hwirq + i - its_dev->event_map.lpi_base),
-+			 (int)(hwirq + i), virq + i);
- 	}
+-			if (!used)
++			if (!shared)
+ 				break;
+ 		}
  
- 	return 0;
+@@ -1040,11 +1040,11 @@ static void passdown_double_checking_sha
+ 
+ 		/* find end of run */
+ 		for (e = b + 1; e != end; e++) {
+-			r = dm_pool_block_is_used(pool->pmd, e, &used);
++			r = dm_pool_block_is_shared(pool->pmd, e, &shared);
+ 			if (r)
+ 				goto out;
+ 
+-			if (used)
++			if (shared)
+ 				break;
+ 		}
+ 
 
 
