@@ -2,129 +2,121 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9020BC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D33EC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60E3820870
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:58:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9BF920870
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:01:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DtzrIPdr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbfA2M6x (ORCPT
+        id S1727318AbfA2NB5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:58:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59380 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725795AbfA2M6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 07:58:53 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 98EA4C08733F;
-        Tue, 29 Jan 2019 12:58:52 +0000 (UTC)
-Received: from [10.36.117.255] (unknown [10.36.117.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9C5AC5D96E;
-        Tue, 29 Jan 2019 12:58:50 +0000 (UTC)
-Subject: Re: [PATCH] perf tools: Filter out hidden symbols from labels
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20190115135354.11572-1-jolsa@kernel.org>
- <960f0b83-a623-67a6-ab55-d56139d10ba2@redhat.com>
- <20190115173838.GB31411@krava> <20190128133526.GD15461@krava>
- <20190129090750.GE4344@kernel.org>
- <83e6ed5c-47b8-9499-af18-5ada0c4bdd6c@redhat.com>
- <20190129113948.GK4344@kernel.org>
-From:   Nick Clifton <nickc@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nickc@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- 6susi2ReUyNJEJaSnjO5z13TQ1U=
-Organization: Red Hat
-Message-ID: <8f30f65e-e894-1aa9-882b-c4172f9bcfee@redhat.com>
-Date:   Tue, 29 Jan 2019 12:58:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 29 Jan 2019 08:01:57 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40142 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbfA2NB4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 08:01:56 -0500
+Received: by mail-lf1-f67.google.com with SMTP id v5so14530764lfe.7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 05:01:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ptpn3ooISk+hbFBLcoiG4r9S5KcxBa6gl30Hi3aaOSA=;
+        b=DtzrIPdrwzNCvJTkAlDg+esBhfR6wT+6BmY7B/Dk47Ve4iJQxHsbc08iYO0fToIPei
+         9DXs+HO/GPR0adLGeFj634r1xIKP787DaT2NTSX1++rLXKWonQwE7lW73MEkGw1nPi3x
+         pTeYQDY+Ts2l2/JpF+jcoAY5fJ15+fQCQGZco=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ptpn3ooISk+hbFBLcoiG4r9S5KcxBa6gl30Hi3aaOSA=;
+        b=NhCtC2QlWHrY7E7Ch6U2T4Kk7jaABtoLl9gAZfyIVNREoATdrAU8S1ZiQFUcuwCRoJ
+         b5ywFUbRERG0CWstlH1bmA5IrNKunPy9LFI7IXnYHIBfiCJ2MQ1ekOK8Pzto/9h8MxiG
+         HhYi8TDKp7SaBeh1EyowCMoK0MqNlGEDGdAaL40kw8vcr1x2iplFKqo+N+mapvn9UFHp
+         pqST6iWXRhz92yp6jjBrMz/nkGK+z8hiRe8KimD1G/KzAVhNGAryiNTmRnbg6WZ2F53t
+         8fxMc8ousj4xk3aIgnlLSsiDvCb6hwknDoeJt4fFbLlhTVAWxmGMKard/klZo6S6MESd
+         WQ7A==
+X-Gm-Message-State: AJcUukfvnjyRAhw8JOdFjJSgCPPq8aOWoP5cUtkTAnLaEh5CZMdVGlYL
+        Rz2h299+863iTESD1FffLM5e7A==
+X-Google-Smtp-Source: ALg8bN4BMPopXnF5/hPiXcfRQVBjG6Ho5TBz4wZWrSK6WbzYOudIxy7Uel6KiDkFFmuUUhWZFddcmw==
+X-Received: by 2002:a19:c995:: with SMTP id z143mr19626325lff.79.1548766914500;
+        Tue, 29 Jan 2019 05:01:54 -0800 (PST)
+Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
+        by smtp.gmail.com with ESMTPSA id 15-v6sm3969541lje.18.2019.01.29.05.01.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 05:01:53 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] btrfs: relocation: fix unused variable
+Date:   Tue, 29 Jan 2019 14:01:46 +0100
+Message-Id: <20190129130146.11934-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <20190129113948.GK4344@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 29 Jan 2019 12:58:52 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+When CONFIG_BRTFS_ASSERT isn't enabled, variable root_objectid isn't used.
 
-  [oops- hit send by mistake...]
+fs/btrfs/relocation.c: In function ‘insert_dirty_subv’:
+fs/btrfs/relocation.c:2138:6: warning: unused variable ‘root_objectid’ [-Wunused-variable]
+  u64 root_objectid = root->root_key.objectid;
+      ^~~~~~~~~~~~~
 
->> Sorry - I do not think that I have the authority to do that.  I am not a
+Reworked by adding a runtime check in the assfail function instead of
+the '#ifdef CONFIG_BTRFS_ASSERT #else ...", so the compiler sees the
+condition being passed into an inline function after preprocessing.
 
-> Ok, I was more thinking about this part of
-> Documentation/process/submittingpatches.txt:
-> 
-> ----------------------------
-> Acked-by: is not as formal as Signed-off-by:.  It is a record that the acker
-> has at least reviewed the patch and has indicated acceptance.  Hence patch
-> mergers will sometimes manually convert an acker's "yep, looks good to me"
-> into an Acked-by: (but note that it is usually better to ask for an
-> explicit ack).
-> ----------------------------
-> 
-> But its ok, if you still don't feel this should be added, I'll just
-> leave a Cc: you, ok?
+Fixes: 7b837199c581 ("btrfs: relocation: Delay reloc tree deletion after merge_reloc_roots()")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ fs/btrfs/ctree.h | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-Yes - this would be fine with me.
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index de23a7ea396d..ad7d079f2cae 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -3521,21 +3521,18 @@ do {								\
+ 	rcu_read_unlock();					\
+ } while (0)
+ 
+-#ifdef CONFIG_BTRFS_ASSERT
+-
+ __cold
+ static inline void assfail(const char *expr, const char *file, int line)
+ {
+-	pr_err("assertion failed: %s, file: %s, line: %d\n",
+-	       expr, file, line);
+-	BUG();
++	if (IS_ENABLED(CONFIG_BTRFS_ASSERT)) {
++		pr_err("assertion failed: %s, file: %s, line: %d\n",
++		       expr, file, line);
++		BUG();
++	}
+ }
+ 
+ #define ASSERT(expr)	\
+ 	(likely(expr) ? (void)0 : assfail(#expr, __FILE__, __LINE__))
+-#else
+-#define ASSERT(expr)	((void)0)
+-#endif
+ 
+ /*
+  * Use that for functions that are conditionally exported for sanity tests but
+-- 
+2.19.2
 
-Cheers
-  Nick
