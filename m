@@ -2,660 +2,215 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5AEC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E75B0C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3D752087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:16:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548782196;
-	bh=KcWTtaCEmauQ5AYLJbQCwn6U0pf3529HV12zOGo6RxQ=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=asK3pp7AGaj6De1Mk7GxYkmfLIIsvC8GvWnTFwauAI6W+RXzZ0m2DdMZOrwWlT40o
-	 vBy2bVSt7+ROvGTMZFarRUf9W7nDaKEKmun2hTiSbi4bRJTxx/oEj8IzEjRYP7vhrY
-	 syBPMx9no3suVhWckdMmsuXzofu6ynyO/3wJtuxQ=
+	by mail.kernel.org (Postfix) with ESMTP id BA504214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbfA2RQ3 (ORCPT
+        id S1729028AbfA2RQ7 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:16:29 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50630 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728017AbfA2RQ1 (ORCPT
+        Tue, 29 Jan 2019 12:16:59 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:44891 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727240AbfA2RQ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:16:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=14lOiFeer+tjSh7B5DHXZFWpL3apoSQWiReno59HtVM=; b=aqXhIcxL9ocG
-        XmA52Llb6z8uwMo4+VsikR9xOMsriC5XeFHpG74+EQPxvqNuF5wGol5iJli+bdePV/y3XXNtGP3Jz
-        FfcZA93R+ZEtGWy8oP//FraK13wVU5blyVnivPbKBTJOHE6Kl2vWPQtnr/DGtl5jzo23c++yPhdlH
-        f/ihs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1goWzo-0000js-HL; Tue, 29 Jan 2019 17:16:24 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 204E51127D50; Tue, 29 Jan 2019 17:16:24 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: max77650: add regulator support" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20190129171624.204E51127D50@debutante.sirena.org.uk>
-Date:   Tue, 29 Jan 2019 17:16:24 +0000 (GMT)
+        Tue, 29 Jan 2019 12:16:59 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1goX0H-0002t1-7p; Tue, 29 Jan 2019 18:16:53 +0100
+Date:   Tue, 29 Jan 2019 18:16:53 +0100
+From:   Sebastian Sewior <bigeasy@linutronix.de>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        Stefan Liebler <stli@linux.ibm.com>
+Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggered
+Message-ID: <20190129171653.ycl64psq2liy5o5c@linutronix.de>
+References: <20190128134410.GA28485@hirez.programming.kicks-ass.net>
+ <20190128135804.GB28878@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1901281650310.1582@nanos.tec.linutronix.de>
+ <20190129090108.GA26906@osiris>
+ <alpine.DEB.2.21.1901291012330.1669@nanos.tec.linutronix.de>
+ <20190129102409.GB26906@osiris>
+ <20190129103557.GF28485@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1901291402410.1513@nanos.tec.linutronix.de>
+ <20190129132303.GE26906@osiris>
+ <20190129151058.GG26906@osiris>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190129151058.GG26906@osiris>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 2019-01-29 16:10:58 [+0100], Heiko Carstens wrote:
+> Finally... the trace output is quite large with 26 MB... Therefore an
+> xz compressed attachment. Hope that's ok.
+> 
+> The kernel used was linux-next 20190129 + your patch.
+|        ld64.so.1-10237 [006] .... 14232.031726: sys_futex(uaddr: 3ff88e80618, op: 7, val: 3ff00000007, utime: 3ff88e7f910, uaddr2: 3ff88e7f910, val3: 3ffc167e8d7)
+FUTEX_UNLOCK_PI | SHARED
 
-   regulator: max77650: add regulator support
+|        ld64.so.1-10237 [006] .... 14232.031726: sys_futex -> 0x0
+…
+|        ld64.so.1-10237 [006] .... 14232.051751: sched_process_exit: comm=ld64.so.1 pid=10237 prio=120
+…
+|        ld64.so.1-10148 [006] .... 14232.061826: sys_futex(uaddr: 3ff88e80618, op: 6, val: 1, utime: 0, uaddr2: 2, val3: 0)
+FUTEX_LOCK_PI | SHARED
 
-has been applied to the regulator tree at
+|        ld64.so.1-10148 [006] .... 14232.061826: sys_futex -> 0xfffffffffffffffd
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+So there got to be another task that acquired the lock in userland and
+left since the last in kernel-user unlocked it. This might bring more
+light to it:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From bcc61f1c44fd21ef0095c38553d2adfe9c1ccae1 Mon Sep 17 00:00:00 2001
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Tue, 29 Jan 2019 14:35:40 +0100
-Subject: [PATCH] regulator: max77650: add regulator support
-
-Add regulator support for max77650. We support all four variants of this
-PMIC including non-linear voltage table for max77651 SBB1 rail.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/Kconfig              |   8 +
- drivers/regulator/Makefile             |   1 +
- drivers/regulator/max77650-regulator.c | 518 +++++++++++++++++++++++++
- 3 files changed, 527 insertions(+)
- create mode 100644 drivers/regulator/max77650-regulator.c
-
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 21dc3b59db19..b7f249ee5e68 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -468,6 +468,14 @@ config REGULATOR_MAX77620
- 	  chip to control Step-Down DC-DC and LDOs. Say Y here to
- 	  enable the regulator driver.
+diff --git a/kernel/futex.c b/kernel/futex.c
+index 599da35c2768..aaa782a8a115 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1209,6 +1209,9 @@ static int handle_exit_race(u32 __user *uaddr, u32 uval,
+ 	 * corrupted or the user space value in *uaddr is simply bogus.
+ 	 * Give up and tell user space.
+ 	 */
++	trace_printk("uval2 vs uval %08x vs %08x (%d)\n", uval2, uval,
++		     tsk ? tsk->pid : -1);
++	__WARN();
+ 	return -ESRCH;
+ }
  
-+config REGULATOR_MAX77650
-+	tristate "Maxim MAX77650/77651 regulator support"
-+	depends on MFD_MAX77650
-+	help
-+	  Regulator driver for MAX77650/77651 PMIC from Maxim
-+	  Semiconductor. This device has a SIMO with three independent
-+	  power rails and an LDO.
-+
- config REGULATOR_MAX8649
- 	tristate "Maxim 8649 voltage regulator"
- 	depends on I2C
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 960406952119..1169f8a27d91 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -61,6 +61,7 @@ obj-$(CONFIG_REGULATOR_LTC3676) += ltc3676.o
- obj-$(CONFIG_REGULATOR_MAX14577) += max14577-regulator.o
- obj-$(CONFIG_REGULATOR_MAX1586) += max1586.o
- obj-$(CONFIG_REGULATOR_MAX77620) += max77620-regulator.o
-+obj-$(CONFIG_REGULATOR_MAX77650) += max77650-regulator.o
- obj-$(CONFIG_REGULATOR_MAX8649)	+= max8649.o
- obj-$(CONFIG_REGULATOR_MAX8660) += max8660.o
- obj-$(CONFIG_REGULATOR_MAX8907) += max8907-regulator.o
-diff --git a/drivers/regulator/max77650-regulator.c b/drivers/regulator/max77650-regulator.c
-new file mode 100644
-index 000000000000..474f2c02f2d5
---- /dev/null
-+++ b/drivers/regulator/max77650-regulator.c
-@@ -0,0 +1,518 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2018 BayLibre SAS
-+// Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+//
-+// Regulator driver for MAXIM 77650/77651 charger/power-supply.
-+
-+#include <linux/i2c.h>
-+#include <linux/mfd/max77650.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/driver.h>
-+
-+#define MAX77650_REGULATOR_EN_CTRL_MASK		GENMASK(3, 0)
-+#define MAX77650_REGULATOR_EN_CTRL_BITS(_reg) \
-+		((_reg) & MAX77650_REGULATOR_EN_CTRL_MASK)
-+#define MAX77650_REGULATOR_ENABLED		GENMASK(2, 1)
-+#define MAX77650_REGULATOR_DISABLED		BIT(2)
-+
-+#define MAX77650_REGULATOR_V_LDO_MASK		GENMASK(6, 0)
-+#define MAX77650_REGULATOR_V_SBB_MASK		GENMASK(5, 0)
-+
-+#define MAX77650_REGULATOR_AD_MASK		BIT(3)
-+#define MAX77650_REGULATOR_AD_DISABLED		0x00
-+#define MAX77650_REGULATOR_AD_ENABLED		BIT(3)
-+
-+#define MAX77650_REGULATOR_CURR_LIM_MASK	GENMASK(7, 6)
-+#define MAX77650_REGULATOR_CURR_LIM_BITS(_reg) \
-+		(((_reg) & MAX77650_REGULATOR_CURR_LIM_MASK) >> 6)
-+#define MAX77650_REGULATOR_CURR_LIM_SHIFT(_val)	((_val) << 6)
-+
-+enum {
-+	MAX77650_REGULATOR_ID_LDO = 0,
-+	MAX77650_REGULATOR_ID_SBB0,
-+	MAX77650_REGULATOR_ID_SBB1,
-+	MAX77650_REGULATOR_ID_SBB2,
-+	MAX77650_REGULATOR_NUM_REGULATORS,
-+};
-+
-+struct max77650_regulator_desc {
-+	struct regulator_desc desc;
-+	unsigned int regA;
-+	unsigned int regB;
-+};
-+
-+static const u32 max77651_sbb1_regulator_volt_table[] = {
-+	2400000, 3200000, 4000000, 4800000,
-+	2450000, 3250000, 4050000, 4850000,
-+	2500000, 3300000, 4100000, 4900000,
-+	2550000, 3350000, 4150000, 4950000,
-+	2600000, 3400000, 4200000, 5000000,
-+	2650000, 3450000, 4250000, 5050000,
-+	2700000, 3500000, 4300000, 5100000,
-+	2750000, 3550000, 4350000, 5150000,
-+	2800000, 3600000, 4400000, 5200000,
-+	2850000, 3650000, 4450000, 5250000,
-+	2900000, 3700000, 4500000,       0,
-+	2950000, 3750000, 4550000,       0,
-+	3000000, 3800000, 4600000,       0,
-+	3050000, 3850000, 4650000,       0,
-+	3100000, 3900000, 4700000,       0,
-+	3150000, 3950000, 4750000,       0,
-+};
-+
-+#define MAX77651_REGULATOR_SBB1_SEL_DEC(_val) \
-+		(((_val & 0x3c) >> 2) | ((_val & 0x03) << 4))
-+#define MAX77651_REGULATOR_SBB1_SEL_ENC(_val) \
-+		(((_val & 0x30) >> 4) | ((_val & 0x0f) << 2))
-+
-+#define MAX77650_REGULATOR_SBB1_SEL_DECR(_val)				\
-+	do {								\
-+		_val = MAX77651_REGULATOR_SBB1_SEL_DEC(_val);		\
-+		_val--;							\
-+		_val = MAX77651_REGULATOR_SBB1_SEL_ENC(_val);		\
-+	} while (0)
-+
-+#define MAX77650_REGULATOR_SBB1_SEL_INCR(_val)				\
-+	do {								\
-+		_val = MAX77651_REGULATOR_SBB1_SEL_DEC(_val);		\
-+		_val++;							\
-+		_val = MAX77651_REGULATOR_SBB1_SEL_ENC(_val);		\
-+	} while (0)
-+
-+static const int max77650_current_limit_table[] = {
-+	1000000, 866000, 707000, 500000,
-+};
-+
-+static int max77650_regulator_is_enabled(struct regulator_dev *rdev)
-+{
-+	struct max77650_regulator_desc *rdesc;
-+	struct regmap *map;
-+	int val, rv, en;
-+
-+	rdesc = rdev_get_drvdata(rdev);
-+	map = rdev_get_regmap(rdev);
-+
-+	rv = regmap_read(map, rdesc->regB, &val);
-+	if (rv)
-+		return rv;
-+
-+	en = MAX77650_REGULATOR_EN_CTRL_BITS(val);
-+
-+	return en != MAX77650_REGULATOR_DISABLED;
-+}
-+
-+static int max77650_regulator_enable(struct regulator_dev *rdev)
-+{
-+	struct max77650_regulator_desc *rdesc;
-+	struct regmap *map;
-+
-+	rdesc = rdev_get_drvdata(rdev);
-+	map = rdev_get_regmap(rdev);
-+
-+	return regmap_update_bits(map, rdesc->regB,
-+				  MAX77650_REGULATOR_EN_CTRL_MASK,
-+				  MAX77650_REGULATOR_ENABLED);
-+}
-+
-+static int max77650_regulator_disable(struct regulator_dev *rdev)
-+{
-+	struct max77650_regulator_desc *rdesc;
-+	struct regmap *map;
-+
-+	rdesc = rdev_get_drvdata(rdev);
-+	map = rdev_get_regmap(rdev);
-+
-+	return regmap_update_bits(map, rdesc->regB,
-+				  MAX77650_REGULATOR_EN_CTRL_MASK,
-+				  MAX77650_REGULATOR_DISABLED);
-+}
-+
-+static int max77650_regulator_set_voltage_sel(struct regulator_dev *rdev,
-+					      unsigned int sel)
-+{
-+	int rv = 0, curr, diff;
-+	bool ascending;
-+
-+	/*
-+	 * If the regulator is disabled, we can program the desired
-+	 * voltage right away.
-+	 */
-+	if (!max77650_regulator_is_enabled(rdev))
-+		return regulator_set_voltage_sel_regmap(rdev, sel);
-+
-+	/*
-+	 * Otherwise we need to manually ramp the output voltage up/down
-+	 * one step at a time.
-+	 */
-+
-+	curr = regulator_get_voltage_sel_regmap(rdev);
-+	if (curr < 0)
-+		return curr;
-+
-+	diff = curr - sel;
-+	if (diff == 0)
-+		return 0; /* Already there. */
-+	else if (diff > 0)
-+		ascending = false;
-+	else
-+		ascending = true;
-+
-+	/*
-+	 * Make sure we'll get to the right voltage and break the loop even if
-+	 * the selector equals 0.
-+	 */
-+	for (ascending ? curr++ : curr--;; ascending ? curr++ : curr--) {
-+		rv = regulator_set_voltage_sel_regmap(rdev, curr);
-+		if (rv)
-+			return rv;
-+
-+		if (curr == sel)
-+			break;
+@@ -1233,8 +1236,10 @@ static int attach_to_pi_owner(u32 __user *uaddr, u32 uval, union futex_key *key,
+ 	if (!pid)
+ 		return -EAGAIN;
+ 	p = find_get_task_by_vpid(pid);
+-	if (!p)
++	if (!p) {
++		trace_printk("Missing pid %d\n", pid);
+ 		return handle_exit_race(uaddr, uval, NULL);
 +	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Special case: non-linear voltage table for max77651 SBB1 - software
-+ * must ensure the voltage is ramped in 50mV increments.
-+ */
-+static int max77651_regulator_sbb1_set_voltage_sel(struct regulator_dev *rdev,
-+						   unsigned int sel)
-+{
-+	int rv = 0, curr, vcurr, vdest, vdiff;
-+
-+	/*
-+	 * If the regulator is disabled, we can program the desired
-+	 * voltage right away.
-+	 */
-+	if (!max77650_regulator_is_enabled(rdev))
-+		return regulator_set_voltage_sel_regmap(rdev, sel);
-+
-+	curr = regulator_get_voltage_sel_regmap(rdev);
-+	if (curr < 0)
-+		return curr;
-+
-+	if (curr == sel)
-+		return 0; /* Already there. */
-+
-+	vcurr = max77651_sbb1_regulator_volt_table[curr];
-+	vdest = max77651_sbb1_regulator_volt_table[sel];
-+	vdiff = vcurr - vdest;
-+
-+	for (;;) {
-+		if (vdiff > 0)
-+			MAX77650_REGULATOR_SBB1_SEL_DECR(curr);
-+		else
-+			MAX77650_REGULATOR_SBB1_SEL_INCR(curr);
-+
-+		rv = regulator_set_voltage_sel_regmap(rdev, curr);
-+		if (rv)
-+			return rv;
-+
-+		if (curr == sel)
-+			break;
-+	};
-+
-+	return 0;
-+}
-+
-+static int max77650_regulator_get_current_limit(struct regulator_dev *rdev)
-+{
-+	struct max77650_regulator_desc *rdesc;
-+	struct regmap *map;
-+	int val, rv, limit;
-+
-+	rdesc = rdev_get_drvdata(rdev);
-+	map = rdev_get_regmap(rdev);
-+
-+	rv = regmap_read(map, rdesc->regA, &val);
-+	if (rv)
-+		return rv;
-+
-+	limit = MAX77650_REGULATOR_CURR_LIM_BITS(val);
-+
-+	return max77650_current_limit_table[limit];
-+}
-+
-+static int max77650_regulator_set_current_limit(struct regulator_dev *rdev,
-+						int min_uA, int max_uA)
-+{
-+	struct max77650_regulator_desc *rdesc;
-+	struct regmap *map;
-+	int rv, i, limit;
-+
-+	rdesc = rdev_get_drvdata(rdev);
-+	map = rdev_get_regmap(rdev);
-+
-+	for (i = 0; i < ARRAY_SIZE(max77650_current_limit_table); i++) {
-+		limit = max77650_current_limit_table[i];
-+
-+		if (limit >= min_uA && limit <= max_uA) {
-+			rv = regmap_update_bits(map, rdesc->regA,
-+					MAX77650_REGULATOR_CURR_LIM_MASK,
-+					MAX77650_REGULATOR_CURR_LIM_SHIFT(i));
-+			if (rv)
-+				return rv;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static const struct regulator_ops max77650_regulator_LDO_ops = {
-+	.is_enabled		= max77650_regulator_is_enabled,
-+	.enable			= max77650_regulator_enable,
-+	.disable		= max77650_regulator_disable,
-+	.list_voltage		= regulator_list_voltage_linear,
-+	.map_voltage		= regulator_map_voltage_linear,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= max77650_regulator_set_voltage_sel,
-+	.set_active_discharge	= regulator_set_active_discharge_regmap,
-+};
-+
-+static const struct regulator_ops max77650_regulator_SBB_ops = {
-+	.is_enabled		= max77650_regulator_is_enabled,
-+	.enable			= max77650_regulator_enable,
-+	.disable		= max77650_regulator_disable,
-+	.list_voltage		= regulator_list_voltage_linear,
-+	.map_voltage		= regulator_map_voltage_linear,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= max77650_regulator_set_voltage_sel,
-+	.get_current_limit	= max77650_regulator_get_current_limit,
-+	.set_current_limit	= max77650_regulator_set_current_limit,
-+	.set_active_discharge	= regulator_set_active_discharge_regmap,
-+};
-+
-+/* Special case for max77651 SBB1 - non-linear voltage mapping. */
-+static const struct regulator_ops max77651_SBB1_regulator_ops = {
-+	.is_enabled		= max77650_regulator_is_enabled,
-+	.enable			= max77650_regulator_enable,
-+	.disable		= max77650_regulator_disable,
-+	.list_voltage		= regulator_list_voltage_table,
-+	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel	= max77651_regulator_sbb1_set_voltage_sel,
-+	.get_current_limit	= max77650_regulator_get_current_limit,
-+	.set_current_limit	= max77650_regulator_set_current_limit,
-+	.set_active_discharge	= regulator_set_active_discharge_regmap,
-+};
-+
-+static struct max77650_regulator_desc max77650_LDO_desc = {
-+	.desc = {
-+		.name			= "ldo",
-+		.of_match		= of_match_ptr("ldo"),
-+		.regulators_node	= of_match_ptr("regulators"),
-+		.supply_name		= "in-ldo",
-+		.id			= MAX77650_REGULATOR_ID_LDO,
-+		.ops			= &max77650_regulator_LDO_ops,
-+		.min_uV			= 1350000,
-+		.uV_step		= 12500,
-+		.n_voltages		= 128,
-+		.vsel_mask		= MAX77650_REGULATOR_V_LDO_MASK,
-+		.vsel_reg		= MAX77650_REG_CNFG_LDO_A,
-+		.active_discharge_off	= MAX77650_REGULATOR_AD_DISABLED,
-+		.active_discharge_on	= MAX77650_REGULATOR_AD_ENABLED,
-+		.active_discharge_mask	= MAX77650_REGULATOR_AD_MASK,
-+		.active_discharge_reg	= MAX77650_REG_CNFG_LDO_B,
-+		.enable_time		= 100,
-+		.type			= REGULATOR_VOLTAGE,
-+	},
-+	.regA		= MAX77650_REG_CNFG_LDO_A,
-+	.regB		= MAX77650_REG_CNFG_LDO_B,
-+};
-+
-+static struct max77650_regulator_desc max77650_SBB0_desc = {
-+	.desc = {
-+		.name			= "sbb0",
-+		.of_match		= of_match_ptr("sbb0"),
-+		.regulators_node	= of_match_ptr("regulators"),
-+		.supply_name		= "in-sbb0",
-+		.id			= MAX77650_REGULATOR_ID_SBB0,
-+		.ops			= &max77650_regulator_SBB_ops,
-+		.min_uV			= 800000,
-+		.uV_step		= 25000,
-+		.n_voltages		= 64,
-+		.vsel_mask		= MAX77650_REGULATOR_V_SBB_MASK,
-+		.vsel_reg		= MAX77650_REG_CNFG_SBB0_A,
-+		.active_discharge_off	= MAX77650_REGULATOR_AD_DISABLED,
-+		.active_discharge_on	= MAX77650_REGULATOR_AD_ENABLED,
-+		.active_discharge_mask	= MAX77650_REGULATOR_AD_MASK,
-+		.active_discharge_reg	= MAX77650_REG_CNFG_SBB0_B,
-+		.enable_time		= 100,
-+		.type			= REGULATOR_VOLTAGE,
-+	},
-+	.regA		= MAX77650_REG_CNFG_SBB0_A,
-+	.regB		= MAX77650_REG_CNFG_SBB0_B,
-+};
-+
-+static struct max77650_regulator_desc max77650_SBB1_desc = {
-+	.desc = {
-+		.name			= "sbb1",
-+		.of_match		= of_match_ptr("sbb1"),
-+		.regulators_node	= of_match_ptr("regulators"),
-+		.supply_name		= "in-sbb1",
-+		.id			= MAX77650_REGULATOR_ID_SBB1,
-+		.ops			= &max77650_regulator_SBB_ops,
-+		.min_uV			= 800000,
-+		.uV_step		= 12500,
-+		.n_voltages		= 64,
-+		.vsel_mask		= MAX77650_REGULATOR_V_SBB_MASK,
-+		.vsel_reg		= MAX77650_REG_CNFG_SBB1_A,
-+		.active_discharge_off	= MAX77650_REGULATOR_AD_DISABLED,
-+		.active_discharge_on	= MAX77650_REGULATOR_AD_ENABLED,
-+		.active_discharge_mask	= MAX77650_REGULATOR_AD_MASK,
-+		.active_discharge_reg	= MAX77650_REG_CNFG_SBB1_B,
-+		.enable_time		= 100,
-+		.type			= REGULATOR_VOLTAGE,
-+	},
-+	.regA		= MAX77650_REG_CNFG_SBB1_A,
-+	.regB		= MAX77650_REG_CNFG_SBB1_B,
-+};
-+
-+static struct max77650_regulator_desc max77651_SBB1_desc = {
-+	.desc = {
-+		.name			= "sbb1",
-+		.of_match		= of_match_ptr("sbb1"),
-+		.regulators_node	= of_match_ptr("regulators"),
-+		.supply_name		= "in-sbb1",
-+		.id			= MAX77650_REGULATOR_ID_SBB1,
-+		.ops			= &max77651_SBB1_regulator_ops,
-+		.volt_table		= max77651_sbb1_regulator_volt_table,
-+		.n_voltages = ARRAY_SIZE(max77651_sbb1_regulator_volt_table),
-+		.vsel_mask		= MAX77650_REGULATOR_V_SBB_MASK,
-+		.vsel_reg		= MAX77650_REG_CNFG_SBB1_A,
-+		.active_discharge_off	= MAX77650_REGULATOR_AD_DISABLED,
-+		.active_discharge_on	= MAX77650_REGULATOR_AD_ENABLED,
-+		.active_discharge_mask	= MAX77650_REGULATOR_AD_MASK,
-+		.active_discharge_reg	= MAX77650_REG_CNFG_SBB1_B,
-+		.enable_time		= 100,
-+		.type			= REGULATOR_VOLTAGE,
-+	},
-+	.regA		= MAX77650_REG_CNFG_SBB1_A,
-+	.regB		= MAX77650_REG_CNFG_SBB1_B,
-+};
-+
-+static struct max77650_regulator_desc max77650_SBB2_desc = {
-+	.desc = {
-+		.name			= "sbb2",
-+		.of_match		= of_match_ptr("sbb2"),
-+		.regulators_node	= of_match_ptr("regulators"),
-+		.supply_name		= "in-sbb0",
-+		.id			= MAX77650_REGULATOR_ID_SBB2,
-+		.ops			= &max77650_regulator_SBB_ops,
-+		.min_uV			= 800000,
-+		.uV_step		= 50000,
-+		.n_voltages		= 64,
-+		.vsel_mask		= MAX77650_REGULATOR_V_SBB_MASK,
-+		.vsel_reg		= MAX77650_REG_CNFG_SBB2_A,
-+		.active_discharge_off	= MAX77650_REGULATOR_AD_DISABLED,
-+		.active_discharge_on	= MAX77650_REGULATOR_AD_ENABLED,
-+		.active_discharge_mask	= MAX77650_REGULATOR_AD_MASK,
-+		.active_discharge_reg	= MAX77650_REG_CNFG_SBB2_B,
-+		.enable_time		= 100,
-+		.type			= REGULATOR_VOLTAGE,
-+	},
-+	.regA		= MAX77650_REG_CNFG_SBB2_A,
-+	.regB		= MAX77650_REG_CNFG_SBB2_B,
-+};
-+
-+static struct max77650_regulator_desc max77651_SBB2_desc = {
-+	.desc = {
-+		.name			= "sbb2",
-+		.of_match		= of_match_ptr("sbb2"),
-+		.regulators_node	= of_match_ptr("regulators"),
-+		.supply_name		= "in-sbb0",
-+		.id			= MAX77650_REGULATOR_ID_SBB2,
-+		.ops			= &max77650_regulator_SBB_ops,
-+		.min_uV			= 2400000,
-+		.uV_step		= 50000,
-+		.n_voltages		= 64,
-+		.vsel_mask		= MAX77650_REGULATOR_V_SBB_MASK,
-+		.vsel_reg		= MAX77650_REG_CNFG_SBB2_A,
-+		.active_discharge_off	= MAX77650_REGULATOR_AD_DISABLED,
-+		.active_discharge_on	= MAX77650_REGULATOR_AD_ENABLED,
-+		.active_discharge_mask	= MAX77650_REGULATOR_AD_MASK,
-+		.active_discharge_reg	= MAX77650_REG_CNFG_SBB2_B,
-+		.enable_time		= 100,
-+		.type			= REGULATOR_VOLTAGE,
-+	},
-+	.regA		= MAX77650_REG_CNFG_SBB2_A,
-+	.regB		= MAX77650_REG_CNFG_SBB2_B,
-+};
-+
-+static int max77650_regulator_probe(struct platform_device *pdev)
-+{
-+	struct max77650_regulator_desc **rdescs;
-+	struct max77650_regulator_desc *rdesc;
-+	struct regulator_config config = { };
-+	struct device *dev, *parent;
-+	struct regulator_dev *rdev;
-+	struct regmap *map;
-+	unsigned int val;
-+	int i, rv;
-+
-+	dev = &pdev->dev;
-+	parent = dev->parent;
-+
-+	if (!dev->of_node)
-+		dev->of_node = parent->of_node;
-+
-+	rdescs = devm_kcalloc(dev, MAX77650_REGULATOR_NUM_REGULATORS,
-+			      sizeof(*rdescs), GFP_KERNEL);
-+	if (!rdescs)
-+		return -ENOMEM;
-+
-+	map = dev_get_regmap(parent, NULL);
-+	if (!map)
-+		return -ENODEV;
-+
-+	rv = regmap_read(map, MAX77650_REG_CID, &val);
-+	if (rv)
-+		return rv;
-+
-+	rdescs[MAX77650_REGULATOR_ID_LDO] = &max77650_LDO_desc;
-+	rdescs[MAX77650_REGULATOR_ID_SBB0] = &max77650_SBB0_desc;
-+
-+	switch (MAX77650_CID_BITS(val)) {
-+	case MAX77650_CID_77650A:
-+	case MAX77650_CID_77650C:
-+		rdescs[MAX77650_REGULATOR_ID_SBB1] = &max77650_SBB1_desc;
-+		rdescs[MAX77650_REGULATOR_ID_SBB2] = &max77650_SBB2_desc;
-+		break;
-+	case MAX77650_CID_77651A:
-+	case MAX77650_CID_77651B:
-+		rdescs[MAX77650_REGULATOR_ID_SBB1] = &max77651_SBB1_desc;
-+		rdescs[MAX77650_REGULATOR_ID_SBB2] = &max77651_SBB2_desc;
-+		break;
-+	default:
-+		return -ENODEV;
-+	}
-+
-+	config.dev = parent;
-+
-+	for (i = 0; i < MAX77650_REGULATOR_NUM_REGULATORS; i++) {
-+		rdesc = rdescs[i];
-+		config.driver_data = rdesc;
-+
-+		rdev = devm_regulator_register(dev, &rdesc->desc, &config);
-+		if (IS_ERR(rdev))
-+			return PTR_ERR(rdev);
-+	}
-+
-+	return 0;
-+}
-+
-+static struct platform_driver max77650_regulator_driver = {
-+	.driver = {
-+		.name = "max77650-regulator",
-+	},
-+	.probe = max77650_regulator_probe,
-+};
-+module_platform_driver(max77650_regulator_driver);
-+
-+MODULE_DESCRIPTION("MAXIM 77650/77651 regulator driver");
-+MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.20.1
+ 
+ 	if (unlikely(p->flags & PF_KTHREAD)) {
+ 		put_task_struct(p);
 
+---
+
+I am not sure, but isn't this the "known" issue where the kernel drops
+ESRCH in a valid case and glibc upstream does not recognize it because
+it is not a valid /POSIX-defined error code? (I *think* same is true for
+-ENOMEM) If it is, the following C snippet is a small tc:
+
+---->8------
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <stdio.h>
+
+static char nothing[4096];
+
+int main(void)
+{
+	int fd;
+	ssize_t wn;
+	void *lockm;
+	pid_t child;
+	pthread_mutex_t *the_lock;
+	pthread_mutexattr_t mutexattr;
+	int ret;
+
+	fd = open("/dev/shm/futex-test-lock", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	if (fd < 0) {
+		printf("Failed to create lock file: %m\n");
+		return 1;
+	}
+	wn = write(fd, nothing, sizeof(nothing));
+	if (wn != sizeof(nothing)) {
+		printf("Failed to write to file: %m\n");
+		goto out_unlink;
+	}
+
+	lockm = mmap(NULL, sizeof(nothing), PROT_READ | PROT_WRITE, MAP_SHARED,
+		     fd, 0);
+	if (lockm == MAP_FAILED) {
+		printf("mmap() failed: %m\n");
+		goto out_unlink;
+	}
+	close(fd);
+	unlink("/dev/shm/futex-test-lock");
+	the_lock = lockm;
+
+	ret = pthread_mutexattr_init(&mutexattr);
+	ret |= pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);
+	ret |= pthread_mutexattr_setprotocol(&mutexattr, PTHREAD_PRIO_INHERIT);
+
+	if (ret) {
+		printf("Something went wrong during init\n");
+		return 1;
+	}
+
+	ret = pthread_mutex_init(the_lock, &mutexattr);
+	if (ret) {
+		printf("Failed to init the lock\n");
+		return 1;
+	}
+	child = fork();
+	if (child < 0) {
+		printf("fork(): %m\n");
+		return 1;
+	}
+
+	if (!child) {
+		pthread_mutex_lock(the_lock);
+		exit(2);
+	}
+
+	sleep(2);
+	ret = pthread_mutex_lock(the_lock);
+
+	printf("-> %x\n", ret);
+	return 0;
+
+out_unlink:
+	unlink("/dev/shm/futex-test-lock");
+	return 1;
+}
+
+---------------8<-----------------------
+
+strace gives this:
+|openat(AT_FDCWD, "/dev/shm/futex-test-lock", O_RDWR|O_CREAT|O_TRUNC, 0644) = 3
+|write(3, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 4096) = 4096
+|mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, 3, 0) = 0x7f5e23e37000
+|close(3)                                = 0
+|unlink("/dev/shm/futex-test-lock")      = 0
+…
+|clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f5e23c1da10) = 25777
+|strace: Process 25777 attached
+|[pid 25776] nanosleep({tv_sec=2, tv_nsec=0},  <unfinished ...>
+|[pid 25777] set_robust_list(0x7f5e23c1da20, 24) = 0
+|[pid 25777] exit_group(2)               = ?
+|[pid 25777] +++ exited with 2 +++
+|<... nanosleep resumed> {tv_sec=1, tv_nsec=999821679}) = ? ERESTART_RESTARTBLOCK (Interrupted by signal)
+|--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=25777, si_uid=1000, si_status=2, si_utime=0, si_stime=0} ---
+|restart_syscall(<... resuming interrupted nanosleep ...>) = 0
+|futex(0x7f5e23e37000, FUTEX_LOCK_PI, NULL) = -1 ESRCH (No such process)
+|pause(^Cstrace: Process 25776 detached
+
+and if I remember correctly, if asserts are not enabled we end up with a
+pause loop instead.
+
+Sebastian
