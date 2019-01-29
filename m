@@ -2,211 +2,106 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A132C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 666F4C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B9A82083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762885;
-	bh=w6yWcE/HuyiagAUSOiP3Q1N5D+jO55PTH+g832jpD08=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Zv+SBlTZEeiefJjbote64CoKyA+8cWOJe5aE4KYo9dJ4/8D6IXEhBOzv1EOGC4FTy
-	 fFxfCmBTeV8PiKT07bNUexqWUTDUtrobV5+Z2u39RO9Wz+39mjEpfWqYRbhCf7/Oll
-	 lWO2PJ2mjUBcUQT7bj2Rw+JuRFQLgmfGL+qB8d04=
+	by mail.kernel.org (Postfix) with ESMTP id 40EE62083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731842AbfA2Lyn (ORCPT
+        id S1731946AbfA2Lys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:54:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730486AbfA2LvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:51:13 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02D172083B;
-        Tue, 29 Jan 2019 11:51:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762672;
-        bh=w6yWcE/HuyiagAUSOiP3Q1N5D+jO55PTH+g832jpD08=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HRSwbeI+yrmsfHaZlvkYhrH7AZob53+6nWb46q5zcEvRIgRiwA03dUT8/+H+P9q1j
-         DvFTEduIb/9JXPypnSLeisyJhMXIFzaOesI8JWBlkddjjSz4ebqWJbeWRv6iro07Wg
-         CXHRAfBQmTNl5x1PRKLCRoZI2d1qo/BDdN+Ba5JE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 05/44] net: ipv4: Fix memory leak in network namespace dismantle
-Date:   Tue, 29 Jan 2019 12:36:00 +0100
-Message-Id: <20190129113140.498324264@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
-References: <20190129113139.826927690@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Tue, 29 Jan 2019 06:54:48 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:41316 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730486AbfA2Lyr (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 29 Jan 2019 06:54:47 -0500
+Received: from [10.160.4.48] (charybdis.suse.de [149.44.162.66])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 29 Jan 2019 12:54:45 +0100
+Subject: Re: Question on handling managed IRQs when hotplugging CPUs
+To:     John Garry <john.garry@huawei.com>, tglx@linutronix.de,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        SCSI Mailing List <linux-scsi@vger.kernel.org>
+References: <f6f6e031-8b79-439d-c2af-8d3e76f30710@huawei.com>
+From:   Hannes Reinecke <hare@suse.com>
+Message-ID: <5bff8227-16fd-6bca-c16e-3992ef6bec5a@suse.com>
+Date:   Tue, 29 Jan 2019 12:54:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <f6f6e031-8b79-439d-c2af-8d3e76f30710@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On 1/29/19 12:25 PM, John Garry wrote:
+> Hi,
+> 
+> I have a question on $subject which I hope you can shed some light on.
+> 
+> According to commit c5cb83bb337c25 ("genirq/cpuhotplug: Handle managed 
+> IRQs on CPU hotplug"), if we offline the last CPU in a managed IRQ 
+> affinity mask, the IRQ is shutdown.
+> 
+> The reasoning is that this IRQ is thought to be associated with a 
+> specific queue on a MQ device, and the CPUs in the IRQ affinity mask are 
+> the same CPUs associated with the queue. So, if no CPU is using the 
+> queue, then no need for the IRQ.
+> 
+> However how does this handle scenario of last CPU in IRQ affinity mask 
+> being offlined while IO associated with queue is still in flight?
+> 
+> Or if we make the decision to use queue associated with the current CPU, 
+> and then that CPU (being the last CPU online in the queue's IRQ 
+> afffinity mask) goes offline and we finish the delivery with another CPU?
+> 
+> In these cases, when the IO completes, it would not be serviced and 
+> timeout.
+> 
+> I have actually tried this on my arm64 system and I see IO timeouts.
+> 
+That actually is a very good question, and I have been wondering about 
+this for quite some time.
 
-------------------
+I find it a bit hard to envision a scenario where the IRQ affinity is 
+automatically (and, more importantly, atomically!) re-routed to one of 
+the other CPUs.
+And even it it were, chances are that there are checks in the driver 
+_preventing_ them from handling those requests, seeing that they should 
+have been handled by another CPU ...
 
-From: Ido Schimmel <idosch@mellanox.com>
+I guess the safest bet is to implement a 'cleanup' worker queue which is 
+responsible of looking through all the outstanding commands (on all 
+hardware queues), and then complete those for which no corresponding CPU 
+/ irqhandler can be found.
 
-[ Upstream commit f97f4dd8b3bb9d0993d2491e0f22024c68109184 ]
+But I defer to the higher authorities here; maybe I'm totally wrong and 
+it's already been taken care of.
 
-IPv4 routing tables are flushed in two cases:
+But if there is no generic mechanism this really is a fit topic for 
+LSF/MM, as most other drivers would be affected, too.
 
-1. In response to events in the netdev and inetaddr notification chains
-2. When a network namespace is being dismantled
+Cheers,
 
-In both cases only routes associated with a dead nexthop group are
-flushed. However, a nexthop group will only be marked as dead in case it
-is populated with actual nexthops using a nexthop device. This is not
-the case when the route in question is an error route (e.g.,
-'blackhole', 'unreachable').
-
-Therefore, when a network namespace is being dismantled such routes are
-not flushed and leaked [1].
-
-To reproduce:
-# ip netns add blue
-# ip -n blue route add unreachable 192.0.2.0/24
-# ip netns del blue
-
-Fix this by not skipping error routes that are not marked with
-RTNH_F_DEAD when flushing the routing tables.
-
-To prevent the flushing of such routes in case #1, add a parameter to
-fib_table_flush() that indicates if the table is flushed as part of
-namespace dismantle or not.
-
-Note that this problem does not exist in IPv6 since error routes are
-associated with the loopback device.
-
-[1]
-unreferenced object 0xffff888066650338 (size 56):
-  comm "ip", pid 1206, jiffies 4294786063 (age 26.235s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 b0 1c 62 61 80 88 ff ff  ..........ba....
-    e8 8b a1 64 80 88 ff ff 00 07 00 08 fe 00 00 00  ...d............
-  backtrace:
-    [<00000000856ed27d>] inet_rtm_newroute+0x129/0x220
-    [<00000000fcdfc00a>] rtnetlink_rcv_msg+0x397/0xa20
-    [<00000000cb85801a>] netlink_rcv_skb+0x132/0x380
-    [<00000000ebc991d2>] netlink_unicast+0x4c0/0x690
-    [<0000000014f62875>] netlink_sendmsg+0x929/0xe10
-    [<00000000bac9d967>] sock_sendmsg+0xc8/0x110
-    [<00000000223e6485>] ___sys_sendmsg+0x77a/0x8f0
-    [<000000002e94f880>] __sys_sendmsg+0xf7/0x250
-    [<00000000ccb1fa72>] do_syscall_64+0x14d/0x610
-    [<00000000ffbe3dae>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    [<000000003a8b605b>] 0xffffffffffffffff
-unreferenced object 0xffff888061621c88 (size 48):
-  comm "ip", pid 1206, jiffies 4294786063 (age 26.235s)
-  hex dump (first 32 bytes):
-    6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-    6b 6b 6b 6b 6b 6b 6b 6b d8 8e 26 5f 80 88 ff ff  kkkkkkkk..&_....
-  backtrace:
-    [<00000000733609e3>] fib_table_insert+0x978/0x1500
-    [<00000000856ed27d>] inet_rtm_newroute+0x129/0x220
-    [<00000000fcdfc00a>] rtnetlink_rcv_msg+0x397/0xa20
-    [<00000000cb85801a>] netlink_rcv_skb+0x132/0x380
-    [<00000000ebc991d2>] netlink_unicast+0x4c0/0x690
-    [<0000000014f62875>] netlink_sendmsg+0x929/0xe10
-    [<00000000bac9d967>] sock_sendmsg+0xc8/0x110
-    [<00000000223e6485>] ___sys_sendmsg+0x77a/0x8f0
-    [<000000002e94f880>] __sys_sendmsg+0xf7/0x250
-    [<00000000ccb1fa72>] do_syscall_64+0x14d/0x610
-    [<00000000ffbe3dae>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    [<000000003a8b605b>] 0xffffffffffffffff
-
-Fixes: 8cced9eff1d4 ("[NETNS]: Enable routing configuration in non-initial namespace.")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/ip_fib.h    |    2 +-
- net/ipv4/fib_frontend.c |    4 ++--
- net/ipv4/fib_trie.c     |   14 ++++++++++++--
- 3 files changed, 15 insertions(+), 5 deletions(-)
-
---- a/include/net/ip_fib.h
-+++ b/include/net/ip_fib.h
-@@ -242,7 +242,7 @@ int fib_table_insert(struct net *, struc
- int fib_table_delete(struct net *, struct fib_table *, struct fib_config *);
- int fib_table_dump(struct fib_table *table, struct sk_buff *skb,
- 		   struct netlink_callback *cb);
--int fib_table_flush(struct net *net, struct fib_table *table);
-+int fib_table_flush(struct net *net, struct fib_table *table, bool flush_all);
- struct fib_table *fib_trie_unmerge(struct fib_table *main_tb);
- void fib_table_flush_external(struct fib_table *table);
- void fib_free_table(struct fib_table *tb);
---- a/net/ipv4/fib_frontend.c
-+++ b/net/ipv4/fib_frontend.c
-@@ -193,7 +193,7 @@ static void fib_flush(struct net *net)
- 		struct fib_table *tb;
- 
- 		hlist_for_each_entry_safe(tb, tmp, head, tb_hlist)
--			flushed += fib_table_flush(net, tb);
-+			flushed += fib_table_flush(net, tb, false);
- 	}
- 
- 	if (flushed)
-@@ -1277,7 +1277,7 @@ static void ip_fib_net_exit(struct net *
- 
- 		hlist_for_each_entry_safe(tb, tmp, head, tb_hlist) {
- 			hlist_del(&tb->tb_hlist);
--			fib_table_flush(net, tb);
-+			fib_table_flush(net, tb, true);
- 			fib_free_table(tb);
- 		}
- 	}
---- a/net/ipv4/fib_trie.c
-+++ b/net/ipv4/fib_trie.c
-@@ -1826,7 +1826,7 @@ void fib_table_flush_external(struct fib
- }
- 
- /* Caller must hold RTNL. */
--int fib_table_flush(struct net *net, struct fib_table *tb)
-+int fib_table_flush(struct net *net, struct fib_table *tb, bool flush_all)
- {
- 	struct trie *t = (struct trie *)tb->tb_data;
- 	struct key_vector *pn = t->kv;
-@@ -1874,7 +1874,17 @@ int fib_table_flush(struct net *net, str
- 		hlist_for_each_entry_safe(fa, tmp, &n->leaf, fa_list) {
- 			struct fib_info *fi = fa->fa_info;
- 
--			if (!fi || !(fi->fib_flags & RTNH_F_DEAD)) {
-+			if (!fi ||
-+			    (!(fi->fib_flags & RTNH_F_DEAD) &&
-+			     !fib_props[fa->fa_type].error)) {
-+				slen = fa->fa_slen;
-+				continue;
-+			}
-+
-+			/* Do not flush error routes if network namespace is
-+			 * not being dismantled
-+			 */
-+			if (!flush_all && fib_props[fa->fa_type].error) {
- 				slen = fa->fa_slen;
- 				continue;
- 			}
-
-
+Hannes
+-- 
+Dr. Hannes Reinecke		               zSeries & Storage
+hare@suse.com			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
