@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6717C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 365DEC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86EF1214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 078152183F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762110;
-	bh=AB+82sKHxr+wB4ZeV28mPgyNkYGRXXU/yiCVQNKEi3U=;
+	s=default; t=1548762115;
+	bh=STZDSb+WeZLkuDq+t5pa61YKNYpzqnUXERPzjJB900A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HNo+m0TYFEYvJyYffcw/Hm6pkW5Y8p8K6QwcZ0CxCiPGGpgdKWCxlAoLJgKLDY2wS
-	 bWZ43Lhb07BqpqRFjFhoQSs2qRJSQHyW3Cf8BEDTdf4olF35XPhCQr4bNbhwZAOcXr
-	 /0GWfViPlggP0AichBju+AhSp2uOpEmYEaKhzlmw=
+	b=BK0zr/BuY9F+OKgpgOvOqTmui3PfVy7wXQBRBVTBSum4WUWh6faNh4NiCHxSRCdZU
+	 xJIrtlxKHCeocmCIXXcDFj5asrhzynj8KMaahPNJBX1EjFq4Bd6uPaYRN8hkXc6a5M
+	 2EF3cG20KfLT8Zh4Wpk+Toevkv0LAhp3ZYbZz5os=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729917AbfA2Llt (ORCPT
+        id S1727764AbfA2Llx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:41:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59166 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:41:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729348AbfA2Llp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:41:45 -0500
+        id S1729348AbfA2Llv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:41:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13111214DA;
-        Tue, 29 Jan 2019 11:41:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3676820882;
+        Tue, 29 Jan 2019 11:41:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762104;
-        bh=AB+82sKHxr+wB4ZeV28mPgyNkYGRXXU/yiCVQNKEi3U=;
+        s=default; t=1548762110;
+        bh=STZDSb+WeZLkuDq+t5pa61YKNYpzqnUXERPzjJB900A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AgoXPSxLKskLJYS//VfLwJJmcwirwa/5F/hAvRm9iTIjSNw+SSKPXDJ0vqp5iRbyB
-         USK3exl3vxNqzXdXS05wNJA34rmDiF8vHGdulinSXqWSGJvks8hJJBnKFrCD2KFcj6
-         VZN0JB2ReXGkXYgiOHKybZsf9XqimbiDSXyWHLH8=
+        b=Hk57Xh4QBEQE5AugWeQty+kRnf7QeXper5qBlCZgHoT/53CWtSaHr3/6mSKLc2ioB
+         zyGFKGbAAiDNVUm/pnZgZpfrVHz6oUFP4W/KVFi9KvVWqDijVe3/xRrn0Dkjs96xX9
+         k8vr5kvCrk8xdGtjD+ANYx0NEmRONbT3cCyNkAvM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stanislaw Gruszka <sgruszka@redhat.com>,
-        Felix Fietkau <nbd@nbd.name>
-Subject: [PATCH 4.20 111/117] mt76x0: use band parameter for LC calibration
-Date:   Tue, 29 Jan 2019 12:36:02 +0100
-Message-Id: <20190129113212.906465773@linuxfoundation.org>
+        Felix Fietkau <nbd@nbd.name>,
+        Stanislaw Gruszka <sgruszka@redhat.com>
+Subject: [PATCH 4.20 113/117] mt76x02: assure we update gain after scan
+Date:   Tue, 29 Jan 2019 12:36:04 +0100
+Message-Id: <20190129113212.990470497@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -67,56 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stanislaw Gruszka <sgruszka@redhat.com>
 
-commit ad3f993a0857ad3b792e7463828eb0d90cdd6f4d upstream.
+commit 4784a3cc3fffd0ba5ef6c7a23980ae0318fc1369 upstream.
 
-We use always 1 as band parameter for MCU_CAL_LC, this break 2GHz,
-we should use 0 for this band instead.
+Assure that after we initialize dev->cal.low_gain to -1 this
+will cause update gain calibration. Otherwise this might or
+might not happen depending on value of second bit of low_gain
+and values read from registers in mt76x02_phy_adjust_vga_gain().
 
-Patch fixes problems happened sometimes when try to associate with 2GHz
-AP and manifest by errors like below:
-
-[14680.920823] wlan0: authenticate with 18:31:bf:c0:51:b0
-[14681.109506] wlan0: send auth to 18:31:bf:c0:51:b0 (try 1/3)
-[14681.310454] wlan0: send auth to 18:31:bf:c0:51:b0 (try 2/3)
-[14681.518469] wlan0: send auth to 18:31:bf:c0:51:b0 (try 3/3)
-[14681.726499] wlan0: authentication with 18:31:bf:c0:51:b0 timed out
-
-Fixes: 9aec146d0f6b ("mt76x0: pci: introduce mt76x0_phy_calirate routine")
-Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
 Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/wireless/mediatek/mt76/mt76x0/phy.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt76x0/main.c |    5 ++++-
+ drivers/net/wireless/mediatek/mt76/mt76x0/phy.c  |    3 ++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/main.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/main.c
+@@ -139,8 +139,11 @@ void mt76x0_sw_scan_complete(struct ieee
+ 
+ 	clear_bit(MT76_SCANNING, &dev->mt76.state);
+ 
+-	if (dev->cal.gain_init_done)
++	if (dev->cal.gain_init_done) {
++		/* Restore AGC gain and resume calibration after scanning. */
++		dev->cal.low_gain = -1;
+ 		ieee80211_queue_delayed_work(hw, &dev->cal_work, 0);
++	}
+ }
+ EXPORT_SYMBOL_GPL(mt76x0_sw_scan_complete);
+ 
 --- a/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
 +++ b/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
-@@ -585,6 +585,7 @@ void mt76x0_phy_set_txpower(struct mt76x
- void mt76x0_phy_calibrate(struct mt76x02_dev *dev, bool power_on)
- {
- 	struct ieee80211_channel *chan = dev->mt76.chandef.chan;
-+	int is_5ghz = (chan->band == NL80211_BAND_5GHZ) ? 1 : 0;
- 	u32 val, tx_alc, reg_val;
+@@ -834,7 +834,8 @@ mt76x0_phy_update_channel_gain(struct mt
+ 	low_gain = (dev->cal.avg_rssi_all > mt76x02_get_rssi_gain_thresh(dev)) +
+ 		   (dev->cal.avg_rssi_all > mt76x02_get_low_rssi_gain_thresh(dev));
  
- 	if (power_on) {
-@@ -602,7 +603,7 @@ void mt76x0_phy_calibrate(struct mt76x02
- 	reg_val = mt76_rr(dev, MT_BBP(IBI, 9));
- 	mt76_wr(dev, MT_BBP(IBI, 9), 0xffffff7e);
+-	gain_change = (dev->cal.low_gain & 2) ^ (low_gain & 2);
++	gain_change = dev->cal.low_gain < 0 ||
++		      (dev->cal.low_gain & 2) ^ (low_gain & 2);
+ 	dev->cal.low_gain = low_gain;
  
--	if (chan->band == NL80211_BAND_5GHZ) {
-+	if (is_5ghz) {
- 		if (chan->hw_value < 100)
- 			val = 0x701;
- 		else if (chan->hw_value < 140)
-@@ -615,7 +616,7 @@ void mt76x0_phy_calibrate(struct mt76x02
- 
- 	mt76x02_mcu_calibrate(dev, MCU_CAL_FULL, val, false);
- 	msleep(350);
--	mt76x02_mcu_calibrate(dev, MCU_CAL_LC, 1, false);
-+	mt76x02_mcu_calibrate(dev, MCU_CAL_LC, is_5ghz, false);
- 	usleep_range(15000, 20000);
- 
- 	mt76_wr(dev, MT_BBP(IBI, 9), reg_val);
+ 	if (!gain_change) {
 
 
