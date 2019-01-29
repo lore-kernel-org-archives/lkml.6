@@ -2,214 +2,97 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AC7C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E56DC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 033F520856
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:33:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="vdnfDQ9J"
+	by mail.kernel.org (Postfix) with ESMTP id DCC8420856
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:34:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbfA2TdD (ORCPT
+        id S1728991AbfA2TeA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:33:03 -0500
-Received: from mail-eopbgr140041.outbound.protection.outlook.com ([40.107.14.41]:62590
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        Tue, 29 Jan 2019 14:34:00 -0500
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:37221 "EHLO mx1.molgen.mpg.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726828AbfA2TdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:33:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RCeCvFq5XVhGTYbx17dUhLsiytz0NldGx3wjwa/aDuA=;
- b=vdnfDQ9JxvIFql16cWL6ZEdYnR4ZIhzj1LaY0F0UodLC3GqrNX8oEUHkKRtGjKqfvrubWcc6c0pwUK/ghh7lyn1hn+r1odKHUxU0AoB5h5aI9PgJOIXgYTAgRM/++TSOLA5MJFLZSR230aX0xP0XDF0Mn0yp94i5Q/kss3aln98=
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
- DBBPR05MB6521.eurprd05.prod.outlook.com (20.179.43.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.21; Tue, 29 Jan 2019 19:32:57 +0000
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Tue, 29 Jan 2019
- 19:32:57 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Logan Gunthorpe <logang@deltatee.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AA==
-Date:   Tue, 29 Jan 2019 19:32:57 +0000
-Message-ID: <20190129193250.GK10108@mellanox.com>
-References: <20190129174728.6430-1-jglisse@redhat.com>
- <20190129174728.6430-4-jglisse@redhat.com>
- <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
- <20190129191120.GE3176@redhat.com>
-In-Reply-To: <20190129191120.GE3176@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR18CA0035.namprd18.prod.outlook.com
- (2603:10b6:320:31::21) To DBBPR05MB6426.eurprd05.prod.outlook.com
- (2603:10a6:10:c9::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DBBPR05MB6521;6:qIbxigtUfkce/aMkXuRgQE4oq5eXlBXrRd/jmJ5Qr/6ngJ/uwqYQOPpxbXYM04QRcyHkN82A/spgU4PUT3jz2YXpu4CA9ee9Pna2FeHYbN+GKOXxxCa3HyczKAqz5k1uU757rUZEex+bPnRFm+6byGQiWIln0D3yqtVLAfjSxrMdfM7+p0MqiFYW3hyQU3kg94AJjdn6XDSttgpi7BNkoUSli8yddtV+vehYJL9F1KevuVw1d692y8E73vDvYfEsGJ3xINPjixg+X9Z8xECxPAsXoxbcnMq8hHa0ODK7UB/rge7PJbOZy3STbizMDR3GFKa/bJSkWOTeRpbiYe52A1VXZ//1RX2pX+nQIOyTOvr7fmQGdfnm5b97BdwkmvCKXpsI6Km4a/OCNPK55A2vVO8Y1Y4zl2yIL1BVpeUsp52BSZ3ddTJFEH50OaLbdWshsyov2FNyGV4AZ5vBf6d8UA==;5:2GZ7euKQlvTfiqVwXrnJCz8M6EvBeyko7iuRIvF7731btWTkgO9KrxSN39D6ohvx182vA7dAvViUe37Zv4xJoykjz60+ycJykbZu536QyEV305fKwwVEPgXQe5pZIcVPY4Jy11z8lGOc4nI/IizIzlnhLb8pYJaACpHaWlJw7rxjW9k+tTnBvun2KrF5W30tGSf3Ic3EhzjwN/3A39ewgw==;7:x9MT+0b2q51C3b51zXY06WZ/TtiA0iPhzx7B0C9WudXXE13v8JoWPAxTyYOMoh+k/VGJaswtdeKFXUPe7G+h7nZhBqK3zx7Xu4CpsyXNy8qNI544EiPGCZguWlzdzkXpvGA0Qj/lg7AreAKNA2Uzew==
-x-ms-office365-filtering-correlation-id: 7be37d8f-8eaa-4788-672c-08d68620923a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6521;
-x-ms-traffictypediagnostic: DBBPR05MB6521:
-x-microsoft-antispam-prvs: <DBBPR05MB652119A47580243302A3E300CF970@DBBPR05MB6521.eurprd05.prod.outlook.com>
-x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(39860400002)(396003)(366004)(376002)(189003)(199004)(6486002)(14454004)(6116002)(2906002)(6512007)(71190400001)(68736007)(6436002)(71200400001)(478600001)(229853002)(446003)(217873002)(53936002)(97736004)(6246003)(3846002)(486006)(476003)(11346002)(2616005)(105586002)(81166006)(93886005)(8676002)(81156014)(1076003)(6916009)(7736002)(305945005)(14444005)(316002)(76176011)(8936002)(4326008)(186003)(256004)(106356001)(386003)(26005)(99286004)(33656002)(36756003)(53546011)(52116002)(86362001)(25786009)(54906003)(7416002)(102836004)(6506007)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6521;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: yVFGJimFHdkRHGZUQ1MMQGCuCVv2izL3ZjyZgutu5AfiQxWQQjrJC9OQuCPfiOfo3/Dpkdya/XtSnSmmGlY1uTlnbhDXIHWHSFUTM2BXO0kRBhfut8ej+bC/k+W0C6193Rz6nr4/aKX+hIjV2dwVE+BlM9OwgM7eGzA1LLD93crfqe4nU8QTsjXnLGAVIcj3lrPcw+h3yeyD2JFYK521/sbr1QmBDyQIk6bUjyQNr7nzwcqWl9YmdyphjR4q9c/k4fqYLrzpNVQXp7lAeY0PuHYV7LB/fNGuzVhtrdZxkCBktbUH+wRAwEAWcHsDlcHTfTYYFhlU25nsGfL4dFByjCOpb/ctAGEEmC4XN2cwJR6H7ZJH56Tnw+p5TyNrPQ2rS40JkAKGty3Dbl9LUlM8mhq/fOrC7Qv2JsX+5Rpq8x8=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D743145BE1A96C40B172B73A6FC4A399@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726852AbfA2Td7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 14:33:59 -0500
+Received: from [192.168.0.13] (ip5f5bf33f.dynamic.kabel-deutschland.de [95.91.243.63])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 091F5201352016;
+        Tue, 29 Jan 2019 20:33:57 +0100 (CET)
+Subject: Re: [PATCH 0/2] Fix TSC issues on (some) AMD Ryzen based systems
+To:     =?UTF-8?Q?Jan_H=2e_Sch=c3=b6nherr?= <jan@schnhrr.de>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Cc:     Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+References: <20190129102329.27610-1-jan@schnhrr.de>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <74929a77-6a21-d13e-9a65-5a0753009ddf@molgen.mpg.de>
+Date:   Tue, 29 Jan 2019 20:33:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7be37d8f-8eaa-4788-672c-08d68620923a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 19:32:56.9860
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6521
+In-Reply-To: <20190129102329.27610-1-jan@schnhrr.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 02:11:23PM -0500, Jerome Glisse wrote:
-> On Tue, Jan 29, 2019 at 11:36:29AM -0700, Logan Gunthorpe wrote:
-> >=20
-> >=20
-> > On 2019-01-29 10:47 a.m., jglisse@redhat.com wrote:
-> >=20
-> > > +	/*
-> > > +	 * Optional for device driver that want to allow peer to peer (p2p)
-> > > +	 * mapping of their vma (which can be back by some device memory) t=
-o
-> > > +	 * another device.
-> > > +	 *
-> > > +	 * Note that the exporting device driver might not have map anythin=
-g
-> > > +	 * inside the vma for the CPU but might still want to allow a peer
-> > > +	 * device to access the range of memory corresponding to a range in
-> > > +	 * that vma.
-> > > +	 *
-> > > +	 * FOR PREDICTABILITY IF DRIVER SUCCESSFULY MAP A RANGE ONCE FOR A
-> > > +	 * DEVICE THEN FURTHER MAPPING OF THE SAME IF THE VMA IS STILL VALI=
-D
-> > > +	 * SHOULD ALSO BE SUCCESSFUL. Following this rule allow the importi=
-ng
-> > > +	 * device to map once during setup and report any failure at that t=
-ime
-> > > +	 * to the userspace. Further mapping of the same range might happen
-> > > +	 * after mmu notifier invalidation over the range. The exporting de=
-vice
-> > > +	 * can use this to move things around (defrag BAR space for instanc=
-e)
-> > > +	 * or do other similar task.
-> > > +	 *
-> > > +	 * IMPORTER MUST OBEY mmu_notifier NOTIFICATION AND CALL p2p_unmap(=
-)
-> > > +	 * WHEN A NOTIFIER IS CALL FOR THE RANGE ! THIS CAN HAPPEN AT ANY
-> > > +	 * POINT IN TIME WITH NO LOCK HELD.
-> > > +	 *
-> > > +	 * In below function, the device argument is the importing device,
-> > > +	 * the exporting device is the device to which the vma belongs.
-> > > +	 */
-> > > +	long (*p2p_map)(struct vm_area_struct *vma,
-> > > +			struct device *device,
-> > > +			unsigned long start,
-> > > +			unsigned long end,
-> > > +			dma_addr_t *pa,
-> > > +			bool write);
-> > > +	long (*p2p_unmap)(struct vm_area_struct *vma,
-> > > +			  struct device *device,
-> > > +			  unsigned long start,
-> > > +			  unsigned long end,
-> > > +			  dma_addr_t *pa);
-> >=20
-> > I don't understand why we need new p2p_[un]map function pointers for
-> > this. In subsequent patches, they never appear to be set anywhere and
-> > are only called by the HMM code. I'd have expected it to be called by
-> > some core VMA code and set by HMM as that's what vm_operations_struct i=
-s
-> > for.
-> >=20
-> > But the code as all very confusing, hard to follow and seems to be
-> > missing significant chunks. So I'm not really sure what is going on.
->=20
-> It is set by device driver when userspace do mmap(fd) where fd comes
-> from open("/dev/somedevicefile"). So it is set by device driver. HMM
-> has nothing to do with this. It must be set by device driver mmap
-> call back (mmap callback of struct file_operations). For this patch
-> you can completely ignore all the HMM patches. Maybe posting this as
-> 2 separate patchset would make it clearer.
->=20
-> For instance see [1] for how a non HMM driver can export its memory
-> by just setting those callback. Note that a proper implementation of
-> this should also include some kind of driver policy on what to allow
-> to map and what to not allow ... All this is driver specific in any
-> way.
+Dear Jan,
 
-I'm imagining that the RDMA drivers would use this interface on their
-per-process 'doorbell' BAR pages - we also wish to have P2P DMA to
-this memory. Also the entire VFIO PCI BAR mmap would be good to cover
-with this too.
 
-Jerome, I think it would be nice to have a helper scheme - I think the
-simple case would be simple remapping of PCI BAR memory, so if we
-could have, say something like:
+Thank you for adding me to the CC list.
 
-static const struct vm_operations_struct my_ops {
-  .p2p_map =3D p2p_ioremap_map_op,
-  .p2p_unmap =3D p2p_ioremap_unmap_op,
-}
 
-struct ioremap_data {
-  [..]
-}
+Am 29.01.19 um 11:23 schrieb Jan H. Schönherr:
+> My newly acquired AMD Ryzen Threadripper based system seems to have
+> some TSC quirks, which go away once the system is up.
+> 
+> Given the discussion in https://lkml.org/lkml/2019/1/28/1356
+> I don't seem to be the only one, and it does not seem to be
+> Threadripper specific.
+> 
+> The first patch addresses presumably SMI interruptions, that occur
+> on my system at a 60 Hz frequency. They take too long, making the
+> existing code fail. The patch makes that code more resilient.
+> (These interruptions go away at some point during boot; also proven
+> by the fact, that I don't have any TSC issues, when kexecing into
+> a new kernel.)
+> 
+> The second patch prevents TSC going unstable when resuming from S3.
+> This may have a similar source, but is certainly more weird: the
+> TSC is observed to go backwards on CPU0 by about 200 to 500 cycles
+> compared to other CPUs every once in a while, as long as its sibling
+> (CPU16 in my case) hasn't been resumed yet. (I did some experiments
+> with CPU hotplug before and after suspend, but apart from reproducing
+> the issue and verifying the "fix", I got nowhere.)
+> 
+> The patches are against v4.20.
+> 
+> Jan H. Schönherr (2):
+>    x86/tsc: Allow quick PIT calibration despite interruptions
+>    cpu/hotplug: Unfreeze sibling CPU first on resume from S3
+> 
+>   arch/x86/kernel/tsc.c | 80 +++++++++++++++++++++++++------------------
+>   kernel/cpu.c          | 34 ++++++++++++------
+>   2 files changed, 70 insertions(+), 44 deletions(-)
 
-fops_mmap() {
-   vma->private_data =3D &driver_priv->ioremap_data;
-   return p2p_ioremap_device_memory(vma, exporting_device, [..]);
-}
+I successfully tested both applied on Linus’ current master branch
+(v5.0-rc4-1-g4aa9fc2a435a).
 
-Which closely matches at least what the RDMA drivers do. Where
-p2p_ioremap_device_memory populates p2p_map and p2p_unmap pointers
-with sensible functions, etc.
+> [    0.000000] DMI: HP HP EliteDesk 705 G4 MT/83E7, BIOS Q06 Ver. 02.04.01 09/14/2018
+> [    0.000000] tsc: Fast TSC calibration using PIT
+> [    0.000000] tsc: Detected 3616.864 MHz processor
 
-It looks like vfio would be able to use this as well (though I am
-unsure why vfio uses remap_pfn_range instead of io_remap_pfn range for
-BAR memory..)
 
-Do any drivers need more control than this?
+Kind regards,
 
-Jason
+Paul
