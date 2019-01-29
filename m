@@ -2,32 +2,32 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F405C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CF7C282CF
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D4D7217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EFBE20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbfA2AjM (ORCPT
+        id S1727445AbfA2AjP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:39:12 -0500
-Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
+        Mon, 28 Jan 2019 19:39:15 -0500
+Received: from mga06.intel.com ([134.134.136.31]:5081 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbfA2AjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:39:11 -0500
+        id S1726845AbfA2AjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 19:39:12 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="133921882"
+   d="scan'208";a="133921888"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
-  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:10 -0800
+  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:11 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -41,129 +41,62 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 00/20] Merge text_poke fixes and executable lockdowns
-Date:   Mon, 28 Jan 2019 16:34:02 -0800
-Message-Id: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 02/20] x86/jump_label: Use text_poke_early() during early init
+Date:   Mon, 28 Jan 2019 16:34:04 -0800
+Message-Id: <20190129003422.9328-3-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset improves several overlapping issues around stale TLB
-entries and W^X violations. It is combined from a slightly tweaked
-"x86/alternative: text_poke() enhancements v7" [1] and a next version of
-the "Don’t leave executable TLB entries to freed pages v2" [2]
-patchsets that were conflicting.
+From: Nadav Amit <namit@vmware.com>
 
-The related issues that this fixes:
-1. Fixmap PTEs that are used for patching are available for access from
-   other cores and might be exploited. They are not even flushed from
-   the TLB in remote cores, so the risk is even higher. Address this
-   issue by introducing a temporary mm that is only used during
-   patching. Unfortunately, due to init ordering, fixmap is still used
-   during boot-time patching. Future patches can eliminate the need for
-   it.
-2. Missing lockdep assertion to ensure text_mutex is taken. It is
-   actually not always taken, so fix the instances that were found not
-   to take the lock (although they should be safe even without taking
-   the lock).
-3. Module_alloc returning memory that is RWX until a module is finished
-   loading.
-4. Sometimes when memory is freed via the module subsystem, an
-   executable permissioned TLB entry can remain to a freed page. If the
-   page is re-used to back an address that will receive data from
-   userspace, it can result in user data being mapped as executable in
-   the kernel. The root of this behavior is vfree lazily flushing the
-   TLB, but not lazily freeing the underlying pages.
+There is no apparent reason not to use text_poke_early() while we are
+during early-init and we do not patch code that might be on the stack
+(i.e., we'll return to the middle of the patched code). This appears to
+be the case of jump-labels, so do so.
 
-Changes for v2:
- - Adding “Reviewed-by tag” [Masami]
- - Comment instead of code to warn against module removal while patching [Masami]
- - Avoiding open-coded TLB flush [Andy]
- - Remove "This patch" [Borislav Petkov]
- - Not set global bit during text poking [Andy, hpa]
- - Add Ack from [Pavel Machek]
- - Split patch 16 "Plug in new special vfree flag" into 4 patches (16-19)
-   to make it easier to review. There were no code changes.
+This is required for the next patches that would set a temporary mm for
+patching, which is initialized after some static-keys are
+enabled/disabled.
 
-The changes from "Don’t leave executable TLB entries to freed pages
-v2" to v1:
- - Add support for case of hibernate trying to save an unmapped page
-   on the directmap. (Ard Biesheuvel)
- - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
- - Avoid changing deferred free code by moving modules init free to work
-   queue (Andy Lutomirski)
- - Plug in new flag for kprobes and ftrace
- - More arch generic names for set_pages functions (Ard Biesheuvel)
- - Fix for TLB not always flushing the directmap (Nadav Amit)
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ arch/x86/kernel/jump_label.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index f99bd26bd3f1..e36cfec0f35e 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -50,7 +50,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 	jmp.offset = jump_entry_target(entry) -
+ 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
  
-Changes from "x86/alternative: text_poke() enhancements v7" to v1
- - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
- - Remove text_poke usage from ftrace (Nadav)
+-	if (early_boot_irqs_disabled)
++	/*
++	 * As long as we're UP and not yet marked RO, we can use
++	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
++	 * SYSTEM_SCHEDULING before going either.
++	 */
++	if (system_state == SYSTEM_BOOTING)
+ 		poker = text_poke_early;
  
-[1] https://lkml.org/lkml/2018/12/5/200
-[2] https://lkml.org/lkml/2018/12/11/1571
-
-Andy Lutomirski (1):
-  x86/mm: temporary mm struct
-
-Nadav Amit (12):
-  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
-  x86/jump_label: Use text_poke_early() during early init
-  fork: provide a function for copying init_mm
-  x86/alternative: initializing temporary mm for patching
-  x86/alternative: use temporary mm for text poking
-  x86/kgdb: avoid redundant comparison of patched code
-  x86/ftrace: set trampoline pages as executable
-  x86/kprobes: instruction pages initialization enhancements
-  x86: avoid W^X being broken during modules loading
-  x86/jump-label: remove support for custom poker
-  x86/alternative: Remove the return value of text_poke_*()
-  x86/alternative: comment about module removal races
-
-Rick Edgecombe (7):
-  Add set_alias_ function and x86 implementation
-  mm: Make hibernate handle unmapped pages
-  vmalloc: New flags for safe vfree on special perms
-  modules: Use vmalloc special flag
-  bpf: Use vmalloc special flag
-  x86/ftrace: Use vmalloc special flag
-  x86/kprobes: Use vmalloc special flag
-
- arch/Kconfig                         |   4 +
- arch/x86/Kconfig                     |   1 +
- arch/x86/include/asm/fixmap.h        |   2 -
- arch/x86/include/asm/mmu_context.h   |  32 +++++
- arch/x86/include/asm/pgtable.h       |   3 +
- arch/x86/include/asm/set_memory.h    |   3 +
- arch/x86/include/asm/text-patching.h |   7 +-
- arch/x86/kernel/alternative.c        | 199 ++++++++++++++++++++-------
- arch/x86/kernel/ftrace.c             |  14 +-
- arch/x86/kernel/jump_label.c         |  19 ++-
- arch/x86/kernel/kgdb.c               |  25 +---
- arch/x86/kernel/kprobes/core.c       |  19 ++-
- arch/x86/kernel/module.c             |   2 +-
- arch/x86/mm/init_64.c                |  36 +++++
- arch/x86/mm/pageattr.c               |  16 ++-
- arch/x86/xen/mmu_pv.c                |   2 -
- include/linux/filter.h               |  18 +--
- include/linux/mm.h                   |  18 +--
- include/linux/sched/task.h           |   1 +
- include/linux/set_memory.h           |  10 ++
- include/linux/vmalloc.h              |  13 ++
- init/main.c                          |   3 +
- kernel/bpf/core.c                    |   1 -
- kernel/fork.c                        |  24 +++-
- kernel/module.c                      |  82 ++++++-----
- mm/page_alloc.c                      |   7 +-
- mm/vmalloc.c                         | 122 +++++++++++++---
- 27 files changed, 494 insertions(+), 189 deletions(-)
-
+ 	if (type == JUMP_LABEL_JMP) {
 -- 
 2.17.1
 
