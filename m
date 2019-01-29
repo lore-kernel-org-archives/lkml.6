@@ -2,121 +2,115 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03461C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E09C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C90BD20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:25:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01CEB20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:26:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548761161;
+	bh=v4hN8c05nwRcSY7U6xL94LZA30KN67DFw1PZLzBQdMQ=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=tbFfxX0PuYF6xX3+UfgQJyPEd8bUmVhbX86/0vJDNxLT/lPo7hCANfNJ/G/TpqiFK
+	 r+KAw3pUnjxSJWTIc6hjEGhd78/QTjvhcqEC5KCZpaTWwm7n/PgkA8TNo4ca8YgTi+
+	 aA9iatZZ/yBh3eSH4SuDYmudGowWVr+Rxct985yE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbfA2LZl (ORCPT
+        id S1727521AbfA2LZ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:25:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33018 "EHLO mx1.redhat.com"
+        Tue, 29 Jan 2019 06:25:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725772AbfA2LZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:25:40 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725772AbfA2LZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:25:59 -0500
+Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1B56CC0C4286;
-        Tue, 29 Jan 2019 11:25:40 +0000 (UTC)
-Received: from [10.36.117.255] (unknown [10.36.117.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ED6E51055007;
-        Tue, 29 Jan 2019 11:25:36 +0000 (UTC)
-Subject: Re: [PATCH] perf tools: Filter out hidden symbols from labels
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20190115135354.11572-1-jolsa@kernel.org>
- <960f0b83-a623-67a6-ab55-d56139d10ba2@redhat.com>
- <20190115173838.GB31411@krava> <20190128133526.GD15461@krava>
- <20190129090750.GE4344@kernel.org>
-From:   Nick Clifton <nickc@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nickc@redhat.com; prefer-encrypt=mutual; keydata=
- mQINBFm/2cUBEADkvRqMWfAryJ52T4J/640Av5cam9ojdFih9MjcX7QWFxIzJfTFYq2z+nb4
- omdfZosdCJL2zGcn6C0AxpHNvxR9HMDkEyFHKrjDh4xWU+pH4z9azQEqJh331X7UzbZldqQo
- 16VkuVavgsTJaHcXm+nGIBTcUbl2oiTtHhmuaYxx6JTMcFjC7vyO5mLBw78wt52HBYweJ0Nj
- HBvvH/JxbAAULSPRUC61K0exlO49VFbFETQNG1hZTKEji95fPbre7PpXQ0ewQShUgttEE/J3
- UA4jYaF9lOcZgUzbA27xTV//KomP0D30yr4e4EJEJYYNKa3hofTEHDXeeNgM25tprhBUMdbV
- RZpf2Keuk2uDVwc+EiOVri48rb1NU+60sOXvoGO6Ks81+mhAGmrBrlgLhAp8K1HPHI4MG4gH
- nrMqX2rEGUGRPFjC3qqVVlPm8H05PnosNqDLQ1Pf7C0pVgsCx6hKQB7Y1qBui7aoj9zeFaQg
- pYef+CEERIKEcWwrjaOJwK3pi9HFdxS0NNWYZj8HPzz/AsgTTQdsbulPlVq2SsctmOnL42CZ
- OCTppGYwl53CG/EqVY+UQBzFzJBaY8TJRFFYVEy5/HH4H11rMoZwqIkk71EOGU3X6mWlANRi
- kR3M4GhVITRzuaV69Fed+OeXcCmP94ASLfuhBR2uynmcHpBKpwARAQABtDtOaWNrIENsaWZ0
- b24gKENoaWVmIEJpbnV0aWxzIE1haW50YWluZXIpIDxuaWNrY0ByZWRoYXQuY29tPokCOAQT
- AQIAIgUCWb/ZxQIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQE/zvid2ePE9cOxAA
- 3cX1bdDaTFttTqukdPXLCtD2aNwJos4vB4LYPSgugLkYaHIQH9d1NQPhS0TlUeovnFNESLaV
- soihv0YmBUCyL4jE52FRoTjE6fUhYkFNqIWN2HYwkVrSap2UUJFquRVoVbPkbSup8P+D8eyd
- BbdxsY6f+5E8Rtz5ibVnPZTib7CyqnFokJITWjzGdIP0Gn+JWVa6jtHTImWx1MtqiuVRDapU
- hrIoUIjf98HQn9/N5ylEFYQTw7tzaJNWeGUoGYS8+8n/0sNbuYQUU/zwMVY9wpJcrXaas6yZ
- XGpF/tua59t9LFCct+07YAUSWyaBXqBW3PKQz7QP+oE8yje91XrhOQam04eJhPIBLO88g6/U
- rdKaY7evBB8bJ76Zpn1yqsYOXwAxifD0gDcRTQcB2s5MYXYmizn2GoUm1MnCJeAfQCi/YMob
- R+c8xEEkRU83Tnnw3pmAbRU6OcPihEFuK/+SOMKIuV1QWmjkbAr4g9XeXvaN+TRJ9Hl/k1k/
- sj+uOfyGIaFzM/fpaLmFk8vHeej4i2/C6cL4mnahwYBDHAfHO65ZUIBAssdA6AeJ+PGsYeYh
- qs6zkpaA2b0wT4f9s7BPSqi0Veky8bUYYY7WpjzDcHnj1gEeIU55EhOQ42dnEfv7WrIAXanO
- P8SjhgqAUkb3R88azZCpEMTHiCE4bFxzOmi5Ag0EWb/ZxQEQALaJE/3u23rTvPLkitaTJFqK
- kwPVylzkwmKdvd2qeEFk1qys2J3tACTMyYVnYTSXy5EJH2zJyhUfLnhLp8jJZF4oU5QehOaJ
- PcMmzI/CZS1AmH+jnm6pukdZAowTzJyt4IKSapr+7mxcxX1YQ2XewMnFYpLkAA2dHaChLSU/
- EHJXe3+O4DgEURTFMa3SRN/J4GNMBacKXnMSSYylI5DcIOZ/v0IGa5MAXHrP1Hwm1rBmloIc
- gmzexczBf+IcWgCLThyFPffv+2pfLK1XaS82OzBC7fS01pB/eDOkjQuKy16sKZX6Rt57vud4
- 0uE5a0lpyItC2P7u7QWL4yT5pMF+oS8bm3YWgEntV380RyZpqgJGZTZLNq2T4ZgfiaueEV4J
- zOnG2/QRGjOUrNQaYzKy5V127CTnRg4BYF/uLEmizLcI3O3U1+mEz6h48wkAojO1B6AZ8Lm+
- JuxOW5ouGcrkTEuIG56GcDwMWS/Pw/vNsDyNmOCjy9eEKWJgmMmLaq59HpfTd8IOeaYyuAQH
- AsYt/zzKy0giMgjhCQtuc99E4nQE9KZ44DKsnqRabK9s3zYE3PIkCFIEZcUiJXSXWWOIdJ43
- j+YyFHU5hqXfECM6rzKGBeBUGTzyWcOX6YwRM4LzQDVJwYG8cVfth+v4/ImcXR43D4WVxxBE
- AjKag02b+1yfABEBAAGJAh8EGAECAAkFAlm/2cUCGwwACgkQE/zvid2ePE/dqQ/6ApUwgsZz
- tps0MOdRddjPwz44pWXS5MG45irMQXELGQyxkrafc8lwHeABYstoK8dpopTcJGE3dZGL3JNz
- 1YWxQ5AV4uyqBn5N8RubcA8NzR6DQP+OGPIwzMketvVC/cbbKDZqf0uTDy3jP65OFhSkTEIy
- nYv1Mb4JJl3Sq+haUbfWLAV5nboSuHmiZE6Bz2+TjdoVkNwHBfpqxu6MlWka+P98SUcmY8iV
- hPy9QC1XFOGdFDFf1kYgHW27mFwds35NQhNARgftAVz9FZXruW6tFIIfisjr3rVjD9R8VgL7
- l5vMr9ylOFpepnI6+wd2X1566HW7F1Zw1DIrY2NHL7kL5635bHrJY4n7o/n7Elk/Ca/MAqzd
- IZxz6orfXeImsqZ6ODn4Y47PToS3Tr3bMNN9N6tmOPQZkJGHDBExbhAi/Jp8fpWxMmpVCUl6
- c85cOBCR4s8tZsvGYOjR3CvqKrX4bb8GElrhOvAJa6DdmZXc7AyoVMaTvhpq3gJYKmC64oqt
- 7zwIHwaCxTbP6C6oUp9ENRV7nHnXN3BlvIgCo4QEs6HkDzkmgYlCEOKBiDyVMSkPDZdsspa+
- K4GlU2Swi/BDJMjtDxyo+K0M81LXXxOeRfEIfPtZ3ddxBKPva1uSsuz+pbN9d1JY8Ko5T/h1
- 6susi2ReUyNJEJaSnjO5z13TQ1U=
-Organization: Red Hat
-Message-ID: <83e6ed5c-47b8-9499-af18-5ada0c4bdd6c@redhat.com>
-Date:   Tue, 29 Jan 2019 11:25:35 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190129090750.GE4344@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 29 Jan 2019 11:25:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB45520880;
+        Tue, 29 Jan 2019 11:25:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548761158;
+        bh=v4hN8c05nwRcSY7U6xL94LZA30KN67DFw1PZLzBQdMQ=;
+        h=From:To:Subject:Date:From;
+        b=ouegjwgrNgxDKqfSe38VOnvtmUScPz9SEBtbn+PvDr47KLecX9FQH0dCagQSv6r/d
+         TTbE0P6rjdb3refA58KsdpM1qEOBDRdP14WYs6yJXB7NgK5a6PeToR5ztqQfQ7kQ0l
+         hZxu7sIBjuaSJ4wbenB2qwRyhHCJxAvm+ELnhzd0=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sangbeom Kim <sbkim73@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/2] mfd: sec-core: Cleanup formatting to a consistent style
+Date:   Tue, 29 Jan 2019 12:25:52 +0100
+Message-Id: <1548761153-28114-1-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+Cleanup the formatting to have consistent style across the file (only
+white-space issues).  No expected difference in code.
 
->> there were no objections for rfc, sending patch
-> 
-> I don't see a problem, Nick, can you provide an Acked-by, or better yet,
-> a Reviewed-by so that Jiri can collect in this patch and I can push it
-> to perf/urgent?
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/mfd/sec-core.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-Sorry - I do not think that I have the authority to do that.  I am not a
-perftools maintainer (or a kernel maintainer).  For what it is worth the 
-patch does look good to me, but I think that a real maintainer needs to 
-approve it.
-
-Cheers
-  Nick
-
-
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index e0835c9df7a1..c3bb53f79e63 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -70,9 +70,11 @@ static const struct mfd_cell s2mps11_devs[] = {
+ };
+ 
+ static const struct mfd_cell s2mps13_devs[] = {
+-	{ .name = "s2mps13-regulator", },
+-	{ .name = "s2mps13-rtc", },
+ 	{
++		.name = "s2mps13-regulator",
++	}, {
++		.name = "s2mps13-rtc",
++	}, {
+ 		.name = "s2mps13-clk",
+ 		.of_compatible = "samsung,s2mps13-clk",
+ 	},
+@@ -114,7 +116,8 @@ static const struct mfd_cell s2mpu02_devs[] = {
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id sec_dt_match[] = {
+-	{	.compatible = "samsung,s5m8767-pmic",
++	{
++		.compatible = "samsung,s5m8767-pmic",
+ 		.data = (void *)S5M8767X,
+ 	}, {
+ 		.compatible = "samsung,s2mps11-pmic",
+@@ -309,8 +312,8 @@ static void sec_pmic_configure(struct sec_pmic_dev *sec_pmic)
+  * the sub-modules need not instantiate another instance while parsing their
+  * platform data.
+  */
+-static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
+-					struct device *dev)
++static struct sec_platform_data *
++sec_pmic_i2c_parse_dt_pdata(struct device *dev)
+ {
+ 	struct sec_platform_data *pd;
+ 
+@@ -331,8 +334,8 @@ static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
+ 	return pd;
+ }
+ #else
+-static struct sec_platform_data *sec_pmic_i2c_parse_dt_pdata(
+-					struct device *dev)
++static struct sec_platform_data *
++sec_pmic_i2c_parse_dt_pdata(struct device *dev)
+ {
+ 	return NULL;
+ }
+-- 
+2.7.4
 
