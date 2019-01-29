@@ -2,96 +2,114 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF7AC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014C1C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF37420857
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:17:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C92B120857
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:18:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="oMpoF8oy"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wU/63d3B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbfA2SRr (ORCPT
+        id S1728751AbfA2SSe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:17:47 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37282 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727898AbfA2SRr (ORCPT
+        Tue, 29 Jan 2019 13:18:34 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38129 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727368AbfA2SSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:17:47 -0500
-Received: by mail-qt1-f196.google.com with SMTP id t33so23310796qtt.4
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:17:46 -0800 (PST)
+        Tue, 29 Jan 2019 13:18:34 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v13so23147798wrw.5
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:18:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZEklhevKI3Gbhsb8btAczqDD1QOFHCflfX9NR1AtiuI=;
-        b=oMpoF8oy79RuME85jCKezNXquwMeoHATz7FZ4NHIYYgps1343D6U2bnUqP0o0KH/Se
-         C9uFwqnGrrnetRAEwQbrfx2ng8r3ea9h2qmUQSu6Sgdv6FPL+7mrWQU1hIpz4d+x7UQ2
-         nHGvh2Qu33xo8Y3eMeVIlMWt0OTBvvewTuEyX1NX0CkklJHRB8mW7fZ6QYAxnGNsNASn
-         KzI16qTifb5+qj1UM+xt1K22dQVVu149ptQE9BkIhEVK6NX1Bs0Z2b+C9NcJ/kxus55i
-         TiIiKAJ9TXWsE70JlUQD7vhOj8jw3oX16/eZE3k5NW3wIvERtEY2DA8PGrviArJj+NCb
-         z+mA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+GxBm8s8C6x84ozFyjXoCsKwNqijbNBimqTvowaT6HA=;
+        b=wU/63d3BqpbaETl1R60YuKHDVlM6oWOlycD365weCHPw8D4pDzyh2VmzYqavACHnQy
+         2E0vBCvdlWBdD0etwek0HhdNqKvPtKLOAlQFgRzID0mB2cjaCZJAIigmbf1v4lWqUmwF
+         JYp4Lm4pJN4DP1NeOojB4yAKbERZnHYyTY/xV0SnPKvVMxwa0YihtVntVY4dx1P0s7Xv
+         4qCpYp2b+meS9qpg6uaMXpF6iwtg2kmE0QFWzaul4ag1gf7tCHOCDFeIDiSALdVR1tN1
+         YAYiKWKxmIsV+dTX2MeLcYGkNN7xNy2V9BjAvc+Yg3lghhd8r0GW1PvEMaDY7CwEZJHL
+         Tr5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZEklhevKI3Gbhsb8btAczqDD1QOFHCflfX9NR1AtiuI=;
-        b=qu/vz93qJxrU3p3isv1Ad8px+gTaqtzRENvhp3iz5z4C3JU/2EPZhuDdl7/mfh0eDY
-         jqs7CcNO0hD9d9AkLY4kmSaPfpiPs+XaSLArCiT9PvRaOyXms0jpWQJIO0r3SYbu0NDQ
-         yDsDR2J/1EWjH4RJ4QZ5cWzJcfetnOZERXAkrxD63u5PRsZoOUvM6Ra9xKTwF5LdIIfo
-         d0q8h/DP/iTdqxjBdtnpQUF56WfAImF89qy2dxliN32c1HdKiwFkUIvIbudmZyOCPpxI
-         DnjL9PfLvzrCgBTx36VX0O66j4YGHSNIdKwS7Qn3ujuNEGjpsSIMk8EnYQZ0e2S+l+Dk
-         NHZg==
-X-Gm-Message-State: AJcUukes6XHWOfaZKPIRS8yO54OE02wtZmgIeafhsktkt3lLRVPfeGYg
-        Woc0V0WUlL/9Y0IZc/vm/NlODw==
-X-Google-Smtp-Source: ALg8bN4nnbZ9oOpkYdiiEUJ9B/YxJfGjNOrjQ8JujZijkSFXJV7mWjUyn3xhhANDE9X5P+89GI/HnQ==
-X-Received: by 2002:a0c:f403:: with SMTP id h3mr25622844qvl.137.1548785866526;
-        Tue, 29 Jan 2019 10:17:46 -0800 (PST)
-Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id l4sm56869941qtf.22.2019.01.29.10.17.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 10:17:45 -0800 (PST)
-Date:   Tue, 29 Jan 2019 13:17:44 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] btrfs: plumb level through the compression
- interface
-Message-ID: <20190129181743.bap6zerlaup5ewaq@MacBook-Pro-91.local>
-References: <20190128212437.11597-1-dennis@kernel.org>
- <20190128212437.11597-9-dennis@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+GxBm8s8C6x84ozFyjXoCsKwNqijbNBimqTvowaT6HA=;
+        b=nRcGYEf1/E0/dG3WkZAZ/2UlSqF4dgH0fnFa9e06qJIV3d5ev0MoQbmRrn5CeFtxzX
+         x0UPodYF5VPLSLnqJEleovIodxvr536iuEj/SolOZ3D9J4rdPYntoh9J+hvM1STu9bxp
+         oighEO92BoE9nAgmE21ePCCGQYoVpd7EkAritxh/s/k+tOqk/R3PrdrPDmD85D0JGwef
+         oh29na6bxjs+Uk/qwJ0bMU9Uv1OyksT76bRkmQcDfbw0uA/zp9Qf6NaLXc8WGCgkALK+
+         U4SRLVK5dhfuFExPnvWpwGXckaLyyc7Cwaah+e5XhvymF+HAHfjiZS+SaJ13Tj6wLXfY
+         97iA==
+X-Gm-Message-State: AJcUukdxN6P+lgOuVMlHa5Ug6mxjjXNr3VxVi2zh72p4Fcexk008W+K/
+        7ZI2W596Qj66ZylB50W8N77fwAhwtBarQp2s1i/baw==
+X-Google-Smtp-Source: ALg8bN4cRFK+VVM41OOXWUgll/3WKZxT3SdKfFLzYyHoHPggY6R004Qc5iemMNf5Igp61Tl5EGthoyMNhU9XqAws9iQ=
+X-Received: by 2002:a5d:4e82:: with SMTP id e2mr26340980wru.291.1548785911774;
+ Tue, 29 Jan 2019 10:18:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128212437.11597-9-dennis@kernel.org>
-User-Agent: NeoMutt/20180716
+References: <20190124211518.244221-1-surenb@google.com> <20190124211518.244221-6-surenb@google.com>
+ <20190129123843.GK28467@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190129123843.GK28467@hirez.programming.kicks-ass.net>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Tue, 29 Jan 2019 10:18:20 -0800
+Message-ID: <CAJuCfpGxtGHsow002nd8Ao8mo9MaZQqZau_NLTMrZ8=aypTkig@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] psi: introduce psi monitor
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, lizefan@huawei.com,
+        Johannes Weiner <hannes@cmpxchg.org>, axboe@kernel.dk,
+        dennis@kernel.org, Dennis Zhou <dennisszhou@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>, linux-doc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 04:24:34PM -0500, Dennis Zhou wrote:
-> Zlib compression supports multiple levels, but doesn't require changing
-> in how a workspace itself is created and managed. Zstd introduces a
-> different memory requirement such that higher levels of compression
-> require more memory. This requires changes in how the alloc()/get()
-> methods work for zstd. This pach plumbs compression level through the
-> interface as a parameter in preparation for zstd compression levels.
-> This gives the compression types opportunity to create/manage based on
-> the compression level.
-> 
-> Signed-off-by: Dennis Zhou <dennis@kernel.org>
+On Tue, Jan 29, 2019 at 4:38 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Thu, Jan 24, 2019 at 01:15:18PM -0800, Suren Baghdasaryan wrote:
+> > +                     atomic_set(&group->polling, polling);
+> > +                     /*
+> > +                      * Memory barrier is needed to order group->polling
+> > +                      * write before times[] read in collect_percpu_times()
+> > +                      */
+> > +                     smp_mb__after_atomic();
+>
+> That's broken, smp_mb__{before,after}_atomic() can only be used on
+> atomic RmW operations, something atomic_set() is _not_.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Oh, I didn't realize that. After reading the following example from
+atomic_ops.txt I was under impression that smp_mb__after_atomic()
+would make changes done by atomic_set() visible:
 
-Thanks,
+/* All memory operations before this call will
+* be globally visible before the clear_bit().
+*/
+smp_mb__before_atomic();
+clear_bit( ... );
+/* The clear_bit() will be visible before all
+* subsequent memory operations.
+*/
+smp_mb__after_atomic();
 
-Josef
+but I'm probably missing something. Is there a more detailed
+description of these rules anywhere else?
+
+Meanwhile I'll change smp_mb__after_atomic() into smp_mb(). Would that
+fix the ordering?
+
+> --
+> You received this message because you are subscribed to the Google Groups "kernel-team" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+>
