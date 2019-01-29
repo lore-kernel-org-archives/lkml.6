@@ -3,132 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A06AC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FFDC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0B420881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:26:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57CEA2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:26:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbfA2J0C (ORCPT
+        id S1727867AbfA2J0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:26:02 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49070 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725799AbfA2J0B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:26:01 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0T9Ptov142306
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 04:26:00 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qajr8dedc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 04:25:59 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <michaele@au1.ibm.com>;
-        Tue, 29 Jan 2019 09:25:27 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 29 Jan 2019 09:25:24 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0T9PN3R3670346
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 29 Jan 2019 09:25:24 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D09C84C04E;
-        Tue, 29 Jan 2019 09:25:23 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D5DF4C044;
-        Tue, 29 Jan 2019 09:25:23 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 29 Jan 2019 09:25:23 +0000 (GMT)
-Received: from localhost (unknown [9.102.48.146])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 2F1E0A01F5;
-        Tue, 29 Jan 2019 20:25:22 +1100 (AEDT)
-From:   Michael Ellerman <michaele@au1.ibm.com>
-To:     Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Tyrel Datwyler <turtle.in.the.kernel@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Juliet Kim <minkim@us.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        nathanl@linux.vnet.ibm.com
-Subject: Re: [RFC 1/6] powerpc:/drc Define interface to acquire arch-specific drc info
-In-Reply-To: <d881d17c-1157-a6a0-0784-33510a4ee674@linux.vnet.ibm.com>
-References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com> <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com> <e7030879-59e4-88fd-3785-fdd98b7f0a3b@gmail.com> <63da6cfa-5272-0c78-ae91-0ad1130db3f1@linux.vnet.ibm.com> <d881d17c-1157-a6a0-0784-33510a4ee674@linux.vnet.ibm.com>
-Date:   Tue, 29 Jan 2019 20:25:21 +1100
+        Tue, 29 Jan 2019 04:26:11 -0500
+Received: from foss.arm.com ([217.140.101.70]:60824 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725799AbfA2J0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:26:11 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9726880D;
+        Tue, 29 Jan 2019 01:26:10 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7F0D3F7A6;
+        Tue, 29 Jan 2019 01:26:05 -0800 (PST)
+Subject: Re: [PATCHv5 4/7] coresight: etm4x: Add support to enable ETMv4.2
+To:     saiprakash.ranjan@codeaurora.org, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, mike.leach@linaro.org,
+        leo.yan@linaro.org, alexander.shishkin@linux.intel.com,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        vivek.gautam@codeaurora.org, jhugo@codeaurora.org,
+        dianders@chromium.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, marc.w.gonzalez@free.fr
+Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
+        tingwei@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <cover.1548419933.git.saiprakash.ranjan@codeaurora.org>
+ <980aaf18c0fe92a667930e3a035394442af74869.1548419933.git.saiprakash.ranjan@codeaurora.org>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <342fa449-124e-7581-dfff-ef5d382f1f6b@arm.com>
+Date:   Tue, 29 Jan 2019 09:26:04 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 19012909-0012-0000-0000-000002EE5852
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012909-0013-0000-0000-000021259A09
-Message-Id: <87d0ofstmm.fsf@concordia.ellerman.id.au>
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901290072
+In-Reply-To: <980aaf18c0fe92a667930e3a035394442af74869.1548419933.git.saiprakash.ranjan@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael Bringmann <mwb@linux.vnet.ibm.com> writes:
-> On 1/25/19 10:09 AM, Michael Bringmann wrote:
->> Adding Nathan Lynch
->> 
->> On 1/24/19 6:04 PM, Tyrel Datwyler wrote:
->>> On 12/14/2018 12:50 PM, Michael Bringmann wrote:
->>>> Define interface to acquire arch-specific drc info to match against
->>>> hotpluggable devices.  The current implementation exposes several
->>>> pseries-specific dynamic memory properties in generic kernel code.
->>>> This patch set provides an interface to pull that code out of the
->>>> generic kernel.
->>>>
->>>> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
->>>> ---
->>>>  include/linux/topology.h |    9 +++++++++
->>>>  1 file changed, 9 insertions(+)
->>>>
->>>> diff --git a/include/linux/topology.h b/include/linux/topology.h
->>>> index cb0775e..df97f5f 100644
->>>> --- a/include/linux/topology.h
->>>> +++ b/include/linux/topology.h
->>>> @@ -44,6 +44,15 @@
->>>
->>> As far as I know pseries is the only platform that uses DR connectors, and I
->>> highly doubt that any other powerpc platform or arch ever will. So, I'm not sure
->>> that this is really generic enough to belong in topology.h. If anything I would
->>> suggest putting this in an include in arch/powerpc/include/ named something like
->>> drcinfo.h or pseries-drc.h. That will make it visible to modules like rpaphp
->>> that want/need to use this functionality.
->
-> It looks like the 'rpaphp' and 'rpadlpar_io' modules are also dependent upon the
-> powerpc platform.
 
-Yes that's right.
 
-> Shouldn't the relevant source files be moved completely to the
-> powerpc-specific directories out of drivers/pci/hotplug as well?
+On 28/01/2019 19:14, Sai Prakash Ranjan wrote:
+> SDM845 has ETMv4.2 and can use the existing etm4x driver.
+> But the current etm driver checks only for ETMv4.0 and
+> errors out for other etm4x versions. This patch adds this
+> missing support to enable SoC's with ETMv4x to use same
+> driver by checking only the ETM architecture major version
+> number.
+> 
+> Without this change, we get below error during etm probe:
+> 
+> / # dmesg | grep etm
+> [    6.660093] coresight-etm4x: probe of 7040000.etm failed with error -22
+> [    6.666902] coresight-etm4x: probe of 7140000.etm failed with error -22
+> [    6.673708] coresight-etm4x: probe of 7240000.etm failed with error -22
+> [    6.680511] coresight-etm4x: probe of 7340000.etm failed with error -22
+> [    6.687313] coresight-etm4x: probe of 7440000.etm failed with error -22
+> [    6.694113] coresight-etm4x: probe of 7540000.etm failed with error -22
+> [    6.700914] coresight-etm4x: probe of 7640000.etm failed with error -22
+> [    6.707717] coresight-etm4x: probe of 7740000.etm failed with error -22
+> 
+> With this change, etm probe is successful:
+> 
+> / # dmesg | grep etm
+> [    6.659198] coresight-etm4x 7040000.etm: CPU0: ETM v4.2 initialized
+> [    6.665848] coresight-etm4x 7140000.etm: CPU1: ETM v4.2 initialized
+> [    6.672493] coresight-etm4x 7240000.etm: CPU2: ETM v4.2 initialized
+> [    6.679129] coresight-etm4x 7340000.etm: CPU3: ETM v4.2 initialized
+> [    6.685770] coresight-etm4x 7440000.etm: CPU4: ETM v4.2 initialized
+> [    6.692403] coresight-etm4x 7540000.etm: CPU5: ETM v4.2 initialized
+> [    6.699024] coresight-etm4x 7640000.etm: CPU6: ETM v4.2 initialized
+> [    6.705646] coresight-etm4x 7740000.etm: CPU7: ETM v4.2 initialized
+> 
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> ---
+>   drivers/hwtracing/coresight/coresight-etm4x.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
+> index 53e2fb6e86f6..fe76b176974a 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
+> @@ -55,7 +55,8 @@ static void etm4_os_unlock(struct etmv4_drvdata *drvdata)
+>   
+>   static bool etm4_arch_supported(u8 arch)
+>   {
+> -	switch (arch) {
+> +	/* Mask out the minor version number */
+> +	switch (arch & 0xf0) {
+>   	case ETM_ARCH_V4:
+>   		break;
+>   	default:
+> 
 
-I don't think so. They are PCI hotplug drivers, so they should sit with
-the other PCI hotplug drivers.
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-It's true that PCI hotplug drivers are more platform specific than other
-types of drivers, but still they have some things in common with other
-PCI hotplug drivers.
-
-cheers
 
