@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD14BC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133C4C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A63C20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D407520882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762518;
-	bh=vPhOnKxnmz9Ow6jt8BCzni8kgWzcgThBnVOoq+PqC8o=;
+	s=default; t=1548762523;
+	bh=YGtAW5dPNGmI4FMT2/U/RsvudpJXFcTUg4priwPfcko=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HQGCCc0E1tdQodE7rI9XEurk4QOA3ibEqeI6E6PObgqjYCOLihAGn01UYb3QK7Bqt
-	 ymO6BTpmwGdh6TgShQg5BAh6ycxpANklzoD0Rc/VzcDjccLEWgtkScwsZQCUGPIdx0
-	 JmDWwlAsZdA4JhpaoigrEd/2BHG3s/Y3NTE0zfNA=
+	b=KiUXeAu3DIVdsgYMuAi41ZbzCsrUo+qx0zafrUaA0oXAGrEvcRGVyJ3uLA1yIRWYa
+	 5Ss69OQQq/Z502CLgG4xgqxiC8gyuVO/cGKIqp5/J8YEaWMjbgh7YZZRo5W1TzZhix
+	 ym7++IyVemEv1nEwCm3fYHyL4uSe9O/8L73fM1cE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731362AbfA2Lsh (ORCPT
+        id S1731370AbfA2Lsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:48:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39484 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:48:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731349AbfA2Lsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:35 -0500
+        id S1731169AbfA2Lsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:48:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C1102086C;
-        Tue, 29 Jan 2019 11:48:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4F442083B;
+        Tue, 29 Jan 2019 11:48:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762514;
-        bh=vPhOnKxnmz9Ow6jt8BCzni8kgWzcgThBnVOoq+PqC8o=;
+        s=default; t=1548762517;
+        bh=YGtAW5dPNGmI4FMT2/U/RsvudpJXFcTUg4priwPfcko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YcSkRknrt4HTo7nBkvDDUFWnAlF/AVfHOq0R86Zkt4tunWSN1zaQxtJ0SSBpRAOWJ
-         vhK011A2kbfB28VWd86xbc89ZonkNaxZlo2upaMHwEV6yXRLfD9KH2tBqo0ZFg9ahn
-         AXfZCX1ENUxTYwNfvJhOZLiN52O4F2ocie/YPhV0=
+        b=n+v1512EFG/I8QvWh5r76I3R8N4Tjewl/ZUNroxxQ6616twPH5izWSNkVpQav2qyh
+         367zjx/vONnsH6f22dh8P0IapviUSNMggRELYC+f187lItuA7Odwj5e7AHO9jE09CX
+         Zj1sYOGOY5aXqkizZ5uSB1PT4RnusiTR9DTYpJVs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.14 30/68] CIFS: Fix possible hang during async MTU reads and writes
-Date:   Tue, 29 Jan 2019 12:35:52 +0100
-Message-Id: <20190129113134.115975097@linuxfoundation.org>
+Subject: [PATCH 4.14 31/68] CIFS: Fix credits calculations for reads with errors
+Date:   Tue, 29 Jan 2019 12:35:53 +0100
+Message-Id: <20190129113134.197266701@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -67,53 +68,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit acc58d0bab55a50e02c25f00bd6a210ee121595f upstream.
+commit 8004c78c68e894e4fd5ac3c22cc22eb7dc24cabc upstream.
 
-When doing MTU i/o we need to leave some credits for
-possible reopen requests and other operations happening
-in parallel. Currently we leave 1 credit which is not
-enough even for reopen only: we need at least 2 credits
-if durable handle reconnect fails. Also there may be
-other operations at the same time including compounding
-ones which require 3 credits at a time each. Fix this
-by leaving 8 credits which is big enough to cover most
-scenarios.
-
-Was able to reproduce this when server was configured
-to give out fewer credits than usual.
-
-The proper fix would be to reconnect a file handle first
-and then obtain credits for an MTU request but this leads
-to bigger code changes and should happen in other patches.
+Currently we mark MID as malformed if we get an error from server
+in a read response. This leads to not properly processing credits
+in the readv callback. Fix this by marking such a response as
+normal received response and process it appropriately.
 
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2ops.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/cifs/cifssmb.c |   35 +++++++++++++++++++++++------------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -153,14 +153,14 @@ smb2_wait_mtu_credits(struct TCP_Server_
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -1445,18 +1445,26 @@ cifs_discard_remaining_data(struct TCP_S
+ }
  
- 			scredits = server->credits;
- 			/* can deadlock with reopen */
--			if (scredits == 1) {
-+			if (scredits <= 8) {
- 				*num = SMB2_MAX_BUFFER_SIZE;
- 				*credits = 0;
- 				break;
- 			}
+ static int
+-cifs_readv_discard(struct TCP_Server_Info *server, struct mid_q_entry *mid)
++__cifs_readv_discard(struct TCP_Server_Info *server, struct mid_q_entry *mid,
++		     bool malformed)
+ {
+ 	int length;
+-	struct cifs_readdata *rdata = mid->callback_data;
  
--			/* leave one credit for a possible reopen */
--			scredits--;
-+			/* leave some credits for reopen and other ops */
-+			scredits -= 8;
- 			*num = min_t(unsigned int, size,
- 				     scredits * SMB2_MAX_BUFFER_SIZE);
+ 	length = cifs_discard_remaining_data(server);
+-	dequeue_mid(mid, rdata->result);
++	dequeue_mid(mid, malformed);
+ 	mid->resp_buf = server->smallbuf;
+ 	server->smallbuf = NULL;
+ 	return length;
+ }
  
++static int
++cifs_readv_discard(struct TCP_Server_Info *server, struct mid_q_entry *mid)
++{
++	struct cifs_readdata *rdata = mid->callback_data;
++
++	return  __cifs_readv_discard(server, mid, rdata->result);
++}
++
+ int
+ cifs_readv_receive(struct TCP_Server_Info *server, struct mid_q_entry *mid)
+ {
+@@ -1496,12 +1504,23 @@ cifs_readv_receive(struct TCP_Server_Inf
+ 		return -1;
+ 	}
+ 
++	/* set up first two iov for signature check and to get credits */
++	rdata->iov[0].iov_base = buf;
++	rdata->iov[0].iov_len = 4;
++	rdata->iov[1].iov_base = buf + 4;
++	rdata->iov[1].iov_len = server->total_read - 4;
++	cifs_dbg(FYI, "0: iov_base=%p iov_len=%zu\n",
++		 rdata->iov[0].iov_base, rdata->iov[0].iov_len);
++	cifs_dbg(FYI, "1: iov_base=%p iov_len=%zu\n",
++		 rdata->iov[1].iov_base, rdata->iov[1].iov_len);
++
+ 	/* Was the SMB read successful? */
+ 	rdata->result = server->ops->map_error(buf, false);
+ 	if (rdata->result != 0) {
+ 		cifs_dbg(FYI, "%s: server returned error %d\n",
+ 			 __func__, rdata->result);
+-		return cifs_readv_discard(server, mid);
++		/* normal error on read response */
++		return __cifs_readv_discard(server, mid, false);
+ 	}
+ 
+ 	/* Is there enough to get to the rest of the READ_RSP header? */
+@@ -1544,14 +1563,6 @@ cifs_readv_receive(struct TCP_Server_Inf
+ 		server->total_read += length;
+ 	}
+ 
+-	/* set up first iov for signature check */
+-	rdata->iov[0].iov_base = buf;
+-	rdata->iov[0].iov_len = 4;
+-	rdata->iov[1].iov_base = buf + 4;
+-	rdata->iov[1].iov_len = server->total_read - 4;
+-	cifs_dbg(FYI, "0: iov_base=%p iov_len=%u\n",
+-		 rdata->iov[0].iov_base, server->total_read);
+-
+ 	/* how much data is in the response? */
+ 	data_len = server->ops->read_data_length(buf);
+ 	if (data_offset + data_len > buflen) {
 
 
