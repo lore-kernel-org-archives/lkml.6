@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD727C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E405C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E6E6214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AE8721871
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762349;
-	bh=K1cWySP/nOG5nUcyXCvHk0wW/pV85vbinJXM9KwOnyY=;
+	s=default; t=1548762356;
+	bh=Qc2poWGTfui51RLnYbEwlkIw82Fd2ls4kiP35CfPiOk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FMZkYpTkO4aFuVcaTJoZfl6MMbPbHcFdnk1ypoyjsJhNljDXEoVV3ayyBLMX20FGx
-	 SqEyTySoSYRPMkM3zM9jUZGG6EpH6JD1ztNSGKsVODSUwNZkZJZx2T5xui/VuDuSR3
-	 h9714xyb4K6DiLSgNf/GGY2UiM6SzVoCqOcIkmVA=
+	b=1tcsehwCny3Uw6+yp+eULPvt3pzRC7YOHIpCFOTMn4YpkejSf9uWErT5qHa4CH9ji
+	 z2NoO+y0xcki0mhhW4JHYrUTDLhWXcKwYZL3mID+c8SZQdJrZ0li+adrGVJWs04HPI
+	 KgK8wTY0CZQkOJTqX/MYiHdu/Tj53LerVnYNPVrg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730841AbfA2Lpr (ORCPT
+        id S1730874AbfA2Lpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:45:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36242 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:45:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730814AbfA2Lpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:45:45 -0500
+        id S1730847AbfA2Lpv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:45:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A2662086C;
-        Tue, 29 Jan 2019 11:45:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 624A520882;
+        Tue, 29 Jan 2019 11:45:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762344;
-        bh=K1cWySP/nOG5nUcyXCvHk0wW/pV85vbinJXM9KwOnyY=;
+        s=default; t=1548762349;
+        bh=Qc2poWGTfui51RLnYbEwlkIw82Fd2ls4kiP35CfPiOk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DJaVBNlwfvTZQk1ZFSdER162KRILh0llSID+HkkeRATVIn870dHJb/+dCS3Iz197X
-         7L2eRQDzKZLRbM/mrvzWbY9BEHu82IdaT6m17q8UzS2E2UhaaXAIRKmYGEx4UuvP0L
-         bMh+K9qYrunfY4pkyYONJe7SLQEwByvI/tdFu7rY=
+        b=UPq/xekgjK/n/QI/vP02MK7hywYyTAaycacYTJbjKVAo+St5ZAoY+UlIqTmWabAGy
+         9zYngieJDvZWpbTNaeC1ZSbUuijvkpksCUR1ln/evP1Oy4537LxcAFyjbxDC3kWp/n
+         fF3ZzeHTJ3w+Yn7IIKgRJ7oiN74vsh0j3oQcEjAQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H.J. Lu" <hjl.tools@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 4.19 076/103] posix-cpu-timers: Unbreak timer rearming
-Date:   Tue, 29 Jan 2019 12:35:53 +0100
-Message-Id: <20190129113205.455382845@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Shannon Nelson <shannon.nelson@oracle.com>,
+        Zhu Yanjun <yanjun.zhu@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Shannon Nelson <shannon.lee.nelson@gmail.com>
+Subject: [PATCH 4.19 077/103] net: sun: cassini: Cleanup license conflict
+Date:   Tue, 29 Jan 2019 12:35:54 +0100
+Message-Id: <20190129113205.611376749@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -69,50 +70,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 93ad0fc088c5b4631f796c995bdd27a082ef33a6 upstream.
+commit 56cb4e5034998b5522a657957321ca64ca2ea0a0 upstream.
 
-The recent commit which prevented a division by 0 issue in the alarm timer
-code broke posix CPU timers as an unwanted side effect.
+The recent addition of SPDX license identifiers to the files in
+drivers/net/ethernet/sun created a licensing conflict.
 
-The reason is that the common rearm code checks for timer->it_interval
-being 0 now. What went unnoticed is that the posix cpu timer setup does not
-initialize timer->it_interval as it stores the interval in CPU timer
-specific storage. The reason for the separate storage is historical as the
-posix CPU timers always had a 64bit nanoseconds representation internally
-while timer->it_interval is type ktime_t which used to be a modified
-timespec representation on 32bit machines.
+The cassini driver files contain a proper license notice:
 
-Instead of reverting the offending commit and fixing the alarmtimer issue
-in the alarmtimer code, store the interval in timer->it_interval at CPU
-timer setup time so the common code check works. This also repairs the
-existing inconistency of the posix CPU timer code which kept a single shot
-timer armed despite of the interval being 0.
+  * This program is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU General Public License as
+  * published by the Free Software Foundation; either version 2 of the
+  * License, or (at your option) any later version.
 
-The separate storage can be removed in mainline, but that needs to be a
-separate commit as the current one has to be backported to stable kernels.
+but the SPDX change added:
 
-Fixes: 0e334db6bb4b ("posix-timers: Fix division by zero bug")
-Reported-by: H.J. Lu <hjl.tools@gmail.com>
+   SPDX-License-Identifier: GPL-2.0
+
+So the file got tagged GPL v2 only while in fact it is licensed under GPL
+v2 or later.
+
+It's nice that people care about the SPDX tags, but they need to be more
+careful about it. Not everything under (the) sun belongs to ...
+
+Fix up the SPDX identifier and remove the boiler plate text as it is
+redundant.
+
+Fixes: c861ef83d771 ("sun: Add SPDX license tags to Sun network drivers")
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Shannon Nelson <shannon.nelson@oracle.com>
+Cc: Zhu Yanjun <yanjun.zhu@oracle.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190111133500.840117406@linutronix.de
+Acked-by: Shannon Nelson <shannon.lee.nelson@gmail.com>
+Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/posix-cpu-timers.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/sun/cassini.c |   15 +--------------
+ drivers/net/ethernet/sun/cassini.h |   15 +--------------
+ 2 files changed, 2 insertions(+), 28 deletions(-)
 
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -685,6 +685,7 @@ static int posix_cpu_timer_set(struct k_
- 	 * set up the signal and overrun bookkeeping.
- 	 */
- 	timer->it.cpu.incr = timespec64_to_ns(&new->it_interval);
-+	timer->it_interval = ns_to_ktime(timer->it.cpu.incr);
- 
- 	/*
- 	 * This acts as a modification timestamp for the timer,
+--- a/drivers/net/ethernet/sun/cassini.c
++++ b/drivers/net/ethernet/sun/cassini.c
+@@ -1,22 +1,9 @@
+-// SPDX-License-Identifier: GPL-2.0
++// SPDX-License-Identifier: GPL-2.0+
+ /* cassini.c: Sun Microsystems Cassini(+) ethernet driver.
+  *
+  * Copyright (C) 2004 Sun Microsystems Inc.
+  * Copyright (C) 2003 Adrian Sun (asun@darksunrising.com)
+  *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License as
+- * published by the Free Software Foundation; either version 2 of the
+- * License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see <http://www.gnu.org/licenses/>.
+- *
+  * This driver uses the sungem driver (c) David Miller
+  * (davem@redhat.com) as its basis.
+  *
+--- a/drivers/net/ethernet/sun/cassini.h
++++ b/drivers/net/ethernet/sun/cassini.h
+@@ -1,23 +1,10 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /* $Id: cassini.h,v 1.16 2004/08/17 21:15:16 zaumen Exp $
+  * cassini.h: Definitions for Sun Microsystems Cassini(+) ethernet driver.
+  *
+  * Copyright (C) 2004 Sun Microsystems Inc.
+  * Copyright (c) 2003 Adrian Sun (asun@darksunrising.com)
+  *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License as
+- * published by the Free Software Foundation; either version 2 of the
+- * License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see <http://www.gnu.org/licenses/>.
+- *
+  * vendor id: 0x108E (Sun Microsystems, Inc.)
+  * device id: 0xabba (Cassini)
+  * revision ids: 0x01 = Cassini
 
 
