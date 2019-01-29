@@ -2,116 +2,161 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFEAC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D58AC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF1420989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:49:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D158020989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:50:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="saglBR9G"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HhrYi0zk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfA2Ftf (ORCPT
+        id S1727195AbfA2FuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 00:49:35 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51396 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbfA2Ftf (ORCPT
+        Tue, 29 Jan 2019 00:50:06 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35623 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbfA2FuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 00:49:35 -0500
-Received: by mail-it1-f196.google.com with SMTP id w18so2439847ite.1;
-        Mon, 28 Jan 2019 21:49:34 -0800 (PST)
+        Tue, 29 Jan 2019 00:50:05 -0500
+Received: by mail-pg1-f194.google.com with SMTP id s198so8302114pgs.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 21:50:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sqT6eOS6rlMfFX6BABqo1r9scBD9HvXuo8A4Z+A64To=;
-        b=saglBR9Gq8QG8/rznlQcqqWgRJwFXLPGMwPRwZKz/iEeyRun8cwQey/D1j+963srU8
-         5d7j28N6TrjQaGAY06qbdcSRN/Oww6NgBgtI/ymbEzAMiKIIWXog+kY7qINfVHaG0adE
-         5HSk+SMjFb4n/ZpwrkxIlNcgxcPNS1f9stIFcQDeJq0zPaj7Lg6QTjo9xpNeoh4wpHQC
-         cSMLvQX3NTAHu0OS0+Nijjnb4VS5Dk4QKDRPE3rSY8ru9I/AeoxyXJFU7WqBAHDWCPfm
-         D8UFeymkR36yN1x2hQH2O/dwx7eW91fWyFoAuH7yZEt7rtU/1Tltmqc8BR2ccbzMPdkJ
-         r7Aw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=25+EHUW/QviVkEKkPntqDGS9uSaHWPwEdP3cMqn+uH0=;
+        b=HhrYi0zkE1/W1dskxLTKFXudDjf1IrbxwRmZ1Dbox2C4stm/elFzLNyP9whCYtq+1w
+         rWW9V+gSWoyagoaf4ITBQ+H1Ix7zqRvaimyBKm8RSBkxgcIKqYR82Q7bo09XNEoV5CSI
+         K4vbY6+lhKzJg9ts7FySJ0ONgYDuC1HmkGCYk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sqT6eOS6rlMfFX6BABqo1r9scBD9HvXuo8A4Z+A64To=;
-        b=GJSKbFgaStHzBdwfpp8ROAxXr5rKmPbEzhbB9sYTMRIV2o6jay7flAzZp5vcpwHzDt
-         bFztv2bGtOdXIXUSbiipR7yfMZtGfERDpkQVtrj9eGM2Wyw7E93ZzNFNitDTFqSzN3oq
-         GPVG6JMvTms3EDZDTsIGNldV829g5tGDH9Z13QAgUCu7ivcIG4DrcZS7Cts5L8R1087D
-         NxBi1gFlvqaPbYU97ZOZ8rW8dV9imhqjDD42Yp+geGEvuR1qkBJEJvqZh6Z2XgLa3tGn
-         a2mZjGRIAI9d9NShpiuYylRIG8K999Hyr2CStqyqlquwhA+TrFD7BhDLCDp5fAp5NF6F
-         TnCQ==
-X-Gm-Message-State: AJcUukfETNPdGr6HOyZZfz2gVD0Nxa/Hl/PrK8s8ztLJGyNEkuDsKrxR
-        24qLRK5XOzBBhVGHzxtFytY=
-X-Google-Smtp-Source: ALg8bN7L2LXrkWkhgceO1siXsM/12lTby+znAVNU6D9SI53yI4VEE/sWmgnetw2UuZFEqENtYA420Q==
-X-Received: by 2002:a24:b044:: with SMTP id b4mr12166782itj.164.1548740974099;
-        Mon, 28 Jan 2019 21:49:34 -0800 (PST)
-Received: from m-hyperV (50-47-88-57.evrt.wa.frontiernet.net. [50.47.88.57])
-        by smtp.gmail.com with ESMTPSA id m186sm879621ita.2.2019.01.28.21.49.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 21:49:33 -0800 (PST)
-Date:   Mon, 28 Jan 2019 21:49:32 -0800
-From:   Maya Nakamura <m.maya.nakamura@gmail.com>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "driverdev-devel@linuxdriverproject.org" 
-        <driverdev-devel@linuxdriverproject.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
-Subject: Re: [PATCH v2 1/2] PCI: hv: Replace hv_vp_set with hv_vpset
-Message-ID: <20190129054930.GA1269@m-hyperV>
-References: <cover.1548489092.git.m.maya.nakamura@gmail.com>
- <2fa660dc51189316590021c4ee8aeaac79b8270f.1548489092.git.m.maya.nakamura@gmail.com>
- <BL0PR2101MB09148DD8AB57D5CD2C41A797D7950@BL0PR2101MB0914.namprd21.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BL0PR2101MB09148DD8AB57D5CD2C41A797D7950@BL0PR2101MB0914.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=25+EHUW/QviVkEKkPntqDGS9uSaHWPwEdP3cMqn+uH0=;
+        b=cHl6YJnWU5T9ERx6mX4FKuFekVkOKKkUVzEY3ibcdSvIykbWWAzdbg4vnZsCBlKRXX
+         39FH7HrHzaUu9WqfqmTUF2DPDLLUgYV561tTlVkmh2MIvROuIQ+AtNk17ZA6WQAjTbij
+         u+vvcB4HFjKTdLmtoeTAa0Q2NTw3WQ83wmdVdMOiioMapd0VRJANQLQigOukZtA+0zhK
+         j2jQJV3XLRL82dwr0kHS2Yzct4vWcvqh2CR3lrJ/TjoMrkYX1K+OJs5NPoKwmJbyjeSz
+         AZk7t37h/bYkjkmtVivfgBAWiaAGMHB1bIyRBeCvpDGDvlfVIxqUysp86czFAC95T558
+         5zbA==
+X-Gm-Message-State: AJcUukcpPpimWQoNqFVMGxh4tSa5uo+YpDAqoBdq8RhqX83/qTW37gbz
+        +AcERDru9KJ5TQ2gINa1D9pD14d8MHc=
+X-Google-Smtp-Source: ALg8bN5uf7lhKRp8F1xGSW2J9DBg7/knYKJdQQ+eIf6pqzX4vPltxwUfAWN1tnqNG5JMVZYGbHu1PA==
+X-Received: by 2002:a63:c141:: with SMTP id p1mr22499168pgi.424.1548741005087;
+        Mon, 28 Jan 2019 21:50:05 -0800 (PST)
+Received: from localhost.localdomain ([117.252.69.38])
+        by smtp.gmail.com with ESMTPSA id y12sm57379437pfk.70.2019.01.28.21.49.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 28 Jan 2019 21:50:04 -0800 (PST)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     jens.wiklander@linaro.org, herbert@gondor.apana.org.au
+Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, mpm@selenic.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        daniel.thompson@linaro.org, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, tee-dev@lists.linaro.org,
+        Sumit Garg <sumit.garg@linaro.org>
+Subject: [PATCH v6 0/4] Introduce TEE bus driver framework
+Date:   Tue, 29 Jan 2019 11:19:34 +0530
+Message-Id: <1548740978-28495-1-git-send-email-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 27, 2019 at 05:11:48AM +0000, Michael Kelley wrote:
-> From: Maya Nakamura <m.maya.nakamura@gmail.com>  Sent: Saturday, January 26, 2019 12:52 AM
-> > 
-> > Remove a duplicate definition of VP set (hv_vp_set) and use the common
-> > definition (hv_vpset) that is used in other places.
-> > 
-> > Change the order of the members in struct hv_pcibus_device so that the
-> > declaration of retarget_msi_interrupt_params is the last member. Struct
-> > hv_vpset, which contains a flexible array, is nested two levels deep in
-> > struct hv_pcibus_device via retarget_msi_interrupt_params.
-> > 
-> > Add a comment that retarget_msi_interrupt_params should be the last member
-> > of struct hv_pcibus_device.
-> > 
-> > Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
-> > ---
-> > Change in v2:
-> > - None
-> > 
-> 
-> Right -- there was no code change.  But it's customary to note that
-> you updated the commit message.
-> 
-Thank you for your feedback. I will edit the change log in v3.
+This series introduces a generic TEE bus driver concept for TEE based
+kernel drivers which would like to communicate with TEE based devices/
+services.
 
-> Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
+Patch #1 adds TEE bus concept where devices/services are identified via
+Universally Unique Identifier (UUID) and drivers register a table of
+device UUIDs which they can support. This concept also allows for device
+enumeration to be specific to corresponding TEE implementation like
+OP-TEE etc.
+
+Patch #2 adds supp_nowait flag for non-blocking requests arising via
+TEE internal client interface.
+
+Patch #3 adds TEE bus device enumeration support for OP-TEE. OP-TEE
+provides a pseudo TA to enumerate TAs which can act as devices/services
+for TEE bus.
+
+Patch #4 adds OP-TEE based hwrng driver which act as TEE bus driver.
+On ARM SoC's with TrustZone enabled, peripherals like entropy sources
+might not be accessible to normal world (linux in this case) and rather
+accessible to secure world (OP-TEE in this case) only. So this driver
+aims to provides a generic interface to OP-TEE based random number
+generator service.
+
+Example case is Developerbox based on Socionext's Synquacer SoC [1]
+which provides 7 thermal sensors accessible from secure world only which
+could be used as entropy sources (thermal/measurement noise).
+
+[1] https://www.96boards.org/product/developerbox/
+
+Changes in v6:
+
+1. Incorporate some nitpicks in patch #1 and #3.
+2. Bundle all statics in a data structure in patch #4 and use dev_*
+   instead of pr_*.
+3. Add reviewed-by tags for patch #1, #2 and #3.
+
+Changes in v5:
+
+1. Add support in module device table for TEE bus devices.
+2. Correct license for optee-rng module.
+
+Changes in v4:
+
+1. Use typedef instead of single member tee_client_device_id struct.
+2. Incorporate TEE bus nitpicks.
+
+Changes in v3:
+
+1. Fixed bus error path in Patch #1.
+2. Reversed order of Patch #2 and #3.
+3. Fixed miscellaneous syntax comments and memory leak.
+4. Added comments in Patch #2 for supp_nowait flag.
+
+Changes in v2:
+
+Based on review comments, the scope of this series has increased as
+follows:
+
+1. Added TEE bus driver framework.
+2. Added OP-TEE based device enumeration.
+3. Register optee-rng driver as TEE bus driver.
+4. Removed DT dependency for optee-rng device UUID.
+5. Added supp_nowait flag.
+
+Sumit Garg (4):
+  tee: add bus driver framework for TEE based devices
+  tee: add supp_nowait flag in tee_context struct
+  tee: optee: add TEE bus device enumeration support
+  hwrng: add OP-TEE based rng driver
+
+ MAINTAINERS                        |   5 +
+ drivers/char/hw_random/Kconfig     |  15 ++
+ drivers/char/hw_random/Makefile    |   1 +
+ drivers/char/hw_random/optee-rng.c | 298 +++++++++++++++++++++++++++++++++++++
+ drivers/tee/optee/Makefile         |   1 +
+ drivers/tee/optee/core.c           |   4 +
+ drivers/tee/optee/device.c         | 155 +++++++++++++++++++
+ drivers/tee/optee/optee_private.h  |   3 +
+ drivers/tee/optee/supp.c           |  10 +-
+ drivers/tee/tee_core.c             |  67 ++++++++-
+ include/linux/mod_devicetable.h    |   9 ++
+ include/linux/tee_drv.h            |  38 ++++-
+ scripts/mod/devicetable-offsets.c  |   3 +
+ scripts/mod/file2alias.c           |  19 +++
+ 14 files changed, 622 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/char/hw_random/optee-rng.c
+ create mode 100644 drivers/tee/optee/device.c
+
+-- 
+2.7.4
+
