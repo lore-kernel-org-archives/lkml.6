@@ -2,122 +2,156 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5809FC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10C4C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EDFF20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:55:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 703EE20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:56:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NMbkgebY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbfA2Qzx (ORCPT
+        id S1728772AbfA2Q4X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:55:53 -0500
-Received: from mout.gmx.net ([212.227.17.22]:42819 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726374AbfA2Qzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:55:53 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx102
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0LrZOj-1hIT3q1zvp-013KQ1; Tue, 29
- Jan 2019 17:55:43 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-gpio@vger.kernel.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Dong Aisheng <dong.aisheng@linaro.org>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: pinctrl: Document the i.MX50 IOMUXC binding
-Date:   Tue, 29 Jan 2019 17:55:28 +0100
-Message-Id: <20190129165530.7606-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
+        Tue, 29 Jan 2019 11:56:23 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41648 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728379AbfA2Q4W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 11:56:22 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b7so9923717pfi.8
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 08:56:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vql8U89T/hHjjSzQxptcPZRte1dCUtGT4jirdck/APc=;
+        b=NMbkgebY4EHpMOLHRgtVlKvOjuX6dyFymsNZhkYtjK443i2AjiQt+z6bxBHHct8Bww
+         wzsMnAoS90uq9JaU2oJNE5Dj2Fv5HyJwccSs2JZtgphXK2yxoG0yPBFToljtFTmEtS1J
+         3H6QOdODDPg0gppQzDjVY8zf2ZEMysqVYB9fTESNjD+HSo5sBm9hv1NFY4phiHAh/bFS
+         Z896B5MgcgR5WxlxIKu7EXEH8JUxhIRJzQyA+vv6sX3qTwfyyVyofRGenZynTxV/m5Zu
+         z7eEt7kT/xq2jWrr4bHJhiZTYNyNozTc2rRc4kRHcEOT9sUrDDzrxgf7FcZMSBGxgwZQ
+         PGIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vql8U89T/hHjjSzQxptcPZRte1dCUtGT4jirdck/APc=;
+        b=CyfhHW0pBUS4E8VmR2ErtIAS9ilp7WmFzA6QWCh5J0qcqSQRmJdCR8mNXS3NI9cEL8
+         srfFx8mDcFD1jKgRpzZRxCpdfv1tsGvc/2iJYmlrmKHOBPNh7/I2aylyDS3ba4Gp6tPO
+         g3if0mFTQbetdhTfGH+EiG0q2C7taxR+v6qcwCl9OKd71RRgZXCx7re0hJqqVTFVY326
+         TFaKJaAlLiMOiU2ibL7FRc7ehR1Cmq72SroeWNtRFAFaG9EOfQLm9CgGAl5NP52D4ARl
+         GS+xpa/Xf9kse5bvftR/N78Sjf9lqHld89yqdjzpQIeqIhVnXqz5qIHVTfM094djrC0D
+         KBpg==
+X-Gm-Message-State: AJcUukcJ3tVI8MAC6coo/pOYk27FvLjuh1BRFYg1rjN7YgOoU9hA6rEe
+        qzi1YJ712wEonrtYDNrnls4b1A==
+X-Google-Smtp-Source: ALg8bN7ptJmZpJU3paI7ZW9MPDibRYYoJVCL3anlb16ShHdSnpfegJMezROCztjWwoW943HbFr5O6g==
+X-Received: by 2002:a63:e915:: with SMTP id i21mr23854042pgh.409.1548780981421;
+        Tue, 29 Jan 2019 08:56:21 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id v9sm47049062pfe.49.2019.01.29.08.56.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 08:56:20 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1goWgO-0003Dw-05; Tue, 29 Jan 2019 09:56:20 -0700
+Date:   Tue, 29 Jan 2019 09:56:19 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Joel Nider <joeln@il.ibm.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] RDMA/uverbs: add owner parameter to ib_umem_get
+Message-ID: <20190129165619.GC10094@ziepe.ca>
+References: <1548768386-28289-1-git-send-email-joeln@il.ibm.com>
+ <1548768386-28289-4-git-send-email-joeln@il.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:lsf7fDpqK+GPxAmo+y8Vsy9Za2weuS05yggUc3BZKlupdW5wjn6
- CuvG5r+JGclST3BPVmZrqVobB9B9uEgCMmRXKJBDWwcDt3C9VCjtXDMTzlMi+xhg4d6i7Il
- xeDnJVmQ6C1TCnraRXYrTb1M9f7LwQkE8HuHN+0sturjwEngAQxlRDEpl1dCzGuI1zuhjaG
- hRox94X0Uz8entXFhcSqA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Rf1knTwRFBY=:qoPQ2hJ0EDjo1aW+sOk7+4
- l9QeiUzLAPisqWEa2j851LrtoJKHVl++G2biDjzCxb297bdvMb/CSUyhVdUYb2IZi03eEsdng
- w0vSNERcgzIZsll9eAVCCUIFzexjlti3VOLFROn0yKPHRmlTshE6n4joJIebsfbYHqjoWWQAY
- pFCYRiQ4nAWXV5JB9Wg9ATR8fN/jBWdU9DcS2Z9fepTqSPjvt6eeqvXvjj+5aQFdMo/HuoMIa
- 6o+TLWRhO5K/pe/tUOoFAlQD9O76L+S1LXUWHbhHDqccE5OagiK1BvNLsEJ3ScbjdS7CWiL1C
- /XkN+uDnHu3Pm+ZqcpNh6Ag+I2Gi4YDWTTbMdIHmrh71609e2hGPY4w8WzLLPQqbEXPsWNE/l
- BL4LIi5qht9mVEWlpE56uWDPfd+T0vUnGujQPEoU8luTx7dQDrFkE3+h8W19nMASG4hCCXqZ7
- hNqrnisRS+DRZ5oul7OZ5uGU+1bruFj/XnTS0V21S/HON+aKvTerA8P/DoI3oKbkFDOabnPYb
- B3kuWdgFlOrQ1YZCXkyEjsDwHAE+iLCQVDLJXHUrHpUcBFIHwNfuIx9HotCHdsRZACpF50RVw
- MB0m2NGLTy6g2c7/sTRCoDft78qhctdPdcy/Ouhule5RBKiEqSnEkm9NtS1c8qAfQqPc6zLvf
- 77klXEGk/CZIpM4XQ7u54829lenq4ccfJsV1DcptWDLzk7r6Lm2bHw/HdAoFVLGGPXBjRlDZX
- woA8PKffp9ph12AQodfU5yhb/NhYLl9z186H3/xuX8qEmQi/b2aK0TMAAuv131JjhgKpA1hb+
- S5jzMFrE2NCLshPyVSPC030EqjhFtklm9XdgYCLzkkIpeC9oRw26Bn9k47RAPRYDH3zHwBEfs
- ECE5SZs64Vr6MmlEn5bvT5TfqsSZnU73ji/aY/JSxgbuFGtiLejWPJxGTqNRYyFqAuaxNPND7
- ulVUfYbxp2g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548768386-28289-4-git-send-email-joeln@il.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AFAICS from the i.MX50 Reference Manual, the i.MX50 IOMUXC works the
-same as the one in i.MX51, so I copied fsl,imx51-pinctrl.txt and changed
-the text to imx50.
+On Tue, Jan 29, 2019 at 03:26:24PM +0200, Joel Nider wrote:
+> ib_umem_get is a core function used by drivers that support RDMA.
+> The 'owner' parameter signifies the process that owns the memory.
+> Until now, it was assumed that the owning process was the current
+> process. This adds the flexibility to specify a process other than
+> the current process. All drivers that call this function are also
+> updated, but the default behaviour is to keep backwards
+> compatibility by assuming the current process is the owner when
+> the 'owner' parameter is NULL.
+> 
+> Signed-off-by: Joel Nider <joeln@il.ibm.com>
+>  drivers/infiniband/core/umem.c                | 26 ++++++++++++++++++++------
+>  drivers/infiniband/hw/bnxt_re/ib_verbs.c      | 10 +++++-----
+>  drivers/infiniband/hw/cxgb3/iwch_provider.c   |  3 ++-
+>  drivers/infiniband/hw/cxgb4/mem.c             |  3 ++-
+>  drivers/infiniband/hw/hns/hns_roce_cq.c       |  2 +-
+>  drivers/infiniband/hw/hns/hns_roce_db.c       |  2 +-
+>  drivers/infiniband/hw/hns/hns_roce_mr.c       |  4 ++--
+>  drivers/infiniband/hw/hns/hns_roce_qp.c       |  2 +-
+>  drivers/infiniband/hw/hns/hns_roce_srq.c      |  2 +-
+>  drivers/infiniband/hw/i40iw/i40iw_verbs.c     |  2 +-
+>  drivers/infiniband/hw/mlx4/cq.c               |  2 +-
+>  drivers/infiniband/hw/mlx4/doorbell.c         |  2 +-
+>  drivers/infiniband/hw/mlx4/mr.c               |  2 +-
+>  drivers/infiniband/hw/mlx4/qp.c               |  2 +-
+>  drivers/infiniband/hw/mlx4/srq.c              |  2 +-
+>  drivers/infiniband/hw/mlx5/cq.c               |  4 ++--
+>  drivers/infiniband/hw/mlx5/devx.c             |  2 +-
+>  drivers/infiniband/hw/mlx5/doorbell.c         |  2 +-
+>  drivers/infiniband/hw/mlx5/mr.c               | 15 ++++++++-------
+>  drivers/infiniband/hw/mlx5/odp.c              |  5 +++--
+>  drivers/infiniband/hw/mlx5/qp.c               |  4 ++--
+>  drivers/infiniband/hw/mlx5/srq.c              |  2 +-
+>  drivers/infiniband/hw/mthca/mthca_provider.c  |  2 +-
+>  drivers/infiniband/hw/nes/nes_verbs.c         |  3 ++-
+>  drivers/infiniband/hw/ocrdma/ocrdma_verbs.c   |  3 ++-
+>  drivers/infiniband/hw/qedr/verbs.c            |  8 +++++---
+>  drivers/infiniband/hw/vmw_pvrdma/pvrdma_cq.c  |  2 +-
+>  drivers/infiniband/hw/vmw_pvrdma/pvrdma_mr.c  |  2 +-
+>  drivers/infiniband/hw/vmw_pvrdma/pvrdma_qp.c  |  5 +++--
+>  drivers/infiniband/hw/vmw_pvrdma/pvrdma_srq.c |  2 +-
+>  drivers/infiniband/sw/rdmavt/mr.c             |  2 +-
+>  drivers/infiniband/sw/rxe/rxe_mr.c            |  3 ++-
+>  include/rdma/ib_umem.h                        |  3 ++-
+>  33 files changed, 80 insertions(+), 55 deletions(-)
+> 
+> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+> index c6144df..9646cee 100644
+> +++ b/drivers/infiniband/core/umem.c
+> @@ -71,15 +71,21 @@ static void __ib_umem_release(struct ib_device *dev, struct ib_umem *umem, int d
+>   *
+>   * If access flags indicate ODP memory, avoid pinning. Instead, stores
+>   * the mm for future page fault handling in conjunction with MMU notifiers.
+> + * If the process doing the pinning is the same as the process that owns
+> + * the memory being pinned, 'owner' should be NULL. Otherwise, 'owner' should
+> + * be the process ID of the owning process. The process ID must be in the
+> + * same PID namespace as the calling userspace context.
+>   *
+> - * @context: userspace context to pin memory for
+> + * @context: userspace context that is pinning the memory
+>   * @addr: userspace virtual address to start at
+>   * @size: length of region to pin
+>   * @access: IB_ACCESS_xxx flags for memory being pinned
+>   * @dmasync: flush in-flight DMA when the memory region is written
+> + * @owner: the ID of the process that owns the memory being pinned
+>   */
+>  struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+> -			    size_t size, int access, int dmasync)
+> +			    size_t size, int access, int dmasync,
+> +			    struct pid *owner)
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-Cc: Dong Aisheng <dong.aisheng@linaro.org>
-Cc: Shawn Guo <shawn.guo@linaro.org>
----
- .../bindings/pinctrl/fsl,imx50-pinctrl.txt    | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt
+You need to rebase this patch on rdma's for-next tree, the signature is
+different.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt
-new file mode 100644
-index 000000000000..6da01d619d33
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt
-@@ -0,0 +1,32 @@
-+* Freescale IMX50 IOMUX Controller
-+
-+Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
-+and usage.
-+
-+Required properties:
-+- compatible: "fsl,imx50-iomuxc"
-+- fsl,pins: two integers array, represents a group of pins mux and config
-+  setting. The format is fsl,pins = <PIN_FUNC_ID CONFIG>, PIN_FUNC_ID is a
-+  pin working on a specific function, CONFIG is the pad setting value like
-+  pull-up for this pin. Please refer to imx50 datasheet for the valid pad
-+  config settings.
-+
-+CONFIG bits definition:
-+PAD_CTL_HVE			(1 << 13)
-+PAD_CTL_HYS			(1 << 8)
-+PAD_CTL_PKE			(1 << 7)
-+PAD_CTL_PUE			(1 << 6)
-+PAD_CTL_PUS_100K_DOWN		(0 << 4)
-+PAD_CTL_PUS_47K_UP		(1 << 4)
-+PAD_CTL_PUS_100K_UP		(2 << 4)
-+PAD_CTL_PUS_22K_UP		(3 << 4)
-+PAD_CTL_ODE			(1 << 3)
-+PAD_CTL_DSE_LOW			(0 << 1)
-+PAD_CTL_DSE_MED			(1 << 1)
-+PAD_CTL_DSE_HIGH		(2 << 1)
-+PAD_CTL_DSE_MAX			(3 << 1)
-+PAD_CTL_SRE_FAST		(1 << 0)
-+PAD_CTL_SRE_SLOW		(0 << 0)
-+
-+Refer to imx50-pinfunc.h in device tree source folder for all available
-+imx50 PIN_FUNC_ID.
--- 
-2.20.1
-
+Jason
