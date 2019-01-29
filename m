@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98776C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E681C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69D5C20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7028F20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763354;
-	bh=3nyf6i8YIg8GouFECqnZsA38nkPEJu/v3D7IKDaRiLA=;
+	s=default; t=1548763364;
+	bh=BegDb6lCe2J9JaK1fYAv+S7vfepBTjehctOkR6k67X4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kGZ+uvOOpu8yhYuWkCnGHbLKuGTyW0b98noDN4kh7xeBAQ+DdHL8IOyFnbPhhogSH
-	 4M5ovezvT9EI2hlVr7pGM4EIHPpsQvXhBgx2JepAaw1fI9BOk0wKsu+IhD6gup8tXH
-	 CfTliJqyJDLYbypyuOdYAnsoFFgsqrTZUkJWS588=
+	b=ajybGaewqtWn+uBdR8EjQ5P3IAOupkPnLxvjcnpRvvMosh1Ka8PWRbjACPra1jCtC
+	 vZSZRUJDNv66LOGqlCxdb6esG1+UUZ5wBGUqxbD/noPt6mpTP/MAomDt+NvXpScrTH
+	 J8WHVQGvTFlBTa4XWcGmdDXZezr70vUAe5h97O34=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730815AbfA2MCd (ORCPT
+        id S1729778AbfA2Loc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:02:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35088 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:44:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730617AbfA2Lom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:44:42 -0500
+        id S1729985AbfA2Lo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:44:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C4FA2086C;
-        Tue, 29 Jan 2019 11:44:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EEE92086C;
+        Tue, 29 Jan 2019 11:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762282;
-        bh=3nyf6i8YIg8GouFECqnZsA38nkPEJu/v3D7IKDaRiLA=;
+        s=default; t=1548762267;
+        bh=BegDb6lCe2J9JaK1fYAv+S7vfepBTjehctOkR6k67X4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OkoHtHtyVp8deJTPOnIN34SIiFIsD2ZHU+qdVzyuZe1AwCKjglgmhwgpLWXoTmjno
-         Wc8MFK9kzv8z9oGmELEBN1Tg70RW56pxLLo8WvXx1wNBvse9uInmbyHDCSVinL7poO
-         uP+rwSs7iPEpT93qYNVarPcr2uphk6rTBm6Dj75E=
+        b=wdhdy5MaviQVglGx+ililINrrh6VYkphH1f/uZjEfGh4Et6GXVTj+MWJcHYijOYtK
+         xayPWLbNbQHwq+OLBeFYtkY+l1fuOoz6Nb25qVHK29l+A8wlPjQ0N6kBa5nf6NXzfr
+         nkWb5yU8sB0tbb+jNs0hP+aXyW2kPqexAB33JpCk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Pitre <nico@linaro.org>
-Subject: [PATCH 4.19 052/103] vgacon: unconfuse vc_origin when using soft scrollback
-Date:   Tue, 29 Jan 2019 12:35:29 +0100
-Message-Id: <20190129113202.872393686@linuxfoundation.org>
+        stable@vger.kernel.org, Samir Virmani <samir@embedur.com>,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH 4.19 048/103] uart: Fix crash in uart_write and uart_put_char
+Date:   Tue, 29 Jan 2019 12:35:25 +0100
+Message-Id: <20190129113202.359523331@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -64,71 +65,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+From: Samir Virmani <samir@embedur.com>
 
-commit bfd8d8fe98b8792f362cd210a7873969f8d2fc04 upstream.
+commit aff9cf5955185d1f183227e46c5f8673fa483813 upstream.
 
-When CONFIG_VGACON_SOFT_SCROLLBACK is selected, the VGA display memory
-index and vc_visible_origin don't change when scrollback is activated.
-The actual screen content is saved away and the scrollbackdata is copied
-over it. However the vt code, and /dev/vcs devices in particular, still
-expect vc_origin to always point at the actual screen content not the
-displayed scrollback content.
+We were experiencing a crash similar to the one reported as part of
+commit:a5ba1d95e46e ("uart: fix race between uart_put_char() and
+uart_shutdown()") in our testbed as well. We continue to observe the same
+crash after integrating the commit a5ba1d95e46e ("uart: fix race between
+uart_put_char() and uart_shutdown()")
 
-So adjust vc_origin to point at the saved screen content when scrollback
-is active and set it back to vc_visible_origin when restoring the screen.
+On reviewing the change, the port lock should be taken prior to checking for
+if (!circ->buf) in fn. __uart_put_char and other fns. that update the buffer
+uart_state->xmit.
 
-This fixes /dev/vcsa<n> that return scrollback content when they
-shouldn't (onli /dev/vcsa without a number should), and also fixes
-/dev/vcsu that should return scrollback content when scrollback is
-active but currently doesn't.
+Traceback:
 
-An unnecessary call to vga_set_mem_top() is also removed.
+[11/27/2018 06:24:32.4870] Unable to handle kernel NULL pointer dereference
+                           at virtual address 0000003b
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
-Cc: stable@vger.kernel.org # v4.19+
+[11/27/2018 06:24:32.4950] PC is at memcpy+0x48/0x180
+[11/27/2018 06:24:32.4950] LR is at uart_write+0x74/0x120
+[11/27/2018 06:24:32.4950] pc : [<ffffffc0002e6808>]
+                           lr : [<ffffffc0003747cc>] pstate: 000001c5
+[11/27/2018 06:24:32.4950] sp : ffffffc076433d30
+[11/27/2018 06:24:32.4950] x29: ffffffc076433d30 x28: 0000000000000140
+[11/27/2018 06:24:32.4950] x27: ffffffc0009b9d5e x26: ffffffc07ce36580
+[11/27/2018 06:24:32.4950] x25: 0000000000000000 x24: 0000000000000140
+[11/27/2018 06:24:32.4950] x23: ffffffc000891200 x22: ffffffc01fc34000
+[11/27/2018 06:24:32.4950] x21: 0000000000000fff x20: 0000000000000076
+[11/27/2018 06:24:32.4950] x19: 0000000000000076 x18: 0000000000000000
+[11/27/2018 06:24:32.4950] x17: 000000000047cf08 x16: ffffffc000099e68
+[11/27/2018 06:24:32.4950] x15: 0000000000000018 x14: 776d726966205948
+[11/27/2018 06:24:32.4950] x13: 50203a6c6974755f x12: 74647075205d3333
+[11/27/2018 06:24:32.4950] x11: 3a35323a36203831 x10: 30322f37322f3131
+[11/27/2018 06:24:32.4950] x9 : 5b205d303638342e x8 : 746164206f742070
+[11/27/2018 06:24:32.4950] x7 : 7520736920657261 x6 : 000000000000003b
+[11/27/2018 06:24:32.4950] x5 : 000000000000817a x4 : 0000000000000008
+[11/27/2018 06:24:32.4950] x3 : 2f37322f31312a5b x2 : 000000000000006e
+[11/27/2018 06:24:32.4950] x1 : ffffffc0009b9cf0 x0 : 000000000000003b
+
+[11/27/2018 06:24:32.4950] CPU2: stopping
+[11/27/2018 06:24:32.4950] CPU: 2 PID: 0 Comm: swapper/2 Tainted: P      D    O    4.1.51 #3
+[11/27/2018 06:24:32.4950] Hardware name: Broadcom-v8A (DT)
+[11/27/2018 06:24:32.4950] Call trace:
+[11/27/2018 06:24:32.4950] [<ffffffc0000883b8>] dump_backtrace+0x0/0x150
+[11/27/2018 06:24:32.4950] [<ffffffc00008851c>] show_stack+0x14/0x20
+[11/27/2018 06:24:32.4950] [<ffffffc0005ee810>] dump_stack+0x90/0xb0
+[11/27/2018 06:24:32.4950] [<ffffffc00008e844>] handle_IPI+0x18c/0x1a0
+[11/27/2018 06:24:32.4950] [<ffffffc000080c68>] gic_handle_irq+0x88/0x90
+
+Fixes: a5ba1d95e46e ("uart: fix race between uart_put_char() and uart_shutdown()")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Samir Virmani <samir@embedur.com>
+Acked-by: Tycho Andersen <tycho@tycho.ws>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/console/vgacon.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/tty/serial/serial_core.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/video/console/vgacon.c
-+++ b/drivers/video/console/vgacon.c
-@@ -271,6 +271,7 @@ static void vgacon_scrollback_update(str
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -550,10 +550,12 @@ static int uart_put_char(struct tty_stru
+ 	int ret = 0;
  
- static void vgacon_restore_screen(struct vc_data *c)
- {
-+	c->vc_origin = c->vc_visible_origin;
- 	vgacon_scrollback_cur->save = 0;
+ 	circ = &state->xmit;
+-	if (!circ->buf)
++	port = uart_port_lock(state, flags);
++	if (!circ->buf) {
++		uart_port_unlock(port, flags);
+ 		return 0;
++	}
  
- 	if (!vga_is_gfx && !vgacon_scrollback_cur->restore) {
-@@ -287,8 +288,7 @@ static void vgacon_scrolldelta(struct vc
- 	int start, end, count, soff;
- 
- 	if (!lines) {
--		c->vc_visible_origin = c->vc_origin;
--		vga_set_mem_top(c);
-+		vgacon_restore_screen(c);
- 		return;
+-	port = uart_port_lock(state, flags);
+ 	if (port && uart_circ_chars_free(circ) != 0) {
+ 		circ->buf[circ->head] = c;
+ 		circ->head = (circ->head + 1) & (UART_XMIT_SIZE - 1);
+@@ -586,11 +588,13 @@ static int uart_write(struct tty_struct
+ 		return -EL3HLT;
  	}
  
-@@ -298,6 +298,7 @@ static void vgacon_scrolldelta(struct vc
- 	if (!vgacon_scrollback_cur->save) {
- 		vgacon_cursor(c, CM_ERASE);
- 		vgacon_save_screen(c);
-+		c->vc_origin = (unsigned long)c->vc_screenbuf;
- 		vgacon_scrollback_cur->save = 1;
- 	}
++	port = uart_port_lock(state, flags);
+ 	circ = &state->xmit;
+-	if (!circ->buf)
++	if (!circ->buf) {
++		uart_port_unlock(port, flags);
+ 		return 0;
++	}
  
-@@ -335,7 +336,7 @@ static void vgacon_scrolldelta(struct vc
- 		int copysize;
- 
- 		int diff = c->vc_rows - count;
--		void *d = (void *) c->vc_origin;
-+		void *d = (void *) c->vc_visible_origin;
- 		void *s = (void *) c->vc_screenbuf;
- 
- 		count *= c->vc_size_row;
+-	port = uart_port_lock(state, flags);
+ 	while (port) {
+ 		c = CIRC_SPACE_TO_END(circ->head, circ->tail, UART_XMIT_SIZE);
+ 		if (count < c)
 
 
