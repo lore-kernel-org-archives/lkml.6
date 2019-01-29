@@ -2,167 +2,250 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AF7C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FA2C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACE422083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:30:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f5iuxOB4"
+	by mail.kernel.org (Postfix) with ESMTP id 26E492083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:30:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729070AbfA2MaZ (ORCPT
+        id S1729087AbfA2Maa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:30:25 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33276 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728498AbfA2MaX (ORCPT
+        Tue, 29 Jan 2019 07:30:30 -0500
+Received: from mgwym03.jp.fujitsu.com ([211.128.242.42]:20418 "EHLO
+        mgwym03.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729039AbfA2MaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 07:30:23 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c123so9617490pfb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 04:30:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ogFhqC1zhd8TWEoo9LulKJyn1R4ZPNj2Npeem7P1skM=;
-        b=f5iuxOB4+/EiUDieLqPoazQiHKzkdE0k7bWX4IyKwA6TPSdXGcwZvDDwL3pZWYmfIz
-         +crFvLdSTsSVYeH0bQ+ZpRH+8RXevARQYNwQyn5XshyJLLBR8MgiFksN07gk6xsdMz/W
-         h7PmMJkPJZ2SiFRRkVl52n7scjOW7Tb45rYlM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ogFhqC1zhd8TWEoo9LulKJyn1R4ZPNj2Npeem7P1skM=;
-        b=PSpZ5VPDwy0ilIkk81ezCSrZoR7LZbKBXp7VJ08p4SrnDvZyp9b5/KYuH0SnfXEP/R
-         VlhD6E9133k8f+ELiF9DNzNY4GXka6xyi1J3M8Q4HerQ/kymxjzvLOc+XrtBf6uo/pjJ
-         WQQzgYTZepYAs17KyF5yRFFDkoReYt369LAG86p0xTKIYtszqj/A/ot2QjKUc1tCb4+a
-         FUDemEdAnA/4I6tRWvJk+/q/Qb2SX/B6jjpUolQwERYpLnhdQZPIAPZm1YhF7UEMlPB8
-         1GEMBSzuexqSFAQ8iD1YYSvshITDyCF9/a33UYspZU5NS3YYcp8D9mEAy/lqfHFG2dwp
-         gT9A==
-X-Gm-Message-State: AJcUukc4hr+mSjrPtmrIi+8hsaGeFWBzu6+zc53+/YaLMNW1TW8Q5DLx
-        /rlYBvihEQqd4RyiPa5jHwI7Mg==
-X-Google-Smtp-Source: ALg8bN7PSrBV3NuS4FCk6RUF+FOb2UNcsESw8Ij9TAJ3Bsff9YaU1Q5Wl8FBbTs7YL9SCQCZ5k0VNQ==
-X-Received: by 2002:a63:304:: with SMTP id 4mr21493775pgd.99.1548765023004;
-        Tue, 29 Jan 2019 04:30:23 -0800 (PST)
-Received: from localhost.localdomain (li569-141.members.linode.com. [192.155.82.141])
-        by smtp.gmail.com with ESMTPSA id h64sm59552502pfc.142.2019.01.29.04.30.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 04:30:22 -0800 (PST)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>
-Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v7 8/8] perf cs-etm: Set sample flags for exception return packet
-Date:   Tue, 29 Jan 2019 20:28:42 +0800
-Message-Id: <20190129122842.32041-9-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190129122842.32041-1-leo.yan@linaro.org>
-References: <20190129122842.32041-1-leo.yan@linaro.org>
+        Tue, 29 Jan 2019 07:30:24 -0500
+Received: from yt-mxoi2.gw.nic.fujitsu.com (unknown [192.168.229.69]) by mgwym03.jp.fujitsu.com with smtp
+         id 7d53_2bc3_07384300_25aa_4883_8f90_66089f8dc970;
+        Tue, 29 Jan 2019 21:30:18 +0900
+Received: from g01jpfmpwkw03.exch.g01.fujitsu.local (g01jpfmpwkw03.exch.g01.fujitsu.local [10.0.193.57])
+        by yt-mxoi2.gw.nic.fujitsu.com (Postfix) with ESMTP id 1708FAC00A3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 21:30:18 +0900 (JST)
+Received: from G01JPEXCHKW15.g01.fujitsu.local (G01JPEXCHKW15.g01.fujitsu.local [10.0.194.54])
+        by g01jpfmpwkw03.exch.g01.fujitsu.local (Postfix) with ESMTP id 26E94BD66DF;
+        Tue, 29 Jan 2019 21:30:17 +0900 (JST)
+Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
+ g01jpexchkw15 ([10.0.194.54]) with mapi id 14.03.0415.000; Tue, 29 Jan 2019
+ 21:30:16 +0900
+From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
+To:     'Mark Rutland' <mark.rutland@arm.com>,
+        "'linux-arm-kernel@lists.infradead.org'" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "'catalin.marinas@arm.com'" <catalin.marinas@arm.com>,
+        "'james.morse@arm.com'" <james.morse@arm.com>,
+        "'will.deacon@arm.com'" <will.deacon@arm.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 1/1] Arm64: Add workaround for Fujitsu A64FX erratum
+ 010001
+Thread-Topic: [PATCH v3 1/1] Arm64: Add workaround for Fujitsu A64FX erratum
+ 010001
+Thread-Index: AdS3xOiDgKAT1+ioSYqRuOZf1340kw==
+Date:   Tue, 29 Jan 2019 12:30:16 +0000
+Message-ID: <8898674D84E3B24BA3A2D289B872026A6A2C04F2@G01JPEXMBKW03>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
+x-originating-ip: [10.18.70.198]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-SecurityPolicyCheck-GC: OK by FENCE-Mail
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When return from exception, we need to distinguish if it's system call
-return or for other type exceptions for setting sample flags.  Due to
-the exception return packet doesn't contain exception number, so we
-cannot decide sample flags based on exception number.
-
-On the other hand, the exception return packet is followed by an
-instruction range packet; this range packet deliveries the start address
-after exception handling, we can check if it is a SVC instruction just
-before the start address.  If there has one SVC instruction is found
-ahead the return address, this means it's an exception return for system
-call; otherwise it is an normal return for other exceptions.
-
-This patch is to set sample flags for exception return packet, firstly
-it simply set sample flags as PERF_IP_FLAG_INTERRUPT for all exception
-returns since at this point it doesn't know what's exactly the exception
-type.  We will defer to decide if it's an exception return for system
-call when the next instruction range packet comes, it checks if there
-has one SVC instruction prior to the start address and if so we will
-change sample flags to PERF_IP_FLAG_SYSCALLRET for system call
-return.
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- tools/perf/util/cs-etm.c | 44 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index a714b31656ea..8b3f882d6e2f 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1372,6 +1372,20 @@ static int cs_etm__set_sample_flags(struct cs_etm_queue *etmq)
- 		if (prev_packet->sample_type == CS_ETM_DISCONTINUITY)
- 			prev_packet->flags |= PERF_IP_FLAG_BRANCH |
- 					      PERF_IP_FLAG_TRACE_BEGIN;
-+
-+		/*
-+		 * If the previous packet is an exception return packet
-+		 * and the return address just follows SVC instuction,
-+		 * it needs to calibrate the previous packet sample flags
-+		 * as PERF_IP_FLAG_SYSCALLRET.
-+		 */
-+		if (prev_packet->flags == (PERF_IP_FLAG_BRANCH |
-+					   PERF_IP_FLAG_RETURN |
-+					   PERF_IP_FLAG_INTERRUPT) &&
-+		    cs_etm__is_svc_instr(etmq, packet, packet->start_addr))
-+			prev_packet->flags = PERF_IP_FLAG_BRANCH |
-+					     PERF_IP_FLAG_RETURN |
-+					     PERF_IP_FLAG_SYSCALLRET;
- 		break;
- 	case CS_ETM_DISCONTINUITY:
- 		/*
-@@ -1422,6 +1436,36 @@ static int cs_etm__set_sample_flags(struct cs_etm_queue *etmq)
- 			prev_packet->flags = packet->flags;
- 		break;
- 	case CS_ETM_EXCEPTION_RET:
-+		/*
-+		 * When the exception return packet is inserted, since
-+		 * exception return packet is not used standalone for
-+		 * generating samples and it's affiliation to the previous
-+		 * instruction range packet; so set previous range packet
-+		 * flags to tell perf it is an exception return branch.
-+		 *
-+		 * The exception return can be for either system call or
-+		 * other exception types; unfortunately the packet doesn't
-+		 * contain exception type related info so we cannot decide
-+		 * the exception type purely based on exception return packet.
-+		 * If we record the exception number from exception packet and
-+		 * reuse it for excpetion return packet, this is not reliable
-+		 * due the trace can be discontinuity or the interrupt can
-+		 * be nested, thus the recorded exception number cannot be
-+		 * used for exception return packet for these two cases.
-+		 *
-+		 * For exception return packet, we only need to distinguish the
-+		 * packet is for system call or for other types.  Thus the
-+		 * decision can be deferred when receive the next packet which
-+		 * contains the return address, based on the return address we
-+		 * can read out the previous instruction and check if it's a
-+		 * system call instruction and then calibrate the sample flag
-+		 * as needed.
-+		 */
-+		if (prev_packet->sample_type == CS_ETM_RANGE)
-+			prev_packet->flags = PERF_IP_FLAG_BRANCH |
-+					     PERF_IP_FLAG_RETURN |
-+					     PERF_IP_FLAG_INTERRUPT;
-+		break;
- 	case CS_ETM_EMPTY:
- 	default:
- 		break;
--- 
-2.17.1
-
+QWRkIHdvcmthcm91bmQgZm9yIEZ1aml0c3UgQTY0RlggZXJyYXR1bSAwMTAw
+MDENCg0KU2lnbmVkLW9mZi1ieTogWmhhbmcgTGVpIDx6aGFuZy5sZWlAanAu
+ZnVqaXRzdS5jb20+DQotLS0NCiBEb2N1bWVudGF0aW9uL2FybTY0L3NpbGlj
+b24tZXJyYXRhLnR4dCB8ICAxICsNCiBhcmNoL2FybTY0L0tjb25maWcgICAg
+ICAgICAgICAgICAgICAgICB8IDIyICsrKysrKysrKysrKysrKysrKysrKysN
+CiBhcmNoL2FybTY0L2luY2x1ZGUvYXNtL2NwdWNhcHMuaCAgICAgICB8ICAz
+ICsrLQ0KIGFyY2gvYXJtNjQvaW5jbHVkZS9hc20vY3B1dHlwZS5oICAgICAg
+IHwgIDQgKysrKw0KIGFyY2gvYXJtNjQva2VybmVsL2NwdV9lcnJhdGEuYyAg
+ICAgICAgIHwgIDggKysrKysrKysNCiBhcmNoL2FybTY0L2tlcm5lbC9lbnRy
+eS5TICAgICAgICAgICAgICB8IDE2ICsrKysrKysrKysrKysrKysNCiBhcmNo
+L2FybTY0L21tL2ZhdWx0LmMgICAgICAgICAgICAgICAgICB8IDE2ICsrKysr
+KysrKysrKysrKy0NCiBhcmNoL2FybTY0L21tL3Byb2MuUyAgICAgICAgICAg
+ICAgICAgICB8IDIwICsrKysrKysrKysrKysrKysrKysrDQogOCBmaWxlcyBj
+aGFuZ2VkLCA4OCBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KDQpk
+aWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9hcm02NC9zaWxpY29uLWVycmF0
+YS50eHQgYi9Eb2N1bWVudGF0aW9uL2FybTY0L3NpbGljb24tZXJyYXRhLnR4
+dA0KaW5kZXggMWYwOWQwNC4uMjZkNjRlOSAxMDA2NDQNCi0tLSBhL0RvY3Vt
+ZW50YXRpb24vYXJtNjQvc2lsaWNvbi1lcnJhdGEudHh0DQorKysgYi9Eb2N1
+bWVudGF0aW9uL2FybTY0L3NpbGljb24tZXJyYXRhLnR4dA0KQEAgLTgwLDMg
+KzgwLDQgQEAgc3RhYmxlIGtlcm5lbHMuDQogfCBRdWFsY29tbSBUZWNoLiB8
+IEZhbGtvciB2MSAgICAgICB8IEUxMDA5ICAgICAgICAgICB8IFFDT01fRkFM
+S09SX0VSUkFUVU1fMTAwOSAgICB8DQogfCBRdWFsY29tbSBUZWNoLiB8IFFE
+RjI0MDAgSVRTICAgICB8IEUwMDY1ICAgICAgICAgICB8IFFDT01fUURGMjQw
+MF9FUlJBVFVNXzAwNjUgICB8DQogfCBRdWFsY29tbSBUZWNoLiB8IEZhbGtv
+ciB2ezEsMn0gICB8IEUxMDQxICAgICAgICAgICB8IFFDT01fRkFMS09SX0VS
+UkFUVU1fMTA0MSAgICB8DQorfCBGdWppdHN1ICAgICAgICB8IEE2NEZYICAg
+ICAgICAgICB8IEUjMDEwMDAxICAgICAgICB8IEZVSklUU1VfRVJSQVRVTV8w
+MTAwMDEgICAgICB8DQpkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9LY29uZmln
+IGIvYXJjaC9hcm02NC9LY29uZmlnDQppbmRleCBhNDE2OGQzLi42MGUxOTNm
+DQotLS0gYS9hcmNoL2FybTY0L0tjb25maWcNCisrKyBiL2FyY2gvYXJtNjQv
+S2NvbmZpZw0KQEAgLTY0Myw2ICs2NDMsMjggQEAgY29uZmlnIFFDT01fRkFM
+S09SX0VSUkFUVU1fRTEwNDENCiANCiAJICBJZiB1bnN1cmUsIHNheSBZLg0K
+IA0KK2NvbmZpZyBGVUpJVFNVX0VSUkFUVU1fMDEwMDAxDQorCWJvb2wgIkZ1
+aml0c3UtQTY0RlggZXJyYXR1bSBFIzAxMDAwMTogVW5kZWZpbmVkIGZhdWx0
+IG1heSBvY2N1ciB3cm9uZ2x5Ig0KKwlkZWZhdWx0IHkNCisJaGVscA0KKwkg
+IFRoaXMgb3B0aW9uIGFkZHMgd29ya2Fyb3VuZCBmb3IgRnVqaXRzdS1BNjRG
+WCBlcnJhdHVtIEUjMDEwMDAxLg0KKwkgIE9uIHNvbWUgdmFyaWFudHMgb2Yg
+dGhlIEZ1aml0c3UtQTY0RlggY29yZXMgdmVyKDEuMCwgMS4xKSwgbWVtb3J5
+IGFjY2Vzc2VzDQorCSAgbWF5IGNhdXNlIHVuZGVmaW5lZCBmYXVsdCAoRGF0
+YSBhYm9ydCwgREZTQz0wYjExMTExMSkuDQorCSAgVGhpcyBmYXVsdCBvY2N1
+cnMgdW5kZXIgYSBzcGVjaWZpYyBoYXJkd2FyZSBjb25kaXRpb24gd2hlbiBh
+IGxvYWQvc3RvcmUNCisgICAgICAgICAgaW5zdHJ1Y3Rpb24gcGVyZm9ybSBh
+biBhZGRyZXNzIHRyYW5zbGF0aW9uIHVzaW5nOg0KKwkgIGNhc2UtMSAgVFRC
+UjBfRUwxIHdpdGggVENSX0VMMS5ORkQwID09IDEuDQorCSAgY2FzZS0yICBU
+VEJSMF9FTDIgd2l0aCBUQ1JfRUwyLk5GRDAgPT0gMS4NCisJICBjYXNlLTMg
+IFRUQlIxX0VMMSB3aXRoIFRDUl9FTDEuTkZEMSA9PSAxLg0KKwkgIGNhc2Ut
+NCAgVFRCUjFfRUwyIHdpdGggVENSX0VMMi5ORkQxID09IDEuDQorDQorCSAg
+VGhlIHdvcmthcm91bmQgaXMgdG8gc2V0ICcwJyB0byBUQ1JfRUx4Lk5GRDEg
+YXQga2VybmVsLWVudHJ5LA0KKwkgIGFuZCBzZXQgJzEnIGF0IGtlcm5lbC1l
+eGl0LiBBbmQgYWxzbyByZXBsYWNlIHRoZSBmYXVsdCBoYW5kbGVyDQorCSAg
+Zm9yIERhdGEgYWJvcnQgREZTQz0wYjExMTExMSB3aXRoIGEgbmV3IG9uZSB0
+byBpZ25vcmUgdGhpcw0KKwkgIHVuZGVmaW5lZCBmYXVsdC4NCisJICBPbmx5
+IGFmZmVjdCB0aGUgRnVqaXRzdS1BNjRGWC4NCisNCisJICBJZiB1bnN1cmUs
+IHNheSBZLg0KKw0KIGVuZG1lbnUNCiANCiANCmRpZmYgLS1naXQgYS9hcmNo
+L2FybTY0L2luY2x1ZGUvYXNtL2NwdWNhcHMuaCBiL2FyY2gvYXJtNjQvaW5j
+bHVkZS9hc20vY3B1Y2Fwcy5oDQppbmRleCA4MmU5MDk5Li4zYTBiMzc1IDEw
+MDY0NA0KLS0tIGEvYXJjaC9hcm02NC9pbmNsdWRlL2FzbS9jcHVjYXBzLmgN
+CisrKyBiL2FyY2gvYXJtNjQvaW5jbHVkZS9hc20vY3B1Y2Fwcy5oDQpAQCAt
+NjAsNyArNjAsOCBAQA0KICNkZWZpbmUgQVJNNjRfSEFTX0FERFJFU1NfQVVU
+SF9JTVBfREVGCQkzOQ0KICNkZWZpbmUgQVJNNjRfSEFTX0dFTkVSSUNfQVVU
+SF9BUkNICQk0MA0KICNkZWZpbmUgQVJNNjRfSEFTX0dFTkVSSUNfQVVUSF9J
+TVBfREVGCQk0MQ0KKyNkZWZpbmUgQVJNNjRfV09SS0FST1VORF9GVUpJVFNV
+X0E2NEZYXzAxMDAwMDEgNDINCiANCi0jZGVmaW5lIEFSTTY0X05DQVBTCQkJ
+CTQyDQorI2RlZmluZSBBUk02NF9OQ0FQUwkJCQk0Mw0KIA0KICNlbmRpZiAv
+KiBfX0FTTV9DUFVDQVBTX0ggKi8NCmRpZmYgLS1naXQgYS9hcmNoL2FybTY0
+L2luY2x1ZGUvYXNtL2NwdXR5cGUuaCBiL2FyY2gvYXJtNjQvaW5jbHVkZS9h
+c20vY3B1dHlwZS5oDQppbmRleCA5NTFlZDFhLi43MDIwM2Y5IDEwMDY0NA0K
+LS0tIGEvYXJjaC9hcm02NC9pbmNsdWRlL2FzbS9jcHV0eXBlLmgNCisrKyBi
+L2FyY2gvYXJtNjQvaW5jbHVkZS9hc20vY3B1dHlwZS5oDQpAQCAtNzYsNiAr
+NzYsNyBAQA0KICNkZWZpbmUgQVJNX0NQVV9JTVBfQlJDTQkJMHg0Mg0KICNk
+ZWZpbmUgQVJNX0NQVV9JTVBfUUNPTQkJMHg1MQ0KICNkZWZpbmUgQVJNX0NQ
+VV9JTVBfTlZJRElBCQkweDRFDQorI2RlZmluZSBBUk1fQ1BVX0lNUF9GVUpJ
+VFNVCQkweDQ2DQogDQogI2RlZmluZSBBUk1fQ1BVX1BBUlRfQUVNX1Y4CQkw
+eEQwRg0KICNkZWZpbmUgQVJNX0NQVV9QQVJUX0ZPVU5EQVRJT04JCTB4RDAw
+DQpAQCAtMTA0LDYgKzEwNSw4IEBADQogI2RlZmluZSBOVklESUFfQ1BVX1BB
+UlRfREVOVkVSCQkweDAwMw0KICNkZWZpbmUgTlZJRElBX0NQVV9QQVJUX0NB
+Uk1FTAkJMHgwMDQNCiANCisjZGVmaW5lIEZVSklUU1VfQ1BVX1BBUlRfQTY0
+RlgJCTB4MDAxDQorDQogI2RlZmluZSBNSURSX0NPUlRFWF9BNTMgTUlEUl9D
+UFVfTU9ERUwoQVJNX0NQVV9JTVBfQVJNLCBBUk1fQ1BVX1BBUlRfQ09SVEVY
+X0E1MykNCiAjZGVmaW5lIE1JRFJfQ09SVEVYX0E1NyBNSURSX0NQVV9NT0RF
+TChBUk1fQ1BVX0lNUF9BUk0sIEFSTV9DUFVfUEFSVF9DT1JURVhfQTU3KQ0K
+ICNkZWZpbmUgTUlEUl9DT1JURVhfQTcyIE1JRFJfQ1BVX01PREVMKEFSTV9D
+UFVfSU1QX0FSTSwgQVJNX0NQVV9QQVJUX0NPUlRFWF9BNzIpDQpAQCAtMTIy
+LDYgKzEyNSw3IEBADQogI2RlZmluZSBNSURSX1FDT01fS1JZTyBNSURSX0NQ
+VV9NT0RFTChBUk1fQ1BVX0lNUF9RQ09NLCBRQ09NX0NQVV9QQVJUX0tSWU8p
+DQogI2RlZmluZSBNSURSX05WSURJQV9ERU5WRVIgTUlEUl9DUFVfTU9ERUwo
+QVJNX0NQVV9JTVBfTlZJRElBLCBOVklESUFfQ1BVX1BBUlRfREVOVkVSKQ0K
+ICNkZWZpbmUgTUlEUl9OVklESUFfQ0FSTUVMIE1JRFJfQ1BVX01PREVMKEFS
+TV9DUFVfSU1QX05WSURJQSwgTlZJRElBX0NQVV9QQVJUX0NBUk1FTCkNCisj
+ZGVmaW5lIE1JRFJfRlVKSVRTVV9BNjRGWCBNSURSX0NQVV9NT0RFTChBUk1f
+Q1BVX0lNUF9GVUpJVFNVLCBGVUpJVFNVX0NQVV9QQVJUX0E2NEZYKQ0KIA0K
+ICNpZm5kZWYgX19BU1NFTUJMWV9fDQogDQpkaWZmIC0tZ2l0IGEvYXJjaC9h
+cm02NC9rZXJuZWwvY3B1X2VycmF0YS5jIGIvYXJjaC9hcm02NC9rZXJuZWwv
+Y3B1X2VycmF0YS5jDQppbmRleCA5OTUwYmIwLi5mYzA3MzdmIDEwMDY0NA0K
+LS0tIGEvYXJjaC9hcm02NC9rZXJuZWwvY3B1X2VycmF0YS5jDQorKysgYi9h
+cmNoL2FybTY0L2tlcm5lbC9jcHVfZXJyYXRhLmMNCkBAIC03MzksNiArNzM5
+LDE0IEBAIHN0YXRpYyBib29sIGhhc19zc2JkX21pdGlnYXRpb24oY29uc3Qg
+c3RydWN0IGFybTY0X2NwdV9jYXBhYmlsaXRpZXMgKmVudHJ5LA0KIAkJRVJS
+QVRBX01JRFJfUkFOR0UoTUlEUl9DT1JURVhfQTc2LCAwLCAwLCAyLCAwKSwN
+CiAJfSwNCiAjZW5kaWYNCisjaWZkZWYgQ09ORklHX0ZVSklUU1VfRVJSQVRV
+TV8wMTAwMDENCisJew0KKwkJLmRlc2MgPSAiRnVqaXRzdSBlcnJhdHVtIDAx
+MDAwMSIsDQorCQkuY2FwYWJpbGl0eSA9IEFSTTY0X1dPUktBUk9VTkRfRlVK
+SVRTVV9BNjRGWF8wMTAwMDAxLA0KKwkJRVJSQVRBX01JRFJfUkFOR0UoTUlE
+Ul9GVUpJVFNVX0E2NEZYLCAwLCAwLCAxLCAwKSwNCisJfSwNCisjZW5kaWYN
+CisNCiAJew0KIAl9DQogfTsNCmRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2tl
+cm5lbC9lbnRyeS5TIGIvYXJjaC9hcm02NC9rZXJuZWwvZW50cnkuUw0KaW5k
+ZXggMGVjMGM0Ni4uMzRhNGY0NA0KLS0tIGEvYXJjaC9hcm02NC9rZXJuZWwv
+ZW50cnkuUw0KKysrIGIvYXJjaC9hcm02NC9rZXJuZWwvZW50cnkuUw0KQEAg
+LTk0MCw2ICs5NDAsMTQgQEAgYWx0ZXJuYXRpdmVfaWYgQVJNNjRfV09SS0FS
+T1VORF9RQ09NX0ZBTEtPUl9FMTAwMw0KIAlkc2IJbnNoDQogYWx0ZXJuYXRp
+dmVfZWxzZV9ub3BfZW5kaWYNCiAjZW5kaWYgLyogQ09ORklHX1FDT01fRkFM
+S09SX0VSUkFUVU1fMTAwMyAqLw0KKyNpZmRlZiBDT05GSUdfRlVKSVRTVV9D
+UFVfUEFSVF9BNjRGWA0KK2FsdGVybmF0aXZlX2lmIEFSTTY0X1dPUktBUk9V
+TkRfRlVKSVRTVV9BNjRGWF8wMTAwMDAxDQorCW1ycwlcdG1wLCB0Y3JfZWwx
+DQorCWFuZAlcdG1wLCBcdG1wLCAjMHhmZmJmZmZmZmZmZmZmZmZmDQorCW1z
+cgl0Y3JfZWwxLFx0bXANCisJaXNiDQorYWx0ZXJuYXRpdmVfZWxzZV9ub3Bf
+ZW5kaWYNCisjZW5kaWYgLyogQ09ORklHX0ZVSklUU1VfQ1BVX1BBUlRfQTY0
+RlggKi8NCiAJLmVuZG0NCiANCiAJLm1hY3JvIHRyYW1wX3VubWFwX2tlcm5l
+bCwgdG1wDQpAQCAtOTUyLDYgKzk2MCwxNCBAQCBhbHRlcm5hdGl2ZV9lbHNl
+X25vcF9lbmRpZg0KIAkgKiBpdCdzIG9ubHkgbmVlZGVkIGJ5IENhdml1bSBU
+aHVuZGVyWCwgd2hpY2ggcmVxdWlyZXMgS1BUSSB0byBiZQ0KIAkgKiBkaXNh
+YmxlZC4NCiAJICovDQorI2lmZGVmIENPTkZJR19GVUpJVFNVX0NQVV9QQVJU
+X0E2NEZYDQorYWx0ZXJuYXRpdmVfaWYgQVJNNjRfV09SS0FST1VORF9GVUpJ
+VFNVX0E2NEZYXzAxMDAwMDENCisJbXJzCVx0bXAsIHRjcl9lbDENCisJb3Jy
+CVx0bXAsIFx0bXAsICMweDQwMDAwMDAwMDAwMDAwDQorCW1zcgl0Y3JfZWwx
+LFx0bXANCisJaXNiDQorYWx0ZXJuYXRpdmVfZWxzZV9ub3BfZW5kaWYNCisj
+ZW5kaWYgLyogQ09ORklHX0ZVSklUU1VfQ1BVX1BBUlRfQTY0RlggKi8NCiAJ
+LmVuZG0NCiANCiAJLm1hY3JvIHRyYW1wX3ZlbnRyeSwgcmVnc2l6ZSA9IDY0
+DQpkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9tbS9mYXVsdC5jIGIvYXJjaC9h
+cm02NC9tbS9mYXVsdC5jDQppbmRleCBlZmI3YjJjLi4xYmYwMzc3DQotLS0g
+YS9hcmNoL2FybTY0L21tL2ZhdWx0LmMNCisrKyBiL2FyY2gvYXJtNjQvbW0v
+ZmF1bHQuYw0KQEAgLTY2Niw2ICs2NjYsMjAgQEAgc3RhdGljIGludCBkb19z
+ZWEodW5zaWduZWQgbG9uZyBhZGRyLCB1bnNpZ25lZCBpbnQgZXNyLCBzdHJ1
+Y3QgcHRfcmVncyAqcmVncykNCiAJcmV0dXJuIDA7DQogfQ0KIA0KK3N0YXRp
+YyBpbnQgZG9fYmFkX3Vua25vd25fNjModW5zaWduZWQgbG9uZyBhZGRyLCB1
+bnNpZ25lZCBpbnQgZXNyLCBzdHJ1Y3QgcHRfcmVncyAqcmVncykNCit7DQor
+CS8qDQorCSAqIE9uIHNvbWUgdmFyaWFudHMgb2YgdGhlIEZ1aml0c3UtQTY0
+RlggY29yZXMgdmVyKDEuMCwgMS4xKSwNCisJICogbWVtb3J5IGFjY2Vzc2Vz
+IG1heSBzcHVyaW91c2x5IHRyaWdnZXIgZGF0YSBhYm9ydHMgd2l0aA0KKwkg
+KiBERlNDPTBiMTExMTExLg0KKwkgKi8NCisJaWYgKElTX0VOQUJMRUQoQ09O
+RklHX0ZVSklUU1VfRVJSQVRVTV8wMTAwMDEpICYmDQorCQljcHVzX2hhdmVf
+Y2FwKEFSTTY0X1dPUktBUk9VTkRfRlVKSVRTVV9BNjRGWF8wMTAwMDAxKSkN
+CisJCQlyZXR1cm4gMDsNCisJcmV0dXJuIGRvX2JhZChhZGRyLCBlc3IsIHJl
+Z3MpOw0KK30NCisNCisNCiBzdGF0aWMgY29uc3Qgc3RydWN0IGZhdWx0X2lu
+Zm8gZmF1bHRfaW5mb1tdID0gew0KIAl7IGRvX2JhZCwJCVNJR0tJTEwsIFNJ
+X0tFUk5FTCwJInR0YnIgYWRkcmVzcyBzaXplIGZhdWx0Igl9LA0KIAl7IGRv
+X2JhZCwJCVNJR0tJTEwsIFNJX0tFUk5FTCwJImxldmVsIDEgYWRkcmVzcyBz
+aXplIGZhdWx0Igl9LA0KQEAgLTczMCw3ICs3NDQsNyBAQCBzdGF0aWMgaW50
+IGRvX3NlYSh1bnNpZ25lZCBsb25nIGFkZHIsIHVuc2lnbmVkIGludCBlc3Is
+IHN0cnVjdCBwdF9yZWdzICpyZWdzKQ0KIAl7IGRvX2JhZCwJCVNJR0tJTEws
+IFNJX0tFUk5FTCwJInVua25vd24gNjAiCQkJfSwNCiAJeyBkb19iYWQsCQlT
+SUdLSUxMLCBTSV9LRVJORUwsCSJzZWN0aW9uIGRvbWFpbiBmYXVsdCIJCX0s
+DQogCXsgZG9fYmFkLAkJU0lHS0lMTCwgU0lfS0VSTkVMLAkicGFnZSBkb21h
+aW4gZmF1bHQiCQl9LA0KLQl7IGRvX2JhZCwJCVNJR0tJTEwsIFNJX0tFUk5F
+TCwJInVua25vd24gNjMiCQkJfSwNCisJeyBkb19iYWRfdW5rbm93bl82MywJ
+U0lHS0lMTCwgU0lfS0VSTkVMLAkidW5rbm93biA2MyIJCQl9LA0KIH07DQog
+DQogaW50IGhhbmRsZV9ndWVzdF9zZWEocGh5c19hZGRyX3QgYWRkciwgdW5z
+aWduZWQgaW50IGVzcikNCmRpZmYgLS1naXQgYS9hcmNoL2FybTY0L21tL3By
+b2MuUyBiL2FyY2gvYXJtNjQvbW0vcHJvYy5TDQppbmRleCA3Mzg4NmE1Li43
+NWY3ZDk5DQotLS0gYS9hcmNoL2FybTY0L21tL3Byb2MuUw0KKysrIGIvYXJj
+aC9hcm02NC9tbS9wcm9jLlMNCkBAIC00NTMsOSArNDUzLDI5IEBAIEVOVFJZ
+KF9fY3B1X3NldHVwKQ0KIAkgKiBTZXQvcHJlcGFyZSBUQ1IgYW5kIFRUQlIu
+IFdlIHVzZSA1MTJHQiAoMzktYml0KSBhZGRyZXNzIHJhbmdlIGZvcg0KIAkg
+KiBib3RoIHVzZXIgYW5kIGtlcm5lbC4NCiAJICovDQorI2lmZGVmIENPTkZJ
+R19GVUpJVFNVX0VSUkFUVU1fMDEwMDAxDQogCWxkcgl4MTAsID1UQ1JfVHhT
+WihWQV9CSVRTKSB8IFRDUl9DQUNIRV9GTEFHUyB8IFRDUl9TTVBfRkxBR1Mg
+fCBcDQogCQkJVENSX1RHX0ZMQUdTIHwgVENSX0tBU0xSX0ZMQUdTIHwgVENS
+X0FTSUQxNiB8IFwNCiAJCQlUQ1JfVEJJMCB8IFRDUl9BMSB8IFRDUl9LQVNB
+Tl9GTEFHUw0KKwkvKiBDYW4gdXNlIHgxOS94MjAveDUgKi8NCisJbXJzICAg
+ICB4MTksIG1pZHJfZWwxDQorCS8qIEVSUkFUQV9NSURSX1JBTkdFKE1JRFJf
+RlVKSVRTVV9BNjRGWCwgMCwgMCwgMSwgMCkgKi8NCisJbW92CXcyMCwgIzB4
+MTAJLy8jMTYNCisJbW92awl3MjAsICMweDQ2MGYsIGxzbCAjMTYNCisJbW92
+CXc1LCAjMHhmZmVmZmZmZg0KKwlhbmQJdzE5LCB3NSwgdzE5DQorCS8qIGNt
+cCBtaWRyX2VsMSB3aXRoIEVSUkFUQV9NSURSX1JBTkdFKE1JRFJfRlVKSVRT
+VV9BNjRGWCwgMCwgMCwgMSwgMCkgKi8NCisJY21wICAgICB3MTksIHcyMA0K
+KwliLm5lCTJmDQorCWxkcgl4MTAsID1UQ1JfVHhTWihWQV9CSVRTKSB8IFRD
+Ul9DQUNIRV9GTEFHUyB8IFRDUl9TTVBfRkxBR1MgfCBcDQorCQkJVENSX1RH
+X0ZMQUdTIHwgVENSX0FTSUQxNiB8IFwNCisJCQlUQ1JfVEJJMCB8IFRDUl9B
+MSB8IFRDUl9LQVNBTl9GTEFHUw0KKzI6CW5vcA0KKyNlbHNlDQorCWxkcgl4
+MTAsID1UQ1JfVHhTWihWQV9CSVRTKSB8IFRDUl9DQUNIRV9GTEFHUyB8IFRD
+Ul9TTVBfRkxBR1MgfCBcDQorCQkJVENSX1RHX0ZMQUdTIHwgVENSX0tBU0xS
+X0ZMQUdTIHwgVENSX0FTSUQxNiB8IFwNCisJCQlUQ1JfVEJJMCB8IFRDUl9B
+MSB8IFRDUl9LQVNBTl9GTEFHUw0KKyNlbmRpZg0KIA0KICNpZmRlZiBDT05G
+SUdfQVJNNjRfVVNFUl9WQV9CSVRTXzUyDQogCWxkcl9sCQl4OSwgdmFiaXRz
+X3VzZXINCi0tIA0KMS44LjMuMQ0K
