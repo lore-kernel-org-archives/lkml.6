@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AF0C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49628C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13D8020881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19E9120881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763619;
-	bh=F4rmoACIa+t6IAwdwXHPiMuj8PxeQP8m55tVDQ/a8wE=;
+	s=default; t=1548763626;
+	bh=NQGkiyCGa2ZthJT134/lDfe7RSQeHY0T3I6EnQsyErk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c51a3b7n8filT5eR/sYF6qZvPIHEpFHkALcGvCYxgRA99x5jsvlysHsk/DZJ/521v
-	 gy8UlXG3ldQjVHXd+7lKX2o4BzrtLVFtZBKLUF/s9ALpGeRhbihfsJDdZSs0SgWaqh
-	 1DCkt36PIMyapCMLR8fiH2w934AQBb3MZY3LVFgM=
+	b=YzDfVce9R8ya0hqwg0JVxzF2kXMxHrb+QAwQuZY3LgxSfPD02M2yz9wFHTKT86ysJ
+	 fb88nuRYGIegno0nF+Xk7+vv5hGIfxD/bNXluPwU//QXh/f4hcgsEnwVpK5ZQPruCW
+	 F6+1bzfrMSBVZMtRgNR2sLfjvA3ddWiw+IhbwmJ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729517AbfA2MG5 (ORCPT
+        id S1729781AbfA2MHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:06:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57940 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:07:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728673AbfA2Lkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:40:49 -0500
+        id S1729692AbfA2Lkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:40:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 408D820857;
-        Tue, 29 Jan 2019 11:40:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5ACC220857;
+        Tue, 29 Jan 2019 11:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762047;
-        bh=F4rmoACIa+t6IAwdwXHPiMuj8PxeQP8m55tVDQ/a8wE=;
+        s=default; t=1548762041;
+        bh=NQGkiyCGa2ZthJT134/lDfe7RSQeHY0T3I6EnQsyErk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XQMCUUBuzSAwViBRBfuhBfk9eEzIQlLufVzjniqYMkKkI6jlEkBYwCoslekc+sb+O
-         IuzyfCmfFKWJ5CtXnyeD/cK2e72eyHUCIa02eCc5/IN/c3yxbV3Qqda0+wRF1IpDQV
-         K4aXA9q58BLuCjQjSnIpQKWKJve1Eno6T/U5UYNs=
+        b=n8ZOMMAPpV81Tca479h1dw0eQnTpCy/Q+h9u1fwAxRZpndMZAb1EQqHI5CipAywXl
+         /71aUfNFZpFt8piLR1x8Jsvm+vK594RkEnEjGzWAdhbkfk/ESn9D70COsafQs9A6Wv
+         whGhBcDFM2j7gVbw02IEhL1CMD1ureFoE8OUi2ag=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Pitre <nico@linaro.org>
-Subject: [PATCH 4.20 090/117] vt: make vt_console_print() compatible with the unicode screen buffer
-Date:   Tue, 29 Jan 2019 12:35:41 +0100
-Message-Id: <20190129113211.873375967@linuxfoundation.org>
+        stable@vger.kernel.org, Kyungtae Kim <kt0755@gmail.com>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Andre Naujoks <nautsch2@gmail.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.20 088/117] can: bcm: check timer values before ktime conversion
+Date:   Tue, 29 Jan 2019 12:35:39 +0100
+Message-Id: <20190129113211.785345728@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -64,119 +67,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-commit 6609cff65c5b184ab889880ef5d41189611ea05f upstream.
+commit 93171ba6f1deffd82f381d36cb13177872d023f6 upstream.
 
-When kernel messages are printed to the console, they appear blank on
-the unicode screen. This is because vt_console_print() is lacking a call
-to vc_uniscr_putc(). However the later function assumes vc->vc_x is
-always up to date when called, which is not the case here as
-vt_console_print() uses it to mark the beginning of the display update.
+Kyungtae Kim detected a potential integer overflow in bcm_[rx|tx]_setup()
+when the conversion into ktime multiplies the given value with NSEC_PER_USEC
+(1000).
 
-This patch reworks (and simplifies) vt_console_print() so that vc->vc_x
-is always valid and keeps the start of display update in a local variable
-instead, which finally allows for adding the missing vc_uniscr_putc()
-call.
+Reference: https://marc.info/?l=linux-can&m=154732118819828&w=2
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
-Cc: stable@vger.kernel.org # v4.19+
+Add a check for the given tv_usec, so that the value stays below one second.
+Additionally limit the tv_sec value to a reasonable value for CAN related
+use-cases of 400 days and ensure all values to be positive.
+
+Reported-by: Kyungtae Kim <kt0755@gmail.com>
+Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: linux-stable <stable@vger.kernel.org> # >= 2.6.26
+Tested-by: Kyungtae Kim <kt0755@gmail.com>
+Acked-by: Andre Naujoks <nautsch2@gmail.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt.c |   47 +++++++++++++++--------------------------------
- 1 file changed, 15 insertions(+), 32 deletions(-)
+ net/can/bcm.c |   27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -2884,8 +2884,7 @@ static void vt_console_print(struct cons
- 	unsigned char c;
- 	static DEFINE_SPINLOCK(printing_lock);
- 	const ushort *start;
--	ushort cnt = 0;
--	ushort myx;
-+	ushort start_x, cnt;
- 	int kmsg_console;
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -67,6 +67,9 @@
+  */
+ #define MAX_NFRAMES 256
  
- 	/* console busy or not yet initialized */
-@@ -2898,10 +2897,6 @@ static void vt_console_print(struct cons
- 	if (kmsg_console && vc_cons_allocated(kmsg_console - 1))
- 		vc = vc_cons[kmsg_console - 1].d;
++/* limit timers to 400 days for sending/timeouts */
++#define BCM_TIMER_SEC_MAX (400 * 24 * 60 * 60)
++
+ /* use of last_frames[index].flags */
+ #define RX_RECV    0x40 /* received data for this element */
+ #define RX_THR     0x80 /* element not been sent due to throttle feature */
+@@ -140,6 +143,22 @@ static inline ktime_t bcm_timeval_to_kti
+ 	return ktime_set(tv.tv_sec, tv.tv_usec * NSEC_PER_USEC);
+ }
  
--	/* read `x' only after setting currcons properly (otherwise
--	   the `x' macro will read the x of the foreground console). */
--	myx = vc->vc_x;
--
- 	if (!vc_cons_allocated(fg_console)) {
- 		/* impossible */
- 		/* printk("vt_console_print: tty %d not allocated ??\n", currcons+1); */
-@@ -2916,53 +2911,41 @@ static void vt_console_print(struct cons
- 		hide_cursor(vc);
++/* check limitations for timeval provided by user */
++static bool bcm_is_invalid_tv(struct bcm_msg_head *msg_head)
++{
++	if ((msg_head->ival1.tv_sec < 0) ||
++	    (msg_head->ival1.tv_sec > BCM_TIMER_SEC_MAX) ||
++	    (msg_head->ival1.tv_usec < 0) ||
++	    (msg_head->ival1.tv_usec >= USEC_PER_SEC) ||
++	    (msg_head->ival2.tv_sec < 0) ||
++	    (msg_head->ival2.tv_sec > BCM_TIMER_SEC_MAX) ||
++	    (msg_head->ival2.tv_usec < 0) ||
++	    (msg_head->ival2.tv_usec >= USEC_PER_SEC))
++		return true;
++
++	return false;
++}
++
+ #define CFSIZ(flags) ((flags & CAN_FD_FRAME) ? CANFD_MTU : CAN_MTU)
+ #define OPSIZ sizeof(struct bcm_op)
+ #define MHSIZ sizeof(struct bcm_msg_head)
+@@ -873,6 +892,10 @@ static int bcm_tx_setup(struct bcm_msg_h
+ 	if (msg_head->nframes < 1 || msg_head->nframes > MAX_NFRAMES)
+ 		return -EINVAL;
  
- 	start = (ushort *)vc->vc_pos;
--
--	/* Contrived structure to try to emulate original need_wrap behaviour
--	 * Problems caused when we have need_wrap set on '\n' character */
-+	start_x = vc->vc_x;
-+	cnt = 0;
- 	while (count--) {
- 		c = *b++;
- 		if (c == 10 || c == 13 || c == 8 || vc->vc_need_wrap) {
--			if (cnt > 0) {
--				if (con_is_visible(vc))
--					vc->vc_sw->con_putcs(vc, start, cnt, vc->vc_y, vc->vc_x);
--				vc->vc_x += cnt;
--				if (vc->vc_need_wrap)
--					vc->vc_x--;
--				cnt = 0;
--			}
-+			if (cnt && con_is_visible(vc))
-+				vc->vc_sw->con_putcs(vc, start, cnt, vc->vc_y, start_x);
-+			cnt = 0;
- 			if (c == 8) {		/* backspace */
- 				bs(vc);
- 				start = (ushort *)vc->vc_pos;
--				myx = vc->vc_x;
-+				start_x = vc->vc_x;
- 				continue;
- 			}
- 			if (c != 13)
- 				lf(vc);
- 			cr(vc);
- 			start = (ushort *)vc->vc_pos;
--			myx = vc->vc_x;
-+			start_x = vc->vc_x;
- 			if (c == 10 || c == 13)
- 				continue;
- 		}
-+		vc_uniscr_putc(vc, c);
- 		scr_writew((vc->vc_attr << 8) + c, (unsigned short *)vc->vc_pos);
- 		notify_write(vc, c);
- 		cnt++;
--		if (myx == vc->vc_cols - 1) {
--			vc->vc_need_wrap = 1;
--			continue;
--		}
--		vc->vc_pos += 2;
--		myx++;
--	}
--	if (cnt > 0) {
--		if (con_is_visible(vc))
--			vc->vc_sw->con_putcs(vc, start, cnt, vc->vc_y, vc->vc_x);
--		vc->vc_x += cnt;
--		if (vc->vc_x == vc->vc_cols) {
--			vc->vc_x--;
-+		if (vc->vc_x == vc->vc_cols - 1) {
- 			vc->vc_need_wrap = 1;
-+		} else {
-+			vc->vc_pos += 2;
-+			vc->vc_x++;
- 		}
- 	}
-+	if (cnt && con_is_visible(vc))
-+		vc->vc_sw->con_putcs(vc, start, cnt, vc->vc_y, start_x);
- 	set_cursor(vc);
- 	notify_update(vc);
++	/* check timeval limitations */
++	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
++		return -EINVAL;
++
+ 	/* check the given can_id */
+ 	op = bcm_find_op(&bo->tx_ops, msg_head, ifindex);
+ 	if (op) {
+@@ -1053,6 +1076,10 @@ static int bcm_rx_setup(struct bcm_msg_h
+ 	     (!(msg_head->can_id & CAN_RTR_FLAG))))
+ 		return -EINVAL;
  
++	/* check timeval limitations */
++	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
++		return -EINVAL;
++
+ 	/* check the given can_id */
+ 	op = bcm_find_op(&bo->rx_ops, msg_head, ifindex);
+ 	if (op) {
 
 
