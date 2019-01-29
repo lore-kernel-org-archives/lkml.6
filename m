@@ -2,140 +2,140 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E68C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5C7C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7404C214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C47FA214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:10:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QoLa2LgL"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="GFyHmHqA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbfA2IKK (ORCPT
+        id S1727936AbfA2IJx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:10:10 -0500
-Received: from mail-eopbgr50056.outbound.protection.outlook.com ([40.107.5.56]:21595
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        Tue, 29 Jan 2019 03:09:53 -0500
+Received: from mail-eopbgr740053.outbound.protection.outlook.com ([40.107.74.53]:27758
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727166AbfA2IKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:10:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1727781AbfA2IJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:09:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KjRhsnHtslgjFjWVqiy0MvdHg9iuVpRmClK+PAq5SPc=;
- b=QoLa2LgL/AfIQFAy8htS6BeCGCNjczsoWTbqqwbWfFnRP3joF6PszdzWdXx4rEDRKRjstB2AGqlFpyW31izNHxiQY0bZbM1iwpXXWSBAN5PqmPTxtUKp1tS1Xm5KeVnTr9jLyJ2E2hLeAIox9OC6BGxNJdLWAa++2vd6h2fp5k0=
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.3.19) by
- AM6PR04MB5784.eurprd04.prod.outlook.com (20.179.2.83) with Microsoft SMTP
+ bh=NjOA0nRKaUZqa59shphD8+kqEBj/b7FPWV//9bR1ZNY=;
+ b=GFyHmHqAQrr5h0BPYNLEzfyScTMCRnYJgJLn1r/7gAupAgJd43cX+bsXKJvGjST5Zee+1K/jRr4NMTt1djg2qKMTZz1U1uij9dlIFx47IBk5hlxw044lHS0sOhmOn9DfnbjKTDO0OgnvEEpXtfe5NN0A22fwcdyODg/qLgvTsVI=
+Received: from DM6PR12MB2844.namprd12.prod.outlook.com (20.176.117.96) by
+ DM6PR12MB3610.namprd12.prod.outlook.com (20.178.199.84) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.17; Tue, 29 Jan 2019 08:10:05 +0000
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::9c0:e3aa:b41f:9504]) by AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::9c0:e3aa:b41f:9504%3]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
- 08:10:05 +0000
-From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
-To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>
-CC:     Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: [PATCHv3 15/27] dt-bindings: pci: mobiveil: change gpio_slave and
- apb_csr to optional
-Thread-Topic: [PATCHv3 15/27] dt-bindings: pci: mobiveil: change gpio_slave
- and apb_csr to optional
-Thread-Index: AQHUt6oKYkXcpaoTuUirxMxQCEM8+g==
-Date:   Tue, 29 Jan 2019 08:10:04 +0000
-Message-ID: <20190129080926.36773-16-Zhiqiang.Hou@nxp.com>
-References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
+ 15.20.1558.20; Tue, 29 Jan 2019 08:09:46 +0000
+Received: from DM6PR12MB2844.namprd12.prod.outlook.com
+ ([fe80::c40:929a:abab:308d]) by DM6PR12MB2844.namprd12.prod.outlook.com
+ ([fe80::c40:929a:abab:308d%3]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
+ 08:09:46 +0000
+From:   "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+CC:     "joro@8bytes.org" <joro@8bytes.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+Subject: [PATCH] svm: Fix improper check when deactivate AVIC
+Thread-Topic: [PATCH] svm: Fix improper check when deactivate AVIC
+Thread-Index: AQHUt6n/PbEp8KQZn0iUg2/B2tUkjQ==
+Date:   Tue, 29 Jan 2019 08:09:46 +0000
+Message-ID: <20190129080913.40998-1-suravee.suthikulpanit@amd.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0PR04CA0008.apcprd04.prod.outlook.com
- (2603:1096:203:36::20) To AM6PR04MB5781.eurprd04.prod.outlook.com
- (2603:10a6:20b:ad::19)
+x-originating-ip: [124.121.4.14]
+x-clientproxiedby: SG2PR02CA0116.apcprd02.prod.outlook.com
+ (2603:1096:4:92::32) To DM6PR12MB2844.namprd12.prod.outlook.com
+ (2603:10b6:5:45::32)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=zhiqiang.hou@nxp.com; 
+ smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
-x-originating-ip: [119.31.174.73]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB5784;6:dYQdYwIFnPL2jpe0v0hiUpYCfZbwGJGNIiHXgd8igbYoHDO5CsWqLFlasspcto3ojaezprkbQn2hgwS3cKSr2gdHRA0kR25R5Gd2MvdniY5Kr/4jI+6CDiY346whwCCK3P+aLIub1grff4kZ+icf/roXEx6qsVzG2XwmK82ei6tuHnxMsHuBDaVazrqGhi2vkVsTfCV3XxP4HSQ/MrPx0mB99haQq6sYTIka0a4ayK31PbEkZhy/+A5wESDPFlPgsb9dvFPoHVk/QjRynqideJCuwD53y6mvX64PgiUzkZP9qz453e24r8JqpRfPvC2Xw1czs14wluSNM7T7LM6Aff+LlHow9DVded495yn+Ej7JfcCxeDtvz1r0xd+IwkjoLVh7AC66WHpSw/gDwTrTZVfBWObeaSaeK0+nSMBqr5wnNXm+tyL64dE7tkEqIJkpjp0dMp2+D/Y/8LTxePYjXA==;5:lray6L7+RybexYM3lniQkkqzkyV1P385YWecZfW0BOw/UjnBRcu/xYmSeXkfv7dPgjLqPuhwmMA4jDTWd6OJMTjVBSlZm+WsHhqEuM+P3VdwMyrzMiKjI94WUqW1N76ZFn3eBbSXYIPZ/5JE9z5TGSF4SjnbHQn1yKiszKL56wdxzi3agyp0HkEQh3cMMibiZMw7yKyBUiBvWKrXdoyIDg==;7:6+VK8G3KEvba5WlND+2uRDUHHJZxAMrkE2JtxZZDh9pynn2OipakJjF7NQjA2ZBnQ2PgIKj73nwPRzynd/9VLHhFSWY6hziVfWR4RMkcKccHjQifUGlNRZ9fucL3npJHWNFAEoasFp+1xd98vUWfMg==
-x-ms-office365-filtering-correlation-id: 6c91fe45-5d07-44ae-dca7-08d685c12ca6
+x-microsoft-exchange-diagnostics: 1;DM6PR12MB3610;20:oV5P7kp3vevm+ygJpalY4V4bVylbE+ADgh9l+mcLfdKz6vifPouEO8c3OKlSpV01vDegF2/DtiCHOKekxUkpnYl3k2lyuOfTcWHAdFSqmavh9SNDJS9cX0km0EfBRpaOCFXBnk3buwE2KNBJvaEryJJ0y1iuqoKMF/mszrFw0Bmf1pUXehriWT/TwZ3odtJmw72TlqFkkeOhMfXQatGGwsRXh3OOeDIjseQ+fI3L7sZ63XLNxgptR+xMQZthD2o/
+x-ms-office365-filtering-correlation-id: debe10c2-69e7-40a8-8198-08d685c121a6
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5784;
-x-ms-traffictypediagnostic: AM6PR04MB5784:
-x-microsoft-antispam-prvs: <AM6PR04MB578435E01B62BE23EF632ADA84970@AM6PR04MB5784.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB3610;
+x-ms-traffictypediagnostic: DM6PR12MB3610:
+x-microsoft-antispam-prvs: <DM6PR12MB3610F2E9C62983EC9E30678AF3970@DM6PR12MB3610.namprd12.prod.outlook.com>
 x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(366004)(396003)(39860400002)(189003)(199004)(3846002)(105586002)(6506007)(386003)(71200400001)(71190400001)(26005)(305945005)(66066001)(7736002)(106356001)(4326008)(102836004)(68736007)(6116002)(2501003)(25786009)(8936002)(8676002)(81166006)(81156014)(50226002)(97736004)(486006)(256004)(476003)(99286004)(6436002)(186003)(6486002)(7416002)(2906002)(14454004)(110136005)(1076003)(2201001)(316002)(478600001)(86362001)(53936002)(446003)(36756003)(6512007)(54906003)(76176011)(2616005)(11346002)(52116002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5784;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(366004)(136003)(39860400002)(199004)(189003)(305945005)(8676002)(81156014)(71200400001)(81166006)(71190400001)(50226002)(7736002)(6116002)(3846002)(256004)(14444005)(8936002)(1076003)(66574012)(2906002)(54906003)(66066001)(52116002)(110136005)(316002)(68736007)(97736004)(386003)(6506007)(99286004)(7416002)(6512007)(102836004)(4326008)(26005)(486006)(476003)(2501003)(2616005)(6486002)(6436002)(186003)(105586002)(72206003)(36756003)(478600001)(53936002)(14454004)(2201001)(106356001)(25786009)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3610;H:DM6PR12MB2844.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: C1wS3BfOac9sbjfX3NWqHBWlQU7pJHiNwcFYmbKOxGxIlcoL1qQVkMYTGENY5GacWIJ0iCWwYVvfLbjfewfHpwVUEsADFEveJvCbv3cPZQVSY24V5VkHt5oe62hicS6Sj0hvYaPYsePtXoomYw6TTQ87L94L7uumxuTCONVS9/N3pZYaKRPkd4pBbYavX70lLd/zWvUlW4obmB3VnUVodh3PgtD0Gk0QeeXQbE/BnRL88ppb54vVxJPNuuuiE8HROmWkpkz1NbANjinXzoLUjwzLmSsrA+0JLoMTw+AHC3KKnWf4z21s/pzNtZqVMB0etBEelBjpReg1eVnE5SRH7PM2nBzYog58k2OzNl89xNX8YnRirG6HTHEAUSycx2TfRaWp04xFZ1D0+c9Kx8Pgo/UNQK3ZDOy9FI3JSd2B5qA=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+x-microsoft-antispam-message-info: Akis3geVUYRathRkv8aiOZuACTcrRsXbqFjDijN5hr94aRP4LZZ6f0qnHap8r9MmNDQ3LkIpRQm9A8LWJKFshDNlBXKQid2is+xUcyIve2OQkzOpDTyDUHrRbBJX35UyFoK62Xt/AUaLWhF9jchPQ1tamkSwLMel0RNpJaKZWKsCDWGpvyz0+byKzJb5EhnfzbWoillSFET3sSH3iq7duWRLehZtI5bAK37uIujUio435C3a+gy6uhTKKUIR5+mL8EQ+v2xXZMY+LDy1nGFI6raCmNEjDvY7yBVyi/qLE783h0ygJbnV9jQi0Fg+v5AJ2POD9GLeoltka7VizVgUfM5nn+5EiZVQx9vJsA72nWNeWbZ2vAx86ad45+sl7kn3pw+EONcoBKbQs2JYM7WuyZFfjGnUU39VMzEuLYe+jks=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3CFC8CC90DE3B647B9A3F453C0BE0391@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c91fe45-5d07-44ae-dca7-08d685c12ca6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 08:09:58.7724
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: debe10c2-69e7-40a8-8198-08d685c121a6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 08:09:35.4222
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5784
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3610
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-
-Change the "gpio_slave" and "apb_csr" to optional, the "gpio_slave"
-is not used in current code, and "apb_csr" is not used by some
-platforms.
-
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Acked-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
----
-V3:
- - No change
-
- Documentation/devicetree/bindings/pci/mobiveil-pcie.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/pci/mobiveil-pcie.txt b/Docu=
-mentation/devicetree/bindings/pci/mobiveil-pcie.txt
-index a618d4787dd7..64156993e052 100644
---- a/Documentation/devicetree/bindings/pci/mobiveil-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/mobiveil-pcie.txt
-@@ -10,8 +10,10 @@ Required properties:
- 	interrupt source. The value must be 1.
- - compatible: Should contain "mbvl,gpex40-pcie"
- - reg: Should contain PCIe registers location and length
-+	Mandatory:
- 	"config_axi_slave": PCIe controller registers
- 	"csr_axi_slave"	  : Bridge config registers
-+	Optional:
- 	"gpio_slave"	  : GPIO registers to control slot power
- 	"apb_csr"	  : MSI registers
-=20
---=20
-2.17.1
-
+VGhlIGZ1bmN0aW9uIHN2bV9yZWZyZXNoX2FwaWN2X2V4ZWNfY3RybCgpIGFsd2F5cyByZXR1cm5p
+bmcgcHJlbWF0dXJlbHkNCmFzIGt2bV92Y3B1X2FwaWN2X2FjdGl2ZSgpIGFsd2F5cyByZXR1cm4g
+ZmFsc2Ugd2hlbiBjYWxsaW5nIGZyb20NCnRoZSBmdW5jdGlvbiBhcmNoL3g4Ni9rdm0veDg2LmM6
+a3ZtX3ZjcHVfZGVhY3RpdmF0ZV9hcGljdigpLg0KVGhpcyBpcyBiZWNhdXNlIHRoZSBhcGljdl9h
+Y3RpdmUgaXMgc2V0IHRvIGZhbHNlIGp1c3QgYmVmb3JlIGNhbGxpbmcNCnJlZnJlc2hfYXBpY3Zf
+ZXhlY19jdHJsKCkuDQoNCkFsc28sIHdlIG5lZWQgdG8gbWFyayBWTUNCX0FWSUMgYml0IGFzIGRp
+cnR5IGluc3RlYWQgb2YgVk1DQl9JTlRSLg0KDQpTbywgZml4IHN2bV9yZWZyZXNoX2FwaWN2X2V4
+ZWNfY3RybCgpIHRvIHByb3Blcmx5IGRlYWN0aXZhdGUgQVZJQy4NCg0KRml4ZXM6IDY3MDM0YmI5
+ZGQ1ZSAoJ0tWTTogU1ZNOiBBZGQgaXJxY2hpcF9zcGxpdCgpIGNoZWNrcyBiZWZvcmUgZW5hYmxp
+bmcgQVZJQycpDQpDYzogUmFkaW0gS3LEjW3DocWZIDxya3JjbWFyQHJlZGhhdC5jb20+DQpDYzog
+UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT4NClNpZ25lZC1vZmYtYnk6IFN1cmF2
+ZWUgU3V0aGlrdWxwYW5pdCA8c3VyYXZlZS5zdXRoaWt1bHBhbml0QGFtZC5jb20+DQotLS0NCiBh
+cmNoL3g4Ni9rdm0vc3ZtLmMgfCAyMiArKysrKysrKysrKysrKysrKystLS0tDQogMSBmaWxlIGNo
+YW5nZWQsIDE4IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9h
+cmNoL3g4Ni9rdm0vc3ZtLmMgYi9hcmNoL3g4Ni9rdm0vc3ZtLmMNCmluZGV4IGQzNWM5MDAyZjI4
+Mi4uNTliMWY2ODA2MGM3IDEwMDY0NA0KLS0tIGEvYXJjaC94ODYva3ZtL3N2bS5jDQorKysgYi9h
+cmNoL3g4Ni9rdm0vc3ZtLmMNCkBAIC0zOTAsNiArMzkwLDggQEAgc3RhdGljIGludCBuZXN0ZWRf
+c3ZtX3ZtZXhpdChzdHJ1Y3QgdmNwdV9zdm0gKnN2bSk7DQogc3RhdGljIGludCBuZXN0ZWRfc3Zt
+X2NoZWNrX2V4Y2VwdGlvbihzdHJ1Y3QgdmNwdV9zdm0gKnN2bSwgdW5zaWduZWQgbnIsDQogCQkJ
+CSAgICAgIGJvb2wgaGFzX2Vycm9yX2NvZGUsIHUzMiBlcnJvcl9jb2RlKTsNCiANCitzdGF0aWMg
+Ym9vbCBzdm1fZ2V0X2VuYWJsZV9hcGljdihzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUpOw0KKw0KIGVu
+dW0gew0KIAlWTUNCX0lOVEVSQ0VQVFMsIC8qIEludGVyY2VwdCB2ZWN0b3JzLCBUU0Mgb2Zmc2V0
+LA0KIAkJCSAgICBwYXVzZSBmaWx0ZXIgY291bnQgKi8NCkBAIC00NzgsNiArNDgwLDEyIEBAIHN0
+YXRpYyBpbmxpbmUgc3RydWN0IHZjcHVfc3ZtICp0b19zdm0oc3RydWN0IGt2bV92Y3B1ICp2Y3B1
+KQ0KIAlyZXR1cm4gY29udGFpbmVyX29mKHZjcHUsIHN0cnVjdCB2Y3B1X3N2bSwgdmNwdSk7DQog
+fQ0KIA0KK3N0YXRpYyBib29sIGlzX2F2aWNfYWN0aXZlKHN0cnVjdCB2Y3B1X3N2bSAqc3ZtKQ0K
+K3sNCisJcmV0dXJuIChzdm1fZ2V0X2VuYWJsZV9hcGljdigmc3ZtLT52Y3B1KSAmJg0KKwkJc3Zt
+LT52bWNiLT5jb250cm9sLmludF9jdGwgJiBBVklDX0VOQUJMRV9NQVNLKTsNCit9DQorDQogc3Rh
+dGljIGlubGluZSB2b2lkIGF2aWNfdXBkYXRlX3ZhcGljX2JhcihzdHJ1Y3QgdmNwdV9zdm0gKnN2
+bSwgdTY0IGRhdGEpDQogew0KIAlzdm0tPnZtY2ItPmNvbnRyb2wuYXZpY192YXBpY19iYXIgPSBk
+YXRhICYgVk1DQl9BVklDX0FQSUNfQkFSX01BU0s7DQpAQCAtNTEwOCwxNyArNTExNiwyMyBAQCBz
+dGF0aWMgdm9pZCBzdm1faHdhcGljX2lzcl91cGRhdGUoc3RydWN0IGt2bV92Y3B1ICp2Y3B1LCBp
+bnQgbWF4X2lzcikNCiB7DQogfQ0KIA0KLS8qIE5vdGU6IEN1cnJlbnRseSBvbmx5IHVzZWQgYnkg
+SHlwZXItVi4gKi8NCi1zdGF0aWMgdm9pZCBzdm1fcmVmcmVzaF9hcGljdl9leGVjX2N0cmwoc3Ry
+dWN0IGt2bV92Y3B1ICp2Y3B1KQ0KK3N0YXRpYyB2b2lkIHN2bV9kZWFjdGl2YXRlX2F2aWMoc3Ry
+dWN0IGt2bV92Y3B1ICp2Y3B1KQ0KIHsNCiAJc3RydWN0IHZjcHVfc3ZtICpzdm0gPSB0b19zdm0o
+dmNwdSk7DQogCXN0cnVjdCB2bWNiICp2bWNiID0gc3ZtLT52bWNiOw0KIA0KLQlpZiAoIWt2bV92
+Y3B1X2FwaWN2X2FjdGl2ZSgmc3ZtLT52Y3B1KSkNCisJaWYgKCFsYXBpY19pbl9rZXJuZWwodmNw
+dSkgfHwgIWlzX2F2aWNfYWN0aXZlKHN2bSkpDQogCQlyZXR1cm47DQogDQogCXZtY2ItPmNvbnRy
+b2wuaW50X2N0bCAmPSB+QVZJQ19FTkFCTEVfTUFTSzsNCi0JbWFya19kaXJ0eSh2bWNiLCBWTUNC
+X0lOVFIpOw0KKwltYXJrX2RpcnR5KHZtY2IsIFZNQ0JfQVZJQyk7DQorfQ0KKw0KKy8qIE5vdGU6
+IEN1cnJlbnRseSBvbmx5IHVzZWQgYnkgSHlwZXItVi4gKi8NCitzdGF0aWMgdm9pZCBzdm1fcmVm
+cmVzaF9hcGljdl9leGVjX2N0cmwoc3RydWN0IGt2bV92Y3B1ICp2Y3B1KQ0KK3sNCisJaWYgKCFr
+dm1fdmNwdV9hcGljdl9hY3RpdmUodmNwdSkpDQorCQlzdm1fZGVhY3RpdmF0ZV9hdmljKHZjcHUp
+Ow0KIH0NCiANCiBzdGF0aWMgdm9pZCBzdm1fbG9hZF9lb2lfZXhpdG1hcChzdHJ1Y3Qga3ZtX3Zj
+cHUgKnZjcHUsIHU2NCAqZW9pX2V4aXRfYml0bWFwKQ0KLS0gDQoyLjE3LjENCg0K
