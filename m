@@ -2,130 +2,102 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D08C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDFFC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F333C2175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:11:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FB5E214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:12:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ganX7ifr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbfA2PLU (ORCPT
+        id S1728222AbfA2PMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:11:20 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:45022 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfA2PLT (ORCPT
+        Tue, 29 Jan 2019 10:12:14 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53146 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfA2PMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:11:19 -0500
-Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id F39913A69A0;
-        Tue, 29 Jan 2019 15:54:11 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 8B1FC200012;
-        Tue, 29 Jan 2019 14:54:07 +0000 (UTC)
-Date:   Tue, 29 Jan 2019 15:54:03 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@openedev.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] Re: [PATCH v6 14/22] dt-bindings: sun6i-dsi: Add
- A64 DSI compatible (w/ A31 fallback)
-Message-ID: <20190129145402.d6athskmfydqodvn@flea>
-References: <20190124195900.22620-1-jagan@amarulasolutions.com>
- <20190124195900.22620-15-jagan@amarulasolutions.com>
- <20190125155236.agxwkxvyefmrbvym@flea>
- <bed39fd2-1f4f-4c6b-afc6-da127326775c@openedev.com>
+        Tue, 29 Jan 2019 10:12:13 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m1so18244259wml.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 07:12:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=vNZ5FJ7cxIMAaxbhIhbHCzmHy341mREO1gfpm3+S9gI=;
+        b=ganX7ifrtp5tHj6ni1+LPVWP1E17F8xIGdm7jPsOh7pTgepdccnF2KaBhkLZk0bsEO
+         KWM3WIriSYx6AbD3+3QDu0fInI0fAARwj/YG67JXNKsQXT1YU4ea1IWUmKu8f1J2Xb60
+         j1vkl34Cro1sm5lCT0LI+i0bbX1fSSeaCyH1Txm6kO12fRVWpId6CtUjApyFniqSdR1T
+         I6qO9V48oBkyREa+ezNnhmMABmZUFQdAWNxy09MsCn95ndTOubJbsGD3PdTVsFIjMqJI
+         z2QAfgWwQW40O2SFwHt9WMHiHdSMZ31fRoftP6LpgX/BUYRShxF895WPuBArRCheanKS
+         OLaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=vNZ5FJ7cxIMAaxbhIhbHCzmHy341mREO1gfpm3+S9gI=;
+        b=lv7Q8CisvPFRi5+sTWaB5NWSwu1bhItYtOXFu4wS0r1W843wk0KoG93dxp7RqTqb4W
+         iyfQwn265My6eF1FrAg5APSvxGhifc15ecxBgSQh+kMER5JPoew/1SzRv/v24tKQEc+G
+         GHPSLJksFt3ZzPjUI1fotLpO017x9sLpMtlMLi+sIadpU8H78HuVMFQDUKeSnMONw6fp
+         x7N5Yk2FivqRPwvzjwIEtWLJmLmsLraHHuzVNZXZUnuiBrYB0Y+vri+6y0VvaJcG/AoY
+         EFaJdD4Ienh1M+aUZ9BD7HDPU3hjmKc0MksigHZ9CnJVqje8BNQ59E15ZfT+/Z2R3ZtV
+         Gurw==
+X-Gm-Message-State: AJcUukfnl4WEE39eh8BDrMSUxfPfN0R/qogfP59ONY/ipt1Of8K8GcnT
+        fdUmDEgqp1kZuOEXbbLKPLw1cg==
+X-Google-Smtp-Source: ALg8bN6L5HiBonH/xydVY8vwKwxq8H7DS1iyrX1T/hefVcJGQR+A0hsHu4l/9SSJFXhLQwTERu+uTw==
+X-Received: by 2002:a1c:2944:: with SMTP id p65mr21261486wmp.20.1548774731567;
+        Tue, 29 Jan 2019 07:12:11 -0800 (PST)
+Received: from localhost (aputeaux-684-1-12-29.w90-86.abo.wanadoo.fr. [90.86.215.29])
+        by smtp.googlemail.com with ESMTPSA id x81sm3069370wmg.17.2019.01.29.07.12.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 07:12:10 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH v2 2/2] reset: meson: add g12a compatible string
+In-Reply-To: <20190128181316.30814-3-jbrunet@baylibre.com>
+References: <20190128181316.30814-1-jbrunet@baylibre.com> <20190128181316.30814-3-jbrunet@baylibre.com>
+Date:   Tue, 29 Jan 2019 16:12:10 +0100
+Message-ID: <7hwomno5v9.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yiit6eh4xmxsxmgp"
-Content-Disposition: inline
-In-Reply-To: <bed39fd2-1f4f-4c6b-afc6-da127326775c@openedev.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
---yiit6eh4xmxsxmgp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Add a compatible for the new g12a SoC family.
+>
+> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/reset/reset-meson.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
+> index 5242e0679df7..a8f6549b3af4 100644
+> --- a/drivers/reset/reset-meson.c
+> +++ b/drivers/reset/reset-meson.c
+> @@ -134,6 +134,7 @@ static const struct of_device_id meson_reset_dt_ids[] = {
+>  	 { .compatible = "amlogic,meson8b-reset" },
+>  	 { .compatible = "amlogic,meson-gxbb-reset" },
+>  	 { .compatible = "amlogic,meson-axg-reset" },
+> +	 { .compatible = "amlogic,meson-g12a-reset" },
+>  	 { /* sentinel */ },
 
-On Sat, Jan 26, 2019 at 09:39:00PM +0530, Jagan Teki wrote:
-> On 25/01/19 9:22 PM, Maxime Ripard wrote:
-> > On Fri, Jan 25, 2019 at 01:28:52AM +0530, Jagan Teki wrote:
-> > > The MIPI DSI controller in Allwinner A64 is similar to A33.
-> > >=20
-> > > But unlike A33, A64 doesn't have DSI_SCLK gating which eventually
-> > > set the mod clock rate for the controller.
-> > >=20
-> > > So, use the DSI_DPHY gating for the similar purpose of mod clock
-> > > so-that the controller can operate properly.
-> > >=20
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > ---
-> > >   Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-ds=
-i.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> > > index 69e233e8fad1..dbda2e567760 100644
-> > > --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> > > +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> > > @@ -12,6 +12,7 @@ The DSI Encoder generates the DSI signal from the T=
-CON's.
-> > >   Required properties:
-> > >     - compatible: value must be one of:
-> > >       * allwinner,sun6i-a31-mipi-dsi
-> > > +    * "allwinner,sun50i-a64-mipi-dsi", "allwinner,sun6i-a31-mipi-dsi"
-> >=20
-> > The other line doesn't have quotes, we should be consistent
->=20
-> You mean to say, remove quotes like this
->=20
-> allwinner,sun50i-a64-mipi-dsi, allwinner,sun6i-a31-mipi-dsi
+Looks like this new compatiable isn't used for anything new in the
+driver.  Let's not add a new compatible unless it's needed fo rnew
+behavior.
 
-Yep
-
-> This make confusion with comma with allwinner vs next compatible string
-> isn't it? (In fact I did follow the similar like TCON in sun4i-drm.txt)
-
-There's no really clear consensus here, andd i don't really have a
-strong opinion on the matter either. Since the YAML schemas are going
-to have it without double quotes, I guess we should use that
-convention as well, but we want to remain consistent at least.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---yiit6eh4xmxsxmgp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFBpCgAKCRDj7w1vZxhR
-xV5KAP4uQCiSzyiLpf20SSf+LVg0ilVvXVaAyKZ8286iXnkfGgD+LuvzUttfKIvE
-cXwtCc2cOoI9IQGGyPCJguGgsMTX3wc=
-=fwZS
------END PGP SIGNATURE-----
-
---yiit6eh4xmxsxmgp--
+Kevin
