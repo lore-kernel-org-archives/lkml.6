@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA37C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04219C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 745432086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6E3320882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762572;
-	bh=YGsoZeEsbO9CNsQMrZUnKFfs45sSdR6QYZBQCTYHVYQ=;
+	s=default; t=1548762577;
+	bh=IYRLQoHEihyEKCY1deYk9sN/WIYTdTGhS5iJabS1bSo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qtN1mqaUokdEqbaVX+W7DKsb9X33lCHB/T3NUCLcjyegQQ2RUlZxLB5TFgaNqE3im
-	 Ym3pgRoUhLSSUZH3BZhTR1u2yMELXpkTb06FiG2uWG/nRnfYO32J9RmcG9m0JQ5Hq0
-	 AX8fmEILnKi6zr1uhTyjzwGP9MCwYlXXR3L1OF3g=
+	b=oSz00MYhRPtANXE9hq34s9FmvmYLOVZ1JtrtSjjFU+KvlMAzFjZOaDK2Pd8kowaaj
+	 98ji1LNJp1K+SGEArmar3p1hhnlHWfplLn5wZlsQb5Q0rGLWDPftWLX0qrisUYCGQU
+	 b1iGdy8EXGlmvA2KDk+di5BrTTvov6pJDqO0JKfA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731492AbfA2Lta (ORCPT
+        id S1731502AbfA2Ltg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:49:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40530 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:49:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731258AbfA2Lt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:49:28 -0500
+        id S1731069AbfA2Ltb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:49:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9B4020882;
-        Tue, 29 Jan 2019 11:49:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0CFE2083B;
+        Tue, 29 Jan 2019 11:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762567;
-        bh=YGsoZeEsbO9CNsQMrZUnKFfs45sSdR6QYZBQCTYHVYQ=;
+        s=default; t=1548762570;
+        bh=IYRLQoHEihyEKCY1deYk9sN/WIYTdTGhS5iJabS1bSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pazw6Y7pldn3mCSVjbC+38kwBmQFw+rtGZB+w1CR3BQ8HXIUvhHuUrYDGJJiVXpOR
-         AViHArQ5MX8OuXs6myyVIQRJYhGnN1pViseUa6X4sSGR23rHX6oWyEnQPLj6gNYfKF
-         1KnTrrym8EdPmddR7ZCrmHbooA5j6cZN14B72lmA=
+        b=FxPcCDXSOuCSWIlRt54p/OBf/kIFQEy2EJR3dVw4olQscVZOp/Qw2qTANjtSFZs0y
+         0fQJQ44uGAh8UFTI6MNxEiA3+ncRD3aJcRrPCXiMTwxtULXmdQvMU8h00W9cipZ6MA
+         jzwqw/ul3WkL1lMfvDWwdbgU6BQeiDz0PTdASnXQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Milian Wolff <milian.wolff@kdab.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 51/68] perf unwind: Take pgoff into account when reporting elf to libdwfl
-Date:   Tue, 29 Jan 2019 12:36:13 +0100
-Message-Id: <20190129113136.362427824@linuxfoundation.org>
+        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 52/68] Revert "seccomp: add a selftest for get_metadata"
+Date:   Tue, 29 Jan 2019 12:36:14 +0100
+Message-Id: <20190129113136.472166772@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -67,195 +64,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1fe627da30331024f453faef04d500079b901107 ]
+This reverts commit e65cd9a20343ea90f576c24c38ee85ab6e7d5fec.
 
-libdwfl parses an ELF file itself and creates mappings for the
-individual sections. perf on the other hand sees raw mmap events which
-represent individual sections. When we encounter an address pointing
-into a mapping with pgoff != 0, we must take that into account and
-report the file at the non-offset base address.
+Tommi T. Rrantala notes:
 
-This fixes unwinding with libdwfl in some cases. E.g. for a file like:
+	PTRACE_SECCOMP_GET_METADATA was only added in 4.16
+	(26500475ac1b499d8636ff281311d633909f5d20)
 
-```
+	And it's also breaking seccomp_bpf.c compilation for me:
 
-using namespace std;
+	seccomp_bpf.c: In function ‘get_metadata’:
+	seccomp_bpf.c:2878:26: error: storage size of ‘md’ isn’t known
+	  struct seccomp_metadata md;
 
-mutex g_mutex;
-
-double worker()
-{
-    lock_guard<mutex> guard(g_mutex);
-    uniform_real_distribution<double> uniform(-1E5, 1E5);
-    default_random_engine engine;
-    double s = 0;
-    for (int i = 0; i < 1000; ++i) {
-        s += norm(complex<double>(uniform(engine), uniform(engine)));
-    }
-    cout << s << endl;
-    return s;
-}
-
-int main()
-{
-    vector<std::future<double>> results;
-    for (int i = 0; i < 10000; ++i) {
-        results.push_back(async(launch::async, worker));
-    }
-    return 0;
-}
-```
-
-Compile it with `g++ -g -O2 -lpthread cpp-locking.cpp  -o cpp-locking`,
-then record it with `perf record --call-graph dwarf -e
-sched:sched_switch`.
-
-When you analyze it with `perf script` and libunwind, you should see:
-
-```
-cpp-locking 20038 [005] 54830.236589: sched:sched_switch: prev_comm=cpp-locking prev_pid=20038 prev_prio=120 prev_state=T ==> next_comm=swapper/5 next_pid=0 next_prio=120
-        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb1670208 schedule+0x28 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb16737cc rwsem_down_read_failed+0xec (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb1665e04 call_rwsem_down_read_failed+0x14 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb1672a03 down_read+0x13 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb106bd85 __do_page_fault+0x445 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb18015f5 page_fault+0x45 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-            7f38e4252591 new_heap+0x101 (/usr/lib/libc-2.28.so)
-            7f38e4252d0b arena_get2.part.4+0x2fb (/usr/lib/libc-2.28.so)
-            7f38e4255b1c tcache_init.part.6+0xec (/usr/lib/libc-2.28.so)
-            7f38e42569e5 __GI___libc_malloc+0x115 (inlined)
-            7f38e4241790 __GI__IO_file_doallocate+0x90 (inlined)
-            7f38e424fbbf __GI__IO_doallocbuf+0x4f (inlined)
-            7f38e424ee47 __GI__IO_file_overflow+0x197 (inlined)
-            7f38e424df36 _IO_new_file_xsputn+0x116 (inlined)
-            7f38e4242bfb __GI__IO_fwrite+0xdb (inlined)
-            7f38e463fa6d std::basic_streambuf<char, std::char_traits<char> >::sputn(char const*, long)+0x1cd (inlined)
-            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> >::_M_put(char const*, long)+0x1cd (inlined)
-            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::__write<char>(std::ostreambuf_iterator<char, std::char_traits<char> >, char const*, int)+0x1cd (inlined)
-            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::_M_insert_float<double>(std::ostreambuf_iterator<c>
-            7f38e464bd70 std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::put(std::ostreambuf_iterator<char, std::char_traits<char> >, std::ios_base&, char, double) const+0x90 (inl>
-            7f38e464bd70 std::ostream& std::ostream::_M_insert<double>(double)+0x90 (/usr/lib/libstdc++.so.6.0.25)
-            563b9cb502f7 std::ostream::operator<<(double)+0xb7 (inlined)
-            563b9cb502f7 worker()+0xb7 (/ssd/milian/projects/kdab/rnd/hotspot/build/tests/test-clients/cpp-locking/cpp-locking)
-            563b9cb506fb double std::__invoke_impl<double, double (*)()>(std::__invoke_other, double (*&&)())+0x2b (inlined)
-            563b9cb506fb std::__invoke_result<double (*)()>::type std::__invoke<double (*)()>(double (*&&)())+0x2b (inlined)
-            563b9cb506fb decltype (__invoke((_S_declval<0ul>)())) std::thread::_Invoker<std::tuple<double (*)()> >::_M_invoke<0ul>(std::_Index_tuple<0ul>)+0x2b (inlined)
-            563b9cb506fb std::thread::_Invoker<std::tuple<double (*)()> >::operator()()+0x2b (inlined)
-            563b9cb506fb std::__future_base::_Task_setter<std::unique_ptr<std::__future_base::_Result<double>, std::__future_base::_Result_base::_Deleter>, std::thread::_Invoker<std::tuple<double (*)()> >, dou>
-            563b9cb506fb std::_Function_handler<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> (), std::__future_base::_Task_setter<std::unique_ptr<std::__future_>
-            563b9cb507e8 std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>::operator()() const+0x28 (inlined)
-            563b9cb507e8 std::__future_base::_State_baseV2::_M_do_set(std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>*, bool*)+0x28 (/ssd/milian/>
-            7f38e46d24fe __pthread_once_slow+0xbe (/usr/lib/libpthread-2.28.so)
-            563b9cb51149 __gthread_once+0xe9 (inlined)
-            563b9cb51149 void std::call_once<void (std::__future_base::_State_baseV2::*)(std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>*, bool*)>
-            563b9cb51149 std::__future_base::_State_baseV2::_M_set_result(std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>, bool)+0xe9 (inlined)
-            563b9cb51149 std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<double (*)()> >&&)::{lambda()#1}::op>
-            563b9cb51149 void std::__invoke_impl<void, std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<double>
-            563b9cb51149 std::__invoke_result<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<double (*)()> >>
-            563b9cb51149 decltype (__invoke((_S_declval<0ul>)())) std::thread::_Invoker<std::tuple<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_>
-            563b9cb51149 std::thread::_Invoker<std::tuple<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<dou>
-            563b9cb51149 std::thread::_State_impl<std::thread::_Invoker<std::tuple<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread>
-            7f38e45f0062 execute_native_thread_routine+0x12 (/usr/lib/libstdc++.so.6.0.25)
-            7f38e46caa9c start_thread+0xfc (/usr/lib/libpthread-2.28.so)
-            7f38e42ccb22 __GI___clone+0x42 (inlined)
-```
-
-Before this patch, using libdwfl, you would see:
-
-```
-cpp-locking 20038 [005] 54830.236589: sched:sched_switch: prev_comm=cpp-locking prev_pid=20038 prev_prio=120 prev_state=T ==> next_comm=swapper/5 next_pid=0 next_prio=120
-        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb1670208 schedule+0x28 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb16737cc rwsem_down_read_failed+0xec (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb1665e04 call_rwsem_down_read_failed+0x14 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb1672a03 down_read+0x13 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb106bd85 __do_page_fault+0x445 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb18015f5 page_fault+0x45 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-            7f38e4252591 new_heap+0x101 (/usr/lib/libc-2.28.so)
-        a041161e77950c5c [unknown] ([unknown])
-```
-
-With this patch applied, we get a bit further in unwinding:
-
-```
-cpp-locking 20038 [005] 54830.236589: sched:sched_switch: prev_comm=cpp-locking prev_pid=20038 prev_prio=120 prev_state=T ==> next_comm=swapper/5 next_pid=0 next_prio=120
-        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb1670208 schedule+0x28 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb16737cc rwsem_down_read_failed+0xec (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb1665e04 call_rwsem_down_read_failed+0x14 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb1672a03 down_read+0x13 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb106bd85 __do_page_fault+0x445 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-        ffffffffb18015f5 page_fault+0x45 (/lib/modules/4.14.78-1-lts/build/vmlinux)
-            7f38e4252591 new_heap+0x101 (/usr/lib/libc-2.28.so)
-            7f38e4252d0b arena_get2.part.4+0x2fb (/usr/lib/libc-2.28.so)
-            7f38e4255b1c tcache_init.part.6+0xec (/usr/lib/libc-2.28.so)
-            7f38e42569e5 __GI___libc_malloc+0x115 (inlined)
-            7f38e4241790 __GI__IO_file_doallocate+0x90 (inlined)
-            7f38e424fbbf __GI__IO_doallocbuf+0x4f (inlined)
-            7f38e424ee47 __GI__IO_file_overflow+0x197 (inlined)
-            7f38e424df36 _IO_new_file_xsputn+0x116 (inlined)
-            7f38e4242bfb __GI__IO_fwrite+0xdb (inlined)
-            7f38e463fa6d std::basic_streambuf<char, std::char_traits<char> >::sputn(char const*, long)+0x1cd (inlined)
-            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> >::_M_put(char const*, long)+0x1cd (inlined)
-            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::__write<char>(std::ostreambuf_iterator<char, std::char_traits<char> >, char const*, int)+0x1cd (inlined)
-            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::_M_insert_float<double>(std::ostreambuf_iterator<c>
-            7f38e464bd70 std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::put(std::ostreambuf_iterator<char, std::char_traits<char> >, std::ios_base&, char, double) const+0x90 (inl>
-            7f38e464bd70 std::ostream& std::ostream::_M_insert<double>(double)+0x90 (/usr/lib/libstdc++.so.6.0.25)
-            563b9cb502f7 std::ostream::operator<<(double)+0xb7 (inlined)
-            563b9cb502f7 worker()+0xb7 (/ssd/milian/projects/kdab/rnd/hotspot/build/tests/test-clients/cpp-locking/cpp-locking)
-        6eab825c1ee3e4ff [unknown] ([unknown])
-```
-
-Note that the backtrace is still stopping too early, when compared to
-the nice results obtained via libunwind. It's unclear so far what the
-reason for that is.
-
-Committer note:
-
-Further comment by Milian on the thread started on the Link: tag below:
-
- ---
-The remaining issue is due to a bug in elfutils:
-
-https://sourceware.org/ml/elfutils-devel/2018-q4/msg00089.html
-
-With both patches applied, libunwind and elfutils produce the same output for
-the above scenario.
- ---
-
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20181029141644.3907-1-milian.wolff@kdab.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/unwind-libdw.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 61 -------------------
+ 1 file changed, 61 deletions(-)
 
-diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
-index 8e969f28cc59..f1fe5acdbba4 100644
---- a/tools/perf/util/unwind-libdw.c
-+++ b/tools/perf/util/unwind-libdw.c
-@@ -44,13 +44,13 @@ static int __report_module(struct addr_location *al, u64 ip,
- 		Dwarf_Addr s;
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index e350cf3d4f90..194759ec9e70 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -145,15 +145,6 @@ struct seccomp_data {
+ #define SECCOMP_FILTER_FLAG_SPEC_ALLOW (1UL << 2)
+ #endif
  
- 		dwfl_module_info(mod, NULL, &s, NULL, NULL, NULL, NULL, NULL);
--		if (s != al->map->start)
-+		if (s != al->map->start - al->map->pgoff)
- 			mod = 0;
- 	}
+-#ifndef PTRACE_SECCOMP_GET_METADATA
+-#define PTRACE_SECCOMP_GET_METADATA	0x420d
+-
+-struct seccomp_metadata {
+-	__u64 filter_off;       /* Input: which filter */
+-	__u64 flags;             /* Output: filter's flags */
+-};
+-#endif
+-
+ #ifndef seccomp
+ int seccomp(unsigned int op, unsigned int flags, void *args)
+ {
+@@ -2870,58 +2861,6 @@ TEST(get_action_avail)
+ 	EXPECT_EQ(errno, EOPNOTSUPP);
+ }
  
- 	if (!mod)
- 		mod = dwfl_report_elf(ui->dwfl, dso->short_name,
--				      (dso->symsrc_filename ? dso->symsrc_filename : dso->long_name), -1, al->map->start,
-+				      (dso->symsrc_filename ? dso->symsrc_filename : dso->long_name), -1, al->map->start - al->map->pgoff,
- 				      false);
- 
- 	return mod && dwfl_addrmodule(ui->dwfl, ip) == mod ? 0 : -1;
+-TEST(get_metadata)
+-{
+-	pid_t pid;
+-	int pipefd[2];
+-	char buf;
+-	struct seccomp_metadata md;
+-
+-	ASSERT_EQ(0, pipe(pipefd));
+-
+-	pid = fork();
+-	ASSERT_GE(pid, 0);
+-	if (pid == 0) {
+-		struct sock_filter filter[] = {
+-			BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
+-		};
+-		struct sock_fprog prog = {
+-			.len = (unsigned short)ARRAY_SIZE(filter),
+-			.filter = filter,
+-		};
+-
+-		/* one with log, one without */
+-		ASSERT_EQ(0, seccomp(SECCOMP_SET_MODE_FILTER,
+-				     SECCOMP_FILTER_FLAG_LOG, &prog));
+-		ASSERT_EQ(0, seccomp(SECCOMP_SET_MODE_FILTER, 0, &prog));
+-
+-		ASSERT_EQ(0, close(pipefd[0]));
+-		ASSERT_EQ(1, write(pipefd[1], "1", 1));
+-		ASSERT_EQ(0, close(pipefd[1]));
+-
+-		while (1)
+-			sleep(100);
+-	}
+-
+-	ASSERT_EQ(0, close(pipefd[1]));
+-	ASSERT_EQ(1, read(pipefd[0], &buf, 1));
+-
+-	ASSERT_EQ(0, ptrace(PTRACE_ATTACH, pid));
+-	ASSERT_EQ(pid, waitpid(pid, NULL, 0));
+-
+-	md.filter_off = 0;
+-	ASSERT_EQ(sizeof(md), ptrace(PTRACE_SECCOMP_GET_METADATA, pid, sizeof(md), &md));
+-	EXPECT_EQ(md.flags, SECCOMP_FILTER_FLAG_LOG);
+-	EXPECT_EQ(md.filter_off, 0);
+-
+-	md.filter_off = 1;
+-	ASSERT_EQ(sizeof(md), ptrace(PTRACE_SECCOMP_GET_METADATA, pid, sizeof(md), &md));
+-	EXPECT_EQ(md.flags, 0);
+-	EXPECT_EQ(md.filter_off, 1);
+-
+-	ASSERT_EQ(0, kill(pid, SIGKILL));
+-}
+-
+ /*
+  * TODO:
+  * - add microbenchmarks
 -- 
 2.19.1
 
