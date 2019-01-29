@@ -2,94 +2,101 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 351E6C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9306CC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F29F214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63243214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:28:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="YtwnFWbi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbfA2Q1o (ORCPT
+        id S1728292AbfA2Q2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:27:44 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:44827 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbfA2Q1o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:27:44 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1goWEO-0001ah-7x; Tue, 29 Jan 2019 17:27:24 +0100
-Date:   Tue, 29 Jan 2019 17:27:23 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     John Garry <john.garry@huawei.com>
-cc:     Hannes Reinecke <hare@suse.com>, Christoph Hellwig <hch@lst.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        SCSI Mailing List <linux-scsi@vger.kernel.org>
-Subject: Re: Question on handling managed IRQs when hotplugging CPUs
-In-Reply-To: <bdd457db-6898-a085-bfaf-99d29d81467d@huawei.com>
-Message-ID: <alpine.DEB.2.21.1901291717370.1513@nanos.tec.linutronix.de>
-References: <f6f6e031-8b79-439d-c2af-8d3e76f30710@huawei.com> <5bff8227-16fd-6bca-c16e-3992ef6bec5a@suse.com> <alpine.DEB.2.21.1901291257590.1513@nanos.tec.linutronix.de> <bdd457db-6898-a085-bfaf-99d29d81467d@huawei.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 29 Jan 2019 11:28:32 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:65031 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725828AbfA2Q2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 11:28:32 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43psPT0TmPz9v2km;
+        Tue, 29 Jan 2019 17:28:29 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=YtwnFWbi; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id C5icorkRXm5E; Tue, 29 Jan 2019 17:28:29 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43psPS6VBnz9v2kg;
+        Tue, 29 Jan 2019 17:28:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548779308; bh=9sW9e9KLj7n9ktYaUM5YdYnUm85NAdf/zI5zcZYMq0Y=;
+        h=From:Subject:To:Cc:Date:From;
+        b=YtwnFWbixQVkMqIfIbobYenx6rIEiBGy4Uq+5W8sshn18v5julncU+7VfaD5jfDrv
+         MmPQvbvX8btvHuBNtdgX+J64FDNBBj2n9wn4KvRm0WgqWL4aBO+42JeGi+uZ49yNbL
+         q2oCYPLlQaxOWrQ01qxkEdg1nsTCYtdOMzUO2QHQ=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 73F178B7E6;
+        Tue, 29 Jan 2019 17:28:30 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id c-Auzt26jUH4; Tue, 29 Jan 2019 17:28:30 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4ABD78B755;
+        Tue, 29 Jan 2019 17:28:30 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 0DF0672DF1; Tue, 29 Jan 2019 16:28:29 +0000 (UTC)
+Message-Id: <1b13936c5ee1dceb8fec9251aff0b5cda9fd2ace.1548737151.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/traps: fix the message printed when stack overflows
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 29 Jan 2019 16:28:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Jan 2019, John Garry wrote:
-> On 29/01/2019 12:01, Thomas Gleixner wrote:
-> > If the last CPU which is associated to a queue (and the corresponding
-> > interrupt) goes offline, then the subsytem/driver code has to make sure
-> > that:
-> > 
-> >    1) No more requests can be queued on that queue
-> > 
-> >    2) All outstanding of that queue have been completed or redirected
-> >       (don't know if that's possible at all) to some other queue.
-> 
-> This may not be possible. For the HW I deal with, we have symmetrical delivery
-> and completion queues, and a command delivered on DQx will always complete on
-> CQx. Each completion queue has a dedicated IRQ.
+Today's message is useless:
 
-So you can stop queueing on DQx and wait for all outstanding ones to come
-in on CQx, right?
+[   42.253267] Kernel stack overflow in process (ptrval), r1=c65500b0
 
-> > That has to be done in that order obviously. Whether any of the
-> > subsystems/drivers actually implements this, I can't tell.
-> 
-> Going back to c5cb83bb337c25, it seems to me that the change was made with the
-> idea that we can maintain the affinity for the IRQ as we're shutting it down
-> as no interrupts should occur.
-> 
-> However I don't see why we can't instead keep the IRQ up and set the affinity
-> to all online CPUs in offline path, and restore the original affinity in
-> online path. The reason we set the queue affinity to specific CPUs is for
-> performance, but I would not say that this matters for handling residual IRQs.
+This patch fixes it:
 
-Oh yes it does. The problem is especially on x86, that if you have a large
-number of queues and you take a large number of CPUs offline, then you run
-into vector space exhaustion on the remaining online CPUs.
+[   66.905235] Kernel stack overflow in process sh[356], r1=c65560b0
 
-In the worst case a single CPU on x86 has only 186 vectors available for
-device interrupts. So just take a quad socket machine with 144 CPUs and two
-multiqueue devices with a queue per cpu. ---> FAIL
+Fixes: ad67b74d2469 ("printk: hash addresses printed with %p")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/kernel/traps.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It probably fails already with one device because there are lots of other
-devices which have regular interrupt which cannot be shut down.
-
-Thanks,
-
-	tglx
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index 5e917a84f949..ca8f86ea0345 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -1535,8 +1535,8 @@ void alignment_exception(struct pt_regs *regs)
+ 
+ void StackOverflow(struct pt_regs *regs)
+ {
+-	printk(KERN_CRIT "Kernel stack overflow in process %p, r1=%lx\n",
+-	       current, regs->gpr[1]);
++	printk(KERN_CRIT "Kernel stack overflow in process %s[%d], r1=%lx\n",
++	       current->comm, current->pid, regs->gpr[1]);
+ 	debugger(regs);
+ 	show_regs(regs);
+ 	panic("kernel stack overflow");
+-- 
+2.13.3
 
