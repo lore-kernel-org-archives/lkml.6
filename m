@@ -2,80 +2,260 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F997C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1189C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A8DE20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:34:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97E87214D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:36:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="O5BuUVqu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729244AbfA2UeX (ORCPT
+        id S1727912AbfA2Ug2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:34:23 -0500
-Received: from mga04.intel.com ([192.55.52.120]:6145 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726984AbfA2UeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:34:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 12:34:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,538,1539673200"; 
-   d="scan'208";a="270944429"
-Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
-  by orsmga004.jf.intel.com with ESMTP; 29 Jan 2019 12:34:17 -0800
-Date:   Tue, 29 Jan 2019 22:34:22 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v8 5/7] tpm: move tpm_chip definition to
- include/linux/tpm.h
-Message-ID: <20190129203422.GD11615@linux.intel.com>
-References: <20190124154910.29948-1-roberto.sassu@huawei.com>
- <20190124154910.29948-6-roberto.sassu@huawei.com>
+        Tue, 29 Jan 2019 15:36:28 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39209 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727075AbfA2Ug2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 15:36:28 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b14so17148287edt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 12:36:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7PU1pk2m3cOnXRaamvpxJKgNwOWp0jjkWLulyuuDImg=;
+        b=O5BuUVquHcp0sYtmcoxKlyNosg2Kw67Ithxdrp66MzDDTxEQtPROGx6AN0eug0cHv0
+         +2GFQA4qUn7ImLLI/0tMaqrl3jyJyGSnAtqyf/yGdvNKJOFlF21Zu9PfPWit99rZQJAo
+         hcZIE1eQA7fDcr5aZnI65hyO+YS1Vr8E1Yo5c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=7PU1pk2m3cOnXRaamvpxJKgNwOWp0jjkWLulyuuDImg=;
+        b=iiLE/6cJix2isM5sccQ/3N77LjvIV4sNVvLO4sdNGqXhvbb4xaH0OOVI0+ZN8JnAIT
+         KNr68nPj7OSGOh7gm/vBh09NfTE4qot+PeaC7BoWdOtffOXWB2W4DSwW9Q3S+uQY4C++
+         ZrRs2BnjAWYalsX21DoXG3bNWXTJ4BV4h9VTHAjqNNtkZ+VM4fVFhmLIlm7UVhvRyGIw
+         LIWkpdAAetPXILJh3/rWjSIdsjQDyVB70xWrr1Elpk66BFJ3g2Ox7AWB5jq7PRkIUter
+         GH4qxVq2+9PM9OpFNFPvDzMTrld/GEKcqpR+4pFFEBABBAAEg3Uf3f5cJj9qLRJdJuBO
+         +HAQ==
+X-Gm-Message-State: AJcUukdM2vTg/gmzQDFnVoqcx7UjNwgPpCv/Dupb3L/0kcD9Vfu9/mrY
+        GasxiqYvhVahRZa2zbrZaXzwDg==
+X-Google-Smtp-Source: ALg8bN5LYIa26ZX25aHzPQdCwbX+mCc+2r5p7ZtXBn2HfBzaxJawuwn6wS8Mktadyf36yjd6qSDHNA==
+X-Received: by 2002:a17:906:1248:: with SMTP id u8mr7018076eja.33.1548794185839;
+        Tue, 29 Jan 2019 12:36:25 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id j8sm14739668ede.55.2019.01.29.12.36.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 12:36:24 -0800 (PST)
+Date:   Tue, 29 Jan 2019 21:36:22 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] drm/dp_mst: Fix unbalanced malloc ref in
+ drm_dp_mst_deallocate_vcpi()
+Message-ID: <20190129203622.GB3271@phenom.ffwll.local>
+Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+References: <20190129183928.26779-1-lyude@redhat.com>
+ <20190129183928.26779-2-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124154910.29948-6-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20190129183928.26779-2-lyude@redhat.com>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 04:49:08PM +0100, Roberto Sassu wrote:
-> -enum tpm_const {
-> -	TPM_MINOR = 224,	/* officially assigned */
-> -	TPM_BUFSIZE = 4096,
-> -	TPM_NUM_DEVICES = 65536,
-> -	TPM_RETRY = 50,		/* 5 seconds */
-> -	TPM_NUM_EVENT_LOG_FILES = 3,
-> -};
+On Tue, Jan 29, 2019 at 01:39:25PM -0500, Lyude Paul wrote:
+> In drm_dp_mst_deallocate_vcpi(), we currently unconditionally call
+> drm_dp_mst_put_port_malloc() on the port that's passed to us, even if we
+> never successfully allocated VCPI to it. This is contrary to what we do
+> in drm_dp_mst_allocate_vcpi(), where we only call
+> drm_dp_mst_get_port_malloc() on the passed port if we successfully
+> allocated VCPI to it.
+> 
+> As a result, if drm_dp_mst_allocate_vcpi() fails during a modeset and
+> another successive modeset calls drm_dp_mst_deallocate_vcpi() we will
+> end up dropping someone else's malloc reference to the port. Example:
+> 
+> [  962.309260] ==================================================================
+> [  962.309290] BUG: KASAN: use-after-free in drm_dp_mst_put_port_malloc+0x72/0x180 [drm_kms_helper]
+> [  962.309296] Read of size 4 at addr ffff888416c30004 by task kworker/0:1H/500
+> 
+> [  962.309308] CPU: 0 PID: 500 Comm: kworker/0:1H Tainted: G        W  O      5.0.0-rc2Lyude-Test+ #1
+> [  962.309313] Hardware name: LENOVO 20L8S2N800/20L8S2N800, BIOS N22ET35W (1.12 ) 04/09/2018
+> [  962.309428] Workqueue: events_highpri intel_atomic_cleanup_work [i915]
+> [  962.309434] Call Trace:
+> [  962.309452]  dump_stack+0xad/0x150
+> [  962.309462]  ? dump_stack_print_info.cold.0+0x1b/0x1b
+> [  962.309472]  ? kmsg_dump_rewind_nolock+0xd9/0xd9
+> [  962.309504]  ? drm_dp_mst_put_port_malloc+0x72/0x180 [drm_kms_helper]
+> [  962.309515]  print_address_description+0x6c/0x23c
+> [  962.309542]  ? drm_dp_mst_put_port_malloc+0x72/0x180 [drm_kms_helper]
+> [  962.309568]  ? drm_dp_mst_put_port_malloc+0x72/0x180 [drm_kms_helper]
+> [  962.309577]  kasan_report.cold.3+0x1a/0x32
+> [  962.309605]  ? drm_dp_mst_put_port_malloc+0x72/0x180 [drm_kms_helper]
+> [  962.309631]  drm_dp_mst_put_port_malloc+0x72/0x180 [drm_kms_helper]
+> [  962.309658]  ? drm_dp_mst_put_mstb_malloc+0x180/0x180 [drm_kms_helper]
+> [  962.309687]  drm_dp_mst_destroy_state+0xcd/0x120 [drm_kms_helper]
+> [  962.309745]  drm_atomic_state_default_clear+0x6ee/0xcc0 [drm]
+> [  962.309864]  intel_atomic_state_clear+0xe/0x80 [i915]
+> [  962.309928]  __drm_atomic_state_free+0x35/0xd0 [drm]
+> [  962.310044]  intel_atomic_cleanup_work+0x56/0x70 [i915]
+> [  962.310057]  process_one_work+0x884/0x1400
+> [  962.310067]  ? drain_workqueue+0x5a0/0x5a0
+> [  962.310075]  ? __schedule+0x87f/0x1e80
+> [  962.310086]  ? __sched_text_start+0x8/0x8
+> [  962.310095]  ? run_rebalance_domains+0x400/0x400
+> [  962.310110]  ? deref_stack_reg+0xb4/0x120
+> [  962.310117]  ? __read_once_size_nocheck.constprop.7+0x10/0x10
+> [  962.310124]  ? worker_enter_idle+0x47f/0x6a0
+> [  962.310134]  ? schedule+0xd7/0x2e0
+> [  962.310141]  ? __schedule+0x1e80/0x1e80
+> [  962.310148]  ? _raw_spin_lock_irq+0x9f/0x130
+> [  962.310155]  ? _raw_write_unlock_irqrestore+0x110/0x110
+> [  962.310164]  worker_thread+0x196/0x11e0
+> [  962.310175]  ? set_load_weight+0x2e0/0x2e0
+> [  962.310181]  ? __switch_to_asm+0x34/0x70
+> [  962.310187]  ? __switch_to_asm+0x40/0x70
+> [  962.310194]  ? process_one_work+0x1400/0x1400
+> [  962.310199]  ? __switch_to_asm+0x40/0x70
+> [  962.310205]  ? __switch_to_asm+0x34/0x70
+> [  962.310211]  ? __switch_to_asm+0x34/0x70
+> [  962.310216]  ? __switch_to_asm+0x40/0x70
+> [  962.310221]  ? __switch_to_asm+0x34/0x70
+> [  962.310226]  ? __switch_to_asm+0x40/0x70
+> [  962.310231]  ? __switch_to_asm+0x34/0x70
+> [  962.310236]  ? __switch_to_asm+0x40/0x70
+> [  962.310242]  ? syscall_return_via_sysret+0xf/0x7f
+> [  962.310248]  ? __switch_to_asm+0x34/0x70
+> [  962.310253]  ? __switch_to_asm+0x40/0x70
+> [  962.310258]  ? __switch_to_asm+0x34/0x70
+> [  962.310263]  ? __switch_to_asm+0x40/0x70
+> [  962.310268]  ? __switch_to_asm+0x34/0x70
+> [  962.310273]  ? __switch_to_asm+0x40/0x70
+> [  962.310281]  ? __schedule+0x87f/0x1e80
+> [  962.310292]  ? __sched_text_start+0x8/0x8
+> [  962.310300]  ? save_stack+0x8c/0xb0
+> [  962.310308]  ? __kasan_kmalloc.constprop.6+0xc6/0xd0
+> [  962.310313]  ? kthread+0x98/0x3a0
+> [  962.310318]  ? ret_from_fork+0x35/0x40
+> [  962.310334]  ? __wake_up_common+0x178/0x6f0
+> [  962.310343]  ? _raw_spin_lock_irqsave+0xa4/0x140
+> [  962.310349]  ? __lock_text_start+0x8/0x8
+> [  962.310355]  ? _raw_write_lock_irqsave+0x70/0x130
+> [  962.310360]  ? __lock_text_start+0x8/0x8
+> [  962.310371]  ? process_one_work+0x1400/0x1400
+> [  962.310376]  kthread+0x2e2/0x3a0
+> [  962.310383]  ? kthread_create_on_node+0xc0/0xc0
+> [  962.310389]  ret_from_fork+0x35/0x40
+> 
+> [  962.310401] Allocated by task 1462:
+> [  962.310410]  __kasan_kmalloc.constprop.6+0xc6/0xd0
+> [  962.310437]  drm_dp_add_port+0xd60/0x1960 [drm_kms_helper]
+> [  962.310464]  drm_dp_send_link_address+0x4b0/0x770 [drm_kms_helper]
+> [  962.310491]  drm_dp_check_and_send_link_address+0x197/0x1f0 [drm_kms_helper]
+> [  962.310515]  drm_dp_mst_link_probe_work+0x2b6/0x330 [drm_kms_helper]
+> [  962.310522]  process_one_work+0x884/0x1400
+> [  962.310529]  worker_thread+0x196/0x11e0
+> [  962.310533]  kthread+0x2e2/0x3a0
+> [  962.310538]  ret_from_fork+0x35/0x40
+> 
+> [  962.310543] Freed by task 500:
+> [  962.310550]  __kasan_slab_free+0x133/0x180
+> [  962.310555]  kfree+0x92/0x1a0
+> [  962.310581]  drm_dp_mst_put_port_malloc+0x14d/0x180 [drm_kms_helper]
+> [  962.310693]  intel_connector_destroy+0xb2/0xe0 [i915]
+> [  962.310747]  drm_mode_object_put.part.0+0x12b/0x1a0 [drm]
+> [  962.310802]  drm_atomic_state_default_clear+0x1f2/0xcc0 [drm]
+> [  962.310916]  intel_atomic_state_clear+0xe/0x80 [i915]
+> [  962.310972]  __drm_atomic_state_free+0x35/0xd0 [drm]
+> [  962.311083]  intel_atomic_cleanup_work+0x56/0x70 [i915]
+> [  962.311092]  process_one_work+0x884/0x1400
+> [  962.311098]  worker_thread+0x196/0x11e0
+> [  962.311103]  kthread+0x2e2/0x3a0
+> [  962.311108]  ret_from_fork+0x35/0x40
+> 
+> [  962.311116] The buggy address belongs to the object at ffff888416c30000
+>                 which belongs to the cache kmalloc-2k of size 2048
+> [  962.311122] The buggy address is located 4 bytes inside of
+>                 2048-byte region [ffff888416c30000, ffff888416c30800)
+> [  962.311124] The buggy address belongs to the page:
+> [  962.311132] page:ffffea00105b0c00 count:1 mapcount:0 mapping:ffff88841d003040 index:0x0 compound_mapcount: 0
+> [  962.311142] flags: 0x8000000000010200(slab|head)
+> [  962.311152] raw: 8000000000010200 dead000000000100 dead000000000200 ffff88841d003040
+> [  962.311159] raw: 0000000000000000 00000000000f000f 00000001ffffffff 0000000000000000
+> [  962.311162] page dumped because: kasan: bad access detected
+> 
+> So, bail early if drm_dp_mst_deallocate_vcpi() is called on a port with
+> no VCPI allocation. Additionally, clean up the surrounding kerneldoc
+> while we're at it since the port is assumed to be kept around because
+> the DRM driver is expected to hold a malloc reference to it, not just
+> us.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Fixes: eceae1472467 ("drm/dp_mst: Start tracking per-port VCPI allocations")
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> ---
+>  drivers/gpu/drm/drm_dp_mst_topology.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+> index 2552a27362a0..8ba0e5b368da 100644
+> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> @@ -3246,15 +3246,13 @@ EXPORT_SYMBOL(drm_dp_mst_reset_vcpi_slots);
+>  /**
+>   * drm_dp_mst_deallocate_vcpi() - deallocate a VCPI
+>   * @mgr: manager for this port
+> - * @port: unverified port to deallocate vcpi for
+> + * @port: port to deallocate vcpi for
 
-Here using enum has been a bad idea in the first place, as they don't
-relate in any meaningful way.
+Maybe add:
 
-Replace the definition with the following in drivers/char/tpm/tpm.h:
+"This can be called unconditionally, whether drm_dp_mst_allocate_vcpi
+succeeded or not."
 
-#define TPM_MINOR	224 /* misc backwards compatibility */
-#define TPM_BUFSIZE	4096
-#define TPM_NUM_DEVICES	65536
-#define TPM_RETRY	5 /* seconds */
+Just to clarify this a bit more.
 
-And only add this to include/linux/tpm.h:
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-#define TPM_NUM_EVENT_LOG_FILES 3
+>   */
+>  void drm_dp_mst_deallocate_vcpi(struct drm_dp_mst_topology_mgr *mgr,
+>  				struct drm_dp_mst_port *port)
+>  {
+> -	/*
+> -	 * A port with VCPI will remain allocated until it's VCPI is
+> -	 * released, no verified ref needed
+> -	 */
+> +	if (!port->vcpi.vcpi)
+> +		return;
+>  
+>  	drm_dp_mst_put_payload_id(mgr, port->vcpi.vcpi);
+>  	port->vcpi.num_slots = 0;
+> -- 
+> 2.20.1
+> 
 
-Otherwise, this looks good.
-
-/Jarkko
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
