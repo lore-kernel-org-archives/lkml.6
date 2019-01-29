@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49628C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59E2C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E9120881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A95E20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763626;
-	bh=NQGkiyCGa2ZthJT134/lDfe7RSQeHY0T3I6EnQsyErk=;
+	s=default; t=1548763636;
+	bh=FGjDR4H0eK+SYPvN6fBSECxcBrr27RMRHaE7x039krY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YzDfVce9R8ya0hqwg0JVxzF2kXMxHrb+QAwQuZY3LgxSfPD02M2yz9wFHTKT86ysJ
-	 fb88nuRYGIegno0nF+Xk7+vv5hGIfxD/bNXluPwU//QXh/f4hcgsEnwVpK5ZQPruCW
-	 F6+1bzfrMSBVZMtRgNR2sLfjvA3ddWiw+IhbwmJ8=
+	b=w95KkUnXYBzSPoLmHaj0PWBN6sbjTlDGKHjqJBggUFgub7kgRQOna6BDbBlc2hnco
+	 ytlbi9dq/gTMMuk8mgCT+xnPHjtdKFD58UQRpN63mxGrk6c0XQvKvDlN5b43WQwEWF
+	 2gcy8i6W0cTd+GKfAOIyB1kLawxlOvXHIKL9YbIw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbfA2MHE (ORCPT
+        id S1729829AbfA2MHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:07:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57812 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:07:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729692AbfA2Lkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:40:43 -0500
+        id S1729661AbfA2Lka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:40:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5ACC220857;
-        Tue, 29 Jan 2019 11:40:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 989692183F;
+        Tue, 29 Jan 2019 11:40:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762041;
-        bh=NQGkiyCGa2ZthJT134/lDfe7RSQeHY0T3I6EnQsyErk=;
+        s=default; t=1548762030;
+        bh=FGjDR4H0eK+SYPvN6fBSECxcBrr27RMRHaE7x039krY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n8ZOMMAPpV81Tca479h1dw0eQnTpCy/Q+h9u1fwAxRZpndMZAb1EQqHI5CipAywXl
-         /71aUfNFZpFt8piLR1x8Jsvm+vK594RkEnEjGzWAdhbkfk/ESn9D70COsafQs9A6Wv
-         whGhBcDFM2j7gVbw02IEhL1CMD1ureFoE8OUi2ag=
+        b=VQ/SSjqfbshsgU6cGEiYCeMO44aJfKqJd71WvxzUU1iW+F7NO9gLmRkwTJ8aX7MiV
+         p7f1zrPGxJSdp3YE87NlucwnLd7pTQDULU/ZW/4S2FT6HRBN4YrIFsNvcZen/1yGV1
+         9Q94XOy/TltcN5r/HOvbhda5luUoL5p9k7neyxbQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kyungtae Kim <kt0755@gmail.com>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Andre Naujoks <nautsch2@gmail.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.20 088/117] can: bcm: check timer values before ktime conversion
-Date:   Tue, 29 Jan 2019 12:35:39 +0100
-Message-Id: <20190129113211.785345728@linuxfoundation.org>
+        stable@vger.kernel.org, "H.J. Lu" <hjl.tools@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 4.20 084/117] posix-cpu-timers: Unbreak timer rearming
+Date:   Tue, 29 Jan 2019 12:35:35 +0100
+Message-Id: <20190129113211.626933928@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -67,89 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Hartkopp <socketcan@hartkopp.net>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 93171ba6f1deffd82f381d36cb13177872d023f6 upstream.
+commit 93ad0fc088c5b4631f796c995bdd27a082ef33a6 upstream.
 
-Kyungtae Kim detected a potential integer overflow in bcm_[rx|tx]_setup()
-when the conversion into ktime multiplies the given value with NSEC_PER_USEC
-(1000).
+The recent commit which prevented a division by 0 issue in the alarm timer
+code broke posix CPU timers as an unwanted side effect.
 
-Reference: https://marc.info/?l=linux-can&m=154732118819828&w=2
+The reason is that the common rearm code checks for timer->it_interval
+being 0 now. What went unnoticed is that the posix cpu timer setup does not
+initialize timer->it_interval as it stores the interval in CPU timer
+specific storage. The reason for the separate storage is historical as the
+posix CPU timers always had a 64bit nanoseconds representation internally
+while timer->it_interval is type ktime_t which used to be a modified
+timespec representation on 32bit machines.
 
-Add a check for the given tv_usec, so that the value stays below one second.
-Additionally limit the tv_sec value to a reasonable value for CAN related
-use-cases of 400 days and ensure all values to be positive.
+Instead of reverting the offending commit and fixing the alarmtimer issue
+in the alarmtimer code, store the interval in timer->it_interval at CPU
+timer setup time so the common code check works. This also repairs the
+existing inconistency of the posix CPU timer code which kept a single shot
+timer armed despite of the interval being 0.
 
-Reported-by: Kyungtae Kim <kt0755@gmail.com>
-Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: linux-stable <stable@vger.kernel.org> # >= 2.6.26
-Tested-by: Kyungtae Kim <kt0755@gmail.com>
-Acked-by: Andre Naujoks <nautsch2@gmail.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+The separate storage can be removed in mainline, but that needs to be a
+separate commit as the current one has to be backported to stable kernels.
+
+Fixes: 0e334db6bb4b ("posix-timers: Fix division by zero bug")
+Reported-by: H.J. Lu <hjl.tools@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190111133500.840117406@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/can/bcm.c |   27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ kernel/time/posix-cpu-timers.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/can/bcm.c
-+++ b/net/can/bcm.c
-@@ -67,6 +67,9 @@
-  */
- #define MAX_NFRAMES 256
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -685,6 +685,7 @@ static int posix_cpu_timer_set(struct k_
+ 	 * set up the signal and overrun bookkeeping.
+ 	 */
+ 	timer->it.cpu.incr = timespec64_to_ns(&new->it_interval);
++	timer->it_interval = ns_to_ktime(timer->it.cpu.incr);
  
-+/* limit timers to 400 days for sending/timeouts */
-+#define BCM_TIMER_SEC_MAX (400 * 24 * 60 * 60)
-+
- /* use of last_frames[index].flags */
- #define RX_RECV    0x40 /* received data for this element */
- #define RX_THR     0x80 /* element not been sent due to throttle feature */
-@@ -140,6 +143,22 @@ static inline ktime_t bcm_timeval_to_kti
- 	return ktime_set(tv.tv_sec, tv.tv_usec * NSEC_PER_USEC);
- }
- 
-+/* check limitations for timeval provided by user */
-+static bool bcm_is_invalid_tv(struct bcm_msg_head *msg_head)
-+{
-+	if ((msg_head->ival1.tv_sec < 0) ||
-+	    (msg_head->ival1.tv_sec > BCM_TIMER_SEC_MAX) ||
-+	    (msg_head->ival1.tv_usec < 0) ||
-+	    (msg_head->ival1.tv_usec >= USEC_PER_SEC) ||
-+	    (msg_head->ival2.tv_sec < 0) ||
-+	    (msg_head->ival2.tv_sec > BCM_TIMER_SEC_MAX) ||
-+	    (msg_head->ival2.tv_usec < 0) ||
-+	    (msg_head->ival2.tv_usec >= USEC_PER_SEC))
-+		return true;
-+
-+	return false;
-+}
-+
- #define CFSIZ(flags) ((flags & CAN_FD_FRAME) ? CANFD_MTU : CAN_MTU)
- #define OPSIZ sizeof(struct bcm_op)
- #define MHSIZ sizeof(struct bcm_msg_head)
-@@ -873,6 +892,10 @@ static int bcm_tx_setup(struct bcm_msg_h
- 	if (msg_head->nframes < 1 || msg_head->nframes > MAX_NFRAMES)
- 		return -EINVAL;
- 
-+	/* check timeval limitations */
-+	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
-+		return -EINVAL;
-+
- 	/* check the given can_id */
- 	op = bcm_find_op(&bo->tx_ops, msg_head, ifindex);
- 	if (op) {
-@@ -1053,6 +1076,10 @@ static int bcm_rx_setup(struct bcm_msg_h
- 	     (!(msg_head->can_id & CAN_RTR_FLAG))))
- 		return -EINVAL;
- 
-+	/* check timeval limitations */
-+	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
-+		return -EINVAL;
-+
- 	/* check the given can_id */
- 	op = bcm_find_op(&bo->rx_ops, msg_head, ifindex);
- 	if (op) {
+ 	/*
+ 	 * This acts as a modification timestamp for the timer,
 
 
