@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72404C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CD9C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FD8620882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FE2820880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763116;
-	bh=jgNwobwcjuBaBKgm/XiNIytbEiXvDmy8fmeVvY7bxz8=;
+	s=default; t=1548763126;
+	bh=dmvJBLrEH6TZ3EU1RVd9ujE8virLArk+2yTGuUmeU/Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iJBj2r0zulSThO+tTvM/4GSZqJfRSTRk3PIqW6R5Le884C1Ntt7xflcb5chZsumCv
-	 7iZzvNKIlhkS3ySimBQTW3MM/jAWA23Ix2KlktgX0OYcdv5WNaSy/pv6c70S61LYKf
-	 PQjXSovtH8kNNIw5rc+eYfrlJqIjUG/G54phrMmw=
+	b=ahIVOo8ewm7ggR9NxN4lK2fw6lZYxXZ8T7L+imDfK/ueg4Kgw83+GvQt/SlSvzW2d
+	 rRBo5VqmfmU95miI0rvMlLR7C9FKOM07ju9I+jTXzh0/UvEKWmd2y8/xnpSB7f5lek
+	 Nra8eiVK3UxEmTSIxTmJ8JVvJwYTJHXqFciIB+uw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731288AbfA2L6e (ORCPT
+        id S1731066AbfA2L6o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:58:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38824 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:58:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730337AbfA2LsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:01 -0500
+        id S1730953AbfA2Lrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 135B02086C;
-        Tue, 29 Jan 2019 11:47:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D56082086C;
+        Tue, 29 Jan 2019 11:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762480;
-        bh=jgNwobwcjuBaBKgm/XiNIytbEiXvDmy8fmeVvY7bxz8=;
+        s=default; t=1548762467;
+        bh=dmvJBLrEH6TZ3EU1RVd9ujE8virLArk+2yTGuUmeU/Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=orOMEhiYZW3g3SMAdY+U3nK2paWGsj++/A0HEEoiJ/wzxZvn6+3bUIutez631udc9
-         uovKRDwtE8nAO6U+VRZcxFZhcuLzW/m+urZEeVFq+5p7au6AB+X92KjQsx3hbr24G/
-         OkGg3tkFiHurT2A1XV937K1kLdOlD9jJcoJo8Wmg=
+        b=E3Hhw7NHv3kiOSVfKK9Jl8U2IXA8uEa7Lem2IySCTW77v2guGaUKyJdZrOHA8mWNj
+         5Bwwd6NqSm5gImenZzcMvWTjr5ilSoehHfBQTQXGYx70slR3A+LO13RXvJ+/58We9y
+         tuuDHLowk7A60+GGl3kK6df1bzHndLbC2j6uk/mE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, bridge@lists.linux-foundation.org,
-        Nkolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Yunjian Wang <wangyunjian@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 02/68] net: bridge: Fix ethernet header pointer before check skb forwardable
-Date:   Tue, 29 Jan 2019 12:35:24 +0100
-Message-Id: <20190129113131.910742749@linuxfoundation.org>
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.14 15/68] ASoC: atom: fix a missing check of snd_pcm_lib_malloc_pages
+Date:   Tue, 29 Jan 2019 12:35:37 +0100
+Message-Id: <20190129113132.793681839@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -69,69 +66,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunjian Wang <wangyunjian@huawei.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit 28c1382fa28f2e2d9d0d6f25ae879b5af2ecbd03 ]
+commit 44fabd8cdaaa3acb80ad2bb3b5c61ae2136af661 upstream.
 
-The skb header should be set to ethernet header before using
-is_skb_forwardable. Because the ethernet header length has been
-considered in is_skb_forwardable(including dev->hard_header_len
-length).
+snd_pcm_lib_malloc_pages() may fail, so let's check its status and
+return its error code upstream.
 
-To reproduce the issue:
-1, add 2 ports on linux bridge br using following commands:
-$ brctl addbr br
-$ brctl addif br eth0
-$ brctl addif br eth1
-2, the MTU of eth0 and eth1 is 1500
-3, send a packet(Data 1480, UDP 8, IP 20, Ethernet 14, VLAN 4)
-from eth0 to eth1
-
-So the expect result is packet larger than 1500 cannot pass through
-eth0 and eth1. But currently, the packet passes through success, it
-means eth1's MTU limit doesn't take effect.
-
-Fixes: f6367b4660dd ("bridge: use is_skb_forwardable in forward path")
-Cc: bridge@lists.linux-foundation.org
-Cc: Nkolay Aleksandrov <nikolay@cumulusnetworks.com>
-Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/bridge/br_forward.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/net/bridge/br_forward.c
-+++ b/net/bridge/br_forward.c
-@@ -35,10 +35,10 @@ static inline int should_deliver(const s
- 
- int br_dev_queue_push_xmit(struct net *net, struct sock *sk, struct sk_buff *skb)
+---
+ sound/soc/intel/atom/sst-mfld-platform-pcm.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/sound/soc/intel/atom/sst-mfld-platform-pcm.c
++++ b/sound/soc/intel/atom/sst-mfld-platform-pcm.c
+@@ -399,7 +399,13 @@ static int sst_media_hw_params(struct sn
+ 				struct snd_pcm_hw_params *params,
+ 				struct snd_soc_dai *dai)
  {
-+	skb_push(skb, ETH_HLEN);
- 	if (!is_skb_forwardable(skb->dev, skb))
- 		goto drop;
- 
--	skb_push(skb, ETH_HLEN);
- 	br_drop_fake_rtable(skb);
- 
- 	if (skb->ip_summed == CHECKSUM_PARTIAL &&
-@@ -96,12 +96,11 @@ static void __br_forward(const struct ne
- 		net = dev_net(indev);
- 	} else {
- 		if (unlikely(netpoll_tx_running(to->br->dev))) {
--			if (!is_skb_forwardable(skb->dev, skb)) {
-+			skb_push(skb, ETH_HLEN);
-+			if (!is_skb_forwardable(skb->dev, skb))
- 				kfree_skb(skb);
--			} else {
--				skb_push(skb, ETH_HLEN);
-+			else
- 				br_netpoll_send_skb(to, skb);
--			}
- 			return;
- 		}
- 		br_hook = NF_BR_LOCAL_OUT;
+-	snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(params));
++	int ret;
++
++	ret =
++		snd_pcm_lib_malloc_pages(substream,
++				params_buffer_bytes(params));
++	if (ret)
++		return ret;
+ 	memset(substream->runtime->dma_area, 0, params_buffer_bytes(params));
+ 	return 0;
+ }
 
 
