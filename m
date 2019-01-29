@@ -2,111 +2,144 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C522CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F1EC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9408820844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:02:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uVxB7tP0"
+	by mail.kernel.org (Postfix) with ESMTP id A2FB320844
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:02:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbfA2TCY (ORCPT
+        id S1729332AbfA2TCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:02:24 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37332 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbfA2TCX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:02:23 -0500
-Received: by mail-pf1-f194.google.com with SMTP id y126so10098633pfb.4;
-        Tue, 29 Jan 2019 11:02:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bHHOBYjyBT1Ud/qjsk79tJmi5ZAILVa95ORbRxakPhE=;
-        b=uVxB7tP0v4QWrBR/iFSdhVfHaUlhKF4U3ep56BvWzZ4PNxZxPdJt4mdK5F5p5JDMvt
-         4O1i4bowWnXuCQhYwj0NsJ/cqWUh3XSTLu6+HhAcV05pByUqquFtjoK6DyNNes8/w5LD
-         cVUa3atXbx7TITkrCWU4ipu9DMf3OFjf1nWMn25xLJegMlW/3Wf/PQ9b22M7nq8DUpap
-         TMlDtEVKy5fkIeKm5AEDe+I6BCHQirpiVWzgxWSxXwbJY4nd/38JEfVaLVLRdk8sMIhh
-         5IzSmlqHcrIa6jJvsR/oA7brcfpC8e2qQUA34bB40GiRBvZSUCcTmMCOebhPuu6SP3Qg
-         ZMGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bHHOBYjyBT1Ud/qjsk79tJmi5ZAILVa95ORbRxakPhE=;
-        b=TVkWDR2rtkjcQLGHXcTMnqHvmgPnhjbmHkPDWNlzFQOmYylPRGLd23z0itYL70GKrF
-         siT9Gw9GpW155zNnhbz3dc9fpmTfMDDiNJNuS/UnRGvqvPLcanGVOnB6qfqyGpcfXJfE
-         gcZFrTvnZZlvza32Umbsfkrk2pmPNQ/mopOTiRUJf64ZGevFs2kGmU+n+t5OsFS6QdP0
-         EkD0TSwzxVNtHYxBT+XbgIb0JmD/D3VE6ctvt8s4IV43Vj3hCg/rvGO9bPvacaj6GJ3E
-         u4HP3cjYVvBPivP325A85B2IRecL/ijjJ43xK02d/RvHYFfKjD8aE6j/yrzGkYGKjdX3
-         Dmug==
-X-Gm-Message-State: AJcUukcqGAKr4qmiWLKr1LR4V7PcwSOSGY0BVerGpce+ew785TuO+XwW
-        4DSF79JoCfsXV1JSj83SYlk=
-X-Google-Smtp-Source: ALg8bN7HdtODbZncVAu34ulOk2/3Wwab9On1fp0TqLkvInip+mmPVWWtIELTEClqTrBGKIVV1bISrg==
-X-Received: by 2002:a63:e615:: with SMTP id g21mr25131951pgh.290.1548788542372;
-        Tue, 29 Jan 2019 11:02:22 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id v70sm50780274pfa.152.2019.01.29.11.02.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 11:02:21 -0800 (PST)
-Date:   Tue, 29 Jan 2019 11:02:20 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/44] 4.9.154-stable review
-Message-ID: <20190129190220.GA6116@roeck-us.net>
-References: <20190129113139.826927690@linuxfoundation.org>
+        Tue, 29 Jan 2019 14:02:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52288 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727165AbfA2TCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 14:02:41 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0177CA0484;
+        Tue, 29 Jan 2019 19:02:41 +0000 (UTC)
+Received: from redhat.com (ovpn-123-79.rdu2.redhat.com [10.10.123.79])
+        by smtp.corp.redhat.com (Postfix) with SMTP id DA0CC5C893;
+        Tue, 29 Jan 2019 19:02:37 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 14:02:36 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Alexey Kardashevskiy <aik@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
+Message-ID: <20190129134750-mutt-send-email-mst@kernel.org>
+References: <87zhrj8kcp.fsf@morokweng.localdomain>
+ <87womn8inf.fsf@morokweng.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <87womn8inf.fsf@morokweng.localdomain>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 29 Jan 2019 19:02:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 12:35:55PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.154 release.
-> There are 44 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Jan 29, 2019 at 03:42:44PM -0200, Thiago Jung Bauermann wrote:
 > 
-> Responses should be made by Thu Jan 31 11:31:22 UTC 2019.
-> Anything received after that time might be too late.
+> Fixing address of powerpc mailing list.
 > 
+> Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
+> 
+> > Hello,
+> >
+> > With Christoph's rework of the DMA API that recently landed, the patch
+> > below is the only change needed in virtio to make it work in a POWER
+> > secure guest under the ultravisor.
+> >
+> > The other change we need (making sure the device's dma_map_ops is NULL
+> > so that the dma-direct/swiotlb code is used) can be made in
+> > powerpc-specific code.
+> >
+> > Of course, I also have patches (soon to be posted as RFC) which hook up
+> > <linux/mem_encrypt.h> to the powerpc secure guest support code.
+> >
+> > What do you think?
+> >
+> > From d0629a36a75c678b4a72b853f8f7f8c17eedd6b3 Mon Sep 17 00:00:00 2001
+> > From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> > Date: Thu, 24 Jan 2019 22:08:02 -0200
+> > Subject: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
+> >
+> > The host can't access the guest memory when it's encrypted, so using
+> > regular memory pages for the ring isn't an option. Go through the DMA API.
+> >
+> > Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 
-fs/cifs/connect.c: In function 'zero_credits':
-fs/cifs/connect.c:527:34: error: 'struct TCP_Server_Info' has no member named 'echo_credits'
-fs/cifs/connect.c:527:57: error: 'struct TCP_Server_Info' has no member named 'oplock_credits'
+Well I think this will come back to bite us (witness xen which is now
+reworking precisely this path - but at least they aren't to blame, xen
+came before ACCESS_PLATFORM).
 
-Seen with:
+I also still think the right thing would have been to set
+ACCESS_PLATFORM for all systems where device can't access all memory.
 
-arm:s3c2410_defconfig 
-arm:nhk8815_defconfig 
-arm:cm_x2xx_defconfig 
-ia64:defconfig 
-m68k:defconfig 
-m68k:sun3_defconfig 
-microblaze:mmu_defconfig 
-mips:defconfig 
-mips:nlm_xlp_defconfig 
-parisc:defconfig 
-parisc:generic-32bit_defconfig 
-parisc:a500_defconfig 
-powerpc:defconfig 
-powerpc:ppc64e_defconfig 
-powerpc:ppc6xx_defconfig 
-s390:performance_defconfig
-tile:tilegx_defconfig 
+But I also think I don't have the energy to argue about power secure
+guest anymore.  So be it for power secure guest since the involved
+engineers disagree with me.  Hey I've been wrong in the past ;).
 
-Guenter
+But the name "sev_active" makes me scared because at least AMD guys who
+were doing the sensible thing and setting ACCESS_PLATFORM (unless I'm
+wrong? I reemember distinctly that's so) will likely be affected too.
+We don't want that.
+
+So let's find a way to make sure it's just power secure guest for now
+pls.
+
+I also think we should add a dma_api near features under virtio_device
+such that these hacks can move off data path.
+
+By the way could you please respond about virtio-iommu and
+why there's no support for ACCESS_PLATFORM on power?
+
+I have Cc'd you on these discussions.
+
+
+Thanks!
+
+
+> > ---
+> >  drivers/virtio/virtio_ring.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index cd7e755484e3..321a27075380 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -259,8 +259,11 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
+> >  	 * not work without an even larger kludge.  Instead, enable
+> >  	 * the DMA API if we're a Xen guest, which at least allows
+> >  	 * all of the sensible Xen configurations to work correctly.
+> > +	 *
+> > +	 * Also, if guest memory is encrypted the host can't access
+> > +	 * it directly. In this case, we'll need to use the DMA API.
+> >  	 */
+> > -	if (xen_domain())
+> > +	if (xen_domain() || sev_active())
+> >  		return true;
+> >
+> >  	return false;
+> 
+> 
+> -- 
+> Thiago Jung Bauermann
+> IBM Linux Technology Center
