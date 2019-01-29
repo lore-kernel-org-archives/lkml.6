@@ -5,118 +5,97 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4916AC282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D536C282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 054402175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:26:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C15920870
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:37:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hhbDSTGo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYN0oAEK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfA2A0b (ORCPT
+        id S1727082AbfA2Ahl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:26:31 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40315 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfA2A0b (ORCPT
+        Mon, 28 Jan 2019 19:37:41 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46095 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfA2Ahk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:26:31 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z10so7952425pgp.7;
-        Mon, 28 Jan 2019 16:26:30 -0800 (PST)
+        Mon, 28 Jan 2019 19:37:40 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c73so8786669pfe.13;
+        Mon, 28 Jan 2019 16:37:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sGAsU05C3PyG3eEOF3MjpKkLqSwUI9qgZBxz9Zz1xiA=;
-        b=hhbDSTGoT42fxyu0wbbAiRcu5iMfv7kW3H2WsNAmUYekpSV0ie8w7bvxTtAaWbOZri
-         oJnGehJ2OrrMtkhe/m1S+I1SXzUQvXTahTiDUeqlV9OZZZjeEPg/ha48o4XrUc4gmqBT
-         OTAeOLcFrs8RYqhWoF84ZpgZOVBPtV2IcMS6+mASoP70sDLM3YQ5D2ampFnkMFS4vyTp
-         WLM6LdOZUbdlFRSxs+d/zjUyQadQ3IQvOHZ754ydgfsBjGRG5FSXz2mUTyEcEUvDIQWD
-         KiLoYh+47wM+A4YYr5Xl8Wq2/H/SU9kfci8Mvlh/9tSv542N6cWRK9/wZ0tI5cchblMr
-         KyCQ==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=Q0DGhxaczt609U70/kPzWdo/a0NW1iHZiBbzvJaHoVg=;
+        b=hYN0oAEKnvT4L1gEod8u+6JSMVATyUTQ5I5QZGCnAQIu5/wnDVvQ6QyRw5bJhkuwqk
+         YDOvT5rBeIsCguuA98Ys8LyzT0FAACaf503tWdkqRI3pp6Cp9AFNTmOluoHZ1MvLCqBg
+         c4XZ+pLoKXr3JHEKLHXW5S8AsLr47StUNNJJYrn+izj7xgdqMDNwa7rFSM3TerK09pCg
+         xbbNZK5OXnGZDy5E25i5debfqQ9gOEi9Uh7OjZJiHCkmw4byGvk02mDgs5aOYU2o8MjA
+         Zyf189iRp19Y/T9U+VjTsuvo0ek+AfFJLGEWTg8ZXNVl48L+Oey9NQM/b6bq/nLH5HcP
+         CQTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sGAsU05C3PyG3eEOF3MjpKkLqSwUI9qgZBxz9Zz1xiA=;
-        b=CWodpkyLtLEmKpwWHzKlS0aRX+uZLPAWunYZivFPAAePPh6RN/U/44BgLxNCnGFC0c
-         m7TW17sApcbrfQxJRyqDfEQUfdjL1CcZ27Pb6uAuLjiAHXg6yRgVPL1F9ni7EOS+Y8a0
-         g6MBzYeVpuoe9f6B9CiACI0q0MLB752vo2MTn0lkxtnrw06KAqRzx6P3HG8FwQIJ1cnh
-         bTLf/RADlwhMCiTJ4DNbkbjwPLu73dYOituJaM98w8Bzchx4g13R4PpkjxX/T1C3VE6b
-         xeQQIHgHsiQnu9pBm9mOOfz3gZopwrflJ63frjHfRm0tFioz+OFVwJWaesoOFTS4sRYD
-         DLvg==
-X-Gm-Message-State: AJcUuke6iSm95GC7i3j/1azMhI2Jvb0de9zvn44hJgYuOxF0SEBV6loy
-        9vUnemeGNojOaxlLKrCFLL4=
-X-Google-Smtp-Source: ALg8bN5ZlnRd/UAe5ZhKUV5+2hdRo8XAea+5eHiAYDjibAUYPW7wvvKIJXZ92Hq6AohNnd/83xuE+Q==
-X-Received: by 2002:a65:6215:: with SMTP id d21mr21722024pgv.289.1548721589661;
-        Mon, 28 Jan 2019 16:26:29 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Q0DGhxaczt609U70/kPzWdo/a0NW1iHZiBbzvJaHoVg=;
+        b=ISm/v+9+b5KOhCjSLl16ZWHXUGhLAchr3Y+PQoxAMv1ZoZDnAZyKIDNmUitqUms1Qa
+         bmHtH42VIaM9nUHPKaSw/jmQNnJH3kOEWoBI5EyByiGkPLR9QGJw6uenG4o4w1opPaIU
+         eQ9IIlxSgHEa6Ux3xJad/vVrqaEadYi8rE4eykP9unrt4nKKFxbHpTNsPVea0Mout5u+
+         NG4caK45C+/BR0KKj+3OA+fgOy+tf7XiLFQS6Un94XqjpcCzdTwEdqKNCjiVTDBuQua7
+         L5xw3r+7agIy35obKPx2m1JYjBTg0mZcaA6rF0AkWmIYrkK6cpB6nHn+nvYC0OT9mVUG
+         Le6Q==
+X-Gm-Message-State: AJcUukeP8QZ0uFxauBN6GGwjktIv2SpaV0jtFSAER++anS0H6tfWpoDd
+        mFeAPL5OJc8CW4qqyxs7+IaDRfYW
+X-Google-Smtp-Source: ALg8bN7PRUB14bvrOIiJXvjofbO/Xud3TmQG0Hq6uOgRuFoINNRr0mR4b2DXpXgFr4hkD/egmoLUFQ==
+X-Received: by 2002:a63:d252:: with SMTP id t18mr21952445pgi.133.1548722259488;
+        Mon, 28 Jan 2019 16:37:39 -0800 (PST)
 Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id h82sm69522253pfa.105.2019.01.28.16.26.28
+        by smtp.gmail.com with ESMTPSA id l74sm53812663pfb.145.2019.01.28.16.37.38
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 16:26:29 -0800 (PST)
-Date:   Mon, 28 Jan 2019 16:26:27 -0800
+        Mon, 28 Jan 2019 16:37:38 -0800 (PST)
+Date:   Mon, 28 Jan 2019 16:37:37 -0800
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Richard Leitner <richard.leitner@skidata.com>
-Cc:     mark.rutland@arm.com, robh+dt@kernel.org,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+To:     linux-input@vger.kernel.org
+Cc:     Richard Leitner <richard.leitner@skidata.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 4/8] Input: sx8654 - add sx8655 and sx8656 to
- compatibles
-Message-ID: <20190129002627.GK34692@dtor-ws>
-References: <20181218083606.25795-1-richard.leitner@skidata.com>
- <20181218083606.25795-5-richard.leitner@skidata.com>
+Subject: [PATCH] Input: sx8654 - do not override interrupt trigger
+Message-ID: <20190129003737.GA80949@dtor-ws>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181218083606.25795-5-richard.leitner@skidata.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 09:36:02AM +0100, Richard Leitner wrote:
-> As the sx865[456] share the same datasheet and differ only in the
-> presence of a "capacitive proximity detection circuit" and a "haptics
-> motor driver for LRA/ERM" add them to the compatbiles. As the driver
-> doesn't implement these features it should be no problem.
-> 
-> Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
+We should rely on the interrupt trigger (level vs edge) set up by the
+firmware or board code instead of forcing what we consider appropriate.
 
-Applied, thank you.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/input/touchscreen/sx8654.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/input/touchscreen/sx8654.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
-> index 238f56b1581b..afa4da138fe9 100644
-> --- a/drivers/input/touchscreen/sx8654.c
-> +++ b/drivers/input/touchscreen/sx8654.c
-> @@ -293,6 +293,8 @@ static int sx8654_probe(struct i2c_client *client,
->  #ifdef CONFIG_OF
->  static const struct of_device_id sx8654_of_match[] = {
->  	{ .compatible = "semtech,sx8654", },
-> +	{ .compatible = "semtech,sx8655", },
-> +	{ .compatible = "semtech,sx8656", },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, sx8654_of_match);
-> @@ -300,6 +302,8 @@ MODULE_DEVICE_TABLE(of, sx8654_of_match);
->  
->  static const struct i2c_device_id sx8654_id_table[] = {
->  	{ "semtech_sx8654", 0 },
-> +	{ "semtech_sx8655", 0 },
-> +	{ "semtech_sx8656", 0 },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(i2c, sx8654_id_table);
-> -- 
-> 2.11.0
-> 
+diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
+index 1cc0e4116d3b..b792320d628e 100644
+--- a/drivers/input/touchscreen/sx8654.c
++++ b/drivers/input/touchscreen/sx8654.c
+@@ -403,7 +403,7 @@ static int sx8654_probe(struct i2c_client *client,
+ 
+ 	error = devm_request_threaded_irq(&client->dev, client->irq,
+ 					  NULL, sx8654->data->irqh,
+-					  IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
++					  IRQF_ONESHOT,
+ 					  client->name, sx8654);
+ 	if (error) {
+ 		dev_err(&client->dev,
+-- 
+2.20.1.495.gaa96b0ce6b-goog
+
 
 -- 
 Dmitry
