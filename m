@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D89C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132EDC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B5C92183F
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF6852183F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:32:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbfA2HcU (ORCPT
+        id S1727033AbfA2HcZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 02:32:20 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:8423 "EHLO
+        Tue, 29 Jan 2019 02:32:25 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:20119 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725730AbfA2HcU (ORCPT
+        with ESMTP id S1725786AbfA2HcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 02:32:20 -0500
-X-UUID: cbdd44d0f7ef4090804e2a5a442cb45c-20190129
-X-UUID: cbdd44d0f7ef4090804e2a5a442cb45c-20190129
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        Tue, 29 Jan 2019 02:32:22 -0500
+X-UUID: 0588ae895bbf41be959d4b0382ef8911-20190129
+X-UUID: 0588ae895bbf41be959d4b0382ef8911-20190129
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2143939328; Tue, 29 Jan 2019 15:32:13 +0800
+        with ESMTP id 464381186; Tue, 29 Jan 2019 15:32:12 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Tue, 29 Jan 2019 15:32:12 +0800
 Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 29 Jan 2019 15:32:12 +0800
+ Transport; Tue, 29 Jan 2019 15:32:11 +0800
 From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -53,122 +53,76 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         Houlong Wei <houlong.wei@mediatek.com>,
         <ginny.chen@mediatek.com>, <kendrick.hsu@mediatek.com>,
         Frederic Chen <Frederic.Chen@mediatek.com>
-Subject: [PATCH 09/10] soc: mediatek: change the argument of write and write_mask API
-Date:   Tue, 29 Jan 2019 15:32:06 +0800
-Message-ID: <1548747128-60136-10-git-send-email-bibby.hsieh@mediatek.com>
+Subject: [PATCH 06/10] soc: mediatek: add register device function
+Date:   Tue, 29 Jan 2019 15:32:03 +0800
+Message-ID: <1548747128-60136-7-git-send-email-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548747128-60136-1-git-send-email-bibby.hsieh@mediatek.com>
 References: <1548747128-60136-1-git-send-email-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 5CABCEE1B16ABE4A2AC62D473E6598E5333E263EFBD4220D2931816D65A199232000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to enhance the convienience of client usage,
-we change the input argument from subsys and offset to
-struct cmdq_base and dma_addr_t.
+GCE cannot know the register base address, we store the subsys-base address
+relationship in the device node, and store the relationship by
+cmdq_register_device function.
 
 Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 ---
- drivers/soc/mediatek/mtk-cmdq-helper.c | 24 +++++++++++++++++-------
- include/linux/soc/mediatek/mtk-cmdq.h  | 16 ++++++++--------
- 2 files changed, 25 insertions(+), 15 deletions(-)
+ drivers/soc/mediatek/mtk-cmdq-helper.c | 24 ++++++++++++++++++++++++
+ include/linux/soc/mediatek/mtk-cmdq.h  |  1 +
+ 2 files changed, 25 insertions(+)
 
 diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index 923a815..34ae712 100644
+index 6e4b85e..6ad997f 100644
 --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
 +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -238,8 +238,13 @@ static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, s16 arg_c, s16 arg_b,
- 	return 0;
+@@ -32,6 +32,30 @@ u8 cmdq_subsys_base_to_id(struct cmdq_base *clt_base, u32 base)
  }
+ EXPORT_SYMBOL(cmdq_subsys_base_to_id);
  
--int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value)
-+int cmdq_pkt_write(struct cmdq_pkt *pkt, struct cmdq_base *clt_base,
-+		   dma_addr_t addr, u32 value)
- {
-+	const u32 base = (addr >> 32) ? 0 : addr & 0xFFFF0000;
-+	u8 subsys = cmdq_subsys_base_to_id(clt_base, base);
-+	s16 offset = addr & 0x0000FFFF;
++struct cmdq_base *cmdq_register_device(struct device *dev)
++{
++	struct cmdq_base *clt_base;
++	struct of_phandle_args spec;
++	u32 idx;
 +
- 	return cmdq_pkt_append_command(pkt, CMDQ_GET_ARG_C(value),
- 				       CMDQ_GET_ARG_B(value), offset, subsys,
- 				       CMDQ_IMMEDIATE_VALUE,
-@@ -248,21 +253,26 @@ int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value)
- }
- EXPORT_SYMBOL(cmdq_pkt_write);
- 
--int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys, u16 offset,
--			u32 value, u32 mask)
-+int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, struct cmdq_base *clt_base,
-+			dma_addr_t addr, u32 value, u32 mask)
++	clt_base = devm_kzalloc(dev, sizeof(*clt_base), GFP_KERNEL);
++	if (!clt_base)
++		return NULL;
++
++	/* parse subsys */
++	for (idx = 0; idx < ARRAY_SIZE(clt_base->subsys); idx++) {
++		if (of_parse_phandle_with_args(dev->of_node, "gce-subsys",
++		    "#gce-subsys-cells", idx, &spec))
++			break;
++		clt_base->subsys[idx].base = spec.args[0];
++		clt_base->subsys[idx].id = spec.args[1];
++	}
++	clt_base->count = idx;
++
++	return clt_base;
++}
++EXPORT_SYMBOL(cmdq_register_device);
++
+ static void cmdq_client_timeout(struct timer_list *t)
  {
--	u32 offset_mask = offset;
-+	const u32 base = (addr >> 32) ? 0 : addr & 0xFFFF0000;
-+	u8 subsys = cmdq_subsys_base_to_id(clt_base, base);
-+	s16 offset = addr & 0x0000FFFF;
- 	int err = 0;
- 
- 	if (mask != 0xffffffff) {
- 		err = cmdq_pkt_append_command(pkt, CMDQ_GET_ARG_C(~mask),
- 					      CMDQ_GET_ARG_B(~mask), 0, 0, 0, 0,
- 					      0, CMDQ_CODE_MASK);
--		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
-+		offset |= CMDQ_WRITE_ENABLE_MASK;
- 	}
--	err |= cmdq_pkt_write(pkt, subsys, offset_mask, value);
- 
--	return err;
-+	return cmdq_pkt_append_command(pkt, CMDQ_GET_ARG_C(value),
-+				       CMDQ_GET_ARG_B(value), offset, subsys,
-+				       CMDQ_IMMEDIATE_VALUE,
-+				       CMDQ_IMMEDIATE_VALUE,
-+				       CMDQ_IMMEDIATE_VALUE, CMDQ_CODE_WRITE);
- }
- EXPORT_SYMBOL(cmdq_pkt_write_mask);
- 
+ 	struct cmdq_client *client = from_timer(client, t, timer);
 diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-index e4d1876..230bc2b 100644
+index 0c7a6ee..a1f5eb6 100644
 --- a/include/linux/soc/mediatek/mtk-cmdq.h
 +++ b/include/linux/soc/mediatek/mtk-cmdq.h
-@@ -70,26 +70,26 @@ struct cmdq_client *cmdq_mbox_create(struct device *dev, int index,
- /**
-  * cmdq_pkt_write() - append write command to the CMDQ packet
-  * @pkt:	the CMDQ packet
-- * @subsys:	the CMDQ sub system code
-- * @offset:	register offset from CMDQ sub system
-+ * @cmdq_base:	the CMDQ sub system code and base address
-+ * @addr:	register address
-  * @value:	the specified target register value
-  *
-  * Return: 0 for success; else the error code is returned
-  */
--int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value);
--
-+int cmdq_pkt_write(struct cmdq_pkt *pkt, struct cmdq_base *clt_base,
-+		   dma_addr_t addr, u32 value);
- /**
-  * cmdq_pkt_write_mask() - append write command with mask to the CMDQ packet
-  * @pkt:	the CMDQ packet
-- * @subsys:	the CMDQ sub system code
-- * @offset:	register offset from CMDQ sub system
-+ * @cmdq_base:	the CMDQ sub system code and base address
-+ * @addr:	register address
-  * @value:	the specified target register value
-  * @mask:	the specified target register mask
-  *
-  * Return: 0 for success; else the error code is returned
-  */
--int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys, u16 offset,
--			u32 value, u32 mask);
-+int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, struct cmdq_base *clt_base,
-+			dma_addr_t addr, u32 value, u32 mask);
+@@ -138,5 +138,6 @@ int cmdq_pkt_flush_async(struct cmdq_pkt *pkt, cmdq_async_flush_cb cb,
+ int cmdq_pkt_flush(struct cmdq_pkt *pkt);
  
- /**
-  * cmdq_pkt_wfe() - append wait for event command to the CMDQ packet
+ u8 cmdq_subsys_base_to_id(struct cmdq_base *clt_base, u32 base);
++struct cmdq_base *cmdq_register_device(struct device *dev);
+ 
+ #endif	/* __MTK_CMDQ_H__ */
 -- 
 1.9.1
 
