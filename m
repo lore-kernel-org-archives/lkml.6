@@ -4,54 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29077C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A472FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA91620881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72A4D20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763666;
-	bh=N0/VZDxT3chsae8TQNxq/j+mQhY8SsEKdvICvxS3D20=;
+	s=default; t=1548763675;
+	bh=eHWD7ygfITcMbq+U6KkoekqpgaLEIGD8etCzc3215ls=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YWl+uxhL5gAKPagGkqLEugWg38GfzeALcD8Liny0/w4UgO1lxIpwyCXxWutwDNx3W
-	 PhuiWjXYV1ilIBcr+XvcbGxnBFzt5eWj2uZ8pigEdIydR1TWtGXOTbfEaZu/vJ2BoA
-	 7gmuialvUfdDq+67K/vZGq8pN8m605onsr/aiYyM=
+	b=vA3iH81fxbU10bzPkR6O+k+l/Y3v+ctH7ntCfiBE1NzP/ogQoRcTuR87+ekisqCzw
+	 fQtK+GB924AWtXw3kSwfcQHWfpwjdmUhkpAcFeU/LOe5Q88ko9zy1jGdGvtloCe+yA
+	 nWcpWCNVsSMin1AFqpWaW+Nq9xl7ymRBGK1rAos0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729303AbfA2MHo (ORCPT
+        id S1729658AbfA2MHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:07:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56916 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:07:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729025AbfA2LkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:40:01 -0500
+        id S1729515AbfA2Ljw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:39:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4E4220857;
-        Tue, 29 Jan 2019 11:39:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3D8D2148E;
+        Tue, 29 Jan 2019 11:39:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762000;
-        bh=N0/VZDxT3chsae8TQNxq/j+mQhY8SsEKdvICvxS3D20=;
+        s=default; t=1548761991;
+        bh=eHWD7ygfITcMbq+U6KkoekqpgaLEIGD8etCzc3215ls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IaCdQYR/WbPkr65x76ALwIJJVCyB/qpg5uvlKTk+YGqVsRKrBOs+1eH4O5vl4qCHd
-         9AA3A3voryIJ2Rv1WyJdfQbph7pi4f2T4Q3q3cYLMl81sHEBLEtBn/rY15OQmBV6PD
-         ctGVeeGUsn+dO6Vh2K57D8N++QQxHycsUfIo9mW0=
+        b=hB87o/f9ITVmOFiEHfr9LAnI9UVeRrFALQojbdGcXHxsJEfB9b0xjDUYZak81m5w6
+         qX6KBzy0xLuVadet/cUHj49HlMkLGuiwa+iclOG35uCOmOe/N0/x6a5V/HJEez4Ss1
+         aKXRTmmjKCbUURMY894nXj6cVUr+AX0cLGLHTpro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thor Thayer <thor.thayer@linux.intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        devicetree@vger.kernel.org, dinguyen@kernel.org,
-        linux-edac <linux-edac@vger.kernel.org>, mark.rutland@arm.com,
-        robh+dt@kernel.org
-Subject: [PATCH 4.20 075/117] EDAC, altera: Fix S10 persistent register offset
-Date:   Tue, 29 Jan 2019 12:35:26 +0100
-Message-Id: <20190129113211.253650252@linuxfoundation.org>
+        stable@vger.kernel.org, ryan.p.norwood@gmail.com,
+        Joe Thornber <ejt@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.20 072/117] dm thin: fix passdown_double_checking_shared_status()
+Date:   Tue, 29 Jan 2019 12:35:23 +0100
+Message-Id: <20190129113211.130270218@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -70,43 +65,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+From: Joe Thornber <ejt@redhat.com>
 
-commit 245b6c6558128327d330549b23d09594c46f58df upstream.
+commit d445bd9cec1a850c2100fcf53684c13b3fd934f2 upstream.
 
-Correct the persistent register offset where address and status are
-stored.
+Commit 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next
+stage processing") changed process_prepared_discard_passdown_pt1() to
+increment all the blocks being discarded until after the passdown had
+completed to avoid them being prematurely reused.
 
-Fixes: 08f08bfb7b4c ("EDAC, altera: Merge Stratix10 into the Arria10 SDRAM probe routine")
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: James Morse <james.morse@arm.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: dinguyen@kernel.org
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: mark.rutland@arm.com
-Cc: robh+dt@kernel.org
-Cc: stable <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/1548179287-21760-2-git-send-email-thor.thayer@linux.intel.com
+IO issued to a thin device that breaks sharing with a snapshot, followed
+by a discard issued to snapshot(s) that previously shared the block(s),
+results in passdown_double_checking_shared_status() being called to
+iterate through the blocks double checking their reference count is zero
+and issuing the passdown if so.  So a side effect of commit 00a0ea33b495
+is passdown_double_checking_shared_status() was broken.
+
+Fix this by checking if the block reference count is greater than 1.
+Also, rename dm_pool_block_is_used() to dm_pool_block_is_shared().
+
+Fixes: 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next stage processing")
+Cc: stable@vger.kernel.org # 4.9+
+Reported-by: ryan.p.norwood@gmail.com
+Signed-off-by: Joe Thornber <ejt@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/altera_edac.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/md/dm-thin-metadata.c |    4 ++--
+ drivers/md/dm-thin-metadata.h |    2 +-
+ drivers/md/dm-thin.c          |   10 +++++-----
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/edac/altera_edac.h
-+++ b/drivers/edac/altera_edac.h
-@@ -295,8 +295,8 @@ struct altr_sdram_mc_data {
- #define S10_SYSMGR_ECC_INTSTAT_DERR_OFST  0xA0
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -1678,7 +1678,7 @@ int dm_thin_remove_range(struct dm_thin_
+ 	return r;
+ }
  
- /* Sticky registers for Uncorrected Errors */
--#define S10_SYSMGR_UE_VAL_OFST            0x120
--#define S10_SYSMGR_UE_ADDR_OFST           0x124
-+#define S10_SYSMGR_UE_VAL_OFST            0x220
-+#define S10_SYSMGR_UE_ADDR_OFST           0x224
+-int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
++int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
+ {
+ 	int r;
+ 	uint32_t ref_count;
+@@ -1686,7 +1686,7 @@ int dm_pool_block_is_used(struct dm_pool
+ 	down_read(&pmd->root_lock);
+ 	r = dm_sm_get_count(pmd->data_sm, b, &ref_count);
+ 	if (!r)
+-		*result = (ref_count != 0);
++		*result = (ref_count > 1);
+ 	up_read(&pmd->root_lock);
  
- #define S10_DDR0_IRQ_MASK                 BIT(16)
+ 	return r;
+--- a/drivers/md/dm-thin-metadata.h
++++ b/drivers/md/dm-thin-metadata.h
+@@ -195,7 +195,7 @@ int dm_pool_get_metadata_dev_size(struct
+ 
+ int dm_pool_get_data_dev_size(struct dm_pool_metadata *pmd, dm_block_t *result);
+ 
+-int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
++int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
+ 
+ int dm_pool_inc_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
+ int dm_pool_dec_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -1048,7 +1048,7 @@ static void passdown_double_checking_sha
+ 	 * passdown we have to check that these blocks are now unused.
+ 	 */
+ 	int r = 0;
+-	bool used = true;
++	bool shared = true;
+ 	struct thin_c *tc = m->tc;
+ 	struct pool *pool = tc->pool;
+ 	dm_block_t b = m->data_block, e, end = m->data_block + m->virt_end - m->virt_begin;
+@@ -1058,11 +1058,11 @@ static void passdown_double_checking_sha
+ 	while (b != end) {
+ 		/* find start of unmapped run */
+ 		for (; b < end; b++) {
+-			r = dm_pool_block_is_used(pool->pmd, b, &used);
++			r = dm_pool_block_is_shared(pool->pmd, b, &shared);
+ 			if (r)
+ 				goto out;
+ 
+-			if (!used)
++			if (!shared)
+ 				break;
+ 		}
+ 
+@@ -1071,11 +1071,11 @@ static void passdown_double_checking_sha
+ 
+ 		/* find end of run */
+ 		for (e = b + 1; e != end; e++) {
+-			r = dm_pool_block_is_used(pool->pmd, e, &used);
++			r = dm_pool_block_is_shared(pool->pmd, e, &shared);
+ 			if (r)
+ 				goto out;
+ 
+-			if (used)
++			if (shared)
+ 				break;
+ 		}
  
 
 
