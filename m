@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 760EBC282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF58AC282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E096217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88748217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbfA2AkR (ORCPT
+        id S1728303AbfA2AkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:40:17 -0500
-Received: from mga06.intel.com ([134.134.136.31]:5081 "EHLO mga06.intel.com"
+        Mon, 28 Jan 2019 19:40:25 -0500
+Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727580AbfA2AjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:39:21 -0500
+        id S1727529AbfA2AjS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 19:39:18 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="133921919"
+   d="scan'208";a="133921915"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
   by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:12 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -46,9 +46,9 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         Dave Hansen <dave.hansen@intel.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 12/20] x86/alternative: Remove the return value of text_poke_*()
-Date:   Mon, 28 Jan 2019 16:34:14 -0800
-Message-Id: <20190129003422.9328-13-rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 11/20] x86/jump-label: remove support for custom poker
+Date:   Mon, 28 Jan 2019 16:34:13 -0800
+Message-Id: <20190129003422.9328-12-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
@@ -59,8 +59,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nadav Amit <namit@vmware.com>
 
-The return value of text_poke_early() and text_poke_bp() is useless.
-Remove it.
+There are only two types of poking: early and breakpoint based. The use
+of a function pointer to perform poking complicates the code and is
+probably inefficient due to the use of indirect branches.
 
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
@@ -70,81 +71,75 @@ Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/text-patching.h |  4 ++--
- arch/x86/kernel/alternative.c        | 11 ++++-------
- 2 files changed, 6 insertions(+), 9 deletions(-)
+ arch/x86/kernel/jump_label.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index a75eed841eed..c90678fd391a 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -18,7 +18,7 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
- #define __parainstructions_end	NULL
- #endif
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index e36cfec0f35e..427facef8aff 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -37,7 +37,6 @@ static void bug_at(unsigned char *ip, int line)
  
--extern void *text_poke_early(void *addr, const void *opcode, size_t len);
-+extern void text_poke_early(void *addr, const void *opcode, size_t len);
- 
- /*
-  * Clear and restore the kernel write-protection flag on the local CPU.
-@@ -37,7 +37,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
- extern void *text_poke(void *addr, const void *opcode, size_t len);
- extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
--extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
-+extern void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
- extern int after_bootmem;
- extern __ro_after_init struct mm_struct *poking_mm;
- extern __ro_after_init unsigned long poking_addr;
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 69f3e650ada8..81876e3ef3fd 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -264,7 +264,7 @@ static void __init_or_module add_nops(void *insns, unsigned int len)
- 
- extern struct alt_instr __alt_instructions[], __alt_instructions_end[];
- extern s32 __smp_locks[], __smp_locks_end[];
--void *text_poke_early(void *addr, const void *opcode, size_t len);
-+void text_poke_early(void *addr, const void *opcode, size_t len);
- 
- /*
-  * Are we looking at a near JMP with a 1 or 4-byte displacement.
-@@ -666,8 +666,8 @@ void __init alternative_instructions(void)
-  * instructions. And on the local CPU you need to be protected again NMI or MCE
-  * handlers seeing an inconsistent instruction while you patch.
-  */
--void *__init_or_module text_poke_early(void *addr, const void *opcode,
--				       size_t len)
-+void __init_or_module text_poke_early(void *addr, const void *opcode,
-+				      size_t len)
+ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 					 enum jump_label_type type,
+-					 void *(*poker)(void *, const void *, size_t),
+ 					 int init)
  {
- 	unsigned long flags;
+ 	union jump_code_union jmp;
+@@ -50,14 +49,6 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 	jmp.offset = jump_entry_target(entry) -
+ 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
  
-@@ -690,7 +690,6 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
- 		 * that causes hangs on some VIA CPUs.
- 		 */
- 	}
--	return addr;
- }
- 
- __ro_after_init struct mm_struct *poking_mm;
-@@ -890,7 +889,7 @@ int poke_int3_handler(struct pt_regs *regs)
-  *	  replacing opcode
-  *	- sync cores
-  */
--void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
-+void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- {
- 	unsigned char int3 = 0xcc;
- 
-@@ -932,7 +931,5 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- 	 * the writing of the new instruction.
- 	 */
- 	bp_patching_in_progress = false;
+-	/*
+-	 * As long as we're UP and not yet marked RO, we can use
+-	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
+-	 * SYSTEM_SCHEDULING before going either.
+-	 */
+-	if (system_state == SYSTEM_BOOTING)
+-		poker = text_poke_early;
 -
--	return addr;
+ 	if (type == JUMP_LABEL_JMP) {
+ 		if (init) {
+ 			expect = default_nop; line = __LINE__;
+@@ -80,16 +71,17 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 		bug_at((void *)jump_entry_code(entry), line);
+ 
+ 	/*
+-	 * Make text_poke_bp() a default fallback poker.
++	 * As long as we're UP and not yet marked RO, we can use
++	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
++	 * SYSTEM_SCHEDULING before going either.
+ 	 *
+ 	 * At the time the change is being done, just ignore whether we
+ 	 * are doing nop -> jump or jump -> nop transition, and assume
+ 	 * always nop being the 'currently valid' instruction
+-	 *
+ 	 */
+-	if (poker) {
+-		(*poker)((void *)jump_entry_code(entry), code,
+-			 JUMP_LABEL_NOP_SIZE);
++	if (init || system_state == SYSTEM_BOOTING) {
++		text_poke_early((void *)jump_entry_code(entry), code,
++				JUMP_LABEL_NOP_SIZE);
+ 		return;
+ 	}
+ 
+@@ -101,7 +93,7 @@ void arch_jump_label_transform(struct jump_entry *entry,
+ 			       enum jump_label_type type)
+ {
+ 	mutex_lock(&text_mutex);
+-	__jump_label_transform(entry, type, NULL, 0);
++	__jump_label_transform(entry, type, 0);
+ 	mutex_unlock(&text_mutex);
  }
  
+@@ -131,5 +123,5 @@ __init_or_module void arch_jump_label_transform_static(struct jump_entry *entry,
+ 			jlstate = JL_STATE_NO_UPDATE;
+ 	}
+ 	if (jlstate == JL_STATE_UPDATE)
+-		__jump_label_transform(entry, type, text_poke_early, 1);
++		__jump_label_transform(entry, type, 1);
+ }
 -- 
 2.17.1
 
