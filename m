@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D29E4C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40858C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A50AC2086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1225E2083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762767;
-	bh=ilXlKXShoZEhc9C336zQS4MePl2meRN/y/VBsgGeuEw=;
+	s=default; t=1548762773;
+	bh=JzfI4ceL5RNcEyd59AvoOvbj1sUvCMg8kStymtsPkRc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mcqjbxiSBSKQ2GQsy30x339bLdQSZ23WO/j2Hu2dZ42Qt3ocmSfap1Zwlg/5+qTex
-	 Ryz4Y3HoXnmmCkSVXuKs3DFsfcHXSJa7c69o4hheqp86rry6a5v4dGcJu0qRORVz8R
-	 t2kvt1gHEujr969Td3ELWjS9hRsaJK/0+4npp8mU=
+	b=jyfBMdFExsIyePXtiiQqsuoDCNoF2t8hbkK0AkxdwlUo9sxTObaOknZxz9j7zmegc
+	 JTkOq1OO77xbYBBASRlQrsuyWAsoHCNzyzctRRtVUAAqRHNE2+8BtVR0hrNuALN1WJ
+	 ee9ra3ALy15pqrz5qv40YrlypJPIkwswVJ5fwSnE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731882AbfA2Lwq (ORCPT
+        id S1732193AbfA2Lwv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:52:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44612 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:52:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732159AbfA2Lwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:52:44 -0500
+        id S1732174AbfA2Lwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:52:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E1742083B;
-        Tue, 29 Jan 2019 11:52:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D1DF2083B;
+        Tue, 29 Jan 2019 11:52:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762763;
-        bh=ilXlKXShoZEhc9C336zQS4MePl2meRN/y/VBsgGeuEw=;
+        s=default; t=1548762768;
+        bh=JzfI4ceL5RNcEyd59AvoOvbj1sUvCMg8kStymtsPkRc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h35sjkufp1gP+AD2FwWuY92r+5zIVG2SJAfQ9OnH198gcgfmbwd1kNN28houO0Kd7
-         vHl+28tZg5/4pHbhgj7gLo6+OrGMB6UFo2wAHxL5XaXPB+9m6yIU7uSVwEkOwBxODy
-         uWAo4SAe6GTpy/6HlQCzdJPVO5TwTdtGDgg9ew7g=
+        b=U4POsPMaI2gPhWJf5pMRnzIBd4L5jFu3FiZAhhcgXZ7co3jhXZTDvxvYJZvfuH2zm
+         5e+K+EO5AzRhP5DIIn7On1VBoAKXeq3IW0SZo1zfpqhZDRoNyQCyHt2hUe5uqXQuPE
+         QWKAOiTYxEfhcYoXrrwtb3RUTd7lxfpuupkwTC3g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tom Panfil <tom@steelseries.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 24/44] Input: xpad - add support for SteelSeries Stratus Duo
-Date:   Tue, 29 Jan 2019 12:36:19 +0100
-Message-Id: <20190129113141.885690761@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.9 16/44] s390/smp: fix CPU hotplug deadlock with CPU rescan
+Date:   Tue, 29 Jan 2019 12:36:11 +0100
+Message-Id: <20190129113141.324243699@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -65,43 +66,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tom Panfil <tom@steelseries.com>
+From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
 
-commit fe2bfd0d40c935763812973ce15f5764f1c12833 upstream.
+commit b7cb707c373094ce4008d4a6ac9b6b366ec52da5 upstream.
 
-Add support for the SteelSeries Stratus Duo, a wireless Xbox 360
-controller. The Stratus Duo ships with a USB dongle to enable wireless
-connectivity, but it can also function as a wired controller by connecting
-it directly to a PC via USB, hence the need for two USD PIDs. 0x1430 is the
-dongle, and 0x1431 is the controller.
+smp_rescan_cpus() is called without the device_hotplug_lock, which can lead
+to a dedlock when a new CPU is found and immediately set online by a udev
+rule.
 
-Signed-off-by: Tom Panfil <tom@steelseries.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+This was observed on an older kernel version, where the cpu_hotplug_begin()
+loop was still present, and it resulted in hanging chcpu and systemd-udev
+processes. This specific deadlock will not show on current kernels. However,
+there may be other possible deadlocks, and since smp_rescan_cpus() can still
+trigger a CPU hotplug operation, the device_hotplug_lock should be held.
+
+For reference, this was the deadlock with the old cpu_hotplug_begin() loop:
+
+        chcpu (rescan)                       systemd-udevd
+
+ echo 1 > /sys/../rescan
+ -> smp_rescan_cpus()
+ -> (*) get_online_cpus()
+    (increases refcount)
+ -> smp_add_present_cpu()
+    (new CPU found)
+ -> register_cpu()
+ -> device_add()
+ -> udev "add" event triggered -----------> udev rule sets CPU online
+                                         -> echo 1 > /sys/.../online
+                                         -> lock_device_hotplug_sysfs()
+                                            (this is missing in rescan path)
+                                         -> device_online()
+                                         -> (**) device_lock(new CPU dev)
+                                         -> cpu_up()
+                                         -> cpu_hotplug_begin()
+                                            (loops until refcount == 0)
+                                            -> deadlock with (*)
+ -> bus_probe_device()
+ -> device_attach()
+ -> device_lock(new CPU dev)
+    -> deadlock with (**)
+
+Fix this by taking the device_hotplug_lock in the CPU rescan path.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/joystick/xpad.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/s390/kernel/smp.c          |    4 ++++
+ drivers/s390/char/sclp_config.c |    2 ++
+ 2 files changed, 6 insertions(+)
 
---- a/drivers/input/joystick/xpad.c
-+++ b/drivers/input/joystick/xpad.c
-@@ -255,6 +255,8 @@ static const struct xpad_device {
- 	{ 0x0f30, 0x0202, "Joytech Advanced Controller", 0, XTYPE_XBOX },
- 	{ 0x0f30, 0x8888, "BigBen XBMiniPad Controller", 0, XTYPE_XBOX },
- 	{ 0x102c, 0xff0c, "Joytech Wireless Advanced Controller", 0, XTYPE_XBOX },
-+	{ 0x1038, 0x1430, "SteelSeries Stratus Duo", 0, XTYPE_XBOX360 },
-+	{ 0x1038, 0x1431, "SteelSeries Stratus Duo", 0, XTYPE_XBOX360 },
- 	{ 0x11c9, 0x55f0, "Nacon GC-100XF", 0, XTYPE_XBOX360 },
- 	{ 0x12ab, 0x0004, "Honey Bee Xbox360 dancepad", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360 },
- 	{ 0x12ab, 0x0301, "PDP AFTERGLOW AX.1", 0, XTYPE_XBOX360 },
-@@ -431,6 +433,7 @@ static const struct usb_device_id xpad_t
- 	XPAD_XBOXONE_VENDOR(0x0e6f),		/* 0x0e6f X-Box One controllers */
- 	XPAD_XBOX360_VENDOR(0x0f0d),		/* Hori Controllers */
- 	XPAD_XBOXONE_VENDOR(0x0f0d),		/* Hori Controllers */
-+	XPAD_XBOX360_VENDOR(0x1038),		/* SteelSeries Controllers */
- 	XPAD_XBOX360_VENDOR(0x11c9),		/* Nacon GC100XF */
- 	XPAD_XBOX360_VENDOR(0x12ab),		/* X-Box 360 dance pads */
- 	XPAD_XBOX360_VENDOR(0x1430),		/* RedOctane X-Box 360 controllers */
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@ -1139,7 +1139,11 @@ static ssize_t __ref rescan_store(struct
+ {
+ 	int rc;
+ 
++	rc = lock_device_hotplug_sysfs();
++	if (rc)
++		return rc;
+ 	rc = smp_rescan_cpus();
++	unlock_device_hotplug();
+ 	return rc ? rc : count;
+ }
+ static DEVICE_ATTR(rescan, 0200, NULL, rescan_store);
+--- a/drivers/s390/char/sclp_config.c
++++ b/drivers/s390/char/sclp_config.c
+@@ -59,7 +59,9 @@ static void sclp_cpu_capability_notify(s
+ 
+ static void __ref sclp_cpu_change_notify(struct work_struct *work)
+ {
++	lock_device_hotplug();
+ 	smp_rescan_cpus();
++	unlock_device_hotplug();
+ }
+ 
+ static void sclp_conf_receiver_fn(struct evbuf_header *evbuf)
 
 
