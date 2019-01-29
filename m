@@ -2,206 +2,111 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28D2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E5BC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59DC92147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548802258;
-	bh=t74ythkHaPEfDQr6kBkrw9aIN/r/JpkyyZkAWrsmwKk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GkZxuf75qJpO1v3e/et7pnhkTwiR7y1At4rZ5LsL/nGrghI7J3bFAPyuyvgoDKjgz
-	 MoTCyVyiztimtn6Ufa7HFhl4/hUBhjypmJbznicH15oEIBS5j1dXecVl9WkAbueWOh
-	 0UXh6wVU39gl+mCPHVbz9UnRpd3RfE6QIP+USbwg=
+	by mail.kernel.org (Postfix) with ESMTP id AB007214D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:52:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="IxJXz8GX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729777AbfA2Wu4 (ORCPT
+        id S1729602AbfA2WwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:50:56 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:34929 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729663AbfA2Wuz (ORCPT
+        Tue, 29 Jan 2019 17:52:21 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:41807 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727358AbfA2WwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:50:55 -0500
-Received: by mail-yb1-f194.google.com with SMTP id 64so4458725ybs.2;
-        Tue, 29 Jan 2019 14:50:54 -0800 (PST)
+        Tue, 29 Jan 2019 17:52:21 -0500
+Received: by mail-yb1-f193.google.com with SMTP id n6so3460539ybg.8
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 14:52:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CdGe6/Yo7nLW7G75bv7nG6chpZyXCPNYdxAkMYBosTM=;
+        b=IxJXz8GX+Si558KKavIbsvO0B/yuMzxRTq5nMLy0b0G3LkrObsJQQGpFEcCGUsi6oe
+         4JjVOXscDG5xpT92OE2YncKi5Cr9W1LMIk2Dem0b23nYiXWx4jqDv0tpfYHiLAOAcVKZ
+         elj6MRasJr7rx9vQ5q5lAV3Oyu8sctpbN88W4AypSPWc/2NDJzkfFkp8OT6rmP4quCld
+         EZCrbwCr/q4Mi23riVQUt4Nxo+LgTebMZ/pgfMUSgmq30hFjIpCR6aE5nuy99AoZUqUm
+         G+upda5RFlI1bgrp9xEVhJCesqZDLRjZa71FZDa7Afhf4pSfeYtv9Eh/+/iZWn4NWO6p
+         xJCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Bt5uAXlGEh+xbxNa64Wd7TBVok43VzmctHEcR2md1oo=;
-        b=AYgQnxy4MN1Fx4mVIC87F+8CwJSP14bQqx6y3ypiJJFPDX+g3FMMFn7jUlUqMwUoUB
-         zL8CWe5TqCcEGP7BEi9N6lfb7HAUyvwtzmfxe7luin3JvjJJ4xMcc6REXmUZpmIqXMTE
-         vvmdSXNB8deW+ZWlMmbGLR+qNpUVAmAzSfkjtuC8xtyBrmso8pVF4S41fgDH6aRUPkne
-         FzMnr8kkZtWVjgOInnMbdSlp25YtK6ihU5U2IZvqEynCktmtf13ks0CQ1uZg7Wj3x6pQ
-         k7NO+Xk8yyaqYqyHRe5teQPebvgl8eoP00gEHOxpvkd8gCkgkzlYllkh/BC+itj2JIjP
-         cMpw==
-X-Gm-Message-State: AHQUAubU3jpJ9LNf0MBR+JR1h82knm9MqTVMs8dzA2Dvqd01IOL17g8f
-        ygRegU9jIY1Sjbo3kt6G/RQ=
-X-Google-Smtp-Source: AHgI3IaEOqVjWMMRL8m90yY3y3dxAWqRxFZP4/AqU/+S+n1j43cGFebFlAoR8ZzdeDSf58AoFT6s5A==
-X-Received: by 2002:a25:d2cb:: with SMTP id j194mr11170654ybg.516.1548802253831;
-        Tue, 29 Jan 2019 14:50:53 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::5:f5f4])
-        by smtp.gmail.com with ESMTPSA id s35sm42704056ywa.19.2019.01.29.14.50.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 14:50:52 -0800 (PST)
-Date:   Tue, 29 Jan 2019 17:50:50 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Omar Sandoval <osandov@fb.com>
-Subject: Re: [PATCH 11/11] btrfs: add zstd compression level support
-Message-ID: <20190129225050.GB87266@dennisz-mbp.dhcp.thefacebook.com>
-References: <20190128212437.11597-1-dennis@kernel.org>
- <20190128212437.11597-12-dennis@kernel.org>
- <c92b0233-5406-42a8-4444-a5ab503f726f@suse.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CdGe6/Yo7nLW7G75bv7nG6chpZyXCPNYdxAkMYBosTM=;
+        b=RhqzPOL8UIN3Tby5i3J/aG8xfBVi1em0MxGZTv2dLyGk2gw8O6WHyd0iVY+6Du2bcC
+         EnCk6xQSezs7rgpCcR8gFYHauNyLEOvHMscCo/yvuk9Tcl3HdVSdV6HNCdDh8+2Ubc10
+         wN1U8DkcTVck9pH89dMMSY/3+YdSyb4jlmYZHbE2aZ1O1snelSvkeh9FjeWpVNxr6Vfb
+         dOp8YLMp5ju7YVIWegIAESgKubU6k6OB7b5OaTz7s++HOUm4a3d4+NMozh67SkfY7YFD
+         L4CL6u8pA8AE0YGW/Rhf4nIexjVvDEczDosNb2rsyHfOSylrAbOIzjS+SPZQ/Xxq81Lt
+         Ej2g==
+X-Gm-Message-State: AJcUukeKlvlDJoDJgI22/buYnbiihChKiSS8+Og4n0VDW4R6GRgMkIKx
+        f2B9mKlgW0Bv7TJeL/IEuygQ2g==
+X-Google-Smtp-Source: ALg8bN57QK38vWHBo8rZJC6vnnH5OxaLPeXVQNgsXBMAqWydnO9auwYqkwYC1qqQHzb0ZSeh5e5lug==
+X-Received: by 2002:a5b:482:: with SMTP id n2mr26188297ybp.193.1548802339947;
+        Tue, 29 Jan 2019 14:52:19 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::4:1d25])
+        by smtp.gmail.com with ESMTPSA id n16sm18577333ywn.31.2019.01.29.14.52.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 14:52:19 -0800 (PST)
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Babu Moger <babu.moger@amd.com>, Borislav Petkov <bp@suse.de>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] x86: avoid confusion over the new RESCTRL config prompt
+Date:   Tue, 29 Jan 2019 17:52:18 -0500
+Message-Id: <20190129225218.15441-1-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c92b0233-5406-42a8-4444-a5ab503f726f@suse.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 09:25:54AM +0200, Nikolay Borisov wrote:
-> 
-> 
-> On 28.01.19 г. 23:24 ч., Dennis Zhou wrote:
-> > Zstd compression requires different amounts of memory for each level of
-> > compression. The prior patches implemented indirection to allow for each
-> > compression type to manage their workspaces independently. This patch
-> > uses this indirection to implement compression level support for zstd.
-> > 
-> > As mentioned above, a requirement that differs zstd from zlib is that
-> > higher levels of compression require more memory. To manage this, each
-> > compression level has its own queue of workspaces. A global LRU is used
-> > to help with reclaim. To guarantee forward progress, a max level
-> > workspace is preallocated and hidden from the LRU.
-> > 
-> > When getting a workspace, it uses a bitmap to identify the levels that
-> > are populated and scans up. If it finds a workspace that is greater than
-> > it, it uses it, but does not update the last_used time and the
-> > corresponding place in the LRU. This provides a mechanism to decrease
-> > memory utilization as we only keep around workspaces that are sized
-> > appropriately for the in use compression levels.
-> > 
-> > By knowing which compression levels have available workspaces, we can
-> > recycle rather than always create new workspaces as well as take
-> > advantage of the preallocated max level for forward progress. If we hit
-> > memory pressure, we sleep on the max level workspace. We continue to
-> > rescan in case we can use a smaller workspace, but eventually should be
-> > able to obtain the max level workspace or allocate one again should
-> > memory pressure subside. The memory requirement for decompression is the
-> > same as level 1, and therefore can use any of available workspace.
-> > 
-> > The number of workspaces is bound by an upper limit of the workqueue's
-> > limit which currently is 2 (percpu limit). Second, a reclaim timer is
-> > used to free inactive/improperly sized workspaces. The reclaim timer is
-> > set to 67s to avoid colliding with transaction commit (every 30s) and
-> > attempts to reclaim any unused workspace older than 45s.
-> > 
-> > Repeating the experiment from v2 [1], the Silesia corpus was copied to a
-> > btrfs filesystem 10 times and then read back after dropping the caches.
-> > The btrfs filesystem was on an SSD.
-> > 
-> > Level   Ratio   Compression (MB/s)  Decompression (MB/s)
-> > 1       2.658        438.47                910.51
-> > 2       2.744        364.86                886.55
-> > 3       2.801        336.33                828.41
-> > 4       2.858        286.71                886.55
-> > 5       2.916        212.77                556.84
-> > 6       2.363        119.82                990.85
-> > 7       3.000        154.06                849.30
-> > 8       3.011        159.54                875.03
-> > 9       3.025        100.51                940.15
-> > 10      3.033        118.97                616.26
-> > 11      3.036         94.19                802.11
-> > 12      3.037         73.45                931.49
-> > 13      3.041         55.17                835.26
-> > 14      3.087         44.70                716.78
-> > 15      3.126         37.30                878.84
-> > 
-> > [1] https://lore.kernel.org/linux-btrfs/20181031181108.289340-1-terrelln@fb.com/
-> > 
-> > Signed-off-by: Dennis Zhou <dennis@kernel.org>
-> > Cc: Nick Terrell <terrelln@fb.com>
-> > Cc: Omar Sandoval <osandov@fb.com>
-> > ---
-> >  fs/btrfs/super.c |   6 +-
-> >  fs/btrfs/zstd.c  | 229 +++++++++++++++++++++++++++++++++++++++++++++--
-> >  2 files changed, 226 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> > index b28dff207383..0ecc513cb56c 100644
-> > --- a/fs/btrfs/super.c
-> > +++ b/fs/btrfs/super.c
-> > @@ -544,9 +544,13 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
-> >  				btrfs_clear_opt(info->mount_opt, NODATASUM);
-> >  				btrfs_set_fs_incompat(info, COMPRESS_LZO);
-> >  				no_compress = 0;
-> > -			} else if (strcmp(args[0].from, "zstd") == 0) {
-> > +			} else if (strncmp(args[0].from, "zstd", 4) == 0) {
-> >  				compress_type = "zstd";
-> >  				info->compress_type = BTRFS_COMPRESS_ZSTD;
-> > +				info->compress_level =
-> > +					btrfs_compress_str2level(
-> > +							 BTRFS_COMPRESS_ZSTD,
-> > +							 args[0].from + 4);
-> >  				btrfs_set_opt(info->mount_opt, COMPRESS);
-> >  				btrfs_clear_opt(info->mount_opt, NODATACOW);
-> >  				btrfs_clear_opt(info->mount_opt, NODATASUM);
-> > diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
-> > index a951d4fe77f7..ce9b466c197f 100644
-> > --- a/fs/btrfs/zstd.c
-> > +++ b/fs/btrfs/zstd.c
-> > @@ -6,20 +6,27 @@
-> >   */
-> >  
-> >  #include <linux/bio.h>
-> > +#include <linux/bitmap.h>
-> >  #include <linux/err.h>
-> >  #include <linux/init.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/mm.h>
-> > +#include <linux/sched/mm.h>
-> >  #include <linux/pagemap.h>
-> >  #include <linux/refcount.h>
-> >  #include <linux/sched.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/zstd.h>
-> >  #include "compression.h"
-> > +#include "ctree.h"
-> >  
-> >  #define ZSTD_BTRFS_MAX_WINDOWLOG 17
-> >  #define ZSTD_BTRFS_MAX_INPUT (1 << ZSTD_BTRFS_MAX_WINDOWLOG)
-> >  #define ZSTD_BTRFS_DEFAULT_LEVEL 3
-> > +#define ZSTD_BTRFS_MAX_LEVEL 15
-> > +#define ZSTD_BTRFS_RECLAIM_NS (45 * NSEC_PER_SEC)
-> > +/* 67s to avoid clashing with transaction commit (every 30s) */
-> > +#define ZSTD_BTRFS_RECLAIM_JIFFIES (67 * HZ)
-> 
-> This is valid provided that transaction commit time is not overriden by
-> Opt_commit_interval. If it is such a problem to not clash with trans
-> commit maybe this should be calculated upon mount?
-> 
+"Resource Control" is a very broad term for this CPU feature, and a
+term that is also associated with containers, cgroups etc. This can
+easily cause confusion.
 
-Because the workspace managers are initialized once and shared,
-different mounts can have different Opt_commit_interval settings. I
-don't think it's particularly problematic to clash with trans commit,
-it's kind of nice to have the offset to in the majority of cases not run
-into this.
+Make the user prompt more specific.
 
-Thanks,
-Dennis
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ arch/x86/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+As somebody who works in "resource control", this prompt in oldconfig
+certainly had me go wtf. Can we do something more specific?
+
+Not insisting on this name, and I haven't renamed all the config
+symbols yet, but we should probably fix this before 5.0 is released.
+
+Thanks!
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 26387c7bf305..426677b759c0 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -447,11 +447,11 @@ config RETPOLINE
+ 	  support for full protection. The kernel may run slower.
+ 
+ config X86_RESCTRL
+-	bool "Resource Control support"
++	bool "x86 cache control support"
+ 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+ 	select KERNFS
+ 	help
+-	  Enable Resource Control support.
++	  Enable x86 cache control support.
+ 
+ 	  Provide support for the allocation and monitoring of system resources
+ 	  usage by the CPU.
+-- 
+2.20.1
+
