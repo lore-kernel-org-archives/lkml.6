@@ -2,91 +2,132 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F6CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E040C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A2D2148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:17:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F03AD2148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:20:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="uMWjhhA/"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PzKLYuJE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfA2GRG (ORCPT
+        id S1727403AbfA2GUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 01:17:06 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60194 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfA2GRF (ORCPT
+        Tue, 29 Jan 2019 01:20:16 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:35677 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbfA2GUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 01:17:05 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0T698Oh126070;
-        Tue, 29 Jan 2019 06:16:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=cxOOuBiDxSqVoXdgoRodmHJoKbbZvgIK1NK1+8BquyY=;
- b=uMWjhhA/RY9Nt+3ku0Ulm7/89bbghsUJ3hF33WA+vFZMpNUPP8AbvJnDA3ZbqsUsF0Rm
- t1QnrPvlDxVkENwBEWgUIcQTnKzaqSrSzAdPDOE0Y0rLMGlO0B6ReyFuNU0BWAvG8aYC
- jKwoh0T5ncOsvSl92xfel3aIHpil/2En3q7GGL/GR3/RE/Hr5W4OVO9R9OtGxnml+C3X
- LZ893Dyv3RDv4QDNnidbMSKKUHC0Da3o080Z4AAd5gIamBl0T9FQlhtq7l36/aLWF7fD
- hS7y4b0r1OTJ/fLmyOKFn03gTuSQFSRsRddZ0cHMzLiJ+ar6QDXfygrS9H97hPGCHldD zg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2q8eyuaaxq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jan 2019 06:16:58 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0T6GruT018670
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jan 2019 06:16:53 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0T6Gq2f002228;
-        Tue, 29 Jan 2019 06:16:52 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 28 Jan 2019 22:16:52 -0800
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <satishkh@cisco.com>, <sebaddel@cisco.com>, <kartilak@cisco.com>,
-        <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH -next] scsi: fnic: Remove set but not used variable 'vdev'
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190125020014.11184-1-yuehaibing@huawei.com>
-Date:   Tue, 29 Jan 2019 01:16:49 -0500
-In-Reply-To: <20190125020014.11184-1-yuehaibing@huawei.com> (YueHaibing's
-        message of "Fri, 25 Jan 2019 10:00:14 +0800")
-Message-ID: <yq1ef8wdm3y.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 29 Jan 2019 01:20:15 -0500
+Received: by mail-ua1-f65.google.com with SMTP id d2so6469746ual.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 22:20:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7wkFrcpsH8vjnkt+YHK0343FnxE8nm4ndTlDY14pPeo=;
+        b=PzKLYuJECQl8uW3GlH8caYRhkVOacJWltOLHe5gZryayHeYuf7bayT2WtFWUV2mRce
+         z1evoYruiOcILgP7wmrTO764Zt4DVf2tlsC/8ucKSMoqd18BNEVYXwXoLnXGI5WA4SJZ
+         EX8787G0fAdHC0yg0AySwj5tkFMpYBkCeKUi4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7wkFrcpsH8vjnkt+YHK0343FnxE8nm4ndTlDY14pPeo=;
+        b=QrOOHTd2iHfVu5x6RaYWezkn7c2YLgaHerfp+gRZ6v3AhQhsXWPtEEF07vZJ+BVNtY
+         /fHJfFX9eueJTInauzyrGyaISVLPO4cFXzhxxdCkjut9NgZqWvUTnVAHeCR7jcO2N2Fi
+         +RgkJxeyDtU/BMzXCS4BIFYgQGwnjAaq671EnN3yHvFaz5E1NOuf85uKA6pnJWyXB9qF
+         nVb8QvlUTbKNqyB1C2G4XqUwmBd7jPbTx8sKuEOTCnB/LlOEwjbIoYpbvWIzVxEb6biK
+         Muh7RKYYQAEN/F2YRCvqZSdvZZ2nOFZbUZ43/I3LMHSHj3uZLdFLnJ7HM2Brl2vz928J
+         aklw==
+X-Gm-Message-State: AJcUukcJLGgNUxHLU70NyUvbp7vf0YdPHA4PWQ0sA9Z1cpa6CYQOTIGA
+        6AEI1E1aQlgjUs1UG5BP/gIWIyNxSJJKHnZc04f2gg==
+X-Google-Smtp-Source: ALg8bN7FcTGEOOFrdbjHYb3dyb4dqCTGgwrWRzdQ5AebSUoTqgU9f74ZhXm8tcz4WSOhapasFcUCbhnOJDv4pLM/Rno=
+X-Received: by 2002:ab0:26cb:: with SMTP id b11mr10050153uap.112.1548742814354;
+ Mon, 28 Jan 2019 22:20:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9150 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=738
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901290046
+References: <cover.1548737236.git.amit.kucheria@linaro.org>
+ <6077cb33d7e078bb0e85776bad99fdb476f16d0c.1548737236.git.amit.kucheria@linaro.org>
+ <20190129053618.laa6nscfvlmhhkb5@vireshk-i7> <CAP245DVk+Bbkqh5xzNnL+RG3zZDJJR+ZLJqmEhSWjjSK1FH8rw@mail.gmail.com>
+In-Reply-To: <CAP245DVk+Bbkqh5xzNnL+RG3zZDJJR+ZLJqmEhSWjjSK1FH8rw@mail.gmail.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Tue, 29 Jan 2019 11:50:03 +0530
+Message-ID: <CAHLCerMAY8ZZRap4RQictmPkjhmk8gjKxRoS4o2ObP9jdv+FAQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/9] cpufreq: Auto-register the driver as a thermal
+ cooling device if asked
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-YueHaibing,
-
-> Fixes gcc '-Wunused-but-set-variable' warning:
+On Tue, Jan 29, 2019 at 11:16 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
 >
-> drivers/scsi/fnic/vnic_wq.c: In function 'vnic_wq_alloc_bufs':
-> drivers/scsi/fnic/vnic_wq.c:50:19: warning:
->  variable 'vdev' set but not used [-Wunused-but-set-variable]
+> On Tue, Jan 29, 2019 at 11:06 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > On 29-01-19, 10:25, Amit Kucheria wrote:
+> > > All cpufreq drivers do similar things to register as a cooling device.
+> > > Provide a cpufreq driver flag so drivers can just ask the cpufreq core
+> > > to register the cooling device on their behalf. This allows us to get
+> > > rid of duplicated code in the drivers.
+> > >
+> > > In order to allow this, we add a struct thermal_cooling_device pointer
+> > > to struct cpufreq_policy so that drivers don't need to store it in a
+> > > private data structure.
+> > >
+> > > Suggested-by: Stephen Boyd <swboyd@chromium.org>
+> > > Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> > > Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > > ---
+> > >  drivers/cpufreq/cpufreq.c | 13 +++++++++++++
+> > >  include/linux/cpufreq.h   |  9 +++++++++
+> > >  2 files changed, 22 insertions(+)
+> > >
+> > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > > index e35a886e00bc..0f9b50d3ee91 100644
+> > > --- a/drivers/cpufreq/cpufreq.c
+> > > +++ b/drivers/cpufreq/cpufreq.c
+> > > @@ -19,6 +19,7 @@
+> > >
+> > >  #include <linux/cpu.h>
+> > >  #include <linux/cpufreq.h>
+> > > +#include <linux/cpu_cooling.h>
+> > >  #include <linux/delay.h>
+> > >  #include <linux/device.h>
+> > >  #include <linux/init.h>
+> > > @@ -1318,6 +1319,11 @@ static int cpufreq_online(unsigned int cpu)
+> > >       if (cpufreq_driver->ready)
+> > >               cpufreq_driver->ready(policy);
+> > >
+> > > +#if IS_ENABLED(CONFIG_CPU_THERMAL)
+> > > +     if (cpufreq_driver->flags & CPUFREQ_IS_COOLING_DEV)
+> > > +             policy->cdev = of_cpufreq_cooling_register(policy);
+> > > +#endif
+> >
+> > I am not sure if Rafael wanted it this way but maybe something like this:
+> >
+> >         if (IS_ENABLED(CONFIG_CPU_THERMAL) &&
+> >             cpufreq_driver->flags & CPUFREQ_IS_COOLING_DEV))
+> >                 policy->cdev = of_cpufreq_cooling_register(policy);
+> >
+> > We never wanted ifdef hackery to be in there :)
 >
-> drivers/scsi/fnic/vnic_rq.c: In function 'vnic_rq_alloc_bufs':
-> drivers/scsi/fnic/vnic_rq.c:30:19: warning:
->  variable 'vdev' set but not used [-Wunused-but-set-variable]
+> OK, that makes more sense. Should I just send out a fixup patch or the
+> entire series?
 
-Applied to 5.1/scsi-queue, thanks!
+FWIW, I checked drivers/cpufreq and drivers/thermal before converting
+over and there is a mixed use of #if IS_ENABLED and if(IS_ENABLED).
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Perhaps we should clean it up?
