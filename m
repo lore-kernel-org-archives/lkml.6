@@ -7,94 +7,156 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CCAC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC05FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 627F22184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:18:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76CDF2184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:18:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tv91WTP1"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Xghk4eUt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729911AbfA2XSJ (ORCPT
+        id S1729933AbfA2XSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 18:18:09 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33613 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729594AbfA2XSI (ORCPT
+        Tue, 29 Jan 2019 18:18:18 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14918 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbfA2XRy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 18:18:08 -0500
-Received: by mail-pl1-f196.google.com with SMTP id z23so10106859plo.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 15:18:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MZ/DdbeQn7CAyCekKMFuF2UcpgJJmHxGBqfuC9XeHKI=;
-        b=Tv91WTP1jaB97yFmEnSDpjYezcdLkLhE2dy82hyp+RrGtE23FnP5F1B96H5HtcJCwD
-         IqL0g3gM8rzJuARtywfzWCe1CFpuJ6CxjeLD9EJZn+4L3pmIpms5z/lMQQH/q8klh+P1
-         U8dnzJ8Wg3lbSk/9byGVzqX+R1TuOEkfLEYRw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MZ/DdbeQn7CAyCekKMFuF2UcpgJJmHxGBqfuC9XeHKI=;
-        b=G15JiJwDKsbucVhDarl/Z5uq+3BCHWcRJrfFu44WhISBJK39dKWY4xHbatiLCaQGTE
-         FET0W6e9kfqQBVB98/xGlibiofpfa7+UVWiX14eEOG6vDH+75UPsMDOvgcEOyCiGMSUR
-         6MDAt1tU/w4hID1+mOvjF+LnSIzSknCjAWVmEDmZnlghMiiFoUuvfrlWSOjXObsP/6cK
-         W5+fWBrWQa1fn4/zdHWT5TZZGUSnY2wLuu9aJYgHGgabYkGlprNQpkOmI2aB+Eol/6nP
-         5tfq0CzXYYDHGPN3FVfGT+g3a+OncoK2oFQWnod/BFGXAuGpa67oMtZVDkIAWBCirxUy
-         wOAg==
-X-Gm-Message-State: AJcUukfaSM9G08VE7zzkvzFeYSiXpJ+2tLtfhZS4bxCnoHRG/qzUTYQH
-        mFwLxxkVMqaNPZjSZanahdno3Q==
-X-Google-Smtp-Source: ALg8bN7VBCDE0/zoF+Opol1KpqEnJkhDMFX3iQ3NtIYykELf8XA2yufVCHxgS3tEs883H9M0s4J6lA==
-X-Received: by 2002:a17:902:8bc6:: with SMTP id r6mr27842288plo.67.1548803887519;
-        Tue, 29 Jan 2019 15:18:07 -0800 (PST)
-Received: from smtp.gmail.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id r8sm46949632pgr.48.2019.01.29.15.18.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 15:18:06 -0800 (PST)
-From:   Brian Norris <briannorris@chromium.org>
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        Wen Gong <wgong@codeaurora.org>,
-        <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH] ath10k: sdio: add .owner field
-Date:   Tue, 29 Jan 2019 15:14:48 -0800
-Message-Id: <20190129231448.83305-1-briannorris@chromium.org>
-X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+        Tue, 29 Jan 2019 18:17:54 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c50df040001>; Tue, 29 Jan 2019 15:17:24 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 29 Jan 2019 15:17:51 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 29 Jan 2019 15:17:51 -0800
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 29 Jan
+ 2019 23:17:51 +0000
+Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 29 Jan
+ 2019 23:17:51 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 29 Jan 2019 23:17:50 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c50df1e0008>; Tue, 29 Jan 2019 15:17:51 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V5 4/5] i2c: tegra: Update transfer timeout
+Date:   Tue, 29 Jan 2019 15:16:10 -0800
+Message-ID: <1548803771-13424-4-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548803771-13424-1-git-send-email-skomatineni@nvidia.com>
+References: <1548803771-13424-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548803844; bh=VuoZAK/haIrMe42M1Oy3zBDyeBLJit1KIHZXczd2Hos=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=Xghk4eUtaQ417pOLe2TmtyLe9N+78qoRK4CPgQWR6dRwGrov5EMuXS8Vsf0u9Sq8S
+         MnooPmGP2ZkC9a+J1bnNbeVeWExdRECyihqUe4fUsz0OrOyrVEs/3hFdKrFpS/lysj
+         iJEwLFiwL5ZsTZZZeZVVmzJuGqpWQ0jZP+Nfw1yE4hBmlha6LvhMZW9vAdAnEnq/4T
+         173CUuLVXJe5kAT+1m99fIsLGQUfJ5vaLRk5blg+SuqavT1uJ3TCHB+aaPDOvCUMGQ
+         rCTEpMlHY8fKZRkKzXAJDH5spAhE1+BiFfkjmBKAPr5kfYnjUJObtTuAA8cj2G3Dt9
+         dA+Y2xoEogrJw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sdio_register_driver() doesn't do this for us, unlike (for example)
-platform_driver_register(). This is important for helping track
-module-to-device relationships.
+Tegra194 allows max of 64K bytes and Tegra186 and prior allows
+max of 4K bytes of transfer per packet.
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
+one sec timeout is not enough for transfers more than 10K bytes
+at STD bus rate.
+
+This patch updates I2C transfer timeout based on the transfer size
+and I2C bus rate to allow enough time during max transfer size at
+lower bus speed.
+
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/net/wireless/ath/ath10k/sdio.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ [V5] : Same as V4
+ [V4] : V4 series includes bus clear support and this patch is updated with
+	fixed timeout of 1sec for bus clear operation.
+ [V3] : Same as V2
+ [V2] : Added this patch in V2 series to allow enough time for data transfer
+	to happen.
+	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
+	takes argument with this patch.
 
-diff --git a/drivers/net/wireless/ath/ath10k/sdio.c b/drivers/net/wireless/ath/ath10k/sdio.c
-index 983ecfef1d28..2fc0c17c9672 100644
---- a/drivers/net/wireless/ath/ath10k/sdio.c
-+++ b/drivers/net/wireless/ath/ath10k/sdio.c
-@@ -2088,7 +2088,10 @@ static struct sdio_driver ath10k_sdio_driver = {
- 	.id_table = ath10k_sdio_devices,
- 	.probe = ath10k_sdio_probe,
- 	.remove = ath10k_sdio_remove,
--	.drv.pm = ATH10K_SDIO_PM_OPS,
-+	.drv = {
-+		.owner = THIS_MODULE,
-+		.pm = ATH10K_SDIO_PM_OPS,
-+	},
- };
+ drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 651b55fd9aa5..e33bbc1b2212 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -25,7 +25,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
  
- static int __init ath10k_sdio_init(void)
+-#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
++#define TEGRA_I2C_TIMEOUT(ms) (msecs_to_jiffies(ms))
+ #define BYTES_PER_FIFO_WORD 4
+ 
+ #define I2C_CNFG				0x000
+@@ -900,8 +900,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
+ 		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
+ 		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
+ 
+-		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
+-							TEGRA_I2C_TIMEOUT);
++		time_left = wait_for_completion_timeout(
++						&i2c_dev->msg_complete,
++						TEGRA_I2C_TIMEOUT(1000));
+ 		if (time_left == 0) {
+ 			dev_err(i2c_dev->dev, "timed out for bus clear\n");
+ 			return -ETIMEDOUT;
+@@ -928,6 +929,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	u32 *buffer = 0;
+ 	int ret = 0;
+ 	bool dma = false;
++	u16 xfer_time = 100;
+ 
+ 	if (msg->flags & I2C_M_RD)
+ 		xfer_size = msg->len;
+@@ -935,6 +937,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
+ 
+ 	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
++	xfer_time += DIV_ROUND_CLOSEST((xfer_size * 9) * 1000,
++					i2c_dev->bus_clk_rate);
++
+ 	dma = i2c_dev->has_dma && (xfer_size > I2C_PIO_MODE_MAX_LEN);
+ 	if (dma) {
+ 		if ((msg->flags & I2C_M_RD) && !i2c_dev->rx_dma_chan)
+@@ -1071,7 +1076,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	if (dma) {
+ 		time_left = wait_for_completion_timeout(
+ 						&i2c_dev->dma_complete,
+-						TEGRA_I2C_TIMEOUT);
++						TEGRA_I2C_TIMEOUT(xfer_time));
+ 
+ 		if (time_left == 0) {
+ 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
+@@ -1094,7 +1099,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	}
+ 
+ 	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
+-						TEGRA_I2C_TIMEOUT);
++						TEGRA_I2C_TIMEOUT(xfer_time));
+ 	tegra_i2c_mask_irq(i2c_dev, int_mask);
+ 
+ 	if (time_left == 0) {
 -- 
-2.20.1.495.gaa96b0ce6b-goog
+2.7.4
 
