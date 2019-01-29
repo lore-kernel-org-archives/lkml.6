@@ -8,137 +8,173 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D81F8C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F2CC282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3330A2175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:25:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B8F52177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:26:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gpQq0SwP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3AX2478"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbfA2AZa (ORCPT
+        id S1727397AbfA2A0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:25:30 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40256 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfA2AZa (ORCPT
+        Mon, 28 Jan 2019 19:26:21 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40178 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbfA2A0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:25:30 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z10so7951412pgp.7;
-        Mon, 28 Jan 2019 16:25:29 -0800 (PST)
+        Mon, 28 Jan 2019 19:26:21 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u18so8514070plq.7;
+        Mon, 28 Jan 2019 16:26:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uKESH3dP8KlH2H1aC9ySmBdA/fbboEB/JQypTItUj7I=;
-        b=gpQq0SwPdDkNS9ZYm6KJF0bJ55NyrCChKzrCu46vKxqh0tIeyvh1unq0/4JCI+o1x3
-         1hrLVRRSqhUi1OmCgRWfsNAjr48UvmNB1JwinR1RiVZfeSFAE3YvtWRaG+zTuV1lE3U6
-         wrfNszfiWmQG1r1GCdHAwNrbs/TOla4gmbNRV5Ihgunj7cxKm+ZVmBw3Y8vtm/WwXGCL
-         Cqr2LB6mIq005qo1RE4qm2KGOfA3kkX0OcaQNGljwDGMkUD7QBBjBkpU4Kkyyr966tX1
-         gTPbE6lsc1KTP1oHHNzNOOP3p/kAlbrsPUpav/9XByNj9+pZx+IjddCbdlb85PoSoo3n
-         XmcA==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=tkAmkW6+O8lwaIXlC7KKsWzv1ehiI1Q+Mnv5n+nuoYs=;
+        b=P3AX2478tFAt3I549N96NKeobqS6QEXmhA1JBr8yw96hlDjgN250GdFjdcLPMrXFhw
+         Flme0LYsNxsuIuaqe2y8RSRSlSwK8zXJmvAhCrIayAvOaCzTrCO4SpU310lIH0Ia9Blb
+         Nbaz5sYHfp5NcqPg5VlHs3FFE5IsV4V9mDrxtOrlQoj9HW+6kj8201niRC/1oFx8i9cJ
+         NdEm1+VGzzlfDve2X5/tqBJqDiNM+WRWD9zZDGx0ApdowbbJtgt/C/cPKrUxrMIQJD0/
+         Sggg5+T3ZHKnTChJKC6w4jlSy3BsSH7ejuJkd3SFoE3W54JfKnVsFIm3Xzjy6h5oixkT
+         ByhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uKESH3dP8KlH2H1aC9ySmBdA/fbboEB/JQypTItUj7I=;
-        b=W822ADF5n29Hc5/yo6GUrtLiu+sv0/WPvrBLXBCUTiuhkmK5WcuRD9sZERon85lCa+
-         XaxribBVYA86n7C4EFxwnjDpI1oU5BgVmR4ZX87VXH/9SdWnN2ijrvzqcWxjakLGJnVx
-         suC/2G8ITSWnM6/eM62hCzRvm6Lom+YZlg5f7OHBz74vUEVsPylwKJ39EFCUPX76KfA/
-         reGgyTHXqdO38HtZE4lyYfIvBkl0vxuNInlwoEEX1sDrfs30SZf6bPjN69SHJfmgcjPl
-         UZUHuFuyAqOYjrmW8kNblaDxEtppFBuzb9IC6Y/XuggtXk7CF2R4NH30m4lV7OOWgX7n
-         DZFA==
-X-Gm-Message-State: AJcUukclMfchK/u9E+sa72RLd840zX/TWZzKQ3tHs39TKzY1w1XBFYfG
-        PjFCUq86d20yGBXIrOx74jo=
-X-Google-Smtp-Source: ALg8bN6AoR5EUkhDerMKX1YXbzqmE34VQORbHd9A8F71uuc9YoJnqTqgbIrtTaQni6qDO/ywQ8s1uw==
-X-Received: by 2002:a62:1484:: with SMTP id 126mr23660899pfu.257.1548721528966;
-        Mon, 28 Jan 2019 16:25:28 -0800 (PST)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=tkAmkW6+O8lwaIXlC7KKsWzv1ehiI1Q+Mnv5n+nuoYs=;
+        b=FFixSa4I+hOoMBS+oySPqm9+CGHDhgpNIrwFoH+NZCr6ELt63W96CV5i6IKhCwowTP
+         VaG/XyCAgisaHq0YF3MsrWRhUhqNpZ9NpZcEy0j5KbWFs/IugCrIqJcXjH7nJShMhgKn
+         rns5/vr0aUWCMxz54GNis0gOCFIm/1iFjD06q+Hv37cr3Croa4ke4VLJ/hSCt392V2mx
+         VapvVIicKoq6xrlfyDqNs0A4LMpySC7iKe0ksnA0yLTFGMpWSLGMnYP6NAjUxjcXxUv/
+         SicrED89sXX30kJDeuHrVji4zuH/NLrBUGsSb+3VF4lFgU59Ez+xejHcsLj8d0aS3vYP
+         xprg==
+X-Gm-Message-State: AJcUukdiCGkCCMXHuHxsKSrsr70dGk7gHszGAbuJGCyLuV6dHLEIsZr2
+        CXK1mb0+1QHEow017lCYztM=
+X-Google-Smtp-Source: ALg8bN5aSRhs2vEBjo/Hu5e21lUNes9d/yZK1DldhzmRfHkUrpHzvtmff49Z9P2Xw+Aiay2YHBKJgA==
+X-Received: by 2002:a17:902:c05:: with SMTP id 5mr24065786pls.155.1548721579990;
+        Mon, 28 Jan 2019 16:26:19 -0800 (PST)
 Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id m9sm75473244pgd.32.2019.01.28.16.25.27
+        by smtp.gmail.com with ESMTPSA id v191sm63989000pgb.77.2019.01.28.16.26.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 16:25:28 -0800 (PST)
-Date:   Mon, 28 Jan 2019 16:25:26 -0800
+        Mon, 28 Jan 2019 16:26:19 -0800 (PST)
+Date:   Mon, 28 Jan 2019 16:26:17 -0800
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Richard Leitner <richard.leitner@skidata.com>
 Cc:     mark.rutland@arm.com, robh+dt@kernel.org,
         linux-input@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 7/8] Input: sx8654 - use common of_touchscreen
- functions
-Message-ID: <20190129002526.GI34692@dtor-ws>
+Subject: Re: [RESEND PATCH v2 2/8] Input: sx8654 - add reset-gpio support
+Message-ID: <20190129002617.GJ34692@dtor-ws>
 References: <20181218083606.25795-1-richard.leitner@skidata.com>
- <20181218083946.13823-1-richard.leitner@skidata.com>
+ <20181218083606.25795-3-richard.leitner@skidata.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181218083946.13823-1-richard.leitner@skidata.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181218083606.25795-3-richard.leitner@skidata.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 09:39:46AM +0100, Richard Leitner wrote:
-> of_touchscreen.c provides a common interface for a axis invertion and
-> swapping of touchscreens. Therefore use it in the sx8654 driver.
+On Tue, Dec 18, 2018 at 09:36:00AM +0100, Richard Leitner wrote:
+> The sx8654 features a NRST input which may be connected to a GPIO.
+> Therefore add support for hard-resetting the sx8654 via this NRST.
+> 
+> If the reset-gpio property is provided the sx8654 is resetted via NRST
+> instead of the soft-reset via I2C.
 > 
 > Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
-
-Applied, thank you.
-
 > ---
->  drivers/input/touchscreen/sx8654.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
+>  drivers/input/touchscreen/sx8654.c | 40 +++++++++++++++++++++++++++++++++++---
+>  1 file changed, 37 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
-> index 4939863efbef..b7b263ed52af 100644
+> index ed29db3ec731..238f56b1581b 100644
 > --- a/drivers/input/touchscreen/sx8654.c
 > +++ b/drivers/input/touchscreen/sx8654.c
-> @@ -35,6 +35,7 @@
+> @@ -33,6 +33,8 @@
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
 >  #include <linux/irq.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/delay.h>
-> +#include <linux/input/touchscreen.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/delay.h>
 >  
 >  /* register addresses */
 >  #define I2C_REG_TOUCH0			0x00
-> @@ -101,6 +102,7 @@ struct sx8654 {
->  
->  	spinlock_t		lock; /* for input reporting from irq/timer */
->  	struct timer_list	timer;
-> +	struct touchscreen_properties props;
->  
->  	const struct sx865x_data *data;
+> @@ -74,6 +76,7 @@
+>  struct sx8654 {
+>  	struct input_dev *input;
+>  	struct i2c_client *client;
+> +	struct gpio_desc *gpio_reset;
 >  };
-> @@ -178,8 +180,7 @@ static irqreturn_t sx8650_irq(int irq, void *handle)
->  				 chdata);
->  	}
 >  
-> -	input_report_abs(ts->input, ABS_X, x);
-> -	input_report_abs(ts->input, ABS_Y, y);
-> +	touchscreen_report_pos(ts->input, &ts->props, x, y, false);
->  	input_report_key(ts->input, BTN_TOUCH, 1);
->  	input_sync(ts->input);
->  	dev_dbg(dev, "point(%4d,%4d)\n", x, y);
-> @@ -226,8 +227,8 @@ static irqreturn_t sx8654_irq(int irq, void *handle)
->  		x = ((data[0] & 0xf) << 8) | (data[1]);
->  		y = ((data[2] & 0xf) << 8) | (data[3]);
+>  static irqreturn_t sx8654_irq(int irq, void *handle)
+> @@ -124,6 +127,27 @@ static irqreturn_t sx8654_irq(int irq, void *handle)
+>  	return IRQ_HANDLED;
+>  }
 >  
-> -		input_report_abs(sx8654->input, ABS_X, x);
-> -		input_report_abs(sx8654->input, ABS_Y, y);
-> +		touchscreen_report_pos(sx8654->input, &sx8654->props, x, y,
-> +				       false);
->  		input_report_key(sx8654->input, BTN_TOUCH, 1);
->  		input_sync(sx8654->input);
->  
-> @@ -377,6 +378,8 @@ static int sx8654_probe(struct i2c_client *client,
->  	input_set_abs_params(input, ABS_X, 0, MAX_12BIT, 0, 0);
->  	input_set_abs_params(input, ABS_Y, 0, MAX_12BIT, 0, 0);
->  
-> +	touchscreen_parse_properties(input, false, &sx8654->props);
+> +static int sx8654_reset(struct sx8654 *ts)
+> +{
+> +	int err;
 > +
->  	sx8654->client = client;
->  	sx8654->input = input;
+> +	if (ts->gpio_reset) {
+> +		gpiod_set_value_cansleep(ts->gpio_reset, 1);
+> +		udelay(2); /* Tpulse > 1µs */
+> +		gpiod_set_value_cansleep(ts->gpio_reset, 0);
+> +
+> +		return 0;
+
+I rearranged code a bit to avoid this early return and applied. Thank
+you.
+
+> +	}
+> +
+> +	dev_dbg(&ts->client->dev, "NRST unavailable, try softreset\n");
+> +	err = i2c_smbus_write_byte_data(ts->client, I2C_REG_SOFTRESET,
+> +					SOFTRESET_VALUE);
+> +	if (err)
+> +		return err;
+> +	else
+> +		return 0;
+> +}
+> +
+>  static int sx8654_open(struct input_dev *dev)
+>  {
+>  	struct sx8654 *sx8654 = input_get_drvdata(dev);
+> @@ -186,6 +210,17 @@ static int sx8654_probe(struct i2c_client *client,
+>  	if (!sx8654)
+>  		return -ENOMEM;
+>  
+> +	sx8654->gpio_reset = devm_gpiod_get_optional(&client->dev, "reset",
+> +						     GPIOD_OUT_HIGH);
+> +	if (IS_ERR(sx8654->gpio_reset)) {
+> +		error = PTR_ERR(sx8654->gpio_reset);
+> +		if (error != -EPROBE_DEFER)
+> +			dev_err(&client->dev, "unable to get reset-gpio: %d\n",
+> +				error);
+> +		return error;
+> +	}
+> +	dev_dbg(&client->dev, "got GPIO reset pin\n");
+> +
+>  	input = devm_input_allocate_device(&client->dev);
+>  	if (!input)
+>  		return -ENOMEM;
+> @@ -206,10 +241,9 @@ static int sx8654_probe(struct i2c_client *client,
+>  
+>  	input_set_drvdata(sx8654->input, sx8654);
+>  
+> -	error = i2c_smbus_write_byte_data(client, I2C_REG_SOFTRESET,
+> -					  SOFTRESET_VALUE);
+> +	error = sx8654_reset(sx8654);
+>  	if (error) {
+> -		dev_err(&client->dev, "writing softreset value failed");
+> +		dev_err(&client->dev, "reset failed");
+>  		return error;
+>  	}
 >  
 > -- 
 > 2.11.0
