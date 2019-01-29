@@ -2,169 +2,121 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174E8C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B0CC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA7F2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:39:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A6C32175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:43:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548801817;
+	bh=HFxu0VFGNX5lKIGQAnvvklfeALH0M4AhEbyocQeNKOM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DQ+rs3rFtDmIlBrcGN3ZRXgFXuwevd1n7DuIlWQJwVt9hlG+rF6F9QXVnYHJ7c1Ry
+	 w/q0IwRcUEkj877n5X6aXJwwgH9PEe6AJC+X4+QH4yHzdgx50M2EtVqQKXVCyLGZfb
+	 A6fdZ1LoBre3JzkJWaSVciLSl0sfRw7opWb1L2b0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbfA2Wjp (ORCPT
+        id S1729671AbfA2Wne (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:39:45 -0500
-Received: from mga12.intel.com ([192.55.52.136]:48636 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727545AbfA2Wjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:39:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 14:39:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,538,1539673200"; 
-   d="scan'208";a="139897549"
-Received: from glacier.sc.intel.com ([10.3.62.55])
-  by fmsmga004.fm.intel.com with ESMTP; 29 Jan 2019 14:39:43 -0800
-From:   Rajmohan Mani <rajmohan.mani@intel.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>, tian.shu.qiu@intel.com,
-        bingbu.cao@intel.com, Zhi@vger.kernel.org,
-        Yong <yong.zhi@intel.com>, hverkuil@xs4all.nl,
-        tfiga@chromium.org, Rajmohan Mani <rajmohan.mani@intel.com>
-Subject: [PATCH] media: staging/intel-ipu3: Implement lock for stream on/off operations
-Date:   Tue, 29 Jan 2019 14:27:36 -0800
-Message-Id: <20190129222736.6216-1-rajmohan.mani@intel.com>
-X-Mailer: git-send-email 2.19.1
+        Tue, 29 Jan 2019 17:43:34 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:45490 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727332AbfA2Wne (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 17:43:34 -0500
+Received: by mail-yw1-f65.google.com with SMTP id d190so8854970ywd.12;
+        Tue, 29 Jan 2019 14:43:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=fEJbE/ywGzh83Tzyph5e5xJGrSMLJvMydLxy61aXPL8=;
+        b=Ib+bzy3R70eEUbilZmjTRMu/GkUisHTrQISmEuV82TfrIqL4yaxLqwO7v8kVbTUCD0
+         7tQKw0lvaIfg9NnmuUc56tUNkr/UuzIaaQP1WOdXLaxUvrpnfL5hfEpqMmJTQ8mTVSiw
+         ODgAuAnYeBTK1X9PFIS9bK8q87BqjDO3KA7rNsCAoLl5xkn6C91YMMhgmZFc5ZuoQw6Y
+         wD2BXcvaY3opope2gydw5pihDK2lptNwR5P4xZrb1QF+/dxmZ5TGRdShdWXN7kRrhioX
+         +0ZKc9I/gH8xkJ3IMgsoQOY5D4WOM8kRD+6agHZ11+b3zilLzkfKD2M46odhUeB7p7bi
+         e55w==
+X-Gm-Message-State: AJcUukdIKGQ4yNdf0q4ekUp5KEJmJeAGePAe6deXnwc8ysJ7WPHA9JC/
+        BaGClPYHmx3NOPhXrZFkN4M=
+X-Google-Smtp-Source: ALg8bN5z2FBpz3se6uUaNzMZImf5j+//jVqfvS7tPhukQIlW7npmZuraofxJgoJRjy9bteaFfMyvGA==
+X-Received: by 2002:a0d:d586:: with SMTP id x128mr27137899ywd.346.1548801813467;
+        Tue, 29 Jan 2019 14:43:33 -0800 (PST)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::5:f5f4])
+        by smtp.gmail.com with ESMTPSA id n16sm18540726ywn.31.2019.01.29.14.43.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 14:43:32 -0800 (PST)
+Date:   Tue, 29 Jan 2019 17:43:30 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/11] btrfs: manage heuristic workspace as index 0
+Message-ID: <20190129224330.GA87266@dennisz-mbp.dhcp.thefacebook.com>
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190128212437.11597-4-dennis@kernel.org>
+ <4bc26773-da13-3730-afda-78d672f348bc@suse.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <4bc26773-da13-3730-afda-78d672f348bc@suse.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently concurrent stream off operations on ImgU nodes are not
-synchronized, leading to use-after-free bugs (as reported by KASAN).
+On Tue, Jan 29, 2019 at 09:53:33AM +0200, Nikolay Borisov wrote:
+> 
+> 
+> On 28.01.19 г. 23:24 ч., Dennis Zhou wrote:
+> > While the heuristic workspaces aren't really compression workspaces,
+> > they use the same interface for managing them. So rather than branching,
+> > let's just handle them once again as the index 0 compression type.
+> > 
+> > Signed-off-by: Dennis Zhou <dennis@kernel.org>
+> 
+> Reviewed-by: Nikolay Borisov <nborisov@suse.com> albeit one minor nit
+> below.
+> > ---
+> >  fs/btrfs/compression.c  | 107 +++++++++++-----------------------------
+> >  fs/btrfs/compression.h  |   3 +-
+> >  fs/btrfs/ioctl.c        |   2 +-
+> >  fs/btrfs/tree-checker.c |   4 +-
+> >  4 files changed, 33 insertions(+), 83 deletions(-)
+> > 
+> > diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+> > index aced261984e2..bda7e8d2cbc7 100644
+> > --- a/fs/btrfs/compression.c
+> > +++ b/fs/btrfs/compression.c
+> > @@ -37,6 +37,8 @@ const char* btrfs_compress_type2str(enum btrfs_compression_type type)
+> >  	case BTRFS_COMPRESS_ZSTD:
+> >  	case BTRFS_COMPRESS_NONE:
+> >  		return btrfs_compress_types[type];
+> > +	default:
+> > +		return NULL;
+> 
+> nit: With this change...
+> 
+> >  	}
+> >  
+> >  	return NULL;
+> 
+> This becomes redundant. I doubt the compiler will issue a warning since
+> it should be clever enough to figure we will never exit the switch()
+> construct.
+> 
 
-[  250.090724] BUG: KASAN: use-after-free in ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu]
-[  250.090726] Read of size 8 at addr ffff888127b29bc0 by task yavta/18836
-[  250.090731] Hardware name: HP Soraka/Soraka, BIOS Google_Soraka.10431.17.0 03/22/2018
-[  250.090732] Call Trace:
-[  250.090735]  dump_stack+0x6a/0xb1
-[  250.090739]  print_address_description+0x8e/0x279
-[  250.090743]  ? ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu]
-[  250.090746]  kasan_report+0x260/0x28a
-[  250.090750]  ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu]
-[  250.090754]  ipu3_css_pool_cleanup+0x24/0x37 [ipu3_imgu]
-[  250.090759]  ipu3_css_pipeline_cleanup+0x61/0xb9 [ipu3_imgu]
-[  250.090763]  ipu3_css_stop_streaming+0x1f2/0x321 [ipu3_imgu]
-[  250.090768]  imgu_s_stream+0x94/0x443 [ipu3_imgu]
-[  250.090772]  ? ipu3_vb2_buf_queue+0x280/0x280 [ipu3_imgu]
-[  250.090775]  ? vb2_dma_sg_unmap_dmabuf+0x16/0x6f [videobuf2_dma_sg]
-[  250.090778]  ? vb2_buffer_in_use+0x36/0x58 [videobuf2_common]
-[  250.090782]  ipu3_vb2_stop_streaming+0xf9/0x135 [ipu3_imgu]
+Ah yes. I've removed it for v2.
 
-Implemented a lock to synchronize imgu stream on / off operations and
-the modification of streaming flag (in struct imgu_device), to prevent
-these issues.
-
-Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
----
- drivers/staging/media/ipu3/ipu3-v4l2.c | 6 ++++++
- drivers/staging/media/ipu3/ipu3.c      | 3 +++
- drivers/staging/media/ipu3/ipu3.h      | 4 ++++
- 3 files changed, 13 insertions(+)
-
-diff --git a/drivers/staging/media/ipu3/ipu3-v4l2.c b/drivers/staging/media/ipu3/ipu3-v4l2.c
-index c7936032beb9..cf7e917cd0c8 100644
---- a/drivers/staging/media/ipu3/ipu3-v4l2.c
-+++ b/drivers/staging/media/ipu3/ipu3-v4l2.c
-@@ -507,12 +507,15 @@ static int ipu3_vb2_start_streaming(struct vb2_queue *vq, unsigned int count)
- 			goto fail_stop_pipeline;
- 	}
- 
-+	mutex_lock(&imgu->streaming_lock);
-+
- 	/* Start streaming of the whole pipeline now */
- 	dev_dbg(dev, "IMGU streaming is ready to start");
- 	r = imgu_s_stream(imgu, true);
- 	if (!r)
- 		imgu->streaming = true;
- 
-+	mutex_unlock(&imgu->streaming_lock);
- 	return 0;
- 
- fail_stop_pipeline:
-@@ -543,6 +546,8 @@ static void ipu3_vb2_stop_streaming(struct vb2_queue *vq)
- 		dev_err(&imgu->pci_dev->dev,
- 			"failed to stop subdev streaming\n");
- 
-+	mutex_lock(&imgu->streaming_lock);
-+
- 	/* Was this the first node with streaming disabled? */
- 	if (imgu->streaming && ipu3_all_nodes_streaming(imgu, node)) {
- 		/* Yes, really stop streaming now */
-@@ -552,6 +557,7 @@ static void ipu3_vb2_stop_streaming(struct vb2_queue *vq)
- 			imgu->streaming = false;
- 	}
- 
-+	mutex_unlock(&imgu->streaming_lock);
- 	ipu3_return_all_buffers(imgu, node, VB2_BUF_STATE_ERROR);
- 	media_pipeline_stop(&node->vdev.entity);
- }
-diff --git a/drivers/staging/media/ipu3/ipu3.c b/drivers/staging/media/ipu3/ipu3.c
-index d521b3afb8b1..2daee51cd845 100644
---- a/drivers/staging/media/ipu3/ipu3.c
-+++ b/drivers/staging/media/ipu3/ipu3.c
-@@ -635,6 +635,7 @@ static int imgu_pci_probe(struct pci_dev *pci_dev,
- 		return r;
- 
- 	mutex_init(&imgu->lock);
-+	mutex_init(&imgu->streaming_lock);
- 	atomic_set(&imgu->qbuf_barrier, 0);
- 	init_waitqueue_head(&imgu->buf_drain_wq);
- 
-@@ -699,6 +700,7 @@ static int imgu_pci_probe(struct pci_dev *pci_dev,
- 	ipu3_css_set_powerdown(&pci_dev->dev, imgu->base);
- out_mutex_destroy:
- 	mutex_destroy(&imgu->lock);
-+	mutex_destroy(&imgu->streaming_lock);
- 
- 	return r;
- }
-@@ -716,6 +718,7 @@ static void imgu_pci_remove(struct pci_dev *pci_dev)
- 	ipu3_dmamap_exit(imgu);
- 	ipu3_mmu_exit(imgu->mmu);
- 	mutex_destroy(&imgu->lock);
-+	mutex_destroy(&imgu->streaming_lock);
- }
- 
- static int __maybe_unused imgu_suspend(struct device *dev)
-diff --git a/drivers/staging/media/ipu3/ipu3.h b/drivers/staging/media/ipu3/ipu3.h
-index 04fc99f47ebb..f732315f0701 100644
---- a/drivers/staging/media/ipu3/ipu3.h
-+++ b/drivers/staging/media/ipu3/ipu3.h
-@@ -146,6 +146,10 @@ struct imgu_device {
- 	 * vid_buf.list and css->queue
- 	 */
- 	struct mutex lock;
-+
-+	/* Lock to protect writes to streaming flag in this struct */
-+	struct mutex streaming_lock;
-+
- 	/* Forbit streaming and buffer queuing during system suspend. */
- 	atomic_t qbuf_barrier;
- 	/* Indicate if system suspend take place while imgu is streaming. */
--- 
-2.19.1
-
+Thanks,
+Dennis
