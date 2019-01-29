@@ -2,114 +2,142 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DATE_IN_PAST_96_XX,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E700C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0022CC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 276952177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:06:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC4572177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:07:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X1DSyWMA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfA2HGn (ORCPT
+        id S1726988AbfA2HHk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 02:06:43 -0500
-Received: from mga09.intel.com ([134.134.136.24]:37998 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725764AbfA2HGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 02:06:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 23:06:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,536,1539673200"; 
-   d="scan'208";a="129738132"
-Received: from vmm.bj.intel.com ([10.240.192.123])
-  by orsmga002.jf.intel.com with ESMTP; 28 Jan 2019 23:06:38 -0800
-From:   Luwei Kang <luwei.kang@intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, songliubraving@fb.com, pbonzini@redhat.com,
-        rkrcmar@redhat.com, peterz@infradead.org, zsm@chromium.org,
-        alexander.shishkin@linux.intel.com, konrad.wilk@oracle.com,
-        ak@linux.intel.com, Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH 3/3] KVM: x86: Add support of clear Trace_ToPA_PMI status
-Date:   Sat, 19 Jan 2019 15:04:44 -0500
-Message-Id: <1547928284-2915-4-git-send-email-luwei.kang@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1547928284-2915-1-git-send-email-luwei.kang@intel.com>
-References: <1547928284-2915-1-git-send-email-luwei.kang@intel.com>
+        Tue, 29 Jan 2019 02:07:40 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46772 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfA2HHj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 02:07:39 -0500
+Received: by mail-qk1-f195.google.com with SMTP id q1so10912780qkf.13;
+        Mon, 28 Jan 2019 23:07:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jVmIIcZZ+L2IDOYKmmfAYEnJQHgohWz4yF+HkqdtjBY=;
+        b=X1DSyWMAvhH3ydHrw2uplDCR9AGyWrVzyX0o0igG41OKfkNWIG4/IXe7teTEF+OH7r
+         BImvVlI+9Gip3U9Qu8JErHCBf+V2JQUQ2OFE6D95mIY8e/7uH0+SGH6lFdFKvDu3FhLo
+         gaORZ7FiqzdeEZ/mMbJ2xycEdQR2xqySL6l7Q4HgxqRA+Xvd4i2GJduPZu14HUHSwNcz
+         gr0lxEAEs+aMibZ84YTHTSu49SlBKLg8a+0cqsRA9F1F4OyG50tDDDKwhrhSXryVwjbs
+         GpCky+hKQl6Th/vTK6vHzo0DzaUvNkznpCGq25baxODz6dDPUyGWOFiK4CfpoXenN7dV
+         UFNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jVmIIcZZ+L2IDOYKmmfAYEnJQHgohWz4yF+HkqdtjBY=;
+        b=XcRh7UPu/+xO5BsmzGL+QqAM22RigclxRPGA07JEr+4aVBBrvhocSmBlASb8zaCjyI
+         th7XplVfyAM3Ev90927agFNMNzFYtCx9CM6GaJKrHQbSkeE3U2+pUCvXJ5NK+lUWGQzx
+         HNU7smB3quMC5lz/SpD4rQVyVMwgl2q5JFKWNqzLI62TYCM7cAY/qxQJLlYCQSL6ol9f
+         cwd20N9GKy/NFn9Ce42klYUCCYGfdwsgpwmnzBUffbHC+0SRgPPZxZXeW7STUZ1w7JGL
+         k2oRFBxXvT7BK7UlMHsouHyr2uQgc7N45BpigiCZ9koNgP5Xn9WFzgp+Ds56fG/kYV/v
+         xqbg==
+X-Gm-Message-State: AJcUukehCE/HEaV9RLLj72TzqbKPYlaNB8fdnLTFdJyS9L/E+cYDg71T
+        sv5R5p3SitX9n/aiR2H5fIF2ZRarPvCjbwnJBEM=
+X-Google-Smtp-Source: ALg8bN691eQ0Pjg0vinHGLRnMQncXpn+az+My5S8wKTRuyBXqj+rexyeZlUDmoTVZjyTLbHpQiA2yJOHEr7kwBbxwQ0=
+X-Received: by 2002:a37:cc4c:: with SMTP id r73mr22033036qki.120.1548745658674;
+ Mon, 28 Jan 2019 23:07:38 -0800 (PST)
+MIME-Version: 1.0
+References: <10746.1548744426@turing-police.cc.vt.edu>
+In-Reply-To: <10746.1548744426@turing-police.cc.vt.edu>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Mon, 28 Jan 2019 23:07:26 -0800
+Message-ID: <CAPhsuW5CcdpCCppRv0FMLNdunNxgkO_AKFo+E_nFWHFqmq=6KQ@mail.gmail.com>
+Subject: Re: [PATCH] kernel/bpf/cgroup.c - clean up kerneldoc warnings
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Networking <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support of clear Intel PT ToPA PMI status for
-KVM guest.
+On Mon, Jan 28, 2019 at 10:48 PM <valdis.kletnieks@vt.edu> wrote:
+>
+> Building with W=1 reveals some bitrot
+>
+>   CC      kernel/bpf/cgroup.o
+> kernel/bpf/cgroup.c:238: warning: Function parameter or member 'flags' not described in '__cgroup_bpf_attach'
+> kernel/bpf/cgroup.c:367: warning: Function parameter or member 'unused_flags' not described in '__cgroup_bpf_detach'
+>
+> Add a kerneldoc line for 'flags'.
+>
+> Fixing the warning for 'unused_flags' is best approached by
+> removing the unused parameter on the function call.
+>
+> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
----
- arch/x86/include/asm/kvm_host.h  | 1 +
- arch/x86/include/asm/msr-index.h | 4 ++++
- arch/x86/kvm/vmx/pmu_intel.c     | 8 +++++++-
- 3 files changed, 12 insertions(+), 1 deletion(-)
+Thanks!
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 4660ce9..de95704 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -468,6 +468,7 @@ struct kvm_pmu {
- 	u64 global_ovf_ctrl;
- 	u64 counter_bitmask[2];
- 	u64 global_ctrl_mask;
-+	u64 global_ovf_ctrl_mask;
- 	u64 reserved_bits;
- 	u8 version;
- 	struct kvm_pmc gp_counters[INTEL_PMC_MAX_GENERIC];
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index ae01fb0..c0ea4aa 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -778,6 +778,10 @@
- /* PERF_GLOBAL_OVF_CTL bits */
- #define MSR_CORE_PERF_GLOBAL_OVF_CTRL_TRACE_TOPA_PMI_BIT	55
- #define MSR_CORE_PERF_GLOBAL_OVF_CTRL_TRACE_TOPA_PMI		(1ULL << MSR_CORE_PERF_GLOBAL_OVF_CTRL_TRACE_TOPA_PMI_BIT)
-+#define MSR_CORE_PERF_GLOBAL_OVF_CTRL_OVF_BUF_BIT		62
-+#define MSR_CORE_PERF_GLOBAL_OVF_CTRL_OVF_BUF			(1ULL <<  MSR_CORE_PERF_GLOBAL_OVF_CTRL_OVF_BUF_BIT)
-+#define MSR_CORE_PERF_GLOBAL_OVF_CTRL_COND_CHGD_BIT		63
-+#define MSR_CORE_PERF_GLOBAL_OVF_CTRL_COND_CHGD			(1ULL << MSR_CORE_PERF_GLOBAL_OVF_CTRL_COND_CHGD_BIT)
- 
- /* Geode defined MSRs */
- #define MSR_GEODE_BUSCONT_CONF0		0x00001900
-diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-index 5ab4a36..6dee7cf 100644
---- a/arch/x86/kvm/vmx/pmu_intel.c
-+++ b/arch/x86/kvm/vmx/pmu_intel.c
-@@ -227,7 +227,7 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		}
- 		break;
- 	case MSR_CORE_PERF_GLOBAL_OVF_CTRL:
--		if (!(data & (pmu->global_ctrl_mask & ~(3ull<<62)))) {
-+		if (!(data & pmu->global_ovf_ctrl_mask)) {
- 			if (!msr_info->host_initiated)
- 				pmu->global_status &= ~data;
- 			pmu->global_ovf_ctrl = data;
-@@ -297,6 +297,12 @@ static void intel_pmu_refresh(struct kvm_vcpu *vcpu)
- 	pmu->global_ctrl = ((1ull << pmu->nr_arch_gp_counters) - 1) |
- 		(((1ull << pmu->nr_arch_fixed_counters) - 1) << INTEL_PMC_IDX_FIXED);
- 	pmu->global_ctrl_mask = ~pmu->global_ctrl;
-+	pmu->global_ovf_ctrl_mask = ~(pmu->global_ctrl |
-+				MSR_CORE_PERF_GLOBAL_OVF_CTRL_OVF_BUF |
-+				MSR_CORE_PERF_GLOBAL_OVF_CTRL_COND_CHGD);
-+	if (kvm_x86_ops->pt_supported())
-+		pmu->global_ovf_ctrl_mask &=
-+				~MSR_CORE_PERF_GLOBAL_OVF_CTRL_TRACE_TOPA_PMI;
- 
- 	entry = kvm_find_cpuid_entry(vcpu, 7, 0);
- 	if (entry &&
--- 
-1.8.3.1
+Acked-by: Song Liu <songliubraving@fb.com>
 
+PS: For future patches, please specify which tree the patch should be
+applied to with [PATCH bpf] or [PATCH bpf-next].
+
+>
+> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+> index 588dd5f0bd85..695b2a880d9a 100644
+> --- a/include/linux/bpf-cgroup.h
+> +++ b/include/linux/bpf-cgroup.h
+> @@ -78,7 +78,7 @@ int cgroup_bpf_inherit(struct cgroup *cgrp);
+>  int __cgroup_bpf_attach(struct cgroup *cgrp, struct bpf_prog *prog,
+>                         enum bpf_attach_type type, u32 flags);
+>  int __cgroup_bpf_detach(struct cgroup *cgrp, struct bpf_prog *prog,
+> -                       enum bpf_attach_type type, u32 flags);
+> +                       enum bpf_attach_type type);
+>  int __cgroup_bpf_query(struct cgroup *cgrp, const union bpf_attr *attr,
+>                        union bpf_attr __user *uattr);
+>
+> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+> index ab612fe9862f..d78cfec5807d 100644
+> --- a/kernel/bpf/cgroup.c
+> +++ b/kernel/bpf/cgroup.c
+> @@ -230,6 +230,7 @@ static int update_effective_progs(struct cgroup *cgrp,
+>   * @cgrp: The cgroup which descendants to traverse
+>   * @prog: A program to attach
+>   * @type: Type of attach operation
+> + * @flags: Option flags
+>   *
+>   * Must be called with cgroup_mutex held.
+>   */
+> @@ -363,7 +364,7 @@ int __cgroup_bpf_attach(struct cgroup *cgrp, struct bpf_prog *prog,
+>   * Must be called with cgroup_mutex held.
+>   */
+>  int __cgroup_bpf_detach(struct cgroup *cgrp, struct bpf_prog *prog,
+> -                       enum bpf_attach_type type, u32 unused_flags)
+> +                       enum bpf_attach_type type)
+>  {
+>         struct list_head *progs = &cgrp->bpf.progs[type];
+>         enum bpf_cgroup_storage_type stype;
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index 6d03a27918f4..9802ab424397 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -6059,7 +6059,7 @@ int cgroup_bpf_detach(struct cgroup *cgrp, struct bpf_prog *prog,
+>         int ret;
+>
+>         mutex_lock(&cgroup_mutex);
+> -       ret = __cgroup_bpf_detach(cgrp, prog, type, flags);
+> +       ret = __cgroup_bpf_detach(cgrp, prog, type);
+>         mutex_unlock(&cgroup_mutex);
+>         return ret;
+>  }
+>
