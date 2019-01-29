@@ -2,115 +2,88 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D65A3C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3013EC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E03B2175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:53:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/CttCD7"
+	by mail.kernel.org (Postfix) with ESMTP id ED5FA20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbfA2Wxf (ORCPT
+        id S1729744AbfA2Wyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:53:35 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46439 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbfA2Wxe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:53:34 -0500
-Received: by mail-wr1-f65.google.com with SMTP id l9so23892508wrt.13;
-        Tue, 29 Jan 2019 14:53:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gnpjrpJ9SO1uxLSMRCNlay9ff270KZBwxe/ynP0cjWs=;
-        b=S/CttCD7oofGIGkxCVt+/zI5zK6G9VXBxlKpcHlMASN/mJks8/bGodOYOlFyIJStXy
-         gV6uhk0dZlS7ObSeNVLDFgiExi4xji8ovyWRF7gilbvVXtzseV4uBQYio3hfSru6lXvF
-         CZS2kRj/V8hBqC5c54aTBTUjE3iv1DWXncPbabQ/ovETD99qXVFbOCWeki/7PIF+Rggt
-         jOuTJmVVfREMOvKe0vTrVfMCdSg2bONhrNtDqeAEn6HpeIxcqpc57sIb6PXh967l+Kgd
-         6+JMY+VJtOnowJ3SnKA0t+e6XPfa51fCVKOYuPGR6jS/tB6GcdxD90APyfiA7SiUFXzR
-         qBNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gnpjrpJ9SO1uxLSMRCNlay9ff270KZBwxe/ynP0cjWs=;
-        b=GJEKP5sdVQr7U1m8vKTgMnkjjmMh6a8nJGUUIn5Pm7aMXd+D9kb1CZ0/q0+i6RVU7/
-         ASjgVvhuEkVMZ4gFJRk7+NYQISDXDa0DEb8MOhcdL5GAZeaHJR/t0z4jQOBsZGIgRLz+
-         g6v1Q41EKlCNlrCgz55FZ/lvUh3pvj9AwBxXEFznTMibYpLW8bPBSwtunNLCRw7xHuJ2
-         0pRTfIloAV3uqqxT7Mb2H1UwOMNMe6TRC4oOrR8m4/bFre3L0gOM0FSlNX0YtZIEAhoS
-         i8cEMtY35jlp6KyTLw1j6D6qUujyBrEBTOzRl04tekqzM08cASQUBar2K/qF56s52fyB
-         MW/Q==
-X-Gm-Message-State: AJcUukcaYJKe4L/HWKXfhYrRhg0CKScP20Pwfn2IUQCDCqgbP8DwqiVp
-        rJUMYTKKagVs/ZJaI60mErOkqpUaduDjaYRC4eGxityZ
-X-Google-Smtp-Source: ALg8bN745ZuAhONT6/d3Qki6lnZWOn08RE5TcLy2QidehAcssK0jMEcMirxc26PJY+xZ9hMcvuqIL7frZaNyUgALooM=
-X-Received: by 2002:adf:ec83:: with SMTP id z3mr28478498wrn.264.1548802412700;
- Tue, 29 Jan 2019 14:53:32 -0800 (PST)
+        Tue, 29 Jan 2019 17:54:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35966 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727488AbfA2Wyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 17:54:50 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7F0687AE8B;
+        Tue, 29 Jan 2019 22:54:50 +0000 (UTC)
+Received: from redhat.com (ovpn-123-79.rdu2.redhat.com [10.10.123.79])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2518D5D96F;
+        Tue, 29 Jan 2019 22:54:44 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 17:54:44 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     jasowang@redhat.com, stefanha@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] vhost: fix OOB in get_rx_bufs()
+Message-ID: <20190129175145-mutt-send-email-mst@kernel.org>
+References: <20190128070505.18335-1-jasowang@redhat.com>
+ <20190128.225444.1929870241029842289.davem@davemloft.net>
 MIME-Version: 1.0
-References: <20190130093830.728e9d06@canb.auug.org.au>
-In-Reply-To: <20190130093830.728e9d06@canb.auug.org.au>
-From:   Lucas De Marchi <lucas.de.marchi@gmail.com>
-Date:   Tue, 29 Jan 2019 14:53:21 -0800
-Message-ID: <CAKi4VA+kGT1WbUHV=Q6PW+PR+Vh+AEE+a2_wLkmMVq88tTSH_Q@mail.gmail.com>
-Subject: Re: [Intel-gfx] linux-next: build failure after merge of the
- drm-intel-fixes tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128.225444.1929870241029842289.davem@davemloft.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 29 Jan 2019 22:54:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 2:39 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> After merging the drm-intel-fixes tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/gpu/drm/i915/intel_display.c: In function 'has_bogus_dpll_config':
-> drivers/gpu/drm/i915/intel_display.c:15432:27: error: macro "IS_GEN" requires 3 arguments, but only 2 given
->   return IS_GEN(dev_priv, 6) &&
->                            ^
->
-> Caused by commit
->
->   a49a17226feb ("drm/i915: Try to sanitize bogus DPLL state left over by broken SNB BIOSen")
->
-> It seems this was cherry-picked incorrectly :-(
+On Mon, Jan 28, 2019 at 10:54:44PM -0800, David Miller wrote:
+> From: Jason Wang <jasowang@redhat.com>
+> Date: Mon, 28 Jan 2019 15:05:05 +0800
+> 
+> > After batched used ring updating was introduced in commit e2b3b35eb989
+> > ("vhost_net: batch used ring update in rx"). We tend to batch heads in
+> > vq->heads for more than one packet. But the quota passed to
+> > get_rx_bufs() was not correctly limited, which can result a OOB write
+> > in vq->heads.
+> > 
+> >         headcount = get_rx_bufs(vq, vq->heads + nvq->done_idx,
+> >                     vhost_len, &in, vq_log, &log,
+> >                     likely(mergeable) ? UIO_MAXIOV : 1);
+> > 
+> > UIO_MAXIOV was still used which is wrong since we could have batched
+> > used in vq->heads, this will cause OOB if the next buffer needs more
+> > than 960 (1024 (UIO_MAXIOV) - 64 (VHOST_NET_BATCH)) heads after we've
+> > batched 64 (VHOST_NET_BATCH) heads:
+>  ...
+> > Fixing this by allocating UIO_MAXIOV + VHOST_NET_BATCH iovs for
+> > vhost-net. This is done through set the limitation through
+> > vhost_dev_init(), then set_owner can allocate the number of iov in a
+> > per device manner.
+> > 
+> > This fixes CVE-2018-16880.
+> > 
+> > Fixes: e2b3b35eb989 ("vhost_net: batch used ring update in rx")
+> > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> 
+> Applied and queued up for -stable, thanks!
 
-while the cherry-pick was correct, the macro is different on
-drm-intel-fixes. IS_GEN(dev_priv, 6) needs to be converted to
-IS_GEN6(dev_priv).
-
-Lucas De Marchi
-
->
-> I have reverted that commit for today.
->
-> --
-> Cheers,
-> Stephen Rothwell
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
-
-
+Wow it seems we are down to hours round time post to queue.
+It would be hard to keep up that rate generally.
+However, I am guessing this was already in downstreams, and it's a CVE,
+so I guess it's a no brainer and review wasn't really necessary - was
+that the idea? Just checking.
 
 -- 
-Lucas De Marchi
+MST
