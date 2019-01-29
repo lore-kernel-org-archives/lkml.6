@@ -2,139 +2,118 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22622C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 323E0C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC04B20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1A202175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548780121;
+	bh=mTK6bKsVqPFWYZ6gksqc/vWAZYxKnqI6k/Z4AdfTk3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Vc3vV2CK0/FSbCzLCLg9yUYowvNNYajEJRgnnABmZWpQMvM3HSDoRS71lhp8tuSJD
+	 pYdDH9MrA4p56jL8LQGaSc+8xb8BHRnTBFzxMgVZ2eMM0PmEIUa3JjstZqGa+eYyV1
+	 STsNMPT4Sn03Ux0wgXZ5m2UegYkji/QLCy9zLPfQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727848AbfA2QjZ (ORCPT
+        id S1727968AbfA2Ql7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:39:25 -0500
-Received: from mga18.intel.com ([134.134.136.126]:59314 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726374AbfA2QjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:39:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 08:39:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
-   d="scan'208";a="112037266"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 29 Jan 2019 08:39:24 -0800
-Received: from [10.125.252.22] (abudanko-mobl.ccr.corp.intel.com [10.125.252.22])
-        by linux.intel.com (Postfix) with ESMTP id ACDC6580550;
-        Tue, 29 Jan 2019 08:39:21 -0800 (PST)
-Subject: Re: [PATCH v2 0/4] perf: enable compression of record mode trace to
- save storage space
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <b834df0e-26b5-3f8c-7a43-18f675fb7434@linux.intel.com>
- <20190129104543.GJ4344@kernel.org> <20190129105337.GA17762@kernel.org>
- <de604869-4d2e-689c-39ba-368d444c809a@linux.intel.com>
- <20190129121332.GL4344@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <a72064be-0fd8-2b00-a8ac-1655b351dd10@linux.intel.com>
-Date:   Tue, 29 Jan 2019 19:39:17 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 29 Jan 2019 11:41:59 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49252 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726374AbfA2Ql6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 11:41:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=szjOlRlI7uBF/W5HaG9wUCokli/J7uBg1nefJhg9Kjs=; b=uHBlZn7WjNZF8Ww9wughdpM+q
+        uXzkAQw0IgZHqob8ryXj6wxRRdN9ZrTFh3t6naWE0x8OTlxvuu4HADGSaO/LvAUG04w09a50csJyM
+        1jNpp85n6Wm7jO+Bdh4QD95sWNSuc15/FRE0qZwz6MIg+o5WKqjFsaHcupoBIGa87nbuU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1goWSG-0000Zd-8d; Tue, 29 Jan 2019 16:41:44 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 9847F1127D50; Tue, 29 Jan 2019 16:41:43 +0000 (GMT)
+Date:   Tue, 29 Jan 2019 16:41:43 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Jonas Bonn <jonas@norrbonn.se>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lanqing Liu <lanqing.liu@spreadtrum.com>
+Subject: Re: [PATCH v3 1/2] spi: support inter-word delay requirement for
+ devices
+Message-ID: <20190129164143.GF10524@sirena.org.uk>
+References: <20190126163220.26421-1-jonas@norrbonn.se>
+ <20190126163220.26421-2-jonas@norrbonn.se>
+ <20190128181038.GF11699@sirena.org.uk>
+ <1b9807aa-3e6e-16f2-a2c2-ebe5e186d904@norrbonn.se>
+ <CAMz4kuK9HAmntmqG-_s6re854tK7UL6wwCh0Lm8=bzpFZsseaw@mail.gmail.com>
+ <28617b72-fbc0-4274-d9d1-34c37f03f867@norrbonn.se>
+ <CAMz4kuLOSx9mQ-RG9qqy9Qbor97Nj5oYdOgLg_dNfxFeT+XK5g@mail.gmail.com>
+ <abb0749c-629f-5a81-1dba-0be260b0fb8d@norrbonn.se>
+ <CAMuHMdXyuWMPUdipwW0oQUdPLDyZhssZ1NHQfMF9hWTtMkTZ1A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190129121332.GL4344@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/QKKmeG/X/bPShih"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXyuWMPUdipwW0oQUdPLDyZhssZ1NHQfMF9hWTtMkTZ1A@mail.gmail.com>
+X-Cookie: What foods these morsels be!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.01.2019 15:13, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Jan 29, 2019 at 02:39:00PM +0300, Alexey Budankov escreveu:
->> Hi,
->> On 29.01.2019 13:53, Arnaldo Carvalho de Melo wrote:
->>> Em Tue, Jan 29, 2019 at 11:45:43AM +0100, Arnaldo Carvalho de Melo escreveu:
->>>> Em Mon, Jan 28, 2019 at 09:40:28AM +0300, Alexey Budankov escreveu:
->>>>> The patch set implements runtime trace compression for record mode and 
->>>>> trace file decompression for report mode. Zstandard API [1] is used for 
->>>>> compression/decompression of data that come from perf_events kernel 
->>>>
->>>> Interesting, wasn't aware of this zstd library, I wonder if we can add
->>>> it and switch the other compression libraries we link against, so that
->>>> we're not adding one more library to the dep list of perf but removing
->>>> some instead, do you think this would be possible?
->>
->> Replacing of incorporated compression APIs was not evaluated or tested in 
->> the scope of this patch set work. However according to their numbers in the 
->> docs and the numbers that we have got during testing Zstd API outperforms 
->> the exiting compression libraries as in terms of speed as in terms of 
->> compression ratio (at least libz). Backward compatibility needs to be taken
->> into account so that old perf files would open by newer perf tool versions.
-> 
-> Right, I'm not talking in the scope of this patch, its just that while
-> looking at it, I notice that we're adding yet another compression
-> library and its description seemed to imply it would support the other
-> compression formats, which I've learned its not the case, so nevermind.
-> 
-> I'm not talking about using just zstd, as what we mostly do with the
-> compression libraries is to decompress, not compress, for instance, we
-> need to uncompress kernel modules to get to its symbols, do annotation
-> with it, etc.
 
-Well, yes, having single compression/decompression API implementation that 
-would handle different compression formats and scenarios sounds reasonable 
-from support cost perspective.
+--/QKKmeG/X/bPShih
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It looks like Zstandard library could provide such capabilities. 
-The library is well supported at the moment so fixes and extensions are 
-released timely enough.
+On Tue, Jan 29, 2019 at 11:07:50AM +0100, Geert Uytterhoeven wrote:
+> On Tue, Jan 29, 2019 at 10:50 AM Jonas Bonn <jonas@norrbonn.se> wrote:
 
--Alexey
+> > OK.  So the user (perhaps in userspace using spidev) has to know the
+> > rate of the IO clock that the SPI controller sits behind and then has to
+> > match this to the required delay of the slave device...  Doesn't sound
+> > very portable.
 
-> 
-> - Arnaldo
->  
->> -Alexey
->>
->>>>
->>>>   $ ldd ~/bin/perf | wc -l
->>>>   30
->>>>   $ ldd ~/bin/perf | grep z
->>>> 	liblzma.so.5 => /lib64/liblzma.so.5 (0x00007f3dcc356000)
->>>> 	libz.so.1 => /lib64/libz.so.1 (0x00007f3dcb2aa000)
->>>> 	libbz2.so.1 => /lib64/libbz2.so.1 (0x00007f3dcb218000)
->>>>   $
->>>>
->>>> Humm, from the github page it says:
->>>>
->>>> -----
->>>> The project is provided as an open-source dual BSD and GPLv2 licensed C
->>>> library, and a command line utility producing and decoding .zst, .gz,
->>>> .xz and .lz4 files. Should your project require another programming
->>>> language, a list of known ports and bindings is provided on Zstandard
->>>> homepage.
->>>> -----
->>>>
->>>> So it would cover just liblzma and libz, right?
->>>
->>> Nevermind;
->>>
->>> [acme@quaco perf]$ zstdcat ~/git/perf/perf-5.0.0-rc2.tar.xz
->>> zstd: /home/acme/git/perf/perf-5.0.0-rc2.tar.xz: xz/lzma file cannot be uncompressed (zstd compiled without HAVE_LZMA) -- ignored
->>>
->>> So it handles those formats, _if_ linked with those libraries, duh.
->>>
->>> - Arnaldo
->>>
-> 
+I think if we're doing translation we should just do it in the core and
+either say that clients should only set one or the other or pick what
+looks like the higher value.
+
+> I can see the value of having both:
+> On some slaves, the delay may depend on a fixed internal or
+> external clock[1] on the SPI slave, so it should be specified in time units.
+> Some slaves may be clocked by the SPI clock[2], so the delay should be
+> specified in SPI clock cycles.
+
+Yes, they're definitely both useful.
+
+--/QKKmeG/X/bPShih
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxQgkYACgkQJNaLcl1U
+h9BpcQf/ccdkXJ6vmh0isqva90NnEMmC8ctfpWCZ1lh5senmjaIQrllQrXgfsAkm
+9V/XOGrByMBLbS1U5dBaA3CPcWuZjtph1axjDkhJy2GG5e+gDZNIFq4sTQvSmTCS
+nb8DQgRtHbz/RGFuaW7frG9gCDbQb9T7FSvuLaGFrPABiUJKLKGkRgm3tpxrXXPd
+Bo3UGsJgPiO9mjI7IZO60aXSgS46rsE+hnfiJ1v3fc/8ySa6w5zsU6bJh2g8hGj1
+ti6kAIrk3dicYPzhSkfgwdNFeJ/din8SBITm04xLbUA4GAFxyWCnohbRDZdZPHHb
+LBkls9P3mXpe3gV/9oxc5YGkE0kBzg==
+=vhvC
+-----END PGP SIGNATURE-----
+
+--/QKKmeG/X/bPShih--
