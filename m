@@ -2,91 +2,238 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB7AC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB63DC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC02F2177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:48:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548751736;
-	bh=Ig2D8V5JtjRJdmtfchTseqmuLTKIW4SJHekGAx7X8fw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=G8R7IfCyZfFT5eBL/rgnSgN1MTjq0Rcpzp+2a06jsMzcqvqqODlduKBEg/+YI7brz
-	 d4xzAcSi6ytLbb4FgAWgx004LCdXqWuOTEJUqIyDu1c+tWoQ7ySRf1O5SGPAGcrUIZ
-	 hNtXP/j9+78aqNKd0Ch5gCalu7Y3O/MchbXrb7Ng=
+	by mail.kernel.org (Postfix) with ESMTP id 7EB9D20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:49:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q8zSkrfB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfA2Isz (ORCPT
+        id S1727583AbfA2ItO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:48:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48004 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725298AbfA2Isy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:48:54 -0500
-Received: from quaco.ghostprotocols.net (ovpn-brq.redhat.com [213.175.37.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0361520856;
-        Tue, 29 Jan 2019 08:48:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548751734;
-        bh=Ig2D8V5JtjRJdmtfchTseqmuLTKIW4SJHekGAx7X8fw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2T9NhTP63aW8TSws9CiGLgAM/ZzeDtLqr9SupYbWklT77srF9BPxPuelDETK2ameP
-         57LcIXlmpwLxK/ES/zzD4IzpCcInbVlt5d/IMdc862K5ZdPCylduwaFHTv7kWGPygY
-         k1WIZGMC/Hx0rcJVaSACP7DeW5PcxSswkyW383+4=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id CE3674034F; Tue, 29 Jan 2019 09:48:51 +0100 (CET)
-Date:   Tue, 29 Jan 2019 09:48:51 +0100
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Andi Kleen <andi@firstfloor.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [RFC] Don't print sample_type bits in non-group events not set
- in the group's was Re: [PATCH] perf, script: Fix crash with printing mixed
- trace point and other events
-Message-ID: <20190129084851.GC4344@kernel.org>
-References: <20190117194834.21940-1-andi@firstfloor.org>
- <20190118094919.GA28346@krava>
- <20190118125920.GG5823@kernel.org>
- <20190118130106.GH5823@kernel.org>
- <20190118134205.GI5823@kernel.org>
- <20190118161000.GC28346@krava>
- <20190118161140.z45vl3milw2vk4hy@two.firstfloor.org>
- <20190119153745.GA19542@krava>
- <20190128141301.GA26788@krava>
- <20190128170037.sbayc3mve66krzzd@two.firstfloor.org>
+        Tue, 29 Jan 2019 03:49:14 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55638 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfA2ItN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:49:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=a6OWXRDrKRjK1tn6RziHuR9D0P3iFku43jfbGrAOHuo=; b=Q8zSkrfB3Y/7Et26rFB1C4F4d
+        /i4ENuTK2AEX2jacaPj+lf1dJIaa4I+Guyc10Px7DuoN0dNte7IEAN6ag4R1CB9Bog/jXUCEOB93Q
+        18d00mLJGH6sRGYWQ4k8Fez9JskKtHXBPvHiPEyzVygxkAa0aZ1x4FPYSzo7M80c8ViMlbAm2Zh6R
+        oz+pbHA+5/kptEOmhxkAeM/WXhwse7X1UvKluWmYY2tpU97UkE7ZDndpAvO8vp6IOxDdEu1sXmtW4
+        87EVcoQL6E0pzm0wBkOmMfylFsCZed9SZOoQfNwMWyYzNn6Kulo/efImCddMJ0IljR7Kf2WyJRKI5
+        bmNly2szw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1goP4t-00080E-JI; Tue, 29 Jan 2019 08:49:07 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 82E47201EC171; Tue, 29 Jan 2019 09:49:04 +0100 (CET)
+Date:   Tue, 29 Jan 2019 09:49:04 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        Stefan Liebler <stli@linux.ibm.com>,
+        Sebastian Sewior <bigeasy@linutronix.de>
+Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggered
+Message-ID: <20190129084904.GB28485@hirez.programming.kicks-ass.net>
+References: <20181127081115.GB3625@osiris>
+ <alpine.DEB.2.21.1811281526430.1532@nanos.tec.linutronix.de>
+ <20181129112321.GB3449@osiris>
+ <20190128134410.GA28485@hirez.programming.kicks-ass.net>
+ <20190128135804.GB28878@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1901281650310.1582@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190128170037.sbayc3mve66krzzd@two.firstfloor.org>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <alpine.DEB.2.21.1901281650310.1582@nanos.tec.linutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Jan 28, 2019 at 09:00:37AM -0800, Andi Kleen escreveu:
-> > > also now it won't make sample for slave events
-> > > with zero value/period read
-> > > 
-> > > note the patch needs to be split into more patches,
-> > > sending it all together for discussion over the solution
-> > 
-> > any feedback on this one?
-> 
-> Looks good to me.
-> 
-> Reviewed-by: Andi Kleen <ak@linux.intel.com>
-> -Andi
+On Mon, Jan 28, 2019 at 04:53:19PM +0100, Thomas Gleixner wrote:
 
-Jiri, can you repost with a proper Subject line, Andi's reviewed-by,
-etc?
+> Right after staring long enough at it, the commit simply forgot to give
+> __rt_mutex_start_proxy_lock() the same treatment as it gave to
+> rt_mutex_wait_proxy_lock().
+> 
+> Patch below cures that.
 
-- Arnaldo
+Yes, that is a very nice solution. Find below an updated patch that
+includes a few comments. I found it harder than it should be to
+reconstruct this code.
+
+(also, I flipped the label names)
+
+---
+ kernel/futex.c           | 28 ++++++++++++++++++----------
+ kernel/locking/rtmutex.c | 37 ++++++++++++++++++++++++++++++++-----
+ 2 files changed, 50 insertions(+), 15 deletions(-)
+
+diff --git a/kernel/futex.c b/kernel/futex.c
+index fdd312da0992..9d8411d3142d 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -2861,35 +2861,39 @@ static int futex_lock_pi(u32 __user *uaddr, unsigned int flags,
+ 	 * and BUG when futex_unlock_pi() interleaves with this.
+ 	 *
+ 	 * Therefore acquire wait_lock while holding hb->lock, but drop the
+-	 * latter before calling rt_mutex_start_proxy_lock(). This still fully
+-	 * serializes against futex_unlock_pi() as that does the exact same
+-	 * lock handoff sequence.
++	 * latter before calling __rt_mutex_start_proxy_lock(). This
++	 * interleaves with futex_unlock_pi() -- which does a similar lock
++	 * handoff -- such that the latter can observe the futex_q::pi_state
++	 * before __rt_mutex_start_proxy_lock() is done.
+ 	 */
+ 	raw_spin_lock_irq(&q.pi_state->pi_mutex.wait_lock);
+ 	spin_unlock(q.lock_ptr);
++	/*
++	 * __rt_mutex_start_proxy_lock() unconditionally enqueues the @rt_waiter
++	 * such that futex_unlock_pi() is guaranteed to observe the waiter when
++	 * it sees the futex_q::pi_state.
++	 */
+ 	ret = __rt_mutex_start_proxy_lock(&q.pi_state->pi_mutex, &rt_waiter, current);
+ 	raw_spin_unlock_irq(&q.pi_state->pi_mutex.wait_lock);
+ 
+ 	if (ret) {
+ 		if (ret == 1)
+ 			ret = 0;
+-
+-		spin_lock(q.lock_ptr);
+-		goto no_block;
++		goto cleanup;
+ 	}
+ 
+-
+ 	if (unlikely(to))
+ 		hrtimer_start_expires(&to->timer, HRTIMER_MODE_ABS);
+ 
+ 	ret = rt_mutex_wait_proxy_lock(&q.pi_state->pi_mutex, to, &rt_waiter);
+ 
++cleanup:
+ 	spin_lock(q.lock_ptr);
+ 	/*
+-	 * If we failed to acquire the lock (signal/timeout), we must
++	 * If we failed to acquire the lock (deadlock/signal/timeout), we must
+ 	 * first acquire the hb->lock before removing the lock from the
+-	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex
+-	 * wait lists consistent.
++	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex wait
++	 * lists consistent.
+ 	 *
+ 	 * In particular; it is important that futex_unlock_pi() can not
+ 	 * observe this inconsistency.
+@@ -3013,6 +3017,10 @@ static int futex_unlock_pi(u32 __user *uaddr, unsigned int flags)
+ 		 * there is no point where we hold neither; and therefore
+ 		 * wake_futex_pi() must observe a state consistent with what we
+ 		 * observed.
++		 *
++		 * In particular; this forces __rt_mutex_start_proxy() to
++		 * complete such that we're guaranteed to observe the
++		 * rt_waiter. Also see the WARN in wake_futex_pi().
+ 		 */
+ 		raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
+ 		spin_unlock(&hb->lock);
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 581edcc63c26..afaf37d0ac15 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1726,12 +1726,33 @@ void rt_mutex_proxy_unlock(struct rt_mutex *lock,
+ 	rt_mutex_set_owner(lock, NULL);
+ }
+ 
++/**
++ * __rt_mutex_start_proxy_lock() - Start lock acquisition for another task
++ * @lock:		the rt_mutex to take
++ * @waiter:		the pre-initialized rt_mutex_waiter
++ * @task:		the task to prepare
++ *
++ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
++ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
++ *
++ * NOTE: does _NOT_ remove the @waiter on failure; must either call
++ * rt_mutex_wait_proxy_lock() or rt_mutex_cleanup_proxy_lock() after this.
++ *
++ * Returns:
++ *  0 - task blocked on lock
++ *  1 - acquired the lock for task, caller should wake it up
++ * <0 - error
++ *
++ * Special API call for PI-futex support.
++ */
+ int __rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+ 			      struct rt_mutex_waiter *waiter,
+ 			      struct task_struct *task)
+ {
+ 	int ret;
+ 
++	lockdep_asssert_held(&lock->wait_lock);
++
+ 	if (try_to_take_rt_mutex(lock, task, NULL))
+ 		return 1;
+ 
+@@ -1749,9 +1770,6 @@ int __rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+ 		ret = 0;
+ 	}
+ 
+-	if (unlikely(ret))
+-		remove_waiter(lock, waiter);
+-
+ 	debug_rt_mutex_print_deadlock(waiter);
+ 
+ 	return ret;
+@@ -1763,12 +1781,18 @@ int __rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+  * @waiter:		the pre-initialized rt_mutex_waiter
+  * @task:		the task to prepare
+  *
++ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
++ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
++ *
++ * NOTE: unlike __rt_mutex_start_proxy_lock this _DOES_ remove the @waiter
++ * on failure.
++ *
+  * Returns:
+  *  0 - task blocked on lock
+  *  1 - acquired the lock for task, caller should wake it up
+  * <0 - error
+  *
+- * Special API call for FUTEX_REQUEUE_PI support.
++ * Special API call for PI-futex support.
+  */
+ int rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+ 			      struct rt_mutex_waiter *waiter,
+@@ -1778,6 +1802,8 @@ int rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+ 
+ 	raw_spin_lock_irq(&lock->wait_lock);
+ 	ret = __rt_mutex_start_proxy_lock(lock, waiter, task);
++	if (unlikely(ret))
++		remove_waiter(lock, waiter);
+ 	raw_spin_unlock_irq(&lock->wait_lock);
+ 
+ 	return ret;
+@@ -1845,7 +1871,8 @@ int rt_mutex_wait_proxy_lock(struct rt_mutex *lock,
+  * @lock:		the rt_mutex we were woken on
+  * @waiter:		the pre-initialized rt_mutex_waiter
+  *
+- * Attempt to clean up after a failed rt_mutex_wait_proxy_lock().
++ * Attempt to clean up after a failed __rt_mutex_start_proxy_lock() or
++ * rt_mutex_wait_proxy_lock().
+  *
+  * Unless we acquired the lock; we're still enqueued on the wait-list and can
+  * in fact still be granted ownership until we're removed. Therefore we can
