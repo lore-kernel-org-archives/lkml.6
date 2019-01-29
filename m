@@ -2,59 +2,60 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F67C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99872C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50FD214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA9C217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="DAxMWgGo"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="owXvs/3K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfA2IoW (ORCPT
+        id S1727743AbfA2IoY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:44:22 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35156 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727889AbfA2IoU (ORCPT
+        Tue, 29 Jan 2019 03:44:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36691 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727903AbfA2IoW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:44:20 -0500
-Received: by mail-wr1-f65.google.com with SMTP id 96so21066760wrb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:44:19 -0800 (PST)
+        Tue, 29 Jan 2019 03:44:22 -0500
+Received: by mail-wr1-f68.google.com with SMTP id u4so21034121wrp.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:44:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TqGNmy9KB5gLgteplp8cLO+81L5bqfpDnlHvZNRtc6U=;
-        b=DAxMWgGoqh7e4ZLwfMBAsM7bnjdW2ROqq9rOCDdlvxXUK9ohTypfFfYKtp8llxfi2u
-         HjWg1wb57zn35jBjplwuX64Dl8MJ2UDoDwkdxcxvePQDq4ufFjwcPOqV7L+8bC+x3GIv
-         8MjbpkdzT04E6uSlZdyXwm2LznPYlMKpcy2fAUA35fMKqoubIfisB392N5gMJL24vmlH
-         opDm+a7UFTTokQ/0ZAbHygT/SoiAo+VKltpQ9konMI5CFX6v5lTeUiciKgHmS6qEUonV
-         V6yAvQczW5FqgQp7mS+Z+XRamSH5uJAsj2/2R7iNBYJZ+eMiaXOTKimw2+zvQk7hTVMy
-         +TUw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=8M8SkLlBUO6aIkmvQdt73jSIyNWAPLQHicQuYx4M/z8=;
+        b=owXvs/3KpQ85MmIixWzVI0ge13IlH4i71lzEJUZsZ0nglkRxj4rU1LQSV5uXXGP8Fj
+         XGu/X4WUlJHUBxrOcsHpc4Q7aZlXJQtvqTOh+/ioLWHkRrpsNPGAhejvxu2m2LQKg7e4
+         Sprc5xDWgGX/DYuP4ZC7LEpCqxD8C4Z69SjsmpjxJUsttMUSa4Fb3N1uvzagv0N/3L7G
+         I+c/apqs6DIE9a5exEZRwoxb1ClYc16NI8V51OQLKG4XhXtC/MQ3mx/v3b6XchYVTFi1
+         zt7gxpeXydjehOgLT7LK/VrapPYdVK6F585wqylS3CYhdI6I3s4U1zuyOmaBxUw2JW7l
+         j2IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TqGNmy9KB5gLgteplp8cLO+81L5bqfpDnlHvZNRtc6U=;
-        b=kTAoXpFgduMy48naIyu8h6gK7aOJCTcsJ8SNgbxM13iQpJHGzHJLXcXBejxu6bdT46
-         Y+/qMCgONRhUBZT6d4rMmYuAuL/Zlvf2FKH3llROT0OuXfI92IsGSDZgPauO6/2w/oqJ
-         foO+664wmohGyGbhcyxg7est2Y+OWLuovKWVYoLjDn5E5uBGEh5MmJPxt6c8gVg3+0dj
-         SBt7/oisHOe/GJjVnor3BH54rSZWms32uy6bPa/4aH3oNfWdaSnvXc8Fk2rw2Tc92qTC
-         coLd0N2N8c2MEJvNlclz5OelxLXEiQSBwPVyYW2wAiLsJ/V8UNuBEKOLVIe5l4gXgqCv
-         eTTA==
-X-Gm-Message-State: AJcUukeiJ7u4rqKvAcppq7UfvpYoxeJoIujNeIwNUjIEGCwtoOHnRpf4
-        41Bl7h5Y2/SKvzDjpCZt8LGZOA==
-X-Google-Smtp-Source: ALg8bN67thkQRjU4HzkNuNdSD62G+cMFG4uuugP4SRVgOyMzynjwvW7hVFM24BloEs2gH9J9UKiIGg==
-X-Received: by 2002:adf:f691:: with SMTP id v17mr24060162wrp.114.1548751458361;
-        Tue, 29 Jan 2019 00:44:18 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8M8SkLlBUO6aIkmvQdt73jSIyNWAPLQHicQuYx4M/z8=;
+        b=Q3zIcLm3MEZt9MvSwy/il4GYnTGly4uMSR+0x0u9JyEcoh+Gc4VlM+oMmLuB+jBX3y
+         7i0Mhj9AsRwIgpx4w9YmwAaGP4uHdED4N5STSgGuzcazsYc5+liSbBHHKHSvTUMe8hW1
+         Ak/Z1IC8weUGOazKAT7KVXeojedGm1cVNdlxfuZF4lzZKyE5t4DJNsdEeSDzs0R3otlg
+         xzRdAxu4+X9Y9huGCA3sgs+M+yhHwRo4v58+/n4Oa31WJiTlCY9BpEF2uiRVMxVQu2X0
+         gafw0S1A+MFoFYPdcU29tFKx0sLEH19r9/ODVijOVFgim8LIrsa/VvPstJCEHd6QRlgy
+         1JiQ==
+X-Gm-Message-State: AJcUuke0WJugH6gh1jdNmydF4j4rmZDvj36fDPyRmx+iTosYlxbA/jf3
+        FlQksyVurQr+gXiY+/NgWVTz9Q==
+X-Google-Smtp-Source: ALg8bN4+NvpMzrhdEqitwilEY5AqTwtc15FHuRDWKiQKJ8UCYsp1gyI6SCHZNWs/UMBXVjxRztriaQ==
+X-Received: by 2002:adf:891a:: with SMTP id s26mr24772955wrs.44.1548751460628;
+        Tue, 29 Jan 2019 00:44:20 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id c1sm3979319wmb.14.2019.01.29.00.44.17
+        by smtp.gmail.com with ESMTPSA id c1sm3979319wmb.14.2019.01.29.00.44.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 00:44:17 -0800 (PST)
+        Tue, 29 Jan 2019 00:44:20 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -63,12 +64,13 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         <u.kleine-koenig@pengutronix.de>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 0/9] gpio: mockup: improve the user-space testing interface
-Date:   Tue, 29 Jan 2019 09:44:02 +0100
-Message-Id: <20190129084411.30495-1-brgl@bgdev.pl>
+Subject: [PATCH v2 2/9] irq/irq_sim: use irq domain
+Date:   Tue, 29 Jan 2019 09:44:04 +0100
+Message-Id: <20190129084411.30495-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190129084411.30495-1-brgl@bgdev.pl>
+References: <20190129084411.30495-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -77,68 +79,200 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This series aims at reworking the gpio-mockup debugfs interface. The
-reason for that is the fact that certain known problems with this
-testing module exist and the user-space tests are broken anyway
-after commit fa38869b0161 ("gpiolib: Don't support irq sharing
-for userspace") which made it impossible for gpio-mockup to ignore
-certain events (e.g. only receive notifications about rising edge
-events).
+Delegate the offset to virq number mapping to the provided framework
+instead of handling it locally. Use the legacy domain as we want to
+preallocate the irq descriptors.
 
-The first three patches improve the interrupt simulator. The first one
-makes the struct irq_chip part of the irq_sim structure so that we can
-support multiple instances at once. The second delegates the irq number
-mapping to the irq domain subsystem. The third patch provides a helper
-that will allow users to specify the type of the fired interrupt so that
-the configuration set by the set_type() callback can be taken into account.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ include/linux/irq_sim.h |  6 +--
+ kernel/irq/irq_sim.c    | 94 +++++++++++++++++++++++++++++------------
+ 2 files changed, 71 insertions(+), 29 deletions(-)
 
-Next six patches improve the gpio-mockup module. Patches 4-5 have been
-reviewed before but missed the last merge window. Patch 6 is there
-because we're already breaking the debugfs interface anyway and it
-removes a link that has no users. Patches 7-8 are minor tweaks.
-
-Last patch introduces a rework of the debugfs interface. With this
-change each mockup chip is represented by a directory named after the
-chip's device name under <debugfs mount point>/gpio-mockup/. Each line
-is represented by a file using the line's offset as the name under the
-chip's directory. Reading from the line's file yields the current
-*value*, writing to the line's file changes the current "pull". Default
-pull for mockup lines is down. More info on that can be found in the
-comment added by this change to the gpio-mockup code.
-
-This is somewhat inspired by the idea of the gpio-simulator by
-Uwe Kleine-König except that I strongly belive that when testing
-certain user API code paths we should not be using the same paths for
-verification. That's why there's a separate interface (debugfs) sharing
-as little as possible with the character device that allows to check if
-various operations (reading and setting values, events) work as
-expected instead of two connected dummy chips sharing the same
-interface.
-
-If accepted this will of course require major modification of user-space
-tests in libgpiod once upstream.
-
-v1 -> v2:
-- instead of providing the irq_sim_get_type() helper, move the irq type
-  logic into the simulator and provide a helper that allows users to specify
-  the type of the fired interrupt
-
-Bartosz Golaszewski (9):
-  irq/irq_sim: don't share the irq_chip structure between simulators
-  irq/irq_sim: use irq domain
-  irq/irq_sim: provide irq_sim_fire_type()
-  gpio: mockup: add locking
-  gpio: mockup: implement get_multiple()
-  gpio: mockup: don't create the debugfs link named after the label
-  gpio: mockup: change the type of 'offset' to unsigned int
-  gpio: mockup: change the signature of unlocked get/set helpers
-  gpio: mockup: rework debugfs interface
-
- drivers/gpio/gpio-mockup.c | 185 +++++++++++++++++++++++++++++++------
- include/linux/irq_sim.h    |  17 +++-
- kernel/irq/irq_sim.c       | 126 ++++++++++++++++++-------
- 3 files changed, 263 insertions(+), 65 deletions(-)
-
+diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+index eda132c22b57..b96c2f752320 100644
+--- a/include/linux/irq_sim.h
++++ b/include/linux/irq_sim.h
+@@ -8,6 +8,7 @@
+ 
+ #include <linux/irq.h>
+ #include <linux/irq_work.h>
++#include <linux/irqdomain.h>
+ #include <linux/device.h>
+ 
+ /*
+@@ -21,16 +22,15 @@ struct irq_sim_work_ctx {
+ };
+ 
+ struct irq_sim_irq_ctx {
+-	int			irqnum;
+ 	bool			enabled;
+ };
+ 
+ struct irq_sim {
+ 	struct irq_chip		chip;
++	struct irq_domain	*domain;
+ 	struct irq_sim_work_ctx	work_ctx;
+-	int			irq_base;
++	int			virq_base;
+ 	unsigned int		irq_count;
+-	struct irq_sim_irq_ctx	*irqs;
+ };
+ 
+ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
+diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+index b732e4e2e45b..2bcdbab1bc5a 100644
+--- a/kernel/irq/irq_sim.c
++++ b/kernel/irq/irq_sim.c
+@@ -44,6 +44,43 @@ static void irq_sim_handle_irq(struct irq_work *work)
+ 	}
+ }
+ 
++static int irq_sim_domain_map(struct irq_domain *domain,
++			      unsigned int virq, irq_hw_number_t hw)
++{
++	struct irq_sim *sim = domain->host_data;
++	struct irq_sim_irq_ctx *ctx;
++
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++
++	irq_set_chip(virq, &sim->chip);
++	irq_set_chip_data(virq, ctx);
++	irq_set_handler(virq, handle_simple_irq);
++	irq_modify_status(virq, IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
++
++	return 0;
++}
++
++static void irq_sim_domain_free(struct irq_domain *domain,
++				unsigned int virq, unsigned int num_irqs)
++{
++	struct irq_sim_irq_ctx *ctx;
++	struct irq_data *irq;
++	int i;
++
++	for (i = 0; i < num_irqs; i++) {
++		irq = irq_domain_get_irq_data(domain, virq + i);
++		ctx = irq_data_get_irq_chip_data(irq);
++		kfree(ctx);
++	}
++}
++
++static const struct irq_domain_ops irq_sim_domain_ops = {
++	.map = irq_sim_domain_map,
++	.free = irq_sim_domain_free,
++};
++
+ /**
+  * irq_sim_init - Initialize the interrupt simulator: allocate a range of
+  *                dummy interrupts.
+@@ -56,16 +93,15 @@ static void irq_sim_handle_irq(struct irq_work *work)
+  */
+ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+ {
+-	int i;
+-
+-	sim->irqs = kmalloc_array(num_irqs, sizeof(*sim->irqs), GFP_KERNEL);
+-	if (!sim->irqs)
++	sim->virq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
++	if (sim->virq_base < 0)
++		return sim->virq_base;
++
++	sim->domain = irq_domain_add_legacy(NULL, num_irqs, sim->virq_base,
++					    0, &irq_sim_domain_ops, sim);
++	if (!sim->domain) {
++		irq_free_descs(sim->virq_base, num_irqs);
+ 		return -ENOMEM;
+-
+-	sim->irq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
+-	if (sim->irq_base < 0) {
+-		kfree(sim->irqs);
+-		return sim->irq_base;
+ 	}
+ 
+ 	sim->chip.name = "irq_sim";
+@@ -74,25 +110,15 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+ 
+ 	sim->work_ctx.pending = bitmap_zalloc(num_irqs, GFP_KERNEL);
+ 	if (!sim->work_ctx.pending) {
+-		kfree(sim->irqs);
+-		irq_free_descs(sim->irq_base, num_irqs);
++		irq_domain_remove(sim->domain);
++		irq_free_descs(sim->virq_base, num_irqs);
+ 		return -ENOMEM;
+ 	}
+ 
+-	for (i = 0; i < num_irqs; i++) {
+-		sim->irqs[i].irqnum = sim->irq_base + i;
+-		sim->irqs[i].enabled = false;
+-		irq_set_chip(sim->irq_base + i, &sim->chip);
+-		irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
+-		irq_set_handler(sim->irq_base + i, &handle_simple_irq);
+-		irq_modify_status(sim->irq_base + i,
+-				  IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
+-	}
+-
+ 	init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
+ 	sim->irq_count = num_irqs;
+ 
+-	return sim->irq_base;
++	return sim->virq_base;
+ }
+ EXPORT_SYMBOL_GPL(irq_sim_init);
+ 
+@@ -106,8 +132,8 @@ void irq_sim_fini(struct irq_sim *sim)
+ {
+ 	irq_work_sync(&sim->work_ctx.work);
+ 	bitmap_free(sim->work_ctx.pending);
+-	irq_free_descs(sim->irq_base, sim->irq_count);
+-	kfree(sim->irqs);
++	irq_domain_free_irqs(sim->virq_base, sim->irq_count);
++	irq_domain_remove(sim->domain);
+ }
+ EXPORT_SYMBOL_GPL(irq_sim_fini);
+ 
+@@ -151,6 +177,20 @@ int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
+ }
+ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
+ 
++static struct irq_sim_irq_ctx *
++irq_sim_get_ctx(struct irq_sim *sim, unsigned int offset)
++{
++	struct irq_sim_irq_ctx *ctx;
++	struct irq_data *irq;
++	int virq;
++
++	virq = irq_find_mapping(sim->domain, offset);
++	irq = irq_domain_get_irq_data(sim->domain, virq);
++	ctx = irq_data_get_irq_chip_data(irq);
++
++	return ctx;
++}
++
+ /**
+  * irq_sim_fire - Enqueue an interrupt.
+  *
+@@ -159,7 +199,9 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
+  */
+ void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
+ {
+-	if (sim->irqs[offset].enabled) {
++	struct irq_sim_irq_ctx *ctx = irq_sim_get_ctx(sim, offset);
++
++	if (ctx->enabled) {
+ 		set_bit(offset, sim->work_ctx.pending);
+ 		irq_work_queue(&sim->work_ctx.work);
+ 	}
+@@ -175,6 +217,6 @@ EXPORT_SYMBOL_GPL(irq_sim_fire);
+  */
+ int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
+ {
+-	return sim->irqs[offset].irqnum;
++	return irq_find_mapping(sim->domain, offset);
+ }
+ EXPORT_SYMBOL_GPL(irq_sim_irqnum);
 -- 
 2.19.1
 
