@@ -2,100 +2,99 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E13C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FCEC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 912482184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:05:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548785157;
-	bh=HYU0VpPkTwAVt0GjuWhhtdSHEStCm7KcfkROMzsXPvI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=clS7bKpAPpMkSUWBbecUWylzn4MWQ2zCLGUISL2yabN/L2+NORjf8Y/GYgtpU9Wy7
-	 ms6yw+rHG9rM7Pc6fTvA/lp2yLbiPkgI8ug0kdln6nUCbg/0wVXNBaV5Lul+Kc/vE7
-	 VntrC1R2zcf6SV7ENmP+KVd+40G2xyzzlHPYshlI=
+	by mail.kernel.org (Postfix) with ESMTP id 47C2C21848
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:06:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="xOY//dpo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbfA2SF4 (ORCPT
+        id S1729116AbfA2SGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:05:56 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48938 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbfA2SFz (ORCPT
+        Tue, 29 Jan 2019 13:06:16 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44644 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728627AbfA2SGQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:05:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HYU0VpPkTwAVt0GjuWhhtdSHEStCm7KcfkROMzsXPvI=; b=wFy4lPDDkAVtaIMPiO3BIVmCv
-        PhtBOslTjdMImWD8yj7dVkceyc7lyGFpVBJyPMuXHaWd8mdyk0mayz/oNEFg9Oqxw8uMq9k/YSCHu
-        +JBXRnQb4EVX0gZhRa2JtocxtEV8XesVfojrUY6KVLk0sfaYp24ihnbvwmclZR2C5mves=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1goXlc-0000vy-7T; Tue, 29 Jan 2019 18:05:48 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 949081127D50; Tue, 29 Jan 2019 18:05:47 +0000 (GMT)
-Date:   Tue, 29 Jan 2019 18:05:47 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Axel Lin <axel.lin@ingics.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: lochnagar: Fix n_voltages setting for VDDCORE
-Message-ID: <20190129180547.GI10524@sirena.org.uk>
-References: <20190129030156.2024-1-axel.lin@ingics.com>
- <20190129095438.GJ3837@imbe.wolfsonmicro.main>
+        Tue, 29 Jan 2019 13:06:16 -0500
+Received: by mail-qk1-f195.google.com with SMTP id o8so12044423qkk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:06:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5wNE0HV5mvZVQ9rThDrqHS4OERbxFOIR6q7tTWzLOKY=;
+        b=xOY//dpoHTVUwSZfXZ/05OjwDr0eF+y/2Y6bmSq3zkXheRGFMsDGg1qdJq3wtc5STH
+         lb0YOkAJeD0agD6UrailHN7236stm9yD5bwleGOB+xJdj2XuQottg45Iv8JqosUdHRXT
+         ojB8zhW1G5Gi+PfF2l71gXrwc6A0KHSpbxP9YfmmGoCvYDpMnYv8pEVKQ6rNAeNGENsz
+         WGRTqNh0wFlXU+zyYLGVg2oYmpq0JALL5odLklyruosv59nJi780zLiwyjXoAq5MH8UC
+         YOJgGSZpO3Txw6p+PAKVOJU9p/oAlcG7xaDmGi6ZRBtcOKVqQGJ4Ty86hcQTsdNq2ROB
+         tE4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5wNE0HV5mvZVQ9rThDrqHS4OERbxFOIR6q7tTWzLOKY=;
+        b=SmSwjEJu2DNN01FsXowW8kI1c3drtyq9uYhFfTRwVuIrh579/xCt5uQ+emvNENrx1w
+         chhFsgzIrMT1zEsUMy2wLGkriK+QPOiwpwB+Lpyv2pEk8u58R9ILzAF4Dw43wcXmVQqz
+         y9r5dVjJ1AB4/tigcm6OscDm2DTqoiCGuzHYWeMqGCTod2yKybCXqQJOTTRUHdJbbVVB
+         9JQJRumuQZNAIb++Z/F9qajbpFRyhrTJ7ZgQ8ZrNiFEpXjEpuaRigKGWBop3oKNRj43+
+         x/31admFYHs/kmKTl3c5DDM0WPLzngfvjtlxVMreSevMQwf09cOCEMkEZ0ZTCcNlTweo
+         UdCQ==
+X-Gm-Message-State: AJcUuke6WLsBZP5mAr50U/ru8Mnja5jbIMqnYNQZwp9fsNiamnZ9/WEF
+        a3mLhYURvNXIEHjs9TVCgmytKA==
+X-Google-Smtp-Source: ALg8bN5OiT6B5uDi2ytO0Ovt3RiW4nREYjxhJNEamHsz0esCnkgcXtZvsqppNmUmdj4oM0X0MYCh4g==
+X-Received: by 2002:a37:7885:: with SMTP id t127mr24899602qkc.323.1548785175262;
+        Tue, 29 Jan 2019 10:06:15 -0800 (PST)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id s46sm88555537qtc.63.2019.01.29.10.06.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 10:06:14 -0800 (PST)
+Date:   Tue, 29 Jan 2019 13:06:13 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/11] btrfs: add compression interface in
+ (get/put)_workspace()
+Message-ID: <20190129180612.2su6scf3mcuj4bdd@MacBook-Pro-91.local>
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190128212437.11597-7-dennis@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="svExV93C05KqedWb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129095438.GJ3837@imbe.wolfsonmicro.main>
-X-Cookie: What foods these morsels be!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190128212437.11597-7-dennis@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 28, 2019 at 04:24:32PM -0500, Dennis Zhou wrote:
+> There are two levels of workspace management. First, alloc()/free()
+> which are responsible for actually creating and destroy workspaces.
+> Second, at a higher level, get()/put() which is the compression code
+> asking for a workspace from a workspace_manager.
+> 
+> The compression code shouldn't really care how it gets a workspace, but
+> that it got a workspace. This adds get_workspace() and put_workspace()
+> to be the higher level interface which is responsible for indexing into
+> the appropriate compression type. It also introduces
+> btrfs_put_workspace() and btrfs_get_workspace() to be the generic
+> implementations of the higher interface.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
 
---svExV93C05KqedWb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-On Tue, Jan 29, 2019 at 09:54:38AM +0000, Charles Keepax wrote:
+Thanks,
 
-> Hmm... I think this might need a little more investigation, it
-> does indeed fail at present (amazing that it works upto exactly 1.2V
-> which is common the usecase) but this feels more like a core
-> problem. There are indeed only 57 valid voltage settings as the
-> range is 0x8 - 0x41, but it seems that presently the core treats
-> this less as n_voltages and more like max_selector. Should we
-> perhaps be teaching the core to understand the min_selector
-> instead?
-
-We've not had a need for this before but that seems like a reasonable
-addition.
-
---svExV93C05KqedWb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxQlfoACgkQJNaLcl1U
-h9CWCwf/ZxzfLoEjq12l4scqJJJmpfhVqlHEDdjHea26783vz7S0ktdWmF0FMQ+x
-tRo+YaqxCs4jk/lufyvubY3jPaurP7388NSTZg7bpcZGO9MncO9UcGYq2FgjSlkS
-VkKSl4qFZ9rtZbSX+Mqav7+QPpTJak+6wLbN3x0MRgMmoemOfJOZl2PjBtmqpXF9
-ikRcZaBKu2u+6P2RfTE83VUrNjgLW5BbYhWnzypmu09rNLIfbnwu22mV1jp1n1oW
-FfVFyCtp/pJHsOVOvNJymhi7fIbVSk2gxVo76Y8oJO+N8EG26urGLgEpZiHeWJ4Q
-LU9tlH8DlbkVpi7Dii7duNa5ocjLbw==
-=SbyI
------END PGP SIGNATURE-----
-
---svExV93C05KqedWb--
+Josef
