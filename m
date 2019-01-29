@@ -2,143 +2,102 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B92DC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C059C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4802E20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:24:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C7B720989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:26:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548789989;
+	bh=ST054maXA+onQkcPaDumAdubdaOZiqAKAKKl7+8nesg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=M/pldY3Sda/sIWnx5fEKFNCuus1M/tOZI8EEbq9m0+KfyKFhRzeoY1eN2eiRvm3Ev
+	 fpkJX8rLUs03pK0hKIsZrcFqeJs9hVAlzQ4DYz81vBVEkQP2/6LecJOYcfuuaRpFIq
+	 l8ShJ+1QHJiXp0v19ijrzb/OblQNDoSCIyKI1pFY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbfA2TYT (ORCPT
+        id S1728076AbfA2T01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:24:19 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:59356 "EHLO ale.deltatee.com"
+        Tue, 29 Jan 2019 14:26:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbfA2TYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:24:19 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1goYzN-0005nT-QG; Tue, 29 Jan 2019 12:24:06 -0700
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, linux-pci@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        iommu@lists.linux-foundation.org
-References: <20190129174728.6430-1-jglisse@redhat.com>
- <20190129174728.6430-4-jglisse@redhat.com>
- <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
- <20190129191120.GE3176@redhat.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <c2c02af7-1d6f-e54f-c7fb-99c5b7776014@deltatee.com>
-Date:   Tue, 29 Jan 2019 12:24:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726852AbfA2T01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 14:26:27 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB05F20882;
+        Tue, 29 Jan 2019 19:26:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548789986;
+        bh=ST054maXA+onQkcPaDumAdubdaOZiqAKAKKl7+8nesg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iTnkCpBpkAVKAXg5p4IH7aP3shmV6CSG/0rQIS/5sCXFuf0vYVdltcMJgDh+Iba3M
+         xqJp6JeI3jDJ6nDx0qizl5VL+p95w/agtP6Kw2CsRjV8V8b9DsSXkBf5GcQlmI49Y/
+         G4RyA+lAWbnkYrq7/qG10P0kfU7LCtgVCGzOKX1Y=
+Date:   Tue, 29 Jan 2019 20:26:24 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/44] 4.9.154-stable review
+Message-ID: <20190129192624.GA21847@kroah.com>
+References: <20190129113139.826927690@linuxfoundation.org>
+ <20190129190220.GA6116@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <20190129191120.GE3176@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, jgg@mellanox.com, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jglisse@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129190220.GA6116@roeck-us.net>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019-01-29 12:11 p.m., Jerome Glisse wrote:
-> On Tue, Jan 29, 2019 at 11:36:29AM -0700, Logan Gunthorpe wrote:
->>
->>
->> On 2019-01-29 10:47 a.m., jglisse@redhat.com wrote:
->>
->>> +	/*
->>> +	 * Optional for device driver that want to allow peer to peer (p2p)
->>> +	 * mapping of their vma (which can be back by some device memory) to
->>> +	 * another device.
->>> +	 *
->>> +	 * Note that the exporting device driver might not have map anything
->>> +	 * inside the vma for the CPU but might still want to allow a peer
->>> +	 * device to access the range of memory corresponding to a range in
->>> +	 * that vma.
->>> +	 *
->>> +	 * FOR PREDICTABILITY IF DRIVER SUCCESSFULY MAP A RANGE ONCE FOR A
->>> +	 * DEVICE THEN FURTHER MAPPING OF THE SAME IF THE VMA IS STILL VALID
->>> +	 * SHOULD ALSO BE SUCCESSFUL. Following this rule allow the importing
->>> +	 * device to map once during setup and report any failure at that time
->>> +	 * to the userspace. Further mapping of the same range might happen
->>> +	 * after mmu notifier invalidation over the range. The exporting device
->>> +	 * can use this to move things around (defrag BAR space for instance)
->>> +	 * or do other similar task.
->>> +	 *
->>> +	 * IMPORTER MUST OBEY mmu_notifier NOTIFICATION AND CALL p2p_unmap()
->>> +	 * WHEN A NOTIFIER IS CALL FOR THE RANGE ! THIS CAN HAPPEN AT ANY
->>> +	 * POINT IN TIME WITH NO LOCK HELD.
->>> +	 *
->>> +	 * In below function, the device argument is the importing device,
->>> +	 * the exporting device is the device to which the vma belongs.
->>> +	 */
->>> +	long (*p2p_map)(struct vm_area_struct *vma,
->>> +			struct device *device,
->>> +			unsigned long start,
->>> +			unsigned long end,
->>> +			dma_addr_t *pa,
->>> +			bool write);
->>> +	long (*p2p_unmap)(struct vm_area_struct *vma,
->>> +			  struct device *device,
->>> +			  unsigned long start,
->>> +			  unsigned long end,
->>> +			  dma_addr_t *pa);
->>
->> I don't understand why we need new p2p_[un]map function pointers for
->> this. In subsequent patches, they never appear to be set anywhere and
->> are only called by the HMM code. I'd have expected it to be called by
->> some core VMA code and set by HMM as that's what vm_operations_struct is
->> for.
->>
->> But the code as all very confusing, hard to follow and seems to be
->> missing significant chunks. So I'm not really sure what is going on.
+On Tue, Jan 29, 2019 at 11:02:20AM -0800, Guenter Roeck wrote:
+> On Tue, Jan 29, 2019 at 12:35:55PM +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.9.154 release.
+> > There are 44 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu Jan 31 11:31:22 UTC 2019.
+> > Anything received after that time might be too late.
+> > 
 > 
-> It is set by device driver when userspace do mmap(fd) where fd comes
-> from open("/dev/somedevicefile"). So it is set by device driver. HMM
-> has nothing to do with this. It must be set by device driver mmap
-> call back (mmap callback of struct file_operations). For this patch
-> you can completely ignore all the HMM patches. Maybe posting this as
-> 2 separate patchset would make it clearer.
+> fs/cifs/connect.c: In function 'zero_credits':
+> fs/cifs/connect.c:527:34: error: 'struct TCP_Server_Info' has no member named 'echo_credits'
+> fs/cifs/connect.c:527:57: error: 'struct TCP_Server_Info' has no member named 'oplock_credits'
 > 
-> For instance see [1] for how a non HMM driver can export its memory
-> by just setting those callback. Note that a proper implementation of
-> this should also include some kind of driver policy on what to allow
-> to map and what to not allow ... All this is driver specific in any
-> way.
+> Seen with:
+> 
+> arm:s3c2410_defconfig 
+> arm:nhk8815_defconfig 
+> arm:cm_x2xx_defconfig 
+> ia64:defconfig 
+> m68k:defconfig 
+> m68k:sun3_defconfig 
+> microblaze:mmu_defconfig 
+> mips:defconfig 
+> mips:nlm_xlp_defconfig 
+> parisc:defconfig 
+> parisc:generic-32bit_defconfig 
+> parisc:a500_defconfig 
+> powerpc:defconfig 
+> powerpc:ppc64e_defconfig 
+> powerpc:ppc6xx_defconfig 
+> s390:performance_defconfig
+> tile:tilegx_defconfig 
 
-I'd suggest [1] should be a part of the patchset so we can actually see
-a user of the stuff you're adding.
+Ugh, this is due to CONFIG_CIFS_SMB2 not being enabled there.  But it's
+removed in newer kernels.  Let me see if I should just drop the
+offending patch, give me a bit...
 
-But it still doesn't explain everything as without the HMM code nothing
-calls the new vm_ops. And there's still no callers for the p2p_test
-functions you added. And I still don't understand why we need the new
-vm_ops or who calls them and when. Why can't drivers use the existing
-'fault' vm_op and call a new helper function to map p2p when appropriate
-or a different helper function to map a large range in its mmap
-operation? Just like regular mmap code...
+thanks for the quick response.
 
-Logan
+greg k-h
