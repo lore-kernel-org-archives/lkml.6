@@ -2,105 +2,169 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5F6C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174E8C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6D9020844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:39:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PS/a9mpM"
+	by mail.kernel.org (Postfix) with ESMTP id DFA7F2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:39:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbfA2WjS (ORCPT
+        id S1729675AbfA2Wjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:39:18 -0500
-Received: from ozlabs.org ([203.11.71.1]:55189 "EHLO ozlabs.org"
+        Tue, 29 Jan 2019 17:39:45 -0500
+Received: from mga12.intel.com ([192.55.52.136]:48636 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727980AbfA2WjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:39:17 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43q1dG4Mfcz9sBQ;
-        Wed, 30 Jan 2019 09:39:14 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548801555;
-        bh=BniT2tdG7AuK7acRWs7MwFWxF5oAs876VP5bHF1N7E8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=PS/a9mpMYL6eR1wywmTKXg5uJZY7erbhVcV4mQ/AOoPazYmnqarNcMcjh6PkJHeIk
-         1iJWH9O0f6lkDY5YBerMiMe4uVRcT2yd2eBJ1Cxo7P2smAlpwUue7drvc6ZdM4EOAn
-         OG9PoifuwkRv+knQzrN6NDMTZu0huoaxN7YteoxXcIAkgOE7KUUayV3kzWHSfRxTnI
-         dxgHwYumDocWYnDRCfEcJLg0yfLzfYh3wXSTG7aELuaN2cHgWFxpPm0TIoD6k1h/rS
-         +y3wlrnYwb9tdr8ME122z4DF+NGeLGcWtcjngbEVThKFqPyMqGUSSXVmjEUrdUixm2
-         3J+Ff5xOxnPNQ==
-Date:   Wed, 30 Jan 2019 09:39:08 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Mika Kahola <mika.kahola@intel.com>
-Subject: linux-next: build failure after merge of the drm-intel-fixes tree
-Message-ID: <20190130093830.728e9d06@canb.auug.org.au>
+        id S1727545AbfA2Wjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 17:39:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 14:39:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,538,1539673200"; 
+   d="scan'208";a="139897549"
+Received: from glacier.sc.intel.com ([10.3.62.55])
+  by fmsmga004.fm.intel.com with ESMTP; 29 Jan 2019 14:39:43 -0800
+From:   Rajmohan Mani <rajmohan.mani@intel.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>, tian.shu.qiu@intel.com,
+        bingbu.cao@intel.com, Zhi@vger.kernel.org,
+        Yong <yong.zhi@intel.com>, hverkuil@xs4all.nl,
+        tfiga@chromium.org, Rajmohan Mani <rajmohan.mani@intel.com>
+Subject: [PATCH] media: staging/intel-ipu3: Implement lock for stream on/off operations
+Date:   Tue, 29 Jan 2019 14:27:36 -0800
+Message-Id: <20190129222736.6216-1-rajmohan.mani@intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//EuLT0clbUsC3uFs9.Gmalb"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_//EuLT0clbUsC3uFs9.Gmalb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Currently concurrent stream off operations on ImgU nodes are not
+synchronized, leading to use-after-free bugs (as reported by KASAN).
 
-Hi all,
+[  250.090724] BUG: KASAN: use-after-free in ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu]
+[  250.090726] Read of size 8 at addr ffff888127b29bc0 by task yavta/18836
+[  250.090731] Hardware name: HP Soraka/Soraka, BIOS Google_Soraka.10431.17.0 03/22/2018
+[  250.090732] Call Trace:
+[  250.090735]  dump_stack+0x6a/0xb1
+[  250.090739]  print_address_description+0x8e/0x279
+[  250.090743]  ? ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu]
+[  250.090746]  kasan_report+0x260/0x28a
+[  250.090750]  ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu]
+[  250.090754]  ipu3_css_pool_cleanup+0x24/0x37 [ipu3_imgu]
+[  250.090759]  ipu3_css_pipeline_cleanup+0x61/0xb9 [ipu3_imgu]
+[  250.090763]  ipu3_css_stop_streaming+0x1f2/0x321 [ipu3_imgu]
+[  250.090768]  imgu_s_stream+0x94/0x443 [ipu3_imgu]
+[  250.090772]  ? ipu3_vb2_buf_queue+0x280/0x280 [ipu3_imgu]
+[  250.090775]  ? vb2_dma_sg_unmap_dmabuf+0x16/0x6f [videobuf2_dma_sg]
+[  250.090778]  ? vb2_buffer_in_use+0x36/0x58 [videobuf2_common]
+[  250.090782]  ipu3_vb2_stop_streaming+0xf9/0x135 [ipu3_imgu]
 
-After merging the drm-intel-fixes tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Implemented a lock to synchronize imgu stream on / off operations and
+the modification of streaming flag (in struct imgu_device), to prevent
+these issues.
 
-drivers/gpu/drm/i915/intel_display.c: In function 'has_bogus_dpll_config':
-drivers/gpu/drm/i915/intel_display.c:15432:27: error: macro "IS_GEN" requir=
-es 3 arguments, but only 2 given
-  return IS_GEN(dev_priv, 6) &&
-                           ^
+Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Caused by commit
+Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+---
+ drivers/staging/media/ipu3/ipu3-v4l2.c | 6 ++++++
+ drivers/staging/media/ipu3/ipu3.c      | 3 +++
+ drivers/staging/media/ipu3/ipu3.h      | 4 ++++
+ 3 files changed, 13 insertions(+)
 
-  a49a17226feb ("drm/i915: Try to sanitize bogus DPLL state left over by br=
-oken SNB BIOSen")
+diff --git a/drivers/staging/media/ipu3/ipu3-v4l2.c b/drivers/staging/media/ipu3/ipu3-v4l2.c
+index c7936032beb9..cf7e917cd0c8 100644
+--- a/drivers/staging/media/ipu3/ipu3-v4l2.c
++++ b/drivers/staging/media/ipu3/ipu3-v4l2.c
+@@ -507,12 +507,15 @@ static int ipu3_vb2_start_streaming(struct vb2_queue *vq, unsigned int count)
+ 			goto fail_stop_pipeline;
+ 	}
+ 
++	mutex_lock(&imgu->streaming_lock);
++
+ 	/* Start streaming of the whole pipeline now */
+ 	dev_dbg(dev, "IMGU streaming is ready to start");
+ 	r = imgu_s_stream(imgu, true);
+ 	if (!r)
+ 		imgu->streaming = true;
+ 
++	mutex_unlock(&imgu->streaming_lock);
+ 	return 0;
+ 
+ fail_stop_pipeline:
+@@ -543,6 +546,8 @@ static void ipu3_vb2_stop_streaming(struct vb2_queue *vq)
+ 		dev_err(&imgu->pci_dev->dev,
+ 			"failed to stop subdev streaming\n");
+ 
++	mutex_lock(&imgu->streaming_lock);
++
+ 	/* Was this the first node with streaming disabled? */
+ 	if (imgu->streaming && ipu3_all_nodes_streaming(imgu, node)) {
+ 		/* Yes, really stop streaming now */
+@@ -552,6 +557,7 @@ static void ipu3_vb2_stop_streaming(struct vb2_queue *vq)
+ 			imgu->streaming = false;
+ 	}
+ 
++	mutex_unlock(&imgu->streaming_lock);
+ 	ipu3_return_all_buffers(imgu, node, VB2_BUF_STATE_ERROR);
+ 	media_pipeline_stop(&node->vdev.entity);
+ }
+diff --git a/drivers/staging/media/ipu3/ipu3.c b/drivers/staging/media/ipu3/ipu3.c
+index d521b3afb8b1..2daee51cd845 100644
+--- a/drivers/staging/media/ipu3/ipu3.c
++++ b/drivers/staging/media/ipu3/ipu3.c
+@@ -635,6 +635,7 @@ static int imgu_pci_probe(struct pci_dev *pci_dev,
+ 		return r;
+ 
+ 	mutex_init(&imgu->lock);
++	mutex_init(&imgu->streaming_lock);
+ 	atomic_set(&imgu->qbuf_barrier, 0);
+ 	init_waitqueue_head(&imgu->buf_drain_wq);
+ 
+@@ -699,6 +700,7 @@ static int imgu_pci_probe(struct pci_dev *pci_dev,
+ 	ipu3_css_set_powerdown(&pci_dev->dev, imgu->base);
+ out_mutex_destroy:
+ 	mutex_destroy(&imgu->lock);
++	mutex_destroy(&imgu->streaming_lock);
+ 
+ 	return r;
+ }
+@@ -716,6 +718,7 @@ static void imgu_pci_remove(struct pci_dev *pci_dev)
+ 	ipu3_dmamap_exit(imgu);
+ 	ipu3_mmu_exit(imgu->mmu);
+ 	mutex_destroy(&imgu->lock);
++	mutex_destroy(&imgu->streaming_lock);
+ }
+ 
+ static int __maybe_unused imgu_suspend(struct device *dev)
+diff --git a/drivers/staging/media/ipu3/ipu3.h b/drivers/staging/media/ipu3/ipu3.h
+index 04fc99f47ebb..f732315f0701 100644
+--- a/drivers/staging/media/ipu3/ipu3.h
++++ b/drivers/staging/media/ipu3/ipu3.h
+@@ -146,6 +146,10 @@ struct imgu_device {
+ 	 * vid_buf.list and css->queue
+ 	 */
+ 	struct mutex lock;
++
++	/* Lock to protect writes to streaming flag in this struct */
++	struct mutex streaming_lock;
++
+ 	/* Forbit streaming and buffer queuing during system suspend. */
+ 	atomic_t qbuf_barrier;
+ 	/* Indicate if system suspend take place while imgu is streaming. */
+-- 
+2.19.1
 
-It seems this was cherry-picked incorrectly :-(
-
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//EuLT0clbUsC3uFs9.Gmalb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxQ1gwACgkQAVBC80lX
-0GytTgf9GZWitM+DC3u9Y/fcXzYCvMqy13W0wUhocGeY9qpeJ2fFyqgcKbQ42Kd+
-w8avgWv61j/aLdO6kBqQBK2D46gbWf3om2BQ0vWNHJ0aVzj22lqJr9pNP84P+mvX
-to8m8R2jU4gpoHq9wNByNhZDB+mCuzA/B0QLZo4o/arr43kStqeZ+nfNvoRcjjrT
-VNGWYRmmg4N1ofrdvoioHiNBWCVFNPljP245eUUtKgMibg1fH/5UwZjpuYQP/ctf
-jgdZ93M1F/qTRE/j2iTAQU7GMn4fRPTh/m/fTNh81hLKchbj8ra87D6mLcakIpf6
-XniPMDJrzGbxBXf0x1rbYaI/54Ly/A==
-=MmjD
------END PGP SIGNATURE-----
-
---Sig_//EuLT0clbUsC3uFs9.Gmalb--
