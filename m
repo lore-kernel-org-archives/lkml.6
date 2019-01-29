@@ -6,94 +6,101 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAE6C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 138E6C282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71750214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:19:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE9352177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727571AbfA2BSO (ORCPT
+        id S1727673AbfA2BTY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 20:18:14 -0500
-Received: from ozlabs.org ([203.11.71.1]:42707 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726993AbfA2BSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 20:18:14 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43pTC33jzjz9sCX;
-        Tue, 29 Jan 2019 12:18:06 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
-        vishal.l.verma@intel.com, thomas.lendacky@amd.com,
-        Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        Huang Ying <ying.huang@intel.com>,
-        Wu Fengguang <fengguang.wu@intel.com>,
-        Borislav Petkov <bp@suse.de>, baiyaowei@cmss.chinamobile.com,
-        Takashi Iwai <tiwai@suse.de>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Subject: Re: [PATCH 1/5] mm/resource: return real error codes from walk failures
-In-Reply-To: <4898e064-5298-6a82-83ea-23d16f3dfb3d@intel.com>
-References: <20190124231441.37A4A305@viggo.jf.intel.com> <20190124231442.EFD29EE0@viggo.jf.intel.com> <CAErSpo7kMjfi-1r8ZyGbheWzo+JCFkDZ1zpVhyNV7VVy8NOV7g@mail.gmail.com> <4898e064-5298-6a82-83ea-23d16f3dfb3d@intel.com>
-Date:   Tue, 29 Jan 2019 12:18:05 +1100
-Message-ID: <87k1ios1ma.fsf@concordia.ellerman.id.au>
+        Mon, 28 Jan 2019 20:19:24 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2789 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726993AbfA2BTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 20:19:24 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7450794E94F0EC393648;
+        Tue, 29 Jan 2019 09:19:22 +0800 (CST)
+Received: from [127.0.0.1] (10.63.139.185) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Tue, 29 Jan 2019
+ 09:19:14 +0800
+Subject: Re: [PATCH v2 0/4] crypto: hisilicon: Add HiSilicon QM and ZIP
+ controller driver
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        <linux-crypto@vger.kernel.org>
+References: <1548248933-149853-1-git-send-email-wangzhou1@hisilicon.com>
+CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>
+From:   Zhou Wang <wangzhou1@hisilicon.com>
+Message-ID: <5C4FAA19.7010807@hisilicon.com>
+Date:   Tue, 29 Jan 2019 09:19:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1548248933-149853-1-git-send-email-wangzhou1@hisilicon.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.63.139.185]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dave Hansen <dave.hansen@intel.com> writes:
-> On 1/25/19 1:02 PM, Bjorn Helgaas wrote:
->>> @@ -453,7 +453,7 @@ int walk_system_ram_range(unsigned long
->>>         unsigned long flags;
->>>         struct resource res;
->>>         unsigned long pfn, end_pfn;
->>> -       int ret = -1;
->>> +       int ret = -EINVAL;
->> Can you either make a similar change to the powerpc version of
->> walk_system_ram_range() in arch/powerpc/mm/mem.c or explain why it's
->> not needed?  It *seems* like we'd want both versions of
->> walk_system_ram_range() to behave similarly in this respect.
->
-> Sure.  A quick grep shows powerpc being the only other implementation.
+On 2019/1/23 21:08, Zhou Wang wrote:
+> This series adds HiSilicon QM and ZIP controller driver in crypto subsystem.
+> 
+> A simple QM/ZIP driver which helps to provide an example for a general
+> accelerator framework is under review in community[1]. Based on this simple
+> driver, this series adds HW v2 support, PCI passthrough, reset, PCI/misc error
+> handler, debug support. But unlike [1], driver in this patchset only registers
+> to crypto subsystem.
+> 
+> There will be a long discussion about above accelerator framework in the
+> process of upstreaming. So let's firstly review and upstream QM/ZIP crypto
+> driver.
+> 
+> Changes v1 -> v2:
+> - Change to register zlib/gzip to scomp.
+> - Remove hisi_qm_mem_init/uninit, make QM interfaces compact.
+> - Some tiny fixes.
+> 
+> Links:
+> - v1  https://lwn.net/Articles/775484/
+> - rfc https://lkml.org/lkml/2018/12/13/290
+> 
+> Reference:
+> [1] https://lkml.org/lkml/2018/11/12/1951
+> 
+> Zhou Wang (4):
+>   Documentation: Add debugfs doc for hisi_zip
+>   crypto: hisilicon: Add queue management driver for HiSilicon QM module
+>   crypto: hisilicon: Add HiSilicon ZIP accelerator support
+>   MAINTAINERS: add maintainer for HiSilicon QM and ZIP controller driver
+> 
+>  Documentation/ABI/testing/debugfs-hisi-zip |   50 +
+>  MAINTAINERS                                |    8 +
+>  drivers/crypto/hisilicon/Kconfig           |   11 +
+>  drivers/crypto/hisilicon/Makefile          |    2 +
+>  drivers/crypto/hisilicon/qm.c              | 1736 ++++++++++++++++++++++++++++
+>  drivers/crypto/hisilicon/qm.h              |  276 +++++
+>  drivers/crypto/hisilicon/zip/Makefile      |    2 +
+>  drivers/crypto/hisilicon/zip/zip.h         |   60 +
+>  drivers/crypto/hisilicon/zip/zip_crypto.c  |  484 ++++++++
+>  drivers/crypto/hisilicon/zip/zip_main.c    | 1199 +++++++++++++++++++
+>  10 files changed, 3828 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/debugfs-hisi-zip
+>  create mode 100644 drivers/crypto/hisilicon/qm.c
+>  create mode 100644 drivers/crypto/hisilicon/qm.h
+>  create mode 100644 drivers/crypto/hisilicon/zip/Makefile
+>  create mode 100644 drivers/crypto/hisilicon/zip/zip.h
+>  create mode 100644 drivers/crypto/hisilicon/zip/zip_crypto.c
+>  create mode 100644 drivers/crypto/hisilicon/zip/zip_main.c
+> 
 
-Ugh gross, why are we reimplementing it? ...
+Any comments for this version?
 
-Oh right, memblock vs iomem. We should fix that one day :/
+Best,
+Zhou
 
-> I'll just add this hunk:
->
->> diff -puN arch/powerpc/mm/mem.c~memory-hotplug-walk_system_ram_range-returns-neg-1 arch/powerpc/mm/mem.c
->> --- a/arch/powerpc/mm/mem.c~memory-hotplug-walk_system_ram_range-returns-neg-1  2019-01-25 12:57:00.000004446 -0800
->> +++ b/arch/powerpc/mm/mem.c     2019-01-25 12:58:13.215004263 -0800 
->> @@ -188,7 +188,7 @@ walk_system_ram_range(unsigned long star 
->>         struct memblock_region *reg; 
->>         unsigned long end_pfn = start_pfn + nr_pages; 
->>         unsigned long tstart, tend; 
->> -       int ret = -1; 
->> +       int ret = -EINVAL; 
->
-> I'll also dust off the ol' cross-compiler and make sure I didn't
-> fat-finger anything.
-
-Modern Fedora & Ubuntu have packaged cross toolchains. Otherwise there's
-the kernel.org ones, or bootlin has versions with libc if you need it.
-
-Patch looks fine. That value could only get to userspace if we have no
-memory, which would be interesting.
-
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-
-cheers
