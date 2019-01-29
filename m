@@ -2,121 +2,94 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072F0C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8402C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E0520880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:03:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="gfjDs/wU"
+	by mail.kernel.org (Postfix) with ESMTP id A628320880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:03:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548763430;
+	bh=9geIYlQ5pEJ9E400xQE0q26sLrQhdpv80mVlz1+FkGY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=CvuOPEx4BxAJvX8/Fh0aMPiczn/fJzRaKc8KHuuKhw3hwF8K6pYH0QYupOlvFQ8E7
+	 qCbP1LBlk1byeJIzEpopLE4sF8D7qjn7u7O9UxkbeZvf/mvZACbTBpmFfNvBP9ZiFd
+	 P+uUrenhe3zc1RG33400urpQIjEbCZ7JPZGK9uHQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbfA2Lnl (ORCPT
+        id S1730559AbfA2MDt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:43:41 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41729 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730365AbfA2Lni (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:43:38 -0500
-Received: by mail-pg1-f195.google.com with SMTP id m1so8629321pgq.8
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 03:43:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=BYtsksCc3g+PmSULTt0E8BRnvpc7E4mg6XPQVON9mcs=;
-        b=gfjDs/wUKN6FehYc9VG0UQAzo8SAcw0p/mIsR+V4BLYvMJub3S7VgC1I8/q47qzeFK
-         O8JvpFo/SgkXpxTjj09Byy3SSx12tZ4d5izHFj+3/vYuoZ8g946iYy5BWBFStVAMeNhK
-         61QYTmBMDpuTLyUkyUNB65O1n4i9oJIwxaHxzuGaV6o3A2YMeG4qfLNwzEG2PzNEgiaS
-         dP9CU+5qUwVTBqKAVaaqOYGSsDnbOsmg231a9RWacDmnce5iWUPGJuYWxkeDBzBeNIh6
-         GBWJEGLT0fNvntImcNGQVUkZCA1pX6d38ROPCl2hoEZSr7sMAXAS320g+nKNMp9L3bO3
-         PC3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BYtsksCc3g+PmSULTt0E8BRnvpc7E4mg6XPQVON9mcs=;
-        b=CA7J4aBj4dhKYYosXljYraBjIMU55cJETY7QJ1rVCS5iCGOQLDmTAESXBK8GMu350/
-         orBb2L3pUHVU6zhd+quQBOKaWMeK+qBP0RhJ5V6681Poj1hnyIyB/imkoaDYNXBi95B/
-         66GeX1L9F3am1O+fjA1CUzRVk3K/RCgqq6oD2II7rMsLw0JQ9TRc/J/deix8h0KTXmpr
-         RMMV7IbihOV0HcLI+a8IOKvalWzNV8hNjujZBaCTyyXrbgxtPGF47JUuO0O+MyATtoGD
-         UpvomEcKoH2bQvTc6C/SN50UPj3wsi6vsKptOPJKJtIQPisAEiB1IJ2RUaviorhlcqkR
-         WgwQ==
-X-Gm-Message-State: AJcUukfvENNwRjDWPZn+oBeTc00yQFfrIRF5zBPg1AjVIqqIPCs9g6Xu
-        +ACeELX3NfWwMzzJ/44FIvqyPg==
-X-Google-Smtp-Source: ALg8bN5lqCpISIJjZ6e0fXkpLyie8zITnv5vzILnqTWRM0mpQg+5nEcjVr/meZAIfUK91Kz8COIfIw==
-X-Received: by 2002:a62:798f:: with SMTP id u137mr26058536pfc.168.1548762217083;
-        Tue, 29 Jan 2019 03:43:37 -0800 (PST)
-Received: from buildserver-90.open-silicon.com ([114.143.65.226])
-        by smtp.googlemail.com with ESMTPSA id p2sm48755717pfp.125.2019.01.29.03.43.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 29 Jan 2019 03:43:36 -0800 (PST)
-From:   Yash Shah <yash.shah@sifive.com>
-To:     palmer@sifive.com, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Cc:     thierry.reding@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sachin.ghadi@sifive.com, paul.walmsley@sifive.com,
-        Yash Shah <yash.shah@sifive.com>
-Subject: [PATCH v5 0/2] PWM support for HiFive Unleashed
-Date:   Tue, 29 Jan 2019 17:13:17 +0530
-Message-Id: <1548762199-7065-1-git-send-email-yash.shah@sifive.com>
-X-Mailer: git-send-email 1.9.1
+        Tue, 29 Jan 2019 07:03:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33478 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729519AbfA2Lnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:43:33 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1103320856;
+        Tue, 29 Jan 2019 11:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548762212;
+        bh=9geIYlQ5pEJ9E400xQE0q26sLrQhdpv80mVlz1+FkGY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qHKY7H6fAqOUuhkatZj+3mJq3gCrssoecpgR1wdua47jId4td0d6cmrNMq8d0gcRX
+         kgeNp0rmkVgu4EMPdjlrNvHFTJ/Bx3rleK84w6QCsSUqGozANujGZGVLsG6IMI0R81
+         8OsBFmcTxGsUi6D8QqUm5n5nqMYdXJgxNYzBgWIU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 4.19 022/103] mei: me: mark LBG devices as having dma support
+Date:   Tue, 29 Jan 2019 12:34:59 +0100
+Message-Id: <20190129113200.883509672@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
+References: <20190129113159.567154026@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds a PWM driver and DT documentation
-for HiFive Unleashed board. The patches are mostly based on
-Wesley's patch.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-v5
-- Correct the order of compatible string properties
-- PWM state correction to be done always
-- Other minor fixes based upon feedback on v4
+------------------
 
-v4
-- Rename the property sifive,approx-period-ns to sifive,period-ns
-- Rename macros with appropriate names
-- Remove unused macros
-- Rename struct sifive_pwm_device to struct pwm_sifive_ddata
-- Rename function prefix as per driver name
-- Set deglitch bit before changing output waveform.
-- Other minor fixes based upon feedback on v3
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-v3
-- Add a link to the reference manaul
-- Use appropriate apis for division operation
-- Add check for polarity
-- Enable clk before calling clk_get_rate
-- Other minor fixes based upon feedback on v2
+commit 173436ba800d01178a8b19e5de4a8cb02c0db760 upstream.
 
-V2 changed from V1:
-- Remove inclusion of dt-bindings/pwm/pwm.h
-- Remove artificial alignments
-- Replace ioread32/iowrite32 with readl/writel
-- Remove camelcase
-- Change dev_info to dev_dbg for unnecessary log
-- Correct typo in driver name
-- Remove use of of_match_ptr macro
-- Update the DT compatible strings and Add reference to a common
-  versioning document
+The LBG server platform sports DMA support.
 
-Yash Shah (2):
-  pwm: sifive: Add DT documentation for SiFive PWM Controller
-  pwm: sifive: Add a driver for SiFive SoC PWM
+Cc: <stable@vger.kernel.org> #v5.0+
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
- .../devicetree/bindings/pwm/pwm-sifive.txt         |  33 +++
- drivers/pwm/Kconfig                                |  11 +
- drivers/pwm/Makefile                               |   1 +
- drivers/pwm/pwm-sifive.c                           | 261 +++++++++++++++++++++
- 4 files changed, 306 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
- create mode 100644 drivers/pwm/pwm-sifive.c
+---
+ drivers/misc/mei/pci-me.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-1.9.1
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -88,7 +88,7 @@ static const struct pci_device_id mei_me
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_2, MEI_ME_PCH8_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_H, MEI_ME_PCH8_SPS_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_H_2, MEI_ME_PCH8_SPS_CFG)},
+-	{MEI_PCI_DEVICE(MEI_DEV_ID_LBG, MEI_ME_PCH8_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_LBG, MEI_ME_PCH12_CFG)},
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_BXT_M, MEI_ME_PCH8_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_APL_I, MEI_ME_PCH8_CFG)},
+
 
