@@ -2,177 +2,215 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5467C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE3FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B290021874
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C66421871
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:21:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbfA2QUC (ORCPT
+        id S1727871AbfA2QVP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:20:02 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.46]:21787 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725828AbfA2QUC (ORCPT
+        Tue, 29 Jan 2019 11:21:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40618 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725804AbfA2QVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:20:02 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 07F42C91E0B
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:20:01 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id oW7EgNGMYdnCeoW7FgP9Jm; Tue, 29 Jan 2019 10:20:01 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=34782 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1goW7E-002x4J-AT; Tue, 29 Jan 2019 10:20:00 -0600
-Subject: Re: [PATCH] x86/events: Mark expected switch fall-throughs
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20190125184917.GA7289@embeddedor>
- <20190129152500.GA25706@zn.tnic>
- <8aa46db0-6983-62c4-7dc6-e006d20cd84b@embeddedor.com>
- <20190129160753.GA27037@zn.tnic>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+        Tue, 29 Jan 2019 11:21:14 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0TGGEXb105059
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:21:13 -0500
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qasn8tej4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:21:13 -0500
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
+        Tue, 29 Jan 2019 16:21:12 -0000
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 29 Jan 2019 16:21:11 -0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0TGLAiN10813440
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 29 Jan 2019 16:21:10 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2C311BE051;
+        Tue, 29 Jan 2019 16:21:10 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9A338BE04F;
+        Tue, 29 Jan 2019 16:21:09 +0000 (GMT)
+Received: from oc8380061452.ibm.com (unknown [9.53.179.224])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 29 Jan 2019 16:21:09 +0000 (GMT)
+Subject: Re: [RFC 1/6] powerpc:/drc Define interface to acquire arch-specific
+ drc info
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Tyrel Datwyler <turtle.in.the.kernel@gmail.com>,
+        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
+        <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org
+Cc:     Juliet Kim <minkim@us.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        nathanl@linux.vnet.ibm.com
+References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
+ <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com>
+ <e7030879-59e4-88fd-3785-fdd98b7f0a3b@gmail.com>
+ <87a7jjstbu.fsf@concordia.ellerman.id.au>
+From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <db4c4c57-fcdb-5101-a3b6-d1f3c587185e@embeddedor.com>
-Date:   Tue, 29 Jan 2019 10:19:59 -0600
+Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
+ mQENBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
+ lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
+ DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
+ t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
+ AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
+ AAG0LU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPokBOAQT
+ AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
+ CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
+ 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
+ QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
+ AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
+ oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/UrkBDQRXGOxnAQgAmJ5Y
+ ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
+ DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
+ 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
+ 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
+ qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABiQEfBBgBAgAJBQJX
+ GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
+ efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
+ ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
+ yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
+ IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
+ 53/hcWvxHVs=
+Organization: IBM Linux Technology Center
+Date:   Tue, 29 Jan 2019 10:21:09 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190129160753.GA27037@zn.tnic>
+In-Reply-To: <87a7jjstbu.fsf@concordia.ellerman.id.au>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1goW7E-002x4J-AT
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:34782
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-TM-AS-GCONF: 00
+x-cbid: 19012916-0016-0000-0000-0000097C4583
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010499; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01153523; UDB=6.00601400; IPR=6.00933890;
+ MB=3.00025341; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-29 16:21:12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012916-0017-0000-0000-000041F44938
+Message-Id: <f03794ac-eb81-6280-3141-4c07ecd12331@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901290122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 1/29/19 3:31 AM, Michael Ellerman wrote:
+> Tyrel Datwyler <turtle.in.the.kernel@gmail.com> writes:
+>> On 12/14/2018 12:50 PM, Michael Bringmann wrote:
+>>> Define interface to acquire arch-specific drc info to match against
+>>> hotpluggable devices.  The current implementation exposes several
+>>> pseries-specific dynamic memory properties in generic kernel code.
+>>> This patch set provides an interface to pull that code out of the
+>>> generic kernel.
+>>>
+>>> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+>>> ---
+>>>  include/linux/topology.h |    9 +++++++++
+>>>  1 file changed, 9 insertions(+)
+>>>
+>>> diff --git a/include/linux/topology.h b/include/linux/topology.h
+>>> index cb0775e..df97f5f 100644
+>>> --- a/include/linux/topology.h
+>>> +++ b/include/linux/topology.h
+>>> @@ -44,6 +44,15 @@
+>>
+>> As far as I know pseries is the only platform that uses DR connectors, and I
+>> highly doubt that any other powerpc platform or arch ever will. So, I'm not sure
+>> that this is really generic enough to belong in topology.h.
+> 
+> Right. This does not belong in include/linux.
+> 
+>> If anything I would
+>> suggest putting this in an include in arch/powerpc/include/ named something like
+>> drcinfo.h or pseries-drc.h. That will make it visible to modules like rpaphp
+>> that want/need to use this functionality.
+> 
+> Yeah that would make more sense.
+
+If you see no objection to referencing a powerpc-specific function from
+the code ...
+
+> 
+> Using "arch" in the name is wrong, it's pseries specific so
+> pseries_find_drc_match() would be more appropriate.
+> 
+>>> +int arch_find_drc_match(struct device_node *dn,
+>>> +			bool (*usercb)(struct device_node *dn,
+>>> +				u32 drc_index, char *drc_name,
+>>> +				char *drc_type, u32 drc_power_domain,
+>>> +				void *data),
+>>> +			char *opt_drc_type, char *opt_drc_name,
+>>> +			bool match_drc_index, bool ck_php_type,
+>>> +			void *data);
+> 
+> This function signature is kind of insane.
+> 
+> You end with calls like:
+> 
+> +	return arch_find_drc_match(dn, rpaphp_add_slot_cb,
+> +			NULL, NULL, false, true, NULL);
+> 
+> Which is impossible to parse.
+> 
+> I feel like maybe this isn't the right level of abstraction.
+
+...
+I had already been considering simplifying the interface for these
+calls to something like the following:
+
+int rpaphp_check_drc_props(struct device_node *dn, char *drc_name,
+			char *drc_type)
+{
+    return pseries_find_drc_match(dn, drc_type, drc_name);
+}
+...
+int rpaphp_add_slot(struct device_node *dn)
+{
+       if (!dn->name || strcmp(dn->name, "pci"))
+               return 0;
+
+       return pseries_add_drc_slot(dn, rpaphp_add_slot_cb);
+}
+...
+
+Further details would be hidden within the pseries code.
 
 
-On 1/29/19 10:07 AM, Borislav Petkov wrote:
-> On Tue, Jan 29, 2019 at 09:58:05AM -0600, Gustavo A. R. Silva wrote:
->> $ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback arch/x86/events/intel/core.c
 > 
-> You need to have -f when supplying a file:
-> 
-> scripts/get_maintainer.pl -f arch/x86/events/intel/core.c
-> 
+> cheers
 
-You're correct.  I used the command I use for patches.
+Regards
 
-> and the pattern is there:
-> 
-> PERFORMANCE EVENTS SUBSYSTEM
-> M:      Peter Zijlstra <peterz@infradead.org>
-> ...
-> F:      arch/*/events/*
-> 
-> yet it still doesn't list Peter as maintainer:
-> 
+-- 
+Michael W. Bringmann
+Linux Technology Center
+IBM Corporation
+Tie-Line  363-5196
+External: (512) 286-5196
+Cell:       (512) 466-0650
+mwb@linux.vnet.ibm.com
 
-Yep. And this is the reason why I didn't include him.
-
-> Thomas Gleixner <tglx@linutronix.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-> Ingo Molnar <mingo@redhat.com> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT),commit_signer:21/22=95%)
-> Borislav Petkov <bp@alien8.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-> "H. Peter Anvin" <hpa@zytor.com> (reviewer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-> x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-> Peter Zijlstra <peterz@infradead.org> (commit_signer:19/22=86%,authored:3/22=14%,added_lines:22/382=6%,removed_lines:13/122=11%)
-> Kan Liang <kan.liang@linux.intel.com> (commit_signer:11/22=50%,authored:10/22=45%,added_lines:144/382=38%,removed_lines:73/122=60%)
-> Jiri Olsa <jolsa@kernel.org> (commit_signer:4/22=18%,authored:4/22=18%,added_lines:99/382=26%,removed_lines:32/122=26%)
-> Andi Kleen <ak@linux.intel.com> (added_lines:113/382=30%)
-> linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)
-> 
-> if you change the pattern to
-> 
-> F:      arch/*/events/
-> 
-> i.e., drop the '*', then it works:
-> 
-> $ scripts/get_maintainer.pl -f arch/x86/events/intel/core.c
-
-Yeah. But I don't want to send patches to every person that has touched the file.
-
-> Peter Zijlstra <peterz@infradead.org> (supporter:PERFORMANCE EVENTS SUBSYSTEM,commit_signer:19/22=86%,authored:3/22=14%,added_lines:22/382=6%,removed_lines:13/122=11%)
-> Ingo Molnar <mingo@redhat.com> (supporter:PERFORMANCE EVENTS SUBSYSTEM,commit_signer:21/22=95%)
-> Arnaldo Carvalho de Melo <acme@kernel.org> (supporter:PERFORMANCE EVENTS SUBSYSTEM)
-> Alexander Shishkin <alexander.shishkin@linux.intel.com> (reviewer:PERFORMANCE EVENTS SUBSYSTEM)
-> Jiri Olsa <jolsa@redhat.com> (reviewer:PERFORMANCE EVENTS SUBSYSTEM,commit_signer:4/22=18%,authored:4/22=18%,added_lines:99/382=26%,removed_lines:32/122=26%)
-> Namhyung Kim <namhyung@kernel.org> (reviewer:PERFORMANCE EVENTS SUBSYSTEM)
-> ...
-> 
-
---
-Gustavo
