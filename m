@@ -7,68 +7,65 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6451C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A46B7C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADCAC2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:47:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D6B820882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:50:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1Z2U+FF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cE65DjaL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbfA2VrI (ORCPT
+        id S1729014AbfA2Vuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 16:47:08 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37463 "EHLO
+        Tue, 29 Jan 2019 16:50:35 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42185 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727332AbfA2VrH (ORCPT
+        with ESMTP id S1727461AbfA2Vue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 16:47:07 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h15so17310596edb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 13:47:05 -0800 (PST)
+        Tue, 29 Jan 2019 16:50:34 -0500
+Received: by mail-ed1-f66.google.com with SMTP id y20so17305403edw.9
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 13:50:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=n8XV4iq9rA+fxnqZgdrOpJNvxbAjFgBIFBi+69D7N30=;
-        b=O1Z2U+FFs/xXdhyfCIX4vQ/y60cjlT6HDkQbbCzsFOYaAYRvGEkqWzMxH11eUvLywW
-         gBC+m1/yoJuwnGH7V1gi5rIVNPCWa+nNl1hC7Sd+KBIMIbbX5SBL+9onypPIPsR2noru
-         HnKTU1rdKKgFWt+ypI5KA39EYIQyXaSjgBiBKTTmFcXMgPw5MJCzTEJs+z790N1/x+8t
-         +S2rcqQ3F+CTQvGHasCuk7VWgQGkoerq+fzYx2HRoIETjKXC/Lq6o+vIH07RMxm/o1b9
-         m7r70uUp9Gw+59LBw9u7Q5j8kOD7XcvLQlSqTqs3L8PuLVaZqZ0rPG10CIHFAtvwhSXD
-         +BAQ==
+        bh=oTM3oUocaEUpdR4dp3v/pgr3uNhYbKTQi55NFUqe5zU=;
+        b=cE65DjaL6EPvl4DbkvbH5GmRrfD1/QYSG640FFBK0AoFnr9YWcggrHr6tVC/L+SeRk
+         JwbT6JnJQFu1mnoCvLrMVsr1zTQlAgPSZEgEj2CzaClUorqsxL4yvbeSvFk46RB85zO9
+         qSUYCsoc1S4ea6mRehf3Og0A0b8APAm4CNM+PNrNaPe64PQW/T6AjcpEmijAfaoaLKrg
+         GB64LbwP6Ryi+WJLkTuhuZYBqh0tICN7ewGilfb3h+7VWFeSytB+RyMiwiDreo0y9eaU
+         sdGGjoAmCftTtl538tAyJyNVUDmxewswSi0Gi7l80gD9EXHPQk+/lU55bGU4ou5uYCHy
+         4gbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=n8XV4iq9rA+fxnqZgdrOpJNvxbAjFgBIFBi+69D7N30=;
-        b=H2qAscyFWnNteX8YQkK0VhrX/GCRO8bPUGTzrV1e0SLdRvxYJ9nhv05L6GpW5juCXE
-         E6CoktujKaPpZ3FsbBiENyKvLiIJvb5tDar+GytrjDU48DwTu7Rj0W1U+kS0OvYfM0xm
-         8GabicF6R7s7I2tV4ZkZYCWRe5pT5JQkYsPDoWUfGqnqVeHrJIFf9wur+yEh+QVPfvSx
-         dRiqh9mcmJeAYdOy3dOqb7dqVsCWGzuDjrIc6lwqUyHq1fxh2vYZatLHNZURgbBnM9Uc
-         8MVH2GU1P02zC6dgkc/ukiAMHbZUWWeHNmVNzBRhVMOKDSy154z5IcTb99lhvmyoME6x
-         Jpcw==
-X-Gm-Message-State: AJcUukeqxTlmU4DSxROIbc5k9iS6vb2f6JhU6Pd4sWvxfLvA5XthiVyg
-        i3m62S6E1gEuJVlQlner0SM=
-X-Google-Smtp-Source: ALg8bN47o6Rqe+uaZF9wFXjaoxci4e+cXndEnBBvjiH+TT4ecdA3X+dxfIjNsZrcwc7TRCDv49DITw==
-X-Received: by 2002:a50:8d12:: with SMTP id s18mr27666403eds.32.1548798424905;
-        Tue, 29 Jan 2019 13:47:04 -0800 (PST)
+        bh=oTM3oUocaEUpdR4dp3v/pgr3uNhYbKTQi55NFUqe5zU=;
+        b=tVhGZntyUk/bf00KFsq9MlPQqsva0Fvta9EiclzriRipw+RIJ2blliymooxWQUhJwQ
+         AEJm8YRX77pnh8fl0FZXo+2OSLDXkm+FfMeqirs9uOk+GG1bHkbPcLZIScdcYchPER8h
+         r+LzHtLk+Oad8Mv9jLGUdmW0JIYJTiZYN9xrrwvhOfb9xSVQ2n+YbZZoAK5dqfhVG+6G
+         7jCuij0UjxEtCSfykshbQVGKK939Q0lOtZ7hfSR9pQVa7disXcyNZZ/qmTXDSz2xMF1k
+         lmYqf6jTcvivWgEPWrfJb4er7kZHQZ82Xq3jw6iZzUcMDAURh6Bz/1zZ7V4IXtfAgTOd
+         22xg==
+X-Gm-Message-State: AJcUukfYkpUb5zKj9J6aIGgpxq2Xv7fnFviU9Ee5D3i1HN0LS28SHdtf
+        VzcwaJe6ooFDMJ10w3tpL6o=
+X-Google-Smtp-Source: ALg8bN4nSvD3wGtHh2B8Uyzv6VdaECDjw2K6jfOSXmV2+47brbkl4NsfAKOp0r9tX1l3Esq5iqQVvw==
+X-Received: by 2002:a50:d643:: with SMTP id c3mr26147122edj.178.1548798632272;
+        Tue, 29 Jan 2019 13:50:32 -0800 (PST)
 Received: from localhost.localdomain ([2a01:4f9:2a:1fae::2])
-        by smtp.gmail.com with ESMTPSA id y16sm8342edb.41.2019.01.29.13.47.03
+        by smtp.gmail.com with ESMTPSA id p21sm6660edr.67.2019.01.29.13.50.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 13:47:03 -0800 (PST)
+        Tue, 29 Jan 2019 13:50:31 -0800 (PST)
 From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Liang Yang <liang.yang@amlogic.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Vinod Koul <vkoul@kernel.org>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] mtd: rawnand: meson: Fix linking error on 32-bit platforms
-Date:   Tue, 29 Jan 2019 14:46:57 -0700
-Message-Id: <20190129214657.5877-1-natechancellor@gmail.com>
+Subject: [PATCH] wcd9335: Remove unnecessary null checks in wcd9335_set_channel_map
+Date:   Tue, 29 Jan 2019 14:48:47 -0700
+Message-Id: <20190129214847.6341-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 X-Patchwork-Bot: notify
@@ -78,37 +75,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On arm little endian allyesconfig:
+Clang warns:
 
-  ld.lld: error: undefined symbol: __aeabi_uldivmod
-  >>> referenced by meson_nand.c
-  >>> mtd/nand/raw/meson_nand.o:(meson_nfc_setup_data_interface) in archive drivers/built-in.a
+sound/soc/codecs/wcd9335.c:2004:11: warning: address of array
+'wcd->rx_chs' will always evaluate to 'true' [-Wpointer-bool-conversion]
+        if (wcd->rx_chs) {
+        ~~  ~~~~~^~~~~~
+sound/soc/codecs/wcd9335.c:2012:11: warning: address of array
+'wcd->tx_chs' will always evaluate to 'true' [-Wpointer-bool-conversion]
+        if (wcd->tx_chs) {
+        ~~  ~~~~~^~~~~~
+2 warnings generated.
 
-The dividend tBERS_max is u64, meaning we need to use DIV_ROUND_UP_ULL
-(which wraps do_div) to prevent the compiler from emitting
-__aebi_uldivmod.
-
-Fixes: 2d570b34b41a ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
+Fixes: 20aedafdf492 ("ASoC: wcd9335: add support to wcd9335 codec")
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/mtd/nand/raw/meson_nand.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/wcd9335.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
-index e858d58d97b0..6f12a96195d1 100644
---- a/drivers/mtd/nand/raw/meson_nand.c
-+++ b/drivers/mtd/nand/raw/meson_nand.c
-@@ -1116,8 +1116,8 @@ int meson_nfc_setup_data_interface(struct nand_chip *nand, int csline,
- 				       div * NFC_CLK_CYCLE);
- 	meson_chip->tadl = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tADL_min),
- 					div * NFC_CLK_CYCLE);
--	tbers_clocks = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tBERS_max),
--				    div * NFC_CLK_CYCLE);
-+	tbers_clocks = DIV_ROUND_UP_ULL(PSEC_TO_NSEC(timings->tBERS_max),
-+					div * NFC_CLK_CYCLE);
- 	meson_chip->tbers_max = ilog2(tbers_clocks);
- 	if (!is_power_of_2(tbers_clocks))
- 		meson_chip->tbers_max++;
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index 3878187bb512..981f88a5f615 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -2001,20 +2001,16 @@ static int wcd9335_set_channel_map(struct snd_soc_dai *dai,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (wcd->rx_chs) {
+-		wcd->num_rx_port = rx_num;
+-		for (i = 0; i < rx_num; i++) {
+-			wcd->rx_chs[i].ch_num = rx_slot[i];
+-			INIT_LIST_HEAD(&wcd->rx_chs[i].list);
+-		}
++	wcd->num_rx_port = rx_num;
++	for (i = 0; i < rx_num; i++) {
++		wcd->rx_chs[i].ch_num = rx_slot[i];
++		INIT_LIST_HEAD(&wcd->rx_chs[i].list);
+ 	}
+ 
+-	if (wcd->tx_chs) {
+-		wcd->num_tx_port = tx_num;
+-		for (i = 0; i < tx_num; i++) {
+-			wcd->tx_chs[i].ch_num = tx_slot[i];
+-			INIT_LIST_HEAD(&wcd->tx_chs[i].list);
+-		}
++	wcd->num_tx_port = tx_num;
++	for (i = 0; i < tx_num; i++) {
++		wcd->tx_chs[i].ch_num = tx_slot[i];
++		INIT_LIST_HEAD(&wcd->tx_chs[i].list);
+ 	}
+ 
+ 	return 0;
 -- 
 2.20.1
 
