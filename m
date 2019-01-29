@@ -2,134 +2,95 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92086C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0669BC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EDD820856
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:51:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCE0921873
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:53:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="x2dQ5VNc"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LYzi6wrG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729452AbfA2Uvj (ORCPT
+        id S1729007AbfA2Uxl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:51:39 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42220 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726982AbfA2Uvi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:51:38 -0500
-Received: by mail-ot1-f68.google.com with SMTP id v23so19153954otk.9
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 12:51:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Sm0C8uNoBe+bGoNiTlTfD56A+1LmrUUdkZUy9VizQWU=;
-        b=x2dQ5VNcnVPbB/3914tiLEowS6woiNf8m3LiZx+ju5NM3v2hVeBlbL5BB+2F3v8tI9
-         8bCjWLHXDZraJiv5GcKCkDn+hDrl58AafZEFzNUwaTMcg0ITbieMksWTXZ+WXUO5yymp
-         WT6Z1iZa70ZpL7xjPHjzcdu96ri3Gp92IiU5i0Zf5gucfPZ7J5ct3paPY5Lur4Vc1WQA
-         g4JwYYZLzKp+AC82ktXAm3QGps1+EiY7OOb/Mdw2QelncymUyJ5Z70158dBvt5zq2icc
-         CjlUBzlJXzvaGvW8l+NoooQg0boOnHnARMpgJLX/wBYYIhhMs/2IkGwy+MX1OttGq5Ck
-         Ombw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Sm0C8uNoBe+bGoNiTlTfD56A+1LmrUUdkZUy9VizQWU=;
-        b=KZVAhuKxFi5IWHvLJbZP8kI0MFApA410iAIyshfaSPxyY5ZO/tsljxUlWAvEMfJIS+
-         uy79/SpDguuBYshLaSXeYayVxZm7NRSsByhBd0I/kV9PTNHjViC91WRdeUgyilDDv2eS
-         f6emwBpsPOSBBS41SW4ifdf4xSz10DR2WINqqpSV1Fc3BDTm2wCAbCfSbXUGtX3N1C7Z
-         EB6E7xWeJqR5Ug/w0t1/MiO1HvWWUG2zk0VuHLFGKp5VkO9hyEpTOFORGt1sQazyHt0E
-         8RfD2HUHj7Ns5D/e1lXY6ovFsSgcNpkd8gPULYhHk8/+2tg0PlTnCvdh3CRSE7INyOEY
-         FLeQ==
-X-Gm-Message-State: AJcUukfg+URUkVOYDMmJSAtUHGVDPtVxUQXlRWkE/5P7LcLj9r8ZEEWT
-        MdjmnkZPL1fAEbSRFjvAPXmRdZuiweRdE27772MtE7N0
-X-Google-Smtp-Source: ALg8bN7nGMnDAxFShZDbVEGc5m0fcNw41rSBLb27K1CZLYgEIBC+fjBSxWrbi+E2BQVSfwLrE6d6AQ/pP4xiQag4yws=
-X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr20886983oti.367.1548795097418;
- Tue, 29 Jan 2019 12:51:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20190129165428.3931-1-jglisse@redhat.com> <20190129165428.3931-10-jglisse@redhat.com>
- <CAPcyv4gNtDQf0mHwhZ8g3nX6ShsjA1tx2KLU_ZzTH1Z1AeA_CA@mail.gmail.com> <20190129193123.GF3176@redhat.com>
-In-Reply-To: <20190129193123.GF3176@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 29 Jan 2019 12:51:25 -0800
-Message-ID: <CAPcyv4gkYTZ-_Et1ZriAcoHwhtPEftOt2LnR_kW+hQM5-0G4HA@mail.gmail.com>
-Subject: Re: [PATCH 09/10] mm/hmm: allow to mirror vma of a file on a DAX
- backed filesystem
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
+        Tue, 29 Jan 2019 15:53:41 -0500
+Received: from ozlabs.org ([203.11.71.1]:42007 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726982AbfA2Uxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 15:53:40 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43pzHQ3fBkz9sBb;
+        Wed, 30 Jan 2019 07:53:38 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548795218;
+        bh=BOc2GyYobvUeTvLha8rU2IKW2vbvFSc1qmbw/fw1ox4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=LYzi6wrGVgQ9xKlV7w7MlnsC0b6hgJ/z9X0ZprcrD6GUlfegFEa3M5paEm5EHk/5g
+         QrBMWFckKOLhTF4e8I0i+b0h3BmaRkZE4+Ppn1UGm3Qc6kNi4rhBohFw+fvfZFseir
+         TaUL8neavWP7wG7iQtaO1m1IpTqIv9Fe3e28DJ7bZKbCpY3E6Xmf6kt/Pgu84uL1yj
+         vJ+acMD9AlxRADLnvOR/593n5XP92Rs7EQxT6wxR+9xfi1EDnPFcHnVMwa3aUQiCUg
+         FlmDZ52x+EDBzwgAY8V7sKc4fVwhjmjVuR6Fs/i8POOXCytiFAHrapq8UvJq+XH7OX
+         jczhVGTovAOxQ==
+Date:   Wed, 30 Jan 2019 07:53:36 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Steffen Maier <maier@linux.ibm.com>
+Subject: linux-next: Fixes tag needs some work in the scsi-fixes tree
+Message-ID: <20190130075336.3164fcc8@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//LouQrkFFexUt7KaZyWjIIu"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 11:32 AM Jerome Glisse <jglisse@redhat.com> wrote:
->
-> On Tue, Jan 29, 2019 at 10:41:23AM -0800, Dan Williams wrote:
-> > On Tue, Jan 29, 2019 at 8:54 AM <jglisse@redhat.com> wrote:
-> > >
-> > > From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> > >
-> > > This add support to mirror vma which is an mmap of a file which is on
-> > > a filesystem that using a DAX block device. There is no reason not to
-> > > support that case.
-> > >
-> >
-> > The reason not to support it would be if it gets in the way of future
-> > DAX development. How does this interact with MAP_SYNC? I'm also
-> > concerned if this complicates DAX reflink support. In general I'd
-> > rather prioritize fixing the places where DAX is broken today before
-> > adding more cross-subsystem entanglements. The unit tests for
-> > filesystems (xfstests) are readily accessible. How would I go about
-> > regression testing DAX + HMM interactions?
->
-> HMM mirror CPU page table so anything you do to CPU page table will
-> be reflected to all HMM mirror user. So MAP_SYNC has no bearing here
-> whatsoever as all HMM mirror user must do cache coherent access to
-> range they mirror so from DAX point of view this is just _exactly_
-> the same as CPU access.
->
-> Note that you can not migrate DAX memory to GPU memory and thus for a
-> mmap of a file on a filesystem that use a DAX block device then you can
-> not do migration to device memory. Also at this time migration of file
-> back page is only supported for cache coherent device memory so for
-> instance on OpenCAPI platform.
+--Sig_//LouQrkFFexUt7KaZyWjIIu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Ok, this addresses the primary concern about maintenance burden. Thanks.
+Hi all,
 
-However the changelog still amounts to a justification of "change
-this, because we can". At least, that's how it reads to me. Is there
-any positive benefit to merging this patch? Can you spell that out in
-the changelog?
+In commit
 
-> Bottom line is you just have to worry about the CPU page table. What
-> ever you do there will be reflected properly. It does not add any
-> burden to people working on DAX. Unless you want to modify CPU page
-> table without calling mmu notifier but in that case you would not
-> only break HMM mirror user but other thing like KVM ...
->
->
-> For testing the issue is what do you want to test ? Do you want to test
-> that a device properly mirror some mmap of a file back by DAX ? ie
-> device driver which use HMM mirror keep working after changes made to
-> DAX.
->
-> Or do you want to run filesystem test suite using the GPU to access
-> mmap of the file (read or write) instead of the CPU ? In that case any
-> such test suite would need to be updated to be able to use something
-> like OpenCL for. At this time i do not see much need for that but maybe
-> this is something people would like to see.
+  b63195698dea ("scsi: zfcp: fix sysfs block queue limit output for max_seg=
+ment_size")
 
-In general, as HMM grows intercept points throughout the mm it would
-be helpful to be able to sanity check the implementation.
+Fixes tag
+
+  Fixes: 50c2e9107f ("scsi: introduce a max_segment_size host_template para=
+meters")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_//LouQrkFFexUt7KaZyWjIIu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxQvVAACgkQAVBC80lX
+0GyyGwgAglHqjd/1TNdKN2ZPkGgSoJ1lVE/alfGW8tG9JOu6aqHpTnhn5JUeS8dr
+MoVtCKWcKlm+MrL7zkzii78u21XENSOycM/1k7O/iU41d1Q5p+qKhRSQF8vtnrIS
+0bItDwTd+LQ7Vg2yK859hd/n6+sHrux9/HxfxlA1l27LKP3K05TSIzHAd7R/OAFv
+SazREi1mFhORCMIbFetAWoS6JujHy6Zhzv96YLFQ+X84Yvn+mBEfKWUI1iDBQRcG
+nT8RWrP25Ozk6bCYR7Xpzu7pNw+P40WU9aiQ+h/NaJtpUWXednADCJ07AgMUor2C
+fM+BLOO5yzmDG/qyjtUuP1aVuuwoug==
+=ylgP
+-----END PGP SIGNATURE-----
+
+--Sig_//LouQrkFFexUt7KaZyWjIIu--
