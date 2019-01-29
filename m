@@ -2,121 +2,68 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D33EC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82597C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9BF920870
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:01:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DtzrIPdr"
+	by mail.kernel.org (Postfix) with ESMTP id 569E42147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbfA2NB5 (ORCPT
+        id S1727530AbfA2NDM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 08:01:57 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40142 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbfA2NB4 (ORCPT
+        Tue, 29 Jan 2019 08:03:12 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:44408 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725772AbfA2NDM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 08:01:56 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v5so14530764lfe.7
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 05:01:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ptpn3ooISk+hbFBLcoiG4r9S5KcxBa6gl30Hi3aaOSA=;
-        b=DtzrIPdrwzNCvJTkAlDg+esBhfR6wT+6BmY7B/Dk47Ve4iJQxHsbc08iYO0fToIPei
-         9DXs+HO/GPR0adLGeFj634r1xIKP787DaT2NTSX1++rLXKWonQwE7lW73MEkGw1nPi3x
-         pTeYQDY+Ts2l2/JpF+jcoAY5fJ15+fQCQGZco=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ptpn3ooISk+hbFBLcoiG4r9S5KcxBa6gl30Hi3aaOSA=;
-        b=NhCtC2QlWHrY7E7Ch6U2T4Kk7jaABtoLl9gAZfyIVNREoATdrAU8S1ZiQFUcuwCRoJ
-         b5ywFUbRERG0CWstlH1bmA5IrNKunPy9LFI7IXnYHIBfiCJ2MQ1ekOK8Pzto/9h8MxiG
-         HhYi8TDKp7SaBeh1EyowCMoK0MqNlGEDGdAaL40kw8vcr1x2iplFKqo+N+mapvn9UFHp
-         pqST6iWXRhz92yp6jjBrMz/nkGK+z8hiRe8KimD1G/KzAVhNGAryiNTmRnbg6WZ2F53t
-         8fxMc8ousj4xk3aIgnlLSsiDvCb6hwknDoeJt4fFbLlhTVAWxmGMKard/klZo6S6MESd
-         WQ7A==
-X-Gm-Message-State: AJcUukfvnjyRAhw8JOdFjJSgCPPq8aOWoP5cUtkTAnLaEh5CZMdVGlYL
-        Rz2h299+863iTESD1FffLM5e7A==
-X-Google-Smtp-Source: ALg8bN4BMPopXnF5/hPiXcfRQVBjG6Ho5TBz4wZWrSK6WbzYOudIxy7Uel6KiDkFFmuUUhWZFddcmw==
-X-Received: by 2002:a19:c995:: with SMTP id z143mr19626325lff.79.1548766914500;
-        Tue, 29 Jan 2019 05:01:54 -0800 (PST)
-Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
-        by smtp.gmail.com with ESMTPSA id 15-v6sm3969541lje.18.2019.01.29.05.01.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 05:01:53 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] btrfs: relocation: fix unused variable
-Date:   Tue, 29 Jan 2019 14:01:46 +0100
-Message-Id: <20190129130146.11934-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.11.0
+        Tue, 29 Jan 2019 08:03:12 -0500
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1goT2c-0005I3-6Y; Tue, 29 Jan 2019 14:03:02 +0100
+Date:   Tue, 29 Jan 2019 14:03:01 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        Stefan Liebler <stli@linux.ibm.com>,
+        Sebastian Sewior <bigeasy@linutronix.de>
+Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggered
+In-Reply-To: <20190129103557.GF28485@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1901291402410.1513@nanos.tec.linutronix.de>
+References: <20181127081115.GB3625@osiris> <alpine.DEB.2.21.1811281526430.1532@nanos.tec.linutronix.de> <20181129112321.GB3449@osiris> <20190128134410.GA28485@hirez.programming.kicks-ass.net> <20190128135804.GB28878@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1901281650310.1582@nanos.tec.linutronix.de> <20190129090108.GA26906@osiris> <alpine.DEB.2.21.1901291012330.1669@nanos.tec.linutronix.de> <20190129102409.GB26906@osiris> <20190129103557.GF28485@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_BRTFS_ASSERT isn't enabled, variable root_objectid isn't used.
+On Tue, 29 Jan 2019, Peter Zijlstra wrote:
 
-fs/btrfs/relocation.c: In function ‘insert_dirty_subv’:
-fs/btrfs/relocation.c:2138:6: warning: unused variable ‘root_objectid’ [-Wunused-variable]
-  u64 root_objectid = root->root_key.objectid;
-      ^~~~~~~~~~~~~
+> On Tue, Jan 29, 2019 at 11:24:09AM +0100, Heiko Carstens wrote:
+> 
+> > Yes, sure. However ;) I reproduced the above with v5.0-rc4 + your
+> > patch. And now I am trying to reproduce with linux-next 20190129 +
+> > your patch and it doesn't trigger. Did I miss a patch which is only in
+> > linux-next which could fix this?
+> > 
+> 
+> I'm forever confused on what patch is where; but -ESRCH makes me thing
+> maybe you lost this one:
+> 
+> ---
+> 
+> commit da791a667536bf8322042e38ca85d55a78d3c273
+> Author: Thomas Gleixner <tglx@linutronix.de>
+> Date:   Mon Dec 10 14:35:14 2018 +0100
 
-Reworked by adding a runtime check in the assfail function instead of
-the '#ifdef CONFIG_BTRFS_ASSERT #else ...", so the compiler sees the
-condition being passed into an inline function after preprocessing.
-
-Fixes: 7b837199c581 ("btrfs: relocation: Delay reloc tree deletion after merge_reloc_roots()")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- fs/btrfs/ctree.h | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index de23a7ea396d..ad7d079f2cae 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -3521,21 +3521,18 @@ do {								\
- 	rcu_read_unlock();					\
- } while (0)
- 
--#ifdef CONFIG_BTRFS_ASSERT
--
- __cold
- static inline void assfail(const char *expr, const char *file, int line)
- {
--	pr_err("assertion failed: %s, file: %s, line: %d\n",
--	       expr, file, line);
--	BUG();
-+	if (IS_ENABLED(CONFIG_BTRFS_ASSERT)) {
-+		pr_err("assertion failed: %s, file: %s, line: %d\n",
-+		       expr, file, line);
-+		BUG();
-+	}
- }
- 
- #define ASSERT(expr)	\
- 	(likely(expr) ? (void)0 : assfail(#expr, __FILE__, __LINE__))
--#else
--#define ASSERT(expr)	((void)0)
--#endif
- 
- /*
-  * Use that for functions that are conditionally exported for sanity tests but
--- 
-2.19.2
-
+That's in Linus tree already ...
