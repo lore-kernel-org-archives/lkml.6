@@ -2,61 +2,114 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 550A1C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DF6C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B65320989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:44:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0F6D2087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:49:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729511AbfA2UoY (ORCPT
+        id S1728169AbfA2Utw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:44:24 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:60074 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbfA2UoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:44:23 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1goaEu-0006kt-Rd; Tue, 29 Jan 2019 13:44:13 -0700
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     jglisse@redhat.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, linux-pci@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        iommu@lists.linux-foundation.org
-References: <20190129174728.6430-1-jglisse@redhat.com>
- <20190129174728.6430-2-jglisse@redhat.com>
- <f66ba584-9c4a-f6cd-c647-9b32a93be807@deltatee.com>
- <20190129194426.GB32069@kroah.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <8b4e0157-4eaf-c79a-28d0-7a266abe2207@deltatee.com>
-Date:   Tue, 29 Jan 2019 13:44:09 -0700
+        Tue, 29 Jan 2019 15:49:52 -0500
+Received: from gateway33.websitewelcome.com ([192.185.145.216]:28256 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727339AbfA2Utw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 15:49:52 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id EC73DA6E5FA7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 14:49:50 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id oaKMgU07fdnCeoaKMgVqvg; Tue, 29 Jan 2019 14:49:50 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=43160 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1goaKM-001V42-Gk; Tue, 29 Jan 2019 14:49:50 -0600
+Subject: Re: [PATCH] drm/nouveau: fix missing break in switch statement
+To:     Colin King <colin.king@canonical.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181008204736.8941-1-colin.king@canonical.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <63660e1c-1075-80a0-6b11-5f1a8cb253fc@embeddedor.com>
+Date:   Tue, 29 Jan 2019 14:49:48 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190129194426.GB32069@kroah.com>
+In-Reply-To: <20181008204736.8941-1-colin.king@canonical.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, jgg@mellanox.com, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jglisse@redhat.com, gregkh@linuxfoundation.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 1/5] pci/p2p: add a function to test peer to peer
- capability
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1goaKM-001V42-Gk
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:43160
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 21
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,51 +117,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2019-01-29 12:44 p.m., Greg Kroah-Hartman wrote:
-> On Tue, Jan 29, 2019 at 11:24:09AM -0700, Logan Gunthorpe wrote:
->>
->>
->> On 2019-01-29 10:47 a.m., jglisse@redhat.com wrote:
->>> +bool pci_test_p2p(struct device *devA, struct device *devB)
->>> +{
->>> +	struct pci_dev *pciA, *pciB;
->>> +	bool ret;
->>> +	int tmp;
->>> +
->>> +	/*
->>> +	 * For now we only support PCIE peer to peer but other inter-connect
->>> +	 * can be added.
->>> +	 */
->>> +	pciA = find_parent_pci_dev(devA);
->>> +	pciB = find_parent_pci_dev(devB);
->>> +	if (pciA == NULL || pciB == NULL) {
->>> +		ret = false;
->>> +		goto out;
->>> +	}
->>> +
->>> +	tmp = upstream_bridge_distance(pciA, pciB, NULL);
->>> +	ret = tmp < 0 ? false : true;
->>> +
->>> +out:
->>> +	pci_dev_put(pciB);
->>> +	pci_dev_put(pciA);
->>> +	return false;
->>> +}
->>> +EXPORT_SYMBOL_GPL(pci_test_p2p);
->>
->> This function only ever returns false....
+On 10/8/18 3:47 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> I guess it was nevr actually tested :(
+> The NOUVEAU_GETPARAM_PCI_DEVICE case is missing a break statement and falls
+> through to the following NOUVEAU_GETPARAM_BUS_TYPE case and may end up
+> re-assigning the getparam->value to an undesired value. Fix this by adding
+> in the missing break.
 > 
-> I feel really worried about passing random 'struct device' pointers into
-> the PCI layer.  Are we _sure_ it can handle this properly?
+> Detected by CoverityScan, CID#1460507 ("Missing break in switch")
+> 
+> Fixes: 359088d5b8ec ("drm/nouveau: remove trivial cases of nvxx_device() usage")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Yes, there are a couple of pci_p2pdma functions that take struct devices
-directly simply because it's way more convenient for the caller. That's
-what find_parent_pci_dev() takes care of (it returns false if the device
-is not a PCI device). Whether that's appropriate here is hard to say
-seeing we haven't seen any caller code.
+Reviewed-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Logan
+Friendly ping:
 
+Who can take this?
 
+Thanks
+--
+Gustavo
+
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_abi16.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_abi16.c b/drivers/gpu/drm/nouveau/nouveau_abi16.c
+> index e67a471331b5..6ec745873bc5 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_abi16.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_abi16.c
+> @@ -214,6 +214,7 @@ nouveau_abi16_ioctl_getparam(ABI16_IOCTL_ARGS)
+>  			WARN_ON(1);
+>  			break;
+>  		}
+> +		break;
+>  	case NOUVEAU_GETPARAM_FB_SIZE:
+>  		getparam->value = drm->gem.vram_available;
+>  		break;
+> 
