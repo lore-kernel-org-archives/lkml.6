@@ -2,129 +2,93 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 509D9C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D91F5C4151A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CD8C20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:43:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bZFPjS6F"
+	by mail.kernel.org (Postfix) with ESMTP id A8F8221473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548772992;
+	bh=1YHaNgJNYbqTBaPd3fpVlrbvWM1kC7HMYAo6DJJai4o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=UntP966cLArDGeqHmyOwGaj9hSA8ZZwwRSdAQiY5wqDBDEQYQOBj9314aICVp2fIZ
+	 5nN5gb/DTOtD1rPygctk2BHlWhYltNGvsN59PMTJ9ky16p0WgoRsxPQW42L+ioGawX
+	 MHQkdbJspSw3FOcp0nYMZRSHKpKiLgCTD5Ue5TOw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfA2OnG (ORCPT
+        id S1727270AbfA2OnL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 09:43:06 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:38719 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfA2OnF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 09:43:05 -0500
-Received: by mail-yb1-f193.google.com with SMTP id x9so8241750ybj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 06:43:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kQ0zmxnQA+VDsZt6oEB7dC83/E7Za3Z7DPHdWzyDSrY=;
-        b=bZFPjS6F9+kxzb9rrax7M/OIbofdRzVLJTZSVaqZfurQNEF1HX+0OoOM+kvBP/NBPY
-         uSu14UL97zIO47Lz4ThWhzwX9lmO27PaIHl3eEAhEBHdCuTejgO2Y7VLlCyvHhc+828F
-         aihbi5jsVC6frVIP3FwRjEeEZG2lT9KKxFcTMWCS1wFRKSsOi3MTDgXltdnYUdkUDfef
-         DJf7RgJY4I1M+TbecRmnEMIja1kZBLxfUC6x+0yTuTe98rXR9WF1yLWIU6v2T6V+oH09
-         6gWQRJIDmUBlaH8QNYBKh2Ilq9gkl+frF/822vQ3YpjgSkix2wKKKioe63uhG0dYctjP
-         xV1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kQ0zmxnQA+VDsZt6oEB7dC83/E7Za3Z7DPHdWzyDSrY=;
-        b=iSp9sctpZKEdnRma1ZonEjmFUpXIEe1Q4sr2Mh4IoPvrgyPUtag8wEP7yiHctXw7+K
-         nD9wQjuImuw2PtlsFIeRT9+Ivn3dpFDY90w//L7znqPSDsQem0mQBkpXI+6B6fNqyoh5
-         JSqBW5o8ZC6VCSFxd3w+9BgUakmFlMZX9aPO38BSOfryBWKgTWvpADxvT6q41wIZR+SB
-         L9izDppH9sjHjIlfzHKG+cLP1XJvUjbsbPe+dvXX9F8A0lN5vfDNUo6eLgbJto7ptEoj
-         n0o/MkRzjp3YwDeHPhYB1s4lza8kFBkpsF7TRm2d5RuqcbgRu3tr4wMZh74rJ4OYkpyc
-         kmTQ==
-X-Gm-Message-State: AJcUukeGwP4DsQgA7GozKUU0NVieDClpAxSsmrkMVONtUCo895LgsP4h
-        qSoQTB6If3ck6tpAeSknY0QeMO33J2r3UjUrw5Akhg==
-X-Google-Smtp-Source: ALg8bN7/XHMRMeDxsuaCaNu2tdN9KrKUqmfdCFTVTzYb63k8qewVuMDYtIQymtmhUBSjkSSEzdbyfD73WE1CR060GYo=
-X-Received: by 2002:a25:8685:: with SMTP id z5mr24752229ybk.247.1548772984339;
- Tue, 29 Jan 2019 06:43:04 -0800 (PST)
+        Tue, 29 Jan 2019 09:43:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47060 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725730AbfA2OnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 09:43:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2BBAFB049;
+        Tue, 29 Jan 2019 14:43:08 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 15:43:06 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Chris Down <chris@chrisdown.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+Message-ID: <20190129144306.GO18811@dhcp22.suse.cz>
+References: <20190125173713.GD20411@dhcp22.suse.cz>
+ <20190125182808.GL50184@devbig004.ftw2.facebook.com>
+ <20190128125151.GI18811@dhcp22.suse.cz>
+ <20190128142816.GM50184@devbig004.ftw2.facebook.com>
+ <20190128145210.GM18811@dhcp22.suse.cz>
+ <20190128145407.GP50184@devbig004.ftw2.facebook.com>
+ <20190128151859.GO18811@dhcp22.suse.cz>
+ <20190128154150.GQ50184@devbig004.ftw2.facebook.com>
+ <20190128170526.GQ18811@dhcp22.suse.cz>
+ <20190128174905.GU50184@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-References: <20190129093823.27137-1-enric.balletbo@collabora.com> <20190129093823.27137-7-enric.balletbo@collabora.com>
-In-Reply-To: <20190129093823.27137-7-enric.balletbo@collabora.com>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Tue, 29 Jan 2019 06:42:52 -0800
-Message-ID: <CABXOdTeTTQtOJdp+9xQO=itm8XT8w_y8ju+ADW6nuw5KMkkzdQ@mail.gmail.com>
-Subject: Re: [PATCH v3 06/12] platform/chrome: cros_ec_i2c: switch to SPDX identifier
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128174905.GU50184@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 1:38 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Adopt the SPDX license identifier headers to ease license compliance
-> management. Also fix the module license mismatch and change the
-> description for a more descriptive phrase.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+On Mon 28-01-19 09:49:05, Tejun Heo wrote:
+> Hello, Michal.
+> 
+> On Mon, Jan 28, 2019 at 06:05:26PM +0100, Michal Hocko wrote:
+> > Yeah, that is quite clear. But it also assumes that the hierarchy is
+> > pretty stable but cgroups might go away at any time. I am not saying
+> > that the aggregated events are not useful I am just saying that it is
+> > quite non-trivial to use and catch all potential corner cases. Maybe I
+> 
+> It really isn't complicated and doesn't require stable subtree.
+> 
+> > am overcomplicating it but one thing is quite clear to me. The existing
+> > semantic is really useful to watch for the reclaim behavior at the
+> > current level of the tree. You really do not have to care what is
+> > happening in the subtree when it is clear that the workload itself
+> > is underprovisioned etc. Considering that such a semantic already
+> > existis, somebody might depend on it and we likely want also aggregated
+> > semantic then I really do not see why to risk regressions rather than
+> > add a new memory.hierarchy_events and have both.
+> 
+> The problem then is that most other things are hierarchical including
+> some fields in .events files, so if we try to add local stats and
+> events, there's no good way to add them.
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-
-> ---
->
-> Changes in v3:
-> - cros_ec_i2c: Fix SPDX license tag.
->
-> Changes in v2: None
->
->  drivers/platform/chrome/cros_ec_i2c.c | 22 ++++++----------------
->  1 file changed, 6 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
-> index 739b985c97e1..419d1b9fa143 100644
-> --- a/drivers/platform/chrome/cros_ec_i2c.c
-> +++ b/drivers/platform/chrome/cros_ec_i2c.c
-> @@ -1,17 +1,7 @@
-> -/*
-> - * ChromeOS EC multi-function device (I2C)
-> - *
-> - * Copyright (C) 2012 Google, Inc
-> - *
-> - * This software is licensed under the terms of the GNU General Public
-> - * License version 2, as published by the Free Software Foundation, and
-> - * may be copied, distributed, and modified under those terms.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0
-> +// I2C interface for ChromeOS Embedded Controller
-> +//
-> +// Copyright (C) 2012 Google, Inc
->
->  #include <linux/acpi.h>
->  #include <linux/delay.h>
-> @@ -373,5 +363,5 @@ static struct i2c_driver cros_ec_driver = {
->
->  module_i2c_driver(cros_ec_driver);
->
-> -MODULE_LICENSE("GPL");
-> -MODULE_DESCRIPTION("ChromeOS EC multi function device");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("I2C interface for ChromeOS Embedded Controller");
-> --
-> 2.20.1
->
+All memcg events are represented non-hierarchical AFAICS
+memcg_memory_event() simply accounts at the level when it happens. Or do
+I miss something? Or are you talking about .events files for other
+controllers?
+-- 
+Michal Hocko
+SUSE Labs
