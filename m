@@ -2,141 +2,122 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 713F9C282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5809FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4941620989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EDFF20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:55:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728974AbfA2Qz0 (ORCPT
+        id S1728990AbfA2Qzx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:55:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37300 "EHLO mx1.redhat.com"
+        Tue, 29 Jan 2019 11:55:53 -0500
+Received: from mout.gmx.net ([212.227.17.22]:42819 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728595AbfA2Qym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:54:42 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EDFC43DE0E;
-        Tue, 29 Jan 2019 16:54:41 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-122-2.rdu2.redhat.com [10.10.122.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E1FCA103BAB6;
-        Tue, 29 Jan 2019 16:54:40 +0000 (UTC)
-From:   jglisse@redhat.com
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 03/10] mm/hmm: improve and rename hmm_vma_get_pfns() to hmm_range_snapshot()
-Date:   Tue, 29 Jan 2019 11:54:21 -0500
-Message-Id: <20190129165428.3931-4-jglisse@redhat.com>
-In-Reply-To: <20190129165428.3931-1-jglisse@redhat.com>
-References: <20190129165428.3931-1-jglisse@redhat.com>
+        id S1726374AbfA2Qzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 11:55:53 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx102
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LrZOj-1hIT3q1zvp-013KQ1; Tue, 29
+ Jan 2019 17:55:43 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-gpio@vger.kernel.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Dong Aisheng <dong.aisheng@linaro.org>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: pinctrl: Document the i.MX50 IOMUXC binding
+Date:   Tue, 29 Jan 2019 17:55:28 +0100
+Message-Id: <20190129165530.7606-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 29 Jan 2019 16:54:42 +0000 (UTC)
+X-Provags-ID: V03:K1:lsf7fDpqK+GPxAmo+y8Vsy9Za2weuS05yggUc3BZKlupdW5wjn6
+ CuvG5r+JGclST3BPVmZrqVobB9B9uEgCMmRXKJBDWwcDt3C9VCjtXDMTzlMi+xhg4d6i7Il
+ xeDnJVmQ6C1TCnraRXYrTb1M9f7LwQkE8HuHN+0sturjwEngAQxlRDEpl1dCzGuI1zuhjaG
+ hRox94X0Uz8entXFhcSqA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Rf1knTwRFBY=:qoPQ2hJ0EDjo1aW+sOk7+4
+ l9QeiUzLAPisqWEa2j851LrtoJKHVl++G2biDjzCxb297bdvMb/CSUyhVdUYb2IZi03eEsdng
+ w0vSNERcgzIZsll9eAVCCUIFzexjlti3VOLFROn0yKPHRmlTshE6n4joJIebsfbYHqjoWWQAY
+ pFCYRiQ4nAWXV5JB9Wg9ATR8fN/jBWdU9DcS2Z9fepTqSPjvt6eeqvXvjj+5aQFdMo/HuoMIa
+ 6o+TLWRhO5K/pe/tUOoFAlQD9O76L+S1LXUWHbhHDqccE5OagiK1BvNLsEJ3ScbjdS7CWiL1C
+ /XkN+uDnHu3Pm+ZqcpNh6Ag+I2Gi4YDWTTbMdIHmrh71609e2hGPY4w8WzLLPQqbEXPsWNE/l
+ BL4LIi5qht9mVEWlpE56uWDPfd+T0vUnGujQPEoU8luTx7dQDrFkE3+h8W19nMASG4hCCXqZ7
+ hNqrnisRS+DRZ5oul7OZ5uGU+1bruFj/XnTS0V21S/HON+aKvTerA8P/DoI3oKbkFDOabnPYb
+ B3kuWdgFlOrQ1YZCXkyEjsDwHAE+iLCQVDLJXHUrHpUcBFIHwNfuIx9HotCHdsRZACpF50RVw
+ MB0m2NGLTy6g2c7/sTRCoDft78qhctdPdcy/Ouhule5RBKiEqSnEkm9NtS1c8qAfQqPc6zLvf
+ 77klXEGk/CZIpM4XQ7u54829lenq4ccfJsV1DcptWDLzk7r6Lm2bHw/HdAoFVLGGPXBjRlDZX
+ woA8PKffp9ph12AQodfU5yhb/NhYLl9z186H3/xuX8qEmQi/b2aK0TMAAuv131JjhgKpA1hb+
+ S5jzMFrE2NCLshPyVSPC030EqjhFtklm9XdgYCLzkkIpeC9oRw26Bn9k47RAPRYDH3zHwBEfs
+ ECE5SZs64Vr6MmlEn5bvT5TfqsSZnU73ji/aY/JSxgbuFGtiLejWPJxGTqNRYyFqAuaxNPND7
+ ulVUfYbxp2g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
+AFAICS from the i.MX50 Reference Manual, the i.MX50 IOMUXC works the
+same as the one in i.MX51, so I copied fsl,imx51-pinctrl.txt and changed
+the text to imx50.
 
-Rename for consistency between code, comments and documentation. Also
-improves the comments on all the possible returns values. Improve the
-function by returning the number of populated entries in pfns array.
-
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Cc: Dong Aisheng <dong.aisheng@linaro.org>
+Cc: Shawn Guo <shawn.guo@linaro.org>
 ---
- include/linux/hmm.h |  4 ++--
- mm/hmm.c            | 23 ++++++++++-------------
- 2 files changed, 12 insertions(+), 15 deletions(-)
+ .../bindings/pinctrl/fsl,imx50-pinctrl.txt    | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt
 
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index bd6e058597a6..ddf49c1b1f5e 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -365,11 +365,11 @@ void hmm_mirror_unregister(struct hmm_mirror *mirror);
-  * table invalidation serializes on it.
-  *
-  * YOU MUST CALL hmm_vma_range_done() ONCE AND ONLY ONCE EACH TIME YOU CALL
-- * hmm_vma_get_pfns() WITHOUT ERROR !
-+ * hmm_range_snapshot() WITHOUT ERROR !
-  *
-  * IF YOU DO NOT FOLLOW THE ABOVE RULE THE SNAPSHOT CONTENT MIGHT BE INVALID !
-  */
--int hmm_vma_get_pfns(struct hmm_range *range);
-+long hmm_range_snapshot(struct hmm_range *range);
- bool hmm_vma_range_done(struct hmm_range *range);
- 
- 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 74d69812d6be..0d9ecd3337e5 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -706,23 +706,19 @@ static void hmm_pfns_special(struct hmm_range *range)
- }
- 
- /*
-- * hmm_vma_get_pfns() - snapshot CPU page table for a range of virtual addresses
-- * @range: range being snapshotted
-+ * hmm_range_snapshot() - snapshot CPU page table for a range
-+ * @range: range
-  * Returns: -EINVAL if invalid argument, -ENOMEM out of memory, -EPERM invalid
-- *          vma permission, 0 success
-+ *          permission (for instance asking for write and range is read only),
-+ *          -EAGAIN if you need to retry, -EFAULT invalid (ie either no valid
-+ *          vma or it is illegal to access that range), number of valid pages
-+ *          in range->pfns[] (from range start address).
-  *
-  * This snapshots the CPU page table for a range of virtual addresses. Snapshot
-  * validity is tracked by range struct. See hmm_vma_range_done() for further
-  * information.
-- *
-- * The range struct is initialized here. It tracks the CPU page table, but only
-- * if the function returns success (0), in which case the caller must then call
-- * hmm_vma_range_done() to stop CPU page table update tracking on this range.
-- *
-- * NOT CALLING hmm_vma_range_done() IF FUNCTION RETURNS 0 WILL LEAD TO SERIOUS
-- * MEMORY CORRUPTION ! YOU HAVE BEEN WARNED !
-  */
--int hmm_vma_get_pfns(struct hmm_range *range)
-+long hmm_range_snapshot(struct hmm_range *range)
- {
- 	struct vm_area_struct *vma = range->vma;
- 	struct hmm_vma_walk hmm_vma_walk;
-@@ -776,6 +772,7 @@ int hmm_vma_get_pfns(struct hmm_range *range)
- 	hmm_vma_walk.fault = false;
- 	hmm_vma_walk.range = range;
- 	mm_walk.private = &hmm_vma_walk;
-+	hmm_vma_walk.last = range->start;
- 
- 	mm_walk.vma = vma;
- 	mm_walk.mm = vma->vm_mm;
-@@ -792,9 +789,9 @@ int hmm_vma_get_pfns(struct hmm_range *range)
- 	 * function return 0).
- 	 */
- 	range->hmm = hmm;
--	return 0;
-+	return (hmm_vma_walk.last - range->start) >> PAGE_SHIFT;
- }
--EXPORT_SYMBOL(hmm_vma_get_pfns);
-+EXPORT_SYMBOL(hmm_range_snapshot);
- 
- /*
-  * hmm_vma_range_done() - stop tracking change to CPU page table over a range
+diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt
+new file mode 100644
+index 000000000000..6da01d619d33
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx50-pinctrl.txt
+@@ -0,0 +1,32 @@
++* Freescale IMX50 IOMUX Controller
++
++Please refer to fsl,imx-pinctrl.txt in this directory for common binding part
++and usage.
++
++Required properties:
++- compatible: "fsl,imx50-iomuxc"
++- fsl,pins: two integers array, represents a group of pins mux and config
++  setting. The format is fsl,pins = <PIN_FUNC_ID CONFIG>, PIN_FUNC_ID is a
++  pin working on a specific function, CONFIG is the pad setting value like
++  pull-up for this pin. Please refer to imx50 datasheet for the valid pad
++  config settings.
++
++CONFIG bits definition:
++PAD_CTL_HVE			(1 << 13)
++PAD_CTL_HYS			(1 << 8)
++PAD_CTL_PKE			(1 << 7)
++PAD_CTL_PUE			(1 << 6)
++PAD_CTL_PUS_100K_DOWN		(0 << 4)
++PAD_CTL_PUS_47K_UP		(1 << 4)
++PAD_CTL_PUS_100K_UP		(2 << 4)
++PAD_CTL_PUS_22K_UP		(3 << 4)
++PAD_CTL_ODE			(1 << 3)
++PAD_CTL_DSE_LOW			(0 << 1)
++PAD_CTL_DSE_MED			(1 << 1)
++PAD_CTL_DSE_HIGH		(2 << 1)
++PAD_CTL_DSE_MAX			(3 << 1)
++PAD_CTL_SRE_FAST		(1 << 0)
++PAD_CTL_SRE_SLOW		(0 << 0)
++
++Refer to imx50-pinfunc.h in device tree source folder for all available
++imx50 PIN_FUNC_ID.
 -- 
-2.17.2
+2.20.1
 
