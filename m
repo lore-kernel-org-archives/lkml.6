@@ -2,98 +2,590 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1A5C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74771C282D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4AB421473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:28:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2604F2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:30:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ihNwYvrO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbfA2N2e (ORCPT
+        id S1727077AbfA2Nax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 08:28:34 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41820 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727136AbfA2N2d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 08:28:33 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0TDRXRo078724
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 08:28:31 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qap89ngey-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 08:28:25 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Tue, 29 Jan 2019 13:28:02 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 29 Jan 2019 13:27:59 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0TDRwsP56950972
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 29 Jan 2019 13:27:58 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2047EAE058;
-        Tue, 29 Jan 2019 13:27:58 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9D8E7AE051;
-        Tue, 29 Jan 2019 13:27:57 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.224.212])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 29 Jan 2019 13:27:57 +0000 (GMT)
-Date:   Tue, 29 Jan 2019 14:27:56 +0100
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Michael Mueller <mimu@linux.ibm.com>
-Cc:     KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-Subject: Re: [PATCH v6 13/13] KVM: s390: start using the GIB
-In-Reply-To: <20190124125939.130763-14-mimu@linux.ibm.com>
-References: <20190124125939.130763-1-mimu@linux.ibm.com>
-        <20190124125939.130763-14-mimu@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Tue, 29 Jan 2019 08:30:53 -0500
+Received: from mail-eopbgr20078.outbound.protection.outlook.com ([40.107.2.78]:18592
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725911AbfA2Naw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 08:30:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=90X4MwzwubFSUdcE3ZhdSYbyc2gzgpQJHCtoYzBwsso=;
+ b=ihNwYvrOp0tzC23vD3zTcC9DBYQyzuCIsyvx9gVR7zFD99luWzzpGnzC4kPnO2h5AWY0njWkFN40mhuJptwPuXvoO0L46zl54LHeIS4nbCB5AGEa8bPk4Q2B+OevRPj/27nuCioWEfKgeTFI9FrqHtV/E/njyonVvBtrZIvC1hU=
+Received: from VI1PR04MB5008.eurprd04.prod.outlook.com (20.177.49.225) by
+ VI1PR04MB4271.eurprd04.prod.outlook.com (52.134.31.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.17; Tue, 29 Jan 2019 13:30:41 +0000
+Received: from VI1PR04MB5008.eurprd04.prod.outlook.com
+ ([fe80::2d2c:455a:16e9:cd4f]) by VI1PR04MB5008.eurprd04.prod.outlook.com
+ ([fe80::2d2c:455a:16e9:cd4f%2]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
+ 13:30:41 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Rob Herring <robh@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Jacky Bai <ping.bai@nxp.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abelvesa@linux.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] soc: imx: Add psci gpc support for i.MX8MQ
+Thread-Topic: [PATCH] soc: imx: Add psci gpc support for i.MX8MQ
+Thread-Index: AQHUt9bU+/jArCh7A0qIut8V+yy3WQ==
+Date:   Tue, 29 Jan 2019 13:30:41 +0000
+Message-ID: <1548768630-2416-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5PR0601CA0029.eurprd06.prod.outlook.com
+ (2603:10a6:203:68::15) To VI1PR04MB5008.eurprd04.prod.outlook.com
+ (2603:10a6:803:57::33)
+x-originating-ip: [95.76.156.53]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB4271;6:54buLjOPouEPWD1pkVufF4sS7vpNb6KaoVhwrJhuTel7xX+5lDIiOBpMtWwqxYWT9KEqZslgqwB4fKCHcc1syoXAEe4rX3FNyPzXnxR/jLpwYKKcrFuMzEIDuoAZ3hL3UgJNlfUqZBkdFtR02At1xFsHDfj8nxXQcwb5WHl2FYVcTFb4RA3OaE5x5cnoAzW4pSHz6dtjB18iREX84XrnpzN45cXEEh6TNd6FWgU4u7ZWvvstzhE/kxr1x2gWCxyVb27Vwm3Pk6dJxI39WG11WuZQFYwnFMvEU/f4RlxHSJHO+XEsg5v8J7O0GdgXWtAO2rXf0ILN65OJWSRWDFNV4yEwNyvXAuL7sd402LbVkzGDYYlfJnydT33pKLdRYkm04nU10dPVYorGAktSwo4IzdHsO1cz9qDCsrU621dEKWQbye/Zc3JWa2RCl3ix7zjL9rjzGofdNTc7Meh5row37g==;5:PCFELKl/TgBVz1DKHvyTQ9PeSbnu+J+NoPZKqnzQOqvVgw4TVG0iehUh4uAsMDZGhltrtSX8IRxp7Z9HOthMONTDD1a/5yHQPkGzCEQgB5EJazqHv2ChtpnOS4cSUXDInnXDsSJjvqSItz3JlGk6f+/+/z+2YxMTkyT6lBVmztTRBYXhxshwzibFf7sPY3q8uh5UUtsTKTadqF2PwpyUBA==;7:nYKe31R4fun5qTiNNjluPF8KCg8ziY8o9nS1Lb4nDSLYo3u3d3hHtSoDVEdVz6P0MM6HdT0GzX6E1x9/YLaYdB4qeyQsGtFC7MTxvqYiU26hDIgk9Czo2smnIw341wFlP1r0LPl/7FGOX6eq8c0DdQ==
+x-ms-office365-filtering-correlation-id: d2370c97-995e-450b-9ba8-08d685edf6be
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4271;
+x-ms-traffictypediagnostic: VI1PR04MB4271:
+x-microsoft-antispam-prvs: <VI1PR04MB42718D23D8650A70389F1924F6970@VI1PR04MB4271.eurprd04.prod.outlook.com>
+x-forefront-prvs: 093290AD39
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(366004)(39860400002)(346002)(189003)(199004)(478600001)(39060400002)(36756003)(71190400001)(71200400001)(99286004)(25786009)(3846002)(8676002)(44832011)(2906002)(86362001)(2616005)(6512007)(6486002)(106356001)(105586002)(6436002)(6116002)(476003)(14454004)(53936002)(486006)(102836004)(97736004)(8936002)(110136005)(66066001)(54906003)(186003)(14444005)(4326008)(6506007)(386003)(30864003)(305945005)(81166006)(81156014)(7736002)(50226002)(316002)(52116002)(6636002)(68736007)(256004)(26005)(2004002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4271;H:VI1PR04MB5008.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: q40gfzG42HNxNdHkLjPT/X4DoPFFZLtMQXSeJdYDIeMsKsE1W++Gi5TuembSRkO3VXt9HX2gueqm3qH1cTAPLn3OIEmo+rafCw3HmwPuWnpLOyDeA3ZZIiXWR61R44MGFOf6kENYl4h8mIgHhGLR2UGPkLsXXh3LKz5UgMEaSyJuLCi0luFTnp4Nx9QRvV+AcX7dys/SH4a5/Y4aYjCC8GQaS3PDOy1FQ6T871fsfZ9Xf1bAwv91CJs2kUJaWUUQtXCHzeGYtVTcHXExnhjq6xPxw+OJ650WsS5MHz7epHQbobAr+AJxQvzt+/B7ch1Ffun21t3Uxcu+jqWe8mx/u9BfQQ8g4m003dLXt0IiNH7krXJhL7HTZcVc9Jy6ZuKibUZfoqgh64tyA8GtfO87ueCTj0Tj3xfotcnm5gGKISQ=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012913-4275-0000-0000-00000307518D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012913-4276-0000-0000-0000381553CE
-Message-Id: <20190129142756.015772d5@oc2783563651>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=784 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901290102
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2370c97-995e-450b-9ba8-08d685edf6be
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 13:30:40.3090
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4271
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 13:59:39 +0100
-Michael Mueller <mimu@linux.ibm.com> wrote:
+From: Anson Huang <Anson.Huang@nxp.com>
 
-> By initializing the GIB, it will be used by the kvm host.
-> 
-> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-> Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+Add i.MX8MQ PSCI GPC virtual driver support.
 
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Bai Ping <ping.bai@nxp.com>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/soc/imx/Makefile   |   1 +
+ drivers/soc/imx/gpc-psci.c | 423 +++++++++++++++++++++++++++++++++++++++++=
+++++
+ include/soc/imx/fsl_sip.h  |  31 ++++
+ 3 files changed, 455 insertions(+)
+ create mode 100644 drivers/soc/imx/gpc-psci.c
+ create mode 100644 include/soc/imx/fsl_sip.h
+
+diff --git a/drivers/soc/imx/Makefile b/drivers/soc/imx/Makefile
+index 506a6f3..83a38ac 100644
+--- a/drivers/soc/imx/Makefile
++++ b/drivers/soc/imx/Makefile
+@@ -1,2 +1,3 @@
+ obj-$(CONFIG_HAVE_IMX_GPC) +=3D gpc.o
+ obj-$(CONFIG_IMX_GPCV2_PM_DOMAINS) +=3D gpcv2.o
++obj-$(CONFIG_ARCH_MXC) +=3D gpc-psci.o
+diff --git a/drivers/soc/imx/gpc-psci.c b/drivers/soc/imx/gpc-psci.c
+new file mode 100644
+index 0000000..4f8fee9
+--- /dev/null
++++ b/drivers/soc/imx/gpc-psci.c
+@@ -0,0 +1,423 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2019 NXP.
++ *
++ */
++
++#include <linux/arm-smccc.h>
++#include <linux/clk.h>
++#include <linux/cpumask.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/irqchip.h>
++#include <linux/irqchip/arm-gic.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
++#include <linux/pm_domain.h>
++#include <soc/imx/fsl_sip.h>
++
++#define GPC_MAX_IRQS		(4 * 32)
++
++struct imx_gpc_pm_domain {
++	const char name[30];
++	struct device *dev;
++	struct generic_pm_domain pd;
++	u32 gpc_domain_id;
++	struct clk **clks;
++	unsigned int num_clks;
++	struct regulator *reg;
++};
++
++enum imx_gpc_pm_domain_state {
++	GPC_PD_STATE_OFF,
++	GPC_PD_STATE_ON,
++};
++
++#define to_imx_gpc_pm_domain(_genpd) \
++	container_of(_genpd, struct imx_gpc_pm_domain, pd)
++
++static DEFINE_SPINLOCK(gpc_psci_lock);
++static DEFINE_MUTEX(gpc_pd_mutex);
++
++static void imx_gpc_psci_irq_unmask(struct irq_data *d)
++{
++	struct arm_smccc_res res;
++
++	spin_lock(&gpc_psci_lock);
++	arm_smccc_smc(FSL_SIP_GPC, FSL_SIP_CONFIG_GPC_UNMASK, d->hwirq,
++		      0, 0, 0, 0, 0, &res);
++	spin_unlock(&gpc_psci_lock);
++
++	irq_chip_unmask_parent(d);
++}
++
++static void imx_gpc_psci_irq_mask(struct irq_data *d)
++{
++	struct arm_smccc_res res;
++
++	spin_lock(&gpc_psci_lock);
++	arm_smccc_smc(FSL_SIP_GPC, FSL_SIP_CONFIG_GPC_MASK, d->hwirq,
++		      0, 0, 0, 0, 0, &res);
++	spin_unlock(&gpc_psci_lock);
++
++	irq_chip_mask_parent(d);
++}
++static int imx_gpc_psci_irq_set_wake(struct irq_data *d, unsigned int on)
++{
++	struct arm_smccc_res res;
++
++	spin_lock(&gpc_psci_lock);
++	arm_smccc_smc(FSL_SIP_GPC, FSL_SIP_CONFIG_GPC_SET_WAKE, d->hwirq,
++			on, 0, 0, 0, 0, &res);
++	spin_unlock(&gpc_psci_lock);
++
++	return 0;
++}
++
++static int imx_gpc_psci_irq_set_affinity(struct irq_data *d,
++					 const struct cpumask *dest,
++					 bool force)
++{
++	/* parse the cpu of irq affinity */
++	struct arm_smccc_res res;
++	int cpu =3D cpumask_any_and(dest, cpu_online_mask);
++
++	irq_chip_set_affinity_parent(d, dest, force);
++
++	spin_lock(&gpc_psci_lock);
++	arm_smccc_smc(FSL_SIP_GPC, 0x4, d->hwirq,
++		      cpu, 0, 0, 0, 0, &res);
++	spin_unlock(&gpc_psci_lock);
++
++	return 0;
++}
++
++static struct irq_chip imx_gpc_psci_chip =3D {
++	.name			=3D "GPC-PSCI",
++	.irq_eoi		=3D irq_chip_eoi_parent,
++	.irq_mask		=3D imx_gpc_psci_irq_mask,
++	.irq_unmask		=3D imx_gpc_psci_irq_unmask,
++	.irq_retrigger		=3D irq_chip_retrigger_hierarchy,
++	.irq_set_wake		=3D imx_gpc_psci_irq_set_wake,
++	.irq_set_affinity	=3D imx_gpc_psci_irq_set_affinity,
++};
++
++static int imx_gpc_psci_domain_translate(struct irq_domain *d,
++				    struct irq_fwspec *fwspec,
++				    unsigned long *hwirq,
++				    unsigned int *type)
++{
++	if (is_of_node(fwspec->fwnode)) {
++		if (fwspec->param_count !=3D 3)
++			return -EINVAL;
++
++		/* No PPI should point to this domain */
++		if (fwspec->param[0] !=3D 0)
++			return -EINVAL;
++
++		*hwirq =3D fwspec->param[1];
++		*type =3D fwspec->param[2];
++		return 0;
++	}
++
++	return -EINVAL;
++}
++
++static int imx_gpc_psci_domain_alloc(struct irq_domain *domain,
++				  unsigned int irq,
++				  unsigned int nr_irqs, void *data)
++{
++	struct irq_fwspec *fwspec =3D data;
++	struct irq_fwspec parent_fwspec;
++	irq_hw_number_t hwirq;
++	int i;
++
++	if (fwspec->param_count !=3D 3)
++		return -EINVAL;	/* Not GIC compliant */
++	if (fwspec->param[0] !=3D 0)
++		return -EINVAL;	/* No PPI should point to this domain */
++
++	hwirq =3D fwspec->param[1];
++	if (hwirq >=3D GPC_MAX_IRQS)
++		return -EINVAL;	/* Can't deal with this */
++
++	for (i =3D 0; i < nr_irqs; i++)
++		irq_domain_set_hwirq_and_chip(domain, irq + i, hwirq + i,
++					      &imx_gpc_psci_chip, NULL);
++
++	parent_fwspec =3D *fwspec;
++	parent_fwspec.fwnode =3D domain->parent->fwnode;
++
++	return irq_domain_alloc_irqs_parent(domain, irq, nr_irqs,
++					    &parent_fwspec);
++}
++
++static const struct irq_domain_ops imx_gpc_psci_domain_ops =3D {
++	.translate =3D imx_gpc_psci_domain_translate,
++	.alloc	=3D imx_gpc_psci_domain_alloc,
++	.free	=3D irq_domain_free_irqs_common,
++};
++
++static int __init imx_gpc_psci_init(struct device_node *node,
++			       struct device_node *parent)
++{
++	struct irq_domain *parent_domain, *domain;
++
++	if (!parent) {
++		pr_err("%s: no parent, giving up\n", node->full_name);
++		return -ENODEV;
++	}
++
++	parent_domain =3D irq_find_host(parent);
++	if (!parent_domain) {
++		pr_err("%s: unable to obtain parent domain\n",
++			node->full_name);
++		return -ENXIO;
++	}
++
++	domain =3D irq_domain_add_hierarchy(parent_domain, 0, GPC_MAX_IRQS,
++					  node, &imx_gpc_psci_domain_ops,
++					  NULL);
++	if (!domain)
++		return -ENOMEM;
++
++	return 0;
++}
++IRQCHIP_DECLARE(imx_gpc_psci, "fsl,imx8mq-gpc", imx_gpc_psci_init);
++
++static int imx_gpc_pd_power_on(struct generic_pm_domain *domain)
++{
++	struct imx_gpc_pm_domain *pd =3D to_imx_gpc_pm_domain(domain);
++	struct arm_smccc_res res;
++	int index, ret =3D 0;
++
++	/* power on the external supply */
++	if (pd->reg) {
++		ret =3D regulator_enable(pd->reg);
++		if (ret) {
++			dev_warn(pd->dev, "failed to power up the reg%d\n", ret);
++			return ret;
++		}
++	}
++
++	/* enable the necessary clks needed by the power domain */
++	if (pd->num_clks) {
++		for (index =3D 0; index < pd->num_clks; index++)
++			clk_prepare_enable(pd->clks[index]);
++	}
++
++	mutex_lock(&gpc_pd_mutex);
++	arm_smccc_smc(FSL_SIP_GPC, FSL_SIP_CONFIG_GPC_PM_DOMAIN,
++			pd->gpc_domain_id,
++			GPC_PD_STATE_ON, 0, 0, 0, 0, &res);
++	mutex_unlock(&gpc_pd_mutex);
++
++	return 0;
++}
++
++static int imx_gpc_pd_power_off(struct generic_pm_domain *domain)
++{
++	struct imx_gpc_pm_domain *pd =3D to_imx_gpc_pm_domain(domain);
++	struct arm_smccc_res res;
++	int index, ret =3D 0;
++
++	mutex_lock(&gpc_pd_mutex);
++	arm_smccc_smc(FSL_SIP_GPC, FSL_SIP_CONFIG_GPC_PM_DOMAIN,
++			pd->gpc_domain_id, GPC_PD_STATE_OFF,
++			0, 0, 0, 0, &res);
++	mutex_unlock(&gpc_pd_mutex);
++
++	/* power off the external supply */
++	if (pd->reg) {
++		ret =3D regulator_disable(pd->reg);
++		if (ret) {
++			dev_warn(pd->dev, "failed to power off the reg%d\n", ret);
++			return ret;
++		}
++	}
++
++	/* disable the necessary clks when power domain on finished */
++	if (pd->num_clks) {
++		for (index =3D 0; index < pd->num_clks; index++)
++			clk_disable_unprepare(pd->clks[index]);
++	}
++
++	return ret;
++};
++
++static int imx8m_pd_clk_init(struct device_node *np,
++			     struct imx_gpc_pm_domain *domain)
++{
++	struct property *pp;
++	struct clk **clks;
++	int index;
++
++	pp =3D of_find_property(np, "clocks", NULL);
++	if (pp)
++		domain->num_clks =3D pp->length / 8;
++	else
++		domain->num_clks =3D 0;
++
++	if (domain->num_clks) {
++		clks =3D kcalloc(domain->num_clks, sizeof(*clks), GFP_KERNEL);
++		if (!clks) {
++			domain->num_clks =3D 0;
++			domain->clks =3D NULL;
++			return -ENOMEM;
++		}
++
++		domain->clks =3D clks;
++	}
++
++	for (index =3D 0; index < domain->num_clks; index++) {
++		clks[index] =3D of_clk_get(np, index);
++		if (IS_ERR(clks[index])) {
++			for (index =3D 0; index < domain->num_clks; index++) {
++				if (!IS_ERR(clks[index]))
++					clk_put(clks[index]);
++			}
++
++			domain->num_clks =3D 0;
++			domain->clks =3D NULL;
++			kfree(clks);
++			pr_warn("imx8m domain clock init failed\n");
++			return -ENODEV;
++		}
++	}
++
++	return 0;
++}
++
++static int imx8m_add_subdomain(struct device_node *parent,
++			       struct generic_pm_domain *parent_pd)
++{
++	struct device_node *child_node;
++	struct imx_gpc_pm_domain *child_domain;
++	int ret =3D 0;
++
++	/* add each of the child domain of parent */
++	for_each_child_of_node(parent, child_node) {
++		if (!of_device_is_available(child_node))
++			continue;
++
++		child_domain =3D kzalloc(sizeof(*child_domain), GFP_KERNEL);
++		if (!child_domain)
++			return -ENOMEM;
++
++		ret =3D of_property_read_string(child_node, "domain-name",
++					      &child_domain->pd.name);
++		if (ret)
++			goto exit;
++
++		ret =3D of_property_read_u32(child_node, "domain-id",
++					   &child_domain->gpc_domain_id);
++		if (ret)
++			goto exit;
++
++		child_domain->pd.power_off =3D imx_gpc_pd_power_off;
++		child_domain->pd.power_on =3D imx_gpc_pd_power_on;
++		/* no reg for subdomains */
++		child_domain->reg =3D NULL;
++
++		imx8m_pd_clk_init(child_node, child_domain);
++
++		/* power domains as off at boot */
++		pm_genpd_init(&child_domain->pd, NULL, true);
++
++		/* add subdomain of parent power domain */
++		pm_genpd_add_subdomain(parent_pd, &child_domain->pd);
++
++		ret =3D of_genpd_add_provider_simple(child_node,
++						 &child_domain->pd);
++		if (ret)
++			pr_err("failed to add subdomain\n");
++	}
++
++	return 0;
++exit:
++	kfree(child_domain);
++	return ret;
++};
++
++static int imx_gpc_pm_domain_probe(struct platform_device *pdev)
++{
++	struct device *dev =3D &pdev->dev;
++	struct device_node *np =3D dev->of_node;
++	struct imx_gpc_pm_domain *imx_pm_domain;
++	int ret =3D 0;
++
++	if (!np) {
++		dev_err(dev, "power domain device tree node not found\n");
++		return -ENODEV;
++	}
++
++	imx_pm_domain =3D devm_kzalloc(dev, sizeof(*imx_pm_domain), GFP_KERNEL);
++	if (!imx_pm_domain)
++		return -ENOMEM;
++	imx_pm_domain->dev =3D dev;
++
++	ret =3D of_property_read_string(np, "domain-name",
++					&imx_pm_domain->pd.name);
++	if (ret) {
++		dev_err(dev, "get domain name failed\n");
++		return -EINVAL;
++	}
++
++	ret =3D of_property_read_u32(np, "domain-id",
++					&imx_pm_domain->gpc_domain_id);
++	if (ret) {
++		dev_err(dev, "get domain id failed\n");
++		return -EINVAL;
++	}
++
++	imx_pm_domain->reg =3D devm_regulator_get_optional(dev, "power");
++	if (IS_ERR(imx_pm_domain->reg)) {
++		if (PTR_ERR(imx_pm_domain->reg) =3D=3D -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++
++		imx_pm_domain->reg =3D NULL;
++	}
++
++	imx8m_pd_clk_init(np, imx_pm_domain);
++
++	imx_pm_domain->pd.power_off =3D imx_gpc_pd_power_off;
++	imx_pm_domain->pd.power_on =3D imx_gpc_pd_power_on;
++	/* all power domains as off at boot */
++	pm_genpd_init(&imx_pm_domain->pd, NULL, true);
++
++	ret =3D of_genpd_add_provider_simple(np,
++				 &imx_pm_domain->pd);
++
++	/* add subdomain */
++	ret =3D imx8m_add_subdomain(np, &imx_pm_domain->pd);
++	if (ret)
++		dev_warn(dev, "please check the child power domain init\n");
++
++	return 0;
++}
++
++static const struct of_device_id imx_gpc_pm_domain_ids[] =3D {
++	{.compatible =3D "fsl,imx8mq-pm-domain"},
++	{.compatible =3D "fsl,imx8mm-pm-domain"},
++	{},
++};
++
++static struct platform_driver imx_gpc_pm_domain_driver =3D {
++	.driver =3D {
++		.name	=3D "imx8m_gpc_pm_domain",
++		.owner	=3D THIS_MODULE,
++		.of_match_table =3D imx_gpc_pm_domain_ids,
++	},
++	.probe =3D imx_gpc_pm_domain_probe,
++};
++
++module_platform_driver(imx_gpc_pm_domain_driver);
++
++MODULE_AUTHOR("NXP");
++MODULE_DESCRIPTION("NXP i.MX8M GPC power domain driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/soc/imx/fsl_sip.h b/include/soc/imx/fsl_sip.h
+new file mode 100644
+index 0000000..c3867a2
+--- /dev/null
++++ b/include/soc/imx/fsl_sip.h
+@@ -0,0 +1,31 @@
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017 NXP
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef __SOC_FSL_SIP_H
++#define __SOC_FSL_SIP_H
++
++#define FSL_SIP_GPC			0xC2000000
++#define FSL_SIP_CONFIG_GPC_MASK		0x00
++#define FSL_SIP_CONFIG_GPC_UNMASK	0x01
++#define FSL_SIP_CONFIG_GPC_SET_WAKE	0x02
++#define FSL_SIP_CONFIG_GPC_PM_DOMAIN	0x03
++
++#define IMX8MQ_PD_MIPI		0
++#define IMX8MQ_PD_PCIE1		1
++#define IMX8MQ_PD_OTG1		2
++#define IMX8MQ_PD_OTG2		3
++#define IMX8MQ_PD_GPU		4
++#define IMX8MQ_PD_VPU		5
++#define IMX8MQ_PD_HDMI		6
++#define IMX8MQ_PD_DISP		7
++#define IMX8MQ_PD_MIPI_CSI1	8
++#define IMX8MQ_PD_MIPI_CSI2	9
++#define IMX8MQ_PD_PCIE2		10
++
++#endif
+--=20
+2.7.4
 
