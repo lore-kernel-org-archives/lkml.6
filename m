@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66F7C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4109FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95BD62083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11C962083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762361;
-	bh=Opb5ZpCHndRBsKyFFy/HY5GsN4PkQgjxnFaW7XFRVTI=;
+	s=default; t=1548762365;
+	bh=BI1hV1CLylRtIOOzHA2tuWI36v+ZwSyVJxSHsRcoUtM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cC88l7SSfld9MXBGG1Enwih06vZ0dob9cIh9tnlkyS4WRv7aCkk9j4c/Yod8hGaSL
-	 gQ6PV02sbaWMxpiYn4ublMt9Fu9aUeJ5jhdqAGCYRfutIJ1qwdwiKzV+6MBL4EsPhy
-	 /xwnKSUWUnkAb3gtTprAfPteYB9UixD3OBoKVc18=
+	b=ZrUcgaQxS9kUfE/Fa7w/8gYJzd2R3hIYGXAx6PJeEwCy79Jvcw1BIXr6nmWH9tgWp
+	 sA1emjBa8wlJUIKjWIkd+B7jiK0WEYHXe+b8JljjgK+iY2zlciqN/e5HLAne1x6mhV
+	 KX8w+qDNQhQJ1QXYEWmcPONt52LZedjTBi3a3Kt8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbfA2LqA (ORCPT
+        id S1730931AbfA2LqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:46:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36384 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:46:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730865AbfA2Lpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:45:53 -0500
+        id S1730077AbfA2LqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:46:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F34B22086C;
-        Tue, 29 Jan 2019 11:45:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC9A120882;
+        Tue, 29 Jan 2019 11:45:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762352;
-        bh=Opb5ZpCHndRBsKyFFy/HY5GsN4PkQgjxnFaW7XFRVTI=;
+        s=default; t=1548762360;
+        bh=BI1hV1CLylRtIOOzHA2tuWI36v+ZwSyVJxSHsRcoUtM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EUo78p/vfQEEiBokiQi4zDXrLdKQ3y8U+JRcITAprnWJHklN9bGPG3FMbUywCP55G
-         D93DmuLmqka8ls0IPqHpqKW9Lbyy4VpyIO4K+tTS+znTFIW7lPwHsWx/voTQCqVzWR
-         0+dGJtY5F4G5CNZo7DKGZBhBIqnxKzIrb/61djx0=
+        b=AN3z9IayRLuCyq+Ydckb287McW+fF3PwBNx1T3ufxvtr5eoLJJ/3IA7WyUekx7R7l
+         01+5YqR/1GKOo2EMnnWr9iU4v53KQpElmHJ5zmdZB2BwppOZx0oVrP6YkW6Os/sd23
+         BhUzAKSS+hdre/FV7VX6nexcwx9OskJWQrRAZQ/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.19 078/103] irqchip/gic-v3-its: Align PCI Multi-MSI allocation on their size
-Date:   Tue, 29 Jan 2019 12:35:55 +0100
-Message-Id: <20190129113205.756415368@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.19 081/103] can: flexcan: fix NULL pointer exception during bringup
+Date:   Tue, 29 Jan 2019 12:35:58 +0100
+Message-Id: <20190129113206.197578898@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -64,83 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-commit 8208d1708b88b412ca97f50a6d951242c88cbbac upstream.
+commit a55234dabe1f72cf22f9197980751d37e38ba020 upstream.
 
-The way we allocate events works fine in most cases, except
-when multiple PCI devices share an ITS-visible DevID, and that
-one of them is trying to use MultiMSI allocation.
+Commit cbffaf7aa09e ("can: flexcan: Always use last mailbox for TX")
+introduced a loop letting i run up to (including) ARRAY_SIZE(regs->mb)
+and in the body accessed regs->mb[i] which is an out-of-bounds array
+access that then resulted in an access to an reserved register area.
 
-In that case, our allocation is not guaranteed to be zero-based
-anymore, and we have to make sure we allocate it on a boundary
-that is compatible with the PCI Multi-MSI constraints.
+Later this was changed by commit 0517961ccdf1 ("can: flexcan: Add
+provision for variable payload size") to iterate a bit differently but
+still runs one iteration too much resulting to call
 
-Fix this by allocating the full region upfront instead of iterating
-over the number of MSIs. MSI-X are always allocated one by one,
-so this shouldn't change anything on that front.
+	flexcan_get_mb(priv, priv->mb_count)
 
-Fixes: b48ac83d6bbc2 ("irqchip: GICv3: ITS: MSI support")
-Cc: stable@vger.kernel.org
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+which results in a WARN_ON and then a NULL pointer exception. This
+only affects devices compatible with "fsl,p1010-flexcan",
+"fsl,imx53-flexcan", "fsl,imx35-flexcan", "fsl,imx25-flexcan",
+"fsl,imx28-flexcan", so newer i.MX SoCs are not affected.
+
+Fixes: cbffaf7aa09e ("can: flexcan: Always use last mailbox for TX")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Cc: linux-stable <stable@vger.kernel.org> # >= 4.20
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/irqchip/irq-gic-v3-its.c |   25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
 
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2267,13 +2267,14 @@ static void its_free_device(struct its_d
- 	kfree(its_dev);
- }
- 
--static int its_alloc_device_irq(struct its_device *dev, irq_hw_number_t *hwirq)
-+static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number_t *hwirq)
- {
- 	int idx;
- 
--	idx = find_first_zero_bit(dev->event_map.lpi_map,
--				  dev->event_map.nr_lpis);
--	if (idx == dev->event_map.nr_lpis)
-+	idx = bitmap_find_free_region(dev->event_map.lpi_map,
-+				      dev->event_map.nr_lpis,
-+				      get_count_order(nvecs));
-+	if (idx < 0)
- 		return -ENOSPC;
- 
- 	*hwirq = dev->event_map.lpi_base + idx;
-@@ -2369,21 +2370,21 @@ static int its_irq_domain_alloc(struct i
- 	int err;
- 	int i;
- 
--	for (i = 0; i < nr_irqs; i++) {
--		err = its_alloc_device_irq(its_dev, &hwirq);
--		if (err)
--			return err;
-+	err = its_alloc_device_irq(its_dev, nr_irqs, &hwirq);
-+	if (err)
-+		return err;
- 
--		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq);
-+	for (i = 0; i < nr_irqs; i++) {
-+		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq + i);
- 		if (err)
- 			return err;
- 
- 		irq_domain_set_hwirq_and_chip(domain, virq + i,
--					      hwirq, &its_irq_chip, its_dev);
-+					      hwirq + i, &its_irq_chip, its_dev);
- 		irqd_set_single_target(irq_desc_get_irq_data(irq_to_desc(virq + i)));
- 		pr_debug("ID:%d pID:%d vID:%d\n",
--			 (int)(hwirq - its_dev->event_map.lpi_base),
--			 (int) hwirq, virq + i);
-+			 (int)(hwirq + i - its_dev->event_map.lpi_base),
-+			 (int)(hwirq + i), virq + i);
- 	}
- 
- 	return 0;
+---
+ drivers/net/can/flexcan.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/net/can/flexcan.c
++++ b/drivers/net/can/flexcan.c
+@@ -1004,7 +1004,7 @@ static int flexcan_chip_start(struct net
+ 		}
+ 	} else {
+ 		/* clear and invalidate unused mailboxes first */
+-		for (i = FLEXCAN_TX_MB_RESERVED_OFF_FIFO; i <= ARRAY_SIZE(regs->mb); i++) {
++		for (i = FLEXCAN_TX_MB_RESERVED_OFF_FIFO; i < ARRAY_SIZE(regs->mb); i++) {
+ 			priv->write(FLEXCAN_MB_CODE_RX_INACTIVE,
+ 				    &regs->mb[i].can_ctrl);
+ 		}
 
 
