@@ -2,73 +2,191 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 422F5C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB9BC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A697218AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548805927;
-	bh=KevqUReVk+rKgkkiMsfibycVeB5XVVbxY5qYL8RLwRU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Q/J0hNMkDwsiAAPYqnf/z6FKmJPyhwqOQMO81c1XTIkC3wKtQfOqPea0neG9FUZAn
-	 V0BWWrhBFuxNkxBUvphV9wzJBk86Uv/jjdmjOPFOJXMCERKOqZ/0wtpAX+9mUCqbaf
-	 hPKNniFd9pYbtkOymsX0xt+BRh89gZKhv9rM06qA=
+	by mail.kernel.org (Postfix) with ESMTP id 155D72087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:56:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NVv8tivW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eqouPe/3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbfA2XwF (ORCPT
+        id S1727692AbfA2X4O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 18:52:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58256 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727148AbfA2XwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 18:52:05 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 78AF7AD2F;
-        Tue, 29 Jan 2019 23:52:03 +0000 (UTC)
-Date:   Wed, 30 Jan 2019 00:52:02 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Snyder <joshs@netflix.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Tue, 29 Jan 2019 18:56:14 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36382 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726890AbfA2X4N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 18:56:13 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6D61C6083E; Tue, 29 Jan 2019 23:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548806172;
+        bh=3E39rNK8WQfnmWhN+okT8Vvmmb/HXZD26rZ/X0hdh0Q=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=NVv8tivW6iafeEDULqf0ovpXUh08RAEBK/lUO/ihnbybt2qEC8pkocuGGR2AOPjSq
+         gKXxLZz0wUb5pbJJ8AILZ662s7DSuj0IbOQEwpeb/cc8cBgHuXSRRKlD6x7BZefD2P
+         zT+I0rP4nb/+g4vKZfbWy1W9kBWa15J+9IPKMO+E=
+Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: lmark@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A6D87604BE;
+        Tue, 29 Jan 2019 23:56:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548806171;
+        bh=3E39rNK8WQfnmWhN+okT8Vvmmb/HXZD26rZ/X0hdh0Q=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=eqouPe/3rjVU1uFf653gYATT6UXa43w/iOopbJUYEmY4FIPK09z2VzvXbZRE+IXoZ
+         kSn8Y1NDK5DE4vM/HXWiIz3j06nQxTNkYWIhXuIKhZ2nWBeuKmwVvyrrDowFxfwEBI
+         9o93jfpyLKeN/vA5c652D/gi2wJmRe1pbZwGdfQc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6D87604BE
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
+Date:   Tue, 29 Jan 2019 15:56:10 -0800 (PST)
+From:   Liam Mark <lmark@codeaurora.org>
+X-X-Sender: lmark@lmark-linux.qualcomm.com
+To:     "Skidanov, Alexey" <alexey.skidanov@intel.com>
+cc:     Laura Abbott <labbott@redhat.com>,
         Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-In-Reply-To: <20190128000547.GA25155@nautica>
-Message-ID: <nycvar.YFH.7.76.1901300050550.6626@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1901240009560.6626@cbobk.fhfr.pm> <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com> <20190124002455.GA23181@nautica> <20190124124501.GA18012@nautica> <nycvar.YFH.7.76.1901241523500.6626@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1901272335040.6626@cbobk.fhfr.pm> <20190128000547.GA25155@nautica>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "tkjos@android.com" <tkjos@android.com>,
+        "rve@android.com" <rve@android.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "maco@android.com" <maco@android.com>,
+        "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>
+Subject: RE: [PATCH v3] staging: android: ion: Add implementation of dma_buf_vmap
+ and dma_buf_vunmap
+In-Reply-To: <040863540BC4D141BEB177532350882876A5692E@hasmsx108.ger.corp.intel.com>
+Message-ID: <alpine.DEB.2.10.1901291555360.19412@lmark-linux.qualcomm.com>
+References: <1517400222-2854-1-git-send-email-alexey.skidanov@intel.com> <20180131130047.GA22917@kroah.com> <89be45dd-ac0e-4efb-2b21-e6c07b0cd66e@intel.com> <bf909d75-21a4-9d6d-2f72-887492821252@redhat.com> <7d836085-cd8d-300b-56be-e8db4ff37afc@intel.com>
+ <alpine.DEB.2.10.1812152119130.2951@lmark-linux.qualcomm.com> <67f288db-d9ea-2d45-ddcf-a15dbff316f5@intel.com> <alpine.DEB.2.10.1812171036080.23226@lmark-linux.qualcomm.com> <3740948f-02be-cf7a-bc41-54b4fd195103@intel.com> <alpine.DEB.2.10.1901040940260.19175@lmark-linux.qualcomm.com>
+ <040863540BC4D141BEB177532350882876A5692E@hasmsx108.ger.corp.intel.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Jan 2019, Dominique Martinet wrote:
+On Fri, 4 Jan 2019, Skidanov, Alexey wrote:
 
-> > So, any objections to aproaching it this way?
 > 
-> I'm not sure why I'm the main recipient of that mail but answering
-> because I am -- let's get these patches in through the regular -mm tree
-> though
+> 
+> > -----Original Message-----
+> > From: Liam Mark [mailto:lmark@codeaurora.org]
+> > Sent: Friday, January 04, 2019 19:42
+> > To: Skidanov, Alexey <alexey.skidanov@intel.com>
+> > Cc: Laura Abbott <labbott@redhat.com>; Greg KH <gregkh@linuxfoundation.org>;
+> > devel@driverdev.osuosl.org; tkjos@android.com; rve@android.com; linux-
+> > kernel@vger.kernel.org; maco@android.com; sumit.semwal@linaro.org
+> > Subject: Re: [PATCH v3] staging: android: ion: Add implementation of dma_buf_vmap and
+> > dma_buf_vunmap
+> > 
+> > On Tue, 18 Dec 2018, Alexey Skidanov wrote:
+> > 
+> > > >>> I was wondering if we could re-open the discussion on adding support to
+> > > >>> ION for dma_buf_vmap.
+> > > >>> It seems like the patch was not taken as the reviewers wanted more
+> > > >>> evidence of an upstream use case.
+> > > >>>
+> > > >>> Here would be my upstream usage argument for including dma_buf_vmap
+> > > >>> support in ION.
+> > > >>>
+> > > >>> Currently all calls to ion_dma_buf_begin_cpu_access result in the creation
+> > > >>> of a kernel mapping for the buffer, unfortunately the resulting call to
+> > > >>> alloc_vmap_area can be quite expensive and this has caused a performance
+> > > >>> regression for certain clients when they have moved to the new version of
+> > > >>> ION.
+> > > >>>
+> > > >>> The kernel mapping is not actually needed in ion_dma_buf_begin_cpu_access,
+> > > >>> and generally isn't needed by clients. So if we remove the creation of the
+> > > >>> kernel mapping in ion_dma_buf_begin_cpu_access and only create it when
+> > > >>> needed we can speed up the calls to ion_dma_buf_begin_cpu_access.
+> > > >>>
+> > > >>> An additional benefit of removing the creation of kernel mappings from
+> > > >>> ion_dma_buf_begin_cpu_access is that it makes the ION code more secure.
+> > > >>> Currently a malicious client could call the DMA_BUF_IOCTL_SYNC IOCTL with
+> > > >>> flags DMA_BUF_SYNC_END multiple times to cause the ION buffer kmap_cnt to
+> > > >>> go negative which could lead to undesired behavior.
+> > > >>>
+> > > >>> One disadvantage of the above change is that a kernel mapping is not
+> > > >>> already created when a client calls dma_buf_kmap. So the following
+> > > >>> dma_buf_kmap contract can't be satisfied.
+> > > >>>
+> > > >>> /**
+> > > >>> * dma_buf_kmap - Map a page of the buffer object into kernel address
+> > > >>> space. The
+> > > >>> * same restrictions as for kmap and friends apply.
+> > > >>> * @dmabuf:	[in]	buffer to map page from.
+> > > >>> * @page_num:	[in]	page in PAGE_SIZE units to map.
+> > > >>> *
+> > > >>> * This call must always succeed, any necessary preparations that might
+> > > >>> fail
+> > > >>> * need to be done in begin_cpu_access.
+> > > >>> */
+> > > >>>
+> > > >>> But hopefully we can work around this by moving clients to dma_buf_vmap.
+> > > >> I think the problem is with the contract. We can't ensure that the call
+> > > >> is always succeeds regardless the implementation - any mapping might
+> > > >> fail. Probably this is why  *all* clients of dma_buf_kmap() check the
+> > > >> return value (so it's safe to return NULL in case of failure).
+> > > >>
+> > > >
+> > > > I think currently the call to dma_buf_kmap will always succeed since the
+> > > > DMA-Buf contract requires that the client first successfully call
+> > > > dma_buf_begin_cpu_access(), and if dma_buf_begin_cpu_access() succeeds
+> > > > then dma_buf_kmap will succeed.
+> > > >
+> > > >> I would suggest to fix the contract and to keep the dma_buf_kmap()
+> > > >> support in ION.
+> > > >
+> > > > I will leave it to the DMA-Buf maintainers as to whether they want to
+> > > > change their contract.
+> > > >
+> > > > Liam
+> > > >
+> > > > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> > > > a Linux Foundation Collaborative Project
+> > > >
+> > >
+> > > Ok. We need the list of the clients using the ION in the mainline tree.
+> > >
+> > 
+> > Looks to me like the only functions which might be calling
+> > dma_buf_kmap/dma_buf_kunmap on ION buffers are
+> > tegra_bo_kmap/tegra_bo_kunmap, I assume Tegra is used in some Android
+> > automotive products.
+> > 
+> > Looks like these functions could be moved over to using
+> > dma_buf_vmap/dma_buf_vunmap but it wouldn't be very clean and would add a
+> > performance hit.
+> > 
+> > Liam
+> > 
+> > Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+> > a Linux Foundation Collaborative Project
+> 
+> I'm a little bit confused. Why making the buffer accessible by CPU (mapping the buffer)
+> and making the content of the buffer valid (coherent) are so tightly coupled in DMA-BUF? 
+> 
 
-*prod to mm maintainers* (at least for an opinion)
+Hi Sumit,
 
--- 
-Jiri Kosina
-SUSE Labs
+Hope you are feeling better.
 
+I was wondering if you would be open to changes to to the DMA-BUF contract 
+so that we can remove the creation of kernel mappings in begin_cpu_access.
+
+This would have the benefit of improving the performance of 
+begin_cpu_access and removing the ability for userspace to add and remove 
+kernel mappings.
+
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
