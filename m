@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4E7C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF920C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 157152086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 869192083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762747;
-	bh=aMcXgJ5jwq2wCz8NHia39DvIG5CwpRX3jVAYQvc76iw=;
+	s=default; t=1548762753;
+	bh=ZkGroI5MD2nsDXYDZmaTPRxsiCD/73NJ7sHkL4Npcq8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aGUovmoANSTFxB6P3I8UWjxkZBcnmuhwznKfXtREuXpw+A4WDfslnumeTpHGxWRl+
-	 yEQIkWaSI9igFqmuNZhu7KL6c0xqey0b9HMpsDpKFWEzwpUHsX/VXdPSbgv6I5NJqr
-	 z9jWiSkEVL0OgkamtI+SqzqSVCpBc8wRYFTw9HfI=
+	b=gvYLFNxhE8zc/h4eCz1EFBzrO/6zv1tz6KivrXAdmOrQLXVxIjmKqOjPFbIzIpQV3
+	 yd4tmZjdGuajK0YB0Z1whl1bx/4eXd+63nHVgZcicFGIhzD2d6lRvJ9XJe0jvNuzsB
+	 JO1O+KwQrO53VBOu9w/FPRHlrZMQFoI96oRjRFY0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732091AbfA2LwZ (ORCPT
+        id S1732112AbfA2Lwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:52:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44188 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:52:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732063AbfA2LwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:52:22 -0500
+        id S1729750AbfA2Lw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:52:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D6D82083B;
-        Tue, 29 Jan 2019 11:52:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 728C120882;
+        Tue, 29 Jan 2019 11:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762741;
-        bh=aMcXgJ5jwq2wCz8NHia39DvIG5CwpRX3jVAYQvc76iw=;
+        s=default; t=1548762747;
+        bh=ZkGroI5MD2nsDXYDZmaTPRxsiCD/73NJ7sHkL4Npcq8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RGDCNxiQr96Fm8cIN39PpHVTeSih8UK88SOhG7QGA2O4h1OacWeJDFibfBxG08xF9
-         JuZ7aKcGNnIA1y99FaM1oWAEEFUXAqdT1UTNwFRf4Ff1TmbYNSmTwQ5lGKpmRaRXcy
-         GJxpqQpVbb74/LVp8//gwkRFjKWa4kld9M3tV3pc=
+        b=YWzYeFsy9a/1alZSQcLYGpql/9o7HBfDHKwecE4K3TVPSp64E2RI5WH/z0scSS7K3
+         SLL7mc72RZdvV+TNdv9vLGAI5TXaSiJBEzbaPubYKhAN+mfhyhJVrktDHrP6+aN4dN
+         ru2sHuifTH49y4Z0LF4s8VffUU0K1Ri+/T4vbu7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.9 42/44] f2fs: read page index before freeing
-Date:   Tue, 29 Jan 2019 12:36:37 +0100
-Message-Id: <20190129113143.353583872@linuxfoundation.org>
+Subject: [PATCH 4.9 44/44] btrfs: dev-replace: go back to suspended state if target device is missing
+Date:   Tue, 29 Jan 2019 12:36:39 +0100
+Message-Id: <20190129113143.540292866@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -66,47 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Anand Jain <anand.jain@oracle.com>
 
-commit 0ea295dd853e0879a9a30ab61f923c26be35b902 upstream.
+commit 0d228ece59a35a9b9e8ff0d40653234a6d90f61e upstream.
 
-The function truncate_node frees the page with f2fs_put_page. However,
-the page index is read after that. So, the patch reads the index before
-freeing the page.
+At the time of forced unmount we place the running replace to
+BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED state, so when the system comes
+back and expect the target device is missing.
 
-Fixes: bf39c00a9a7f ("f2fs: drop obsolete node page when it is truncated")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Then let the replace state continue to be in
+BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED state instead of
+BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED as there isn't any matching scrub
+running as part of replace.
+
+Fixes: e93c89c1aaaa ("Btrfs: add new sources for device replace code")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/node.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/dev-replace.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -656,6 +656,7 @@ static void truncate_node(struct dnode_o
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
- 	struct node_info ni;
-+	pgoff_t index;
- 
- 	get_node_info(sbi, dn->nid, &ni);
- 	if (dn->inode->i_blocks == 0) {
-@@ -678,10 +679,11 @@ invalidate:
- 	clear_node_page_dirty(dn->node_page);
- 	set_sbi_flag(sbi, SBI_IS_DIRTY);
- 
-+	index = dn->node_page->index;
- 	f2fs_put_page(dn->node_page, 1);
- 
- 	invalidate_mapping_pages(NODE_MAPPING(sbi),
--			dn->node_page->index, dn->node_page->index);
-+			index, index);
- 
- 	dn->node_page = NULL;
- 	trace_f2fs_truncate_node(dn->inode, dn->nid, ni.blk_addr);
+--- a/fs/btrfs/dev-replace.c
++++ b/fs/btrfs/dev-replace.c
+@@ -787,6 +787,8 @@ int btrfs_resume_dev_replace_async(struc
+ 			   "cannot continue dev_replace, tgtdev is missing");
+ 		btrfs_info(fs_info,
+ 			   "you may cancel the operation after 'mount -o degraded'");
++		dev_replace->replace_state =
++					BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED;
+ 		btrfs_dev_replace_unlock(dev_replace, 1);
+ 		return 0;
+ 	}
 
 
