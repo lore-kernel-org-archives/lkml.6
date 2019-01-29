@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99872C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5207AC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA9C217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E47E2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="owXvs/3K"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ltJWi/rZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbfA2IoY (ORCPT
+        id S1728001AbfA2Io2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:44:24 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36691 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727903AbfA2IoW (ORCPT
+        Tue, 29 Jan 2019 03:44:28 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39635 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727941AbfA2IoZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:44:22 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u4so21034121wrp.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:44:21 -0800 (PST)
+        Tue, 29 Jan 2019 03:44:25 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y8so16697369wmi.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:44:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8M8SkLlBUO6aIkmvQdt73jSIyNWAPLQHicQuYx4M/z8=;
-        b=owXvs/3KpQ85MmIixWzVI0ge13IlH4i71lzEJUZsZ0nglkRxj4rU1LQSV5uXXGP8Fj
-         XGu/X4WUlJHUBxrOcsHpc4Q7aZlXJQtvqTOh+/ioLWHkRrpsNPGAhejvxu2m2LQKg7e4
-         Sprc5xDWgGX/DYuP4ZC7LEpCqxD8C4Z69SjsmpjxJUsttMUSa4Fb3N1uvzagv0N/3L7G
-         I+c/apqs6DIE9a5exEZRwoxb1ClYc16NI8V51OQLKG4XhXtC/MQ3mx/v3b6XchYVTFi1
-         zt7gxpeXydjehOgLT7LK/VrapPYdVK6F585wqylS3CYhdI6I3s4U1zuyOmaBxUw2JW7l
-         j2IA==
+        bh=xh6JAmkBnBKkEOMZQs9o929ceuBTII37rCxqn/4TinI=;
+        b=ltJWi/rZsnURDFa+IEr8utG5+hqmxoQ5Dfe6jZ8tlr8Yj/JCkzIsaV9okuhDKjEcBz
+         clcdm3VwumIICl5P7Nz0BAGnEihG7kf+j/7wYX43+9ZMorSAoz0sL11JBMnqkFiPnPXD
+         hjMj/niUOLDhRhFhTrGv8Mr34rKY3BQNnSh+5pULYUYuUReZ2Qv2fw7N/UecYrtx8TU2
+         2AviEK0qQNhqb+tJhjfP9GBLLqt0ax7/0+IO5ND6lg5kaRXPKpyU3D+goL+gjfnHIeNl
+         yOH6VoDAWWaHnP3g29IkfLATNU+w8N5/DcbmojdtvtM2bA906nnWNbq7yOLQcbbsBHcj
+         PEbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8M8SkLlBUO6aIkmvQdt73jSIyNWAPLQHicQuYx4M/z8=;
-        b=Q3zIcLm3MEZt9MvSwy/il4GYnTGly4uMSR+0x0u9JyEcoh+Gc4VlM+oMmLuB+jBX3y
-         7i0Mhj9AsRwIgpx4w9YmwAaGP4uHdED4N5STSgGuzcazsYc5+liSbBHHKHSvTUMe8hW1
-         Ak/Z1IC8weUGOazKAT7KVXeojedGm1cVNdlxfuZF4lzZKyE5t4DJNsdEeSDzs0R3otlg
-         xzRdAxu4+X9Y9huGCA3sgs+M+yhHwRo4v58+/n4Oa31WJiTlCY9BpEF2uiRVMxVQu2X0
-         gafw0S1A+MFoFYPdcU29tFKx0sLEH19r9/ODVijOVFgim8LIrsa/VvPstJCEHd6QRlgy
-         1JiQ==
-X-Gm-Message-State: AJcUuke0WJugH6gh1jdNmydF4j4rmZDvj36fDPyRmx+iTosYlxbA/jf3
-        FlQksyVurQr+gXiY+/NgWVTz9Q==
-X-Google-Smtp-Source: ALg8bN4+NvpMzrhdEqitwilEY5AqTwtc15FHuRDWKiQKJ8UCYsp1gyI6SCHZNWs/UMBXVjxRztriaQ==
-X-Received: by 2002:adf:891a:: with SMTP id s26mr24772955wrs.44.1548751460628;
-        Tue, 29 Jan 2019 00:44:20 -0800 (PST)
+        bh=xh6JAmkBnBKkEOMZQs9o929ceuBTII37rCxqn/4TinI=;
+        b=GH+p5+Nzkc/wYXZR7XykhVuplmZl27c12co/1+JBkDLCRHGgyFRzdEIzhpVhKL2L6W
+         QvFLM4cWDOrihgRAW91p8Yfi36eJ4rUaNl4raZ/hKVla9WHDJburfAv/ZVhDwihu+HPf
+         2AuuOg+a7dI+4u+dP1sdfpu3A0XeoTCon/tlu5i32rrcyWJ6zkp2TCv7549KH+8s1c3u
+         gvQDL/Sb8+togczkML2etgilq1NY4DfklTMIUMefqhlq60QISnwtsGjS8P/9fPvxQXGa
+         /oWgtIaKrsJRrI5mmDE9O8W+pVggpa5HdsK9aB2m6gxzp4ytLZilxSzik5mI0CaYMBZz
+         MTLg==
+X-Gm-Message-State: AJcUukc3pjSMA99YgCnN5YF1j6WPMlLahfr+Gc0cZ712fata3seUzdtR
+        Wbaw8gCntjI6spmLZHxhAw0H6Q==
+X-Google-Smtp-Source: ALg8bN6eqKUxs1UYmYtabYgWnQX+3uVAffAfuckU/4UwLxqWIJeuVNl0L4lK8zyBNxr03mX2dsvn9A==
+X-Received: by 2002:a1c:544f:: with SMTP id p15mr20303242wmi.37.1548751463054;
+        Tue, 29 Jan 2019 00:44:23 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id c1sm3979319wmb.14.2019.01.29.00.44.19
+        by smtp.gmail.com with ESMTPSA id c1sm3979319wmb.14.2019.01.29.00.44.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 00:44:20 -0800 (PST)
+        Tue, 29 Jan 2019 00:44:22 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -64,13 +64,14 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         <u.kleine-koenig@pengutronix.de>
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 2/9] irq/irq_sim: use irq domain
-Date:   Tue, 29 Jan 2019 09:44:04 +0100
-Message-Id: <20190129084411.30495-3-brgl@bgdev.pl>
+Subject: [PATCH v2 4/9] gpio: mockup: add locking
+Date:   Tue, 29 Jan 2019 09:44:06 +0100
+Message-Id: <20190129084411.30495-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190129084411.30495-1-brgl@bgdev.pl>
 References: <20190129084411.30495-1-brgl@bgdev.pl>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -79,200 +80,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Delegate the offset to virq number mapping to the provided framework
-instead of handling it locally. Use the legacy domain as we want to
-preallocate the irq descriptors.
+While no user reported any race condition problems with gpio-mockup,
+let's be on the safe side and use a mutex when performing any changes
+on the dummy chip structures.
 
+Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- include/linux/irq_sim.h |  6 +--
- kernel/irq/irq_sim.c    | 94 +++++++++++++++++++++++++++++------------
- 2 files changed, 71 insertions(+), 29 deletions(-)
+ drivers/gpio/gpio-mockup.c | 50 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-index eda132c22b57..b96c2f752320 100644
---- a/include/linux/irq_sim.h
-+++ b/include/linux/irq_sim.h
-@@ -8,6 +8,7 @@
- 
- #include <linux/irq.h>
- #include <linux/irq_work.h>
-+#include <linux/irqdomain.h>
- #include <linux/device.h>
- 
- /*
-@@ -21,16 +22,15 @@ struct irq_sim_work_ctx {
+diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+index 6a50f9f59c90..b4c1de6acf74 100644
+--- a/drivers/gpio/gpio-mockup.c
++++ b/drivers/gpio/gpio-mockup.c
+@@ -54,6 +54,7 @@ struct gpio_mockup_chip {
+ 	struct gpio_mockup_line_status *lines;
+ 	struct irq_sim irqsim;
+ 	struct dentry *dbg_dir;
++	struct mutex lock;
  };
  
- struct irq_sim_irq_ctx {
--	int			irqnum;
- 	bool			enabled;
- };
- 
- struct irq_sim {
- 	struct irq_chip		chip;
-+	struct irq_domain	*domain;
- 	struct irq_sim_work_ctx	work_ctx;
--	int			irq_base;
-+	int			virq_base;
- 	unsigned int		irq_count;
--	struct irq_sim_irq_ctx	*irqs;
- };
- 
- int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs);
-diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-index b732e4e2e45b..2bcdbab1bc5a 100644
---- a/kernel/irq/irq_sim.c
-+++ b/kernel/irq/irq_sim.c
-@@ -44,6 +44,43 @@ static void irq_sim_handle_irq(struct irq_work *work)
- 	}
+ struct gpio_mockup_dbgfs_private {
+@@ -82,29 +83,53 @@ static int gpio_mockup_range_ngpio(unsigned int index)
+ 	return gpio_mockup_ranges[index * 2 + 1];
  }
  
-+static int irq_sim_domain_map(struct irq_domain *domain,
-+			      unsigned int virq, irq_hw_number_t hw)
+-static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
++static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+ 	return chip->lines[offset].value;
+ }
+ 
+-static void gpio_mockup_set(struct gpio_chip *gc,
+-			    unsigned int offset, int value)
++static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
 +{
-+	struct irq_sim *sim = domain->host_data;
-+	struct irq_sim_irq_ctx *ctx;
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++	int val;
 +
-+	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
++	mutex_lock(&chip->lock);
++	val = __gpio_mockup_get(gc, offset);
++	mutex_unlock(&chip->lock);
 +
-+	irq_set_chip(virq, &sim->chip);
-+	irq_set_chip_data(virq, ctx);
-+	irq_set_handler(virq, handle_simple_irq);
-+	irq_modify_status(virq, IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
-+
-+	return 0;
++	return val;
 +}
 +
-+static void irq_sim_domain_free(struct irq_domain *domain,
-+				unsigned int virq, unsigned int num_irqs)
++static void __gpio_mockup_set(struct gpio_chip *gc,
++			      unsigned int offset, int value)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+ 	chip->lines[offset].value = !!value;
+ }
+ 
++static void gpio_mockup_set(struct gpio_chip *gc,
++			   unsigned int offset, int value)
 +{
-+	struct irq_sim_irq_ctx *ctx;
-+	struct irq_data *irq;
-+	int i;
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
 +
-+	for (i = 0; i < num_irqs; i++) {
-+		irq = irq_domain_get_irq_data(domain, virq + i);
-+		ctx = irq_data_get_irq_chip_data(irq);
-+		kfree(ctx);
-+	}
++	mutex_lock(&chip->lock);
++	__gpio_mockup_set(gc, offset, value);
++	mutex_unlock(&chip->lock);
 +}
 +
-+static const struct irq_domain_ops irq_sim_domain_ops = {
-+	.map = irq_sim_domain_map,
-+	.free = irq_sim_domain_free,
-+};
-+
- /**
-  * irq_sim_init - Initialize the interrupt simulator: allocate a range of
-  *                dummy interrupts.
-@@ -56,16 +93,15 @@ static void irq_sim_handle_irq(struct irq_work *work)
-  */
- int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+ static void gpio_mockup_set_multiple(struct gpio_chip *gc,
+ 				     unsigned long *mask, unsigned long *bits)
  {
--	int i;
++	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 	unsigned int bit;
+ 
++	mutex_lock(&chip->lock);
+ 	for_each_set_bit(bit, mask, gc->ngpio)
+-		gpio_mockup_set(gc, bit, test_bit(bit, bits));
 -
--	sim->irqs = kmalloc_array(num_irqs, sizeof(*sim->irqs), GFP_KERNEL);
--	if (!sim->irqs)
-+	sim->virq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
-+	if (sim->virq_base < 0)
-+		return sim->virq_base;
++		__gpio_mockup_set(gc, bit, test_bit(bit, bits));
++	mutex_unlock(&chip->lock);
+ }
+ 
+ static int gpio_mockup_dirout(struct gpio_chip *gc,
+@@ -112,8 +137,10 @@ static int gpio_mockup_dirout(struct gpio_chip *gc,
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
+-	gpio_mockup_set(gc, offset, value);
++	mutex_lock(&chip->lock);
+ 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_OUT;
++	__gpio_mockup_set(gc, offset, value);
++	mutex_unlock(&chip->lock);
+ 
+ 	return 0;
+ }
+@@ -122,7 +149,9 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+ 
++	mutex_lock(&chip->lock);
+ 	chip->lines[offset].dir = GPIO_MOCKUP_DIR_IN;
++	mutex_unlock(&chip->lock);
+ 
+ 	return 0;
+ }
+@@ -130,8 +159,13 @@ static int gpio_mockup_dirin(struct gpio_chip *gc, unsigned int offset)
+ static int gpio_mockup_get_direction(struct gpio_chip *gc, unsigned int offset)
+ {
+ 	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
++	int direction;
+ 
+-	return !chip->lines[offset].dir;
++	mutex_lock(&chip->lock);
++	direction = !chip->lines[offset].dir;
++	mutex_unlock(&chip->lock);
 +
-+	sim->domain = irq_domain_add_legacy(NULL, num_irqs, sim->virq_base,
-+					    0, &irq_sim_domain_ops, sim);
-+	if (!sim->domain) {
-+		irq_free_descs(sim->virq_base, num_irqs);
- 		return -ENOMEM;
--
--	sim->irq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
--	if (sim->irq_base < 0) {
--		kfree(sim->irqs);
--		return sim->irq_base;
++	return direction;
+ }
+ 
+ static int gpio_mockup_to_irq(struct gpio_chip *gc, unsigned int offset)
+@@ -283,6 +317,8 @@ static int gpio_mockup_probe(struct platform_device *pdev)
+ 			return -ENOMEM;
  	}
  
- 	sim->chip.name = "irq_sim";
-@@ -74,25 +110,15 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
- 
- 	sim->work_ctx.pending = bitmap_zalloc(num_irqs, GFP_KERNEL);
- 	if (!sim->work_ctx.pending) {
--		kfree(sim->irqs);
--		irq_free_descs(sim->irq_base, num_irqs);
-+		irq_domain_remove(sim->domain);
-+		irq_free_descs(sim->virq_base, num_irqs);
- 		return -ENOMEM;
- 	}
- 
--	for (i = 0; i < num_irqs; i++) {
--		sim->irqs[i].irqnum = sim->irq_base + i;
--		sim->irqs[i].enabled = false;
--		irq_set_chip(sim->irq_base + i, &sim->chip);
--		irq_set_chip_data(sim->irq_base + i, &sim->irqs[i]);
--		irq_set_handler(sim->irq_base + i, &handle_simple_irq);
--		irq_modify_status(sim->irq_base + i,
--				  IRQ_NOREQUEST | IRQ_NOAUTOEN, IRQ_NOPROBE);
--	}
--
- 	init_irq_work(&sim->work_ctx.work, irq_sim_handle_irq);
- 	sim->irq_count = num_irqs;
- 
--	return sim->irq_base;
-+	return sim->virq_base;
- }
- EXPORT_SYMBOL_GPL(irq_sim_init);
- 
-@@ -106,8 +132,8 @@ void irq_sim_fini(struct irq_sim *sim)
- {
- 	irq_work_sync(&sim->work_ctx.work);
- 	bitmap_free(sim->work_ctx.pending);
--	irq_free_descs(sim->irq_base, sim->irq_count);
--	kfree(sim->irqs);
-+	irq_domain_free_irqs(sim->virq_base, sim->irq_count);
-+	irq_domain_remove(sim->domain);
- }
- EXPORT_SYMBOL_GPL(irq_sim_fini);
- 
-@@ -151,6 +177,20 @@ int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
- }
- EXPORT_SYMBOL_GPL(devm_irq_sim_init);
- 
-+static struct irq_sim_irq_ctx *
-+irq_sim_get_ctx(struct irq_sim *sim, unsigned int offset)
-+{
-+	struct irq_sim_irq_ctx *ctx;
-+	struct irq_data *irq;
-+	int virq;
++	mutex_init(&chip->lock);
 +
-+	virq = irq_find_mapping(sim->domain, offset);
-+	irq = irq_domain_get_irq_data(sim->domain, virq);
-+	ctx = irq_data_get_irq_chip_data(irq);
-+
-+	return ctx;
-+}
-+
- /**
-  * irq_sim_fire - Enqueue an interrupt.
-  *
-@@ -159,7 +199,9 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
-  */
- void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
- {
--	if (sim->irqs[offset].enabled) {
-+	struct irq_sim_irq_ctx *ctx = irq_sim_get_ctx(sim, offset);
-+
-+	if (ctx->enabled) {
- 		set_bit(offset, sim->work_ctx.pending);
- 		irq_work_queue(&sim->work_ctx.work);
- 	}
-@@ -175,6 +217,6 @@ EXPORT_SYMBOL_GPL(irq_sim_fire);
-  */
- int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
- {
--	return sim->irqs[offset].irqnum;
-+	return irq_find_mapping(sim->domain, offset);
- }
- EXPORT_SYMBOL_GPL(irq_sim_irqnum);
+ 	gc = &chip->gc;
+ 	gc->base = base;
+ 	gc->ngpio = ngpio;
 -- 
 2.19.1
 
