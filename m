@@ -2,85 +2,159 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5FBC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 689E8C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 725352148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:32:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3BtuGejY"
+	by mail.kernel.org (Postfix) with ESMTP id 35F422148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:34:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfA2Fce (ORCPT
+        id S1726090AbfA2Fes (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 00:32:34 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:59788 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbfA2Fce (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 00:32:34 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0T5O6rd056072;
-        Tue, 29 Jan 2019 05:32:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=BEEIDna4m5f9/qSoFavB5KWRn03gy3kKEzy5uvV6YF8=;
- b=3BtuGejYXQ9B3GUg4947BlwW2cxltGt/IqurtlF2laG22kCfEYzRl1WNaOPINHSrWxWU
- WLyviX/KoPEOzz+bz8p0eHRGKfzUZxzoKbP778fuGuwVweF0V1w2XZiYgWF9KvXxty0R
- WFPLEW8HK59JqXnTYtRkniXzuCUxZjM5EkJ9eP2pd2oEkWXQqwqhMf7oNz9ypRhvkOBU
- kXS0OcQW0DPoki6GspFRuhpqRdyAn4QFfyFEC52Hc3PYSXcBE06fqVVfbNQbGq4l2ZQF
- rJl1/Mtcv0HW2HgwrtcW8fOexhFNE2fi9JFmcLIgjqHl4t8Tp9YlXMheH3dgyic2Om/D Pw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2q8g6r2382-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jan 2019 05:32:29 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0T5WOSe015566
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jan 2019 05:32:24 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0T5WN0Z029634;
-        Tue, 29 Jan 2019 05:32:23 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 28 Jan 2019 21:32:23 -0800
-To:     Johannes Thumshirn <jthumshirn@suse.de>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH] MAINTAINERS: Move FCoE to Hannes Reinecke
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190128110634.17243-1-jthumshirn@suse.de>
-Date:   Tue, 29 Jan 2019 00:32:21 -0500
-In-Reply-To: <20190128110634.17243-1-jthumshirn@suse.de> (Johannes Thumshirn's
-        message of "Mon, 28 Jan 2019 12:06:34 +0100")
-Message-ID: <yq14l9sf2qi.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 29 Jan 2019 00:34:48 -0500
+Received: from mga04.intel.com ([192.55.52.120]:60485 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725536AbfA2Fes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 00:34:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 21:34:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,536,1539673200"; 
+   d="scan'208";a="120282711"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga008.fm.intel.com with ESMTP; 28 Jan 2019 21:34:47 -0800
+Subject: [PATCH] nfit: Fix nfit_intel_shutdown_status() command submission
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 28 Jan 2019 21:22:10 -0800
+Message-ID: <154873933011.295327.10921465390915828081.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9150 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=708
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901290040
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The implementation is broken in all the ways the unit test did not touch:
 
-Johannes,
+1/ The local definition of in_buf and in_obj violated C99 initializer
+   expectations for zeroing. By only initializing 2 out of the three
+   struct members the compiler was free to zero-initialize the remaining
+   entry even though the aliased location in the union was initialized.
 
-> I'll be moving on to different things in the storage stack and Hannes
-> agreed to take over FCoE.
+2/ The implementation made assumptions about the state of the 'smart'
+   payload after command execution that are satisfied by
+   acpi_nfit_ctl(), but not acpi_evaluate_dsm().
 
-Applied to 5.1/scsi-queue. Thanks.
+3/ populate_shutdown_status() is skipped on Intel NVDIMMs due to the early
+   return for skipping the common _LS{I,R,W} enabling.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+4/ The input length should be zero.
+
+This breakage was missed due to the unit test implementation only
+testing the case where nfit_intel_shutdown_status() returns a valid
+payload.
+
+Much of this complexity would be saved if acpi_nfit_ctl() could be used, but
+that currently requires a 'struct nvdimm *' argument and one is not created
+until later in the init process. The health result is needed before the device
+is created because the payload gates whether the nmemX/nfit/dirty_shutdown
+property is visible in sysfs.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 0ead11181fe0 ("acpi, nfit: Collect shutdown status")
+Reported-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ drivers/acpi/nfit/core.c |   41 ++++++++++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index e18ade5d74e9..0a49c57334cc 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -1759,14 +1759,14 @@ static bool acpi_nvdimm_has_method(struct acpi_device *adev, char *method)
+ 
+ __weak void nfit_intel_shutdown_status(struct nfit_mem *nfit_mem)
+ {
++	struct device *dev = &nfit_mem->adev->dev;
+ 	struct nd_intel_smart smart = { 0 };
+ 	union acpi_object in_buf = {
+-		.type = ACPI_TYPE_BUFFER,
+-		.buffer.pointer = (char *) &smart,
+-		.buffer.length = sizeof(smart),
++		.buffer.type = ACPI_TYPE_BUFFER,
++		.buffer.length = 0,
+ 	};
+ 	union acpi_object in_obj = {
+-		.type = ACPI_TYPE_PACKAGE,
++		.package.type = ACPI_TYPE_PACKAGE,
+ 		.package.count = 1,
+ 		.package.elements = &in_buf,
+ 	};
+@@ -1781,8 +1781,15 @@ __weak void nfit_intel_shutdown_status(struct nfit_mem *nfit_mem)
+ 		return;
+ 
+ 	out_obj = acpi_evaluate_dsm(handle, guid, revid, func, &in_obj);
+-	if (!out_obj)
++	if (!out_obj || out_obj->type != ACPI_TYPE_BUFFER
++			|| out_obj->buffer.length < sizeof(smart)) {
++		dev_dbg(dev->parent, "%s: failed to retrieve initial health\n",
++				dev_name(dev));
++		ACPI_FREE(out_obj);
+ 		return;
++	}
++	memcpy(&smart, out_obj->buffer.pointer, sizeof(smart));
++	ACPI_FREE(out_obj);
+ 
+ 	if (smart.flags & ND_INTEL_SMART_SHUTDOWN_VALID) {
+ 		if (smart.shutdown_state)
+@@ -1793,7 +1800,6 @@ __weak void nfit_intel_shutdown_status(struct nfit_mem *nfit_mem)
+ 		set_bit(NFIT_MEM_DIRTY_COUNT, &nfit_mem->flags);
+ 		nfit_mem->dirty_shutdown = smart.shutdown_count;
+ 	}
+-	ACPI_FREE(out_obj);
+ }
+ 
+ static void populate_shutdown_status(struct nfit_mem *nfit_mem)
+@@ -1915,18 +1921,19 @@ static int acpi_nfit_add_dimm(struct acpi_nfit_desc *acpi_desc,
+ 		| 1 << ND_CMD_SET_CONFIG_DATA;
+ 	if (family == NVDIMM_FAMILY_INTEL
+ 			&& (dsm_mask & label_mask) == label_mask)
+-		return 0;
+-
+-	if (acpi_nvdimm_has_method(adev_dimm, "_LSI")
+-			&& acpi_nvdimm_has_method(adev_dimm, "_LSR")) {
+-		dev_dbg(dev, "%s: has _LSR\n", dev_name(&adev_dimm->dev));
+-		set_bit(NFIT_MEM_LSR, &nfit_mem->flags);
+-	}
++		/* skip _LS{I,R,W} enabling */;
++	else {
++		if (acpi_nvdimm_has_method(adev_dimm, "_LSI")
++				&& acpi_nvdimm_has_method(adev_dimm, "_LSR")) {
++			dev_dbg(dev, "%s: has _LSR\n", dev_name(&adev_dimm->dev));
++			set_bit(NFIT_MEM_LSR, &nfit_mem->flags);
++		}
+ 
+-	if (test_bit(NFIT_MEM_LSR, &nfit_mem->flags)
+-			&& acpi_nvdimm_has_method(adev_dimm, "_LSW")) {
+-		dev_dbg(dev, "%s: has _LSW\n", dev_name(&adev_dimm->dev));
+-		set_bit(NFIT_MEM_LSW, &nfit_mem->flags);
++		if (test_bit(NFIT_MEM_LSR, &nfit_mem->flags)
++				&& acpi_nvdimm_has_method(adev_dimm, "_LSW")) {
++			dev_dbg(dev, "%s: has _LSW\n", dev_name(&adev_dimm->dev));
++			set_bit(NFIT_MEM_LSW, &nfit_mem->flags);
++		}
+ 	}
+ 
+ 	populate_shutdown_status(nfit_mem);
+
