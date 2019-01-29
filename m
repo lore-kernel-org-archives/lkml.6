@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D41C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5705C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68A1621871
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A07AE2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762441;
-	bh=6QOlXpnjtRiOWiAC8dT3S7r/GwQBkltFX0FTOkx48nE=;
+	s=default; t=1548762447;
+	bh=/B+1Zv3ry4KRryELdIhteJaqUoi/SJfKMkQbQwRO8Xw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AIiFQ3vZr7iZW8phAbhOvhFjyt5Kii+A4qBbprwMYr5qyzn8KHclO7oo1H9K0FEdB
-	 3GGZ2fQbruCL2TFML+zQgKM1OGrS7dYS/3jP3+a5DupFGYK1ts0LHOGQ80lIBt0Zg+
-	 Dx/Q56fJ8Y1Kdg/4Ej/qUnFcOgugR4Zng2VGzc28=
+	b=gZ+LAOV8RJKYFGgZqUWJVULADxHWnuTzi4rjH9aAwpl3gBL8tkDsp7y9ZJVkbQsyc
+	 +c+r6Z4vJbBKYraAJP43ZqO6gJc8T1rEL6LoxT366XWSiFydLu0z8KjQVboEC1vv2x
+	 rb1oMl9dlCemXTpz3nAhwpaUAP+h4eLZ532ffbSU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731177AbfA2LrT (ORCPT
+        id S1731186AbfA2LrY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:47:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37922 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:47:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730763AbfA2LrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:16 -0500
+        id S1731172AbfA2LrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49F7721852;
-        Tue, 29 Jan 2019 11:47:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D94C20882;
+        Tue, 29 Jan 2019 11:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762435;
-        bh=6QOlXpnjtRiOWiAC8dT3S7r/GwQBkltFX0FTOkx48nE=;
+        s=default; t=1548762438;
+        bh=/B+1Zv3ry4KRryELdIhteJaqUoi/SJfKMkQbQwRO8Xw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d+5JOuHkaiLBDdEtfTNvOcMwdp6cAYU6OqVB/jOD1liTjXVWRuy1pnYXVheOh3S+2
-         Zh9dB/Y4cBO0ElJ6Otj02vUDoNZZedcTX3BJw0UTt0gfJXdJEj9xEfiN47+nRqPjlc
-         QY2sweXCGb24E99PQc9YBJFMQx12hZ1Y15y3S2F8=
+        b=V9uTZgeDI1KGx/OmFyeXxfX014252jDApKltE1ErZFr98wKBFa11L3406g1bqX8BI
+         0sNuB3+BBGPtN0CBMqlKsvrLCmg+LRz0IjOo7z+SZk4tclJhIaZmKZnpsw0X7EQHSV
+         w2m/nC0PDNjeI5tq22Nzmxv/oJaytL3bYH46Chkc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Raju Rangoju <rajur@chelsio.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 100/103] nvmet-rdma: fix null dereference under heavy load
-Date:   Tue, 29 Jan 2019 12:36:17 +0100
-Message-Id: <20190129113207.500254853@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Robert Shteynfeld <robert.shteynfeld@gmail.com>,
+        stable@kernel.org, Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 101/103] Revert "mm, memory_hotplug: initialize struct pages for the full memory section"
+Date:   Tue, 29 Jan 2019 12:36:18 +0100
+Message-Id: <20190129113207.561654704@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -67,71 +67,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Raju Rangoju <rajur@chelsio.com>
+From: Michal Hocko <mhocko@suse.com>
 
-commit 5cbab6303b4791a3e6713dfe2c5fda6a867f9adc upstream.
+commit 4aa9fc2a435abe95a1e8d7f8c7b3d6356514b37a upstream.
 
-Under heavy load if we don't have any pre-allocated rsps left, we
-dynamically allocate a rsp, but we are not actually allocating memory
-for nvme_completion (rsp->req.rsp). In such a case, accessing pointer
-fields (req->rsp->status) in nvmet_req_init() will result in crash.
+This reverts commit 2830bf6f05fb3e05bc4743274b806c821807a684.
 
-To fix this, allocate the memory for nvme_completion by calling
-nvmet_rdma_alloc_rsp()
+The underlying assumption that one sparse section belongs into a single
+numa node doesn't hold really. Robert Shteynfeld has reported a boot
+failure. The boot log was not captured but his memory layout is as
+follows:
 
-Fixes: 8407879c("nvmet-rdma:fix possible bogus dereference under heavy load")
+  Early memory node ranges
+    node   1: [mem 0x0000000000001000-0x0000000000090fff]
+    node   1: [mem 0x0000000000100000-0x00000000dbdf8fff]
+    node   1: [mem 0x0000000100000000-0x0000001423ffffff]
+    node   0: [mem 0x0000001424000000-0x0000002023ffffff]
 
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Raju Rangoju <rajur@chelsio.com>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This means that node0 starts in the middle of a memory section which is
+also in node1.  memmap_init_zone tries to initialize padding of a
+section even when it is outside of the given pfn range because there are
+code paths (e.g.  memory hotplug) which assume that the full worth of
+memory section is always initialized.
+
+In this particular case, though, such a range is already intialized and
+most likely already managed by the page allocator.  Scribbling over
+those pages corrupts the internal state and likely blows up when any of
+those pages gets used.
+
+Reported-by: Robert Shteynfeld <robert.shteynfeld@gmail.com>
+Fixes: 2830bf6f05fb ("mm, memory_hotplug: initialize struct pages for the full memory section")
+Cc: stable@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvme/target/rdma.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ mm/page_alloc.c |   12 ------------
+ 1 file changed, 12 deletions(-)
 
---- a/drivers/nvme/target/rdma.c
-+++ b/drivers/nvme/target/rdma.c
-@@ -139,6 +139,10 @@ static void nvmet_rdma_recv_done(struct
- static void nvmet_rdma_read_data_done(struct ib_cq *cq, struct ib_wc *wc);
- static void nvmet_rdma_qp_event(struct ib_event *event, void *priv);
- static void nvmet_rdma_queue_disconnect(struct nvmet_rdma_queue *queue);
-+static void nvmet_rdma_free_rsp(struct nvmet_rdma_device *ndev,
-+				struct nvmet_rdma_rsp *r);
-+static int nvmet_rdma_alloc_rsp(struct nvmet_rdma_device *ndev,
-+				struct nvmet_rdma_rsp *r);
- 
- static const struct nvmet_fabrics_ops nvmet_rdma_ops;
- 
-@@ -182,9 +186,17 @@ nvmet_rdma_get_rsp(struct nvmet_rdma_que
- 	spin_unlock_irqrestore(&queue->rsps_lock, flags);
- 
- 	if (unlikely(!rsp)) {
--		rsp = kmalloc(sizeof(*rsp), GFP_KERNEL);
-+		int ret;
-+
-+		rsp = kzalloc(sizeof(*rsp), GFP_KERNEL);
- 		if (unlikely(!rsp))
- 			return NULL;
-+		ret = nvmet_rdma_alloc_rsp(queue->dev, rsp);
-+		if (unlikely(ret)) {
-+			kfree(rsp);
-+			return NULL;
-+		}
-+
- 		rsp->allocated = true;
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5538,18 +5538,6 @@ not_early:
+ 			cond_resched();
+ 		}
  	}
+-#ifdef CONFIG_SPARSEMEM
+-	/*
+-	 * If the zone does not span the rest of the section then
+-	 * we should at least initialize those pages. Otherwise we
+-	 * could blow up on a poisoned page in some paths which depend
+-	 * on full sections being initialized (e.g. memory hotplug).
+-	 */
+-	while (end_pfn % PAGES_PER_SECTION) {
+-		__init_single_page(pfn_to_page(end_pfn), end_pfn, zone, nid);
+-		end_pfn++;
+-	}
+-#endif
+ }
  
-@@ -197,6 +209,7 @@ nvmet_rdma_put_rsp(struct nvmet_rdma_rsp
- 	unsigned long flags;
- 
- 	if (unlikely(rsp->allocated)) {
-+		nvmet_rdma_free_rsp(rsp->queue->dev, rsp);
- 		kfree(rsp);
- 		return;
- 	}
+ static void __meminit zone_init_free_lists(struct zone *zone)
 
 
