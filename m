@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7F4C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E0EC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A234214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:42:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 147E520882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:42:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762169;
-	bh=2HKTe0TVMVZcKEgHEYel5Ff2z3+M1XetuQMlAbyZzNs=;
+	s=default; t=1548762174;
+	bh=oY5Rap6zRcEXMcY1pT14kBkDPaJlQNE/aXFV6hKgQkA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MseF5WulaEHmkWGBnuwKuoBT5HviPpkNz5wb30VmsQejLcSZS96OlBV8MrRhzPmDQ
-	 I/sym/tu7s+6Qpw6vYBnp9PckCzXvD1AKXZZkggA2g55a8dF4vOtrguuJ67XYIdHoS
-	 gmEZCtBp7FyW5aULt8uyPdxfKuR5RFmUju9MDVuw=
+	b=RhaMz+480Wl2esC/9JaZNKP3vYQXU5AM98WzByg9l73w8NepLQgYXKLEgAGnc4VTJ
+	 HJCBnQEpLQQlW4CC0MsKkbRLcDB8+F+sVygqv0t5qIFVrGClvsOtGT8T3ib1hMD1Ww
+	 lOPVk5KLoaPC/7D7Pat9dam0c0kM1KTrT9+QYEkU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729428AbfA2Lms (ORCPT
+        id S1730162AbfA2Lmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:42:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60646 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:42:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729083AbfA2Lmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:42:45 -0500
+        id S1729083AbfA2Lmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:42:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E363220856;
-        Tue, 29 Jan 2019 11:42:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41C6F20882;
+        Tue, 29 Jan 2019 11:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762164;
-        bh=2HKTe0TVMVZcKEgHEYel5Ff2z3+M1XetuQMlAbyZzNs=;
+        s=default; t=1548762169;
+        bh=oY5Rap6zRcEXMcY1pT14kBkDPaJlQNE/aXFV6hKgQkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aaQ5taBEm/3M/ngxUvpSO2t0Auzb+ocrJErna96H8YtTN/+O4guR1QbAXbnKoNKuY
-         WP8QsYSqjx4O0lOsh1sL6h5JPwuI4faVZZq8SVCAQ7jyAC9sGbTNPfOF3tnz+PpkYI
-         u4gPY5bs3S0Rb7LSPNDClvbIajXPjYaPTAU9Ni70=
+        b=H30mmwqrwMRB+jpgnuQGPL9WwTQFw/ZhirlGhabe+waamh1yzLtrVnAvjH/RVkdRb
+         iQsWXKincL9zVYg6J/HZObWb3w/G1FRi7eS949LXlSjuAaapAinDZV+obGX8RQsyzj
+         OrrXetjCmjJUtVv8QPR2Sxj0BdqkVckpfWC9U87o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
+        stable@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
+        Paul Blakey <paulb@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ivan Vecera <ivecera@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 013/103] mlxsw: spectrum_fid: Update dummy FID index
-Date:   Tue, 29 Jan 2019 12:34:50 +0100
-Message-Id: <20190129113200.321744932@linuxfoundation.org>
+Subject: [PATCH 4.19 015/103] net/sched: cls_flower: allocate mask dynamically in fl_change()
+Date:   Tue, 29 Jan 2019 12:34:52 +0100
+Message-Id: <20190129113200.444340274@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,43 +68,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nir Dotan <nird@mellanox.com>
+From: Ivan Vecera <ivecera@redhat.com>
 
-[ Upstream commit a11dcd6497915ba79d95ef4fe2541aaac27f6201 ]
+[ Upstream commit 2cddd20147826aef283115abb00012d4dafe3cdb ]
 
-When using a tc flower action of egress mirred redirect, the driver adds
-an implicit FID setting action. This implicit action sets a dummy FID to
-the packet and is used as part of a design for trapping unmatched flows
-in OVS.  While this implicit FID setting action is supposed to be a NOP
-when a redirect action is added, in Spectrum-2 the FID record is
-consulted as the dummy FID index is an 802.1D FID index and the packet
-is dropped instead of being redirected.
+Recent changes (especially 05cd271fd61a ("cls_flower: Support multiple
+masks per priority")) in the fl_flow_mask structure grow it and its
+current size e.g. on x86_64 with defconfig is 760 bytes and more than
+1024 bytes with some debug options enabled. Prior the mentioned commit
+its size was 176 bytes (using defconfig on x86_64).
+With regard to this fact it's reasonable to allocate this structure
+dynamically in fl_change() to reduce its stack size.
 
-Set the dummy FID index value to be within 802.1Q range. This satisfies
-both Spectrum-1 which ignores the FID and Spectrum-2 which identifies it
-as an 802.1Q FID and will then follow the redirect action.
+v2:
+- use kzalloc() instead of kcalloc()
 
-Fixes: c3ab435466d5 ("mlxsw: spectrum: Extend to support Spectrum-2 ASIC")
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Fixes: 05cd271fd61a ("cls_flower: Support multiple masks per priority")
+Cc: Jiri Pirko <jiri@resnulli.us>
+Cc: Paul Blakey <paulb@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ivan Vecera <ivecera@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/sched/cls_flower.c |   19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c
-@@ -696,8 +696,8 @@ static const struct mlxsw_sp_fid_ops mlx
- static const struct mlxsw_sp_fid_family mlxsw_sp_fid_dummy_family = {
- 	.type			= MLXSW_SP_FID_TYPE_DUMMY,
- 	.fid_size		= sizeof(struct mlxsw_sp_fid),
--	.start_index		= MLXSW_SP_RFID_BASE - 1,
--	.end_index		= MLXSW_SP_RFID_BASE - 1,
-+	.start_index		= VLAN_N_VID - 1,
-+	.end_index		= VLAN_N_VID - 1,
- 	.ops			= &mlxsw_sp_fid_dummy_ops,
- };
+--- a/net/sched/cls_flower.c
++++ b/net/sched/cls_flower.c
+@@ -1176,17 +1176,23 @@ static int fl_change(struct net *net, st
+ 	struct cls_fl_head *head = rtnl_dereference(tp->root);
+ 	struct cls_fl_filter *fold = *arg;
+ 	struct cls_fl_filter *fnew;
++	struct fl_flow_mask *mask;
+ 	struct nlattr **tb;
+-	struct fl_flow_mask mask = {};
+ 	int err;
+ 
+ 	if (!tca[TCA_OPTIONS])
+ 		return -EINVAL;
+ 
+-	tb = kcalloc(TCA_FLOWER_MAX + 1, sizeof(struct nlattr *), GFP_KERNEL);
+-	if (!tb)
++	mask = kzalloc(sizeof(struct fl_flow_mask), GFP_KERNEL);
++	if (!mask)
+ 		return -ENOBUFS;
+ 
++	tb = kcalloc(TCA_FLOWER_MAX + 1, sizeof(struct nlattr *), GFP_KERNEL);
++	if (!tb) {
++		err = -ENOBUFS;
++		goto errout_mask_alloc;
++	}
++
+ 	err = nla_parse_nested(tb, TCA_FLOWER_MAX, tca[TCA_OPTIONS],
+ 			       fl_policy, NULL);
+ 	if (err < 0)
+@@ -1229,12 +1235,12 @@ static int fl_change(struct net *net, st
+ 		}
+ 	}
+ 
+-	err = fl_set_parms(net, tp, fnew, &mask, base, tb, tca[TCA_RATE], ovr,
++	err = fl_set_parms(net, tp, fnew, mask, base, tb, tca[TCA_RATE], ovr,
+ 			   tp->chain->tmplt_priv, extack);
+ 	if (err)
+ 		goto errout_idr;
+ 
+-	err = fl_check_assign_mask(head, fnew, fold, &mask);
++	err = fl_check_assign_mask(head, fnew, fold, mask);
+ 	if (err)
+ 		goto errout_idr;
+ 
+@@ -1281,6 +1287,7 @@ static int fl_change(struct net *net, st
+ 	}
+ 
+ 	kfree(tb);
++	kfree(mask);
+ 	return 0;
+ 
+ errout_mask:
+@@ -1294,6 +1301,8 @@ errout:
+ 	kfree(fnew);
+ errout_tb:
+ 	kfree(tb);
++errout_mask_alloc:
++	kfree(mask);
+ 	return err;
+ }
  
 
 
