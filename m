@@ -3,258 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 966FDC282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B4CC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FC7E2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4764C2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:48:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729720AbfA2Wrh (ORCPT
+        id S1729746AbfA2WsX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:47:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50792 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727525AbfA2Wrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:47:37 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E371989AC5;
-        Tue, 29 Jan 2019 22:47:35 +0000 (UTC)
-Received: from redhat.com (ovpn-123-79.rdu2.redhat.com [10.10.123.79])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 360E72C8C3;
-        Tue, 29 Jan 2019 22:47:33 +0000 (UTC)
-Date:   Tue, 29 Jan 2019 17:47:32 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, xuyandong <xuyandong2@huawei.com>,
-        Yinghai Lu <yinghai@kernel.org>,
-        Jesse Barnes <jbarnes@virtuousgeek.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Ofer Hayut <ofer@lightbitslabs.com>,
-        Roy Shterman <roys@lightbitslabs.com>,
-        Keith Busch <keith.busch@intel.com>,
-        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Probe bridge window attributes once at
- enumeration-time
-Message-ID: <20190129174504-mutt-send-email-mst@kernel.org>
-References: <154818377425.41851.650909794935936003.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20190129224333.GE91506@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129224333.GE91506@google.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 29 Jan 2019 22:47:36 +0000 (UTC)
+        Tue, 29 Jan 2019 17:48:23 -0500
+Received: from smtprelay0210.hostedemail.com ([216.40.44.210]:54655 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727525AbfA2WsX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 17:48:23 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 13A5B100E86C4;
+        Tue, 29 Jan 2019 22:48:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: geese95_ea4c13ea441b
+X-Filterd-Recvd-Size: 2428
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 29 Jan 2019 22:48:20 +0000 (UTC)
+Message-ID: <a8ae5209f676171a97cae7211411e7ced3ebefbc.camel@perches.com>
+Subject: Re: [PATCH] iio:potentiostat:lmp91000: solve codestyle WARNINGs and
+ CHECKs
+From:   Joe Perches <joe@perches.com>
+To:     Lucas Oshiro <lucasseikioshiro@gmail.com>, jic23@kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-usp@googlegroups.com,
+        Anderson Reis <andersonreisrosa@gmail.com>
+Date:   Tue, 29 Jan 2019 14:48:19 -0800
+In-Reply-To: <20190129183656.15656-1-lucasseikioshiro@gmail.com>
+References: <20190129183656.15656-1-lucasseikioshiro@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 04:43:33PM -0600, Bjorn Helgaas wrote:
-> On Tue, Jan 22, 2019 at 01:02:54PM -0600, Bjorn Helgaas wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> > 
-> > pci_bridge_check_ranges() determines whether a bridge supports the optional
-> > I/O and prefetchable memory windows and sets the flag bits in the bridge
-> > resources.  This *could* be done once during enumeration except that the
-> > resource allocation code completely clears the flag bits, e.g., in the
-> > pci_assign_unassigned_bridge_resources() path.
-> > 
-> > The problem with pci_bridge_check_ranges() in the resource allocation path
-> > is that we may allocate resources after devices have been claimed by
-> > drivers, and pci_bridge_check_ranges() *changes* the window registers to
-> > determine whether they're writable.  This may break concurrent accesses to
-> > devices behind the bridge.
-> > 
-> > Add a new pci_read_bridge_windows() to determine whether a bridge supports
-> > the optional windows, call it once during enumeration, remember the
-> > results, and change pci_bridge_check_ranges() so it doesn't touch the
-> > bridge windows but sets the flag bits based on those remembered results.
-> > 
-> > Link: https://lore.kernel.org/linux-pci/1506151482-113560-1-git-send-email-wangzhou1@hisilicon.com
-> > Link: https://lists.gnu.org/archive/html/qemu-devel/2018-12/msg02082.html
-> > Reported-by: xuyandong <xuyandong2@huawei.com>
-> > Tested-by: xuyandong <xuyandong2@huawei.com>
-> > Cc: Sagi Grimberg <sagi@grimberg.me>
-> > Cc: Ofer Hayut <ofer@lightbitslabs.com>
-> > Cc: Roy Shterman <roys@lightbitslabs.com>
-> > Cc: Keith Busch <keith.busch@intel.com>
-> > Cc: Zhou Wang <wangzhou1@hisilicon.com>
+On Tue, 2019-01-29 at 16:36 -0200, Lucas Oshiro wrote:
+> Solve most of the checkpatch.pl WARNINGs and CHECKs on lmp9100.c. They
+> are the following:
 > 
-> Applied to pci/enumeration for v5.1.
-> 
-> This is fairly simple in concept, but doesn't meet the letter of the
-> restrictions in Documentation/process/stable-kernel-rules.rst, so I
-> didn't tag it for stable.
-> 
-> Is there a compelling argument to mark it for stable?
+> lmp91000.c:116: CHECK: Unnecessary parentheses around 'state != channel'
+> lmp91000.c:116: CHECK: Unnecessary parentheses around 'channel == LMP91000_REG_MODECN_TEMP'
+> lmp91000.c:214: CHECK: braces {} should be used on all arms of this statement
+> lmp91000.c:216: CHECK: Unbalanced braces around else statement
+> lmp91000.c:258: WARNING: line over 80 characters
+> lmp91000.c:279: CHECK: Please don't use multiple blank lines
 
-Well it's needed downstream.
-It's a bit above 100 lines with context. Is this what you mean?
-If yes how about using my patch for stable as an alternative?
-The rules allow for equivalent patches.
+Some will say this is too many things to do at once.
+I think it's mostly fine, but there are a few nits
+that also could use fixing.
+
+> diff --git a/drivers/iio/potentiostat/lmp91000.c b/drivers/iio/potentiostat/lmp91000.c
+[]
+> @@ -211,9 +211,9 @@ static int lmp91000_read_config(struct lmp91000_data *data)
+>  
+>  	ret = of_property_read_u32(np, "ti,tia-gain-ohm", &val);
+>  	if (ret) {
+> -		if (of_property_read_bool(np, "ti,external-tia-resistor"))
+> +		if (of_property_read_bool(np, "ti,external-tia-resistor")) {
+>  			val = 0;
+> -		else {
+> +		} else {
+>  			dev_err(dev, "no ti,tia-gain-ohm defined");
+>  			return ret;
+>  		}
+
+This could use inverting the test
+
+	if (ret) {
+		if (!of_property_read_bool(...)) {
+			dev_err(dev, "no ti,ti-gain-ohm defined\n");
+			return ret;
+		}
+		val = 0;
+	}
+
+Also the dev_err is missing a '\n' termination
 
 
-> > ---
-> >  drivers/pci/probe.c     |   52 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/pci/setup-bus.c |   45 ++++-------------------------------------
-> >  include/linux/pci.h     |    3 +++
-> >  3 files changed, 59 insertions(+), 41 deletions(-)
-> > 
-> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> > index 257b9f6f2ebb..2ef8b954c65a 100644
-> > --- a/drivers/pci/probe.c
-> > +++ b/drivers/pci/probe.c
-> > @@ -348,6 +348,57 @@ static void pci_read_bases(struct pci_dev *dev, unsigned int howmany, int rom)
-> >  	}
-> >  }
-> >  
-> > +static void pci_read_bridge_windows(struct pci_dev *bridge)
-> > +{
-> > +	u16 io;
-> > +	u32 pmem, tmp;
-> > +
-> > +	pci_read_config_word(bridge, PCI_IO_BASE, &io);
-> > +	if (!io) {
-> > +		pci_write_config_word(bridge, PCI_IO_BASE, 0xe0f0);
-> > +		pci_read_config_word(bridge, PCI_IO_BASE, &io);
-> > +		pci_write_config_word(bridge, PCI_IO_BASE, 0x0);
-> > +	}
-> > +	if (io)
-> > +		bridge->io_window = 1;
-> > +
-> > +	/*
-> > +	 * DECchip 21050 pass 2 errata: the bridge may miss an address
-> > +	 * disconnect boundary by one PCI data phase.  Workaround: do not
-> > +	 * use prefetching on this device.
-> > +	 */
-> > +	if (bridge->vendor == PCI_VENDOR_ID_DEC && bridge->device == 0x0001)
-> > +		return;
-> > +
-> > +	pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
-> > +	if (!pmem) {
-> > +		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
-> > +					       0xffe0fff0);
-> > +		pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
-> > +		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE, 0x0);
-> > +	}
-> > +	if (!pmem)
-> > +		return;
-> > +
-> > +	bridge->pref_window = 1;
-> > +
-> > +	if ((pmem & PCI_PREF_RANGE_TYPE_MASK) == PCI_PREF_RANGE_TYPE_64) {
-> > +
-> > +		/*
-> > +		 * Bridge claims to have a 64-bit prefetchable memory
-> > +		 * window; verify that the upper bits are actually
-> > +		 * writable.
-> > +		 */
-> > +		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32, &pmem);
-> > +		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > +				       0xffffffff);
-> > +		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32, &tmp);
-> > +		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32, pmem);
-> > +		if (tmp)
-> > +			bridge->pref_64_window = 1;
-> > +	}
-> > +}
-> > +
-> >  static void pci_read_bridge_io(struct pci_bus *child)
-> >  {
-> >  	struct pci_dev *dev = child->self;
-> > @@ -1739,6 +1790,7 @@ int pci_setup_device(struct pci_dev *dev)
-> >  		pci_read_irq(dev);
-> >  		dev->transparent = ((dev->class & 0xff) == 1);
-> >  		pci_read_bases(dev, 2, PCI_ROM_ADDRESS1);
-> > +		pci_read_bridge_windows(dev);
-> >  		set_pcie_hotplug_bridge(dev);
-> >  		pos = pci_find_capability(dev, PCI_CAP_ID_SSVID);
-> >  		if (pos) {
-> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> > index ed960436df5e..1941bb0a6c13 100644
-> > --- a/drivers/pci/setup-bus.c
-> > +++ b/drivers/pci/setup-bus.c
-> > @@ -735,58 +735,21 @@ int pci_claim_bridge_resource(struct pci_dev *bridge, int i)
-> >     base/limit registers must be read-only and read as 0. */
-> >  static void pci_bridge_check_ranges(struct pci_bus *bus)
-> >  {
-> > -	u16 io;
-> > -	u32 pmem;
-> >  	struct pci_dev *bridge = bus->self;
-> > -	struct resource *b_res;
-> > +	struct resource *b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
-> >  
-> > -	b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
-> >  	b_res[1].flags |= IORESOURCE_MEM;
-> >  
-> > -	pci_read_config_word(bridge, PCI_IO_BASE, &io);
-> > -	if (!io) {
-> > -		pci_write_config_word(bridge, PCI_IO_BASE, 0xe0f0);
-> > -		pci_read_config_word(bridge, PCI_IO_BASE, &io);
-> > -		pci_write_config_word(bridge, PCI_IO_BASE, 0x0);
-> > -	}
-> > -	if (io)
-> > +	if (bridge->io_window)
-> >  		b_res[0].flags |= IORESOURCE_IO;
-> >  
-> > -	/*  DECchip 21050 pass 2 errata: the bridge may miss an address
-> > -	    disconnect boundary by one PCI data phase.
-> > -	    Workaround: do not use prefetching on this device. */
-> > -	if (bridge->vendor == PCI_VENDOR_ID_DEC && bridge->device == 0x0001)
-> > -		return;
-> > -
-> > -	pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
-> > -	if (!pmem) {
-> > -		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
-> > -					       0xffe0fff0);
-> > -		pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
-> > -		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE, 0x0);
-> > -	}
-> > -	if (pmem) {
-> > +	if (bridge->pref_window) {
-> >  		b_res[2].flags |= IORESOURCE_MEM | IORESOURCE_PREFETCH;
-> > -		if ((pmem & PCI_PREF_RANGE_TYPE_MASK) ==
-> > -		    PCI_PREF_RANGE_TYPE_64) {
-> > +		if (bridge->pref_64_window) {
-> >  			b_res[2].flags |= IORESOURCE_MEM_64;
-> >  			b_res[2].flags |= PCI_PREF_RANGE_TYPE_64;
-> >  		}
-> >  	}
-> > -
-> > -	/* double check if bridge does support 64 bit pref */
-> > -	if (b_res[2].flags & IORESOURCE_MEM_64) {
-> > -		u32 mem_base_hi, tmp;
-> > -		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > -					 &mem_base_hi);
-> > -		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > -					       0xffffffff);
-> > -		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32, &tmp);
-> > -		if (!tmp)
-> > -			b_res[2].flags &= ~IORESOURCE_MEM_64;
-> > -		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
-> > -				       mem_base_hi);
-> > -	}
-> >  }
-> >  
-> >  /* Helper function for sizing routines: find first available
-> > diff --git a/include/linux/pci.h b/include/linux/pci.h
-> > index 65f1d8c2f082..40b327b814aa 100644
-> > --- a/include/linux/pci.h
-> > +++ b/include/linux/pci.h
-> > @@ -373,6 +373,9 @@ struct pci_dev {
-> >  	bool		match_driver;		/* Skip attaching driver */
-> >  
-> >  	unsigned int	transparent:1;		/* Subtractive decode bridge */
-> > +	unsigned int	io_window:1;		/* Bridge has I/O window */
-> > +	unsigned int	pref_window:1;		/* Bridge has pref mem window */
-> > +	unsigned int	pref_64_window:1;	/* Pref mem window is 64-bit */
-> >  	unsigned int	multifunction:1;	/* Multi-function device */
-> >  
-> >  	unsigned int	is_busmaster:1;		/* Is busmaster */
-> > 
