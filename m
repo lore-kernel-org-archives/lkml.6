@@ -2,227 +2,177 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56903C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5467C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A2AF2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:18:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1u6VfbH"
+	by mail.kernel.org (Postfix) with ESMTP id B290021874
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:20:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbfA2QSI (ORCPT
+        id S1728201AbfA2QUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:18:08 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40621 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfA2QSI (ORCPT
+        Tue, 29 Jan 2019 11:20:02 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.46]:21787 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725828AbfA2QUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:18:08 -0500
-Received: by mail-lf1-f66.google.com with SMTP id v5so15044386lfe.7
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 08:18:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zQ9HptmdOWJ9u9idVqDsmESiFBgfBiqm+pbhrVDO9qE=;
-        b=a1u6VfbHu0XhUBPA9meYk+NPYYvfrvLI3EffjAPM+xeblatTcIdmuwE16U85fJqHRR
-         N+Yo2eSJ5GeJTJtgJgfL0Xwm0HNhKf7ZDqJQqoo+cockoPVGkEtJZLx5y9v7GT58YGkO
-         N4urZ4CT1vFCWlPaUg6X2h2lwi6NHfhgVKce3BvGRRShEhgwQDPhljs2pspkShLfD4XV
-         z5bNvK1VqKLslqvC16hKcZuyFQV1EWR1yP4pKSZyNGPFJjjgtY0G2cr52+iCB7d8Zb4C
-         utpHNl/KE66ZFJnUXEN/t7XaIzoQ1o2PpX83KUmM2XxMJHP9fuS9Gr24lYV8gHU/4XCZ
-         TtIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zQ9HptmdOWJ9u9idVqDsmESiFBgfBiqm+pbhrVDO9qE=;
-        b=aCbKjjrM8ezNKm1uOTx1jVACX6eW9daO2gscodzP6Wz5NbFAWoEjpvwVai/IOJWloV
-         dhqxkGHYEiDhvUL8r3NmNiYVifcfxYX9UKlWQoKKGHSLIi43r4yNSI4UQB50xQociPKq
-         /w/AUht2rYq3iCpEBZqu0ew4roKa53yigGQK50HeDO6t9cJeEwPQYrSg1WhMk5c7TE+B
-         C/80GhckUipyCIl21bFsMaIKZ4dfHdkx/aXCu40VI5/cIrBoiMWkj99SyZpEh+dSTLYj
-         AsbtYhRFYQPyo3j307erAqQwxTZKrs8cTXZFsMw6T7hqxwmnd50Yudk8viPK1oQj6zGM
-         eufQ==
-X-Gm-Message-State: AHQUAubNgAivcNfR1fnFx+b/U3DSbSnYiN97B6pQXPaksrwetKvr/S+2
-        rmNmifPwaycSTyfEIZZEOHw=
-X-Google-Smtp-Source: AHgI3IZU9GTIu2eWt3iCt52xb3nejqK0a2b3uXyjkGCOLMVKz7o+u7T3hQWCgTTA/SXIlvAi9SYf7w==
-X-Received: by 2002:ac2:4243:: with SMTP id m3mr2329267lfl.5.1548778684646;
-        Tue, 29 Jan 2019 08:18:04 -0800 (PST)
-Received: from pc636 ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id x24-v6sm3974681ljc.54.2019.01.29.08.18.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 08:18:03 -0800 (PST)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Tue, 29 Jan 2019 17:17:54 +0100
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v1 2/2] mm: add priority threshold to
- __purge_vmap_area_lazy()
-Message-ID: <20190129161754.phdr3puhp4pjrnao@pc636>
-References: <20190124115648.9433-1-urezki@gmail.com>
- <20190124115648.9433-3-urezki@gmail.com>
- <20190128120429.17819bd348753c2d7ed3a7b9@linux-foundation.org>
+        Tue, 29 Jan 2019 11:20:02 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 07F42C91E0B
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:20:01 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id oW7EgNGMYdnCeoW7FgP9Jm; Tue, 29 Jan 2019 10:20:01 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=34782 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1goW7E-002x4J-AT; Tue, 29 Jan 2019 10:20:00 -0600
+Subject: Re: [PATCH] x86/events: Mark expected switch fall-throughs
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20190125184917.GA7289@embeddedor>
+ <20190129152500.GA25706@zn.tnic>
+ <8aa46db0-6983-62c4-7dc6-e006d20cd84b@embeddedor.com>
+ <20190129160753.GA27037@zn.tnic>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <db4c4c57-fcdb-5101-a3b6-d1f3c587185e@embeddedor.com>
+Date:   Tue, 29 Jan 2019 10:19:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128120429.17819bd348753c2d7ed3a7b9@linux-foundation.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190129160753.GA27037@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1goW7E-002x4J-AT
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:34782
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 12:04:29PM -0800, Andrew Morton wrote:
-> On Thu, 24 Jan 2019 12:56:48 +0100 "Uladzislau Rezki (Sony)" <urezki@gmail.com> wrote:
+
+
+On 1/29/19 10:07 AM, Borislav Petkov wrote:
+> On Tue, Jan 29, 2019 at 09:58:05AM -0600, Gustavo A. R. Silva wrote:
+>> $ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback arch/x86/events/intel/core.c
 > 
-> > commit 763b218ddfaf ("mm: add preempt points into
-> > __purge_vmap_area_lazy()")
-> > 
-> > introduced some preempt points, one of those is making an
-> > allocation more prioritized over lazy free of vmap areas.
-> > 
-> > Prioritizing an allocation over freeing does not work well
-> > all the time, i.e. it should be rather a compromise.
-> > 
-> > 1) Number of lazy pages directly influence on busy list length
-> > thus on operations like: allocation, lookup, unmap, remove, etc.
-> > 
-> > 2) Under heavy stress of vmalloc subsystem i run into a situation
-> > when memory usage gets increased hitting out_of_memory -> panic
-> > state due to completely blocking of logic that frees vmap areas
-> > in the __purge_vmap_area_lazy() function.
-> > 
-> > Establish a threshold passing which the freeing is prioritized
-> > back over allocation creating a balance between each other.
+> You need to have -f when supplying a file:
 > 
-> It would be useful to credit the vmalloc test driver for this
-> discovery, and perhaps to identify specifically which test triggered
-> the kernel misbehaviour.  Please send along suitable words and I'll add
-> them.
-> 
-Please see below more detail of testing:
-
-<snip>
-Using vmalloc test driver in "stress mode", i.e. When all available test
-cases are run simultaneously on all online CPUs applying a pressure on the
-vmalloc subsystem, my HiKey 960 board runs out of memory due to the fact
-that __purge_vmap_area_lazy() logic simply is not able to free pages in
-time.
-
-How i run it:
-
-1) You should build your kernel with CONFIG_TEST_VMALLOC=m
-2) ./tools/testing/selftests/vm/test_vmalloc.sh stress
-
-during this test "vmap_lazy_nr" pages will go far beyond acceptable
-lazy_max_pages() threshold, that will lead to enormous busy list size
-and other problems including allocation time and so on.
-<snip>
-> 
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -661,23 +661,27 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
-> >  	struct llist_node *valist;
-> >  	struct vmap_area *va;
-> >  	struct vmap_area *n_va;
-> > -	bool do_free = false;
-> > +	int resched_threshold;
-> >  
-> >  	lockdep_assert_held(&vmap_purge_lock);
-> >  
-> >  	valist = llist_del_all(&vmap_purge_list);
-> > +	if (unlikely(valist == NULL))
-> > +		return false;
-> 
-> Why this change?
-> 
-I decided to refactor a bit, simplify and get rid of unneeded
-do_free check logic. I think it is more straightforward just to
-check if list is empty or not, instead of accessing to "do_free"
-"n" times in a loop.
-
-I can drop it, or upload as separate patch. What is your view?
-
-> > +	/*
-> > +	 * TODO: to calculate a flush range without looping.
-> > +	 * The list can be up to lazy_max_pages() elements.
-> > +	 */
-> 
-> How important is this?
-> 
-It depends on vmap_lazy_nr pages in the list we iterate. For example
-on my ARM 8 cores with 4Gb system i see that __purge_vmap_area_lazy()
-can take up to 12 milliseconds because of long list. That is why there
-is the cond_resched_lock().
-
-As for this first loop's time execution, it takes ~4/5 milliseconds to
-find out the flush range. Probably it is not so important since it is
-not done in atomic context means it can be interrupted or preempted.
-So, it will increase execution time of the current process that does:
-
-vfree()/etc -> __purge_vmap_area_lazy().
-
-From the other hand if we could calculate that range in runtime, i
-mean when we add a VA to the vmap_purge_list checking va->va_start
-and va->va_end with min/max we could get rid of that loop. But this
-is just an idea.
-
-> >  	llist_for_each_entry(va, valist, purge_list) {
-> >  		if (va->va_start < start)
-> >  			start = va->va_start;
-> >  		if (va->va_end > end)
-> >  			end = va->va_end;
-> > -		do_free = true;
-> >  	}
-> >  
-> > -	if (!do_free)
-> > -		return false;
-> > -
-> >  	flush_tlb_kernel_range(start, end);
-> > +	resched_threshold = (int) lazy_max_pages() << 1;
-> 
-> Is the typecast really needed?
-> 
-> Perhaps resched_threshold shiould have unsigned long type and perhaps
-> vmap_lazy_nr should be atomic_long_t?
-> 
-I think so. Especially that atomit_t is 32 bit integer value on both 32
-and 64 bit systems. lazy_max_pages() deals with unsigned long that is 8
-bytes on 64 bit system, thus vmap_lazy_nr should be 8 bytes on 64 bit
-as well.
-
-Should i send it as separate patch? What is your view?
-
-> >  	spin_lock(&vmap_area_lock);
-> >  	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
-> > @@ -685,7 +689,9 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
-> >  
-> >  		__free_vmap_area(va);
-> >  		atomic_sub(nr, &vmap_lazy_nr);
-> > -		cond_resched_lock(&vmap_area_lock);
-> > +
-> > +		if (atomic_read(&vmap_lazy_nr) < resched_threshold)
-> > +			cond_resched_lock(&vmap_area_lock);
-> >  	}
-> >  	spin_unlock(&vmap_area_lock);
-> >  	return true;
+> scripts/get_maintainer.pl -f arch/x86/events/intel/core.c
 > 
 
-Thank you for your comments and review.
+You're correct.  I used the command I use for patches.
+
+> and the pattern is there:
+> 
+> PERFORMANCE EVENTS SUBSYSTEM
+> M:      Peter Zijlstra <peterz@infradead.org>
+> ...
+> F:      arch/*/events/*
+> 
+> yet it still doesn't list Peter as maintainer:
+> 
+
+Yep. And this is the reason why I didn't include him.
+
+> Thomas Gleixner <tglx@linutronix.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+> Ingo Molnar <mingo@redhat.com> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT),commit_signer:21/22=95%)
+> Borislav Petkov <bp@alien8.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+> "H. Peter Anvin" <hpa@zytor.com> (reviewer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+> x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+> Peter Zijlstra <peterz@infradead.org> (commit_signer:19/22=86%,authored:3/22=14%,added_lines:22/382=6%,removed_lines:13/122=11%)
+> Kan Liang <kan.liang@linux.intel.com> (commit_signer:11/22=50%,authored:10/22=45%,added_lines:144/382=38%,removed_lines:73/122=60%)
+> Jiri Olsa <jolsa@kernel.org> (commit_signer:4/22=18%,authored:4/22=18%,added_lines:99/382=26%,removed_lines:32/122=26%)
+> Andi Kleen <ak@linux.intel.com> (added_lines:113/382=30%)
+> linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)
+> 
+> if you change the pattern to
+> 
+> F:      arch/*/events/
+> 
+> i.e., drop the '*', then it works:
+> 
+> $ scripts/get_maintainer.pl -f arch/x86/events/intel/core.c
+
+Yeah. But I don't want to send patches to every person that has touched the file.
+
+> Peter Zijlstra <peterz@infradead.org> (supporter:PERFORMANCE EVENTS SUBSYSTEM,commit_signer:19/22=86%,authored:3/22=14%,added_lines:22/382=6%,removed_lines:13/122=11%)
+> Ingo Molnar <mingo@redhat.com> (supporter:PERFORMANCE EVENTS SUBSYSTEM,commit_signer:21/22=95%)
+> Arnaldo Carvalho de Melo <acme@kernel.org> (supporter:PERFORMANCE EVENTS SUBSYSTEM)
+> Alexander Shishkin <alexander.shishkin@linux.intel.com> (reviewer:PERFORMANCE EVENTS SUBSYSTEM)
+> Jiri Olsa <jolsa@redhat.com> (reviewer:PERFORMANCE EVENTS SUBSYSTEM,commit_signer:4/22=18%,authored:4/22=18%,added_lines:99/382=26%,removed_lines:32/122=26%)
+> Namhyung Kim <namhyung@kernel.org> (reviewer:PERFORMANCE EVENTS SUBSYSTEM)
+> ...
+> 
 
 --
-Vlad Rezki
+Gustavo
