@@ -3,121 +3,218 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98625C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD0AC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6351520663
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:15:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SbeAVn+0"
+	by mail.kernel.org (Postfix) with ESMTP id 30463214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548764685;
+	bh=amGcodM5pva2Vl5Km6rOy46w672v1fLarHy2uMMkMSs=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=RB64+E7CFRs7pfzyqTByYRAX5aELIkYswVhWsKRZ60zHxN3CaFHbPc9tH5WrxTb0M
+	 E6H//0nlwaUNOHUeBAORzt+X/7yTAGbOsc0pAqqj3WFz7WOWG5TswtI+hAWXg3BIDC
+	 7pbLA8YoxS15z9DPKhIhs9LZozd9na6NEcCs58Ok=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728930AbfA2MPD (ORCPT
+        id S1728587AbfA2MYn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:15:03 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43684 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728870AbfA2MPA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 07:15:00 -0500
-Received: by mail-pf1-f194.google.com with SMTP id w73so9557262pfk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 04:14:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5LB3pwvnk4GJemSCy28xjYAPXvXv16KpVfezXgyBDJc=;
-        b=SbeAVn+0hb9RxK2Sd8fQWQpk3LFtYhcWBCkrYqLQa5Ye+AAT3CMEfE9lCsFZ1i76f4
-         kxKLb/zkkHIi1dWM3B7whj4SE0xD+FBApm+qRpfEVIhQaVsbGdYDY9uBZ/yHaL4qtwiD
-         LI8WBLnlxxqbvT88Y/98Ua/9BPgqymDBgf5Tk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=5LB3pwvnk4GJemSCy28xjYAPXvXv16KpVfezXgyBDJc=;
-        b=I9JbWM6OUXUoci98YOfzpiShjLdCJ3oqIRj77Wc8MstElQfvHWa2k/6FyRLzeCur1Y
-         Bp+nNPPJdfeImWsEThZXRX0iL+RHhcugKmmtt9a3JRlQ+aHtN6jh0cMbsICboO2UEg/T
-         /r2ZxhrHADvd8eNHNS+VjiMNHwv96cUBsFjZtEtTBZDcu065+33EdM3bwo+iXofm7f6M
-         6KJv3X2Yp+5HoVVhQfIE2kdXwteRH3lpaJOS+5xPhfQGswzImTCl2sU1gamfiXHeQTKR
-         dBT7j75ytBc7qZi6zzpjMSWDB29Pz2samIvy8YIsxe+XhZ3BN1daWYPPwPl/7HGzEfbc
-         XMvA==
-X-Gm-Message-State: AJcUukfWJVvlzJkXcJ3ExNRsqu5kZrRnin2ZVAov00tl3y9j5P+6KgfL
-        6cKPyJVx5emQHptxDh9dDjBD9Q==
-X-Google-Smtp-Source: ALg8bN4gOjzWAZMQq6xpp4wPkms7NB0GWs/NkEDDCsFiCD+mpVNKNVTAE0ui2itweN9aWhJ0I4vmXA==
-X-Received: by 2002:a63:e344:: with SMTP id o4mr23148364pgj.158.1548764098953;
-        Tue, 29 Jan 2019 04:14:58 -0800 (PST)
-Received: from dhcp-10-123-20-72.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id g136sm48689876pfb.154.2019.01.29.04.14.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 04:14:58 -0800 (PST)
-From:   Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
-To:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sathya.Prakash@broadcom.com, sreekanth.reddy@broadcom.com,
-        Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
-Subject: [PATCH 2/4] mpt3sas: Add support for NVMe Switch Adapter
-Date:   Tue, 29 Jan 2019 07:14:41 -0500
-Message-Id: <1548764083-5781-3-git-send-email-suganath-prabu.subramani@broadcom.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1548764083-5781-1-git-send-email-suganath-prabu.subramani@broadcom.com>
-References: <1548764083-5781-1-git-send-email-suganath-prabu.subramani@broadcom.com>
+        Tue, 29 Jan 2019 07:24:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35624 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727593AbfA2MYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 07:24:43 -0500
+Received: from localhost.localdomain (unknown [60.186.218.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 854CC20870;
+        Tue, 29 Jan 2019 12:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548764681;
+        bh=amGcodM5pva2Vl5Km6rOy46w672v1fLarHy2uMMkMSs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=alDQ55GbSZhrjF2aX85dznWbZCqPA5HCmGuMDPtJgoauZhW9ncoyxLMdrn7krBuks
+         mF15pmsdUJQUUHCGZcaMcxyKoH9ERbGuI1bCGeVjojGpPje4aauGZ+TM2j+AovtmWM
+         ddqnWzutPPhlM0y+3qCC98JM7kZ/x6snXav6JbBE=
+From:   guoren@kernel.org
+To:     arnd@arndb.de, robh+dt@kernel.org, marc.zyngier@arm.com
+Cc:     linux-kernel@vger.kernel.org, guoren@kernel.org,
+        linux-arch@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH 01/10] irqchip/csky: Support csky,dh7k SOC intc driver
+Date:   Tue, 29 Jan 2019 20:24:20 +0800
+Message-Id: <1548764669-16656-1-git-send-email-guoren@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added device ID for NVMe Switch Adapter (Ambrosia).
-VID: 0x1000
-DID: 0x02B1
+From: Guo Ren <ren_guo@c-sky.com>
 
-Signed-off-by: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
+C-SKY dh7k SOC use simple APB interrupt controller and most of driver's
+implementation codes could be reused in csky-apb-intc.c. So merge them
+together.
+
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 ---
- drivers/scsi/mpt3sas/mpi/mpi2_cnfg.h | 1 +
- drivers/scsi/mpt3sas/mpt3sas_scsih.c | 4 ++++
- 2 files changed, 5 insertions(+)
+ drivers/irqchip/irq-csky-apb-intc.c | 95 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 85 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpi/mpi2_cnfg.h b/drivers/scsi/mpt3sas/mpi/mpi2_cnfg.h
-index a53a758..a2f4a55 100644
---- a/drivers/scsi/mpt3sas/mpi/mpi2_cnfg.h
-+++ b/drivers/scsi/mpt3sas/mpi/mpi2_cnfg.h
-@@ -549,6 +549,7 @@ typedef struct _MPI2_CONFIG_REPLY {
- #define MPI2_MFGPAGE_DEVID_SAS2308_2                (0x0087)
- #define MPI2_MFGPAGE_DEVID_SAS2308_3                (0x006E)
- #define MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP            (0x02B0)
-+#define MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP_1          (0x02B1)
+diff --git a/drivers/irqchip/irq-csky-apb-intc.c b/drivers/irqchip/irq-csky-apb-intc.c
+index 5a2ec43..fcc5444 100644
+--- a/drivers/irqchip/irq-csky-apb-intc.c
++++ b/drivers/irqchip/irq-csky-apb-intc.c
+@@ -12,6 +12,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <asm/irq.h>
++#include <asm/traps.h>
  
- /*MPI v2.5 SAS products */
- #define MPI25_MFGPAGE_DEVID_SAS3004                 (0x0096)
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index c3a0f70..4a73753 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -10257,6 +10257,7 @@ _scsih_determine_hba_mpi_version(struct pci_dev *pdev)
- 	case MPI2_MFGPAGE_DEVID_SAS2308_2:
- 	case MPI2_MFGPAGE_DEVID_SAS2308_3:
- 	case MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP:
-+	case MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP_1:
- 		return MPI2_VERSION;
- 	case MPI25_MFGPAGE_DEVID_SAS3004:
- 	case MPI25_MFGPAGE_DEVID_SAS3008:
-@@ -10344,6 +10345,7 @@ _scsih_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 			ioc->hide_ir_msg = 1;
- 			break;
- 		case MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP:
-+		case MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP_1:
- 			ioc->is_mcpu_endpoint = 1;
- 			break;
- 		default:
-@@ -10785,6 +10787,8 @@ static const struct pci_device_id mpt3sas_pci_table[] = {
- 		PCI_ANY_ID, PCI_ANY_ID },
- 	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP,
- 		PCI_ANY_ID, PCI_ANY_ID },
-+	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SWITCH_MPI_EP_1,
-+		PCI_ANY_ID, PCI_ANY_ID },
- 	/* SSS6200 */
- 	{ MPI2_MFGPAGE_VENDORID_LSI, MPI2_MFGPAGE_DEVID_SSS6200,
- 		PCI_ANY_ID, PCI_ANY_ID },
+ #define INTC_IRQS		64
+ 
+@@ -31,6 +32,17 @@
+ #define GX_INTC_NMASK63_32	0x54
+ #define GX_INTC_SOURCE		0x60
+ 
++#define DH_INTC_CLR		0x10
++#define DH_INTC_INIT		0x34
++#define DH_INTC_NMASK31_00	0x08
++#define DH_INTC_NMASK63_32	0x68
++#define DH_INTC_SOURCE31_00	0x14
++#define DH_INTC_SOURCE63_32	0x6c
++#define DH_INTC_EDGE31_00	0x00
++#define DH_INTC_EDGE63_32	0x60
++#define DH_INTC_POLL31_00	0x04
++#define DH_INTC_POLL63_32	0x64
++
+ static void __iomem *reg_base;
+ static struct irq_domain *root_domain;
+ 
+@@ -58,15 +70,21 @@ static void irq_ck_mask_set_bit(struct irq_data *d)
+ }
+ 
+ static void __init ck_set_gc(struct device_node *node, void __iomem *reg_base,
+-			     u32 mask_reg, u32 irq_base)
++				u32 en_off, u32 mask_off, u32 irq_base)
+ {
+ 	struct irq_chip_generic *gc;
+ 
+ 	gc = irq_get_domain_generic_chip(root_domain, irq_base);
+ 	gc->reg_base = reg_base;
+-	gc->chip_types[0].regs.mask = mask_reg;
+-	gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
+-	gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
++	if (en_off) {
++		gc->chip_types[0].regs.mask = en_off;
++		gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
++		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
++	} else if (mask_off) {
++		gc->chip_types[0].regs.mask = mask_off;
++		gc->chip_types[0].chip.irq_mask = irq_gc_mask_set_bit;
++		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_clr_bit;
++	}
+ 
+ 	if (of_find_property(node, "csky,support-pulse-signal", NULL))
+ 		gc->chip_types[0].chip.irq_unmask = irq_ck_mask_set_bit;
+@@ -183,8 +201,8 @@ gx_intc_init(struct device_node *node, struct device_node *parent)
+ 
+ 	setup_irq_channel(0x03020100, reg_base + GX_INTC_SOURCE);
+ 
+-	ck_set_gc(node, reg_base, GX_INTC_NEN31_00, 0);
+-	ck_set_gc(node, reg_base, GX_INTC_NEN63_32, 32);
++	ck_set_gc(node, reg_base, GX_INTC_NEN31_00, 0, 0);
++	ck_set_gc(node, reg_base, GX_INTC_NEN63_32, 0, 32);
+ 
+ 	set_handle_irq(gx_irq_handler);
+ 
+@@ -192,6 +210,63 @@ gx_intc_init(struct device_node *node, struct device_node *parent)
+ }
+ IRQCHIP_DECLARE(csky_gx6605s_intc, "csky,gx6605s-intc", gx_intc_init);
+ 
++static void dh_irq_handler(struct pt_regs *regs)
++{
++	u32 tmp;
++	unsigned long vector = (mfcr("psr") >> 16) & 0xff;
++
++	tmp = readl(reg_base + DH_INTC_CLR);
++	tmp |= BIT(2);
++	writel(tmp, reg_base + DH_INTC_CLR);
++
++	handle_domain_irq(root_domain, vector - 32, regs);
++}
++
++extern void csky_irq(void);
++
++static int __init
++dh_intc_init(struct device_node *node, struct device_node *parent)
++{
++	int ret, i;
++
++	ret = ck_intc_init_comm(node, parent);
++	if (ret)
++		return ret;
++
++	/* set default mode */
++	writel(0xffffffff, reg_base + DH_INTC_EDGE31_00);
++	writel(0xffffffff, reg_base + DH_INTC_EDGE63_32);
++	writel(0xffffffff, reg_base + DH_INTC_POLL31_00);
++	writel(0xffffffff, reg_base + DH_INTC_POLL63_32);
++
++	writel(BIT(1) | BIT(6), reg_base + DH_INTC_INIT);
++
++	/* Setup  0-31 channel slots */
++	for (i = 0; i < INTC_IRQS/2; i += 4)
++		writel(build_channel_val(i, 0x03020100) + 0x40404040,
++				reg_base + DH_INTC_SOURCE31_00 + i);
++
++	/* Setup 32-63 channel slots */
++	for (i = 0; i < INTC_IRQS/2; i += 4)
++		writel(build_channel_val(i, 0x03020100) + 0x40404040,
++				reg_base + DH_INTC_SOURCE63_32 + i);
++
++	/* mask all interrrupts */
++	writel(0xffffffff, reg_base + DH_INTC_NMASK31_00);
++	writel(0xffffffff, reg_base + DH_INTC_NMASK63_32);
++
++	ck_set_gc(node, reg_base, 0, DH_INTC_NMASK31_00, 0);
++	ck_set_gc(node, reg_base, 0, DH_INTC_NMASK63_32, 32);
++
++	for (i = 32; i < 128; i++)
++		VEC_INIT(i, csky_irq);
++
++	set_handle_irq(dh_irq_handler);
++
++	return 0;
++}
++IRQCHIP_DECLARE(csky_dh7k_intc, "csky,dh7k-intc", dh_intc_init);
++
+ /*
+  * C-SKY simple 64 irqs interrupt controller, dual-together could support 128
+  * irqs.
+@@ -243,8 +318,8 @@ ck_intc_init(struct device_node *node, struct device_node *parent)
+ 	/* Enable irq intc */
+ 	writel(BIT(31), reg_base + CK_INTC_ICR);
+ 
+-	ck_set_gc(node, reg_base, CK_INTC_NEN31_00, 0);
+-	ck_set_gc(node, reg_base, CK_INTC_NEN63_32, 32);
++	ck_set_gc(node, reg_base, CK_INTC_NEN31_00, 0, 0);
++	ck_set_gc(node, reg_base, CK_INTC_NEN63_32, 0, 32);
+ 
+ 	setup_irq_channel(0x00010203, reg_base + CK_INTC_SOURCE);
+ 
+@@ -270,8 +345,8 @@ ck_dual_intc_init(struct device_node *node, struct device_node *parent)
+ 	writel(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
+ 	writel(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
+ 
+-	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 64);
+-	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 96);
++	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 0, 64);
++	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 0, 96);
+ 
+ 	setup_irq_channel(0x00010203,
+ 			  reg_base + CK_INTC_SOURCE + CK_INTC_DUAL_BASE);
 -- 
-1.8.3.1
+2.7.4
 
