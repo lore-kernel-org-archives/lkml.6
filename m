@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF83C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC55C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B13E520844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C51A20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761868;
-	bh=vEnj3eGDK0ZLbgXLJoogegJLvvn3IwRIXazGn3fsc9M=;
+	s=default; t=1548761873;
+	bh=slsWp9ZBq9WA9GmO2ylpUj0J2vmmJ0y7MLhlYdRkQTw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ETEw5nPc/Kr4y8Jno338SRRti+c6Ui0Ks52Dm88sTa9tDWxmU1DvmM2xCbCo3lzJv
-	 jPpLiAotx0xW5RVyAHkUHVP/EAyWJMD218a6hTTnPGMAcy8JhV/Wpay4tV9rnZf0i4
-	 W5qLGzX8sDHtV9kbjcTG+TduBZCMZ18RTkp9iOBQ=
+	b=uk2OSCcJCJXygAvqiGh8yl/I2WpMsXzvWhfyDd3XR02JXD6q7C0GP+EFwQX7OYcWL
+	 usLxjLhq7dV8reR49TYgwExk16aHMn6L+Jw2vUluiUv8yNfKgVhumkXhmdghU/azyR
+	 u7td2rFUcaIPAgLeauVk3xH9Qo8TiJLlMVr/1hvQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbfA2Lhr (ORCPT
+        id S1728954AbfA2Lhv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:37:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54368 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:37:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728881AbfA2Lho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:37:44 -0500
+        id S1728939AbfA2Lht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:37:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED58E20844;
-        Tue, 29 Jan 2019 11:37:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF7D620989;
+        Tue, 29 Jan 2019 11:37:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761863;
-        bh=vEnj3eGDK0ZLbgXLJoogegJLvvn3IwRIXazGn3fsc9M=;
+        s=default; t=1548761869;
+        bh=slsWp9ZBq9WA9GmO2ylpUj0J2vmmJ0y7MLhlYdRkQTw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MKN6zPK2KN0dwJU5W81noURgVmT80/emjAq2QBG0Lj6oJQi3TZCrpSA7D7Q4ljz0l
-         90tL1N1tyWYID5Hefzvd/MrjbZHcpjBeR0miLTepZKmMpp8fZW9W9X6E2xYucP2V2/
-         hrvN6JIbSXIIjWd1TvHMhgy7DAZXJA9btjh+gjqQ=
+        b=DbCXW8J2OL2Rh9PcsdFLoVXuIX9/dKsVEj6gfi6hfvfbkp21wJoasztgKKoRw40B5
+         /I9Gk7OExYzvfFayYNxEfx7PUEPrJC4CWO5w+/EqXXaq6PyHrQUyf9VUGdTM6hkgAf
+         cajTjzi0EPE/Ch9Vv5HNaTPkKhr0V18dd/uNyvSI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        stable@vger.kernel.org, Scott Wood <oss@buserror.net>,
+        Camelia Groza <camelia.groza@nxp.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 004/117] net: phy: marvell: Errata for mv88e6390 internal PHYs
-Date:   Tue, 29 Jan 2019 12:34:15 +0100
-Message-Id: <20190129113207.725864582@linuxfoundation.org>
+Subject: [PATCH 4.20 006/117] net: phy: phy driver features are mandatory
+Date:   Tue, 29 Jan 2019 12:34:17 +0100
+Message-Id: <20190129113207.840573969@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -65,71 +66,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrew Lunn <andrew@lunn.ch>
+From: Camelia Groza <camelia.groza@nxp.com>
 
-[ Upstream commit 8cbcdc1a51999ca81db2956608b917aacd28d837 ]
+[ Upstream commit 3e64cf7a435ed0500e3adaa8aada2272d3ae8abc ]
 
-The VOD can be out of spec, unless some magic value is poked into an
-undocumented register in an undocumented page.
+Since phy driver features became a link_mode bitmap, phy drivers that
+don't have a list of features configured will cause the kernel to crash
+when probed.
 
-Fixes: e4cf8a38fc0d ("net: phy: Marvell: Add mv88e6390 internal PHY")
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Prevent the phy driver from registering if the features field is missing.
+
+Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
+Reported-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/marvell.c |   35 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 34 insertions(+), 1 deletion(-)
+ drivers/net/phy/phy_device.c |    5 +++++
+ include/linux/phy.h          |    4 ++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -1042,6 +1042,39 @@ static int m88e1145_config_init(struct p
- 	return 0;
- }
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -2196,6 +2196,11 @@ int phy_driver_register(struct phy_drive
+ {
+ 	int retval;
  
-+/* The VOD can be out of specification on link up. Poke an
-+ * undocumented register, in an undocumented page, with a magic value
-+ * to fix this.
-+ */
-+static int m88e6390_errata(struct phy_device *phydev)
-+{
-+	int err;
++	if (WARN_ON(!new_driver->features)) {
++		pr_err("%s: Driver features are missing\n", new_driver->name);
++		return -EINVAL;
++	}
 +
-+	err = phy_write(phydev, MII_BMCR,
-+			BMCR_ANENABLE | BMCR_SPEED1000 | BMCR_FULLDPLX);
-+	if (err)
-+		return err;
-+
-+	usleep_range(300, 400);
-+
-+	err = phy_write_paged(phydev, 0xf8, 0x08, 0x36);
-+	if (err)
-+		return err;
-+
-+	return genphy_soft_reset(phydev);
-+}
-+
-+static int m88e6390_config_aneg(struct phy_device *phydev)
-+{
-+	int err;
-+
-+	err = m88e6390_errata(phydev);
-+	if (err)
-+		return err;
-+
-+	return m88e1510_config_aneg(phydev);
-+}
-+
- /**
-  * fiber_lpa_to_ethtool_lpa_t
-  * @lpa: value of the MII_LPA register for fiber link
-@@ -2292,7 +2325,7 @@ static struct phy_driver marvell_drivers
- 		.flags = PHY_HAS_INTERRUPT,
- 		.probe = m88e6390_probe,
- 		.config_init = &marvell_config_init,
--		.config_aneg = &m88e1510_config_aneg,
-+		.config_aneg = &m88e6390_config_aneg,
- 		.read_status = &marvell_read_status,
- 		.ack_interrupt = &marvell_ack_interrupt,
- 		.config_intr = &marvell_config_intr,
+ 	new_driver->mdiodrv.flags |= MDIO_DEVICE_IS_PHY;
+ 	new_driver->mdiodrv.driver.name = new_driver->name;
+ 	new_driver->mdiodrv.driver.bus = &mdio_bus_type;
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -502,8 +502,8 @@ struct phy_device {
+  *   only works for PHYs with IDs which match this field
+  * name: The friendly name of this PHY type
+  * phy_id_mask: Defines the important bits of the phy_id
+- * features: A list of features (speed, duplex, etc) supported
+- *   by this PHY
++ * features: A mandatory list of features (speed, duplex, etc)
++ *   supported by this PHY
+  * flags: A bitfield defining certain other features this PHY
+  *   supports (like interrupts)
+  *
 
 
