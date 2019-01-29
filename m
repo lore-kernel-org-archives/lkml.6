@@ -2,108 +2,118 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3990AC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE32C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 099372087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:58:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="asqtoNsx"
+	by mail.kernel.org (Postfix) with ESMTP id 642B92175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:58:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbfA2Q6A (ORCPT
+        id S1728860AbfA2Q6r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:58:00 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33685 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728320AbfA2Q6A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:58:00 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r24so13426337wmh.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 08:57:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4g0QKmDsRFRscDMvzm+JploBlAovB0C3tea7QT0vqkk=;
-        b=asqtoNsxo9PsGe3F6oiYa0pwAin7/AzCbr10NaEXA8HS+MvE9MU2TdqljmdoPTQ0kU
-         jQKYfbMMYGOPTzZVyblRuOOUOvkZ+EFE2TbiZww2ducQVqfUbpKnC6qGKz/Qk4fHCxUl
-         Rw9LBA2EFcR2rWNsqtmbCJRZYFkpGJ7XUi/WU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4g0QKmDsRFRscDMvzm+JploBlAovB0C3tea7QT0vqkk=;
-        b=r04nBGn6CUUCmZbo6GtYtthhf5TQxUxbWgpGfQE/PD4+KMvVwuS63Fl8gcd1ALrqgs
-         0WKAPuPGV0RV+NirJIvY4GzvBRF4FqLl3AgE8SjGilte48a5/P0DNVx2QlfDmdakoda5
-         sN9Ygj2j2jhewGFD8FI7ISuybbMJSqyn/OSRXRm4H4zMnDOcMHDPYyFdCfsZZqUfE4+1
-         /vpvmRuXdgLy9m7yNIKNuCHO4uDMrvQor5pKTcpFy/VCpqLX8wWGHjepByxas7QOCLD3
-         yTSGVc/yxmw+jYCG1gB1DoPNvdGuLLTZnh1WusBw7aTplkla1wahMdeFrbDzisZ6Z6E3
-         qIaQ==
-X-Gm-Message-State: AJcUukc/v9Ft309Hdda+a4YzmFR62lfT9DTFY0yMcy5VtUbZYwEHcPl7
-        Fx1VojCe8XskIECPI0LwU35MxA==
-X-Google-Smtp-Source: ALg8bN7McmaQTw6/z35pJ/y1ufDu7p4hgOA1Ox40moFhMzrG/l6ENmONFoUnbX9qJnM2uW9n0JKlSg==
-X-Received: by 2002:a1c:cc2:: with SMTP id 185mr22755542wmm.1.1548781078192;
-        Tue, 29 Jan 2019 08:57:58 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id 127sm5544506wmm.45.2019.01.29.08.57.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 08:57:57 -0800 (PST)
-Subject: Re: linux-next: Tree for Jan 29 (SLIMbus & SND_SOC_WCD9335)
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>
-References: <20190129171143.3945af24@canb.auug.org.au>
- <2eaba760-96d5-5e0b-c1e6-c45fb24d89f2@infradead.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <a849e598-da5b-bfc2-cd41-dab94fa79c87@linaro.org>
-Date:   Tue, 29 Jan 2019 16:57:56 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 29 Jan 2019 11:58:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48610 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728628AbfA2Q6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 11:58:47 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E96B881F0B;
+        Tue, 29 Jan 2019 16:58:46 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-122-2.rdu2.redhat.com [10.10.122.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 632585F7E7;
+        Tue, 29 Jan 2019 16:58:45 +0000 (UTC)
+From:   jglisse@redhat.com
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        linux-rdma@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Artemy Kovalyov <artemyko@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>
+Subject: [RFC PATCH 0/1] Use HMM for ODP
+Date:   Tue, 29 Jan 2019 11:58:38 -0500
+Message-Id: <20190129165839.4127-1-jglisse@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <2eaba760-96d5-5e0b-c1e6-c45fb24d89f2@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 29 Jan 2019 16:58:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Jérôme Glisse <jglisse@redhat.com>
+
+This patchset convert RDMA ODP to use HMM underneath this is motivated
+by stronger code sharing for same feature (share virtual memory SVM or
+Share Virtual Address SVA) and also stronger integration with mm code to
+achieve that. It depends on HMM patchset posted for inclusion in 5.1 so
+earliest target for this should be 5.2. I welcome any testing people can
+do on this.
+
+Moreover they are some features of HMM in the works like peer to peer
+support, fast CPU page table snapshot, fast IOMMU mapping update ...
+It will be easier for RDMA devices with ODP to leverage those if they
+use HMM underneath.
+
+Quick summary of what HMM is:
+    HMM is a toolbox for device driver to implement software support for
+    Share Virtual Memory (SVM). Not only it provides helpers to mirror a
+    process address space on a device (hmm_mirror). It also provides
+    helper to allow to use device memory to back regular valid virtual
+    address of a process (any valid mmap that is not an mmap of a device
+    or a DAX mapping). They are two kinds of device memory. Private memory
+    that is not accessible to CPU because it does not have all the expected
+    properties (this is for all PCIE devices) or public memory which can
+    also be access by CPU without restriction (with OpenCAPI or CCIX or
+    similar cache-coherent and atomic inter-connect).
+
+    Device driver can use each of HMM tools separatly. You do not have to
+    use all the tools it provides.
+
+For RDMA device i do not expect a need to use the device memory support
+of HMM. This device memory support is geared toward accelerator like GPU.
 
 
-https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?h=for-5.1&id=a8233b6c1972e1959cf84a021aeb61ddcd23cc26
+You can find a branch [1] with all the prerequisite in. This patch is on
+top of 5.0rc2+ but i can rebase it on any specific branch before it is
+consider for inclusion (5.2 at best).
 
-This should fix the issue! It should be in next today!
+Questions and reviews are more than welcome.
 
-Thanks,
-srini
+[1] https://cgit.freedesktop.org/~glisse/linux/log/?h=odp-hmm
+[2] https://cgit.freedesktop.org/~glisse/linux/log/?h=hmm-for-5.1
 
+Cc: linux-rdma@vger.kernel.org
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Leon Romanovsky <leonro@mellanox.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Artemy Kovalyov <artemyko@mellanox.com>
+Cc: Moni Shoua <monis@mellanox.com>
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: Kaike Wan <kaike.wan@intel.com>
+Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
 
-On 29/01/2019 16:50, Randy Dunlap wrote:
-> On 1/28/19 10:11 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20190125:
->>
-> 
-> on x86_64:
-> 
-> CONFIG_SND_SOC_WCD9335=m
-> which selects REGMAP_SLIMBUS, but SLIMBUS is not set/enabled.
-> 
-> 
-> ERROR: "slim_driver_unregister" [sound/soc/codecs/snd-soc-wcd9335.ko] undefined!
-> ERROR: "__slim_driver_register" [sound/soc/codecs/snd-soc-wcd9335.ko] undefined!
-> ERROR: "slim_read" [drivers/base/regmap/regmap-slimbus.ko] undefined!
-> ERROR: "slim_write" [drivers/base/regmap/regmap-slimbus.ko] undefined!
-> 
-> 
-> Full randconfig file is attached.
-> 
+Jérôme Glisse (1):
+  RDMA/odp: convert to use HMM for ODP
+
+ drivers/infiniband/core/umem_odp.c | 483 ++++++++---------------------
+ drivers/infiniband/hw/mlx5/mem.c   |  20 +-
+ drivers/infiniband/hw/mlx5/mr.c    |   2 +-
+ drivers/infiniband/hw/mlx5/odp.c   |  95 +++---
+ include/rdma/ib_umem_odp.h         |  54 +---
+ 5 files changed, 202 insertions(+), 452 deletions(-)
+
+-- 
+2.17.2
+
