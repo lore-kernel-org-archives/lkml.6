@@ -2,123 +2,100 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EBDC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A99B5C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D802217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:26:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 805642177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfA2H0D (ORCPT
+        id S1726971AbfA2H0k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 02:26:03 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35974 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbfA2H0B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 02:26:01 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p6so16484843wmc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 23:26:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RQvjdtxFs7m0nphzUIqAMWIG8Tw7TR+/aZi2b9zfUDo=;
-        b=D5KnsYWwRkJqGjcROXCSWgNpZiZEkneWUHDORbu2gsDOw6tISlmQmc4LtKzX1JghsW
-         jRIP0clyLTcfLmpBvvQRr2+Wp77uawN5hKDpMC5zyv3EvpTDjeWn/mMe+SJQ9eNPT6Jv
-         +NfjybgMVSzKKepXZKj7tfpA5z0OSg+WQwNH/dqbBnOXzmFIIgZpQzYSHTICW1Jkk6Gu
-         qgBHuGQ5XqivITraHdxkU7jAeNGcKb4sm/BULDE7ICUfbK5q9RF63YjZsjqzkPwRnUmU
-         iqjwDcTv2Yic5oya1jurhmepm7M80pmD8JAQtWcMnuizqgYQzFH5eGfgUz9JdWmP6pub
-         0Qsw==
-X-Gm-Message-State: AJcUukd9kj7KtNuLcsa5sKWL9LgxVgUcQpyN6ZHARqthJcihR8qF107P
-        yZvqIGtHbafoTIMtMxz8ScuWclYJsW9E+A==
-X-Google-Smtp-Source: ALg8bN74fTR1aYgN4WDGZiM0aNgZAV4jOFFvdbEuBN0qf7/FeVN0jcast/3XdH5eRiVZvWpIB3eD2Q==
-X-Received: by 2002:a1c:2382:: with SMTP id j124mr19874009wmj.14.1548746759851;
-        Mon, 28 Jan 2019 23:25:59 -0800 (PST)
-Received: from [10.200.137.150] (ovpn-brq.redhat.com. [213.175.37.11])
-        by smtp.gmail.com with ESMTPSA id r9sm4047753wmb.27.2019.01.28.23.25.58
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 23:25:58 -0800 (PST)
-Subject: Re: [PATCH] s390/jump_label: Correct asm contraint
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Andreas Krebbel <krebbel@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190123125513.20210-1-labbott@redhat.com>
- <20190123132401.GG3424@osiris>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <898d52cc-fa76-0888-429f-27446190653b@redhat.com>
-Date:   Tue, 29 Jan 2019 08:25:58 +0100
+        Tue, 29 Jan 2019 02:26:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42190 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725536AbfA2H0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 02:26:39 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 76791ADD7;
+        Tue, 29 Jan 2019 07:26:37 +0000 (UTC)
+Subject: Re: [PATCH 01/11] btrfs: add macros for compression type and level
+To:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>
+Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190128212437.11597-2-dennis@kernel.org>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <bfe0babc-c1ad-5e14-8328-e4370cd4622f@suse.com>
+Date:   Tue, 29 Jan 2019 09:26:36 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190123132401.GG3424@osiris>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190128212437.11597-2-dennis@kernel.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/23/19 5:24 AM, Heiko Carstens wrote:
-> On Wed, Jan 23, 2019 at 01:55:13PM +0100, Laura Abbott wrote:
->> There's a build failure with gcc9:
->>
->>   ./arch/s390/include/asm/jump_label.h: Assembler messages:
->>   ./arch/s390/include/asm/jump_label.h:23: Error: bad expression
->>   ./arch/s390/include/asm/jump_label.h:23: Error: junk at end of line, first unrecognized character is `r'
->>   make[1]: *** [scripts/Makefile.build:277: init/main.o] Error 1
->>
->> According to the toolchain people, the actual issue is the use of
->> "X" constraint which is too permissive. Switch to using "i" instead.
->>
->> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1668703
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->> ---
->>   arch/s390/include/asm/jump_label.h | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/s390/include/asm/jump_label.h b/arch/s390/include/asm/jump_label.h
->> index e2d3e6c43395..41dabfd8518d 100644
->> --- a/arch/s390/include/asm/jump_label.h
->> +++ b/arch/s390/include/asm/jump_label.h
->> @@ -22,7 +22,7 @@ static inline bool arch_static_branch(struct static_key *key, bool branch)
->>   			  ".long	0b-.,%l[label]-.\n"
->>   			  ".quad	%0-.\n"
->>   			  ".popsection\n"
->> -			  : : "X" (&((char *)key)[branch]) : : label);
->> +			  : : "i" (&((char *)key)[branch]) : : label);
->>   	return false;
->>   label:
->>   	return true;
-> 
-> Hmmm, this works only for the kernel image, but not for modules, which
-> we compile with "-fPIC", which again doesn't work as described in the
-> referenced bugzilla:
-> 
-> In file included from ././include/linux/compiler_types.h:68,
->                   from <command-line>:
-> ./arch/s390/include/asm/jump_label.h: In function 'kvm_vcpu_ioctl':
-> ./include/linux/compiler-gcc.h:124:38: warning: asm operand 0 probably doesn't match constraints
->   #define asm_volatile_goto(x...) do { asm goto(x); asm (""); } while (0)
->                                        ^~~
-> ./arch/s390/include/asm/jump_label.h:19:2: note: in expansion of macro 'asm_volatile_goto'
->    asm_volatile_goto("0: brcl 0,"__stringify(JUMP_LABEL_NOP_OFFSET)"\n"
->    ^~~~~~~~~~~~~~~~~
-> ./include/linux/compiler-gcc.h:124:38: error: impossible constraint in 'asm'
->   #define asm_volatile_goto(x...) do { asm goto(x); asm (""); } while (0)
->                                        ^~~
-> ./arch/s390/include/asm/jump_label.h:19:2: note: in expansion of macro 'asm_volatile_goto'
->    asm_volatile_goto("0: brcl 0,"__stringify(JUMP_LABEL_NOP_OFFSET)"\n"
-> 
-> Andreas, Ilya, any idea how to fix this?
-> 
 
-I've had to turn off s390 in Fedora until this gets fixed :(
 
+On 28.01.19 г. 23:24 ч., Dennis Zhou wrote:
+> It is very easy to miss places that rely on a certain bitshifting for
+> decyphering the type_level overloading. Make macros handle this instead.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
