@@ -2,113 +2,174 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D8DC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDFE2C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B71F2175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:33:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548747217;
-	bh=GAyB0WCMSevbWr3awchjmMxGIHIErqEstJMWMJBsU3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qC19wXtQsK8D1tiJOJvrlc7XExnSTTqKQbeo8acrI4C1mT7E0TVJGjYwcoFER+CUT
-	 0nZmSW1Fs6L0esurr1VSeW999PhMzl/jcvq01SqkQtzoPdRQ4OLiIcAPRP3WtXOHNc
-	 k9JVmw4c0O6xZs0bf30W1AGPHR/sjnfwYAS8KWX4=
+	by mail.kernel.org (Postfix) with ESMTP id 9B62720869
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:34:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pRQ/zppk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727571AbfA2Hdf (ORCPT
+        id S1727100AbfA2HeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 02:33:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42918 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725773AbfA2Hdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 02:33:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0B807AE60;
-        Tue, 29 Jan 2019 07:33:34 +0000 (UTC)
-Date:   Tue, 29 Jan 2019 08:33:32 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Oscar Salvador <osalvador@suse.de>,
-        David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        Tue, 29 Jan 2019 02:34:14 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53330 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfA2HeO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 02:34:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vmRuW3rV1BpLTjexkKN3MxaZhDeBnEhtxWvlUu/tw9I=; b=pRQ/zppkoZx4GipDSUv1MH7Up
+        xo1FLdtki1rNSCqt2Lo3sJ2L5OErNK1Nei1IxXnS6l4RiDCwUHQJkzsmjiWSkGRLZZnENfWDjmBR+
+        fkt+ZnrPfJ2PiAUL9LfNHgay7XpxxoIREw9NQCY+nyCHKdAX/ccZ5Y0U8om5nuu+gSE169NjmCWR8
+        CNr5LEcxih5V+G7hgIwov5J5IOmlTVYkvITnhXADU4t2azOMZamb2EEjiJoZ48qgcOdpk7uIejIGP
+        9YvE8Nfs+zR4mcuXtHq01wuOlka74gCgwnahcYY0zvfz5tajJtEHvS9hcb0W+eTDLEEsvD791CpPu
+        sgm8ISkFA==;
+Received: from 213-225-35-141.nat.highway.a1.net ([213.225.35.141] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1goNuO-0006KJ-7e; Tue, 29 Jan 2019 07:34:12 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     stuart.w.hayes@gmail.com, dvhart@infradead.org
+Cc:     andy@infradead.org, platform-driver-x86@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm,memory_hotplug: Fix scan_movable_pages for gigantic
- hugepages
-Message-ID: <20190129073332.GB18811@dhcp22.suse.cz>
-References: <20190122154407.18417-1-osalvador@suse.de>
- <5368e2b4-5aca-40dd-fe18-67d861a04a29@redhat.com>
- <20190125075830.6mqw2io4rwz7wxx5@d104.suse.de>
- <20190128145309.c7dcf075b469d6a54694327d@linux-foundation.org>
- <20190128145617.069b3a5436fc7e34bdebb104@linux-foundation.org>
+Subject: [PATCH] dell_rbu: stop abusing the DMA API
+Date:   Tue, 29 Jan 2019 08:34:09 +0100
+Message-Id: <20190129073409.7247-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128145617.069b3a5436fc7e34bdebb104@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 28-01-19 14:56:17, Andrew Morton wrote:
-[...]
-> --- a/mm/memory_hotplug.c~mmmemory_hotplug-fix-scan_movable_pages-for-gigantic-hugepages-fix
-> +++ a/mm/memory_hotplug.c
-> @@ -1305,28 +1305,27 @@ int test_pages_in_a_zone(unsigned long s
->  static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
->  {
->  	unsigned long pfn;
-> -	struct page *page;
-> +
->  	for (pfn = start; pfn < end; pfn++) {
-> -		if (pfn_valid(pfn)) {
-> -			page = pfn_to_page(pfn);
-> -			if (PageLRU(page))
-> -				return pfn;
-> -			if (__PageMovable(page))
-> -				return pfn;
-> -			if (PageHuge(page)) {
-> -				struct page *head = compound_head(page);
-> +		struct page *page, *head;
-> +		unsigned long skip;
->  
-> -				if (hugepage_migration_supported(page_hstate(head)) &&
-> -				    page_huge_active(head))
-> -					return pfn;
-> -				else {
-> -					unsigned long skip;
-> +		if (!pfn_valid(pfn))
-> +			continue;
-> +		page = pfn_to_page(pfn);
-> +		if (PageLRU(page))
-> +			return pfn;
-> +		if (__PageMovable(page))
-> +			return pfn;
->  
-> -					skip = (1 << compound_order(head)) - (page - head);
-> -					pfn += skip - 1;
-> -				}
-> -			}
-> -		}
-> +		if (!PageHuge(page))
-> +			continue;
-> +		head = compound_head(page);
-> +		if (hugepage_migration_supported(page_hstate(head)) &&
-> +		    page_huge_active(head))
-> +			return pfn;
-> +		skip = (1 << compound_order(head)) - (page - head);
-> +		pfn += skip - 1;
->  	}
->  	return 0;
->  }
-> _
-> 
+For some odd reason dell_rbu actually seems to want the physical and
+not a bus address for the allocated buffer.  Lets assume that actually
+is correct given that it is BIOS-related and that is a good source
+of insanity.  In that case we should not use dma_alloc_coherent with
+a NULL device to allocate memory, but use GFP_DMA32 to stay under
+the 32-bit BIOS limit.
 
-LGTM
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/platform/x86/dell_rbu.c | 52 ++++++++++-----------------------
+ 1 file changed, 15 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/platform/x86/dell_rbu.c b/drivers/platform/x86/dell_rbu.c
+index ccefa84f7305..fba7d96c1714 100644
+--- a/drivers/platform/x86/dell_rbu.c
++++ b/drivers/platform/x86/dell_rbu.c
+@@ -59,7 +59,6 @@ static struct _rbu_data {
+ 	unsigned long image_update_buffer_size;
+ 	unsigned long bios_image_size;
+ 	int image_update_ordernum;
+-	int dma_alloc;
+ 	spinlock_t lock;
+ 	unsigned long packet_read_count;
+ 	unsigned long num_packets;
+@@ -89,7 +88,6 @@ static struct packet_data packet_data_head;
+ 
+ static struct platform_device *rbu_device;
+ static int context;
+-static dma_addr_t dell_rbu_dmaaddr;
+ 
+ static void init_packet_head(void)
+ {
+@@ -380,12 +378,8 @@ static void img_update_free(void)
+ 	 */
+ 	memset(rbu_data.image_update_buffer, 0,
+ 		rbu_data.image_update_buffer_size);
+-	if (rbu_data.dma_alloc == 1)
+-		dma_free_coherent(NULL, rbu_data.bios_image_size,
+-			rbu_data.image_update_buffer, dell_rbu_dmaaddr);
+-	else
+-		free_pages((unsigned long) rbu_data.image_update_buffer,
+-			rbu_data.image_update_ordernum);
++	free_pages((unsigned long) rbu_data.image_update_buffer,
++		rbu_data.image_update_ordernum);
+ 
+ 	/*
+ 	 * Re-initialize the rbu_data variables after a free
+@@ -394,7 +388,6 @@ static void img_update_free(void)
+ 	rbu_data.image_update_buffer = NULL;
+ 	rbu_data.image_update_buffer_size = 0;
+ 	rbu_data.bios_image_size = 0;
+-	rbu_data.dma_alloc = 0;
+ }
+ 
+ /*
+@@ -410,10 +403,8 @@ static void img_update_free(void)
+ static int img_update_realloc(unsigned long size)
+ {
+ 	unsigned char *image_update_buffer = NULL;
+-	unsigned long rc;
+ 	unsigned long img_buf_phys_addr;
+ 	int ordernum;
+-	int dma_alloc = 0;
+ 
+ 	/*
+ 	 * check if the buffer of sufficient size has been
+@@ -444,36 +435,23 @@ static int img_update_realloc(unsigned long size)
+ 
+ 	ordernum = get_order(size);
+ 	image_update_buffer =
+-		(unsigned char *) __get_free_pages(GFP_KERNEL, ordernum);
+-
+-	img_buf_phys_addr =
+-		(unsigned long) virt_to_phys(image_update_buffer);
+-
+-	if (img_buf_phys_addr > BIOS_SCAN_LIMIT) {
+-		free_pages((unsigned long) image_update_buffer, ordernum);
+-		ordernum = -1;
+-		image_update_buffer = dma_alloc_coherent(NULL, size,
+-			&dell_rbu_dmaaddr, GFP_KERNEL);
+-		dma_alloc = 1;
+-	}
+-
+-	spin_lock(&rbu_data.lock);
+-
+-	if (image_update_buffer != NULL) {
+-		rbu_data.image_update_buffer = image_update_buffer;
+-		rbu_data.image_update_buffer_size = size;
+-		rbu_data.bios_image_size =
+-			rbu_data.image_update_buffer_size;
+-		rbu_data.image_update_ordernum = ordernum;
+-		rbu_data.dma_alloc = dma_alloc;
+-		rc = 0;
+-	} else {
++		(unsigned char *)__get_free_pages(GFP_DMA32, ordernum);
++	if (!image_update_buffer) {
+ 		pr_debug("Not enough memory for image update:"
+ 			"size = %ld\n", size);
+-		rc = -ENOMEM;
++		return -ENOMEM;
+ 	}
+ 
+-	return rc;
++	img_buf_phys_addr = (unsigned long)virt_to_phys(image_update_buffer);
++	if (WARN_ON_ONCE(img_buf_phys_addr > BIOS_SCAN_LIMIT))
++		return -EINVAL; /* can't happen per defintion */
++
++	spin_lock(&rbu_data.lock);
++	rbu_data.image_update_buffer = image_update_buffer;
++	rbu_data.image_update_buffer_size = size;
++	rbu_data.bios_image_size = rbu_data.image_update_buffer_size;
++	rbu_data.image_update_ordernum = ordernum;
++	return 0;
+ }
+ 
+ static ssize_t read_packet_data(char *buffer, loff_t pos, size_t count)
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
+
