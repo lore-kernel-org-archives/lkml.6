@@ -2,126 +2,239 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2A4C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE27C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5F120882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:14:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7CD220989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:15:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WczOwf53"
+	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="NWO1tpka"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbfA2TO1 (ORCPT
+        id S1729389AbfA2TP3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:14:27 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39869 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727332AbfA2TO0 (ORCPT
+        Tue, 29 Jan 2019 14:15:29 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:41319 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727332AbfA2TP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:14:26 -0500
-Received: by mail-pf1-f193.google.com with SMTP id r136so10110928pfc.6
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:14:26 -0800 (PST)
+        Tue, 29 Jan 2019 14:15:28 -0500
+Received: by mail-yw1-f66.google.com with SMTP id f65so8630930ywc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:15:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=chrisdown.name; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=2Vr3VPlZLYUX2dqW6k3w7msBxvOqgLohul8mFuhLMR0=;
-        b=WczOwf53WJU/ByJz8mut8Wu8sqN4u5Mnt3zfxBvvF8U//weHGN8GscPC187W9MR6EA
-         9Fzm+W6QkqM4ZSEb3Wk8kctJ4DxKyhsm9WLSpMOCEe9sd1u5LDT9lmNf+ISG8ldqX8fn
-         PE0BpNOXUtlQRYDqmJeqikmbg94rd5VJMSfpU=
+        bh=7Uuf0LVs+pzHcF3nyh4GxvEPQsOE1NPnxZxuLZkBYcE=;
+        b=NWO1tpkadXDzKPLeqcckeYOXK0qRah25lv9XpFX4W/D0ZeK8WDrTZav72UjZSwm8Y5
+         8E9j5aDJinxsGCjkPiV9bCrYzES7wIWNC6XZjNvE3ekV4DtiuqGhAvnXih2dEIUtbjBe
+         5QquP/EkhMDDHWEeQGacIpCHyATrH6UAr06Rc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2Vr3VPlZLYUX2dqW6k3w7msBxvOqgLohul8mFuhLMR0=;
-        b=dIc/FRFKQI6BDUMQ9krCQHvygegv7pF9+sES9ZKqmQnpdIESHx+1ubWjs8BE4kZ4rW
-         Z2yeJCpd6RAQzvQIk4WyoXz6jeqpKLd5ExWtO6u5hi0zKJGyggPDVSQxG9j8/kkQNbPS
-         5SWEttbr84jipvWU5clAaKmrJ/wWkJ+BYbXYx1UifiyhlYkODN9AfHo5j9eS9zZuU+/R
-         wrs0IBG7jT2GlM3LfnJh9oLSBLhTKiGcn6gQ77rzmv3TPPdeydMKHR/ykj+lMXKlb/tK
-         KU/pboeOB9OVMq2aAD54v7IeuHsSza4gmD/9XIFQM73xOY3qu7q0i5XGOm02V+zoZ5jd
-         aN6g==
-X-Gm-Message-State: AJcUukerzYaO0VRf5QxEn1EqXl8spKJajgrV9HuKx21SBobAjxvVSCn2
-        WDS0py85cbp3wj5rrkUR0fVitA==
-X-Google-Smtp-Source: ALg8bN7hzrofYjvkM3KyEI5FM3fxWhDo0lgcpoQBjNO3KPiqJkgwFZwAmIVdieFpTsA6QgpzmAa7kw==
-X-Received: by 2002:a65:4381:: with SMTP id m1mr24366352pgp.358.1548789265870;
-        Tue, 29 Jan 2019 11:14:25 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id n70sm54935347pfi.185.2019.01.29.11.14.25
+        bh=7Uuf0LVs+pzHcF3nyh4GxvEPQsOE1NPnxZxuLZkBYcE=;
+        b=LV3ZmXQEGxUtcxL/15oShwZSEBEQIKxr7a2n0dvui7e90FJfaa1vdLWPgQ5IHVpdtV
+         1AOW2aPux5VcmnuPCniI4Px4pyzSLNL7Tkjd14pWqjZ/eyfPRsj8yQ3o1XhcSva0sZ9Y
+         9+ub4a06tJyZs5Q1TXcXYDmF2HdreL5mcqFdEo+MIguAVJ2XHJnRUS4kxxSy24Mtf62U
+         +jUPrlj/IR4Ra1BMQRld5QoaX3jN8CU6MLCHgSpzpS/RT51rDs+cDXn+HDDGGVcwXM+C
+         nL8zoVA1KITLKdvPxTvLxrTcc1YmT+W9CLOKdZOXP34OaUYTpZNRF7w98CMk1/HR4HWZ
+         udPA==
+X-Gm-Message-State: AJcUukeK9lEOF8LisExiOGEcradhjYnOuaOnj6BuaQD/td1XgDiMWEK9
+        7YNwYHlgfJx177++fp4Us+jCtA==
+X-Google-Smtp-Source: ALg8bN7IHjZGwZzucz28HO/PlymbzsSNvGYxzDg61I0IW58mCAOiemGroUrZ9qMUoFn7zt2LxKfK1A==
+X-Received: by 2002:a81:5b07:: with SMTP id p7mr27054908ywb.468.1548789326972;
+        Tue, 29 Jan 2019 11:15:26 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::6:f1fc])
+        by smtp.gmail.com with ESMTPSA id k187sm12398985ywf.71.2019.01.29.11.15.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 11:14:25 -0800 (PST)
-Date:   Tue, 29 Jan 2019 11:14:24 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Yi Zeng <yizeng@asrmicro.com>
-Cc:     rui.zhang@intel.com, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] thermal: of-thermal: support to select governor in dts
- for thermal zone
-Message-ID: <20190129191424.GL81583@google.com>
-References: <1546873479-20415-1-git-send-email-yizeng@asrmicro.com>
+        Tue, 29 Jan 2019 11:15:26 -0800 (PST)
+Date:   Tue, 29 Jan 2019 14:15:25 -0500
+From:   Chris Down <chris@chrisdown.name>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH v3] mm: Make memory.emin the baseline for utilisation
+ determination
+Message-ID: <20190129191525.GB10430@chrisdown.name>
+References: <20190129182516.GA1834@chrisdown.name>
+ <20190129190253.GA10430@chrisdown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1546873479-20415-1-git-send-email-yizeng@asrmicro.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190129190253.GA10430@chrisdown.name>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 11:04:39PM +0800, Yi Zeng wrote:
-> Add the governor property parsing that defined in thermal zone node
-> in dts. If define the governor property for one thermal zone, for
-> example, governor = "step_wise", then parse and register the thermal
-> zone will find and set the right governor, except the only choice
-> of default governor.
-> 
-> Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
-> ---
->  drivers/thermal/of-thermal.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-> index 4bfdb4a..f9368f4 100644
-> --- a/drivers/thermal/of-thermal.c
-> +++ b/drivers/thermal/of-thermal.c
-> @@ -1024,6 +1024,7 @@ int __init of_parse_thermal_zones(void)
->  		struct thermal_zone_params *tzp;
->  		int i, mask = 0;
->  		u32 prop;
-> +		const char *name;
->  
->  		tz = thermal_of_build_thermal_zone(child);
->  		if (IS_ERR(tz)) {
-> @@ -1049,6 +1050,10 @@ int __init of_parse_thermal_zones(void)
->  		if (!of_property_read_u32(child, "sustainable-power", &prop))
->  			tzp->sustainable_power = prop;
->  
-> +		if (!of_property_read_string(child, "governor", &name))
-> +			strncpy(tzp->governor_name, name,
-> +				THERMAL_NAME_LENGTH);
-> +
->  		for (i = 0; i < tz->ntrips; i++)
->  			mask |= 1 << i;
+Roman points out that when when we do the low reclaim pass, we scale the
+reclaim pressure relative to position between 0 and the maximum
+protection threshold.
 
-For reference, the discussion of a similar patch about a year ago:
-https://patchwork.kernel.org/patch/10259487/
+However, if the maximum protection is based on memory.elow, and
+memory.emin is above zero, this means we still may get binary behaviour
+on second-pass low reclaim. This is because we scale starting at 0, not
+starting at memory.emin, and since we don't scan at all below emin, we
+end up with cliff behaviour.
 
-From a board developer POV I can see why you would want this, but
-maintainers seem(ed) to think that it could cause more problems
-than it solves.
+This should be a fairly uncommon case since usually we don't go into the
+second pass, but it makes sense to scale our low reclaim pressure
+starting at emin.
 
-Some arguments that were brought up against configuring the governor
-in the DT:
+You can test this by catting two large sparse files, one in a cgroup
+with emin set to some moderate size compared to physical RAM, and
+another cgroup without any emin. In both cgroups, set an elow larger
+than 50% of physical RAM. The one with emin will have less page
+scanning, as reclaim pressure is lower.
 
-- the DT should describe the hardware, not policy
-- the specified governor might not exist / be enabled
-- sysfs is more flexible than the DT
+Signed-off-by: Chris Down <chris@chrisdown.name>
+Suggested-by: Roman Gushchin <guro@fb.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: cgroups@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: kernel-team@fb.com
+---
+ include/linux/memcontrol.h | 12 ++++++---
+ mm/vmscan.c                | 55 +++++++++++++++++++++++---------------
+ 2 files changed, 41 insertions(+), 26 deletions(-)
 
-Cheers
+...well, I sent it with NULL for !CONFIG_MEMCG when I wanted 0. This is the 
+fixed fix(tm) patch.
 
-Matthias
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 290cfbfd60cd..6f7e0e1b581d 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -333,9 +333,11 @@ static inline bool mem_cgroup_disabled(void)
+ 	return !cgroup_subsys_enabled(memory_cgrp_subsys);
+ }
+ 
+-static inline unsigned long mem_cgroup_protection(struct mem_cgroup *memcg)
++static inline void mem_cgroup_protection(struct mem_cgroup *memcg,
++					 unsigned long *min, unsigned long *low)
+ {
+-	return max(READ_ONCE(memcg->memory.emin), READ_ONCE(memcg->memory.elow));
++	*min = READ_ONCE(memcg->memory.emin);
++	*low = READ_ONCE(memcg->memory.elow);
+ }
+ 
+ enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
+@@ -826,9 +828,11 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
+ {
+ }
+ 
+-static inline unsigned long mem_cgroup_protection(struct mem_cgroup *memcg)
++static inline void mem_cgroup_protection(struct mem_cgroup *memcg,
++					 unsigned long *min, unsigned long *low)
+ {
+-	return 0;
++	*min = 0;
++	*low = 0;
+ }
+ 
+ static inline enum mem_cgroup_protection mem_cgroup_protected(
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 549251818605..f7c4ab39d5d0 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2447,12 +2447,12 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 		int file = is_file_lru(lru);
+ 		unsigned long lruvec_size;
+ 		unsigned long scan;
+-		unsigned long protection;
++		unsigned long min, low;
+ 
+ 		lruvec_size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
+-		protection = mem_cgroup_protection(memcg);
++		mem_cgroup_protection(memcg, &min, &low);
+ 
+-		if (protection > 0) {
++		if (min || low) {
+ 			/*
+ 			 * Scale a cgroup's reclaim pressure by proportioning
+ 			 * its current usage to its memory.low or memory.min
+@@ -2467,28 +2467,38 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 			 * set it too low, which is not ideal.
+ 			 */
+ 			unsigned long cgroup_size = mem_cgroup_size(memcg);
+-			unsigned long baseline = 0;
+ 
+ 			/*
+-			 * During the reclaim first pass, we only consider
+-			 * cgroups in excess of their protection setting, but if
+-			 * that doesn't produce free pages, we come back for a
+-			 * second pass where we reclaim from all groups.
++			 * If there is any protection in place, we adjust scan
++			 * pressure in proportion to how much a group's current
++			 * usage exceeds that, in percent.
+ 			 *
+-			 * To maintain fairness in both cases, the first pass
+-			 * targets groups in proportion to their overage, and
+-			 * the second pass targets groups in proportion to their
+-			 * protection utilization.
+-			 *
+-			 * So on the first pass, a group whose size is 130% of
+-			 * its protection will be targeted at 30% of its size.
+-			 * On the second pass, a group whose size is at 40% of
+-			 * its protection will be
+-			 * targeted at 40% of its size.
++			 * There is one special case: in the first reclaim pass,
++			 * we skip over all groups that are within their low
++			 * protection. If that fails to reclaim enough pages to
++			 * satisfy the reclaim goal, we come back and override
++			 * the best-effort low protection. However, we still
++			 * ideally want to honor how well-behaved groups are in
++			 * that case instead of simply punishing them all
++			 * equally. As such, we reclaim them based on how much
++			 * of their best-effort protection they are using. Usage
++			 * below memory.min is excluded from consideration when
++			 * calculating utilisation, as it isn't ever
++			 * reclaimable, so it might as well not exist for our
++			 * purposes.
+ 			 */
+-			if (!sc->memcg_low_reclaim)
+-				baseline = lruvec_size;
+-			scan = lruvec_size * cgroup_size / protection - baseline;
++			if (sc->memcg_low_reclaim && low > min) {
++				/*
++				 * Reclaim according to utilisation between min
++				 * and low
++				 */
++				scan = lruvec_size * (cgroup_size - min) /
++					(low - min);
++			} else {
++				/* Reclaim according to protection overage */
++				scan = lruvec_size * cgroup_size /
++					max(min, low) - lruvec_size;
++			}
+ 
+ 			/*
+ 			 * Don't allow the scan target to exceed the lruvec
+@@ -2504,7 +2514,8 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 			 * some cases in the case of large overages.
+ 			 *
+ 			 * Also, minimally target SWAP_CLUSTER_MAX pages to keep
+-			 * reclaim moving forwards.
++			 * reclaim moving forwards, avoiding decremeting
++			 * sc->priority further than desirable.
+ 			 */
+ 			scan = clamp(scan, SWAP_CLUSTER_MAX, lruvec_size);
+ 		} else {
+-- 
+2.20.1
+
