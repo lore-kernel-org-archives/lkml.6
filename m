@@ -2,93 +2,99 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CD1C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:53:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D697C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EB832183F
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548755601;
-	bh=Dv5WAWwxOjJCOSKBm3bcnreU0q5AdFFEetxZtFvCwIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=G01QMnNzIGIhL9HQJxVDofayT4GWyiK/K+AnNQAW0CqkdM1/idoJ/BIAtvWFjv9Yj
-	 sRS7VseJ01ZDK2w5jfikBmsylyzGa6JfSXAiJheAQiGKvN8rh69hHI+8CPRHwxe2ZS
-	 5F2fk0mcVBH9Nxzy2jfcPFNfWfkaq2lI4RKAYk7c=
+	by mail.kernel.org (Postfix) with ESMTP id 75A4720869
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:54:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728307AbfA2JxU (ORCPT
+        id S1727412AbfA2Jyn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:53:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbfA2JxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:53:18 -0500
-Received: from quaco.ghostprotocols.net (ovpn-brq.redhat.com [213.175.37.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F36DA2183F;
-        Tue, 29 Jan 2019 09:53:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548755598;
-        bh=Dv5WAWwxOjJCOSKBm3bcnreU0q5AdFFEetxZtFvCwIM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NNlh4KOPRq2ZBJL3NKoxQ0U5wDXEmYiiKIqqU7rAjeOyMivEcLwdQO+L2QGUrhQmw
-         CxI+KYnHDMT9uA++yWaV4AU55nY5s5SDr0uzn9PwepQzEg8WhTlUANxOJvGoe3Ogq1
-         iDtg+GvbK/xYczsf1UqZkDhu6GVYKwzMy1q7CbY4=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id DDD7A4034F; Tue, 29 Jan 2019 10:53:15 +0100 (CET)
-Date:   Tue, 29 Jan 2019 10:53:15 +0100
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, jolsa@redhat.com,
-        namhyung@kernel.org, dzickus@redhat.com, fowles@inreach.com,
-        jmario@redhat.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, maddy@linux.vnet.ibm.com
-Subject: Re: [PATCH] perf mem/c2c: Fix perf_mem_events to support powerpc
-Message-ID: <20190129095315.GH4344@kernel.org>
-References: <20190114041402.14033-1-ravi.bangoria@linux.ibm.com>
- <f308ef3e-f34b-6000-8826-27bdf8c3704e@linux.ibm.com>
- <874l9rsson.fsf@concordia.ellerman.id.au>
+        Tue, 29 Jan 2019 04:54:43 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:35454 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725536AbfA2Jyn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:54:43 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0T9sA9D030677;
+        Tue, 29 Jan 2019 03:54:39 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2q8nu7uh9q-1;
+        Tue, 29 Jan 2019 03:54:39 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id B924E611C8B3;
+        Tue, 29 Jan 2019 03:54:38 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 29 Jan 2019
+ 09:54:38 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x0T9sc6s015547; Tue,
+ 29 Jan 2019 09:54:38 GMT
+Date:   Tue, 29 Jan 2019 09:54:38 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Axel Lin <axel.lin@ingics.com>
+CC:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] regulator: lochnagar: Fix n_voltages setting for VDDCORE
+Message-ID: <20190129095438.GJ3837@imbe.wolfsonmicro.main>
+References: <20190129030156.2024-1-axel.lin@ingics.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <874l9rsson.fsf@concordia.ellerman.id.au>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190129030156.2024-1-axel.lin@ingics.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901290076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jan 29, 2019 at 08:45:44PM +1100, Michael Ellerman escreveu:
-> Ravi Bangoria <ravi.bangoria@linux.ibm.com> writes:
+On Tue, Jan 29, 2019 at 11:01:56AM +0800, Axel Lin wrote:
+> With current n_voltages setting, regulator_list_voltage will return
+> -EINVAL when selector >=57. The highest selector is 0x41, so the
+> n_voltages should be 0x41+1, i.e. 66.
 > 
-> > On 1/14/19 9:44 AM, Ravi Bangoria wrote:
-> >> Powerpc hw does not have inbuilt latency filter (--ldlat) for mem-load
-> >> event and, perf_mem_events by default includes ldlat=30 which is
-> >> causing failure on powerpc. Refactor code to support perf mem/c2c on
-> >> powerpc.
-> >> 
-> >> This patch depends on kernel side changes done my Madhavan:
-> >> https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-December/182596.html
-> >> 
-> >> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> >
-> >
-> > Arnaldo / Michael, Any thoughts?
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+>  drivers/regulator/lochnagar-regulator.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I haven't merged the kernel patch, I think because Maddy told me not to
-> because it would break the userspace tooling :)
-> 
-> What is the actual dependency between them? ie. should we merge the
-> kernel fix first or second or what?
+> diff --git a/drivers/regulator/lochnagar-regulator.c b/drivers/regulator/lochnagar-regulator.c
+> index 4962d13659aa..ff97cc50f2eb 100644
+> --- a/drivers/regulator/lochnagar-regulator.c
+> +++ b/drivers/regulator/lochnagar-regulator.c
+> @@ -194,7 +194,7 @@ static const struct regulator_desc lochnagar_regulators[] = {
+>  		.name = "VDDCORE",
+>  		.supply_name = "SYSVDD",
+>  		.type = REGULATOR_VOLTAGE,
+> -		.n_voltages = 57,
+> +		.n_voltages = 66,
+>  		.ops = &lochnagar_vddcore_ops,
+>  
+>  		.id = LOCHNAGAR_VDDCORE,
+> -- 
+> 2.17.1
 
-I think its just a tooling side, I haven't processed it because I'm
-waiting for Ravi to address Jiri's comment, after that I'm happy to put
-it in my perf/urgent branch that I'm brewing to push to Ingo today or
-tomorrow.
+Hmm... I think this might need a little more investigation, it
+does indeed fail at present (amazing that it works upto exactly 1.2V
+which is common the usecase) but this feels more like a core
+problem. There are indeed only 57 valid voltage settings as the
+range is 0x8 - 0x41, but it seems that presently the core treats
+this less as n_voltages and more like max_selector. Should we
+perhaps be teaching the core to understand the min_selector
+instead?
 
-- Arnaldo
+Thanks,
+Charles
