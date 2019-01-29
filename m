@@ -2,52 +2,53 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB973C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5F6C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0ED6214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4B432083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762424;
-	bh=9rvy04bQqT1FbTOnMUwSMNKx+RtVaJhKa8zZ07SS8yU=;
+	s=default; t=1548762430;
+	bh=BVdXZ2kXG1CcNZahWI+naSPBkWnRjkz8KBfCsQu3SXI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=It+hcCDDbbhWtVHOPOapRDsZ8T+2rqhts+duAb0fbm5EiHvtVm6h9zPGEJE5B0iWz
-	 dfbSLprFCWdUZJNQYaODVHDzqyZGE2zhGToxSvr8Hl3YhDxXCHv9Rm66yRZZcHwZm2
-	 UalyAjuREhJ6r24FxdgOn8exCe4STdMnjhItwFl4=
+	b=CVo8mkyicH8lbpdjkpJGnrNRfGDBYY9UhM4DzxR/qRjWCPj+qEKJEQjdXFKvgB+C0
+	 NdAmq6Dt3oyPDorfgE6i7kujDzzvXIB03zwR8t30+UM718DTeZtmM90xDP1SqjYvFA
+	 lqRLBZYT+Z/tg0q9zy93NoY84IvuUGlt2Hs7caiA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731119AbfA2LrD (ORCPT
+        id S1731144AbfA2LrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:47:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37602 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:47:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729724AbfA2Lq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:46:57 -0500
+        id S1730140AbfA2LrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 255AE214DA;
-        Tue, 29 Jan 2019 11:46:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D71720882;
+        Tue, 29 Jan 2019 11:46:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762416;
-        bh=9rvy04bQqT1FbTOnMUwSMNKx+RtVaJhKa8zZ07SS8yU=;
+        s=default; t=1548762420;
+        bh=BVdXZ2kXG1CcNZahWI+naSPBkWnRjkz8KBfCsQu3SXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QvBgIcNNMa3F3Y1/clU9DBubsxDsQbTL1P80LTyJJZle6QRxknBfeFcvBV6/urupZ
-         wzDbcNGVUppVETfQtpWfK3mkU20jnVga5hGiMe0hfRyKJ08wuDTo3I25eGBucX+q3E
-         yQ4PN8UowKTK+qjE02kTj9BMb6HllLNkkB3uUBe0=
+        b=au5KV6RZ+ORKe0gdJK4Bz/m7wxXPuSB56mTJOggPEXH1+OtxesMFaJ2wnxlluIOZK
+         XqRK1eXDUfLGAGW7fj/OOzdKFcp1Vfnb7LRBDU1VpIR5+riwz7fvc/gFbqLH1fA0Vd
+         cogq0tNtkOSIMp4kjNDir8TA7PrXVlpH26DYAXKc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.19 057/103] smb3: add credits we receive from oplock/break PDUs
-Date:   Tue, 29 Jan 2019 12:35:34 +0100
-Message-Id: <20190129113204.109239414@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 095/103] bpf: prevent out of bounds speculation on pointer arithmetic
+Date:   Tue, 29 Jan 2019 12:36:12 +0100
+Message-Id: <20190129113207.223846678@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,38 +67,608 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+[ commit 979d63d50c0c0f7bc537bf821e056cc9fe5abd38 upstream ]
 
-commit 2e5700bdde438ed708b36d8acd0398dc73cbf759 upstream.
+Jann reported that the original commit back in b2157399cc98
+("bpf: prevent out-of-bounds speculation") was not sufficient
+to stop CPU from speculating out of bounds memory access:
+While b2157399cc98 only focussed on masking array map access
+for unprivileged users for tail calls and data access such
+that the user provided index gets sanitized from BPF program
+and syscall side, there is still a more generic form affected
+from BPF programs that applies to most maps that hold user
+data in relation to dynamic map access when dealing with
+unknown scalars or "slow" known scalars as access offset, for
+example:
 
-Otherwise we gradually leak credits leading to potential
-hung session.
+  - Load a map value pointer into R6
+  - Load an index into R7
+  - Do a slow computation (e.g. with a memory dependency) that
+    loads a limit into R8 (e.g. load the limit from a map for
+    high latency, then mask it to make the verifier happy)
+  - Exit if R7 >= R8 (mispredicted branch)
+  - Load R0 = R6[R7]
+  - Load R0 = R6[R0]
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-CC: Stable <stable@vger.kernel.org>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+For unknown scalars there are two options in the BPF verifier
+where we could derive knowledge from in order to guarantee
+safe access to the memory: i) While </>/<=/>= variants won't
+allow to derive any lower or upper bounds from the unknown
+scalar where it would be safe to add it to the map value
+pointer, it is possible through ==/!= test however. ii) another
+option is to transform the unknown scalar into a known scalar,
+for example, through ALU ops combination such as R &= <imm>
+followed by R |= <imm> or any similar combination where the
+original information from the unknown scalar would be destroyed
+entirely leaving R with a constant. The initial slow load still
+precedes the latter ALU ops on that register, so the CPU
+executes speculatively from that point. Once we have the known
+scalar, any compare operation would work then. A third option
+only involving registers with known scalars could be crafted
+as described in [0] where a CPU port (e.g. Slow Int unit)
+would be filled with many dependent computations such that
+the subsequent condition depending on its outcome has to wait
+for evaluation on its execution port and thereby executing
+speculatively if the speculated code can be scheduled on a
+different execution port, or any other form of mistraining
+as described in [1], for example. Given this is not limited
+to only unknown scalars, not only map but also stack access
+is affected since both is accessible for unprivileged users
+and could potentially be used for out of bounds access under
+speculation.
 
+In order to prevent any of these cases, the verifier is now
+sanitizing pointer arithmetic on the offset such that any
+out of bounds speculation would be masked in a way where the
+pointer arithmetic result in the destination register will
+stay unchanged, meaning offset masked into zero similar as
+in array_index_nospec() case. With regards to implementation,
+there are three options that were considered: i) new insn
+for sanitation, ii) push/pop insn and sanitation as inlined
+BPF, iii) reuse of ax register and sanitation as inlined BPF.
+
+Option i) has the downside that we end up using from reserved
+bits in the opcode space, but also that we would require
+each JIT to emit masking as native arch opcodes meaning
+mitigation would have slow adoption till everyone implements
+it eventually which is counter-productive. Option ii) and iii)
+have both in common that a temporary register is needed in
+order to implement the sanitation as inlined BPF since we
+are not allowed to modify the source register. While a push /
+pop insn in ii) would be useful to have in any case, it
+requires once again that every JIT needs to implement it
+first. While possible, amount of changes needed would also
+be unsuitable for a -stable patch. Therefore, the path which
+has fewer changes, less BPF instructions for the mitigation
+and does not require anything to be changed in the JITs is
+option iii) which this work is pursuing. The ax register is
+already mapped to a register in all JITs (modulo arm32 where
+it's mapped to stack as various other BPF registers there)
+and used in constant blinding for JITs-only so far. It can
+be reused for verifier rewrites under certain constraints.
+The interpreter's tmp "register" has therefore been remapped
+into extending the register set with hidden ax register and
+reusing that for a number of instructions that needed the
+prior temporary variable internally (e.g. div, mod). This
+allows for zero increase in stack space usage in the interpreter,
+and enables (restricted) generic use in rewrites otherwise as
+long as such a patchlet does not make use of these instructions.
+The sanitation mask is dynamic and relative to the offset the
+map value or stack pointer currently holds.
+
+There are various cases that need to be taken under consideration
+for the masking, e.g. such operation could look as follows:
+ptr += val or val += ptr or ptr -= val. Thus, the value to be
+sanitized could reside either in source or in destination
+register, and the limit is different depending on whether
+the ALU op is addition or subtraction and depending on the
+current known and bounded offset. The limit is derived as
+follows: limit := max_value_size - (smin_value + off). For
+subtraction: limit := umax_value + off. This holds because
+we do not allow any pointer arithmetic that would
+temporarily go out of bounds or would have an unknown
+value with mixed signed bounds where it is unclear at
+verification time whether the actual runtime value would
+be either negative or positive. For example, we have a
+derived map pointer value with constant offset and bounded
+one, so limit based on smin_value works because the verifier
+requires that statically analyzed arithmetic on the pointer
+must be in bounds, and thus it checks if resulting
+smin_value + off and umax_value + off is still within map
+value bounds at time of arithmetic in addition to time of
+access. Similarly, for the case of stack access we derive
+the limit as follows: MAX_BPF_STACK + off for subtraction
+and -off for the case of addition where off := ptr_reg->off +
+ptr_reg->var_off.value. Subtraction is a special case for
+the masking which can be in form of ptr += -val, ptr -= -val,
+or ptr -= val. In the first two cases where we know that
+the value is negative, we need to temporarily negate the
+value in order to do the sanitation on a positive value
+where we later swap the ALU op, and restore original source
+register if the value was in source.
+
+The sanitation of pointer arithmetic alone is still not fully
+sufficient as is, since a scenario like the following could
+happen ...
+
+  PTR += 0x1000 (e.g. K-based imm)
+  PTR -= BIG_NUMBER_WITH_SLOW_COMPARISON
+  PTR += 0x1000
+  PTR -= BIG_NUMBER_WITH_SLOW_COMPARISON
+  [...]
+
+... which under speculation could end up as ...
+
+  PTR += 0x1000
+  PTR -= 0 [ truncated by mitigation ]
+  PTR += 0x1000
+  PTR -= 0 [ truncated by mitigation ]
+  [...]
+
+... and therefore still access out of bounds. To prevent such
+case, the verifier is also analyzing safety for potential out
+of bounds access under speculative execution. Meaning, it is
+also simulating pointer access under truncation. We therefore
+"branch off" and push the current verification state after the
+ALU operation with known 0 to the verification stack for later
+analysis. Given the current path analysis succeeded it is
+likely that the one under speculation can be pruned. In any
+case, it is also subject to existing complexity limits and
+therefore anything beyond this point will be rejected. In
+terms of pruning, it needs to be ensured that the verification
+state from speculative execution simulation must never prune
+a non-speculative execution path, therefore, we mark verifier
+state accordingly at the time of push_stack(). If verifier
+detects out of bounds access under speculative execution from
+one of the possible paths that includes a truncation, it will
+reject such program.
+
+Given we mask every reg-based pointer arithmetic for
+unprivileged programs, we've been looking into how it could
+affect real-world programs in terms of size increase. As the
+majority of programs are targeted for privileged-only use
+case, we've unconditionally enabled masking (with its alu
+restrictions on top of it) for privileged programs for the
+sake of testing in order to check i) whether they get rejected
+in its current form, and ii) by how much the number of
+instructions and size will increase. We've tested this by
+using Katran, Cilium and test_l4lb from the kernel selftests.
+For Katran we've evaluated balancer_kern.o, Cilium bpf_lxc.o
+and an older test object bpf_lxc_opt_-DUNKNOWN.o and l4lb
+we've used test_l4lb.o as well as test_l4lb_noinline.o. We
+found that none of the programs got rejected by the verifier
+with this change, and that impact is rather minimal to none.
+balancer_kern.o had 13,904 bytes (1,738 insns) xlated and
+7,797 bytes JITed before and after the change. Most complex
+program in bpf_lxc.o had 30,544 bytes (3,817 insns) xlated
+and 18,538 bytes JITed before and after and none of the other
+tail call programs in bpf_lxc.o had any changes either. For
+the older bpf_lxc_opt_-DUNKNOWN.o object we found a small
+increase from 20,616 bytes (2,576 insns) and 12,536 bytes JITed
+before to 20,664 bytes (2,582 insns) and 12,558 bytes JITed
+after the change. Other programs from that object file had
+similar small increase. Both test_l4lb.o had no change and
+remained at 6,544 bytes (817 insns) xlated and 3,401 bytes
+JITed and for test_l4lb_noinline.o constant at 5,080 bytes
+(634 insns) xlated and 3,313 bytes JITed. This can be explained
+in that LLVM typically optimizes stack based pointer arithmetic
+by using K-based operations and that use of dynamic map access
+is not overly frequent. However, in future we may decide to
+optimize the algorithm further under known guarantees from
+branch and value speculation. Latter seems also unclear in
+terms of prediction heuristics that today's CPUs apply as well
+as whether there could be collisions in e.g. the predictor's
+Value History/Pattern Table for triggering out of bounds access,
+thus masking is performed unconditionally at this point but could
+be subject to relaxation later on. We were generally also
+brainstorming various other approaches for mitigation, but the
+blocker was always lack of available registers at runtime and/or
+overhead for runtime tracking of limits belonging to a specific
+pointer. Thus, we found this to be minimally intrusive under
+given constraints.
+
+With that in place, a simple example with sanitized access on
+unprivileged load at post-verification time looks as follows:
+
+  # bpftool prog dump xlated id 282
+  [...]
+  28: (79) r1 = *(u64 *)(r7 +0)
+  29: (79) r2 = *(u64 *)(r7 +8)
+  30: (57) r1 &= 15
+  31: (79) r3 = *(u64 *)(r0 +4608)
+  32: (57) r3 &= 1
+  33: (47) r3 |= 1
+  34: (2d) if r2 > r3 goto pc+19
+  35: (b4) (u32) r11 = (u32) 20479  |
+  36: (1f) r11 -= r2                | Dynamic sanitation for pointer
+  37: (4f) r11 |= r2                | arithmetic with registers
+  38: (87) r11 = -r11               | containing bounded or known
+  39: (c7) r11 s>>= 63              | scalars in order to prevent
+  40: (5f) r11 &= r2                | out of bounds speculation.
+  41: (0f) r4 += r11                |
+  42: (71) r4 = *(u8 *)(r4 +0)
+  43: (6f) r4 <<= r1
+  [...]
+
+For the case where the scalar sits in the destination register
+as opposed to the source register, the following code is emitted
+for the above example:
+
+  [...]
+  16: (b4) (u32) r11 = (u32) 20479
+  17: (1f) r11 -= r2
+  18: (4f) r11 |= r2
+  19: (87) r11 = -r11
+  20: (c7) r11 s>>= 63
+  21: (5f) r2 &= r11
+  22: (0f) r2 += r0
+  23: (61) r0 = *(u32 *)(r2 +0)
+  [...]
+
+JIT blinding example with non-conflicting use of r10:
+
+  [...]
+   d5:	je     0x0000000000000106    _
+   d7:	mov    0x0(%rax),%edi       |
+   da:	mov    $0xf153246,%r10d     | Index load from map value and
+   e0:	xor    $0xf153259,%r10      | (const blinded) mask with 0x1f.
+   e7:	and    %r10,%rdi            |_
+   ea:	mov    $0x2f,%r10d          |
+   f0:	sub    %rdi,%r10            | Sanitized addition. Both use r10
+   f3:	or     %rdi,%r10            | but do not interfere with each
+   f6:	neg    %r10                 | other. (Neither do these instructions
+   f9:	sar    $0x3f,%r10           | interfere with the use of ax as temp
+   fd:	and    %r10,%rdi            | in interpreter.)
+  100:	add    %rax,%rdi            |_
+  103:	mov    0x0(%rdi),%eax
+ [...]
+
+Tested that it fixes Jann's reproducer, and also checked that test_verifier
+and test_progs suite with interpreter, JIT and JIT with hardening enabled
+on x86-64 and arm64 runs successfully.
+
+  [0] Speculose: Analyzing the Security Implications of Speculative
+      Execution in CPUs, Giorgi Maisuradze and Christian Rossow,
+      https://arxiv.org/pdf/1801.04084.pdf
+
+  [1] A Systematic Evaluation of Transient Execution Attacks and
+      Defenses, Claudio Canella, Jo Van Bulck, Michael Schwarz,
+      Moritz Lipp, Benjamin von Berg, Philipp Ortner, Frank Piessens,
+      Dmitry Evtyushkin, Daniel Gruss,
+      https://arxiv.org/pdf/1811.05441.pdf
+
+Fixes: b2157399cc98 ("bpf: prevent out-of-bounds speculation")
+Reported-by: Jann Horn <jannh@google.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2misc.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ include/linux/bpf_verifier.h |  10 ++
+ kernel/bpf/verifier.c        | 186 +++++++++++++++++++++++++++++++++--
+ 2 files changed, 189 insertions(+), 7 deletions(-)
 
---- a/fs/cifs/smb2misc.c
-+++ b/fs/cifs/smb2misc.c
-@@ -648,6 +648,13 @@ smb2_is_valid_oplock_break(char *buffer,
- 	if (rsp->sync_hdr.Command != SMB2_OPLOCK_BREAK)
+diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+index b1587ffdea7b..2716dcbfb2f1 100644
+--- a/include/linux/bpf_verifier.h
++++ b/include/linux/bpf_verifier.h
+@@ -134,6 +134,7 @@ struct bpf_verifier_state {
+ 	struct bpf_func_state *frame[MAX_CALL_FRAMES];
+ 	struct bpf_verifier_state *parent;
+ 	u32 curframe;
++	bool speculative;
+ };
+ 
+ /* linked list of verifier states used to prune search */
+@@ -142,15 +143,24 @@ struct bpf_verifier_state_list {
+ 	struct bpf_verifier_state_list *next;
+ };
+ 
++/* Possible states for alu_state member. */
++#define BPF_ALU_SANITIZE_SRC		1U
++#define BPF_ALU_SANITIZE_DST		2U
++#define BPF_ALU_NEG_VALUE		(1U << 2)
++#define BPF_ALU_SANITIZE		(BPF_ALU_SANITIZE_SRC | \
++					 BPF_ALU_SANITIZE_DST)
++
+ struct bpf_insn_aux_data {
+ 	union {
+ 		enum bpf_reg_type ptr_type;	/* pointer type for load/store insns */
+ 		unsigned long map_state;	/* pointer/poison value for maps */
+ 		s32 call_imm;			/* saved imm field of call insn */
++		u32 alu_limit;			/* limit for add/sub register with pointer */
+ 	};
+ 	int ctx_field_size; /* the ctx field size for load insn, maybe 0 */
+ 	int sanitize_stack_off; /* stack slot to be cleared */
+ 	bool seen; /* this insn was processed by the verifier */
++	u8 alu_state; /* used in combination with alu_limit */
+ };
+ 
+ #define MAX_USED_MAPS 64 /* max number of maps accessed by one eBPF program */
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index f9d5aea4891d..9ab0adedb174 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -466,6 +466,7 @@ static int copy_verifier_state(struct bpf_verifier_state *dst_state,
+ 		free_func_state(dst_state->frame[i]);
+ 		dst_state->frame[i] = NULL;
+ 	}
++	dst_state->speculative = src->speculative;
+ 	dst_state->curframe = src->curframe;
+ 	dst_state->parent = src->parent;
+ 	for (i = 0; i <= src->curframe; i++) {
+@@ -511,7 +512,8 @@ static int pop_stack(struct bpf_verifier_env *env, int *prev_insn_idx,
+ }
+ 
+ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
+-					     int insn_idx, int prev_insn_idx)
++					     int insn_idx, int prev_insn_idx,
++					     bool speculative)
+ {
+ 	struct bpf_verifier_state *cur = env->cur_state;
+ 	struct bpf_verifier_stack_elem *elem;
+@@ -529,6 +531,7 @@ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
+ 	err = copy_verifier_state(&elem->st, cur);
+ 	if (err)
+ 		goto err;
++	elem->st.speculative |= speculative;
+ 	if (env->stack_size > BPF_COMPLEXITY_LIMIT_STACK) {
+ 		verbose(env, "BPF program is too complex\n");
+ 		goto err;
+@@ -2698,6 +2701,102 @@ static bool check_reg_sane_offset(struct bpf_verifier_env *env,
+ 	return true;
+ }
+ 
++static struct bpf_insn_aux_data *cur_aux(struct bpf_verifier_env *env)
++{
++	return &env->insn_aux_data[env->insn_idx];
++}
++
++static int retrieve_ptr_limit(const struct bpf_reg_state *ptr_reg,
++			      u32 *ptr_limit, u8 opcode, bool off_is_neg)
++{
++	bool mask_to_left = (opcode == BPF_ADD &&  off_is_neg) ||
++			    (opcode == BPF_SUB && !off_is_neg);
++	u32 off;
++
++	switch (ptr_reg->type) {
++	case PTR_TO_STACK:
++		off = ptr_reg->off + ptr_reg->var_off.value;
++		if (mask_to_left)
++			*ptr_limit = MAX_BPF_STACK + off;
++		else
++			*ptr_limit = -off;
++		return 0;
++	case PTR_TO_MAP_VALUE:
++		if (mask_to_left) {
++			*ptr_limit = ptr_reg->umax_value + ptr_reg->off;
++		} else {
++			off = ptr_reg->smin_value + ptr_reg->off;
++			*ptr_limit = ptr_reg->map_ptr->value_size - off;
++		}
++		return 0;
++	default:
++		return -EINVAL;
++	}
++}
++
++static int sanitize_ptr_alu(struct bpf_verifier_env *env,
++			    struct bpf_insn *insn,
++			    const struct bpf_reg_state *ptr_reg,
++			    struct bpf_reg_state *dst_reg,
++			    bool off_is_neg)
++{
++	struct bpf_verifier_state *vstate = env->cur_state;
++	struct bpf_insn_aux_data *aux = cur_aux(env);
++	bool ptr_is_dst_reg = ptr_reg == dst_reg;
++	u8 opcode = BPF_OP(insn->code);
++	u32 alu_state, alu_limit;
++	struct bpf_reg_state tmp;
++	bool ret;
++
++	if (env->allow_ptr_leaks || BPF_SRC(insn->code) == BPF_K)
++		return 0;
++
++	/* We already marked aux for masking from non-speculative
++	 * paths, thus we got here in the first place. We only care
++	 * to explore bad access from here.
++	 */
++	if (vstate->speculative)
++		goto do_sim;
++
++	alu_state  = off_is_neg ? BPF_ALU_NEG_VALUE : 0;
++	alu_state |= ptr_is_dst_reg ?
++		     BPF_ALU_SANITIZE_SRC : BPF_ALU_SANITIZE_DST;
++
++	if (retrieve_ptr_limit(ptr_reg, &alu_limit, opcode, off_is_neg))
++		return 0;
++
++	/* If we arrived here from different branches with different
++	 * limits to sanitize, then this won't work.
++	 */
++	if (aux->alu_state &&
++	    (aux->alu_state != alu_state ||
++	     aux->alu_limit != alu_limit))
++		return -EACCES;
++
++	/* Corresponding fixup done in fixup_bpf_calls(). */
++	aux->alu_state = alu_state;
++	aux->alu_limit = alu_limit;
++
++do_sim:
++	/* Simulate and find potential out-of-bounds access under
++	 * speculative execution from truncation as a result of
++	 * masking when off was not within expected range. If off
++	 * sits in dst, then we temporarily need to move ptr there
++	 * to simulate dst (== 0) +/-= ptr. Needed, for example,
++	 * for cases where we use K-based arithmetic in one direction
++	 * and truncated reg-based in the other in order to explore
++	 * bad access.
++	 */
++	if (!ptr_is_dst_reg) {
++		tmp = *dst_reg;
++		*dst_reg = *ptr_reg;
++	}
++	ret = push_stack(env, env->insn_idx + 1, env->insn_idx, true);
++	if (!ptr_is_dst_reg)
++		*dst_reg = tmp;
++	return !ret ? -EFAULT : 0;
++}
++
+ /* Handles arithmetic on a pointer and a scalar: computes new min/max and var_off.
+  * Caller should also handle BPF_MOV case separately.
+  * If we return -EACCES, caller may want to try again treating pointer as a
+@@ -2718,6 +2817,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 	    umin_ptr = ptr_reg->umin_value, umax_ptr = ptr_reg->umax_value;
+ 	u32 dst = insn->dst_reg, src = insn->src_reg;
+ 	u8 opcode = BPF_OP(insn->code);
++	int ret;
+ 
+ 	dst_reg = &regs[dst];
+ 
+@@ -2772,6 +2872,11 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 
+ 	switch (opcode) {
+ 	case BPF_ADD:
++		ret = sanitize_ptr_alu(env, insn, ptr_reg, dst_reg, smin_val < 0);
++		if (ret < 0) {
++			verbose(env, "R%d tried to add from different maps or paths\n", dst);
++			return ret;
++		}
+ 		/* We can take a fixed offset as long as it doesn't overflow
+ 		 * the s32 'off' field
+ 		 */
+@@ -2822,6 +2927,11 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 		}
+ 		break;
+ 	case BPF_SUB:
++		ret = sanitize_ptr_alu(env, insn, ptr_reg, dst_reg, smin_val < 0);
++		if (ret < 0) {
++			verbose(env, "R%d tried to sub from different maps or paths\n", dst);
++			return ret;
++		}
+ 		if (dst_reg == off_reg) {
+ 			/* scalar -= pointer.  Creates an unknown scalar */
+ 			verbose(env, "R%d tried to subtract pointer from scalar\n",
+@@ -3997,7 +4107,8 @@ static int check_cond_jmp_op(struct bpf_verifier_env *env,
+ 		}
+ 	}
+ 
+-	other_branch = push_stack(env, *insn_idx + insn->off + 1, *insn_idx);
++	other_branch = push_stack(env, *insn_idx + insn->off + 1, *insn_idx,
++				  false);
+ 	if (!other_branch)
+ 		return -EFAULT;
+ 	other_branch_regs = other_branch->frame[other_branch->curframe]->regs;
+@@ -4712,6 +4823,12 @@ static bool states_equal(struct bpf_verifier_env *env,
+ 	if (old->curframe != cur->curframe)
  		return false;
  
-+	if (rsp->sync_hdr.CreditRequest) {
-+		spin_lock(&server->req_lock);
-+		server->credits += le16_to_cpu(rsp->sync_hdr.CreditRequest);
-+		spin_unlock(&server->req_lock);
-+		wake_up(&server->request_q);
-+	}
++	/* Verification state from speculative execution simulation
++	 * must never prune a non-speculative execution one.
++	 */
++	if (old->speculative && !cur->speculative)
++		return false;
 +
- 	if (rsp->StructureSize !=
- 				smb2_rsp_struct_sizes[SMB2_OPLOCK_BREAK_HE]) {
- 		if (le16_to_cpu(rsp->StructureSize) == 44)
+ 	/* for states to be equal callsites have to be the same
+ 	 * and all frame states need to be equivalent
+ 	 */
+@@ -4863,7 +4980,7 @@ static int do_check(struct bpf_verifier_env *env)
+ 	if (!state)
+ 		return -ENOMEM;
+ 	state->curframe = 0;
+-	state->parent = NULL;
++	state->speculative = false;
+ 	state->frame[0] = kzalloc(sizeof(struct bpf_func_state), GFP_KERNEL);
+ 	if (!state->frame[0]) {
+ 		kfree(state);
+@@ -4903,8 +5020,10 @@ static int do_check(struct bpf_verifier_env *env)
+ 			/* found equivalent state, can prune the search */
+ 			if (env->log.level) {
+ 				if (do_print_state)
+-					verbose(env, "\nfrom %d to %d: safe\n",
+-						env->prev_insn_idx, env->insn_idx);
++					verbose(env, "\nfrom %d to %d%s: safe\n",
++						env->prev_insn_idx, env->insn_idx,
++						env->cur_state->speculative ?
++						" (speculative execution)" : "");
+ 				else
+ 					verbose(env, "%d: safe\n", env->insn_idx);
+ 			}
+@@ -4921,8 +5040,10 @@ static int do_check(struct bpf_verifier_env *env)
+ 			if (env->log.level > 1)
+ 				verbose(env, "%d:", env->insn_idx);
+ 			else
+-				verbose(env, "\nfrom %d to %d:",
+-					env->prev_insn_idx, env->insn_idx);
++				verbose(env, "\nfrom %d to %d%s:",
++					env->prev_insn_idx, env->insn_idx,
++					env->cur_state->speculative ?
++					" (speculative execution)" : "");
+ 			print_verifier_state(env, state->frame[state->curframe]);
+ 			do_print_state = false;
+ 		}
+@@ -5869,6 +5990,57 @@ static int fixup_bpf_calls(struct bpf_verifier_env *env)
+ 			continue;
+ 		}
+ 
++		if (insn->code == (BPF_ALU64 | BPF_ADD | BPF_X) ||
++		    insn->code == (BPF_ALU64 | BPF_SUB | BPF_X)) {
++			const u8 code_add = BPF_ALU64 | BPF_ADD | BPF_X;
++			const u8 code_sub = BPF_ALU64 | BPF_SUB | BPF_X;
++			struct bpf_insn insn_buf[16];
++			struct bpf_insn *patch = &insn_buf[0];
++			bool issrc, isneg;
++			u32 off_reg;
++
++			aux = &env->insn_aux_data[i + delta];
++			if (!aux->alu_state)
++				continue;
++
++			isneg = aux->alu_state & BPF_ALU_NEG_VALUE;
++			issrc = (aux->alu_state & BPF_ALU_SANITIZE) ==
++				BPF_ALU_SANITIZE_SRC;
++
++			off_reg = issrc ? insn->src_reg : insn->dst_reg;
++			if (isneg)
++				*patch++ = BPF_ALU64_IMM(BPF_MUL, off_reg, -1);
++			*patch++ = BPF_MOV32_IMM(BPF_REG_AX, aux->alu_limit - 1);
++			*patch++ = BPF_ALU64_REG(BPF_SUB, BPF_REG_AX, off_reg);
++			*patch++ = BPF_ALU64_REG(BPF_OR, BPF_REG_AX, off_reg);
++			*patch++ = BPF_ALU64_IMM(BPF_NEG, BPF_REG_AX, 0);
++			*patch++ = BPF_ALU64_IMM(BPF_ARSH, BPF_REG_AX, 63);
++			if (issrc) {
++				*patch++ = BPF_ALU64_REG(BPF_AND, BPF_REG_AX,
++							 off_reg);
++				insn->src_reg = BPF_REG_AX;
++			} else {
++				*patch++ = BPF_ALU64_REG(BPF_AND, off_reg,
++							 BPF_REG_AX);
++			}
++			if (isneg)
++				insn->code = insn->code == code_add ?
++					     code_sub : code_add;
++			*patch++ = *insn;
++			if (issrc && isneg)
++				*patch++ = BPF_ALU64_IMM(BPF_MUL, off_reg, -1);
++			cnt = patch - insn_buf;
++
++			new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
++			if (!new_prog)
++				return -ENOMEM;
++
++			delta    += cnt - 1;
++			env->prog = prog = new_prog;
++			insn      = new_prog->insnsi + i + delta;
++			continue;
++		}
++
+ 		if (insn->code != (BPF_JMP | BPF_CALL))
+ 			continue;
+ 		if (insn->src_reg == BPF_PSEUDO_CALL)
+-- 
+2.19.1
+
 
 
