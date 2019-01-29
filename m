@@ -2,175 +2,265 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 953BEC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE9BC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C1532175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7790A2175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:16:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ek4SAPpY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725779AbfA2FNm (ORCPT
+        id S1725783AbfA2FQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 00:13:42 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.168]:33836 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725535AbfA2FNm (ORCPT
+        Tue, 29 Jan 2019 00:16:52 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44286 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfA2FQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 00:13:42 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id CB5D615CCD
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 23:12:57 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id oLhhgrkjr90onoLhhgHzDa; Mon, 28 Jan 2019 23:12:57 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=60062 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1goLhh-003jI8-F7; Mon, 28 Jan 2019 23:12:57 -0600
-Subject: Re: [PATCH] drivers: qcom: rpmh: use struct_size() in kzalloc()
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181224062235.GA27815@embeddedor.com>
- <a3aeb9ae-6054-103f-db28-6ac3c0800e50@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <178072e6-046f-cc33-20a1-d44d87b238c6@embeddedor.com>
-Date:   Mon, 28 Jan 2019 23:12:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <a3aeb9ae-6054-103f-db28-6ac3c0800e50@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1goLhh-003jI8-F7
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:60062
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 29 Jan 2019 00:16:52 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u6so9104833pfh.11
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 21:16:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=jzmZGdThprPvWBd9rPPWpnODIbiUAg2dB5lcjbKVNTg=;
+        b=Ek4SAPpYxmrdAk8oSy7CDj4WiM+49wRgZNo7M7PR/r59RBoySwQmnL4sGmIVxTqV2J
+         A4NBpdIMj+AkkAUDlp4jYAbvd7gitZM13RrgdTB6uIbD17rSuMIuXa3jLegqks6dm2Dc
+         NvXkYSa+DzmwyBPQleUqCijGvEUaCzCVKMP8q4683H0T8ltEpn76kx+h41vIft8BVC+x
+         XyHqp57OODoQJU/sc1dH/rxhvKsTaKlCZBLZbjSeuyeTtamfn+aDsCMEsI7b8hX6+cn/
+         Jqjl3anZCmx1qlSto2XvUZlJi9vGa49Ru73Q16GFj93LC7sqz1ZRuNB2O6vTnZ6qjLtj
+         2OHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jzmZGdThprPvWBd9rPPWpnODIbiUAg2dB5lcjbKVNTg=;
+        b=W7JDsyXnXgRNm6X5E8/1zih0+3wYG8g00BDwkxlTHKGgZzZgMqi8tgr0UhbI0DrF5y
+         zeYqqe2zPNEx8AL7iHBNxFtuYKnxk0JnVffT/a4Tacp8EyejZ1HaoL/C7IlgVXH3gqAG
+         ZcVMQATeBBRUfv27n9QmCgErjr+50Emnwzb3oclt85SqEitxDx3EpWMOAijdDi3I5Jsy
+         OrNxM1xb2J+wbx7qgO8R0xHk5R4tCm4rsj/DRgcaaiE7r5NXyTz9ls6lFxY4yST979L6
+         RCQTO3ohxaE6G/2jGvH4kVZBVwTnZhpILvwBivn2uN0YFuKXqk6ALyOJcx1ST6Ysa3cA
+         ZAXA==
+X-Gm-Message-State: AJcUuke2SW85BVABRQdoEruxEvwUSvmOiMxDiv2pPXQSclUVitMGwZTT
+        i7DPY2C/UOHIjKVuqIETUc8=
+X-Google-Smtp-Source: ALg8bN48y+ktCVq5x1K/plzhuH4aeYGKqlt3V60TtfRMBozkSJyyIlQgoguwZTwcXQnkLBMFLvJmjQ==
+X-Received: by 2002:a63:7c6:: with SMTP id 189mr22782210pgh.129.1548739011054;
+        Mon, 28 Jan 2019 21:16:51 -0800 (PST)
+Received: from test-System-Product-Name.sunix.com.tw (114-36-229-251.dynamic-ip.hinet.net. [114.36.229.251])
+        by smtp.gmail.com with ESMTPSA id u126sm83182740pgb.2.2019.01.28.21.16.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 21:16:50 -0800 (PST)
+From:   saumah <saumah@gmail.com>
+To:     sudipm.mukherjee@gmail.com
+Cc:     morris_ku@sunix.com, linux-kernel@vger.kernel.org,
+        saumah <saumah@gmail.com>
+Subject: [PATCH] 8250_pci.c change for fix hanging problem while suspend machine. pci_ids.h has the same vendor id and device id definition as sunix multi-I/O card driver, when the sunix multi-io borad driver is installed,there are two drivers to support the same sunix multi-io card,it will cause operation error
+Date:   Tue, 29 Jan 2019 13:16:30 +0800
+Message-Id: <20190129051630.2630-1-saumah@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Signed-off-by: saumah <saumah@gmail.com>
+---
+ 8250_pci.c | 162 +----------------------------------------------------
+ 1 file changed, 2 insertions(+), 160 deletions(-)
 
-Friendly ping:
+diff --git a/8250_pci.c b/8250_pci.c
+index f80a300..310b1eb 100644
+--- a/8250_pci.c
++++ b/8250_pci.c
+@@ -519,115 +519,6 @@ static int pci_siig_setup(struct serial_private *priv,
+ 	return setup_port(priv, port, bar, offset, 0);
+ }
 
-Who can take this?
+-/*
+- * Timedia has an explosion of boards, and to avoid the PCI table from
+- * growing *huge*, we use this function to collapse some 70 entries
+- * in the PCI table into one, for sanity's and compactness's sake.
+- */
+-static const unsigned short timedia_single_port[] = {
+-	0x4025, 0x4027, 0x4028, 0x5025, 0x5027, 0
+-};
+-
+-static const unsigned short timedia_dual_port[] = {
+-	0x0002, 0x4036, 0x4037, 0x4038, 0x4078, 0x4079, 0x4085,
+-	0x4088, 0x4089, 0x5037, 0x5078, 0x5079, 0x5085, 0x6079,
+-	0x7079, 0x8079, 0x8137, 0x8138, 0x8237, 0x8238, 0x9079,
+-	0x9137, 0x9138, 0x9237, 0x9238, 0xA079, 0xB079, 0xC079,
+-	0xD079, 0
+-};
+-
+-static const unsigned short timedia_quad_port[] = {
+-	0x4055, 0x4056, 0x4095, 0x4096, 0x5056, 0x8156, 0x8157,
+-	0x8256, 0x8257, 0x9056, 0x9156, 0x9157, 0x9158, 0x9159,
+-	0x9256, 0x9257, 0xA056, 0xA157, 0xA158, 0xA159, 0xB056,
+-	0xB157, 0
+-};
+-
+-static const unsigned short timedia_eight_port[] = {
+-	0x4065, 0x4066, 0x5065, 0x5066, 0x8166, 0x9066, 0x9166,
+-	0x9167, 0x9168, 0xA066, 0xA167, 0xA168, 0
+-};
+-
+-static const struct timedia_struct {
+-	int num;
+-	const unsigned short *ids;
+-} timedia_data[] = {
+-	{ 1, timedia_single_port },
+-	{ 2, timedia_dual_port },
+-	{ 4, timedia_quad_port },
+-	{ 8, timedia_eight_port }
+-};
+-
+-/*
+- * There are nearly 70 different Timedia/SUNIX PCI serial devices.  Instead of
+- * listing them individually, this driver merely grabs them all with
+- * PCI_ANY_ID.  Some of these devices, however, also feature a parallel port,
+- * and should be left free to be claimed by parport_serial instead.
+- */
+-static int pci_timedia_probe(struct pci_dev *dev)
+-{
+-	/*
+-	 * Check the third digit of the subdevice ID
+-	 * (0,2,3,5,6: serial only -- 7,8,9: serial + parallel)
+-	 */
+-	if ((dev->subsystem_device & 0x00f0) >= 0x70) {
+-		dev_info(&dev->dev,
+-			"ignoring Timedia subdevice %04x for parport_serial\n",
+-			dev->subsystem_device);
+-		return -ENODEV;
+-	}
+-
+-	return 0;
+-}
+-
+-static int pci_timedia_init(struct pci_dev *dev)
+-{
+-	const unsigned short *ids;
+-	int i, j;
+-
+-	for (i = 0; i < ARRAY_SIZE(timedia_data); i++) {
+-		ids = timedia_data[i].ids;
+-		for (j = 0; ids[j]; j++)
+-			if (dev->subsystem_device == ids[j])
+-				return timedia_data[i].num;
+-	}
+-	return 0;
+-}
+-
+-/*
+- * Timedia/SUNIX uses a mixture of BARs and offsets
+- * Ugh, this is ugly as all hell --- TYT
+- */
+-static int
+-pci_timedia_setup(struct serial_private *priv,
+-		  const struct pciserial_board *board,
+-		  struct uart_8250_port *port, int idx)
+-{
+-	unsigned int bar = 0, offset = board->first_offset;
+-
+-	switch (idx) {
+-	case 0:
+-		bar = 0;
+-		break;
+-	case 1:
+-		offset = board->uart_offset;
+-		bar = 0;
+-		break;
+-	case 2:
+-		bar = 1;
+-		break;
+-	case 3:
+-		offset = board->uart_offset;
+-		/* FALLTHROUGH */
+-	case 4: /* BAR 2 */
+-	case 5: /* BAR 3 */
+-	case 6: /* BAR 4 */
+-	case 7: /* BAR 5 */
+-		bar = idx - 2;
+-	}
+-
+-	return setup_port(priv, port, bar, offset, board->reg_shift);
+-}
 
-Thanks
+ /*
+  * Some Titan cards are also a little weird
+@@ -2103,42 +1994,8 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
+ 		.subdevice	= PCI_ANY_ID,
+ 		.setup		= titan_400l_800l_setup,
+ 	},
+-	/*
+-	 * Timedia cards
+-	 */
+-	{
+-		.vendor		= PCI_VENDOR_ID_TIMEDIA,
+-		.device		= PCI_DEVICE_ID_TIMEDIA_1889,
+-		.subvendor	= PCI_VENDOR_ID_TIMEDIA,
+-		.subdevice	= PCI_ANY_ID,
+-		.probe		= pci_timedia_probe,
+-		.init		= pci_timedia_init,
+-		.setup		= pci_timedia_setup,
+-	},
+-	{
+-		.vendor		= PCI_VENDOR_ID_TIMEDIA,
+-		.device		= PCI_ANY_ID,
+-		.subvendor	= PCI_ANY_ID,
+-		.subdevice	= PCI_ANY_ID,
+-		.setup		= pci_timedia_setup,
+-	},
+-	/*
+-	 * SUNIX (Timedia) cards
+-	 * Do not "probe" for these cards as there is at least one combination
+-	 * card that should be handled by parport_pc that doesn't match the
+-	 * rule in pci_timedia_probe.
+-	 * It is part number is MIO5079A but its subdevice ID is 0x0102.
+-	 * There are some boards with part number SER5037AL that report
+-	 * subdevice ID 0x0002.
+-	 */
+-	{
+-		.vendor		= PCI_VENDOR_ID_SUNIX,
+-		.device		= PCI_DEVICE_ID_SUNIX_1999,
+-		.subvendor	= PCI_VENDOR_ID_SUNIX,
+-		.subdevice	= PCI_ANY_ID,
+-		.init		= pci_timedia_init,
+-		.setup		= pci_timedia_setup,
+-	},
++
++
+ 	/*
+ 	 * Xircom cards
+ 	 */
+@@ -4375,22 +4232,7 @@ static const struct pci_device_id serial_pci_tbl[] = {
+ 	{	PCI_VENDOR_ID_OXSEMI, PCI_DEVICE_ID_OXSEMI_16PCI95N,
+ 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 		pbn_oxsemi },
+-	{	PCI_VENDOR_ID_TIMEDIA, PCI_DEVICE_ID_TIMEDIA_1889,
+-		PCI_VENDOR_ID_TIMEDIA, PCI_ANY_ID, 0, 0,
+-		pbn_b0_bt_1_921600 },
+
+-	/*
+-	 * SUNIX (TIMEDIA)
+-	 */
+-	{	PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
+-		PCI_VENDOR_ID_SUNIX, PCI_ANY_ID,
+-		PCI_CLASS_COMMUNICATION_SERIAL << 8, 0xffff00,
+-		pbn_b0_bt_1_921600 },
+-
+-	{	PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
+-		PCI_VENDOR_ID_SUNIX, PCI_ANY_ID,
+-		PCI_CLASS_COMMUNICATION_MULTISERIAL << 8, 0xffff00,
+-		pbn_b0_bt_1_921600 },
+
+ 	/*
+ 	 * AFAVLAB serial card, from Harald Welte <laforge@gnumonks.org>
 --
-Gustavo
+2.17.1
 
-On 1/9/19 11:38 AM, Gustavo A. R. Silva wrote:
-> Hi,
-> 
-> Friendly ping:
-> 
-> Who can ack or review this patch, please?
-> 
-> Thanks
-> -- 
-> Gustavo
-> 
-> 
-> On 12/24/18 12:22 AM, Gustavo A. R. Silva wrote:
->> One of the more common cases of allocation size calculations is finding
->> the size of a structure that has a zero-sized array at the end, along
->> with memory for some number of elements for that array. For example:
->>
->> struct foo {
->>      int stuff;
->>      void *entry[];
->> };
->>
->> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
->>
->> Instead of leaving these open-coded and prone to type mistakes, we can
->> now use the new struct_size() helper:
->>
->> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
->>
->> This issue was detected with the help of Coccinelle.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>   drivers/soc/qcom/rpmh.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
->> index c7beb6841289..12c057a0b325 100644
->> --- a/drivers/soc/qcom/rpmh.c
->> +++ b/drivers/soc/qcom/rpmh.c
->> @@ -362,8 +362,7 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
->>       if (!count)
->>           return -EINVAL;
->>   -    req = kzalloc(sizeof(*req) + count * sizeof(req->rpm_msgs[0]),
->> -              GFP_ATOMIC);
->> +    req = kzalloc(struct_size(req, rpm_msgs, count), GFP_ATOMIC);
->>       if (!req)
->>           return -ENOMEM;
->>       req->count = count;
->>
