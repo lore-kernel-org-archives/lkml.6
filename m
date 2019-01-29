@@ -2,166 +2,254 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A60C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D629C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 571AB2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:22:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="TSUwHfa/"
+	by mail.kernel.org (Postfix) with ESMTP id CDEAD2087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:22:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548782555;
+	bh=x33nJ5bH6myQDzTmDUHe7OAVf7PqkQ1uZct4VIOW8G4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iOqLnmd8GXcLFisOeIOs8Qr+Xh5Hf8cgRm7NsAwMgplNHDGSRAiUsNw74MhsW/Qeo
+	 vs8IsADBxZCZ+KakXGAGrhnMBYb/pKSsqscZn/sT8CQjeaMBT4fEIVVb50lXQ0D3iF
+	 DEjiYiF6IOVkATqqlHKYJhpnAiX5CKvdurHyw8jM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729092AbfA2RWK (ORCPT
+        id S1727855AbfA2RWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:22:10 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:34912 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727499AbfA2RWJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:22:09 -0500
-Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
+        Tue, 29 Jan 2019 12:22:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35980 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726374AbfA2RWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 12:22:32 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 6B1E110C15B3;
-        Tue, 29 Jan 2019 09:22:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1548782529; bh=6siewOsFyiFle78IVXA2UfKcVeYXluE46qqcvMFZi+g=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=TSUwHfa/6/4qbYdcL2hxcspmtpTdbByKLCQBmaelITxOs5dgsxpTbxHnSeEp4uk8n
-         Iiu2OGUwei8MegOU3dZ45OA0qbEHLmlezIodS+vyXiitEVPPsulST02Ne8VRY7bFLc
-         Mvz5WTqdjE6z6170B+UD69aiRTHwMifbd0ZI+i1paVzdkxnuEs+c1QTnLojgYAGwMB
-         At/IsbuoXxj+Qb8zIZq/nIAAlnzVjL+Iief/9ql/Crl9GIBKwHDEhQVFrXZNnmiaOF
-         oYiS3w3vDYX+ozylmBFl54c2h5727HHbsOmAHiZzJDrvndAYIWzeeBJ6K4ZgfRycs3
-         xM90u+/iHDEEQ==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 58FD7A0097;
-        Tue, 29 Jan 2019 17:22:09 +0000 (UTC)
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 29 Jan 2019 09:21:46 -0800
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 29 Jan 2019 22:51:49 +0530
-Received: from [10.10.161.70] (10.10.161.70) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 29 Jan 2019 22:51:48 +0530
-Subject: Re: [PATCH 1/2] ARCv2: Enable unaligned access in early ASM code
-To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
-        <linux-snps-arc@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>
-Newsgroups: gmane.linux.kernel,gmane.linux.kernel.arc
-References: <20190116112951.10641-1-Eugeniy.Paltsev@synopsys.com>
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- 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
- hhqBJlyU6MVUa6vZNv8E
-Message-ID: <3c341dd9-f360-640e-a3c9-3291300d02ae@synopsys.com>
-Date:   Tue, 29 Jan 2019 09:21:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id E82502087E;
+        Tue, 29 Jan 2019 17:22:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548782551;
+        bh=x33nJ5bH6myQDzTmDUHe7OAVf7PqkQ1uZct4VIOW8G4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QyyW1Fzw19ooyw0RceOWO1PdMIPKuYJOifNJ+cQbr0pmLOdNdUs+GI4icQkFS8diA
+         5Jw1ocNRDAzH4TkuV9yJqzL5EoWLhpceMrMo/VMSbYR5X5cXAh2unNNHJbNM1r+ptL
+         fEH/cVViEwD8s0WSH6lE2JAqjQ384vU4pxLPfiso=
+Date:   Tue, 29 Jan 2019 18:22:29 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Holger =?iso-8859-1?Q?Hoffst=E4tte?= 
+        <holger@applied-asynchrony.com>
+Cc:     Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Scott Wood <oss@buserror.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH 4.19 006/103] net: phy: phy driver features are mandatory
+Message-ID: <20190129172229.GA27005@kroah.com>
+References: <20190129113159.567154026@linuxfoundation.org>
+ <20190129113159.909710200@linuxfoundation.org>
+ <2f2aa129-e9fb-c75a-1b60-1821863986bf@applied-asynchrony.com>
+ <VI1PR04MB4799457AC9ECABE4EE8E5021F2970@VI1PR04MB4799.eurprd04.prod.outlook.com>
+ <20190129163321.GA21868@kroah.com>
+ <19d73292-95c4-2990-8ec6-c2a9b87c5598@applied-asynchrony.com>
 MIME-Version: 1.0
-In-Reply-To: <20190116112951.10641-1-Eugeniy.Paltsev@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.70]
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <19d73292-95c4-2990-8ec6-c2a9b87c5598@applied-asynchrony.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/19 3:29 AM, Eugeniy Paltsev wrote:
-> Even though we do enable AD bit in arc_init_IRQ() we need to do
-> it in early ASM code otherwise we may face unaligned data until
-> we reach arc_init_IRQ() because GCC starting from v8.1.0 actively
-> generates unaligned data as it assumes that:
->  * ARCv2 always has support of unaliged data
->  * This support is turned on in runtime
+On Tue, Jan 29, 2019 at 05:57:38PM +0100, Holger Hoffstätte wrote:
+> On 1/29/19 5:33 PM, Greg Kroah-Hartman wrote:
+> > On Tue, Jan 29, 2019 at 04:05:16PM +0000, Camelia Alexandra Groza wrote:
+> > > > -----Original Message-----
+> > > > From: Holger Hoffstätte <holger@applied-asynchrony.com>
+> > > > Sent: Tuesday, January 29, 2019 17:50
+> > > > To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; linux-
+> > > > kernel@vger.kernel.org
+> > > > Cc: stable@vger.kernel.org; Scott Wood <oss@buserror.net>; Camelia
+> > > > Alexandra Groza <camelia.groza@nxp.com>; David S. Miller
+> > > > <davem@davemloft.net>; Heiner Kallweit <hkallweit1@gmail.com>
+> > > > Subject: Re: [PATCH 4.19 006/103] net: phy: phy driver features are
+> > > > mandatory
+> > > > 
+> > > > On 1/29/19 12:34 PM, Greg Kroah-Hartman wrote:
+> > > > > 4.19-stable review patch.  If anyone has any objections, please let me
+> > > > know.
+> > > > > 
+> > > > > ------------------
+> > > > > 
+> > > > > From: Camelia Groza <camelia.groza@nxp.com>
+> > > > > 
+> > > > > [ Upstream commit 3e64cf7a435ed0500e3adaa8aada2272d3ae8abc ]
+> > > > > 
+> > > > > Since phy driver features became a link_mode bitmap, phy drivers that
+> > > > > don't have a list of features configured will cause the kernel to crash
+> > > > > when probed.
+> > > > > 
+> > > > > Prevent the phy driver from registering if the features field is missing.
+> > > > > 
+> > > > > Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with
+> > > > link_mode bitmap")
+> > > > > Reported-by: Scott Wood <oss@buserror.net>
+> > > > > Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
+> > > > > Signed-off-by: David S. Miller <davem@davemloft.net>
+> > > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > > ---
+> > > > >    drivers/net/phy/phy_device.c |    5 +++++
+> > > > >    include/linux/phy.h          |    4 ++--
+> > > > >    2 files changed, 7 insertions(+), 2 deletions(-)
+> > > > > 
+> > > > > --- a/drivers/net/phy/phy_device.c
+> > > > > +++ b/drivers/net/phy/phy_device.c
+> > > > > @@ -1917,6 +1917,11 @@ int phy_driver_register(struct phy_drive
+> > > > >    {
+> > > > >    	int retval;
+> > > > > 
+> > > > > +	if (WARN_ON(!new_driver->features)) {
+> > > > > +		pr_err("%s: Driver features are missing\n", new_driver-
+> > > > > name);
+> > > > > +		return -EINVAL;
+> > > > > +	}
+> > > > > +
+> > > > >    	new_driver->mdiodrv.flags |= MDIO_DEVICE_IS_PHY;
+> > > > >    	new_driver->mdiodrv.driver.name = new_driver->name;
+> > > > >    	new_driver->mdiodrv.driver.bus = &mdio_bus_type;
+> > > > > --- a/include/linux/phy.h
+> > > > > +++ b/include/linux/phy.h
+> > > > > @@ -491,8 +491,8 @@ struct phy_device {
+> > > > >     *   only works for PHYs with IDs which match this field
+> > > > >     * name: The friendly name of this PHY type
+> > > > >     * phy_id_mask: Defines the important bits of the phy_id
+> > > > > - * features: A list of features (speed, duplex, etc) supported
+> > > > > - *   by this PHY
+> > > > > + * features: A mandatory list of features (speed, duplex, etc)
+> > > > > + *   supported by this PHY
+> > > > >     * flags: A bitfield defining certain other features this PHY
+> > > > >     *   supports (like interrupts)
+> > > > >     *
+> > > > > 
+> > > > 
+> > > > This patch leads to the following dump during boot and no working
+> > > > network:
+> > > > 
+> > > > Jan 29 13:11:50 ragnarok kernel: RIP: 0010:phy_driver_register+0x5f/0x80
+> > > > [libphy]
+> > > > Jan 29 13:11:50 ragnarok kernel: Code: dd 06 a0 48 c7 47 40 30 e4 06 a0 48 89
+> > > > 77 10 c7 47 24 02 00 00 00 e8 10 5c 44 e1 89 c5 85 c0 0f 85 aa 1d 00 00 89 e8 5b
+> > > > 5d c3 <0f> 0b 48 c7 c7 f0 20 07 a0 48 89 c6 bd ea ff ff ff e8 c9 4c 02 e1
+> > > > Jan 29 13:11:50 ragnarok kernel: RSP: 0018:ffffc90000df3c78 EFLAGS:
+> > > > 00010246
+> > > > Jan 29 13:11:50 ragnarok kernel: RAX: ffffffffa0071c8d RBX: 0000000000000000
+> > > > RCX: 0000000000000000
+> > > > Jan 29 13:11:50 ragnarok kernel: RDX: 0000000000000000 RSI: ffffffffa0076900
+> > > > RDI: ffffffffa0076040
+> > > > Jan 29 13:11:50 ragnarok kernel: RBP: ffffffffa007a000 R08: 0000000000000044
+> > > > R09: 0000000000000228
+> > > > Jan 29 13:11:50 ragnarok kernel: R10: ffff888603a0d6f8 R11:
+> > > > 000000000000003c R12: ffff888601252d00
+> > > > Jan 29 13:11:50 ragnarok kernel: R13: 0000000000000002 R14:
+> > > > ffffc90000df3e98 R15: ffffffffa0076900
+> > > > Jan 29 13:11:50 ragnarok kernel: FS:  00007feea9ced800(0000)
+> > > > GS:ffff888607240000(0000) knlGS:0000000000000000
+> > > > Jan 29 13:11:50 ragnarok kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+> > > > 0000000080050033
+> > > > Jan 29 13:11:50 ragnarok kernel: CR2: 00007feea9cdfc42 CR3:
+> > > > 00000005fec64001 CR4: 00000000000606e0
+> > > > Jan 29 13:11:50 ragnarok kernel: Call Trace:
+> > > > Jan 29 13:11:50 ragnarok kernel:  ? 0xffffffffa007a000
+> > > > Jan 29 13:11:50 ragnarok kernel:  phy_init+0x24/0x58 [libphy]
+> > > > Jan 29 13:11:50 ragnarok kernel:  do_one_initcall+0x43/0x1af
+> > > > Jan 29 13:11:50 ragnarok kernel:  ? _cond_resched+0x15/0x30
+> > > > Jan 29 13:11:50 ragnarok kernel:  ? kmem_cache_alloc_trace+0x154/0x1b0
+> > > > Jan 29 13:11:50 ragnarok kernel:  do_init_module+0x5a/0x210
+> > > > Jan 29 13:11:50 ragnarok kernel:  load_module+0x203a/0x2500
+> > > > Jan 29 13:11:50 ragnarok kernel:  ? vfs_read+0x10d/0x130
+> > > > Jan 29 13:11:50 ragnarok kernel:  ? __se_sys_finit_module+0xb1/0xd0
+> > > > Jan 29 13:11:50 ragnarok kernel:  __se_sys_finit_module+0xb1/0xd0
+> > > > Jan 29 13:11:50 ragnarok kernel:  do_syscall_64+0x3e/0xe0
+> > > > Jan 29 13:11:50 ragnarok kernel:
+> > > > entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > > > Jan 29 13:11:50 ragnarok kernel: RIP: 0033:0x7feeaa2417c9
+> > > > Jan 29 13:11:50 ragnarok kernel: Code: 00 00 00 75 05 48 83 c4 18 c3 e8 82 9c 01
+> > > > 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05
+> > > > <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 87 c6 0c 00 f7 d8 64 89 01 48
+> > > > Jan 29 13:11:50 ragnarok kernel: RSP: 002b:00007fff6fa6ea08 EFLAGS:
+> > > > 00000246 ORIG_RAX: 0000000000000139
+> > > > Jan 29 13:11:50 ragnarok kernel: RAX: ffffffffffffffda RBX: 000055c6eac06db0
+> > > > RCX: 00007feeaa2417c9
+> > > > Jan 29 13:11:50 ragnarok kernel: RDX: 0000000000000000 RSI:
+> > > > 00007feeaa4198fd RDI: 0000000000000006
+> > > > Jan 29 13:11:50 ragnarok kernel: RBP: 00007feeaa4198fd R08:
+> > > > 0000000000000000 R09: 000055c6eac03000
+> > > > Jan 29 13:11:50 ragnarok kernel: R10: 0000000000000006 R11:
+> > > > 0000000000000246 R12: 0000000000000000
+> > > > Jan 29 13:11:50 ragnarok kernel: R13: 000055c6eabfc1d0 R14:
+> > > > 0000000000020000 R15: 000055c6eac06db0
+> > > > Jan 29 13:11:50 ragnarok kernel: ---[ end trace 18e05a0afeb140b2 ]---
+> > > > Jan 29 13:11:50 ragnarok kernel: libphy: Generic 10G PHY: Driver features are
+> > > > missing
+> > > > 
+> > > > Apparently the r8169 driver for my NIC does something wrong wrt. this
+> > > > fix and the original commit (719655a14971), but regardless - reverting this
+> > > > patch leads to a booting & working 4.19.19:
+> > > > 
+> > > > Jan 29 13:29:16 ragnarok kernel: libphy: r8169: probed
+> > > > Jan 29 13:29:19 ragnarok kernel: RTL8211E Gigabit Ethernet r8169-400:00:
+> > > > attached PHY driver [RTL8211E Gigabit Ethernet] (mii_bus:phy_addr=r8169-
+> > > > 400:00, irq=IGNORE)
+> > > > 
+> > > > I've cc'ed Heiner Kallweit who might know why phylib with this fix and r8169
+> > > > don't like each other.
+> > > > 
+> > > > cheers,
+> > > > Holger
+> > > 
+> > > Hi
+> > > 
+> > > This points to an issue with the Generic 10G PHY driver. The following patch seems to be missing from the 4.19 stable tree and should be merged:
+> > > f802912 net: phy: genphy_10g_driver: Avoid NULL pointer dereference
+> > 
+> > But that patch says it:
+> > Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
+> > 
+> > Which is not in 4.19.y, it showed up in 4.20.
 > 
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> ---
->  arch/arc/kernel/head.S | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> Nope, as you found 719655a14971 was backported:
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-4.19.y&id=719655a149715f26fc4de904fe0aa83068bd5b9e
+
+That doesn't show that happening, sorry, it's on a different branch.
+
+It really did not get applied to the 4.19.y branch, you can see that if
+you search manually with a local copy.
+
+> > Ah, wait, I think that there was a patch backported to the 4.19.y queue
+> > that should not have, specifically:
+> > 	3e64cf7a435e ("net: phy: phy driver features are mandatory")
+> > which said it too fixes:
+> > 	719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
+> > 
+> > 
+> > Holger, if you revert 3e64cf7a435e, does that solve the problem for you
+> > here?
 > 
-> diff --git a/arch/arc/kernel/head.S b/arch/arc/kernel/head.S
-> index 8b90d25a15cc..d5b7a572365a 100644
-> --- a/arch/arc/kernel/head.S
-> +++ b/arch/arc/kernel/head.S
-> @@ -17,6 +17,9 @@
->  #include <asm/entry.h>
->  #include <asm/arcregs.h>
->  #include <asm/cache.h>
-> +#ifdef CONFIG_ISA_ARCV2
-> +#include <asm/irqflags-arcv2.h>
-> +#endif
-
-I presume there is no specific reason to include this conditionally.
-irqflags.h already includes the right version.
-
->  
->  .macro CPU_EARLY_SETUP
->  
-> @@ -47,6 +50,13 @@
->  	sr	r5, [ARC_REG_DC_CTRL]
->  
->  1:
-> +
-> +#ifdef CONFIG_ISA_ARCV2
-> +	; Enable handling of unaligned access in the CPU as by default
-> +	; this HW feature is disabled while GCC starting from 8.1.0
-> +	; unconditionally uses it for ARC HS cores.
-> +	flag    1 << STATUS_AD_BIT
-> +#endif
->  .endm
->  
->  	.section .init.text, "ax",@progbits
+> Yes, as per $SUBJECT if I patch --reverse 3e64cf7a435e it works again,
+> seem my original log above.
 > 
+> Fwiw just test-booted 5.0-rc4 and it works too.
 
+Wonderful, I'll go drop 3e64cf7a435e and push out a new -rc release.
+
+Thanks so much for the quick testing and debugging.
+
+greg k-h
