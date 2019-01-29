@@ -2,219 +2,104 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDEBC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FADBC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B675020869
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:25:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 524A22087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:26:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="McgI8bfv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BXh7n98B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728872AbfA2SZT (ORCPT
+        id S1728946AbfA2S0N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:25:19 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:33295 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbfA2SZS (ORCPT
+        Tue, 29 Jan 2019 13:26:13 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46103 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727100AbfA2S0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:25:18 -0500
-Received: by mail-yw1-f67.google.com with SMTP id p65so8588263ywe.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:25:17 -0800 (PST)
+        Tue, 29 Jan 2019 13:26:13 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so23138091wrt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:26:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=UEWYKVrLyoeo+EHNXuBgk1+ZBNjf1UAZ3jeHlECOcAQ=;
-        b=McgI8bfvdTRAl+2DLzBET3/Zjz/BtOczncjJHHBGvJ3GOUy9g7c49IqGOr3yNuniV0
-         oqcOkePmToWyG86MaU9XxkXYumP42ZRTkHKM7Smar0unOFX53UAIgM7g+/0Poxdi7oI1
-         PzErKCQtFsTmSap0QpdD/5nml7gMUDzxJk/Bs=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ADwM0lszvaqhduF5I3DNeFvWPeUQTXjMtjOQKUDAPJ8=;
+        b=BXh7n98B5xjbeB+aql7MNs/6BjRNZglzr66LB5d1zE4A4IXStoeq7g7volggkOR0jm
+         Zw4Ew6E/Mn8x9yOekTa6e3ZeVuRcso8aX3m5+bpoW/SbRmwVAh7PW5CHhPa3QjTpqSWI
+         uLYmSvffhC1lccnslt+fRVgCkeoPzinyOXdqCHzx03/tGID0YwW0bRIT+fsW57P472hY
+         dIksMeGK073m5vEA30nAIeiNKStj7FtgFsaObHsW4CFEy8wMXyPrYI4K27+VKVl2sh9y
+         MmAVuYcOhROvZCyChKdV3QsAE741Ix5ZmCqCkX3aa2Jdi2RMb+Cwe5vou1Ftliov/taq
+         +Hdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=UEWYKVrLyoeo+EHNXuBgk1+ZBNjf1UAZ3jeHlECOcAQ=;
-        b=rHG7uJbTIHbbsz9lXMjuxBJGnj8WldJrEK6bpOogbZEJ8uaYvL5SgBSxt37CdL5/Bn
-         9ChJeau/jc7/oOK6G/zBmx6TPPXxl4QtVsi9589bBOMB2vkEbxT8j7+6KUNrBpEaD0Oq
-         Wui+K66tEYIFsCuLLaoleU6r5OdvcxuzBZIEwzvmevzbP/0bpynVNb8uPbJ1GGuA5OeV
-         NQwISIZ4dFeloBNTySpdzOIPbnaC2elpBBefwk4ka1+sC4ksZhecOCFOGtbMWptEHTY3
-         FXvSR9gNDuXMgJ5sPvUFV6D1ybrENJxfDHLG5vOZY7QUJA+2Et24jrjNrOM5WWxGA5D6
-         bCRA==
-X-Gm-Message-State: AJcUukdvCC2ueB78Tmk0D5dVRDzCufTvBXQ9ox0rVcpR7XK6NVfQaiG+
-        WsFFX2MxJCu8/3rV7r6D3f5WQQ==
-X-Google-Smtp-Source: ALg8bN577D3vsrWrco8DYQ5GHfXNdfHyNspCRtVPvoceQad/0oDbiZflNlI4aul0HsoG3q7bwTR0JA==
-X-Received: by 2002:a81:6246:: with SMTP id w67mr26154697ywb.60.1548786317308;
-        Tue, 29 Jan 2019 10:25:17 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::6:f1fc])
-        by smtp.gmail.com with ESMTPSA id k62sm15883985ywk.84.2019.01.29.10.25.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 29 Jan 2019 10:25:16 -0800 (PST)
-Date:   Tue, 29 Jan 2019 13:25:16 -0500
-From:   Chris Down <chris@chrisdown.name>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@fb.com
-Subject: [PATCH] mm: Make memory.emin the baseline for utilisation
- determination
-Message-ID: <20190129182516.GA1834@chrisdown.name>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ADwM0lszvaqhduF5I3DNeFvWPeUQTXjMtjOQKUDAPJ8=;
+        b=YHzVJ1c6IIGmWbqgKiJK7iGfzYniNpwO+/MnN6yY6gdilGvx1apKHlcwz/V+CSbfGV
+         I0bGph5Qxc9ogf2UCDN0TAx+aiJ14lFh44KtziUZVOnD8XWVnyNpmjtS29F4LWJB651U
+         Zzao5a5bgNmWoR7UE4KAx5KReIKMnKCrLprs9D9nP6dt4VRfT4M2L6hAiQKcdNIhCn5s
+         HR+kknddAjODX/+fiZFLqniY65enTxh9uoougsa/6FbCuHTrrLARIv5na1MpX5O3VNgR
+         XPUFLSiReWzdEBWUidlYAUkMPF7LuHu+W0Fss3moDnJNw3ATfP+phGg43HMVnevL7lRB
+         +35A==
+X-Gm-Message-State: AHQUAubA08FghZMKpXI/NJ8W6RDqsoYZImdp0IsD9mub0WbhG7GLkrXV
+        claXhJDL2PzsKIQebnYRphMrn86IYdtw2c+PmiLCAQ==
+X-Google-Smtp-Source: AHgI3IbJXcwKzyDgm1JDGoKVL5g4uCwu2Dk74NNLxZkW+r/uERASibjooWGTvyTUxd2OI6Moz27ryN1VdshIkuPqAI8=
+X-Received: by 2002:adf:dc4e:: with SMTP id m14mr7274623wrj.107.1548786371209;
+ Tue, 29 Jan 2019 10:26:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190124211518.244221-1-surenb@google.com> <20190124211518.244221-6-surenb@google.com>
+ <20190129123843.GK28467@hirez.programming.kicks-ass.net> <20190129151649.GA2997@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190129151649.GA2997@hirez.programming.kicks-ass.net>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Tue, 29 Jan 2019 10:25:58 -0800
+Message-ID: <CAJuCfpHyuY89Aw3YpQpaor2hKvdqJOH5sMoXNZ-yNAnAb+tY6A@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] psi: introduce psi monitor
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, lizefan@huawei.com,
+        Johannes Weiner <hannes@cmpxchg.org>, axboe@kernel.dk,
+        dennis@kernel.org, Dennis Zhou <dennisszhou@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>, linux-doc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Roman points out that when when we do the low reclaim pass, we scale the
-reclaim pressure relative to position between 0 and the maximum
-protection threshold.
+On Tue, Jan 29, 2019 at 7:16 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Jan 29, 2019 at 01:38:43PM +0100, Peter Zijlstra wrote:
+> > On Thu, Jan 24, 2019 at 01:15:18PM -0800, Suren Baghdasaryan wrote:
+> > > +                   atomic_set(&group->polling, polling);
+> > > +                   /*
+> > > +                    * Memory barrier is needed to order group->polling
+> > > +                    * write before times[] read in collect_percpu_times()
+> > > +                    */
+> > > +                   smp_mb__after_atomic();
+> >
+> > That's broken, smp_mb__{before,after}_atomic() can only be used on
+> > atomic RmW operations, something atomic_set() is _not_.
+>
+> Also; the comment should explain _why_ not only what.
 
-However, if the maximum protection is based on memory.elow, and
-memory.emin is above zero, this means we still may get binary behaviour
-on second-pass low reclaim. This is because we scale starting at 0, not
-starting at memory.emin, and since we don't scan at all below emin, we
-end up with cliff behaviour.
+Got it. Will change the comment to something like:
 
-This should be a fairly uncommon case since usually we don't go into the
-second pass, but it makes sense to scale our low reclaim pressure
-starting at emin.
+Order group->polling=0 before reading times[] in
+collect_percpu_times() to detect possible race with hotpath that
+modifies times[] before it sets group->polling=1 (see Race #1 in the
+comments at the top).
 
-You can test this by catting two large sparse files, one in a cgroup
-with emin set to some moderate size compared to physical RAM, and
-another cgroup without any emin. In both cgroups, set an elow larger
-than 50% of physical RAM. The one with emin will have less page
-scanning, as reclaim pressure is lower.
-
-Signed-off-by: Chris Down <chris@chrisdown.name>
-Suggested-by: Roman Gushchin <guro@fb.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Dennis Zhou <dennis@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: cgroups@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: kernel-team@fb.com
----
- include/linux/memcontrol.h |  6 +++--
- mm/vmscan.c                | 55 +++++++++++++++++++++++---------------
- 2 files changed, 37 insertions(+), 24 deletions(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 290cfbfd60cd..89e460f9612f 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -333,9 +333,11 @@ static inline bool mem_cgroup_disabled(void)
- 	return !cgroup_subsys_enabled(memory_cgrp_subsys);
- }
- 
--static inline unsigned long mem_cgroup_protection(struct mem_cgroup *memcg)
-+static inline void mem_cgroup_protection(struct mem_cgroup *memcg,
-+					 unsigned long *min, unsigned long *low)
- {
--	return max(READ_ONCE(memcg->memory.emin), READ_ONCE(memcg->memory.elow));
-+	*min = READ_ONCE(memcg->memory.emin);
-+	*low = READ_ONCE(memcg->memory.elow);
- }
- 
- enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 549251818605..f7c4ab39d5d0 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2447,12 +2447,12 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 		int file = is_file_lru(lru);
- 		unsigned long lruvec_size;
- 		unsigned long scan;
--		unsigned long protection;
-+		unsigned long min, low;
- 
- 		lruvec_size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
--		protection = mem_cgroup_protection(memcg);
-+		mem_cgroup_protection(memcg, &min, &low);
- 
--		if (protection > 0) {
-+		if (min || low) {
- 			/*
- 			 * Scale a cgroup's reclaim pressure by proportioning
- 			 * its current usage to its memory.low or memory.min
-@@ -2467,28 +2467,38 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 			 * set it too low, which is not ideal.
- 			 */
- 			unsigned long cgroup_size = mem_cgroup_size(memcg);
--			unsigned long baseline = 0;
- 
- 			/*
--			 * During the reclaim first pass, we only consider
--			 * cgroups in excess of their protection setting, but if
--			 * that doesn't produce free pages, we come back for a
--			 * second pass where we reclaim from all groups.
-+			 * If there is any protection in place, we adjust scan
-+			 * pressure in proportion to how much a group's current
-+			 * usage exceeds that, in percent.
- 			 *
--			 * To maintain fairness in both cases, the first pass
--			 * targets groups in proportion to their overage, and
--			 * the second pass targets groups in proportion to their
--			 * protection utilization.
--			 *
--			 * So on the first pass, a group whose size is 130% of
--			 * its protection will be targeted at 30% of its size.
--			 * On the second pass, a group whose size is at 40% of
--			 * its protection will be
--			 * targeted at 40% of its size.
-+			 * There is one special case: in the first reclaim pass,
-+			 * we skip over all groups that are within their low
-+			 * protection. If that fails to reclaim enough pages to
-+			 * satisfy the reclaim goal, we come back and override
-+			 * the best-effort low protection. However, we still
-+			 * ideally want to honor how well-behaved groups are in
-+			 * that case instead of simply punishing them all
-+			 * equally. As such, we reclaim them based on how much
-+			 * of their best-effort protection they are using. Usage
-+			 * below memory.min is excluded from consideration when
-+			 * calculating utilisation, as it isn't ever
-+			 * reclaimable, so it might as well not exist for our
-+			 * purposes.
- 			 */
--			if (!sc->memcg_low_reclaim)
--				baseline = lruvec_size;
--			scan = lruvec_size * cgroup_size / protection - baseline;
-+			if (sc->memcg_low_reclaim && low > min) {
-+				/*
-+				 * Reclaim according to utilisation between min
-+				 * and low
-+				 */
-+				scan = lruvec_size * (cgroup_size - min) /
-+					(low - min);
-+			} else {
-+				/* Reclaim according to protection overage */
-+				scan = lruvec_size * cgroup_size /
-+					max(min, low) - lruvec_size;
-+			}
- 
- 			/*
- 			 * Don't allow the scan target to exceed the lruvec
-@@ -2504,7 +2514,8 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 			 * some cases in the case of large overages.
- 			 *
- 			 * Also, minimally target SWAP_CLUSTER_MAX pages to keep
--			 * reclaim moving forwards.
-+			 * reclaim moving forwards, avoiding decremeting
-+			 * sc->priority further than desirable.
- 			 */
- 			scan = clamp(scan, SWAP_CLUSTER_MAX, lruvec_size);
- 		} else {
--- 
-2.20.1
-
+> --
+> You received this message because you are subscribed to the Google Groups "kernel-team" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+>
