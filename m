@@ -2,85 +2,271 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC3AC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E1EC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C210220989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:42:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="r0jsziuy"
+	by mail.kernel.org (Postfix) with ESMTP id C591D20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:44:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726341AbfA2Fmr (ORCPT
+        id S1726292AbfA2FoO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 00:42:47 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:36448 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfA2Fmr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 00:42:47 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0T5djqc105276;
-        Tue, 29 Jan 2019 05:42:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=kAZTH3BtFzVWxWnuOigRp86z4DaWAPR7rdUE641fgyI=;
- b=r0jsziuyEsTCGH1PT7LfMEGKRDjJ+8PIlPOtxtepmYesaxdkg4qeabxtlhONn2FhP8kx
- Jq60ixdhyLG3EhQcKwMrnKM90UXBAVf7YjvlZvUx2vjnwyDrgxZV/86Rzot2ePHpONyr
- 0bp0AfdSUaV2oehl09kOkBwwN8oIeKAUrrtUY3FxPIHEYzJVI+b7jaHXmu0Tw68T/kVx
- 1MlSPZm9u+S9Wcdx02G3KQdZcwDHHpJUlCHxOfh0mq5M2RO0tajAz4Ao4EbFHIH8PUkq
- Ao7hEWQKzDCVn5L74ZOHTEsTalOEfkGBj3j6rzxb8kRyGaztNlONXSTXR9CLuDn+ESFf HA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2q8eyua6y7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jan 2019 05:42:39 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0T5gdf8003114
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jan 2019 05:42:39 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0T5gcUQ016814;
-        Tue, 29 Jan 2019 05:42:38 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 28 Jan 2019 21:42:37 -0800
-To:     Colin King <colin.king@canonical.com>
-Cc:     Don Brace <don.brace@microsemi.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        esc.storagedev@microsemi.com, linux-scsi@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: hpsa: clean up two indentation issues
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190122151830.7230-1-colin.king@canonical.com>
-Date:   Tue, 29 Jan 2019 00:42:35 -0500
-In-Reply-To: <20190122151830.7230-1-colin.king@canonical.com> (Colin King's
-        message of "Tue, 22 Jan 2019 15:18:30 +0000")
-Message-ID: <yq1va28dnp0.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 29 Jan 2019 00:44:14 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51908 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725497AbfA2FoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 00:44:13 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5D6EC92FC88A68D09512;
+        Tue, 29 Jan 2019 13:44:10 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.32) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Tue, 29 Jan 2019
+ 13:43:59 +0800
+Subject: Re: [PATCH] irqchip/gic-v3-its: Lock its device list during find and
+ create its device
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <wanghaibin.wang@huawei.com>
+References: <20190126061624.5260-1-zhengxiang9@huawei.com>
+ <86bm438x8n.wl-marc.zyngier@arm.com>
+ <27e0b952-111f-f221-bcd7-1a7ceb2840b5@huawei.com>
+ <0dc03914-4c8a-4fa1-fb67-f51936c54836@arm.com>
+From:   Zheng Xiang <zhengxiang9@huawei.com>
+Message-ID: <505e3257-3ef6-69d4-b996-5a1e200e1246@huawei.com>
+Date:   Tue, 29 Jan 2019 13:42:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9150 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=592
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901290042
+In-Reply-To: <0dc03914-4c8a-4fa1-fb67-f51936c54836@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.32]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019/1/28 21:51, Marc Zyngier wrote:
+> On 28/01/2019 07:13, Zheng Xiang wrote:
+>> Hi Marc,
+>>
+>> Thanks for your review.
+>>
+>> On 2019/1/26 19:38, Marc Zyngier wrote:
+>>> Hi Zheng,
+>>>
+>>> On Sat, 26 Jan 2019 06:16:24 +0000,
+>>> Zheng Xiang <zhengxiang9@huawei.com> wrote:
+>>>>
+>>>> Currently each PCI device under a PCI Bridge shares the same device id
+>>>> and ITS device. Assume there are two PCI devices call its_msi_prepare
+>>>> concurrently and they are both going to find and create their ITS
+>>>> device. There is a chance that the later one couldn't find ITS device
+>>>> before the other one creating the ITS device. It will cause the later
+>>>> one to create a different ITS device even if they have the same
+>>>> device_id.
+>>>
+>>> Interesting finding. Is this something you've actually seen in practice
+>>> with two devices being probed in parallel? Or something that you found
+>>> by inspection?
+>>
+>> Yes, I find this problem after analyzing the reason of VM hung. At last, I
+>> find that the virtio-gpu cannot receive the MSI interrupts due to sharing
+>> a same event_id as virtio-serial.
+>>
+>> See https://lkml.org/lkml/2019/1/10/299 for the bug report.
+>>
+>> This problem can be reproducted with high probability by booting a Qemu/KVM
+>> VM with a virtio-serial controller and a virtio-gpu adding to a PCI Bridge
+>> and also adding some delay before creating ITS device.
+> 
+> Fair enough. Do you mind sharing your QEMU command line? It'd be useful
+> if I could reproduce it here (and would give me a way to check that it
+> doesn't regress).
 
-Colin,
+Yes of course, my QEMU command line is below:
 
-> There are two statements that are indented incorrectly. Fix these.
+qemu-system-aarch64 \
+    -name guest=arm64 \
+    -machine virt,accel=kvm,usb=off,gic-version=3 \
+    -cpu host \
+    -bios /usr/share/edk2/aarch64/QEMU_EFI.fd \
+    -nodefaults \
+    -m 2048 \
+    -smp 1 \
+    -device ioh3420,port=0x8,chassis=1,id=pci.1,bus=pcie.0,multifunction=on,addr=0x1 \
+    -device i82801b11-bridge,id=pci.2,bus=pcie.0,addr=0x2 \
+    -device pci-bridge,chassis_nr=3,id=pci.3,bus=pci.2,addr=0x0 \
+    -device ioh3420,port=0x9,chassis=4,id=pci.4,bus=pcie.0,addr=0x1.0x1 \
+    -device virtio-scsi-pci,id=scsi0,bus=pci.4,addr=0x0 \
+    -drive file=/home/zhengxiang/tmp.raw,format=raw,if=none,id=drive-scsi0-0-0-0,cache=none,aio=threads \
+    -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1 \
+    -drive file=/dev/mapper/VolGroup00-lvol_7,format=raw,if=none,id=drive-virtio-disk0,cache=none,aio=threads \
+    -device virtio-blk-pci,scsi=off,bus=pci.1,addr=0x0,drive=drive-virtio-disk0,id=virtio-disk0 \
+    -device virtio-gpu-pci,id=video0,bus=pci.3,addr=0x2 \
+    -device virtio-serial-pci,id=virtio-serial0,bus=pci.3,addr=0x3 \
+    -device usb-ehci,id=usb,bus=pci.3,addr=0x1 \
+    -device usb-kbd,id=input1,bus=usb.0,port=2 \
+    -monitor telnet:0.0.0.0:22222,server,nowait \
+    -vnc 0.0.0.0:8 \
+    -msg timestamp=on \
+    -serial stdio \
 
-Applied to 5.1/scsi-queue, thanks.
+Add *msleep* between *its_find_device* and *its_create_device* to increase the
+rate of probability, .
 
+> 
+>>
+>>>
+>>> The whole RID aliasing is such a mess, I wish we never supported
+>>> it. Anyway, comments below.
+>>>
+>>>>
+>>>> Signed-off-by: Zheng Xiang <zhengxiang9@huawei.com>
+>>>> ---
+>>>>  drivers/irqchip/irq-gic-v3-its.c | 52 +++++++++++++++-------------------------
+>>>>  1 file changed, 19 insertions(+), 33 deletions(-)
+>>>>
+>>>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+>>>> index db20e99..397edc8 100644
+>>>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>>>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>>>> @@ -2205,25 +2205,6 @@ static void its_cpu_init_collections(void)
+>>>>  	raw_spin_unlock(&its_lock);
+>>>>  }
+>>>>  
+>>>> -static struct its_device *its_find_device(struct its_node *its, u32 dev_id)
+>>>> -{
+>>>> -	struct its_device *its_dev = NULL, *tmp;
+>>>> -	unsigned long flags;
+>>>> -
+>>>> -	raw_spin_lock_irqsave(&its->lock, flags);
+>>>> -
+>>>> -	list_for_each_entry(tmp, &its->its_device_list, entry) {
+>>>> -		if (tmp->device_id == dev_id) {
+>>>> -			its_dev = tmp;
+>>>> -			break;
+>>>> -		}
+>>>> -	}
+>>>> -
+>>>> -	raw_spin_unlock_irqrestore(&its->lock, flags);
+>>>> -
+>>>> -	return its_dev;
+>>>> -}
+>>>> -
+>>>>  static struct its_baser *its_get_baser(struct its_node *its, u32 type)
+>>>>  {
+>>>>  	int i;
+>>>> @@ -2321,7 +2302,7 @@ static bool its_alloc_vpe_table(u32 vpe_id)
+>>>>  static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>>>>  					    int nvecs, bool alloc_lpis)
+>>>>  {
+>>>> -	struct its_device *dev;
+>>>> +	struct its_device *dev = NULL, *tmp;
+>>>>  	unsigned long *lpi_map = NULL;
+>>>>  	unsigned long flags;
+>>>>  	u16 *col_map = NULL;
+>>>> @@ -2331,6 +2312,24 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>>>>  	int nr_ites;
+>>>>  	int sz;
+>>>>  
+>>>> +	raw_spin_lock_irqsave(&its->lock, flags);
+>>>> +	list_for_each_entry(tmp, &its->its_device_list, entry) {
+>>>> +		if (tmp->device_id == dev_id) {
+>>>> +			dev = tmp;
+>>>> +			break;
+>>>> +		}
+>>>> +	}
+>>>> +	if (dev) {
+>>>> +		/*
+>>>> +		 * We already have seen this ID, probably through
+>>>> +		 * another alias (PCI bridge of some sort). No need to
+>>>> +		 * create the device.
+>>>> +		 */
+>>>> +		pr_debug("Reusing ITT for devID %x\n", dev_id);
+>>>> +		raw_spin_unlock_irqrestore(&its->lock, flags);
+>>>> +		return dev;
+>>>> +	}
+>>>> +
+>>>>  	if (!its_alloc_device_table(its, dev_id))
+>>>
+>>> You're now performing all sort of allocations in an atomic context,
+>>> which is pretty horrible (and the kernel will shout at you for doing
+>>> so).
+>>>
+>>> We could probably keep the current logic and wrap it around a mutex
+>>> instead, which would give us the appropriate guarantees WRT allocations.
+>>> Something along those lines (untested):>
+>>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+>>> index db20e992a40f..99feb62e63ba 100644
+>>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>>> @@ -97,9 +97,14 @@ struct its_device;
+>>>   * The ITS structure - contains most of the infrastructure, with the
+>>>   * top-level MSI domain, the command queue, the collections, and the
+>>>   * list of devices writing to it.
+>>> + *
+>>> + * alloc_lock has to be taken for any allocation that can happen at
+>>> + * run time, while the spinlock must be taken to parse data structures
+>>> + * such as the device list.
+>>>   */
+>>>  struct its_node {
+>>>  	raw_spinlock_t		lock;
+>>> +	struct mutex		alloc_lock;
+>>>  	struct list_head	entry;
+>>>  	void __iomem		*base;
+>>>  	phys_addr_t		phys_base;
+>>> @@ -2421,6 +2426,7 @@ static int its_msi_prepare(struct irq_domain *domain, struct device *dev,
+>>>  	struct its_device *its_dev;
+>>>  	struct msi_domain_info *msi_info;
+>>>  	u32 dev_id;
+>>> +	int err = 0;
+>>>  
+>>>  	/*
+>>>  	 * We ignore "dev" entierely, and rely on the dev_id that has
+>>> @@ -2443,6 +2449,7 @@ static int its_msi_prepare(struct irq_domain *domain, struct device *dev,
+>>>  		return -EINVAL;
+>>>  	}
+>>>  
+>>> +	mutex_lock(&its->alloc_lock);
+>>>  	its_dev = its_find_device(its, dev_id);
+>>>  	if (its_dev) {
+>>>  		/*
+>>> @@ -2455,11 +2462,14 @@ static int its_msi_prepare(struct irq_domain *domain, struct device *dev,
+>>>  	}
+>>>  
+>>>  	its_dev = its_create_device(its, dev_id, nvec, true);
+>>> -	if (!its_dev)
+>>> -		return -ENOMEM;
+>>> +	if (!its_dev) {
+>>> +		err = -ENOMEM;
+>>> +		goto out;
+>>> +	}
+>>>  
+>>>  	pr_debug("ITT %d entries, %d bits\n", nvec, ilog2(nvec));
+>>>  out:
+>>> +	mutex_unlock(&its->alloc_lock);
+>>>  	info->scratchpad[0].ptr = its_dev;>>>  	return 0;
+>>
+>> Should it return *err* here?
+> 
+> Absolutely. Does it fix the problem for you?
+
+Yes, VM doesn't get hung anymore after thousands of times of boot/reboot.
+
+> 
+> Thanks,
+> 
+> 	M.
+> 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+
+Thanks,
+Xiang
+
+
