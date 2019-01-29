@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBBFC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3524C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51F6F20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4B7120881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:05:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763492;
-	bh=N6glU6cGtDWeA0tX8vouEjM22xEHHwlIu0tSHVnG+lk=;
+	s=default; t=1548763501;
+	bh=yKjzKezuSGv5f8tAyC59tLC6LIAgxE504A+ByYr3yno=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=p66DnzpA6UNaG23j8NbcAfu2Fjg2vSb+ZmbsvibHtBLjwBBC/kXRncCV7wjzCu44A
-	 S+dFAWYImtA1mWuNs5sXUFGMQgfQLrbRiS2dQ3VLUs9NFfzjEJVbmiFG+CwS+WpndS
-	 6erc4/GC3+Ureiecu7+YEeNJ1b1Z53aheVPoTM5E=
+	b=HndU3gdWSc7hOx2HlwIamvwnUgmAlNfzpJUBE4/yypD50maHdmTUHhfI/MpD8DwxT
+	 J55u3hjaj3EJxwuTZzkx5/cYG++OPNvSpVPsMl2dGKjbV3ROCaiuGWRPYcGdQVBzGo
+	 NtsVEjAYxOjNNofAr3JGx9bYXYjZR+inPRNdzHqc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730100AbfA2Lmk (ORCPT
+        id S1730108AbfA2MFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:42:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60416 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:05:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730076AbfA2Lmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:42:37 -0500
+        id S1730061AbfA2Lmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:42:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FE2F20856;
-        Tue, 29 Jan 2019 11:42:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC7E920856;
+        Tue, 29 Jan 2019 11:42:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762155;
-        bh=N6glU6cGtDWeA0tX8vouEjM22xEHHwlIu0tSHVnG+lk=;
+        s=default; t=1548762152;
+        bh=yKjzKezuSGv5f8tAyC59tLC6LIAgxE504A+ByYr3yno=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i6/ri4z4JUoPb6cBqir0+92ZpRXhJlYvK46cq3aPYVQMx/98QeQ1Mt+cJFIc9R+yP
-         xhXvPQihHbCe1c2J+aCGXQHxQO/wquh2o1wpVWk4wxyZJaUBdH5nABQN3PvoJgPMzA
-         WTwpEoGe0EmwN4CSVr52BUJHYbuWuwCZp3OJdtRs=
+        b=ZVAYpD6WW88a32vbjkaoVsvqEP6O7h3l5dUrCQNU/9H3mI+PXW07qCjeHppWMDmIQ
+         WGkZwGjYbNRYnCOKo1zGRKkHj9yZCgxh+NyELAhgmBiRkCYPnYl0oePqhWR1FwxQiT
+         37HexJh9YbsJG63e/USon37NXtFA7BHCP+kjakRU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jintack Lim <jintack@cs.columbia.edu>,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 010/103] vhost: log dirty page correctly
-Date:   Tue, 29 Jan 2019 12:34:47 +0100
-Message-Id: <20190129113200.136894494@linuxfoundation.org>
+Subject: [PATCH 4.19 001/103] amd-xgbe: Fix mdio access for non-zero ports and clause 45 PHYs
+Date:   Tue, 29 Jan 2019 12:34:38 +0100
+Message-Id: <20190129113159.671535496@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -67,202 +66,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
 
-[ Upstream commit cc5e710759470bc7f3c61d11fd54586f15fdbdf4 ]
+[ Upstream commit 5ab3121beeb76aa6090195b67d237115860dd9ec ]
 
-Vhost dirty page logging API is designed to sync through GPA. But we
-try to log GIOVA when device IOTLB is enabled. This is wrong and may
-lead to missing data after migration.
+The XGBE hardware has support for performing MDIO operations using an
+MDIO command request. The driver mistakenly uses the mdio port address
+as the MDIO command request device address instead of the MDIO command
+request port address. Additionally, the driver does not properly check
+for and create a clause 45 MDIO command.
 
-To solve this issue, when logging with device IOTLB enabled, we will:
+Check the supplied MDIO register to determine if the request is a clause
+45 operation (MII_ADDR_C45). For a clause 45 operation, extract the device
+address and register number from the supplied MDIO register and use them
+to set the MDIO command request device address and register number fields.
+For a clause 22 operation, the MDIO request device address is set to zero
+and the MDIO command request register number is set to the supplied MDIO
+register. In either case, the supplied MDIO port address is used as the
+MDIO command request port address.
 
-1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
-   get HVA, for writable descriptor, get HVA through iovec. For used
-   ring update, translate its GIOVA to HVA
-2) traverse the GPA->HVA mapping to get the possible GPA and log
-   through GPA. Pay attention this reverse mapping is not guaranteed
-   to be unique, so we should log each possible GPA in this case.
-
-This fix the failure of scp to guest during migration. In -next, we
-will probably support passing GIOVA->GPA instead of GIOVA->HVA.
-
-Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-Reported-by: Jintack Lim <jintack@cs.columbia.edu>
-Cc: Jintack Lim <jintack@cs.columbia.edu>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Fixes: 732f2ab7afb9 ("amd-xgbe: Add support for MDIO attached PHYs")
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Tested-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/net.c   |    3 +
- drivers/vhost/vhost.c |   97 ++++++++++++++++++++++++++++++++++++++++++--------
- drivers/vhost/vhost.h |    3 +
- 3 files changed, 87 insertions(+), 16 deletions(-)
+ drivers/net/ethernet/amd/xgbe/xgbe-common.h |    2 --
+ drivers/net/ethernet/amd/xgbe/xgbe-dev.c    |   22 ++++++++++++++++------
+ 2 files changed, 16 insertions(+), 8 deletions(-)
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1024,7 +1024,8 @@ static void handle_rx(struct vhost_net *
- 		if (nvq->done_idx > VHOST_NET_BATCH)
- 			vhost_net_signal_used(nvq);
- 		if (unlikely(vq_log))
--			vhost_log_write(vq, vq_log, log, vhost_len);
-+			vhost_log_write(vq, vq_log, log, vhost_len,
-+					vq->iov, in);
- 		total_len += vhost_len;
- 		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
- 			vhost_poll_queue(&vq->poll);
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1733,13 +1733,87 @@ static int log_write(void __user *log_ba
- 	return r;
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-common.h
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-common.h
+@@ -431,8 +431,6 @@
+ #define MAC_MDIOSCAR_PA_WIDTH		5
+ #define MAC_MDIOSCAR_RA_INDEX		0
+ #define MAC_MDIOSCAR_RA_WIDTH		16
+-#define MAC_MDIOSCAR_REG_INDEX		0
+-#define MAC_MDIOSCAR_REG_WIDTH		21
+ #define MAC_MDIOSCCDR_BUSY_INDEX	22
+ #define MAC_MDIOSCCDR_BUSY_WIDTH	1
+ #define MAC_MDIOSCCDR_CMD_INDEX		16
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+@@ -1284,6 +1284,20 @@ static void xgbe_write_mmd_regs(struct x
+ 	}
  }
  
-+static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
++static unsigned int xgbe_create_mdio_sca(int port, int reg)
 +{
-+	struct vhost_umem *umem = vq->umem;
-+	struct vhost_umem_node *u;
-+	u64 start, end, l, min;
-+	int r;
-+	bool hit = false;
++	unsigned int mdio_sca, da;
 +
-+	while (len) {
-+		min = len;
-+		/* More than one GPAs can be mapped into a single HVA. So
-+		 * iterate all possible umems here to be safe.
-+		 */
-+		list_for_each_entry(u, &umem->umem_list, link) {
-+			if (u->userspace_addr > hva - 1 + len ||
-+			    u->userspace_addr - 1 + u->size < hva)
-+				continue;
-+			start = max(u->userspace_addr, hva);
-+			end = min(u->userspace_addr - 1 + u->size,
-+				  hva - 1 + len);
-+			l = end - start + 1;
-+			r = log_write(vq->log_base,
-+				      u->start + start - u->userspace_addr,
-+				      l);
-+			if (r < 0)
-+				return r;
-+			hit = true;
-+			min = min(l, min);
-+		}
++	da = (reg & MII_ADDR_C45) ? reg >> 16 : 0;
 +
-+		if (!hit)
-+			return -EFAULT;
++	mdio_sca = 0;
++	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, RA, reg);
++	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, PA, port);
++	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, DA, da);
 +
-+		len -= min;
-+		hva += min;
-+	}
-+
-+	return 0;
++	return mdio_sca;
 +}
 +
-+static int log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
-+{
-+	struct iovec iov[64];
-+	int i, ret;
-+
-+	if (!vq->iotlb)
-+		return log_write(vq->log_base, vq->log_addr + used_offset, len);
-+
-+	ret = translate_desc(vq, (uintptr_t)vq->used + used_offset,
-+			     len, iov, 64, VHOST_ACCESS_WO);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < ret; i++) {
-+		ret = log_write_hva(vq,	(uintptr_t)iov[i].iov_base,
-+				    iov[i].iov_len);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len)
-+		    unsigned int log_num, u64 len, struct iovec *iov, int count)
+ static int xgbe_write_ext_mii_regs(struct xgbe_prv_data *pdata, int addr,
+ 				   int reg, u16 val)
  {
- 	int i, r;
+@@ -1291,9 +1305,7 @@ static int xgbe_write_ext_mii_regs(struc
  
- 	/* Make sure data written is seen before log. */
- 	smp_wmb();
-+
-+	if (vq->iotlb) {
-+		for (i = 0; i < count; i++) {
-+			r = log_write_hva(vq, (uintptr_t)iov[i].iov_base,
-+					  iov[i].iov_len);
-+			if (r < 0)
-+				return r;
-+		}
-+		return 0;
-+	}
-+
- 	for (i = 0; i < log_num; ++i) {
- 		u64 l = min(log[i].len, len);
- 		r = log_write(vq->log_base, log[i].addr, l);
-@@ -1769,9 +1843,8 @@ static int vhost_update_used_flags(struc
- 		smp_wmb();
- 		/* Log used flag write. */
- 		used = &vq->used->flags;
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof vq->used->flags);
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof vq->used->flags);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-@@ -1789,9 +1862,8 @@ static int vhost_update_avail_event(stru
- 		smp_wmb();
- 		/* Log avail event write */
- 		used = vhost_avail_event(vq);
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof *vhost_avail_event(vq));
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof *vhost_avail_event(vq));
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-@@ -2191,10 +2263,8 @@ static int __vhost_add_used_n(struct vho
- 		/* Make sure data is seen before log. */
- 		smp_wmb();
- 		/* Log used ring entry write. */
--		log_write(vq->log_base,
--			  vq->log_addr +
--			   ((void __user *)used - (void __user *)vq->used),
--			  count * sizeof *used);
-+		log_used(vq, ((void __user *)used - (void __user *)vq->used),
-+			 count * sizeof *used);
- 	}
- 	old = vq->last_used_idx;
- 	new = (vq->last_used_idx += count);
-@@ -2236,9 +2306,8 @@ int vhost_add_used_n(struct vhost_virtqu
- 		/* Make sure used idx is seen before log. */
- 		smp_wmb();
- 		/* Log used index update. */
--		log_write(vq->log_base,
--			  vq->log_addr + offsetof(struct vring_used, idx),
--			  sizeof vq->used->idx);
-+		log_used(vq, offsetof(struct vring_used, idx),
-+			 sizeof vq->used->idx);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -205,7 +205,8 @@ bool vhost_vq_avail_empty(struct vhost_d
- bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
+ 	reinit_completion(&pdata->mdio_complete);
  
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len);
-+		    unsigned int log_num, u64 len,
-+		    struct iovec *iov, int count);
- int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
+-	mdio_sca = 0;
+-	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, REG, reg);
+-	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, DA, addr);
++	mdio_sca = xgbe_create_mdio_sca(addr, reg);
+ 	XGMAC_IOWRITE(pdata, MAC_MDIOSCAR, mdio_sca);
  
- struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
+ 	mdio_sccd = 0;
+@@ -1317,9 +1329,7 @@ static int xgbe_read_ext_mii_regs(struct
+ 
+ 	reinit_completion(&pdata->mdio_complete);
+ 
+-	mdio_sca = 0;
+-	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, REG, reg);
+-	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, DA, addr);
++	mdio_sca = xgbe_create_mdio_sca(addr, reg);
+ 	XGMAC_IOWRITE(pdata, MAC_MDIOSCAR, mdio_sca);
+ 
+ 	mdio_sccd = 0;
 
 
