@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EE6C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8954C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6491B20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FC7A20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761848;
-	bh=2DmXRyYUIeMjxBiT4vb6bVZGsyAqiJROZFItrW7ii/Y=;
+	s=default; t=1548761852;
+	bh=WFzbVvnymFu1vfya80RHP31QzlkzzqWwnX4FB1OhGQg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FSidyaOhM91eNcLvg1RAg42KFjCSpyZegbaXHCVXEH51SFmaLJucDBd4LqWxEiuwl
-	 aWYPbhETNuBiozwJhndaxGCGMuZY+BRl/lh/+A3a39L+cKMtWY5Qg9JMlHrbJ9NL52
-	 w5ApkLVFUHf20VHJpKeSGmP1YPAVIUQeGUlkaKyQ=
+	b=iJ6qmCLrkHuyXESx1QEqomnE6k3fjeJAhJGek/XvMxm3H5x71n0Ps/n2wS6qnLBXv
+	 HUXhKeji2Jkva3q7ihqoaLsGdaZY1M3pA/aategcZsdOJ17eG9eATknR53DcOSQ5Mz
+	 nzzo88ZJAKUYFWV2J0QKZOs9n837s4JE1SVrrZVc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbfA2Lh0 (ORCPT
+        id S1728848AbfA2Lhb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:37:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54030 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:37:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725772AbfA2LhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:37:22 -0500
+        id S1728830AbfA2Lh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:37:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3F1820844;
-        Tue, 29 Jan 2019 11:37:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35BAD20882;
+        Tue, 29 Jan 2019 11:37:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761842;
-        bh=2DmXRyYUIeMjxBiT4vb6bVZGsyAqiJROZFItrW7ii/Y=;
+        s=default; t=1548761845;
+        bh=WFzbVvnymFu1vfya80RHP31QzlkzzqWwnX4FB1OhGQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nq9fPzCOoRO+gBP0a5Qiv40EJHtSeyS/6G0uFq13yNTOSS3E4okJBt8HYDq7uPoB6
-         Acp9W8baVAXTTwZSnxy0YCLe7krJj+KuWMeOnxSuuiKoItXtBIxTrtSIzn16ztsCdS
-         KCAo0H+dAVoi3JSg059NoEkoUWgenoOjVX6jAADk=
+        b=nS9k/biEzJq+mN7ciQKh+4GWyBMRkyN5kAKLjMSghTPsT6uEyC7V5t2yxCJQvNLdX
+         oKsXZ67nVegE5snb258/E8OuDGusJmXey1Xt2/F+INOgJ7CENqBf6U3TqlMjFFlX8v
+         xQz0gSoPjVWYM22icZe6JJvOiT81B8KAE2LoZLK0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, bridge@lists.linux-foundation.org,
-        Nkolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Yunjian Wang <wangyunjian@huawei.com>,
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Hangbin Liu <liuhangbin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 002/117] net: bridge: Fix ethernet header pointer before check skb forwardable
-Date:   Tue, 29 Jan 2019 12:34:13 +0100
-Message-Id: <20190129113207.620772545@linuxfoundation.org>
+Subject: [PATCH 4.20 020/117] ip6_gre: update version related info when changing link
+Date:   Tue, 29 Jan 2019 12:34:31 +0100
+Message-Id: <20190129113208.659055608@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -69,69 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunjian Wang <wangyunjian@huawei.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-[ Upstream commit 28c1382fa28f2e2d9d0d6f25ae879b5af2ecbd03 ]
+[ Upstream commit 80b3671e9377916bf2b02e56113fa7377ce5705a ]
 
-The skb header should be set to ethernet header before using
-is_skb_forwardable. Because the ethernet header length has been
-considered in is_skb_forwardable(including dev->hard_header_len
-length).
+We forgot to update ip6erspan version related info when changing link,
+which will cause setting new hwid failed.
 
-To reproduce the issue:
-1, add 2 ports on linux bridge br using following commands:
-$ brctl addbr br
-$ brctl addif br eth0
-$ brctl addif br eth1
-2, the MTU of eth0 and eth1 is 1500
-3, send a packet(Data 1480, UDP 8, IP 20, Ethernet 14, VLAN 4)
-from eth0 to eth1
-
-So the expect result is packet larger than 1500 cannot pass through
-eth0 and eth1. But currently, the packet passes through success, it
-means eth1's MTU limit doesn't take effect.
-
-Fixes: f6367b4660dd ("bridge: use is_skb_forwardable in forward path")
-Cc: bridge@lists.linux-foundation.org
-Cc: Nkolay Aleksandrov <nikolay@cumulusnetworks.com>
-Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Fixes: 94d7d8f292870 ("ip6_gre: add erspan v2 support")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bridge/br_forward.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ net/ipv6/ip6_gre.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/net/bridge/br_forward.c
-+++ b/net/bridge/br_forward.c
-@@ -36,10 +36,10 @@ static inline int should_deliver(const s
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -1169,6 +1169,10 @@ static void ip6gre_tnl_copy_tnl_parm(str
+ 	t->parms.i_flags = p->i_flags;
+ 	t->parms.o_flags = p->o_flags;
+ 	t->parms.fwmark = p->fwmark;
++	t->parms.erspan_ver = p->erspan_ver;
++	t->parms.index = p->index;
++	t->parms.dir = p->dir;
++	t->parms.hwid = p->hwid;
+ 	dst_cache_reset(&t->dst_cache);
+ }
  
- int br_dev_queue_push_xmit(struct net *net, struct sock *sk, struct sk_buff *skb)
- {
-+	skb_push(skb, ETH_HLEN);
- 	if (!is_skb_forwardable(skb->dev, skb))
- 		goto drop;
- 
--	skb_push(skb, ETH_HLEN);
- 	br_drop_fake_rtable(skb);
- 
- 	if (skb->ip_summed == CHECKSUM_PARTIAL &&
-@@ -98,12 +98,11 @@ static void __br_forward(const struct ne
- 		net = dev_net(indev);
- 	} else {
- 		if (unlikely(netpoll_tx_running(to->br->dev))) {
--			if (!is_skb_forwardable(skb->dev, skb)) {
-+			skb_push(skb, ETH_HLEN);
-+			if (!is_skb_forwardable(skb->dev, skb))
- 				kfree_skb(skb);
--			} else {
--				skb_push(skb, ETH_HLEN);
-+			else
- 				br_netpoll_send_skb(to, skb);
--			}
- 			return;
- 		}
- 		br_hook = NF_BR_LOCAL_OUT;
 
 
