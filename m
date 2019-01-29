@@ -2,256 +2,144 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B636FC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31B5C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B10020881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD39E20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:23:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfA2JWL (ORCPT
+        id S1728019AbfA2JXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:22:11 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:33174 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbfA2JWE (ORCPT
+        Tue, 29 Jan 2019 04:23:04 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:49419 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725298AbfA2JXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:22:04 -0500
-Received: by mail-it1-f200.google.com with SMTP id w68so8746048ith.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:22:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=OXMGEoEpng5wheaJQTeE0I13jg9Xe/tDDYNOkcATTXM=;
-        b=hTOO6uckAKPLz/qGATijltEGFjEZ7qLwEZgu8ouO3lnR44StWewpDdnozOUmxO9Njj
-         ssxHrIfqfo6S12ArshKDb5wOXSTy7Jobfkq78GCL+adilry3V4iVGj2YLVUx3w8gMDY4
-         zpk0/M3Cb9R/XMFZ2is9vWceMhgMycMgZRUJyRDnGjjpAj97EtZgNLgAPY0PKhtnt0F+
-         agMB1OoLJ1Ydt3Ofo8QcTT1HfFfr4Utf98RGX5Ncymuh1v1rl+SfiUMohYLj6FySqcQ0
-         rOibCAoeVqgAJUpyKLRVDsi+BA7JQR0Sm9Bz++p3yNuIADYZxQhrafgwy3GrzTjNDiGT
-         27/A==
-X-Gm-Message-State: AHQUAuYhXnRc7D6KyuMuqDVKjToW3VroIje73+W8OeLebBZpdInLHbaO
-        SKIF8fKAeDgLYSNk7/qHtewpPTb5GSjaeFIwVu6z1XVTj3rD
-X-Google-Smtp-Source: AHgI3IZkzrf9K90njWAIoHMPaehi9csKNPpGuiyGAGBC70LQQDr4tiin+tpjeDyWJ+VGatYNMUzbYMAqRRxVYpA4uIIBtomHRUWf
+        Tue, 29 Jan 2019 04:23:04 -0500
+X-UUID: 05fc5744be63431ea482d404dfafe204-20190129
+X-UUID: 05fc5744be63431ea482d404dfafe204-20190129
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1945678748; Tue, 29 Jan 2019 17:22:57 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 29 Jan 2019 17:22:55 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 29 Jan 2019 17:22:56 +0800
+Message-ID: <1548753776.11055.4.camel@mtksdaap41>
+Subject: Re: [PATCH 03/10] soc: mediatek: move the CMDQ_IRQ_MASK into cmdq
+ driver data
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        "YT Shen" <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <ginny.chen@mediatek.com>, <kendrick.hsu@mediatek.com>,
+        Frederic Chen <Frederic.Chen@mediatek.com>
+Date:   Tue, 29 Jan 2019 17:22:56 +0800
+In-Reply-To: <1548747128-60136-4-git-send-email-bibby.hsieh@mediatek.com>
+References: <1548747128-60136-1-git-send-email-bibby.hsieh@mediatek.com>
+         <1548747128-60136-4-git-send-email-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-X-Received: by 2002:a24:69c6:: with SMTP id e189mr2231442itc.8.1548753722832;
- Tue, 29 Jan 2019 01:22:02 -0800 (PST)
-Date:   Tue, 29 Jan 2019 01:22:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007e86fd058095533f@google.com>
-Subject: INFO: task hung in vhost_init_device_iotlb
-From:   syzbot <syzbot+40e28a8bd59d10ed0c42@syzkaller.appspotmail.com>
-To:     jasowang@redhat.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mst@redhat.com,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi, Bibby:
 
-syzbot found the following crash on:
+On Tue, 2019-01-29 at 15:32 +0800, Bibby Hsieh wrote:
+> The interrupt mask and thread number has positive correlation,
+> so we move the CMDQ_IRQ_MASK into cmdq driver data and calculate
+> it by thread number.
+> 
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> ---
+>  drivers/mailbox/mtk-cmdq-mailbox.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+> index 909eb23..f6174ca 100644
+> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
+> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/of_device.h>
+>  
+>  #define CMDQ_OP_CODE_MASK		(0xff << CMDQ_OP_CODE_SHIFT)
+> -#define CMDQ_IRQ_MASK			0xffff
+>  #define CMDQ_NUM_CMD(t)			(t->cmd_buf_size / CMDQ_INST_SIZE)
+>  
+>  #define CMDQ_CURR_IRQ_STATUS		0x10
+> @@ -71,6 +70,7 @@ struct cmdq {
+>  	void __iomem		*base;
+>  	u32			irq;
+>  	u32			thread_nr;
+> +	u32			irq_mask;
+>  	struct cmdq_thread	*thread;
+>  	struct clk		*clock;
+>  	bool			suspended;
+> @@ -284,11 +284,11 @@ static irqreturn_t cmdq_irq_handler(int irq, void *dev)
+>  	unsigned long irq_status, flags = 0L;
+>  	int bit;
+>  
+> -	irq_status = readl(cmdq->base + CMDQ_CURR_IRQ_STATUS) & CMDQ_IRQ_MASK;
+> -	if (!(irq_status ^ CMDQ_IRQ_MASK))
+> +	irq_status = readl(cmdq->base + CMDQ_CURR_IRQ_STATUS) & cmdq->irq_mask;
+> +	if (!(irq_status ^ cmdq->irq_mask))
+>  		return IRQ_NONE;
+>  
+> -	for_each_clear_bit(bit, &irq_status, fls(CMDQ_IRQ_MASK)) {
+> +	for_each_clear_bit(bit, &irq_status, fls(cmdq->irq_mask)) {
 
-HEAD commit:    983542434e6b Merge tag 'edac_fix_for_5.0' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17476498c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
-dashboard link: https://syzkaller.appspot.com/bug?extid=40e28a8bd59d10ed0c42
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+for_each_clear_bit(bit, &irq_status, cmdq->thread_nr) {
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Regards,
+CK
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+40e28a8bd59d10ed0c42@syzkaller.appspotmail.com
-
-protocol 88fb is buggy, dev hsr_slave_1
-protocol 88fb is buggy, dev hsr_slave_0
-protocol 88fb is buggy, dev hsr_slave_1
-protocol 88fb is buggy, dev hsr_slave_0
-protocol 88fb is buggy, dev hsr_slave_1
-INFO: task syz-executor5:9417 blocked for more than 140 seconds.
-       Not tainted 5.0.0-rc3+ #48
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor5   D27576  9417   8469 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2831 [inline]
-  __schedule+0x897/0x1e60 kernel/sched/core.c:3472
-  schedule+0xfe/0x350 kernel/sched/core.c:3516
-protocol 88fb is buggy, dev hsr_slave_0
-protocol 88fb is buggy, dev hsr_slave_1
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3574
-  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
-  __mutex_lock+0xa3b/0x1670 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  vhost_init_device_iotlb+0x124/0x280 drivers/vhost/vhost.c:1606
-  vhost_net_set_features drivers/vhost/net.c:1674 [inline]
-  vhost_net_ioctl+0x1282/0x1c00 drivers/vhost/net.c:1739
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-protocol 88fb is buggy, dev hsr_slave_0
-protocol 88fb is buggy, dev hsr_slave_1
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x458099
-Code: Bad RIP value.
-RSP: 002b:00007efd7ca9bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458099
-RDX: 0000000020000080 RSI: 000000004008af00 RDI: 0000000000000003
-RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007efd7ca9c6d4
-R13: 00000000004c295b R14: 00000000004d5280 R15: 00000000ffffffff
-INFO: task syz-executor5:9418 blocked for more than 140 seconds.
-       Not tainted 5.0.0-rc3+ #48
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor5   D27800  9418   8469 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2831 [inline]
-  __schedule+0x897/0x1e60 kernel/sched/core.c:3472
-  schedule+0xfe/0x350 kernel/sched/core.c:3516
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3574
-  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
-  __mutex_lock+0xa3b/0x1670 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  vhost_net_set_owner drivers/vhost/net.c:1697 [inline]
-  vhost_net_ioctl+0x426/0x1c00 drivers/vhost/net.c:1754
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x458099
-Code: Bad RIP value.
-RSP: 002b:00007efd7ca7ac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458099
-RDX: 0000000000000000 RSI: 000040010000af01 RDI: 0000000000000003
-RBP: 000000000073c040 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007efd7ca7b6d4
-R13: 00000000004c33a4 R14: 00000000004d5e80 R15: 00000000ffffffff
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/1040:
-  #0: 00000000b7479fbe (rcu_read_lock){....}, at:  
-debug_show_all_locks+0xc6/0x41d kernel/locking/lockdep.c:4389
-1 lock held by rsyslogd/8285:
-  #0: 000000006d9ccf7d (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1b3/0x1f0  
-fs/file.c:795
-2 locks held by getty/8406:
-  #0: 00000000052e805b (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000b90dc267 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
-2 locks held by getty/8407:
-  #0: 000000009fdef632 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 00000000ff2b1a16 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
-2 locks held by getty/8408:
-  #0: 00000000e48a8e78 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 000000008fcf2060 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
-2 locks held by getty/8409:
-  #0: 0000000063f3f4f5 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 000000001dc973ca (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
-2 locks held by getty/8410:
-  #0: 00000000f3c14150 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 000000007987cec5 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
-2 locks held by getty/8411:
-  #0: 00000000d04f4305 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 000000003f47e3a6 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
-2 locks held by getty/8412:
-  #0: 0000000082430560 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
-  #1: 0000000094609d81 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
-2 locks held by syz-executor5/9417:
-  #0: 0000000020a0f0a1 (&dev->mutex#4){+.+.}, at: vhost_net_set_features  
-drivers/vhost/net.c:1668 [inline]
-  #0: 0000000020a0f0a1 (&dev->mutex#4){+.+.}, at:  
-vhost_net_ioctl+0x204/0x1c00 drivers/vhost/net.c:1739
-  #1: 00000000a7b5872b (&vq->mutex){+.+.}, at:  
-vhost_init_device_iotlb+0x124/0x280 drivers/vhost/vhost.c:1606
-1 lock held by syz-executor5/9418:
-  #0: 0000000020a0f0a1 (&dev->mutex#4){+.+.}, at: vhost_net_set_owner  
-drivers/vhost/net.c:1697 [inline]
-  #0: 0000000020a0f0a1 (&dev->mutex#4){+.+.}, at:  
-vhost_net_ioctl+0x426/0x1c00 drivers/vhost/net.c:1754
-1 lock held by vhost-9408/9413:
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 1040 Comm: khungtaskd Not tainted 5.0.0-rc3+ #48
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:203 [inline]
-  watchdog+0xbbb/0x1170 kernel/hung_task.c:287
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 7 Comm: kworker/u4:0 Not tainted 5.0.0-rc3+ #48
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: bat_events batadv_nc_worker
-RIP: 0010:__sanitizer_cov_trace_const_cmp1+0x15/0x20 kernel/kcov.c:174
-Code: 00 48 89 e5 48 8b 4d 08 e8 18 ff ff ff 5d c3 66 0f 1f 44 00 00 55 40  
-0f b6 d6 40 0f b6 f7 bf 01 00 00 00 48 89 e5 48 8b 4d 08 <e8> f6 fe ff ff  
-5d c3 0f 1f 40 00 55 0f b7 d6 0f b7 f7 bf 03 00 00
-RSP: 0018:ffff8880a947f8a8 EFLAGS: 00000246
-RAX: ffff8880a94701c0 RBX: ffff8880a05efc40 RCX: ffffffff87d36c97
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: ffff8880a947f8a8 R08: ffff8880a94701c0 R09: ffffed1015ce5b90
-R10: ffffed1015ce5b8f R11: ffff8880ae72dc7b R12: 0000000000000000
-R13: 0000000000000000 R14: 000000000000019e R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000000a005a000 CR4: 00000000001426e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  rcu_read_unlock include/linux/rcupdate.h:657 [inline]
-  batadv_nc_purge_orig_hash net/batman-adv/network-coding.c:423 [inline]
-  batadv_nc_worker+0x2f7/0x920 net/batman-adv/network-coding.c:730
-  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
-  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+>  		struct cmdq_thread *thread = &cmdq->thread[bit];
+>  
+>  		spin_lock_irqsave(&thread->chan->lock, flags);
+> @@ -472,6 +472,9 @@ static int cmdq_probe(struct platform_device *pdev)
+>  		dev_err(dev, "failed to get irq\n");
+>  		return -EINVAL;
+>  	}
+> +
+> +	cmdq->thread_nr = (u32)(unsigned long)of_device_get_match_data(dev);
+> +	cmdq->irq_mask = GENMASK(cmdq->thread_nr - 1, 0);
+>  	err = devm_request_irq(dev, cmdq->irq, cmdq_irq_handler, IRQF_SHARED,
+>  			       "mtk_cmdq", cmdq);
+>  	if (err < 0) {
+> @@ -489,6 +492,7 @@ static int cmdq_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	cmdq->thread_nr = (u32)(unsigned long)of_device_get_match_data(dev);
+> +	cmdq->irq_mask = GENMASK(cmdq->thread_nr - 1, 0);
+>  	cmdq->mbox.dev = dev;
+>  	cmdq->mbox.chans = devm_kcalloc(dev, cmdq->thread_nr,
+>  					sizeof(*cmdq->mbox.chans), GFP_KERNEL);
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
