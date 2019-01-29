@@ -2,94 +2,104 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBF2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 864CEC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C74D2177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:51:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T5mEmXym"
+	by mail.kernel.org (Postfix) with ESMTP id 5F45F2183F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbfA2Jvu (ORCPT
+        id S1728249AbfA2Jwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:51:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47646 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726456AbfA2Jvu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:51:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6XIjcDQwIP+WQY5IcwlIazckl7rG6gnBTyMGW7XwXgQ=; b=T5mEmXymdKzGkOEdBkSqsPyDE
-        8GYPzUzKbVvXliqAgHLN9mFfDjUq+UgzKxXcZb40czx2ppLxizGPw6yL4vZlRPofRIA8la1cnsUnv
-        1aA0KwL7hLWULZRvgJgfONslon5Tvx/Bghh6tcgeTpzFsvzwsL8TcD2Eb88PCS1oHiw8PpOpLp+U8
-        /f2E0lGBzxFjwkCxGvPiGqM34RzdG2pKvBZ1y9OBHDYZ1zgq9IPsRq//im3c3umgUtvOBPIYPmm7r
-        S/9qdW88Nrl3mqKLOXFE+DoqECJswuRKRpFHLms5O3TmX5YjpdBSm2aWfUH6ss8FiBzp6zzy4QxgK
-        l+Dr8spgA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1goQ3W-0003Lm-8Z; Tue, 29 Jan 2019 09:51:46 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id AE9F92018338A; Tue, 29 Jan 2019 10:51:44 +0100 (CET)
-Date:   Tue, 29 Jan 2019 10:51:44 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Elena Reshetova <elena.reshetova@intel.com>,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH] refcount_t: add ACQUIRE ordering on success for
- dec(sub)_and_test variants
-Message-ID: <20190129095144.GH28467@hirez.programming.kicks-ass.net>
-References: <1548677377-22177-1-git-send-email-elena.reshetova@intel.com>
- <20190128142910.GA7232@andrea>
+        Tue, 29 Jan 2019 04:52:35 -0500
+Received: from ozlabs.org ([203.11.71.1]:35429 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727039AbfA2Jwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:52:34 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43phcK6Xzfz9s9h;
+        Tue, 29 Jan 2019 20:52:17 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH v2 02/21] powerpc: use memblock functions returning virtual address
+In-Reply-To: <1548057848-15136-3-git-send-email-rppt@linux.ibm.com>
+References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com> <1548057848-15136-3-git-send-email-rppt@linux.ibm.com>
+Date:   Tue, 29 Jan 2019 20:52:17 +1100
+Message-ID: <871s4vssdq.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128142910.GA7232@andrea>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 03:29:10PM +0100, Andrea Parri wrote:
+Mike Rapoport <rppt@linux.ibm.com> writes:
 
-> > diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-> > index dbaed55..ab8f584 100644
-> > --- a/arch/x86/include/asm/refcount.h
-> > +++ b/arch/x86/include/asm/refcount.h
-> > @@ -67,16 +67,29 @@ static __always_inline void refcount_dec(refcount_t *r)
-> >  static __always_inline __must_check
-> >  bool refcount_sub_and_test(unsigned int i, refcount_t *r)
-> >  {
-> > -	return GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-> > +	bool ret = GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-> >  					 REFCOUNT_CHECK_LT_ZERO,
-> >  					 r->refs.counter, e, "er", i, "cx");
-> > +
-> > +    if (ret) {
-> > +               smp_acquire__after_ctrl_dep();
-> > +               return true;
-> > +    }
-> > +
-> > +    return false;
-> 
-> There appears to be some white-space damage (here and in other places);
-> checkpatch.pl should point these and other style problems out.
+> From: Christophe Leroy <christophe.leroy@c-s.fr>
+>
+> Since only the virtual address of allocated blocks is used,
+> lets use functions returning directly virtual address.
+>
+> Those functions have the advantage of also zeroing the block.
+>
+> [ MR:
+>  - updated error message in alloc_stack() to be more verbose
+>  - convereted several additional call sites ]
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+>  arch/powerpc/kernel/dt_cpu_ftrs.c |  3 +--
+>  arch/powerpc/kernel/irq.c         |  5 -----
+>  arch/powerpc/kernel/paca.c        |  6 +++++-
+>  arch/powerpc/kernel/prom.c        |  5 ++++-
+>  arch/powerpc/kernel/setup_32.c    | 26 ++++++++++++++++----------
+>  5 files changed, 26 insertions(+), 19 deletions(-)
 
-It's worse...
+LGTM.
 
-patch: **** malformed patch at line 81: diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 
-And yes, there's a lot of whitespace damage all around. Lots of trailing
-spaces too.
-
+cheers
