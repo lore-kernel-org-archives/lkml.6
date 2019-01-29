@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B916C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADA2C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C350214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51C1220989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762618;
-	bh=5m8rru/IuJE55SNaktCJrTxHg5v8a0N10lzNA4VPhwI=;
+	s=default; t=1548762623;
+	bh=o+0/0iuj3d8raXHlzPd5/dmcvnQCEzz3wmzXxYqQmHc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=viLUekeBxid/ooBnmeRULLTHZluMJyLAJ8vs9EvcI6+CefWdxyo6wcKMhnFwtWlxY
-	 a/LwneQ4GnvSwjtWdB+nd4tmbmxUsxq2QVwOq/umlIxiLYgzcHzuJWN1f27j2/EO1i
-	 0FsVvgess1XgsM3htN2fwIkxfdhydu839BMC7PmM=
+	b=UVuja594c7fdBwg6SFSwo20e0/0y5U6RJOv5hLl4trjAYpebXhV3hPMtQYXoBBYLw
+	 ybNXlCXlC58clKeyvXnkwGf0Ad1uGz7nfBnNtFw6/dPPIc5/o/kcnVWrIs2sevA7UW
+	 e/kdYiPAVoXfayajzowxTKc0VsaUHD/YBJUsbsZs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731639AbfA2LuQ (ORCPT
+        id S1731664AbfA2LuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:50:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41452 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731618AbfA2LuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:13 -0500
+        id S1731629AbfA2LuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:50:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 407E52177E;
-        Tue, 29 Jan 2019 11:50:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3A1E2184D;
+        Tue, 29 Jan 2019 11:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762612;
-        bh=5m8rru/IuJE55SNaktCJrTxHg5v8a0N10lzNA4VPhwI=;
+        s=default; t=1548762615;
+        bh=o+0/0iuj3d8raXHlzPd5/dmcvnQCEzz3wmzXxYqQmHc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZM8XVl2dyKt9SWYwSdcNrbF6jLKjc+0iSb6dXmqgS5c64DzGzNJFRcRkbKjt+GYys
-         ADBG9gOPM9N1BvGgMeXTfwh3ADhLPWhAVC9o4q9KI0xByLHnmpAARI2cyyCiLjEY3H
-         cOjjKovc1ufy5o19U1VDqWWjPHnE797T9Vj7wsOo=
+        b=XJfR4XuTOFjl0ZhE6vph3ObwrktaSJ/N/chh9hNMGB+efvmIAyOGCnLphZV4FgVZX
+         rFiTEl6TXyl8pjBhBZBv761WcPNAWcD3A7+BqnoYiCOuL+AhVWn049zmcZQYdljtw3
+         95Nj0aGDgB+7IcG5FRBLQa6QFAAWOJAznmZaSyxM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.14 65/68] xen: Fix x86 sched_clock() interface for xen
-Date:   Tue, 29 Jan 2019 12:36:27 +0100
-Message-Id: <20190129113138.034020219@linuxfoundation.org>
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 66/68] f2fs: read page index before freeing
+Date:   Tue, 29 Jan 2019 12:36:28 +0100
+Message-Id: <20190129113138.151887427@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -67,102 +66,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 867cefb4cb1012f42cada1c7d1f35ac8dd276071 upstream.
+commit 0ea295dd853e0879a9a30ab61f923c26be35b902 upstream.
 
-Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
-sched_clock() interface") broke Xen guest time handling across
-migration:
+The function truncate_node frees the page with f2fs_put_page. However,
+the page index is read after that. So, the patch reads the index before
+freeing the page.
 
-[  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
-[  187.251137] OOM killer disabled.
-[  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-[  187.252299] suspending xenstore...
-[  187.266987] xen:grant_table: Grant tables using version 1 layout
-[18446743811.706476] OOM killer enabled.
-[18446743811.706478] Restarting tasks ... done.
-[18446743811.720505] Setting capacity to 16777216
-
-Fix that by setting xen_sched_clock_offset at resume time to ensure a
-monotonic clock value.
-
-[boris: replaced pr_info() with pr_info_once() in xen_callback_vector()
- to avoid printing with incorrect timestamp during resume (as we
- haven't re-adjusted the clock yet)]
-
-Fixes: f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable' sched_clock() interface")
-Cc: <stable@vger.kernel.org> # 4.11
-Reported-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Tested-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Fixes: bf39c00a9a7f ("f2fs: drop obsolete node page when it is truncated")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/xen/time.c              |   12 +++++++++---
- drivers/xen/events/events_base.c |    2 +-
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ fs/f2fs/node.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/x86/xen/time.c
-+++ b/arch/x86/xen/time.c
-@@ -361,8 +361,6 @@ void xen_timer_resume(void)
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -694,6 +694,7 @@ static void truncate_node(struct dnode_o
  {
- 	int cpu;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+ 	struct node_info ni;
++	pgoff_t index;
  
--	pvclock_resume();
--
- 	if (xen_clockevent != &xen_vcpuop_clockevent)
- 		return;
+ 	get_node_info(sbi, dn->nid, &ni);
+ 	f2fs_bug_on(sbi, ni.blk_addr == NULL_ADDR);
+@@ -712,10 +713,11 @@ static void truncate_node(struct dnode_o
+ 	clear_node_page_dirty(dn->node_page);
+ 	set_sbi_flag(sbi, SBI_IS_DIRTY);
  
-@@ -379,12 +377,15 @@ static const struct pv_time_ops xen_time
- };
++	index = dn->node_page->index;
+ 	f2fs_put_page(dn->node_page, 1);
  
- static struct pvclock_vsyscall_time_info *xen_clock __read_mostly;
-+static u64 xen_clock_value_saved;
+ 	invalidate_mapping_pages(NODE_MAPPING(sbi),
+-			dn->node_page->index, dn->node_page->index);
++			index, index);
  
- void xen_save_time_memory_area(void)
- {
- 	struct vcpu_register_time_memory_area t;
- 	int ret;
- 
-+	xen_clock_value_saved = xen_clocksource_read() - xen_sched_clock_offset;
-+
- 	if (!xen_clock)
- 		return;
- 
-@@ -404,7 +405,7 @@ void xen_restore_time_memory_area(void)
- 	int ret;
- 
- 	if (!xen_clock)
--		return;
-+		goto out;
- 
- 	t.addr.v = &xen_clock->pvti;
- 
-@@ -421,6 +422,11 @@ void xen_restore_time_memory_area(void)
- 	if (ret != 0)
- 		pr_notice("Cannot restore secondary vcpu_time_info (err %d)",
- 			  ret);
-+
-+out:
-+	/* Need pvclock_resume() before using xen_clocksource_read(). */
-+	pvclock_resume();
-+	xen_sched_clock_offset = xen_clocksource_read() - xen_clock_value_saved;
- }
- 
- static void xen_setup_vsyscall_time_info(void)
---- a/drivers/xen/events/events_base.c
-+++ b/drivers/xen/events/events_base.c
-@@ -1650,7 +1650,7 @@ void xen_callback_vector(void)
- 			xen_have_vector_callback = 0;
- 			return;
- 		}
--		pr_info("Xen HVM callback vector for event delivery is enabled\n");
-+		pr_info_once("Xen HVM callback vector for event delivery is enabled\n");
- 		alloc_intr_gate(HYPERVISOR_CALLBACK_VECTOR,
- 				xen_hvm_callback_vector);
- 	}
+ 	dn->node_page = NULL;
+ 	trace_f2fs_truncate_node(dn->inode, dn->nid, ni.blk_addr);
 
 
