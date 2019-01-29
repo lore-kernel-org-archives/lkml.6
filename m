@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 436F5C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC82C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15BC72086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD81E2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762508;
-	bh=WsSIkIxkUch3UxoQV10QzzILtiWYQRksiTAhvgqU5U4=;
+	s=default; t=1548762513;
+	bh=o0+sMYuWM+YVlSYwvSiKI/6kxaH7EucnuRKO4Mngkis=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v+3zKH/OKKZEWMDRJnNNoLCQDpDj7gJx9fr8zSGMi/FErpKj/tHpJDEvV3VWobAkO
-	 LTqjYJAFCYdx56jJh4blvT9IEc/B51n7Nm4A7Z+gomy2soTL3P4VTDq/wAQw4zAF2z
-	 NXtoJ7gjjIDXsR3d/0kBwoUj5aEruMQTaBraumqQ=
+	b=oiOzk6x/lQcNZAx1REca6M+gNMFbnb/E2031YGGAAqzvOJl6CWIe2pGK7nY1IDUFe
+	 mBd83wgRQ9NWc3uyUzAeyj7qh9ko8WT//oz0NazpuH2tzg6J7PHvWTsbal9oGLWLte
+	 IqpXx26x+gwHTa+nUn70pONGfDcUQ3l14qjULquc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731305AbfA2Ls0 (ORCPT
+        id S1731338AbfA2Lsc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:48:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39222 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:48:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727215AbfA2LsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:18 -0500
+        id S1731308AbfA2Ls1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:48:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C115D2086C;
-        Tue, 29 Jan 2019 11:48:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32ED72083B;
+        Tue, 29 Jan 2019 11:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762498;
-        bh=WsSIkIxkUch3UxoQV10QzzILtiWYQRksiTAhvgqU5U4=;
+        s=default; t=1548762506;
+        bh=o0+sMYuWM+YVlSYwvSiKI/6kxaH7EucnuRKO4Mngkis=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXX68Ruel4aUkhHPkDwOTFRvAXYvfHr9peo7ezPxtfaKARZLfTIuKouzlUup+gAII
-         zSWYuaNq4HQ8EOuWGeKAAgMcCXdZft78oglfbCQsPZcv8If7JZPUlavlGefJJ7Gtsy
-         9Sm+uA2hEfmvW+D8roDDyCWmhRcPqM9oK1MlhsDs=
+        b=CzQeR/tVjF/4EHQmEgxQShKXhOuYvOoDLToe2JnDkoJdUrUaFlP1o/LGQL+H7FB6P
+         N9CWyiSptRtpM3ejxg5G20wvjVLDlwDyX7w2awMwf0vaCrCrM/ixxnoq801RtMzLzl
+         8RGxJrkLvxjp1ZGwTy4NmrkNHs1Y7Qi31E3xkrnY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: [PATCH 4.14 25/68] tty: Handle problem if line discipline does not have receive_buf
-Date:   Tue, 29 Jan 2019 12:35:47 +0100
-Message-Id: <20190129113133.736772342@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        stable@kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 28/68] hv_balloon: avoid touching uninitialized struct page during tail onlining
+Date:   Tue, 29 Jan 2019 12:35:50 +0100
+Message-Id: <20190129113133.957038667@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -64,33 +65,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-commit 27cfb3a53be46a54ec5e0bd04e51995b74c90343 upstream.
+commit da8ced360ca8ad72d8f41f5c8fcd5b0e63e1555f upstream.
 
-Some tty line disciplines do not have a receive buf callback, so
-properly check for that before calling it.  If they do not have this
-callback, just eat the character quietly, as we can't fail this call.
+Hyper-V memory hotplug protocol has 2M granularity and in Linux x86 we use
+128M. To deal with it we implement partial section onlining by registering
+custom page onlining callback (hv_online_page()). Later, when more memory
+arrives we try to online the 'tail' (see hv_bring_pgs_online()).
 
-Reported-by: Jann Horn <jannh@google.com>
-Cc: stable <stable@vger.kernel.org>
+It was found that in some cases this 'tail' onlining causes issues:
+
+ BUG: Bad page state in process kworker/0:2  pfn:109e3a
+ page:ffffe08344278e80 count:0 mapcount:1 mapping:0000000000000000 index:0x0
+ flags: 0xfffff80000000()
+ raw: 000fffff80000000 dead000000000100 dead000000000200 0000000000000000
+ raw: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+ page dumped because: nonzero mapcount
+ ...
+ Workqueue: events hot_add_req [hv_balloon]
+ Call Trace:
+  dump_stack+0x5c/0x80
+  bad_page.cold.112+0x7f/0xb2
+  free_pcppages_bulk+0x4b8/0x690
+  free_unref_page+0x54/0x70
+  hv_page_online_one+0x5c/0x80 [hv_balloon]
+  hot_add_req.cold.24+0x182/0x835 [hv_balloon]
+  ...
+
+Turns out that we now have deferred struct page initialization for memory
+hotplug so e.g. memory_block_action() in drivers/base/memory.c does
+pages_correctly_probed() check and in that check it avoids inspecting
+struct pages and checks sections instead. But in Hyper-V balloon driver we
+do PageReserved(pfn_to_page()) check and this is now wrong.
+
+Switch to checking online_section_nr() instead.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: stable@kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_io.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/hv/hv_balloon.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2180,7 +2180,8 @@ static int tiocsti(struct tty_struct *tt
- 	ld = tty_ldisc_ref_wait(tty);
- 	if (!ld)
- 		return -EIO;
--	ld->ops->receive_buf(tty, &ch, &mbz, 1);
-+	if (ld->ops->receive_buf)
-+		ld->ops->receive_buf(tty, &ch, &mbz, 1);
- 	tty_ldisc_deref(ld);
- 	return 0;
- }
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -846,12 +846,14 @@ static unsigned long handle_pg_range(uns
+ 			pfn_cnt -= pgs_ol;
+ 			/*
+ 			 * Check if the corresponding memory block is already
+-			 * online by checking its last previously backed page.
+-			 * In case it is we need to bring rest (which was not
+-			 * backed previously) online too.
++			 * online. It is possible to observe struct pages still
++			 * being uninitialized here so check section instead.
++			 * In case the section is online we need to bring the
++			 * rest of pfns (which were not backed previously)
++			 * online too.
+ 			 */
+ 			if (start_pfn > has->start_pfn &&
+-			    !PageReserved(pfn_to_page(start_pfn - 1)))
++			    online_section_nr(pfn_to_section_nr(start_pfn)))
+ 				hv_bring_pgs_online(has, start_pfn, pgs_ol);
+ 
+ 		}
 
 
