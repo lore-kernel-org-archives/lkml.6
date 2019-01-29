@@ -2,164 +2,175 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEA1C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:13:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDACC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96CD420989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:13:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E98B2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:15:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XDQaRPr9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pOB9iMGk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbfA2KNx (ORCPT
+        id S1728331AbfA2KPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:13:53 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38744 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfA2KNx (ORCPT
+        Tue, 29 Jan 2019 05:15:10 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38953 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfA2KPK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:13:53 -0500
-Received: by mail-pg1-f193.google.com with SMTP id g189so8550829pgc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 02:13:52 -0800 (PST)
+        Tue, 29 Jan 2019 05:15:10 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y8so17031957wmi.4;
+        Tue, 29 Jan 2019 02:15:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=L49h9QkNpx56q8oRbtd1NcnocQ6XxJWs8GSZnc/Zph4=;
-        b=XDQaRPr93DDmkZEmzuJ+TObX882ASIJojbiUZq2HzpG6cr0Ejn6xCtoH8l0c273eBP
-         frKjTruEPxlhxzCi5M44Z54W8Rh1E6wNJK/Wjzu+8zwvuk6JwRouFOi3yI0JOwIvsmxm
-         0hBy6i9KHBaMdL5EHVbQHyHMmsUsEHrXWbLOM=
+        bh=EBCYi6r22cn+0LrGfkpIA5np/DMvwqkE0M2+eH0iYEI=;
+        b=pOB9iMGk0DN+xvvl/yVSCaAloAmQO7jnj6kkOzeu8y/YrWDXyKxZMA0rsPMB62DpgX
+         heYi85aFlshQzdxkmQdZbDCZ3IIqd57gCJtfdi5T+otQNeUDeZOT71ma4StnEXk3tgm9
+         gXHBSgHq0uGESBfwhcfsNuvWnMZFIBaaiv+L20zqup2OVg1/poomghlWB8jeOj/mEHj1
+         ghIBBlYrxojHFtFr7tiVgWIXErtYdvIEnFlJlIt++Tn41eqC1RWLIKi9GANbvUDXoK3M
+         ByvPNL4ReCyNaj00Q7yHMT4FfhVGFaEpOUc3EpAZ8lSecEqDcXkyoiYdrePPh7zOXjac
+         7GxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L49h9QkNpx56q8oRbtd1NcnocQ6XxJWs8GSZnc/Zph4=;
-        b=j/H96UMMAur9+Zj2/F0tVwd0sIvSPQbCHV/EYCLunCOqQO9WEQv3RcJ4K083HIFxlx
-         hozrDIzm4bSBfqsiswCEclvbJeirA7nu0qCs4fh+b9vchlZcpGXSLuTWXpPRLwPh3p/0
-         ZVvcEoXPG0um7+JPEqQAI2sC57ZXA4MGVmvcnfSou/rnPuCmGN6Yj/QpNMoKQDHbrOg7
-         hT7nm0DdLx4OD+DnLpPLVB1KdKwnCzDuvBsozcjkWBRiVnzvDfoQ4kweqODduDHEoQ2e
-         BqysyXlBJN1VOlPP292O71dUDR8cIi2Zn5oXgb0lYmUiAZcppvw21gkV1G21uvyHz7a9
-         AiCw==
-X-Gm-Message-State: AJcUukcEW+KZYhXgBGPCGgJhFx/uHZWX/odxUTZQWNq1Ez+sjWkVW1Tm
-        j9hURPTiwg4wV6bVNcsRlxSv9w==
-X-Google-Smtp-Source: ALg8bN46Hih6fDtXHr4hYfD3+O5Kms3cLJ2qozDpyOBc6SSOuts7EIkQraPQoRySbp7+DrqmvQsIuQ==
-X-Received: by 2002:a62:798f:: with SMTP id u137mr25766277pfc.168.1548756832251;
-        Tue, 29 Jan 2019 02:13:52 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id w6sm29978653pga.72.2019.01.29.02.13.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 02:13:50 -0800 (PST)
-Date:   Tue, 29 Jan 2019 15:43:48 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Andrew-sh Cheng <andrew-sh.cheng@mediatek.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        srv_heupstream@mediatek.com, fan.chen@mediatek.com
-Subject: Re: [PATCH 1/3] cpufreq: mediatek: add mt8183 cpufreq support
-Message-ID: <20190129101348.7oxqerszhcopanzr@vireshk-i7>
-References: <1548743704-16821-1-git-send-email-andrew-sh.cheng@mediatek.com>
- <1548743704-16821-2-git-send-email-andrew-sh.cheng@mediatek.com>
+        bh=EBCYi6r22cn+0LrGfkpIA5np/DMvwqkE0M2+eH0iYEI=;
+        b=s9Dkd2MeQidio+D0G+Dq3firqLjydjQ+v6EAigW3OD2kayp6vRtpIj8r/wga5iNvoc
+         3tUXnvWOizuNXwnUOFMf4gsOiJciiVXCwCZOxev+82aaabKTeGmSi5o7mR1U0+FwzP3y
+         AOd8EmXkjSa7IpoZv0RjbKAdZdua7RpuqlDa6T063W0mZJbmElpt8x118N1EDnisjqPh
+         6/87J/qM0bHhqhxfgttFH1JGq01p7cvsZdx01x4pir1mIonG/TmcIHbslw0g5ExbVpS4
+         ywiaKJUYE9aQUOaGFNd3kW/MHMag2G6W/9yifFcVsPHOwMfpDecIFY1qiijecNhpwHbK
+         Ptcw==
+X-Gm-Message-State: AJcUukeS3sXB5dzKbvMTwHY5Ba3oSew8n4FEMqUnZRmBQFjoX7ZDFCYF
+        kQ3sq2i1CxE59TBvRGWW9A8=
+X-Google-Smtp-Source: ALg8bN7FfeYRHfuwEeOEeqUig6XHx251oxYjky/CtCxXS+EJOleZk3TB3wOeSwJ8nzUGEet3/V3WPg==
+X-Received: by 2002:a7b:c7c7:: with SMTP id z7mr21939799wmk.74.1548756907337;
+        Tue, 29 Jan 2019 02:15:07 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id b129sm1235602wmd.24.2019.01.29.02.15.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 02:15:06 -0800 (PST)
+Date:   Tue, 29 Jan 2019 11:15:05 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH V3 2/3] i2c: tegra: Update transfer timeout
+Message-ID: <20190129101505.GA28850@ulmo>
+References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
+ <1548475073-12408-2-git-send-email-skomatineni@nvidia.com>
+ <0cf91475-f77d-7453-deb6-3dd91b63aeb6@gmail.com>
+ <BYAPR12MB3398E9D32B57B0E2FC2A6466C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <c0b36535-6767-7327-5dc5-612e6957a769@gmail.com>
+ <BYAPR12MB339837E896774531B0D11A98C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <2f3cab66-7424-1b33-976f-826877623726@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
 Content-Disposition: inline
-In-Reply-To: <1548743704-16821-2-git-send-email-andrew-sh.cheng@mediatek.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <2f3cab66-7424-1b33-976f-826877623726@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29-01-19, 14:35, Andrew-sh Cheng wrote:
-> From: "Andrew-sh.Cheng" <andrew-sh.cheng@mediatek.com>
-> 
-> For new mediatek chip mt8183,
-> cci and little cluster share the same buck,
-> so need to modify the attribute of regulator from exclusive to optional
-> 
-> Intermediate clock is not always enabled by ccf in different projects,
-> so cpufreq should always enable it by itself.
-> 
-> Signed-off-by: Andrew-sh.Cheng <andrew-sh.cheng@mediatek.com>
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
->  drivers/cpufreq/mediatek-cpufreq.c   | 7 ++++++-
->  2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index b1c5468..5a1c588 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -117,6 +117,7 @@
->  	{ .compatible = "mediatek,mt817x", },
->  	{ .compatible = "mediatek,mt8173", },
->  	{ .compatible = "mediatek,mt8176", },
-> +	{ .compatible = "mediatek,mt8183", },
->  
->  	{ .compatible = "nvidia,tegra124", },
->  
-> diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-> index eb8920d..e956248 100644
-> --- a/drivers/cpufreq/mediatek-cpufreq.c
-> +++ b/drivers/cpufreq/mediatek-cpufreq.c
-> @@ -355,7 +355,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
->  		goto out_free_resources;
->  	}
->  
-> -	proc_reg = regulator_get_exclusive(cpu_dev, "proc");
-> +	proc_reg = regulator_get_optional(cpu_dev, "proc");
->  	if (IS_ERR(proc_reg)) {
->  		if (PTR_ERR(proc_reg) == -EPROBE_DEFER)
->  			pr_warn("proc regulator for cpu%d not ready, retry.\n",
-> @@ -385,6 +385,9 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
->  		goto out_free_resources;
->  	}
->  
-> +	ret = clk_prepare_enable(inter_clk);
-> +	if (ret)
-> +		goto out_free_resources;
 
-Add a blank line here please.
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also out_free_resources isn't enough here and you need to free OPP table as
-well.
+On Tue, Jan 29, 2019 at 01:27:09AM +0300, Dmitry Osipenko wrote:
+> 29.01.2019 1:15, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >=20
+> >=20
+> >>>>> Update I2C transfer timeout based on transfer bytes and I2C bus rat=
+e=20
+> >>>>> to allow enough time during max transfer size based on the speed.
+> >>>>
+> >>>> Could it be that I2C device is busy and just slowly handling the tra=
+nsfer requests? Maybe better to leave the timeout as-is and assume the wors=
+t case scenario?
+> >>>>
+> >>> This change includes min transfer time out of 100ms in addition to co=
+mputed timeout based on transfer bytes and speed which can account in cases=
+ of slave devices running at slower speed.
+> >>> Also Tegra I2C Master supports Clock stretching by the slave.
+> >>
+> >> Okay, I suppose in reality this shouldn't break anything.
+> >>
+> >> Please explain what benefits this change brings. Does it fix or improv=
+e anything? The commit message only describes changes done in the patch and=
+ has no word on justification of those changes. Transfer timeout is an extr=
+eme case that doesn't happen often and > > when it happens, usually only th=
+e fact of timeout matters. If there is no real value in shortening of the t=
+imeout, why bother then?
+> >=20
+> > Original transfer timeout in existing driver is 1Sec and incases of tra=
+nsfer size more than 10Kbytes at STD bus rate, timeout is not sufficient.
+> > Also Tegra194 platform supports max of 64K bytes of transfer and to all=
+ow full transfer size at lowest bus rate it takes almost ~5.8 Sec.
+> > In cases if large transfer at low bus rates 1 Sec timeout is not enough=
+ and in those cases transfers will timeout before it waits for complete tra=
+nsfer to happen.
+> >=20
+> > So this patch uses transfer time based on transfer bytes and bus rate.
+> >=20
+>=20
+> Please add that to the commit message.
+>=20
+> And then seems you also need to set I2C adapter timeout to a some
+> larger value. Currently Tegra's I2C doesn't explicitly specify the
+> "adapter.timeout" and I2C core sets it to 1 second if it is 0.
 
+I don't think adapter.timeout is the same thing as the timeout that
+we're dealing with here. adapter.timeout is only used as a way to retry
+on arbitration lost conditions. So, as far as I understand, if we try to
+send a message to an I2C slave and we loose arbitration, we'll keep
+retrying for one second before finally failing. I wouldn't expect these
+arbitration lost conditions to happen right in the middle of a transfer,
+but rather at the beginning already, so I'm not sure arbitration could
+even be lost after, say, 2 seconds into a very large transfer.
 
->  	/* Search a safe voltage for intermediate frequency. */
->  	rate = clk_get_rate(inter_clk);
->  	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
-> @@ -412,6 +415,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
->  
->  out_free_opp_table:
->  	dev_pm_opp_of_cpumask_remove_table(&info->cpus);
-> +	clk_disable_unprepare(inter_clk);
+All of that said, it seems like i2c-tegra doesn't respect the protocol
+for making this arbitration loss retry work in the first place. We
+should be returning -EAGAIN if we detect arbitration loss, but I don't
+see that we ever return that. We should probably fix that in another
+patch.
 
-Clock was enabled after adding the table, and so it must be disabled before
-removing the table. Just the opposite sequence.
+Thierry
 
->  
->  out_free_resources:
->  	if (!IS_ERR(proc_reg))
-> @@ -551,6 +555,7 @@ static int mtk_cpufreq_probe(struct platform_device *pdev)
->  	{ .compatible = "mediatek,mt817x", },
->  	{ .compatible = "mediatek,mt8173", },
->  	{ .compatible = "mediatek,mt8176", },
-> +	{ .compatible = "mediatek,mt8183", },
->  
->  	{ }
->  };
-> -- 
-> 1.8.1.1.dirty
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-viresh
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxQJ6YACgkQ3SOs138+
+s6G/IxAApCkLSlD9ft/tM34BpBPzUo1bHW85AEKvygq3sJeLEfLVj7y+lGpQZlb9
+S4168g2cgkMVNNRZhtwhoTxZI3R4vgwz7mjciBp8hcxQ2H0AI99t4+4ogXPVNdXh
+GfA8CZzLCSoGL9X4G8giKhJ7ciN1kJJXrHJwNVJwG45Ah9X30TH5sgxifUK9PWV9
+MxdM5s4YPZ0OB2BFW8vgqdUy87Jpu1E/Js/tVOJIcDji7hGNom3b9lmJ7JjHbjsf
+Kb2dGaUPmLprnYjxOBiFXW+f/IfXtz0BeBs18zxpN1pqQKHKBiFX196vKwdzlEUH
+RbkadHCjdy77c1Qq7uivz5oAQuEbz1hBNcEeHPWyNWFnNRmSyGeLhAhaKoTgh8lI
+xwsxEDwmZ0h55WFHXjeCyuIex68/c4X6a+r5navEjl8iCkAwoJDOJKm6vps5tVBE
+VP2nPdMLLSP6yW/C2ggWAkbFuyVwc6fPrITdNO8D+kd4SaQlj+arRtQjez+2sF9L
+HgqbVxVjmlLoz5dbs5aSxNzL5FMUv8/vDiG9DYVKBpk1Ew7zqq+8doj1UjUgJm5f
+d/+oKlxrHeuU/upeqEZGCvkSaKl7IF2rR9HAuM/2ynfWVtEYQPLeCc7Uv/LD4aMr
+hbcVLXbdJMQ/10xhCJqST5H1bP9vKaHAQAcBor+/TWo1H5OIYl0=
+=1kRD
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
