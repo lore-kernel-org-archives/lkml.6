@@ -7,47 +7,52 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0A5C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE789C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F132B2086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 728512083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:56:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762954;
-	bh=j6lpeb85W1yXKENEsHOYHPleFwOVE1whC72evYNtveA=;
+	s=default; t=1548762969;
+	bh=W2Amv6nGLbUv1F8eUSIP2DwZDjh0N43OXagkXvsMmDA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eYY/i9UQMqV6lxcQm0sCeWUz94pdKyABLx2XRD1OXMeX6Z/H3PAh6zNsVu2kGzqqz
-	 74PAFKVNK2Tw9W5yT+WOx8ZeT55qnL2gOs2ETqLnWWWv4Vtvzk6qK0ZeecMHjpSZGP
-	 SLQYM79ehmqXIvpFgCqXSy3EL6co31jLzjAPLMjw=
+	b=HlsbJ3oUf9WovyEFUIZjS/6d7+7KI46DkpzcCMht+lKwA7SUnSiuMWpCJa3S0ze+r
+	 sUFn9qB+EZdgljCxty+Kxq/m7QjZSEgaWsI6hAswjSEJRd/a4Pz7o+19kldJCu5les
+	 zz/jUR1xe9bOeU0Iv767ChD4vMsMaqk61TYgNwrk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731649AbfA2LuU (ORCPT
+        id S1731573AbfA2LuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:50:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41586 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731242AbfA2LuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:19 -0500
+        id S1731543AbfA2Ltz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:49:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEA7D2148E;
-        Tue, 29 Jan 2019 11:50:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A9732083B;
+        Tue, 29 Jan 2019 11:49:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762618;
-        bh=j6lpeb85W1yXKENEsHOYHPleFwOVE1whC72evYNtveA=;
+        s=default; t=1548762593;
+        bh=W2Amv6nGLbUv1F8eUSIP2DwZDjh0N43OXagkXvsMmDA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PRqIP3GQClqwRXUOhz3HVfjbdevi6kwxS56LEsdr2NnqfjCo++J7rg/YMTqcS68l1
-         RSgBEpOe6wrJb7glSxbIahYNSg6Ko1NNznc56fp+9yp506zI2r1w7R6Du1fBHs2v23
-         GKvQl9+peUmzvnYPMM4g0Nmcq1Eq2p/QI8GuuG9E=
+        b=L3XzlCpIOB63p4PnJ63jJaSJbECXH8W6Vgf06f8p0vIEhsN55/UYkAkDsnMWfSLmE
+         S1fEq505mQWRQcJ9UwI9B3dSldOWxC9Ps7lsO+iAQhFvaX2UN4r65vsJejn86ssZ4o
+         wyfDh5U1hhs6dzpeRCjdIwnYA+ioYaXLvy5fRczE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        Jack Pham <jackp@codeaurora.org>,
+        Peter Chen <peter.chen@nxp.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 67/68] btrfs: fix error handling in btrfs_dev_replace_start
-Date:   Tue, 29 Jan 2019 12:36:29 +0100
-Message-Id: <20190129113138.293057527@linuxfoundation.org>
+Subject: [PATCH 4.14 59/68] xhci: Fix leaking USB3 shared_hcd at xhci removal
+Date:   Tue, 29 Jan 2019 12:36:21 +0100
+Message-Id: <20190129113137.244656094@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -66,62 +71,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeff Mahoney <jeffm@suse.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 5c06147128fbbdf7a84232c5f0d808f53153defe upstream.
+commit f068090426ea8d72c408ebd42953a82a88e2282c upstream.
 
-When we fail to start a transaction in btrfs_dev_replace_start, we leave
-dev_replace->replace_start set to STARTED but clear ->srcdev and
-->tgtdev.  Later, that can result in an Oops in
-btrfs_dev_replace_progress when having state set to STARTED or SUSPENDED
-implies that ->srcdev is valid.
+Ensure that the shared_hcd pointer is valid when calling usb_put_hcd()
 
-Also fix error handling when the state is already STARTED or SUSPENDED
-while starting.  That, too, will clear ->srcdev and ->tgtdev even though
-it doesn't own them.  This should be an impossible case to hit since we
-should be protected by the BTRFS_FS_EXCL_OP bit being set.  Let's add an
-ASSERT there while we're at it.
+The shared_hcd is removed and freed in xhci by first calling
+usb_remove_hcd(xhci->shared_hcd), and later
+usb_put_hcd(xhci->shared_hcd)
 
-Fixes: e93c89c1aaaaa (Btrfs: add new sources for device replace code)
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Afer commit fe190ed0d602 ("xhci: Do not halt the host until both HCD have
+disconnected their devices.") the shared_hcd was never properly put as
+xhci->shared_hcd was set to NULL before usb_put_hcd(xhci->shared_hcd) was
+called.
+
+shared_hcd (USB3) is removed before primary hcd (USB2).
+While removing the primary hcd we might need to handle xhci interrupts
+to cleanly remove last USB2 devices, therefore we need to set
+xhci->shared_hcd to NULL before removing the primary hcd to let xhci
+interrupt handler know shared_hcd is no longer available.
+
+xhci-plat.c, xhci-histb.c and xhci-mtk first create both their hcd's before
+adding them. so to keep the correct reverse removal order use a temporary
+shared_hcd variable for them.
+For more details see commit 4ac53087d6d4 ("usb: xhci: plat: Create both
+HCDs before adding them")
+
+Fixes: fe190ed0d602 ("xhci: Do not halt the host until both HCD have disconnected their devices.")
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Jianguo Sun <sunjianguo1@huawei.com>
+Cc: <stable@vger.kernel.org>
+Reported-by: Jack Pham <jackp@codeaurora.org>
+Tested-by: Jack Pham <jackp@codeaurora.org>
+Tested-by: Peter Chen <peter.chen@nxp.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/dev-replace.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/usb/host/xhci-mtk.c   |    6 ++++--
+ drivers/usb/host/xhci-pci.c   |    1 +
+ drivers/usb/host/xhci-plat.c  |    6 ++++--
+ drivers/usb/host/xhci-tegra.c |    1 +
+ drivers/usb/host/xhci.c       |    2 --
+ 5 files changed, 10 insertions(+), 6 deletions(-)
 
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -351,6 +351,7 @@ int btrfs_dev_replace_start(struct btrfs
- 		break;
- 	case BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED:
- 	case BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED:
-+		ASSERT(0);
- 		ret = BTRFS_IOCTL_DEV_REPLACE_RESULT_ALREADY_STARTED;
- 		goto leave;
- 	}
-@@ -395,6 +396,10 @@ int btrfs_dev_replace_start(struct btrfs
- 	if (IS_ERR(trans)) {
- 		ret = PTR_ERR(trans);
- 		btrfs_dev_replace_lock(dev_replace, 1);
-+		dev_replace->replace_state =
-+			BTRFS_IOCTL_DEV_REPLACE_STATE_NEVER_STARTED;
-+		dev_replace->srcdev = NULL;
-+		dev_replace->tgtdev = NULL;
- 		goto leave;
+--- a/drivers/usb/host/xhci-mtk.c
++++ b/drivers/usb/host/xhci-mtk.c
+@@ -724,14 +724,16 @@ static int xhci_mtk_remove(struct platfo
+ 	struct xhci_hcd_mtk *mtk = platform_get_drvdata(dev);
+ 	struct usb_hcd	*hcd = mtk->hcd;
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
++	struct usb_hcd  *shared_hcd = xhci->shared_hcd;
+ 
+-	usb_remove_hcd(xhci->shared_hcd);
++	usb_remove_hcd(shared_hcd);
++	xhci->shared_hcd = NULL;
+ 	xhci_mtk_phy_power_off(mtk);
+ 	xhci_mtk_phy_exit(mtk);
+ 	device_init_wakeup(&dev->dev, false);
+ 
+ 	usb_remove_hcd(hcd);
+-	usb_put_hcd(xhci->shared_hcd);
++	usb_put_hcd(shared_hcd);
+ 	usb_put_hcd(hcd);
+ 	xhci_mtk_sch_exit(mtk);
+ 	xhci_mtk_clks_disable(mtk);
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -370,6 +370,7 @@ static void xhci_pci_remove(struct pci_d
+ 	if (xhci->shared_hcd) {
+ 		usb_remove_hcd(xhci->shared_hcd);
+ 		usb_put_hcd(xhci->shared_hcd);
++		xhci->shared_hcd = NULL;
  	}
  
-@@ -416,8 +421,6 @@ int btrfs_dev_replace_start(struct btrfs
- 	return ret;
+ 	/* Workaround for spurious wakeups at shutdown with HSW */
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -332,14 +332,16 @@ static int xhci_plat_remove(struct platf
+ 	struct usb_hcd	*hcd = platform_get_drvdata(dev);
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+ 	struct clk *clk = xhci->clk;
++	struct usb_hcd *shared_hcd = xhci->shared_hcd;
  
- leave:
--	dev_replace->srcdev = NULL;
--	dev_replace->tgtdev = NULL;
- 	btrfs_dev_replace_unlock(dev_replace, 1);
- 	btrfs_destroy_dev_replace_tgtdev(fs_info, tgt_device);
- 	return ret;
+ 	xhci->xhc_state |= XHCI_STATE_REMOVING;
+ 
+-	usb_remove_hcd(xhci->shared_hcd);
++	usb_remove_hcd(shared_hcd);
++	xhci->shared_hcd = NULL;
+ 	usb_phy_shutdown(hcd->usb_phy);
+ 
+ 	usb_remove_hcd(hcd);
+-	usb_put_hcd(xhci->shared_hcd);
++	usb_put_hcd(shared_hcd);
+ 
+ 	if (!IS_ERR(clk))
+ 		clk_disable_unprepare(clk);
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1178,6 +1178,7 @@ static int tegra_xusb_remove(struct plat
+ 
+ 	usb_remove_hcd(xhci->shared_hcd);
+ 	usb_put_hcd(xhci->shared_hcd);
++	xhci->shared_hcd = NULL;
+ 	usb_remove_hcd(tegra->hcd);
+ 	usb_put_hcd(tegra->hcd);
+ 
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -669,8 +669,6 @@ static void xhci_stop(struct usb_hcd *hc
+ 
+ 	/* Only halt host and free memory after both hcds are removed */
+ 	if (!usb_hcd_is_primary_hcd(hcd)) {
+-		/* usb core will free this hcd shortly, unset pointer */
+-		xhci->shared_hcd = NULL;
+ 		mutex_unlock(&xhci->mutex);
+ 		return;
+ 	}
 
 
