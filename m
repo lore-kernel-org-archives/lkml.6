@@ -2,101 +2,102 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8112FC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFEFC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F4302175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:25:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5BEA2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:27:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfA2IZv (ORCPT
+        id S1727479AbfA2I1D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:25:51 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42712 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727280AbfA2IZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:25:50 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2D31183F3E;
-        Tue, 29 Jan 2019 08:25:50 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-116.ams2.redhat.com [10.36.116.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B5A4517591;
-        Tue, 29 Jan 2019 08:25:47 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id D5EE99D85; Tue, 29 Jan 2019 09:25:41 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR QXL
-        VIRTUAL GPU),
-        spice-devel@lists.freedesktop.org (open list:DRM DRIVER FOR QXL VIRTUAL
-        GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] drm/qxl: use ttm_tt
-Date:   Tue, 29 Jan 2019 09:25:41 +0100
-Message-Id: <20190129082541.1392-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 29 Jan 2019 08:25:50 +0000 (UTC)
+        Tue, 29 Jan 2019 03:27:03 -0500
+Received: from nat.nue.novell.com ([195.135.221.2]:58869 "EHLO suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725468AbfA2I1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:27:02 -0500
+Received: by suse.de (Postfix, from userid 1000)
+        id 73C3940AC; Tue, 29 Jan 2019 09:27:01 +0100 (CET)
+Date:   Tue, 29 Jan 2019 09:27:00 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mhocko@suse.com
+Subject: Re: [PATCH] mm,memory_hotplug: Fix scan_movable_pages for gigantic
+ hugepages
+Message-ID: <20190129082658.erftot43e5ogasif@d104.suse.de>
+References: <20190122154407.18417-1-osalvador@suse.de>
+ <5368e2b4-5aca-40dd-fe18-67d861a04a29@redhat.com>
+ <20190125075830.6mqw2io4rwz7wxx5@d104.suse.de>
+ <20190128145309.c7dcf075b469d6a54694327d@linux-foundation.org>
+ <20190128145617.069b3a5436fc7e34bdebb104@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128145617.069b3a5436fc7e34bdebb104@linux-foundation.org>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qxl device will not dma, so we don't need ttm_dma_tt.  Go use ttm_tt
-instead, to avoid wasting resources (swiotlb bounce buffers for
-example).
+On Mon, Jan 28, 2019 at 02:56:17PM -0800, Andrew Morton wrote:
+> 
+> --- a/mm/memory_hotplug.c~mmmemory_hotplug-fix-scan_movable_pages-for-gigantic-hugepages-fix
+> +++ a/mm/memory_hotplug.c
+> @@ -1305,28 +1305,27 @@ int test_pages_in_a_zone(unsigned long s
+>  static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+>  {
+>  	unsigned long pfn;
+> -	struct page *page;
+> +
+>  	for (pfn = start; pfn < end; pfn++) {
+> -		if (pfn_valid(pfn)) {
+> -			page = pfn_to_page(pfn);
+> -			if (PageLRU(page))
+> -				return pfn;
+> -			if (__PageMovable(page))
+> -				return pfn;
+> -			if (PageHuge(page)) {
+> -				struct page *head = compound_head(page);
+> +		struct page *page, *head;
+> +		unsigned long skip;
+>  
+> -				if (hugepage_migration_supported(page_hstate(head)) &&
+> -				    page_huge_active(head))
+> -					return pfn;
+> -				else {
+> -					unsigned long skip;
+> +		if (!pfn_valid(pfn))
+> +			continue;
+> +		page = pfn_to_page(pfn);
+> +		if (PageLRU(page))
+> +			return pfn;
+> +		if (__PageMovable(page))
+> +			return pfn;
+>  
+> -					skip = (1 << compound_order(head)) - (page - head);
+> -					pfn += skip - 1;
+> -				}
+> -			}
+> -		}
+> +		if (!PageHuge(page))
+> +			continue;
+> +		head = compound_head(page);
+> +		if (hugepage_migration_supported(page_hstate(head)) &&
+> +		    page_huge_active(head))
+> +			return pfn;
+> +		skip = (1 << compound_order(head)) - (page - head);
+> +		pfn += skip - 1;
+>  	}
+>  	return 0;
+>  }
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/qxl/qxl_ttm.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+It looks much better, thanks a lot for the cleanup Andrew!
 
-diff --git a/drivers/gpu/drm/qxl/qxl_ttm.c b/drivers/gpu/drm/qxl/qxl_ttm.c
-index 36ea993aac..92f5db5b29 100644
---- a/drivers/gpu/drm/qxl/qxl_ttm.c
-+++ b/drivers/gpu/drm/qxl/qxl_ttm.c
-@@ -204,7 +204,7 @@ static void qxl_ttm_io_mem_free(struct ttm_bo_device *bdev,
-  * TTM backend functions.
-  */
- struct qxl_ttm_tt {
--	struct ttm_dma_tt		ttm;
-+	struct ttm_tt		        ttm;
- 	struct qxl_device		*qdev;
- 	u64				offset;
- };
-@@ -233,7 +233,7 @@ static void qxl_ttm_backend_destroy(struct ttm_tt *ttm)
- {
- 	struct qxl_ttm_tt *gtt = (void *)ttm;
- 
--	ttm_dma_tt_fini(&gtt->ttm);
-+	ttm_tt_fini(&gtt->ttm);
- 	kfree(gtt);
- }
- 
-@@ -253,13 +253,13 @@ static struct ttm_tt *qxl_ttm_tt_create(struct ttm_buffer_object *bo,
- 	gtt = kzalloc(sizeof(struct qxl_ttm_tt), GFP_KERNEL);
- 	if (gtt == NULL)
- 		return NULL;
--	gtt->ttm.ttm.func = &qxl_backend_func;
-+	gtt->ttm.func = &qxl_backend_func;
- 	gtt->qdev = qdev;
--	if (ttm_dma_tt_init(&gtt->ttm, bo, page_flags)) {
-+	if (ttm_tt_init(&gtt->ttm, bo, page_flags)) {
- 		kfree(gtt);
- 		return NULL;
- 	}
--	return &gtt->ttm.ttm;
-+	return &gtt->ttm;
- }
- 
- static void qxl_move_null(struct ttm_buffer_object *bo,
 -- 
-2.9.3
-
+Oscar Salvador
+SUSE L3
