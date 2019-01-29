@@ -2,182 +2,179 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32853C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD727C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA80C21473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:16:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 929F121473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:16:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="wwfQ0w/q";
-	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="bY+jgiMX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALrB247C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbfA2KQS (ORCPT
+        id S1728370AbfA2KQ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:16:18 -0500
-Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:57563 "EHLO
-        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725799AbfA2KQS (ORCPT
+        Tue, 29 Jan 2019 05:16:57 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36069 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfA2KQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:16:18 -0500
-X-Greylist: delayed 1313 seconds by postgrey-1.27 at vger.kernel.org; Tue, 29 Jan 2019 05:16:15 EST
-Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
-        by mx07-00252a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0TA8GG6020752
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:16:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp;
- bh=zkrNMCGqmQhknpXEnYoasEaaYPOraYskNafnNeeps3s=;
- b=wwfQ0w/qwhM8RfhNcAylkohRBglVrPlDtTiDI8e/SuwhGZT2HgEUx0uVRy6s0PBYRkmx
- 8Zcw0EE/i0InoN0Oz26asOiDgARklD8Rje7t2Pa7JMvCxCnmTnHdSwV9zsqR9m+yCpYy
- i9NHDFrUhkEuFgp6kq4AJEV/YRXdqBusAuWlzZVS7SW2nshvU8cxzM/B9JKwFjN20pBx
- o61PVOHLnz/cehQhOIPLl/EAzK8RWyBAlxEeqauY1lnhovZ0ZlhNQkgN8Tty4F4h0meq
- KxzGBqHFQE/LDHWbBmqpcdB0/xcyXXo1PERfaIPdKvA+lyFbv46l52eOm05pmR0Nh02+ 4A== 
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-        by mx07-00252a01.pphosted.com with ESMTP id 2q8du51ef6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:16:14 +0000
-Received: by mail-wm1-f72.google.com with SMTP id o5so5648525wmf.9
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 02:16:14 -0800 (PST)
+        Tue, 29 Jan 2019 05:16:57 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u4so21370237wrp.3;
+        Tue, 29 Jan 2019 02:16:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.org; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=zkrNMCGqmQhknpXEnYoasEaaYPOraYskNafnNeeps3s=;
-        b=bY+jgiMXN3HjJwanjK7+KP9Xru9ThnEZDjDkgug1o5yrPlyK4JsahTdwE87tAYozvC
-         76mVx/VSxz8Xxi0cMwaDK6oNk3UWJCTpM0fGFw/yS3J5PkOArym8v2RrQct7k4ZUEUYR
-         zh59YoGTS1M7NpoSYqAP7UMbJAY4kJiuA+W4hVc7A3VNGCMXQRyTlNfsoNou58noy9Xd
-         Ay8qN3UVXrfaJu6uN4f0Jw5C8TCL0r/uJXFzU0h7u9poP/e6OJghSQYNJHqU+r9tyIrs
-         wBhFerFAMzwjvs3dHHq0RO154hnnrkXYsaN59Wn7yt3PQfcEzkmrv+AokITLZH5D/LbG
-         fm+w==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RJBZpYc5FJEmeTWcrWVs52mx7hbWaDLyRWT3qQ+yfrQ=;
+        b=ALrB247Cx/cYb7fN+DNiJA3qQQbBfgmMILjpMoAgPJ9WpcIyxH8AnDjDpw1QGj8n6J
+         BnjMniZfEgLFrlQa30/9IOe4gHOa6TghPHfj9ulfPqtFzyHiLY2HDB9GkVkuap7yyt7R
+         1/NbT4Bej+M+Z445eegvr19K+t+n4/4gNuWH8FKDlxp4Q5WDjzRFeYsz6l2Jy/wRgtvv
+         3IlGOlR0QmigQau2PT03PEjBJ1tbgmeNoAdsLWIE4BztUbxyp8D78Ql7F7puGAytneSu
+         6Lt9mmlXE3/LumI38jtuNWdNT2oteCpYGP0VRUi1w7H4d7ORymBGQsWo2wvVGAo6iCav
+         GmMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zkrNMCGqmQhknpXEnYoasEaaYPOraYskNafnNeeps3s=;
-        b=Uby2c604rfWxrDHtLKAIMCUbMf7M4NOfy1SHJjzLUHgnlHm5gV97xpSnRF20HbzajZ
-         siSqGhzglYmdocY8tHVaOY1VxGWcLUvnK3mN7CV+gfKM3J5H8iH1ar+ng4h4Gh2muh2o
-         cvGsDXbCpiuQZEGQWAbANYcGJNOuaCbDse3Acg1uJKiBIVGlBr3YLJyCPQgIq4YxxghU
-         zG0hgyDml3UOVa+LKAlCHHTl8G3SWsp5VhxOewhhVME08OcjhW84SoSTpjVuPQsSGw6H
-         6E4DfsM8YjFMfrFSkEToOz1NLKicQMHZFtla+4CUXghJOZoD5aGWJuap7WC3lkrmyWbw
-         GfaA==
-X-Gm-Message-State: AJcUukdun2YGZuIg99TRbWqxpnmbvOOH7Iz96OLEXNZb4G2JEPbMyr3c
-        DD3Iz7JVhyUVwDAfLf5459oQW6hD5Nu8mhNfYeaz8X88fes5YJt0aM2ZIJI1mkmbMqaNGO+StLH
-        714B2G5Bp+YxnoUy0CsRAcXUC
-X-Received: by 2002:adf:b608:: with SMTP id f8mr24743681wre.120.1548756973849;
-        Tue, 29 Jan 2019 02:16:13 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN7+oAQpvPORr9mA3Odc6AUubyqQjDTlTwljoiTuz6RToEuKayqIR5BQH2YXeYyFdcYda8vfnA==
-X-Received: by 2002:adf:b608:: with SMTP id f8mr24743656wre.120.1548756973537;
-        Tue, 29 Jan 2019 02:16:13 -0800 (PST)
-Received: from [10.3.14.17] (cust51-dsl50.idnet.net. [212.69.50.51])
-        by smtp.gmail.com with ESMTPSA id h131sm2848411wmd.17.2019.01.29.02.16.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 02:16:12 -0800 (PST)
-Subject: Re: [PATCH] thermal: bcm2835: Fix crash in bcm2835_thermal_debugfs
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-References: <1548753048-78735-1-git-send-email-phil@raspberrypi.org>
- <d4a3e7b3-ed86-ca74-0e46-9b3b5f9cbef7@linaro.org>
-From:   Phil Elwell <phil@raspberrypi.org>
-Message-ID: <4f424b94-f871-08b2-03c7-d3e28c534785@raspberrypi.org>
-Date:   Tue, 29 Jan 2019 10:16:12 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RJBZpYc5FJEmeTWcrWVs52mx7hbWaDLyRWT3qQ+yfrQ=;
+        b=ZAhWI7JUmvBjbWZ+J45HezZ2ppiX0D8qMVQqOzFgeyVlqi3UQPyWxDC8UsXr1qZ7wc
+         5e1BGVQbZK2kZdHHVbmW2HODXp/mSKPP1WsNuCDZMgaEoUMCDePfVGYNHUFjvvl6U3Cd
+         iLR0u2G0BoxaNg7Be4F2SLQvGygjtH9XqIAq5FU1Pakcz5gb0hazg1COdhk+dDxzWyfT
+         SomBcFNQl1p7yglUqBwC7OVbrbMV7O/uT6NQS8RQu19n2YueUYmaznF8pXuSleo1O2kX
+         MlGO2MgfcRvD4xlQulzwJF4XlpV2jBnWDm+nMqE64xpiFcu3qHjTTSsmjP6xa7+VQMcf
+         uQrQ==
+X-Gm-Message-State: AJcUukf61283iaVB7hVl+JCjH433/ZcDCrNnmGFHbo9HsMknaSYy6D3B
+        Yd8wUc7s1CfYGEDAjS4OzSE=
+X-Google-Smtp-Source: ALg8bN5op9uCOXNn156JaQ1ulTIB7r1WpM92SDtKEZChybAUVYOasi5El2eUrCK2RMVNG7HeTpLcPw==
+X-Received: by 2002:a5d:43d0:: with SMTP id v16mr26788854wrr.67.1548757014303;
+        Tue, 29 Jan 2019 02:16:54 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id f3sm3020110wmd.22.2019.01.29.02.16.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 02:16:53 -0800 (PST)
+Date:   Tue, 29 Jan 2019 11:16:52 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH V3 2/3] i2c: tegra: Update transfer timeout
+Message-ID: <20190129101652.GB28850@ulmo>
+References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
+ <1548475073-12408-2-git-send-email-skomatineni@nvidia.com>
+ <0cf91475-f77d-7453-deb6-3dd91b63aeb6@gmail.com>
+ <BYAPR12MB3398E9D32B57B0E2FC2A6466C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <c0b36535-6767-7327-5dc5-612e6957a769@gmail.com>
+ <BYAPR12MB339837E896774531B0D11A98C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <2f3cab66-7424-1b33-976f-826877623726@gmail.com>
+ <20190129101505.GA28850@ulmo>
 MIME-Version: 1.0
-In-Reply-To: <d4a3e7b3-ed86-ca74-0e46-9b3b5f9cbef7@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_07:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qcHopEYAB45HaUaB"
+Content-Disposition: inline
+In-Reply-To: <20190129101505.GA28850@ulmo>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
 
-On 29/01/2019 09:52, Daniel Lezcano wrote:
-> On 29/01/2019 10:10, Phil Elwell wrote:
->> "cat /sys/kernel/debug/bcm2835_thermal/regset" causes a NULL pointer
->> dereference in bcm2835_thermal_debugfs. The driver makes use of the
->> implementation details of the thermal framework to retrieve a pointer
->> to its private data from a struct thermal_zone_device, and gets it
->> wrong - leading to the crash. Instead, store its private data as the
->> drvdata and retrieve the thermal_zone_device pointer from it.
->>
->> Fixes: bcb7dd9ef206 ("thermal: bcm2835: add thermal driver for bcm2835 SoC")
->>
->> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
-> 
-> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> 
-> One question: do you really want the thermal driver to be loaded as a
-> module ? Don't you want to have it operational as soon as possible
-> instead of waiting the OS to boot and load the kernel module?
-> 
-> If a module format is not needed, then the thermal_zone field won't be
-> needed anymore because the 'remove' ops can be removed and the need of
-> the tz field to unregister it disappears.
+--qcHopEYAB45HaUaB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the review. The general approach for Pi drivers has been to make them
-tristate to allow minimal kernels to be built - important when the smallest
-Pis have 256M - and the delayed startup isn't a problem because the firmware
-is running a thermal limiter from before the kernel is loaded. However, this
-driver is very small, and I wouldn't object if somebody decided it was better
-to make it built-in.
+On Tue, Jan 29, 2019 at 11:15:05AM +0100, Thierry Reding wrote:
+> On Tue, Jan 29, 2019 at 01:27:09AM +0300, Dmitry Osipenko wrote:
+> > 29.01.2019 1:15, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > >=20
+> > >=20
+> > >>>>> Update I2C transfer timeout based on transfer bytes and I2C bus r=
+ate=20
+> > >>>>> to allow enough time during max transfer size based on the speed.
+> > >>>>
+> > >>>> Could it be that I2C device is busy and just slowly handling the t=
+ransfer requests? Maybe better to leave the timeout as-is and assume the wo=
+rst case scenario?
+> > >>>>
+> > >>> This change includes min transfer time out of 100ms in addition to =
+computed timeout based on transfer bytes and speed which can account in cas=
+es of slave devices running at slower speed.
+> > >>> Also Tegra I2C Master supports Clock stretching by the slave.
+> > >>
+> > >> Okay, I suppose in reality this shouldn't break anything.
+> > >>
+> > >> Please explain what benefits this change brings. Does it fix or impr=
+ove anything? The commit message only describes changes done in the patch a=
+nd has no word on justification of those changes. Transfer timeout is an ex=
+treme case that doesn't happen often and > > when it happens, usually only =
+the fact of timeout matters. If there is no real value in shortening of the=
+ timeout, why bother then?
+> > >=20
+> > > Original transfer timeout in existing driver is 1Sec and incases of t=
+ransfer size more than 10Kbytes at STD bus rate, timeout is not sufficient.
+> > > Also Tegra194 platform supports max of 64K bytes of transfer and to a=
+llow full transfer size at lowest bus rate it takes almost ~5.8 Sec.
+> > > In cases if large transfer at low bus rates 1 Sec timeout is not enou=
+gh and in those cases transfers will timeout before it waits for complete t=
+ransfer to happen.
+> > >=20
+> > > So this patch uses transfer time based on transfer bytes and bus rate.
+> > >=20
+> >=20
+> > Please add that to the commit message.
+> >=20
+> > And then seems you also need to set I2C adapter timeout to a some
+> > larger value. Currently Tegra's I2C doesn't explicitly specify the
+> > "adapter.timeout" and I2C core sets it to 1 second if it is 0.
+>=20
+> I don't think adapter.timeout is the same thing as the timeout that
+> we're dealing with here. adapter.timeout is only used as a way to retry
+> on arbitration lost conditions. So, as far as I understand, if we try to
+> send a message to an I2C slave and we loose arbitration, we'll keep
+> retrying for one second before finally failing. I wouldn't expect these
+> arbitration lost conditions to happen right in the middle of a transfer,
+> but rather at the beginning already, so I'm not sure arbitration could
+> even be lost after, say, 2 seconds into a very large transfer.
+>=20
+> All of that said, it seems like i2c-tegra doesn't respect the protocol
+> for making this arbitration loss retry work in the first place. We
+> should be returning -EAGAIN if we detect arbitration loss, but I don't
+> see that we ever return that. We should probably fix that in another
+> patch.
 
-> 
->> ---
->>  drivers/thermal/broadcom/bcm2835_thermal.c | 9 ++++-----
->>  1 file changed, 4 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
->> index 720760c..ba39647 100644
->> --- a/drivers/thermal/broadcom/bcm2835_thermal.c
->> +++ b/drivers/thermal/broadcom/bcm2835_thermal.c
->> @@ -119,8 +119,7 @@ static const struct debugfs_reg32 bcm2835_thermal_regs[] = {
->>  
->>  static void bcm2835_thermal_debugfs(struct platform_device *pdev)
->>  {
->> -	struct thermal_zone_device *tz = platform_get_drvdata(pdev);
->> -	struct bcm2835_thermal_data *data = tz->devdata;
->> +	struct bcm2835_thermal_data *data = platform_get_drvdata(pdev);
->>  	struct debugfs_regset32 *regset;
->>  
->>  	data->debugfsdir = debugfs_create_dir("bcm2835_thermal", NULL);
->> @@ -266,7 +265,7 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
->>  
->>  	data->tz = tz;
->>  
->> -	platform_set_drvdata(pdev, tz);
->> +	platform_set_drvdata(pdev, data);
->>  
->>  	/*
->>  	 * Thermal_zone doesn't enable hwmon as default,
->> @@ -290,8 +289,8 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
->>  
->>  static int bcm2835_thermal_remove(struct platform_device *pdev)
->>  {
->> -	struct thermal_zone_device *tz = platform_get_drvdata(pdev);
->> -	struct bcm2835_thermal_data *data = tz->devdata;
->> +	struct bcm2835_thermal_data *data = platform_get_drvdata(pdev);
->> +	struct thermal_zone_device *tz = data->tz;
->>  
->>  	debugfs_remove_recursive(data->debugfsdir);
->>  	thermal_zone_of_sensor_unregister(&pdev->dev, tz);
->>
-> 
-> 
+Scratch that. Sowjanya's "bus clear" patch already takes care of that.
+
+Thierry
+
+--qcHopEYAB45HaUaB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxQKBQACgkQ3SOs138+
+s6G1ExAAoUu0MGAShYZQunkWDdEHOp6YC2wdKI6ZFdXYYFCDO03YYWz4vYdFWg3P
+F5h6VZ/0iugVMWnaRZLl2IvDPJMgajBXNQikh3OMfmX63J3lTrY7OoRIT6xR80iH
+aERxXV3jBod7F1fCfQyazXnqOQaX0SvsSTxIOOGwt/s7jgdqrpmj/M9LJc/l0QBa
+rlrypR7Jx6CBnE9tyVhKMC8Hs3zKZai6DevIteswFKqp1aa0vBFeAMTHi+wSPgbY
+QbuAKL/BeaR6alELOxoFCMzGFSn+JFhkFyJ0VLUFr3F6yT8OWtRr/RkM6hgWHc+v
+E4VKqwW9pjBqg5Hvd68ykvNTBW/wCxLtcVHGKjuEVm1UaoeYO1gUE7elxJTGhq6P
+MQN5/Uk6je2rSaIylq1rp8epG3HEmkgvqOtHPtNQ4Srd8yuiV5jvzZueQgGy2jk8
+T4v70PZ25UiS8lviOY+PEyRuXlTGTCfChktM4onJsIimAqZfROFRqE2Y8gcZ8V71
+5UlOT4fJ9N9pKaZwq26Qd665yeGBm393h+fppDsgxdu4/VWSlvIk3MdeM61jmHVO
+LqcyPZtpFHQZ5zNp7eaySxNEdMYDyMfqp8QQvCloPZu8Ahs82tIZkl6eJVIoTMXG
+fPSlVMfgyH5EX0mw1PuRnW69Jns6kupQJV+2RMA8hhazMGxqWXk=
+=OcTh
+-----END PGP SIGNATURE-----
+
+--qcHopEYAB45HaUaB--
