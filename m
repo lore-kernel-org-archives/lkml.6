@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71CCFC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC25C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34C7C2177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E24182177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761893;
-	bh=0ko9jGN0PEpY8Wna3EvTaOtSdk5PeNe87usXm1/cksw=;
+	s=default; t=1548761895;
+	bh=pxLK6hV3n8Bdm6DCTunTEpbKU9W5eK0SZUTJ5JLAQTA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=e11ZVDPAzQaqYm46C/3vvdnYDspg80X7bQuYu042Daiy6g+gG0wPnPTu0Z49fBRFZ
-	 KGlyt/gdd1TEpX0C/dRlVHSp2DnGT/bVyBASRV6/hiE7L6Nb5h81IcnL47Z2nJgsQM
-	 p9C0FBoLTJeHNrU284q9qX3VZ81zbNgH/SGom5n8=
+	b=weFOUeoAA99U6Qr8DTX4ElX6uJ4Bscr+EySKayX+fbKWQTkedF1pbJOMgdh0YwET6
+	 DAk8jsqxUdiv36haTClyX9aNljDm5NvRHPFrzjgizCyz+Mssjvc9hZkwMrgKQ+QSOB
+	 5QMLjyvg6PT2ckBoqVQakNyFi87u8CG/TyvYGQKY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729065AbfA2LiM (ORCPT
+        id S1729080AbfA2LiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:38:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54722 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:38:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727962AbfA2LiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:38:06 -0500
+        id S1729057AbfA2LiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:38:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49B9A20844;
-        Tue, 29 Jan 2019 11:38:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6500F214DA;
+        Tue, 29 Jan 2019 11:38:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761885;
-        bh=0ko9jGN0PEpY8Wna3EvTaOtSdk5PeNe87usXm1/cksw=;
+        s=default; t=1548761890;
+        bh=pxLK6hV3n8Bdm6DCTunTEpbKU9W5eK0SZUTJ5JLAQTA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qZknZyTiWmAeVi6ESdouR2oX+2UfLKnuKoRf7rggbHt93FSYvhTx87KxCQ86H+tnW
-         JcsazPgZXMU0JDyN/9AhyD3HuuSfWx5ry1Z/NcFxU9PnWQvzj9BXCakxTkRjQPHt9Z
-         nM9Lc+a98AYJAH9iTFQ0YtVUh/iCoC+te3xyyRYc=
+        b=yNdmxpf81zm2BSx9b4ExEEF09RhBLQ9LkmM8wggz903VKRgUq6n3Kkeh2vgRiMZsv
+         O+mSnLAzGENNztUz5sSqCxlj3/emAXslBdWiHZz9R3Figzg/Oe6BMkORg16Xgf2gxt
+         DlyKUT07xZ3GC9L+16JNps1BCrT22BvIxrGaWC4U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Michal Simek <michal.simek@xilinx.com>,
+        stable@vger.kernel.org, linux-stable@vger.kernel.org,
+        Dinh Nguyen <dinguyen@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.20 035/117] clk: zynqmp: Fix memory allocation in zynqmp_clk_setup
-Date:   Tue, 29 Jan 2019 12:34:46 +0100
-Message-Id: <20190129113209.365355741@linuxfoundation.org>
+Subject: [PATCH 4.20 037/117] clk: socfpga: stratix10: fix naming convention for the fixed-clocks
+Date:   Tue, 29 Jan 2019 12:34:48 +0100
+Message-Id: <20190129113209.458777345@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -67,39 +66,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Dinh Nguyen <dinguyen@kernel.org>
 
-commit 4f340efcb21220b7a0afcea3884e66f79e6f2306 upstream.
+commit b488517b28a47d16b228ce8dcf07f5cb8e5b3dc5 upstream.
 
-Fix memory allocation and use struct_size() in kzalloc(). This also
-fixes the allocation size to be correct, and smaller, because before we
-were allocating a bunch of sizeof(struct clk_hw_onecell_data) structures
-for each struct clk_hw we needed.
+The fixed clocks in the DTS file have a hyphen, but the clock driver has
+the fixed clocks using underbar. Thus the clock driver cannot detect the
+other fixed clocks correctly. Change the fixed clock names to a hyphen.
 
-Fixes: 3fde0e16d016 ("drivers: clk: Add ZynqMP clock driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Acked-by: Michal Simek <michal.simek@xilinx.com>
-[sboyd@kernel.org: Expand commit text]
+Fixes: 07afb8db7340 ("clk: socfpga: stratix10: add clock driver for
+Stratix10 platform")
+Cc: linux-stable@vger.kernel.org
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/zynqmp/clkc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/socfpga/clk-s10.c |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/drivers/clk/zynqmp/clkc.c
-+++ b/drivers/clk/zynqmp/clkc.c
-@@ -669,8 +669,8 @@ static int zynqmp_clk_setup(struct devic
- 	if (ret)
- 		return ret;
+--- a/drivers/clk/socfpga/clk-s10.c
++++ b/drivers/clk/socfpga/clk-s10.c
+@@ -12,17 +12,17 @@
  
--	zynqmp_data = kzalloc(sizeof(*zynqmp_data) + sizeof(*zynqmp_data) *
--						clock_max_idx, GFP_KERNEL);
-+	zynqmp_data = kzalloc(struct_size(zynqmp_data, hws, clock_max_idx),
-+			      GFP_KERNEL);
- 	if (!zynqmp_data)
- 		return -ENOMEM;
+ #include "stratix10-clk.h"
  
+-static const char * const pll_mux[] = { "osc1", "cb_intosc_hs_div2_clk",
+-					"f2s_free_clk",};
++static const char * const pll_mux[] = { "osc1", "cb-intosc-hs-div2-clk",
++					"f2s-free-clk",};
+ static const char * const cntr_mux[] = { "main_pll", "periph_pll",
+-					 "osc1", "cb_intosc_hs_div2_clk",
+-					 "f2s_free_clk"};
+-static const char * const boot_mux[] = { "osc1", "cb_intosc_hs_div2_clk",};
++					 "osc1", "cb-intosc-hs-div2-clk",
++					 "f2s-free-clk"};
++static const char * const boot_mux[] = { "osc1", "cb-intosc-hs-div2-clk",};
+ 
+ static const char * const noc_free_mux[] = {"main_noc_base_clk",
+ 					    "peri_noc_base_clk",
+-					    "osc1", "cb_intosc_hs_div2_clk",
+-					    "f2s_free_clk"};
++					    "osc1", "cb-intosc-hs-div2-clk",
++					    "f2s-free-clk"};
+ 
+ static const char * const emaca_free_mux[] = {"peri_emaca_clk", "boot_clk"};
+ static const char * const emacb_free_mux[] = {"peri_emacb_clk", "boot_clk"};
+@@ -33,14 +33,14 @@ static const char * const s2f_usr1_free_
+ static const char * const psi_ref_free_mux[] = {"peri_psi_ref_clk", "boot_clk"};
+ static const char * const mpu_mux[] = { "mpu_free_clk", "boot_clk",};
+ 
+-static const char * const s2f_usr0_mux[] = {"f2s_free_clk", "boot_clk"};
++static const char * const s2f_usr0_mux[] = {"f2s-free-clk", "boot_clk"};
+ static const char * const emac_mux[] = {"emaca_free_clk", "emacb_free_clk"};
+ static const char * const noc_mux[] = {"noc_free_clk", "boot_clk"};
+ 
+ static const char * const mpu_free_mux[] = {"main_mpu_base_clk",
+ 					    "peri_mpu_base_clk",
+-					    "osc1", "cb_intosc_hs_div2_clk",
+-					    "f2s_free_clk"};
++					    "osc1", "cb-intosc-hs-div2-clk",
++					    "f2s-free-clk"};
+ 
+ /* clocks in AO (always on) controller */
+ static const struct stratix10_pll_clock s10_pll_clks[] = {
 
 
