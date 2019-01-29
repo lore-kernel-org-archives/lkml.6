@@ -2,142 +2,351 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CD6C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D45C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A86E520856
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:39:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA01F20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:41:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="C9iTEo72"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbfA2Sju (ORCPT
+        id S1728913AbfA2Slg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:39:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52312 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729132AbfA2Sjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:39:42 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F384C7BDC6;
-        Tue, 29 Jan 2019 18:39:41 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F7ED5D6A6;
-        Tue, 29 Jan 2019 18:39:40 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm/i915: Always allocate VCPI during system resume
-Date:   Tue, 29 Jan 2019 13:39:27 -0500
-Message-Id: <20190129183928.26779-4-lyude@redhat.com>
-In-Reply-To: <20190129183928.26779-1-lyude@redhat.com>
-References: <20190129183928.26779-1-lyude@redhat.com>
+        Tue, 29 Jan 2019 13:41:36 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39438 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbfA2Slf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 13:41:35 -0500
+Received: by mail-oi1-f193.google.com with SMTP id i6so17010100oia.6
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:41:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HL83ygIqpSTTKGQg55ygGuyvC6iG0KJllUYn+t+L7fo=;
+        b=C9iTEo72hAQPj1VLygRAYbRemfwQw/wdjdXDB3e/eclhA3asML1sVcibMctJEo6uvM
+         UzOOCIoV4igwfhs+BOKVOb0NxKQHX2mLoe8zTN3ipepSsA7CJPAms4TelPvV+lEjs7NS
+         pusDqWXYQz/xLw4ddjbankm+UWcc6n3w2WKfNtD2q98fMZLd/SmA2TGcs+1zSKGaGNbB
+         Jw5Wu0qyfVYCB6sDA9JS9NCp+tKRnBCdViSIy6ksZVgWPNi+MGPcLByDcG16oUtSJCp6
+         GG09SsSyEVlXkjPiF7ZobCb6Pwh05ezDJtreAqFoLVpnb+I50qvxDtXBG+iI7KAoqZmr
+         IxGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HL83ygIqpSTTKGQg55ygGuyvC6iG0KJllUYn+t+L7fo=;
+        b=PVtRL7XNRTpD87OABsODqXv+NC3yE4z3N8Yc8VECOSARGkQnweZ55zhD329IeYaM/U
+         Q6TMStp+p+aSp7PXeasCisBrwGTCE4rd3mNDZe7biG+UBZn0NQ1cvXvU43mkARYZnJ9G
+         ae6HeBSc5u3YlUqjfs0ya/PkhIKlfda78incRdV13p/jGFkSCwwGw0Cuos/dmFUI8tUb
+         O3NHRQRKwI8mmT290+O1GZ2v9AIw8naxPujR4eJiNsByuE4amPBj0ikZz/TrbqDB6mJK
+         52RANr6lhAVqAK3DNaHMkQdkLXCZstKbchHYZiJ0Fg63QXwU38Li0UZ5ymoy94aN7BHR
+         KVdw==
+X-Gm-Message-State: AJcUukcyDv8f7cVGPQX4QJh2HE4fpEj1wHfVdGgAL5jnkjWVnHnRjds6
+        Qd15Vs67pDk6aiAINV+fEOFFrPZv6xOr9+ENx4jeEw==
+X-Google-Smtp-Source: AHgI3IYljlwfixZbEW9k35QADvn426C06Y3dCzjYEAwUUk9JxY2Lr5SqZvdOmBetvdgd9kgxSjPcJbFa3Dw6Aldoo9c=
+X-Received: by 2002:aca:d905:: with SMTP id q5mr10434566oig.0.1548787294934;
+ Tue, 29 Jan 2019 10:41:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 29 Jan 2019 18:39:42 +0000 (UTC)
+References: <20190129165428.3931-1-jglisse@redhat.com> <20190129165428.3931-10-jglisse@redhat.com>
+In-Reply-To: <20190129165428.3931-10-jglisse@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 29 Jan 2019 10:41:23 -0800
+Message-ID: <CAPcyv4gNtDQf0mHwhZ8g3nX6ShsjA1tx2KLU_ZzTH1Z1AeA_CA@mail.gmail.com>
+Subject: Re: [PATCH 09/10] mm/hmm: allow to mirror vma of a file on a DAX
+ backed filesystem
+To:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since there's a chance MST topologies can be removed while the system is
-in suspend, there's also a chance that the connectors in the atomic
-state which we try to restore on system resume will have been
-unregistered if they were part of an MST topology that was removed
-mid-suspend. In such situations, we'll currently skip recalculating the
-VCPI. Normally this would be safe since we don't expect to be allowed to
-enable displays on unregistered connections, but since we need to try
-our best to restore even partially invalid atomic states on system
-resume we end up introducing the chance that we try enabling a display
-on a now-unregistered connector. This of course results on a blow up
-during system resume:
+On Tue, Jan 29, 2019 at 8:54 AM <jglisse@redhat.com> wrote:
+>
+> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>
+> This add support to mirror vma which is an mmap of a file which is on
+> a filesystem that using a DAX block device. There is no reason not to
+> support that case.
+>
 
-[ 1894.177788] [drm:pipe_config_err [i915]] *ERROR* mismatch in dp_m_n (expected tu 0 gmch 1730150/8388608 link 288358/1048576, or tu 0 gmch 0/0 link 0/0, found tu 64, gmch 1730150/8388608 link 288358/1048576)
-[ 1894.177795] ------------[ cut here ]------------
-[ 1894.177799] pipe state doesn't match!
-[ 1894.177905] WARNING: CPU: 2 PID: 1894 at drivers/gpu/drm/i915/intel_display.c:12292 intel_atomic_commit_tail+0xd5e/0xdd0 [i915]
-[ 1894.177909] Modules linked in: i915(O) drm_kms_helper(O) drm(O) vfat fat joydev iTCO_wdt wmi_bmof btusb btrtl btbcm intel_rapl btintel i2c_algo_bit x86_pkg_temp_thermal bluetooth syscopyarea coretemp sysfillrect sysimgblt crc32_pclmul fb_sys_fops ucsi_acpi psmouse ecdh_generic pcspkr typec_ucsi i2c_i801 typec mei_me mei i2c_core wmi thinkpad_acpi ledtrig_audio snd soundcore rfkill tpm_tis tpm_tis_core video pcc_cpufreq tpm acpi_pad uas usb_storage crc32c_intel nvme serio_raw nvme_core xhci_pci xhci_hcd [last unloaded: drm]
-[ 1894.177990] CPU: 2 PID: 1894 Comm: kworker/u16:8 Tainted: G           O      5.0.0-rc4Lyude-Test+ #9
-[ 1894.177994] Hardware name: LENOVO 20L8S2N800/20L8S2N800, BIOS N22ET35W (1.12 ) 04/09/2018
-[ 1894.178005] Workqueue: events_unbound async_run_entry_fn
-[ 1894.178079] RIP: 0010:intel_atomic_commit_tail+0xd5e/0xdd0 [i915]
-[ 1894.178085] Code: ba 01 00 00 00 4c 89 4c 24 10 e8 3d 46 01 00 4c 8b 4c 24 10 e9 a4 fb ff ff e8 b2 18 bd e0 0f 0b e9 a5 fd ff ff e8 a6 18 bd e0 <0f> 0b e9 f1 f9 ff ff e8 9a 18 bd e0 0f 0b 0f b6 44 24 18 e9 23 f9
-[ 1894.178090] RSP: 0000:ffffc90000553c08 EFLAGS: 00010286
-[ 1894.178096] RAX: 0000000000000000 RBX: ffff888459edc000 RCX: 0000000000000006
-[ 1894.178101] RDX: 0000000000000007 RSI: ffff8884591e2f90 RDI: ffff88845e295690
-[ 1894.178105] RBP: ffff888454e27000 R08: 0000000000000000 R09: 0000000000000000
-[ 1894.178108] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888454e22000
-[ 1894.178112] R13: ffff888454e21000 R14: ffff8883ca680750 R15: ffff8883ca680758
-[ 1894.178118] FS:  0000000000000000(0000) GS:ffff88845e280000(0000) knlGS:0000000000000000
-[ 1894.178123] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1894.178127] CR2: 0000000000000000 CR3: 0000000002214001 CR4: 00000000003606e0
-[ 1894.178131] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 1894.178135] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 1894.178139] Call Trace:
-[ 1894.178224]  intel_atomic_commit+0x240/0x320 [i915]
-[ 1894.178251]  drm_atomic_helper_commit_duplicated_state+0xc9/0xe0 [drm_kms_helper]
-[ 1894.178321]  __intel_display_resume+0x82/0xd0 [i915]
-[ 1894.178391]  intel_display_resume+0xcf/0x120 [i915]
-[ 1894.178453]  i915_drm_resume+0xb1/0x100 [i915]
-[ 1894.178465]  ? pci_pm_suspend_late+0x30/0x30
-[ 1894.178473]  dpm_run_callback+0x70/0x210
-[ 1894.178484]  device_resume+0xae/0x1f0
-[ 1894.178493]  async_resume+0x19/0x30
-[ 1894.178502]  async_run_entry_fn+0x39/0x160
-[ 1894.178513]  process_one_work+0x23c/0x590
-[ 1894.178529]  worker_thread+0x30/0x380
-[ 1894.178539]  ? rescuer_thread+0x340/0x340
-[ 1894.178545]  kthread+0x112/0x130
-[ 1894.178552]  ? kthread_create_on_node+0x60/0x60
-[ 1894.178563]  ret_from_fork+0x3a/0x50
-[ 1894.178582] irq event stamp: 76782
-[ 1894.178591] hardirqs last  enabled at (76781): [<ffffffff8112c135>] vprintk_emit+0x2c5/0x2d0
-[ 1894.178600] hardirqs last disabled at (76782): [<ffffffff81001ae8>] trace_hardirqs_off_thunk+0x1a/0x1c
-[ 1894.178609] softirqs last  enabled at (76734): [<ffffffff81c0035d>] __do_softirq+0x35d/0x412
-[ 1894.178618] softirqs last disabled at (76727): [<ffffffff810bf830>] irq_exit+0xe0/0xf0
-[ 1894.178687] WARNING: CPU: 2 PID: 1894 at drivers/gpu/drm/i915/intel_display.c:12292 intel_atomic_commit_tail+0xd5e/0xdd0 [i915]
-[ 1894.178692] ---[ end trace 0df08c0b9a67376e ]---
+The reason not to support it would be if it gets in the way of future
+DAX development. How does this interact with MAP_SYNC? I'm also
+concerned if this complicates DAX reflink support. In general I'd
+rather prioritize fixing the places where DAX is broken today before
+adding more cross-subsystem entanglements. The unit tests for
+filesystems (xfstests) are readily accessible. How would I go about
+regression testing DAX + HMM interactions?
 
-So, fix this by using the new drm_atomic_state.suspend_or_resume hook in
-order to force us to retrieve a VCPI allocation when restoring a pipe's
-atomic state. This is safe, since drm_dp_atomic_find_vcpi_slots() will
-just return the VCPI allocation we had pre-suspend.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Fixes: eceae1472467 ("drm/dp_mst: Start tracking per-port VCPI allocations")
----
- drivers/gpu/drm/i915/intel_dp_mst.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-index cdb83d294cdd..04c9a16fdc39 100644
---- a/drivers/gpu/drm/i915/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -80,8 +80,13 @@ static int intel_dp_mst_compute_config(struct intel_encoder *encoder,
- 	mst_pbn = drm_dp_calc_pbn_mode(adjusted_mode->crtc_clock, bpp);
- 	pipe_config->pbn = mst_pbn;
- 
--	/* Zombie connectors can't have VCPI slots */
--	if (!drm_connector_is_unregistered(connector)) {
-+	/*
-+	 * Zombie connectors can't have VCPI slots and won't be turned on,
-+	 * except during resume where we must make sure we restore the
-+	 * previous VCPI allocations
-+	 */
-+	if (!drm_connector_is_unregistered(connector) ||
-+	    state->suspend_or_resume) {
- 		slots = drm_dp_atomic_find_vcpi_slots(state,
- 						      &intel_dp->mst_mgr,
- 						      port,
--- 
-2.20.1
-
+> Note that unlike GUP code we do not take page reference hence when we
+> back-off we have nothing to undo.
+>
+> Signed-off-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Ralph Campbell <rcampbell@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  mm/hmm.c | 133 ++++++++++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 112 insertions(+), 21 deletions(-)
+>
+> diff --git a/mm/hmm.c b/mm/hmm.c
+> index 8b87e1813313..1a444885404e 100644
+> --- a/mm/hmm.c
+> +++ b/mm/hmm.c
+> @@ -334,6 +334,7 @@ EXPORT_SYMBOL(hmm_mirror_unregister);
+>
+>  struct hmm_vma_walk {
+>         struct hmm_range        *range;
+> +       struct dev_pagemap      *pgmap;
+>         unsigned long           last;
+>         bool                    fault;
+>         bool                    block;
+> @@ -508,6 +509,15 @@ static inline uint64_t pmd_to_hmm_pfn_flags(struct h=
+mm_range *range, pmd_t pmd)
+>                                 range->flags[HMM_PFN_VALID];
+>  }
+>
+> +static inline uint64_t pud_to_hmm_pfn_flags(struct hmm_range *range, pud=
+_t pud)
+> +{
+> +       if (!pud_present(pud))
+> +               return 0;
+> +       return pud_write(pud) ? range->flags[HMM_PFN_VALID] |
+> +                               range->flags[HMM_PFN_WRITE] :
+> +                               range->flags[HMM_PFN_VALID];
+> +}
+> +
+>  static int hmm_vma_handle_pmd(struct mm_walk *walk,
+>                               unsigned long addr,
+>                               unsigned long end,
+> @@ -529,8 +539,19 @@ static int hmm_vma_handle_pmd(struct mm_walk *walk,
+>                 return hmm_vma_walk_hole_(addr, end, fault, write_fault, =
+walk);
+>
+>         pfn =3D pmd_pfn(pmd) + pte_index(addr);
+> -       for (i =3D 0; addr < end; addr +=3D PAGE_SIZE, i++, pfn++)
+> +       for (i =3D 0; addr < end; addr +=3D PAGE_SIZE, i++, pfn++) {
+> +               if (pmd_devmap(pmd)) {
+> +                       hmm_vma_walk->pgmap =3D get_dev_pagemap(pfn,
+> +                                             hmm_vma_walk->pgmap);
+> +                       if (unlikely(!hmm_vma_walk->pgmap))
+> +                               return -EBUSY;
+> +               }
+>                 pfns[i] =3D hmm_pfn_from_pfn(range, pfn) | cpu_flags;
+> +       }
+> +       if (hmm_vma_walk->pgmap) {
+> +               put_dev_pagemap(hmm_vma_walk->pgmap);
+> +               hmm_vma_walk->pgmap =3D NULL;
+> +       }
+>         hmm_vma_walk->last =3D end;
+>         return 0;
+>  }
+> @@ -617,10 +638,24 @@ static int hmm_vma_handle_pte(struct mm_walk *walk,=
+ unsigned long addr,
+>         if (fault || write_fault)
+>                 goto fault;
+>
+> +       if (pte_devmap(pte)) {
+> +               hmm_vma_walk->pgmap =3D get_dev_pagemap(pte_pfn(pte),
+> +                                             hmm_vma_walk->pgmap);
+> +               if (unlikely(!hmm_vma_walk->pgmap))
+> +                       return -EBUSY;
+> +       } else if (IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL) && pte_special=
+(pte)) {
+> +               *pfn =3D range->values[HMM_PFN_SPECIAL];
+> +               return -EFAULT;
+> +       }
+> +
+>         *pfn =3D hmm_pfn_from_pfn(range, pte_pfn(pte)) | cpu_flags;
+>         return 0;
+>
+>  fault:
+> +       if (hmm_vma_walk->pgmap) {
+> +               put_dev_pagemap(hmm_vma_walk->pgmap);
+> +               hmm_vma_walk->pgmap =3D NULL;
+> +       }
+>         pte_unmap(ptep);
+>         /* Fault any virtual address we were asked to fault */
+>         return hmm_vma_walk_hole_(addr, end, fault, write_fault, walk);
+> @@ -708,12 +743,84 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+>                         return r;
+>                 }
+>         }
+> +       if (hmm_vma_walk->pgmap) {
+> +               put_dev_pagemap(hmm_vma_walk->pgmap);
+> +               hmm_vma_walk->pgmap =3D NULL;
+> +       }
+>         pte_unmap(ptep - 1);
+>
+>         hmm_vma_walk->last =3D addr;
+>         return 0;
+>  }
+>
+> +static int hmm_vma_walk_pud(pud_t *pudp,
+> +                           unsigned long start,
+> +                           unsigned long end,
+> +                           struct mm_walk *walk)
+> +{
+> +       struct hmm_vma_walk *hmm_vma_walk =3D walk->private;
+> +       struct hmm_range *range =3D hmm_vma_walk->range;
+> +       struct vm_area_struct *vma =3D walk->vma;
+> +       unsigned long addr =3D start, next;
+> +       pmd_t *pmdp;
+> +       pud_t pud;
+> +       int ret;
+> +
+> +again:
+> +       pud =3D READ_ONCE(*pudp);
+> +       if (pud_none(pud))
+> +               return hmm_vma_walk_hole(start, end, walk);
+> +
+> +       if (pud_huge(pud) && pud_devmap(pud)) {
+> +               unsigned long i, npages, pfn;
+> +               uint64_t *pfns, cpu_flags;
+> +               bool fault, write_fault;
+> +
+> +               if (!pud_present(pud))
+> +                       return hmm_vma_walk_hole(start, end, walk);
+> +
+> +               i =3D (addr - range->start) >> PAGE_SHIFT;
+> +               npages =3D (end - addr) >> PAGE_SHIFT;
+> +               pfns =3D &range->pfns[i];
+> +
+> +               cpu_flags =3D pud_to_hmm_pfn_flags(range, pud);
+> +               hmm_range_need_fault(hmm_vma_walk, pfns, npages,
+> +                                    cpu_flags, &fault, &write_fault);
+> +               if (fault || write_fault)
+> +                       return hmm_vma_walk_hole_(addr, end, fault,
+> +                                               write_fault, walk);
+> +
+> +               pfn =3D pud_pfn(pud) + ((addr & ~PUD_MASK) >> PAGE_SHIFT)=
+;
+> +               for (i =3D 0; i < npages; ++i, ++pfn) {
+> +                       hmm_vma_walk->pgmap =3D get_dev_pagemap(pfn,
+> +                                             hmm_vma_walk->pgmap);
+> +                       if (unlikely(!hmm_vma_walk->pgmap))
+> +                               return -EBUSY;
+> +                       pfns[i] =3D hmm_pfn_from_pfn(range, pfn) | cpu_fl=
+ags;
+> +               }
+> +               if (hmm_vma_walk->pgmap) {
+> +                       put_dev_pagemap(hmm_vma_walk->pgmap);
+> +                       hmm_vma_walk->pgmap =3D NULL;
+> +               }
+> +               hmm_vma_walk->last =3D end;
+> +               return 0;
+> +       }
+> +
+> +       split_huge_pud(vma, pudp, addr);
+> +       if (pud_none(*pudp))
+> +               goto again;
+> +
+> +       pmdp =3D pmd_offset(pudp, addr);
+> +       do {
+> +               next =3D pmd_addr_end(addr, end);
+> +               ret =3D hmm_vma_walk_pmd(pmdp, addr, next, walk);
+> +               if (ret)
+> +                       return ret;
+> +       } while (pmdp++, addr =3D next, addr !=3D end);
+> +
+> +       return 0;
+> +}
+> +
+>  static int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask,
+>                                       unsigned long start, unsigned long =
+end,
+>                                       struct mm_walk *walk)
+> @@ -786,14 +893,6 @@ static void hmm_pfns_clear(struct hmm_range *range,
+>                 *pfns =3D range->values[HMM_PFN_NONE];
+>  }
+>
+> -static void hmm_pfns_special(struct hmm_range *range)
+> -{
+> -       unsigned long addr =3D range->start, i =3D 0;
+> -
+> -       for (; addr < range->end; addr +=3D PAGE_SIZE, i++)
+> -               range->pfns[i] =3D range->values[HMM_PFN_SPECIAL];
+> -}
+> -
+>  /*
+>   * hmm_range_register() - start tracking change to CPU page table over a=
+ range
+>   * @range: range
+> @@ -911,12 +1010,6 @@ long hmm_range_snapshot(struct hmm_range *range)
+>                 if (vma =3D=3D NULL || (vma->vm_flags & device_vma))
+>                         return -EFAULT;
+>
+> -               /* FIXME support dax */
+> -               if (vma_is_dax(vma)) {
+> -                       hmm_pfns_special(range);
+> -                       return -EINVAL;
+> -               }
+> -
+>                 if (is_vm_hugetlb_page(vma)) {
+>                         struct hstate *h =3D hstate_vma(vma);
+>
+> @@ -940,6 +1033,7 @@ long hmm_range_snapshot(struct hmm_range *range)
+>                 }
+>
+>                 range->vma =3D vma;
+> +               hmm_vma_walk.pgmap =3D NULL;
+>                 hmm_vma_walk.last =3D start;
+>                 hmm_vma_walk.fault =3D false;
+>                 hmm_vma_walk.range =3D range;
+> @@ -951,6 +1045,7 @@ long hmm_range_snapshot(struct hmm_range *range)
+>                 mm_walk.pte_entry =3D NULL;
+>                 mm_walk.test_walk =3D NULL;
+>                 mm_walk.hugetlb_entry =3D NULL;
+> +               mm_walk.pud_entry =3D hmm_vma_walk_pud;
+>                 mm_walk.pmd_entry =3D hmm_vma_walk_pmd;
+>                 mm_walk.pte_hole =3D hmm_vma_walk_hole;
+>                 mm_walk.hugetlb_entry =3D hmm_vma_walk_hugetlb_entry;
+> @@ -1018,12 +1113,6 @@ long hmm_range_fault(struct hmm_range *range, bool=
+ block)
+>                 if (vma =3D=3D NULL || (vma->vm_flags & device_vma))
+>                         return -EFAULT;
+>
+> -               /* FIXME support dax */
+> -               if (vma_is_dax(vma)) {
+> -                       hmm_pfns_special(range);
+> -                       return -EINVAL;
+> -               }
+> -
+>                 if (is_vm_hugetlb_page(vma)) {
+>                         struct hstate *h =3D hstate_vma(vma);
+>
+> @@ -1047,6 +1136,7 @@ long hmm_range_fault(struct hmm_range *range, bool =
+block)
+>                 }
+>
+>                 range->vma =3D vma;
+> +               hmm_vma_walk.pgmap =3D NULL;
+>                 hmm_vma_walk.last =3D start;
+>                 hmm_vma_walk.fault =3D true;
+>                 hmm_vma_walk.block =3D block;
+> @@ -1059,6 +1149,7 @@ long hmm_range_fault(struct hmm_range *range, bool =
+block)
+>                 mm_walk.pte_entry =3D NULL;
+>                 mm_walk.test_walk =3D NULL;
+>                 mm_walk.hugetlb_entry =3D NULL;
+> +               mm_walk.pud_entry =3D hmm_vma_walk_pud;
+>                 mm_walk.pmd_entry =3D hmm_vma_walk_pmd;
+>                 mm_walk.pte_hole =3D hmm_vma_walk_hole;
+>                 mm_walk.hugetlb_entry =3D hmm_vma_walk_hugetlb_entry;
+> --
+> 2.17.2
+>
