@@ -2,133 +2,132 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	PLING_QUERY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF47CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 302A0C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93229214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2B8520880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:16:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f061IAuH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfA2NO6 (ORCPT
+        id S1726877AbfA2NQ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 08:14:58 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43856 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725601AbfA2NO6 (ORCPT
+        Tue, 29 Jan 2019 08:16:58 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:56135 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbfA2NQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 08:14:58 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0TDDAIS134701
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 08:14:57 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qap89mqca-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 08:14:56 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gerald.schaefer@de.ibm.com>;
-        Tue, 29 Jan 2019 13:14:54 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 29 Jan 2019 13:14:51 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0TDEoFl61735050
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 29 Jan 2019 13:14:50 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 58B3B42047;
-        Tue, 29 Jan 2019 13:14:50 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F28C04204D;
-        Tue, 29 Jan 2019 13:14:49 +0000 (GMT)
-Received: from thinkpad (unknown [9.152.99.81])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 29 Jan 2019 13:14:49 +0000 (GMT)
-Date:   Tue, 29 Jan 2019 14:14:47 +0100
-From:   Gerald Schaefer <gerald.schaefer@de.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] mm, memory_hotplug: fix uninitialized pages
- fallouts.
-In-Reply-To: <20190128144506.15603-1-mhocko@kernel.org>
-References: <20190128144506.15603-1-mhocko@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 29 Jan 2019 08:16:57 -0500
+Received: by mail-it1-f196.google.com with SMTP id m62so4379772ith.5
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 05:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IkoDHTcoQExAmP/zAYGRu0okBS/vxY+ZLfd6eRLq2ws=;
+        b=f061IAuHSK40I6nwWINrYYQYRCskJ9MACDwUkTWtcLX1aQvOTh17RYGlMImOEtf+Dd
+         acKrpU8urBDqKrja8BBPGU/+nT6RVfROPCxwCZimgWsUrKreBe5PqpstY3NI800dTk+B
+         xGYZymOzfSWs2UXdEK/ekgexvdqxH4+1Wk//UTa9dtBFpo0iAjzUhnRSykfnS7uBhbnN
+         xG7r2zSbXB99vdr3zYuyP6yFz7OtwCKcvffIm3rA1PDQ7gmGm4e80jifZc0GNTJxN1as
+         DApyhr7QFfWnC1NyvEwujhryzwldweuPn5V6sbbYfUgf4p8zP9/hJE35p67u0XSBY3hb
+         GzwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IkoDHTcoQExAmP/zAYGRu0okBS/vxY+ZLfd6eRLq2ws=;
+        b=nFJe8e0zYE7RLP8h2Si14PnaaGmzKvwaGzoPxm5tqUBrFMY+EMnSrAfGF6BrtRrWiH
+         /RcrvSN6oCr0VVZWLkPGHSwoDfzM89q9mqpbaFLwDjjDxr+8plGmRMocrOu6GPCXWNwk
+         4ohIuWNx6rxwvGF+K+hSNNr2Nfpe78g4Xq19uFSld1pAAQOWhQsQyaez0fagNj8LGmA2
+         1pr2ejZemlYFpq3sWDFUavFRlC2wgiZZyNBDj56mJzZ8XWMKontWnAx6V1jFoztfQQGn
+         B8vV8JYo5/q9BZHvMfIBJGfWQB7HQSig4dWZlBYGqfRcd+ePydV+YCWFp4WrR/Siwehe
+         qbxw==
+X-Gm-Message-State: AJcUukcKfw/o0dVBn0sFpCTmr5c7kVtUOQhpRzTM42iYaaURkMI87R2r
+        RM9yUBEVRP2iUDakAOs2yA2wW817ZbNxcGH1+TW8hg==
+X-Google-Smtp-Source: ALg8bN6HUj/A2UU9bghOpcHs1qK2Z+MApKf0C4wuxVMRcYDAospR59LbC5gWi/li/WD2y0jw96rJ6UbiFVPgZsFKDXE=
+X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr11173972itl.144.1548767816077;
+ Tue, 29 Jan 2019 05:16:56 -0800 (PST)
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 19012913-0008-0000-0000-000002B775A7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012913-0009-0000-0000-00002223B856
-Message-Id: <20190129141447.34aa9d0c@thinkpad>
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901290099
+References: <CAKcZhuW-ozJp-MVU3gw=uhuSc9+HTMVJza8QRUL3TaRrbqjJew@mail.gmail.com>
+ <CACT4Y+aJADsj37Y8jPAV7PASqKm_L-iJ=MDv68yPUO0TFvhdRg@mail.gmail.com>
+ <CACT4Y+ZxgzdbCeFquYmKThfiTGg3pZhn90X_Fk3yRXGYfepU4Q@mail.gmail.com>
+ <CAKcZhuWE_2+D_AP_U0XZP-bjb=8Eec1Ku3KD8qO8K0zDGo98Ow@mail.gmail.com>
+ <CACT4Y+Ye+0bBV5sB1F3wVbCC1guyA=RdsRnYHgrar=AhftGtQA@mail.gmail.com> <20190121175842.0f526757@vmware.local.home>
+In-Reply-To: <20190121175842.0f526757@vmware.local.home>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 29 Jan 2019 14:16:43 +0100
+Message-ID: <CACT4Y+Y7PJ1=dv6wzDTVRkFJCnrtDYyksmYp6UibW9a8_ob0Nw@mail.gmail.com>
+Subject: Re: [RESEND BUG REPORT] System hung! Due to ftrace or KASAN?
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>
+Cc:     Zenghui Yu <zenghuiyu96@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-trace-devel@vger.kernel.org,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Lameter <cl@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Jan 2019 15:45:04 +0100
-Michal Hocko <mhocko@kernel.org> wrote:
+On Tue, Jan 29, 2019 at 1:27 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Mon, 21 Jan 2019 10:36:25 +0100 Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> > > Thanks Dmitry! I'll try to test this commit tomorrow.
+> > >
+> > > BTW, I have bisect-ed and tested for this issue today. Finally it turned out
+> > > that
+> > >         bffa986c6f80e39d9903015fc7d0d99a66bbf559 is the first bad commit.
+> > > So I'm wondering if anywhere need to be fixed in commit bffa986c6f80 ("kasan:
+> > > move common generic and tag-based code to common.c").
+> >
+> > Thanks for bisecting. I think we have understanding of what happens
+> > here and it's exactly this that needs to be fixed:
+> > https://groups.google.com/d/msg/kasan-dev/g8A8PLKCyoE/vXnirYEnCAAJ
+> > And this commit already fixes it.
+>
+> Has that been sent in my direction?  I can't find it.
+>
+> If sending it please add
+>
+> Tested-by: Dmitry Vyukov <dvyukov@google.com>
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-> Hi,
-> Mikhail has posted fixes for the two bugs quite some time ago [1]. I
-> have pushed back on those fixes because I believed that it is much
-> better to plug the problem at the initialization time rather than play
-> whack-a-mole all over the hotplug code and find all the places which
-> expect the full memory section to be initialized. We have ended up with
-> 2830bf6f05fb ("mm, memory_hotplug: initialize struct pages for the full
-> memory section") merged and cause a regression [2][3]. The reason is
-> that there might be memory layouts when two NUMA nodes share the same
-> memory section so the merged fix is simply incorrect.
-> 
-> In order to plug this hole we really have to be zone range aware in
-> those handlers. I have split up the original patch into two. One is
-> unchanged (patch 2) and I took a different approach for `removable'
-> crash. It would be great if Mikhail could test it still works for his
-> memory layout.
-> 
-> [1] http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com
-> [2] https://bugzilla.redhat.com/show_bug.cgi?id=1666948
-> [3] http://lkml.kernel.org/r/20190125163938.GA20411@dhcp22.suse.cz
 
-I verified that both patches fix the issues we had with valid_zones
-(with mem=2050M) and removable (with mem=3075M).
+Yes, it's here (State: New):
+https://lore.kernel.org/patchwork/patch/1024393/
 
-However, the call trace in the description of your patch 1 is wrong.
-You basically have the same call trace for test_pages_in_a_zone in
-both patches. The "removable" patch should have the call trace for
-is_mem_section_removable from Mikhails original patches:
+This page says it was mailed to linux-mm mailing list too:
+https://groups.google.com/forum/#!topic/kasan-dev/g8A8PLKCyoE
 
- CONFIG_DEBUG_VM_PGFLAGS=y
- kernel parameter mem=3075M
- --------------------------
- page:000003d08300c000 is uninitialized and poisoned
- page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
- Call Trace:
- ([<000000000038596c>] is_mem_section_removable+0xb4/0x190)
-  [<00000000008f12fa>] show_mem_removable+0x9a/0xd8
-  [<00000000008cf9c4>] dev_attr_show+0x34/0x70
-  [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
-  [<00000000003e4194>] seq_read+0x204/0x480
-  [<00000000003b53ea>] __vfs_read+0x32/0x178
-  [<00000000003b55b2>] vfs_read+0x82/0x138
-  [<00000000003b5be2>] ksys_read+0x5a/0xb0
-  [<0000000000b86ba0>] system_call+0xdc/0x2d8
- Last Breaking-Event-Address:
-  [<000000000038596c>] is_mem_section_removable+0xb4/0x190
- Kernel panic - not syncing: Fatal exception: panic_on_oops
+But I can't find linux-mm archives here:
+http://vger.kernel.org/vger-lists.html
 
+How can I add a tag to an existing change under review? Patchwork does
+not show something like "add Tested-by: me tag" to me on the patch
+page.
+
+Patchwork shows Todo list on the main page with "Your todo list
+contains patches that have been delegated to you". But I don't see an
+option to delegate this patch to you either...
