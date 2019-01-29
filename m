@@ -2,293 +2,175 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFCFC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA57C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89E6021473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DD7020857
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:35:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbfA2RdF (ORCPT
+        id S1728250AbfA2Rfb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:33:05 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:39056 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbfA2RdE (ORCPT
+        Tue, 29 Jan 2019 12:35:31 -0500
+Received: from gateway24.websitewelcome.com ([192.185.50.73]:49514 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726374AbfA2Rfa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:33:04 -0500
-Received: by mail-io1-f70.google.com with SMTP id q23so17234636ior.6
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 09:33:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=gQkIedbpzPLyZ0g0DlBcMR6eqwozWkapQ9632gLfoVQ=;
-        b=db1pfs4igbPnshtUf2CUFwO8xYKaWN0a3gq/BPV8Jp1Slb0Cf73cWaXOj/UTUuIhX8
-         teqasc+4aKsAPrAd3hZR1WN3NvObie6FH1IiM2n/Ljoihu5WOrBwe4v28NWRHmx3YCtq
-         uKyeHwXU+jK5HfbyrJFgKkK9FJXNPLVANfk6Jdh71hAm0DbSSS3n+dma/Hy60k+VXIUe
-         /7gMAZeMjxLsdeATL6m+uFc1a4MZVPqmMq0/DGHEnpALFGpj3Vgvhyg9MUiNMQ8lYREE
-         ST9+UFf8qPW3VMiSOm/wUf5a6UuQxoBxT/7TG+KZt7z2idkPNKdqScyomO6h0T6wJu4X
-         Bd/w==
-X-Gm-Message-State: AHQUAua+cF246/LpFWDrb4PzwqordjvzwfqjzT8Zy3xXHeKXTlDvymKw
-        vfvBg25J4y0uQaWQyvUb1CGjGVqIEr7sQ63UP5lgdWMD4qaB
-X-Google-Smtp-Source: AHgI3IYT7t+AYmaiCo7tsXUCP9Y6ORr97pbjAZjIz7LWzWCZyW2dfW977J9ezI7z4bpRhep0Trf2Fxi568Mwby0dwSoqbG8jy7i1
+        Tue, 29 Jan 2019 12:35:30 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 25D91C9B56
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:20:31 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id oX3ng17JHYTGMoX3ngiQuG; Tue, 29 Jan 2019 11:20:31 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=37068 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1goX3m-003dsf-HP; Tue, 29 Jan 2019 11:20:30 -0600
+Subject: Re: [PATCH] kvm: Use struct_size() in kmalloc()
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190104162910.GA25118@embeddedor>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <4c4093b5-814d-3337-bc26-d6a491a7944e@embeddedor.com>
+Date:   Tue, 29 Jan 2019 11:20:29 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9a0b:: with SMTP id s11mr3598781iol.5.1548783183511;
- Tue, 29 Jan 2019 09:33:03 -0800 (PST)
-Date:   Tue, 29 Jan 2019 09:33:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007cd20e05809c2f96@google.com>
-Subject: INFO: trying to register non-static key in icmp_send
-From:   syzbot <syzbot+e1628a5e87492e6f1b76@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190104162910.GA25118@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1goX3m-003dsf-HP
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:37068
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 19
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi all,
 
-syzbot found the following crash on:
+Friendly ping:
 
-HEAD commit:    4aa9fc2a435a Revert "mm, memory_hotplug: initialize struct..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=168581ef400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4fceea9e2d99ac20
-dashboard link: https://syzkaller.appspot.com/bug?extid=e1628a5e87492e6f1b76
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=175c96ef400000
+Who can take this?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e1628a5e87492e6f1b76@syzkaller.appspotmail.com
+Thanks
+--
+Gustavo
 
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-Enabling of bearer <udp:syz1> rejected, already enabled
-turning off the locking correctness validator.
-CPU: 1 PID: 3867 Comm: udevd Not tainted 5.0.0-rc4+ #50
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  assign_lock_key kernel/locking/lockdep.c:731 [inline]
-  register_lock_class+0x19dc/0x1e60 kernel/locking/lockdep.c:757
-  __lock_acquire+0x149/0x4a30 kernel/locking/lockdep.c:3224
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-  lock_acquire+0x1db/0x570 kernel/locking/lockdep.c:3841
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-  __raw_spin_trylock include/linux/spinlock_api_smp.h:90 [inline]
-  _raw_spin_trylock+0x62/0x80 kernel/locking/spinlock.c:128
-  spin_trylock include/linux/spinlock.h:339 [inline]
-  icmp_xmit_lock net/ipv4/icmp.c:219 [inline]
-  icmp_send+0x582/0x1bc0 net/ipv4/icmp.c:665
-  __udp4_lib_rcv+0x23a8/0x3180 net/ipv4/udp.c:2321
-Enabling of bearer <udp:syz1> rejected, already enabled
-  udp_rcv+0x22/0x30 net/ipv4/udp.c:2480
-  ip_protocol_deliver_rcu+0xb6/0xa20 net/ipv4/ip_input.c:208
-Enabling of bearer <udp:syz1> rejected, already enabled
-  ip_local_deliver_finish+0x23b/0x390 net/ipv4/ip_input.c:234
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  NF_HOOK include/linux/netfilter.h:283 [inline]
-  ip_local_deliver+0x1f0/0x740 net/ipv4/ip_input.c:255
-Enabling of bearer <udp:syz1> rejected, already enabled
-  dst_input include/net/dst.h:450 [inline]
-  ip_rcv_finish+0x1f4/0x2f0 net/ipv4/ip_input.c:414
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  NF_HOOK include/linux/netfilter.h:283 [inline]
-  ip_rcv+0xed/0x620 net/ipv4/ip_input.c:524
-  __netif_receive_skb_one_core+0x160/0x210 net/core/dev.c:4973
-  __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5083
-  process_backlog+0x206/0x750 net/core/dev.c:5923
-  napi_poll net/core/dev.c:6346 [inline]
-  net_rx_action+0x76d/0x1930 net/core/dev.c:6412
-  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x180/0x1d0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
-Enabling of bearer <udp:syz1> rejected, already enabled
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:766  
-[inline]
-RIP: 0010:lock_acquire+0x259/0x570 kernel/locking/lockdep.c:3844
-Code: 00 00 00 00 00 48 c1 e8 03 80 3c 10 00 0f 85 64 02 00 00 48 83 3d 66  
-30 2e 08 00 0f 84 d0 01 00 00 48 8b bd 48 ff ff ff 57 9d <0f> 1f 44 00 00  
-48 b8 00 00 00 00 00 fc ff df 48 03 85 40 ff ff ff
-RSP: 0018:ffff888097c57640 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: 1ffffffff1325046 RBX: ffff888097c4c2c0 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000eb8 RDI: 0000000000000282
-RBP: ffff888097c57710 R08: 0000000000000001 R09: ffff888097c4cb88
-R10: ffff888097c4cb68 R11: 0000000000000001 R12: ffff88808954e7b8
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
-  spin_lock include/linux/spinlock.h:329 [inline]
-  __d_lookup+0x2b6/0x960 fs/dcache.c:2272
-  lookup_fast+0x480/0x1260 fs/namei.c:1617
-  do_last fs/namei.c:3284 [inline]
-  path_openat+0x4db/0x5650 fs/namei.c:3534
-  do_filp_open+0x26f/0x370 fs/namei.c:3564
-  do_sys_open+0x59a/0x7c0 fs/open.c:1063
-  __do_sys_open fs/open.c:1081 [inline]
-  __se_sys_open fs/open.c:1076 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f902edde120
-Code: 48 8b 15 1b 4d 2b 00 f7 d8 64 89 02 83 c8 ff c3 90 90 90 90 90 90 90  
-90 90 90 83 3d d5 a4 2b 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 73 31 c3 48 83 ec 08 e8 5e 8c 01 00 48 89 04 24
-RSP: 002b:00007ffc8e9d9588 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0000000000b35bb0 RCX: 00007f902edde120
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 00007ffc8e9da200
-RBP: 0000000000b35360 R08: 000000000041f4f1 R09: 00007f902ee347d0
-R10: 7269762f73656369 R11: 0000000000000246 R12: 0000000000000003
-R13: 0000000000000000 R14: 0000000000b35bb0 R15: 0000000000b25250
-kasan: CONFIG_KASAN_INLINE enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 3867 Comm: udevd Not tainted 5.0.0-rc4+ #50
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__ip_append_data.isra.0+0x301/0x3350 net/ipv4/ip_output.c:898
-Code: c7 85 64 fe ff ff 00 00 00 00 0f 85 78 15 00 00 e8 d4 c5 f0 fa 48 8b  
-95 d8 fe ff ff 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
-85 60 2f 00 00 48 8b 85 d8 fe ff ff 48 8b 18 48 b8
-RSP: 0018:ffff8880ae706e38 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff86913e0c
-RDX: 0000000000000000 RSI: ffffffff86913e8c RDI: 0000000000000001
-RBP: ffff8880ae707010 R08: ffff888097c4c2c0 R09: ffffffff86a3da70
-R10: ffff8880ae707180 R11: ffff888096919343 R12: ffff88808dba2a70
-R13: ffff88808dba2f10 R14: 0000000000000001 R15: dead4ead00000000
-FS:  00007f902f6d67a0(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffb4062fe4 CR3: 00000000981e9000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  <IRQ>
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-  ip_append_data.part.0+0xf2/0x170 net/ipv4/ip_output.c:1220
-Enabling of bearer <udp:syz1> rejected, already enabled
-  ip_append_data+0x6e/0x90 net/ipv4/ip_output.c:1209
-  icmp_push_reply+0x189/0x510 net/ipv4/icmp.c:375
-Enabling of bearer <udp:syz1> rejected, already enabled
-  icmp_send+0x1535/0x1bc0 net/ipv4/icmp.c:736
-Enabling of bearer <udp:syz1> rejected, already enabled
-  __udp4_lib_rcv+0x23a8/0x3180 net/ipv4/udp.c:2321
-  udp_rcv+0x22/0x30 net/ipv4/udp.c:2480
-  ip_protocol_deliver_rcu+0xb6/0xa20 net/ipv4/ip_input.c:208
-Enabling of bearer <udp:syz1> rejected, already enabled
-  ip_local_deliver_finish+0x23b/0x390 net/ipv4/ip_input.c:234
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  NF_HOOK include/linux/netfilter.h:283 [inline]
-  ip_local_deliver+0x1f0/0x740 net/ipv4/ip_input.c:255
-Enabling of bearer <udp:syz1> rejected, already enabled
-  dst_input include/net/dst.h:450 [inline]
-  ip_rcv_finish+0x1f4/0x2f0 net/ipv4/ip_input.c:414
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  NF_HOOK include/linux/netfilter.h:283 [inline]
-  ip_rcv+0xed/0x620 net/ipv4/ip_input.c:524
-  __netif_receive_skb_one_core+0x160/0x210 net/core/dev.c:4973
-Enabling of bearer <udp:syz1> rejected, already enabled
-Enabling of bearer <udp:syz1> rejected, already enabled
-  __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5083
-  process_backlog+0x206/0x750 net/core/dev.c:5923
-Enabling of bearer <udp:syz1> rejected, already enabled
-  napi_poll net/core/dev.c:6346 [inline]
-  net_rx_action+0x76d/0x1930 net/core/dev.c:6412
-Enabling of bearer <udp:syz1> rejected, already enabled
-  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x180/0x1d0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:766  
-[inline]
-RIP: 0010:lock_acquire+0x259/0x570 kernel/locking/lockdep.c:3844
-Code: 00 00 00 00 00 48 c1 e8 03 80 3c 10 00 0f 85 64 02 00 00 48 83 3d 66  
-30 2e 08 00 0f 84 d0 01 00 00 48 8b bd 48 ff ff ff 57 9d <0f> 1f 44 00 00  
-48 b8 00 00 00 00 00 fc ff df 48 03 85 40 ff ff ff
-RSP: 0018:ffff888097c57640 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: 1ffffffff1325046 RBX: ffff888097c4c2c0 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000eb8 RDI: 0000000000000282
-RBP: ffff888097c57710 R08: 0000000000000001 R09: ffff888097c4cb88
-R10: ffff888097c4cb68 R11: 0000000000000001 R12: ffff88808954e7b8
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
-  spin_lock include/linux/spinlock.h:329 [inline]
-  __d_lookup+0x2b6/0x960 fs/dcache.c:2272
-  lookup_fast+0x480/0x1260 fs/namei.c:1617
-  do_last fs/namei.c:3284 [inline]
-  path_openat+0x4db/0x5650 fs/namei.c:3534
-  do_filp_open+0x26f/0x370 fs/namei.c:3564
-  do_sys_open+0x59a/0x7c0 fs/open.c:1063
-  __do_sys_open fs/open.c:1081 [inline]
-  __se_sys_open fs/open.c:1076 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f902edde120
-Code: 48 8b 15 1b 4d 2b 00 f7 d8 64 89 02 83 c8 ff c3 90 90 90 90 90 90 90  
-90 90 90 83 3d d5 a4 2b 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 73 31 c3 48 83 ec 08 e8 5e 8c 01 00 48 89 04 24
-RSP: 002b:00007ffc8e9d9588 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0000000000b35bb0 RCX: 00007f902edde120
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 00007ffc8e9da200
-RBP: 0000000000b35360 R08: 000000000041f4f1 R09: 00007f902ee347d0
-R10: 7269762f73656369 R11: 0000000000000246 R12: 0000000000000003
-R13: 0000000000000000 R14: 0000000000b35bb0 R15: 0000000000b25250
-Modules linked in:
----[ end trace 6d5f724bc69e6c3e ]---
-Enabling of bearer <udp:syz1> rejected, already enabled
-RIP: 0010:__ip_append_data.isra.0+0x301/0x3350 net/ipv4/ip_output.c:898
-Code: c7 85 64 fe ff ff 00 00 00 00 0f 85 78 15 00 00 e8 d4 c5 f0 fa 48 8b  
-95 d8 fe ff ff 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
-85 60 2f 00 00 48 8b 85 d8 fe ff ff 48 8b 18 48 b8
-RSP: 0018:ffff8880ae706e38 EFLAGS: 00010246
-Enabling of bearer <udp:syz1> rejected, already enabled
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff86913e0c
-RDX: 0000000000000000 RSI: ffffffff86913e8c RDI: 0000000000000001
-RBP: ffff8880ae707010 R08: ffff888097c4c2c0 R09: ffffffff86a3da70
-Enabling of bearer <udp:syz1> rejected, already enabled
-R10: ffff8880ae707180 R11: ffff888096919343 R12: ffff88808dba2a70
-R13: ffff88808dba2f10 R14: 0000000000000001 R15: dead4ead00000000
-FS:  00007f902f6d67a0(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffb4062fe4 CR3: 00000000981e9000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+On 1/4/19 10:29 AM, Gustavo A. R. Silva wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+> 
+> struct foo {
+>     int stuff;
+>     void *entry[];
+> };
+> 
+> instance = kmalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+> 
+> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  virt/kvm/kvm_main.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 666d0155662d..635b12fdbab8 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -3709,8 +3709,8 @@ int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
+>  	if (bus->dev_count - bus->ioeventfd_count > NR_IOBUS_DEVS - 1)
+>  		return -ENOSPC;
+>  
+> -	new_bus = kmalloc(sizeof(*bus) + ((bus->dev_count + 1) *
+> -			  sizeof(struct kvm_io_range)), GFP_KERNEL);
+> +	new_bus = kmalloc(struct_size(bus, range, bus->dev_count + 1),
+> +			  GFP_KERNEL);
+>  	if (!new_bus)
+>  		return -ENOMEM;
+>  
+> @@ -3755,8 +3755,8 @@ void kvm_io_bus_unregister_dev(struct kvm *kvm, enum kvm_bus bus_idx,
+>  	if (i == bus->dev_count)
+>  		return;
+>  
+> -	new_bus = kmalloc(sizeof(*bus) + ((bus->dev_count - 1) *
+> -			  sizeof(struct kvm_io_range)), GFP_KERNEL);
+> +	new_bus = kmalloc(struct_size(bus, range, bus->dev_count - 1),
+> +			  GFP_KERNEL);
+>  	if (!new_bus)  {
+>  		pr_err("kvm: failed to shrink bus, removing it completely\n");
+>  		goto broken;
+> 
