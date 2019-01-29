@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AF5C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70761C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B62B720989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F37F20857
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761934;
-	bh=bxypVAWxNG2m5U7h1Si8jklAJ9XP+2/IBURtTuPD71U=;
+	s=default; t=1548761938;
+	bh=ticgF0n/ZDgTqfEmqPhvgIKPA7uEgY2Qb5RttEPehVU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xlCe0wa1utcbmsLa3aMUJ1pI5XUqEEOeQueiZ7UW/Xw9Z7zJWlxcHK0ayfB1+eTI8
-	 TfdhUqJAG8uTFRDj5a1ommIPNJ/6T0QD8SGp2jm5uVR6aH8YG4aRvsCB6e598/Un7x
-	 HF/EKITAxq2XJdxPgGo0/2j21EH9xvY28O2sNiyo=
+	b=vzzp4612b+JT5BkeuxerRMnPvVE/mu3cB5l5jtJ3WdRIM7q0lRQxgP5MPUNBLwdRB
+	 s9g8RtZR6EzSV94bl4R3TS4qEw8rvH47f6RrBV0eEXYNM5obpbzdaT4clVtKELvU2A
+	 tmhUy++VkPW+9213fYQ3yr5fXqMGHnUtMuod1DXQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729271AbfA2Liw (ORCPT
+        id S1729296AbfA2Li5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:38:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55474 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:38:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729260AbfA2Lit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:38:49 -0500
+        id S1728751AbfA2Liv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:38:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 149CE20844;
-        Tue, 29 Jan 2019 11:38:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2CCF20882;
+        Tue, 29 Jan 2019 11:38:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761928;
-        bh=bxypVAWxNG2m5U7h1Si8jklAJ9XP+2/IBURtTuPD71U=;
+        s=default; t=1548761931;
+        bh=ticgF0n/ZDgTqfEmqPhvgIKPA7uEgY2Qb5RttEPehVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nawfp/Q4mORTicO5+9XfRbS82iZpMaIYatPrJdd4Dxgq9YslZ4Tg6iu40ouMP4BS2
-         SBvRHPeIU+pvCwro+vDkqVMXKxQYh+dFD46pqY4hJFkUc3Bd4fej5tvN9+8/fy7KqU
-         +TO68MCLsAbWZ+TvcB3tyOhr3X8Nx/IaHHqnZQK4=
+        b=PTYuNkmfn7d2Ddg+XdqiiwVTU2eZsEIK8kvs7CbEKf0TdPH4JDu4zHmM9tJHa1GCB
+         XO/xfCIYJl8md/mIrJGMrq/WEHFR1UVCphe5y4cGPwhtUMhdNXZAlkXwK8O1XqHGGU
+         45KWkzGjvxYDjeFky391dW3YjXLRU1V6QHFoQRHc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 4.20 049/117] misc: ibmvsm: Fix potential NULL pointer dereference
-Date:   Tue, 29 Jan 2019 12:35:00 +0100
-Message-Id: <20190129113210.048342918@linuxfoundation.org>
+Subject: [PATCH 4.20 050/117] char/mwave: fix potential Spectre v1 vulnerability
+Date:   Tue, 29 Jan 2019 12:35:01 +0100
+Message-Id: <20190129113210.104942048@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -67,55 +67,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit e25df7812c91f62581301f9a7ac102acf92e4937 upstream.
+commit 701956d4018e5d5438570e39e8bda47edd32c489 upstream.
 
-There is a potential NULL pointer dereference in case kzalloc()
-fails and returns NULL.
+ipcnum is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Fix this by adding a NULL check on *session*
+This issue was detected with the help of Smatch:
 
-Also, update the function header with information about the
-expected return on failure and remove unnecessary variable rc.
+drivers/char/mwave/mwavedd.c:299 mwave_ioctl() warn: potential spectre issue 'pDrvData->IPCs' [w] (local cap)
 
-This issue was detected with the help of Coccinelle.
+Fix this by sanitizing ipcnum before using it to index pDrvData->IPCs.
 
-Fixes: 0eca353e7ae7 ("misc: IBM Virtual Management Channel Driver (VMC)")
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
 Cc: stable@vger.kernel.org
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/ibmvmc.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/char/mwave/mwavedd.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/misc/ibmvmc.c
-+++ b/drivers/misc/ibmvmc.c
-@@ -820,21 +820,24 @@ static int ibmvmc_send_msg(struct crq_se
-  *
-  * Return:
-  *	0 - Success
-+ *	Non-zero - Failure
-  */
- static int ibmvmc_open(struct inode *inode, struct file *file)
- {
- 	struct ibmvmc_file_session *session;
--	int rc = 0;
- 
- 	pr_debug("%s: inode = 0x%lx, file = 0x%lx, state = 0x%x\n", __func__,
- 		 (unsigned long)inode, (unsigned long)file,
- 		 ibmvmc.state);
- 
- 	session = kzalloc(sizeof(*session), GFP_KERNEL);
-+	if (!session)
-+		return -ENOMEM;
-+
- 	session->file = file;
- 	file->private_data = session;
- 
--	return rc;
-+	return 0;
- }
- 
- /**
+--- a/drivers/char/mwave/mwavedd.c
++++ b/drivers/char/mwave/mwavedd.c
+@@ -59,6 +59,7 @@
+ #include <linux/mutex.h>
+ #include <linux/delay.h>
+ #include <linux/serial_8250.h>
++#include <linux/nospec.h>
+ #include "smapi.h"
+ #include "mwavedd.h"
+ #include "3780i.h"
+@@ -289,6 +290,8 @@ static long mwave_ioctl(struct file *fil
+ 						ipcnum);
+ 				return -EINVAL;
+ 			}
++			ipcnum = array_index_nospec(ipcnum,
++						    ARRAY_SIZE(pDrvData->IPCs));
+ 			PRINTK_3(TRACE_MWAVE,
+ 				"mwavedd::mwave_ioctl IOCTL_MW_REGISTER_IPC"
+ 				" ipcnum %x entry usIntCount %x\n",
+@@ -317,6 +320,8 @@ static long mwave_ioctl(struct file *fil
+ 						" Invalid ipcnum %x\n", ipcnum);
+ 				return -EINVAL;
+ 			}
++			ipcnum = array_index_nospec(ipcnum,
++						    ARRAY_SIZE(pDrvData->IPCs));
+ 			PRINTK_3(TRACE_MWAVE,
+ 				"mwavedd::mwave_ioctl IOCTL_MW_GET_IPC"
+ 				" ipcnum %x, usIntCount %x\n",
+@@ -383,6 +388,8 @@ static long mwave_ioctl(struct file *fil
+ 						ipcnum);
+ 				return -EINVAL;
+ 			}
++			ipcnum = array_index_nospec(ipcnum,
++						    ARRAY_SIZE(pDrvData->IPCs));
+ 			mutex_lock(&mwave_mutex);
+ 			if (pDrvData->IPCs[ipcnum].bIsEnabled == true) {
+ 				pDrvData->IPCs[ipcnum].bIsEnabled = false;
 
 
