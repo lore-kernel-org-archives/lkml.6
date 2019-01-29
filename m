@@ -2,124 +2,85 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AB7C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5FBC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C10632148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 725352148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:32:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ECy16EZ/"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3BtuGejY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbfA2Fbi (ORCPT
+        id S1726462AbfA2Fce (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 00:31:38 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43971 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbfA2Fbg (ORCPT
+        Tue, 29 Jan 2019 00:32:34 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59788 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbfA2Fce (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 00:31:36 -0500
-Received: by mail-pl1-f194.google.com with SMTP id gn14so8844160plb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 21:31:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vlg5RKRyPLWXTBq2LOJACwgaidg3unYs3d3ZnrY1INg=;
-        b=ECy16EZ/Y6jE+aah4EZBoP9nZOEXtsKfUWIryo38B6bgh6TVGV9dDCHanABhvtGZVX
-         ffJib29zhxcAq5wViyxusDnC/DTkY9Oc73fErmpRFl9txBMHeXO26ChZ+7JrlpUM0x1S
-         2u5Dv23rssSMZt4BK3bQ9Zu6sqFaWt9XJxvDc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vlg5RKRyPLWXTBq2LOJACwgaidg3unYs3d3ZnrY1INg=;
-        b=AkBI++91hL6BYvRSH3ld+seCihoDAGcptnZH59420ou7DLQWMPoZZi5sQaZgEjKErk
-         qTDLvC9NBtMUzmbdJuJEiO8AtV3T+Pgml9N32xBirDhqHM/GNLt61tIvX9YWglzi/DFk
-         onz4/btXczZglMauwRMnCbwE0bM6WHEBSPFTtbirPW1cYxzrVtZo+AMrO8Nh5XhoKkn2
-         +mb4t9sIiYTQ3eQ3BbyQ7l54SD1KkF4XFThDoAzhzv5Ez8lBG/v30e4xP2CTc4oRC6Jt
-         A5N1H5jNg9oJvdH+X28QLxo49DrZ6aCqf+IPINxbchrAnrNEHF8QlzHFjei/woNA6Zwq
-         FPZw==
-X-Gm-Message-State: AJcUukfvHXo8Sr/7FaywPMOqFx4I4LTWcIxARzQgupQC70FAGWIAORnR
-        G+0yfWWCa6VBAhHo7TcAlUvpFw==
-X-Google-Smtp-Source: ALg8bN75XfWs0sEQP9p9INBUSDRQFrbDis5v2xtNgT6H/5XHiIo7Z6C8xD+kW/R+/RqQiO3gpW/7Ng==
-X-Received: by 2002:a17:902:29ab:: with SMTP id h40mr24527616plb.238.1548739896184;
-        Mon, 28 Jan 2019 21:31:36 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id 15sm59474176pfr.55.2019.01.28.21.31.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 21:31:35 -0800 (PST)
-Date:   Tue, 29 Jan 2019 11:01:33 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, sudeep.holla@arm.com, liviu.dudau@arm.com,
-        lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, nm@ti.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        dietmar.eggemann@arm.com, mka@chromium.org
-Subject: Re: [PATCH 3/7] cpufreq: scpi: Register an Energy Model
-Message-ID: <20190129053133.l5wix4qgvty7bzig@vireshk-i7>
-References: <20190128165522.31749-1-quentin.perret@arm.com>
- <20190128165522.31749-4-quentin.perret@arm.com>
+        Tue, 29 Jan 2019 00:32:34 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0T5O6rd056072;
+        Tue, 29 Jan 2019 05:32:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=BEEIDna4m5f9/qSoFavB5KWRn03gy3kKEzy5uvV6YF8=;
+ b=3BtuGejYXQ9B3GUg4947BlwW2cxltGt/IqurtlF2laG22kCfEYzRl1WNaOPINHSrWxWU
+ WLyviX/KoPEOzz+bz8p0eHRGKfzUZxzoKbP778fuGuwVweF0V1w2XZiYgWF9KvXxty0R
+ WFPLEW8HK59JqXnTYtRkniXzuCUxZjM5EkJ9eP2pd2oEkWXQqwqhMf7oNz9ypRhvkOBU
+ kXS0OcQW0DPoki6GspFRuhpqRdyAn4QFfyFEC52Hc3PYSXcBE06fqVVfbNQbGq4l2ZQF
+ rJl1/Mtcv0HW2HgwrtcW8fOexhFNE2fi9JFmcLIgjqHl4t8Tp9YlXMheH3dgyic2Om/D Pw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2q8g6r2382-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Jan 2019 05:32:29 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0T5WOSe015566
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Jan 2019 05:32:24 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0T5WN0Z029634;
+        Tue, 29 Jan 2019 05:32:23 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 28 Jan 2019 21:32:23 -0800
+To:     Johannes Thumshirn <jthumshirn@suse.de>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>
+Subject: Re: [PATCH] MAINTAINERS: Move FCoE to Hannes Reinecke
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190128110634.17243-1-jthumshirn@suse.de>
+Date:   Tue, 29 Jan 2019 00:32:21 -0500
+In-Reply-To: <20190128110634.17243-1-jthumshirn@suse.de> (Johannes Thumshirn's
+        message of "Mon, 28 Jan 2019 12:06:34 +0100")
+Message-ID: <yq14l9sf2qi.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128165522.31749-4-quentin.perret@arm.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9150 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=708
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901290040
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28-01-19, 16:55, Quentin Perret wrote:
-> Now that PM_OPP provides a helper function to estimate the power
-> consumed by CPUs, make sure to try and register an Energy Model (EM)
-> from scpi-cpufreq, hence ensuring interested subsystems (the task
-> scheduler, for example) can make use of that information when available.
-> 
-> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-> ---
->  drivers/cpufreq/scpi-cpufreq.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-> index 87a98ec77773..05fc7448f5cb 100644
-> --- a/drivers/cpufreq/scpi-cpufreq.c
-> +++ b/drivers/cpufreq/scpi-cpufreq.c
-> @@ -23,6 +23,7 @@
->  #include <linux/cpufreq.h>
->  #include <linux/cpumask.h>
->  #include <linux/cpu_cooling.h>
-> +#include <linux/energy_model.h>
->  #include <linux/export.h>
->  #include <linux/module.h>
->  #include <linux/of_platform.h>
-> @@ -98,11 +99,12 @@ scpi_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask)
->  
->  static int scpi_cpufreq_init(struct cpufreq_policy *policy)
->  {
-> -	int ret;
-> +	int ret, nr_opp;
->  	unsigned int latency;
->  	struct device *cpu_dev;
->  	struct scpi_data *priv;
->  	struct cpufreq_frequency_table *freq_table;
-> +	struct em_data_callback em_cb = EM_DATA_CB(of_dev_pm_opp_get_cpu_power);
->  
->  	cpu_dev = get_cpu_device(policy->cpu);
->  	if (!cpu_dev) {
-> @@ -135,6 +137,7 @@ static int scpi_cpufreq_init(struct cpufreq_policy *policy)
->  		ret = -EPROBE_DEFER;
->  		goto out_free_opp;
->  	}
-> +	nr_opp = ret;
 
-Same comment here.
+Johannes,
+
+> I'll be moving on to different things in the storage stack and Hannes
+> agreed to take over FCoE.
+
+Applied to 5.1/scsi-queue. Thanks.
 
 -- 
-viresh
+Martin K. Petersen	Oracle Linux Engineering
