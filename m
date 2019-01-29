@@ -2,165 +2,213 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2E1C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD63C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:22:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 895CD21473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:20:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tb6+AX1B"
+	by mail.kernel.org (Postfix) with ESMTP id AAD882148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:22:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbfA2KUw (ORCPT
+        id S1728284AbfA2KW3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:20:52 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:45900 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfA2KUv (ORCPT
+        Tue, 29 Jan 2019 05:22:29 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:56353 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725772AbfA2KW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:20:51 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0TAKUWE058370;
-        Tue, 29 Jan 2019 04:20:30 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548757230;
-        bh=Ws8cfEW/GdK3qAnIerup80pZ7QCUAQ/ikhsMVH1JYMg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=tb6+AX1BmbjyH91s/hiKSJdzczG6BvCc1pWzl0eWbuYfAWdBAEQE8RZhUS5gVotO0
-         aQbNfeOQrAHwfWdK12biUy6+fdpOWpwi3LBE6clpDMm5eM/pn/NrBAoYgSWbCq7Ffu
-         h0mIWNNzMF0VsH4bIpNEfXbuzPRZDhtQCXDx0CLc=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0TAKTto091224
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 29 Jan 2019 04:20:29 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 29
- Jan 2019 04:20:29 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 29 Jan 2019 04:20:29 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0TAKNdi014159;
-        Tue, 29 Jan 2019 04:20:24 -0600
-Subject: Re: [PATCH 18/24] PCI: dwc: Fix dw_pcie_ep_find_capability to return
- correct capability offset
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Jingoo Han <jingoohan1@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-arm-kernel@axis.com" <linux-arm-kernel@axis.com>
-References: <20190114132424.6445-1-kishon@ti.com>
- <20190114132424.6445-19-kishon@ti.com>
- <13501c15-8f3d-604b-c4fc-bde3fb208745@synopsys.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <a3c7458b-f8e8-1f02-116b-3e9f4fbf00f3@ti.com>
-Date:   Tue, 29 Jan 2019 15:49:51 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 29 Jan 2019 05:22:28 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id 3B86A18549;
+        Tue, 29 Jan 2019 11:22:25 +0100 (CET)
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id C2nL-iU0KsNZ; Tue, 29 Jan 2019 11:22:23 +0100 (CET)
+Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
+        by bastet.se.axis.com (Postfix) with ESMTPS id 2C55018538;
+        Tue, 29 Jan 2019 11:22:23 +0100 (CET)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E433F1E08F;
+        Tue, 29 Jan 2019 11:22:22 +0100 (CET)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CDB291E088;
+        Tue, 29 Jan 2019 11:22:22 +0100 (CET)
+Received: from thoth.se.axis.com (unknown [10.0.2.173])
+        by boulder03.se.axis.com (Postfix) with ESMTP;
+        Tue, 29 Jan 2019 11:22:22 +0100 (CET)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by thoth.se.axis.com (Postfix) with ESMTP id E92CD2B7E;
+        Tue, 29 Jan 2019 11:22:08 +0100 (CET)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id E486680C1C; Tue, 29 Jan 2019 11:22:08 +0100 (CET)
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     gregkh@linuxfoundation.org, arnd@arndb.de
+Cc:     sudeep.dutt@intel.com, ashutosh.dixit@intel.com,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, tiwei.bie@intel.com,
+        luto@kernel.org, Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH] mic: vop: Fix broken virtqueues
+Date:   Tue, 29 Jan 2019 11:22:07 +0100
+Message-Id: <20190129102207.9577-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <13501c15-8f3d-604b-c4fc-bde3fb208745@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+VOP is broken in mainline since commit 1ce9e6055fa0a9043 ("virtio_ring:
+introduce packed ring support"); attempting to use the virtqueues leads
+to various kernel crashes.  I'm testing it with my not-yet-merged
+loopback patches, but even the in-tree MIC hardware cannot work.
 
-On 29/01/19 2:55 PM, Gustavo Pimentel wrote:
-> Hi Kishon,
-> 
-> On 14/01/2019 13:24, Kishon Vijay Abraham I wrote:
->> commit beb4641a787df79a ("PCI: dwc: Add MSI-X callbacks handler") while
->> adding MSI-X callback handler, introduced dw_pcie_ep_find_capability and
->> __dw_pcie_ep_find_next_cap for finding the MSI and MSIX capability.
->>
->> However if MSI or MSIX capability is the last capability (i.e there are
->> no additional items in the capabilities list and the Next Capability
->> Pointer is set to '0'), __dw_pcie_ep_find_next_cap will return '0'
->> even though MSI or MSIX capability may be present. This is because of
->> incorrect ordering of "next_cap_ptr" check. Fix it here.
->>
->> Fixes: beb4641a787df79a142 ("PCI: dwc: Add MSI-X callbacks handler")
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  drivers/pci/controller/dwc/pcie-designware-ep.c | 10 +++++-----
->>  1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> index d5144781005b..cd51b008858c 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
->> @@ -46,16 +46,19 @@ static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
->>  	u8 cap_id, next_cap_ptr;
->>  	u16 reg;
->>  
->> +	if (!cap_ptr)
->> +		return 0;
->> +
-> 
-> Supposedly this was already verified by the function that calls this one.
+The problem is not in the referenced commit per se, but is due to the
+following hack in vop_find_vq() which depends on the layout of private
+structures in other source files, which that commit happened to change:
 
-Right, with with this fix cap_ptr is checked only once. This being a recursive
-function, it makes sense to have the check only here instead of once in the
-calling function and once here.
-> 
->>  	reg = dw_pcie_readw_dbi(pci, cap_ptr);
->> -	next_cap_ptr = (reg & 0xff00) >> 8;
->>  	cap_id = (reg & 0x00ff);
->>  
->> -	if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
->> +	if (cap_id > PCI_CAP_ID_MAX)
->>  		return 0;
->>  
->>  	if (cap_id == cap)
->>  		return cap_ptr;
->>  
->> +	next_cap_ptr = (reg & 0xff00) >> 8;
-> 
-> This fix seems to be a bit overdone, especially when you only need to swap the
-> if blocks order to achieve the desired goal.
+  /*
+   * To reassign the used ring here we are directly accessing
+   * struct vring_virtqueue which is a private data structure
+   * in virtio_ring.c. At the minimum, a BUILD_BUG_ON() in
+   * vring_new_virtqueue() would ensure that
+   *  (&vq->vring == (struct vring *) (&vq->vq + 1));
+   */
+  vr = (struct vring *)(vq + 1);
+  vr->used = used;
 
-No, cap_id > PCI_CAP_ID_MAX is a base error case and it should checked before
-returning the offset IMO.
-> 
->>  	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
->>  }
->>  
->> @@ -67,9 +70,6 @@ static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
->>  	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
->>  	next_cap_ptr = (reg & 0x00ff);
->>  
->> -	if (!next_cap_ptr)
->> -		return 0;
->> -
-> 
-> Why remove it?
-> If pointer is null, why to jump to another function to check is the the same
-> pointer is null?
+Fix vop by using __vring_new_virtqueue() to create the needed vring
+layout from the start, instead of attempting to patch in the used ring
+later.  __vring_new_virtqueue() was added way back in commit
+2a2d1382fe9dcc ("virtio: Add improved queue allocation API") in order to
+address mic's usecase, according to the commit message.
 
-so that we check cap_ptr only once.
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+---
+ drivers/misc/mic/vop/vop_main.c | 60 +++++++++++++++++++--------------
+ 1 file changed, 34 insertions(+), 26 deletions(-)
 
-Thanks
-Kishon
+diff --git a/drivers/misc/mic/vop/vop_main.c b/drivers/misc/mic/vop/vop_main.c
+index d2b9782eee87..fef45bf6d519 100644
+--- a/drivers/misc/mic/vop/vop_main.c
++++ b/drivers/misc/mic/vop/vop_main.c
+@@ -284,6 +284,26 @@ static void vop_del_vqs(struct virtio_device *dev)
+ 		vop_del_vq(vq, idx++);
+ }
+ 
++static struct virtqueue *vop_new_virtqueue(unsigned int index,
++				      unsigned int num,
++				      struct virtio_device *vdev,
++				      bool context,
++				      void *pages,
++				      bool (*notify)(struct virtqueue *vq),
++				      void (*callback)(struct virtqueue *vq),
++				      const char *name,
++				      void *used)
++{
++	bool weak_barriers = false;
++	struct vring vring;
++
++	vring_init(&vring, num, pages, MIC_VIRTIO_RING_ALIGN);
++	vring.used = used;
++
++	return __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
++				     notify, callback, name);
++}
++
+ /*
+  * This routine will assign vring's allocated in host/io memory. Code in
+  * virtio_ring.c however continues to access this io memory as if it were local
+@@ -303,7 +323,6 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
+ 	struct _mic_vring_info __iomem *info;
+ 	void *used;
+ 	int vr_size, _vr_size, err, magic;
+-	struct vring *vr;
+ 	u8 type = ioread8(&vdev->desc->type);
+ 
+ 	if (index >= ioread8(&vdev->desc->num_vq))
+@@ -322,17 +341,7 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
+ 		return ERR_PTR(-ENOMEM);
+ 	vdev->vr[index] = va;
+ 	memset_io(va, 0x0, _vr_size);
+-	vq = vring_new_virtqueue(
+-				index,
+-				le16_to_cpu(config.num), MIC_VIRTIO_RING_ALIGN,
+-				dev,
+-				false,
+-				ctx,
+-				(void __force *)va, vop_notify, callback, name);
+-	if (!vq) {
+-		err = -ENOMEM;
+-		goto unmap;
+-	}
++
+ 	info = va + _vr_size;
+ 	magic = ioread32(&info->magic);
+ 
+@@ -341,7 +350,6 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
+ 		goto unmap;
+ 	}
+ 
+-	/* Allocate and reassign used ring now */
+ 	vdev->used_size[index] = PAGE_ALIGN(sizeof(__u16) * 3 +
+ 					     sizeof(struct vring_used_elem) *
+ 					     le16_to_cpu(config.num));
+@@ -351,8 +359,17 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
+ 		err = -ENOMEM;
+ 		dev_err(_vop_dev(vdev), "%s %d err %d\n",
+ 			__func__, __LINE__, err);
+-		goto del_vq;
++		goto unmap;
++	}
++
++	vq = vop_new_virtqueue(index, le16_to_cpu(config.num), dev, ctx,
++			       (void __force *)va, vop_notify, callback,
++			       name, used);
++	if (!vq) {
++		err = -ENOMEM;
++		goto free_used;
+ 	}
++
+ 	vdev->used[index] = dma_map_single(&vpdev->dev, used,
+ 					    vdev->used_size[index],
+ 					    DMA_BIDIRECTIONAL);
+@@ -360,26 +377,17 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
+ 		err = -ENOMEM;
+ 		dev_err(_vop_dev(vdev), "%s %d err %d\n",
+ 			__func__, __LINE__, err);
+-		goto free_used;
++		goto del_vq;
+ 	}
+ 	writeq(vdev->used[index], &vqconfig->used_address);
+-	/*
+-	 * To reassign the used ring here we are directly accessing
+-	 * struct vring_virtqueue which is a private data structure
+-	 * in virtio_ring.c. At the minimum, a BUILD_BUG_ON() in
+-	 * vring_new_virtqueue() would ensure that
+-	 *  (&vq->vring == (struct vring *) (&vq->vq + 1));
+-	 */
+-	vr = (struct vring *)(vq + 1);
+-	vr->used = used;
+ 
+ 	vq->priv = vdev;
+ 	return vq;
++del_vq:
++	vring_del_virtqueue(vq);
+ free_used:
+ 	free_pages((unsigned long)used,
+ 		   get_order(vdev->used_size[index]));
+-del_vq:
+-	vring_del_virtqueue(vq);
+ unmap:
+ 	vpdev->hw_ops->unmap(vpdev, vdev->vr[index]);
+ 	return ERR_PTR(err);
+-- 
+2.20.0
+
