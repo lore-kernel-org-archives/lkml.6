@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC82C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD14BC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD81E2086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A63C20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762513;
-	bh=o0+sMYuWM+YVlSYwvSiKI/6kxaH7EucnuRKO4Mngkis=;
+	s=default; t=1548762518;
+	bh=vPhOnKxnmz9Ow6jt8BCzni8kgWzcgThBnVOoq+PqC8o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oiOzk6x/lQcNZAx1REca6M+gNMFbnb/E2031YGGAAqzvOJl6CWIe2pGK7nY1IDUFe
-	 mBd83wgRQ9NWc3uyUzAeyj7qh9ko8WT//oz0NazpuH2tzg6J7PHvWTsbal9oGLWLte
-	 IqpXx26x+gwHTa+nUn70pONGfDcUQ3l14qjULquc=
+	b=HQGCCc0E1tdQodE7rI9XEurk4QOA3ibEqeI6E6PObgqjYCOLihAGn01UYb3QK7Bqt
+	 ymO6BTpmwGdh6TgShQg5BAh6ycxpANklzoD0Rc/VzcDjccLEWgtkScwsZQCUGPIdx0
+	 JmDWwlAsZdA4JhpaoigrEd/2BHG3s/Y3NTE0zfNA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731338AbfA2Lsc (ORCPT
+        id S1731362AbfA2Lsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:48:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39338 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:48:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731308AbfA2Ls1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:27 -0500
+        id S1731349AbfA2Lsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:48:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32ED72083B;
-        Tue, 29 Jan 2019 11:48:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C1102086C;
+        Tue, 29 Jan 2019 11:48:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762506;
-        bh=o0+sMYuWM+YVlSYwvSiKI/6kxaH7EucnuRKO4Mngkis=;
+        s=default; t=1548762514;
+        bh=vPhOnKxnmz9Ow6jt8BCzni8kgWzcgThBnVOoq+PqC8o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CzQeR/tVjF/4EHQmEgxQShKXhOuYvOoDLToe2JnDkoJdUrUaFlP1o/LGQL+H7FB6P
-         N9CWyiSptRtpM3ejxg5G20wvjVLDlwDyX7w2awMwf0vaCrCrM/ixxnoq801RtMzLzl
-         8RGxJrkLvxjp1ZGwTy4NmrkNHs1Y7Qi31E3xkrnY=
+        b=YcSkRknrt4HTo7nBkvDDUFWnAlF/AVfHOq0R86Zkt4tunWSN1zaQxtJ0SSBpRAOWJ
+         vhK011A2kbfB28VWd86xbc89ZonkNaxZlo2upaMHwEV6yXRLfD9KH2tBqo0ZFg9ahn
+         AXfZCX1ENUxTYwNfvJhOZLiN52O4F2ocie/YPhV0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        stable@kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 28/68] hv_balloon: avoid touching uninitialized struct page during tail onlining
-Date:   Tue, 29 Jan 2019 12:35:50 +0100
-Message-Id: <20190129113133.957038667@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.14 30/68] CIFS: Fix possible hang during async MTU reads and writes
+Date:   Tue, 29 Jan 2019 12:35:52 +0100
+Message-Id: <20190129113134.115975097@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -65,71 +65,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit da8ced360ca8ad72d8f41f5c8fcd5b0e63e1555f upstream.
+commit acc58d0bab55a50e02c25f00bd6a210ee121595f upstream.
 
-Hyper-V memory hotplug protocol has 2M granularity and in Linux x86 we use
-128M. To deal with it we implement partial section onlining by registering
-custom page onlining callback (hv_online_page()). Later, when more memory
-arrives we try to online the 'tail' (see hv_bring_pgs_online()).
+When doing MTU i/o we need to leave some credits for
+possible reopen requests and other operations happening
+in parallel. Currently we leave 1 credit which is not
+enough even for reopen only: we need at least 2 credits
+if durable handle reconnect fails. Also there may be
+other operations at the same time including compounding
+ones which require 3 credits at a time each. Fix this
+by leaving 8 credits which is big enough to cover most
+scenarios.
 
-It was found that in some cases this 'tail' onlining causes issues:
+Was able to reproduce this when server was configured
+to give out fewer credits than usual.
 
- BUG: Bad page state in process kworker/0:2  pfn:109e3a
- page:ffffe08344278e80 count:0 mapcount:1 mapping:0000000000000000 index:0x0
- flags: 0xfffff80000000()
- raw: 000fffff80000000 dead000000000100 dead000000000200 0000000000000000
- raw: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
- page dumped because: nonzero mapcount
- ...
- Workqueue: events hot_add_req [hv_balloon]
- Call Trace:
-  dump_stack+0x5c/0x80
-  bad_page.cold.112+0x7f/0xb2
-  free_pcppages_bulk+0x4b8/0x690
-  free_unref_page+0x54/0x70
-  hv_page_online_one+0x5c/0x80 [hv_balloon]
-  hot_add_req.cold.24+0x182/0x835 [hv_balloon]
-  ...
+The proper fix would be to reconnect a file handle first
+and then obtain credits for an MTU request but this leads
+to bigger code changes and should happen in other patches.
 
-Turns out that we now have deferred struct page initialization for memory
-hotplug so e.g. memory_block_action() in drivers/base/memory.c does
-pages_correctly_probed() check and in that check it avoids inspecting
-struct pages and checks sections instead. But in Hyper-V balloon driver we
-do PageReserved(pfn_to_page()) check and this is now wrong.
-
-Switch to checking online_section_nr() instead.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: stable@kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hv/hv_balloon.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ fs/cifs/smb2ops.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -846,12 +846,14 @@ static unsigned long handle_pg_range(uns
- 			pfn_cnt -= pgs_ol;
- 			/*
- 			 * Check if the corresponding memory block is already
--			 * online by checking its last previously backed page.
--			 * In case it is we need to bring rest (which was not
--			 * backed previously) online too.
-+			 * online. It is possible to observe struct pages still
-+			 * being uninitialized here so check section instead.
-+			 * In case the section is online we need to bring the
-+			 * rest of pfns (which were not backed previously)
-+			 * online too.
- 			 */
- 			if (start_pfn > has->start_pfn &&
--			    !PageReserved(pfn_to_page(start_pfn - 1)))
-+			    online_section_nr(pfn_to_section_nr(start_pfn)))
- 				hv_bring_pgs_online(has, start_pfn, pgs_ol);
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -153,14 +153,14 @@ smb2_wait_mtu_credits(struct TCP_Server_
  
- 		}
+ 			scredits = server->credits;
+ 			/* can deadlock with reopen */
+-			if (scredits == 1) {
++			if (scredits <= 8) {
+ 				*num = SMB2_MAX_BUFFER_SIZE;
+ 				*credits = 0;
+ 				break;
+ 			}
+ 
+-			/* leave one credit for a possible reopen */
+-			scredits--;
++			/* leave some credits for reopen and other ops */
++			scredits -= 8;
+ 			*num = min_t(unsigned int, size,
+ 				     scredits * SMB2_MAX_BUFFER_SIZE);
+ 
 
 
