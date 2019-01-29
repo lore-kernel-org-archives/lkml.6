@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 136FCC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079D2C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6ACB20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:57:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C90BD20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763067;
-	bh=YKiDfW+1257AyqQZxl74b1tGq07tIGXSygYuWLhwabM=;
+	s=default; t=1548763076;
+	bh=Ompww5gnv18gxthPvlrWbAWUCRHKD+kBwXTXgtOMMac=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SwIQp2TvMEcOtf/n9IDdA6bSR8GT63/mAoPFTYzv12W0gu2DagLrpJMgiQ5jTAH4d
-	 q6oNZZaxdc81Mvqn+HooQtSI1GLHNOChXrl9pquq2HQz6oajo12O+dZbI7FtCa5gUz
-	 AJ0rIfWNe6wRxa2WQeyEAZ54BOYqIDrrImwzI8wY=
+	b=08SlrAPfv3mOcm0awo1dxWH+3FR56YcxcqrpryqITtBLn6TtWzMBpjSlzD3pXeshP
+	 HgES0TDUCKCxMggy6Z1rXBbLmrTQoGikx15+XYBiPockt1HNbEPIk40mLO4zWrQjpz
+	 H/2Ba+L6FMWwhevRSN2EsZR4JBRtNDyrAuoU9npY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731668AbfA2L5q (ORCPT
+        id S1730805AbfA2Lsf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:57:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39706 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:48:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729900AbfA2Lsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:46 -0500
+        id S1731336AbfA2Lsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:48:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3B9B2083B;
-        Tue, 29 Jan 2019 11:48:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99F892083B;
+        Tue, 29 Jan 2019 11:48:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762525;
-        bh=YKiDfW+1257AyqQZxl74b1tGq07tIGXSygYuWLhwabM=;
+        s=default; t=1548762512;
+        bh=Ompww5gnv18gxthPvlrWbAWUCRHKD+kBwXTXgtOMMac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZhiSt5LyFaJkzpDFzB9BLqDYHeVzeJaSgTkxGxhzfkmdsYbUDyNFpilLmXm+9T9ur
-         1ehXjoyk1rtpyhYUiEpYmzZ8R7+KudzVKAuOvr7YsafFXIZFaJlZ2Q7cpzd/a41c5x
-         kUjNEUkYYjb1FsR/ayxbWJMn93eu7PdSSMaSjSUA=
+        b=S7BIUikA+fn+1xeOESWQh7BgyZxh0IyRnVvHqGCzhB/ClCvfUMTMwDcjah5mPiAAc
+         RT66rNRG4Il+zs5DGoFHSxgfEQukDDp7bJ24iSPqC8D0l15KzXSdQxGfFwjbhWn0y2
+         kJHhLJtC+B7/yD/P5b9lomQ9B3xnMznoVD8Oenv0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 04/68] net: phy: mdio_bus: add missing device_del() in mdiobus_register() error handling
-Date:   Tue, 29 Jan 2019 12:35:26 +0100
-Message-Id: <20190129113132.051157146@linuxfoundation.org>
+Subject: [PATCH 4.14 03/68] net: Fix usage of pskb_trim_rcsum
+Date:   Tue, 29 Jan 2019 12:35:25 +0100
+Message-Id: <20190129113131.980198231@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -67,92 +65,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-[ Upstream commit e40e2a2e78664fa90ea4b9bdf4a84efce2fea9d9 ]
+[ Upstream commit 6c57f0458022298e4da1729c67bd33ce41c14e7a ]
 
-The current code in __mdiobus_register() doesn't properly handle
-failures returned by the devm_gpiod_get_optional() call: it returns
-immediately, without unregistering the device that was added by the
-call to device_register() earlier in the function.
+In certain cases, pskb_trim_rcsum() may change skb pointers.
+Reinitialize header pointers afterwards to avoid potential
+use-after-frees. Add a note in the documentation of
+pskb_trim_rcsum(). Found by KASAN.
 
-This leaves a stale device, which then causes a NULL pointer
-dereference in the code that handles deferred probing:
-
-[    1.489982] Unable to handle kernel NULL pointer dereference at virtual address 00000074
-[    1.498110] pgd = (ptrval)
-[    1.500838] [00000074] *pgd=00000000
-[    1.504432] Internal error: Oops: 17 [#1] SMP ARM
-[    1.509133] Modules linked in:
-[    1.512192] CPU: 1 PID: 51 Comm: kworker/1:3 Not tainted 4.20.0-00039-g3b73a4cc8b3e-dirty #99
-[    1.520708] Hardware name: Xilinx Zynq Platform
-[    1.525261] Workqueue: events deferred_probe_work_func
-[    1.530403] PC is at klist_next+0x10/0xfc
-[    1.534403] LR is at device_for_each_child+0x40/0x94
-[    1.539361] pc : [<c0683fbc>]    lr : [<c0455d90>]    psr: 200e0013
-[    1.545628] sp : ceeefe68  ip : 00000001  fp : ffffe000
-[    1.550863] r10: 00000000  r9 : c0c66790  r8 : 00000000
-[    1.556079] r7 : c0457d44  r6 : 00000000  r5 : ceeefe8c  r4 : cfa2ec78
-[    1.562604] r3 : 00000064  r2 : c0457d44  r1 : ceeefe8c  r0 : 00000064
-[    1.569129] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[    1.576263] Control: 18c5387d  Table: 0ed7804a  DAC: 00000051
-[    1.582013] Process kworker/1:3 (pid: 51, stack limit = 0x(ptrval))
-[    1.588280] Stack: (0xceeefe68 to 0xceef0000)
-[    1.592630] fe60:                   cfa2ec78 c0c03c08 00000000 c0457d44 00000000 c0c66790
-[    1.600814] fe80: 00000000 c0455d90 ceeefeac 00000064 00000000 0d7a542e cee9d494 cfa2ec78
-[    1.608998] fea0: cfa2ec78 00000000 c0457d44 c0457d7c cee9d494 c0c03c08 00000000 c0455dac
-[    1.617182] fec0: cf98ba44 cf926a00 cee9d494 0d7a542e 00000000 cf935a10 cf935a10 cf935a10
-[    1.625366] fee0: c0c4e9b8 c0457d7c c0c4e80c 00000001 cf935a10 c0457df4 cf935a10 c0c4e99c
-[    1.633550] ff00: c0c4e99c c045a27c c0c4e9c4 ced63f80 cfde8a80 cfdebc00 00000000 c013893c
-[    1.641734] ff20: cfde8a80 cfde8a80 c07bd354 ced63f80 ced63f94 cfde8a80 00000008 c0c02d00
-[    1.649936] ff40: cfde8a98 cfde8a80 ffffe000 c0139a30 ffffe000 c0c6624a c07bd354 00000000
-[    1.658120] ff60: ffffe000 cee9e780 ceebfe00 00000000 ceeee000 ced63f80 c0139788 cf8cdea4
-[    1.666304] ff80: cee9e79c c013e598 00000001 ceebfe00 c013e44c 00000000 00000000 00000000
-[    1.674488] ffa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
-[    1.682671] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    1.690855] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-[    1.699058] [<c0683fbc>] (klist_next) from [<c0455d90>] (device_for_each_child+0x40/0x94)
-[    1.707241] [<c0455d90>] (device_for_each_child) from [<c0457d7c>] (device_reorder_to_tail+0x38/0x88)
-[    1.716476] [<c0457d7c>] (device_reorder_to_tail) from [<c0455dac>] (device_for_each_child+0x5c/0x94)
-[    1.725692] [<c0455dac>] (device_for_each_child) from [<c0457d7c>] (device_reorder_to_tail+0x38/0x88)
-[    1.734927] [<c0457d7c>] (device_reorder_to_tail) from [<c0457df4>] (device_pm_move_to_tail+0x28/0x40)
-[    1.744235] [<c0457df4>] (device_pm_move_to_tail) from [<c045a27c>] (deferred_probe_work_func+0x58/0x8c)
-[    1.753746] [<c045a27c>] (deferred_probe_work_func) from [<c013893c>] (process_one_work+0x210/0x4fc)
-[    1.762888] [<c013893c>] (process_one_work) from [<c0139a30>] (worker_thread+0x2a8/0x5c0)
-[    1.771072] [<c0139a30>] (worker_thread) from [<c013e598>] (kthread+0x14c/0x154)
-[    1.778482] [<c013e598>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-[    1.785689] Exception stack(0xceeeffb0 to 0xceeefff8)
-[    1.790739] ffa0:                                     00000000 00000000 00000000 00000000
-[    1.798923] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    1.807107] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    1.813724] Code: e92d47f0 e1a05000 e8900048 e1a00003 (e5937010)
-[    1.819844] ---[ end trace 3c2c0c8b65399ec9 ]---
-
-The actual error that we had from devm_gpiod_get_optional() was
--EPROBE_DEFER, due to the GPIO being provided by a driver that is
-probed later than the Ethernet controller driver.
-
-To fix this, we simply add the missing device_del() invocation in the
-error path.
-
-Fixes: 69226896ad636 ("mdio_bus: Issue GPIO RESET to PHYs")
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/mdio_bus.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ppp/pppoe.c                  |    1 +
+ include/linux/skbuff.h                   |    1 +
+ net/bridge/br_netfilter_ipv6.c           |    1 +
+ net/bridge/netfilter/nft_reject_bridge.c |    1 +
+ net/ipv4/ip_input.c                      |    1 +
+ 5 files changed, 5 insertions(+)
 
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -358,6 +358,7 @@ int __mdiobus_register(struct mii_bus *b
- 	if (IS_ERR(gpiod)) {
- 		dev_err(&bus->dev, "mii_bus %s couldn't get reset GPIO\n",
- 			bus->id);
-+		device_del(&bus->dev);
- 		return PTR_ERR(gpiod);
- 	} else	if (gpiod) {
- 		bus->reset_gpiod = gpiod;
+--- a/drivers/net/ppp/pppoe.c
++++ b/drivers/net/ppp/pppoe.c
+@@ -445,6 +445,7 @@ static int pppoe_rcv(struct sk_buff *skb
+ 	if (pskb_trim_rcsum(skb, len))
+ 		goto drop;
+ 
++	ph = pppoe_hdr(skb);
+ 	pn = pppoe_pernet(dev_net(dev));
+ 
+ 	/* Note that get_item does a sock_hold(), so sk_pppox(po)
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -3163,6 +3163,7 @@ int pskb_trim_rcsum_slow(struct sk_buff
+  *
+  *	This is exactly the same as pskb_trim except that it ensures the
+  *	checksum of received packets are still valid after the operation.
++ *	It can change skb pointers.
+  */
+ 
+ static inline int pskb_trim_rcsum(struct sk_buff *skb, unsigned int len)
+--- a/net/bridge/br_netfilter_ipv6.c
++++ b/net/bridge/br_netfilter_ipv6.c
+@@ -131,6 +131,7 @@ int br_validate_ipv6(struct net *net, st
+ 					IPSTATS_MIB_INDISCARDS);
+ 			goto drop;
+ 		}
++		hdr = ipv6_hdr(skb);
+ 	}
+ 	if (hdr->nexthdr == NEXTHDR_HOP && br_nf_check_hbh_len(skb))
+ 		goto drop;
+--- a/net/bridge/netfilter/nft_reject_bridge.c
++++ b/net/bridge/netfilter/nft_reject_bridge.c
+@@ -230,6 +230,7 @@ static bool reject6_br_csum_ok(struct sk
+ 	    pskb_trim_rcsum(skb, ntohs(ip6h->payload_len) + sizeof(*ip6h)))
+ 		return false;
+ 
++	ip6h = ipv6_hdr(skb);
+ 	thoff = ipv6_skip_exthdr(skb, ((u8*)(ip6h+1) - skb->data), &proto, &fo);
+ 	if (thoff < 0 || thoff >= skb->len || (fo & htons(~0x7)) != 0)
+ 		return false;
+--- a/net/ipv4/ip_input.c
++++ b/net/ipv4/ip_input.c
+@@ -481,6 +481,7 @@ int ip_rcv(struct sk_buff *skb, struct n
+ 		goto drop;
+ 	}
+ 
++	iph = ip_hdr(skb);
+ 	skb->transport_header = skb->network_header + iph->ihl*4;
+ 
+ 	/* Remove any debris in the socket control block */
 
 
