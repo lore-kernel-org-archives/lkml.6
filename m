@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9396C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9020BC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B3520870
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:57:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60E3820870
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:58:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbfA2M5w (ORCPT
+        id S1727529AbfA2M6x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:57:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46704 "EHLO mx1.redhat.com"
+        Tue, 29 Jan 2019 07:58:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59380 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725795AbfA2M5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 07:57:51 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1725795AbfA2M6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 07:58:53 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 28F2F2CD7F1;
-        Tue, 29 Jan 2019 12:57:50 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 98EA4C08733F;
+        Tue, 29 Jan 2019 12:58:52 +0000 (UTC)
 Received: from [10.36.117.255] (unknown [10.36.117.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 381DE5D757;
-        Tue, 29 Jan 2019 12:57:48 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9C5AC5D96E;
+        Tue, 29 Jan 2019 12:58:50 +0000 (UTC)
 Subject: Re: [PATCH] perf tools: Filter out hidden symbols from labels
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
@@ -88,8 +88,8 @@ Autocrypt: addr=nickc@redhat.com; prefer-encrypt=mutual; keydata=
  K4GlU2Swi/BDJMjtDxyo+K0M81LXXxOeRfEIfPtZ3ddxBKPva1uSsuz+pbN9d1JY8Ko5T/h1
  6susi2ReUyNJEJaSnjO5z13TQ1U=
 Organization: Red Hat
-Message-ID: <6795096d-988a-89ce-b6f7-9a326830d195@redhat.com>
-Date:   Tue, 29 Jan 2019 12:57:46 +0000
+Message-ID: <8f30f65e-e894-1aa9-882b-c4172f9bcfee@redhat.com>
+Date:   Tue, 29 Jan 2019 12:58:42 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
@@ -97,8 +97,8 @@ In-Reply-To: <20190129113948.GK4344@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 29 Jan 2019 12:57:50 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 29 Jan 2019 12:58:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -106,11 +106,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Arnaldo,
 
+  [oops- hit send by mistake...]
+
 >> Sorry - I do not think that I have the authority to do that.  I am not a
->> perftools maintainer (or a kernel maintainer).  For what it is worth the 
->> patch does look good to me, but I think that a real maintainer needs to 
->> approve it.
-> 
+
 > Ok, I was more thinking about this part of
 > Documentation/process/submittingpatches.txt:
 > 
@@ -125,4 +124,7 @@ Hi Arnaldo,
 > But its ok, if you still don't feel this should be added, I'll just
 > leave a Cc: you, ok?
 
+Yes - this would be fine with me.
 
+Cheers
+  Nick
