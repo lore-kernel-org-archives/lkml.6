@@ -2,124 +2,307 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EE7C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE49C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB62421473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:29:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 906AF214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:29:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbfA2P3C (ORCPT
+        id S1728023AbfA2P3t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:29:02 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58473 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfA2P3B (ORCPT
+        Tue, 29 Jan 2019 10:29:49 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33016 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725788AbfA2P3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:29:01 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0TFRxcp1991517
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 29 Jan 2019 07:27:59 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0TFRvqW1991513;
-        Tue, 29 Jan 2019 07:27:57 -0800
-Date:   Tue, 29 Jan 2019 07:27:57 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Gustavo A. R. Silva" <tipbot@zytor.com>
-Message-ID: <tip-2b0fc3742bc77687f58d389c902ee092df6f8669@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        peterz@infradead.org, keescook@chromium.org, hpa@zytor.com,
-        x86@kernel.org, gustavo@embeddedor.com, qianyue.zj@alibaba-inc.com,
-        jacek.tomaka@poczta.fm, jolsa@kernel.org, ak@linux.intel.com,
-        mingo@kernel.org, bp@suse.de, kan.liang@linux.intel.com
-Reply-To: qianyue.zj@alibaba-inc.com, gustavo@embeddedor.com,
-          x86@kernel.org, hpa@zytor.com, keescook@chromium.org,
-          peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, kan.liang@linux.intel.com,
-          bp@suse.de, mingo@kernel.org, ak@linux.intel.com,
-          jolsa@kernel.org, jacek.tomaka@poczta.fm
-In-Reply-To: <20190125184917.GA7289@embeddedor>
-References: <20190125184917.GA7289@embeddedor>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/events: Mark expected switch-case
- fall-throughs
-Git-Commit-ID: 2b0fc3742bc77687f58d389c902ee092df6f8669
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 29 Jan 2019 10:29:49 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0TFT3fD051903
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:29:48 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qaqsyes4y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:29:48 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
+        Tue, 29 Jan 2019 15:29:45 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 29 Jan 2019 15:29:42 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0TFTfPn8782080
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 29 Jan 2019 15:29:41 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E2D78A4040;
+        Tue, 29 Jan 2019 15:29:40 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 71B98A4055;
+        Tue, 29 Jan 2019 15:29:40 +0000 (GMT)
+Received: from [9.152.224.122] (unknown [9.152.224.122])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 29 Jan 2019 15:29:40 +0000 (GMT)
+Reply-To: mimu@linux.ibm.com
+Subject: Re: [PATCH v6 12/13] KVM: s390: add gib_alert_irq_handler()
+To:     Halil Pasic <pasic@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+References: <20190124125939.130763-1-mimu@linux.ibm.com>
+ <20190124125939.130763-13-mimu@linux.ibm.com>
+ <20190129142642.3a94a5f1@oc2783563651>
+From:   Michael Mueller <mimu@linux.ibm.com>
+Organization: IBM
+Date:   Tue, 29 Jan 2019 16:29:40 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20190129142642.3a94a5f1@oc2783563651>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19012915-0020-0000-0000-0000030D5F20
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012915-0021-0000-0000-0000215E6459
+Message-Id: <3819a46e-b2cf-96e3-b3b8-6cdf35eeb616@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901290116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2b0fc3742bc77687f58d389c902ee092df6f8669
-Gitweb:     https://git.kernel.org/tip/2b0fc3742bc77687f58d389c902ee092df6f8669
-Author:     Gustavo A. R. Silva <gustavo@embeddedor.com>
-AuthorDate: Fri, 25 Jan 2019 12:49:17 -0600
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 29 Jan 2019 16:23:47 +0100
 
-x86/events: Mark expected switch-case fall-throughs
 
-In preparation to enable -Wimplicit-fallthrough by default, mark
-switch-case statements where fall-through is intentional, explicitly in
-order to fix a couple of -Wimplicit-fallthrough warnings.
+On 29.01.19 14:26, Halil Pasic wrote:
+> On Thu, 24 Jan 2019 13:59:38 +0100
+> Michael Mueller <mimu@linux.ibm.com> wrote:
+> 
+>> The patch implements a handler for GIB alert interruptions
+>> on the host. Its task is to alert guests that interrupts are
+>> pending for them.
+>>
+>> A GIB alert interrupt statistic counter is added as well:
+>>
+>> $ cat /proc/interrupts
+>>            CPU0       CPU1
+>>    ...
+>>    GAL:      23         37   [I/O] GIB Alert
+>>    ...
+>>
+>> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> [..]
+>> +/**
+>> + * gisa_get_ipm_or_restore_iam - return IPM or restore GISA IAM
+>> + *
+>> + * @gi: gisa interrupt struct to work on
+>> + *
+>> + * Atomically restores the interruption alert mask if none of the
+>> + * relevant ISCs are pending and return the IPM.
+> 
+> The word 'relevant' probably reflects some previous state. It does not
+> bother me too much.
 
-Warning level 3 was used: -Wimplicit-fallthrough=3.
+"relevant" refers to the ISCs handled by the GAL mechanism, i.e those
+registered in the kvm->arch.gisa_int.alert.mask.
 
- [ bp: Massasge and trim commit message. ]
+> 
+> [..]
+> 
+>>   
+>> +static void __airqs_kick_single_vcpu(struct kvm *kvm, u8 deliverable_mask)
+>> +{
+>> +	int vcpu_id, online_vcpus = atomic_read(&kvm->online_vcpus);
+>> +	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
+>> +	struct kvm_vcpu *vcpu;
+>> +
+>> +	for_each_set_bit(vcpu_id, kvm->arch.idle_mask, online_vcpus) {
+>> +		vcpu = kvm_get_vcpu(kvm, vcpu_id);
+>> +		if (psw_ioint_disabled(vcpu))
+>> +			continue;
+>> +		deliverable_mask &= (u8)(vcpu->arch.sie_block->gcr[6] >> 24);
+>> +		if (deliverable_mask) {
+>> +			/* lately kicked but not yet running */
+> 
+> How about /* was kicked but didn't run yet */?
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jacek Tomaka <jacek.tomaka@poczta.fm>
-Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190125184917.GA7289@embeddedor
----
- arch/x86/events/intel/core.c | 2 ++
- arch/x86/events/intel/lbr.c  | 1 +
- 2 files changed, 3 insertions(+)
+what is the difference here...
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 40e12cfc87f6..ece43e7e4569 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4168,6 +4168,8 @@ __init int intel_pmu_init(void)
- 
- 	case INTEL_FAM6_CORE2_MEROM:
- 		x86_add_quirk(intel_clovertown_quirk);
-+		/* fall through */
+> 
+>> +			if (test_and_set_bit(vcpu_id, gi->kicked_mask))
+>> +				return;
+>> +			kvm_s390_vcpu_wakeup(vcpu);
+>> +			return;
+>> +		}
+>> +	}
+>> +}
+>> +
+> 
+> [..]
+> 
+>> +static void process_gib_alert_list(void)
+>> +{
+>> +	struct kvm_s390_gisa_interrupt *gi;
+>> +	struct kvm_s390_gisa *gisa;
+>> +	struct kvm *kvm;
+>> +	u32 final, origin = 0UL;
+>> +
+>> +	do {
+>> +		/*
+>> +		 * If the NONE_GISA_ADDR is still stored in the alert list
+>> +		 * origin, we will leave the outer loop. No further GISA has
+>> +		 * been added to the alert list by millicode while processing
+>> +		 * the current alert list.
+>> +		 */
+>> +		final = (origin & NONE_GISA_ADDR);
+>> +		/*
+>> +		 * Cut off the alert list and store the NONE_GISA_ADDR in the
+>> +		 * alert list origin to avoid further GAL interruptions.
+>> +		 * A new alert list can be build up by millicode in parallel
+>> +		 * for guests not in the yet cut-off alert list. When in the
+>> +		 * final loop, store the NULL_GISA_ADDR instead. This will re-
+>> +		 * enable GAL interruptions on the host again.
+>> +		 */
+>> +		origin = xchg(&gib->alert_list_origin,
+>> +			      (!final) ? NONE_GISA_ADDR : NULL_GISA_ADDR);
+>> +		/*
+>> +		 * Loop through the just cut-off alert list and start the
+>> +		 * gisa timers to kick idle vcpus to consume the pending
+>> +		 * interruptions asap.
+>> +		 */
+>> +		while (origin & GISA_ADDR_MASK) {
+>> +			gisa = (struct kvm_s390_gisa *)(u64)origin;
+>> +			origin = gisa->next_alert;
+>> +			gisa->next_alert = (u32)(u64)gisa;
+>> +			kvm = container_of(gisa, struct sie_page2, gisa)->kvm;
+>> +			gi = &kvm->arch.gisa_int;
+>> +			if (hrtimer_active(&gi->timer))
+>> +				hrtimer_cancel(&gi->timer);
+>> +			hrtimer_start(&gi->timer, 0, HRTIMER_MODE_REL);
+>> +		}
+>> +	} while (!final);
+>> +
+>> +}
+>> +
+>>   void kvm_s390_gisa_clear(struct kvm *kvm)
+>>   {
+>>   	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
+>>   
+>>   	if (!gi->origin)
+>>   		return;
+>> -	memset(gi->origin, 0, sizeof(struct kvm_s390_gisa));
+>> -	gi->origin->next_alert = (u32)(u64)gi->origin;
+>> +	gisa_clear_ipm(gi->origin);
+> 
+> This could be a separate patch. I would like little more explanation
+> to this.
+
+I can break at out as I had before... ;)
+
+> 
+>>   	VM_EVENT(kvm, 3, "gisa 0x%pK cleared", gi->origin);
+>>   }
+>>   
+>> @@ -2940,13 +3078,25 @@ void kvm_s390_gisa_init(struct kvm *kvm)
+>>   	gi->origin = &kvm->arch.sie_page2->gisa;
+>>   	gi->alert.mask = 0;
+>>   	spin_lock_init(&gi->alert.ref_lock);
+>> -	kvm_s390_gisa_clear(kvm);
+>> +	gi->expires = 50 * 1000; /* 50 usec */
+> 
+> I blindly trust your choice here ;)
+
+You know I will increase it to 1 ms together with the change that I
+proposed. (gisa_get_ipm_or_restore_iam() in kvm_s390_handle_wait()).
+
+> 
+>> +	hrtimer_init(&gi->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+>> +	gi->timer.function = gisa_vcpu_kicker;
+>> +	memset(gi->origin, 0, sizeof(struct kvm_s390_gisa));
+>> +	gi->origin->next_alert = (u32)(u64)gi->origin;
+>>   	VM_EVENT(kvm, 3, "gisa 0x%pK initialized", gi->origin);
+>>   }
+>>   
+>>   void kvm_s390_gisa_destroy(struct kvm *kvm)
+>>   {
+>> -	kvm->arch.gisa_int.origin = NULL;
+>> +	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
+>> +
+>> +	if (!gi->origin)
+>> +		return;
+>> +	hrtimer_cancel(&gi->timer);
+> 
+> I'm not sure this cancel here is sufficient.
+> 
+>> +	WRITE_ONCE(gi->alert.mask, 0);
+>> +	while (gisa_in_alert_list(gi->origin))
+>> +		cpu_relax();
+> 
+> If you end up waiting here, I guess, it's likely that a new
+> timer is going to get set up right after we do
+> gisa->next_alert = (u32)(u64)gisa;
+> in  process_gib_alert_list().
+
+There will be no vcpus available anymore at this time, whence
+none will be kicked by the timer function. Thus canceling the
+timer will be sufficient after the loop.
+
+I have addressed the message as well, but will write it into
+the KVM trace.
+
+  void kvm_s390_gisa_destroy(struct kvm *kvm)
+  {
+-       kvm->arch.gisa_int.origin = NULL;
++       struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
 +
- 	case INTEL_FAM6_CORE2_MEROM_L:
- 	case INTEL_FAM6_CORE2_PENRYN:
- 	case INTEL_FAM6_CORE2_DUNNINGTON:
-diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
-index c88ed39582a1..580c1b91c454 100644
---- a/arch/x86/events/intel/lbr.c
-+++ b/arch/x86/events/intel/lbr.c
-@@ -931,6 +931,7 @@ static int branch_type(unsigned long from, unsigned long to, int abort)
- 			ret = X86_BR_ZERO_CALL;
- 			break;
- 		}
-+		/* fall through */
- 	case 0x9a: /* call far absolute */
- 		ret = X86_BR_CALL;
- 		break;
++       if (!gi->origin)
++               return;
++       if (gi->alert.mask)
++               KVM_EVENT(3, "vm 0x%pK has unexpected iam 0x%02x",
++                         kvm, gi->alert.mask);
++       while (gisa_in_alert_list(gi->origin))
++               cpu_relax();
++       hrtimer_cancel(&gi->timer);
++       gi->origin = NULL;
+  }
+
+
+> 
+>> +	gi->origin = NULL;
+>>   }
+>>   
+>>   /**
+>> @@ -3037,11 +3187,23 @@ int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc)
+>>   }
+>>   EXPORT_SYMBOL_GPL(kvm_s390_gisc_unregister);
+>>   
+> 
+> 
+> Overall, there are couple of things I would prefer done differently,
+> but better something working today that something prefect in 6 months.
+> In that sense, provided my comment regarding destroy is addressed:
+> 
+> Acked-by: Halil Pasic <pasic@linux.ibm.com>
+> 
+
+Michael
+
