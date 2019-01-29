@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A52C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6134BC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A8D42083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:53:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F7CA2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:53:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762792;
-	bh=H6hzUu30x+oAF3VC5vvpP6QS5RFl/4LQzymr9dgRLak=;
+	s=default; t=1548762800;
+	bh=twUBzgsuVUqfsbqvgxU90t7Y/jPuf/e5InN9BaL9Fg0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=T7irymA73ugCAHp6TAALdOL93Fn8juodb4pHwi7yTiKRG8N52rvHcev5tTsMOkP9a
-	 MdDpe/iJlxA5iYxMgeB/oRgia7P86YEg1ivcG6tPoVDN+2TP4xO90NmrJgsBeoLrsQ
-	 j5GySS2GdxFgncxlVJpAHXREZbu7SWuJOPmDQdqs=
+	b=LIZrPitf7shyco3Sh2WLT84B2/xr3kyNIImRuTpvXq9kJM6GMBtHc+a0/3zUUSEzy
+	 wCL5YbaPKbfHITR7yjlpGfoCM4tFAJE6cEYc35ChWgHobB4yA0hjEgMoaoegJIv7O+
+	 Fj5ERAM88LP9GOsUcWhKyr3gEdF9uSEKBnGftjFo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732133AbfA2Lwi (ORCPT
+        id S1732100AbfA2Lw3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:52:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44380 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:52:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732114AbfA2Lwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:52:34 -0500
+        id S1732083AbfA2LwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:52:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28FCE2086C;
-        Tue, 29 Jan 2019 11:52:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDC7F20882;
+        Tue, 29 Jan 2019 11:52:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762752;
-        bh=H6hzUu30x+oAF3VC5vvpP6QS5RFl/4LQzymr9dgRLak=;
+        s=default; t=1548762744;
+        bh=twUBzgsuVUqfsbqvgxU90t7Y/jPuf/e5InN9BaL9Fg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vDtY5/WhjC3/dQovSjjUlieakRJeblDl/la4Ez1wgrKBAa3EBpAweB3YNjH1A/lLq
-         hONaoKea4OkYvaWtWzkIPUUnZ23fQc3QPRcKLwv812hWoP6CzWIpml4lu3bfJWKqED
-         TBhwFOa8cPNoPDYlI+288FL2066sajPZqWjSS+tg=
+        b=j8Mn1ShtkXq3B6/zENJgqqaMsnPiXjH1jtiCjjKCp5AgDS+u1/huatt6jg/uzWsiz
+         502ZEe2WY3KnkKhWULC+iDIYZzdirdC7Aky2MIS1Xlq/i9VvdYeaFDs97CY2Q9IhYy
+         zPp+Z2Wn4VVJ9hi0c38WWSGh/GIaD0RpXT2Yt/yw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Samir Virmani <samir@embedur.com>,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH 4.9 20/44] uart: Fix crash in uart_write and uart_put_char
-Date:   Tue, 29 Jan 2019 12:36:15 +0100
-Message-Id: <20190129113141.606696643@linuxfoundation.org>
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.9 43/44] btrfs: fix error handling in btrfs_dev_replace_start
+Date:   Tue, 29 Jan 2019 12:36:38 +0100
+Message-Id: <20190129113143.456682357@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -65,98 +66,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Samir Virmani <samir@embedur.com>
+From: Jeff Mahoney <jeffm@suse.com>
 
-commit aff9cf5955185d1f183227e46c5f8673fa483813 upstream.
+commit 5c06147128fbbdf7a84232c5f0d808f53153defe upstream.
 
-We were experiencing a crash similar to the one reported as part of
-commit:a5ba1d95e46e ("uart: fix race between uart_put_char() and
-uart_shutdown()") in our testbed as well. We continue to observe the same
-crash after integrating the commit a5ba1d95e46e ("uart: fix race between
-uart_put_char() and uart_shutdown()")
+When we fail to start a transaction in btrfs_dev_replace_start, we leave
+dev_replace->replace_start set to STARTED but clear ->srcdev and
+->tgtdev.  Later, that can result in an Oops in
+btrfs_dev_replace_progress when having state set to STARTED or SUSPENDED
+implies that ->srcdev is valid.
 
-On reviewing the change, the port lock should be taken prior to checking for
-if (!circ->buf) in fn. __uart_put_char and other fns. that update the buffer
-uart_state->xmit.
+Also fix error handling when the state is already STARTED or SUSPENDED
+while starting.  That, too, will clear ->srcdev and ->tgtdev even though
+it doesn't own them.  This should be an impossible case to hit since we
+should be protected by the BTRFS_FS_EXCL_OP bit being set.  Let's add an
+ASSERT there while we're at it.
 
-Traceback:
-
-[11/27/2018 06:24:32.4870] Unable to handle kernel NULL pointer dereference
-                           at virtual address 0000003b
-
-[11/27/2018 06:24:32.4950] PC is at memcpy+0x48/0x180
-[11/27/2018 06:24:32.4950] LR is at uart_write+0x74/0x120
-[11/27/2018 06:24:32.4950] pc : [<ffffffc0002e6808>]
-                           lr : [<ffffffc0003747cc>] pstate: 000001c5
-[11/27/2018 06:24:32.4950] sp : ffffffc076433d30
-[11/27/2018 06:24:32.4950] x29: ffffffc076433d30 x28: 0000000000000140
-[11/27/2018 06:24:32.4950] x27: ffffffc0009b9d5e x26: ffffffc07ce36580
-[11/27/2018 06:24:32.4950] x25: 0000000000000000 x24: 0000000000000140
-[11/27/2018 06:24:32.4950] x23: ffffffc000891200 x22: ffffffc01fc34000
-[11/27/2018 06:24:32.4950] x21: 0000000000000fff x20: 0000000000000076
-[11/27/2018 06:24:32.4950] x19: 0000000000000076 x18: 0000000000000000
-[11/27/2018 06:24:32.4950] x17: 000000000047cf08 x16: ffffffc000099e68
-[11/27/2018 06:24:32.4950] x15: 0000000000000018 x14: 776d726966205948
-[11/27/2018 06:24:32.4950] x13: 50203a6c6974755f x12: 74647075205d3333
-[11/27/2018 06:24:32.4950] x11: 3a35323a36203831 x10: 30322f37322f3131
-[11/27/2018 06:24:32.4950] x9 : 5b205d303638342e x8 : 746164206f742070
-[11/27/2018 06:24:32.4950] x7 : 7520736920657261 x6 : 000000000000003b
-[11/27/2018 06:24:32.4950] x5 : 000000000000817a x4 : 0000000000000008
-[11/27/2018 06:24:32.4950] x3 : 2f37322f31312a5b x2 : 000000000000006e
-[11/27/2018 06:24:32.4950] x1 : ffffffc0009b9cf0 x0 : 000000000000003b
-
-[11/27/2018 06:24:32.4950] CPU2: stopping
-[11/27/2018 06:24:32.4950] CPU: 2 PID: 0 Comm: swapper/2 Tainted: P      D    O    4.1.51 #3
-[11/27/2018 06:24:32.4950] Hardware name: Broadcom-v8A (DT)
-[11/27/2018 06:24:32.4950] Call trace:
-[11/27/2018 06:24:32.4950] [<ffffffc0000883b8>] dump_backtrace+0x0/0x150
-[11/27/2018 06:24:32.4950] [<ffffffc00008851c>] show_stack+0x14/0x20
-[11/27/2018 06:24:32.4950] [<ffffffc0005ee810>] dump_stack+0x90/0xb0
-[11/27/2018 06:24:32.4950] [<ffffffc00008e844>] handle_IPI+0x18c/0x1a0
-[11/27/2018 06:24:32.4950] [<ffffffc000080c68>] gic_handle_irq+0x88/0x90
-
-Fixes: a5ba1d95e46e ("uart: fix race between uart_put_char() and uart_shutdown()")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Samir Virmani <samir@embedur.com>
-Acked-by: Tycho Andersen <tycho@tycho.ws>
+Fixes: e93c89c1aaaaa (Btrfs: add new sources for device replace code)
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/tty/serial/serial_core.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/btrfs/dev-replace.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -540,10 +540,12 @@ static int uart_put_char(struct tty_stru
- 	int ret = 0;
- 
- 	circ = &state->xmit;
--	if (!circ->buf)
-+	port = uart_port_lock(state, flags);
-+	if (!circ->buf) {
-+		uart_port_unlock(port, flags);
- 		return 0;
-+	}
- 
--	port = uart_port_lock(state, flags);
- 	if (port && uart_circ_chars_free(circ) != 0) {
- 		circ->buf[circ->head] = c;
- 		circ->head = (circ->head + 1) & (UART_XMIT_SIZE - 1);
-@@ -576,11 +578,13 @@ static int uart_write(struct tty_struct
- 		return -EL3HLT;
+--- a/fs/btrfs/dev-replace.c
++++ b/fs/btrfs/dev-replace.c
+@@ -350,6 +350,7 @@ int btrfs_dev_replace_start(struct btrfs
+ 		break;
+ 	case BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED:
+ 	case BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED:
++		ASSERT(0);
+ 		ret = BTRFS_IOCTL_DEV_REPLACE_RESULT_ALREADY_STARTED;
+ 		goto leave;
+ 	}
+@@ -394,6 +395,10 @@ int btrfs_dev_replace_start(struct btrfs
+ 	if (IS_ERR(trans)) {
+ 		ret = PTR_ERR(trans);
+ 		btrfs_dev_replace_lock(dev_replace, 1);
++		dev_replace->replace_state =
++			BTRFS_IOCTL_DEV_REPLACE_STATE_NEVER_STARTED;
++		dev_replace->srcdev = NULL;
++		dev_replace->tgtdev = NULL;
+ 		goto leave;
  	}
  
-+	port = uart_port_lock(state, flags);
- 	circ = &state->xmit;
--	if (!circ->buf)
-+	if (!circ->buf) {
-+		uart_port_unlock(port, flags);
- 		return 0;
-+	}
+@@ -415,8 +420,6 @@ int btrfs_dev_replace_start(struct btrfs
+ 	return ret;
  
--	port = uart_port_lock(state, flags);
- 	while (port) {
- 		c = CIRC_SPACE_TO_END(circ->head, circ->tail, UART_XMIT_SIZE);
- 		if (count < c)
+ leave:
+-	dev_replace->srcdev = NULL;
+-	dev_replace->tgtdev = NULL;
+ 	btrfs_dev_replace_unlock(dev_replace, 1);
+ 	btrfs_destroy_dev_replace_tgtdev(fs_info, tgt_device);
+ 	return ret;
 
 
