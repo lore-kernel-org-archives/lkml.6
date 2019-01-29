@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87702C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B47D9C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56242214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80FD5214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762018;
-	bh=laMHjaAfXtx40mqujTyNj38EF2nNLeXDZD/J7tyesWM=;
+	s=default; t=1548762026;
+	bh=fsPl1KFc2AYiMerc/bTB5C1GlspeXLyuSZz8vcqgsL8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Q4gG6j62nSyvJjBQ4cTxqoAsJQv6xngAa2v4GAA3cu3ZTEvmsfPF5BBwYyYLiqBHL
-	 QNdgjO5jO4l/fE2zXA0GSQO81FBlSch7hFBvCZQYlIVdkQjZASqIQQ0yFdIVO7dYPl
-	 7J7N6l5AY/DSknSNH0N/QH3BBryx02W3voyvYcKI=
+	b=DRPee6KEUVPAIJEJJDPHJqVj+X+OJfe+5Ex4gT+TfgMsAxkJEP3YmjP7jYf+iphkp
+	 JT0CHtU1fOUUoxXTvrB86J1+1iBXBt9z4/b5bVW+hJKytzELuyYpsppsZsW6vj5EYF
+	 ilQ7DVsa0fQ+qRl22CJqh2CKkwp5KSDky6LFT8Eg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbfA2LkQ (ORCPT
+        id S1729645AbfA2LkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:40:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57176 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:40:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729584AbfA2LkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:40:13 -0500
+        id S1729102AbfA2LkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:40:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9B8D20989;
-        Tue, 29 Jan 2019 11:40:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8047820857;
+        Tue, 29 Jan 2019 11:40:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762012;
-        bh=laMHjaAfXtx40mqujTyNj38EF2nNLeXDZD/J7tyesWM=;
+        s=default; t=1548762021;
+        bh=fsPl1KFc2AYiMerc/bTB5C1GlspeXLyuSZz8vcqgsL8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PlG0CIhJw/M0QT9gKW+8uc4DlaE841a3b70oiMCAW+ZRfzWusT1oztDyE4kGGYROf
-         ct9PhvlIznFiTiJnaXG0ihJ6kSadLMircr+k0iTTeEUShL86i4yuOa1dhs+56yNxrh
-         6NRy2eI/jVZvPrPaB2wZ4kGLYSovYMnpNff/7nb4=
+        b=pQN6SsCSI5SxJcxt2SICNPjM8OwGhxBDl+1w4KpAeeU/+ppA79e8d8anHB3iuKzIR
+         W1AImieewqqjwjKDOSNzTPQeUqS6dlhYIQmhB2jmClcHFKWZnn16DDKaSm3UK6azcm
+         57Zo0LwNjZZgOvPRgrl9NPXD+CwhhvTgmyKAunIE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com,
-        Tom Roeder <tmroeder@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.20 079/117] kvm: x86/vmx: Use kzalloc for cached_vmcs12
-Date:   Tue, 29 Jan 2019 12:35:30 +0100
-Message-Id: <20190129113211.425847072@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.20 064/117] CIFS: Do not reconnect TCP session in add_credits()
+Date:   Tue, 29 Jan 2019 12:35:15 +0100
+Message-Id: <20190129113210.826872330@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -66,68 +66,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tom Roeder <tmroeder@google.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit 3a33d030daaa7c507e1c12d5adcf828248429593 upstream.
+commit ef68e831840c40c7d01b328b3c0f5d8c4796c232 upstream.
 
-This changes the allocation of cached_vmcs12 to use kzalloc instead of
-kmalloc. This removes the information leak found by Syzkaller (see
-Reported-by) in this case and prevents similar leaks from happening
-based on cached_vmcs12.
+When executing add_credits() we currently call cifs_reconnect()
+if the number of credits is zero and there are no requests in
+flight. In this case we may call cifs_reconnect() recursively
+twice and cause memory corruption given the following sequence
+of functions:
 
-It also changes vmx_get_nested_state to copy out the full 4k VMCS12_SIZE
-in copy_to_user rather than only the size of the struct.
+mid1.callback() -> add_credits() -> cifs_reconnect() ->
+-> mid2.callback() -> add_credits() -> cifs_reconnect().
 
-Tested: rebuilt against head, booted, and ran the syszkaller repro
-  https://syzkaller.appspot.com/text?tag=ReproC&x=174efca3400000 without
-  observing any problems.
+Fix this by avoiding to call cifs_reconnect() in add_credits()
+and checking for zero credits in the demultiplex thread.
 
-Reported-by: syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
-Fixes: 8fcc4b5923af5de58b80b53a069453b135693304
-Cc: stable@vger.kernel.org
-Signed-off-by: Tom Roeder <tmroeder@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/cifs/connect.c |   21 +++++++++++++++++++++
+ fs/cifs/smb2ops.c |   32 +++++++++++++++++++++++++-------
+ 2 files changed, 46 insertions(+), 7 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -8315,11 +8315,11 @@ static int enter_vmx_operation(struct kv
- 	if (r < 0)
- 		goto out_vmcs02;
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -534,6 +534,21 @@ server_unresponsive(struct TCP_Server_In
+ 	return false;
+ }
  
--	vmx->nested.cached_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
-+	vmx->nested.cached_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
- 	if (!vmx->nested.cached_vmcs12)
- 		goto out_cached_vmcs12;
++static inline bool
++zero_credits(struct TCP_Server_Info *server)
++{
++	int val;
++
++	spin_lock(&server->req_lock);
++	val = server->credits + server->echo_credits + server->oplock_credits;
++	if (server->in_flight == 0 && val == 0) {
++		spin_unlock(&server->req_lock);
++		return true;
++	}
++	spin_unlock(&server->req_lock);
++	return false;
++}
++
+ static int
+ cifs_readv_from_socket(struct TCP_Server_Info *server, struct msghdr *smb_msg)
+ {
+@@ -546,6 +561,12 @@ cifs_readv_from_socket(struct TCP_Server
+ 	for (total_read = 0; msg_data_left(smb_msg); total_read += length) {
+ 		try_to_freeze();
  
--	vmx->nested.cached_shadow_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
-+	vmx->nested.cached_shadow_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
- 	if (!vmx->nested.cached_shadow_vmcs12)
- 		goto out_cached_shadow_vmcs12;
++		/* reconnect if no credits and no requests in flight */
++		if (zero_credits(server)) {
++			cifs_reconnect(server);
++			return -ECONNABORTED;
++		}
++
+ 		if (server_unresponsive(server))
+ 			return -ECONNABORTED;
+ 		if (cifs_rdma_enabled(server) && server->smbd_conn)
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -34,6 +34,7 @@
+ #include "cifs_ioctl.h"
+ #include "smbdirect.h"
  
-@@ -14853,13 +14853,17 @@ static int vmx_get_nested_state(struct k
- 			copy_shadow_to_vmcs12(vmx);
++/* Change credits for different ops and return the total number of credits */
+ static int
+ change_conf(struct TCP_Server_Info *server)
+ {
+@@ -41,17 +42,15 @@ change_conf(struct TCP_Server_Info *serv
+ 	server->oplock_credits = server->echo_credits = 0;
+ 	switch (server->credits) {
+ 	case 0:
+-		return -1;
++		return 0;
+ 	case 1:
+ 		server->echoes = false;
+ 		server->oplocks = false;
+-		cifs_dbg(VFS, "disabling echoes and oplocks\n");
+ 		break;
+ 	case 2:
+ 		server->echoes = true;
+ 		server->oplocks = false;
+ 		server->echo_credits = 1;
+-		cifs_dbg(FYI, "disabling oplocks\n");
+ 		break;
+ 	default:
+ 		server->echoes = true;
+@@ -64,14 +63,15 @@ change_conf(struct TCP_Server_Info *serv
+ 		server->echo_credits = 1;
  	}
+ 	server->credits -= server->echo_credits + server->oplock_credits;
+-	return 0;
++	return server->credits + server->echo_credits + server->oplock_credits;
+ }
  
--	if (copy_to_user(user_kvm_nested_state->data, vmcs12, sizeof(*vmcs12)))
-+	/*
-+	 * Copy over the full allocated size of vmcs12 rather than just the size
-+	 * of the struct.
-+	 */
-+	if (copy_to_user(user_kvm_nested_state->data, vmcs12, VMCS12_SIZE))
- 		return -EFAULT;
+ static void
+ smb2_add_credits(struct TCP_Server_Info *server, const unsigned int add,
+ 		 const int optype)
+ {
+-	int *val, rc = 0;
++	int *val, rc = -1;
++
+ 	spin_lock(&server->req_lock);
+ 	val = server->ops->get_credits_field(server, optype);
  
- 	if (nested_cpu_has_shadow_vmcs(vmcs12) &&
- 	    vmcs12->vmcs_link_pointer != -1ull) {
- 		if (copy_to_user(user_kvm_nested_state->data + VMCS12_SIZE,
--				 get_shadow_vmcs12(vcpu), sizeof(*vmcs12)))
-+				 get_shadow_vmcs12(vcpu), VMCS12_SIZE))
- 			return -EFAULT;
+@@ -101,8 +101,26 @@ smb2_add_credits(struct TCP_Server_Info
  	}
+ 	spin_unlock(&server->req_lock);
+ 	wake_up(&server->request_q);
+-	if (rc)
+-		cifs_reconnect(server);
++
++	if (server->tcpStatus == CifsNeedReconnect)
++		return;
++
++	switch (rc) {
++	case -1:
++		/* change_conf hasn't been executed */
++		break;
++	case 0:
++		cifs_dbg(VFS, "Possible client or server bug - zero credits\n");
++		break;
++	case 1:
++		cifs_dbg(VFS, "disabling echoes and oplocks\n");
++		break;
++	case 2:
++		cifs_dbg(FYI, "disabling oplocks\n");
++		break;
++	default:
++		cifs_dbg(FYI, "add %u credits total=%d\n", add, rc);
++	}
+ }
  
+ static void
 
 
