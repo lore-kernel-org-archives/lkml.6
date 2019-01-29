@@ -2,127 +2,213 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8857DC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34421C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D1212087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7D7E20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:41:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="vfYGx4D6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729623AbfA2VbC (ORCPT
+        id S1728589AbfA2Vll (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 16:31:02 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:60448 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727488AbfA2VbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 16:31:02 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1goay3-0007MV-KB; Tue, 29 Jan 2019 14:30:52 -0700
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-References: <20190129174728.6430-1-jglisse@redhat.com>
- <20190129174728.6430-4-jglisse@redhat.com>
- <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
- <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
- <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
- <20190129205749.GN3176@redhat.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
-Date:   Tue, 29 Jan 2019 14:30:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190129205749.GN3176@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgg@mellanox.com, jglisse@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        Tue, 29 Jan 2019 16:41:41 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45750 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727339AbfA2Vlk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 16:41:40 -0500
+Received: by mail-qt1-f193.google.com with SMTP id e5so23975761qtr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 13:41:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version;
+        bh=p8xnOvZSHMvDSgZGAc1wzQUwKncdi8WTrdqxIvluZ0o=;
+        b=vfYGx4D6OZSneIa7NZOJF9VhGjHOCtSSkHQyiAvEeG4tFMUixTqqEVi5FzWSUxFiFp
+         rg0/BVEs/WVS/SPPolQsI/UwEMXfc/FVCxrXW9W0SgM2jluoSUHazATW5bGRAvkRGMOp
+         vM6vXENljThoz2uzjjCqj4puk3H9QKpEx22Z4lzi5tzczZC0NO5Hasbm00Ar5T74iZjr
+         BW3BKxE0V85uSntDWII+gx1LClNcqmW4/0QLFE9bfIoRrQ/Ty2jynf47P/KwJ741iVCN
+         7Oaf3VpNFfZ5DhGiVwj74XN9XBNi7co9RzeOwVtSZGNM+0weTI6+kDfe4yw8msHu4dzN
+         bIIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version;
+        bh=p8xnOvZSHMvDSgZGAc1wzQUwKncdi8WTrdqxIvluZ0o=;
+        b=oBkEc2Mkfxxm63ZwUAROx+mahRu2Nf5h5E8yIiyG6umz3wj+XbcZXmkk+yf5nHQqIA
+         j2dndjuL2/XFaNWXbUMyY88SGT7B+QSzDoJ+Z0xiw/Nn7Bn3nuaSo+QE6UHQ8Hruylff
+         c9ffxT1nSasABMruUVdslUFAfdzU3dXKQBSMbA7m5Ei3lSOCp76RsjqGU3CjvkapRpzq
+         y3GyXsqGJdaTWYUWdJaQSB8sVIRSEmFMG67qM5zmUoOOk4t4jRt4Txlg00X9Z8Rcrx96
+         8yUmUWpxvbOykY0Ls9o0A54xhDyOshcdtrkiMBHwU5BkXxhDosbDJYzXYcCiLBE60SMv
+         3bAg==
+X-Gm-Message-State: AJcUukdzotSJ5y3O2tqBsVLHlZmnvVm+7s04GwZucJC8SR3/AJXmD+Iy
+        wkuSHCr1y+KfHBFeEGYOULf6Cw==
+X-Google-Smtp-Source: ALg8bN60yPISFL3544dT/MqkG6QDr9VICZrPdWezny+OX7W1Ga8ij8CSzpschO4sUxnVEu3jJff5pw==
+X-Received: by 2002:a0c:d792:: with SMTP id z18mr26408815qvi.183.1548798098924;
+        Tue, 29 Jan 2019 13:41:38 -0800 (PST)
+Received: from tpx230-nicolas.collaboramtl (modemcable154.55-37-24.static.videotron.ca. [24.37.55.154])
+        by smtp.gmail.com with ESMTPSA id r47sm84192955qtc.77.2019.01.29.13.41.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 13:41:38 -0800 (PST)
+Message-ID: <2442b23d3b0a00c1bd441298a712888e016acf92.camel@ndufresne.ca>
+Subject: Re: [linux-sunxi] [PATCH v2 1/2] media: v4l: Add definitions for
+ the HEVC slice format and controls
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Alexandre Courbot <acourbot@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Ayaka <ayaka@soulik.info>, Randy Li <randy.li@rock-chips.com>,
+        Jernej =?UTF-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-rockchip@lists.infradead.org
+Date:   Tue, 29 Jan 2019 16:41:35 -0500
+In-Reply-To: <CAPBb6MUJu3cX9A-E32bSSjxc1cvGP83ayzZzUxa5_QMf6niK4g@mail.gmail.com>
+References: <20181123130209.11696-1-paul.kocialkowski@bootlin.com>
+         <20181123130209.11696-2-paul.kocialkowski@bootlin.com>
+         <5515174.7lFZcYkk85@jernej-laptop>
+         <ffe9c81db34b599f675ca5bbf02de360bf0a1608.camel@bootlin.com>
+         <776e63c9-d4a5-342a-e0f7-200ef144ffc4@rock-chips.com>
+         <64c793e08d61181b78125b3956ec38623fa5d261.camel@bootlin.com>
+         <D8005130-F7FD-4CBD-8396-1BB08BB08E81@soulik.info>
+         <f982ef378a8ade075bc7077b93640e20ecebf9f4.camel@bootlin.com>
+         <82FA0C3F-BC54-4D89-AECB-90D81B89B1CE@soulik.info>
+         <c3619a00-17e7-fb92-a427-a7478b96f356@soulik.info>
+         <bdf14f97e98f2fd06307545ab9038ac3c2086ae7.camel@bootlin.com>
+         <42520087-4EAE-4F7F-BCA0-42E422170E91@soulik.info>
+         <ab8ca098ad60f209fe97f79bb93b2d1e898da524.camel@bootlin.com>
+         <CAPBb6MUJu3cX9A-E32bSSjxc1cvGP83ayzZzUxa5_QMf6niK4g@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+        boundary="=-2kunDr+ALQ68ZYgOww0f"
+User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--=-2kunDr+ALQ68ZYgOww0f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2019-01-29 1:57 p.m., Jerome Glisse wrote:
-> GPU driver must be in control and must be call to. Here there is 2 cases
-> in this patchset and i should have instead posted 2 separate patchset as
-> it seems that it is confusing things.
-> 
-> For the HMM page, the physical address of the page ie the pfn does not
-> correspond to anything ie there is nothing behind it. So the importing
-> device has no idea how to get a valid physical address from an HMM page
-> only the device driver exporting its memory with HMM device memory knows
-> that.
-> 
-> 
-> For the special vma ie mmap of a device file. GPU driver do manage their
-> BAR ie the GPU have a page table that map BAR page to GPU memory and the
-> driver _constantly_ update this page table, it is reflected by invalidating
-> the CPU mapping. In fact most of the time the CPU mapping of GPU object are
-> invalid they are valid only a small fraction of their lifetime. So you
-> _must_ have some call to inform the exporting device driver that another
-> device would like to map one of its vma. The exporting device can then
-> try to avoid as much churn as possible for the importing device. But this
-> has consequence and the exporting device driver must be allow to apply
-> policy and make decission on wether or not it authorize the other device
-> to peer map its memory. For GPU the userspace application have to call
-> specific API that translate into specific ioctl which themself set flags
-> on object (in the kernel struct tracking the user space object). The only
-> way to allow program predictability is if the application can ask and know
-> if it can peer export an object (ie is there enough BAR space left).
+Le mardi 29 janvier 2019 =C3=A0 16:44 +0900, Alexandre Courbot a =C3=A9crit=
+ :
+> On Fri, Jan 25, 2019 at 10:04 PM Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+> > Hi,
+> >=20
+> > On Thu, 2019-01-24 at 20:23 +0800, Ayaka wrote:
+> > > Sent from my iPad
+> > >=20
+> > > > On Jan 24, 2019, at 6:27 PM, Paul Kocialkowski <paul.kocialkowski@b=
+ootlin.com> wrote:
+> > > >=20
+> > > > Hi,
+> > > >=20
+> > > > > On Thu, 2019-01-10 at 21:32 +0800, ayaka wrote:
+> > > > > I forget a important thing, for the rkvdec and rk hevc decoder, i=
+t would
+> > > > > requests cabac table, scaling list, picture parameter set and ref=
+erence
+> > > > > picture storing in one or various of DMA buffers. I am not talkin=
+g about
+> > > > > the data been parsed, the decoder would requests a raw data.
+> > > > >=20
+> > > > > For the pps and rps, it is possible to reuse the slice header, ju=
+st let
+> > > > > the decoder know the offset from the bitstream bufer, I would sug=
+gest to
+> > > > > add three properties(with sps) for them. But I think we need a me=
+thod to
+> > > > > mark a OUTPUT side buffer for those aux data.
+> > > >=20
+> > > > I'm quite confused about the hardware implementation then. From wha=
+t
+> > > > you're saying, it seems that it takes the raw bitstream elements ra=
+ther
+> > > > than parsed elements. Is it really a stateless implementation?
+> > > >=20
+> > > > The stateless implementation was designed with the idea that only t=
+he
+> > > > raw slice data should be passed in bitstream form to the decoder. F=
+or
+> > > > H.264, it seems that some decoders also need the slice header in ra=
+w
+> > > > bitstream form (because they take the full slice NAL unit), see the
+> > > > discussions in this thread:
+> > > > media: docs-rst: Document m2m stateless video decoder interface
+> > >=20
+> > > Stateless just mean it won=E2=80=99t track the previous result, but I=
+ don=E2=80=99t
+> > > think you can define what a date the hardware would need. Even you
+> > > just build a dpb for the decoder, it is still stateless, but parsing
+> > > less or more data from the bitstream doesn=E2=80=99t stop a decoder b=
+ecome a
+> > > stateless decoder.
+> >=20
+> > Yes fair enough, the format in which the hardware decoder takes the
+> > bitstream parameters does not make it stateless or stateful per-se.
+> > It's just that stateless decoders should have no particular reason for
+> > parsing the bitstream on their own since the hardware can be designed
+> > with registers for each relevant bitstream element to configure the
+> > decoding pipeline. That's how GPU-based decoder implementations are
+> > implemented (VAAPI/VDPAU/NVDEC, etc).
+> >=20
+> > So the format we have agreed on so far for the stateless interface is
+> > to pass parsed elements via v4l2 control structures.
+> >=20
+> > If the hardware can only work by parsing the bitstream itself, I'm not
+> > sure what the best solution would be. Reconstructing the bitstream in
+> > the kernel is a pretty bad option, but so is parsing in the kernel or
+> > having the data both in parsed and raw forms. Do you see another
+> > possibility?
+>=20
+> Is reconstructing the bitstream so bad? The v4l2 controls provide a
+> generic interface to an encoded format which the driver needs to
+> convert into a sequence that the hardware can understand. Typically
+> this is done by populating hardware-specific structures. Can't we
+> consider that in this specific instance, the hardware-specific
+> structure just happens to be identical to the original bitstream
+> format?
 
-This all seems like it's an HMM problem and not related to mapping
-BARs/"potential BARs" to userspace. If some code wants to DMA map HMM
-pages, it calls an HMM function to map them. If HMM needs to consult
-with the driver on aspects of how that's mapped, then that's between HMM
-and the driver and not something I really care about. But making the
-entire mapping stuff tied to userspace VMAs does not make sense to me.
-What if somebody wants to map some HMM pages in the same way but from
-kernel space and they therefore don't have a VMA?
+At maximum allowed bitrate for let's say HEVC (940MB/s iirc), yes, it
+would be really really bad. In GStreamer project we have discussed for
+a while (but have never done anything about) adding the ability through
+a bitmask to select which part of the stream need to be parsed, as
+parsing itself was causing some overhead. Maybe similar thing applies,
+though as per our new design, it's the fourcc that dictate the driver
+behaviour, we'd need yet another fourcc for drivers that wants the full
+bitstream (which seems odd if you have already parsed everything, I
+think this need some clarification).
 
+>=20
+> I agree that this is not strictly optimal for that particular
+> hardware, but such is the cost of abstractions, and in this specific
+> case I don't believe the cost would be particularly high?
 
->> I also figured there'd be a fault version of p2p_ioremap_device_memory()
->> for when you are mapping P2P memory and you want to assign the pages
->> lazily. Though, this can come later when someone wants to implement that.
-> 
-> For GPU the BAR address space is manage page by page and thus you do not
-> want to map a range of BAR addresses but you want to allow mapping of
-> multiple page of BAR address that are not adjacent to each other nor
-> ordered in anyway. But providing helper for simpler device does make sense.
+--=-2kunDr+ALQ68ZYgOww0f
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Well, this has little do with the backing device but how the memory is
-mapped into userspace. With p2p_ioremap_device_memory() the entire range
-is mapped into the userspace VMA immediately during the call to mmap().
-With p2p_fault_device_memory(), mmap() would not actually map anything
-and a page in the VMA would be mapped only when userspace accesses it
-(using fault()). It seems to me like GPUs would prefer the latter but if
-HMM takes care of the mapping from userspace potential pages to actual
-GPU pages through the BAR then that may not be true.
+-----BEGIN PGP SIGNATURE-----
 
-Logan
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCXFDIjwAKCRBxUwItrAao
+HMH7AJ9In4tsGt+ueK2AiiooucvNAJ+86QCdFysjbjVAgW9gD81I6i2cYXI9afk=
+=CPiw
+-----END PGP SIGNATURE-----
+
+--=-2kunDr+ALQ68ZYgOww0f--
+
