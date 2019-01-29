@@ -2,70 +2,71 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FEBEC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D8FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 090E620856
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84E0721874
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:30:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbfA2T3p (ORCPT
+        id S1729153AbfA2Ta4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:29:45 -0500
-Received: from mga03.intel.com ([134.134.136.65]:31044 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbfA2T3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:29:44 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 11:29:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
-   d="scan'208";a="129911349"
-Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
-  by orsmga002.jf.intel.com with ESMTP; 29 Jan 2019 11:29:38 -0800
-Date:   Tue, 29 Jan 2019 21:29:41 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v8 1/7] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20190129192941.GB14305@linux.intel.com>
-References: <20190124154910.29948-1-roberto.sassu@huawei.com>
- <20190124154910.29948-2-roberto.sassu@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124154910.29948-2-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 29 Jan 2019 14:30:56 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:34796 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbfA2Taz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 14:30:55 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6C5531411AC1B;
+        Tue, 29 Jan 2019 11:30:54 -0800 (PST)
+Date:   Tue, 29 Jan 2019 11:30:51 -0800 (PST)
+Message-Id: <20190129.113051.1765896152662794323.davem@davemloft.net>
+To:     jelsasser@appneta.com
+Cc:     josh@elsasser.ca, ecree@solarflare.com, ktkhai@virtuozzo.com,
+        jiri@mellanox.com, petrm@mellanox.com, edumazet@google.com,
+        amritha.nambiar@intel.com, alexander.h.duyck@intel.com,
+        lirongqing@baidu.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: set default network namespace in
+ init_dummy_netdev()
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190126223835.14613-1-jelsasser@appneta.com>
+References: <20190126223835.14613-1-jelsasser@appneta.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 29 Jan 2019 11:30:54 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 04:49:04PM +0100, Roberto Sassu wrote:
-> +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
-> +					GFP_KERNEL);
-> +	if (!chip->allocated_banks) {
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	chip->allocated_banks[0] = TPM2_ALG_SHA1;
-> +	chip->nr_allocated_banks = 1;
+From: Josh Elsasser <jelsasser@appneta.com>
+Date: Sat, 26 Jan 2019 14:38:33 -0800
 
-Everything else looks nice in this patch except this.
+> Assign a default net namespace to netdevs created by init_dummy_netdev().
+> Fixes a NULL pointer dereference caused by busy-polling a socket bound to
+> an iwlwifi wireless device, which bumps the per-net BUSYPOLLRXPACKETS stat
+> if napi_poll() received packets:
+> 
+>   BUG: unable to handle kernel NULL pointer dereference at 0000000000000190
+>   IP: napi_busy_loop+0xd6/0x200
+>   Call Trace:
+>     sock_poll+0x5e/0x80
+>     do_sys_poll+0x324/0x5a0
+>     SyS_poll+0x6c/0xf0
+>     do_syscall_64+0x6b/0x1f0
+>     entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+> 
+> Fixes: 7db6b048da3b ("net: Commonize busy polling code to focus on napi_id instead of socket")
+> Signed-off-by: Josh Elsasser <jelsasser@appneta.com>
 
-You always branch for TPM 1.2, and it will always have just SHA1. This
-is unnecessary.
-
-/Jarkko
+Applied and queued up for -stable.
