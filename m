@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A90DC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9C1C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B1C020989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B86592148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762561;
-	bh=mEfY5z3rPCFMD3bioXmMpAe9lB/NYuxSFbBlPam4Hoo=;
+	s=default; t=1548762564;
+	bh=h4MyqfzUwOBcSY72Jfd4iAj1184KcAvkP7+Frq/ghf8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BINrMgLlKrrSURPU2RWxmDtHLlEHHPaERDU82+wVYDnThwl2oCk+4H2LbTdhyuwq7
-	 8oo5MeGub4xGRCvsKkr/bDt7yUSrUP5kPr3JAlvpEtbFy9juxRzoDhfGTYKQl9gZHM
-	 Mhb/gsAi4PyNS09A+EUtK7Dii6q/+hsf1OjMTz0k=
+	b=yMtIO0CwMtTFEXykr+dPdCe/RQUGir65fzhnCJkgiV5M6AlV+puMhpomydfoH/aUs
+	 Ux4mxk+8G38o1fCHM0Dv/VsiwmoFec+V9T9eo3E0vRcFK0xeKY5uyoheUxN7gX/TNI
+	 p+wJ7znRqj/vrMdBp5eCBZmMrD7d+tHSEJIupJOA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731019AbfA2LtT (ORCPT
+        id S1731466AbfA2LtX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:49:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40312 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:49:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731258AbfA2LtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:49:18 -0500
+        id S1730991AbfA2LtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:49:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5218220869;
-        Tue, 29 Jan 2019 11:49:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 003F62148E;
+        Tue, 29 Jan 2019 11:49:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762556;
-        bh=mEfY5z3rPCFMD3bioXmMpAe9lB/NYuxSFbBlPam4Hoo=;
+        s=default; t=1548762559;
+        bh=h4MyqfzUwOBcSY72Jfd4iAj1184KcAvkP7+Frq/ghf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z2mHoR4LWby1V2NhmJSyotznpj9s5GfAO/u5xmj5occxt2wurqifxR6H5DjHgUg1r
-         vqC0b5/8eVRXO73KulXYiG5VXq4rEeCJSbe7Fezcw7ks4/zbeY+z2EzF1qmzAZx/NH
-         fwsQXi1T28X1HTQLeIj5aYrn6hE0hVZAnoJRMOPI=
+        b=cs0KwrrhJOH7nF3GGqSp1un60spkRonsvEUz20oFOhktqYCsmO3vewyaVX9t5Io+O
+         tgVRtk+ZS6tMZ60f2eYpuYKlfyZvaCWsR1gxrWA95fIRa8Pj9MJ9j3Y8N2h9NObAr8
+         zXUOMz2mjsOZsLHkdYynFDXRjcHelQZAdD3QmZsQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        stable@vger.kernel.org, Kyungtae Kim <kt0755@gmail.com>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Andre Naujoks <nautsch2@gmail.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 47/68] can: dev: __can_get_echo_skb(): fix bogous check for non-existing skb by removing it
-Date:   Tue, 29 Jan 2019 12:36:09 +0100
-Message-Id: <20190129113136.029075291@linuxfoundation.org>
+Subject: [PATCH 4.14 48/68] can: bcm: check timer values before ktime conversion
+Date:   Tue, 29 Jan 2019 12:36:10 +0100
+Message-Id: <20190129113136.102635128@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -66,84 +66,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-commit 7b12c8189a3dc50638e7d53714c88007268d47ef upstream.
+commit 93171ba6f1deffd82f381d36cb13177872d023f6 upstream.
 
-This patch revert commit 7da11ba5c506
-("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
+Kyungtae Kim detected a potential integer overflow in bcm_[rx|tx]_setup()
+when the conversion into ktime multiplies the given value with NSEC_PER_USEC
+(1000).
 
-After introduction of this change we encountered following new error
-message on various i.MX plattforms (flexcan):
+Reference: https://marc.info/?l=linux-can&m=154732118819828&w=2
 
-| flexcan 53fc8000.can can0: __can_get_echo_skb: BUG! Trying to echo non
-| existing skb: can_priv::echo_skb[0]
+Add a check for the given tv_usec, so that the value stays below one second.
+Additionally limit the tv_sec value to a reasonable value for CAN related
+use-cases of 400 days and ensure all values to be positive.
 
-The introduction of the message was a mistake because
-priv->echo_skb[idx] = NULL is a perfectly valid in following case: If
-CAN_RAW_LOOPBACK is disabled (setsockopt) in applications, the pkt_type
-of the tx skb's given to can_put_echo_skb is set to PACKET_LOOPBACK. In
-this case can_put_echo_skb will not set priv->echo_skb[idx]. It is
-therefore kept NULL.
-
-As additional argument for revert: The order of check and usage of idx
-was changed. idx is used to access an array element before checking it's
-boundaries.
-
-Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
-Fixes: 7da11ba5c506 ("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
-Cc: linux-stable <stable@vger.kernel.org>
+Reported-by: Kyungtae Kim <kt0755@gmail.com>
+Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: linux-stable <stable@vger.kernel.org> # >= 2.6.26
+Tested-by: Kyungtae Kim <kt0755@gmail.com>
+Acked-by: Andre Naujoks <nautsch2@gmail.com>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/dev.c |   27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ net/can/bcm.c |   27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
---- a/drivers/net/can/dev.c
-+++ b/drivers/net/can/dev.c
-@@ -479,8 +479,6 @@ EXPORT_SYMBOL_GPL(can_put_echo_skb);
- struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
- {
- 	struct can_priv *priv = netdev_priv(dev);
--	struct sk_buff *skb = priv->echo_skb[idx];
--	struct canfd_frame *cf;
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -67,6 +67,9 @@
+  */
+ #define MAX_NFRAMES 256
  
- 	if (idx >= priv->echo_skb_max) {
- 		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
-@@ -488,20 +486,21 @@ struct sk_buff *__can_get_echo_skb(struc
- 		return NULL;
- 	}
- 
--	if (!skb) {
--		netdev_err(dev, "%s: BUG! Trying to echo non existing skb: can_priv::echo_skb[%u]\n",
--			   __func__, idx);
--		return NULL;
--	}
-+	if (priv->echo_skb[idx]) {
-+		/* Using "struct canfd_frame::len" for the frame
-+		 * length is supported on both CAN and CANFD frames.
-+		 */
-+		struct sk_buff *skb = priv->echo_skb[idx];
-+		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
-+		u8 len = cf->len;
- 
--	/* Using "struct canfd_frame::len" for the frame
--	 * length is supported on both CAN and CANFD frames.
--	 */
--	cf = (struct canfd_frame *)skb->data;
--	*len_ptr = cf->len;
--	priv->echo_skb[idx] = NULL;
-+		*len_ptr = len;
-+		priv->echo_skb[idx] = NULL;
++/* limit timers to 400 days for sending/timeouts */
++#define BCM_TIMER_SEC_MAX (400 * 24 * 60 * 60)
 +
-+		return skb;
-+	}
- 
--	return skb;
-+	return NULL;
+ /* use of last_frames[index].flags */
+ #define RX_RECV    0x40 /* received data for this element */
+ #define RX_THR     0x80 /* element not been sent due to throttle feature */
+@@ -140,6 +143,22 @@ static inline ktime_t bcm_timeval_to_kti
+ 	return ktime_set(tv.tv_sec, tv.tv_usec * NSEC_PER_USEC);
  }
  
- /*
++/* check limitations for timeval provided by user */
++static bool bcm_is_invalid_tv(struct bcm_msg_head *msg_head)
++{
++	if ((msg_head->ival1.tv_sec < 0) ||
++	    (msg_head->ival1.tv_sec > BCM_TIMER_SEC_MAX) ||
++	    (msg_head->ival1.tv_usec < 0) ||
++	    (msg_head->ival1.tv_usec >= USEC_PER_SEC) ||
++	    (msg_head->ival2.tv_sec < 0) ||
++	    (msg_head->ival2.tv_sec > BCM_TIMER_SEC_MAX) ||
++	    (msg_head->ival2.tv_usec < 0) ||
++	    (msg_head->ival2.tv_usec >= USEC_PER_SEC))
++		return true;
++
++	return false;
++}
++
+ #define CFSIZ(flags) ((flags & CAN_FD_FRAME) ? CANFD_MTU : CAN_MTU)
+ #define OPSIZ sizeof(struct bcm_op)
+ #define MHSIZ sizeof(struct bcm_msg_head)
+@@ -886,6 +905,10 @@ static int bcm_tx_setup(struct bcm_msg_h
+ 	if (msg_head->nframes < 1 || msg_head->nframes > MAX_NFRAMES)
+ 		return -EINVAL;
+ 
++	/* check timeval limitations */
++	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
++		return -EINVAL;
++
+ 	/* check the given can_id */
+ 	op = bcm_find_op(&bo->tx_ops, msg_head, ifindex);
+ 	if (op) {
+@@ -1065,6 +1088,10 @@ static int bcm_rx_setup(struct bcm_msg_h
+ 	     (!(msg_head->can_id & CAN_RTR_FLAG))))
+ 		return -EINVAL;
+ 
++	/* check timeval limitations */
++	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
++		return -EINVAL;
++
+ 	/* check the given can_id */
+ 	op = bcm_find_op(&bo->rx_ops, msg_head, ifindex);
+ 	if (op) {
 
 
