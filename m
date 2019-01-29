@@ -2,131 +2,146 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E173C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F13C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352B72087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:19:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 514A02175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548782474;
+	bh=PyKtQ7qC0wxh867jSDYtEOMZFEMPUvSYGi3ho30F6nw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=lHqb3dW7gH4U7nx7S/boBP8YugxngtOmNNYACZAuv2bX3WZjLxUKeuTzAZJmquyV2
+	 j0fBeFD//qNtiDPLvcfPUmoqk5TvV7hJ0MrRL6S4o/8Ny3sq3yYRT+Rg9CV1AmGAOf
+	 jxJg6CRn9ziO0Lzarnq1I7n9XTMUNDmalNoVlI98=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729121AbfA2RTL (ORCPT
+        id S1728816AbfA2RVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:19:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37006 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727100AbfA2RTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:19:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 41DB4B033;
-        Tue, 29 Jan 2019 17:19:09 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 07124DA78C; Tue, 29 Jan 2019 18:18:31 +0100 (CET)
-Date:   Tue, 29 Jan 2019 18:18:30 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/11] btrfs: add zstd compression level support
-Message-ID: <20190129171830.GP2900@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Dennis Zhou <dennis@kernel.org>,
-        David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
-        Chris Mason <clm@fb.com>, Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190128212437.11597-1-dennis@kernel.org>
+        Tue, 29 Jan 2019 12:21:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35738 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727100AbfA2RVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 12:21:12 -0500
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27A402087E;
+        Tue, 29 Jan 2019 17:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548782471;
+        bh=PyKtQ7qC0wxh867jSDYtEOMZFEMPUvSYGi3ho30F6nw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=TKYbqiFIxy6BaIUEB492tU9Zc1c3Kt5rbDZYPNfIRtowMevK7x2MVXWJl9Dg9/cm4
+         xqqDWu09wDkgzwpMxUQ6aphNy6jdbMlIg4CPwovsqjAL2DnLQM0lUCADN7P1iZvKE8
+         Qr1Iw35jjnmyo7Fe+zHnTvwIwfFHNnjan5pSrp10=
+Date:   Tue, 29 Jan 2019 18:21:00 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     Piotr Sroka <piotrs@cadence.com>
+Cc:     <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        BrianNorris <computersforpeace@gmail.com>,
+        "Marek Vasut" <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: nand: Add Cadence NAND controller
+ driver
+Message-ID: <20190129182100.2fcb4e9f@bbrezillon>
+In-Reply-To: <20190129161040.20299-1-piotrs@cadence.com>
+References: <20190129160337.24350-1-piotrs@cadence.com>
+        <20190129161040.20299-1-piotrs@cadence.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128212437.11597-1-dennis@kernel.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 04:24:26PM -0500, Dennis Zhou wrote:
-> As mentioned above, a requirement that differs zstd from zlib is that
-> higher levels of compression require more memory. To manage this, each
-> compression level has its own queue of workspaces. A global LRU is used
-> to help with reclaim. To guarantee forward progress, a max level
-> workspace is preallocated and hidden from the LRU.
+Hi Piotr,
 
-Here I'd like to bring up what was mentioned in previous iteration, the
-workspace sizes.
+On Tue, 29 Jan 2019 16:10:40 +0000
+Piotr Sroka <piotrs@cadence.com> wrote:
 
-Level   Compression Memory
-1       0.8 MB
-2       1.0 MB
-3       1.3 MB
-4       0.9 MB
-5       1.4 MB
-6       1.5 MB
-7       1.4 MB
-8       1.8 MB
-9       1.8 MB
-10      1.8 MB
-11      1.8 MB
-12      1.8 MB
-13      2.3 MB
-14      2.6 MB
-15      2.6 MB
-
-and decompression needs memory of level 1. The sizes can be grouped
-together to say 3 sizes, I'm not sure that we'd really need 15 distinct
-workspaces. The reclaim mechanism helps, but I'd rather keep a smaller
-number of workspaces that covers average use.
-
-Default level is 3, that's 1.3 MiB, that also covers level 1, 2 and 4.
-For 5 to 12 it's 1.8 and the rest is 2.6 MiB.
-
-> btrfs filesystem 10 times and then read back after dropping the caches.
-> The btrfs filesystem was on an SSD.
+> Signed-off-by: Piotr Sroka <piotrs@cadence.com>
+> ---
+>  .../devicetree/bindings/mtd/cadence-nand.txt       | 35 ++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/cadence-nand.txt
 > 
-> Level   Ratio   Compression (MB/s)  Decompression (MB/s)
-> 1       2.658        438.47                910.51
-> 2       2.744        364.86                886.55
-> 3       2.801        336.33                828.41
-> 4       2.858        286.71                886.55
-> 5       2.916        212.77                556.84
-> 6       2.363        119.82                990.85
-> 7       3.000        154.06                849.30
-> 8       3.011        159.54                875.03
-> 9       3.025        100.51                940.15
-> 10      3.033        118.97                616.26
-> 11      3.036         94.19                802.11
-> 12      3.037         73.45                931.49
-> 13      3.041         55.17                835.26
-> 14      3.087         44.70                716.78
-> 15      3.126         37.30                878.84
+> diff --git a/Documentation/devicetree/bindings/mtd/cadence-nand.txt b/Documentation/devicetree/bindings/mtd/cadence-nand.txt
+> new file mode 100644
+> index 000000000000..82afa34d5652
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/cadence-nand.txt
+> @@ -0,0 +1,35 @@
+> +* Cadence NAND controller
+> +
+> +Required properties:
+> +  - compatible : "cdns,hpnfc-nand"
 
-From my casual user's perspective, I'd use the level 1 for speed, 7 for
-better ratio and 15 for the best compression. Anything else does not
-look good, though the results would vary based on the data set. I
-assume that the silesia corpus serves as a good approximation of the
-worst case average.
+"nfc" already means nand flash controller, no need to suffix it with
+-nand, "cdns,hpnfc" should be enough. 
 
-The levels 7-14 strike particularly obvious pattern: same ratio but the
-speed gets worse with each level. Taking the default level into account,
-(my) recommended levels would be 1, 3, 7, 15.
+> +  - reg : Contains two entries, each of which is a tuple consisting of a
+> +	  physical address and length. The first entry is the address and
+> +	  length of the controller register set. The second entry is the
+> +	  address and length of the Slave DMA data port.
 
-I went through the patches, looks mostly ok, I don't like the
-indirections but at the moment it's an implementation detail as I'd like
-to agree on the overall approach first.
+Please name the register ranges.
 
-We might need a few revisions or cleanup rounds to converge to an
-efficient solution, the advantage here is that it's all in-memory and
-without compatibility concerns once the level support for zstd is in and
-works.
+> +  - interrupts : The interrupt number.
+> +  - clocks: phandle of the controller core clock (nf_clk).
+> +
+> +Optional properties:
+> +Driver calculates controller timings base on NAND flash memory timings and
+> +the following delays in picoseconds.
+> +  - cdns,if-skew : Skew value of the output signals of the NAND Flash interface
+> +  - cdns,nand2-delay : Delay value of one NAND2 gate from which
+> +    the delay element is build
+> +  - cdns,board-delay : Estimated Board delay. The value includes the total
+> +    round trip delay for the signals and is used for deciding on values
+> +    associated with data read capture. The example formula for SDR mode is
+> +    the following:
+> +    board_delay = RE#PAD_delay + PCB trace to device + PCB trace from device
+> +    + DQ PAD delay
 
-For that reason, I'm not opposed to the current version of the patchset.
-Given the time in development schedule, it's really close to code
-freeze, but the functionality has a narrow scope so I'm tentatively
-counting with it for 5.1.
+The unit of those props is not defined, and if possible I'd like to
+avoid specifying custom timing adjustment values in the DT. Looks like
+some of these values are SoC specific (depends on the integration of
+this IP in a SoC) and others are board specific. For SoC specific
+values, this should be attached to the SoC specific compatible at the
+driver level. For board-specific values, I'd prefer to have a generic
+way to describe boards constraints. 
+
+Please point to the generic bindings to describe NAND chip
+representation under the NAND controller node.
+
+> +
+> +Example
+> +
+> +nand: nand@60000000 {
+
+nand_controller: nand-controller@60000000 { 
+
+> +	  compatible = "cdns,hpnfc-nand";
+> +	  reg = <0x60000000 0x10000>, <0x80000000 0x10000>;
+> +	  clocks = <&nf_clk>;
+> +	  cdns,if-skew = <50>;
+> +	  cdns,nand2-delay = <37>;
+> +	  cdns,board-delay = <4830>;
+> +	  interrupts = <2 0>;
+
+Add a NAND chip in the example.
+
+> +};
+
+Regards,
+
+Boris
