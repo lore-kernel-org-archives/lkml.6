@@ -2,86 +2,148 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D71BBC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346D2C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0BE321473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CAE321473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:08:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbfA2OFK (ORCPT
+        id S1727952AbfA2OIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 09:05:10 -0500
-Received: from mout.gmx.net ([212.227.15.15]:37871 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbfA2OFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 09:05:10 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0Lrviw-1hIp6b3gI2-013coq; Tue, 29
- Jan 2019 15:04:59 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     virtualization@lists.linux-foundation.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] tools/virtio/ringtest: Remove bogus definition of BUG_ON()
-Date:   Tue, 29 Jan 2019 15:04:42 +0100
-Message-Id: <20190129140443.31161-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
+        Tue, 29 Jan 2019 09:08:17 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53868 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725772AbfA2OIQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 09:08:16 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0TE4qBf010482
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 09:08:15 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qaqsya5v0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 09:08:15 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <gerald.schaefer@de.ibm.com>;
+        Tue, 29 Jan 2019 14:08:13 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 29 Jan 2019 14:08:10 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0TE89WO9044292
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 29 Jan 2019 14:08:09 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9D14A4054;
+        Tue, 29 Jan 2019 14:08:09 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 77D93A405C;
+        Tue, 29 Jan 2019 14:08:09 +0000 (GMT)
+Received: from thinkpad (unknown [9.152.99.81])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 29 Jan 2019 14:08:09 +0000 (GMT)
+Date:   Tue, 29 Jan 2019 15:08:08 +0100
+From:   Gerald Schaefer <gerald.schaefer@de.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] mm, memory_hotplug: fix uninitialized pages
+ fallouts.
+In-Reply-To: <20190129134920.GM18811@dhcp22.suse.cz>
+References: <20190128144506.15603-1-mhocko@kernel.org>
+        <20190129141447.34aa9d0c@thinkpad>
+        <20190129134920.GM18811@dhcp22.suse.cz>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+x-cbid: 19012914-0028-0000-0000-000003405403
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012914-0029-0000-0000-000023FD56DF
+Message-Id: <20190129150808.685d7d39@thinkpad>
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:O4tH2Jvu8GNI54JYwR7AAyInn2uL7AQn8ej8rN7eEu7YD+4zVd1
- Uwe6Yy2zFWIjBRqr4rHmMDbvGGyELWgZEnPrM29tsGG5DwSUPddL32PxW8DC4IXccymj//W
- xZff0OJ2NRSb159Bx+L5osEhPx13kjuhTLZERXXJ24oEbIXBVOOZ/C1s1f6irek9hFkc9t2
- LPu2uptA7yN/KS+rIoJWQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:kfxA3/ft8EQ=:TMIfa5xpNyRwScuNgooU/3
- 7Rypj+Ay7wPnxMl08aE7G723GKiA6/qsNLu6zlFrhTCRxsWBJomNJvWuWIJWlIzgxC+c0ECtR
- JgaJmlYSPhTr6WpWiNcoryD/ZlinYvgDvCkDdfQ+a1Wqr97vVDpfBW5h8hbH/ED2wxnfjeXbH
- /leVER8vFqMD66kbLA9SIPPSKlDTlKrR/xaZpUMjUFWgV93q1QmHeeZsav2oeWAtcjC8TVcZG
- cCzTzDhDmt+BGSMbHcixO9q/nWBY4mYG8+P+r8UKUTxiymdRNWAqF5CTk0HPEi2H02wNJ++GV
- IjoykseILbMbtTeUJV2J9PUNpFg5rfU42oUrK03N22u/4KQ+LCovqBbEvt2ECyNZsb45CLHu4
- XUyCR0sbRQomSWThHudt+SN4GxDtYPkuIrFGDLsRIOyQ6LYvK8bRHXoSPs5/Jtq/9WLI0oWn6
- BaaqHmevlqQQ5tDkdiez+/AI3KSeRoR38NUlSGOyB4zP6qkIPRwRH/tyx/IUO7eTPzaJHxqLh
- Wt+KVVVU52/FHsYWGIHygdyVRszi8EmQsHRjrv1hibhS1Oy76v+NVWpqxYA0YiIckKyzv+d9V
- Y4iERWNs+U+cZ/3oRIt7rjkhSNbHxTRufF6O8slb5cgcSQMOw5ffxomNDrdiV7dcMzS9hxKKS
- RV8S2ugnu6UxSaj7+h69zmU5Yob1+Azre/9csXnjE8kyJI5rX4DEYVad03uMhe4GsgmKaC+Tl
- 9zwmmtljA3ohq98X9PDbuvLPWA0XkbhIU0YrcjTt1J8D9cryd55ocTQUfupa6h4qTZnsa1b9P
- di0xMa6CuGUa07Mk3TVbngDWUSF2/WPZbpmMtVSLthWKuZiqBTplCNfi8U2xYXXGEosqbaWBK
- q+tb5V7sR/Dzpf3Ta8ZQyCiJC9+uM9HDVehNNb9ieqgk5d7KceNzBetkTToyDFFWCPqBsv1kp
- PlGI25rLWBg==
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901290107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BUG_ON(x) should raise an error if x is true, but assert(x) raises an
-error if x is false. Remove this bogus definition of BUG_ON(), which
-isn't used anyway.
+On Tue, 29 Jan 2019 14:49:20 +0100
+Michal Hocko <mhocko@kernel.org> wrote:
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
----
- tools/virtio/ringtest/ptr_ring.c | 1 -
- 1 file changed, 1 deletion(-)
+> On Tue 29-01-19 14:14:47, Gerald Schaefer wrote:
+> > On Mon, 28 Jan 2019 15:45:04 +0100
+> > Michal Hocko <mhocko@kernel.org> wrote:
+> > 
+> > > Hi,
+> > > Mikhail has posted fixes for the two bugs quite some time ago [1]. I
+> > > have pushed back on those fixes because I believed that it is much
+> > > better to plug the problem at the initialization time rather than play
+> > > whack-a-mole all over the hotplug code and find all the places which
+> > > expect the full memory section to be initialized. We have ended up with
+> > > 2830bf6f05fb ("mm, memory_hotplug: initialize struct pages for the full
+> > > memory section") merged and cause a regression [2][3]. The reason is
+> > > that there might be memory layouts when two NUMA nodes share the same
+> > > memory section so the merged fix is simply incorrect.
+> > > 
+> > > In order to plug this hole we really have to be zone range aware in
+> > > those handlers. I have split up the original patch into two. One is
+> > > unchanged (patch 2) and I took a different approach for `removable'
+> > > crash. It would be great if Mikhail could test it still works for his
+> > > memory layout.
+> > > 
+> > > [1] http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com
+> > > [2] https://bugzilla.redhat.com/show_bug.cgi?id=1666948
+> > > [3] http://lkml.kernel.org/r/20190125163938.GA20411@dhcp22.suse.cz
+> > 
+> > I verified that both patches fix the issues we had with valid_zones
+> > (with mem=2050M) and removable (with mem=3075M).
+> > 
+> > However, the call trace in the description of your patch 1 is wrong.
+> > You basically have the same call trace for test_pages_in_a_zone in
+> > both patches. The "removable" patch should have the call trace for
+> > is_mem_section_removable from Mikhails original patches:
+> 
+> Thanks for testing. Can I use you Tested-by?
 
-diff --git a/tools/virtio/ringtest/ptr_ring.c b/tools/virtio/ringtest/ptr_ring.c
-index 2d566fbd236b..c9b26335f891 100644
---- a/tools/virtio/ringtest/ptr_ring.c
-+++ b/tools/virtio/ringtest/ptr_ring.c
-@@ -18,7 +18,6 @@
- #define ALIGN(x, a) (((x) + (a) - 1) / (a) * (a))
- #define SIZE_MAX        (~(size_t)0)
- #define KMALLOC_MAX_SIZE SIZE_MAX
--#define BUG_ON(x) assert(x)
- 
- typedef pthread_spinlock_t  spinlock_t;
- 
--- 
-2.20.1
+Sure, forgot to add this:
+Tested-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+
+> 
+> >  CONFIG_DEBUG_VM_PGFLAGS=y
+> >  kernel parameter mem=3075M
+> >  --------------------------
+> >  page:000003d08300c000 is uninitialized and poisoned
+> >  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+> >  Call Trace:
+> >  ([<000000000038596c>] is_mem_section_removable+0xb4/0x190)
+> >   [<00000000008f12fa>] show_mem_removable+0x9a/0xd8
+> >   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
+> >   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
+> >   [<00000000003e4194>] seq_read+0x204/0x480
+> >   [<00000000003b53ea>] __vfs_read+0x32/0x178
+> >   [<00000000003b55b2>] vfs_read+0x82/0x138
+> >   [<00000000003b5be2>] ksys_read+0x5a/0xb0
+> >   [<0000000000b86ba0>] system_call+0xdc/0x2d8
+> >  Last Breaking-Event-Address:
+> >   [<000000000038596c>] is_mem_section_removable+0xb4/0x190
+> >  Kernel panic - not syncing: Fatal exception: panic_on_oops
+> 
+> Yeah, this is c&p mistake on my end. I will use this trace instead.
+> Thanks for spotting.
 
