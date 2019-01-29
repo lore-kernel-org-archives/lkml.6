@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698B8C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 698A7C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 348FE2083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:56:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3955B2083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:56:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762999;
-	bh=xGSMM84BiLjJtt6DlPf3Hw8iW3o+WaM2FdVJQi4QoL8=;
+	s=default; t=1548763009;
+	bh=2mApwcoZburJVTc3kX/EkXxfqXHKEo4xacA3fuhDySE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MOk3WmVU5USPq8qvYBHed9+zPhOJL9lQ8WB94nNaGNxTEwsqhZMg81zG2nF9CMsAl
-	 7qJlK+RlcX8VN9ZvGnKfze21GQ/VN6z7KywO+ODY4fPJoLZiBwW16zB0/yNIkO69ty
-	 xShOpTR7fyHwgTdnYqjDCfa4k4nxVntd8toaGKxM=
+	b=r5X+vb8lFDtp1/1KBkKEce+wiMp6YCXrICMwDzkKNknOjlz6kTxqag380yukwn1s0
+	 gBGwRXeNx7VLroaEOiZ1QtNRW+YG7cK+5aqczvcg/uJHeHjOXPbZaaAIkaIBXqYln0
+	 OxOYgppdfTUNPeY/9lzJgAto3n4j0UWCITo6wV5Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731534AbfA2Ltu (ORCPT
+        id S1731873AbfA2L4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:49:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40836 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:56:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731520AbfA2Ltm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:49:42 -0500
+        id S1731501AbfA2Ltg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:49:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88D822086C;
-        Tue, 29 Jan 2019 11:49:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7461F2086C;
+        Tue, 29 Jan 2019 11:49:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762582;
-        bh=xGSMM84BiLjJtt6DlPf3Hw8iW3o+WaM2FdVJQi4QoL8=;
+        s=default; t=1548762575;
+        bh=2mApwcoZburJVTc3kX/EkXxfqXHKEo4xacA3fuhDySE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UGg2Y2Wfi0Dytd1zYLY461NAaaulVfAIB7C4zNnqnF4EzYsuCp2KeDrD+75pMuv1c
-         bE1fEK/cQUsYfKCBT9bXBO3O/WYsN/VTTSQXuCTaqVXwWf64oQosjpYKQLwcOkwQlZ
-         qVMFTSsZvXe7mXtQKbSQLXD0/E7aayfdr04JKSLc=
+        b=XZL2b9ywQ3FHI8/iwK++kSFGpuQrrRbtno5sTfM1djZBCpYkF8N02Vb3N5Wb/WvHh
+         1gYCjRFL+NpcesyqkfPeyIFOLbKQ6ghrD76GVFvIanTrX4YkBfIKIFY2FtRSOyluUw
+         IuXhYGdrkNK+8cGPtxojkX1bk2hFad4luCURn1y0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 55/68] s390/smp: Fix calling smp_call_ipl_cpu() from ipl CPU
-Date:   Tue, 29 Jan 2019 12:36:17 +0100
-Message-Id: <20190129113136.709314899@linuxfoundation.org>
+        stable@vger.kernel.org, Kyungtae Kim <kt0755@gmail.com>,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 36/68] Input: uinput - fix undefined behavior in uinput_validate_absinfo()
+Date:   Tue, 29 Jan 2019 12:35:58 +0100
+Message-Id: <20190129113134.578200748@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -66,79 +66,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit 60f1bf29c0b2519989927cae640cd1f50f59dc7f upstream.
+commit d77651a227f8920dd7ec179b84e400cce844eeb3 upstream.
 
-When calling smp_call_ipl_cpu() from the IPL CPU, we will try to read
-from pcpu_devices->lowcore. However, due to prefixing, that will result
-in reading from absolute address 0 on that CPU. We have to go via the
-actual lowcore instead.
+An integer overflow may arise in uinput_validate_absinfo() if "max - min"
+can't be represented by an "int". We should check for overflow before
+trying to use the result.
 
-This means that right now, we will read lc->nodat_stack == 0 and
-therfore work on a very wrong stack.
-
-This BUG essentially broke rebooting under QEMU TCG (which will report
-a low address protection exception). And checking under KVM, it is
-also broken under KVM. With 1 VCPU it can be easily triggered.
-
-:/# echo 1 > /proc/sys/kernel/sysrq
-:/# echo b > /proc/sysrq-trigger
-[   28.476745] sysrq: SysRq : Resetting
-[   28.476793] Kernel stack overflow.
-[   28.476817] CPU: 0 PID: 424 Comm: sh Not tainted 5.0.0-rc1+ #13
-[   28.476820] Hardware name: IBM 2964 NE1 716 (KVM/Linux)
-[   28.476826] Krnl PSW : 0400c00180000000 0000000000115c0c (pcpu_delegate+0x12c/0x140)
-[   28.476861]            R:0 T:1 IO:0 EX:0 Key:0 M:0 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
-[   28.476863] Krnl GPRS: ffffffffffffffff 0000000000000000 000000000010dff8 0000000000000000
-[   28.476864]            0000000000000000 0000000000000000 0000000000ab7090 000003e0006efbf0
-[   28.476864]            000000000010dff8 0000000000000000 0000000000000000 0000000000000000
-[   28.476865]            000000007fffc000 0000000000730408 000003e0006efc58 0000000000000000
-[   28.476887] Krnl Code: 0000000000115bfe: 4170f000            la      %r7,0(%r15)
-[   28.476887]            0000000000115c02: 41f0a000            la      %r15,0(%r10)
-[   28.476887]           #0000000000115c06: e370f0980024        stg     %r7,152(%r15)
-[   28.476887]           >0000000000115c0c: c0e5fffff86e        brasl   %r14,114ce8
-[   28.476887]            0000000000115c12: 41f07000            la      %r15,0(%r7)
-[   28.476887]            0000000000115c16: a7f4ffa8            brc     15,115b66
-[   28.476887]            0000000000115c1a: 0707                bcr     0,%r7
-[   28.476887]            0000000000115c1c: 0707                bcr     0,%r7
-[   28.476901] Call Trace:
-[   28.476902] Last Breaking-Event-Address:
-[   28.476920]  [<0000000000a01c4a>] arch_call_rest_init+0x22/0x80
-[   28.476927] Kernel panic - not syncing: Corrupt kernel stack, can't continue.
-[   28.476930] CPU: 0 PID: 424 Comm: sh Not tainted 5.0.0-rc1+ #13
-[   28.476932] Hardware name: IBM 2964 NE1 716 (KVM/Linux)
-[   28.476932] Call Trace:
-
-Fixes: 2f859d0dad81 ("s390/smp: reduce size of struct pcpu")
-Cc: stable@vger.kernel.org # 4.0+
-Reported-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Reported-by: Kyungtae Kim <kt0755@gmail.com>
+Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/s390/kernel/smp.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/input/misc/uinput.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/s390/kernel/smp.c
-+++ b/arch/s390/kernel/smp.c
-@@ -387,9 +387,13 @@ void smp_call_online_cpu(void (*func)(vo
-  */
- void smp_call_ipl_cpu(void (*func)(void *), void *data)
- {
-+	struct lowcore *lc = pcpu_devices->lowcore;
-+
-+	if (pcpu_devices[0].address == stap())
-+		lc = &S390_lowcore;
-+
- 	pcpu_delegate(&pcpu_devices[0], func, data,
--		      pcpu_devices->lowcore->panic_stack -
--		      PANIC_FRAME_OFFSET + PAGE_SIZE);
-+		      lc->panic_stack - PANIC_FRAME_OFFSET + PAGE_SIZE);
- }
+--- a/drivers/input/misc/uinput.c
++++ b/drivers/input/misc/uinput.c
+@@ -39,6 +39,7 @@
+ #include <linux/fs.h>
+ #include <linux/miscdevice.h>
+ #include <linux/uinput.h>
++#include <linux/overflow.h>
+ #include <linux/input/mt.h>
+ #include "../input-compat.h"
  
- int smp_find_processor_id(u16 address)
+@@ -356,7 +357,7 @@ static int uinput_open(struct inode *ino
+ static int uinput_validate_absinfo(struct input_dev *dev, unsigned int code,
+ 				   const struct input_absinfo *abs)
+ {
+-	int min, max;
++	int min, max, range;
+ 
+ 	min = abs->minimum;
+ 	max = abs->maximum;
+@@ -368,7 +369,7 @@ static int uinput_validate_absinfo(struc
+ 		return -EINVAL;
+ 	}
+ 
+-	if (abs->flat > max - min) {
++	if (!check_sub_overflow(max, min, &range) && abs->flat > range) {
+ 		printk(KERN_DEBUG
+ 		       "%s: abs_flat #%02x out of range: %d (min:%d/max:%d)\n",
+ 		       UINPUT_NAME, code, abs->flat, min, max);
 
 
