@@ -2,134 +2,172 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40319C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BC5C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:30:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 060E420989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:27:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="qE8Cja9L"
+	by mail.kernel.org (Postfix) with ESMTP id 9D753214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfA2O1y (ORCPT
+        id S1727073AbfA2Oak (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 09:27:54 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:3014 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbfA2O1x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 09:27:53 -0500
-X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
-   d="scan'208";a="25895027"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 29 Jan 2019 07:27:52 -0700
-Received: from NAM03-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 29 Jan 2019 07:27:52 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jXLTfSCgOxTz49TvZec9yUEqMqoI2GobRAnzLlalWMA=;
- b=qE8Cja9LQG+SlkRysDe3guGmbaiMiTwxMCFa25E6/wT1tkR8dloaUDPSMaNhbh6aFdCqCWpoq/CKlLIjIXxgm3IkKoR/OWr53Zl2wwN6A7CfzVQC7lbBpCr2tuXRkbzD292JNfPubqzjxam3w1+i0AFtXGdOmiQWTRQDrmBhzko=
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
- MWHPR11MB1693.namprd11.prod.outlook.com (10.169.231.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Tue, 29 Jan 2019 14:27:50 +0000
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::b92e:f982:af32:2887]) by MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::b92e:f982:af32:2887%5]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
- 14:27:50 +0000
-From:   <Nicolas.Ferre@microchip.com>
-To:     <jonas@norrbonn.se>, <linux-kernel@vger.kernel.org>
-CC:     <broonie@kernel.org>, <alexandre.belloni@bootlin.com>,
-        <Ludovic.Desroches@microchip.com>, <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <Tudor.Ambarus@microchip.com>
-Subject: Re: [PATCH v4 2/2] spi-atmel: support inter-word delay
-Thread-Topic: [PATCH v4 2/2] spi-atmel: support inter-word delay
-Thread-Index: AQHUt97QlH7O0YtX50uZ4B6TyEb/dg==
-Date:   Tue, 29 Jan 2019 14:27:50 +0000
-Message-ID: <995b3885-254b-7932-8d05-77271a2c070d@microchip.com>
-References: <20190129083844.20572-1-jonas@norrbonn.se>
- <20190129083844.20572-3-jonas@norrbonn.se>
-In-Reply-To: <20190129083844.20572-3-jonas@norrbonn.se>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CWLP123CA0113.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:401:5f::29) To MWHPR11MB1662.namprd11.prod.outlook.com
- (2603:10b6:301:e::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Nicolas.Ferre@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [195.6.168.232]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR11MB1693;6:C+PlLJxqVxrNu5q9yz9A/JSaBnHh0ykdsuQwHaipWsn7tOxl5iNCUd33uNSAROqrjgClZnj6CZuaXlyAw8KQNN/PL1N5070ZMJd7M8AXXvBWjVCa5gF0/NJh21W/XMDe1A8mh3LA54rb1gBab8OnC0mTPa2rCstdndFNaqRJmEnsEtfKozTQy+/KWxi0WS8MQxE1noVrp/dHN4vXhPvZJjU4EYzh7v8jVDXdI9ZPaL/GKSvsQgSXEJwqXWOW+G/+ZbbEKKDKJyBgQ2B7prxz5azX4n964TMtg/ytFk9vwZ3Yg3sYIzNuDiHtiojEjS67Ur75ep7uWlpu0bl7T+47Y69wDrIBaNY5AuzQvMgXg9siP3yp/jDd5quC6UXtndblVzGzID7qvTUOqPWuu0W7gRU248hSweqz7MRXUOnHpuvE2LTdhGKvHdZtMU4L4F0dLy240l1cLNdoR/EPrd2kiw==;5:WdZEX0drYahv1HV8bY5rPlnJCwZl4E1THPJefwCtPzbeGE8erE24fwsoDcuNB6xknxu/UdUhBTXa0igoRB5OlfhUZ56DKn7xoTnKvjbv/3+Hn6aluU6B3Q6JyGbEVMFL1TlN7wTq1NwQY4GmqyhDQcv7mf48jjW3Z2CcvKHB/aplSkFdVEzAYctG8+Dw5Zwxv9TRN4aCJO1VgCALpAS5IQ==;7:6+6fwpHbPOPQa9R9QEpre+PYwLYv7mbaQRcHI1rVO8YMInHjyXHeSQgyuGlVZo1BZZivZrHx2wN1jxEAK2vvzDWyTBWYXDWORQnQyWndHsFacfZFluu/I9ffaxx6h4isvsQRaOffq3WdZ/HGSI72zA==
-x-ms-office365-filtering-correlation-id: 6ce775d6-45ab-4d89-0086-08d685f5f299
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1693;
-x-ms-traffictypediagnostic: MWHPR11MB1693:
-x-microsoft-antispam-prvs: <MWHPR11MB169316417E72DD7609B917A0E0970@MWHPR11MB1693.namprd11.prod.outlook.com>
-x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(136003)(376002)(396003)(199004)(189003)(53936002)(476003)(486006)(97736004)(446003)(31686004)(2616005)(11346002)(105586002)(31696002)(71200400001)(26005)(186003)(4326008)(86362001)(6486002)(81156014)(71190400001)(6246003)(107886003)(81166006)(106356001)(8676002)(6436002)(8936002)(36756003)(66066001)(25786009)(256004)(52116002)(2501003)(76176011)(386003)(6506007)(68736007)(6512007)(99286004)(14454004)(316002)(7736002)(53546011)(6116002)(478600001)(305945005)(110136005)(54906003)(229853002)(3846002)(102836004)(2906002)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1693;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ZkbNVIYS1tG4nK3Vm8t2Tk/b0aBbq9rG7y65cB+oyGim2zcp36pijDVzWW3lpohviAkUBO42f35DyDpltQ0YPeycD/V2rWcCPaaaV+Xg+9zgt02Lz8hx+aRh4KWlbGbFg4MyZZKeuir0DUo00YpwMlfXo7PqnWN3osPpaes97rihi+HjKyQoRCo6tSyTVG+xYjSUFBI3UOXi52UzLyEYDWm9K8uqG+kvV8Zd9wGUzhNMK9h3w3tDDjOBb8bB91ZCjEaePhZYu0QFmkhHhWc5b7apCFOQbZvYSwzo8fUh8I233CNQByk8J3sJ+ix/36FQzE/+P8CBqMdDtgaoR4MbtK3QgZ5+L4D5MIzJZtBexCOLqP0WK8Y0uziv9JR/fZ2hX1VbvR9QMX9QdKqwMW+dspUquGra00cJzQme0WcSRqg=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3F49B008FA53E043A2C06EAF1D5FC410@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 29 Jan 2019 09:30:40 -0500
+Received: from mout.gmx.net ([212.227.15.18]:48191 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725769AbfA2Oak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 09:30:40 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx003
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0LiDrv-1hT1sH3x7j-00nMpi; Tue, 29
+ Jan 2019 15:29:55 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-doc@vger.kernel.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Markus Heiser <markus.heiser@darmarit.de>,
+        Minghui Liu <minghui.liu.95@gmail.com>,
+        Michael Rodin <michael-git@rodin.online>,
+        Grigory Shipunov <mail@oxapentane.com>,
+        Alessia Mantegazza <amantegazza@vaga.pv.it>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] doc: Change LXR references to elixir.bootlin.com
+Date:   Tue, 29 Jan 2019 15:29:11 +0100
+Message-Id: <20190129142923.5743-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ce775d6-45ab-4d89-0086-08d685f5f299
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 14:27:47.7161
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1693
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:RFtztAhG7nP8GfwnhwXEK2KhyRvO70mIOqq7+GF5TmHi+tUlUay
+ nZErkbyxFPcQ75a/ZWLcQ8f/bZ1ahlKumvTmgRCnqtil3KbykQSUc4+4m4rkf0aCRbO3D7I
+ 3t6Gck/jXezZFVIQgOeYu6Se8Yvt3xU0tXgwSbW8Wde4Ko0SQrEbtj9CIHauQ4wol6kdKWo
+ ku1M10AevX1bI5kuuAqIw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VEI5B0CCF3w=:1zEhRwo9oSPM4WTdGknaxp
+ FKcDrT/g4uNGNvQYRosT6P/CCvrLfxiiQJ9TP0FGl1ftiERCEop1r/syea7xgvY3Wyxxaq1ON
+ C0LChSgytchGYveNFTVYVkHbWF7aQ0L4GjKW30+xQJ1jYNxssudLUcrXeTS7xLC9xc3XRbVQy
+ R94zHJnvMtdKJiidItUCod4C1Y2C6gLKZ/s0+S5wmqMs/iQ45fezY+OhfyygTiiXXSNEmrw+f
+ GtCOlTVndgb1btjpCYkuTAnp30AVx2RTsTz9ijaoZpFGW7QjbUX7y4bwTHPBWYmlizG40AHtK
+ +hh/LXEsPz+LltgSuCWg+YkYi0PqJPEe3RRVZIoxPN+5zx5+lmED/BGcrWAY/1AZ0ytmxlXYH
+ RCoEQwMvE8nxk0myOJe7C5uFrTKr2jpu9qJWy/yOpF0oSEna6Np1knrpvEEK56Ev9Rfq2gLhE
+ 38vaxzOXhejjpVFRBDgwtA0PvHbb6Os7Ex4bYXDRIyLHVLFpDi9WoEHA+Dy+A5QW02r4lF24P
+ J9sobn4CsJv5/WPb/oZSJXMzYJ+ZMrP+5rffzrUVnrT3OZo/gEc/iXTMlI9htEHpnWIakPCyK
+ ZZeNJprZAQBv5JnfJ1bUoka2vnTEyK0eAdkRqFdCcEh5ova1wh+M0RDaZgY/dXo/5ff/99YTL
+ olpZB4eqUVqEfyDH8CHOnmHPE1vcnLEsPfcfjYXS7VkovrKxAiSrRrnLNYw7r1/CDA4Zk7zr9
+ ThOAjbHSlBs/pQDvuo5m/y0UUhEwjkdS8kLC3b1GEmAQJ1vLzpcHKZw2vrppPYrlPvLM/WZTb
+ 6eWDKnYgdSNYOa6ydtpVxB0qe+0u6aVXF9JmFL+GEB/Oo7jFKrifFGUom4wxgcZJSI4S8bo4n
+ NSpKNiJQDAmMl/s+ljwYU9/Z6befZ/59olpKPgHIpYnm+BVLGZRlERZHeHa4x7VR9hj4wkwW+
+ hWEzFGSBZfA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjkvMDEvMjAxOSBhdCAwOTozOCwgSm9uYXMgQm9ubiB3cm90ZToNCj4gSWYgdGhlIFNQSSBz
-bGF2ZSByZXF1aXJlcyBhbiBpbnRlci13b3JkIGRlbGF5LCBjb25maWd1cmUgdGhlIERMWUJDVA0K
-PiByZWdpc3RlciBhY2NvcmRpbmdseS4NCj4gDQo+IFRlc3RlZCBvbiBhIFNBTUE1RDIgYm9hcmQg
-KGRlcml2ZWQgZnJvbSBTQU1BNUQyLVhwbGFpbmVkIHJlZmVyZW5jZQ0KPiBib2FyZCkuDQo+IA0K
-PiBTaWduZWQtb2ZmLWJ5OiBKb25hcyBCb25uIDxqb25hc0Bub3JyYm9ubi5zZT4NCj4gQ0M6IE5p
-Y29sYXMgRmVycmUgPG5pY29sYXMuZmVycmVAbWljcm9jaGlwLmNvbT4NCj4gQ0M6IE1hcmsgQnJv
-d24gPGJyb29uaWVAa2VybmVsLm9yZz4NCj4gQ0M6IEFsZXhhbmRyZSBCZWxsb25pIDxhbGV4YW5k
-cmUuYmVsbG9uaUBib290bGluLmNvbT4NCj4gQ0M6IEx1ZG92aWMgRGVzcm9jaGVzIDxsdWRvdmlj
-LmRlc3JvY2hlc0BtaWNyb2NoaXAuY29tPg0KPiBDQzogbGludXgtc3BpQHZnZXIua2VybmVsLm9y
-Zw0KPiBDQzogbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IC0tLQ0KPiAg
-IGRyaXZlcnMvc3BpL3NwaS1hdG1lbC5jIHwgMTggKysrKysrKysrKysrKy0tLS0tDQo+ICAgMSBm
-aWxlIGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9zcGkvc3BpLWF0bWVsLmMgYi9kcml2ZXJzL3NwaS9zcGktYXRtZWwu
-Yw0KPiBpbmRleCA3NGZkZGNkMzI4MmIuLjYzODlhMjI4ZDJmNSAxMDA2NDQNCj4gLS0tIGEvZHJp
-dmVycy9zcGkvc3BpLWF0bWVsLmMNCj4gKysrIGIvZHJpdmVycy9zcGkvc3BpLWF0bWVsLmMNCj4g
-QEAgLTEyMDksMTMgKzEyMDksMjEgQEAgc3RhdGljIGludCBhdG1lbF9zcGlfc2V0dXAoc3RydWN0
-IHNwaV9kZXZpY2UgKnNwaSkNCj4gICAJCWNzciB8PSBTUElfQklUKENTQUFUKTsNCj4gICANCj4g
-ICAJLyogRExZQlMgaXMgbW9zdGx5IGlycmVsZXZhbnQgc2luY2Ugd2UgbWFuYWdlIGNoaXBzZWxl
-Y3QgdXNpbmcgR1BJT3MuDQo+IC0JICoNCj4gLQkgKiBETFlCQ1Qgd291bGQgYWRkIGRlbGF5cyBi
-ZXR3ZWVuIHdvcmRzLCBzbG93aW5nIGRvd24gdHJhbnNmZXJzLg0KPiAtCSAqIEl0IGNvdWxkIHBv
-dGVudGlhbGx5IGJlIHVzZWZ1bCB0byBjb3BlIHdpdGggRE1BIGJvdHRsZW5lY2tzLCBidXQNCj4g
-LQkgKiBpbiB0aG9zZSBjYXNlcyBpdCdzIHByb2JhYmx5IGJlc3QgdG8ganVzdCB1c2UgYSBsb3dl
-ciBiaXRyYXRlLg0KPiAgIAkgKi8NCj4gICAJY3NyIHw9IFNQSV9CRihETFlCUywgMCk7DQo+IC0J
-Y3NyIHw9IFNQSV9CRihETFlCQ1QsIDApOw0KPiArDQo+ICsJLyogRExZQkNUIGFkZHMgZGVsYXlz
-IGJldHdlZW4gd29yZHMuICBUaGlzIGlzIHVzZWZ1bCBmb3Igc2xvdyBkZXZpY2VzDQo+ICsJICog
-dGhhdCBuZWVkIGEgYml0IG9mIHRpbWUgdG8gc2V0dXAgdGhlIG5leHQgdHJhbnNmZXIuDQo+ICsJ
-ICovDQo+ICsJaWYgKHNwaS0+d29yZF9kZWxheV91cykgew0KDQpXZWxsLi4uDQoNCj4gKwkJY3Ny
-IHw9IFNQSV9CRihETFlCQ1QsDQo+ICsJCQljbGFtcF90KHU4LA0KPiArCQkJCShhcy0+c3BpX2Ns
-ay8xMDAwMDAwKnNwaS0+d29yZF9kZWxheV91cyk+PjUsDQo+ICsJCQkJMSwgMjU1KSk7DQoNCi4u
-LiB3aHkgbm90IHNpbXBsaWZ5aW5nIHRvOg0KKwkJCQkwLCAyNTUpKTsNCmFuZCByZW1vdmUgdGhl
-IHRlc3QgYWx0b2dldGhlciwgYWZ0ZXIgYWxsPw0KDQo+ICsJfSBlbHNlIHsNCj4gKwkJY3NyIHw9
-IFNQSV9CRihETFlCQ1QsIDApOw0KPiArCX0NCj4gKw0KPiAgIA0KPiAgIAkvKiBjaGlwc2VsZWN0
-IG11c3QgaGF2ZSBiZWVuIG11eGVkIGFzIEdQSU8gKGUuZy4gaW4gYm9hcmQgc2V0dXApICovDQo+
-ICAgCW5wY3NfcGluID0gKHVuc2lnbmVkIGxvbmcpc3BpLT5jb250cm9sbGVyX2RhdGE7DQo+IA0K
-DQoNCi0tIA0KTmljb2xhcyBGZXJyZQ0K
+Recently, Free Electrons was renamed to Bootlin[1]. Less recently, the
+Linux Cross Reference (LXR) at lxr.free-electrons.com was replaced by
+Elixir[2], and lxr.free-electrons.com redirected first to
+elixir.free-electrons.com and now to elixir.bootlin.com.
+
+[1]: https://bootlin.com/blog/free-electrons-becomes-bootlin/
+[2]: https://github.com/free-electrons/elixir
+
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+---
+ Documentation/input/devices/xpad.rst               | 2 +-
+ Documentation/process/howto.rst                    | 2 +-
+ Documentation/process/kernel-docs.rst              | 2 +-
+ Documentation/translations/it_IT/process/howto.rst | 2 +-
+ Documentation/translations/ja_JP/howto.rst         | 2 +-
+ Documentation/translations/ko_KR/howto.rst         | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/input/devices/xpad.rst b/Documentation/input/devices/xpad.rst
+index b8bd65962dd8..95d410b27a96 100644
+--- a/Documentation/input/devices/xpad.rst
++++ b/Documentation/input/devices/xpad.rst
+@@ -218,7 +218,7 @@ References
+ .. [1] http://euc.jp/periphs/xbox-controller.ja.html (ITO Takayuki)
+ .. [2] http://xpad.xbox-scene.com/
+ .. [3] http://www.markosweb.com/www/xboxhackz.com/
+-.. [4] http://lxr.free-electrons.com/ident?i=xpad_device
++.. [4] https://elixir.bootlin.com/ident?i=xpad_device
+ 
+ 
+ Historic Edits
+diff --git a/Documentation/process/howto.rst b/Documentation/process/howto.rst
+index 58b2f46c4f98..bdd2eda81a1c 100644
+--- a/Documentation/process/howto.rst
++++ b/Documentation/process/howto.rst
+@@ -225,7 +225,7 @@ Cross-Reference project, which is able to present source code in a
+ self-referential, indexed webpage format. An excellent up-to-date
+ repository of the kernel code may be found at:
+ 
+-	http://lxr.free-electrons.com/
++	https://elixir.bootlin.com/
+ 
+ 
+ The development process
+diff --git a/Documentation/process/kernel-docs.rst b/Documentation/process/kernel-docs.rst
+index 3fb28de556e4..ab12dddc773e 100644
+--- a/Documentation/process/kernel-docs.rst
++++ b/Documentation/process/kernel-docs.rst
+@@ -565,7 +565,7 @@ Miscellaneous
+ 
+     * Name: **Cross-Referencing Linux**
+ 
+-      :URL: http://lxr.free-electrons.com/
++      :URL: https://elixir.bootlin.com/
+       :Keywords: Browsing source code.
+       :Description: Another web-based Linux kernel source code browser.
+         Lots of cross references to variables and functions. You can see
+diff --git a/Documentation/translations/it_IT/process/howto.rst b/Documentation/translations/it_IT/process/howto.rst
+index 909e6a55bc43..b323c4b309a5 100644
+--- a/Documentation/translations/it_IT/process/howto.rst
++++ b/Documentation/translations/it_IT/process/howto.rst
+@@ -234,7 +234,7 @@ il progetto Linux Cross-Reference, che è in grado di presentare codice
+ sorgente in un formato autoreferenziale ed indicizzato. Un eccellente ed
+ aggiornata fonte di consultazione del codice del kernel la potete trovare qui:
+ 
+-	http://lxr.free-electrons.com/
++	https://elixir.bootlin.com
+ 
+ 
+ Il processo di sviluppo
+diff --git a/Documentation/translations/ja_JP/howto.rst b/Documentation/translations/ja_JP/howto.rst
+index f3116381c26b..2ca9389d5915 100644
+--- a/Documentation/translations/ja_JP/howto.rst
++++ b/Documentation/translations/ja_JP/howto.rst
+@@ -245,7 +245,7 @@ Linux カーネルソースツリーの中に含まれる、きれいにし、
+ できます。この最新の素晴しいカーネルコードのリポジトリは以下で見つかり
+ ます -
+ 
+-	http://lxr.free-electrons.com/
++	https://elixir.bootlin.com/
+ 
+ 開発プロセス
+ ------------
+diff --git a/Documentation/translations/ko_KR/howto.rst b/Documentation/translations/ko_KR/howto.rst
+index a8197e072599..9fc869087e9c 100644
+--- a/Documentation/translations/ko_KR/howto.rst
++++ b/Documentation/translations/ko_KR/howto.rst
+@@ -235,7 +235,7 @@ ReST 마크업을 사용하는 문서들은 Documentation/output 에 생성된
+ 소스코드를 인덱스된 웹 페이지들의 형태로 보여준다. 최신의 멋진 커널
+ 코드 저장소는 다음을 통하여 참조할 수 있다.
+ 
+-      http://lxr.free-electrons.com/
++      https://elixir.bootlin.com/
+ 
+ 
+ 개발 프로세스
+-- 
+2.20.1
+
