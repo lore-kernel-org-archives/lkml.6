@@ -2,169 +2,89 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C536C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2949C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E42672175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:56:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA3121473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:57:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bEzq6B3D"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="nvXS2ieJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbfA2R4N (ORCPT
+        id S1728796AbfA2R5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:56:13 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:45679 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbfA2Rz1 (ORCPT
+        Tue, 29 Jan 2019 12:57:05 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37086 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfA2R5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:55:27 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190129175526euoutp012a41f5856b58cc0cd5139874dc49c58e~_Y1I5j8DI0797207972euoutp01C
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 17:55:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190129175526euoutp012a41f5856b58cc0cd5139874dc49c58e~_Y1I5j8DI0797207972euoutp01C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1548784526;
-        bh=gAM5TRktEeGRdR7DfQ1QhDkjvwroBHzBH5M4lKDBh1Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bEzq6B3DmqMsZEnRRl7lguHVZlTesLuoR6aefyjzNzBPXHcqtAWkR+JVMQuw3N7Zs
-         A4tscuZqM36hiiyC5XlfAvlL+WXe4rCgpZZFJVV03DG5tlpQfy6AiDdYL+8zxiYcY2
-         3WxycELe37dPBcrMaRbw6Bju4rK4BQRjFpIjlnQM=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190129175525eucas1p289d4501ce42aa2c37b6a93ec07a0d52c~_Y1IGlY7s2879728797eucas1p2p;
-        Tue, 29 Jan 2019 17:55:25 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 99.44.04806.D83905C5; Tue, 29
-        Jan 2019 17:55:25 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190129175524eucas1p1ead98a852f002461984b9b99c5b5b7e4~_Y1HRQhfr2162921629eucas1p1s;
-        Tue, 29 Jan 2019 17:55:24 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190129175524eusmtrp28592a47ced23435297f3449e94bf5e52~_Y1HCT9Y60424104241eusmtrp2Y;
-        Tue, 29 Jan 2019 17:55:24 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-2b-5c50938db44e
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id F5.EE.04128.C83905C5; Tue, 29
-        Jan 2019 17:55:24 +0000 (GMT)
-Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190129175523eusmtip198cda2cb230269cc0b4d2d7659406751~_Y1GUpRX52139021390eusmtip1G;
-        Tue, 29 Jan 2019 17:55:23 +0000 (GMT)
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
-        cw00.choi@samsung.com, kyungmin.park@samsung.com,
-        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
-        myungjoo.ham@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/8] clk: samsung: add BPLL rate table for Exynos 5422
- SoC
-Date:   Tue, 29 Jan 2019 18:55:09 +0100
-Message-Id: <1548784514-26649-4-git-send-email-l.luba@partner.samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548784514-26649-1-git-send-email-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSa0hTYRj22zlnOw6Xx2n5eUlhFF7AqUzoA0UKioZCDu2XCXbKg4pu2o6X
-        vEAqlbo0rShNRUsDZWTqElve8r4snIrLWxallJJahkqEpjnPrH/P91ze5+XlIzHxM8KZjFel
-        MGoVnSjhC/G2od9Gn+J7iii/6jIJailvItDUxiKBagaMBCpZWMbQ6GizAI3krQjQbI4r0i1M
-        Euhn0UcCTbRX8dF68QBA5aPdPNQ48EGAxt+cQe9zG/iofyWfQDuTLfhJO/mP6RsCuU5byJc/
-        f3JN3vu9kye/3aoF8nWdm4IfKQyKYRLj0xi1b/BFYVxXxzaerBdfbW6/LsgBa7YaYE1CKgAO
-        P+zCNUBIiqkGAA26aoJ7bAD4or/SoqwDuLR4Bz+IDOY3W4R6AKcrNfi/SN/jDb4GkCSfkkK9
-        9oo54EBlwbmpV5jZg1E5GNTnle5PsqfC4LvdzX0/Th2Hf36lm2kRFQIHvxRjXJkbnDEW7mNr
-        KhQWLMwB8xxIdQtg3rIWcKbTsHdyyLKdPfxmaBVw2BXuvqzhcZiFIwVaPoezYf6w3uIJhP2G
-        ccK8A0Z5waZ2X44+BU2jzcBMQ+oQnF61M9PYHrzbVoZxtAgW3BRzbk/YWjRmKToC658+sAyX
-        w4ptHcZdpxrAmp4ZXilwr/hf9ggALXBkUlllLMPKVEy6lKWVbKoqVno5SakDe7/o7Y5hUw+6
-        ty/1AYoEEhuRVYQiSkzQaWyGsg9AEpM4iPy3wqLEohg6I5NRJ0WrUxMZtg+4kLjEUZRl9emC
-        mIqlU5gEhklm1Acqj7R2zgEeinrMVFoyb6BlQcFSk2iwNkBwXqpICNmoOxdo8xlQVWuzmWvH
-        Om8lTYyRpqWdE/dt20o91z2cvM96Re68DnP+7dKbEVNW4a6cm189mu1WHUk7+vVb5YZ3LGwZ
-        I7Y7osOI8MJa2qmkJ1kWElH3dUkli/V1Pdzo7xgvDJ3yaZPgbBzt742pWfovBEsQvUEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42I5/e/4Xd2eyQExBtO3qFhsnLGe1eL6l+es
-        FvOPnGO16H/8mtni/PkN7BZnm96wW9xqkLHY9Pgaq8XHnnusFpd3zWGz+Nx7hNFixvl9TBZr
-        j9xlt7h4ytXiduMKNovDb9pZLf5d28jiIOjx/kYru8emVZ1sHpuX1HscfLeHyaNvyypGj8+b
-        5ALYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQy
-        9u7+w1KwQ6hiw64W9gbGD/xdjJwcEgImEkfbN7B0MXJxCAksZZS4snABM0RCTGLSvu3sELaw
-        xJ9rXWwgtpDAJ0aJJfeSuhg5ONgE9CR2rCoECYsI1Ev0v7nEBjKHWaCPWaLx+GJWkISwgK/E
-        t1eTmEHqWQRUJf5+LwcJ8wp4SRx92gu1Sk7i5rlOMJtTwFui4/EdRohVXhLfXv9gm8DIt4CR
-        YRWjSGppcW56brGRXnFibnFpXrpecn7uJkZgZGw79nPLDsaud8GHGAU4GJV4eBmCA2KEWBPL
-        iitzDzFKcDArifAa/vaPEeJNSaysSi3Kjy8qzUktPsRoCnTTRGYp0eR8YNTmlcQbmhqaW1ga
-        mhubG5tZKInznjeojBISSE8sSc1OTS1ILYLpY+LglGpg1FH0nmIdd2fm2XhelfPbH3m/2v9h
-        l0RoXZPE5KX3BK8+KHCNVYk9utzg4p2vwQmv3mmGqqv/aZl448fBRYH2vJnf93N+rj386eXR
-        hdnfbVzuc1cvWGyg9eCLZWV5jKPyw/KvofWLlhimVewxbjG5sM0p1SL2Ur+YeO28pJ2zAmbd
-        lFhewC8bocRSnJFoqMVcVJwIAPbT0eSiAgAA
-X-CMS-MailID: 20190129175524eucas1p1ead98a852f002461984b9b99c5b5b7e4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190129175524eucas1p1ead98a852f002461984b9b99c5b5b7e4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190129175524eucas1p1ead98a852f002461984b9b99c5b5b7e4
-References: <1548784514-26649-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190129175524eucas1p1ead98a852f002461984b9b99c5b5b7e4@eucas1p1.samsung.com>
+        Tue, 29 Jan 2019 12:57:05 -0500
+Received: by mail-qt1-f193.google.com with SMTP id t33so23228626qtt.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 09:57:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TK5Q823N9cdnhH5uLAjCRM7lh8nNdY6bySdVO5kXkJY=;
+        b=nvXS2ieJhUJo1q93q2C4dgblvLoIVTtzfhlOML7Pv2s4Ya/MPzD98iRLtvagakVjpD
+         nd6cj/MZlvF76e7FLdkqTWb5Gjp15kFb3VbD2uRSLlaBrl8n8DR/qFLsTElhlFCSN1wk
+         i0HqCIrtZO6lDTT8g2TSn8Z0xXgfpWw0Jqqph7fuyG/YY5htb9vlO/R8DGmYQk47Ss27
+         NpJxvdeU8c1U94NfqBn8rH9dOBykC0ANE/oBMbxyXLO8KGJ8ai+fEXoxlekaCJ6TbtUz
+         BOhI4f35Wr1PtThunHWZCd0y7v8SxkUzUmz5eKp+PSljI7euZwcr0HvXqH9K4EyJttnV
+         OpYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TK5Q823N9cdnhH5uLAjCRM7lh8nNdY6bySdVO5kXkJY=;
+        b=rW2M9O4q9wXs1fAYuht7uA70WLx0x+HJ1RjiOFkv4z1H+rWHQA+n+8rQ4LI94BX3/q
+         rDqhxg0I3hCnYbmL8v3unfoQZWy5QdigePMA1bBypUQvG/p9YDyHSw69gaCh6py12gsu
+         UQG7AuFrHSqeLqrJbopylkhdkBSDgXRX1DnKbfH9GNkxfYSUv/VRZ7o/AmqJdjb32MmH
+         d1u2shi4ULR3F3BG0jmUfG+gfax04EMoHQn4U2SyKfJUOxE8/sf6Ej292pyn+NzFbTO9
+         /naRcPb2fluOfKHsvaFEes0jp6C+lLBh/wsUEKBwRITCdLag+kz+21+zqHCYlwuixz+3
+         H+6g==
+X-Gm-Message-State: AJcUukfyQcYMiuAAfw4eiz5NamaMYiwJUS22spW3tvORonQh+tM4hvQ4
+        LF5rc4oOIq6bGsv5qviPiAELcg==
+X-Google-Smtp-Source: ALg8bN7SNuyaiK0XMh3lJ6B36ZVxJjtCSQ5MVAqHBKbfKuYywSIvaefjJDFIPC3aTtnqYAoPEKd1Mw==
+X-Received: by 2002:a0c:df12:: with SMTP id g18mr24827625qvl.208.1548784624452;
+        Tue, 29 Jan 2019 09:57:04 -0800 (PST)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id g19sm44610190qke.2.2019.01.29.09.57.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 09:57:03 -0800 (PST)
+Date:   Tue, 29 Jan 2019 12:57:02 -0500
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/11] btrfs: add macros for compression type and level
+Message-ID: <20190129175701.auj22biuwwrwtufd@MacBook-Pro-91.local>
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190128212437.11597-2-dennis@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128212437.11597-2-dennis@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new table rate for BPLL for Exynos5422 SoC supporting Dynamic Memory
-Controller frequencies for driver's DRAM timings.
+On Mon, Jan 28, 2019 at 04:24:27PM -0500, Dennis Zhou wrote:
+> It is very easy to miss places that rely on a certain bitshifting for
+> decyphering the type_level overloading. Make macros handle this instead.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
 
-CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
-CC: Chanwoo Choi <cw00.choi@samsung.com>
-CC: Michael Turquette <mturquette@baylibre.com>
-CC: Stephen Boyd <sboyd@kernel.org>
-CC: Kukjin Kim <kgene@kernel.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>
-CC: linux-samsung-soc@vger.kernel.org
-CC: linux-clk@vger.kernel.org
-CC: linux-arm-kernel@lists.infradead.org
-CC: linux-kernel@vger.kernel.org
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 3e87421..8bf9579 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1325,6 +1325,19 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
- 	PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
- };
- 
-+static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
-+	PLL_35XX_RATE(24 * MHZ, 933000000, 311, 4, 1),
-+	PLL_35XX_RATE(24 * MHZ, 825000000, 275, 4, 1),
-+	PLL_35XX_RATE(24 * MHZ, 728000000, 182, 3, 1),
-+	PLL_35XX_RATE(24 * MHZ, 633000000, 211, 4, 1),
-+	PLL_35XX_RATE(24 * MHZ, 543000000, 181, 2, 2),
-+	PLL_35XX_RATE(24 * MHZ, 413000000, 413, 6, 2),
-+	PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
-+	PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
-+	PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
-+	PLL_35XX_RATE(24 * MHZ, 138000000, 184, 2, 4),
-+};
-+
- static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
- 	PLL_36XX_RATE(24 * MHZ, 600000000U, 100, 2, 1, 0),
- 	PLL_36XX_RATE(24 * MHZ, 400000000U, 200, 3, 2, 0),
-@@ -1467,7 +1480,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
- 		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
- 		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
--		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
-+		exynos5x_plls[bpll].rate_table = exynos5422_bpll_rate_table;
- 	}
- 
- 	samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_plls),
--- 
-2.7.4
+Thanks,
 
+Josef
