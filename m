@@ -2,52 +2,53 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC190C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CEAC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F85E20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79D89214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762081;
-	bh=smwXdD9wso+KYmeTABeRP4XY/VUixQvW9JNwMHcnoZw=;
+	s=default; t=1548762086;
+	bh=M5hrgy6SiKcpHeJvF6woOgZaBHWv6O3Uii5QTDeoz0c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GhKfH6Pi/EuhuoMYnPvHtuQcbEd7gZSOHVe21K5S4JuoO3G8qdmmZgQU1BUciKyCj
-	 KTyFnkGL73Pve+nE0mKi8ATMHIGQWzZPx4YYcJVoI0DIHT4uqAxeNOIpEoUqmIy6Bq
-	 AXJjUIrkUGB6Tw90uEVKN04QrF7IJ1wbMoyRRl3c=
+	b=gktGaAd7uu8Ch2ErJH2isdFtuawLyvl9SGDRDYNSQcixqPPfFunsuW5yOXkT4/qJ2
+	 99d0c5oIBclJCXREONz2ZBL/hOGS7k4zmm622l9jyRFbNodd4XYQB9ZZ0zDHorQuhd
+	 CRLa89LVZUu5hHkJOCs+WU0recCJTIQxxXgMMBdQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729376AbfA2LlS (ORCPT
+        id S1729361AbfA2LlZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58534 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:41:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729818AbfA2LlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:41:15 -0500
+        id S1729835AbfA2LlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:41:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6611021873;
-        Tue, 29 Jan 2019 11:41:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48B6B20857;
+        Tue, 29 Jan 2019 11:41:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762074;
-        bh=smwXdD9wso+KYmeTABeRP4XY/VUixQvW9JNwMHcnoZw=;
+        s=default; t=1548762080;
+        bh=M5hrgy6SiKcpHeJvF6woOgZaBHWv6O3Uii5QTDeoz0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pu6igajVbt2lIP0i5K9AVFdXte2K84Kgf2uqDFtN+9c8xbkrzFEXqr8f0Xvo2nqt0
-         QamO4zUoZztJb4tQdHHvH2wAXkTIIYkiORhc2lM3WdqOHpwM6EA0RbUdPrt2sUiMRS
-         F/nYSwU0rn/Vn5icwOLtApFjdDS9GqH+d3g2BHbg=
+        b=cSkZ6hAso23RJchLFiPyngA5KaiBKMEHL9QohlvXl1/1hDM6clVFt5swf6lpvX6wm
+         cvxt4cDUSkeqrwV7c/c6wptd5uYn+Rj4MN/ydKb5tz89UIQg6UjdjpXH2YY+zosNM8
+         S0YuqMZA6ZLrzRKx8cTpAg6ZLZ1DkHc22jOb9Z3g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kyungtae Kim <kt0755@gmail.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.20 068/117] Input: uinput - fix undefined behavior in uinput_validate_absinfo()
-Date:   Tue, 29 Jan 2019 12:35:19 +0100
-Message-Id: <20190129113210.978723533@linuxfoundation.org>
+        stable@vger.kernel.org, Sujith Pandel <sujith_pandel@dell.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.20 070/117] acpi/nfit: Fix command-supported detection
+Date:   Tue, 29 Jan 2019 12:35:21 +0100
+Message-Id: <20190129113211.055444036@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -66,51 +67,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit d77651a227f8920dd7ec179b84e400cce844eeb3 upstream.
+commit 11189c1089da413aa4b5fd6be4c4d47c78968819 upstream.
 
-An integer overflow may arise in uinput_validate_absinfo() if "max - min"
-can't be represented by an "int". We should check for overflow before
-trying to use the result.
+The _DSM function number validation only happens to succeed when the
+generic Linux command number translation corresponds with a
+DSM-family-specific function number. This breaks NVDIMM-N
+implementations that correctly implement _LSR, _LSW, and _LSI, but do
+not happen to publish support for DSM function numbers 4, 5, and 6.
 
-Reported-by: Kyungtae Kim <kt0755@gmail.com>
-Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Recall that the support for _LS{I,R,W} family of methods results in the
+DIMM being marked as supporting those command numbers at
+acpi_nfit_register_dimms() time. The DSM function mask is only used for
+ND_CMD_CALL support of non-NVDIMM_FAMILY_INTEL devices.
+
+Fixes: 31eca76ba2fc ("nfit, libnvdimm: limited/whitelisted dimm command...")
+Cc: <stable@vger.kernel.org>
+Link: https://github.com/pmem/ndctl/issues/78
+Reported-by: Sujith Pandel <sujith_pandel@dell.com>
+Tested-by: Sujith Pandel <sujith_pandel@dell.com>
+Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/misc/uinput.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/acpi/nfit/core.c |   54 ++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 40 insertions(+), 14 deletions(-)
 
---- a/drivers/input/misc/uinput.c
-+++ b/drivers/input/misc/uinput.c
-@@ -39,6 +39,7 @@
- #include <linux/init.h>
- #include <linux/fs.h>
- #include <linux/miscdevice.h>
-+#include <linux/overflow.h>
- #include <linux/input/mt.h>
- #include "../input-compat.h"
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -394,6 +394,32 @@ static u8 nfit_dsm_revid(unsigned family
+ 	return id;
+ }
  
-@@ -405,7 +406,7 @@ static int uinput_open(struct inode *ino
- static int uinput_validate_absinfo(struct input_dev *dev, unsigned int code,
- 				   const struct input_absinfo *abs)
++static int cmd_to_func(struct nfit_mem *nfit_mem, unsigned int cmd,
++		struct nd_cmd_pkg *call_pkg)
++{
++	if (call_pkg) {
++		int i;
++
++		if (nfit_mem->family != call_pkg->nd_family)
++			return -ENOTTY;
++
++		for (i = 0; i < ARRAY_SIZE(call_pkg->nd_reserved2); i++)
++			if (call_pkg->nd_reserved2[i])
++				return -EINVAL;
++		return call_pkg->nd_command;
++	}
++
++	/* Linux ND commands == NVDIMM_FAMILY_INTEL function numbers */
++	if (nfit_mem->family == NVDIMM_FAMILY_INTEL)
++		return cmd;
++
++	/*
++	 * Force function number validation to fail since 0 is never
++	 * published as a valid function in dsm_mask.
++	 */
++	return 0;
++}
++
+ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+ 		unsigned int cmd, void *buf, unsigned int buf_len, int *cmd_rc)
  {
--	int min, max;
-+	int min, max, range;
+@@ -407,30 +433,23 @@ int acpi_nfit_ctl(struct nvdimm_bus_desc
+ 	unsigned long cmd_mask, dsm_mask;
+ 	u32 offset, fw_status = 0;
+ 	acpi_handle handle;
+-	unsigned int func;
+ 	const guid_t *guid;
+-	int rc, i;
++	int func, rc, i;
  
- 	min = abs->minimum;
- 	max = abs->maximum;
-@@ -417,7 +418,7 @@ static int uinput_validate_absinfo(struc
- 		return -EINVAL;
- 	}
+ 	if (cmd_rc)
+ 		*cmd_rc = -EINVAL;
+-	func = cmd;
+-	if (cmd == ND_CMD_CALL) {
+-		call_pkg = buf;
+-		func = call_pkg->nd_command;
+-
+-		for (i = 0; i < ARRAY_SIZE(call_pkg->nd_reserved2); i++)
+-			if (call_pkg->nd_reserved2[i])
+-				return -EINVAL;
+-	}
  
--	if (abs->flat > max - min) {
-+	if (!check_sub_overflow(max, min, &range) && abs->flat > range) {
- 		printk(KERN_DEBUG
- 		       "%s: abs_flat #%02x out of range: %d (min:%d/max:%d)\n",
- 		       UINPUT_NAME, code, abs->flat, min, max);
+ 	if (nvdimm) {
+ 		struct acpi_device *adev = nfit_mem->adev;
+ 
+ 		if (!adev)
+ 			return -ENOTTY;
+-		if (call_pkg && nfit_mem->family != call_pkg->nd_family)
+-			return -ENOTTY;
+ 
++		if (cmd == ND_CMD_CALL)
++			call_pkg = buf;
++		func = cmd_to_func(nfit_mem, cmd, call_pkg);
++		if (func < 0)
++			return func;
+ 		dimm_name = nvdimm_name(nvdimm);
+ 		cmd_name = nvdimm_cmd_name(cmd);
+ 		cmd_mask = nvdimm_cmd_mask(nvdimm);
+@@ -441,6 +460,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_desc
+ 	} else {
+ 		struct acpi_device *adev = to_acpi_dev(acpi_desc);
+ 
++		func = cmd;
+ 		cmd_name = nvdimm_bus_cmd_name(cmd);
+ 		cmd_mask = nd_desc->cmd_mask;
+ 		dsm_mask = cmd_mask;
+@@ -455,7 +475,13 @@ int acpi_nfit_ctl(struct nvdimm_bus_desc
+ 	if (!desc || (cmd && (desc->out_num + desc->in_num == 0)))
+ 		return -ENOTTY;
+ 
+-	if (!test_bit(cmd, &cmd_mask) || !test_bit(func, &dsm_mask))
++	/*
++	 * Check for a valid command.  For ND_CMD_CALL, we also have to
++	 * make sure that the DSM function is supported.
++	 */
++	if (cmd == ND_CMD_CALL && !test_bit(func, &dsm_mask))
++		return -ENOTTY;
++	else if (!test_bit(cmd, &cmd_mask))
+ 		return -ENOTTY;
+ 
+ 	in_obj.type = ACPI_TYPE_PACKAGE;
 
 
