@@ -2,137 +2,225 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EB6C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79ADC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 441BD2083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:30:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB7D02083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:30:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TE6BoR6h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbfA2MaL (ORCPT
+        id S1728968AbfA2MaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:30:11 -0500
-Received: from mgwkm04.jp.fujitsu.com ([202.219.69.171]:12515 "EHLO
-        mgwkm04.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728814AbfA2MaI (ORCPT
+        Tue, 29 Jan 2019 07:30:16 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37492 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728892AbfA2MaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 07:30:08 -0500
-Received: from kw-mxq.gw.nic.fujitsu.com (unknown [192.168.231.130]) by mgwkm04.jp.fujitsu.com with smtp
-         id 0b63_1865_47820b2b_2bab_4999_a708_85581dd09052;
-        Tue, 29 Jan 2019 21:30:01 +0900
-Received: from g01jpfmpwkw03.exch.g01.fujitsu.local (g01jpfmpwkw03.exch.g01.fujitsu.local [10.0.193.57])
-        by kw-mxq.gw.nic.fujitsu.com (Postfix) with ESMTP id F3404AC00E7
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 21:30:00 +0900 (JST)
-Received: from G01JPEXCHKW18.g01.fujitsu.local (G01JPEXCHKW18.g01.fujitsu.local [10.0.194.57])
-        by g01jpfmpwkw03.exch.g01.fujitsu.local (Postfix) with ESMTP id 1118FBD66DF;
-        Tue, 29 Jan 2019 21:30:00 +0900 (JST)
-Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
- g01jpexchkw18 ([10.0.194.57]) with mapi id 14.03.0415.000; Tue, 29 Jan 2019
- 21:29:59 +0900
-From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-To:     'Catalin Marinas' <catalin.marinas@arm.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'Mark Rutland'" <mark.rutland@arm.com>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "'will.deacon@arm.com'" <will.deacon@arm.com>,
-        "'james.morse@arm.com'" <james.morse@arm.com>
-Subject: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Topic: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Index: AdS3xNmu3mhhC9MiQRq9+42ieDlaoA==
-Date:   Tue, 29 Jan 2019 12:29:58 +0000
-Message-ID: <8898674D84E3B24BA3A2D289B872026A6A2C04E6@G01JPEXMBKW03>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
-x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
-x-originating-ip: [10.18.70.198]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-MML: disable
+        Tue, 29 Jan 2019 07:30:12 -0500
+Received: by mail-pg1-f196.google.com with SMTP id c25so8682367pgb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 04:30:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=NI1nWA7/IJcIbEMIXPw1bIIK+zBG3TZvrY5SOoR7CDk=;
+        b=TE6BoR6hFdggH7YHDuwb8cRe27bwwsk/5RaPSpXmwz5OOYgzUHVwRalJl8jXhuvg/3
+         xLmJkGYEt1U+O8yQLxsAqMwgpxiUF1qxIFZzJhsydGI1/dK7SKd8g00ouzDuos8B0SDi
+         uJF7+GRYQAreRW5KAcwoNSp50isZMNnmBkrVs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=NI1nWA7/IJcIbEMIXPw1bIIK+zBG3TZvrY5SOoR7CDk=;
+        b=Kd+4ppoSGB6ZapFAg2m23mxXypXIYuGECyXB/YVcam2rK+LBmRrtzKM7Tg45mJO7uV
+         x/rjQmMi9g6jK9umDiXcMz7Pb6sSstq4z5XGCU1XsMp8MkIn54nb0AEUFhvUQvp/Y4/r
+         Y+IMx5Hf8b9pZJldW7iU/NuISCPnMarKmgjNYYpA3UdXAixI5vnLCQDHF5m3l1ExC7IV
+         qiJjx/X6dAwsLB/AhDPhId2ljOn01ZHPZ81NTiQwwWFtNbqopbVFHV8Dcg/gkQmqp46J
+         xpBzaW9JTsIpSjnnTAC72j3lJ/JWvhD12ySBfHsM6Kxq8ZxYDL519eDRyPTyxyS90J1p
+         ZV8w==
+X-Gm-Message-State: AJcUukcr+wgr5GeAYlcj/zstl/qCEK6mU0s8ojM0DwjIMczfeXfxfCcZ
+        hTSr0L1oYXxGmfe5/Kst7Em89A==
+X-Google-Smtp-Source: ALg8bN4T43leE616wX+Qude3sup4NoaS7teWsvdlG5skVd2EHDhdVrvfwLDPwS3meApCd2IDYzwrEw==
+X-Received: by 2002:a62:5c41:: with SMTP id q62mr26456042pfb.171.1548765010935;
+        Tue, 29 Jan 2019 04:30:10 -0800 (PST)
+Received: from localhost.localdomain (li569-141.members.linode.com. [192.155.82.141])
+        by smtp.gmail.com with ESMTPSA id h64sm59552502pfc.142.2019.01.29.04.30.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 04:30:10 -0800 (PST)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Coresight ML <coresight@lists.linaro.org>
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v7 5/8] perf cs-etm: Change tuple from traceID-CPU# to traceID-metadata
+Date:   Tue, 29 Jan 2019 20:28:39 +0800
+Message-Id: <20190129122842.32041-6-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190129122842.32041-1-leo.yan@linaro.org>
+References: <20190129122842.32041-1-leo.yan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gc29tZSB2YXJpYW50cyBvZiB0aGUgRnVqaXRzdS1BNjRGWCBjb3JlcyB2
-ZXIoMS4wLCAxLjEpLCAgDQptZW1vcnkgYWNjZXNzZXMgbWF5IGNhdXNlIHVu
-ZGVmaW5lZCBmYXVsdCAoRGF0YSBhYm9ydCwgREZTQz0wYjExMTExMSkuDQpU
-aGlzIHByb2JsZW0gd2lsbCBiZSBmaXhlZCBieSBuZXh0IHZlcnNpb24gb2Yg
-RnVqaXRzdS1BNjRGWC4NCg0KVGhpcyBmYXVsdCBvY2N1cnMgdW5kZXIgYSBz
-cGVjaWZpYyBoYXJkd2FyZSBjb25kaXRpb24gDQp3aGVuIGEgbG9hZC9zdG9y
-ZSBpbnN0cnVjdGlvbiBwZXJmb3JtIGFuIGFkZHJlc3MgdHJhbnNsYXRpb24g
-dXNpbmc6DQogIGNhc2UtMSAgVFRCUjBfRUwxIHdpdGggVENSX0VMMS5ORkQw
-ID09IDEuDQogIGNhc2UtMiAgVFRCUjBfRUwyIHdpdGggVENSX0VMMi5ORkQw
-ID09IDEuDQogIGNhc2UtMyAgVFRCUjFfRUwxIHdpdGggVENSX0VMMS5ORkQx
-ID09IDEuDQogIGNhc2UtNCAgVFRCUjFfRUwyIHdpdGggVENSX0VMMi5ORkQx
-ID09IDEuDQpBbmQgdGhpcyBmYXVsdCBvY2N1cnMgY29tcGxldGVseSBzcHVy
-aW91cy4NCg0KU2luY2UgVENSX0VMeC5ORkQxIGlzIHNldCB0byAnMScgYXQg
-dGhlIGtlcm5lbCBpbiB2ZXJzaW9ucyANCnBhc3QgNC4xNywgdGhlIGNhc2Ut
-MyBvciBjYXNlLTQgbWF5IGhhcHBlbi4NCg0KVGhpcyBmYXVsdCBjYW4gYmUg
-dGFrZW4gb25seSBhdCBzdGFnZS0xLCANCnNvIHRoaXMgZmF1bHQgaXMgdGFr
-ZW4gZnJvbSBFTDAgdG8gRUwxL0VMMiwgZnJvbSBFTDEgdG8gRUwxLCANCm9y
-IGZyb20gRUwyIHRvIEVMMi4NCg0KSSB3b3VsZCBsaWtlIHRvIHBvc3QgYSB3
-b3JrYXJvdW5kIHRvIGF2b2lkIHRoaXMgcHJvYmxlbSBvbiANCmV4aXN0aW5n
-IEZ1aml0c3UtQTY0RlggdmVyc2lvbi4NCg0KVGhlcmUgYXJlIDIgcG9pbnRz
-IGluIHRoaXMgd29ya2Fyb3VuZC4NClBvaW50MTogdHJhcCBmcm9tIEVMMSB0
-byBFTDEsIEVMMiB0byBFTDINClNldCAnMCcgdG8gVENSX0VMeC5ORkQxaW4g
-a2VybmVsLWVudHJ5LCANCmFuZCBzZXQgJzEnIGluIGtlcm5lbC1leGl0Lg0K
-DQpGcm9tIHRoZSB2aWV3IHBvaW50IG9mIEFSTSBzcGVjaWZpY2F0aW9uLCB0
-aGVyZSBpcyBubyBwcm9ibGVtIHRvIA0KcmVzZXQgVENSX0VMeC57TkZEMCxO
-RkQxfSB3aGlsZSBpbiBFTDEvRUwyLCBiZWNhdXNlIA0KVENSX0VMeC57TkZE
-MCxORkQxfSBjb250cm9scyB3aGV0aGVyIHRvIHBlcmZvcm0gYSB0cmFuc2xh
-dGlvbiANCnRhYmxlIHdhbGsgaW4gcmVzcG9uc2UgdG8gYW4gYWNjZXNzIGZy
-b20gRUwwLg0KDQpJIGNvbmZpcm1lZCB0aGF0Og0K44O7VGhlcmUgaXMgbm8g
-bG9hZC9zdG9yZSBpbnN0cnVjdGlvbiBiZXR3ZWVuIA0KICB0cmFtcF92ZW50
-cnkgYW5kIHNldHRpbmcgVENSX0VMeC5ORkQxIHRvICcwJy4NCuODu1RoZXJl
-IGlzIG5vIGxvYWQvc3RvcmUgaW5zdHJ1Y3Rpb24gYmV0d2VlbiANCiAgc2V0
-dGluZyBUQ1JfRUx4Lk5GRDEgdG8gJzEnIGFuZCB0cmFtcF9leGl0Lg0KDQpQ
-b2ludDI6IHRyYXAgZnJvbSBFTDAgdG8gRUwxL0VMMg0KU2luY2UgdGhpcyBm
-YXVsdCBhbHNvIG9jY3VycyBpbiBFTDAsDQpyZXBsYWNlIHRoZSBmYXVsdCBo
-YW5kbGVyIGZvciBEYXRhIGFib3J0DQpERlNDPTBiMTExMTExIHdpdGggYSBu
-ZXcgb25lIHRvIGlnbm9yZSB0aGlzIHVuZGVmaW5lZCBmYXVsdC4NCkkgZ3Vh
-cmFudGVlIHRoYXQgYSB0aHJlYWQgd2lsbCBzdG9wIGRlbGl2ZXJpbmcgdGhp
-cyBmYXVsdCBjb2RlIGJ5IGlnbm9yZQ0KdGhpcyB1bmRlZmluZWQgZmF1bHQu
-DQoNClRoZSBoYXJkd2FyZSBjb25kaXRpb24gd2hpY2ggY2F1c2UgdGhpcyBm
-YXVsdCBpcyByZXNldCBhdCBleGNlcHRpb24gZW50cnksIA0KdGhlcmVmb3Jl
-IGV4ZWN1dGlvbiBvZiBhdCBsZWFzdCBvbmUgaW5zdHJ1Y3Rpb24gaXMgDQpn
-dWFyYW50ZWVkIGJ5IHRoaXMgc2luZ2xlIHJldHJ5Lg0KDQoNClRoaXMgd29y
-a2Fyb3VuZCBpcyBiYXNlZCBvbiBsaW51eC01LjAtcmMyLA0Kd2hpY2ggVENS
-X0VMeC5ORkQxIGlzIHNldCB0byAnMScgDQpvbmx5IG9uY2UgYXQgYm9vdCBz
-ZXF1ZW5jZSwgDQphbmQgVENSX0VMeC5ORkQwIGlzIG5vdCBzZXQgYnkga2Vy
-bmVsLg0KSSB3aWxsIHVwZGF0ZSBteSBwYXRjaCBpZiBuZXcga2VybmVsIG1h
-a2VzIHNvbWUgY2hhbmdlcw0KYWJvdXQgVENSX0VMeC57TkZEMCxORkQxfS4N
-Cg0KQ2hhbmdlcyBzaW5jZSBbdjFdDQpBcyBNYXJrJ3MgcmV2aWV3Og0KDQog
-KiBBZG9wdGVkIGVycmF0YSBmcmFtZXdvcmsuDQoNCkNoYW5nZXMgc2luY2Ug
-W3YyXQ0KQXMgTWFyayBhbmQgSmFtZXMnIHJldmlldzoNCiANCiAqIEFkZGVk
-IGZyYW1ld29yayB0byBjaGFuZ2UgVENSX0VMeC5ORkQxLg0KICAtIENoYW5n
-ZSBUQ1JfRUx4Lk5GRDEgdG8gMCB3aGVuIGVudHJ5IGtlcm5lbC4NCiAgLSBD
-aGFuZ2UgVENSX0VMeC5ORkQxIHRvIDEgd2hlbiBleGl0IGtlcm5lbC4NCg0K
-SSBmdWxseSBhcHByZWNpYXRlIHRoYXQgaWYgc29tZW9uZSBjYW4gdGVzdCB0
-aGlzIHBhdGNoIG9uIGRpZmZlcmVudCBjaGlwcyANCnRvIHZlcml0eSBubyBo
-YXJtZnVsIGVmZmVjdCBvbiBvdGhlciBjaGlwcy4NCg0KSWYgdGhlcmUgaXMg
-bm8gcHJvYmxlbSBvbiBvdGhlciBjaGlwcywgcGxlYXNlIG1lcmdlIHRoaXMg
-cGF0Y2guDQoNClRoZSBwYXRjaCBiYXNlZCBvbiBsaW51eC01LjAtcmMyLg0K
-DQpaaGFuZyBMZWkgKDEpOg0KICBBcm02NDogQWRkIHdvcmthcm91bmQgZm9y
-IEZ1aml0c3UgQTY0RlggZXJyYXR1bSAwMTAwMDENCg0KIERvY3VtZW50YXRp
-b24vYXJtNjQvc2lsaWNvbi1lcnJhdGEudHh0IHwgIDEgKw0KIGFyY2gvYXJt
-NjQvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgIHwgMjIgKysrKysrKysr
-KysrKysrKysrKysrKw0KIGFyY2gvYXJtNjQvaW5jbHVkZS9hc20vY3B1Y2Fw
-cy5oICAgICAgIHwgIDMgKystDQogYXJjaC9hcm02NC9pbmNsdWRlL2FzbS9j
-cHV0eXBlLmggICAgICAgfCAgNCArKysrDQogYXJjaC9hcm02NC9rZXJuZWwv
-Y3B1X2VycmF0YS5jICAgICAgICAgfCAgOCArKysrKysrKw0KIGFyY2gvYXJt
-NjQva2VybmVsL2VudHJ5LlMgICAgICAgICAgICAgIHwgMTYgKysrKysrKysr
-KysrKysrKw0KIGFyY2gvYXJtNjQvbW0vZmF1bHQuYyAgICAgICAgICAgICAg
-ICAgIHwgMTYgKysrKysrKysrKysrKysrLQ0KIGFyY2gvYXJtNjQvbW0vcHJv
-Yy5TICAgICAgICAgICAgICAgICAgIHwgMjAgKysrKysrKysrKysrKysrKysr
-KysNCiA4IGZpbGVzIGNoYW5nZWQsIDg4IGluc2VydGlvbnMoKyksIDIgZGVs
-ZXRpb25zKC0pDQoNCi0tIA0KMS44LjMuMQ0K
+If packet processing wants to know the packet is bound with which ETM
+version, it needs to access metadata to decide that based on metadata
+magic number; but we cannot simply to use CPU logic ID number as index
+to access metadata sequential array, especially when system have
+hotplugged off CPUs, the metadata array are only allocated for online
+CPUs but not offline CPUs, so the CPU logic number doesn't match with
+its index in the array.
+
+This patch is to change tuple from traceID-CPU# to traceID-metadata,
+thus it can use the tuple to retrieve metadata pointer according to
+traceID.
+
+For safe accessing metadata fields, this patch provides helper function
+cs_etm__get_cpu() which is used to return CPU number according to
+traceID; cs_etm_decoder__buffer_packet() is the first consumer for this
+helper function.
+
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ .../perf/util/cs-etm-decoder/cs-etm-decoder.c |  8 +++---
+ tools/perf/util/cs-etm.c                      | 26 ++++++++++++++-----
+ tools/perf/util/cs-etm.h                      |  9 ++++++-
+ 3 files changed, 31 insertions(+), 12 deletions(-)
+
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+index 294efa76c9e3..cdd38ffd10d2 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+@@ -305,14 +305,12 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+ 			      enum cs_etm_sample_type sample_type)
+ {
+ 	u32 et = 0;
+-	struct int_node *inode = NULL;
++	int cpu;
+ 
+ 	if (decoder->packet_count >= MAX_BUFFER - 1)
+ 		return OCSD_RESP_FATAL_SYS_ERR;
+ 
+-	/* Search the RB tree for the cpu associated with this traceID */
+-	inode = intlist__find(traceid_list, trace_chan_id);
+-	if (!inode)
++	if (cs_etm__get_cpu(trace_chan_id, &cpu) < 0)
+ 		return OCSD_RESP_FATAL_SYS_ERR;
+ 
+ 	et = decoder->tail;
+@@ -322,7 +320,7 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+ 
+ 	decoder->packet_buffer[et].sample_type = sample_type;
+ 	decoder->packet_buffer[et].isa = CS_ETM_ISA_UNKNOWN;
+-	decoder->packet_buffer[et].cpu = *((int *)inode->priv);
++	decoder->packet_buffer[et].cpu = cpu;
+ 	decoder->packet_buffer[et].start_addr = CS_ETM_INVAL_ADDR;
+ 	decoder->packet_buffer[et].end_addr = CS_ETM_INVAL_ADDR;
+ 	decoder->packet_buffer[et].instr_count = 0;
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 1aa29633ce77..a5497a761db7 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -97,6 +97,20 @@ static u32 cs_etm__get_v7_protocol_version(u32 etmidr)
+ 	return CS_ETM_PROTO_ETMV3;
+ }
+ 
++int cs_etm__get_cpu(u8 trace_chan_id, int *cpu)
++{
++	struct int_node *inode;
++	u64 *metadata;
++
++	inode = intlist__find(traceid_list, trace_chan_id);
++	if (!inode)
++		return -EINVAL;
++
++	metadata = inode->priv;
++	*cpu = (int)metadata[CS_ETM_CPU];
++	return 0;
++}
++
+ static void cs_etm__packet_dump(const char *pkt_string)
+ {
+ 	const char *color = PERF_COLOR_BLUE;
+@@ -252,7 +266,7 @@ static void cs_etm__free(struct perf_session *session)
+ 	cs_etm__free_events(session);
+ 	session->auxtrace = NULL;
+ 
+-	/* First remove all traceID/CPU# nodes for the RB tree */
++	/* First remove all traceID/metadata nodes for the RB tree */
+ 	intlist__for_each_entry_safe(inode, tmp, traceid_list)
+ 		intlist__remove(traceid_list, inode);
+ 	/* Then the RB tree itself */
+@@ -1519,9 +1533,9 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 				    0xffffffff);
+ 
+ 	/*
+-	 * Create an RB tree for traceID-CPU# tuple. Since the conversion has
+-	 * to be made for each packet that gets decoded, optimizing access in
+-	 * anything other than a sequential array is worth doing.
++	 * Create an RB tree for traceID-metadata tuple.  Since the conversion
++	 * has to be made for each packet that gets decoded, optimizing access
++	 * in anything other than a sequential array is worth doing.
+ 	 */
+ 	traceid_list = intlist__new(NULL);
+ 	if (!traceid_list) {
+@@ -1587,8 +1601,8 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 			err = -EINVAL;
+ 			goto err_free_metadata;
+ 		}
+-		/* All good, associate the traceID with the CPU# */
+-		inode->priv = &metadata[j][CS_ETM_CPU];
++		/* All good, associate the traceID with the metadata pointer */
++		inode->priv = metadata[j];
+ 	}
+ 
+ 	/*
+diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
+index 37f8d48179ca..fb5fc6538b7f 100644
+--- a/tools/perf/util/cs-etm.h
++++ b/tools/perf/util/cs-etm.h
+@@ -53,7 +53,7 @@ enum {
+ 	CS_ETMV4_PRIV_MAX,
+ };
+ 
+-/* RB tree for quick conversion between traceID and CPUs */
++/* RB tree for quick conversion between traceID and metadata pointers */
+ struct intlist *traceid_list;
+ 
+ #define KiB(x) ((x) * 1024)
+@@ -69,6 +69,7 @@ static const u64 __perf_cs_etmv4_magic   = 0x4040404040404040ULL;
+ #ifdef HAVE_CSTRACE_SUPPORT
+ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 				  struct perf_session *session);
++int cs_etm__get_cpu(u8 trace_chan_id, int *cpu);
+ #else
+ static inline int
+ cs_etm__process_auxtrace_info(union perf_event *event __maybe_unused,
+@@ -76,6 +77,12 @@ cs_etm__process_auxtrace_info(union perf_event *event __maybe_unused,
+ {
+ 	return -1;
+ }
++
++static inline int cs_etm__get_cpu(u8 trace_chan_id __maybe_unused,
++				  int *cpu __maybe_unused)
++{
++	return -1;
++}
+ #endif
+ 
+ #endif
+-- 
+2.17.1
+
