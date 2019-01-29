@@ -2,261 +2,105 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F995C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D8FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8F062087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:15:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E83D2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:15:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="Wplr7vFt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbfA2WPV (ORCPT
+        id S1729705AbfA2WPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:15:21 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45312 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727332AbfA2WPU (ORCPT
+        Tue, 29 Jan 2019 17:15:52 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:40608 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729556AbfA2WPw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:15:20 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gobey-0007nS-VE; Tue, 29 Jan 2019 23:15:13 +0100
-Date:   Tue, 29 Jan 2019 23:15:12 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
-        Stefan Liebler <stli@linux.ibm.com>,
-        Sebastian Sewior <bigeasy@linutronix.de>
-Subject: [PATCH] futex: Handle early deadlock return correctly
-In-Reply-To: <20190129084904.GB28485@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1901292311410.1950@nanos.tec.linutronix.de>
-References: <20181127081115.GB3625@osiris> <alpine.DEB.2.21.1811281526430.1532@nanos.tec.linutronix.de> <20181129112321.GB3449@osiris> <20190128134410.GA28485@hirez.programming.kicks-ass.net> <20190128135804.GB28878@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1901281650310.1582@nanos.tec.linutronix.de> <20190129084904.GB28485@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 29 Jan 2019 17:15:52 -0500
+Received: by mail-yw1-f65.google.com with SMTP id g194so8842470ywe.7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 14:15:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cjPKJoHf3Gll+qk80dZ1zwwaf8+ItgdBe9DjCPAWJDM=;
+        b=Wplr7vFthNztMxNfahA1bdj2lR3+YAdLQRgxzerOl/TRr5R4rFJx8TUrvIk1v7GEmQ
+         kW80/oYXICrRj09V7xe49KhmG2HZE1rJdek1rUmiqrM2TA1ik6ZtsJgqvXoDfbFUOR+S
+         r4jYBxwP6P+szzZp1EYHRu4AAGuOv48jtQZkBrJIuIK+HpL2oLgfyUT6VPMjGkKDonHS
+         muByxxO7QtKKoPg2xVphTkV4PvV79xkf5ySxjt/21cxk5LPq3n5eJ1Ke3iNPGFjjCCDn
+         eVLHYSC/VtVDEYZMxvnvbWN0zOjJl29ex2JcIHoqtd4k3gYMyhNO+XXv3bD3rnJ2e43X
+         LLtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cjPKJoHf3Gll+qk80dZ1zwwaf8+ItgdBe9DjCPAWJDM=;
+        b=HMjJsDxqmQGQNakievnO1EjuoUcxvI9ctsPCU3WkfvBw4VeSF/dq6IuL+0dSflWlmr
+         aPIe0NMXQ3Q42VQsmXNvBKTyHPVXa1fWZy9o3lPpHX9TDskOgUjWLuAA6bXjMg7ownZY
+         rqgBdigIFM6lEZIr1Vxq73IjaEsffdtLYWBn5SQtBlMwhVgYWxcgMN7mSjHXxfOpiNkb
+         5YXmIux12jxWcRj7CNHCbPnQudg3EXiq0HjcKm7V5OI2ZSbMol6JH5Sfn/JzS4E81HZD
+         FMssEfcffZg1qVoi22GZGbqL0CZdrrA5c/QUmEtXzK71D3lRz6oDgynBQHPknvBJpjEx
+         Dd1A==
+X-Gm-Message-State: AJcUukd1LZRwC1HYLAIuPCpgRXz75vRFRMTuObAOOwa5pVV0F9gUPIao
+        bGLTKxNBeaE+LNN9PJA0Ulfi9A==
+X-Google-Smtp-Source: ALg8bN7irhuyfL8ClWcmZz429auZ4MvffBQRSq6hSXFkHXRmgB0027WWy+O8lD2sUt1XagmxX0AEHg==
+X-Received: by 2002:a81:1282:: with SMTP id 124mr27709051yws.154.1548800151050;
+        Tue, 29 Jan 2019 14:15:51 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::4:1d25])
+        by smtp.gmail.com with ESMTPSA id e189sm14009152ywc.101.2019.01.29.14.15.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 14:15:50 -0800 (PST)
+Date:   Tue, 29 Jan 2019 17:15:49 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Chris Down <chris@chrisdown.name>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH] mm: memcontrol: Expose THP events on a per-memcg basis
+Message-ID: <20190129221549.GA13066@cmpxchg.org>
+References: <20190129205852.GA7310@chrisdown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129205852.GA7310@chrisdown.name>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 56222b212e8e ("futex: Drop hb->lock before enqueueing on the
-rtmutex") changed the locking rules in the futex code so that the hash
-bucket lock is not longer held while the waiter is enqueued into the
-rtmutex wait list. This made the lock and the unlock path symmetric, but
-unfortunately the possible early exit from __rt_mutex_proxy_start() due to
-a detected deadlock was not updated accordingly. That allows a concurrent
-unlocker to observe inconsitent state which triggers the warning in the
-unlock path.
+On Tue, Jan 29, 2019 at 03:58:52PM -0500, Chris Down wrote:
+> Currently THP allocation events data is fairly opaque, since you can
+> only get it system-wide. This patch makes it easier to reason about
+> transparent hugepage behaviour on a per-memcg basis.
+> 
+> For anonymous THP-backed pages, we already have MEMCG_RSS_HUGE in v1,
+> which is used for v1's rss_huge [sic]. This is reused here as it's
+> fairly involved to untangle NR_ANON_THPS right now to make it
+> per-memcg, since right now some of this is delegated to rmap before we
+> have any memcg actually assigned to the page. It's a good idea to rework
+> that, but let's leave untangling THP allocation for a future patch.
+>
+> Signed-off-by: Chris Down <chris@chrisdown.name>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Roman Gushchin <guro@fb.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: cgroups@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: kernel-team@fb.com
 
-futex_lock_pi()                         futex_unlock_pi()
-  lock(hb->lock)
-  queue(hb_waiter)				lock(hb->lock)
-  lock(rtmutex->wait_lock)
-  unlock(hb->lock)
-                                        // acquired hb->lock
-                                        hb_waiter = futex_top_waiter()
-                                        lock(rtmutex->wait_lock)
-  __rt_mutex_proxy_start()
-     ---> fail
-          remove(rtmutex_waiter);
-     ---> returns -EDEADLOCK
-  unlock(rtmutex->wait_lock)
-                                        // acquired wait_lock
-                                        wake_futex_pi()
-                                        rt_mutex_next_owner()
-					  --> returns NULL
-                                          --> WARN
+Looks good to me. It's useful to know if a cgroup is getting the THP
+coverage and allocation policy it's asking for.
 
-  lock(hb->lock)
-  unqueue(hb_waiter)
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
-The problem is caused by the remove(rtmutex_waiter) in the failure case of
-__rt_mutex_proxy_start() as this lets the unlocker observe a waiter in the
-hash bucket but no waiter on the rtmutex, i.e. inconsistent state.
-
-The original commit handles this correctly for the other early return cases
-(timeout, signal) by delaying the removal of the rtmutex waiter until the
-returning task reacquired the hash bucket lock.
-
-Treat the failure case of __rt_mutex_proxy_start() in the same way and let
-the existing cleanup code handle the eventual handover of the rtmutex
-gracefully. The regular rt_mutex_proxy_start() gains the rtmutex waiter
-removal for the failure case, so that the other callsites are still
-operating correctly.
-
-Add proper comments to the code so all these details are fully documented.
-
-Thanks to Peter for helping with the analysis and writing the really
-valuable code comments.
-
-Fixes: 56222b212e8e ("futex: Drop hb->lock before enqueueing on the rtmutex")
-Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Co-developed-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: stable@vger.kernel.org
----
- kernel/futex.c           |   28 ++++++++++++++++++----------
- kernel/locking/rtmutex.c |   37 ++++++++++++++++++++++++++++++++-----
- 2 files changed, 50 insertions(+), 15 deletions(-)
-
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -2861,35 +2861,39 @@ static int futex_lock_pi(u32 __user *uad
- 	 * and BUG when futex_unlock_pi() interleaves with this.
- 	 *
- 	 * Therefore acquire wait_lock while holding hb->lock, but drop the
--	 * latter before calling rt_mutex_start_proxy_lock(). This still fully
--	 * serializes against futex_unlock_pi() as that does the exact same
--	 * lock handoff sequence.
-+	 * latter before calling __rt_mutex_start_proxy_lock(). This
-+	 * interleaves with futex_unlock_pi() -- which does a similar lock
-+	 * handoff -- such that the latter can observe the futex_q::pi_state
-+	 * before __rt_mutex_start_proxy_lock() is done.
- 	 */
- 	raw_spin_lock_irq(&q.pi_state->pi_mutex.wait_lock);
- 	spin_unlock(q.lock_ptr);
-+	/*
-+	 * __rt_mutex_start_proxy_lock() unconditionally enqueues the @rt_waiter
-+	 * such that futex_unlock_pi() is guaranteed to observe the waiter when
-+	 * it sees the futex_q::pi_state.
-+	 */
- 	ret = __rt_mutex_start_proxy_lock(&q.pi_state->pi_mutex, &rt_waiter, current);
- 	raw_spin_unlock_irq(&q.pi_state->pi_mutex.wait_lock);
- 
- 	if (ret) {
- 		if (ret == 1)
- 			ret = 0;
--
--		spin_lock(q.lock_ptr);
--		goto no_block;
-+		goto cleanup;
- 	}
- 
--
- 	if (unlikely(to))
- 		hrtimer_start_expires(&to->timer, HRTIMER_MODE_ABS);
- 
- 	ret = rt_mutex_wait_proxy_lock(&q.pi_state->pi_mutex, to, &rt_waiter);
- 
-+cleanup:
- 	spin_lock(q.lock_ptr);
- 	/*
--	 * If we failed to acquire the lock (signal/timeout), we must
-+	 * If we failed to acquire the lock (deadlock/signal/timeout), we must
- 	 * first acquire the hb->lock before removing the lock from the
--	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex
--	 * wait lists consistent.
-+	 * rt_mutex waitqueue, such that we can keep the hb and rt_mutex wait
-+	 * lists consistent.
- 	 *
- 	 * In particular; it is important that futex_unlock_pi() can not
- 	 * observe this inconsistency.
-@@ -3013,6 +3017,10 @@ static int futex_unlock_pi(u32 __user *u
- 		 * there is no point where we hold neither; and therefore
- 		 * wake_futex_pi() must observe a state consistent with what we
- 		 * observed.
-+		 *
-+		 * In particular; this forces __rt_mutex_start_proxy() to
-+		 * complete such that we're guaranteed to observe the
-+		 * rt_waiter. Also see the WARN in wake_futex_pi().
- 		 */
- 		raw_spin_lock_irq(&pi_state->pi_mutex.wait_lock);
- 		spin_unlock(&hb->lock);
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -1726,12 +1726,33 @@ void rt_mutex_proxy_unlock(struct rt_mut
- 	rt_mutex_set_owner(lock, NULL);
- }
- 
-+/**
-+ * __rt_mutex_start_proxy_lock() - Start lock acquisition for another task
-+ * @lock:		the rt_mutex to take
-+ * @waiter:		the pre-initialized rt_mutex_waiter
-+ * @task:		the task to prepare
-+ *
-+ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
-+ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
-+ *
-+ * NOTE: does _NOT_ remove the @waiter on failure; must either call
-+ * rt_mutex_wait_proxy_lock() or rt_mutex_cleanup_proxy_lock() after this.
-+ *
-+ * Returns:
-+ *  0 - task blocked on lock
-+ *  1 - acquired the lock for task, caller should wake it up
-+ * <0 - error
-+ *
-+ * Special API call for PI-futex support.
-+ */
- int __rt_mutex_start_proxy_lock(struct rt_mutex *lock,
- 			      struct rt_mutex_waiter *waiter,
- 			      struct task_struct *task)
- {
- 	int ret;
- 
-+	lockdep_asssert_held(&lock->wait_lock);
-+
- 	if (try_to_take_rt_mutex(lock, task, NULL))
- 		return 1;
- 
-@@ -1749,9 +1770,6 @@ int __rt_mutex_start_proxy_lock(struct r
- 		ret = 0;
- 	}
- 
--	if (unlikely(ret))
--		remove_waiter(lock, waiter);
--
- 	debug_rt_mutex_print_deadlock(waiter);
- 
- 	return ret;
-@@ -1763,12 +1781,18 @@ int __rt_mutex_start_proxy_lock(struct r
-  * @waiter:		the pre-initialized rt_mutex_waiter
-  * @task:		the task to prepare
-  *
-+ * Starts the rt_mutex acquire; it enqueues the @waiter and does deadlock
-+ * detection. It does not wait, see rt_mutex_wait_proxy_lock() for that.
-+ *
-+ * NOTE: unlike __rt_mutex_start_proxy_lock this _DOES_ remove the @waiter
-+ * on failure.
-+ *
-  * Returns:
-  *  0 - task blocked on lock
-  *  1 - acquired the lock for task, caller should wake it up
-  * <0 - error
-  *
-- * Special API call for FUTEX_REQUEUE_PI support.
-+ * Special API call for PI-futex support.
-  */
- int rt_mutex_start_proxy_lock(struct rt_mutex *lock,
- 			      struct rt_mutex_waiter *waiter,
-@@ -1778,6 +1802,8 @@ int rt_mutex_start_proxy_lock(struct rt_
- 
- 	raw_spin_lock_irq(&lock->wait_lock);
- 	ret = __rt_mutex_start_proxy_lock(lock, waiter, task);
-+	if (unlikely(ret))
-+		remove_waiter(lock, waiter);
- 	raw_spin_unlock_irq(&lock->wait_lock);
- 
- 	return ret;
-@@ -1845,7 +1871,8 @@ int rt_mutex_wait_proxy_lock(struct rt_m
-  * @lock:		the rt_mutex we were woken on
-  * @waiter:		the pre-initialized rt_mutex_waiter
-  *
-- * Attempt to clean up after a failed rt_mutex_wait_proxy_lock().
-+ * Attempt to clean up after a failed __rt_mutex_start_proxy_lock() or
-+ * rt_mutex_wait_proxy_lock().
-  *
-  * Unless we acquired the lock; we're still enqueued on the wait-list and can
-  * in fact still be granted ownership until we're removed. Therefore we can
+The fallback numbers could be useful as well, but they're tricky to
+obtain as there isn't an obvious memcg context. We can do them later.
