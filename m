@@ -2,121 +2,105 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F155C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7029EC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E8F620882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:46:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42CD520882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:47:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjAiUM/e"
+	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="OsEJ4n8z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbfA2Tqm (ORCPT
+        id S1729399AbfA2TrH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:46:42 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53551 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbfA2Tqm (ORCPT
+        Tue, 29 Jan 2019 14:47:07 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54909 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727492AbfA2TrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:46:42 -0500
-Received: by mail-wm1-f68.google.com with SMTP id d15so19183171wmb.3;
-        Tue, 29 Jan 2019 11:46:40 -0800 (PST)
+        Tue, 29 Jan 2019 14:47:07 -0500
+Received: by mail-it1-f196.google.com with SMTP id i145so6498495ita.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:47:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=20blMOHuyAbQUXb2gdRexITNWuPKKSD4eW2JNIItz8Y=;
-        b=cjAiUM/e/d+kumGxCK4UfUtgOQ0f0MkgLCT1vPxsWHL2FPLwLaRC7wmXzLQmiiZtuS
-         mZnRlAlK80CQ7a1rP/1freJlZSpGpdiyo9ZL41q2eveNrDDrkEEAmhNyqLzpS6Ytzvyx
-         PEjxyET/5sBMBu17C46OKzlbH4dqzVWdqq0EQg+QbD1HJ2rWJ32Z9kfWRGVYcyHa91Aa
-         MiL04rai0GchYRZmms8q/e3+WaP7iiU8T18ID19NQyO349t37DwKpTeKKumlB5f9oCoH
-         QxhCAn36MUomVVV8/+6taxtWHsZEBIR3A8wfZBIFslwk84gI9XF8q+MOldhBXyrfzMrr
-         aq1w==
+        d=ieee.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XG7u523a/0f6kyGjbZgxsWPAk334VvfCv1Jk6fCTIsA=;
+        b=OsEJ4n8zUxkYU4PMZvePLOWqNzRY0561eKlemyXivyWwEbnIbIFlNqXpffGsDVmwUn
+         GSDW9+4KKPB8YJaEmsXPMpZCtbv0FuBQdMhXS6mah7p0plnwDMbamslfsEB3SqedOk8n
+         zYGxz9LCJ42C5+n8tZDEAhRSg2JOFcScsrrwM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=20blMOHuyAbQUXb2gdRexITNWuPKKSD4eW2JNIItz8Y=;
-        b=SR7nxa/6jQ25wkmefmFy79aIPdMzcCjfKNm19FKt0iXr+jIoSBLN7WjV6U5uVZUOqL
-         Kfkv/B9oxz/9TQeeNN+QfLwBZbOEiychjaA684lGO1sZNZVJLndQyygeXGTD9idsy0fN
-         rWaPRFXVeOvOw+E0D0RtSBNRkuBYSnnKBOV5cDDx417IJi/52VW2H7EnzuBSvXZts6uK
-         +ZZLRzqxy9lrbW3RdrNCAnJelx7YgbRBl8OhuqPqpGYIsde4NYQ7BUA+dOUiIOVSGxvv
-         9ei5Et/cjEfCVSpRVsfHEvhT4hu1Ecyl/wJIbqI/RhQaJv59Kwzh91hZBjTLrSQ5Przj
-         bZVQ==
-X-Gm-Message-State: AJcUukeQsPHXpQm3Ij1mwQYBPcAnpsWp8LJg8hXpwRv0Sr8qEpbjiuuq
-        dSykBa+tfa/krwwhI22CRP0=
-X-Google-Smtp-Source: ALg8bN48o9Nv2HwWQ0w0kpXSWLZe2swGi5gmDL4bu1sWvg/JRniT1ve4RVkEtw6fASmUJVJvmWnbrw==
-X-Received: by 2002:a1c:a185:: with SMTP id k127mr22227190wme.134.1548791200081;
-        Tue, 29 Jan 2019 11:46:40 -0800 (PST)
-Received: from ubuntu.home ([2a02:8071:6a3:700:8c22:ee0c:efc8:ed86])
-        by smtp.gmail.com with ESMTPSA id x1sm30151558wru.34.2019.01.29.11.46.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 11:46:39 -0800 (PST)
-From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-X-Google-Original-From: Simon Goldschmidt <goldsimon@gmx.de>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     Simon Goldschmidt <goldsimon@gmx.de>, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: socfpga: update more missing reset properties
-Date:   Tue, 29 Jan 2019 20:46:25 +0100
-Message-Id: <20190129194625.19218-1-goldsimon@gmx.de>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XG7u523a/0f6kyGjbZgxsWPAk334VvfCv1Jk6fCTIsA=;
+        b=WJSste6pKGYHDAiXBG0c04r/uHdlqiuH3xriBkARUOLyceCTxiK9A9x3PKJkih0yBv
+         oGc29yBt5Uu4Q5ukXz9vR8yjJaIj/KbAa+j4SNN+pZB2YJ5PovI7Rr/WVgfBw8npZY66
+         FtoA6qK3kM/aMR20l510y4bhLpCjsRAXc8mYFv/ImxWtts62bDH6FAw+luDcIIYOA+LO
+         jTYmGCq3VcB8e+DDIddBzUcMxU+EohNQ80Z1mqlTUfgBj/T+RcmB9RChcoofBSESjNHB
+         Duu69y3h8ba+k7qiN4b7GVmytsXewkGCx+HafKALS0J0w4sQ7ZSWq1hPpjjUHBzAbxL+
+         Bgzg==
+X-Gm-Message-State: AJcUukcznOrgveQKuq9l0tfesigJTExYgmRc7wqoTADUMt/GET3Pobvu
+        O1YscruTiROCI1DV8mlvgWb0z5BB09Rg6DXar9ZdeQ==
+X-Google-Smtp-Source: ALg8bN5DGzla/QKZwis6cRJIQyg2Ju8Fk2fSxgIH3vLcT9upMZn+e+YH48qNUy050rPyOgC45tKsBG55kMHkrJmcYhg=
+X-Received: by 2002:a24:9dce:: with SMTP id f197mr14154001itd.13.1548791226353;
+ Tue, 29 Jan 2019 11:47:06 -0800 (PST)
+MIME-Version: 1.0
+References: <20190122152151.16139-9-gregkh@linuxfoundation.org>
+In-Reply-To: <20190122152151.16139-9-gregkh@linuxfoundation.org>
+From:   Dan Streetman <ddstreet@ieee.org>
+Date:   Tue, 29 Jan 2019 14:46:30 -0500
+Message-ID: <CALZtONCjGashJkkDSxjP-E8-p67+WeAjDaYn5dQi=FomByh8Qg@mail.gmail.com>
+Subject: Re: [PATCH] zswap: ignore debugfs_create_dir() return value
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Seth Jennings <sjenning@redhat.com>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add reset property for dma, can and sdram on socfpga gen5.
+On Tue, Jan 22, 2019 at 10:23 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+>
+> Cc: Seth Jennings <sjenning@redhat.com>
+> Cc: Dan Streetman <ddstreet@ieee.org>
+> Cc: linux-mm@kvack.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  mm/zswap.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index a4e4d36ec085..f583d08f6e24 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -1262,8 +1262,6 @@ static int __init zswap_debugfs_init(void)
+>                 return -ENODEV;
+>
+>         zswap_debugfs_root = debugfs_create_dir("zswap", NULL);
+> -       if (!zswap_debugfs_root)
+> -               return -ENOMEM;
+>
+>         debugfs_create_u64("pool_limit_hit", 0444,
+>                            zswap_debugfs_root, &zswap_pool_limit_hit);
 
-Signed-off-by: Simon Goldschmidt <goldsimon@gmx.de>
+wait, so if i'm reading the code right, in the case where
+debugfs_create_dir() returns NULL, that will then be passed along to
+debugfs_create_u64() as its parent directory - and the debugfs nodes
+will then get created in the root debugfs directory.  That's not what
+we want to happen...
 
----
-This series applies on top of  kernel/git/dinguyen/linux.git,
-branch socfpga_for_next_v5.1_dts_v1
-
- arch/arm/boot/dts/socfpga.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
-index f365003f0..ec1966480 100644
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -84,6 +84,7 @@
- 				#dma-requests = <32>;
- 				clocks = <&l4_main_clk>;
- 				clock-names = "apb_pclk";
-+				resets = <&rst DMA_RESET>;
- 			};
- 		};
- 
-@@ -100,6 +101,7 @@
- 			reg = <0xffc00000 0x1000>;
- 			interrupts = <0 131 4>, <0 132 4>, <0 133 4>, <0 134 4>;
- 			clocks = <&can0_clk>;
-+			resets = <&rst CAN0_RESET>;
- 			status = "disabled";
- 		};
- 
-@@ -108,6 +110,7 @@
- 			reg = <0xffc01000 0x1000>;
- 			interrupts = <0 135 4>, <0 136 4>, <0 137 4>, <0 138 4>;
- 			clocks = <&can1_clk>;
-+			resets = <&rst CAN1_RESET>;
- 			status = "disabled";
- 		};
- 
-@@ -791,6 +794,7 @@
- 		sdr: sdr@ffc25000 {
- 			compatible = "altr,sdr-ctl", "syscon";
- 			reg = <0xffc25000 0x1000>;
-+			resets = <&rst SDR_RESET>;
- 		};
- 
- 		sdramedac {
--- 
-2.17.1
-
+> --
+> 2.20.1
+>
