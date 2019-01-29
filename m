@@ -3,143 +3,132 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31B5C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A06AC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD39E20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:23:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C0B420881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:26:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbfA2JXE (ORCPT
+        id S1727246AbfA2J0C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:23:04 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:49419 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725298AbfA2JXE (ORCPT
+        Tue, 29 Jan 2019 04:26:02 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49070 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725799AbfA2J0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:23:04 -0500
-X-UUID: 05fc5744be63431ea482d404dfafe204-20190129
-X-UUID: 05fc5744be63431ea482d404dfafe204-20190129
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1945678748; Tue, 29 Jan 2019 17:22:57 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 29 Jan 2019 17:22:55 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 29 Jan 2019 17:22:56 +0800
-Message-ID: <1548753776.11055.4.camel@mtksdaap41>
-Subject: Re: [PATCH 03/10] soc: mediatek: move the CMDQ_IRQ_MASK into cmdq
- driver data
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        "YT Shen" <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>, <kendrick.hsu@mediatek.com>,
-        Frederic Chen <Frederic.Chen@mediatek.com>
-Date:   Tue, 29 Jan 2019 17:22:56 +0800
-In-Reply-To: <1548747128-60136-4-git-send-email-bibby.hsieh@mediatek.com>
-References: <1548747128-60136-1-git-send-email-bibby.hsieh@mediatek.com>
-         <1548747128-60136-4-git-send-email-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 29 Jan 2019 04:26:01 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0T9Ptov142306
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 04:26:00 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qajr8dedc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 04:25:59 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <michaele@au1.ibm.com>;
+        Tue, 29 Jan 2019 09:25:27 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 29 Jan 2019 09:25:24 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0T9PN3R3670346
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 29 Jan 2019 09:25:24 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D09C84C04E;
+        Tue, 29 Jan 2019 09:25:23 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7D5DF4C044;
+        Tue, 29 Jan 2019 09:25:23 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 29 Jan 2019 09:25:23 +0000 (GMT)
+Received: from localhost (unknown [9.102.48.146])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 2F1E0A01F5;
+        Tue, 29 Jan 2019 20:25:22 +1100 (AEDT)
+From:   Michael Ellerman <michaele@au1.ibm.com>
+To:     Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Tyrel Datwyler <turtle.in.the.kernel@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Juliet Kim <minkim@us.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        nathanl@linux.vnet.ibm.com
+Subject: Re: [RFC 1/6] powerpc:/drc Define interface to acquire arch-specific drc info
+In-Reply-To: <d881d17c-1157-a6a0-0784-33510a4ee674@linux.vnet.ibm.com>
+References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com> <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com> <e7030879-59e4-88fd-3785-fdd98b7f0a3b@gmail.com> <63da6cfa-5272-0c78-ae91-0ad1130db3f1@linux.vnet.ibm.com> <d881d17c-1157-a6a0-0784-33510a4ee674@linux.vnet.ibm.com>
+Date:   Tue, 29 Jan 2019 20:25:21 +1100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+X-TM-AS-GCONF: 00
+x-cbid: 19012909-0012-0000-0000-000002EE5852
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012909-0013-0000-0000-000021259A09
+Message-Id: <87d0ofstmm.fsf@concordia.ellerman.id.au>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901290072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
+Michael Bringmann <mwb@linux.vnet.ibm.com> writes:
+> On 1/25/19 10:09 AM, Michael Bringmann wrote:
+>> Adding Nathan Lynch
+>> 
+>> On 1/24/19 6:04 PM, Tyrel Datwyler wrote:
+>>> On 12/14/2018 12:50 PM, Michael Bringmann wrote:
+>>>> Define interface to acquire arch-specific drc info to match against
+>>>> hotpluggable devices.  The current implementation exposes several
+>>>> pseries-specific dynamic memory properties in generic kernel code.
+>>>> This patch set provides an interface to pull that code out of the
+>>>> generic kernel.
+>>>>
+>>>> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+>>>> ---
+>>>>  include/linux/topology.h |    9 +++++++++
+>>>>  1 file changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/include/linux/topology.h b/include/linux/topology.h
+>>>> index cb0775e..df97f5f 100644
+>>>> --- a/include/linux/topology.h
+>>>> +++ b/include/linux/topology.h
+>>>> @@ -44,6 +44,15 @@
+>>>
+>>> As far as I know pseries is the only platform that uses DR connectors, and I
+>>> highly doubt that any other powerpc platform or arch ever will. So, I'm not sure
+>>> that this is really generic enough to belong in topology.h. If anything I would
+>>> suggest putting this in an include in arch/powerpc/include/ named something like
+>>> drcinfo.h or pseries-drc.h. That will make it visible to modules like rpaphp
+>>> that want/need to use this functionality.
+>
+> It looks like the 'rpaphp' and 'rpadlpar_io' modules are also dependent upon the
+> powerpc platform.
 
-On Tue, 2019-01-29 at 15:32 +0800, Bibby Hsieh wrote:
-> The interrupt mask and thread number has positive correlation,
-> so we move the CMDQ_IRQ_MASK into cmdq driver data and calculate
-> it by thread number.
-> 
-> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-> ---
->  drivers/mailbox/mtk-cmdq-mailbox.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-> index 909eb23..f6174ca 100644
-> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
-> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-> @@ -17,7 +17,6 @@
->  #include <linux/of_device.h>
->  
->  #define CMDQ_OP_CODE_MASK		(0xff << CMDQ_OP_CODE_SHIFT)
-> -#define CMDQ_IRQ_MASK			0xffff
->  #define CMDQ_NUM_CMD(t)			(t->cmd_buf_size / CMDQ_INST_SIZE)
->  
->  #define CMDQ_CURR_IRQ_STATUS		0x10
-> @@ -71,6 +70,7 @@ struct cmdq {
->  	void __iomem		*base;
->  	u32			irq;
->  	u32			thread_nr;
-> +	u32			irq_mask;
->  	struct cmdq_thread	*thread;
->  	struct clk		*clock;
->  	bool			suspended;
-> @@ -284,11 +284,11 @@ static irqreturn_t cmdq_irq_handler(int irq, void *dev)
->  	unsigned long irq_status, flags = 0L;
->  	int bit;
->  
-> -	irq_status = readl(cmdq->base + CMDQ_CURR_IRQ_STATUS) & CMDQ_IRQ_MASK;
-> -	if (!(irq_status ^ CMDQ_IRQ_MASK))
-> +	irq_status = readl(cmdq->base + CMDQ_CURR_IRQ_STATUS) & cmdq->irq_mask;
-> +	if (!(irq_status ^ cmdq->irq_mask))
->  		return IRQ_NONE;
->  
-> -	for_each_clear_bit(bit, &irq_status, fls(CMDQ_IRQ_MASK)) {
-> +	for_each_clear_bit(bit, &irq_status, fls(cmdq->irq_mask)) {
+Yes that's right.
 
-for_each_clear_bit(bit, &irq_status, cmdq->thread_nr) {
+> Shouldn't the relevant source files be moved completely to the
+> powerpc-specific directories out of drivers/pci/hotplug as well?
 
-Regards,
-CK
+I don't think so. They are PCI hotplug drivers, so they should sit with
+the other PCI hotplug drivers.
 
->  		struct cmdq_thread *thread = &cmdq->thread[bit];
->  
->  		spin_lock_irqsave(&thread->chan->lock, flags);
-> @@ -472,6 +472,9 @@ static int cmdq_probe(struct platform_device *pdev)
->  		dev_err(dev, "failed to get irq\n");
->  		return -EINVAL;
->  	}
-> +
-> +	cmdq->thread_nr = (u32)(unsigned long)of_device_get_match_data(dev);
-> +	cmdq->irq_mask = GENMASK(cmdq->thread_nr - 1, 0);
->  	err = devm_request_irq(dev, cmdq->irq, cmdq_irq_handler, IRQF_SHARED,
->  			       "mtk_cmdq", cmdq);
->  	if (err < 0) {
-> @@ -489,6 +492,7 @@ static int cmdq_probe(struct platform_device *pdev)
->  	}
->  
->  	cmdq->thread_nr = (u32)(unsigned long)of_device_get_match_data(dev);
-> +	cmdq->irq_mask = GENMASK(cmdq->thread_nr - 1, 0);
->  	cmdq->mbox.dev = dev;
->  	cmdq->mbox.chans = devm_kcalloc(dev, cmdq->thread_nr,
->  					sizeof(*cmdq->mbox.chans), GFP_KERNEL);
+It's true that PCI hotplug drivers are more platform specific than other
+types of drivers, but still they have some things in common with other
+PCI hotplug drivers.
 
+cheers
 
