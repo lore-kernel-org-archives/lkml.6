@@ -2,120 +2,126 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6768CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2A4C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41FC420880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:13:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E5F120882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:14:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WczOwf53"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbfA2TNw (ORCPT
+        id S1729418AbfA2TO1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:13:52 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:59521 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbfA2TNw (ORCPT
+        Tue, 29 Jan 2019 14:14:27 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39869 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727332AbfA2TO0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:13:52 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0TJDYwQ2062021
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 29 Jan 2019 11:13:34 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0TJDYRs2062018;
-        Tue, 29 Jan 2019 11:13:34 -0800
-Date:   Tue, 29 Jan 2019 11:13:34 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Gustavo A. R. Silva" <tipbot@zytor.com>
-Message-ID: <tip-75b710af7139768fd4ba2d4e05335d2344796279@git.kernel.org>
-Cc:     gustavo@embeddedor.com, sboyd@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, fweisbec@gmail.com,
-        tglx@linutronix.de, john.stultz@linaro.org, mingo@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, john.stultz@linaro.org,
-          hpa@zytor.com, linux-kernel@vger.kernel.org, fweisbec@gmail.com,
-          sboyd@kernel.org, gustavo@embeddedor.com
-In-Reply-To: <20190123081413.GA3949@embeddedor>
-References: <20190123081413.GA3949@embeddedor>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] timers: Mark expected switch fall-throughs
-Git-Commit-ID: 75b710af7139768fd4ba2d4e05335d2344796279
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 29 Jan 2019 14:14:26 -0500
+Received: by mail-pf1-f193.google.com with SMTP id r136so10110928pfc.6
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:14:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2Vr3VPlZLYUX2dqW6k3w7msBxvOqgLohul8mFuhLMR0=;
+        b=WczOwf53WJU/ByJz8mut8Wu8sqN4u5Mnt3zfxBvvF8U//weHGN8GscPC187W9MR6EA
+         9Fzm+W6QkqM4ZSEb3Wk8kctJ4DxKyhsm9WLSpMOCEe9sd1u5LDT9lmNf+ISG8ldqX8fn
+         PE0BpNOXUtlQRYDqmJeqikmbg94rd5VJMSfpU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2Vr3VPlZLYUX2dqW6k3w7msBxvOqgLohul8mFuhLMR0=;
+        b=dIc/FRFKQI6BDUMQ9krCQHvygegv7pF9+sES9ZKqmQnpdIESHx+1ubWjs8BE4kZ4rW
+         Z2yeJCpd6RAQzvQIk4WyoXz6jeqpKLd5ExWtO6u5hi0zKJGyggPDVSQxG9j8/kkQNbPS
+         5SWEttbr84jipvWU5clAaKmrJ/wWkJ+BYbXYx1UifiyhlYkODN9AfHo5j9eS9zZuU+/R
+         wrs0IBG7jT2GlM3LfnJh9oLSBLhTKiGcn6gQ77rzmv3TPPdeydMKHR/ykj+lMXKlb/tK
+         KU/pboeOB9OVMq2aAD54v7IeuHsSza4gmD/9XIFQM73xOY3qu7q0i5XGOm02V+zoZ5jd
+         aN6g==
+X-Gm-Message-State: AJcUukerzYaO0VRf5QxEn1EqXl8spKJajgrV9HuKx21SBobAjxvVSCn2
+        WDS0py85cbp3wj5rrkUR0fVitA==
+X-Google-Smtp-Source: ALg8bN7hzrofYjvkM3KyEI5FM3fxWhDo0lgcpoQBjNO3KPiqJkgwFZwAmIVdieFpTsA6QgpzmAa7kw==
+X-Received: by 2002:a65:4381:: with SMTP id m1mr24366352pgp.358.1548789265870;
+        Tue, 29 Jan 2019 11:14:25 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id n70sm54935347pfi.185.2019.01.29.11.14.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 11:14:25 -0800 (PST)
+Date:   Tue, 29 Jan 2019 11:14:24 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Yi Zeng <yizeng@asrmicro.com>
+Cc:     rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] thermal: of-thermal: support to select governor in dts
+ for thermal zone
+Message-ID: <20190129191424.GL81583@google.com>
+References: <1546873479-20415-1-git-send-email-yizeng@asrmicro.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <1546873479-20415-1-git-send-email-yizeng@asrmicro.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  75b710af7139768fd4ba2d4e05335d2344796279
-Gitweb:     https://git.kernel.org/tip/75b710af7139768fd4ba2d4e05335d2344796279
-Author:     Gustavo A. R. Silva <gustavo@embeddedor.com>
-AuthorDate: Wed, 23 Jan 2019 02:14:13 -0600
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 29 Jan 2019 20:08:42 +0100
+On Mon, Jan 07, 2019 at 11:04:39PM +0800, Yi Zeng wrote:
+> Add the governor property parsing that defined in thermal zone node
+> in dts. If define the governor property for one thermal zone, for
+> example, governor = "step_wise", then parse and register the thermal
+> zone will find and set the right governor, except the only choice
+> of default governor.
+> 
+> Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
+> ---
+>  drivers/thermal/of-thermal.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+> index 4bfdb4a..f9368f4 100644
+> --- a/drivers/thermal/of-thermal.c
+> +++ b/drivers/thermal/of-thermal.c
+> @@ -1024,6 +1024,7 @@ int __init of_parse_thermal_zones(void)
+>  		struct thermal_zone_params *tzp;
+>  		int i, mask = 0;
+>  		u32 prop;
+> +		const char *name;
+>  
+>  		tz = thermal_of_build_thermal_zone(child);
+>  		if (IS_ERR(tz)) {
+> @@ -1049,6 +1050,10 @@ int __init of_parse_thermal_zones(void)
+>  		if (!of_property_read_u32(child, "sustainable-power", &prop))
+>  			tzp->sustainable_power = prop;
+>  
+> +		if (!of_property_read_string(child, "governor", &name))
+> +			strncpy(tzp->governor_name, name,
+> +				THERMAL_NAME_LENGTH);
+> +
+>  		for (i = 0; i < tz->ntrips; i++)
+>  			mask |= 1 << i;
 
-timers: Mark expected switch fall-throughs
+For reference, the discussion of a similar patch about a year ago:
+https://patchwork.kernel.org/patch/10259487/
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where fall through is indeed expected.
+From a board developer POV I can see why you would want this, but
+maintainers seem(ed) to think that it could cause more problems
+than it solves.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190123081413.GA3949@embeddedor
+Some arguments that were brought up against configuring the governor
+in the DT:
 
----
- kernel/time/hrtimer.c        | 2 +-
- kernel/time/tick-broadcast.c | 1 +
- kernel/time/timer.c          | 2 +-
- 3 files changed, 3 insertions(+), 2 deletions(-)
+- the DT should describe the hardware, not policy
+- the specified governor might not exist / be enabled
+- sysfs is more flexible than the DT
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index f5cfa1b73d6f..6418e1bdc549 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -364,7 +364,7 @@ static bool hrtimer_fixup_activate(void *addr, enum debug_obj_state state)
- 	switch (state) {
- 	case ODEBUG_STATE_ACTIVE:
- 		WARN_ON(1);
--
-+		/* fall through */
- 	default:
- 		return false;
- 	}
-diff --git a/kernel/time/tick-broadcast.c b/kernel/time/tick-broadcast.c
-index 803fa67aace9..ee834d4fb814 100644
---- a/kernel/time/tick-broadcast.c
-+++ b/kernel/time/tick-broadcast.c
-@@ -375,6 +375,7 @@ void tick_broadcast_control(enum tick_broadcast_mode mode)
- 	switch (mode) {
- 	case TICK_BROADCAST_FORCE:
- 		tick_broadcast_forced = 1;
-+		/* fall through */
- 	case TICK_BROADCAST_ON:
- 		cpumask_set_cpu(cpu, tick_broadcast_on);
- 		if (!cpumask_test_and_set_cpu(cpu, tick_broadcast_mask)) {
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 444156debfa0..167e71f9ed3c 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -647,7 +647,7 @@ static bool timer_fixup_activate(void *addr, enum debug_obj_state state)
- 
- 	case ODEBUG_STATE_ACTIVE:
- 		WARN_ON(1);
--
-+		/* fall through */
- 	default:
- 		return false;
- 	}
+Cheers
+
+Matthias
