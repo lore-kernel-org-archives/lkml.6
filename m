@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CE4C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 798A7C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0872214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 477C221841
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:36:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="eEWjmwyQ"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="HYoM7iC6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbfA2NgC (ORCPT
+        id S1728306AbfA2NgF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 08:36:02 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41128 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727940AbfA2Nf7 (ORCPT
+        Tue, 29 Jan 2019 08:36:05 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38604 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728139AbfA2NgC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 08:35:59 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so22059565wrs.8
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 05:35:58 -0800 (PST)
+        Tue, 29 Jan 2019 08:36:02 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so22054844wrw.5
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 05:36:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=I7jIseMqCPPj3u7DXuTWdGC+Sbz7UI6uCT01nprpTw4=;
-        b=eEWjmwyQxtvyeH7evby+YC/d1Qahl1I6dZz/7AZo+M2cRxvwLrGNHQvXpgXVwOzu+X
-         ILPhOigvoB8M1xG6aqJoogzT1AGSAPBdeU01Nvf5mmLfn9ywiCcMl+5aKtWftD3a/fEj
-         fz+JFuOjCwevbn3j5kVVcrLSX9l5SXERxDgd2pGryOBWvr0sqAyz2o0kmiF+5Q9YZOBc
-         TMq7BfPdG4jUbWrR7dpbg3PerKo8QFY78UK0KLRZa4+7o62buwKIrofDzdj4UWng0s5P
-         g5G6ReEMDfBVohRerWuXOBxzMc3zRQb3oXLur1kbP5fncajxjAYdmHn2YJbIPLaixfGv
-         eeRA==
+        bh=uJmiNfRo8EeI+C3VRiIxh9DmBCp1GcHRXWm7GuC7DQs=;
+        b=HYoM7iC6xQfh7wKcObTnnddwVLDqcZXIXvqUU4ooHDrmEo5TL0TpPUs+AjCqzWRHgL
+         HgItjWlwPfWES8ATjxSRg2d77LPh+AKWDmloL7R0KXQ3To/EvHuV032sunIark1Memkb
+         4U3IM90u+NCqIIdZn3Qw9qD2FbqOtV4r49p1fs+cKdp0SXg+bqxJrHM1EDfK4TsJQ2bE
+         3eI3LOqCZqq3aofhHFmLFWZgk7IhUNLyAquBs+Rewdid6Ct2Wo21TUiZCyR9cHlIE0LU
+         RXgOn2eaVXNaYiH/B0pnVV1obumhnsQkBIneoA9LZXXQwJz3uhub1TQ+1lLNLqb5JW0C
+         ljpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=I7jIseMqCPPj3u7DXuTWdGC+Sbz7UI6uCT01nprpTw4=;
-        b=d+1vu/HQFfuk1yLfAmRrd+1smkAmjF6E0Y66k/53I+S2DbmgCIWD3ohtLZGkeXs8d3
-         QIkL3HlrAtvRxYlXPSeH7BDY23wJdPt2yfbz1Fbnz+hQHIap8TbccfSSZb9eHsTjOTFm
-         /LJ3u0c/RQsrAaVHXRSGMZn7piEek4skNcDJnVOomx7ITjKo2rLlyMqgiXLTzGHsWZ4a
-         CdX09rON0HLBIm7BvnwWDTI/E1iqXLimjED8Xr+gvm0ixyhaF66u7BNa5FjQK8Rw91VN
-         yy7DmPD5tIU0KZLFBnjOng5mxd/SYK1IV/pMHUnJsQZLq8CEtN4HTPQQFXcWfzNfSSX5
-         ssZw==
-X-Gm-Message-State: AJcUukdc0MVHUQhSDapu6UHxeqwBCdpKMF141tmxuOBf1T1BZK43+vlN
-        4vCemhEmPRlTKT6fAcPYtcEeog==
-X-Google-Smtp-Source: ALg8bN7i18tvj7lvPU0ShfxlnWpbBYXXojbtTiDR/vBkuLnotQrR62zVvbEFRQLDgb4jKxUKyOrJRA==
-X-Received: by 2002:adf:e34b:: with SMTP id n11mr24691786wrj.91.1548768957934;
-        Tue, 29 Jan 2019 05:35:57 -0800 (PST)
+        bh=uJmiNfRo8EeI+C3VRiIxh9DmBCp1GcHRXWm7GuC7DQs=;
+        b=meCnxtocOpTAcTBwkErwxzCbMVNtgbQs173Ws28YTYjhIARttR0ggGAeQH5JVth2YX
+         H4Xyg483i6ElnkiKYvBg/t9qT1JBBiZzQOPaiz+uBcT47Q7OlZupmlP+xrOkQW23SYPH
+         lUvCwEgmJTYry072bR+xvHaZUtk7OGY1ybxWPYAEJQToZktqVaMl1rs8uLjFvW93Zuep
+         j5NU8BqDs/0KZVwo1BIOgh6XxTXPuxclWBnZvvdSS+VfBFpRx0z2Z17F4gWwx61MiDB4
+         e81IUYdupP1D86nxOd+eFfdJ/FhKXTzCij6VqazVdnMYqI05s89P+UbWk+6nUs4BXz2w
+         uy5A==
+X-Gm-Message-State: AJcUukcoHuRzFUAnSCqS7Vye19JukAK8pPuSSZRybhafBQmrFZHih3Gr
+        36lXFGWCQFnjQqKbJr+J2LOY6Q==
+X-Google-Smtp-Source: ALg8bN77gugys53OLgBISREJeuKACcQwuiAMawTX24Qc3pYtWs7cP/xv5bq2SGu8/LEFd9Jpu7KDRg==
+X-Received: by 2002:adf:9123:: with SMTP id j32mr27274478wrj.122.1548768960736;
+        Tue, 29 Jan 2019 05:36:00 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id k128sm4367891wmd.37.2019.01.29.05.35.56
+        by smtp.gmail.com with ESMTPSA id k128sm4367891wmd.37.2019.01.29.05.35.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 05:35:57 -0800 (PST)
+        Tue, 29 Jan 2019 05:36:00 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -71,9 +71,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 04/13] dt-bindings: gpio: add DT bindings for max77650
-Date:   Tue, 29 Jan 2019 14:35:36 +0100
-Message-Id: <20190129133545.1931-6-brgl@bgdev.pl>
+Subject: [PATCH v2 06/13] dt-bindings: input: add DT bindings for max77650
+Date:   Tue, 29 Jan 2019 14:35:38 +0100
+Message-Id: <20190129133545.1931-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129133545.1931-1-brgl@bgdev.pl>
 References: <20190129133545.1931-1-brgl@bgdev.pl>
@@ -86,54 +86,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add the DT binding document for the GPIO module of max77650.
+Add the DT binding document for the onkey module of max77650.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../bindings/gpio/gpio-max77650.txt           | 34 +++++++++++++++++++
- 1 file changed, 34 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-max77650.txt
+ .../bindings/input/max77650-onkey.txt         | 26 +++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-max77650.txt b/Documentation/devicetree/bindings/gpio/gpio-max77650.txt
+diff --git a/Documentation/devicetree/bindings/input/max77650-onkey.txt b/Documentation/devicetree/bindings/input/max77650-onkey.txt
 new file mode 100644
-index 000000000000..b5dbbe934deb
+index 000000000000..37c80898be4d
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-max77650.txt
-@@ -0,0 +1,34 @@
-+GPIO driver for MAX77650 PMIC from Maxim Integrated.
++++ b/Documentation/devicetree/bindings/input/max77650-onkey.txt
+@@ -0,0 +1,26 @@
++Onkey driver for MAX77650 PMIC from Maxim Integrated.
 +
 +This module is part of the MAX77650 MFD device. For more details
 +see Documentation/devicetree/bindings/mfd/max77650.txt.
 +
-+The GPIO controller is represented as a sub-node of the PMIC node on
++The onkey controller is represented as a sub-node of the PMIC node on
 +the device tree.
-+
-+This device has a single GPIO pin.
 +
 +Required properties:
 +--------------------
-+- compatible:		Must be "maxim,max77650-gpio"
-+- gpio-controller : 	Marks the device node as a gpio controller.
-+- #gpio-cells : 	Must be <2>. The first cell is the pin number and
-+			the second cell is used to specify the gpio active
-+			state.
++- compatible:		Must be "maxim,max77650-onkey".
 +
 +Optional properties:
-+--------------------
-+gpio-line-names:	Single string containing the name of the GPIO line.
-+
-+For more details, please refer to the generic GPIO DT binding document
-+<devicetree/bindings/gpio/gpio.txt>.
++- linux,code:		The key-code to be reported when the key is pressed.
++			Defaults to KEY_POWER.
++- maxim,onkey-mode:	Must be "push" or "slide" depending on the type of
++			button used by the system. Defaults to "push".
 +
 +Example:
 +--------
 +
-+	gpio {
-+		compatible = "maxim,max77650-gpio";
-+		gpio-line-names = "max77650-charger";
-+		gpio-controller;
-+		#gpio-cells = <2>;
++	onkey {
++		compatible = "maxim,max77650-onkey";
++		linux,code = <KEY_END>;
++		maxim,onkey-mode = "slide";
 +	};
 -- 
 2.20.1
