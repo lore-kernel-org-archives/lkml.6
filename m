@@ -2,92 +2,120 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6FDC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14800C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56FED21473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:27:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E347F21473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:28:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbfA2P1t (ORCPT
+        id S1728482AbfA2P2F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:27:49 -0500
-Received: from foss.arm.com ([217.140.101.70]:38600 "EHLO foss.arm.com"
+        Tue, 29 Jan 2019 10:28:05 -0500
+Received: from mout.gmx.net ([212.227.15.19]:34001 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbfA2P1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:27:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F574A78;
-        Tue, 29 Jan 2019 07:27:48 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 913D23F557;
-        Tue, 29 Jan 2019 07:27:45 -0800 (PST)
-Date:   Tue, 29 Jan 2019 15:27:35 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org, liviu.dudau@arm.com,
-        lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, nm@ti.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        dietmar.eggemann@arm.com, Sudeep Holla <sudeep.holla@arm.com>,
-        mka@chromium.org
-Subject: Re: [PATCH 6/7] arm64: dts: juno: Add cpu dynamic-power-coefficient
- information
-Message-ID: <20190129152735.GA24772@e107155-lin>
-References: <20190128165522.31749-1-quentin.perret@arm.com>
- <20190128165522.31749-7-quentin.perret@arm.com>
+        id S1725730AbfA2P2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 10:28:04 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx002
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0M70Td-1h38NA3m0j-00woWp; Tue, 29
+ Jan 2019 16:27:30 +0100
+Date:   Tue, 29 Jan 2019 16:27:25 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Kepplinger Martin <Martin.Kepplinger@ginzinger.com>
+Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Markus Heiser <markus.heiser@darmarit.de>,
+        Minghui Liu <minghui.liu.95@gmail.com>,
+        Michael Rodin <michael-git@rodin.online>,
+        Grigory Shipunov <mail@oxapentane.com>,
+        Alessia Mantegazza <amantegazza@vaga.pv.it>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] doc: Change LXR references to elixir.bootlin.com
+Message-ID: <20190129152725.GA19354@latitude>
+References: <20190129142923.5743-1-j.neuschaefer@gmx.net>
+ <2755754cdd8e4bd3956648f9fb6315c2@ginzinger.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190128165522.31749-7-quentin.perret@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <2755754cdd8e4bd3956648f9fb6315c2@ginzinger.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:eUjZXuKwDQpXkUKKXHxMm628c2zMQJH1aGeeYMXNjTfCal5RL2P
+ gu+8HBbr835LdsiCPRjZ16h6dQrEoI/FXdgxLvc3AJ6O2LRHWKww2EUQkOnTekRITBHC+OW
+ IgKttBGa8tzYDOPnWvS59kGHbyd4iDlT6q7KKEi+o7kjBB8DUteyQAy2aNEKSC3Kv1A/Xxv
+ wPDxVotaNJIZxYSpOiveA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:4qAnvEWiT/g=:FdRXxko351pFFTnbHueEyu
+ kXE9n5GbC5YoCMpCAQnK3Xitra9XhAqEgO2w4/yifcNRUPpnKBp9EAa4X4C4gbjjIA4v2Ng71
+ Abki7KkTOX9RyOiTDcDLuzb/KsmlrRUQXCsMJ4679DjRMo+mWKfLjvW2ogUe/D8b09XhE7QTI
+ aUkxJuetnQfGelq6MYzuXWHq2i0IHnJ6uEs0Qq7ld8uq1De76vbiDIwVMrsJjiYrW0q2/PyHm
+ rkps+w2xVqI+k3w+Sn58+VTA6o0u/QVyjv9AkqLpxJkE50fYRyXt2vmdejt7RoAXq7507bA1c
+ 20QBCvlHL43NBYTC0qZNQGQWeAlvI7MUctlyZXPKGdQw7HqkFj1Ymw5UxHbeKowT87E5NsUKA
+ Egy42BaAVSrJPe/tMcdwQdvWViEI7izc71+/4C3qdvQod6m190GV+Mlk3blMnx5XG56tyOOA3
+ +KL5CBAx4sxfwbjz/v7P1WiAU+Ph+qW43lM93erUSDC7iEsKHuaQWOAp69dDU2jm36+8PY3m1
+ iT6SW/rAP7DtGsu/+6SmXazh0ue96ezmk3jCHWukHjJb2D+xBkyjKcEZG5+f9btFWWL2oY4t0
+ eqChTgyFDsE9X9ZJ38LfwG7agDnmNQuqnVzhTY2KFxSyi/nn5dG7sgDnZv8zxPQ2Ji84knjfT
+ M5DpIkevkstuPoKYzGxfccZcg6MtvPcqAMNYLg7BBw4ap/JZL0XPXSYfhuh0ANrnraR5ofQVS
+ k1pgGI0l+f/If18FC4iCXYFXgETXgZIv2MewYT5jeDIWGOS5BYRzhxJCRu5pSRYVa+KiLf1Em
+ jBbSUumIjQO2ayA2pkCY6jmfS/TYutgZS8msprgo+UOnyb8wa/6fFO2bjJabaFhuPu+YDD1I1
+ IX80Z4VFkyejBN3LaBJla0dj6wrJ4x8c7bVdt8ABwSXrddm18ZFqU4xXs1YvYNElWm/G0mRq5
+ z9t4wZrCdHw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 04:55:21PM +0000, Quentin Perret wrote:
-> From: Dietmar Eggemann <dietmar.eggemann@arm.com>
->
-> A CPUfreq driver, like the scpi driver used on Juno boards, which
-> provide the Energy Model with power cost information via the PM_OPP
-> of_dev_pm_opp_get_cpu_power() function, do need the
-> dynamic-power-coefficient (C) in the device tree.
->
-> Method used to obtain the C value:
-> C is computed by measuring energy (E) consumption of a frequency domain
-> (FD) over a 10s runtime (t) sysbench workload running at each Operating
-> Performance Point (OPP) affine to 1 or 2 CPUs of that FD while the other
-> CPUs of the system are hotplugged out.
-> By definition all CPUs of a FD have the the same micro-architecture. An
-> OPP is characterized by a certain frequency (f) and voltage (V) value.
-> The corresponding power values (P) are calculated by dividing the delta
-> of the E values between the runs with 2 and 1 CPUs by t.
->
-> With n data tuples (P, f, V), n equal to number of OPPs for this
-> frequency domain, we can solve C by:
->
-> P = Pstat + Pdyn
->
-> P = Pstat + CV²f
->
-> Cx = (Px - P1)/(Vx²fx - V1²f1) with x = {2, ..., n}
->
-> The C value is the arithmetic mean out of {C2, ..., Cn}.
->
-> Since DVFS is broken on Juno r1, no dynamic-power-coefficient
-> information has been added to its dts file.
->
 
-Since the binding for "dynamic-power-coefficient" property already exist,
-and I don't see any dependency for this and the next patch(TC2) on this
-series, I will apply them. Please shout if for any reason that's not true.
+--n8g4imXOkfNTN/H1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---
-Regards,
-Sudeep
+On Tue, Jan 29, 2019 at 03:01:18PM +0000, Kepplinger Martin wrote:
+[...]
+> -.. [4] http://lxr.free-electrons.com/ident?i=3Dxpad_device
+> +.. [4] https://elixir.bootlin.com/ident?i=3Dxpad_device
+>=20
+> that seems to be wrong. I think it's https://elixir.bootlin.com/linux/lat=
+est/ident/xpad_device
+
+Oops. Indeed, it doesn't work with the old syntax. I'll fix this in v2.
+
+> other than that, good.
+
+Thanks,
+Jonathan Neusch=C3=A4fer
+
+--n8g4imXOkfNTN/H1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlxQcNYACgkQCDBEmo7z
+X9u4Ew/9FelWYWndNdMHR93IecjDouiZCV0jCiaO1/yx2wnqPx+mnEBnIxkrTcBw
+V41za5eEdhwOX+kxS8sHupBZHbdLZxBR5xgEgnwc9P8PwogFJa6wx2CY0NnHAhSI
+B7k1BVLMYuDIAWrSyMEN8GWbKFiCdlgzQMeDK+g9bDu9Hlo41AJxxa1foTpEFPue
+d9zH0t0nL+WRwykPPOcG6MmjPMIpLfQLFHV0FOIee7KFY9ZpUPUdnpYSJEzA/7sS
+/hCu3BU+d96H8VrcmxKP6Zv2p4Y+tlz3K/AhhOBQLe2jyWORBsBAT77oqxajs6u2
+5VXABKrWmm72roFkMd4ePm9aOEsoEZmA+nYGRB2zQ6z3mXWsMlb5IOOqIEEmH8mx
+85kljFP9HUvuwaQQ956SEtBHFVWRfqubM8oVTqjz+SR61I3OrWHTX5QuZ3HBH2/R
+H1pJYkxTqEvUtQ47DEkum1SqKDnrPf4cCYrNV8herSvJC5h4tHks+whbHRH3lCzV
+Fpxmi/gbCygzfpRecNu90j+gfW3RksIp4hh1odERUR6d/eyX1Oi98OPbvYf6aoTS
+XJlK1vY2FqTV8rEdSzRwExEW8j8S2GraPTOYUUieLVTWpqV78J9yNLawS5BZxlsh
+mkMuOYNv8hP8iHzXLOOw3ywJz3uD69NjOf9/xTasM+9j2ZLLJwk=
+=Rd97
+-----END PGP SIGNATURE-----
+
+--n8g4imXOkfNTN/H1--
