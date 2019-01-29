@@ -2,196 +2,89 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B855BC282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73705C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C5E521473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:31:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44B8921473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:32:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Rs0akdsm"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="kvyu8utr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbfA2Rbp (ORCPT
+        id S1728997AbfA2Rca (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:31:45 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44174 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbfA2Rbo (ORCPT
+        Tue, 29 Jan 2019 12:32:30 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:35444 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726999AbfA2Rca (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:31:44 -0500
-Received: by mail-io1-f68.google.com with SMTP id r200so16959592iod.11
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 09:31:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bZh0qe15JVYEhdxehVf2IVz+a7AcDGhW0+jvnJqPk1M=;
-        b=Rs0akdsmCMlEPTq9WHuH9kawCWMxee51GSzmmGmU8FOmCVbDxXNWzqQ4/lvjJ4UgM3
-         9X+tFjCjaUTsp/4QhemzdFHHc08nRBAKIBHB1pPRaAuvqh/IMxcQ528J7DMaAoXwM8hR
-         I2cr0BixknbZGOGPp+Z1sm8mre+8o4DaWo4xY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bZh0qe15JVYEhdxehVf2IVz+a7AcDGhW0+jvnJqPk1M=;
-        b=MTSg7yutAfKNvRVA4g+0IV1wEiJh59SRUxB32HWD2Sn+4pC96sFueP7MmnXluRvNEC
-         130Q2pGLsWFrEeBj5GKchAWO1eg6RRl32gAKzzWYJsNxfP9EzOLO/CF7pvxmkHBUmNtk
-         vMRLXVcYwk8xRh42t5KhdIaszwm09pDyc8GQyH81TODXBn/9yH4eBDXorGnIzoWbESt3
-         S5M0i6nScrL6VA0YadWZlbNCVP9iBB4L9JdTHdFMSq9A5Y4YYSBdJWscfd8q1fCsRk8b
-         YK5CrKU6eM8J17Zu7B22aLD3ARUbiG53sXJr9sK41AKv5qWG6e4f6Lg2zxTWiOol62Fk
-         KKuw==
-X-Gm-Message-State: AHQUAuYtZbaU7FGCpkVzzBlAvSxV09A/5uD/AOIHDoUvhgyFiBo6citK
-        rAd82FG01bpPTLhUWPtsE6dSnoQ4Qu4qEmXOmm+auw==
-X-Google-Smtp-Source: AHgI3Ib6SZoISxrxWS5TsELBm2UfiVTshEipN4cOitSRdbmF6PAKVZDU+9CpAudCOkW2jLTPXxyLRJUpoZ+hjj+k3yE=
-X-Received: by 2002:a6b:7a0a:: with SMTP id h10mr2413852iom.114.1548783103321;
- Tue, 29 Jan 2019 09:31:43 -0800 (PST)
+        Tue, 29 Jan 2019 12:32:30 -0500
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id 4FF7210C15B3;
+        Tue, 29 Jan 2019 09:32:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1548783150; bh=ibL+64ziqHSaoC0t51v+5CQbE3Q1Am78u9L9VtwtGrg=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=kvyu8utrYFBVrfp6MArX36XQprIT0EvzrsLjSDlePK9b0ZbPE2Guww436H/pSM0lx
+         QKy9X0OLOmEzL0uEhJ+WsatzH2j5x9LRdM/OEhidqreVxfQBBM3O0u3YCFwFCQEyYD
+         xnYBjO0K2W2YR9GfQHi6h/lRHiKLr0cQg9ac7BznXnKZMUtzk3TWIBT+XZ175sANj0
+         eApUq5qunAZJ9bx2SoDQsCSc0+wlwuaR+JXi1Cp8ak8YN4FNk5wDYr++xjwbb/de85
+         96WEdafoT8DpZhsfZ+RCC1sANMnUtxE1PJ+HTbIg1rPICg6thbew/MN2415KqCvQ0C
+         Zl8Mh7uvicniA==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 1FDFBA00D5;
+        Tue, 29 Jan 2019 17:32:29 +0000 (UTC)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 29 Jan 2019 09:32:09 -0800
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Tue,
+ 29 Jan 2019 18:32:06 +0100
+From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
+To:     "Eugeniy.Paltsev@synopsys.com" <eugeniy.paltsev@synopsys.com>,
+        "Vineet Gupta" <vineet.gupta1@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexey.brodkin@synopsys.com" <alexey.brodkin@synopsys.com>
+Subject: Re: [PATCH 1/2] ARCv2: Enable unaligned access in early ASM code
+Thread-Topic: [PATCH 1/2] ARCv2: Enable unaligned access in early ASM code
+Thread-Index: AQHUrY7S1r2HqQHrAUmKrUzEXiBQFaXGhToA
+Date:   Tue, 29 Jan 2019 17:32:06 +0000
+Message-ID: <1548783126.29008.22.camel@synopsys.com>
+References: <20190116112951.10641-1-Eugeniy.Paltsev@synopsys.com>
+         <3c341dd9-f360-640e-a3c9-3291300d02ae@synopsys.com>
+         <1548782756.29008.20.camel@synopsys.com>
+         <C2D7FE5348E1B147BCA15975FBA23075014642D45B@US01WEMBX2.internal.synopsys.com>
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075014642D45B@US01WEMBX2.internal.synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.8.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <945BF332CBA9624B91ABC437F0544F6A@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190124195900.22620-1-jagan@amarulasolutions.com>
- <20190124195900.22620-12-jagan@amarulasolutions.com> <20190125212433.ni2jg3wvpyjazlxf@flea>
- <CAMty3ZAsH2iZ+JEqTE3D58aXfGuhMSg9YoO56ZhhOeE4c4yQHQ@mail.gmail.com> <20190129151348.mh27btttsqcmeban@flea>
-In-Reply-To: <20190129151348.mh27btttsqcmeban@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 29 Jan 2019 23:01:31 +0530
-Message-ID: <CAMty3ZAjAoti8Zu80c=OyCA+u-jtQnkidsKSNz_c2OaRswqc3w@mail.gmail.com>
-Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 8:43 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Mon, Jan 28, 2019 at 03:06:10PM +0530, Jagan Teki wrote:
-> > On Sat, Jan 26, 2019 at 2:54 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Fri, Jan 25, 2019 at 01:28:49AM +0530, Jagan Teki wrote:
-> > > > Minimum PLL used for MIPI is 500MHz, as per manual, but
-> > > > lowering the min rate by 300MHz can result proper working
-> > > > nkms divider with the help of desired dclock rate from
-> > > > panel driver.
-> > > >
-> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > >
-> > > Going 200MHz below the minimum doesn't seem really reasonable. What
-> > > is the issue that you are trying to fix here?
-> > >
-> > > It looks like it's picking bad dividers, but if that's the case, this
-> > > isn't the proper fix.
-> >
-> > As I stated in earlier patches, the whole idea is pick the desired
-> > dclk divider based dclk rate. So the dotclock, sun4i_dclk_round_rate
-> > is unable to get the proper dclk divider at the end, so it eventually
-> > picking up wrong divider value and fired vblank timeout.
-> >
-> > So, we come-up with optimal and working min_rate 300MHz in pll-mipi to
-> > get the desired clock something like below.
-> > [    2.415773] [drm] No driver support for vblank timestamp query.
-> > [    2.424116] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-> > [    2.424172] ideal = 220000000, rounded = 0
-> > [    2.424176] ideal = 275000000, rounded = 0
-> > [    2.424194] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424197] ideal = 330000000, rounded = 330000000
-> > [    2.424201] sun4i_dclk_round_rate: div = 6 rate = 55000000
-> > [    2.424205] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-> > [    2.424209] ideal = 220000000, rounded = 0
-> > [    2.424213] ideal = 275000000, rounded = 0
-> > [    2.424230] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424233] ideal = 330000000, rounded = 330000000
-> > [    2.424236] sun4i_dclk_round_rate: div = 6 rate = 55000000
-> > [    2.424253] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424270] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424278] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-> > [    2.424281] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-> > [    2.424306] ccu_nkm_set_rate: rate = 330000000, parent_rate = 297000000
-> > [    2.424309] ccu_nkm_set_rate: _nkm.n = 5
-> > [    2.424311] ccu_nkm_set_rate: _nkm.k = 2
-> > [    2.424313] ccu_nkm_set_rate: _nkm.m = 9
-> > [    2.424661] sun4i_dclk_set_rate div 6
-> > [    2.424668] sun4i_dclk_recalc_rate: val = 6, rate = 55000000
-> >
-> > But look like this wouldn't valid for all other dclock rates, say BPI
-> > panel has 30MHz clock that would failed with this logic.
-> >
-> > On the other side Allwinner BSP calculating dclk divider based on the
-> > SoC's. for A33 [1] it is fixed dclk divider of 4 and for A64 is is
-> > calculated based on the bpp/lanes.
->
-> It looks like the A64 has the same divider of 4:
-> https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L12
->
-> I think you're confusing it with the ratio between the pixel clock and
-> the dotclock, called dsi_div:
-> https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L198
-
-Ahh.. I thought this initially but as far as DSI clock computation is
-concern, the L12 tcon_div is local variable which is used for edge0
-computation in burst mode and not for the dsi clock computation. Since
-the BSP is unable to get the tcon_div during edge0 computation, they
-defined it locally I think.
-
-You can see the lcd_clk_config() code [2], where we can see DSI clock
-computation using dsi_div value.
-
-Here is dump after the in Line 792 which is after computation[3]
-[   10.800737] lcd_clk_config: dsi_div = 6, tcon_div = 4, lcd_div = 1
-[   10.800743] lcd_clk_config: lcd_dclk_freq = 55, dclk_rate = 55000000
-[   10.800749] lcd_clk_config: lcd_rate = 330000000, pll_rate = 330000000
-
-The above dump the lcd_rate 330MHz is computed with panel clock, 55MHz
-into dsi_div 6. So this can be our actual divider values dclk_min_div,
-dclk_max_div in sun4i_dclk_round_rate (from
-drivers/gpu/drm/sun4i/sun4i_dotclock.c)
-
-We can even confirm this from Mainline code:
-[    1.866128] sun4i_dclk_round_rate: min_div = 6 max_div = 6, rate = 55000000
-[    1.873112] round_rate, parent = 330000000
-[    1.877351] round_rate, rate = 330000000
-[    1.881338] ideal = 330000000, rounded = 330000000, div = 6
-[    1.887232] sun4i_dclk_round_rate: div = 6 rate = 55000000
-[    1.887239] sun4i_dclk_round_rate: min_div = 6 max_div = 6, rate = 55000000
-[    1.887243] round_rate, parent = 330000000
-[    1.887259] round_rate, rate = 330000000
-[    1.887264] ideal = 330000000, rounded = 330000000, div = 6
-[    1.887267] sun4i_dclk_round_rate: div = 6 rate = 55000000
-[    1.887270] round_rate, parent = 330000000
-[    1.887286] round_rate, rate = 330000000
-[    1.887292] round_rate, parent = 330000000
-[    1.887307] round_rate, rate = 330000000
-[    1.887320] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-[    1.887324] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-[    1.887350] rate = 330000000
-[    1.887353] parent_rate = 297000000
-[    1.887355] reg = 0x80c00000
-[    1.887359] _nkm.n = 5, nkm->n.offset = 0x1, nkm->n.shift = 8
-[    1.887362] _nkm.k = 2, nkm->k.offset = 0x1, nkm->k.shift = 4
-[    1.887365] _nkm.m = 9, nkm->m.offset = 0x1, nkm->m.shift = 0
-[    1.887712] sun4i_dclk_set_rate div 6
-[    1.887720] sun4i_dclk_recalc_rate: val = 6, rate = 55000000
-
-So, the dsi_div from AW BSP is our dclk_mini_div(and dclk_max_div) and
-that can be computed as format/lanes in A64.
-
-Hope this explaining clears the diff, let me know if I miss anything.
-
-[2] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L781
-[3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L792
+T24gVHVlLCAyMDE5LTAxLTI5IGF0IDA5OjI4IC0wODAwLCBWaW5lZXQgR3VwdGEgd3JvdGU6DQo+
+IE9uIDEvMjkvMTkgOToyNiBBTSwgRXVnZW5peSBQYWx0c2V2IHdyb3RlOg0KPiA+ID4gSSBwcmVz
+dW1lIHRoZXJlIGlzIG5vIHNwZWNpZmljIHJlYXNvbiB0byBpbmNsdWRlIHRoaXMgY29uZGl0aW9u
+YWxseS4NCj4gPiA+IGlycWZsYWdzLmggYWxyZWFkeSBpbmNsdWRlcyB0aGUgcmlnaHQgdmVyc2lv
+bi4NCj4gPiANCj4gPiBBZ3JlZS4NCj4gPiBJJ3ZlIGp1c3QgZm9yZ290dGVuIGFib3V0IGNvbW1v
+biBpcnFmbGFncy5oDQo+IA0KPiBObyBuZWVkIGZvciB0aGlzIHNlcmllcy4gR2l2ZW4gQWxleGV5
+J3MgcmVxdWVzdCwgSSd2ZSBwdXNoZWQgdGhlIG1pbmltYWwgcGF0Y2guDQo+IFlvdSBkbyBuZWVk
+IHRvIHJlYmFzZSB0aGUgb3RoZXIgdW5hbGluZ2VkIGFjY2VzcyBzZXJpZXMgb24gdG9wLCBob3dl
+dmVyIHdhaXQgZm9yDQo+IG1lIHRvIGNvbW1lbnQgb24gdGhhdC4NCg0KT2suDQoNCj4gLVZpbmVl
+dA0KPiANCi0tIA0KIEV1Z2VuaXkgUGFsdHNldg==
