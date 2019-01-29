@@ -2,214 +2,177 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42659C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EDBC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06E832175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:58:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="c1elvF0p"
+	by mail.kernel.org (Postfix) with ESMTP id 95B782087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbfA2P6C (ORCPT
+        id S1727936AbfA2P6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:58:02 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49117 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbfA2P6B (ORCPT
+        Tue, 29 Jan 2019 10:58:09 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.194]:28211 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727490AbfA2P6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:58:01 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190129155759euoutp012f24e4581304c8badc9bfd9288d6eff8~_XOmDrfAU1569915699euoutp01u
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 15:57:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190129155759euoutp012f24e4581304c8badc9bfd9288d6eff8~_XOmDrfAU1569915699euoutp01u
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1548777479;
-        bh=efA1xgq/E6H2bvJ060ZQWL4+mu93Fz0joqPMVYcT+hk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=c1elvF0pcQfD481UxWd+lsPqXeThn4ylVvH2AZerCuQ9B9q0BIlPSmZ2i4BSylkqw
-         IcfLM1jBQ8Rj8rRP1PKZN9k/g24J/GvYyb2BpUWlY7pDW0+BxImUpw+43W7ZsnvUYP
-         z7qXwWIlJZSeaG8NYKykp+Ji5bn7fpRxERbIvSJ4=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190129155759eucas1p2acbb97bf26d1a3625dcbd266d371a5fc~_XOlQXk1N2552225522eucas1p25;
-        Tue, 29 Jan 2019 15:57:59 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 51.07.04294.608705C5; Tue, 29
-        Jan 2019 15:57:58 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190129155758eucas1p13ee7f9bf17b10d104e198770fa8a9122~_XOkasFnM2320423204eucas1p1v;
-        Tue, 29 Jan 2019 15:57:58 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190129155757eusmtrp19b9a3923bb352f53395ae36b909421fd~_XOkL_9A02822928229eusmtrp15;
-        Tue, 29 Jan 2019 15:57:57 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-ab-5c507806155d
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 3F.FF.04284.508705C5; Tue, 29
-        Jan 2019 15:57:57 +0000 (GMT)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190129155757eusmtip113b4e6905e9601c05a055ec1e1810d6c~_XOjn2lsb2108621086eusmtip1h;
-        Tue, 29 Jan 2019 15:57:57 +0000 (GMT)
-Subject: Re: [PATCH 1/8] clk: samsung: add needed IDs for DMC clocks in
- Exynos5420
-To:     Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org
-Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
-        krzk@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Message-ID: <f41259c2-fe37-261d-2029-e4d4aecf52d6@partner.samsung.com>
-Date:   Tue, 29 Jan 2019 16:57:56 +0100
+        Tue, 29 Jan 2019 10:58:08 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 88CD5FDE7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 09:58:07 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id oVm3gMXWPdnCeoVm3gOQhp; Tue, 29 Jan 2019 09:58:07 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=34016 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1goVm2-002gtH-Vc; Tue, 29 Jan 2019 09:58:07 -0600
+Subject: Re: [PATCH] x86/events: Mark expected switch fall-throughs
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20190125184917.GA7289@embeddedor>
+ <20190129152500.GA25706@zn.tnic>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <8aa46db0-6983-62c4-7dc6-e006d20cd84b@embeddedor.com>
+Date:   Tue, 29 Jan 2019 09:58:05 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <d6cbbeac-c15f-91b8-caf3-b22b8715665a@samsung.com>
+In-Reply-To: <20190129152500.GA25706@zn.tnic>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAKsWRmVeSWpSXmKPExsWy7djPc7psFQExBreW61hsnLGe1eL6l+es
-        FvOPnGO16H/8mtni/PkN7BabHl9jtbi8aw6bxYzz+5gsll6/yGRxu3EFm0Xr3iPsFofftLM6
-        8HismbeG0WPTqk42j81L6j36tqxi9Pi8SS6ANYrLJiU1J7MstUjfLoEr4/2W5WwFMyUrWta0
-        sDcwnhXpYuTkkBAwkTiy5DYLiC0ksIJRouWJXxcjF5D9hVGi8dIuVgjnM6PErs9r2GE6NvTe
-        YoJILGeUmP71LiOE85ZRYuf1ZawgVcICIRLbV+wB6xARcJH4dLGXEcRmFjjJJNE02aSLkYOD
-        TUBPYseqQpAwr4CbxONPS8BaWQRUJd69aWYGsUUFIiQO975jhKgRlDg58wnYqZwC9hKzXx1n
-        gRgpLnHryXwmCFteonnrbGaQeyQEbrFLHG4+zgpxtYvEua9voT4Qlnh1fAuULSNxenIPC4Rd
-        LHG2YxUbhF0j0X5yB1SNtcTh4xdZQW5mFtCUWL9LHyLsKHF+/n12kLCEAJ/EjbeCECfwSUza
-        Np0ZIswr0dEmBFGtIbGl5wIThC0msXzNNPYJjEqzkDw2C8kzs5A8Mwth7wJGllWM4qmlxbnp
-        qcVGeanlesWJucWleel6yfm5mxiB6er0v+NfdjDu+pN0iFGAg1GJh5chOCBGiDWxrLgy9xCj
-        BAezkgiv4W//GCHelMTKqtSi/Pii0pzU4kOM0hwsSuK81QwPooUE0hNLUrNTUwtSi2CyTByc
-        Ug2Mnp/lDfj+2t6tskieHfvUe5L/jn973r6fztknPulZqtUru/M5+c62VqtKol7Lx516xMRm
-        7Cqq+3r2Bb9b0zjbN8+xXvt947EDGz6afHiWNT/Gaorg4i8LFZ0zLHOecPJcUJBTDWZrk6us
-        /SdyxfbvL6abk53MciakBb3q1Npi3nc580fxLP4CJZbijERDLeai4kQAOh0lqFMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xu7qsFQExBos+6ltsnLGe1eL6l+es
-        FvOPnGO16H/8mtni/PkN7BabHl9jtbi8aw6bxYzz+5gsll6/yGRxu3EFm0Xr3iPsFofftLM6
-        8HismbeG0WPTqk42j81L6j36tqxi9Pi8SS6ANUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jE
-        Us/Q2DzWyshUSd/OJiU1J7MstUjfLkEv4/2W5WwFMyUrWta0sDcwnhXpYuTkkBAwkdjQe4up
-        i5GLQ0hgKaPEgSvn2CASYhKT9m1nh7CFJf5c62KDKHrNKPFt+h8mkISwQIjE9hV7wIpEBFwk
-        Pl3sZQQpYhY4ySTR/G4SI0THFCaJrX2ngRwODjYBPYkdqwpBGngF3CQef1rCCmKzCKhKvHvT
-        zAxiiwpESHx8uo8JokZQ4uTMJywgNqeAvcTsV8fBbGYBM4l5mx8yQ9jiEreezGeCsOUlmrfO
-        Zp7AKDQLSfssJC2zkLTMQtKygJFlFaNIamlxbnpusaFecWJucWleul5yfu4mRmCcbjv2c/MO
-        xksbgw8xCnAwKvHwMgQHxAixJpYVV+YeYpTgYFYS4TX87R8jxJuSWFmVWpQfX1Sak1p8iNEU
-        6LmJzFKiyfnAFJJXEm9oamhuYWlobmxubGahJM573qAySkggPbEkNTs1tSC1CKaPiYNTqoGx
-        ZuPCYycKkgU4izfMVJ65RfK0r6tWnMEu1Ub/OvXTd2oC9hnP0mKYeTasp0d3988li2ayuR1j
-        3CL+Z+XjiKSHyxc99Vp89Vmh/rsr1/3vL9uwW7iiau6alreb8melND/4VsSu8tIso+KFr82N
-        Hyq/vvHrFah13F4ZmcX00zMkxkRtyf623EePlFiKMxINtZiLihMBkIHJt+kCAAA=
-X-CMS-MailID: 20190129155758eucas1p13ee7f9bf17b10d104e198770fa8a9122
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190128192151eucas1p1754d1286ff0f46e8e98796d7583d8e96
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190128192151eucas1p1754d1286ff0f46e8e98796d7583d8e96
-References: <1548703299-15806-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190128192151eucas1p1754d1286ff0f46e8e98796d7583d8e96@eucas1p1.samsung.com>
-        <1548703299-15806-2-git-send-email-l.luba@partner.samsung.com>
-        <d6cbbeac-c15f-91b8-caf3-b22b8715665a@samsung.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1goVm2-002gtH-Vc
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:34016
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
 
-On 1/29/19 1:54 AM, Chanwoo Choi wrote:
-> Hi Lukasz,
-> 
-> This patchset don't contain the cover-letter. Please send the
-> cover-letter which explains what to do on this patchset.
-> 
-> And is it supporting all Exynos5 for both 32bit(5420,5422)
-> and 64bit(5433) or only Exynos542x(32bit)? If it only support
-> the Exynos 542x series, you have to change the driver name
-> from 'exynos5-dmc.c' to 'exynos5420-dmc.c' or 'exynos5422-dmc.c'
-> in order to prevent the confusion according to the driver name.
-I will rename the driver file to exynos5422-dmc.c and the config entry.
-When the driver will get support for Exynos5433, the file name would
-have to be changed again.
 
-Regards,
-Lukasz
-
-> 
-> 
-> On 19. 1. 29. 오전 4:21, Lukasz Luba wrote:
->> Define new IDs for clocks used by Dynamic Memory Controller in
->> Exynos5422 SoC.
+On 1/29/19 9:25 AM, Borislav Petkov wrote:
+> On Fri, Jan 25, 2019 at 12:49:17PM -0600, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+>> cases where we are expecting to fall through.
 >>
->> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> CC: Chanwoo Choi <cw00.choi@samsung.com>
->> CC: Rob Herring <robh+dt@kernel.org>
->> CC: Mark Rutland <mark.rutland@arm.com>
->> CC: Kukjin Kim <kgene@kernel.org>
->> CC: Krzysztof Kozlowski <krzk@kernel.org>
->> CC: linux-samsung-soc@vger.kernel.org
->> CC: devicetree@vger.kernel.org
->> CC: linux-arm-kernel@lists.infradead.org
->> CC: linux-kernel@vger.kernel.org
->> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> This patch fixes the following warnings:
+>>
+>> In file included from arch/x86/events/intel/core.c:22:
+>> arch/x86/events/intel/core.c: In function ‘intel_pmu_init’:
+>> arch/x86/events/intel/../perf_event.h:668:17: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>   x86_pmu.quirks = &__quirk;     \
+>>   ~~~~~~~~~~~~~~~^~~~~~~~~~
+>> arch/x86/events/intel/core.c:4170:3: note: in expansion of macro ‘x86_add_quirk’
+>>    x86_add_quirk(intel_clovertown_quirk);
+>>    ^~~~~~~~~~~~~
+>> arch/x86/events/intel/core.c:4171:2: note: here
+>>   case INTEL_FAM6_CORE2_MEROM_L:
+>>   ^~~~
+>> arch/x86/events/intel/lbr.c:929:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 >> ---
->>   include/dt-bindings/clock/exynos5420.h | 18 +++++++++++++++++-
->>   1 file changed, 17 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
->> index 355f469..1827a64 100644
->> --- a/include/dt-bindings/clock/exynos5420.h
->> +++ b/include/dt-bindings/clock/exynos5420.h
->> @@ -60,6 +60,7 @@
->>   #define CLK_MAU_EPLL		159
->>   #define CLK_SCLK_HSIC_12M	160
->>   #define CLK_SCLK_MPHY_IXTAL24	161
->> +#define CLK_SCLK_BPLL		162
->>   
->>   /* gate clocks */
->>   #define CLK_UART0		257
->> @@ -195,6 +196,16 @@
->>   #define CLK_ACLK432_CAM		518
->>   #define CLK_ACLK_FL1550_CAM	519
->>   #define CLK_ACLK550_CAM		520
->> +#define CLK_CLKM_PHY0		521
->> +#define CLK_CLKM_PHY1		522
->> +#define CLK_ACLK_PPMU_DREX0_0	523
->> +#define CLK_ACLK_PPMU_DREX0_1	524
->> +#define CLK_ACLK_PPMU_DREX1_0	525
->> +#define CLK_ACLK_PPMU_DREX1_1	526
->> +#define CLK_PCLK_PPMU_DREX0_0	527
->> +#define CLK_PCLK_PPMU_DREX0_1	528
->> +#define CLK_PCLK_PPMU_DREX1_0	529
->> +#define CLK_PCLK_PPMU_DREX1_1	530
->>   
->>   /* mux clocks */
->>   #define CLK_MOUT_HDMI		640
->> @@ -217,6 +228,10 @@
->>   #define CLK_MOUT_EPLL		657
->>   #define CLK_MOUT_MAU_EPLL	658
->>   #define CLK_MOUT_USER_MAU_EPLL	659
->> +#define CLK_MOUT_DPLL		660
->> +#define CLK_MOUT_ACLK_G3D	661
->> +#define CLK_MOUT_SCLK_SPLL	662
->> +#define CLK_MOUT_MX_MSPLL_CCORE_PHY	663
->>   
->>   /* divider clocks */
->>   #define CLK_DOUT_PIXEL		768
->> @@ -248,8 +263,9 @@
->>   #define CLK_DOUT_CCLK_DREX0	794
->>   #define CLK_DOUT_CLK2X_PHY0	795
->>   #define CLK_DOUT_PCLK_CORE_MEM	796
->> +#define CLK_FF_DOUT_SPLL2	797
->>   
->>   /* must be greater than maximal clock id */
->> -#define CLK_NR_CLKS		797
->> +#define CLK_NR_CLKS		798
->>   
->>   #endif /* _DT_BINDINGS_CLOCK_EXYNOS_5420_H */
->>
+>>  arch/x86/events/intel/core.c | 2 ++
+>>  arch/x86/events/intel/lbr.c  | 1 +
+>>  2 files changed, 3 insertions(+)
 > 
+> You do know how to use scripts/get_maintainer.pl, right?
 > 
+> Because I don't see PeterZ on CC.
+> 
+> Please use that script when preparing patches.
+> 
+
+$ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback arch/x86/events/intel/core.c
+Thomas Gleixner <tglx@linutronix.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Ingo Molnar <mingo@redhat.com> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Borislav Petkov <bp@alien8.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+"H. Peter Anvin" <hpa@zytor.com> (reviewer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+
+$ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback arch/x86/events/intel/lbr.c
+Thomas Gleixner <tglx@linutronix.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Ingo Molnar <mingo@redhat.com> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Borislav Petkov <bp@alien8.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+"H. Peter Anvin" <hpa@zytor.com> (reviewer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+
+Does the MAINTAINERS file need an update?
+
+--
+Gustavo
