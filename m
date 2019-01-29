@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A26F2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E56F2C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6892C20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B550920882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761826;
-	bh=1bTmogRl9kUd3rmvcxx6bPH1bAXCKZlfQQerweL0E/U=;
+	s=default; t=1548761829;
+	bh=nTdHKyODXp/48hnLC7TOEh5A3TqnobtbNMO5l0qVOE4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vtGMMRBVodGT7svIpw+aT/HlaCclqexv6qtHtWTJafx2NIhMayfQNYP1d+Ahiytfq
-	 mOLaVLANouvHbDgcgFODqObgB8SGiXcFMUJvEp8tkX5+An/8nWRgj5lgt5VaZw3vLw
-	 Ti3xE/qFSm8D3RWmkiuqabS4vP2qCClO/Qr+ug1o=
+	b=rCzbBDw6XfRDw6UYPk+Xlp7bQsp2kg4WN0u+UowW9qkjYcPsu8NeArTsBSaa4PYQs
+	 AhkNgt9MzLOrF6jp99pgZp9a5ZOhfvdOL7KMIVrqTGPk3Jd7pphrspDiB7LGwF920M
+	 sQskr319mLup0cnigR3HgILlAz+2NT6HXLQOETY0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbfA2LhF (ORCPT
+        id S1728733AbfA2LhH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:37:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53676 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:37:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728700AbfA2LhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:37:02 -0500
+        id S1728712AbfA2LhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:37:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34A4620882;
-        Tue, 29 Jan 2019 11:37:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D99ED20989;
+        Tue, 29 Jan 2019 11:37:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761821;
-        bh=1bTmogRl9kUd3rmvcxx6bPH1bAXCKZlfQQerweL0E/U=;
+        s=default; t=1548761824;
+        bh=nTdHKyODXp/48hnLC7TOEh5A3TqnobtbNMO5l0qVOE4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gb0TmwYYYRngQSO6Rw5wUthuNfciiNFdgQBOzdugo5/mltNtw5aeTmCvmWzd5MrnN
-         a1d5IJtpiD/9dgJaztTRdxrmdMlVEZKVLNU6SXOPdc8TUKMrtDmzuM5Aln3HYNzzUF
-         vkSj0YmEy5gCulZR+CWWY+JZz3/i5k/7SZGvbYdA=
+        b=H5dg3qirnLXPearbVRrbVPMmlMRlTllJA1BcNEYAZnh8ajWA5gggr9IL2eJ3+iaLE
+         CdWr+DmhKIHM/9Bp/WhTg6pzcdJco0tMtDfkCGcjjAUmay0PeKeKQB1Q7J37/8uKVi
+         WhvN8zcFJ+P07WM+7aj2u1eXSXk96tjVSkZJzQv8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Semion Lisyansky <semionl@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 013/117] mlxsw: spectrum_fid: Update dummy FID index
-Date:   Tue, 29 Jan 2019 12:34:24 +0100
-Message-Id: <20190129113208.247058897@linuxfoundation.org>
+Subject: [PATCH 4.20 014/117] mlxsw: pci: Ring CQs doorbell before RDQs
+Date:   Tue, 29 Jan 2019 12:34:25 +0100
+Message-Id: <20190129113208.326607100@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -66,43 +67,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nir Dotan <nird@mellanox.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit a11dcd6497915ba79d95ef4fe2541aaac27f6201 ]
+When a packet should be trapped to the CPU the device consumes a WQE
+(work queue element) from an RDQ (receive descriptor queue) and copies
+the packet to the address specified in the WQE. The device then tries to
+post a CQE (completion queue element) that contains various metadata
+(e.g., ingress port) about the packet to a CQ (completion queue).
 
-When using a tc flower action of egress mirred redirect, the driver adds
-an implicit FID setting action. This implicit action sets a dummy FID to
-the packet and is used as part of a design for trapping unmatched flows
-in OVS.  While this implicit FID setting action is supposed to be a NOP
-when a redirect action is added, in Spectrum-2 the FID record is
-consulted as the dummy FID index is an 802.1D FID index and the packet
-is dropped instead of being redirected.
+In case the device managed to consume a WQE, but did not manage to post
+the corresponding CQE, it will get stuck. This unlikely situation can be
+triggered due to the scheme the driver is currently using to process
+CQEs.
 
-Set the dummy FID index value to be within 802.1Q range. This satisfies
-both Spectrum-1 which ignores the FID and Spectrum-2 which identifies it
-as an 802.1Q FID and will then follow the redirect action.
+The driver will consume up to 512 CQEs at a time and after processing
+each corresponding WQE it will ring the RDQ's doorbell, letting the
+device know that a new WQE was posted for it to consume. Only after
+processing all the CQEs (up to 512), the driver will ring the CQ's
+doorbell, letting the device know that new ones can be posted.
 
-Fixes: c3ab435466d5 ("mlxsw: spectrum: Extend to support Spectrum-2 ASIC")
-Signed-off-by: Nir Dotan <nird@mellanox.com>
+Fix this by having the driver ring the CQ's doorbell for every processed
+CQE, but before ringing the RDQ's doorbell. This guarantees that
+whenever we post a new WQE, there is a corresponding CQE available. Copy
+the currently processed CQE to prevent the device from overwriting it
+with a new CQE after ringing the doorbell.
+
+Note that the driver still arms the CQ only after processing all the
+pending CQEs, so that interrupts for this CQ will only be delivered
+after the driver finished its processing.
+
+Before commit 8404f6f2e8ed ("mlxsw: pci: Allow to use CQEs of version 1
+and version 2") the issue was virtually impossible to trigger since the
+number of CQEs was twice the number of WQEs and the number of CQEs
+processed at a time was equal to the number of available WQEs.
+
+Fixes: 8404f6f2e8ed ("mlxsw: pci: Allow to use CQEs of version 1 and version 2")
 Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: Semion Lisyansky <semionl@mellanox.com>
+Tested-by: Semion Lisyansky <semionl@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/pci.c    |   12 +++++++-----
+ drivers/net/ethernet/mellanox/mlxsw/pci_hw.h |    1 +
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c
-@@ -882,8 +882,8 @@ static const struct mlxsw_sp_fid_ops mlx
- static const struct mlxsw_sp_fid_family mlxsw_sp_fid_dummy_family = {
- 	.type			= MLXSW_SP_FID_TYPE_DUMMY,
- 	.fid_size		= sizeof(struct mlxsw_sp_fid),
--	.start_index		= MLXSW_SP_RFID_BASE - 1,
--	.end_index		= MLXSW_SP_RFID_BASE - 1,
-+	.start_index		= VLAN_N_VID - 1,
-+	.end_index		= VLAN_N_VID - 1,
- 	.ops			= &mlxsw_sp_fid_dummy_ops,
- };
+--- a/drivers/net/ethernet/mellanox/mlxsw/pci.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/pci.c
+@@ -604,29 +604,31 @@ static void mlxsw_pci_cq_tasklet(unsigne
+ 		u16 wqe_counter = mlxsw_pci_cqe_wqe_counter_get(cqe);
+ 		u8 sendq = mlxsw_pci_cqe_sr_get(q->u.cq.v, cqe);
+ 		u8 dqn = mlxsw_pci_cqe_dqn_get(q->u.cq.v, cqe);
++		char ncqe[MLXSW_PCI_CQE_SIZE_MAX];
++
++		memcpy(ncqe, cqe, q->elem_size);
++		mlxsw_pci_queue_doorbell_consumer_ring(mlxsw_pci, q);
  
+ 		if (sendq) {
+ 			struct mlxsw_pci_queue *sdq;
+ 
+ 			sdq = mlxsw_pci_sdq_get(mlxsw_pci, dqn);
+ 			mlxsw_pci_cqe_sdq_handle(mlxsw_pci, sdq,
+-						 wqe_counter, cqe);
++						 wqe_counter, ncqe);
+ 			q->u.cq.comp_sdq_count++;
+ 		} else {
+ 			struct mlxsw_pci_queue *rdq;
+ 
+ 			rdq = mlxsw_pci_rdq_get(mlxsw_pci, dqn);
+ 			mlxsw_pci_cqe_rdq_handle(mlxsw_pci, rdq,
+-						 wqe_counter, q->u.cq.v, cqe);
++						 wqe_counter, q->u.cq.v, ncqe);
+ 			q->u.cq.comp_rdq_count++;
+ 		}
+ 		if (++items == credits)
+ 			break;
+ 	}
+-	if (items) {
+-		mlxsw_pci_queue_doorbell_consumer_ring(mlxsw_pci, q);
++	if (items)
+ 		mlxsw_pci_queue_doorbell_arm_consumer_ring(mlxsw_pci, q);
+-	}
+ }
+ 
+ static u16 mlxsw_pci_cq_elem_count(const struct mlxsw_pci_queue *q)
+--- a/drivers/net/ethernet/mellanox/mlxsw/pci_hw.h
++++ b/drivers/net/ethernet/mellanox/mlxsw/pci_hw.h
+@@ -53,6 +53,7 @@
+ #define MLXSW_PCI_WQE_SIZE	32 /* 32 bytes per element */
+ #define MLXSW_PCI_CQE01_SIZE	16 /* 16 bytes per element */
+ #define MLXSW_PCI_CQE2_SIZE	32 /* 32 bytes per element */
++#define MLXSW_PCI_CQE_SIZE_MAX	MLXSW_PCI_CQE2_SIZE
+ #define MLXSW_PCI_EQE_SIZE	16 /* 16 bytes per element */
+ #define MLXSW_PCI_WQE_COUNT	(MLXSW_PCI_AQ_SIZE / MLXSW_PCI_WQE_SIZE)
+ #define MLXSW_PCI_CQE01_COUNT	(MLXSW_PCI_AQ_SIZE / MLXSW_PCI_CQE01_SIZE)
 
 
