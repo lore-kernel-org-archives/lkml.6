@@ -4,52 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE3BC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAFEC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17EEF20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA6E20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763086;
-	bh=K9CHrK75K+vu+zwWC9e/HtWa4ETNyBuTIXpXOhDCGwU=;
+	s=default; t=1548763094;
+	bh=ovPXgvZKWIjo4QxWF6oYi12OHNjpG6+uIJWf8MXUiS0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Dx9CooMIrovQ0QGnLZrtOTuLSiL68Il7zKnmKvPFJmUtOmd6voAPw+aceapDnVUQb
-	 q1CN5w2x322p4352PlQ1owkqOp9f0yHk6RwRKcLPD28VnMd7V4uzuUYq5TCMIhaDt5
-	 vk7wrTKS2s2V0JMoYhXiVcD+NVcXshT/ETs7wkqs=
+	b=wVwy3eOk80/HFytykvMuw0mRGqnD9Ara8mvnsjxo52L9GCySl023Hrq+H8Lu23aQ9
+	 S0tqNxJZ88FhfaFiVspj7WoAzz2S5ym/5dnw23EwlTYQKZTKrTgfnlMokZ46JmRPUo
+	 hcKrjKnlkj56zEnB+IIv/LWUbA8wH00dEVHPJi3A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731508AbfA2L6E (ORCPT
+        id S1731316AbfA2Ls2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:58:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39404 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:48:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731329AbfA2Lsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:30 -0500
+        id S1728631AbfA2LsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:48:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 009FD2083B;
-        Tue, 29 Jan 2019 11:48:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6ECDA21852;
+        Tue, 29 Jan 2019 11:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762509;
-        bh=K9CHrK75K+vu+zwWC9e/HtWa4ETNyBuTIXpXOhDCGwU=;
+        s=default; t=1548762500;
+        bh=ovPXgvZKWIjo4QxWF6oYi12OHNjpG6+uIJWf8MXUiS0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZuVExmG1DdSOLkublhD8No4sOR/EFRjzfLVUs+Ztrt7QHA2LBOGc/iEUsH+BuhMhq
-         lGChR0S5Mbc3IebfoDJs/T3tlawo11HVp1Imv9nyFiPK2Z/n6xbDT7/qjDm0TJFNF0
-         QaS2H+U8QkwzuKEBiQNWepHIqZ9nibC9ew3bokf4=
+        b=RyZjLIlTidHcjFTOCRGI2RzS8C30VVbbfjOlQvC4QwdV7vjWofNLrCUAfH9rWhGF9
+         UjokI34vAnEHaFIv/KCshEJpJUyWeyTf/t7aD8sEfwW1aLzqHccNHAZzsS++UwPiby
+         9ldHXnpu0lIiNWjIA4eT/6+b3znn5jKfI/wjGwEk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 29/68] Drivers: hv: vmbus: Check for ring when getting debug info
-Date:   Tue, 29 Jan 2019 12:35:51 +0100
-Message-Id: <20190129113134.038996767@linuxfoundation.org>
+        stable@vger.kernel.org, Samir Virmani <samir@embedur.com>,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH 4.14 26/68] uart: Fix crash in uart_write and uart_put_char
+Date:   Tue, 29 Jan 2019 12:35:48 +0100
+Message-Id: <20190129113133.819071469@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -68,283 +64,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Samir Virmani <samir@embedur.com>
 
-commit ba50bf1ce9a51fc97db58b96d01306aa70bc3979 upstream.
+commit aff9cf5955185d1f183227e46c5f8673fa483813 upstream.
 
-fc96df16a1ce is good and can already fix the "return stack garbage" issue,
-but let's also improve hv_ringbuffer_get_debuginfo(), which would silently
-return stack garbage, if people forget to check channel->state or
-ring_info->ring_buffer, when using the function in the future.
+We were experiencing a crash similar to the one reported as part of
+commit:a5ba1d95e46e ("uart: fix race between uart_put_char() and
+uart_shutdown()") in our testbed as well. We continue to observe the same
+crash after integrating the commit a5ba1d95e46e ("uart: fix race between
+uart_put_char() and uart_shutdown()")
 
-Having an error check in the function would eliminate the potential risk.
+On reviewing the change, the port lock should be taken prior to checking for
+if (!circ->buf) in fn. __uart_put_char and other fns. that update the buffer
+uart_state->xmit.
 
-Add a Fixes tag to indicate the patch depdendency.
+Traceback:
 
-Fixes: fc96df16a1ce ("Drivers: hv: vmbus: Return -EINVAL for the sys files for unopened channels")
-Cc: stable@vger.kernel.org
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+[11/27/2018 06:24:32.4870] Unable to handle kernel NULL pointer dereference
+                           at virtual address 0000003b
+
+[11/27/2018 06:24:32.4950] PC is at memcpy+0x48/0x180
+[11/27/2018 06:24:32.4950] LR is at uart_write+0x74/0x120
+[11/27/2018 06:24:32.4950] pc : [<ffffffc0002e6808>]
+                           lr : [<ffffffc0003747cc>] pstate: 000001c5
+[11/27/2018 06:24:32.4950] sp : ffffffc076433d30
+[11/27/2018 06:24:32.4950] x29: ffffffc076433d30 x28: 0000000000000140
+[11/27/2018 06:24:32.4950] x27: ffffffc0009b9d5e x26: ffffffc07ce36580
+[11/27/2018 06:24:32.4950] x25: 0000000000000000 x24: 0000000000000140
+[11/27/2018 06:24:32.4950] x23: ffffffc000891200 x22: ffffffc01fc34000
+[11/27/2018 06:24:32.4950] x21: 0000000000000fff x20: 0000000000000076
+[11/27/2018 06:24:32.4950] x19: 0000000000000076 x18: 0000000000000000
+[11/27/2018 06:24:32.4950] x17: 000000000047cf08 x16: ffffffc000099e68
+[11/27/2018 06:24:32.4950] x15: 0000000000000018 x14: 776d726966205948
+[11/27/2018 06:24:32.4950] x13: 50203a6c6974755f x12: 74647075205d3333
+[11/27/2018 06:24:32.4950] x11: 3a35323a36203831 x10: 30322f37322f3131
+[11/27/2018 06:24:32.4950] x9 : 5b205d303638342e x8 : 746164206f742070
+[11/27/2018 06:24:32.4950] x7 : 7520736920657261 x6 : 000000000000003b
+[11/27/2018 06:24:32.4950] x5 : 000000000000817a x4 : 0000000000000008
+[11/27/2018 06:24:32.4950] x3 : 2f37322f31312a5b x2 : 000000000000006e
+[11/27/2018 06:24:32.4950] x1 : ffffffc0009b9cf0 x0 : 000000000000003b
+
+[11/27/2018 06:24:32.4950] CPU2: stopping
+[11/27/2018 06:24:32.4950] CPU: 2 PID: 0 Comm: swapper/2 Tainted: P      D    O    4.1.51 #3
+[11/27/2018 06:24:32.4950] Hardware name: Broadcom-v8A (DT)
+[11/27/2018 06:24:32.4950] Call trace:
+[11/27/2018 06:24:32.4950] [<ffffffc0000883b8>] dump_backtrace+0x0/0x150
+[11/27/2018 06:24:32.4950] [<ffffffc00008851c>] show_stack+0x14/0x20
+[11/27/2018 06:24:32.4950] [<ffffffc0005ee810>] dump_stack+0x90/0xb0
+[11/27/2018 06:24:32.4950] [<ffffffc00008e844>] handle_IPI+0x18c/0x1a0
+[11/27/2018 06:24:32.4950] [<ffffffc000080c68>] gic_handle_irq+0x88/0x90
+
+Fixes: a5ba1d95e46e ("uart: fix race between uart_put_char() and uart_shutdown()")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Samir Virmani <samir@embedur.com>
+Acked-by: Tycho Andersen <tycho@tycho.ws>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hv/ring_buffer.c |   29 +++++++-------
- drivers/hv/vmbus_drv.c   |   91 +++++++++++++++++++++++++++++++----------------
- include/linux/hyperv.h   |    5 +-
- 3 files changed, 78 insertions(+), 47 deletions(-)
+ drivers/tty/serial/serial_core.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/hv/ring_buffer.c
-+++ b/drivers/hv/ring_buffer.c
-@@ -141,26 +141,25 @@ static u32 hv_copyto_ringbuffer(
- }
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -563,10 +563,12 @@ static int uart_put_char(struct tty_stru
+ 	int ret = 0;
  
- /* Get various debug metrics for the specified ring buffer. */
--void hv_ringbuffer_get_debuginfo(const struct hv_ring_buffer_info *ring_info,
--				 struct hv_ring_buffer_debug_info *debug_info)
-+int hv_ringbuffer_get_debuginfo(const struct hv_ring_buffer_info *ring_info,
-+				struct hv_ring_buffer_debug_info *debug_info)
- {
- 	u32 bytes_avail_towrite;
- 	u32 bytes_avail_toread;
+ 	circ = &state->xmit;
+-	if (!circ->buf)
++	port = uart_port_lock(state, flags);
++	if (!circ->buf) {
++		uart_port_unlock(port, flags);
+ 		return 0;
++	}
  
--	if (ring_info->ring_buffer) {
--		hv_get_ringbuffer_availbytes(ring_info,
--					&bytes_avail_toread,
--					&bytes_avail_towrite);
-+	if (!ring_info->ring_buffer)
-+		return -EINVAL;
+-	port = uart_port_lock(state, flags);
+ 	if (port && uart_circ_chars_free(circ) != 0) {
+ 		circ->buf[circ->head] = c;
+ 		circ->head = (circ->head + 1) & (UART_XMIT_SIZE - 1);
+@@ -599,11 +601,13 @@ static int uart_write(struct tty_struct
+ 		return -EL3HLT;
+ 	}
  
--		debug_info->bytes_avail_toread = bytes_avail_toread;
--		debug_info->bytes_avail_towrite = bytes_avail_towrite;
--		debug_info->current_read_index =
--			ring_info->ring_buffer->read_index;
--		debug_info->current_write_index =
--			ring_info->ring_buffer->write_index;
--		debug_info->current_interrupt_mask =
--			ring_info->ring_buffer->interrupt_mask;
--	}
-+	hv_get_ringbuffer_availbytes(ring_info,
-+				     &bytes_avail_toread,
-+				     &bytes_avail_towrite);
-+	debug_info->bytes_avail_toread = bytes_avail_toread;
-+	debug_info->bytes_avail_towrite = bytes_avail_towrite;
-+	debug_info->current_read_index = ring_info->ring_buffer->read_index;
-+	debug_info->current_write_index = ring_info->ring_buffer->write_index;
-+	debug_info->current_interrupt_mask
-+		= ring_info->ring_buffer->interrupt_mask;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(hv_ringbuffer_get_debuginfo);
++	port = uart_port_lock(state, flags);
+ 	circ = &state->xmit;
+-	if (!circ->buf)
++	if (!circ->buf) {
++		uart_port_unlock(port, flags);
+ 		return 0;
++	}
  
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -297,12 +297,16 @@ static ssize_t out_intr_mask_show(struct
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info outbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound,
-+					  &outbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", outbound.current_interrupt_mask);
- }
- static DEVICE_ATTR_RO(out_intr_mask);
-@@ -312,12 +316,15 @@ static ssize_t out_read_index_show(struc
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info outbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound,
-+					  &outbound);
-+	if (ret < 0)
-+		return ret;
- 	return sprintf(buf, "%d\n", outbound.current_read_index);
- }
- static DEVICE_ATTR_RO(out_read_index);
-@@ -328,12 +335,15 @@ static ssize_t out_write_index_show(stru
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info outbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound,
-+					  &outbound);
-+	if (ret < 0)
-+		return ret;
- 	return sprintf(buf, "%d\n", outbound.current_write_index);
- }
- static DEVICE_ATTR_RO(out_write_index);
-@@ -344,12 +354,15 @@ static ssize_t out_read_bytes_avail_show
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info outbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound,
-+					  &outbound);
-+	if (ret < 0)
-+		return ret;
- 	return sprintf(buf, "%d\n", outbound.bytes_avail_toread);
- }
- static DEVICE_ATTR_RO(out_read_bytes_avail);
-@@ -360,12 +373,15 @@ static ssize_t out_write_bytes_avail_sho
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info outbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound,
-+					  &outbound);
-+	if (ret < 0)
-+		return ret;
- 	return sprintf(buf, "%d\n", outbound.bytes_avail_towrite);
- }
- static DEVICE_ATTR_RO(out_write_bytes_avail);
-@@ -375,12 +391,15 @@ static ssize_t in_intr_mask_show(struct
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info inbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", inbound.current_interrupt_mask);
- }
- static DEVICE_ATTR_RO(in_intr_mask);
-@@ -390,12 +409,15 @@ static ssize_t in_read_index_show(struct
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info inbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", inbound.current_read_index);
- }
- static DEVICE_ATTR_RO(in_read_index);
-@@ -405,12 +427,15 @@ static ssize_t in_write_index_show(struc
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info inbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", inbound.current_write_index);
- }
- static DEVICE_ATTR_RO(in_write_index);
-@@ -421,12 +446,15 @@ static ssize_t in_read_bytes_avail_show(
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info inbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", inbound.bytes_avail_toread);
- }
- static DEVICE_ATTR_RO(in_read_bytes_avail);
-@@ -437,12 +465,15 @@ static ssize_t in_write_bytes_avail_show
- {
- 	struct hv_device *hv_dev = device_to_hv_device(dev);
- 	struct hv_ring_buffer_debug_info inbound;
-+	int ret;
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
--	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
--		return -EINVAL;
--	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+
-+	ret = hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
-+	if (ret < 0)
-+		return ret;
-+
- 	return sprintf(buf, "%d\n", inbound.bytes_avail_towrite);
- }
- static DEVICE_ATTR_RO(in_write_bytes_avail);
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -1130,8 +1130,9 @@ struct hv_ring_buffer_debug_info {
- 	u32 bytes_avail_towrite;
- };
- 
--void hv_ringbuffer_get_debuginfo(const struct hv_ring_buffer_info *ring_info,
--			    struct hv_ring_buffer_debug_info *debug_info);
-+
-+int hv_ringbuffer_get_debuginfo(const struct hv_ring_buffer_info *ring_info,
-+				struct hv_ring_buffer_debug_info *debug_info);
- 
- /* Vmbus interface */
- #define vmbus_driver_register(driver)	\
+-	port = uart_port_lock(state, flags);
+ 	while (port) {
+ 		c = CIRC_SPACE_TO_END(circ->head, circ->tail, UART_XMIT_SIZE);
+ 		if (count < c)
 
 
