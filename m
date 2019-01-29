@@ -2,151 +2,552 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4DBC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09256C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2C7920881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:08:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2C252082E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:12:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xsSLMnX2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbfA2KIg (ORCPT
+        id S1727513AbfA2KMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:08:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43998 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725793AbfA2KIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:08:35 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 74F76C05B039;
-        Tue, 29 Jan 2019 10:08:35 +0000 (UTC)
-Received: from [10.36.118.12] (unknown [10.36.118.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB6FD5D73F;
-        Tue, 29 Jan 2019 10:08:33 +0000 (UTC)
-Subject: Re: [RFC PATCH v2 0/4] mm, memory_hotplug: allocate memmap from
- hotadded memory
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     linux-mm@kvack.org, mhocko@suse.com, dan.j.williams@intel.com,
-        Pavel.Tatashin@microsoft.com, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com, Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <20190122103708.11043-1-osalvador@suse.de>
- <d9dbefb8-052e-7cb5-3de4-245d05270ff9@redhat.com>
- <20190129084359.65fzc4hqan265gii@d104.suse.de>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <23d64fa1-386d-bdbf-1546-77eb56fcebc6@redhat.com>
-Date:   Tue, 29 Jan 2019 11:08:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20190129084359.65fzc4hqan265gii@d104.suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 29 Jan 2019 05:12:06 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37451 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfA2KMG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 05:12:06 -0500
+Received: by mail-wr1-f66.google.com with SMTP id s12so21333338wrt.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 02:12:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=NULnMeTN8tfwxxxh2vQIaNXOHOwfuhJw55omz8T8qcY=;
+        b=xsSLMnX2hmeRwc5oQGgjk7OT+RLQUWST/46n8VPhS94fx1f+XK00dGw5NWV+Kl5G1M
+         yFEICMHl800KiLH5R8s0es+/NgwaqEtQpM7pWzSdYK9lokTKvYCmG1v04L1m2vJtsQpc
+         7lOIL9rfhzJpGAQUjxhKWuPSjr5ndQGYqMOZrYn7S0W8yfTILuOpEwx5P2luIz/pCZdd
+         iGAydKa9Azx0CvHxPSjUsvsSpfd8MpwNInonWiakcVw9SyjLKWgukVstw6Jo7UE4mR0z
+         bi3K3CtPSBy9cogsnrlEfyR/PtWCYEZfI2zKkpr+PpQt0EX250imEiv5Zpjxm+XV0MJI
+         n8kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=NULnMeTN8tfwxxxh2vQIaNXOHOwfuhJw55omz8T8qcY=;
+        b=XyTuZIKbIF0vJPQSxnbyRpXDxrsllygeGY1mwb2ZrxvuaIS8zTX5BO2Ok8ZxlUJGMj
+         usJ+fjS7HSOnXbNjYrI6T1sXqk4/KuFuI2450IZhb2E3b2r4zAsDbuKOT3Sa2VDCT7LN
+         UDxlN/mpkELkN9Mx8csgfkaqITxyHcb0wFzvcBaC2FChhoLJVvQe7WY59T62AbD91AKo
+         LWhMBhxVd/Hf/mtG4bFfm3n38JHW+tn/dOwyYuJ+dGMKRn+rkLe6Vnv0pI5jU6Kre+mi
+         wv+t4M0B8cQRCow1vfKf+yEfqqg8aBmfsCSnzkO80feef2zI3xfHxOTcvyGL5WOmTxDR
+         4GTQ==
+X-Gm-Message-State: AJcUukeLr7gdqByUf4nfh4LJ0l/X1IOxAjr1Zi9BVDtvvAlkFkFN6NrX
+        Qizf4o6wu8vDp9dkaQiiylG25A==
+X-Google-Smtp-Source: ALg8bN4CHVUyD9okCIsxDkEmtii7J7kPdwnV9iP2wzpDJ0fjvC57urxCelSaTg5/7d4FuWMoptijPw==
+X-Received: by 2002:a5d:50c5:: with SMTP id f5mr24260726wrt.37.1548756723020;
+        Tue, 29 Jan 2019 02:12:03 -0800 (PST)
+Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id q12sm103911833wrx.31.2019.01.29.02.12.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 29 Jan 2019 02:12:02 -0800 (PST)
+Message-ID: <2f88e7fb1788f68f7b97d9806d56f9271663bdfc.camel@baylibre.com>
+Subject: Re: [PATCH 7/9] clk: Allow parents to be specified without string
+ names
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>
+Date:   Tue, 29 Jan 2019 11:12:00 +0100
+In-Reply-To: <20190129061021.94775-8-sboyd@kernel.org>
+References: <20190129061021.94775-1-sboyd@kernel.org>
+         <20190129061021.94775-8-sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 29 Jan 2019 10:08:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.01.19 09:43, Oscar Salvador wrote:
-> On Fri, Jan 25, 2019 at 09:53:35AM +0100, David Hildenbrand wrote:
-> Hi David,
+On Mon, 2019-01-28 at 22:10 -0800, Stephen Boyd wrote:
+> The common clk framework is lacking in ability to describe the clk
+> topology without specifying strings for every possible parent-child
+> link. There are a few drawbacks to the current approach:
 > 
->> I only had a quick glimpse. I would prefer if the caller of add_memory()
->> can specify whether it would be ok to allocate vmmap from the range.
->> This e.g. allows ACPI dimm code to allocate from the range, however
->> other machanisms (XEN, hyper-v, virtio-mem) can allow it once they
->> actually support it.
+>  1) String comparisons are used for everything, including describing
+>  topologies that are 'local' to a single clock controller.
 > 
-> Well, I think this can be done, and it might make more sense, as we
-> would get rid of some other flags to prevent allocating vmemmap
-> besides mhp_restrictions.
+>  2) clk providers (e.g. i2c clk drivers) need to create globally unique
+>  clk names to avoid collisions in the clk namespace, leading to awkward
+>  name generation code in various clk drivers.
+> 
+>  3) DT bindings may not fully describe the clk topology and linkages
+>  between clk controllers because drivers can easily rely on globally unique
+>  strings to describe connections between clks.
+> 
+> This leads to confusing DT bindings, complicated clk name generation
+> code, and inefficient string comparisons during clk registration just so
+> that the clk framework can detect the topology of the clk tree.
+> Furthermore, some drivers call clk_get() and then __clk_get_name() to
+> extract the globally unique clk name just so they can specify the parent
+> of the clk they're registering. We have of_clk_parent_fill() but that
+> mostly only works for single clks registered from a DT node, which isn't
+> the norm. Let's simplify this all by introducing two new ways of
+> specifying clk parents.
+> 
+> The first method is an array of pointers to clk_hw structures
+> corresponding to the parents at that index. This works for clks that are
+> registered when we have access to all the clk_hw pointers for the
+> parents.
+> 
+> The second method is a mix of clk_hw pointers and strings of local and
+> global parent clk names. If the .name member of the map is set we'll
+> look for that clk by performing a DT based lookup of the device the clk
+> is registered with and the .name specified in the map. If that fails,
+> we'll fallback to the .fallback member and perform a global clk name
+> lookup like we've always done before.
+> 
+> Using either one of these new methods is entirely optional. Existing
+> drivers will continue to work, and they can migrate to this new approach
+> as they see fit. Eventually, we'll want to get rid of the 'parent_names'
+> array in struct clk_init_data and use one of these new methods instead.
 
-Maybe we can also start passing a struct to add_memory() to describe
-such properties. This would avoid having to change all the layers over
-and over again. We would just have to establish some rules to avoid
-breaking stuff. E.g. the struct always has to be initialized to 0 so new
-features won't break any caller not wanting to make use of that.
+This may indeed allow to remove a lot of annoying code.
 
-E.g. memory block types (or if we come up with something better) would
-also have to add new parameters to add_memory() and friends.
+However, does this remove the globally unique name string constraints ? Are we
+now allowed to have 2 instances of a driver registering a clock named "foo" ?
+
+If this is the case, I wonder:
+* How will it work with debugfs: clock names are used to create the
+directories in there, plus clk_summary will quickly get messy.
+* How will it behave if 2 clock registers with "foo" and one clock register
+with the fallback parent "foo" ?
 
 > 
->>
->> Also, while s390x standby memory cannot support allocating from the
->> range, virtio-mem could easily support it on s390x.
->>
->> Not sure how such an interface could look like, but I would really like
->> to have control over that on the add_memory() interface, not per arch.
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/clk.c            | 215 +++++++++++++++++++++++++----------
+>  include/linux/clk-provider.h |  17 ++-
+>  2 files changed, 173 insertions(+), 59 deletions(-)
 > 
-> Let me try it out and will report back.
-> 
-> Btw, since you are a virt-guy, would it be do feasible for you to test the patchset
-> on hyper-v, xen or your virtio-mem driver?
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 202902e64799..0cd90a2339ad 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -42,6 +42,13 @@ static LIST_HEAD(clk_notifier_list);
+>  
+>  /***    private data structures    ***/
+>  
+> +struct clk_parent_map {
+> +	struct clk_hw		*hw;
+> +	struct clk_core		*core;
+> +	const char	 	*name;
+> +	const char	 	*fallback;
+> +};
+> +
+>  struct clk_core {
+>  	const char		*name;
+>  	const struct clk_ops	*ops;
+> @@ -49,8 +56,7 @@ struct clk_core {
+>  	struct module		*owner;
+>  	struct device		*dev;
+>  	struct clk_core		*parent;
+> -	const char		**parent_names;
+> -	struct clk_core		**parents;
+> +	struct clk_parent_map	*parents;
+>  	u8			num_parents;
+>  	u8			new_parent_index;
+>  	unsigned long		rate;
+> @@ -319,17 +325,77 @@ static struct clk_core *clk_core_lookup(const char
+> *name)
+>  	return NULL;
+>  }
+>  
+> +/**
+> + * clk_core_get - Find the parent of a clk using a clock specifier in DT
+> + * @core: clk to find parent of
+> + * @name: name to search for in 'clock-names' of device providing clk
+> + *
+> + * This is the preferred method for clk providers to find the parent of a
+> + * clk when that parent is external to the clk controller. The parent_names
+> + * array is indexed and treated as a local name matching a string in the
+> device
+> + * node's 'clock-names' property. This allows clk providers to use their
+> own
+> + * namespace instead of looking for a globally unique parent string.
+> + *
+> + * For example the following DT snippet would allow a clock registered by
+> the
+> + * clock-controller@c001 that has a clk_init_data::parent_data array
+> + * with 'xtal' in the 'name' member to find the clock provided by the
+> + * clock-controller@f00abcd without needing to get the globally unique name
+> of
+> + * the xtal clk.
+> + *
+> + * 	parent: clock-controller@f00abcd {
+> + * 		reg = <0xf00abcd 0xabcd>;
+> + * 		#clock-cells = <0>;
+> + * 	};
+> + *
+> + * 	clock-controller@c001 {
+> + * 		reg = <0xc001 0xf00d>;
+> + * 		clocks = <&parent>;
+> + * 		clock-names = "xtal";
+> + * 		#clock-cells = <1>;
+> + * 	};
+> + */
+> +static struct clk_core *clk_core_get(struct clk_core *core, const char
+> *name)
+> +{
+> +	struct clk_hw *hw;
+> +	struct device *dev = core->dev;
+> +
+> +	if (!dev)
+> +		return NULL;
+> +
+> +	/* TODO: Support clkdev clk_lookups */
+> +	hw = of_clk_get_hw(dev->of_node, -1, name);
+> +	if (IS_ERR_OR_NULL(hw))
+> +		return NULL;
+> +
+> +	return hw->core;
+> +}
+> +
+> +static void clk_core_fill_parent_index(struct clk_core *core, u8 index)
+> +{
+> +	struct clk_parent_map *entry = &core->parents[index];
+> +	struct clk_core *parent = NULL;
+> +
+> +	if (entry->hw)
+> +		parent = entry->hw->core;
+> +	else if (entry->name)
+> +		parent = clk_core_get(core, entry->name);
+> +
+> +	if (!parent)
+> +		parent = clk_core_lookup(entry->fallback);
+> +
+> +	entry->core = parent;
+> +}
+> +
+>  static struct clk_core *clk_core_get_parent_by_index(struct clk_core *core,
+>  							 u8 index)
+>  {
+> -	if (!core || index >= core->num_parents)
+> +	if (!core || index >= core->num_parents || !core->parents)
+>  		return NULL;
+>  
+> -	if (!core->parents[index])
+> -		core->parents[index] =
+> -				clk_core_lookup(core->parent_names[index]);
+> +	if (!core->parents[index].core)
+> +		clk_core_fill_parent_index(core, index);
+>  
+> -	return core->parents[index];
+> +	return core->parents[index].core;
+>  }
+>  
+>  struct clk_hw *
+> @@ -2353,6 +2419,7 @@ void clk_hw_reparent(struct clk_hw *hw, struct clk_hw
+> *new_parent)
+>  bool clk_has_parent(struct clk *clk, struct clk *parent)
+>  {
+>  	struct clk_core *core, *parent_core;
+> +	int i;
+>  
+>  	/* NULL clocks should be nops, so return success if either is NULL. */
+>  	if (!clk || !parent)
+> @@ -2365,8 +2432,11 @@ bool clk_has_parent(struct clk *clk, struct clk
+> *parent)
+>  	if (core->parent == parent_core)
+>  		return true;
+>  
+> -	return match_string(core->parent_names, core->num_parents,
+> -			    parent_core->name) >= 0;
+> +	for (i = 0; i < core->num_parents; i++)
+> +		if (!strcmp(core->parents[i].fallback, parent_core->name))
+> +			return true;
+> +
+> +	return false;
+>  }
+>  EXPORT_SYMBOL_GPL(clk_has_parent);
+>  
+> @@ -2949,9 +3019,9 @@ static int possible_parents_show(struct seq_file *s,
+> void *data)
+>  	int i;
+>  
+>  	for (i = 0; i < core->num_parents - 1; i++)
+> -		seq_printf(s, "%s ", core->parent_names[i]);
+> +		seq_printf(s, "%s ", core->parents[i].fallback);
+>  
+> -	seq_printf(s, "%s\n", core->parent_names[i]);
+> +	seq_printf(s, "%s\n", core->parents[i].fallback);
 
-I don't have a XEN or Hyper-V installation myself. cc-ing Vitaly, maybe
-he has time end resources to test on Hyper-V.
+Wouldn't this show nothing if parent_data is used but fallback is not provided
+(like in your example when you provide the clk_hw pointer instead) or did I
+miss something ?
 
-I'll be reworking my virtio-mem prototype soon and try with this
-patchset than! But this could take a little bit longer as I have tons of
-other stuff on my plate :) So don't worry about virtio-mem too much for now.
+>  
+>  	return 0;
+>  }
+> @@ -3085,7 +3155,7 @@ static inline void clk_debug_unregister(struct
+> clk_core *core)
+>   */
+>  static int __clk_core_init(struct clk_core *core)
+>  {
+> -	int i, ret;
+> +	int ret;
+>  	struct clk_core *orphan;
+>  	struct hlist_node *tmp2;
+>  	unsigned long rate;
+> @@ -3139,12 +3209,6 @@ static int __clk_core_init(struct clk_core *core)
+>  		goto out;
+>  	}
+>  
+> -	/* throw a WARN if any entries in parent_names are NULL */
+> -	for (i = 0; i < core->num_parents; i++)
+> -		WARN(!core->parent_names[i],
+> -				"%s: invalid NULL in %s's .parent_names\n",
+> -				__func__, core->name);
+> -
+>  	ret = clk_init_parent(core);
+>  	if (ret)
+>  		goto out;
+> @@ -3360,6 +3424,74 @@ struct clk *clk_hw_create_clk(struct device *dev,
+> struct clk_hw *hw,
+>  	return clk;
+>  }
+>  
+> +static int clk_core_populate_parent_map(struct clk_core *core)
+> +{
+> +	const struct clk_init_data *init = core->hw->init;
+> +	u8 num_parents = init->num_parents;
+> +	const char * const *parent_names = init->parent_names;
+> +	struct clk_hw **parent_hws = init->parent_hws;
+> +	const struct clk_parent_data *parent_data = init->parent_data;
+> +	int i, ret = 0;
+> +	struct clk_parent_map *parents, *parent;
+> +
+> +	if (!num_parents)
+> +		return 0;
+> +
+> +	/*
+> +	 * Avoid unnecessary string look-ups of clk_core's possible parents by
+> +	 * having a cache of names/clk_hw pointers to clk_core pointers.
+> +	 */
+> +	parents = kcalloc(num_parents, sizeof(*parents), GFP_KERNEL);
+> +	core->parents = parents;
+> +	if (!parents)
+> +		return -ENOMEM;
+> +
+> +	/* Copy everything over because it might be __initdata */
+> +	for (i = 0, parent = parents; i < num_parents; i++, parent++) {
+> +		if (parent_names) {
+> +			/* throw a WARN if any entries are NULL */
+> +			WARN(!parent_names[i],
+> +				"%s: invalid NULL in %s's .parent_names\n",
+> +				__func__, core->name);
+> +			parent->fallback = kstrdup_const(parent_names[i],
+> +							 GFP_KERNEL);
+> +			if (!parent->fallback) {
+> +				ret = -ENOMEM;
+> +				while (--i >= 0)
+> +					kfree_const(parents[i].fallback);
+> +			}
+> +		} else if (parent_data) {
+> +			parent->hw = parent_data[i].hw;
+> +			parent->name = parent_data[i].name;
+> +			parent->fallback = parent_data[i].fallback;
 
-> 
-> Thanks David!
-> 
+I'm a bit confused by the comment at the top of the loop. Strings in
+parent_data are not copied over like we used to do with parent_names.
+
+Is it allowed to have parent_data in __initdata ? It could be error prone if
+parent_names and parent_data behaved differently on this.
+
+> +		} else if (parent_hws) {
+> +			parent->hw = parent_hws[i];
+> +		} else {
+> +			ret = -EINVAL;
+> +			WARN(1, "Must specify parents if num_parents > 0\n");
+> +		}
+> +
+> +		if (ret) {
+> +			kfree(parents);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void clk_core_free_parent_map(struct clk_core *core)
+> +{
+> +	int i = core->num_parents;
+> +
+> +	if (!core->num_parents)
+> +		return;
+> +
+> +	while (--i >= 0)
+> +		kfree_const(core->parents[i].fallback);
+> +	kfree(core->parents);
+> +}
+> +
+>  /**
+>   * clk_register - allocate a new clock, register it and return an opaque
+> cookie
+>   * @dev: device that is registering this clock
+> @@ -3373,7 +3505,7 @@ struct clk *clk_hw_create_clk(struct device *dev,
+> struct clk_hw *hw,
+>   */
+>  struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+>  {
+> -	int i, ret;
+> +	int ret;
+>  	struct clk_core *core;
+>  
+>  	core = kzalloc(sizeof(*core), GFP_KERNEL);
+> @@ -3406,33 +3538,9 @@ struct clk *clk_register(struct device *dev, struct
+> clk_hw *hw)
+>  	core->max_rate = ULONG_MAX;
+>  	hw->core = core;
+>  
+> -	/* allocate local copy in case parent_names is __initdata */
+> -	core->parent_names = kcalloc(core->num_parents, sizeof(char *),
+> -					GFP_KERNEL);
+> -
+> -	if (!core->parent_names) {
+> -		ret = -ENOMEM;
+> -		goto fail_parent_names;
+> -	}
+> -
+> -
+> -	/* copy each string name in case parent_names is __initdata */
+> -	for (i = 0; i < core->num_parents; i++) {
+> -		core->parent_names[i] = kstrdup_const(hw->init-
+> >parent_names[i],
+> -						GFP_KERNEL);
+> -		if (!core->parent_names[i]) {
+> -			ret = -ENOMEM;
+> -			goto fail_parent_names_copy;
+> -		}
+> -	}
+> -
+> -	/* avoid unnecessary string look-ups of clk_core's possible parents.
+> */
+> -	core->parents = kcalloc(core->num_parents, sizeof(*core->parents),
+> -				GFP_KERNEL);
+> -	if (!core->parents) {
+> -		ret = -ENOMEM;
+> +	ret = clk_core_populate_parent_map(core);
+> +	if (ret)
+>  		goto fail_parents;
+> -	};
+>  
+>  	INIT_HLIST_HEAD(&core->clks);
+>  
+> @@ -3443,7 +3551,7 @@ struct clk *clk_register(struct device *dev, struct
+> clk_hw *hw)
+>  	hw->clk = alloc_clk(core, NULL, NULL);
+>  	if (IS_ERR(hw->clk)) {
+>  		ret = PTR_ERR(hw->clk);
+> -		goto fail_parents;
+> +		goto fail_create_clk;
+>  	}
+>  
+>  	clk_core_link_consumer(hw->core, hw->clk);
+> @@ -3459,13 +3567,9 @@ struct clk *clk_register(struct device *dev, struct
+> clk_hw *hw)
+>  	free_clk(hw->clk);
+>  	hw->clk = NULL;
+>  
+> +fail_create_clk:
+> +	clk_core_free_parent_map(core);
+>  fail_parents:
+> -	kfree(core->parents);
+> -fail_parent_names_copy:
+> -	while (--i >= 0)
+> -		kfree_const(core->parent_names[i]);
+> -	kfree(core->parent_names);
+> -fail_parent_names:
+>  fail_ops:
+>  	kfree_const(core->name);
+>  fail_name:
+> @@ -3495,15 +3599,10 @@ EXPORT_SYMBOL_GPL(clk_hw_register);
+>  static void __clk_release(struct kref *ref)
+>  {
+>  	struct clk_core *core = container_of(ref, struct clk_core, ref);
+> -	int i = core->num_parents;
+>  
+>  	lockdep_assert_held(&prepare_lock);
+>  
+> -	kfree(core->parents);
+> -	while (--i >= 0)
+> -		kfree_const(core->parent_names[i]);
+> -
+> -	kfree(core->parent_names);
+> +	clk_core_free_parent_map(core);
+>  	kfree_const(core->name);
+>  	kfree(core);
+>  }
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 8b84dee942bf..f513f4074a93 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -264,6 +264,18 @@ struct clk_ops {
+>  	void		(*debug_init)(struct clk_hw *hw, struct dentry
+> *dentry);
+>  };
+>  
+> +/**
+> + * struct clk_parent_data - clk parent information
+> + * @hw: parent clk_hw pointer (used for clk providers with internal clks)
+> + * @name: parent name local to provider registering clk
+> + * @fallback: globally unique parent name (used as a fallback)
+> + */
+> +struct clk_parent_data {
+> +	struct clk_hw 	*hw;
+> +	const char	*name;
+> +	const char	*fallback;
+
+If I understand correctly, .name and .fallback will be ignored if hw is
+provided ? Maybe this should be documented somehow ?
+
+> +};
+> +
+>  /**
+>   * struct clk_init_data - holds init data that's common to all clocks and
+> is
+>   * shared between the clock provider and the common clock framework.
+> @@ -277,7 +289,10 @@ struct clk_ops {
+>  struct clk_init_data {
+>  	const char		*name;
+>  	const struct clk_ops	*ops;
+> -	const char		* const *parent_names;
+> +	/* Only one of the following three should be assigned */
+> +	const char		* const *parent_names; /* If NULL (and
+> num_parents != 0) look at parent_data and parent_hws */
+> +	const struct clk_parent_data	*parent_data;
+> +	struct clk_hw		**parent_hws;
+
+Isn't parent_hws redundant with parent_data ? you may pass the clk_hw pointer
+with both, right ?
 
 
--- 
+>  	u8			num_parents;
+>  	unsigned long		flags;
+>  };
 
-Thanks,
 
-David / dhildenb
