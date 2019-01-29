@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27805C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB0BC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC19E2175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F30782175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:02:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728706AbfA2PCH (ORCPT
+        id S1728754AbfA2PCS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:02:07 -0500
-Received: from mga12.intel.com ([192.55.52.136]:8099 "EHLO mga12.intel.com"
+        Tue, 29 Jan 2019 10:02:18 -0500
+Received: from mga17.intel.com ([192.55.52.151]:45434 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728390AbfA2PCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:02:00 -0500
+        id S1728550AbfA2PB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 10:01:56 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 07:01:59 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 07:01:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
-   d="scan'208";a="122266167"
+   d="scan'208";a="113610583"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 29 Jan 2019 07:01:51 -0800
+  by orsmga008.jf.intel.com with ESMTP; 29 Jan 2019 07:01:52 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 6098DD22; Tue, 29 Jan 2019 17:01:45 +0200 (EET)
+        id 4127AB6D; Tue, 29 Jan 2019 17:01:45 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Michael Jamet <michael.jamet@intel.com>,
@@ -40,9 +40,9 @@ Cc:     Michael Jamet <michael.jamet@intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         netdev@vger.kernel.org
-Subject: [PATCH 25/28] thunderbolt: Make tb_switch_alloc() return ERR_PTR()
-Date:   Tue, 29 Jan 2019 18:01:40 +0300
-Message-Id: <20190129150143.12681-26-mika.westerberg@linux.intel.com>
+Subject: [PATCH 22/28] thunderbolt: Run tb_xdp_handle_request() in system workqueue
+Date:   Tue, 29 Jan 2019 18:01:37 +0300
+Message-Id: <20190129150143.12681-23-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129150143.12681-1-mika.westerberg@linux.intel.com>
 References: <20190129150143.12681-1-mika.westerberg@linux.intel.com>
@@ -53,174 +53,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to detect possible connections to other domains we need to be
-able to find out why tb_switch_alloc() fails so make it return ERR_PTR()
-instead. This allows the caller to differentiate between errors such as
--ENOMEM which comes from the kernel and for instance -EIO which comes
-from the hardware when trying to access the possible switch.
+We run all XDomain requests during discovery in tb->wq and since it only
+runs one work at the time it means that sending back reply to the other
+domain may be delayed too much depending whether there is an active
+XDomain discovery request running.
 
-Convert all the current call sites to handle this properly.
+To make sure we can send reply to the other domain as soon as possible
+run tb_xdp_handle_request() in system workqueue instead. Since the
+device can be hot-removed in the middle we need to make sure the domain
+structure is still around when the function is run so increase reference
+count before we schedule the reply work.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/icm.c    |  6 +++---
- drivers/thunderbolt/switch.c | 36 ++++++++++++++++++++----------------
- drivers/thunderbolt/tb.c     |  6 +++---
- 3 files changed, 26 insertions(+), 22 deletions(-)
+ drivers/thunderbolt/tb.h      | 7 +++++++
+ drivers/thunderbolt/xdomain.c | 6 ++++--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-index 041e7ab0efd3..e28a4255d56a 100644
---- a/drivers/thunderbolt/icm.c
-+++ b/drivers/thunderbolt/icm.c
-@@ -468,7 +468,7 @@ static void add_switch(struct tb_switch *parent_sw, u64 route,
- 	pm_runtime_get_sync(&parent_sw->dev);
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index 7b6d1428bfad..a85b92a6936b 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -411,6 +411,13 @@ int tb_domain_approve_xdomain_paths(struct tb *tb, struct tb_xdomain *xd);
+ int tb_domain_disconnect_xdomain_paths(struct tb *tb, struct tb_xdomain *xd);
+ int tb_domain_disconnect_all_paths(struct tb *tb);
  
- 	sw = tb_switch_alloc(parent_sw->tb, &parent_sw->dev, route);
--	if (!sw)
-+	if (IS_ERR(sw))
- 		goto out;
- 
- 	sw->uuid = kmemdup(uuid, sizeof(*uuid), GFP_KERNEL);
-@@ -1852,8 +1852,8 @@ static int icm_start(struct tb *tb)
- 		tb->root_switch = tb_switch_alloc_safe_mode(tb, &tb->dev, 0);
- 	else
- 		tb->root_switch = tb_switch_alloc(tb, &tb->dev, 0);
--	if (!tb->root_switch)
--		return -ENODEV;
-+	if (IS_ERR(tb->root_switch))
-+		return PTR_ERR(tb->root_switch);
- 
- 	/*
- 	 * NVM upgrade has not been tested on Apple systems and they
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index bcf8b447facb..e10bae4a770c 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -1481,30 +1481,32 @@ static int tb_switch_get_generation(struct tb_switch *sw)
-  * separately. The returned switch should be released by calling
-  * tb_switch_put().
-  *
-- * Return: Pointer to the allocated switch or %NULL in case of failure
-+ * Return: Pointer to the allocated switch or ERR_PTR() in case of
-+ * failure.
-  */
- struct tb_switch *tb_switch_alloc(struct tb *tb, struct device *parent,
- 				  u64 route)
++static inline struct tb *tb_domain_get(struct tb *tb)
++{
++	if (tb)
++		get_device(&tb->dev);
++	return tb;
++}
++
+ static inline void tb_domain_put(struct tb *tb)
  {
- 	struct tb_switch *sw;
- 	int upstream_port;
--	int i, cap, depth;
-+	int i, ret, depth;
+ 	put_device(&tb->dev);
+diff --git a/drivers/thunderbolt/xdomain.c b/drivers/thunderbolt/xdomain.c
+index e27dd8beb94b..59789bdd93ac 100644
+--- a/drivers/thunderbolt/xdomain.c
++++ b/drivers/thunderbolt/xdomain.c
+@@ -524,6 +524,8 @@ static void tb_xdp_handle_request(struct work_struct *work)
+ out:
+ 	kfree(xw->pkg);
+ 	kfree(xw);
++
++	tb_domain_put(tb);
+ }
  
- 	/* Make sure we do not exceed maximum topology limit */
- 	depth = tb_route_length(route);
- 	if (depth > TB_SWITCH_MAX_DEPTH)
--		return NULL;
-+		return ERR_PTR(-EADDRNOTAVAIL);
+ static void
+@@ -538,9 +540,9 @@ tb_xdp_schedule_request(struct tb *tb, const struct tb_xdp_header *hdr,
  
- 	upstream_port = tb_cfg_get_upstream_port(tb->ctl, route);
- 	if (upstream_port < 0)
--		return NULL;
-+		return ERR_PTR(upstream_port);
+ 	INIT_WORK(&xw->work, tb_xdp_handle_request);
+ 	xw->pkg = kmemdup(hdr, size, GFP_KERNEL);
+-	xw->tb = tb;
++	xw->tb = tb_domain_get(tb);
  
- 	sw = kzalloc(sizeof(*sw), GFP_KERNEL);
- 	if (!sw)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	sw->tb = tb;
--	if (tb_cfg_read(tb->ctl, &sw->config, route, 0, TB_CFG_SWITCH, 0, 5))
-+	ret = tb_cfg_read(tb->ctl, &sw->config, route, 0, TB_CFG_SWITCH, 0, 5);
-+	if (ret)
- 		goto err_free_sw_ports;
- 
- 	tb_dbg(tb, "current switch config:\n");
-@@ -1520,8 +1522,10 @@ struct tb_switch *tb_switch_alloc(struct tb *tb, struct device *parent,
- 	/* initialize ports */
- 	sw->ports = kcalloc(sw->config.max_port_number + 1, sizeof(*sw->ports),
- 				GFP_KERNEL);
--	if (!sw->ports)
-+	if (!sw->ports) {
-+		ret = -ENOMEM;
- 		goto err_free_sw_ports;
-+	}
- 
- 	for (i = 0; i <= sw->config.max_port_number; i++) {
- 		/* minimum setup for tb_find_cap and tb_drom_read to work */
-@@ -1531,16 +1535,16 @@ struct tb_switch *tb_switch_alloc(struct tb *tb, struct device *parent,
- 
- 	sw->generation = tb_switch_get_generation(sw);
- 
--	cap = tb_switch_find_vse_cap(sw, TB_VSE_CAP_PLUG_EVENTS);
--	if (cap < 0) {
-+	ret = tb_switch_find_vse_cap(sw, TB_VSE_CAP_PLUG_EVENTS);
-+	if (ret < 0) {
- 		tb_sw_warn(sw, "cannot find TB_VSE_CAP_PLUG_EVENTS aborting\n");
- 		goto err_free_sw_ports;
- 	}
--	sw->cap_plug_events = cap;
-+	sw->cap_plug_events = ret;
- 
--	cap = tb_switch_find_vse_cap(sw, TB_VSE_CAP_LINK_CONTROLLER);
--	if (cap > 0)
--		sw->cap_lc = cap;
-+	ret = tb_switch_find_vse_cap(sw, TB_VSE_CAP_LINK_CONTROLLER);
-+	if (ret > 0)
-+		sw->cap_lc = ret;
- 
- 	/* Root switch is always authorized */
- 	if (!route)
-@@ -1559,7 +1563,7 @@ struct tb_switch *tb_switch_alloc(struct tb *tb, struct device *parent,
- 	kfree(sw->ports);
- 	kfree(sw);
- 
--	return NULL;
-+	return ERR_PTR(ret);
+-	queue_work(tb->wq, &xw->work);
++	schedule_work(&xw->work);
  }
  
  /**
-@@ -1574,7 +1578,7 @@ struct tb_switch *tb_switch_alloc(struct tb *tb, struct device *parent,
-  *
-  * The returned switch must be released by calling tb_switch_put().
-  *
-- * Return: Pointer to the allocated switch or %NULL in case of failure
-+ * Return: Pointer to the allocated switch or ERR_PTR() in case of failure
-  */
- struct tb_switch *
- tb_switch_alloc_safe_mode(struct tb *tb, struct device *parent, u64 route)
-@@ -1583,7 +1587,7 @@ tb_switch_alloc_safe_mode(struct tb *tb, struct device *parent, u64 route)
- 
- 	sw = kzalloc(sizeof(*sw), GFP_KERNEL);
- 	if (!sw)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	sw->tb = tb;
- 	sw->config.depth = tb_route_length(route);
-diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-index 56bbd1237bd9..4eb74254116c 100644
---- a/drivers/thunderbolt/tb.c
-+++ b/drivers/thunderbolt/tb.c
-@@ -155,7 +155,7 @@ static void tb_scan_port(struct tb_port *port)
- 	}
- 	sw = tb_switch_alloc(port->sw->tb, &port->sw->dev,
- 			     tb_downstream_route(port));
--	if (!sw)
-+	if (IS_ERR(sw))
- 		return;
- 
- 	if (tb_switch_configure(sw)) {
-@@ -516,8 +516,8 @@ static int tb_start(struct tb *tb)
- 	int ret;
- 
- 	tb->root_switch = tb_switch_alloc(tb, &tb->dev, 0);
--	if (!tb->root_switch)
--		return -ENOMEM;
-+	if (IS_ERR(tb->root_switch))
-+		return PTR_ERR(tb->root_switch);
- 
- 	/*
- 	 * ICM firmware upgrade needs running firmware and in native
 -- 
 2.20.1
 
