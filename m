@@ -2,180 +2,289 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7977C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2D3C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE5420844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:56:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTogsUDS"
+	by mail.kernel.org (Postfix) with ESMTP id 26DB620989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:56:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548788214;
+	bh=9r+oe5jna/Iw9Y6V0E+Qw2FY4aZyFK35kpgEU5vpYZs=;
+	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
+	b=yEy3PGokAqQXjMK4+XU2K/TMEk4gZPTV5GZXqUNFnHwFBnUgXqY5AYwOQv0lmbBVz
+	 XKZP5WrmG06svoqtKfdLTPtNyCc616Z949mU71YY83MYdHmzCYhi4RnkwuTGECNq81
+	 bO40GcY4mGZQ7/mdGhqlCg4m+t6j/m5h9funIEKE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbfA2S4F (ORCPT
+        id S1728973AbfA2S4w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:56:05 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42367 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726942AbfA2S4E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:56:04 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y1so9752369plp.9;
-        Tue, 29 Jan 2019 10:56:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6QwWpnJgv1GjxiMMzkx3rfy8vyFIphyZ17dynepjQE4=;
-        b=TTogsUDSia1/idd3GeITuoQQBgU8LeycUtrM2B5gZ2f89QgFebjeweazVdNrvndOPN
-         c2jbVLolQjMXZFYDOvBt5yuqsiPMHdhHdd2mtm4X7mjPZ+BIjKArgm6fWjCxu9fTDSIW
-         pV0IoWWkSbU+hai9a8516IniV6pNkO43d0z9f9XePac07Yg3BCk+PV1LHB4ZQRZ3YCVA
-         u0pOZyzKxGh9DSIkgY1tPmt+AfwtVS9f9YAaLgoPvG5IwQynaYi5uCSjy5806HzEl3Dj
-         TsIFdOnEPjtQufrsEqJmTZVUBVy4mY/78ajG+T6Ozj5wR8JJ2SHEeVOTHw1bvdb+e8Dz
-         YIQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6QwWpnJgv1GjxiMMzkx3rfy8vyFIphyZ17dynepjQE4=;
-        b=XnuE9tJtIvXCa8vd+JMuvkCgkb+fcOU+95jWv+OidAutevKVm2AbD60PUR6zyAi4AE
-         KZLr0IZd/Sv9YAykbKOii01SGtR09IhN0aWFhANGuPG992P5HR2dFc6usL0wTYLR6mNJ
-         UDrHplVtBloakF7vsvK6RdyQdYvGTa9uSMx6TnnDGtlH+BkHBi2tAIJe8Q0ZAGzgS67l
-         4dkSJfWOQw2nwUFFg/c/EkAZ6EOCGXj6IHL/ap0YRQQgk8bZVI+jtMKGPFau9r/5Cfkq
-         NHlbymEhU72KkP1W87ix3TZzA7P48b6dG9gZHmtAZLQoO2krBAo738jFKmu+5ngKvMc6
-         niTA==
-X-Gm-Message-State: AJcUukfZVYrPXzfRBKrBF7TS3dDFcnQZCeAv6adqs+z6WnbfZVsA7Yxn
-        uTCR/79YObmXD4z5oG1yhm3/3ASF
-X-Google-Smtp-Source: ALg8bN69ysuxa2wXFsQb5eBbwcl6HQ4tBJSAXrcPdyjTX0x/lsR7vzHa0PHVF0l5Q5PAa7OGrQo08A==
-X-Received: by 2002:a17:902:292b:: with SMTP id g40mr27434840plb.82.1548788163405;
-        Tue, 29 Jan 2019 10:56:03 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id a4sm39500514pgv.70.2019.01.29.10.56.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 10:56:02 -0800 (PST)
-Date:   Tue, 29 Jan 2019 10:56:01 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "ndesaulniers@google.com" <ndesaulniers@google.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>, "S@google.com" <S@google.com>,
-        "Laktyushkin, Dmytro" <Dmytro.Laktyushkin@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Daenzer, Michel" <Michel.Daenzer@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "S, Shirish" <Shirish.S@amd.com>,
-        Matthias Kaehlcke <mka@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        James Y Knight <jyknight@google.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Cheng, Tony" <Tony.Cheng@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>
-Subject: Re: [PATCH] drm/amd/display: add -msse2 to prevent Clang from
- emitting libcalls to undefined SW FP routines
-Message-ID: <20190129185601.GA17525@roeck-us.net>
-References: <20190125005304.183322-1-ndesaulniers@google.com>
- <04bc6844-2a3b-2de8-60a7-a027149709fd@amd.com>
- <CADnq5_OuSD7Bmeg3CP0Y6JTo9Xso2FTZ3tKk-u1C+-B32eUGmQ@mail.gmail.com>
+        Tue, 29 Jan 2019 13:56:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726910AbfA2S4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 13:56:51 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0280220844;
+        Tue, 29 Jan 2019 18:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548788210;
+        bh=9r+oe5jna/Iw9Y6V0E+Qw2FY4aZyFK35kpgEU5vpYZs=;
+        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
+        b=X/ShWqKosRwTc/CuGPLmfm+hE7IEPrT7D0rn8WCSMG5St247y5FmyXZxIEl0uNc1t
+         DwxdTAVkEB2H3/NB7ovvwfLOqzSpA5Vlv4QlqOCwo3SnB9Kabn/MpoSigH9w2wEZaw
+         04nOKRA3XFctQIojATAwnk6X3DSSJLxM4+dYaweI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADnq5_OuSD7Bmeg3CP0Y6JTo9Xso2FTZ3tKk-u1C+-B32eUGmQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 7/9] clk: Allow parents to be specified without string names
+References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-8-sboyd@kernel.org> <2f88e7fb1788f68f7b97d9806d56f9271663bdfc.camel@baylibre.com>
+User-Agent: alot/0.8
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <2f88e7fb1788f68f7b97d9806d56f9271663bdfc.camel@baylibre.com>
+Message-ID: <154878820913.136743.9860407353339842831@swboyd.mtv.corp.google.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Tue, 29 Jan 2019 10:56:49 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 10:30:31AM -0500, Alex Deucher wrote:
-> On Fri, Jan 25, 2019 at 10:29 AM Wentland, Harry <Harry.Wentland@amd.com> wrote:
-> >
-> > On 2019-01-24 7:52 p.m., ndesaulniers@google.com wrote:
-> > > arch/x86/Makefile disables SSE and SSE2 for the whole kernel.  The
-> > > AMDGPU drivers modified in this patch re-enable SSE but not SSE2.  Turn
-> > > on SSE2 to support emitting double precision floating point instructions
-> > > rather than calls to non-existent (usually available from gcc_s or
-> > > compiler_rt) floating point helper routines.
-> > >
-> > > Link: https://gcc.gnu.org/onlinedocs/gccint/Soft-float-library-routines.html
-> > > Link: https://github.com/ClangBuiltLinux/linux/issues/327
-> > > Cc: stable@vger.kernel.org # 4.19
-> > > Reported-by: S, Shirish <Shirish.S@amd.com>
-> > > Reported-by: Matthias Kaehlcke <mka@google.com>
-> > > Suggested-by: James Y Knight <jyknight@google.com>
-> > > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > Tested-by: Guenter Roeck <linux@roeck-us.net>
-> >
-> > Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-> >
-> > and applied.
-> >
-> 
-> This patch causes a segfault:
-> https://bugs.freedesktop.org/show_bug.cgi?id=109487
-> 
-> Any ideas?
-> 
+Quoting Jerome Brunet (2019-01-29 02:12:00)
+> On Mon, 2019-01-28 at 22:10 -0800, Stephen Boyd wrote:
+> >=20
+> > Using either one of these new methods is entirely optional. Existing
+> > drivers will continue to work, and they can migrate to this new approach
+> > as they see fit. Eventually, we'll want to get rid of the 'parent_names'
+> > array in struct clk_init_data and use one of these new methods instead.
+>=20
+> This may indeed allow to remove a lot of annoying code.
+>=20
+> However, does this remove the globally unique name string constraints ? A=
+re we
+> now allowed to have 2 instances of a driver registering a clock named "fo=
+o" ?
 
-Set -msse2 only for clang ? I suspect, though, that this might only
-solve the compile problem. If I understand correctly, the first
-warning in the log is due to BREAK_TO_DEBUGGER(), suggesting that
-something is seriously wrong. Maybe enabling sse2 results in different
-results from floating point operations.
+Yes it would be allowed to have multiple clocks with the same name but
+I'm not trying to solve that exact problem right now. The framework
+already complains if that's happening, so drivers need to generate
+unique names regardless of this series.
 
-Unfortunately I don't have a system with the affected GPU,
-so I can't run any tests on real hardware. Unless someone can test
-with real hardware, I think we have no choice but to revert the
-patch.
+>=20
+> If this is the case, I wonder:
+> * How will it work with debugfs: clock names are used to create the
+> directories in there, plus clk_summary will quickly get messy.
 
-Guenter
+Agreed. We should probably prepend the device name to the front of the
+clk now when creating in debugfs. I'll throw a patch for that into the
+pile to get that problem out of the way.
 
-> Alex
-> 
-> > Harry
-> >
-> > > ---
-> > >  drivers/gpu/drm/amd/display/dc/calcs/Makefile | 2 +-
-> > >  drivers/gpu/drm/amd/display/dc/dml/Makefile   | 2 +-
-> > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/amd/display/dc/calcs/Makefile b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
-> > > index 95f332ee3e7e..dc85a3c088af 100644
-> > > --- a/drivers/gpu/drm/amd/display/dc/calcs/Makefile
-> > > +++ b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
-> > > @@ -30,7 +30,7 @@ else ifneq ($(call cc-option, -mstack-alignment=16),)
-> > >       cc_stack_align := -mstack-alignment=16
-> > >  endif
-> > >
-> > > -calcs_ccflags := -mhard-float -msse $(cc_stack_align)
-> > > +calcs_ccflags := -mhard-float -msse -msse2 $(cc_stack_align)
-> > >
-> > >  CFLAGS_dcn_calcs.o := $(calcs_ccflags)
-> > >  CFLAGS_dcn_calc_auto.o := $(calcs_ccflags)
-> > > diff --git a/drivers/gpu/drm/amd/display/dc/dml/Makefile b/drivers/gpu/drm/amd/display/dc/dml/Makefile
-> > > index d97ca6528f9d..33c7d7588712 100644
-> > > --- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
-> > > +++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
-> > > @@ -30,7 +30,7 @@ else ifneq ($(call cc-option, -mstack-alignment=16),)
-> > >       cc_stack_align := -mstack-alignment=16
-> > >  endif
-> > >
-> > > -dml_ccflags := -mhard-float -msse $(cc_stack_align)
-> > > +dml_ccflags := -mhard-float -msse -msse2 $(cc_stack_align)
-> > >
-> > >  CFLAGS_display_mode_lib.o := $(dml_ccflags)
-> > >  CFLAGS_display_pipe_clocks.o := $(dml_ccflags)
-> > >
-> > _______________________________________________
-> > amd-gfx mailing list
-> > amd-gfx@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+I'm also beginning to think we should add a way to pass in the of_node
+for a clk when it's registered.  Probably need to do that with the
+initdata structure again. That way we can lookup a clk's parents with
+the DT node if they don't call clk_register() with a device and also to
+generate a better unique name for the clk for debug purposes.
+
+> * How will it behave if 2 clock registers with "foo" and one clock regist=
+er
+> with the fallback parent "foo" ?
+
+Sorry, I'm not following. The fallback is global so we'll be unable to
+figure out which parent the clk is referring to. Maybe this is an
+argument for keeping everything globally unique in the clk name space?
+
+>=20
+> >=20
+> > Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> > Cc: Jerome Brunet <jbrunet@baylibre.com>
+> > Cc: Russell King <linux@armlinux.org.uk>
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> > ---
+> > @@ -2365,8 +2432,11 @@ bool clk_has_parent(struct clk *clk, struct clk
+> > *parent)
+> >       if (core->parent =3D=3D parent_core)
+> >               return true;
+> > =20
+> > -     return match_string(core->parent_names, core->num_parents,
+> > -                         parent_core->name) >=3D 0;
+> > +     for (i =3D 0; i < core->num_parents; i++)
+> > +             if (!strcmp(core->parents[i].fallback, parent_core->name))
+> > +                     return true;
+
+This is also messy and not great BTW.
+
+> > +
+> > +     return false;
+> >  }
+> >  EXPORT_SYMBOL_GPL(clk_has_parent);
+> > =20
+> > @@ -2949,9 +3019,9 @@ static int possible_parents_show(struct seq_file =
+*s,
+> > void *data)
+> >       int i;
+> > =20
+> >       for (i =3D 0; i < core->num_parents - 1; i++)
+> > -             seq_printf(s, "%s ", core->parent_names[i]);
+> > +             seq_printf(s, "%s ", core->parents[i].fallback);
+> > =20
+> > -     seq_printf(s, "%s\n", core->parent_names[i]);
+> > +     seq_printf(s, "%s\n", core->parents[i].fallback);
+>=20
+> Wouldn't this show nothing if parent_data is used but fallback is not pro=
+vided
+> (like in your example when you provide the clk_hw pointer instead) or did=
+ I
+> miss something ?
+
+Yes, it will show nothing. Maybe we need to generate the debug name
+somehow? That code sounds quite awful because we're going in reverse to
+the device through a DT node pointer. Or add an indicator in the output
+if the parent is a global name vs. a local name or a clk debugfs name?
+
+   "global_name(g)"
+   "local_name(l)"
+   "debug_name"
+
+Or if we can't figure anything out then perhaps just ignoring this
+problem for now is fine. It is debugfs after all.
+
+>=20
+> > =20
+> >       return 0;
+> >  }
+> > @@ -3360,6 +3424,74 @@ struct clk *clk_hw_create_clk(struct device *dev,
+> > struct clk_hw *hw,
+> >       return clk;
+> >  }
+> > =20
+> > +static int clk_core_populate_parent_map(struct clk_core *core)
+> > +{
+> > +     const struct clk_init_data *init =3D core->hw->init;
+> > +     u8 num_parents =3D init->num_parents;
+> > +     const char * const *parent_names =3D init->parent_names;
+> > +     struct clk_hw **parent_hws =3D init->parent_hws;
+> > +     const struct clk_parent_data *parent_data =3D init->parent_data;
+> > +     int i, ret =3D 0;
+> > +     struct clk_parent_map *parents, *parent;
+> > +
+> > +     if (!num_parents)
+> > +             return 0;
+> > +
+> > +     /*
+> > +      * Avoid unnecessary string look-ups of clk_core's possible paren=
+ts by
+> > +      * having a cache of names/clk_hw pointers to clk_core pointers.
+> > +      */
+> > +     parents =3D kcalloc(num_parents, sizeof(*parents), GFP_KERNEL);
+> > +     core->parents =3D parents;
+> > +     if (!parents)
+> > +             return -ENOMEM;
+> > +
+> > +     /* Copy everything over because it might be __initdata */
+> > +     for (i =3D 0, parent =3D parents; i < num_parents; i++, parent++)=
+ {
+> > +             if (parent_names) {
+> > +                     /* throw a WARN if any entries are NULL */
+> > +                     WARN(!parent_names[i],
+> > +                             "%s: invalid NULL in %s's .parent_names\n=
+",
+> > +                             __func__, core->name);
+> > +                     parent->fallback =3D kstrdup_const(parent_names[i=
+],
+> > +                                                      GFP_KERNEL);
+> > +                     if (!parent->fallback) {
+> > +                             ret =3D -ENOMEM;
+> > +                             while (--i >=3D 0)
+> > +                                     kfree_const(parents[i].fallback);
+> > +                     }
+> > +             } else if (parent_data) {
+> > +                     parent->hw =3D parent_data[i].hw;
+> > +                     parent->name =3D parent_data[i].name;
+> > +                     parent->fallback =3D parent_data[i].fallback;
+>=20
+> I'm a bit confused by the comment at the top of the loop. Strings in
+> parent_data are not copied over like we used to do with parent_names.
+>=20
+> Is it allowed to have parent_data in __initdata ? It could be error prone=
+ if
+> parent_names and parent_data behaved differently on this.
+
+Good catch, thanks. Will fix.
+
+>=20
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index 8b84dee942bf..f513f4074a93 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -264,6 +264,18 @@ struct clk_ops {
+> >       void            (*debug_init)(struct clk_hw *hw, struct dentry
+> > *dentry);
+> >  };
+> > =20
+> > +/**
+> > + * struct clk_parent_data - clk parent information
+> > + * @hw: parent clk_hw pointer (used for clk providers with internal cl=
+ks)
+> > + * @name: parent name local to provider registering clk
+> > + * @fallback: globally unique parent name (used as a fallback)
+> > + */
+> > +struct clk_parent_data {
+> > +     struct clk_hw   *hw;
+> > +     const char      *name;
+> > +     const char      *fallback;
+>=20
+> If I understand correctly, .name and .fallback will be ignored if hw is
+> provided ? Maybe this should be documented somehow ?
+
+Sure. I'll add some documentation to the long portion of the kernel-doc
+here describing priority order.
+
+>=20
+> > +};
+> > +
+> >  /**
+> >   * struct clk_init_data - holds init data that's common to all clocks =
+and
+> > is
+> >   * shared between the clock provider and the common clock framework.
+> > @@ -277,7 +289,10 @@ struct clk_ops {
+> >  struct clk_init_data {
+> >       const char              *name;
+> >       const struct clk_ops    *ops;
+> > -     const char              * const *parent_names;
+> > +     /* Only one of the following three should be assigned */
+> > +     const char              * const *parent_names; /* If NULL (and
+> > num_parents !=3D 0) look at parent_data and parent_hws */
+> > +     const struct clk_parent_data    *parent_data;
+> > +     struct clk_hw           **parent_hws;
+>=20
+> Isn't parent_hws redundant with parent_data ? you may pass the clk_hw poi=
+nter
+> with both, right ?
+
+Yeah it's redundant, but I thought that drivers may not want to waste
+the extra space for pointers if they had all the pointers in hand for
+the parents they care about, or if they had a single parent and just
+wanted to point to that directly.
+
+Another thought is to have a union on these three pointers and then a
+flag indicating which method is used:
+
+	union {
+		const char              * const *parent_names;
+		const struct clk_parent_data    *parent_data;
+		struct clk_hw           **parent_hws;
+	};
+
+	#define CLK_PARENTS_POINTERS		BIT(3)
+	#define CLK_PARENTS_DATA		BIT(8)
+
