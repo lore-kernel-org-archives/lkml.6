@@ -2,104 +2,149 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864CEC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3199C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F45F2183F
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:52:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A341A2183F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:53:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XgP9wfWy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbfA2Jwf (ORCPT
+        id S1728277AbfA2JxB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:52:35 -0500
-Received: from ozlabs.org ([203.11.71.1]:35429 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727039AbfA2Jwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:52:34 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43phcK6Xzfz9s9h;
-        Tue, 29 Jan 2019 20:52:17 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dennis Zhou <dennis@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greentime Hu <green.hu@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Mark Salter <msalter@redhat.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Stafford Horne <shorne@gmail.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
-        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
-        xen-devel@lists.xenproject.org,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH v2 02/21] powerpc: use memblock functions returning virtual address
-In-Reply-To: <1548057848-15136-3-git-send-email-rppt@linux.ibm.com>
-References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com> <1548057848-15136-3-git-send-email-rppt@linux.ibm.com>
-Date:   Tue, 29 Jan 2019 20:52:17 +1100
-Message-ID: <871s4vssdq.fsf@concordia.ellerman.id.au>
+        Tue, 29 Jan 2019 04:53:01 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37504 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbfA2JxA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:53:00 -0500
+Received: by mail-wr1-f65.google.com with SMTP id s12so21260561wrt.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:52:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=UTxLBj/MYU9MxfJEFlYDKK3fCMuYTOx/SGGih3Hwt2k=;
+        b=XgP9wfWyd4KRcH1WQNHn4XVNvtZjwS/wTrf/8bKXR8gRdtnDQm8Cid9qXhNhKiJi++
+         tnqo7+w7G4d7dEUeZSBBzjtv4mCX0AvcKb6TXCTfPQoAnHqzJAHi9cTnfrzZgWNmqT6h
+         YuHQGiD2lhJut8OMOoaur9mGG7GbIyM0B27wA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UTxLBj/MYU9MxfJEFlYDKK3fCMuYTOx/SGGih3Hwt2k=;
+        b=BkZWIoIDFydWl18FOEVqBMEHVQ9IEUDc6X8lSzfiIsyZv0s5Kj+NTl11VktOMKlCxL
+         iIDSKJ5wk1tGRKng9aridq73cnMH4qGbWNKwq+N8B6UQ2NPgZqADkK3b1jM0QzEgzsRX
+         8UrMy+9nCItDVEr5LkO671ZrJmQq8jR5f9yWyGHwo0KY5T7Ue2dFqCVdt1yYmuuosIFk
+         Al2+DODMNUtoc+iX4yG5iutd9ZxL3JoVKEBvLXPxOzb1S5gLKMiWcvhPKeB6KrjnZqiD
+         /xjiuXGNCZBUD7h/jMtqp7K42qZae0bzfLN0g4w4L/VjR9glJ2KgymMnxCgV385Jnk0C
+         q3ZQ==
+X-Gm-Message-State: AJcUukel5+jS23zuscqzAYwuRqXWDYbGv0RW5yOrOvWkCK68pFEPAy/C
+        mKBojR32Sg23NEUW+YnaODUw6H2y0CY=
+X-Google-Smtp-Source: ALg8bN50IVl9PezQRSEf9l6/JcC7YMtHlDF+34ZGsoRlXomTcalqjSR15J7uVoQT+zt5HgkxarLPIA==
+X-Received: by 2002:adf:ee89:: with SMTP id b9mr26130032wro.246.1548755578216;
+        Tue, 29 Jan 2019 01:52:58 -0800 (PST)
+Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id 126sm1992494wmd.1.2019.01.29.01.52.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 01:52:57 -0800 (PST)
+Subject: Re: [PATCH] thermal: bcm2835: Fix crash in bcm2835_thermal_debugfs
+To:     Phil Elwell <phil@raspberrypi.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1548753048-78735-1-git-send-email-phil@raspberrypi.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <d4a3e7b3-ed86-ca74-0e46-9b3b5f9cbef7@linaro.org>
+Date:   Tue, 29 Jan 2019 10:52:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1548753048-78735-1-git-send-email-phil@raspberrypi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mike Rapoport <rppt@linux.ibm.com> writes:
+On 29/01/2019 10:10, Phil Elwell wrote:
+> "cat /sys/kernel/debug/bcm2835_thermal/regset" causes a NULL pointer
+> dereference in bcm2835_thermal_debugfs. The driver makes use of the
+> implementation details of the thermal framework to retrieve a pointer
+> to its private data from a struct thermal_zone_device, and gets it
+> wrong - leading to the crash. Instead, store its private data as the
+> drvdata and retrieve the thermal_zone_device pointer from it.
+> 
+> Fixes: bcb7dd9ef206 ("thermal: bcm2835: add thermal driver for bcm2835 SoC")
+> 
+> Signed-off-by: Phil Elwell <phil@raspberrypi.org>
 
-> From: Christophe Leroy <christophe.leroy@c-s.fr>
->
-> Since only the virtual address of allocated blocks is used,
-> lets use functions returning directly virtual address.
->
-> Those functions have the advantage of also zeroing the block.
->
-> [ MR:
->  - updated error message in alloc_stack() to be more verbose
->  - convereted several additional call sites ]
->
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+One question: do you really want the thermal driver to be loaded as a
+module ? Don't you want to have it operational as soon as possible
+instead of waiting the OS to boot and load the kernel module?
+
+If a module format is not needed, then the thermal_zone field won't be
+needed anymore because the 'remove' ops can be removed and the need of
+the tz field to unregister it disappears.
+
 > ---
->  arch/powerpc/kernel/dt_cpu_ftrs.c |  3 +--
->  arch/powerpc/kernel/irq.c         |  5 -----
->  arch/powerpc/kernel/paca.c        |  6 +++++-
->  arch/powerpc/kernel/prom.c        |  5 ++++-
->  arch/powerpc/kernel/setup_32.c    | 26 ++++++++++++++++----------
->  5 files changed, 26 insertions(+), 19 deletions(-)
+>  drivers/thermal/broadcom/bcm2835_thermal.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
+> index 720760c..ba39647 100644
+> --- a/drivers/thermal/broadcom/bcm2835_thermal.c
+> +++ b/drivers/thermal/broadcom/bcm2835_thermal.c
+> @@ -119,8 +119,7 @@ static const struct debugfs_reg32 bcm2835_thermal_regs[] = {
+>  
+>  static void bcm2835_thermal_debugfs(struct platform_device *pdev)
+>  {
+> -	struct thermal_zone_device *tz = platform_get_drvdata(pdev);
+> -	struct bcm2835_thermal_data *data = tz->devdata;
+> +	struct bcm2835_thermal_data *data = platform_get_drvdata(pdev);
+>  	struct debugfs_regset32 *regset;
+>  
+>  	data->debugfsdir = debugfs_create_dir("bcm2835_thermal", NULL);
+> @@ -266,7 +265,7 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+>  
+>  	data->tz = tz;
+>  
+> -	platform_set_drvdata(pdev, tz);
+> +	platform_set_drvdata(pdev, data);
+>  
+>  	/*
+>  	 * Thermal_zone doesn't enable hwmon as default,
+> @@ -290,8 +289,8 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+>  
+>  static int bcm2835_thermal_remove(struct platform_device *pdev)
+>  {
+> -	struct thermal_zone_device *tz = platform_get_drvdata(pdev);
+> -	struct bcm2835_thermal_data *data = tz->devdata;
+> +	struct bcm2835_thermal_data *data = platform_get_drvdata(pdev);
+> +	struct thermal_zone_device *tz = data->tz;
+>  
+>  	debugfs_remove_recursive(data->debugfsdir);
+>  	thermal_zone_of_sensor_unregister(&pdev->dev, tz);
+> 
 
-LGTM.
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-cheers
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
