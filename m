@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF5DC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB775C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 737332083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81EBD2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762670;
-	bh=ulIaSQ7WDourKgAzF6dIjVqN23ayMTYQtybZwtLgpws=;
+	s=default; t=1548762676;
+	bh=ScxfXUk5cn6JXxjCE7o9eD3uFIYzh1wjKLXD84AF758=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FoTxkGdWBHl+5RJK9kDK+Fmsu+5TFPqMiqn6Lhft45y6EvV/+fD5x2eJLE+/3cahs
-	 WtfYYU4pmSa24a8DBAP1ZdCY7M1o7i4Fi+dCA+AWB27wGVZx8jF+XiR31q59k98SSS
-	 gDitB34vm8wkjV1QA2CVbKMivQ0OYboIhzdwNCZI=
+	b=MTMo0RxWHm4J2LbhhUq5o0jFLKdO8j+jtyJ7PstmxTEOgsMAj++P7uiVcTeUoZM5k
+	 z33eCwqE6JwT0nkFaTL4gDTuvKgyEU/icCcbllRktU1Og7XUPWj0dGC8aJ8foFSf7B
+	 WEYhMGFnY5DUGQPZYRrn74KlC65zyEZAqKwGlMg4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731829AbfA2LvJ (ORCPT
+        id S1731838AbfA2LvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:51:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42602 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:51:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731795AbfA2LvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:51:06 -0500
+        id S1731830AbfA2LvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:51:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF1C32083B;
-        Tue, 29 Jan 2019 11:51:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96DD22086C;
+        Tue, 29 Jan 2019 11:51:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762666;
-        bh=ulIaSQ7WDourKgAzF6dIjVqN23ayMTYQtybZwtLgpws=;
+        s=default; t=1548762669;
+        bh=ScxfXUk5cn6JXxjCE7o9eD3uFIYzh1wjKLXD84AF758=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GGVOm9vQlNIsY8peKT2DMiB/nzNVhH2ZK+CfzELaNkwueGZXk/5Co3wovlJobB0lv
-         R23jwBn5fqmvEVqCvCkQR3eJVXq+kWg/R9AvwzsQarViz3hILZ3t6JtZrjzOTANJDB
-         JXGZgUdAz5x/9/5WR1BWHlUEzvk5nyvQSETdVQVM=
+        b=cTrPaoArjQBrciNvP+g1tEFYwEEH6kVSfH+ueb74WOvllqaQ2J3rp+3EH6LRAoNmc
+         lFIw3QyE8/tZrCVjSqR8b9CSxTl64cnK0ODLdAGjLeVErsgzVvm03dvNJ2YwJjQH+u
+         Gi1y0TOSnHbcjg3SlNggOKRpc0II5seXo58EdZEg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Pravin B Shelar <pshelar@ovn.org>,
+        stable@vger.kernel.org, Jintack Lim <jintack@cs.columbia.edu>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 03/44] openvswitch: Avoid OOB read when parsing flow nlattrs
-Date:   Tue, 29 Jan 2019 12:35:58 +0100
-Message-Id: <20190129113140.209520729@linuxfoundation.org>
+Subject: [PATCH 4.9 04/44] vhost: log dirty page correctly
+Date:   Tue, 29 Jan 2019 12:35:59 +0100
+Message-Id: <20190129113140.312342369@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -66,34 +67,202 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Jason Wang <jasowang@redhat.com>
 
-[ Upstream commit 04a4af334b971814eedf4e4a413343ad3287d9a9 ]
+[ Upstream commit cc5e710759470bc7f3c61d11fd54586f15fdbdf4 ]
 
-For nested and variable attributes, the expected length of an attribute
-is not known and marked by a negative number.  This results in an OOB
-read when the expected length is later used to check if the attribute is
-all zeros. Fix this by using the actual length of the attribute rather
-than the expected length.
+Vhost dirty page logging API is designed to sync through GPA. But we
+try to log GIOVA when device IOTLB is enabled. This is wrong and may
+lead to missing data after migration.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Acked-by: Pravin B Shelar <pshelar@ovn.org>
+To solve this issue, when logging with device IOTLB enabled, we will:
+
+1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
+   get HVA, for writable descriptor, get HVA through iovec. For used
+   ring update, translate its GIOVA to HVA
+2) traverse the GPA->HVA mapping to get the possible GPA and log
+   through GPA. Pay attention this reverse mapping is not guaranteed
+   to be unique, so we should log each possible GPA in this case.
+
+This fix the failure of scp to guest during migration. In -next, we
+will probably support passing GIOVA->GPA instead of GIOVA->HVA.
+
+Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
+Reported-by: Jintack Lim <jintack@cs.columbia.edu>
+Cc: Jintack Lim <jintack@cs.columbia.edu>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/flow_netlink.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vhost/net.c   |    3 +
+ drivers/vhost/vhost.c |   97 ++++++++++++++++++++++++++++++++++++++++++--------
+ drivers/vhost/vhost.h |    3 +
+ 3 files changed, 87 insertions(+), 16 deletions(-)
 
---- a/net/openvswitch/flow_netlink.c
-+++ b/net/openvswitch/flow_netlink.c
-@@ -409,7 +409,7 @@ static int __parse_flow_nlattrs(const st
- 			return -EINVAL;
- 		}
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -751,7 +751,8 @@ static void handle_rx(struct vhost_net *
+ 		vhost_add_used_and_signal_n(&net->dev, vq, vq->heads,
+ 					    headcount);
+ 		if (unlikely(vq_log))
+-			vhost_log_write(vq, vq_log, log, vhost_len);
++			vhost_log_write(vq, vq_log, log, vhost_len,
++					vq->iov, in);
+ 		total_len += vhost_len;
+ 		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
+ 			vhost_poll_queue(&vq->poll);
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1646,13 +1646,87 @@ static int log_write(void __user *log_ba
+ 	return r;
+ }
  
--		if (!nz || !is_all_zero(nla_data(nla), expected_len)) {
-+		if (!nz || !is_all_zero(nla_data(nla), nla_len(nla))) {
- 			attrs |= 1 << type;
- 			a[type] = nla;
- 		}
++static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
++{
++	struct vhost_umem *umem = vq->umem;
++	struct vhost_umem_node *u;
++	u64 start, end, l, min;
++	int r;
++	bool hit = false;
++
++	while (len) {
++		min = len;
++		/* More than one GPAs can be mapped into a single HVA. So
++		 * iterate all possible umems here to be safe.
++		 */
++		list_for_each_entry(u, &umem->umem_list, link) {
++			if (u->userspace_addr > hva - 1 + len ||
++			    u->userspace_addr - 1 + u->size < hva)
++				continue;
++			start = max(u->userspace_addr, hva);
++			end = min(u->userspace_addr - 1 + u->size,
++				  hva - 1 + len);
++			l = end - start + 1;
++			r = log_write(vq->log_base,
++				      u->start + start - u->userspace_addr,
++				      l);
++			if (r < 0)
++				return r;
++			hit = true;
++			min = min(l, min);
++		}
++
++		if (!hit)
++			return -EFAULT;
++
++		len -= min;
++		hva += min;
++	}
++
++	return 0;
++}
++
++static int log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
++{
++	struct iovec iov[64];
++	int i, ret;
++
++	if (!vq->iotlb)
++		return log_write(vq->log_base, vq->log_addr + used_offset, len);
++
++	ret = translate_desc(vq, (uintptr_t)vq->used + used_offset,
++			     len, iov, 64, VHOST_ACCESS_WO);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < ret; i++) {
++		ret = log_write_hva(vq,	(uintptr_t)iov[i].iov_base,
++				    iov[i].iov_len);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
+-		    unsigned int log_num, u64 len)
++		    unsigned int log_num, u64 len, struct iovec *iov, int count)
+ {
+ 	int i, r;
+ 
+ 	/* Make sure data written is seen before log. */
+ 	smp_wmb();
++
++	if (vq->iotlb) {
++		for (i = 0; i < count; i++) {
++			r = log_write_hva(vq, (uintptr_t)iov[i].iov_base,
++					  iov[i].iov_len);
++			if (r < 0)
++				return r;
++		}
++		return 0;
++	}
++
+ 	for (i = 0; i < log_num; ++i) {
+ 		u64 l = min(log[i].len, len);
+ 		r = log_write(vq->log_base, log[i].addr, l);
+@@ -1682,9 +1756,8 @@ static int vhost_update_used_flags(struc
+ 		smp_wmb();
+ 		/* Log used flag write. */
+ 		used = &vq->used->flags;
+-		log_write(vq->log_base, vq->log_addr +
+-			  (used - (void __user *)vq->used),
+-			  sizeof vq->used->flags);
++		log_used(vq, (used - (void __user *)vq->used),
++			 sizeof vq->used->flags);
+ 		if (vq->log_ctx)
+ 			eventfd_signal(vq->log_ctx, 1);
+ 	}
+@@ -1702,9 +1775,8 @@ static int vhost_update_avail_event(stru
+ 		smp_wmb();
+ 		/* Log avail event write */
+ 		used = vhost_avail_event(vq);
+-		log_write(vq->log_base, vq->log_addr +
+-			  (used - (void __user *)vq->used),
+-			  sizeof *vhost_avail_event(vq));
++		log_used(vq, (used - (void __user *)vq->used),
++			 sizeof *vhost_avail_event(vq));
+ 		if (vq->log_ctx)
+ 			eventfd_signal(vq->log_ctx, 1);
+ 	}
+@@ -2103,10 +2175,8 @@ static int __vhost_add_used_n(struct vho
+ 		/* Make sure data is seen before log. */
+ 		smp_wmb();
+ 		/* Log used ring entry write. */
+-		log_write(vq->log_base,
+-			  vq->log_addr +
+-			   ((void __user *)used - (void __user *)vq->used),
+-			  count * sizeof *used);
++		log_used(vq, ((void __user *)used - (void __user *)vq->used),
++			 count * sizeof *used);
+ 	}
+ 	old = vq->last_used_idx;
+ 	new = (vq->last_used_idx += count);
+@@ -2148,9 +2218,8 @@ int vhost_add_used_n(struct vhost_virtqu
+ 		/* Make sure used idx is seen before log. */
+ 		smp_wmb();
+ 		/* Log used index update. */
+-		log_write(vq->log_base,
+-			  vq->log_addr + offsetof(struct vring_used, idx),
+-			  sizeof vq->used->idx);
++		log_used(vq, offsetof(struct vring_used, idx),
++			 sizeof vq->used->idx);
+ 		if (vq->log_ctx)
+ 			eventfd_signal(vq->log_ctx, 1);
+ 	}
+--- a/drivers/vhost/vhost.h
++++ b/drivers/vhost/vhost.h
+@@ -199,7 +199,8 @@ bool vhost_vq_avail_empty(struct vhost_d
+ bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
+ 
+ int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
+-		    unsigned int log_num, u64 len);
++		    unsigned int log_num, u64 len,
++		    struct iovec *iov, int count);
+ int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
+ 
+ struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
 
 
