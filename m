@@ -2,183 +2,137 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87DFC282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 04:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F512C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 04:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9E072177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 04:45:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C175920989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 04:46:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idoY4koW"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="AhB3TneB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbfA2Epg (ORCPT
+        id S1727263AbfA2EqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 23:45:36 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53586 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbfA2Epg (ORCPT
+        Mon, 28 Jan 2019 23:46:10 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33531 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726950AbfA2EqK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 23:45:36 -0500
-Received: by mail-wm1-f67.google.com with SMTP id d15so16307588wmb.3;
-        Mon, 28 Jan 2019 20:45:33 -0800 (PST)
+        Mon, 28 Jan 2019 23:46:10 -0500
+Received: by mail-pl1-f193.google.com with SMTP id z23so8814666plo.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 20:46:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SsxW6fkD/qctw2NjLA6cTEcv/F0TugHn3GC22YwBKRA=;
-        b=idoY4koW7bAqvnGdAxBJt5sQlgRcAtq7t61pz+ZCeHixXiNxDYqwPbAzAO4fuvWZ08
-         0GhaW1VYrtMRRkiktxr5rDGUpmqzBt4x19Q4GVmxUd9+cEuxXqQWsHzlNPnJVH6qlHQ2
-         k4dQcME7ozOEOSFZFjJ9V/WBtCBewgc43OkN8GpFyeeN8MFaXzuYU5xS/Fk3Rvs7fbsN
-         iFuoh/P3L1rlE6gowusIzphxbmygfqrzVKmN/MSE6mDXNo1XowxXJbaueIVSCSW1ejnp
-         vmZWdATpIaeduP8C01CqxEcq+QzY1/F8XLYkBCnhbml4Uyo586pFzgXT80Ty+p8btv1k
-         03dw==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eVdQI+bKFnHxHsyrWVjxAl5UcBq6aUXQPMqjgJnSXMU=;
+        b=AhB3TneBFy5a0D3ECmn3nW0DFD00d64H7KXVKa2rW5c8hyVHul1zsyPBj53m+pAEn6
+         a3VzM3KcH8t2Btm5Qz/EHVh0SVk4D/dz+4lBGsMUPMlsQY7JrJpIoUhRX3JvrLBTtrUF
+         hu+ABju5baJzTV6C6u2plaAYJbka1voJWQK4d1xS/t+oGAV5rgNy1Wtb9AmimQz9rDcn
+         NK9GIET8z8CNIMWhVivUtsc+vbDm3xHvUKYhE4pCMl18Fbj0RGgcb2b6wstWaTY5SErZ
+         eiwjt4GAeq78cF/eTYNjn5r5B/vr9moiRWvzJT1X3iffiFSmAiFT86VT01lQvrj8sZQe
+         VY+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SsxW6fkD/qctw2NjLA6cTEcv/F0TugHn3GC22YwBKRA=;
-        b=BQwd5on/aT0JqRhN9uvbpMPKBtJK5zYfuKVuIvaIluTT5engRFuqHmHsqQIJWjlfG9
-         0DwXf/JNAZJMKJcBkZO7nwgiJmdwl9Pl+Htq9iycKdBVVIl3tkfimOCuCjLomoeMuo72
-         2szpvuGFqJ1LpsHR3aJDpkx/kLySDsxudVV1ZbYpCZr1Q5zWISUm3E9zaln+i4wKRdv6
-         JZq2h3/zfwLHXV/PWOeeCeycBeigwb3TxVML9drkArpAy3Nr8/BwLRHa4lToUanp+279
-         Eg5MMsAtHnfjquDXgZsTglSPkLMYezOBta0+i5geDJKJMnC6WaDB5cjvM2Faz8qtMaYH
-         ni2g==
-X-Gm-Message-State: AJcUukflZ213vJeH8pPSQkH84Qf4L0OlSsF9P/r6EkiJWUJ8zfnSBDEa
-        Mmrv0RpZbgitD4erLoaK6vA=
-X-Google-Smtp-Source: ALg8bN6/Vb9+tx62ZvTCIAAeOu7/o4NkkvjPEFBmtGSx5r67KUQpAayVjbG5fPF7iQFXm2XvKF0A2A==
-X-Received: by 2002:a1c:c70f:: with SMTP id x15mr19388076wmf.130.1548737132688;
-        Mon, 28 Jan 2019 20:45:32 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id t199sm2760278wmt.1.2019.01.28.20.45.31
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 20:45:31 -0800 (PST)
-Subject: Re: [PATCH v7 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
-        zhengxunli@mxic.com.tw
-References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
- <1548227352-14910-2-git-send-email-masonccyang@mxic.com.tw>
- <bb63b646-b549-dc3b-a604-17ba156e735c@gmail.com>
- <OF767ACC95.EECC73BE-ON4825838C.000BD6A3-4825838C.000D23A6@mxic.com.tw>
- <67fa5f94-886b-f09c-c93d-832e427ffec8@gmail.com>
- <OF891E176A.614DBEEF-ON4825838C.0022D454-4825838C.002396ED@mxic.com.tw>
- <0b3ea94f-a4f3-0780-301b-f88ff2ad2fb1@gmail.com>
- <OFEAAE10B4.20C3E45D-ON48258390.0007CD37-48258390.0009066E@mxic.com.tw>
- <2d762c16-d714-9171-9450-b6adf1a6509c@gmail.com>
- <OF1DC7FF88.3574E5B9-ON48258391.000A5001-48258391.000D5DDE@mxic.com.tw>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <a0f86e7c-dd16-f3fa-5387-b0da6900975c@gmail.com>
-Date:   Tue, 29 Jan 2019 05:43:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eVdQI+bKFnHxHsyrWVjxAl5UcBq6aUXQPMqjgJnSXMU=;
+        b=XUkn1HM4jlTBxasH3bJgR9QXxnkso+9fAg2pInQuMrsVOHV0s6aRrxJkceTczyThFZ
+         EtALK5aTckJ4JRvFN5MB45fDcTZflVs+ackS1/V3JKgG9gjrPVRTQntgLXzVAe91xqK9
+         ETBPk1Ks4xt7PDUkXL5QB7lgAQDs6pOfcUU3sonz5g247lWz18mrwo7yJv2o8q0vOKIU
+         rmCnfkOfSLuqVpquxCCcXRvUTdDJu++uFTcJ98dJKSQV0gogODvEqI7EhErv7/0DrOwQ
+         8iigj0yzD4ve1oV2OKTtztdyAh+jVT59ycpZ462+aWRQyH+vQCOacZJTK1I1Wqu8qOYU
+         81yg==
+X-Gm-Message-State: AJcUukdtcufo3DcfXvG99RGQLzZeQ2oBnjWgIQuQMRc84jlxxkHV8D81
+        ntsoB9qSR4ifI1yYDMmPV4P0sBhWmsg=
+X-Google-Smtp-Source: ALg8bN7+HaiY1XsTWvzakNPi7ADMWJt74gu5PpijmJ/RQm9hMIALtHjokkF1/++wIReWRCu9PvwyWQ==
+X-Received: by 2002:a17:902:7c05:: with SMTP id x5mr24101332pll.273.1548737169100;
+        Mon, 28 Jan 2019 20:46:09 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id h128sm66270847pgc.15.2019.01.28.20.46.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 20:46:08 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1goLHj-00040F-Du; Mon, 28 Jan 2019 21:46:07 -0700
+Date:   Mon, 28 Jan 2019 21:46:07 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     akpm@linux-foundation.org, dledford@redhat.com, jack@suse.de,
+        ira.weiny@intel.com, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        dennis.dalessandro@intel.com, mike.marciniszyn@intel.com,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 3/6] drivers/IB,qib: do not use mmap_sem
+Message-ID: <20190129044607.GL25106@ziepe.ca>
+References: <20190121174220.10583-1-dave@stgolabs.net>
+ <20190121174220.10583-4-dave@stgolabs.net>
+ <20190128233140.GA12530@ziepe.ca>
 MIME-Version: 1.0
-In-Reply-To: <OF1DC7FF88.3574E5B9-ON48258391.000A5001-48258391.000D5DDE@mxic.com.tw>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128233140.GA12530@ziepe.ca>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/29/19 3:26 AM, masonccyang@mxic.com.tw wrote:
-> Hi Marek,
-
-Hi,
-
->> >> "Marek Vasut" <marek.vasut@gmail.com>
->> >> >> >> > +module_platform_driver(rpc_spi_driver);
->> >> >> >>
->> >> >> >> RPC is not a SPI controller, it's a SPI and HF controller.
->> >> >> >>
->> >> >> >> Also, how difficult will it be to add the HF support ?
->> >> >> >
->> >> >> > One of my customers needs RPC SPI driver for our company's
->> >> >> > Octal-Flash,MX25UW51245G.
->> >> >> > We don't have HF product and hope you could understanding.
->> >> >>
->> >> >> I am worried that when we need to add RPC HF support (which is
-> what all
->> >> >> boards but the D3 Draak use), we will have to rewrite the entire
-> driver
->> >> >> and/or convert it to MFD and that would be a tremendous
->> > undertaking. I'd
->> >> >> prefer to have the driver ready for the HF addition before it's
->> > accepted
->> >> >> upstream.
->> >> >>
->> >> >
->> >> > I think maybe your concerned would be happened only if HF driver
->> > goes with
->> >> > spi-mem layer.
->> >> >
->> >> > A comment for HF from Daniel Fishman. FYR.
->> >> >
->> >> > https://www.quora.com/What-is-a-hyper-flash-memory-and-how-is-it-
->> >> different-from-normal-flash-memory
->> >>
->> >> I have a decent idea what HF and SPI NOR are, since I wrote the RPC
->> >> driver for both HF and SPI mode for U-Boot (as I mentioned earlier).
->> >>
->> >> The HF in Linux would use the CFI NOR part of MTD framework. My concern
->> >> is that when we need to add HF support into this driver, this driver
->> >> will have to be basically rewritten, since the architecture won't allow
->> >> for that. I'd like to avoid that, since the majority of Gen3 boards,
->> >> expect for the D3 Draak, use RPC in HF mode.
->> >
->> > FYI~
->> >
->> > MX25UW51245g(64MByte Octa)                      S26KL512S(64MByte HF)
->> >    8 IO                                                  8 IO
->> > 200MHz DDR@1.8v                                   166MHz DDR@1.8v
->> >
->> > support Read-while-write                       Not support
->> > good for OTA,etc
->> > powerful application
->>
->> What does that mean ?
+On Mon, Jan 28, 2019 at 04:31:40PM -0700, Jason Gunthorpe wrote:
+> On Mon, Jan 21, 2019 at 09:42:17AM -0800, Davidlohr Bueso wrote:
+> > The driver uses mmap_sem for both pinned_vm accounting and
+> > get_user_pages(). By using gup_fast() and letting the mm handle
+> > the lock if needed, we can no longer rely on the semaphore and
+> > simplify the whole thing as the pinning is decoupled from the lock.
+> > 
+> > This also fixes a bug that __qib_get_user_pages was not taking into
+> > account the current value of pinned_vm.
+> > 
+> > Cc: dennis.dalessandro@intel.com
+> > Cc: mike.marciniszyn@intel.com
+> > Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> > Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> >  drivers/infiniband/hw/qib/qib_user_pages.c | 67 ++++++++++--------------------
+> >  1 file changed, 22 insertions(+), 45 deletions(-)
 > 
-> I have no idea why would you say "since the majority of Gen3 boards use
-> RPC in HF mode" ?
-
-Well, the H3/M3W/M3N S-X(S) and the H3/M3 ULCB and E3 Ebisu all boot
-from HF. Only the D3 Draak uses QSPI NOR.
-
-> So far as I know that HF is provided by Cypress only and
-> any mass production product use the component which is provided by only
-> one provider
-> will be a big risk.
+> I need you to respin this patch/series against the latest rdma tree:
 > 
-> Compare to HF, there are more provider of SPI/Octa could support the
-> mass production product
-> as their second provider.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git
 > 
-> In addition, from the technical points of view, mx25uw51245g is more
-> powerful than HF and
-> good for complicate user application, i.e., OTA and so on.
+> branch for-next
+> 
+> > diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
+> > -static int __qib_get_user_pages(unsigned long start_page, size_t num_pages,
+> > -				struct page **p)
+> > -{
+> > -	unsigned long lock_limit;
+> > -	size_t got;
+> > -	int ret;
+> > -
+> > -	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+> > -
+> > -	if (num_pages > lock_limit && !capable(CAP_IPC_LOCK)) {
+> > -		ret = -ENOMEM;
+> > -		goto bail;
+> > -	}
+> > -
+> > -	for (got = 0; got < num_pages; got += ret) {
+> > -		ret = get_user_pages(start_page + got * PAGE_SIZE,
+> > -				     num_pages - got,
+> > -				     FOLL_WRITE | FOLL_FORCE,
+> > -				     p + got, NULL);
+> 
+> As this has been rightly changed to get_user_pages_longterm, and I
+> think the right answer to solve the conflict is to discard some of
+> this patch?
 
-Did you consider protocol overhead too ? I don't think you can compare
-them just by raw numbers of pins and bus frequency.
+.. and I'm looking at some of the other conversions here.. *most
+likely* any caller that is manipulating rlimit for get_user_pages
+should really be calling get_user_pages_longterm, so they should not
+be converted to use _fast?
 
-Note that over-the-air update (if that's what you mean by OTA) is
-completely separate from the underlying storage device.
-
-> I think customer have more choice for their flash memory component.
-Note that none of this is really relevant to my concerns above regarding
-HF support. This driver should be implemented as MFD driver and the SPI
-part should use the MFD core part , just like the future HF part.
-
--- 
-Best regards,
-Marek Vasut
+Jason
