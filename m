@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E7DC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A358C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D40D20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ABDA20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763447;
-	bh=35dz/6NCxjkiLluNMgvcyG2aX5AlR7O05weijIhX404=;
+	s=default; t=1548763463;
+	bh=9upuF7YskzAF/N+K6UAu+yo2Z05r7ZlR3kKQqjFGeQM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nb/8RhnZsrc/ZMs88Dk6a6OjW2rJgVLiEN3wXFBWAYXkpW4j8AjJumTdgoPvrWs4F
-	 uEKGDNkpu7JbKB2SlZcVwk6W5VJ1olX0UWg+4Y+ZQXcvZaubJ+bhKiQNmVB/5kp0le
-	 DPz3sRmNubhqwgVBxLBGMjQxloXAMVm2BDHeqB50=
+	b=K8lpM3YuFsOE1aNohj8bDL5Ba5JYPH+nPhM7Py8vyShSRjlp7+KlE19+LapoCBrjQ
+	 eFRzu0k0NBpZGPmP9KGSEMNzHi6MJG8p3yGx22VEtpxDQ5wl9JprGAAgwTjepkfEjx
+	 rqBLX7Mw+CSgoUlL7bbq7wD1Ua+rBf/bP/XlCK34=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729505AbfA2LnS (ORCPT
+        id S1729985AbfA2MEV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:43:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33104 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:04:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730264AbfA2LnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:43:15 -0500
+        id S1729424AbfA2LnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:43:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D807420856;
-        Tue, 29 Jan 2019 11:43:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 896B920857;
+        Tue, 29 Jan 2019 11:43:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762194;
-        bh=35dz/6NCxjkiLluNMgvcyG2aX5AlR7O05weijIhX404=;
+        s=default; t=1548762183;
+        bh=9upuF7YskzAF/N+K6UAu+yo2Z05r7ZlR3kKQqjFGeQM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tXD6I4yi7i1OEcH+epsy+YK7j/fAnkKYRAmfy48JVhhDJo/70NO09eDenWlKHxeaf
-         etPp+x1BDPjo67d6+94oQvskAxPmZGNEWUv6p0DQEV1NUqccdcMJGeX70reiRXhjL3
-         xHiNxKIgdqHsQzwdWZs8acchkQUbVjopE101zHNM=
+        b=P1Oqx1lOofCTQmogV9dZRWJK0MAwoDiLM6qwRZo8BGIe2l1jUwqyGH4B8hQmzJ+F8
+         Sdo+eSC0SN24Kw+IUsGBx2ze9DU8nUZLTk113uKpxYG8wuAO6NbZE+24ASwPylxmlQ
+         Z+XPeOKgnVKAvyX2rCcJ+R9nY0nBo/qcy22wXess=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+        stable@vger.kernel.org, bridge@lists.linux-foundation.org,
+        Nkolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Yunjian Wang <wangyunjian@huawei.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 005/103] net: phy: mdio_bus: add missing device_del() in mdiobus_register() error handling
-Date:   Tue, 29 Jan 2019 12:34:42 +0100
-Message-Id: <20190129113159.863786801@linuxfoundation.org>
+Subject: [PATCH 4.19 002/103] net: bridge: Fix ethernet header pointer before check skb forwardable
+Date:   Tue, 29 Jan 2019 12:34:39 +0100
+Message-Id: <20190129113159.708370663@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -67,92 +69,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+From: Yunjian Wang <wangyunjian@huawei.com>
 
-[ Upstream commit e40e2a2e78664fa90ea4b9bdf4a84efce2fea9d9 ]
+[ Upstream commit 28c1382fa28f2e2d9d0d6f25ae879b5af2ecbd03 ]
 
-The current code in __mdiobus_register() doesn't properly handle
-failures returned by the devm_gpiod_get_optional() call: it returns
-immediately, without unregistering the device that was added by the
-call to device_register() earlier in the function.
+The skb header should be set to ethernet header before using
+is_skb_forwardable. Because the ethernet header length has been
+considered in is_skb_forwardable(including dev->hard_header_len
+length).
 
-This leaves a stale device, which then causes a NULL pointer
-dereference in the code that handles deferred probing:
+To reproduce the issue:
+1, add 2 ports on linux bridge br using following commands:
+$ brctl addbr br
+$ brctl addif br eth0
+$ brctl addif br eth1
+2, the MTU of eth0 and eth1 is 1500
+3, send a packet(Data 1480, UDP 8, IP 20, Ethernet 14, VLAN 4)
+from eth0 to eth1
 
-[    1.489982] Unable to handle kernel NULL pointer dereference at virtual address 00000074
-[    1.498110] pgd = (ptrval)
-[    1.500838] [00000074] *pgd=00000000
-[    1.504432] Internal error: Oops: 17 [#1] SMP ARM
-[    1.509133] Modules linked in:
-[    1.512192] CPU: 1 PID: 51 Comm: kworker/1:3 Not tainted 4.20.0-00039-g3b73a4cc8b3e-dirty #99
-[    1.520708] Hardware name: Xilinx Zynq Platform
-[    1.525261] Workqueue: events deferred_probe_work_func
-[    1.530403] PC is at klist_next+0x10/0xfc
-[    1.534403] LR is at device_for_each_child+0x40/0x94
-[    1.539361] pc : [<c0683fbc>]    lr : [<c0455d90>]    psr: 200e0013
-[    1.545628] sp : ceeefe68  ip : 00000001  fp : ffffe000
-[    1.550863] r10: 00000000  r9 : c0c66790  r8 : 00000000
-[    1.556079] r7 : c0457d44  r6 : 00000000  r5 : ceeefe8c  r4 : cfa2ec78
-[    1.562604] r3 : 00000064  r2 : c0457d44  r1 : ceeefe8c  r0 : 00000064
-[    1.569129] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[    1.576263] Control: 18c5387d  Table: 0ed7804a  DAC: 00000051
-[    1.582013] Process kworker/1:3 (pid: 51, stack limit = 0x(ptrval))
-[    1.588280] Stack: (0xceeefe68 to 0xceef0000)
-[    1.592630] fe60:                   cfa2ec78 c0c03c08 00000000 c0457d44 00000000 c0c66790
-[    1.600814] fe80: 00000000 c0455d90 ceeefeac 00000064 00000000 0d7a542e cee9d494 cfa2ec78
-[    1.608998] fea0: cfa2ec78 00000000 c0457d44 c0457d7c cee9d494 c0c03c08 00000000 c0455dac
-[    1.617182] fec0: cf98ba44 cf926a00 cee9d494 0d7a542e 00000000 cf935a10 cf935a10 cf935a10
-[    1.625366] fee0: c0c4e9b8 c0457d7c c0c4e80c 00000001 cf935a10 c0457df4 cf935a10 c0c4e99c
-[    1.633550] ff00: c0c4e99c c045a27c c0c4e9c4 ced63f80 cfde8a80 cfdebc00 00000000 c013893c
-[    1.641734] ff20: cfde8a80 cfde8a80 c07bd354 ced63f80 ced63f94 cfde8a80 00000008 c0c02d00
-[    1.649936] ff40: cfde8a98 cfde8a80 ffffe000 c0139a30 ffffe000 c0c6624a c07bd354 00000000
-[    1.658120] ff60: ffffe000 cee9e780 ceebfe00 00000000 ceeee000 ced63f80 c0139788 cf8cdea4
-[    1.666304] ff80: cee9e79c c013e598 00000001 ceebfe00 c013e44c 00000000 00000000 00000000
-[    1.674488] ffa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
-[    1.682671] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    1.690855] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-[    1.699058] [<c0683fbc>] (klist_next) from [<c0455d90>] (device_for_each_child+0x40/0x94)
-[    1.707241] [<c0455d90>] (device_for_each_child) from [<c0457d7c>] (device_reorder_to_tail+0x38/0x88)
-[    1.716476] [<c0457d7c>] (device_reorder_to_tail) from [<c0455dac>] (device_for_each_child+0x5c/0x94)
-[    1.725692] [<c0455dac>] (device_for_each_child) from [<c0457d7c>] (device_reorder_to_tail+0x38/0x88)
-[    1.734927] [<c0457d7c>] (device_reorder_to_tail) from [<c0457df4>] (device_pm_move_to_tail+0x28/0x40)
-[    1.744235] [<c0457df4>] (device_pm_move_to_tail) from [<c045a27c>] (deferred_probe_work_func+0x58/0x8c)
-[    1.753746] [<c045a27c>] (deferred_probe_work_func) from [<c013893c>] (process_one_work+0x210/0x4fc)
-[    1.762888] [<c013893c>] (process_one_work) from [<c0139a30>] (worker_thread+0x2a8/0x5c0)
-[    1.771072] [<c0139a30>] (worker_thread) from [<c013e598>] (kthread+0x14c/0x154)
-[    1.778482] [<c013e598>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-[    1.785689] Exception stack(0xceeeffb0 to 0xceeefff8)
-[    1.790739] ffa0:                                     00000000 00000000 00000000 00000000
-[    1.798923] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    1.807107] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    1.813724] Code: e92d47f0 e1a05000 e8900048 e1a00003 (e5937010)
-[    1.819844] ---[ end trace 3c2c0c8b65399ec9 ]---
+So the expect result is packet larger than 1500 cannot pass through
+eth0 and eth1. But currently, the packet passes through success, it
+means eth1's MTU limit doesn't take effect.
 
-The actual error that we had from devm_gpiod_get_optional() was
--EPROBE_DEFER, due to the GPIO being provided by a driver that is
-probed later than the Ethernet controller driver.
-
-To fix this, we simply add the missing device_del() invocation in the
-error path.
-
-Fixes: 69226896ad636 ("mdio_bus: Issue GPIO RESET to PHYs")
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: f6367b4660dd ("bridge: use is_skb_forwardable in forward path")
+Cc: bridge@lists.linux-foundation.org
+Cc: Nkolay Aleksandrov <nikolay@cumulusnetworks.com>
+Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/mdio_bus.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/bridge/br_forward.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -391,6 +391,7 @@ int __mdiobus_register(struct mii_bus *b
- 	if (IS_ERR(gpiod)) {
- 		dev_err(&bus->dev, "mii_bus %s couldn't get reset GPIO\n",
- 			bus->id);
-+		device_del(&bus->dev);
- 		return PTR_ERR(gpiod);
- 	} else	if (gpiod) {
- 		bus->reset_gpiod = gpiod;
+--- a/net/bridge/br_forward.c
++++ b/net/bridge/br_forward.c
+@@ -36,10 +36,10 @@ static inline int should_deliver(const s
+ 
+ int br_dev_queue_push_xmit(struct net *net, struct sock *sk, struct sk_buff *skb)
+ {
++	skb_push(skb, ETH_HLEN);
+ 	if (!is_skb_forwardable(skb->dev, skb))
+ 		goto drop;
+ 
+-	skb_push(skb, ETH_HLEN);
+ 	br_drop_fake_rtable(skb);
+ 
+ 	if (skb->ip_summed == CHECKSUM_PARTIAL &&
+@@ -98,12 +98,11 @@ static void __br_forward(const struct ne
+ 		net = dev_net(indev);
+ 	} else {
+ 		if (unlikely(netpoll_tx_running(to->br->dev))) {
+-			if (!is_skb_forwardable(skb->dev, skb)) {
++			skb_push(skb, ETH_HLEN);
++			if (!is_skb_forwardable(skb->dev, skb))
+ 				kfree_skb(skb);
+-			} else {
+-				skb_push(skb, ETH_HLEN);
++			else
+ 				br_netpoll_send_skb(to, skb);
+-			}
+ 			return;
+ 		}
+ 		br_hook = NF_BR_LOCAL_OUT;
 
 
