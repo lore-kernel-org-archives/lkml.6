@@ -2,52 +2,50 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC99C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85EC6C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A02820880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5242020880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763147;
-	bh=MYnSJhu0MS3PUNqY26ljQKTg0ODdPGQQj7AfT6Srsx4=;
+	s=default; t=1548763156;
+	bh=Y2kuHpNnFiSHYlV1fU4otSpAWOOwpdFCLWJhvjrcAYA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BC+X3b9r8qXBgIKXHLFSXzZqtYjMPGZgOzKMsGgt7+gUxQVeU5RY73wPrqgb5vSMy
-	 mNIqudOT8n87097SdcG6d+z0y51pewK5T9pjnKcycrYCLjbRX9LqT8C9F4PgRLlOMV
-	 xjAhjK6u7aNqyHJkaQEwYOuCb+m6SHSCFTkHoS6E=
+	b=TMf27OXAIzeF7lTwTVvX7AfeV3CpYyb6Ek5V5cAFS08pmzbOP/VaSeugdZgCJXX3I
+	 jmP7X7CILXUHKi2TrmqeoTSgMuD01cbIkaL1B4bWW7Q97/cWqIkTN+YesiRGkamjU9
+	 V5gQ5H7gYybNhWNtOyXIf0fPOW5tLlfSGrNd5FS8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbfA2L7F (ORCPT
+        id S1731456AbfA2L7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:59:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38106 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:59:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729984AbfA2Lr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:27 -0500
+        id S1731179AbfA2LrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F04E2083B;
-        Tue, 29 Jan 2019 11:47:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C76D32086C;
+        Tue, 29 Jan 2019 11:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762446;
-        bh=MYnSJhu0MS3PUNqY26ljQKTg0ODdPGQQj7AfT6Srsx4=;
+        s=default; t=1548762441;
+        bh=Y2kuHpNnFiSHYlV1fU4otSpAWOOwpdFCLWJhvjrcAYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WeejoL+d0i13hzJBVWkOTJ8Gp0njIigxcbyZ+lW9HmoFg23RH9W9zirYeg4vrE3bT
-         oMdMbAyMtRRgaaqDko/0vrJvB36fmjEIp31bzdtl4IvPF54zLYz4szRcHJVEw7cbr3
-         QibVKtCufIhJ683fmh0ahliFWVm1AmzK48L4KntQ=
+        b=KTNeVWOncpM4kUJBc4EZ5ECcC1kRfh8SdMtxrfdQWi1xgi0Wb00uW0QtmDAsw3NOa
+         CeILwvocc2aw3KfXtITeQPkQjsJLFJBfV9Krr5lJbQGzsxVSiFWrEO94fE0bZEjtnF
+         oxsmsDyszAlv3ZdF+VUUP2Kdb5XYCG4vui+EIdSc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 094/103] bpf: fix check_map_access smin_value test when pointer contains offset
-Date:   Tue, 29 Jan 2019 12:36:11 +0100
-Message-Id: <20190129113207.164685192@linuxfoundation.org>
+        stable@vger.kernel.org, Jack Pham <jackp@codeaurora.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.19 102/103] usb: dwc3: gadget: Clear req->needs_extra_trb flag on cleanup
+Date:   Tue, 29 Jan 2019 12:36:19 +0100
+Message-Id: <20190129113207.610918252@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,53 +64,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ commit b7137c4eab85c1cf3d46acdde90ce1163b28c873 upstream ]
+From: Jack Pham <jackp@codeaurora.org>
 
-In check_map_access() we probe actual bounds through __check_map_access()
-with offset of reg->smin_value + off for lower bound and offset of
-reg->umax_value + off for the upper bound. However, even though the
-reg->smin_value could have a negative value, the final result of the
-sum with off could be positive when pointer arithmetic with known and
-unknown scalars is combined. In this case we reject the program with
-an error such as "R<x> min value is negative, either use unsigned index
-or do a if (index >=0) check." even though the access itself would be
-fine. Therefore extend the check to probe whether the actual resulting
-reg->smin_value + off is less than zero.
+commit bd6742249b9ca918565e4e3abaa06665e587f4b5 upstream.
 
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+OUT endpoint requests may somtimes have this flag set when
+preparing to be submitted to HW indicating that there is an
+additional TRB chained to the request for alignment purposes.
+If that request is removed before the controller can execute the
+transfer (e.g. ep_dequeue/ep_disable), the request will not go
+through the dwc3_gadget_ep_cleanup_completed_request() handler
+and will not have its needs_extra_trb flag cleared when
+dwc3_gadget_giveback() is called.  This same request could be
+later requeued for a new transfer that does not require an
+extra TRB and if it is successfully completed, the cleanup
+and TRB reclamation will incorrectly process the additional TRB
+which belongs to the next request, and incorrectly advances the
+TRB dequeue pointer, thereby messing up calculation of the next
+requeust's actual/remaining count when it completes.
+
+The right thing to do here is to ensure that the flag is cleared
+before it is given back to the function driver.  A good place
+to do that is in dwc3_gadget_del_and_unmap_request().
+
+Fixes: c6267a51639b ("usb: dwc3: gadget: align transfers to wMaxPacketSize")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jack Pham <jackp@codeaurora.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+[jackp: backport to <= 4.20: replaced 'needs_extra_trb' with 'unaligned'
+        and 'zero' members in patch and reworded commit text]
+Signed-off-by: Jack Pham <jackp@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/verifier.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/usb/dwc3/gadget.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index fbaa3b9e1d71..f9d5aea4891d 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -1294,13 +1294,17 @@ static int check_map_access(struct bpf_verifier_env *env, u32 regno,
- 	 */
- 	if (env->log.level)
- 		print_verifier_state(env, state);
-+
- 	/* The minimum value is only important with signed
- 	 * comparisons where we can't assume the floor of a
- 	 * value is 0.  If we are using signed variables for our
- 	 * index'es we need to make sure that whatever we use
- 	 * will have a set floor within our range.
- 	 */
--	if (reg->smin_value < 0) {
-+	if (reg->smin_value < 0 &&
-+	    (reg->smin_value == S64_MIN ||
-+	     (off + reg->smin_value != (s64)(s32)(off + reg->smin_value)) ||
-+	      reg->smin_value + off < 0)) {
- 		verbose(env, "R%d min value is negative, either use unsigned index or do a if (index >=0) check.\n",
- 			regno);
- 		return -EACCES;
--- 
-2.19.1
-
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -177,6 +177,8 @@ static void dwc3_gadget_del_and_unmap_re
+ 	req->started = false;
+ 	list_del(&req->list);
+ 	req->remaining = 0;
++	req->unaligned = false;
++	req->zero = false;
+ 
+ 	if (req->request.status == -EINPROGRESS)
+ 		req->request.status = status;
 
 
