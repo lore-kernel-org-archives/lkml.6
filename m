@@ -2,135 +2,152 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B5AC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86701C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 989F2214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E24D2175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:12:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="djPYXVoI"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="N3aZVUHF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbfA2IJB (ORCPT
+        id S1727477AbfA2IMk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:09:01 -0500
-Received: from mail-eopbgr50081.outbound.protection.outlook.com ([40.107.5.81]:48576
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727502AbfA2II7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:08:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PHqR/FXj0HKqNCbtsS5N9hT6szJRQA3lf7JEfN9PluA=;
- b=djPYXVoInQRQ9MesSmaDDYrUTurjG30gI4lZ/Xrr1IK7fDrb5e86E9AL+e5gGqAkpqVnwSbsccIjtg4nx1Uyh70ZiRd3iWml18+NI4FXlWO1rld3YIM2gZkmZZs7nqERJ+nvY3mayerQCansZ3yF02AYkGVrIwKQ+ycHxMxSk80=
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.3.19) by
- AM6PR04MB5784.eurprd04.prod.outlook.com (20.179.2.83) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.17; Tue, 29 Jan 2019 08:08:53 +0000
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::9c0:e3aa:b41f:9504]) by AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::9c0:e3aa:b41f:9504%3]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
- 08:08:53 +0000
-From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
-To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>
-CC:     Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: [PATCHv3 04/27] PCI: mobiveil: remove flag MSI_FLAG_MULTI_PCI_MSI
-Thread-Topic: [PATCHv3 04/27] PCI: mobiveil: remove flag
- MSI_FLAG_MULTI_PCI_MSI
-Thread-Index: AQHUt6nfsD9iNbAFAUaq30Vq7P8rlA==
-Date:   Tue, 29 Jan 2019 08:08:53 +0000
-Message-ID: <20190129080926.36773-5-Zhiqiang.Hou@nxp.com>
-References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0PR04CA0008.apcprd04.prod.outlook.com
- (2603:1096:203:36::20) To AM6PR04MB5781.eurprd04.prod.outlook.com
- (2603:10a6:20b:ad::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=zhiqiang.hou@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB5784;6:3TYroxuSysEb7S9mvRge5Q1tJdiEqxXQYbNKgS/tt+4YZgc4cjGCtMo6sc09T50G6dGpXGhHe+WGs/FHGD/tiZtKRwtyZc9RcHuu9Bo1OLbunSxWfMFucom2TBt8Xe9N1RIYhrF2Efnbr7grcChFmI25toq3R3BHT9yJ5CZ7n4vN3XgPWjbbaGrLPMVYI5VRg0qi5fSNsIF47+7abUPoAxa6yTQeu4mFKfm6IRkn3+Zs/4+xEINMwonnBbAJC6qnlpMRJAMXxWDyMBjg/Bz3i+ud1nM95fgd9nWZyrEAWnVYxnb+mam/rEqSEGCMVatLmYDuktwsEpIRNsAEKCtD4ipRqv8CE4i6CX7YZUM1Nf4vZzEciJErna7IW+JSkAZDbdmVyLwFFF1MAoag2ty881I6foZO+8X0f6LQD+9ztdH4ToNLwLQgzMJhBQD8rsSlKKWFTnDPlEg3/jlnpbEdYQ==;5:Y5+1rHSk7sZ/5DfI4NzrtbNceeAoxlr4CQpmgvCGpjpGBA4H3jR/6DbZdD+5ckXlUcvvLZbEDZ6PBbiewcMxcldOSK3atRTL15NCJyY+RoFRiAJvr9E6fCvUxumzH8g1M1GHnZ+eFd0N3WbBa68CFH8RZR8QIZ5z2HosOMCLzJGbVO9u55zGXAPhDrsQYUn7LtEaUVvR1H45EykvmxOrEw==;7:be0x2ghZsxb6RLd6gTTMZtz/odIZ3ucQlwtfwkF2E/Z5aRG3HzAebnqIxsqkW7jzv00sAkKPSk6LUFPowUyHSStUs5I/Rvd2pmn6InsNOsDivKlHBFgnqAOGriVcoo9/2LOKPakSprOH8zPtVSodSg==
-x-ms-office365-filtering-correlation-id: 4c207ecc-d8a1-41cc-ab29-08d685c10227
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5784;
-x-ms-traffictypediagnostic: AM6PR04MB5784:
-x-microsoft-antispam-prvs: <AM6PR04MB5784E026954BFFE86135C62184970@AM6PR04MB5784.eurprd04.prod.outlook.com>
-x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(366004)(396003)(39860400002)(189003)(199004)(3846002)(105586002)(6506007)(386003)(71200400001)(71190400001)(26005)(305945005)(66066001)(7736002)(106356001)(4326008)(102836004)(4744005)(68736007)(6116002)(2501003)(25786009)(8936002)(8676002)(81166006)(81156014)(50226002)(97736004)(486006)(14444005)(256004)(476003)(99286004)(6436002)(186003)(6486002)(7416002)(2906002)(14454004)(110136005)(1076003)(2201001)(316002)(478600001)(86362001)(53936002)(446003)(36756003)(6512007)(54906003)(76176011)(2616005)(11346002)(52116002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5784;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 5AdkIXrqf8/MTRRCWs53CB8RF8Z7O+esyu4rtnSFRFQnbonH29oQXcF2AE4RD4wyUvmSDznsyaQ1tkWa+YL2OYddd0UGBitpy0Ap/0CN9CHBkGjUks3OoJRMpvB0k5YQHDW+KigLc9+nYQVIp6/41ZmBKxVHD1fevSYVFZiH4FitA09kmrZqJ8ZLARSxSdJ1xcr8M8dTRLaPPAt5A2WyghIW3IX5Gbr8x8rW//C1/siAXW3xtkJAaqNtkzFhpSDXwWvaO1DRvZKljkMVJW9Pp76gwe4pnwVCShLh4oY/4Ahl8FfnbqXjTrI+A0vhKBJTEnnVwr/JQkV5v9IJueFUsAPgMbkScQOxKuCeKk9dLQqTiVGcd95wvoCesLqjHekoAV0slb7C9+mw3FjO0CBIgRCYOFEFiRXr7VVLLvxAX8Q=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 29 Jan 2019 03:12:40 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46016 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfA2IMk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:12:40 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0T896Ia175928;
+        Tue, 29 Jan 2019 08:12:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=KZKPNVLlmi9MM1fC6Evv97EB/zIPVuPe5u1P5j2SJjY=;
+ b=N3aZVUHFu4AO5rzApetElatEsC0PGeAz9j7MFQXlkun3pzSL3qFD0AiUxRJkt7cV0uzB
+ D9MbTfdV52epp3VBz1VmjE+Nu/QQ176ZakZf0anqZwfKL/N0zy+vvjaiGEGK8B7CpV5a
+ BFG5ZZsL7h4CuULkusOJxZbObj0HJxOLLZOHQgJ5A16HSSLi69DoNu15Y+O38HrS8NGk
+ uXF/JzfnVAGCQ6NT2whbGRR7DyMuHxhwY4x0F/rDrh+cnPFquMzEeNKHu1mOEFpBE2D3
+ fY/Woo2x+5LCm18+kYLPOqYcwPNkSwkyqGVDXQx9/z0OQj/ZXaK9Wwvu5Z++PwYxxx5S OQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2q8g6r2ngp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Jan 2019 08:12:35 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0T8CTqe013103
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Jan 2019 08:12:29 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0T8CSrE006274;
+        Tue, 29 Jan 2019 08:12:28 GMT
+Received: from kadam (/197.157.0.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 29 Jan 2019 00:12:28 -0800
+Date:   Tue, 29 Jan 2019 11:12:18 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Todd Kjos <tkjos@android.com>
+Cc:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        maco@google.com, joel@joelfernandes.org, kernel-team@android.com
+Subject: Re: [PATCH 1/7] binder: create userspace-to-binder-buffer copy
+ function
+Message-ID: <20190129081218.GL1795@kadam>
+References: <20190129004934.85885-1-tkjos@google.com>
+ <20190129004934.85885-2-tkjos@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c207ecc-d8a1-41cc-ab29-08d685c10227
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 08:08:47.4277
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5784
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129004934.85885-2-tkjos@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9150 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901290062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+On Mon, Jan 28, 2019 at 04:49:28PM -0800, Todd Kjos wrote:
+> +/**
+> + * binder_alloc_copy_user_to_buffer() - copy src user to tgt user
+> + * @alloc: binder_alloc for this proc
+> + * @buffer: binder buffer to be accessed
+> + * @buffer_offset: offset into @buffer data
+> + * @from: userspace pointer to source buffer
+> + * @bytes: bytes to copy
+> + *
+> + * Copy bytes from source userspace to target buffer.
+> + *
+> + * Return: bytes remaining to be copied
+> + */
+> +unsigned long
+> +binder_alloc_copy_user_to_buffer(struct binder_alloc *alloc,
+> +				 struct binder_buffer *buffer,
+> +				 binder_size_t buffer_offset,
+> +				 const void __user *from,
+> +				 size_t bytes)
+> +{
+> +	if (!check_buffer(alloc, buffer, buffer_offset, bytes))
+> +		return bytes;
+> +
+> +	while (bytes) {
+> +		unsigned long size;
+> +		unsigned long ret;
+> +		struct page *page;
+> +		pgoff_t pgoff;
+> +		void *kptr;
+> +
+> +		page = binder_alloc_get_page(alloc, buffer,
+> +					     buffer_offset, &pgoff);
+> +		size = min(bytes, (size_t)(PAGE_SIZE - pgoff));
 
-The current code does not support multiple MSIs, so remove
-the corresponding flag from the msi_domain_info structure.
+This code has so much more casting than necessary.  To me casting says
+that we haven't got the types correct or something.  I've just pulled
+this function out as an example really, but none of the casts here are
+required...  This could just be:
 
-Fixes: 1e913e58335f ("PCI: mobiveil: Add MSI support")
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
----
-V3:
- - No change
+		size = min(bytes, PAGE_SIZE - pgoff);
 
- drivers/pci/controller/pcie-mobiveil.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Btw, if you really need to do a cast inside a min() (you don't in this
+cast) then use min_t().
 
-diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controlle=
-r/pcie-mobiveil.c
-index 563210e731d3..a0dd337c6214 100644
---- a/drivers/pci/controller/pcie-mobiveil.c
-+++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -703,7 +703,7 @@ static struct irq_chip mobiveil_msi_irq_chip =3D {
-=20
- static struct msi_domain_info mobiveil_msi_domain_info =3D {
- 	.flags	=3D (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
--		   MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_PCI_MSIX),
-+		   MSI_FLAG_PCI_MSIX),
- 	.chip	=3D &mobiveil_msi_irq_chip,
- };
-=20
---=20
-2.17.1
+> +		kptr = (void *)((uintptr_t)kmap(page) + pgoff);
+
+This would be a lot cleaner as:
+
+		kptr = kmap(page) + pgoff;
+
+> +		ret = copy_from_user(kptr, (const void __user *)(uintptr_t)from,
+> +				     size);
+
+Remove the cast:
+
+		ret = copy_from_user(kptr, from, size);
+
+
+> +		kunmap(page);
+> +		if (ret)
+> +			return bytes - size + ret;
+> +		bytes -= size;
+> +		from = (void __user *)(uintptr_t)from + size;
+
+Remove the cast:
+
+		from += size;
+
+> +		buffer_offset += size;
+> +	}
+> +	return 0;
+> +}
+
+regards,
+dan carpenter
 
