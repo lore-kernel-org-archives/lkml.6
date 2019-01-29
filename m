@@ -8,132 +8,138 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3E5C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81F8C282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9D32175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:25:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3330A2175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:25:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFWy4rBW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gpQq0SwP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfA2AZW (ORCPT
+        id S1727253AbfA2AZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:25:22 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37367 "EHLO
+        Mon, 28 Jan 2019 19:25:30 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40256 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbfA2AZW (ORCPT
+        with ESMTP id S1726713AbfA2AZa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:25:22 -0500
-Received: by mail-pg1-f193.google.com with SMTP id c25so7957608pgb.4;
-        Mon, 28 Jan 2019 16:25:21 -0800 (PST)
+        Mon, 28 Jan 2019 19:25:30 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z10so7951412pgp.7;
+        Mon, 28 Jan 2019 16:25:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=zuMTD7i3DPkolHvTelq1ypV2FTV33mbaMeF7pJE/ifg=;
-        b=EFWy4rBWDq+u6NPT9mOPTSNspPt7122l91jUcujP3gYExTiAuSUEYzk8FdA6/ounhB
-         5IahCb4Ne9Pq4zu4Bt0UcXvmfAEPmme2E1caVSMZbFELDG5h6w70F2We1sLyP/W5qU2Q
-         FLbUlTfuLzFhIfR/jTRVXs+6PYWsiypzGwGPEhhV20RymdESHypjOYHzsfN6K/ZUALFV
-         F8rl9PsZ+RymmK3+GdPLB79OPwWo8VjVWLWd7oL4d+EOeUCMiHPeuhomAHLAANveIXZt
-         5bwvY0HaVbU7ODu0WHwnrVTePB0z3d5Gk6dr+v+ZW2RnJPIy5g53f6P9Kvo1xGIV6yA9
-         Qjyw==
+        bh=uKESH3dP8KlH2H1aC9ySmBdA/fbboEB/JQypTItUj7I=;
+        b=gpQq0SwPdDkNS9ZYm6KJF0bJ55NyrCChKzrCu46vKxqh0tIeyvh1unq0/4JCI+o1x3
+         1hrLVRRSqhUi1OmCgRWfsNAjr48UvmNB1JwinR1RiVZfeSFAE3YvtWRaG+zTuV1lE3U6
+         wrfNszfiWmQG1r1GCdHAwNrbs/TOla4gmbNRV5Ihgunj7cxKm+ZVmBw3Y8vtm/WwXGCL
+         Cqr2LB6mIq005qo1RE4qm2KGOfA3kkX0OcaQNGljwDGMkUD7QBBjBkpU4Kkyyr966tX1
+         gTPbE6lsc1KTP1oHHNzNOOP3p/kAlbrsPUpav/9XByNj9+pZx+IjddCbdlb85PoSoo3n
+         XmcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zuMTD7i3DPkolHvTelq1ypV2FTV33mbaMeF7pJE/ifg=;
-        b=MzidgjSKwdXD5EiJkMguS/kc22qGDx3abphMQXN8XwqySfpkZ5vu6K2F7GSdhzaEGu
-         YLd80Pbd8MUodaPmGjeeTv4dvW/7nMWVtbA3uWTwL1Hf8QYb22xB5kEF7ovJJWrmGLAA
-         Hb5Jm4AS47YcSYOqpbwZPuJT95HVcyZWLmMUStFB5zVxVGHfDtbtzUt6DyaUlVVcy6io
-         rmEJVRk5YqsuGT81P3zRc7fnMkwgDB+5Q6pPbceO9lcpRtwOyq8gAipVAr1QyPXFBily
-         BwhpAdz1Zj53ZqoyWpiCl1OFZbidItDNQRLX7bK29S+uZDiLUrvut9c9xkQhenXIuoI6
-         Gamw==
-X-Gm-Message-State: AJcUukfwkKsvVVRU0sai0jgsai4k0zd/Wqstm9CyWEdqsgsb9uEn3G34
-        4JnHnXXb4FCDS6T2l7T9dPM=
-X-Google-Smtp-Source: ALg8bN60Njc+HyRR1wyo2PUw1KMz+0tC+hHk8lwR36tlAlkztsflghb5xM/1/B6rkvuzTnhC8xwLYg==
-X-Received: by 2002:a63:c904:: with SMTP id o4mr21542547pgg.331.1548721520628;
-        Mon, 28 Jan 2019 16:25:20 -0800 (PST)
+        bh=uKESH3dP8KlH2H1aC9ySmBdA/fbboEB/JQypTItUj7I=;
+        b=W822ADF5n29Hc5/yo6GUrtLiu+sv0/WPvrBLXBCUTiuhkmK5WcuRD9sZERon85lCa+
+         XaxribBVYA86n7C4EFxwnjDpI1oU5BgVmR4ZX87VXH/9SdWnN2ijrvzqcWxjakLGJnVx
+         suC/2G8ITSWnM6/eM62hCzRvm6Lom+YZlg5f7OHBz74vUEVsPylwKJ39EFCUPX76KfA/
+         reGgyTHXqdO38HtZE4lyYfIvBkl0vxuNInlwoEEX1sDrfs30SZf6bPjN69SHJfmgcjPl
+         UZUHuFuyAqOYjrmW8kNblaDxEtppFBuzb9IC6Y/XuggtXk7CF2R4NH30m4lV7OOWgX7n
+         DZFA==
+X-Gm-Message-State: AJcUukclMfchK/u9E+sa72RLd840zX/TWZzKQ3tHs39TKzY1w1XBFYfG
+        PjFCUq86d20yGBXIrOx74jo=
+X-Google-Smtp-Source: ALg8bN6AoR5EUkhDerMKX1YXbzqmE34VQORbHd9A8F71uuc9YoJnqTqgbIrtTaQni6qDO/ywQ8s1uw==
+X-Received: by 2002:a62:1484:: with SMTP id 126mr23660899pfu.257.1548721528966;
+        Mon, 28 Jan 2019 16:25:28 -0800 (PST)
 Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id g28sm54717040pfd.100.2019.01.28.16.25.19
+        by smtp.gmail.com with ESMTPSA id m9sm75473244pgd.32.2019.01.28.16.25.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 16:25:19 -0800 (PST)
-Date:   Mon, 28 Jan 2019 16:25:18 -0800
+        Mon, 28 Jan 2019 16:25:28 -0800 (PST)
+Date:   Mon, 28 Jan 2019 16:25:26 -0800
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     Richard Leitner <richard.leitner@skidata.com>
 Cc:     mark.rutland@arm.com, robh+dt@kernel.org,
         linux-input@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 8/8] Input: sx8654 - convert #defined flags to
- BIT(x)
-Message-ID: <20190129002518.GH34692@dtor-ws>
+Subject: Re: [RESEND PATCH v2 7/8] Input: sx8654 - use common of_touchscreen
+ functions
+Message-ID: <20190129002526.GI34692@dtor-ws>
 References: <20181218083606.25795-1-richard.leitner@skidata.com>
- <20181218084002.19454-1-richard.leitner@skidata.com>
+ <20181218083946.13823-1-richard.leitner@skidata.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181218084002.19454-1-richard.leitner@skidata.com>
+In-Reply-To: <20181218083946.13823-1-richard.leitner@skidata.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 09:40:02AM +0100, Richard Leitner wrote:
-> Some of the #defined register values are one-bit flags. Convert them to
-> use the BIT(x) macro instead of 1 byte hexadecimal values. This improves
-> readability and clarifies the intent.
+On Tue, Dec 18, 2018 at 09:39:46AM +0100, Richard Leitner wrote:
+> of_touchscreen.c provides a common interface for a axis invertion and
+> swapping of touchscreens. Therefore use it in the sx8654 driver.
 > 
 > Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
 
 Applied, thank you.
 
 > ---
->  drivers/input/touchscreen/sx8654.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+>  drivers/input/touchscreen/sx8654.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 > 
 > diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
-> index b7b263ed52af..3746ea855f94 100644
+> index 4939863efbef..b7b263ed52af 100644
 > --- a/drivers/input/touchscreen/sx8654.c
 > +++ b/drivers/input/touchscreen/sx8654.c
-> @@ -36,6 +36,7 @@
+> @@ -35,6 +35,7 @@
+>  #include <linux/irq.h>
 >  #include <linux/gpio/consumer.h>
 >  #include <linux/delay.h>
->  #include <linux/input/touchscreen.h>
-> +#include <linux/bitops.h>
+> +#include <linux/input/touchscreen.h>
 >  
 >  /* register addresses */
 >  #define I2C_REG_TOUCH0			0x00
-> @@ -46,7 +47,7 @@
->  #define I2C_REG_SOFTRESET		0x3f
+> @@ -101,6 +102,7 @@ struct sx8654 {
 >  
->  #define I2C_REG_SX8650_STAT		0x05
-> -#define SX8650_STAT_CONVIRQ		0x80
-> +#define SX8650_STAT_CONVIRQ		BIT(7)
+>  	spinlock_t		lock; /* for input reporting from irq/timer */
+>  	struct timer_list	timer;
+> +	struct touchscreen_properties props;
 >  
->  /* commands */
->  #define CMD_READ_REGISTER		0x40
-> @@ -56,8 +57,8 @@
->  #define SOFTRESET_VALUE			0xde
+>  	const struct sx865x_data *data;
+>  };
+> @@ -178,8 +180,7 @@ static irqreturn_t sx8650_irq(int irq, void *handle)
+>  				 chdata);
+>  	}
 >  
->  /* bits for I2C_REG_IRQSRC */
-> -#define IRQ_PENTOUCH_TOUCHCONVDONE	0x08
-> -#define IRQ_PENRELEASE			0x04
-> +#define IRQ_PENTOUCH_TOUCHCONVDONE	BIT(7)
-> +#define IRQ_PENRELEASE			BIT(6)
+> -	input_report_abs(ts->input, ABS_X, x);
+> -	input_report_abs(ts->input, ABS_Y, y);
+> +	touchscreen_report_pos(ts->input, &ts->props, x, y, false);
+>  	input_report_key(ts->input, BTN_TOUCH, 1);
+>  	input_sync(ts->input);
+>  	dev_dbg(dev, "point(%4d,%4d)\n", x, y);
+> @@ -226,8 +227,8 @@ static irqreturn_t sx8654_irq(int irq, void *handle)
+>  		x = ((data[0] & 0xf) << 8) | (data[1]);
+>  		y = ((data[2] & 0xf) << 8) | (data[3]);
 >  
->  /* bits for RegTouch1 */
->  #define CONDIRQ				0x20
-> @@ -65,8 +66,8 @@
->  #define FILT_7SA			0x03
+> -		input_report_abs(sx8654->input, ABS_X, x);
+> -		input_report_abs(sx8654->input, ABS_Y, y);
+> +		touchscreen_report_pos(sx8654->input, &sx8654->props, x, y,
+> +				       false);
+>  		input_report_key(sx8654->input, BTN_TOUCH, 1);
+>  		input_sync(sx8654->input);
 >  
->  /* bits for I2C_REG_CHANMASK */
-> -#define CONV_X				0x80
-> -#define CONV_Y				0x40
-> +#define CONV_X				BIT(7)
-> +#define CONV_Y				BIT(6)
+> @@ -377,6 +378,8 @@ static int sx8654_probe(struct i2c_client *client,
+>  	input_set_abs_params(input, ABS_X, 0, MAX_12BIT, 0, 0);
+>  	input_set_abs_params(input, ABS_Y, 0, MAX_12BIT, 0, 0);
 >  
->  /* coordinates rate: higher nibble of CTRL0 register */
->  #define RATE_MANUAL			0x00
+> +	touchscreen_parse_properties(input, false, &sx8654->props);
+> +
+>  	sx8654->client = client;
+>  	sx8654->input = input;
+>  
 > -- 
 > 2.11.0
 > 
