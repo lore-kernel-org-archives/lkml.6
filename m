@@ -2,265 +2,138 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F44C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CE7C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74A6F2175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:23:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 245E72175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:26:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MNuSAUrC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sdT4NTn3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbfA2FXB (ORCPT
+        id S1725927AbfA2FZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 00:23:01 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45881 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbfA2FXB (ORCPT
+        Tue, 29 Jan 2019 00:25:58 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:39261 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfA2FZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 00:23:01 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a14so8825562plm.12
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 21:23:00 -0800 (PST)
+        Tue, 29 Jan 2019 00:25:58 -0500
+Received: by mail-it1-f194.google.com with SMTP id a6so2222283itl.4
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 21:25:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=jzmZGdThprPvWBd9rPPWpnODIbiUAg2dB5lcjbKVNTg=;
-        b=MNuSAUrC8ouJzXrQ8GKP+qscrz1JRngw+ZfkS+2EABt3GgZXGfRCsgZswn0H/Urtjt
-         1DHBMPfPX0mPlkmgp61fjAUUfBGMdxd/MA/DHZaTf2yYBagOHkvz8Duw6tHlmb4W1H1v
-         hjHRS1XVSzO3ln/fINwAcqpAI0K5Tz5ySsBkWecBLOBYe3mL6wjQ3HQ+QBYMAEXnQtzK
-         IeXsqgWHk6QvFxN7KJdKmryv0iqmSOBjAClHKvhZwmib7lkuZibg4Pibh0J2GbGaRTnb
-         wPQue+ML9PBM+Hh7vY10DEoghzhvEDzUDGTiSAz5XqPz1ZJtvaDDkQgSfUL9YBOIO3xE
-         a1OA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EoG5zwFwz/zugmlvlLSPlZlHaXhenbG7kxD8d9Gdc6I=;
+        b=sdT4NTn3UEoDcjYdl88c/v54HrLEA/aFP28q2P7yNEKSpqwThNGVk7TB0Uxrr+4y2/
+         A3Ub4yetGLKWHyBtjYPI7xVl/Lkp+O7lHsnjHqKQ+YIZPUqpfL6Z1hQsQzuE0sJnlIGC
+         KCmHsCSOQV4VfOabrFeq2rQHMkZQGExU1ZnqwjimLT+yKF3EiGHm7TlMl8FzidsdIXiy
+         XTl7Z1f03clEVei+6oUGnIpDCJj7HOeT9PJvgY0zhIBhDNR0sFNhCqW0xmG6rVCS6M4B
+         tRmCvrGmISKHHkMK31LlEyQicEuYRuVjDOP54v79cr54DRCdOG3k14KcWCikPkoFy07b
+         UsOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jzmZGdThprPvWBd9rPPWpnODIbiUAg2dB5lcjbKVNTg=;
-        b=d91iluHYzVHmcQowV6bfYRwz7eba3FvCwegwyFPBilGmmDvzqxI4A4XEuQUVfFNY+z
-         t373v+pZNTvU/NJdoEEhFy2DhpYH6TMxpk2nW277pRwqxrC8IzgCoOKaAAqlSAoV3W+o
-         +LzQ+RBk9PXT1WqecsDON/xnGZp4/3EeQ2YarpA3JEt61LqS9HjmJW/kFi6XMKmzth7+
-         XSioUA74TTMz4CzjIiaJQmMwP477Dd1OzvDVaOjy8kDGVsafxGA2aZIAvnqpobg2F3pl
-         DDYPrFYdWg59U5nUMiZ+HM15NxVjs3KI27jalhahiLhZmPmt7uC31yKmbREY0GzxSbBS
-         QCoA==
-X-Gm-Message-State: AJcUukeqMVfqzKn4LQwVY3xdnA/59LWaMjcUiwswbZiCBfqhQL7GIdZ6
-        0d7y68miu/dEajAiQwBEC0M=
-X-Google-Smtp-Source: ALg8bN7jHnNE5YAjgZYp0slkvE9lB777YRUF1nCyA1Kz3LzaliB+43FhQIwy06PtecImnPVx7e4IOw==
-X-Received: by 2002:a17:902:8687:: with SMTP id g7mr24379153plo.96.1548739380415;
-        Mon, 28 Jan 2019 21:23:00 -0800 (PST)
-Received: from test-System-Product-Name.sunix.com.tw (114-36-229-251.dynamic-ip.hinet.net. [114.36.229.251])
-        by smtp.gmail.com with ESMTPSA id y71sm70081931pfi.123.2019.01.28.21.22.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 21:22:59 -0800 (PST)
-From:   saumah <saumah@gmail.com>
-To:     sudipm.mukherjee@gmail.com
-Cc:     morris_ku@sunix.com, linux-kernel@vger.kernel.org,
-        saumah <saumah@gmail.com>
-Subject: [PATCH] 8250_pci.c change for fix hanging problem while suspend machine. 8250_pci.c support the same vendor id and device id definition as sunix multi-I/O card driver, when the sunix multi-io borad driver is installed,there are two drivers to support the same sunix multi-io card,it will cause operation error
-Date:   Tue, 29 Jan 2019 13:22:49 +0800
-Message-Id: <20190129052249.2702-1-saumah@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EoG5zwFwz/zugmlvlLSPlZlHaXhenbG7kxD8d9Gdc6I=;
+        b=Kn3Xpb9TCSvTs+jYB2JPGZkwZEme/pj/ycjIOWAG1Q0+qgb8hDZ/NdqMM1MM0I5iEi
+         7vGT95nCL0WKnkIUcCvtgVHlY5+FibHCIX2g9qJehZr8TIG560uwEPB9L8r7Z5h3lKcB
+         BbDURvHV46JHcDA6mtA49ukEISCP6iKDXCjJpBYOokWjF11FG6rXxsVj2sEi29eSAYlw
+         wCjkKKaAmk7uruaMZkegXr7a0+EERRMUdzorNHyr6ns+mZ4MKuF6b22GDM2pffETwlon
+         cisPPDrO+H/R6t8qtC0kz6ymC0N7jyfQ/HtXqollz5f5fwIlPl6MJ8PHMmTVj3wH+sBc
+         83ug==
+X-Gm-Message-State: AJcUukfSasNlW9KxvbRmrOfMwejnUZZLSxtxtu2jI+Sd5vidn4GqLKTH
+        RB8FpTkf2GZsgBEyCgF15+GFx0qcTzeViWaBqw==
+X-Google-Smtp-Source: ALg8bN6uTIzeMHCllwA/WgMqJO9wmgVvumRuxHlvOCZbLPvD0wfLXx1+kTh6xK0NmGHayz96N5OA2Iqx+f2N3m9mX88=
+X-Received: by 2002:a24:5608:: with SMTP id o8mr11575917itb.35.1548739556984;
+ Mon, 28 Jan 2019 21:25:56 -0800 (PST)
+MIME-Version: 1.0
+References: <1548047768-7656-1-git-send-email-kernelfans@gmail.com>
+ <20190125103924.GB27998@zn.tnic> <20190125134518.GA23595@dhcp-128-65.nay.redhat.com>
+ <20190125140823.GC27998@zn.tnic>
+In-Reply-To: <20190125140823.GC27998@zn.tnic>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Tue, 29 Jan 2019 13:25:45 +0800
+Message-ID: <CAFgQCTsuuOSSLKXOaF7jchDRevegZkzZVNiTgB6D+S4=dpc5Xg@mail.gmail.com>
+Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+        Baoquan He <bhe@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Yinghai Lu <yinghai@kernel.org>, vgoyal@redhat.com,
+        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: saumah <saumah@gmail.com>
----
- 8250_pci.c | 162 +----------------------------------------------------
- 1 file changed, 2 insertions(+), 160 deletions(-)
+On Fri, Jan 25, 2019 at 10:08 PM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Fri, Jan 25, 2019 at 09:45:18PM +0800, Dave Young wrote:
+> > AFAIK, some people prefer to explictly reserve crash memory at high
+> > region even if it is possible to reserve at low area.  May because
+> > <4G memory is limited on large server, they want to leave this for other
+> > use.
+> >
+> > Yinghai or Vivek should know more about the history, probably they can
+> > recall some initial reason.
+>
+Go through the git log, and I found the initial introduction of
+crashkernel_high option. Refer to
+commit 55a20ee7804ab64ac90bcdd4e2868a42829e2784
+Author: Yinghai Lu <yinghai@kernel.org>
+Date:   Mon Apr 15 22:23:47 2013 -0700
 
-diff --git a/8250_pci.c b/8250_pci.c
-index f80a300..310b1eb 100644
---- a/8250_pci.c
-+++ b/8250_pci.c
-@@ -519,115 +519,6 @@ static int pci_siig_setup(struct serial_private *priv,
- 	return setup_port(priv, port, bar, offset, 0);
- }
+    x86, kdump: Retore crashkernel= to allocate under 896M
 
--/*
-- * Timedia has an explosion of boards, and to avoid the PCI table from
-- * growing *huge*, we use this function to collapse some 70 entries
-- * in the PCI table into one, for sanity's and compactness's sake.
-- */
--static const unsigned short timedia_single_port[] = {
--	0x4025, 0x4027, 0x4028, 0x5025, 0x5027, 0
--};
--
--static const unsigned short timedia_dual_port[] = {
--	0x0002, 0x4036, 0x4037, 0x4038, 0x4078, 0x4079, 0x4085,
--	0x4088, 0x4089, 0x5037, 0x5078, 0x5079, 0x5085, 0x6079,
--	0x7079, 0x8079, 0x8137, 0x8138, 0x8237, 0x8238, 0x9079,
--	0x9137, 0x9138, 0x9237, 0x9238, 0xA079, 0xB079, 0xC079,
--	0xD079, 0
--};
--
--static const unsigned short timedia_quad_port[] = {
--	0x4055, 0x4056, 0x4095, 0x4096, 0x5056, 0x8156, 0x8157,
--	0x8256, 0x8257, 0x9056, 0x9156, 0x9157, 0x9158, 0x9159,
--	0x9256, 0x9257, 0xA056, 0xA157, 0xA158, 0xA159, 0xB056,
--	0xB157, 0
--};
--
--static const unsigned short timedia_eight_port[] = {
--	0x4065, 0x4066, 0x5065, 0x5066, 0x8166, 0x9066, 0x9166,
--	0x9167, 0x9168, 0xA066, 0xA167, 0xA168, 0
--};
--
--static const struct timedia_struct {
--	int num;
--	const unsigned short *ids;
--} timedia_data[] = {
--	{ 1, timedia_single_port },
--	{ 2, timedia_dual_port },
--	{ 4, timedia_quad_port },
--	{ 8, timedia_eight_port }
--};
--
--/*
-- * There are nearly 70 different Timedia/SUNIX PCI serial devices.  Instead of
-- * listing them individually, this driver merely grabs them all with
-- * PCI_ANY_ID.  Some of these devices, however, also feature a parallel port,
-- * and should be left free to be claimed by parport_serial instead.
-- */
--static int pci_timedia_probe(struct pci_dev *dev)
--{
--	/*
--	 * Check the third digit of the subdevice ID
--	 * (0,2,3,5,6: serial only -- 7,8,9: serial + parallel)
--	 */
--	if ((dev->subsystem_device & 0x00f0) >= 0x70) {
--		dev_info(&dev->dev,
--			"ignoring Timedia subdevice %04x for parport_serial\n",
--			dev->subsystem_device);
--		return -ENODEV;
--	}
--
--	return 0;
--}
--
--static int pci_timedia_init(struct pci_dev *dev)
--{
--	const unsigned short *ids;
--	int i, j;
--
--	for (i = 0; i < ARRAY_SIZE(timedia_data); i++) {
--		ids = timedia_data[i].ids;
--		for (j = 0; ids[j]; j++)
--			if (dev->subsystem_device == ids[j])
--				return timedia_data[i].num;
--	}
--	return 0;
--}
--
--/*
-- * Timedia/SUNIX uses a mixture of BARs and offsets
-- * Ugh, this is ugly as all hell --- TYT
-- */
--static int
--pci_timedia_setup(struct serial_private *priv,
--		  const struct pciserial_board *board,
--		  struct uart_8250_port *port, int idx)
--{
--	unsigned int bar = 0, offset = board->first_offset;
--
--	switch (idx) {
--	case 0:
--		bar = 0;
--		break;
--	case 1:
--		offset = board->uart_offset;
--		bar = 0;
--		break;
--	case 2:
--		bar = 1;
--		break;
--	case 3:
--		offset = board->uart_offset;
--		/* FALLTHROUGH */
--	case 4: /* BAR 2 */
--	case 5: /* BAR 3 */
--	case 6: /* BAR 4 */
--	case 7: /* BAR 5 */
--		bar = idx - 2;
--	}
--
--	return setup_port(priv, port, bar, offset, board->reg_shift);
--}
+    Vivek found old kexec-tools does not work new kernel anymore.
 
- /*
-  * Some Titan cards are also a little weird
-@@ -2103,42 +1994,8 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.subdevice	= PCI_ANY_ID,
- 		.setup		= titan_400l_800l_setup,
- 	},
--	/*
--	 * Timedia cards
--	 */
--	{
--		.vendor		= PCI_VENDOR_ID_TIMEDIA,
--		.device		= PCI_DEVICE_ID_TIMEDIA_1889,
--		.subvendor	= PCI_VENDOR_ID_TIMEDIA,
--		.subdevice	= PCI_ANY_ID,
--		.probe		= pci_timedia_probe,
--		.init		= pci_timedia_init,
--		.setup		= pci_timedia_setup,
--	},
--	{
--		.vendor		= PCI_VENDOR_ID_TIMEDIA,
--		.device		= PCI_ANY_ID,
--		.subvendor	= PCI_ANY_ID,
--		.subdevice	= PCI_ANY_ID,
--		.setup		= pci_timedia_setup,
--	},
--	/*
--	 * SUNIX (Timedia) cards
--	 * Do not "probe" for these cards as there is at least one combination
--	 * card that should be handled by parport_pc that doesn't match the
--	 * rule in pci_timedia_probe.
--	 * It is part number is MIO5079A but its subdevice ID is 0x0102.
--	 * There are some boards with part number SER5037AL that report
--	 * subdevice ID 0x0002.
--	 */
--	{
--		.vendor		= PCI_VENDOR_ID_SUNIX,
--		.device		= PCI_DEVICE_ID_SUNIX_1999,
--		.subvendor	= PCI_VENDOR_ID_SUNIX,
--		.subdevice	= PCI_ANY_ID,
--		.init		= pci_timedia_init,
--		.setup		= pci_timedia_setup,
--	},
-+
-+
- 	/*
- 	 * Xircom cards
- 	 */
-@@ -4375,22 +4232,7 @@ static const struct pci_device_id serial_pci_tbl[] = {
- 	{	PCI_VENDOR_ID_OXSEMI, PCI_DEVICE_ID_OXSEMI_16PCI95N,
- 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
- 		pbn_oxsemi },
--	{	PCI_VENDOR_ID_TIMEDIA, PCI_DEVICE_ID_TIMEDIA_1889,
--		PCI_VENDOR_ID_TIMEDIA, PCI_ANY_ID, 0, 0,
--		pbn_b0_bt_1_921600 },
+    So change back crashkernel= back to old behavoir, and add crashkernel_high=
+    to let user decide if buffer could be above 4G, and also new
+kexec-tools will
+    be needed.
 
--	/*
--	 * SUNIX (TIMEDIA)
--	 */
--	{	PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
--		PCI_VENDOR_ID_SUNIX, PCI_ANY_ID,
--		PCI_CLASS_COMMUNICATION_SERIAL << 8, 0xffff00,
--		pbn_b0_bt_1_921600 },
--
--	{	PCI_VENDOR_ID_SUNIX, PCI_DEVICE_ID_SUNIX_1999,
--		PCI_VENDOR_ID_SUNIX, PCI_ANY_ID,
--		PCI_CLASS_COMMUNICATION_MULTISERIAL << 8, 0xffff00,
--		pbn_b0_bt_1_921600 },
+But kexec-tools-2.0.3, released at 2012, can run 4.20 kernel with
+crashkernel=256M@5G, so I think only very old kexec-tools requires
+memory under 896M. Due to -1.few people running latest kernel with
+very old kexec-tools to date, -2. crashkernel=X is more popular than
+crashkernel=X.high, it should be time to eliminate this limit of
+crashkernel=X parameter, otherwise we will run into this bug.
+As for crashkernel=,high, I think it is a more professional option for
+who cares about the DMA32. On high-end machine, big reserved region is
+used for crashkernel(e.g. in this case 384M), which make the crowed
+situation under under 4GB memory worse.
 
- 	/*
- 	 * AFAVLAB serial card, from Harald Welte <laforge@gnumonks.org>
---
-2.17.1
+> Yes, just "prefer" is not good enough. There should be a technical
+> reason why that's there.
+>
+> Also, if the user doesn't care, then the code should be free to force
+> "high" and thus probe a different range for allocation.
+>
+Do you suggest to remove crashkernel=X,high parameter?
 
+Thanks,
+Pingfan
+> > Good question, still it may be some historical reason, but it is good to
+> > make them clear and rethink about it after long time.
+> >
+> > I also want to understand, need dig the log more.
+>
+> Good idea. That would be a very nice cleanup. :-)
+>
+> Thx.
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> Good mailing practices for 400: avoid top-posting and trim the reply.
