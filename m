@@ -2,104 +2,81 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7DE6C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 02:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 711A6C282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 02:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7557521738
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 02:34:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 492792085B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 02:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfA2Cez (ORCPT
+        id S1727195AbfA2CyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 21:34:55 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38444 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726895AbfA2Cez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 21:34:55 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0CABC5F797;
-        Tue, 29 Jan 2019 02:34:55 +0000 (UTC)
-Received: from [10.72.12.167] (ovpn-12-167.pek2.redhat.com [10.72.12.167])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BA9E760BE8;
-        Tue, 29 Jan 2019 02:34:48 +0000 (UTC)
-Subject: Re: [PATCH net-next V4 0/5] vhost: accelerate metadata access through
- vmap()
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        David Miller <davem@davemloft.net>
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20190123095557.30168-1-jasowang@redhat.com>
- <20190126.143708.1203048880266877709.davem@davemloft.net>
- <20190126193126-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <e6f97f48-0fcb-9bea-1603-c6d93f83b3a8@redhat.com>
-Date:   Tue, 29 Jan 2019 10:34:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 28 Jan 2019 21:54:19 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2790 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726958AbfA2CyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 21:54:18 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A7540E6FE2654CBDFCCD;
+        Tue, 29 Jan 2019 10:54:16 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Tue, 29 Jan 2019
+ 10:54:10 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <stefanr@s5r6.in-berlin.de>, <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux1394-devel@lists.sourceforge.net>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] firewire: net: remove set but not used variable  'guid'
+Date:   Tue, 29 Jan 2019 10:54:05 +0800
+Message-ID: <20190129025405.17896-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20190126193126-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 29 Jan 2019 02:34:55 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 2019/1/27 上午8:31, Michael S. Tsirkin wrote:
-> On Sat, Jan 26, 2019 at 02:37:08PM -0800, David Miller wrote:
->> From: Jason Wang <jasowang@redhat.com>
->> Date: Wed, 23 Jan 2019 17:55:52 +0800
->>
->>> This series tries to access virtqueue metadata through kernel virtual
->>> address instead of copy_user() friends since they had too much
->>> overheads like checks, spec barriers or even hardware feature
->>> toggling.
->>>
->>> Test shows about 24% improvement on TX PPS. It should benefit other
->>> cases as well.
->> I've read over the discussion of patch #5 a few times.
->>
->> And it seems to me that, at a minimum, a few things still need to
->> be resolved:
->>
->> 1) More perf data added to commit message.
+drivers/firewire/net.c:488:9:
+ warning: variable 'guid' set but not used [-Wunused-but-set-variable]
 
+It not used since commit 6752c8db8e0c ("firewire net, ipv4 arp:
+Extend hardware address and remove driver-level packet inspection.")
 
-Ok.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/firewire/net.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-
->>
->> 2) Whether invalidate_range_start() and invalidate_range_end() must
->>     be paired.
-
-
-The reason that vhost doesn't need an invalidate_range_end() is because 
-we have a fallback to copy_to_user() friends. So there's no requirement 
-to setup the mapping in range_end() or lock the vq between range_start() 
-and range_end(). We try to delay the setup of vmap until it will be 
-really used in vhost_meta_prefetch() and we hold mmap_sem when trying to 
-setup vmap, this will guarantee there's no intermediate state at this time.
-
-
->
-> Add dirty tracking.
+diff --git a/drivers/firewire/net.c b/drivers/firewire/net.c
+index 82ba110..5dcb991 100644
+--- a/drivers/firewire/net.c
++++ b/drivers/firewire/net.c
+@@ -485,7 +485,6 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
+ {
+ 	struct fwnet_device *dev;
+ 	int status;
+-	__be64 guid;
+ 
+ 	switch (ether_type) {
+ 	case ETH_P_ARP:
+@@ -507,7 +506,6 @@ static int fwnet_finish_incoming_packet(struct net_device *net,
+ 	 * Parse the encapsulation header. This actually does the job of
+ 	 * converting to an ethernet-like pseudo frame header.
+ 	 */
+-	guid = cpu_to_be64(dev->card->guid);
+ 	if (dev_hard_header(skb, net, ether_type,
+ 			   is_broadcast ? net->broadcast : net->dev_addr,
+ 			   NULL, skb->len) >= 0) {
+-- 
+2.7.0
 
 
-I think this could be solved by introducing e.g 
-vhost_meta_prefetch_done() at the end of handle_tx()/handle_rx() and 
-call set_page_dirty() for used pages instead of the tricks of 
-classifying VMA. (As I saw hugetlbfs has its own set dirty method).
-
-Thanks
-
-
->
->> Etc.  So I am marking this series "Changes Requested".
