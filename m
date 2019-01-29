@@ -4,32 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72736C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2B4C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FA682082E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:39:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C342C2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:39:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728504AbfA2Jjd (ORCPT
+        id S1728520AbfA2Jji (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:39:33 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:32844 "EHLO
+        Tue, 29 Jan 2019 04:39:38 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:32842 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728242AbfA2Jie (ORCPT
+        with ESMTP id S1728240AbfA2Jie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 Jan 2019 04:38:34 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id D574E2761E9
+        with ESMTPSA id F03F82761E1
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
-        bleung@chromium.org
-Subject: [PATCH v3 02/12] platform/chrome: cros_ec_debugfs: switch to SPDX identifier
-Date:   Tue, 29 Jan 2019 10:38:13 +0100
-Message-Id: <20190129093823.27137-3-enric.balletbo@collabora.com>
+        bleung@chromium.org, Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH v3 01/12] platform/chrome: cromeos_pstore: switch to SPDX identifier
+Date:   Tue, 29 Jan 2019 10:38:12 +0100
+Message-Id: <20190129093823.27137-2-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129093823.27137-1-enric.balletbo@collabora.com>
 References: <20190129093823.27137-1-enric.balletbo@collabora.com>
@@ -41,48 +44,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Adopt the SPDX license identifier headers to ease license compliance
-management.
+management. Also fix the module license mismatch and change the term
+'Chrome OS' for 'ChromeOS' to be coherent with other drivers.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Reviewed-by: Guenter Roeck <groeck@chromium.org>
 ---
 
-Changes in v3: None
-Changes in v2: None
+Changes in v3:
+- Add Reviewed-by tags.
 
- drivers/platform/chrome/cros_ec_debugfs.c | 22 ++++------------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
+Changes in v2:
+- Removed the patches that removed the unnused includes (were wrong).
+- Add patches for all files in platform/chrome that didn't switch yet.
 
-diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
-index 6cacac53dfce..900c7073c46f 100644
---- a/drivers/platform/chrome/cros_ec_debugfs.c
-+++ b/drivers/platform/chrome/cros_ec_debugfs.c
-@@ -1,21 +1,7 @@
+ drivers/platform/chrome/chromeos_pstore.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/platform/chrome/chromeos_pstore.c b/drivers/platform/chrome/chromeos_pstore.c
+index b0693fdec8c6..d13770785fb5 100644
+--- a/drivers/platform/chrome/chromeos_pstore.c
++++ b/drivers/platform/chrome/chromeos_pstore.c
+@@ -1,12 +1,7 @@
 -/*
-- * cros_ec_debugfs - debug logs for Chrome OS EC
+- *  chromeos_pstore.c - Driver to instantiate Chromebook ramoops device
 - *
-- * Copyright 2015 Google, Inc.
+- *  Copyright (C) 2013 Google, Inc.
 - *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation, version 2 of the License.
 - */
-+// SPDX-License-Identifier: GPL-2.0+
-+// Debug logs for the ChromeOS EC
++// SPDX-License-Identifier: GPL-2.0
++// Driver to instantiate Chromebook ramoops device.
 +//
-+// Copyright (C) 2015 Google, Inc.
++// Copyright (C) 2013 Google, Inc.
  
- #include <linux/circ_buf.h>
- #include <linux/debugfs.h>
+ #include <linux/acpi.h>
+ #include <linux/dmi.h>
+@@ -138,5 +133,5 @@ static void __exit chromeos_pstore_exit(void)
+ module_init(chromeos_pstore_init);
+ module_exit(chromeos_pstore_exit);
+ 
+-MODULE_DESCRIPTION("Chrome OS pstore module");
+-MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("ChromeOS pstore module");
++MODULE_LICENSE("GPL v2");
 -- 
 2.20.1
 
