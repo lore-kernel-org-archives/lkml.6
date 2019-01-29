@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5014FC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174CFC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2318B2083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:56:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D552E2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762974;
-	bh=VSpRlaNW2xA/OZgaM2J82lpQjYuC/hz/654/fRRedR4=;
+	s=default; t=1548762978;
+	bh=z16YqNXFSZak6EozmT0RpVAF0q0xGqJRIffH+yYbP5Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0vMFshw99G2Z6n1EwXQMMJe/QtScIf6VtRvMxzqYf0DUxASbtTvvVb5fvJUnmYu0F
-	 1Mc5lrRwQpQEbe3cNq0C7wwmOR6k1vJESR9uIwYBOkqmReJBe3FnnZIWTUG7FSZ+HB
-	 ym43j5AbzSMFi+1vGZ+o95Cy5YUJpSaCjnytc8wE=
+	b=AIeutoun92dKRe4wNkuzLm3ARPijRaG8OCAKTEEaPc06hWANBZJGFw2CNhZH01pDy
+	 PJy3DHhUIXzIPZ9pORXpnYlxd0wJPVlaJWxXEJvLGa0r4ZjBTOTbMjeAkPIFTQ6Orq
+	 YbRC1qd3woqdOyuxqukAQXojQayasvEnS3k6Co/k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731152AbfA2L4M (ORCPT
+        id S1731565AbfA2LuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:56:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41176 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731569AbfA2LuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:02 -0500
+        id S1731346AbfA2Ltv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:49:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DBD92086C;
-        Tue, 29 Jan 2019 11:50:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30FF62086C;
+        Tue, 29 Jan 2019 11:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762601;
-        bh=VSpRlaNW2xA/OZgaM2J82lpQjYuC/hz/654/fRRedR4=;
+        s=default; t=1548762590;
+        bh=z16YqNXFSZak6EozmT0RpVAF0q0xGqJRIffH+yYbP5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iFxIbP+22basrOiI/siHfi322KJ8/r/XnAL69AkC50d/TSyrj753uqizx02JAW57L
-         P77MQ32kJyNdK8YXd0FxKlHiw3MaL1TvEL80B9cSayfs9DYlRaGJQkVTVislkuaKkH
-         6jmOP3s9YZPYCKmidybtDyBJBb+3KpjF+kVUMXw0=
+        b=IOO0/TLGXx11KEn/PuLoHJ1zfDeHsiZBxxZhAz9ZXjLV0mFH0QEpwnHZXTYVn+nbp
+         Sqwi9LkF2exOT1FH4KblIuRb/0so4VHIqK0gAoqX1x69c4LIfSTt8jQo3GrHXgwZ84
+         HSZfVu4cYTmhLFpAMQouahIlsXnN+Bi0JxunuemA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joao Martins <joao.m.martins@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH 4.14 62/68] x86/xen/time: set pvclock flags on xen_time_init()
-Date:   Tue, 29 Jan 2019 12:36:24 +0100
-Message-Id: <20190129113137.576594862@linuxfoundation.org>
+        stable@vger.kernel.org, Jack Pham <jackp@codeaurora.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 58/68] usb: dwc3: gadget: Clear req->needs_extra_trb flag on cleanup
+Date:   Tue, 29 Jan 2019 12:36:20 +0100
+Message-Id: <20190129113137.108921532@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -66,48 +65,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joao Martins <joao.m.martins@oracle.com>
+From: Jack Pham <jackp@codeaurora.org>
 
-commit b888808093113ae7d63d213272d01fea4b8329ed upstream.
+commit bd6742249b9ca918565e4e3abaa06665e587f4b5 upstream.
 
-Specifically check for PVCLOCK_TSC_STABLE_BIT and if this bit is set,
-then set it too on pvclock flags. This allows Xen clocksource to use it
-and thus speeding up xen_clocksource_read() callers (i.e. sched_clock())
+OUT endpoint requests may somtimes have this flag set when
+preparing to be submitted to HW indicating that there is an
+additional TRB chained to the request for alignment purposes.
+If that request is removed before the controller can execute the
+transfer (e.g. ep_dequeue/ep_disable), the request will not go
+through the dwc3_gadget_ep_cleanup_completed_request() handler
+and will not have its needs_extra_trb flag cleared when
+dwc3_gadget_giveback() is called.  This same request could be
+later requeued for a new transfer that does not require an
+extra TRB and if it is successfully completed, the cleanup
+and TRB reclamation will incorrectly process the additional TRB
+which belongs to the next request, and incorrectly advances the
+TRB dequeue pointer, thereby messing up calculation of the next
+requeust's actual/remaining count when it completes.
 
-Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+The right thing to do here is to ensure that the flag is cleared
+before it is given back to the function driver.  A good place
+to do that is in dwc3_gadget_del_and_unmap_request().
+
+Fixes: c6267a51639b ("usb: dwc3: gadget: align transfers to wMaxPacketSize")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jack Pham <jackp@codeaurora.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+[jackp: backport to <= 4.20: replaced 'needs_extra_trb' with 'unaligned'
+        and 'zero' members in patch and reworded commit text]
+Signed-off-by: Jack Pham <jackp@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/xen/time.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/usb/dwc3/gadget.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/xen/time.c
-+++ b/arch/x86/xen/time.c
-@@ -373,6 +373,7 @@ static const struct pv_time_ops xen_time
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -182,6 +182,8 @@ void dwc3_gadget_del_and_unmap_request(s
+ 	req->started = false;
+ 	list_del(&req->list);
+ 	req->remaining = 0;
++	req->unaligned = false;
++	req->zero = false;
  
- static void __init xen_time_init(void)
- {
-+	struct pvclock_vcpu_time_info *pvti;
- 	int cpu = smp_processor_id();
- 	struct timespec tp;
- 
-@@ -396,6 +397,14 @@ static void __init xen_time_init(void)
- 
- 	setup_force_cpu_cap(X86_FEATURE_TSC);
- 
-+	/*
-+	 * We check ahead on the primary time info if this
-+	 * bit is supported hence speeding up Xen clocksource.
-+	 */
-+	pvti = &__this_cpu_read(xen_vcpu)->time;
-+	if (pvti->flags & PVCLOCK_TSC_STABLE_BIT)
-+		pvclock_set_flags(PVCLOCK_TSC_STABLE_BIT);
-+
- 	xen_setup_runstate_info(cpu);
- 	xen_setup_timer(cpu);
- 	xen_setup_cpu_clockevents();
+ 	if (req->request.status == -EINPROGRESS)
+ 		req->request.status = status;
 
 
