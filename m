@@ -2,127 +2,138 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AFFBC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 250D7C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E29C121473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E12A82087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548800545;
+	bh=duB/OEPVnAOweVIX/fmi4WSu5Y1wsCapFzlboDlEZm4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=AhdnsvHHHCZ2841YTD0CtvJTE6sCXBQAzZUmL52GL0pUgIKx7kbMLQYPSynHbhAGO
+	 V6ElBSaiT+dC5LLYSK7xegvWxkEhyScPTwpI5KRGc1hrMZFEMVtcRNQFPH+9ZLr1Yh
+	 g18i8dFKHxsKkB3yRZP9WSgPq4n8SbGsIeIimbco=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbfA2WTZ (ORCPT
+        id S1729682AbfA2WWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:19:25 -0500
-Received: from gateway24.websitewelcome.com ([192.185.50.91]:21306 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727332AbfA2WTY (ORCPT
+        Tue, 29 Jan 2019 17:22:23 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39486 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727332AbfA2WWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:19:24 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 8DE2474FD
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 16:18:30 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id obiAgusyi4FKpobiAgII36; Tue, 29 Jan 2019 16:18:30 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=45036 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gobiA-002OOF-7k; Tue, 29 Jan 2019 16:18:30 -0600
-Subject: Re: [PATCH] md-linear: use struct_size() in kzalloc()
-To:     Song Liu <liu.song.a23@gmail.com>
-Cc:     Shaohua Li <shli@kernel.org>,
-        linux-raid <linux-raid@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190107174538.GA7255@embeddedor>
- <CAPhsuW7a_F_K1cJdrGHLhnuCdpeN365n1BG-QawmxKWaZajGeA@mail.gmail.com>
- <caff2263-fb7d-257c-f7f2-cca6c537f597@embeddedor.com>
- <CAPhsuW4dZYmiBvnrs=SNkAM4EByxiaB2hE3X6n9HFr6e+Ze=zA@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <2113f3e2-41c8-6605-6cc1-89fc2a5377bf@embeddedor.com>
-Date:   Tue, 29 Jan 2019 16:18:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 29 Jan 2019 17:22:23 -0500
+Received: by mail-ot1-f65.google.com with SMTP id n8so19397582otl.6;
+        Tue, 29 Jan 2019 14:22:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ro/e6q+5fmr4HNR3iePe/0fUq89Iub3wrVXm/j6/h6Q=;
+        b=JZERG/NfAsybeV1jP0+ZVU7x6zFGLXhFFH5fJrj602oTKMEqTCGc1gJUBG00PQEHrk
+         qvcqbdOQ4GaOxm2mibQoX7CKO3xSL/AX6qcv95rxMZQRYj9OTrflH9vCYd5oAawa1jbh
+         AS5C/RL7VT/09d6bHF3wuWL78WJxLH6ChK+q1jNF5C/JFbcbB9vTT5kWvSaZSIw4bEOA
+         Zx5lD5s8cfGu6R9jcvmDJ9FJnIdPyM8j3a8PnRWTRYq65CvoS1WfgTml2MwOpVMvEXSj
+         dZnjjpE1AfEZC9844ztAP3r+mXRO3yM2Fn4v6JqVoMov57zu2VatJTIKoKG43197Uty+
+         pKXw==
+X-Gm-Message-State: AJcUukdjpvwEqDYpmg+gVpJqxArYA3Wf2yPPOPWtW8K1zvodzWuu6RAl
+        xmoVxSJalIwEckEMCrHdgWXKTOOu0Vn85MfebKE=
+X-Google-Smtp-Source: ALg8bN5xcxTGHWqbJR/2yneWxu1+gy/wE7MTDj8IOAdmFLO+FBkSUJtjcIm5+/xwNdMvk8sDL78oOKXpR8guIpjkoTI=
+X-Received: by 2002:a9d:2062:: with SMTP id n89mr19853990ota.244.1548800541861;
+ Tue, 29 Jan 2019 14:22:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPhsuW4dZYmiBvnrs=SNkAM4EByxiaB2hE3X6n9HFr6e+Ze=zA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gobiA-002OOF-7k
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:45036
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <cover.1548737236.git.amit.kucheria@linaro.org>
+ <6077cb33d7e078bb0e85776bad99fdb476f16d0c.1548737236.git.amit.kucheria@linaro.org>
+ <20190129053618.laa6nscfvlmhhkb5@vireshk-i7> <CAP245DVk+Bbkqh5xzNnL+RG3zZDJJR+ZLJqmEhSWjjSK1FH8rw@mail.gmail.com>
+ <CAJZ5v0hs2Af9DJoxiyMmFt7R5nYbGOCqgG5cvPOL8yrQXN-ZUw@mail.gmail.com> <CAHLCerN-+57hH8r5e0ZyNY6+w102tHHhWORXk2admf1EU_=jjA@mail.gmail.com>
+In-Reply-To: <CAHLCerN-+57hH8r5e0ZyNY6+w102tHHhWORXk2admf1EU_=jjA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 29 Jan 2019 23:22:11 +0100
+Message-ID: <CAJZ5v0iwq15mwoa-LBN07fgNNurtBGodG6urgfnvMbGWj8vyAw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/9] cpufreq: Auto-register the driver as a thermal
+ cooling device if asked
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 29, 2019 at 9:20 PM Amit Kucheria <amit.kucheria@linaro.org> wrote:
+>
+> On Tue, Jan 29, 2019 at 2:43 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Tue, Jan 29, 2019 at 6:46 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
+> > >
+> > > On Tue, Jan 29, 2019 at 11:06 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > >
+> > > > On 29-01-19, 10:25, Amit Kucheria wrote:
+> > > > > All cpufreq drivers do similar things to register as a cooling device.
+> > > > > Provide a cpufreq driver flag so drivers can just ask the cpufreq core
+> > > > > to register the cooling device on their behalf. This allows us to get
+> > > > > rid of duplicated code in the drivers.
+> > > > >
+> > > > > In order to allow this, we add a struct thermal_cooling_device pointer
+> > > > > to struct cpufreq_policy so that drivers don't need to store it in a
+> > > > > private data structure.
+> > > > >
+> > > > > Suggested-by: Stephen Boyd <swboyd@chromium.org>
+> > > > > Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > > > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > > > > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> > > > > Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> > > > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > > > > ---
+> > > > >  drivers/cpufreq/cpufreq.c | 13 +++++++++++++
+> > > > >  include/linux/cpufreq.h   |  9 +++++++++
+> > > > >  2 files changed, 22 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > > > > index e35a886e00bc..0f9b50d3ee91 100644
+> > > > > --- a/drivers/cpufreq/cpufreq.c
+> > > > > +++ b/drivers/cpufreq/cpufreq.c
+> > > > > @@ -19,6 +19,7 @@
+> > > > >
+> > > > >  #include <linux/cpu.h>
+> > > > >  #include <linux/cpufreq.h>
+> > > > > +#include <linux/cpu_cooling.h>
+> > > > >  #include <linux/delay.h>
+> > > > >  #include <linux/device.h>
+> > > > >  #include <linux/init.h>
+> > > > > @@ -1318,6 +1319,11 @@ static int cpufreq_online(unsigned int cpu)
+> > > > >       if (cpufreq_driver->ready)
+> > > > >               cpufreq_driver->ready(policy);
+> > > > >
+> > > > > +#if IS_ENABLED(CONFIG_CPU_THERMAL)
+> > > > > +     if (cpufreq_driver->flags & CPUFREQ_IS_COOLING_DEV)
+> > > > > +             policy->cdev = of_cpufreq_cooling_register(policy);
+> > > > > +#endif
+> > > >
+> > > > I am not sure if Rafael wanted it this way but maybe something like this:
+> > > >
+> > > >         if (IS_ENABLED(CONFIG_CPU_THERMAL) &&
+> > > >             cpufreq_driver->flags & CPUFREQ_IS_COOLING_DEV))
+> > > >                 policy->cdev = of_cpufreq_cooling_register(policy);
+> > > >
+> > > > We never wanted ifdef hackery to be in there :)
+> > >
+> > > OK, that makes more sense. Should I just send out a fixup patch or the
+> > > entire series?
+> >
+> > Just a fixup patch, please.
+>
+> Please find attached a fixup patch suitable to add to the top of the
+> series and use git rebase --autosquash on.
 
-
-On 1/29/19 4:10 PM, Song Liu wrote:
-> I will take it, and send pull request.
-> 
-
-Thank you, Song.
-
---
-Gustavo
+This isn't Patchwork-friendly, so can you send the complete patch
+instead, please?
