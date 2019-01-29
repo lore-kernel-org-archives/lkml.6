@@ -2,52 +2,41 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66401C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C62EC4151A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3126A20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:01:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A5D32177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:04:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfA2KBl (ORCPT
+        id S1727301AbfA2KD7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:01:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49480 "EHLO mx1.redhat.com"
+        Tue, 29 Jan 2019 05:03:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55354 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725772AbfA2KBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:01:40 -0500
+        id S1725772AbfA2KD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 05:03:59 -0500
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD6CE88E57;
-        Tue, 29 Jan 2019 10:01:39 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5808CC7A07;
+        Tue, 29 Jan 2019 10:03:58 +0000 (UTC)
 Received: from [10.36.118.12] (unknown [10.36.118.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 564F73780;
-        Tue, 29 Jan 2019 10:01:36 +0000 (UTC)
-Subject: Re: [PATCH v1] mm: migrate: don't rely on PageMovable() of newpage
- after unlocking it
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vratislav Bendel <vbendel@redhat.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
-        Minchan Kim <minchan@kernel.org>, stable@vger.kernel.org
-References: <20190128160403.16657-1-david@redhat.com>
- <e3247625-b25c-a18a-a494-f1e9a0148932@redhat.com>
- <20190128201902.GW18811@dhcp22.suse.cz>
- <725cd2b9-984f-d69b-1967-660d32858ce4@redhat.com>
- <20190129071837.GZ18811@dhcp22.suse.cz>
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EC295176AE;
+        Tue, 29 Jan 2019 10:03:56 +0000 (UTC)
+Subject: Re: [PATCH] mm,memory_hotplug: Fix scan_movable_pages for gigantic
+ hugepages
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mhocko@suse.com
+References: <20190122154407.18417-1-osalvador@suse.de>
+ <5368e2b4-5aca-40dd-fe18-67d861a04a29@redhat.com>
+ <20190125075830.6mqw2io4rwz7wxx5@d104.suse.de>
+ <20190128145309.c7dcf075b469d6a54694327d@linux-foundation.org>
+ <20190128145617.069b3a5436fc7e34bdebb104@linux-foundation.org>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -94,43 +83,164 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <8830012a-1fc6-f937-d72c-b61af03d5913@redhat.com>
-Date:   Tue, 29 Jan 2019 11:01:35 +0100
+Message-ID: <33fdaa38-6204-bef0-b12f-0416f16dc165@redhat.com>
+Date:   Tue, 29 Jan 2019 11:03:56 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20190129071837.GZ18811@dhcp22.suse.cz>
+In-Reply-To: <20190128145617.069b3a5436fc7e34bdebb104@linux-foundation.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 29 Jan 2019 10:01:40 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 29 Jan 2019 10:03:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.01.19 08:18, Michal Hocko wrote:
-> On Mon 28-01-19 22:09:14, David Hildenbrand wrote:
->> On 28.01.19 21:19, Michal Hocko wrote:
-> [...]
->>> David, could you reformulate the changelog accordingly please? My ack
->>> still holds.
+On 28.01.19 23:56, Andrew Morton wrote:
+> On Mon, 28 Jan 2019 14:53:09 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
+> 
+>> On Fri, 25 Jan 2019 08:58:33 +0100 Oscar Salvador <osalvador@suse.de> wrote:
 >>
->> You mean reformulating + resending for stable kernels only?
+>>> On Wed, Jan 23, 2019 at 11:33:56AM +0100, David Hildenbrand wrote:
+>>>> If you use {} for the else case, please also do so for the if case.
+>>>
+>>> Diff on top:
+>>>
+>>> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+>>> index 25aee4f04a72..d5810e522b72 100644
+>>> --- a/mm/memory_hotplug.c
+>>> +++ b/mm/memory_hotplug.c
+>>> @@ -1338,9 +1338,9 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+>>>  				struct page *head = compound_head(page);
+>>>  
+>>>  				if (hugepage_migration_supported(page_hstate(head)) &&
+>>> -				    page_huge_active(head))
+>>> +				    page_huge_active(head)) {
+>>>  					return pfn;
+>>> -				else {
+>>> +				} else {
+>>>  					unsigned long skip;
+>>>  
+>>>  					skip = (1 << compound_order(head)) - (page - head);
+>>>
+>>
+>> The indenting is getting a bit deep also, so how about this?
+>>
+>> static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+>> {
+>> 	unsigned long pfn;
+>>
+>> 	for (pfn = start; pfn < end; pfn++) {
+>> 		struct page *page, *head;
+>> 	
+>> 		if (!pfn_valid(pfn))
+>> 			continue;
+>> 		page = pfn_to_page(pfn);
+>> 		if (PageLRU(page))
+>> 			return pfn;
+>> 		if (__PageMovable(page))
+>> 			return pfn;
+>>
+>> 		if (!PageHuge(page))
+>> 			continue;
+>> 		head = compound_head(page);
+>> 		if (hugepage_migration_supported(page_hstate(head)) &&
+>> 		    page_huge_active(head)) {
+>> 			return pfn;
 > 
-> I would merge your patch even if it doesn't fix any real problem _now_.
-> If for not other reasons it makes the code less subtle because we no
-> longer depend on this crazy __PageMovable is special. If the movable
-> flag is supposed to be synchronized with the page lock then do not do
-> tricks and make code more robust because the next time somebody would
-> like to fix up the current semantic he might reintroduce the bug easily.
+> checkpatch pointed out that else-after-return isn't needed so we can do
+> 
+> static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+> {
+> 	unsigned long pfn;
+> 
+> 	for (pfn = start; pfn < end; pfn++) {
+> 		struct page *page, *head;
+> 		unsigned long skip;
+> 
+> 		if (!pfn_valid(pfn))
+> 			continue;
+> 		page = pfn_to_page(pfn);
+> 		if (PageLRU(page))
+> 			return pfn;
+> 		if (__PageMovable(page))
+> 			return pfn;
+> 
+> 		if (!PageHuge(page))
+> 			continue;
+> 		head = compound_head(page);
+> 		if (hugepage_migration_supported(page_hstate(head)) &&
+> 		    page_huge_active(head))
+> 			return pfn;
+> 		skip = (1 << compound_order(head)) - (page - head);
+> 		pfn += skip - 1;
+> 	}
+> 	return 0;
+> }
+> 
+> --- a/mm/memory_hotplug.c~mmmemory_hotplug-fix-scan_movable_pages-for-gigantic-hugepages-fix
+> +++ a/mm/memory_hotplug.c
+> @@ -1305,28 +1305,27 @@ int test_pages_in_a_zone(unsigned long s
+>  static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+>  {
+>  	unsigned long pfn;
+> -	struct page *page;
+> +
+>  	for (pfn = start; pfn < end; pfn++) {
+> -		if (pfn_valid(pfn)) {
+> -			page = pfn_to_page(pfn);
+> -			if (PageLRU(page))
+> -				return pfn;
+> -			if (__PageMovable(page))
+> -				return pfn;
+> -			if (PageHuge(page)) {
+> -				struct page *head = compound_head(page);
+> +		struct page *page, *head;
+> +		unsigned long skip;
+>  
+> -				if (hugepage_migration_supported(page_hstate(head)) &&
+> -				    page_huge_active(head))
+> -					return pfn;
+> -				else {
+> -					unsigned long skip;
+> +		if (!pfn_valid(pfn))
+> +			continue;
+> +		page = pfn_to_page(pfn);
+> +		if (PageLRU(page))
+> +			return pfn;
+> +		if (__PageMovable(page))
+> +			return pfn;
+>  
+> -					skip = (1 << compound_order(head)) - (page - head);
+> -					pfn += skip - 1;
+> -				}
+> -			}
+> -		}
+> +		if (!PageHuge(page))
+> +			continue;
+> +		head = compound_head(page);
+> +		if (hugepage_migration_supported(page_hstate(head)) &&
+> +		    page_huge_active(head))
+> +			return pfn;
+> +		skip = (1 << compound_order(head)) - (page - head);
+> +		pfn += skip - 1;
+
+Not sure if encoding the -1 in the previous line is even better now that
+we have more space
+
+skip = (1 << compound_order(head)) - (page - head + 1);
+
+Looks good to me.
+
+>  	}
+>  	return 0;
+>  }
+> _
 > 
 
-Sounds good to me, I'll rephrase and resend. I'll also have a look if I
-can easily refactor the whole PageMovable logic or if this is more involved.
-
-Thanks!
 
 -- 
 
