@@ -2,105 +2,138 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B52C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C427C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9538F2177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:42:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linbit-com.20150623.gappssmtp.com header.i=@linbit-com.20150623.gappssmtp.com header.b="Mkc6KrhC"
+	by mail.kernel.org (Postfix) with ESMTP id D75C421841
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:43:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbfA2Jmf (ORCPT
+        id S1728328AbfA2JnI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:42:35 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36625 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbfA2Jme (ORCPT
+        Tue, 29 Jan 2019 04:43:08 -0500
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:40887 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725298AbfA2JnH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:42:34 -0500
-Received: by mail-wr1-f67.google.com with SMTP id u4so21242031wrp.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:42:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=H2Egnq9ngobzM8WF4zpWb1uknJJq7nzRKi8Y170uTDA=;
-        b=Mkc6KrhC37fpkEc1cjdGSc4prGRcAu+EXzaOB+JwK4KB0dJgTi0PCMQ/KAmXIirj1y
-         /PVJsANQVQFeAnlxFYFGEX/TQu7OyQKi06qs6k/WDC6Qg6WSCKuxHfdM5AimiJvnrPmu
-         Tyk3jjE7X7Fz9aoOOJA/hHO9Xzm25ynS52zb9lldvTIZo0XOU7jlSToPu7ytV4Araae9
-         KaNIOR/aNplYDncNt9J5rPKvZO077y7qnBrNj2InLp158vLxzXt1p/5fX+RYT0TR0MmF
-         0vruTpnNuxWyW3a/+r0rgtiVcR+P7bnIj/bzo1gbXSFeIQR0VamrRsKaGwwqrXEZcTp8
-         Smtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=H2Egnq9ngobzM8WF4zpWb1uknJJq7nzRKi8Y170uTDA=;
-        b=Iah3Nhs2qEo0nH/ahYY18L1+DIDuj6H87pjDxGA5Mc4afcn8lpRNvK607jZj2Leiia
-         rZi4lwrmN0gusoAMXd0xFNU2kcSSoEpZgHtORpNv0fL4L9FnS78KJlD0o8K9EqqwD3Kd
-         Ydy+5wnj2sLibuehjOIR0kwZun1JuuyTtYES8nyy0u+mTDQjW606UTkAQIZ4JXMz8MRM
-         WIZSB8tDklGJOLlrq5JOG5vivOaGhfk0QIMUMqhRcfT9CmpctyvyD3ykiVnLhqaq5zoD
-         0VFMLJ9PanbnirA9MOfzyK/yD3rRnciEgRck5YuiTm6h3NxX3djeqpPWQzaPiwTBWPCy
-         fV0g==
-X-Gm-Message-State: AJcUukdK/7TunW0+N0NRgMtVg6Ci63yxrQEmY+pTihVf6Mg1OZYvYeSq
-        ebYxv0JsoKoeOc3LpUtBJ0RKVA==
-X-Google-Smtp-Source: ALg8bN7oMLYGldESo7Z7HTbVai65yGyAp0Ba8wqgiWMFahT02R8f1Vyiy4J30GK/Or0OaWqhoVvOug==
-X-Received: by 2002:a5d:4652:: with SMTP id j18mr25895841wrs.279.1548754952786;
-        Tue, 29 Jan 2019 01:42:32 -0800 (PST)
-Received: from localhost (213-47-144-126.static.upcbusiness.at. [213.47.144.126])
-        by smtp.gmail.com with ESMTPSA id z17sm87962125wrv.2.2019.01.29.01.42.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 01:42:31 -0800 (PST)
-Date:   Tue, 29 Jan 2019 10:42:31 +0100
-From:   Roland Kammerer <roland.kammerer@linbit.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Joshua Morris <josh.h.morris@us.ibm.com>,
-        Philip Kelleher <pjk1939@linux.ibm.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        drbd-dev@lists.linbit.com
-Subject: Re: [Drbd-dev] [PATCH] block: Mark expected switch fall-throughs
-Message-ID: <20190129094230.ezjzpfwf5xx47luu@rck.sh>
-References: <20190123064501.GA26147@embeddedor>
+        Tue, 29 Jan 2019 04:43:07 -0500
+Received: from [IPv6:2001:420:44c1:2579:1c83:9203:362b:bf24] ([IPv6:2001:420:44c1:2579:1c83:9203:362b:bf24])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id oPv3g04HRRO5ZoPv7gNCz5; Tue, 29 Jan 2019 10:43:05 +0100
+Subject: Re: [PATCH v10 0/4] Media Device Allocator API
+To:     shuah <shuah@kernel.org>, mchehab@kernel.org, perex@perex.cz,
+        tiwai@suse.com
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+References: <cover.1548360791.git.shuah@kernel.org>
+ <e8717d11-1eff-2e07-53d5-6cd55356c66a@xs4all.nl>
+ <481787e7-112a-80dd-228c-2497a12547b9@kernel.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <d9ae1073-f6a9-1085-c8f8-8edd05daece5@xs4all.nl>
+Date:   Tue, 29 Jan 2019 10:43:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190123064501.GA26147@embeddedor>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <481787e7-112a-80dd-228c-2497a12547b9@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfOeoGCy4X+FzaHpMSSJDnL8juMgRVeZapEcVbuqJ3eFzigEbOY7EE9EjMqggjVPIk/ISv9ExxzYrrqs7s2+40AVmU4dj1q8udJUZwPAKLKn+elaV4tqR
+ 6BqwvD83ZbP57w70CaVzIL+AAktHVsyxd3DXfAI4A2CH2k3yCFG0MOBPbCOpfsN7ofB3I+8fdMlCbB1MNEZDnWrbPSTAf3HpfY+LeLMzez7XgoExNG4VkRan
+ MSMw2W3HYuGW6aKDjlsMH1q/FsTfmxVUYzNLw/JorFervMGNT5IhQCuRuW4/hKYbQWN/QwQUfY0ixlU5s5y+EalFD+7eTm8fvOiXc+EYEyVmqdAb3YIGwahv
+ WNzqNIgf19qp3f36bWykeaS/u7s1f0otCSuI/2+jsedAYQD/1jlcGBVcDoqbS0D78vBSKlrpwr+ABDK4RKJAha+IPvvsAMxWTvixda8leFQ61cLtA7qRkuKN
+ q7X/9GXwsyJZutk1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 12:45:01AM -0600, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+On 1/29/19 12:48 AM, shuah wrote:
+> Hi Hans,
 > 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
+> On 1/28/19 5:03 AM, Hans Verkuil wrote:
+>> Hi Shuah,
+>>
+>> On 1/24/19 9:32 PM, Shuah Khan wrote:
+>>> Media Device Allocator API to allows multiple drivers share a media device.
+>>> This API solves a very common use-case for media devices where one physical
+>>> device (an USB stick) provides both audio and video. When such media device
+>>> exposes a standard USB Audio class, a proprietary Video class, two or more
+>>> independent drivers will share a single physical USB bridge. In such cases,
+>>> it is necessary to coordinate access to the shared resource.
+>>>
+>>> Using this API, drivers can allocate a media device with the shared struct
+>>> device as the key. Once the media device is allocated by a driver, other
+>>> drivers can get a reference to it. The media device is released when all
+>>> the references are released.
+>>>
+>>> - This patch series is tested on 5.0-rc3 and addresses comments on
+>>>    v9 series from Hans Verkuil.
+>>> - v9 was tested on 4.20-rc6.
+>>> - Tested sharing resources with kaffeine, vlc, xawtv, tvtime, and
+>>>    arecord. When analog is streaming, digital and audio user-space
+>>>    applications detect that the tuner is busy and exit. When digital
+>>>    is streaming, analog and audio applications detect that the tuner is
+>>>    busy and exit. When arecord is owns the tuner, digital and analog
+>>>    detect that the tuner is busy and exit.
+>>
+>> I've been doing some testing with my au0828, and I am confused about one
+>> thing, probably because it has been too long ago since I last looked into
+>> this in detail:
+>>
 > 
-> This patch is part of the ongoing efforts to enabling
-> -Wimplicit-fallthrough
+> Great.
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/block/drbd/drbd_int.h      | 2 +-
->  drivers/block/drbd/drbd_receiver.c | 4 ++--
->  drivers/block/drbd/drbd_req.c      | 2 +-
->  drivers/block/rsxx/core.c          | 1 +
->  4 files changed, 5 insertions(+), 4 deletions(-)
+>> Why can't I change the tuner frequency if arecord (and only arecord) is
+>> streaming audio? If arecord is streaming, then it is recording the audio
+>> from the analog TV tuner, right? So changing the analog TV frequency
+>> should be fine.
+>>
+> 
+> Changing analog TV frequency would be s_frequency. The way it works is
+> any s_* calls would require holding the pipeline. In Analog TV case, it
+> would mean holding both audio and video pipelines for any changes
+> including TV.
+> 
+> As I recall, we discussed this design and the decision was to make all
+> s_* calls interfaces to hold the tuner. A special exception is g_tuner
+> in case of au0828. au0828 initializes the tuner from s_* interfaces and
+> its g_tuner interfaces. Allowing s_frequency to proceed will disrupt the
+> arecord audio stream.
+> 
+> Query (q_*) works just fine without holding the pipeline. I limited the
+> analog holds to just the ones that are required. The current set is
+> required to avoid audio stream disruptions.
+
+So I am not sure about that ('avoid audio stream disruptions'): if I
+stream video AND use arecord, then I can just set the frequency while
+streaming. Doesn't that interrupt audio as well? And are you sure changing
+the tuner frequency actually disrupts audio? And if audio is disrupted,
+are we talking about a glitch or is audio permanently disrupted?
+
+That's basically the inconsistent behavior I noticed: just running arecord
+will prevent me from changing the frequency, but if I run arecord and stream
+video, then it is suddenly OK to change the frequency.
+
+BTW, I think there was also inconsistent behavior in the order of streaming
+audio and video: if I stream video first, then I can stream audio afterwards.
+But if I stream audio first, then (if I remember correctly) I can't start
+video streaming.
+
+Regards,
+
+	Hans
+
+> 
+> I made sure v4l-ctl --all works when the pipeline is locked by any one
+> of the 3 (audio, video, DVB).
+> 
+> Hope this helps.
+> 
+> thanks,
+> -- Shuah
+> 
 > 
 
-Hi Gustavo,
-
-as also discussed with Lars in person, obviously OK for the DRBD part.
-
-Acked-by: Roland Kammerer <roland.kammerer@linbit.com>
-
-Best, rck
