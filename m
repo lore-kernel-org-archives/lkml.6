@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 257EBC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98776C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E319E20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69D5C20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763351;
-	bh=w3k7zFYXaW8li8/Mb7uHIquxYTI77lkXCWRXTgjrqos=;
+	s=default; t=1548763354;
+	bh=3nyf6i8YIg8GouFECqnZsA38nkPEJu/v3D7IKDaRiLA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0rk+1MSj+TORhOEYYmpvhzBcUuByfcsW4YpWcSnNp2ahupaMbV51FkDeM15+r/woe
-	 KYkaNsr6KtvU3uqJMuDWQa2F9W30NR+tX1xH23f0ON0foHYIPgaYfLm6ZBfVzXlwzK
-	 ZUDRhTIzEFtO3cGodk/TPDP11GLPqRR6j6V1JB80=
+	b=kGZ+uvOOpu8yhYuWkCnGHbLKuGTyW0b98noDN4kh7xeBAQ+DdHL8IOyFnbPhhogSH
+	 4M5ovezvT9EI2hlVr7pGM4EIHPpsQvXhBgx2JepAaw1fI9BOk0wKsu+IhD6gup8tXH
+	 CfTliJqyJDLYbypyuOdYAnsoFFgsqrTZUkJWS588=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbfA2Lol (ORCPT
+        id S1730815AbfA2MCd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:44:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35002 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:02:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730603AbfA2Log (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:44:36 -0500
+        id S1730617AbfA2Lom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:44:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 913F32083B;
-        Tue, 29 Jan 2019 11:44:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C4FA2086C;
+        Tue, 29 Jan 2019 11:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762276;
-        bh=w3k7zFYXaW8li8/Mb7uHIquxYTI77lkXCWRXTgjrqos=;
+        s=default; t=1548762282;
+        bh=3nyf6i8YIg8GouFECqnZsA38nkPEJu/v3D7IKDaRiLA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A5QTqAqiNlljAOYjqA9TLZuxXLr2ZU7qQgDTWK8dNtMJ2KarEJJzJd4++DZgO5jvA
-         iJIAbW2mqJ6Mt7Jc8pBoIs0gn0u9C079594Np7zIt2AtE6EyPaXPutg0Oecyar3v4V
-         NPyLeQDJ83qKYQPhAnUs1D3himPCRHlkgZODJLzI=
+        b=OkoHtHtyVp8deJTPOnIN34SIiFIsD2ZHU+qdVzyuZe1AwCKjglgmhwgpLWXoTmjno
+         Wc8MFK9kzv8z9oGmELEBN1Tg70RW56pxLLo8WvXx1wNBvse9uInmbyHDCSVinL7poO
+         uP+rwSs7iPEpT93qYNVarPcr2uphk6rTBm6Dj75E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 4.19 024/103] USB: leds: fix regression in usbport led trigger
-Date:   Tue, 29 Jan 2019 12:35:01 +0100
-Message-Id: <20190129113201.033832816@linuxfoundation.org>
+        stable@vger.kernel.org, Nicolas Pitre <nico@linaro.org>
+Subject: [PATCH 4.19 052/103] vgacon: unconfuse vc_origin when using soft scrollback
+Date:   Tue, 29 Jan 2019 12:35:29 +0100
+Message-Id: <20190129113202.872393686@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -65,96 +64,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Lamparter <chunkeey@gmail.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
 
-commit 91f7d2e89868fcac0e750a28230fdb1ad4512137 upstream.
+commit bfd8d8fe98b8792f362cd210a7873969f8d2fc04 upstream.
 
-The patch "usb: simplify usbport trigger" together with "leds: triggers:
-add device attribute support" caused an regression for the usbport
-trigger. it will no longer enumerate any active usb hub ports under the
-"ports" directory in the sysfs class directory, if the usb host drivers
-are fully initialized before the usbport trigger was loaded.
+When CONFIG_VGACON_SOFT_SCROLLBACK is selected, the VGA display memory
+index and vc_visible_origin don't change when scrollback is activated.
+The actual screen content is saved away and the scrollbackdata is copied
+over it. However the vt code, and /dev/vcs devices in particular, still
+expect vc_origin to always point at the actual screen content not the
+displayed scrollback content.
 
-The reason is that the usbport driver tries to register the sysfs
-entries during the activate() callback. And this will fail with -2 /
-ENOENT because the patch "leds: triggers: add device attribute support"
-made it so that the sysfs "ports" group was only being added after the
-activate() callback succeeded.
+So adjust vc_origin to point at the saved screen content when scrollback
+is active and set it back to vc_visible_origin when restoring the screen.
 
-This version of the patch reverts parts of the "usb: simplify usbport
-trigger" patch and restores usbport trigger's functionality.
+This fixes /dev/vcsa<n> that return scrollback content when they
+shouldn't (onli /dev/vcsa without a number should), and also fixes
+/dev/vcsu that should return scrollback content when scrollback is
+active but currently doesn't.
 
-Fixes: 6f7b0bad8839 ("usb: simplify usbport trigger")
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+An unnecessary call to vga_set_mem_top() is also removed.
+
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
+Cc: stable@vger.kernel.org # v4.19+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/ledtrig-usbport.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/video/console/vgacon.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/core/ledtrig-usbport.c
-+++ b/drivers/usb/core/ledtrig-usbport.c
-@@ -119,11 +119,6 @@ static const struct attribute_group port
- 	.attrs = ports_attrs,
- };
+--- a/drivers/video/console/vgacon.c
++++ b/drivers/video/console/vgacon.c
+@@ -271,6 +271,7 @@ static void vgacon_scrollback_update(str
  
--static const struct attribute_group *ports_groups[] = {
--	&ports_group,
--	NULL
--};
--
- /***************************************
-  * Adding & removing ports
-  ***************************************/
-@@ -307,6 +302,7 @@ static int usbport_trig_notify(struct no
- static int usbport_trig_activate(struct led_classdev *led_cdev)
+ static void vgacon_restore_screen(struct vc_data *c)
  {
- 	struct usbport_trig_data *usbport_data;
-+	int err;
++	c->vc_origin = c->vc_visible_origin;
+ 	vgacon_scrollback_cur->save = 0;
  
- 	usbport_data = kzalloc(sizeof(*usbport_data), GFP_KERNEL);
- 	if (!usbport_data)
-@@ -315,6 +311,9 @@ static int usbport_trig_activate(struct
+ 	if (!vga_is_gfx && !vgacon_scrollback_cur->restore) {
+@@ -287,8 +288,7 @@ static void vgacon_scrolldelta(struct vc
+ 	int start, end, count, soff;
  
- 	/* List of ports */
- 	INIT_LIST_HEAD(&usbport_data->ports);
-+	err = sysfs_create_group(&led_cdev->dev->kobj, &ports_group);
-+	if (err)
-+		goto err_free;
- 	usb_for_each_dev(usbport_data, usbport_trig_add_usb_dev_ports);
- 	usbport_trig_update_count(usbport_data);
- 
-@@ -322,8 +321,11 @@ static int usbport_trig_activate(struct
- 	usbport_data->nb.notifier_call = usbport_trig_notify;
- 	led_set_trigger_data(led_cdev, usbport_data);
- 	usb_register_notify(&usbport_data->nb);
--
- 	return 0;
-+
-+err_free:
-+	kfree(usbport_data);
-+	return err;
- }
- 
- static void usbport_trig_deactivate(struct led_classdev *led_cdev)
-@@ -335,6 +337,8 @@ static void usbport_trig_deactivate(stru
- 		usbport_trig_remove_port(usbport_data, port);
+ 	if (!lines) {
+-		c->vc_visible_origin = c->vc_origin;
+-		vga_set_mem_top(c);
++		vgacon_restore_screen(c);
+ 		return;
  	}
  
-+	sysfs_remove_group(&led_cdev->dev->kobj, &ports_group);
-+
- 	usb_unregister_notify(&usbport_data->nb);
+@@ -298,6 +298,7 @@ static void vgacon_scrolldelta(struct vc
+ 	if (!vgacon_scrollback_cur->save) {
+ 		vgacon_cursor(c, CM_ERASE);
+ 		vgacon_save_screen(c);
++		c->vc_origin = (unsigned long)c->vc_screenbuf;
+ 		vgacon_scrollback_cur->save = 1;
+ 	}
  
- 	kfree(usbport_data);
-@@ -344,7 +348,6 @@ static struct led_trigger usbport_led_tr
- 	.name     = "usbport",
- 	.activate = usbport_trig_activate,
- 	.deactivate = usbport_trig_deactivate,
--	.groups = ports_groups,
- };
+@@ -335,7 +336,7 @@ static void vgacon_scrolldelta(struct vc
+ 		int copysize;
  
- static int __init usbport_trig_init(void)
+ 		int diff = c->vc_rows - count;
+-		void *d = (void *) c->vc_origin;
++		void *d = (void *) c->vc_visible_origin;
+ 		void *s = (void *) c->vc_screenbuf;
+ 
+ 		count *= c->vc_size_row;
 
 
