@@ -2,138 +2,158 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F80C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 167D9C282D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E9642086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:13:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0C1F2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548764017;
-	bh=+MH16JEkCjpoIYtv44+PhFbEfMY/XHZ4D9jZoqltlRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wMh62Y8yZvpVPRzhQsLCi9jXTTpogVqAC7aHp+EMHolUVXlWNYY0BGBEdZUOA5QG1
-	 z/ShUIHFPcXgnYFg3PByVjPJdj7vd0gpk5utUvsNV/PFA9UZ3m5pb5d3cCjHLDCHSR
-	 etnSzaZsXuTBEmiUsJ950AbFZLl54DUmQOLo/vlA=
+	s=default; t=1548764056;
+	bh=puyz1jsFt3vEDQXU+nHOGLoBQbj1WCTTbwg0zJtBNaU=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=dUCO+1h7ruQ1gw60n/GZKvSskIIys/6CBo79I8YjNFLw2uEFSGbjvmY3tGlS9aYwW
+	 C3lwSkFa27ReSOSGbNAVAmEDKccTmQl1nPqBjEcIjtmitbtmkR+8OZAyWcReoaR/si
+	 gh9pXCcfYwoJXslL47MwNm9vIy20uZ51aZaCurr8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbfA2MNf (ORCPT
+        id S1728694AbfA2MOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:13:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbfA2MNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 07:13:35 -0500
-Received: from quaco.ghostprotocols.net (ovpn-brq.redhat.com [213.175.37.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F365A2086C;
-        Tue, 29 Jan 2019 12:13:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548764014;
-        bh=+MH16JEkCjpoIYtv44+PhFbEfMY/XHZ4D9jZoqltlRA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OvPDnw+F/6FAgnKHBkXKglFQlNPQZwNNh+vOHnS/b+V5IfGWOTcRve+IbvT14+Lh1
-         wt9E+PQy2rcUvLI+PTG+5ALcskm1YW3OMVnDoeAHHD0N1hdNoE0RxbiJvcpzEjzZXt
-         mgooiFbugRNxHKzhs9WELjvNq40XeOQ/kogQ4EaA=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 41DD54034F; Tue, 29 Jan 2019 13:13:32 +0100 (CET)
-Date:   Tue, 29 Jan 2019 13:13:32 +0100
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/4] perf: enable compression of record mode trace to
- save storage space
-Message-ID: <20190129121332.GL4344@kernel.org>
-References: <b834df0e-26b5-3f8c-7a43-18f675fb7434@linux.intel.com>
- <20190129104543.GJ4344@kernel.org>
- <20190129105337.GA17762@kernel.org>
- <de604869-4d2e-689c-39ba-368d444c809a@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de604869-4d2e-689c-39ba-368d444c809a@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 29 Jan 2019 07:14:15 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51614 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbfA2MOP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 07:14:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=L9NrviBzZNISiu7A7sd2MzTcXsXUFzlBzN9H06B6iOo=; b=sctkE6BTGZkK
+        s+5RZG7jaLoFRKABj7F0eRYxBOcWENsBQwHnEFHMKZQL1j3yAOHtY4k03CAkijtAygrjBQMg0jxH6
+        0LeJVaPehlmz7w/+fGuWbu063Akv8eZaK1PEaJUEzLto1JNoQwrLjELm4OVAzTbjWuT/kXXRwsTJz
+        EKdZg=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1goSHK-0008AT-2H; Tue, 29 Jan 2019 12:14:10 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id B8B441127D50; Tue, 29 Jan 2019 12:14:09 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Cheng-Yi Chiang <cychiang@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, tzungbi@chromium.org,
+        Mark Brown <broonie@kernel.org>,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Guenter Roeck <groeck@chromium.org>, dgreid@chromium.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: Documentation: Add google, cros-ec-codec" to the asoc tree
+In-Reply-To:  <20190119113332.249720-1-cychiang@chromium.org>
+X-Patchwork-Hint: ignore
+Message-Id: <20190129121409.B8B441127D50@debutante.sirena.org.uk>
+Date:   Tue, 29 Jan 2019 12:14:09 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jan 29, 2019 at 02:39:00PM +0300, Alexey Budankov escreveu:
-> Hi,
-> On 29.01.2019 13:53, Arnaldo Carvalho de Melo wrote:
-> > Em Tue, Jan 29, 2019 at 11:45:43AM +0100, Arnaldo Carvalho de Melo escreveu:
-> >> Em Mon, Jan 28, 2019 at 09:40:28AM +0300, Alexey Budankov escreveu:
-> >>> The patch set implements runtime trace compression for record mode and 
-> >>> trace file decompression for report mode. Zstandard API [1] is used for 
-> >>> compression/decompression of data that come from perf_events kernel 
-> >>
-> >> Interesting, wasn't aware of this zstd library, I wonder if we can add
-> >> it and switch the other compression libraries we link against, so that
-> >> we're not adding one more library to the dep list of perf but removing
-> >> some instead, do you think this would be possible?
-> 
-> Replacing of incorporated compression APIs was not evaluated or tested in 
-> the scope of this patch set work. However according to their numbers in the 
-> docs and the numbers that we have got during testing Zstd API outperforms 
-> the exiting compression libraries as in terms of speed as in terms of 
-> compression ratio (at least libz). Backward compatibility needs to be taken
-> into account so that old perf files would open by newer perf tool versions.
+The patch
 
-Right, I'm not talking in the scope of this patch, its just that while
-looking at it, I notice that we're adding yet another compression
-library and its description seemed to imply it would support the other
-compression formats, which I've learned its not the case, so nevermind.
+   ASoC: Documentation: Add google, cros-ec-codec
 
-I'm not talking about using just zstd, as what we mostly do with the
-compression libraries is to decompress, not compress, for instance, we
-need to uncompress kernel modules to get to its symbols, do annotation
-with it, etc.
+has been applied to the asoc tree at
 
-- Arnaldo
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 494a3503d684b6fc497623bc01e3e16f8def0499 Mon Sep 17 00:00:00 2001
+From: Cheng-Yi Chiang <cychiang@chromium.org>
+Date: Sat, 19 Jan 2019 19:33:31 +0800
+Subject: [PATCH] ASoC: Documentation: Add google, cros-ec-codec
+
+Add documentation for Chrome EC codec driver.
+
+Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../bindings/sound/google,cros-ec-codec.txt   | 26 +++++++++++++++++++
+ MAINTAINERS                                   |  7 +++++
+ 2 files changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+
+diff --git a/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+new file mode 100644
+index 000000000000..1084f7f22eea
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
+@@ -0,0 +1,26 @@
++* Audio codec controlled by ChromeOS EC
++
++Google's ChromeOS EC codec is a digital mic codec provided by the
++Embedded Controller (EC) and is controlled via a host-command interface.
++
++An EC codec node should only be found as a sub-node of the EC node (see
++Documentation/devicetree/bindings/mfd/cros-ec.txt).
++
++Required properties:
++- compatible: Must contain "google,cros-ec-codec"
++- #sound-dai-cells: Should be 1. The cell specifies number of DAIs.
++- max-dmic-gain: A number for maximum gain in dB on digital microphone.
++
++Example:
++
++cros-ec@0 {
++	compatible = "google,cros-ec-spi";
++
++	...
++
++	cros_ec_codec: ec-codec {
++		compatible = "google,cros-ec-codec";
++		#sound-dai-cells = <1>;
++		max-dmic-gain = <43>;
++	};
++};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9f64f8d3740e..3bcc5465e460 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3687,6 +3687,13 @@ N:	cros_ec
+ N:	cros-ec
+ F:	drivers/power/supply/cros_usbpd-charger.c
  
-> -Alexey
-> 
-> >>
-> >>   $ ldd ~/bin/perf | wc -l
-> >>   30
-> >>   $ ldd ~/bin/perf | grep z
-> >> 	liblzma.so.5 => /lib64/liblzma.so.5 (0x00007f3dcc356000)
-> >> 	libz.so.1 => /lib64/libz.so.1 (0x00007f3dcb2aa000)
-> >> 	libbz2.so.1 => /lib64/libbz2.so.1 (0x00007f3dcb218000)
-> >>   $
-> >>
-> >> Humm, from the github page it says:
-> >>
-> >> -----
-> >> The project is provided as an open-source dual BSD and GPLv2 licensed C
-> >> library, and a command line utility producing and decoding .zst, .gz,
-> >> .xz and .lz4 files. Should your project require another programming
-> >> language, a list of known ports and bindings is provided on Zstandard
-> >> homepage.
-> >> -----
-> >>
-> >> So it would cover just liblzma and libz, right?
-> > 
-> > Nevermind;
-> > 
-> > [acme@quaco perf]$ zstdcat ~/git/perf/perf-5.0.0-rc2.tar.xz
-> > zstd: /home/acme/git/perf/perf-5.0.0-rc2.tar.xz: xz/lzma file cannot be uncompressed (zstd compiled without HAVE_LZMA) -- ignored
-> > 
-> > So it handles those formats, _if_ linked with those libraries, duh.
-> > 
-> > - Arnaldo
-> > 
-
++CHROMEOS EC CODEC DRIVER
++M:	Cheng-Yi Chiang <cychiang@chromium.org>
++S:	Maintained
++R:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
++R:	Guenter Roeck <groeck@chromium.org>
++F:	Documentation/devicetree/bindings/sound/google,cros-ec-codec.txt
++
+ CIRRUS LOGIC AUDIO CODEC DRIVERS
+ M:	Brian Austin <brian.austin@cirrus.com>
+ M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
 -- 
+2.20.1
 
-- Arnaldo
