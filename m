@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2460BC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B43BEC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF24320882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 851DF20857
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761967;
-	bh=4GioorKk7EUnjVuM1v6EvE6VBkxkD1Le/LCEWDYLwwM=;
+	s=default; t=1548761972;
+	bh=dJWG5KIburKDnGE1grotriLAAhhSwvSQ/BAFGAae5mg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U+A7PWg1nQj5aNPMn08Vs/UG/05XMDBSAoxSB5nN93ECwgHjqVirewWXjzifpbXox
-	 0cmmU4y1mKSwanD0bV6c5e4b7/RzFmIj7m5t7FzPmULm6Z3lxBbVbSn9EhLTgxPWJQ
-	 JyZU34yTkV0agR68gKaJdb1Ysh3AlvB6IeSJ2HfE=
+	b=SY5jHte6KOSM+H81DLq3Snm4bKyKQyrer5d6566ERWPxLLBI0jG/uGjd+y0MsdJK4
+	 XG1B7TdoKScHp4Wvk4tPBTSN96KEJxrXXhE8ut8vdp8zTHmZ1vVYElRgQbD6dbU5Qu
+	 s5hMHM6xfteURNUu9gxRs0yRehDFiMpeq7ZwVByg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbfA2LjZ (ORCPT
+        id S1729450AbfA2Lja (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:39:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56044 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:39:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729413AbfA2LjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:39:21 -0500
+        id S1728861AbfA2Lj1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:39:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D95320857;
-        Tue, 29 Jan 2019 11:39:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98CC720857;
+        Tue, 29 Jan 2019 11:39:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761961;
-        bh=4GioorKk7EUnjVuM1v6EvE6VBkxkD1Le/LCEWDYLwwM=;
+        s=default; t=1548761967;
+        bh=dJWG5KIburKDnGE1grotriLAAhhSwvSQ/BAFGAae5mg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bPjPZq7+Milr7U75Q5orXlQV3x8PUaSa5LxOAMggiiCnAQSLdT/f/MSLFhnVJFwj2
-         MUDtGtxUZSOznLmttIGThLtnd4UbS1CEMcvttIC/tosdL12b8YapgDiBrTHjMhAhy5
-         eL+/4MBc1DRnct8iJVYRmbURttXuFCgCCK631dXQ=
+        b=kFi9do7UHJ6e8osQF7HzFAGKYky8h5DFUpvXObI8MOan6jSiLnmBPzr6YAv7DN6VV
+         yl8HEBZuKVg+h+DoA+QvLiWfUK5nKEdv99r/aHBCsevx1XqgJaSmyXe0jZKg2d/Iqc
+         J8SRtNi3JdWVqm2+N1S5b0WpBxmW3vl2znQluPTU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Pitre <nico@linaro.org>
-Subject: [PATCH 4.20 060/117] vgacon: unconfuse vc_origin when using soft scrollback
-Date:   Tue, 29 Jan 2019 12:35:11 +0100
-Message-Id: <20190129113210.661815079@linuxfoundation.org>
+        stable@vger.kernel.org, Max Schulze <max.schulze@posteo.de>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.20 029/117] USB: serial: simple: add Motorola Tetra TPG2200 device id
+Date:   Tue, 29 Jan 2019 12:34:40 +0100
+Message-Id: <20190129113209.093664720@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -64,71 +65,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+From: Max Schulze <max.schulze@posteo.de>
 
-commit bfd8d8fe98b8792f362cd210a7873969f8d2fc04 upstream.
+commit b81c2c33eab79dfd3650293b2227ee5c6036585c upstream.
 
-When CONFIG_VGACON_SOFT_SCROLLBACK is selected, the VGA display memory
-index and vc_visible_origin don't change when scrollback is activated.
-The actual screen content is saved away and the scrollbackdata is copied
-over it. However the vt code, and /dev/vcs devices in particular, still
-expect vc_origin to always point at the actual screen content not the
-displayed scrollback content.
+Add new Motorola Tetra device id for Motorola Solutions TETRA PEI device
 
-So adjust vc_origin to point at the saved screen content when scrollback
-is active and set it back to vc_visible_origin when restoring the screen.
+T:  Bus=02 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#=  4 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=0cad ProdID=9016 Rev=24.16
+S:  Manufacturer=Motorola Solutions, Inc.
+S:  Product=TETRA PEI interface
+C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=usb_serial_simple
+I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=usb_serial_simple
 
-This fixes /dev/vcsa<n> that return scrollback content when they
-shouldn't (onli /dev/vcsa without a number should), and also fixes
-/dev/vcsu that should return scrollback content when scrollback is
-active but currently doesn't.
-
-An unnecessary call to vga_set_mem_top() is also removed.
-
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
-Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Max Schulze <max.schulze@posteo.de>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/console/vgacon.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/usb/serial/usb-serial-simple.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/video/console/vgacon.c
-+++ b/drivers/video/console/vgacon.c
-@@ -271,6 +271,7 @@ static void vgacon_scrollback_update(str
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -85,7 +85,8 @@ DEVICE(moto_modem, MOTO_IDS);
+ /* Motorola Tetra driver */
+ #define MOTOROLA_TETRA_IDS()			\
+ 	{ USB_DEVICE(0x0cad, 0x9011) },	/* Motorola Solutions TETRA PEI */ \
+-	{ USB_DEVICE(0x0cad, 0x9012) }	/* MTP6550 */
++	{ USB_DEVICE(0x0cad, 0x9012) },	/* MTP6550 */ \
++	{ USB_DEVICE(0x0cad, 0x9016) }	/* TPG2200 */
+ DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
  
- static void vgacon_restore_screen(struct vc_data *c)
- {
-+	c->vc_origin = c->vc_visible_origin;
- 	vgacon_scrollback_cur->save = 0;
- 
- 	if (!vga_is_gfx && !vgacon_scrollback_cur->restore) {
-@@ -287,8 +288,7 @@ static void vgacon_scrolldelta(struct vc
- 	int start, end, count, soff;
- 
- 	if (!lines) {
--		c->vc_visible_origin = c->vc_origin;
--		vga_set_mem_top(c);
-+		vgacon_restore_screen(c);
- 		return;
- 	}
- 
-@@ -298,6 +298,7 @@ static void vgacon_scrolldelta(struct vc
- 	if (!vgacon_scrollback_cur->save) {
- 		vgacon_cursor(c, CM_ERASE);
- 		vgacon_save_screen(c);
-+		c->vc_origin = (unsigned long)c->vc_screenbuf;
- 		vgacon_scrollback_cur->save = 1;
- 	}
- 
-@@ -335,7 +336,7 @@ static void vgacon_scrolldelta(struct vc
- 		int copysize;
- 
- 		int diff = c->vc_rows - count;
--		void *d = (void *) c->vc_origin;
-+		void *d = (void *) c->vc_visible_origin;
- 		void *s = (void *) c->vc_screenbuf;
- 
- 		count *= c->vc_size_row;
+ /* Novatel Wireless GPS driver */
 
 
