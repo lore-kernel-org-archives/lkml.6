@@ -2,210 +2,253 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A10C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9953DC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE72F2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:05:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rlbUgGsR"
+	by mail.kernel.org (Postfix) with ESMTP id 4D1F12175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:06:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbfA2QFX (ORCPT
+        id S1728059AbfA2QF7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:05:23 -0500
-Received: from mail-eopbgr10083.outbound.protection.outlook.com ([40.107.1.83]:32736
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725355AbfA2QFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:05:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wbNI+AcLWQK9/MXvwM9Qn9fP66q5XUEUXpA3gHSqgvg=;
- b=rlbUgGsRlhPqsPxwCW+Rix+fCiqz6tzHUfYD4BOsMvEwiadql+TRgd99PueIxPU0YwRsH8bfkcbDndKV8jGAmukKbIlq+BhM/sONoBFFGcSqYTBjL5mlmG0cO+peS6P9YRbHohIyUrjyxCjKiVz0JOEqFIDehP6KQ5bkoEQCzhw=
-Received: from VI1PR04MB4799.eurprd04.prod.outlook.com (20.177.48.220) by
- VI1SPR01MB0346.eurprd04.prod.outlook.com (20.177.59.94) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.23; Tue, 29 Jan 2019 16:05:16 +0000
-Received: from VI1PR04MB4799.eurprd04.prod.outlook.com
- ([fe80::e036:f2c8:647d:1506]) by VI1PR04MB4799.eurprd04.prod.outlook.com
- ([fe80::e036:f2c8:647d:1506%5]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
- 16:05:16 +0000
-From:   Camelia Alexandra Groza <camelia.groza@nxp.com>
-To:     =?utf-8?B?SG9sZ2VyIEhvZmZzdMOkdHRl?= 
-        <holger@applied-asynchrony.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Scott Wood <oss@buserror.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: RE: [PATCH 4.19 006/103] net: phy: phy driver features are mandatory
-Thread-Topic: [PATCH 4.19 006/103] net: phy: phy driver features are mandatory
-Thread-Index: AQHUt8fVqnnpj1tb90yHBVnDzOknIqXGZRKAgAABncA=
-Date:   Tue, 29 Jan 2019 16:05:16 +0000
-Message-ID: <VI1PR04MB4799457AC9ECABE4EE8E5021F2970@VI1PR04MB4799.eurprd04.prod.outlook.com>
-References: <20190129113159.567154026@linuxfoundation.org>
- <20190129113159.909710200@linuxfoundation.org>
- <2f2aa129-e9fb-c75a-1b60-1821863986bf@applied-asynchrony.com>
-In-Reply-To: <2f2aa129-e9fb-c75a-1b60-1821863986bf@applied-asynchrony.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=camelia.groza@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1SPR01MB0346;6:lhhlqvmQUC+Dcdbrvc28UWcyky4JHsmy/Hv49B0q5GD1m/rgP46QNaF0UBy5XxidNS3VfiphXStdjB4wh9rUX+S9Pm1zf2+S4SNn60O31i2DlgEawpbWAZSrbpyeFFYMFTPc8lyDOTKybPYTYdags7tK0H3D8BYZHuVyElNZtYmzTYrktcEuN1TYOOsHd1nqPpfHFA9HSMdvSVPCCPtNJckYpKj3poQGYQgxbJuuQChCQeChBHF5wgDR4D/wGDcmyQg3hjGd0keLuHWCoqpUwbaZxOxKbgrb/TdjkePQgYcTAh7p54LS/GoUQSOtu9GL0ctijFrn2vo/wIxBK2WyGmIOUuCU6Mqmse+46whU6S7D9EPMZHrOwYQv/BVVtsp1Eau2YTE/oFwTOwAYIqQjIk3ShyoI6WD+dvynQubG3TOScXs78OjMCbPAZAAjfhNlksCJfsJFzCQjdggHxdIB8Q==;5:dP/c9mFb7+nNqJGWDkENBLRCeohrFeJT0kPpCYQWKEC5YSPcTTbaXdbl9H2H39Aj0mVQ0jhE0RnPnzeEd2fJToG9+FZznCKQo5CtXpRxNFwLN/qrQNFMMwNbbiT7MH64xbXQuSRCCpSH1P4y3juBzToFOxOcdN+mDG/unkDErr2NL1EXuli28pypOu8Sd1SXHliLJN2EAn/hG6+470ELDA==;7:yXdCZMvN15fXLdCf6Pf1goOGByXtwBhdxMUph0Y6eBEYSkyl9M+BhUSX08oOy7JOqCD+/noMpBM/Z8RbQc4+gbMidDQj9SJwkob9SZwB+X2NLgj1KiWwytJfNWrlBwv9rETjnfD37whqEGmlPp7ZSg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 1aad6663-9940-4f14-77f4-08d686038f69
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1SPR01MB0346;
-x-ms-traffictypediagnostic: VI1SPR01MB0346:
-x-microsoft-antispam-prvs: <VI1SPR01MB03461E2703B9B5EF18D5B818F2970@VI1SPR01MB0346.eurprd04.prod.outlook.com>
-x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(13464003)(189003)(199004)(76176011)(81166006)(99286004)(3846002)(66574012)(6116002)(81156014)(498600001)(14454004)(4326008)(68736007)(2501003)(14444005)(486006)(86362001)(25786009)(446003)(53936002)(8676002)(476003)(11346002)(110136005)(54906003)(5024004)(7696005)(8936002)(256004)(229853002)(74316002)(6436002)(186003)(102836004)(105586002)(106356001)(55016002)(71200400001)(71190400001)(53546011)(6506007)(33656002)(66066001)(39060400002)(2906002)(9686003)(6246003)(97736004)(305945005)(7736002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1SPR01MB0346;H:VI1PR04MB4799.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ZSVIsMKC9FLi4TaU9u0ISse93KC/xT7m2BIlW8hZgVimrmTrv4yFfTIeXYD1NN+Gn7f1Qt20hLZ6y08clt/D3flhH8UpK/rTz8/XgC758W88ZzmT9UEx1u+XIUI9FL9W0tN7fyxcIlwpnUba5FBu+cupuf6qxLWTSBG4SXPoVB9PYtT6zoMz0KjeWVcDeJPOe+Draq0zo99vhbAt970C3rwR3D3MgbuFniu1/0PNFAp+1vN8IupMJpMMR3rFbi78FjVTqXYLqpdfV7IAwyONa2Rj8a3UrqYmSO/UPmmy7GGBW0UMmAzzO7i7t6rN2Wlyv5njOonUqmMZ3DaqI25Gdk0xMnKznlf7i9fKlOgSDI/tlVfmrDy+MBAHHDGor5Vw4JydRrRW2lyzOZEBaVpf1ICXYKtTelaJ19RN0l5eoF0=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 29 Jan 2019 11:05:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38150 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725788AbfA2QF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 11:05:59 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 258828B104;
+        Tue, 29 Jan 2019 16:05:58 +0000 (UTC)
+Received: from redhat.com (ovpn-123-79.rdu2.redhat.com [10.10.123.79])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2B1465D6A6;
+        Tue, 29 Jan 2019 16:05:57 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 11:05:51 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     syzbot <syzbot+40e28a8bd59d10ed0c42@syzkaller.appspotmail.com>
+Cc:     jasowang@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        virtualization@lists.linux-foundation.org
+Subject: Re: INFO: task hung in vhost_init_device_iotlb
+Message-ID: <20190129105957-mutt-send-email-mst@kernel.org>
+References: <0000000000007e86fd058095533f@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1aad6663-9940-4f14-77f4-08d686038f69
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 16:05:16.7530
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1SPR01MB0346
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000007e86fd058095533f@google.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 29 Jan 2019 16:05:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBIb2xnZXIgSG9mZnN0w6R0dGUg
-PGhvbGdlckBhcHBsaWVkLWFzeW5jaHJvbnkuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBKYW51YXJ5
-IDI5LCAyMDE5IDE3OjUwDQo+IFRvOiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZv
-dW5kYXRpb24ub3JnPjsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IHN0
-YWJsZUB2Z2VyLmtlcm5lbC5vcmc7IFNjb3R0IFdvb2QgPG9zc0BidXNlcnJvci5uZXQ+OyBDYW1l
-bGlhDQo+IEFsZXhhbmRyYSBHcm96YSA8Y2FtZWxpYS5ncm96YUBueHAuY29tPjsgRGF2aWQgUy4g
-TWlsbGVyDQo+IDxkYXZlbUBkYXZlbWxvZnQubmV0PjsgSGVpbmVyIEthbGx3ZWl0IDxoa2FsbHdl
-aXQxQGdtYWlsLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCA0LjE5IDAwNi8xMDNdIG5ldDog
-cGh5OiBwaHkgZHJpdmVyIGZlYXR1cmVzIGFyZQ0KPiBtYW5kYXRvcnkNCj4gDQo+IE9uIDEvMjkv
-MTkgMTI6MzQgUE0sIEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToNCj4gPiA0LjE5LXN0YWJsZSBy
-ZXZpZXcgcGF0Y2guICBJZiBhbnlvbmUgaGFzIGFueSBvYmplY3Rpb25zLCBwbGVhc2UgbGV0IG1l
-DQo+IGtub3cuDQo+ID4NCj4gPiAtLS0tLS0tLS0tLS0tLS0tLS0NCj4gPg0KPiA+IEZyb206IENh
-bWVsaWEgR3JvemEgPGNhbWVsaWEuZ3JvemFAbnhwLmNvbT4NCj4gPg0KPiA+IFsgVXBzdHJlYW0g
-Y29tbWl0IDNlNjRjZjdhNDM1ZWQwNTAwZTNhZGFhOGFhZGEyMjcyZDNhZThhYmMgXQ0KPiA+DQo+
-ID4gU2luY2UgcGh5IGRyaXZlciBmZWF0dXJlcyBiZWNhbWUgYSBsaW5rX21vZGUgYml0bWFwLCBw
-aHkgZHJpdmVycyB0aGF0DQo+ID4gZG9uJ3QgaGF2ZSBhIGxpc3Qgb2YgZmVhdHVyZXMgY29uZmln
-dXJlZCB3aWxsIGNhdXNlIHRoZSBrZXJuZWwgdG8gY3Jhc2gNCj4gPiB3aGVuIHByb2JlZC4NCj4g
-Pg0KPiA+IFByZXZlbnQgdGhlIHBoeSBkcml2ZXIgZnJvbSByZWdpc3RlcmluZyBpZiB0aGUgZmVh
-dHVyZXMgZmllbGQgaXMgbWlzc2luZy4NCj4gPg0KPiA+IEZpeGVzOiA3MTk2NTVhMTQ5NzEgKCJu
-ZXQ6IHBoeTogUmVwbGFjZSBwaHkgZHJpdmVyIGZlYXR1cmVzIHUzMiB3aXRoDQo+IGxpbmtfbW9k
-ZSBiaXRtYXAiKQ0KPiA+IFJlcG9ydGVkLWJ5OiBTY290dCBXb29kIDxvc3NAYnVzZXJyb3IubmV0
-Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IENhbWVsaWEgR3JvemEgPGNhbWVsaWEuZ3JvemFAbnhwLmNv
-bT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBEYXZpZCBTLiBNaWxsZXIgPGRhdmVtQGRhdmVtbG9mdC5u
-ZXQ+DQo+ID4gU2lnbmVkLW9mZi1ieTogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhm
-b3VuZGF0aW9uLm9yZz4NCj4gPiAtLS0NCj4gPiAgIGRyaXZlcnMvbmV0L3BoeS9waHlfZGV2aWNl
-LmMgfCAgICA1ICsrKysrDQo+ID4gICBpbmNsdWRlL2xpbnV4L3BoeS5oICAgICAgICAgIHwgICAg
-NCArKy0tDQo+ID4gICAyIGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlv
-bnMoLSkNCj4gPg0KPiA+IC0tLSBhL2RyaXZlcnMvbmV0L3BoeS9waHlfZGV2aWNlLmMNCj4gPiAr
-KysgYi9kcml2ZXJzL25ldC9waHkvcGh5X2RldmljZS5jDQo+ID4gQEAgLTE5MTcsNiArMTkxNywx
-MSBAQCBpbnQgcGh5X2RyaXZlcl9yZWdpc3RlcihzdHJ1Y3QgcGh5X2RyaXZlDQo+ID4gICB7DQo+
-ID4gICAJaW50IHJldHZhbDsNCj4gPg0KPiA+ICsJaWYgKFdBUk5fT04oIW5ld19kcml2ZXItPmZl
-YXR1cmVzKSkgew0KPiA+ICsJCXByX2VycigiJXM6IERyaXZlciBmZWF0dXJlcyBhcmUgbWlzc2lu
-Z1xuIiwgbmV3X2RyaXZlci0NCj4gPm5hbWUpOw0KPiA+ICsJCXJldHVybiAtRUlOVkFMOw0KPiA+
-ICsJfQ0KPiA+ICsNCj4gPiAgIAluZXdfZHJpdmVyLT5tZGlvZHJ2LmZsYWdzIHw9IE1ESU9fREVW
-SUNFX0lTX1BIWTsNCj4gPiAgIAluZXdfZHJpdmVyLT5tZGlvZHJ2LmRyaXZlci5uYW1lID0gbmV3
-X2RyaXZlci0+bmFtZTsNCj4gPiAgIAluZXdfZHJpdmVyLT5tZGlvZHJ2LmRyaXZlci5idXMgPSAm
-bWRpb19idXNfdHlwZTsNCj4gPiAtLS0gYS9pbmNsdWRlL2xpbnV4L3BoeS5oDQo+ID4gKysrIGIv
-aW5jbHVkZS9saW51eC9waHkuaA0KPiA+IEBAIC00OTEsOCArNDkxLDggQEAgc3RydWN0IHBoeV9k
-ZXZpY2Ugew0KPiA+ICAgICogICBvbmx5IHdvcmtzIGZvciBQSFlzIHdpdGggSURzIHdoaWNoIG1h
-dGNoIHRoaXMgZmllbGQNCj4gPiAgICAqIG5hbWU6IFRoZSBmcmllbmRseSBuYW1lIG9mIHRoaXMg
-UEhZIHR5cGUNCj4gPiAgICAqIHBoeV9pZF9tYXNrOiBEZWZpbmVzIHRoZSBpbXBvcnRhbnQgYml0
-cyBvZiB0aGUgcGh5X2lkDQo+ID4gLSAqIGZlYXR1cmVzOiBBIGxpc3Qgb2YgZmVhdHVyZXMgKHNw
-ZWVkLCBkdXBsZXgsIGV0Yykgc3VwcG9ydGVkDQo+ID4gLSAqICAgYnkgdGhpcyBQSFkNCj4gPiAr
-ICogZmVhdHVyZXM6IEEgbWFuZGF0b3J5IGxpc3Qgb2YgZmVhdHVyZXMgKHNwZWVkLCBkdXBsZXgs
-IGV0YykNCj4gPiArICogICBzdXBwb3J0ZWQgYnkgdGhpcyBQSFkNCj4gPiAgICAqIGZsYWdzOiBB
-IGJpdGZpZWxkIGRlZmluaW5nIGNlcnRhaW4gb3RoZXIgZmVhdHVyZXMgdGhpcyBQSFkNCj4gPiAg
-ICAqICAgc3VwcG9ydHMgKGxpa2UgaW50ZXJydXB0cykNCj4gPiAgICAqDQo+ID4NCj4gDQo+IFRo
-aXMgcGF0Y2ggbGVhZHMgdG8gdGhlIGZvbGxvd2luZyBkdW1wIGR1cmluZyBib290IGFuZCBubyB3
-b3JraW5nDQo+IG5ldHdvcms6DQo+IA0KPiBKYW4gMjkgMTM6MTE6NTAgcmFnbmFyb2sga2VybmVs
-OiBSSVA6IDAwMTA6cGh5X2RyaXZlcl9yZWdpc3RlcisweDVmLzB4ODANCj4gW2xpYnBoeV0NCj4g
-SmFuIDI5IDEzOjExOjUwIHJhZ25hcm9rIGtlcm5lbDogQ29kZTogZGQgMDYgYTAgNDggYzcgNDcg
-NDAgMzAgZTQgMDYgYTAgNDggODkNCj4gNzcgMTAgYzcgNDcgMjQgMDIgMDAgMDAgMDAgZTggMTAg
-NWMgNDQgZTEgODkgYzUgODUgYzAgMGYgODUgYWEgMWQgMDAgMDAgODkgZTggNWINCj4gNWQgYzMg
-PDBmPiAwYiA0OCBjNyBjNyBmMCAyMCAwNyBhMCA0OCA4OSBjNiBiZCBlYSBmZiBmZiBmZiBlOCBj
-OSA0YyAwMiBlMQ0KPiBKYW4gMjkgMTM6MTE6NTAgcmFnbmFyb2sga2VybmVsOiBSU1A6IDAwMTg6
-ZmZmZmM5MDAwMGRmM2M3OCBFRkxBR1M6DQo+IDAwMDEwMjQ2DQo+IEphbiAyOSAxMzoxMTo1MCBy
-YWduYXJvayBrZXJuZWw6IFJBWDogZmZmZmZmZmZhMDA3MWM4ZCBSQlg6IDAwMDAwMDAwMDAwMDAw
-MDANCj4gUkNYOiAwMDAwMDAwMDAwMDAwMDAwDQo+IEphbiAyOSAxMzoxMTo1MCByYWduYXJvayBr
-ZXJuZWw6IFJEWDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6IGZmZmZmZmZmYTAwNzY5MDANCj4gUkRJ
-OiBmZmZmZmZmZmEwMDc2MDQwDQo+IEphbiAyOSAxMzoxMTo1MCByYWduYXJvayBrZXJuZWw6IFJC
-UDogZmZmZmZmZmZhMDA3YTAwMCBSMDg6IDAwMDAwMDAwMDAwMDAwNDQNCj4gUjA5OiAwMDAwMDAw
-MDAwMDAwMjI4DQo+IEphbiAyOSAxMzoxMTo1MCByYWduYXJvayBrZXJuZWw6IFIxMDogZmZmZjg4
-ODYwM2EwZDZmOCBSMTE6DQo+IDAwMDAwMDAwMDAwMDAwM2MgUjEyOiBmZmZmODg4NjAxMjUyZDAw
-DQo+IEphbiAyOSAxMzoxMTo1MCByYWduYXJvayBrZXJuZWw6IFIxMzogMDAwMDAwMDAwMDAwMDAw
-MiBSMTQ6DQo+IGZmZmZjOTAwMDBkZjNlOTggUjE1OiBmZmZmZmZmZmEwMDc2OTAwDQo+IEphbiAy
-OSAxMzoxMTo1MCByYWduYXJvayBrZXJuZWw6IEZTOiAgMDAwMDdmZWVhOWNlZDgwMCgwMDAwKQ0K
-PiBHUzpmZmZmODg4NjA3MjQwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDANCj4gSmFu
-IDI5IDEzOjExOjUwIHJhZ25hcm9rIGtlcm5lbDogQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAw
-IENSMDoNCj4gMDAwMDAwMDA4MDA1MDAzMw0KPiBKYW4gMjkgMTM6MTE6NTAgcmFnbmFyb2sga2Vy
-bmVsOiBDUjI6IDAwMDA3ZmVlYTljZGZjNDIgQ1IzOg0KPiAwMDAwMDAwNWZlYzY0MDAxIENSNDog
-MDAwMDAwMDAwMDA2MDZlMA0KPiBKYW4gMjkgMTM6MTE6NTAgcmFnbmFyb2sga2VybmVsOiBDYWxs
-IFRyYWNlOg0KPiBKYW4gMjkgMTM6MTE6NTAgcmFnbmFyb2sga2VybmVsOiAgPyAweGZmZmZmZmZm
-YTAwN2EwMDANCj4gSmFuIDI5IDEzOjExOjUwIHJhZ25hcm9rIGtlcm5lbDogIHBoeV9pbml0KzB4
-MjQvMHg1OCBbbGlicGh5XQ0KPiBKYW4gMjkgMTM6MTE6NTAgcmFnbmFyb2sga2VybmVsOiAgZG9f
-b25lX2luaXRjYWxsKzB4NDMvMHgxYWYNCj4gSmFuIDI5IDEzOjExOjUwIHJhZ25hcm9rIGtlcm5l
-bDogID8gX2NvbmRfcmVzY2hlZCsweDE1LzB4MzANCj4gSmFuIDI5IDEzOjExOjUwIHJhZ25hcm9r
-IGtlcm5lbDogID8ga21lbV9jYWNoZV9hbGxvY190cmFjZSsweDE1NC8weDFiMA0KPiBKYW4gMjkg
-MTM6MTE6NTAgcmFnbmFyb2sga2VybmVsOiAgZG9faW5pdF9tb2R1bGUrMHg1YS8weDIxMA0KPiBK
-YW4gMjkgMTM6MTE6NTAgcmFnbmFyb2sga2VybmVsOiAgbG9hZF9tb2R1bGUrMHgyMDNhLzB4MjUw
-MA0KPiBKYW4gMjkgMTM6MTE6NTAgcmFnbmFyb2sga2VybmVsOiAgPyB2ZnNfcmVhZCsweDEwZC8w
-eDEzMA0KPiBKYW4gMjkgMTM6MTE6NTAgcmFnbmFyb2sga2VybmVsOiAgPyBfX3NlX3N5c19maW5p
-dF9tb2R1bGUrMHhiMS8weGQwDQo+IEphbiAyOSAxMzoxMTo1MCByYWduYXJvayBrZXJuZWw6ICBf
-X3NlX3N5c19maW5pdF9tb2R1bGUrMHhiMS8weGQwDQo+IEphbiAyOSAxMzoxMTo1MCByYWduYXJv
-ayBrZXJuZWw6ICBkb19zeXNjYWxsXzY0KzB4M2UvMHhlMA0KPiBKYW4gMjkgMTM6MTE6NTAgcmFn
-bmFyb2sga2VybmVsOg0KPiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg0NC8weGE5
-DQo+IEphbiAyOSAxMzoxMTo1MCByYWduYXJvayBrZXJuZWw6IFJJUDogMDAzMzoweDdmZWVhYTI0
-MTdjOQ0KPiBKYW4gMjkgMTM6MTE6NTAgcmFnbmFyb2sga2VybmVsOiBDb2RlOiAwMCAwMCAwMCA3
-NSAwNSA0OCA4MyBjNCAxOCBjMyBlOCA4MiA5YyAwMQ0KPiAwMCA2NiA5MCA0OCA4OSBmOCA0OCA4
-OSBmNyA0OCA4OSBkNiA0OCA4OSBjYSA0ZCA4OSBjMiA0ZCA4OSBjOCA0YyA4YiA0YyAyNCAwOCAw
-ZiAwNQ0KPiA8NDg+IDNkIDAxIGYwIGZmIGZmIDczIDAxIGMzIDQ4IDhiIDBkIDg3IGM2IDBjIDAw
-IGY3IGQ4IDY0IDg5IDAxIDQ4DQo+IEphbiAyOSAxMzoxMTo1MCByYWduYXJvayBrZXJuZWw6IFJT
-UDogMDAyYjowMDAwN2ZmZjZmYTZlYTA4IEVGTEFHUzoNCj4gMDAwMDAyNDYgT1JJR19SQVg6IDAw
-MDAwMDAwMDAwMDAxMzkNCj4gSmFuIDI5IDEzOjExOjUwIHJhZ25hcm9rIGtlcm5lbDogUkFYOiBm
-ZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAwMDU1YzZlYWMwNmRiMA0KPiBSQ1g6IDAwMDA3ZmVlYWEy
-NDE3YzkNCj4gSmFuIDI5IDEzOjExOjUwIHJhZ25hcm9rIGtlcm5lbDogUkRYOiAwMDAwMDAwMDAw
-MDAwMDAwIFJTSToNCj4gMDAwMDdmZWVhYTQxOThmZCBSREk6IDAwMDAwMDAwMDAwMDAwMDYNCj4g
-SmFuIDI5IDEzOjExOjUwIHJhZ25hcm9rIGtlcm5lbDogUkJQOiAwMDAwN2ZlZWFhNDE5OGZkIFIw
-ODoNCj4gMDAwMDAwMDAwMDAwMDAwMCBSMDk6IDAwMDA1NWM2ZWFjMDMwMDANCj4gSmFuIDI5IDEz
-OjExOjUwIHJhZ25hcm9rIGtlcm5lbDogUjEwOiAwMDAwMDAwMDAwMDAwMDA2IFIxMToNCj4gMDAw
-MDAwMDAwMDAwMDI0NiBSMTI6IDAwMDAwMDAwMDAwMDAwMDANCj4gSmFuIDI5IDEzOjExOjUwIHJh
-Z25hcm9rIGtlcm5lbDogUjEzOiAwMDAwNTVjNmVhYmZjMWQwIFIxNDoNCj4gMDAwMDAwMDAwMDAy
-MDAwMCBSMTU6IDAwMDA1NWM2ZWFjMDZkYjANCj4gSmFuIDI5IDEzOjExOjUwIHJhZ25hcm9rIGtl
-cm5lbDogLS0tWyBlbmQgdHJhY2UgMThlMDVhMGFmZWIxNDBiMiBdLS0tDQo+IEphbiAyOSAxMzox
-MTo1MCByYWduYXJvayBrZXJuZWw6IGxpYnBoeTogR2VuZXJpYyAxMEcgUEhZOiBEcml2ZXIgZmVh
-dHVyZXMgYXJlDQo+IG1pc3NpbmcNCj4gDQo+IEFwcGFyZW50bHkgdGhlIHI4MTY5IGRyaXZlciBm
-b3IgbXkgTklDIGRvZXMgc29tZXRoaW5nIHdyb25nIHdydC4gdGhpcw0KPiBmaXggYW5kIHRoZSBv
-cmlnaW5hbCBjb21taXQgKDcxOTY1NWExNDk3MSksIGJ1dCByZWdhcmRsZXNzIC0gcmV2ZXJ0aW5n
-IHRoaXMNCj4gcGF0Y2ggbGVhZHMgdG8gYSBib290aW5nICYgd29ya2luZyA0LjE5LjE5Og0KPiAN
-Cj4gSmFuIDI5IDEzOjI5OjE2IHJhZ25hcm9rIGtlcm5lbDogbGlicGh5OiByODE2OTogcHJvYmVk
-DQo+IEphbiAyOSAxMzoyOToxOSByYWduYXJvayBrZXJuZWw6IFJUTDgyMTFFIEdpZ2FiaXQgRXRo
-ZXJuZXQgcjgxNjktNDAwOjAwOg0KPiBhdHRhY2hlZCBQSFkgZHJpdmVyIFtSVEw4MjExRSBHaWdh
-Yml0IEV0aGVybmV0XSAobWlpX2J1czpwaHlfYWRkcj1yODE2OS0NCj4gNDAwOjAwLCBpcnE9SUdO
-T1JFKQ0KPiANCj4gSSd2ZSBjYydlZCBIZWluZXIgS2FsbHdlaXQgd2hvIG1pZ2h0IGtub3cgd2h5
-IHBoeWxpYiB3aXRoIHRoaXMgZml4IGFuZCByODE2OQ0KPiBkb24ndCBsaWtlIGVhY2ggb3RoZXIu
-DQo+IA0KPiBjaGVlcnMsDQo+IEhvbGdlcg0KDQpIaQ0KDQpUaGlzIHBvaW50cyB0byBhbiBpc3N1
-ZSB3aXRoIHRoZSBHZW5lcmljIDEwRyBQSFkgZHJpdmVyLiBUaGUgZm9sbG93aW5nIHBhdGNoIHNl
-ZW1zIHRvIGJlIG1pc3NpbmcgZnJvbSB0aGUgNC4xOSBzdGFibGUgdHJlZSBhbmQgc2hvdWxkIGJl
-IG1lcmdlZDoNCmY4MDI5MTIgbmV0OiBwaHk6IGdlbnBoeV8xMGdfZHJpdmVyOiBBdm9pZCBOVUxM
-IHBvaW50ZXIgZGVyZWZlcmVuY2UNCg0KVGhhbmtzIGZvciBwb2ludGluZyB0aGlzIG91dC4NCg0K
-UmVnYXJkcywNCkNhbWVsaWENCiANCg==
+On Tue, Jan 29, 2019 at 01:22:02AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    983542434e6b Merge tag 'edac_fix_for_5.0' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17476498c00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
+> dashboard link: https://syzkaller.appspot.com/bug?extid=40e28a8bd59d10ed0c42
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+
+Hmm nothing obvious below. Generic corruption elsewhere?
+
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+40e28a8bd59d10ed0c42@syzkaller.appspotmail.com
+> 
+> protocol 88fb is buggy, dev hsr_slave_1
+> protocol 88fb is buggy, dev hsr_slave_0
+> protocol 88fb is buggy, dev hsr_slave_1
+> protocol 88fb is buggy, dev hsr_slave_0
+> protocol 88fb is buggy, dev hsr_slave_1
+> INFO: task syz-executor5:9417 blocked for more than 140 seconds.
+>       Not tainted 5.0.0-rc3+ #48
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor5   D27576  9417   8469 0x00000004
+> Call Trace:
+>  context_switch kernel/sched/core.c:2831 [inline]
+>  __schedule+0x897/0x1e60 kernel/sched/core.c:3472
+>  schedule+0xfe/0x350 kernel/sched/core.c:3516
+> protocol 88fb is buggy, dev hsr_slave_0
+> protocol 88fb is buggy, dev hsr_slave_1
+>  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3574
+>  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
+>  __mutex_lock+0xa3b/0x1670 kernel/locking/mutex.c:1072
+>  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+>  vhost_init_device_iotlb+0x124/0x280 drivers/vhost/vhost.c:1606
+>  vhost_net_set_features drivers/vhost/net.c:1674 [inline]
+>  vhost_net_ioctl+0x1282/0x1c00 drivers/vhost/net.c:1739
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  file_ioctl fs/ioctl.c:509 [inline]
+>  do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
+>  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+>  __do_sys_ioctl fs/ioctl.c:720 [inline]
+>  __se_sys_ioctl fs/ioctl.c:718 [inline]
+>  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+>  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> protocol 88fb is buggy, dev hsr_slave_0
+> protocol 88fb is buggy, dev hsr_slave_1
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x458099
+> Code: Bad RIP value.
+> RSP: 002b:00007efd7ca9bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458099
+> RDX: 0000000020000080 RSI: 000000004008af00 RDI: 0000000000000003
+> RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007efd7ca9c6d4
+> R13: 00000000004c295b R14: 00000000004d5280 R15: 00000000ffffffff
+> INFO: task syz-executor5:9418 blocked for more than 140 seconds.
+>       Not tainted 5.0.0-rc3+ #48
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor5   D27800  9418   8469 0x00000004
+> Call Trace:
+>  context_switch kernel/sched/core.c:2831 [inline]
+>  __schedule+0x897/0x1e60 kernel/sched/core.c:3472
+>  schedule+0xfe/0x350 kernel/sched/core.c:3516
+>  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3574
+>  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
+>  __mutex_lock+0xa3b/0x1670 kernel/locking/mutex.c:1072
+>  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+>  vhost_net_set_owner drivers/vhost/net.c:1697 [inline]
+>  vhost_net_ioctl+0x426/0x1c00 drivers/vhost/net.c:1754
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  file_ioctl fs/ioctl.c:509 [inline]
+>  do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
+>  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+>  __do_sys_ioctl fs/ioctl.c:720 [inline]
+>  __se_sys_ioctl fs/ioctl.c:718 [inline]
+>  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+>  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x458099
+> Code: Bad RIP value.
+> RSP: 002b:00007efd7ca7ac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458099
+> RDX: 0000000000000000 RSI: 000040010000af01 RDI: 0000000000000003
+> RBP: 000000000073c040 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007efd7ca7b6d4
+> R13: 00000000004c33a4 R14: 00000000004d5e80 R15: 00000000ffffffff
+> 
+> Showing all locks held in the system:
+> 1 lock held by khungtaskd/1040:
+>  #0: 00000000b7479fbe (rcu_read_lock){....}, at:
+> debug_show_all_locks+0xc6/0x41d kernel/locking/lockdep.c:4389
+> 1 lock held by rsyslogd/8285:
+>  #0: 000000006d9ccf7d (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1b3/0x1f0
+> fs/file.c:795
+> 2 locks held by getty/8406:
+>  #0: 00000000052e805b (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40
+> drivers/tty/tty_ldsem.c:341
+>  #1: 00000000b90dc267 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/8407:
+>  #0: 000000009fdef632 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40
+> drivers/tty/tty_ldsem.c:341
+>  #1: 00000000ff2b1a16 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/8408:
+>  #0: 00000000e48a8e78 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40
+> drivers/tty/tty_ldsem.c:341
+>  #1: 000000008fcf2060 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/8409:
+>  #0: 0000000063f3f4f5 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40
+> drivers/tty/tty_ldsem.c:341
+>  #1: 000000001dc973ca (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/8410:
+>  #0: 00000000f3c14150 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40
+> drivers/tty/tty_ldsem.c:341
+>  #1: 000000007987cec5 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/8411:
+>  #0: 00000000d04f4305 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40
+> drivers/tty/tty_ldsem.c:341
+>  #1: 000000003f47e3a6 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
+> 2 locks held by getty/8412:
+>  #0: 0000000082430560 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x33/0x40
+> drivers/tty/tty_ldsem.c:341
+>  #1: 0000000094609d81 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x30a/0x1eb0 drivers/tty/n_tty.c:2154
+> 2 locks held by syz-executor5/9417:
+>  #0: 0000000020a0f0a1 (&dev->mutex#4){+.+.}, at: vhost_net_set_features
+> drivers/vhost/net.c:1668 [inline]
+>  #0: 0000000020a0f0a1 (&dev->mutex#4){+.+.}, at:
+> vhost_net_ioctl+0x204/0x1c00 drivers/vhost/net.c:1739
+>  #1: 00000000a7b5872b (&vq->mutex){+.+.}, at:
+> vhost_init_device_iotlb+0x124/0x280 drivers/vhost/vhost.c:1606
+> 1 lock held by syz-executor5/9418:
+>  #0: 0000000020a0f0a1 (&dev->mutex#4){+.+.}, at: vhost_net_set_owner
+> drivers/vhost/net.c:1697 [inline]
+>  #0: 0000000020a0f0a1 (&dev->mutex#4){+.+.}, at:
+> vhost_net_ioctl+0x426/0x1c00 drivers/vhost/net.c:1754
+> 1 lock held by vhost-9408/9413:
+> 
+> =============================================
+> 
+> NMI backtrace for cpu 0
+> CPU: 0 PID: 1040 Comm: khungtaskd Not tainted 5.0.0-rc3+ #48
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+>  nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
+>  nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
+>  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+>  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+>  check_hung_uninterruptible_tasks kernel/hung_task.c:203 [inline]
+>  watchdog+0xbbb/0x1170 kernel/hung_task.c:287
+>  kthread+0x357/0x430 kernel/kthread.c:246
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+> Sending NMI from CPU 0 to CPUs 1:
+> NMI backtrace for cpu 1
+> CPU: 1 PID: 7 Comm: kworker/u4:0 Not tainted 5.0.0-rc3+ #48
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Workqueue: bat_events batadv_nc_worker
+> RIP: 0010:__sanitizer_cov_trace_const_cmp1+0x15/0x20 kernel/kcov.c:174
+> Code: 00 48 89 e5 48 8b 4d 08 e8 18 ff ff ff 5d c3 66 0f 1f 44 00 00 55 40
+> 0f b6 d6 40 0f b6 f7 bf 01 00 00 00 48 89 e5 48 8b 4d 08 <e8> f6 fe ff ff 5d
+> c3 0f 1f 40 00 55 0f b7 d6 0f b7 f7 bf 03 00 00
+> RSP: 0018:ffff8880a947f8a8 EFLAGS: 00000246
+> RAX: ffff8880a94701c0 RBX: ffff8880a05efc40 RCX: ffffffff87d36c97
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
+> RBP: ffff8880a947f8a8 R08: ffff8880a94701c0 R09: ffffed1015ce5b90
+> R10: ffffed1015ce5b8f R11: ffff8880ae72dc7b R12: 0000000000000000
+> R13: 0000000000000000 R14: 000000000000019e R15: dffffc0000000000
+> FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffffffffff600400 CR3: 00000000a005a000 CR4: 00000000001426e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  rcu_read_unlock include/linux/rcupdate.h:657 [inline]
+>  batadv_nc_purge_orig_hash net/batman-adv/network-coding.c:423 [inline]
+>  batadv_nc_worker+0x2f7/0x920 net/batman-adv/network-coding.c:730
+>  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
+>  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
+>  kthread+0x357/0x430 kernel/kthread.c:246
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
