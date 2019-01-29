@@ -2,73 +2,66 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C08EC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6BDC282D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 407FB2175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:37:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD58C2175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:38:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbfA2Hhl (ORCPT
+        id S1727111AbfA2Hil (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 02:37:41 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2693 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725554AbfA2Hhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 02:37:41 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 17197B05D9EAE5438D13;
-        Tue, 29 Jan 2019 15:37:39 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 29 Jan 2019 15:37:32 +0800
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-To:     <x86@kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH] x86/mm: Remove unused cpu variable
-Date:   Tue, 29 Jan 2019 15:36:57 +0800
-Message-ID: <1548747417-33551-1-git-send-email-zhangshaokun@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 29 Jan 2019 02:38:41 -0500
+Received: from verein.lst.de ([213.95.11.211]:44604 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725554AbfA2Hil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 02:38:41 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id BB9FB68CEB; Tue, 29 Jan 2019 08:38:39 +0100 (CET)
+Date:   Tue, 29 Jan 2019 08:38:39 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Joerg Roedel <joro@8bytes.org>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
+Subject: Re: [PATCH 5/5] virtio-blk: Consider virtio_max_dma_size() for
+ maximum segment size
+Message-ID: <20190129073839.GB4087@lst.de>
+References: <20190123163049.24863-1-joro@8bytes.org> <20190123163049.24863-6-joro@8bytes.org> <20190123213139.GD9032@lst.de> <20190124084011.GJ32526@8bytes.org> <20190124084221.GB19441@lst.de> <20190124095150.GL32526@8bytes.org> <20190128080526.GA3874@lst.de> <20190128121407-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128121407-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cpu variable is never used after commit <a2055abe9c67> ("x86/mm: Pass
-flush_tlb_info to flush_tlb_others() etc"), so remove it.
+On Mon, Jan 28, 2019 at 12:14:33PM -0500, Michael S. Tsirkin wrote:
+> On Mon, Jan 28, 2019 at 09:05:26AM +0100, Christoph Hellwig wrote:
+> > On Thu, Jan 24, 2019 at 10:51:51AM +0100, Joerg Roedel wrote:
+> > > On Thu, Jan 24, 2019 at 09:42:21AM +0100, Christoph Hellwig wrote:
+> > > > Yes.  But more importantly it would fix the limit for all other block
+> > > > drivers that set large segment sizes when running over swiotlb.
+> > > 
+> > > True, so it would be something like the diff below? I havn't worked on
+> > > the block layer, so I don't know if that needs additional checks for
+> > > ->dev or anything.
+> > 
+> > Looks sensible.  Maybe for now we'll just do the virtio-blk case
+> > that triggered it, and we'll do something like this patch for the
+> > next merge window.  We'll also need to apply the same magic to the
+> > DMA boundary.
+> 
+> So do I get an ack for this patch then?
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
----
- arch/x86/mm/tlb.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 999d6d8f0bef..bc4bc7b2f075 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -685,9 +685,6 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
- 		 * that UV should be updated so that smp_call_function_many(),
- 		 * etc, are optimal on UV.
- 		 */
--		unsigned int cpu;
--
--		cpu = smp_processor_id();
- 		cpumask = uv_flush_tlb_others(cpumask, info);
- 		if (cpumask)
- 			smp_call_function_many(cpumask, flush_tlb_func_remote,
--- 
-2.7.4
-
+I'll wait for a resend of the series to review the whole thing.
