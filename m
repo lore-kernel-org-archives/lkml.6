@@ -2,59 +2,105 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC572C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B52C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 864932177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:41:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9538F2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:42:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linbit-com.20150623.gappssmtp.com header.i=@linbit-com.20150623.gappssmtp.com header.b="Mkc6KrhC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbfA2Jlv (ORCPT
+        id S1728300AbfA2Jmf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:41:51 -0500
-Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:55648 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728016AbfA2Jlu (ORCPT
+        Tue, 29 Jan 2019 04:42:35 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36625 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbfA2Jme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:41:50 -0500
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1goPto-0004nY-Or; Tue, 29 Jan 2019 10:41:44 +0100
-Date:   Tue, 29 Jan 2019 10:41:44 +0100
-From:   Florian Westphal <fw@strlen.de>
-To:     syzbot <syzbot+e6e1fe9148cffa18cf97@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
-Subject: Re: general protection fault in __xfrm_policy_bysel_ctx
-Message-ID: <20190129094144.bln4dnirr5kz3dl4@breakpoint.cc>
-References: <0000000000007b129305809553da@google.com>
+        Tue, 29 Jan 2019 04:42:34 -0500
+Received: by mail-wr1-f67.google.com with SMTP id u4so21242031wrp.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:42:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linbit-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=H2Egnq9ngobzM8WF4zpWb1uknJJq7nzRKi8Y170uTDA=;
+        b=Mkc6KrhC37fpkEc1cjdGSc4prGRcAu+EXzaOB+JwK4KB0dJgTi0PCMQ/KAmXIirj1y
+         /PVJsANQVQFeAnlxFYFGEX/TQu7OyQKi06qs6k/WDC6Qg6WSCKuxHfdM5AimiJvnrPmu
+         Tyk3jjE7X7Fz9aoOOJA/hHO9Xzm25ynS52zb9lldvTIZo0XOU7jlSToPu7ytV4Araae9
+         KaNIOR/aNplYDncNt9J5rPKvZO077y7qnBrNj2InLp158vLxzXt1p/5fX+RYT0TR0MmF
+         0vruTpnNuxWyW3a/+r0rgtiVcR+P7bnIj/bzo1gbXSFeIQR0VamrRsKaGwwqrXEZcTp8
+         Smtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H2Egnq9ngobzM8WF4zpWb1uknJJq7nzRKi8Y170uTDA=;
+        b=Iah3Nhs2qEo0nH/ahYY18L1+DIDuj6H87pjDxGA5Mc4afcn8lpRNvK607jZj2Leiia
+         rZi4lwrmN0gusoAMXd0xFNU2kcSSoEpZgHtORpNv0fL4L9FnS78KJlD0o8K9EqqwD3Kd
+         Ydy+5wnj2sLibuehjOIR0kwZun1JuuyTtYES8nyy0u+mTDQjW606UTkAQIZ4JXMz8MRM
+         WIZSB8tDklGJOLlrq5JOG5vivOaGhfk0QIMUMqhRcfT9CmpctyvyD3ykiVnLhqaq5zoD
+         0VFMLJ9PanbnirA9MOfzyK/yD3rRnciEgRck5YuiTm6h3NxX3djeqpPWQzaPiwTBWPCy
+         fV0g==
+X-Gm-Message-State: AJcUukdK/7TunW0+N0NRgMtVg6Ci63yxrQEmY+pTihVf6Mg1OZYvYeSq
+        ebYxv0JsoKoeOc3LpUtBJ0RKVA==
+X-Google-Smtp-Source: ALg8bN7oMLYGldESo7Z7HTbVai65yGyAp0Ba8wqgiWMFahT02R8f1Vyiy4J30GK/Or0OaWqhoVvOug==
+X-Received: by 2002:a5d:4652:: with SMTP id j18mr25895841wrs.279.1548754952786;
+        Tue, 29 Jan 2019 01:42:32 -0800 (PST)
+Received: from localhost (213-47-144-126.static.upcbusiness.at. [213.47.144.126])
+        by smtp.gmail.com with ESMTPSA id z17sm87962125wrv.2.2019.01.29.01.42.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 01:42:31 -0800 (PST)
+Date:   Tue, 29 Jan 2019 10:42:31 +0100
+From:   Roland Kammerer <roland.kammerer@linbit.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Joshua Morris <josh.h.morris@us.ibm.com>,
+        Philip Kelleher <pjk1939@linux.ibm.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        drbd-dev@lists.linbit.com
+Subject: Re: [Drbd-dev] [PATCH] block: Mark expected switch fall-throughs
+Message-ID: <20190129094230.ezjzpfwf5xx47luu@rck.sh>
+References: <20190123064501.GA26147@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000007b129305809553da@google.com>
+In-Reply-To: <20190123064501.GA26147@embeddedor>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot <syzbot+e6e1fe9148cffa18cf97@syzkaller.appspotmail.com> wrote:
-> Hello,
+On Wed, Jan 23, 2019 at 12:45:01AM -0600, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 > 
-> syzbot found the following crash on:
+> Warning level 3 was used: -Wimplicit-fallthrough=3
 > 
-> HEAD commit:    085c4c7dd2b6 net: lmc: remove -I. header search path
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12347128c00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e6e1fe9148cffa18cf97
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> This patch is part of the ongoing efforts to enabling
+> -Wimplicit-fallthrough
 > 
-> Unfortunately, I don't have any reproducer for this crash yet.
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/block/drbd/drbd_int.h      | 2 +-
+>  drivers/block/drbd/drbd_receiver.c | 4 ++--
+>  drivers/block/drbd/drbd_req.c      | 2 +-
+>  drivers/block/rsxx/core.c          | 1 +
+>  4 files changed, 5 insertions(+), 4 deletions(-)
+> 
 
-net-next doesn't contain the fixes for the rbtree fallout yet, so
-this might already be fixed (fingers crossed).
+Hi Gustavo,
+
+as also discussed with Lars in person, obviously OK for the DRBD part.
+
+Acked-by: Roland Kammerer <roland.kammerer@linbit.com>
+
+Best, rck
