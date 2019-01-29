@@ -2,213 +2,601 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34421C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C36C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7D7E20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:41:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="vfYGx4D6"
+	by mail.kernel.org (Postfix) with ESMTP id 1628420882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:44:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbfA2Vll (ORCPT
+        id S1729125AbfA2Voh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 16:41:41 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45750 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727339AbfA2Vlk (ORCPT
+        Tue, 29 Jan 2019 16:44:37 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:37849 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726982AbfA2Voh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 16:41:40 -0500
-Received: by mail-qt1-f193.google.com with SMTP id e5so23975761qtr.12
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 13:41:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version;
-        bh=p8xnOvZSHMvDSgZGAc1wzQUwKncdi8WTrdqxIvluZ0o=;
-        b=vfYGx4D6OZSneIa7NZOJF9VhGjHOCtSSkHQyiAvEeG4tFMUixTqqEVi5FzWSUxFiFp
-         rg0/BVEs/WVS/SPPolQsI/UwEMXfc/FVCxrXW9W0SgM2jluoSUHazATW5bGRAvkRGMOp
-         vM6vXENljThoz2uzjjCqj4puk3H9QKpEx22Z4lzi5tzczZC0NO5Hasbm00Ar5T74iZjr
-         BW3BKxE0V85uSntDWII+gx1LClNcqmW4/0QLFE9bfIoRrQ/Ty2jynf47P/KwJ741iVCN
-         7Oaf3VpNFfZ5DhGiVwj74XN9XBNi7co9RzeOwVtSZGNM+0weTI6+kDfe4yw8msHu4dzN
-         bIIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version;
-        bh=p8xnOvZSHMvDSgZGAc1wzQUwKncdi8WTrdqxIvluZ0o=;
-        b=oBkEc2Mkfxxm63ZwUAROx+mahRu2Nf5h5E8yIiyG6umz3wj+XbcZXmkk+yf5nHQqIA
-         j2dndjuL2/XFaNWXbUMyY88SGT7B+QSzDoJ+Z0xiw/Nn7Bn3nuaSo+QE6UHQ8Hruylff
-         c9ffxT1nSasABMruUVdslUFAfdzU3dXKQBSMbA7m5Ei3lSOCp76RsjqGU3CjvkapRpzq
-         y3GyXsqGJdaTWYUWdJaQSB8sVIRSEmFMG67qM5zmUoOOk4t4jRt4Txlg00X9Z8Rcrx96
-         8yUmUWpxvbOykY0Ls9o0A54xhDyOshcdtrkiMBHwU5BkXxhDosbDJYzXYcCiLBE60SMv
-         3bAg==
-X-Gm-Message-State: AJcUukdzotSJ5y3O2tqBsVLHlZmnvVm+7s04GwZucJC8SR3/AJXmD+Iy
-        wkuSHCr1y+KfHBFeEGYOULf6Cw==
-X-Google-Smtp-Source: ALg8bN60yPISFL3544dT/MqkG6QDr9VICZrPdWezny+OX7W1Ga8ij8CSzpschO4sUxnVEu3jJff5pw==
-X-Received: by 2002:a0c:d792:: with SMTP id z18mr26408815qvi.183.1548798098924;
-        Tue, 29 Jan 2019 13:41:38 -0800 (PST)
-Received: from tpx230-nicolas.collaboramtl (modemcable154.55-37-24.static.videotron.ca. [24.37.55.154])
-        by smtp.gmail.com with ESMTPSA id r47sm84192955qtc.77.2019.01.29.13.41.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 13:41:38 -0800 (PST)
-Message-ID: <2442b23d3b0a00c1bd441298a712888e016acf92.camel@ndufresne.ca>
-Subject: Re: [linux-sunxi] [PATCH v2 1/2] media: v4l: Add definitions for
- the HEVC slice format and controls
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Alexandre Courbot <acourbot@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Ayaka <ayaka@soulik.info>, Randy Li <randy.li@rock-chips.com>,
-        Jernej =?UTF-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-rockchip@lists.infradead.org
-Date:   Tue, 29 Jan 2019 16:41:35 -0500
-In-Reply-To: <CAPBb6MUJu3cX9A-E32bSSjxc1cvGP83ayzZzUxa5_QMf6niK4g@mail.gmail.com>
-References: <20181123130209.11696-1-paul.kocialkowski@bootlin.com>
-         <20181123130209.11696-2-paul.kocialkowski@bootlin.com>
-         <5515174.7lFZcYkk85@jernej-laptop>
-         <ffe9c81db34b599f675ca5bbf02de360bf0a1608.camel@bootlin.com>
-         <776e63c9-d4a5-342a-e0f7-200ef144ffc4@rock-chips.com>
-         <64c793e08d61181b78125b3956ec38623fa5d261.camel@bootlin.com>
-         <D8005130-F7FD-4CBD-8396-1BB08BB08E81@soulik.info>
-         <f982ef378a8ade075bc7077b93640e20ecebf9f4.camel@bootlin.com>
-         <82FA0C3F-BC54-4D89-AECB-90D81B89B1CE@soulik.info>
-         <c3619a00-17e7-fb92-a427-a7478b96f356@soulik.info>
-         <bdf14f97e98f2fd06307545ab9038ac3c2086ae7.camel@bootlin.com>
-         <42520087-4EAE-4F7F-BCA0-42E422170E91@soulik.info>
-         <ab8ca098ad60f209fe97f79bb93b2d1e898da524.camel@bootlin.com>
-         <CAPBb6MUJu3cX9A-E32bSSjxc1cvGP83ayzZzUxa5_QMf6niK4g@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-        boundary="=-2kunDr+ALQ68ZYgOww0f"
-User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
-Mime-Version: 1.0
+        Tue, 29 Jan 2019 16:44:37 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gobBJ-0006Ro-3f; Tue, 29 Jan 2019 14:44:33 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gobBH-0006IU-Ah; Tue, 29 Jan 2019 14:44:32 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     <linux-api@vger.kernel.org>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Karel Zak <kzak@redhat.com>, <util-linux@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Date:   Tue, 29 Jan 2019 15:44:22 -0600
+Message-ID: <87va2716mh.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="=-=-="
+X-XM-SPF: eid=1gobBH-0006IU-Ah;;;mid=<87va2716mh.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18ELjRQY7qbNumlg3GNHfIl48WmXLK0mo0=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [RFD] A mount api that notices previous mounts
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--=-=-=
+Content-Type: text/plain
 
---=-2kunDr+ALQ68ZYgOww0f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Le mardi 29 janvier 2019 =C3=A0 16:44 +0900, Alexandre Courbot a =C3=A9crit=
- :
-> On Fri, Jan 25, 2019 at 10:04 PM Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
-> > Hi,
-> >=20
-> > On Thu, 2019-01-24 at 20:23 +0800, Ayaka wrote:
-> > > Sent from my iPad
-> > >=20
-> > > > On Jan 24, 2019, at 6:27 PM, Paul Kocialkowski <paul.kocialkowski@b=
-ootlin.com> wrote:
-> > > >=20
-> > > > Hi,
-> > > >=20
-> > > > > On Thu, 2019-01-10 at 21:32 +0800, ayaka wrote:
-> > > > > I forget a important thing, for the rkvdec and rk hevc decoder, i=
-t would
-> > > > > requests cabac table, scaling list, picture parameter set and ref=
-erence
-> > > > > picture storing in one or various of DMA buffers. I am not talkin=
-g about
-> > > > > the data been parsed, the decoder would requests a raw data.
-> > > > >=20
-> > > > > For the pps and rps, it is possible to reuse the slice header, ju=
-st let
-> > > > > the decoder know the offset from the bitstream bufer, I would sug=
-gest to
-> > > > > add three properties(with sps) for them. But I think we need a me=
-thod to
-> > > > > mark a OUTPUT side buffer for those aux data.
-> > > >=20
-> > > > I'm quite confused about the hardware implementation then. From wha=
-t
-> > > > you're saying, it seems that it takes the raw bitstream elements ra=
-ther
-> > > > than parsed elements. Is it really a stateless implementation?
-> > > >=20
-> > > > The stateless implementation was designed with the idea that only t=
-he
-> > > > raw slice data should be passed in bitstream form to the decoder. F=
-or
-> > > > H.264, it seems that some decoders also need the slice header in ra=
-w
-> > > > bitstream form (because they take the full slice NAL unit), see the
-> > > > discussions in this thread:
-> > > > media: docs-rst: Document m2m stateless video decoder interface
-> > >=20
-> > > Stateless just mean it won=E2=80=99t track the previous result, but I=
- don=E2=80=99t
-> > > think you can define what a date the hardware would need. Even you
-> > > just build a dpb for the decoder, it is still stateless, but parsing
-> > > less or more data from the bitstream doesn=E2=80=99t stop a decoder b=
-ecome a
-> > > stateless decoder.
-> >=20
-> > Yes fair enough, the format in which the hardware decoder takes the
-> > bitstream parameters does not make it stateless or stateful per-se.
-> > It's just that stateless decoders should have no particular reason for
-> > parsing the bitstream on their own since the hardware can be designed
-> > with registers for each relevant bitstream element to configure the
-> > decoding pipeline. That's how GPU-based decoder implementations are
-> > implemented (VAAPI/VDPAU/NVDEC, etc).
-> >=20
-> > So the format we have agreed on so far for the stateless interface is
-> > to pass parsed elements via v4l2 control structures.
-> >=20
-> > If the hardware can only work by parsing the bitstream itself, I'm not
-> > sure what the best solution would be. Reconstructing the bitstream in
-> > the kernel is a pretty bad option, but so is parsing in the kernel or
-> > having the data both in parsed and raw forms. Do you see another
-> > possibility?
->=20
-> Is reconstructing the bitstream so bad? The v4l2 controls provide a
-> generic interface to an encoded format which the driver needs to
-> convert into a sequence that the hardware can understand. Typically
-> this is done by populating hardware-specific structures. Can't we
-> consider that in this specific instance, the hardware-specific
-> structure just happens to be identical to the original bitstream
-> format?
+All,
 
-At maximum allowed bitrate for let's say HEVC (940MB/s iirc), yes, it
-would be really really bad. In GStreamer project we have discussed for
-a while (but have never done anything about) adding the ability through
-a bitmask to select which part of the stream need to be parsed, as
-parsing itself was causing some overhead. Maybe similar thing applies,
-though as per our new design, it's the fourcc that dictate the driver
-behaviour, we'd need yet another fourcc for drivers that wants the full
-bitstream (which seems odd if you have already parsed everything, I
-think this need some clarification).
+With the existing mount API it is possible to mount a filesystem
+like:
 
->=20
-> I agree that this is not strictly optimal for that particular
-> hardware, but such is the cost of abstractions, and in this specific
-> case I don't believe the cost would be particularly high?
+mount -t ext4 /dev/sda1 -o user_xattr /some/path
+mount -t ext4 /dev/sda1 -o nouser_xattr /some/other/path
 
---=-2kunDr+ALQ68ZYgOww0f
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+And have both mount commands succeed and have two mounts of the same
+filesystem.  If the mounter is not attentive or the first mount is added
+earlier it may not be immediately noticed that a mount option that is
+needed for the correct operation or the security of the system is lost.
 
------BEGIN PGP SIGNATURE-----
+We have seen this failure mode with both devpts and proc.  So it is not
+theoretical, and it has resulted in CVEs.
 
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCXFDIjwAKCRBxUwItrAao
-HMH7AJ9In4tsGt+ueK2AiiooucvNAJ+86QCdFysjbjVAgW9gD81I6i2cYXI9afk=
-=CPiw
------END PGP SIGNATURE-----
+In some cases the existing mount API (such as a conflict between ro and
+rw) handles this by returning -EBUSY.  So we may be able to correct this
+in the existing mount API.  But it is always very tricky to to get
+adequate testing for a change like that to avoid regressions, so I am
+proposing we change this in the new mount api.
 
---=-2kunDr+ALQ68ZYgOww0f--
+This has been brought up before and I have been told it is technically
+infeasible to make this work.  To counter that I have sat down and
+implemented it.
 
+The basic idea is:
+ - get a handle to a filesystem
+   (passing enough options to uniquely identify the super block).
+   Also capture enough state in the file handle to let you know if
+   the file system has it's mount options changed between system calls.
+   (essentially this is just the fs code that calls sget)
+
+ - If the super block has not been configured allow setting the file
+   systems options.
+
+ - If the super block has already been configured require reading the
+   file systems mount options before setting/updating the file systems
+   mount options.
+
+To complement that I have functionality that:
+ - Allows reading a file systems current mount options.
+ - Allows reading the mount options that are needed to get a handle to
+   the filesystem.  For most filesystems it is just the block device
+   name.  For nfs is is essentially all mount options.  For btrfs
+   it is the block device name, and the "devices=" mount option for
+   secondary block device names.
+
+Please find below a tree where all of this is implemented and working.
+Not all file systems have been converted but the most of the unconverted
+ones are just a couple minutes work as I have converted all of the file
+system mount helper routines.
+
+Also please find below an example mount program that takes the same set
+of mount options as mount(8) today and mounts filesystems with the
+proposed new mount api.
+ - Without having any filesystem mount knowledge it sucessfully figures
+
+out which system calls different mount options needs to be applied
+   to.
+
+- Without having any filesystem specific knowledge in most cases it
+   can detect if a mount option you specify is already specified to an
+   existing mount or not.  For duplicates it can detect it ignores them.
+   For the other cases it fails the mount as it thinks the mount options
+   are different.
+
+ - Which demonstrates it safe to put the detection and remediation of
+   multiple mount commands resolving to the same filesystem in user
+   space.
+
+I really don't care whose code gets used as long as it works.  I do very
+much care that we don't add a new mount api that has the confusion flaws
+of the existing mount api.
+
+Along the way I have also detected a lot of room for improvement on the
+mount path for filesystems.  Those cleanup patches are in my tree below
+and will be extracting them and sending them along shortly.
+
+Comments?
+
+git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git no-losing-mount-options-proof-of-concept
+
+
+--=-=-=
+Content-Type: text/x-csrc
+Content-Disposition: attachment; filename=example_mount.c
+
+/* gcc -Wall -O2 -g example_mount.c -o example_mount */
+#define _ATFILE_SOURCE
+#include <sys/syscall.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/syscall.h>
+
+#ifdef __x86_64__
+# ifndef __NR_open_tree
+#  define __NR_open_tree 335
+# endif
+# ifndef __NR_move_mount
+#  define __NR_move_mount 336
+# endif
+# ifndef __NR_fsopen
+#  define  __NR_fsopen 337
+# endif
+# ifndef __NR_fsspecifiers
+#  define  __NR_fsspecifiers 338
+# endif
+# ifndef __NR_fsinstance
+#  define  __NR_fsinstance 339
+# endif
+# ifndef __NR_fspick
+#  define  __NR_fspick 340
+# endif
+# ifndef __NR_fsset
+#  define  __NR_fsset 341
+# endif
+# ifndef __NR_fsmount
+#  define  __NR_fsmount 342
+# endif
+# ifndef __NR_fsoptions
+#  define  __NR_fsoptions 343
+# endif
+# ifndef __NR_fsname
+#  define  __NR_fsname 344
+# endif
+# ifndef __NR_fstype
+#  define  __NR_fstype 345
+# endif
+#endif /* x86_64 */
+
+#ifndef MOVE_MOUNT_F_SYMLINKS
+# define MOVE_MOUNT_F_SYMLINKS		0x00000001 /* Follow symlinks on from path */
+#endif
+#ifndef MOVE_MOUNT_F_AUTOMOUNTS
+# define MOVE_MOUNT_F_AUTOMOUNTS	0x00000002 /* Follow automounts on from path */
+#endif
+#ifndef MOVE_MOUNT_F_EMPTY_PATH
+# define MOVE_MOUNT_F_EMPTY_PATH	0x00000004 /* Empty from path permitted */
+#endif
+#ifndef MOVE_MOUNT_T_SYMLINKS
+# define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
+#endif
+#ifndef MOVE_MOUNT_T_AUTOMOUNTS
+# define MOVE_MOUNT_T_AUTOMOUNTS	0x00000020 /* Follow automounts on to path */
+#endif
+#ifndef MOVE_MOUNT_T_EMPTY_PATH
+# define MOVE_MOUNT_T_EMPTY_PATH	0x00000040 /* Empty to path permitted */
+#endif
+
+int open_tree(int dfd, const char *path, unsigned int flags)
+{
+	return syscall(__NR_open_tree, dfd, path, flags);
+}
+
+int move_mount(int from_dfd, const char *from_path,
+	       int to_dfd, const char *to_path, unsigned int flags)
+{
+	return syscall(__NR_move_mount, from_dfd, from_path, to_dfd, to_path, flags);
+}
+
+int fsopen(const char *type)
+{
+	return syscall(__NR_fsopen, type);
+}
+
+
+int fsspecifiers(int driverfd, char *specifiers, size_t specifiers_len)
+{
+	return syscall(__NR_fsspecifiers, driverfd, specifiers, specifiers_len);
+}
+
+
+int fsinstance(int driverfd, const char *name, const char *specifiers)
+{
+	return syscall(__NR_fsinstance, driverfd, name, specifiers);
+}
+
+
+int fspick(int dfd, const char *path, unsigned int flags)
+{
+	return syscall(__NR_fspick, dfd, path, flags);
+}
+
+int fsset(int instancefd, const char *options)
+{
+	return syscall(__NR_fsset, instancefd, options);
+}
+
+int fsmount(int instancefd, const char *options)
+{
+	return syscall(__NR_fsmount, instancefd, options);
+}
+
+int fsoptions(int instancefd, char *options, size_t options_len)
+{
+	return syscall(__NR_fsoptions, instancefd, options, options_len);
+}
+
+int fsname(int instancefd, char *name, size_t name_len)
+{
+	return syscall(__NR_fsname, instancefd, name, name_len);
+}
+
+int fstype(int instancefd, char *type, size_t type_len)
+{
+	return syscall(__NR_fstype, instancefd, type, type_len);
+}
+
+
+static const char *mount_vec[] = {
+	"ro",
+	"rw",
+	"nosuid",
+	"nodev",
+	"dev",
+	"noexec",
+	"nodiratime",
+	"diratime",
+	"noatime",
+	"relatime",
+	"strictatime",
+	NULL
+};
+
+static const char *joint_vec[] = {
+	"ro",
+	"rw",
+	NULL
+};
+
+static char *parse_mnt_opt(char *opt, char *end)
+{
+	char *p, *equal = NULL;
+	int open_quote;
+
+	open_quote = 0;
+	for (p = opt; (p < end) && *p; p++) {
+		if (equal && (*p == '"'))
+			open_quote ^= 1;
+		if (open_quote)
+			continue;
+		if (!equal && (*p == '='))
+			equal = p;
+		else if (*p == ',') {
+			end = p;
+			break;
+		}
+	}
+	/* Unbalaned quotes? */
+	if (open_quote) {
+		errno = -EINVAL;
+		return NULL;
+	}
+
+	return end;
+}
+
+int split_options(char *options, const char ***optvp)
+{
+	const char **vec = NULL;
+	size_t count = 0, index = 0;
+	char *opt, *end, *comma;
+
+	opt = options;
+	end = opt + strlen(opt);
+	for (comma = opt; comma != end; opt = comma + 1) {
+		comma = parse_mnt_opt(opt, end);
+		if (!comma)
+			return -1;
+
+		if (opt == comma)
+			continue;
+
+		count++;
+	}
+
+	vec = calloc(count + 1, sizeof(char *));
+	if (!vec)
+		return -1;
+
+	opt = options;
+	for (comma = opt; comma != end; opt = comma + 1) {
+		comma = parse_mnt_opt(opt, end);
+		if (!comma)
+			abort();
+
+		if (opt == comma)
+			continue;
+
+		*comma = '\0';
+		vec[index++] = opt;
+	}
+	vec[index] = NULL;
+	*optvp = vec;
+	return 0;
+}
+
+static char *join_options(const char *optv[])
+{
+	char *flat, *flat_opt;
+	const char **opt;
+	size_t bytes = 0;
+
+	for (opt = optv; *opt; opt++) {
+		size_t len = strlen(*opt);
+		/* An extra byte for the comma */
+		bytes += len + 1;
+	}
+
+	flat_opt = flat = malloc(bytes + 1);
+	if (!flat) {
+		fprintf(stderr, "malloc failed: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+
+	for (opt = optv; *opt; opt++) {
+		size_t len = strlen(*opt);
+		if (flat_opt != flat) {
+			*flat_opt = ',';
+			flat_opt += 1;
+		}
+		memcpy(flat_opt, *opt, len);
+		flat_opt += len;
+	}
+	*flat_opt = '\0';
+	return flat;
+}
+
+
+void build_option_strings(int dfd,
+	const char **specifiers, const char **ioptions, const char **moptions,
+	const char *input_options)
+{
+	char accepted_specifiers[1024*1024];
+	const char **ovec, **asvec, **svec, **ivec, **mvec;
+	const char **opt, **sopt, **iopt, **mopt;
+	char *options;
+	size_t count;
+	int ret;
+
+	ret = fsspecifiers(dfd, accepted_specifiers, sizeof(accepted_specifiers));
+	if (ret < 0) {
+		fprintf(stderr, "fsspecifiers failed: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+
+	options = strdup(input_options);
+	if (!options) {
+		fprintf(stderr, "strdup failed: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+	if (split_options(options, &ovec) != 0) {
+		fprintf(stderr, "split_options failed: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+	if (split_options(accepted_specifiers, &asvec) != 0) {
+		fprintf(stderr, "split_options failed: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+
+	for (count = 0, opt = ovec; *opt; opt++) {
+		count++;
+	}
+
+	svec = calloc(count + 1, sizeof(char *));
+	if (!svec) {
+		fprintf(stderr, "calloc failed: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+	ivec = calloc(count + 1, sizeof(char *));
+	if (!ivec) {
+		fprintf(stderr, "calloc failed: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+	mvec = calloc(count + 1, sizeof(char *));
+	if (!mvec) {
+		fprintf(stderr, "calloc failed: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+
+	sopt = svec;
+	iopt = ivec;
+	mopt = mvec;
+	for (opt = ovec; *opt; opt++) {
+		const char **topt;
+		const char *sep;
+		int len;
+
+		sep = strchr(*opt, '=');
+		len = sep ? sep - *opt : strlen(*opt);
+
+		/* Is the option both a mount an a normal option? */
+		for (topt = joint_vec; *topt; topt++) {
+			if (strcmp(*opt, *topt) == 0) {
+				*mopt++ = *opt;
+				goto fsoption;
+			}
+		}
+		/* Is the option just a mount option? */
+		for (topt = mount_vec; *topt; topt++) {
+			if (strcmp(*opt, *topt) == 0) {
+				*mopt++ = *opt;
+				goto placed;
+			}
+		}
+	fsoption:
+		for (topt = asvec; *topt; topt++) {
+			char tail;
+			if (strncmp(*opt, *topt, len) != 0)
+				continue;
+			tail = (*opt)[len];
+			if (tail != (sep ? '=' : '\0'))
+				continue;
+			*sopt++ = *opt;
+			goto placed;
+		}
+		*iopt++ = *opt;
+	placed:
+		;
+	}
+	*sopt = NULL;
+	*iopt = NULL;
+	*mopt = NULL;
+	*specifiers = join_options(svec);
+	*ioptions = join_options(ivec);
+	*moptions = join_options(mvec);
+	free(svec);
+	free(ivec);
+	free(mvec);
+	return;
+}
+
+int main(int argc, char **argv)
+{
+	const char *type, *name, *specifiers, *options, *moptions, *dir;
+	const char *input_options;
+	int dfd, ifd, mfd, ret;
+
+	if (argc != 5) {
+		fprintf(stderr, "usage: new_mount <type> <name> <options> <dir>\n");
+		return EXIT_FAILURE;
+	}
+
+	type = argv[1];
+	name = argv[2];
+	input_options = argv[3];
+	dir = argv[4];
+
+	dfd = fsopen(type);
+	if (dfd < 0) {
+		fprintf(stderr, "fsopen failed: %s\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
+
+	build_option_strings(dfd, &specifiers, &options, &moptions, input_options);
+
+	ifd = fsinstance(dfd, name, specifiers);
+	if (ifd < 0) {
+		fprintf(stderr, "fsinstance failed: %s\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
+
+	errno = 0;
+	ret = fsset(ifd, options);
+	if (ret && (errno != ESTALE)) {
+		fprintf(stderr, "fsset.1 failed: %s\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
+	if (errno == ESTALE) {
+		char existing_options[1024*1024];
+		const char **evec, **nvec, **eopt, **nopt;
+		char *new_options;
+		ret = fsoptions(ifd, existing_options, sizeof(existing_options));
+		if (ret < 0) {
+			fprintf(stderr, "fsoptions failed: %s\n", strerror(errno));
+			return EXIT_FAILURE;
+		}
+
+		new_options = strdup(options);
+		if (!new_options) {
+			fprintf(stderr, "strdup failed: %s\n", strerror(errno));
+			return EXIT_FAILURE;
+		}
+		if (split_options(existing_options, &evec) != 0) {
+			fprintf(stderr, "split_options failed: %s\n", strerror(errno));
+			return EXIT_FAILURE;
+		}
+		if (split_options(new_options, &nvec) != 0) {
+			fprintf(stderr, "split_options failed: %s\n", strerror(errno));
+			return EXIT_FAILURE;
+		}
+		for (nopt = nvec; *nopt; nopt++) {
+			for (eopt = evec; *eopt; eopt++) {
+				if (strcmp(*eopt, *nopt) == 0)
+					goto found;
+			}
+			fprintf(stderr, "Setting '%s' would change the existing file system options\n",
+				*nopt);
+			return EXIT_FAILURE;
+		found:
+			;
+		}
+		ret = fsset(ifd, options);
+		if (ret) {
+			fprintf(stderr, "fsset.2 failed: %s\n", strerror(errno));
+			return EXIT_FAILURE;
+		}
+
+	}
+
+	mfd = fsmount(ifd, moptions);
+	if (mfd < 0) {
+		fprintf(stderr, "fsmount failed: %s\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
+	close(ifd);
+
+	ret = move_mount(mfd, "", AT_FDCWD, dir, MOVE_MOUNT_F_EMPTY_PATH);
+	if (ret) {
+		fprintf(stderr, "move_mount failed: %s\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
+
+	return 0;
+}
+
+--=-=-=
+Content-Type: text/plain
+
+
+
+Eric
+
+
+--=-=-=--
