@@ -2,365 +2,180 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D24CC282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0327EC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 527E2214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:08:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A34A0214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:08:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RQ6YSHhE"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="IPv12kVM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbfA2IIl (ORCPT
+        id S1727383AbfA2IIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:08:41 -0500
-Received: from mail-eopbgr30089.outbound.protection.outlook.com ([40.107.3.89]:20736
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        Tue, 29 Jan 2019 03:08:48 -0500
+Received: from mail-eopbgr740042.outbound.protection.outlook.com ([40.107.74.42]:42592
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725468AbfA2IIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:08:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1726016AbfA2IIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:08:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YURbUw422ScAlv4SQ6d02/Q+xYwCuKhy824O9vETnG8=;
- b=RQ6YSHhEOgw5omCrqo4blcZ0spsUEWM40Rr+yWOI2r5vQpRTiKvDTCVacMPZ7DZQaKUYVZmqzS8IvstN/PwyzKfkUULq1Cxvj3Kzp0Loij77jI9HMlYJjAo59UbVPI1gxKfEzsdVk1LOhnmfJFTVW2bI8lL8nlvZzd5uCwCPODI=
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.3.19) by
- AM6PR04MB5847.eurprd04.prod.outlook.com (20.179.3.27) with Microsoft SMTP
+ bh=07oqAg+gDKpknSznhBGguBprEpMiDrPpoFqJ40bP5n8=;
+ b=IPv12kVMI57Onsm6r2EMdsjc5vOT2XhhlZSe78UMn7xV2XO6lBC4AFn9OIkmYkSGaZTchi8FkrfWHpZ3pfJ9b7XdEtPe38C+OTP/uQH+ajUx60ty3sk/eYbalinXovEcUNv5wiDOyJaio5qOE/wWLlKR7XQKPEwBwDD8Vln/r7o=
+Received: from DM6PR12MB2844.namprd12.prod.outlook.com (20.176.117.96) by
+ DM6PR12MB3610.namprd12.prod.outlook.com (20.178.199.84) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.17; Tue, 29 Jan 2019 08:08:34 +0000
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::9c0:e3aa:b41f:9504]) by AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::9c0:e3aa:b41f:9504%3]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
- 08:08:34 +0000
-From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
-To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>
-CC:     Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: [PATCHv3 01/27] PCI: mobiveil: uniform the register accessors
-Thread-Topic: [PATCHv3 01/27] PCI: mobiveil: uniform the register accessors
-Thread-Index: AQHUt6nUdk4grkaopECRyHHb4VOFRQ==
-Date:   Tue, 29 Jan 2019 08:08:34 +0000
-Message-ID: <20190129080926.36773-2-Zhiqiang.Hou@nxp.com>
-References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
+ 15.20.1558.20; Tue, 29 Jan 2019 08:08:43 +0000
+Received: from DM6PR12MB2844.namprd12.prod.outlook.com
+ ([fe80::c40:929a:abab:308d]) by DM6PR12MB2844.namprd12.prod.outlook.com
+ ([fe80::c40:929a:abab:308d%3]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
+ 08:08:43 +0000
+From:   "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+CC:     "joro@8bytes.org" <joro@8bytes.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+Subject: [PATCH]  svm: Fix AVIC DFR and LDR handling
+Thread-Topic: [PATCH]  svm: Fix AVIC DFR and LDR handling
+Thread-Index: AQHUt6nZSHpjO5TYpUuwav6+0LPYQA==
+Date:   Tue, 29 Jan 2019 08:08:42 +0000
+Message-ID: <20190129080813.40689-1-suravee.suthikulpanit@amd.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0PR04CA0008.apcprd04.prod.outlook.com
- (2603:1096:203:36::20) To AM6PR04MB5781.eurprd04.prod.outlook.com
- (2603:10a6:20b:ad::19)
+x-originating-ip: [124.121.4.14]
+x-clientproxiedby: SG2PR01CA0153.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::33) To DM6PR12MB2844.namprd12.prod.outlook.com
+ (2603:10b6:5:45::32)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=zhiqiang.hou@nxp.com; 
+ smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
-x-originating-ip: [119.31.174.73]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB5847;6:pApE1Q8ldQUS8VpZ+P0lijVLKH4dwwg29XdlLDg5fZpufZJfjMFx8g3ecsTf9CwDcQ4547efq3Ufe0LM4Ul5li9h14V3rmJkK4g9eS18cvLfY2j01e5Wbu9W0laVkcCBwzgeQJ4KVYnRyqxce2lx/l1BUc4TMkLxAO5JFwjHid/3JQDh/tk8+DxSFknQuedj3LPVIiI0fsbQnKPi5oeuZDnT88aKTuDoD9/7zjCbWwdc3s+MFsAQI8vmLg8FwvXUU4BGW2tRJvaWhkjRafx884wAsi1PLNoLc+SFpMeVMyInMFzZtalyj6CQHzMP/gzjXd9pG4It0COk9HSz3rL9eixWfqOG/eFg6May1jX3Ir1u17/WAWuP8PFGF0FkMTmDxclxeOC4ViSInvw2kbR/ADqE8MRytUlxpKmZ+mGSROzWb3QwT8a9iPFhu5WtVPkS/UBU4kbQE6UjmA9vLyEWVg==;5:HJ/H5nxrNSccIQHaPFyb/NjMV73E0WJyK9Zmmc03lTNqhHkCaizVkoXlcCyGE1Nx/Hgb4mDHNmXmgQBhU17JE9YZZSA2d8wsNQWC4SCOgxBppK70TNz9M7uWfA4lhxcVKPc/82XPFFIHxHtvW+8Wy4FUD/wyKvOc759DhRZSRAnKJVUoJm2LQY0JT2J7DWImSwlZ/8gjt8JT6a6NuuzYhQ==;7:xgnVKJphIHgG8cBiRuvb4RkcOgXtdJLzrfuF89KPkGCwEZrN5aAxVOqvRSkFUFXrOJfTp3DU/eUMBFxREaCiA8SsPI4BRpWh3qNUvu+VdKWjx0Wp7p7Lj4Zs5Zu8mayEe5hHrfSkZgYEcWXlCd0pOw==
-x-ms-office365-filtering-correlation-id: bd76ab15-84ee-4fb9-73cf-08d685c0f6f3
+x-microsoft-exchange-diagnostics: 1;DM6PR12MB3610;20:WoQ+R6FLejrwnB0XyIK9ASRpOoNFVSxlyEGhUCbo1Ppu1TH+9GqGGCquvNkmrvymj4SPlcdWoDRZNiIqwNZ5LQot2uhlDyqajuij3Tsx9x2EAJgvqdNlB8ZrkyZGuRhQuBB3gt68o/VTiifsQM92gtONNtpeazW0Bx4EMSamCi9Wj1p+hbPEr9CM9pwDdSD610kvKJISzYtaxzjYtAB/RvolB2nBc83I6n43OC/ps88NOdzlz6ZkJVOk34DtOJQj
+x-ms-office365-filtering-correlation-id: d5a41b97-b80a-44e1-3ff7-08d685c0fbc6
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5847;
-x-ms-traffictypediagnostic: AM6PR04MB5847:
-x-microsoft-antispam-prvs: <AM6PR04MB5847B70925D763A14DC467C884970@AM6PR04MB5847.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB3610;
+x-ms-traffictypediagnostic: DM6PR12MB3610:
+x-microsoft-antispam-prvs: <DM6PR12MB36102DA298354DBE6A60E14CF3970@DM6PR12MB3610.namprd12.prod.outlook.com>
 x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(366004)(376002)(136003)(199004)(189003)(14444005)(14454004)(66066001)(478600001)(2616005)(6436002)(71200400001)(446003)(486006)(54906003)(11346002)(476003)(99286004)(110136005)(52116002)(256004)(6486002)(36756003)(6506007)(386003)(316002)(97736004)(26005)(102836004)(71190400001)(186003)(76176011)(81156014)(81166006)(7736002)(8676002)(3846002)(50226002)(305945005)(4326008)(7416002)(25786009)(1076003)(2906002)(53936002)(6116002)(86362001)(2201001)(105586002)(106356001)(8936002)(2501003)(68736007)(6512007)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5847;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(366004)(136003)(39860400002)(199004)(189003)(305945005)(8676002)(81156014)(71200400001)(81166006)(71190400001)(50226002)(7736002)(6116002)(3846002)(256004)(14444005)(217873002)(8936002)(1076003)(66574012)(2906002)(54906003)(66066001)(52116002)(110136005)(316002)(68736007)(97736004)(386003)(6506007)(99286004)(7416002)(6512007)(102836004)(4326008)(26005)(486006)(476003)(2501003)(2616005)(6486002)(6436002)(186003)(105586002)(72206003)(36756003)(478600001)(53936002)(14454004)(2201001)(106356001)(25786009)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3610;H:DM6PR12MB2844.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: BlFymusaf79FmIAal+Vahf+ivz6tle722klMCWp7Tym8Gfi43vfctg41eOY4m2YVPrNjHVpqafy0IoRgSEoHs3wblL5Tm1OK7qfRnlr4S4guN+dd5iXh3gVpT12HEYKQHfhQ4KCD2dEUdJCPIpfdV2MaTYrhsG5yw2EbnXn3TX9TJ8VhhArPsTPVcLbt11Mk9WjMJOFy3ZAkFM9xc4GCY/eMy1QKsCqkEUPFc626ZAWTL1U67EYHAOj96SG0fFiDnJwgcK5fXohoKjk2a1G6pKImbFmfCUvGENBOnOsMZCyN4gzf3RWFPinQ5kUMUDdLJNQwCecnrON+RYAWkv9Laze5ezC46XSJVH2owdjlrUVoSmMQIumK5LnHCL4omSOWowXEzSSmcKR8GqTC+zBZVTGS53r2tWabJk5n1dPH+Kg=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+x-microsoft-antispam-message-info: OjpCHd15mnAhmJSCPNBBSqg1aB+snGf4H4soHWi4omp1CdwA8XgWi9oEV5/XLwC2+i8w0lSZS81zsTOs2OBJNK2fQMKwaEn/3qlxYFC2UCYU9/C4S5mj2Abg6+L6qrbusBr62cZqpmNW68+uSln1Dk9knsWfIbchLYPY2XBY2f8Nt1f1+HWVw9jzYvuIVXHGxWD0H0lJiQhHB68UPc2v5B3Yfy4my1rQIwaaqNjhbdCxaVv9HcISz5d6wX0r51un67ajBX5zxviKIRmy9FlTeVXbCVl7Ha+gULaHDnSEces/V7cEQ+MdAcjzlwNR5rmNwsCwHZnSrkIrvRyLsW3+HnKKxkV8dxlI2juFN+HcPjb/76Kadd+b9EKmnGQYoaWUKQPzobZJqoXskmfqQNevjsof2gmEZP7qRd97gU+p6m0=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <114CC33A045E884AA8CA38F04DFE5B3C@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd76ab15-84ee-4fb9-73cf-08d685c0f6f3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 08:08:28.6930
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5a41b97-b80a-44e1-3ff7-08d685c0fbc6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 08:08:38.8247
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5847
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3610
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-
-It's confused that R/W some registers by csr_readl()/csr_writel(),
-while others by read_paged_register()/write_paged_register().
-Actually the low 3KB of 4KB PCIe configure space can be accessed
-directly and high 1KB is paging area. So this patch uniformed the
-register accessors to csr_readl() and csr_writel() by comparing
-the register offset with page access boundary 3KB in the accessor
-internal.
-
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
----
-V3:
- - No change
-
- drivers/pci/controller/pcie-mobiveil.c | 179 +++++++++++++++++--------
- 1 file changed, 124 insertions(+), 55 deletions(-)
-
-diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controlle=
-r/pcie-mobiveil.c
-index 77052a0712d0..d55c7e780c6e 100644
---- a/drivers/pci/controller/pcie-mobiveil.c
-+++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -47,7 +47,6 @@
- #define  PAGE_SEL_SHIFT	13
- #define  PAGE_SEL_MASK		0x3f
- #define  PAGE_LO_MASK		0x3ff
--#define  PAGE_SEL_EN		0xc00
- #define  PAGE_SEL_OFFSET_SHIFT	10
-=20
- #define PAB_AXI_PIO_CTRL	0x0840
-@@ -117,6 +116,12 @@
- #define LINK_WAIT_MIN	90000
- #define LINK_WAIT_MAX	100000
-=20
-+#define PAGED_ADDR_BNDRY			0xc00
-+#define OFFSET_TO_PAGE_ADDR(off)		\
-+	((off & PAGE_LO_MASK) | PAGED_ADDR_BNDRY)
-+#define OFFSET_TO_PAGE_IDX(off)			\
-+	((off >> PAGE_SEL_OFFSET_SHIFT) & PAGE_SEL_MASK)
-+
- struct mobiveil_msi {			/* MSI information */
- 	struct mutex lock;		/* protect bitmap variable */
- 	struct irq_domain *msi_domain;
-@@ -145,15 +150,119 @@ struct mobiveil_pcie {
- 	struct mobiveil_msi msi;
- };
-=20
--static inline void csr_writel(struct mobiveil_pcie *pcie, const u32 value,
--		const u32 reg)
-+/*
-+ * mobiveil_pcie_sel_page - routine to access paged register
-+ *
-+ * Registers whose address greater than PAGED_ADDR_BNDRY (0xc00) are paged=
-,
-+ * for this scheme to work extracted higher 6 bits of the offset will be
-+ * written to pg_sel field of PAB_CTRL register and rest of the lower 10
-+ * bits enabled with PAGED_ADDR_BNDRY are used as offset of the register.
-+ */
-+static void mobiveil_pcie_sel_page(struct mobiveil_pcie *pcie, u8 pg_idx)
- {
--	writel_relaxed(value, pcie->csr_axi_slave_base + reg);
-+	u32 val;
-+
-+	val =3D readl(pcie->csr_axi_slave_base + PAB_CTRL);
-+	val &=3D ~(PAGE_SEL_MASK << PAGE_SEL_SHIFT);
-+	val |=3D (pg_idx & PAGE_SEL_MASK) << PAGE_SEL_SHIFT;
-+
-+	writel(val, pcie->csr_axi_slave_base + PAB_CTRL);
- }
-=20
--static inline u32 csr_readl(struct mobiveil_pcie *pcie, const u32 reg)
-+static void *mobiveil_pcie_comp_addr(struct mobiveil_pcie *pcie, u32 off)
- {
--	return readl_relaxed(pcie->csr_axi_slave_base + reg);
-+	if (off < PAGED_ADDR_BNDRY) {
-+		/* For directly accessed registers, clear the pg_sel field */
-+		mobiveil_pcie_sel_page(pcie, 0);
-+		return pcie->csr_axi_slave_base + off;
-+	}
-+
-+	mobiveil_pcie_sel_page(pcie, OFFSET_TO_PAGE_IDX(off));
-+	return pcie->csr_axi_slave_base + OFFSET_TO_PAGE_ADDR(off);
-+}
-+
-+static int mobiveil_pcie_read(void __iomem *addr, int size, u32 *val)
-+{
-+	if ((uintptr_t)addr & (size - 1)) {
-+		*val =3D 0;
-+		return PCIBIOS_BAD_REGISTER_NUMBER;
-+	}
-+
-+	switch (size) {
-+	case 4:
-+		*val =3D readl(addr);
-+		break;
-+	case 2:
-+		*val =3D readw(addr);
-+		break;
-+	case 1:
-+		*val =3D readb(addr);
-+		break;
-+	default:
-+		*val =3D 0;
-+		return PCIBIOS_BAD_REGISTER_NUMBER;
-+	}
-+
-+	return PCIBIOS_SUCCESSFUL;
-+}
-+
-+static int mobiveil_pcie_write(void __iomem *addr, int size, u32 val)
-+{
-+	if ((uintptr_t)addr & (size - 1))
-+		return PCIBIOS_BAD_REGISTER_NUMBER;
-+
-+	switch (size) {
-+	case 4:
-+		writel(val, addr);
-+		break;
-+	case 2:
-+		writew(val, addr);
-+		break;
-+	case 1:
-+		writeb(val, addr);
-+		break;
-+	default:
-+		return PCIBIOS_BAD_REGISTER_NUMBER;
-+	}
-+
-+	return PCIBIOS_SUCCESSFUL;
-+}
-+
-+static u32 csr_read(struct mobiveil_pcie *pcie, u32 off, size_t size)
-+{
-+	void *addr;
-+	u32 val;
-+	int ret;
-+
-+	addr =3D mobiveil_pcie_comp_addr(pcie, off);
-+
-+	ret =3D mobiveil_pcie_read(addr, size, &val);
-+	if (ret)
-+		dev_err(&pcie->pdev->dev, "read CSR address failed\n");
-+
-+	return val;
-+}
-+
-+static void csr_write(struct mobiveil_pcie *pcie, u32 val, u32 off, size_t=
- size)
-+{
-+	void *addr;
-+	int ret;
-+
-+	addr =3D mobiveil_pcie_comp_addr(pcie, off);
-+
-+	ret =3D mobiveil_pcie_write(addr, size, val);
-+	if (ret)
-+		dev_err(&pcie->pdev->dev, "write CSR address failed\n");
-+}
-+
-+static u32 csr_readl(struct mobiveil_pcie *pcie, u32 off)
-+{
-+	return csr_read(pcie, off, 0x4);
-+}
-+
-+static void csr_writel(struct mobiveil_pcie *pcie, u32 val, u32 off)
-+{
-+	csr_write(pcie, val, off, 0x4);
- }
-=20
- static bool mobiveil_pcie_link_up(struct mobiveil_pcie *pcie)
-@@ -342,45 +451,6 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie=
- *pcie)
- 	return 0;
- }
-=20
--/*
-- * select_paged_register - routine to access paged register of root comple=
-x
-- *
-- * registers of RC are paged, for this scheme to work
-- * extracted higher 6 bits of the offset will be written to pg_sel
-- * field of PAB_CTRL register and rest of the lower 10 bits enabled with
-- * PAGE_SEL_EN are used as offset of the register.
-- */
--static void select_paged_register(struct mobiveil_pcie *pcie, u32 offset)
--{
--	int pab_ctrl_dw, pg_sel;
--
--	/* clear pg_sel field */
--	pab_ctrl_dw =3D csr_readl(pcie, PAB_CTRL);
--	pab_ctrl_dw =3D (pab_ctrl_dw & ~(PAGE_SEL_MASK << PAGE_SEL_SHIFT));
--
--	/* set pg_sel field */
--	pg_sel =3D (offset >> PAGE_SEL_OFFSET_SHIFT) & PAGE_SEL_MASK;
--	pab_ctrl_dw |=3D ((pg_sel << PAGE_SEL_SHIFT));
--	csr_writel(pcie, pab_ctrl_dw, PAB_CTRL);
--}
--
--static void write_paged_register(struct mobiveil_pcie *pcie,
--		u32 val, u32 offset)
--{
--	u32 off =3D (offset & PAGE_LO_MASK) | PAGE_SEL_EN;
--
--	select_paged_register(pcie, offset);
--	csr_writel(pcie, val, off);
--}
--
--static u32 read_paged_register(struct mobiveil_pcie *pcie, u32 offset)
--{
--	u32 off =3D (offset & PAGE_LO_MASK) | PAGE_SEL_EN;
--
--	select_paged_register(pcie, offset);
--	return csr_readl(pcie, off);
--}
--
- static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
- 		int pci_addr, u32 type, u64 size)
- {
-@@ -397,19 +467,19 @@ static void program_ib_windows(struct mobiveil_pcie *=
-pcie, int win_num,
- 	pio_ctrl_val =3D csr_readl(pcie, PAB_PEX_PIO_CTRL);
- 	csr_writel(pcie,
- 		pio_ctrl_val | (1 << PIO_ENABLE_SHIFT), PAB_PEX_PIO_CTRL);
--	amap_ctrl_dw =3D read_paged_register(pcie, PAB_PEX_AMAP_CTRL(win_num));
-+	amap_ctrl_dw =3D csr_readl(pcie, PAB_PEX_AMAP_CTRL(win_num));
- 	amap_ctrl_dw =3D (amap_ctrl_dw | (type << AMAP_CTRL_TYPE_SHIFT));
- 	amap_ctrl_dw =3D (amap_ctrl_dw | (1 << AMAP_CTRL_EN_SHIFT));
-=20
--	write_paged_register(pcie, amap_ctrl_dw | lower_32_bits(size64),
--				PAB_PEX_AMAP_CTRL(win_num));
-+	csr_writel(pcie, amap_ctrl_dw | lower_32_bits(size64),
-+		   PAB_PEX_AMAP_CTRL(win_num));
-=20
--	write_paged_register(pcie, upper_32_bits(size64),
--				PAB_EXT_PEX_AMAP_SIZEN(win_num));
-+	csr_writel(pcie, upper_32_bits(size64),
-+		   PAB_EXT_PEX_AMAP_SIZEN(win_num));
-=20
--	write_paged_register(pcie, pci_addr, PAB_PEX_AMAP_AXI_WIN(win_num));
--	write_paged_register(pcie, pci_addr, PAB_PEX_AMAP_PEX_WIN_L(win_num));
--	write_paged_register(pcie, 0, PAB_PEX_AMAP_PEX_WIN_H(win_num));
-+	csr_writel(pcie, pci_addr, PAB_PEX_AMAP_AXI_WIN(win_num));
-+	csr_writel(pcie, pci_addr, PAB_PEX_AMAP_PEX_WIN_L(win_num));
-+	csr_writel(pcie, 0, PAB_PEX_AMAP_PEX_WIN_H(win_num));
- }
-=20
- /*
-@@ -437,8 +507,7 @@ static void program_ob_windows(struct mobiveil_pcie *pc=
-ie, int win_num,
- 	csr_writel(pcie, 1 << WIN_ENABLE_SHIFT | type << WIN_TYPE_SHIFT |
- 			lower_32_bits(size64), PAB_AXI_AMAP_CTRL(win_num));
-=20
--	write_paged_register(pcie, upper_32_bits(size64),
--				PAB_EXT_AXI_AMAP_SIZE(win_num));
-+	csr_writel(pcie, upper_32_bits(size64), PAB_EXT_AXI_AMAP_SIZE(win_num));
-=20
- 	/*
- 	 * program AXI window base with appropriate value in
---=20
-2.17.1
-
+Q3VycmVudCBTVk0gQVZJQyBkcml2ZXIgbWFrZXMgdHdvIGluY29ycmVjdCBhc3N1bXB0aW9uczoN
+CiAgMS4gQVBJQyBMRFIgcmVnaXN0ZXIgY2Fubm90IGJlIHplcm8NCiAgMi4gQVBJQyBERlIgZm9y
+IGFsbCB2Q1BVcyBtdXN0IGJlIHRoZSBzYW1lDQoNCkxEUj0wIG1lYW5zIHRoZSBsb2NhbCBBUElD
+IGRvZXMgbm90IHN1cHBvcnQgbG9naWNhbCBkZXN0aW5hdGlvbiBtb2RlLg0KVGhlcmVmb3JlLCB0
+aGUgZHJpdmVyIHNob3VsZCBtYXJrIGFueSBwcmV2aW91c2x5IGFzc2lnbmVkIGxvZ2ljYWwgQVBJ
+QyBJRA0KdGFibGUgZW50cnkgYXMgaW52YWxpZCwgYW5kIHJldHVybiBzdWNjZXNzLiAgQWxzbywg
+REZSIGlzIHNwZWNpZmljIHRvDQphIHBhcnRpY3VsYXIgbG9jYWwgQVBJQywgYW5kIGNhbiBiZSBk
+aWZmZXJlbnQgYW1vbmcgYWxsIHZDUFVzDQooYXMgb2JzZXJ2ZWQgb24gV2luZG93cyAxMCkuDQoN
+ClRoZXNlIGluY29ycmVjdCBhc3N1bXB0aW9ucyBjYXVzZSBXaW5kb3dzIDEwIGFuZCBGcmVlQlNE
+IFZNcyB0byBmYWlsDQp0byBib290IHdpdGggQVZJQyBlbmFibGVkLiBTbywgaW5zdGVhZCBvZiBm
+bHVzaCB0aGUgd2hvbGUgbG9naWNhbCBBUElDIElEDQp0YWJsZSwgaGFuZGxlIERGUiBhbmQgTERS
+IGZvciBlYWNoIHZDUFUgaW5kZXBlbmRlbnRseS4NCg0KRml4ZXM6IDE4ZjQwYzUzZTEwZiAoJ3N2
+bTogQWRkIFZNRVhJVCBoYW5kbGVycyBmb3IgQVZJQycpDQpDYzogUmFkaW0gS3LEjW3DocWZIDxy
+a3JjbWFyQHJlZGhhdC5jb20+DQpDYzogUGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNv
+bT4NClJlcG9ydGVkLWJ5OiBKdWxpYW4gU3RlY2tsaW5hIDxqc3RlY2tsaUBhbWF6b24uZGU+DQpT
+aWduZWQtb2ZmLWJ5OiBTdXJhdmVlIFN1dGhpa3VscGFuaXQgPHN1cmF2ZWUuc3V0aGlrdWxwYW5p
+dEBhbWQuY29tPg0KLS0tDQogYXJjaC94ODYva3ZtL3N2bS5jIHwgNjQgKysrKysrKysrKysrKysr
+KysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCAzMCBpbnNl
+cnRpb25zKCspLCAzNCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2FyY2gveDg2L2t2bS9z
+dm0uYyBiL2FyY2gveDg2L2t2bS9zdm0uYw0KaW5kZXggOGEwYzlhMWY2YWM4Li5kMzVjOTAwMmYy
+ODIgMTAwNjQ0DQotLS0gYS9hcmNoL3g4Ni9rdm0vc3ZtLmMNCisrKyBiL2FyY2gveDg2L2t2bS9z
+dm0uYw0KQEAgLTE0NSw3ICsxNDUsNiBAQCBzdHJ1Y3Qga3ZtX3N2bSB7DQogDQogCS8qIFN0cnVj
+dCBtZW1iZXJzIGZvciBBVklDICovDQogCXUzMiBhdmljX3ZtX2lkOw0KLQl1MzIgbGRyX21vZGU7
+DQogCXN0cnVjdCBwYWdlICphdmljX2xvZ2ljYWxfaWRfdGFibGVfcGFnZTsNCiAJc3RydWN0IHBh
+Z2UgKmF2aWNfcGh5c2ljYWxfaWRfdGFibGVfcGFnZTsNCiAJc3RydWN0IGhsaXN0X25vZGUgaG5v
+ZGU7DQpAQCAtMjM2LDYgKzIzNSw3IEBAIHN0cnVjdCB2Y3B1X3N2bSB7DQogCWJvb2wgbnJpcHNf
+ZW5hYmxlZAk6IDE7DQogDQogCXUzMiBsZHJfcmVnOw0KKwl1MzIgZGZyX3JlZzsNCiAJc3RydWN0
+IHBhZ2UgKmF2aWNfYmFja2luZ19wYWdlOw0KIAl1NjQgKmF2aWNfcGh5c2ljYWxfaWRfY2FjaGU7
+DQogCWJvb2wgYXZpY19pc19ydW5uaW5nOw0KQEAgLTIxMDYsNiArMjEwNiw3IEBAIHN0YXRpYyBp
+bnQgYXZpY19pbml0X3ZjcHUoc3RydWN0IHZjcHVfc3ZtICpzdm0pDQogDQogCUlOSVRfTElTVF9I
+RUFEKCZzdm0tPmlyX2xpc3QpOw0KIAlzcGluX2xvY2tfaW5pdCgmc3ZtLT5pcl9saXN0X2xvY2sp
+Ow0KKwlzdm0tPmRmcl9yZWcgPSBBUElDX0RGUl9GTEFUOw0KIA0KIAlyZXR1cm4gcmV0Ow0KIH0N
+CkBAIC00NTU3LDggKzQ1NTgsNyBAQCBzdGF0aWMgdTMyICphdmljX2dldF9sb2dpY2FsX2lkX2Vu
+dHJ5KHN0cnVjdCBrdm1fdmNwdSAqdmNwdSwgdTMyIGxkciwgYm9vbCBmbGF0KQ0KIAlyZXR1cm4g
+JmxvZ2ljYWxfYXBpY19pZF90YWJsZVtpbmRleF07DQogfQ0KIA0KLXN0YXRpYyBpbnQgYXZpY19s
+ZHJfd3JpdGUoc3RydWN0IGt2bV92Y3B1ICp2Y3B1LCB1OCBnX3BoeXNpY2FsX2lkLCB1MzIgbGRy
+LA0KLQkJCSAgYm9vbCB2YWxpZCkNCitzdGF0aWMgaW50IGF2aWNfbGRyX3dyaXRlKHN0cnVjdCBr
+dm1fdmNwdSAqdmNwdSwgdTggZ19waHlzaWNhbF9pZCwgdTMyIGxkcikNCiB7DQogCWJvb2wgZmxh
+dDsNCiAJdTMyICplbnRyeSwgbmV3X2VudHJ5Ow0KQEAgLTQ1NzEsMzEgKzQ1NzEsMzkgQEAgc3Rh
+dGljIGludCBhdmljX2xkcl93cml0ZShzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUsIHU4IGdfcGh5c2lj
+YWxfaWQsIHUzMiBsZHIsDQogCW5ld19lbnRyeSA9IFJFQURfT05DRSgqZW50cnkpOw0KIAluZXdf
+ZW50cnkgJj0gfkFWSUNfTE9HSUNBTF9JRF9FTlRSWV9HVUVTVF9QSFlTSUNBTF9JRF9NQVNLOw0K
+IAluZXdfZW50cnkgfD0gKGdfcGh5c2ljYWxfaWQgJiBBVklDX0xPR0lDQUxfSURfRU5UUllfR1VF
+U1RfUEhZU0lDQUxfSURfTUFTSyk7DQotCWlmICh2YWxpZCkNCi0JCW5ld19lbnRyeSB8PSBBVklD
+X0xPR0lDQUxfSURfRU5UUllfVkFMSURfTUFTSzsNCi0JZWxzZQ0KLQkJbmV3X2VudHJ5ICY9IH5B
+VklDX0xPR0lDQUxfSURfRU5UUllfVkFMSURfTUFTSzsNCisJbmV3X2VudHJ5IHw9IEFWSUNfTE9H
+SUNBTF9JRF9FTlRSWV9WQUxJRF9NQVNLOw0KIAlXUklURV9PTkNFKCplbnRyeSwgbmV3X2VudHJ5
+KTsNCiANCiAJcmV0dXJuIDA7DQogfQ0KIA0KK3N0YXRpYyB2b2lkIGF2aWNfaW52X2xvZ2ljYWxf
+aWRfZW50cnkoc3RydWN0IGt2bV92Y3B1ICp2Y3B1KQ0KK3sNCisJc3RydWN0IHZjcHVfc3ZtICpz
+dm0gPSB0b19zdm0odmNwdSk7DQorCWJvb2wgZmxhdCA9IHN2bS0+ZGZyX3JlZyA9PSBBUElDX0RG
+Ul9GTEFUOw0KKwl1MzIgKmVudHJ5ID0gYXZpY19nZXRfbG9naWNhbF9pZF9lbnRyeSh2Y3B1LCBz
+dm0tPmxkcl9yZWcsIGZsYXQpOw0KKw0KKwlpZiAoZW50cnkpDQorCQlXUklURV9PTkNFKCplbnRy
+eSwgKHUzMikgfkFWSUNfTE9HSUNBTF9JRF9FTlRSWV9WQUxJRF9NQVNLKTsNCit9DQorDQogc3Rh
+dGljIGludCBhdmljX2hhbmRsZV9sZHJfdXBkYXRlKHN0cnVjdCBrdm1fdmNwdSAqdmNwdSkNCiB7
+DQotCWludCByZXQ7DQorCWludCByZXQgPSAwOw0KIAlzdHJ1Y3QgdmNwdV9zdm0gKnN2bSA9IHRv
+X3N2bSh2Y3B1KTsNCiAJdTMyIGxkciA9IGt2bV9sYXBpY19nZXRfcmVnKHZjcHUtPmFyY2guYXBp
+YywgQVBJQ19MRFIpOw0KIA0KLQlpZiAoIWxkcikNCi0JCXJldHVybiAxOw0KKwlpZiAobGRyID09
+IHN2bS0+bGRyX3JlZykNCisJCXJldHVybiAwOw0KIA0KLQlyZXQgPSBhdmljX2xkcl93cml0ZSh2
+Y3B1LCB2Y3B1LT52Y3B1X2lkLCBsZHIsIHRydWUpOw0KLQlpZiAocmV0ICYmIHN2bS0+bGRyX3Jl
+Zykgew0KLQkJYXZpY19sZHJfd3JpdGUodmNwdSwgMCwgc3ZtLT5sZHJfcmVnLCBmYWxzZSk7DQot
+CQlzdm0tPmxkcl9yZWcgPSAwOw0KLQl9IGVsc2Ugew0KKwlhdmljX2ludl9sb2dpY2FsX2lkX2Vu
+dHJ5KHZjcHUpOw0KKw0KKwlpZiAobGRyKQ0KKwkJcmV0ID0gYXZpY19sZHJfd3JpdGUodmNwdSwg
+dmNwdS0+dmNwdV9pZCwgbGRyKTsNCisNCisJaWYgKCFyZXQpDQogCQlzdm0tPmxkcl9yZWcgPSBs
+ZHI7DQotCX0NCisNCiAJcmV0dXJuIHJldDsNCiB9DQogDQpAQCAtNDYyOSwyNyArNDYzNywxNiBA
+QCBzdGF0aWMgaW50IGF2aWNfaGFuZGxlX2FwaWNfaWRfdXBkYXRlKHN0cnVjdCBrdm1fdmNwdSAq
+dmNwdSkNCiAJcmV0dXJuIDA7DQogfQ0KIA0KLXN0YXRpYyBpbnQgYXZpY19oYW5kbGVfZGZyX3Vw
+ZGF0ZShzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUpDQorc3RhdGljIHZvaWQgYXZpY19oYW5kbGVfZGZy
+X3VwZGF0ZShzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUpDQogew0KIAlzdHJ1Y3QgdmNwdV9zdm0gKnN2
+bSA9IHRvX3N2bSh2Y3B1KTsNCi0Jc3RydWN0IGt2bV9zdm0gKmt2bV9zdm0gPSB0b19rdm1fc3Zt
+KHZjcHUtPmt2bSk7DQogCXUzMiBkZnIgPSBrdm1fbGFwaWNfZ2V0X3JlZyh2Y3B1LT5hcmNoLmFw
+aWMsIEFQSUNfREZSKTsNCi0JdTMyIG1vZCA9IChkZnIgPj4gMjgpICYgMHhmOw0KLQ0KLQkvKg0K
+LQkgKiBXZSBhc3N1bWUgdGhhdCBhbGwgbG9jYWwgQVBJQ3MgYXJlIHVzaW5nIHRoZSBzYW1lIHR5
+cGUuDQotCSAqIElmIHRoaXMgY2hhbmdlcywgd2UgbmVlZCB0byBmbHVzaCB0aGUgQVZJQyBsb2dp
+Y2FsDQotCSAqIEFQSUQgaWQgdGFibGUuDQotCSAqLw0KLQlpZiAoa3ZtX3N2bS0+bGRyX21vZGUg
+PT0gbW9kKQ0KLQkJcmV0dXJuIDA7DQogDQotCWNsZWFyX3BhZ2UocGFnZV9hZGRyZXNzKGt2bV9z
+dm0tPmF2aWNfbG9naWNhbF9pZF90YWJsZV9wYWdlKSk7DQotCWt2bV9zdm0tPmxkcl9tb2RlID0g
+bW9kOw0KKwlpZiAoc3ZtLT5kZnJfcmVnID09IGRmcikNCisJCXJldHVybjsNCiANCi0JaWYgKHN2
+bS0+bGRyX3JlZykNCi0JCWF2aWNfaGFuZGxlX2xkcl91cGRhdGUodmNwdSk7DQotCXJldHVybiAw
+Ow0KKwlhdmljX2ludl9sb2dpY2FsX2lkX2VudHJ5KHZjcHUpOw0KKwlzdm0tPmRmcl9yZWcgPSBk
+ZnI7DQogfQ0KIA0KIHN0YXRpYyBpbnQgYXZpY191bmFjY2VsX3RyYXBfd3JpdGUoc3RydWN0IHZj
+cHVfc3ZtICpzdm0pDQpAQCAtNjE1NSw4ICs2MTUyLDcgQEAgc3RhdGljIGlubGluZSB2b2lkIGF2
+aWNfcG9zdF9zdGF0ZV9yZXN0b3JlKHN0cnVjdCBrdm1fdmNwdSAqdmNwdSkNCiB7DQogCWlmIChh
+dmljX2hhbmRsZV9hcGljX2lkX3VwZGF0ZSh2Y3B1KSAhPSAwKQ0KIAkJcmV0dXJuOw0KLQlpZiAo
+YXZpY19oYW5kbGVfZGZyX3VwZGF0ZSh2Y3B1KSAhPSAwKQ0KLQkJcmV0dXJuOw0KKwlhdmljX2hh
+bmRsZV9kZnJfdXBkYXRlKHZjcHUpOw0KIAlhdmljX2hhbmRsZV9sZHJfdXBkYXRlKHZjcHUpOw0K
+IH0NCiANCi0tIA0KMi4xNy4xDQoNCg==
