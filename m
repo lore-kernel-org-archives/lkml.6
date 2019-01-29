@@ -2,333 +2,461 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEE5C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30239C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03005214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:34:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFA782183F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:34:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CkncJYsM"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="be75JzQ3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbfA2Jeo (ORCPT
+        id S1728249AbfA2Jer (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:34:44 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54566 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbfA2Jeo (ORCPT
+        Tue, 29 Jan 2019 04:34:47 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45125 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727342AbfA2Jep (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:34:44 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so17000893wmh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:34:42 -0800 (PST)
+        Tue, 29 Jan 2019 04:34:45 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t6so21165867wrr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:34:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=1Zjq2WctcVH0NKa5Tr4dSEzjz+ChEkhVWBArMb0P8po=;
-        b=CkncJYsMm+JGbzg82cfofdGvTqxmkWgqW0bDLaHeuQeZBMHhfu25PBVX/30yj3zpoG
-         qF+SmOo3PRaadhhiBZ+I6oCiM4zd9T2cAfmzlLWaL3pwJbErpXNSx3OJRKG9sL7qsRZb
-         jr3WRFFgBcf+/WfUQEFK5pOP5irQD4d2LjSBMxHIWSEZFwBQGRmcYdUMX/ocbfwOcWXS
-         2U0fAZ2q2bn9YwYE7mrnwsHwSvQH2gRJyBGLpPqGMo1cE9/hm/vls8mkfDCl/3ulfj4D
-         5t9+M+Q9O+Yr1Ps9jrTfppIPevx+JFbzKyHl/kH3hcozlUO8+shGPn+B+LGhgQrJongz
-         RwTA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1AFF7zfX2emsgFskKDZcDByeBSeYsdpHdS8Qjt8Fvk0=;
+        b=be75JzQ3jNtOmjZ9pY+G6UDaF7nMhsLqBiCx9bEFu67W6j7AG9d3/DmYlWgCo8aE+Z
+         nvXGrGyOCYZspvrLcLX8AKnuV198r3JRJv8Pt3z34OISRcuLUCQz0zSuFM+9Cp/TJagu
+         j0muTfRPiIS3sZuP4GA9JI6slzsTyoHYqBiqQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=1Zjq2WctcVH0NKa5Tr4dSEzjz+ChEkhVWBArMb0P8po=;
-        b=gaUZpNyk4ISkif31i+zBeEl8N9AQULqPb7gUX1MV4pT9WURlVMH7n3hud825Trgqzf
-         6jt4tO8U94sWKTR+fT55RAsxWM/D1q1bO/Dq1DN2saJ7t9F+FQHneAd7RNn3X1/zU+Uq
-         jBNyqt3VTshzQg9Odw2okf6c0FcxjqfPlVusN3dGU9oCtfhJts9LyxZKhbXdFROer5h0
-         chf1VvWVDVPIHrwf299oaytw2Tkvv58cW86kJ9FI5O8KUBPIHNBgYuR0bd9kDtlcnnAH
-         guxRDeTQHFJpsLf7dIwV9/DwrlQ23FHuo+sKZHeXeao1ge4zukqpBFoDTRb/jB/ilRm+
-         gZgw==
-X-Gm-Message-State: AJcUukf++5aNfI0+1JWKEA7Dy4SqF5Z3APRl7zf6mPFbTcxqYFjSbOCE
-        CKFUO7zGe7YaLGEOMxXdpcY/TQ==
-X-Google-Smtp-Source: ALg8bN7+dLDfuO2x1tDJ5n9rPOD1Z6B27kcoSuha61cgb9aAwBTkiDtgKJSYlL92cLyzuMZpNI3F4A==
-X-Received: by 2002:a1c:c2d4:: with SMTP id s203mr20397996wmf.3.1548754481215;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1AFF7zfX2emsgFskKDZcDByeBSeYsdpHdS8Qjt8Fvk0=;
+        b=OiP3/W4UAKluRN9q9Tk1QxjoYM8qaOLEaPhPZp4nskaOQqmg1g9OIeX1l00Ne3+dVa
+         gQiXJZcxCwgIRh2nq22qNEDw+/Eax/It0fOjC1i44q9DH0RZoYBOmHuBMzG+bgc0srqM
+         6XQ6TBVzoOVyiYFHfQjn73VlVcNk4B4MxMwlYP5F+mviTJHeVXVQTHT0onzYlQyc5KT2
+         i+GSJqYr7PY0aeeVUNaVfJIrdYl1GvlZE4mv+UNso8zUY6GrlTfg7+9XAJPndnb75rKw
+         keN+kO9gP1Za5wfju+1p9jzf2eTlrXE6h0/rTJp6+vAk9wIvYIrVNc5+A//CyhB+0McE
+         Ff/g==
+X-Gm-Message-State: AJcUukc9SWvT2SD8DAeqQ0dtjCfJ9EU1QYJnmrT3I8zGD+lh2XOmT6XC
+        xBB+jyKNaTKbFMz2qBwRKDQTIg==
+X-Google-Smtp-Source: ALg8bN7i9H4V36F2QpJD+R1s87YCkrz6LYWM9Om19UoH3tN3s4IGh7jY+42fFDeeASYwZGfbuicQGA==
+X-Received: by 2002:a5d:42ce:: with SMTP id t14mr25430839wrr.51.1548754482836;
+        Tue, 29 Jan 2019 01:34:42 -0800 (PST)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id f187sm1568911wma.4.2019.01.29.01.34.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Tue, 29 Jan 2019 01:34:41 -0800 (PST)
-Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id f187sm1568856wma.4.2019.01.29.01.34.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 29 Jan 2019 01:34:40 -0800 (PST)
-Message-ID: <e303573aefeaf6a7e3a4b1d820e801354ff900b4.camel@baylibre.com>
-Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-Date:   Tue, 29 Jan 2019 10:34:38 +0100
-In-Reply-To: <20190129061021.94775-3-sboyd@kernel.org>
-References: <20190129061021.94775-1-sboyd@kernel.org>
-         <20190129061021.94775-3-sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Date:   Tue, 29 Jan 2019 09:34:39 +0000
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     jens.wiklander@linaro.org, herbert@gondor.apana.org.au,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, mpm@selenic.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        tee-dev@lists.linaro.org
+Subject: Re: [PATCH v6 4/4] hwrng: add OP-TEE based rng driver
+Message-ID: <20190129093439.oftwq4labucdql4b@holly.lan>
+References: <1548740978-28495-1-git-send-email-sumit.garg@linaro.org>
+ <1548740978-28495-5-git-send-email-sumit.garg@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548740978-28495-5-git-send-email-sumit.garg@linaro.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-28 at 22:10 -0800, Stephen Boyd wrote:
-> The clk_ops::get_parent function is limited in ability to return errors
-> because it returns a u8. A "workaround" to return an error is to return
-> a number >= the number of parents of a clk. This will in turn cause the
-> framework to "orphan" the clk and make the parent of the clk NULL. This
-> isn't really correct, because if an error occurs while reading the
-> parents of a clk we should fail the clk registration, instead of
-> orphaning the clk and waiting for the clk to appear later.
+On Tue, Jan 29, 2019 at 11:19:38AM +0530, Sumit Garg wrote:
+> On ARM SoC's with TrustZone enabled, peripherals like entropy sources
+> might not be accessible to normal world (linux in this case) and rather
+> accessible to secure world (OP-TEE in this case) only. So this driver
+> aims to provides a generic interface to OP-TEE based random number
+> generator service.
 > 
-> We really need to have three different return values from the get_parent
-> clk op. Something valid for a clk that exists, something invalid for a
-> clk that doesn't exist and never will exist or can't be determined
-> because the register operation to read the parent failed, and something
-> for a clk that doesn't exist because the framework doesn't know about
-> what it is. Introduce a new clk_op that can express all of this by
-> returning a pointer to the clk_hw of the parent. It's expected that clk
-> provider drivers will return a valid pointer when the parent is
-> findable, an error pointer like EPROBE_DEFER if their parent provider
-> hasn't probed yet but is valid, a NULL pointer if they can't find the
-> clk but index is valid, and an error pointer with an appropriate error
-> code otherwise.
+> This driver registers on TEE bus to interact with OP-TEE based rng
+> device/service.
 > 
-> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+
+Daniel.
+
 > ---
->  drivers/clk/clk.c            | 117 ++++++++++++++++++++++++++---------
->  include/linux/clk-provider.h |   9 +++
->  2 files changed, 96 insertions(+), 30 deletions(-)
+>  MAINTAINERS                        |   5 +
+>  drivers/char/hw_random/Kconfig     |  15 ++
+>  drivers/char/hw_random/Makefile    |   1 +
+>  drivers/char/hw_random/optee-rng.c | 298 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 319 insertions(+)
+>  create mode 100644 drivers/char/hw_random/optee-rng.c
 > 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 01b36f0851bd..5d82cf25bb29 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2242,14 +2242,84 @@ struct clk *clk_get_parent(struct clk *clk)
->  }
->  EXPORT_SYMBOL_GPL(clk_get_parent);
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 51029a4..dcef7e9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11262,6 +11262,11 @@ M:	Jens Wiklander <jens.wiklander@linaro.org>
+>  S:	Maintained
+>  F:	drivers/tee/optee/
 >  
-> -static struct clk_core *__clk_init_parent(struct clk_core *core)
-> +static struct clk_core *
-> +__clk_init_parent(struct clk_core *core, bool update_orphan)
->  {
->  	u8 index = 0;
-> +	struct clk_hw *parent_hw = NULL;
->  
-> -	if (core->num_parents > 1 && core->ops->get_parent)
-> -		index = core->ops->get_parent(core->hw);
-> +	if (core->ops->get_parent_hw) {
-> +		parent_hw = core->ops->get_parent_hw(core->hw);
-> +		/*
-> +		 * The provider driver doesn't know what the parent is,
-> +		 * but it's at least something valid, so it's not an
-> +		 * orphan, just a clk with some unknown parent.
-> +		 */
-
-I suppose this is the answer the discussion we had last year. I'm not sure it
-answer the problem. In the case I presented, we have no idea wether the
-setting is valid or not.
-
-We can't assume it is `at least something valid`, the value in the mux is just
-something we can't map.
-
-Aslo, could you provide an example of what such callback would be, with clk-
-mux maybe ?
-
-I don't get how a clock driver will keep track of the clk_hw pointers it is
-connected to. Is there an API for this ? clk-mux must access to clk_core to
-explore his own parent ... which already does not scale well, expect if we
-plan to expose clk_core at some point ?
-
-> +		if (!parent_hw && update_orphan)
-> +			core->orphan = false;
-> +	} else {
-> +		if (core->num_parents > 1 && core->ops->get_parent)
-
-I still get why, when num_parents == 1, it is OK to call get_parent_hw() and
-no get_parent(). It does not seems coherent.
-
-> +			index = core->ops->get_parent(core->hw);
+> +OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
+> +M:	Sumit Garg <sumit.garg@linaro.org>
+> +S:	Maintained
+> +F:	drivers/char/hw_random/optee-rng.c
 > +
-> +		parent_hw = clk_hw_get_parent_by_index(core->hw, index);
+>  OPA-VNIC DRIVER
+>  M:	Dennis Dalessandro <dennis.dalessandro@intel.com>
+>  M:	Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>
+> diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+> index dac895d..25a7d8f 100644
+> --- a/drivers/char/hw_random/Kconfig
+> +++ b/drivers/char/hw_random/Kconfig
+> @@ -424,6 +424,21 @@ config HW_RANDOM_EXYNOS
+>  	  will be called exynos-trng.
+>  
+>  	  If unsure, say Y.
+> +
+> +config HW_RANDOM_OPTEE
+> +	tristate "OP-TEE based Random Number Generator support"
+> +	depends on OPTEE
+> +	default HW_RANDOM
+> +	help
+> +	  This  driver provides support for OP-TEE based Random Number
+> +	  Generator on ARM SoCs where hardware entropy sources are not
+> +	  accessible to normal world (Linux).
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called optee-rng.
+> +
+> +	  If unsure, say Y.
+> +
+>  endif # HW_RANDOM
+>  
+>  config UML_RANDOM
+> diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
+> index e35ec3c..7c9ef4a 100644
+> --- a/drivers/char/hw_random/Makefile
+> +++ b/drivers/char/hw_random/Makefile
+> @@ -38,3 +38,4 @@ obj-$(CONFIG_HW_RANDOM_CAVIUM) += cavium-rng.o cavium-rng-vf.o
+>  obj-$(CONFIG_HW_RANDOM_MTK)	+= mtk-rng.o
+>  obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
+>  obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
+> +obj-$(CONFIG_HW_RANDOM_OPTEE) += optee-rng.o
+> diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
+> new file mode 100644
+> index 0000000..2b9fc8a
+> --- /dev/null
+> +++ b/drivers/char/hw_random/optee-rng.c
+> @@ -0,0 +1,298 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018-2019 Linaro Ltd.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/of.h>
+> +#include <linux/hw_random.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/tee_drv.h>
+> +#include <linux/uuid.h>
+> +
+> +#define DRIVER_NAME "optee-rng"
+> +
+> +#define TEE_ERROR_HEALTH_TEST_FAIL	0x00000001
+> +
+> +/*
+> + * TA_CMD_GET_ENTROPY - Get Entropy from RNG
+> + *
+> + * param[0] (inout memref) - Entropy buffer memory reference
+> + * param[1] unused
+> + * param[2] unused
+> + * param[3] unused
+> + *
+> + * Result:
+> + * TEE_SUCCESS - Invoke command success
+> + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
+> + * TEE_ERROR_NOT_SUPPORTED - Requested entropy size greater than size of pool
+> + * TEE_ERROR_HEALTH_TEST_FAIL - Continuous health testing failed
+> + */
+> +#define TA_CMD_GET_ENTROPY		0x0
+> +
+> +/*
+> + * TA_CMD_GET_RNG_INFO - Get RNG information
+> + *
+> + * param[0] (out value) - value.a: RNG data-rate in bytes per second
+> + *                        value.b: Quality/Entropy per 1024 bit of data
+> + * param[1] unused
+> + * param[2] unused
+> + * param[3] unused
+> + *
+> + * Result:
+> + * TEE_SUCCESS - Invoke command success
+> + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
+> + */
+> +#define TA_CMD_GET_RNG_INFO		0x1
+> +
+> +#define MAX_ENTROPY_REQ_SZ		(4 * 1024)
+> +
+> +/**
+> + * struct optee_rng_private - OP-TEE Random Number Generator private data
+> + * @dev:		OP-TEE based RNG device.
+> + * @ctx:		OP-TEE context handler.
+> + * @session_id:		RNG TA session identifier.
+> + * @data_rate:		RNG data rate.
+> + * @entropy_shm_pool:	Memory pool shared with RNG device.
+> + * @optee_rng:		OP-TEE RNG driver structure.
+> + */
+> +struct optee_rng_private {
+> +	struct device *dev;
+> +	struct tee_context *ctx;
+> +	u32 session_id;
+> +	u32 data_rate;
+> +	struct tee_shm *entropy_shm_pool;
+> +	struct hwrng optee_rng;
+> +};
+> +
+> +#define to_optee_rng_private(r) \
+> +		container_of(r, struct optee_rng_private, optee_rng)
+> +
+> +static size_t get_optee_rng_data(struct optee_rng_private *pvt_data,
+> +				 void *buf, size_t req_size)
+> +{
+> +	u32 ret = 0;
+> +	u8 *rng_data = NULL;
+> +	size_t rng_size = 0;
+> +	struct tee_ioctl_invoke_arg inv_arg = {0};
+> +	struct tee_param param[4] = {0};
+> +
+> +	/* Invoke TA_CMD_GET_ENTROPY function of Trusted App */
+> +	inv_arg.func = TA_CMD_GET_ENTROPY;
+> +	inv_arg.session = pvt_data->session_id;
+> +	inv_arg.num_params = 4;
+> +
+> +	/* Fill invoke cmd params */
+> +	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT;
+> +	param[0].u.memref.shm = pvt_data->entropy_shm_pool;
+> +	param[0].u.memref.size = req_size;
+> +	param[0].u.memref.shm_offs = 0;
+> +
+> +	ret = tee_client_invoke_func(pvt_data->ctx, &inv_arg, param);
+> +	if ((ret < 0) || (inv_arg.ret != 0)) {
+> +		dev_err(pvt_data->dev, "TA_CMD_GET_ENTROPY invoke err: %x\n",
+> +			inv_arg.ret);
+> +		return 0;
 > +	}
 > +
-> +	if (IS_ERR(parent_hw)) {
-> +		/* Parent clk provider hasn't probed yet, orphan it */
-> +		if (PTR_ERR(parent_hw) == -EPROBE_DEFER) {
-> +			if (update_orphan)
-> +				core->orphan = true;
-> +
-> +			return NULL;
-> +		}
-> +
-> +		return ERR_CAST(parent_hw);
+> +	rng_data = tee_shm_get_va(pvt_data->entropy_shm_pool, 0);
+> +	if (IS_ERR(rng_data)) {
+> +		dev_err(pvt_data->dev, "tee_shm_get_va failed\n");
+> +		return 0;
 > +	}
 > +
-> +	if (!parent_hw)
-> +		return NULL;
+> +	rng_size = param[0].u.memref.size;
+> +	memcpy(buf, rng_data, rng_size);
 > +
-> +	return parent_hw->core;
+> +	return rng_size;
 > +}
 > +
-> +static int clk_init_parent(struct clk_core *core)
+> +static int optee_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
 > +{
-> +	core->parent = __clk_init_parent(core, true);
-> +	if (IS_ERR(core->parent))
-> +		return PTR_ERR(core->parent);
+> +	struct optee_rng_private *pvt_data = to_optee_rng_private(rng);
+> +	size_t read = 0, rng_size = 0;
+> +	int timeout = 1;
+> +	u8 *data = buf;
 > +
-> +	/*
-> +	 * Populate core->parent if parent has already been clk_core_init'd.
-> If
-> +	 * parent has not yet been clk_core_init'd then place clk in the
-> orphan
-> +	 * list.  If clk doesn't have any parents then place it in the root
-> +	 * clk list.
-> +	 *
-> +	 * Every time a new clk is clk_init'd then we walk the list of orphan
-> +	 * clocks and re-parent any that are children of the clock currently
-> +	 * being clk_init'd.
-> +	 */
-> +	if (core->parent) {
-> +		hlist_add_head(&core->child_node,
-> +				&core->parent->children);
-> +		core->orphan = core->parent->orphan;
-> +	} else if (!core->num_parents) {
-> +		hlist_add_head(&core->child_node, &clk_root_list);
-> +		core->orphan = false;
-> +	} else {
-> +		hlist_add_head(&core->child_node, &clk_orphan_list);
+> +	if (max > MAX_ENTROPY_REQ_SZ)
+> +		max = MAX_ENTROPY_REQ_SZ;
+> +
+> +	while (read == 0) {
+> +		rng_size = get_optee_rng_data(pvt_data, data, (max - read));
+> +
+> +		data += rng_size;
+> +		read += rng_size;
+> +
+> +		if (wait) {
+> +			if (timeout-- == 0)
+> +				return read;
+> +			msleep((1000 * (max - read)) / pvt_data->data_rate);
+> +		} else {
+> +			return read;
+> +		}
 > +	}
+> +
+> +	return read;
+> +}
+> +
+> +static int optee_rng_init(struct hwrng *rng)
+> +{
+> +	struct optee_rng_private *pvt_data = to_optee_rng_private(rng);
+> +	struct tee_shm *entropy_shm_pool = NULL;
+> +
+> +	entropy_shm_pool = tee_shm_alloc(pvt_data->ctx, MAX_ENTROPY_REQ_SZ,
+> +					 TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
+> +	if (IS_ERR(entropy_shm_pool)) {
+> +		dev_err(pvt_data->dev, "tee_shm_alloc failed\n");
+> +		return PTR_ERR(entropy_shm_pool);
+> +	}
+> +
+> +	pvt_data->entropy_shm_pool = entropy_shm_pool;
 > +
 > +	return 0;
 > +}
->  
-> -	return clk_core_get_parent_by_index(core, index);
-> +static struct clk_core *clk_find_parent(struct clk_core *core)
+> +
+> +static void optee_rng_cleanup(struct hwrng *rng)
 > +{
-> +	return __clk_init_parent(core, false);
+> +	struct optee_rng_private *pvt_data = to_optee_rng_private(rng);
+> +
+> +	tee_shm_free(pvt_data->entropy_shm_pool);
 > +}
 > +
-> +static bool clk_has_parent_op(const struct clk_ops *ops)
-> +{
-> +	return ops->get_parent || ops->get_parent_hw;
->  }
->  
->  static void clk_core_reparent(struct clk_core *core,
-> @@ -3045,14 +3115,14 @@ static int __clk_core_init(struct clk_core *core)
->  		goto out;
->  	}
->  
-> -	if (core->ops->set_parent && !core->ops->get_parent) {
-> +	if (core->ops->set_parent && !clk_has_parent_op(core->ops)) {
->  		pr_err("%s: %s must implement .get_parent & .set_parent\n",
->  		       __func__, core->name);
->  		ret = -EINVAL;
->  		goto out;
->  	}
->  
-> -	if (core->num_parents > 1 && !core->ops->get_parent) {
-> +	if (core->num_parents > 1 && !clk_has_parent_op(core->ops)) {
->  		pr_err("%s: %s must implement .get_parent as it has multi
-> parents\n",
->  		       __func__, core->name);
->  		ret = -EINVAL;
-> @@ -3073,29 +3143,9 @@ static int __clk_core_init(struct clk_core *core)
->  				"%s: invalid NULL in %s's .parent_names\n",
->  				__func__, core->name);
->  
-> -	core->parent = __clk_init_parent(core);
-> -
-> -	/*
-> -	 * Populate core->parent if parent has already been clk_core_init'd.
-> If
-> -	 * parent has not yet been clk_core_init'd then place clk in the
-> orphan
-> -	 * list.  If clk doesn't have any parents then place it in the root
-> -	 * clk list.
-> -	 *
-> -	 * Every time a new clk is clk_init'd then we walk the list of orphan
-> -	 * clocks and re-parent any that are children of the clock currently
-> -	 * being clk_init'd.
-> -	 */
-> -	if (core->parent) {
-> -		hlist_add_head(&core->child_node,
-> -				&core->parent->children);
-> -		core->orphan = core->parent->orphan;
-> -	} else if (!core->num_parents) {
-> -		hlist_add_head(&core->child_node, &clk_root_list);
-> -		core->orphan = false;
-> -	} else {
-> -		hlist_add_head(&core->child_node, &clk_orphan_list);
-> -		core->orphan = true;
-> -	}
-> +	ret = clk_init_parent(core);
-> +	if (ret)
-> +		goto out;
->  
->  	/*
->  	 * optional platform-specific magic
-> @@ -3173,7 +3223,14 @@ static int __clk_core_init(struct clk_core *core)
->  	 * parent.
->  	 */
->  	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node)
-> {
-> -		struct clk_core *parent = __clk_init_parent(orphan);
-> +		struct clk_core *parent = clk_find_parent(orphan);
+> +static struct optee_rng_private pvt_data = {
+> +	.optee_rng = {
+> +		.name		= DRIVER_NAME,
+> +		.init		= optee_rng_init,
+> +		.cleanup	= optee_rng_cleanup,
+> +		.read		= optee_rng_read,
+> +	}
+> +};
 > +
-> +		/*
-> +		 * Error parent should have been caught before and returned
-> +		 * as an error during registration.
-> +		 */
-> +		if (WARN_ON_ONCE(IS_ERR(parent)))
-> +			continue;
->  
->  		/*
->  		 * We need to use __clk_set_parent_before() and _after() to
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 60c51871b04b..8b84dee942bf 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -155,6 +155,14 @@ struct clk_duty {
->   *		multiple parents.  It is optional (and unnecessary) for clocks
->   *		with 0 or 1 parents.
->   *
-> + * @get_parent_hw: Queries the hardware to determine the parent of a
-> clock.  The
-> + *		return value is a clk_hw pointer corresponding to
-> + *		the parent clock. In short, this function translates the
-> parent
-> + *		value read from hardware into a pointer to the clk_hw for that
-> clk.
-> + *		Currently only called when the clock is initialized by
-> + *		__clk_init.  This callback is mandatory for clocks with
-> + *		multiple parents.  It is optional for clocks with 0 or 1
-> parents.
-> + *
-
-The comments above could imply that get_parent() and get_parent_hw() are both
-mandatory if num_parent > 1. (I don't think so but) Is this your intent ?
-
->   * @set_rate:	Change the rate of this clock. The requested rate is
-> specified
->   *		by the second argument, which should typically be the return
->   *		of .round_rate call.  The third argument gives the parent rate
-> @@ -238,6 +246,7 @@ struct clk_ops {
->  					  struct clk_rate_request *req);
->  	int		(*set_parent)(struct clk_hw *hw, u8 index);
->  	u8		(*get_parent)(struct clk_hw *hw);
-> +	struct clk_hw * (*get_parent_hw)(struct clk_hw *hw);
->  	int		(*set_rate)(struct clk_hw *hw, unsigned long rate,
->  				    unsigned long parent_rate);
->  	int		(*set_rate_and_parent)(struct clk_hw *hw,
-
-
+> +static int get_optee_rng_info(struct device *dev)
+> +{
+> +	u32 ret = 0;
+> +	struct tee_ioctl_invoke_arg inv_arg = {0};
+> +	struct tee_param param[4] = {0};
+> +
+> +	/* Invoke TA_CMD_GET_RNG_INFO function of Trusted App */
+> +	inv_arg.func = TA_CMD_GET_RNG_INFO;
+> +	inv_arg.session = pvt_data.session_id;
+> +	inv_arg.num_params = 4;
+> +
+> +	/* Fill invoke cmd params */
+> +	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
+> +
+> +	ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
+> +	if ((ret < 0) || (inv_arg.ret != 0)) {
+> +		dev_err(dev, "TA_CMD_GET_RNG_INFO invoke err: %x\n",
+> +			inv_arg.ret);
+> +		return -EINVAL;
+> +	}
+> +
+> +	pvt_data.data_rate = param[0].u.value.a;
+> +	pvt_data.optee_rng.quality = param[0].u.value.b;
+> +
+> +	return 0;
+> +}
+> +
+> +static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+> +{
+> +	if (ver->impl_id == TEE_IMPL_ID_OPTEE)
+> +		return 1;
+> +	else
+> +		return 0;
+> +}
+> +
+> +static int optee_rng_probe(struct device *dev)
+> +{
+> +	struct tee_client_device *rng_device = to_tee_client_device(dev);
+> +	int ret = 0, err = -ENODEV;
+> +	struct tee_ioctl_open_session_arg sess_arg = {0};
+> +
+> +	/* Open context with TEE driver */
+> +	pvt_data.ctx = tee_client_open_context(NULL, optee_ctx_match, NULL,
+> +					       NULL);
+> +	if (IS_ERR(pvt_data.ctx))
+> +		return -ENODEV;
+> +
+> +	/* Open session with hwrng Trusted App */
+> +	memcpy(sess_arg.uuid, rng_device->id.uuid.b, TEE_IOCTL_UUID_LEN);
+> +	sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
+> +	sess_arg.num_params = 0;
+> +
+> +	ret = tee_client_open_session(pvt_data.ctx, &sess_arg, NULL);
+> +	if ((ret < 0) || (sess_arg.ret != 0)) {
+> +		dev_err(dev, "tee_client_open_session failed, err: %x\n",
+> +			sess_arg.ret);
+> +		err = -EINVAL;
+> +		goto out_ctx;
+> +	}
+> +	pvt_data.session_id = sess_arg.session;
+> +
+> +	err = get_optee_rng_info(dev);
+> +	if (err)
+> +		goto out_sess;
+> +
+> +	err = hwrng_register(&pvt_data.optee_rng);
+> +	if (err) {
+> +		dev_err(dev, "hwrng registration failed (%d)\n", err);
+> +		goto out_sess;
+> +	}
+> +
+> +	pvt_data.dev = dev;
+> +
+> +	return 0;
+> +
+> +out_sess:
+> +	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
+> +out_ctx:
+> +	tee_client_close_context(pvt_data.ctx);
+> +
+> +	return err;
+> +}
+> +
+> +static int optee_rng_remove(struct device *dev)
+> +{
+> +	hwrng_unregister(&pvt_data.optee_rng);
+> +	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
+> +	tee_client_close_context(pvt_data.ctx);
+> +
+> +	return 0;
+> +}
+> +
+> +const struct tee_client_device_id optee_rng_id_table[] = {
+> +	{UUID_INIT(0xab7a617c, 0xb8e7, 0x4d8f,
+> +		   0x83, 0x01, 0xd0, 0x9b, 0x61, 0x03, 0x6b, 0x64)},
+> +	{}
+> +};
+> +
+> +MODULE_DEVICE_TABLE(tee, optee_rng_id_table);
+> +
+> +static struct tee_client_driver optee_rng_driver = {
+> +	.id_table	= optee_rng_id_table,
+> +	.driver		= {
+> +		.name		= DRIVER_NAME,
+> +		.bus		= &tee_bus_type,
+> +		.probe		= optee_rng_probe,
+> +		.remove		= optee_rng_remove,
+> +	},
+> +};
+> +
+> +static int __init optee_rng_mod_init(void)
+> +{
+> +	return driver_register(&optee_rng_driver.driver);
+> +}
+> +
+> +static void __exit optee_rng_mod_exit(void)
+> +{
+> +	driver_unregister(&optee_rng_driver.driver);
+> +}
+> +
+> +module_init(optee_rng_mod_init);
+> +module_exit(optee_rng_mod_exit);
+> +
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_AUTHOR("Sumit Garg <sumit.garg@linaro.org>");
+> +MODULE_DESCRIPTION("OP-TEE based random number generator driver");
+> -- 
+> 2.7.4
+> 
