@@ -2,186 +2,255 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9551CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCF4C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FEF320869
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:34:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A01A220869
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:36:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nuDt9gJs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfA2KeN (ORCPT
+        id S1727471AbfA2KgE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:34:13 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:57731 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbfA2KeN (ORCPT
+        Tue, 29 Jan 2019 05:36:04 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:57086 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726790AbfA2KgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:34:13 -0500
-Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0TAY996049529;
-        Tue, 29 Jan 2019 19:34:09 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
- Tue, 29 Jan 2019 19:34:09 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0TAY4Pw049496
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 29 Jan 2019 19:34:09 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v3] oom, oom_reaper: do not enqueue same task twice
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
-        Roman Gushchin <guro@fb.com>, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>
-References: <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
- <72aa8863-a534-b8df-6b9e-f69cf4dd5c4d@i-love.sakura.ne.jp>
- <33a07810-6dbc-36be-5bb6-a279773ccf69@i-love.sakura.ne.jp>
- <34e97b46-0792-cc66-e0f2-d72576cdec59@i-love.sakura.ne.jp>
- <2b0c7d6c-c58a-da7d-6f0a-4900694ec2d3@gmail.com>
- <1d161137-55a5-126f-b47e-b2625bd798ca@i-love.sakura.ne.jp>
- <20190127083724.GA18811@dhcp22.suse.cz>
- <ec0d0580-a2dd-f329-9707-0cb91205a216@i-love.sakura.ne.jp>
- <20190127114021.GB18811@dhcp22.suse.cz>
- <e865a044-2c10-9858-f4ef-254bc71d6cc2@i-love.sakura.ne.jp>
- <20190128215315.GA2011@cmpxchg.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <5ee34fc6-1485-34f8-8790-903ddabaa809@i-love.sakura.ne.jp>
-Date:   Tue, 29 Jan 2019 19:34:00 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 29 Jan 2019 05:36:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5RJI3o5M+mkjfr5g4Aw6j9OJ0MTR8pHNwl/kE+goJ0o=; b=nuDt9gJsItxxGKi+QDFJH9XzC
+        s+9KNrWH88TeuWQPiQ0KPSlPvE1CYJHmYUXnPPrSiUWJeLcSURofJhGjombYFWqDQC0CD0l9ZjMVZ
+        a4xxLKFO4F8+iMox/0yfAlDayAYqsVoTIG2Ca2JGkDQRHsGxcC+lfsRLpXu92iTc0WHUfmjMZPwQT
+        QIYHDjTdkF3dW5a+RWx8EtxAdjlaAf1H5N6j5TefKAxQnpc7qBDFs0b/ifnOs0X43cYCWWB3VixUq
+        XAzhadTnF65cEcw+jJ5+m35zFd51pXG1UVtXmGKJxsOi1bIJiLtv1CJYd/ljGbXKh2hSIyz8mRQAE
+        HwA9IJv/Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1goQkJ-0000Hr-AR; Tue, 29 Jan 2019 10:35:59 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2337620101B8C; Tue, 29 Jan 2019 11:35:57 +0100 (CET)
+Date:   Tue, 29 Jan 2019 11:35:57 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        Stefan Liebler <stli@linux.ibm.com>,
+        Sebastian Sewior <bigeasy@linutronix.de>
+Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggered
+Message-ID: <20190129103557.GF28485@hirez.programming.kicks-ass.net>
+References: <20181127081115.GB3625@osiris>
+ <alpine.DEB.2.21.1811281526430.1532@nanos.tec.linutronix.de>
+ <20181129112321.GB3449@osiris>
+ <20190128134410.GA28485@hirez.programming.kicks-ass.net>
+ <20190128135804.GB28878@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1901281650310.1582@nanos.tec.linutronix.de>
+ <20190129090108.GA26906@osiris>
+ <alpine.DEB.2.21.1901291012330.1669@nanos.tec.linutronix.de>
+ <20190129102409.GB26906@osiris>
 MIME-Version: 1.0
-In-Reply-To: <20190128215315.GA2011@cmpxchg.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129102409.GB26906@osiris>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Johannes Weiner wrote:
-> On Sun, Jan 27, 2019 at 11:57:38PM +0900, Tetsuo Handa wrote:
-> > This bug existed since the OOM reaper became invokable from
-> > task_will_free_mem(current) path in out_of_memory() in Linux 4.7,
-> > but memcg's group oom killing made it easier to trigger this bug by
-> > calling wake_oom_reaper() on the same task from one out_of_memory()
-> > request.
+On Tue, Jan 29, 2019 at 11:24:09AM +0100, Heiko Carstens wrote:
+
+> Yes, sure. However ;) I reproduced the above with v5.0-rc4 + your
+> patch. And now I am trying to reproduce with linux-next 20190129 +
+> your patch and it doesn't trigger. Did I miss a patch which is only in
+> linux-next which could fix this?
 > 
-> This changelog seems a little terse compared to how tricky this is.
-> 
-> Can you please include an explanation here *how* this bug is possible?
-> I.e. the race condition that causes the function te be entered twice
-> and the existing re-entrance check in there to fail.
 
-OK. Here is an updated patch. Only changelog part has changed.
-I hope this will provide enough information to stable kernel maintainers.
-----------
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: oom, oom_reaper: do not enqueue same task twice
+I'm forever confused on what patch is where; but -ESRCH makes me thing
+maybe you lost this one:
 
-Arkadiusz reported that enabling memcg's group oom killing causes strange
-memcg statistics where there is no task in a memcg despite the number of
-tasks in that memcg is not 0.  It turned out that there is a bug in
-wake_oom_reaper() which allows enqueuing same task twice which makes
-impossible to decrease the number of tasks in that memcg due to a refcount
-leak.
-
-This bug existed since the OOM reaper became invokable from
-task_will_free_mem(current) path in out_of_memory() in Linux 4.7,
-
-  T1@P1     |T2@P1     |T3@P1     |OOM reaper
-  ----------+----------+----------+------------
-                                   # Processing an OOM victim in a different memcg domain.
-                        try_charge()
-                          mem_cgroup_out_of_memory()
-                            mutex_lock(&oom_lock)
-             try_charge()
-               mem_cgroup_out_of_memory()
-                 mutex_lock(&oom_lock)
-  try_charge()
-    mem_cgroup_out_of_memory()
-      mutex_lock(&oom_lock)
-                            out_of_memory()
-                              oom_kill_process(P1)
-                                do_send_sig_info(SIGKILL, @P1)
-                                mark_oom_victim(T1@P1)
-                                wake_oom_reaper(T1@P1) # T1@P1 is enqueued.
-                            mutex_unlock(&oom_lock)
-                 out_of_memory()
-                   mark_oom_victim(T2@P1)
-                   wake_oom_reaper(T2@P1) # T2@P1 is enqueued.
-                 mutex_unlock(&oom_lock)
-      out_of_memory()
-        mark_oom_victim(T1@P1)
-        wake_oom_reaper(T1@P1) # T1@P1 is enqueued again due to oom_reaper_list == T2@P1 && T1@P1->oom_reaper_list == NULL.
-      mutex_unlock(&oom_lock)
-                                   # Completed processing an OOM victim in a different memcg domain.
-                                   spin_lock(&oom_reaper_lock)
-                                   # T1P1 is dequeued.
-                                   spin_unlock(&oom_reaper_lock)
-
-but memcg's group oom killing made it easier to trigger this bug by
-calling wake_oom_reaper() on the same task from one out_of_memory()
-request.
-
-Fix this bug using an approach used by commit 855b018325737f76 ("oom,
-oom_reaper: disable oom_reaper for oom_kill_allocating_task").  As a side
-effect of this patch, this patch also avoids enqueuing multiple threads
-sharing memory via task_will_free_mem(current) path.
-
-Fixes: af8e15cc85a25315 ("oom, oom_reaper: do not enqueue task if it is on the oom_reaper_list head")
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: Arkadiusz Miśkiewicz <arekm@maven.pl>
-Tested-by: Arkadiusz Miśkiewicz <arekm@maven.pl>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Aleksa Sarai <asarai@suse.de>
-Cc: Jay Kamat <jgkamat@fb.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
 ---
- include/linux/sched/coredump.h | 1 +
- mm/oom_kill.c                  | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
-index ec912d0..ecdc654 100644
---- a/include/linux/sched/coredump.h
-+++ b/include/linux/sched/coredump.h
-@@ -71,6 +71,7 @@ static inline int get_dumpable(struct mm_struct *mm)
- #define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
- #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
- #define MMF_OOM_VICTIM		25	/* mm is the oom victim */
-+#define MMF_OOM_REAP_QUEUED	26	/* mm was queued for oom_reaper */
- #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+commit da791a667536bf8322042e38ca85d55a78d3c273
+Author: Thomas Gleixner <tglx@linutronix.de>
+Date:   Mon Dec 10 14:35:14 2018 +0100
+
+    futex: Cure exit race
+    
+    Stefan reported, that the glibc tst-robustpi4 test case fails
+    occasionally. That case creates the following race between
+    sys_exit() and sys_futex_lock_pi():
+    
+     CPU0                           CPU1
+    
+     sys_exit()                     sys_futex()
+      do_exit()                      futex_lock_pi()
+       exit_signals(tsk)              No waiters:
+        tsk->flags |= PF_EXITING;     *uaddr == 0x00000PID
+      mm_release(tsk)                 Set waiter bit
+       exit_robust_list(tsk) {        *uaddr = 0x80000PID;
+          Set owner died              attach_to_pi_owner() {
+        *uaddr = 0xC0000000;           tsk = get_task(PID);
+       }                               if (!tsk->flags & PF_EXITING) {
+      ...                                attach();
+      tsk->flags |= PF_EXITPIDONE;     } else {
+                                         if (!(tsk->flags & PF_EXITPIDONE))
+                                           return -EAGAIN;
+                                         return -ESRCH; <--- FAIL
+                                       }
+    
+    ESRCH is returned all the way to user space, which triggers the glibc test
+    case assert. Returning ESRCH unconditionally is wrong here because the user
+    space value has been changed by the exiting task to 0xC0000000, i.e. the
+    FUTEX_OWNER_DIED bit is set and the futex PID value has been cleared. This
+    is a valid state and the kernel has to handle it, i.e. taking the futex.
+    
+    Cure it by rereading the user space value when PF_EXITING and PF_EXITPIDONE
+    is set in the task which 'owns' the futex. If the value has changed, let
+    the kernel retry the operation, which includes all regular sanity checks
+    and correctly handles the FUTEX_OWNER_DIED case.
+    
+    If it hasn't changed, then return ESRCH as there is no way to distinguish
+    this case from malfunctioning user space. This happens when the exiting
+    task did not have a robust list, the robust list was corrupted or the user
+    space value in the futex was simply bogus.
+    
+    Reported-by: Stefan Liebler <stli@linux.ibm.com>
+    Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+    Acked-by: Peter Zijlstra <peterz@infradead.org>
+    Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+    Cc: Darren Hart <dvhart@infradead.org>
+    Cc: Ingo Molnar <mingo@kernel.org>
+    Cc: Sasha Levin <sashal@kernel.org>
+    Cc: stable@vger.kernel.org
+    Link: https://bugzilla.kernel.org/show_bug.cgi?id=200467
+    Link: https://lkml.kernel.org/r/20181210152311.986181245@linutronix.de
+
+diff --git a/kernel/futex.c b/kernel/futex.c
+index f423f9b6577e..5cc8083a4c89 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1148,11 +1148,65 @@ static int attach_to_pi_state(u32 __user *uaddr, u32 uval,
+ 	return ret;
+ }
  
- #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f0e8cd9..059e617 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -647,8 +647,8 @@ static int oom_reaper(void *unused)
- 
- static void wake_oom_reaper(struct task_struct *tsk)
++static int handle_exit_race(u32 __user *uaddr, u32 uval,
++			    struct task_struct *tsk)
++{
++	u32 uval2;
++
++	/*
++	 * If PF_EXITPIDONE is not yet set, then try again.
++	 */
++	if (tsk && !(tsk->flags & PF_EXITPIDONE))
++		return -EAGAIN;
++
++	/*
++	 * Reread the user space value to handle the following situation:
++	 *
++	 * CPU0				CPU1
++	 *
++	 * sys_exit()			sys_futex()
++	 *  do_exit()			 futex_lock_pi()
++	 *                                futex_lock_pi_atomic()
++	 *   exit_signals(tsk)		    No waiters:
++	 *    tsk->flags |= PF_EXITING;	    *uaddr == 0x00000PID
++	 *  mm_release(tsk)		    Set waiter bit
++	 *   exit_robust_list(tsk) {	    *uaddr = 0x80000PID;
++	 *      Set owner died		    attach_to_pi_owner() {
++	 *    *uaddr = 0xC0000000;	     tsk = get_task(PID);
++	 *   }				     if (!tsk->flags & PF_EXITING) {
++	 *  ...				       attach();
++	 *  tsk->flags |= PF_EXITPIDONE;     } else {
++	 *				       if (!(tsk->flags & PF_EXITPIDONE))
++	 *				         return -EAGAIN;
++	 *				       return -ESRCH; <--- FAIL
++	 *				     }
++	 *
++	 * Returning ESRCH unconditionally is wrong here because the
++	 * user space value has been changed by the exiting task.
++	 *
++	 * The same logic applies to the case where the exiting task is
++	 * already gone.
++	 */
++	if (get_futex_value_locked(&uval2, uaddr))
++		return -EFAULT;
++
++	/* If the user space value has changed, try again. */
++	if (uval2 != uval)
++		return -EAGAIN;
++
++	/*
++	 * The exiting task did not have a robust list, the robust list was
++	 * corrupted or the user space value in *uaddr is simply bogus.
++	 * Give up and tell user space.
++	 */
++	return -ESRCH;
++}
++
+ /*
+  * Lookup the task for the TID provided from user space and attach to
+  * it after doing proper sanity checks.
+  */
+-static int attach_to_pi_owner(u32 uval, union futex_key *key,
++static int attach_to_pi_owner(u32 __user *uaddr, u32 uval, union futex_key *key,
+ 			      struct futex_pi_state **ps)
  {
--	/* tsk is already queued? */
--	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
-+	/* mm is already queued? */
-+	if (test_and_set_bit(MMF_OOM_REAP_QUEUED, &tsk->signal->oom_mm->flags))
- 		return;
+ 	pid_t pid = uval & FUTEX_TID_MASK;
+@@ -1162,12 +1216,15 @@ static int attach_to_pi_owner(u32 uval, union futex_key *key,
+ 	/*
+ 	 * We are the first waiter - try to look up the real owner and attach
+ 	 * the new pi_state to it, but bail out when TID = 0 [1]
++	 *
++	 * The !pid check is paranoid. None of the call sites should end up
++	 * with pid == 0, but better safe than sorry. Let the caller retry
+ 	 */
+ 	if (!pid)
+-		return -ESRCH;
++		return -EAGAIN;
+ 	p = find_get_task_by_vpid(pid);
+ 	if (!p)
+-		return -ESRCH;
++		return handle_exit_race(uaddr, uval, NULL);
  
- 	get_task_struct(tsk);
--- 
-1.8.3.1
-
+ 	if (unlikely(p->flags & PF_KTHREAD)) {
+ 		put_task_struct(p);
+@@ -1187,7 +1244,7 @@ static int attach_to_pi_owner(u32 uval, union futex_key *key,
+ 		 * set, we know that the task has finished the
+ 		 * cleanup:
+ 		 */
+-		int ret = (p->flags & PF_EXITPIDONE) ? -ESRCH : -EAGAIN;
++		int ret = handle_exit_race(uaddr, uval, p);
+ 
+ 		raw_spin_unlock_irq(&p->pi_lock);
+ 		put_task_struct(p);
+@@ -1244,7 +1301,7 @@ static int lookup_pi_state(u32 __user *uaddr, u32 uval,
+ 	 * We are the first waiter - try to look up the owner based on
+ 	 * @uval and attach to it.
+ 	 */
+-	return attach_to_pi_owner(uval, key, ps);
++	return attach_to_pi_owner(uaddr, uval, key, ps);
+ }
+ 
+ static int lock_pi_update_atomic(u32 __user *uaddr, u32 uval, u32 newval)
+@@ -1352,7 +1409,7 @@ static int futex_lock_pi_atomic(u32 __user *uaddr, struct futex_hash_bucket *hb,
+ 	 * attach to the owner. If that fails, no harm done, we only
+ 	 * set the FUTEX_WAITERS bit in the user space variable.
+ 	 */
+-	return attach_to_pi_owner(uval, key, ps);
++	return attach_to_pi_owner(uaddr, newval, key, ps);
+ }
+ 
+ /**
