@@ -2,75 +2,135 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFAFC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD06C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4F822086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C6B520882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548762742;
+	bh=SzEgPNhJWWqjYuTVuXJbpqIHApJL6+0BdS0QcNHlFD4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ICz701e+HXBZ1UWksBUsB9d98pNYRZv5LzFDaC7goOW3raPeSGbMXlF9/oCDPHfNK
+	 040IOJwv/psoH6Meb12a4AlRAo7cM0ZrYk6wQcRuOObuxGfm+8phBYkiFIfStopHC/
+	 cYKs/iCV7Z0CDv1YcyrHmu2WX93XpyLchJy9sYxc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732061AbfA2LwO (ORCPT
+        id S1732080AbfA2LwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:52:14 -0500
-Received: from mga11.intel.com ([192.55.52.93]:17616 "EHLO mga11.intel.com"
+        Tue, 29 Jan 2019 06:52:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732046AbfA2LwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:52:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 03:52:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
-   d="scan'208";a="314488588"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga006.fm.intel.com with ESMTP; 29 Jan 2019 03:52:06 -0800
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id EFF91205C8; Tue, 29 Jan 2019 13:52:05 +0200 (EET)
-Date:   Tue, 29 Jan 2019 13:52:05 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: media: Add Allwinner A10 CSI binding
-Message-ID: <20190129115205.jsplf7ml7kmzem56@paasikivi.fi.intel.com>
-References: <cover.ba7411f0c7155d0292b38d3dec698e26b5cc813b.1548687041.git-series.maxime.ripard@bootlin.com>
- <f6b6adf84c58e0de605d0a23dd559fee011f380c.1548687041.git-series.maxime.ripard@bootlin.com>
+        id S1732063AbfA2LwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:52:19 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECC542086C;
+        Tue, 29 Jan 2019 11:52:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548762738;
+        bh=SzEgPNhJWWqjYuTVuXJbpqIHApJL6+0BdS0QcNHlFD4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=R+GhfJZ0NIemVYNCm/MCBS0N7SEyWmqb97BVUV9XjUfR0wnDrL+/Qu8l7FBC6WTek
+         XdfaTBJVXtq6/XbqhXVxE9mreIlguQn+k0WmP/8kiOAFoop0q9AoUr/yIDVIJS/g2x
+         FeJPDrVUbvFSad6QK+iav3Pebp7pdiI75qt7Acr4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Raju Rangoju <rajur@chelsio.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 41/44] nvmet-rdma: fix null dereference under heavy load
+Date:   Tue, 29 Jan 2019 12:36:36 +0100
+Message-Id: <20190129113143.290397932@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
+References: <20190129113139.826927690@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6b6adf84c58e0de605d0a23dd559fee011f380c.1548687041.git-series.maxime.ripard@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-On Mon, Jan 28, 2019 at 03:52:32PM +0100, Maxime Ripard wrote:
-> The Allwinner A10 CMOS Sensor Interface is a camera capture interface also
-> used in later (A10s, A13, A20, R8 and GR8) SoCs.
-> 
-> On some SoCs, like the A10, there's multiple instances of that controller,
-> with one instance supporting more channels and having an ISP.
+------------------
 
-How about the graph, and endpoint configuration? You had that in v1...
+From: Raju Rangoju <rajur@chelsio.com>
 
--- 
-Regards,
+commit 5cbab6303b4791a3e6713dfe2c5fda6a867f9adc upstream.
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Under heavy load if we don't have any pre-allocated rsps left, we
+dynamically allocate a rsp, but we are not actually allocating memory
+for nvme_completion (rsp->req.rsp). In such a case, accessing pointer
+fields (req->rsp->status) in nvmet_req_init() will result in crash.
+
+To fix this, allocate the memory for nvme_completion by calling
+nvmet_rdma_alloc_rsp()
+
+Fixes: 8407879c("nvmet-rdma:fix possible bogus dereference under heavy load")
+
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Raju Rangoju <rajur@chelsio.com>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/nvme/target/rdma.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+--- a/drivers/nvme/target/rdma.c
++++ b/drivers/nvme/target/rdma.c
+@@ -137,6 +137,10 @@ static void nvmet_rdma_recv_done(struct
+ static void nvmet_rdma_read_data_done(struct ib_cq *cq, struct ib_wc *wc);
+ static void nvmet_rdma_qp_event(struct ib_event *event, void *priv);
+ static void nvmet_rdma_queue_disconnect(struct nvmet_rdma_queue *queue);
++static void nvmet_rdma_free_rsp(struct nvmet_rdma_device *ndev,
++				struct nvmet_rdma_rsp *r);
++static int nvmet_rdma_alloc_rsp(struct nvmet_rdma_device *ndev,
++				struct nvmet_rdma_rsp *r);
+ 
+ static struct nvmet_fabrics_ops nvmet_rdma_ops;
+ 
+@@ -175,9 +179,17 @@ nvmet_rdma_get_rsp(struct nvmet_rdma_que
+ 	spin_unlock_irqrestore(&queue->rsps_lock, flags);
+ 
+ 	if (unlikely(!rsp)) {
+-		rsp = kmalloc(sizeof(*rsp), GFP_KERNEL);
++		int ret;
++
++		rsp = kzalloc(sizeof(*rsp), GFP_KERNEL);
+ 		if (unlikely(!rsp))
+ 			return NULL;
++		ret = nvmet_rdma_alloc_rsp(queue->dev, rsp);
++		if (unlikely(ret)) {
++			kfree(rsp);
++			return NULL;
++		}
++
+ 		rsp->allocated = true;
+ 	}
+ 
+@@ -190,6 +202,7 @@ nvmet_rdma_put_rsp(struct nvmet_rdma_rsp
+ 	unsigned long flags;
+ 
+ 	if (unlikely(rsp->allocated)) {
++		nvmet_rdma_free_rsp(rsp->queue->dev, rsp);
+ 		kfree(rsp);
+ 		return;
+ 	}
+
+
