@@ -2,113 +2,114 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1A2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 772C8C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F29A2083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:30:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZZN6Wad"
+	by mail.kernel.org (Postfix) with ESMTP id 4F5A92083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbfA2MaP (ORCPT
+        id S1729115AbfA2MbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:30:15 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39874 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728498AbfA2MaM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 07:30:12 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y8so17526063wmi.4
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 04:30:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=oE8Qm9PdZluCUZkLGWY+ZFIppoNu/D2qntGj/3XiAXQ=;
-        b=LZZN6Wadr4cjXRY+8dG1EeZk5m/TdVcTfpOsZ5V3GC5hu0tCP6jbbMPBh03ne5P1zy
-         ghlKYErOvpXI91DIeGX1ODR8VvIyaDe5KPQSfDOG6AzBpYuhi+79EKFNQFSSbLM68h6D
-         95Z/d7mkgz/UENS2zkiIHBphbNV6BRLo8vu6U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=oE8Qm9PdZluCUZkLGWY+ZFIppoNu/D2qntGj/3XiAXQ=;
-        b=KJ0zkhvbfRM0y23KRLWk2aMITmtAWBqvpqM91iWkRc6eKKXIsZUwspb997VQIGQ/vY
-         FaYK2jOGherisdxVguC6mxdVHfdrsAYu5qGOUaao3PZ5fKJZPqFGm7DYolmMaA0+nIBC
-         sN+R7OYKdfc2HUA449kCKK2RztPuG5fELklNdAC1xTI7k4mrWtpRNY3B6oOEBSnsv/vT
-         8Fz7ltoD+dSbhzv6JlKauJ45TAEkvnackzZc7QBbyuF45dnIKlVKJMw1mH2HSM7qw/vX
-         c6U9vr/Ldy/yCtqnnqcmD1DHqRPovnKjyVLiutkEZ/e7nhzYfGBRUZT9iimslCSgNXtP
-         Eo2A==
-X-Gm-Message-State: AJcUukfHGnxz3iPrXwwCOXp7ZIpecOC/U6Hg2CP9h2jpGky/2GsBO3w2
-        5ZOVFFPHBffQMuGQ6xoTlonhzQ==
-X-Google-Smtp-Source: ALg8bN6Dv5bto48uf2VZhK8Y3t2maUaWJp3mSF942fyW3hxN7qnMGNqU1ppDG+NKI3dclarAXzygsA==
-X-Received: by 2002:a1c:a755:: with SMTP id q82mr21799557wme.6.1548765010759;
-        Tue, 29 Jan 2019 04:30:10 -0800 (PST)
-Received: from dell ([2.27.35.198])
-        by smtp.gmail.com with ESMTPSA id l19sm2852142wme.21.2019.01.29.04.30.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 04:30:09 -0800 (PST)
-Date:   Tue, 29 Jan 2019 12:30:08 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Vijay Khemka <vijaykhemka@fb.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
-Subject: Re: [PATCH v2] dt-bindings: aspeed-lpc: Make parameter optional
-Message-ID: <20190129123008.GC24070@dell>
-References: <20190118201547.640173-1-vijaykhemka@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190118201547.640173-1-vijaykhemka@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 29 Jan 2019 07:31:02 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36016 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727939AbfA2MbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 07:31:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6B41EBD;
+        Tue, 29 Jan 2019 04:31:01 -0800 (PST)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.37.186])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 173A93F59C;
+        Tue, 29 Jan 2019 04:30:58 -0800 (PST)
+Date:   Tue, 29 Jan 2019 12:31:00 +0000
+Message-ID: <868sz3ve63.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <daniel.thompson@linaro.org>,
+        <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
+        <james.morse@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH v9 20/26] irqchip/gic-v3: Handle pseudo-NMIs
+In-Reply-To: <c332af8d-4529-dbb0-f760-0c2518823053@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-21-git-send-email-julien.thierry@arm.com>
+        <86wompuh5j.wl-marc.zyngier@arm.com>
+        <c332af8d-4529-dbb0-f760-0c2518823053@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Jan 2019, Vijay Khemka wrote:
-
-> Memory-region and flash phandle is not a required parameter, it is
-> optional to describe in device tree and needed only use basis.
+On Tue, 29 Jan 2019 11:33:35 +0000,
+Julien Thierry <julien.thierry@arm.com> wrote:
 > 
-> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
-> ---
->  Documentation/devicetree/bindings/mfd/aspeed-lpc.txt | 3 +++
->  1 file changed, 3 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-> index 34dd89087cff..d28c4e117611 100644
-> --- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-> +++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.txt
-> @@ -135,6 +135,9 @@ Required properties:
->  - clocks:	contains a phandle to the syscon node describing the clocks.
->  		There should then be one cell representing the clock to use
->  
-> +Optional properties:
-> +These below properties are optional to define.
+> 
+> On 28/01/2019 11:59, Marc Zyngier wrote:
+> > On Mon, 21 Jan 2019 15:33:39 +0000,
+> > Julien Thierry <julien.thierry@arm.com> wrote:
+> >>
+> >> Provide a higher priority to be used for pseudo-NMIs. When such an
+> >> interrupt is received, keep interrupts fully disabled at CPU level to
+> >> prevent receiving other pseudo-NMIs while handling the current one.
+> >>
+> >> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> >> Cc: Thomas Gleixner <tglx@linutronix.de>
+> >> Cc: Jason Cooper <jason@lakedaemon.net>
+> >> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> >> ---
+> >>  drivers/irqchip/irq-gic-v3.c | 42 ++++++++++++++++++++++++++++++++++++------
+> >>  1 file changed, 36 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> >> index 5374b43..4df1e94 100644
+> >> --- a/drivers/irqchip/irq-gic-v3.c
+> >> +++ b/drivers/irqchip/irq-gic-v3.c
+> >> @@ -41,6 +41,8 @@
+> >>  
+> >>  #include "irq-gic-common.h"
+> >>  
+> >> +#define GICD_INT_NMI_PRI	(GICD_INT_DEF_PRI & ~0x80)
+> >> +
+> >>  #define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
+> >>  
+> >>  struct redist_region {
+> >> @@ -381,12 +383,45 @@ static u64 gic_mpidr_to_affinity(unsigned long mpidr)
+> >>  	return aff;
+> >>  }
+> >>  
+> >> +static inline void gic_deactivate_unexpected_irq(u32 irqnr)
+> > 
+> > Same remark as on some other patches: you should be able to drop the
+> > inline attribute without any ill effect. I'd also like this to be
+> > renamed "gic_deactivate_spurious", or something similar.
+> > 
+> 
+> I'm a bit concern about using spurious since it is not related to
+> GICC_INT_SPURIOUS, we actually read a valid IRQ number, we just don't
+> know how we should handle it.
 
-This line is superfluous.  Please remove it.
+Well, I'd say that in the case of GICC_INT_SPURIOUS, there is nothing
+to deactivate, but hey... ;-)
 
-> +
->  - memory-region: A phandle to a reserved_memory region to be used for the LPC
->  		to AHB mapping
->  
+> Would "gic_deactivate_unhandled" work? Or "gic_deactivate_bad"?
+
+Sure, any will do.
+
+	M.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Jazz is not dead, it just smell funny.
