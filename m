@@ -2,107 +2,77 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D713C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933C5C282D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E419320856
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:37:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 651F020856
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbfA2ThO (ORCPT
+        id S1729123AbfA2Thk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:37:14 -0500
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:33081 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726828AbfA2ThO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:37:14 -0500
-Received: from [192.168.0.13] (ip5f5bf33f.dynamic.kabel-deutschland.de [95.91.243.63])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 3B833201352016;
-        Tue, 29 Jan 2019 20:37:12 +0100 (CET)
-Subject: Re: [PATCH 0/2] Fix TSC issues on (some) AMD Ryzen based systems
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-To:     =?UTF-8?Q?Jan_H=2e_Sch=c3=b6nherr?= <jan@schnhrr.de>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Cc:     Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        it+linux-x86@molgen.mpg.de
-References: <20190129102329.27610-1-jan@schnhrr.de>
- <74929a77-6a21-d13e-9a65-5a0753009ddf@molgen.mpg.de>
-Message-ID: <986788f4-2a89-78a9-edee-3754dadba512@molgen.mpg.de>
-Date:   Tue, 29 Jan 2019 20:37:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 29 Jan 2019 14:37:40 -0500
+Received: from mga17.intel.com ([192.55.52.151]:6444 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726828AbfA2Thj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 14:37:39 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 11:37:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,538,1539673200"; 
+   d="scan'208";a="138932916"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
+  by fmsmga002.fm.intel.com with ESMTP; 29 Jan 2019 11:37:34 -0800
+Date:   Tue, 29 Jan 2019 21:37:38 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v8 2/7] tpm: add _head suffix to tcg_efi_specid_event and
+ tcg_pcr_event2
+Message-ID: <20190129193738.GB11615@linux.intel.com>
+References: <20190124154910.29948-1-roberto.sassu@huawei.com>
+ <20190124154910.29948-3-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <74929a77-6a21-d13e-9a65-5a0753009ddf@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124154910.29948-3-roberto.sassu@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Jan,
-
-
-Am 29.01.19 um 20:33 schrieb Paul Menzel:
-
-> Thank you for adding me to the CC list.
+On Thu, Jan 24, 2019 at 04:49:05PM +0100, Roberto Sassu wrote:
+> TCG defines two structures, TCG_EfiSpecIDEventStruct and TCG_PCR_EVENT2,
+> which contain variable-sized arrays in the middle of the definition.
 > 
+> Since these structures are not suitable for type casting, this patch
+> removes structure members after the variable-sized arrays and adds the
+> _head suffix to the structure name, to indicate that the renamed structures
+> do not contain all fields defined by TCG.
 > 
-> Am 29.01.19 um 11:23 schrieb Jan H. Schönherr:
->> My newly acquired AMD Ryzen Threadripper based system seems to have
->> some TSC quirks, which go away once the system is up.
->>
->> Given the discussion in https://lkml.org/lkml/2019/1/28/1356
->> I don't seem to be the only one, and it does not seem to be
->> Threadripper specific.
->>
->> The first patch addresses presumably SMI interruptions, that occur
->> on my system at a 60 Hz frequency. They take too long, making the
->> existing code fail. The patch makes that code more resilient.
->> (These interruptions go away at some point during boot; also proven
->> by the fact, that I don't have any TSC issues, when kexecing into
->> a new kernel.)
->>
->> The second patch prevents TSC going unstable when resuming from S3.
->> This may have a similar source, but is certainly more weird: the
->> TSC is observed to go backwards on CPU0 by about 200 to 500 cycles
->> compared to other CPUs every once in a while, as long as its sibling
->> (CPU16 in my case) hasn't been resumed yet. (I did some experiments
->> with CPU hotplug before and after suspend, but apart from reproducing
->> the issue and verifying the "fix", I got nowhere.)
->>
->> The patches are against v4.20.
->>
->> Jan H. Schönherr (2):
->>    x86/tsc: Allow quick PIT calibration despite interruptions
->>    cpu/hotplug: Unfreeze sibling CPU first on resume from S3
->>
->>   arch/x86/kernel/tsc.c | 80 +++++++++++++++++++++++++------------------
->>   kernel/cpu.c          | 34 ++++++++++++------
->>   2 files changed, 70 insertions(+), 44 deletions(-)
+> Lastly, given that variable-sized arrays are now in the last position, and
+> given that the size of the arrays cannot be determined in advance, this
+> patch also sets the size of those arrays to zero and removes the definition
+> of TPM2_ACTIVE_PCR_BANKS.
 > 
-> I successfully tested both applied on Linus’ current master branch
-> (v5.0-rc4-1-g4aa9fc2a435a).
-> 
->> [    0.000000] DMI: HP HP EliteDesk 705 G4 MT/83E7, BIOS Q06 Ver. 02.04.01 09/14/2018
->> [    0.000000] tsc: Fast TSC calibration using PIT
->> [    0.000000] tsc: Detected 3616.864 MHz processor
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Tested-by: Nayna Jain <nayna@linux.ibm.com>
 
-Please do not forget to tag both patches for the stable releases
-by adding the tag.
+OK, I applied this to my tree. Does not make to sense to hold this.
 
- > CC: stable@vger.kernel.org
+Thank you.
 
-
-Kind regards,
-
-Paul
+/Jarkko
