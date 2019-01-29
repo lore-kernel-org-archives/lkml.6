@@ -4,53 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B7DC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3C3C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AC8E218A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EE7021852
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762409;
-	bh=SU0yQjaEQPcS85ss1x+uaw42uE9HuLzjQJ2GGbYyQ0k=;
+	s=default; t=1548762413;
+	bh=2E22aUmgnKTCnKavps1jK4UW3xVaValWjfs7lEqNBeA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AzGszzICaqt4zu1+LvCciddDMKxlaAt+aTFMRir0GVztLzVsHoHBeiBqj7hZdLo7P
-	 hcPg6yYrfh5mv8KvjQmpgazXIQcpNkPxX1V2nJI+CWcaIGqMlZFQ6eLF91JcvbH0IU
-	 Dl2jQFjvDTQe6A4eU1Xe81eSW3FZamg/nANDiy0o=
+	b=NkONHMCp3687IY73yiOCd+9khPSNsmyoFQkVVoSk+HwpLbiEcGZ19ajBd6k8HMHDM
+	 2isVWxFQJ7ebgiYn11UopHzccDgP0VDBy8Jk7HSJKuOYBF9kYJe5+fkFloq1j+nw80
+	 ZOKt+BFJrTHGA0QLytx6QrNA1gdT9DEZrPlZP29k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731100AbfA2Lqs (ORCPT
+        id S1729659AbfA2Lqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:46:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37406 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:46:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731046AbfA2Lqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:46:45 -0500
+        id S1731096AbfA2Lqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:46:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5778D218A3;
-        Tue, 29 Jan 2019 11:46:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DC4E21874;
+        Tue, 29 Jan 2019 11:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762404;
-        bh=SU0yQjaEQPcS85ss1x+uaw42uE9HuLzjQJ2GGbYyQ0k=;
+        s=default; t=1548762408;
+        bh=2E22aUmgnKTCnKavps1jK4UW3xVaValWjfs7lEqNBeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AGuYV/vVm6up9V8PKdkrppEjiU+B/5axU8igl4VNVCpVsYDvte6806BbVKOYsD23U
-         obTkUN06gTPdZT1kjyT48Rss+LmMqIerCT0Wk/o5ILVaLsmp6wbZMnPxvvw7JVJ4Vu
-         fXPi1YBgkLMdskSFH9kWTShih8bNvwXyItOd9D9E=
+        b=vjBpy1I5SKLOCQ8z4Nd70rF0VLSMK9dhNQH6tkcPk+pp1GogsnpaERe5bSbLBU3vA
+         Yj1Wq0HfnW75kM0UasJupj4zuWK24HzZL2lRn02J5f+utxJTf0W+QxmyDNe4jz7jyb
+         rMeilhVl154kmQepmuTcxNY7nrNJU3NFbGVSSjHw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 063/103] scsi: ufs: Use explicit access size in ufshcd_dump_regs
-Date:   Tue, 29 Jan 2019 12:35:40 +0100
-Message-Id: <20190129113204.440714804@linuxfoundation.org>
+        stable@vger.kernel.org, ryan.p.norwood@gmail.com,
+        Joe Thornber <ejt@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 064/103] dm thin: fix passdown_double_checking_shared_status()
+Date:   Tue, 29 Jan 2019 12:35:41 +0100
+Message-Id: <20190129113204.494362798@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -69,87 +65,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Gonzalez <marc.w.gonzalez@free.fr>
+From: Joe Thornber <ejt@redhat.com>
 
-commit d67247566450cf89a693307c9bc9f05a32d96cea upstream.
+commit d445bd9cec1a850c2100fcf53684c13b3fd934f2 upstream.
 
-memcpy_fromio() doesn't provide any control over access size.  For example,
-on arm64, it is implemented using readb and readq.  This may trigger a
-synchronous external abort:
+Commit 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next
+stage processing") changed process_prepared_discard_passdown_pt1() to
+increment all the blocks being discarded until after the passdown had
+completed to avoid them being prematurely reused.
 
-[    3.729943] Internal error: synchronous external abort: 96000210 [#1] PREEMPT SMP
-[    3.737000] Modules linked in:
-[    3.744371] CPU: 2 PID: 1 Comm: swapper/0 Tainted: G S                4.20.0-rc4 #16
-[    3.747413] Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
-[    3.755295] pstate: 00000005 (nzcv daif -PAN -UAO)
-[    3.761978] pc : __memcpy_fromio+0x68/0x80
-[    3.766718] lr : ufshcd_dump_regs+0x50/0xb0
-[    3.770767] sp : ffff00000807ba00
-[    3.774830] x29: ffff00000807ba00 x28: 00000000fffffffb
-[    3.778344] x27: ffff0000089db068 x26: ffff8000f6e58000
-[    3.783728] x25: 000000000000000e x24: 0000000000000800
-[    3.789023] x23: ffff8000f6e587c8 x22: 0000000000000800
-[    3.794319] x21: ffff000008908368 x20: ffff8000f6e1ab80
-[    3.799615] x19: 000000000000006c x18: ffffffffffffffff
-[    3.804910] x17: 0000000000000000 x16: 0000000000000000
-[    3.810206] x15: ffff000009199648 x14: ffff000089244187
-[    3.815502] x13: ffff000009244195 x12: ffff0000091ab000
-[    3.820797] x11: 0000000005f5e0ff x10: ffff0000091998a0
-[    3.826093] x9 : 0000000000000000 x8 : ffff8000f6e1ac00
-[    3.831389] x7 : 0000000000000000 x6 : 0000000000000068
-[    3.836676] x5 : ffff8000f6e1abe8 x4 : 0000000000000000
-[    3.841971] x3 : ffff00000928c868 x2 : ffff8000f6e1abec
-[    3.847267] x1 : ffff00000928c868 x0 : ffff8000f6e1abe8
-[    3.852567] Process swapper/0 (pid: 1, stack limit = 0x(____ptrval____))
-[    3.857900] Call trace:
-[    3.864473]  __memcpy_fromio+0x68/0x80
-[    3.866683]  ufs_qcom_dump_dbg_regs+0x1c0/0x370
-[    3.870522]  ufshcd_print_host_regs+0x168/0x190
-[    3.874946]  ufshcd_init+0xd4c/0xde0
-[    3.879459]  ufshcd_pltfrm_init+0x3c8/0x550
-[    3.883264]  ufs_qcom_probe+0x24/0x60
-[    3.887188]  platform_drv_probe+0x50/0xa0
+IO issued to a thin device that breaks sharing with a snapshot, followed
+by a discard issued to snapshot(s) that previously shared the block(s),
+results in passdown_double_checking_shared_status() being called to
+iterate through the blocks double checking their reference count is zero
+and issuing the passdown if so.  So a side effect of commit 00a0ea33b495
+is passdown_double_checking_shared_status() was broken.
 
-Assuming aligned 32-bit registers, let's use readl, after making sure
-that 'offset' and 'len' are indeed multiples of 4.
+Fix this by checking if the block reference count is greater than 1.
+Also, rename dm_pool_block_is_used() to dm_pool_block_is_shared().
 
-Fixes: ba80917d9932d ("scsi: ufs: ufshcd_dump_regs to use memcpy_fromio")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-Acked-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Tested-by: Evan Green <evgreen@chromium.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next stage processing")
+Cc: stable@vger.kernel.org # 4.9+
+Reported-by: ryan.p.norwood@gmail.com
+Signed-off-by: Joe Thornber <ejt@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/ufs/ufshcd.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/md/dm-thin-metadata.c |    4 ++--
+ drivers/md/dm-thin-metadata.h |    2 +-
+ drivers/md/dm-thin.c          |   10 +++++-----
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -109,13 +109,19 @@
- int ufshcd_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
- 		     const char *prefix)
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -1678,7 +1678,7 @@ int dm_thin_remove_range(struct dm_thin_
+ 	return r;
+ }
+ 
+-int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
++int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
  {
--	u8 *regs;
-+	u32 *regs;
-+	size_t pos;
-+
-+	if (offset % 4 != 0 || len % 4 != 0) /* keep readl happy */
-+		return -EINVAL;
+ 	int r;
+ 	uint32_t ref_count;
+@@ -1686,7 +1686,7 @@ int dm_pool_block_is_used(struct dm_pool
+ 	down_read(&pmd->root_lock);
+ 	r = dm_sm_get_count(pmd->data_sm, b, &ref_count);
+ 	if (!r)
+-		*result = (ref_count != 0);
++		*result = (ref_count > 1);
+ 	up_read(&pmd->root_lock);
  
- 	regs = kzalloc(len, GFP_KERNEL);
- 	if (!regs)
- 		return -ENOMEM;
+ 	return r;
+--- a/drivers/md/dm-thin-metadata.h
++++ b/drivers/md/dm-thin-metadata.h
+@@ -195,7 +195,7 @@ int dm_pool_get_metadata_dev_size(struct
  
--	memcpy_fromio(regs, hba->mmio_base + offset, len);
-+	for (pos = 0; pos < len; pos += 4)
-+		regs[pos / 4] = ufshcd_readl(hba, offset + pos);
-+
- 	ufshcd_hex_dump(prefix, regs, len);
- 	kfree(regs);
+ int dm_pool_get_data_dev_size(struct dm_pool_metadata *pmd, dm_block_t *result);
+ 
+-int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
++int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
+ 
+ int dm_pool_inc_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
+ int dm_pool_dec_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -1048,7 +1048,7 @@ static void passdown_double_checking_sha
+ 	 * passdown we have to check that these blocks are now unused.
+ 	 */
+ 	int r = 0;
+-	bool used = true;
++	bool shared = true;
+ 	struct thin_c *tc = m->tc;
+ 	struct pool *pool = tc->pool;
+ 	dm_block_t b = m->data_block, e, end = m->data_block + m->virt_end - m->virt_begin;
+@@ -1058,11 +1058,11 @@ static void passdown_double_checking_sha
+ 	while (b != end) {
+ 		/* find start of unmapped run */
+ 		for (; b < end; b++) {
+-			r = dm_pool_block_is_used(pool->pmd, b, &used);
++			r = dm_pool_block_is_shared(pool->pmd, b, &shared);
+ 			if (r)
+ 				goto out;
+ 
+-			if (!used)
++			if (!shared)
+ 				break;
+ 		}
+ 
+@@ -1071,11 +1071,11 @@ static void passdown_double_checking_sha
+ 
+ 		/* find end of run */
+ 		for (e = b + 1; e != end; e++) {
+-			r = dm_pool_block_is_used(pool->pmd, e, &used);
++			r = dm_pool_block_is_shared(pool->pmd, e, &shared);
+ 			if (r)
+ 				goto out;
+ 
+-			if (used)
++			if (shared)
+ 				break;
+ 		}
  
 
 
