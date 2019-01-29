@@ -2,126 +2,155 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17880C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67987C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA6BE20857
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548753210;
-	bh=8dQJ39Qe6z1zQ2+fMzLdCH8kWMcupAo1/qGjcL523l0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=uNK9dObx35faMs25zvz1YFP88rLH5hc0VtQByCwcJ6UXCg60s8jtaqvug2WXjw2d4
-	 d6S9dSlVEPctsEoSCY9E0VzCWwzxz4VSw4q1OH5/Lo73+k28ONqflX3/aZxjaxrz/b
-	 ThQzIVGkNeg3fRohFPqdYW5rLUUVyPu9SEUGcHCE=
+	by mail.kernel.org (Postfix) with ESMTP id 2B7B920857
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:14:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="OQH26co7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfA2JN3 (ORCPT
+        id S1727709AbfA2JOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:13:29 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38202 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbfA2JN3 (ORCPT
+        Tue, 29 Jan 2019 04:14:24 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44195 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfA2JOX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:13:29 -0500
-Received: by mail-ot1-f65.google.com with SMTP id e12so17266496otl.5;
-        Tue, 29 Jan 2019 01:13:28 -0800 (PST)
+        Tue, 29 Jan 2019 04:14:23 -0500
+Received: by mail-lf1-f68.google.com with SMTP id z13so14032607lfe.11
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:14:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KKMz8nfKF0cy15fJreQndBZXUzFDeBH8q0iWx2o5RSw=;
+        b=OQH26co7h8NjuDnpB1hYgEw1lFyu7RXf6aYZxMGRKdi9vbc9kneMY6qH5sEFaNMEnR
+         YEHYRpVPhon9UFTTa2rutskIkZtypm7qJbfsWeHbwOKpWlzQNi07GYvQp45Bw+VbQorI
+         r4OCgaXQ8MwAL6Wo+ppA2oLhNSidA0AWD+fk2l+QF7i4wKpX8zGwIl1YzhxbBNeQBiN8
+         ytQzmO1rQa73JFonygdPJgZ+SurgOnLfdePn7Cizwb7iAD0ws3QEFxd4rCAz2jjSvLPe
+         eiupGpMoUur35jU5Nd77S4jXBJac+3BWFGgC39L0XroOVyqH9xi9Vc/GV6oMm7sicjff
+         taRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7GUniQntzzZbkjZJqErsG9HvsQo//LjD7QjxdWEzWBg=;
-        b=ogPOiqQxXSeWrU3NjU2Fvw/uQ3/7ErUIAAg3RpEsMVwteI7+YzlKBpm2DzxWsS5GxR
-         fUNu1rbBUWRNUoWatgEDiaqgabT3zBCce9DPuNdmEjJ4/D1ZwVOg7Gma3ftkryHDK+/5
-         CBb3Xx0fWQXHJUcoU8zszBPLTtuDgJLGudrHukLtAxdPT1vBxrUW8NQOMLEaqWFoRZOE
-         EUf4DjKHXLlsYfwy64n5DsU69BjDYy5XnT39EY6BCdDbVMiX9QONqFGM2Wr3/lilLoLI
-         vcvvVbolByKjcXg88vCCCbQFF/Jt2tA8FDSuyK8zDau2hhgH0vfRiYTH37vx3Ck7a5L3
-         NlFQ==
-X-Gm-Message-State: AJcUukcF7cqaQLrI+ha13Wgj0QVUjBB8m15SwGjaeEIcq9UCksUciQxH
-        UgD4ARo/jUdw0xew7utkdVQPCEjbloe5Obtzffw=
-X-Google-Smtp-Source: ALg8bN5o+nljS0TUqxHT+VMjjGrf8DK6j3i1eECw1cVDlUNmvyNUgen0UMLoDmrrYtJB0txLTlfm1SUwPazfUwgBbO8=
-X-Received: by 2002:a9d:5f06:: with SMTP id f6mr19790804oti.258.1548753208127;
- Tue, 29 Jan 2019 01:13:28 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KKMz8nfKF0cy15fJreQndBZXUzFDeBH8q0iWx2o5RSw=;
+        b=lkg11DppZKsFtP3qvDFeydSYsh+6PKlhlIyo+et/WIyj6As4F6WZRjozuq1uuyq9/V
+         XFrKZyh3tTtIxReIzMvWI85cHCpw2W5Z6mAsRWrunE28zrR6SN0LmGVqwrERnONTtvvC
+         rHCjVokB7XQ42OScnjxmZHx81WG7vAC5jMZ0ZxY0rpYklV4iKcgj35rbkIev3DuJWAt5
+         CVLlA/u9EMLbx0hCN7Lq69mKOb60Wma8NHN0F8OAnhW0sRkBEnLOfcF51ez4i4WRQPGz
+         xrlM7g1OPD/cISaDhueKP7/5S307K2QnW/a7FQKHYGwt98ciY1bse0YEHfGd8GsavR67
+         uwVQ==
+X-Gm-Message-State: AJcUukeh+Ea7ZCKBF9VZVjYo/pLPNHnKnZBFexyCdBbDIZbyt6NlgduQ
+        LMk/sGxEDcLSX83dObB87IxzTw==
+X-Google-Smtp-Source: ALg8bN5+hdpZN/H2DMSMO1hlOAXGDMriJ6mqNU9+SWTLXYVquOFHkdkTxRFiGLOBrMoz5mK5p4OtKg==
+X-Received: by 2002:a19:ec16:: with SMTP id b22mr20206999lfa.65.1548753261571;
+        Tue, 29 Jan 2019 01:14:21 -0800 (PST)
+Received: from [192.168.1.169] (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
+        by smtp.gmail.com with ESMTPSA id u26-v6sm3397635lji.22.2019.01.29.01.14.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 01:14:21 -0800 (PST)
+Subject: Re: [PATCH v3 1/2] spi: support inter-word delay requirement for
+ devices
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lanqing Liu <lanqing.liu@spreadtrum.com>
+References: <20190126163220.26421-1-jonas@norrbonn.se>
+ <20190126163220.26421-2-jonas@norrbonn.se>
+ <20190128181038.GF11699@sirena.org.uk>
+ <1b9807aa-3e6e-16f2-a2c2-ebe5e186d904@norrbonn.se>
+ <CAMz4kuK9HAmntmqG-_s6re854tK7UL6wwCh0Lm8=bzpFZsseaw@mail.gmail.com>
+From:   Jonas Bonn <jonas@norrbonn.se>
+Message-ID: <28617b72-fbc0-4274-d9d1-34c37f03f867@norrbonn.se>
+Date:   Tue, 29 Jan 2019 10:14:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <cover.1548737236.git.amit.kucheria@linaro.org>
- <6077cb33d7e078bb0e85776bad99fdb476f16d0c.1548737236.git.amit.kucheria@linaro.org>
- <20190129053618.laa6nscfvlmhhkb5@vireshk-i7> <CAP245DVk+Bbkqh5xzNnL+RG3zZDJJR+ZLJqmEhSWjjSK1FH8rw@mail.gmail.com>
-In-Reply-To: <CAP245DVk+Bbkqh5xzNnL+RG3zZDJJR+ZLJqmEhSWjjSK1FH8rw@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 29 Jan 2019 10:13:15 +0100
-Message-ID: <CAJZ5v0hs2Af9DJoxiyMmFt7R5nYbGOCqgG5cvPOL8yrQXN-ZUw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/9] cpufreq: Auto-register the driver as a thermal
- cooling device if asked
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMz4kuK9HAmntmqG-_s6re854tK7UL6wwCh0Lm8=bzpFZsseaw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 6:46 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
->
-> On Tue, Jan 29, 2019 at 11:06 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > On 29-01-19, 10:25, Amit Kucheria wrote:
-> > > All cpufreq drivers do similar things to register as a cooling device.
-> > > Provide a cpufreq driver flag so drivers can just ask the cpufreq core
-> > > to register the cooling device on their behalf. This allows us to get
-> > > rid of duplicated code in the drivers.
-> > >
-> > > In order to allow this, we add a struct thermal_cooling_device pointer
-> > > to struct cpufreq_policy so that drivers don't need to store it in a
-> > > private data structure.
-> > >
-> > > Suggested-by: Stephen Boyd <swboyd@chromium.org>
-> > > Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> > > Tested-by: Matthias Kaehlcke <mka@chromium.org>
-> > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > ---
-> > >  drivers/cpufreq/cpufreq.c | 13 +++++++++++++
-> > >  include/linux/cpufreq.h   |  9 +++++++++
-> > >  2 files changed, 22 insertions(+)
-> > >
-> > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > > index e35a886e00bc..0f9b50d3ee91 100644
-> > > --- a/drivers/cpufreq/cpufreq.c
-> > > +++ b/drivers/cpufreq/cpufreq.c
-> > > @@ -19,6 +19,7 @@
-> > >
-> > >  #include <linux/cpu.h>
-> > >  #include <linux/cpufreq.h>
-> > > +#include <linux/cpu_cooling.h>
-> > >  #include <linux/delay.h>
-> > >  #include <linux/device.h>
-> > >  #include <linux/init.h>
-> > > @@ -1318,6 +1319,11 @@ static int cpufreq_online(unsigned int cpu)
-> > >       if (cpufreq_driver->ready)
-> > >               cpufreq_driver->ready(policy);
-> > >
-> > > +#if IS_ENABLED(CONFIG_CPU_THERMAL)
-> > > +     if (cpufreq_driver->flags & CPUFREQ_IS_COOLING_DEV)
-> > > +             policy->cdev = of_cpufreq_cooling_register(policy);
-> > > +#endif
-> >
-> > I am not sure if Rafael wanted it this way but maybe something like this:
-> >
-> >         if (IS_ENABLED(CONFIG_CPU_THERMAL) &&
-> >             cpufreq_driver->flags & CPUFREQ_IS_COOLING_DEV))
-> >                 policy->cdev = of_cpufreq_cooling_register(policy);
-> >
-> > We never wanted ifdef hackery to be in there :)
->
-> OK, that makes more sense. Should I just send out a fixup patch or the
-> entire series?
 
-Just a fixup patch, please.
+
+On 29/01/2019 10:04, Baolin Wang wrote:
+> Hi Jonas,
+> On Tue, 29 Jan 2019 at 05:28, Jonas Bonn <jonas@norrbonn.se> wrote:
+>>
+>> Hi,
+>>
+>> On 28/01/2019 19:10, Mark Brown wrote:
+>>> On Sat, Jan 26, 2019 at 05:32:19PM +0100, Jonas Bonn wrote:
+>>>
+>>>> @@ -164,6 +166,7 @@ struct spi_device {
+>>>>       char                    modalias[SPI_NAME_SIZE];
+>>>>       const char              *driver_override;
+>>>>       int                     cs_gpio;        /* chip select gpio */
+>>>> +    uint16_t                word_delay;     /* inter-word delay (us) */
+>>>
+>>> This needs some code in the core joining it up with the per-transfer
+>>> word delay similar to what we have for speed_hz and bits_per_word in
+>>> __spi_validate().  Then the controller drivers can just look at the
+>>> per-transfer value and support both without having to duplicate logic.
+>>>
+>>
+>> So spi_transfer already has a field word_delay and it's defined as
+>> _clock cycles_ to delay between words.  I defined word_delay in
+>> spi_device as _microseconds_ to delay along the lines of delay_usecs.
+>>
+>> Given that the inter-word delay is a function of the slave device speed
+>> and not of the SPI bus speed, I'm inclined to say that a time-based
+>> delay is what we want (to be independent of bus speed).  As such, I want
+>> to know if I should add word_delay_usecs to _both_ spi_transfer and
+>> spi_device?
+>>
+>> There's only one user of word_delay from spi_transfer.  Just looking at
+>> it quickly, it looks like it wants the word_delay in
+>> SPI-controller-clock cycles and not SCK cycles which seems pretty broken
+>> to me.  Adding Baolin and Lanqing to CC: for comment.  Could we rework
+>> that to be microseconds and do the calculation in the driver?
+> 
+> The Spreadtrum SPI controller's word delay unit is clock cycle of the
+> SPI clock, since the SPI source clock can be changed, we can not force
+> user to know the real microseconds. But can we change it to a union
+> structure? not sure if this is a good way.
+
+OK, so it is the SPI clock.  That's good.  There's a comment in the 
+driver that makes it look like it should be the source clock.
+
+The problem with a delay in clock cycles is that the faster the clock, 
+the shorter the delay.  The delay is a property of the slave and the 
+slave has a fixed internal clock.  This means that if we increase SCK we 
+also need to increase the word_delay (in cycles) in order to give the 
+slave the same amount of breathing room.
+
+> 
+> union {
+>       int word_delay_us;
+>       int word_delay_cycle;
+> } w;
+> 
+
+I don't think that's a practical solution.
+
+The register setting in the spi-sprd driver is what... SCK cycles?  So 
+you'd want word_delay_us * max_speed_hz?
+
+The register setting on my Atmel board is in SPI-clock cycles 
+(effectively).  So I want word_delay_us*clk_get_rate(spi-clk).
+
+/Jonas
