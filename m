@@ -2,155 +2,456 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67987C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E875C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B7B920857
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:14:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="OQH26co7"
+	by mail.kernel.org (Postfix) with ESMTP id 58A9C2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:14:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548753278;
+	bh=Wq481mHmfHvZbyqMajosOoW9tlcTEIFkaTrUnld6kew=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OdgtWLROCj9dyE0TH/73kh85tl7Zff6G59DHC8jE1Ho1f6gqQ7hdqGRMbTa2h4YsZ
+	 +66JUWHjtzuoLlkNzkZQxEcLUMx7m427baDEjowGyoIc3EcFXA7ZCKgTNDqtRxsvd/
+	 84UdPpdP+2kWg8cC8hwSwNzmoGUEghQglLziH6H8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfA2JOY (ORCPT
+        id S1727976AbfA2JOg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:14:24 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44195 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbfA2JOX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:14:23 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z13so14032607lfe.11
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:14:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KKMz8nfKF0cy15fJreQndBZXUzFDeBH8q0iWx2o5RSw=;
-        b=OQH26co7h8NjuDnpB1hYgEw1lFyu7RXf6aYZxMGRKdi9vbc9kneMY6qH5sEFaNMEnR
-         YEHYRpVPhon9UFTTa2rutskIkZtypm7qJbfsWeHbwOKpWlzQNi07GYvQp45Bw+VbQorI
-         r4OCgaXQ8MwAL6Wo+ppA2oLhNSidA0AWD+fk2l+QF7i4wKpX8zGwIl1YzhxbBNeQBiN8
-         ytQzmO1rQa73JFonygdPJgZ+SurgOnLfdePn7Cizwb7iAD0ws3QEFxd4rCAz2jjSvLPe
-         eiupGpMoUur35jU5Nd77S4jXBJac+3BWFGgC39L0XroOVyqH9xi9Vc/GV6oMm7sicjff
-         taRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KKMz8nfKF0cy15fJreQndBZXUzFDeBH8q0iWx2o5RSw=;
-        b=lkg11DppZKsFtP3qvDFeydSYsh+6PKlhlIyo+et/WIyj6As4F6WZRjozuq1uuyq9/V
-         XFrKZyh3tTtIxReIzMvWI85cHCpw2W5Z6mAsRWrunE28zrR6SN0LmGVqwrERnONTtvvC
-         rHCjVokB7XQ42OScnjxmZHx81WG7vAC5jMZ0ZxY0rpYklV4iKcgj35rbkIev3DuJWAt5
-         CVLlA/u9EMLbx0hCN7Lq69mKOb60Wma8NHN0F8OAnhW0sRkBEnLOfcF51ez4i4WRQPGz
-         xrlM7g1OPD/cISaDhueKP7/5S307K2QnW/a7FQKHYGwt98ciY1bse0YEHfGd8GsavR67
-         uwVQ==
-X-Gm-Message-State: AJcUukeh+Ea7ZCKBF9VZVjYo/pLPNHnKnZBFexyCdBbDIZbyt6NlgduQ
-        LMk/sGxEDcLSX83dObB87IxzTw==
-X-Google-Smtp-Source: ALg8bN5+hdpZN/H2DMSMO1hlOAXGDMriJ6mqNU9+SWTLXYVquOFHkdkTxRFiGLOBrMoz5mK5p4OtKg==
-X-Received: by 2002:a19:ec16:: with SMTP id b22mr20206999lfa.65.1548753261571;
-        Tue, 29 Jan 2019 01:14:21 -0800 (PST)
-Received: from [192.168.1.169] (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
-        by smtp.gmail.com with ESMTPSA id u26-v6sm3397635lji.22.2019.01.29.01.14.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 01:14:21 -0800 (PST)
-Subject: Re: [PATCH v3 1/2] spi: support inter-word delay requirement for
- devices
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lanqing Liu <lanqing.liu@spreadtrum.com>
-References: <20190126163220.26421-1-jonas@norrbonn.se>
- <20190126163220.26421-2-jonas@norrbonn.se>
- <20190128181038.GF11699@sirena.org.uk>
- <1b9807aa-3e6e-16f2-a2c2-ebe5e186d904@norrbonn.se>
- <CAMz4kuK9HAmntmqG-_s6re854tK7UL6wwCh0Lm8=bzpFZsseaw@mail.gmail.com>
-From:   Jonas Bonn <jonas@norrbonn.se>
-Message-ID: <28617b72-fbc0-4274-d9d1-34c37f03f867@norrbonn.se>
-Date:   Tue, 29 Jan 2019 10:14:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 29 Jan 2019 04:14:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725298AbfA2JOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:14:36 -0500
+Received: from quaco.ghostprotocols.net (ovpn-brq.redhat.com [213.175.37.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76C7320857;
+        Tue, 29 Jan 2019 09:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548753274;
+        bh=Wq481mHmfHvZbyqMajosOoW9tlcTEIFkaTrUnld6kew=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lPYA7+EIpia4Hoske5r6IvkXXvzQRGKK4/t2J+VLYgu/N0EcHXMxDYwVtBQh3lyY5
+         lQWcztEFbBbizn0bIyxdpsoAO7rAEYmWBjvnP0Z7CGbXse1+wHfjBmzKCDBrfUjUUd
+         Dq8l7LMk7gOu8zoc9UIX5uzdw9fdiazYpaDLzTNQ=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 99F6F4034F; Tue, 29 Jan 2019 10:14:32 +0100 (CET)
+Date:   Tue, 29 Jan 2019 10:14:32 +0100
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 0/4] Reduce NUMA related overhead in perf record
+ profiling on large server systems
+Message-ID: <20190129091432.GF4344@kernel.org>
+References: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMz4kuK9HAmntmqG-_s6re854tK7UL6wwCh0Lm8=bzpFZsseaw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 29/01/2019 10:04, Baolin Wang wrote:
-> Hi Jonas,
-> On Tue, 29 Jan 2019 at 05:28, Jonas Bonn <jonas@norrbonn.se> wrote:
->>
->> Hi,
->>
->> On 28/01/2019 19:10, Mark Brown wrote:
->>> On Sat, Jan 26, 2019 at 05:32:19PM +0100, Jonas Bonn wrote:
->>>
->>>> @@ -164,6 +166,7 @@ struct spi_device {
->>>>       char                    modalias[SPI_NAME_SIZE];
->>>>       const char              *driver_override;
->>>>       int                     cs_gpio;        /* chip select gpio */
->>>> +    uint16_t                word_delay;     /* inter-word delay (us) */
->>>
->>> This needs some code in the core joining it up with the per-transfer
->>> word delay similar to what we have for speed_hz and bits_per_word in
->>> __spi_validate().  Then the controller drivers can just look at the
->>> per-transfer value and support both without having to duplicate logic.
->>>
->>
->> So spi_transfer already has a field word_delay and it's defined as
->> _clock cycles_ to delay between words.  I defined word_delay in
->> spi_device as _microseconds_ to delay along the lines of delay_usecs.
->>
->> Given that the inter-word delay is a function of the slave device speed
->> and not of the SPI bus speed, I'm inclined to say that a time-based
->> delay is what we want (to be independent of bus speed).  As such, I want
->> to know if I should add word_delay_usecs to _both_ spi_transfer and
->> spi_device?
->>
->> There's only one user of word_delay from spi_transfer.  Just looking at
->> it quickly, it looks like it wants the word_delay in
->> SPI-controller-clock cycles and not SCK cycles which seems pretty broken
->> to me.  Adding Baolin and Lanqing to CC: for comment.  Could we rework
->> that to be microseconds and do the calculation in the driver?
+Em Tue, Jan 22, 2019 at 08:45:12PM +0300, Alexey Budankov escreveu:
 > 
-> The Spreadtrum SPI controller's word delay unit is clock cycle of the
-> SPI clock, since the SPI source clock can be changed, we can not force
-> user to know the real microseconds. But can we change it to a union
-> structure? not sure if this is a good way.
-
-OK, so it is the SPI clock.  That's good.  There's a comment in the 
-driver that makes it look like it should be the source clock.
-
-The problem with a delay in clock cycles is that the faster the clock, 
-the shorter the delay.  The delay is a property of the slave and the 
-slave has a fixed internal clock.  This means that if we increase SCK we 
-also need to increase the word_delay (in cycles) in order to give the 
-slave the same amount of breathing room.
-
+> It has been observed that trace reading thread runs on the same hw thread
+> most of the time during perf record sampling collection. This scheduling
+> layout leads up to 30% profiling overhead in case when some cpu intensive
+> workload fully utilizes a large server system with NUMA. Overhead usually
+> arises from remote (cross node) HW and memory references that have much
+> longer latencies than local ones [1].
 > 
-> union {
->       int word_delay_us;
->       int word_delay_cycle;
-> } w;
+> This patch set implements --affinity option that lowers 30% overhead
+> completely for serial trace streaming (--affinity=cpu) and from 30% to
+> 10% for AIO1 (--aio=1) trace streaming (--affinity=node|cpu).
+> See OVERHEAD section below for more details.
 > 
+> Implemented extension provides users with capability to instruct Perf 
+> tool to bounce trace reading thread's affinity mask between NUMA nodes 
+> (--affinity=node) or assign the thread to the exact cpu (--affinity=cpu) 
+> that trace buffer being processed belongs to.
+> 
+> The extension brings improvement in case of full system utilization when 
+> Perf tool process contends with workload process on cpu cores. In case a 
+> system has free cores to execute Perf tool process during profiling the 
+> default system scheduling layout induces the lowest overhead.
+> 
+> The patch set has been validated on BT benchmark from NAS Parallel 
+> Benchmarks [2] running on dual socket, 44 cores, 88 hw threads Broadwell 
+> system with kernels v4.4-21-generic (Ubuntu 16.04) and v4.20.0-rc5 
+> (tip perf/core). 
+> 
+> The patch set is for Arnaldo's perf/core repository.
+> 
+> OVERHEAD:
+> 			       BENCH REPORT BASED   ELAPSED TIME BASED
+> 	  v4.20.0-rc5 
+>           (tip perf/core):
+> 				
+> (current) SERIAL-SYS  / BASE : 1.27x (14.37/11.31), 1.29x (15.19/11.69)
+> 	  SERIAL-NODE / BASE : 1.15x (13.04/11.31), 1.17x (13.79/11.69)
+> 	  SERIAL-CPU  / BASE : 1.00x (11.32/11.31), 1.01x (11.89/11.69)
 
-I don't think that's a practical solution.
+Can you explain those numbers a bit? You mean that in (14.37/11.31)
+without this patch your test workload (NAS Parallel Benchmarks) took
+14.37 seconds to complete and with the patch applied it took 11.31
+seconds?
 
-The register setting in the spi-sprd driver is what... SCK cycles?  So 
-you'd want word_delay_us * max_speed_hz?
+If so its really interesting that all the "after" numbers, in seconds,
+are the same in _all_ the tests, is that right?
 
-The register setting on my Atmel board is in SPI-clock cycles 
-(effectively).  So I want word_delay_us*clk_get_rate(spi-clk).
+Please clarify.
 
-/Jonas
+- Arnaldo
+
+> 	
+> 	  AIO1-SYS    / BASE : 1.29x (14.58/11.31), 1.29x (15.26/11.69)
+> 	  AIO1-NODE   / BASE : 1.08x (12.23/11.31), 1,11x (13.01/11.69)
+> 	  AIO1-CPU    / BASE : 1.07x (12.14/11.31), 1.08x (12.83/11.69)
+> 
+> 	  v4.4.0-21-generic
+>           (Ubuntu 16.04 LTS):
+> 
+> (current) SERIAL-SYS  / BASE : 1.26x (13.73/10.87), 1.29x (14.69/11.32)
+> 	  SERIAL-NODE / BASE : 1.19x (13.02/10.87), 1.23x (14.03/11.32)
+> 	  SERIAL-CPU  / BASE : 1.03x (11.21/10.87), 1.07x (12.18/11.32)
+> 	
+> 	  AIO1-SYS    / BASE : 1.26x (13.73/10.87), 1.29x (14.69/11.32)
+> 	  AIO1-NODE   / BASE : 1.10x (12.04/10.87), 1.15x (13.03/11.32)
+> 	  AIO1-CPU    / BASE : 1.12x (12.20/10.87), 1.15x (13.09/11.32)
+> 
+> ---
+> Alexey Budankov (4):
+>   perf record: allocate affinity masks
+>   perf record: bind the AIO user space buffers to nodes
+>   perf record: apply affinity masks when reading mmap buffers
+>   perf record: implement --affinity=node|cpu option
+> 
+>  tools/perf/Documentation/perf-record.txt |   5 ++
+>  tools/perf/builtin-record.c              |  45 +++++++++-
+>  tools/perf/perf.h                        |   8 ++
+>  tools/perf/util/cpumap.c                 |  10 +++
+>  tools/perf/util/cpumap.h                 |   1 +
+>  tools/perf/util/evlist.c                 |   6 +-
+>  tools/perf/util/evlist.h                 |   2 +-
+>  tools/perf/util/mmap.c                   | 105 ++++++++++++++++++++++-
+>  tools/perf/util/mmap.h                   |   3 +-
+>  9 files changed, 175 insertions(+), 10 deletions(-)
+> 
+> ---
+> Changes in v5:
+> - avoided multiple allocations of online cpu maps by 
+>   implementing it once in cpu_map__online()
+> - reduced indentation at record__parse_affinity()
+> 
+> Changes in v4:
+> - fixed compilation issue converting pr_warn() to pr_warning()
+> - implemented stop if mbind() fails
+> - corrected mmap_params->cpu_map initialization to be based on /sys/devices/system/cpu/online
+> - separated node cpu map generation into build_node_mask()
+> 
+> Changes in v3:
+> - converted PERF_AFFINITY_EOF to PERF_AFFINITY_MAX
+> - corrected code style issues
+> - adjusted __aio_alloc,__aio_bind,__aio_free() implementation
+> - separated mask manipulations into __adjust_affinity() and __setup_affinity_mask()
+> - implemented mapping of c index into online cpu index
+> - adjusted indentation at record__parse_affinity()
+> 
+> Changes in v2:
+> - made debug affinity mode message user friendly
+> - converted affinity mode defines to enum values
+> - implemented perf_mmap__aio_alloc, perf_mmap__aio_free, perf_mmap__aio_bind 
+>   and put HAVE_LIBNUMA_SUPPORT #ifdefs in there
+> - separated AIO buffers binding to patch 2/4
+> 
+> ---
+> [1] https://en.wikipedia.org/wiki/Non-uniform_memory_access
+> [2] https://www.nas.nasa.gov/publications/npb.html
+> [3] http://man7.org/linux/man-pages/man2/sched_setaffinity.2.html
+> [4] http://man7.org/linux/man-pages/man2/mbind.2.html
+> 
+> ---
+> ENVIRONMENT AND MEASUREMENTS:
+> 
+>   MACHINE:
+> 
+> 	broadwell, dual socket, 44 core, 88 threads
+> 
+> 	/proc/cpuinfo
+> 
+> 	processor	: 87
+> 	vendor_id	: GenuineIntel
+> 	cpu family	: 6
+> 	model		: 79
+> 	model name	: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+> 	stepping	: 1
+> 	microcode	: 0xb000019
+> 	cpu MHz		: 1200.117
+> 	cache size	: 56320 KB
+> 	physical id	: 1
+> 	siblings	: 44
+> 	core id		: 28
+> 	cpu cores	: 22
+> 	apicid		: 121
+> 	initial apicid	: 121
+> 	fpu		: yes
+> 	fpu_exception	: yes
+> 	cpuid level	: 20
+> 	wp		: yes
+> 	flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm rdseed adx smap xsaveopt cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts
+> 	bugs		:
+> 	bogomips	: 4391.42
+> 	clflush size	: 64
+> 	cache_alignment	: 64
+> 	address sizes	: 46 bits physical, 48 bits virtual
+> 	power management:
+>   		
+>   BASE:
+> 
+> 	/usr/bin/time ./bt.B.x 
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 	
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 	
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    10.87
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 64608.74
+> 	Mop/s/thread    =                   734.19
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 	
+> 	956.25user 19.14system 0:11.32elapsed 8616%CPU (0avgtext+0avgdata 210496maxresident)k
+> 	0inputs+0outputs (0major+57939minor)pagefaults 0swaps
+> 
+>   SERIAL-SYS:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 0
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 0
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    13.73
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 51136.52
+> 	Mop/s/thread    =                   581.10
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1661,120 MB perf.data ]
+> 
+> 	1184.84user 40.70system 0:14.69elapsed 8341%CPU (0avgtext+0avgdata 208612maxresident)k
+> 	0inputs+3402072outputs (0major+137077minor)pagefaults 0swaps
+> 
+>   SERIAL-NODE:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --affinity=node -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 0
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 1
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    13.02
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 53924.69
+> 	Mop/s/thread    =                   612.78
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1557,152 MB perf.data ]
+> 
+> 	1120.42user 29.92system 0:14.03elapsed 8198%CPU (0avgtext+0avgdata 206388maxresident)k
+> 	0inputs+3189128outputs (0major+149207minor)pagefaults 0swaps
+> 
+>   SERIAL-CPU:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --affinity=cpu -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 0
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 2
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    11.21
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 62642.24
+> 	Mop/s/thread    =                   711.84
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1365,043 MB perf.data ]
+> 
+> 	976.06user 31.35system 0:12.18elapsed 8264%CPU (0avgtext+0avgdata 208488maxresident)k
+> 	0inputs+2795704outputs (0major+126032minor)pagefaults 0swaps
+> 
+>   AIO1-SYS:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 1
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 0
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    14.23
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 49338.27
+> 	Mop/s/thread    =                   560.66
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1720,590 MB perf.data ]
+> 
+> 	1229.19user 41.99system 0:15.22elapsed 8350%CPU (0avgtext+0avgdata 208604maxresident)k
+> 	0inputs+3523880outputs (0major+124670minor)pagefaults 0swaps
+> 
+>   AIO1-NODE:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 --affinity=node -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 1
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 1
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    12.04
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 58313.58
+> 	Mop/s/thread    =                   662.65
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1471,279 MB perf.data ]
+> 
+> 	1055.62user 30.43system 0:13.03elapsed 8333%CPU (0avgtext+0avgdata 208424maxresident)k
+> 	0inputs+3013288outputs (0major+79088minor)pagefaults 0swaps
+> 
+>   AIO1-CPU:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 --affinity=cpu -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 1
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 2
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    12.20
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 57538.84
+> 	Mop/s/thread    =                   653.85
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1486,859 MB perf.data ]
+> 
+> 	1051.97user 42.07system 0:13.09elapsed 8352%CPU (0avgtext+0avgdata 206388maxresident)k
+> 	0inputs+3045168outputs (0major+174612minor)pagefaults 0swaps
+
+-- 
+
+- Arnaldo
