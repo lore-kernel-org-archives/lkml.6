@@ -2,231 +2,104 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7504C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2CBC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B491E20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 092602183F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:38:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="S1t4U1Ga"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbfA2IhJ (ORCPT
+        id S1727550AbfA2Iiw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:37:09 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2697 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727530AbfA2IhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:37:03 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id AE7CDB0C97A09B00094E;
-        Tue, 29 Jan 2019 16:37:01 +0800 (CST)
-Received: from 138.huawei.com (10.175.124.28) by smtp.huawei.com (10.3.19.204)
- with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 29 Jan 2019 16:36:53
- +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v4 2/2] staging: erofs: complete POSIX ACL support
-Date:   Tue, 29 Jan 2019 16:35:20 +0800
-Message-ID: <20190129083520.28607-2-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20190129083520.28607-1-gaoxiang25@huawei.com>
-References: <20190129083520.28607-1-gaoxiang25@huawei.com>
+        Tue, 29 Jan 2019 03:38:52 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43441 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbfA2Iiw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:38:52 -0500
+Received: by mail-lf1-f68.google.com with SMTP id u18so13957716lff.10
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:38:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p2kIF2D3mfXdnTnzYqtCaYs/f84OFeKZVdbluyx94wg=;
+        b=S1t4U1GazkO17kk1fRBuCQ3f2Pf1eINj5CfgSCCN0EeDVvvsm61crKWE7JHzRdkDnx
+         k57T9tEc69TsC6WJjcvpZMowMHSXpDSVB1vuaj9W9V3KGHWkuuTSEEBvptQiXb5g+MI0
+         Obm98QY6TG/17kRNhGUKnbvAXYEJSHBcGbDvY6DCPlJHmOmh04L0aV7Qk3fJDWQ/3J1s
+         zVz7aMsej3tnhjmit/sxs6xdTe5ZrBpODfem7iWZpbSAYWPIGZr2hMY48tvIIeHg0e8+
+         b8klJoSIwnqkpx2hTv+skH+vcajwGjxunVNKXMvsHP5IGbMyMd3jHCz2SThOpxWoTsr1
+         DgIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p2kIF2D3mfXdnTnzYqtCaYs/f84OFeKZVdbluyx94wg=;
+        b=K1jJDm5DIMjp6j4KWND+hq8OAIfn/F+moeJyVaDmwfMHnUGjKQ9ttIBuSvhtupn/kH
+         tBpzp593/NGD75z+Qm5gNhTwuyGWjHU7JOJNNMB2XtOTmyWEyelKqj2sxZFBbMozjoyF
+         jF521wkjoZSp4QkXlx+WUqWMcGQZrFiaeTJgPpq2kFzm5SkHVLgm1zf+QtMhy2pLOVAF
+         frRMmzQXS4dVypw/8bVyBYGZIPCLqqgtu5wle9tcA8Ka/b+NooRZTXRdJ1Hpg1TuUhRO
+         G2IX1DbLDW+0orwhMUhBdZpyTJMKHV0+anaxHPTat1t5w78a+TxrCTXH2QvPwND1OVYU
+         MCrw==
+X-Gm-Message-State: AJcUukeEkf0LMheqdbFqXVKscA7zhUbEASDJ+GzE0LwVh/OUBpWLMeWZ
+        jhwk1oGn8C7mabhYc5ncUCI8+Fmpkrw=
+X-Google-Smtp-Source: ALg8bN4mKQac98KnNky6NTlCEmXxnSI56YEfDH00b4hZMdWZBrh7D7cW51qR6eeYHRkPkMgL786ncg==
+X-Received: by 2002:a19:40cc:: with SMTP id n195mr18948956lfa.40.1548751129399;
+        Tue, 29 Jan 2019 00:38:49 -0800 (PST)
+Received: from mimer.lan (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
+        by smtp.gmail.com with ESMTPSA id v17-v6sm3378774ljg.32.2019.01.29.00.38.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 00:38:48 -0800 (PST)
+From:   Jonas Bonn <jonas@norrbonn.se>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jonas Bonn <jonas@norrbonn.se>
+Subject: [PATCH v4 0/2] spi: support inter-word delays
+Date:   Tue, 29 Jan 2019 09:38:42 +0100
+Message-Id: <20190129083844.20572-1-jonas@norrbonn.se>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's add .get_acl() to read the file's acl from its xattrs
-to make POSIX ACL usable.
+Changed in v4:
+* Rename word_delay to word_delay_us and slot it in _beside_ the
+  existing word_delay parameter in spi_transfer (see commit message for
+  more info).
+* Add code to __spi_validate to make sure transfer and device align with
+  respect to the word_delay_us parameter
 
-Here is the on-disk detail,
-fullname: system.posix_acl_access
-struct erofs_xattr_entry:
-        .e_name_len = 0
-        .e_name_index = EROFS_XATTR_INDEX_POSIX_ACL_ACCESS (2)
+Changed in v3:
+* Drop setting of inter-word delay via device tree
 
-fullname: system.posix_acl_default
-struct erofs_xattr_entry:
-	.e_name_len = 0
-	.e_name_index = EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT (3)
+Changed in v2:
+* Fix atmel-spi driver to not unconditionally set minimal delay if no
+  delay is required (erroneous clamping)
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
-change log v4:
- - leave kmalloc and wait the conclusion of fault injection
-   pointed out by Dan Carpenter;
+This short series adds support for SPI inter-word delays and configures
+the spi-atmel driver to honour the setting.
 
-change log v3:
- - kvmalloc -> erofs_kmalloc suggested by Chao;
- - update SB_POSIXACL for the remount case as well;
+Some SPI slaves are so slow that they are unable to keep up even at the
+SPI controller's lowest available clock frequency.  I have such a
+configuration where an AVR-based SPI slave is unable to feed the SPI bus
+fast enough even the SPI master runs at the lowest possible clock speed.
 
-change log v2:
- - add the missing SB_POSIXACL flag;
- - fix the on-disk detail, use .e_name_len == 0 and proper prefix value;
- - tested ok with xattr enabled erofs_mkfs;
+Jonas Bonn (2):
+  spi: support inter-word delay requirement for devices
+  spi-atmel: support inter-word delay
 
- .../erofs/Documentation/filesystems/erofs.txt      |  2 ++
- drivers/staging/erofs/inode.c                      |  3 ++
- drivers/staging/erofs/namei.c                      |  1 +
- drivers/staging/erofs/super.c                      | 10 ++++++
- drivers/staging/erofs/xattr.c                      | 37 ++++++++++++++++++++++
- drivers/staging/erofs/xattr.h                      |  6 ++++
- 6 files changed, 59 insertions(+)
+ drivers/spi/spi-atmel.c | 18 +++++++++++++-----
+ drivers/spi/spi.c       |  5 +++++
+ include/linux/spi/spi.h |  6 ++++++
+ 3 files changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/erofs/Documentation/filesystems/erofs.txt b/drivers/staging/erofs/Documentation/filesystems/erofs.txt
-index 803988d74c21..961ec4da7705 100644
---- a/drivers/staging/erofs/Documentation/filesystems/erofs.txt
-+++ b/drivers/staging/erofs/Documentation/filesystems/erofs.txt
-@@ -36,6 +36,8 @@ Here is the main features of EROFS:
- 
-  - Support xattr inline and tail-end data inline for all files;
- 
-+ - Support POSIX.1e ACLs by using xattrs;
-+
-  - Support transparent file compression as an option:
-    LZ4 algorithm with 4 KB fixed-output compression for high performance;
- 
-diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
-index 4f04f7c38cf2..924b8dfc7a8f 100644
---- a/drivers/staging/erofs/inode.c
-+++ b/drivers/staging/erofs/inode.c
-@@ -287,6 +287,7 @@ const struct inode_operations erofs_generic_iops = {
- #ifdef CONFIG_EROFS_FS_XATTR
- 	.listxattr = erofs_listxattr,
- #endif
-+	.get_acl = erofs_get_acl,
- };
- 
- const struct inode_operations erofs_symlink_iops = {
-@@ -294,6 +295,7 @@ const struct inode_operations erofs_symlink_iops = {
- #ifdef CONFIG_EROFS_FS_XATTR
- 	.listxattr = erofs_listxattr,
- #endif
-+	.get_acl = erofs_get_acl,
- };
- 
- const struct inode_operations erofs_fast_symlink_iops = {
-@@ -301,5 +303,6 @@ const struct inode_operations erofs_fast_symlink_iops = {
- #ifdef CONFIG_EROFS_FS_XATTR
- 	.listxattr = erofs_listxattr,
- #endif
-+	.get_acl = erofs_get_acl,
- };
- 
-diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
-index 7fed1f996ab0..b1752adc5934 100644
---- a/drivers/staging/erofs/namei.c
-+++ b/drivers/staging/erofs/namei.c
-@@ -238,5 +238,6 @@ const struct inode_operations erofs_dir_iops = {
- #ifdef CONFIG_EROFS_FS_XATTR
- 	.listxattr = erofs_listxattr,
- #endif
-+	.get_acl = erofs_get_acl,
- };
- 
-diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
-index 176fca2af379..15c784fba879 100644
---- a/drivers/staging/erofs/super.c
-+++ b/drivers/staging/erofs/super.c
-@@ -398,6 +398,11 @@ static int erofs_read_super(struct super_block *sb,
- 	if (!silent)
- 		infoln("root inode @ nid %llu", ROOT_NID(sbi));
- 
-+	if (test_opt(sbi, POSIX_ACL))
-+		sb->s_flags |= SB_POSIXACL;
-+	else
-+		sb->s_flags &= ~SB_POSIXACL;
-+
- #ifdef CONFIG_EROFS_FS_ZIP
- 	INIT_RADIX_TREE(&sbi->workstn_tree, GFP_ATOMIC);
- #endif
-@@ -646,6 +651,11 @@ static int erofs_remount(struct super_block *sb, int *flags, char *data)
- 	if (err)
- 		goto out;
- 
-+	if (test_opt(sbi, POSIX_ACL))
-+		sb->s_flags |= SB_POSIXACL;
-+	else
-+		sb->s_flags &= ~SB_POSIXACL;
-+
- 	*flags |= SB_RDONLY;
- 	return 0;
- out:
-diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
-index 7de46690d972..e748df8d2b44 100644
---- a/drivers/staging/erofs/xattr.c
-+++ b/drivers/staging/erofs/xattr.c
-@@ -643,3 +643,40 @@ ssize_t erofs_listxattr(struct dentry *dentry,
- 	return shared_listxattr(&it);
- }
- 
-+#ifdef CONFIG_EROFS_FS_POSIX_ACL
-+struct posix_acl *erofs_get_acl(struct inode *inode, int type)
-+{
-+	struct posix_acl *acl;
-+	int prefix, rc;
-+	char *value = NULL;
-+
-+	switch (type) {
-+	case ACL_TYPE_ACCESS:
-+		prefix = EROFS_XATTR_INDEX_POSIX_ACL_ACCESS;
-+		break;
-+	case ACL_TYPE_DEFAULT:
-+		prefix = EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT;
-+		break;
-+	default:
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	rc = erofs_getxattr(inode, prefix, "", NULL, 0);
-+	if (rc > 0) {
-+		value = kmalloc(rc, GFP_KERNEL);
-+		if (!value)
-+			return ERR_PTR(-ENOMEM);
-+		rc = erofs_getxattr(inode, prefix, "", value, rc);
-+	}
-+
-+	if (rc == -ENOATTR)
-+		acl = NULL;
-+	else if (rc < 0)
-+		acl = ERR_PTR(rc);
-+	else
-+		acl = posix_acl_from_xattr(&init_user_ns, value, rc);
-+	kfree(value);
-+	return acl;
-+}
-+#endif
-+
-diff --git a/drivers/staging/erofs/xattr.h b/drivers/staging/erofs/xattr.h
-index 634dae9aaa0b..35ba5ac2139a 100644
---- a/drivers/staging/erofs/xattr.h
-+++ b/drivers/staging/erofs/xattr.h
-@@ -87,5 +87,11 @@ static ssize_t __maybe_unused erofs_listxattr(struct dentry *dentry,
- }
- #endif
- 
-+#ifdef CONFIG_EROFS_FS_POSIX_ACL
-+struct posix_acl *erofs_get_acl(struct inode *inode, int type);
-+#else
-+#define erofs_get_acl	(NULL)
-+#endif
-+
- #endif
- 
 -- 
-2.14.4
+2.19.1
 
