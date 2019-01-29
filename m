@@ -2,265 +2,137 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D69C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23173C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDF8F21473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E802921473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:36:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="UJL8GZCH"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZoE2FPm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728607AbfA2NgS (ORCPT
+        id S1728703AbfA2NgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 08:36:18 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50384 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728422AbfA2NgM (ORCPT
+        Tue, 29 Jan 2019 08:36:23 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44100 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728509AbfA2NgO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 08:36:12 -0500
-Received: by mail-wm1-f65.google.com with SMTP id n190so17904291wmd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 05:36:10 -0800 (PST)
+        Tue, 29 Jan 2019 08:36:14 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e11so9337824plt.11
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 05:36:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rNl2wbu3HJmajiOwASsgI0cpMdybDNanDVQvwE7olVs=;
-        b=UJL8GZCHfRlpy6hAlcqhXZNu8uZ4IVvUX07z75Ot0vX6BqxYiuaywDsZVyQCiu/2Z+
-         iIcxSlKZgCEqxPgLr7iOYsRjgM+4RXF6tx2dwZ5Qd3wSxmpJJoftUVbx8Yc0OGEBMTgA
-         kxkZscb8aPSCFl7FCG/Ck6fcM0X835wRM1KAajPUwc2KO2y3+QAVh8CNC0Ss00xAiU44
-         E9DfdhTBe2X/JwSmEhoKo/waf0GG80h8+wjAn5EMJFW++G0FEkRUEgpElvX4CjY4VOkW
-         NhSr71Jfi+bqZk2Ldrfd88B8VFryfhx+Auvzd0zSefl8R37sJ0bXlwl8M4SyYyAjzMmK
-         eHZw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qxi6QSw+j9dxu434FQ4Eohm/D/kYWlWKSoDoWJIFfSQ=;
+        b=LZoE2FPmISmtfs+I7I9xm3NRRErollRnEo43E64ov7MSBLi2iBTAWKPHtpeDS4dOuQ
+         noiK5ttdgOdd6OJFOBoPQDx5w8PLEQyhTCBLodiAPNRIxyd4achKz9PBUtrLQoH9amKm
+         Vq60w2C0qg0T0LERlwpjLBbpOv7sOvs96dYkk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rNl2wbu3HJmajiOwASsgI0cpMdybDNanDVQvwE7olVs=;
-        b=EKt4Z+7Qj2lx5eM3wlnow7micuwKrGexrKtznehFts8E9HlPGZZUnoKd4U1a3CmPMa
-         6U2FBplutK8Xjq9p4SwntzBn8TnXGEb3iz6Ah8ZOSKtdeIqdpMCnsfRzsrzHshpDJwwK
-         Kn5LFo/j/CTiBFcgGprnwUSOKNRkHOnz8fdd12jR5uexBsj+ayjvVbVRZfelcqluD+vu
-         mkA4QCku49FJQO85yczKCin+FZak08w6UAt3Fxg5jAkGk///HBy6i+lx6TuEDH/pM4Ir
-         Xw9Tu0eVbP82ZjgcscWeAI4s2lfgXNV2rw1Po6X4ELeK6LrVCOoXrTNze2oEjPNkpP7F
-         1fCA==
-X-Gm-Message-State: AJcUukdso7i+AM3rzkDxJ0TAdiYkz3VympIMCdpuiQFhzcJX9qglS3ZC
-        NSo7wFokjsLpQ9nbwbfZd9ULMw==
-X-Google-Smtp-Source: ALg8bN7252UeWQN8JE59ma1zVFrysUSJI2ism+VspTSDVIs+h2P5LjshQbN0nbUDsye6Ez0w9h+UJw==
-X-Received: by 2002:a1c:5604:: with SMTP id k4mr20518088wmb.107.1548768969401;
-        Tue, 29 Jan 2019 05:36:09 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id k128sm4367891wmd.37.2019.01.29.05.36.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 05:36:08 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 12/13] input: max77650: add onkey support
-Date:   Tue, 29 Jan 2019 14:35:44 +0100
-Message-Id: <20190129133545.1931-14-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129133545.1931-1-brgl@bgdev.pl>
-References: <20190129133545.1931-1-brgl@bgdev.pl>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qxi6QSw+j9dxu434FQ4Eohm/D/kYWlWKSoDoWJIFfSQ=;
+        b=UOSlmzbQPg1VruYGy9M4VDhKO+8+rYWt5PHVZ6v8KBbMYCKOmLD8p/A8UacXEtbvKq
+         OYKcTG5+l/WVF5mZIfmBGwfOiBrC2Qqps20UHOsXpSnLq+5fg/K8NxBIywjNgSVpLK4p
+         NkYJ2iQhuRFBgcKFzAqMUi+eEBKE1b0uzvSm2a0fRFzmXRwFgEZsitOIVGK5FnILq52P
+         WSy6MOsmVNwAJWZ6LrRm5Dvmu15WAtnGSBKKzrqqbGiHEx6yo6ZakXSJCHfoK1tYUr8g
+         jUj49cTJcf6d6SkZp2eKrGHY5h3P8CzdPDE62pT0nWePb8+K/HqxU4wBs/bMGHbqJT+F
+         ds1g==
+X-Gm-Message-State: AJcUukdqZNeBE0s/bwHaZz7HnR+WHJCuqLcESPLL3zj6lbb/btnoCzM3
+        1H+glMRsrZoZ2ad3wKEtckwX5g==
+X-Google-Smtp-Source: ALg8bN6gSIamczhNwlqEy6ToE+aC3NqQ2fPU2pzlYAV8lmJdPBhb3vhtAlKujyVckazpUeMoMejsqw==
+X-Received: by 2002:a17:902:b40d:: with SMTP id x13mr26412540plr.237.1548768973317;
+        Tue, 29 Jan 2019 05:36:13 -0800 (PST)
+Received: from leoy-ThinkPad-X240s (li569-141.members.linode.com. [192.155.82.141])
+        by smtp.gmail.com with ESMTPSA id b7sm48660638pfa.52.2019.01.29.05.36.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 05:36:12 -0800 (PST)
+Date:   Tue, 29 Jan 2019 21:36:05 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCHv5 6/7] coresight: debug: Add Unique Component Identifier
+ (UCI) table
+Message-ID: <20190129133605.GB16669@leoy-ThinkPad-X240s>
+References: <cover.1548419933.git.saiprakash.ranjan@codeaurora.org>
+ <1019e6fed1ade6a580f01df9b3f70c2a9df5b3be.1548419933.git.saiprakash.ranjan@codeaurora.org>
+ <20190129132528.GA16669@leoy-ThinkPad-X240s>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129132528.GA16669@leoy-ThinkPad-X240s>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Jan 29, 2019 at 09:25:28PM +0800, Leo Yan wrote:
+> On Tue, Jan 29, 2019 at 12:44:03AM +0530, Sai Prakash Ranjan wrote:
+> > Add UCI table and a helper macro for coresight CPU debug
+> > module. This patch adds the UCI entries for Krypo CPUs
+> > found on MSM8996 which shares the same PIDs as ETMs.
+> > 
+> > Without this, below error is observed on MSM8996:
+> > 
+> > [    5.429867] OF: graph: no port node found in /soc/debug@3810000
+> > [    5.429938] coresight-etm4x: probe of 3810000.debug failed with error -22
+> > [    5.435415] coresight-cpu-debug 3810000.debug: Coresight debug-CPU0 initialized
+> > [    5.446474] OF: graph: no port node found in /soc/debug@3910000
+> > [    5.448927] coresight-etm4x: probe of 3910000.debug failed with error -22
+> > [    5.454681] coresight-cpu-debug 3910000.debug: Coresight debug-CPU1 initialized
+> > [    5.487765] OF: graph: no port node found in /soc/debug@3a10000
+> > [    5.488007] coresight-etm4x: probe of 3a10000.debug failed with error -22
+> > [    5.493024] coresight-cpu-debug 3a10000.debug: Coresight debug-CPU2 initialized
+> > [    5.501802] OF: graph: no port node found in /soc/debug@3b10000
+> > [    5.512901] coresight-etm4x: probe of 3b10000.debug failed with error -22
+> > [    5.513192] coresight-cpu-debug 3b10000.debug: Coresight debug-CPU3 initialized
+> > 
+> > Also add a helper macro to make adding CPU PIDs easier
+> > similar to ETM4X driver.
+> > 
+> > Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> 
+> Looks good to me and tested on my Hikey board (though I cannot test
+> for a device with UCI ID):
+> 
+> Reviewed-and-tested-by: Leo Yan <leo.yan@linaro.org>
 
-Add support for the push- and slide-button events for max77650.
+I just now found if apply this patch onto coresight next branch [1],
+it will conflict with patch 'coresight: cpu-debug: Support for CA73
+CPUs' [2].  Sorry if introduce regression by this.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/input/misc/Kconfig          |   9 ++
- drivers/input/misc/Makefile         |   1 +
- drivers/input/misc/max77650-onkey.c | 127 ++++++++++++++++++++++++++++
- 3 files changed, 137 insertions(+)
- create mode 100644 drivers/input/misc/max77650-onkey.c
+Hi Mathieu, could you confirm should apply this patch onto to coresight
+next branch?
 
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index ca59a2be9bc5..bb9c45c1269e 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -180,6 +180,15 @@ config INPUT_M68K_BEEP
- 	tristate "M68k Beeper support"
- 	depends on M68K
- 
-+config INPUT_MAX77650_ONKEY
-+	tristate "Maxim MAX77650 ONKEY support"
-+	depends on MFD_MAX77650
-+	help
-+	  Support the ONKEY of the MAX77650 PMIC as an input device.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called max77650-onkey.
-+
- config INPUT_MAX77693_HAPTIC
- 	tristate "MAXIM MAX77693/MAX77843 haptic controller support"
- 	depends on (MFD_MAX77693 || MFD_MAX77843) && PWM
-diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-index 9d0f9d1ff68f..5bd53590ce60 100644
---- a/drivers/input/misc/Makefile
-+++ b/drivers/input/misc/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_INPUT_IXP4XX_BEEPER)	+= ixp4xx-beeper.o
- obj-$(CONFIG_INPUT_KEYSPAN_REMOTE)	+= keyspan_remote.o
- obj-$(CONFIG_INPUT_KXTJ9)		+= kxtj9.o
- obj-$(CONFIG_INPUT_M68K_BEEP)		+= m68kspkr.o
-+obj-$(CONFIG_INPUT_MAX77650_ONKEY)	+= max77650-onkey.o
- obj-$(CONFIG_INPUT_MAX77693_HAPTIC)	+= max77693-haptic.o
- obj-$(CONFIG_INPUT_MAX8925_ONKEY)	+= max8925_onkey.o
- obj-$(CONFIG_INPUT_MAX8997_HAPTIC)	+= max8997_haptic.o
-diff --git a/drivers/input/misc/max77650-onkey.c b/drivers/input/misc/max77650-onkey.c
-new file mode 100644
-index 000000000000..7fc3e9196abb
---- /dev/null
-+++ b/drivers/input/misc/max77650-onkey.c
-@@ -0,0 +1,127 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2018 BayLibre SAS
-+// Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+//
-+// ONKEY driver for MAXIM 77650/77651 charger/power-supply.
-+
-+#include <linux/i2c.h>
-+#include <linux/input.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/max77650.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define MAX77650_ONKEY_MODE_MASK	BIT(3)
-+#define MAX77650_ONKEY_MODE_PUSH	0x00
-+#define MAX77650_ONKEY_MODE_SLIDE	BIT(3)
-+
-+struct max77650_onkey {
-+	struct input_dev *input;
-+	unsigned int code;
-+};
-+
-+static irqreturn_t max77650_onkey_falling(int irq, void *data)
-+{
-+	struct max77650_onkey *onkey = data;
-+
-+	input_report_key(onkey->input, onkey->code, 0);
-+	input_sync(onkey->input);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t max77650_onkey_rising(int irq, void *data)
-+{
-+	struct max77650_onkey *onkey = data;
-+
-+	input_report_key(onkey->input, onkey->code, 1);
-+	input_sync(onkey->input);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int max77650_onkey_probe(struct platform_device *pdev)
-+{
-+	int irq_r, irq_f, error, mode;
-+	struct max77650_onkey *onkey;
-+	struct device *dev, *parent;
-+	const char *mode_prop;
-+	struct regmap *map;
-+
-+	dev = &pdev->dev;
-+	parent = dev->parent;
-+
-+	map = dev_get_regmap(parent, NULL);
-+	if (!map)
-+		return -ENODEV;
-+
-+	onkey = devm_kzalloc(dev, sizeof(*onkey), GFP_KERNEL);
-+	if (!onkey)
-+		return -ENOMEM;
-+
-+	error = device_property_read_u32(dev, "linux,code", &onkey->code);
-+	if (error)
-+		onkey->code = KEY_POWER;
-+
-+	error = device_property_read_string(dev,
-+					    "maxim,onkey-mode", &mode_prop);
-+	if (error)
-+		mode_prop = "push";
-+
-+	if (strcmp(mode_prop, "push") == 0)
-+		mode = MAX77650_ONKEY_MODE_PUSH;
-+	else if (strcmp(mode_prop, "slide") == 0)
-+		mode = MAX77650_ONKEY_MODE_SLIDE;
-+	else
-+		return -EINVAL;
-+
-+	error = regmap_update_bits(map, MAX77650_REG_CNFG_GLBL,
-+				   MAX77650_ONKEY_MODE_MASK, mode);
-+	if (error)
-+		return error;
-+
-+	irq_f = platform_get_irq_byname(pdev, "nEN_F");
-+	if (irq_f < 0)
-+		return irq_f;
-+
-+	irq_r = platform_get_irq_byname(pdev, "nEN_R");
-+	if (irq_r < 0)
-+		return irq_r;
-+
-+	onkey->input = devm_input_allocate_device(dev);
-+	if (!onkey->input)
-+		return -ENOMEM;
-+
-+	onkey->input->name = "max77650_onkey";
-+	onkey->input->phys = "max77650_onkey/input0";
-+	onkey->input->id.bustype = BUS_I2C;
-+	input_set_capability(onkey->input, EV_KEY, onkey->code);
-+
-+	error = devm_request_any_context_irq(dev, irq_f,
-+					     max77650_onkey_falling,
-+					     IRQF_ONESHOT, "onkey-down",
-+					     onkey);
-+	if (error < 0)
-+		return error;
-+
-+	error = devm_request_any_context_irq(dev, irq_r, max77650_onkey_rising,
-+					     IRQF_ONESHOT, "onkey-up", onkey);
-+	if (error < 0)
-+		return error;
-+
-+	return input_register_device(onkey->input);
-+}
-+
-+static struct platform_driver max77650_onkey_driver = {
-+	.driver = {
-+		.name = "max77650-onkey",
-+	},
-+	.probe = max77650_onkey_probe,
-+};
-+module_platform_driver(max77650_onkey_driver);
-+
-+MODULE_DESCRIPTION("MAXIM 77650/77651 ONKEY driver");
-+MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.20.1
+[...]
 
+Thanks,
+Leo Yan
+
+[1] https://git.linaro.org/kernel/coresight.git/log/?h=next
+[2] https://git.linaro.org/kernel/coresight.git/commit/?h=next&id=14420b405d03cd160b5ace283693ce5b1cf273fa
