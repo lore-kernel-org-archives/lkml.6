@@ -2,104 +2,104 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1AF3C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB430C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EAFF20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7775B20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:35:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HDUpzE1N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbfA2Ldj (ORCPT
+        id S1728343AbfA2LfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:33:39 -0500
-Received: from foss.arm.com ([217.140.101.70]:34522 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725804AbfA2Ldj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:33:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 017D1EBD;
-        Tue, 29 Jan 2019 03:33:39 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0AC8C3F589;
-        Tue, 29 Jan 2019 03:33:36 -0800 (PST)
-Subject: Re: [PATCH v9 20/26] irqchip/gic-v3: Handle pseudo-NMIs
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        daniel.thompson@linaro.org, joel@joelfernandes.org,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
- <1548084825-8803-21-git-send-email-julien.thierry@arm.com>
- <86wompuh5j.wl-marc.zyngier@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <c332af8d-4529-dbb0-f760-0c2518823053@arm.com>
-Date:   Tue, 29 Jan 2019 11:33:35 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <86wompuh5j.wl-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 29 Jan 2019 06:35:21 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33478 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbfA2LfU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:35:20 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so12744950wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 03:35:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=NFHpMSLlTtGiK00UH+qqUo8z2oUdMcYvkTVCpigpA7I=;
+        b=HDUpzE1NgNKjdsPmb5TS0IZiPnerLAb3UiWYUn1v3YguBkEvphCGQ+bBSdaC4kgg9z
+         0/VTw53yaztyQpPjbYR92LL9yR2Z5Ah6jhMuQ+UGfIz9iOC3VlCP4XdASXZBURIFlfze
+         TRr/dgzPiP6OQOIPe8cFfIz7P17p/VEGckJ7k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NFHpMSLlTtGiK00UH+qqUo8z2oUdMcYvkTVCpigpA7I=;
+        b=p/hl94XDxF+obHkV33ARRJtr2koQ8gHOQvKFHWuVeFHHM4zc+ZM9OsC03HOke99Osm
+         aMN7tlEONrR1Gu/g/ACiIwsyj95chGGu6NcjzcFC95ZAYnNIBJAiLyXcSlWLDTE9KnE8
+         CoA9tO1lPpe2/BzvPSn5NSG8T00EZHj6gQO/hI6oBpXw1lxMz4DZKGyBgavpkwMr7D5I
+         SuQbX7ljjKJ3p3UizVjS+qDPf0QwknXVfstAJ/XCRvjP1mkrFdKqEgwfTNtQiNBy4oPb
+         Z9ZxiG6CRARd59Nis5RTVKduEHdeCDllTuGJgBOxDFbI0++VBAzwwJu6PlifT+wxFudb
+         XwyQ==
+X-Gm-Message-State: AJcUukfz+bq7LVtKqklqKUH9KSC06SVZ/CMP6B+Y3GFIbn9gyYCNTNcT
+        56qYDySwdgHc/md4JSS21ASutg==
+X-Google-Smtp-Source: ALg8bN5QEnvmAi7Y1KyHyRmrB0L9BVh5IljLopTV18ZaYb4ehz4WJUqv5971II3qOUD/AJGytxFKCA==
+X-Received: by 2002:a1c:2c6:: with SMTP id 189mr20272610wmc.21.1548761719213;
+        Tue, 29 Jan 2019 03:35:19 -0800 (PST)
+Received: from localhost.localdomain (233.red-81-47-145.staticip.rima-tde.net. [81.47.145.233])
+        by smtp.gmail.com with ESMTPSA id i192sm1960129wmg.7.2019.01.29.03.35.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 29 Jan 2019 03:35:18 -0800 (PST)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, gregkh@linuxfoundation.org,
+        mark.rutland@arm.com, kishon@ti.com, jackp@codeaurora.org,
+        andy.gross@linaro.org, swboyd@chromium.org
+Cc:     shawn.guo@linaro.org, vkoul@kernel.org, bjorn.andersson@linaro.org,
+        khasim.mohammed@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] USB SS PHY for Qualcomm's QCS404
+Date:   Tue, 29 Jan 2019 12:35:13 +0100
+Message-Id: <1548761715-4004-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This set adds USB SS PHY support to Qualcomm's QCS404 SoC
+The PHY is implemented using Synopsys SS PHY 1.0.0 IP
 
+The code is losely based on Sriharsha Allenki's
+<sallenki@codeaurora.org> original implementation.
 
-On 28/01/2019 11:59, Marc Zyngier wrote:
-> On Mon, 21 Jan 2019 15:33:39 +0000,
-> Julien Thierry <julien.thierry@arm.com> wrote:
->>
->> Provide a higher priority to be used for pseudo-NMIs. When such an
->> interrupt is received, keep interrupts fully disabled at CPU level to
->> prevent receiving other pseudo-NMIs while handling the current one.
->>
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Jason Cooper <jason@lakedaemon.net>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>  drivers/irqchip/irq-gic-v3.c | 42 ++++++++++++++++++++++++++++++++++++------
->>  1 file changed, 36 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
->> index 5374b43..4df1e94 100644
->> --- a/drivers/irqchip/irq-gic-v3.c
->> +++ b/drivers/irqchip/irq-gic-v3.c
->> @@ -41,6 +41,8 @@
->>  
->>  #include "irq-gic-common.h"
->>  
->> +#define GICD_INT_NMI_PRI	(GICD_INT_DEF_PRI & ~0x80)
->> +
->>  #define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
->>  
->>  struct redist_region {
->> @@ -381,12 +383,45 @@ static u64 gic_mpidr_to_affinity(unsigned long mpidr)
->>  	return aff;
->>  }
->>  
->> +static inline void gic_deactivate_unexpected_irq(u32 irqnr)
-> 
-> Same remark as on some other patches: you should be able to drop the
-> inline attribute without any ill effect. I'd also like this to be
-> renamed "gic_deactivate_spurious", or something similar.
-> 
+v2:
+  enable OTG mode detection
+  move vdd voltage levels to driver
+  use bulk_ control interfaces
+  ss-phy-bindings [1]
 
-I'm a bit concern about using spurious since it is not related to
-GICC_INT_SPURIOUS, we actually read a valid IRQ number, we just don't
-know how we should handle it.
+[1] ss-phy-binding discussion:
+ - qcom,dwc3-ss-usb-phy exist for a generic usb2/usb3 phy driver that
+ was never merged. Rather than trying to re-use these bindings (or
+ delete them) I  propose that we go ahead with the new separate
+ bindings for HS and SS: if  not now - investigation  in progress- in
+ the  future  it might be  possible to have again a common phy driver
+ for  which these old  bindings would be the binding agreement. 
+    
+Jorge Ramirez-Ortiz (2):
+  dt-bindings: Add Qualcomm USB Super-Speed PHY bindings
+  phy: qualcomm: usb: Add Super-Speed PHY driver
 
-Would "gic_deactivate_unhandled" work? Or "gic_deactivate_bad"?
-
-Thanks,
+ .../devicetree/bindings/usb/qcom,usb-ssphy.txt     |  73 +++++
+ drivers/phy/qualcomm/Kconfig                       |  11 +
+ drivers/phy/qualcomm/Makefile                      |   1 +
+ drivers/phy/qualcomm/phy-qcom-usb-ss.c             | 347 +++++++++++++++++++++
+ 4 files changed, 432 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-usb-ss.c
 
 -- 
-Julien Thierry
+2.7.4
+
