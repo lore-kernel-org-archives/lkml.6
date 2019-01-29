@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7C8C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1ECC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 917C421852
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:43:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0E6820882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:43:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762218;
-	bh=pO/kNsp40OystC3hCM19D+6zjidLIMlFLMPcm2Xi4/8=;
+	s=default; t=1548762225;
+	bh=S405Nio0cPrc1jeD32TVs3mVSOHJ8Ptem3hfuKN9w9U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N7KoZW8ktYwdoPHU8Hcu5MnRZukuwIBywHPkcmAj+NMqHnxRNmVYh4HfPCoasf1kR
-	 XG/CrTglVzsD5oAJS9Woo3538Ngiy109nk0UmtuRHXTSVuWDJDMSaE2aXdp+yU3WoM
-	 QECSyxAPvMBFCkPz62NsCA4O8Rbu2qMinTtVO9ck=
+	b=UT/MbXOjQYeBQgTc/bfG+L3tDaiLK9cqf8EdHcP/RkP32yEnLAjwtIj4K8ee+IXIM
+	 AF/7z/i4G7QkXhGvQIjIm7BJawy7sSZhEE/+Xtjkc69WI3cmGXQjS4ugY7+tPhJWPU
+	 UKXBavfWTfaZT4rNVuNLR5y30Tg2IVcXgeRuUceA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730370AbfA2Lnh (ORCPT
+        id S1730402AbfA2Lno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:43:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33544 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:43:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729530AbfA2Lng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:43:36 -0500
+        id S1729882AbfA2Lnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:43:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43118214DA;
-        Tue, 29 Jan 2019 11:43:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3772D20882;
+        Tue, 29 Jan 2019 11:43:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762215;
-        bh=pO/kNsp40OystC3hCM19D+6zjidLIMlFLMPcm2Xi4/8=;
+        s=default; t=1548762221;
+        bh=S405Nio0cPrc1jeD32TVs3mVSOHJ8Ptem3hfuKN9w9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lHPvL8ocPm1gRiC94yUVacnO2MIk3TTZMVO4tALqe2o+/qStyRhaSf2trUWxM3auW
-         9PQoHaCjEN1XCe8DVO0j+SGRJ7D3EnM03bJqksoeI27i9grubPXbSm4tA1+p4Hdjp+
-         JPnXLj4f0L4RDygUtifCcAFSrniZxOz+hpnN/VTg=
+        b=cJqbqMIM9n3l6gsXtotoinY0OpcKJbPHf5DdN2vqerlO2QOg20dvCzyGLMc0qUBi1
+         5SHCxfuPGGnQOJWBihy7mIic7/pomejWluKii4aI+n7dckiD7oKfFHletC5Ct48SYL
+         RC8T84WooIuy6VVTYAJHhyrJrW/XB748Gaka3548=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-stable@vger.kernel.org,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.19 031/103] clk: socfpga: stratix10: fix rate calculation for pll clocks
-Date:   Tue, 29 Jan 2019 12:35:08 +0100
-Message-Id: <20190129113201.439825874@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.19 033/103] inotify: Fix fd refcount leak in inotify_add_watch().
+Date:   Tue, 29 Jan 2019 12:35:10 +0100
+Message-Id: <20190129113201.551200774@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,34 +66,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dinh Nguyen <dinguyen@kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit c0a636e4cc2eb39244d23c0417c117be4c96a7fe upstream.
+commit 125892edfe69915a227d8d125ff0e1cd713178f4 upstream.
 
-The main PLL calculation has a mistake. We should be using the
-multiplying the VCO frequency, not the parent clock frequency.
+Commit 4d97f7d53da7dc83 ("inotify: Add flag IN_MASK_CREATE for
+inotify_add_watch()") forgot to call fdput() before bailing out.
 
-Fixes: 07afb8db7340 ("clk: socfpga: stratix10: add clock driver for
-Stratix10 platform")
-Cc: linux-stable@vger.kernel.org
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 4d97f7d53da7dc83 ("inotify: Add flag IN_MASK_CREATE for inotify_add_watch()")
+CC: stable@vger.kernel.org
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/socfpga/clk-pll-s10.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/notify/inotify/inotify_user.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -43,7 +43,7 @@ static unsigned long clk_pll_recalc_rate
- 	/* Read mdiv and fdiv from the fdbck register */
- 	reg = readl(socfpgaclk->hw.reg + 0x4);
- 	mdiv = (reg & SOCFPGA_PLL_MDIV_MASK) >> SOCFPGA_PLL_MDIV_SHIFT;
--	vco_freq = (unsigned long long)parent_rate * (mdiv + 6);
-+	vco_freq = (unsigned long long)vco_freq * (mdiv + 6);
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -724,8 +724,10 @@ SYSCALL_DEFINE3(inotify_add_watch, int,
+ 		return -EBADF;
  
- 	return (unsigned long)vco_freq;
- }
+ 	/* IN_MASK_ADD and IN_MASK_CREATE don't make sense together */
+-	if (unlikely((mask & IN_MASK_ADD) && (mask & IN_MASK_CREATE)))
+-		return -EINVAL;
++	if (unlikely((mask & IN_MASK_ADD) && (mask & IN_MASK_CREATE))) {
++		ret = -EINVAL;
++		goto fput_and_out;
++	}
+ 
+ 	/* verify that this is indeed an inotify instance */
+ 	if (unlikely(f.file->f_op != &inotify_fops)) {
 
 
