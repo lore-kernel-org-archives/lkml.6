@@ -2,87 +2,112 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE78C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEB1C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67B6220880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3B1620880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548763339;
+	bh=wXp6vexW0dabKvW9xhzaHZv4NGM+RdTYpuhsb7BQUGI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=jL2IFaAeL+shVUr8wgNtlljl4VAhA56pju5K4WvxLrU8oQ2tD3/slDoWEF7h0enD4
+	 18rV7pSz95hlAUzYz5So5YWb4sWC36XHU5FUQ/JgU741i1dhAT3xhV1L2n9TtGqdt2
+	 h2i5hCkTWPK3sw8aDDSOOsRfgQ1/lxBD6IGt5P3M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730733AbfA2MCK (ORCPT
+        id S1730893AbfA2MCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:02:10 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:44301 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727589AbfA2MCH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 07:02:07 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1goS5J-0002OX-OX; Tue, 29 Jan 2019 13:01:45 +0100
-Date:   Tue, 29 Jan 2019 13:01:45 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Hannes Reinecke <hare@suse.com>
-cc:     John Garry <john.garry@huawei.com>, Christoph Hellwig <hch@lst.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        SCSI Mailing List <linux-scsi@vger.kernel.org>
-Subject: Re: Question on handling managed IRQs when hotplugging CPUs
-In-Reply-To: <5bff8227-16fd-6bca-c16e-3992ef6bec5a@suse.com>
-Message-ID: <alpine.DEB.2.21.1901291257590.1513@nanos.tec.linutronix.de>
-References: <f6f6e031-8b79-439d-c2af-8d3e76f30710@huawei.com> <5bff8227-16fd-6bca-c16e-3992ef6bec5a@suse.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 29 Jan 2019 07:02:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730667AbfA2LpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:45:00 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C49C214DA;
+        Tue, 29 Jan 2019 11:44:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548762300;
+        bh=wXp6vexW0dabKvW9xhzaHZv4NGM+RdTYpuhsb7BQUGI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=I4tI4F/ecTdLdc8A8gMFdt7y/IHnls0zq/nQH4ZLvGTl4ckXxl1FrbGoGPCKF09TL
+         V2YwXwY3biv+EHo1PGNpRvvDnXwoaOyTq5+LBHp1pI0F0l2AmZyHaoZUW62NDaEWyM
+         w03e+ghnCPMf9Q2vk6bBCBmKWTfKBhU2pDQcmtvI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Charles Yeh <charlesyeh522@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 026/103] USB: serial: pl2303: add new PID to support PL2303TB
+Date:   Tue, 29 Jan 2019 12:35:03 +0100
+Message-Id: <20190129113201.148142703@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
+References: <20190129113159.567154026@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Jan 2019, Hannes Reinecke wrote:
-> That actually is a very good question, and I have been wondering about this
-> for quite some time.
-> 
-> I find it a bit hard to envision a scenario where the IRQ affinity is
-> automatically (and, more importantly, atomically!) re-routed to one of the
-> other CPUs.
-> And even it it were, chances are that there are checks in the driver
-> _preventing_ them from handling those requests, seeing that they should have
-> been handled by another CPU ...
-> 
-> I guess the safest bet is to implement a 'cleanup' worker queue which is
-> responsible of looking through all the outstanding commands (on all hardware
-> queues), and then complete those for which no corresponding CPU / irqhandler
-> can be found.
-> 
-> But I defer to the higher authorities here; maybe I'm totally wrong and it's
-> already been taken care of.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-TBH, I don't know. I merily was involved in the genirq side of this. But
-yes, in order to make this work correctly the basic contract for CPU
-hotplug case must be:
+------------------
 
-If the last CPU which is associated to a queue (and the corresponding
-interrupt) goes offline, then the subsytem/driver code has to make sure
-that:
+From: Charles Yeh <charlesyeh522@gmail.com>
 
-   1) No more requests can be queued on that queue
+commit 4dcf9ddc9ad5ab649abafa98c5a4d54b1a33dabb upstream.
 
-   2) All outstanding of that queue have been completed or redirected
-      (don't know if that's possible at all) to some other queue.
+Add new PID to support PL2303TB (TYPE_HX)
 
-That has to be done in that order obviously. Whether any of the
-subsystems/drivers actually implements this, I can't tell.
+Signed-off-by: Charles Yeh <charlesyeh522@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Thanks,
+---
+ drivers/usb/serial/pl2303.c |    1 +
+ drivers/usb/serial/pl2303.h |    2 ++
+ 2 files changed, 3 insertions(+)
 
-	tglx
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -46,6 +46,7 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_HCR331) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MOTOROLA) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ZTEK) },
++	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_TB) },
+ 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID) },
+ 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID_RSAQ5) },
+ 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_ID),
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -8,6 +8,7 @@
+ 
+ #define PL2303_VENDOR_ID	0x067b
+ #define PL2303_PRODUCT_ID	0x2303
++#define PL2303_PRODUCT_ID_TB		0x2304
+ #define PL2303_PRODUCT_ID_RSAQ2		0x04bb
+ #define PL2303_PRODUCT_ID_DCU11		0x1234
+ #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
+@@ -20,6 +21,7 @@
+ #define PL2303_PRODUCT_ID_MOTOROLA	0x0307
+ #define PL2303_PRODUCT_ID_ZTEK		0xe1f1
+ 
++
+ #define ATEN_VENDOR_ID		0x0557
+ #define ATEN_VENDOR_ID2		0x0547
+ #define ATEN_PRODUCT_ID		0x2008
+
+
