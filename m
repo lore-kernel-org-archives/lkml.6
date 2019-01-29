@@ -2,35 +2,36 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4C8C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BFFC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B26120857
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AAFC20857
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:13:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548753149;
-	bh=OPx29B2rl1Fq6RjDTAT/pxB2y+WOilUWwMOF0BDkxw8=;
+	s=default; t=1548753206;
+	bh=P3Ah/OFAzV1xmbVBbNeO6yQiMl2kYgL8rk4UmpR8PdY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ArhOXQOkG0iMC6iS0lrUkPv4FBscU1DQr8rTUIEaaDUERr9QM33z7piMBMN6vQeFJ
-	 093qJ8j5UIJ2HWzjdUO4olkVSZgcaxKt1BIIwLSTz21nlK4+IsypwS66RHWobTV2xe
-	 YpSbtHy6apUSLIw1STM93TKlpu4kibtVYyt/eUPM=
+	b=p84KmeuyeHvfnFTyqV7Tg2i/HuLCLKFKpGOYzUewB9wiwyfVpKwbMBR0jVx28q5Sd
+	 xu0IPrbcjvnv1Vzy9xfESFMWQnRjJ0Li2x5bin+oH6OSzmbydRuHTEo87jlmZxgw9w
+	 6/2SHEkt8XclYmH7FWxXdFHZoYM2yKJIDPt/dsmE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbfA2JM1 (ORCPT
+        id S1727781AbfA2JNY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:12:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55084 "EHLO mx1.suse.de"
+        Tue, 29 Jan 2019 04:13:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55248 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725298AbfA2JM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:12:27 -0500
+        id S1725298AbfA2JNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:13:23 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A5D9BAE89;
-        Tue, 29 Jan 2019 09:12:25 +0000 (UTC)
-Date:   Tue, 29 Jan 2019 10:12:24 +0100
+        by mx1.suse.de (Postfix) with ESMTP id CFC79AE5E;
+        Tue, 29 Jan 2019 09:13:22 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 10:13:21 +0100
 From:   Michal Hocko <mhocko@kernel.org>
 To:     Oscar Salvador <osalvador@suse.de>
 Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
@@ -40,28 +41,35 @@ Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
         schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
         gerald.schaefer@de.ibm.com, linux-mm@kvack.org,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm, memory_hotplug: is_mem_section_removable do not
- pass the end of a zone
-Message-ID: <20190129091224.GG18811@dhcp22.suse.cz>
+Subject: Re: [PATCH 2/2] mm, memory_hotplug: test_pages_in_a_zone do not pass
+ the end of zone
+Message-ID: <20190129091321.GH18811@dhcp22.suse.cz>
 References: <20190128144506.15603-1-mhocko@kernel.org>
- <20190128144506.15603-2-mhocko@kernel.org>
- <20190129090605.lenisalq2zxtck3u@d104.suse.de>
+ <20190128144506.15603-3-mhocko@kernel.org>
+ <20190129090908.oms43oyjicozkvzu@d104.suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129090605.lenisalq2zxtck3u@d104.suse.de>
+In-Reply-To: <20190129090908.oms43oyjicozkvzu@d104.suse.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 29-01-19 10:06:05, Oscar Salvador wrote:
-> On Mon, Jan 28, 2019 at 03:45:05PM +0100, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
+On Tue 29-01-19 10:09:08, Oscar Salvador wrote:
+> On Mon, Jan 28, 2019 at 03:45:06PM +0100, Michal Hocko wrote:
+> > From: Mikhail Zaslonko <zaslonko@linux.ibm.com>
 > > 
-> > Mikhail has reported the following VM_BUG_ON triggered when reading
-> > sysfs removable state of a memory block:
+> > If memory end is not aligned with the sparse memory section boundary, the
+> > mapping of such a section is only partly initialized. This may lead to
+> > VM_BUG_ON due to uninitialized struct pages access from test_pages_in_a_zone()
+> > function triggered by memory_hotplug sysfs handlers.
+> > 
+> > Here are the the panic examples:
+> >  CONFIG_DEBUG_VM_PGFLAGS=y
+> >  kernel parameter mem=2050M
+> >  --------------------------
 > >  page:000003d082008000 is uninitialized and poisoned
 > >  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
 > >  Call Trace:
@@ -78,17 +86,46 @@ On Tue 29-01-19 10:06:05, Oscar Salvador wrote:
 > >   [<0000000000385b26>] test_pages_in_a_zone+0xde/0x160
 > >  Kernel panic - not syncing: Fatal exception: panic_on_oops
 > > 
-> > The reason is that the memory block spans the zone boundary and we are
-> > stumbling over an unitialized struct page. Fix this by enforcing zone
-> > range in is_mem_section_removable so that we never run away from a
-> > zone.
+> > Fix this by checking whether the pfn to check is within the zone.
+> > 
+> > [mhocko@suse.com: separated this change from
+> > http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com]
+> > Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
 > 
-> Does that mean that the remaining pages(escaping from the current zone) are not tied to
-> any other zone? Why? Are these pages "holes" or how that came to be?
+> Looks good to me:
+> 
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> 
+> > ---
+> >  mm/memory_hotplug.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> > index 07872789d778..7711d0e327b6 100644
+> > --- a/mm/memory_hotplug.c
+> > +++ b/mm/memory_hotplug.c
+> > @@ -1274,6 +1274,9 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+> >  				i++;
+> >  			if (i == MAX_ORDER_NR_PAGES || pfn + i >= end_pfn)
+> >  				continue;
+> > +			/* Check if we got outside of the zone */
+> > +			if (zone && !zone_spans_pfn(zone, pfn + i))
+> > +				return 0;
+> >  			page = pfn_to_page(pfn + i);
+> 
+> Since we are already checking if the zone spans that pfn, is it safe to get
+> rid of the below check? Or maybe not because we might have intersected zones?
 
-Yes, those pages should be unreachable because they are out of the zone.
-Reasons might be various. The memory range is not mem section aligned,
-or cut due to mem parameter etc.
+Exactly. The new zone might start at the next pfn. Look for the cover
+leter for such an example.
+ 
+> >  			if (zone && page_zone(page) != zone)
+> >  				return 0;
+> 
+> -- 
+> Oscar Salvador
+> SUSE L3
 
 -- 
 Michal Hocko
