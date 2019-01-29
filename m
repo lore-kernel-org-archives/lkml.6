@@ -2,140 +2,131 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10783C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E173C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D34DF214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:19:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hm0uYdfU"
+	by mail.kernel.org (Postfix) with ESMTP id 352B72087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbfA2RS7 (ORCPT
+        id S1729121AbfA2RTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:18:59 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44861 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727100AbfA2RS6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:18:58 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z5so22938604wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 09:18:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=bOjQszdiXiJL/fJroUex0a3tZRSKXR3lbPIDzGKz6dY=;
-        b=hm0uYdfUAsjCU6FQ/w5UYUPg0eoT3+X9LWXR8KmkKg3GzbOriYDv/JAfS41pjVQ2ED
-         RjtiJGac9TjizjBJeYiEM1G97hew/v5mFgwtQ4AGZzJO+L1mzjUDaV0D6bB1M1U9VMAc
-         7WQ6SxVdEXQfrCMyamvOW6mOJ3GQgfMRKCu1Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=bOjQszdiXiJL/fJroUex0a3tZRSKXR3lbPIDzGKz6dY=;
-        b=Wk2tKwSEVt3ubM+iSywyBaBopOh97UU4m1CqwZMW1BFf4XXfTQFiJ8CaQG9CdmNEp4
-         OZZFoMNZjk9uieot/cQ5Rp6cI+D8JxojVkTKmuQxBlnIJXpj11weLlJCX0+euEkkLniP
-         VX6dToPggWNxxqoGpkEckoy+mWWuS9Og68WWI6AhKHpicYDqOCi3C+xGStCWYlEEgqpN
-         0owPfay5ARZFbPoozcoIFHZGRDdvCHKKZ4Ayd7OxqzHPNBp2VYprWMp2XOWUvqslLpJp
-         y+GpEVgXrub80C5RwPW2X3tw0ZvBatx6GPqLaMV4Bqd7jtYw6OzCSoxCzqS4N2Enug4J
-         6vjg==
-X-Gm-Message-State: AHQUAuY7nVBdVJKG0vjP481yBB07SeThv9Ijo+JY8Q3plfkotibpP12B
-        nWR0auuga6T4PJV76ID1rtVeiSwKBgBbNA==
-X-Google-Smtp-Source: AHgI3IYGF3piTZyKLK4DwZAvkdu5eP7gDUOq9d7Dde9nbu4PbYBjPrHyBdMy8192HgaAOffoiL4AIA==
-X-Received: by 2002:a5d:4d46:: with SMTP id a6mr5597972wru.28.1548782335864;
-        Tue, 29 Jan 2019 09:18:55 -0800 (PST)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:a13d:e482:c90f:2b78])
-        by smtp.gmail.com with ESMTPSA id x3sm116048550wrd.19.2019.01.29.09.18.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 29 Jan 2019 09:18:55 -0800 (PST)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org
-Cc:     tj@kernel.org, sargun@sargun.me,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] sched/fair: Fix insertion in rq->leaf_cfs_rq_list
-Date:   Tue, 29 Jan 2019 18:18:52 +0100
-Message-Id: <1548782332-18591-1-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 29 Jan 2019 12:19:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37006 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727100AbfA2RTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 12:19:11 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 41DB4B033;
+        Tue, 29 Jan 2019 17:19:09 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 07124DA78C; Tue, 29 Jan 2019 18:18:31 +0100 (CET)
+Date:   Tue, 29 Jan 2019 18:18:30 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] btrfs: add zstd compression level support
+Message-ID: <20190129171830.GP2900@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Dennis Zhou <dennis@kernel.org>,
+        David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
+        Chris Mason <clm@fb.com>, Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190128212437.11597-1-dennis@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128212437.11597-1-dennis@kernel.org>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sargu reported a crash:
-  "I picked up c40f7d74c741a907cfaeb73a7697081881c497d0 sched/fair: Fix
-   infinite loop in update_blocked_averages() by reverting a9e7f6544b9c
-   and put it on top of 4.19.13. In addition to this, I uninlined
-   list_add_leaf_cfs_rq for debugging.
+On Mon, Jan 28, 2019 at 04:24:26PM -0500, Dennis Zhou wrote:
+> As mentioned above, a requirement that differs zstd from zlib is that
+> higher levels of compression require more memory. To manage this, each
+> compression level has its own queue of workspaces. A global LRU is used
+> to help with reclaim. To guarantee forward progress, a max level
+> workspace is preallocated and hidden from the LRU.
 
-   This revealed a new bug that we didn't get to because we kept getting
-   crashes from the previous issue. When we are running with cgroups that
-   are rapidly changing, with CFS bandwidth control, and in addition
-   using the cpusets cgroup, we see this crash. Specifically, it seems to
-   occur with cgroups that are throttled and we change the allowed
-   cpuset."
+Here I'd like to bring up what was mentioned in previous iteration, the
+workspace sizes.
 
-The algorithm used to order cfs_rq in rq->leaf_cfs_rq_list assumes that
-it will walk down to root the 1st time a cfs_rq is used and we will finish
-to add either a cfs_rq without parent or a cfs_rq with a parent that is
-already on the list. But this is not always true in presence of throttling.
-Because a cfs_rq can be throttled even if it has never been used but other CPUS
-of the cgroup have already used all the bandwdith, we are not sure to go down to
-the root and add all cfs_rq in the list.
+Level   Compression Memory
+1       0.8 MB
+2       1.0 MB
+3       1.3 MB
+4       0.9 MB
+5       1.4 MB
+6       1.5 MB
+7       1.4 MB
+8       1.8 MB
+9       1.8 MB
+10      1.8 MB
+11      1.8 MB
+12      1.8 MB
+13      2.3 MB
+14      2.6 MB
+15      2.6 MB
 
-Ensure that all cfs_rq will be added in the list even if they are throttled.
+and decompression needs memory of level 1. The sizes can be grouped
+together to say 3 sizes, I'm not sure that we'd really need 15 distinct
+workspaces. The reclaim mechanism helps, but I'd rather keep a smaller
+number of workspaces that covers average use.
 
-Reported-by: Sargun Dhillon <sargun@sargun.me>
-Fixes: 9c2791f936ef ("Fix hierarchical order in rq->leaf_cfs_rq_list")
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
+Default level is 3, that's 1.3 MiB, that also covers level 1, 2 and 4.
+For 5 to 12 it's 1.8 and the rest is 2.6 MiB.
 
-This patch doesn't fix:
-  a9e7f6544b9c ("sched/fair: Fix O(nr_cgroups) in load balance path")
-which has been reverted in v5.0-rc1. I'm working on an additonal patch
-that should be similar to this one to fix a9e7f6544b9c.
+> btrfs filesystem 10 times and then read back after dropping the caches.
+> The btrfs filesystem was on an SSD.
+> 
+> Level   Ratio   Compression (MB/s)  Decompression (MB/s)
+> 1       2.658        438.47                910.51
+> 2       2.744        364.86                886.55
+> 3       2.801        336.33                828.41
+> 4       2.858        286.71                886.55
+> 5       2.916        212.77                556.84
+> 6       2.363        119.82                990.85
+> 7       3.000        154.06                849.30
+> 8       3.011        159.54                875.03
+> 9       3.025        100.51                940.15
+> 10      3.033        118.97                616.26
+> 11      3.036         94.19                802.11
+> 12      3.037         73.45                931.49
+> 13      3.041         55.17                835.26
+> 14      3.087         44.70                716.78
+> 15      3.126         37.30                878.84
 
- kernel/sched/fair.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+From my casual user's perspective, I'd use the level 1 for speed, 7 for
+better ratio and 15 for the best compression. Anything else does not
+look good, though the results would vary based on the data set. I
+assume that the silesia corpus serves as a good approximation of the
+worst case average.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e2ff4b6..bf6b6c1 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -352,6 +352,20 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
- 	}
- }
- 
-+static inline void list_add_branch_cfs_rq(struct sched_entity *se, struct rq *rq)
-+{
-+	struct cfs_rq *cfs_rq;
-+
-+	for_each_sched_entity(se) {
-+		cfs_rq = cfs_rq_of(se);
-+		list_add_leaf_cfs_rq(cfs_rq);
-+
-+		/* If parent is already in the list, we can stop */
-+		if (rq->tmp_alone_branch == &rq->leaf_cfs_rq_list)
-+			break;
-+	}
-+}
-+
- /* Iterate through all leaf cfs_rq's on a runqueue: */
- #define for_each_leaf_cfs_rq(rq, cfs_rq) \
- 	list_for_each_entry_rcu(cfs_rq, &rq->leaf_cfs_rq_list, leaf_cfs_rq_list)
-@@ -5179,6 +5193,9 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 
- 	}
- 
-+	/* Ensure that all cfs_rq have been added to the list */
-+	list_add_branch_cfs_rq(se, rq);
-+
- 	hrtick_update(rq);
- }
- 
--- 
-2.7.4
+The levels 7-14 strike particularly obvious pattern: same ratio but the
+speed gets worse with each level. Taking the default level into account,
+(my) recommended levels would be 1, 3, 7, 15.
 
+I went through the patches, looks mostly ok, I don't like the
+indirections but at the moment it's an implementation detail as I'd like
+to agree on the overall approach first.
+
+We might need a few revisions or cleanup rounds to converge to an
+efficient solution, the advantage here is that it's all in-memory and
+without compatibility concerns once the level support for zstd is in and
+works.
+
+For that reason, I'm not opposed to the current version of the patchset.
+Given the time in development schedule, it's really close to code
+freeze, but the functionality has a narrow scope so I'm tentatively
+counting with it for 5.1.
