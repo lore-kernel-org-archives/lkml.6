@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C70C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCFCC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B102083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10ECC2184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762531;
-	bh=O1oML94p9jdakQP/mcPiKy/t7hYH/AenvUIDAnOxxKI=;
+	s=default; t=1548762536;
+	bh=i+5AeL2JWsA7yI9KX1yTt6BjWcFs/KbbXb5giWCslmU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rTF535pD7WZdBA9rs9Lj778Mxa251wMZulfoIR6SFmln98Gp65lWgeUJBwg7AG663
-	 dBv0ChIl41hj2Gq2hfTIN9oZ5Hok4VGvNx9kemFee4mhgeTaj47fyoh8xHiUnH8GVz
-	 /+mde7s4xbVJpMchM3zYSPi+vAKwOXWeEJA15HC8=
+	b=TVbedHr1HSGygtc5KIGOkVsqhVJAwrRGsZnuXzUzzi4umnt81Wsna1r1pFK2ZDvm+
+	 qK35FjhFc5JfDptaGw7V+MQVsIe3G0LP3PO6vlH+PRv8VAap5AJdJWRqxMePcUoYas
+	 w7YC4p7Vj3ZdUltRgx+GOizYSH+xq+4otDzbk+Js=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731384AbfA2Lst (ORCPT
+        id S1731395AbfA2Lsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:48:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39590 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:48:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730846AbfA2Lsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:40 -0500
+        id S1730846AbfA2Lsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:48:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79E472083B;
-        Tue, 29 Jan 2019 11:48:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6528320882;
+        Tue, 29 Jan 2019 11:48:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762520;
-        bh=O1oML94p9jdakQP/mcPiKy/t7hYH/AenvUIDAnOxxKI=;
+        s=default; t=1548762530;
+        bh=i+5AeL2JWsA7yI9KX1yTt6BjWcFs/KbbXb5giWCslmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jqfanum13ZOdD5lc5JyaeMDV5LiEqtAilPkwPxIu8E02reCyxChnLyW17vKDazWCT
-         Lgx1Z1FPxEs4lD7ZY1wdBbCSEif+GRK8luatGBzxoq+ZzA5W7t2zTP88VmezKH+hvg
-         Jq0Uqz/HIuX4zSAlt7NYX6Cf2KuH0Kj/0th/oUxQ=
+        b=UOz2BWMDRlLGozwrz0cYpqDMB3nBkTT0LZhfky8FEwO2zie7sRjs211kdIk+Z2z0i
+         SEzoK/waGm8yw4yXDpcu5Epy519MNdlLRheOCgLb6CluX2dcH0tJEpLpQ8/g4kBoGn
+         oc45wCNUQk8IdrcJKxP+FU2mMNDBLVyobCu0vnOY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.14 32/68] CIFS: Fix credit calculation for encrypted reads with errors
-Date:   Tue, 29 Jan 2019 12:35:54 +0100
-Message-Id: <20190129113134.258089600@linuxfoundation.org>
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Pravin B Shelar <pshelar@ovn.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 06/68] openvswitch: Avoid OOB read when parsing flow nlattrs
+Date:   Tue, 29 Jan 2019 12:35:28 +0100
+Message-Id: <20190129113132.204417179@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -66,65 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-commit ec678eae746dd25766a61c4095e2b649d3b20b09 upstream.
+[ Upstream commit 04a4af334b971814eedf4e4a413343ad3287d9a9 ]
 
-We do need to account for credits received in error responses
-to read requests on encrypted sessions.
+For nested and variable attributes, the expected length of an attribute
+is not known and marked by a negative number.  This results in an OOB
+read when the expected length is later used to check if the attribute is
+all zeros. Fix this by using the actual length of the attribute rather
+than the expected length.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Acked-by: Pravin B Shelar <pshelar@ovn.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/smb2ops.c |   24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ net/openvswitch/flow_netlink.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -2531,11 +2531,23 @@ handle_read_data(struct TCP_Server_Info
- 			server->ops->is_status_pending(buf, server, 0))
- 		return -1;
+--- a/net/openvswitch/flow_netlink.c
++++ b/net/openvswitch/flow_netlink.c
+@@ -459,7 +459,7 @@ static int __parse_flow_nlattrs(const st
+ 			return -EINVAL;
+ 		}
  
--	rdata->result = server->ops->map_error(buf, false);
-+	/* set up first two iov to get credits */
-+	rdata->iov[0].iov_base = buf;
-+	rdata->iov[0].iov_len = 4;
-+	rdata->iov[1].iov_base = buf + 4;
-+	rdata->iov[1].iov_len =
-+		min_t(unsigned int, buf_len, server->vals->read_rsp_size) - 4;
-+	cifs_dbg(FYI, "0: iov_base=%p iov_len=%zu\n",
-+		 rdata->iov[0].iov_base, rdata->iov[0].iov_len);
-+	cifs_dbg(FYI, "1: iov_base=%p iov_len=%zu\n",
-+		 rdata->iov[1].iov_base, rdata->iov[1].iov_len);
-+
-+	rdata->result = server->ops->map_error(buf, true);
- 	if (rdata->result != 0) {
- 		cifs_dbg(FYI, "%s: server returned error %d\n",
- 			 __func__, rdata->result);
--		dequeue_mid(mid, rdata->result);
-+		/* normal error on read response */
-+		dequeue_mid(mid, false);
- 		return 0;
- 	}
- 
-@@ -2605,14 +2617,6 @@ handle_read_data(struct TCP_Server_Info
- 		return 0;
- 	}
- 
--	/* set up first iov for signature check */
--	rdata->iov[0].iov_base = buf;
--	rdata->iov[0].iov_len = 4;
--	rdata->iov[1].iov_base = buf + 4;
--	rdata->iov[1].iov_len = server->vals->read_rsp_size - 4;
--	cifs_dbg(FYI, "0: iov_base=%p iov_len=%zu\n",
--		 rdata->iov[0].iov_base, server->vals->read_rsp_size);
--
- 	length = rdata->copy_into_pages(server, rdata, &iter);
- 
- 	kfree(bvec);
+-		if (!nz || !is_all_zero(nla_data(nla), expected_len)) {
++		if (!nz || !is_all_zero(nla_data(nla), nla_len(nla))) {
+ 			attrs |= 1 << type;
+ 			a[type] = nla;
+ 		}
 
 
