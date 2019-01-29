@@ -2,89 +2,136 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 049BCC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6952C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC6820989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:30:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NfhM1mzW"
+	by mail.kernel.org (Postfix) with ESMTP id 7F33D20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:30:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbfA2GaM (ORCPT
+        id S1727643AbfA2GaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 01:30:12 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:42090 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbfA2GaM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 01:30:12 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0T6Obj3082958;
-        Tue, 29 Jan 2019 06:27:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=4m7Vfm/ayjEUjHKEQXPM0gARYx4rproQBgxQTfUFQME=;
- b=NfhM1mzW0WHsceuVsllKeTidUtkDC8ZPSDuJLLXpilT2esze9Niq+beiNyDxoldq6dna
- UJ684SZ1vNmq+bPJNPy7lE7HLmsMrzq4lSI+t+AokjM/yuW+j+ncAVDd9NdzkFVg7ffq
- uO4DSRfRbb8/K5Y1ZbKZrbVvtM38J68I3Vx56pnCROpUqR4nld03e+oMEZeZNVO1uP+6
- G/kXz9jg2l/hbeVP50HI/dObrQsMqGz1QtcoC1ZZCNR/dYrq4hP+j6TKAgWQT0f6yWKN
- hwdm78Si+CHFQ5IYzkdDbIWtzlO3uIQ8gH3GrDE5bxOQ6HCppEf2+b7g8mLrQfiLDGuo kQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2q8d2e2j48-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jan 2019 06:27:55 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0T6RrJO023093
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jan 2019 06:27:54 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0T6RpxY006998;
-        Tue, 29 Jan 2019 06:27:51 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 28 Jan 2019 22:27:51 -0800
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     GOTO Masanori <gotom@debian.or.jp>,
-        YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: nsp32: Remove unnecessary self assignment in nsp32_set_sync_entry
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20181210235156.6237-1-natechancellor@gmail.com>
-        <20190126191143.GB25003@archlinux-ryzen>
-Date:   Tue, 29 Jan 2019 01:27:48 -0500
-In-Reply-To: <20190126191143.GB25003@archlinux-ryzen> (Nathan Chancellor's
-        message of "Sat, 26 Jan 2019 12:11:43 -0700")
-Message-ID: <yq1womoc717.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 29 Jan 2019 01:30:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55036 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727225AbfA2GaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 01:30:13 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3BAE2C04BD46;
+        Tue, 29 Jan 2019 06:30:13 +0000 (UTC)
+Received: from localhost (unknown [10.64.242.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 68BA71057045;
+        Tue, 29 Jan 2019 06:30:10 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 14:30:08 +0800
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] vhost: fix OOB in get_rx_bufs()
+Message-ID: <20190129063008.GJ3264@stefanha-x1.localdomain>
+References: <20190128070505.18335-1-jasowang@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9150 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=972
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901290047
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="YPJ8CVbwFUtL7OFW"
+Content-Disposition: inline
+In-Reply-To: <20190128070505.18335-1-jasowang@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 29 Jan 2019 06:30:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Nathan,
+--YPJ8CVbwFUtL7OFW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> drivers/scsi/nsp32.c:2444:14: warning: explicitly assigning value of
->> variable of type 'unsigned char' to itself [-Wself-assign]
->>         offset      = offset;
->>         ~~~~~~      ^
+On Mon, Jan 28, 2019 at 03:05:05PM +0800, Jason Wang wrote:
+> After batched used ring updating was introduced in commit e2b3b35eb989
+> ("vhost_net: batch used ring update in rx"). We tend to batch heads in
+> vq->heads for more than one packet. But the quota passed to
+> get_rx_bufs() was not correctly limited, which can result a OOB write
+> in vq->heads.
+>=20
+>         headcount =3D get_rx_bufs(vq, vq->heads + nvq->done_idx,
+>                     vhost_len, &in, vq_log, &log,
+>                     likely(mergeable) ? UIO_MAXIOV : 1);
+>=20
+> UIO_MAXIOV was still used which is wrong since we could have batched
+> used in vq->heads, this will cause OOB if the next buffer needs more
+> than 960 (1024 (UIO_MAXIOV) - 64 (VHOST_NET_BATCH)) heads after we've
+> batched 64 (VHOST_NET_BATCH) heads:
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> BUG kmalloc-8k (Tainted: G    B            ): Redzone overwritten
+> -------------------------------------------------------------------------=
+----
+>=20
+> INFO: 0x00000000fd93b7a2-0x00000000f0713384. First byte 0xa9 instead of 0=
+xcc
+> INFO: Allocated in alloc_pd+0x22/0x60 age=3D3933677 cpu=3D2 pid=3D2674
+>     kmem_cache_alloc_trace+0xbb/0x140
+>     alloc_pd+0x22/0x60
+>     gen8_ppgtt_create+0x11d/0x5f0
+>     i915_ppgtt_create+0x16/0x80
+>     i915_gem_create_context+0x248/0x390
+>     i915_gem_context_create_ioctl+0x4b/0xe0
+>     drm_ioctl_kernel+0xa5/0xf0
+>     drm_ioctl+0x2ed/0x3a0
+>     do_vfs_ioctl+0x9f/0x620
+>     ksys_ioctl+0x6b/0x80
+>     __x64_sys_ioctl+0x11/0x20
+>     do_syscall_64+0x43/0xf0
+>     entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> INFO: Slab 0x00000000d13e87af objects=3D3 used=3D3 fp=3D0x          (null=
+) flags=3D0x200000000010201
+> INFO: Object 0x0000000003278802 @offset=3D17064 fp=3D0x00000000e2e6652b
+>=20
+> Fixing this by allocating UIO_MAXIOV + VHOST_NET_BATCH iovs for
+> vhost-net. This is done through set the limitation through
+> vhost_dev_init(), then set_owner can allocate the number of iov in a
+> per device manner.
+>=20
+> This fixes CVE-2018-16880.
+>=20
+> Fixes: e2b3b35eb989 ("vhost_net: batch used ring update in rx")
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/vhost/net.c   | 3 ++-
+>  drivers/vhost/scsi.c  | 2 +-
+>  drivers/vhost/vhost.c | 7 ++++---
+>  drivers/vhost/vhost.h | 4 +++-
+>  drivers/vhost/vsock.c | 2 +-
+>  5 files changed, 11 insertions(+), 7 deletions(-)
 
-Applied to 5.1/scsi-queue. Thanks.
+No change in the scsi and vsock cases.  I haven't reviewed the net case.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--YPJ8CVbwFUtL7OFW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJcT/LwAAoJEJykq7OBq3PIxekH/05O7+mudnt5sHQYTE8fzAnD
+qyX80qnYtoOkhdxJv+OJXC0wWNziXP+FKx+txGjW8YQbgyICgzPZdFx+MdJskyBj
+ui74eegtEx60Jn0dxvRv9kuphlDTAk7csZ4tjJkjibkjkYDydqdconnO3l6eoklP
+mHO15NKbm/R4zeNu8LzvIi0OBRQ7WSDyPuwCieVI8j6pkpPGnkf5qmhfdkLUIhfZ
+yVXsX/zKFCwAktm2Q3W7nMnaJCwmmewxVj9wASOfwhI9fmUxY1TuAqAAaZW0oV5T
+H9bjm/I73zR22jAUiMUKNBSs3hGc2DfJsSohkzRIscZuk/bGLVV+qtqokxWWVx8=
+=3Jhy
+-----END PGP SIGNATURE-----
+
+--YPJ8CVbwFUtL7OFW--
