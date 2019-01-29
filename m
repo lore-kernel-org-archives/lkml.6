@@ -2,127 +2,113 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDB2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCB3C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA13B2177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:18:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tuz7be0k"
+	by mail.kernel.org (Postfix) with ESMTP id 9F1692175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:22:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfA2ISC (ORCPT
+        id S1726869AbfA2IWi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:18:02 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:37707 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbfA2ISC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:18:02 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190129081759epoutp0445de9b0a15ca020d56bbc2f80053d168~_Q88_wBTE0911909119epoutp04B
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 08:17:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190129081759epoutp0445de9b0a15ca020d56bbc2f80053d168~_Q88_wBTE0911909119epoutp04B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1548749879;
-        bh=Lap3XF/zuD/GvbLv0QytfXAXvTHVQDX9QALbPssZsFU=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=tuz7be0k2BgsRKDqbMi4cJwt/K3Hfb6F6STDnc5D8zN/qLWP7Fpvz//bz0xG4XLB0
-         1DKRr1HF+X3PHuCQMyrjdEdxkaNuiH31ic+wtiUwWRwdnG2uVBOMyzGLDwDNsKC6am
-         wXUGkY/ndwrzhnHk8OzI5pEMnS+n27VXFev9IeeM=
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.154]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190129081755epcas1p18b8fc9355a39f9f1c684510aeb15f77f~_Q85zfS2C1782117821epcas1p1e;
-        Tue, 29 Jan 2019 08:17:55 +0000 (GMT)
-X-AuditID: b6c32a35-297ff70000000fea-a0-5c500c2f1609
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        14.2A.04074.F2C005C5; Tue, 29 Jan 2019 17:17:51 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: [PATCH 3/3] devfreq: add mediatek cci devfreq
-Reply-To: myungjoo.ham@samsung.com
-From:   MyungJoo Ham <myungjoo.ham@samsung.com>
-To:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-CC:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "srv_heupstream@mediatek.com" <srv_heupstream@mediatek.com>,
-        "fan.chen@mediatek.com" <fan.chen@mediatek.com>,
-        "Andrew-sh.Cheng" <andrew-sh.cheng@mediatek.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <1548743704-16821-4-git-send-email-andrew-sh.cheng@mediatek.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20190129081750epcms1p41e46de569005622ad3d90f9aaa75f545@epcms1p4>
-Date:   Tue, 29 Jan 2019 17:17:50 +0900
-X-CMS-MailID: 20190129081750epcms1p41e46de569005622ad3d90f9aaa75f545
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA12TaUxTWRiGPb29C441hxb1BB2n3qgTTEp7rYUDijHKmBtFbXR+TGZQvIEb
-        IF3TW4y7jWJQRnEjURApGoyInSCVzV0rElRE0QhuJQaZjAtqJlQTgltL22j89573vOd7vrMx
-        hLKLimfyrU7RYRXMLDVa3nQtIVGjHWPM1HUPqnBz3QsSv/Ql4J7AfyR2t3aS+MPTYRm+vXWA
-        xt7n3SS+f66Cwve3dQE8uLsV4OM9XTK8tVCPO27dI/H2i600PuhX4vr3/DzIeyo9gD9b7qd5
-        b+1Oin/afYHiz1Rv4QtvXJbzDQ+K5HxJQy3gB72TjTF/mubkiUKO6FCL1mxbTr41N41dvCJr
-        QZYhScdpuBSczKqtgkVMY9MzjJqF+ebgFlj1GsFcELSMgiSx2rlzHLYCp6jOs0nONFa055jt
-        KfZESbBIBdbcxGybJZXT6WYagsHVprwz/Scpu59cu7vqHuECj+XFIIZBcBY6XdJHFoPRjBK2
-        ABRwu+hiwDAKGIs+tahCGRVMRa+b3bKQVkIWuR5dIsK+Fu141gRCmoIa1HjaLw/ViYMVMtTu
-        qxkZEHCYQEWBK3SYpkCHiv6NkCei5hONIASLgUvQQI0UtsehR6fe0FH9rs0NwjoObe+9TYR1
-        LHo2dB5Eyxwq/RIpuQH17eoiQlwECwGqLWuShSe0qOPIDSqkFUHWjqG2EYAcTkPd7fWRTDry
-        tPeMAAj4C2p+U0GEeiNgAqo7p42276ofpn/UBByL3r7fRUb9lsr+SMnpyHe+OpKfhG4dPBrp
-        n0euhlfyvWBK+bejLv8OXP4NXAWIWjBetEuWXFHi7Nz3t+sFI895hqEFlHZm+ABkADtGoaOW
-        ZSpJYY20zuIDiCHYOAU3HLQUOcK69aLDluUoMIuSDxiC+99HxI/LtgU/h9WZxRlm6vV6PItL
-        MnAcO0FRN29BphLmCk7RJIp20RFdJ2Ni4l2graOz1Jscu0evqJ7f1rMxMJB0k2+3matqNP+s
-        XKRij95cylSaHpd5NvU69rlSh/73W46tMvZnPOxtFa9fkq2tLjHt/xxIv9qHnlT8/evUUfRf
-        jcn0hQOL3MV/bHarP2Yml/4+abnKteziq6E7ZYd3zjbepT1Hfmv8+exP61Pe8fvTG1i5lCdw
-        MwiHJHwFWVZd5eQDAAA=
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190129063600epcas2p255b062c64f22555692ff895634ea4eb0
-References: <1548743704-16821-4-git-send-email-andrew-sh.cheng@mediatek.com>
-        <1548743704-16821-1-git-send-email-andrew-sh.cheng@mediatek.com>
-        <CGME20190129063600epcas2p255b062c64f22555692ff895634ea4eb0@epcms1p4>
+        Tue, 29 Jan 2019 03:22:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48680 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725298AbfA2IWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:22:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 912C2AF6C;
+        Tue, 29 Jan 2019 08:22:35 +0000 (UTC)
+Subject: Re: [PATCH 07/11] btrfs: move to fn pointers for get/put workspaces
+To:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>
+Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190128212437.11597-8-dennis@kernel.org>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ mQINBFiKBz4BEADNHZmqwhuN6EAzXj9SpPpH/nSSP8YgfwoOqwrP+JR4pIqRK0AWWeWCSwmZ
+ T7g+RbfPFlmQp+EwFWOtABXlKC54zgSf+uulGwx5JAUFVUIRBmnHOYi/lUiE0yhpnb1KCA7f
+ u/W+DkwGerXqhhe9TvQoGwgCKNfzFPZoM+gZrm+kWv03QLUCr210n4cwaCPJ0Nr9Z3c582xc
+ bCUVbsjt7BN0CFa2BByulrx5xD9sDAYIqfLCcZetAqsTRGxM7LD0kh5WlKzOeAXj5r8DOrU2
+ GdZS33uKZI/kZJZVytSmZpswDsKhnGzRN1BANGP8sC+WD4eRXajOmNh2HL4P+meO1TlM3GLl
+ EQd2shHFY0qjEo7wxKZI1RyZZ5AgJnSmehrPCyuIyVY210CbMaIKHUIsTqRgY5GaNME24w7h
+ TyyVCy2qAM8fLJ4Vw5bycM/u5xfWm7gyTb9V1TkZ3o1MTrEsrcqFiRrBY94Rs0oQkZvunqia
+ c+NprYSaOG1Cta14o94eMH271Kka/reEwSZkC7T+o9hZ4zi2CcLcY0DXj0qdId7vUKSJjEep
+ c++s8ncFekh1MPhkOgNj8pk17OAESanmDwksmzh1j12lgA5lTFPrJeRNu6/isC2zyZhTwMWs
+ k3LkcTa8ZXxh0RfWAqgx/ogKPk4ZxOXQEZetkEyTFghbRH2BIwARAQABtCNOaWtvbGF5IEJv
+ cmlzb3YgPG5ib3Jpc292QHN1c2UuY29tPokCOAQTAQIAIgUCWIo48QIbAwYLCQgHAwIGFQgC
+ CQoLBBYCAwECHgECF4AACgkQcb6CRuU/KFc0eg/9GLD3wTQz9iZHMFbjiqTCitD7B6dTLV1C
+ ddZVlC8Hm/TophPts1bWZORAmYIihHHI1EIF19+bfIr46pvfTu0yFrJDLOADMDH+Ufzsfy2v
+ HSqqWV/nOSWGXzh8bgg/ncLwrIdEwBQBN9SDS6aqsglagvwFD91UCg/TshLlRxD5BOnuzfzI
+ Leyx2c6YmH7Oa1R4MX9Jo79SaKwdHt2yRN3SochVtxCyafDlZsE/efp21pMiaK1HoCOZTBp5
+ VzrIP85GATh18pN7YR9CuPxxN0V6IzT7IlhS4Jgj0NXh6vi1DlmKspr+FOevu4RVXqqcNTSS
+ E2rycB2v6cttH21UUdu/0FtMBKh+rv8+yD49FxMYnTi1jwVzr208vDdRU2v7Ij/TxYt/v4O8
+ V+jNRKy5Fevca/1xroQBICXsNoFLr10X5IjmhAhqIH8Atpz/89ItS3+HWuE4BHB6RRLM0gy8
+ T7rN6ja+KegOGikp/VTwBlszhvfLhyoyjXI44Tf3oLSFM+8+qG3B7MNBHOt60CQlMkq0fGXd
+ mm4xENl/SSeHsiomdveeq7cNGpHi6i6ntZK33XJLwvyf00PD7tip/GUj0Dic/ZUsoPSTF/mG
+ EpuQiUZs8X2xjK/AS/l3wa4Kz2tlcOKSKpIpna7V1+CMNkNzaCOlbv7QwprAerKYywPCoOSC
+ 7P25Ag0EWIoHPgEQAMiUqvRBZNvPvki34O/dcTodvLSyOmK/MMBDrzN8Cnk302XfnGlW/YAQ
+ csMWISKKSpStc6tmD+2Y0z9WjyRqFr3EGfH1RXSv9Z1vmfPzU42jsdZn667UxrRcVQXUgoKg
+ QYx055Q2FdUeaZSaivoIBD9WtJq/66UPXRRr4H/+Y5FaUZx+gWNGmBT6a0S/GQnHb9g3nonD
+ jmDKGw+YO4P6aEMxyy3k9PstaoiyBXnzQASzdOi39BgWQuZfIQjN0aW+Dm8kOAfT5i/yk59h
+ VV6v3NLHBjHVw9kHli3jwvsizIX9X2W8tb1SefaVxqvqO1132AO8V9CbE1DcVT8fzICvGi42
+ FoV/k0QOGwq+LmLf0t04Q0csEl+h69ZcqeBSQcIMm/Ir+NorfCr6HjrB6lW7giBkQl6hhomn
+ l1mtDP6MTdbyYzEiBFcwQD4terc7S/8ELRRybWQHQp7sxQM/Lnuhs77MgY/e6c5AVWnMKd/z
+ MKm4ru7A8+8gdHeydrRQSWDaVbfy3Hup0Ia76J9FaolnjB8YLUOJPdhI2vbvNCQ2ipxw3Y3c
+ KhVIpGYqwdvFIiz0Fej7wnJICIrpJs/+XLQHyqcmERn3s/iWwBpeogrx2Lf8AGezqnv9woq7
+ OSoWlwXDJiUdaqPEB/HmGfqoRRN20jx+OOvuaBMPAPb+aKJyle8zABEBAAGJAh8EGAECAAkF
+ AliKBz4CGwwACgkQcb6CRuU/KFdacg/+M3V3Ti9JYZEiIyVhqs+yHb6NMI1R0kkAmzsGQ1jU
+ zSQUz9AVMR6T7v2fIETTT/f5Oout0+Hi9cY8uLpk8CWno9V9eR/B7Ifs2pAA8lh2nW43FFwp
+ IDiSuDbH6oTLmiGCB206IvSuaQCp1fed8U6yuqGFcnf0ZpJm/sILG2ECdFK9RYnMIaeqlNQm
+ iZicBY2lmlYFBEaMXHoy+K7nbOuizPWdUKoKHq+tmZ3iA+qL5s6Qlm4trH28/fPpFuOmgP8P
+ K+7LpYLNSl1oQUr+WlqilPAuLcCo5Vdl7M7VFLMq4xxY/dY99aZx0ZJQYFx0w/6UkbDdFLzN
+ upT7NIN68lZRucImffiWyN7CjH23X3Tni8bS9ubo7OON68NbPz1YIaYaHmnVQCjDyDXkQoKC
+ R82Vf9mf5slj0Vlpf+/Wpsv/TH8X32ajva37oEQTkWNMsDxyw3aPSps6MaMafcN7k60y2Wk/
+ TCiLsRHFfMHFY6/lq/c0ZdOsGjgpIK0G0z6et9YU6MaPuKwNY4kBdjPNBwHreucrQVUdqRRm
+ RcxmGC6ohvpqVGfhT48ZPZKZEWM+tZky0mO7bhZYxMXyVjBn4EoNTsXy1et9Y1dU3HVJ8fod
+ 5UqrNrzIQFbdeM0/JqSLrtlTcXKJ7cYFa9ZM2AP7UIN9n1UWxq+OPY9YMOewVfYtL8M=
+Message-ID: <6f9b4be7-0ce8-bd62-c90d-f3f537528b7a@suse.com>
+Date:   Tue, 29 Jan 2019 10:22:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190128212437.11597-8-dennis@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From: "Andrew-sh.Cheng" <andrew-sh.cheng@mediatek.com>
->
->For big/little cpu cluster architecture,
->not only CPU frequency, but CCI frequency will also affect performance.
->
->Little cores and cci share the same buck in Mediatek mt8183 IC,
->so we add a CCI devfreq which will get notification when buck voltage
->is changed, then CCI devfreq can set cci frequency as high as possible.
->
->Signed-off-by: Andrew-sh.Cheng <andrew-sh.cheng@mediatek.com>
 
-Please correct the coding style first in the .c file.
 
-- empty last line?
-- inconsistent indentation (line26? match the first lines for all variable declarations OR don't match them at all)
-- Need proper boilerplate and try to comply with C89.
+On 28.01.19 г. 23:24 ч., Dennis Zhou wrote:
+> The previous patch added generic helpers for get_workspace() and
+> put_workspace(). Now, we can migrate ownership of the workspace_manager
+> to be in the compression type code as the compression code itself
+> doesn't care beyond being able to get a workspace. The init/cleanup
+> and get/put methods are abstracted so each compression algorithm can
+> decide how they want to manage their workspaces.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
 
-Cheers,
-MyungJoo
+TBH I can't really see the value in this patch. IMO it doesn't make the
+code more readable, on the contrary, you create algorithm-specific
+wrappers over the generic function, where the sole specialization is in
+the arguments passed to the generic functions. You introduce 4 more
+function pointers and this affects performance negatively (albeit can't
+say to what extent) due to spectre mitigations (retpolines).
 
+I also read the follow up patches with the hopes of seeing how the code
+becomes cleaner to no avail. At this point I'm really not in favor of
+this particular patch.
