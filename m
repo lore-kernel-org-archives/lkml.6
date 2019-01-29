@@ -2,86 +2,146 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F851C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03859C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6BE22148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:30:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2D342148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:30:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="orvN8M0Y"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UlysjKYV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725810AbfA2Faf (ORCPT
+        id S1726198AbfA2Faq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 00:30:35 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57032 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfA2Fae (ORCPT
+        Tue, 29 Jan 2019 00:30:46 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36389 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfA2Fap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 00:30:34 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0T5NtsS055703;
-        Tue, 29 Jan 2019 05:30:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=c47iu4RThyU5VHlKfGMrS5jK+0YKaRFQBOIVCj2zRA4=;
- b=orvN8M0Yr65Uji3gerTe8kGuFiAUzDPrum1n0ARhSR8rf8pwoxcbLpLHFjfUsiJrpZz9
- qSLldKC3envo210Yw+BG96te5btSK18rhWCeFMGMqA/ZpDRfGTdeer43EufSOXLFxyM9
- HzCDwxQJphKAh3MTtwS+/VKWRTEAwLrbnuzfVS9a7ydk+f6hlWEBuCKq9gGWFKypFy60
- /NiwnhlZbCEBLsrnQ/AVl1LvXddbyLPVQiK7tPQ32uHhqC7Qsh4Qepoz9nPoNR6pCE8R
- /qY80uj9Dkc1vkOzIjdIK+7S7IGE516LlvbozgGQKMxJuqwTeWoM0B5DfR3FG9U5CHwT ug== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2q8g6r2329-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jan 2019 05:30:15 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0T5UEqE027730
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jan 2019 05:30:14 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0T5UDP2028475;
-        Tue, 29 Jan 2019 05:30:13 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 28 Jan 2019 21:30:13 -0800
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Johannes Thumshirn <jth@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH v2] SCSI: fcoe: convert to use BUS_ATTR_WO
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190122142735.GB18225@kroah.com>
-Date:   Tue, 29 Jan 2019 00:30:10 -0500
-In-Reply-To: <20190122142735.GB18225@kroah.com> (Greg Kroah-Hartman's message
-        of "Tue, 22 Jan 2019 15:27:35 +0100")
-Message-ID: <yq1d0ogf2u5.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 29 Jan 2019 00:30:45 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b85so9151119pfc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 21:30:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lLtNXSuhfQ2a5ic9Oh5vSesrlVFA1pyWAIE7zBbCCXs=;
+        b=UlysjKYV5FpjsXM/z43czmFiIOlLsRVxflQicHVxiJv1c4pZLAiF8SxaDclUQubbbs
+         2Nrhy+iVlDdkXBdsywB9q5w7FuwecdPYI0bqWLD2HeFBTkvXlvDTm0CD8h2fDUkehM6a
+         fNBpvaa7tHe2amAzNoXSEmYkRFd9rBLi4kSKg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lLtNXSuhfQ2a5ic9Oh5vSesrlVFA1pyWAIE7zBbCCXs=;
+        b=ud2UAu7DZFFkCHLZABh1FjHTvzddzYEJEF/QL6h1djwEf2M84DfwjPDRY4WSi25HYj
+         MzioeULAUSAZ09hepF/nX8ghQNdT2xjKuKzbAirNWqvdvJTvQcy9fjVqd2H3Pjbio0Yj
+         /a7z83BsknMcIoCUHXBttXIOYAbZ7MHlM4m288VU/XYRGrOIAHu0nhGlzVZ6shvNPo70
+         WAccy61Zt47BzCcKGJ1shkdPhwcDbyjl7aDdO2w01P2OvGGbGyzKSFHkKY3gvQIJoS8u
+         HqbkPQIMUy6ImHKa3Rk5lFlyL9L4JSsxI8fqTco2lStx2Fd8kr6frZFYxmhsYfyG25r4
+         lN7w==
+X-Gm-Message-State: AJcUukcQLX/2v4iblH1uV14fz0qsdnWcAuCtSM6+0GiYtzti4z9tlnkJ
+        XQu7SNfeuDVF9t22VWAqWqfGXQ==
+X-Google-Smtp-Source: ALg8bN7S80eAeaLyRknarNnMGbTRRAqMUdweWiSpaCtKH/p6fF8r571jOKvmjABuNzvPQXShdcCtwA==
+X-Received: by 2002:a65:4784:: with SMTP id e4mr21998619pgs.12.1548739844424;
+        Mon, 28 Jan 2019 21:30:44 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id 4sm43829983pfq.10.2019.01.28.21.30.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 21:30:43 -0800 (PST)
+Date:   Tue, 29 Jan 2019 11:00:41 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     rjw@rjwysocki.net, sudeep.holla@arm.com, liviu.dudau@arm.com,
+        lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, nm@ti.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        dietmar.eggemann@arm.com, mka@chromium.org
+Subject: Re: [PATCH 2/7] cpufreq: dt: Register an Energy Model
+Message-ID: <20190129053041.ymyhfusj6eimpxfu@vireshk-i7>
+References: <20190128165522.31749-1-quentin.perret@arm.com>
+ <20190128165522.31749-3-quentin.perret@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9150 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=842
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901290040
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128165522.31749-3-quentin.perret@arm.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 28-01-19, 16:55, Quentin Perret wrote:
+> Now that PM_OPP provides a helper function to estimate the power
+> consumed by CPUs, make sure to try and register an Energy Model (EM)
+> from cpufreq-dt, hence ensuring interested subsystems (the task
+> scheduler, for example) can make use of that information when available.
+> 
+> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+> index e58bfcb1169e..7556e07e7a9f 100644
+> --- a/drivers/cpufreq/cpufreq-dt.c
+> +++ b/drivers/cpufreq/cpufreq-dt.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/cpu_cooling.h>
+>  #include <linux/cpufreq.h>
+>  #include <linux/cpumask.h>
+> +#include <linux/energy_model.h>
+>  #include <linux/err.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> @@ -152,6 +153,7 @@ static int resources_available(void)
+>  
+>  static int cpufreq_init(struct cpufreq_policy *policy)
+>  {
+> +	struct em_data_callback em_cb = EM_DATA_CB(of_dev_pm_opp_get_cpu_power);
 
-Greg,
+Hmm, so all the earlier comments regarding prototype of this routine are invalid
+because of this.
 
-> We are trying to get rid of BUS_ATTR() and the usage of that in the
-> fcoe driver can be trivially converted to use BUS_ATTR_WO(), so use
-> that instead.
+>  	struct cpufreq_frequency_table *freq_table;
+>  	struct opp_table *opp_table = NULL;
+>  	struct private_data *priv;
+> @@ -160,7 +162,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+>  	unsigned int transition_latency;
+>  	bool fallback = false;
+>  	const char *name;
+> -	int ret;
+> +	int ret, nr_opp;
+>  
+>  	cpu_dev = get_cpu_device(policy->cpu);
+>  	if (!cpu_dev) {
+> @@ -237,6 +239,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+>  		ret = -EPROBE_DEFER;
+>  		goto out_free_opp;
+>  	}
+> +	nr_opp = ret;
 
-Applied to 5.1/scsi-queue, thanks!
+Instead use nr_opp instead of ret while calling dev_pm_opp_get_opp_count().
+
+>  
+>  	if (fallback) {
+>  		cpumask_setall(policy->cpus);
+> @@ -280,6 +283,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+>  	policy->cpuinfo.transition_latency = transition_latency;
+>  	policy->dvfs_possible_from_any_cpu = true;
+>  
+> +	em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
+> +
+>  	return 0;
+>  
+>  out_free_cpufreq_table:
+> -- 
+> 2.20.1
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+viresh
