@@ -2,347 +2,279 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C17C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C66C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FB0620881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:27:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50A9D20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:28:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kReRXwnN"
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="xihHySx2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbfA2U1p (ORCPT
+        id S1728975AbfA2U23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:27:45 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45612 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbfA2U1p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:27:45 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so10191331pfd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 12:27:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FcXX162GqhxYJvEtt0yO0BCjii24nkrvGMIFzvdDOIU=;
-        b=kReRXwnNv9LdWNm9YCPt8kgqNiKnumGOhE3nk1ifJaU9YFoUPYUThUHCc/uGenOrZl
-         Rsz6/DEbTIehqY2NJhGdHpyyE5h9HpTxUkyWD1iy3qfqym14NuD4JDGjYig5ONXLqcmK
-         J20e2P7g+fAqwaeGD1nWEgpEdV2KNPls1dYg4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FcXX162GqhxYJvEtt0yO0BCjii24nkrvGMIFzvdDOIU=;
-        b=TIvVHLpnkS7ekhqyayA1xUWHKXy5EIcXe+OvmBHLV8mTXQ6UsRDNFPfHUdI9d2gHld
-         EWmQfk44KbR62WdBp0XRquQ/e0UqrvBZWl5M0t/7XskN7Nwe81Ti6I67j5QBvHp9FqV8
-         vJxB/X6Mi8hCkFwVYHJnmmEYHATi17rWG9L2pVs+k4yVVoBZ0z7KYl4JL9kye61AHglG
-         dMAVgIURda17imXC1P1axM4T6/WUotglFlTZPebR6bqzXS6iExoCgPJgVR51m4yxWTQr
-         HXNDs2JMKELjL9V1cx2sr0dEo/e/F0oeJxRwc0N7u6zoaB7rZwJrODLmECCCIuY/57Wt
-         TIvQ==
-X-Gm-Message-State: AJcUukeU85iuNsxQLCMP8Mgn4VSmQ8ULa7P2tjsEP5deh5QOCIfuwc4a
-        mPz0mSigG/hh+G85nTgWkXWEtw==
-X-Google-Smtp-Source: ALg8bN4ZtZ2R5A1iBrYut3stE1Zu34zmPfEZwJwEBlHcx8zHXSHsl0XDs2uQHOyK2tofLtOYQ0O0+A==
-X-Received: by 2002:a62:4181:: with SMTP id g1mr27587030pfd.45.1548793664269;
-        Tue, 29 Jan 2019 12:27:44 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 6sm78912651pfv.30.2019.01.29.12.27.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 12:27:43 -0800 (PST)
-Date:   Tue, 29 Jan 2019 12:27:26 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
-        jackp@codeaurora.org, andy.gross@linaro.org, swboyd@chromium.org,
-        shawn.guo@linaro.org, vkoul@kernel.org, khasim.mohammed@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] phy: qualcomm: usb: Add Super-Speed PHY driver
-Message-ID: <20190129202726.GA3036@builder>
-References: <1548761715-4004-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1548761715-4004-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
+        Tue, 29 Jan 2019 15:28:29 -0500
+Received: from cock.li ([185.100.85.212]:34782 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726984AbfA2U23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 15:28:29 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548761715-4004-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1548793702; bh=V4GIeNerlP4xxGpFPTCiXFb5o6SZk7Sb+VKRxNbfN9U=;
+        h=Date:From:To:Cc:Subject:From;
+        b=xihHySx2FpaA4W3t0mHZFfw8we0EgKc/iMcSti8O8t2TrZaOf0+x6qdEKjR9KR/xv
+         jSlnmFEp3TmbgslUaDIIDTS+NTBOK0NIxiHV0XnTJgMxB6tgWgZB7TXN5uvM2UUhtY
+         kN/JSPEiNfVCh/7YF+CcmQxt9C1uSMZv2ljzTAjEejjc1u7k32C98iOZej4DPdQxAq
+         H3XwtsbiEvo4R3K8oFCOKJUqDVIbDXN7Eu0iqfVVJVGl5TVQP7m+Bf5bCL+6naM3IK
+         5wE2DUte+RoL/Bc6DyHXP39FlUdc8yflr4jJo+CYTeefiKJ+0xenF+hn/Ojh4f6+48
+         P3XjFXu9gmhjg==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 29 Jan 2019 20:28:21 +0000
+From:   mikeeusa@redchan.it
+To:     copyright@github.com
+Cc:     legal@github.com, legal@microsoft.com, copyright@microsoft.com,
+        linux-kernel@vger.kernel.org, misc@openbsd.org,
+        gentoo-user@lists.gentoo.org, freebsd-chat@freebsd.org
+Subject: DMCA takedown request to GitHub regarding: GPC-Slots2
+Message-ID: <a82e4de350ca5c93e439598833dc8bcc@redchan.it>
+X-Sender: mikeeusa@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 29 Jan 03:35 PST 2019, Jorge Ramirez-Ortiz wrote:
-> diff --git a/drivers/phy/qualcomm/phy-qcom-usb-ss.c b/drivers/phy/qualcomm/phy-qcom-usb-ss.c
-> new file mode 100644
-> index 0000000..e6ae96e
-> --- /dev/null
-> +++ b/drivers/phy/qualcomm/phy-qcom-usb-ss.c
-> @@ -0,0 +1,347 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2012-2014,2017 The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2018, Linaro Limited
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/reset.h>
-> +#include <linux/slab.h>
-> +
-> +#define PHY_CTRL0			0x6C
-> +#define PHY_CTRL1			0x70
-> +#define PHY_CTRL2			0x74
-> +#define PHY_CTRL4			0x7C
-> +
-> +/* PHY_CTRL bits */
-> +#define REF_PHY_EN			BIT(0)
-> +#define LANE0_PWR_ON			BIT(2)
-> +#define SWI_PCS_CLK_SEL			BIT(4)
-> +#define TST_PWR_DOWN			BIT(4)
-> +#define PHY_RESET			BIT(7)
-> +
-> +enum phy_vdd_ctrl { ENABLE, DISABLE, };
+As you may know, In the United States; a license, absent an attached 
+interest, is revocable.
 
-Use bool to describe boolean values.
+A "John Doe" had his non-exclusive license regarding the game 
+"GPC-Slots2" terminated by the copyright owner (me: MikeeUSA).
+The copyright owner may do this as-of-right, unless there is an attached 
+interest (ie: unless the licensee paid good consideration for the 
+license).
 
-> +enum phy_regulator { VDD, VDDA1P8, };
+The "John Doe" then proceeded to beligerently upload a copy of 
+"GPC-Slots2" to your host, GitHub.
+This violated Author's (my) copyright, since "John Doe"'s gratuitous 
+bare license had been terminated by the copyright holder (me).
 
-It doesn't look like you need either of these if you remove the
-set_voltage calls.
+The "John Doe" then proceeded to modify my work, which again violated my 
+copyright since I had previosly revoked his license.
+The license flows from me, the copyright owner, not any text. It is 
+permission to use, redistribute, modify, etc. Instructions on how to use 
+my property.
+When such permission is not supported by any consideration, it may be 
+rescinded by the owner, at his will.
+(/Regardless/ of the "terms". "Terms" are only enforcable against the 
+grantor if the licensee has paid consideration for them, essentially, 
+under US law.)
 
-> +
-> +struct ssphy_priv {
-> +	void __iomem *base;
-> +	struct device *dev;
-> +	struct reset_control *reset_com;
-> +	struct reset_control *reset_phy;
-> +	struct regulator *vbus;
-> +	struct regulator_bulk_data *regs;
-> +	int num_regs;
-> +	struct clk_bulk_data *clks;
-> +	int num_clks;
-> +	enum phy_mode mode;
-> +};
-> +
-> +static inline void qcom_ssphy_updatel(void __iomem *addr, u32 mask, u32 val)
-> +{
-> +	writel((readl(addr) & ~mask) | val, addr);
-> +}
-> +
-> +static inline int qcom_ssphy_vbus_enable(struct regulator *vbus)
-> +{
-> +	return !regulator_is_enabled(vbus) ? regulator_enable(vbus) : 0;
+I have done so.
 
-regulator_is_enabled() will check if the actual regulator is on, not if
-you already voted for it.
+I reiterated to the "John Doe" that his license had been terminated.
 
-So if something else is enabling the vbus regulator you will skip your
-enable and be in the mercy of them not releasing it. Presumably there's
-only one consumer of this particular regulator, but it's a bad habit.
+"John Doe" then informed me that I "can't do that". I tried to explain 
+to him US law.
+"John Doe" declared that he did not care and would keep the violating 
+work up, in defiance of me.
+(IE: he would "pirate" it)
 
-Please keep track of this drivers requested state in this driver, if
-qcom_ssphy_vbus_ctrl() is called not only for the state changes.
+He then cited works from a discredited paralegal while I cited published 
+works by lawyers studied in their field.
 
-> +}
-> +
-> +static inline int qcom_ssphy_vbus_disable(struct regulator *vbus)
-> +{
-> +	return regulator_is_enabled(vbus) ? regulator_disable(vbus) : 0;
-> +}
-> +
-> +static int qcom_ssphy_vdd_ctrl(struct ssphy_priv *priv, enum phy_vdd_ctrl ctrl)
+(Note: I make no claim to PERL, the color ansi library, any supporting 
+libraries, or the -2 split screen function. My copyright covers the game 
+code of GPC-Slots2. I (MikeeUSA) am the original author of the work and 
+never signed over copyright to the work.)
+(Note: "obeying the terms" (obeying the copyright holders instructions 
+regarding the use of his property) is not consideration: it is a 
+preexisting legal duty: outside of the "terms" there is no right for the 
+licensee to copy, modify, make derivative works, distribute, distribute 
+derivative works)
 
-As discussed on IRC, I think you should just leave the voltage
-constraints to DeviceTree.
+[Additionally "John Doe" registered a fradulent account under my 
+long-held nom-de-gurre, adding a Code of Conduct ("CoC"), something I 
+would never do (being opposed to "CoC" for gratis projects on 
+principal)]
 
-> +{
-> +	const int vdd_min = ctrl == ENABLE ? 1050000 : 0;
-> +	const int vdd_max = 1050000;
-> +	int ret;
-> +
-> +	ret = regulator_set_voltage(priv->regs[VDD].consumer, vdd_min, vdd_max);
-> +	if (ret)
-> +		dev_err(priv->dev, "Failed to set regulator vdd to %d\n",
-> +			vdd_min);
-> +
-> +	return ret;
-> +}
-[..]
-> +static int qcom_ssphy_power_on(struct phy *phy)
-> +{
-> +	struct ssphy_priv *priv = phy_get_drvdata(phy);
-> +	int ret;
-> +
-> +	ret = qcom_ssphy_vdd_ctrl(priv, ENABLE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regulator_bulk_enable(priv->num_regs, priv->regs);
-> +	if (ret)
-> +		goto err1;
-> +
-> +	ret = clk_bulk_prepare_enable(priv->num_clks, priv->clks);
-> +	if (ret)
-> +		goto err2;
-> +
-> +	ret = qcom_ssphy_vbus_ctrl(priv->vbus, priv->mode);
-> +	if (ret)
-> +		goto err3;
-> +
-> +	ret = qcom_ssphy_do_reset(priv);
-> +	if (ret)
-> +		goto err4;
-> +
-> +	writeb(SWI_PCS_CLK_SEL, priv->base + PHY_CTRL0);
-> +	qcom_ssphy_updatel(priv->base + PHY_CTRL4, LANE0_PWR_ON, LANE0_PWR_ON);
-> +	qcom_ssphy_updatel(priv->base + PHY_CTRL2, REF_PHY_EN, REF_PHY_EN);
-> +	qcom_ssphy_updatel(priv->base + PHY_CTRL4, TST_PWR_DOWN, 0);
-> +
-> +	return 0;
-> +err4:
+I now have no choice but to issue a DMCA takedown request, to you, 
+GitHub.
 
-Name your labels based on what they do, e.g. err_disable_vbus.
+Regrettably;
+--MikeeUSA--
+(electronic signature)
+Jan 29, 2019
 
-> +	if (priv->vbus && priv->mode != PHY_MODE_INVALID)
-> +		qcom_ssphy_vbus_disable(priv->vbus);
+Contact information:
+email: mikeeusa@redchan.it
 
-qcom_ssphy_vbus_ctrl() above was either enabling or disabling vbus, but
-here you're directly calling disable to unroll that. It think the result
-is correct (in host this reverts to disabled and in gadget it's a
-no-op), but I'm not sure I like the design of sometimes calling straight
-to the vbus enable/disable and sometimes to the wrapper function.
+infringing content: github.com/MikeeUSA/GPC-Slots-2
+The material is not authorized by me, the copyright owner of the 
+GPC-Slots2 game code, as I explicitly rescinded the license from the 
+"John Doe", and he acknowledged that I had informed him of such and 
+communicated that he would defy my will regarding my property and 
+copyright.
+Everything stated within this above communication is accurate to the 
+best of my knowlege and ability.
 
-> +err3:
+Some notices to you, github:
+1) Yes I viewed your page at: 
+https://help.github.com/articles/guide-to-submitting-a-dmca-takedown-notice/
+2) Yes this is "opensource" code.
+3) No that does not matter:
+The GPL(any version), being a bare license, is revocable 
+("retroactively").
+Just as any bare license, not supported by an interest, in the US.
+The "John Doe" is not in privity of contract with me and has paid me no 
+consideration.
+He cannot "bind" me (the grantor) to the terms.
+It is his duty to abide by my instructions regarding my property.
+I did not transfer my property away, the license is just that: a license 
+(temporary permission, that can be rescinded unless a "term" was indeed 
+"purchased")
+It is also his duty to cease all use, modification, distribution of my 
+property at my demand.
+I have made such a demand.
+4) Yes I will consider taking legal action against you if you do not 
+heed my request.
+Cite the paralegal from groklaw, ZDnet, the FSF, and the SFConservancy 
+all you want.
+They are wrong on the law and have been wrong for 10 years.
 
-err_clk_disable
+-----
 
-> +	clk_bulk_disable_unprepare(priv->num_clks, priv->clks);
-> +err2:
-> +	regulator_bulk_disable(priv->num_regs, priv->regs);
-> +err1:
-> +	qcom_ssphy_vdd_ctrl(priv, DISABLE);
-> +
-> +	return ret;
-> +}
-> +
-> +static int qcom_ssphy_power_off(struct phy *phy)
-> +{
-> +	struct ssphy_priv *priv = phy_get_drvdata(phy);
-> +
-> +	qcom_ssphy_updatel(priv->base + PHY_CTRL4, LANE0_PWR_ON, 0);
-> +	qcom_ssphy_updatel(priv->base + PHY_CTRL2, REF_PHY_EN, 0);
-> +	qcom_ssphy_updatel(priv->base + PHY_CTRL4, TST_PWR_DOWN, TST_PWR_DOWN);
-> +
-> +	clk_bulk_disable_unprepare(priv->num_clks, priv->clks);
-> +	regulator_bulk_disable(priv->num_regs, priv->regs);
-> +
-> +	if (priv->vbus && priv->mode != PHY_MODE_INVALID)
-> +		qcom_ssphy_vbus_disable(priv->vbus);
-> +
-> +	qcom_ssphy_vdd_ctrl(priv, DISABLE);
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_ssphy_init_clock(struct ssphy_priv *priv)
-> +{
-> +	const char * const clk_id[] = { "ref", "phy", "pipe", };
-> +	int i;
-> +
-> +	priv->num_clks = ARRAY_SIZE(clk_id);
-> +	priv->clks = devm_kcalloc(priv->dev, priv->num_clks,
-> +				  sizeof(*priv->clks), GFP_KERNEL);
+The conversation with the "John Doe" can be found here: 
+8ch.net/tech/res/1018729.html#1024398
 
-You know num_clks is 3, so I would suggest that you just change the
-sshphy_priv to clks[3] and skip the dynamic allocation.
+Some excerpts:
+
+ From me to "John Doe":
+> >>1024390
+> 
+> 1) I rescind your permission to modify, make derivative works, 
+> distribute the program. The GPL license you "have" been granted from 
+> me, is revoked.
+> 
+> 2) you are impersonating me.
 
 
-Also, as num_clks always is ARRAY_SIZE(priv->clks) I would suggest using
-the latter, to make that clear throughout the driver.
 
-> +	if (!priv->clks)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < priv->num_clks; i++)
-> +		priv->clks[i].id = clk_id[i];
+> >>1024400
+> I rescind the license from you.
+> I am going to sue you if I find out who you are.
 
-There's no harm in just writing this on three lines:
+----
 
-	priv->clks[0].id = "ref";
-	priv->clks[1].id = "phy";
-	priv->clks[2].id = "pipe";
-
-> +
-> +	return devm_clk_bulk_get(priv->dev, priv->num_clks, priv->clks);
-> +}
-> +
-> +static int qcom_ssphy_init_regulator(struct ssphy_priv *priv)
-> +{
-> +	const char * const reg_supplies[] = {
-> +		[VDD] = "vdd",
-> +		[VDDA1P8] = "vdda1p8",
-> +	};
-> +	int ret, i;
-> +
-> +	priv->num_regs = ARRAY_SIZE(reg_supplies);
-> +	priv->regs = devm_kcalloc(priv->dev, priv->num_regs,
-> +				  sizeof(*priv->regs), GFP_KERNEL);
-
-As with clocks, you know there will only be 2 of these, make it fixed
-size in ssphy_priv.
-
-And as with clocks, I would suggest using ARRAY_SIZE(priv->regs)
-throughout the driver to make it obvious that's it's a static number. 
-
-> +	if (!priv->regs)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < priv->num_regs; i++)
-> +		priv->regs[i].supply = reg_supplies[i];
-
-As with clocks, just unroll this and fill in the 2 supplies directly.
-
-> +
-> +	ret = devm_regulator_bulk_get(priv->dev, priv->num_regs, priv->regs);
-> +	if (ret)
-> +		return ret;
-> +
-> +	priv->vbus = devm_regulator_get_optional(priv->dev, "vbus");
-
-get_optional means that if vbus-supply is not found, rather than
-returning a dummy regulator object this will fail with -ENODEV.
-
-Given the rest of the logic related to vbus you should set vbus to NULL
-if the returned PTR_ERR(value) is -ENODEV, and fail for other errors.
+ From "John Doe"
+> >Your license was rescinded by author.
+> You can't :^)
+> I'm not taking it down.
 
 
-Or just drop the _optional, and let your vbus controls operate on the
-dummy regulator you get back.
+> >>1024597
+> >HOW MUCH DID YOU FUCKING PAY ME?
+> Nothing. Thank God for that.
+> 
+> >ARE WE IN A CONTRACT?
+> No.
+> 
+> >IT IS A BARE LICENSE.
+> Is this lawyer speak? I'm not a lawyer, sorry.
+> 
+> >I CAN RESCIND IT AT ANY TIME.
+> wrong
+> 
+> >THE CODE IS NOT YOUR PROPERTY. IT IS _MY_ PROPERTY.
+> It is your intellectual property that you have licensed to me under the 
+> GPLv2+.
+> 
+> >I ALLOWED YOU A LICENSE TO USE IT.
+> correct
+> 
+> >I HAVE NOW REVOKED THAT LICENSE FROM YOU YOU [...].
+> no
+> 
+> >Show me a case otherwise.
+> why???????????
+> 
+> >Gratis licenses, without an attached interest, are revocable.
+> sorry m8. you are wrong
 
-(Right now vbus can't be NULL, so these checks are not very useful)
 
-> +	if (IS_ERR(priv->vbus))
-> +		return PTR_ERR(priv->vbus);
-> +
-> +	return 0;
 
-return PTR_ERR_OR_ZERO(priv->vbus)
 
-(Although that might change based on above comment)
+-----
 
-> +}
+Remeber: A license, absent an interest, is revocable in the US.
 
-Regards,
-Bjorn
+-----
+Some study materials:
+(From: Open Source Licensing - Sofware Freedom and Intellectual 
+property):
+
+> p46  "As long as the project continues to honor the terms of the 
+> licenses under which it received contributions, the licenses continue 
+> in effect. There is one important caveat: Even a perpetual license can 
+> be revoked.   See the discussion of bare licenses and contracts in 
+> Chapter 4"
+--Lawrence Rosen
+
+> p56  "A third problem with bare licenses is that they may be revocable 
+> by the licensor. Specifically, /a license not coupled with an interest 
+> may be revoked./ The term /interest/ in this context usually means the 
+> payment of some royalty or license fee, but there are other more 
+> complicated ways to satisfy the interest requirement. For example, a 
+> licensee can demonstrate that he or she has paid some consideration-a 
+> contract law term not found in copyright or patent law-in order to 
+> avoid revocation. Or a licensee may claim that he or she relied on the 
+> software licensed under an open source license and now is dependent 
+> upon that software, but this contract law concept, called promissory 
+> estoppel, is both difficult to prove and unreliable in court tests. 
+> (The concepts of /consideration/ and /promissory estoppel/ are 
+> explained more fully in the next section.) Unless the courts allow us 
+> to apply these contract law principles to a license, we are faced with 
+> a bare license that is revocable.
+--Lawrence Rosen
+
+> p278  "Notice that in a copyright dispute over a bare license,  the 
+> plaintiff will almost certainly be the copyright owner. If a licensee 
+> were foolish enough to sue to enforce the terms and conditions of the 
+> license, the licensor can simply revoke the bare license, thus ending 
+> the dispute. Remember that a bare license in the absence of an interest 
+> is revocable."
+--Lawrence Rosen
+
+Lawrence Rosen - Open Source Licensing - Sofware Freedom and 
+Intellectual property Law
+
+
+
+> p65 "Of all the licenses described in this book,  only the GPL makes 
+> the explicitly point that it wants nothing of /acceptance/ of 
+> /consideration/:
+> ...
+> The GPL authors intend that it not be treated as a contract.  I will 
+> say much more about this license and these two provisions in Chapter 6. 
+> For now, I simply point out that the GPL licensors are in essentially 
+> the same situation as other open source licensors who cannot prove 
+> offer, acceptance, or consideration. There is no contract."
+--Lawrence Rosen
+
+----
+(Additionally:)
+> David McGowan, Professor of Law, University of Minnesota Law School:
+
+> "Termination of rights
+
+> [...]  The most plausible assumption is that a developer who releases 
+> code under the GPL may terminate GPL rights, probably at will.
+
+> [...]  My point is not that termination is a great risk, it is that it 
+> is not recognized as a risk even though it is probably relevant to 
+> commercial end-users, accustomed to having contractual rights they can 
+> enforce themselves.
