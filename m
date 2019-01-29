@@ -2,57 +2,57 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C0DDC282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DB4C282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55BB121738
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E68C2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:55:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MuT7E3+k"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jUKaesuM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbfA2Bzv (ORCPT
+        id S1727366AbfA2Bzz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 20:55:51 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37399 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbfA2Bzu (ORCPT
+        Mon, 28 Jan 2019 20:55:55 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45185 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbfA2Bzw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 20:55:50 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so8612659plr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 17:55:50 -0800 (PST)
+        Mon, 28 Jan 2019 20:55:52 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so8031746pgc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 17:55:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YJmK86iaqhwA0O+aVdcJ7tSqpGuZHn6LzNzGo8HF8IU=;
-        b=MuT7E3+kITYpnGMQjYzNyvXfj/kAxc7/Li5tOgCpfPccnHbGeKfoJxB8R3ybxt7unf
-         AnYdMf89+Dci9v+24a0EtXI9vYAA6Q/DD6k1aNX9pXIxEVTtv4vH6KvYFPBSm80rTnY0
-         +KhRhu/WW/go8xbxLN4u12W/hGSo/0Eoec5OI=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ZVULfzxWVElJMCwq1wy/pfgTajaNanG7YoLpOBVV2Xo=;
+        b=jUKaesuMBcYZs2+V6aDk92VljfYqtRok693G/qZFfl7LLib7eOX9EsdPkuvDmPwBD9
+         0p+lqTRD9sHxAwAsOyUz7Jp3//WGeHbP4N3NWVWRZ5e2d42FCl6C+HvXkmf5prgHUOzr
+         ZWIjSdzdaHege2yn2EYC65iy3/es1opNulvLk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YJmK86iaqhwA0O+aVdcJ7tSqpGuZHn6LzNzGo8HF8IU=;
-        b=OMRgjPb0I6/y3vzJeuzxc6E/q9pDU9tpOkMJvJXq7YHVzOoIwS+RGUSNTKt0CMtbWG
-         kSsteexZWneWpcwom0NgCLAfSsEmmXArD8PKH4RWskOlbQLQvlANgtKSiiQLzXusR8Li
-         53KpFGX3FG8p3cLc4G113qTpufBX6X/wT/MT6nVyTzBXhm83/2x3gQ6BXXYVENaRR8TQ
-         WrK3mSlTW8ERQI+Kdp54QI7lTz5tV27iaUQ4pvE3BFiKtMn61scWbA1zacOZ1vuyOztY
-         JJVIg7IsM7s5ZZTTCuUo8iJ5nPfc54A0tZ+UoaH1hAUmjiGJmvY9bTsUil1g8dQcQNa4
-         Yglg==
-X-Gm-Message-State: AJcUuke4q02tVw6zFd1AbtSgXBhe2Sfb7Dsgiu4S8A+uZWzLZcb4MvQB
-        XUXUdzZReGuZQWUMJowTQkhsstluGo4oWg==
-X-Google-Smtp-Source: ALg8bN6O0+yNZR6lm1umTmZ5Vu3OjOP1j1y/9PDRYUT3MNEX/mdkc8nBml6IZh5nuv2/SH7fzAvx8A==
-X-Received: by 2002:a17:902:7296:: with SMTP id d22mr24619904pll.265.1548726949513;
-        Mon, 28 Jan 2019 17:55:49 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ZVULfzxWVElJMCwq1wy/pfgTajaNanG7YoLpOBVV2Xo=;
+        b=ILe+4p21171voJsjAAdRvgj6ySI+Fl/oMo6KlgrbElsN04EWnX0Rz/6L2v0tq7vORA
+         5WXPUHt515Rh+w+D0/aiJk90Jg/4LRviwEx8uCK9+z0yUipwTPTS5t7dip0fmzlg5Cxv
+         Zg1mYg7EVecZj0HY43KDv8FYseDJStwCqDfK2fKb2uQ1EDQuE1OE6cE48Uu92mTPTIOC
+         F10m90mItlgGKyCKNi8U0xd5CC1JnO7h7R4O6eProCglI7GlWN/AhqBy2JQiINANm/xj
+         1FRyM6CcGgLSh+/A+6SF3Kh98hqcFWZlqpe8IQ4F5YC2GJxlPlnjCINYdKZSNKxJ70+h
+         rtjg==
+X-Gm-Message-State: AJcUukdSzMIAAFhYfYEqe31nFP6lUxztUCXPxQ4oIg2LXeVDEyyq192S
+        wGgvCYo0bFmzRPqBqB8VLcQlubuzERPUfA==
+X-Google-Smtp-Source: ALg8bN4/xhmNqo5oaO4yiUUgEZkYF+UDzSOc37IkGAuSgTn9HIiVfMbpXgm91YkxZlFAgB94vBt5AQ==
+X-Received: by 2002:a63:86c1:: with SMTP id x184mr21780233pgd.305.1548726950808;
+        Mon, 28 Jan 2019 17:55:50 -0800 (PST)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g15sm142911530pfj.131.2019.01.28.17.55.48
+        by smtp.gmail.com with ESMTPSA id g15sm142911530pfj.131.2019.01.28.17.55.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 17:55:48 -0800 (PST)
+        Mon, 28 Jan 2019 17:55:49 -0800 (PST)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
@@ -61,10 +61,12 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Doug Anderson <dianders@chromium.org>
-Subject: [RFC/PATCH 0/5] DVFS in the OPP core
-Date:   Mon, 28 Jan 2019 17:55:42 -0800
-Message-Id: <20190129015547.213276-1-swboyd@chromium.org>
+Subject: [RFC/PATCH 1/5] OPP: Don't overwrite rounded clk rate
+Date:   Mon, 28 Jan 2019 17:55:43 -0800
+Message-Id: <20190129015547.213276-2-swboyd@chromium.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+In-Reply-To: <20190129015547.213276-1-swboyd@chromium.org>
+References: <20190129015547.213276-1-swboyd@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,91 +74,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series is an RFC around how we can implement DVFS for devices
-that aren't your typical OPPish device (i.e. GPU/CPU). They don't have a
-strict set of frequencies that they have been tested at to derive some
-operating performance point. Instead they have a coarser set of
-frequency max or 'fmax' OPPs that describe the maiximum frequency the
-device can operate at with a given voltage.
+Doing this allows us to call this API with any rate requested and have
+it not need to match in the OPP table. Instead, we'll round the rate up
+to the nearest OPP that we see so that we can get the voltage or level
+that's required for that OPP. This supports users of OPP that want to
+specify the 'fmax' tables of a device instead of every single frequency
+that they need. And for devices that required the exact frequency, we
+can rely on the clk framework to round the rate to the nearest supported
+frequency instead of the OPP framework to do so.
 
-The approach we take is to let the devm_pm_opp_set_rate() API accept 0
-as a valid frequency indicating the frequency isn't required anymore and
-to make the same API use the clk framework to round the frequency passed
-in instead of relying on the OPP table to specify each frequency that
-can be used. Once we have these two patches in place, we can use the OPP
-API to change clk rates instead of clk_set_rate() and use all the recent
-OPP enhancements that have been made around required-opps and genpd
-performance states to do DVFS for all devices.
+Note that this may affect drivers that don't want the clk framework to
+do rounding, but instead want the OPP table to do the rounding for them.
+Do we have that case? Should we add some flag to the OPP table to
+indicate this and then not have that flag set when there isn't an OPP
+table for the device and also introduce a property like 'opp-use-clk' to
+tell the table that it should use the clk APIs to round rates instead of
+OPP?
 
-One nice feature of this approach is that we don't need to change the
-OPP binding to support this. We can specify only the max frequencies and
-the voltage requirements in DT with the existing binding and slightly
-tweak the OPP code to achieve these results. 
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/opp/core.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-This series includes a conversion of the uart and spi drivers on
-qcom sdm845 where these patches are being developed. It shows how a
-driver is converted from the clk APIs to the OPP APIs and how
-enable/disable state of the clk is communicated to the OPP layer.
-
-Some open topics and initial points for discussion are:
-
-1) The dev_pm_opp_set_rate() API changes may break something that's 
-relying on the rate rounding that OPP provides. If those exist,
-we may need to implement another API that is more explicit about using
-the clk API instead of the OPP tables.
-
-2) dev_pm_opp_set_rate(0) is an interesting solution to the problem of
-dropping the rate requirement. Is there anything better than this?
-
-3) How do we handle devices that already have power-domains specified in
-DT? The opp binding for required-opps doesn't let us specify the power
-domain to target, instead it assumes that whatever power domain is
-attached to a device is the one that OPP needs to use to change the
-genpd performance state. Do we need a
-dev_pm_opp_set_required_opps_name() or something to be explicit about
-this? Can we have some way for the power domain that required-opps
-correspond to be expressed in the OPP tables themselves?
-
-4) How do we achieve the "full constraint" state? i.e. what do we do
-about some devices being active and others being inactive during boot
-and making sure that the voltage for the shared power domains doesn't
-drop until all devices requiring it have informed OPP about their
-power requirements?
-
-Rajendra Nayak (4):
-  OPP: Make dev_pm_opp_set_rate() with freq=0 as valid
-  tty: serial: qcom_geni_serial: Use OPP API to set clk/perf state
-  spi: spi-geni-qcom: Use OPP API to set clk/perf state
-  arm64: dts: sdm845: Add OPP table for all qup devices
-
-Stephen Boyd (1):
-  OPP: Don't overwrite rounded clk rate
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi  | 115 ++++++++++++++++++++++++++
- drivers/opp/core.c                    |  26 ++++--
- drivers/spi/spi-geni-qcom.c           |  12 ++-
- drivers/tty/serial/qcom_geni_serial.c |  15 +++-
- 4 files changed, 155 insertions(+), 13 deletions(-)
-
-For the interested, these patches are located here:
-
-   https://github.com/rrnayak/linux/ v5.0-rc3/opp-corners-wip
-
-I've generated these patches by cutting off the top of that tree and
-massaging the commit text a bit for the first patch.
-
-base-commit: 49a57857aeea06ca831043acbb0fa5e0f50602fd
-prerequisite-patch-id: 9c3ee728603596b8b0ba06ffd66084bdc21b1271
-prerequisite-patch-id: f160e050bcd74f5de6fad66329381853869a6a97
-prerequisite-patch-id: aa23548d2b486c29489b4304d85799d08762254e
-prerequisite-patch-id: 40dd117c45fecb4308298352346546612db94b64
-prerequisite-patch-id: cd102fa42bab19897c2295e8b990b2156626054a
-prerequisite-patch-id: 3b9e5c8ed65ee96cc0f1c50166cf6bbb597ef582
-prerequisite-patch-id: 7e71b957b90ad51d0619944d5ebc859380e8e3e4
-prerequisite-patch-id: 5abd2bd6b3ae3e91551e2b8f9295169019ba82c7
-prerequisite-patch-id: 68bb3e44cf4e5dbd363a1a1750e4d378971ed393
-prerequisite-patch-id: 882b14ef9527b15d22cfddbb5fa2b9d43df1ff04
-prerequisite-patch-id: 6fc14ddeb074fb0826f1f40031e9d161f1361666
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index e06a0ab05ad6..b6516d623c5a 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -704,7 +704,7 @@ static int _set_required_opps(struct device *dev,
+ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+ {
+ 	struct opp_table *opp_table;
+-	unsigned long freq, old_freq;
++	unsigned long freq, opp_freq, old_freq, old_opp_freq;
+ 	struct dev_pm_opp *old_opp, *opp;
+ 	struct clk *clk;
+ 	int ret;
+@@ -743,13 +743,15 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+ 		goto put_opp_table;
+ 	}
+ 
+-	old_opp = _find_freq_ceil(opp_table, &old_freq);
++	old_opp_freq = old_freq;
++	old_opp = _find_freq_ceil(opp_table, &old_opp_freq);
+ 	if (IS_ERR(old_opp)) {
+ 		dev_err(dev, "%s: failed to find current OPP for freq %lu (%ld)\n",
+ 			__func__, old_freq, PTR_ERR(old_opp));
+ 	}
+ 
+-	opp = _find_freq_ceil(opp_table, &freq);
++	opp_freq = freq;
++	opp = _find_freq_ceil(opp_table, &opp_freq);
+ 	if (IS_ERR(opp)) {
+ 		ret = PTR_ERR(opp);
+ 		dev_err(dev, "%s: failed to find OPP for freq %lu (%d)\n",
 -- 
 Sent by a computer through tubes
 
