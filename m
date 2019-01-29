@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3ED0C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2A6C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4DFE2183F
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 233012183F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:41:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762104;
-	bh=wA7bi7NBtumR/YLcqshxNMjpKuQuwICF01JVgSRQDD0=;
+	s=default; t=1548762107;
+	bh=SjLGWloHvwVs3FzcOl9pV6Sr4U6vsAN4HU5d1+ukNXA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VRO8Y8LfwLhaExjNYrMv7C3m3FkqKBM4L1CpUKNaK+WwnYxFQmiDjGotMXnaRDD58
-	 ID3x7yM1i5wH5N4GJG6Xak8JMNjDYRSttM2pfi1hDgPGie74cedIm98GgNbAaz/w/4
-	 mbyTMXsQhgWrrjfoivadDAbOF1dMaBdNd+tIdMV0=
+	b=x5hGfHVeXYUUUz8mDGSSpsYM6K7o5+z9O2JJ2JqncFAiLlTy/2j8rGPjbqTG8e4Vu
+	 hm03yp0Hslnm4VrLsviOc7kKTYF7IVwMIIHGvEmuj6FnMUGcpicSGNuUQwapPADQ+v
+	 JzhX28ByEQNAXSBMXwV8TRaBm4ixenPDEBGRH5dk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729889AbfA2Llm (ORCPT
+        id S1729906AbfA2Llp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:41:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59050 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:41:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727949AbfA2Llj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:41:39 -0500
+        id S1729435AbfA2Llm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:41:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27DD2214DA;
-        Tue, 29 Jan 2019 11:41:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EAA4214DA;
+        Tue, 29 Jan 2019 11:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762098;
-        bh=wA7bi7NBtumR/YLcqshxNMjpKuQuwICF01JVgSRQDD0=;
+        s=default; t=1548762101;
+        bh=SjLGWloHvwVs3FzcOl9pV6Sr4U6vsAN4HU5d1+ukNXA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VEWm+K6rmWt/Bos6xpCji7kN3AB/DYo4SqfFm6sZg2oyzZcXI3t9NB61czFXp0P9Y
-         WGZQ0Lk2DNFOPAhMNr4EJeNc9tN6W3USWePopqmGwHUN3x5WD1slWjsMVsdCrJ1ukc
-         KBoJmVOiL9yOTCLRSyJ/GC4p+rhXm5FNM+2NQm4Y=
+        b=fEmLMsT4KfQ/TcEjlD+j4EUEW0unEcEJSPIFfd3B1dYwyIoX6YwxyAEIptvM6cXF3
+         mzLPge0QFLkuIzhDct5UYTe/OCVekWQeYdEdjFWW1+NPeScuQMmGibj2p7jqBojwG1
+         zc/Cw+7Pu6styzvZuWGYmCh2Nx0oU9cceB4ofSyE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jack Pham <jackp@codeaurora.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.20 109/117] usb: dwc3: gadget: Clear req->needs_extra_trb flag on cleanup
-Date:   Tue, 29 Jan 2019 12:36:00 +0100
-Message-Id: <20190129113212.807547507@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Felix Fietkau <nbd@nbd.name>
+Subject: [PATCH 4.20 110/117] mt76x0: do not overwrite other MT_BBP(AGC, 8) fields
+Date:   Tue, 29 Jan 2019 12:36:01 +0100
+Message-Id: <20190129113212.860583260@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -65,51 +67,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Pham <jackp@codeaurora.org>
+From: Stanislaw Gruszka <sgruszka@redhat.com>
 
-commit bd6742249b9ca918565e4e3abaa06665e587f4b5 upstream.
+commit b983a5b900627faa49cf37e101d65b56e941c740 upstream.
 
-OUT endpoint requests may somtimes have this flag set when
-preparing to be submitted to HW indicating that there is an
-additional TRB chained to the request for alignment purposes.
-If that request is removed before the controller can execute the
-transfer (e.g. ep_dequeue/ep_disable), the request will not go
-through the dwc3_gadget_ep_cleanup_completed_request() handler
-and will not have its needs_extra_trb flag cleared when
-dwc3_gadget_giveback() is called.  This same request could be
-later requeued for a new transfer that does not require an
-extra TRB and if it is successfully completed, the cleanup
-and TRB reclamation will incorrectly process the additional TRB
-which belongs to the next request, and incorrectly advances the
-TRB dequeue pointer, thereby messing up calculation of the next
-requeust's actual/remaining count when it completes.
+MT_BBP(AGC, 8) register has values depend on band in
+mt76x0_bbp_switch_tab, so we should not overwrite other fields
+than MT_BBP_AGC_GAIN when setting gain.
 
-The right thing to do here is to ensure that the flag is cleared
-before it is given back to the function driver.  A good place
-to do that is in dwc3_gadget_del_and_unmap_request().
+This can fix performance issues when connecting to 2.4GHz AP.
 
-Fixes: c6267a51639b ("usb: dwc3: gadget: align transfers to wMaxPacketSize")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jack Pham <jackp@codeaurora.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-[jackp: backport to <= 4.20: replaced 'needs_extra_trb' with 'unaligned'
-        and 'zero' members in patch and reworded commit text]
-Signed-off-by: Jack Pham <jackp@codeaurora.org>
+Fixes: 4636a2544c3b ("mt76x0: phy: align channel gain logic to mt76x2 one")
+Acked-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/usb/dwc3/gadget.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -177,6 +177,8 @@ static void dwc3_gadget_del_and_unmap_re
- 	req->started = false;
- 	list_del(&req->list);
- 	req->remaining = 0;
-+	req->unaligned = false;
-+	req->zero = false;
+
+---
+ drivers/net/wireless/mediatek/mt76/mt76x0/phy.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/phy.c
+@@ -817,10 +817,8 @@ done:
+ static void mt76x0_phy_set_gain_val(struct mt76x02_dev *dev)
+ {
+ 	u8 gain = dev->cal.agc_gain_cur[0] - dev->cal.agc_gain_adjust;
+-	u32 val = 0x122c << 16 | 0xf2;
  
- 	if (req->request.status == -EINPROGRESS)
- 		req->request.status = status;
+-	mt76_wr(dev, MT_BBP(AGC, 8),
+-		val | FIELD_PREP(MT_BBP_AGC_GAIN, gain));
++	mt76_rmw_field(dev, MT_BBP(AGC, 8), MT_BBP_AGC_GAIN, gain);
+ }
+ 
+ static void
 
 
