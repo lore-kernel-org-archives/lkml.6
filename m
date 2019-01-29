@@ -2,81 +2,103 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2646AC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A011CC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 048CA20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7963B20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:13:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbfA2TMn (ORCPT
+        id S1729404AbfA2TND (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:12:43 -0500
-Received: from foss.arm.com ([217.140.101.70]:43218 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726984AbfA2TMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:12:43 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3BF4A78;
-        Tue, 29 Jan 2019 11:12:42 -0800 (PST)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2A67C3F557;
-        Tue, 29 Jan 2019 11:12:41 -0800 (PST)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, cdall@kernel.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH] kvm: arm64: Relax the restriction on using stage2 PUD huge mapping
-Date:   Tue, 29 Jan 2019 19:12:17 +0000
-Message-Id: <1548789137-4446-1-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 29 Jan 2019 14:13:03 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51135 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbfA2TNC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 14:13:02 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0TJCuuO2061986
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 29 Jan 2019 11:12:56 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0TJCuFb2061983;
+        Tue, 29 Jan 2019 11:12:56 -0800
+Date:   Tue, 29 Jan 2019 11:12:56 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Greg Kroah-Hartman <tipbot@zytor.com>
+Message-ID: <tip-ae503ab04913794b12e1939caa75aa091062a1b3@git.kernel.org>
+Cc:     tglx@linutronix.de, gregkh@linuxfoundation.org, sboyd@kernel.org,
+        john.stultz@linaro.org, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org
+Reply-To: gregkh@linuxfoundation.org, tglx@linutronix.de, sboyd@kernel.org,
+          john.stultz@linaro.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <20190122152151.16139-43-gregkh@linuxfoundation.org>
+References: <20190122152151.16139-43-gregkh@linuxfoundation.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] timekeeping/debug: No need to check return value
+ of debugfs_create functions
+Git-Commit-ID: ae503ab04913794b12e1939caa75aa091062a1b3
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We restrict mapping the PUD huge pages in stage2 to only when the
-stage2 has 4 level page table, leaving the feature unused with
-the default IPA size. But we could use it even with a 3
-level page table, i.e, when the PUD level is folded into PGD,
-just like the stage1. Relax the condition to allow using the
-PUD huge page mappings at stage2 when it is possible.
+Commit-ID:  ae503ab04913794b12e1939caa75aa091062a1b3
+Gitweb:     https://git.kernel.org/tip/ae503ab04913794b12e1939caa75aa091062a1b3
+Author:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+AuthorDate: Tue, 22 Jan 2019 16:21:42 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 29 Jan 2019 20:08:41 +0100
 
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+timekeeping/debug: No need to check return value of debugfs_create functions
+
+When calling debugfs functions, there is no need to ever check the return
+value.  The function can work or not, but the code logic should never do
+something different based on this.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20190122152151.16139-43-gregkh@linuxfoundation.org
+
 ---
- virt/kvm/arm/mmu.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ kernel/time/timekeeping_debug.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index fbdf3ac..30251e2 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1695,11 +1695,14 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+diff --git a/kernel/time/timekeeping_debug.c b/kernel/time/timekeeping_debug.c
+index 86489950d690..b73e8850e58d 100644
+--- a/kernel/time/timekeeping_debug.c
++++ b/kernel/time/timekeeping_debug.c
+@@ -37,15 +37,8 @@ DEFINE_SHOW_ATTRIBUTE(tk_debug_sleep_time);
  
- 	vma_pagesize = vma_kernel_pagesize(vma);
- 	/*
--	 * PUD level may not exist for a VM but PMD is guaranteed to
--	 * exist.
-+	 * The stage2 has a minimum of 2 level table (For arm64 see
-+	 * kvm_arm_setup_stage2()). Hence, we are guaranteed that we can
-+	 * use PMD_SIZE huge mappings (even when the PMD is folded into PGD).
-+	 * As for PUD huge maps, we must make sure that we have at least
-+	 * 3 levels, i.e, PMD is not folded.
- 	 */
- 	if ((vma_pagesize == PMD_SIZE ||
--	     (vma_pagesize == PUD_SIZE && kvm_stage2_has_pud(kvm))) &&
-+	     (vma_pagesize == PUD_SIZE && kvm_stage2_has_pmd(kvm))) &&
- 	    !force_pte) {
- 		gfn = (fault_ipa & huge_page_mask(hstate_vma(vma))) >> PAGE_SHIFT;
- 	}
--- 
-2.7.4
-
+ static int __init tk_debug_sleep_time_init(void)
+ {
+-	struct dentry *d;
+-
+-	d = debugfs_create_file("sleep_time", 0444, NULL, NULL,
+-		&tk_debug_sleep_time_fops);
+-	if (!d) {
+-		pr_err("Failed to create sleep_time debug file\n");
+-		return -ENOMEM;
+-	}
+-
++	debugfs_create_file("sleep_time", 0444, NULL, NULL,
++			    &tk_debug_sleep_time_fops);
+ 	return 0;
+ }
+ late_initcall(tk_debug_sleep_time_init);
