@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C29C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC6BC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CF7F2086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51D9F2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762416;
-	bh=waHCZt964ElGKcR5whMcvxMfWXmFTIPHjGLK0WnXm2M=;
+	s=default; t=1548762419;
+	bh=u3uC9g+siBF7V6bK6VvjmxelSm5CyFZVW5Y54HVIHQw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UIlXTxctCEOGleMH8mD65ovrD0qFP0MJGoB9yNL/pmur5WUBmAXEJDcVnDTjewGwt
-	 MeS1nH4T5vulYUWOgRRGeyNMVo9ESzWXts393BM8oO6V3t+/mHq4Es7X9cdXn10J4U
-	 hHHRBHavp/DxlaXGtCHupN40Yk3OqPNsr0DoSbng=
+	b=TqEvOu2r7A0uOCj68fNMXMFzkM4X5gmHtEK+fvVyRDennaoIppHXkH/yI1US2HBTO
+	 qprnlZq+oGyZYcYrYDMCcIZ8ihVlo+FmROtOJExNzdcoy9EChUAUoUek6FUl9v6GlO
+	 mQW4PtvFS5Egbwukm7URxiwb8PMJkS8wxcUGIcl4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731078AbfA2Lqy (ORCPT
+        id S1731107AbfA2Lq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:46:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37502 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:46:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729724AbfA2Lqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:46:51 -0500
+        id S1730140AbfA2Lqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:46:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2801721874;
-        Tue, 29 Jan 2019 11:46:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7404621917;
+        Tue, 29 Jan 2019 11:46:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762410;
-        bh=waHCZt964ElGKcR5whMcvxMfWXmFTIPHjGLK0WnXm2M=;
+        s=default; t=1548762413;
+        bh=u3uC9g+siBF7V6bK6VvjmxelSm5CyFZVW5Y54HVIHQw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oH7+6pEULaqpVgYT4vvWHw5RfIksq2baPVI/oK0CBAKXT8JFkN2ZFo3p065bm8ISe
-         nVaWLhZyD45h4Quyx+4VY7xaKyDPgqcEtcRQ//hDtD9p70f+5H9IUB8gjCne/sTTLl
-         X+NVVhuQUbU/2nyGt10++NcyQK39pM48WixpTJcg=
+        b=o7jP0+VCdAUss6uHG478PvvKP9+d7b8jp3KKXyf7xfog1S4oI/K62grGD/rj+uRSu
+         KWtQneg19mledHNJXxAiF1TkGOwR37F2us8gQbYTmqIoRX21hxmMBYSqXOWL/iWmK/
+         e9T/MMhtZRrldaATjRt/uG9V9UEX9LN5rgjrxuCM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Milan Broz <gmazyland@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.19 065/103] dm crypt: fix parsing of extended IV arguments
-Date:   Tue, 29 Jan 2019 12:35:42 +0100
-Message-Id: <20190129113204.552478151@linuxfoundation.org>
+        stable@vger.kernel.org, Jim Qu <Jim.Qu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.19 066/103] drm/amdgpu: Add APTX quirk for Lenovo laptop
+Date:   Tue, 29 Jan 2019 12:35:43 +0100
+Message-Id: <20190129113204.606064463@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -65,84 +65,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Milan Broz <gmazyland@gmail.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 1856b9f7bcc8e9bdcccc360aabb56fbd4dd6c565 upstream.
+commit f15f3eb26e8d9d25ea2330ed1273473df2f039df upstream.
 
-The dm-crypt cipher specification in a mapping table is defined as:
-  cipher[:keycount]-chainmode-ivmode[:ivopts]
-or (new crypt API format):
-  capi:cipher_api_spec-ivmode[:ivopts]
+Needs ATPX rather than _PR3 for dGPU power control.
 
-For ESSIV, the parameter includes hash specification, for example:
-aes-cbc-essiv:sha256
-
-The implementation expected that additional IV option to never include
-another dash '-' character.
-
-But, with SHA3, there are names like sha3-256; so the mapping table
-parser fails:
-
-dmsetup create test --table "0 8 crypt aes-cbc-essiv:sha3-256 9c1185a5c5e9fc54612808977ee8f5b9e 0 /dev/sdb 0"
-  or (new crypt API format)
-dmsetup create test --table "0 8 crypt capi:cbc(aes)-essiv:sha3-256 9c1185a5c5e9fc54612808977ee8f5b9e 0 /dev/sdb 0"
-
-  device-mapper: crypt: Ignoring unexpected additional cipher options
-  device-mapper: table: 253:0: crypt: Error creating IV
-  device-mapper: ioctl: error adding target to table
-
-Fix the dm-crypt constructor to ignore additional dash in IV options and
-also remove a bogus warning (that is ignored anyway).
-
-Cc: stable@vger.kernel.org # 4.12+
-Signed-off-by: Milan Broz <gmazyland@gmail.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Bug: https://bugzilla.kernel.org/show_bug.cgi?id=202263
+Reviewed-by: Jim Qu <Jim.Qu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-crypt.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -2405,9 +2405,21 @@ static int crypt_ctr_cipher_new(struct d
- 	 * capi:cipher_api_spec-iv:ivopts
- 	 */
- 	tmp = &cipher_in[strlen("capi:")];
--	cipher_api = strsep(&tmp, "-");
--	*ivmode = strsep(&tmp, ":");
--	*ivopts = tmp;
-+
-+	/* Separate IV options if present, it can contain another '-' in hash name */
-+	*ivopts = strrchr(tmp, ':');
-+	if (*ivopts) {
-+		**ivopts = '\0';
-+		(*ivopts)++;
-+	}
-+	/* Parse IV mode */
-+	*ivmode = strrchr(tmp, '-');
-+	if (*ivmode) {
-+		**ivmode = '\0';
-+		(*ivmode)++;
-+	}
-+	/* The rest is crypto API spec */
-+	cipher_api = tmp;
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
+@@ -576,6 +576,7 @@ static const struct amdgpu_px_quirk amdg
+ 	{ 0x1002, 0x6900, 0x1028, 0x0812, AMDGPU_PX_QUIRK_FORCE_ATPX },
+ 	{ 0x1002, 0x6900, 0x1028, 0x0813, AMDGPU_PX_QUIRK_FORCE_ATPX },
+ 	{ 0x1002, 0x6900, 0x1025, 0x125A, AMDGPU_PX_QUIRK_FORCE_ATPX },
++	{ 0x1002, 0x6900, 0x17AA, 0x3806, AMDGPU_PX_QUIRK_FORCE_ATPX },
+ 	{ 0, 0, 0, 0, 0 },
+ };
  
- 	if (*ivmode && !strcmp(*ivmode, "lmk"))
- 		cc->tfms_count = 64;
-@@ -2477,11 +2489,8 @@ static int crypt_ctr_cipher_old(struct d
- 		goto bad_mem;
- 
- 	chainmode = strsep(&tmp, "-");
--	*ivopts = strsep(&tmp, "-");
--	*ivmode = strsep(&*ivopts, ":");
--
--	if (tmp)
--		DMWARN("Ignoring unexpected additional cipher options");
-+	*ivmode = strsep(&tmp, ":");
-+	*ivopts = tmp;
- 
- 	/*
- 	 * For compatibility with the original dm-crypt mapping format, if
 
 
