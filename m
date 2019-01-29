@@ -2,106 +2,88 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C204CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8418C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 971C921841
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:06:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC4BE2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:06:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e2lYVseO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfA2JGI (ORCPT
+        id S1727724AbfA2JGw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:06:08 -0500
-Received: from nat.nue.novell.com ([195.135.221.2]:61501 "EHLO suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725298AbfA2JGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:06:07 -0500
-Received: by suse.de (Postfix, from userid 1000)
-        id 4A06040B1; Tue, 29 Jan 2019 10:06:05 +0100 (CET)
-Date:   Tue, 29 Jan 2019 10:06:05 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        gerald.schaefer@de.ibm.com, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2] mm, memory_hotplug: is_mem_section_removable do not
- pass the end of a zone
-Message-ID: <20190129090605.lenisalq2zxtck3u@d104.suse.de>
-References: <20190128144506.15603-1-mhocko@kernel.org>
- <20190128144506.15603-2-mhocko@kernel.org>
+        Tue, 29 Jan 2019 04:06:52 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38929 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfA2JGw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:06:52 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y8so16775404wmi.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:06:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dBHGbd4uyqxBuIpS6W/UvoUs6SB71cP+RGg2XCiky3o=;
+        b=e2lYVseOdBzR4L/aHJo2sdqsqlUcjH2QLWY6GjxcGw3W/HexoONzwssfIsqmiVvBMG
+         3hc15wjoV87obfBpmTXFlVdy2/vCSkiigtO+KB8NlZjXwYZYmCk/6yIp9FfT4EQtj0aa
+         FTMeCeP6SvTWQIdaZMhC8crmsHvFt12JaYyo0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dBHGbd4uyqxBuIpS6W/UvoUs6SB71cP+RGg2XCiky3o=;
+        b=tvkjZZRqwYjSpdG4Vbh10tjOU0aB1XDWpLjFelfrp3gfEP04BNNuoVKnk9b4F5DCsS
+         LxO1rWbsdmNFefcVCPlCCQvBXxnyJARofZoVBCEYU/X8c76hiBWVN52Ce9aG3BoFm++3
+         4PQxD+a6WhvhteRSNGf+7ntCzqUJCpx75bOOigLRVhm31IWqznu+cL68O++DmPlfPk7L
+         xN1hcccQmgi1vOh6s2joR/WvPd67KXoBE3yursWB38FQ9wAVvL2bJRDRUslGMANCL4cn
+         RMapvKFYvpJsQUqpV6nmIauBImBybCyGNpuY92aSE9/c9CKqzjvtuL3LGgLFbIVcoK+n
+         V50Q==
+X-Gm-Message-State: AHQUAuYhxzK8LSmQGIxJ5G/R9GIr7AgPupnqZAivz1gOl7I1KvTXZMJ7
+        zaz9mdK5kTay43UMzbryfhF2P8E0MJs=
+X-Google-Smtp-Source: ALg8bN5z5hUoxGnrUFXAPf9lq3hyz/FeDdUxWWCM1rkXhmBdX3dpiQgDz7+X8EyAD0Dg5dX27sJ0YQ==
+X-Received: by 2002:a1c:f50a:: with SMTP id t10mr9076371wmh.126.1548752809742;
+        Tue, 29 Jan 2019 01:06:49 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id a12sm133313639wro.18.2019.01.29.01.06.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 01:06:49 -0800 (PST)
+Subject: Re: [PATCH 2/3] nvmem: allow to select i.MX nvmem driver for i.MX 7D
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     peng.fan@nxp.com, linux-imx@nxp.com, fabio.estevam@nxp.com,
+        kernel@pengutronix.de, shawnguo@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190128160722.23955-1-stefan@agner.ch>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <3e305756-7929-b01b-3291-2d8380c3a7ed@linaro.org>
+Date:   Tue, 29 Jan 2019 09:06:48 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128144506.15603-2-mhocko@kernel.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20190128160722.23955-1-stefan@agner.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 03:45:05PM +0100, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> Mikhail has reported the following VM_BUG_ON triggered when reading
-> sysfs removable state of a memory block:
->  page:000003d082008000 is uninitialized and poisoned
->  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
->  Call Trace:
->  ([<0000000000385b26>] test_pages_in_a_zone+0xde/0x160)
->   [<00000000008f15c4>] show_valid_zones+0x5c/0x190
->   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
->   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
->   [<00000000003e4194>] seq_read+0x204/0x480
->   [<00000000003b53ea>] __vfs_read+0x32/0x178
->   [<00000000003b55b2>] vfs_read+0x82/0x138
->   [<00000000003b5be2>] ksys_read+0x5a/0xb0
->   [<0000000000b86ba0>] system_call+0xdc/0x2d8
->  Last Breaking-Event-Address:
->   [<0000000000385b26>] test_pages_in_a_zone+0xde/0x160
->  Kernel panic - not syncing: Fatal exception: panic_on_oops
-> 
-> The reason is that the memory block spans the zone boundary and we are
-> stumbling over an unitialized struct page. Fix this by enforcing zone
-> range in is_mem_section_removable so that we never run away from a
-> zone.
 
-Does that mean that the remaining pages(escaping from the current zone) are not tied to
-any other zone? Why? Are these pages "holes" or how that came to be?
 
+On 28/01/2019 16:07, Stefan Agner wrote:
+> The imx-ocotp nvmem driver supports the i.MX 7D SoC too. Allow to select
+> the imx-ocotp driver even if only the i.MX 7D SoC has been selected.
 > 
-> Reported-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-> Debugged-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/memory_hotplug.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index b9a667d36c55..07872789d778 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1233,7 +1233,8 @@ static bool is_pageblock_removable_nolock(struct page *page)
->  bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
->  {
->  	struct page *page = pfn_to_page(start_pfn);
-> -	struct page *end_page = page + nr_pages;
-> +	unsigned long end_pfn = min(start_pfn + nr_pages, zone_end_pfn(page_zone(page)));
-> +	struct page *end_page = pfn_to_page(end_pfn);
->  
->  	/* Check the starting page of each pageblock within the range */
->  	for (; page < end_page; page = next_active_pageblock(page)) {
-> -- 
-> 2.20.1
-> 
+> Fixes: 711d45477931 ("nvmem: octop: Add i.MX7D support")
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
--- 
-Oscar Salvador
-SUSE L3
+Applied thanks,
+
+
+srini
