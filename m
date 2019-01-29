@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B42CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A0CC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4FAF20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A0C32086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762630;
-	bh=JlRDsUpk+Cb0RXytDJDC6ZtzMaho9AzwOBC8LZkaaIE=;
+	s=default; t=1548762634;
+	bh=2Q/FZL17kG2HxpErKH14YkgJzzZRLf2a+d4B7gBOuQ0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XZ55ty2aentPcKVNGAGvL9LYumuKwiyezqjmVNgToJdfChNfcHune2y/ypqmPFmHt
-	 YrK5D/QmNrpuNpos2kCV6LyUIhXP77dV/SealV7DPxjx34EbHyezkIMVK/esnP1vjM
-	 xKimhQg/PqtSPq2eF4jlrn8qLeMHANCyLP1HwiFs=
+	b=e/F3cYy1MJm2FRw3ZnGNRDlG6icin2IR94aw+M8WIjgDQUleDPjp1j+hB1+5ewodi
+	 mdtVADlflmr7QcExjeb/2dpQVnCWwyNU8oUBqc69oAZ3dlYq6apYpa/GWkEYF3N7MH
+	 yrEKHS0NDYKqL4JIWDFBxFEzPnOIVWs8F7vgczGE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731420AbfA2Lu2 (ORCPT
+        id S1731692AbfA2Luc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:50:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41754 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731657AbfA2LuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:25 -0500
+        id S1731423AbfA2Lu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:50:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD0E820989;
-        Tue, 29 Jan 2019 11:50:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 417122148E;
+        Tue, 29 Jan 2019 11:50:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762624;
-        bh=JlRDsUpk+Cb0RXytDJDC6ZtzMaho9AzwOBC8LZkaaIE=;
+        s=default; t=1548762626;
+        bh=2Q/FZL17kG2HxpErKH14YkgJzzZRLf2a+d4B7gBOuQ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gn52I8g8ADkhPnG62+ae3JwwfLLVzoQb2U3C0/8GrmgXx+oT4AjKuNMmOb0tABHn9
-         /vLkPjdtRwv0SCnbqMym0dKJhrlQD3nE55+Bq48QiwbDx0BHa0zFqXhqcKZm2tgBy0
-         BQEcJo/fJVoe7jKmlgbVX0tw+Hclpgi8YBh4lVyk=
+        b=PvdiHTt7Ho30tj2VXsz0hx07rzaNZSVnNf32R3OEmL9DQ+JEl+Y0S6muxBJTJ3en3
+         S7OpChrucGvCm9KXXiFwXRg7uUkU3P2QSVjJ5ntjaqpgLvefG23TImHGddDmArbpRw
+         Aa+WYpgAMFhfpb3Cx+Np4ow+93yhj9gGiSakujj8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, ryan.p.norwood@gmail.com,
-        Joe Thornber <ejt@redhat.com>,
+        stable@vger.kernel.org, Milan Broz <gmazyland@gmail.com>,
         Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.14 39/68] dm thin: fix passdown_double_checking_shared_status()
-Date:   Tue, 29 Jan 2019 12:36:01 +0100
-Message-Id: <20190129113134.962319589@linuxfoundation.org>
+Subject: [PATCH 4.14 40/68] dm crypt: fix parsing of extended IV arguments
+Date:   Tue, 29 Jan 2019 12:36:02 +0100
+Message-Id: <20190129113135.067117978@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -66,107 +65,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Thornber <ejt@redhat.com>
+From: Milan Broz <gmazyland@gmail.com>
 
-commit d445bd9cec1a850c2100fcf53684c13b3fd934f2 upstream.
+commit 1856b9f7bcc8e9bdcccc360aabb56fbd4dd6c565 upstream.
 
-Commit 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next
-stage processing") changed process_prepared_discard_passdown_pt1() to
-increment all the blocks being discarded until after the passdown had
-completed to avoid them being prematurely reused.
+The dm-crypt cipher specification in a mapping table is defined as:
+  cipher[:keycount]-chainmode-ivmode[:ivopts]
+or (new crypt API format):
+  capi:cipher_api_spec-ivmode[:ivopts]
 
-IO issued to a thin device that breaks sharing with a snapshot, followed
-by a discard issued to snapshot(s) that previously shared the block(s),
-results in passdown_double_checking_shared_status() being called to
-iterate through the blocks double checking their reference count is zero
-and issuing the passdown if so.  So a side effect of commit 00a0ea33b495
-is passdown_double_checking_shared_status() was broken.
+For ESSIV, the parameter includes hash specification, for example:
+aes-cbc-essiv:sha256
 
-Fix this by checking if the block reference count is greater than 1.
-Also, rename dm_pool_block_is_used() to dm_pool_block_is_shared().
+The implementation expected that additional IV option to never include
+another dash '-' character.
 
-Fixes: 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next stage processing")
-Cc: stable@vger.kernel.org # 4.9+
-Reported-by: ryan.p.norwood@gmail.com
-Signed-off-by: Joe Thornber <ejt@redhat.com>
+But, with SHA3, there are names like sha3-256; so the mapping table
+parser fails:
+
+dmsetup create test --table "0 8 crypt aes-cbc-essiv:sha3-256 9c1185a5c5e9fc54612808977ee8f5b9e 0 /dev/sdb 0"
+  or (new crypt API format)
+dmsetup create test --table "0 8 crypt capi:cbc(aes)-essiv:sha3-256 9c1185a5c5e9fc54612808977ee8f5b9e 0 /dev/sdb 0"
+
+  device-mapper: crypt: Ignoring unexpected additional cipher options
+  device-mapper: table: 253:0: crypt: Error creating IV
+  device-mapper: ioctl: error adding target to table
+
+Fix the dm-crypt constructor to ignore additional dash in IV options and
+also remove a bogus warning (that is ignored anyway).
+
+Cc: stable@vger.kernel.org # 4.12+
+Signed-off-by: Milan Broz <gmazyland@gmail.com>
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-thin-metadata.c |    4 ++--
- drivers/md/dm-thin-metadata.h |    2 +-
- drivers/md/dm-thin.c          |   10 +++++-----
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/md/dm-crypt.c |   25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
---- a/drivers/md/dm-thin-metadata.c
-+++ b/drivers/md/dm-thin-metadata.c
-@@ -1687,7 +1687,7 @@ int dm_thin_remove_range(struct dm_thin_
- 	return r;
- }
- 
--int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
-+int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
- {
- 	int r;
- 	uint32_t ref_count;
-@@ -1695,7 +1695,7 @@ int dm_pool_block_is_used(struct dm_pool
- 	down_read(&pmd->root_lock);
- 	r = dm_sm_get_count(pmd->data_sm, b, &ref_count);
- 	if (!r)
--		*result = (ref_count != 0);
-+		*result = (ref_count > 1);
- 	up_read(&pmd->root_lock);
- 
- 	return r;
---- a/drivers/md/dm-thin-metadata.h
-+++ b/drivers/md/dm-thin-metadata.h
-@@ -195,7 +195,7 @@ int dm_pool_get_metadata_dev_size(struct
- 
- int dm_pool_get_data_dev_size(struct dm_pool_metadata *pmd, dm_block_t *result);
- 
--int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
-+int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
- 
- int dm_pool_inc_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
- int dm_pool_dec_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -1042,7 +1042,7 @@ static void passdown_double_checking_sha
- 	 * passdown we have to check that these blocks are now unused.
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -2413,9 +2413,21 @@ static int crypt_ctr_cipher_new(struct d
+ 	 * capi:cipher_api_spec-iv:ivopts
  	 */
- 	int r = 0;
--	bool used = true;
-+	bool shared = true;
- 	struct thin_c *tc = m->tc;
- 	struct pool *pool = tc->pool;
- 	dm_block_t b = m->data_block, e, end = m->data_block + m->virt_end - m->virt_begin;
-@@ -1052,11 +1052,11 @@ static void passdown_double_checking_sha
- 	while (b != end) {
- 		/* find start of unmapped run */
- 		for (; b < end; b++) {
--			r = dm_pool_block_is_used(pool->pmd, b, &used);
-+			r = dm_pool_block_is_shared(pool->pmd, b, &shared);
- 			if (r)
- 				goto out;
+ 	tmp = &cipher_in[strlen("capi:")];
+-	cipher_api = strsep(&tmp, "-");
+-	*ivmode = strsep(&tmp, ":");
+-	*ivopts = tmp;
++
++	/* Separate IV options if present, it can contain another '-' in hash name */
++	*ivopts = strrchr(tmp, ':');
++	if (*ivopts) {
++		**ivopts = '\0';
++		(*ivopts)++;
++	}
++	/* Parse IV mode */
++	*ivmode = strrchr(tmp, '-');
++	if (*ivmode) {
++		**ivmode = '\0';
++		(*ivmode)++;
++	}
++	/* The rest is crypto API spec */
++	cipher_api = tmp;
  
--			if (!used)
-+			if (!shared)
- 				break;
- 		}
+ 	if (*ivmode && !strcmp(*ivmode, "lmk"))
+ 		cc->tfms_count = 64;
+@@ -2485,11 +2497,8 @@ static int crypt_ctr_cipher_old(struct d
+ 		goto bad_mem;
  
-@@ -1065,11 +1065,11 @@ static void passdown_double_checking_sha
+ 	chainmode = strsep(&tmp, "-");
+-	*ivopts = strsep(&tmp, "-");
+-	*ivmode = strsep(&*ivopts, ":");
+-
+-	if (tmp)
+-		DMWARN("Ignoring unexpected additional cipher options");
++	*ivmode = strsep(&tmp, ":");
++	*ivopts = tmp;
  
- 		/* find end of run */
- 		for (e = b + 1; e != end; e++) {
--			r = dm_pool_block_is_used(pool->pmd, e, &used);
-+			r = dm_pool_block_is_shared(pool->pmd, e, &shared);
- 			if (r)
- 				goto out;
- 
--			if (used)
-+			if (shared)
- 				break;
- 		}
- 
+ 	/*
+ 	 * For compatibility with the original dm-crypt mapping format, if
 
 
