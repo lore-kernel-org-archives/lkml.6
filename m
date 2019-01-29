@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24421C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBBFC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE11E20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51F6F20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763488;
-	bh=oVZjUllMTAgeZcjWJApnq9OkcVwdfGIE/26zzNQymes=;
+	s=default; t=1548763492;
+	bh=N6glU6cGtDWeA0tX8vouEjM22xEHHwlIu0tSHVnG+lk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Rj8CBRDGEXlcm/Rjg6FZGZ+fFibMqCP89Gyn8HCIPgDIwqPEjQm7644sYENa7mNu0
-	 HXME5cUPpMhZZYRoSZWsWd5BvigbuQv1XQ5pMd/k1P8HCHQC/9/W0Br6DBC7qIyvzZ
-	 vMdlQpRwIUi1q6b3xvwbfPQbDZcJcKZBvdeLNl+4=
+	b=p66DnzpA6UNaG23j8NbcAfu2Fjg2vSb+ZmbsvibHtBLjwBBC/kXRncCV7wjzCu44A
+	 S+dFAWYImtA1mWuNs5sXUFGMQgfQLrbRiS2dQ3VLUs9NFfzjEJVbmiFG+CwS+WpndS
+	 6erc4/GC3+Ureiecu7+YEeNJ1b1Z53aheVPoTM5E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730123AbfA2Lmq (ORCPT
+        id S1730100AbfA2Lmk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:42:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60572 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:42:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729038AbfA2Lmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:42:43 -0500
+        id S1730076AbfA2Lmh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:42:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55D6720857;
-        Tue, 29 Jan 2019 11:42:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FE2F20856;
+        Tue, 29 Jan 2019 11:42:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762161;
-        bh=oVZjUllMTAgeZcjWJApnq9OkcVwdfGIE/26zzNQymes=;
+        s=default; t=1548762155;
+        bh=N6glU6cGtDWeA0tX8vouEjM22xEHHwlIu0tSHVnG+lk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CDosie6rZT/bOMfnyvBMCP4HnV8BS9yZQ77EtEGzGVZcPpVhUn3ocDHRFQK6ZjcJ7
-         uppCvpz4b4qOipTk9VsR8N+UgNFjciSD3Wf7pvGav841DF1aWT1Kut6SZPW4e6uMdv
-         kbi6Mpk6Jh1yeNscW5cO0h6damn0qfRdEALPLQLg=
+        b=i6/ri4z4JUoPb6cBqir0+92ZpRXhJlYvK46cq3aPYVQMx/98QeQ1Mt+cJFIc9R+yP
+         xhXvPQihHbCe1c2J+aCGXQHxQO/wquh2o1wpVWk4wxyZJaUBdH5nABQN3PvoJgPMzA
+         WTwpEoGe0EmwN4CSVr52BUJHYbuWuwCZp3OJdtRs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Jintack Lim <jintack@cs.columbia.edu>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 012/103] net: ipv4: Fix memory leak in network namespace dismantle
-Date:   Tue, 29 Jan 2019 12:34:49 +0100
-Message-Id: <20190129113200.262722173@linuxfoundation.org>
+Subject: [PATCH 4.19 010/103] vhost: log dirty page correctly
+Date:   Tue, 29 Jan 2019 12:34:47 +0100
+Message-Id: <20190129113200.136894494@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,148 +67,202 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Jason Wang <jasowang@redhat.com>
 
-[ Upstream commit f97f4dd8b3bb9d0993d2491e0f22024c68109184 ]
+[ Upstream commit cc5e710759470bc7f3c61d11fd54586f15fdbdf4 ]
 
-IPv4 routing tables are flushed in two cases:
+Vhost dirty page logging API is designed to sync through GPA. But we
+try to log GIOVA when device IOTLB is enabled. This is wrong and may
+lead to missing data after migration.
 
-1. In response to events in the netdev and inetaddr notification chains
-2. When a network namespace is being dismantled
+To solve this issue, when logging with device IOTLB enabled, we will:
 
-In both cases only routes associated with a dead nexthop group are
-flushed. However, a nexthop group will only be marked as dead in case it
-is populated with actual nexthops using a nexthop device. This is not
-the case when the route in question is an error route (e.g.,
-'blackhole', 'unreachable').
+1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
+   get HVA, for writable descriptor, get HVA through iovec. For used
+   ring update, translate its GIOVA to HVA
+2) traverse the GPA->HVA mapping to get the possible GPA and log
+   through GPA. Pay attention this reverse mapping is not guaranteed
+   to be unique, so we should log each possible GPA in this case.
 
-Therefore, when a network namespace is being dismantled such routes are
-not flushed and leaked [1].
+This fix the failure of scp to guest during migration. In -next, we
+will probably support passing GIOVA->GPA instead of GIOVA->HVA.
 
-To reproduce:
-# ip netns add blue
-# ip -n blue route add unreachable 192.0.2.0/24
-# ip netns del blue
-
-Fix this by not skipping error routes that are not marked with
-RTNH_F_DEAD when flushing the routing tables.
-
-To prevent the flushing of such routes in case #1, add a parameter to
-fib_table_flush() that indicates if the table is flushed as part of
-namespace dismantle or not.
-
-Note that this problem does not exist in IPv6 since error routes are
-associated with the loopback device.
-
-[1]
-unreferenced object 0xffff888066650338 (size 56):
-  comm "ip", pid 1206, jiffies 4294786063 (age 26.235s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 b0 1c 62 61 80 88 ff ff  ..........ba....
-    e8 8b a1 64 80 88 ff ff 00 07 00 08 fe 00 00 00  ...d............
-  backtrace:
-    [<00000000856ed27d>] inet_rtm_newroute+0x129/0x220
-    [<00000000fcdfc00a>] rtnetlink_rcv_msg+0x397/0xa20
-    [<00000000cb85801a>] netlink_rcv_skb+0x132/0x380
-    [<00000000ebc991d2>] netlink_unicast+0x4c0/0x690
-    [<0000000014f62875>] netlink_sendmsg+0x929/0xe10
-    [<00000000bac9d967>] sock_sendmsg+0xc8/0x110
-    [<00000000223e6485>] ___sys_sendmsg+0x77a/0x8f0
-    [<000000002e94f880>] __sys_sendmsg+0xf7/0x250
-    [<00000000ccb1fa72>] do_syscall_64+0x14d/0x610
-    [<00000000ffbe3dae>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    [<000000003a8b605b>] 0xffffffffffffffff
-unreferenced object 0xffff888061621c88 (size 48):
-  comm "ip", pid 1206, jiffies 4294786063 (age 26.235s)
-  hex dump (first 32 bytes):
-    6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
-    6b 6b 6b 6b 6b 6b 6b 6b d8 8e 26 5f 80 88 ff ff  kkkkkkkk..&_....
-  backtrace:
-    [<00000000733609e3>] fib_table_insert+0x978/0x1500
-    [<00000000856ed27d>] inet_rtm_newroute+0x129/0x220
-    [<00000000fcdfc00a>] rtnetlink_rcv_msg+0x397/0xa20
-    [<00000000cb85801a>] netlink_rcv_skb+0x132/0x380
-    [<00000000ebc991d2>] netlink_unicast+0x4c0/0x690
-    [<0000000014f62875>] netlink_sendmsg+0x929/0xe10
-    [<00000000bac9d967>] sock_sendmsg+0xc8/0x110
-    [<00000000223e6485>] ___sys_sendmsg+0x77a/0x8f0
-    [<000000002e94f880>] __sys_sendmsg+0xf7/0x250
-    [<00000000ccb1fa72>] do_syscall_64+0x14d/0x610
-    [<00000000ffbe3dae>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    [<000000003a8b605b>] 0xffffffffffffffff
-
-Fixes: 8cced9eff1d4 ("[NETNS]: Enable routing configuration in non-initial namespace.")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
+Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
+Reported-by: Jintack Lim <jintack@cs.columbia.edu>
+Cc: Jintack Lim <jintack@cs.columbia.edu>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/ip_fib.h    |    2 +-
- net/ipv4/fib_frontend.c |    4 ++--
- net/ipv4/fib_trie.c     |   15 ++++++++++++---
- 3 files changed, 15 insertions(+), 6 deletions(-)
+ drivers/vhost/net.c   |    3 +
+ drivers/vhost/vhost.c |   97 ++++++++++++++++++++++++++++++++++++++++++--------
+ drivers/vhost/vhost.h |    3 +
+ 3 files changed, 87 insertions(+), 16 deletions(-)
 
---- a/include/net/ip_fib.h
-+++ b/include/net/ip_fib.h
-@@ -230,7 +230,7 @@ int fib_table_delete(struct net *, struc
- 		     struct netlink_ext_ack *extack);
- int fib_table_dump(struct fib_table *table, struct sk_buff *skb,
- 		   struct netlink_callback *cb);
--int fib_table_flush(struct net *net, struct fib_table *table);
-+int fib_table_flush(struct net *net, struct fib_table *table, bool flush_all);
- struct fib_table *fib_trie_unmerge(struct fib_table *main_tb);
- void fib_table_flush_external(struct fib_table *table);
- void fib_free_table(struct fib_table *tb);
---- a/net/ipv4/fib_frontend.c
-+++ b/net/ipv4/fib_frontend.c
-@@ -203,7 +203,7 @@ static void fib_flush(struct net *net)
- 		struct fib_table *tb;
- 
- 		hlist_for_each_entry_safe(tb, tmp, head, tb_hlist)
--			flushed += fib_table_flush(net, tb);
-+			flushed += fib_table_flush(net, tb, false);
- 	}
- 
- 	if (flushed)
-@@ -1357,7 +1357,7 @@ static void ip_fib_net_exit(struct net *
- 
- 		hlist_for_each_entry_safe(tb, tmp, head, tb_hlist) {
- 			hlist_del(&tb->tb_hlist);
--			fib_table_flush(net, tb);
-+			fib_table_flush(net, tb, true);
- 			fib_free_table(tb);
- 		}
- 	}
---- a/net/ipv4/fib_trie.c
-+++ b/net/ipv4/fib_trie.c
-@@ -1856,7 +1856,7 @@ void fib_table_flush_external(struct fib
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1024,7 +1024,8 @@ static void handle_rx(struct vhost_net *
+ 		if (nvq->done_idx > VHOST_NET_BATCH)
+ 			vhost_net_signal_used(nvq);
+ 		if (unlikely(vq_log))
+-			vhost_log_write(vq, vq_log, log, vhost_len);
++			vhost_log_write(vq, vq_log, log, vhost_len,
++					vq->iov, in);
+ 		total_len += vhost_len;
+ 		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
+ 			vhost_poll_queue(&vq->poll);
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1733,13 +1733,87 @@ static int log_write(void __user *log_ba
+ 	return r;
  }
  
- /* Caller must hold RTNL. */
--int fib_table_flush(struct net *net, struct fib_table *tb)
-+int fib_table_flush(struct net *net, struct fib_table *tb, bool flush_all)
- {
- 	struct trie *t = (struct trie *)tb->tb_data;
- 	struct key_vector *pn = t->kv;
-@@ -1904,8 +1904,17 @@ int fib_table_flush(struct net *net, str
- 		hlist_for_each_entry_safe(fa, tmp, &n->leaf, fa_list) {
- 			struct fib_info *fi = fa->fa_info;
- 
--			if (!fi || !(fi->fib_flags & RTNH_F_DEAD) ||
--			    tb->tb_id != fa->tb_id) {
-+			if (!fi || tb->tb_id != fa->tb_id ||
-+			    (!(fi->fib_flags & RTNH_F_DEAD) &&
-+			     !fib_props[fa->fa_type].error)) {
-+				slen = fa->fa_slen;
-+				continue;
-+			}
++static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
++{
++	struct vhost_umem *umem = vq->umem;
++	struct vhost_umem_node *u;
++	u64 start, end, l, min;
++	int r;
++	bool hit = false;
 +
-+			/* Do not flush error routes if network namespace is
-+			 * not being dismantled
-+			 */
-+			if (!flush_all && fib_props[fa->fa_type].error) {
- 				slen = fa->fa_slen;
- 				continue;
- 			}
++	while (len) {
++		min = len;
++		/* More than one GPAs can be mapped into a single HVA. So
++		 * iterate all possible umems here to be safe.
++		 */
++		list_for_each_entry(u, &umem->umem_list, link) {
++			if (u->userspace_addr > hva - 1 + len ||
++			    u->userspace_addr - 1 + u->size < hva)
++				continue;
++			start = max(u->userspace_addr, hva);
++			end = min(u->userspace_addr - 1 + u->size,
++				  hva - 1 + len);
++			l = end - start + 1;
++			r = log_write(vq->log_base,
++				      u->start + start - u->userspace_addr,
++				      l);
++			if (r < 0)
++				return r;
++			hit = true;
++			min = min(l, min);
++		}
++
++		if (!hit)
++			return -EFAULT;
++
++		len -= min;
++		hva += min;
++	}
++
++	return 0;
++}
++
++static int log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
++{
++	struct iovec iov[64];
++	int i, ret;
++
++	if (!vq->iotlb)
++		return log_write(vq->log_base, vq->log_addr + used_offset, len);
++
++	ret = translate_desc(vq, (uintptr_t)vq->used + used_offset,
++			     len, iov, 64, VHOST_ACCESS_WO);
++	if (ret)
++		return ret;
++
++	for (i = 0; i < ret; i++) {
++		ret = log_write_hva(vq,	(uintptr_t)iov[i].iov_base,
++				    iov[i].iov_len);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
+-		    unsigned int log_num, u64 len)
++		    unsigned int log_num, u64 len, struct iovec *iov, int count)
+ {
+ 	int i, r;
+ 
+ 	/* Make sure data written is seen before log. */
+ 	smp_wmb();
++
++	if (vq->iotlb) {
++		for (i = 0; i < count; i++) {
++			r = log_write_hva(vq, (uintptr_t)iov[i].iov_base,
++					  iov[i].iov_len);
++			if (r < 0)
++				return r;
++		}
++		return 0;
++	}
++
+ 	for (i = 0; i < log_num; ++i) {
+ 		u64 l = min(log[i].len, len);
+ 		r = log_write(vq->log_base, log[i].addr, l);
+@@ -1769,9 +1843,8 @@ static int vhost_update_used_flags(struc
+ 		smp_wmb();
+ 		/* Log used flag write. */
+ 		used = &vq->used->flags;
+-		log_write(vq->log_base, vq->log_addr +
+-			  (used - (void __user *)vq->used),
+-			  sizeof vq->used->flags);
++		log_used(vq, (used - (void __user *)vq->used),
++			 sizeof vq->used->flags);
+ 		if (vq->log_ctx)
+ 			eventfd_signal(vq->log_ctx, 1);
+ 	}
+@@ -1789,9 +1862,8 @@ static int vhost_update_avail_event(stru
+ 		smp_wmb();
+ 		/* Log avail event write */
+ 		used = vhost_avail_event(vq);
+-		log_write(vq->log_base, vq->log_addr +
+-			  (used - (void __user *)vq->used),
+-			  sizeof *vhost_avail_event(vq));
++		log_used(vq, (used - (void __user *)vq->used),
++			 sizeof *vhost_avail_event(vq));
+ 		if (vq->log_ctx)
+ 			eventfd_signal(vq->log_ctx, 1);
+ 	}
+@@ -2191,10 +2263,8 @@ static int __vhost_add_used_n(struct vho
+ 		/* Make sure data is seen before log. */
+ 		smp_wmb();
+ 		/* Log used ring entry write. */
+-		log_write(vq->log_base,
+-			  vq->log_addr +
+-			   ((void __user *)used - (void __user *)vq->used),
+-			  count * sizeof *used);
++		log_used(vq, ((void __user *)used - (void __user *)vq->used),
++			 count * sizeof *used);
+ 	}
+ 	old = vq->last_used_idx;
+ 	new = (vq->last_used_idx += count);
+@@ -2236,9 +2306,8 @@ int vhost_add_used_n(struct vhost_virtqu
+ 		/* Make sure used idx is seen before log. */
+ 		smp_wmb();
+ 		/* Log used index update. */
+-		log_write(vq->log_base,
+-			  vq->log_addr + offsetof(struct vring_used, idx),
+-			  sizeof vq->used->idx);
++		log_used(vq, offsetof(struct vring_used, idx),
++			 sizeof vq->used->idx);
+ 		if (vq->log_ctx)
+ 			eventfd_signal(vq->log_ctx, 1);
+ 	}
+--- a/drivers/vhost/vhost.h
++++ b/drivers/vhost/vhost.h
+@@ -205,7 +205,8 @@ bool vhost_vq_avail_empty(struct vhost_d
+ bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
+ 
+ int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
+-		    unsigned int log_num, u64 len);
++		    unsigned int log_num, u64 len,
++		    struct iovec *iov, int count);
+ int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
+ 
+ struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
 
 
