@@ -2,221 +2,124 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B2EC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1404C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB03220844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:49:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FCD42087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:52:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="U2UAgSpo"
+	dkim=pass (2048-bit key) header.d=daynix-com.20150623.gappssmtp.com header.i=@daynix-com.20150623.gappssmtp.com header.b="pN0tUh2F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbfA2MtP (ORCPT
+        id S1727737AbfA2Mwq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:49:15 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:32934 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbfA2MtO (ORCPT
+        Tue, 29 Jan 2019 07:52:46 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36827 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbfA2Mwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 07:49:14 -0500
-Received: by mail-vs1-f65.google.com with SMTP id p74so11877257vsc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 04:49:13 -0800 (PST)
+        Tue, 29 Jan 2019 07:52:46 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p6so17619168wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 04:52:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=no+1oS4s347G7gknih83cWmNsSUn8v8xk/1BuDFSPFA=;
-        b=U2UAgSpoWIi3HVQAxj0CknNsg59AiX9gJp2xCNzzZ9cjYPj564cMioogfZX7EahEIH
-         sgf34BIR/cYFhEo4MQW4IHlD/5k83AdRIkfYmu1scuOEZ3EIOCw+NrdbygfmzUTwgnhg
-         zdAAnGEmUBOnKhhM1tAX9OkSPfGROaMZ5S+SyvHp0JNa69IHd+H7e2mrs7XDkdDO5fUi
-         FOgt9uLcTtGzicCGBM9eoNfnsbJ3cPqrKaDssrI1Bzf2OXim4lLI+yOFEH72Wt9/0Ngh
-         5pW1GKWroG+H7O2gAqxzwe1ngGLVQ6eUTRcHGNV6uR9FhORR/fcLbdDRccVYVkAKhRL7
-         L7RA==
+        d=daynix-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=JSPp80mPpjMLHxiYwgVFlyS+M+a8c9VP14HDP0AdVTs=;
+        b=pN0tUh2FSYj/VRZ+2jGRxoBSRHccfZ6jkiD5hzN/uq+lxTXXDqbFIKBCZ/PoA09HjP
+         eBv7RYaQC2G4L2s1sOlWuE1bA9N411XSG2bOIFk9E/MOXFvSIgDrNkekziOG792zrlJr
+         TQ6uh6HeZO8n6Tp4QAsTLB+imAtdhFI8Pxs5Hz1fye2a0zkmr+0PszO0kla9LXYyGBjk
+         8Y9IAE1uWFhokjIiuhfnmp9i09yiyci6BbHnau1XJwKbr5IM/Os0iFoG7/GcETJjeriA
+         CpzCB4rDZ+Z9DCED6zs60DqTdgnvEhetUy+/8n9ig3dRCa2+1WMH20apdbWeskug7p0F
+         YvjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=no+1oS4s347G7gknih83cWmNsSUn8v8xk/1BuDFSPFA=;
-        b=g3gOOn7Q7LVYJK+45gQ/OSkSka4QyYbnaA3XQmksfG9/qg6LuMiz69x0cKPxczd+7T
-         YgWiZ0q/i3RiR+ZIZyLT1MEwMS2OtO2a3vv1U0n1WKKLqas9ImK8/44QS/WBpmaryqC5
-         HiSo1WA4024s9VKblp2H2Fv5mwMX1CwSFOHQ7jzqGM4ejWtCMag5BVmKpkKIVuHccD0r
-         yKtt8oi1/qqYmAHX8IWFuuaNh6ztjkAbXxOaA6pG/K7e04PMXaNftX2KXIzb/nginiRO
-         Q67D/bHNEKBvemz2xYnKqc1zjV+U7Y/ir2+mLemqy/uTB5Zp4IzeVE+4RMXVI4P5iFOh
-         q8mQ==
-X-Gm-Message-State: AJcUukftWc8GaQMLF3MwavXQac4gIJxR2G2z39zqny6aC0KIqLjp69uy
-        EpHcgGNi5aKisAi878oCb92PhQZm+0WNkSv1a5l20A==
-X-Google-Smtp-Source: ALg8bN6WHUc+vdfNx/Aqhk0NQr+hsOhLiqjzyd1Qp0V55bfkPhg8kh9iqMfWNlRj07PZmg65suaQBoUSmqKnqj8Pyz4=
-X-Received: by 2002:a67:6f82:: with SMTP id k124mr10474631vsc.42.1548766153268;
- Tue, 29 Jan 2019 04:49:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20190129084737.718-1-hans@owltronix.com> <FDFE70E2-CA70-456F-8507-94BF822BF9A7@javigon.com>
-In-Reply-To: <FDFE70E2-CA70-456F-8507-94BF822BF9A7@javigon.com>
-From:   Hans Holmberg <hans@owltronix.com>
-Date:   Tue, 29 Jan 2019 13:49:02 +0100
-Message-ID: <CANr-nt34gCrRWsNrAfKS1Opy=kV5EwuR_C1VDjQbBP5MnfdgpA@mail.gmail.com>
-Subject: Re: [PATCH] lightnvm: pblk: extend line wp balance check
-To:     =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Cc:     =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        Zhoujie Wu <zjwu@marvell.com>, linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JSPp80mPpjMLHxiYwgVFlyS+M+a8c9VP14HDP0AdVTs=;
+        b=aK/vynzPJ+/iz5Vqpoq1dVETanmpWJDOS0MsWvU/v71pSmuESwNLHB5vanN6NB8+W+
+         ybPJiANebZh3OnYG17mQQh0jn901Mg+lxwNDMAtWfNmWN6AIM2X3jj8qQOB/IAtiBZ2V
+         J3jDJW4HdtO0nWJzBzXQvSENTTad0ZyBPP1m352jyGGw0NhjJJt3DPwXUVPdmg8i01b4
+         iDh9G4MjRy6I/kGuXobTl+WQWDddkVM3sq7MsEVBdkonYAumaLKA/XDBQwp7V/Wcig6v
+         8x+IaiM70RpWiMqwWp9YZIah+tbYeemUBBkh7UenHtupzbY0rnTa9Jm2mkqUWkjxrpM9
+         egXQ==
+X-Gm-Message-State: AJcUukd/wI8NwX/B8OlrjFOKkv6/Ie1hb9Fsin8NqIohIg4se9/OL2j7
+        Q5uWqlS3qfnk6mRlhrcoE+vVDw==
+X-Google-Smtp-Source: ALg8bN58VCwosDhmCkNtXtouFzj89sKW38eHL40q8pfooTyX8TEnGusolWiT74slvUmEcLf9F2p41Q==
+X-Received: by 2002:a1c:9c0a:: with SMTP id f10mr21653090wme.73.1548766364560;
+        Tue, 29 Jan 2019 04:52:44 -0800 (PST)
+Received: from f2.redhat.com (bzq-79-183-8-90.red.bezeqint.net. [79.183.8.90])
+        by smtp.gmail.com with ESMTPSA id m21sm2872724wmi.43.2019.01.29.04.52.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 04:52:43 -0800 (PST)
+From:   Yuri Benditovich <yuri.benditovich@daynix.com>
+To:     mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Cc:     yan@daynix.com
+Subject: [PATCH] virtio_net: Introduce extended RSC feature
+Date:   Tue, 29 Jan 2019 14:52:36 +0200
+Message-Id: <20190129125236.12165-1-yuri.benditovich@daynix.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 12:19 PM Javier Gonz=C3=A1lez <javier@javigon.com> =
-wrote:
->
->
-> > On 29 Jan 2019, at 09.47, hans@owltronix.com wrote:
-> >
-> > From: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> >
-> > pblk stripes writes of minimal write size across all non-offline chunks
-> > in a line, which means that the maximum write pointer delta should not
-> > exceed the minimal write size. Extend the line write pointer balance ch=
-eck
-> > to cover this case.
-> >
-> > Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> > ---
-> >
-> > This patch applies on top of Zhoujie's V3 of
-> > "lightnvm: pblk: ignore bad block wp for pblk_line_wp_is_unbalanced
-> >
-> > drivers/lightnvm/pblk-recovery.c | 60 ++++++++++++++++++++------------
-> > 1 file changed, 37 insertions(+), 23 deletions(-)
-> >
-> > diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-r=
-ecovery.c
-> > index 02d466e6925e..d86f580036d3 100644
-> > --- a/drivers/lightnvm/pblk-recovery.c
-> > +++ b/drivers/lightnvm/pblk-recovery.c
-> > @@ -302,41 +302,55 @@ static int pblk_pad_distance(struct pblk *pblk, s=
-truct pblk_line *line)
-> >       return (distance > line->left_msecs) ? line->left_msecs : distanc=
-e;
-> > }
-> >
-> > -static int pblk_line_wp_is_unbalanced(struct pblk *pblk,
-> > -                                   struct pblk_line *line)
-> > +/* Return a chunk belonging to a line by stripe(write order) index */
-> > +static struct nvm_chk_meta *pblk_get_stripe_chunk(struct pblk *pblk,
-> > +                                               struct pblk_line *line,
-> > +                                               int index)
-> > {
-> >       struct nvm_tgt_dev *dev =3D pblk->dev;
-> >       struct nvm_geo *geo =3D &dev->geo;
-> > -     struct pblk_line_meta *lm =3D &pblk->lm;
-> >       struct pblk_lun *rlun;
-> > -     struct nvm_chk_meta *chunk;
-> >       struct ppa_addr ppa;
-> > -     u64 line_wp;
-> > -     int pos, i, bit;
-> > +     int pos;
-> >
-> > -     bit =3D find_first_zero_bit(line->blk_bitmap, lm->blk_per_line);
-> > -     if (bit >=3D lm->blk_per_line)
-> > -             return 0;
-> > -     rlun =3D &pblk->luns[bit];
-> > +     rlun =3D &pblk->luns[index];
-> >       ppa =3D rlun->bppa;
-> >       pos =3D pblk_ppa_to_pos(geo, ppa);
-> > -     chunk =3D &line->chks[pos];
-> >
-> > -     line_wp =3D chunk->wp;
-> > +     return &line->chks[pos];
-> > +}
-> >
-> > -     for (i =3D bit + 1; i < lm->blk_per_line; i++) {
-> > -             rlun =3D &pblk->luns[i];
-> > -             ppa =3D rlun->bppa;
-> > -             pos =3D pblk_ppa_to_pos(geo, ppa);
-> > -             chunk =3D &line->chks[pos];
-> > +static int pblk_line_wps_are_unbalanced(struct pblk *pblk,
-> > +                                   struct pblk_line *line)
-> > +{
-> > +     struct pblk_line_meta *lm =3D &pblk->lm;
-> > +     int blk_in_line =3D lm->blk_per_line;
-> > +     struct nvm_chk_meta *chunk;
-> > +     u64 max_wp, min_wp;
-> > +     int i;
-> >
-> > -             if (chunk->state & NVM_CHK_ST_OFFLINE)
-> > -                     continue;
-> > +     i =3D find_first_zero_bit(line->blk_bitmap, blk_in_line);
-> > +
-> > +     /* If there is one or zero good chunks in the line,
-> > +      * the write pointers can't be unbalanced.
-> > +      */
-> > +     if (i >=3D (blk_in_line - 1))
-> > +             return 0;
-> >
-> > -             if (chunk->wp > line_wp)
-> > +     chunk =3D pblk_get_stripe_chunk(pblk, line, i);
-> > +     max_wp =3D chunk->wp;
-> > +     if (max_wp > pblk->max_write_pgs)
-> > +             min_wp =3D max_wp - pblk->max_write_pgs;
-> > +     else
-> > +             min_wp =3D 0;
-> > +
-> > +     i =3D find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
-> > +     while (i < blk_in_line) {
-> > +             chunk =3D pblk_get_stripe_chunk(pblk, line, i);
-> > +             if (chunk->wp > max_wp || chunk->wp < min_wp)
-> >                       return 1;
-> > -             else if (chunk->wp < line_wp)
-> > -                     line_wp =3D chunk->wp;
-> > +
-> > +             i =3D find_next_zero_bit(line->blk_bitmap, blk_in_line, i=
- + 1);
-> >       }
-> >
-> >       return 0;
-> > @@ -362,7 +376,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, s=
-truct pblk_line *line,
-> >       int ret;
-> >       u64 left_ppas =3D pblk_sec_in_open_line(pblk, line) - lm->smeta_s=
-ec;
-> >
-> > -     if (pblk_line_wp_is_unbalanced(pblk, line))
-> > +     if (pblk_line_wps_are_unbalanced(pblk, line))
-> >               pblk_warn(pblk, "recovering unbalanced line (%d)\n", line=
-->id);
-> >
-> >       ppa_list =3D p.ppa_list;
-> > --
-> > 2.17.1
->
-> If I am understanding correctly, you want to protect against the case
-> where a pfail has broken the ws_min partition of a chunk, right? I say
-> this because there is a guarantee that the minimal write size and pblk's
-> write size align with ws_min and ws_opt. Even if we have grown bad
-> blocks on pfail for the current line (which is a bigger problem because
-> we have potentially lost data), this guarantee would remain.
->
-> If this is the case, my first reaction would be to say that the
-> controller is responsible for guaranteeing atomicity for both scalar and
-> vector I/Os. If this is not guaranteed, we have bigger problems than
-> this (e.g., for the write error recovery path).
->
-> Are you thinking of a different case?
+VIRTIO_NET_F_RSC_EXT feature bit indicates that the device
+is able to provide extended RSC information. When the feature
+is active and 'gso_type' field in received packet is not GSO_NONE,
+the device reports number of coalesced packets in 'csum_start'
+field and number of duplicated acks in 'csum_offset' field
+and sets VIRTIO_NET_HDR_F_RSC_INFO in 'flags' field.
 
-The write pointer check triggers a warning if something unexpected has
-happened to the chunks.
-i.e. if something else than pblk messed with the disk, or if the user
-tries to recover a pblk instance with an invalid lun configuration.
+Signed-off-by: Yuri Benditovich <yuri.benditovich@daynix.com>
+---
+ include/uapi/linux/virtio_net.h | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-This patch adds a warning if a chunk wp is too small(i.e. if a chunk
-was unexpectedly reset)
+diff --git a/include/uapi/linux/virtio_net.h b/include/uapi/linux/virtio_net.h
+index a3715a3224c1..93c71d714475 100644
+--- a/include/uapi/linux/virtio_net.h
++++ b/include/uapi/linux/virtio_net.h
+@@ -56,7 +56,7 @@
+ #define VIRTIO_NET_F_MQ	22	/* Device supports Receive Flow
+ 					 * Steering */
+ #define VIRTIO_NET_F_CTRL_MAC_ADDR 23	/* Set MAC address */
+-
++#define VIRTIO_NET_F_RSC_EXT	  61	/* Provides extended RSC info */
+ #define VIRTIO_NET_F_STANDBY	  62	/* Act as standby for another device
+ 					 * with the same MAC.
+ 					 */
+@@ -104,6 +104,7 @@ struct virtio_net_config {
+ struct virtio_net_hdr_v1 {
+ #define VIRTIO_NET_HDR_F_NEEDS_CSUM	1	/* Use csum_start, csum_offset */
+ #define VIRTIO_NET_HDR_F_DATA_VALID	2	/* Csum is valid */
++#define VIRTIO_NET_HDR_F_RSC_INFO	4   /* rsc_ext data in csum_ fields */
+ 	__u8 flags;
+ #define VIRTIO_NET_HDR_GSO_NONE		0	/* Not a GSO frame */
+ #define VIRTIO_NET_HDR_GSO_TCPV4	1	/* GSO frame, IPv4 TCP (TSO) */
+@@ -140,6 +141,18 @@ struct virtio_net_hdr_mrg_rxbuf {
+ 	struct virtio_net_hdr hdr;
+ 	__virtio16 num_buffers;	/* Number of merged rx buffers */
+ };
++
++static inline __virtio16 *virtio_net_rsc_ext_num_packets(
++	struct virtio_net_hdr *hdr)
++{
++	return &hdr->csum_start;
++}
++
++static inline __virtio16 *virtio_net_rsc_ext_num_dupacks(
++	struct virtio_net_hdr *hdr)
++{
++	return &hdr->csum_offset;
++}
+ #endif /* ...VIRTIO_NET_NO_LEGACY */
+ 
+ /*
+-- 
+2.17.1
 
->
-> Javier
->
