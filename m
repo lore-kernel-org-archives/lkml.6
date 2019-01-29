@@ -2,116 +2,85 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDB3C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5742FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D94D214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:45:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iky8fOpD"
+	by mail.kernel.org (Postfix) with ESMTP id 254DD214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbfA2PpV (ORCPT
+        id S1725730AbfA2PpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 29 Jan 2019 10:45:23 -0500
+Received: from mga17.intel.com ([192.55.52.151]:49362 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725846AbfA2PpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 Jan 2019 10:45:21 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46642 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfA2PpV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:45:21 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w7so8881133pgp.13
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 07:45:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=2hL+n8s3PZPDTVR3C3fsWQ4CUK8XIxnsp6gmvT4RKy4=;
-        b=iky8fOpDKopaxVP5oB+m/gza7nNYX98IttZ9Ou3fFLtC0Q2Rqf8LzajWHG+agWM3Sw
-         wHo/jk63ro7ORYasiFmXLcCClY7rx3lkYnjRSmbB4p3UcvkoqS/+uHB7Vh9S9c3rNC/k
-         ffB5EYudjdgAoZ7O93gXMppWeFky4qU3qs7VxQXFuCug4gQV4C8wagJB2gILgZfSHKiM
-         MdQSHljJhpXiH3KrXtrgTO0PSA8s423H9Qd1YwFJWdgbiVCEyBT1Zx9dd6MyIXZ7C3m4
-         M9CCOwCfVt4lRLE5jzQVQttbosHGdgb5wZ6VyjWklz0D/LLvBnI8qCO7/YG5lfguLtZ/
-         RRiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=2hL+n8s3PZPDTVR3C3fsWQ4CUK8XIxnsp6gmvT4RKy4=;
-        b=dZzFRPWBnIDBxsPm0HahKonOGbWJIvRmNUU/VzZiEbWAXWEBSCk810IHbom5cZFMHb
-         J8eQCbTgf+84DkqjD2NMWyA7E6wny+1g/h6KPSAWGQCkUYSBxlr/lj9cWeyImGAryBsv
-         sSJMp1FWDcRtkSlCjlfvaOJOQdNM3wg+PEccjnOwLQTrJbwbNduRkyR15eGYOPBx2VaL
-         fztVuGosZd9irima1PqcDbyHZ+/S5heUBysPEsx7TXFZNVWgT60URpohexDyyV4ERR3U
-         yRLJn9qE143FkhFBp68q1IroPtGvZ6O45ZK00oLu+AA1miKgSLwQsdFEa/Av5T5r7zVM
-         2s2A==
-X-Gm-Message-State: AJcUukelAOUkpViClsaIkJNQDjkfuRx6FEjnEvaTUbxj6fqSwIQzYceS
-        57aEqwAyIHXoQUta1dQVmyF3DW3fOM+JKw==
-X-Google-Smtp-Source: ALg8bN5XE/W25hqzW7cVy6uuZTOVgGIDj/6VzVf76Uweg1cDJ9QLj+yuRPdAFWbEgoVP7RrzDWhiCg==
-X-Received: by 2002:a63:e247:: with SMTP id y7mr23038857pgj.84.1548776720057;
-        Tue, 29 Jan 2019 07:45:20 -0800 (PST)
-Received: from nishad ([106.51.25.107])
-        by smtp.gmail.com with ESMTPSA id w11sm45165929pgk.16.2019.01.29.07.45.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 07:45:19 -0800 (PST)
-Date:   Tue, 29 Jan 2019 21:15:12 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>
-Cc:     NeilBrown <neil@brown.name>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Kees Cook <keescook@chromium.org>, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: mt7621-pinctrl: Test devm_kzalloc for failure while
- improving the code
-Message-ID: <20190129154507.GA25365@nishad>
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 07:45:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
+   d="scan'208";a="139790854"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga004.fm.intel.com with ESMTP; 29 Jan 2019 07:45:20 -0800
+Date:   Tue, 29 Jan 2019 08:44:33 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>
+Subject: Re: Question on handling managed IRQs when hotplugging CPUs
+Message-ID: <20190129154433.GF15302@localhost.localdomain>
+References: <f6f6e031-8b79-439d-c2af-8d3e76f30710@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <f6f6e031-8b79-439d-c2af-8d3e76f30710@huawei.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch tests the return of devm_kzalloc for failure and
-improves the code.
+On Tue, Jan 29, 2019 at 03:25:48AM -0800, John Garry wrote:
+> Hi,
+> 
+> I have a question on $subject which I hope you can shed some light on.
+> 
+> According to commit c5cb83bb337c25 ("genirq/cpuhotplug: Handle managed 
+> IRQs on CPU hotplug"), if we offline the last CPU in a managed IRQ 
+> affinity mask, the IRQ is shutdown.
+> 
+> The reasoning is that this IRQ is thought to be associated with a 
+> specific queue on a MQ device, and the CPUs in the IRQ affinity mask are 
+> the same CPUs associated with the queue. So, if no CPU is using the 
+> queue, then no need for the IRQ.
+> 
+> However how does this handle scenario of last CPU in IRQ affinity mask 
+> being offlined while IO associated with queue is still in flight?
+> 
+> Or if we make the decision to use queue associated with the current CPU, 
+> and then that CPU (being the last CPU online in the queue's IRQ 
+> afffinity mask) goes offline and we finish the delivery with another CPU?
+> 
+> In these cases, when the IO completes, it would not be serviced and timeout.
+> 
+> I have actually tried this on my arm64 system and I see IO timeouts.
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-index 3e959fa73703..9b52d44abef1 100644
---- a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-+++ b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-@@ -350,7 +350,6 @@ static int rt2880_pinmux_probe(struct platform_device *pdev)
- 	for_each_compatible_node(np, NULL, "ralink,rt2880-gpio") {
- 		const __be32 *ngpio, *gpiobase;
- 		struct pinctrl_gpio_range *range;
--		char *name;
- 
- 		if (!of_device_is_available(np))
- 			continue;
-@@ -362,9 +361,10 @@ static int rt2880_pinmux_probe(struct platform_device *pdev)
- 			return -EINVAL;
- 		}
- 
--		range = devm_kzalloc(p->dev, sizeof(*range) + 4, GFP_KERNEL);
--		range->name = name = (char *)&range[1];
--		sprintf(name, "pio");
-+		range = devm_kzalloc(p->dev, sizeof(*range), GFP_KERNEL);
-+		if (!range)
-+			return -ENOMEM;
-+		range->name = "pio";
- 		range->npins = __be32_to_cpu(*ngpio);
- 		range->base = __be32_to_cpu(*gpiobase);
- 		range->pin_base = range->base;
--- 
-2.17.1
-
+Hm, we used to freeze the queues with CPUHP_BLK_MQ_PREPARE callback,
+which would reap all outstanding commands before the CPU and IRQ are
+taken offline. That was removed with commit 4b855ad37194f ("blk-mq:
+Create hctx for each present CPU"). It sounds like we should bring
+something like that back, but make more fine grain to the per-cpu context.
