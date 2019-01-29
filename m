@@ -2,105 +2,80 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A123C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F997C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1669220989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:33:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548794011;
-	bh=DPvH4a8NS+v9FXY+mtxhNvQwoYBsLvv8TgIPjWa/rig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=APNSUTnFoEo7fnhXrfuMz5OXdsX225wr1Q2xF0TdRUtCE5rH/aGEuaM64B9D41RrY
-	 /Iunx/ujneAlAe4NHRe6zi72cOzRWmAumqVcAma1w6y1gXnKt0k7/pdgCufdEnpDsl
-	 zOpP/5B0DdQ75P16JXH35/CTh/yz/YushVGpzWvQ=
+	by mail.kernel.org (Postfix) with ESMTP id 2A8DE20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbfA2Ud3 (ORCPT
+        id S1729244AbfA2UeX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:33:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59700 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 15:34:23 -0500
+Received: from mga04.intel.com ([192.55.52.120]:6145 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726984AbfA2Ud3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:33:29 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C67A720881;
-        Tue, 29 Jan 2019 20:33:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548794008;
-        bh=DPvH4a8NS+v9FXY+mtxhNvQwoYBsLvv8TgIPjWa/rig=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xbHcsDb9z/t9SFcX7zbJvN0Y70JVgtoHVnofc5ApZrRHDseOF/6LXOxzrZT/DaNos
-         DorLlUrMHz7AexuNH3hg/+0h8VKG6kaC1S+aSGG36dshtPMM1cb/HFR5bCuFQ7/dEt
-         W2YU8l6kBJBV36AAypIa1G/iJw1Owiz1BwyS+NR8=
-Date:   Tue, 29 Jan 2019 21:33:25 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dan Streetman <ddstreet@ieee.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Seth Jennings <sjenning@redhat.com>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH] zswap: ignore debugfs_create_dir() return value
-Message-ID: <20190129203325.GA2723@kroah.com>
-References: <20190122152151.16139-9-gregkh@linuxfoundation.org>
- <CALZtONCjGashJkkDSxjP-E8-p67+WeAjDaYn5dQi=FomByh8Qg@mail.gmail.com>
+        id S1726984AbfA2UeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 15:34:23 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 12:34:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,538,1539673200"; 
+   d="scan'208";a="270944429"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
+  by orsmga004.jf.intel.com with ESMTP; 29 Jan 2019 12:34:17 -0800
+Date:   Tue, 29 Jan 2019 22:34:22 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v8 5/7] tpm: move tpm_chip definition to
+ include/linux/tpm.h
+Message-ID: <20190129203422.GD11615@linux.intel.com>
+References: <20190124154910.29948-1-roberto.sassu@huawei.com>
+ <20190124154910.29948-6-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALZtONCjGashJkkDSxjP-E8-p67+WeAjDaYn5dQi=FomByh8Qg@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190124154910.29948-6-roberto.sassu@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 02:46:30PM -0500, Dan Streetman wrote:
-> On Tue, Jan 22, 2019 at 10:23 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > When calling debugfs functions, there is no need to ever check the
-> > return value.  The function can work or not, but the code logic should
-> > never do something different based on this.
-> >
-> > Cc: Seth Jennings <sjenning@redhat.com>
-> > Cc: Dan Streetman <ddstreet@ieee.org>
-> > Cc: linux-mm@kvack.org
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >  mm/zswap.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> >
-> > diff --git a/mm/zswap.c b/mm/zswap.c
-> > index a4e4d36ec085..f583d08f6e24 100644
-> > --- a/mm/zswap.c
-> > +++ b/mm/zswap.c
-> > @@ -1262,8 +1262,6 @@ static int __init zswap_debugfs_init(void)
-> >                 return -ENODEV;
-> >
-> >         zswap_debugfs_root = debugfs_create_dir("zswap", NULL);
-> > -       if (!zswap_debugfs_root)
-> > -               return -ENOMEM;
-> >
-> >         debugfs_create_u64("pool_limit_hit", 0444,
-> >                            zswap_debugfs_root, &zswap_pool_limit_hit);
-> 
-> wait, so if i'm reading the code right, in the case where
-> debugfs_create_dir() returns NULL, that will then be passed along to
-> debugfs_create_u64() as its parent directory - and the debugfs nodes
-> will then get created in the root debugfs directory.  That's not what
-> we want to happen...
+On Thu, Jan 24, 2019 at 04:49:08PM +0100, Roberto Sassu wrote:
+> -enum tpm_const {
+> -	TPM_MINOR = 224,	/* officially assigned */
+> -	TPM_BUFSIZE = 4096,
+> -	TPM_NUM_DEVICES = 65536,
+> -	TPM_RETRY = 50,		/* 5 seconds */
+> -	TPM_NUM_EVENT_LOG_FILES = 3,
+> -};
 
-True, but that is such a rare thing to ever happen (hint, you have to be
-out of memory), that it's not really a bad thing.  But, you are not the
-first to mention this, which is why this patch is on its way to Linus
-for 5.0-final:
-	https://lore.kernel.org/lkml/20190123102814.GB17123@kroah.com/
+Here using enum has been a bad idea in the first place, as they don't
+relate in any meaningful way.
 
-thanks,
+Replace the definition with the following in drivers/char/tpm/tpm.h:
 
-greg k-h
+#define TPM_MINOR	224 /* misc backwards compatibility */
+#define TPM_BUFSIZE	4096
+#define TPM_NUM_DEVICES	65536
+#define TPM_RETRY	5 /* seconds */
+
+And only add this to include/linux/tpm.h:
+
+#define TPM_NUM_EVENT_LOG_FILES 3
+
+Otherwise, this looks good.
+
+/Jarkko
