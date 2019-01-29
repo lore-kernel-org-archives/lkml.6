@@ -2,215 +2,206 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE3FC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 571D0C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C66421871
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:21:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 254762175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:21:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbfA2QVP (ORCPT
+        id S1728392AbfA2QVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:21:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40618 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725804AbfA2QVO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:21:14 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0TGGEXb105059
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:21:13 -0500
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qasn8tej4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:21:13 -0500
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
-        Tue, 29 Jan 2019 16:21:12 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 29 Jan 2019 16:21:11 -0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0TGLAiN10813440
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 29 Jan 2019 16:21:10 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C311BE051;
-        Tue, 29 Jan 2019 16:21:10 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9A338BE04F;
-        Tue, 29 Jan 2019 16:21:09 +0000 (GMT)
-Received: from oc8380061452.ibm.com (unknown [9.53.179.224])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 29 Jan 2019 16:21:09 +0000 (GMT)
-Subject: Re: [RFC 1/6] powerpc:/drc Define interface to acquire arch-specific
- drc info
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Tyrel Datwyler <turtle.in.the.kernel@gmail.com>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
-        <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org
-Cc:     Juliet Kim <minkim@us.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        nathanl@linux.vnet.ibm.com
-References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
- <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com>
- <e7030879-59e4-88fd-3785-fdd98b7f0a3b@gmail.com>
- <87a7jjstbu.fsf@concordia.ellerman.id.au>
-From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
- mQENBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
- lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
- DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
- t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
- AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
- AAG0LU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPokBOAQT
- AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
- CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
- 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
- QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
- AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
- oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/UrkBDQRXGOxnAQgAmJ5Y
- ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
- DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
- 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
- 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
- qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABiQEfBBgBAgAJBQJX
- GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
- efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
- ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
- yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
- IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
- 53/hcWvxHVs=
-Organization: IBM Linux Technology Center
-Date:   Tue, 29 Jan 2019 10:21:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 29 Jan 2019 11:21:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:21131 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725804AbfA2QVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 11:21:19 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BFE45CD243;
+        Tue, 29 Jan 2019 16:21:17 +0000 (UTC)
+Received: from redhat.com (ovpn-123-178.rdu2.redhat.com [10.10.123.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 39DC219743;
+        Tue, 29 Jan 2019 16:21:15 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 11:21:13 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc:     linux-mm@kvack.org, Ralph Campbell <rcampbell@nvidia.com>,
+        Jan Kara <jack@suse.cz>, Arnd Bergmann <arnd@arndb.de>,
+        kvm@vger.kernel.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-rdma@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v4 8/9] gpu/drm/i915: optimize out the case when a range
+ is updated to read only
+Message-ID: <20190129162112.GA3194@redhat.com>
+References: <20190123222315.1122-1-jglisse@redhat.com>
+ <20190123222315.1122-9-jglisse@redhat.com>
+ <154833175216.4120.925061299171157938@jlahtine-desk.ger.corp.intel.com>
+ <20190124153032.GA5030@redhat.com>
+ <154877159986.4387.16328989441685542244@jlahtine-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <87a7jjstbu.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012916-0016-0000-0000-0000097C4583
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010499; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01153523; UDB=6.00601400; IPR=6.00933890;
- MB=3.00025341; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-29 16:21:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012916-0017-0000-0000-000041F44938
-Message-Id: <f03794ac-eb81-6280-3141-4c07ecd12331@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901290122
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <154877159986.4387.16328989441685542244@jlahtine-desk.ger.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 29 Jan 2019 16:21:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/29/19 3:31 AM, Michael Ellerman wrote:
-> Tyrel Datwyler <turtle.in.the.kernel@gmail.com> writes:
->> On 12/14/2018 12:50 PM, Michael Bringmann wrote:
->>> Define interface to acquire arch-specific drc info to match against
->>> hotpluggable devices.  The current implementation exposes several
->>> pseries-specific dynamic memory properties in generic kernel code.
->>> This patch set provides an interface to pull that code out of the
->>> generic kernel.
->>>
->>> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
->>> ---
->>>  include/linux/topology.h |    9 +++++++++
->>>  1 file changed, 9 insertions(+)
->>>
->>> diff --git a/include/linux/topology.h b/include/linux/topology.h
->>> index cb0775e..df97f5f 100644
->>> --- a/include/linux/topology.h
->>> +++ b/include/linux/topology.h
->>> @@ -44,6 +44,15 @@
->>
->> As far as I know pseries is the only platform that uses DR connectors, and I
->> highly doubt that any other powerpc platform or arch ever will. So, I'm not sure
->> that this is really generic enough to belong in topology.h.
+On Tue, Jan 29, 2019 at 04:20:00PM +0200, Joonas Lahtinen wrote:
+> Quoting Jerome Glisse (2019-01-24 17:30:32)
+> > On Thu, Jan 24, 2019 at 02:09:12PM +0200, Joonas Lahtinen wrote:
+> > > Hi Jerome,
+> > > 
+> > > This patch seems to have plenty of Cc:s, but none of the right ones :)
+> > 
+> > So sorry, i am bad with git commands.
+> > 
+> > > For further iterations, I guess you could use git option --cc to make
+> > > sure everyone gets the whole series, and still keep the Cc:s in the
+> > > patches themselves relevant to subsystems.
+> > 
+> > Will do.
+> > 
+> > > This doesn't seem to be on top of drm-tip, but on top of your previous
+> > > patches(?) that I had some comments about. Could you take a moment to
+> > > first address the couple of question I had, before proceeding to discuss
+> > > what is built on top of that base.
+> > 
+> > It is on top of Linus tree so roughly ~ rc3 it does not depend on any
+> > of the previous patch i posted.
 > 
-> Right. This does not belong in include/linux.
+> You actually managed to race a point in time just when Chris rewrote much
+> of the userptr code in drm-tip, which I didn't remember of. My bad.
 > 
->> If anything I would
->> suggest putting this in an include in arch/powerpc/include/ named something like
->> drcinfo.h or pseries-drc.h. That will make it visible to modules like rpaphp
->> that want/need to use this functionality.
+> Still interested to hearing replies to my questions in the previous
+> thread, if the series is still relevant. Trying to get my head around
+> how the different aspects of HMM pan out for devices without fault handling.
+
+HMM mirror does not need page fault handling for everything and in fact
+for user ptr you can use HMM mirror without page fault support in hardware.
+Page fault requirement is more like a __very__ nice to have feature.
+
+So sorry i missed that mail i must had it in a middle of bugzilla spam
+and deleted it. So here is a paste of it and answer. This was for a
+patch to convert i915 to use HMM mirror instead of having i915 does it
+own thing with GUP (get_user_page).
+
+> Bit late reply, but here goes :)
+>
+> We're working quite hard to avoid pinning any pages unless they're in
+> the GPU page tables. And when they are in the GPU page tables, they must
+> be pinned for whole of that duration, for the reason that our GPUs can
+> not take a fault. And to avoid thrashing GPU page tables, we do leave
+> objects in page tables with the expectation that smart userspace
+> recycles buffers.
+
+You do not need to pin the page because you obey to mmu notifier ie
+it is perfectly fine for you to keep the page map into the GPU until
+you get an mmu notifier call back for the range of virtual address.
+
+The pin from GUP in fact does not protect you from anything. GUP is
+really misleading, by the time GUP return the page you get might not
+correspond to the memory backing the virtual address.
+
+In i915 code this is not an issue because you synchronize against
+mmu notifier call back.
+
+So my intention in converting GPU driver from GUP to HMM mirror is
+just to avoid the useless page pin. As long as you obey the mmu
+notifier call back (or HMM sync page table call back) then you are
+fine.
+
+> So what I understand of your proposal, it wouldn't really make a
+> difference for us in the amount of pinned pages (which I agree,
+> we'd love to see going down). When we're unable to take a fault,
+> the first use effectively forces us to pin any pages and keep them
+> pinned to avoid thrashing GPU page tables.
+
+With HMM there is no pin, we never pin the page ie we never increment
+the refcount on the page as it is useless to do so if you abide by
+mmu notifier. Again the pin GUP take is misleading it does not block
+mm event.
+
+However Without pin and still abiding to mmu notifier you will not
+see any difference in thrashing ie number of time you will get a mmu
+notifier call back. As really those call back happens for good reasons.
+For instance running out of memory and kernel trying to reclaim or
+because userspace did a syscall that affect the range of virtual address.
+
+This should not happen in regular workload and when they happen the pin
+from GUP will not inhibit those either. In the end you will get the exact
+same amount of trashing but you will inhibit thing like memory compaction
+or migration while HMM does not block those (ie HMM is a good citizen ;)
+while GUP user are not).
+
+Also we are in the process of changing GUP and GUP will now have more
+profound impact to filesystem and mm (inhibiting and breaking some of
+the filesystem behavior). Converting GPU driver to HMM will avoid those
+adverse impact and it is one of the motivation behind my crusade to
+convert all GUP user that abide by mmu notifier to use HMM instead.
+
+
+> So from i915 perspective, it just seems to be mostly an exchange of
+> an API to an another for getting the pages. You already mentioned
+> the fast path is being worked on, which is an obvious difference.
+> But is there some other improvement one would be expecting, beyond
+> the page pinning?
+
+So for HMM i have a bunch of further optimization and new feature.
+Using HMM would make it easier for i915 to leverage those.
+
+> Also, is the requirement for a single non-file-backed VMA in the
+> plans of being eliminated or is that inherent restriction of the
+> HMM_MIRROR feature? We're currently not imposing such a limitation.
+
+HMM does not have that limitation, never did. It seems that i915
+unlike other driver does allow GUP on file back page, while other
+GPU driver do not. So i made the assumption the i915 did have that
+limitation without checking the code.
+
+
+> > I still intended to propose to remove
+> > GUP from i915 once i get around to implement the equivalent of GUP_fast
+> > for HMM and other bonus cookies with it.
+> > 
+> > The plan is once i have all mm bits properly upstream then i can propose
+> > patches to individual driver against the proper driver tree ie following
+> > rules of each individual device driver sub-system and Cc only people
+> > there to avoid spamming the mm folks :)
 > 
-> Yeah that would make more sense.
+> Makes sense, as we're having tons of changes in this field in i915, the
+> churn to rebase on top of them will be substantial.
 
-If you see no objection to referencing a powerpc-specific function from
-the code ...
-
-> 
-> Using "arch" in the name is wrong, it's pseries specific so
-> pseries_find_drc_match() would be more appropriate.
-> 
->>> +int arch_find_drc_match(struct device_node *dn,
->>> +			bool (*usercb)(struct device_node *dn,
->>> +				u32 drc_index, char *drc_name,
->>> +				char *drc_type, u32 drc_power_domain,
->>> +				void *data),
->>> +			char *opt_drc_type, char *opt_drc_name,
->>> +			bool match_drc_index, bool ck_php_type,
->>> +			void *data);
-> 
-> This function signature is kind of insane.
-> 
-> You end with calls like:
-> 
-> +	return arch_find_drc_match(dn, rpaphp_add_slot_cb,
-> +			NULL, NULL, false, true, NULL);
-> 
-> Which is impossible to parse.
-> 
-> I feel like maybe this isn't the right level of abstraction.
-
-...
-I had already been considering simplifying the interface for these
-calls to something like the following:
-
-int rpaphp_check_drc_props(struct device_node *dn, char *drc_name,
-			char *drc_type)
-{
-    return pseries_find_drc_match(dn, drc_type, drc_name);
-}
-...
-int rpaphp_add_slot(struct device_node *dn)
-{
-       if (!dn->name || strcmp(dn->name, "pci"))
-               return 0;
-
-       return pseries_add_drc_slot(dn, rpaphp_add_slot_cb);
-}
-...
-
-Further details would be hidden within the pseries code.
-
+I am posting more HMM bits today for 5.1, i will probably post another i915
+patchset in coming weeks. I will try to base it on for-5.1-drm tree as i am
+not only doing i915 but amd too and it is easier if i can do all of them in
+just one tree so i only have to switch GPU not kernel too for testing :)
 
 > 
-> cheers
+> Regards, Joonas
+> 
+> PS. Are you by any chance attending FOSDEM? Would be nice to chat about
+> this.
 
-Regards
+No i am not going to fosdem :(
 
--- 
-Michael W. Bringmann
-Linux Technology Center
-IBM Corporation
-Tie-Line  363-5196
-External: (512) 286-5196
-Cell:       (512) 466-0650
-mwb@linux.vnet.ibm.com
-
+Cheers,
+Jérôme
