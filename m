@@ -2,164 +2,135 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C028C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F01AC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E8DB207E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:54:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39F1B214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:58:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbfA2HyX (ORCPT
+        id S1726719AbfA2H6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 02:54:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45084 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725294AbfA2HyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 02:54:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1DFCAAC17;
-        Tue, 29 Jan 2019 07:54:21 +0000 (UTC)
-Subject: Re: [PATCH 04/11] btrfs: unify compression ops with workspace_manager
-To:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>
-Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190128212437.11597-1-dennis@kernel.org>
- <20190128212437.11597-5-dennis@kernel.org>
-From:   Nikolay Borisov <nborisov@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <415fbefb-1a69-5b80-02c4-aab8b204375c@suse.com>
-Date:   Tue, 29 Jan 2019 09:54:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 29 Jan 2019 02:58:05 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:34144 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725294AbfA2H6E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 02:58:04 -0500
+Received: by mail-it1-f197.google.com with SMTP id x17so8611141ita.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 23:58:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=q1eYfQpz394h4N3SD6yLnKuMfsw9YGLfZVmc+FZ5xxI=;
+        b=ASryCliZ+kIUvoiQmBhygpKccMSoUrdrCgpkn3SWHhkCes8LzmuWNaYi2S5xO1Dqin
+         aDh54Yy5amiOnEKxfhVyuOItDlrfeddgGBMi8U+gLxmhbbOHq7cF6XZDOhWTUnsQtk95
+         MpWlAkMJbwBBXzuBiygsQIZBBLMGzNw95T1OCB0O2JiuchN4UQzU2aA3B5HFnICEZFKW
+         3CL/OgnAz8Jlbic46wYKO5edr2cDNpt5KZrZMIWG1uFzCspiKTuD2Ox06effxcQ2PQZV
+         VBB4GathxvbtPqbtyrDkeDgTjq7S7foXEgWc4YBAYfZgxje2GLmViFZcFs2/7G0QLQX2
+         K1rw==
+X-Gm-Message-State: AHQUAuapHOFEvLs1QM3ZBtIJB/ke/yU8+B7KNZdG93zbOAythmJJUHyM
+        92L3iwSGhCkQF4xUxYG5tShAaSgetC+otD1DRiaUTvfxdIDl
+X-Google-Smtp-Source: AHgI3IZ3pk50CnTWpkitzslGAZ133+AR6Tocl4CBMHRZysLWQAaGz3zeufRV+BHvkpjlFcTtXMSQPxDU6fPthWMjwYzPlur6r3VW
 MIME-Version: 1.0
-In-Reply-To: <20190128212437.11597-5-dennis@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a24:9411:: with SMTP id j17mr2074218ite.18.1548748683889;
+ Mon, 28 Jan 2019 23:58:03 -0800 (PST)
+Date:   Mon, 28 Jan 2019 23:58:03 -0800
+In-Reply-To: <00000000000069922505797781b0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000026533a05809427c7@google.com>
+Subject: Re: WARNING in vb2_core_reqbufs
+From:   syzbot <syzbot+f9966a25169b6d66d61f@syzkaller.appspotmail.com>
+To:     kyungmin.park@samsung.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, m.szyprowski@samsung.com,
+        mchehab@kernel.org, pawel@osciak.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+syzbot has found a reproducer for the following crash on:
 
+HEAD commit:    39ad1c1b6bb8 Add linux-next specific files for 20190129
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17971f17400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a2b2e9c0bc43c14d
+dashboard link: https://syzkaller.appspot.com/bug?extid=f9966a25169b6d66d61f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1342c7a0c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a241c4c00000
 
-On 28.01.19 г. 23:24 ч., Dennis Zhou wrote:
-> Make the workspace_manager own the interface operations rather than
-> managing index-paired arrays for the workspace_manager and compression
-> operations.
-> 
-> Signed-off-by: Dennis Zhou <dennis@kernel.org>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f9966a25169b6d66d61f@syzkaller.appspotmail.com
 
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+WARNING: CPU: 1 PID: 8082 at  
+drivers/media/common/videobuf2/videobuf2-core.c:728  
+vb2_core_reqbufs+0x59b/0xf10  
+drivers/media/common/videobuf2/videobuf2-core.c:728
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 8082 Comm: syz-executor505 Not tainted 5.0.0-rc4-next-20190129  
+#21
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  panic+0x2cb/0x65c kernel/panic.c:214
+  __warn.cold+0x20/0x48 kernel/panic.c:571
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  fixup_bug arch/x86/kernel/traps.c:173 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:vb2_core_reqbufs+0x59b/0xf10  
+drivers/media/common/videobuf2/videobuf2-core.c:728
+Code: 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 56 08 00 00 45 8b 3c 9e 31  
+ff 44 89 fe e8 9f 41 3d fc 45 85 ff 75 9f e8 15 40 3d fc <0f> 0b 41 bc ea  
+ff ff ff e8 08 40 3d fc 48 b8 00 00 00 00 00 fc ff
+RSP: 0018:ffff88809d8e7680 EFLAGS: 00010293
+RAX: ffff88809138e3c0 RBX: 0000000000000000 RCX: ffffffff8544da11
+RDX: 0000000000000000 RSI: ffffffff8544da1b RDI: 0000000000000005
+RBP: ffff88809d8e77b0 R08: ffff88809138e3c0 R09: ffff88808d42d6f0
+R10: ffffed1011a85ae5 R11: ffff88808d42d72f R12: 0000000000000001
+R13: dffffc0000000000 R14: ffff88809d8e7728 R15: 0000000000000000
+  vb2_reqbufs drivers/media/common/videobuf2/videobuf2-v4l2.c:664 [inline]
+  vb2_reqbufs+0x1cb/0x210 drivers/media/common/videobuf2/videobuf2-v4l2.c:659
+  v4l2_m2m_reqbufs+0x90/0x1d0 drivers/media/v4l2-core/v4l2-mem2mem.c:457
+  v4l2_m2m_ioctl_reqbufs+0x6b/0x80  
+drivers/media/v4l2-core/v4l2-mem2mem.c:1051
+  v4l_reqbufs drivers/media/v4l2-core/v4l2-ioctl.c:1932 [inline]
+  v4l_reqbufs+0xad/0xe0 drivers/media/v4l2-core/v4l2-ioctl.c:1921
+  __video_do_ioctl+0x805/0xd80 drivers/media/v4l2-core/v4l2-ioctl.c:2872
+  video_usercopy+0x460/0x16b0 drivers/media/v4l2-core/v4l2-ioctl.c:3054
+  video_ioctl2+0x2d/0x35 drivers/media/v4l2-core/v4l2-ioctl.c:3098
+  v4l2_ioctl+0x156/0x1b0 drivers/media/v4l2-core/v4l2-dev.c:364
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440049
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffc76fc9aa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440049
+RDX: 0000000020000400 RSI: 00000000c0145608 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004018d0
+R13: 0000000000401960 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-> ---
->  fs/btrfs/compression.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-> index bda7e8d2cbc7..b7e986e16640 100644
-> --- a/fs/btrfs/compression.c
-> +++ b/fs/btrfs/compression.c
-> @@ -777,6 +777,7 @@ const struct btrfs_compress_op btrfs_heuristic_compress = {
->  };
->  
->  struct workspace_manager {
-> +	const struct btrfs_compress_op *ops;
->  	struct list_head idle_ws;
->  	spinlock_t ws_lock;
->  	/* Number of free workspaces */
-> @@ -802,6 +803,8 @@ void __init btrfs_init_compress(void)
->  	int i;
->  
->  	for (i = 0; i < BTRFS_COMPRESS_TYPES; i++) {
-> +		wsm[i].ops = btrfs_compress_op[i];
-> +
->  		INIT_LIST_HEAD(&wsm[i].idle_ws);
->  		spin_lock_init(&wsm[i].ws_lock);
->  		atomic_set(&wsm[i].total_ws, 0);
-> @@ -811,7 +814,7 @@ void __init btrfs_init_compress(void)
->  		 * Preallocate one workspace for each compression type so
->  		 * we can guarantee forward progress in the worst case
->  		 */
-> -		workspace = btrfs_compress_op[i]->alloc_workspace();
-> +		workspace = wsm[i].ops->alloc_workspace();
->  		if (IS_ERR(workspace)) {
->  			pr_warn("BTRFS: cannot preallocate compression workspace, will try later\n");
->  		} else {
-> @@ -874,7 +877,7 @@ static struct list_head *find_workspace(int type)
->  	 * context of btrfs_compress_bio/btrfs_compress_pages
->  	 */
->  	nofs_flag = memalloc_nofs_save();
-> -	workspace = btrfs_compress_op[type]->alloc_workspace();
-> +	workspace = wsm[type].ops->alloc_workspace();
->  	memalloc_nofs_restore(nofs_flag);
->  
->  	if (IS_ERR(workspace)) {
-> @@ -932,7 +935,7 @@ static void free_workspace(int type, struct list_head *workspace)
->  	}
->  	spin_unlock(ws_lock);
->  
-> -	btrfs_compress_op[type]->free_workspace(workspace);
-> +	wsm[type].ops->free_workspace(workspace);
->  	atomic_dec(total_ws);
->  wake:
->  	cond_wake_up(ws_wait);
-> @@ -950,7 +953,7 @@ static void free_workspaces(void)
->  		while (!list_empty(&wsm[i].idle_ws)) {
->  			workspace = wsm[i].idle_ws.next;
->  			list_del(workspace);
-> -			btrfs_compress_op[i]->free_workspace(workspace);
-> +			wsm[i].ops->free_workspace(workspace);
->  			atomic_dec(&wsm[i].total_ws);
->  		}
->  	}
-> 
