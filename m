@@ -2,158 +2,343 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89BE2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37DAC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FA7C214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:08:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="P3wD+tMF"
+	by mail.kernel.org (Postfix) with ESMTP id 7287420881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:09:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfA2IIz (ORCPT
+        id S1727607AbfA2IJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:08:55 -0500
-Received: from mail-eopbgr30052.outbound.protection.outlook.com ([40.107.3.52]:51167
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        Tue, 29 Jan 2019 03:09:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46690 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725355AbfA2IIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:08:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LaEntDyw6qLx6mvy22xU073gwAKY3mmxOe0XBwod+gQ=;
- b=P3wD+tMFJ6dj7tE4ZDNzUxTsNeC5HYvkbkJKlFb5vVN+9Wr//aSyQwNnYAcbdgA/xCvqvffG4xdZPg5LddPPGwvnsGBXLR8eci1vfeuEAMNYnnlK2d/7fe3KDoH43LTNhL1rtOIoEsibMb+Izmdgcls+P77wUdeGg/SnCn2njzM=
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.3.19) by
- AM6PR04MB5847.eurprd04.prod.outlook.com (20.179.3.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.17; Tue, 29 Jan 2019 08:08:47 +0000
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::9c0:e3aa:b41f:9504]) by AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::9c0:e3aa:b41f:9504%3]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
- 08:08:47 +0000
-From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
-To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>
-CC:     Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: [PATCHv3 03/27] PCI: mobiveil: correct the returned error number
-Thread-Topic: [PATCHv3 03/27] PCI: mobiveil: correct the returned error number
-Thread-Index: AQHUt6ncjsMFdns5G0+hpkPdSUjWog==
-Date:   Tue, 29 Jan 2019 08:08:47 +0000
-Message-ID: <20190129080926.36773-4-Zhiqiang.Hou@nxp.com>
-References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0PR04CA0008.apcprd04.prod.outlook.com
- (2603:1096:203:36::20) To AM6PR04MB5781.eurprd04.prod.outlook.com
- (2603:10a6:20b:ad::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=zhiqiang.hou@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB5847;6:lg+RLQN4pERq6haAXAbj3/lGFyYAFdVUFixry0imbZpg97O3MUP/G1AV7gVwq3Sh8cNJ9EHo9aw9vLFT3bEMIoWSIz1D2hWpbXF2hKjiocEAqvH3rl83+kQlyqv9N2GU4nhEdpn9h5s6oyPKUcmz3abIWnabelPgNFpNCRg1D8GhgjddOt+y/U0mXsGRUCO+m3sJFKE8tUd3+Pa1nWvR0j2BMf5b2CPMKFjQ1C67g9L/FiZCMKAgtoS6gjKKsmWVVOQ3QYPNjSHBQ9Oxd9Bw7xRVUN0KIASMobTM+3dFEdS7FRixLKLC+bSzn2l01kiBGJuGBBT8hTzqY2CqbTz/Zbn2Dsm5lWuTqS+V4aBLTnQgvZYUxHEeQuz1eU9snpd5uGaB+4Xgacz8wMrdRul+uZyYLDuq88MpENP2TBxoOF6NUy3rKAdeMISv9BWsOSM+NFy5D2HoGBhZPmcflqLooA==;5:iaE1oyO2Dis18G9Y7JqCygaIO0GTrjBpBDuJGkyCilQwkpkesd9X9UeUmpz/T/Cs9QJLhSa2tt6pqR0CFm5HMB9N55QXzBSmjlnmB34LCbcSx8UkltHL7KyJLYLIhOiD/hCOZFsPpQORUmFSfWSmy3mx9RVAyUBxZQHSDe78zQz3bZ305U8KSjJsiSu14TerI5+Od1fMTHmkRlC7HgC0Ew==;7:j16y6KOkV6lGh0oi6spCG2Ef0C/D/qu+qCyubcqGcv/psdhpYNJW+mB3Z/qFto8oG/x2GMNB/tcOdI372ukUf+C5GsXinKaj7tIeLAFsWv/ZS5nLFWrZO0f6zjR6blndrbyOrzMyZ2EiEqRTB2hw0w==
-x-ms-office365-filtering-correlation-id: 063fc20a-3f06-4a2c-fb28-08d685c0fe6d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5847;
-x-ms-traffictypediagnostic: AM6PR04MB5847:
-x-microsoft-antispam-prvs: <AM6PR04MB58479E75382AB38E7BD00B2484970@AM6PR04MB5847.eurprd04.prod.outlook.com>
-x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(366004)(376002)(136003)(199004)(189003)(14444005)(14454004)(66066001)(478600001)(2616005)(6436002)(71200400001)(446003)(486006)(54906003)(11346002)(476003)(99286004)(110136005)(52116002)(256004)(6486002)(36756003)(6506007)(386003)(316002)(97736004)(26005)(102836004)(71190400001)(186003)(76176011)(81156014)(81166006)(7736002)(8676002)(3846002)(50226002)(305945005)(4326008)(7416002)(25786009)(1076003)(2906002)(53936002)(6116002)(86362001)(2201001)(105586002)(106356001)(8936002)(2501003)(68736007)(6512007)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5847;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: kqlYz9/vZQAilr+kTioiVklEfa3hrLAUi9zoD9mVE4wgAPO+/aJI/79pH8y9s4ynvz4EmNXngjuMRMnx7dmrbaeANeEMOzv9rNyNy+UtCGI9bZ5FPeKNLOwKyDEHSWIJQy37xYG4bG05zDGN1DQtJ1Nmgmb8itdJvOAnL1wzLcopM72+/wtynEHS1UqjeQejdjWj8jhsqrS0nNvNsw3qfHCxMhP02utmXZtHBoj+TchVeP/2ed8tnLMYMGM48KlQlEs2tFCZ7Z0j1dEm11h19ZiyybP1FCAfnc/ELui2lucPdHQmPi7R0nPeoV2ij36mul2rTzTp6pP0Q8QBFTQRHz6vrA+Zxx36cY3rbhmN8+nA05uhJHRGFce74BmeBf86wEQNb1i1IQ3+TvAp4wFglQ+HyBNWMMVTMCKOHo5tRuM=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1725808AbfA2IJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:09:00 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8C08FAF3D;
+        Tue, 29 Jan 2019 08:08:58 +0000 (UTC)
+Subject: Re: [PATCH 08/11] btrfs: plumb level through the compression
+ interface
+To:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>
+Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190128212437.11597-9-dennis@kernel.org>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <ebc38878-5311-ac46-7384-560dd4dd24cb@suse.com>
+Date:   Tue, 29 Jan 2019 10:08:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 063fc20a-3f06-4a2c-fb28-08d685c0fe6d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 08:08:41.2401
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5847
+In-Reply-To: <20190128212437.11597-9-dennis@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
-This patch corrected the returned error number by convention,
-and removed a unnecessary error check.
 
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
----
-V3:
- - No change
+On 28.01.19 г. 23:24 ч., Dennis Zhou wrote:
+> Zlib compression supports multiple levels, but doesn't require changing
+> in how a workspace itself is created and managed. Zstd introduces a
+> different memory requirement such that higher levels of compression
+> require more memory. This requires changes in how the alloc()/get()
+> methods work for zstd. This pach plumbs compression level through the
+> interface as a parameter in preparation for zstd compression levels.
+> This gives the compression types opportunity to create/manage based on
+> the compression level.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
 
- drivers/pci/controller/pcie-mobiveil.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 
-diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controlle=
-r/pcie-mobiveil.c
-index b87471f08a40..563210e731d3 100644
---- a/drivers/pci/controller/pcie-mobiveil.c
-+++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -819,7 +819,7 @@ static int mobiveil_pcie_init_irq_domain(struct mobivei=
-l_pcie *pcie)
-=20
- 	if (!pcie->intx_domain) {
- 		dev_err(dev, "Failed to get a INTx IRQ domain\n");
--		return -ENODEV;
-+		return -ENOMEM;
- 	}
-=20
- 	raw_spin_lock_init(&pcie->intx_mask_lock);
-@@ -845,11 +845,9 @@ static int mobiveil_pcie_probe(struct platform_device =
-*pdev)
- 	/* allocate the PCIe port */
- 	bridge =3D devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
- 	if (!bridge)
--		return -ENODEV;
-+		return -ENOMEM;
-=20
- 	pcie =3D pci_host_bridge_priv(bridge);
--	if (!pcie)
--		return -ENOMEM;
-=20
- 	pcie->pdev =3D pdev;
-=20
-@@ -866,7 +864,7 @@ static int mobiveil_pcie_probe(struct platform_device *=
-pdev)
- 						    &pcie->resources, &iobase);
- 	if (ret) {
- 		dev_err(dev, "Getting bridge resources failed\n");
--		return -ENOMEM;
-+		return ret;
- 	}
-=20
- 	/*
---=20
-2.17.1
-
+> ---
+>  fs/btrfs/compression.c | 31 ++++++++++++++++---------------
+>  fs/btrfs/compression.h |  7 ++++---
+>  fs/btrfs/lzo.c         |  6 +++---
+>  fs/btrfs/zlib.c        |  7 ++++---
+>  fs/btrfs/zstd.c        |  6 +++---
+>  5 files changed, 30 insertions(+), 27 deletions(-)
+> 
+> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+> index ab694760ffdb..e509071eaa69 100644
+> --- a/fs/btrfs/compression.c
+> +++ b/fs/btrfs/compression.c
+> @@ -744,9 +744,9 @@ static void heuristic_cleanup_workspace_manager(void)
+>  	btrfs_cleanup_workspace_manager(&heuristic_wsm);
+>  }
+>  
+> -static struct list_head *heuristic_get_workspace(void)
+> +static struct list_head *heuristic_get_workspace(unsigned int level)
+>  {
+> -	return btrfs_get_workspace(&heuristic_wsm);
+> +	return btrfs_get_workspace(&heuristic_wsm, level);
+>  }
+>  
+>  static void heuristic_put_workspace(struct list_head *ws)
+> @@ -766,7 +766,7 @@ static void free_heuristic_ws(struct list_head *ws)
+>  	kfree(workspace);
+>  }
+>  
+> -static struct list_head *alloc_heuristic_ws(void)
+> +static struct list_head *alloc_heuristic_ws(unsigned int level)
+>  {
+>  	struct heuristic_ws *ws;
+>  
+> @@ -825,7 +825,7 @@ void btrfs_init_workspace_manager(struct workspace_manager *wsm,
+>  	 * Preallocate one workspace for each compression type so
+>  	 * we can guarantee forward progress in the worst case
+>  	 */
+> -	workspace = wsm->ops->alloc_workspace();
+> +	workspace = wsm->ops->alloc_workspace(0);
+>  	if (IS_ERR(workspace)) {
+>  		pr_warn("BTRFS: cannot preallocate compression workspace, will try later\n");
+>  	} else {
+> @@ -853,7 +853,8 @@ void btrfs_cleanup_workspace_manager(struct workspace_manager *wsman)
+>   * Preallocation makes a forward progress guarantees and we do not return
+>   * errors.
+>   */
+> -struct list_head *btrfs_get_workspace(struct workspace_manager *wsm)
+> +struct list_head *btrfs_get_workspace(struct workspace_manager *wsm,
+> +				      unsigned int level)
+>  {
+>  	struct list_head *workspace;
+>  	int cpus = num_online_cpus();
+> @@ -899,7 +900,7 @@ struct list_head *btrfs_get_workspace(struct workspace_manager *wsm)
+>  	 * context of btrfs_compress_bio/btrfs_compress_pages
+>  	 */
+>  	nofs_flag = memalloc_nofs_save();
+> -	workspace = wsm->ops->alloc_workspace();
+> +	workspace = wsm->ops->alloc_workspace(level);
+>  	memalloc_nofs_restore(nofs_flag);
+>  
+>  	if (IS_ERR(workspace)) {
+> @@ -930,9 +931,9 @@ struct list_head *btrfs_get_workspace(struct workspace_manager *wsm)
+>  	return workspace;
+>  }
+>  
+> -static struct list_head *get_workspace(int type)
+> +static struct list_head *get_workspace(int type, int level)
+>  {
+> -	return btrfs_compress_op[type]->get_workspace();
+> +	return btrfs_compress_op[type]->get_workspace(level);
+>  }
+>  
+>  /*
+> @@ -1003,12 +1004,13 @@ int btrfs_compress_pages(unsigned int type_level, struct address_space *mapping,
+>  			 unsigned long *total_out)
+>  {
+>  	int type = BTRFS_COMPRESS_TYPE(type_level);
+> +	int level = BTRFS_COMPRESS_LEVEL(type_level);
+>  	struct list_head *workspace;
+>  	int ret;
+>  
+> -	workspace = get_workspace(type);
+> +	workspace = get_workspace(type, level);
+>  
+> -	btrfs_compress_op[type]->set_level(workspace, type_level);
+> +	btrfs_compress_op[type]->set_level(workspace, level);
+>  	ret = btrfs_compress_op[type]->compress_pages(workspace, mapping,
+>  						      start, pages,
+>  						      out_pages,
+> @@ -1037,7 +1039,7 @@ static int btrfs_decompress_bio(struct compressed_bio *cb)
+>  	int ret;
+>  	int type = cb->compress_type;
+>  
+> -	workspace = get_workspace(type);
+> +	workspace = get_workspace(type, 0);
+>  	ret = btrfs_compress_op[type]->decompress_bio(workspace, cb);
+>  	put_workspace(type, workspace);
+>  
+> @@ -1055,13 +1057,12 @@ int btrfs_decompress(int type, unsigned char *data_in, struct page *dest_page,
+>  	struct list_head *workspace;
+>  	int ret;
+>  
+> -	workspace = get_workspace(type);
+> -
+> +	workspace = get_workspace(type, 0);
+>  	ret = btrfs_compress_op[type]->decompress(workspace, data_in,
+>  						  dest_page, start_byte,
+>  						  srclen, destlen);
+> -
+>  	put_workspace(type, workspace);
+> +
+>  	return ret;
+>  }
+>  
+> @@ -1489,7 +1490,7 @@ static void heuristic_collect_sample(struct inode *inode, u64 start, u64 end,
+>   */
+>  int btrfs_compress_heuristic(struct inode *inode, u64 start, u64 end)
+>  {
+> -	struct list_head *ws_list = get_workspace(0);
+> +	struct list_head *ws_list = get_workspace(0, 0);
+>  	struct heuristic_ws *ws;
+>  	u32 i;
+>  	u8 byte;
+> diff --git a/fs/btrfs/compression.h b/fs/btrfs/compression.h
+> index 05342ad081d6..e3627139bc5c 100644
+> --- a/fs/btrfs/compression.h
+> +++ b/fs/btrfs/compression.h
+> @@ -114,7 +114,8 @@ struct workspace_manager {
+>  
+>  void btrfs_init_workspace_manager(struct workspace_manager *wsm,
+>  				  const struct btrfs_compress_op *ops);
+> -struct list_head *btrfs_get_workspace(struct workspace_manager *wsm);
+> +struct list_head *btrfs_get_workspace(struct workspace_manager *wsm,
+> +				      unsigned int level);
+>  void btrfs_put_workspace(struct workspace_manager *wsm, struct list_head *ws);
+>  void btrfs_cleanup_workspace_manager(struct workspace_manager *wsm);
+>  
+> @@ -123,11 +124,11 @@ struct btrfs_compress_op {
+>  
+>  	void (*cleanup_workspace_manager)(void);
+>  
+> -	struct list_head *(*get_workspace)(void);
+> +	struct list_head *(*get_workspace)(unsigned int level);
+>  
+>  	void (*put_workspace)(struct list_head *ws);
+>  
+> -	struct list_head *(*alloc_workspace)(void);
+> +	struct list_head *(*alloc_workspace)(unsigned int level);
+>  
+>  	void (*free_workspace)(struct list_head *workspace);
+>  
+> diff --git a/fs/btrfs/lzo.c b/fs/btrfs/lzo.c
+> index f0837b2c8e94..f132af45a924 100644
+> --- a/fs/btrfs/lzo.c
+> +++ b/fs/btrfs/lzo.c
+> @@ -73,9 +73,9 @@ static void lzo_cleanup_workspace_manager(void)
+>  	btrfs_cleanup_workspace_manager(&wsm);
+>  }
+>  
+> -static struct list_head *lzo_get_workspace(void)
+> +static struct list_head *lzo_get_workspace(unsigned int level)
+>  {
+> -	return btrfs_get_workspace(&wsm);
+> +	return btrfs_get_workspace(&wsm, level);
+>  }
+>  
+>  static void lzo_put_workspace(struct list_head *ws)
+> @@ -93,7 +93,7 @@ static void lzo_free_workspace(struct list_head *ws)
+>  	kfree(workspace);
+>  }
+>  
+> -static struct list_head *lzo_alloc_workspace(void)
+> +static struct list_head *lzo_alloc_workspace(unsigned int level)
+>  {
+>  	struct workspace *workspace;
+>  
+> diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
+> index 04687bf692e3..e2173d0c4fd3 100644
+> --- a/fs/btrfs/zlib.c
+> +++ b/fs/btrfs/zlib.c
+> @@ -39,9 +39,9 @@ static void zlib_cleanup_workspace_manager(void)
+>  	btrfs_cleanup_workspace_manager(&wsm);
+>  }
+>  
+> -static struct list_head *zlib_get_workspace(void)
+> +static struct list_head *zlib_get_workspace(unsigned int level)
+>  {
+> -	return btrfs_get_workspace(&wsm);
+> +	return btrfs_get_workspace(&wsm, level);
+>  }
+>  
+>  static void zlib_put_workspace(struct list_head *ws)
+> @@ -58,7 +58,7 @@ static void zlib_free_workspace(struct list_head *ws)
+>  	kfree(workspace);
+>  }
+>  
+> -static struct list_head *zlib_alloc_workspace(void)
+> +static struct list_head *zlib_alloc_workspace(unsigned int level)
+>  {
+>  	struct workspace *workspace;
+>  	int workspacesize;
+> @@ -71,6 +71,7 @@ static struct list_head *zlib_alloc_workspace(void)
+>  			zlib_inflate_workspacesize());
+>  	workspace->strm.workspace = kvmalloc(workspacesize, GFP_KERNEL);
+>  	workspace->buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
+> +	workspace->level = level;
+>  	if (!workspace->strm.workspace || !workspace->buf)
+>  		goto fail;
+>  
+> diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
+> index b06eaf171be7..404101864220 100644
+> --- a/fs/btrfs/zstd.c
+> +++ b/fs/btrfs/zstd.c
+> @@ -53,9 +53,9 @@ static void zstd_cleanup_workspace_manager(void)
+>  	btrfs_cleanup_workspace_manager(&wsm);
+>  }
+>  
+> -static struct list_head *zstd_get_workspace(void)
+> +static struct list_head *zstd_get_workspace(unsigned int level)
+>  {
+> -	return btrfs_get_workspace(&wsm);
+> +	return btrfs_get_workspace(&wsm, level);
+>  }
+>  
+>  static void zstd_put_workspace(struct list_head *ws)
+> @@ -72,7 +72,7 @@ static void zstd_free_workspace(struct list_head *ws)
+>  	kfree(workspace);
+>  }
+>  
+> -static struct list_head *zstd_alloc_workspace(void)
+> +static struct list_head *zstd_alloc_workspace(unsigned int level)
+>  {
+>  	ZSTD_parameters params =
+>  			zstd_get_btrfs_parameters(ZSTD_BTRFS_MAX_INPUT);
+> 
