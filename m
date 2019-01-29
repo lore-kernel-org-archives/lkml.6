@@ -2,116 +2,121 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E65C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3CAC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18F0020856
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:05:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42FD72087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:06:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="lIZCE47Q"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WscQTZrx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbfA2WF4 (ORCPT
+        id S1729673AbfA2WGU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:05:56 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43241 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727570AbfA2WFz (ORCPT
+        Tue, 29 Jan 2019 17:06:20 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:11164 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727332AbfA2WGU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:05:55 -0500
-Received: by mail-qt1-f194.google.com with SMTP id i7so24084092qtj.10
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 14:05:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WkHarLW31VHhafsMLD+STTdwmaZxaox2qI9bgB04JG0=;
-        b=lIZCE47QO4ruAuG7mEKE5RqYOEDbqoMi9pdEVriPnR6HZHSISlyGSkUpCn8Tlo7u5n
-         +h9EjXiZyXJpxNVRBYD2C4iMmB/PIxJvAShetPIW7NpIOamXMale0E/g/ambvX9n2BMh
-         0b6beIHUOb5b2zrAUzTIUCPQx+qL3VScwUZkj4XuiCQSSr836TwLj2PvY5wVVcuPlBOM
-         9ftXuddhSyiJrk1qsECUwAb1igl0TNeo0XvZD0HZ1Ljl08J1h59KIRX6vq5/j5JajU/+
-         g8gtsCyncbMlQElLCJJ+6k3dhZXsqT3k/N4MKFxNnJ7dYkBoOjBmijfXZ7pT8QmGmllD
-         Fh+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WkHarLW31VHhafsMLD+STTdwmaZxaox2qI9bgB04JG0=;
-        b=Pj8UWl/SQhcJqTGItruvEQ8xvAwJkGB+9aSKP/7KlcFMo8KZJAMhCJDNJCuaAxbgVX
-         rLsn7pc2BzeZIe3kUJyLnWkHCNBj1/XKaEo/Lz/DVsujExRiFZXhZYnaB+p/Lm3lX0ZW
-         76GftQNwJAkotulll67NiXgg5j5+YrKFcmM8fjZBzkw9PuScz5SCwl4vzHZ9fSgqUBJ2
-         a8Qu/rMSuqlh52oq6w35M8JSGqdimE3j6dhU7UDecBKW/oaAnkmfbGCIxYDgF7A4U5jq
-         7j8ZRD88TgfJ/NxaTYLFhq3yvqw8toJPLKgynrkBu9LU+/fPw5v9eK5SbFlc26u2ludm
-         Sqbg==
-X-Gm-Message-State: AJcUukdioytl9e/7gQEVDxnxS8OR+VaAkA1bmi/zaso5nH8XbW+9KM/x
-        3blCkClTCgtMrUx/9i+9Y+ZJ9w==
-X-Google-Smtp-Source: ALg8bN4pOMBy+u8RtCDsgTP+6S2tW5CUY+fHPGfE1S5MDdPzMFEaii/GCYnhrowG6p2EuPoapC4BSw==
-X-Received: by 2002:a0c:e105:: with SMTP id w5mr25952350qvk.234.1548799554220;
-        Tue, 29 Jan 2019 14:05:54 -0800 (PST)
-Received: from localhost.localdomain ([205.153.92.177])
-        by smtp.gmail.com with ESMTPSA id w52sm93299565qtc.51.2019.01.29.14.05.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 14:05:53 -0800 (PST)
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH] rcu docs: repair some whitespace damage
-Date:   Tue, 29 Jan 2019 15:05:46 -0700
-Message-Id: <20190129220546.12934-1-tycho@tycho.ws>
-X-Mailer: git-send-email 2.19.1
+        Tue, 29 Jan 2019 17:06:20 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c50ce5c0002>; Tue, 29 Jan 2019 14:06:20 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 29 Jan 2019 14:06:19 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 29 Jan 2019 14:06:19 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 29 Jan
+ 2019 22:06:19 +0000
+Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 29 Jan
+ 2019 22:06:18 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 29 Jan 2019 22:06:18 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c50ce5b0000>; Tue, 29 Jan 2019 14:06:19 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V4 1/4] i2c: tegra: Sort all the include headers alphabetically
+Date:   Tue, 29 Jan 2019 14:06:15 -0800
+Message-ID: <1548799578-11638-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548799580; bh=jLit+45D97fSSwpTQXVG2IHJ3sMiIWvPV56R0o5NOkk=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=WscQTZrxJYPELngO7mrtnBNb9R0Pk8J3fMPN+fPCoG9kScchZcMfOouM42G1X7zdu
+         vm+VaM4WvzzFq2Fhf0C5g7Y9DuapRABxSadxL5F64OEfBbnVGtTCefMU88kBAq5SUJ
+         4CJATg6vQzFfIyxsBNbbY/Bs/HihDRa2UYdUcCC8h0auzt2Ra21ScwgG7kol+hoQ73
+         athqXxhx5X8pn5fh8wy2aw10b82671IGNFFugVBpiMG8FH2JmYhQRiQkIA7FiLwAB9
+         dKNKY7IgEKE7xJGZVIe/Yua6m4x8XlVSRImohf2cqMvrsVEfi54s7RsBB2NbY9CQnz
+         sg9c1/XUJ+HVA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While reading the docs I noticed some whitespace damage in diagram. Let's
-fix it up to be consistent with elsewhere in the document: use one leading
-tab, followed by spaces for any additional whitespace required.
+This patch sorts all the include headers alphabetically for the
+I2C tegra driver
 
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- Documentation/RCU/whatisRCU.txt | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ [V3, V4] : Removed unsued headers in tegra I2C
+ [V2] : Added this in V2 to sort the headers in tegra I2C
 
-diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
-index 4a6854318b17..419ec18b87bd 100644
---- a/Documentation/RCU/whatisRCU.txt
-+++ b/Documentation/RCU/whatisRCU.txt
-@@ -310,7 +310,7 @@ reader, updater, and reclaimer.
+ drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index e417ebf7628c..15806c984859 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,21 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
  
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
  
- 	    rcu_assign_pointer()
--	    			    +--------+
-+	                            +--------+
- 	    +---------------------->| reader |---------+
- 	    |                       +--------+         |
- 	    |                           |              |
-@@ -318,12 +318,12 @@ reader, updater, and reclaimer.
- 	    |                           |              | rcu_read_lock()
- 	    |                           |              | rcu_read_unlock()
- 	    |        rcu_dereference()  |              |
--       +---------+                      |              |
--       | updater |<---------------------+              |
--       +---------+                                     V
-+	    +---------+                 |              |
-+	    | updater |<----------------+              |
-+	    +---------+                                V
- 	    |                                    +-----------+
- 	    +----------------------------------->| reclaimer |
--	    				         +-----------+
-+	                                         +-----------+
- 	      Defer:
- 	      synchronize_rcu() & call_rcu()
- 
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
 -- 
-2.19.1
+2.7.4
 
