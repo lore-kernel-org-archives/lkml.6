@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09113C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF1CC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D77332175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2906721848
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:05:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729276AbfA2PFp (ORCPT
+        id S1729287AbfA2PFt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:05:45 -0500
-Received: from mga12.intel.com ([192.55.52.136]:8099 "EHLO mga12.intel.com"
+        Tue, 29 Jan 2019 10:05:49 -0500
+Received: from mga02.intel.com ([134.134.136.20]:34504 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728186AbfA2PBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728177AbfA2PBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 Jan 2019 10:01:51 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 07:01:50 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 07:01:50 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
-   d="scan'208";a="314531724"
+   d="scan'208";a="315840510"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 29 Jan 2019 07:01:48 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 29 Jan 2019 07:01:47 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 97136570; Tue, 29 Jan 2019 17:01:44 +0200 (EET)
+        id 6E3273B7; Tue, 29 Jan 2019 17:01:44 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Michael Jamet <michael.jamet@intel.com>,
@@ -40,9 +40,9 @@ Cc:     Michael Jamet <michael.jamet@intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         netdev@vger.kernel.org
-Subject: [PATCH 09/28] thunderbolt: Cache adapter specific capability offset into struct port
-Date:   Tue, 29 Jan 2019 18:01:24 +0300
-Message-Id: <20190129150143.12681-10-mika.westerberg@linux.intel.com>
+Subject: [PATCH 06/28] thunderbolt: Configure lanes when switch is initialized
+Date:   Tue, 29 Jan 2019 18:01:21 +0300
+Message-Id: <20190129150143.12681-7-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129150143.12681-1-mika.westerberg@linux.intel.com>
 References: <20190129150143.12681-1-mika.westerberg@linux.intel.com>
@@ -53,106 +53,210 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The adapter specific capability either is there or not if the port does
-not hold an adapter. Instead of always finding it on-demand we read the
-offset just once when the port is initialized.
-
-While there we update the struct port documentation to follow kernel-doc
-format.
+Thunderbolt 2 devices and beyond need to have additional bits set in
+link controller specific registers. This includes two bits in LC_SX_CTRL
+that tell the link controller which lane is connected and whether it is
+upstream facing or not.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/switch.c     | 4 ++++
- drivers/thunderbolt/tb.c         | 4 ++--
- drivers/thunderbolt/tb.h         | 3 +++
- drivers/thunderbolt/tunnel_pci.c | 9 +++------
- 4 files changed, 12 insertions(+), 8 deletions(-)
+ drivers/thunderbolt/lc.c      | 114 ++++++++++++++++++++++++++++++++++
+ drivers/thunderbolt/switch.c  |   9 +++
+ drivers/thunderbolt/tb.h      |   2 +
+ drivers/thunderbolt/tb_regs.h |  11 ++++
+ 4 files changed, 136 insertions(+)
 
+diff --git a/drivers/thunderbolt/lc.c b/drivers/thunderbolt/lc.c
+index 2134a55ed837..a5dddf176546 100644
+--- a/drivers/thunderbolt/lc.c
++++ b/drivers/thunderbolt/lc.c
+@@ -19,3 +19,117 @@ int tb_lc_read_uuid(struct tb_switch *sw, u32 *uuid)
+ 		return -EINVAL;
+ 	return tb_sw_read(sw, uuid, TB_CFG_SWITCH, sw->cap_lc + TB_LC_FUSE, 4);
+ }
++
++static int read_lc_desc(struct tb_switch *sw, u32 *desc)
++{
++	if (!sw->cap_lc)
++		return -EINVAL;
++	return tb_sw_read(sw, desc, TB_CFG_SWITCH, sw->cap_lc + TB_LC_DESC, 1);
++}
++
++static int find_port_lc_cap(struct tb_port *port)
++{
++	struct tb_switch *sw = port->sw;
++	int start, phys, ret, size;
++	u32 desc;
++
++	ret = read_lc_desc(sw, &desc);
++	if (ret)
++		return ret;
++
++	/* Start of port LC registers */
++	start = (desc & TB_LC_DESC_SIZE_MASK) >> TB_LC_DESC_SIZE_SHIFT;
++	size = (desc & TB_LC_DESC_PORT_SIZE_MASK) >> TB_LC_DESC_PORT_SIZE_SHIFT;
++	phys = tb_phy_port_from_link(port->port);
++
++	return sw->cap_lc + start + phys * size;
++}
++
++static int tb_lc_configure_lane(struct tb_port *port, bool configure)
++{
++	bool upstream = tb_is_upstream_port(port);
++	struct tb_switch *sw = port->sw;
++	u32 ctrl, lane;
++	int cap, ret;
++
++	if (sw->generation < 2)
++		return 0;
++
++	cap = find_port_lc_cap(port);
++	if (cap < 0)
++		return cap;
++
++	ret = tb_sw_read(sw, &ctrl, TB_CFG_SWITCH, cap + TB_LC_SX_CTRL, 1);
++	if (ret)
++		return ret;
++
++	/* Resolve correct lane */
++	if (port->port % 2)
++		lane = TB_LC_SX_CTRL_L1C;
++	else
++		lane = TB_LC_SX_CTRL_L2C;
++
++	if (configure) {
++		ctrl |= lane;
++		if (upstream)
++			ctrl |= TB_LC_SX_CTRL_UPSTREAM;
++	} else {
++		ctrl &= ~lane;
++		if (upstream)
++			ctrl &= ~TB_LC_SX_CTRL_UPSTREAM;
++	}
++
++	return tb_sw_write(sw, &ctrl, TB_CFG_SWITCH, cap + TB_LC_SX_CTRL, 1);
++}
++
++/**
++ * tb_lc_configure_link() - Let LC know about configured link
++ * @sw: Switch that is being added
++ *
++ * Informs LC of both parent switch and @sw that there is established
++ * link between the two.
++ */
++int tb_lc_configure_link(struct tb_switch *sw)
++{
++	struct tb_port *up, *down;
++	int ret;
++
++	if (!sw->config.enabled || !tb_route(sw))
++		return 0;
++
++	up = tb_upstream_port(sw);
++	down = tb_port_at(tb_route(sw), tb_to_switch(sw->dev.parent));
++
++	/* Configure parent link toward this switch */
++	ret = tb_lc_configure_lane(down, true);
++	if (ret)
++		return ret;
++
++	/* Configure upstream link from this switch to the parent */
++	ret = tb_lc_configure_lane(up, true);
++	if (ret)
++		tb_lc_configure_lane(down, false);
++
++	return ret;
++}
++
++/**
++ * tb_lc_unconfigure_link() - Let LC know about unconfigured link
++ * @sw: Switch to unconfigure
++ *
++ * Informs LC of both parent switch and @sw that the link between the
++ * two does not exist anymore.
++ */
++void tb_lc_unconfigure_link(struct tb_switch *sw)
++{
++	struct tb_port *up, *down;
++
++	if (sw->is_unplugged || !sw->config.enabled || !tb_route(sw))
++		return;
++
++	up = tb_upstream_port(sw);
++	down = tb_port_at(tb_route(sw), tb_to_switch(sw->dev.parent));
++
++	tb_lc_configure_lane(up, false);
++	tb_lc_configure_lane(down, false);
++}
 diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 1eee2502b5ba..fcafe4095de5 100644
+index bd96eebd8248..760332f57b5c 100644
 --- a/drivers/thunderbolt/switch.c
 +++ b/drivers/thunderbolt/switch.c
-@@ -585,6 +585,8 @@ static int tb_init_port(struct tb_port *port)
- 	if (res)
- 		return res;
+@@ -1301,6 +1301,10 @@ int tb_switch_configure(struct tb_switch *sw)
+ 	if (ret)
+ 		return ret;
  
-+	port->cap_adap = -ENOENT;
++	ret = tb_lc_configure_link(sw);
++	if (ret)
++		return ret;
 +
- 	/* Port 0 is the switch itself and has no PHY. */
- 	if (port->config.type == TB_TYPE_PORT && port->port != 0) {
- 		cap = tb_port_find_cap(port, TB_PORT_CAP_PHY);
-@@ -593,6 +595,8 @@ static int tb_init_port(struct tb_port *port)
- 			port->cap_phy = cap;
- 		else
- 			tb_port_WARN(port, "non switch port without a PHY\n");
-+	} else if (port->port != 0) {
-+		port->cap_adap = tb_port_find_cap(port, TB_PORT_CAP_ADAP);
- 	}
- 
- 	tb_dump_port(port->sw->tb, &port->config);
-diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-index 30e02c716f6c..8e9761d950d6 100644
---- a/drivers/thunderbolt/tb.c
-+++ b/drivers/thunderbolt/tb.c
-@@ -151,7 +151,7 @@ static struct tb_port *tb_find_unused_down_port(struct tb_switch *sw)
- 			continue;
- 		if (sw->ports[i].config.type != TB_TYPE_PCIE_DOWN)
- 			continue;
--		cap = tb_port_find_cap(&sw->ports[i], TB_PORT_CAP_ADAP);
-+		cap = sw->ports[i].cap_adap;
- 		if (cap < 0)
- 			continue;
- 		res = tb_port_read(&sw->ports[i], &data, TB_CFG_PORT, cap, 1);
-@@ -197,7 +197,7 @@ static void tb_activate_pcie_devices(struct tb *tb)
- 		}
- 
- 		/* check whether port is already activated */
--		cap = tb_port_find_cap(up_port, TB_PORT_CAP_ADAP);
-+		cap = up_port->cap_adap;
- 		if (cap < 0)
- 			continue;
- 		if (tb_port_read(up_port, &data, TB_CFG_PORT, cap, 1))
-diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index 3160169389cc..43a1d7dfba73 100644
---- a/drivers/thunderbolt/tb.h
-+++ b/drivers/thunderbolt/tb.h
-@@ -124,6 +124,8 @@ struct tb_switch {
-  * @remote: Remote port (%NULL if not connected)
-  * @xdomain: Remote host (%NULL if not connected)
-  * @cap_phy: Offset, zero if not found
-+ * @cap_adap: Offset of the adapter specific capability. Negative if not
-+ *	      present.
-  * @port: Port number on switch
-  * @disabled: Disabled by eeprom
-  * @dual_link_port: If the switch is connected using two ports, points
-@@ -136,6 +138,7 @@ struct tb_port {
- 	struct tb_port *remote;
- 	struct tb_xdomain *xdomain;
- 	int cap_phy;
-+	int cap_adap;
- 	u8 port;
- 	bool disabled;
- 	struct tb_port *dual_link_port;
-diff --git a/drivers/thunderbolt/tunnel_pci.c b/drivers/thunderbolt/tunnel_pci.c
-index 0637537ea53f..4fae236a4a39 100644
---- a/drivers/thunderbolt/tunnel_pci.c
-+++ b/drivers/thunderbolt/tunnel_pci.c
-@@ -148,12 +148,9 @@ bool tb_pci_is_invalid(struct tb_pci_tunnel *tunnel)
- static int tb_pci_port_active(struct tb_port *port, bool active)
- {
- 	u32 word = active ? 0x80000000 : 0x0;
--	int cap = tb_port_find_cap(port, TB_PORT_CAP_ADAP);
--	if (cap < 0) {
--		tb_port_warn(port, "TB_PORT_CAP_ADAP not found: %d\n", cap);
--		return cap;
--	}
--	return tb_port_write(port, &word, TB_CFG_PORT, cap, 1);
-+	if (port->cap_adap < 0)
-+		return -ENXIO;
-+	return tb_port_write(port, &word, TB_CFG_PORT, port->cap_adap, 1);
+ 	return tb_plug_events_active(sw, true);
  }
  
- /**
+@@ -1504,6 +1508,7 @@ void tb_switch_remove(struct tb_switch *sw)
+ 
+ 	if (!sw->is_unplugged)
+ 		tb_plug_events_active(sw, false);
++	tb_lc_unconfigure_link(sw);
+ 
+ 	tb_switch_nvm_remove(sw);
+ 
+@@ -1563,6 +1568,10 @@ int tb_switch_resume(struct tb_switch *sw)
+ 	if (err)
+ 		return err;
+ 
++	err = tb_lc_configure_link(sw);
++	if (err)
++		return err;
++
+ 	err = tb_plug_events_active(sw, true);
+ 	if (err)
+ 		return err;
+diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
+index 530464b25dcb..e61c2409021d 100644
+--- a/drivers/thunderbolt/tb.h
++++ b/drivers/thunderbolt/tb.h
+@@ -451,6 +451,8 @@ int tb_drom_read(struct tb_switch *sw);
+ int tb_drom_read_uid_only(struct tb_switch *sw, u64 *uid);
+ 
+ int tb_lc_read_uuid(struct tb_switch *sw, u32 *uuid);
++int tb_lc_configure_link(struct tb_switch *sw);
++void tb_lc_unconfigure_link(struct tb_switch *sw);
+ 
+ static inline int tb_route_length(u64 route)
+ {
+diff --git a/drivers/thunderbolt/tb_regs.h b/drivers/thunderbolt/tb_regs.h
+index 4895ae9f0b40..e0f867dad5cf 100644
+--- a/drivers/thunderbolt/tb_regs.h
++++ b/drivers/thunderbolt/tb_regs.h
+@@ -238,6 +238,17 @@ struct tb_regs_hop {
+ } __packed;
+ 
+ /* Common link controller registers */
++#define TB_LC_DESC			0x02
++#define TB_LC_DESC_SIZE_SHIFT		8
++#define TB_LC_DESC_SIZE_MASK		GENMASK(15, 8)
++#define TB_LC_DESC_PORT_SIZE_SHIFT	16
++#define TB_LC_DESC_PORT_SIZE_MASK	GENMASK(27, 16)
+ #define TB_LC_FUSE			0x03
+ 
++/* Link controller registers */
++#define TB_LC_SX_CTRL			0x96
++#define TB_LC_SX_CTRL_L1C		BIT(16)
++#define TB_LC_SX_CTRL_L2C		BIT(20)
++#define TB_LC_SX_CTRL_UPSTREAM		BIT(30)
++
+ #endif
 -- 
 2.20.1
 
