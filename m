@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF920C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D6AC282D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 869192083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82C7A20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762753;
-	bh=ZkGroI5MD2nsDXYDZmaTPRxsiCD/73NJ7sHkL4Npcq8=;
+	s=default; t=1548762757;
+	bh=Am/iAC53N+6DzzW1NJcGiuSetL6AA5uZvNr9mtfvjIs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gvYLFNxhE8zc/h4eCz1EFBzrO/6zv1tz6KivrXAdmOrQLXVxIjmKqOjPFbIzIpQV3
-	 yd4tmZjdGuajK0YB0Z1whl1bx/4eXd+63nHVgZcicFGIhzD2d6lRvJ9XJe0jvNuzsB
-	 JO1O+KwQrO53VBOu9w/FPRHlrZMQFoI96oRjRFY0=
+	b=pJj20rm8FO+3/wrz6icO6moB5gO6ngDq/TxYlK0d64ksrrPqlBIpsK0m0yIY+2GEP
+	 K5reDoLlvAvt0AyPx2bC7C2IpI10VdyUbLXvwjOj3Hd0mGeD/HOqsi9PAWMsFaKoPr
+	 /zfOKb4ZzSQGu9qBsOGOe1QfvZbtrXEy1ZWb50D0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732112AbfA2Lwc (ORCPT
+        id S1731576AbfA2Lwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:52:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44282 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:52:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729750AbfA2Lw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:52:27 -0500
+        id S1732083AbfA2Lwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:52:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 728C120882;
-        Tue, 29 Jan 2019 11:52:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B4A62083B;
+        Tue, 29 Jan 2019 11:52:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762747;
-        bh=ZkGroI5MD2nsDXYDZmaTPRxsiCD/73NJ7sHkL4Npcq8=;
+        s=default; t=1548762750;
+        bh=Am/iAC53N+6DzzW1NJcGiuSetL6AA5uZvNr9mtfvjIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YWzYeFsy9a/1alZSQcLYGpql/9o7HBfDHKwecE4K3TVPSp64E2RI5WH/z0scSS7K3
-         SLL7mc72RZdvV+TNdv9vLGAI5TXaSiJBEzbaPubYKhAN+mfhyhJVrktDHrP6+aN4dN
-         ru2sHuifTH49y4Z0LF4s8VffUU0K1Ri+/T4vbu7k=
+        b=xuc4N+WcD2dlCQumjViadxOVkZtg9MPyQl01X/XJX/Dyi+BAnLQrBekERabew89ib
+         N6Mu27llx5yjJLqKu43yyLASFo4T4eAUnzZbAT3TbCDxkX8Aex2CB+CeFOATox1bgZ
+         sQJ2c1MUbNhaEDwU+yyms0sLC1alE4qIA/p5zlVI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.9 44/44] btrfs: dev-replace: go back to suspended state if target device is missing
-Date:   Tue, 29 Jan 2019 12:36:39 +0100
-Message-Id: <20190129113143.540292866@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: [PATCH 4.9 19/44] tty: Handle problem if line discipline does not have receive_buf
+Date:   Tue, 29 Jan 2019 12:36:14 +0100
+Message-Id: <20190129113141.526727692@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -66,40 +64,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anand Jain <anand.jain@oracle.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 0d228ece59a35a9b9e8ff0d40653234a6d90f61e upstream.
+commit 27cfb3a53be46a54ec5e0bd04e51995b74c90343 upstream.
 
-At the time of forced unmount we place the running replace to
-BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED state, so when the system comes
-back and expect the target device is missing.
+Some tty line disciplines do not have a receive buf callback, so
+properly check for that before calling it.  If they do not have this
+callback, just eat the character quietly, as we can't fail this call.
 
-Then let the replace state continue to be in
-BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED state instead of
-BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED as there isn't any matching scrub
-running as part of replace.
-
-Fixes: e93c89c1aaaa ("Btrfs: add new sources for device replace code")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Reported-by: Jann Horn <jannh@google.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/dev-replace.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -787,6 +787,8 @@ int btrfs_resume_dev_replace_async(struc
- 			   "cannot continue dev_replace, tgtdev is missing");
- 		btrfs_info(fs_info,
- 			   "you may cancel the operation after 'mount -o degraded'");
-+		dev_replace->replace_state =
-+					BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED;
- 		btrfs_dev_replace_unlock(dev_replace, 1);
- 		return 0;
- 	}
+---
+ drivers/tty/tty_io.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2324,7 +2324,8 @@ static int tiocsti(struct tty_struct *tt
+ 	ld = tty_ldisc_ref_wait(tty);
+ 	if (!ld)
+ 		return -EIO;
+-	ld->ops->receive_buf(tty, &ch, &mbz, 1);
++	if (ld->ops->receive_buf)
++		ld->ops->receive_buf(tty, &ch, &mbz, 1);
+ 	tty_ldisc_deref(ld);
+ 	return 0;
+ }
 
 
