@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C00C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29941C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80974218AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:43:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E304120856
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:43:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762207;
-	bh=n0kRVq9QpyAu7Slo0WmDiiedmmGXvLL0g6oW/x6ihuQ=;
+	s=default; t=1548762210;
+	bh=6GsylGdz2pKvxwKBX1DxYX3rpprimmSMpQrw6u7JzCk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IM3QFM+ubnh8lY9oTIdhHD40+n1KfvEwyFK10PspcQnxLgfR0PYo1f8/rmWque7Jp
-	 8v7eOpfJ6gIGUysWswtJlw4lEnSfE+tR1NM6qcLQZEhOYCAlTs7k30qXvLbam7DXPu
-	 lQH4m0lySlvV+0amND5hIY6qeZpYRy33SlYPKcYg=
+	b=VpuKFZdiSxrw15ZNVSEF5h9BveTB2UsOIwrNOx0aYLBcIyHDAU7kP2ytDsVlCDLGD
+	 eMcaENdT53WJqSmSa/PW0SSiCK1JnyXEMjnzdGuEn/hTP28xdxd1ma6gwu+aFjR7dd
+	 MbLdFKsVlJKBC+6UaIOVrvKMImmMkqgpQJhzhSmc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730325AbfA2LnZ (ORCPT
+        id S1730342AbfA2Ln3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:43:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33278 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:43:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730297AbfA2LnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:43:24 -0500
+        id S1730297AbfA2Ln0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:43:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48B0720856;
-        Tue, 29 Jan 2019 11:43:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD6F020856;
+        Tue, 29 Jan 2019 11:43:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762203;
-        bh=n0kRVq9QpyAu7Slo0WmDiiedmmGXvLL0g6oW/x6ihuQ=;
+        s=default; t=1548762206;
+        bh=6GsylGdz2pKvxwKBX1DxYX3rpprimmSMpQrw6u7JzCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cQu3wF39EKLR7cZXBw5FPUV9AYenZ2wyLOl1cEQcpXqD5AidUTGwtWX4Sg9LjL1Gv
-         PO6KZc1TIQ+oQZe2ON95/x6tCLGC6KW8uiCLGduqKGs+3O6LcbZV5xnYMDCozlii74
-         /2LBc3LSb6pkF+C8wH4G088s1Ij8mWbjqRvZOU6k=
+        b=fzB8MgrDg5bsWPptmp+ajABpBoZCxAVbQqRlEiYtqTFlgoUYUeLs/ky2GavND7zIv
+         VnOyZjpsQjMkLJPpMA95i5iWz2cK70uglfHzdJTMduETKfW5OQNC0oRbRHnq07j61V
+         iqO5dFqafIUaidrRR8qIzIHBaHcpz92siAphQ6Z8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Olsson <martin.olsson+netdev@sentorsecurity.com>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Pravin B Shelar <pshelar@ovn.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 008/103] net_sched: refetch skb protocol for each filter
-Date:   Tue, 29 Jan 2019 12:34:45 +0100
-Message-Id: <20190129113200.023547747@linuxfoundation.org>
+Subject: [PATCH 4.19 009/103] openvswitch: Avoid OOB read when parsing flow nlattrs
+Date:   Tue, 29 Jan 2019 12:34:46 +0100
+Message-Id: <20190129113200.073654498@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -69,60 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-[ Upstream commit cd0c4e70fc0ccfa705cdf55efb27519ce9337a26 ]
+[ Upstream commit 04a4af334b971814eedf4e4a413343ad3287d9a9 ]
 
-Martin reported a set of filters don't work after changing
-from reclassify to continue. Looking into the code, it
-looks like skb protocol is not always fetched for each
-iteration of the filters. But, as demonstrated by Martin,
-TC actions could modify skb->protocol, for example act_vlan,
-this means we have to refetch skb protocol in each iteration,
-rather than using the one we fetch in the beginning of the loop.
+For nested and variable attributes, the expected length of an attribute
+is not known and marked by a negative number.  This results in an OOB
+read when the expected length is later used to check if the attribute is
+all zeros. Fix this by using the actual length of the attribute rather
+than the expected length.
 
-This bug is _not_ introduced by commit 3b3ae880266d
-("net: sched: consolidate tc_classify{,_compat}"), technically,
-if act_vlan is the only action that modifies skb protocol, then
-it is commit c7e2b9689ef8 ("sched: introduce vlan action") which
-introduced this bug.
-
-Reported-by: Martin Olsson <martin.olsson+netdev@sentorsecurity.com>
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Jiri Pirko <jiri@resnulli.us>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Acked-by: Pravin B Shelar <pshelar@ovn.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/cls_api.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/openvswitch/flow_netlink.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sched/cls_api.c
-+++ b/net/sched/cls_api.c
-@@ -960,7 +960,6 @@ static int tcf_block_cb_call(struct tcf_
- int tcf_classify(struct sk_buff *skb, const struct tcf_proto *tp,
- 		 struct tcf_result *res, bool compat_mode)
- {
--	__be16 protocol = tc_skb_protocol(skb);
- #ifdef CONFIG_NET_CLS_ACT
- 	const int max_reclassify_loop = 4;
- 	const struct tcf_proto *orig_tp = tp;
-@@ -970,6 +969,7 @@ int tcf_classify(struct sk_buff *skb, co
- reclassify:
- #endif
- 	for (; tp; tp = rcu_dereference_bh(tp->next)) {
-+		__be16 protocol = tc_skb_protocol(skb);
- 		int err;
+--- a/net/openvswitch/flow_netlink.c
++++ b/net/openvswitch/flow_netlink.c
+@@ -500,7 +500,7 @@ static int __parse_flow_nlattrs(const st
+ 			return -EINVAL;
+ 		}
  
- 		if (tp->protocol != protocol &&
-@@ -1002,7 +1002,6 @@ reset:
- 	}
- 
- 	tp = first_tp;
--	protocol = tc_skb_protocol(skb);
- 	goto reclassify;
- #endif
- }
+-		if (!nz || !is_all_zero(nla_data(nla), expected_len)) {
++		if (!nz || !is_all_zero(nla_data(nla), nla_len(nla))) {
+ 			attrs |= 1 << type;
+ 			a[type] = nla;
+ 		}
 
 
