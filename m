@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DBEC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 077BBC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 728CF20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:42:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEA1420856
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762158;
-	bh=IYAwTwgNvbg4cLD9hPPVaRkjV/xV+LZ7sCcpvyx5L54=;
+	s=default; t=1548762162;
+	bh=dlMPagLLzwkkgOWrRKMdRrYdWvVQ/1kibFRBhXWRoYw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aX4rCPKwGia0I5rY/S2Rx4vQBkAenoAoGlpFDMOwuqxi+/ZSCtnpxsUbgPy5sHepg
-	 o6R9wpa2JyrFjYD0rXOwDjbdJ+sL+h1t8X+0ExZKmx3IxLHBbjBWaZC2KxCQLJlFz+
-	 Pi7SstGleoFXuCEc4pGZGZmzuaFaBgXkHkcQiXV4=
+	b=CmTzRo/Gcruh/NVdZWGUOSr/F6Fl8Jc3wHsrLqMp0+ZVQueaBiTq7Ir+DIxzPVR42
+	 s0xnHtQzParDqoeHO3LbT8A+X+Z4FVopyLGK4NYMqGj0P8tZpBmJcFczfBDnxXaETE
+	 32rz+tOujOhJapsvwt0zXd5ZDkTvAApG7zr302IA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729664AbfA2Lmh (ORCPT
+        id S1730114AbfA2Lml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:42:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60260 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:42:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730058AbfA2Lma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:42:30 -0500
+        id S1730092AbfA2Lmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:42:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C14C20882;
-        Tue, 29 Jan 2019 11:42:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBA7A20857;
+        Tue, 29 Jan 2019 11:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762149;
-        bh=IYAwTwgNvbg4cLD9hPPVaRkjV/xV+LZ7sCcpvyx5L54=;
+        s=default; t=1548762158;
+        bh=dlMPagLLzwkkgOWrRKMdRrYdWvVQ/1kibFRBhXWRoYw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oslmhTE1uItdTT6qessHhQl29VmjrBv1S2d51WksVwWX74HTkgu3hbpmnH7be66Kc
-         lL6OBglOc3Uz1L9mCAqES+bztr6MXLSRYrhiY7JLCqh1rVxjHLHqEcS+QnwIob5Dc+
-         N5yoHwnBwPtvn8HsP/t5C6roTIUiNsrZqMTDjTtk=
+        b=maJFOXj+/s1TD7bgPhsOdd3bEf4nwVQj7jYQj3CCwbfWldhfeNCue/LpQ06F57B4M
+         bmesGf0ZPwCEuedrNcBKV+KpGl1AS/gwvRkWQR5oF3RqX2tW3GhptH5CSbxfMbocpv
+         cH5v0/+XfxaHoDioqmrasu6802blFsE/HukOe81g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Raju Rangoju <rajur@chelsio.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.20 097/117] nvmet-rdma: fix null dereference under heavy load
-Date:   Tue, 29 Jan 2019 12:35:48 +0100
-Message-Id: <20190129113212.229098709@linuxfoundation.org>
+        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 011/103] mlxsw: pci: Increase PCI SW reset timeout
+Date:   Tue, 29 Jan 2019 12:34:48 +0100
+Message-Id: <20190129113200.200958888@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
-References: <20190129113207.477505932@linuxfoundation.org>
+In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
+References: <20190129113159.567154026@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,75 +63,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Raju Rangoju <rajur@chelsio.com>
+From: Nir Dotan <nird@mellanox.com>
 
-commit 5cbab6303b4791a3e6713dfe2c5fda6a867f9adc upstream.
+[ Upstream commit d2f372ba0914e5722ac28e15f2ed2db61bcf0e44 ]
 
-Under heavy load if we don't have any pre-allocated rsps left, we
-dynamically allocate a rsp, but we are not actually allocating memory
-for nvme_completion (rsp->req.rsp). In such a case, accessing pointer
-fields (req->rsp->status) in nvmet_req_init() will result in crash.
+Spectrum-2 PHY layer introduces a calibration period which is a part of the
+Spectrum-2 firmware boot process. Hence increase the SW timeout waiting for
+the firmware to come out of boot. This does not increase system boot time
+in cases where the firmware PHY calibration process is done quickly.
 
-To fix this, allocate the memory for nvme_completion by calling
-nvmet_rdma_alloc_rsp()
-
-Fixes: 8407879c("nvmet-rdma:fix possible bogus dereference under heavy load")
-
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Raju Rangoju <rajur@chelsio.com>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: c3ab435466d5 ("mlxsw: spectrum: Extend to support Spectrum-2 ASIC")
+Signed-off-by: Nir Dotan <nird@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/nvme/target/rdma.c |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlxsw/pci_hw.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/nvme/target/rdma.c
-+++ b/drivers/nvme/target/rdma.c
-@@ -139,6 +139,10 @@ static void nvmet_rdma_recv_done(struct
- static void nvmet_rdma_read_data_done(struct ib_cq *cq, struct ib_wc *wc);
- static void nvmet_rdma_qp_event(struct ib_event *event, void *priv);
- static void nvmet_rdma_queue_disconnect(struct nvmet_rdma_queue *queue);
-+static void nvmet_rdma_free_rsp(struct nvmet_rdma_device *ndev,
-+				struct nvmet_rdma_rsp *r);
-+static int nvmet_rdma_alloc_rsp(struct nvmet_rdma_device *ndev,
-+				struct nvmet_rdma_rsp *r);
+--- a/drivers/net/ethernet/mellanox/mlxsw/pci_hw.h
++++ b/drivers/net/ethernet/mellanox/mlxsw/pci_hw.h
+@@ -27,7 +27,7 @@
  
- static const struct nvmet_fabrics_ops nvmet_rdma_ops;
- 
-@@ -182,9 +186,17 @@ nvmet_rdma_get_rsp(struct nvmet_rdma_que
- 	spin_unlock_irqrestore(&queue->rsps_lock, flags);
- 
- 	if (unlikely(!rsp)) {
--		rsp = kmalloc(sizeof(*rsp), GFP_KERNEL);
-+		int ret;
-+
-+		rsp = kzalloc(sizeof(*rsp), GFP_KERNEL);
- 		if (unlikely(!rsp))
- 			return NULL;
-+		ret = nvmet_rdma_alloc_rsp(queue->dev, rsp);
-+		if (unlikely(ret)) {
-+			kfree(rsp);
-+			return NULL;
-+		}
-+
- 		rsp->allocated = true;
- 	}
- 
-@@ -197,6 +209,7 @@ nvmet_rdma_put_rsp(struct nvmet_rdma_rsp
- 	unsigned long flags;
- 
- 	if (unlikely(rsp->allocated)) {
-+		nvmet_rdma_free_rsp(rsp->queue->dev, rsp);
- 		kfree(rsp);
- 		return;
- 	}
+ #define MLXSW_PCI_SW_RESET			0xF0010
+ #define MLXSW_PCI_SW_RESET_RST_BIT		BIT(0)
+-#define MLXSW_PCI_SW_RESET_TIMEOUT_MSECS	5000
++#define MLXSW_PCI_SW_RESET_TIMEOUT_MSECS	13000
+ #define MLXSW_PCI_SW_RESET_WAIT_MSECS		100
+ #define MLXSW_PCI_FW_READY			0xA1844
+ #define MLXSW_PCI_FW_READY_MASK			0xFFFF
 
 
