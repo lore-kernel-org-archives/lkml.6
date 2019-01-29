@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 747A1C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AA6C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 463C520882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2705521873
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762329;
-	bh=jBAvyyvdUS3A9m5WVPOugNXzymzv4yetnLohzc9ZJq0=;
+	s=default; t=1548762333;
+	bh=fGDkwQGhGqzn1maz9TOU/oI8unXySvt4eWGmLqA7f1g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i78NTb+mHQjITlTWXH2rYXSFRGoYF5yZYg8mrVHfW4+p4Mq8oa+zZo6PWUkBtIPX+
-	 bGi8fo4OreCFRMaqjA65WosVo7SvH2eiegEoNIeqFMkPWMw0A+M/UdH/plzoYV+2A/
-	 +qg2yEwu/Cdsdj8eMwhaS4ZaMUW5viYdIuv+9Ys0=
+	b=v24v4mHChZ08pzJA0EDav9c4HtaZCPukgpBIaVeaP7jWb8pFP0hsFBbf1mVx/06Mh
+	 zxunGYSMeREahnQrE6YqjLA+DN9wzROeR3mVTb4A2rn0hnxYZxaI7PApVS885dhuGW
+	 JAoeS8kJjnl52flNLhldON5BssZMndTXSBU2nuWw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730772AbfA2Lp2 (ORCPT
+        id S1730786AbfA2Lpb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:45:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35860 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:45:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729611AbfA2LpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:45:25 -0500
+        id S1730771AbfA2Lp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:45:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7937E2083B;
-        Tue, 29 Jan 2019 11:45:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C570214DA;
+        Tue, 29 Jan 2019 11:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762325;
-        bh=jBAvyyvdUS3A9m5WVPOugNXzymzv4yetnLohzc9ZJq0=;
+        s=default; t=1548762327;
+        bh=fGDkwQGhGqzn1maz9TOU/oI8unXySvt4eWGmLqA7f1g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HkkzOcpy1AIayO6brb/ALlG1n0rRLO7D4S12Jx9i7fBGqsNELVkux7BxJ2qrBV2m3
-         s2Ijr9HCi526Kq1fP8ic3OHBzQr+McFtzCvMP22QdW2wsVF9jYeaqWY/LVPLCcgazZ
-         UEbCPpw8JQfaFIYsdOlv/RR+h78lUY+eS9TrekiA=
+        b=CPNExKtsyz1pGSUH8eagtQAeGoHx0gKd7RPkdWTwuLeJXTyMfns246ObxT3bI4oZ1
+         YooLJHAeTtVfydJxhfZs8SSeUSI4H0CwTgJKeczWEnjn9BdYF3f4vqyE31u5Jgb3Zm
+         Zj0KeRWQuh/W0OWKCD/M6gTTy55h7YMitKv8ow/o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wanpeng Li <wanpengli@tencent.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
+        stable@vger.kernel.org,
+        syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com,
+        Tom Roeder <tmroeder@google.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 069/103] KVM: x86: WARN_ONCE if sending a PV IPI returns a fatal error
-Date:   Tue, 29 Jan 2019 12:35:46 +0100
-Message-Id: <20190129113204.772388391@linuxfoundation.org>
+Subject: [PATCH 4.19 070/103] kvm: x86/vmx: Use kzalloc for cached_vmcs12
+Date:   Tue, 29 Jan 2019 12:35:47 +0100
+Message-Id: <20190129113204.848390406@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,57 +66,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Tom Roeder <tmroeder@google.com>
 
-commit de81c2f912ef57917bdc6d63b410c534c3e07982 upstream.
+commit 3a33d030daaa7c507e1c12d5adcf828248429593 upstream.
 
-KVM hypercalls return a negative value error code in case of a fatal
-error, e.g. when the hypercall isn't supported or was made with invalid
-parameters.  WARN_ONCE on fatal errors when sending PV IPIs as any such
-error all but guarantees an SMP system will hang due to a missing IPI.
+This changes the allocation of cached_vmcs12 to use kzalloc instead of
+kmalloc. This removes the information leak found by Syzkaller (see
+Reported-by) in this case and prevents similar leaks from happening
+based on cached_vmcs12.
 
-Fixes: aaffcfd1e82d ("KVM: X86: Implement PV IPIs in linux guest")
+It also changes vmx_get_nested_state to copy out the full 4k VMCS12_SIZE
+in copy_to_user rather than only the size of the struct.
+
+Tested: rebuilt against head, booted, and ran the syszkaller repro
+  https://syzkaller.appspot.com/text?tag=ReproC&x=174efca3400000 without
+  observing any problems.
+
+Reported-by: syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
+Fixes: 8fcc4b5923af5de58b80b53a069453b135693304
 Cc: stable@vger.kernel.org
-Cc: Wanpeng Li <wanpengli@tencent.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Tom Roeder <tmroeder@google.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/kvm.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/kvm/vmx.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -457,6 +457,7 @@ static void __send_ipi_mask(const struct
- #else
- 	u64 ipi_bitmap = 0;
- #endif
-+	long ret;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -8290,11 +8290,11 @@ static int enter_vmx_operation(struct kv
+ 	if (r < 0)
+ 		goto out_vmcs02;
  
- 	if (cpumask_empty(mask))
- 		return;
-@@ -482,8 +483,9 @@ static void __send_ipi_mask(const struct
- 		} else if (apic_id < min + KVM_IPI_CLUSTER_SIZE) {
- 			max = apic_id < max ? max : apic_id;
- 		} else {
--			kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
-+			ret = kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
- 				(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, icr);
-+			WARN_ONCE(ret < 0, "KVM: failed to send PV IPI: %ld", ret);
- 			min = max = apic_id;
- 			ipi_bitmap = 0;
- 		}
-@@ -491,8 +493,9 @@ static void __send_ipi_mask(const struct
+-	vmx->nested.cached_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
++	vmx->nested.cached_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
+ 	if (!vmx->nested.cached_vmcs12)
+ 		goto out_cached_vmcs12;
+ 
+-	vmx->nested.cached_shadow_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
++	vmx->nested.cached_shadow_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
+ 	if (!vmx->nested.cached_shadow_vmcs12)
+ 		goto out_cached_shadow_vmcs12;
+ 
+@@ -13984,13 +13984,17 @@ static int vmx_get_nested_state(struct k
+ 	else if (enable_shadow_vmcs && !vmx->nested.sync_shadow_vmcs)
+ 		copy_shadow_to_vmcs12(vmx);
+ 
+-	if (copy_to_user(user_kvm_nested_state->data, vmcs12, sizeof(*vmcs12)))
++	/*
++	 * Copy over the full allocated size of vmcs12 rather than just the size
++	 * of the struct.
++	 */
++	if (copy_to_user(user_kvm_nested_state->data, vmcs12, VMCS12_SIZE))
+ 		return -EFAULT;
+ 
+ 	if (nested_cpu_has_shadow_vmcs(vmcs12) &&
+ 	    vmcs12->vmcs_link_pointer != -1ull) {
+ 		if (copy_to_user(user_kvm_nested_state->data + VMCS12_SIZE,
+-				 get_shadow_vmcs12(vcpu), sizeof(*vmcs12)))
++				 get_shadow_vmcs12(vcpu), VMCS12_SIZE))
+ 			return -EFAULT;
  	}
  
- 	if (ipi_bitmap) {
--		kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
-+		ret = kvm_hypercall4(KVM_HC_SEND_IPI, (unsigned long)ipi_bitmap,
- 			(unsigned long)(ipi_bitmap >> BITS_PER_LONG), min, icr);
-+		WARN_ONCE(ret < 0, "KVM: failed to send PV IPI: %ld", ret);
- 	}
- 
- 	local_irq_restore(flags);
 
 
