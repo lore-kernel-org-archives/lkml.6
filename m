@@ -2,134 +2,133 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6045C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41438C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 798D820882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761960;
-	bh=ieLL6maC+/Il3iQvHcB5hGZbFbso1LJG07gmPRNHA2M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QrxrpEwLZe6CTznxmZjH7kxNekXQbmNxIAMibYmtWBpwGob5cXJJZTBPc2ztoIgrz
-	 1umvlxlEb0iESKMA3uXc96Sq9N35G9vd0boTP8OmZjmv7ePMqz3XMTZzGzXERYWXv8
-	 YNjlOWCtBxC3w2DMa9RU46m7vq/hL3ShHFZeF5FA=
+	by mail.kernel.org (Postfix) with ESMTP id 1BA5120857
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbfA2LjS (ORCPT
+        id S1728821AbfA2LjW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:39:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55934 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:39:22 -0500
+Received: from foss.arm.com ([217.140.101.70]:34732 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729390AbfA2LjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:39:16 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A99CA20844;
-        Tue, 29 Jan 2019 11:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761955;
-        bh=ieLL6maC+/Il3iQvHcB5hGZbFbso1LJG07gmPRNHA2M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AyJB8Br4+mh5NQnmkO0/4Gy6G7rvPu4tWkRSDG+SW87IVOeygWo0KEm40JltE8oBi
-         lyrdzjW2ZX04MIOLzdTj3CE9kdZXYj5DOF8FG6jvAMP3VBDToGvlFinygT2aB0YwWr
-         conyZm8ZYQkvbW6b3iIFmugP8xfbRH/X3xG+f4m4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        stable@kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 058/117] hv_balloon: avoid touching uninitialized struct page during tail onlining
-Date:   Tue, 29 Jan 2019 12:35:09 +0100
-Message-Id: <20190129113210.571420906@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
-References: <20190129113207.477505932@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1729404AbfA2LjS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:39:18 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA353EBD;
+        Tue, 29 Jan 2019 03:39:17 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37ABF3F589;
+        Tue, 29 Jan 2019 03:39:15 -0800 (PST)
+Date:   Tue, 29 Jan 2019 11:39:10 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: Re: [PATCHv3 00/27] PCI: refactor Mobiveil driver and add PCIe Gen4
+ driver for NXP Layerscape SoCs
+Message-ID: <20190129113910.GA7467@e107981-ln.cambridge.arm.com>
+References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Jan 29, 2019 at 08:08:28AM +0000, Z.q. Hou wrote:
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> 
+> This patch set is aim to refactor the Mobiveil driver and add
+> PCIe support for NXP Layerscape series SoCs integrated Mobiveil's
+> PCIe Gen4 controller.
+> 
+> Hou Zhiqiang (27):
+>   PCI: mobiveil: uniform the register accessors
+>   PCI: mobiveil: format the code without function change
+>   PCI: mobiveil: correct the returned error number
+>   PCI: mobiveil: remove flag MSI_FLAG_MULTI_PCI_MSI
+>   PCI: mobiveil: correct PCI base address in MEM/IO outbound windows
+>   PCI: mobiveil: replace the resource list iteration function
+>   PCI: mobiveil: use WIN_NUM_0 explicitly for CFG outbound window
+>   PCI: mobiveil: use the 1st inbound window for MEM inbound transactions
+>   PCI: mobiveil: correct inbound/outbound window setup routines
+>   PCI: mobiveil: fix the INTx process error
+>   PCI: mobiveil: only fix up the Class Code field
+>   PCI: mobiveil: move out the link up waiting from mobiveil_host_init
+>   PCI: mobiveil: move irq chained handler setup out of DT parse
+>   PCI: mobiveil: initialize Primary/Secondary/Subordinate bus number
+>   dt-bindings: pci: mobiveil: change gpio_slave and apb_csr to optional
+>   PCI: mobiveil: refactor Mobiveil PCIe Host Bridge IP driver
+>   PCI: mobiveil: fix the checking of valid device
+>   PCI: mobiveil: continue to initialize the host upon no PCIe link
+>   PCI: mobiveil: disabled IB and OB windows set by bootloader
+>   PCI: mobiveil: add Byte and Half-Word width register accessors
+>   PCI: mobiveil: make mobiveil_host_init can be used to re-init host
+>   dt-bindings: pci: Add NXP Layerscape SoCs PCIe Gen4 controller
+>   PCI: mobiveil: add PCIe Gen4 RC driver for NXP Layerscape SoCs
+>   PCI: mobiveil: ls_pcie_g4: add Workaround for A-011577
+>   PCI: mobiveil: ls_pcie_g4: add Workaround for A-011451
+>   arm64: dts: freescale: lx2160a: add pcie DT nodes
+>   arm64: defconfig: Enable CONFIG_PCI_LAYERSCAPE_GEN4
 
-------------------
+Subrahmanya,
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+Either you review this series or I will have to drop you from
+the MAINTAINERS list for this driver, I am sorry but I asked you
+before to no avail.
 
-commit da8ced360ca8ad72d8f41f5c8fcd5b0e63e1555f upstream.
+Thanks,
+Lorenzo
 
-Hyper-V memory hotplug protocol has 2M granularity and in Linux x86 we use
-128M. To deal with it we implement partial section onlining by registering
-custom page onlining callback (hv_online_page()). Later, when more memory
-arrives we try to online the 'tail' (see hv_bring_pgs_online()).
-
-It was found that in some cases this 'tail' onlining causes issues:
-
- BUG: Bad page state in process kworker/0:2  pfn:109e3a
- page:ffffe08344278e80 count:0 mapcount:1 mapping:0000000000000000 index:0x0
- flags: 0xfffff80000000()
- raw: 000fffff80000000 dead000000000100 dead000000000200 0000000000000000
- raw: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
- page dumped because: nonzero mapcount
- ...
- Workqueue: events hot_add_req [hv_balloon]
- Call Trace:
-  dump_stack+0x5c/0x80
-  bad_page.cold.112+0x7f/0xb2
-  free_pcppages_bulk+0x4b8/0x690
-  free_unref_page+0x54/0x70
-  hv_page_online_one+0x5c/0x80 [hv_balloon]
-  hot_add_req.cold.24+0x182/0x835 [hv_balloon]
-  ...
-
-Turns out that we now have deferred struct page initialization for memory
-hotplug so e.g. memory_block_action() in drivers/base/memory.c does
-pages_correctly_probed() check and in that check it avoids inspecting
-struct pages and checks sections instead. But in Hyper-V balloon driver we
-do PageReserved(pfn_to_page()) check and this is now wrong.
-
-Switch to checking online_section_nr() instead.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: stable@kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/hv/hv_balloon.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -888,12 +888,14 @@ static unsigned long handle_pg_range(uns
- 			pfn_cnt -= pgs_ol;
- 			/*
- 			 * Check if the corresponding memory block is already
--			 * online by checking its last previously backed page.
--			 * In case it is we need to bring rest (which was not
--			 * backed previously) online too.
-+			 * online. It is possible to observe struct pages still
-+			 * being uninitialized here so check section instead.
-+			 * In case the section is online we need to bring the
-+			 * rest of pfns (which were not backed previously)
-+			 * online too.
- 			 */
- 			if (start_pfn > has->start_pfn &&
--			    !PageReserved(pfn_to_page(start_pfn - 1)))
-+			    online_section_nr(pfn_to_section_nr(start_pfn)))
- 				hv_bring_pgs_online(has, start_pfn, pgs_ol);
- 
- 		}
-
-
+>  .../bindings/pci/layerscape-pci-gen4.txt      |  52 ++
+>  .../devicetree/bindings/pci/mobiveil-pcie.txt |   2 +
+>  MAINTAINERS                                   |  10 +-
+>  .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 163 ++++
+>  arch/arm64/configs/defconfig                  |   1 +
+>  drivers/pci/controller/Kconfig                |  11 +-
+>  drivers/pci/controller/Makefile               |   2 +-
+>  drivers/pci/controller/mobiveil/Kconfig       |  34 +
+>  drivers/pci/controller/mobiveil/Makefile      |   5 +
+>  .../controller/mobiveil/pci-layerscape-gen4.c | 306 +++++++
+>  .../controller/mobiveil/pcie-mobiveil-host.c  | 640 +++++++++++++
+>  .../controller/mobiveil/pcie-mobiveil-plat.c  |  54 ++
+>  .../pci/controller/mobiveil/pcie-mobiveil.c   | 246 +++++
+>  .../pci/controller/mobiveil/pcie-mobiveil.h   | 229 +++++
+>  drivers/pci/controller/pcie-mobiveil.c        | 861 ------------------
+>  15 files changed, 1743 insertions(+), 873 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/layerscape-pci-gen4.txt
+>  create mode 100644 drivers/pci/controller/mobiveil/Kconfig
+>  create mode 100644 drivers/pci/controller/mobiveil/Makefile
+>  create mode 100644 drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
+>  create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+>  create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil-plat.c
+>  create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil.c
+>  create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil.h
+>  delete mode 100644 drivers/pci/controller/pcie-mobiveil.c
+> 
+> -- 
+> 2.17.1
+> 
