@@ -2,103 +2,127 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D6BC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8857DC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4503E21473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:29:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sweptlaser-com.20150623.gappssmtp.com header.i=@sweptlaser-com.20150623.gappssmtp.com header.b="wM1NavwZ"
+	by mail.kernel.org (Postfix) with ESMTP id 5D1212087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729621AbfA2V3b (ORCPT
+        id S1729623AbfA2VbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 16:29:31 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:50255 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729498AbfA2V3b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 16:29:31 -0500
-Received: by mail-it1-f195.google.com with SMTP id z7so6998321iti.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 13:29:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sweptlaser-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id;
-        bh=jyGeuZdc33uN3Y2UHU7KUY8NrBL/9m1Ao71O/HzCaGE=;
-        b=wM1NavwZOrfvMJjQWqjBkM+xRasHVLFyPGWDDCIDqEbUlIG5MTppDx9Kc6jDcjcAyr
-         ioJStNW8mHzgBIUvOWOmwIsIaZPEeEjTOxXgWzzYbxuroVs8wFUTVzpbesrX+jWAyeL2
-         P1GA9TR6Qw9KUrZ92cnpwjrOYYWcFUIunYTbEPB44B9tHZUc6EoRaCrAnFblAzFKz4Vn
-         YuAme6fccf6fe5y8gTyguNfGtRtlhDye9hS9VvBprsp+jI504qL4ULuqwgEUu8zM9+xm
-         pFAxC8HNd0Tpb+pQt7jMJPqGG1Cwqq1r8iMyi7FqBhg9wSznKKBRBGqqSCfeespJRthS
-         XrHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=jyGeuZdc33uN3Y2UHU7KUY8NrBL/9m1Ao71O/HzCaGE=;
-        b=LpSSN3SBndK4yIpXgM7bV4US1Pg5594QNStTGYyCsaVkrKa52bSZSmq7R+TxB7Zdcn
-         CJcddUMzZR6YCigEzNCgL5nyd4q/JXqZ0ocZbWOSaLK2wJNZqBAvI+a4eOkJyV6AhotQ
-         8kUdHLbyI48FRWRcoaxMg3H0UHKJQRNOSPDb8KUb5z2lA9QQbIABav9xT21AGFQ3mIq9
-         OYstJUj98R876CsRKmzqvBxgYekgSi5O6m1VFJBpTuAX+JVz/QWw7cUTIo8cT8939fcY
-         qbV8gR+46jgEe6WRsjgaSoaE9DOs72lyiVec5zBeTkJ2nrKw8gsjOOt4R0diacE8vsRL
-         o1wQ==
-X-Gm-Message-State: AJcUukeT/i7n1r1xJ9YNrstYW8GV2yfKYrV6k9UD3d/mIEYsKoU7LTMF
-        NC9pDYUQQExadK5EKGFKedgSFQ==
-X-Google-Smtp-Source: ALg8bN7HQ46tFTjavDwgXDr7N9rbhp/wahuFvv6g6da6slw6MOYbVqku1Y+7WUxGEvXjEv7r/yjbiw==
-X-Received: by 2002:a05:660c:a50:: with SMTP id j16mr12631034itl.52.1548797370380;
-        Tue, 29 Jan 2019 13:29:30 -0800 (PST)
-Received: from yngvi.hq.sweptlaser.com ([63.147.146.226])
-        by smtp.googlemail.com with ESMTPSA id n16sm14787776iom.58.2019.01.29.13.29.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 13:29:29 -0800 (PST)
-From:   Jeremy Gebben <jgebben@sweptlaser.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] hwmon: (lm85) add LM96000 high freqency pwm support
-Date:   Tue, 29 Jan 2019 14:29:17 -0700
-Message-Id: <20190129212920.27921-1-jgebben@sweptlaser.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 29 Jan 2019 16:31:02 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:60448 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727488AbfA2VbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 16:31:02 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1goay3-0007MV-KB; Tue, 29 Jan 2019 14:30:52 -0700
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+References: <20190129174728.6430-1-jglisse@redhat.com>
+ <20190129174728.6430-4-jglisse@redhat.com>
+ <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
+ <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
+ <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
+ <20190129205749.GN3176@redhat.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
+Date:   Tue, 29 Jan 2019 14:30:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190129205749.GN3176@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgg@mellanox.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-This patch adds support for the PWM frequencies from 22.5 to 30 kHz
-available on the LM96000.
-
-It looks like this chip has been supported for a long time, but wasn't
-mentioned in the docs (which I have updated).
-
-Also, it has been using the generic 'lm85' prefix, which I have not
-changed to avoid breaking userspace or device tree files. AFAICT,
-lm85_detect() will only return 'lm85' for LM96000 chips, so it doesn't
-look like you can get a bare 'lm85' prefix with any other chips.
-
-I stumbled on to a 10 year old thread discussing a patch which looks
-like an early attempt to add support for this chip, which may be of
-interest:
-https://lm-sensors.lm-sensors.narkive.com/1SIwaMDT/patch-hwmon-lm96000-support
-
-Thanks for reviewing,
-
-Jeremy
 
 
-Jeremy Gebben (3):
-  hwmon: (lm85) remove freq_map size hardcodes
-  hwmon: (lm85) Document the LM96000 as supported
-  hwmon: (lm85) add support for LM96000 high frequencies
+On 2019-01-29 1:57 p.m., Jerome Glisse wrote:
+> GPU driver must be in control and must be call to. Here there is 2 cases
+> in this patchset and i should have instead posted 2 separate patchset as
+> it seems that it is confusing things.
+> 
+> For the HMM page, the physical address of the page ie the pfn does not
+> correspond to anything ie there is nothing behind it. So the importing
+> device has no idea how to get a valid physical address from an HMM page
+> only the device driver exporting its memory with HMM device memory knows
+> that.
+> 
+> 
+> For the special vma ie mmap of a device file. GPU driver do manage their
+> BAR ie the GPU have a page table that map BAR page to GPU memory and the
+> driver _constantly_ update this page table, it is reflected by invalidating
+> the CPU mapping. In fact most of the time the CPU mapping of GPU object are
+> invalid they are valid only a small fraction of their lifetime. So you
+> _must_ have some call to inform the exporting device driver that another
+> device would like to map one of its vma. The exporting device can then
+> try to avoid as much churn as possible for the importing device. But this
+> has consequence and the exporting device driver must be allow to apply
+> policy and make decission on wether or not it authorize the other device
+> to peer map its memory. For GPU the userspace application have to call
+> specific API that translate into specific ioctl which themself set flags
+> on object (in the kernel struct tracking the user space object). The only
+> way to allow program predictability is if the application can ask and know
+> if it can peer export an object (ie is there enough BAR space left).
 
- Documentation/hwmon/lm85 |  9 ++++++++-
- drivers/hwmon/lm85.c     | 32 ++++++++++++++++++++++----------
- 2 files changed, 30 insertions(+), 11 deletions(-)
+This all seems like it's an HMM problem and not related to mapping
+BARs/"potential BARs" to userspace. If some code wants to DMA map HMM
+pages, it calls an HMM function to map them. If HMM needs to consult
+with the driver on aspects of how that's mapped, then that's between HMM
+and the driver and not something I really care about. But making the
+entire mapping stuff tied to userspace VMAs does not make sense to me.
+What if somebody wants to map some HMM pages in the same way but from
+kernel space and they therefore don't have a VMA?
 
--- 
-2.17.1
 
+>> I also figured there'd be a fault version of p2p_ioremap_device_memory()
+>> for when you are mapping P2P memory and you want to assign the pages
+>> lazily. Though, this can come later when someone wants to implement that.
+> 
+> For GPU the BAR address space is manage page by page and thus you do not
+> want to map a range of BAR addresses but you want to allow mapping of
+> multiple page of BAR address that are not adjacent to each other nor
+> ordered in anyway. But providing helper for simpler device does make sense.
+
+Well, this has little do with the backing device but how the memory is
+mapped into userspace. With p2p_ioremap_device_memory() the entire range
+is mapped into the userspace VMA immediately during the call to mmap().
+With p2p_fault_device_memory(), mmap() would not actually map anything
+and a page in the VMA would be mapped only when userspace accesses it
+(using fault()). It seems to me like GPUs would prefer the latter but if
+HMM takes care of the mapping from userspace potential pages to actual
+GPU pages through the BAR then that may not be true.
+
+Logan
