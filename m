@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7F5C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF83C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F10AC20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B13E520844
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761864;
-	bh=gflrIHVGSA1ahS7ivf4Yv2vg1COPVbQYy48sc2JKwW4=;
+	s=default; t=1548761868;
+	bh=vEnj3eGDK0ZLbgXLJoogegJLvvn3IwRIXazGn3fsc9M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nEnUK8WDPtdMSoXmkZ83b0B23tORMi5DxsxyDErSomUdjwazHQFBZWGrOeusYdUZk
-	 LGabr810j6M3/hOdtCjdGPi5H6F03WCsTzwAveTE84AA1Qc9fosss/iaZ+Y8ZAXJSR
-	 ZKzcwrIGd1ioJMw+Iu7GOJV4NRfvsBnDqMmMTwOk=
+	b=ETEw5nPc/Kr4y8Jno338SRRti+c6Ui0Ks52Dm88sTa9tDWxmU1DvmM2xCbCo3lzJv
+	 jPpLiAotx0xW5RVyAHkUHVP/EAyWJMD218a6hTTnPGMAcy8JhV/Wpay4tV9rnZf0i4
+	 W5qLGzX8sDHtV9kbjcTG+TduBZCMZ18RTkp9iOBQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbfA2Lhm (ORCPT
+        id S1728926AbfA2Lhr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:37:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54318 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:37:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728881AbfA2Lhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:37:40 -0500
+        id S1728881AbfA2Lho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:37:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A385620844;
-        Tue, 29 Jan 2019 11:37:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED58E20844;
+        Tue, 29 Jan 2019 11:37:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761860;
-        bh=gflrIHVGSA1ahS7ivf4Yv2vg1COPVbQYy48sc2JKwW4=;
+        s=default; t=1548761863;
+        bh=vEnj3eGDK0ZLbgXLJoogegJLvvn3IwRIXazGn3fsc9M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qih69V2b8KLura4onMCEz9YQD0MRz6nMlBHRzEjoJ5jJdq8Qsr65YZjg1e4pddu+W
-         dMI4QqIxVNo+QHP1xVqIZ0FBUoIrdMzu5znhjGAwOowI8XH7LSOF1LUvf1fyPSKXyw
-         LEwnAIueS1wHOfVVjPV6BDDitWFfpYTo/C+V3zLk=
+        b=MKN6zPK2KN0dwJU5W81noURgVmT80/emjAq2QBG0Lj6oJQi3TZCrpSA7D7Q4ljz0l
+         90tL1N1tyWYID5Hefzvd/MrjbZHcpjBeR0miLTepZKmMpp8fZW9W9X6E2xYucP2V2/
+         hrvN6JIbSXIIjWd1TvHMhgy7DAZXJA9btjh+gjqQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 003/117] net: Fix usage of pskb_trim_rcsum
-Date:   Tue, 29 Jan 2019 12:34:14 +0100
-Message-Id: <20190129113207.672800744@linuxfoundation.org>
+Subject: [PATCH 4.20 004/117] net: phy: marvell: Errata for mv88e6390 internal PHYs
+Date:   Tue, 29 Jan 2019 12:34:15 +0100
+Message-Id: <20190129113207.725864582@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -65,75 +65,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-[ Upstream commit 6c57f0458022298e4da1729c67bd33ce41c14e7a ]
+[ Upstream commit 8cbcdc1a51999ca81db2956608b917aacd28d837 ]
 
-In certain cases, pskb_trim_rcsum() may change skb pointers.
-Reinitialize header pointers afterwards to avoid potential
-use-after-frees. Add a note in the documentation of
-pskb_trim_rcsum(). Found by KASAN.
+The VOD can be out of spec, unless some magic value is poked into an
+undocumented register in an undocumented page.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Fixes: e4cf8a38fc0d ("net: phy: Marvell: Add mv88e6390 internal PHY")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ppp/pppoe.c                  |    1 +
- include/linux/skbuff.h                   |    1 +
- net/bridge/br_netfilter_ipv6.c           |    1 +
- net/bridge/netfilter/nft_reject_bridge.c |    1 +
- net/ipv4/ip_input.c                      |    1 +
- 5 files changed, 5 insertions(+)
+ drivers/net/phy/marvell.c |   35 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ppp/pppoe.c
-+++ b/drivers/net/ppp/pppoe.c
-@@ -445,6 +445,7 @@ static int pppoe_rcv(struct sk_buff *skb
- 	if (pskb_trim_rcsum(skb, len))
- 		goto drop;
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -1042,6 +1042,39 @@ static int m88e1145_config_init(struct p
+ 	return 0;
+ }
  
-+	ph = pppoe_hdr(skb);
- 	pn = pppoe_pernet(dev_net(dev));
- 
- 	/* Note that get_item does a sock_hold(), so sk_pppox(po)
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -3204,6 +3204,7 @@ int pskb_trim_rcsum_slow(struct sk_buff
-  *
-  *	This is exactly the same as pskb_trim except that it ensures the
-  *	checksum of received packets are still valid after the operation.
-+ *	It can change skb pointers.
-  */
- 
- static inline int pskb_trim_rcsum(struct sk_buff *skb, unsigned int len)
---- a/net/bridge/br_netfilter_ipv6.c
-+++ b/net/bridge/br_netfilter_ipv6.c
-@@ -131,6 +131,7 @@ int br_validate_ipv6(struct net *net, st
- 					IPSTATS_MIB_INDISCARDS);
- 			goto drop;
- 		}
-+		hdr = ipv6_hdr(skb);
- 	}
- 	if (hdr->nexthdr == NEXTHDR_HOP && br_nf_check_hbh_len(skb))
- 		goto drop;
---- a/net/bridge/netfilter/nft_reject_bridge.c
-+++ b/net/bridge/netfilter/nft_reject_bridge.c
-@@ -229,6 +229,7 @@ static bool reject6_br_csum_ok(struct sk
- 	    pskb_trim_rcsum(skb, ntohs(ip6h->payload_len) + sizeof(*ip6h)))
- 		return false;
- 
-+	ip6h = ipv6_hdr(skb);
- 	thoff = ipv6_skip_exthdr(skb, ((u8*)(ip6h+1) - skb->data), &proto, &fo);
- 	if (thoff < 0 || thoff >= skb->len || (fo & htons(~0x7)) != 0)
- 		return false;
---- a/net/ipv4/ip_input.c
-+++ b/net/ipv4/ip_input.c
-@@ -489,6 +489,7 @@ static struct sk_buff *ip_rcv_core(struc
- 		goto drop;
- 	}
- 
-+	iph = ip_hdr(skb);
- 	skb->transport_header = skb->network_header + iph->ihl*4;
- 
- 	/* Remove any debris in the socket control block */
++/* The VOD can be out of specification on link up. Poke an
++ * undocumented register, in an undocumented page, with a magic value
++ * to fix this.
++ */
++static int m88e6390_errata(struct phy_device *phydev)
++{
++	int err;
++
++	err = phy_write(phydev, MII_BMCR,
++			BMCR_ANENABLE | BMCR_SPEED1000 | BMCR_FULLDPLX);
++	if (err)
++		return err;
++
++	usleep_range(300, 400);
++
++	err = phy_write_paged(phydev, 0xf8, 0x08, 0x36);
++	if (err)
++		return err;
++
++	return genphy_soft_reset(phydev);
++}
++
++static int m88e6390_config_aneg(struct phy_device *phydev)
++{
++	int err;
++
++	err = m88e6390_errata(phydev);
++	if (err)
++		return err;
++
++	return m88e1510_config_aneg(phydev);
++}
++
+ /**
+  * fiber_lpa_to_ethtool_lpa_t
+  * @lpa: value of the MII_LPA register for fiber link
+@@ -2292,7 +2325,7 @@ static struct phy_driver marvell_drivers
+ 		.flags = PHY_HAS_INTERRUPT,
+ 		.probe = m88e6390_probe,
+ 		.config_init = &marvell_config_init,
+-		.config_aneg = &m88e1510_config_aneg,
++		.config_aneg = &m88e6390_config_aneg,
+ 		.read_status = &marvell_read_status,
+ 		.ack_interrupt = &marvell_ack_interrupt,
+ 		.config_intr = &marvell_config_intr,
 
 
