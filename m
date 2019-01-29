@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7740FC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5641C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A81A20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6FCA20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:40:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762044;
-	bh=HmqzEGxBItPrWePklH+DmDOoBjYN5KKLuPxqlyoCTdw=;
+	s=default; t=1548762047;
+	bh=ltjX6XTuv2d16MfnrKM+s5Yw1loQ0T+aOEfCi+utm80=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ri+s4mWAAdYh0T8zRmh6caNsOE/RFrdSLkBupCtC3oNZaOO64lka2CHJ321I0R2+c
-	 YG9UiFJTlPEwUC+yavoyweClW9thhR/TQtJBO0V1G6f9hHosKIupU8/xR3BIVF64Mp
-	 A0D1LxS4C9ed78n6Ay3J7GkfykWTyJ4AuQbPMvVU=
+	b=I5HnDIiTgXwQlSjL36Ju+e4qRHUVBvnmDPt9T6bZF71wKqSUoVsHiYaC2/IY0CUM8
+	 BP+vCqz2B773BQ5NGqiyFWGIN00xweUEEz0Y8iOkzbBacn2JdxfCQeTE4ZSdJ5xb6K
+	 L/dL/8SMb6faJX0FhWFe1TphP+bA8iwnsQJlSQV0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729694AbfA2Lkm (ORCPT
+        id S1729707AbfA2Lkq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:40:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57684 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:40:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729685AbfA2Lkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:40:37 -0500
+        id S1729098AbfA2Lkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:40:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A868520882;
-        Tue, 29 Jan 2019 11:40:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 514642183F;
+        Tue, 29 Jan 2019 11:40:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762036;
-        bh=HmqzEGxBItPrWePklH+DmDOoBjYN5KKLuPxqlyoCTdw=;
+        s=default; t=1548762038;
+        bh=ltjX6XTuv2d16MfnrKM+s5Yw1loQ0T+aOEfCi+utm80=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p9Iu3E8ZYZkVjQQnTnkWx6bbIiz0KwEgO44c3YYQmmGB1v4hJKAARYKEhqmRhWOsV
-         3lofXSEs5dguCNKR0MzVACeqElW6PQKRJO2PqgNcxbjzNVgIV+mI7S6TfQ9MvcUYBm
-         k1btidrvenicvRIpC/ZehZXQOBRPL+o1sKkCyXnw=
+        b=ZNv8kkUY/FyOFz3utP3w8E6RBi1jPvo5uWvXdDdgPifj1tebvrUQLOjkClDgw/D8i
+         BHBKweVqxRm/ni2ho3u1bf2cfFeED0+RMbRqFtjvn2C0SIxoAjytyRZuJORVu6nJxk
+         NUuVA5Yk5E10XZ8b7KX+OUWFG1WtYbA3fRWtRBi4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.20 086/117] irqchip/gic-v3-its: Align PCI Multi-MSI allocation on their size
-Date:   Tue, 29 Jan 2019 12:35:37 +0100
-Message-Id: <20190129113211.709063543@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.20 087/117] can: dev: __can_get_echo_skb(): fix bogous check for non-existing skb by removing it
+Date:   Tue, 29 Jan 2019 12:35:38 +0100
+Message-Id: <20190129113211.745605523@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -65,83 +66,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
 
-commit 8208d1708b88b412ca97f50a6d951242c88cbbac upstream.
+commit 7b12c8189a3dc50638e7d53714c88007268d47ef upstream.
 
-The way we allocate events works fine in most cases, except
-when multiple PCI devices share an ITS-visible DevID, and that
-one of them is trying to use MultiMSI allocation.
+This patch revert commit 7da11ba5c506
+("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
 
-In that case, our allocation is not guaranteed to be zero-based
-anymore, and we have to make sure we allocate it on a boundary
-that is compatible with the PCI Multi-MSI constraints.
+After introduction of this change we encountered following new error
+message on various i.MX plattforms (flexcan):
 
-Fix this by allocating the full region upfront instead of iterating
-over the number of MSIs. MSI-X are always allocated one by one,
-so this shouldn't change anything on that front.
+| flexcan 53fc8000.can can0: __can_get_echo_skb: BUG! Trying to echo non
+| existing skb: can_priv::echo_skb[0]
 
-Fixes: b48ac83d6bbc2 ("irqchip: GICv3: ITS: MSI support")
-Cc: stable@vger.kernel.org
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+The introduction of the message was a mistake because
+priv->echo_skb[idx] = NULL is a perfectly valid in following case: If
+CAN_RAW_LOOPBACK is disabled (setsockopt) in applications, the pkt_type
+of the tx skb's given to can_put_echo_skb is set to PACKET_LOOPBACK. In
+this case can_put_echo_skb will not set priv->echo_skb[idx]. It is
+therefore kept NULL.
+
+As additional argument for revert: The order of check and usage of idx
+was changed. idx is used to access an array element before checking it's
+boundaries.
+
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Fixes: 7da11ba5c506 ("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/irqchip/irq-gic-v3-its.c |   25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ drivers/net/can/dev.c |   27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2399,13 +2399,14 @@ static void its_free_device(struct its_d
- 	kfree(its_dev);
- }
- 
--static int its_alloc_device_irq(struct its_device *dev, irq_hw_number_t *hwirq)
-+static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number_t *hwirq)
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -480,8 +480,6 @@ EXPORT_SYMBOL_GPL(can_put_echo_skb);
+ struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
  {
- 	int idx;
+ 	struct can_priv *priv = netdev_priv(dev);
+-	struct sk_buff *skb = priv->echo_skb[idx];
+-	struct canfd_frame *cf;
  
--	idx = find_first_zero_bit(dev->event_map.lpi_map,
--				  dev->event_map.nr_lpis);
--	if (idx == dev->event_map.nr_lpis)
-+	idx = bitmap_find_free_region(dev->event_map.lpi_map,
-+				      dev->event_map.nr_lpis,
-+				      get_count_order(nvecs));
-+	if (idx < 0)
- 		return -ENOSPC;
- 
- 	*hwirq = dev->event_map.lpi_base + idx;
-@@ -2501,21 +2502,21 @@ static int its_irq_domain_alloc(struct i
- 	int err;
- 	int i;
- 
--	for (i = 0; i < nr_irqs; i++) {
--		err = its_alloc_device_irq(its_dev, &hwirq);
--		if (err)
--			return err;
-+	err = its_alloc_device_irq(its_dev, nr_irqs, &hwirq);
-+	if (err)
-+		return err;
- 
--		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq);
-+	for (i = 0; i < nr_irqs; i++) {
-+		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq + i);
- 		if (err)
- 			return err;
- 
- 		irq_domain_set_hwirq_and_chip(domain, virq + i,
--					      hwirq, &its_irq_chip, its_dev);
-+					      hwirq + i, &its_irq_chip, its_dev);
- 		irqd_set_single_target(irq_desc_get_irq_data(irq_to_desc(virq + i)));
- 		pr_debug("ID:%d pID:%d vID:%d\n",
--			 (int)(hwirq - its_dev->event_map.lpi_base),
--			 (int) hwirq, virq + i);
-+			 (int)(hwirq + i - its_dev->event_map.lpi_base),
-+			 (int)(hwirq + i), virq + i);
+ 	if (idx >= priv->echo_skb_max) {
+ 		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
+@@ -489,20 +487,21 @@ struct sk_buff *__can_get_echo_skb(struc
+ 		return NULL;
  	}
  
- 	return 0;
+-	if (!skb) {
+-		netdev_err(dev, "%s: BUG! Trying to echo non existing skb: can_priv::echo_skb[%u]\n",
+-			   __func__, idx);
+-		return NULL;
+-	}
++	if (priv->echo_skb[idx]) {
++		/* Using "struct canfd_frame::len" for the frame
++		 * length is supported on both CAN and CANFD frames.
++		 */
++		struct sk_buff *skb = priv->echo_skb[idx];
++		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
++		u8 len = cf->len;
+ 
+-	/* Using "struct canfd_frame::len" for the frame
+-	 * length is supported on both CAN and CANFD frames.
+-	 */
+-	cf = (struct canfd_frame *)skb->data;
+-	*len_ptr = cf->len;
+-	priv->echo_skb[idx] = NULL;
++		*len_ptr = len;
++		priv->echo_skb[idx] = NULL;
++
++		return skb;
++	}
+ 
+-	return skb;
++	return NULL;
+ }
+ 
+ /*
 
 
