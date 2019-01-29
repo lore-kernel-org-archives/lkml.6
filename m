@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD39C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C2EC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7953720880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D9CE20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763307;
-	bh=PvpnZs8XYcSxCP76717UpTQu0z66fV73s39taDx7jHk=;
+	s=default; t=1548763319;
+	bh=wOby97sO9Ix52Ye95VqDFizR/OBJJJ5ICEjzatY+BHE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IYObklHwW1XZduyveylyRraHFwX7nXpPa35+YghcxHmGmqZFGRxNecbKETc0lOQOC
-	 N6iczONJMoVWQSsxTcFEAmIQah5Wa3HB3B52EnRxyYI2JqYNgoB2VCocpcBwtBCWja
-	 cZbXqvGkopYxVK9/quLNU67A/r87antqZIahRdIA=
+	b=EiqG8nK+HHUHmm/0wX95fN6oaZ1opjv5jRnnmvT+Zq+Fy4xxx00ek4puMGTznvHQK
+	 JsulWsnUJBiMuuy1kltbYxV/2aotDBgs2mSNmSBivVly35tPVXe3Ua3DFI777hrFnR
+	 Fq829SCNvRaOIXVeQ6VFhlmQjz8aA2Y1OUY31E5Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730882AbfA2MBn (ORCPT
+        id S1729935AbfA2LpP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:01:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35776 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:45:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730733AbfA2LpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:45:20 -0500
+        id S1728979AbfA2LpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:45:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A8782086C;
-        Tue, 29 Jan 2019 11:45:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5893820882;
+        Tue, 29 Jan 2019 11:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762319;
-        bh=PvpnZs8XYcSxCP76717UpTQu0z66fV73s39taDx7jHk=;
+        s=default; t=1548762311;
+        bh=wOby97sO9Ix52Ye95VqDFizR/OBJJJ5ICEjzatY+BHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZV+C/HIAPTXiFgmp899qI+Ue/8kmingsgXSFXi5BM1y9kE7noBtKdyug83jSd/2JP
-         +qHETZIvR56/9HzLYtp0Y6dUKlzZfoRBLAqj4rba8mnhibt/BLSOOGPsVSlquC7RwY
-         QopQOT6ntXO2S2TzlkPsewGXG9k2xqr3b9fzEq5Y=
+        b=RUSRKvM4ojH5V9kkTW7DfIcoslFa04J1U9WUSwTS7J8Xs2xcFg11kmz99BBVE5z9Z
+         6uQAZ1s9NepNIrIXJF/naW2cenGXGJ2R68Aw2i+WYC4nbhgENjp/G5SPjXm2Molx0m
+         Qq8+Z5YuLzdaG1jD5rQJ0uvcF1VjtdrLJepW+CGU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Popov <alex.popov@linux.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 067/103] KVM: x86: Fix single-step debugging
-Date:   Tue, 29 Jan 2019 12:35:44 +0100
-Message-Id: <20190129113204.656880907@linuxfoundation.org>
+        stable@vger.kernel.org, b-ak <anur.bhargav@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 030/103] ASoC: tlv320aic32x4: Kernel OOPS while entering DAPM standby mode
+Date:   Tue, 29 Jan 2019 12:35:07 +0100
+Message-Id: <20190129113201.376872508@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -65,43 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Popov <alex.popov@linux.com>
+From: b-ak <anur.bhargav@gmail.com>
 
-commit 5cc244a20b86090c087073c124284381cdf47234 upstream.
+commit 667e9334fa64da2273e36ce131b05ac9e47c5769 upstream.
 
-The single-step debugging of KVM guests on x86 is broken: if we run
-gdb 'stepi' command at the breakpoint when the guest interrupts are
-enabled, RIP always jumps to native_apic_mem_write(). Then other
-nasty effects follow.
+During the bootup of the kernel, the DAPM bias level is in the OFF
+state. As soon as the DAPM framework kicks in it pushes the codec
+into STANDBY state.
 
-Long investigation showed that on Jun 7, 2017 the
-commit c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
-introduced the kvm_run.debug corruption: kvm_vcpu_do_singlestep() can
-be called without X86_EFLAGS_TF set.
+The probe function doesn't prepare the clock, and STANDBY state
+does a clk_disable_unprepare() without checking the previous state.
+This leads to an OOPS.
 
-Let's fix it. Please consider that for -stable.
+Not transitioning from an OFF state to the STANDBY state fixes the
+problem.
 
-Signed-off-by: Alexander Popov <alex.popov@linux.com>
+Signed-off-by: b-ak <anur.bhargav@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Fixes: c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/codecs/tlv320aic32x4.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -6277,8 +6277,7 @@ restart:
- 		toggle_interruptibility(vcpu, ctxt->interruptibility);
- 		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
- 		kvm_rip_write(vcpu, ctxt->eip);
--		if (r == EMULATE_DONE &&
--		    (ctxt->tf || (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)))
-+		if (r == EMULATE_DONE && ctxt->tf)
- 			kvm_vcpu_do_singlestep(vcpu, &r);
- 		if (!ctxt->have_exception ||
- 		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
+--- a/sound/soc/codecs/tlv320aic32x4.c
++++ b/sound/soc/codecs/tlv320aic32x4.c
+@@ -822,6 +822,10 @@ static int aic32x4_set_bias_level(struct
+ 	case SND_SOC_BIAS_PREPARE:
+ 		break;
+ 	case SND_SOC_BIAS_STANDBY:
++		/* Initial cold start */
++		if (snd_soc_component_get_bias_level(component) == SND_SOC_BIAS_OFF)
++			break;
++
+ 		/* Switch off BCLK_N Divider */
+ 		snd_soc_component_update_bits(component, AIC32X4_BCLKN,
+ 				    AIC32X4_BCLKEN, 0);
 
 
