@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB11FC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 600C0C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 917E120880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:03:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DD1220880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:03:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763397;
-	bh=jGtuglDbsb53ujNLwGDVPkQKGVhzbPCx13vLMV3DUx8=;
+	s=default; t=1548763405;
+	bh=GC67eXWANX5gTJLjl7GTIbvGN6gks8+ycWzBkE2Lf6c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZEDn0BejP1o4DzA39W7kHzhkbp80gtvs21IDD9SPxrkN2uTlKZt84iwQlvmeYHAEo
-	 jlsmYSh8f+eYW/pl0wyiMHtjVHjS3UPU33HUUBOeZ6v1lNKF5ssAGG1OgvRZQ4phqk
-	 cQ0Ywz9UTqzePvupg+4+TK0k+fkPqnchZSkywzJk=
+	b=UTvwJRlMrKMl/p2woNLi/r9ALYB4bFe/QEDHivc+aLAUEWg5CMiamIyhQEySobnBY
+	 zu6v8Z6SZazR+IWj/ZLUoKl1yhjeJdpujGD7MCNt3zSRSsp7/QZeZr2uYWiG+XZqVK
+	 S2ctNndS4kWmxUJZMBy5KPiz90ee3tZK3/kZw/Yo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730448AbfA2Lnz (ORCPT
+        id S1730844AbfA2MDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:43:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33752 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:03:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730414AbfA2Lnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:43:45 -0500
+        id S1729653AbfA2Lnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:43:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E167820856;
-        Tue, 29 Jan 2019 11:43:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6C4E20857;
+        Tue, 29 Jan 2019 11:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762224;
-        bh=jGtuglDbsb53ujNLwGDVPkQKGVhzbPCx13vLMV3DUx8=;
+        s=default; t=1548762230;
+        bh=GC67eXWANX5gTJLjl7GTIbvGN6gks8+ycWzBkE2Lf6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TA7oqasmtgZjWo+jHnazphy8kPIZj0gr2ByLi6Ez/yMES0QffzZGjp5/IDkJiJhTp
-         FIXPZsbbAcNJKTosHarUV6elSs4X8lD0yFD8ZULsSCrKhigdiCdrX13OuulAZVSDcS
-         Oy6rARssGEjrqYfmwkSxli5+sm+YDqsw/Vp0AD9A=
+        b=CTnH/owrrXb3rc7Safarmh15OwWKEB+54ffTh8Dp3/btYtGdeXTZQXITqlngOmI4I
+         FjEWH1yNlFb2MXeWUcQDdISX1m5BznEqqzrxsqOMlbiMSH2ukLsADl2GkIPCSb8kCW
+         Er7B1qoNaqta0zISqhFSZ/4qBMNtPeG/f+p3Fz98=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 034/103] ALSA: hda/realtek - Fix typo for ALC225 model
-Date:   Tue, 29 Jan 2019 12:35:11 +0100
-Message-Id: <20190129113201.600696720@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.19 036/103] ARCv2: lib: memeset: fix doing prefetchw outside of buffer
+Date:   Tue, 29 Jan 2019 12:35:13 +0100
+Message-Id: <20190129113201.707328936@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -65,34 +66,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-commit 82aa0d7e09840704d9a37434fef1770179d663fb upstream.
+commit e6a72b7daeeb521753803550f0ed711152bb2555 upstream.
 
-Fix typo for model alc255-dell1 to alc225-dell1.
+ARCv2 optimized memset uses PREFETCHW instruction for prefetching the
+next cache line but doesn't ensure that the line is not past the end of
+the buffer. PRETECHW changes the line ownership and marks it dirty,
+which can cause issues in SMP config when next line was already owned by
+other core. Fix the issue by avoiding the PREFETCHW
 
-Enable headset mode support for new WYSE NB platform.
+Some more details:
 
-Fixes: a26d96c7802e ("ALSA: hda/realtek - Comprehensive model list for ALC259 & co")
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+The current code has 3 logical loops (ignroing the unaligned part)
+  (a) Big loop for doing aligned 64 bytes per iteration with PREALLOC
+  (b) Loop for 32 x 2 bytes with PREFETCHW
+  (c) any left over bytes
+
+loop (a) was already eliding the last 64 bytes, so PREALLOC was
+safe. The fix was removing PREFETCW from (b).
+
+Another potential issue (applicable to configs with 32 or 128 byte L1
+cache line) is that PREALLOC assumes 64 byte cache line and may not do
+the right thing specially for 32b. While it would be easy to adapt,
+there are no known configs with those lie sizes, so for now, just
+compile out PREALLOC in such cases.
+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: stable@vger.kernel.org #4.4+
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: rewrote changelog, used asm .macro vs. "C" macro]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arc/lib/memset-archs.S |   40 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 32 insertions(+), 8 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6842,7 +6842,7 @@ static const struct hda_model_fixup alc2
- 	{.id = ALC293_FIXUP_LENOVO_SPK_NOISE, .name = "lenovo-spk-noise"},
- 	{.id = ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY, .name = "lenovo-hotkey"},
- 	{.id = ALC255_FIXUP_DELL_SPK_NOISE, .name = "dell-spk-noise"},
--	{.id = ALC225_FIXUP_DELL1_MIC_NO_PRESENCE, .name = "alc255-dell1"},
-+	{.id = ALC225_FIXUP_DELL1_MIC_NO_PRESENCE, .name = "alc225-dell1"},
- 	{.id = ALC295_FIXUP_DISABLE_DAC3, .name = "alc295-disable-dac3"},
- 	{.id = ALC280_FIXUP_HP_HEADSET_MIC, .name = "alc280-hp-headset"},
- 	{.id = ALC221_FIXUP_HP_FRONT_MIC, .name = "alc221-hp-mic"},
+--- a/arch/arc/lib/memset-archs.S
++++ b/arch/arc/lib/memset-archs.S
+@@ -7,11 +7,39 @@
+  */
+ 
+ #include <linux/linkage.h>
++#include <asm/cache.h>
+ 
+-#undef PREALLOC_NOT_AVAIL
++/*
++ * The memset implementation below is optimized to use prefetchw and prealloc
++ * instruction in case of CPU with 64B L1 data cache line (L1_CACHE_SHIFT == 6)
++ * If you want to implement optimized memset for other possible L1 data cache
++ * line lengths (32B and 128B) you should rewrite code carefully checking
++ * we don't call any prefetchw/prealloc instruction for L1 cache lines which
++ * don't belongs to memset area.
++ */
++
++#if L1_CACHE_SHIFT == 6
++
++.macro PREALLOC_INSTR	reg, off
++	prealloc	[\reg, \off]
++.endm
++
++.macro PREFETCHW_INSTR	reg, off
++	prefetchw	[\reg, \off]
++.endm
++
++#else
++
++.macro PREALLOC_INSTR
++.endm
++
++.macro PREFETCHW_INSTR
++.endm
++
++#endif
+ 
+ ENTRY_CFI(memset)
+-	prefetchw [r0]		; Prefetch the write location
++	PREFETCHW_INSTR	r0, 0	; Prefetch the first write location
+ 	mov.f	0, r2
+ ;;; if size is zero
+ 	jz.d	[blink]
+@@ -48,11 +76,8 @@ ENTRY_CFI(memset)
+ 
+ 	lpnz	@.Lset64bytes
+ 	;; LOOP START
+-#ifdef PREALLOC_NOT_AVAIL
+-	prefetchw [r3, 64]	;Prefetch the next write location
+-#else
+-	prealloc  [r3, 64]
+-#endif
++	PREALLOC_INSTR	r3, 64	; alloc next line w/o fetching
++
+ #ifdef CONFIG_ARC_HAS_LL64
+ 	std.ab	r4, [r3, 8]
+ 	std.ab	r4, [r3, 8]
+@@ -85,7 +110,6 @@ ENTRY_CFI(memset)
+ 	lsr.f	lp_count, r2, 5 ;Last remaining  max 124 bytes
+ 	lpnz	.Lset32bytes
+ 	;; LOOP START
+-	prefetchw   [r3, 32]	;Prefetch the next write location
+ #ifdef CONFIG_ARC_HAS_LL64
+ 	std.ab	r4, [r3, 8]
+ 	std.ab	r4, [r3, 8]
 
 
