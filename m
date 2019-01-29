@@ -2,163 +2,179 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC5CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C18EC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7833020989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3717B2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfA2NmW (ORCPT
+        id S1727922AbfA2Nmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 08:42:22 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37106 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726862AbfA2NmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 08:42:22 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5BF1EBD;
-        Tue, 29 Jan 2019 05:42:21 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38D253F59C;
-        Tue, 29 Jan 2019 05:42:19 -0800 (PST)
-Subject: Re: [PATCH] arm64: fix potential deadlock in
- arm64-provide-pseudo-NMI-with-GICv3
-To:     Wei Li <liwei391@huawei.com>, linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        daniel.thompson@linaro.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, dave.martin@arm.com, mark.rutland@arm.com,
-        jason@lakedaemon.net, huawei.libin@huawei.com,
-        guohanjun@huawei.com, thunder.leizhen@huawei.com
-References: <20190129131223.32505-1-liwei391@huawei.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <37962c23-75a9-a0a1-7810-3abfb702be72@arm.com>
-Date:   Tue, 29 Jan 2019 13:42:16 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 29 Jan 2019 08:42:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:9138 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727862AbfA2Nmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 08:42:42 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 78A39C0C7CA0;
+        Tue, 29 Jan 2019 13:42:41 +0000 (UTC)
+Received: from krava (ovpn-204-171.brq.redhat.com [10.40.204.171])
+        by smtp.corp.redhat.com (Postfix) with SMTP id A4119226F1;
+        Tue, 29 Jan 2019 13:42:37 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 14:42:36 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     acme@kernel.org, namhyung@kernel.org, dzickus@redhat.com,
+        fowles@inreach.com, jmario@redhat.com,
+        linux-kernel@vger.kernel.org, mpe@ellerman.id.au,
+        linuxppc-dev@lists.ozlabs.org, maddy@linux.vnet.ibm.com
+Subject: Re: [PATCH v2] perf mem/c2c: Fix perf_mem_events to support powerpc
+Message-ID: <20190129134236.GB30190@krava>
+References: <dd6d04f3-c8aa-1d57-c466-c6b3c333db51@linux.ibm.com>
+ <20190129132412.771-1-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190129131223.32505-1-liwei391@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129132412.771-1-ravi.bangoria@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 29 Jan 2019 13:42:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wei,
-
-Thanks testing the series.
-
-On 29/01/2019 13:12, Wei Li wrote:
-> In some exception handlers, the interrupt is not reenabled by daifclr at first.
-> The later process may call local_irq_enable() to enable the interrupt, like
-> gic_handle_irq(). As we known, function local_irq_enable() just change the pmr now.
-
-This is not yet in, so it might be useful to point to the series that
-adds this:
-https://lkml.org/lkml/2019/1/21/1060
-
-> The following codes what i found may cause a deadlock or some issues else:
+On Tue, Jan 29, 2019 at 06:54:12PM +0530, Ravi Bangoria wrote:
+> Powerpc hw does not have inbuilt latency filter (--ldlat) for mem-load
+> event and, perf_mem_events by default includes ldlat=30 which is
+> causing failure on powerpc. Refactor code to support perf mem/c2c on
+> powerpc.
 > 
-> do_sp_pc_abort			<- el0_sp_pc
-> do_el0_ia_bp_hardening	<- el0_ia
-> kgdb_roundup_cpus		<- el1_dbg
+> This patch depends on kernel side changes done my Madhavan:
+> https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-December/182596.html
 > 
-> Signed-off-by: Wei Li <liwei391@huawei.com>
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 > ---
->  arch/arm64/kernel/kgdb.c | 4 ++++
->  arch/arm64/mm/fault.c    | 6 ++++++
->  2 files changed, 10 insertions(+)
+
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+thanks,
+jirka
+
+>  tools/perf/Documentation/perf-c2c.txt     | 16 ++++++++++++----
+>  tools/perf/Documentation/perf-mem.txt     |  2 +-
+>  tools/perf/arch/powerpc/util/Build        |  1 +
+>  tools/perf/arch/powerpc/util/mem-events.c | 11 +++++++++++
+>  tools/perf/util/mem-events.c              |  2 +-
+>  5 files changed, 26 insertions(+), 6 deletions(-)
+>  create mode 100644 tools/perf/arch/powerpc/util/mem-events.c
 > 
-> diff --git a/arch/arm64/kernel/kgdb.c b/arch/arm64/kernel/kgdb.c
-> index a20de58061a8..119fbf2c0788 100644
-> --- a/arch/arm64/kernel/kgdb.c
-> +++ b/arch/arm64/kernel/kgdb.c
-> @@ -25,6 +25,7 @@
->  #include <linux/kgdb.h>
->  #include <linux/kprobes.h>
->  #include <linux/sched/task_stack.h>
-> +#include <linux/irqchip/arm-gic-v3.h>
+> diff --git a/tools/perf/Documentation/perf-c2c.txt b/tools/perf/Documentation/perf-c2c.txt
+> index 095aebd..e6150f2 100644
+> --- a/tools/perf/Documentation/perf-c2c.txt
+> +++ b/tools/perf/Documentation/perf-c2c.txt
+> @@ -19,8 +19,11 @@ C2C stands for Cache To Cache.
+>  The perf c2c tool provides means for Shared Data C2C/HITM analysis. It allows
+>  you to track down the cacheline contentions.
 >  
->  #include <asm/debug-monitors.h>
->  #include <asm/insn.h>
-> @@ -291,6 +292,9 @@ static void kgdb_call_nmi_hook(void *ignored)
+> -The tool is based on x86's load latency and precise store facility events
+> -provided by Intel CPUs. These events provide:
+> +On x86, the tool is based on load latency and precise store facility events
+> +provided by Intel CPUs. On PowerPC, the tool uses random instruction sampling
+> +with thresholding feature.
+> +
+> +These events provide:
+>    - memory address of the access
+>    - type of the access (load and store details)
+>    - latency (in cycles) of the load access
+> @@ -46,7 +49,7 @@ RECORD OPTIONS
 >  
->  void kgdb_roundup_cpus(unsigned long flags)
-
-Hmm, I don't see this function defined in arch/arm64/kernel/kgdb.c in
-v5.0-rc*. Was it removed? or is that something in your local tree.
-
+>  -l::
+>  --ldlat::
+> -	Configure mem-loads latency.
+> +	Configure mem-loads latency. (x86 only)
+>  
+>  -k::
+>  --all-kernel::
+> @@ -119,11 +122,16 @@ Following perf record options are configured by default:
+>    -W,-d,--phys-data,--sample-cpu
+>  
+>  Unless specified otherwise with '-e' option, following events are monitored by
+> -default:
+> +default on x86:
+>  
+>    cpu/mem-loads,ldlat=30/P
+>    cpu/mem-stores/P
+>  
+> +and following on PowerPC:
+> +
+> +  cpu/mem-loads/
+> +  cpu/mem-stores/
+> +
+>  User can pass any 'perf record' option behind '--' mark, like (to enable
+>  callchains and system wide monitoring):
+>  
+> diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documentation/perf-mem.txt
+> index f8d2167..199ea0f 100644
+> --- a/tools/perf/Documentation/perf-mem.txt
+> +++ b/tools/perf/Documentation/perf-mem.txt
+> @@ -82,7 +82,7 @@ RECORD OPTIONS
+>  	Be more verbose (show counter open errors, etc)
+>  
+>  --ldlat <n>::
+> -	Specify desired latency for loads event.
+> +	Specify desired latency for loads event. (x86 only)
+>  
+>  In addition, for report all perf report options are valid, and for record
+>  all perf record options.
+> diff --git a/tools/perf/arch/powerpc/util/Build b/tools/perf/arch/powerpc/util/Build
+> index 2e659531..ba98bd0 100644
+> --- a/tools/perf/arch/powerpc/util/Build
+> +++ b/tools/perf/arch/powerpc/util/Build
+> @@ -2,6 +2,7 @@ libperf-y += header.o
+>  libperf-y += sym-handling.o
+>  libperf-y += kvm-stat.o
+>  libperf-y += perf_regs.o
+> +libperf-y += mem-events.o
+>  
+>  libperf-$(CONFIG_DWARF) += dwarf-regs.o
+>  libperf-$(CONFIG_DWARF) += skip-callchain-idx.o
+> diff --git a/tools/perf/arch/powerpc/util/mem-events.c b/tools/perf/arch/powerpc/util/mem-events.c
+> new file mode 100644
+> index 0000000..f1194fc
+> --- /dev/null
+> +++ b/tools/perf/arch/powerpc/util/mem-events.c
+> @@ -0,0 +1,11 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include "mem-events.h"
+> +
+> +/* PowerPC does not support 'ldlat' parameter. */
+> +char *perf_mem_events__name(int i)
+> +{
+> +	if (i == PERF_MEM_EVENTS__LOAD)
+> +		return (char *) "cpu/mem-loads/";
+> +
+> +	return (char *) "cpu/mem-stores/";
+> +}
+> diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
+> index 93f74d8..42c3e5a 100644
+> --- a/tools/perf/util/mem-events.c
+> +++ b/tools/perf/util/mem-events.c
+> @@ -28,7 +28,7 @@ struct perf_mem_event perf_mem_events[PERF_MEM_EVENTS__MAX] = {
+>  static char mem_loads_name[100];
+>  static bool mem_loads_name__init;
+>  
+> -char *perf_mem_events__name(int i)
+> +char * __weak perf_mem_events__name(int i)
 >  {
-> +	if (gic_prio_masking_enabled())
-> +		gic_arch_enable_irqs();
-> +
->  	local_irq_enable();
-
-Seeing we introduce the daifflags functions, with the relation described
-at the top of arch/arm64/include/asm/daifflags.h. I think just calling
-local_irq_enable() might not comply with this, as PSR.I would be clear
-while PSR.D is set.
-
-Maybe it should be using:
-
-	local_daif_restore(DAIF_PROCCTX);
-
->  	smp_call_function(kgdb_call_nmi_hook, NULL, 0);
->  	local_irq_disable();
-
-and here
-	local_daif_mask();
-
-Although I'd like to understand what you are applying the pseudo-NMI
-series on first.
-
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index 97ba2ba78aee..f7c39a0b28bc 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -32,6 +32,7 @@
->  #include <linux/perf_event.h>
->  #include <linux/preempt.h>
->  #include <linux/hugetlb.h>
-> +#include <linux/irqchip/arm-gic-v3.h>
->  
->  #include <asm/bug.h>
->  #include <asm/cmpxchg.h>
-> @@ -780,6 +781,8 @@ asmlinkage void __exception do_el0_ia_bp_hardening(unsigned long addr,
->  	if (addr > TASK_SIZE)
->  		arm64_apply_bp_hardening();
->  
-> +	if (gic_prio_masking_enabled())
-> +		gic_arch_enable_irqs();
->  	local_irq_enable();
-
-This is not in mainline, in v5.0-rc1 there is:
-
-	local_daif_restore(DAIF_PROCCTX);
-
-Which my series updates to modify both DAIF and PMR if needed.
-
-So you wouldn't need to have the gic_arch_enable_irqs().
-
->  	do_mem_abort(addr, esr, regs);
->  }
-> @@ -794,6 +797,9 @@ asmlinkage void __exception do_sp_pc_abort(unsigned long addr,
->  	if (user_mode(regs)) {
->  		if (instruction_pointer(regs) > TASK_SIZE)
->  			arm64_apply_bp_hardening();
-> +
-> +		if (gic_prio_masking_enabled())
-> +			gic_arch_enable_irqs();
->  		local_irq_enable();
-
-Same here.
-
-Thanks,
-
--- 
-Julien Thierry
+>  	if (i == PERF_MEM_EVENTS__LOAD) {
+>  		if (!mem_loads_name__init) {
+> -- 
+> 1.8.3.1
+> 
