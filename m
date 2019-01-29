@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61640C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E07C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 325E22177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B59221871
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761889;
-	bh=1eSsoqEC9rq0V9oM3ZmgqjURhYlJ88aLW5X7YaO91uo=;
+	s=default; t=1548761891;
+	bh=uuMHvEyNK8k5Ohfo8V0LWzf9z+Go6StIYrbjkSt4/ro=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WRrmFkp6ow+iaf7l5OfmpTYo69BeJnsMSYGQq6ViHtrl9cTa4CXcL6YfaqXN8TAZn
-	 pOuG5e1gKgf7JC0Imzx32gUt1BLMp3ugHgK0J0lvO0EjgXBvj3L8yhK3b7edRh9Qny
-	 zOEWr5b9J/jHt8/CktOXa51LfNrxI7gtaQNHXrPM=
+	b=Se/8Lt/VnX4HzG/lFf04marNWRRK9bYOBB+Vd1dwmZLd6wuuirmIUdeEe9XgXqLjh
+	 6+JZ8mnqOYi+25UOCFyek62wBzJ76H8gvvEQJu6qtB+1P4FGYhvT7OwkrlqbSfjVZ5
+	 s4PRzCx/WIpB+7CjC6SNmm+8ITD14zA/zUkjMjAI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbfA2LiH (ORCPT
+        id S1729048AbfA2LiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:38:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54686 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:38:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729012AbfA2LiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:38:04 -0500
+        id S1728622AbfA2LiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:38:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE16920844;
-        Tue, 29 Jan 2019 11:38:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D02EE214DA;
+        Tue, 29 Jan 2019 11:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761883;
-        bh=1eSsoqEC9rq0V9oM3ZmgqjURhYlJ88aLW5X7YaO91uo=;
+        s=default; t=1548761888;
+        bh=uuMHvEyNK8k5Ohfo8V0LWzf9z+Go6StIYrbjkSt4/ro=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oa2Gf8Bclyfa97c6/tgVDB+oJSLJNtJVNNq0XICF/o00kJcysNIELRQxTKV2X1PWs
-         Y8IIdbe0NJ0y7DTK2uznx9IMQSEuHubUzXk/FwBQ6MX7bfW4iKgWOV1llKGUwEowLL
-         BMv/niZiwRT3PEHTabd8FTC153mR4wqA8IUYw7Qw=
+        b=dCc0bs7g3AduYMURLejoxJmwKwDqHTSVlT1ezdvVeUTdRv+Y38RB2sgSSXvht+U6/
+         pXtdm8acmtoh12cWqWvVnC7mC20nYK9iF9EEiSUjoaePyztU6jsWl62O398aweQOJn
+         7sHr6qUA2hihTeZN6kq+ZCZq1ekaC1O2VMJ9qU+4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: [PATCH 4.20 026/117] USB: leds: fix regression in usbport led trigger
-Date:   Tue, 29 Jan 2019 12:34:37 +0100
-Message-Id: <20190129113208.959309898@linuxfoundation.org>
+        stable@vger.kernel.org, linux-stable@vger.kernel.org,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.20 036/117] clk: socfpga: stratix10: fix rate calculation for pll clocks
+Date:   Tue, 29 Jan 2019 12:34:47 +0100
+Message-Id: <20190129113209.409483944@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -65,96 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Lamparter <chunkeey@gmail.com>
+From: Dinh Nguyen <dinguyen@kernel.org>
 
-commit 91f7d2e89868fcac0e750a28230fdb1ad4512137 upstream.
+commit c0a636e4cc2eb39244d23c0417c117be4c96a7fe upstream.
 
-The patch "usb: simplify usbport trigger" together with "leds: triggers:
-add device attribute support" caused an regression for the usbport
-trigger. it will no longer enumerate any active usb hub ports under the
-"ports" directory in the sysfs class directory, if the usb host drivers
-are fully initialized before the usbport trigger was loaded.
+The main PLL calculation has a mistake. We should be using the
+multiplying the VCO frequency, not the parent clock frequency.
 
-The reason is that the usbport driver tries to register the sysfs
-entries during the activate() callback. And this will fail with -2 /
-ENOENT because the patch "leds: triggers: add device attribute support"
-made it so that the sysfs "ports" group was only being added after the
-activate() callback succeeded.
-
-This version of the patch reverts parts of the "usb: simplify usbport
-trigger" patch and restores usbport trigger's functionality.
-
-Fixes: 6f7b0bad8839 ("usb: simplify usbport trigger")
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Fixes: 07afb8db7340 ("clk: socfpga: stratix10: add clock driver for
+Stratix10 platform")
+Cc: linux-stable@vger.kernel.org
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/ledtrig-usbport.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/clk/socfpga/clk-pll-s10.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/ledtrig-usbport.c
-+++ b/drivers/usb/core/ledtrig-usbport.c
-@@ -119,11 +119,6 @@ static const struct attribute_group port
- 	.attrs = ports_attrs,
- };
+--- a/drivers/clk/socfpga/clk-pll-s10.c
++++ b/drivers/clk/socfpga/clk-pll-s10.c
+@@ -43,7 +43,7 @@ static unsigned long clk_pll_recalc_rate
+ 	/* Read mdiv and fdiv from the fdbck register */
+ 	reg = readl(socfpgaclk->hw.reg + 0x4);
+ 	mdiv = (reg & SOCFPGA_PLL_MDIV_MASK) >> SOCFPGA_PLL_MDIV_SHIFT;
+-	vco_freq = (unsigned long long)parent_rate * (mdiv + 6);
++	vco_freq = (unsigned long long)vco_freq * (mdiv + 6);
  
--static const struct attribute_group *ports_groups[] = {
--	&ports_group,
--	NULL
--};
--
- /***************************************
-  * Adding & removing ports
-  ***************************************/
-@@ -307,6 +302,7 @@ static int usbport_trig_notify(struct no
- static int usbport_trig_activate(struct led_classdev *led_cdev)
- {
- 	struct usbport_trig_data *usbport_data;
-+	int err;
- 
- 	usbport_data = kzalloc(sizeof(*usbport_data), GFP_KERNEL);
- 	if (!usbport_data)
-@@ -315,6 +311,9 @@ static int usbport_trig_activate(struct
- 
- 	/* List of ports */
- 	INIT_LIST_HEAD(&usbport_data->ports);
-+	err = sysfs_create_group(&led_cdev->dev->kobj, &ports_group);
-+	if (err)
-+		goto err_free;
- 	usb_for_each_dev(usbport_data, usbport_trig_add_usb_dev_ports);
- 	usbport_trig_update_count(usbport_data);
- 
-@@ -322,8 +321,11 @@ static int usbport_trig_activate(struct
- 	usbport_data->nb.notifier_call = usbport_trig_notify;
- 	led_set_trigger_data(led_cdev, usbport_data);
- 	usb_register_notify(&usbport_data->nb);
--
- 	return 0;
-+
-+err_free:
-+	kfree(usbport_data);
-+	return err;
+ 	return (unsigned long)vco_freq;
  }
- 
- static void usbport_trig_deactivate(struct led_classdev *led_cdev)
-@@ -335,6 +337,8 @@ static void usbport_trig_deactivate(stru
- 		usbport_trig_remove_port(usbport_data, port);
- 	}
- 
-+	sysfs_remove_group(&led_cdev->dev->kobj, &ports_group);
-+
- 	usb_unregister_notify(&usbport_data->nb);
- 
- 	kfree(usbport_data);
-@@ -344,7 +348,6 @@ static struct led_trigger usbport_led_tr
- 	.name     = "usbport",
- 	.activate = usbport_trig_activate,
- 	.deactivate = usbport_trig_deactivate,
--	.groups = ports_groups,
- };
- 
- static int __init usbport_trig_init(void)
 
 
