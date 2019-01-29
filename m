@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB775C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164B5C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81EBD2086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB3922086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762676;
-	bh=ScxfXUk5cn6JXxjCE7o9eD3uFIYzh1wjKLXD84AF758=;
+	s=default; t=1548762679;
+	bh=K2j4/7t7OcYdQBRy6HtcnXkwGHHpzT54WmQpkhn/E50=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MTMo0RxWHm4J2LbhhUq5o0jFLKdO8j+jtyJ7PstmxTEOgsMAj++P7uiVcTeUoZM5k
-	 z33eCwqE6JwT0nkFaTL4gDTuvKgyEU/icCcbllRktU1Og7XUPWj0dGC8aJ8foFSf7B
-	 WEYhMGFnY5DUGQPZYRrn74KlC65zyEZAqKwGlMg4=
+	b=VWEERH5MsNtJsQxQR6N4hnY1dHNeui6FQw5ZE612hV7DKY+EprktF3iPBorPb/i8J
+	 0mkaJMdbIMUcQsDH/gFAyrWYx7/pPmjvN6yROl/Gg1BUgj+rCC224BFmlmQPusnItz
+	 gLxcTQQjCMfA0NADpMotGWA2PxOPy1OoqsdA0b68=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731838AbfA2LvO (ORCPT
+        id S1731847AbfA2LvS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:51:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42654 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:51:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731830AbfA2LvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:51:10 -0500
+        id S1731366AbfA2LvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:51:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96DD22086C;
-        Tue, 29 Jan 2019 11:51:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FC0820882;
+        Tue, 29 Jan 2019 11:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762669;
-        bh=ScxfXUk5cn6JXxjCE7o9eD3uFIYzh1wjKLXD84AF758=;
+        s=default; t=1548762675;
+        bh=K2j4/7t7OcYdQBRy6HtcnXkwGHHpzT54WmQpkhn/E50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cTrPaoArjQBrciNvP+g1tEFYwEEH6kVSfH+ueb74WOvllqaQ2J3rp+3EH6LRAoNmc
-         lFIw3QyE8/tZrCVjSqR8b9CSxTl64cnK0ODLdAGjLeVErsgzVvm03dvNJ2YwJjQH+u
-         Gi1y0TOSnHbcjg3SlNggOKRpc0II5seXo58EdZEg=
+        b=uGG3qsXlGq05lkRyvb5gYMvfRJkER48XzLxp2cPbOTlhqBEWHf3gO1U0n/AuZbe0U
+         Od1+K6u+6NczHb6pdzb3gDkB0ke8jFG0F5IKCzz1fCZ8WcUnx8VaUstI5hWoCz27JL
+         F2MJ7vvuHvhTk5Iv9SiHrrKg0lsrTSBFgEsWcsNE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jintack Lim <jintack@cs.columbia.edu>,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        stable@vger.kernel.org,
+        Martin Olsson <martin.olsson+netdev@sentorsecurity.com>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 04/44] vhost: log dirty page correctly
-Date:   Tue, 29 Jan 2019 12:35:59 +0100
-Message-Id: <20190129113140.312342369@linuxfoundation.org>
+Subject: [PATCH 4.9 06/44] net_sched: refetch skb protocol for each filter
+Date:   Tue, 29 Jan 2019 12:36:01 +0100
+Message-Id: <20190129113140.567750587@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -67,202 +69,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit cc5e710759470bc7f3c61d11fd54586f15fdbdf4 ]
+[ Upstream commit cd0c4e70fc0ccfa705cdf55efb27519ce9337a26 ]
 
-Vhost dirty page logging API is designed to sync through GPA. But we
-try to log GIOVA when device IOTLB is enabled. This is wrong and may
-lead to missing data after migration.
+Martin reported a set of filters don't work after changing
+from reclassify to continue. Looking into the code, it
+looks like skb protocol is not always fetched for each
+iteration of the filters. But, as demonstrated by Martin,
+TC actions could modify skb->protocol, for example act_vlan,
+this means we have to refetch skb protocol in each iteration,
+rather than using the one we fetch in the beginning of the loop.
 
-To solve this issue, when logging with device IOTLB enabled, we will:
+This bug is _not_ introduced by commit 3b3ae880266d
+("net: sched: consolidate tc_classify{,_compat}"), technically,
+if act_vlan is the only action that modifies skb protocol, then
+it is commit c7e2b9689ef8 ("sched: introduce vlan action") which
+introduced this bug.
 
-1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
-   get HVA, for writable descriptor, get HVA through iovec. For used
-   ring update, translate its GIOVA to HVA
-2) traverse the GPA->HVA mapping to get the possible GPA and log
-   through GPA. Pay attention this reverse mapping is not guaranteed
-   to be unique, so we should log each possible GPA in this case.
-
-This fix the failure of scp to guest during migration. In -next, we
-will probably support passing GIOVA->GPA instead of GIOVA->HVA.
-
-Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-Reported-by: Jintack Lim <jintack@cs.columbia.edu>
-Cc: Jintack Lim <jintack@cs.columbia.edu>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Reported-by: Martin Olsson <martin.olsson+netdev@sentorsecurity.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/net.c   |    3 +
- drivers/vhost/vhost.c |   97 ++++++++++++++++++++++++++++++++++++++++++--------
- drivers/vhost/vhost.h |    3 +
- 3 files changed, 87 insertions(+), 16 deletions(-)
+ net/sched/sch_api.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -751,7 +751,8 @@ static void handle_rx(struct vhost_net *
- 		vhost_add_used_and_signal_n(&net->dev, vq, vq->heads,
- 					    headcount);
- 		if (unlikely(vq_log))
--			vhost_log_write(vq, vq_log, log, vhost_len);
-+			vhost_log_write(vq, vq_log, log, vhost_len,
-+					vq->iov, in);
- 		total_len += vhost_len;
- 		if (unlikely(total_len >= VHOST_NET_WEIGHT)) {
- 			vhost_poll_queue(&vq->poll);
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1646,13 +1646,87 @@ static int log_write(void __user *log_ba
- 	return r;
- }
- 
-+static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
-+{
-+	struct vhost_umem *umem = vq->umem;
-+	struct vhost_umem_node *u;
-+	u64 start, end, l, min;
-+	int r;
-+	bool hit = false;
-+
-+	while (len) {
-+		min = len;
-+		/* More than one GPAs can be mapped into a single HVA. So
-+		 * iterate all possible umems here to be safe.
-+		 */
-+		list_for_each_entry(u, &umem->umem_list, link) {
-+			if (u->userspace_addr > hva - 1 + len ||
-+			    u->userspace_addr - 1 + u->size < hva)
-+				continue;
-+			start = max(u->userspace_addr, hva);
-+			end = min(u->userspace_addr - 1 + u->size,
-+				  hva - 1 + len);
-+			l = end - start + 1;
-+			r = log_write(vq->log_base,
-+				      u->start + start - u->userspace_addr,
-+				      l);
-+			if (r < 0)
-+				return r;
-+			hit = true;
-+			min = min(l, min);
-+		}
-+
-+		if (!hit)
-+			return -EFAULT;
-+
-+		len -= min;
-+		hva += min;
-+	}
-+
-+	return 0;
-+}
-+
-+static int log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
-+{
-+	struct iovec iov[64];
-+	int i, ret;
-+
-+	if (!vq->iotlb)
-+		return log_write(vq->log_base, vq->log_addr + used_offset, len);
-+
-+	ret = translate_desc(vq, (uintptr_t)vq->used + used_offset,
-+			     len, iov, 64, VHOST_ACCESS_WO);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < ret; i++) {
-+		ret = log_write_hva(vq,	(uintptr_t)iov[i].iov_base,
-+				    iov[i].iov_len);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len)
-+		    unsigned int log_num, u64 len, struct iovec *iov, int count)
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@ -1850,7 +1850,6 @@ done:
+ int tc_classify(struct sk_buff *skb, const struct tcf_proto *tp,
+ 		struct tcf_result *res, bool compat_mode)
  {
- 	int i, r;
+-	__be16 protocol = tc_skb_protocol(skb);
+ #ifdef CONFIG_NET_CLS_ACT
+ 	const struct tcf_proto *old_tp = tp;
+ 	int limit = 0;
+@@ -1858,6 +1857,7 @@ int tc_classify(struct sk_buff *skb, con
+ reclassify:
+ #endif
+ 	for (; tp; tp = rcu_dereference_bh(tp->next)) {
++		__be16 protocol = tc_skb_protocol(skb);
+ 		int err;
  
- 	/* Make sure data written is seen before log. */
- 	smp_wmb();
-+
-+	if (vq->iotlb) {
-+		for (i = 0; i < count; i++) {
-+			r = log_write_hva(vq, (uintptr_t)iov[i].iov_base,
-+					  iov[i].iov_len);
-+			if (r < 0)
-+				return r;
-+		}
-+		return 0;
-+	}
-+
- 	for (i = 0; i < log_num; ++i) {
- 		u64 l = min(log[i].len, len);
- 		r = log_write(vq->log_base, log[i].addr, l);
-@@ -1682,9 +1756,8 @@ static int vhost_update_used_flags(struc
- 		smp_wmb();
- 		/* Log used flag write. */
- 		used = &vq->used->flags;
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof vq->used->flags);
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof vq->used->flags);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
+ 		if (tp->protocol != protocol &&
+@@ -1884,7 +1884,6 @@ reset:
  	}
-@@ -1702,9 +1775,8 @@ static int vhost_update_avail_event(stru
- 		smp_wmb();
- 		/* Log avail event write */
- 		used = vhost_avail_event(vq);
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof *vhost_avail_event(vq));
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof *vhost_avail_event(vq));
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-@@ -2103,10 +2175,8 @@ static int __vhost_add_used_n(struct vho
- 		/* Make sure data is seen before log. */
- 		smp_wmb();
- 		/* Log used ring entry write. */
--		log_write(vq->log_base,
--			  vq->log_addr +
--			   ((void __user *)used - (void __user *)vq->used),
--			  count * sizeof *used);
-+		log_used(vq, ((void __user *)used - (void __user *)vq->used),
-+			 count * sizeof *used);
- 	}
- 	old = vq->last_used_idx;
- 	new = (vq->last_used_idx += count);
-@@ -2148,9 +2218,8 @@ int vhost_add_used_n(struct vhost_virtqu
- 		/* Make sure used idx is seen before log. */
- 		smp_wmb();
- 		/* Log used index update. */
--		log_write(vq->log_base,
--			  vq->log_addr + offsetof(struct vring_used, idx),
--			  sizeof vq->used->idx);
-+		log_used(vq, offsetof(struct vring_used, idx),
-+			 sizeof vq->used->idx);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -199,7 +199,8 @@ bool vhost_vq_avail_empty(struct vhost_d
- bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
  
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len);
-+		    unsigned int log_num, u64 len,
-+		    struct iovec *iov, int count);
- int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
- 
- struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
+ 	tp = old_tp;
+-	protocol = tc_skb_protocol(skb);
+ 	goto reclassify;
+ #endif
+ }
 
 
