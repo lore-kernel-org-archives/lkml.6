@@ -6,77 +6,74 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B185C282CF
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9726C282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 249F8214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:23:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84A0E20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 01:32:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbfA2BXZ convert rfc822-to-8bit (ORCPT
+        id S1726832AbfA2Bcs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 20:23:25 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36186 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727139AbfA2BXY (ORCPT
+        Mon, 28 Jan 2019 20:32:48 -0500
+Received: from smtprelay0137.hostedemail.com ([216.40.44.137]:59405 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726678AbfA2Bcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 20:23:24 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CCD5B28DF;
-        Tue, 29 Jan 2019 01:23:22 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 17:23:21 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     =?ISO-8859-1?Q?J=FCrg?= Billeter <j@bitron.ch>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2 1/1] prctl: add
- PR_{GET,SET}_KILL_DESCENDANTS_ON_EXIT
-Message-Id: <20190128172321.780e9b380dd40eb3e7c22daf@linux-foundation.org>
-In-Reply-To: <20190118131130.42209-2-j@bitron.ch>
-References: <20181127225408.7553-1-j@bitron.ch>
-        <20190118131130.42209-1-j@bitron.ch>
-        <20190118131130.42209-2-j@bitron.ch>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 28 Jan 2019 20:32:48 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 9811C18224D66;
+        Tue, 29 Jan 2019 01:32:46 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: crook68_522bca3377236
+X-Filterd-Recvd-Size: 1836
+Received: from XPS-9350 (cpe-75-82-193-221.socal.res.rr.com [75.82.193.221])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 29 Jan 2019 01:32:44 +0000 (UTC)
+Message-ID: <9d085583a1d9a1068838f4333a2f12156f77d246.camel@perches.com>
+Subject: Re: [PATCH][RFC] module: Cure the MODULE_LICENSE "GPL" vs. "GPL v2"
+ bogosity
+From:   Joe Perches <joe@perches.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Jessica Yu <jeyu@kernel.org>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Christoph Hellwig <hch@lst.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Date:   Mon, 28 Jan 2019 17:32:42 -0800
+In-Reply-To: <alpine.DEB.2.21.1901282105450.1669@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1901282105450.1669@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Jan 2019 14:11:30 +0100 Jürg Billeter <j@bitron.ch> wrote:
+On Mon, 2019-01-28 at 23:38 +0100, Thomas Gleixner wrote:
+> Therefore remove the well meant, but ill defined, distinction between "GPL"
+> and "GPL v2" and document that:
+> 
+>   - "GPL" and "GPL v2" both express that the module is licensed under GPLv2
+>     (without a distinction of 'only' and 'or later') and is therefore kernel
+>     license compliant.
+> 
+>   - None of the MODULE_LICENSE strings can be used for expressing or
+>     determining the exact license
+> 
+>   - Their sole purpose is to decide whether the module is free software or
+>     not.
 
-> This introduces a new thread group flag that can be set by calling
-> 
->     prctl(PR_SET_KILL_DESCENDANTS_ON_EXIT, 1, 0, 0, 0)
-> 
-> When a thread group exits with this flag set, it will send SIGKILL to
-> all descendant processes.  This can be used to prevent stray child
-> processes.
-> 
-> This flag is cleared on privilege gaining execve(2) to ensure an
-> unprivileged process cannot get a privileged process to send SIGKILL.
-> 
-> Descendants that are orphaned and reparented to an ancestor of the
-> current process before the current process exits, will not be killed.
-> PR_SET_CHILD_SUBREAPER can be used to contain orphaned processes.
-> 
-> If a descendant gained privileges, the current process may not be
-> allowed to kill it, and the descendant process will survive.
-> PR_SET_NO_NEW_PRIVS can be used to prevent descendant processes from
-> gaining privileges.
+Thanks Thomas.
 
-I don't feel that I'm able to judge the usefulness of this.  It would
-help to have a lot more words right here in this changelog which
-communicate the value of this change to our users.  References are
-useful, but please don't send people off to chase down mailing list and
-bugzilla discussions as a substitute for properly describing the feature
-and its justification.
+Acked-by: Joe Perches <joe@perches.com>
 
-Some test code in tools/testing/selftests/ would be helpful.
+if you want that.
 
-We'll need to update the prctl(2) manpage if we proceed with this.
+
