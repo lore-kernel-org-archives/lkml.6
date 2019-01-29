@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEB1C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED83AC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3B1620880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD96420880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:02:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763339;
-	bh=wXp6vexW0dabKvW9xhzaHZv4NGM+RdTYpuhsb7BQUGI=;
+	s=default; t=1548763343;
+	bh=xNBZ0o3g++2r6+0hbROXOv4ep2JttUvNi8m/F1mMIBM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jL2IFaAeL+shVUr8wgNtlljl4VAhA56pju5K4WvxLrU8oQ2tD3/slDoWEF7h0enD4
-	 18rV7pSz95hlAUzYz5So5YWb4sWC36XHU5FUQ/JgU741i1dhAT3xhV1L2n9TtGqdt2
-	 h2i5hCkTWPK3sw8aDDSOOsRfgQ1/lxBD6IGt5P3M=
+	b=RBXqrM4+r7spdYJicZBI3W807E2OPbAkRDK9OCFEsFiecTcRT/RmCA73ZOpNTMaaR
+	 SIOz1c0bA0whnzNz5lQNfwr06hX2TxIdX0GapWTn7UQS2n8B0/Ju8kbpAmJHttSSHR
+	 2NY+ohWYvSfblaVg3zlOxHit2PJmjPFaybiSTPaI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730893AbfA2MCQ (ORCPT
+        id S1730660AbfA2Lo5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:02:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35404 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:44:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730667AbfA2LpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:45:00 -0500
+        id S1730641AbfA2Lov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:44:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C49C214DA;
-        Tue, 29 Jan 2019 11:44:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24CAB20882;
+        Tue, 29 Jan 2019 11:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762300;
-        bh=wXp6vexW0dabKvW9xhzaHZv4NGM+RdTYpuhsb7BQUGI=;
+        s=default; t=1548762290;
+        bh=xNBZ0o3g++2r6+0hbROXOv4ep2JttUvNi8m/F1mMIBM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I4tI4F/ecTdLdc8A8gMFdt7y/IHnls0zq/nQH4ZLvGTl4ckXxl1FrbGoGPCKF09TL
-         V2YwXwY3biv+EHo1PGNpRvvDnXwoaOyTq5+LBHp1pI0F0l2AmZyHaoZUW62NDaEWyM
-         w03e+ghnCPMf9Q2vk6bBCBmKWTfKBhU2pDQcmtvI=
+        b=DybWrfhqsDN9XBH7SZ9HIeHWcAyx2DuBpEWHLlApAfqs5MPfWv+GkAp/02k1zx7Am
+         l5k8RVLNwZZjkY8wYYi+xN+d7hgIH1XTsBWu/aw12rtypyUbCirezBYlg997nEDaYN
+         KLifSKa+yStsEccSCcjiLlBEE2r/CG0ioL8poFAc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Charles Yeh <charlesyeh522@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 026/103] USB: serial: pl2303: add new PID to support PL2303TB
-Date:   Tue, 29 Jan 2019 12:35:03 +0100
-Message-Id: <20190129113201.148142703@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 055/103] CIFS: Fix credit calculation for encrypted reads with errors
+Date:   Tue, 29 Jan 2019 12:35:32 +0100
+Message-Id: <20190129113203.897362077@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -65,49 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Charles Yeh <charlesyeh522@gmail.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit 4dcf9ddc9ad5ab649abafa98c5a4d54b1a33dabb upstream.
+commit ec678eae746dd25766a61c4095e2b649d3b20b09 upstream.
 
-Add new PID to support PL2303TB (TYPE_HX)
+We do need to account for credits received in error responses
+to read requests on encrypted sessions.
 
-Signed-off-by: Charles Yeh <charlesyeh522@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/pl2303.c |    1 +
- drivers/usb/serial/pl2303.h |    2 ++
- 2 files changed, 3 insertions(+)
+ fs/cifs/smb2ops.c |   24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -46,6 +46,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_HCR331) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MOTOROLA) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ZTEK) },
-+	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_TB) },
- 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID) },
- 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID_RSAQ5) },
- 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_ID),
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -8,6 +8,7 @@
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -2901,11 +2901,23 @@ handle_read_data(struct TCP_Server_Info
+ 			server->ops->is_status_pending(buf, server, 0))
+ 		return -1;
  
- #define PL2303_VENDOR_ID	0x067b
- #define PL2303_PRODUCT_ID	0x2303
-+#define PL2303_PRODUCT_ID_TB		0x2304
- #define PL2303_PRODUCT_ID_RSAQ2		0x04bb
- #define PL2303_PRODUCT_ID_DCU11		0x1234
- #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
-@@ -20,6 +21,7 @@
- #define PL2303_PRODUCT_ID_MOTOROLA	0x0307
- #define PL2303_PRODUCT_ID_ZTEK		0xe1f1
- 
+-	rdata->result = server->ops->map_error(buf, false);
++	/* set up first two iov to get credits */
++	rdata->iov[0].iov_base = buf;
++	rdata->iov[0].iov_len = 4;
++	rdata->iov[1].iov_base = buf + 4;
++	rdata->iov[1].iov_len =
++		min_t(unsigned int, buf_len, server->vals->read_rsp_size) - 4;
++	cifs_dbg(FYI, "0: iov_base=%p iov_len=%zu\n",
++		 rdata->iov[0].iov_base, rdata->iov[0].iov_len);
++	cifs_dbg(FYI, "1: iov_base=%p iov_len=%zu\n",
++		 rdata->iov[1].iov_base, rdata->iov[1].iov_len);
 +
- #define ATEN_VENDOR_ID		0x0557
- #define ATEN_VENDOR_ID2		0x0547
- #define ATEN_PRODUCT_ID		0x2008
++	rdata->result = server->ops->map_error(buf, true);
+ 	if (rdata->result != 0) {
+ 		cifs_dbg(FYI, "%s: server returned error %d\n",
+ 			 __func__, rdata->result);
+-		dequeue_mid(mid, rdata->result);
++		/* normal error on read response */
++		dequeue_mid(mid, false);
+ 		return 0;
+ 	}
+ 
+@@ -2978,14 +2990,6 @@ handle_read_data(struct TCP_Server_Info
+ 		return 0;
+ 	}
+ 
+-	/* set up first iov for signature check */
+-	rdata->iov[0].iov_base = buf;
+-	rdata->iov[0].iov_len = 4;
+-	rdata->iov[1].iov_base = buf + 4;
+-	rdata->iov[1].iov_len = server->vals->read_rsp_size - 4;
+-	cifs_dbg(FYI, "0: iov_base=%p iov_len=%zu\n",
+-		 rdata->iov[0].iov_base, server->vals->read_rsp_size);
+-
+ 	length = rdata->copy_into_pages(server, rdata, &iter);
+ 
+ 	kfree(bvec);
 
 
