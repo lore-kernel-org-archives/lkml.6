@@ -7,52 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5A0C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD685C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B51D2148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7358120882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761854;
-	bh=MTue32hDEd6wQ+rR2I90uV7S9JJ6ymkIG8MK6InGS2o=;
+	s=default; t=1548761857;
+	bh=J3V2ge1SNFkjfFf833kFJLmhxbs3UgTytFlBLSRaLuc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=r01SATFrKRN1DpEKXmffDQtzXFbdUsuUYgBXY25uF3DW6kTTLt8ZUyAsUzNaPnkTz
-	 4DEQ1iXHFJxJ22dAl7+cD7jcLG3ng+7aQi+jONDve+kQ25TDVNc/v4zXNRMwUEP1TI
-	 zHz26yxNUU2pFC7il9zaDypFW655S6ziVfAIsHiQ=
+	b=Ag3uECfqJ4wAYHKMkwm2Hb7QYY5Px8vkc70w/+LIF0lXigrQIKBe/RlNdAxfNEWNy
+	 KBKy9Kz0rcm88vUYFx7OYK5OGlgWrXnrzsp1ggjhH/ZOx9tPMzKJmvzT+S+tcQLVBu
+	 PtWXwMNcEFxOBlYnMAbrigl9WOGnfFP3FzxEiv2Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728867AbfA2Lhd (ORCPT
+        id S1728879AbfA2Lhg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:37:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54132 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:37:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728834AbfA2Lh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:37:29 -0500
+        id S1727728AbfA2Lhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:37:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C630320844;
-        Tue, 29 Jan 2019 11:37:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B86F020882;
+        Tue, 29 Jan 2019 11:37:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761848;
-        bh=MTue32hDEd6wQ+rR2I90uV7S9JJ6ymkIG8MK6InGS2o=;
+        s=default; t=1548761854;
+        bh=J3V2ge1SNFkjfFf833kFJLmhxbs3UgTytFlBLSRaLuc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nGBfrugnK8PoJZxP7PzEC5aJ6R1oabYeDW9sfZ3PKT05EyZrR4nqpNGGlz77RxcsZ
-         yilv1wU0D4qQVQNL8yKiYYjjsOOT+b1FtJk7xTbxIrOdO8rH8dWkRf5+Ot1tbjdyFi
-         TB58Amavroc7yTmcpenm/p1OxtpZdel4kjjS0+rM=
+        b=SQ/R3K8mTo7qzpeYZSpAx4Uaewcbgd/eq4AyEQb19v3beKkGzreb8xTicygVj1YVf
+         Sn8kZQ0QgjV/q9h5cGOzvTqXOZJqNnKDIStbbUj7ZlWBqW7489Z2N5ajLQdVdyxz2k
+         q6YU5zZh/EAz6gGZKAsYHtcvHqG/A2BDa8+IuJJI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marek Majkowski <marek@cloudflare.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Alexey Kodanev <alexey.kodanev@oracle.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 021/117] tcp: allow MSG_ZEROCOPY transmission also in CLOSE_WAIT state
-Date:   Tue, 29 Jan 2019 12:34:32 +0100
-Message-Id: <20190129113208.714803911@linuxfoundation.org>
+        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 023/117] SUNRPC: Address Kerberos performance/behavior regression
+Date:   Tue, 29 Jan 2019 12:34:34 +0100
+Message-Id: <20190129113208.820427598@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -71,43 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+[ Upstream commit deaa5c96c2f7e8b934088a1e70a0fe8797bd1149 ]
 
-[ Upstream commit 13d7f46386e060df31b727c9975e38306fa51e7a ]
+When using Kerberos with v4.20, I've observed frequent connection
+loss on heavy workloads. I traced it down to the client underrunning
+the GSS sequence number window -- NFS servers are required to drop
+the RPC with the low sequence number, and also drop the connection
+to signal that an RPC was dropped.
 
-TCP transmission with MSG_ZEROCOPY fails if the peer closes its end of
-the connection and so transitions this socket to CLOSE_WAIT state.
+Bisected to commit 918f3c1fe83c ("SUNRPC: Improve latency for
+interactive tasks").
 
-Transmission in close wait state is acceptable. Other similar tests in
-the stack (e.g., in FastOpen) accept both states. Relax this test, too.
+I've got a one-line workaround for this issue, which is easy to
+backport to v4.20 while a more permanent solution is being derived.
+Essentially, tk_owner-based sorting is disabled for RPCs that carry
+a GSS sequence number.
 
-Link: https://www.mail-archive.com/netdev@vger.kernel.org/msg276886.html
-Link: https://www.mail-archive.com/netdev@vger.kernel.org/msg227390.html
-Fixes: f214f915e7db ("tcp: enable MSG_ZEROCOPY")
-Reported-by: Marek Majkowski <marek@cloudflare.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-CC: Yuchung Cheng <ycheng@google.com>
-CC: Neal Cardwell <ncardwell@google.com>
-CC: Soheil Hassas Yeganeh <soheil@google.com>
-CC: Alexey Kodanev <alexey.kodanev@oracle.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 918f3c1fe83c ("SUNRPC: Improve latency for interactive ... ")
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp.c |    2 +-
+ net/sunrpc/xprt.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -1186,7 +1186,7 @@ int tcp_sendmsg_locked(struct sock *sk,
- 	flags = msg->msg_flags;
- 
- 	if (flags & MSG_ZEROCOPY && size && sock_flag(sk, SOCK_ZEROCOPY)) {
--		if (sk->sk_state != TCP_ESTABLISHED) {
-+		if ((1 << sk->sk_state) & ~(TCPF_ESTABLISHED | TCPF_CLOSE_WAIT)) {
- 			err = -EINVAL;
- 			goto out_err;
- 		}
+--- a/net/sunrpc/xprt.c
++++ b/net/sunrpc/xprt.c
+@@ -1177,7 +1177,7 @@ xprt_request_enqueue_transmit(struct rpc
+ 				INIT_LIST_HEAD(&req->rq_xmit2);
+ 				goto out;
+ 			}
+-		} else {
++		} else if (!req->rq_seqno) {
+ 			list_for_each_entry(pos, &xprt->xmit_queue, rq_xmit) {
+ 				if (pos->rq_task->tk_owner != task->tk_owner)
+ 					continue;
 
 
