@@ -2,92 +2,131 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF69C282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E76C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56ECD20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:20:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25D0820882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfA2NUU (ORCPT
+        id S1727266AbfA2NUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 08:20:20 -0500
-Received: from mga06.intel.com ([134.134.136.31]:59450 "EHLO mga06.intel.com"
+        Tue, 29 Jan 2019 08:20:24 -0500
+Received: from mga02.intel.com ([134.134.136.20]:15138 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725355AbfA2NUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 08:20:20 -0500
+        id S1725355AbfA2NUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 08:20:23 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 05:20:19 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 05:20:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
-   d="scan'208";a="138829651"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.127])
-  by fmsmga002.fm.intel.com with ESMTP; 29 Jan 2019 05:20:17 -0800
-Date:   Tue, 29 Jan 2019 15:20:16 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190129132016.GA1602@linux.intel.com>
-References: <20190118142559.GA4080@linux.intel.com>
- <1547849358.2794.90.camel@HansenPartnership.com>
- <20190120160413.GB30478@linux.intel.com>
- <20190122010218.GA26713@linux.intel.com>
- <20190122025836.GH25163@ziepe.ca>
- <20190122132910.GA2720@linux.intel.com>
- <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
- <20190123153638.GA8727@linux.intel.com>
- <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+   d="scan'208";a="120377237"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga008.fm.intel.com with ESMTP; 29 Jan 2019 05:20:18 -0800
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 9F217205C8; Tue, 29 Jan 2019 15:20:15 +0200 (EET)
+Date:   Tue, 29 Jan 2019 15:20:15 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Ken Sloat <ken.sloat@ohmlinxelectronics.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, yong.deng@magewell.com,
+        mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        maxime.ripard@bootlin.com, wens@csie.org,
+        kieran.bingham@ideasonboard.com, laurent.pinchart@ideasonboard.com,
+        jean-michel.hautbois@vodalys.com,
+        Nate Drude <nate.drude@ohmlinxelectronics.com>,
+        devicetree@vger.kernel.org
+Subject: Re: devicetree: media: Documentation of Bt.656 Bus DT bindings
+Message-ID: <20190129132015.tvtzycrzr46kotbt@paasikivi.fi.intel.com>
+References: <CAPo_4QDW0r22ZTqtS_NDFWB3NFLBx9YEGgWKb-P9A3t_TBAFMQ@mail.gmail.com>
+ <c4d68627-b26a-6402-daf4-5cd103ec9fd0@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c4d68627-b26a-6402-daf4-5cd103ec9fd0@xs4all.nl>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 07:43:30AM +1300, Linus Torvalds wrote:
-> On Thu, Jan 24, 2019 at 4:36 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> > >
-> > > Is it just that this particular hardware always happened to trigger
-> > > the ERMS case (ie "rep movsb")?
-> >
-> > This is the particular snippet in question:
-> >
-> > memcpy_fromio(buf, priv->rsp, 6);
-> > expected = be32_to_cpup((__be32 *) &buf[2]);
-> > if (expected > count || expected < 6)
-> >         return -EIO;
+Hi Ken, Hans,
+
+On Mon, Jan 28, 2019 at 02:11:54PM +0100, Hans Verkuil wrote:
+> +Sakari
+
+Thanks for cc'ing me!
+
 > 
-> Ok, strange.
+> On 1/24/19 3:53 AM, Ken Sloat wrote:
+> > There are a number of v4l2 subdevices in the kernel that support a
+> > Bt.656 bus also known as "embedded sync." Previously in older versions
+> > of the kernel (and in the current 4.14 LTS kernel), the standard way
+> > to enable this in device tree on a parallel bus was to simply omit all
+> > hysync and vsync flags.
+> > 
+> > During some other kernel development I was doing, it was brought to my
+> > attention that there is now a standard defined binding in
+> > "video-interfaces.txt" called "bus-type" that should be used in order
+> > to enable Bt.656 mode. While omitting the flags still appears to work
+> > because of other assumptions made in v4l2-fwnode driver, this method
+> > is now outdated and improper.
+> > 
+> > However, I have noticed that several dt binding docs have not been
+> > updated to reflect this change and still reference the old method:
+> > 
+> > Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > /* If hsync-active/vsync-active are missing,
+> >    embedded BT.656 sync is used */
+> > 
+> > Documentation/devicetree/bindings/media/i2c/tvp5150.txt
+> > "If none of hsync-active, vsync-active and field-even-active is specified,
+> > the endpoint is assumed to use embedded BT.656 synchronization."
+> > 
+> > Documentation/devicetree/bindings/media/i2c/adv7604.txt
+> > "If none of hsync-active, vsync-active and pclk-sample is specified the
+> >   endpoint will use embedded BT.656 synchronization."
+> > 
+> > and amazingly even
+> > Documentation/devicetree/bindings/media/video-interfaces.txt in one of
+> > the code snippets
+> > /* If hsync-active/vsync-active are missing,
+> >    embedded BT.656 sync is used */
+
+Yeah, these are the old bindings indeed.
+
+> > 
+> > In order to avoid future confusion in the matter and ensure that the
+> > proper bindings are used, I am proposing submitting patches to update
+> > these docs to at minimum remove these statements and maybe even adding
+> > additional comments specifying the optional property and value for
+> > Bt.656 where missing. I wanted to open a discussion here first before
+> > doing this though. Thoughts?
+
+I agree. If a device supports different busses on the same port, then the
+bus-type property is needed. This is often the case for Bt.656 and parallel
+(Bt.601?) interfaces.
+
+This should be documented so that new devices would use the bus type. The
+existing bindings still need to be supported in drivers though.
+
+I cc'd the devicetree list as well.
+
+> > 
+> > Thanks,
+> > Ken Sloat
+> > 
 > 
-> So what *used* to happen is that the memcpy_fromio() would just expand
-> as a "memcpy()", and in this case, gcc would then inline the memcpy().
-> In fact, gcc does it as a 4-byte access and a two-byte access from
-> what I can tell.
+> I certainly agree that this should be updated to make it all consistent.
 
-I verified, and it is exactly as you stated:
+-- 
+Kind regards,
 
-   0xffffffff814aaa33 <+51>:	mov    (%rax),%edx
-   0xffffffff814aaa35 <+53>:	mov    %edx,0x0(%rbp)
-   0xffffffff814aaa38 <+56>:	movzwl 0x4(%rax),%eax
-   0xffffffff814aaa3c <+60>:	mov    %ax,0x4(%rbp)
-
-And your new version does exactly the same thing to the first six bytes
-(with different opcode, but the same memory access pattern).
-
-/Jarkko
+Sakari Ailus
+sakari.ailus@linux.intel.com
