@@ -2,216 +2,110 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F7BC282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD6E3C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9161E20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763175;
-	bh=WKj+ffPxitBGimG7QGLxdbZOS4SyKmOlLCVHKCIIC08=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WkEQseV8AQLufxMDxmboURuAmk7AUWtINOodmzcwcmz4K485j6ereEoYKyUEj6jcx
-	 Sl356Ums1gzko6X1tLnzMR8rS12kwtWXRfoLojIcnF7mAANp3ienGxYsL+bp4rVVfR
-	 83HCE6YBqNamjeK8a5Ktyxr8d0lmdEt6yHZIvhWc=
+	by mail.kernel.org (Postfix) with ESMTP id A705220882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731133AbfA2LrG (ORCPT
+        id S1731291AbfA2L7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:47:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731118AbfA2LrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:04 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 435182086C;
-        Tue, 29 Jan 2019 11:47:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762422;
-        bh=WKj+ffPxitBGimG7QGLxdbZOS4SyKmOlLCVHKCIIC08=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sZXaLVV3Sdisj6YCjqdpWYanB0LuVr5JO/7XIJicHX7W0S9ZHs+sdJzWLpJo9Xnft
-         rFdGuYQL5lZ5YoaB5MrNZle524vONhtdLqMkeLGiYtRUnkTxLorTsBYCFS1UmkOlqX
-         xnObxK//EViX3VuN0jFNK/MVuIDBJc/Hbao1Teuc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 096/103] bpf: fix sanitation of alu op with pointer / scalar type from different paths
-Date:   Tue, 29 Jan 2019 12:36:13 +0100
-Message-Id: <20190129113207.270101662@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
-References: <20190129113159.567154026@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Tue, 29 Jan 2019 06:59:42 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39351 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728737AbfA2LrC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:02 -0500
+Received: by mail-lj1-f193.google.com with SMTP id t9-v6so17174623ljh.6;
+        Tue, 29 Jan 2019 03:46:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n0duLS7q5gZJLFQKEZXIgwsdlF4usLdESdPOckaF1MQ=;
+        b=BfWrTRkSd/43XiVMb3RIMSJh4uRHCGrOEUfNBrHytTAJ9C0yD+meSmLbizQEPmd4kE
+         xUZ/369yw6a+SchmBqIdYbCNvYDsjgMTs9v0D4DLFTIkR+QzJnkQsGa8v/IHq3m2mz1Y
+         xbav+uazUg1Jz2WpqkXpETNtQvraRT51EQtjHW6dB4tDa1+SO9qWreU18XPmUdKGq2jp
+         pRrxS4J7dcLE/b0yRFh8KzDIIfX2HNRLzhHtXUxbcM3dB7Fd9NHGU/yyRxLrZ1dBy80k
+         Davm3hbqJZwRp0UeL87VBSW+EnWKuuT4wbQ+VFhX5TX8MOjkfxXshPPsAMKjygPXJH6h
+         QC+g==
+X-Gm-Message-State: AJcUukdxYPUTFR+BVrMf2EBaMkCUKW7BPM6NmFHWkbxw3En9oh4/rRRp
+        4WIyfJc3lp42TSMfGhrQpTmC2ucxq1w=
+X-Google-Smtp-Source: ALg8bN7rVtHX8eOQUY5mFtqygmIJdY4RXMsk/R/OMsNzMkTnFM+bVQlmmIwpqcNb1LgCCGIBGOiHRg==
+X-Received: by 2002:a2e:81d3:: with SMTP id s19-v6mr18804774ljg.138.1548762418792;
+        Tue, 29 Jan 2019 03:46:58 -0800 (PST)
+Received: from localhost.localdomain (dytkl7s9vpj00trvf9g2y-4.rev.dnainternet.fi. [2001:14bb:410:9dbf:b161:fde8:3a24:e96c])
+        by smtp.gmail.com with ESMTPSA id q20sm3386630lfj.20.2019.01.29.03.46.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 03:46:57 -0800 (PST)
+Date:   Tue, 29 Jan 2019 13:46:53 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        wim@linux-watchdog.org, linux@roeck-us.net,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
+ bd70528 RTC
+Message-ID: <20190129114653.GB2551@localhost.localdomain>
+References: <20190125110536.GA29321@localhost.localdomain>
+ <20190128212009.GE18309@piout.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128212009.GE18309@piout.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+Hello Alexandre,
 
-------------------
+Big thanks for the review!
 
-[ commit d3bd7413e0ca40b60cf60d4003246d067cafdeda upstream ]
+On Mon, Jan 28, 2019 at 10:20:09PM +0100, Alexandre Belloni wrote:
+> Hello,
+> 
+> On 25/01/2019 13:05:36+0200, Matti Vaittinen wrote:
+> > +static const struct rtc_class_ops bd70528_rtc_ops = {
+> > +	.read_time	= bd70528_get_time,
+> > +	.set_time	= bd70528_set_time,
+> > +	.read_alarm	= bd70528_read_alarm,
+> > +	.set_alarm	= bd70528_set_alarm,
+> 
+> You actually need to provide a .alarm_irq_enable callback, else there is
+> no way to disable a set alarm.
 
-While 979d63d50c0c ("bpf: prevent out of bounds speculation on pointer
-arithmetic") took care of rejecting alu op on pointer when e.g. pointer
-came from two different map values with different map properties such as
-value size, Jann reported that a case was not covered yet when a given
-alu op is used in both "ptr_reg += reg" and "numeric_reg += reg" from
-different branches where we would incorrectly try to sanitize based
-on the pointer's limit. Catch this corner case and reject the program
-instead.
+Glad that you pointed this out. I thought the RTC core would use
+set_alarm with enabled in struct rtc_wkalrm being zero for disabling
+the alarm. I'll add alarm_irq_enable for disabling alarm at v3.
 
-Fixes: 979d63d50c0c ("bpf: prevent out of bounds speculation on pointer arithmetic")
-Reported-by: Jann Horn <jannh@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/linux/bpf_verifier.h |  1 +
- kernel/bpf/verifier.c        | 61 ++++++++++++++++++++++++++++--------
- 2 files changed, 49 insertions(+), 13 deletions(-)
+> > +	rtc = devm_rtc_device_register(&pdev->dev, "bd70528-rtc",
+> > +				       &bd70528_rtc_ops, THIS_MODULE);
+> > +	if (IS_ERR(rtc)) {
+> > +		dev_err(&pdev->dev, "Registering RTC failed\n");
+> > +		return PTR_ERR(rtc);
+> > +	}
+> 
+> Please use devm_rtc_allocate_device() and set rtc->range_min and
+> rtc->range_max before registering with rtc_register_device() (which can
+> be done after trying to request the irq).
 
-diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
-index 2716dcbfb2f1..91393724e933 100644
---- a/include/linux/bpf_verifier.h
-+++ b/include/linux/bpf_verifier.h
-@@ -147,6 +147,7 @@ struct bpf_verifier_state_list {
- #define BPF_ALU_SANITIZE_SRC		1U
- #define BPF_ALU_SANITIZE_DST		2U
- #define BPF_ALU_NEG_VALUE		(1U << 2)
-+#define BPF_ALU_NON_POINTER		(1U << 3)
- #define BPF_ALU_SANITIZE		(BPF_ALU_SANITIZE_SRC | \
- 					 BPF_ALU_SANITIZE_DST)
- 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 9ab0adedb174..4d81be2d0739 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -2734,6 +2734,40 @@ static int retrieve_ptr_limit(const struct bpf_reg_state *ptr_reg,
- 	}
- }
- 
-+static bool can_skip_alu_sanitation(const struct bpf_verifier_env *env,
-+				    const struct bpf_insn *insn)
-+{
-+	return env->allow_ptr_leaks || BPF_SRC(insn->code) == BPF_K;
-+}
-+
-+static int update_alu_sanitation_state(struct bpf_insn_aux_data *aux,
-+				       u32 alu_state, u32 alu_limit)
-+{
-+	/* If we arrived here from different branches with different
-+	 * state or limits to sanitize, then this won't work.
-+	 */
-+	if (aux->alu_state &&
-+	    (aux->alu_state != alu_state ||
-+	     aux->alu_limit != alu_limit))
-+		return -EACCES;
-+
-+	/* Corresponding fixup done in fixup_bpf_calls(). */
-+	aux->alu_state = alu_state;
-+	aux->alu_limit = alu_limit;
-+	return 0;
-+}
-+
-+static int sanitize_val_alu(struct bpf_verifier_env *env,
-+			    struct bpf_insn *insn)
-+{
-+	struct bpf_insn_aux_data *aux = cur_aux(env);
-+
-+	if (can_skip_alu_sanitation(env, insn))
-+		return 0;
-+
-+	return update_alu_sanitation_state(aux, BPF_ALU_NON_POINTER, 0);
-+}
-+
- static int sanitize_ptr_alu(struct bpf_verifier_env *env,
- 			    struct bpf_insn *insn,
- 			    const struct bpf_reg_state *ptr_reg,
-@@ -2748,7 +2782,7 @@ static int sanitize_ptr_alu(struct bpf_verifier_env *env,
- 	struct bpf_reg_state tmp;
- 	bool ret;
- 
--	if (env->allow_ptr_leaks || BPF_SRC(insn->code) == BPF_K)
-+	if (can_skip_alu_sanitation(env, insn))
- 		return 0;
- 
- 	/* We already marked aux for masking from non-speculative
-@@ -2764,19 +2798,8 @@ static int sanitize_ptr_alu(struct bpf_verifier_env *env,
- 
- 	if (retrieve_ptr_limit(ptr_reg, &alu_limit, opcode, off_is_neg))
- 		return 0;
--
--	/* If we arrived here from different branches with different
--	 * limits to sanitize, then this won't work.
--	 */
--	if (aux->alu_state &&
--	    (aux->alu_state != alu_state ||
--	     aux->alu_limit != alu_limit))
-+	if (update_alu_sanitation_state(aux, alu_state, alu_limit))
- 		return -EACCES;
--
--	/* Corresponding fixup done in fixup_bpf_calls(). */
--	aux->alu_state = alu_state;
--	aux->alu_limit = alu_limit;
--
- do_sim:
- 	/* Simulate and find potential out-of-bounds access under
- 	 * speculative execution from truncation as a result of
-@@ -3048,6 +3071,8 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
- 	s64 smin_val, smax_val;
- 	u64 umin_val, umax_val;
- 	u64 insn_bitness = (BPF_CLASS(insn->code) == BPF_ALU64) ? 64 : 32;
-+	u32 dst = insn->dst_reg;
-+	int ret;
- 
- 	if (insn_bitness == 32) {
- 		/* Relevant for 32-bit RSH: Information can propagate towards
-@@ -3082,6 +3107,11 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
- 
- 	switch (opcode) {
- 	case BPF_ADD:
-+		ret = sanitize_val_alu(env, insn);
-+		if (ret < 0) {
-+			verbose(env, "R%d tried to add from different pointers or scalars\n", dst);
-+			return ret;
-+		}
- 		if (signed_add_overflows(dst_reg->smin_value, smin_val) ||
- 		    signed_add_overflows(dst_reg->smax_value, smax_val)) {
- 			dst_reg->smin_value = S64_MIN;
-@@ -3101,6 +3131,11 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
- 		dst_reg->var_off = tnum_add(dst_reg->var_off, src_reg.var_off);
- 		break;
- 	case BPF_SUB:
-+		ret = sanitize_val_alu(env, insn);
-+		if (ret < 0) {
-+			verbose(env, "R%d tried to sub from different pointers or scalars\n", dst);
-+			return ret;
-+		}
- 		if (signed_sub_overflows(dst_reg->smin_value, smax_val) ||
- 		    signed_sub_overflows(dst_reg->smax_value, smin_val)) {
- 			/* Overflow possible, we know nothing */
--- 
-2.19.1
+Right. I should've noted that devm_rtc_device_register was marked
+deprecated. I'll fix this too at v3.
 
-
-
+Br,
+	Matti Vaittinen
