@@ -2,94 +2,84 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83809C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7A8C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53DF020844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:54:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MlUozkQM"
+	by mail.kernel.org (Postfix) with ESMTP id 7986A20844
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729316AbfA2Sya (ORCPT
+        id S1729322AbfA2SzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:54:30 -0500
-Received: from mail-yb1-f197.google.com ([209.85.219.197]:35923 "EHLO
-        mail-yb1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbfA2Sy3 (ORCPT
+        Tue, 29 Jan 2019 13:55:25 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:49955 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726984AbfA2SzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:54:29 -0500
-Received: by mail-yb1-f197.google.com with SMTP id 63so5413932ybf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:54:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=G0epUqFu3AmCTsfTCZBWyuwLgZxvATnBae8HP0ixIfc=;
-        b=MlUozkQMHxb5n/jPhkS4DTcTd4VsaPbttFo5x9eWIG8pksOUrzuTaW5m3iXV/mtKf/
-         Y+9hTZdImQ2UdWUsejIhnp0zgbQ/Kp6z55CLpGu4Qc9zI+8hQXt7d9EgBJBfGmLDdRrV
-         5jqbFq7ZYI3mp9uzYqL/v3dhYRegKkXLCNxvE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=G0epUqFu3AmCTsfTCZBWyuwLgZxvATnBae8HP0ixIfc=;
-        b=moMS5jUpE57e9zvguG+gGq4Z2AeNQ6HihNXzy/vpUklaQbeDAR3Bkc5bXqApUQ7GYU
-         7PjZMlJtYwSf93x5AUWd9EcDCUGrkRdsH1TGUYsU71Fh9SLv4U2UUm52L5pTX1oMg72G
-         VtM8aV4ZYoT/yEQGS1t6mMFQlcXxOhBmtfpLGhkI593ccK6r5ToWRssYx0fS8RGtwamP
-         yGktq4WMDXUMK67iJJoeqSHErN5d60yWWrlepg7k5DG3LSvZyfyFR+h5G/yMy1mrprTj
-         ZIduUnFLAsnwrBcG8hj9Hc8WrwM/3sRzhJaGuIjc27n4XIvA5qCrkce+AUj/VvfBtgcN
-         33nQ==
-X-Gm-Message-State: AHQUAuZL4jttqR3A60vwoAkYwPT9vQ8sH/1dCqQ3msyU+vvrs4T1Hmg1
-        0QmNZyTDiYp2R9kJscGOBf2fSEMHF6fThKj9
-X-Google-Smtp-Source: AHgI3IYuvkCaYCMYauiy4MF48g2nOFC0MFUTa63C0CTHb56BRwsat5DJrrNduvdch+8ZPCiFAxixBi2AOH0e66LH
-X-Received: by 2002:a25:ca11:: with SMTP id a17mr2633199ybg.43.1548788068983;
- Tue, 29 Jan 2019 10:54:28 -0800 (PST)
-Date:   Tue, 29 Jan 2019 10:54:24 -0800
-In-Reply-To: <CAJ-EccMgDvx81g-XgWymdYn_G5Ou8mgbef3GUbx-C_Ai5qF-pQ@mail.gmail.com>
-Message-Id: <20190129185424.251139-1-mortonm@chromium.org>
-Mime-Version: 1.0
-References: <CAJ-EccMgDvx81g-XgWymdYn_G5Ou8mgbef3GUbx-C_Ai5qF-pQ@mail.gmail.com>
-X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
-Subject: [PATCH] LSM: SafeSetID: 'depend' on CONFIG_SECURITY
-From:   mortonm@chromium.org
-To:     rdunlap@infradead.org, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Micah Morton <mortonm@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 Jan 2019 13:55:24 -0500
+Received: from localhost.localdomain ([37.4.249.100]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MXpQA-1geikM20dQ-00Y7XM; Tue, 29 Jan 2019 19:54:14 +0100
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 2/3] bcm2835-dt-64-next-2019-01-29
+Date:   Tue, 29 Jan 2019 19:53:27 +0100
+Message-Id: <1548788008-4733-2-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548788008-4733-1-git-send-email-stefan.wahren@i2se.com>
+References: <1548788008-4733-1-git-send-email-stefan.wahren@i2se.com>
+X-Provags-ID: V03:K1:weP9x1bjLc6j8jqZTUbWJ6RUDD2+RsCJhuFsntlS6yRWX7ixjlv
+ TJTgYGLYeyr/K0TQ8KKhNDJtT6ezayWLnsRGPWDvt685WFtdJlcfFgrjf2EewOc3rskeByv
+ xsfI9w9WprKn1jQlAnLAC1DY5i9shs3892kk5UXinTm8m4kHADpgwfczpbgz/oB2IXEYOlQ
+ qHG1J81+lDFKBA/iEL0kg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5C4DL9QtVag=:WM2dssDTYYKh0gBpleuTAk
+ 7VRqF99ZgBIIjhWjqHWYCgfKrp04+OscaMfnSrIgcGpCkZwR3bdWQBVAnVP0m82IJoIuNfiOO
+ JJFSegiscXKi4WprFdLY67A5GTZPfHJW8cK+520pt1U3nNusae0aMaC+/NFOekf+32poGrgvs
+ gg/mJPG5rlA6+oE6+hgoz8YxQcWQJK5KnlvX07huGyY9VPGewdi1VH55fNxM0wye/OKgQ7V0h
+ jyGSWoF5KooK9cJHzs8Cbc6hTZODgOjyo3hEr1ntgFeFQuoRFtx10aZZa273iXk/sZnMayc2g
+ zPDlMK3lMDG5OC42bNx/p4bl7dDgBAA7CW4mWN9rZCyBZ6hhKoTrpwV9Zpjx8KLxCjZgtEMRD
+ WkJNmiXwCd9F/tGCyj57U7T+uk86V1NtlBXmVApU63WGWhR/E0wtZCC18bci3ufeU/uHOBUD7
+ lDxhk32tczB26wVNnluog/7xRuX5c3n/Gu+rUvzi/craP8+OKBh1t65E20h/tV4sYgOnuQtQa
+ UBtfMyyNHcotjf/r379nNgV3gp1EyF6IfS1chzainKw3N4kT5KEXPZjWdsbC8bN5TZHa7JsDZ
+ LbiCXfVbTTHqd5csari8AFcF3yJ3FOdVDHAFG+nqNDv8wlSL4SRsBsKiYNmDhQLGjNnmDY4Jr
+ m66DI6rukFI6DuZzwT2h7eo/PGg+fNkOfJHdS4PNmnTCJyJnQj2euCUtBGtDLjEluEmaGZxNU
+ AywU1N0lqYm4QHB9cCxGUT/rCNXJg6ET6mvbAHjHlYnuJJGY5cwnHbdtaLc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Micah Morton <mortonm@chromium.org>
+Hi Florian,
 
-This patch changes the Kconfig file for the SafeSetID LSM to depend on
-CONFIG_SECURITY as well as select CONFIG_SECURITYFS, since the policies
-for the LSM are configured through writing to securityfs.
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-Signed-off-by: Micah Morton <mortonm@chromium.org>
----
- security/safesetid/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
-diff --git a/security/safesetid/Kconfig b/security/safesetid/Kconfig
-index bf89a47ffcc8..4f415c4e3f93 100644
---- a/security/safesetid/Kconfig
-+++ b/security/safesetid/Kconfig
-@@ -1,5 +1,7 @@
- config SECURITY_SAFESETID
-         bool "Gate setid transitions to limit CAP_SET{U/G}ID capabilities"
-+        depends on SECURITY
-+        select SECURITYFS
-         default n
-         help
-           SafeSetID is an LSM module that gates the setid family of syscalls to
--- 
-2.20.1.495.gaa96b0ce6b-goog
+are available in the git repository at:
 
+  git://github.com/anholt/linux tags/bcm2835-dt-64-next-2019-01-29
+
+for you to fetch changes up to 3688325a4acac981e95e25478d3703e3ab05d4c9:
+
+  arm64: dts: broadcom: Add reference to RPi 3 A+ (2019-01-09 19:24:04 +0100)
+
+----------------------------------------------------------------
+This pull request brings in the arm64 reference for Raspberry Pi 3 A+.
+
+----------------------------------------------------------------
+Stefan Wahren (1):
+      arm64: dts: broadcom: Add reference to RPi 3 A+
+
+ arch/arm64/boot/dts/broadcom/Makefile                 | 3 ++-
+ arch/arm64/boot/dts/broadcom/bcm2837-rpi-3-a-plus.dts | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/boot/dts/broadcom/bcm2837-rpi-3-a-plus.dts
