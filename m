@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD39C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2EE8C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 517A320880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6DB920880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763213;
-	bh=FhO8a7yFAyukCJ7Fqa6fZ4EeSBX3y53BpJOK20fg6+4=;
+	s=default; t=1548763219;
+	bh=aK2P7tFonyjugZiBhSGcM95AUd3xy6jWsB7BVOM20eY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KJ+A4AdfgOC6dtOTdXjrF2WaRc6crDbJwhO5oN/cEC0AgBw87f8+7Iv92O2+vCMcT
-	 IQyW8JW/StxJykEEirvz0ZXTVVl30tBDZO1ekx52aAybmKuGSAq2e8d2YOMqNJ2BuC
-	 ZGv9Ixm9BR9rWIVdTSsrFhBJ2dvfernMsyD9iATU=
+	b=Nn7LHkRXTS8I2333EbTbyDQ3zGJnibav2MZk5HSzKEqJRAPwZsmNrZ9o6UVI2JwqD
+	 jYDHtFvXAW3MMUmmkzWzMh0VCoMMQ9w83iGSBrLVVzh+T0eMER/j9sFoINsKIOkXQH
+	 bw0VM1UfT/IB1R5pubQshrMIQ/rJgIHzo3rgJ360=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbfA2MAM (ORCPT
+        id S1730989AbfA2Lq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:00:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37244 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:46:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731010AbfA2Lqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:46:36 -0500
+        id S1730962AbfA2LqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:46:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA0E42083B;
-        Tue, 29 Jan 2019 11:46:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EFE420882;
+        Tue, 29 Jan 2019 11:46:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762396;
-        bh=FhO8a7yFAyukCJ7Fqa6fZ4EeSBX3y53BpJOK20fg6+4=;
+        s=default; t=1548762382;
+        bh=aK2P7tFonyjugZiBhSGcM95AUd3xy6jWsB7BVOM20eY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zNiz7hoR/ZK2+E0n5UMAcw23KUie6LANwHXDePP9SmvlNm6IwxLDWKdH0JrABcNN0
-         zceRoznoPDmqly0/UwLVrbAXKEkJyLO47rYskZAhrEIXagHgktZWG/qjcQRwxyy7k9
-         yKtF28iCvcsbb+MplckFvz3H61tu9ka7Nt0I+D14=
+        b=yO8hvAJxMJ1dxk2VBB971nOg3pI4PPDqyPKR483K6QtR+Hj6FhRjiCK8taN61I6/G
+         cHXdVOT6X+9XWh/aFyaxVJNqubvq9cp1ZSAf/YXbL8g2MqtlR6zBsfieIiqzi9wqB3
+         p0j7tK6UOGNwJtsO8b11myjEVSTenJCzBH1N+u5Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
         Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 093/103] bpf: restrict unknown scalars of mixed signed bounds for unprivileged
-Date:   Tue, 29 Jan 2019 12:36:10 +0100
-Message-Id: <20190129113207.112130352@linuxfoundation.org>
+Subject: [PATCH 4.19 088/103] bpf: move {prev_,}insn_idx into verifier env
+Date:   Tue, 29 Jan 2019 12:36:05 +0100
+Message-Id: <20190129113206.834072615@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,15 +66,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ commit 9d7eceede769f90b66cfa06ad5b357140d5141ed upstream ]
+[ commit c08435ec7f2bc8f4109401f696fd55159b4b40cb upstream ]
 
-For unknown scalars of mixed signed bounds, meaning their smin_value is
-negative and their smax_value is positive, we need to reject arithmetic
-with pointer to map value. For unprivileged the goal is to mask every
-map pointer arithmetic and this cannot reliably be done when it is
-unknown at verification time whether the scalar value is negative or
-positive. Given this is a corner case, the likelihood of breaking should
-be very small.
+Move prev_insn_idx and insn_idx from the do_check() function into
+the verifier environment, so they can be read inside the various
+helper functions for handling the instructions. It's easier to put
+this into the environment rather than changing all call-sites only
+to pass it along. insn_idx is useful in particular since this later
+on allows to hold state in env->insn_aux_data[env->insn_idx].
 
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Acked-by: Alexei Starovoitov <ast@kernel.org>
@@ -82,36 +81,251 @@ Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/verifier.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/linux/bpf_verifier.h |  2 +
+ kernel/bpf/verifier.c        | 75 ++++++++++++++++++------------------
+ 2 files changed, 40 insertions(+), 37 deletions(-)
 
+diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+index 1fd6fa822d2c..b1587ffdea7b 100644
+--- a/include/linux/bpf_verifier.h
++++ b/include/linux/bpf_verifier.h
+@@ -186,6 +186,8 @@ struct bpf_subprog_info {
+  * one verifier_env per bpf_check() call
+  */
+ struct bpf_verifier_env {
++	u32 insn_idx;
++	u32 prev_insn_idx;
+ 	struct bpf_prog *prog;		/* eBPF program being verified */
+ 	const struct bpf_verifier_ops *ops;
+ 	struct bpf_verifier_stack_elem *head; /* stack of verifier states to be processed */
 diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index aa2944d54e7a..fbaa3b9e1d71 100644
+index 2bbb98535b70..6d11320998c6 100644
 --- a/kernel/bpf/verifier.c
 +++ b/kernel/bpf/verifier.c
-@@ -2712,8 +2712,8 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
- 	    smin_ptr = ptr_reg->smin_value, smax_ptr = ptr_reg->smax_value;
- 	u64 umin_val = off_reg->umin_value, umax_val = off_reg->umax_value,
- 	    umin_ptr = ptr_reg->umin_value, umax_ptr = ptr_reg->umax_value;
-+	u32 dst = insn->dst_reg, src = insn->src_reg;
- 	u8 opcode = BPF_OP(insn->code);
--	u32 dst = insn->dst_reg;
+@@ -4816,7 +4816,6 @@ static int do_check(struct bpf_verifier_env *env)
+ 	struct bpf_insn *insns = env->prog->insnsi;
+ 	struct bpf_reg_state *regs;
+ 	int insn_cnt = env->prog->len, i;
+-	int insn_idx, prev_insn_idx = 0;
+ 	int insn_processed = 0;
+ 	bool do_print_state = false;
  
- 	dst_reg = &regs[dst];
+@@ -4835,19 +4834,19 @@ static int do_check(struct bpf_verifier_env *env)
+ 			BPF_MAIN_FUNC /* callsite */,
+ 			0 /* frameno */,
+ 			0 /* subprogno, zero == main subprog */);
+-	insn_idx = 0;
++
+ 	for (;;) {
+ 		struct bpf_insn *insn;
+ 		u8 class;
+ 		int err;
  
-@@ -2749,6 +2749,12 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
- 			dst);
- 		return -EACCES;
+-		if (insn_idx >= insn_cnt) {
++		if (env->insn_idx >= insn_cnt) {
+ 			verbose(env, "invalid insn idx %d insn_cnt %d\n",
+-				insn_idx, insn_cnt);
++				env->insn_idx, insn_cnt);
+ 			return -EFAULT;
+ 		}
+ 
+-		insn = &insns[insn_idx];
++		insn = &insns[env->insn_idx];
+ 		class = BPF_CLASS(insn->code);
+ 
+ 		if (++insn_processed > BPF_COMPLEXITY_LIMIT_INSNS) {
+@@ -4857,7 +4856,7 @@ static int do_check(struct bpf_verifier_env *env)
+ 			return -E2BIG;
+ 		}
+ 
+-		err = is_state_visited(env, insn_idx);
++		err = is_state_visited(env, env->insn_idx);
+ 		if (err < 0)
+ 			return err;
+ 		if (err == 1) {
+@@ -4865,9 +4864,9 @@ static int do_check(struct bpf_verifier_env *env)
+ 			if (env->log.level) {
+ 				if (do_print_state)
+ 					verbose(env, "\nfrom %d to %d: safe\n",
+-						prev_insn_idx, insn_idx);
++						env->prev_insn_idx, env->insn_idx);
+ 				else
+-					verbose(env, "%d: safe\n", insn_idx);
++					verbose(env, "%d: safe\n", env->insn_idx);
+ 			}
+ 			goto process_bpf_exit;
+ 		}
+@@ -4880,10 +4879,10 @@ static int do_check(struct bpf_verifier_env *env)
+ 
+ 		if (env->log.level > 1 || (env->log.level && do_print_state)) {
+ 			if (env->log.level > 1)
+-				verbose(env, "%d:", insn_idx);
++				verbose(env, "%d:", env->insn_idx);
+ 			else
+ 				verbose(env, "\nfrom %d to %d:",
+-					prev_insn_idx, insn_idx);
++					env->prev_insn_idx, env->insn_idx);
+ 			print_verifier_state(env, state->frame[state->curframe]);
+ 			do_print_state = false;
+ 		}
+@@ -4894,19 +4893,20 @@ static int do_check(struct bpf_verifier_env *env)
+ 				.private_data	= env,
+ 			};
+ 
+-			verbose(env, "%d: ", insn_idx);
++			verbose(env, "%d: ", env->insn_idx);
+ 			print_bpf_insn(&cbs, insn, env->allow_ptr_leaks);
+ 		}
+ 
+ 		if (bpf_prog_is_dev_bound(env->prog->aux)) {
+-			err = bpf_prog_offload_verify_insn(env, insn_idx,
+-							   prev_insn_idx);
++			err = bpf_prog_offload_verify_insn(env, env->insn_idx,
++							   env->prev_insn_idx);
+ 			if (err)
+ 				return err;
+ 		}
+ 
+ 		regs = cur_regs(env);
+-		env->insn_aux_data[insn_idx].seen = true;
++		env->insn_aux_data[env->insn_idx].seen = true;
++
+ 		if (class == BPF_ALU || class == BPF_ALU64) {
+ 			err = check_alu_op(env, insn);
+ 			if (err)
+@@ -4931,13 +4931,13 @@ static int do_check(struct bpf_verifier_env *env)
+ 			/* check that memory (src_reg + off) is readable,
+ 			 * the state of dst_reg will be updated by this func
+ 			 */
+-			err = check_mem_access(env, insn_idx, insn->src_reg, insn->off,
+-					       BPF_SIZE(insn->code), BPF_READ,
+-					       insn->dst_reg, false);
++			err = check_mem_access(env, env->insn_idx, insn->src_reg,
++					       insn->off, BPF_SIZE(insn->code),
++					       BPF_READ, insn->dst_reg, false);
+ 			if (err)
+ 				return err;
+ 
+-			prev_src_type = &env->insn_aux_data[insn_idx].ptr_type;
++			prev_src_type = &env->insn_aux_data[env->insn_idx].ptr_type;
+ 
+ 			if (*prev_src_type == NOT_INIT) {
+ 				/* saw a valid insn
+@@ -4964,10 +4964,10 @@ static int do_check(struct bpf_verifier_env *env)
+ 			enum bpf_reg_type *prev_dst_type, dst_reg_type;
+ 
+ 			if (BPF_MODE(insn->code) == BPF_XADD) {
+-				err = check_xadd(env, insn_idx, insn);
++				err = check_xadd(env, env->insn_idx, insn);
+ 				if (err)
+ 					return err;
+-				insn_idx++;
++				env->insn_idx++;
+ 				continue;
+ 			}
+ 
+@@ -4983,13 +4983,13 @@ static int do_check(struct bpf_verifier_env *env)
+ 			dst_reg_type = regs[insn->dst_reg].type;
+ 
+ 			/* check that memory (dst_reg + off) is writeable */
+-			err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
+-					       BPF_SIZE(insn->code), BPF_WRITE,
+-					       insn->src_reg, false);
++			err = check_mem_access(env, env->insn_idx, insn->dst_reg,
++					       insn->off, BPF_SIZE(insn->code),
++					       BPF_WRITE, insn->src_reg, false);
+ 			if (err)
+ 				return err;
+ 
+-			prev_dst_type = &env->insn_aux_data[insn_idx].ptr_type;
++			prev_dst_type = &env->insn_aux_data[env->insn_idx].ptr_type;
+ 
+ 			if (*prev_dst_type == NOT_INIT) {
+ 				*prev_dst_type = dst_reg_type;
+@@ -5018,9 +5018,9 @@ static int do_check(struct bpf_verifier_env *env)
+ 			}
+ 
+ 			/* check that memory (dst_reg + off) is writeable */
+-			err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
+-					       BPF_SIZE(insn->code), BPF_WRITE,
+-					       -1, false);
++			err = check_mem_access(env, env->insn_idx, insn->dst_reg,
++					       insn->off, BPF_SIZE(insn->code),
++					       BPF_WRITE, -1, false);
+ 			if (err)
+ 				return err;
+ 
+@@ -5038,9 +5038,9 @@ static int do_check(struct bpf_verifier_env *env)
+ 				}
+ 
+ 				if (insn->src_reg == BPF_PSEUDO_CALL)
+-					err = check_func_call(env, insn, &insn_idx);
++					err = check_func_call(env, insn, &env->insn_idx);
+ 				else
+-					err = check_helper_call(env, insn->imm, insn_idx);
++					err = check_helper_call(env, insn->imm, env->insn_idx);
+ 				if (err)
+ 					return err;
+ 
+@@ -5053,7 +5053,7 @@ static int do_check(struct bpf_verifier_env *env)
+ 					return -EINVAL;
+ 				}
+ 
+-				insn_idx += insn->off + 1;
++				env->insn_idx += insn->off + 1;
+ 				continue;
+ 
+ 			} else if (opcode == BPF_EXIT) {
+@@ -5067,8 +5067,8 @@ static int do_check(struct bpf_verifier_env *env)
+ 
+ 				if (state->curframe) {
+ 					/* exit from nested function */
+-					prev_insn_idx = insn_idx;
+-					err = prepare_func_exit(env, &insn_idx);
++					env->prev_insn_idx = env->insn_idx;
++					err = prepare_func_exit(env, &env->insn_idx);
+ 					if (err)
+ 						return err;
+ 					do_print_state = true;
+@@ -5094,7 +5094,8 @@ static int do_check(struct bpf_verifier_env *env)
+ 				if (err)
+ 					return err;
+ process_bpf_exit:
+-				err = pop_stack(env, &prev_insn_idx, &insn_idx);
++				err = pop_stack(env, &env->prev_insn_idx,
++						&env->insn_idx);
+ 				if (err < 0) {
+ 					if (err != -ENOENT)
+ 						return err;
+@@ -5104,7 +5105,7 @@ static int do_check(struct bpf_verifier_env *env)
+ 					continue;
+ 				}
+ 			} else {
+-				err = check_cond_jmp_op(env, insn, &insn_idx);
++				err = check_cond_jmp_op(env, insn, &env->insn_idx);
+ 				if (err)
+ 					return err;
+ 			}
+@@ -5121,8 +5122,8 @@ static int do_check(struct bpf_verifier_env *env)
+ 				if (err)
+ 					return err;
+ 
+-				insn_idx++;
+-				env->insn_aux_data[insn_idx].seen = true;
++				env->insn_idx++;
++				env->insn_aux_data[env->insn_idx].seen = true;
+ 			} else {
+ 				verbose(env, "invalid BPF_LD mode\n");
+ 				return -EINVAL;
+@@ -5132,7 +5133,7 @@ static int do_check(struct bpf_verifier_env *env)
+ 			return -EINVAL;
+ 		}
+ 
+-		insn_idx++;
++		env->insn_idx++;
  	}
-+	if (ptr_reg->type == PTR_TO_MAP_VALUE &&
-+	    !env->allow_ptr_leaks && !known && (smin_val < 0) != (smax_val < 0)) {
-+		verbose(env, "R%d has unknown scalar with mixed signed bounds, pointer arithmetic with it prohibited for !root\n",
-+			off_reg == dst_reg ? dst : src);
-+		return -EACCES;
-+	}
  
- 	/* In case of 'scalar += pointer', dst_reg inherits pointer type and id.
- 	 * The id may be overwritten later if we create a new variable offset.
+ 	verbose(env, "processed %d insns (limit %d), stack depth ",
 -- 
 2.19.1
 
