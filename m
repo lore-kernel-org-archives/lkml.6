@@ -2,133 +2,183 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B47C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEEEC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC25220870
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 111D72177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:49:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="dd0a2umI"
+	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="cUMukSke"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfA2Jt1 (ORCPT
+        id S1728068AbfA2Jtm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:49:27 -0500
-Received: from mail-eopbgr30073.outbound.protection.outlook.com ([40.107.3.73]:43885
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725536AbfA2Jt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:49:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4FU0zrbAbKa57Fitc3b9C6D9KS41z+nyW5e2tfGe1ik=;
- b=dd0a2umIaO942Ix2K0w9ECdkVb0tPjSCeRZuEKtcpMA6LBnQPFxuO9N8e6vfOR23hY+O0W8ZVhGlp0kqIRXsJsfQUc7QOAimkDKG9vjCvr6H9AN8yVgqV6ggoK+TAQwbiieFj5YoVGsXmxbnPHllh+toq5rOsVWgV2EcsWxMkLg=
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
- VI1PR04MB4240.eurprd04.prod.outlook.com (52.134.31.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.21; Tue, 29 Jan 2019 09:49:22 +0000
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::a1c2:cc79:80f3:3bcb]) by VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::a1c2:cc79:80f3:3bcb%5]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
- 09:49:22 +0000
-From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@kontron.de" <frieder.schrempf@kontron.de>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Subject: [PATCH v2] spi: spi-mem: spi-nxp-fspi: add module license info
-Thread-Topic: [PATCH v2] spi: spi-mem: spi-nxp-fspi: add module license info
-Thread-Index: AQHUt7fpYyKJev1QqU2j2/cYy8Wrpg==
-Date:   Tue, 29 Jan 2019 09:49:22 +0000
-Message-ID: <1548755240-27319-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SG2PR06CA0126.apcprd06.prod.outlook.com
- (2603:1096:1:1d::28) To VI1PR04MB5726.eurprd04.prod.outlook.com
- (2603:10a6:803:e4::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 1.9.1
-x-originating-ip: [92.120.1.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4240;6:ERQC5TJrEBog0Xd7qfdJTXASP+LwH39c6XVY9PsjFK3MW8R+ZtzmCJpPC9Z2NUSyMSoLCf0Q5TSD9a5N+7eyVTbOYCwciWpeQXcNNxV9SO+jLc0JigvKJHWstIb8/0LGiny1zZ60TxTep8MkKOGL/vD42kesLRtecdSGlKm0jNaRAfOsi1+4ZHiN8Es/sWBe+xNNynPdfEQlhuVdrMGRoJT7ILp2eospRdJu0eyRRFTsenytsfLXCnrLKvwrgqkFdCqdrmd0hNLNaZER51YVk67S3+SvYkyNpZKV9w6lo7oiDAjZUcd4iKCwAmU5IxwlHizu1dEZnzM9zNjqAwsxHg7ikDW+crwY8b9ZaywSKbp4QNw4hSINUQ/SWOAeHsgyiyaBQVUF8vEcMdxUUeTn48BtI7c8dh+yDp1h3GlgQ+AFgcNf9WZ2oUV55OJqlM2bylTUjjBStCfOLlCVT23i0A==;5:xrMpFWsfwTbl8sWOkuxwmI+PUjbnVcDlV2WG+aLi8NNBchOqoqgff/3VhhumVjb9WFTVk7UFqwT3olXv9IB2gLRlUA/ynp3MpnuSWjW4O6GavBglo1kFhuE+A6FOu20p4kwwlr5MDwPdGePL/SM0mXkRriZwx9tzaLwSsKY9rfka+3hwtyDQkvIwMQCYTF7GZ3ff4Sa5T7Im5+ZdRKcZ4Q==;7:pYOJ9aq5B6GTe6GBgx0GLJH5q87D7DQOw62Cw6h65vkH+YqJcDCm67IFW7mRS2Xwqz34TDxF/vjZ79RZMn6aPPBlBjvY4exejDsOeQUZB8vKOilN2GAArU4VkuQICSMqRS85qHHKvJCd2+2kRmqJFw==
-x-ms-office365-filtering-correlation-id: 7bacb5f0-4813-4395-cdf4-08d685cf0bd5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4240;
-x-ms-traffictypediagnostic: VI1PR04MB4240:
-x-microsoft-antispam-prvs: <VI1PR04MB4240C20950FC8BFADC15BAEE99970@VI1PR04MB4240.eurprd04.prod.outlook.com>
-x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(396003)(136003)(366004)(199004)(189003)(4326008)(52116002)(110136005)(2616005)(25786009)(2201001)(476003)(81156014)(102836004)(2906002)(8676002)(81166006)(478600001)(316002)(105586002)(39060400002)(86362001)(14444005)(53936002)(99286004)(106356001)(256004)(54906003)(7736002)(14454004)(186003)(7416002)(71190400001)(66066001)(50226002)(71200400001)(36756003)(97736004)(486006)(6486002)(3846002)(6436002)(6506007)(68736007)(2501003)(305945005)(386003)(6116002)(26005)(8936002)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4240;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: S9aIYsrz51l+/7fLUQK6r3bOKyVUFEGvLu5DeENHlKAirNQGarXXwygLU+noHHuqdKtlwpHtnpTnO2yo4pgjh/PIef10CMp1cuev93MhYrFUyqZiJbp6FRwRsRJkyS1Q8ERRdPOklEvNXdLmI4w5o10KyT//kfL9UfVbojyG2wEXlfQlxUv+O98oa7/5yp68Jo196mAeItuBgk18e1/FcouEEOHJwERg7oyDIGwg76U9nYsIZqtbU1ueIJ0BUW4AjxxmJ1/sSBvNBiUVE5/K+7pKzxNWZBeXC3Qch10lmJXNqfqT37UEwtjYdL+t8FrpLbgGUma5WA1AfKLmnVUHqKi7e6pDxptUfBLr9og2vyEa5XQWWpVMfpbnXeUaiA3yKsBtY8PhHFbzVImZDF19WoazALvoq48uY/oQN2jjl10=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 29 Jan 2019 04:49:42 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35619 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfA2Jtl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:49:41 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so16927900ljb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:49:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=r4OgAu/r0jEU6lujj2lT+uSpRTg9en/HeuGEXeyCIEQ=;
+        b=cUMukSke9EktEf0iHUFzMRF+MVGR/o7JaXot6tJNgn6NSnpJ/9p7yb4xouDkeLiM2h
+         dhhLH1l7ju7aN2bwmF0HxGEsIQL8vQz0NIQKZehXHgLsqxVNupNv6n25PfaG0T7QavMz
+         ryy2pFxfr45Wv113RZx5kwv2IJr9HE2iHRDwVRFRllmtc9HpESIq0b/nfW6HYy66Fctd
+         BJ98LMx4nGQRlI3UK3qv88mRTqKh4tNkZ/drwN28lRqEAYswp8/hDdw9hAgvfkVGPZg7
+         /gh6mqjzi+aEQa/P/D1HhD8x/Oacqz2UTbM2cng+RuF1LXAkTSR1sxmfSLFWJSN8QDkb
+         KsiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=r4OgAu/r0jEU6lujj2lT+uSpRTg9en/HeuGEXeyCIEQ=;
+        b=JInRSWoLw/4VeAmA001a5sbdDOr2oYnsokcEKt7SYSVoiMkodahYlq/+gYPydGIwHd
+         0Gs/NB2QxjnHqW4M6MyG4UhRt50qdzSdT+TltJ/x/tYGCvS+gE/QR5EWEmgAwVxVmHoh
+         EwYDdgR5wgJHPiYGTYep7Y9Xz5ZaxA0vgGukqKNhbkc4wVY/9NssSJ7eUIvN77Fkc/2Y
+         f+ZYsYfXkbG4DxB53jqC7eRgPRQH1bF4Kry0D/SzjFSRGx01+9uLOrtmnbITEhTNyfyZ
+         v0N6OViwJISv4jyGeuqTUGxKyZ6uOi9YSPqNXPZaFR3imybYA1NLU4+rNrlqWBGSCsew
+         n+gw==
+X-Gm-Message-State: AJcUukcnXLawh9e6FRztIEzUIrZLALhMhGid80f7aqYt5GNlTXQHPdUf
+        MgS3sJWcyHVNszzD6JeptMMLXg==
+X-Google-Smtp-Source: ALg8bN6/dMM71foM0/49OZ3ApNPRjYs6Vrz+s+klBIjK11mJzpsMLtADZSFuEkV2tOisFcWrCUW4Iw==
+X-Received: by 2002:a2e:92:: with SMTP id e18-v6mr20230673lji.130.1548755378851;
+        Tue, 29 Jan 2019 01:49:38 -0800 (PST)
+Received: from [192.168.1.169] (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
+        by smtp.gmail.com with ESMTPSA id y23-v6sm3562457ljk.95.2019.01.29.01.49.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 01:49:38 -0800 (PST)
+Subject: Re: [PATCH v3 1/2] spi: support inter-word delay requirement for
+ devices
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lanqing Liu <lanqing.liu@spreadtrum.com>
+References: <20190126163220.26421-1-jonas@norrbonn.se>
+ <20190126163220.26421-2-jonas@norrbonn.se>
+ <20190128181038.GF11699@sirena.org.uk>
+ <1b9807aa-3e6e-16f2-a2c2-ebe5e186d904@norrbonn.se>
+ <CAMz4kuK9HAmntmqG-_s6re854tK7UL6wwCh0Lm8=bzpFZsseaw@mail.gmail.com>
+ <28617b72-fbc0-4274-d9d1-34c37f03f867@norrbonn.se>
+ <CAMz4kuLOSx9mQ-RG9qqy9Qbor97Nj5oYdOgLg_dNfxFeT+XK5g@mail.gmail.com>
+From:   Jonas Bonn <jonas@norrbonn.se>
+Message-ID: <abb0749c-629f-5a81-1dba-0be260b0fb8d@norrbonn.se>
+Date:   Tue, 29 Jan 2019 10:49:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7bacb5f0-4813-4395-cdf4-08d685cf0bd5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 09:49:18.3021
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4240
+In-Reply-To: <CAMz4kuLOSx9mQ-RG9qqy9Qbor97Nj5oYdOgLg_dNfxFeT+XK5g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MODULE_LICENSE info to fix below warning:
-WARNING: modpost: missing MODULE_LICENSE() in drivers/spi/spi-nxp-fspi.o
 
-Typo fix in Boris Brezillon last name.
 
-Fixes: a5356aef6a90 ("spi: spi-mem: Add driver for NXP FlexSPI controller")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
----
-Changes for v2:
-- Added Reported-by and Fixes tag.
-- Typo fix in Boris Brezillon last name.
+On 29/01/2019 10:35, Baolin Wang wrote:
+> On Tue, 29 Jan 2019 at 17:14, Jonas Bonn <jonas@norrbonn.se> wrote:
+>>
+>>
+>>
+>> On 29/01/2019 10:04, Baolin Wang wrote:
+>>> Hi Jonas,
+>>> On Tue, 29 Jan 2019 at 05:28, Jonas Bonn <jonas@norrbonn.se> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> On 28/01/2019 19:10, Mark Brown wrote:
+>>>>> On Sat, Jan 26, 2019 at 05:32:19PM +0100, Jonas Bonn wrote:
+>>>>>
+>>>>>> @@ -164,6 +166,7 @@ struct spi_device {
+>>>>>>        char                    modalias[SPI_NAME_SIZE];
+>>>>>>        const char              *driver_override;
+>>>>>>        int                     cs_gpio;        /* chip select gpio */
+>>>>>> +    uint16_t                word_delay;     /* inter-word delay (us) */
+>>>>>
+>>>>> This needs some code in the core joining it up with the per-transfer
+>>>>> word delay similar to what we have for speed_hz and bits_per_word in
+>>>>> __spi_validate().  Then the controller drivers can just look at the
+>>>>> per-transfer value and support both without having to duplicate logic.
+>>>>>
+>>>>
+>>>> So spi_transfer already has a field word_delay and it's defined as
+>>>> _clock cycles_ to delay between words.  I defined word_delay in
+>>>> spi_device as _microseconds_ to delay along the lines of delay_usecs.
+>>>>
+>>>> Given that the inter-word delay is a function of the slave device speed
+>>>> and not of the SPI bus speed, I'm inclined to say that a time-based
+>>>> delay is what we want (to be independent of bus speed).  As such, I want
+>>>> to know if I should add word_delay_usecs to _both_ spi_transfer and
+>>>> spi_device?
+>>>>
+>>>> There's only one user of word_delay from spi_transfer.  Just looking at
+>>>> it quickly, it looks like it wants the word_delay in
+>>>> SPI-controller-clock cycles and not SCK cycles which seems pretty broken
+>>>> to me.  Adding Baolin and Lanqing to CC: for comment.  Could we rework
+>>>> that to be microseconds and do the calculation in the driver?
+>>>
+>>> The Spreadtrum SPI controller's word delay unit is clock cycle of the
+>>> SPI clock, since the SPI source clock can be changed, we can not force
+>>> user to know the real microseconds. But can we change it to a union
+>>> structure? not sure if this is a good way.
+>>
+>> OK, so it is the SPI clock.  That's good.  There's a comment in the
+>> driver that makes it look like it should be the source clock.
+> 
+> Sorry for my unclear description, what I mean is that it is the SPI
+> source clock cycles.
+> 
+>> The problem with a delay in clock cycles is that the faster the clock,
+>> the shorter the delay.  The delay is a property of the slave and the
+>> slave has a fixed internal clock.  This means that if we increase SCK we
+>> also need to increase the word_delay (in cycles) in order to give the
+>> slave the same amount of breathing room.
+> 
+> Sorry for my confusing description, our case requires source clock
+> cycles for word delay.
 
- drivers/spi/spi-nxp-fspi.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+OK.  So the user (perhaps in userspace using spidev) has to know the 
+rate of the IO clock that the SPI controller sits behind and then has to 
+match this to the required delay of the slave device...  Doesn't sound 
+very portable.
 
-diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
-index 0327216ef7aa..8894f98cc99c 100644
---- a/drivers/spi/spi-nxp-fspi.c
-+++ b/drivers/spi/spi-nxp-fspi.c
-@@ -26,7 +26,7 @@
-  *
-  * Author:
-  *     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-- *     Boris Brezillion <bbrezillon@kernel.org>
-+ *     Boris Brezillon <bbrezillon@kernel.org>
-  *     Frieder Schrempf <frieder.schrempf@kontron.de>
-  */
-=20
-@@ -1101,5 +1101,6 @@ module_platform_driver(nxp_fspi_driver);
- MODULE_DESCRIPTION("NXP FSPI Controller Driver");
- MODULE_AUTHOR("NXP Semiconductor");
- MODULE_AUTHOR("Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>");
--MODULE_AUTHOR("Boris Brezillion <bbrezillon@kernel.org>");
-+MODULE_AUTHOR("Boris Brezillon <bbrezillon@kernel.org>");
- MODULE_AUTHOR("Frieder Schrempf <frieder.schrempf@kontron.de>");
-+MODULE_LICENSE("GPL v2");
---=20
-2.17.1
+> 
+>>
+>>>
+>>> union {
+>>>        int word_delay_us;
+>>>        int word_delay_cycle;
+>>> } w;
+>>>
+>>
+>> I don't think that's a practical solution.
+>>
+>> The register setting in the spi-sprd driver is what... SCK cycles?  So
+>> you'd want word_delay_us * max_speed_hz?
+>>
+>> The register setting on my Atmel board is in SPI-clock cycles
+>> (effectively).  So I want word_delay_us*clk_get_rate(spi-clk).
+> 
+> Okay, so your case is different with Spreadtrum SPI.
+> 
 
+No, if your register is source clock cycles then it's the same.  On my 
+board, the register setting is source clock cycles, too.  It's a 
+straightforward conversion from delay to clock cycles... rough, unscaled 
+formula above.
+
+/Jonas
