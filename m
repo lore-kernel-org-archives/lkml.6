@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8D1C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C06C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4A44214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:11:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2B29217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:11:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="EVKh2v/L"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hjSp+001"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbfA2ILO (ORCPT
+        id S1728236AbfA2ILL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:11:14 -0500
-Received: from mail-eopbgr150070.outbound.protection.outlook.com ([40.107.15.70]:19280
+        Tue, 29 Jan 2019 03:11:11 -0500
+Received: from mail-eopbgr150087.outbound.protection.outlook.com ([40.107.15.87]:28160
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728220AbfA2ILL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:11:11 -0500
+        id S1725468AbfA2ILI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:11:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c/jjkrCHhuec9NM0rI88O/LrQCzFWBoyVFRHSStuy4E=;
- b=EVKh2v/LYfqeOgO+Lxoft7TLTCTM0LSjBsQchepmls58oejQM8Rd/zHAT5MGAeNi0eeyKLdnVwuhtFzZ6+AzSQUqmH+PSg6QGxztoV44fC1ft4w/qRQ2jHOZ/PdCW5Z3RCYm0VRNQ8fszpnXh+mMQHcO/pIV4gMqPmTiaYDezfA=
+ bh=7Ijucq+in7jzAUvaRJqQehF8100FgZk16qweqH1kdag=;
+ b=hjSp+00125C5F5R2fqNWVpANlBSNlXVd9yOjzw6+nFFYEMK/bPvQu5Ok26ZwJxhcNJq0zGtDs2kwKzyf123xi/DZx7+5dg4bBizMCQphYKq0gkPQxHMRs16/E+SfHCIAkrnTj5T0A8xw/hOx7mNiYn89I+YjId6xs+5ONu8jOAs=
 Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.3.19) by
  AM6PR04MB6117.eurprd04.prod.outlook.com (20.179.7.206) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Tue, 29 Jan 2019 08:11:08 +0000
+ 15.20.1580.16; Tue, 29 Jan 2019 08:11:01 +0000
 Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
  ([fe80::9c0:e3aa:b41f:9504]) by AM6PR04MB5781.eurprd04.prod.outlook.com
  ([fe80::9c0:e3aa:b41f:9504%3]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
- 08:11:07 +0000
+ 08:11:01 +0000
 From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
 To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
@@ -54,13 +54,13 @@ CC:     Mingkai Hu <mingkai.hu@nxp.com>,
         "M.h. Lian" <minghuan.lian@nxp.com>,
         Xiaowei Bao <xiaowei.bao@nxp.com>,
         "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: [PATCHv3 25/27] PCI: mobiveil: ls_pcie_g4: add Workaround for
- A-011451
-Thread-Topic: [PATCHv3 25/27] PCI: mobiveil: ls_pcie_g4: add Workaround for
- A-011451
-Thread-Index: AQHUt6ovZBcKHJqyUUSJmvZsRQEfig==
-Date:   Tue, 29 Jan 2019 08:11:07 +0000
-Message-ID: <20190129080926.36773-26-Zhiqiang.Hou@nxp.com>
+Subject: [PATCHv3 24/27] PCI: mobiveil: ls_pcie_g4: add Workaround for
+ A-011577
+Thread-Topic: [PATCHv3 24/27] PCI: mobiveil: ls_pcie_g4: add Workaround for
+ A-011577
+Thread-Index: AQHUt6osDgubRWC4UkS7LbPeiPAwNQ==
+Date:   Tue, 29 Jan 2019 08:11:01 +0000
+Message-ID: <20190129080926.36773-25-Zhiqiang.Hou@nxp.com>
 References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
 In-Reply-To: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
 Accept-Language: zh-CN, en-US
@@ -76,24 +76,24 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-originating-ip: [119.31.174.73]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB6117;6:S1JE+/Qpazn8YUf5A+0gThHItz86v9boFXdDAE1iNxZWSJRhaKRcxt1GyuLo3ho729N/c14QpjuBw//DjOYOB3TXo5Lj/eqe8jl0me8w//vO6VyL8hsYNjbawjDe/gyZPAmeq3kXjuq8X9nehQ4zmvsT3r19qOdbj018HYjaBG/XhPdRd9xLqjIqlht+NeO52s+GUo4bEupXm/6z0a69QHFlW64PjXiCi8optp6KNR251viBI4F5PnMZfzZUCuhwv+aGhGQPWkqYNZiJ7/V92oH8N6ipVY9DLOBG8AKNstx7n6wjdVwSS+/OpdLBwx7XyyMgYds5d5zPUe3mVe9C+urPWWIaBQf9SMdInx3UCAp/50PVe6Iz1tKr/++UhOOcncM+Pfz/TiMMdZRGNvaNnRKwkIUxkNwwk04wEpZS+YZXytk32zcpb0QZool8SprRwHEQfuEvpPzWsj8PpO3KJA==;5:clXBePbj38cXucrlsfBjmIRn6hESm/QTTJ35piZgkXTBYTwW101RyUdrQDRR9HUNOM6Vvf7ivO+ixy3hHGZBCEKlVGcL0KpBQj8Zhtx7kPo7RmQbkd3glL2Eb8681M+Ynuhmy7lHmrYi6o6Ih+33wRyixp6i63kKo4Za40+dZ+F4hPrWHMVTUvEL4ezh4GAqDPYLudI3xJs8uh0bYt327Q==;7:57CG0tlIQXNeX8xuxP7NsjEmDN0m39SD2NpKgn9XCcgSD0udZo0h41DNxRSlKo2kEjQVMgXmv87fuD1dnMRV6ivArCbDfaqWRBwHcSCzy1K2yi+2m7gaGJfOKcfIsvJZvT2aaLrTppBY6hj/1e3pKw==
-x-ms-office365-filtering-correlation-id: e4de1717-07a3-43d8-5700-08d685c15242
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB6117;6:6xhF086TG1/Sz/6gvPQUxzTR0Bef+51Kp7bB1p/yiqCvUym2AeqCBy8cSsks+5EDx0yzDs7odJD1P6suZZT7o9tKQ9clkZ9mr2Opfu+9Lm0UO0FxtuE+qL6O9m8/OrgO3EPyIS8t3lW3In9u8WDod9DqjQ2zIitjM1B6qfnqub1EW/rIB7FAYNA2Q3bZoogXyhJwUTLbLZtlrE/hTlYWd8Q5Hmbymh66rudvyTfM37RXdMFWe90umGBWm5O/0TuT/svt2ASOsVWIIHz45bsUUKq8IfjoXWDyr/lA5EjxRdZiNJ77J6JUJL3RJ+t+hu1N2ffK8fCXzTRhbRGeumkLisNYtrPdOGZyoB4MygaXKorNGe7SB2bBmWUdLdMGnppObPKOdkk4GaI6zettUS6D1q33RnEpywS5jOF6MHFwP+EBQkYL5ZtKtz37VgDKsJBwXO546aDkqoK03eFvO5r+Zg==;5:uoHJxYCfJYdKQxJuiNmkvJwr5QDDDfFDjq04Q+kWbUat0QXR1VtUi62JrKD6S9iOehPu8i6u/HIGCYkHxqzDO6z7k9SefJbs5p7QJw7PIvcwgZcAEgMDbVgK87VCY/rA2sB5Ktih3Y3u80y2YzbiQqZh9NTDRk/GUdzQXUMl0jkL2KXDLUg4Gdh8DqgIwJ/8LbCMYhwKVjxPoid65IFyiA==;7:xXGIVD5wrVZ/M2I5U3v6LQQ9DoQU4DQzbHsuClWxylPYUxOd2fvF0FyPrxrD951hal6VyeRN4yQS46aeFySjB4dTCF9W3yqX6dFGPjX1j/9I2xB2jP+y7mC7H1B20e/fJxzwJLFXrIBUOng/ob4i7g==
+x-ms-office365-filtering-correlation-id: 7f7a747b-acc0-4971-92a9-08d685c14e94
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB6117;
 x-ms-traffictypediagnostic: AM6PR04MB6117:
-x-microsoft-antispam-prvs: <AM6PR04MB61175592250366454733249E84970@AM6PR04MB6117.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM6PR04MB61171A9B249308BCF2412CD184970@AM6PR04MB6117.eurprd04.prod.outlook.com>
 x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(376002)(39860400002)(136003)(199004)(189003)(3846002)(966005)(6116002)(486006)(81166006)(81156014)(8676002)(7416002)(106356001)(14454004)(478600001)(386003)(446003)(11346002)(186003)(102836004)(476003)(6506007)(8936002)(50226002)(105586002)(68736007)(71190400001)(2906002)(2616005)(71200400001)(36756003)(2501003)(66066001)(97736004)(26005)(4326008)(25786009)(6436002)(6486002)(53936002)(6512007)(256004)(54906003)(7736002)(14444005)(99286004)(305945005)(76176011)(2201001)(110136005)(1076003)(316002)(86362001)(52116002)(6306002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6117;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(396003)(366004)(346002)(376002)(39860400002)(136003)(199004)(189003)(3846002)(966005)(6116002)(486006)(81166006)(81156014)(8676002)(7416002)(106356001)(14454004)(478600001)(386003)(446003)(11346002)(186003)(102836004)(476003)(6506007)(8936002)(50226002)(105586002)(68736007)(71190400001)(2906002)(2616005)(71200400001)(36756003)(2501003)(66066001)(97736004)(26005)(4326008)(25786009)(6436002)(6486002)(53936002)(6512007)(256004)(54906003)(7736002)(14444005)(99286004)(305945005)(76176011)(2201001)(110136005)(1076003)(316002)(86362001)(52116002)(6306002)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6117;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: mduQQ23cZXmf+p6Y8Wc+mVRhUwakN1oe8uP5d9zj5tvL9UaEIQSyiVrCQMuTb8t6rMMiGIv20oU29KucaKUGMb0MpGiqtagCI+PLIwVx94w/sxfIZJpyqznqVAzBaY5s2gGJT9/KAae1oFyKcTzgDC56RB8Z9iV3WwusK/yEicA4hPczNSUyiKWu2xh4xRjfEAaz219L3NXLOhHGFIDykWzye/8N84/VikEVblbybQXxQKBCiQdL5JHy+CyxRnquFonSWQgxB+eJahjJnI8YMc7MmIXVTYNVhYpMkrXKiH1qUNOIx+uIiUUqBHHwN0vXNvQxugNC9BWeH5XBnXGIjbL6zl/KVUtMz0Cx+DYtb3ewfMsoH4pi/3HlF1U+761ScO60iCXL6EKn4efcFVMzvffOzupOP3S1/7V1WJFUnH8=
+x-microsoft-antispam-message-info: iMX0ZUBrDgA/W05MrvVfZ7bt8S5G2y3rwB+rW7Lz+fgW2/ntlm8MWGLZwvBEbqbW5dRy8MpQHmJ7uqhZm1rw/V8Tie/aLq+Zg1Rj/ZM65gkuy1wRLvDd0zi/gLBkzeWgeUbHX7VDO/MRAZwX5PggHc01s7LiXQsVQsbvjsC2ZM6i3UirII1/Z33SCll2osurX8HeoyClw31ItlbU1q2vcqy3TdOg9vx2CalEZxtu8wXncrN4Mq6qfY5C3STXCgzVwFTwk1SSe/gF1mAupcuCrCxSve+Y4gQthiBKTZyxPDCivAJkVA9ShznVl1iqlcgL+thi9D75a2pw2FhtgN2eT/nKs/8W5pGPDkl+yNCg4x37P1qJuAhU4sV10dgJiqSYk4srmPdNrpQFF0MOBrEPaNRZIKfbfNr2zWIj8c0uLqc=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4de1717-07a3-43d8-5700-08d685c15242
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 08:11:01.8827
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f7a747b-acc0-4971-92a9-08d685c14e94
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 08:10:55.7107
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -106,21 +106,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
-When LX2 PCIe controller is sending multiple split completions and
-ACK latency expires indicating that ACK should be send at priority.
-But because of large number of split completions and FC update DLLP,
-the controller does not give priority to ACK transmission. This
-results into ACK latency timer timeout error at the link partner and
-the pending TLPs are replayed by the link partner again.
+PCIe configuration access to non-existent function triggered
+SERROR interrupt exception.
 
 Workaround:
-1. Reduce the ACK latency timeout value to a very small value.
-2. Restrict the number of completions from the LX2 PCIe controller
-   to 1, by changing the Max Read Request Size (MRRS) of link partner
-   to the same value as Max Packet size (MPS).
-
-This patch implemented part 1, the part 2 can be set by kernel parameter
-'pci=3Dpcie_bus_perf'
+Disable error reporting on AXI bus during the Vendor ID read
+transactions in enumeration.
 
 This ERRATA is only for LX2160A Rev1.0, and it will be fixed
 in Rev2.0.
@@ -128,63 +119,158 @@ in Rev2.0.
 Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 ---
 V3:
- - Integrated without change from http://patchwork.ozlabs.org/patch/1006796=
+ - Integrated without change from http://patchwork.ozlabs.org/patch/1006790=
 /
 
- .../pci/controller/mobiveil/pci-layerscape-gen4.c | 15 +++++++++++++++
- drivers/pci/controller/mobiveil/pcie-mobiveil.h   |  4 ++++
- 2 files changed, 19 insertions(+)
+ .../controller/mobiveil/pci-layerscape-gen4.c | 37 +++++++++++++++++++
+ .../controller/mobiveil/pcie-mobiveil-host.c  | 17 ++++++++-
+ .../pci/controller/mobiveil/pcie-mobiveil.h   |  3 ++
+ 3 files changed, 56 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c b/driver=
 s/pci/controller/mobiveil/pci-layerscape-gen4.c
-index d2c5dbbd5e3c..20ce146788ca 100644
+index 174cbcac4059..d2c5dbbd5e3c 100644
 --- a/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
 +++ b/drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
-@@ -82,12 +82,27 @@ static bool ls_pcie_g4_is_bridge(struct ls_pcie_g4 *pci=
-e)
+@@ -22,8 +22,13 @@
+=20
+ #include "pcie-mobiveil.h"
+=20
++#define REV_1_0				(0x10)
++
+ /* LUT and PF control registers */
+ #define PCIE_LUT_OFF			(0x80000)
++#define PCIE_LUT_GCR			(0x28)
++#define PCIE_LUT_GCR_RRE		(0)
++
+ #define PCIE_PF_OFF			(0xc0000)
+ #define PCIE_PF_INT_STAT		(0x18)
+ #define PF_INT_STAT_PABRST		(31)
+@@ -41,6 +46,7 @@ struct ls_pcie_g4 {
+ 	struct mobiveil_pcie *pci;
+ 	struct delayed_work dwork;
+ 	int irq;
++	u8 rev;
+ };
+=20
+ static inline u32 ls_pcie_g4_lut_readl(struct ls_pcie_g4 *pcie, u32 off)
+@@ -76,6 +82,15 @@ static bool ls_pcie_g4_is_bridge(struct ls_pcie_g4 *pcie=
+)
  	return header_type =3D=3D PCI_HEADER_TYPE_BRIDGE;
  }
 =20
-+static void workaround_A011451(struct ls_pcie_g4 *pcie)
++static int ls_pcie_g4_host_init(struct mobiveil_pcie *pci)
 +{
-+	struct mobiveil_pcie *mv_pci =3D pcie->pci;
-+	u32 val;
++	struct ls_pcie_g4 *pcie =3D to_ls_pcie_g4(pci);
 +
-+	/* Set ACK latency timeout */
-+	val =3D csr_readl(mv_pci, GPEX_ACK_REPLAY_TO);
-+	val &=3D ~(ACK_LAT_TO_VAL_MASK << ACK_LAT_TO_VAL_SHIFT);
-+	val |=3D (4 << ACK_LAT_TO_VAL_SHIFT);
-+	csr_writel(mv_pci, val, GPEX_ACK_REPLAY_TO);
++	pcie->rev =3D csr_readb(pci, PCI_REVISION_ID);
++
++	return 0;
 +}
 +
- static int ls_pcie_g4_host_init(struct mobiveil_pcie *pci)
+ static int ls_pcie_g4_link_up(struct mobiveil_pcie *pci)
  {
  	struct ls_pcie_g4 *pcie =3D to_ls_pcie_g4(pci);
+@@ -188,12 +203,34 @@ static void ls_pcie_g4_reset(struct work_struct *work=
+)
+ 	ls_pcie_g4_reinit_hw(pcie);
+ }
 =20
- 	pcie->rev =3D csr_readb(pci, PCI_REVISION_ID);
++static int ls_pcie_g4_read_other_conf(struct pci_bus *bus, unsigned int de=
+vfn,
++				   int where, int size, u32 *val)
++{
++	struct mobiveil_pcie *pci =3D bus->sysdata;
++	struct ls_pcie_g4 *pcie =3D to_ls_pcie_g4(pci);
++	int ret;
++
++	if (pcie->rev =3D=3D REV_1_0 && where =3D=3D PCI_VENDOR_ID)
++		ls_pcie_g4_lut_writel(pcie, PCIE_LUT_GCR,
++				      0 << PCIE_LUT_GCR_RRE);
++
++	ret =3D pci_generic_config_read(bus, devfn, where, size, val);
++
++	if (pcie->rev =3D=3D REV_1_0 && where =3D=3D PCI_VENDOR_ID)
++		ls_pcie_g4_lut_writel(pcie, PCIE_LUT_GCR,
++				      1 << PCIE_LUT_GCR_RRE);
++
++	return ret;
++}
++
+ static struct mobiveil_rp_ops ls_pcie_g4_rp_ops =3D {
+ 	.interrupt_init =3D ls_pcie_g4_interrupt_init,
++	.read_other_conf =3D ls_pcie_g4_read_other_conf,
+ };
 =20
-+	if (pcie->rev =3D=3D REV_1_0)
-+		workaround_A011451(pcie);
+ static const struct mobiveil_pab_ops ls_pcie_g4_pab_ops =3D {
+ 	.link_up =3D ls_pcie_g4_link_up,
++	.host_init =3D ls_pcie_g4_host_init,
+ };
+=20
+ static int __init ls_pcie_g4_probe(struct platform_device *pdev)
+diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c b/drivers=
+/pci/controller/mobiveil/pcie-mobiveil-host.c
+index e8d0c4989013..5f51bc2dd6d7 100644
+--- a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
++++ b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+@@ -79,9 +79,20 @@ static void __iomem *mobiveil_pcie_map_bus(struct pci_bu=
+s *bus,
+ 	return pcie->rp.config_axi_slave_base + where;
+ }
+=20
++static int mobiveil_pcie_config_read(struct pci_bus *bus, unsigned int dev=
+fn,
++				     int where, int size, u32 *val)
++{
++	struct mobiveil_pcie *pcie =3D bus->sysdata;
++	struct root_port *rp =3D &pcie->rp;
++
++	if (bus->number > rp->root_bus_nr && rp->ops->read_other_conf)
++		return rp->ops->read_other_conf(bus, devfn, where, size, val);
++
++	return pci_generic_config_read(bus, devfn, where, size, val);
++}
+ static struct pci_ops mobiveil_pcie_ops =3D {
+ 	.map_bus =3D mobiveil_pcie_map_bus,
+-	.read =3D pci_generic_config_read,
++	.read =3D mobiveil_pcie_config_read,
+ 	.write =3D pci_generic_config_write,
+ };
+=20
+@@ -309,6 +320,10 @@ int mobiveil_host_init(struct mobiveil_pcie *pcie, boo=
+l reinit)
+ 	value |=3D (PCI_CLASS_BRIDGE_PCI << 16);
+ 	csr_writel(pcie, value, PAB_INTP_AXI_PIO_CLASS);
+=20
++	/* Platform specific host init */
++	if (pcie->ops->host_init)
++		return pcie->ops->host_init(pcie);
 +
  	return 0;
  }
 =20
 diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/=
 controller/mobiveil/pcie-mobiveil.h
-index ab43de5e4b2b..f0e2e4ae09b5 100644
+index 0ccd6cee5f8f..ab43de5e4b2b 100644
 --- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
 +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-@@ -85,6 +85,10 @@
- #define PAB_AXI_AMAP_PEX_WIN_H(win)	PAB_REG_ADDR(0x0bac, win)
- #define PAB_INTP_AXI_PIO_CLASS		0x474
+@@ -145,6 +145,8 @@ struct mobiveil_msi {			/* MSI information */
 =20
-+#define GPEX_ACK_REPLAY_TO		0x438
-+#define  ACK_LAT_TO_VAL_MASK		0x1fff
-+#define  ACK_LAT_TO_VAL_SHIFT		0
-+
- #define PAB_PEX_AMAP_CTRL(win)		PAB_REG_ADDR(0x4ba0, win)
- #define  AMAP_CTRL_EN_SHIFT		0
- #define  AMAP_CTRL_TYPE_SHIFT		1
+ struct mobiveil_rp_ops {
+ 	int (*interrupt_init)(struct mobiveil_pcie *pcie);
++	int (*read_other_conf)(struct pci_bus *bus, unsigned int devfn,
++			       int where, int size, u32 *val);
+ };
+=20
+ struct root_port {
+@@ -160,6 +162,7 @@ struct root_port {
+=20
+ struct mobiveil_pab_ops {
+ 	int (*link_up)(struct mobiveil_pcie *pcie);
++	int (*host_init)(struct mobiveil_pcie *pcie);
+ };
+=20
+ struct mobiveil_pcie {
 --=20
 2.17.1
 
