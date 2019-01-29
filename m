@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B48C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4BFC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3585D20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09FFC2148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:49:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="i5URn9Si"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="T/EA5xPX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbfA2Kty (ORCPT
+        id S1728457AbfA2Ktz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:49:54 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:46392 "EHLO
+        Tue, 29 Jan 2019 05:49:55 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:46396 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbfA2Ktv (ORCPT
+        with ESMTP id S1728351AbfA2Ktx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:49:51 -0500
+        Tue, 29 Jan 2019 05:49:53 -0500
 Received: from mailhost.synopsys.com (dc2-mailhost1.synopsys.com [10.12.135.161])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id A0B6710C11FC;
-        Tue, 29 Jan 2019 02:49:51 -0800 (PST)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id 579BC10C1493;
+        Tue, 29 Jan 2019 02:49:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1548758991; bh=WSJDjd3/oVJABGK0l9Hp5QCULSLXnEApOGjWPqPwE3U=;
+        t=1548758993; bh=w64iJvGv0yzHjpm3aGnApbOj/XSVxiTqqDo3AeNSwII=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i5URn9Si6qh2AeflkpgQwV4ml/MenOQJ+py/OzLqjhYeGlDOBmWRCo5/EgVoOkS9X
-         4y9JGN7g+TC7Lx2HfWy9a8VS+BIdazt0ya3dY3Nc2fxZWk1XnXvFga5I8SLZOeKGID
-         NrjxWFrxMt4LJtXBv/a2M9SnZfTyFLUuYltmNHRmdtLph5F0X/LOaBGjkvWZ7yMtAc
-         7pDnCC05mwswuDCBLQLxIsZAVGbkAteWdJfGNCZG8ZNrSFlosVdFiVmPAwquQgjJ9d
-         d8PYsGl0SP3b5OpGTILqO5zPbyFJPa4eFElrnYsPQqIej0LN+v/+vUV5po0x38fzin
-         UZK1e1VmkaFug==
+        b=T/EA5xPXWwaU+ME9vhv1a5ub61AO5Ik+T1iC3ke3MCaK/81QfJloBzPP6pXr54thz
+         k3WE5BZN8hbndPGLVXnqrT9hsdr9u7kgIW8QwjOb71v9GpCnCqaUJC4gHXcrz4Myp1
+         rwb09mp/p9JZry+7zocFAukVRLfD+15Datqe36cvSqCGbZi9TzSvSgETcUh8jhpBts
+         Z1j8ZVTBwBSWTvcFuMMJyF9DYTfq7xV+32q1LHa41/0080mU9q0ZMmOhlrvXis4vWY
+         7gV/APWo/Si3cgC/M6B6fUQaUhjua8TSnPlk+RuTNoCVqEv5wrzGmvFOHVof0kkogO
+         K49mJoK1nycTA==
 Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.46])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 4D6C4A0070;
-        Tue, 29 Jan 2019 10:49:50 +0000 (UTC)
+        by mailhost.synopsys.com (Postfix) with ESMTP id EE25EA0070;
+        Tue, 29 Jan 2019 10:49:51 +0000 (UTC)
 From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
 To:     linux-snps-arc@lists.infradead.org,
         Vineet Gupta <vineet.gupta1@synopsys.com>
 Cc:     linux-kernel@vger.kernel.org,
         Alexey Brodkin <alexey.brodkin@synopsys.com>,
         Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-Subject: [PATCH 3/5] ARCv2: Enable unaligned access in early ASM code
-Date:   Tue, 29 Jan 2019 13:49:40 +0300
-Message-Id: <20190129104942.31705-4-Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH 4/5] ARCv2: use unaligned access in SW
+Date:   Tue, 29 Jan 2019 13:49:41 +0300
+Message-Id: <20190129104942.31705-5-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.14.5
 In-Reply-To: <20190129104942.31705-1-Eugeniy.Paltsev@synopsys.com>
 References: <20190129104942.31705-1-Eugeniy.Paltsev@synopsys.com>
@@ -57,64 +57,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Even though we do enable AD bit in arc_init_IRQ() we need to do
-it in early ASM code otherwise we may face unaligned data until
-we reach arc_init_IRQ() because GCC starting from v8.1.0 actively
-generates unaligned data as it assumes that:
- * ARCv2 always has support of unaliged data
- * This support is turned on in runtime
+Select HAVE_EFFICIENT_UNALIGNED_ACCESS and allow GCC to generate
+unaligned data if we enable enable unaligned access in HW.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
- arch/arc/kernel/head.S       | 14 ++++++++++++++
- arch/arc/kernel/intc-arcv2.c |  2 --
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ arch/arc/Kconfig  | 1 +
+ arch/arc/Makefile | 6 ++++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/arch/arc/kernel/head.S b/arch/arc/kernel/head.S
-index 8b90d25a15cc..ffe3d384fca5 100644
---- a/arch/arc/kernel/head.S
-+++ b/arch/arc/kernel/head.S
-@@ -17,6 +17,9 @@
- #include <asm/entry.h>
- #include <asm/arcregs.h>
- #include <asm/cache.h>
-+#ifdef CONFIG_ISA_ARCV2
-+#include <asm/irqflags-arcv2.h>
-+#endif
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index 37c8aeefa3a5..a1d976c612a6 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -390,6 +390,7 @@ if ISA_ARCV2
+ config ARC_USE_UNALIGNED_MEM_ACCESS
+ 	bool "Handle unaligned access in HW and use it"
+ 	default y
++	select HAVE_EFFICIENT_UNALIGNED_ACCESS
+ 	help
+ 	  The ARC HS architecture supports unaligned memory access
+ 	  which is disabled by default. Enable unaligned access in
+diff --git a/arch/arc/Makefile b/arch/arc/Makefile
+index df00578c279d..e2b991f75bc5 100644
+--- a/arch/arc/Makefile
++++ b/arch/arc/Makefile
+@@ -28,6 +28,12 @@ cflags-$(CONFIG_ARC_HAS_SWAPE)		+= -mswape
  
- .macro CPU_EARLY_SETUP
+ ifdef CONFIG_ISA_ARCV2
  
-@@ -47,6 +50,17 @@
- 	sr	r5, [ARC_REG_DC_CTRL]
- 
- 1:
++ifdef CONFIG_ARC_USE_UNALIGNED_MEM_ACCESS
++cflags-y				+= -munaligned-access
++else
++cflags-y				+= -mno-unaligned-access
++endif
 +
-+	; Enable / disable HW handling of unaligned access in the CPU.
-+#ifdef CONFIG_ARC_USE_UNALIGNED_MEM_ACCESS
-+	kflag	STATUS_AD_MASK
-+#else
-+	; Handling of unaligned access is disabled by default but we disable it
-+	; manually in case of any bootloader enabled it earlier.
-+	lr	r5, [ARC_REG_STATUS32]
-+	bclr	r5, r5, STATUS_AD_BIT
-+	kflag	r5
-+#endif
- .endm
- 
- 	.section .init.text, "ax",@progbits
-diff --git a/arch/arc/kernel/intc-arcv2.c b/arch/arc/kernel/intc-arcv2.c
-index 84b1c7157d1b..6359896da1ea 100644
---- a/arch/arc/kernel/intc-arcv2.c
-+++ b/arch/arc/kernel/intc-arcv2.c
-@@ -93,8 +93,6 @@ void arc_init_IRQ(void)
- 
- 	/* setup status32, don't enable intr yet as kernel doesn't want */
- 	tmp = read_aux_reg(ARC_REG_STATUS32);
--	if (IS_ENABLED(ARC_USE_UNALIGNED_MEM_ACCESS))
--		tmp |= STATUS_AD_MASK;
- 	tmp |= ARCV2_IRQ_DEF_PRIO << 1;
- 	tmp &= ~STATUS_IE_MASK;
- 	asm volatile("kflag %0	\n"::"r"(tmp));
+ ifndef CONFIG_ARC_HAS_LL64
+ cflags-y				+= -mno-ll64
+ endif
 -- 
 2.14.5
 
