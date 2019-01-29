@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A58FAC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 501A8C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F7EF2086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E66820882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762477;
-	bh=IBzeetOUZlN9GPb1u0owrhMZnyxOl6W0tAUaypIreNw=;
+	s=default; t=1548762481;
+	bh=D/AkT5HBQ0+Te2TPqbXz/C80+hFhL0/CRO/ttymw4ac=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=esfxCGLpGMv77YnX+rp2ExRFpDNw19N4prQOhPG3S+s2KTjzcpiY+tR4PQ0wEmupj
-	 /8mxtMHZdV+JAzTSieGJbSYsFyifqWAmtOZrvDftCWQxSM8qpB6Z/LNiFE4d2tmoCR
-	 nnNhUTrWqn/V1UVyvbzyGf6B3hlDpXdB/4XzDUhw=
+	b=P66+uW5LLVqhUst9XeOgmWl5DEFg5WHFZFbuIBRt9W3TeDNNCUhCvmuDoVPCBzuD4
+	 MmQskAmejBM963Uo4xYqRaHms1mQKnSzS/NQPFD2BD2OnzRHnA1dAMnH3UMB59WJBJ
+	 zSjj0VAxQ5mAi7EFDfzuYpD2CRYknEovjsPUMK/E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731252AbfA2Lrz (ORCPT
+        id S1730276AbfA2Lr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:47:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38676 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:47:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729851AbfA2Lrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:53 -0500
+        id S1731249AbfA2Lr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 123ED20882;
-        Tue, 29 Jan 2019 11:47:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B39712086C;
+        Tue, 29 Jan 2019 11:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762472;
-        bh=IBzeetOUZlN9GPb1u0owrhMZnyxOl6W0tAUaypIreNw=;
+        s=default; t=1548762475;
+        bh=D/AkT5HBQ0+Te2TPqbXz/C80+hFhL0/CRO/ttymw4ac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nxRPtOiBxqykAZWJbFxd+vOQxiZOC1WaaCucPhbWmkx/OQJW4PZNR7F6pirOIYHCu
-         jjjeIgKCDQJO2h3GGye9OFc7I0aTmlx0kGY3QVDr4jYMFuzC2KCUNGzKzdSX5P0Fn6
-         babs8kEY/bp5G56fLnLzjzQgPhkkTyj90l8zvCv4=
+        b=lYMei2LS3Vm+2bBRUJVo8EesRSgQuqlTLFOvo0fWlQtc4Y6hSSOB2Mogd0hDzML/F
+         UON/mjGPKUHw2iT40WN8DNW5bUqy8FGPvsvYEH3kI7dUFpedXsUou5xGephwwB0k6F
+         T+Xy+lhqHUOE+0JxllLX1mejBF2QWUhRokGdNJ7o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anthony Wong <anthony.wong@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 17/68] ALSA: hda - Add mute LED support for HP ProBook 470 G5
-Date:   Tue, 29 Jan 2019 12:35:39 +0100
-Message-Id: <20190129113133.038266731@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.14 18/68] ARCv2: lib: memeset: fix doing prefetchw outside of buffer
+Date:   Tue, 29 Jan 2019 12:35:40 +0100
+Message-Id: <20190129113133.145596929@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -64,31 +66,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anthony Wong <anthony.wong@canonical.com>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-commit 699390381a7bae2fab01a22f742a17235c44ed8a upstream.
+commit e6a72b7daeeb521753803550f0ed711152bb2555 upstream.
 
-Support speaker and mic mute LEDs on HP ProBook 470 G5.
+ARCv2 optimized memset uses PREFETCHW instruction for prefetching the
+next cache line but doesn't ensure that the line is not past the end of
+the buffer. PRETECHW changes the line ownership and marks it dirty,
+which can cause issues in SMP config when next line was already owned by
+other core. Fix the issue by avoiding the PREFETCHW
 
-BugLink: https://bugs.launchpad.net/bugs/1811254
-Signed-off-by: Anthony Wong <anthony.wong@canonical.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Some more details:
+
+The current code has 3 logical loops (ignroing the unaligned part)
+  (a) Big loop for doing aligned 64 bytes per iteration with PREALLOC
+  (b) Loop for 32 x 2 bytes with PREFETCHW
+  (c) any left over bytes
+
+loop (a) was already eliding the last 64 bytes, so PREALLOC was
+safe. The fix was removing PREFETCW from (b).
+
+Another potential issue (applicable to configs with 32 or 128 byte L1
+cache line) is that PREALLOC assumes 64 byte cache line and may not do
+the right thing specially for 32b. While it would be easy to adapt,
+there are no known configs with those lie sizes, so for now, just
+compile out PREALLOC in such cases.
+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: stable@vger.kernel.org #4.4+
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: rewrote changelog, used asm .macro vs. "C" macro]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arc/lib/memset-archs.S |   40 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 32 insertions(+), 8 deletions(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -969,6 +969,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x836e, "HP ProBook 455 G5", CXT_FIXUP_MUTE_LED_GPIO),
-+	SND_PCI_QUIRK(0x103c, 0x837f, "HP ProBook 470 G5", CXT_FIXUP_MUTE_LED_GPIO),
- 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+--- a/arch/arc/lib/memset-archs.S
++++ b/arch/arc/lib/memset-archs.S
+@@ -7,11 +7,39 @@
+  */
+ 
+ #include <linux/linkage.h>
++#include <asm/cache.h>
+ 
+-#undef PREALLOC_NOT_AVAIL
++/*
++ * The memset implementation below is optimized to use prefetchw and prealloc
++ * instruction in case of CPU with 64B L1 data cache line (L1_CACHE_SHIFT == 6)
++ * If you want to implement optimized memset for other possible L1 data cache
++ * line lengths (32B and 128B) you should rewrite code carefully checking
++ * we don't call any prefetchw/prealloc instruction for L1 cache lines which
++ * don't belongs to memset area.
++ */
++
++#if L1_CACHE_SHIFT == 6
++
++.macro PREALLOC_INSTR	reg, off
++	prealloc	[\reg, \off]
++.endm
++
++.macro PREFETCHW_INSTR	reg, off
++	prefetchw	[\reg, \off]
++.endm
++
++#else
++
++.macro PREALLOC_INSTR
++.endm
++
++.macro PREFETCHW_INSTR
++.endm
++
++#endif
+ 
+ ENTRY_CFI(memset)
+-	prefetchw [r0]		; Prefetch the write location
++	PREFETCHW_INSTR	r0, 0	; Prefetch the first write location
+ 	mov.f	0, r2
+ ;;; if size is zero
+ 	jz.d	[blink]
+@@ -48,11 +76,8 @@ ENTRY_CFI(memset)
+ 
+ 	lpnz	@.Lset64bytes
+ 	;; LOOP START
+-#ifdef PREALLOC_NOT_AVAIL
+-	prefetchw [r3, 64]	;Prefetch the next write location
+-#else
+-	prealloc  [r3, 64]
+-#endif
++	PREALLOC_INSTR	r3, 64	; alloc next line w/o fetching
++
+ #ifdef CONFIG_ARC_HAS_LL64
+ 	std.ab	r4, [r3, 8]
+ 	std.ab	r4, [r3, 8]
+@@ -85,7 +110,6 @@ ENTRY_CFI(memset)
+ 	lsr.f	lp_count, r2, 5 ;Last remaining  max 124 bytes
+ 	lpnz	.Lset32bytes
+ 	;; LOOP START
+-	prefetchw   [r3, 32]	;Prefetch the next write location
+ #ifdef CONFIG_ARC_HAS_LL64
+ 	std.ab	r4, [r3, 8]
+ 	std.ab	r4, [r3, 8]
 
 
