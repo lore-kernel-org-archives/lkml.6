@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40983C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C116C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05F8D20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE44C20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761902;
-	bh=0uynyqNaPeNVnMEm2lB1VhEnM+5doSQMskXa+4MRJXs=;
+	s=default; t=1548761908;
+	bh=qq2AkoG5vdTMVHdCv2mRPumF2N+iG7O0giRWEAQzsj4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pAAz9MQ54oBd/ToMKKxKRQqiUsig/3hrHCiIyEI4cyXOm1dEZbdZg7Tmy8Is+3svW
-	 Ddg2UUB1T13BlLn6yTqxY8W5LTPw+9LxY9FtmKQvStdCDgUnWPBQqiWJVMqyNgLcjw
-	 i8RV5W28rc5dTyjxKFQxgLebhZyGp183Ed2xurxw=
+	b=NLOCX+GGJO9/FNke6T1DesaHpJ9TdsoqcAlAr0+eO0POiMytx9/hw0D5RQiQtQIPU
+	 oEUaCGVBlp1YDV4NCkjIQ+cT8wamikiqzA8R0Q4A0f1g78HhEgDBtp17o8MFHAeEkP
+	 M7M1kolIZtddarKzgn9qNClTbx4+Sl0fICgtO41M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729113AbfA2LiU (ORCPT
+        id S1729145AbfA2Li1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:38:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54970 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:38:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729090AbfA2LiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:38:16 -0500
+        id S1729099AbfA2LiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:38:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1B47214DA;
-        Tue, 29 Jan 2019 11:38:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A11D720844;
+        Tue, 29 Jan 2019 11:38:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761896;
-        bh=0uynyqNaPeNVnMEm2lB1VhEnM+5doSQMskXa+4MRJXs=;
+        s=default; t=1548761899;
+        bh=qq2AkoG5vdTMVHdCv2mRPumF2N+iG7O0giRWEAQzsj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xfziku7tzsgMBrN3C5FnY4zFha/bJiTHkxWm0QK2CuHD/oJsjwjTClaNJzhHL/r7I
-         iadmo5rwxvdG3Aci2O0bitbe7E88eTBxAn/2P5X0EbmmiwLj9clztKkz+aC5nYOLyu
-         WfwJQK6tg2S82TjQ094xXieGpHzgqvVuAHBoygIk=
+        b=xbjVgysPJmXaSB8kt7tvjKrScDj/XbPOG2iPCFZfnHnbPPoFNUPrEdT9SBCkIz/I+
+         Udi2FYmsTguV65lG6HFRwOU/0clGTUi4akDOwcr+XKwQCZu7qDkuMYHTjShffTwkZ7
+         9oY3+IRzH2335GDYUBb863GAS6pCpkv+EUlta1BU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        stable@vger.kernel.org, Anthony Wong <anthony.wong@canonical.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 039/117] ALSA: hda/realtek - Fix typo for ALC225 model
-Date:   Tue, 29 Jan 2019 12:34:50 +0100
-Message-Id: <20190129113209.563542487@linuxfoundation.org>
+Subject: [PATCH 4.20 040/117] ALSA: hda - Add mute LED support for HP ProBook 470 G5
+Date:   Tue, 29 Jan 2019 12:34:51 +0100
+Message-Id: <20190129113209.610822649@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -64,34 +64,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Anthony Wong <anthony.wong@canonical.com>
 
-commit 82aa0d7e09840704d9a37434fef1770179d663fb upstream.
+commit 699390381a7bae2fab01a22f742a17235c44ed8a upstream.
 
-Fix typo for model alc255-dell1 to alc225-dell1.
+Support speaker and mic mute LEDs on HP ProBook 470 G5.
 
-Enable headset mode support for new WYSE NB platform.
-
-Fixes: a26d96c7802e ("ALSA: hda/realtek - Comprehensive model list for ALC259 & co")
-Signed-off-by: Kailang Yang <kailang@realtek.com>
+BugLink: https://bugs.launchpad.net/bugs/1811254
+Signed-off-by: Anthony Wong <anthony.wong@canonical.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6842,7 +6842,7 @@ static const struct hda_model_fixup alc2
- 	{.id = ALC293_FIXUP_LENOVO_SPK_NOISE, .name = "lenovo-spk-noise"},
- 	{.id = ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY, .name = "lenovo-hotkey"},
- 	{.id = ALC255_FIXUP_DELL_SPK_NOISE, .name = "dell-spk-noise"},
--	{.id = ALC225_FIXUP_DELL1_MIC_NO_PRESENCE, .name = "alc255-dell1"},
-+	{.id = ALC225_FIXUP_DELL1_MIC_NO_PRESENCE, .name = "alc225-dell1"},
- 	{.id = ALC295_FIXUP_DISABLE_DAC3, .name = "alc295-disable-dac3"},
- 	{.id = ALC280_FIXUP_HP_HEADSET_MIC, .name = "alc280-hp-headset"},
- 	{.id = ALC221_FIXUP_HP_FRONT_MIC, .name = "alc221-hp-mic"},
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -931,6 +931,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x836e, "HP ProBook 455 G5", CXT_FIXUP_MUTE_LED_GPIO),
++	SND_PCI_QUIRK(0x103c, 0x837f, "HP ProBook 470 G5", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
 
 
