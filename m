@@ -2,136 +2,259 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85E0C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 966FDC282D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B10482147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:46:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kRFxF78/"
+	by mail.kernel.org (Postfix) with ESMTP id 5FC7E2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:47:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729544AbfA2Wq6 (ORCPT
+        id S1729720AbfA2Wrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:46:58 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39590 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbfA2Wq5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:46:57 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n18so15916164lfh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 14:46:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xfw8h2TEUUd48ds29/wo0hGuEF0n8MjNAPrKWo6x+Qo=;
-        b=kRFxF78/Uj4zS4IRLpEutk/5VBZUGTbQyWNj3WZw7CHQvFMuakbeZyRr2sw6PIgd48
-         dKyXGNmpswtXfKxXAy8QLw8AAvUR+B1bGq5vNK3yaky4FAn1tY0u5kTYd+qMgAi977xn
-         Ps0JsthfYb0IUDPpiGiy2dgtNQhCXtmj+uwQQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xfw8h2TEUUd48ds29/wo0hGuEF0n8MjNAPrKWo6x+Qo=;
-        b=rd64EShcDNMSGypkiXx3HMu2+g9PyoAiHlodB2IYLpgOZOpoxAmIkrrwOLfpbGDZsN
-         DwBLBsjSQDRWiUYi9C21l1DK7/YR1OptzmZcCHpDNBuYoevKfh1Yzn8NycoZvhUVoL4/
-         b2DK1Y5tigbODjjvy8H1Jm7qM8i3+EDrYO0bdPnvs8DrYWxQKJ3ONYMxOYFwRBVP1+Is
-         QC61d4tze9MBcEBMPImEMkI/0rsQuKnjBNsLJZHDEnrab/mR42S+vrIw/53kAK8+x98X
-         DvxAf4NBNyD50zcxA3QFan5hdKWHTsogxg4U2l9/ga/khqxhTfSjeA5gEhVEtMkL9QRb
-         +QrA==
-X-Gm-Message-State: AJcUukfY7dnzxAJbP5J9oZnk/cdgPO0Buv6SE+D+5LJe1p6SxLoeq7mk
-        EDBl59CFXab0FCPxyVBFY+IfEQ==
-X-Google-Smtp-Source: ALg8bN4Ttcc8s43KZ+YK2cTGPqMUfodX30cZPt0SSRhRw8OxZkTpOBAyHzCSoVSWDuKBgSQYgCaO5g==
-X-Received: by 2002:a19:c014:: with SMTP id q20mr23259355lff.16.1548802015497;
-        Tue, 29 Jan 2019 14:46:55 -0800 (PST)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id h3sm3663785lfj.25.2019.01.29.14.46.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 14:46:54 -0800 (PST)
-Date:   Tue, 29 Jan 2019 23:46:52 +0100
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
-        broonie@kernel.org
-Subject: Re: [PATCH] arm64: dts: qcs404: evb: Fix voltages for s5 and l3
-Message-ID: <20190129224652.GB11349@centauri.lan>
-References: <20190125232954.26166-1-bjorn.andersson@linaro.org>
- <32b8136d-3acb-66e9-948c-ee8903b91401@linaro.org>
+        Tue, 29 Jan 2019 17:47:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50792 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727525AbfA2Wrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 17:47:37 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E371989AC5;
+        Tue, 29 Jan 2019 22:47:35 +0000 (UTC)
+Received: from redhat.com (ovpn-123-79.rdu2.redhat.com [10.10.123.79])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 360E72C8C3;
+        Tue, 29 Jan 2019 22:47:33 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 17:47:32 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, xuyandong <xuyandong2@huawei.com>,
+        Yinghai Lu <yinghai@kernel.org>,
+        Jesse Barnes <jbarnes@virtuousgeek.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Ofer Hayut <ofer@lightbitslabs.com>,
+        Roy Shterman <roys@lightbitslabs.com>,
+        Keith Busch <keith.busch@intel.com>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Probe bridge window attributes once at
+ enumeration-time
+Message-ID: <20190129174504-mutt-send-email-mst@kernel.org>
+References: <154818377425.41851.650909794935936003.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20190129224333.GE91506@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <32b8136d-3acb-66e9-948c-ee8903b91401@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190129224333.GE91506@google.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 29 Jan 2019 22:47:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Mark Brown on CC.
+On Tue, Jan 29, 2019 at 04:43:33PM -0600, Bjorn Helgaas wrote:
+> On Tue, Jan 22, 2019 at 01:02:54PM -0600, Bjorn Helgaas wrote:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > pci_bridge_check_ranges() determines whether a bridge supports the optional
+> > I/O and prefetchable memory windows and sets the flag bits in the bridge
+> > resources.  This *could* be done once during enumeration except that the
+> > resource allocation code completely clears the flag bits, e.g., in the
+> > pci_assign_unassigned_bridge_resources() path.
+> > 
+> > The problem with pci_bridge_check_ranges() in the resource allocation path
+> > is that we may allocate resources after devices have been claimed by
+> > drivers, and pci_bridge_check_ranges() *changes* the window registers to
+> > determine whether they're writable.  This may break concurrent accesses to
+> > devices behind the bridge.
+> > 
+> > Add a new pci_read_bridge_windows() to determine whether a bridge supports
+> > the optional windows, call it once during enumeration, remember the
+> > results, and change pci_bridge_check_ranges() so it doesn't touch the
+> > bridge windows but sets the flag bits based on those remembered results.
+> > 
+> > Link: https://lore.kernel.org/linux-pci/1506151482-113560-1-git-send-email-wangzhou1@hisilicon.com
+> > Link: https://lists.gnu.org/archive/html/qemu-devel/2018-12/msg02082.html
+> > Reported-by: xuyandong <xuyandong2@huawei.com>
+> > Tested-by: xuyandong <xuyandong2@huawei.com>
+> > Cc: Sagi Grimberg <sagi@grimberg.me>
+> > Cc: Ofer Hayut <ofer@lightbitslabs.com>
+> > Cc: Roy Shterman <roys@lightbitslabs.com>
+> > Cc: Keith Busch <keith.busch@intel.com>
+> > Cc: Zhou Wang <wangzhou1@hisilicon.com>
+> 
+> Applied to pci/enumeration for v5.1.
+> 
+> This is fairly simple in concept, but doesn't meet the letter of the
+> restrictions in Documentation/process/stable-kernel-rules.rst, so I
+> didn't tag it for stable.
+> 
+> Is there a compelling argument to mark it for stable?
 
-On Tue, Jan 29, 2019 at 10:58:47PM +0100, Jorge Ramirez wrote:
-> On 1/26/19 00:29, Bjorn Andersson wrote:
-> > PMS405 S5 was upstreamed without a voltage and PMS405 L3 is outside the
-> > acceptable range, causing PCIe to fail. Fix these.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Well it's needed downstream.
+It's a bit above 100 lines with context. Is this what you mean?
+If yes how about using my patch for stable as an alternative?
+The rules allow for equivalent patches.
+
+
 > > ---
-> >  arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >  drivers/pci/probe.c     |   52 +++++++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/pci/setup-bus.c |   45 ++++-------------------------------------
+> >  include/linux/pci.h     |    3 +++
+> >  3 files changed, 59 insertions(+), 41 deletions(-)
 > > 
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> > index 579ddaf4f5fa..072061aa1b79 100644
-> > --- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> > @@ -72,8 +72,8 @@
-> >  		};
+> > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> > index 257b9f6f2ebb..2ef8b954c65a 100644
+> > --- a/drivers/pci/probe.c
+> > +++ b/drivers/pci/probe.c
+> > @@ -348,6 +348,57 @@ static void pci_read_bases(struct pci_dev *dev, unsigned int howmany, int rom)
+> >  	}
+> >  }
 > >  
-> >  		vreg_s5_1p35: s5 {
-> > -			regulator-min-microvolt = <>;
-> > -			regulator-max-microvolt = <>;
-> > +			regulator-min-microvolt = <1352000>;
-> > +			regulator-max-microvolt = <1352000>;
-> >  		};
+> > +static void pci_read_bridge_windows(struct pci_dev *bridge)
+> > +{
+> > +	u16 io;
+> > +	u32 pmem, tmp;
+> > +
+> > +	pci_read_config_word(bridge, PCI_IO_BASE, &io);
+> > +	if (!io) {
+> > +		pci_write_config_word(bridge, PCI_IO_BASE, 0xe0f0);
+> > +		pci_read_config_word(bridge, PCI_IO_BASE, &io);
+> > +		pci_write_config_word(bridge, PCI_IO_BASE, 0x0);
+> > +	}
+> > +	if (io)
+> > +		bridge->io_window = 1;
+> > +
+> > +	/*
+> > +	 * DECchip 21050 pass 2 errata: the bridge may miss an address
+> > +	 * disconnect boundary by one PCI data phase.  Workaround: do not
+> > +	 * use prefetching on this device.
+> > +	 */
+> > +	if (bridge->vendor == PCI_VENDOR_ID_DEC && bridge->device == 0x0001)
+> > +		return;
+> > +
+> > +	pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
+> > +	if (!pmem) {
+> > +		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
+> > +					       0xffe0fff0);
+> > +		pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
+> > +		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE, 0x0);
+> > +	}
+> > +	if (!pmem)
+> > +		return;
+> > +
+> > +	bridge->pref_window = 1;
+> > +
+> > +	if ((pmem & PCI_PREF_RANGE_TYPE_MASK) == PCI_PREF_RANGE_TYPE_64) {
+> > +
+> > +		/*
+> > +		 * Bridge claims to have a 64-bit prefetchable memory
+> > +		 * window; verify that the upper bits are actually
+> > +		 * writable.
+> > +		 */
+> > +		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32, &pmem);
+> > +		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > +				       0xffffffff);
+> > +		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32, &tmp);
+> > +		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32, pmem);
+> > +		if (tmp)
+> > +			bridge->pref_64_window = 1;
+> > +	}
+> > +}
+> > +
+> >  static void pci_read_bridge_io(struct pci_bus *child)
+> >  {
+> >  	struct pci_dev *dev = child->self;
+> > @@ -1739,6 +1790,7 @@ int pci_setup_device(struct pci_dev *dev)
+> >  		pci_read_irq(dev);
+> >  		dev->transparent = ((dev->class & 0xff) == 1);
+> >  		pci_read_bases(dev, 2, PCI_ROM_ADDRESS1);
+> > +		pci_read_bridge_windows(dev);
+> >  		set_pcie_hotplug_bridge(dev);
+> >  		pos = pci_find_capability(dev, PCI_CAP_ID_SSVID);
+> >  		if (pos) {
+> > diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> > index ed960436df5e..1941bb0a6c13 100644
+> > --- a/drivers/pci/setup-bus.c
+> > +++ b/drivers/pci/setup-bus.c
+> > @@ -735,58 +735,21 @@ int pci_claim_bridge_resource(struct pci_dev *bridge, int i)
+> >     base/limit registers must be read-only and read as 0. */
+> >  static void pci_bridge_check_ranges(struct pci_bus *bus)
+> >  {
+> > -	u16 io;
+> > -	u32 pmem;
+> >  	struct pci_dev *bridge = bus->self;
+> > -	struct resource *b_res;
+> > +	struct resource *b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
 > >  
-> >  		vreg_l1_1p3: l1 {
-> > @@ -87,7 +87,7 @@
-> >  		};
+> > -	b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
+> >  	b_res[1].flags |= IORESOURCE_MEM;
 > >  
-> >  		vreg_l3_1p05: l3 {
-> > -			regulator-min-microvolt = <976000>;
-> > +			regulator-min-microvolt = <1050000>;
-> 
-> 
-> the linear range for this regulator is
->  - REGULATOR_LINEAR_RANGE(312000, 0, 127, 8000),
-> 
-> meaning that 1050000 is actually not a valid selectable value (ie, after
-> applying the above constrains 1056000 would be selected instead)
-> 
-> In order for a driver to be able to successfully request min = 1050000,
-> regulator-min-microvolt should be set to 1048000 (and 1056000 would be
-> applied)
-> 
-> the question is, should this property contain only hardware achievable
-> values? or should drivers only request hardware achievable values? the
-> way the constrains are implemented it has to be one of the two (I think
-> the former would be more intuitive - ie if the dts
-> regulator-min-microvolt is a valid value)
-> 
-> >  			regulator-max-microvolt = <1160000>;
-> >  		};
+> > -	pci_read_config_word(bridge, PCI_IO_BASE, &io);
+> > -	if (!io) {
+> > -		pci_write_config_word(bridge, PCI_IO_BASE, 0xe0f0);
+> > -		pci_read_config_word(bridge, PCI_IO_BASE, &io);
+> > -		pci_write_config_word(bridge, PCI_IO_BASE, 0x0);
+> > -	}
+> > -	if (io)
+> > +	if (bridge->io_window)
+> >  		b_res[0].flags |= IORESOURCE_IO;
 > >  
+> > -	/*  DECchip 21050 pass 2 errata: the bridge may miss an address
+> > -	    disconnect boundary by one PCI data phase.
+> > -	    Workaround: do not use prefetching on this device. */
+> > -	if (bridge->vendor == PCI_VENDOR_ID_DEC && bridge->device == 0x0001)
+> > -		return;
+> > -
+> > -	pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
+> > -	if (!pmem) {
+> > -		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
+> > -					       0xffe0fff0);
+> > -		pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
+> > -		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE, 0x0);
+> > -	}
+> > -	if (pmem) {
+> > +	if (bridge->pref_window) {
+> >  		b_res[2].flags |= IORESOURCE_MEM | IORESOURCE_PREFETCH;
+> > -		if ((pmem & PCI_PREF_RANGE_TYPE_MASK) ==
+> > -		    PCI_PREF_RANGE_TYPE_64) {
+> > +		if (bridge->pref_64_window) {
+> >  			b_res[2].flags |= IORESOURCE_MEM_64;
+> >  			b_res[2].flags |= PCI_PREF_RANGE_TYPE_64;
+> >  		}
+> >  	}
+> > -
+> > -	/* double check if bridge does support 64 bit pref */
+> > -	if (b_res[2].flags & IORESOURCE_MEM_64) {
+> > -		u32 mem_base_hi, tmp;
+> > -		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > -					 &mem_base_hi);
+> > -		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > -					       0xffffffff);
+> > -		pci_read_config_dword(bridge, PCI_PREF_BASE_UPPER32, &tmp);
+> > -		if (!tmp)
+> > -			b_res[2].flags &= ~IORESOURCE_MEM_64;
+> > -		pci_write_config_dword(bridge, PCI_PREF_BASE_UPPER32,
+> > -				       mem_base_hi);
+> > -	}
+> >  }
+> >  
+> >  /* Helper function for sizing routines: find first available
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index 65f1d8c2f082..40b327b814aa 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -373,6 +373,9 @@ struct pci_dev {
+> >  	bool		match_driver;		/* Skip attaching driver */
+> >  
+> >  	unsigned int	transparent:1;		/* Subtractive decode bridge */
+> > +	unsigned int	io_window:1;		/* Bridge has I/O window */
+> > +	unsigned int	pref_window:1;		/* Bridge has pref mem window */
+> > +	unsigned int	pref_64_window:1;	/* Pref mem window is 64-bit */
+> >  	unsigned int	multifunction:1;	/* Multi-function device */
+> >  
+> >  	unsigned int	is_busmaster:1;		/* Is busmaster */
 > > 
-> 
