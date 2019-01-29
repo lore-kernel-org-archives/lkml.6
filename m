@@ -2,123 +2,204 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73608C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E4DC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34ACD20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:58:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3DDC20869
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:58:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="wPIJ6s3R"
+	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="atRWCQe0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729560AbfA2U6l (ORCPT
+        id S1729597AbfA2U6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:58:41 -0500
-Received: from mail-eopbgr10074.outbound.protection.outlook.com ([40.107.1.74]:2690
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726982AbfA2U6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:58:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=crFkFDL6HoTHuo/PPx9XXMrngUcivpMe02RcQCcP4Dw=;
- b=wPIJ6s3RufR9eRbueTSWeYwDR/GduiVw4YBfIt4Hyv9t8mxhipnmT5x+xctLElvR2StMFXmoL+54HR39tshJXNDeRAUC7vxl1XAhC3X1Cy+PX0q3j55ctAuvbG2JWYZaSrveE1JqsT7JaAkCLQX6COW0eFAJfxAcPDrDLKf+Uoc=
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
- DBBPR05MB6316.eurprd05.prod.outlook.com (20.179.40.210) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.17; Tue, 29 Jan 2019 20:58:35 +0000
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Tue, 29 Jan 2019
- 20:58:35 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-CC:     Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFNYA=
-Date:   Tue, 29 Jan 2019 20:58:35 +0000
-Message-ID: <20190129205827.GM10108@mellanox.com>
-References: <20190129174728.6430-1-jglisse@redhat.com>
- <20190129174728.6430-4-jglisse@redhat.com>
- <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
- <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
- <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
-In-Reply-To: <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR1201CA0011.namprd12.prod.outlook.com
- (2603:10b6:301:4a::21) To DBBPR05MB6426.eurprd05.prod.outlook.com
- (2603:10a6:10:c9::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DBBPR05MB6316;6:oqhIb0u9iptFxG72au529ZElgzV0PiVBxK/BUGjyuI0YWtygReVbXKYKW3hiA8m+IVK+0SFb6W1wgtkImociII9p7vPFvA/csJ+MIO+2AcIrat/Cv1ro7aVGBCZ9JLI/f2mAsxy+NXO0JoBMr14Zbruj/olZwdNnJisjxghVN70HHDVxkwGKi5K7Vewc/hjoUS7KVVRI/0KAgjBCid7JnnxZaGUeXEcH62BwGKSrxEun8dlMa71S7s49+67/AStBqrpovQ8q1R6AeAnll99kItv1NGVxXJ+Nz10xQ8l3tHSBQwYVq/pTPajSfBLUiWQmEXU1vWJb80z5zw8KX3TXFFOPn6aNK4tNSdmFayPKpvYmAQRh4wQXDU00yB7k9nC+kMgesjZlHPR4LAiWtHaM+C0FtLCA+I6ZYeXLF8am1C4Y9lcFxXKKhYArAldb6us/QY15wHfH0hm6D1vVNj+MAg==;5:+qE1CX8Kk+8ReQpRlS9HfuhUYonq7jwd+vRqR6f1izm8h/9WN78KeScFAqKM1e3ldeMIFVXcYweGEZXO3LFWwik5+lVIWQAtsWuwHdX++MD2anPBrMxpjK2HuVgK+OW/oqiMLALtb7/FiJvoOaOAQQukUaGoAAABeLpf88VA+DvwMxqivpdilw8+6+9rC9zYAhySs0YQLxCKhGSlF3ggGQ==;7:6S4/VJX86as4RyCmbY495fgr1tkTVPeh/uwmayYoKNFOtL63/sHtAdqur7XksCQmMIbNs6NWvAOYDeAqpi7WKKkshr2M97phnp69DfWJ4YM/yulf948+GzilfzgXrsl6ogQlZgfdMCNV6lvef56Ovg==
-x-ms-office365-filtering-correlation-id: f87fd651-db10-4ec2-3559-08d6862c8860
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6316;
-x-ms-traffictypediagnostic: DBBPR05MB6316:
-x-microsoft-antispam-prvs: <DBBPR05MB6316862A459C5F52DA1CEDC0CF970@DBBPR05MB6316.eurprd05.prod.outlook.com>
-x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(346002)(366004)(376002)(189003)(199004)(446003)(11346002)(54906003)(26005)(217873002)(6512007)(2616005)(476003)(66066001)(229853002)(186003)(4744005)(486006)(14454004)(8936002)(386003)(6506007)(36756003)(102836004)(93886005)(6116002)(256004)(3846002)(316002)(8676002)(81166006)(81156014)(478600001)(6916009)(71190400001)(71200400001)(7736002)(305945005)(4326008)(86362001)(76176011)(2906002)(97736004)(99286004)(52116002)(6436002)(6486002)(53936002)(6246003)(1076003)(33656002)(105586002)(25786009)(106356001)(7416002)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6316;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: IP3i1PaWZXDdSoMl6tt0T0n/TmKuOYDAq7AG5E/7PwNXD7FQSSlN6BI+tdiFth23Ut+YfpcTJq4lnjUNN8O0OAqokO0wqL6QVMbrHCbj4VLUmY56jFi0UXrjgtzx3h88yzuwKOc6AOkb5qfmKADJvTaQWvyV8eSM9ujt8GRh2qBN+viGHs8Gk/5xXBX2VZCHJxNN8c3bg9BFr6Gzx5wwhgObARcALYbmAu6BXnYEODItf7aaTmxJi0Kz0+ejh9OueWOBcZIP3guQVJXV14K2mjtKk7IgJzUUI1eXdKN7rU1p0HwZAwz3rUMhaRlvRkKgz1AnBPGMjPFzHbheB6Hcv0i72sMMW9nJftY7jzvndr9mPBPgOjMXNgHGGXZ/tnUmLLY0BrzgESVZ6MBhzo/qAcprtqzp0+qN33lFGGe5RwI=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <C53BE3538A37714BBCD7EECA0BFDFC44@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 29 Jan 2019 15:58:55 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:45863 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727326AbfA2U6y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 15:58:54 -0500
+Received: by mail-yw1-f67.google.com with SMTP id d190so8743859ywd.12
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 12:58:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=+lCxnlIZUJU9pZqCTFE3c/UHyRafPDqnnoPq+cvx5Es=;
+        b=atRWCQe0OXSmeZ8tI433nmuVXC9/nf3+BVa2GFc+cDVIopGZtz4CpjFyBmLV5vlmE6
+         f5YbVCdzOSSXQtZpiK7XBBVdOuoKCkdmprZnxWY0zYoyQYZDgU40xLVWJfPGojBjisSe
+         /K00diZPmknhspvWEuz7lQEQrLtL1JiUXq/nU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=+lCxnlIZUJU9pZqCTFE3c/UHyRafPDqnnoPq+cvx5Es=;
+        b=tSn2YQX8tIAZmvjM/OOhpuORd5Y5OxNck52sU2yba62E8bNUj0KMb9L3aT/XnE0Tum
+         IOOCKWU+4wdL5XLFGesU3rpqosgp0KkKfaDYsxlSpixjPgvSPDSoci1l1VtxS6d9tXNe
+         /yeqjYC+w0O1GHr9y7EdyOYdoi9DmIBEucahEi8XoOF6RW31ob49t64hb410fbI5O7L0
+         r4vd0NUpTABW8KBu625LRDlfnIyAqzP3uAI0jZiHWuKwQWMxrR/1rWw6FoPWYhC+/iZ1
+         pmMjJA+5uOj4EiQ92oF4Pl9Ada8gx+afBmAYxHXyz+MKn7NmRI+zMhDZBhWqIpcyXHRB
+         FszQ==
+X-Gm-Message-State: AJcUukcw535mEqb7wvkuim9jvJ17AZhAi15P1e6CdRYP0MzYjNXqw7OB
+        8uw3TJubiM1KHNAjVRZ2PANmgw==
+X-Google-Smtp-Source: ALg8bN4bAFXvrX7xlnWLrEOHHMCEQ5DrTKaHs+SvByRcm7HBXudGSe/5DtonJU5ERb3hIgHUIINucQ==
+X-Received: by 2002:a81:7d0b:: with SMTP id y11mr25566161ywc.442.1548795533500;
+        Tue, 29 Jan 2019 12:58:53 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::6:f1fc])
+        by smtp.gmail.com with ESMTPSA id o14sm27932586ywo.52.2019.01.29.12.58.52
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 29 Jan 2019 12:58:52 -0800 (PST)
+Date:   Tue, 29 Jan 2019 15:58:52 -0500
+From:   Chris Down <chris@chrisdown.name>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>,
+        Roman Gushchin <guro@fb.com>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org, kernel-team@fb.com
+Subject: [PATCH] mm: memcontrol: Expose THP events on a per-memcg basis
+Message-ID: <20190129205852.GA7310@chrisdown.name>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f87fd651-db10-4ec2-3559-08d6862c8860
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 20:58:34.4173
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6316
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 01:39:49PM -0700, Logan Gunthorpe wrote:
+Currently THP allocation events data is fairly opaque, since you can
+only get it system-wide. This patch makes it easier to reason about
+transparent hugepage behaviour on a per-memcg basis.
 
-> implement the mapping. And I don't think we should have 'special' vma's
-> for this (though we may need something to ensure we don't get mapping
-> requests mixed with different types of pages...).
+For anonymous THP-backed pages, we already have MEMCG_RSS_HUGE in v1,
+which is used for v1's rss_huge [sic]. This is reused here as it's
+fairly involved to untangle NR_ANON_THPS right now to make it
+per-memcg, since right now some of this is delegated to rmap before we
+have any memcg actually assigned to the page. It's a good idea to rework
+that, but let's leave untangling THP allocation for a future patch.
 
-I think Jerome explained the point here is to have a 'special vma'
-rather than a 'special struct page' as, really, we don't need a
-struct page at all to make this work.
+Signed-off-by: Chris Down <chris@chrisdown.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: cgroups@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: kernel-team@fb.com
+---
+ Documentation/admin-guide/cgroup-v2.rst | 14 ++++++++++++++
+ mm/huge_memory.c                        |  2 ++
+ mm/khugepaged.c                         |  2 ++
+ mm/memcontrol.c                         | 13 +++++++++++++
+ 4 files changed, 31 insertions(+)
 
-If I recall your earlier attempts at adding struct page for BAR
-memory, it ran aground on issues related to O_DIRECT/sgls, etc, etc.
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 7bf3f129c68b..b6989b39ed8e 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1189,6 +1189,10 @@ PAGE_SIZE multiple when read back.
+ 		Amount of cached filesystem data that was modified and
+ 		is currently being written back to disk
+ 
++	  anon_thp
++		Amount of memory used in anonymous mappings backed by
++		transparent hugepages
++
+ 	  inactive_anon, active_anon, inactive_file, active_file, unevictable
+ 		Amount of memory, swap-backed and filesystem-backed,
+ 		on the internal memory management lists used by the
+@@ -1248,6 +1252,16 @@ PAGE_SIZE multiple when read back.
+ 
+ 		Amount of reclaimed lazyfree pages
+ 
++	  thp_fault_alloc
++
++		Number of transparent hugepages which were allocated to satisfy
++		a page fault, including COW faults
++
++	  thp_collapse_alloc
++
++		Number of transparent hugepages which were allocated to
++		allow collapsing an existing range of pages
++
+   memory.swap.current
+ 	A read-only single value file which exists on non-root
+ 	cgroups.
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index f5f1d4324fe2..6cb7a748aa33 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -617,6 +617,7 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+ 		mm_inc_nr_ptes(vma->vm_mm);
+ 		spin_unlock(vmf->ptl);
+ 		count_vm_event(THP_FAULT_ALLOC);
++		count_memcg_events(memcg, THP_FAULT_ALLOC, 1);
+ 	}
+ 
+ 	return 0;
+@@ -1339,6 +1340,7 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
+ 	}
+ 
+ 	count_vm_event(THP_FAULT_ALLOC);
++	count_memcg_events(memcg, THP_FAULT_ALLOC, 1);
+ 
+ 	if (!page)
+ 		clear_huge_page(new_page, vmf->address, HPAGE_PMD_NR);
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index ceb242ca6ef6..54f3d33f897a 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1075,6 +1075,7 @@ static void collapse_huge_page(struct mm_struct *mm,
+ 	BUG_ON(!pmd_none(*pmd));
+ 	page_add_new_anon_rmap(new_page, vma, address, true);
+ 	mem_cgroup_commit_charge(new_page, memcg, false, true);
++	count_memcg_events(memcg, THP_COLLAPSE_ALLOC, 1);
+ 	lru_cache_add_active_or_unevictable(new_page, vma);
+ 	pgtable_trans_huge_deposit(mm, pmd, pgtable);
+ 	set_pmd_at(mm, address, pmd, _pmd);
+@@ -1503,6 +1504,7 @@ static void collapse_shmem(struct mm_struct *mm,
+ 		page_ref_add(new_page, HPAGE_PMD_NR - 1);
+ 		set_page_dirty(new_page);
+ 		mem_cgroup_commit_charge(new_page, memcg, false, true);
++		count_memcg_events(memcg, THP_COLLAPSE_ALLOC, 1);
+ 		lru_cache_add_anon(new_page);
+ 
+ 		/*
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 18f4aefbe0bf..2f4fe2fb9046 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5603,6 +5603,15 @@ static int memory_stat_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "file_writeback %llu\n",
+ 		   (u64)acc.stat[NR_WRITEBACK] * PAGE_SIZE);
+ 
++	/*
++	 * TODO: We should eventually replace our own MEMCG_RSS_HUGE counter
++	 * with the NR_ANON_THP vm counter, but right now it's a pain in the
++	 * arse because it requires migrating the work out of rmap to a place
++	 * where the page->mem_cgroup is set up and stable.
++	 */
++	seq_printf(m, "anon_thp %llu\n",
++		   (u64)acc.stat[MEMCG_RSS_HUGE] * PAGE_SIZE);
++
+ 	for (i = 0; i < NR_LRU_LISTS; i++)
+ 		seq_printf(m, "%s %llu\n", mem_cgroup_lru_names[i],
+ 			   (u64)acc.lru_pages[i] * PAGE_SIZE);
+@@ -5634,6 +5643,10 @@ static int memory_stat_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "pglazyfree %lu\n", acc.events[PGLAZYFREE]);
+ 	seq_printf(m, "pglazyfreed %lu\n", acc.events[PGLAZYFREED]);
+ 
++	seq_printf(m, "thp_fault_alloc %lu\n", acc.events[THP_FAULT_ALLOC]);
++	seq_printf(m, "thp_collapse_alloc %lu\n",
++		   acc.events[THP_COLLAPSE_ALLOC]);
++
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
 
-This does seem to avoid that pitfall entirely as we can never
-accidently get into the SGL system with this kind of memory or VMA?
-
-Jason
