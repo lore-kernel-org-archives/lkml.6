@@ -2,232 +2,108 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA85CC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3990AC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAF88214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 099372087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:58:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="asqtoNsx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbfA2Q5r (ORCPT
+        id S1728817AbfA2Q6A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:57:47 -0500
-Received: from mail02.iobjects.de ([188.40.134.68]:35938 "EHLO
-        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbfA2Q5m (ORCPT
+        Tue, 29 Jan 2019 11:58:00 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33685 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728320AbfA2Q6A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 11:57:42 -0500
-Received: from tux.wizards.de (pD9EBF050.dip0.t-ipconnect.de [217.235.240.80])
-        by mail02.iobjects.de (Postfix) with ESMTPSA id EB6824164A8D;
-        Tue, 29 Jan 2019 17:57:38 +0100 (CET)
-Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
-        by tux.wizards.de (Postfix) with ESMTP id 58BABF015FD;
-        Tue, 29 Jan 2019 17:57:38 +0100 (CET)
-Subject: Re: [PATCH 4.19 006/103] net: phy: phy driver features are mandatory
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Scott Wood <oss@buserror.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-References: <20190129113159.567154026@linuxfoundation.org>
- <20190129113159.909710200@linuxfoundation.org>
- <2f2aa129-e9fb-c75a-1b60-1821863986bf@applied-asynchrony.com>
- <VI1PR04MB4799457AC9ECABE4EE8E5021F2970@VI1PR04MB4799.eurprd04.prod.outlook.com>
- <20190129163321.GA21868@kroah.com>
-From:   =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
-Organization: Applied Asynchrony, Inc.
-Message-ID: <19d73292-95c4-2990-8ec6-c2a9b87c5598@applied-asynchrony.com>
-Date:   Tue, 29 Jan 2019 17:57:38 +0100
+        Tue, 29 Jan 2019 11:58:00 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so13426337wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 08:57:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4g0QKmDsRFRscDMvzm+JploBlAovB0C3tea7QT0vqkk=;
+        b=asqtoNsxo9PsGe3F6oiYa0pwAin7/AzCbr10NaEXA8HS+MvE9MU2TdqljmdoPTQ0kU
+         jQKYfbMMYGOPTzZVyblRuOOUOvkZ+EFE2TbiZww2ducQVqfUbpKnC6qGKz/Qk4fHCxUl
+         Rw9LBA2EFcR2rWNsqtmbCJRZYFkpGJ7XUi/WU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4g0QKmDsRFRscDMvzm+JploBlAovB0C3tea7QT0vqkk=;
+        b=r04nBGn6CUUCmZbo6GtYtthhf5TQxUxbWgpGfQE/PD4+KMvVwuS63Fl8gcd1ALrqgs
+         0WKAPuPGV0RV+NirJIvY4GzvBRF4FqLl3AgE8SjGilte48a5/P0DNVx2QlfDmdakoda5
+         sN9Ygj2j2jhewGFD8FI7ISuybbMJSqyn/OSRXRm4H4zMnDOcMHDPYyFdCfsZZqUfE4+1
+         /vpvmRuXdgLy9m7yNIKNuCHO4uDMrvQor5pKTcpFy/VCpqLX8wWGHjepByxas7QOCLD3
+         yTSGVc/yxmw+jYCG1gB1DoPNvdGuLLTZnh1WusBw7aTplkla1wahMdeFrbDzisZ6Z6E3
+         qIaQ==
+X-Gm-Message-State: AJcUukc/v9Ft309Hdda+a4YzmFR62lfT9DTFY0yMcy5VtUbZYwEHcPl7
+        Fx1VojCe8XskIECPI0LwU35MxA==
+X-Google-Smtp-Source: ALg8bN7McmaQTw6/z35pJ/y1ufDu7p4hgOA1Ox40moFhMzrG/l6ENmONFoUnbX9qJnM2uW9n0JKlSg==
+X-Received: by 2002:a1c:cc2:: with SMTP id 185mr22755542wmm.1.1548781078192;
+        Tue, 29 Jan 2019 08:57:58 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id 127sm5544506wmm.45.2019.01.29.08.57.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 08:57:57 -0800 (PST)
+Subject: Re: linux-next: Tree for Jan 29 (SLIMbus & SND_SOC_WCD9335)
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>
+References: <20190129171143.3945af24@canb.auug.org.au>
+ <2eaba760-96d5-5e0b-c1e6-c45fb24d89f2@infradead.org>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <a849e598-da5b-bfc2-cd41-dab94fa79c87@linaro.org>
+Date:   Tue, 29 Jan 2019 16:57:56 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190129163321.GA21868@kroah.com>
+In-Reply-To: <2eaba760-96d5-5e0b-c1e6-c45fb24d89f2@infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/29/19 5:33 PM, Greg Kroah-Hartman wrote:
-> On Tue, Jan 29, 2019 at 04:05:16PM +0000, Camelia Alexandra Groza wrote:
->>> -----Original Message-----
->>> From: Holger Hoffstätte <holger@applied-asynchrony.com>
->>> Sent: Tuesday, January 29, 2019 17:50
->>> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; linux-
->>> kernel@vger.kernel.org
->>> Cc: stable@vger.kernel.org; Scott Wood <oss@buserror.net>; Camelia
->>> Alexandra Groza <camelia.groza@nxp.com>; David S. Miller
->>> <davem@davemloft.net>; Heiner Kallweit <hkallweit1@gmail.com>
->>> Subject: Re: [PATCH 4.19 006/103] net: phy: phy driver features are
->>> mandatory
->>>
->>> On 1/29/19 12:34 PM, Greg Kroah-Hartman wrote:
->>>> 4.19-stable review patch.  If anyone has any objections, please let me
->>> know.
->>>>
->>>> ------------------
->>>>
->>>> From: Camelia Groza <camelia.groza@nxp.com>
->>>>
->>>> [ Upstream commit 3e64cf7a435ed0500e3adaa8aada2272d3ae8abc ]
->>>>
->>>> Since phy driver features became a link_mode bitmap, phy drivers that
->>>> don't have a list of features configured will cause the kernel to crash
->>>> when probed.
->>>>
->>>> Prevent the phy driver from registering if the features field is missing.
->>>>
->>>> Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with
->>> link_mode bitmap")
->>>> Reported-by: Scott Wood <oss@buserror.net>
->>>> Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
->>>> Signed-off-by: David S. Miller <davem@davemloft.net>
->>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>> ---
->>>>    drivers/net/phy/phy_device.c |    5 +++++
->>>>    include/linux/phy.h          |    4 ++--
->>>>    2 files changed, 7 insertions(+), 2 deletions(-)
->>>>
->>>> --- a/drivers/net/phy/phy_device.c
->>>> +++ b/drivers/net/phy/phy_device.c
->>>> @@ -1917,6 +1917,11 @@ int phy_driver_register(struct phy_drive
->>>>    {
->>>>    	int retval;
->>>>
->>>> +	if (WARN_ON(!new_driver->features)) {
->>>> +		pr_err("%s: Driver features are missing\n", new_driver-
->>>> name);
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>>    	new_driver->mdiodrv.flags |= MDIO_DEVICE_IS_PHY;
->>>>    	new_driver->mdiodrv.driver.name = new_driver->name;
->>>>    	new_driver->mdiodrv.driver.bus = &mdio_bus_type;
->>>> --- a/include/linux/phy.h
->>>> +++ b/include/linux/phy.h
->>>> @@ -491,8 +491,8 @@ struct phy_device {
->>>>     *   only works for PHYs with IDs which match this field
->>>>     * name: The friendly name of this PHY type
->>>>     * phy_id_mask: Defines the important bits of the phy_id
->>>> - * features: A list of features (speed, duplex, etc) supported
->>>> - *   by this PHY
->>>> + * features: A mandatory list of features (speed, duplex, etc)
->>>> + *   supported by this PHY
->>>>     * flags: A bitfield defining certain other features this PHY
->>>>     *   supports (like interrupts)
->>>>     *
->>>>
->>>
->>> This patch leads to the following dump during boot and no working
->>> network:
->>>
->>> Jan 29 13:11:50 ragnarok kernel: RIP: 0010:phy_driver_register+0x5f/0x80
->>> [libphy]
->>> Jan 29 13:11:50 ragnarok kernel: Code: dd 06 a0 48 c7 47 40 30 e4 06 a0 48 89
->>> 77 10 c7 47 24 02 00 00 00 e8 10 5c 44 e1 89 c5 85 c0 0f 85 aa 1d 00 00 89 e8 5b
->>> 5d c3 <0f> 0b 48 c7 c7 f0 20 07 a0 48 89 c6 bd ea ff ff ff e8 c9 4c 02 e1
->>> Jan 29 13:11:50 ragnarok kernel: RSP: 0018:ffffc90000df3c78 EFLAGS:
->>> 00010246
->>> Jan 29 13:11:50 ragnarok kernel: RAX: ffffffffa0071c8d RBX: 0000000000000000
->>> RCX: 0000000000000000
->>> Jan 29 13:11:50 ragnarok kernel: RDX: 0000000000000000 RSI: ffffffffa0076900
->>> RDI: ffffffffa0076040
->>> Jan 29 13:11:50 ragnarok kernel: RBP: ffffffffa007a000 R08: 0000000000000044
->>> R09: 0000000000000228
->>> Jan 29 13:11:50 ragnarok kernel: R10: ffff888603a0d6f8 R11:
->>> 000000000000003c R12: ffff888601252d00
->>> Jan 29 13:11:50 ragnarok kernel: R13: 0000000000000002 R14:
->>> ffffc90000df3e98 R15: ffffffffa0076900
->>> Jan 29 13:11:50 ragnarok kernel: FS:  00007feea9ced800(0000)
->>> GS:ffff888607240000(0000) knlGS:0000000000000000
->>> Jan 29 13:11:50 ragnarok kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
->>> 0000000080050033
->>> Jan 29 13:11:50 ragnarok kernel: CR2: 00007feea9cdfc42 CR3:
->>> 00000005fec64001 CR4: 00000000000606e0
->>> Jan 29 13:11:50 ragnarok kernel: Call Trace:
->>> Jan 29 13:11:50 ragnarok kernel:  ? 0xffffffffa007a000
->>> Jan 29 13:11:50 ragnarok kernel:  phy_init+0x24/0x58 [libphy]
->>> Jan 29 13:11:50 ragnarok kernel:  do_one_initcall+0x43/0x1af
->>> Jan 29 13:11:50 ragnarok kernel:  ? _cond_resched+0x15/0x30
->>> Jan 29 13:11:50 ragnarok kernel:  ? kmem_cache_alloc_trace+0x154/0x1b0
->>> Jan 29 13:11:50 ragnarok kernel:  do_init_module+0x5a/0x210
->>> Jan 29 13:11:50 ragnarok kernel:  load_module+0x203a/0x2500
->>> Jan 29 13:11:50 ragnarok kernel:  ? vfs_read+0x10d/0x130
->>> Jan 29 13:11:50 ragnarok kernel:  ? __se_sys_finit_module+0xb1/0xd0
->>> Jan 29 13:11:50 ragnarok kernel:  __se_sys_finit_module+0xb1/0xd0
->>> Jan 29 13:11:50 ragnarok kernel:  do_syscall_64+0x3e/0xe0
->>> Jan 29 13:11:50 ragnarok kernel:
->>> entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>> Jan 29 13:11:50 ragnarok kernel: RIP: 0033:0x7feeaa2417c9
->>> Jan 29 13:11:50 ragnarok kernel: Code: 00 00 00 75 05 48 83 c4 18 c3 e8 82 9c 01
->>> 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05
->>> <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 87 c6 0c 00 f7 d8 64 89 01 48
->>> Jan 29 13:11:50 ragnarok kernel: RSP: 002b:00007fff6fa6ea08 EFLAGS:
->>> 00000246 ORIG_RAX: 0000000000000139
->>> Jan 29 13:11:50 ragnarok kernel: RAX: ffffffffffffffda RBX: 000055c6eac06db0
->>> RCX: 00007feeaa2417c9
->>> Jan 29 13:11:50 ragnarok kernel: RDX: 0000000000000000 RSI:
->>> 00007feeaa4198fd RDI: 0000000000000006
->>> Jan 29 13:11:50 ragnarok kernel: RBP: 00007feeaa4198fd R08:
->>> 0000000000000000 R09: 000055c6eac03000
->>> Jan 29 13:11:50 ragnarok kernel: R10: 0000000000000006 R11:
->>> 0000000000000246 R12: 0000000000000000
->>> Jan 29 13:11:50 ragnarok kernel: R13: 000055c6eabfc1d0 R14:
->>> 0000000000020000 R15: 000055c6eac06db0
->>> Jan 29 13:11:50 ragnarok kernel: ---[ end trace 18e05a0afeb140b2 ]---
->>> Jan 29 13:11:50 ragnarok kernel: libphy: Generic 10G PHY: Driver features are
->>> missing
->>>
->>> Apparently the r8169 driver for my NIC does something wrong wrt. this
->>> fix and the original commit (719655a14971), but regardless - reverting this
->>> patch leads to a booting & working 4.19.19:
->>>
->>> Jan 29 13:29:16 ragnarok kernel: libphy: r8169: probed
->>> Jan 29 13:29:19 ragnarok kernel: RTL8211E Gigabit Ethernet r8169-400:00:
->>> attached PHY driver [RTL8211E Gigabit Ethernet] (mii_bus:phy_addr=r8169-
->>> 400:00, irq=IGNORE)
->>>
->>> I've cc'ed Heiner Kallweit who might know why phylib with this fix and r8169
->>> don't like each other.
->>>
->>> cheers,
->>> Holger
+
+
+https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/commit/?h=for-5.1&id=a8233b6c1972e1959cf84a021aeb61ddcd23cc26
+
+This should fix the issue! It should be in next today!
+
+Thanks,
+srini
+
+
+On 29/01/2019 16:50, Randy Dunlap wrote:
+> On 1/28/19 10:11 PM, Stephen Rothwell wrote:
+>> Hi all,
 >>
->> Hi
+>> Changes since 20190125:
 >>
->> This points to an issue with the Generic 10G PHY driver. The following patch seems to be missing from the 4.19 stable tree and should be merged:
->> f802912 net: phy: genphy_10g_driver: Avoid NULL pointer dereference
 > 
-> But that patch says it:
-> Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
+> on x86_64:
 > 
-> Which is not in 4.19.y, it showed up in 4.20.
-
-Nope, as you found 719655a14971 was backported:
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-4.19.y&id=719655a149715f26fc4de904fe0aa83068bd5b9e
-
-> Ah, wait, I think that there was a patch backported to the 4.19.y queue
-> that should not have, specifically:
-> 	3e64cf7a435e ("net: phy: phy driver features are mandatory")
-> which said it too fixes:
-> 	719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
+> CONFIG_SND_SOC_WCD9335=m
+> which selects REGMAP_SLIMBUS, but SLIMBUS is not set/enabled.
 > 
 > 
-> Holger, if you revert 3e64cf7a435e, does that solve the problem for you
-> here?
-
-Yes, as per $SUBJECT if I patch --reverse 3e64cf7a435e it works again,
-seem my original log above.
-
-Fwiw just test-booted 5.0-rc4 and it works too.
-
-cheers,
-Holger
+> ERROR: "slim_driver_unregister" [sound/soc/codecs/snd-soc-wcd9335.ko] undefined!
+> ERROR: "__slim_driver_register" [sound/soc/codecs/snd-soc-wcd9335.ko] undefined!
+> ERROR: "slim_read" [drivers/base/regmap/regmap-slimbus.ko] undefined!
+> ERROR: "slim_write" [drivers/base/regmap/regmap-slimbus.ko] undefined!
+> 
+> 
+> Full randconfig file is attached.
+> 
