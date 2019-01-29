@@ -2,110 +2,115 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD6E3C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F4FC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A705220882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 906DC20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548763199;
+	bh=T0wmoTGF3/eI2RPCDlcyhCHff0vthpjYGMjPh2iBilQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=atRFuy6iGiVDanor0t5gQOgOBe+l9+0Bv2eJxlr9jq4bcKkVBmbjfYWF3uPZNp6SZ
+	 fLYx6LiNE2mkBFuGOgL2wgwbRGczA5lqhC7MJyy2MuRcl/+1MHCqqj6zYSazpBC2av
+	 G2vsn7SQCrmDvfxFJLqYQeaakQqdC3NlY3z+VoZ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731291AbfA2L7m (ORCPT
+        id S1731035AbfA2Lqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:59:42 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39351 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728737AbfA2LrC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:02 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t9-v6so17174623ljh.6;
-        Tue, 29 Jan 2019 03:46:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n0duLS7q5gZJLFQKEZXIgwsdlF4usLdESdPOckaF1MQ=;
-        b=BfWrTRkSd/43XiVMb3RIMSJh4uRHCGrOEUfNBrHytTAJ9C0yD+meSmLbizQEPmd4kE
-         xUZ/369yw6a+SchmBqIdYbCNvYDsjgMTs9v0D4DLFTIkR+QzJnkQsGa8v/IHq3m2mz1Y
-         xbav+uazUg1Jz2WpqkXpETNtQvraRT51EQtjHW6dB4tDa1+SO9qWreU18XPmUdKGq2jp
-         pRrxS4J7dcLE/b0yRFh8KzDIIfX2HNRLzhHtXUxbcM3dB7Fd9NHGU/yyRxLrZ1dBy80k
-         Davm3hbqJZwRp0UeL87VBSW+EnWKuuT4wbQ+VFhX5TX8MOjkfxXshPPsAMKjygPXJH6h
-         QC+g==
-X-Gm-Message-State: AJcUukdxYPUTFR+BVrMf2EBaMkCUKW7BPM6NmFHWkbxw3En9oh4/rRRp
-        4WIyfJc3lp42TSMfGhrQpTmC2ucxq1w=
-X-Google-Smtp-Source: ALg8bN7rVtHX8eOQUY5mFtqygmIJdY4RXMsk/R/OMsNzMkTnFM+bVQlmmIwpqcNb1LgCCGIBGOiHRg==
-X-Received: by 2002:a2e:81d3:: with SMTP id s19-v6mr18804774ljg.138.1548762418792;
-        Tue, 29 Jan 2019 03:46:58 -0800 (PST)
-Received: from localhost.localdomain (dytkl7s9vpj00trvf9g2y-4.rev.dnainternet.fi. [2001:14bb:410:9dbf:b161:fde8:3a24:e96c])
-        by smtp.gmail.com with ESMTPSA id q20sm3386630lfj.20.2019.01.29.03.46.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 03:46:57 -0800 (PST)
-Date:   Tue, 29 Jan 2019 13:46:53 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        wim@linux-watchdog.org, linux@roeck-us.net,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
- bd70528 RTC
-Message-ID: <20190129114653.GB2551@localhost.localdomain>
-References: <20190125110536.GA29321@localhost.localdomain>
- <20190128212009.GE18309@piout.net>
+        Tue, 29 Jan 2019 06:46:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37120 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730998AbfA2Lqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:46:31 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39FBF21873;
+        Tue, 29 Jan 2019 11:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548762390;
+        bh=T0wmoTGF3/eI2RPCDlcyhCHff0vthpjYGMjPh2iBilQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VpmPK9/uR40ejBRzubND2PtbRzP4SQpCJvoARcr10obj4/0Tuv5fSJCZtr9nhWsFW
+         sigD2lQ7ns0sysQV0+P9FTJFNeYfj7ivjoKNGwtc5sQweUi8YtxdbYMf0GK8bv4DO8
+         wzLeS8Rm5D0c9kkOPLlNjmtHxgwUNqxJyGVl+TO8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 091/103] bpf: restrict map value pointer arithmetic for unprivileged
+Date:   Tue, 29 Jan 2019 12:36:08 +0100
+Message-Id: <20190129113207.001538791@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
+References: <20190129113159.567154026@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128212009.GE18309@piout.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Alexandre,
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Big thanks for the review!
+------------------
 
-On Mon, Jan 28, 2019 at 10:20:09PM +0100, Alexandre Belloni wrote:
-> Hello,
-> 
-> On 25/01/2019 13:05:36+0200, Matti Vaittinen wrote:
-> > +static const struct rtc_class_ops bd70528_rtc_ops = {
-> > +	.read_time	= bd70528_get_time,
-> > +	.set_time	= bd70528_set_time,
-> > +	.read_alarm	= bd70528_read_alarm,
-> > +	.set_alarm	= bd70528_set_alarm,
-> 
-> You actually need to provide a .alarm_irq_enable callback, else there is
-> no way to disable a set alarm.
+[ commit 0d6303db7970e6f56ae700fa07e11eb510cda125 upstream ]
 
-Glad that you pointed this out. I thought the RTC core would use
-set_alarm with enabled in struct rtc_wkalrm being zero for disabling
-the alarm. I'll add alarm_irq_enable for disabling alarm at v3.
+Restrict map value pointer arithmetic for unprivileged users in that
+arithmetic itself must not go out of bounds as opposed to the actual
+access later on. Therefore after each adjust_ptr_min_max_vals() with a
+map value pointer as a destination it will simulate a check_map_access()
+of 1 byte on the destination and once that fails the program is rejected
+for unprivileged program loads. We use this later on for masking any
+pointer arithmetic with the remainder of the map value space. The
+likelihood of breaking any existing real-world unprivileged eBPF
+program is very small for this corner case.
 
-> > +	rtc = devm_rtc_device_register(&pdev->dev, "bd70528-rtc",
-> > +				       &bd70528_rtc_ops, THIS_MODULE);
-> > +	if (IS_ERR(rtc)) {
-> > +		dev_err(&pdev->dev, "Registering RTC failed\n");
-> > +		return PTR_ERR(rtc);
-> > +	}
-> 
-> Please use devm_rtc_allocate_device() and set rtc->range_min and
-> rtc->range_max before registering with rtc_register_device() (which can
-> be done after trying to request the irq).
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/bpf/verifier.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Right. I should've noted that devm_rtc_device_register was marked
-deprecated. I'll fix this too at v3.
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 6d11320998c6..110ca915cfb6 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -2880,6 +2880,17 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 	__update_reg_bounds(dst_reg);
+ 	__reg_deduce_bounds(dst_reg);
+ 	__reg_bound_offset(dst_reg);
++
++	/* For unprivileged we require that resulting offset must be in bounds
++	 * in order to be able to sanitize access later on.
++	 */
++	if (!env->allow_ptr_leaks && dst_reg->type == PTR_TO_MAP_VALUE &&
++	    check_map_access(env, dst, dst_reg->off, 1, false)) {
++		verbose(env, "R%d pointer arithmetic of map value goes out of range, prohibited for !root\n",
++			dst);
++		return -EACCES;
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.19.1
 
-Br,
-	Matti Vaittinen
+
+
