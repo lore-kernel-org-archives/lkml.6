@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4515C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584CAC4151A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A48D120882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 287C820880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763286;
-	bh=s8Ygw2dRqIQCU4fhr3tCPzGD70eaBF8V0kjLUESReKk=;
+	s=default; t=1548763300;
+	bh=QvfqFEwI0n10ck1A5PgoZjc80oiL2xP6eGzTTc01NQw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RopDHMDVNQFpDjJSnFm1gmKy7KkkUQJ+5ROZ22mXR2mEB8kKdvt2HhJIpeiT16g0V
-	 /+mNB4xAk7AKI/VfFWNr9Ka9PzHcJ5UNzqJUBHniEtEeyXmDmgiuItnqZ7A3lL9yVs
-	 r863Z6j1LSFvgH0znrKJFJLL9i7+3ITv2wVjoDxs=
+	b=A3C0qkYMm1xhpPb3TJtJCkkpxfLEbGPlwvDkOLBOeK579ryTKbZ4koSR+efIxmb8V
+	 9PoZKJ6c1xVpoVowttPA/oe/CuIJ2LlePCfqpYcMisg/gYUYTob0QkOlolD68Y1Ikk
+	 G4+7VcPz3ZYdzau+4XakzCQ6qNcXihbAh4r0aI0c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbfA2MBY (ORCPT
+        id S1730746AbfA2LpW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:01:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36098 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:45:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729953AbfA2Lpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:45:36 -0500
+        id S1730716AbfA2LpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:45:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B0E821871;
-        Tue, 29 Jan 2019 11:45:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9214920882;
+        Tue, 29 Jan 2019 11:45:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762336;
-        bh=s8Ygw2dRqIQCU4fhr3tCPzGD70eaBF8V0kjLUESReKk=;
+        s=default; t=1548762317;
+        bh=QvfqFEwI0n10ck1A5PgoZjc80oiL2xP6eGzTTc01NQw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fgxbkxpZJFjyAKsSy3+CRoqNZ4Au4O+qG/hbj3pjJJU1rtPsksadrN8k5GBDzXE6T
-         q8+ltE46SfvVX8OiPCUqOT3+sfYuYLc7yuCdK8SylOt0vHeynIJhzkQfCBh4b3OxPS
-         I+ZHvITIUovTBEr5pkLBzc9lNPcj704o4AENQk10=
+        b=Fb/Q9W/Npexlq4LaJ7UufY9SgoeGVsDkUJFt0NKl659t+QP8QK9auh5Pl/7ekYYrp
+         8AatW8U+UBCUfzWTb2uKEPLJP0pxhMHuiQm4hYdybb3ip+evWLWxVOetIOWTeR0h44
+         9m6C2kd8utUG8s2zUuxi/AfdsAShYi7Oh0v0YtOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        hpa@zytor.com, peterz@infradead.org, mpe@ellerman.id.au,
-        will.deacon@arm.com, luto@kernel.org, jroedel@suse.de
-Subject: [PATCH 4.19 073/103] x86/selftests/pkeys: Fork() to check for state being preserved
-Date:   Tue, 29 Jan 2019 12:35:50 +0100
-Message-Id: <20190129113205.085621953@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Panfil <tom@steelseries.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 058/103] Input: xpad - add support for SteelSeries Stratus Duo
+Date:   Tue, 29 Jan 2019 12:35:35 +0100
+Message-Id: <20190129113204.178180944@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -67,115 +65,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Tom Panfil <tom@steelseries.com>
 
-commit e1812933b17be7814f51b6c310c5d1ced7a9a5f5 upstream.
+commit fe2bfd0d40c935763812973ce15f5764f1c12833 upstream.
 
-There was a bug where the per-mm pkey state was not being preserved across
-fork() in the child.  fork() is performed in the pkey selftests, but all of
-the pkey activity is performed in the parent.  The child does not perform
-any actions sensitive to pkey state.
+Add support for the SteelSeries Stratus Duo, a wireless Xbox 360
+controller. The Stratus Duo ships with a USB dongle to enable wireless
+connectivity, but it can also function as a wired controller by connecting
+it directly to a PC via USB, hence the need for two USD PIDs. 0x1430 is the
+dongle, and 0x1431 is the controller.
 
-To make the test more sensitive to these kinds of bugs, add a fork() where
-the parent exits, and execution continues in the child.
-
-To achieve this let the key exhaustion test not terminate at the first
-allocation failure and fork after 2*NR_PKEYS loops and continue in the
-child.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: peterz@infradead.org
-Cc: mpe@ellerman.id.au
-Cc: will.deacon@arm.com
-Cc: luto@kernel.org
-Cc: jroedel@suse.de
+Signed-off-by: Tom Panfil <tom@steelseries.com>
 Cc: stable@vger.kernel.org
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Joerg Roedel <jroedel@suse.de>
-Link: https://lkml.kernel.org/r/20190102215657.585704B7@viggo.jf.intel.com
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/protection_keys.c |   41 +++++++++++++++++++-------
- 1 file changed, 31 insertions(+), 10 deletions(-)
+ drivers/input/joystick/xpad.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -1133,6 +1133,21 @@ void test_pkey_syscalls_bad_args(int *pt
- 	pkey_assert(err);
- }
- 
-+void become_child(void)
-+{
-+	pid_t forkret;
-+
-+	forkret = fork();
-+	pkey_assert(forkret >= 0);
-+	dprintf3("[%d] fork() ret: %d\n", getpid(), forkret);
-+
-+	if (!forkret) {
-+		/* in the child */
-+		return;
-+	}
-+	exit(0);
-+}
-+
- /* Assumes that all pkeys other than 'pkey' are unallocated */
- void test_pkey_alloc_exhaust(int *ptr, u16 pkey)
- {
-@@ -1141,7 +1156,7 @@ void test_pkey_alloc_exhaust(int *ptr, u
- 	int nr_allocated_pkeys = 0;
- 	int i;
- 
--	for (i = 0; i < NR_PKEYS*2; i++) {
-+	for (i = 0; i < NR_PKEYS*3; i++) {
- 		int new_pkey;
- 		dprintf1("%s() alloc loop: %d\n", __func__, i);
- 		new_pkey = alloc_pkey();
-@@ -1152,21 +1167,27 @@ void test_pkey_alloc_exhaust(int *ptr, u
- 		if ((new_pkey == -1) && (errno == ENOSPC)) {
- 			dprintf2("%s() failed to allocate pkey after %d tries\n",
- 				__func__, nr_allocated_pkeys);
--			break;
-+		} else {
-+			/*
-+			 * Ensure the number of successes never
-+			 * exceeds the number of keys supported
-+			 * in the hardware.
-+			 */
-+			pkey_assert(nr_allocated_pkeys < NR_PKEYS);
-+			allocated_pkeys[nr_allocated_pkeys++] = new_pkey;
- 		}
--		pkey_assert(nr_allocated_pkeys < NR_PKEYS);
--		allocated_pkeys[nr_allocated_pkeys++] = new_pkey;
-+
-+		/*
-+		 * Make sure that allocation state is properly
-+		 * preserved across fork().
-+		 */
-+		if (i == NR_PKEYS*2)
-+			become_child();
- 	}
- 
- 	dprintf3("%s()::%d\n", __func__, __LINE__);
- 
- 	/*
--	 * ensure it did not reach the end of the loop without
--	 * failure:
--	 */
--	pkey_assert(i < NR_PKEYS*2);
--
--	/*
- 	 * There are 16 pkeys supported in hardware.  Three are
- 	 * allocated by the time we get here:
- 	 *   1. The default key (0)
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -252,6 +252,8 @@ static const struct xpad_device {
+ 	{ 0x0f30, 0x0202, "Joytech Advanced Controller", 0, XTYPE_XBOX },
+ 	{ 0x0f30, 0x8888, "BigBen XBMiniPad Controller", 0, XTYPE_XBOX },
+ 	{ 0x102c, 0xff0c, "Joytech Wireless Advanced Controller", 0, XTYPE_XBOX },
++	{ 0x1038, 0x1430, "SteelSeries Stratus Duo", 0, XTYPE_XBOX360 },
++	{ 0x1038, 0x1431, "SteelSeries Stratus Duo", 0, XTYPE_XBOX360 },
+ 	{ 0x11c9, 0x55f0, "Nacon GC-100XF", 0, XTYPE_XBOX360 },
+ 	{ 0x12ab, 0x0004, "Honey Bee Xbox360 dancepad", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360 },
+ 	{ 0x12ab, 0x0301, "PDP AFTERGLOW AX.1", 0, XTYPE_XBOX360 },
+@@ -428,6 +430,7 @@ static const struct usb_device_id xpad_t
+ 	XPAD_XBOXONE_VENDOR(0x0e6f),		/* 0x0e6f X-Box One controllers */
+ 	XPAD_XBOX360_VENDOR(0x0f0d),		/* Hori Controllers */
+ 	XPAD_XBOXONE_VENDOR(0x0f0d),		/* Hori Controllers */
++	XPAD_XBOX360_VENDOR(0x1038),		/* SteelSeries Controllers */
+ 	XPAD_XBOX360_VENDOR(0x11c9),		/* Nacon GC100XF */
+ 	XPAD_XBOX360_VENDOR(0x12ab),		/* X-Box 360 dance pads */
+ 	XPAD_XBOX360_VENDOR(0x1430),		/* RedOctane X-Box 360 controllers */
 
 
