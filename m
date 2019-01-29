@@ -2,173 +2,404 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9E2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E96E9C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB2D2148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:51:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EDc3rw5R"
+	by mail.kernel.org (Postfix) with ESMTP id A4E972148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 07:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbfA2Hvn (ORCPT
+        id S1726957AbfA2Hxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 02:51:43 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:32973 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725294AbfA2Hvn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 02:51:43 -0500
-Received: by mail-oi1-f194.google.com with SMTP id c206so15447276oib.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 23:51:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=sg8RsoaeVSyRM13cr5tOwJLRDxxtn7MjroRD+akYFO8=;
-        b=EDc3rw5RmGhwyCdR1w79Ob9Bp8OAgfX8H2Y7qobBPURN3XUJWK+gOmWJ1p2Wtl5qjk
-         f+mmr6SX/2LFC/j8SpeDPn/FTZ9GKoua45nie5ASbXR99pDf+8V1bMQ2ow5TSyFLV41X
-         9yKTUhQpBi+oc6nVNyshshx/POxsjJ2Zn6+sg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sg8RsoaeVSyRM13cr5tOwJLRDxxtn7MjroRD+akYFO8=;
-        b=N46uwlS3m8+4I4uQava28Ke0BNM12UtlvFfhagNkoncwJvwoUGBcdPvszCKYmDVP+7
-         fYac2FP0rvm7FgSGjAX2rzj9hQdrvoxwdTSgABz3VEcP0rBbBSVUcI3hg3M/I0KKpQkw
-         pnkLYR65s+Mk1ElY9e5ZyUx6HaGxLNBDK0d/mnGDXXdilrfZgl0f0WU5GMjRY97I8hMk
-         Ll/9+QUpymF0UMBrdz4jzicddTSqU7ChTtcwfNrpeI3hrLyZaDHhOqtrzIUCigmokFDG
-         9kDSka/uEbaYDG0JNo3g1pcoIL1GePdDyyZdw7ssU8JgYXiXENj9B1+7SYJlrx5hvlM2
-         YnIw==
-X-Gm-Message-State: AJcUukd5bKeluJwSmL9Az52AEAb9G7DvZ9xnN4tSIn+fxNBC+PKcWnHe
-        Jln03suQyJ8vZDgggWyvQ/LADao4O8tmeA==
-X-Google-Smtp-Source: ALg8bN62CMpYbpJXsWTa6UYV4P+fjSismosPcFD9Fbi//u8xqqfjR3mig+LLkzneVV/zLKUmnDG5Gg==
-X-Received: by 2002:aca:ea57:: with SMTP id i84mr8608746oih.346.1548748301829;
-        Mon, 28 Jan 2019 23:51:41 -0800 (PST)
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com. [209.85.210.41])
-        by smtp.gmail.com with ESMTPSA id h64sm2362142otb.45.2019.01.28.23.51.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 23:51:41 -0800 (PST)
-Received: by mail-ot1-f41.google.com with SMTP id n8so17091437otl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 23:51:41 -0800 (PST)
-X-Received: by 2002:a05:6830:14d6:: with SMTP id t22mr17871926otq.146.1548747887817;
- Mon, 28 Jan 2019 23:44:47 -0800 (PST)
+        Tue, 29 Jan 2019 02:53:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44912 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725294AbfA2Hxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 02:53:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B6D3FAEA1;
+        Tue, 29 Jan 2019 07:53:35 +0000 (UTC)
+Subject: Re: [PATCH 03/11] btrfs: manage heuristic workspace as index 0
+To:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>
+Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190128212437.11597-4-dennis@kernel.org>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <4bc26773-da13-3730-afda-78d672f348bc@suse.com>
+Date:   Tue, 29 Jan 2019 09:53:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181123130209.11696-1-paul.kocialkowski@bootlin.com>
- <20181123130209.11696-2-paul.kocialkowski@bootlin.com> <5515174.7lFZcYkk85@jernej-laptop>
- <ffe9c81db34b599f675ca5bbf02de360bf0a1608.camel@bootlin.com>
- <776e63c9-d4a5-342a-e0f7-200ef144ffc4@rock-chips.com> <64c793e08d61181b78125b3956ec38623fa5d261.camel@bootlin.com>
- <D8005130-F7FD-4CBD-8396-1BB08BB08E81@soulik.info> <f982ef378a8ade075bc7077b93640e20ecebf9f4.camel@bootlin.com>
- <82FA0C3F-BC54-4D89-AECB-90D81B89B1CE@soulik.info> <c3619a00-17e7-fb92-a427-a7478b96f356@soulik.info>
- <bdf14f97e98f2fd06307545ab9038ac3c2086ae7.camel@bootlin.com>
- <42520087-4EAE-4F7F-BCA0-42E422170E91@soulik.info> <ab8ca098ad60f209fe97f79bb93b2d1e898da524.camel@bootlin.com>
-In-Reply-To: <ab8ca098ad60f209fe97f79bb93b2d1e898da524.camel@bootlin.com>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Tue, 29 Jan 2019 16:44:35 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MUJu3cX9A-E32bSSjxc1cvGP83ayzZzUxa5_QMf6niK4g@mail.gmail.com>
-Message-ID: <CAPBb6MUJu3cX9A-E32bSSjxc1cvGP83ayzZzUxa5_QMf6niK4g@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 1/2] media: v4l: Add definitions for the
- HEVC slice format and controls
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Ayaka <ayaka@soulik.info>, Randy Li <randy.li@rock-chips.com>,
-        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190128212437.11597-4-dennis@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 10:04 PM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
->
-> Hi,
->
-> On Thu, 2019-01-24 at 20:23 +0800, Ayaka wrote:
-> >
-> > Sent from my iPad
-> >
-> > > On Jan 24, 2019, at 6:27 PM, Paul Kocialkowski <paul.kocialkowski@boo=
-tlin.com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > > On Thu, 2019-01-10 at 21:32 +0800, ayaka wrote:
-> > > > I forget a important thing, for the rkvdec and rk hevc decoder, it =
-would
-> > > > requests cabac table, scaling list, picture parameter set and refer=
-ence
-> > > > picture storing in one or various of DMA buffers. I am not talking =
-about
-> > > > the data been parsed, the decoder would requests a raw data.
-> > > >
-> > > > For the pps and rps, it is possible to reuse the slice header, just=
- let
-> > > > the decoder know the offset from the bitstream bufer, I would sugge=
-st to
-> > > > add three properties(with sps) for them. But I think we need a meth=
-od to
-> > > > mark a OUTPUT side buffer for those aux data.
-> > >
-> > > I'm quite confused about the hardware implementation then. From what
-> > > you're saying, it seems that it takes the raw bitstream elements rath=
-er
-> > > than parsed elements. Is it really a stateless implementation?
-> > >
-> > > The stateless implementation was designed with the idea that only the
-> > > raw slice data should be passed in bitstream form to the decoder. For
-> > > H.264, it seems that some decoders also need the slice header in raw
-> > > bitstream form (because they take the full slice NAL unit), see the
-> > > discussions in this thread:
-> > > media: docs-rst: Document m2m stateless video decoder interface
-> >
-> > Stateless just mean it won=E2=80=99t track the previous result, but I d=
-on=E2=80=99t
-> > think you can define what a date the hardware would need. Even you
-> > just build a dpb for the decoder, it is still stateless, but parsing
-> > less or more data from the bitstream doesn=E2=80=99t stop a decoder bec=
-ome a
-> > stateless decoder.
->
-> Yes fair enough, the format in which the hardware decoder takes the
-> bitstream parameters does not make it stateless or stateful per-se.
-> It's just that stateless decoders should have no particular reason for
-> parsing the bitstream on their own since the hardware can be designed
-> with registers for each relevant bitstream element to configure the
-> decoding pipeline. That's how GPU-based decoder implementations are
-> implemented (VAAPI/VDPAU/NVDEC, etc).
->
-> So the format we have agreed on so far for the stateless interface is
-> to pass parsed elements via v4l2 control structures.
->
-> If the hardware can only work by parsing the bitstream itself, I'm not
-> sure what the best solution would be. Reconstructing the bitstream in
-> the kernel is a pretty bad option, but so is parsing in the kernel or
-> having the data both in parsed and raw forms. Do you see another
-> possibility?
 
-Is reconstructing the bitstream so bad? The v4l2 controls provide a
-generic interface to an encoded format which the driver needs to
-convert into a sequence that the hardware can understand. Typically
-this is done by populating hardware-specific structures. Can't we
-consider that in this specific instance, the hardware-specific
-structure just happens to be identical to the original bitstream
-format?
 
-I agree that this is not strictly optimal for that particular
-hardware, but such is the cost of abstractions, and in this specific
-case I don't believe the cost would be particularly high?
+On 28.01.19 г. 23:24 ч., Dennis Zhou wrote:
+> While the heuristic workspaces aren't really compression workspaces,
+> they use the same interface for managing them. So rather than branching,
+> let's just handle them once again as the index 0 compression type.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com> albeit one minor nit
+below.
+> ---
+>  fs/btrfs/compression.c  | 107 +++++++++++-----------------------------
+>  fs/btrfs/compression.h  |   3 +-
+>  fs/btrfs/ioctl.c        |   2 +-
+>  fs/btrfs/tree-checker.c |   4 +-
+>  4 files changed, 33 insertions(+), 83 deletions(-)
+> 
+> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+> index aced261984e2..bda7e8d2cbc7 100644
+> --- a/fs/btrfs/compression.c
+> +++ b/fs/btrfs/compression.c
+> @@ -37,6 +37,8 @@ const char* btrfs_compress_type2str(enum btrfs_compression_type type)
+>  	case BTRFS_COMPRESS_ZSTD:
+>  	case BTRFS_COMPRESS_NONE:
+>  		return btrfs_compress_types[type];
+> +	default:
+> +		return NULL;
+
+nit: With this change...
+
+>  	}
+>  
+>  	return NULL;
+
+This becomes redundant. I doubt the compiler will issue a warning since
+it should be clever enough to figure we will never exit the switch()
+construct.
+
+> @@ -769,6 +771,11 @@ static struct list_head *alloc_heuristic_ws(void)
+>  	return ERR_PTR(-ENOMEM);
+>  }
+>  
+> +const struct btrfs_compress_op btrfs_heuristic_compress = {
+> +	.alloc_workspace = alloc_heuristic_ws,
+> +	.free_workspace = free_heuristic_ws,
+> +};
+> +
+>  struct workspace_manager {
+>  	struct list_head idle_ws;
+>  	spinlock_t ws_lock;
+> @@ -782,9 +789,8 @@ struct workspace_manager {
+>  
+>  static struct workspace_manager wsm[BTRFS_COMPRESS_TYPES];
+>  
+> -static struct workspace_manager btrfs_heuristic_ws;
+> -
+>  static const struct btrfs_compress_op * const btrfs_compress_op[] = {
+> +	&btrfs_heuristic_compress,
+>  	&btrfs_zlib_compress,
+>  	&btrfs_lzo_compress,
+>  	&btrfs_zstd_compress,
+> @@ -795,21 +801,6 @@ void __init btrfs_init_compress(void)
+>  	struct list_head *workspace;
+>  	int i;
+>  
+> -	INIT_LIST_HEAD(&btrfs_heuristic_ws.idle_ws);
+> -	spin_lock_init(&btrfs_heuristic_ws.ws_lock);
+> -	atomic_set(&btrfs_heuristic_ws.total_ws, 0);
+> -	init_waitqueue_head(&btrfs_heuristic_ws.ws_wait);
+> -
+> -	workspace = alloc_heuristic_ws();
+> -	if (IS_ERR(workspace)) {
+> -		pr_warn(
+> -	"BTRFS: cannot preallocate heuristic workspace, will try later\n");
+> -	} else {
+> -		atomic_set(&btrfs_heuristic_ws.total_ws, 1);
+> -		btrfs_heuristic_ws.free_ws = 1;
+> -		list_add(workspace, &btrfs_heuristic_ws.idle_ws);
+> -	}
+> -
+>  	for (i = 0; i < BTRFS_COMPRESS_TYPES; i++) {
+>  		INIT_LIST_HEAD(&wsm[i].idle_ws);
+>  		spin_lock_init(&wsm[i].ws_lock);
+> @@ -837,11 +828,10 @@ void __init btrfs_init_compress(void)
+>   * Preallocation makes a forward progress guarantees and we do not return
+>   * errors.
+>   */
+> -static struct list_head *__find_workspace(int type, bool heuristic)
+> +static struct list_head *find_workspace(int type)
+>  {
+>  	struct list_head *workspace;
+>  	int cpus = num_online_cpus();
+> -	int idx = type - 1;
+>  	unsigned nofs_flag;
+>  	struct list_head *idle_ws;
+>  	spinlock_t *ws_lock;
+> @@ -849,19 +839,11 @@ static struct list_head *__find_workspace(int type, bool heuristic)
+>  	wait_queue_head_t *ws_wait;
+>  	int *free_ws;
+>  
+> -	if (heuristic) {
+> -		idle_ws	 = &btrfs_heuristic_ws.idle_ws;
+> -		ws_lock	 = &btrfs_heuristic_ws.ws_lock;
+> -		total_ws = &btrfs_heuristic_ws.total_ws;
+> -		ws_wait	 = &btrfs_heuristic_ws.ws_wait;
+> -		free_ws	 = &btrfs_heuristic_ws.free_ws;
+> -	} else {
+> -		idle_ws	 = &wsm[idx].idle_ws;
+> -		ws_lock	 = &wsm[idx].ws_lock;
+> -		total_ws = &wsm[idx].total_ws;
+> -		ws_wait	 = &wsm[idx].ws_wait;
+> -		free_ws	 = &wsm[idx].free_ws;
+> -	}
+> +	idle_ws	 = &wsm[type].idle_ws;
+> +	ws_lock	 = &wsm[type].ws_lock;
+> +	total_ws = &wsm[type].total_ws;
+> +	ws_wait	 = &wsm[type].ws_wait;
+> +	free_ws	 = &wsm[type].free_ws;
+>  
+>  again:
+>  	spin_lock(ws_lock);
+> @@ -892,10 +874,7 @@ static struct list_head *__find_workspace(int type, bool heuristic)
+>  	 * context of btrfs_compress_bio/btrfs_compress_pages
+>  	 */
+>  	nofs_flag = memalloc_nofs_save();
+> -	if (heuristic)
+> -		workspace = alloc_heuristic_ws();
+> -	else
+> -		workspace = btrfs_compress_op[idx]->alloc_workspace();
+> +	workspace = btrfs_compress_op[type]->alloc_workspace();
+>  	memalloc_nofs_restore(nofs_flag);
+>  
+>  	if (IS_ERR(workspace)) {
+> @@ -926,38 +905,23 @@ static struct list_head *__find_workspace(int type, bool heuristic)
+>  	return workspace;
+>  }
+>  
+> -static struct list_head *find_workspace(int type)
+> -{
+> -	return __find_workspace(type, false);
+> -}
+> -
+>  /*
+>   * put a workspace struct back on the list or free it if we have enough
+>   * idle ones sitting around
+>   */
+> -static void __free_workspace(int type, struct list_head *workspace,
+> -			     bool heuristic)
+> +static void free_workspace(int type, struct list_head *workspace)
+>  {
+> -	int idx = type - 1;
+>  	struct list_head *idle_ws;
+>  	spinlock_t *ws_lock;
+>  	atomic_t *total_ws;
+>  	wait_queue_head_t *ws_wait;
+>  	int *free_ws;
+>  
+> -	if (heuristic) {
+> -		idle_ws	 = &btrfs_heuristic_ws.idle_ws;
+> -		ws_lock	 = &btrfs_heuristic_ws.ws_lock;
+> -		total_ws = &btrfs_heuristic_ws.total_ws;
+> -		ws_wait	 = &btrfs_heuristic_ws.ws_wait;
+> -		free_ws	 = &btrfs_heuristic_ws.free_ws;
+> -	} else {
+> -		idle_ws	 = &wsm[idx].idle_ws;
+> -		ws_lock	 = &wsm[idx].ws_lock;
+> -		total_ws = &wsm[idx].total_ws;
+> -		ws_wait	 = &wsm[idx].ws_wait;
+> -		free_ws	 = &wsm[idx].free_ws;
+> -	}
+> +	idle_ws	 = &wsm[type].idle_ws;
+> +	ws_lock	 = &wsm[type].ws_lock;
+> +	total_ws = &wsm[type].total_ws;
+> +	ws_wait	 = &wsm[type].ws_wait;
+> +	free_ws	 = &wsm[type].free_ws;
+>  
+>  	spin_lock(ws_lock);
+>  	if (*free_ws <= num_online_cpus()) {
+> @@ -968,20 +932,12 @@ static void __free_workspace(int type, struct list_head *workspace,
+>  	}
+>  	spin_unlock(ws_lock);
+>  
+> -	if (heuristic)
+> -		free_heuristic_ws(workspace);
+> -	else
+> -		btrfs_compress_op[idx]->free_workspace(workspace);
+> +	btrfs_compress_op[type]->free_workspace(workspace);
+>  	atomic_dec(total_ws);
+>  wake:
+>  	cond_wake_up(ws_wait);
+>  }
+>  
+> -static void free_workspace(int type, struct list_head *ws)
+> -{
+> -	return __free_workspace(type, ws, false);
+> -}
+> -
+>  /*
+>   * cleanup function for module exit
+>   */
+> @@ -990,13 +946,6 @@ static void free_workspaces(void)
+>  	struct list_head *workspace;
+>  	int i;
+>  
+> -	while (!list_empty(&btrfs_heuristic_ws.idle_ws)) {
+> -		workspace = btrfs_heuristic_ws.idle_ws.next;
+> -		list_del(workspace);
+> -		free_heuristic_ws(workspace);
+> -		atomic_dec(&btrfs_heuristic_ws.total_ws);
+> -	}
+> -
+>  	for (i = 0; i < BTRFS_COMPRESS_TYPES; i++) {
+>  		while (!list_empty(&wsm[i].idle_ws)) {
+>  			workspace = wsm[i].idle_ws.next;
+> @@ -1042,8 +991,8 @@ int btrfs_compress_pages(unsigned int type_level, struct address_space *mapping,
+>  
+>  	workspace = find_workspace(type);
+>  
+> -	btrfs_compress_op[type - 1]->set_level(workspace, type_level);
+> -	ret = btrfs_compress_op[type-1]->compress_pages(workspace, mapping,
+> +	btrfs_compress_op[type]->set_level(workspace, type_level);
+> +	ret = btrfs_compress_op[type]->compress_pages(workspace, mapping,
+>  						      start, pages,
+>  						      out_pages,
+>  						      total_in, total_out);
+> @@ -1072,7 +1021,7 @@ static int btrfs_decompress_bio(struct compressed_bio *cb)
+>  	int type = cb->compress_type;
+>  
+>  	workspace = find_workspace(type);
+> -	ret = btrfs_compress_op[type - 1]->decompress_bio(workspace, cb);
+> +	ret = btrfs_compress_op[type]->decompress_bio(workspace, cb);
+>  	free_workspace(type, workspace);
+>  
+>  	return ret;
+> @@ -1091,7 +1040,7 @@ int btrfs_decompress(int type, unsigned char *data_in, struct page *dest_page,
+>  
+>  	workspace = find_workspace(type);
+>  
+> -	ret = btrfs_compress_op[type-1]->decompress(workspace, data_in,
+> +	ret = btrfs_compress_op[type]->decompress(workspace, data_in,
+>  						  dest_page, start_byte,
+>  						  srclen, destlen);
+>  
+> @@ -1512,7 +1461,7 @@ static void heuristic_collect_sample(struct inode *inode, u64 start, u64 end,
+>   */
+>  int btrfs_compress_heuristic(struct inode *inode, u64 start, u64 end)
+>  {
+> -	struct list_head *ws_list = __find_workspace(0, true);
+> +	struct list_head *ws_list = find_workspace(0);
+>  	struct heuristic_ws *ws;
+>  	u32 i;
+>  	u8 byte;
+> @@ -1581,7 +1530,7 @@ int btrfs_compress_heuristic(struct inode *inode, u64 start, u64 end)
+>  	}
+>  
+>  out:
+> -	__free_workspace(0, ws_list, true);
+> +	free_workspace(0, ws_list);
+>  	return ret;
+>  }
+>  
+> diff --git a/fs/btrfs/compression.h b/fs/btrfs/compression.h
+> index 69a9197dadc3..53a8b9e93217 100644
+> --- a/fs/btrfs/compression.h
+> +++ b/fs/btrfs/compression.h
+> @@ -97,7 +97,7 @@ enum btrfs_compression_type {
+>  	BTRFS_COMPRESS_ZLIB  = 1,
+>  	BTRFS_COMPRESS_LZO   = 2,
+>  	BTRFS_COMPRESS_ZSTD  = 3,
+> -	BTRFS_COMPRESS_TYPES = 3,
+> +	BTRFS_COMPRESS_TYPES = 4,
+>  };
+>  
+>  struct btrfs_compress_op {
+> @@ -125,6 +125,7 @@ struct btrfs_compress_op {
+>  	void (*set_level)(struct list_head *ws, unsigned int type);
+>  };
+>  
+> +extern const struct btrfs_compress_op btrfs_heuristic_compress;
+>  extern const struct btrfs_compress_op btrfs_zlib_compress;
+>  extern const struct btrfs_compress_op btrfs_lzo_compress;
+>  extern const struct btrfs_compress_op btrfs_zstd_compress;
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index 9c8e1734429c..20081465a451 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -1410,7 +1410,7 @@ int btrfs_defrag_file(struct inode *inode, struct file *file,
+>  		return -EINVAL;
+>  
+>  	if (do_compress) {
+> -		if (range->compress_type > BTRFS_COMPRESS_TYPES)
+> +		if (range->compress_type >= BTRFS_COMPRESS_TYPES)
+>  			return -EINVAL;
+>  		if (range->compress_type)
+>  			compress_type = range->compress_type;
+> diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
+> index a62e1e837a89..c88e146d8e99 100644
+> --- a/fs/btrfs/tree-checker.c
+> +++ b/fs/btrfs/tree-checker.c
+> @@ -133,9 +133,9 @@ static int check_extent_data_item(struct btrfs_fs_info *fs_info,
+>  	 * Support for new compression/encryption must introduce incompat flag,
+>  	 * and must be caught in open_ctree().
+>  	 */
+> -	if (btrfs_file_extent_compression(leaf, fi) > BTRFS_COMPRESS_TYPES) {
+> +	if (btrfs_file_extent_compression(leaf, fi) >= BTRFS_COMPRESS_TYPES) {
+>  		file_extent_err(fs_info, leaf, slot,
+> -	"invalid compression for file extent, have %u expect range [0, %u]",
+> +	"invalid compression for file extent, have %u expect range [0, %u)",
+>  			btrfs_file_extent_compression(leaf, fi),
+>  			BTRFS_COMPRESS_TYPES);
+>  		return -EUCLEAN;
+> 
