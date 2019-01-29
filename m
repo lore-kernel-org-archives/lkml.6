@@ -2,52 +2,51 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8A2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7F5C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEFCE20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F10AC20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761860;
-	bh=i+I51aoOZxnoku1V2DWmtbi5zZ49uhh3HO+U1WkU8DM=;
+	s=default; t=1548761864;
+	bh=gflrIHVGSA1ahS7ivf4Yv2vg1COPVbQYy48sc2JKwW4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0icfl+idwZhGau8BZ1LIStDbs8LcFhFmDbLmiwvTJSTEyp0+JyiWJM4M/n3gacyov
-	 CSoUALf+Tfh09PibTuu212lrjzhR3+f6MPZSPbb56OYqRAjzQrtzTvt6GetrcEGKZZ
-	 aLd28OWeLK7zsKlXvLXbbzSS3zTGP2llUCE0scLY=
+	b=nEnUK8WDPtdMSoXmkZ83b0B23tORMi5DxsxyDErSomUdjwazHQFBZWGrOeusYdUZk
+	 LGabr810j6M3/hOdtCjdGPi5H6F03WCsTzwAveTE84AA1Qc9fosss/iaZ+Y8ZAXJSR
+	 ZKzcwrIGd1ioJMw+Iu7GOJV4NRfvsBnDqMmMTwOk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbfA2Lhj (ORCPT
+        id S1728911AbfA2Lhm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:37:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54278 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:37:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728881AbfA2Lhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:37:38 -0500
+        id S1728881AbfA2Lhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:37:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 089C820844;
-        Tue, 29 Jan 2019 11:37:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A385620844;
+        Tue, 29 Jan 2019 11:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761857;
-        bh=i+I51aoOZxnoku1V2DWmtbi5zZ49uhh3HO+U1WkU8DM=;
+        s=default; t=1548761860;
+        bh=gflrIHVGSA1ahS7ivf4Yv2vg1COPVbQYy48sc2JKwW4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JL+vbJXZx+4+h2Hwbo8obQguOrbghWGfE3of6JDJ83xyWAY7yvxPx0Ox/9pAWRZtF
-         ocibeivcWL+ZdjpFw1bh75HfLZhxj+LQ01g0dbVSOXUAS+UNaOJPIdmd8ZHxC1AVx6
-         GRfZPvDnUJRYCUeNLpfbM5UuI4det0MbvC7Maumk=
+        b=qih69V2b8KLura4onMCEz9YQD0MRz6nMlBHRzEjoJ5jJdq8Qsr65YZjg1e4pddu+W
+         dMI4QqIxVNo+QHP1xVqIZ0FBUoIrdMzu5znhjGAwOowI8XH7LSOF1LUvf1fyPSKXyw
+         LEwnAIueS1wHOfVVjPV6BDDitWFfpYTo/C+V3zLk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH 4.20 024/117] mei: me: mark LBG devices as having dma support
-Date:   Tue, 29 Jan 2019 12:34:35 +0100
-Message-Id: <20190129113208.865155315@linuxfoundation.org>
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 003/117] net: Fix usage of pskb_trim_rcsum
+Date:   Tue, 29 Jan 2019 12:34:14 +0100
+Message-Id: <20190129113207.672800744@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -66,29 +65,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Usyskin <alexander.usyskin@intel.com>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-commit 173436ba800d01178a8b19e5de4a8cb02c0db760 upstream.
+[ Upstream commit 6c57f0458022298e4da1729c67bd33ce41c14e7a ]
 
-The LBG server platform sports DMA support.
+In certain cases, pskb_trim_rcsum() may change skb pointers.
+Reinitialize header pointers afterwards to avoid potential
+use-after-frees. Add a note in the documentation of
+pskb_trim_rcsum(). Found by KASAN.
 
-Cc: <stable@vger.kernel.org> #v5.0+
-Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ppp/pppoe.c                  |    1 +
+ include/linux/skbuff.h                   |    1 +
+ net/bridge/br_netfilter_ipv6.c           |    1 +
+ net/bridge/netfilter/nft_reject_bridge.c |    1 +
+ net/ipv4/ip_input.c                      |    1 +
+ 5 files changed, 5 insertions(+)
 
-diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
-index 73ace2d59dea..c2bf3e99955e 100644
---- a/drivers/misc/mei/pci-me.c
-+++ b/drivers/misc/mei/pci-me.c
-@@ -88,7 +88,7 @@ static const struct pci_device_id mei_me_pci_tbl[] = {
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_2, MEI_ME_PCH8_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_H, MEI_ME_PCH8_SPS_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_H_2, MEI_ME_PCH8_SPS_CFG)},
--	{MEI_PCI_DEVICE(MEI_DEV_ID_LBG, MEI_ME_PCH8_CFG)},
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_LBG, MEI_ME_PCH12_CFG)},
+--- a/drivers/net/ppp/pppoe.c
++++ b/drivers/net/ppp/pppoe.c
+@@ -445,6 +445,7 @@ static int pppoe_rcv(struct sk_buff *skb
+ 	if (pskb_trim_rcsum(skb, len))
+ 		goto drop;
  
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_BXT_M, MEI_ME_PCH8_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_APL_I, MEI_ME_PCH8_CFG)},
++	ph = pppoe_hdr(skb);
+ 	pn = pppoe_pernet(dev_net(dev));
+ 
+ 	/* Note that get_item does a sock_hold(), so sk_pppox(po)
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -3204,6 +3204,7 @@ int pskb_trim_rcsum_slow(struct sk_buff
+  *
+  *	This is exactly the same as pskb_trim except that it ensures the
+  *	checksum of received packets are still valid after the operation.
++ *	It can change skb pointers.
+  */
+ 
+ static inline int pskb_trim_rcsum(struct sk_buff *skb, unsigned int len)
+--- a/net/bridge/br_netfilter_ipv6.c
++++ b/net/bridge/br_netfilter_ipv6.c
+@@ -131,6 +131,7 @@ int br_validate_ipv6(struct net *net, st
+ 					IPSTATS_MIB_INDISCARDS);
+ 			goto drop;
+ 		}
++		hdr = ipv6_hdr(skb);
+ 	}
+ 	if (hdr->nexthdr == NEXTHDR_HOP && br_nf_check_hbh_len(skb))
+ 		goto drop;
+--- a/net/bridge/netfilter/nft_reject_bridge.c
++++ b/net/bridge/netfilter/nft_reject_bridge.c
+@@ -229,6 +229,7 @@ static bool reject6_br_csum_ok(struct sk
+ 	    pskb_trim_rcsum(skb, ntohs(ip6h->payload_len) + sizeof(*ip6h)))
+ 		return false;
+ 
++	ip6h = ipv6_hdr(skb);
+ 	thoff = ipv6_skip_exthdr(skb, ((u8*)(ip6h+1) - skb->data), &proto, &fo);
+ 	if (thoff < 0 || thoff >= skb->len || (fo & htons(~0x7)) != 0)
+ 		return false;
+--- a/net/ipv4/ip_input.c
++++ b/net/ipv4/ip_input.c
+@@ -489,6 +489,7 @@ static struct sk_buff *ip_rcv_core(struc
+ 		goto drop;
+ 	}
+ 
++	iph = ip_hdr(skb);
+ 	skb->transport_header = skb->network_header + iph->ihl*4;
+ 
+ 	/* Remove any debris in the socket control block */
 
 
