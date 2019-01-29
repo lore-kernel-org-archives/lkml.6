@@ -2,146 +2,131 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1200CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 147FCC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7DBE20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9BC02087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:09:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nvnCTxky"
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="DggUPO1n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbfA2UJQ (ORCPT
+        id S1729396AbfA2UJr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:09:16 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39800 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbfA2UJP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:09:15 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y8so19143158wmi.4;
-        Tue, 29 Jan 2019 12:09:14 -0800 (PST)
+        Tue, 29 Jan 2019 15:09:47 -0500
+Received: from mail-eopbgr750129.outbound.protection.outlook.com ([40.107.75.129]:60096
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727229AbfA2UJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 15:09:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=P7uVknH6a2Lm+ESxiJyN8q2dm02UOXfATTairwfK400=;
-        b=nvnCTxkyC8qHHud/LHMJZcH7o5qtNZfushQ0ji7K5vDUOBEq7lR3UY8DdLwjdzWa3B
-         1sm4PNCqgWa6UW+8otsQCRoJqrlnjCan34yEkHEJi1AkQ87lWgjKnN9kH0HmozJw2HhB
-         C4zl83U7rLyI1oUogUSnFxb3hx+ayEYbgIeCCDPdj90TO1rq9zrpmxBm2NJE6ajiBIUf
-         lo0TVis7hFLwvm3jpcBU7MtqIqibdNGKzCwzC498GLfmVa2OrPrUY3/Zu3kn2xpPe8+X
-         yE3RUB3JAhM7m9R58rZa7DGJLRCRxnc+JaDjqKGE8b5qfn/wasrT1Hrqv1wYyGywBMBi
-         yc5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=P7uVknH6a2Lm+ESxiJyN8q2dm02UOXfATTairwfK400=;
-        b=jTyVaThuzzaPLSBrW66i0KYz7l1NLlJuj7Nx55rl3KtbwcBuUSLQTjQ7aPVfFZDf31
-         bQ4tWkcZaf0fGLzcdiRl/ZLw6xTZEC5iHxiYQWoyxZwwAMJSvojkl0jZCq0TUYNaBfzp
-         DT4dDuvubIO3Tom2Ae/+hDFyg9VmtbN85UpSVEmm+lwTSUkqeny/gb4BtND3icSYk7Im
-         QAjrCI0LGKyD3gf49xP+sjVLQmHvAfTTQez8ZmXpqeONjlT2Zu63K9zEi48pi3SqaN6+
-         OQ2UY4zpVi4alQN4txlIYSUfU+b8AESDz3MOknw7+Isak4IchH3Ns8VbYUs43/quNyqQ
-         EK/g==
-X-Gm-Message-State: AJcUukdhyF03ilfIDfBRLisVyLD23lvteFcbuF4tuCHIsfAHmGnBAS8o
-        hszV+97xnH/q6xjph4EhPW0KMncY
-X-Google-Smtp-Source: ALg8bN5DuFtprYmvcsaJ7ebhyaOqIHffPOA+BEFzkHnf4qwnam+Hcb21/mFU85z/wTkdBjSqVD2iwA==
-X-Received: by 2002:a1c:96ce:: with SMTP id y197mr23364527wmd.36.1548792554022;
-        Tue, 29 Jan 2019 12:09:14 -0800 (PST)
-Received: from ubuntu.home ([2a02:8071:6a3:700:8c22:ee0c:efc8:ed86])
-        by smtp.gmail.com with ESMTPSA id w10sm4279020wmb.1.2019.01.29.12.09.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 12:09:13 -0800 (PST)
-From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-X-Google-Original-From: Simon Goldschmidt <goldsimon@gmx.de>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Moritz Fischer <mdf@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Alan Tull <atull@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: socfpga: fix base address of SDR controller
-Date:   Tue, 29 Jan 2019 21:08:58 +0100
-Message-Id: <20190129200858.19773-1-goldsimon@gmx.de>
-X-Mailer: git-send-email 2.17.1
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yJQtleUq3yiL3hu/ArSCi9Yh5NdG+6QL9LtU8WnN+Vs=;
+ b=DggUPO1n35n+kOigQ7fmR8/tIpeGLhuOVYQRnQDod9BgXfnNV6f8GUvecgmDA6hOS/x3MBpCPT8aahc7m6IEwvh0OmdGwtnlYO+O/7PqhF2mGbJWVL+QB6EFKMTVLVPAPIDWf4EpNkiy1ECeVgdPih8zvj2JfEbKJQJti7O/P9k=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1582.namprd22.prod.outlook.com (10.174.167.31) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.19; Tue, 29 Jan 2019 20:09:07 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::7d5e:f3b0:4a5:4636]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::7d5e:f3b0:4a5:4636%9]) with mapi id 15.20.1558.023; Tue, 29 Jan 2019
+ 20:09:07 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        NeilBrown <neil@brown.name>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, Joe Perches <joe@perches.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MIPS: Select PINCTRL_RT2880 when RALINK is enabled
+Thread-Topic: [PATCH] MIPS: Select PINCTRL_RT2880 when RALINK is enabled
+Thread-Index: AQHUt+bkNR8KLJ2FGECDdb70JPYxtKXGrSqA
+Date:   Tue, 29 Jan 2019 20:09:07 +0000
+Message-ID: <20190129200905.vnb3amouxq6o57fn@pburton-laptop>
+References: <20190129152522.GA24872@nishad>
+In-Reply-To: <20190129152522.GA24872@nishad>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR02CA0063.namprd02.prod.outlook.com
+ (2603:10b6:a03:54::40) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [67.207.99.198]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1582;6:UtDWYpe7x0b5z9L9mQ4b7J8jeTg8MmooBEYA5wL3Wp3Mq52PbkGfRbCWWcPcOsmVek/vDwjV0jkY/gcZaxsaVXEfl5XYVHLEX8NOH1eEE+h+5s0Xek7jC7540kkEZoUmw7WUrygfqFOcvj913/Wvfd4ZDArSEGqNbr26aJTvKa4XgBt+8v6x3bScFGQ1V7e2oZjqHYg/7rdnZP927cQd+x8cJ4ryqR7vvWy8RbMAaKHdT7pjmMVw66zbanLbigu62g+tZ6MEkFRCXplnvWf6JQ2oYzOBLsY9pXJ1cEL4V0jteeuUI/tMtYk+lHjIOrOhAu4swe7clxVNOY0XkdAwndV+WBzA8P5eW29Z6cE7zjxSuEfGJPW4ob7l67KVVR0TF1GpnKyNZSHCqyDbGoce5pHMxtlM0vUyxgyTt7e8PvJzRyhQocjIKRezcXzr4T7hCEm0dQxF2MVrQXmSVwc8xA==;5:I0WhWJ8OZbK4uxnRWqgJm1nlQvOKxqSWaDON1383RV/ZLwJqaX6DXtSOw+o1gcGgMtR0FrCVJoDxpK2fvYZTOVBS5mYwV4jiLyuF+V1i0zR1wPc8pUv+8ZoKQqZghH9B66JTinikfZSSTnLT3VJ58bphO5nVG1wQ8Wm/nxQRh/be/hhwA80SWxQ53RCNc2NnWrL9YLU7zV7chkgdAN8tDw==;7:xsfrMjiHJn1m+1w9SrLDj1IB1qCBdFLUMWchYIJzpEmwXEmeqjEUyGEtqDcoUszdTNCgVG5kedO5ksIlfPnQHN/cNkqwxtvW3AwhS2ietMB0A87CuH56ea/jWZhirliiPR4Hf8GSUipwS06ijzWlRQ==
+x-ms-office365-filtering-correlation-id: fbd46eba-dc03-459d-7de8-08d686259f7d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1582;
+x-ms-traffictypediagnostic: MWHPR2201MB1582:
+x-microsoft-antispam-prvs: <MWHPR2201MB1582301CC877BE1B2FA1F000C1970@MWHPR2201MB1582.namprd22.prod.outlook.com>
+x-forefront-prvs: 093290AD39
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(396003)(346002)(39850400004)(366004)(376002)(136003)(189003)(199004)(386003)(6506007)(2906002)(102836004)(4744005)(97736004)(105586002)(8936002)(6116002)(3846002)(33716001)(7416002)(256004)(476003)(1411001)(446003)(26005)(25786009)(1076003)(305945005)(11346002)(8676002)(81166006)(186003)(66066001)(106356001)(81156014)(42882007)(6916009)(52116002)(9686003)(6512007)(486006)(6246003)(14454004)(99286004)(6436002)(4326008)(58126008)(53936002)(478600001)(76176011)(33896004)(39060400002)(44832011)(7736002)(71190400001)(71200400001)(68736007)(316002)(6486002)(54906003)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1582;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: +eRIWNlwAM61e8BwR4iQFudLnssU1OOz+mGTJckCuSXZhBuNCI3fm7Y45ttIrKas1NWPnp8Gf8t0hqN7SCgszDU3sgFAAvx+UqY9lwjg+bUMv8/2cD0xGhqkG5Ul3tl0xF7nk+fPLFd5O8FWqZ4RdLx5XHpW7goxUjY9LFxa8R2zOJCFY/tCWzDKB57gdtLa4t+skaNgaGXtX7JfMt3lvdiJro+C2Rlv+KtJE2uv/afuv8ypm2bvhAFGPUKnjgUXiD6rZxjbX0s0nNOY2lAtKN+pO3sq6T5DK7L3o4kU4lyxaRQmWtcTpftl+/3espeT30i2Opj3L2IGHY8s6UKXeDabWaHzkiuxyEZPZUjRXtcBaMeiva7Zztr4nfa+4WTaJDxvdRnQqD0OYsYhEG5iZV8LlZ1j0LkXAct0lsFfAOA=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <335B6EC3D6EAD047885765D40FEEF4B3@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbd46eba-dc03-459d-7de8-08d686259f7d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 20:09:06.6592
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1582
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+Hi Nishad,
 
-The documentation for socfpga gen5 says the base address of the sdram
-controller is 0xffc20000, while the current devicetree says it is at
-0xffc25000.
+On Tue, Jan 29, 2019 at 08:55:27PM +0530, Nishad Kamdar wrote:
+> This patch selects config PINCTRL_RT2880 when config RALINK is
+> enabled as per drivers/staging/mt7621-pinctrl/TODO list. PINCTRL
+> is also selected when RALINK is enabled to avoid config dependency
+> warnings.
+>=20
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> ---
+>  arch/mips/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index e2fc88da0223..cea529cf6284 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -623,6 +623,8 @@ config RALINK
+>  	select CLKDEV_LOOKUP
+>  	select ARCH_HAS_RESET_CONTROLLER
+>  	select RESET_CONTROLLER
+> +	select PINCTRL
+> +	select PINCTRL_RT2880
+> =20
+>  config SGI_IP22
+>  	bool "SGI IP22 (Indy/Indigo2)"
 
-While this is not a problem for Linux, as it only accesses the registers
-above 0xffc25000, it *is* a problem for U-Boot because the lower registers
-are used during DDR calibration (up to now, the U-Boot driver does not use
-the dts address, but that should change).
+Wouldn't this also require selecting STAGING? Perhaps that's why it
+wasn't done in the first place?
 
-To keep Linux and U-Boot devicetrees in sync, this patch changes the base
-address to 0xffc20000 and adapts the 2 files where it is currently used.
-
-This patch changes the dts and 2 drivers with one commit to prevent
-breaking the code if dts change and driver change would be split.
-
-Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
----
-
- arch/arm/boot/dts/socfpga.dtsi       | 4 ++--
- arch/arm/mach-socfpga/self-refresh.S | 4 ++--
- drivers/fpga/altera-fpga2sdram.c     | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
-index f365003f0..8f6c1a5d6 100644
---- a/arch/arm/boot/dts/socfpga.dtsi
-+++ b/arch/arm/boot/dts/socfpga.dtsi
-@@ -788,9 +788,9 @@
- 			reg = <0xfffec000 0x100>;
- 		};
- 
--		sdr: sdr@ffc25000 {
-+		sdr: sdr@ffc20000 {
- 			compatible = "altr,sdr-ctl", "syscon";
--			reg = <0xffc25000 0x1000>;
-+			reg = <0xffc20000 0x6000>;
- 		};
- 
- 		sdramedac {
-diff --git a/arch/arm/mach-socfpga/self-refresh.S b/arch/arm/mach-socfpga/self-refresh.S
-index f2d7f883e..bd7759357 100644
---- a/arch/arm/mach-socfpga/self-refresh.S
-+++ b/arch/arm/mach-socfpga/self-refresh.S
-@@ -19,8 +19,8 @@
- #define MAX_LOOP_COUNT		1000
- 
- /* Register offset */
--#define SDR_CTRLGRP_LOWPWREQ_ADDR       0x54
--#define SDR_CTRLGRP_LOWPWRACK_ADDR      0x58
-+#define SDR_CTRLGRP_LOWPWREQ_ADDR       0x5054
-+#define SDR_CTRLGRP_LOWPWRACK_ADDR      0x5058
- 
- /* Bitfield positions */
- #define SELFRSHREQ_POS                  3
-diff --git a/drivers/fpga/altera-fpga2sdram.c b/drivers/fpga/altera-fpga2sdram.c
-index a78e49c63..30767c254 100644
---- a/drivers/fpga/altera-fpga2sdram.c
-+++ b/drivers/fpga/altera-fpga2sdram.c
-@@ -30,7 +30,7 @@
- #include <linux/of_platform.h>
- #include <linux/regmap.h>
- 
--#define ALT_SDR_CTL_FPGAPORTRST_OFST		0x80
-+#define ALT_SDR_CTL_FPGAPORTRST_OFST		0x5080
- #define ALT_SDR_CTL_FPGAPORTRST_PORTRSTN_MSK	0x00003fff
- #define ALT_SDR_CTL_FPGAPORTRST_RD_SHIFT	0
- #define ALT_SDR_CTL_FPGAPORTRST_WR_SHIFT	4
--- 
-2.17.1
-
+Thanks,
+    Paul
