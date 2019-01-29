@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97560C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF99C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DAAC20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0D5820989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761953;
-	bh=wsZZkSYYlSneWnDRTeNNoid3Sxjg/s45G798NR3Qjx8=;
+	s=default; t=1548761956;
+	bh=VeCvCJZIb3EJL3j730qqU7TnjKPGjfC3M9ClzbnD3P4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u/jZqpp0+eaDHpXUna/jMERDdXUOg6lqk/2XF8aO5XuAedQdNFtyC/khrBB5Ud4kN
-	 mwRd0dn9/3odd/auOZAyUzxwpR1DSzj/ItWAe8gC+b1rmV62MxYY+cyZyJR0uoebIc
-	 puEuRKlZnz3W11g5gQXuMAoLudDvTF96b/V5C/Zo=
+	b=TQ6DQmn4cFlJt8MENeEzrg5AEJyWOh5kDzgRH0MaZ6xre1F5FzW5BdCM/xTlnLf2D
+	 vdE0Z2QkOP/NnzaGbrq4aH2NcxnFmg8B4vCe4pyjpvitVqKqNDUhC1G4YnEDQqsnPs
+	 R/ymEEvssNvBRw2fWg1L8/kqgJpl7IQkDVO8OGwI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729380AbfA2LjL (ORCPT
+        id S1729392AbfA2LjP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:39:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55784 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:39:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729352AbfA2LjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:39:07 -0500
+        id S1729373AbfA2LjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:39:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9296E20857;
-        Tue, 29 Jan 2019 11:39:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AA1D20844;
+        Tue, 29 Jan 2019 11:39:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761947;
-        bh=wsZZkSYYlSneWnDRTeNNoid3Sxjg/s45G798NR3Qjx8=;
+        s=default; t=1548761949;
+        bh=VeCvCJZIb3EJL3j730qqU7TnjKPGjfC3M9ClzbnD3P4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q+ZaLYUOlkwhOIKe0gfsSyaUU8+p0qhGDPblfHvdF1/3bNpJpBj7GGn7RNc/hRVGN
-         gzBpFbez5aK7baShS89AprwRPZM1hDiWIIDFvGhRuFiHejoaeVy+8eielg4RDYxN0a
-         xUIzyC4Yf6kzYsJh8OhI++qXrIz/iFaj8KsZmWx4=
+        b=DXFJs3hrPqzr7mI5xQGmjNbpk5qFh/Ves7pNXl8U3YSzsxIK57gjQW6KnPN8H7MKy
+         RUkQFVUJGXSlQmBSHFL+xiDL5LSyPj7775oER+cWHH3Y1e1ikQ3oM88yOq/t2jbVdP
+         I/VXlC1+CXjjNWsAPL31qQJvas9fqo4gg1OXyDM8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: [PATCH 4.20 055/117] tty: Handle problem if line discipline does not have receive_buf
-Date:   Tue, 29 Jan 2019 12:35:06 +0100
-Message-Id: <20190129113210.392319676@linuxfoundation.org>
+        stable@vger.kernel.org, Samir Virmani <samir@embedur.com>,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH 4.20 056/117] uart: Fix crash in uart_write and uart_put_char
+Date:   Tue, 29 Jan 2019 12:35:07 +0100
+Message-Id: <20190129113210.454536447@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -64,33 +65,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Samir Virmani <samir@embedur.com>
 
-commit 27cfb3a53be46a54ec5e0bd04e51995b74c90343 upstream.
+commit aff9cf5955185d1f183227e46c5f8673fa483813 upstream.
 
-Some tty line disciplines do not have a receive buf callback, so
-properly check for that before calling it.  If they do not have this
-callback, just eat the character quietly, as we can't fail this call.
+We were experiencing a crash similar to the one reported as part of
+commit:a5ba1d95e46e ("uart: fix race between uart_put_char() and
+uart_shutdown()") in our testbed as well. We continue to observe the same
+crash after integrating the commit a5ba1d95e46e ("uart: fix race between
+uart_put_char() and uart_shutdown()")
 
-Reported-by: Jann Horn <jannh@google.com>
+On reviewing the change, the port lock should be taken prior to checking for
+if (!circ->buf) in fn. __uart_put_char and other fns. that update the buffer
+uart_state->xmit.
+
+Traceback:
+
+[11/27/2018 06:24:32.4870] Unable to handle kernel NULL pointer dereference
+                           at virtual address 0000003b
+
+[11/27/2018 06:24:32.4950] PC is at memcpy+0x48/0x180
+[11/27/2018 06:24:32.4950] LR is at uart_write+0x74/0x120
+[11/27/2018 06:24:32.4950] pc : [<ffffffc0002e6808>]
+                           lr : [<ffffffc0003747cc>] pstate: 000001c5
+[11/27/2018 06:24:32.4950] sp : ffffffc076433d30
+[11/27/2018 06:24:32.4950] x29: ffffffc076433d30 x28: 0000000000000140
+[11/27/2018 06:24:32.4950] x27: ffffffc0009b9d5e x26: ffffffc07ce36580
+[11/27/2018 06:24:32.4950] x25: 0000000000000000 x24: 0000000000000140
+[11/27/2018 06:24:32.4950] x23: ffffffc000891200 x22: ffffffc01fc34000
+[11/27/2018 06:24:32.4950] x21: 0000000000000fff x20: 0000000000000076
+[11/27/2018 06:24:32.4950] x19: 0000000000000076 x18: 0000000000000000
+[11/27/2018 06:24:32.4950] x17: 000000000047cf08 x16: ffffffc000099e68
+[11/27/2018 06:24:32.4950] x15: 0000000000000018 x14: 776d726966205948
+[11/27/2018 06:24:32.4950] x13: 50203a6c6974755f x12: 74647075205d3333
+[11/27/2018 06:24:32.4950] x11: 3a35323a36203831 x10: 30322f37322f3131
+[11/27/2018 06:24:32.4950] x9 : 5b205d303638342e x8 : 746164206f742070
+[11/27/2018 06:24:32.4950] x7 : 7520736920657261 x6 : 000000000000003b
+[11/27/2018 06:24:32.4950] x5 : 000000000000817a x4 : 0000000000000008
+[11/27/2018 06:24:32.4950] x3 : 2f37322f31312a5b x2 : 000000000000006e
+[11/27/2018 06:24:32.4950] x1 : ffffffc0009b9cf0 x0 : 000000000000003b
+
+[11/27/2018 06:24:32.4950] CPU2: stopping
+[11/27/2018 06:24:32.4950] CPU: 2 PID: 0 Comm: swapper/2 Tainted: P      D    O    4.1.51 #3
+[11/27/2018 06:24:32.4950] Hardware name: Broadcom-v8A (DT)
+[11/27/2018 06:24:32.4950] Call trace:
+[11/27/2018 06:24:32.4950] [<ffffffc0000883b8>] dump_backtrace+0x0/0x150
+[11/27/2018 06:24:32.4950] [<ffffffc00008851c>] show_stack+0x14/0x20
+[11/27/2018 06:24:32.4950] [<ffffffc0005ee810>] dump_stack+0x90/0xb0
+[11/27/2018 06:24:32.4950] [<ffffffc00008e844>] handle_IPI+0x18c/0x1a0
+[11/27/2018 06:24:32.4950] [<ffffffc000080c68>] gic_handle_irq+0x88/0x90
+
+Fixes: a5ba1d95e46e ("uart: fix race between uart_put_char() and uart_shutdown()")
 Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Samir Virmani <samir@embedur.com>
+Acked-by: Tycho Andersen <tycho@tycho.ws>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_io.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/serial_core.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2189,7 +2189,8 @@ static int tiocsti(struct tty_struct *tt
- 	ld = tty_ldisc_ref_wait(tty);
- 	if (!ld)
- 		return -EIO;
--	ld->ops->receive_buf(tty, &ch, &mbz, 1);
-+	if (ld->ops->receive_buf)
-+		ld->ops->receive_buf(tty, &ch, &mbz, 1);
- 	tty_ldisc_deref(ld);
- 	return 0;
- }
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -550,10 +550,12 @@ static int uart_put_char(struct tty_stru
+ 	int ret = 0;
+ 
+ 	circ = &state->xmit;
+-	if (!circ->buf)
++	port = uart_port_lock(state, flags);
++	if (!circ->buf) {
++		uart_port_unlock(port, flags);
+ 		return 0;
++	}
+ 
+-	port = uart_port_lock(state, flags);
+ 	if (port && uart_circ_chars_free(circ) != 0) {
+ 		circ->buf[circ->head] = c;
+ 		circ->head = (circ->head + 1) & (UART_XMIT_SIZE - 1);
+@@ -586,11 +588,13 @@ static int uart_write(struct tty_struct
+ 		return -EL3HLT;
+ 	}
+ 
++	port = uart_port_lock(state, flags);
+ 	circ = &state->xmit;
+-	if (!circ->buf)
++	if (!circ->buf) {
++		uart_port_unlock(port, flags);
+ 		return 0;
++	}
+ 
+-	port = uart_port_lock(state, flags);
+ 	while (port) {
+ 		c = CIRC_SPACE_TO_END(circ->head, circ->tail, UART_XMIT_SIZE);
+ 		if (count < c)
 
 
