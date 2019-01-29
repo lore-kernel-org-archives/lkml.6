@@ -2,218 +2,280 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD28C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A85C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 804062177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:13:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="puNvNeck"
+	by mail.kernel.org (Postfix) with ESMTP id E04032177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:14:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbfA2INK (ORCPT
+        id S1727435AbfA2IOW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:13:10 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38696 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbfA2INK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:13:10 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h50so15220141ede.5
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:13:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=f/tZUUThlJr1yTNoJR/qpu3sQRcnidvLeVHHov8bumE=;
-        b=puNvNecknf3HStXmm0j1iO3DsLhOAwTW+Z84emFHRKjHhrXTPaR2AMd4jERO2S9ox7
-         PRzJrdHQeJPJf4+XEWSs9ectjhDW1mH5BvPlYeaglVk0/xDJ/ylJlhVHy4qCOXzfcIcP
-         G2FmHPrirgO3JsurI8eBGFGS8+NckfH5wPUWPSmyq4dMLRjCCf7HHw7IaDuWUGBZvDiz
-         hu392D89qWc6QWSezVTql5awVJBFzuYHocwVbvxBKT83d/odTARZNxfXw0YNSk6uPbrW
-         Tj6Q8utl7y49VL64iV0ovxfaugZkBr2XECm6WUcMXxP6kiP0ouB3XsmPHLA9UzKx/ffC
-         YUtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=f/tZUUThlJr1yTNoJR/qpu3sQRcnidvLeVHHov8bumE=;
-        b=qTot0eG4IDCtEAW9R3TAKOj39cOtzVm3rN+onOfHVqY0ija3KSC4MrGLijmtL0ci2+
-         auxT5SANeRxNJ4mSyT7xN3+K3PPVSbGgevBhtf69deOgVJ2miGYrXHPuIqvp+DUGq1Bg
-         BbB8m6Mk4MfhMvB9hDki/rHwzcSUmp+CtY9o8uu7yMbt892XiHW1yYYeIMY5poz+ucYC
-         Th3OoNTxBKLdA8lOs96o5s8CYkoUv0LYCePq2D+zDnt1pklFSliZRszPztkdhjbObtOo
-         kTGr+UnnNQaDPJ87cVkze4ArxQ0eAvNVrKL9Foi00lW6E2tOdFzABl1K5BofI0vEHdHd
-         Z57g==
-X-Gm-Message-State: AJcUukcuJ7teMuxn2y5+lGLWnkS9xkVLD+OUEtcMCCOgRYx/9YFZPLCV
-        SaG55pufAUrsKDdqIXbXeqi31g==
-X-Google-Smtp-Source: ALg8bN6Na2KGL1dQOs/s5xqeNkbKp/IlTDkc+kUo+RYFzLnIx546WFWKTv39+M0TMw6CkVz8LYojOw==
-X-Received: by 2002:a50:9226:: with SMTP id i35mr25142989eda.8.1548749588027;
-        Tue, 29 Jan 2019 00:13:08 -0800 (PST)
-Received: from [192.168.1.85] (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
-        by smtp.gmail.com with ESMTPSA id t15-v6sm7972969ejt.0.2019.01.29.00.13.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 00:13:07 -0800 (PST)
-From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <9E81CD34-5291-40B8-93EE-00BABAC7C0DC@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_B2FB69B3-A04E-4BD0-8000-459B75E5478A";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] lightnvm: pblk: fix race condition on GC
-Date:   Tue, 29 Jan 2019 09:13:06 +0100
-In-Reply-To: <20190127065421.10662-1-hlitz@ucsc.edu>
-Cc:     =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Heiner Litz <hlitz@ucsc.edu>
-References: <20190127065421.10662-1-hlitz@ucsc.edu>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Tue, 29 Jan 2019 03:14:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47780 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726016AbfA2IOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:14:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 727E1AEE6;
+        Tue, 29 Jan 2019 08:14:19 +0000 (UTC)
+Subject: Re: [PATCH 09/11] btrfs: change set_level() to bound the level passed
+ in
+To:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>
+Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190128212437.11597-10-dennis@kernel.org>
+From:   Nikolay Borisov <nborisov@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <372d47b8-457d-db5d-61f4-de7b901c5e78@suse.com>
+Date:   Tue, 29 Jan 2019 10:14:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190128212437.11597-10-dennis@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Apple-Mail=_B2FB69B3-A04E-4BD0-8000-459B75E5478A
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
 
-> On 27 Jan 2019, at 07.54, Heiner Litz <hlitz@ucsc.edu> wrote:
->=20
-> This patch fixes a race condition where a write is mapped to the last
-> sectors of a line. The write is synced to the device but the L2P is =
-not
-> updated yet. When the line is garbage collected before the L2P update =
-is
-> performed, the sectors are ignored by the GC logic and the line is =
-freed
-> before all sectors are moved. When the L2P is finally updated, it =
-contains
-> a mapping to a freed line, subsequent reads of the corresponding LBAs =
-fail.
-
-Hi Heiner,
-
-This has been an interesting issue to debug - good catch!
-
->=20
-> Note that looking up the L2P and checking the ppa in the write buffer =
-needs
-> to be performed atomically, hence the refactor of =
-pblk_lookup_l2p_rand.
->=20
-> Signed-off-by: Heiner Litz <hlitz@ucsc.edu>
+On 28.01.19 г. 23:24 ч., Dennis Zhou wrote:
+> Currently, the only user of set_level() is zlib which sets an internal
+> workspace parameter. As level is now plumbed into get_workspace(), this
+> can be handled there rather than separately.
+> 
+> This repurposes set_level() to bound the level passed in so it can be
+> used when setting the mounts compression level and as well as verifying
+> the level before getting a workspace. The other benefit is this divides
+> the meaning of compress(0) and get_workspace(0). The former means we
+> want to use the default compression level of the compression type. The
+> latter means we can use any workspace available.
+> 
+> Signed-off-by: Dennis Zhou <dennis@kernel.org>
 > ---
-> drivers/lightnvm/pblk-read.c | 27 +++++++++++++++++++++++++--
-> 1 file changed, 25 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/lightnvm/pblk-read.c =
-b/drivers/lightnvm/pblk-read.c
-> index 3789185144da..7c556b2218e4 100644
-> --- a/drivers/lightnvm/pblk-read.c
-> +++ b/drivers/lightnvm/pblk-read.c
-> @@ -529,13 +529,35 @@ static int read_ppalist_rq_gc(struct pblk *pblk, =
-struct nvm_rq *rqd,
-> 	int valid_secs =3D 0;
-> 	int i;
->=20
-> -	pblk_lookup_l2p_rand(pblk, ppa_list_l2p, lba_list, nr_secs);
+>  fs/btrfs/compression.c | 23 +++++++++++++++--------
+>  fs/btrfs/compression.h |  4 ++--
+>  fs/btrfs/lzo.c         |  3 ++-
+>  fs/btrfs/super.c       |  4 +++-
+>  fs/btrfs/zlib.c        | 18 +++++++++++-------
+>  fs/btrfs/zstd.c        |  3 ++-
+>  6 files changed, 35 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+> index e509071eaa69..a552c6f61e6d 100644
+> --- a/fs/btrfs/compression.c
+> +++ b/fs/btrfs/compression.c
+> @@ -1008,9 +1008,9 @@ int btrfs_compress_pages(unsigned int type_level, struct address_space *mapping,
+>  	struct list_head *workspace;
+>  	int ret;
+>  
+> -	workspace = get_workspace(type, level);
+> +	level = btrfs_compress_op[type]->set_level(level);
+>  
+> -	btrfs_compress_op[type]->set_level(workspace, level);
+> +	workspace = get_workspace(type, level);
+>  	ret = btrfs_compress_op[type]->compress_pages(workspace, mapping,
+>  						      start, pages,
+>  						      out_pages,
+> @@ -1563,14 +1563,21 @@ int btrfs_compress_heuristic(struct inode *inode, u64 start, u64 end)
+>  	return ret;
+>  }
+>  
+> -unsigned int btrfs_compress_str2level(const char *str)
+> +unsigned int btrfs_compress_str2level(unsigned int type, const char *str)
+>  {
+> -	if (strncmp(str, "zlib", 4) != 0)
+> +	unsigned int level;
+> +	int ret;
+> +
+> +	if (!type)
+>  		return 0;
+>  
+> -	/* Accepted form: zlib:1 up to zlib:9 and nothing left after the number */
+> -	if (str[4] == ':' && '1' <= str[5] && str[5] <= '9' && str[6] == 0)
+> -		return str[5] - '0';
+> +	if (str[0] == ':') {
+> +		ret = kstrtouint(str + 1, 10, &level);
+> +		if (ret)
+> +			level = 0;
+> +	}
+> +
+> +	level = btrfs_compress_op[type]->set_level(level);
+>  
+> -	return BTRFS_ZLIB_DEFAULT_LEVEL;
+> +	return level;
+>  }
+> diff --git a/fs/btrfs/compression.h b/fs/btrfs/compression.h
+> index e3627139bc5c..d607be40aa0e 100644
+> --- a/fs/btrfs/compression.h
+> +++ b/fs/btrfs/compression.h
+> @@ -90,7 +90,7 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
+>  blk_status_t btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+>  				 int mirror_num, unsigned long bio_flags);
+>  
+> -unsigned btrfs_compress_str2level(const char *str);
+> +unsigned int btrfs_compress_str2level(unsigned int type, const char *str);
+>  
+>  enum btrfs_compression_type {
+>  	BTRFS_COMPRESS_NONE  = 0,
+> @@ -149,7 +149,7 @@ struct btrfs_compress_op {
+>  			  unsigned long start_byte,
+>  			  size_t srclen, size_t destlen);
+>  
+> -	void (*set_level)(struct list_head *ws, unsigned int type);
+> +	unsigned int (*set_level)(unsigned int level);
+
+It might be good to document the return value since this is an
+interface. AFAICS implementations are required to return the actual
+level set irrespective of what level was passed in, no?
+
+>  };
+>  
+>  extern const struct btrfs_compress_op btrfs_heuristic_compress;
+> diff --git a/fs/btrfs/lzo.c b/fs/btrfs/lzo.c
+> index f132af45a924..579d53ae256f 100644
+> --- a/fs/btrfs/lzo.c
+> +++ b/fs/btrfs/lzo.c
+> @@ -507,8 +507,9 @@ static int lzo_decompress(struct list_head *ws, unsigned char *data_in,
+>  	return ret;
+>  }
+>  
+> -static void lzo_set_level(struct list_head *ws, unsigned int type)
+> +static unsigned int lzo_set_level(unsigned int level)
+>  {
+> +	return 0;
+>  }
+>  
+>  const struct btrfs_compress_op btrfs_lzo_compress = {
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index c5586ffd1426..b28dff207383 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -529,7 +529,9 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+>  				if (token != Opt_compress &&
+>  				    token != Opt_compress_force)
+>  					info->compress_level =
+> -					  btrfs_compress_str2level(args[0].from);
+> +					  btrfs_compress_str2level(
+> +							BTRFS_COMPRESS_ZLIB,
+> +							args[0].from + 4);
+>  				btrfs_set_opt(info->mount_opt, COMPRESS);
+>  				btrfs_clear_opt(info->mount_opt, NODATACOW);
+>  				btrfs_clear_opt(info->mount_opt, NODATASUM);
+> diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
+> index e2173d0c4fd3..388b1f000fca 100644
+> --- a/fs/btrfs/zlib.c
+> +++ b/fs/btrfs/zlib.c
+> @@ -41,7 +41,12 @@ static void zlib_cleanup_workspace_manager(void)
+>  
+>  static struct list_head *zlib_get_workspace(unsigned int level)
+>  {
+> -	return btrfs_get_workspace(&wsm, level);
+> +	struct list_head *ws = btrfs_get_workspace(&wsm, level);
+> +	struct workspace *workspace = list_entry(ws, struct workspace, list);
+> +
+> +	workspace->level = level;
+> +
+> +	return ws;
+>  }
+>  
+>  static void zlib_put_workspace(struct list_head *ws)
+> @@ -413,15 +418,14 @@ static int zlib_decompress(struct list_head *ws, unsigned char *data_in,
+>  	return ret;
+>  }
+>  
+> -static void zlib_set_level(struct list_head *ws, unsigned int type)
+> +static unsigned int zlib_set_level(unsigned int level)
+>  {
+> -	struct workspace *workspace = list_entry(ws, struct workspace, list);
+> -	unsigned int level = BTRFS_COMPRESS_LEVEL(type);
 > -
-> +	spin_lock(&pblk->trans_lock);
-> 	for (i =3D 0; i < nr_secs; i++) {
-> 		if (lba_list[i] =3D=3D ADDR_EMPTY)
-> 			continue;
->=20
-> +		ppa_list_l2p[i] =3D pblk_trans_map_get(pblk, =
-lba_list[i]);
-> 		ppa_gc =3D addr_to_gen_ppa(pblk, paddr_list_gc[i], =
-line->id);
-> +
-> +		/* Obtain ppa from cache if the sector has been synced =
-to the
-> +		   device but the L2P has not been updated yet */
-> +		if(pblk_addr_in_cache(ppa_list_l2p[i])) {
-> +			struct pblk_rb *rb =3D &pblk->rwb;
-> +			struct pblk_rb_entry *entry;
-> +			struct pblk_w_ctx *w_ctx;
-> +			u64 pos =3D =
-pblk_addr_to_cacheline(ppa_list_l2p[i]);
-> +
-> +#ifdef CONFIG_NVM_PBLK_DEBUG
-> +			/* Ensure that the access will not cause an =
-overflow */
-> +			BUG_ON(pos >=3D rb->nr_entries);
-> +#endif
-> +
-> +			entry =3D &rb->entries[pos];
-> +			w_ctx =3D &entry->w_ctx;
-> +			if (pblk_ppa_comp(w_ctx->ppa, ppa_gc)) {
-> +				rqd->ppa_list[valid_secs++] =3D ppa_gc;
-> +				continue;
-> +			}
-> +		}
-> +
-> 		if (!pblk_ppa_comp(ppa_list_l2p[i], ppa_gc)) {
-> 			paddr_list_gc[i] =3D lba_list[i] =3D ADDR_EMPTY;
-> 			continue;
-> @@ -543,6 +565,7 @@ static int read_ppalist_rq_gc(struct pblk *pblk, =
-struct nvm_rq *rqd,
->=20
-> 		rqd->ppa_list[valid_secs++] =3D ppa_list_l2p[i];
-> 	}
-> +	spin_unlock(&pblk->trans_lock);
->=20
-> #ifdef CONFIG_NVM_PBLK_DEBUG
-> 	atomic_long_add(valid_secs, &pblk->inflight_reads);
-> --
-> 2.17.1
+> -	if (level > 9)
+> +	if (!level)
+> +		level = BTRFS_ZLIB_DEFAULT_LEVEL;
+> +	else if (level > 9)
+>  		level = 9;
 
+nit:  This makes it a bit more obvious (IMO) that you are essentially
+doing max:
 
-Here is a suggestion: Why not add an atomic counter to the
-line stating the sectors that are synced in the L2P table and then
-loosely wait (i.e., check and sleep / schedule) until the counter
-reaches 0 on pblk_line_close_ws()? This way you guarantee that the line
-does not close - and therefore never reaches the GC lists - before all
-the L2P entries for that line point to the media. Any other form of
-synchronization that puts the burden at pblk_line_close_ws() would also
-work for me.
+if (!level)
+   level = BTRFS_ZLIB_DEFAULT_LEVEL;
+level = max(level, 9);
 
-In essence, I would rather pay the price on a per-line basis than
-blocking the trans_lock longer for each I/O.
-
-Thoughts?
-
-Javier
-
-
---Apple-Mail=_B2FB69B3-A04E-4BD0-8000-459B75E5478A
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlxQCxIACgkQPEYBfS0l
-eOCqKhAA1Vt7rIWaid80/N1f5DKSLXneS63sa9+N89STDm1PR3ep1PmkpiBv3lEV
-pqssIYM1WdsVggRyylPk0jfObFTZmSDpVICyMe0THIrvYdoG2omQTubuZS+PtyKO
-kqYGb+a49pcwCt2ZL+YKtEHcrefrVq3Wj7wq5qLtW6mNrodU62kRiN5u+CoKHHfd
-7a0+HLOWpTl9IuhEcLsXBoIsJXmEuRj97o/zDsoX/n9rk+4lXKUHqOrCRCKdDH9q
-lGjCmBvBWA26w6A/8sGUpjfD2t4hNpR14KG3BWeL6f2kE8VUeSx5DYN1bOBN+gTV
-RclMR5iYsrZ4bNkKrLLyRTuf+xGlpcKFSRMd4d6qMN+/uNboq4GlpmSqOmAxuaNa
-BNH8J/7PYxFZrPgWOW4E3lef/suD6oIgH9nTOW8nBxOSxow9mw746xpFQJAVTaGJ
-ElpS6tfbstAzgRdnZYCFD+5H3/eWHtu4SWI4W7KhsUKTkZ7HXsRaTwJvTcQ4X7bf
-7z7iZn/snrBK59JwzwgkLut7UG5nWdrxeh7Q7MKAuWnsDnGSA4aczzsuSGpSrKZz
-gWrc6ssc86l8S/Fz4aUgwatCQ/AgikpRCiwFVHjt7Cd0NlPwuLhT16UvEFn5/sXP
-Vhr9t1AtLWBPNMxRQjYWy3ItetnZDWTiiZHC9xBgLC8KZfsw3l8=
-=jTbF
------END PGP SIGNATURE-----
-
---Apple-Mail=_B2FB69B3-A04E-4BD0-8000-459B75E5478A--
+>  
+> -	workspace->level = level > 0 ? level : 3;
+> +	return level;
+>  }
+>  
+>  const struct btrfs_compress_op btrfs_zlib_compress = {
+> diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
+> index 404101864220..43f3be755b8c 100644
+> --- a/fs/btrfs/zstd.c
+> +++ b/fs/btrfs/zstd.c
+> @@ -441,8 +441,9 @@ static int zstd_decompress(struct list_head *ws, unsigned char *data_in,
+>  	return ret;
+>  }
+>  
+> -static void zstd_set_level(struct list_head *ws, unsigned int type)
+> +static unsigned int zstd_set_level(unsigned int level)
+>  {
+> +	return ZSTD_BTRFS_DEFAULT_LEVEL;
+>  }
+>  
+>  const struct btrfs_compress_op btrfs_zstd_compress = {
+> 
