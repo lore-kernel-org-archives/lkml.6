@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F76BC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44486C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E724A20857
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:13:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 169C220857
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:13:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h9nnQF0Q"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bv3TAi+7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfA2SN1 (ORCPT
+        id S1728616AbfA2SN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:13:27 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35150 "EHLO
+        Tue, 29 Jan 2019 13:13:28 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35158 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727368AbfA2SNZ (ORCPT
+        with ESMTP id S1728682AbfA2SN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:13:25 -0500
+        Tue, 29 Jan 2019 13:13:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3EpTLPTe7MxqR7rhIW83gWtXzmEP4UKkgI2JifEq9Rc=; b=h9nnQF0QAAvN7pvGRn62DMEsNk
-        AxSGH6uiqzCT/H1UNvdMnvEj0gGKRwMMFNDhRhSf70lKsuir2NIE0OeJ4/Jxw4jLeTzm+qj4ROl2d
-        lbXbGHhBCCwVzVF3eq2dotCD7QXeCtKcmJMKpIOZ5LuLcdEWSJ5hmRUZ/yW6kQV/D1S27no21yZ/u
-        3dlvDQaNSVckyWD89eyhjQElAeReT15XqJIyiSgjtfJWIoDn5wGcMjKpzeZ3M3ezUMxavWG7WpSjo
-        7GUR1IAC5dodo3ogK5uIA2Djeg7UC6flP+eZ7ieu8kcbNEDA4QI0ZCp8cdRo82WPNOQwtNTkGCzBe
-        GTeQgIfg==;
+        bh=yBOfS/1RGs0Iv7Q/HqrXI7lqeT5eZT0y7JFIpYqjL+g=; b=Bv3TAi+7OVUu9LN8s3D/LcQByB
+        KIuCi9YOG4N0UIotJ/gr7TttW5w4YKED3IuYnAR5XSGiN0AoCn5qpK8vGjT3El4JOQhs1e7MU+x2M
+        dNYcUutQoaU7DZdcglUz42ElUxGukSLtSCRzZ7aG0KVqGFjT2sIwr7zZc32TbjFPdrIc4Fz3wOfri
+        ERgk0JVf/FTz5HlVwEhljRo9MhDKkLBFN/fQfDbGNbV/i3GiBKtJnpstKsAJrPnN+QtE6kDhDaYfl
+        AoJFPLHiycBkrZahDFhSKg1QuQ6/anq41MOZkO8V8Fmw+iGduCZt+8frEkCS4TJVPHPeefrwCTxmH
+        LzzoAUhA==;
 Received: from 213-225-35-141.nat.highway.a1.net ([213.225.35.141] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1goXsw-00082N-Qx; Tue, 29 Jan 2019 18:13:23 +0000
+        id 1goXsz-00082u-MN; Tue, 29 Jan 2019 18:13:26 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     "James E.J. Bottomley" <jejb@parisc-linux.org>,
         Helge Deller <deller@gmx.de>
 Cc:     linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/8] parisc: turn GET_IOC into an inline function
-Date:   Tue, 29 Jan 2019 19:13:05 +0100
-Message-Id: <20190129181310.5557-4-hch@lst.de>
+Subject: [PATCH 4/8] parisc: properly type the iommu field in struct pci_hba_data
+Date:   Tue, 29 Jan 2019 19:13:06 +0100
+Message-Id: <20190129181310.5557-5-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129181310.5557-1-hch@lst.de>
 References: <20190129181310.5557-1-hch@lst.de>
@@ -56,36 +56,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes the function both more readable and more typesafe.
-
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/parisc/iommu.h | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/parisc/include/asm/pci.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/parisc/iommu.h b/drivers/parisc/iommu.h
-index 5a38b635e963..d6fd3ab899ac 100644
---- a/drivers/parisc/iommu.h
-+++ b/drivers/parisc/iommu.h
-@@ -26,10 +26,14 @@ static inline void *parisc_walk_tree(struct device *dev)
- 	return dev->platform_data;
- }
+diff --git a/arch/parisc/include/asm/pci.h b/arch/parisc/include/asm/pci.h
+index 3328fd17c19d..00f763688401 100644
+--- a/arch/parisc/include/asm/pci.h
++++ b/arch/parisc/include/asm/pci.h
+@@ -56,7 +56,7 @@ struct pci_hba_data {
+ 	#define DINO_MAX_LMMIO_RESOURCES	3
  
--#define GET_IOC(dev) ({					\
--	void *__pdata = parisc_walk_tree(dev);		\
--	__pdata ? HBA_DATA(__pdata)->iommu : NULL;	\
--})
-+static inline struct ioc *GET_IOC(struct device *dev)
-+{
-+	struct pci_hba_data *pdata = parisc_walk_tree(dev);
-+
-+	if (!pdata)
-+		return NULL;
-+	return pdata->iommu;
-+}
+ 	unsigned long   lmmio_space_offset;  /* CPU view - PCI view */
+-	void *          iommu;          /* IOMMU this device is under */
++	struct ioc	*iommu;		/* IOMMU this device is under */
+ 	/* REVISIT - spinlock to protect resources? */
  
- #ifdef CONFIG_IOMMU_CCIO
- void *ccio_get_iommu(const struct parisc_device *dev);
+ 	#define HBA_NAME_SIZE 16
 -- 
 2.20.1
 
