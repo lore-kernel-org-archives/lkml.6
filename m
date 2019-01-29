@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CEE7C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68123C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E83A82177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A29321473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:24:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="nJwp9grW"
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="NOSEXRqJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728360AbfA2KYD (ORCPT
+        id S1728385AbfA2KYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:24:03 -0500
-Received: from mout02.posteo.de ([185.67.36.66]:44919 "EHLO mout02.posteo.de"
+        Tue, 29 Jan 2019 05:24:06 -0500
+Received: from mout02.posteo.de ([185.67.36.66]:35579 "EHLO mout02.posteo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726752AbfA2KYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:24:02 -0500
+        id S1728364AbfA2KYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 05:24:04 -0500
 Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id 4C1722400FC
+        by mout02.posteo.de (Postfix) with ESMTPS id B33E92400FD
         for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:24:00 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1548757440; bh=DY6aMhdu6hrdcEZWqhPjCrorr3VltracxCXw0bMyUpc=;
+        t=1548757440; bh=Z9t6EZyxo16c6vcFyes+GmXGLWU/TBpT2YHjRl36LhU=;
         h=From:To:Cc:Subject:Date:From;
-        b=nJwp9grW7woHb4P5dl+vYp89xaWZB2pYUxQ59KG5+Ylv36gG1OmpveMLEP/3k8FTt
-         W/FaDFRvdhohueyoj0/cv/2OtTWVMBkR+OgjjDrA1xN4AvJsPFOxOOV3ct208sTLpG
-         5ppJ0a9JPs2PfehuTq3wRjbcjELLo7iJA2XckW2y/oL8S5MXFO0Et3RM7XuTOLtfDC
-         ZwUwAQU37InU8GdkpWM16rpB/vq2Y9Mdl6fHc1b4Z9JEEcRZqBwnQseg0iZOd2lU6O
-         HEu2mJdrc+nJ1FYe91GikK5unZNwT1K106ll9u1z5nMxqz6LuRfH0n0z5YGeuQi2OX
-         IYebUhXyoPFug==
+        b=NOSEXRqJdWATgByLLunzk0rsV0hsCUzCdmSC570r9uwqyBkfINtLOiQnBPf+qQW2x
+         HnA8X0dl8qP707FU6QV4oVhnG/93iz0IgiZZFg29SPDAIG+wD/4/CHLUa88wu5NXkG
+         99G9a9kER7eqtRsjXM1TEC1dyaD8tKIxJfLImvoKkx8jrXFjPUP/ftlDAW7XFs+d1G
+         y0nQNRMx+yjL4dhdpT1DF7qIvoSHOBds/s984L6aRQrXDG6nJgMVCeajUgMslvJBBh
+         S/CW1Hd1ePlivxqk4gDYBgTELSgbKug8j0BWJVPZ5Gzvjy7SrtrcYjuY+fw8m8gdgJ
+         qmbzPV8+cEofA==
 Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 43pjJv0JCNz9rxd;
-        Tue, 29 Jan 2019 11:23:58 +0100 (CET)
+        by submission (posteo.de) with ESMTPSA id 43pjJv71nWz9rxg;
+        Tue, 29 Jan 2019 11:23:59 +0100 (CET)
 From:   Martin Kepplinger <martink@posteo.de>
 To:     devicetree@vger.kernel.org, linux-input@vger.kernel.org
 Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
         mark.rutland@arm.com, linux-kernel@vger.kernel.org,
         Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH 1/2] dt-bindings: input: sitronix-st1232: document optional reset-gpios property
-Date:   Tue, 29 Jan 2019 11:23:46 +0100
-Message-Id: <20190129102347.27754-1-martink@posteo.de>
+Subject: [PATCH 2/2] Input: st1232 - switch to gpiod API
+Date:   Tue, 29 Jan 2019 11:23:47 +0100
+Message-Id: <20190129102347.27754-2-martink@posteo.de>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190129102347.27754-1-martink@posteo.de>
+References: <20190129102347.27754-1-martink@posteo.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -55,35 +57,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 
-The st1232 driver reads this via gpiod.
+Use devm_gpiod_get_optional() and gpiod_set_value_cansleep() instead
+of the old API. The st1232_ts_power() now passes on the inverted "poweron"
+value to reflect the correct logical value.
 
 Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 ---
- .../devicetree/bindings/input/touchscreen/sitronix-st1232.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt b/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
-index e73e826e0f2a..365b32d30d4b 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/sitronix-st1232.txt
-@@ -8,7 +8,7 @@ Required properties:
- - interrupts: interrupt to which the chip is connected
+Tested and works. thanks for your help Dmitry,
+
+                          martin
+
+
+
+ drivers/input/touchscreen/st1232.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/input/touchscreen/st1232.c b/drivers/input/touchscreen/st1232.c
+index 777df903605d..04d75b08be44 100644
+--- a/drivers/input/touchscreen/st1232.c
++++ b/drivers/input/touchscreen/st1232.c
+@@ -45,7 +45,7 @@ struct st1232_ts_data {
+ 	struct i2c_client *client;
+ 	struct input_dev *input_dev;
+ 	struct dev_pm_qos_request low_latency_req;
+-	int reset_gpio;
++	struct gpio_desc *reset_gpio;
+ 	const struct st_chip_info *chip_info;
+ 	int read_buf_len;
+ 	u8 *read_buf;
+@@ -142,8 +142,8 @@ static irqreturn_t st1232_ts_irq_handler(int irq, void *dev_id)
  
- Optional properties:
--- gpios: a phandle to the reset GPIO
-+- reset-gpios: a phandle to the reset GPIO
+ static void st1232_ts_power(struct st1232_ts_data *ts, bool poweron)
+ {
+-	if (gpio_is_valid(ts->reset_gpio))
+-		gpio_direction_output(ts->reset_gpio, poweron);
++	if (ts->reset_gpio)
++		gpiod_set_value_cansleep(ts->reset_gpio, !poweron);
+ }
  
- Example:
+ static const struct st_chip_info st1232_chip_info = {
+@@ -215,15 +215,13 @@ static int st1232_ts_probe(struct i2c_client *client,
+ 	ts->client = client;
+ 	ts->input_dev = input_dev;
  
-@@ -19,7 +19,7 @@ Example:
- 			compatible = "sitronix,st1232";
- 			reg = <0x55>;
- 			interrupts = <2 0>;
--			gpios = <&gpio1 166 0>;
-+			reset-gpios = <&gpio1 166 0>;
- 		};
+-	ts->reset_gpio = of_get_gpio(client->dev.of_node, 0);
+-	if (gpio_is_valid(ts->reset_gpio)) {
+-		error = devm_gpio_request(&client->dev, ts->reset_gpio, NULL);
+-		if (error) {
+-			dev_err(&client->dev,
+-				"Unable to request GPIO pin %d.\n",
+-				ts->reset_gpio);
+-				return error;
+-		}
++	ts->reset_gpio = devm_gpiod_get_optional(&client->dev, "reset",
++						 GPIOD_OUT_HIGH);
++	if (IS_ERR(ts->reset_gpio)) {
++		error = PTR_ERR(ts->reset_gpio);
++		dev_err(&client->dev, "Unable to request GPIO pin: %d.\n",
++			error);
++		return error;
+ 	}
  
- 		/* ... */
+ 	st1232_ts_power(ts, true);
 -- 
 2.20.1
 
