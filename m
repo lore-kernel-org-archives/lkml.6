@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11310C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF7AC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D050520857
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF37420857
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:17:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="sZf7AhBz"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="oMpoF8oy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbfA2SRU (ORCPT
+        id S1728495AbfA2SRr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:17:20 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45670 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfA2SRT (ORCPT
+        Tue, 29 Jan 2019 13:17:47 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37282 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727898AbfA2SRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:17:19 -0500
-Received: by mail-qt1-f195.google.com with SMTP id e5so23254107qtr.12
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:17:19 -0800 (PST)
+        Tue, 29 Jan 2019 13:17:47 -0500
+Received: by mail-qt1-f196.google.com with SMTP id t33so23310796qtt.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:17:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ApmOKSKwJ34ByPx19EXm+YEtEj3MA8QK8o2g/+hj+FI=;
-        b=sZf7AhBz6aFYiMtKB7dZHDPmigJ2H80teY097Ul6nJ0GKxtXNdOoOIzz11LOauzV2P
-         XONUm3CW1F05iHWbR84ZBoLIkukGIyWqtftsMKjzM0uuCM+AkZ5eHValtkoNqm0mp0vb
-         6/avAGPnX7Xw/3oEqsN710SI3RvyRwzQ2nBKczUUJIt376GlenUsrmHNSuYp1U3UMWlw
-         xLG1UjqpUlrN+qwMss8Xws36ivvk22Wfnc+nerHRpZICWGBCkJdDzyXWyBJzVPzISXYK
-         I/xoBEi559hd3h/1nPFV9qLaJCHBjGYk8BjZJFf7avPfBiWjfM8dbZQal1m4BMNPhGkg
-         XhIA==
+        bh=ZEklhevKI3Gbhsb8btAczqDD1QOFHCflfX9NR1AtiuI=;
+        b=oMpoF8oy79RuME85jCKezNXquwMeoHATz7FZ4NHIYYgps1343D6U2bnUqP0o0KH/Se
+         C9uFwqnGrrnetRAEwQbrfx2ng8r3ea9h2qmUQSu6Sgdv6FPL+7mrWQU1hIpz4d+x7UQ2
+         nHGvh2Qu33xo8Y3eMeVIlMWt0OTBvvewTuEyX1NX0CkklJHRB8mW7fZ6QYAxnGNsNASn
+         KzI16qTifb5+qj1UM+xt1K22dQVVu149ptQE9BkIhEVK6NX1Bs0Z2b+C9NcJ/kxus55i
+         TiIiKAJ9TXWsE70JlUQD7vhOj8jw3oX16/eZE3k5NW3wIvERtEY2DA8PGrviArJj+NCb
+         z+mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ApmOKSKwJ34ByPx19EXm+YEtEj3MA8QK8o2g/+hj+FI=;
-        b=tjvi0KzJYvZRiW+Lii/e7KoAzYVq16l1UYynxZ6wcu3GksU7gB0T9SzZ7vNmqr7mwB
-         frafHp2gczc/4g5+aeCHO1utts6pBt7mRQgX8BNR+oeCiP0pM6rSqp7JXJD8oFF3Zvx4
-         TxsvW1CDF40+YZ4IH13+jH++Fi7HA8R2QhiZ/i6STdwbnVN85CtLrDRtgr55N22KISG9
-         bDNdiDn8Je+Re1q5lLLdH51nFl80KxL2RH9E+PwrrVinyDklPYWYIW1X4qEuJySWuHSz
-         3C/suQjimroIPEdRT/bLPWydAG5aQt4A91hDiIzn/R+NoAm6uTV9PHFOPjh/T6b9sd9L
-         SxfQ==
-X-Gm-Message-State: AJcUukeRZFhw8HcOEUkKl/lbjxzWUm37lQsIuq4epkZ61htmtLSGko0i
-        WI3AvHXiPHN2BFM/+Huf5TZpjw==
-X-Google-Smtp-Source: ALg8bN7eKd8F80p/BHanCqsaxp1FwazPrdHwgML7hhh3MNGzQ6lrazltapfHcZn/fuPd5BxEjIMljA==
-X-Received: by 2002:a0c:a545:: with SMTP id y63mr25234040qvy.119.1548785838791;
-        Tue, 29 Jan 2019 10:17:18 -0800 (PST)
+        bh=ZEklhevKI3Gbhsb8btAczqDD1QOFHCflfX9NR1AtiuI=;
+        b=qu/vz93qJxrU3p3isv1Ad8px+gTaqtzRENvhp3iz5z4C3JU/2EPZhuDdl7/mfh0eDY
+         jqs7CcNO0hD9d9AkLY4kmSaPfpiPs+XaSLArCiT9PvRaOyXms0jpWQJIO0r3SYbu0NDQ
+         yDsDR2J/1EWjH4RJ4QZ5cWzJcfetnOZERXAkrxD63u5PRsZoOUvM6Ra9xKTwF5LdIIfo
+         d0q8h/DP/iTdqxjBdtnpQUF56WfAImF89qy2dxliN32c1HdKiwFkUIvIbudmZyOCPpxI
+         DnjL9PfLvzrCgBTx36VX0O66j4YGHSNIdKwS7Qn3ujuNEGjpsSIMk8EnYQZ0e2S+l+Dk
+         NHZg==
+X-Gm-Message-State: AJcUukes6XHWOfaZKPIRS8yO54OE02wtZmgIeafhsktkt3lLRVPfeGYg
+        Woc0V0WUlL/9Y0IZc/vm/NlODw==
+X-Google-Smtp-Source: ALg8bN4nnbZ9oOpkYdiiEUJ9B/YxJfGjNOrjQ8JujZijkSFXJV7mWjUyn3xhhANDE9X5P+89GI/HnQ==
+X-Received: by 2002:a0c:f403:: with SMTP id h3mr25622844qvl.137.1548785866526;
+        Tue, 29 Jan 2019 10:17:46 -0800 (PST)
 Received: from localhost ([107.15.81.208])
-        by smtp.gmail.com with ESMTPSA id a3sm93479632qta.21.2019.01.29.10.17.17
+        by smtp.gmail.com with ESMTPSA id l4sm56869941qtf.22.2019.01.29.10.17.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 10:17:18 -0800 (PST)
-Date:   Tue, 29 Jan 2019 13:17:17 -0500
+        Tue, 29 Jan 2019 10:17:45 -0800 (PST)
+Date:   Tue, 29 Jan 2019 13:17:44 -0500
 From:   Josef Bacik <josef@toxicpanda.com>
 To:     Dennis Zhou <dennis@kernel.org>
 Cc:     David Sterba <dsterba@suse.com>,
@@ -63,35 +63,35 @@ Cc:     David Sterba <dsterba@suse.com>,
         Omar Sandoval <osandov@osandov.com>,
         Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
         linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] btrfs: move to fn pointers for get/put workspaces
-Message-ID: <20190129181716.hstuxkdzai4qiist@MacBook-Pro-91.local>
+Subject: Re: [PATCH 08/11] btrfs: plumb level through the compression
+ interface
+Message-ID: <20190129181743.bap6zerlaup5ewaq@MacBook-Pro-91.local>
 References: <20190128212437.11597-1-dennis@kernel.org>
- <20190128212437.11597-8-dennis@kernel.org>
+ <20190128212437.11597-9-dennis@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190128212437.11597-8-dennis@kernel.org>
+In-Reply-To: <20190128212437.11597-9-dennis@kernel.org>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 04:24:33PM -0500, Dennis Zhou wrote:
-> The previous patch added generic helpers for get_workspace() and
-> put_workspace(). Now, we can migrate ownership of the workspace_manager
-> to be in the compression type code as the compression code itself
-> doesn't care beyond being able to get a workspace. The init/cleanup
-> and get/put methods are abstracted so each compression algorithm can
-> decide how they want to manage their workspaces.
+On Mon, Jan 28, 2019 at 04:24:34PM -0500, Dennis Zhou wrote:
+> Zlib compression supports multiple levels, but doesn't require changing
+> in how a workspace itself is created and managed. Zstd introduces a
+> different memory requirement such that higher levels of compression
+> require more memory. This requires changes in how the alloc()/get()
+> methods work for zstd. This pach plumbs compression level through the
+> interface as a parameter in preparation for zstd compression levels.
+> This gives the compression types opportunity to create/manage based on
+> the compression level.
 > 
 > Signed-off-by: Dennis Zhou <dennis@kernel.org>
 
-We're doing this to have special handling for extra workspaces to be free'd at
-some point in the future if they are unused.  This is fine by me, but why not
-just add a shrinker and let it be handled by memory pressure?  Then we avoid all
-this abstraction and allow for ztsd to have its shrinker for its extra
-workspaces.  You can even use the list_lru stuff to make it super simple, then
-you don't have to worry about all the infrastructure.  Thanks,
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+
+Thanks,
 
 Josef
