@@ -7,45 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CEBC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 259D8C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 757A6214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:56:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7944214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:56:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="RyDDsCMU"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IS8C+n3s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfA2I4U (ORCPT
+        id S1727929AbfA2I4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:56:20 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:2044 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727913AbfA2I4S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 Jan 2019 03:56:18 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5015320001>; Tue, 29 Jan 2019 00:56:18 -0800
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4764 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727867AbfA2I4Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:56:16 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5015070002>; Tue, 29 Jan 2019 00:55:35 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 29 Jan 2019 00:56:17 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 29 Jan 2019 00:56:15 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 29 Jan 2019 00:56:17 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 29 Jan
- 2019 08:56:17 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 29 Jan 2019 08:56:17 +0000
+        by hqpgpgate101.nvidia.com on Tue, 29 Jan 2019 00:56:15 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 29 Jan
+ 2019 08:56:14 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 29 Jan
+ 2019 08:56:14 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 29 Jan 2019 08:56:14 +0000
 Received: from localhost.localdomain (Not Verified[10.19.225.143]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c50152f0000>; Tue, 29 Jan 2019 00:56:16 -0800
+        id <B5c50152b0006>; Tue, 29 Jan 2019 00:56:14 -0800
 From:   Mark Zhang <markz@nvidia.com>
 To:     <lee.jones@linaro.org>, <blaws05@gmail.com>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-CC:     <linux-tegra@vger.kernel.org>, Mark Zhang <markz@nvidia.com>
-Subject: [PATCH v2 4/4] mfd: max77620: add documentation for low battery monitoring
-Date:   Tue, 29 Jan 2019 16:55:31 +0800
-Message-ID: <20190129085531.32364-5-markz@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, Mark Zhang <markz@nvidia.com>,
+        "Laxman Dewangan" <ldewangan@nvidia.com>,
+        Venkat Reddy Talla <vreddytalla@nvidia.com>
+Subject: [PATCH v2 3/4] mfd: max77620: Add low battery monitor support
+Date:   Tue, 29 Jan 2019 16:55:30 +0800
+Message-ID: <20190129085531.32364-4-markz@nvidia.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190129085531.32364-1-markz@nvidia.com>
 References: <20190129085531.32364-1-markz@nvidia.com>
@@ -54,61 +59,108 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548752178; bh=L9LH9hSL3Ib/CS/ZOqBpbZI2CIcUfJ74WbkHuzn+K/w=;
+        t=1548752136; bh=BgG6FUugC1CevREJ1krBzbps1BGj7dMGa+3M+zudQjU=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=RyDDsCMU3jyqr4fxrC2MNB5vSblqUiIOiBB3vczowS/uXpMyxOtb3ovu+iodJO/JL
-         hRusacVkzDY/n5hI/ULv4fZYPN4X2xbKsSDp6+Ma32evh2hXRVR5VVqKD8PMp/bq8Q
-         cqtEIZYx+FcwCC0mHgjFO9RaWGM+qbOVVjAQJzZq7oj15QepfaaVMfmgwuX+1VVxzh
-         8n1+zp4A6eYKeCFEX6dzoEL/b3qDmZxjfISgfsPOxnT7XnZw+wHMzbRnI3vAi3SoF0
-         CsHoflTZauu9XDUeG5JxRa4/IzizdXUZXP5oiSvAFlRwL2zn8+FzEgUB0dZSCMs36R
-         TiP4VmF/51Xfw==
+        b=IS8C+n3sj6zoBQx9m0diEhLB9G43DtLLPVrvriYTNg0MaJXC+osEaZPBlQfhwytr8
+         dT8ssw94ROFIZJ3oV8oD6rcAogg/B0jSVbnxt1w4X2eFsxGujrR7p/53AiCIdvRwC0
+         3ShL+okLBCIObiDnZIQCDrHxFIpY74NmcZdp5T5tWZKRQPzF8jxE2q6MRHyjKWKMaZ
+         qldGwWtjxMEsVU0jp4iE4Ix0Ra81xAwIbZSphNqljGf4JP4fUjfhR8/WCGBDy4jJKT
+         dp7KKObDwSA8LKOmXnOrlwfofHX3gGXwzb0jTXdVlUTFtFv++vrxgp/uHN9oKqThjJ
+         QWM+dQTtsY9IA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding documentation for low battery monitor properties:
-- maxim,low-battery-dac-enable
-- maxim,low-battery-dac-disable
-- maxim,low-battery-shutdown-enable
-- maxim,low-battery-shutdown-disable
-- maxim,low-battery-reset-enable
-- maxim,low-battery-reset-disable
+This patch adds PMIC configurations for low-battery
+monitoring by handling max77620 register CNFGGLBL1.
 
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
 Signed-off-by: Mark Zhang <markz@nvidia.com>
 ---
- Documentation/devicetree/bindings/mfd/max77620.txt | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/mfd/max77620.c | 57 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 56 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documenta=
-tion/devicetree/bindings/mfd/max77620.txt
-index 484b17e4fba5..5fed0a463b80 100644
---- a/Documentation/devicetree/bindings/mfd/max77620.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77620.txt
-@@ -142,6 +142,20 @@ Optional properties:
- 			Device supports 100/1000/3000/6000 Ohms.
- 			Default will be set to 1000 Ohm.
+diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+index f58143103185..9e50d145afd8 100644
+--- a/drivers/mfd/max77620.c
++++ b/drivers/mfd/max77620.c
+@@ -474,6 +474,57 @@ static int max77620_init_backup_battery_charging(struc=
+t max77620_chip *chip)
+ 	return ret;
+ }
 =20
-+Low-Battery Monitor:
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-+This sub-node configure low battery monitor configuration registers. Devic=
-e has
-+support for low-battery monitor configuration through child DT node
-+"low-battery-monitor".
++static int max77620_init_low_battery_monitor(struct max77620_chip *chip)
++{
++	struct device *dev =3D chip->dev;
++	struct device_node *np;
++	bool pval;
++	u8 mask =3D 0;
++	u8 val =3D 0;
++	int ret;
 +
-+Optional properties:
-+	- maxim,low-battery-dac-enable: Enable low battery DAC.
-+	- maxim,low-battery-dac-disable: Disable low battery DAC.
-+	- maxim,low-battery-shutdown-enable: Enable low battery shutdown.
-+	- maxim,low-battery-shutdown-disable: Disable low battery shutdown.
-+	- maxim,low-battery-reset-enable: Enable low battery reset.
-+	- maxim,low-battery-reset-disable: Disable low battery reset.
++	np =3D of_get_child_by_name(dev->of_node, "low-battery-monitor");
++	if (!np) {
++		dev_info(dev, "Low battery monitoring support disabled\n");
++		return 0;
++	}
 +
- Example:
- --------
- #include <dt-bindings/mfd/max77620.h>
++	pval =3D of_property_read_bool(np, "maxim,low-battery-dac-enable");
++	if (pval) {
++		mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
++		val |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
++	}
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-dac-disable");
++	if (pval)
++		mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-shutdown-enable");
++	if (pval) {
++		mask |=3D MAX77620_CNFGGLBL1_MPPLD;
++		val |=3D MAX77620_CNFGGLBL1_MPPLD;
++	}
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-shutdown-disable");
++	if (pval)
++		mask |=3D MAX77620_CNFGGLBL1_MPPLD;
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-reset-enable");
++	if (pval) {
++		mask |=3D MAX77620_CNFGGLBL1_LBRSTEN;
++		val |=3D MAX77620_CNFGGLBL1_LBRSTEN;
++	}
++
++	pval =3D of_property_read_bool(np, "maxim,low-battery-reset-disable");
++	if (pval)
++		mask |=3D MAX77620_CNFGGLBL1_LBRSTEN;
++
++	ret =3D regmap_update_bits(chip->rmap, MAX77620_REG_CNFGGLBL1, mask, val)=
+;
++	if (ret < 0)
++		dev_err(dev, "Reg CNFGGLBL1 update failed: %d\n", ret);
++	return ret;
++}
++
+ static int max77620_read_es_version(struct max77620_chip *chip)
+ {
+ 	unsigned int val;
+@@ -563,7 +614,11 @@ static int max77620_probe(struct i2c_client *client,
+ 	if (ret < 0)
+ 		return ret;
+=20
+-	ret =3D  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
++	ret =3D max77620_init_low_battery_monitor(chip);
++	if (ret < 0)
++		return ret;
++
++	ret =3D devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
+ 				    mfd_cells, n_mfd_cells, NULL, 0,
+ 				    regmap_irq_get_domain(chip->top_irq_data));
+ 	if (ret < 0) {
 --=20
 2.19.2
 
