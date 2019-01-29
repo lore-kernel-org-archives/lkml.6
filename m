@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8E3C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48882C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07102214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:38:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14CD32177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:38:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbfA2Jit (ORCPT
+        id S1728404AbfA2Jiz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:38:49 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:32856 "EHLO
+        Tue, 29 Jan 2019 04:38:55 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:32852 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbfA2Jik (ORCPT
+        with ESMTP id S1728328AbfA2Jij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:38:40 -0500
+        Tue, 29 Jan 2019 04:38:39 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 6B6472761E9
+        with ESMTPSA id 93F332761E9
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
         bleung@chromium.org
-Subject: [PATCH v3 11/12] platform/chrome: cros_ec_lightbar: remove pr_fmt() define
-Date:   Tue, 29 Jan 2019 10:38:22 +0100
-Message-Id: <20190129093823.27137-12-enric.balletbo@collabora.com>
+Subject: [PATCH v3 08/12] platform/chrome: cros_ec_proto: switch to SPDX identifier
+Date:   Tue, 29 Jan 2019 10:38:19 +0100
+Message-Id: <20190129093823.27137-9-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129093823.27137-1-enric.balletbo@collabora.com>
 References: <20190129093823.27137-1-enric.balletbo@collabora.com>
@@ -40,7 +40,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver no longer has any pr_{level} messages. Remove the pr_fmt().
+Adopt the SPDX license identifier headers to ease license compliance
+management.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Reviewed-by: Guenter Roeck <groeck@chromium.org>
@@ -49,22 +50,36 @@ Reviewed-by: Guenter Roeck <groeck@chromium.org>
 Changes in v3: None
 Changes in v2: None
 
- drivers/platform/chrome/cros_ec_lightbar.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/platform/chrome/cros_ec_proto.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index 37689ad79544..d30a6650b0b5 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -3,8 +3,6 @@
- //
- // Copyright (C) 2014 Google, Inc.
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index d2ba662fc713..d259ff264e9d 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -1,18 +1,7 @@
+-/*
+- * ChromeOS EC communication protocol helper functions
+- *
+- * Copyright (C) 2015 Google, Inc
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
++// SPDX-License-Identifier: GPL-2.0
++// ChromeOS EC communication protocol helper functions
++//
++// Copyright (C) 2015 Google, Inc
  
--#define pr_fmt(fmt) "cros_ec_lightbar: " fmt
--
- #include <linux/ctype.h>
+ #include <linux/mfd/cros_ec.h>
  #include <linux/delay.h>
- #include <linux/device.h>
 -- 
 2.20.1
 
