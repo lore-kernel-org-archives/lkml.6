@@ -2,172 +2,207 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BC5C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A010C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D753214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0783020989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 14:31:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dGLdF5bX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfA2Oak (ORCPT
+        id S1727767AbfA2Obv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 09:30:40 -0500
-Received: from mout.gmx.net ([212.227.15.18]:48191 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbfA2Oak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 09:30:40 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0LiDrv-1hT1sH3x7j-00nMpi; Tue, 29
- Jan 2019 15:29:55 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-doc@vger.kernel.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Markus Heiser <markus.heiser@darmarit.de>,
-        Minghui Liu <minghui.liu.95@gmail.com>,
-        Michael Rodin <michael-git@rodin.online>,
-        Grigory Shipunov <mail@oxapentane.com>,
-        Alessia Mantegazza <amantegazza@vaga.pv.it>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] doc: Change LXR references to elixir.bootlin.com
-Date:   Tue, 29 Jan 2019 15:29:11 +0100
-Message-Id: <20190129142923.5743-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
+        Tue, 29 Jan 2019 09:31:51 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44263 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbfA2Obv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 09:31:51 -0500
+Received: by mail-vs1-f65.google.com with SMTP id u11so12029785vsp.11
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 06:31:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SZM6OVgxv/IBmtJypwoYcCJZu0u9rAyQfSsjwtcLSkM=;
+        b=dGLdF5bXTIm9Lr3os3sri+AADTTshoVLNLq3wu64hl7s5JVkNOxDHFNh/v1+O7/BOE
+         e1xI/A4xH4KP/wGAbJalszKC2cmfAgIVFOc2YzBfK7MBygoGDTD5nmJVRgX0qxjtyurf
+         0NNnBB6Wq5LyvrJ6EgDr25Sx0NO10Xc0Mto6k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SZM6OVgxv/IBmtJypwoYcCJZu0u9rAyQfSsjwtcLSkM=;
+        b=sHBZA2yEDqdOTAAzb82Yir8s9tyTZ8JYH2ZYvEO59IoXOMw6eEue3pC4GSj0HKDj6e
+         yKFKGdEXh6n3+p2u0ULDgvGCBuKdQ4bSroIAF27w5txOALVosLN/uNYNvwJGXHJ982Ps
+         BUaCiai9P03qaeCBjo2yO8cmvWylVPtMjuvLMrVgAGnCEX7e+Bx/rugBkfnTLxAOrx91
+         DfHtEpsTo7CgCmgnrh2aagsmVFXmdheiru6N6FqoSTPlQCcwwz41Kj8cAw4aIJTMGYFa
+         Rj1dxheW4PMvxMGXEXKTfqfqp/TMcOLbQ9XWTJLuBG7RCbmSSZdpX8aV8jUTncW6cqin
+         tD9w==
+X-Gm-Message-State: AJcUukfSM1BNtTmapxYX+UCRMr7Ib2JcVnWBAN1D8AysR8QsAEwFw34r
+        QQh7oN9VON/TFZGRu3fNf0KSpkG0CJ8sy6sedjilqp02
+X-Google-Smtp-Source: ALg8bN5SaNX6wpE3yPb8T94cks8htxcsY1y8H73reD0IgY6DGw6mMeWXRcn6W4aWJKWQuAHw2auvp0v0FgpK6g7XT3U=
+X-Received: by 2002:a67:b245:: with SMTP id s5mr10779714vsh.200.1548772309791;
+ Tue, 29 Jan 2019 06:31:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:RFtztAhG7nP8GfwnhwXEK2KhyRvO70mIOqq7+GF5TmHi+tUlUay
- nZErkbyxFPcQ75a/ZWLcQ8f/bZ1ahlKumvTmgRCnqtil3KbykQSUc4+4m4rkf0aCRbO3D7I
- 3t6Gck/jXezZFVIQgOeYu6Se8Yvt3xU0tXgwSbW8Wde4Ko0SQrEbtj9CIHauQ4wol6kdKWo
- ku1M10AevX1bI5kuuAqIw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:VEI5B0CCF3w=:1zEhRwo9oSPM4WTdGknaxp
- FKcDrT/g4uNGNvQYRosT6P/CCvrLfxiiQJ9TP0FGl1ftiERCEop1r/syea7xgvY3Wyxxaq1ON
- C0LChSgytchGYveNFTVYVkHbWF7aQ0L4GjKW30+xQJ1jYNxssudLUcrXeTS7xLC9xc3XRbVQy
- R94zHJnvMtdKJiidItUCod4C1Y2C6gLKZ/s0+S5wmqMs/iQ45fezY+OhfyygTiiXXSNEmrw+f
- GtCOlTVndgb1btjpCYkuTAnp30AVx2RTsTz9ijaoZpFGW7QjbUX7y4bwTHPBWYmlizG40AHtK
- +hh/LXEsPz+LltgSuCWg+YkYi0PqJPEe3RRVZIoxPN+5zx5+lmED/BGcrWAY/1AZ0ytmxlXYH
- RCoEQwMvE8nxk0myOJe7C5uFrTKr2jpu9qJWy/yOpF0oSEna6Np1knrpvEEK56Ev9Rfq2gLhE
- 38vaxzOXhejjpVFRBDgwtA0PvHbb6Os7Ex4bYXDRIyLHVLFpDi9WoEHA+Dy+A5QW02r4lF24P
- J9sobn4CsJv5/WPb/oZSJXMzYJ+ZMrP+5rffzrUVnrT3OZo/gEc/iXTMlI9htEHpnWIakPCyK
- ZZeNJprZAQBv5JnfJ1bUoka2vnTEyK0eAdkRqFdCcEh5ova1wh+M0RDaZgY/dXo/5ff/99YTL
- olpZB4eqUVqEfyDH8CHOnmHPE1vcnLEsPfcfjYXS7VkovrKxAiSrRrnLNYw7r1/CDA4Zk7zr9
- ThOAjbHSlBs/pQDvuo5m/y0UUhEwjkdS8kLC3b1GEmAQJ1vLzpcHKZw2vrppPYrlPvLM/WZTb
- 6eWDKnYgdSNYOa6ydtpVxB0qe+0u6aVXF9JmFL+GEB/Oo7jFKrifFGUom4wxgcZJSI4S8bo4n
- NSpKNiJQDAmMl/s+ljwYU9/Z6befZ/59olpKPgHIpYnm+BVLGZRlERZHeHa4x7VR9hj4wkwW+
- hWEzFGSBZfA==
+References: <1544109212-12621-1-git-send-email-ludovic.Barre@st.com> <1544109212-12621-3-git-send-email-ludovic.Barre@st.com>
+In-Reply-To: <1544109212-12621-3-git-send-email-ludovic.Barre@st.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 29 Jan 2019 15:31:12 +0100
+Message-ID: <CAPDyKFoqjNZXgAGQe+aT4xE=7Q69msowambNNM+6qGWjXa9Qmg@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] mmc: mmci: send stop command to clear the dpsm
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recently, Free Electrons was renamed to Bootlin[1]. Less recently, the
-Linux Cross Reference (LXR) at lxr.free-electrons.com was replaced by
-Elixir[2], and lxr.free-electrons.com redirected first to
-elixir.free-electrons.com and now to elixir.bootlin.com.
+On Thu, 6 Dec 2018 at 16:13, Ludovic Barre <ludovic.Barre@st.com> wrote:
+>
+> From: Ludovic Barre <ludovic.barre@st.com>
+>
+> The current approach with sending a CMD12 (STOP_TRANSMISSION) to
+> complete a data transfer request, either because of using the open
+> ended transmission type or because of receiving an error during a data
+> transfer, isn't sufficient for the STM32 sdmmc variant.
+>
+> More precisely, for STM32 sdmmc the DPSM ("Data Path State Machine")
+> needs to be cleared by sending a CMD12, also for the so called ADTC
+> commands. For this reason, let the driver send a CMD12 to complete
+> ADTC commands, in case it's set (depend of cmdreg_stop variant property).
+>
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> ---
+>  drivers/mmc/host/mmci.c | 37 +++++++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/mmci.h |  2 ++
+>  2 files changed, 39 insertions(+)
+>
+> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+> index e352f5a..4e5643d 100644
+> --- a/drivers/mmc/host/mmci.c
+> +++ b/drivers/mmc/host/mmci.c
+> @@ -58,6 +58,8 @@ void sdmmc_variant_init(struct mmci_host *host);
+>  #else
+>  static inline void sdmmc_variant_init(struct mmci_host *host) {}
+>  #endif
+> +static void
+> +mmci_start_command(struct mmci_host *host, struct mmc_command *cmd, u32 c);
+>
+>  static unsigned int fmax = 515633;
+>
+> @@ -572,9 +574,37 @@ void mmci_dma_error(struct mmci_host *host)
+>                 host->ops->dma_error(host);
+>  }
+>
+> +static int mmci_stop_command(struct mmci_host *host, struct mmc_request *mrq)
+> +{
+> +       u32 dpsm;
+> +
+> +       /*
+> +        * If an error happens on command or data transmission
+> +        * the DPSM stay enabled. The CPSM required a stop command
+> +        * to reinitialize the DPSM.
+> +        */
+> +       dpsm = readl_relaxed(host->base + MMCISTATUS);
+> +       dpsm &= MCI_STM32_DPSMACTIVE;
+> +
+> +       if (dpsm && ((mrq->cmd && mrq->cmd->error) ||
+> +                    (mrq->data && mrq->data->error))) {
+> +               mmci_start_command(host, &host->stop_abort, 0);
+> +               return -EBUSY;
+> +       }
 
-[1]: https://bootlin.com/blog/free-electrons-becomes-bootlin/
-[2]: https://github.com/free-electrons/elixir
+Unless I have got it wrong, I think there are several problems with
+the above code and how you call it.
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
----
- Documentation/input/devices/xpad.rst               | 2 +-
- Documentation/process/howto.rst                    | 2 +-
- Documentation/process/kernel-docs.rst              | 2 +-
- Documentation/translations/it_IT/process/howto.rst | 2 +-
- Documentation/translations/ja_JP/howto.rst         | 2 +-
- Documentation/translations/ko_KR/howto.rst         | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+1) We may be reading the MMCISTATUS register when we don't need to
+(because there are no errors).
 
-diff --git a/Documentation/input/devices/xpad.rst b/Documentation/input/devices/xpad.rst
-index b8bd65962dd8..95d410b27a96 100644
---- a/Documentation/input/devices/xpad.rst
-+++ b/Documentation/input/devices/xpad.rst
-@@ -218,7 +218,7 @@ References
- .. [1] http://euc.jp/periphs/xbox-controller.ja.html (ITO Takayuki)
- .. [2] http://xpad.xbox-scene.com/
- .. [3] http://www.markosweb.com/www/xboxhackz.com/
--.. [4] http://lxr.free-electrons.com/ident?i=xpad_device
-+.. [4] https://elixir.bootlin.com/ident?i=xpad_device
- 
- 
- Historic Edits
-diff --git a/Documentation/process/howto.rst b/Documentation/process/howto.rst
-index 58b2f46c4f98..bdd2eda81a1c 100644
---- a/Documentation/process/howto.rst
-+++ b/Documentation/process/howto.rst
-@@ -225,7 +225,7 @@ Cross-Reference project, which is able to present source code in a
- self-referential, indexed webpage format. An excellent up-to-date
- repository of the kernel code may be found at:
- 
--	http://lxr.free-electrons.com/
-+	https://elixir.bootlin.com/
- 
- 
- The development process
-diff --git a/Documentation/process/kernel-docs.rst b/Documentation/process/kernel-docs.rst
-index 3fb28de556e4..ab12dddc773e 100644
---- a/Documentation/process/kernel-docs.rst
-+++ b/Documentation/process/kernel-docs.rst
-@@ -565,7 +565,7 @@ Miscellaneous
- 
-     * Name: **Cross-Referencing Linux**
- 
--      :URL: http://lxr.free-electrons.com/
-+      :URL: https://elixir.bootlin.com/
-       :Keywords: Browsing source code.
-       :Description: Another web-based Linux kernel source code browser.
-         Lots of cross references to variables and functions. You can see
-diff --git a/Documentation/translations/it_IT/process/howto.rst b/Documentation/translations/it_IT/process/howto.rst
-index 909e6a55bc43..b323c4b309a5 100644
---- a/Documentation/translations/it_IT/process/howto.rst
-+++ b/Documentation/translations/it_IT/process/howto.rst
-@@ -234,7 +234,7 @@ il progetto Linux Cross-Reference, che è in grado di presentare codice
- sorgente in un formato autoreferenziale ed indicizzato. Un eccellente ed
- aggiornata fonte di consultazione del codice del kernel la potete trovare qui:
- 
--	http://lxr.free-electrons.com/
-+	https://elixir.bootlin.com
- 
- 
- Il processo di sviluppo
-diff --git a/Documentation/translations/ja_JP/howto.rst b/Documentation/translations/ja_JP/howto.rst
-index f3116381c26b..2ca9389d5915 100644
---- a/Documentation/translations/ja_JP/howto.rst
-+++ b/Documentation/translations/ja_JP/howto.rst
-@@ -245,7 +245,7 @@ Linux カーネルソースツリーの中に含まれる、きれいにし、
- できます。この最新の素晴しいカーネルコードのリポジトリは以下で見つかり
- ます -
- 
--	http://lxr.free-electrons.com/
-+	https://elixir.bootlin.com/
- 
- 開発プロセス
- ------------
-diff --git a/Documentation/translations/ko_KR/howto.rst b/Documentation/translations/ko_KR/howto.rst
-index a8197e072599..9fc869087e9c 100644
---- a/Documentation/translations/ko_KR/howto.rst
-+++ b/Documentation/translations/ko_KR/howto.rst
-@@ -235,7 +235,7 @@ ReST 마크업을 사용하는 문서들은 Documentation/output 에 생성된
- 소스코드를 인덱스된 웹 페이지들의 형태로 보여준다. 최신의 멋진 커널
- 코드 저장소는 다음을 통하여 참조할 수 있다.
- 
--      http://lxr.free-electrons.com/
-+      https://elixir.bootlin.com/
- 
- 
- 개발 프로세스
--- 
-2.20.1
+2) Nothing prevents keep sending the CMD12 over and over again, for
+the same request. This could happen, as long as the
+MCI_STM32_DPSMACTIVE remains set. I guess it simply shouldn't happen,
+but I rather prevent this being possible altogether, as to avoid a
+potential hang. It's better to propagate errors.
 
+3) There is a scenario when the DPSM has been enabled, while we fail
+with the "sbc" command, this isn't covered, but I think should, right?
+
+4) host->stop_abort.error needs to be reset to zero, in-between
+sending the internal CMD12 command. Otherwise, we may end up re-using
+an error code from a failed CMD12 command, over and over again.
+
+> +
+> +       return 0;
+> +}
+> +
+>  static void
+>  mmci_request_end(struct mmci_host *host, struct mmc_request *mrq)
+>  {
+> +       /*
+> +        * For variant with cmdstop bit, a stop command could be needed
+> +        * to finish the request.
+> +        */
+> +       if (host->variant->cmdreg_stop && mmci_stop_command(host, mrq))
+> +               return;
+> +
+>         writel(0, host->base + MMCICOMMAND);
+>
+>         BUG_ON(host->data);
+> @@ -1956,6 +1986,13 @@ static int mmci_probe(struct amba_device *dev,
+>                 mmc->max_busy_timeout = 0;
+>         }
+>
+> +       /* prepare the stop command, used to abort and reinitialized the DPSM */
+> +       if (variant->cmdreg_stop) {
+> +               host->stop_abort.opcode = MMC_STOP_TRANSMISSION;
+> +               host->stop_abort.arg = 0;
+> +               host->stop_abort.flags = MMC_RSP_R1B | MMC_CMD_AC;
+> +       }
+> +
+>         mmc->ops = &mmci_ops;
+>
+>         /* We support these PM capabilities. */
+> diff --git a/drivers/mmc/host/mmci.h b/drivers/mmc/host/mmci.h
+> index 2422909..35372cd 100644
+> --- a/drivers/mmc/host/mmci.h
+> +++ b/drivers/mmc/host/mmci.h
+> @@ -161,6 +161,7 @@
+>  #define MCI_ST_CEATAEND                (1 << 23)
+>  #define MCI_ST_CARDBUSY                (1 << 24)
+>  /* Extended status bits for the STM32 variants */
+> +#define MCI_STM32_DPSMACTIVE   BIT(12)
+>  #define MCI_STM32_BUSYD0       BIT(20)
+>
+>  #define MMCICLEAR              0x038
+> @@ -377,6 +378,7 @@ struct mmci_host {
+>         void __iomem            *base;
+>         struct mmc_request      *mrq;
+>         struct mmc_command      *cmd;
+> +       struct mmc_command      stop_abort;
+>         struct mmc_data         *data;
+>         struct mmc_host         *mmc;
+>         struct clk              *clk;
+> --
+> 2.7.4
+>
+
+To fix the issues I pointed out above, I decided to try out something
+myself. So, I will post a patch in a few minutes, can you please give
+it try at your end?
+
+Kind regards
+Uffe
