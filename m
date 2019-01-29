@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B869C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD19C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7BF20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3AD120989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762697;
-	bh=Nrwdy9u0vK483DrziIXVrZfhNGvu1O+DV6fmbULOYuQ=;
+	s=default; t=1548762702;
+	bh=MhRN4e7d3ZxNm88IZGbzoawpkmdHJOeSzns2GkEy2t0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MpwYteJl9USWwqc734PKwmUihcmIpRic8AEjry/RRADkip6ny2JHdCjIfv8irgx2X
-	 1Oip1a1TZaEjbFLc85mFpTkJx7qZB/98vD85K1IRiIA9aSiYAmWp6ww8E6sa1aictp
-	 ph820odE80SDrCehwMiD5GwF7b/b/SiazZ3QKFQs=
+	b=blP9SHs+ovvDce4GqMOzonTpKylWTzy7PZAhTl69Ejzm6Is93un692VPY8d2MaE82
+	 gFFxX6zZGK5dMFMXnBETQVqEPZu5tlsOBJA8k2FzyQObZkZjXWEzYbwSVsYOgFQipm
+	 SIpcYfxeKAQ1KHS8BJFj4d49v/dVdOXyGnaqZoZw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731903AbfA2Lvf (ORCPT
+        id S1731435AbfA2Lvk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:51:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43026 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:51:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731889AbfA2Lvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:51:31 -0500
+        id S1730948AbfA2Lvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:51:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0E4B2086C;
-        Tue, 29 Jan 2019 11:51:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1DDE2148E;
+        Tue, 29 Jan 2019 11:51:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762690;
-        bh=Nrwdy9u0vK483DrziIXVrZfhNGvu1O+DV6fmbULOYuQ=;
+        s=default; t=1548762696;
+        bh=MhRN4e7d3ZxNm88IZGbzoawpkmdHJOeSzns2GkEy2t0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OzK9qEYJnbcvW0NIYD2o+PuomINZOHnd0yM9qMVn9Go33xamAPpOhmYBrxVQ6hX7W
-         NwNX9Bzyt+WMiN8p2JPUXDs46neN22Oa+mwpKF6ch2aZE/3LWO7EL/u+SlI2QB80VO
-         FB1JQGCAsaOkHbQ6+pTcF8kAj1+ZsrpgVDS/Brf4=
+        b=uxjKdG3MJz3ml/FsyeitaFH6Mod6T0XEjfG7vIJBIemOdenrjFWOZfc+jcZKCHxmt
+         /BDpf8LRVGEqo55TEyz9O3mhEsyFNQJKbcSq6A/bKuTdPhatIkKpdXoV2wtPw9wswP
+         vp4EhF3FBsBRkQh9DsdKytZ9YWsP/93i/k9YhrSE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 4.9 17/44] char/mwave: fix potential Spectre v1 vulnerability
-Date:   Tue, 29 Jan 2019 12:36:12 +0100
-Message-Id: <20190129113141.385394175@linuxfoundation.org>
+        stable@vger.kernel.org, stuart hayes <stuart.w.hayes@gmail.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.9 27/44] acpi/nfit: Block function zero DSMs
+Date:   Tue, 29 Jan 2019 12:36:22 +0100
+Message-Id: <20190129113142.108013804@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -65,69 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 701956d4018e5d5438570e39e8bda47edd32c489 upstream.
+commit 5e9e38d0db1d29efed1dd4cf9a70115d33521be7 upstream.
 
-ipcnum is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+In preparation for using function number 0 as an error value, prevent it
+from being considered a valid function value by acpi_nfit_ctl().
 
-This issue was detected with the help of Smatch:
-
-drivers/char/mwave/mwavedd.c:299 mwave_ioctl() warn: potential spectre issue 'pDrvData->IPCs' [w] (local cap)
-
-Fix this by sanitizing ipcnum before using it to index pDrvData->IPCs.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Cc: <stable@vger.kernel.org>
+Cc: stuart hayes <stuart.w.hayes@gmail.com>
+Fixes: e02fb7264d8a ("nfit: add Microsoft NVDIMM DSM command set...")
+Reported-by: Jeff Moyer <jmoyer@redhat.com>
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/mwave/mwavedd.c |    7 +++++++
+ drivers/acpi/nfit/core.c |    7 +++++++
  1 file changed, 7 insertions(+)
 
---- a/drivers/char/mwave/mwavedd.c
-+++ b/drivers/char/mwave/mwavedd.c
-@@ -59,6 +59,7 @@
- #include <linux/mutex.h>
- #include <linux/delay.h>
- #include <linux/serial_8250.h>
-+#include <linux/nospec.h>
- #include "smapi.h"
- #include "mwavedd.h"
- #include "3780i.h"
-@@ -289,6 +290,8 @@ static long mwave_ioctl(struct file *fil
- 						ipcnum);
- 				return -EINVAL;
- 			}
-+			ipcnum = array_index_nospec(ipcnum,
-+						    ARRAY_SIZE(pDrvData->IPCs));
- 			PRINTK_3(TRACE_MWAVE,
- 				"mwavedd::mwave_ioctl IOCTL_MW_REGISTER_IPC"
- 				" ipcnum %x entry usIntCount %x\n",
-@@ -317,6 +320,8 @@ static long mwave_ioctl(struct file *fil
- 						" Invalid ipcnum %x\n", ipcnum);
- 				return -EINVAL;
- 			}
-+			ipcnum = array_index_nospec(ipcnum,
-+						    ARRAY_SIZE(pDrvData->IPCs));
- 			PRINTK_3(TRACE_MWAVE,
- 				"mwavedd::mwave_ioctl IOCTL_MW_GET_IPC"
- 				" ipcnum %x, usIntCount %x\n",
-@@ -383,6 +388,8 @@ static long mwave_ioctl(struct file *fil
- 						ipcnum);
- 				return -EINVAL;
- 			}
-+			ipcnum = array_index_nospec(ipcnum,
-+						    ARRAY_SIZE(pDrvData->IPCs));
- 			mutex_lock(&mwave_mutex);
- 			if (pDrvData->IPCs[ipcnum].bIsEnabled == true) {
- 				pDrvData->IPCs[ipcnum].bIsEnabled = false;
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -1433,6 +1433,13 @@ static int acpi_nfit_add_dimm(struct acp
+ 		return 0;
+ 	}
+ 
++	/*
++	 * Function 0 is the command interrogation function, don't
++	 * export it to potential userspace use, and enable it to be
++	 * used as an error value in acpi_nfit_ctl().
++	 */
++	dsm_mask &= ~1UL;
++
+ 	uuid = to_nfit_uuid(nfit_mem->family);
+ 	for_each_set_bit(i, &dsm_mask, BITS_PER_LONG)
+ 		if (acpi_check_dsm(adev_dimm->handle, uuid, 1, 1ULL << i))
 
 
