@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77227C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2A9C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47A6420880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:57:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8230020880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:57:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763029;
-	bh=VlEW2lhWiEuEwLCvSvJnzwocdGkUu5CytewinW2bMlo=;
+	s=default; t=1548763038;
+	bh=zX70q9xlByaZ5DBtBZ4O/78vdKmBOURFkN8ka3Bls84=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uTpgC13bFgiUMGmHQ0ggR/khLKWvr3hYQHDZMn/2tjLVIM1BcY4RmB+CM/A+2pdYJ
-	 bh5+imuGv5FK+NcMkf6kEERPIiy77OT0uyC2dDo+sjr+qtMXsnjn2IwS3vekwvn/6P
-	 jn0JHTxYzupUcEHIJZ+Eq+xOurg2PF81e5cyvgTo=
+	b=WGn59CAGWBZdXmXgrZPWs3bMsxaDHofZo/wDYq8TkOz/90WbgMikPwwXkqEgUMO1B
+	 cNADhMTs1zjEtwa2A+/KFynxkCXI9rGij38ccv79WEJMt2Fq1W6XCWc7QCmNM/929a
+	 yt07NNnaFoNGAI8Po/uGElPtwW9N8thiv7uJiKdc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731451AbfA2LtS (ORCPT
+        id S1731642AbfA2L5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:49:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40266 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:57:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731434AbfA2LtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:49:15 -0500
+        id S1731421AbfA2LtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:49:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B58BF2148E;
-        Tue, 29 Jan 2019 11:49:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BBC420869;
+        Tue, 29 Jan 2019 11:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762554;
-        bh=VlEW2lhWiEuEwLCvSvJnzwocdGkUu5CytewinW2bMlo=;
+        s=default; t=1548762548;
+        bh=zX70q9xlByaZ5DBtBZ4O/78vdKmBOURFkN8ka3Bls84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y4Ut4+/LMBYEpiwqkdSgFATRYEQpeukWLBoJM0BWeYl0xMoxrYhAYa3ucJdyGw7Ap
-         Z6fv9cfeBfauhLgvmxJPhIuYf3I5UmJ5KBsaUh3p4/ov+C+1PRFDDuhrAcQigYEpY0
-         1rpgOBUsWrEQznF0VnmGtw/vBcyDLicqnr8BwTt8=
+        b=AiPwxZsv4xyY0LOO3oskjlMExPouF2RXOMTRgUBU3OnrVpJqMW8aUbRoOdYlcbSet
+         cylmi31CkV0z7NVK+eJ/Zc+btGobUL+1GoTc72Gwhka+f+dSga9TaF4eZGcbQOOi3C
+         6pyBxBls0cuUsKyV8p1a5fnIxowpaWDsawvftKT4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.14 46/68] irqchip/gic-v3-its: Align PCI Multi-MSI allocation on their size
-Date:   Tue, 29 Jan 2019 12:36:08 +0100
-Message-Id: <20190129113135.906462811@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
+        hpa@zytor.com, linux@endlessm.com
+Subject: [PATCH 4.14 44/68] x86/kaslr: Fix incorrect i8254 outb() parameters
+Date:   Tue, 29 Jan 2019 12:36:06 +0100
+Message-Id: <20190129113135.647568489@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -65,83 +66,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Daniel Drake <drake@endlessm.com>
 
-commit 8208d1708b88b412ca97f50a6d951242c88cbbac upstream.
+commit 7e6fc2f50a3197d0e82d1c0e86282976c9e6c8a4 upstream.
 
-The way we allocate events works fine in most cases, except
-when multiple PCI devices share an ITS-visible DevID, and that
-one of them is trying to use MultiMSI allocation.
+The outb() function takes parameters value and port, in that order.  Fix
+the parameters used in the kalsr i8254 fallback code.
 
-In that case, our allocation is not guaranteed to be zero-based
-anymore, and we have to make sure we allocate it on a boundary
-that is compatible with the PCI Multi-MSI constraints.
-
-Fix this by allocating the full region upfront instead of iterating
-over the number of MSIs. MSI-X are always allocated one by one,
-so this shouldn't change anything on that front.
-
-Fixes: b48ac83d6bbc2 ("irqchip: GICv3: ITS: MSI support")
+Fixes: 5bfce5ef55cb ("x86, kaslr: Provide randomness functions")
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: linux@endlessm.com
 Cc: stable@vger.kernel.org
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Link: https://lkml.kernel.org/r/20190107034024.15005-1-drake@endlessm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/irqchip/irq-gic-v3-its.c |   25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ arch/x86/lib/kaslr.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2086,13 +2086,14 @@ static void its_free_device(struct its_d
- 	kfree(its_dev);
- }
+--- a/arch/x86/lib/kaslr.c
++++ b/arch/x86/lib/kaslr.c
+@@ -36,8 +36,8 @@ static inline u16 i8254(void)
+ 	u16 status, timer;
  
--static int its_alloc_device_irq(struct its_device *dev, irq_hw_number_t *hwirq)
-+static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number_t *hwirq)
- {
- 	int idx;
- 
--	idx = find_first_zero_bit(dev->event_map.lpi_map,
--				  dev->event_map.nr_lpis);
--	if (idx == dev->event_map.nr_lpis)
-+	idx = bitmap_find_free_region(dev->event_map.lpi_map,
-+				      dev->event_map.nr_lpis,
-+				      get_count_order(nvecs));
-+	if (idx < 0)
- 		return -ENOSPC;
- 
- 	*hwirq = dev->event_map.lpi_base + idx;
-@@ -2188,21 +2189,21 @@ static int its_irq_domain_alloc(struct i
- 	int err;
- 	int i;
- 
--	for (i = 0; i < nr_irqs; i++) {
--		err = its_alloc_device_irq(its_dev, &hwirq);
--		if (err)
--			return err;
-+	err = its_alloc_device_irq(its_dev, nr_irqs, &hwirq);
-+	if (err)
-+		return err;
- 
--		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq);
-+	for (i = 0; i < nr_irqs; i++) {
-+		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq + i);
- 		if (err)
- 			return err;
- 
- 		irq_domain_set_hwirq_and_chip(domain, virq + i,
--					      hwirq, &its_irq_chip, its_dev);
-+					      hwirq + i, &its_irq_chip, its_dev);
- 		irqd_set_single_target(irq_desc_get_irq_data(irq_to_desc(virq + i)));
- 		pr_debug("ID:%d pID:%d vID:%d\n",
--			 (int)(hwirq - its_dev->event_map.lpi_base),
--			 (int) hwirq, virq + i);
-+			 (int)(hwirq + i - its_dev->event_map.lpi_base),
-+			 (int)(hwirq + i), virq + i);
- 	}
- 
- 	return 0;
+ 	do {
+-		outb(I8254_PORT_CONTROL,
+-		     I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
++		outb(I8254_CMD_READBACK | I8254_SELECT_COUNTER0,
++		     I8254_PORT_CONTROL);
+ 		status = inb(I8254_PORT_COUNTER0);
+ 		timer  = inb(I8254_PORT_COUNTER0);
+ 		timer |= inb(I8254_PORT_COUNTER0) << 8;
 
 
