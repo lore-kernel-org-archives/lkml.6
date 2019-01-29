@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DD8C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A704C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF8F214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ACE8214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762452;
-	bh=69YDg3RjeeJlRGZY6BxHs4v/yeWKmGQvd/jZPsheGxA=;
+	s=default; t=1548762456;
+	bh=prfZqUYnkWT5JZ/UufI3n5MVpFJVAiwg9sXwqpH/XgI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OOcBPWU1MvbHRLORB3rsNv/iuVM/FBWx1AvI73y9tIOw//HthtNZlJf0Bt5U+JfNX
-	 W+Pr0OhoIw6RCC1DfZg8eT7NKhYFzD686IWLJXiof7jauKeMuV/ETp8PG6oZ/QJ0Cj
-	 3Puc2kYc4MQpdflTQ7Jflq6wTc7d0wS6u4S4LbRk=
+	b=jw2Po6JTbOqVa19dGR3GV8I4QIK1k2meV2hbBsCqE+c5TDCflgiUFVmu3p79zp6mn
+	 QFm9VRsrylSTkjPI11laEWxPz3Jyl9ManBUjhovQW1YCpUAdOs7m61m7SC94xyXBPf
+	 7SJjtEQVGSQ0QR7oe+JS4EbaT/eBrtEs2YFaesb8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730836AbfA2Lr3 (ORCPT
+        id S1731203AbfA2Lre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:47:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38072 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:47:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730513AbfA2LrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:24 -0500
+        id S1730849AbfA2Lra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C52DB2086C;
-        Tue, 29 Jan 2019 11:47:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D3F52086C;
+        Tue, 29 Jan 2019 11:47:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762444;
-        bh=69YDg3RjeeJlRGZY6BxHs4v/yeWKmGQvd/jZPsheGxA=;
+        s=default; t=1548762450;
+        bh=prfZqUYnkWT5JZ/UufI3n5MVpFJVAiwg9sXwqpH/XgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pbustj1syZzIPWVhN0oEf3xT4hV/zM47FXRVRd9BAsqHwOi40/e+4wshdvS//v57y
-         0j4Kfn26pAsjIIVJ7SbOpL2Z5zqbhwnXvSBQyf9q4Lidnv0avfALi8ae7zhxIx9XOU
-         KH9dF8qThp1cM4Q0/4ZLgL9p9nVaPpLfERxazw1w=
+        b=TjmKq96w/yNtXvD/Dz0ZHkTcErQu3Zb2J99PEZ5crlMT+nL4O2OSJCwuKC9SHW8+K
+         SfpD2L0nBgXCyQAy2GiGII6UD7sn+ScqTq5136Rn8Q5p0fEPIK6VrxV73CKP8KcN3b
+         wXBc8aRiyykUH/bqkcf/bSqGyjkB3pJq+vB4uJLU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kernel test robot <lkp@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 103/103] ide: fix a typo in the settings proc file name
-Date:   Tue, 29 Jan 2019 12:36:20 +0100
-Message-Id: <20190129113207.661902331@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 01/68] amd-xgbe: Fix mdio access for non-zero ports and clause 45 PHYs
+Date:   Tue, 29 Jan 2019 12:35:23 +0100
+Message-Id: <20190129113131.855518341@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
-References: <20190129113159.567154026@linuxfoundation.org>
+In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
+References: <20190129113131.751891514@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,34 +62,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Christoph Hellwig <hch@lst.de>
+From: "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
 
-commit f8ff6c732d35904d773043f979b844ef330c701b upstream.
+[ Upstream commit 5ab3121beeb76aa6090195b67d237115860dd9ec ]
 
-Fixes: ec7d9c9ce8 ("ide: replace ->proc_fops with ->proc_show")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+The XGBE hardware has support for performing MDIO operations using an
+MDIO command request. The driver mistakenly uses the mdio port address
+as the MDIO command request device address instead of the MDIO command
+request port address. Additionally, the driver does not properly check
+for and create a clause 45 MDIO command.
+
+Check the supplied MDIO register to determine if the request is a clause
+45 operation (MII_ADDR_C45). For a clause 45 operation, extract the device
+address and register number from the supplied MDIO register and use them
+to set the MDIO command request device address and register number fields.
+For a clause 22 operation, the MDIO request device address is set to zero
+and the MDIO command request register number is set to the supplied MDIO
+register. In either case, the supplied MDIO port address is used as the
+MDIO command request port address.
+
+Fixes: 732f2ab7afb9 ("amd-xgbe: Add support for MDIO attached PHYs")
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Tested-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/ide/ide-proc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/amd/xgbe/xgbe-common.h |    2 --
+ drivers/net/ethernet/amd/xgbe/xgbe-dev.c    |   22 ++++++++++++++++------
+ 2 files changed, 16 insertions(+), 8 deletions(-)
 
---- a/drivers/ide/ide-proc.c
-+++ b/drivers/ide/ide-proc.c
-@@ -544,7 +544,7 @@ void ide_proc_port_register_devices(ide_
- 		drive->proc = proc_mkdir(drive->name, parent);
- 		if (drive->proc) {
- 			ide_add_proc_entries(drive->proc, generic_drive_entries, drive);
--			proc_create_data("setting", S_IFREG|S_IRUSR|S_IWUSR,
-+			proc_create_data("settings", S_IFREG|S_IRUSR|S_IWUSR,
- 					drive->proc, &ide_settings_proc_fops,
- 					drive);
- 		}
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-common.h
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-common.h
+@@ -431,8 +431,6 @@
+ #define MAC_MDIOSCAR_PA_WIDTH		5
+ #define MAC_MDIOSCAR_RA_INDEX		0
+ #define MAC_MDIOSCAR_RA_WIDTH		16
+-#define MAC_MDIOSCAR_REG_INDEX		0
+-#define MAC_MDIOSCAR_REG_WIDTH		21
+ #define MAC_MDIOSCCDR_BUSY_INDEX	22
+ #define MAC_MDIOSCCDR_BUSY_WIDTH	1
+ #define MAC_MDIOSCCDR_CMD_INDEX		16
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+@@ -1284,6 +1284,20 @@ static void xgbe_write_mmd_regs(struct x
+ 	}
+ }
+ 
++static unsigned int xgbe_create_mdio_sca(int port, int reg)
++{
++	unsigned int mdio_sca, da;
++
++	da = (reg & MII_ADDR_C45) ? reg >> 16 : 0;
++
++	mdio_sca = 0;
++	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, RA, reg);
++	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, PA, port);
++	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, DA, da);
++
++	return mdio_sca;
++}
++
+ static int xgbe_write_ext_mii_regs(struct xgbe_prv_data *pdata, int addr,
+ 				   int reg, u16 val)
+ {
+@@ -1291,9 +1305,7 @@ static int xgbe_write_ext_mii_regs(struc
+ 
+ 	reinit_completion(&pdata->mdio_complete);
+ 
+-	mdio_sca = 0;
+-	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, REG, reg);
+-	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, DA, addr);
++	mdio_sca = xgbe_create_mdio_sca(addr, reg);
+ 	XGMAC_IOWRITE(pdata, MAC_MDIOSCAR, mdio_sca);
+ 
+ 	mdio_sccd = 0;
+@@ -1317,9 +1329,7 @@ static int xgbe_read_ext_mii_regs(struct
+ 
+ 	reinit_completion(&pdata->mdio_complete);
+ 
+-	mdio_sca = 0;
+-	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, REG, reg);
+-	XGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, DA, addr);
++	mdio_sca = xgbe_create_mdio_sca(addr, reg);
+ 	XGMAC_IOWRITE(pdata, MAC_MDIOSCAR, mdio_sca);
+ 
+ 	mdio_sccd = 0;
 
 
