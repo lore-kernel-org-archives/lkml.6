@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A472FC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725E5C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:08:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72A4D20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:07:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 438DE20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:08:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763675;
-	bh=eHWD7ygfITcMbq+U6KkoekqpgaLEIGD8etCzc3215ls=;
+	s=default; t=1548763684;
+	bh=Dk9V9sT7M8bSitb1nLrfD5qOzMr1ZgOqzoVjFRQrAaQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vA3iH81fxbU10bzPkR6O+k+l/Y3v+ctH7ntCfiBE1NzP/ogQoRcTuR87+ekisqCzw
-	 fQtK+GB924AWtXw3kSwfcQHWfpwjdmUhkpAcFeU/LOe5Q88ko9zy1jGdGvtloCe+yA
-	 nWcpWCNVsSMin1AFqpWaW+Nq9xl7ymRBGK1rAos0=
+	b=iquRZY1hv51jWGbjCrH2uRpYRgpb1fRM1TSpsw/Iohis7fi+384HBQ8CYNiqsIm49
+	 KvW2Is+35VQ1qONOOLUU25Kq2YSX0tIFX75B0ME65px1WVhrD6flHDU8L32f7nzHT6
+	 u0TUMo40/Cc5Hn/4JswjVWzf3WuYA0mf0TI1saHg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbfA2MHx (ORCPT
+        id S1727213AbfA2MID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:07:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56710 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:08:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729515AbfA2Ljw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:39:52 -0500
+        id S1729506AbfA2Ljt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:39:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3D8D2148E;
-        Tue, 29 Jan 2019 11:39:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 584662148E;
+        Tue, 29 Jan 2019 11:39:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761991;
-        bh=eHWD7ygfITcMbq+U6KkoekqpgaLEIGD8etCzc3215ls=;
+        s=default; t=1548761988;
+        bh=Dk9V9sT7M8bSitb1nLrfD5qOzMr1ZgOqzoVjFRQrAaQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hB87o/f9ITVmOFiEHfr9LAnI9UVeRrFALQojbdGcXHxsJEfB9b0xjDUYZak81m5w6
-         qX6KBzy0xLuVadet/cUHj49HlMkLGuiwa+iclOG35uCOmOe/N0/x6a5V/HJEez4Ss1
-         aKXRTmmjKCbUURMY894nXj6cVUr+AX0cLGLHTpro=
+        b=opshpBDJ3Y94HsRFPnbHl+sPk+p5wRfe0p7c2r7Byk+hhMsW2S/XT5NC1eINgh9Ci
+         Nq9OuEO5HoR3whI89rWXZVa8JFTEO+0CKeOpdO6cETQQ3GJucRNc7t0lky9zLk/gQ/
+         /wNcJ5OercwlWyRM00wwhbiiim7P9sohyvmA7cSU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, ryan.p.norwood@gmail.com,
-        Joe Thornber <ejt@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.20 072/117] dm thin: fix passdown_double_checking_shared_status()
-Date:   Tue, 29 Jan 2019 12:35:23 +0100
-Message-Id: <20190129113211.130270218@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.20 063/117] CIFS: Fix credit calculation for encrypted reads with errors
+Date:   Tue, 29 Jan 2019 12:35:14 +0100
+Message-Id: <20190129113210.786506938@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -65,107 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Thornber <ejt@redhat.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit d445bd9cec1a850c2100fcf53684c13b3fd934f2 upstream.
+commit ec678eae746dd25766a61c4095e2b649d3b20b09 upstream.
 
-Commit 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next
-stage processing") changed process_prepared_discard_passdown_pt1() to
-increment all the blocks being discarded until after the passdown had
-completed to avoid them being prematurely reused.
+We do need to account for credits received in error responses
+to read requests on encrypted sessions.
 
-IO issued to a thin device that breaks sharing with a snapshot, followed
-by a discard issued to snapshot(s) that previously shared the block(s),
-results in passdown_double_checking_shared_status() being called to
-iterate through the blocks double checking their reference count is zero
-and issuing the passdown if so.  So a side effect of commit 00a0ea33b495
-is passdown_double_checking_shared_status() was broken.
-
-Fix this by checking if the block reference count is greater than 1.
-Also, rename dm_pool_block_is_used() to dm_pool_block_is_shared().
-
-Fixes: 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next stage processing")
-Cc: stable@vger.kernel.org # 4.9+
-Reported-by: ryan.p.norwood@gmail.com
-Signed-off-by: Joe Thornber <ejt@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-thin-metadata.c |    4 ++--
- drivers/md/dm-thin-metadata.h |    2 +-
- drivers/md/dm-thin.c          |   10 +++++-----
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ fs/cifs/smb2ops.c |   24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
---- a/drivers/md/dm-thin-metadata.c
-+++ b/drivers/md/dm-thin-metadata.c
-@@ -1678,7 +1678,7 @@ int dm_thin_remove_range(struct dm_thin_
- 	return r;
- }
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -3101,11 +3101,23 @@ handle_read_data(struct TCP_Server_Info
+ 			server->ops->is_status_pending(buf, server, 0))
+ 		return -1;
  
--int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
-+int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
- {
- 	int r;
- 	uint32_t ref_count;
-@@ -1686,7 +1686,7 @@ int dm_pool_block_is_used(struct dm_pool
- 	down_read(&pmd->root_lock);
- 	r = dm_sm_get_count(pmd->data_sm, b, &ref_count);
- 	if (!r)
--		*result = (ref_count != 0);
-+		*result = (ref_count > 1);
- 	up_read(&pmd->root_lock);
+-	rdata->result = server->ops->map_error(buf, false);
++	/* set up first two iov to get credits */
++	rdata->iov[0].iov_base = buf;
++	rdata->iov[0].iov_len = 4;
++	rdata->iov[1].iov_base = buf + 4;
++	rdata->iov[1].iov_len =
++		min_t(unsigned int, buf_len, server->vals->read_rsp_size) - 4;
++	cifs_dbg(FYI, "0: iov_base=%p iov_len=%zu\n",
++		 rdata->iov[0].iov_base, rdata->iov[0].iov_len);
++	cifs_dbg(FYI, "1: iov_base=%p iov_len=%zu\n",
++		 rdata->iov[1].iov_base, rdata->iov[1].iov_len);
++
++	rdata->result = server->ops->map_error(buf, true);
+ 	if (rdata->result != 0) {
+ 		cifs_dbg(FYI, "%s: server returned error %d\n",
+ 			 __func__, rdata->result);
+-		dequeue_mid(mid, rdata->result);
++		/* normal error on read response */
++		dequeue_mid(mid, false);
+ 		return 0;
+ 	}
  
- 	return r;
---- a/drivers/md/dm-thin-metadata.h
-+++ b/drivers/md/dm-thin-metadata.h
-@@ -195,7 +195,7 @@ int dm_pool_get_metadata_dev_size(struct
+@@ -3178,14 +3190,6 @@ handle_read_data(struct TCP_Server_Info
+ 		return 0;
+ 	}
  
- int dm_pool_get_data_dev_size(struct dm_pool_metadata *pmd, dm_block_t *result);
+-	/* set up first iov for signature check */
+-	rdata->iov[0].iov_base = buf;
+-	rdata->iov[0].iov_len = 4;
+-	rdata->iov[1].iov_base = buf + 4;
+-	rdata->iov[1].iov_len = server->vals->read_rsp_size - 4;
+-	cifs_dbg(FYI, "0: iov_base=%p iov_len=%zu\n",
+-		 rdata->iov[0].iov_base, server->vals->read_rsp_size);
+-
+ 	length = rdata->copy_into_pages(server, rdata, &iter);
  
--int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
-+int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
- 
- int dm_pool_inc_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
- int dm_pool_dec_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -1048,7 +1048,7 @@ static void passdown_double_checking_sha
- 	 * passdown we have to check that these blocks are now unused.
- 	 */
- 	int r = 0;
--	bool used = true;
-+	bool shared = true;
- 	struct thin_c *tc = m->tc;
- 	struct pool *pool = tc->pool;
- 	dm_block_t b = m->data_block, e, end = m->data_block + m->virt_end - m->virt_begin;
-@@ -1058,11 +1058,11 @@ static void passdown_double_checking_sha
- 	while (b != end) {
- 		/* find start of unmapped run */
- 		for (; b < end; b++) {
--			r = dm_pool_block_is_used(pool->pmd, b, &used);
-+			r = dm_pool_block_is_shared(pool->pmd, b, &shared);
- 			if (r)
- 				goto out;
- 
--			if (!used)
-+			if (!shared)
- 				break;
- 		}
- 
-@@ -1071,11 +1071,11 @@ static void passdown_double_checking_sha
- 
- 		/* find end of run */
- 		for (e = b + 1; e != end; e++) {
--			r = dm_pool_block_is_used(pool->pmd, e, &used);
-+			r = dm_pool_block_is_shared(pool->pmd, e, &shared);
- 			if (r)
- 				goto out;
- 
--			if (used)
-+			if (shared)
- 				break;
- 		}
- 
+ 	kfree(bvec);
 
 
