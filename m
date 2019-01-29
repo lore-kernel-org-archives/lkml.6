@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2028DC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24421C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43F820881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE11E20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763481;
-	bh=I/baSjvT9WPxQf5cWTWvFDYXVJ6JLDnXfq0SnBAS8gI=;
+	s=default; t=1548763488;
+	bh=oVZjUllMTAgeZcjWJApnq9OkcVwdfGIE/26zzNQymes=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WgUQvNriFBSTO4hrMrrSIHeSUf4A+8e+LVB9GrvNscxaSfg01pZh8neZrJi9ype6I
-	 IwUWJAwpDTHhY6ChYC/XkMuw2reqUXB1s9f2H1D3GXoA8+a8EMBhX/oXlBkTw4mi0r
-	 cDzCglhBFXE8BkwmTxa2OZfxqR4DvWcoAEWHqwyo=
+	b=Rj8CBRDGEXlcm/Rjg6FZGZ+fFibMqCP89Gyn8HCIPgDIwqPEjQm7644sYENa7mNu0
+	 HXME5cUPpMhZZYRoSZWsWd5BvigbuQv1XQ5pMd/k1P8HCHQC/9/W0Br6DBC7qIyvzZ
+	 vMdlQpRwIUi1q6b3xvwbfPQbDZcJcKZBvdeLNl+4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730149AbfA2Lmv (ORCPT
+        id S1730123AbfA2Lmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:42:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60676 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:42:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730130AbfA2Lms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:42:48 -0500
+        id S1729038AbfA2Lmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:42:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97E7820857;
-        Tue, 29 Jan 2019 11:42:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55D6720857;
+        Tue, 29 Jan 2019 11:42:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762167;
-        bh=I/baSjvT9WPxQf5cWTWvFDYXVJ6JLDnXfq0SnBAS8gI=;
+        s=default; t=1548762161;
+        bh=oVZjUllMTAgeZcjWJApnq9OkcVwdfGIE/26zzNQymes=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LclsgPFrcCUHTm5Osrqs1pxTStcMofOG0Ean2YXNw/MAiFbnw2oMRhjG2t9juSunq
-         hDW7Z0vq25kMU/peqq0fqoaVK8MGjTenCAWnvInlRHqHO4yxsFdvynP9Vub67bn6Uo
-         xoEJTzk6UUnuSnVHbff7gjo2tFyrMWNzlBRp0VIw=
+        b=CDosie6rZT/bOMfnyvBMCP4HnV8BS9yZQ77EtEGzGVZcPpVhUn3ocDHRFQK6ZjcJ7
+         uppCvpz4b4qOipTk9VsR8N+UgNFjciSD3Wf7pvGav841DF1aWT1Kut6SZPW4e6uMdv
+         kbi6Mpk6Jh1yeNscW5cO0h6damn0qfRdEALPLQLg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        Semion Lisyansky <semionl@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
+        David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 014/103] mlxsw: pci: Ring CQs doorbell before RDQs
-Date:   Tue, 29 Jan 2019 12:34:51 +0100
-Message-Id: <20190129113200.380757705@linuxfoundation.org>
+Subject: [PATCH 4.19 012/103] net: ipv4: Fix memory leak in network namespace dismantle
+Date:   Tue, 29 Jan 2019 12:34:49 +0100
+Message-Id: <20190129113200.262722173@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -69,98 +68,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ido Schimmel <idosch@mellanox.com>
 
-When a packet should be trapped to the CPU the device consumes a WQE
-(work queue element) from an RDQ (receive descriptor queue) and copies
-the packet to the address specified in the WQE. The device then tries to
-post a CQE (completion queue element) that contains various metadata
-(e.g., ingress port) about the packet to a CQ (completion queue).
+[ Upstream commit f97f4dd8b3bb9d0993d2491e0f22024c68109184 ]
 
-In case the device managed to consume a WQE, but did not manage to post
-the corresponding CQE, it will get stuck. This unlikely situation can be
-triggered due to the scheme the driver is currently using to process
-CQEs.
+IPv4 routing tables are flushed in two cases:
 
-The driver will consume up to 512 CQEs at a time and after processing
-each corresponding WQE it will ring the RDQ's doorbell, letting the
-device know that a new WQE was posted for it to consume. Only after
-processing all the CQEs (up to 512), the driver will ring the CQ's
-doorbell, letting the device know that new ones can be posted.
+1. In response to events in the netdev and inetaddr notification chains
+2. When a network namespace is being dismantled
 
-Fix this by having the driver ring the CQ's doorbell for every processed
-CQE, but before ringing the RDQ's doorbell. This guarantees that
-whenever we post a new WQE, there is a corresponding CQE available. Copy
-the currently processed CQE to prevent the device from overwriting it
-with a new CQE after ringing the doorbell.
+In both cases only routes associated with a dead nexthop group are
+flushed. However, a nexthop group will only be marked as dead in case it
+is populated with actual nexthops using a nexthop device. This is not
+the case when the route in question is an error route (e.g.,
+'blackhole', 'unreachable').
 
-Note that the driver still arms the CQ only after processing all the
-pending CQEs, so that interrupts for this CQ will only be delivered
-after the driver finished its processing.
+Therefore, when a network namespace is being dismantled such routes are
+not flushed and leaked [1].
 
-Before commit 8404f6f2e8ed ("mlxsw: pci: Allow to use CQEs of version 1
-and version 2") the issue was virtually impossible to trigger since the
-number of CQEs was twice the number of WQEs and the number of CQEs
-processed at a time was equal to the number of available WQEs.
+To reproduce:
+# ip netns add blue
+# ip -n blue route add unreachable 192.0.2.0/24
+# ip netns del blue
 
-Fixes: 8404f6f2e8ed ("mlxsw: pci: Allow to use CQEs of version 1 and version 2")
+Fix this by not skipping error routes that are not marked with
+RTNH_F_DEAD when flushing the routing tables.
+
+To prevent the flushing of such routes in case #1, add a parameter to
+fib_table_flush() that indicates if the table is flushed as part of
+namespace dismantle or not.
+
+Note that this problem does not exist in IPv6 since error routes are
+associated with the loopback device.
+
+[1]
+unreferenced object 0xffff888066650338 (size 56):
+  comm "ip", pid 1206, jiffies 4294786063 (age 26.235s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 b0 1c 62 61 80 88 ff ff  ..........ba....
+    e8 8b a1 64 80 88 ff ff 00 07 00 08 fe 00 00 00  ...d............
+  backtrace:
+    [<00000000856ed27d>] inet_rtm_newroute+0x129/0x220
+    [<00000000fcdfc00a>] rtnetlink_rcv_msg+0x397/0xa20
+    [<00000000cb85801a>] netlink_rcv_skb+0x132/0x380
+    [<00000000ebc991d2>] netlink_unicast+0x4c0/0x690
+    [<0000000014f62875>] netlink_sendmsg+0x929/0xe10
+    [<00000000bac9d967>] sock_sendmsg+0xc8/0x110
+    [<00000000223e6485>] ___sys_sendmsg+0x77a/0x8f0
+    [<000000002e94f880>] __sys_sendmsg+0xf7/0x250
+    [<00000000ccb1fa72>] do_syscall_64+0x14d/0x610
+    [<00000000ffbe3dae>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+    [<000000003a8b605b>] 0xffffffffffffffff
+unreferenced object 0xffff888061621c88 (size 48):
+  comm "ip", pid 1206, jiffies 4294786063 (age 26.235s)
+  hex dump (first 32 bytes):
+    6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b 6b  kkkkkkkkkkkkkkkk
+    6b 6b 6b 6b 6b 6b 6b 6b d8 8e 26 5f 80 88 ff ff  kkkkkkkk..&_....
+  backtrace:
+    [<00000000733609e3>] fib_table_insert+0x978/0x1500
+    [<00000000856ed27d>] inet_rtm_newroute+0x129/0x220
+    [<00000000fcdfc00a>] rtnetlink_rcv_msg+0x397/0xa20
+    [<00000000cb85801a>] netlink_rcv_skb+0x132/0x380
+    [<00000000ebc991d2>] netlink_unicast+0x4c0/0x690
+    [<0000000014f62875>] netlink_sendmsg+0x929/0xe10
+    [<00000000bac9d967>] sock_sendmsg+0xc8/0x110
+    [<00000000223e6485>] ___sys_sendmsg+0x77a/0x8f0
+    [<000000002e94f880>] __sys_sendmsg+0xf7/0x250
+    [<00000000ccb1fa72>] do_syscall_64+0x14d/0x610
+    [<00000000ffbe3dae>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+    [<000000003a8b605b>] 0xffffffffffffffff
+
+Fixes: 8cced9eff1d4 ("[NETNS]: Enable routing configuration in non-initial namespace.")
 Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reported-by: Semion Lisyansky <semionl@mellanox.com>
-Tested-by: Semion Lisyansky <semionl@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/pci.c    |   12 +++++++-----
- drivers/net/ethernet/mellanox/mlxsw/pci_hw.h |    1 +
- 2 files changed, 8 insertions(+), 5 deletions(-)
+ include/net/ip_fib.h    |    2 +-
+ net/ipv4/fib_frontend.c |    4 ++--
+ net/ipv4/fib_trie.c     |   15 ++++++++++++---
+ 3 files changed, 15 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/pci.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/pci.c
-@@ -604,29 +604,31 @@ static void mlxsw_pci_cq_tasklet(unsigne
- 		u16 wqe_counter = mlxsw_pci_cqe_wqe_counter_get(cqe);
- 		u8 sendq = mlxsw_pci_cqe_sr_get(q->u.cq.v, cqe);
- 		u8 dqn = mlxsw_pci_cqe_dqn_get(q->u.cq.v, cqe);
-+		char ncqe[MLXSW_PCI_CQE_SIZE_MAX];
-+
-+		memcpy(ncqe, cqe, q->elem_size);
-+		mlxsw_pci_queue_doorbell_consumer_ring(mlxsw_pci, q);
+--- a/include/net/ip_fib.h
++++ b/include/net/ip_fib.h
+@@ -230,7 +230,7 @@ int fib_table_delete(struct net *, struc
+ 		     struct netlink_ext_ack *extack);
+ int fib_table_dump(struct fib_table *table, struct sk_buff *skb,
+ 		   struct netlink_callback *cb);
+-int fib_table_flush(struct net *net, struct fib_table *table);
++int fib_table_flush(struct net *net, struct fib_table *table, bool flush_all);
+ struct fib_table *fib_trie_unmerge(struct fib_table *main_tb);
+ void fib_table_flush_external(struct fib_table *table);
+ void fib_free_table(struct fib_table *tb);
+--- a/net/ipv4/fib_frontend.c
++++ b/net/ipv4/fib_frontend.c
+@@ -203,7 +203,7 @@ static void fib_flush(struct net *net)
+ 		struct fib_table *tb;
  
- 		if (sendq) {
- 			struct mlxsw_pci_queue *sdq;
- 
- 			sdq = mlxsw_pci_sdq_get(mlxsw_pci, dqn);
- 			mlxsw_pci_cqe_sdq_handle(mlxsw_pci, sdq,
--						 wqe_counter, cqe);
-+						 wqe_counter, ncqe);
- 			q->u.cq.comp_sdq_count++;
- 		} else {
- 			struct mlxsw_pci_queue *rdq;
- 
- 			rdq = mlxsw_pci_rdq_get(mlxsw_pci, dqn);
- 			mlxsw_pci_cqe_rdq_handle(mlxsw_pci, rdq,
--						 wqe_counter, q->u.cq.v, cqe);
-+						 wqe_counter, q->u.cq.v, ncqe);
- 			q->u.cq.comp_rdq_count++;
- 		}
- 		if (++items == credits)
- 			break;
+ 		hlist_for_each_entry_safe(tb, tmp, head, tb_hlist)
+-			flushed += fib_table_flush(net, tb);
++			flushed += fib_table_flush(net, tb, false);
  	}
--	if (items) {
--		mlxsw_pci_queue_doorbell_consumer_ring(mlxsw_pci, q);
-+	if (items)
- 		mlxsw_pci_queue_doorbell_arm_consumer_ring(mlxsw_pci, q);
--	}
+ 
+ 	if (flushed)
+@@ -1357,7 +1357,7 @@ static void ip_fib_net_exit(struct net *
+ 
+ 		hlist_for_each_entry_safe(tb, tmp, head, tb_hlist) {
+ 			hlist_del(&tb->tb_hlist);
+-			fib_table_flush(net, tb);
++			fib_table_flush(net, tb, true);
+ 			fib_free_table(tb);
+ 		}
+ 	}
+--- a/net/ipv4/fib_trie.c
++++ b/net/ipv4/fib_trie.c
+@@ -1856,7 +1856,7 @@ void fib_table_flush_external(struct fib
  }
  
- static u16 mlxsw_pci_cq_elem_count(const struct mlxsw_pci_queue *q)
---- a/drivers/net/ethernet/mellanox/mlxsw/pci_hw.h
-+++ b/drivers/net/ethernet/mellanox/mlxsw/pci_hw.h
-@@ -53,6 +53,7 @@
- #define MLXSW_PCI_WQE_SIZE	32 /* 32 bytes per element */
- #define MLXSW_PCI_CQE01_SIZE	16 /* 16 bytes per element */
- #define MLXSW_PCI_CQE2_SIZE	32 /* 32 bytes per element */
-+#define MLXSW_PCI_CQE_SIZE_MAX	MLXSW_PCI_CQE2_SIZE
- #define MLXSW_PCI_EQE_SIZE	16 /* 16 bytes per element */
- #define MLXSW_PCI_WQE_COUNT	(MLXSW_PCI_AQ_SIZE / MLXSW_PCI_WQE_SIZE)
- #define MLXSW_PCI_CQE01_COUNT	(MLXSW_PCI_AQ_SIZE / MLXSW_PCI_CQE01_SIZE)
+ /* Caller must hold RTNL. */
+-int fib_table_flush(struct net *net, struct fib_table *tb)
++int fib_table_flush(struct net *net, struct fib_table *tb, bool flush_all)
+ {
+ 	struct trie *t = (struct trie *)tb->tb_data;
+ 	struct key_vector *pn = t->kv;
+@@ -1904,8 +1904,17 @@ int fib_table_flush(struct net *net, str
+ 		hlist_for_each_entry_safe(fa, tmp, &n->leaf, fa_list) {
+ 			struct fib_info *fi = fa->fa_info;
+ 
+-			if (!fi || !(fi->fib_flags & RTNH_F_DEAD) ||
+-			    tb->tb_id != fa->tb_id) {
++			if (!fi || tb->tb_id != fa->tb_id ||
++			    (!(fi->fib_flags & RTNH_F_DEAD) &&
++			     !fib_props[fa->fa_type].error)) {
++				slen = fa->fa_slen;
++				continue;
++			}
++
++			/* Do not flush error routes if network namespace is
++			 * not being dismantled
++			 */
++			if (!flush_all && fib_props[fa->fa_type].error) {
+ 				slen = fa->fa_slen;
+ 				continue;
+ 			}
 
 
