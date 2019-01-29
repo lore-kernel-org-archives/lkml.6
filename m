@@ -2,169 +2,147 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A90ADC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3EEC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78EB620881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF73720881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfA2KGG convert rfc822-to-8bit (ORCPT
+        id S1727944AbfA2KIE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:06:06 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44212 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfA2KGG (ORCPT
+        Tue, 29 Jan 2019 05:08:04 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40826 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbfA2KID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:06:06 -0500
-Received: by mail-qt1-f193.google.com with SMTP id n32so21509807qte.11
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 02:06:05 -0800 (PST)
+        Tue, 29 Jan 2019 05:08:03 -0500
+Received: by mail-vs1-f65.google.com with SMTP id z3so11592379vsf.7;
+        Tue, 29 Jan 2019 02:08:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pTB1bWieBlGNlw8L8vm610TRvXf/JX26pHTEbBNtKqE=;
-        b=L1kx2lpmp/WgOGQpTI+XcrG7Zi8xdmXsuctt01NfuV0B/52ouRHHzQyOq4f5u/RP3t
-         9QpqGPeSsf0oXIawcBRpO6y1OE/YosK5PPieG6CYswIsFi+i59OLdwvox8WwxMXrLz45
-         kgjER4KGziiLBITDab4SR0WFlRbkZ6Uhqlk7kykHYt02xlw6EZfM/yxSFQjn5/icBxX/
-         nOTDVSsvtiKY3j/mBMX8ythr8IMaLlZikS+eUkHd1NmOkcRsNtn0gmkXZZLrAoJapGyL
-         UCgvI3sTbXdK7/1iVIFQA3o8AgsX16D3XBSNeUwgLpNa7QvIW1cAnIOOEIN5YVJdJFaj
-         39mg==
-X-Gm-Message-State: AJcUukfrqhl9z3PLeGmSWX9u+1y6xlG8KY2aTYHT0Wz+oN+DLCw/8OTS
-        9L5YqPoxNck6KZWaITWQ1QDHAT8vV6egIjLZ4cvsjA==
-X-Google-Smtp-Source: ALg8bN46NupPZUaNpdrVCe07tvcQBxgfwLXXDcLJNVinTIvdJ3YDHp9ey1WdBj44xSP8zE/wvaMyp8FGFGSCuEHj2ts=
-X-Received: by 2002:a0c:d174:: with SMTP id c49mr23448511qvh.231.1548756365185;
- Tue, 29 Jan 2019 02:06:05 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=EmtYN+Y+9/kMBqbcdmfpKbwS13cIhsGC2vop/+2yPps=;
+        b=o3whiTU3oTlYLeSM0GBD9lqPFO850z7UcDHKGZDglkaRZvds5SgRteZFb1Y910HZus
+         dBK5tf1uTBza0xhUuGJULOCxWxrlBTI4ky/RNmk6CS2+fGG9An7cV3EKT8/BIhGZfsse
+         4dT1vYtjgKk+xE4/0EObC16wtGpJkfzxYwe484Ml7Lp4BwoNz9iWwJVtXZgFC+yJYXea
+         kbqiOZ/PvZ9ZFmBXLfr1k24HpwqUvDjh1gpA+qdTfhrV/HiKv9T13VKUne5GvbzNZuBa
+         K0tNpc8HzY1V0nTsfFkqSsAA7l8a2+Jc7HiLJwVG+cOq3DgwTwKRautRnMGVaLRRjc3E
+         soUQ==
+X-Gm-Message-State: AJcUukf+2uz5fAt0+4D3gjXoariMHiL72bdiEj5KM2vWwgAs+mpbNI+t
+        BsjQz5jXChy6PJhNUpl07wt8IniSM99WTETmtok=
+X-Google-Smtp-Source: ALg8bN6CynnqX8TzCTlfkf4c5i5O464utx+fduG4CNzH6sX4rMaPS1kdHt/WuOxMDR2woWIw9SZBOPWWbGaaVIuY6Cc=
+X-Received: by 2002:a67:3885:: with SMTP id n5mr9052126vsi.96.1548756482129;
+ Tue, 29 Jan 2019 02:08:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20190107072429.23828-1-kai.heng.feng@canonical.com>
- <CAO-hwJKo=EaPoXJLGUvjq3QRng1V1NkO7A5zYGojbPyxxyJYHA@mail.gmail.com> <D7C6B90F-641A-495B-9E05-78BF4F56B552@canonical.com>
-In-Reply-To: <D7C6B90F-641A-495B-9E05-78BF4F56B552@canonical.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 29 Jan 2019 11:05:53 +0100
-Message-ID: <CAO-hwJ+CF-obuUK9T=x0ggJRLBNmM3H6-FfKjv2y0LT96C=TUg@mail.gmail.com>
-Subject: Re: [PATCH v3] HID: i2c-hid: Ignore input report if there's no data
- present on Elan touchpanels
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+References: <20190126163220.26421-1-jonas@norrbonn.se> <20190126163220.26421-2-jonas@norrbonn.se>
+ <20190128181038.GF11699@sirena.org.uk> <1b9807aa-3e6e-16f2-a2c2-ebe5e186d904@norrbonn.se>
+ <CAMz4kuK9HAmntmqG-_s6re854tK7UL6wwCh0Lm8=bzpFZsseaw@mail.gmail.com>
+ <28617b72-fbc0-4274-d9d1-34c37f03f867@norrbonn.se> <CAMz4kuLOSx9mQ-RG9qqy9Qbor97Nj5oYdOgLg_dNfxFeT+XK5g@mail.gmail.com>
+ <abb0749c-629f-5a81-1dba-0be260b0fb8d@norrbonn.se>
+In-Reply-To: <abb0749c-629f-5a81-1dba-0be260b0fb8d@norrbonn.se>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 29 Jan 2019 11:07:50 +0100
+Message-ID: <CAMuHMdXyuWMPUdipwW0oQUdPLDyZhssZ1NHQfMF9hWTtMkTZ1A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] spi: support inter-word delay requirement for devices
+To:     Jonas Bonn <jonas@norrbonn.se>,
+        Baolin Wang <baolin.wang@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lanqing Liu <lanqing.liu@spreadtrum.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 4:30 AM Kai-Heng Feng
-<kai.heng.feng@canonical.com> wrote:
->
->
->
-> > On Jan 18, 2019, at 23:50, Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
-> >
-> > Hi Kai-Heng,
-> >
-> > On Mon, Jan 7, 2019 at 8:24 AM Kai-Heng Feng
-> > <kai.heng.feng@canonical.com> wrote:
-> >>
-> >> While using Elan touchpads, the message floods:
-> >> [  136.138487] i2c_hid i2c-DELL08D6:00: i2c_hid_get_input: incomplete report (14/65535)
-> >>
-> >> Though the message flood is annoying, the device it self works without
-> >> any issue. I suspect that the device in question takes too much time to
-> >> pull the IRQ back to high after I2C host has done reading its data.
-> >>
-> >> Since the host receives all useful data, let's ignore the input report
-> >> when there's no data.
-> >>
-> >> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> >
-> > Thanks for the v3.
-> >
-> > This patch has just been brought to my attention, and I have one
-> > question before applying it:
-> > are those messages (without your patch) occurring all the time, or
-> > just after resume?
->
-> All the time.
->
-> The touchpad works fine though. The entire report is 0xff, so it can be
-> safely ignored.
+Hi Jonas, Baolin,
 
-Couple of things:
-- I have forgotten to tell you that I have applied this patch in
-for-5.1/i2c-hid, it will be pushed to linux-next today.
-- Dell told me that a BIOS fix was solving the issue. We can still
-quarry the patch, but there should not be a strong need for it when
-users upgrade their BIOS.
+On Tue, Jan 29, 2019 at 10:50 AM Jonas Bonn <jonas@norrbonn.se> wrote:
+> On 29/01/2019 10:35, Baolin Wang wrote:
+> > On Tue, 29 Jan 2019 at 17:14, Jonas Bonn <jonas@norrbonn.se> wrote:
+> >> On 29/01/2019 10:04, Baolin Wang wrote:
+> >>> On Tue, 29 Jan 2019 at 05:28, Jonas Bonn <jonas@norrbonn.se> wrote:
+> >>>> On 28/01/2019 19:10, Mark Brown wrote:
+> >>>>> On Sat, Jan 26, 2019 at 05:32:19PM +0100, Jonas Bonn wrote:
+> >>>>>
+> >>>>>> @@ -164,6 +166,7 @@ struct spi_device {
+> >>>>>>        char                    modalias[SPI_NAME_SIZE];
+> >>>>>>        const char              *driver_override;
+> >>>>>>        int                     cs_gpio;        /* chip select gpio */
+> >>>>>> +    uint16_t                word_delay;     /* inter-word delay (us) */
+> >>>>>
+> >>>>> This needs some code in the core joining it up with the per-transfer
+> >>>>> word delay similar to what we have for speed_hz and bits_per_word in
+> >>>>> __spi_validate().  Then the controller drivers can just look at the
+> >>>>> per-transfer value and support both without having to duplicate logic.
+> >>>>>
+> >>>>
+> >>>> So spi_transfer already has a field word_delay and it's defined as
+> >>>> _clock cycles_ to delay between words.  I defined word_delay in
+> >>>> spi_device as _microseconds_ to delay along the lines of delay_usecs.
+> >>>>
+> >>>> Given that the inter-word delay is a function of the slave device speed
+> >>>> and not of the SPI bus speed, I'm inclined to say that a time-based
+> >>>> delay is what we want (to be independent of bus speed).  As such, I want
+> >>>> to know if I should add word_delay_usecs to _both_ spi_transfer and
+> >>>> spi_device?
+> >>>>
+> >>>> There's only one user of word_delay from spi_transfer.  Just looking at
+> >>>> it quickly, it looks like it wants the word_delay in
+> >>>> SPI-controller-clock cycles and not SCK cycles which seems pretty broken
+> >>>> to me.  Adding Baolin and Lanqing to CC: for comment.  Could we rework
+> >>>> that to be microseconds and do the calculation in the driver?
+> >>>
+> >>> The Spreadtrum SPI controller's word delay unit is clock cycle of the
+> >>> SPI clock, since the SPI source clock can be changed, we can not force
+> >>> user to know the real microseconds. But can we change it to a union
+> >>> structure? not sure if this is a good way.
+> >>
+> >> OK, so it is the SPI clock.  That's good.  There's a comment in the
+> >> driver that makes it look like it should be the source clock.
+> >
+> > Sorry for my unclear description, what I mean is that it is the SPI
+> > source clock cycles.
+> >
+> >> The problem with a delay in clock cycles is that the faster the clock,
+> >> the shorter the delay.  The delay is a property of the slave and the
+> >> slave has a fixed internal clock.  This means that if we increase SCK we
+> >> also need to increase the word_delay (in cycles) in order to give the
+> >> slave the same amount of breathing room.
+> >
+> > Sorry for my confusing description, our case requires source clock
+> > cycles for word delay.
+>
+> OK.  So the user (perhaps in userspace using spidev) has to know the
+> rate of the IO clock that the SPI controller sits behind and then has to
+> match this to the required delay of the slave device...  Doesn't sound
+> very portable.
 
-Cheers,
-Benjamin
+I can see the value of having both:
+On some slaves, the delay may depend on a fixed internal or
+external clock[1] on the SPI slave, so it should be specified in time units.
+Some slaves may be clocked by the SPI clock[2], so the delay should be
+specified in SPI clock cycles.
 
->
-> >
-> > I wonder if the pm_suspend delay we talked about in the other thread
-> > would fix that issue in a cleaner way.
->
-> I’ve replied in another thread, unfortunately it can’t.
->
-> We can introduce msleep() between each commands though, but I don’t
-> think it’s good either.
->
-> Kai-Heng
->
-> >
-> > Cheers,
-> > Benjamin
-> >
-> >> ---
-> >> v3:
-> >> Fix compiler error/warnings.
-> >>
-> >> v2:
-> >> Use dev_warn_once() to warn the user about the situation.
-> >>
-> >> drivers/hid/i2c-hid/i2c-hid-core.c | 9 +++++++++
-> >> 1 file changed, 9 insertions(+)
-> >>
-> >> diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-> >> index 8555ce7e737b..2f940c1de616 100644
-> >> --- a/drivers/hid/i2c-hid/i2c-hid-core.c
-> >> +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-> >> @@ -50,6 +50,7 @@
-> >> #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET       BIT(1)
-> >> #define I2C_HID_QUIRK_NO_RUNTIME_PM            BIT(2)
-> >> #define I2C_HID_QUIRK_DELAY_AFTER_SLEEP                BIT(3)
-> >> +#define I2C_HID_QUIRK_BOGUS_IRQ                        BIT(4)
-> >>
-> >> /* flags */
-> >> #define I2C_HID_STARTED                0
-> >> @@ -179,6 +180,8 @@ static const struct i2c_hid_quirks {
-> >>                I2C_HID_QUIRK_DELAY_AFTER_SLEEP },
-> >>        { USB_VENDOR_ID_LG, I2C_DEVICE_ID_LG_8001,
-> >>                I2C_HID_QUIRK_NO_RUNTIME_PM },
-> >> +       { USB_VENDOR_ID_ELAN, HID_ANY_ID,
-> >> +                I2C_HID_QUIRK_BOGUS_IRQ },
-> >>        { 0, 0 }
-> >> };
-> >>
-> >> @@ -503,6 +506,12 @@ static void i2c_hid_get_input(struct i2c_hid *ihid)
-> >>                return;
-> >>        }
-> >>
-> >> +       if (ihid->quirks & I2C_HID_QUIRK_BOGUS_IRQ && ret_size == 0xffff) {
-> >> +               dev_warn_once(&ihid->client->dev, "%s: IRQ triggered but "
-> >> +                             "there's no data\n", __func__);
-> >> +               return;
-> >> +       }
-> >> +
-> >>        if ((ret_size > size) || (ret_size < 2)) {
-> >>                dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
-> >>                        __func__, size, ret_size);
-> >> --
-> >> 2.17.1
-> >>
->
+[1] For an external clock, the SPI slave driver may need to obtain a clock
+    reference from DT, get its rate, and calculate the needed delay.
+[2] I've seen hardware designs where the SPI clock had to be kept running all
+    the time because of this.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
