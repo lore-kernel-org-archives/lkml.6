@@ -2,93 +2,90 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F552C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED9AC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E98F20844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:32:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EZ4xAFQH"
+	by mail.kernel.org (Postfix) with ESMTP id 7D29520870
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727583AbfA2Ic1 (ORCPT
+        id S1727416AbfA2Ifr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:32:27 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:32875 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbfA2Ic0 (ORCPT
+        Tue, 29 Jan 2019 03:35:47 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:60694 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725601AbfA2Ifr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:32:26 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v1-v6so16754440ljd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:32:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2AxdUIGC1kTdKpFS1Vqyter9qGjQHMLHKNI/Zd8VHNw=;
-        b=EZ4xAFQHUfdh3NtWFqaaHj4EKiVEKs6t0FAo3ha3uWObPsCckbKnM4gvTH7vN8U08c
-         OMR+VUoKETPt14nCyzcss+E4kDPE04mBk9tQDbYVEkCF2l8FoVoVqBAKmjjOjUPGCZgL
-         CzMpRbn1oPERQH/38+BzlHbenVsI5aYEwpJjaSVAIRiIlRsqiCjVYqTNu8OomiphTkOB
-         qyzDc2Ct2Ku81j6cpzXGNBFucTZOrvBfk1fVcC0OuYLr/70xVZJgHch718FsWsh1G3ZF
-         nFkqczmN5eofidpdJmlTcQvyDW6tcZ+cRPGS1SuVGV/BJgcDwHun0H613uu/EVM+YkmZ
-         CpKA==
+        Tue, 29 Jan 2019 03:35:47 -0500
+Received: from mr2.cc.vt.edu (junk.cc.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x0T8Zk9R004169
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 03:35:46 -0500
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x0T8ZfMn000315
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 03:35:46 -0500
+Received: by mail-qk1-f200.google.com with SMTP id x125so20812938qka.17
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:35:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2AxdUIGC1kTdKpFS1Vqyter9qGjQHMLHKNI/Zd8VHNw=;
-        b=CUGtuWsbhvACDDxaswQcimMihi+xOxd2jwWeuPoO8hn9oEJ9LcQ1CT3aBl8OxuLSXB
-         VKk0z6EDX4zx6KHMo0i8ZbrvcmlRAHihsj39FESokGJtoZ839mBzu6vt3J6YnmWWYgNS
-         4G8kVOXPLxLMUAQf1r/rzfp/QjgMbSARVUmLg9ARhDwgZBB/yzSTHfIf7eNrMncHuIZ5
-         PmhDWS9FMr8xIju2mbDwMbOr2JGqaiKFhoShgOzCwodVxE4BZUt3Un9bAG7WOh4qNjuX
-         1oP7mYHNsX13cU/C9bpZZ+setJo+9nHphnNwThfZODZcBQdmZ5VIRAcwsYpp4jB0FMX3
-         5qPQ==
-X-Gm-Message-State: AJcUukdUu6aJuFREJNkmYkwUERq1dPCIvtXm+EN1CRHmXjBiySWMGI86
-        caU3Rwor2+RfYyq6zuWaEfKSU/vgeNS9iaDV0vB88g==
-X-Google-Smtp-Source: AHgI3IabsiEWA43N+pfZuwc2pWmjT1YnlKHrx3N0ys6MM3VDE/q89YoLGxYGD6F3bgb0Z0hPS7tur3mKhfcemr/qkng=
-X-Received: by 2002:a2e:744:: with SMTP id i4-v6mr13935535ljd.140.1548750744314;
- Tue, 29 Jan 2019 00:32:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20190109021112.5836-1-rkir@google.com> <20190109021112.5836-2-rkir@google.com>
- <20190122110712.GA1004@kroah.com>
-In-Reply-To: <20190122110712.GA1004@kroah.com>
-From:   Roman Kiryanov <rkir@google.com>
-Date:   Tue, 29 Jan 2019 00:32:12 -0800
-Message-ID: <CAOGAQeo1Kv55EUn2sYPOt9EgBMfN=+o_A4KOPVgqbJHo+HN-Sw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] drivers: platform: goldfish: goldfish_address_space:
- add a driver
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:mime-version:date:message-id;
+        bh=YNofE9xL/zFV568kxrNilUcGj+Jr4LnnQAseovd8dHw=;
+        b=mKv58B3s1B6+OwApzdnz5eBgzdi6cTb53ueXdYTCTAA2ecx/pl51LyL+C+xNI4a2Tz
+         cDyjE3Ej2squpffMlYfuz+AJnuIHvs6p+xeyGlj+JB2SY8Y4H+cT2718WDrSoCIgysf3
+         Hf4p9RDcX3f1ZUyUObBOBBkNniXdueUvINymVvQDzKEwuHon+u8A5dduMX2gTU5VKcGQ
+         JI7FDRBM6I92SQW1uYt8CKT+fIueszBg4bAl7tljm7Ez0SzM4uogGFWZNbHQfPGwZphM
+         zfcYW1lMeEf/m61BU7dXloQ+Cd5DoDyEaCXGNz9ziQ4XKpkO/auIwNbxYmSXeE+SiEEe
+         8piQ==
+X-Gm-Message-State: AJcUukd50z6f6kDjg8uPAhmQ65wWZFJquXzRwNJy1jw2UQ0d+pitL5au
+        Is18R+WkHIpwB8OfqWFSzxTklcpuW6OdSvWf7uCmhkGMHmxD9jUjD9RmCGTkBbdwbq0cWcXZDjI
+        oowXCxrZRofUfe5gks391Zdz9kQS9q29Juj0=
+X-Received: by 2002:ac8:2b99:: with SMTP id m25mr24784327qtm.36.1548750940828;
+        Tue, 29 Jan 2019 00:35:40 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN5JQ/qUj4ra1Bb1WljThd+R49PWLWTCzRBdXC4lKqxLtVaKxRDapLivXn90cUfTALCFtTgIYQ==
+X-Received: by 2002:ac8:2b99:: with SMTP id m25mr24784317qtm.36.1548750940621;
+        Tue, 29 Jan 2019 00:35:40 -0800 (PST)
+Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4341::936])
+        by smtp.gmail.com with ESMTPSA id j36sm85529596qtk.15.2019.01.29.00.35.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 00:35:39 -0800 (PST)
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+From:   valdis.kletnieks@vt.edu
+To:     Andrew Morton <akpm@linux-foundation.org>
+cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] init/calibrate.c - provide proper prototype.
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date:   Tue, 29 Jan 2019 03:35:38 -0500
+Message-ID: <18827.1548750938@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> How does QEMU do this today?  There isn't a virtio or some other virtual
-> memory device that allows memory regions to be shared?  I can't believe
-> that there isn't one yet.  If not, then this should be some kind of
-> "generic" QEMU memory device, not a "goldfish" specific one, right?
+Sparse issues a warning:
 
-I also thought this should not be something unique to us. So I asked
-in our internal mailing list, I heard nothing back.
+  CHECK   init/calibrate.c
+init/calibrate.c:271:28: warning: symbol 'calibration_delay_done' was not declared. Should it be static?
 
-> Please work with the QEMU developers on this, I need their ack before I
-> can take something like this.
+The actual issue is that it's a __weak symbol that archs can override (in fact,
+ARM does so), but no prototype is provided. Let's provide one to prevent
+surprises.
 
-This is a good point. I asked there (nothing since 1/24):
+Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-http://lists.nongnu.org/archive/html/qemu-discuss/2019-01/msg00055.html
+diff --git a/include/linux/delay.h b/include/linux/delay.h
+index b78bab4395d8..8e6828094c1e 100644
+--- a/include/linux/delay.h
++++ b/include/linux/delay.h
+@@ -55,6 +55,7 @@ static inline void ndelay(unsigned long x)
+ 
+ extern unsigned long lpj_fine;
+ void calibrate_delay(void);
++void __attribute__((weak)) calibration_delay_done(void);
+ void msleep(unsigned int msecs);
+ unsigned long msleep_interruptible(unsigned int msecs);
+ void usleep_range(unsigned long min, unsigned long max);
 
-When we were working on our device side, we had to change some QEMU
-code and later noticed that HAXM also requires some fixes (we had
-meetings with Intel). I suppose QEMU does not have this feature yet.
 
-Could you please tell if we can proceed with upstreaming as is?
-
-Regards,
-Roman.
