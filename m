@@ -2,182 +2,186 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EECD7C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9551CC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFCE621871
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FEF320869
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:34:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbfA2KdG (ORCPT
+        id S1727200AbfA2KeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:33:06 -0500
-Received: from smtprelay02.ispgateway.de ([80.67.18.14]:39826 "EHLO
-        smtprelay02.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbfA2KdE (ORCPT
+        Tue, 29 Jan 2019 05:34:13 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57731 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbfA2KeN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:33:04 -0500
-Received: from [77.22.253.72] (helo=calia.hitronhub.home)
-        by smtprelay02.ispgateway.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <jan@schnhrr.de>)
-        id 1goQXN-0003Gk-GU; Tue, 29 Jan 2019 11:22:37 +0100
-From:   =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jan@schnhrr.de>
-To:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Cc:     =?UTF-8?q?Jan=20H=2E=20Sch=C3=B6nherr?= <jan@schnhrr.de>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] x86/tsc: Allow quick PIT calibration despite interruptions
-Date:   Tue, 29 Jan 2019 11:23:28 +0100
-Message-Id: <20190129102329.27610-2-jan@schnhrr.de>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190129102329.27610-1-jan@schnhrr.de>
-References: <20190129102329.27610-1-jan@schnhrr.de>
+        Tue, 29 Jan 2019 05:34:13 -0500
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0TAY996049529;
+        Tue, 29 Jan 2019 19:34:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Tue, 29 Jan 2019 19:34:09 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0TAY4Pw049496
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 29 Jan 2019 19:34:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v3] oom, oom_reaper: do not enqueue same task twice
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
+        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
+        Roman Gushchin <guro@fb.com>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>
+References: <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
+ <72aa8863-a534-b8df-6b9e-f69cf4dd5c4d@i-love.sakura.ne.jp>
+ <33a07810-6dbc-36be-5bb6-a279773ccf69@i-love.sakura.ne.jp>
+ <34e97b46-0792-cc66-e0f2-d72576cdec59@i-love.sakura.ne.jp>
+ <2b0c7d6c-c58a-da7d-6f0a-4900694ec2d3@gmail.com>
+ <1d161137-55a5-126f-b47e-b2625bd798ca@i-love.sakura.ne.jp>
+ <20190127083724.GA18811@dhcp22.suse.cz>
+ <ec0d0580-a2dd-f329-9707-0cb91205a216@i-love.sakura.ne.jp>
+ <20190127114021.GB18811@dhcp22.suse.cz>
+ <e865a044-2c10-9858-f4ef-254bc71d6cc2@i-love.sakura.ne.jp>
+ <20190128215315.GA2011@cmpxchg.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <5ee34fc6-1485-34f8-8790-903ddabaa809@i-love.sakura.ne.jp>
+Date:   Tue, 29 Jan 2019 19:34:00 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190128215315.GA2011@cmpxchg.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Df-Sender: am5Ac2Nobmhyci5kZQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some systems experience regular interruptions (60 Hz SMI?), that prevent
-the quick PIT calibration from succeeding: individual interruptions can be
-so long, that the PIT MSB is observed to decrement by 2 or 3 instead of 1.
-The existing code cannot recover from this.
+Johannes Weiner wrote:
+> On Sun, Jan 27, 2019 at 11:57:38PM +0900, Tetsuo Handa wrote:
+> > This bug existed since the OOM reaper became invokable from
+> > task_will_free_mem(current) path in out_of_memory() in Linux 4.7,
+> > but memcg's group oom killing made it easier to trigger this bug by
+> > calling wake_oom_reaper() on the same task from one out_of_memory()
+> > request.
+> 
+> This changelog seems a little terse compared to how tricky this is.
+> 
+> Can you please include an explanation here *how* this bug is possible?
+> I.e. the race condition that causes the function te be entered twice
+> and the existing re-entrance check in there to fail.
 
-The system in question is an AMD Ryzen Threadripper 2950X, microcode
-0x800820b, on an ASRock Fatal1ty X399 Professional Gaming, BIOS P3.30.
+OK. Here is an updated patch. Only changelog part has changed.
+I hope this will provide enough information to stable kernel maintainers.
+----------
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: oom, oom_reaper: do not enqueue same task twice
 
-Change the code to handle (almost) arbitrary interruptions, as long
-as they happen only once in a while and they do not take too long.
-Specifically, also cover an interruption during the very first reads.
+Arkadiusz reported that enabling memcg's group oom killing causes strange
+memcg statistics where there is no task in a memcg despite the number of
+tasks in that memcg is not 0.  It turned out that there is a bug in
+wake_oom_reaper() which allows enqueuing same task twice which makes
+impossible to decrease the number of tasks in that memcg due to a refcount
+leak.
 
-Signed-off-by: Jan H. Schönherr <jan@schnhrr.de>
+This bug existed since the OOM reaper became invokable from
+task_will_free_mem(current) path in out_of_memory() in Linux 4.7,
+
+  T1@P1     |T2@P1     |T3@P1     |OOM reaper
+  ----------+----------+----------+------------
+                                   # Processing an OOM victim in a different memcg domain.
+                        try_charge()
+                          mem_cgroup_out_of_memory()
+                            mutex_lock(&oom_lock)
+             try_charge()
+               mem_cgroup_out_of_memory()
+                 mutex_lock(&oom_lock)
+  try_charge()
+    mem_cgroup_out_of_memory()
+      mutex_lock(&oom_lock)
+                            out_of_memory()
+                              oom_kill_process(P1)
+                                do_send_sig_info(SIGKILL, @P1)
+                                mark_oom_victim(T1@P1)
+                                wake_oom_reaper(T1@P1) # T1@P1 is enqueued.
+                            mutex_unlock(&oom_lock)
+                 out_of_memory()
+                   mark_oom_victim(T2@P1)
+                   wake_oom_reaper(T2@P1) # T2@P1 is enqueued.
+                 mutex_unlock(&oom_lock)
+      out_of_memory()
+        mark_oom_victim(T1@P1)
+        wake_oom_reaper(T1@P1) # T1@P1 is enqueued again due to oom_reaper_list == T2@P1 && T1@P1->oom_reaper_list == NULL.
+      mutex_unlock(&oom_lock)
+                                   # Completed processing an OOM victim in a different memcg domain.
+                                   spin_lock(&oom_reaper_lock)
+                                   # T1P1 is dequeued.
+                                   spin_unlock(&oom_reaper_lock)
+
+but memcg's group oom killing made it easier to trigger this bug by
+calling wake_oom_reaper() on the same task from one out_of_memory()
+request.
+
+Fix this bug using an approach used by commit 855b018325737f76 ("oom,
+oom_reaper: disable oom_reaper for oom_kill_allocating_task").  As a side
+effect of this patch, this patch also avoids enqueuing multiple threads
+sharing memory via task_will_free_mem(current) path.
+
+Fixes: af8e15cc85a25315 ("oom, oom_reaper: do not enqueue task if it is on the oom_reaper_list head")
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: Arkadiusz Miśkiewicz <arekm@maven.pl>
+Tested-by: Arkadiusz Miśkiewicz <arekm@maven.pl>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Roman Gushchin <guro@fb.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Aleksa Sarai <asarai@suse.de>
+Cc: Jay Kamat <jgkamat@fb.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
 ---
- arch/x86/kernel/tsc.c | 80 +++++++++++++++++++++++++------------------
- 1 file changed, 46 insertions(+), 34 deletions(-)
+ include/linux/sched/coredump.h | 1 +
+ mm/oom_kill.c                  | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index e9f777bfed40..a005e0aa215e 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -485,7 +485,7 @@ static inline int pit_verify_msb(unsigned char val)
- static inline int pit_expect_msb(unsigned char val, u64 *tscp, unsigned long *deltap)
+diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
+index ec912d0..ecdc654 100644
+--- a/include/linux/sched/coredump.h
++++ b/include/linux/sched/coredump.h
+@@ -71,6 +71,7 @@ static inline int get_dumpable(struct mm_struct *mm)
+ #define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
+ #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
+ #define MMF_OOM_VICTIM		25	/* mm is the oom victim */
++#define MMF_OOM_REAP_QUEUED	26	/* mm was queued for oom_reaper */
+ #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+ 
+ #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f0e8cd9..059e617 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -647,8 +647,8 @@ static int oom_reaper(void *unused)
+ 
+ static void wake_oom_reaper(struct task_struct *tsk)
  {
- 	int count;
--	u64 tsc = 0, prev_tsc = 0;
-+	u64 tsc = get_cycles(), prev_tsc = 0;
+-	/* tsk is already queued? */
+-	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
++	/* mm is already queued? */
++	if (test_and_set_bit(MMF_OOM_REAP_QUEUED, &tsk->signal->oom_mm->flags))
+ 		return;
  
- 	for (count = 0; count < 50000; count++) {
- 		if (!pit_verify_msb(val))
-@@ -500,7 +500,7 @@ static inline int pit_expect_msb(unsigned char val, u64 *tscp, unsigned long *de
- 	 * We require _some_ success, but the quality control
- 	 * will be based on the error terms on the TSC values.
- 	 */
--	return count > 5;
-+	return count > 0 && pit_verify_msb(val - 1);
- }
- 
- /*
-@@ -515,7 +515,8 @@ static inline int pit_expect_msb(unsigned char val, u64 *tscp, unsigned long *de
- static unsigned long quick_pit_calibrate(void)
- {
- 	int i;
--	u64 tsc, delta;
-+	u64 tsc = 0, delta;
-+	unsigned char start;
- 	unsigned long d1, d2;
- 
- 	if (!has_legacy_pic())
-@@ -547,39 +548,50 @@ static unsigned long quick_pit_calibrate(void)
- 	 */
- 	pit_verify_msb(0);
- 
--	if (pit_expect_msb(0xff, &tsc, &d1)) {
--		for (i = 1; i <= MAX_QUICK_PIT_ITERATIONS; i++) {
--			if (!pit_expect_msb(0xff-i, &delta, &d2))
--				break;
--
--			delta -= tsc;
--
--			/*
--			 * Extrapolate the error and fail fast if the error will
--			 * never be below 500 ppm.
--			 */
--			if (i == 1 &&
--			    d1 + d2 >= (delta * MAX_QUICK_PIT_ITERATIONS) >> 11)
--				return 0;
--
--			/*
--			 * Iterate until the error is less than 500 ppm
--			 */
--			if (d1+d2 >= delta >> 11)
--				continue;
--
--			/*
--			 * Check the PIT one more time to verify that
--			 * all TSC reads were stable wrt the PIT.
--			 *
--			 * This also guarantees serialization of the
--			 * last cycle read ('d2') in pit_expect_msb.
--			 */
--			if (!pit_verify_msb(0xfe - i))
--				break;
--			goto success;
-+	for (i = 0xff; i > 0xf0; i--) {
-+		if (!pit_expect_msb(i, &delta, &d2))
-+			continue;
-+
-+		if (!tsc) {
-+			/* first success */
-+			tsc = delta;
-+			d1 = d2;
-+			continue;
-+		}
-+
-+		/* second success */
-+		if (d2 < d1) {
-+			tsc = delta;
-+			d1 = d2;
- 		}
-+		goto calibrate;
-+	}
-+
-+	pr_info("Fast TSC calibration failed (couldn't even start)\n");
-+	return 0;
-+
-+calibrate:
-+	/*
-+	 * Extrapolate the error and fail fast if the error will
-+	 * never be below 500 ppm.
-+	 */
-+	if (d1 + d1 >= (delta * MAX_QUICK_PIT_ITERATIONS) >> 11) {
-+		pr_info("Fast TSC calibration failed (wouldn't work)\n");
-+		return 0;
-+	}
-+
-+	start = i;
-+	for (i = 1; i <= MAX_QUICK_PIT_ITERATIONS; i++) {
-+		if (!pit_expect_msb(start - i, &delta, &d2))
-+			continue;
-+
-+		delta -= tsc;
-+
-+		/* Stop when the error is less than 500 ppm */
-+		if (d1 + d2 < delta >> 11)
-+			goto success;
- 	}
-+
- 	pr_info("Fast TSC calibration failed\n");
- 	return 0;
- 
+ 	get_task_struct(tsk);
 -- 
-2.19.2
+1.8.3.1
 
