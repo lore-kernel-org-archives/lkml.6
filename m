@@ -6,18 +6,18 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D20F4C282CF
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 166A4C282CF
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5E612177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4930217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbfA2Akt (ORCPT
+        id S1728413AbfA2Aks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:40:49 -0500
-Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
+        Mon, 28 Jan 2019 19:40:48 -0500
+Received: from mga06.intel.com ([134.134.136.31]:5081 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727456AbfA2AjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726845AbfA2AjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 19:39:17 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -25,7 +25,7 @@ Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="133921898"
+   d="scan'208";a="133921894"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
   by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:11 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -45,9 +45,9 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 05/20] x86/alternative: initializing temporary mm for patching
-Date:   Mon, 28 Jan 2019 16:34:07 -0800
-Message-Id: <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 04/20] fork: provide a function for copying init_mm
+Date:   Mon, 28 Jan 2019 16:34:06 -0800
+Message-Id: <20190129003422.9328-5-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
@@ -58,149 +58,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nadav Amit <namit@vmware.com>
 
-To prevent improper use of the PTEs that are used for text patching, we
-want to use a temporary mm struct. We initailize it by copying the init
-mm.
+Provide a function for copying init_mm. This function will be later used
+for setting a temporary mm.
 
-The address that will be used for patching is taken from the lower area
-that is usually used for the task memory. Doing so prevents the need to
-frequently synchronize the temporary-mm (e.g., when BPF programs are
-installed), since different PGDs are used for the task memory.
-
-Finally, we randomize the address of the PTEs to harden against exploits
-that use these PTEs.
-
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/pgtable.h       |  3 +++
- arch/x86/include/asm/text-patching.h |  2 ++
- arch/x86/kernel/alternative.c        |  3 +++
- arch/x86/mm/init_64.c                | 36 ++++++++++++++++++++++++++++
- init/main.c                          |  3 +++
- 5 files changed, 47 insertions(+)
+ include/linux/sched/task.h |  1 +
+ kernel/fork.c              | 24 ++++++++++++++++++------
+ 2 files changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 40616e805292..e8f630d9a2ed 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1021,6 +1021,9 @@ static inline void __meminit init_trampoline_default(void)
- 	/* Default trampoline pgd value */
- 	trampoline_pgd_entry = init_top_pgt[pgd_index(__PAGE_OFFSET)];
- }
-+
-+void __init poking_init(void);
-+
- # ifdef CONFIG_RANDOMIZE_MEMORY
- void __meminit init_trampoline(void);
- # else
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index f8fc8e86cf01..a75eed841eed 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
- extern int after_bootmem;
-+extern __ro_after_init struct mm_struct *poking_mm;
-+extern __ro_after_init unsigned long poking_addr;
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 44c6f15800ff..c5a00a7b3beb 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -76,6 +76,7 @@ extern void exit_itimers(struct signal_struct *);
+ extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
+ extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
+ struct task_struct *fork_idle(int);
++struct mm_struct *copy_init_mm(void);
+ extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
+ extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
  
- #endif /* _ASM_X86_TEXT_PATCHING_H */
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 12fddbc8c55b..ae05fbb50171 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
- 	return addr;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index b69248e6f0e0..d7b156c49f29 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1299,13 +1299,20 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
+ 		complete_vfork_done(tsk);
  }
  
-+__ro_after_init struct mm_struct *poking_mm;
-+__ro_after_init unsigned long poking_addr;
-+
- static void *__text_poke(void *addr, const void *opcode, size_t len)
+-/*
+- * Allocate a new mm structure and copy contents from the
+- * mm structure of the passed in task structure.
++/**
++ * dup_mm() - duplicates an existing mm structure
++ * @tsk: the task_struct with which the new mm will be associated.
++ * @oldmm: the mm to duplicate.
++ *
++ * Allocates a new mm structure and copy contents from the provided
++ * @oldmm structure.
++ *
++ * Return: the duplicated mm or NULL on failure.
+  */
+-static struct mm_struct *dup_mm(struct task_struct *tsk)
++static struct mm_struct *dup_mm(struct task_struct *tsk,
++				struct mm_struct *oldmm)
  {
- 	unsigned long flags;
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index bccff68e3267..125c8c48aa24 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -53,6 +53,7 @@
- #include <asm/init.h>
- #include <asm/uv/uv.h>
- #include <asm/setup.h>
-+#include <asm/text-patching.h>
+-	struct mm_struct *mm, *oldmm = current->mm;
++	struct mm_struct *mm;
+ 	int err;
  
- #include "mm_internal.h"
+ 	mm = allocate_mm();
+@@ -1372,7 +1379,7 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
+ 	}
  
-@@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
- 	return memory_block_size_probed;
+ 	retval = -ENOMEM;
+-	mm = dup_mm(tsk);
++	mm = dup_mm(tsk, current->mm);
+ 	if (!mm)
+ 		goto fail_nomem;
+ 
+@@ -2187,6 +2194,11 @@ struct task_struct *fork_idle(int cpu)
+ 	return task;
  }
  
-+/*
-+ * Initialize an mm_struct to be used during poking and a pointer to be used
-+ * during patching.
-+ */
-+void __init poking_init(void)
++struct mm_struct *copy_init_mm(void)
 +{
-+	spinlock_t *ptl;
-+	pte_t *ptep;
-+
-+	poking_mm = copy_init_mm();
-+	BUG_ON(!poking_mm);
-+
-+	/*
-+	 * Randomize the poking address, but make sure that the following page
-+	 * will be mapped at the same PMD. We need 2 pages, so find space for 3,
-+	 * and adjust the address if the PMD ends after the first one.
-+	 */
-+	poking_addr = TASK_UNMAPPED_BASE;
-+	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
-+		poking_addr += (kaslr_get_random_long("Poking") & PAGE_MASK) %
-+			(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
-+
-+	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) == 0)
-+		poking_addr += PAGE_SIZE;
-+
-+	/*
-+	 * We need to trigger the allocation of the page-tables that will be
-+	 * needed for poking now. Later, poking may be performed in an atomic
-+	 * section, which might cause allocation to fail.
-+	 */
-+	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
-+	BUG_ON(!ptep);
-+	pte_unmap_unlock(ptep, ptl);
++	return dup_mm(NULL, &init_mm);
 +}
 +
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
  /*
-  * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
-diff --git a/init/main.c b/init/main.c
-index e2e80ca3165a..f5947ba53bb4 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -496,6 +496,8 @@ void __init __weak thread_stack_cache_init(void)
- 
- void __init __weak mem_encrypt_init(void) { }
- 
-+void __init __weak poking_init(void) { }
-+
- bool initcall_debug;
- core_param(initcall_debug, initcall_debug, bool, 0644);
- 
-@@ -730,6 +732,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	taskstats_init_early();
- 	delayacct_init();
- 
-+	poking_init();
- 	check_bugs();
- 
- 	acpi_subsystem_init();
+  *  Ok, this is the main fork-routine.
+  *
 -- 
 2.17.1
 
