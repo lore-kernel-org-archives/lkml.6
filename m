@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 079D2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3FDC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C90BD20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1FCF20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763076;
-	bh=Ompww5gnv18gxthPvlrWbAWUCRHKD+kBwXTXgtOMMac=;
+	s=default; t=1548763084;
+	bh=fhPcsEUfGecLET/asQ7AeBkxh/R4C06ks1XmPZiox/k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=08SlrAPfv3mOcm0awo1dxWH+3FR56YcxcqrpryqITtBLn6TtWzMBpjSlzD3pXeshP
-	 HgES0TDUCKCxMggy6Z1rXBbLmrTQoGikx15+XYBiPockt1HNbEPIk40mLO4zWrQjpz
-	 H/2Ba+L6FMWwhevRSN2EsZR4JBRtNDyrAuoU9npY=
+	b=JkARjrXYixS5ob0IVUsMo/2sLUVvIdrzmnbfEXT2Wv4ehim+c987NfxB0uVpJ9i0K
+	 HF4qLKa6a3r9E/fuRZdJLRbffRy0phv+8SZSbuqTUYRv7pUGHpa3PWVSxDuP7u6YIc
+	 raSTA8EJvykKSYB+C+Kt/UyvdKYSlcHcoUmeX040=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730805AbfA2Lsf (ORCPT
+        id S1731330AbfA2Ls3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:48:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39436 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:48:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731336AbfA2Lsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:32 -0500
+        id S1730689AbfA2LsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:48:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99F892083B;
-        Tue, 29 Jan 2019 11:48:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98E522086C;
+        Tue, 29 Jan 2019 11:48:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762512;
-        bh=Ompww5gnv18gxthPvlrWbAWUCRHKD+kBwXTXgtOMMac=;
+        s=default; t=1548762504;
+        bh=fhPcsEUfGecLET/asQ7AeBkxh/R4C06ks1XmPZiox/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S7BIUikA+fn+1xeOESWQh7BgyZxh0IyRnVvHqGCzhB/ClCvfUMTMwDcjah5mPiAAc
-         RT66rNRG4Il+zs5DGoFHSxgfEQukDDp7bJ24iSPqC8D0l15KzXSdQxGfFwjbhWn0y2
-         kJHhLJtC+B7/yD/P5b9lomQ9B3xnMznoVD8Oenv0=
+        b=F+4ojLzttKBnmqAFLwh7RaZrnG0lpcllsN2+axw3n08Cd6n2YG1CSdk9eBplIUyyz
+         SBSLr+9UbCksHsmyAhnofJNreLJMidivAk8b6yoLlFp9dSpLcxwgeHpJTLbC9wY3gR
+         vrj+fqv08qxgEJFDI+U7A1Gt/f/rc9cvEm21y4Iw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 03/68] net: Fix usage of pskb_trim_rcsum
-Date:   Tue, 29 Jan 2019 12:35:25 +0100
-Message-Id: <20190129113131.980198231@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Fulghum <paulkf@microgate.com>,
+        syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.14 27/68] tty/n_hdlc: fix __might_sleep warning
+Date:   Tue, 29 Jan 2019 12:35:49 +0100
+Message-Id: <20190129113133.870908913@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -65,75 +68,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Paul Fulghum <paulkf@microgate.com>
 
-[ Upstream commit 6c57f0458022298e4da1729c67bd33ce41c14e7a ]
+commit fc01d8c61ce02c034e67378cd3e645734bc18c8c upstream.
 
-In certain cases, pskb_trim_rcsum() may change skb pointers.
-Reinitialize header pointers afterwards to avoid potential
-use-after-frees. Add a note in the documentation of
-pskb_trim_rcsum(). Found by KASAN.
+Fix __might_sleep warning[1] in tty/n_hdlc.c read due to copy_to_user
+call while current is TASK_INTERRUPTIBLE.  This is a false positive
+since the code path does not depend on current state remaining
+TASK_INTERRUPTIBLE.  The loop breaks out and sets TASK_RUNNING after
+calling copy_to_user.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This patch supresses the warning by setting TASK_RUNNING before calling
+copy_to_user.
+
+[1] https://syzkaller.appspot.com/bug?id=17d5de7f1fcab794cb8c40032f893f52de899324
+
+Signed-off-by: Paul Fulghum <paulkf@microgate.com>
+Reported-by: syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ppp/pppoe.c                  |    1 +
- include/linux/skbuff.h                   |    1 +
- net/bridge/br_netfilter_ipv6.c           |    1 +
- net/bridge/netfilter/nft_reject_bridge.c |    1 +
- net/ipv4/ip_input.c                      |    1 +
- 5 files changed, 5 insertions(+)
 
---- a/drivers/net/ppp/pppoe.c
-+++ b/drivers/net/ppp/pppoe.c
-@@ -445,6 +445,7 @@ static int pppoe_rcv(struct sk_buff *skb
- 	if (pskb_trim_rcsum(skb, len))
- 		goto drop;
- 
-+	ph = pppoe_hdr(skb);
- 	pn = pppoe_pernet(dev_net(dev));
- 
- 	/* Note that get_item does a sock_hold(), so sk_pppox(po)
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -3163,6 +3163,7 @@ int pskb_trim_rcsum_slow(struct sk_buff
-  *
-  *	This is exactly the same as pskb_trim except that it ensures the
-  *	checksum of received packets are still valid after the operation.
-+ *	It can change skb pointers.
-  */
- 
- static inline int pskb_trim_rcsum(struct sk_buff *skb, unsigned int len)
---- a/net/bridge/br_netfilter_ipv6.c
-+++ b/net/bridge/br_netfilter_ipv6.c
-@@ -131,6 +131,7 @@ int br_validate_ipv6(struct net *net, st
- 					IPSTATS_MIB_INDISCARDS);
- 			goto drop;
- 		}
-+		hdr = ipv6_hdr(skb);
- 	}
- 	if (hdr->nexthdr == NEXTHDR_HOP && br_nf_check_hbh_len(skb))
- 		goto drop;
---- a/net/bridge/netfilter/nft_reject_bridge.c
-+++ b/net/bridge/netfilter/nft_reject_bridge.c
-@@ -230,6 +230,7 @@ static bool reject6_br_csum_ok(struct sk
- 	    pskb_trim_rcsum(skb, ntohs(ip6h->payload_len) + sizeof(*ip6h)))
- 		return false;
- 
-+	ip6h = ipv6_hdr(skb);
- 	thoff = ipv6_skip_exthdr(skb, ((u8*)(ip6h+1) - skb->data), &proto, &fo);
- 	if (thoff < 0 || thoff >= skb->len || (fo & htons(~0x7)) != 0)
- 		return false;
---- a/net/ipv4/ip_input.c
-+++ b/net/ipv4/ip_input.c
-@@ -481,6 +481,7 @@ int ip_rcv(struct sk_buff *skb, struct n
- 		goto drop;
- 	}
- 
-+	iph = ip_hdr(skb);
- 	skb->transport_header = skb->network_header + iph->ihl*4;
- 
- 	/* Remove any debris in the socket control block */
+---
+ drivers/tty/n_hdlc.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/tty/n_hdlc.c
++++ b/drivers/tty/n_hdlc.c
+@@ -598,6 +598,7 @@ static ssize_t n_hdlc_tty_read(struct tt
+ 				/* too large for caller's buffer */
+ 				ret = -EOVERFLOW;
+ 			} else {
++				__set_current_state(TASK_RUNNING);
+ 				if (copy_to_user(buf, rbuf->buf, rbuf->count))
+ 					ret = -EFAULT;
+ 				else
 
 
