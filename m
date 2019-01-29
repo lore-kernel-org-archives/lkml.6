@@ -2,165 +2,126 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 259D8C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98919C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7944214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:56:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IS8C+n3s"
+	by mail.kernel.org (Postfix) with ESMTP id 6C48421473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:00:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbfA2I4S (ORCPT
+        id S1727310AbfA2JAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:56:18 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4764 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727867AbfA2I4Q (ORCPT
+        Tue, 29 Jan 2019 04:00:39 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:40399 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbfA2JAj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:56:16 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5015070002>; Tue, 29 Jan 2019 00:55:35 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 29 Jan 2019 00:56:15 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 29 Jan 2019 00:56:15 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 29 Jan
- 2019 08:56:14 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 29 Jan
- 2019 08:56:14 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 29 Jan 2019 08:56:14 +0000
-Received: from localhost.localdomain (Not Verified[10.19.225.143]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c50152b0006>; Tue, 29 Jan 2019 00:56:14 -0800
-From:   Mark Zhang <markz@nvidia.com>
-To:     <lee.jones@linaro.org>, <blaws05@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <linux-tegra@vger.kernel.org>, Mark Zhang <markz@nvidia.com>,
-        "Laxman Dewangan" <ldewangan@nvidia.com>,
-        Venkat Reddy Talla <vreddytalla@nvidia.com>
-Subject: [PATCH v2 3/4] mfd: max77620: Add low battery monitor support
-Date:   Tue, 29 Jan 2019 16:55:30 +0800
-Message-ID: <20190129085531.32364-4-markz@nvidia.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190129085531.32364-1-markz@nvidia.com>
-References: <20190129085531.32364-1-markz@nvidia.com>
+        Tue, 29 Jan 2019 04:00:39 -0500
+X-Originating-IP: 90.88.29.206
+Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id BAB75C0009;
+        Tue, 29 Jan 2019 09:00:35 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 10:00:35 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH] media: ov5640: Fix set 15fps regression
+Message-ID: <20190129090035.lopfq3sdbx5glkl4@flea>
+References: <20190124175801.28018-1-jagan@amarulasolutions.com>
+ <20190125153958.3aertsxgdzjldlzd@flea>
+ <CAMty3ZCuBqiOGAixWhy5bYqUHk0_=NvX08zp2F+MT4GgVEo+Rw@mail.gmail.com>
+ <20190128083304.nxuvxecrcq63v2vn@uno.localdomain>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548752136; bh=BgG6FUugC1CevREJ1krBzbps1BGj7dMGa+3M+zudQjU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=IS8C+n3sj6zoBQx9m0diEhLB9G43DtLLPVrvriYTNg0MaJXC+osEaZPBlQfhwytr8
-         dT8ssw94ROFIZJ3oV8oD6rcAogg/B0jSVbnxt1w4X2eFsxGujrR7p/53AiCIdvRwC0
-         3ShL+okLBCIObiDnZIQCDrHxFIpY74NmcZdp5T5tWZKRQPzF8jxE2q6MRHyjKWKMaZ
-         qldGwWtjxMEsVU0jp4iE4Ix0Ra81xAwIbZSphNqljGf4JP4fUjfhR8/WCGBDy4jJKT
-         dp7KKObDwSA8LKOmXnOrlwfofHX3gGXwzb0jTXdVlUTFtFv++vrxgp/uHN9oKqThjJ
-         QWM+dQTtsY9IA==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uratojj4iyju3ihf"
+Content-Disposition: inline
+In-Reply-To: <20190128083304.nxuvxecrcq63v2vn@uno.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds PMIC configurations for low-battery
-monitoring by handling max77620 register CNFGGLBL1.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
-Signed-off-by: Mark Zhang <markz@nvidia.com>
----
- drivers/mfd/max77620.c | 57 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 56 insertions(+), 1 deletion(-)
+--uratojj4iyju3ihf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index f58143103185..9e50d145afd8 100644
---- a/drivers/mfd/max77620.c
-+++ b/drivers/mfd/max77620.c
-@@ -474,6 +474,57 @@ static int max77620_init_backup_battery_charging(struc=
-t max77620_chip *chip)
- 	return ret;
- }
-=20
-+static int max77620_init_low_battery_monitor(struct max77620_chip *chip)
-+{
-+	struct device *dev =3D chip->dev;
-+	struct device_node *np;
-+	bool pval;
-+	u8 mask =3D 0;
-+	u8 val =3D 0;
-+	int ret;
-+
-+	np =3D of_get_child_by_name(dev->of_node, "low-battery-monitor");
-+	if (!np) {
-+		dev_info(dev, "Low battery monitoring support disabled\n");
-+		return 0;
-+	}
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-dac-enable");
-+	if (pval) {
-+		mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
-+		val |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
-+	}
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-dac-disable");
-+	if (pval)
-+		mask |=3D MAX77620_CNFGGLBL1_LBDAC_EN;
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-shutdown-enable");
-+	if (pval) {
-+		mask |=3D MAX77620_CNFGGLBL1_MPPLD;
-+		val |=3D MAX77620_CNFGGLBL1_MPPLD;
-+	}
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-shutdown-disable");
-+	if (pval)
-+		mask |=3D MAX77620_CNFGGLBL1_MPPLD;
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-reset-enable");
-+	if (pval) {
-+		mask |=3D MAX77620_CNFGGLBL1_LBRSTEN;
-+		val |=3D MAX77620_CNFGGLBL1_LBRSTEN;
-+	}
-+
-+	pval =3D of_property_read_bool(np, "maxim,low-battery-reset-disable");
-+	if (pval)
-+		mask |=3D MAX77620_CNFGGLBL1_LBRSTEN;
-+
-+	ret =3D regmap_update_bits(chip->rmap, MAX77620_REG_CNFGGLBL1, mask, val)=
-;
-+	if (ret < 0)
-+		dev_err(dev, "Reg CNFGGLBL1 update failed: %d\n", ret);
-+	return ret;
-+}
-+
- static int max77620_read_es_version(struct max77620_chip *chip)
- {
- 	unsigned int val;
-@@ -563,7 +614,11 @@ static int max77620_probe(struct i2c_client *client,
- 	if (ret < 0)
- 		return ret;
-=20
--	ret =3D  devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
-+	ret =3D max77620_init_low_battery_monitor(chip);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret =3D devm_mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE,
- 				    mfd_cells, n_mfd_cells, NULL, 0,
- 				    regmap_irq_get_domain(chip->top_irq_data));
- 	if (ret < 0) {
+On Mon, Jan 28, 2019 at 09:33:04AM +0100, Jacopo Mondi wrote:
+> Hi everyone,
+>=20
+> On Mon, Jan 28, 2019 at 01:20:37PM +0530, Jagan Teki wrote:
+> > On Fri, Jan 25, 2019 at 9:10 PM Maxime Ripard <maxime.ripard@bootlin.co=
+m> wrote:
+> > >
+> > > On Thu, Jan 24, 2019 at 11:28:01PM +0530, Jagan Teki wrote:
+> > > > The ov5640_try_frame_interval operation updates the FPS as per user
+> > > > input based on default ov5640_frame_rate, OV5640_30_FPS which is fa=
+iled
+> > > > to update when user trigger 15fps.
+> > > >
+> > > > So, initialize the default ov5640_frame_rate to OV5640_15_FPS so-th=
+at
+> > > > it can satisfy to update all fps.
+> > > >
+> > > > Fixes: 5a3ad937bc78 ("media: ov5640: Make the return rate type more=
+ explicit")
+> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > >
+> > > I'm pretty sure I tested this and it was working fine. You're
+> > > mentionning a regression, but what regression is there exactly (ie,
+> > > what was working before that commit that doesn't work anymore?). What
+> > > tools/commands are you using to see this behaviour?
+> >
+>=20
+> I think Jagan's right, here.
+>=20
+> For the 15FPS use case, the below condition in the for loop of
+> ov5640_try_frame_interval() never gets satisfied (0 < 0 ?) and 'rate' ret=
+ains
+> its initial value of 30FPS.
+>=20
+> 		if (abs(curr_fps - fps) < abs(best_fps - fps)) {
+> 			best_fps =3D curr_fps;
+> 			rate =3D i;
+> 		}
+>=20
+> To make more clear what's happening, I would initialize 'rate' just
+> before 'best_fps' before the for loop. Anyway, please add:
+> Acked-by: Jacopo Mondi <jacopo@jmondi.org>
+>=20
+> Maxime, does this make sense to you?
+
+With that explanation in the commit log, yes.
+
+Maxime
+
 --=20
-2.19.2
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--uratojj4iyju3ihf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFAWMwAKCRDj7w1vZxhR
+xegdAP4r2z5eA9iFiTsVqHFV7Oi1JLFpsREGDtn0FQ/NjZaN/AD+L9WU1PO/9nzQ
+YamlzAgkMwbsxat0is32D+Q1EjT6IwE=
+=dsC0
+-----END PGP SIGNATURE-----
+
+--uratojj4iyju3ihf--
