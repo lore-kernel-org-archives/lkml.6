@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27215C282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5459AC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBAA22083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19B882083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762852;
-	bh=UnCwPL2AWeeVzXLoc1/k94Q4XwKehXo62htDZm7dt5w=;
+	s=default; t=1548762856;
+	bh=pwPK9HQfQMMGQCtLBVeB8TvowvS1QK/odkZKhQ3TFC8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Pz2NzH0iIdvxk7su0f/dFT1dAMK7TkzFcOicbLDDIcFA0dP7hrQatlPRLx1d0tBtr
-	 YDNcwQHb/HAofIJCpwiiH34//NxnNnjoBUd5tNWcL7JeADuJY+KUfwwju/yqSIi+XR
-	 /G7J9rjkCqH+FWaKWECcFGe24w4tAqTLL28PKNcE=
+	b=pgP1NFyAsO3LX4eLBjPgpl+LOK5edrZx0Qi1VnkzE2bxwRVgsOzTBo2KWutt1Mnem
+	 jNGpkT72f9O+8JdYOUdayMKf50WC27ByPEZXnP1Rhp8piAV6JqeT8Txwk76wXe13MZ
+	 /mI3QNZBLvLLzW8dvVdeolswuLIDOUduk/cnnt9s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731980AbfA2Lv4 (ORCPT
+        id S1731938AbfA2Lvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:51:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43402 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:51:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731966AbfA2Lvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:51:48 -0500
+        id S1731402AbfA2Lvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:51:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63FC120989;
-        Tue, 29 Jan 2019 11:51:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F30F2148E;
+        Tue, 29 Jan 2019 11:51:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762707;
-        bh=UnCwPL2AWeeVzXLoc1/k94Q4XwKehXo62htDZm7dt5w=;
+        s=default; t=1548762710;
+        bh=pwPK9HQfQMMGQCtLBVeB8TvowvS1QK/odkZKhQ3TFC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oN5o6CenfkCuhhPtEUnwnUuOB2lLTk7YRtaH1vUp9EjjwRIG3bi0HrOP323QNRwyO
-         bfN8DqxMwzck6DmM4Nx8dtdWViVhYXPpXj1QSTrEgsjmPUVTXRSp7yL4uvZs2pYgDj
-         kPMxo724SG5eGQG2RHnuyuy9kNL1yP5knzrymCAY=
+        b=2UbyxzCKSTHam6KuuQF5+ypctnHY1jSdy/DqK5lZoQBEbYFVD6qlZ6DD7M2cAbwyH
+         zkO6RtqAZxsOLWrgPrxIHJ2dv0gbv8tpEZDgXwGRoIlbtwIWgE9t8n9cWzDsGKOckK
+         8IgY2B8V79KCQ07ol5CFs8L2Jo5jDyDkyqwfqejw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
         Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        hpa@zytor.com, peterz@infradead.org, mpe@ellerman.id.au,
-        will.deacon@arm.com, luto@kernel.org, jroedel@suse.de
-Subject: [PATCH 4.9 31/44] x86/selftests/pkeys: Fork() to check for state being preserved
-Date:   Tue, 29 Jan 2019 12:36:26 +0100
-Message-Id: <20190129113142.435160949@linuxfoundation.org>
+        hpa@zytor.com, linux@endlessm.com
+Subject: [PATCH 4.9 32/44] x86/kaslr: Fix incorrect i8254 outb() parameters
+Date:   Tue, 29 Jan 2019 12:36:27 +0100
+Message-Id: <20190129113142.517091836@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -67,115 +66,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Daniel Drake <drake@endlessm.com>
 
-commit e1812933b17be7814f51b6c310c5d1ced7a9a5f5 upstream.
+commit 7e6fc2f50a3197d0e82d1c0e86282976c9e6c8a4 upstream.
 
-There was a bug where the per-mm pkey state was not being preserved across
-fork() in the child.  fork() is performed in the pkey selftests, but all of
-the pkey activity is performed in the parent.  The child does not perform
-any actions sensitive to pkey state.
+The outb() function takes parameters value and port, in that order.  Fix
+the parameters used in the kalsr i8254 fallback code.
 
-To make the test more sensitive to these kinds of bugs, add a fork() where
-the parent exits, and execution continues in the child.
-
-To achieve this let the key exhaustion test not terminate at the first
-allocation failure and fork after 2*NR_PKEYS loops and continue in the
-child.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Fixes: 5bfce5ef55cb ("x86, kaslr: Provide randomness functions")
+Signed-off-by: Daniel Drake <drake@endlessm.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: bp@alien8.de
 Cc: hpa@zytor.com
-Cc: peterz@infradead.org
-Cc: mpe@ellerman.id.au
-Cc: will.deacon@arm.com
-Cc: luto@kernel.org
-Cc: jroedel@suse.de
+Cc: linux@endlessm.com
 Cc: stable@vger.kernel.org
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Joerg Roedel <jroedel@suse.de>
-Link: https://lkml.kernel.org/r/20190102215657.585704B7@viggo.jf.intel.com
+Link: https://lkml.kernel.org/r/20190107034024.15005-1-drake@endlessm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/x86/protection_keys.c |   41 +++++++++++++++++++-------
- 1 file changed, 31 insertions(+), 10 deletions(-)
+ arch/x86/lib/kaslr.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -1129,6 +1129,21 @@ void test_pkey_syscalls_bad_args(int *pt
- 	pkey_assert(err);
- }
+--- a/arch/x86/lib/kaslr.c
++++ b/arch/x86/lib/kaslr.c
+@@ -35,8 +35,8 @@ static inline u16 i8254(void)
+ 	u16 status, timer;
  
-+void become_child(void)
-+{
-+	pid_t forkret;
-+
-+	forkret = fork();
-+	pkey_assert(forkret >= 0);
-+	dprintf3("[%d] fork() ret: %d\n", getpid(), forkret);
-+
-+	if (!forkret) {
-+		/* in the child */
-+		return;
-+	}
-+	exit(0);
-+}
-+
- /* Assumes that all pkeys other than 'pkey' are unallocated */
- void test_pkey_alloc_exhaust(int *ptr, u16 pkey)
- {
-@@ -1139,7 +1154,7 @@ void test_pkey_alloc_exhaust(int *ptr, u
- 	int nr_allocated_pkeys = 0;
- 	int i;
- 
--	for (i = 0; i < NR_PKEYS*2; i++) {
-+	for (i = 0; i < NR_PKEYS*3; i++) {
- 		int new_pkey;
- 		dprintf1("%s() alloc loop: %d\n", __func__, i);
- 		new_pkey = alloc_pkey();
-@@ -1150,21 +1165,27 @@ void test_pkey_alloc_exhaust(int *ptr, u
- 		if ((new_pkey == -1) && (errno == ENOSPC)) {
- 			dprintf2("%s() failed to allocate pkey after %d tries\n",
- 				__func__, nr_allocated_pkeys);
--			break;
-+		} else {
-+			/*
-+			 * Ensure the number of successes never
-+			 * exceeds the number of keys supported
-+			 * in the hardware.
-+			 */
-+			pkey_assert(nr_allocated_pkeys < NR_PKEYS);
-+			allocated_pkeys[nr_allocated_pkeys++] = new_pkey;
- 		}
--		pkey_assert(nr_allocated_pkeys < NR_PKEYS);
--		allocated_pkeys[nr_allocated_pkeys++] = new_pkey;
-+
-+		/*
-+		 * Make sure that allocation state is properly
-+		 * preserved across fork().
-+		 */
-+		if (i == NR_PKEYS*2)
-+			become_child();
- 	}
- 
- 	dprintf3("%s()::%d\n", __func__, __LINE__);
- 
- 	/*
--	 * ensure it did not reach the end of the loop without
--	 * failure:
--	 */
--	pkey_assert(i < NR_PKEYS*2);
--
--	/*
- 	 * There are 16 pkeys supported in hardware.  One is taken
- 	 * up for the default (0) and another can be taken up by
- 	 * an execute-only mapping.  Ensure that we can allocate
+ 	do {
+-		outb(I8254_PORT_CONTROL,
+-		     I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
++		outb(I8254_CMD_READBACK | I8254_SELECT_COUNTER0,
++		     I8254_PORT_CONTROL);
+ 		status = inb(I8254_PORT_COUNTER0);
+ 		timer  = inb(I8254_PORT_COUNTER0);
+ 		timer |= inb(I8254_PORT_COUNTER0) << 8;
 
 
