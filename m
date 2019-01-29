@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBFFC282D1
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DB0C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2051214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BE9A214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762465;
-	bh=8H+Ca6yo46RwV2Tq0JfuXG8yjb7rIdph1fcN5I6R1W0=;
+	s=default; t=1548762470;
+	bh=NGpFfwkthfZKBTiooWU0KnLmfo+LF3JjvIxU54/dccI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QQvPtkA5bGGl+WtYwviIVT/fZOelCnsKmCs9bW6IYCAmHHR0l2pTy+ixCyNgJYqEh
-	 tZsfs6pdxbNJX85E6AHPRuGDtHrHob62g9UvEIlXmwc2WCCNoczl8slvphi1oVcwy1
-	 CyIElVhx/xgEvxC62B/nqCbcVYQ8ZfNIjmdgPk/0=
+	b=NEsHg/B/JeKLetA3ZZCYR2m15lyH6FACtjKvaNFxg2sCdVsctM7t4Lo2aGttwkd2Z
+	 JW29liRbYaGUSfk6whp/Z9Z9o77YzHh3YFoKGyrhsUqftyQZaaY/stiWrKZVxlJDKO
+	 IktDeMUc/anspuJOq/P8OGw28MwpFiUdTCbgaRVA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731238AbfA2Lro (ORCPT
+        id S1731089AbfA2Lrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:47:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38432 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:47:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbfA2Lrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:42 -0500
+        id S1725811AbfA2Lrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F2582086C;
-        Tue, 29 Jan 2019 11:47:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F6FD20882;
+        Tue, 29 Jan 2019 11:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762462;
-        bh=8H+Ca6yo46RwV2Tq0JfuXG8yjb7rIdph1fcN5I6R1W0=;
+        s=default; t=1548762464;
+        bh=NGpFfwkthfZKBTiooWU0KnLmfo+LF3JjvIxU54/dccI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vufCMkOsfmRel3AKHMYa5tQqth9k00mz+7fh0wzZXMYUAn4Cd1/8BWO99DJ1ROkTo
-         rucnrzxKUcwrzhH6ZS8PnZtdioLKPhMDdabO30iefFFRw+xbu9HC0OpqC4s6xWzlFk
-         1+PARIdFIx+tNu/K78fC1/mvLfG12Xype66gk6c8=
+        b=dxq+uPBeIW2ea2u6N5e3eug5QXx/0Xvg3pTAdWWKFuboxOwlLjaGJlZOen8squa9e
+         e5PVynd+hNXjyK5Dhk1KsKJJmm7Jh59vL1goFICkL7qVMWOP6diPNqjgwLHvfOlKOX
+         ptv5B4gmikxfxmJJu9C88YG3FNSTssGV83WgnqnE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Schulze <max.schulze@posteo.de>,
+        stable@vger.kernel.org, Charles Yeh <charlesyeh522@gmail.com>,
         Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 13/68] USB: serial: simple: add Motorola Tetra TPG2200 device id
-Date:   Tue, 29 Jan 2019 12:35:35 +0100
-Message-Id: <20190129113132.651577839@linuxfoundation.org>
+Subject: [PATCH 4.14 14/68] USB: serial: pl2303: add new PID to support PL2303TB
+Date:   Tue, 29 Jan 2019 12:35:36 +0100
+Message-Id: <20190129113132.716770517@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -65,41 +65,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Max Schulze <max.schulze@posteo.de>
+From: Charles Yeh <charlesyeh522@gmail.com>
 
-commit b81c2c33eab79dfd3650293b2227ee5c6036585c upstream.
+commit 4dcf9ddc9ad5ab649abafa98c5a4d54b1a33dabb upstream.
 
-Add new Motorola Tetra device id for Motorola Solutions TETRA PEI device
+Add new PID to support PL2303TB (TYPE_HX)
 
-T:  Bus=02 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#=  4 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=0cad ProdID=9016 Rev=24.16
-S:  Manufacturer=Motorola Solutions, Inc.
-S:  Product=TETRA PEI interface
-C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=usb_serial_simple
-I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=usb_serial_simple
-
-Signed-off-by: Max Schulze <max.schulze@posteo.de>
+Signed-off-by: Charles Yeh <charlesyeh522@gmail.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/usb-serial-simple.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/serial/pl2303.c |    1 +
+ drivers/usb/serial/pl2303.h |    2 ++
+ 2 files changed, 3 insertions(+)
 
---- a/drivers/usb/serial/usb-serial-simple.c
-+++ b/drivers/usb/serial/usb-serial-simple.c
-@@ -88,7 +88,8 @@ DEVICE(moto_modem, MOTO_IDS);
- /* Motorola Tetra driver */
- #define MOTOROLA_TETRA_IDS()			\
- 	{ USB_DEVICE(0x0cad, 0x9011) },	/* Motorola Solutions TETRA PEI */ \
--	{ USB_DEVICE(0x0cad, 0x9012) }	/* MTP6550 */
-+	{ USB_DEVICE(0x0cad, 0x9012) },	/* MTP6550 */ \
-+	{ USB_DEVICE(0x0cad, 0x9016) }	/* TPG2200 */
- DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -49,6 +49,7 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_HCR331) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MOTOROLA) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ZTEK) },
++	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_TB) },
+ 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID) },
+ 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID_RSAQ5) },
+ 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_ID),
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -13,6 +13,7 @@
  
- /* Novatel Wireless GPS driver */
+ #define PL2303_VENDOR_ID	0x067b
+ #define PL2303_PRODUCT_ID	0x2303
++#define PL2303_PRODUCT_ID_TB		0x2304
+ #define PL2303_PRODUCT_ID_RSAQ2		0x04bb
+ #define PL2303_PRODUCT_ID_DCU11		0x1234
+ #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
+@@ -25,6 +26,7 @@
+ #define PL2303_PRODUCT_ID_MOTOROLA	0x0307
+ #define PL2303_PRODUCT_ID_ZTEK		0xe1f1
+ 
++
+ #define ATEN_VENDOR_ID		0x0557
+ #define ATEN_VENDOR_ID2		0x0547
+ #define ATEN_PRODUCT_ID		0x2008
 
 
