@@ -2,141 +2,193 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F41FC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240D0C4151A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B3492147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:43:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C+nCPt/l";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KXjhPqYb"
+	by mail.kernel.org (Postfix) with ESMTP id EF5722177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 10:44:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbfA2Kn2 (ORCPT
+        id S1728274AbfA2KoJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 05:43:28 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:60736 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbfA2Kn2 (ORCPT
+        Tue, 29 Jan 2019 05:44:09 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:37089 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbfA2KoJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 05:43:28 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 900B860907; Tue, 29 Jan 2019 10:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548758606;
-        bh=b8SkCNRhjNOfUi0XfdquRN5VpBwkG9P4jLXAjsvZQdQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=C+nCPt/lF+oxnenPcKCFA5OZAp4MhujiewCbiXiq45IAmoveM+T2Qfj6DJXywNIyc
-         ks6DYG4wSrgRiADLjRbIZRElnLeN5jXRlSLLzjvYsnG4GLazNPRCvegzzSWx7tJA5c
-         KlJXxU4lDUJuKl2WUyaxGsr+Mc0Z4H5JUyfUIv7E=
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 79D3660850;
-        Tue, 29 Jan 2019 10:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548758605;
-        bh=b8SkCNRhjNOfUi0XfdquRN5VpBwkG9P4jLXAjsvZQdQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KXjhPqYbcmmPih5E5qJpApgRkwMj/jHrkpaTUTqTgQsXD8mMWLDAMeZ5Li1WWXG2V
-         NFebdVUSMVeSKcQglGyAOYpR3gkOI46YRGJHfGTP8KKjuxi9CVeeno15UA1SexdY98
-         g6lkef0tX/E/IkoSxbNvuHg94hKSPziV/QKzE4hQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 79D3660850
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-ed1-f52.google.com with SMTP id g22so15559493edr.7;
-        Tue, 29 Jan 2019 02:43:25 -0800 (PST)
-X-Gm-Message-State: AJcUukejNepEdKu004RJuZPxoArxNPpphMyx8HkL3G5zt+oOjthpWwx+
-        B9AJ1U7fpFU+LrBlsCerzOQ0BZa/WLhuQjNWKFs=
-X-Google-Smtp-Source: ALg8bN4wRRQQdDYNNzhSv9KBKIAwkqmbUvcI5Sz6uW5VBaUr5b2J+z2xBius0AjqsCH1Rj0DiXBmii/VvjNGJg/6EoM=
-X-Received: by 2002:a17:906:452:: with SMTP id e18mr11493850eja.142.1548758604052;
- Tue, 29 Jan 2019 02:43:24 -0800 (PST)
+        Tue, 29 Jan 2019 05:44:09 -0500
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0TAi6Pr059092;
+        Tue, 29 Jan 2019 19:44:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Tue, 29 Jan 2019 19:44:06 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0TAi59p059088
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 29 Jan 2019 19:44:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: possible deadlock in __do_page_fault
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Todd Kjos <tkjos@google.com>,
+        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
+        ak@linux.intel.com, Johannes Weiner <hannes@cmpxchg.org>,
+        jack@suse.cz, jrdr.linux@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        syzkaller-bugs@googlegroups.com,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <201901230201.x0N214eq043832@www262.sakura.ne.jp>
+ <20190123155751.GA168927@google.com>
+ <201901240152.x0O1qUUU069046@www262.sakura.ne.jp>
+ <20190124134646.GA53008@google.com>
+ <d736c8f5-eba1-2da8-000f-4b2a80ad74ff@i-love.sakura.ne.jp>
+ <20190128164502.GA260885@google.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <17f26aab-4a25-dba9-7d39-40df80d1eadb@i-love.sakura.ne.jp>
+Date:   Tue, 29 Jan 2019 19:44:02 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190117092718.1396-1-vivek.gautam@codeaurora.org>
- <20190117092718.1396-3-vivek.gautam@codeaurora.org> <20190120000117.GH26876@brain-police>
- <CAFp+6iFh26JgBUx1jkm4EHNY1vs93Uz2qngxP27D0f7dcpX2GQ@mail.gmail.com> <20190122054326.GA6445@brain-police>
-In-Reply-To: <20190122054326.GA6445@brain-police>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Tue, 29 Jan 2019 16:13:12 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iHJ_Ctjh8-y8p4KWGrCVHE+1uv3KX2-rfKkt1uqb0YqHA@mail.gmail.com>
-Message-ID: <CAFp+6iHJ_Ctjh8-y8p4KWGrCVHE+1uv3KX2-rfKkt1uqb0YqHA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] iommu/arm-smmu: Add support for non-coherent page
- table mappings
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190128164502.GA260885@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+On 2019/01/29 1:45, Joel Fernandes wrote:
+>>  		freed += range_size(range);
+>> +		mutex_unlock(&ashmem_mutex);
+>> +		f->f_op->fallocate(f,
+>> +				   FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+>> +				   start, end - start);
+>> +		fput(f);
+>> +		if (atomic_dec_and_test(&ashmem_shrink_inflight))
+>> +			wake_up_all(&ashmem_shrink_wait);
+>> +		mutex_lock(&ashmem_mutex);
+> 
+> Let us replace mutex_lock with mutex_trylock, as done before the loop? Here
+> is there is an opportunity to not block other ashmem operations. Otherwise
+> LGTM. Also, CC stable.
 
-On Tue, Jan 22, 2019 at 11:14 AM Will Deacon <will.deacon@arm.com> wrote:
->
-> On Mon, Jan 21, 2019 at 11:35:30AM +0530, Vivek Gautam wrote:
-> > On Sun, Jan 20, 2019 at 5:31 AM Will Deacon <will.deacon@arm.com> wrote:
-> > > On Thu, Jan 17, 2019 at 02:57:18PM +0530, Vivek Gautam wrote:
-> > > > Adding a device tree option for arm smmu to enable non-cacheable
-> > > > memory for page tables.
-> > > > We already enable a smmu feature for coherent walk based on
-> > > > whether the smmu device is dma-coherent or not. Have an option
-> > > > to enable non-cacheable page table memory to force set it for
-> > > > particular smmu devices.
-> > >
-> > > Hmm, I must be missing something here. What is the difference between this
-> > > new property, and simply omitting dma-coherent on the SMMU?
-> >
-> > So, this is what I understood from the email thread for Last level
-> > cache support -
-> > Robin pointed to the fact that we may need to add support for setting
-> > non-cacheable
-> > mappings in the TCR.
-> > Currently, we don't do that for SMMUs that omit dma-coherent.
-> > We rely on the interconnect to handle the configuration set in TCR,
-> > and let interconnect
-> > ignore the cacheability if it can't support.
->
-> I think that's a bug. With that fixed, can you get what you want by omitting
-> "dma-coherent"?
+If shrinker succeeded to grab ashmem_mutex using mutex_trylock(), it is
+guaranteed that that thread is not inside
 
-Based on the discussion on the first patch in this series [1], I can
-update the series.
-First thing can be -
-if QUIRK_NO_DMA is set (i.e. the IOMMU _is_ coherent) then we use a
-cacheable TCR;
-So, we may need an additional check for this when setting the TCR.
+  mutex_lock(&ashmem_mutex);
+  kmalloc(GFP_KERNEL);
+  mutex_unlock(&ashmem_mutex);
 
-For the second case -
-IOMMUs that are *not* coherent, i.e ones that are omitting
-'dma-coherent' property,
-anyways have to access the page table directly from memory. We take
-care of the CPU
-side of this by allocating non-coherent memory, and making sure that we sync the
-PTEs from map call.
-Shouldn't we mark TCR for these IOMMUs as non-cacheable for inner and outer
-cacheability attribute?
+block. Therefore, I think that it is safe to use mutex_lock() here.
 
-
-[1] https://lore.kernel.org/patchwork/patch/1032939/
-
-Regards
-Vivek
-
->
-> Will
+Nonetheless, although syzbot did not find other dependency, I can update this
+patch to use mutex_trylock() if you worry about not-yet-discovered dependency.
 
 
 
+From fd850fecd248951ad1ad26b37ec5bf84afe41cbb Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Tue, 29 Jan 2019 10:56:47 +0900
+Subject: [PATCH v2] staging: android: ashmem: Don't call fallocate() with ashmem_mutex held.
+
+syzbot is hitting lockdep warnings [1][2][3]. This patch tries to fix
+the warning by eliminating ashmem_shrink_scan() => {shmem|vfs}_fallocate()
+sequence.
+
+[1] https://syzkaller.appspot.com/bug?id=87c399f6fa6955006080b24142e2ce7680295ad4
+[2] https://syzkaller.appspot.com/bug?id=7ebea492de7521048355fc84210220e1038a7908
+[3] https://syzkaller.appspot.com/bug?id=e02419c12131c24e2a957ea050c2ab6dcbbc3270
+
+Reported-by: syzbot <syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com>
+Reported-by: syzbot <syzbot+148c2885d71194f18d28@syzkaller.appspotmail.com>
+Reported-by: syzbot <syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: stable@vger.kernel.org
+---
+ drivers/staging/android/ashmem.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+index 90a8a9f1ac7d..ade8438a827a 100644
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -75,6 +75,9 @@ struct ashmem_range {
+ /* LRU list of unpinned pages, protected by ashmem_mutex */
+ static LIST_HEAD(ashmem_lru_list);
+ 
++static atomic_t ashmem_shrink_inflight = ATOMIC_INIT(0);
++static DECLARE_WAIT_QUEUE_HEAD(ashmem_shrink_wait);
++
+ /*
+  * long lru_count - The count of pages on our LRU list.
+  *
+@@ -438,7 +441,6 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
+ static unsigned long
+ ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ {
+-	struct ashmem_range *range, *next;
+ 	unsigned long freed = 0;
+ 
+ 	/* We might recurse into filesystem code, so bail out if necessary */
+@@ -448,21 +450,33 @@ ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ 	if (!mutex_trylock(&ashmem_mutex))
+ 		return -1;
+ 
+-	list_for_each_entry_safe(range, next, &ashmem_lru_list, lru) {
++	while (!list_empty(&ashmem_lru_list)) {
++		struct ashmem_range *range =
++			list_first_entry(&ashmem_lru_list, typeof(*range), lru);
+ 		loff_t start = range->pgstart * PAGE_SIZE;
+ 		loff_t end = (range->pgend + 1) * PAGE_SIZE;
++		struct file *f = range->asma->file;
+ 
+-		range->asma->file->f_op->fallocate(range->asma->file,
+-				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+-				start, end - start);
++		get_file(f);
++		atomic_inc(&ashmem_shrink_inflight);
+ 		range->purged = ASHMEM_WAS_PURGED;
+ 		lru_del(range);
+ 
+ 		freed += range_size(range);
++		mutex_unlock(&ashmem_mutex);
++		f->f_op->fallocate(f,
++				   FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
++				   start, end - start);
++		fput(f);
++		if (atomic_dec_and_test(&ashmem_shrink_inflight))
++			wake_up_all(&ashmem_shrink_wait);
++		if (!mutex_trylock(&ashmem_mutex))
++			goto out;
+ 		if (--sc->nr_to_scan <= 0)
+ 			break;
+ 	}
+ 	mutex_unlock(&ashmem_mutex);
++out:
+ 	return freed;
+ }
+ 
+@@ -713,6 +727,7 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
+ 		return -EFAULT;
+ 
+ 	mutex_lock(&ashmem_mutex);
++	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
+ 
+ 	if (!asma->file)
+ 		goto out_unlock;
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.17.1
+
+
