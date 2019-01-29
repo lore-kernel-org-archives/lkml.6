@@ -6,43 +6,50 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5034C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 422F5C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 688C120881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:50:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A697218AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:52:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548805837;
-	bh=XAuxQaJjIX4bV3TFPEDE6QnuExB2Ni9coaAoODm6xCM=;
+	s=default; t=1548805927;
+	bh=KevqUReVk+rKgkkiMsfibycVeB5XVVbxY5qYL8RLwRU=;
 	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=YNo7bmkrXW7nEnITDYCV8Q8R2inOEVoRas7j8HbQESXMy7RFRzqJKADwVs4ze8EBq
-	 QpkXzErF2rQU0cumJ0ucW0G9LRvQF/TkzEwHnacjavwBElQCqb+wKRmjied9p1ngoO
-	 47VZZVzOIisLblS43My3/YTPLvsg4tpMqsUrz3DY=
+	b=Q/J0hNMkDwsiAAPYqnf/z6FKmJPyhwqOQMO81c1XTIkC3wKtQfOqPea0neG9FUZAn
+	 V0BWWrhBFuxNkxBUvphV9wzJBk86Uv/jjdmjOPFOJXMCERKOqZ/0wtpAX+9mUCqbaf
+	 hPKNniFd9pYbtkOymsX0xt+BRh89gZKhv9rM06qA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbfA2Xuf (ORCPT
+        id S1729650AbfA2XwF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 18:50:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58118 "EHLO mx1.suse.de"
+        Tue, 29 Jan 2019 18:52:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58256 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727358AbfA2Xuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 18:50:35 -0500
+        id S1727148AbfA2XwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 18:52:05 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C00A8AE4B;
-        Tue, 29 Jan 2019 23:50:33 +0000 (UTC)
-Date:   Wed, 30 Jan 2019 00:50:32 +0100 (CET)
+        by mx1.suse.de (Postfix) with ESMTP id 78AF7AD2F;
+        Tue, 29 Jan 2019 23:52:03 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 00:52:02 +0100 (CET)
 From:   Jiri Kosina <jikos@kernel.org>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        live-patching@vger.kernel.org,
-        Balbir Singh <bsingharora@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicolai Stange <nstange@suse.de>, Torsten Duwe <duwe@lst.de>
-Subject: Re: [PATCH 0/4] powerpc/livepatch: reliable stack unwinder fixes
-In-Reply-To: <20190122155724.27557-1-joe.lawrence@redhat.com>
-Message-ID: <nycvar.YFH.7.76.1901300049470.6626@cbobk.fhfr.pm>
-References: <20190122155724.27557-1-joe.lawrence@redhat.com>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+In-Reply-To: <20190128000547.GA25155@nautica>
+Message-ID: <nycvar.YFH.7.76.1901300050550.6626@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1901240009560.6626@cbobk.fhfr.pm> <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com> <20190124002455.GA23181@nautica> <20190124124501.GA18012@nautica> <nycvar.YFH.7.76.1901241523500.6626@cbobk.fhfr.pm>
+ <nycvar.YFH.7.76.1901272335040.6626@cbobk.fhfr.pm> <20190128000547.GA25155@nautica>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -51,41 +58,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 22 Jan 2019, Joe Lawrence wrote:
+On Mon, 28 Jan 2019, Dominique Martinet wrote:
 
-> This patchset fixes a false negative report (ie, unreliable) from the
-> ppc64 reliable stack unwinder, discussed here [1] when it may
-> inadvertently trip over a stale exception marker left on the stack.
+> > So, any objections to aproaching it this way?
 > 
-> The first two patches fix this bug.  Nicolai's change clears the marker
-> from the stack when an exception is finished.  The next patch modifies
-> the unwinder to only look for such on stack elements when the ABI
-> guarantees that they will actually be initialized.
-> 
-> The final two patches consist of code cleanups that Nicolai and I
-> spotted during the development of the fixes.
-> 
-> Testing included re-running the original test scenario (loading a
-> livepatch module on ppc64le) on a 5.0.0-rc2 kernel as well as a RHEL-7
-> backport.  I ran internal tests on the RHEL-7 backport and no new test
-> failures were introduced.  I believe that Nicolai has done the same
-> with respect to the first patch.
-> 
-> [1] https://lore.kernel.org/lkml/7f468285-b149-37e2-e782-c9e538b997a9@redhat.com/
-> 
-> Joe Lawrence (3):
->   powerpc/livepatch: relax reliable stack tracer checks for first-frame
->   powerpc/livepatch: small cleanups in save_stack_trace_tsk_reliable()
->   powerpc/livepatch: return -ERRNO values in
->     save_stack_trace_tsk_reliable()
-> 
-> Nicolai Stange (1):
->   powerpc/64s: Clear on-stack exception marker upon exception return
+> I'm not sure why I'm the main recipient of that mail but answering
+> because I am -- let's get these patches in through the regular -mm tree
+> though
 
-Michael, are you fine with this going through LP tree, or do you plan to 
-take it through yours?
-
-Thanks,
+*prod to mm maintainers* (at least for an opinion)
 
 -- 
 Jiri Kosina
