@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2F6C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E7DC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F35420881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D40D20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763441;
-	bh=GHgedVjATHK59ZfXQYFiHgIKJZUDtR8L/SyJJoU7mvg=;
+	s=default; t=1548763447;
+	bh=35dz/6NCxjkiLluNMgvcyG2aX5AlR7O05weijIhX404=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rR/BBW1gwtR9AQ/8/ehiO05jWprBJBr01/aLMe1BOPU/Dc8ZzZf1KWxvTojknQ023
-	 jrQ3sOsZ7T/BvYlHGaaoKh0I56Wd35ivLUHaM/YjuTcpVLk5+rnDVcaKVejV5hAuLL
-	 x1MERFUaI2aJLf8Yrkf0SHg4P5h+IurySO5KO4K0=
+	b=Nb/8RhnZsrc/ZMs88Dk6a6OjW2rJgVLiEN3wXFBWAYXkpW4j8AjJumTdgoPvrWs4F
+	 uEKGDNkpu7JbKB2SlZcVwk6W5VJ1olX0UWg+4Y+ZQXcvZaubJ+bhKiQNmVB/5kp0le
+	 DPz3sRmNubhqwgVBxLBGMjQxloXAMVm2BDHeqB50=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730303AbfA2LnY (ORCPT
+        id S1729505AbfA2LnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:43:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33202 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:43:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730286AbfA2LnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:43:21 -0500
+        id S1730264AbfA2LnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:43:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D740A20857;
-        Tue, 29 Jan 2019 11:43:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D807420856;
+        Tue, 29 Jan 2019 11:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762200;
-        bh=GHgedVjATHK59ZfXQYFiHgIKJZUDtR8L/SyJJoU7mvg=;
+        s=default; t=1548762194;
+        bh=35dz/6NCxjkiLluNMgvcyG2aX5AlR7O05weijIhX404=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YW+B5Hk2hxzAGDGYa75xI6f08fzT1hSM04Hd/1l+YJhE38/8T+/ZOmrgaQk/KeacD
-         ikiSTeif16USn2fRk387uzlzrzVfuIUEBSfRKGxnZkFskDtgZvSqYYITV3sFgHcoIA
-         8/leuMs8Z+D/8ahz9QvZy7qKN7fU+ZLMDpQA8xNE=
+        b=tXD6I4yi7i1OEcH+epsy+YK7j/fAnkKYRAmfy48JVhhDJo/70NO09eDenWlKHxeaf
+         etPp+x1BDPjo67d6+94oQvskAxPmZGNEWUv6p0DQEV1NUqccdcMJGeX70reiRXhjL3
+         xHiNxKIgdqHsQzwdWZs8acchkQUbVjopE101zHNM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 007/103] net/sched: act_tunnel_key: fix memory leak in case of action replace
-Date:   Tue, 29 Jan 2019 12:34:44 +0100
-Message-Id: <20190129113159.964228453@linuxfoundation.org>
+Subject: [PATCH 4.19 005/103] net: phy: mdio_bus: add missing device_del() in mdiobus_register() error handling
+Date:   Tue, 29 Jan 2019 12:34:42 +0100
+Message-Id: <20190129113159.863786801@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,93 +67,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Davide Caratti <dcaratti@redhat.com>
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 
-[ Upstream commit 9174c3df1cd181c14913138d50ccbe539bb08335 ]
+[ Upstream commit e40e2a2e78664fa90ea4b9bdf4a84efce2fea9d9 ]
 
-running the following TDC test cases:
+The current code in __mdiobus_register() doesn't properly handle
+failures returned by the devm_gpiod_get_optional() call: it returns
+immediately, without unregistering the device that was added by the
+call to device_register() earlier in the function.
 
- 7afc - Replace tunnel_key set action with all parameters
- 364d - Replace tunnel_key set action with all parameters and cookie
+This leaves a stale device, which then causes a NULL pointer
+dereference in the code that handles deferred probing:
 
-it's possible to trigger kmemleak warnings like:
+[    1.489982] Unable to handle kernel NULL pointer dereference at virtual address 00000074
+[    1.498110] pgd = (ptrval)
+[    1.500838] [00000074] *pgd=00000000
+[    1.504432] Internal error: Oops: 17 [#1] SMP ARM
+[    1.509133] Modules linked in:
+[    1.512192] CPU: 1 PID: 51 Comm: kworker/1:3 Not tainted 4.20.0-00039-g3b73a4cc8b3e-dirty #99
+[    1.520708] Hardware name: Xilinx Zynq Platform
+[    1.525261] Workqueue: events deferred_probe_work_func
+[    1.530403] PC is at klist_next+0x10/0xfc
+[    1.534403] LR is at device_for_each_child+0x40/0x94
+[    1.539361] pc : [<c0683fbc>]    lr : [<c0455d90>]    psr: 200e0013
+[    1.545628] sp : ceeefe68  ip : 00000001  fp : ffffe000
+[    1.550863] r10: 00000000  r9 : c0c66790  r8 : 00000000
+[    1.556079] r7 : c0457d44  r6 : 00000000  r5 : ceeefe8c  r4 : cfa2ec78
+[    1.562604] r3 : 00000064  r2 : c0457d44  r1 : ceeefe8c  r0 : 00000064
+[    1.569129] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[    1.576263] Control: 18c5387d  Table: 0ed7804a  DAC: 00000051
+[    1.582013] Process kworker/1:3 (pid: 51, stack limit = 0x(ptrval))
+[    1.588280] Stack: (0xceeefe68 to 0xceef0000)
+[    1.592630] fe60:                   cfa2ec78 c0c03c08 00000000 c0457d44 00000000 c0c66790
+[    1.600814] fe80: 00000000 c0455d90 ceeefeac 00000064 00000000 0d7a542e cee9d494 cfa2ec78
+[    1.608998] fea0: cfa2ec78 00000000 c0457d44 c0457d7c cee9d494 c0c03c08 00000000 c0455dac
+[    1.617182] fec0: cf98ba44 cf926a00 cee9d494 0d7a542e 00000000 cf935a10 cf935a10 cf935a10
+[    1.625366] fee0: c0c4e9b8 c0457d7c c0c4e80c 00000001 cf935a10 c0457df4 cf935a10 c0c4e99c
+[    1.633550] ff00: c0c4e99c c045a27c c0c4e9c4 ced63f80 cfde8a80 cfdebc00 00000000 c013893c
+[    1.641734] ff20: cfde8a80 cfde8a80 c07bd354 ced63f80 ced63f94 cfde8a80 00000008 c0c02d00
+[    1.649936] ff40: cfde8a98 cfde8a80 ffffe000 c0139a30 ffffe000 c0c6624a c07bd354 00000000
+[    1.658120] ff60: ffffe000 cee9e780 ceebfe00 00000000 ceeee000 ced63f80 c0139788 cf8cdea4
+[    1.666304] ff80: cee9e79c c013e598 00000001 ceebfe00 c013e44c 00000000 00000000 00000000
+[    1.674488] ffa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
+[    1.682671] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    1.690855] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[    1.699058] [<c0683fbc>] (klist_next) from [<c0455d90>] (device_for_each_child+0x40/0x94)
+[    1.707241] [<c0455d90>] (device_for_each_child) from [<c0457d7c>] (device_reorder_to_tail+0x38/0x88)
+[    1.716476] [<c0457d7c>] (device_reorder_to_tail) from [<c0455dac>] (device_for_each_child+0x5c/0x94)
+[    1.725692] [<c0455dac>] (device_for_each_child) from [<c0457d7c>] (device_reorder_to_tail+0x38/0x88)
+[    1.734927] [<c0457d7c>] (device_reorder_to_tail) from [<c0457df4>] (device_pm_move_to_tail+0x28/0x40)
+[    1.744235] [<c0457df4>] (device_pm_move_to_tail) from [<c045a27c>] (deferred_probe_work_func+0x58/0x8c)
+[    1.753746] [<c045a27c>] (deferred_probe_work_func) from [<c013893c>] (process_one_work+0x210/0x4fc)
+[    1.762888] [<c013893c>] (process_one_work) from [<c0139a30>] (worker_thread+0x2a8/0x5c0)
+[    1.771072] [<c0139a30>] (worker_thread) from [<c013e598>] (kthread+0x14c/0x154)
+[    1.778482] [<c013e598>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+[    1.785689] Exception stack(0xceeeffb0 to 0xceeefff8)
+[    1.790739] ffa0:                                     00000000 00000000 00000000 00000000
+[    1.798923] ffc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    1.807107] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    1.813724] Code: e92d47f0 e1a05000 e8900048 e1a00003 (e5937010)
+[    1.819844] ---[ end trace 3c2c0c8b65399ec9 ]---
 
-  unreferenced object 0xffff94797127ab40 (size 192):
-  comm "tc", pid 3248, jiffies 4300565293 (age 1006.862s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 c0 93 f9 8a ff ff ff ff  ................
-    41 84 ee 89 ff ff ff ff 00 00 00 00 00 00 00 00  A...............
-  backtrace:
-    [<000000001e85b61c>] tunnel_key_init+0x31d/0x820 [act_tunnel_key]
-    [<000000007f3f6ee7>] tcf_action_init_1+0x384/0x4c0
-    [<00000000e89e3ded>] tcf_action_init+0x12b/0x1a0
-    [<00000000c1c8c0f8>] tcf_action_add+0x73/0x170
-    [<0000000095a9fc28>] tc_ctl_action+0x122/0x160
-    [<000000004bebeac5>] rtnetlink_rcv_msg+0x263/0x2d0
-    [<000000009fd862dd>] netlink_rcv_skb+0x4a/0x110
-    [<00000000b55199e7>] netlink_unicast+0x1a0/0x250
-    [<000000004996cd21>] netlink_sendmsg+0x2c1/0x3c0
-    [<000000004d6a94b4>] sock_sendmsg+0x36/0x40
-    [<000000005d9f0208>] ___sys_sendmsg+0x280/0x2f0
-    [<00000000dec19023>] __sys_sendmsg+0x5e/0xa0
-    [<000000004b82ac81>] do_syscall_64+0x5b/0x180
-    [<00000000a0f1209a>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-    [<000000002926b2ab>] 0xffffffffffffffff
+The actual error that we had from devm_gpiod_get_optional() was
+-EPROBE_DEFER, due to the GPIO being provided by a driver that is
+probed later than the Ethernet controller driver.
 
-when the tunnel_key action is replaced, the kernel forgets to release the
-dst metadata: ensure they are released by tunnel_key_init(), the same way
-it's done in tunnel_key_release().
+To fix this, we simply add the missing device_del() invocation in the
+error path.
 
-Fixes: d0f6dd8a914f4 ("net/sched: Introduce act_tunnel_key")
-Signed-off-by: Davide Caratti <dcaratti@redhat.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 69226896ad636 ("mdio_bus: Issue GPIO RESET to PHYs")
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_tunnel_key.c |   19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ drivers/net/phy/mdio_bus.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/sched/act_tunnel_key.c
-+++ b/net/sched/act_tunnel_key.c
-@@ -197,6 +197,15 @@ static const struct nla_policy tunnel_ke
- 	[TCA_TUNNEL_KEY_ENC_TTL]      = { .type = NLA_U8 },
- };
- 
-+static void tunnel_key_release_params(struct tcf_tunnel_key_params *p)
-+{
-+	if (!p)
-+		return;
-+	if (p->tcft_action == TCA_TUNNEL_KEY_ACT_SET)
-+		dst_release(&p->tcft_enc_metadata->dst);
-+	kfree_rcu(p, rcu);
-+}
-+
- static int tunnel_key_init(struct net *net, struct nlattr *nla,
- 			   struct nlattr *est, struct tc_action **a,
- 			   int ovr, int bind, bool rtnl_held,
-@@ -360,8 +369,7 @@ static int tunnel_key_init(struct net *n
- 	rcu_swap_protected(t->params, params_new,
- 			   lockdep_is_held(&t->tcf_lock));
- 	spin_unlock_bh(&t->tcf_lock);
--	if (params_new)
--		kfree_rcu(params_new, rcu);
-+	tunnel_key_release_params(params_new);
- 
- 	if (ret == ACT_P_CREATED)
- 		tcf_idr_insert(tn, *a);
-@@ -385,12 +393,7 @@ static void tunnel_key_release(struct tc
- 	struct tcf_tunnel_key_params *params;
- 
- 	params = rcu_dereference_protected(t->params, 1);
--	if (params) {
--		if (params->tcft_action == TCA_TUNNEL_KEY_ACT_SET)
--			dst_release(&params->tcft_enc_metadata->dst);
--
--		kfree_rcu(params, rcu);
--	}
-+	tunnel_key_release_params(params);
- }
- 
- static int tunnel_key_geneve_opts_dump(struct sk_buff *skb,
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -391,6 +391,7 @@ int __mdiobus_register(struct mii_bus *b
+ 	if (IS_ERR(gpiod)) {
+ 		dev_err(&bus->dev, "mii_bus %s couldn't get reset GPIO\n",
+ 			bus->id);
++		device_del(&bus->dev);
+ 		return PTR_ERR(gpiod);
+ 	} else	if (gpiod) {
+ 		bus->reset_gpiod = gpiod;
 
 
