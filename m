@@ -2,115 +2,131 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE15C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA69C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5C442147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85C61214D8
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:07:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="CW1Z7Pyt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ti8a9qGK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729608AbfA2VEz (ORCPT
+        id S1729481AbfA2VHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 16:04:55 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:60121 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728624AbfA2VEz (ORCPT
+        Tue, 29 Jan 2019 16:07:32 -0500
+Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:34727 "EHLO
+        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727570AbfA2VHc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 16:04:55 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0TL4Zwq2097139
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 29 Jan 2019 13:04:35 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0TL4Z5x2097136;
-        Tue, 29 Jan 2019 13:04:35 -0800
-Date:   Tue, 29 Jan 2019 13:04:35 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Colin Ian King <tipbot@zytor.com>
-Message-ID: <tip-5ccd35287edae4107475a141a477a6a4ecbe1cab@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
-        colin.king@canonical.com, dave.hansen@linux.intel.com,
-        bp@alien8.de, luto@kernel.org, mingo@kernel.org, tglx@linutronix.de
-Reply-To: peterz@infradead.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-          colin.king@canonical.com, luto@kernel.org, bp@alien8.de,
-          mingo@kernel.org, tglx@linutronix.de
-In-Reply-To: <20181222191116.21831-1-colin.king@canonical.com>
-References: <20181222191116.21831-1-colin.king@canonical.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/fault: Fix sign-extend unintended sign
- extension
-Git-Commit-ID: 5ccd35287edae4107475a141a477a6a4ecbe1cab
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 29 Jan 2019 16:07:32 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.west.internal (Postfix) with ESMTP id 840351618;
+        Tue, 29 Jan 2019 16:07:30 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Tue, 29 Jan 2019 16:07:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=sGeiiTsU+6rD+14Dgqvo7i90/DI
+        iBCWVDdWbNCpwksc=; b=CW1Z7PytuTVZtlQeJVROj37+iG52PeBMhW4Ei88Jfxw
+        cuoFSlBXvVSAP1MggUYKG5/gr+V2g61yfL6OLygBkRZHH1Y04BOOgN2VAzMuRRDD
+        tqBisDGo8LovO9YYRrRGLXEjrkva+alOrZn8BrS4rzOHWGacRUXLviWHv5DAKhh6
+        i8r9AeK9oYXgnn/kCg/E1O89J/y8+ARyLMq90KF9VkzcX1kvHO64MlRrSa0JBwYv
+        BLLPRKJc6NS89VQ0a7IaGZOBXpNuWlaseEo5My0JlMDCey6SqNY6YrlokFEJ3+NS
+        bcKG5lcuqgavzQj/xfLvZElkoRbJcpBGVkI6W70O7Ig==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=sGeiiT
+        sU+6rD+14Dgqvo7i90/DIiBCWVDdWbNCpwksc=; b=Ti8a9qGKyYnwkm/4UegjD+
+        dJHJygnXkxchN7D1l3WqM9NltLq4++OH438CdCAQndiGj+nK58NDzuaf5XeXwcIh
+        AQOJSD21d3kqQLXBAqKLh6/iYsuSZ8uoVA0wAEUAFJSKPsT3ev28joBLhw6wHiaI
+        i/wIJElmf3HTo6PZzXSxDh8HkgcX5FUCuYWW36k6W/srncg2lV+7tK0cQxyI+t7/
+        AZGP9fC+CYQFTJEKioXiKNhMBjRr9hv+LTARE1c1eCTG7DkPTeEdVf43YyStiILL
+        N2WgNKPVVz7GUFuQWjNI+HbtCqi8wIcmMDiaHUiWq/onxbaPI4BYBH8SitcE4kfA
+        ==
+X-ME-Sender: <xms:kMBQXFkQNNXzU912SfrfavBXhAWSEWlUD3hG4SYboujIsnOZ4W79Zg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjedvgddugeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
+    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftd
+    dtmdenucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefi
+    rhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrke
+    elrddutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtgho
+    mhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:kMBQXI2LWq8OqVSuNQE0KsfFfTXuMSaGT5scbp8QJ8PIFyPHGqDiTQ>
+    <xmx:kMBQXMTupiCxlouhcCNQZzW0CJktco8ryArbniTnuR7ISGQtZ8jBgg>
+    <xmx:kMBQXFL0NJNlx4kuhw5mRbL1II_XNSWUOuJCTsiB7EThPIY-wIBJ9g>
+    <xmx:ksBQXI5tnl-0PYFsKmmpTMG3gHZMsg1fj9d9laykYUVQefzAXNlvyAkhfJs>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 077E110086;
+        Tue, 29 Jan 2019 16:07:27 -0500 (EST)
+Date:   Tue, 29 Jan 2019 22:07:26 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Dai <daidavid1@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: Re: linux-next: manual merge of the char-misc tree with the qcom tree
+Message-ID: <20190129210726.GA31708@kroah.com>
+References: <20190129140846.4dc4c158@canb.auug.org.au>
+ <9e32a49c-fb78-c5f8-77cf-66b4b4a8b4a2@linaro.org>
+ <CAPBZ5QeLEHOLJDBW4zGXJ8DayvDU3V=rGJ6Ty-pKruZEYv88DQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAPBZ5QeLEHOLJDBW4zGXJ8DayvDU3V=rGJ6Ty-pKruZEYv88DQ@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5ccd35287edae4107475a141a477a6a4ecbe1cab
-Gitweb:     https://git.kernel.org/tip/5ccd35287edae4107475a141a477a6a4ecbe1cab
-Author:     Colin Ian King <colin.king@canonical.com>
-AuthorDate: Sat, 22 Dec 2018 19:11:16 +0000
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 29 Jan 2019 21:58:59 +0100
+On Tue, Jan 29, 2019 at 02:30:08PM -0600, Andy Gross wrote:
+> On Tue, 29 Jan 2019 at 05:46, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+> >
+> > Hi Stephen,
+> >
+> > On 1/29/19 05:08, Stephen Rothwell wrote:
+> > > Hi all,
+> > >
+> > > Today's linux-next merge of the char-misc tree got a conflict in:
+> > >
+> > >   arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > >
+> > > between commits:
+> > >
+> > >   05556681948b ("arm64: dts: sdm845: Add videocc node")
+> > >   5b6f186f0abb ("arm64: dts: sdm845: Add rpmh powercontroller node")
+> > >
+> > > from the qcom tree and commit:
+> > >
+> > >   ae0037dbfc5e ("arm64: dts: sdm845: Add interconnect provider DT nodes")
+> > >
+> > > from the char-misc tree.
+> > >
+> > > I fixed it up (see below) and can carry the fix as necessary. This
+> > > is now fixed as far as linux-next is concerned, but any non trivial
+> > > conflicts should be mentioned to your upstream maintainer when your tree
+> > > is submitted for merging.  You may also want to consider cooperating
+> > > with the maintainer of the conflicting tree to minimise any particularly
+> > > complex conflicts.
+> 
+> Greg,
+> I'd prefer in this instance that this patch get dropped from
+> char-misc.  I have too much stuff in flight with some additional
+> patches coming in to mess with this right now.  And we don't have
+> clients rdy anyway for this so let's wait till next cycle on this one.
 
-x86/fault: Fix sign-extend unintended sign extension
+Now reverted.
 
-show_ldttss() shifts desc.base2 by 24 bit, but base2 is 8 bits of a
-bitfield in a u16.
+thanks,
 
-Due to the really great idea of integer promotion in C99 base2 is promoted
-to an int, because that's the standard defined behaviour when all values
-which can be represented by base2 fit into an int.
-
-Now if bit 7 is set in desc.base2 the result of the shift left by 24 makes
-the resulting integer negative and the following conversion to unsigned
-long legitmately sign extends first causing the upper bits 32 bits to be
-set in the result.
-
-Fix this by casting desc.base2 to unsigned long before the shift.
-
-Detected by CoverityScan, CID#1475635 ("Unintended sign extension")
-
-[ tglx: Reworded the changelog a bit as I actually had to lookup
-  	the standard (again) to decode the original one. ]
-
-Fixes: a1a371c468f7 ("x86/fault: Decode page fault OOPSes better")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181222191116.21831-1-colin.king@canonical.com
-
----
- arch/x86/mm/fault.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 2ff25ad33233..9d5c75f02295 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -595,7 +595,7 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
- 		return;
- 	}
- 
--	addr = desc.base0 | (desc.base1 << 16) | (desc.base2 << 24);
-+	addr = desc.base0 | (desc.base1 << 16) | ((unsigned long)desc.base2 << 24);
- #ifdef CONFIG_X86_64
- 	addr |= ((u64)desc.base3 << 32);
- #endif
+greg k-h
