@@ -6,81 +6,76 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADACC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497BFC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4401020881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:30:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9E1220989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:32:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="cbYihk8s"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="U0la24gc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbfA2Uay (ORCPT
+        id S1727757AbfA2Uca (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:30:54 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40316 "EHLO
+        Tue, 29 Jan 2019 15:32:30 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36753 "EHLO
         mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729466AbfA2Uax (ORCPT
+        with ESMTP id S1726984AbfA2Uc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:30:53 -0500
-Received: by mail-ed1-f65.google.com with SMTP id g22so17117533edr.7
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 12:30:50 -0800 (PST)
+        Tue, 29 Jan 2019 15:32:29 -0500
+Received: by mail-ed1-f65.google.com with SMTP id f23so17139315edb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 12:32:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=sender:date:from:to:cc:subject:message-id:mail-followup-to
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nq8OA7B3t0ixrpA65YucUNqrycDfmJ1rKOGbixHl2fs=;
-        b=cbYihk8skHK0muty4fv5P9zRxUa2ZfzzqsvWT57jbqWUcmzOLauaaXl5gF1P4KItns
-         VINUr+4s+kv0Mk9RXmVB1IYJINOHkesuzvuSyZ6db1P0fI2jATw9moP/whTXAcDb+9w9
-         omMh+1yASr8Dj7NujCQ4VwCgpRh++2UFHeulA=
+        bh=mkDQBanMrMqpFMG/yIE4fD6W17dgZpQWiF1yvpbuOng=;
+        b=U0la24gcg/dfeDpFU8jxtgcxRcPGT1YdddlAPIfJBFmvKvm5IKLRN8GYeIquWpLnvW
+         QZlKhInLaJYwR0FNt9nDLs3voCsvXHO2TQt3nTLfy6A3tKTDgv84UoyP6bUh6oz1EdK3
+         ekPhHOOHxkv9oIx1wOk5YvUDSBxnpiJ+8YmD0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
          :in-reply-to:user-agent;
-        bh=nq8OA7B3t0ixrpA65YucUNqrycDfmJ1rKOGbixHl2fs=;
-        b=qhmfTw1Wn5n/n+gJMK6ARkwwNTOuNwESsEWY0YL/k9l6sXHPX01ETVNerr4OHvR4av
-         SPmUZYDjwtUyurELNQp+TJD4r3O0C3PkmtuG8qR4MslYZLbJXhBHRGlQ2rjJX4cs91Hp
-         BNm9Nt0NH+zLTS6aRaIkObc39bgGAb6AB4Npg2QCstRJYh/FVnbkUV3J23Jd7bustTeg
-         +H8luGn0AfLp8smgeK/f2wHzC5UbIv36WKEyl9nz/kboutngzcQG8IN9MT25OqbGuJBw
-         67FKgybCA7NJGrb0IkI+Igmn7yRyh9vIpJQ1b6ksiHuQLFtbKdJspDoS2xZLYmkAPmKj
-         9o2w==
-X-Gm-Message-State: AJcUukfxG6+EvQMVQrMvqBz2pIgSoocdbufZ72A3CmbXWR5WRTeE5CWC
-        iT0E4RsH1l+1PQk4h+QXB167pQ==
-X-Google-Smtp-Source: ALg8bN6zZua9AC6PdZe83D9Dgs6ila12Rmn0vNVzYVRXQs/6oReiwSgQjw3WXCe+hGkvUY38o7f6zw==
-X-Received: by 2002:a17:906:c2cd:: with SMTP id ch13mr23224443ejb.198.1548793849350;
-        Tue, 29 Jan 2019 12:30:49 -0800 (PST)
+        bh=mkDQBanMrMqpFMG/yIE4fD6W17dgZpQWiF1yvpbuOng=;
+        b=MBCyezotK90/eoWaieCBxc4+w4If7iifHOFvs5ZiEu5CxjbWKYSUbjdvHpE1Bi6Ofv
+         b8nACYN4KsxcrrU2ZeX+WpLB/tFDBfClzoPvoN6BSjXtY50/fmwy1IXAdIz4zjWQP9Hs
+         Ais2+YLMbeUYXUiqKGNr7JXuNrgFBYoQfTTH2E2PI4SOIV2y0rCJhnqQBCS9O2S4Xath
+         m6KHNEr/LgEOCXJqB8/TIZvs/EEFXhjbLeWCMQGdhEIYqB3xP/1SHEtlBVmV5ZUUEPl+
+         FGOFscXSTgck07UirINLHVK6shoiKDBjVHWT6Ypv4hCzKwe3wmijW3/tckoOWEuT7Az0
+         tnYw==
+X-Gm-Message-State: AJcUukfJsfCdPpcAt2TMumj9V9eXBqomjOPY1ajCWT7gSUA+mKajYy80
+        MzzC9ZGH/UKin0biopHMcXVf6g==
+X-Google-Smtp-Source: ALg8bN6csMq0LuZnx6B0qOwTt/eBRlB3a62k48Ovgtlb50XVUPg03Eo+EVgrmIjld49XhvYXLMk6kQ==
+X-Received: by 2002:a17:906:19c8:: with SMTP id h8mr24285465ejd.199.1548793947344;
+        Tue, 29 Jan 2019 12:32:27 -0800 (PST)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id p36sm14860863edc.78.2019.01.29.12.30.47
+        by smtp.gmail.com with ESMTPSA id c30sm14768299edc.70.2019.01.29.12.32.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 12:30:48 -0800 (PST)
-Date:   Tue, 29 Jan 2019 21:30:45 +0100
+        Tue, 29 Jan 2019 12:32:26 -0800 (PST)
+Date:   Tue, 29 Jan 2019 21:32:24 +0100
 From:   Daniel Vetter <daniel@ffwll.ch>
 To:     Lyude Paul <lyude@redhat.com>
 Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         Jani Nikula <jani.nikula@linux.intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] drm/atomic: Add drm_atomic_state->suspend_or_resume
-Message-ID: <20190129203045.GZ3271@phenom.ffwll.local>
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] drm/i915: Always allocate VCPI during system resume
+Message-ID: <20190129203224.GA3271@phenom.ffwll.local>
 Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
         intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         Jani Nikula <jani.nikula@linux.intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, linux-kernel@vger.kernel.org
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
 References: <20190129183928.26779-1-lyude@redhat.com>
- <20190129183928.26779-3-lyude@redhat.com>
+ <20190129183928.26779-4-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129183928.26779-3-lyude@redhat.com>
+In-Reply-To: <20190129183928.26779-4-lyude@redhat.com>
 X-Operating-System: Linux phenom 4.19.0-1-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -88,356 +83,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 01:39:26PM -0500, Lyude Paul wrote:
-> Since
+On Tue, Jan 29, 2019 at 01:39:27PM -0500, Lyude Paul wrote:
+> Since there's a chance MST topologies can be removed while the system is
+> in suspend, there's also a chance that the connectors in the atomic
+> state which we try to restore on system resume will have been
+> unregistered if they were part of an MST topology that was removed
+> mid-suspend. In such situations, we'll currently skip recalculating the
+> VCPI. Normally this would be safe since we don't expect to be allowed to
+> enable displays on unregistered connections, but since we need to try
+> our best to restore even partially invalid atomic states on system
+> resume we end up introducing the chance that we try enabling a display
+> on a now-unregistered connector. This of course results on a blow up
+> during system resume:
 > 
-> commit 39b50c603878 ("drm/atomic_helper: Stop modesets on unregistered
-> connectors harder")
+> [ 1894.177788] [drm:pipe_config_err [i915]] *ERROR* mismatch in dp_m_n (expected tu 0 gmch 1730150/8388608 link 288358/1048576, or tu 0 gmch 0/0 link 0/0, found tu 64, gmch 1730150/8388608 link 288358/1048576)
+> [ 1894.177795] ------------[ cut here ]------------
+> [ 1894.177799] pipe state doesn't match!
+> [ 1894.177905] WARNING: CPU: 2 PID: 1894 at drivers/gpu/drm/i915/intel_display.c:12292 intel_atomic_commit_tail+0xd5e/0xdd0 [i915]
+> [ 1894.177909] Modules linked in: i915(O) drm_kms_helper(O) drm(O) vfat fat joydev iTCO_wdt wmi_bmof btusb btrtl btbcm intel_rapl btintel i2c_algo_bit x86_pkg_temp_thermal bluetooth syscopyarea coretemp sysfillrect sysimgblt crc32_pclmul fb_sys_fops ucsi_acpi psmouse ecdh_generic pcspkr typec_ucsi i2c_i801 typec mei_me mei i2c_core wmi thinkpad_acpi ledtrig_audio snd soundcore rfkill tpm_tis tpm_tis_core video pcc_cpufreq tpm acpi_pad uas usb_storage crc32c_intel nvme serio_raw nvme_core xhci_pci xhci_hcd [last unloaded: drm]
+> [ 1894.177990] CPU: 2 PID: 1894 Comm: kworker/u16:8 Tainted: G           O      5.0.0-rc4Lyude-Test+ #9
+> [ 1894.177994] Hardware name: LENOVO 20L8S2N800/20L8S2N800, BIOS N22ET35W (1.12 ) 04/09/2018
+> [ 1894.178005] Workqueue: events_unbound async_run_entry_fn
+> [ 1894.178079] RIP: 0010:intel_atomic_commit_tail+0xd5e/0xdd0 [i915]
+> [ 1894.178085] Code: ba 01 00 00 00 4c 89 4c 24 10 e8 3d 46 01 00 4c 8b 4c 24 10 e9 a4 fb ff ff e8 b2 18 bd e0 0f 0b e9 a5 fd ff ff e8 a6 18 bd e0 <0f> 0b e9 f1 f9 ff ff e8 9a 18 bd e0 0f 0b 0f b6 44 24 18 e9 23 f9
+> [ 1894.178090] RSP: 0000:ffffc90000553c08 EFLAGS: 00010286
+> [ 1894.178096] RAX: 0000000000000000 RBX: ffff888459edc000 RCX: 0000000000000006
+> [ 1894.178101] RDX: 0000000000000007 RSI: ffff8884591e2f90 RDI: ffff88845e295690
+> [ 1894.178105] RBP: ffff888454e27000 R08: 0000000000000000 R09: 0000000000000000
+> [ 1894.178108] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888454e22000
+> [ 1894.178112] R13: ffff888454e21000 R14: ffff8883ca680750 R15: ffff8883ca680758
+> [ 1894.178118] FS:  0000000000000000(0000) GS:ffff88845e280000(0000) knlGS:0000000000000000
+> [ 1894.178123] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 1894.178127] CR2: 0000000000000000 CR3: 0000000002214001 CR4: 00000000003606e0
+> [ 1894.178131] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [ 1894.178135] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [ 1894.178139] Call Trace:
+> [ 1894.178224]  intel_atomic_commit+0x240/0x320 [i915]
+> [ 1894.178251]  drm_atomic_helper_commit_duplicated_state+0xc9/0xe0 [drm_kms_helper]
+> [ 1894.178321]  __intel_display_resume+0x82/0xd0 [i915]
+> [ 1894.178391]  intel_display_resume+0xcf/0x120 [i915]
+> [ 1894.178453]  i915_drm_resume+0xb1/0x100 [i915]
+> [ 1894.178465]  ? pci_pm_suspend_late+0x30/0x30
+> [ 1894.178473]  dpm_run_callback+0x70/0x210
+> [ 1894.178484]  device_resume+0xae/0x1f0
+> [ 1894.178493]  async_resume+0x19/0x30
+> [ 1894.178502]  async_run_entry_fn+0x39/0x160
+> [ 1894.178513]  process_one_work+0x23c/0x590
+> [ 1894.178529]  worker_thread+0x30/0x380
+> [ 1894.178539]  ? rescuer_thread+0x340/0x340
+> [ 1894.178545]  kthread+0x112/0x130
+> [ 1894.178552]  ? kthread_create_on_node+0x60/0x60
+> [ 1894.178563]  ret_from_fork+0x3a/0x50
+> [ 1894.178582] irq event stamp: 76782
+> [ 1894.178591] hardirqs last  enabled at (76781): [<ffffffff8112c135>] vprintk_emit+0x2c5/0x2d0
+> [ 1894.178600] hardirqs last disabled at (76782): [<ffffffff81001ae8>] trace_hardirqs_off_thunk+0x1a/0x1c
+> [ 1894.178609] softirqs last  enabled at (76734): [<ffffffff81c0035d>] __do_softirq+0x35d/0x412
+> [ 1894.178618] softirqs last disabled at (76727): [<ffffffff810bf830>] irq_exit+0xe0/0xf0
+> [ 1894.178687] WARNING: CPU: 2 PID: 1894 at drivers/gpu/drm/i915/intel_display.c:12292 intel_atomic_commit_tail+0xd5e/0xdd0 [i915]
+> [ 1894.178692] ---[ end trace 0df08c0b9a67376e ]---
 > 
-> We've been failing atomic checks if they try to enable new displays on
-> unregistered connectors. This is fine except for the one situation that
-> breaks atomic assumptions: suspend/resume. If a connector is
-> unregistered before we attempt to restore the atomic state, something we
-> end up failing the atomic check that happens when trying to restore the
-> state during resume.
-> 
-> Normally this would be OK: we try our best to make sure that the atomic
-> state pre-suspend can be restored post-suspend, but failures at that
-> point usually don't cause problems. That is of course, until we
-> introduced the new atomic MST VCPI helpers:
-> 
-> [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] [CRTC:65:pipe B] active changed
-> [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] Updating routing for [CONNECTOR:123:DP-5]
-> [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] Disabling [CONNECTOR:123:DP-5]
-> [drm:drm_atomic_get_private_obj_state [drm]] Added new private object 0000000025844636 state 000000009fd2899a to 000000003a13d7b8
-> WARNING: CPU: 6 PID: 1070 at drivers/gpu/drm/drm_dp_mst_topology.c:3153 drm_dp_atomic_release_vcpi_slots+0xb9/0x200 [drm_kms_helper]
-> Modules linked in: fuse vfat fat snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic joydev iTCO_wdt i915(O) wmi_bmof intel_rapl btusb btrtl x86_pkg_temp_thermal btbcm btintel coretemp i2c_algo_bit drm_kms_helper(O) crc32_pclmul snd_hda_intel syscopyarea sysfillrect snd_hda_codec sysimgblt snd_hda_core bluetooth fb_sys_fops snd_pcm pcspkr drm(O) psmouse snd_timer mei_me ecdh_generic i2c_i801 mei i2c_core ucsi_acpi typec_ucsi typec wmi thinkpad_acpi ledtrig_audio snd soundcore tpm_tis rfkill tpm_tis_core video tpm acpi_pad pcc_cpufreq uas usb_storage crc32c_intel nvme serio_raw xhci_pci nvme_core xhci_hcd
-> CPU: 6 PID: 1070 Comm: gnome-shell Tainted: G        W  O      5.0.0-rc2Lyude-Test+ #1
-> Hardware name: LENOVO 20L8S2N800/20L8S2N800, BIOS N22ET35W (1.12 ) 04/09/2018
-> RIP: 0010:drm_dp_atomic_release_vcpi_slots+0xb9/0x200 [drm_kms_helper]
-> Code: 00 4c 39 6d f0 74 49 48 8d 7b 10 48 89 f9 48 c1 e9 03 42 80 3c 21 00 0f 85 d2 00 00 00 48 8b 6b 10 48 8d 5d f0 49 39 ee 75 c5 <0f> 0b 48 c7 c7 c0 78 b3 a0 48 89 c2 4c 89 ee e8 03 6c aa ff b8 ea
-> RSP: 0018:ffff88841235f268 EFLAGS: 00010246
-> RAX: ffff88841bf12ab0 RBX: ffff88841bf12aa8 RCX: 1ffff110837e2557
-> RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffffed108246bde0
-> RBP: ffff88841bf12ab8 R08: ffffed1083db3c93 R09: ffffed1083db3c92
-> R10: ffffed1083db3c92 R11: ffff88841ed9e497 R12: ffff888419555d80
-> R13: ffff8883bc499100 R14: ffff88841bf12ab8 R15: 0000000000000000
-> FS:  00007f16fbd4cd00(0000) GS:ffff88841ed80000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f1687c9f000 CR3: 00000003ba3cc003 CR4: 00000000003606e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  drm_atomic_helper_check_modeset+0xf21/0x2f50 [drm_kms_helper]
->  ? drm_atomic_helper_commit_modeset_enables+0xa90/0xa90 [drm_kms_helper]
->  ? __printk_safe_exit+0x10/0x10
->  ? save_stack+0x8c/0xb0
->  ? vprintk_func+0x96/0x1bf
->  ? __printk_safe_exit+0x10/0x10
->  intel_atomic_check+0x234/0x4750 [i915]
->  ? printk+0x9f/0xc5
->  ? kmsg_dump_rewind_nolock+0xd9/0xd9
->  ? _raw_spin_lock_irqsave+0xa4/0x140
->  ? drm_atomic_check_only+0xb1/0x28b0 [drm]
->  ? drm_dbg+0x186/0x1b0 [drm]
->  ? drm_dev_dbg+0x200/0x200 [drm]
->  ? intel_link_compute_m_n+0xb0/0xb0 [i915]
->  ? drm_mode_put_tile_group+0x20/0x20 [drm]
->  ? skl_plane_format_mod_supported+0x17f/0x1b0 [i915]
->  ? drm_plane_check_pixel_format+0x14a/0x310 [drm]
->  drm_atomic_check_only+0x13c4/0x28b0 [drm]
->  ? drm_state_info+0x220/0x220 [drm]
->  ? drm_atomic_helper_disable_plane+0x1d0/0x1d0 [drm_kms_helper]
->  ? pick_single_encoder_for_connector+0xe0/0xe0 [drm_kms_helper]
->  ? kasan_unpoison_shadow+0x35/0x40
->  drm_atomic_commit+0x3b/0x100 [drm]
->  drm_atomic_helper_set_config+0xd5/0x100 [drm_kms_helper]
->  drm_mode_setcrtc+0x636/0x1660 [drm]
->  ? vprintk_func+0x96/0x1bf
->  ? drm_dev_dbg+0x200/0x200 [drm]
->  ? drm_mode_getcrtc+0x790/0x790 [drm]
->  ? printk+0x9f/0xc5
->  ? mutex_unlock+0x1d/0x40
->  ? drm_mode_addfb2+0x2e9/0x3a0 [drm]
->  ? rcu_sync_dtor+0x2e0/0x2e0
->  ? drm_dbg+0x186/0x1b0 [drm]
->  ? set_page_dirty+0x271/0x4d0
->  drm_ioctl_kernel+0x203/0x290 [drm]
->  ? drm_mode_getcrtc+0x790/0x790 [drm]
->  ? drm_setversion+0x7f0/0x7f0 [drm]
->  ? __switch_to_asm+0x34/0x70
->  ? __switch_to_asm+0x34/0x70
->  drm_ioctl+0x445/0x950 [drm]
->  ? drm_mode_getcrtc+0x790/0x790 [drm]
->  ? drm_getunique+0x220/0x220 [drm]
->  ? expand_files.part.10+0x920/0x920
->  do_vfs_ioctl+0x1a1/0x13d0
->  ? ioctl_preallocate+0x2b0/0x2b0
->  ? __fget_light+0x2d6/0x390
->  ? schedule+0xd7/0x2e0
->  ? fget_raw+0x10/0x10
->  ? apic_timer_interrupt+0xa/0x20
->  ? apic_timer_interrupt+0xa/0x20
->  ? rcu_cleanup_dead_rnp+0x2c0/0x2c0
->  ksys_ioctl+0x60/0x90
->  __x64_sys_ioctl+0x6f/0xb0
->  do_syscall_64+0x136/0x440
->  ? syscall_return_slowpath+0x2d0/0x2d0
->  ? do_page_fault+0x89/0x330
->  ? __do_page_fault+0x9c0/0x9c0
->  ? prepare_exit_to_usermode+0x188/0x200
->  ? perf_trace_sys_enter+0x1090/0x1090
->  ? __x64_sys_sigaltstack+0x280/0x280
->  ? __put_user_4+0x1c/0x30
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x7f16ff89a09b
-> Code: 0f 1e fa 48 8b 05 ed bd 0c 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d bd bd 0c 00 f7 d8 64 89 01 48
-> RSP: 002b:00007fff001232b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007fff001232f0 RCX: 00007f16ff89a09b
-> RDX: 00007fff001232f0 RSI: 00000000c06864a2 RDI: 000000000000000b
-> RBP: 00007fff001232f0 R08: 0000000000000000 R09: 000055a79d484460
-> R10: 000055a79d44e770 R11: 0000000000000246 R12: 00000000c06864a2
-> R13: 000000000000000b R14: 0000000000000000 R15: 000055a79d44e770
-> WARNING: CPU: 6 PID: 1070 at drivers/gpu/drm/drm_dp_mst_topology.c:3153 drm_dp_atomic_release_vcpi_slots+0xb9/0x200 [drm_kms_helper]
-> ---[ end trace d536c05c13c83be2 ]---
-> [drm:drm_dp_atomic_release_vcpi_slots [drm_kms_helper]] *ERROR* no VCPI for [MST PORT:00000000f9e2b143] found in mst state 000000009fd2899a
-> 
-> This appears to be happening because we destroy the VCPI allocations
-> when disabling all connected displays while suspending, and those VCPI
-> allocations don't get restored on resume due to failing to restore the
-> atomic state.
-> 
-> So, fix this by introducing the suspending option to
-> drm_atomic_helper_duplicate_state() and use that to indicate in the
-> atomic state that it's being used for suspending or resuming the system,
-> and thus needs to be fixed up by the driver. We can then use the new
-> state->suspend_or_resume hook to fixup the atomic VCPI helpers so they
-> merely save and restore the VCPI allocations for such states instead of
-> performing error checking on them. This fixes the warnings during
-> suspend/resume when a topology is removed from the system, and allows
-> us to once again restore the atomic state on resume without any issues.
+> So, fix this by using the new drm_atomic_state.suspend_or_resume hook in
+> order to force us to retrieve a VCPI allocation when restoring a pipe's
+> atomic state. This is safe, since drm_dp_atomic_find_vcpi_slots() will
+> just return the VCPI allocation we had pre-suspend.
 > 
 > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Fixes: eceae1472467 ("drm/dp_mst: Start tracking per-port VCPI allocations")
 > Cc: Daniel Vetter <daniel@ffwll.ch>
+> Fixes: eceae1472467 ("drm/dp_mst: Start tracking per-port VCPI allocations")
 > ---
->  drivers/gpu/drm/drm_atomic_helper.c   | 16 +++++++++---
->  drivers/gpu/drm/drm_dp_mst_topology.c | 36 ++++++++++++++++++++++++---
->  drivers/gpu/drm/i915/intel_display.c  |  4 +--
->  include/drm/drm_atomic.h              | 11 ++++++++
->  include/drm/drm_atomic_helper.h       |  3 ++-
->  5 files changed, 61 insertions(+), 9 deletions(-)
+>  drivers/gpu/drm/i915/intel_dp_mst.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 6fe2303fccd9..7d23dafdffbc 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -332,8 +332,15 @@ update_connector_routing(struct drm_atomic_state *state,
->  	 * about is ensuring that userspace can't do anything but shut off the
->  	 * display on a connector that was destroyed after its been notified,
->  	 * not before.
-> +	 *
-> +	 * Additionally, we also want to ignore connector registration when
-> +	 * we're trying to restore an atomic state during system resume since
-> +	 * there's a chance the connector may have been destroyed during the
-> +	 * process, but it's better to ignore that then cause
-> +	 * drm_atomic_helper_resume() to fail.
->  	 */
-> -	if (drm_connector_is_unregistered(connector) && crtc_state->active) {
-> +	if (!state->suspend_or_resume &&
-> +	    drm_connector_is_unregistered(connector) && crtc_state->active) {
->  		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
->  				 connector->base.id, connector->name);
->  		return -EINVAL;
-> @@ -3144,6 +3151,7 @@ EXPORT_SYMBOL(drm_atomic_helper_shutdown);
->   * drm_atomic_helper_duplicate_state - duplicate an atomic state object
->   * @dev: DRM device
->   * @ctx: lock acquisition context
-> + * @suspending: If this state is being duplicated as part of system suspend
->   *
->   * Makes a copy of the current atomic state by looping over all objects and
->   * duplicating their respective states. This is used for example by suspend/
-> @@ -3166,7 +3174,8 @@ EXPORT_SYMBOL(drm_atomic_helper_shutdown);
->   */
->  struct drm_atomic_state *
->  drm_atomic_helper_duplicate_state(struct drm_device *dev,
-> -				  struct drm_modeset_acquire_ctx *ctx)
-> +				  struct drm_modeset_acquire_ctx *ctx,
-> +				  bool suspending)
+> diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
+> index cdb83d294cdd..04c9a16fdc39 100644
+> --- a/drivers/gpu/drm/i915/intel_dp_mst.c
+> +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
+> @@ -80,8 +80,13 @@ static int intel_dp_mst_compute_config(struct intel_encoder *encoder,
+>  	mst_pbn = drm_dp_calc_pbn_mode(adjusted_mode->crtc_clock, bpp);
+>  	pipe_config->pbn = mst_pbn;
+>  
+> -	/* Zombie connectors can't have VCPI slots */
+> -	if (!drm_connector_is_unregistered(connector)) {
+> +	/*
+> +	 * Zombie connectors can't have VCPI slots and won't be turned on,
+> +	 * except during resume where we must make sure we restore the
+> +	 * previous VCPI allocations
+> +	 */
+> +	if (!drm_connector_is_unregistered(connector) ||
 
-The duplicated state in the gpu reset code also wants suspending = true.
-If you race a gpu hang with a hotunplug, we don't want blow up either. A
-gpu reset which requires the display state reset too essentially looks
-like a suspend/resume operation (the hw is completely off after the
-reset).
+Hm, could we push the !drm_connector_is_unregistered check into
+drm_dp_atomic_find_vcpi_slots? Then we could also push the
+state->duplicated check there, and these special cases would be in the
+same library.
 
-For the watermark optimizer: That's run at boot-up, so right now 0 mst
-connectors, and the setting doesn't matter. But if we ever get around to
-fast-booting mst, then again I think blowing up when we race the unplug
-with the watermark cleanup is probably not good.
-
-tldr; I don't think we need this parameter. state->suspend_or_resume
-becomes a bit misleading then, I'd call it state->duplicated. I think
-that's also more accurately describing why we need special code: The issue
-isn't resuming, it's trying to re-apply an atomic state that doesn't quite
-fit to reality anymore.
-
-Aside from the naming/api bikeshed looks good to me.
+From a code logic pov looks correct I think, I couldn't poke any holes int
+this idea at least. I guess we'll find out :-)
 -Daniel
 
->  {
->  	struct drm_atomic_state *state;
->  	struct drm_connector *conn;
-> @@ -3180,6 +3189,7 @@ drm_atomic_helper_duplicate_state(struct drm_device *dev,
->  		return ERR_PTR(-ENOMEM);
->  
->  	state->acquire_ctx = ctx;
-> +	state->suspend_or_resume = suspending;
->  
->  	drm_for_each_crtc(crtc, dev) {
->  		struct drm_crtc_state *crtc_state;
-> @@ -3263,7 +3273,7 @@ struct drm_atomic_state *drm_atomic_helper_suspend(struct drm_device *dev)
->  
->  	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
->  
-> -	state = drm_atomic_helper_duplicate_state(dev, &ctx);
-> +	state = drm_atomic_helper_duplicate_state(dev, &ctx, true);
->  	if (IS_ERR(state))
->  		goto unlock;
->  
-> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-> index 8ba0e5b368da..371010f8d42e 100644
-> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> @@ -3032,6 +3032,10 @@ static int drm_dp_init_vcpi(struct drm_dp_mst_topology_mgr *mgr,
->   * @port as needed. It is not OK however, to call this function and
->   * drm_dp_atomic_release_vcpi_slots() in the same atomic check phase.
->   *
-> + * When &drm_atomic_state.suspend_or_resume is set to %true%, this function
-> + * will not perform any error checking and will instead simply retrieve the
-> + * previously recorded VCPI allocation that was present before system suspend.
-> + *
->   * See also:
->   * drm_dp_atomic_release_vcpi_slots()
->   * drm_dp_mst_atomic_check()
-> @@ -3052,9 +3056,11 @@ int drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
->  	if (IS_ERR(topology_state))
->  		return PTR_ERR(topology_state);
->  
-> -	port = drm_dp_mst_topology_get_port_validated(mgr, port);
-> -	if (port == NULL)
-> -		return -EINVAL;
-> +	if (!state->suspend_or_resume) {
-> +		port = drm_dp_mst_topology_get_port_validated(mgr, port);
-> +		if (!port)
-> +			return -EINVAL;
-> +	}
->  
->  	/* Find the current allocation for this port, if any */
->  	list_for_each_entry(pos, &topology_state->vcpis, next) {
-> @@ -3062,6 +3068,19 @@ int drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
->  			vcpi = pos;
->  			prev_slots = vcpi->vcpi;
->  
-> +			/*
-> +			 * When resuming, we just want to restore the previous
-> +			 * VCPI without doing error checking
-> +			 */
-> +			if (state->suspend_or_resume) {
-> +				DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] [MST PORT:%p] restoring VCPI of %d\n",
-> +						 port->connector->base.id,
-> +						 port->connector->name,
-> +						 port, prev_slots);
-> +
-> +				return prev_slots;
-> +			}
-> +
->  			/*
->  			 * This should never happen, unless the driver tries
->  			 * releasing and allocating the same VCPI allocation,
-> @@ -3124,6 +3143,11 @@ EXPORT_SYMBOL(drm_dp_atomic_find_vcpi_slots);
->   * drm_dp_atomic_find_vcpi_slots() on the same @port in a single atomic check
->   * phase.
->   *
-> + * When &drm_atomic_state.suspend_or_resume is set, this function will not
-> + * modify the VCPI allocations in &drm_dp_mst_topology_state.vcpis, so that
-> + * those VCPI allocations may be restored as-is during system resume. In this
-> + * scenario, this function will always return 0.
-> + *
->   * See also:
->   * drm_dp_atomic_find_vcpi_slots()
->   * drm_dp_mst_atomic_check()
-> @@ -3140,6 +3164,12 @@ int drm_dp_atomic_release_vcpi_slots(struct drm_atomic_state *state,
->  	struct drm_dp_vcpi_allocation *pos;
->  	bool found = false;
->  
-> +	/* During suspend, just keep our VCPI allocations as-is in the atomic
-> +	 * state so they can be restored as-is at resume
-> +	 */
-> +	if (state->suspend_or_resume)
-> +		return 0;
-> +
->  	topology_state = drm_atomic_get_mst_topology_state(state, mgr);
->  	if (IS_ERR(topology_state))
->  		return PTR_ERR(topology_state);
-> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> index 4a282532af81..4c70f1531119 100644
-> --- a/drivers/gpu/drm/i915/intel_display.c
-> +++ b/drivers/gpu/drm/i915/intel_display.c
-> @@ -3824,7 +3824,7 @@ void intel_prepare_reset(struct drm_i915_private *dev_priv)
->  	 * Disabling the crtcs gracefully seems nicer. Also the
->  	 * g33 docs say we should at least disable all the planes.
->  	 */
-> -	state = drm_atomic_helper_duplicate_state(dev, ctx);
-> +	state = drm_atomic_helper_duplicate_state(dev, ctx, false);
->  	if (IS_ERR(state)) {
->  		ret = PTR_ERR(state);
->  		DRM_ERROR("Duplicating state failed with %i\n", ret);
-> @@ -15043,7 +15043,7 @@ static void sanitize_watermarks(struct drm_device *dev)
->  		goto fail;
->  	}
->  
-> -	state = drm_atomic_helper_duplicate_state(dev, &ctx);
-> +	state = drm_atomic_helper_duplicate_state(dev, &ctx, false);
->  	if (WARN_ON(IS_ERR(state)))
->  		goto fail;
->  
-> diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> index 811b4a92568f..0897f51dcd62 100644
-> --- a/include/drm/drm_atomic.h
-> +++ b/include/drm/drm_atomic.h
-> @@ -329,6 +329,17 @@ struct drm_atomic_state {
->  	bool allow_modeset : 1;
->  	bool legacy_cursor_update : 1;
->  	bool async_update : 1;
-> +	/**
-> +	 * @suspend_or_resume:
-> +	 *
-> +	 * Indicates whether or not this atomic state is being saved or
-> +	 * committed as part of suspending or resuming the system
-> +	 * respectively. Drivers and atomic helpers hould use this to fixup
-> +	 * normal state inconsistencies that might arise between system
-> +	 * suspend and resume, so as to ensure that restoring the atomic state
-> +	 * at resume never fails.
-> +	 */
-> +	bool suspend_or_resume : 1;
->  	struct __drm_planes_state *planes;
->  	struct __drm_crtcs_state *crtcs;
->  	int num_connector;
-> diff --git a/include/drm/drm_atomic_helper.h b/include/drm/drm_atomic_helper.h
-> index 58214be3bf3d..359f557b6898 100644
-> --- a/include/drm/drm_atomic_helper.h
-> +++ b/include/drm/drm_atomic_helper.h
-> @@ -129,7 +129,8 @@ int drm_atomic_helper_disable_all(struct drm_device *dev,
->  void drm_atomic_helper_shutdown(struct drm_device *dev);
->  struct drm_atomic_state *
->  drm_atomic_helper_duplicate_state(struct drm_device *dev,
-> -				  struct drm_modeset_acquire_ctx *ctx);
-> +				  struct drm_modeset_acquire_ctx *ctx,
-> +				  bool suspending);
->  struct drm_atomic_state *drm_atomic_helper_suspend(struct drm_device *dev);
->  int drm_atomic_helper_commit_duplicated_state(struct drm_atomic_state *state,
->  					      struct drm_modeset_acquire_ctx *ctx);
+> +	    state->suspend_or_resume) {
+>  		slots = drm_dp_atomic_find_vcpi_slots(state,
+>  						      &intel_dp->mst_mgr,
+>  						      port,
 > -- 
 > 2.20.1
 > 
