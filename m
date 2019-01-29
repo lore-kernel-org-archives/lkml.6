@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 846F9C282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532FAC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AF3E2148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 148FB2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762656;
-	bh=eM9Br03K8qgtGEXtzjuU6brC8EdRL6IHOZQNXqjoix0=;
+	s=default; t=1548762660;
+	bh=TjZ24ny6NsEvDDKiQ3aauAMUg2qxM1x+mH0LFo9obb8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LiWmrngm1gXpEztmgVjjPPyazlTz+leL8ngzmRdycOu6nNqF6+EGDQZLEAJrTq7w0
-	 mWa2cTcuarVplybqaWLh936OK6D9qS6AC9jwxJT3SrienDdKUlFoBZaGAEhIdWj3c6
-	 t7CywjfxrALd+mUCG7aerznm/BZ+GyW6lP0jv3Dg=
+	b=tcIzgmhBlrKV4UJ5gm6K1Z47Dbgqc2pgUp2BDv3WDFBqwO1U4/cGN7cOUtZ41Q7rB
+	 1150rX1ILUakty7VpqIzH7aBhbkDYk4CkGSLgrvN0XwMxsQiZNHTbYZFMY9o5lEXbi
+	 Xo3UJtCparmJWdBJpgYi1dEQ9KlDYPvGPC5QZOf8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731759AbfA2Luz (ORCPT
+        id S1731783AbfA2Lu6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:50:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42200 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731725AbfA2Lur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:47 -0500
+        id S1731739AbfA2Lux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:50:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B32C12086C;
-        Tue, 29 Jan 2019 11:50:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 506492083B;
+        Tue, 29 Jan 2019 11:50:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762647;
-        bh=eM9Br03K8qgtGEXtzjuU6brC8EdRL6IHOZQNXqjoix0=;
+        s=default; t=1548762652;
+        bh=TjZ24ny6NsEvDDKiQ3aauAMUg2qxM1x+mH0LFo9obb8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fBmErjlPPrQu2TZgdh5w+K8ytOgzT7mnKQmxAfH/ug9UONGLfIUwh2jDnWmIZGUmE
-         t/OH6ZD5wBgIaQRYFQWe9JtFUyKyWO4FdmmL8vGyfSpkFzWMZPhqLbvvSvowMT/07A
-         21+9DuMVNVe/HPVoSnQ5KBGLmEHeFM997KyL+VWs=
+        b=y4yY7EqkWEbXdwE5ZOb3KwR/fpqMslK5aup2HZg6P0EIQsGmodalIhUSFG6SkEf4B
+         goxkJOCBvYdT6AUhyJTpguFyetXMKPBY/JTFLZF39MvE/3Dr4Z7vL2osmiAW/5/ZdW
+         jRDZgYvSbt/rq3uELANNTulrAUHv1fmDFp6469Y4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Charles Yeh <charlesyeh522@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 10/44] USB: serial: pl2303: add new PID to support PL2303TB
-Date:   Tue, 29 Jan 2019 12:36:05 +0100
-Message-Id: <20190129113140.911984030@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 12/44] ASoC: rt5514-spi: Fix potential NULL pointer dereference
+Date:   Tue, 29 Jan 2019 12:36:07 +0100
+Message-Id: <20190129113141.062080611@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -65,49 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Charles Yeh <charlesyeh522@gmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 4dcf9ddc9ad5ab649abafa98c5a4d54b1a33dabb upstream.
+commit 060d0bf491874daece47053c4e1fb0489eb867d2 upstream.
 
-Add new PID to support PL2303TB (TYPE_HX)
+There is a potential NULL pointer dereference in case devm_kzalloc()
+fails and returns NULL.
 
-Signed-off-by: Charles Yeh <charlesyeh522@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fix this by adding a NULL check on rt5514_dsp.
+
+This issue was detected with the help of Coccinelle.
+
+Fixes: 6eebf35b0e4a ("ASoC: rt5514: add rt5514 SPI driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/pl2303.c |    1 +
- drivers/usb/serial/pl2303.h |    2 ++
- 2 files changed, 3 insertions(+)
+ sound/soc/codecs/rt5514-spi.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -47,6 +47,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_HCR331) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MOTOROLA) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ZTEK) },
-+	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_TB) },
- 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID) },
- 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID_RSAQ5) },
- 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_ID) },
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -13,6 +13,7 @@
+--- a/sound/soc/codecs/rt5514-spi.c
++++ b/sound/soc/codecs/rt5514-spi.c
+@@ -253,6 +253,8 @@ static int rt5514_spi_pcm_probe(struct s
  
- #define PL2303_VENDOR_ID	0x067b
- #define PL2303_PRODUCT_ID	0x2303
-+#define PL2303_PRODUCT_ID_TB		0x2304
- #define PL2303_PRODUCT_ID_RSAQ2		0x04bb
- #define PL2303_PRODUCT_ID_DCU11		0x1234
- #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
-@@ -25,6 +26,7 @@
- #define PL2303_PRODUCT_ID_MOTOROLA	0x0307
- #define PL2303_PRODUCT_ID_ZTEK		0xe1f1
+ 	rt5514_dsp = devm_kzalloc(platform->dev, sizeof(*rt5514_dsp),
+ 			GFP_KERNEL);
++	if (!rt5514_dsp)
++		return -ENOMEM;
  
-+
- #define ATEN_VENDOR_ID		0x0557
- #define ATEN_VENDOR_ID2		0x0547
- #define ATEN_PRODUCT_ID		0x2008
+ 	rt5514_dsp->dev = &rt5514_spi->dev;
+ 	mutex_init(&rt5514_dsp->dma_lock);
 
 
