@@ -2,73 +2,96 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0D3C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A059C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87AAF20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 047792085B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:44:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfA2IoD (ORCPT
+        id S1727877AbfA2IoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:44:03 -0500
-Received: from charybdis-ext.suse.de ([195.135.221.2]:61573 "EHLO suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727176AbfA2IoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:44:00 -0500
-Received: by suse.de (Postfix, from userid 1000)
-        id 4977F40AF; Tue, 29 Jan 2019 09:43:59 +0100 (CET)
-Date:   Tue, 29 Jan 2019 09:43:59 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, mhocko@suse.com, dan.j.williams@intel.com,
-        Pavel.Tatashin@microsoft.com, linux-kernel@vger.kernel.org,
-        dave.hansen@intel.com
-Subject: Re: [RFC PATCH v2 0/4] mm, memory_hotplug: allocate memmap from
- hotadded memory
-Message-ID: <20190129084359.65fzc4hqan265gii@d104.suse.de>
-References: <20190122103708.11043-1-osalvador@suse.de>
- <d9dbefb8-052e-7cb5-3de4-245d05270ff9@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d9dbefb8-052e-7cb5-3de4-245d05270ff9@redhat.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Tue, 29 Jan 2019 03:44:15 -0500
+Received: from 8bytes.org ([81.169.241.247]:35522 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727145AbfA2Inq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:43:46 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 62E90B9; Tue, 29 Jan 2019 09:43:44 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, joro@8bytes.org,
+        jroedel@suse.de
+Subject: [PATCH 1/5] swiotlb: Introduce swiotlb_max_mapping_size()
+Date:   Tue, 29 Jan 2019 09:43:38 +0100
+Message-Id: <20190129084342.26030-2-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190129084342.26030-1-joro@8bytes.org>
+References: <20190129084342.26030-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 09:53:35AM +0100, David Hildenbrand wrote:
-Hi David,
+From: Joerg Roedel <jroedel@suse.de>
 
-> I only had a quick glimpse. I would prefer if the caller of add_memory()
-> can specify whether it would be ok to allocate vmmap from the range.
-> This e.g. allows ACPI dimm code to allocate from the range, however
-> other machanisms (XEN, hyper-v, virtio-mem) can allow it once they
-> actually support it.
+The function returns the maximum size that can be remapped
+by the SWIOTLB implementation. This function will be later
+exposed to users through the DMA-API.
 
-Well, I think this can be done, and it might make more sense, as we
-would get rid of some other flags to prevent allocating vmemmap
-besides mhp_restrictions.
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ include/linux/swiotlb.h | 5 +++++
+ kernel/dma/swiotlb.c    | 5 +++++
+ 2 files changed, 10 insertions(+)
 
-> 
-> Also, while s390x standby memory cannot support allocating from the
-> range, virtio-mem could easily support it on s390x.
-> 
-> Not sure how such an interface could look like, but I would really like
-> to have control over that on the add_memory() interface, not per arch.
-
-Let me try it out and will report back.
-
-Btw, since you are a virt-guy, would it be do feasible for you to test the patchset
-on hyper-v, xen or your virtio-mem driver?
-
-Thanks David!
-
+diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
+index 7c007ed7505f..1c22d96e1742 100644
+--- a/include/linux/swiotlb.h
++++ b/include/linux/swiotlb.h
+@@ -62,6 +62,7 @@ extern void swiotlb_tbl_sync_single(struct device *hwdev,
+ 
+ extern int
+ swiotlb_dma_supported(struct device *hwdev, u64 mask);
++size_t swiotlb_max_mapping_size(struct device *dev);
+ 
+ #ifdef CONFIG_SWIOTLB
+ extern enum swiotlb_force swiotlb_force;
+@@ -95,6 +96,10 @@ static inline unsigned int swiotlb_max_segment(void)
+ {
+ 	return 0;
+ }
++static inline size_t swiotlb_max_mapping_size(struct device *dev)
++{
++	return SIZE_MAX;
++}
+ #endif /* CONFIG_SWIOTLB */
+ 
+ extern void swiotlb_print_info(void);
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index 1fb6fd68b9c7..9cb21259cb0b 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -662,3 +662,8 @@ swiotlb_dma_supported(struct device *hwdev, u64 mask)
+ {
+ 	return __phys_to_dma(hwdev, io_tlb_end - 1) <= mask;
+ }
++
++size_t swiotlb_max_mapping_size(struct device *dev)
++{
++	return ((size_t)1 << IO_TLB_SHIFT) * IO_TLB_SEGSIZE;
++}
 -- 
-Oscar Salvador
-SUSE L3
+2.17.1
+
