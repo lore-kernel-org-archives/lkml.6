@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C03AC282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 760EBC282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F04F5217F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E096217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbfA2AjU (ORCPT
+        id S1728215AbfA2AkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:39:20 -0500
-Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
+        Mon, 28 Jan 2019 19:40:17 -0500
+Received: from mga06.intel.com ([134.134.136.31]:5081 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726867AbfA2AjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:39:15 -0500
+        id S1727580AbfA2AjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 19:39:21 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:11 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="133921886"
+   d="scan'208";a="133921919"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
-  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:11 -0800
+  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:12 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -46,9 +46,9 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         Dave Hansen <dave.hansen@intel.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 01/20] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
-Date:   Mon, 28 Jan 2019 16:34:03 -0800
-Message-Id: <20190129003422.9328-2-rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 12/20] x86/alternative: Remove the return value of text_poke_*()
+Date:   Mon, 28 Jan 2019 16:34:14 -0800
+Message-Id: <20190129003422.9328-13-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
@@ -59,165 +59,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nadav Amit <namit@vmware.com>
 
-text_mutex is currently expected to be held before text_poke() is
-called, but we kgdb does not take the mutex, and instead *supposedly*
-ensures the lock is not taken and will not be acquired by any other core
-while text_poke() is running.
-
-The reason for the "supposedly" comment is that it is not entirely clear
-that this would be the case if kgdb_do_roundup is zero.
-
-Create two wrapper functions, text_poke() and text_poke_kgdb() which do
-or do not run the lockdep assertion respectively.
-
-While we are at it, change the return code of text_poke() to something
-meaningful. One day, callers might actually respect it and the existing
-BUG_ON() when patching fails could be removed. For kgdb, the return
-value can actually be used.
+The return value of text_poke_early() and text_poke_bp() is useless.
+Remove it.
 
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/text-patching.h |  1 +
- arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
- arch/x86/kernel/kgdb.c               | 11 +++---
- 3 files changed, 45 insertions(+), 19 deletions(-)
+ arch/x86/include/asm/text-patching.h |  4 ++--
+ arch/x86/kernel/alternative.c        | 11 ++++-------
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
 diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index e85ff65c43c3..f8fc8e86cf01 100644
+index a75eed841eed..c90678fd391a 100644
 --- a/arch/x86/include/asm/text-patching.h
 +++ b/arch/x86/include/asm/text-patching.h
-@@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
-  * inconsistent instruction while you patch.
-  */
+@@ -18,7 +18,7 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
+ #define __parainstructions_end	NULL
+ #endif
+ 
+-extern void *text_poke_early(void *addr, const void *opcode, size_t len);
++extern void text_poke_early(void *addr, const void *opcode, size_t len);
+ 
+ /*
+  * Clear and restore the kernel write-protection flag on the local CPU.
+@@ -37,7 +37,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
  extern void *text_poke(void *addr, const void *opcode, size_t len);
-+extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
  extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+-extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
++extern void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
  extern int after_bootmem;
+ extern __ro_after_init struct mm_struct *poking_mm;
+ extern __ro_after_init unsigned long poking_addr;
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index d458c7973c56..12fddbc8c55b 100644
+index 69f3e650ada8..81876e3ef3fd 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -678,18 +678,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
- 	return addr;
- }
+@@ -264,7 +264,7 @@ static void __init_or_module add_nops(void *insns, unsigned int len)
  
--/**
-- * text_poke - Update instructions on a live kernel
-- * @addr: address to modify
-- * @opcode: source of the copy
-- * @len: length to copy
-- *
-- * Only atomic text poke/set should be allowed when not doing early patching.
-- * It means the size must be writable atomically and the address must be aligned
-- * in a way that permits an atomic write. It also makes sure we fit on a single
-- * page.
-- */
--void *text_poke(void *addr, const void *opcode, size_t len)
-+static void *__text_poke(void *addr, const void *opcode, size_t len)
+ extern struct alt_instr __alt_instructions[], __alt_instructions_end[];
+ extern s32 __smp_locks[], __smp_locks_end[];
+-void *text_poke_early(void *addr, const void *opcode, size_t len);
++void text_poke_early(void *addr, const void *opcode, size_t len);
+ 
+ /*
+  * Are we looking at a near JMP with a 1 or 4-byte displacement.
+@@ -666,8 +666,8 @@ void __init alternative_instructions(void)
+  * instructions. And on the local CPU you need to be protected again NMI or MCE
+  * handlers seeing an inconsistent instruction while you patch.
+  */
+-void *__init_or_module text_poke_early(void *addr, const void *opcode,
+-				       size_t len)
++void __init_or_module text_poke_early(void *addr, const void *opcode,
++				      size_t len)
  {
  	unsigned long flags;
- 	char *vaddr;
-@@ -702,8 +691,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
- 	 */
- 	BUG_ON(!after_bootmem);
  
--	lockdep_assert_held(&text_mutex);
--
- 	if (!core_kernel_text((unsigned long)addr)) {
- 		pages[0] = vmalloc_to_page(addr);
- 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
-@@ -732,6 +719,43 @@ void *text_poke(void *addr, const void *opcode, size_t len)
- 	return addr;
+@@ -690,7 +690,6 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 		 * that causes hangs on some VIA CPUs.
+ 		 */
+ 	}
+-	return addr;
  }
  
-+/**
-+ * text_poke - Update instructions on a live kernel
-+ * @addr: address to modify
-+ * @opcode: source of the copy
-+ * @len: length to copy
-+ *
-+ * Only atomic text poke/set should be allowed when not doing early patching.
-+ * It means the size must be writable atomically and the address must be aligned
-+ * in a way that permits an atomic write. It also makes sure we fit on a single
-+ * page.
-+ */
-+void *text_poke(void *addr, const void *opcode, size_t len)
-+{
-+	lockdep_assert_held(&text_mutex);
-+
-+	return __text_poke(addr, opcode, len);
-+}
-+
-+/**
-+ * text_poke_kgdb - Update instructions on a live kernel by kgdb
-+ * @addr: address to modify
-+ * @opcode: source of the copy
-+ * @len: length to copy
-+ *
-+ * Only atomic text poke/set should be allowed when not doing early patching.
-+ * It means the size must be writable atomically and the address must be aligned
-+ * in a way that permits an atomic write. It also makes sure we fit on a single
-+ * page.
-+ *
-+ * Context: should only be used by kgdb, which ensures no other core is running,
-+ *	    despite the fact it does not hold the text_mutex.
-+ */
-+void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
-+{
-+	return __text_poke(addr, opcode, len);
-+}
-+
- static void do_sync_core(void *info)
+ __ro_after_init struct mm_struct *poking_mm;
+@@ -890,7 +889,7 @@ int poke_int3_handler(struct pt_regs *regs)
+  *	  replacing opcode
+  *	- sync cores
+  */
+-void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
++void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
  {
- 	sync_core();
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index 5db08425063e..1461544cba8b 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -758,13 +758,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
- 	if (!err)
- 		return err;
- 	/*
--	 * It is safe to call text_poke() because normal kernel execution
-+	 * It is safe to call text_poke_kgdb() because normal kernel execution
- 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	unsigned char int3 = 0xcc;
+ 
+@@ -932,7 +931,5 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ 	 * the writing of the new instruction.
  	 */
- 	if (mutex_is_locked(&text_mutex))
- 		return -EBUSY;
--	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
--		  BREAK_INSTR_SIZE);
-+	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
-+		       BREAK_INSTR_SIZE);
- 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
- 	if (err)
- 		return err;
-@@ -783,12 +783,13 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
- 	if (bpt->type != BP_POKE_BREAKPOINT)
- 		goto knl_write;
- 	/*
--	 * It is safe to call text_poke() because normal kernel execution
-+	 * It is safe to call text_poke_kgdb() because normal kernel execution
- 	 * is stopped on all cores, so long as the text_mutex is not locked.
- 	 */
- 	if (mutex_is_locked(&text_mutex))
- 		goto knl_write;
--	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
-+	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
-+		       BREAK_INSTR_SIZE);
- 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
- 	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
- 		goto knl_write;
+ 	bp_patching_in_progress = false;
+-
+-	return addr;
+ }
+ 
 -- 
 2.17.1
 
