@@ -2,52 +2,52 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD685C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8A2C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7358120882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEFCE20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:37:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761857;
-	bh=J3V2ge1SNFkjfFf833kFJLmhxbs3UgTytFlBLSRaLuc=;
+	s=default; t=1548761860;
+	bh=i+I51aoOZxnoku1V2DWmtbi5zZ49uhh3HO+U1WkU8DM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ag3uECfqJ4wAYHKMkwm2Hb7QYY5Px8vkc70w/+LIF0lXigrQIKBe/RlNdAxfNEWNy
-	 KBKy9Kz0rcm88vUYFx7OYK5OGlgWrXnrzsp1ggjhH/ZOx9tPMzKJmvzT+S+tcQLVBu
-	 PtWXwMNcEFxOBlYnMAbrigl9WOGnfFP3FzxEiv2Q=
+	b=0icfl+idwZhGau8BZ1LIStDbs8LcFhFmDbLmiwvTJSTEyp0+JyiWJM4M/n3gacyov
+	 CSoUALf+Tfh09PibTuu212lrjzhR3+f6MPZSPbb56OYqRAjzQrtzTvt6GetrcEGKZZ
+	 aLd28OWeLK7zsKlXvLXbbzSS3zTGP2llUCE0scLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbfA2Lhg (ORCPT
+        id S1728897AbfA2Lhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:37:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54222 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:37:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727728AbfA2Lhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:37:35 -0500
+        id S1728881AbfA2Lhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:37:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B86F020882;
-        Tue, 29 Jan 2019 11:37:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 089C820844;
+        Tue, 29 Jan 2019 11:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761854;
-        bh=J3V2ge1SNFkjfFf833kFJLmhxbs3UgTytFlBLSRaLuc=;
+        s=default; t=1548761857;
+        bh=i+I51aoOZxnoku1V2DWmtbi5zZ49uhh3HO+U1WkU8DM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SQ/R3K8mTo7qzpeYZSpAx4Uaewcbgd/eq4AyEQb19v3beKkGzreb8xTicygVj1YVf
-         Sn8kZQ0QgjV/q9h5cGOzvTqXOZJqNnKDIStbbUj7ZlWBqW7489Z2N5ajLQdVdyxz2k
-         q6YU5zZh/EAz6gGZKAsYHtcvHqG/A2BDa8+IuJJI=
+        b=JL+vbJXZx+4+h2Hwbo8obQguOrbghWGfE3of6JDJ83xyWAY7yvxPx0Ox/9pAWRZtF
+         ocibeivcWL+ZdjpFw1bh75HfLZhxj+LQ01g0dbVSOXUAS+UNaOJPIdmd8ZHxC1AVx6
+         GRfZPvDnUJRYCUeNLpfbM5UuI4det0MbvC7Maumk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 023/117] SUNRPC: Address Kerberos performance/behavior regression
-Date:   Tue, 29 Jan 2019 12:34:34 +0100
-Message-Id: <20190129113208.820427598@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH 4.20 024/117] mei: me: mark LBG devices as having dma support
+Date:   Tue, 29 Jan 2019 12:34:35 +0100
+Message-Id: <20190129113208.865155315@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -66,41 +66,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit deaa5c96c2f7e8b934088a1e70a0fe8797bd1149 ]
+From: Alexander Usyskin <alexander.usyskin@intel.com>
 
-When using Kerberos with v4.20, I've observed frequent connection
-loss on heavy workloads. I traced it down to the client underrunning
-the GSS sequence number window -- NFS servers are required to drop
-the RPC with the low sequence number, and also drop the connection
-to signal that an RPC was dropped.
+commit 173436ba800d01178a8b19e5de4a8cb02c0db760 upstream.
 
-Bisected to commit 918f3c1fe83c ("SUNRPC: Improve latency for
-interactive tasks").
+The LBG server platform sports DMA support.
 
-I've got a one-line workaround for this issue, which is easy to
-backport to v4.20 while a more permanent solution is being derived.
-Essentially, tk_owner-based sorting is disabled for RPCs that carry
-a GSS sequence number.
-
-Fixes: 918f3c1fe83c ("SUNRPC: Improve latency for interactive ... ")
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: <stable@vger.kernel.org> #v5.0+
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sunrpc/xprt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sunrpc/xprt.c
-+++ b/net/sunrpc/xprt.c
-@@ -1177,7 +1177,7 @@ xprt_request_enqueue_transmit(struct rpc
- 				INIT_LIST_HEAD(&req->rq_xmit2);
- 				goto out;
- 			}
--		} else {
-+		} else if (!req->rq_seqno) {
- 			list_for_each_entry(pos, &xprt->xmit_queue, rq_xmit) {
- 				if (pos->rq_task->tk_owner != task->tk_owner)
- 					continue;
+diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
+index 73ace2d59dea..c2bf3e99955e 100644
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -88,7 +88,7 @@ static const struct pci_device_id mei_me_pci_tbl[] = {
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_2, MEI_ME_PCH8_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_H, MEI_ME_PCH8_SPS_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_H_2, MEI_ME_PCH8_SPS_CFG)},
+-	{MEI_PCI_DEVICE(MEI_DEV_ID_LBG, MEI_ME_PCH8_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_LBG, MEI_ME_PCH12_CFG)},
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_BXT_M, MEI_ME_PCH8_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_APL_I, MEI_ME_PCH8_CFG)},
 
 
