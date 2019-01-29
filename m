@@ -2,179 +2,113 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C18EC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81FECC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3717B2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FE6120989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 13:49:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548769765;
+	bh=4mA24A6r0GSrYe897I6L2T3/2XRT+HpUFt0OaP4fBhE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0qiTEASPPSWKZLnj2exBbYqfXSF8FozCUk+2y5ug96DzvPyn/Cb2Ht/gS53M1tqjI
+	 pbbOODL/SRHLJmdhowgjdZxSet7scpxMYZiiAF0puwAlrzTdQCfw1rTBu6L90q3R3V
+	 ODQ3Mne0uza6ChnWlAQd1QVhVVtzQIFp1EfgL9Pk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfA2Nmm (ORCPT
+        id S1727511AbfA2NtX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 08:42:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:9138 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727862AbfA2Nmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 08:42:42 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 78A39C0C7CA0;
-        Tue, 29 Jan 2019 13:42:41 +0000 (UTC)
-Received: from krava (ovpn-204-171.brq.redhat.com [10.40.204.171])
-        by smtp.corp.redhat.com (Postfix) with SMTP id A4119226F1;
-        Tue, 29 Jan 2019 13:42:37 +0000 (UTC)
-Date:   Tue, 29 Jan 2019 14:42:36 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     acme@kernel.org, namhyung@kernel.org, dzickus@redhat.com,
-        fowles@inreach.com, jmario@redhat.com,
-        linux-kernel@vger.kernel.org, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, maddy@linux.vnet.ibm.com
-Subject: Re: [PATCH v2] perf mem/c2c: Fix perf_mem_events to support powerpc
-Message-ID: <20190129134236.GB30190@krava>
-References: <dd6d04f3-c8aa-1d57-c466-c6b3c333db51@linux.ibm.com>
- <20190129132412.771-1-ravi.bangoria@linux.ibm.com>
+        Tue, 29 Jan 2019 08:49:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33332 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726763AbfA2NtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 08:49:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E4EE7AD5D;
+        Tue, 29 Jan 2019 13:49:21 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 14:49:20 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] mm, memory_hotplug: fix uninitialized pages fallouts.
+Message-ID: <20190129134920.GM18811@dhcp22.suse.cz>
+References: <20190128144506.15603-1-mhocko@kernel.org>
+ <20190129141447.34aa9d0c@thinkpad>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129132412.771-1-ravi.bangoria@linux.ibm.com>
+In-Reply-To: <20190129141447.34aa9d0c@thinkpad>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 29 Jan 2019 13:42:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 06:54:12PM +0530, Ravi Bangoria wrote:
-> Powerpc hw does not have inbuilt latency filter (--ldlat) for mem-load
-> event and, perf_mem_events by default includes ldlat=30 which is
-> causing failure on powerpc. Refactor code to support perf mem/c2c on
-> powerpc.
+On Tue 29-01-19 14:14:47, Gerald Schaefer wrote:
+> On Mon, 28 Jan 2019 15:45:04 +0100
+> Michal Hocko <mhocko@kernel.org> wrote:
 > 
-> This patch depends on kernel side changes done my Madhavan:
-> https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-December/182596.html
+> > Hi,
+> > Mikhail has posted fixes for the two bugs quite some time ago [1]. I
+> > have pushed back on those fixes because I believed that it is much
+> > better to plug the problem at the initialization time rather than play
+> > whack-a-mole all over the hotplug code and find all the places which
+> > expect the full memory section to be initialized. We have ended up with
+> > 2830bf6f05fb ("mm, memory_hotplug: initialize struct pages for the full
+> > memory section") merged and cause a regression [2][3]. The reason is
+> > that there might be memory layouts when two NUMA nodes share the same
+> > memory section so the merged fix is simply incorrect.
+> > 
+> > In order to plug this hole we really have to be zone range aware in
+> > those handlers. I have split up the original patch into two. One is
+> > unchanged (patch 2) and I took a different approach for `removable'
+> > crash. It would be great if Mikhail could test it still works for his
+> > memory layout.
+> > 
+> > [1] http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com
+> > [2] https://bugzilla.redhat.com/show_bug.cgi?id=1666948
+> > [3] http://lkml.kernel.org/r/20190125163938.GA20411@dhcp22.suse.cz
 > 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> ---
+> I verified that both patches fix the issues we had with valid_zones
+> (with mem=2050M) and removable (with mem=3075M).
+> 
+> However, the call trace in the description of your patch 1 is wrong.
+> You basically have the same call trace for test_pages_in_a_zone in
+> both patches. The "removable" patch should have the call trace for
+> is_mem_section_removable from Mikhails original patches:
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Thanks for testing. Can I use you Tested-by?
 
-thanks,
-jirka
+>  CONFIG_DEBUG_VM_PGFLAGS=y
+>  kernel parameter mem=3075M
+>  --------------------------
+>  page:000003d08300c000 is uninitialized and poisoned
+>  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+>  Call Trace:
+>  ([<000000000038596c>] is_mem_section_removable+0xb4/0x190)
+>   [<00000000008f12fa>] show_mem_removable+0x9a/0xd8
+>   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
+>   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
+>   [<00000000003e4194>] seq_read+0x204/0x480
+>   [<00000000003b53ea>] __vfs_read+0x32/0x178
+>   [<00000000003b55b2>] vfs_read+0x82/0x138
+>   [<00000000003b5be2>] ksys_read+0x5a/0xb0
+>   [<0000000000b86ba0>] system_call+0xdc/0x2d8
+>  Last Breaking-Event-Address:
+>   [<000000000038596c>] is_mem_section_removable+0xb4/0x190
+>  Kernel panic - not syncing: Fatal exception: panic_on_oops
 
->  tools/perf/Documentation/perf-c2c.txt     | 16 ++++++++++++----
->  tools/perf/Documentation/perf-mem.txt     |  2 +-
->  tools/perf/arch/powerpc/util/Build        |  1 +
->  tools/perf/arch/powerpc/util/mem-events.c | 11 +++++++++++
->  tools/perf/util/mem-events.c              |  2 +-
->  5 files changed, 26 insertions(+), 6 deletions(-)
->  create mode 100644 tools/perf/arch/powerpc/util/mem-events.c
-> 
-> diff --git a/tools/perf/Documentation/perf-c2c.txt b/tools/perf/Documentation/perf-c2c.txt
-> index 095aebd..e6150f2 100644
-> --- a/tools/perf/Documentation/perf-c2c.txt
-> +++ b/tools/perf/Documentation/perf-c2c.txt
-> @@ -19,8 +19,11 @@ C2C stands for Cache To Cache.
->  The perf c2c tool provides means for Shared Data C2C/HITM analysis. It allows
->  you to track down the cacheline contentions.
->  
-> -The tool is based on x86's load latency and precise store facility events
-> -provided by Intel CPUs. These events provide:
-> +On x86, the tool is based on load latency and precise store facility events
-> +provided by Intel CPUs. On PowerPC, the tool uses random instruction sampling
-> +with thresholding feature.
-> +
-> +These events provide:
->    - memory address of the access
->    - type of the access (load and store details)
->    - latency (in cycles) of the load access
-> @@ -46,7 +49,7 @@ RECORD OPTIONS
->  
->  -l::
->  --ldlat::
-> -	Configure mem-loads latency.
-> +	Configure mem-loads latency. (x86 only)
->  
->  -k::
->  --all-kernel::
-> @@ -119,11 +122,16 @@ Following perf record options are configured by default:
->    -W,-d,--phys-data,--sample-cpu
->  
->  Unless specified otherwise with '-e' option, following events are monitored by
-> -default:
-> +default on x86:
->  
->    cpu/mem-loads,ldlat=30/P
->    cpu/mem-stores/P
->  
-> +and following on PowerPC:
-> +
-> +  cpu/mem-loads/
-> +  cpu/mem-stores/
-> +
->  User can pass any 'perf record' option behind '--' mark, like (to enable
->  callchains and system wide monitoring):
->  
-> diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documentation/perf-mem.txt
-> index f8d2167..199ea0f 100644
-> --- a/tools/perf/Documentation/perf-mem.txt
-> +++ b/tools/perf/Documentation/perf-mem.txt
-> @@ -82,7 +82,7 @@ RECORD OPTIONS
->  	Be more verbose (show counter open errors, etc)
->  
->  --ldlat <n>::
-> -	Specify desired latency for loads event.
-> +	Specify desired latency for loads event. (x86 only)
->  
->  In addition, for report all perf report options are valid, and for record
->  all perf record options.
-> diff --git a/tools/perf/arch/powerpc/util/Build b/tools/perf/arch/powerpc/util/Build
-> index 2e659531..ba98bd0 100644
-> --- a/tools/perf/arch/powerpc/util/Build
-> +++ b/tools/perf/arch/powerpc/util/Build
-> @@ -2,6 +2,7 @@ libperf-y += header.o
->  libperf-y += sym-handling.o
->  libperf-y += kvm-stat.o
->  libperf-y += perf_regs.o
-> +libperf-y += mem-events.o
->  
->  libperf-$(CONFIG_DWARF) += dwarf-regs.o
->  libperf-$(CONFIG_DWARF) += skip-callchain-idx.o
-> diff --git a/tools/perf/arch/powerpc/util/mem-events.c b/tools/perf/arch/powerpc/util/mem-events.c
-> new file mode 100644
-> index 0000000..f1194fc
-> --- /dev/null
-> +++ b/tools/perf/arch/powerpc/util/mem-events.c
-> @@ -0,0 +1,11 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include "mem-events.h"
-> +
-> +/* PowerPC does not support 'ldlat' parameter. */
-> +char *perf_mem_events__name(int i)
-> +{
-> +	if (i == PERF_MEM_EVENTS__LOAD)
-> +		return (char *) "cpu/mem-loads/";
-> +
-> +	return (char *) "cpu/mem-stores/";
-> +}
-> diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
-> index 93f74d8..42c3e5a 100644
-> --- a/tools/perf/util/mem-events.c
-> +++ b/tools/perf/util/mem-events.c
-> @@ -28,7 +28,7 @@ struct perf_mem_event perf_mem_events[PERF_MEM_EVENTS__MAX] = {
->  static char mem_loads_name[100];
->  static bool mem_loads_name__init;
->  
-> -char *perf_mem_events__name(int i)
-> +char * __weak perf_mem_events__name(int i)
->  {
->  	if (i == PERF_MEM_EVENTS__LOAD) {
->  		if (!mem_loads_name__init) {
-> -- 
-> 1.8.3.1
-> 
+Yeah, this is c&p mistake on my end. I will use this trace instead.
+Thanks for spotting.
+-- 
+Michal Hocko
+SUSE Labs
