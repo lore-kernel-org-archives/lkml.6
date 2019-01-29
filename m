@@ -2,79 +2,81 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 049C3C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3771C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC0802148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:38:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jDg0qNhQ"
+	by mail.kernel.org (Postfix) with ESMTP id A98DD2148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:41:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbfA2Fif (ORCPT
+        id S1726217AbfA2Fk7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 00:38:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36160 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbfA2Fif (ORCPT
+        Tue, 29 Jan 2019 00:40:59 -0500
+Received: from smtprelay0123.hostedemail.com ([216.40.44.123]:42777 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725536AbfA2Fk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 00:38:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=t8fkzWMHxXDIkytKtq4mCKfuJ+XlIbmSP26+VZ3R6Tw=; b=jDg0qNhQ8VD/4F9eDb3TAcCXx
-        KgrHXFD4VUcQ7FG4aqXzx+03Sz9cGxs8Fu1XTbjulAd4M9G9ltw8J72wpUM4eG8/t3t26w6TYpkZ+
-        9j0Di4upLo9PJrngncDKQ60gYIFuZITAk1kfiOHP6UwoEHolJKTbn3p4iK2STBQpOh+bhac4NIyhr
-        Srd2fjPNNoh/yaxeszJy1KPd41ffdRnUZ0VEWvUHxnsiAkVS2CI2HQaqK+6A9DdWP0pGCsjSU1rkA
-        wuDjExz/IA8gHWwZ0TjoqfdZ7sVZ1TM3TjwAyCAaSW2NrFESAE5jqaGaCohDGut/W01IpjUZFZdZz
-        W3aRK/IkA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1goM6T-0000zO-1P; Tue, 29 Jan 2019 05:38:33 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH] mm: Prevent mapping typed pages to userspace
-Date:   Mon, 28 Jan 2019 21:38:30 -0800
-Message-Id: <20190129053830.3749-1-willy@infradead.org>
-X-Mailer: git-send-email 2.14.5
+        Tue, 29 Jan 2019 00:40:59 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 9D7118368EF5;
+        Tue, 29 Jan 2019 05:40:57 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: scarf45_4268684d3b636
+X-Filterd-Recvd-Size: 1941
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 29 Jan 2019 05:40:56 +0000 (UTC)
+Message-ID: <533e48bd35d360cec8d749f3b70425c1eb5e6e9d.camel@perches.com>
+Subject: Re: [RESEND PATCH v2 8/8] Input: sx8654 - convert #defined flags to
+ BIT(x)
+From:   Joe Perches <joe@perches.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Richard Leitner <richard.leitner@skidata.com>
+Cc:     mark.rutland@arm.com, robh+dt@kernel.org,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 28 Jan 2019 21:40:54 -0800
+In-Reply-To: <20190129002518.GH34692@dtor-ws>
+References: <20181218083606.25795-1-richard.leitner@skidata.com>
+         <20181218084002.19454-1-richard.leitner@skidata.com>
+         <20190129002518.GH34692@dtor-ws>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pages which use page_type must never be mapped to userspace as it would
-destroy their page type.  Add an explicit check for this instead of
-assuming that kernel drivers always get this right.
+On Mon, 2019-01-28 at 16:25 -0800, Dmitry Torokhov wrote:
+> On Tue, Dec 18, 2018 at 09:40:02AM +0100, Richard Leitner wrote:
+> > Some of the #defined register values are one-bit flags. Convert them to
+> > use the BIT(x) macro instead of 1 byte hexadecimal values. This improves
+> > readability and clarifies the intent.
+> > 
+> > Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
+> 
+> Applied, thank you.
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
----
- mm/memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Not so sure this should be applied.
 
-diff --git a/mm/memory.c b/mm/memory.c
-index ce8c90b752be..db3534bbd652 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1451,7 +1451,7 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
- 	spinlock_t *ptl;
- 
- 	retval = -EINVAL;
--	if (PageAnon(page) || PageSlab(page))
-+	if (PageAnon(page) || PageSlab(page) || page_has_type(page))
- 		goto out;
- 	retval = -ENOMEM;
- 	flush_dcache_page(page);
--- 
-2.20.1
+> > diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
+[]
+> > @@ -46,7 +47,7 @@
+[]
+> >  /* bits for I2C_REG_IRQSRC */
+> > -#define IRQ_PENTOUCH_TOUCHCONVDONE	0x08
+> > -#define IRQ_PENRELEASE			0x04
+> > +#define IRQ_PENTOUCH_TOUCHCONVDONE	BIT(7)
+> > +#define IRQ_PENRELEASE			BIT(6)
+
+Shouldn't this be BIT(3) and BIT(2)
+or did you mean to change the values too?
+
+If so, this change should be noted in the commit message.
 
