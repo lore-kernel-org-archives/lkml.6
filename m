@@ -7,47 +7,51 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A3DC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538D0C282D1
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 785782083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C8412083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:54:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762867;
-	bh=80xxtLTTlbe+kXlwv7p3cf+4qG8F9/ibnJ7JCWnLPL8=;
+	s=default; t=1548762874;
+	bh=/ACvBFsJYqh5cv/3r2UcDnEjbXdLO76XUHFyNfhOBXg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MYQj+IB0djm7jPECSez8OiKKWp55uACt2wuFj1HK1KDy8UMZoc9oIbE8Et0wn7hcJ
-	 boffovC/PHUsCIfp9n5JzRrDsXbTg2IKujioVuNvHDqWJjq37optkoGAYuM/LL9cS/
-	 9g5Ipa+jFuwfba4x6U1whCo0TEUuweQLRBmpAM10=
+	b=oLHT7eHWuPy8zP5THY/9baZ79hpP5hcdi+SrKZis03q+ad0ckcVd0D76eZGQASn0R
+	 xt40+ZZnmhyeNgugBv0L8huJMkeD/dCZOuoMYg9RQk4kirgt0jok7bCiVBoFXKBgIs
+	 7ewLeqiBe7CRgcIK6enLulkO56eIe2CyivYPBxcM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731921AbfA2Ly0 (ORCPT
+        id S1731206AbfA2LvZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:54:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43064 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:51:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731894AbfA2Lvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:51:33 -0500
+        id S1731854AbfA2LvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:51:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9048C20989;
-        Tue, 29 Jan 2019 11:51:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A16532083B;
+        Tue, 29 Jan 2019 11:51:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762693;
-        bh=80xxtLTTlbe+kXlwv7p3cf+4qG8F9/ibnJ7JCWnLPL8=;
+        s=default; t=1548762681;
+        bh=/ACvBFsJYqh5cv/3r2UcDnEjbXdLO76XUHFyNfhOBXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c3eu6yPLZTZLqpuufyurxMtdKbP7W6jFj+NCUX2UGEuHnkVry69IxClwY/b+9ZaY7
-         cj1OEkBVZiOuOh+MhzwSJNkmPbqaPY3xoxnnL0VUx4D1/RDSZ4GAD5Ou3lj8Yz+HVc
-         zyrBMeE1gF+RkKTkqMYoAbLhyPPbuSIH+8Tnu0CA=
+        b=0qTsEt5I8CQ3F3tzw8SYeytwTZJFCMbN/igOfHVVxqT+ZXmNL+5TPHduOmM1/taGK
+         23vwQw+2CMvaYtCmI2IWsDLmVxH4PX19GhGM3HS494zvx5jRVHCq4ddAx+JJYpVvLo
+         l5nhgOUFQ2x4vrYsqKw3ornyx/LHZPDiDSqH2IkM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kyungtae Kim <kt0755@gmail.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 26/44] Input: uinput - fix undefined behavior in uinput_validate_absinfo()
-Date:   Tue, 29 Jan 2019 12:36:21 +0100
-Message-Id: <20190129113142.033836052@linuxfoundation.org>
+        stable@vger.kernel.org, Vijay Viswanath <vviswana@codeaurora.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Koen Vandeputte <koen.vandeputte@ncentric.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 08/44] mmc: Kconfig: Enable CONFIG_MMC_SDHCI_IO_ACCESSORS
+Date:   Tue, 29 Jan 2019 12:36:03 +0100
+Message-Id: <20190129113140.773786691@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -66,51 +70,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+commit 99d570da309813f67e9c741edeff55bafc6c1d5e upstream.
 
-commit d77651a227f8920dd7ec179b84e400cce844eeb3 upstream.
+Enable CONFIG_MMC_SDHCI_IO_ACCESSORS so that SDHC controller specific
+register read and write APIs, if registered, can be used.
 
-An integer overflow may arise in uinput_validate_absinfo() if "max - min"
-can't be represented by an "int". We should check for overflow before
-trying to use the result.
-
-Reported-by: Kyungtae Kim <kt0755@gmail.com>
-Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Koen Vandeputte <koen.vandeputte@ncentric.com>
+Cc: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/input/misc/uinput.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/mmc/host/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/input/misc/uinput.c
-+++ b/drivers/input/misc/uinput.c
-@@ -39,6 +39,7 @@
- #include <linux/fs.h>
- #include <linux/miscdevice.h>
- #include <linux/uinput.h>
-+#include <linux/overflow.h>
- #include <linux/input/mt.h>
- #include "../input-compat.h"
- 
-@@ -335,7 +336,7 @@ static int uinput_open(struct inode *ino
- static int uinput_validate_absinfo(struct input_dev *dev, unsigned int code,
- 				   const struct input_absinfo *abs)
- {
--	int min, max;
-+	int min, max, range;
- 
- 	min = abs->minimum;
- 	max = abs->maximum;
-@@ -347,7 +348,7 @@ static int uinput_validate_absinfo(struc
- 		return -EINVAL;
- 	}
- 
--	if (abs->flat > max - min) {
-+	if (!check_sub_overflow(max, min, &range) && abs->flat > range) {
- 		printk(KERN_DEBUG
- 		       "%s: abs_flat #%02x out of range: %d (min:%d/max:%d)\n",
- 		       UINPUT_NAME, code, abs->flat, min, max);
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -399,6 +399,7 @@ config MMC_SDHCI_MSM
+ 	tristate "Qualcomm SDHCI Controller Support"
+ 	depends on ARCH_QCOM || (ARM && COMPILE_TEST)
+ 	depends on MMC_SDHCI_PLTFM
++	select MMC_SDHCI_IO_ACCESSORS
+ 	help
+ 	  This selects the Secure Digital Host Controller Interface (SDHCI)
+ 	  support present in Qualcomm SOCs. The controller supports
 
 
