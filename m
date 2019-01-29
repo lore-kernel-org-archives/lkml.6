@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13103C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0164C282D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D60972083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CB802083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762915;
-	bh=9Mr8g9QAXKM2/pETEkwkeBwX0AsZUimbII2dKhnSitI=;
+	s=default; t=1548762929;
+	bh=qUeY3TLOD1nhZHflAkqzhX5VzFKQqFHmTs+Wvc4bol4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KKO/1sPLhcUstdojtaYtPhAPpRShB3uwE1NS5ZIEEBtCAITI7cJbv7s5X+sFosUi5
-	 KnzWIfjP4iqfoAiunFAF4rwnMRmLQGfOENhktiaVzi8E6Ak/QPQc/4dFY5PozQME4L
-	 0dzT4/kHSNynjjYO5u5iORxZk91S/D8LQnzJ4Tsk=
+	b=jJu4WNOJvVp5JKz+zecF80QMDXuGcAl5sF1s6gRvDfvffwh7Q0u82deEUdhFaHBi8
+	 FBgLMyO0gZ236bRHncA4fK4DQVghmR7XKkiDBsYaio1HccovPwbMfb2wTiv7zRC/Cs
+	 lcJnMsdsFJ6pwbNYCbMUq5zvOMTNz+mUH+Jf1awE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731959AbfA2LzO (ORCPT
+        id S1731723AbfA2Luq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:55:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42344 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730104AbfA2Lu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:56 -0500
+        id S1730992AbfA2Lum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:50:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3CD12086C;
-        Tue, 29 Jan 2019 11:50:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B92120882;
+        Tue, 29 Jan 2019 11:50:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762655;
-        bh=9Mr8g9QAXKM2/pETEkwkeBwX0AsZUimbII2dKhnSitI=;
+        s=default; t=1548762642;
+        bh=qUeY3TLOD1nhZHflAkqzhX5VzFKQqFHmTs+Wvc4bol4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I1RlaNE1QmJdEZS4s0TbPf8A1FXA5OB2PX0qxwjRjryNk7uUj2tIP1/gRtqOn0Kjo
-         I3+uh5jV7ib/iVRnolyT4mDSvXVWPdkfTQvXFHuQxOAbv8q7TCE7EhT86bnXAI13+c
-         ++bhZzCvTYAUpDyEYbve984mwq44r8t2NZOB6xIU=
+        b=o1s8oWmD4QXTC7nCPgmlPByCNxuvK/RlLkWJRz22VpJH80FdEmDZdjrvPCzuxS5GC
+         P8k10hUBkLi6rGTd2BBCKrR2LiiW3C9MJRG7lRIO4nYLJZo1aM8S8r2YJ5OFIslA4Y
+         Tecg+Ot54Yc+L1Xol4HSzxAPwtMh8doFDz5HUgWo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.9 13/44] ARCv2: lib: memeset: fix doing prefetchw outside of buffer
-Date:   Tue, 29 Jan 2019 12:36:08 +0100
-Message-Id: <20190129113141.128924278@linuxfoundation.org>
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 68/68] btrfs: dev-replace: go back to suspended state if target device is missing
+Date:   Tue, 29 Jan 2019 12:36:30 +0100
+Message-Id: <20190129113138.407120647@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
-References: <20190129113139.826927690@linuxfoundation.org>
+In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
+References: <20190129113131.751891514@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,111 +62,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Anand Jain <anand.jain@oracle.com>
 
-commit e6a72b7daeeb521753803550f0ed711152bb2555 upstream.
+commit 0d228ece59a35a9b9e8ff0d40653234a6d90f61e upstream.
 
-ARCv2 optimized memset uses PREFETCHW instruction for prefetching the
-next cache line but doesn't ensure that the line is not past the end of
-the buffer. PRETECHW changes the line ownership and marks it dirty,
-which can cause issues in SMP config when next line was already owned by
-other core. Fix the issue by avoiding the PREFETCHW
+At the time of forced unmount we place the running replace to
+BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED state, so when the system comes
+back and expect the target device is missing.
 
-Some more details:
+Then let the replace state continue to be in
+BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED state instead of
+BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED as there isn't any matching scrub
+running as part of replace.
 
-The current code has 3 logical loops (ignroing the unaligned part)
-  (a) Big loop for doing aligned 64 bytes per iteration with PREALLOC
-  (b) Loop for 32 x 2 bytes with PREFETCHW
-  (c) any left over bytes
-
-loop (a) was already eliding the last 64 bytes, so PREALLOC was
-safe. The fix was removing PREFETCW from (b).
-
-Another potential issue (applicable to configs with 32 or 128 byte L1
-cache line) is that PREALLOC assumes 64 byte cache line and may not do
-the right thing specially for 32b. While it would be easy to adapt,
-there are no known configs with those lie sizes, so for now, just
-compile out PREALLOC in such cases.
-
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: stable@vger.kernel.org #4.4+
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-[vgupta: rewrote changelog, used asm .macro vs. "C" macro]
+Fixes: e93c89c1aaaa ("Btrfs: add new sources for device replace code")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arc/lib/memset-archs.S |   40 ++++++++++++++++++++++++++++++++--------
- 1 file changed, 32 insertions(+), 8 deletions(-)
+ fs/btrfs/dev-replace.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/arc/lib/memset-archs.S
-+++ b/arch/arc/lib/memset-archs.S
-@@ -7,11 +7,39 @@
-  */
- 
- #include <linux/linkage.h>
-+#include <asm/cache.h>
- 
--#undef PREALLOC_NOT_AVAIL
-+/*
-+ * The memset implementation below is optimized to use prefetchw and prealloc
-+ * instruction in case of CPU with 64B L1 data cache line (L1_CACHE_SHIFT == 6)
-+ * If you want to implement optimized memset for other possible L1 data cache
-+ * line lengths (32B and 128B) you should rewrite code carefully checking
-+ * we don't call any prefetchw/prealloc instruction for L1 cache lines which
-+ * don't belongs to memset area.
-+ */
-+
-+#if L1_CACHE_SHIFT == 6
-+
-+.macro PREALLOC_INSTR	reg, off
-+	prealloc	[\reg, \off]
-+.endm
-+
-+.macro PREFETCHW_INSTR	reg, off
-+	prefetchw	[\reg, \off]
-+.endm
-+
-+#else
-+
-+.macro PREALLOC_INSTR
-+.endm
-+
-+.macro PREFETCHW_INSTR
-+.endm
-+
-+#endif
- 
- ENTRY_CFI(memset)
--	prefetchw [r0]		; Prefetch the write location
-+	PREFETCHW_INSTR	r0, 0	; Prefetch the first write location
- 	mov.f	0, r2
- ;;; if size is zero
- 	jz.d	[blink]
-@@ -48,11 +76,8 @@ ENTRY_CFI(memset)
- 
- 	lpnz	@.Lset64bytes
- 	;; LOOP START
--#ifdef PREALLOC_NOT_AVAIL
--	prefetchw [r3, 64]	;Prefetch the next write location
--#else
--	prealloc  [r3, 64]
--#endif
-+	PREALLOC_INSTR	r3, 64	; alloc next line w/o fetching
-+
- #ifdef CONFIG_ARC_HAS_LL64
- 	std.ab	r4, [r3, 8]
- 	std.ab	r4, [r3, 8]
-@@ -85,7 +110,6 @@ ENTRY_CFI(memset)
- 	lsr.f	lp_count, r2, 5 ;Last remaining  max 124 bytes
- 	lpnz	.Lset32bytes
- 	;; LOOP START
--	prefetchw   [r3, 32]	;Prefetch the next write location
- #ifdef CONFIG_ARC_HAS_LL64
- 	std.ab	r4, [r3, 8]
- 	std.ab	r4, [r3, 8]
+--- a/fs/btrfs/dev-replace.c
++++ b/fs/btrfs/dev-replace.c
+@@ -804,6 +804,8 @@ int btrfs_resume_dev_replace_async(struc
+ 			   "cannot continue dev_replace, tgtdev is missing");
+ 		btrfs_info(fs_info,
+ 			   "you may cancel the operation after 'mount -o degraded'");
++		dev_replace->replace_state =
++					BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED;
+ 		btrfs_dev_replace_unlock(dev_replace, 1);
+ 		return 0;
+ 	}
 
 
