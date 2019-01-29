@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61F71C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AECB6C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34D8021852
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 694E0214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:45:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762312;
-	bh=khrKJE3QI547w6xfLR8ci5KPXaUt/pOpkWFmDJPI9yo=;
+	s=default; t=1548762319;
+	bh=u/DnrVxwdDOUPuP5U+6nTPIDr8M7G8oUP87qpEkV6rQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=T/891Fdk29csnA0i1bxyuQhye05muYQFG4vHlcIrRUB1DToMLC+m/AdazMomECmt9
-	 kDWmQuRWiq8NIFOHooYKtTdzGMDPs3Ze5PJ/jKwGlfsX3G5trwbwQan1ThwexUPWl9
-	 5zn835ezWPmsZDp/6kHzNyvreQqaQsbmKtdu90dY=
+	b=IzMxTLkCxsBi1XgQ87pqwTXzNcCsEctYbMY0K4lsh7mzAjJqve600roGWkE2qSqIa
+	 C1ZYAes/cmv6mirgbHGkmnIX/xG4UeUDoFZ/97cNMQSdgad/h2qUdPPNbwUUWGB2J6
+	 2jTEQrtw7ru8Wx/XZqOJ5VnC0jIUfBgPSK8yqB70=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730691AbfA2LpK (ORCPT
+        id S1730717AbfA2LpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:45:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35496 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:45:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729530AbfA2LpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:45:03 -0500
+        id S1730684AbfA2LpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:45:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C3C220882;
-        Tue, 29 Jan 2019 11:45:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E9292083B;
+        Tue, 29 Jan 2019 11:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762302;
-        bh=khrKJE3QI547w6xfLR8ci5KPXaUt/pOpkWFmDJPI9yo=;
+        s=default; t=1548762308;
+        bh=u/DnrVxwdDOUPuP5U+6nTPIDr8M7G8oUP87qpEkV6rQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i33xtBOsZ4guO3SC7G4i4GHCYJCtJ/moC14TTE4oFFXzXjSKQ3/ta41rmJEfCVUZA
-         7ruHPKOq2oD0EWttPMrnT5RxoRDoiPc6MPXfHSSGyLpqC5cRcxkJTB+ujdJxG/66Jp
-         AWl34JHgZiIYSZmCB3ZkHR8O7th1YUos28eOB4Ho=
+        b=Km2F1jW3BK003Hxi51JgurQRIVfSM3EMREBJ/3pSg0nA3YYHS1wgDIy9eu5tlWBRR
+         s409zPaBThR1O1tI9EwuimnzECfa8AoOdFhc1FQnMHAzTnH8JbhHKVJnh9RkgcuYuX
+         /CWW3QpjEe6YPzU7HlBZBs/z9/pMJmhtfkGoF5TY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
-        Luis Henriques <lhenriques@suse.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.19 027/103] ceph: clear inode pointer when snap realm gets dropped by its inode
-Date:   Tue, 29 Jan 2019 12:35:04 +0100
-Message-Id: <20190129113201.216709806@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 029/103] ASoC: rt5514-spi: Fix potential NULL pointer dereference
+Date:   Tue, 29 Jan 2019 12:35:06 +0100
+Message-Id: <20190129113201.326773904@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,34 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yan, Zheng <zyan@redhat.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit d95e674c01cfb5461e8b9fdeebf6d878c9b80b2f upstream.
+commit 060d0bf491874daece47053c4e1fb0489eb867d2 upstream.
 
-snap realm and corresponding inode have pointers to each other.
-The two pointer should get clear at the same time. Otherwise,
-snap realm's pointer may reference freed inode.
+There is a potential NULL pointer dereference in case devm_kzalloc()
+fails and returns NULL.
 
-Cc: stable@vger.kernel.org # 4.17+
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Reviewed-by: Luis Henriques <lhenriques@suse.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Fix this by adding a NULL check on rt5514_dsp.
+
+This issue was detected with the help of Coccinelle.
+
+Fixes: 6eebf35b0e4a ("ASoC: rt5514: add rt5514 SPI driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/caps.c |    2 ++
+ sound/soc/codecs/rt5514-spi.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1030,6 +1030,8 @@ static void drop_inode_snap_realm(struct
- 	list_del_init(&ci->i_snap_realm_item);
- 	ci->i_snap_realm_counter++;
- 	ci->i_snap_realm = NULL;
-+	if (realm->ino == ci->i_vino.ino)
-+		realm->inode = NULL;
- 	spin_unlock(&realm->inodes_with_caps_lock);
- 	ceph_put_snap_realm(ceph_sb_to_client(ci->vfs_inode.i_sb)->mdsc,
- 			    realm);
+--- a/sound/soc/codecs/rt5514-spi.c
++++ b/sound/soc/codecs/rt5514-spi.c
+@@ -278,6 +278,8 @@ static int rt5514_spi_pcm_probe(struct s
+ 
+ 	rt5514_dsp = devm_kzalloc(component->dev, sizeof(*rt5514_dsp),
+ 			GFP_KERNEL);
++	if (!rt5514_dsp)
++		return -ENOMEM;
+ 
+ 	rt5514_dsp->dev = &rt5514_spi->dev;
+ 	mutex_init(&rt5514_dsp->dma_lock);
 
 
