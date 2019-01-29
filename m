@@ -4,53 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A62C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828A1C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD949214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53DC621852
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762458;
-	bh=rY20fYlae+XPRjdawJ3Wl1o+P+2JTh12pDzOswQscgw=;
+	s=default; t=1548762462;
+	bh=AnYbM2cZqJvZwpjG56qOT0ymP9juDsf/kj5NSds8tw8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FWS4sQ5tR9snH6558kNJvEdLlmAHAZgFAoLdCgCwalmhpzXL02FhI9Y8xpQwhwKLQ
-	 i1rv1yoiiGbsCvDjyEO+x4uVuPqpros2kdpZUypRJoY+m+p5P8MMpI+vBtxSg8ZBLs
-	 7l4ppkGrhaBNcVXTdoZMLzwvF7o2rHGY6Z/UCgXc=
+	b=MdeBxxybkJtlHkvRih9XMQJJcoYkD7lyBvi7jLPj5ROixiey1qnfiOELIUcXTXxkn
+	 ljC3pqVht0ci/jHLIYm+ABlMLJyWvVambWQ0IUnMblq/CfksUtSMZTGmU5jvLYHEdL
+	 /R+2nl1l0J4LHMzg1XlqRD1ONN+mCX8OGiwvo0yY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731215AbfA2Lrh (ORCPT
+        id S1731225AbfA2Lrk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:47:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38308 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:47:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730073AbfA2Lrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:36 -0500
+        id S1725811AbfA2Lrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81F3F2086C;
-        Tue, 29 Jan 2019 11:47:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30FD72086C;
+        Tue, 29 Jan 2019 11:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762456;
-        bh=rY20fYlae+XPRjdawJ3Wl1o+P+2JTh12pDzOswQscgw=;
+        s=default; t=1548762458;
+        bh=AnYbM2cZqJvZwpjG56qOT0ymP9juDsf/kj5NSds8tw8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D1wX1Zd27OgV5WIYuBRHWFyNQCnp0h/+KehpP+sO5LA3VLtfYHS9W/qYawzfgIKb9
-         HyE3tx0X/ZJxJjwP4cDOYCaftn9aFQdIWFSImMOhKhPGrH7k0CxhO7HovIyw4E9l6m
-         VwMpeiaoaegTnT0I4shw3O8vfjC8i9eXPoCP1LVM=
+        b=YGZTZEsywyzgzVLx3CzPa3Gzt6wjFpXS4ApOWCra90onIzSxAAvAiRxtvscYRfNW0
+         7YBMHWeUdPN/rMGhzTHSutAk2+fw7sbIfztd1+oRQN1KJHqfHn2AXDJxsHYxLUk8De
+         hJBDPO2F2OSEBQpwB0cEl3blNtk1BsYMWMJA/Yzk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vijay Viswanath <vviswana@codeaurora.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Koen Vandeputte <koen.vandeputte@ncentric.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 11/68] mmc: Kconfig: Enable CONFIG_MMC_SDHCI_IO_ACCESSORS
-Date:   Tue, 29 Jan 2019 12:35:33 +0100
-Message-Id: <20190129113132.532656951@linuxfoundation.org>
+        stable@vger.kernel.org, Tomas Winkler <tomas.winkler@intel.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>
+Subject: [PATCH 4.14 12/68] mei: me: add denverton innovation engine device IDs
+Date:   Tue, 29 Jan 2019 12:35:34 +0100
+Message-Id: <20190129113132.593081628@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -69,32 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 99d570da309813f67e9c741edeff55bafc6c1d5e upstream.
+From: Tomas Winkler <tomas.winkler@intel.com>
 
-Enable CONFIG_MMC_SDHCI_IO_ACCESSORS so that SDHC controller specific
-register read and write APIs, if registered, can be used.
+commit f7ee8ead151f9d0b8dac6ab6c3ff49bbe809c564 upstream.
 
-Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Koen Vandeputte <koen.vandeputte@ncentric.com>
-Cc: Loic Poulain <loic.poulain@linaro.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Add the Denverton innovation engine (IE) device ids.
+The IE is an ME-like device which provides HW security
+offloading.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/mmc/host/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -429,6 +429,7 @@ config MMC_SDHCI_MSM
- 	tristate "Qualcomm SDHCI Controller Support"
- 	depends on ARCH_QCOM || (ARM && COMPILE_TEST)
- 	depends on MMC_SDHCI_PLTFM
-+	select MMC_SDHCI_IO_ACCESSORS
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  support present in Qualcomm SOCs. The controller supports
+---
+ drivers/misc/mei/hw-me-regs.h |    2 ++
+ drivers/misc/mei/pci-me.c     |    2 ++
+ 2 files changed, 4 insertions(+)
+
+--- a/drivers/misc/mei/hw-me-regs.h
++++ b/drivers/misc/mei/hw-me-regs.h
+@@ -127,6 +127,8 @@
+ #define MEI_DEV_ID_BXT_M      0x1A9A  /* Broxton M */
+ #define MEI_DEV_ID_APL_I      0x5A9A  /* Apollo Lake I */
+ 
++#define MEI_DEV_ID_DNV_IE     0x19E5  /* Denverton IE */
++
+ #define MEI_DEV_ID_GLK        0x319A  /* Gemini Lake */
+ 
+ #define MEI_DEV_ID_KBP        0xA2BA  /* Kaby Point */
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -93,6 +93,8 @@ static const struct pci_device_id mei_me
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_BXT_M, MEI_ME_PCH8_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_APL_I, MEI_ME_PCH8_CFG)},
+ 
++	{MEI_PCI_DEVICE(MEI_DEV_ID_DNV_IE, MEI_ME_PCH8_CFG)},
++
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_GLK, MEI_ME_PCH8_CFG)},
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_KBP, MEI_ME_PCH8_CFG)},
 
 
