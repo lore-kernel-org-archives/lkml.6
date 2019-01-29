@@ -2,149 +2,99 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE271C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CCAC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C198D21852
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:18:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 627F22184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 23:18:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tv91WTP1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729896AbfA2XSE (ORCPT
+        id S1729911AbfA2XSJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 18:18:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48412 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729828AbfA2XSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 18:18:01 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A38D17F41D;
-        Tue, 29 Jan 2019 23:18:00 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-14.phx2.redhat.com [10.3.112.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E3CEB19C65;
-        Tue, 29 Jan 2019 23:17:53 +0000 (UTC)
-Date:   Tue, 29 Jan 2019 18:17:51 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>
-Subject: Re: [PATCH ghak105 V2] audit: remove audit_context when CONFIG_
- AUDIT and not AUDITSYSCALL
-Message-ID: <20190129231750.i3yxoqv3jb352dwk@madcap2.tricolour.ca>
-References: <6378bddc2ca871615ebbdaffe17ee0b4482c44a0.1548700115.git.rgb@redhat.com>
- <CAHC9VhQkLAgEUf6Rc6ovDyiJuNvm6PaKp0gGzDus6nkKDekWww@mail.gmail.com>
+        Tue, 29 Jan 2019 18:18:09 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33613 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729594AbfA2XSI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 18:18:08 -0500
+Received: by mail-pl1-f196.google.com with SMTP id z23so10106859plo.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 15:18:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MZ/DdbeQn7CAyCekKMFuF2UcpgJJmHxGBqfuC9XeHKI=;
+        b=Tv91WTP1jaB97yFmEnSDpjYezcdLkLhE2dy82hyp+RrGtE23FnP5F1B96H5HtcJCwD
+         IqL0g3gM8rzJuARtywfzWCe1CFpuJ6CxjeLD9EJZn+4L3pmIpms5z/lMQQH/q8klh+P1
+         U8dnzJ8Wg3lbSk/9byGVzqX+R1TuOEkfLEYRw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MZ/DdbeQn7CAyCekKMFuF2UcpgJJmHxGBqfuC9XeHKI=;
+        b=G15JiJwDKsbucVhDarl/Z5uq+3BCHWcRJrfFu44WhISBJK39dKWY4xHbatiLCaQGTE
+         FET0W6e9kfqQBVB98/xGlibiofpfa7+UVWiX14eEOG6vDH+75UPsMDOvgcEOyCiGMSUR
+         6MDAt1tU/w4hID1+mOvjF+LnSIzSknCjAWVmEDmZnlghMiiFoUuvfrlWSOjXObsP/6cK
+         W5+fWBrWQa1fn4/zdHWT5TZZGUSnY2wLuu9aJYgHGgabYkGlprNQpkOmI2aB+Eol/6nP
+         5tfq0CzXYYDHGPN3FVfGT+g3a+OncoK2oFQWnod/BFGXAuGpa67oMtZVDkIAWBCirxUy
+         wOAg==
+X-Gm-Message-State: AJcUukfaSM9G08VE7zzkvzFeYSiXpJ+2tLtfhZS4bxCnoHRG/qzUTYQH
+        mFwLxxkVMqaNPZjSZanahdno3Q==
+X-Google-Smtp-Source: ALg8bN7VBCDE0/zoF+Opol1KpqEnJkhDMFX3iQ3NtIYykELf8XA2yufVCHxgS3tEs883H9M0s4J6lA==
+X-Received: by 2002:a17:902:8bc6:: with SMTP id r6mr27842288plo.67.1548803887519;
+        Tue, 29 Jan 2019 15:18:07 -0800 (PST)
+Received: from smtp.gmail.com ([2620:15c:202:1:534:b7c0:a63c:460c])
+        by smtp.gmail.com with ESMTPSA id r8sm46949632pgr.48.2019.01.29.15.18.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 15:18:06 -0800 (PST)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        Wen Gong <wgong@codeaurora.org>,
+        <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>
+Subject: [PATCH] ath10k: sdio: add .owner field
+Date:   Tue, 29 Jan 2019 15:14:48 -0800
+Message-Id: <20190129231448.83305-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQkLAgEUf6Rc6ovDyiJuNvm6PaKp0gGzDus6nkKDekWww@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 29 Jan 2019 23:18:00 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-29 18:07, Paul Moore wrote:
-> On Mon, Jan 28, 2019 at 1:33 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > Remove audit_context from struct task_struct and struct audit_buffer
-> > when CONFIG_AUDIT is enabled but CONFIG_AUDITSYSCALL is not.
-> >
-> > Also, audit_log_name() (and supporting inode and fcaps functions) should
-> > have been put back in auditsc.c when soft and hard link logging was
-> > normalized since it is only used by syscall auditing.
-> >
-> > See github issue https://github.com/linux-audit/audit-kernel/issues/105
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> > Changelog:
-> > v2:
-> > - resolve merge conflicts from rebase on upstreamed ghak103 patch
-> > - wrap task_struct audit_context in CONFIG_AUDITSYSCALL
-> >
-> >  include/linux/sched.h |   4 +-
-> >  kernel/audit.c        | 157 +++-----------------------------------------------
-> >  kernel/audit.h        |   9 ---
-> >  kernel/auditsc.c      | 150 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 161 insertions(+), 159 deletions(-)
-> 
-> ...
-> 
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index 3f3f1888cac7..15e41603fd34 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -205,7 +205,9 @@ struct audit_net {
-> >   * use simultaneously. */
-> >  struct audit_buffer {
-> >         struct sk_buff       *skb;      /* formatted skb ready to send */
-> > +#ifdef CONFIG_AUDITSYSCALL
-> >         struct audit_context *ctx;      /* NULL or associated context */
-> > +#endif
-> >         gfp_t                gfp_mask;
-> >  };
-> >
-> > @@ -1696,7 +1698,9 @@ static struct audit_buffer *audit_buffer_alloc(struct audit_context *ctx,
-> >         if (!nlmsg_put(ab->skb, 0, 0, type, 0, 0))
-> >                 goto err;
-> >
-> > +#ifdef CONFIG_AUDITSYSCALL
-> >         ab->ctx = ctx;
-> > +#endif
-> 
-> I vaguely remember reading/hearing something in the past about
-> kmem_cache_alloc() not returning a zero'd out buffer in all cases, can
-> you say for certain that "ab" in this case is always going to be
-> zero'd out?  This is an honest question.
+sdio_register_driver() doesn't do this for us, unlike (for example)
+platform_driver_register(). This is important for helping track
+module-to-device relationships.
 
-Ok, then maybe we should be using kmem_cache_zalloc() instead of
-kmem_cache_alloc() in audit_buffer_alloc()?  (as I've done in
-the last patch of ghak81/first patch of ghak90)
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+ drivers/net/wireless/ath/ath10k/sdio.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-If this is too much overhead, then we can initialize ctx = NULL;
+diff --git a/drivers/net/wireless/ath/ath10k/sdio.c b/drivers/net/wireless/ath/ath10k/sdio.c
+index 983ecfef1d28..2fc0c17c9672 100644
+--- a/drivers/net/wireless/ath/ath10k/sdio.c
++++ b/drivers/net/wireless/ath/ath10k/sdio.c
+@@ -2088,7 +2088,10 @@ static struct sdio_driver ath10k_sdio_driver = {
+ 	.id_table = ath10k_sdio_devices,
+ 	.probe = ath10k_sdio_probe,
+ 	.remove = ath10k_sdio_remove,
+-	.drv.pm = ATH10K_SDIO_PM_OPS,
++	.drv = {
++		.owner = THIS_MODULE,
++		.pm = ATH10K_SDIO_PM_OPS,
++	},
+ };
+ 
+ static int __init ath10k_sdio_init(void)
+-- 
+2.20.1.495.gaa96b0ce6b-goog
 
-> If we can't guarantee that "ab" is zero'd out, we should manually set
-> ab->ctx to NULL when !CONFIG_AUDITSYSCALL.
-
-But ctx isn't part of struct audit_buffer when !CONFIG_AUDITSYSCALL.  It
-is #ifdef-ed out.  What am I missing?
-
-> >         ab->gfp_mask = gfp_mask;
-> >
-> >         return ab;
-> > @@ -1809,7 +1813,11 @@ struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
-> >                 return NULL;
-> >         }
-> >
-> > +#ifdef CONFIG_AUDITSYSCALL
-> >         audit_get_stamp(ab->ctx, &t, &serial);
-> > +#else
-> > +       audit_get_stamp(NULL, &t, &serial);
-> > +#endif
-> 
-> If ab->ctx is NULL we don't really need this, do we?
-
-We do if ctx isn't part of struct audit_buffer when
-!CONFIG_AUDITSYSCALL.
-
-> >         audit_log_format(ab, "audit(%llu.%03lu:%u): ",
-> >                          (unsigned long long)t.tv_sec, t.tv_nsec/1000000, serial);
-> >
-> 
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
