@@ -2,191 +2,128 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1C1C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 03:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2CCC282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 03:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B939D2175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 03:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3419621738
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 03:12:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bZFqIDhk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJTADGxT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbfA2DIx (ORCPT
+        id S1727325AbfA2DMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 22:08:53 -0500
-Received: from ozlabs.org ([203.11.71.1]:51869 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727210AbfA2DIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 22:08:52 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43pWfm2wmQz9sDL;
-        Tue, 29 Jan 2019 14:08:47 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548731328;
-        bh=S4GPUlgx+4+UBfq5mwNzCKTznhZV/t7eL+gWJiXjPVw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=bZFqIDhkzOkOur6MiIbBAbtKipEVSmYwk8UIpk9X5+l+pd+zeDveblEAGkVJ072f8
-         RHn87e9hrDAQ0t9jB0yeIA+DouKhwSQE9MobfZX62ntqmxg3aKUcWu/20ujHBvkZIi
-         8rKG/gP2pGnrP8AVY74u/8hqrBkMeHa6z7wPPKV3sA5S6KZQ8e5HeQ0G9ip7oP9GZS
-         IVUIurThCJQAcE6gzoAFhukZMkGDAFacUc13T54n9r5zVy2jN/M8QiR1jrgretThp6
-         ggbjME6WvG0qa/WTlU59HFV8jIxbx3G8vZVkrzlK0UTkOolcQ1X8dYzjHFyC8S8Fak
-         bUf+u+n3FAaSw==
-Date:   Tue, 29 Jan 2019 14:08:46 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>,
-        Andy Gross <andy.gross@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Dai <daidavid1@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: linux-next: manual merge of the char-misc tree with the qcom tree
-Message-ID: <20190129140846.4dc4c158@canb.auug.org.au>
+        Mon, 28 Jan 2019 22:12:06 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46479 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbfA2DMG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 22:12:06 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c73so8964062pfe.13;
+        Mon, 28 Jan 2019 19:12:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pzbzUxuc5l78aFWZpDvT2UuYMY7xsK52+UZ108r6hto=;
+        b=aJTADGxTW+DFfnXqEpwuoMD6s4JFSqs1xN4ifIw4Ho31yo1MQjUy2JDj42vr6PzTv8
+         gzf3+5x+pBhA4EXxQdn+zQxu2wU6+Z7ObJzeDo3JGVjXaRzApOMMsVPai1ZHbhTf7byd
+         sYFsyBCl5hFDFzbaemPB8lVG7xzyhNEbjsQLBpEjcxXf7ErW6Jt9RIHxKD5camhVmgkq
+         pUoBhgyB25cVJxK/XCOhMpd+7qebV1wCpT2ztx+Is0f2mFFA2ENFL2vdKOlavcmhLsTR
+         JpB6/fEM4pj4xF6OBr/dKPi5ppMMqq3diFxoj63I/cb/n+Hb2r8UfDzZQeDAaGV2ZAi9
+         8xbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pzbzUxuc5l78aFWZpDvT2UuYMY7xsK52+UZ108r6hto=;
+        b=I4erPeueTKk3x/7flTsJ5h+SA83h8QzfHT4iBXiAZIFTrWXxB0qSrOIf1+1jzMBhuT
+         Y3Dey4YXiiMpYr7rw+BAGsn0qUcVkiYHJLF5xU+EuvdKaSGe7pgbmhI389RHvE71BOb5
+         pX9MoqGZFgMnH7vhbRXG0aETnn5lKV2LWWrTNk1rOMdvY+AM551qywf6iH7FLgnoub9F
+         GCnIq0LHIv3ArmZCjOJMdQYOFdDaF7iWb/ML40qyVnVNLODgkq0tTRDcUIgitdmg2eXY
+         edUzeTgV40DJTjZE0VzsxAPzTZ07S6NwLxUXED89VX7+/n8D51a8GpNxl4OLj2jSLzsV
+         6KUQ==
+X-Gm-Message-State: AJcUukc7xuKTfqzMdsqG/tAzU+M65Uzumk/6YGrWgx67Et/7xQdW6kN/
+        ysT5V2+tbrfYPoYFthq2Ze30/iDG
+X-Google-Smtp-Source: ALg8bN62zPIPjOXU4J69Vick9dowc8LgrHfS67Ujz12vN9/o0kvAtGDXCZW30DMVHu5tgBS3rDy9EQ==
+X-Received: by 2002:aa7:8045:: with SMTP id y5mr24209182pfm.62.1548731524828;
+        Mon, 28 Jan 2019 19:12:04 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id y89sm53696488pfa.136.2019.01.28.19.11.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 19:12:04 -0800 (PST)
+Subject: Re: [PATCH V3 3/3] i2c: tegra: Add DMA Support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
+ <1548475073-12408-3-git-send-email-skomatineni@nvidia.com>
+ <5973707c-555f-a27c-2ff3-e867d4b2cde7@gmail.com>
+ <BYAPR12MB339874021C106E447529E887C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <BYAPR12MB339837F4E341F7911F1E1E67C2970@BYAPR12MB3398.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <778d578f-6bee-1acb-0562-6657ab4edb43@gmail.com>
+Date:   Tue, 29 Jan 2019 06:11:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CZfcs.RrhR6kzgnlCitpHrj"; protocol="application/pgp-signature"
+In-Reply-To: <BYAPR12MB339837F4E341F7911F1E1E67C2970@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/CZfcs.RrhR6kzgnlCitpHrj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+29.01.2019 5:02, Sowjanya Komatineni пишет:
+> 
+> 
+>>>> This patch adds DMA support for Tegra I2C.
+>>>>
+>>>> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for 
+>>>> transfer size of the max FIFO depth and DMA mode is used for 
+>>>> transfer size higher than max FIFO depth to save CPU overhead.
+>>>>
+>>>> PIO mode needs full intervention of CPU to fill or empty FIFO's and 
+>>>> also need to service multiple data requests interrupt for the same 
+>>>> transaction adding overhead on CPU for large transfers.
+>>>>
+>>>> DMA mode is helpful for Large transfers during downloading or 
+>>>> uploading FW over I2C to some external devices.
+>>>>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>
+>>>> ---
+>>>
+>>> Seems there are good news, APB DMA could access IRAM. Quote from TRM: "The source may be DRAM or IRAM, and the destination location could be devices placed on > APB Bus; or vice versa". Hence it shall be much more efficient to use IRAM for the DMA buffer, please consider that variant.
+>>>
+>>
+>> Regarding your request for Write Combined memory, it doesn’t guarantee the order.
 
-Hi all,
+The memory-access order doesn't matter at all in your case, all you need to care about is that actual data is read from dma-buffer and that caches are flushed after writing is done.
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+>> Main reason for adding DMA mode support to Tegra I2C driver is not for actual transfer performance but for not having delayed I2C transfer mainly in case of CPU fully loaded and I2C transfer during that time (FW upload/download, Sensor programming..) using PIO > mode introduces delay b/w bytes of transfer as it depends on CPU scheduling and interrupt priority which impacts on serving interrupts and filling FIFO for transfer to happen.
+>>
+>> Below are the cases where we see the need for DMA mode for I2C transfers (mainly during the use cases where CPU is fully loaded)
+>> - Some devices need FW update over I2C and DMA mode helps in such large transfers on I2C reducing CPU intervention mainly when CPU is fully loaded.
+>> - Some devices have internal timeout for no data activity on I2C bus after the start command (time restriction b/w data to data within single transaction) to avoid bus hang and they force to stop when timeout happens. with PIO mode in those cases, depending on CPU load, there could be more delay in serving interrupt for data requests and sending the data causing the device to trigger its timeout and transaction stops.
+>> - Helps for reading data from I2C sensors with better BW.
 
-  arch/arm64/boot/dts/qcom/sdm845.dtsi
+Okay, since the efficiency between transfers is not the concern in your case, it doesn't really matter much where dma-buffer is located.
 
-between commits:
+> Found from documentation default attribute is DMA_ATTR_WRITE_BARRIER which forces all pending writes to complete preventing race b/w completion notification and data DMA.
+> Will use write-combined memory allocation for DMA buffer in revised patch..
 
-  05556681948b ("arm64: dts: sdm845: Add videocc node")
-  5b6f186f0abb ("arm64: dts: sdm845: Add rpmh powercontroller node")
-
-from the qcom tree and commit:
-
-  ae0037dbfc5e ("arm64: dts: sdm845: Add interconnect provider DT nodes")
-
-from the char-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 0ec827394e92,5179cb94c95b..000000000000
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@@ -7,16 -7,13 +7,17 @@@
- =20
-  #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
-  #include <dt-bindings/clock/qcom,gcc-sdm845.h>
- +#include <dt-bindings/clock/qcom,gpucc-sdm845.h>
- +#include <dt-bindings/clock/qcom,lpass-sdm845.h>
-  #include <dt-bindings/clock/qcom,rpmh.h>
- +#include <dt-bindings/clock/qcom,videocc-sdm845.h>
-+ #include <dt-bindings/interconnect/qcom,sdm845.h>
-  #include <dt-bindings/interrupt-controller/arm-gic.h>
-  #include <dt-bindings/phy/phy-qcom-qusb2.h>
- +#include <dt-bindings/power/qcom-rpmpd.h>
-  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
- +#include <dt-bindings/reset/qcom,sdm845-pdc.h>
-  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
- -#include <dt-bindings/clock/qcom,gcc-sdm845.h>
- =20
-  / {
-  	interrupt-parent =3D <&intc>;
-@@@ -2075,55 -1604,10 +2076,60 @@@
-  				#clock-cells =3D <1>;
-  			};
- =20
- +			rpmhpd: power-controller {
- +				compatible =3D "qcom,sdm845-rpmhpd";
- +				#power-domain-cells =3D <1>;
- +				operating-points-v2 =3D <&rpmhpd_opp_table>;
- +
- +				rpmhpd_opp_table: opp-table {
- +					compatible =3D "operating-points-v2";
- +
- +					rpmhpd_opp_ret: opp1 {
- +						opp-level =3D <RPMH_REGULATOR_LEVEL_RETENTION>;
- +					};
- +
- +					rpmhpd_opp_min_svs: opp2 {
- +						opp-level =3D <RPMH_REGULATOR_LEVEL_MIN_SVS>;
- +					};
- +
- +					rpmhpd_opp_low_svs: opp3 {
- +						opp-level =3D <RPMH_REGULATOR_LEVEL_LOW_SVS>;
- +					};
- +
- +					rpmhpd_opp_svs: opp4 {
- +						opp-level =3D <RPMH_REGULATOR_LEVEL_SVS>;
- +					};
- +
- +					rpmhpd_opp_svs_l1: opp5 {
- +						opp-level =3D <RPMH_REGULATOR_LEVEL_SVS_L1>;
- +					};
- +
- +					rpmhpd_opp_nom: opp6 {
- +						opp-level =3D <RPMH_REGULATOR_LEVEL_NOM>;
- +					};
- +
- +					rpmhpd_opp_nom_l1: opp7 {
- +						opp-level =3D <RPMH_REGULATOR_LEVEL_NOM_L1>;
- +					};
- +
- +					rpmhpd_opp_nom_l2: opp8 {
- +						opp-level =3D <RPMH_REGULATOR_LEVEL_NOM_L2>;
- +					};
- +
- +					rpmhpd_opp_turbo: opp9 {
- +						opp-level =3D <RPMH_REGULATOR_LEVEL_TURBO>;
- +					};
- +
- +					rpmhpd_opp_turbo_l1: opp10 {
- +						opp-level =3D <RPMH_REGULATOR_LEVEL_TURBO_L1>;
- +					};
- +				};
- +			};
-++
-+ 			rsc_hlos: interconnect {
-+ 				compatible =3D "qcom,sdm845-rsc-hlos";
-+ 				#interconnect-cells =3D <1>;
-+ 			};
-  		};
- =20
-  		intc: interrupt-controller@17a00000 {
-
---Sig_/CZfcs.RrhR6kzgnlCitpHrj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxPw74ACgkQAVBC80lX
-0GwzuwgAhZYufATKQCwwILOAX/aMZ3vWJhPI1Dk9GbyvzZ6iCmx+A5F+RkM+f5WB
-0DlgrHQc9GNRNvHHYHqLkkDXqjLMocOl5ASTjwKbOBsIAaCsgDRfYZLNIr/hsKaY
-fqZCTKHGjMm7ObQmdfbjjtyLTGdgGFGu+4gxPQkhBTtZf/pvHpQ/fjQ1Aolwwzjo
-nNo7XzprrYQsPEGEXokP2jxtXB1SKutPjy/70zohKMiUytr0E26OqE6tN+nT3Hak
-P9/hpXHJj6pNwZZWbFdVv0hdODtkSoLmXqi75gtLjX7mYxhCC969xYwiO/IF/Zu9
-5k1zl9VzvKMfb4BCC2IJ7gCUmwJ/Nw==
-=BYPh
------END PGP SIGNATURE-----
-
---Sig_/CZfcs.RrhR6kzgnlCitpHrj--
+Actually mapping is write-combined on ARM for the coherent DMA allocation with CONFIG_ARM_DMA_MEM_BUFFERABLE=y (enabled by default). I just falsely assumed that it could be writeback. Hence please keep the coherent allocation as-is. And you don't need to care about DMA_ATTR_WRITE_BARRIER, apparently it is only relevant for PCI on IA64.
