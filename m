@@ -2,449 +2,234 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D7CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEA9C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:52:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6C242177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:50:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91F3620989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 05:52:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dI5Cma3s"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSHQ+wLW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbfA2Fuh (ORCPT
+        id S1727082AbfA2Fv6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 00:50:37 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43013 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbfA2Fug (ORCPT
+        Tue, 29 Jan 2019 00:51:58 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:34671 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbfA2Fv6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 00:50:36 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so9150171pfk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 21:50:36 -0800 (PST)
+        Tue, 29 Jan 2019 00:51:58 -0500
+Received: by mail-it1-f196.google.com with SMTP id x124so12812156itd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 21:51:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=W6O4FwUHFm6B96ZGWiOQFc9703AoBHKeTQEqHLdtHCk=;
-        b=dI5Cma3sUICsvLaJ8eaZGEG3qQuIw1s4tP1Y34dCpef6ANb5GwvArb4CJCbP0FyRZo
-         Uhg85X/SUy9eHaXbJ0xAnIsSBn8P98piyxzGT1vVTZO7KFRuEixzm60YLjMdLEJ4/zDi
-         W9KkwzJnhfdKsWHfuuyuOcPK9VifrUqujwyvQ=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cnq+adqEpXUXmlrZoNzU7jVlJ5OW87Vyf9hH+vtspCE=;
+        b=iSHQ+wLWyW2zaveyCPzIzoHIoqkaD4yumm6K0/KkgLQikm1RTyVoCq1VILSy9cmw60
+         TgvJZmxiVwbjwRavfSpWCu6lMEFSZdhiuWt7FxWTHBHamv6mr2Pa9T5eXd8fEmoSl2Qw
+         HH23jd9ZO87JvBunUdGeRbvC4X7+DQW9jCO9t8/+dQ8TzUt13rLOnfZrarHARSxI24L/
+         6BimV6FrcTgZNNphRB68AgLXzzKIWz6t/55i+X/tYS1+p/V9AxyyUPbfjlrMKUnAJUQf
+         lDry0ZrG+Lds9q/HxYTJ8c3nNwli0fs1HO8i9qJmat9+DSXhWHqcZ0b7bhlMOZ++QMYM
+         d4dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=W6O4FwUHFm6B96ZGWiOQFc9703AoBHKeTQEqHLdtHCk=;
-        b=rsa7aS+HHaaidfvlpmBeXdO9MqS/8Mv23IjiDEIhJLs52AFDyO7lAzXSVy0HQqI471
-         52dWmxnUSfr+VUSrYIrsJLgFuHGEnU7dj/VqlisEqUqAqH+0aj2CnpUN+jkGnojwzi5w
-         NcDn32jNYNVdqv+RzZx9M30hrdS2GdS7XgEm2yx8CzXORD0+d4BTcykCJcQnVR181jqB
-         5m6p8jlwyeQdWHzCZFCpUIEjUbXQoDuNg8h6hUjJMmiKFcPcU8YjM+2n+rvLjbT27Cg6
-         eBVRp4qqfRP7KSpXNtEeYdo1lJbGCb7VFdVBzqIw7Z9vcvN+VMd+6o9E0tTKqoaeL3IT
-         CEKg==
-X-Gm-Message-State: AJcUukddiHGB5dud5YVVWB0efcfbikLYFrlatIWIb9bBZjaqk1wDCVxp
-        OY5KbseP3StvW1usN+cWtvDaPg==
-X-Google-Smtp-Source: ALg8bN5EZGmiHxJ1mQMTl2uvK8V1ywB2wFb5q/P1GhHRKaJ5piMLUSqmo/4hsGMbreafNPmbSZ2RuA==
-X-Received: by 2002:a63:3d49:: with SMTP id k70mr22505024pga.191.1548741035678;
-        Mon, 28 Jan 2019 21:50:35 -0800 (PST)
-Received: from localhost.localdomain ([117.252.69.38])
-        by smtp.gmail.com with ESMTPSA id y12sm57379437pfk.70.2019.01.28.21.50.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 21:50:35 -0800 (PST)
-From:   Sumit Garg <sumit.garg@linaro.org>
-To:     jens.wiklander@linaro.org, herbert@gondor.apana.org.au
-Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, mpm@selenic.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        daniel.thompson@linaro.org, ard.biesheuvel@linaro.org,
-        bhsharma@redhat.com, tee-dev@lists.linaro.org,
-        Sumit Garg <sumit.garg@linaro.org>
-Subject: [PATCH v6 4/4] hwrng: add OP-TEE based rng driver
-Date:   Tue, 29 Jan 2019 11:19:38 +0530
-Message-Id: <1548740978-28495-5-git-send-email-sumit.garg@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548740978-28495-1-git-send-email-sumit.garg@linaro.org>
-References: <1548740978-28495-1-git-send-email-sumit.garg@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cnq+adqEpXUXmlrZoNzU7jVlJ5OW87Vyf9hH+vtspCE=;
+        b=mYdUpmWOM5oXCZXetmDnUyC0oeY/xlNJ6dwyFYN26cckgarEQMH7uz5PnORyIOPfgy
+         YiEgHL0cztSnKcT0887XGA/qHGY6ulhYI/iQENnNsNR2l5wULmF+aDAt/gc3SY0+picJ
+         FqOUado00QIeWkBofAqI3JwPPt3qCqUYPE2vldttwZ3z7lS6SlT2BPltIIgMpcNN02+b
+         WxYNav0sql5nx8fMzLiDbLRamnfy/VAbL0sjKmYQa+YnusBuqjMqhmdnBS45couxda5Y
+         fQOFrejfZvcwhhnVaUX3isUb562RbOsbvYxiIKav199B74H80cJDD5RTtlR8BUYT2IfK
+         9j0A==
+X-Gm-Message-State: AJcUukfTnAb6W5+23RJTkXf2XdP1Mk725fjNb4jam1EVHgIb4nP60jBd
+        1bQcy7nXPrrEazGyrrDE8HyZ0ZHLa+srKZsNmQ==
+X-Google-Smtp-Source: ALg8bN6zwID7pFNrAHjz/Su/SAHvRS5mYwHiYLS1kZW3oM+38Ep1BxKk2hat1JBjwSh1aGL4s4OkQZRmTL+F6PA2ssc=
+X-Received: by 2002:a24:5608:: with SMTP id o8mr11603782itb.35.1548741117125;
+ Mon, 28 Jan 2019 21:51:57 -0800 (PST)
+MIME-Version: 1.0
+References: <1548047768-7656-1-git-send-email-kernelfans@gmail.com> <20190125103924.GB27998@zn.tnic>
+In-Reply-To: <20190125103924.GB27998@zn.tnic>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Tue, 29 Jan 2019 13:51:45 +0800
+Message-ID: <CAFgQCTtrBrt9CEY=3YiVm7ADD+8oh8bYmatu=3vU92K2_C45ww@mail.gmail.com>
+Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     kexec@lists.infradead.org, Dave Young <dyoung@redhat.com>,
+        Baoquan He <bhe@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Yinghai Lu <yinghai@kernel.org>, vgoyal@redhat.com,
+        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On ARM SoC's with TrustZone enabled, peripherals like entropy sources
-might not be accessible to normal world (linux in this case) and rather
-accessible to secure world (OP-TEE in this case) only. So this driver
-aims to provides a generic interface to OP-TEE based random number
-generator service.
+On Fri, Jan 25, 2019 at 6:39 PM Borislav Petkov <bp@alien8.de> wrote:
+>
+>
+> >  Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
+>
+> s/bugfix, //
+>
+OK.
 
-This driver registers on TEE bus to interact with OP-TEE based rng
-device/service.
+> On Mon, Jan 21, 2019 at 01:16:08PM +0800, Pingfan Liu wrote:
+> > People reported crashkernel=384M reservation failed on a high end server
+> > with KASLR enabled.  In that case there is enough free memory under 896M
+> > but crashkernel reservation still fails intermittently.
+> >
+> > The situation is crashkernel reservation code only finds free region under
+> > 896 MB with 128M aligned in case no ',high' being used.  And KASLR could
+> > break the first 896M into several parts randomly thus the failure happens.
+>
+> This reads very strange.
+>
+What about   "  It turns out that crashkernel reservation code only
+tries to find a region under 896 MB, aligned on 128M. But KASLR
+randomly breaks big region inside [0,896M] into smaller pieces, not
+big enough as demanded in the "crashkernel=X" parameter."
 
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
----
- MAINTAINERS                        |   5 +
- drivers/char/hw_random/Kconfig     |  15 ++
- drivers/char/hw_random/Makefile    |   1 +
- drivers/char/hw_random/optee-rng.c | 298 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 319 insertions(+)
- create mode 100644 drivers/char/hw_random/optee-rng.c
+> > User has no way to predict and make sure crashkernel=xM working unless
+> > he/she use 'crashkernel=xM,high'.  Since 'crashkernel=xM' is the most
+> > common use case this issue is a serious bug.
+> >
+> > And we can't answer questions raised from customer:
+> > 1) why it doesn't succeed to reserve 896 MB;
+> > 2) what's wrong with memory region under 4G;
+> > 3) why I have to add ',high', I only require 384 MB, not 3840 MB.
+>
+> Errr, this looks like communication issue. Sounds to me like the text
+> around crashkernel= in
+>
+What about dropping this section in commit log and another patch to
+fix the document?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 51029a4..dcef7e9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11262,6 +11262,11 @@ M:	Jens Wiklander <jens.wiklander@linaro.org>
- S:	Maintained
- F:	drivers/tee/optee/
- 
-+OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
-+M:	Sumit Garg <sumit.garg@linaro.org>
-+S:	Maintained
-+F:	drivers/char/hw_random/optee-rng.c
-+
- OPA-VNIC DRIVER
- M:	Dennis Dalessandro <dennis.dalessandro@intel.com>
- M:	Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index dac895d..25a7d8f 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -424,6 +424,21 @@ config HW_RANDOM_EXYNOS
- 	  will be called exynos-trng.
- 
- 	  If unsure, say Y.
-+
-+config HW_RANDOM_OPTEE
-+	tristate "OP-TEE based Random Number Generator support"
-+	depends on OPTEE
-+	default HW_RANDOM
-+	help
-+	  This  driver provides support for OP-TEE based Random Number
-+	  Generator on ARM SoCs where hardware entropy sources are not
-+	  accessible to normal world (Linux).
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called optee-rng.
-+
-+	  If unsure, say Y.
-+
- endif # HW_RANDOM
- 
- config UML_RANDOM
-diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
-index e35ec3c..7c9ef4a 100644
---- a/drivers/char/hw_random/Makefile
-+++ b/drivers/char/hw_random/Makefile
-@@ -38,3 +38,4 @@ obj-$(CONFIG_HW_RANDOM_CAVIUM) += cavium-rng.o cavium-rng-vf.o
- obj-$(CONFIG_HW_RANDOM_MTK)	+= mtk-rng.o
- obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
- obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
-+obj-$(CONFIG_HW_RANDOM_OPTEE) += optee-rng.o
-diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
-new file mode 100644
-index 0000000..2b9fc8a
---- /dev/null
-+++ b/drivers/char/hw_random/optee-rng.c
-@@ -0,0 +1,298 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018-2019 Linaro Ltd.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/of.h>
-+#include <linux/hw_random.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/tee_drv.h>
-+#include <linux/uuid.h>
-+
-+#define DRIVER_NAME "optee-rng"
-+
-+#define TEE_ERROR_HEALTH_TEST_FAIL	0x00000001
-+
-+/*
-+ * TA_CMD_GET_ENTROPY - Get Entropy from RNG
-+ *
-+ * param[0] (inout memref) - Entropy buffer memory reference
-+ * param[1] unused
-+ * param[2] unused
-+ * param[3] unused
-+ *
-+ * Result:
-+ * TEE_SUCCESS - Invoke command success
-+ * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-+ * TEE_ERROR_NOT_SUPPORTED - Requested entropy size greater than size of pool
-+ * TEE_ERROR_HEALTH_TEST_FAIL - Continuous health testing failed
-+ */
-+#define TA_CMD_GET_ENTROPY		0x0
-+
-+/*
-+ * TA_CMD_GET_RNG_INFO - Get RNG information
-+ *
-+ * param[0] (out value) - value.a: RNG data-rate in bytes per second
-+ *                        value.b: Quality/Entropy per 1024 bit of data
-+ * param[1] unused
-+ * param[2] unused
-+ * param[3] unused
-+ *
-+ * Result:
-+ * TEE_SUCCESS - Invoke command success
-+ * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-+ */
-+#define TA_CMD_GET_RNG_INFO		0x1
-+
-+#define MAX_ENTROPY_REQ_SZ		(4 * 1024)
-+
-+/**
-+ * struct optee_rng_private - OP-TEE Random Number Generator private data
-+ * @dev:		OP-TEE based RNG device.
-+ * @ctx:		OP-TEE context handler.
-+ * @session_id:		RNG TA session identifier.
-+ * @data_rate:		RNG data rate.
-+ * @entropy_shm_pool:	Memory pool shared with RNG device.
-+ * @optee_rng:		OP-TEE RNG driver structure.
-+ */
-+struct optee_rng_private {
-+	struct device *dev;
-+	struct tee_context *ctx;
-+	u32 session_id;
-+	u32 data_rate;
-+	struct tee_shm *entropy_shm_pool;
-+	struct hwrng optee_rng;
-+};
-+
-+#define to_optee_rng_private(r) \
-+		container_of(r, struct optee_rng_private, optee_rng)
-+
-+static size_t get_optee_rng_data(struct optee_rng_private *pvt_data,
-+				 void *buf, size_t req_size)
-+{
-+	u32 ret = 0;
-+	u8 *rng_data = NULL;
-+	size_t rng_size = 0;
-+	struct tee_ioctl_invoke_arg inv_arg = {0};
-+	struct tee_param param[4] = {0};
-+
-+	/* Invoke TA_CMD_GET_ENTROPY function of Trusted App */
-+	inv_arg.func = TA_CMD_GET_ENTROPY;
-+	inv_arg.session = pvt_data->session_id;
-+	inv_arg.num_params = 4;
-+
-+	/* Fill invoke cmd params */
-+	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT;
-+	param[0].u.memref.shm = pvt_data->entropy_shm_pool;
-+	param[0].u.memref.size = req_size;
-+	param[0].u.memref.shm_offs = 0;
-+
-+	ret = tee_client_invoke_func(pvt_data->ctx, &inv_arg, param);
-+	if ((ret < 0) || (inv_arg.ret != 0)) {
-+		dev_err(pvt_data->dev, "TA_CMD_GET_ENTROPY invoke err: %x\n",
-+			inv_arg.ret);
-+		return 0;
-+	}
-+
-+	rng_data = tee_shm_get_va(pvt_data->entropy_shm_pool, 0);
-+	if (IS_ERR(rng_data)) {
-+		dev_err(pvt_data->dev, "tee_shm_get_va failed\n");
-+		return 0;
-+	}
-+
-+	rng_size = param[0].u.memref.size;
-+	memcpy(buf, rng_data, rng_size);
-+
-+	return rng_size;
-+}
-+
-+static int optee_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
-+{
-+	struct optee_rng_private *pvt_data = to_optee_rng_private(rng);
-+	size_t read = 0, rng_size = 0;
-+	int timeout = 1;
-+	u8 *data = buf;
-+
-+	if (max > MAX_ENTROPY_REQ_SZ)
-+		max = MAX_ENTROPY_REQ_SZ;
-+
-+	while (read == 0) {
-+		rng_size = get_optee_rng_data(pvt_data, data, (max - read));
-+
-+		data += rng_size;
-+		read += rng_size;
-+
-+		if (wait) {
-+			if (timeout-- == 0)
-+				return read;
-+			msleep((1000 * (max - read)) / pvt_data->data_rate);
-+		} else {
-+			return read;
-+		}
-+	}
-+
-+	return read;
-+}
-+
-+static int optee_rng_init(struct hwrng *rng)
-+{
-+	struct optee_rng_private *pvt_data = to_optee_rng_private(rng);
-+	struct tee_shm *entropy_shm_pool = NULL;
-+
-+	entropy_shm_pool = tee_shm_alloc(pvt_data->ctx, MAX_ENTROPY_REQ_SZ,
-+					 TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
-+	if (IS_ERR(entropy_shm_pool)) {
-+		dev_err(pvt_data->dev, "tee_shm_alloc failed\n");
-+		return PTR_ERR(entropy_shm_pool);
-+	}
-+
-+	pvt_data->entropy_shm_pool = entropy_shm_pool;
-+
-+	return 0;
-+}
-+
-+static void optee_rng_cleanup(struct hwrng *rng)
-+{
-+	struct optee_rng_private *pvt_data = to_optee_rng_private(rng);
-+
-+	tee_shm_free(pvt_data->entropy_shm_pool);
-+}
-+
-+static struct optee_rng_private pvt_data = {
-+	.optee_rng = {
-+		.name		= DRIVER_NAME,
-+		.init		= optee_rng_init,
-+		.cleanup	= optee_rng_cleanup,
-+		.read		= optee_rng_read,
-+	}
-+};
-+
-+static int get_optee_rng_info(struct device *dev)
-+{
-+	u32 ret = 0;
-+	struct tee_ioctl_invoke_arg inv_arg = {0};
-+	struct tee_param param[4] = {0};
-+
-+	/* Invoke TA_CMD_GET_RNG_INFO function of Trusted App */
-+	inv_arg.func = TA_CMD_GET_RNG_INFO;
-+	inv_arg.session = pvt_data.session_id;
-+	inv_arg.num_params = 4;
-+
-+	/* Fill invoke cmd params */
-+	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
-+
-+	ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
-+	if ((ret < 0) || (inv_arg.ret != 0)) {
-+		dev_err(dev, "TA_CMD_GET_RNG_INFO invoke err: %x\n",
-+			inv_arg.ret);
-+		return -EINVAL;
-+	}
-+
-+	pvt_data.data_rate = param[0].u.value.a;
-+	pvt_data.optee_rng.quality = param[0].u.value.b;
-+
-+	return 0;
-+}
-+
-+static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
-+{
-+	if (ver->impl_id == TEE_IMPL_ID_OPTEE)
-+		return 1;
-+	else
-+		return 0;
-+}
-+
-+static int optee_rng_probe(struct device *dev)
-+{
-+	struct tee_client_device *rng_device = to_tee_client_device(dev);
-+	int ret = 0, err = -ENODEV;
-+	struct tee_ioctl_open_session_arg sess_arg = {0};
-+
-+	/* Open context with TEE driver */
-+	pvt_data.ctx = tee_client_open_context(NULL, optee_ctx_match, NULL,
-+					       NULL);
-+	if (IS_ERR(pvt_data.ctx))
-+		return -ENODEV;
-+
-+	/* Open session with hwrng Trusted App */
-+	memcpy(sess_arg.uuid, rng_device->id.uuid.b, TEE_IOCTL_UUID_LEN);
-+	sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
-+	sess_arg.num_params = 0;
-+
-+	ret = tee_client_open_session(pvt_data.ctx, &sess_arg, NULL);
-+	if ((ret < 0) || (sess_arg.ret != 0)) {
-+		dev_err(dev, "tee_client_open_session failed, err: %x\n",
-+			sess_arg.ret);
-+		err = -EINVAL;
-+		goto out_ctx;
-+	}
-+	pvt_data.session_id = sess_arg.session;
-+
-+	err = get_optee_rng_info(dev);
-+	if (err)
-+		goto out_sess;
-+
-+	err = hwrng_register(&pvt_data.optee_rng);
-+	if (err) {
-+		dev_err(dev, "hwrng registration failed (%d)\n", err);
-+		goto out_sess;
-+	}
-+
-+	pvt_data.dev = dev;
-+
-+	return 0;
-+
-+out_sess:
-+	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
-+out_ctx:
-+	tee_client_close_context(pvt_data.ctx);
-+
-+	return err;
-+}
-+
-+static int optee_rng_remove(struct device *dev)
-+{
-+	hwrng_unregister(&pvt_data.optee_rng);
-+	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
-+	tee_client_close_context(pvt_data.ctx);
-+
-+	return 0;
-+}
-+
-+const struct tee_client_device_id optee_rng_id_table[] = {
-+	{UUID_INIT(0xab7a617c, 0xb8e7, 0x4d8f,
-+		   0x83, 0x01, 0xd0, 0x9b, 0x61, 0x03, 0x6b, 0x64)},
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(tee, optee_rng_id_table);
-+
-+static struct tee_client_driver optee_rng_driver = {
-+	.id_table	= optee_rng_id_table,
-+	.driver		= {
-+		.name		= DRIVER_NAME,
-+		.bus		= &tee_bus_type,
-+		.probe		= optee_rng_probe,
-+		.remove		= optee_rng_remove,
-+	},
-+};
-+
-+static int __init optee_rng_mod_init(void)
-+{
-+	return driver_register(&optee_rng_driver.driver);
-+}
-+
-+static void __exit optee_rng_mod_exit(void)
-+{
-+	driver_unregister(&optee_rng_driver.driver);
-+}
-+
-+module_init(optee_rng_mod_init);
-+module_exit(optee_rng_mod_exit);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Sumit Garg <sumit.garg@linaro.org>");
-+MODULE_DESCRIPTION("OP-TEE based random number generator driver");
--- 
-2.7.4
+> Documentation/admin-guide/kernel-parameters.txt
+>
+> needs improving?
+>
+> > This patch tries to get memory region from 896 MB firstly, then [896MB,4G],
+>
+> Avoid having "This patch" or "This commit" in the commit message. It is
+> tautologically useless.
+>
+OK
 
+> Also, do
+>
+> $ git grep 'This patch' Documentation/process
+>
+> for more details.
+>
+> > finally above 4G.
+> >
+> > Dave Young sent the original post, and I just re-post it with commit log
+>
+> If he sent it, he should be the author I guess.
+>
+> > improvement as his requirement.
+> > http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
+> > There was an old discussion below (previously posted by Chao Wang):
+> > https://lkml.org/lkml/2013/10/15/601
+>
+> All that changelog info doesn't belong in the commit message ...
+>
+> > Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> > Cc: Dave Young <dyoung@redhat.com>
+> > Cc: Baoquan He <bhe@redhat.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > Cc: yinghai@kernel.org,
+> > Cc: vgoyal@redhat.com
+> > Cc: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: x86@kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > ---
+>
+> .... but here.
+>
+> > v6 -> v7: commit log improvement
+> >  arch/x86/kernel/setup.c | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> > index 3d872a5..fa62c81 100644
+> > --- a/arch/x86/kernel/setup.c
+> > +++ b/arch/x86/kernel/setup.c
+> > @@ -551,6 +551,22 @@ static void __init reserve_crashkernel(void)
+> >                                                   high ? CRASH_ADDR_HIGH_MAX
+> >                                                        : CRASH_ADDR_LOW_MAX,
+> >                                                   crash_size, CRASH_ALIGN);
+> > +#ifdef CONFIG_X86_64
+> > +             /*
+> > +              * crashkernel=X reserve below 896M fails? Try below 4G
+> > +              */
+> > +             if (!high && !crash_base)
+> > +                     crash_base = memblock_find_in_range(CRASH_ALIGN,
+> > +                                             (1ULL << 32),
+> > +                                             crash_size, CRASH_ALIGN);
+> > +             /*
+> > +              * crashkernel=X reserve below 4G fails? Try MAXMEM
+> > +              */
+> > +             if (!high && !crash_base)
+> > +                     crash_base = memblock_find_in_range(CRASH_ALIGN,
+> > +                                             CRASH_ADDR_HIGH_MAX,
+> > +                                             crash_size, CRASH_ALIGN);
+> > +#endif
+>
+> Ok, so this is silly: we know at which physical address KASLR allocated
+> the kernel so why aren't we querying that and seeing if there's enough
+> room before it or after it to call memblock_find_in_range() on the
+> bigger range?
+>
+Sorry, can not catch up with you. Do you suggestion
+memblock_find_in_range(0, kernel_start) and
+memblock_find_in_range(kernel_end, mem_end)? But the memory is
+truncated into fraction by many component which call
+memblock_reserve(), besides kernel.
+
+For the left question, Dave has follow the discussion in another
+email, will follow there.
+
+Thanks and regards,
+Pingfan
+
+> Also, why is "high" dealt with separately and why isn't the code
+> enforcing "high" if the normal reservation fails?
+>
+> The presence of high is requiring from our users to pay attention what
+> to use when the kernel can do all that automatically. Looks like a UI
+> fail to me.
+>
+> And look at all the flavors of crashkernel= :
+>
+>         crashkernel=size[KMG][@offset[KMG]]
+>         crashkernel=range1:size1[,range2:size2,...][@offset]
+>         crashkernel=size[KMG],high
+>         crashkernel=size[KMG],low
+>
+> We couldn't do one so we made 4?!?!
+>
+> What for?
+>
+> Nowhere in that help text does it explain why a user would care about
+> high or low or range or offset or the planets alignment...
+>
+> So what's up?
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> Good mailing practices for 400: avoid top-posting and trim the reply.
