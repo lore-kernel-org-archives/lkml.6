@@ -3,49 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22045C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B642C282D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC45D214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:43:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 323582184D
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 16:43:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbfA2QnG (ORCPT
+        id S1728434AbfA2QnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 11:43:06 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:34298 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728061AbfA2QnF (ORCPT
+        Tue, 29 Jan 2019 11:43:12 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:41932 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbfA2QnF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 29 Jan 2019 11:43:05 -0500
-Received: by mail-io1-f69.google.com with SMTP id q16so17155572ios.1
+Received: by mail-it1-f200.google.com with SMTP id 71so15966689ita.6
         for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 08:43:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=sIv6+AT+ptrB8WA7KqnI7Nd9IMqv1oGR0TAfAAvgzLc=;
-        b=JHWVjDsz37n0Z+rpDm9WPU3mKgz9+bvMfQptJYRtC1UhfudjMH0J9GCJnqgBKr13Mm
-         AOvWcqkKFsIXNxPe+dKoAcymvoHXNbOkU7UkIIuB9qTVYAPRi2A1AZKA/6JBe1+R/xSU
-         FEVj6Np3+Z7cwfaXpauCEq9rpS8OlSlomanWoSAww4sI0z1BjFJz2cVCLA6ZT4rjSLV1
-         /XFeD5frD/OP2XimBG+W6ksK6NqpuPxS3dWeEw2mM5RDvo7AW81/A6NRgTQ1XJpQFvq3
-         7SxY7xCZ0IslIS2pOw1+hBtC3N+I1ySMdGxkrOc8T5XcKrwEX5zh8A5HnDBhTpblVt8u
-         Np8Q==
-X-Gm-Message-State: AHQUAuYUb7G0D/w5qRtNUhhH2iadD1K4IE+dQVAp2v9+HI7AKsKL9xHf
-        9miOBy8o1hdqjOxeisH88pio+zmAKrM+T1fzw9RGC9lwr7sH
-X-Google-Smtp-Source: AHgI3IZDSiECho2XEWtPtepGJVuAmtbe5BrO7Ydqn3l4lQUcq5ZkBO/yoRvYshw1DaIdrMO60KSJ2pdIxnnS/rAXY4EnkvKo2mld
+        bh=8dRJrZLfB6CarDUUkOAxHBvdDCSKoBpervZL3I6QJds=;
+        b=jdFZ0ZbdEfKNvSHDSA3JYjCsGUwqLY7mZZtncUcg7I/16BDZpXdq++ZUXdNQqUiA8X
+         sLe7k6jLCJHjoTd4Pf8GDzBbvYFrIQdEACyR5b8aOM6Rj1nILNIBEQppSTrpbNCd0zI8
+         oRagqyHVdpTUT+vNWXCquXVZy53Ssvnf1QWjxw/TdgbJVCJqznlSUam/rOskWX3iDKb2
+         wRLKCkByfNlR1FBziKI5P6REhQ0BoRiGAAGE/I0LS+0dgES2xfb4gvGvtU4CBpLDCxdV
+         E9fo+OYhRXx6jMjjJndXdyJUidQr4Z67DMLl2TMpD5lb7cZNgVyic6MVozRklLcbIlpv
+         hFzg==
+X-Gm-Message-State: AHQUAuZ8fPRi6MCCMsdFoYDK/qbmXNBUU3ufMoZwsfXZBwls8n0WrcXq
+        cyFuZYnLyHAeHOIrSA8qn1bdta1nCjgaAsFcpcBT2CWQkrD0
+X-Google-Smtp-Source: AHgI3Ia5r3/Zxioj52uYzwZeKTBWPHKvro6jeGDyOu1BkWn62TS89iDMQ7ZZe0DpdtZftinJDa2aoGVd5b0x5t1gH8TeYUJiXkSn
 MIME-Version: 1.0
-X-Received: by 2002:a02:8785:: with SMTP id t5mr3514769jai.10.1548780184904;
+X-Received: by 2002:a02:95ae:: with SMTP id b43mr3509862jai.4.1548780184685;
  Tue, 29 Jan 2019 08:43:04 -0800 (PST)
 Date:   Tue, 29 Jan 2019 08:43:04 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c1ac2805809b7cf6@google.com>
-Subject: WARNING in __flush_work
-From:   syzbot <syzbot+ba2a929dcf8e704c180e@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000be589d05809b7c8a@google.com>
+Subject: WARNING in get_q_data
+From:   syzbot <syzbot+44b24cff6bf96006ecfa@syzkaller.appspotmail.com>
+To:     hans.verkuil@cisco.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, mchehab@kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,23 +59,27 @@ syzbot found the following crash on:
 
 HEAD commit:    39ad1c1b6bb8 Add linux-next specific files for 20190129
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=135e382f400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=127d3eef400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=a2b2e9c0bc43c14d
-dashboard link: https://syzkaller.appspot.com/bug?extid=ba2a929dcf8e704c180e
+dashboard link: https://syzkaller.appspot.com/bug?extid=44b24cff6bf96006ecfa
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17cc2298c00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176c96ef400000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126417a0c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16aa880f400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ba2a929dcf8e704c180e@syzkaller.appspotmail.com
+Reported-by: syzbot+44b24cff6bf96006ecfa@syzkaller.appspotmail.com
 
-WARNING: CPU: 1 PID: 3472 at kernel/workqueue.c:2911  
-__flush_work+0x880/0xa60 kernel/workqueue.c:2911
+WARNING: CPU: 1 PID: 7479 at  
+drivers/media/platform/vicodec/vicodec-core.c:151 get_q_data  
+drivers/media/platform/vicodec/vicodec-core.c:151 [inline]
+WARNING: CPU: 1 PID: 7479 at  
+drivers/media/platform/vicodec/vicodec-core.c:151 get_q_data+0x53/0x80  
+drivers/media/platform/vicodec/vicodec-core.c:140
 Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 3472 Comm: kworker/1:2 Not tainted 5.0.0-rc4-next-20190129 #21
+CPU: 1 PID: 7479 Comm: syz-executor073 Not tainted 5.0.0-rc4-next-20190129  
+#21
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: md_misc mddev_delayed_delete
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
@@ -86,30 +91,46 @@ Call Trace:
   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
   do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-RIP: 0010:__flush_work+0x880/0xa60 kernel/workqueue.c:2911
-Code: 74 58 e8 93 54 2e 00 fb 66 0f 1f 44 00 00 45 31 e4 e9 7d fd ff ff e8  
-7f 54 2e 00 0f 0b 45 31 e4 e9 6e fd ff ff e8 70 54 2e 00 <0f> 0b 45 31 e4  
-e9 5f fd ff ff e8 61 54 2e 00 4c 89 ff 45 31 e4 e8
-RSP: 0018:ffff88809acb7558 EFLAGS: 00010293
-RAX: ffff88809acc4580 RBX: ffff88809acb76e8 RCX: ffffffff8153bde9
-RDX: 0000000000000000 RSI: ffffffff8153c5c0 RDI: 0000000000000001
-RBP: ffff88809acb7710 R08: ffff88809acc4580 R09: ffff88809acc4e48
-R10: ffff88809acc4580 R11: 0000000000000000 R12: ffff88809dd24628
-R13: dffffc0000000000 R14: 0000000000000001 R15: 0000000000000001
-  __cancel_work_timer+0x48d/0x810 kernel/workqueue.c:3007
-  cancel_work_sync+0x18/0x20 kernel/workqueue.c:3043
-  blk_sync_queue+0x33/0x190 block/blk-core.c:234
-  blk_cleanup_queue+0x100/0x200 block/blk-core.c:367
-  md_free+0xcb/0x1b0 drivers/md/md.c:5215
-  kobject_cleanup lib/kobject.c:662 [inline]
-  kobject_release lib/kobject.c:691 [inline]
-  kref_put include/linux/kref.h:67 [inline]
-  kobject_put.cold+0x28f/0x2ec lib/kobject.c:708
-  mddev_delayed_delete+0x34/0x40 drivers/md/md.c:5243
-  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
-  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
-  kthread+0x357/0x430 kernel/kthread.c:247
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+RIP: 0010:get_q_data drivers/media/platform/vicodec/vicodec-core.c:151  
+[inline]
+RIP: 0010:get_q_data+0x53/0x80  
+drivers/media/platform/vicodec/vicodec-core.c:140
+Code: 74 3a 83 fb 02 75 1e e8 eb 6e 33 fc 49 81 c4 70 02 00 00 e8 df 6e 33  
+fc 4c 89 e0 5b 41 5c 5d c3 83 fb 0a 74 e2 e8 cd 6e 33 fc <0f> 0b e8 c6 6e  
+33 fc 45 31 e4 5b 4c 89 e0 41 5c 5d c3 e8 b6 6e 33
+RSP: 0018:ffff88808638f758 EFLAGS: 00010293
+RAX: ffff888097a02400 RBX: 000000000000000c RCX: ffffffff854eab2f
+RDX: 0000000000000000 RSI: ffffffff854eab63 RDI: 0000000000000005
+RBP: ffff88808638f768 R08: ffff888097a02400 R09: ffffed10136ec909
+R10: ffffed10136ec908 R11: ffff88809b764843 R12: ffff888098c484c0
+R13: 0000000000000002 R14: ffff888098c484c0 R15: ffff88808638f7e4
+  vidioc_s_selection+0x9b/0x3e0  
+drivers/media/platform/vicodec/vicodec-core.c:997
+  v4l_s_selection drivers/media/v4l2-core/v4l2-ioctl.c:2245 [inline]
+  v4l_s_crop+0x32a/0x510 drivers/media/v4l2-core/v4l2-ioctl.c:2302
+  __video_do_ioctl+0x805/0xd80 drivers/media/v4l2-core/v4l2-ioctl.c:2872
+  video_usercopy+0x460/0x16b0 drivers/media/v4l2-core/v4l2-ioctl.c:3054
+  video_ioctl2+0x2d/0x35 drivers/media/v4l2-core/v4l2-ioctl.c:3098
+  v4l2_ioctl+0x156/0x1b0 drivers/media/v4l2-core/v4l2-dev.c:364
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440089
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffe747247e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440089
+RDX: 0000000020000100 RSI: 000000004014563c RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000246 R12: 0000000000401910
+R13: 00000000004019a0 R14: 0000000000000000 R15: 0000000000000000
 Kernel Offset: disabled
 Rebooting in 86400 seconds..
 
