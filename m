@@ -2,53 +2,52 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D8F5C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B42CC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D41692148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4FAF20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762625;
-	bh=TzCzUJe7TFytn0tpctgYTBfj/ij6KowV4zAfZ2DgC5k=;
+	s=default; t=1548762630;
+	bh=JlRDsUpk+Cb0RXytDJDC6ZtzMaho9AzwOBC8LZkaaIE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PJSX2cdn8rogPMVqD83qVaYYBn2Sn87v55T7JD17X6Bgh7FdlU+Af/bFyyHo8Etrd
-	 fefM1O9Zg0ApjwHVN2AuJf8HEV9xO0hjGjw4diEO5QiHfmSB4jO8f/KPWqd6jlHsiR
-	 nA+5nmxoSBnTDHZjn8uvlt8bfKlptyrNbC7VnnEk=
+	b=XZ55ty2aentPcKVNGAGvL9LYumuKwiyezqjmVNgToJdfChNfcHune2y/ypqmPFmHt
+	 YrK5D/QmNrpuNpos2kCV6LyUIhXP77dV/SealV7DPxjx34EbHyezkIMVK/esnP1vjM
+	 xKimhQg/PqtSPq2eF4jlrn8qLeMHANCyLP1HwiFs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731676AbfA2LuX (ORCPT
+        id S1731420AbfA2Lu2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:50:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41656 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731657AbfA2LuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:22 -0500
+        id S1731657AbfA2LuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:50:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87EBE2148E;
-        Tue, 29 Jan 2019 11:50:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD0E820989;
+        Tue, 29 Jan 2019 11:50:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762621;
-        bh=TzCzUJe7TFytn0tpctgYTBfj/ij6KowV4zAfZ2DgC5k=;
+        s=default; t=1548762624;
+        bh=JlRDsUpk+Cb0RXytDJDC6ZtzMaho9AzwOBC8LZkaaIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aMgv8AEMvke/D11nRsS62inaU9dqyieNk57DoQWmQ4PuofQWTrcuD5y6SyANQ/U+T
-         CFk+Ld/HWrDjogBGHBhkOJ6n/6ZKqL5lPA33aIB5hsyQXOuXCzherEVW7OQfWHuM9I
-         w3GuQC5XhSZYbAOenqf0JKpTBunhwozIHRdHDc7s=
+        b=Gn52I8g8ADkhPnG62+ae3JwwfLLVzoQb2U3C0/8GrmgXx+oT4AjKuNMmOb0tABHn9
+         /vLkPjdtRwv0SCnbqMym0dKJhrlQD3nE55+Bq48QiwbDx0BHa0zFqXhqcKZm2tgBy0
+         BQEcJo/fJVoe7jKmlgbVX0tw+Hclpgi8YBh4lVyk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sujith Pandel <sujith_pandel@dell.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.14 38/68] acpi/nfit: Fix command-supported detection
-Date:   Tue, 29 Jan 2019 12:36:00 +0100
-Message-Id: <20190129113134.858481512@linuxfoundation.org>
+        stable@vger.kernel.org, ryan.p.norwood@gmail.com,
+        Joe Thornber <ejt@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 39/68] dm thin: fix passdown_double_checking_shared_status()
+Date:   Tue, 29 Jan 2019 12:36:01 +0100
+Message-Id: <20190129113134.962319589@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -67,130 +66,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Joe Thornber <ejt@redhat.com>
 
-commit 11189c1089da413aa4b5fd6be4c4d47c78968819 upstream.
+commit d445bd9cec1a850c2100fcf53684c13b3fd934f2 upstream.
 
-The _DSM function number validation only happens to succeed when the
-generic Linux command number translation corresponds with a
-DSM-family-specific function number. This breaks NVDIMM-N
-implementations that correctly implement _LSR, _LSW, and _LSI, but do
-not happen to publish support for DSM function numbers 4, 5, and 6.
+Commit 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next
+stage processing") changed process_prepared_discard_passdown_pt1() to
+increment all the blocks being discarded until after the passdown had
+completed to avoid them being prematurely reused.
 
-Recall that the support for _LS{I,R,W} family of methods results in the
-DIMM being marked as supporting those command numbers at
-acpi_nfit_register_dimms() time. The DSM function mask is only used for
-ND_CMD_CALL support of non-NVDIMM_FAMILY_INTEL devices.
+IO issued to a thin device that breaks sharing with a snapshot, followed
+by a discard issued to snapshot(s) that previously shared the block(s),
+results in passdown_double_checking_shared_status() being called to
+iterate through the blocks double checking their reference count is zero
+and issuing the passdown if so.  So a side effect of commit 00a0ea33b495
+is passdown_double_checking_shared_status() was broken.
 
-Fixes: 31eca76ba2fc ("nfit, libnvdimm: limited/whitelisted dimm command...")
-Cc: <stable@vger.kernel.org>
-Link: https://github.com/pmem/ndctl/issues/78
-Reported-by: Sujith Pandel <sujith_pandel@dell.com>
-Tested-by: Sujith Pandel <sujith_pandel@dell.com>
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Fix this by checking if the block reference count is greater than 1.
+Also, rename dm_pool_block_is_used() to dm_pool_block_is_shared().
+
+Fixes: 00a0ea33b495 ("dm thin: do not queue freed thin mapping for next stage processing")
+Cc: stable@vger.kernel.org # 4.9+
+Reported-by: ryan.p.norwood@gmail.com
+Signed-off-by: Joe Thornber <ejt@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/nfit/core.c |   54 ++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 40 insertions(+), 14 deletions(-)
+ drivers/md/dm-thin-metadata.c |    4 ++--
+ drivers/md/dm-thin-metadata.h |    2 +-
+ drivers/md/dm-thin.c          |   10 +++++-----
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -208,6 +208,32 @@ static int xlat_status(struct nvdimm *nv
- 	return xlat_nvdimm_status(buf, cmd, status);
+--- a/drivers/md/dm-thin-metadata.c
++++ b/drivers/md/dm-thin-metadata.c
+@@ -1687,7 +1687,7 @@ int dm_thin_remove_range(struct dm_thin_
+ 	return r;
  }
  
-+static int cmd_to_func(struct nfit_mem *nfit_mem, unsigned int cmd,
-+		struct nd_cmd_pkg *call_pkg)
-+{
-+	if (call_pkg) {
-+		int i;
-+
-+		if (nfit_mem->family != call_pkg->nd_family)
-+			return -ENOTTY;
-+
-+		for (i = 0; i < ARRAY_SIZE(call_pkg->nd_reserved2); i++)
-+			if (call_pkg->nd_reserved2[i])
-+				return -EINVAL;
-+		return call_pkg->nd_command;
-+	}
-+
-+	/* Linux ND commands == NVDIMM_FAMILY_INTEL function numbers */
-+	if (nfit_mem->family == NVDIMM_FAMILY_INTEL)
-+		return cmd;
-+
-+	/*
-+	 * Force function number validation to fail since 0 is never
-+	 * published as a valid function in dsm_mask.
-+	 */
-+	return 0;
-+}
-+
- int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
- 		unsigned int cmd, void *buf, unsigned int buf_len, int *cmd_rc)
+-int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
++int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result)
  {
-@@ -220,21 +246,11 @@ int acpi_nfit_ctl(struct nvdimm_bus_desc
- 	unsigned long cmd_mask, dsm_mask;
- 	u32 offset, fw_status = 0;
- 	acpi_handle handle;
--	unsigned int func;
- 	const guid_t *guid;
--	int rc, i;
-+	int func, rc, i;
+ 	int r;
+ 	uint32_t ref_count;
+@@ -1695,7 +1695,7 @@ int dm_pool_block_is_used(struct dm_pool
+ 	down_read(&pmd->root_lock);
+ 	r = dm_sm_get_count(pmd->data_sm, b, &ref_count);
+ 	if (!r)
+-		*result = (ref_count != 0);
++		*result = (ref_count > 1);
+ 	up_read(&pmd->root_lock);
  
- 	if (cmd_rc)
- 		*cmd_rc = -EINVAL;
--	func = cmd;
--	if (cmd == ND_CMD_CALL) {
--		call_pkg = buf;
--		func = call_pkg->nd_command;
--
--		for (i = 0; i < ARRAY_SIZE(call_pkg->nd_reserved2); i++)
--			if (call_pkg->nd_reserved2[i])
--				return -EINVAL;
--	}
+ 	return r;
+--- a/drivers/md/dm-thin-metadata.h
++++ b/drivers/md/dm-thin-metadata.h
+@@ -195,7 +195,7 @@ int dm_pool_get_metadata_dev_size(struct
  
- 	if (nvdimm) {
- 		struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
-@@ -242,9 +258,12 @@ int acpi_nfit_ctl(struct nvdimm_bus_desc
+ int dm_pool_get_data_dev_size(struct dm_pool_metadata *pmd, dm_block_t *result);
  
- 		if (!adev)
- 			return -ENOTTY;
--		if (call_pkg && nfit_mem->family != call_pkg->nd_family)
--			return -ENOTTY;
+-int dm_pool_block_is_used(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
++int dm_pool_block_is_shared(struct dm_pool_metadata *pmd, dm_block_t b, bool *result);
  
-+		if (cmd == ND_CMD_CALL)
-+			call_pkg = buf;
-+		func = cmd_to_func(nfit_mem, cmd, call_pkg);
-+		if (func < 0)
-+			return func;
- 		dimm_name = nvdimm_name(nvdimm);
- 		cmd_name = nvdimm_cmd_name(cmd);
- 		cmd_mask = nvdimm_cmd_mask(nvdimm);
-@@ -255,6 +274,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_desc
- 	} else {
- 		struct acpi_device *adev = to_acpi_dev(acpi_desc);
+ int dm_pool_inc_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
+ int dm_pool_dec_data_range(struct dm_pool_metadata *pmd, dm_block_t b, dm_block_t e);
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -1042,7 +1042,7 @@ static void passdown_double_checking_sha
+ 	 * passdown we have to check that these blocks are now unused.
+ 	 */
+ 	int r = 0;
+-	bool used = true;
++	bool shared = true;
+ 	struct thin_c *tc = m->tc;
+ 	struct pool *pool = tc->pool;
+ 	dm_block_t b = m->data_block, e, end = m->data_block + m->virt_end - m->virt_begin;
+@@ -1052,11 +1052,11 @@ static void passdown_double_checking_sha
+ 	while (b != end) {
+ 		/* find start of unmapped run */
+ 		for (; b < end; b++) {
+-			r = dm_pool_block_is_used(pool->pmd, b, &used);
++			r = dm_pool_block_is_shared(pool->pmd, b, &shared);
+ 			if (r)
+ 				goto out;
  
-+		func = cmd;
- 		cmd_name = nvdimm_bus_cmd_name(cmd);
- 		cmd_mask = nd_desc->cmd_mask;
- 		dsm_mask = cmd_mask;
-@@ -269,7 +289,13 @@ int acpi_nfit_ctl(struct nvdimm_bus_desc
- 	if (!desc || (cmd && (desc->out_num + desc->in_num == 0)))
- 		return -ENOTTY;
+-			if (!used)
++			if (!shared)
+ 				break;
+ 		}
  
--	if (!test_bit(cmd, &cmd_mask) || !test_bit(func, &dsm_mask))
-+	/*
-+	 * Check for a valid command.  For ND_CMD_CALL, we also have to
-+	 * make sure that the DSM function is supported.
-+	 */
-+	if (cmd == ND_CMD_CALL && !test_bit(func, &dsm_mask))
-+		return -ENOTTY;
-+	else if (!test_bit(cmd, &cmd_mask))
- 		return -ENOTTY;
+@@ -1065,11 +1065,11 @@ static void passdown_double_checking_sha
  
- 	in_obj.type = ACPI_TYPE_PACKAGE;
+ 		/* find end of run */
+ 		for (e = b + 1; e != end; e++) {
+-			r = dm_pool_block_is_used(pool->pmd, e, &used);
++			r = dm_pool_block_is_shared(pool->pmd, e, &shared);
+ 			if (r)
+ 				goto out;
+ 
+-			if (used)
++			if (shared)
+ 				break;
+ 		}
+ 
 
 
