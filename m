@@ -2,55 +2,55 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7391BC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC99C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38EC920880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A02820880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763137;
-	bh=lw0zFGn2+C3mzvA/gMa3oF+FCZf7EEs/lScnGQFvuRo=;
+	s=default; t=1548763147;
+	bh=MYnSJhu0MS3PUNqY26ljQKTg0ODdPGQQj7AfT6Srsx4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JxpIG03KEHDes9KJgx7cqwGXk+v2ed2UURuiB1/iWmoRx8NptY/cCkbUIrvEPi4Z0
-	 CwvN5BB6n9LNJbHePYu5GwNBXUVzOvBMjOqITlKAD586qFLuRiffnvBs3/ysBW5PwE
-	 ecrMiOXi+f8fk1a+Cjn9kqkWoDIq1yPN2KBaETXg=
+	b=BC+X3b9r8qXBgIKXHLFSXzZqtYjMPGZgOzKMsGgt7+gUxQVeU5RY73wPrqgb5vSMy
+	 mNIqudOT8n87097SdcG6d+z0y51pewK5T9pjnKcycrYCLjbRX9LqT8C9F4PgRLlOMV
+	 xjAhjK6u7aNqyHJkaQEwYOuCb+m6SHSCFTkHoS6E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731403AbfA2L64 (ORCPT
+        id S1731445AbfA2L7F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:58:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38258 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:59:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730866AbfA2Lrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:33 -0500
+        id S1729984AbfA2Lr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F2B921852;
-        Tue, 29 Jan 2019 11:47:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F04E2083B;
+        Tue, 29 Jan 2019 11:47:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762452;
-        bh=lw0zFGn2+C3mzvA/gMa3oF+FCZf7EEs/lScnGQFvuRo=;
+        s=default; t=1548762446;
+        bh=MYnSJhu0MS3PUNqY26ljQKTg0ODdPGQQj7AfT6Srsx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kHYtuwYocQel8YHujj3laAMztNHZdo5aXzl8OcCEjEzgmVywgqHOl83vU7ZbIQvX/
-         98jXfvk/p5kzq/VbRMscuH294Z/plyFC1juJFJpRk3qSXzFHVkEvSRch9bXbFhXork
-         kxDYQG7DiqBPQNXflL9g55uG50DcyEHZMD6pDU8g=
+        b=WeejoL+d0i13hzJBVWkOTJ8Gp0njIigxcbyZ+lW9HmoFg23RH9W9zirYeg4vrE3bT
+         oMdMbAyMtRRgaaqDko/0vrJvB36fmjEIp31bzdtl4IvPF54zLYz4szRcHJVEw7cbr3
+         QibVKtCufIhJ683fmh0ahliFWVm1AmzK48L4KntQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 10/68] ipfrag: really prevent allocation on netns exit
-Date:   Tue, 29 Jan 2019 12:35:32 +0100
-Message-Id: <20190129113132.466376383@linuxfoundation.org>
+Subject: [PATCH 4.19 094/103] bpf: fix check_map_access smin_value test when pointer contains offset
+Date:   Tue, 29 Jan 2019 12:36:11 +0100
+Message-Id: <20190129113207.164685192@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
-References: <20190129113131.751891514@linuxfoundation.org>
+In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
+References: <20190129113159.567154026@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,39 +62,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit f6f2a4a2eb92bc73671204198bb2f8ab53ff59fb ]
+[ commit b7137c4eab85c1cf3d46acdde90ce1163b28c873 upstream ]
 
-Setting the low threshold to 0 has no effect on frags allocation,
-we need to clear high_thresh instead.
+In check_map_access() we probe actual bounds through __check_map_access()
+with offset of reg->smin_value + off for lower bound and offset of
+reg->umax_value + off for the upper bound. However, even though the
+reg->smin_value could have a negative value, the final result of the
+sum with off could be positive when pointer arithmetic with known and
+unknown scalars is combined. In this case we reject the program with
+an error such as "R<x> min value is negative, either use unsigned index
+or do a if (index >=0) check." even though the access itself would be
+fine. Therefore extend the check to probe whether the actual resulting
+reg->smin_value + off is less than zero.
 
-The code was pre-existent to commit 648700f76b03 ("inet: frags:
-use rhashtables for reassembly units"), but before the above,
-such assignment had a different role: prevent concurrent eviction
-from the worker and the netns cleanup helper.
-
-Fixes: 648700f76b03 ("inet: frags: use rhashtables for reassembly units")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/inet_fragment.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/bpf/verifier.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -90,7 +90,7 @@ static void inet_frags_free_cb(void *ptr
- 
- void inet_frags_exit_net(struct netns_frags *nf)
- {
--	nf->low_thresh = 0; /* prevent creation of new frags */
-+	nf->high_thresh = 0; /* prevent creation of new frags */
- 
- 	rhashtable_free_and_destroy(&nf->rhashtable, inet_frags_free_cb, NULL);
- }
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index fbaa3b9e1d71..f9d5aea4891d 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -1294,13 +1294,17 @@ static int check_map_access(struct bpf_verifier_env *env, u32 regno,
+ 	 */
+ 	if (env->log.level)
+ 		print_verifier_state(env, state);
++
+ 	/* The minimum value is only important with signed
+ 	 * comparisons where we can't assume the floor of a
+ 	 * value is 0.  If we are using signed variables for our
+ 	 * index'es we need to make sure that whatever we use
+ 	 * will have a set floor within our range.
+ 	 */
+-	if (reg->smin_value < 0) {
++	if (reg->smin_value < 0 &&
++	    (reg->smin_value == S64_MIN ||
++	     (off + reg->smin_value != (s64)(s32)(off + reg->smin_value)) ||
++	      reg->smin_value + off < 0)) {
+ 		verbose(env, "R%d min value is negative, either use unsigned index or do a if (index >=0) check.\n",
+ 			regno);
+ 		return -EACCES;
+-- 
+2.19.1
+
 
 
