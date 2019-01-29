@@ -2,147 +2,89 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F92C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62814C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2E552148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24DBA2085B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:24:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9eGdkZK"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xGpLEMAm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbfA2GWk (ORCPT
+        id S1727486AbfA2GYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 01:22:40 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40554 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfA2GWj (ORCPT
+        Tue, 29 Jan 2019 01:24:16 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:51882 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725795AbfA2GYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 01:22:39 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p4so20651017wrt.7;
-        Mon, 28 Jan 2019 22:22:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OulpkHK1W3wCTLsa4tU3WH70de/mnFZqHAE3uaFmX6w=;
-        b=l9eGdkZKEOKb8oFOCEU9/fk2n3CZLgcW3EjimVJqv2LtNC8uZixzSW4x+sFlBBa/LV
-         l13OZTNnKkIK3HwTCHeWLSrVtcjJNXZpw86UAvwBMdgVoUqUZvQ1eEnUu2+CCOVyggOa
-         2pmyRaXBFJ6FXfZnoyXwaWY/5Vm22oXiZusfSgbjcAkietIYuWHABK+fDvw7xjU9csqF
-         EGre3OZ4sAV4oDyWjsQsQf6YP1RkzjVXqs8SlXpa0UaWvulz/mbhtBby98SLYRV7S9iz
-         9eSl/Kk6cWv9ZoelwcFbczhxDI54iRNii4l5ZaBqYtiaoxgJG8ICdhgCUCWpPY7T21/u
-         8KDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OulpkHK1W3wCTLsa4tU3WH70de/mnFZqHAE3uaFmX6w=;
-        b=RLNjKj9srbIHMAccnmpnATAxKWiJJ7VFQe9SfOUY0UEsHazv4dDJVAnkAP3HIbOtq8
-         zYEe4xA+KEog4brEaLrFy96OO2di50H1EFB7wizNZ84FT/eqseikNMgVWLVchEQIh8uB
-         B7wP7sppsfA3SaV8E6iSNTpsuPETfDbU4BUvkXkkMoTtF7qPOWi8WBL2r44oWwjYWB39
-         U1FLO6eMM8XAd2X4rX8D2+xRgH7jZwPfnelLmOssB8CUMUYOzqqLz6PZOobEXnRJ9alA
-         tl/6qMAb7Um6WrKvdJH7IWvWpvB0lm9DZ3Nkv5ZzZCGuBb7oZFpbBrVeq4WBAwwjAu1e
-         +aKQ==
-X-Gm-Message-State: AJcUukcHm7/psTjw+4WF66ErfMSgkjAaMcIoCu409CBfH2riteHiq3Ek
-        MvvbKuZCT5kiyJzj0spVn1U=
-X-Google-Smtp-Source: ALg8bN4X7PD0aSauo6zQkOg/DTN1q1hXljZgcGiFO66APcZM/rsUbnTWm9ZM3sPVuE/AI1BqJZHJwQ==
-X-Received: by 2002:adf:90e5:: with SMTP id i92mr23456399wri.210.1548742957563;
-        Mon, 28 Jan 2019 22:22:37 -0800 (PST)
-Received: from ?IPv6:2001:16b8:a03b:5a00:437e:83f9:772d:3f24? ([2001:16b8:a03b:5a00:437e:83f9:772d:3f24])
-        by smtp.gmail.com with ESMTPSA id 129sm2449223wmd.18.2019.01.28.22.22.36
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 22:22:36 -0800 (PST)
-Subject: Re: [PATCH] pinctrl: mediatek: fix dependencies for PINCTRL_MT76XX
-To:     Sean Wang <sean.wang@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190128223521.2690-1-voytikd@gmail.com>
- <CAGp9LzoVZQx2fb-ETY=sGBB3Xx81jC8t2krczv7h=dVNE-ph2Q@mail.gmail.com>
-From:   Dmitry Voytik <voytikd@gmail.com>
-Message-ID: <3e1acf90-9975-12cb-5e78-24e4bd03b507@gmail.com>
-Date:   Tue, 29 Jan 2019 07:22:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 29 Jan 2019 01:24:16 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0T6979i087473;
+        Tue, 29 Jan 2019 06:24:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=PvW3AFDlj1/TicYVaN0zhPoPjXdiZIr2sF61879Oj/o=;
+ b=xGpLEMAmT2wxXHD7LgNIP+ZmohEPU1TAy1phyXGDZvcFT8xxk85PXVZmDXzFgyf91lOr
+ 6BOJ5eTcPnNvZYS09VvWUEQrJiuynIUnXOjUHGsPNI/STQbUQEAC94FjaipXptDU0Lsk
+ npI0DyAe3i0mbCZVzhAeK5KaiaQHVwK1UC/X2Ig9aXVBB1RhwluGejTNHdeb2rzsyrEn
+ oRhj7QYGoUG2UNyCnT5e8janrNdC2/fkr+/ldOTwvL9qqxLUiR498cycsu7Qbn10JeMZ
+ bfw5bBWKue3C35vRv2/AAt4/TaCRuMiiWl+idk8wFGeuZk65SeI8vPytcs+ZmkWd9s4b gw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2q8g6r28ra-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Jan 2019 06:24:07 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0T6O531021611
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 29 Jan 2019 06:24:05 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0T6O4sk021652;
+        Tue, 29 Jan 2019 06:24:04 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 28 Jan 2019 22:24:03 -0800
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Don Brace <don.brace@microsemi.com>,
+        esc.storagedev@microsemi.com, Hannes Reinecke <hare@suse.com>,
+        linux-kernel@vger.kernel.org,
+        Adaptec OEM Raid Solutions <aacraid@microsemi.com>
+Subject: Re: [PATCH 0/2] scsi: trivial header search path fixups
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1548400144-22513-1-git-send-email-yamada.masahiro@socionext.com>
+Date:   Tue, 29 Jan 2019 01:24:01 -0500
+In-Reply-To: <1548400144-22513-1-git-send-email-yamada.masahiro@socionext.com>
+        (Masahiro Yamada's message of "Fri, 25 Jan 2019 16:09:02 +0900")
+Message-ID: <yq15zu8dlry.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAGp9LzoVZQx2fb-ETY=sGBB3Xx81jC8t2krczv7h=dVNE-ph2Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9150 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=526
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901290046
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Masahiro,
 
-On 1/29/19 6:02 AM, Sean Wang wrote:
-> On Mon, Jan 28, 2019 at 2:35 PM Dmitry Voytik <voytikd@gmail.com> wrote:
->>
->> How to reproduce the problem:
->> $ make tinyconfig
->> $ make menuconfig
->> then enable:
->>  CONFIG_COMPILE_TEST=y
->>  CONFIG_PINCTRL=y
->> and any of these:
->>  CONFIG_PINCTRL_MT7622=y
->>  CONFIG_PINCTRL_MT7629=y
->>  CONFIG_PINCTRL_MT7623=y
->>
->> This combination causes build failure.
->>
->> Fix the problem by making PINCTRL_MT76XX to depend on CONFIG_OF=y.
->>
->> Signed-off-by: Dmitry Voytik <voytikd@gmail.com>
->> ---
->>  drivers/pinctrl/mediatek/Kconfig | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
->> index 1817786ab6aa..a005cbccb4f7 100644
->> --- a/drivers/pinctrl/mediatek/Kconfig
->> +++ b/drivers/pinctrl/mediatek/Kconfig
->> @@ -45,12 +45,14 @@ config PINCTRL_MT2701
->>  config PINCTRL_MT7623
->>         bool "Mediatek MT7623 pin control with generic binding"
->>         depends on MACH_MT7623 || COMPILE_TEST
->> +       depends on OF
->>         default MACH_MT7623
->>         select PINCTRL_MTK_MOORE
->>
->>  config PINCTRL_MT7629
->>         bool "Mediatek MT7629 pin control"
->>         depends on MACH_MT7629 || COMPILE_TEST
->> +       depends on OF
->>         default MACH_MT7629
->>         select PINCTRL_MTK_MOORE
->>
->> @@ -92,6 +94,7 @@ config PINCTRL_MT6797
->>
->>  config PINCTRL_MT7622
->>         bool "MediaTek MT7622 pin control"
->> +       depends on OF
->>         depends on ARM64 || COMPILE_TEST
->>         default ARM64 && ARCH_MEDIATEK
->>         select PINCTRL_MTK_MOORE
->> --
->> 2.20.1
->>
-> 
-> It seems the commit 2d2d478576d71000b29c52668c5712c825ee9af8 already
-> fixed the problem or is there something I'm missing?
-> 
+> My main motivation is to get rid of crappy header search path manipulation
+> from Kbuild core.
+>
+> Before that, I want to do as many treewide cleanups as possible.
 
-Opps, sorry. Should have checked linux-pinctrl.git.
-Sorry for spamming.
+Applied to 5.1/scsi-queue, thanks!
 
-BR,
-Dmitry.
+-- 
+Martin K. Petersen	Oracle Linux Engineering
