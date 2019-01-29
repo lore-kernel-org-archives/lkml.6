@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BF9C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F79C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1079F20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27FAE2083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762662;
-	bh=XHF4K2UB65KAKrV+VMorEDKJ9gJMC4ZEDzbH1G6j3iU=;
+	s=default; t=1548762665;
+	bh=i40wiWW+wRzNzyDgZ+WaSblw6vG94sPJwdlby4VADj0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=w0+n5SFLtkHeDFcigGZezwPnDxqyeAHPAR0/fJbnG3tqGaxbkXvPQCE/wwb7CWXLC
-	 gOAXentcO/s6qc/MYRk4JX5eYvDUO3y826d8wIKH50heJ+j8gDIXbgbVivAaR3mX3p
-	 bX33XJCeSQ8frbq8d4w7IAyrl1hlmGHZZlCmmfWw=
+	b=CLrRR0J7HoOHQgSNryhpYIPDnIQJnOYHwdW5hD9VvYC4jD95Y3Gnvz+LCL7ecPJOh
+	 8D8cW6cs592nn0qknnahTQ9pPIWZsysmx0NPOHHYKiqKuJjR/N+1ORSiVkqWvly/Ww
+	 xU+I+iSj2nh2d4WmJgnBIVV4J+0XzKVD6IKP5XE4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731794AbfA2LvA (ORCPT
+        id S1731804AbfA2LvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:51:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42404 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:51:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731778AbfA2Lu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:58 -0500
+        id S1731795AbfA2LvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:51:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B5C820989;
-        Tue, 29 Jan 2019 11:50:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 589E62086C;
+        Tue, 29 Jan 2019 11:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762658;
-        bh=XHF4K2UB65KAKrV+VMorEDKJ9gJMC4ZEDzbH1G6j3iU=;
+        s=default; t=1548762660;
+        bh=i40wiWW+wRzNzyDgZ+WaSblw6vG94sPJwdlby4VADj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qmzKzV5GC+uuSj80c3+lwTD4pgEeL85TUhSdFggHBgiUIkZ2VGKxfMVBnru4vT8ax
-         y6fJEoqubOoP/YhiYyrzL4RGCTlMxE/leSt5AloIvZm6XwiiQwgpZuv22jd0AguQxl
-         A2Rfa64487E2wdKB+ZCyG7yFNxD9TAdiUT1MI55o=
+        b=19kFhOuY23ro2j9rpqDTnukf4k4lHqBdJvIL7GmkxwtVds0AWoRtKNLWa+F39jUgX
+         3vjwWGmsh9uRgy7XZ3PDMbLBsf4fuho/2QOKiCrEdOZSrYuPIZ/+1mJKguz7+1MhCF
+         iZqB9nfk4gAyfesB9rKL5UbOgH20tKY3bAvyyheU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.9 14/44] ARC: perf: map generic branches to correct hardware condition
-Date:   Tue, 29 Jan 2019 12:36:09 +0100
-Message-Id: <20190129113141.189837374@linuxfoundation.org>
+        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.9 15/44] s390/early: improve machine detection
+Date:   Tue, 29 Jan 2019 12:36:10 +0100
+Message-Id: <20190129113141.255372874@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -66,41 +66,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-commit 3affbf0e154ee351add6fcc254c59c3f3947fa8f upstream.
+commit 03aa047ef2db4985e444af6ee1c1dd084ad9fb4c upstream.
 
-So far we've mapped branches to "ijmp" which also counts conditional
-branches NOT taken. This makes us different from other architectures
-such as ARM which seem to be counting only taken branches.
+Right now the early machine detection code check stsi 3.2.2 for "KVM"
+and set MACHINE_IS_VM if this is different. As the console detection
+uses diagnose 8 if MACHINE_IS_VM returns true this will crash Linux
+early for any non z/VM system that sets a different value than KVM.
+So instead of assuming z/VM, do not set any of MACHINE_IS_LPAR,
+MACHINE_IS_VM, or MACHINE_IS_KVM.
 
-So use "ijmptak" hardware condition which only counts (all jump
-instructions that are taken)
-
-'ijmptak' event is available on both ARCompact and ARCv2 ISA based
-cores.
-
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-[vgupta: reworked changelog]
+CC: stable@vger.kernel.org
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arc/include/asm/perf_event.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/s390/kernel/early.c |    4 ++--
+ arch/s390/kernel/setup.c |    2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/arc/include/asm/perf_event.h
-+++ b/arch/arc/include/asm/perf_event.h
-@@ -103,7 +103,8 @@ static const char * const arc_pmu_ev_hw_
+--- a/arch/s390/kernel/early.c
++++ b/arch/s390/kernel/early.c
+@@ -224,10 +224,10 @@ static noinline __init void detect_machi
+ 	if (stsi(vmms, 3, 2, 2) || !vmms->count)
+ 		return;
  
- 	/* counts condition */
- 	[PERF_COUNT_HW_INSTRUCTIONS] = "iall",
--	[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] = "ijmp", /* Excludes ZOL jumps */
-+	/* All jump instructions that are taken */
-+	[PERF_COUNT_HW_BRANCH_INSTRUCTIONS] = "ijmptak",
- 	[PERF_COUNT_ARC_BPOK]         = "bpok",	  /* NP-NT, PT-T, PNT-NT */
- #ifdef CONFIG_ISA_ARCV2
- 	[PERF_COUNT_HW_BRANCH_MISSES] = "bpmp",
+-	/* Running under KVM? If not we assume z/VM */
++	/* Detect known hypervisors */
+ 	if (!memcmp(vmms->vm[0].cpi, "\xd2\xe5\xd4", 3))
+ 		S390_lowcore.machine_flags |= MACHINE_FLAG_KVM;
+-	else
++	else if (!memcmp(vmms->vm[0].cpi, "\xa9\x61\xe5\xd4", 4))
+ 		S390_lowcore.machine_flags |= MACHINE_FLAG_VM;
+ }
+ 
+--- a/arch/s390/kernel/setup.c
++++ b/arch/s390/kernel/setup.c
+@@ -863,6 +863,8 @@ void __init setup_arch(char **cmdline_p)
+ 		pr_info("Linux is running under KVM in 64-bit mode\n");
+ 	else if (MACHINE_IS_LPAR)
+ 		pr_info("Linux is running natively in 64-bit mode\n");
++	else
++		pr_info("Linux is running as a guest in 64-bit mode\n");
+ 
+ 	/* Have one command line that is parsed and saved in /proc/cmdline */
+ 	/* boot_command_line has been already set up in early.c */
 
 
