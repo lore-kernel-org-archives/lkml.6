@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1C1C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB871C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2C1E2177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:10:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 701BD2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 06:10:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548742228;
-	bh=xpJjqVk08G7KRA5XNG0b5SrlCMynjA4/zEzEaDe3N0I=;
+	s=default; t=1548742232;
+	bh=8OWpSkUy4dPTB7G6tQ9SurVjPpM690XiBZ84Y9OR6w8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rjydJWEuBsFVqSzSOXAUaohsIUSBY6jBJmOJZQ946ljUAUZEGpC/4kuAHOyL32cm2
-	 0BvOA8Uih42uVI4rXOLblgwuH+mr+kn/FO/F/pyHVNRAD2kNLjMViGYl1jDtxKaK79
-	 yVHRAilAGymVSSSffG4sM308pz75WE42bjKKOC5E=
+	b=WH+MLtW74cCS3rtqEoC0Y+As5fXsHMcjI13sRR7d62HTjK2ERaEtAM7wmqz8IWwjR
+	 B3HqV3UAiez4RsPEXow3eomNDm8pdMcU1l6mrEzxJko3Ibevp0tusikNfU3BflMQUW
+	 rrEg0yuZHc/7daV1jPxuN7X/3cNhnczGPvW6Lm/g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbfA2GK0 (ORCPT
+        id S1727639AbfA2GKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 01:10:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33440 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 01:10:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbfA2GKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 01:10:25 -0500
+        id S1727444AbfA2GK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 01:10:27 -0500
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9D9921848;
-        Tue, 29 Jan 2019 06:10:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E12021873;
+        Tue, 29 Jan 2019 06:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548742224;
-        bh=xpJjqVk08G7KRA5XNG0b5SrlCMynjA4/zEzEaDe3N0I=;
+        s=default; t=1548742225;
+        bh=8OWpSkUy4dPTB7G6tQ9SurVjPpM690XiBZ84Y9OR6w8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZJC2IYe+v9rw/dx+ZZJFMyshaWLsNA1RnJPBoqxD7sxTSgkoGKoCRLE3V6e0h8VOY
-         Gr762PUjpraoCaHrnIYWVXWtxRcK0RySv+/XtbRiuWS02iplISuK1ZVY8DI21zrNFy
-         mP4oQPSChkRMFXy5YmGzMu4PUnbXy3fcWXqCHlmI=
+        b=muTgoQHowEnKiFGG6ylcj22+mZq+vGuj9K7fSfc2u5xYy2jcVfpGhp6NJqNZGSxdT
+         7SuZp/uE3Px0Mw+kBYK93yUDWQtvyUG6YQyHm1ioBpH4+mxrZbwTjlYKu61O+HPIU7
+         NFUrAIVVmS4MdjPJETWNBy4Uen5hRiMK3ROibhSc=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -46,9 +46,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 4/9] clk: Introduce of_clk_get_hw_from_clkspec()
-Date:   Mon, 28 Jan 2019 22:10:16 -0800
-Message-Id: <20190129061021.94775-5-sboyd@kernel.org>
+Subject: [PATCH 8/9] clk: qcom: gcc-sdm845: Migrate to DT parent mapping
+Date:   Mon, 28 Jan 2019 22:10:20 -0800
+Message-Id: <20190129061021.94775-9-sboyd@kernel.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 In-Reply-To: <20190129061021.94775-1-sboyd@kernel.org>
 References: <20190129061021.94775-1-sboyd@kernel.org>
@@ -59,19 +59,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We want to get struct clk_hw pointers from a DT clk specifier (i.e. a
-clocks property) so that we can find parent clks without searching for
-globally unique clk names. This should save time by avoiding the global
-string search for clks that are external to the clock controller
-providing the clk and let us move away from string comparisons in
-general.
-
-Introduce of_clk_get_hw_from_clkspec() which is largely the DT parsing
-part of finding clks implemented in clkdev.c and have that return a
-clk_hw pointer instead of converting that into a clk pointer. This lets
-us push up the clk pointer creation to the caller in clk_get() and
-avoids the need to push the dev_id and con_id throughout the DT parsing
-code.
+TODO: Fully convert driver
 
 Cc: Miquel Raynal <miquel.raynal@bootlin.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>
@@ -79,240 +67,431 @@ Cc: Russell King <linux@armlinux.org.uk>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/clk.c    | 46 +++++++++++++++++++++---
- drivers/clk/clk.h    |  5 +--
- drivers/clk/clkdev.c | 83 +++++++++++++-------------------------------
- 3 files changed, 69 insertions(+), 65 deletions(-)
+ drivers/clk/qcom/gcc-sdm845.c | 180 +++++++++++++++++-----------------
+ 1 file changed, 89 insertions(+), 91 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 01cdb9ae03fa..d4c4cab42375 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4077,6 +4077,42 @@ void devm_of_clk_del_provider(struct device *dev)
- }
- EXPORT_SYMBOL(devm_of_clk_del_provider);
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index f133b7f5652f..9da9a337238d 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -25,6 +25,59 @@
+ #include "gdsc.h"
+ #include "reset.h"
  
-+int of_parse_clkspec(const struct device_node *np, int index, const char *name,
-+		     struct of_phandle_args *out_args)
-+{
-+	int ret = -ENOENT;
++static struct clk_alpha_pll gpll0 = {
++	.offset = 0x0,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr = {
++		.enable_reg = 0x52000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gpll0",
++			.parent_names = (const char *[]){ "bi_tcxo" },
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_fixed_fabia_ops,
++		},
++	},
++};
 +
-+	/* Walk up the tree of devices looking for a clock property that matches */
-+	while (np) {
-+		/*
-+		 * For named clocks, first look up the name in the
-+		 * "clock-names" property.  If it cannot be found, then index
-+		 * will be an error code and of_parse_phandle_with_args() will
-+		 * return -EINVAL.
-+		 */
-+		if (name)
-+			index = of_property_match_string(np, "clock-names", name);
-+		ret = of_parse_phandle_with_args(np, "clocks", "#clock-cells",
-+						 index, out_args);
-+		if (!ret)
-+			break;
-+		if (name && index >= 0)
-+			break;
++static struct clk_alpha_pll gpll4 = {
++	.offset = 0x76000,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr = {
++		.enable_reg = 0x52000,
++		.enable_mask = BIT(4),
++		.hw.init = &(struct clk_init_data){
++			.name = "gpll4",
++			.parent_names = (const char *[]){ "bi_tcxo" },
++			.num_parents = 1,
++			.ops = &clk_alpha_pll_fixed_fabia_ops,
++		},
++	},
++};
 +
-+		/*
-+		 * No matching clock found on this node.  If the parent node
-+		 * has a "clock-ranges" property, then we can try one of its
-+		 * clocks.
-+		 */
-+		np = np->parent;
-+		if (np && !of_get_property(np, "clock-ranges", NULL))
-+			break;
-+		index = 0;
-+	}
++static const struct clk_div_table post_div_table_fabia_even[] = {
++	{ 0x0, 1 },
++	{ 0x1, 2 },
++	{ 0x3, 4 },
++	{ 0x7, 8 },
++	{ }
++};
 +
-+	return ret;
-+}
++static struct clk_alpha_pll_postdiv gpll0_out_even = {
++	.offset = 0x0,
++	.post_div_shift = 8,
++	.post_div_table = post_div_table_fabia_even,
++	.num_post_div = ARRAY_SIZE(post_div_table_fabia_even),
++	.width = 4,
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "gpll0_out_even",
++		.parent_names = (const char *[]){ "gpll0" },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_postdiv_fabia_ops,
++	},
++};
 +
- static struct clk_hw *
- __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
- 			      struct of_phandle_args *clkspec)
-@@ -4092,8 +4128,7 @@ __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
- 	return __clk_get_hw(clk);
- }
+ enum {
+ 	P_BI_TCXO,
+ 	P_AUD_REF_CLK,
+@@ -42,11 +95,11 @@ static const struct parent_map gcc_parent_map_0[] = {
+ 	{ P_CORE_BI_PLL_TEST_SE, 7 },
+ };
  
--struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
--				       const char *dev_id, const char *con_id)
-+struct clk_hw *of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
- {
- 	struct of_clk_provider *provider;
- 	struct clk_hw *hw = ERR_PTR(-EPROBE_DEFER);
-@@ -4101,7 +4136,6 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 	if (!clkspec)
- 		return ERR_PTR(-EINVAL);
+-static const char * const gcc_parent_names_0[] = {
+-	"bi_tcxo",
+-	"gpll0",
+-	"gpll0_out_even",
+-	"core_bi_pll_test_se",
++static const struct clk_parent_data gcc_parent_data_0[] = {
++	{ .name = "xo", .fallback = "bi_tcxo" },
++	{ .hw = &gpll0.clkr.hw },
++	{ .hw = &gpll0_out_even.clkr.hw },
++	{ .name = "core_bi_pll_test_se", .fallback = "core_bi_pll_test_se" }
+ };
  
--	/* Check if we have such a provider in our array */
- 	mutex_lock(&of_clk_mutex);
- 	list_for_each_entry(provider, &of_clk_providers, link) {
- 		if (provider->node == clkspec->np) {
-@@ -4112,7 +4146,7 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 	}
- 	mutex_unlock(&of_clk_mutex);
+ static const struct parent_map gcc_parent_map_1[] = {
+@@ -144,59 +197,6 @@ static const char * const gcc_parent_names_10[] = {
+ 	"core_bi_pll_test_se",
+ };
  
--	return clk_hw_create_clk(hw, dev_id, con_id);
-+	return hw;
- }
- 
- /**
-@@ -4125,7 +4159,9 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
-  */
- struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
- {
--	return __of_clk_get_from_provider(clkspec, NULL, __func__);
-+	struct clk_hw *hw = of_clk_get_hw_from_clkspec(clkspec);
-+
-+	return clk_hw_create_clk(hw, NULL, __func__);
- }
- EXPORT_SYMBOL_GPL(of_clk_get_from_provider);
- 
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index c9a14122fadc..cdac6dfa8094 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -12,8 +12,9 @@
- struct clk_hw;
- 
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
--struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
--				       const char *dev_id, const char *con_id);
-+int of_parse_clkspec(const struct device_node *np, int index, const char *name,
-+		     struct of_phandle_args *out_args);
-+struct clk_hw *of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec);
- #endif
- 
- #ifdef CONFIG_COMMON_CLK
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index bdeaffc950ae..5ebb2119c0b9 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -28,69 +28,37 @@ static LIST_HEAD(clocks);
- static DEFINE_MUTEX(clocks_mutex);
- 
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
--static struct clk *__of_clk_get(struct device_node *np, int index,
--			       const char *dev_id, const char *con_id)
-+static struct clk_hw *of_clk_get_hw(struct device_node *np,
-+				    int index, const char *con_id)
- {
-+	int ret;
-+	struct clk_hw *hw;
- 	struct of_phandle_args clkspec;
--	struct clk *clk;
--	int rc;
- 
--	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
--					&clkspec);
--	if (rc)
--		return ERR_PTR(rc);
-+	ret = of_parse_clkspec(np, index, con_id, &clkspec);
-+	if (ret)
-+		return ERR_PTR(ret);
- 
--	clk = __of_clk_get_from_provider(&clkspec, dev_id, con_id);
-+	hw = of_clk_get_hw_from_clkspec(&clkspec);
- 	of_node_put(clkspec.np);
- 
--	return clk;
-+	return hw;
- }
- 
--struct clk *of_clk_get(struct device_node *np, int index)
-+static struct clk *__of_clk_get(struct device_node *np,
-+				int index, const char *dev_id,
-+				const char *con_id)
- {
--	return __of_clk_get(np, index, np->full_name, NULL);
-+	struct clk_hw *hw = of_clk_get_hw(np, index, con_id);
-+
-+	return clk_hw_create_clk(hw, dev_id, con_id);
- }
--EXPORT_SYMBOL(of_clk_get);
- 
--static struct clk *__of_clk_get_by_name(struct device_node *np,
--					const char *dev_id,
--					const char *name)
-+struct clk *of_clk_get(struct device_node *np, int index)
- {
--	struct clk *clk = ERR_PTR(-ENOENT);
+-static struct clk_alpha_pll gpll0 = {
+-	.offset = 0x0,
+-	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+-	.clkr = {
+-		.enable_reg = 0x52000,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gpll0",
+-			.parent_names = (const char *[]){ "bi_tcxo" },
+-			.num_parents = 1,
+-			.ops = &clk_alpha_pll_fixed_fabia_ops,
+-		},
+-	},
+-};
 -
--	/* Walk up the tree of devices looking for a clock that matches */
--	while (np) {
--		int index = 0;
+-static struct clk_alpha_pll gpll4 = {
+-	.offset = 0x76000,
+-	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+-	.clkr = {
+-		.enable_reg = 0x52000,
+-		.enable_mask = BIT(4),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gpll4",
+-			.parent_names = (const char *[]){ "bi_tcxo" },
+-			.num_parents = 1,
+-			.ops = &clk_alpha_pll_fixed_fabia_ops,
+-		},
+-	},
+-};
 -
--		/*
--		 * For named clocks, first look up the name in the
--		 * "clock-names" property.  If it cannot be found, then
--		 * index will be an error code, and of_clk_get() will fail.
--		 */
--		if (name)
--			index = of_property_match_string(np, "clock-names", name);
--		clk = __of_clk_get(np, index, dev_id, name);
--		if (!IS_ERR(clk)) {
--			break;
--		} else if (name && index >= 0) {
--			if (PTR_ERR(clk) != -EPROBE_DEFER)
--				pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
--					np, name ? name : "", index);
--			return clk;
--		}
+-static const struct clk_div_table post_div_table_fabia_even[] = {
+-	{ 0x0, 1 },
+-	{ 0x1, 2 },
+-	{ 0x3, 4 },
+-	{ 0x7, 8 },
+-	{ }
+-};
 -
--		/*
--		 * No matching clock found on this node.  If the parent node
--		 * has a "clock-ranges" property, then we can try one of its
--		 * clocks.
--		 */
--		np = np->parent;
--		if (np && !of_get_property(np, "clock-ranges", NULL))
--			break;
--	}
+-static struct clk_alpha_pll_postdiv gpll0_out_even = {
+-	.offset = 0x0,
+-	.post_div_shift = 8,
+-	.post_div_table = post_div_table_fabia_even,
+-	.num_post_div = ARRAY_SIZE(post_div_table_fabia_even),
+-	.width = 4,
+-	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gpll0_out_even",
+-		.parent_names = (const char *[]){ "gpll0" },
+-		.num_parents = 1,
+-		.ops = &clk_alpha_pll_postdiv_fabia_ops,
+-	},
+-};
 -
--	return clk;
-+	return __of_clk_get(np, index, np->full_name, NULL);
- }
-+EXPORT_SYMBOL(of_clk_get);
+ static const struct freq_tbl ftbl_gcc_cpuss_ahb_clk_src[] = {
+ 	F(19200000, P_BI_TCXO, 1, 0, 0),
+ 	{ }
+@@ -334,7 +334,7 @@ static struct clk_rcg2 gcc_pcie_phy_refgen_clk_src = {
+ 	.freq_tbl = ftbl_gcc_pcie_phy_refgen_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_pcie_phy_refgen_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_ops,
+ 	},
+@@ -356,7 +356,7 @@ static struct clk_rcg2 gcc_qspi_core_clk_src = {
+ 	.freq_tbl = ftbl_gcc_qspi_core_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_qspi_core_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_floor_ops,
+ 	},
+@@ -377,7 +377,7 @@ static struct clk_rcg2 gcc_pdm2_clk_src = {
+ 	.freq_tbl = ftbl_gcc_pdm2_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_pdm2_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_ops,
+ 	},
+@@ -404,7 +404,7 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s0_clk_src[] = {
  
- /**
-  * of_clk_get_by_name() - Parse and lookup a clock referenced by a device node
-@@ -106,15 +74,14 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
- 	if (!np)
- 		return ERR_PTR(-ENOENT);
+ static struct clk_init_data gcc_qupv3_wrap0_s0_clk_init = {
+ 	.name = "gcc_qupv3_wrap0_s0_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -420,7 +420,7 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src = {
  
--	return __of_clk_get_by_name(np, np->full_name, name);
-+	return __of_clk_get(np, -1, np->full_name, name);
- }
- EXPORT_SYMBOL(of_clk_get_by_name);
+ static struct clk_init_data gcc_qupv3_wrap0_s1_clk_init = {
+ 	.name = "gcc_qupv3_wrap0_s1_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -436,7 +436,7 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
  
- #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
+ static struct clk_init_data gcc_qupv3_wrap0_s2_clk_init = {
+ 	.name = "gcc_qupv3_wrap0_s2_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -452,7 +452,7 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
  
--static struct clk *__of_clk_get_by_name(struct device_node *np,
--					const char *dev_id,
--					const char *name)
-+static struct clk_hw *of_clk_get_hw(struct device_node *np,
-+				    int index, const char *con_id)
- {
- 	return ERR_PTR(-ENOENT);
- }
-@@ -187,12 +154,12 @@ EXPORT_SYMBOL(clk_get_sys);
- struct clk *clk_get(struct device *dev, const char *con_id)
- {
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
--	struct clk *clk;
-+	struct clk_hw *hw;
+ static struct clk_init_data gcc_qupv3_wrap0_s3_clk_init = {
+ 	.name = "gcc_qupv3_wrap0_s3_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -468,7 +468,7 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
  
- 	if (dev && dev->of_node) {
--		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
--		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
--			return clk;
-+		hw = of_clk_get_hw(dev->of_node, 0, con_id);
-+		if (!IS_ERR(hw) || PTR_ERR(hw) == -EPROBE_DEFER)
-+			return clk_hw_create_clk(hw, dev_id, con_id);
- 	}
+ static struct clk_init_data gcc_qupv3_wrap0_s4_clk_init = {
+ 	.name = "gcc_qupv3_wrap0_s4_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -484,7 +484,7 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
  
- 	return clk_get_sys(dev_id, con_id);
+ static struct clk_init_data gcc_qupv3_wrap0_s5_clk_init = {
+ 	.name = "gcc_qupv3_wrap0_s5_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -500,7 +500,7 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
+ 
+ static struct clk_init_data gcc_qupv3_wrap0_s6_clk_init = {
+ 	.name = "gcc_qupv3_wrap0_s6_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -516,7 +516,7 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src = {
+ 
+ static struct clk_init_data gcc_qupv3_wrap0_s7_clk_init = {
+ 	.name = "gcc_qupv3_wrap0_s7_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -532,7 +532,7 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src = {
+ 
+ static struct clk_init_data gcc_qupv3_wrap1_s0_clk_init = {
+ 	.name = "gcc_qupv3_wrap1_s0_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -548,7 +548,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
+ 
+ static struct clk_init_data gcc_qupv3_wrap1_s1_clk_init = {
+ 	.name = "gcc_qupv3_wrap1_s1_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -564,7 +564,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
+ 
+ static struct clk_init_data gcc_qupv3_wrap1_s2_clk_init = {
+ 	.name = "gcc_qupv3_wrap1_s2_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -580,7 +580,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
+ 
+ static struct clk_init_data gcc_qupv3_wrap1_s3_clk_init = {
+ 	.name = "gcc_qupv3_wrap1_s3_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -596,7 +596,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
+ 
+ static struct clk_init_data gcc_qupv3_wrap1_s4_clk_init = {
+ 	.name = "gcc_qupv3_wrap1_s4_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -612,7 +612,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
+ 
+ static struct clk_init_data gcc_qupv3_wrap1_s5_clk_init = {
+ 	.name = "gcc_qupv3_wrap1_s5_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -628,7 +628,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
+ 
+ static struct clk_init_data gcc_qupv3_wrap1_s6_clk_init = {
+ 	.name = "gcc_qupv3_wrap1_s6_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -644,7 +644,7 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
+ 
+ static struct clk_init_data gcc_qupv3_wrap1_s7_clk_init = {
+ 	.name = "gcc_qupv3_wrap1_s7_clk_src",
+-	.parent_names = gcc_parent_names_0,
++	.parent_data = gcc_parent_data_0,
+ 	.num_parents = 4,
+ 	.ops = &clk_rcg2_shared_ops,
+ };
+@@ -701,7 +701,7 @@ static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+ 	.freq_tbl = ftbl_gcc_sdcc4_apps_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_sdcc4_apps_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_ops,
+ 	},
+@@ -743,7 +743,7 @@ static struct clk_rcg2 gcc_ufs_card_axi_clk_src = {
+ 	.freq_tbl = ftbl_gcc_ufs_card_axi_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_ufs_card_axi_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+@@ -765,7 +765,7 @@ static struct clk_rcg2 gcc_ufs_card_ice_core_clk_src = {
+ 	.freq_tbl = ftbl_gcc_ufs_card_ice_core_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_ufs_card_ice_core_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+@@ -800,7 +800,7 @@ static struct clk_rcg2 gcc_ufs_card_unipro_core_clk_src = {
+ 	.freq_tbl = ftbl_gcc_ufs_card_unipro_core_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_ufs_card_unipro_core_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+@@ -823,7 +823,7 @@ static struct clk_rcg2 gcc_ufs_phy_axi_clk_src = {
+ 	.freq_tbl = ftbl_gcc_ufs_phy_axi_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_ufs_phy_axi_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+@@ -837,7 +837,7 @@ static struct clk_rcg2 gcc_ufs_phy_ice_core_clk_src = {
+ 	.freq_tbl = ftbl_gcc_ufs_card_ice_core_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_ufs_phy_ice_core_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+@@ -865,7 +865,7 @@ static struct clk_rcg2 gcc_ufs_phy_unipro_core_clk_src = {
+ 	.freq_tbl = ftbl_gcc_ufs_card_unipro_core_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_ufs_phy_unipro_core_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+@@ -888,7 +888,7 @@ static struct clk_rcg2 gcc_usb30_prim_master_clk_src = {
+ 	.freq_tbl = ftbl_gcc_usb30_prim_master_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_usb30_prim_master_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+@@ -910,7 +910,7 @@ static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
+ 	.freq_tbl = ftbl_gcc_usb30_prim_mock_utmi_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_usb30_prim_mock_utmi_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+@@ -924,7 +924,7 @@ static struct clk_rcg2 gcc_usb30_sec_master_clk_src = {
+ 	.freq_tbl = ftbl_gcc_usb30_prim_master_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_usb30_sec_master_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_ops,
+ 	},
+@@ -938,7 +938,7 @@ static struct clk_rcg2 gcc_usb30_sec_mock_utmi_clk_src = {
+ 	.freq_tbl = ftbl_gcc_usb30_prim_mock_utmi_clk_src,
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gcc_usb30_sec_mock_utmi_clk_src",
+-		.parent_names = gcc_parent_names_0,
++		.parent_data = gcc_parent_data_0,
+ 		.num_parents = 4,
+ 		.ops = &clk_rcg2_ops,
+ 	},
+@@ -1030,9 +1030,7 @@ static struct clk_branch gcc_aggre_ufs_card_axi_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_aggre_ufs_card_axi_clk",
+-			.parent_names = (const char *[]){
+-				"gcc_ufs_card_axi_clk_src",
+-			},
++			.parent_hws = (struct clk_hw *[]){ &gcc_ufs_card_axi_clk_src.clkr.hw },
+ 			.num_parents = 1,
+ 			.flags = CLK_SET_RATE_PARENT,
+ 			.ops = &clk_branch2_ops,
 -- 
 Sent by a computer through tubes
 
