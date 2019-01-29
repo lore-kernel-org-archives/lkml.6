@@ -2,100 +2,168 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D536C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F405C282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C15920870
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:37:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYN0oAEK"
+	by mail.kernel.org (Postfix) with ESMTP id 3D4D7217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfA2Ahl (ORCPT
+        id S1727240AbfA2AjM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:37:41 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46095 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfA2Ahk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:37:40 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c73so8786669pfe.13;
-        Mon, 28 Jan 2019 16:37:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Q0DGhxaczt609U70/kPzWdo/a0NW1iHZiBbzvJaHoVg=;
-        b=hYN0oAEKnvT4L1gEod8u+6JSMVATyUTQ5I5QZGCnAQIu5/wnDVvQ6QyRw5bJhkuwqk
-         YDOvT5rBeIsCguuA98Ys8LyzT0FAACaf503tWdkqRI3pp6Cp9AFNTmOluoHZ1MvLCqBg
-         c4XZ+pLoKXr3JHEKLHXW5S8AsLr47StUNNJJYrn+izj7xgdqMDNwa7rFSM3TerK09pCg
-         xbbNZK5OXnGZDy5E25i5debfqQ9gOEi9Uh7OjZJiHCkmw4byGvk02mDgs5aOYU2o8MjA
-         Zyf189iRp19Y/T9U+VjTsuvo0ek+AfFJLGEWTg8ZXNVl48L+Oey9NQM/b6bq/nLH5HcP
-         CQTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Q0DGhxaczt609U70/kPzWdo/a0NW1iHZiBbzvJaHoVg=;
-        b=ISm/v+9+b5KOhCjSLl16ZWHXUGhLAchr3Y+PQoxAMv1ZoZDnAZyKIDNmUitqUms1Qa
-         bmHtH42VIaM9nUHPKaSw/jmQNnJH3kOEWoBI5EyByiGkPLR9QGJw6uenG4o4w1opPaIU
-         eQ9IIlxSgHEa6Ux3xJad/vVrqaEadYi8rE4eykP9unrt4nKKFxbHpTNsPVea0Mout5u+
-         NG4caK45C+/BR0KKj+3OA+fgOy+tf7XiLFQS6Un94XqjpcCzdTwEdqKNCjiVTDBuQua7
-         L5xw3r+7agIy35obKPx2m1JYjBTg0mZcaA6rF0AkWmIYrkK6cpB6nHn+nvYC0OT9mVUG
-         Le6Q==
-X-Gm-Message-State: AJcUukeP8QZ0uFxauBN6GGwjktIv2SpaV0jtFSAER++anS0H6tfWpoDd
-        mFeAPL5OJc8CW4qqyxs7+IaDRfYW
-X-Google-Smtp-Source: ALg8bN7PRUB14bvrOIiJXvjofbO/Xud3TmQG0Hq6uOgRuFoINNRr0mR4b2DXpXgFr4hkD/egmoLUFQ==
-X-Received: by 2002:a63:d252:: with SMTP id t18mr21952445pgi.133.1548722259488;
-        Mon, 28 Jan 2019 16:37:39 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id l74sm53812663pfb.145.2019.01.28.16.37.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 16:37:38 -0800 (PST)
-Date:   Mon, 28 Jan 2019 16:37:37 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     linux-input@vger.kernel.org
-Cc:     Richard Leitner <richard.leitner@skidata.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: sx8654 - do not override interrupt trigger
-Message-ID: <20190129003737.GA80949@dtor-ws>
+        Mon, 28 Jan 2019 19:39:12 -0500
+Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726845AbfA2AjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 19:39:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
+   d="scan'208";a="133921882"
+Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
+  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:10 -0800
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 00/20] Merge text_poke fixes and executable lockdowns
+Date:   Mon, 28 Jan 2019 16:34:02 -0800
+Message-Id: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should rely on the interrupt trigger (level vs edge) set up by the
-firmware or board code instead of forcing what we consider appropriate.
+This patchset improves several overlapping issues around stale TLB
+entries and W^X violations. It is combined from a slightly tweaked
+"x86/alternative: text_poke() enhancements v7" [1] and a next version of
+the "Don’t leave executable TLB entries to freed pages v2" [2]
+patchsets that were conflicting.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/touchscreen/sx8654.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The related issues that this fixes:
+1. Fixmap PTEs that are used for patching are available for access from
+   other cores and might be exploited. They are not even flushed from
+   the TLB in remote cores, so the risk is even higher. Address this
+   issue by introducing a temporary mm that is only used during
+   patching. Unfortunately, due to init ordering, fixmap is still used
+   during boot-time patching. Future patches can eliminate the need for
+   it.
+2. Missing lockdep assertion to ensure text_mutex is taken. It is
+   actually not always taken, so fix the instances that were found not
+   to take the lock (although they should be safe even without taking
+   the lock).
+3. Module_alloc returning memory that is RWX until a module is finished
+   loading.
+4. Sometimes when memory is freed via the module subsystem, an
+   executable permissioned TLB entry can remain to a freed page. If the
+   page is re-used to back an address that will receive data from
+   userspace, it can result in user data being mapped as executable in
+   the kernel. The root of this behavior is vfree lazily flushing the
+   TLB, but not lazily freeing the underlying pages.
 
-diff --git a/drivers/input/touchscreen/sx8654.c b/drivers/input/touchscreen/sx8654.c
-index 1cc0e4116d3b..b792320d628e 100644
---- a/drivers/input/touchscreen/sx8654.c
-+++ b/drivers/input/touchscreen/sx8654.c
-@@ -403,7 +403,7 @@ static int sx8654_probe(struct i2c_client *client,
+Changes for v2:
+ - Adding “Reviewed-by tag” [Masami]
+ - Comment instead of code to warn against module removal while patching [Masami]
+ - Avoiding open-coded TLB flush [Andy]
+ - Remove "This patch" [Borislav Petkov]
+ - Not set global bit during text poking [Andy, hpa]
+ - Add Ack from [Pavel Machek]
+ - Split patch 16 "Plug in new special vfree flag" into 4 patches (16-19)
+   to make it easier to review. There were no code changes.
+
+The changes from "Don’t leave executable TLB entries to freed pages
+v2" to v1:
+ - Add support for case of hibernate trying to save an unmapped page
+   on the directmap. (Ard Biesheuvel)
+ - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
+ - Avoid changing deferred free code by moving modules init free to work
+   queue (Andy Lutomirski)
+ - Plug in new flag for kprobes and ftrace
+ - More arch generic names for set_pages functions (Ard Biesheuvel)
+ - Fix for TLB not always flushing the directmap (Nadav Amit)
  
- 	error = devm_request_threaded_irq(&client->dev, client->irq,
- 					  NULL, sx8654->data->irqh,
--					  IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-+					  IRQF_ONESHOT,
- 					  client->name, sx8654);
- 	if (error) {
- 		dev_err(&client->dev,
--- 
-2.20.1.495.gaa96b0ce6b-goog
+Changes from "x86/alternative: text_poke() enhancements v7" to v1
+ - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
+ - Remove text_poke usage from ftrace (Nadav)
+ 
+[1] https://lkml.org/lkml/2018/12/5/200
+[2] https://lkml.org/lkml/2018/12/11/1571
 
+Andy Lutomirski (1):
+  x86/mm: temporary mm struct
+
+Nadav Amit (12):
+  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+  x86/jump_label: Use text_poke_early() during early init
+  fork: provide a function for copying init_mm
+  x86/alternative: initializing temporary mm for patching
+  x86/alternative: use temporary mm for text poking
+  x86/kgdb: avoid redundant comparison of patched code
+  x86/ftrace: set trampoline pages as executable
+  x86/kprobes: instruction pages initialization enhancements
+  x86: avoid W^X being broken during modules loading
+  x86/jump-label: remove support for custom poker
+  x86/alternative: Remove the return value of text_poke_*()
+  x86/alternative: comment about module removal races
+
+Rick Edgecombe (7):
+  Add set_alias_ function and x86 implementation
+  mm: Make hibernate handle unmapped pages
+  vmalloc: New flags for safe vfree on special perms
+  modules: Use vmalloc special flag
+  bpf: Use vmalloc special flag
+  x86/ftrace: Use vmalloc special flag
+  x86/kprobes: Use vmalloc special flag
+
+ arch/Kconfig                         |   4 +
+ arch/x86/Kconfig                     |   1 +
+ arch/x86/include/asm/fixmap.h        |   2 -
+ arch/x86/include/asm/mmu_context.h   |  32 +++++
+ arch/x86/include/asm/pgtable.h       |   3 +
+ arch/x86/include/asm/set_memory.h    |   3 +
+ arch/x86/include/asm/text-patching.h |   7 +-
+ arch/x86/kernel/alternative.c        | 199 ++++++++++++++++++++-------
+ arch/x86/kernel/ftrace.c             |  14 +-
+ arch/x86/kernel/jump_label.c         |  19 ++-
+ arch/x86/kernel/kgdb.c               |  25 +---
+ arch/x86/kernel/kprobes/core.c       |  19 ++-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/mm/init_64.c                |  36 +++++
+ arch/x86/mm/pageattr.c               |  16 ++-
+ arch/x86/xen/mmu_pv.c                |   2 -
+ include/linux/filter.h               |  18 +--
+ include/linux/mm.h                   |  18 +--
+ include/linux/sched/task.h           |   1 +
+ include/linux/set_memory.h           |  10 ++
+ include/linux/vmalloc.h              |  13 ++
+ init/main.c                          |   3 +
+ kernel/bpf/core.c                    |   1 -
+ kernel/fork.c                        |  24 +++-
+ kernel/module.c                      |  82 ++++++-----
+ mm/page_alloc.c                      |   7 +-
+ mm/vmalloc.c                         | 122 +++++++++++++---
+ 27 files changed, 494 insertions(+), 189 deletions(-)
 
 -- 
-Dmitry
+2.17.1
+
