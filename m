@@ -2,194 +2,152 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF96C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE4E3C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEC3D2083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762394;
-	bh=YX6RU71wyCjSw2LXp9VR3Z3M6/DJAGQrcU2auUs0ZaE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rj/2KUKiJeZmVQNmPe+4BcxsEah9X6B6FrbBiWbKkeYg89kJKQHarpeY4VyUCapx6
-	 JITrjw8vz5mHKW+oIIOytdmlMR8WPt+mpcVhAFgkEAD/K6eArNPzmm5aSAfrKE/LCK
-	 Dl+11IRVnOkJgAh6phWf6FkQz1xnk5XmnSDTyhu8=
+	by mail.kernel.org (Postfix) with ESMTP id AC018218A4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:46:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FrfYEZT6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731001AbfA2Lqc (ORCPT
+        id S1731014AbfA2Lqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:46:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730248AbfA2Lq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:46:26 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7AEA214DA;
-        Tue, 29 Jan 2019 11:46:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762385;
-        bh=YX6RU71wyCjSw2LXp9VR3Z3M6/DJAGQrcU2auUs0ZaE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A472eODDXZSy+4GVrsId3nN+/hRB8kEUbH4tUfF6TPLtkiokMNYZNMWYWNB+eHt39
-         lPrOigyagGQLCsSBApzb/y5UAHUkcFlZ14+P1HgymVCvVQ1nCQ2OOoeN/zenRNgGO/
-         aMhkIe57LPD4x+87E8dWDDnvQSrYVgn7dNfdHx6c=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 089/103] bpf: move tmp variable into ax register in interpreter
-Date:   Tue, 29 Jan 2019 12:36:06 +0100
-Message-Id: <20190129113206.885554524@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
-References: <20190129113159.567154026@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Tue, 29 Jan 2019 06:46:37 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40264 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730314AbfA2Lqe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:46:34 -0500
+Received: by mail-wr1-f65.google.com with SMTP id p4so21692997wrt.7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 03:46:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MEsBkkQpzuarU+fa/A0bQ3xfEuHxREZMNhy1WeAaMjk=;
+        b=FrfYEZT60xt5oi7+ZvmnYi5BRYo8xnbbzc8XTaeGIFRXD5mN11xKZvYKV0InGV5yZ3
+         r135G/Lb0b6ZBVTnxv75buMjJAeGyvji9Rwpylo1cXLj5C2Lt1Hyf1jK8p/nSYi/qDb9
+         PdYhYBPiT/1uW42V9GGv7DlIdQD5J5L28TjYA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MEsBkkQpzuarU+fa/A0bQ3xfEuHxREZMNhy1WeAaMjk=;
+        b=Ve+6iA1J7trxzmEcynnNiv47Tx2GHk4scUA1lZHKvG3uZ8ajAqy1+JH/x9SiKnDJNH
+         dOJ30oceP0OHJbSMcAoOp1EW5qK5l8wDiK5OAgTglLehCHKUPDcbi3LDHEO8rEcJSZhu
+         UEhp+Rm8ULEqDMY6JbZjdKdIRQ67kzXEIJuRr7MDHRG+ZVVee0UgjsvjNzB1VQDNYTXz
+         kFEZo0WXdvNybrSd1+PSQBVnSdK9ilMP1OABQFymu1BSndC5YO30Tl/TosxEUiVIu2b5
+         P+RwlfOa61uHfxJEHT4eKR/wGJjXZbm926cVOrWdI5l502AiFtWiBCAl6aAXck0wbJBy
+         WLiw==
+X-Gm-Message-State: AJcUukdwj8cRejzImbdrolRoDt5LHH2FM8MKl9KAavWWttT6br7/8iPu
+        xaukpBa+beNTOBTH3YWXwTaE+w==
+X-Google-Smtp-Source: ALg8bN7YjAfjQxB8Wvcn5c2RLD00tkNvdz/hCj3V5Cbve2qBYl5ryyko2j2F2lvpmUAePLIdiH9aUw==
+X-Received: by 2002:adf:ca13:: with SMTP id o19mr25332438wrh.148.1548762392226;
+        Tue, 29 Jan 2019 03:46:32 -0800 (PST)
+Received: from [10.44.66.8] ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id i192sm1997853wmg.7.2019.01.29.03.46.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 03:46:31 -0800 (PST)
+Subject: Re: linux-next: manual merge of the char-misc tree with the qcom tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Gross <andy.gross@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Dai <daidavid1@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
+References: <20190129140846.4dc4c158@canb.auug.org.au>
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+ KEmKjLDvB0pePJkdTw==
+Message-ID: <9e32a49c-fb78-c5f8-77cf-66b4b4a8b4a2@linaro.org>
+Date:   Tue, 29 Jan 2019 13:46:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190129140846.4dc4c158@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+Hi Stephen,
 
-------------------
+On 1/29/19 05:08, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the char-misc tree got a conflict in:
+> 
+>   arch/arm64/boot/dts/qcom/sdm845.dtsi
+> 
+> between commits:
+> 
+>   05556681948b ("arm64: dts: sdm845: Add videocc node")
+>   5b6f186f0abb ("arm64: dts: sdm845: Add rpmh powercontroller node")
+> 
+> from the qcom tree and commit:
+> 
+>   ae0037dbfc5e ("arm64: dts: sdm845: Add interconnect provider DT nodes")
+> 
+> from the char-misc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-[ commit 144cd91c4c2bced6eb8a7e25e590f6618a11e854 upstream ]
+Thanks for the fix! I have checked the tree and the merge is correct.
 
-This change moves the on-stack 64 bit tmp variable in ___bpf_prog_run()
-into the hidden ax register. The latter is currently only used in JITs
-for constant blinding as a temporary scratch register, meaning the BPF
-interpreter will never see the use of ax. Therefore it is safe to use
-it for the cases where tmp has been used earlier. This is needed to later
-on allow restricted hidden use of ax in both interpreter and JITs.
-
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/linux/filter.h |  3 ++-
- kernel/bpf/core.c      | 34 +++++++++++++++++-----------------
- 2 files changed, 19 insertions(+), 18 deletions(-)
-
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index ec90d5255cf7..81420a0efdbe 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -60,7 +60,8 @@ struct sock_reuseport;
-  * constants. See JIT pre-step in bpf_jit_blind_constants().
-  */
- #define BPF_REG_AX		MAX_BPF_REG
--#define MAX_BPF_JIT_REG		(MAX_BPF_REG + 1)
-+#define MAX_BPF_EXT_REG		(MAX_BPF_REG + 1)
-+#define MAX_BPF_JIT_REG		MAX_BPF_EXT_REG
- 
- /* unused opcode to mark special call to bpf_tail_call() helper */
- #define BPF_TAIL_CALL	0xf0
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 3f5bf1af0826..aefc62ae4a1e 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -52,6 +52,7 @@
- #define DST	regs[insn->dst_reg]
- #define SRC	regs[insn->src_reg]
- #define FP	regs[BPF_REG_FP]
-+#define AX	regs[BPF_REG_AX]
- #define ARG1	regs[BPF_REG_ARG1]
- #define CTX	regs[BPF_REG_CTX]
- #define IMM	insn->imm
-@@ -971,7 +972,6 @@ bool bpf_opcode_in_insntable(u8 code)
-  */
- static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
- {
--	u64 tmp;
- #define BPF_INSN_2_LBL(x, y)    [BPF_##x | BPF_##y] = &&x##_##y
- #define BPF_INSN_3_LBL(x, y, z) [BPF_##x | BPF_##y | BPF_##z] = &&x##_##y##_##z
- 	static const void *jumptable[256] = {
-@@ -1045,36 +1045,36 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
- 		(*(s64 *) &DST) >>= IMM;
- 		CONT;
- 	ALU64_MOD_X:
--		div64_u64_rem(DST, SRC, &tmp);
--		DST = tmp;
-+		div64_u64_rem(DST, SRC, &AX);
-+		DST = AX;
- 		CONT;
- 	ALU_MOD_X:
--		tmp = (u32) DST;
--		DST = do_div(tmp, (u32) SRC);
-+		AX = (u32) DST;
-+		DST = do_div(AX, (u32) SRC);
- 		CONT;
- 	ALU64_MOD_K:
--		div64_u64_rem(DST, IMM, &tmp);
--		DST = tmp;
-+		div64_u64_rem(DST, IMM, &AX);
-+		DST = AX;
- 		CONT;
- 	ALU_MOD_K:
--		tmp = (u32) DST;
--		DST = do_div(tmp, (u32) IMM);
-+		AX = (u32) DST;
-+		DST = do_div(AX, (u32) IMM);
- 		CONT;
- 	ALU64_DIV_X:
- 		DST = div64_u64(DST, SRC);
- 		CONT;
- 	ALU_DIV_X:
--		tmp = (u32) DST;
--		do_div(tmp, (u32) SRC);
--		DST = (u32) tmp;
-+		AX = (u32) DST;
-+		do_div(AX, (u32) SRC);
-+		DST = (u32) AX;
- 		CONT;
- 	ALU64_DIV_K:
- 		DST = div64_u64(DST, IMM);
- 		CONT;
- 	ALU_DIV_K:
--		tmp = (u32) DST;
--		do_div(tmp, (u32) IMM);
--		DST = (u32) tmp;
-+		AX = (u32) DST;
-+		do_div(AX, (u32) IMM);
-+		DST = (u32) AX;
- 		CONT;
- 	ALU_END_TO_BE:
- 		switch (IMM) {
-@@ -1330,7 +1330,7 @@ STACK_FRAME_NON_STANDARD(___bpf_prog_run); /* jump table */
- static unsigned int PROG_NAME(stack_size)(const void *ctx, const struct bpf_insn *insn) \
- { \
- 	u64 stack[stack_size / sizeof(u64)]; \
--	u64 regs[MAX_BPF_REG]; \
-+	u64 regs[MAX_BPF_EXT_REG]; \
- \
- 	FP = (u64) (unsigned long) &stack[ARRAY_SIZE(stack)]; \
- 	ARG1 = (u64) (unsigned long) ctx; \
-@@ -1343,7 +1343,7 @@ static u64 PROG_NAME_ARGS(stack_size)(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5, \
- 				      const struct bpf_insn *insn) \
- { \
- 	u64 stack[stack_size / sizeof(u64)]; \
--	u64 regs[MAX_BPF_REG]; \
-+	u64 regs[MAX_BPF_EXT_REG]; \
- \
- 	FP = (u64) (unsigned long) &stack[ARRAY_SIZE(stack)]; \
- 	BPF_R1 = r1; \
--- 
-2.19.1
-
-
-
+BR,
+Georgi
