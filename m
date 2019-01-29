@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85EC6C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBAFC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5242020880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7479720880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:59:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763156;
-	bh=Y2kuHpNnFiSHYlV1fU4otSpAWOOwpdFCLWJhvjrcAYA=;
+	s=default; t=1548763171;
+	bh=D8+vrBRfDnI0U144nd3c0v1zHHmv2wMBoAtlxPFtbvc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TMf27OXAIzeF7lTwTVvX7AfeV3CpYyb6Ek5V5cAFS08pmzbOP/VaSeugdZgCJXX3I
-	 jmP7X7CILXUHKi2TrmqeoTSgMuD01cbIkaL1B4bWW7Q97/cWqIkTN+YesiRGkamjU9
-	 V5gQ5H7gYybNhWNtOyXIf0fPOW5tLlfSGrNd5FS8=
+	b=mdA3nQxf+P4YpYdqipPHb0G4FER4/ezPhK7lxhxtjQ/7X27wpSc5nL3vyuJ/a189D
+	 anUKxThO2N85jlwodp831OzQ/S+1XHnzE5m40xtpofSyMmAlxGCS5arZf9mWijS+gP
+	 5g8Y3jyS8zDq9J2CRRnyfSjHRbu1BM6vi1Mdu8zk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731456AbfA2L7O (ORCPT
+        id S1731333AbfA2L7a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:59:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38016 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:59:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731179AbfA2LrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:21 -0500
+        id S1731128AbfA2LrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C76D32086C;
-        Tue, 29 Jan 2019 11:47:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8ACD0214DA;
+        Tue, 29 Jan 2019 11:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762441;
-        bh=Y2kuHpNnFiSHYlV1fU4otSpAWOOwpdFCLWJhvjrcAYA=;
+        s=default; t=1548762426;
+        bh=D8+vrBRfDnI0U144nd3c0v1zHHmv2wMBoAtlxPFtbvc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KTNeVWOncpM4kUJBc4EZ5ECcC1kRfh8SdMtxrfdQWi1xgi0Wb00uW0QtmDAsw3NOa
-         CeILwvocc2aw3KfXtITeQPkQjsJLFJBfV9Krr5lJbQGzsxVSiFWrEO94fE0bZEjtnF
-         oxsmsDyszAlv3ZdF+VUUP2Kdb5XYCG4vui+EIdSc=
+        b=UiixRWaLQRMRuQUTYnEwI0LUanSX6wDhrP3wpnTyHWdEJ6ywKVgfX1MmNjbMrlBXP
+         MfYNqy+4m7PPJZ8MoYJ9oHprBdD+8WNzS2W/ISHDEqXcvNCunYdbEw17yAGHt467xk
+         mPMphxNaqzTfQFH85I2e8xA4MAZ4YJTKsEkpkJ+U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jack Pham <jackp@codeaurora.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.19 102/103] usb: dwc3: gadget: Clear req->needs_extra_trb flag on cleanup
-Date:   Tue, 29 Jan 2019 12:36:19 +0100
-Message-Id: <20190129113207.610918252@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 097/103] bpf: fix inner map masking to prevent oob under speculation
+Date:   Tue, 29 Jan 2019 12:36:14 +0100
+Message-Id: <20190129113207.316787879@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -64,51 +67,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Pham <jackp@codeaurora.org>
+[ commit 9d5564ddcf2a0f5ba3fa1c3a1f8a1b59ad309553 upstream ]
 
-commit bd6742249b9ca918565e4e3abaa06665e587f4b5 upstream.
+During review I noticed that inner meta map setup for map in
+map is buggy in that it does not propagate all needed data
+from the reference map which the verifier is later accessing.
 
-OUT endpoint requests may somtimes have this flag set when
-preparing to be submitted to HW indicating that there is an
-additional TRB chained to the request for alignment purposes.
-If that request is removed before the controller can execute the
-transfer (e.g. ep_dequeue/ep_disable), the request will not go
-through the dwc3_gadget_ep_cleanup_completed_request() handler
-and will not have its needs_extra_trb flag cleared when
-dwc3_gadget_giveback() is called.  This same request could be
-later requeued for a new transfer that does not require an
-extra TRB and if it is successfully completed, the cleanup
-and TRB reclamation will incorrectly process the additional TRB
-which belongs to the next request, and incorrectly advances the
-TRB dequeue pointer, thereby messing up calculation of the next
-requeust's actual/remaining count when it completes.
+In particular one such case is index masking to prevent out of
+bounds access under speculative execution due to missing the
+map's unpriv_array/index_mask field propagation. Fix this such
+that the verifier is generating the correct code for inlined
+lookups in case of unpriviledged use.
 
-The right thing to do here is to ensure that the flag is cleared
-before it is given back to the function driver.  A good place
-to do that is in dwc3_gadget_del_and_unmap_request().
+Before patch (test_verifier's 'map in map access' dump):
 
-Fixes: c6267a51639b ("usb: dwc3: gadget: align transfers to wMaxPacketSize")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jack Pham <jackp@codeaurora.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-[jackp: backport to <= 4.20: replaced 'needs_extra_trb' with 'unaligned'
-        and 'zero' members in patch and reworded commit text]
-Signed-off-by: Jack Pham <jackp@codeaurora.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  # bpftool prog dump xla id 3
+     0: (62) *(u32 *)(r10 -4) = 0
+     1: (bf) r2 = r10
+     2: (07) r2 += -4
+     3: (18) r1 = map[id:4]
+     5: (07) r1 += 272                |
+     6: (61) r0 = *(u32 *)(r2 +0)     |
+     7: (35) if r0 >= 0x1 goto pc+6   | Inlined map in map lookup
+     8: (54) (u32) r0 &= (u32) 0      | with index masking for
+     9: (67) r0 <<= 3                 | map->unpriv_array.
+    10: (0f) r0 += r1                 |
+    11: (79) r0 = *(u64 *)(r0 +0)     |
+    12: (15) if r0 == 0x0 goto pc+1   |
+    13: (05) goto pc+1                |
+    14: (b7) r0 = 0                   |
+    15: (15) if r0 == 0x0 goto pc+11
+    16: (62) *(u32 *)(r10 -4) = 0
+    17: (bf) r2 = r10
+    18: (07) r2 += -4
+    19: (bf) r1 = r0
+    20: (07) r1 += 272                |
+    21: (61) r0 = *(u32 *)(r2 +0)     | Index masking missing (!)
+    22: (35) if r0 >= 0x1 goto pc+3   | for inner map despite
+    23: (67) r0 <<= 3                 | map->unpriv_array set.
+    24: (0f) r0 += r1                 |
+    25: (05) goto pc+1                |
+    26: (b7) r0 = 0                   |
+    27: (b7) r0 = 0
+    28: (95) exit
+
+After patch:
+
+  # bpftool prog dump xla id 1
+     0: (62) *(u32 *)(r10 -4) = 0
+     1: (bf) r2 = r10
+     2: (07) r2 += -4
+     3: (18) r1 = map[id:2]
+     5: (07) r1 += 272                |
+     6: (61) r0 = *(u32 *)(r2 +0)     |
+     7: (35) if r0 >= 0x1 goto pc+6   | Same inlined map in map lookup
+     8: (54) (u32) r0 &= (u32) 0      | with index masking due to
+     9: (67) r0 <<= 3                 | map->unpriv_array.
+    10: (0f) r0 += r1                 |
+    11: (79) r0 = *(u64 *)(r0 +0)     |
+    12: (15) if r0 == 0x0 goto pc+1   |
+    13: (05) goto pc+1                |
+    14: (b7) r0 = 0                   |
+    15: (15) if r0 == 0x0 goto pc+12
+    16: (62) *(u32 *)(r10 -4) = 0
+    17: (bf) r2 = r10
+    18: (07) r2 += -4
+    19: (bf) r1 = r0
+    20: (07) r1 += 272                |
+    21: (61) r0 = *(u32 *)(r2 +0)     |
+    22: (35) if r0 >= 0x1 goto pc+4   | Now fixed inlined inner map
+    23: (54) (u32) r0 &= (u32) 0      | lookup with proper index masking
+    24: (67) r0 <<= 3                 | for map->unpriv_array.
+    25: (0f) r0 += r1                 |
+    26: (05) goto pc+1                |
+    27: (b7) r0 = 0                   |
+    28: (b7) r0 = 0
+    29: (95) exit
+
+Fixes: b2157399cc98 ("bpf: prevent out-of-bounds speculation")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c |    2 ++
- 1 file changed, 2 insertions(+)
+ kernel/bpf/map_in_map.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -177,6 +177,8 @@ static void dwc3_gadget_del_and_unmap_re
- 	req->started = false;
- 	list_del(&req->list);
- 	req->remaining = 0;
-+	req->unaligned = false;
-+	req->zero = false;
+--- a/kernel/bpf/map_in_map.c
++++ b/kernel/bpf/map_in_map.c
+@@ -12,6 +12,7 @@
+ struct bpf_map *bpf_map_meta_alloc(int inner_map_ufd)
+ {
+ 	struct bpf_map *inner_map, *inner_map_meta;
++	u32 inner_map_meta_size;
+ 	struct fd f;
  
- 	if (req->request.status == -EINPROGRESS)
- 		req->request.status = status;
+ 	f = fdget(inner_map_ufd);
+@@ -35,7 +36,12 @@ struct bpf_map *bpf_map_meta_alloc(int i
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	inner_map_meta = kzalloc(sizeof(*inner_map_meta), GFP_USER);
++	inner_map_meta_size = sizeof(*inner_map_meta);
++	/* In some cases verifier needs to access beyond just base map. */
++	if (inner_map->ops == &array_map_ops)
++		inner_map_meta_size = sizeof(struct bpf_array);
++
++	inner_map_meta = kzalloc(inner_map_meta_size, GFP_USER);
+ 	if (!inner_map_meta) {
+ 		fdput(f);
+ 		return ERR_PTR(-ENOMEM);
+@@ -45,9 +51,16 @@ struct bpf_map *bpf_map_meta_alloc(int i
+ 	inner_map_meta->key_size = inner_map->key_size;
+ 	inner_map_meta->value_size = inner_map->value_size;
+ 	inner_map_meta->map_flags = inner_map->map_flags;
+-	inner_map_meta->ops = inner_map->ops;
+ 	inner_map_meta->max_entries = inner_map->max_entries;
+ 
++	/* Misc members not needed in bpf_map_meta_equal() check. */
++	inner_map_meta->ops = inner_map->ops;
++	if (inner_map->ops == &array_map_ops) {
++		inner_map_meta->unpriv_array = inner_map->unpriv_array;
++		container_of(inner_map_meta, struct bpf_array, map)->index_mask =
++		     container_of(inner_map, struct bpf_array, map)->index_mask;
++	}
++
+ 	fdput(f);
+ 	return inner_map_meta;
+ }
 
 
