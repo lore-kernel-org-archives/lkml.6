@@ -2,191 +2,137 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE4EC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DBEC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4302E214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60CCA214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:37:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="jZFNo8/2"
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="PFJf6mm0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbfA2PcF (ORCPT
+        id S1728278AbfA2PhS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:32:05 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:18288 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfA2PcF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:32:05 -0500
-X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
-   d="scan'208";a="23974620"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Jan 2019 08:32:04 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 29 Jan 2019 08:32:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bT+UIRqZt6Qtkwv4WXB9AtgbxOCdN74nFfTtGsViVD4=;
- b=jZFNo8/2JLSRwt1m6LORxJGoL3hNLvG99SpA36rrJSYVbP0ZRzZucufaeujpO4puNs/orn3fnaOHGdSoL5CxttsYYy+Gl1/qDgYXzKsrRW2yBLkfy5cxDdcRYI0t+rPHyKT+7Q4/07M4DF133UfzVMOPJ5axwhC6CBqCOUaAAek=
-Received: from DM5PR11MB1850.namprd11.prod.outlook.com (10.175.92.17) by
- DM5PR11MB1482.namprd11.prod.outlook.com (10.172.36.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.17; Tue, 29 Jan 2019 15:32:01 +0000
-Received: from DM5PR11MB1850.namprd11.prod.outlook.com
- ([fe80::4125:8d55:234b:a4a1]) by DM5PR11MB1850.namprd11.prod.outlook.com
- ([fe80::4125:8d55:234b:a4a1%11]) with mapi id 15.20.1558.021; Tue, 29 Jan
- 2019 15:32:01 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <vigneshr@ti.com>, <bbrezillon@kernel.org>
-CC:     <marek.vasut@gmail.com>, <robh+dt@kernel.org>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] mtd: spi-nor: cadence-quadspi: Add support for
- Octal SPI controller
-Thread-Topic: [PATCH v5 2/2] mtd: spi-nor: cadence-quadspi: Add support for
- Octal SPI controller
-Thread-Index: AQHUts0ncEJQIKZPZEqSdXwhQs20vaXGYe2A
-Date:   Tue, 29 Jan 2019 15:32:01 +0000
-Message-ID: <2efbca08-c4ab-34ea-0e34-05aed7168df8@microchip.com>
-References: <20190128054935.4972-1-vigneshr@ti.com>
- <20190128054935.4972-3-vigneshr@ti.com>
-In-Reply-To: <20190128054935.4972-3-vigneshr@ti.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0501CA0006.eurprd05.prod.outlook.com
- (2603:10a6:800:92::16) To DM5PR11MB1850.namprd11.prod.outlook.com
- (2603:10b6:3:114::17)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR11MB1482;6:sdwVUv6h+VrdG9tcYXtJknz3nUEYb962RnLS94asnNZR/AG/1aUiugql3U553bNgEOmymcvbQal1sG7nKMjuQsonDL2j9sSTyO34F1wAEFQwbt8jE1r+CdLyUWAvZj6LvxbLAgrUMx/hMGpgol5YILUzh1SKBLYCUBi506atC3LtqJZE23YDd6zbJwhpuHoTLV1leDz5pVT4FcWOWAtqF8/0Eeo4DqnrfRXWNyF1WuL74QfS/MSP+H22qu1qWIIlm+hFzXG8nxj3VJmLJxWanVD9O1HFWwC9y/JW0qwq39H/SsrBsOQD4KuZxYQ4h5sEk1yeCJGRgD53NyyWYsKmiUeDjhfE12Q103kTfGahObecdm//hivjbq3qgrIvYg62c2fzTXYL5LBejDyagl2asd3lrla/z9HdTsJ1ST5x3Wq6iPpIAgzrSCgWJIgt3ndnSpwDT1P7U/fJ/w0aR2CN8w==;5:Z9EOttrWDBKk2R/uResPeku7OoqnIEHlWI21nJCwBpfG7U7N3q4d2SQHv3aWluxfKoM5ym/Kp7PL7Bni0pBUOXeG/y+BG9mvMQla6NncTP00gXU+1OCe2QHZBZ2JQT9BWPfwT5rPiud/oW/eZwfdvZ6FuW0id7TPiywlgnR1iVCr6Ad/F2beL9HT+1K5ydWjE6AVMJd9J7YJrkeSmHTNvQ==;7:60KEjNqfXqCw8RtyW6CycfBKafTa5hRqJhdXhvHWvcBwaivdixdF1ZnqddZ0rgyp4naZZjIdJ7gULmj8ZPxbzsJiaBgLoT85fps/ibbwhKbs2hh4MfZQDq+gi1CfQZhTLx/DgfgRPE8/p6YDYZrF7Q==
-x-ms-office365-filtering-correlation-id: f52fa4e7-1791-412e-7f9b-08d685fee9ca
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:DM5PR11MB1482;
-x-ms-traffictypediagnostic: DM5PR11MB1482:
-x-microsoft-antispam-prvs: <DM5PR11MB1482C7A884B930DCA71715FBF0970@DM5PR11MB1482.namprd11.prod.outlook.com>
-x-forefront-prvs: 093290AD39
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(376002)(346002)(136003)(396003)(39860400002)(199004)(189003)(6486002)(31696002)(53936002)(39060400002)(68736007)(76176011)(97736004)(86362001)(4326008)(256004)(52116002)(14444005)(2906002)(6246003)(6436002)(25786009)(229853002)(6512007)(476003)(2616005)(11346002)(8936002)(81166006)(81156014)(36756003)(54906003)(110136005)(71200400001)(106356001)(102836004)(3846002)(316002)(446003)(14454004)(53546011)(31686004)(66066001)(478600001)(386003)(105586002)(8676002)(486006)(186003)(7736002)(26005)(6506007)(71190400001)(72206003)(99286004)(6116002)(305945005)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR11MB1482;H:DM5PR11MB1850.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YCvIXoQVPResnyu/8dfQGUgw4ng8iUjcj5ImZ38lYt/AUHcSdGGaEjijRkV/+ccDUF4ygooOFjnScZQkD0vyDp1OTO2KNBSgh+90HxS+nKFgfMmJ6gMV6A+akuPWnbOHMQlISjZp6Ah+0QFCJ2zjq7t/FaB1Zbtx/VSyn3wYHRHVIkZ97aOhlGVXIa15zzSigM1lmDmotCgYqP80YPSf+lOxHoiHmwxsE4wCn9HRikTC6yDkV1QMtY2JjJnPptPliE9RuNZuK6hs9TwKaQWqV/iFSJI2yNpJBzMRVYSacFza+8kDJkF9GGOks/PTI+CzPIoAuwLIEPxvhN0wVSjVWcc70xvtRr7H9k6/ufmDmBfLbRiUAEc8Oh+rMCicwtxVtW1vc+8Xg4HFhx1qB0BdZ9Q/Ghy+xh2EKYTQi45/2Rw=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6C03ECA0C3DEFA4D81C0A2EB1F62BB94@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 29 Jan 2019 10:37:18 -0500
+Received: from mout01.posteo.de ([185.67.36.65]:41667 "EHLO mout01.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727042AbfA2PhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 10:37:18 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout01.posteo.de (Postfix) with ESMTPS id 94569160064
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 16:37:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1548776233; bh=QjXLibLmjk+oqmf8FmsAQxfwBGSD24Lymh6zHDlUTI0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PFJf6mm0q8nlh4WxOYIQzLS95Tp/F6XdpPeeEINIOGL/YWY6WF5fbVvajUapheB1W
+         h/HYIRlsfFnDzQgTPMdcKkNgXsSb10K96AmzEC0g6/O5KV3qXsWCfPGQLBV1yMDOuc
+         B3Xzmt9WAkOc05GsxHISz1ENEdSQJ/SFLTC8kliWO+91E99wDl2xKF/if8mpdoCwid
+         q/QqMJXNBvMpblu3sr9jNSzUblED5S+az8tn6efyKT/jNuzVvgqhsKiyeE7kcCMwTk
+         7WuOiuO4IgmNrLzTEuqJbrAGervIkIjZgisFREK+rUii+LCM/6ULSU5spTb/ydzZ5/
+         PCVf9lT5s7Z8g==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 43prGJ191Vz6tmR;
+        Tue, 29 Jan 2019 16:37:12 +0100 (CET)
+From:   Martin Kepplinger <martink@posteo.de>
+To:     han.xu@nxp.com, bbrezillon@kernel.org, miquel.raynal@bootlin.com,
+        richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, linux-mtd@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Subject: [PATCH] mtd: rawnand: gpmi: fix MX28 bus master lockup problem
+Date:   Tue, 29 Jan 2019 16:37:00 +0100
+Message-Id: <20190129153700.18717-1-martink@posteo.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: f52fa4e7-1791-412e-7f9b-08d685fee9ca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 15:31:59.4230
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB1482
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDAxLzI4LzIwMTkgMDc6NDkgQU0sIFZpZ25lc2ggUiB3cm90ZToNCj4gQ2FkZW5jZSBP
-U1BJIGNvbnRyb2xsZXIgSVAgc3VwcG9ydHMgT2N0YWwgSU8gKHg4IElPIGxpbmVzKSwNCj4gSXQg
-YWxzbyBoYXMgYW4gaW50ZWdyYXRlZCBQSFkuIElQIHJlZ2lzdGVyIGxheW91dCBpcyB2ZXJ5DQo+
-IHNpbWlsYXIgdG8gZXhpc3RpbmcgUVNQSSBJUCBleGNlcHQgZm9yIGFkZGl0aW9uYWwgYml0cyB0
-byBzdXBwb3J0IE9jdGFsDQo+IGFuZCBPY3RhbCBERFIgbW9kZS4gVGhlcmVmb3JlLCBleHRlbmQg
-Y3VycmVudCBkcml2ZXIgdG8gc3VwcG9ydCBPY3RhbA0KPiBtb2RlLiBPbmx5IE9jdGFsIFNEUiBy
-ZWFkICgxLTEtOCltb2RlIGlzIHN1cHBvcnRlZCBmb3Igbm93Lg0KPiANCj4gVGVzdGVkIHdpdGgg
-bXQzNXh1NTEyYWJhIE9jdGFsIGZsYXNoIG9uIFRJJ3MgQU02NTQgRVZNLg0KPiANCj4gU2lnbmVk
-LW9mZi1ieTogVmlnbmVzaCBSIDx2aWduZXNockB0aS5jb20+DQo+IFJldmlld2VkLWJ5OiBUdWRv
-ciBBbWJhcnVzIDx0dWRvci5hbWJhcnVzQG1pY3JvY2hpcC5jb20+DQo+IC0tLQ0KPiANCj4gdjU6
-DQo+IHMvY3FzaV9iYXNlX2h3Y2Fwc19tYXNrL0NRU1BJX0JBU0VfSFdDQVBTX01BU0svZw0KPiBB
-ZGQgYmFjayBjcXNwaV9kcml2ZXJfcGxhdGRhdGEgZGVmaW5pdGlvbiBmb3IgYmFzZSBjb21wYXRp
-YmxlLg0KPiANCj4gdjQ6IEZpeCBjb21tZW50cyBieSBUdWRvciBvbiB2Mw0KPiB2MzogTm8gY2hh
-bmdlcw0KPiB2MjogRGVjbGFyZSBPY3RhbCBtb2RlIGNhcGFiaWxpdHkgYmFzZWQgb24gY29tcGF0
-aWJsZS4NCj4gDQo+ICBkcml2ZXJzL210ZC9zcGktbm9yL2NhZGVuY2UtcXVhZHNwaS5jIHwgNTgg
-KysrKysrKysrKysrKysrKysrKysrLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgNDYgaW5zZXJ0
-aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQv
-c3BpLW5vci9jYWRlbmNlLXF1YWRzcGkuYyBiL2RyaXZlcnMvbXRkL3NwaS1ub3IvY2FkZW5jZS1x
-dWFkc3BpLmMNCj4gaW5kZXggMDRjZWRkM2EyYmY2Li5jODExM2ViZTQ0ZmQgMTAwNjQ0DQo+IC0t
-LSBhL2RyaXZlcnMvbXRkL3NwaS1ub3IvY2FkZW5jZS1xdWFkc3BpLmMNCj4gKysrIGIvZHJpdmVy
-cy9tdGQvc3BpLW5vci9jYWRlbmNlLXF1YWRzcGkuYw0KPiBAQCAtNDQsNiArNDQsMTIgQEANCj4g
-IC8qIFF1aXJrcyAqLw0KPiAgI2RlZmluZSBDUVNQSV9ORUVEU19XUl9ERUxBWQkJQklUKDApDQo+
-ICANCj4gKy8qIENhcGFiaWxpdGllcyBtYXNrICovDQo+ICsjZGVmaW5lIENRU1BJX0JBU0VfSFdD
-QVBTX01BU0sJCQkJCVwNCj4gKwkoU05PUl9IV0NBUFNfUkVBRCB8IFNOT1JfSFdDQVBTX1JFQURf
-RkFTVCB8CQlcDQo+ICsJU05PUl9IV0NBUFNfUkVBRF8xXzFfMiB8IFNOT1JfSFdDQVBTX1JFQURf
-MV8xXzQgfAlcDQo+ICsJU05PUl9IV0NBUFNfUFApDQo+ICsNCj4gIHN0cnVjdCBjcXNwaV9zdDsN
-Cj4gIA0KPiAgc3RydWN0IGNxc3BpX2ZsYXNoX3BkYXRhIHsNCj4gQEAgLTkzLDYgKzk5LDExIEBA
-IHN0cnVjdCBjcXNwaV9zdCB7DQo+ICAJc3RydWN0IGNxc3BpX2ZsYXNoX3BkYXRhIGZfcGRhdGFb
-Q1FTUElfTUFYX0NISVBTRUxFQ1RdOw0KPiAgfTsNCj4gIA0KPiArc3RydWN0IGNxc3BpX2RyaXZl
-cl9wbGF0ZGF0YSB7DQo+ICsJdTMyIGh3Y2Fwc19tYXNrOw0KPiArCXU4IHF1aXJrczsNCj4gK307
-DQo+ICsNCj4gIC8qIE9wZXJhdGlvbiB0aW1lb3V0IHZhbHVlICovDQo+ICAjZGVmaW5lIENRU1BJ
-X1RJTUVPVVRfTVMJCQk1MDANCj4gICNkZWZpbmUgQ1FTUElfUkVBRF9USU1FT1VUX01TCQkJMTAN
-Cj4gQEAgLTEwMSw2ICsxMTIsNyBAQCBzdHJ1Y3QgY3FzcGlfc3Qgew0KPiAgI2RlZmluZSBDUVNQ
-SV9JTlNUX1RZUEVfU0lOR0xFCQkJMA0KPiAgI2RlZmluZSBDUVNQSV9JTlNUX1RZUEVfRFVBTAkJ
-CTENCj4gICNkZWZpbmUgQ1FTUElfSU5TVF9UWVBFX1FVQUQJCQkyDQo+ICsjZGVmaW5lIENRU1BJ
-X0lOU1RfVFlQRV9PQ1RBTAkJCTMNCj4gIA0KPiAgI2RlZmluZSBDUVNQSV9EVU1NWV9DTEtTX1BF
-Ul9CWVRFCQk4DQo+ICAjZGVmaW5lIENRU1BJX0RVTU1ZX0JZVEVTX01BWAkJCTQNCj4gQEAgLTkx
-MSw2ICs5MjMsOSBAQCBzdGF0aWMgaW50IGNxc3BpX3NldF9wcm90b2NvbChzdHJ1Y3Qgc3BpX25v
-ciAqbm9yLCBjb25zdCBpbnQgcmVhZCkNCj4gIAkJY2FzZSBTTk9SX1BST1RPXzFfMV80Og0KPiAg
-CQkJZl9wZGF0YS0+ZGF0YV93aWR0aCA9IENRU1BJX0lOU1RfVFlQRV9RVUFEOw0KPiAgCQkJYnJl
-YWs7DQo+ICsJCWNhc2UgU05PUl9QUk9UT18xXzFfODoNCj4gKwkJCWZfcGRhdGEtPmRhdGFfd2lk
-dGggPSBDUVNQSV9JTlNUX1RZUEVfT0NUQUw7DQo+ICsJCQlicmVhazsNCj4gIAkJZGVmYXVsdDoN
-Cj4gIAkJCXJldHVybiAtRUlOVkFMOw0KPiAgCQl9DQo+IEBAIC0xMjEzLDIxICsxMjI4LDIyIEBA
-IHN0YXRpYyB2b2lkIGNxc3BpX3JlcXVlc3RfbW1hcF9kbWEoc3RydWN0IGNxc3BpX3N0ICpjcXNw
-aSkNCj4gIA0KPiAgc3RhdGljIGludCBjcXNwaV9zZXR1cF9mbGFzaChzdHJ1Y3QgY3FzcGlfc3Qg
-KmNxc3BpLCBzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKQ0KPiAgew0KPiAtCWNvbnN0IHN0cnVjdCBz
-cGlfbm9yX2h3Y2FwcyBod2NhcHMgPSB7DQo+IC0JCS5tYXNrID0gU05PUl9IV0NBUFNfUkVBRCB8
-DQo+IC0JCQlTTk9SX0hXQ0FQU19SRUFEX0ZBU1QgfA0KPiAtCQkJU05PUl9IV0NBUFNfUkVBRF8x
-XzFfMiB8DQo+IC0JCQlTTk9SX0hXQ0FQU19SRUFEXzFfMV80IHwNCj4gLQkJCVNOT1JfSFdDQVBT
-X1BQLA0KPiAtCX07DQo+ICAJc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiA9IGNxc3BpLT5w
-ZGV2Ow0KPiAgCXN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7DQo+ICsJY29uc3Qgc3Ry
-dWN0IGNxc3BpX2RyaXZlcl9wbGF0ZGF0YSAqZGRhdGE7DQo+ICsJc3RydWN0IHNwaV9ub3JfaHdj
-YXBzIGh3Y2FwczsNCj4gIAlzdHJ1Y3QgY3FzcGlfZmxhc2hfcGRhdGEgKmZfcGRhdGE7DQo+ICAJ
-c3RydWN0IHNwaV9ub3IgKm5vcjsNCj4gIAlzdHJ1Y3QgbXRkX2luZm8gKm10ZDsNCj4gIAl1bnNp
-Z25lZCBpbnQgY3M7DQo+ICAJaW50IGksIHJldDsNCj4gIA0KPiArCWRkYXRhID0gb2ZfZGV2aWNl
-X2dldF9tYXRjaF9kYXRhKGRldik7DQo+ICsJaWYgKCFkZGF0YSkNCj4gKwkJaHdjYXBzLm1hc2sg
-PSBDUVNQSV9CQVNFX0hXQ0FQU19NQVNLOw0KDQpOb3cgdGhhdCAuZGF0YSBpcyBzZXQgaW4gYWxs
-IGNxc3BpX2R0X2lkc1tdLCBtYXliZSBpdCdzIGJldHRlciB0byBwcmludCBhDQptZXNzYWdlIGFu
-ZCByZXR1cm4gYW4gZXJyb3IgaGVyZS4gQnV0IEkgZ3Vlc3MgaXQncyBhIG1hdHRlciBvZiB0YXN0
-ZSwgc28gbm90IGENCnNob3cgc3RvcHBlci4NCg0KPiArCWVsc2UNCj4gKwkJaHdjYXBzLm1hc2sg
-PSBkZGF0YS0+aHdjYXBzX21hc2s7DQo+ICsNCj4gIAkvKiBHZXQgZmxhc2ggZGV2aWNlIGRhdGEg
-Ki8NCj4gIAlmb3JfZWFjaF9hdmFpbGFibGVfY2hpbGRfb2Zfbm9kZShkZXYtPm9mX25vZGUsIG5w
-KSB7DQo+ICAJCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5wLCAicmVnIiwgJmNzKTsNCj4g
-QEAgLTEzMTAsNyArMTMyNiw3IEBAIHN0YXRpYyBpbnQgY3FzcGlfcHJvYmUoc3RydWN0IHBsYXRm
-b3JtX2RldmljZSAqcGRldikNCj4gIAlzdHJ1Y3QgY3FzcGlfc3QgKmNxc3BpOw0KPiAgCXN0cnVj
-dCByZXNvdXJjZSAqcmVzOw0KPiAgCXN0cnVjdCByZXNvdXJjZSAqcmVzX2FoYjsNCj4gLQl1bnNp
-Z25lZCBsb25nIGRhdGE7DQo+ICsJY29uc3Qgc3RydWN0IGNxc3BpX2RyaXZlcl9wbGF0ZGF0YSAq
-ZGRhdGE7DQo+ICAJaW50IHJldDsNCj4gIAlpbnQgaXJxOw0KPiAgDQo+IEBAIC0xMzc3LDggKzEz
-OTMsOCBAQCBzdGF0aWMgaW50IGNxc3BpX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
-ZXYpDQo+ICAJfQ0KPiAgDQo+ICAJY3FzcGktPm1hc3Rlcl9yZWZfY2xrX2h6ID0gY2xrX2dldF9y
-YXRlKGNxc3BpLT5jbGspOw0KPiAtCWRhdGEgID0gKHVuc2lnbmVkIGxvbmcpb2ZfZGV2aWNlX2dl
-dF9tYXRjaF9kYXRhKGRldik7DQo+IC0JaWYgKGRhdGEgJiBDUVNQSV9ORUVEU19XUl9ERUxBWSkN
-Cj4gKwlkZGF0YSAgPSBvZl9kZXZpY2VfZ2V0X21hdGNoX2RhdGEoZGV2KTsNCj4gKwlpZiAoZGRh
-dGEgJiYgKGRkYXRhLT5xdWlya3MgJiBDUVNQSV9ORUVEU19XUl9ERUxBWSkpDQo+ICAJCWNxc3Bp
-LT53cl9kZWxheSA9IDUgKiBESVZfUk9VTkRfVVAoTlNFQ19QRVJfU0VDLA0KPiAgCQkJCQkJICAg
-Y3FzcGktPm1hc3Rlcl9yZWZfY2xrX2h6KTsNCj4gIA0KPiBAQCAtMTQ2MCwxNCArMTQ3NiwzMiBA
-QCBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9vcHMgY3FzcGlfX2Rldl9wbV9vcHMgPSB7DQo+
-ICAjZGVmaW5lIENRU1BJX0RFVl9QTV9PUFMJTlVMTA0KPiAgI2VuZGlmDQo+ICANCj4gK3N0YXRp
-YyBjb25zdCBzdHJ1Y3QgY3FzcGlfZHJpdmVyX3BsYXRkYXRhIGNkbnNfcXNwaSA9IHsNCj4gKwku
-aHdjYXBzX21hc2sgPSBDUVNQSV9CQVNFX0hXQ0FQU19NQVNLLA0KPiArfTsNCj4gKw0KPiArc3Rh
-dGljIGNvbnN0IHN0cnVjdCBjcXNwaV9kcml2ZXJfcGxhdGRhdGEgazJnX3FzcGkgPSB7DQo+ICsJ
-Lmh3Y2Fwc19tYXNrID0gQ1FTUElfQkFTRV9IV0NBUFNfTUFTSywNCj4gKwkucXVpcmtzID0gQ1FT
-UElfTkVFRFNfV1JfREVMQVksDQo+ICt9Ow0KPiArDQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGNx
-c3BpX2RyaXZlcl9wbGF0ZGF0YSBhbTY1NF9vc3BpID0gew0KPiArCS5od2NhcHNfbWFzayA9IENR
-U1BJX0JBU0VfSFdDQVBTX01BU0sgfCBTTk9SX0hXQ0FQU19SRUFEXzFfMV84LA0KPiArCS5xdWly
-a3MgPSBDUVNQSV9ORUVEU19XUl9ERUxBWSwNCj4gK307DQo+ICsNCj4gIHN0YXRpYyBjb25zdCBz
-dHJ1Y3Qgb2ZfZGV2aWNlX2lkIGNxc3BpX2R0X2lkc1tdID0gew0KPiAgCXsNCj4gIAkJLmNvbXBh
-dGlibGUgPSAiY2Rucyxxc3BpLW5vciIsDQo+IC0JCS5kYXRhID0gKHZvaWQgKikwLA0KPiArCQku
-ZGF0YSA9ICZjZG5zX3FzcGksDQo+ICAJfSwNCj4gIAl7DQo+ICAJCS5jb21wYXRpYmxlID0gInRp
-LGsyZy1xc3BpIiwNCj4gLQkJLmRhdGEgPSAodm9pZCAqKUNRU1BJX05FRURTX1dSX0RFTEFZLA0K
-PiArCQkuZGF0YSA9ICZrMmdfcXNwaSwNCj4gKwl9LA0KPiArCXsNCj4gKwkJLmNvbXBhdGlibGUg
-PSAidGksYW02NTQtb3NwaSIsDQo+ICsJCS5kYXRhID0gJmFtNjU0X29zcGksDQo+ICAJfSwNCj4g
-IAl7IC8qIGVuZCBvZiB0YWJsZSAqLyB9DQo+ICB9Ow0KPiANCg==
+From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+
+Disable BCH soft reset according to MX23 erratum #2847 ("BCH soft
+reset may cause bus master lock up") for MX28 too. It has the same
+problem.
+
+Observed problem: once per 100,000+ MX28 reboots NAND read failed on
+DMA timeout errors:
+[    1.770823] UBI: attaching mtd3 to ubi0
+[    2.768088] gpmi_nand: DMA timeout, last DMA :1
+[    3.958087] gpmi_nand: BCH timeout, last DMA :1
+[    4.156033] gpmi_nand: Error in ECC-based read: -110
+[    4.161136] UBI warning: ubi_io_read: error -110 while reading 64
+bytes from PEB 0:0, read only 0 bytes, retry
+[    4.171283] step 1 error
+[    4.173846] gpmi_nand: Chip: 0, Error -1
+
+Without BCH soft reset we successfully executed 1,000,000 MX28 reboots.
+
+I have a quote from NXP regarding this problem, from July 18th 2016:
+
+"As the i.MX23 and i.MX28 are of the same generation, they share many
+characteristics. Unfortunately, also the erratas may be shared.
+In case of the documented erratas and the workarounds, you can also
+apply the workaround solution of one device on the other one. This have
+been reported, but I’m afraid that there are not an estimated date for
+updating the Errata documents.
+Please accept our apologies for any inconveniences this may cause."
+
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+---
+
+This is something we have in our tree for years and is running on
+production systems and I hope that this helps others too.
+
+thanks
+                              martin
+
+
+
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
+index bd4cfac6b5aa..a4768df5083f 100644
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
+@@ -155,9 +155,10 @@ int gpmi_init(struct gpmi_nand_data *this)
+ 
+ 	/*
+ 	 * Reset BCH here, too. We got failures otherwise :(
+-	 * See later BCH reset for explanation of MX23 handling
++	 * See later BCH reset for explanation of MX23 and MX28 handling
+ 	 */
+-	ret = gpmi_reset_block(r->bch_regs, GPMI_IS_MX23(this));
++	ret = gpmi_reset_block(r->bch_regs,
++			       GPMI_IS_MX23(this) || GPMI_IS_MX28(this));
+ 	if (ret)
+ 		goto err_out;
+ 
+@@ -263,12 +264,10 @@ int bch_set_geometry(struct gpmi_nand_data *this)
+ 	/*
+ 	* Due to erratum #2847 of the MX23, the BCH cannot be soft reset on this
+ 	* chip, otherwise it will lock up. So we skip resetting BCH on the MX23.
+-	* On the other hand, the MX28 needs the reset, because one case has been
+-	* seen where the BCH produced ECC errors constantly after 10000
+-	* consecutive reboots. The latter case has not been seen on the MX23
+-	* yet, still we don't know if it could happen there as well.
++	* and MX28.
+ 	*/
+-	ret = gpmi_reset_block(r->bch_regs, GPMI_IS_MX23(this));
++	ret = gpmi_reset_block(r->bch_regs,
++			       GPMI_IS_MX23(this) || GPMI_IS_MX28(this));
+ 	if (ret)
+ 		goto err_out;
+ 
+-- 
+2.20.1
+
