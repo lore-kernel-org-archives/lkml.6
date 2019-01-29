@@ -2,114 +2,106 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143A2C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9921FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D970120844
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:53:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kBLt7Pt6"
+	by mail.kernel.org (Postfix) with ESMTP id 745A020989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 18:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbfA2SxC (ORCPT
+        id S1729226AbfA2SyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:53:02 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39333 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727269AbfA2SxB (ORCPT
+        Tue, 29 Jan 2019 13:54:20 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:58809 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727165AbfA2SyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:53:01 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b14so16876904edt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:53:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ne3/pZn84TgQpMnCsKdjR/xQBD4QmW9srnZyxCcRvp8=;
-        b=kBLt7Pt6h1JdF4e6Uosih3sXSt/p3Rkw6TWiHxknI+gkw2S7neD4LuB72nHYoDbLuZ
-         jXrvDxaGt/Q34FehM5dno73j8YzNutS21T1uhepAmAG7gS7+kLcbp+P85IpQv5CANsPW
-         dAw2XFYWdH7KAhgzB+906hq4NXiWx5opE5A5k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ne3/pZn84TgQpMnCsKdjR/xQBD4QmW9srnZyxCcRvp8=;
-        b=dGJi44i5ytiHYNH4swKYNr1n2CckKyye3v6KV6Z31xBPQCTeeKKCAYNE+xlY1R1ze6
-         C4tEktplu4vgioQkjRYSZEEWzxYNkNxngstJMI5GoTdAeaPyruR/LpaNwspBednrp+VP
-         QOw5uipT/SR2IXF3Ev+43O3Q8qSh9CI/71HA1kfpGIbRKbBmHz9g7Iv7YQfsdQKOR0Sm
-         v/R17R8/Zw4mSZ4MHWp0RobFRzRhFykbEI0BjMX2kdgcQlO6IIsNOD3I7t9RSvBJGl7U
-         d6KdG2zCBvzZD+ZssT5/VAdnYB/W0CuB/NUBmBHkdjKeV1fLNV7WCW76nmH67wilpJn7
-         i7vw==
-X-Gm-Message-State: AJcUukdlHAceD1z/xiuVqyHb9Qh6q9XssGfpsnDVtfGu++a7Mggkp0Nu
-        Sh20whphrvpH5uYqI/ZhbkK8rP2vtuA=
-X-Google-Smtp-Source: ALg8bN5XRRWIjuuMrbbhRwEkSjFUnEpOezoQwAqb4ZtDDTOinDnNjF5qvoxpgEtEsVF5aH6sdgz4BA==
-X-Received: by 2002:a50:e691:: with SMTP id z17mr25912202edm.275.1548787979820;
-        Tue, 29 Jan 2019 10:52:59 -0800 (PST)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id w56sm14856088edb.72.2019.01.29.10.52.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 10:52:56 -0800 (PST)
-Received: by mail-ed1-f52.google.com with SMTP id y20so16861000edw.9
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:52:56 -0800 (PST)
-X-Received: by 2002:a50:951a:: with SMTP id u26mr26638799eda.4.1548787976141;
- Tue, 29 Jan 2019 10:52:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20190128154310.17322-1-stefan@agner.ch>
-In-Reply-To: <20190128154310.17322-1-stefan@agner.ch>
-From:   Brian Norris <briannorris@chromium.org>
-Date:   Tue, 29 Jan 2019 10:52:44 -0800
-X-Gmail-Original-Message-ID: <CA+ASDXPawX9QnHG-y6HYdhKSZbzzTzYpwt_oMaXPz5+pqC5Ddg@mail.gmail.com>
-Message-ID: <CA+ASDXPawX9QnHG-y6HYdhKSZbzzTzYpwt_oMaXPz5+pqC5Ddg@mail.gmail.com>
-Subject: Re: [PATCH] mwifiex: don't print error message on coex event
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     amit karwar <amitkarwar@gmail.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Ganapathi Bhat <gbhat@marvell.com>, huxinming820@gmail.com,
-        Kalle Valo <kvalo@codeaurora.org>, davem@davemloft.net,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 29 Jan 2019 13:54:20 -0500
+Received: from localhost.localdomain ([37.4.249.100]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1Mqrjz-1hSGzn3awj-00muIn; Tue, 29 Jan 2019 19:54:14 +0100
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 3/3] bcm2835-drivers-next-2019-01-29
+Date:   Tue, 29 Jan 2019 19:53:28 +0100
+Message-Id: <1548788008-4733-3-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548788008-4733-1-git-send-email-stefan.wahren@i2se.com>
+References: <1548788008-4733-1-git-send-email-stefan.wahren@i2se.com>
+X-Provags-ID: V03:K1:tG5e4rB/ae/4LOicQ33k71HkMKgOGJQ8XE4ILJWiF9IZNMue2KO
+ O95qpDJ8C1zmcXxBpZZmm4tkTDBPZlzZVSpfudiii8LYQB/IuV3k1hhT+fIUIJk+QyyPDjt
+ jRqKNy9iuYrfR6AnjrbH6f/RvbsrwtL75LmIKsAwU7ahxQeVQawi5mLM18KcgudolbNcTnx
+ dvfiCgYlVJoOoc04duR5g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:RMmEGb6Elvg=:NQWSb8U4uiXNV6PybeLQxN
+ LvinXm2Si+FGNKMH4RCJ6jGe1hNS9+QKvGYNtlIhj0Q0t7SHjss91wyklUiVCvrlozZOSfCGd
+ Z+9jinRGCDj/8nKfUmizNvTuyymK7NJd0LfgyZG2kUCJDgno6JEQl/H8WDISWffrz6SQk5/O+
+ d2nC/OcL5MrOkDdwC2mmv4e626RmQyBB5Qk63W8QlkQkw0H9HusFSkpGeFWEfZx+IRhF84jcg
+ yVHj9Ld4be6EyJfvzIE+z6ujbzP0Bu2HL0Qa0mjuaixz+5R3PYJOvqvbuF7K7KUYCe1msXQtF
+ zqCcuiGfSVcV+x+gJALmlxB66SFpua+NyrT/m++c2+SLAD2CqAOd9A73OZ2QIFlo9/Uhg9SjT
+ LCJEXGWLfeK3RAAHoNktIrkkvskxXM1LYVsicARSn3z2AHuSpNo4jTOR4f4JxqF/OEPk6lKvL
+ 8aLyU2lwoZr/OG18wyaJjKrp4bQE1H3zgU/r1Ij1WH/aNhbVSpM12mXxceFSOkGzKHU+nbE+c
+ a8yW0ApVT9JRPFChQzniD7SXKIklphMJwuiw+LlfLEBWIshZE2z1w54p4ifvLwZ/Y4wEaZxMj
+ NXQ2TfhJOwVPILRupRrHkZZ6LwUHI1pvdOVVuBtn9Y1B4pMp01yx6suV2CIEzzGxFkASTJlh/
+ WH/lO3aYFCpAqi3Xma5zGRXiXQJ03RpfVJJrtAtXFFzUKhHcEwJu6H7GniWYDYdjTLTU5G3Ap
+ nnDI9WfzohUQKQ9HD3vjX7S723RhhUeUvR8dhNqQP+hfrFoh+n+N//ZH4wU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 7:43 AM Stefan Agner <stefan@agner.ch> wrote:
->
-> The BT coex event is not an error condition. Don't print an error
-> message in this case. The same even in sta_event.c prints a
-> message using the debug level already.
+Hi Florian,
 
-For some reason, that one (and a handful of others) uses dev_dbg()
-instead of mwifiex_dbg() with an appropriate mask (e.g., EVENT). But
-mwifiex_dbg() seems preferable for consistency.
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
-Reviewed-by: Brian Norris <briannorris@chromium.org>
+are available in the git repository at:
 
-> ---
->  drivers/net/wireless/marvell/mwifiex/uap_event.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/wireless/marvell/mwifiex/uap_event.c b/drivers/net/wireless/marvell/mwifiex/uap_event.c
-> index e86217a6b9ca..ca759d9c0253 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/uap_event.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/uap_event.c
-> @@ -300,7 +300,7 @@ int mwifiex_process_uap_event(struct mwifiex_private *priv)
->                 mwifiex_11h_handle_radar_detected(priv, adapter->event_skb);
->                 break;
->         case EVENT_BT_COEX_WLAN_PARA_CHANGE:
-> -               dev_err(adapter->dev, "EVENT: BT coex wlan param update\n");
-> +               mwifiex_dbg(adapter, EVENT, "event: BT coex wlan param update\n");
->                 mwifiex_bt_coex_wlan_param_update_event(priv,
->                                                         adapter->event_skb);
->                 break;
-> --
-> 2.20.1
->
+  git://github.com/anholt/linux tags/bcm2835-drivers-next-2019-01-29
+
+for you to fetch changes up to f494caa480f7089ff9bba16dd865e190cee7e545:
+
+  soc: bcm: Make PM driver default for BCM2835 (2019-01-24 19:19:22 +0100)
+
+----------------------------------------------------------------
+This pull request brings the new BCM2835 PM driver and a workaround to
+avoid network boot failures of the Raspberry Pi 3 B+ BOOTROM.
+
+----------------------------------------------------------------
+Eric Anholt (3):
+      dt-bindings: soc: Add a new binding for the BCM2835 PM node. (v4)
+      bcm2835-pm: Move bcm2835-watchdog's DT probe to an MFD.
+      soc: bcm: bcm2835-pm: Add support for power domains under a new binding.
+
+Stefan Wahren (3):
+      soc: bcm2835: sync firmware properties with downstream
+      firmware: raspberrypi: notify VC4 firmware of a reboot
+      soc: bcm: Make PM driver default for BCM2835
+
+ .../bindings/soc/bcm/brcm,bcm2835-pm.txt           |  46 ++
+ arch/arm/mach-bcm/Kconfig                          |   1 +
+ drivers/firmware/raspberrypi.c                     |  11 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/bcm2835-pm.c                           |  92 +++
+ drivers/soc/bcm/Kconfig                            |  12 +
+ drivers/soc/bcm/Makefile                           |   1 +
+ drivers/soc/bcm/bcm2835-power.c                    | 661 +++++++++++++++++++++
+ drivers/watchdog/bcm2835_wdt.c                     |  26 +-
+ include/dt-bindings/soc/bcm2835-pm.h               |  28 +
+ include/linux/mfd/bcm2835-pm.h                     |  14 +
+ include/soc/bcm2835/raspberrypi-firmware.h         |   4 +
+ 12 files changed, 880 insertions(+), 17 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
+ create mode 100644 drivers/mfd/bcm2835-pm.c
+ create mode 100644 drivers/soc/bcm/bcm2835-power.c
+ create mode 100644 include/dt-bindings/soc/bcm2835-pm.h
+ create mode 100644 include/linux/mfd/bcm2835-pm.h
