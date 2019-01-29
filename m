@@ -2,179 +2,91 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303ACC282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB7AC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:48:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F361D21841
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:47:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="rty9DMSz"
+	by mail.kernel.org (Postfix) with ESMTP id BC02F2177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 08:48:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548751736;
+	bh=Ig2D8V5JtjRJdmtfchTseqmuLTKIW4SJHekGAx7X8fw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=G8R7IfCyZfFT5eBL/rgnSgN1MTjq0Rcpzp+2a06jsMzcqvqqODlduKBEg/+YI7brz
+	 d4xzAcSi6ytLbb4FgAWgx004LCdXqWuOTEJUqIyDu1c+tWoQ7ySRf1O5SGPAGcrUIZ
+	 hNtXP/j9+78aqNKd0Ch5gCalu7Y3O/MchbXrb7Ng=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfA2Irz (ORCPT
+        id S1727330AbfA2Isz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 03:47:55 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33017 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbfA2Irz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 03:47:55 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v1-v6so16792167ljd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 00:47:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=C9svzEiZr9kw6t/LWZbdbQcKNuVhxD7bJthkMm/s6+Q=;
-        b=rty9DMSzVoHo9A4/ZNJh8dP09HnUvRgCvzk9VgMduV++IT2+Knm/uvF3WiZoZcDcEV
-         RdJ6fcF4W+HkOMXqBMedqQw0TgqFhCi1oDf/9PLngQNcTyUqNcJdPK2JnIZETjkOtc9g
-         9Plow6seFCj+sHY+WVVWZUzBATtt1eiJAuXjj6m8zoA66DJpnM8wqzZfR3BJDI1NHf1i
-         oHJ2r9g5TTzTJ+Q0ywrhON7FzRiAhhoc5ZhF5H06jyT8GSh6dhlj2UXZRaDG3aVi9kFJ
-         tGK76c664XER/Rpwwigjb8iyimKyaShFkmr9F44/xZKYJeMmdB09i6fK6pbJDNaMzoXk
-         /AFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=C9svzEiZr9kw6t/LWZbdbQcKNuVhxD7bJthkMm/s6+Q=;
-        b=iwMbMzsgZpkvvUDWAfEJVPUmQ08BPP4KjUm+GZQOvcJQ6J/EXyEgec55mO4qlhSW9s
-         B7U0JUHBBPgFkv+73iQihAJ6zbpOwNbSOSOdob0kngjWAJx3C4VTnVI/J8qGCNQyp67N
-         xX4sIFunf29LJBzZjp1s4OXREmLeFr4kLMFB3S2PRVRdVzscYyZWedFui+pnZT8M6ZRf
-         Kvs1ov5zwZcA5W8MO2xW9j/EoflKSYF+HyrBFh6jDxrKSSfcrc7OGz4Q0T7KCSP2KPs+
-         G8SN20P8OmJnukLsePgnDId+pzGPS3GddUl8Nf08h7vIdPwXKHjK7hOdB65wwAQGYGsE
-         yR0w==
-X-Gm-Message-State: AJcUukcQnR1TfheQ/CKMwBgnuC5krj9qcSCQzmifYUtVitEsfvSasslV
-        8J4pjsdZzemSNyN9SZ8R8yZvvh7Jqdky2Q==
-X-Google-Smtp-Source: ALg8bN7qYnhugcn+cuKakkGqvuRe79CiOo9sM1YfkFbZdQSef8htQXHUcwSUQwVHfiBuae6G7Z7BQg==
-X-Received: by 2002:a2e:6109:: with SMTP id v9-v6mr19353883ljb.126.1548751672483;
-        Tue, 29 Jan 2019 00:47:52 -0800 (PST)
-Received: from ch-lap-hans.bredbandsbolaget.se (c-0bf2e055.03-91-6d6c6d4.bbcust.telenor.se. [85.224.242.11])
-        by smtp.gmail.com with ESMTPSA id c22sm3418800lfd.88.2019.01.29.00.47.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 00:47:51 -0800 (PST)
-From:   hans@owltronix.com
-To:     Matias Bjorling <mb@lightnvm.io>
-Cc:     javier@javigon.com, Zhoujie Wu <zjwu@marvell.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH] lightnvm: pblk: extend line wp balance check
-Date:   Tue, 29 Jan 2019 09:47:37 +0100
-Message-Id: <20190129084737.718-1-hans@owltronix.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 29 Jan 2019 03:48:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725298AbfA2Isy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 03:48:54 -0500
+Received: from quaco.ghostprotocols.net (ovpn-brq.redhat.com [213.175.37.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0361520856;
+        Tue, 29 Jan 2019 08:48:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548751734;
+        bh=Ig2D8V5JtjRJdmtfchTseqmuLTKIW4SJHekGAx7X8fw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2T9NhTP63aW8TSws9CiGLgAM/ZzeDtLqr9SupYbWklT77srF9BPxPuelDETK2ameP
+         57LcIXlmpwLxK/ES/zzD4IzpCcInbVlt5d/IMdc862K5ZdPCylduwaFHTv7kWGPygY
+         k1WIZGMC/Hx0rcJVaSACP7DeW5PcxSswkyW383+4=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id CE3674034F; Tue, 29 Jan 2019 09:48:51 +0100 (CET)
+Date:   Tue, 29 Jan 2019 09:48:51 +0100
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC] Don't print sample_type bits in non-group events not set
+ in the group's was Re: [PATCH] perf, script: Fix crash with printing mixed
+ trace point and other events
+Message-ID: <20190129084851.GC4344@kernel.org>
+References: <20190117194834.21940-1-andi@firstfloor.org>
+ <20190118094919.GA28346@krava>
+ <20190118125920.GG5823@kernel.org>
+ <20190118130106.GH5823@kernel.org>
+ <20190118134205.GI5823@kernel.org>
+ <20190118161000.GC28346@krava>
+ <20190118161140.z45vl3milw2vk4hy@two.firstfloor.org>
+ <20190119153745.GA19542@krava>
+ <20190128141301.GA26788@krava>
+ <20190128170037.sbayc3mve66krzzd@two.firstfloor.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128170037.sbayc3mve66krzzd@two.firstfloor.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Em Mon, Jan 28, 2019 at 09:00:37AM -0800, Andi Kleen escreveu:
+> > > also now it won't make sample for slave events
+> > > with zero value/period read
+> > > 
+> > > note the patch needs to be split into more patches,
+> > > sending it all together for discussion over the solution
+> > 
+> > any feedback on this one?
+> 
+> Looks good to me.
+> 
+> Reviewed-by: Andi Kleen <ak@linux.intel.com>
+> -Andi
 
-pblk stripes writes of minimal write size across all non-offline chunks
-in a line, which means that the maximum write pointer delta should not
-exceed the minimal write size. Extend the line write pointer balance check
-to cover this case.
+Jiri, can you repost with a proper Subject line, Andi's reviewed-by,
+etc?
 
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
----
-
-This patch applies on top of Zhoujie's V3 of 
-"lightnvm: pblk: ignore bad block wp for pblk_line_wp_is_unbalanced
-
- drivers/lightnvm/pblk-recovery.c | 60 ++++++++++++++++++++------------
- 1 file changed, 37 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 02d466e6925e..d86f580036d3 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -302,41 +302,55 @@ static int pblk_pad_distance(struct pblk *pblk, struct pblk_line *line)
- 	return (distance > line->left_msecs) ? line->left_msecs : distance;
- }
- 
--static int pblk_line_wp_is_unbalanced(struct pblk *pblk,
--				      struct pblk_line *line)
-+/* Return a chunk belonging to a line by stripe(write order) index */
-+static struct nvm_chk_meta *pblk_get_stripe_chunk(struct pblk *pblk,
-+						  struct pblk_line *line,
-+						  int index)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
--	struct pblk_line_meta *lm = &pblk->lm;
- 	struct pblk_lun *rlun;
--	struct nvm_chk_meta *chunk;
- 	struct ppa_addr ppa;
--	u64 line_wp;
--	int pos, i, bit;
-+	int pos;
- 
--	bit = find_first_zero_bit(line->blk_bitmap, lm->blk_per_line);
--	if (bit >= lm->blk_per_line)
--		return 0;
--	rlun = &pblk->luns[bit];
-+	rlun = &pblk->luns[index];
- 	ppa = rlun->bppa;
- 	pos = pblk_ppa_to_pos(geo, ppa);
--	chunk = &line->chks[pos];
- 
--	line_wp = chunk->wp;
-+	return &line->chks[pos];
-+}
- 
--	for (i = bit + 1; i < lm->blk_per_line; i++) {
--		rlun = &pblk->luns[i];
--		ppa = rlun->bppa;
--		pos = pblk_ppa_to_pos(geo, ppa);
--		chunk = &line->chks[pos];
-+static int pblk_line_wps_are_unbalanced(struct pblk *pblk,
-+				      struct pblk_line *line)
-+{
-+	struct pblk_line_meta *lm = &pblk->lm;
-+	int blk_in_line = lm->blk_per_line;
-+	struct nvm_chk_meta *chunk;
-+	u64 max_wp, min_wp;
-+	int i;
- 
--		if (chunk->state & NVM_CHK_ST_OFFLINE)
--			continue;
-+	i = find_first_zero_bit(line->blk_bitmap, blk_in_line);
-+
-+	/* If there is one or zero good chunks in the line,
-+	 * the write pointers can't be unbalanced.
-+	 */
-+	if (i >= (blk_in_line - 1))
-+		return 0;
- 
--		if (chunk->wp > line_wp)
-+	chunk = pblk_get_stripe_chunk(pblk, line, i);
-+	max_wp = chunk->wp;
-+	if (max_wp > pblk->max_write_pgs)
-+		min_wp = max_wp - pblk->max_write_pgs;
-+	else
-+		min_wp = 0;
-+
-+	i = find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
-+	while (i < blk_in_line) {
-+		chunk = pblk_get_stripe_chunk(pblk, line, i);
-+		if (chunk->wp > max_wp || chunk->wp < min_wp)
- 			return 1;
--		else if (chunk->wp < line_wp)
--			line_wp = chunk->wp;
-+
-+		i = find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
- 	}
- 
- 	return 0;
-@@ -362,7 +376,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 	int ret;
- 	u64 left_ppas = pblk_sec_in_open_line(pblk, line) - lm->smeta_sec;
- 
--	if (pblk_line_wp_is_unbalanced(pblk, line))
-+	if (pblk_line_wps_are_unbalanced(pblk, line))
- 		pblk_warn(pblk, "recovering unbalanced line (%d)\n", line->id);
- 
- 	ppa_list = p.ppa_list;
--- 
-2.17.1
-
+- Arnaldo
