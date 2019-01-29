@@ -2,185 +2,131 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B57C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B6DC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC6342084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:20:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N8FU5aDZ"
+	by mail.kernel.org (Postfix) with ESMTP id 875B620880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:24:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548793486;
+	bh=+ciIrXZeW1+Y/CSQkTTPO9u050N6ssuVfUcyMfLjOZg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=k5twztJ55b11FCdBVNaNz/rqnF+9yZf425t5VUnvVcABRgVPq3YyaWb5rxe2Twk6I
+	 UTeq1Keb7rkwLJ6jA8OxRgcay3q2g459u7hIOm8kmx2mkR8hgVekopASvsamqPXXdN
+	 ho9xv0zD+7VPvHnbpOSOsykOPIrAaMaZBYjoCDGs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729490AbfA2UUf (ORCPT
+        id S1729225AbfA2UYo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:20:35 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:44153 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbfA2UUf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:20:35 -0500
-Received: by mail-ua1-f67.google.com with SMTP id d19so7295723uaq.11
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 12:20:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ilHjXEI1KzvjdP9zzP42JvJaplYBYotZ66b5QTZL1Bc=;
-        b=N8FU5aDZJHTzVXJlRIgvC7uoZvuURuzLWl0hw+dJw3aIad4JdXBcmTUn5CV7cXDw1H
-         /kitQH4t8F+dMQdALsiQB5fEXmt+UxLLLTG/Tg3KjnJtdB/fueBYqN5mqPbJzCdBDkZw
-         M7uuBqHGAe6K8RMG6zZk3dxKqhnZmP3EQ5df4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ilHjXEI1KzvjdP9zzP42JvJaplYBYotZ66b5QTZL1Bc=;
-        b=Xv55UficRSnL47Vi1DzgI4DbMUzgnRMDFG8aqdYsiqh52X0Qq155kmbhifh+qWJrX4
-         eomj47ZwtYHKdzFanI9Y+XaJOkg0C+rME6rr5YtSczfkGR5PhoaOt46oUUmrKK/1gTvs
-         XDR0omH5XOY0a+tn/xZKaYbSABVJtPpLFt5UBE2BLnIz3i1BueJLS9NILqdiyZGT8EQF
-         4o3dPORVc4a/sGH6P5XH0EZ5AOosNbl1Efot+SEV8zjGGnnimNfzFaog3o+87jZtLO5H
-         hpSog/i0qi58K7RgaCL7NqBM2oPEgFTtLfb28r+VU7uNOxF72Ivm5rzA61aT/fAk5VvP
-         Jidg==
-X-Gm-Message-State: AJcUuke4IxYeKwAiM65e/S+JjNLz78G3Xl3lpWuRjcx99zItSYbHGejk
-        +0E7vWOhBbdAWo0qLhj8l6WsW/ylvLHa7B3lRkfUjw==
-X-Google-Smtp-Source: ALg8bN4F6v2thNh+uz9FjyxVvJUaN1hmrHfB37XX4gzMAJbwTLg3mX+1RuGcmScFgiFBSON9cPxkpMqNNvsmEr+I+YA=
-X-Received: by 2002:ab0:6446:: with SMTP id j6mr11410854uap.2.1548793233719;
- Tue, 29 Jan 2019 12:20:33 -0800 (PST)
+        Tue, 29 Jan 2019 15:24:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42280 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727473AbfA2UYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 15:24:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 60854AA71;
+        Tue, 29 Jan 2019 20:24:42 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 21:24:40 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc:     Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] mm, memory_hotplug: fix uninitialized pages fallouts.
+Message-ID: <20190129202440.GP18811@dhcp22.suse.cz>
+References: <20190128144506.15603-1-mhocko@kernel.org>
+ <20190129141447.34aa9d0c@thinkpad>
+ <20190129134920.GM18811@dhcp22.suse.cz>
+ <CABXGCsPM-JrdxN9t-HjkWxJJzdGHiJZOYD5p-CsjGEFSQ=+DwQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <cover.1548737236.git.amit.kucheria@linaro.org>
- <6077cb33d7e078bb0e85776bad99fdb476f16d0c.1548737236.git.amit.kucheria@linaro.org>
- <20190129053618.laa6nscfvlmhhkb5@vireshk-i7> <CAP245DVk+Bbkqh5xzNnL+RG3zZDJJR+ZLJqmEhSWjjSK1FH8rw@mail.gmail.com>
- <CAJZ5v0hs2Af9DJoxiyMmFt7R5nYbGOCqgG5cvPOL8yrQXN-ZUw@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hs2Af9DJoxiyMmFt7R5nYbGOCqgG5cvPOL8yrQXN-ZUw@mail.gmail.com>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Wed, 30 Jan 2019 01:50:22 +0530
-Message-ID: <CAHLCerN-+57hH8r5e0ZyNY6+w102tHHhWORXk2admf1EU_=jjA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/9] cpufreq: Auto-register the driver as a thermal
- cooling device if asked
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000871c4e05809e86f4"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABXGCsPM-JrdxN9t-HjkWxJJzdGHiJZOYD5p-CsjGEFSQ=+DwQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000871c4e05809e86f4
-Content-Type: text/plain; charset="UTF-8"
-
-On Tue, Jan 29, 2019 at 2:43 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Tue, Jan 29, 2019 at 6:46 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
+On Tue 29-01-19 22:38:19, Mikhail Gavrilov wrote:
+> On Tue, 29 Jan 2019 at 18:49, Michal Hocko <mhocko@kernel.org> wrote:
 > >
-> > On Tue, Jan 29, 2019 at 11:06 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > On Tue 29-01-19 14:14:47, Gerald Schaefer wrote:
+> > > On Mon, 28 Jan 2019 15:45:04 +0100
+> > > Michal Hocko <mhocko@kernel.org> wrote:
 > > >
-> > > On 29-01-19, 10:25, Amit Kucheria wrote:
-> > > > All cpufreq drivers do similar things to register as a cooling device.
-> > > > Provide a cpufreq driver flag so drivers can just ask the cpufreq core
-> > > > to register the cooling device on their behalf. This allows us to get
-> > > > rid of duplicated code in the drivers.
+> > > > Hi,
+> > > > Mikhail has posted fixes for the two bugs quite some time ago [1]. I
+> > > > have pushed back on those fixes because I believed that it is much
+> > > > better to plug the problem at the initialization time rather than play
+> > > > whack-a-mole all over the hotplug code and find all the places which
+> > > > expect the full memory section to be initialized. We have ended up with
+> > > > 2830bf6f05fb ("mm, memory_hotplug: initialize struct pages for the full
+> > > > memory section") merged and cause a regression [2][3]. The reason is
+> > > > that there might be memory layouts when two NUMA nodes share the same
+> > > > memory section so the merged fix is simply incorrect.
 > > > >
-> > > > In order to allow this, we add a struct thermal_cooling_device pointer
-> > > > to struct cpufreq_policy so that drivers don't need to store it in a
-> > > > private data structure.
+> > > > In order to plug this hole we really have to be zone range aware in
+> > > > those handlers. I have split up the original patch into two. One is
+> > > > unchanged (patch 2) and I took a different approach for `removable'
+> > > > crash. It would be great if Mikhail could test it still works for his
+> > > > memory layout.
 > > > >
-> > > > Suggested-by: Stephen Boyd <swboyd@chromium.org>
-> > > > Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > > > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> > > > Tested-by: Matthias Kaehlcke <mka@chromium.org>
-> > > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > > ---
-> > > >  drivers/cpufreq/cpufreq.c | 13 +++++++++++++
-> > > >  include/linux/cpufreq.h   |  9 +++++++++
-> > > >  2 files changed, 22 insertions(+)
-> > > >
-> > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > > > index e35a886e00bc..0f9b50d3ee91 100644
-> > > > --- a/drivers/cpufreq/cpufreq.c
-> > > > +++ b/drivers/cpufreq/cpufreq.c
-> > > > @@ -19,6 +19,7 @@
-> > > >
-> > > >  #include <linux/cpu.h>
-> > > >  #include <linux/cpufreq.h>
-> > > > +#include <linux/cpu_cooling.h>
-> > > >  #include <linux/delay.h>
-> > > >  #include <linux/device.h>
-> > > >  #include <linux/init.h>
-> > > > @@ -1318,6 +1319,11 @@ static int cpufreq_online(unsigned int cpu)
-> > > >       if (cpufreq_driver->ready)
-> > > >               cpufreq_driver->ready(policy);
-> > > >
-> > > > +#if IS_ENABLED(CONFIG_CPU_THERMAL)
-> > > > +     if (cpufreq_driver->flags & CPUFREQ_IS_COOLING_DEV)
-> > > > +             policy->cdev = of_cpufreq_cooling_register(policy);
-> > > > +#endif
+> > > > [1] http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com
+> > > > [2] https://bugzilla.redhat.com/show_bug.cgi?id=1666948
+> > > > [3] http://lkml.kernel.org/r/20190125163938.GA20411@dhcp22.suse.cz
 > > >
-> > > I am not sure if Rafael wanted it this way but maybe something like this:
+> > > I verified that both patches fix the issues we had with valid_zones
+> > > (with mem=2050M) and removable (with mem=3075M).
 > > >
-> > >         if (IS_ENABLED(CONFIG_CPU_THERMAL) &&
-> > >             cpufreq_driver->flags & CPUFREQ_IS_COOLING_DEV))
-> > >                 policy->cdev = of_cpufreq_cooling_register(policy);
-> > >
-> > > We never wanted ifdef hackery to be in there :)
+> > > However, the call trace in the description of your patch 1 is wrong.
+> > > You basically have the same call trace for test_pages_in_a_zone in
+> > > both patches. The "removable" patch should have the call trace for
+> > > is_mem_section_removable from Mikhails original patches:
 > >
-> > OK, that makes more sense. Should I just send out a fixup patch or the
-> > entire series?
->
-> Just a fixup patch, please.
+> > Thanks for testing. Can I use you Tested-by?
+> >
+> > >  CONFIG_DEBUG_VM_PGFLAGS=y
+> > >  kernel parameter mem=3075M
+> > >  --------------------------
+> > >  page:000003d08300c000 is uninitialized and poisoned
+> > >  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+> > >  Call Trace:
+> > >  ([<000000000038596c>] is_mem_section_removable+0xb4/0x190)
+> > >   [<00000000008f12fa>] show_mem_removable+0x9a/0xd8
+> > >   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
+> > >   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
+> > >   [<00000000003e4194>] seq_read+0x204/0x480
+> > >   [<00000000003b53ea>] __vfs_read+0x32/0x178
+> > >   [<00000000003b55b2>] vfs_read+0x82/0x138
+> > >   [<00000000003b5be2>] ksys_read+0x5a/0xb0
+> > >   [<0000000000b86ba0>] system_call+0xdc/0x2d8
+> > >  Last Breaking-Event-Address:
+> > >   [<000000000038596c>] is_mem_section_removable+0xb4/0x190
+> > >  Kernel panic - not syncing: Fatal exception: panic_on_oops
+> >
+> > Yeah, this is c&p mistake on my end. I will use this trace instead.
+> > Thanks for spotting.
+> 
+> 
+> Michal, I am late?
 
-Please find attached a fixup patch suitable to add to the top of the
-series and use git rebase --autosquash on.
+I do not think so. I plan to repost tomorrow with the updated changelog
+and gathered review and tested-by tags. Can I assume yours as well?
 
-The entire series with this patch squashed in and rebased on top of
-today's linux-next is available for your convenience if needed[1]
+> I am also tested these patches and can confirm that issue fixed again
+> with new approach.
+> I also attach two dmesg first when issue was reproduced and second
+> with applied patch (problem not reproduced).
 
-Thanks,
-Amit
-
-[1] https://git.linaro.org/people/amit.kucheria/kernel.git/log/?h=up/cpufreq/auto-register-cooling-dev-v5
-
---000000000000871c4e05809e86f4
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-fixup-cpufreq-Auto-register-the-driver-as-a-thermal-.patch"
-Content-Disposition: attachment; 
-	filename="0001-fixup-cpufreq-Auto-register-the-driver-as-a-thermal-.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jri73hss0>
-X-Attachment-Id: f_jri73hss0
-
-RnJvbSBjYjVhYTUwMDFlODZmNDYzNWIzOWZhMWUzOTU1YTUzMGY4YTBjZWQ4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpNZXNzYWdlLUlkOiA8Y2I1YWE1MDAxZTg2ZjQ2MzViMzlmYTFlMzk1NWE1
-MzBmOGEwY2VkOC4xNTQ4NzkyNDg1LmdpdC5hbWl0Lmt1Y2hlcmlhQGxpbmFyby5vcmc+CkZyb206
-IEFtaXQgS3VjaGVyaWEgPGFtaXQua3VjaGVyaWFAbGluYXJvLm9yZz4KRGF0ZTogV2VkLCAzMCBK
-YW4gMjAxOSAwMTozNzo0MCArMDUzMApTdWJqZWN0OiBbUEFUQ0hdIGZpeHVwISBjcHVmcmVxOiBB
-dXRvLXJlZ2lzdGVyIHRoZSBkcml2ZXIgYXMgYSB0aGVybWFsIGNvb2xpbmcKIGRldmljZSBpZiBh
-c2tlZAoKLS0tCiBkcml2ZXJzL2NwdWZyZXEvY3B1ZnJlcS5jIHwgMTAgKysrKy0tLS0tLQogMSBm
-aWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2NwdWZyZXEvY3B1ZnJlcS5jIGIvZHJpdmVycy9jcHVmcmVxL2NwdWZyZXEuYwpp
-bmRleCAwZjliNTBkM2VlOTEuLmNkNTc0ZjAzMTMxOCAxMDA2NDQKLS0tIGEvZHJpdmVycy9jcHVm
-cmVxL2NwdWZyZXEuYworKysgYi9kcml2ZXJzL2NwdWZyZXEvY3B1ZnJlcS5jCkBAIC0xMzE5LDEw
-ICsxMzE5LDkgQEAgc3RhdGljIGludCBjcHVmcmVxX29ubGluZSh1bnNpZ25lZCBpbnQgY3B1KQog
-CWlmIChjcHVmcmVxX2RyaXZlci0+cmVhZHkpCiAJCWNwdWZyZXFfZHJpdmVyLT5yZWFkeShwb2xp
-Y3kpOwogCi0jaWYgSVNfRU5BQkxFRChDT05GSUdfQ1BVX1RIRVJNQUwpCi0JaWYgKGNwdWZyZXFf
-ZHJpdmVyLT5mbGFncyAmIENQVUZSRVFfSVNfQ09PTElOR19ERVYpCisJaWYgKElTX0VOQUJMRUQo
-Q09ORklHX0NQVV9USEVSTUFMKSAmJgorCSAgICBjcHVmcmVxX2RyaXZlci0+ZmxhZ3MgJiBDUFVG
-UkVRX0lTX0NPT0xJTkdfREVWKQogCQlwb2xpY3ktPmNkZXYgPSBvZl9jcHVmcmVxX2Nvb2xpbmdf
-cmVnaXN0ZXIocG9saWN5KTsKLSNlbmRpZgogCiAJcHJfZGVidWcoImluaXRpYWxpemF0aW9uIGNv
-bXBsZXRlXG4iKTsKIApAQCAtMTQxMSwxMiArMTQxMCwxMSBAQCBzdGF0aWMgaW50IGNwdWZyZXFf
-b2ZmbGluZSh1bnNpZ25lZCBpbnQgY3B1KQogCQlnb3RvIHVubG9jazsKIAl9CiAKLSNpZiBJU19F
-TkFCTEVEKENPTkZJR19DUFVfVEhFUk1BTCkKLQlpZiAoY3B1ZnJlcV9kcml2ZXItPmZsYWdzICYg
-Q1BVRlJFUV9JU19DT09MSU5HX0RFVikgeworCWlmIChJU19FTkFCTEVEKENPTkZJR19DUFVfVEhF
-Uk1BTCkgJiYKKwkgICAgY3B1ZnJlcV9kcml2ZXItPmZsYWdzICYgQ1BVRlJFUV9JU19DT09MSU5H
-X0RFVikgewogCQljcHVmcmVxX2Nvb2xpbmdfdW5yZWdpc3Rlcihwb2xpY3ktPmNkZXYpOwogCQlw
-b2xpY3ktPmNkZXYgPSBOVUxMOwogCX0KLSNlbmRpZgogCiAJaWYgKGNwdWZyZXFfZHJpdmVyLT5z
-dG9wX2NwdSkKIAkJY3B1ZnJlcV9kcml2ZXItPnN0b3BfY3B1KHBvbGljeSk7Ci0tIAoyLjE3LjEK
-Cg==
---000000000000871c4e05809e86f4--
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
