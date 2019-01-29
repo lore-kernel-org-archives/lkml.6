@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FF8C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD39C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45CF720880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 517A320880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763207;
-	bh=PhlWMkrBJIiWRvzMitFnktTgelxhuONNMrl80yNT45w=;
+	s=default; t=1548763213;
+	bh=FhO8a7yFAyukCJ7Fqa6fZ4EeSBX3y53BpJOK20fg6+4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=V/euOp5klOQJiZbmvQ/GEHQRJbr8rwuRAlTXRevFqq4XLydbxT/SYGCpjZVjSzYI3
-	 +7Hh5wqvNc+hg45xJqhJZNPI4j+UhG/Fd15kBRpX5uf46LBwoBJNyrd1ZQhJn5ATpe
-	 ucjlrrwkfs9BQxJ1Tke4XtluGdhAEaeWwcoUFzOw=
+	b=KJ+A4AdfgOC6dtOTdXjrF2WaRc6crDbJwhO5oN/cEC0AgBw87f8+7Iv92O2+vCMcT
+	 IQyW8JW/StxJykEEirvz0ZXTVVl30tBDZO1ekx52aAybmKuGSAq2e8d2YOMqNJ2BuC
+	 ZGv9Ixm9BR9rWIVdTSsrFhBJ2dvfernMsyD9iATU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731023AbfA2Lqk (ORCPT
+        id S1731147AbfA2MAM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:46:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37160 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 07:00:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730248AbfA2Lqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:46:34 -0500
+        id S1731010AbfA2Lqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:46:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C74B221871;
-        Tue, 29 Jan 2019 11:46:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA0E42083B;
+        Tue, 29 Jan 2019 11:46:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762393;
-        bh=PhlWMkrBJIiWRvzMitFnktTgelxhuONNMrl80yNT45w=;
+        s=default; t=1548762396;
+        bh=FhO8a7yFAyukCJ7Fqa6fZ4EeSBX3y53BpJOK20fg6+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2hcbHkH+5SlcIT/iziwBpDk5vt7u9i2HY1mi3sUE0tQMR0bJe+16gYDf5xcs6jsBJ
-         f+k7c7XdcfiBF9MLqR4vQ+X7hAE0iJUHnq8VriZfjTgCKQGN8zqC0fobRrbD5f5Bsz
-         REC0SVQ1Q895LWOGOEiVKl06WxFfYc4BuwC0uuG0=
+        b=zNiz7hoR/ZK2+E0n5UMAcw23KUie6LANwHXDePP9SmvlNm6IwxLDWKdH0JrABcNN0
+         zceRoznoPDmqly0/UwLVrbAXKEkJyLO47rYskZAhrEIXagHgktZWG/qjcQRwxyy7k9
+         yKtF28iCvcsbb+MplckFvz3H61tu9ka7Nt0I+D14=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
         Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 092/103] bpf: restrict stack pointer arithmetic for unprivileged
-Date:   Tue, 29 Jan 2019 12:36:09 +0100
-Message-Id: <20190129113207.058598277@linuxfoundation.org>
+Subject: [PATCH 4.19 093/103] bpf: restrict unknown scalars of mixed signed bounds for unprivileged
+Date:   Tue, 29 Jan 2019 12:36:10 +0100
+Message-Id: <20190129113207.112130352@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -66,15 +66,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ commit e4298d25830a866cc0f427d4bccb858e76715859 upstream ]
+[ commit 9d7eceede769f90b66cfa06ad5b357140d5141ed upstream ]
 
-Restrict stack pointer arithmetic for unprivileged users in that
-arithmetic itself must not go out of bounds as opposed to the actual
-access later on. Therefore after each adjust_ptr_min_max_vals() with
-a stack pointer as a destination we simulate a check_stack_access()
-of 1 byte on the destination and once that fails the program is
-rejected for unprivileged program loads. This is analog to map
-value pointer arithmetic and needed for masking later on.
+For unknown scalars of mixed signed bounds, meaning their smin_value is
+negative and their smax_value is positive, we need to reject arithmetic
+with pointer to map value. For unprivileged the goal is to mask every
+map pointer arithmetic and this cannot reliably be done when it is
+unknown at verification time whether the scalar value is negative or
+positive. Given this is a corner case, the likelihood of breaking should
+be very small.
 
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Acked-by: Alexei Starovoitov <ast@kernel.org>
@@ -82,98 +82,36 @@ Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/verifier.c | 63 ++++++++++++++++++++++++++++---------------
- 1 file changed, 41 insertions(+), 22 deletions(-)
+ kernel/bpf/verifier.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 110ca915cfb6..aa2944d54e7a 100644
+index aa2944d54e7a..fbaa3b9e1d71 100644
 --- a/kernel/bpf/verifier.c
 +++ b/kernel/bpf/verifier.c
-@@ -1238,6 +1238,31 @@ static int check_stack_read(struct bpf_verifier_env *env,
- 	}
- }
+@@ -2712,8 +2712,8 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 	    smin_ptr = ptr_reg->smin_value, smax_ptr = ptr_reg->smax_value;
+ 	u64 umin_val = off_reg->umin_value, umax_val = off_reg->umax_value,
+ 	    umin_ptr = ptr_reg->umin_value, umax_ptr = ptr_reg->umax_value;
++	u32 dst = insn->dst_reg, src = insn->src_reg;
+ 	u8 opcode = BPF_OP(insn->code);
+-	u32 dst = insn->dst_reg;
  
-+static int check_stack_access(struct bpf_verifier_env *env,
-+			      const struct bpf_reg_state *reg,
-+			      int off, int size)
-+{
-+	/* Stack accesses must be at a fixed offset, so that we
-+	 * can determine what type of data were returned. See
-+	 * check_stack_read().
-+	 */
-+	if (!tnum_is_const(reg->var_off)) {
-+		char tn_buf[48];
-+
-+		tnum_strn(tn_buf, sizeof(tn_buf), reg->var_off);
-+		verbose(env, "variable stack access var_off=%s off=%d size=%d",
-+			tn_buf, off, size);
+ 	dst_reg = &regs[dst];
+ 
+@@ -2749,6 +2749,12 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			dst);
+ 		return -EACCES;
+ 	}
++	if (ptr_reg->type == PTR_TO_MAP_VALUE &&
++	    !env->allow_ptr_leaks && !known && (smin_val < 0) != (smax_val < 0)) {
++		verbose(env, "R%d has unknown scalar with mixed signed bounds, pointer arithmetic with it prohibited for !root\n",
++			off_reg == dst_reg ? dst : src);
 +		return -EACCES;
 +	}
-+
-+	if (off >= 0 || off < -MAX_BPF_STACK) {
-+		verbose(env, "invalid stack off=%d size=%d\n", off, size);
-+		return -EACCES;
-+	}
-+
-+	return 0;
-+}
-+
- /* check read/write into map element returned by bpf_map_lookup_elem() */
- static int __check_map_access(struct bpf_verifier_env *env, u32 regno, int off,
- 			      int size, bool zero_size_allowed)
-@@ -1736,24 +1761,10 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
- 		}
  
- 	} else if (reg->type == PTR_TO_STACK) {
--		/* stack accesses must be at a fixed offset, so that we can
--		 * determine what type of data were returned.
--		 * See check_stack_read().
--		 */
--		if (!tnum_is_const(reg->var_off)) {
--			char tn_buf[48];
--
--			tnum_strn(tn_buf, sizeof(tn_buf), reg->var_off);
--			verbose(env, "variable stack access var_off=%s off=%d size=%d",
--				tn_buf, off, size);
--			return -EACCES;
--		}
- 		off += reg->var_off.value;
--		if (off >= 0 || off < -MAX_BPF_STACK) {
--			verbose(env, "invalid stack off=%d size=%d\n", off,
--				size);
--			return -EACCES;
--		}
-+		err = check_stack_access(env, reg, off, size);
-+		if (err)
-+			return err;
- 
- 		state = func(env, reg);
- 		err = update_stack_depth(env, state, off);
-@@ -2884,11 +2895,19 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
- 	/* For unprivileged we require that resulting offset must be in bounds
- 	 * in order to be able to sanitize access later on.
- 	 */
--	if (!env->allow_ptr_leaks && dst_reg->type == PTR_TO_MAP_VALUE &&
--	    check_map_access(env, dst, dst_reg->off, 1, false)) {
--		verbose(env, "R%d pointer arithmetic of map value goes out of range, prohibited for !root\n",
--			dst);
--		return -EACCES;
-+	if (!env->allow_ptr_leaks) {
-+		if (dst_reg->type == PTR_TO_MAP_VALUE &&
-+		    check_map_access(env, dst, dst_reg->off, 1, false)) {
-+			verbose(env, "R%d pointer arithmetic of map value goes out of range, "
-+				"prohibited for !root\n", dst);
-+			return -EACCES;
-+		} else if (dst_reg->type == PTR_TO_STACK &&
-+			   check_stack_access(env, dst_reg, dst_reg->off +
-+					      dst_reg->var_off.value, 1)) {
-+			verbose(env, "R%d stack pointer arithmetic goes out of range, "
-+				"prohibited for !root\n", dst);
-+			return -EACCES;
-+		}
- 	}
- 
- 	return 0;
+ 	/* In case of 'scalar += pointer', dst_reg inherits pointer type and id.
+ 	 * The id may be overwritten later if we create a new variable offset.
 -- 
 2.19.1
 
