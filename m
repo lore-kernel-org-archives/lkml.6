@@ -2,162 +2,288 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB81C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8410BC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8511E2184D
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3075420815
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:50:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="lG1OXiOr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726164AbfA2PrR (ORCPT
+        id S1727207AbfA2PuC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:47:17 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58322 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725795AbfA2PrR (ORCPT
+        Tue, 29 Jan 2019 10:50:02 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40889 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbfA2PuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:47:17 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0TFigXC106672
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:47:15 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qasm68mrv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 10:47:15 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
-        Tue, 29 Jan 2019 15:47:14 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 29 Jan 2019 15:47:12 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0TFlBKd7405998
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 29 Jan 2019 15:47:11 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E0104A4059;
-        Tue, 29 Jan 2019 15:47:10 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 88CEBA4051;
-        Tue, 29 Jan 2019 15:47:10 +0000 (GMT)
-Received: from [9.152.224.122] (unknown [9.152.224.122])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 29 Jan 2019 15:47:10 +0000 (GMT)
-Reply-To: mimu@linux.ibm.com
-Subject: Re: [PATCH v6 07/13] KVM: s390: introduce struct
- kvm_s390_gisa_interrupt
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Cc:     KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-References: <20190124125939.130763-1-mimu@linux.ibm.com>
- <20190124125939.130763-8-mimu@linux.ibm.com>
- <20190128175054.67979549@oc2783563651>
- <20190129142220.3f08a1e9.cohuck@redhat.com>
-From:   Michael Mueller <mimu@linux.ibm.com>
-Organization: IBM
-Date:   Tue, 29 Jan 2019 16:47:10 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
+        Tue, 29 Jan 2019 10:50:02 -0500
+Received: by mail-vs1-f65.google.com with SMTP id z3so12200164vsf.7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 07:50:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vrAA2YCG0MN9FJwIUd71VNysqRSpz+WIaMTPbpQs+kM=;
+        b=lG1OXiOr+OdMF+6Xt1zYaAHUjyWMgj/h1wNZC+hK+XaheYjsyyIcJPsyj7Nx9DQe7M
+         dQgyX7so1GbDeojSMLJS2ZFZvbfSf15m8cCwQYV9JP3tMnbkHkKlkE/EqnuyvBnSxHV9
+         w8bwaaxUNtCkLKpAV4x3jpi/cvsuRGmDuaidALLpnwTnHLCKSsYgOVg5NNNg7h3VzQf+
+         jwHQI6iAloBkaZrBRKLUTPdQZnabZ+zKMuMDCLilx7p1saGowDy2ml7YDsBBkcwX2p5Z
+         Do8RjpJG19UGIGIi7/1oPjeWMJqNRvNAYRhABDBMCaj90IFcKaKCM1YQs+JC/z9W1l85
+         WwLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vrAA2YCG0MN9FJwIUd71VNysqRSpz+WIaMTPbpQs+kM=;
+        b=ZgJseRIaOXKdaX/1hYGqrLNxSsHaiHGRdRkQTI2i5Z0IpisixT9i0NlJ2E9ZZfWA5N
+         KGLWKjv3JhB7cxKZ5BUgVV1J64uXS8cuuAmirohDnaQagRgEt7gQrpyNpR+oO6BtguGn
+         LCO10zcCnCImgZO64YD8/tN3ygvhVZ+I5DGZi97nPnXmmvR8xQbnjwHFeGznqhFqaqQY
+         knRiWleF2QPl2sYvp/fyFp6HqPh0IrDrja3PeuiSMBhkNzOg5rskHZw2Q+ImYLu9Ssl3
+         jTO1y/VAxtwpi3nTFw34I7oViSZWEL9VZruF5CCQk8+epAl02aknrpIxFaokIXw7MjAQ
+         8gaQ==
+X-Gm-Message-State: AJcUukcYc0jL9JYgQaW3EkMh3ppSXg+cJ/l+uKOIgZPxcSLKqSzFmCFy
+        7UDweFsGMc4/xwGGKMVBJKDGSAvBwvrXkK0GfsXVhw==
+X-Google-Smtp-Source: ALg8bN7V8FScIjAeprGqpUaYxNe1VBjpzTVeQa2mgGq2NaTsZElEU+E2dRKGyeG8Q4yGYt5rWpstDlTMsxk5Q6lte7U=
+X-Received: by 2002:a67:1106:: with SMTP id 6mr10715231vsr.213.1548777000745;
+ Tue, 29 Jan 2019 07:50:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190129142220.3f08a1e9.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012915-0028-0000-0000-00000340608A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012915-0029-0000-0000-000023FD6417
-Message-Id: <42befe0d-ad84-5e34-a05a-0ffb4fcadd56@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-29_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=453 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901290118
+References: <20190129084737.718-1-hans@owltronix.com> <FDFE70E2-CA70-456F-8507-94BF822BF9A7@javigon.com>
+ <CANr-nt34gCrRWsNrAfKS1Opy=kV5EwuR_C1VDjQbBP5MnfdgpA@mail.gmail.com> <74C79F4D-E9B0-4F47-ACF2-9335D3DB8604@javigon.com>
+In-Reply-To: <74C79F4D-E9B0-4F47-ACF2-9335D3DB8604@javigon.com>
+From:   Hans Holmberg <hans@owltronix.com>
+Date:   Tue, 29 Jan 2019 16:49:49 +0100
+Message-ID: <CANr-nt3K3OWRoe9jHT0fJWZdSBTmiro4KERTNPu9CDiZB8QgAw@mail.gmail.com>
+Subject: Re: [PATCH] lightnvm: pblk: extend line wp balance check
+To:     =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+Cc:     =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Zhoujie Wu <zjwu@marvell.com>, linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 29, 2019 at 4:03 PM Javier Gonz=C3=A1lez <javier@javigon.com> w=
+rote:
+>
+> > On 29 Jan 2019, at 13.49, Hans Holmberg <hans@owltronix.com> wrote:
+> >
+> > On Tue, Jan 29, 2019 at 12:19 PM Javier Gonz=C3=A1lez <javier@javigon.c=
+om> wrote:
+> >>> On 29 Jan 2019, at 09.47, hans@owltronix.com wrote:
+> >>>
+> >>> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> >>>
+> >>> pblk stripes writes of minimal write size across all non-offline chun=
+ks
+> >>> in a line, which means that the maximum write pointer delta should no=
+t
+> >>> exceed the minimal write size. Extend the line write pointer balance =
+check
+> >>> to cover this case.
+> >>>
+> >>> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> >>> ---
+> >>>
+> >>> This patch applies on top of Zhoujie's V3 of
+> >>> "lightnvm: pblk: ignore bad block wp for pblk_line_wp_is_unbalanced
+> >>>
+> >>> drivers/lightnvm/pblk-recovery.c | 60 ++++++++++++++++++++-----------=
+-
+> >>> 1 file changed, 37 insertions(+), 23 deletions(-)
+> >>>
+> >>> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk=
+-recovery.c
+> >>> index 02d466e6925e..d86f580036d3 100644
+> >>> --- a/drivers/lightnvm/pblk-recovery.c
+> >>> +++ b/drivers/lightnvm/pblk-recovery.c
+> >>> @@ -302,41 +302,55 @@ static int pblk_pad_distance(struct pblk *pblk,=
+ struct pblk_line *line)
+> >>>      return (distance > line->left_msecs) ? line->left_msecs : distan=
+ce;
+> >>> }
+> >>>
+> >>> -static int pblk_line_wp_is_unbalanced(struct pblk *pblk,
+> >>> -                                   struct pblk_line *line)
+> >>> +/* Return a chunk belonging to a line by stripe(write order) index *=
+/
+> >>> +static struct nvm_chk_meta *pblk_get_stripe_chunk(struct pblk *pblk,
+> >>> +                                               struct pblk_line *lin=
+e,
+> >>> +                                               int index)
+> >>> {
+> >>>      struct nvm_tgt_dev *dev =3D pblk->dev;
+> >>>      struct nvm_geo *geo =3D &dev->geo;
+> >>> -     struct pblk_line_meta *lm =3D &pblk->lm;
+> >>>      struct pblk_lun *rlun;
+> >>> -     struct nvm_chk_meta *chunk;
+> >>>      struct ppa_addr ppa;
+> >>> -     u64 line_wp;
+> >>> -     int pos, i, bit;
+> >>> +     int pos;
+> >>>
+> >>> -     bit =3D find_first_zero_bit(line->blk_bitmap, lm->blk_per_line)=
+;
+> >>> -     if (bit >=3D lm->blk_per_line)
+> >>> -             return 0;
+> >>> -     rlun =3D &pblk->luns[bit];
+> >>> +     rlun =3D &pblk->luns[index];
+> >>>      ppa =3D rlun->bppa;
+> >>>      pos =3D pblk_ppa_to_pos(geo, ppa);
+> >>> -     chunk =3D &line->chks[pos];
+> >>>
+> >>> -     line_wp =3D chunk->wp;
+> >>> +     return &line->chks[pos];
+> >>> +}
+> >>>
+> >>> -     for (i =3D bit + 1; i < lm->blk_per_line; i++) {
+> >>> -             rlun =3D &pblk->luns[i];
+> >>> -             ppa =3D rlun->bppa;
+> >>> -             pos =3D pblk_ppa_to_pos(geo, ppa);
+> >>> -             chunk =3D &line->chks[pos];
+> >>> +static int pblk_line_wps_are_unbalanced(struct pblk *pblk,
+> >>> +                                   struct pblk_line *line)
+> >>> +{
+> >>> +     struct pblk_line_meta *lm =3D &pblk->lm;
+> >>> +     int blk_in_line =3D lm->blk_per_line;
+> >>> +     struct nvm_chk_meta *chunk;
+> >>> +     u64 max_wp, min_wp;
+> >>> +     int i;
+> >>>
+> >>> -             if (chunk->state & NVM_CHK_ST_OFFLINE)
+> >>> -                     continue;
+> >>> +     i =3D find_first_zero_bit(line->blk_bitmap, blk_in_line);
+> >>> +
+> >>> +     /* If there is one or zero good chunks in the line,
+> >>> +      * the write pointers can't be unbalanced.
+> >>> +      */
+> >>> +     if (i >=3D (blk_in_line - 1))
+> >>> +             return 0;
+> >>>
+> >>> -             if (chunk->wp > line_wp)
+> >>> +     chunk =3D pblk_get_stripe_chunk(pblk, line, i);
+> >>> +     max_wp =3D chunk->wp;
+> >>> +     if (max_wp > pblk->max_write_pgs)
+> >>> +             min_wp =3D max_wp - pblk->max_write_pgs;
+> >>> +     else
+> >>> +             min_wp =3D 0;
+> >>> +
+> >>> +     i =3D find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
+> >>> +     while (i < blk_in_line) {
+> >>> +             chunk =3D pblk_get_stripe_chunk(pblk, line, i);
+> >>> +             if (chunk->wp > max_wp || chunk->wp < min_wp)
+> >>>                      return 1;
+> >>> -             else if (chunk->wp < line_wp)
+> >>> -                     line_wp =3D chunk->wp;
+> >>> +
+> >>> +             i =3D find_next_zero_bit(line->blk_bitmap, blk_in_line,=
+ i + 1);
+> >>>      }
+> >>>
+> >>>      return 0;
+> >>> @@ -362,7 +376,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk,=
+ struct pblk_line *line,
+> >>>      int ret;
+> >>>      u64 left_ppas =3D pblk_sec_in_open_line(pblk, line) - lm->smeta_=
+sec;
+> >>>
+> >>> -     if (pblk_line_wp_is_unbalanced(pblk, line))
+> >>> +     if (pblk_line_wps_are_unbalanced(pblk, line))
+> >>>              pblk_warn(pblk, "recovering unbalanced line (%d)\n", lin=
+e->id);
+> >>>
+> >>>      ppa_list =3D p.ppa_list;
+> >>> --
+> >>> 2.17.1
+> >>
+> >> If I am understanding correctly, you want to protect against the case
+> >> where a pfail has broken the ws_min partition of a chunk, right? I say
+> >> this because there is a guarantee that the minimal write size and pblk=
+'s
+> >> write size align with ws_min and ws_opt. Even if we have grown bad
+> >> blocks on pfail for the current line (which is a bigger problem becaus=
+e
+> >> we have potentially lost data), this guarantee would remain.
+> >>
+> >> If this is the case, my first reaction would be to say that the
+> >> controller is responsible for guaranteeing atomicity for both scalar a=
+nd
+> >> vector I/Os. If this is not guaranteed, we have bigger problems than
+> >> this (e.g., for the write error recovery path).
+> >>
+> >> Are you thinking of a different case?
+> >
+> > The write pointer check triggers a warning if something unexpected has
+> > happened to the chunks.
+> > i.e. if something else than pblk messed with the disk, or if the user
+> > tries to recover a pblk instance with an invalid lun configuration.
+>
+> But this will only solve a very specific corner case of this, right?
+> This is, when you are writing at WP on a middle LUN exactly < ws_min.
+>> For example, If the user attempts to start pblk with a different LUN
+> configuration, the alignment is the same an pblk will actually fail
+> because it cannot find any emeta.
 
+Well, we will try to recover a line if the emeta data cannot be read
+or the data fails the crc check, and the recovery path assumes that
+the write pointers pointers have been incremented in the pblk stripe
+order. We'll get a warning now for all cases if this assumption is not
+valid.
 
-On 29.01.19 14:22, Cornelia Huck wrote:
-> On Mon, 28 Jan 2019 17:50:54 +0100
-> Halil Pasic <pasic@linux.ibm.com> wrote:
-> 
->> On Thu, 24 Jan 2019 13:59:33 +0100
->> Michael Mueller <mimu@linux.ibm.com> wrote:
->>
->>> Use this struct analog to the kvm interruption structs
->>> for kvm emulated floating and local interruptions.
->>> Further fields will be added with this series as
->>> required.
->>>
->>> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
->>
->> While looking at this I was asking myself what guards against invalid
->> gisa pointer dereference e.g. when pending_irqs() is called (see below).
->>
->> AFAIU we set up gisa_int.origin only if we have
->> css_general_characteristics.aiv. Opinions?
-> 
-> I think you're right that this is a (pre-existing) problem.
-> 
->>> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
->>> index 942cc7d33766..ee91d1de0036 100644
->>> --- a/arch/s390/kvm/interrupt.c
->>> +++ b/arch/s390/kvm/interrupt.c
->>> @@ -246,7 +246,8 @@ static inline unsigned long pending_irqs_no_gisa(struct kvm_vcpu *vcpu)
->>>   static inline unsigned long pending_irqs(struct kvm_vcpu *vcpu)
->>>   {
->>>   	return pending_irqs_no_gisa(vcpu) |
->>> -		gisa_get_ipm(vcpu->kvm->arch.gisa) << IRQ_PEND_IO_ISC_7;
->>> +		gisa_get_ipm(vcpu->kvm->arch.gisa_int.origin) <<
->>
->> Unconditional call to gisa_get_ipm(), and get ipm just accesses ->ipm.
-> 
-> All other callers of this function check for gisa != NULL first, so
-> either we should check here as well or move the check into the
-> gisa_get_ipm() function.
+> For completion, the original wp_unbalanced patch attempted to protect
+> against the case where several outstanding I/Os to different PUs are
+> inflight and then you have a pfail. In this case, a write to a PU that
+> is not "next" in the line bitmap completes and we have a whole, meaning
+> that if we recover this case, we risk to overwrite valid data, as we
+> break the "sequentiality" the line, which allows for recovering by
+> replaying the P2L stored on the OOB.
 
-I suggest to use an explicit test like this.
+For outstanding writes, we can leave no guarantees anyway. If a
+presync was attached to a bio, that bio will complete when the write
+completes.
 
-  static inline unsigned long pending_irqs(struct kvm_vcpu *vcpu)
-  {
--       return pending_irqs_no_gisa(vcpu) |
--               gisa_get_ipm(vcpu->kvm->arch.gisa_int.origin) <<
--                       IRQ_PEND_IO_ISC_7;
-+       struct kvm_s390_gisa_int *gi = &vcpu->kvm->arch.gisa_int;
-+       unsigned long pending_mask;
-+
-+       pending_mask = pending_irqs_no_gisa(vcpu);
-+       if (gi->origin)
-+               pending_mask |= gisa_get_ipm(gi->origin) << 
-IRQ_PEND_IO_ISC_7;
-+       return pending_mask;
-  }
+>
+> >
+> > This patch adds a warning if a chunk wp is too small(i.e. if a chunk
+> > was unexpectedly reset)
+>
+> I am not arguing against the implementation, I am just trying to
+> understand what you are trying to fix. If it is the case I described
+> originally, then I do not think it is possible on the Open-Channel
+> architecture. If you want to add protection against corruptions, then
+> this needs more work as many corruption cases are missing - you would
+> need something like a OOB watermark to protect open lines and something
+> like a OOB lba CRC check in emeta to validate that no data has been
+> altered.
+>
+> If you ask me, I do not think the latter belongs to pblk, and if it did,
+> I would suggest a whole new (optional) feature that adds this short of
+> integrity protection, ideally, reusing NVMe PI. In the original pblk, we
+> have followed the same assumption as block devices do; you can go an
+> write on the side to a block device that has a FS on top; the block
+> device will not complain at all - if the FS detects this then they will
+> try to fix it, otherwise you lost data.
+>
+> In this context, we have discussed about a pblk tool a la fsck, which can
+> cover all this cases instead of adding more complexity to the recovery
+> path in the kernel. Here, you patch makes sense we fail if something
+> suspicious has occurred and move the burden to the pblk tool for it to
+> do the repair. But again, if the goal s adding integrity protection, it
+> needs to cover the rest of the cases.
+>
+> Hope this makes sense.
 
-Michael
+It does! I'm not trying to do anything more than warn if the write
+pointers are not what we expect them to be.
 
-
-> 
->>
->>> +			IRQ_PEND_IO_ISC_7;
->>>   }
->>>     
-> 
-
+You're right, we need some sort of superblock and some recovery tool
+to make pblk more robust against corruptions.
+Now, we get a warning at least :)
