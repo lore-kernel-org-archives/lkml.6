@@ -2,71 +2,106 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C41C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C28FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE8B2086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:05:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="MuxjwOZA"
+	by mail.kernel.org (Postfix) with ESMTP id 6514F2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 17:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbfA2RFI (ORCPT
+        id S1728958AbfA2RF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:05:08 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:42216 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728017AbfA2RFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:05:08 -0500
-Received: from zn.tnic (p200300EC2BCC5400E03D356D4AA330A5.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:5400:e03d:356d:4aa3:30a5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C38181EC0245;
-        Tue, 29 Jan 2019 18:05:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548781506;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=aFt7AURr4ocBAbk09L2UuTjX0kxpip2b/p/REPGDiMA=;
-        b=MuxjwOZAmRYOA85/2FgJemKPfAB3AF38xR4Y3lBtTzYYnReS2P8/ZYyuezLHS9l5wCtGWh
-        djv9vqWpQvRH7P60OdI3bGJLaP5e3wej4t1XiW1GrPRrUvbWcI/PQDa5gXNzoblmct/fra
-        neOkTMVPLBcXB9R/ikquudDo+oPdQmo=
-Date:   Tue, 29 Jan 2019 18:04:58 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] x86/events: Mark expected switch fall-throughs
-Message-ID: <20190129170458.GC27037@zn.tnic>
-References: <20190125184917.GA7289@embeddedor>
- <20190129152500.GA25706@zn.tnic>
- <8aa46db0-6983-62c4-7dc6-e006d20cd84b@embeddedor.com>
- <20190129160753.GA27037@zn.tnic>
- <db4c4c57-fcdb-5101-a3b6-d1f3c587185e@embeddedor.com>
+        Tue, 29 Jan 2019 12:05:26 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.102]:45818 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728914AbfA2RF0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 12:05:26 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id B840226A83
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 11:05:25 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id oWpBg0eSgYTGMoWpBghyB5; Tue, 29 Jan 2019 11:05:25 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=42828 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1goWpA-003TjV-2d; Tue, 29 Jan 2019 11:05:25 -0600
+Date:   Tue, 29 Jan 2019 11:05:23 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Arjun Vynipadath <arjun@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] cxgb4: cxgb4_tc_u32: use struct_size() in kvzalloc()
+Message-ID: <20190129170523.GA29824@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <db4c4c57-fcdb-5101-a3b6-d1f3c587185e@embeddedor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1goWpA-003TjV-2d
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:42828
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 10:19:59AM -0600, Gustavo A. R. Silva wrote:
-> Yeah. But I don't want to send patches to every person that has touched the file.
+One of the more common cases of allocation size calculations is finding the
+size of a structure that has a zero-sized array at the end, along with memory
+for some number of elements for that array. For example:
 
-Yes but you should *definitely* CC supporters and reviewers.
+struct foo {
+    int stuff;
+    struct boo entry[];
+};
 
+instance = kvzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+
+Instead of leaving these open-coded and prone to type mistakes, we can now
+use the new struct_size() helper:
+
+instance = kvzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32.c
+index c7d2b4dc7568..02fc63fa7f25 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_u32.c
+@@ -444,8 +444,7 @@ struct cxgb4_tc_u32_table *cxgb4_init_tc_u32(struct adapter *adap)
+ 	if (!max_tids)
+ 		return NULL;
+ 
+-	t = kvzalloc(sizeof(*t) +
+-			 (max_tids * sizeof(struct cxgb4_link)), GFP_KERNEL);
++	t = kvzalloc(struct_size(t, table, max_tids), GFP_KERNEL);
+ 	if (!t)
+ 		return NULL;
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.20.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
