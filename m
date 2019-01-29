@@ -2,279 +2,234 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C66C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2B6C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A9D20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:28:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="xihHySx2"
+	by mail.kernel.org (Postfix) with ESMTP id BAA9820881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:29:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbfA2U23 (ORCPT
+        id S1729025AbfA2U3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:28:29 -0500
-Received: from cock.li ([185.100.85.212]:34782 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726984AbfA2U23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:28:29 -0500
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1548793702; bh=V4GIeNerlP4xxGpFPTCiXFb5o6SZk7Sb+VKRxNbfN9U=;
-        h=Date:From:To:Cc:Subject:From;
-        b=xihHySx2FpaA4W3t0mHZFfw8we0EgKc/iMcSti8O8t2TrZaOf0+x6qdEKjR9KR/xv
-         jSlnmFEp3TmbgslUaDIIDTS+NTBOK0NIxiHV0XnTJgMxB6tgWgZB7TXN5uvM2UUhtY
-         kN/JSPEiNfVCh/7YF+CcmQxt9C1uSMZv2ljzTAjEejjc1u7k32C98iOZej4DPdQxAq
-         H3XwtsbiEvo4R3K8oFCOKJUqDVIbDXN7Eu0iqfVVJVGl5TVQP7m+Bf5bCL+6naM3IK
-         5wE2DUte+RoL/Bc6DyHXP39FlUdc8yflr4jJo+CYTeefiKJ+0xenF+hn/Ojh4f6+48
-         P3XjFXu9gmhjg==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 29 Jan 2019 20:28:21 +0000
-From:   mikeeusa@redchan.it
-To:     copyright@github.com
-Cc:     legal@github.com, legal@microsoft.com, copyright@microsoft.com,
-        linux-kernel@vger.kernel.org, misc@openbsd.org,
-        gentoo-user@lists.gentoo.org, freebsd-chat@freebsd.org
-Subject: DMCA takedown request to GitHub regarding: GPC-Slots2
-Message-ID: <a82e4de350ca5c93e439598833dc8bcc@redchan.it>
-X-Sender: mikeeusa@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+        Tue, 29 Jan 2019 15:29:25 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:48535 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726945AbfA2U3Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 15:29:24 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TJEYhtT_1548793753;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TJEYhtT_1548793753)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 30 Jan 2019 04:29:20 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     ktkhai@virtuozzo.com, jhubbard@nvidia.com, hughd@google.com,
+        aarcange@redhat.com, akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [v3 PATCH] mm: ksm: do not block on page lock when searching stable tree
+Date:   Wed, 30 Jan 2019 04:29:13 +0800
+Message-Id: <1548793753-62377-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As you may know, In the United States; a license, absent an attached 
-interest, is revocable.
+ksmd need search stable tree to look for the suitable KSM page, but the
+KSM page might be locked for a while due to i.e. KSM page rmap walk.
+Basically it is not a big deal since commit 2c653d0ee2ae
+("ksm: introduce ksm_max_page_sharing per page deduplication limit"),
+since max_page_sharing limits the number of shared KSM pages.
 
-A "John Doe" had his non-exclusive license regarding the game 
-"GPC-Slots2" terminated by the copyright owner (me: MikeeUSA).
-The copyright owner may do this as-of-right, unless there is an attached 
-interest (ie: unless the licensee paid good consideration for the 
-license).
+But it still sounds not worth waiting for the lock, the page can be skip,
+then try to merge it in the next scan to avoid potential stall if its
+content is still intact.
 
-The "John Doe" then proceeded to beligerently upload a copy of 
-"GPC-Slots2" to your host, GitHub.
-This violated Author's (my) copyright, since "John Doe"'s gratuitous 
-bare license had been terminated by the copyright holder (me).
+Introduce trylock mode to get_ksm_page() to not block on page lock, like
+what try_to_merge_one_page() does.  And, define three possible
+operations (nolock, lock and trylock) as enum type to avoid stacking up
+bools and make the code more readable.
 
-The "John Doe" then proceeded to modify my work, which again violated my 
-copyright since I had previosly revoked his license.
-The license flows from me, the copyright owner, not any text. It is 
-permission to use, redistribute, modify, etc. Instructions on how to use 
-my property.
-When such permission is not supported by any consideration, it may be 
-rescinded by the owner, at his will.
-(/Regardless/ of the "terms". "Terms" are only enforcable against the 
-grantor if the licensee has paid consideration for them, essentially, 
-under US law.)
+Return -EBUSY if trylock fails, since NULL means not find suitable KSM
+page, which is a valid case.
 
-I have done so.
+With the default max_page_sharing setting (256), there is almost no
+observed change comparing lock vs trylock.
 
-I reiterated to the "John Doe" that his license had been terminated.
+However, with ksm02 of LTP, the reduced ksmd full scan time can be
+observed, which has set max_page_sharing to 786432.  With lock version,
+ksmd may tak 10s - 11s to run two full scans, with trylock version ksmd
+may take 8s - 11s to run two full scans.  And, the number of
+pages_sharing and pages_to_scan keep same.  Basically, this change has
+no harm.
 
-"John Doe" then informed me that I "can't do that". I tried to explain 
-to him US law.
-"John Doe" declared that he did not care and would keep the violating 
-work up, in defiance of me.
-(IE: he would "pirate" it)
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Suggested-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+Hi folks,
 
-He then cited works from a discredited paralegal while I cited published 
-works by lawyers studied in their field.
+This patch was with "mm: vmscan: skip KSM page in direct reclaim if priority
+is low" in the initial submission.  Then Hugh and Andrea pointed out commit
+2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page deduplication
+limit") is good enough for limiting the number of shared KSM page to prevent
+from softlock when walking ksm page rmap.  This commit does solve the problem.
+So, the series was dropped by Andrew from -mm tree.
 
-(Note: I make no claim to PERL, the color ansi library, any supporting 
-libraries, or the -2 split screen function. My copyright covers the game 
-code of GPC-Slots2. I (MikeeUSA) am the original author of the work and 
-never signed over copyright to the work.)
-(Note: "obeying the terms" (obeying the copyright holders instructions 
-regarding the use of his property) is not consideration: it is a 
-preexisting legal duty: outside of the "terms" there is no right for the 
-licensee to copy, modify, make derivative works, distribute, distribute 
-derivative works)
+However, I thought the second patch (this one) still sounds useful.  So, I did
+some test and resubmit it.  The first version was reviewed by Krill Tkhai, so
+I keep his Reviewed-by tag since there is no change to the patch except the
+commit log.
 
-[Additionally "John Doe" registered a fradulent account under my 
-long-held nom-de-gurre, adding a Code of Conduct ("CoC"), something I 
-would never do (being opposed to "CoC" for gratis projects on 
-principal)]
+So, would you please reconsider this patch?
 
-I now have no choice but to issue a DMCA takedown request, to you, 
-GitHub.
+v3: Use enum to define get_ksm_page operations (nolock, lock and trylock) per
+    John Hubbard
+v2: Updated the commit log to reflect some test result and latest discussion
 
-Regrettably;
---MikeeUSA--
-(electronic signature)
-Jan 29, 2019
+ mm/ksm.c | 46 ++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
 
-Contact information:
-email: mikeeusa@redchan.it
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 6c48ad1..5647bc1 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -667,6 +667,12 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
+ 	free_stable_node(stable_node);
+ }
+ 
++enum get_ksm_page_flags {
++	GET_KSM_PAGE_NOLOCK,
++	GET_KSM_PAGE_LOCK,
++	GET_KSM_PAGE_TRYLOCK
++};
++
+ /*
+  * get_ksm_page: checks if the page indicated by the stable node
+  * is still its ksm page, despite having held no reference to it.
+@@ -686,7 +692,8 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
+  * a page to put something that might look like our key in page->mapping.
+  * is on its way to being freed; but it is an anomaly to bear in mind.
+  */
+-static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
++static struct page *get_ksm_page(struct stable_node *stable_node,
++				 enum get_ksm_page_flags flags)
+ {
+ 	struct page *page;
+ 	void *expected_mapping;
+@@ -728,8 +735,15 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
+ 		goto stale;
+ 	}
+ 
+-	if (lock_it) {
++	if (flags == GET_KSM_PAGE_TRYLOCK) {
++		if (!trylock_page(page)) {
++			put_page(page);
++			return ERR_PTR(-EBUSY);
++		}
++	} else if (flags == GET_KSM_PAGE_LOCK)
+ 		lock_page(page);
++
++	if (flags != GET_KSM_PAGE_NOLOCK) {
+ 		if (READ_ONCE(page->mapping) != expected_mapping) {
+ 			unlock_page(page);
+ 			put_page(page);
+@@ -763,7 +777,7 @@ static void remove_rmap_item_from_tree(struct rmap_item *rmap_item)
+ 		struct page *page;
+ 
+ 		stable_node = rmap_item->head;
+-		page = get_ksm_page(stable_node, true);
++		page = get_ksm_page(stable_node, GET_KSM_PAGE_LOCK);
+ 		if (!page)
+ 			goto out;
+ 
+@@ -863,7 +877,7 @@ static int remove_stable_node(struct stable_node *stable_node)
+ 	struct page *page;
+ 	int err;
+ 
+-	page = get_ksm_page(stable_node, true);
++	page = get_ksm_page(stable_node, GET_KSM_PAGE_LOCK);
+ 	if (!page) {
+ 		/*
+ 		 * get_ksm_page did remove_node_from_stable_tree itself.
+@@ -1385,7 +1399,7 @@ static struct page *stable_node_dup(struct stable_node **_stable_node_dup,
+ 		 * stable_node parameter itself will be freed from
+ 		 * under us if it returns NULL.
+ 		 */
+-		_tree_page = get_ksm_page(dup, false);
++		_tree_page = get_ksm_page(dup, GET_KSM_PAGE_NOLOCK);
+ 		if (!_tree_page)
+ 			continue;
+ 		nr += 1;
+@@ -1508,7 +1522,7 @@ static struct page *__stable_node_chain(struct stable_node **_stable_node_dup,
+ 	if (!is_stable_node_chain(stable_node)) {
+ 		if (is_page_sharing_candidate(stable_node)) {
+ 			*_stable_node_dup = stable_node;
+-			return get_ksm_page(stable_node, false);
++			return get_ksm_page(stable_node, GET_KSM_PAGE_NOLOCK);
+ 		}
+ 		/*
+ 		 * _stable_node_dup set to NULL means the stable_node
+@@ -1613,7 +1627,8 @@ static struct page *stable_tree_search(struct page *page)
+ 			 * wrprotected at all times. Any will work
+ 			 * fine to continue the walk.
+ 			 */
+-			tree_page = get_ksm_page(stable_node_any, false);
++			tree_page = get_ksm_page(stable_node_any,
++						 GET_KSM_PAGE_NOLOCK);
+ 		}
+ 		VM_BUG_ON(!stable_node_dup ^ !!stable_node_any);
+ 		if (!tree_page) {
+@@ -1673,7 +1688,12 @@ static struct page *stable_tree_search(struct page *page)
+ 			 * It would be more elegant to return stable_node
+ 			 * than kpage, but that involves more changes.
+ 			 */
+-			tree_page = get_ksm_page(stable_node_dup, true);
++			tree_page = get_ksm_page(stable_node_dup,
++						 GET_KSM_PAGE_TRYLOCK);
++
++			if (PTR_ERR(tree_page) == -EBUSY)
++				return ERR_PTR(-EBUSY);
++
+ 			if (unlikely(!tree_page))
+ 				/*
+ 				 * The tree may have been rebalanced,
+@@ -1842,7 +1862,8 @@ static struct stable_node *stable_tree_insert(struct page *kpage)
+ 			 * wrprotected at all times. Any will work
+ 			 * fine to continue the walk.
+ 			 */
+-			tree_page = get_ksm_page(stable_node_any, false);
++			tree_page = get_ksm_page(stable_node_any,
++						 GET_KSM_PAGE_NOLOCK);
+ 		}
+ 		VM_BUG_ON(!stable_node_dup ^ !!stable_node_any);
+ 		if (!tree_page) {
+@@ -2060,6 +2081,10 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
+ 
+ 	/* We first start with searching the page inside the stable tree */
+ 	kpage = stable_tree_search(page);
++
++	if (PTR_ERR(kpage) == -EBUSY)
++		return;
++
+ 	if (kpage == page && rmap_item->head == stable_node) {
+ 		put_page(kpage);
+ 		return;
+@@ -2242,7 +2267,8 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
+ 
+ 			list_for_each_entry_safe(stable_node, next,
+ 						 &migrate_nodes, list) {
+-				page = get_ksm_page(stable_node, false);
++				page = get_ksm_page(stable_node,
++						    GET_KSM_PAGE_NOLOCK);
+ 				if (page)
+ 					put_page(page);
+ 				cond_resched();
+-- 
+1.8.3.1
 
-infringing content: github.com/MikeeUSA/GPC-Slots-2
-The material is not authorized by me, the copyright owner of the 
-GPC-Slots2 game code, as I explicitly rescinded the license from the 
-"John Doe", and he acknowledged that I had informed him of such and 
-communicated that he would defy my will regarding my property and 
-copyright.
-Everything stated within this above communication is accurate to the 
-best of my knowlege and ability.
-
-Some notices to you, github:
-1) Yes I viewed your page at: 
-https://help.github.com/articles/guide-to-submitting-a-dmca-takedown-notice/
-2) Yes this is "opensource" code.
-3) No that does not matter:
-The GPL(any version), being a bare license, is revocable 
-("retroactively").
-Just as any bare license, not supported by an interest, in the US.
-The "John Doe" is not in privity of contract with me and has paid me no 
-consideration.
-He cannot "bind" me (the grantor) to the terms.
-It is his duty to abide by my instructions regarding my property.
-I did not transfer my property away, the license is just that: a license 
-(temporary permission, that can be rescinded unless a "term" was indeed 
-"purchased")
-It is also his duty to cease all use, modification, distribution of my 
-property at my demand.
-I have made such a demand.
-4) Yes I will consider taking legal action against you if you do not 
-heed my request.
-Cite the paralegal from groklaw, ZDnet, the FSF, and the SFConservancy 
-all you want.
-They are wrong on the law and have been wrong for 10 years.
-
------
-
-The conversation with the "John Doe" can be found here: 
-8ch.net/tech/res/1018729.html#1024398
-
-Some excerpts:
-
- From me to "John Doe":
-> >>1024390
-> 
-> 1) I rescind your permission to modify, make derivative works, 
-> distribute the program. The GPL license you "have" been granted from 
-> me, is revoked.
-> 
-> 2) you are impersonating me.
-
-
-
-> >>1024400
-> I rescind the license from you.
-> I am going to sue you if I find out who you are.
-
-----
-
- From "John Doe"
-> >Your license was rescinded by author.
-> You can't :^)
-> I'm not taking it down.
-
-
-> >>1024597
-> >HOW MUCH DID YOU FUCKING PAY ME?
-> Nothing. Thank God for that.
-> 
-> >ARE WE IN A CONTRACT?
-> No.
-> 
-> >IT IS A BARE LICENSE.
-> Is this lawyer speak? I'm not a lawyer, sorry.
-> 
-> >I CAN RESCIND IT AT ANY TIME.
-> wrong
-> 
-> >THE CODE IS NOT YOUR PROPERTY. IT IS _MY_ PROPERTY.
-> It is your intellectual property that you have licensed to me under the 
-> GPLv2+.
-> 
-> >I ALLOWED YOU A LICENSE TO USE IT.
-> correct
-> 
-> >I HAVE NOW REVOKED THAT LICENSE FROM YOU YOU [...].
-> no
-> 
-> >Show me a case otherwise.
-> why???????????
-> 
-> >Gratis licenses, without an attached interest, are revocable.
-> sorry m8. you are wrong
-
-
-
-
------
-
-Remeber: A license, absent an interest, is revocable in the US.
-
------
-Some study materials:
-(From: Open Source Licensing - Sofware Freedom and Intellectual 
-property):
-
-> p46  "As long as the project continues to honor the terms of the 
-> licenses under which it received contributions, the licenses continue 
-> in effect. There is one important caveat: Even a perpetual license can 
-> be revoked.   See the discussion of bare licenses and contracts in 
-> Chapter 4"
---Lawrence Rosen
-
-> p56  "A third problem with bare licenses is that they may be revocable 
-> by the licensor. Specifically, /a license not coupled with an interest 
-> may be revoked./ The term /interest/ in this context usually means the 
-> payment of some royalty or license fee, but there are other more 
-> complicated ways to satisfy the interest requirement. For example, a 
-> licensee can demonstrate that he or she has paid some consideration-a 
-> contract law term not found in copyright or patent law-in order to 
-> avoid revocation. Or a licensee may claim that he or she relied on the 
-> software licensed under an open source license and now is dependent 
-> upon that software, but this contract law concept, called promissory 
-> estoppel, is both difficult to prove and unreliable in court tests. 
-> (The concepts of /consideration/ and /promissory estoppel/ are 
-> explained more fully in the next section.) Unless the courts allow us 
-> to apply these contract law principles to a license, we are faced with 
-> a bare license that is revocable.
---Lawrence Rosen
-
-> p278  "Notice that in a copyright dispute over a bare license,  the 
-> plaintiff will almost certainly be the copyright owner. If a licensee 
-> were foolish enough to sue to enforce the terms and conditions of the 
-> license, the licensor can simply revoke the bare license, thus ending 
-> the dispute. Remember that a bare license in the absence of an interest 
-> is revocable."
---Lawrence Rosen
-
-Lawrence Rosen - Open Source Licensing - Sofware Freedom and 
-Intellectual property Law
-
-
-
-> p65 "Of all the licenses described in this book,  only the GPL makes 
-> the explicitly point that it wants nothing of /acceptance/ of 
-> /consideration/:
-> ...
-> The GPL authors intend that it not be treated as a contract.  I will 
-> say much more about this license and these two provisions in Chapter 6. 
-> For now, I simply point out that the GPL licensors are in essentially 
-> the same situation as other open source licensors who cannot prove 
-> offer, acceptance, or consideration. There is no contract."
---Lawrence Rosen
-
-----
-(Additionally:)
-> David McGowan, Professor of Law, University of Minnesota Law School:
-
-> "Termination of rights
-
-> [...]  The most plausible assumption is that a developer who releases 
-> code under the GPL may terminate GPL rights, probably at will.
-
-> [...]  My point is not that termination is a great risk, it is that it 
-> is not recognized as a risk even though it is probably relevant to 
-> commercial end-users, accustomed to having contractual rights they can 
-> enforce themselves.
