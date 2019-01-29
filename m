@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BE0C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C03AC282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0CE22177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F04F5217F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfA2AkH (ORCPT
+        id S1727579AbfA2AjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:40:07 -0500
+        Mon, 28 Jan 2019 19:39:20 -0500
 Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727587AbfA2AjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:39:21 -0500
+        id S1726867AbfA2AjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 19:39:15 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:12 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="133921922"
+   d="scan'208";a="133921886"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
-  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:12 -0800
+  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:11 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -41,10 +41,14 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 13/20] Add set_alias_ function and x86 implementation
-Date:   Mon, 28 Jan 2019 16:34:15 -0800
-Message-Id: <20190129003422.9328-14-rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 01/20] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+Date:   Mon, 28 Jan 2019 16:34:03 -0800
+Message-Id: <20190129003422.9328-2-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
@@ -53,130 +57,167 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds two new functions set_alias_default_noflush and
-set_alias_nv_noflush for setting the alias mapping for the page to its
-default valid permissions and to an invalid state that cannot be cached in
-a TLB, respectively. These functions to not flush the TLB.
+From: Nadav Amit <namit@vmware.com>
 
-Note, __kernel_map_pages does something similar but flushes the TLB and
-doesn't reset the permission bits to default on all architectures.
+text_mutex is currently expected to be held before text_poke() is
+called, but we kgdb does not take the mutex, and instead *supposedly*
+ensures the lock is not taken and will not be acquired by any other core
+while text_poke() is running.
 
-There is also an ARCH config ARCH_HAS_SET_ALIAS for specifying whether
-these have an actual implementation or a default empty one.
+The reason for the "supposedly" comment is that it is not entirely clear
+that this would be the case if kgdb_do_roundup is zero.
 
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Create two wrapper functions, text_poke() and text_poke_kgdb() which do
+or do not run the lockdep assertion respectively.
+
+While we are at it, change the return code of text_poke() to something
+meaningful. One day, callers might actually respect it and the existing
+BUG_ON() when patching fails could be removed. For kgdb, the return
+value can actually be used.
+
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/Kconfig                      |  4 ++++
- arch/x86/Kconfig                  |  1 +
- arch/x86/include/asm/set_memory.h |  3 +++
- arch/x86/mm/pageattr.c            | 14 +++++++++++---
- include/linux/set_memory.h        | 10 ++++++++++
- 5 files changed, 29 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/text-patching.h |  1 +
+ arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
+ arch/x86/kernel/kgdb.c               | 11 +++---
+ 3 files changed, 45 insertions(+), 19 deletions(-)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 4cfb6de48f79..4ef9db190f2d 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -249,6 +249,10 @@ config ARCH_HAS_FORTIFY_SOURCE
- config ARCH_HAS_SET_MEMORY
- 	bool
- 
-+# Select if arch has all set_alias_nv/default() functions
-+config ARCH_HAS_SET_ALIAS
-+	bool
-+
- # Select if arch init_task must go in the __init_task_data section
- config ARCH_TASK_STRUCT_ON_STACK
-        bool
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 26387c7bf305..42bb1df4ea94 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -66,6 +66,7 @@ config X86
- 	select ARCH_HAS_UACCESS_FLUSHCACHE	if X86_64
- 	select ARCH_HAS_UACCESS_MCSAFE		if X86_64 && X86_MCE
- 	select ARCH_HAS_SET_MEMORY
-+	select ARCH_HAS_SET_ALIAS
- 	select ARCH_HAS_STRICT_KERNEL_RWX
- 	select ARCH_HAS_STRICT_MODULE_RWX
- 	select ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-index 07a25753e85c..2ef4e4222df1 100644
---- a/arch/x86/include/asm/set_memory.h
-+++ b/arch/x86/include/asm/set_memory.h
-@@ -85,6 +85,9 @@ int set_pages_nx(struct page *page, int numpages);
- int set_pages_ro(struct page *page, int numpages);
- int set_pages_rw(struct page *page, int numpages);
- 
-+int set_alias_nv_noflush(struct page *page);
-+int set_alias_default_noflush(struct page *page);
-+
- extern int kernel_set_to_readonly;
- void set_kernel_text_rw(void);
- void set_kernel_text_ro(void);
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 4f8972311a77..3a51915a1410 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -2209,8 +2209,6 @@ int set_pages_rw(struct page *page, int numpages)
- 	return set_memory_rw(addr, numpages);
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index e85ff65c43c3..f8fc8e86cf01 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+  * inconsistent instruction while you patch.
+  */
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
++extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index d458c7973c56..12fddbc8c55b 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -678,18 +678,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 	return addr;
  }
  
--#ifdef CONFIG_DEBUG_PAGEALLOC
+-/**
+- * text_poke - Update instructions on a live kernel
+- * @addr: address to modify
+- * @opcode: source of the copy
+- * @len: length to copy
+- *
+- * Only atomic text poke/set should be allowed when not doing early patching.
+- * It means the size must be writable atomically and the address must be aligned
+- * in a way that permits an atomic write. It also makes sure we fit on a single
+- * page.
+- */
+-void *text_poke(void *addr, const void *opcode, size_t len)
++static void *__text_poke(void *addr, const void *opcode, size_t len)
+ {
+ 	unsigned long flags;
+ 	char *vaddr;
+@@ -702,8 +691,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	 */
+ 	BUG_ON(!after_bootmem);
+ 
+-	lockdep_assert_held(&text_mutex);
 -
- static int __set_pages_p(struct page *page, int numpages)
- {
- 	unsigned long tempaddr = (unsigned long) page_address(page);
-@@ -2249,6 +2247,17 @@ static int __set_pages_np(struct page *page, int numpages)
- 	return __change_page_attr_set_clr(&cpa, 0);
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+ 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+@@ -732,6 +719,43 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	return addr;
  }
  
-+int set_alias_nv_noflush(struct page *page)
++/**
++ * text_poke - Update instructions on a live kernel
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ */
++void *text_poke(void *addr, const void *opcode, size_t len)
 +{
-+	return __set_pages_np(page, 1);
++	lockdep_assert_held(&text_mutex);
++
++	return __text_poke(addr, opcode, len);
 +}
 +
-+int set_alias_default_noflush(struct page *page)
++/**
++ * text_poke_kgdb - Update instructions on a live kernel by kgdb
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ *
++ * Context: should only be used by kgdb, which ensures no other core is running,
++ *	    despite the fact it does not hold the text_mutex.
++ */
++void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
 +{
-+	return __set_pages_p(page, 1);
++	return __text_poke(addr, opcode, len);
 +}
 +
-+#ifdef CONFIG_DEBUG_PAGEALLOC
- void __kernel_map_pages(struct page *page, int numpages, int enable)
+ static void do_sync_core(void *info)
  {
- 	if (PageHighMem(page))
-@@ -2282,7 +2291,6 @@ void __kernel_map_pages(struct page *page, int numpages, int enable)
- }
- 
- #ifdef CONFIG_HIBERNATION
--
- bool kernel_page_present(struct page *page)
- {
- 	unsigned int level;
-diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
-index 2a986d282a97..d19481ac6a8f 100644
---- a/include/linux/set_memory.h
-+++ b/include/linux/set_memory.h
-@@ -10,6 +10,16 @@
- 
- #ifdef CONFIG_ARCH_HAS_SET_MEMORY
- #include <asm/set_memory.h>
-+#ifndef CONFIG_ARCH_HAS_SET_ALIAS
-+static inline int set_alias_nv_noflush(struct page *page)
-+{
-+	return 0;
-+}
-+static inline int set_alias_default_noflush(struct page *page)
-+{
-+	return 0;
-+}
-+#endif
- #else
- static inline int set_memory_ro(unsigned long addr, int numpages) { return 0; }
- static inline int set_memory_rw(unsigned long addr, int numpages) { return 0; }
+ 	sync_core();
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 5db08425063e..1461544cba8b 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -758,13 +758,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (!err)
+ 		return err;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		return -EBUSY;
+-	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+-		  BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err)
+ 		return err;
+@@ -783,12 +783,13 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		goto knl_write;
+-	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+ 		goto knl_write;
 -- 
 2.17.1
 
