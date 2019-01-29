@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70761C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D08C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F37F20857
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:38:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CFA820844
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:39:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548761938;
-	bh=ticgF0n/ZDgTqfEmqPhvgIKPA7uEgY2Qb5RttEPehVU=;
+	s=default; t=1548761941;
+	bh=Z9Ld+ntMBv1HVcn5BkUYuCVLOzm8c9Bmuisbare3BTk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vzzp4612b+JT5BkeuxerRMnPvVE/mu3cB5l5jtJ3WdRIM7q0lRQxgP5MPUNBLwdRB
-	 s9g8RtZR6EzSV94bl4R3TS4qEw8rvH47f6RrBV0eEXYNM5obpbzdaT4clVtKELvU2A
-	 tmhUy++VkPW+9213fYQ3yr5fXqMGHnUtMuod1DXQ=
+	b=MUc/TTWMuG73CIZCRyLKVcwNvcMe7VeVq9m3db2YGm9NhB0MhRwr1JZXGYS8u8ApB
+	 a53VGMvx8FOe7s7TMk00NDtlpthjJSOEhG7c0iNZ0we6zYWyCbbZuWhZF7hknN1rht
+	 2Ypy0/l5sDpxxujZHtwKUTiB0KbjDurNgEqdXYAk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbfA2Li5 (ORCPT
+        id S1729306AbfA2Li7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:38:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55522 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:38:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728751AbfA2Liv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:38:51 -0500
+        id S1729260AbfA2Liy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:38:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2CCF20882;
-        Tue, 29 Jan 2019 11:38:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39BB320857;
+        Tue, 29 Jan 2019 11:38:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548761931;
-        bh=ticgF0n/ZDgTqfEmqPhvgIKPA7uEgY2Qb5RttEPehVU=;
+        s=default; t=1548761933;
+        bh=Z9Ld+ntMBv1HVcn5BkUYuCVLOzm8c9Bmuisbare3BTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PTYuNkmfn7d2Ddg+XdqiiwVTU2eZsEIK8kvs7CbEKf0TdPH4JDu4zHmM9tJHa1GCB
-         XO/xfCIYJl8md/mIrJGMrq/WEHFR1UVCphe5y4cGPwhtUMhdNXZAlkXwK8O1XqHGGU
-         45KWkzGjvxYDjeFky391dW3YjXLRU1V6QHFoQRHc=
+        b=1LPtT9fHZOSV175JiwThg+Y/3r+jT1Sx3nhp/Jok6iidR4/xdsxy1ghefPndQInln
+         HwpcQTKHJoayPO+Tnq967+vHcCGDTAEe3BscId+M3TkilweJhTDLFaSXoacDeOxpwn
+         pf/9EZDl8n8Q3KvC4OrGupxDPB0LS87yAAwCFQMg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 4.20 050/117] char/mwave: fix potential Spectre v1 vulnerability
-Date:   Tue, 29 Jan 2019 12:35:01 +0100
-Message-Id: <20190129113210.104942048@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.20 051/117] mmc: sdhci-iproc: handle mmc_of_parse() errors during probe
+Date:   Tue, 29 Jan 2019 12:35:02 +0100
+Message-Id: <20190129113210.170304135@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
 References: <20190129113207.477505932@linuxfoundation.org>
@@ -65,69 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-commit 701956d4018e5d5438570e39e8bda47edd32c489 upstream.
+commit 2bd44dadd5bfb4135162322fd0b45a174d4ad5bf upstream.
 
-ipcnum is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+We need to handle mmc_of_parse() errors during probe.
 
-This issue was detected with the help of Smatch:
+This finally fixes the wifi regression on Raspberry Pi 3 series.
+In error case the wifi chip was permanently in reset because of
+the power sequence depending on the deferred probe of the GPIO expander.
 
-drivers/char/mwave/mwavedd.c:299 mwave_ioctl() warn: potential spectre issue 'pDrvData->IPCs' [w] (local cap)
-
-Fix this by sanitizing ipcnum before using it to index pDrvData->IPCs.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
+Fixes: b580c52d58d9 ("mmc: sdhci-iproc: add IPROC SDHCI driver")
 Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/mwave/mwavedd.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/mmc/host/sdhci-iproc.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/char/mwave/mwavedd.c
-+++ b/drivers/char/mwave/mwavedd.c
-@@ -59,6 +59,7 @@
- #include <linux/mutex.h>
- #include <linux/delay.h>
- #include <linux/serial_8250.h>
-+#include <linux/nospec.h>
- #include "smapi.h"
- #include "mwavedd.h"
- #include "3780i.h"
-@@ -289,6 +290,8 @@ static long mwave_ioctl(struct file *fil
- 						ipcnum);
- 				return -EINVAL;
- 			}
-+			ipcnum = array_index_nospec(ipcnum,
-+						    ARRAY_SIZE(pDrvData->IPCs));
- 			PRINTK_3(TRACE_MWAVE,
- 				"mwavedd::mwave_ioctl IOCTL_MW_REGISTER_IPC"
- 				" ipcnum %x entry usIntCount %x\n",
-@@ -317,6 +320,8 @@ static long mwave_ioctl(struct file *fil
- 						" Invalid ipcnum %x\n", ipcnum);
- 				return -EINVAL;
- 			}
-+			ipcnum = array_index_nospec(ipcnum,
-+						    ARRAY_SIZE(pDrvData->IPCs));
- 			PRINTK_3(TRACE_MWAVE,
- 				"mwavedd::mwave_ioctl IOCTL_MW_GET_IPC"
- 				" ipcnum %x, usIntCount %x\n",
-@@ -383,6 +388,8 @@ static long mwave_ioctl(struct file *fil
- 						ipcnum);
- 				return -EINVAL;
- 			}
-+			ipcnum = array_index_nospec(ipcnum,
-+						    ARRAY_SIZE(pDrvData->IPCs));
- 			mutex_lock(&mwave_mutex);
- 			if (pDrvData->IPCs[ipcnum].bIsEnabled == true) {
- 				pDrvData->IPCs[ipcnum].bIsEnabled = false;
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -296,7 +296,10 @@ static int sdhci_iproc_probe(struct plat
+ 
+ 	iproc_host->data = iproc_data;
+ 
+-	mmc_of_parse(host->mmc);
++	ret = mmc_of_parse(host->mmc);
++	if (ret)
++		goto err;
++
+ 	sdhci_get_property(pdev);
+ 
+ 	host->mmc->caps |= iproc_host->data->mmc_caps;
 
 
