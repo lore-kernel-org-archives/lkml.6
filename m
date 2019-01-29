@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D6AC282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B01C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C7A20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A8E42086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:52:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762757;
-	bh=Am/iAC53N+6DzzW1NJcGiuSetL6AA5uZvNr9mtfvjIs=;
+	s=default; t=1548762761;
+	bh=5uCWltJzeHJBzRKUlRBoRDjKY5tqxH6ErYXO0kY1rwk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pJj20rm8FO+3/wrz6icO6moB5gO6ngDq/TxYlK0d64ksrrPqlBIpsK0m0yIY+2GEP
-	 K5reDoLlvAvt0AyPx2bC7C2IpI10VdyUbLXvwjOj3Hd0mGeD/HOqsi9PAWMsFaKoPr
-	 /zfOKb4ZzSQGu9qBsOGOe1QfvZbtrXEy1ZWb50D0=
+	b=YQQmCxy0HfSZsCF+cBgXZQzKHs7DN/G40kMMnTIbLO8gtWyTeVIiKpDAeXlG7iBGH
+	 nW5i2qdsjuyvoifKSzvVVk/ylxL8pTU2jPlm5SzNQ1sob1+itaGQGQQKP82fOsuLT+
+	 jTdeKWD56hSQe+Q9480tclKPPo2JMplf266eenJ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731576AbfA2Lwf (ORCPT
+        id S1732140AbfA2Lwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:52:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44350 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:52:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732083AbfA2Lwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:52:30 -0500
+        id S1731038AbfA2Lwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:52:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B4A62083B;
-        Tue, 29 Jan 2019 11:52:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDB992086C;
+        Tue, 29 Jan 2019 11:52:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762750;
-        bh=Am/iAC53N+6DzzW1NJcGiuSetL6AA5uZvNr9mtfvjIs=;
+        s=default; t=1548762755;
+        bh=5uCWltJzeHJBzRKUlRBoRDjKY5tqxH6ErYXO0kY1rwk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xuc4N+WcD2dlCQumjViadxOVkZtg9MPyQl01X/XJX/Dyi+BAnLQrBekERabew89ib
-         N6Mu27llx5yjJLqKu43yyLASFo4T4eAUnzZbAT3TbCDxkX8Aex2CB+CeFOATox1bgZ
-         sQJ2c1MUbNhaEDwU+yyms0sLC1alE4qIA/p5zlVI=
+        b=0Adbj/hnKRbb7UkDqV8joteBmPy83tIVm2c2kZZfrMq2+2buphV0LVzWYlU06XABy
+         pRvTH3gHZauZZlQHVtf4p4nqAX1R8SMdvIvj8570evW7pxXsbmGgxvT99cgNBW6oRn
+         9zHzCfmNoha2+6S5gvWGUssxPDwZBE231dP8oC5w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: [PATCH 4.9 19/44] tty: Handle problem if line discipline does not have receive_buf
-Date:   Tue, 29 Jan 2019 12:36:14 +0100
-Message-Id: <20190129113141.526727692@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Fulghum <paulkf@microgate.com>,
+        syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.9 21/44] tty/n_hdlc: fix __might_sleep warning
+Date:   Tue, 29 Jan 2019 12:36:16 +0100
+Message-Id: <20190129113141.683642152@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -64,33 +67,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Paul Fulghum <paulkf@microgate.com>
 
-commit 27cfb3a53be46a54ec5e0bd04e51995b74c90343 upstream.
+commit fc01d8c61ce02c034e67378cd3e645734bc18c8c upstream.
 
-Some tty line disciplines do not have a receive buf callback, so
-properly check for that before calling it.  If they do not have this
-callback, just eat the character quietly, as we can't fail this call.
+Fix __might_sleep warning[1] in tty/n_hdlc.c read due to copy_to_user
+call while current is TASK_INTERRUPTIBLE.  This is a false positive
+since the code path does not depend on current state remaining
+TASK_INTERRUPTIBLE.  The loop breaks out and sets TASK_RUNNING after
+calling copy_to_user.
 
-Reported-by: Jann Horn <jannh@google.com>
+This patch supresses the warning by setting TASK_RUNNING before calling
+copy_to_user.
+
+[1] https://syzkaller.appspot.com/bug?id=17d5de7f1fcab794cb8c40032f893f52de899324
+
+Signed-off-by: Paul Fulghum <paulkf@microgate.com>
+Reported-by: syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
 Cc: stable <stable@vger.kernel.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_io.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/n_hdlc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2324,7 +2324,8 @@ static int tiocsti(struct tty_struct *tt
- 	ld = tty_ldisc_ref_wait(tty);
- 	if (!ld)
- 		return -EIO;
--	ld->ops->receive_buf(tty, &ch, &mbz, 1);
-+	if (ld->ops->receive_buf)
-+		ld->ops->receive_buf(tty, &ch, &mbz, 1);
- 	tty_ldisc_deref(ld);
- 	return 0;
- }
+--- a/drivers/tty/n_hdlc.c
++++ b/drivers/tty/n_hdlc.c
+@@ -598,6 +598,7 @@ static ssize_t n_hdlc_tty_read(struct tt
+ 				/* too large for caller's buffer */
+ 				ret = -EOVERFLOW;
+ 			} else {
++				__set_current_state(TASK_RUNNING);
+ 				if (copy_to_user(buf, rbuf->buf, rbuf->count))
+ 					ret = -EFAULT;
+ 				else
 
 
