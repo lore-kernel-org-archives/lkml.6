@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3E1C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A58FAC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0DDA2086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F7EF2086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:47:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762473;
-	bh=m6QpBUREPkzhER2ZLbFNWK/Xgyy3iRQjfdvzTcQ7PdI=;
+	s=default; t=1548762477;
+	bh=IBzeetOUZlN9GPb1u0owrhMZnyxOl6W0tAUaypIreNw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CyJGXVky6g+5Ya8qOcP8r7SKySnr7jQbzq+vxghGxnoYHEeuTz4QoWUDgbl811azB
-	 Yt6l08Ercn3zRBfYj+tpBpOfaeSQupxDrGZeIrKppEjtah25+T8Qr+c4NR7/UNrxFl
-	 OdKoMGRuXkdNuS+lAqFRYmbRjoiu5fMiGaVZ5gwo=
+	b=esfxCGLpGMv77YnX+rp2ExRFpDNw19N4prQOhPG3S+s2KTjzcpiY+tR4PQ0wEmupj
+	 /8mxtMHZdV+JAzTSieGJbSYsFyifqWAmtOZrvDftCWQxSM8qpB6Z/LNiFE4d2tmoCR
+	 nnNhUTrWqn/V1UVyvbzyGf6B3hlDpXdB/4XzDUhw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731080AbfA2Lrw (ORCPT
+        id S1731252AbfA2Lrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:47:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38620 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:47:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729851AbfA2Lru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:47:50 -0500
+        id S1729851AbfA2Lrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:47:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 628652083B;
-        Tue, 29 Jan 2019 11:47:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 123ED20882;
+        Tue, 29 Jan 2019 11:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762469;
-        bh=m6QpBUREPkzhER2ZLbFNWK/Xgyy3iRQjfdvzTcQ7PdI=;
+        s=default; t=1548762472;
+        bh=IBzeetOUZlN9GPb1u0owrhMZnyxOl6W0tAUaypIreNw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NUscThPqTEVyu2mHcUsjJMx+if3JUv8vfmuz6CoZe+7911QClgL+dlJq9J0NdkIpR
-         db8/FGyeBer53dyI64iTPSGw6KAKVOpWAfv0GcwbHaPcivBUTF5+9Ml4tuKDf1MDPy
-         vVT19rccfVroyThGEdoBAh6ND7PrL4pGlo1U0Ryg=
+        b=nxRPtOiBxqykAZWJbFxd+vOQxiZOC1WaaCucPhbWmkx/OQJW4PZNR7F6pirOIYHCu
+         jjjeIgKCDQJO2h3GGye9OFc7I0aTmlx0kGY3QVDr4jYMFuzC2KCUNGzKzdSX5P0Fn6
+         babs8kEY/bp5G56fLnLzjzQgPhkkTyj90l8zvCv4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 16/68] ASoC: rt5514-spi: Fix potential NULL pointer dereference
-Date:   Tue, 29 Jan 2019 12:35:38 +0100
-Message-Id: <20190129113132.886472516@linuxfoundation.org>
+        stable@vger.kernel.org, Anthony Wong <anthony.wong@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 17/68] ALSA: hda - Add mute LED support for HP ProBook 470 G5
+Date:   Tue, 29 Jan 2019 12:35:39 +0100
+Message-Id: <20190129113133.038266731@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -66,37 +64,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Anthony Wong <anthony.wong@canonical.com>
 
-commit 060d0bf491874daece47053c4e1fb0489eb867d2 upstream.
+commit 699390381a7bae2fab01a22f742a17235c44ed8a upstream.
 
-There is a potential NULL pointer dereference in case devm_kzalloc()
-fails and returns NULL.
+Support speaker and mic mute LEDs on HP ProBook 470 G5.
 
-Fix this by adding a NULL check on rt5514_dsp.
-
-This issue was detected with the help of Coccinelle.
-
-Fixes: 6eebf35b0e4a ("ASoC: rt5514: add rt5514 SPI driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+BugLink: https://bugs.launchpad.net/bugs/1811254
+Signed-off-by: Anthony Wong <anthony.wong@canonical.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/codecs/rt5514-spi.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/soc/codecs/rt5514-spi.c
-+++ b/sound/soc/codecs/rt5514-spi.c
-@@ -265,6 +265,8 @@ static int rt5514_spi_pcm_probe(struct s
- 
- 	rt5514_dsp = devm_kzalloc(platform->dev, sizeof(*rt5514_dsp),
- 			GFP_KERNEL);
-+	if (!rt5514_dsp)
-+		return -ENOMEM;
- 
- 	rt5514_dsp->dev = &rt5514_spi->dev;
- 	mutex_init(&rt5514_dsp->dma_lock);
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -969,6 +969,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x822e, "HP ProBook 440 G4", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x836e, "HP ProBook 455 G5", CXT_FIXUP_MUTE_LED_GPIO),
++	SND_PCI_QUIRK(0x103c, 0x837f, "HP ProBook 470 G5", CXT_FIXUP_MUTE_LED_GPIO),
+ 	SND_PCI_QUIRK(0x103c, 0x8299, "HP 800 G3 SFF", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x829a, "HP 800 G3 DM", CXT_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x8455, "HP Z2 G4", CXT_FIXUP_HP_MIC_NO_PRESENCE),
 
 
