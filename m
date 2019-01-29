@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E28C5C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 618E6C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B57802086C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3160F2083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:55:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762935;
-	bh=fM/EF/vhevlw+kPOI1r8eU13aaCZWoNlk0rwEn+3e/E=;
+	s=default; t=1548762941;
+	bh=AgfoL3IFu1DflmBe8d6paLFyT7XAQdzHEHETgF8um5Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lz1r/xHlFL6/0bkZu/8Ex4J7gCIgonDjwnFJDA3qrB6NkHENDdBKt0bZpPB2rCA/x
-	 Zmx6YQ5T5BaxQC1Flo8/C2+9ygi+gJRU3qk0gXYW6oojA/OABxG24MwjCeR4dQ4MHB
-	 556BtRO1cLFKy6xXux6cIfFX4KJawRLhoROm6SQY=
+	b=1OibDhXJWxTQ7gvX/ifhKh2LgfszqbELIo5n0pBL+5+s2Z9B/7HzKofb1TExy4jYb
+	 NCblUQGM10GagONprRDOZVUkDJKzeL4lICQ3PIhebI1YuDXn+XJe7RyYR+nl8nbJcR
+	 mzaDz5tDFmE8JHTQFwEE1+R4fiZEDdxeq62H9ndw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731701AbfA2Lui (ORCPT
+        id S1731726AbfA2Lzj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:50:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41906 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:55:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731423AbfA2Lue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:34 -0500
+        id S1730979AbfA2Lua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:50:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B0302083B;
-        Tue, 29 Jan 2019 11:50:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2DD72083B;
+        Tue, 29 Jan 2019 11:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762632;
-        bh=fM/EF/vhevlw+kPOI1r8eU13aaCZWoNlk0rwEn+3e/E=;
+        s=default; t=1548762630;
+        bh=AgfoL3IFu1DflmBe8d6paLFyT7XAQdzHEHETgF8um5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FUxt8yKPRTcgTYC+ekwtZb9Mzgafl2iH5b9m0nGg0Ao0VUYNprV9gbVRcgiKR5+Mr
-         cfogF213dpwlbRUxDQ5zpfes8vC6eXJ2IMFE7CnHVoxvOCHNhWxbT/7tiqRKC1JAIW
-         S22scfeQPkIqVssn74/70bhjJaSqFBwu7BaFhD5g=
+        b=jxoCYRCF9kk0TEpmwtW4GH7CMLxaR7IaHz0Va/aCj9M4SdfRYpgY14GvxoYLk1/1r
+         vmYV7aTq25MxUQ+YJwNyegT15zNnb6v4hmaZYV3Jl6w7r/0o+A3z9oHhn9qaYBFjcU
+         i9A8hvOGIPqTZAQyzuigBp0OcImWh+RptbICHli4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        hpa@zytor.com, peterz@infradead.org, mpe@ellerman.id.au,
-        will.deacon@arm.com, luto@kernel.org, jroedel@suse.de
-Subject: [PATCH 4.14 42/68] x86/pkeys: Properly copy pkey state at fork()
-Date:   Tue, 29 Jan 2019 12:36:04 +0100
-Message-Id: <20190129113135.437349823@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Popov <alex.popov@linux.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 41/68] KVM: x86: Fix single-step debugging
+Date:   Tue, 29 Jan 2019 12:36:03 +0100
+Message-Id: <20190129113135.219179922@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -67,101 +65,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Alexander Popov <alex.popov@linux.com>
 
-commit a31e184e4f69965c99c04cc5eb8a4920e0c63737 upstream.
+commit 5cc244a20b86090c087073c124284381cdf47234 upstream.
 
-Memory protection key behavior should be the same in a child as it was
-in the parent before a fork.  But, there is a bug that resets the
-state in the child at fork instead of preserving it.
+The single-step debugging of KVM guests on x86 is broken: if we run
+gdb 'stepi' command at the breakpoint when the guest interrupts are
+enabled, RIP always jumps to native_apic_mem_write(). Then other
+nasty effects follow.
 
-The creation of new mm's is a bit convoluted.  At fork(), the code
-does:
+Long investigation showed that on Jun 7, 2017 the
+commit c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
+introduced the kvm_run.debug corruption: kvm_vcpu_do_singlestep() can
+be called without X86_EFLAGS_TF set.
 
-  1. memcpy() the parent mm to initialize child
-  2. mm_init() to initalize some select stuff stuff
-  3. dup_mmap() to create true copies that memcpy() did not do right
+Let's fix it. Please consider that for -stable.
 
-For pkeys two bits of state need to be preserved across a fork:
-'execute_only_pkey' and 'pkey_allocation_map'.
-
-Those are preserved by the memcpy(), but mm_init() invokes
-init_new_context() which overwrites 'execute_only_pkey' and
-'pkey_allocation_map' with "new" values.
-
-The author of the code erroneously believed that init_new_context is *only*
-called at execve()-time.  But, alas, init_new_context() is used at execve()
-and fork().
-
-The result is that, after a fork(), the child's pkey state ends up looking
-like it does after an execve(), which is totally wrong.  pkeys that are
-already allocated can be allocated again, for instance.
-
-To fix this, add code called by dup_mmap() to copy the pkey state from
-parent to child explicitly.  Also add a comment above init_new_context() to
-make it more clear to the next poor sod what this code is used for.
-
-Fixes: e8c24d3a23a ("x86/pkeys: Allocation/free syscalls")
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: peterz@infradead.org
-Cc: mpe@ellerman.id.au
-Cc: will.deacon@arm.com
-Cc: luto@kernel.org
-Cc: jroedel@suse.de
+Signed-off-by: Alexander Popov <alex.popov@linux.com>
 Cc: stable@vger.kernel.org
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Joerg Roedel <jroedel@suse.de>
-Link: https://lkml.kernel.org/r/20190102215655.7A69518C@viggo.jf.intel.com
+Fixes: c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/mmu_context.h |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/x86/kvm/x86.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -182,6 +182,10 @@ static inline void switch_ldt(struct mm_
- 
- void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk);
- 
-+/*
-+ * Init a new mm.  Used on mm copies, like at fork()
-+ * and on mm's that are brand-new, like at execve().
-+ */
- static inline int init_new_context(struct task_struct *tsk,
- 				   struct mm_struct *mm)
- {
-@@ -232,8 +236,22 @@ do {						\
- } while (0)
- #endif
- 
-+static inline void arch_dup_pkeys(struct mm_struct *oldmm,
-+				  struct mm_struct *mm)
-+{
-+#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-+	if (!cpu_feature_enabled(X86_FEATURE_OSPKE))
-+		return;
-+
-+	/* Duplicate the oldmm pkey state in mm: */
-+	mm->context.pkey_allocation_map = oldmm->context.pkey_allocation_map;
-+	mm->context.execute_only_pkey   = oldmm->context.execute_only_pkey;
-+#endif
-+}
-+
- static inline int arch_dup_mmap(struct mm_struct *oldmm, struct mm_struct *mm)
- {
-+	arch_dup_pkeys(oldmm, mm);
- 	paravirt_arch_dup_mmap(oldmm, mm);
- 	return ldt_dup_context(oldmm, mm);
- }
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5923,8 +5923,7 @@ restart:
+ 		toggle_interruptibility(vcpu, ctxt->interruptibility);
+ 		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
+ 		kvm_rip_write(vcpu, ctxt->eip);
+-		if (r == EMULATE_DONE &&
+-		    (ctxt->tf || (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)))
++		if (r == EMULATE_DONE && ctxt->tf)
+ 			kvm_vcpu_do_singlestep(vcpu, &r);
+ 		if (!ctxt->have_exception ||
+ 		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
 
 
