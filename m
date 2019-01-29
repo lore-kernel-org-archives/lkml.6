@@ -2,254 +2,316 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E80F8C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B11C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A430521848
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 205822175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:03:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/EYODH/"
+	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="AlRt/AV8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728942AbfA2PC5 (ORCPT
+        id S1729039AbfA2PDW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:02:57 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52162 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728916AbfA2PCz (ORCPT
+        Tue, 29 Jan 2019 10:03:22 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37172 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728982AbfA2PDP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:02:55 -0500
-Received: by mail-it1-f193.google.com with SMTP id w18so4936505ite.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 07:02:54 -0800 (PST)
+        Tue, 29 Jan 2019 10:03:15 -0500
+Received: by mail-ed1-f68.google.com with SMTP id h15so16218335edb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 07:03:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tcGl2vWERSNLlX1x8MuJ4PVihGXS6s5oBYyDN8j2C+4=;
-        b=L/EYODH/BFh8kjNGedPQPzgYsWDsS/GAzL2nDVkbX2c6vJYVWFyZhjzw42Iw+ZfLtd
-         J9HJQpiVKRb7IuQBXeAx81kurTvlCp2DNAc3LJY7ewn7wAxfD5aXHg3NfqyBGfy0VLvE
-         d8MYkIH4NsQW53RhLy2RQZO1QwQ1OrqLEy4V0=
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=lLNnP59ZMU3ebsUNLsii3VqQKotAHHQp8+DgKYtWu4A=;
+        b=AlRt/AV8DPk/GkbJhW3JVwliJz6wMLfXAYZ1t/6d5XomNy0W9peEbMwk8dQ6XUPQdC
+         vZAaQq/KgrDvbo6sCa8aSsHrKfMDtntsiGql5xvEB6fBU3s8zoph/yZfXMxaErHDeoIX
+         dlJ4t0+7W16OrV0Cf7i+UyGdxbBraHB3Bqdwg09F9er4xS7HcKKAvSr5/2H5ooXLHU6U
+         DzlnstuQvUwupdO6ZbatFZrSGignFUjdy8M00veSHeSVFnlkjVzlSwNZtMjRNYyy3Yai
+         GProIb8HSai12OEimcCHidIdRftP/5Uf1okXFF0CucQb5pvV5UKHkBisJ/5zWVMbBlqo
+         uZKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tcGl2vWERSNLlX1x8MuJ4PVihGXS6s5oBYyDN8j2C+4=;
-        b=KfiS1sIJwm1KIgTfBM3DbHFcj9a1UGY00ZJYOu9Yr6spHhErqSAD0wHO8IyS+BOwFR
-         DaEg08z1xtw14sBy1Yz0D0zRmE2NfkX1a3SPtNJ/hlT2oqm7vurWu+Ok+Z1b7O8sh2kk
-         7LisTkchlN7X+WEkFgMXNOm9rfmqvMiSNsmt/HhGtTudKD5p0Yz4dx0w0lO5XddVNuvc
-         xGzFq3A/sYUdXRUU32cjI2gdGpOSMMfjXSaBnCEp4suKWRmNbPTi4K0XUjyTIgokMdqr
-         0L9DLlri7CIrp4xoLG7ozVO27VPCpmVn2m+d7DkpokOJ/vL+ThcLCTsRgL68pClgnFON
-         AQHA==
-X-Gm-Message-State: AJcUukeoyVWtmUolj0c1/9lzK54pfrmTFscUHUicH9qsV5uPOcd3svVA
-        3FiA3bFaDS2HKW+Hx/5okBcc9rU21vHHvw9EM2nGDY8mKZ0=
-X-Google-Smtp-Source: ALg8bN7ZsCbM/WBP2/WHL1rhL8TyzZra1quuvz0nSUIsnxTTR50HbjGIsaRMZRL0Ji/IG3VQVqPH3mFrkjcBUj7+Wpk=
-X-Received: by 2002:a02:734b:: with SMTP id a11mr14929593jae.62.1548774173968;
- Tue, 29 Jan 2019 07:02:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
- <CAKv+Gu8P-5hxZ8+OV_xSZteTvCLw-Sc-=KJM1i=3aWajcS9bUw@mail.gmail.com>
- <CAFp+6iEp-bzMrZz8cFUciTFKm7TwAoLdYpsSTD73kDfCRh60bA@mail.gmail.com>
- <CAKv+Gu9z_mGwdZYMKPfM_g2MZwrCF5=f4WAdn_R6wJ1A9xSZ_Q@mail.gmail.com>
- <dbba5a8a-70c0-dd01-713c-081eb412e2d7@arm.com> <CAKv+Gu8K5f0va9q4FYk9x1puoOTDjZ0c25qokm2izSVAwd1gmQ@mail.gmail.com>
- <964779d6-c676-3379-bf1e-cde0dd82d63d@arm.com> <CAKv+Gu_Oz-QEFnq9KiOBHQrC8o+0ykkEZBm0vCWfYDfFB8QTcQ@mail.gmail.com>
- <CAFp+6iESSKZsG06j9RJDn3n84zNT=b962sEyPwfyW1u5DGu-+A@mail.gmail.com>
- <CAKv+Gu964=UOPcxh1ZZ4HEvJonrQ_d21t=GbVV9XwV3o91c6ng@mail.gmail.com> <CAFp+6iGJLNA-sgr+rCZsf20h8Ha0aVh4zKcxYQ_nYjP9CemVpw@mail.gmail.com>
-In-Reply-To: <CAFp+6iGJLNA-sgr+rCZsf20h8Ha0aVh4zKcxYQ_nYjP9CemVpw@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 29 Jan 2019 16:02:41 +0100
-Message-ID: <CAKv+Gu9c2YYQdDNV_9Lgs3nb8MFXNvLj8GdeOfEnHvPAw6qAfg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] iommu/arm-smmu: Add support to use Last level cache
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     pdaly@codeaurora.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=lLNnP59ZMU3ebsUNLsii3VqQKotAHHQp8+DgKYtWu4A=;
+        b=Ibphw4fnZMDuaGL3g67GXzFgArMJKVyz5iTAKk6Nxbxv34AeVPlRN9WwmAlC4zLeSy
+         wxb2NK5nJCxjrXMcuXErKC7ydi7rb7Y7GPlqS4pOr8wpbZwrV6HLpn725+bzQ1tv8se0
+         i5rkPgNaOlYuVklnb5qf9xZBpjynaDVZ7qnMYSi6+hp+zvAk6IwyyLcTSfb1w5PiuSSG
+         vuPmLqbMcGJgB8P4JttEXfpL+AKEn2Ita+1mMLaO0tUHP8e5p1KGi5uZe0NVbdOcI+dK
+         xIvtWaNC8DFgeFUw8dn3Z0lObmDf87PsLgJYcGj2zliotopb18QGe53S73U211qN04VM
+         JYlg==
+X-Gm-Message-State: AJcUukfvliJcclOP2NC5lD60cCemXFHggpEKKg3UEj+Uf2hnGclyHXy+
+        +HnuHFZ3U/pwzKxeAEqQGDyZ8MLGuzVY7Q==
+X-Google-Smtp-Source: ALg8bN7uL2pbIbKVGD3bHvVfiHmRupItE3Jo2ZOdFG8JPN+U/Tlb7hScYwZ66XLwHc/uDG1ibBd8iA==
+X-Received: by 2002:a17:906:8596:: with SMTP id v22mr11194643ejx.41.1548774192229;
+        Tue, 29 Jan 2019 07:03:12 -0800 (PST)
+Received: from [192.168.1.85] (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
+        by smtp.gmail.com with ESMTPSA id g20sm13818584edr.47.2019.01.29.07.03.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 07:03:11 -0800 (PST)
+From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+Message-Id: <74C79F4D-E9B0-4F47-ACF2-9335D3DB8604@javigon.com>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_B56FF616-9AA0-41B6-928E-5C7C656C2C5B";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] lightnvm: pblk: extend line wp balance check
+Date:   Tue, 29 Jan 2019 16:03:10 +0100
+In-Reply-To: <CANr-nt34gCrRWsNrAfKS1Opy=kV5EwuR_C1VDjQbBP5MnfdgpA@mail.gmail.com>
+Cc:     =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Zhoujie Wu <zjwu@marvell.com>, linux-block@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        pratikp@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+To:     Hans Holmberg <hans@owltronix.com>
+References: <20190129084737.718-1-hans@owltronix.com>
+ <FDFE70E2-CA70-456F-8507-94BF822BF9A7@javigon.com>
+ <CANr-nt34gCrRWsNrAfKS1Opy=kV5EwuR_C1VDjQbBP5MnfdgpA@mail.gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(+ Bjorn)
 
-On Mon, 28 Jan 2019 at 12:27, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
->
-> Hi Ard,
->
-> On Thu, Jan 24, 2019 at 1:25 PM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
-> >
-> > On Thu, 24 Jan 2019 at 07:58, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
-> > >
-> > > On Mon, Jan 21, 2019 at 7:55 PM Ard Biesheuvel
-> > > <ard.biesheuvel@linaro.org> wrote:
-> > > >
-> > > > On Mon, 21 Jan 2019 at 14:56, Robin Murphy <robin.murphy@arm.com> wrote:
-> > > > >
-> > > > > On 21/01/2019 13:36, Ard Biesheuvel wrote:
-> > > > > > On Mon, 21 Jan 2019 at 14:25, Robin Murphy <robin.murphy@arm.com> wrote:
-> > > > > >>
-> > > > > >> On 21/01/2019 10:50, Ard Biesheuvel wrote:
-> > > > > >>> On Mon, 21 Jan 2019 at 11:17, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
-> > > > > >>>>
-> > > > > >>>> Hi,
-> > > > > >>>>
-> > > > > >>>>
-> > > > > >>>> On Mon, Jan 21, 2019 at 12:56 PM Ard Biesheuvel
-> > > > > >>>> <ard.biesheuvel@linaro.org> wrote:
-> > > > > >>>>>
-> > > > > >>>>> On Mon, 21 Jan 2019 at 06:54, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
-> > > > > >>>>>>
-> > > > > >>>>>> Qualcomm SoCs have an additional level of cache called as
-> > > > > >>>>>> System cache, aka. Last level cache (LLC). This cache sits right
-> > > > > >>>>>> before the DDR, and is tightly coupled with the memory controller.
-> > > > > >>>>>> The clients using this cache request their slices from this
-> > > > > >>>>>> system cache, make it active, and can then start using it.
-> > > > > >>>>>> For these clients with smmu, to start using the system cache for
-> > > > > >>>>>> buffers and, related page tables [1], memory attributes need to be
-> > > > > >>>>>> set accordingly. This series add the required support.
-> > > > > >>>>>>
-> > > > > >>>>>
-> > > > > >>>>> Does this actually improve performance on reads from a device? The
-> > > > > >>>>> non-cache coherent DMA routines perform an unconditional D-cache
-> > > > > >>>>> invalidate by VA to the PoC before reading from the buffers filled by
-> > > > > >>>>> the device, and I would expect the PoC to be defined as lying beyond
-> > > > > >>>>> the LLC to still guarantee the architected behavior.
-> > > > > >>>>
-> > > > > >>>> We have seen performance improvements when running Manhattan
-> > > > > >>>> GFXBench benchmarks.
-> > > > > >>>>
-> > > > > >>>
-> > > > > >>> Ah ok, that makes sense, since in that case, the data flow is mostly
-> > > > > >>> to the device, not from the device.
-> > > > > >>>
-> > > > > >>>> As for the PoC, from my knowledge on sdm845 the system cache, aka
-> > > > > >>>> Last level cache (LLC) lies beyond the point of coherency.
-> > > > > >>>> Non-cache coherent buffers will not be cached to system cache also, and
-> > > > > >>>> no additional software cache maintenance ops are required for system cache.
-> > > > > >>>> Pratik can add more if I am missing something.
-> > > > > >>>>
-> > > > > >>>> To take care of the memory attributes from DMA APIs side, we can add a
-> > > > > >>>> DMA_ATTR definition to take care of any dma non-coherent APIs calls.
-> > > > > >>>>
-> > > > > >>>
-> > > > > >>> So does the device use the correct inner non-cacheable, outer
-> > > > > >>> writeback cacheable attributes if the SMMU is in pass-through?
-> > > > > >>>
-> > > > > >>> We have been looking into another use case where the fact that the
-> > > > > >>> SMMU overrides memory attributes is causing issues (WC mappings used
-> > > > > >>> by the radeon and amdgpu driver). So if the SMMU would honour the
-> > > > > >>> existing attributes, would you still need the SMMU changes?
-> > > > > >>
-> > > > > >> Even if we could force a stage 2 mapping with the weakest pagetable
-> > > > > >> attributes (such that combining would work), there would still need to
-> > > > > >> be a way to set the TCR attributes appropriately if this behaviour is
-> > > > > >> wanted for the SMMU's own table walks as well.
-> > > > > >>
-> > > > > >
-> > > > > > Isn't that just a matter of implementing support for SMMUs that lack
-> > > > > > the 'dma-coherent' attribute?
-> > > > >
-> > > > > Not quite - in general they need INC-ONC attributes in case there
-> > > > > actually is something in the architectural outer-cacheable domain.
-> > > >
-> > > > But is it a problem to use INC-ONC attributes for the SMMU PTW on this
-> > > > chip? AIUI, the reason for the SMMU changes is to avoid the
-> > > > performance hit of snooping, which is more expensive than cache
-> > > > maintenance of SMMU page tables. So are you saying the by-VA cache
-> > > > maintenance is not relayed to this system cache, resulting in page
-> > > > table updates to be invisible to masters using INC-ONC attributes?
-> > >
-> > > The reason for this SMMU changes is that the non-coherent devices
-> > > can't access the inner caches at all. But they have a way to allocate
-> > > and lookup in system cache.
-> > >
-> > > CPU will by default make use of system cache when the inner-cacheable
-> > > and outer-cacheable memory attribute is set.
-> > >
-> > > So for SMMU page tables to be visible to PTW,
-> > > -- For IO coherent clients, the CPU cache maintenance operations are not
-> > > required for buffers marked Normal Cached to achieve a coherent view of
-> > > memory. However, client-specific cache maintenance may still be
-> > > required for devices
-> > > with local caches (for example, compute DSP local L1 or L2).
-> >
-> > Why would devices need to access the SMMU page tables?
->
-> No, the devices don't need to access the page tables, rather the PTW does.
-> Sorry for mixing it up.
->
-> >
-> > > -- For non-IO coherent clients, the CPU cache maintenance operations (cleans
-> > > and/or invalidates) are required at buffer handoff points for buffers marked as
-> > > Normal Cached in any CPU page table in order to observe the latest updates.
-> > >
-> >
-> > Indeed, and this is what your non-coherent SMMU PTW requires, and what
-> > you /should/ get when you omit the 'dma-coherent' property from its DT
-> > node (and if you don't, it is a bug in the SMMU driver that should get
-> > fixed)
-> >
-> > The question is whether using inner-non-cached/outer-cacheable
-> > attributes for the PTW is required for correctness, or whether it is
-> > merely an optimization (since the point of this exercise was to avoid
-> > snoop latency from the SMMU PTW). If it is an optimization, I would
-> > like to understand whether the performance delta between SMMU page
-> > tables in DRAM vs SMMU page tables in the LLC justifies these
-> > intrusive changes to the SMMU driver.
->
-> IIUC, SMMU uses the TCR configurations to decide how PTW should access
-> the memory. TCR doesn't direct CPU whether to use cacheable or non -cacheable
-> memory to allocate page tables. Is that right?
+--Apple-Mail=_B56FF616-9AA0-41B6-928E-5C7C656C2C5B
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Correct
+> On 29 Jan 2019, at 13.49, Hans Holmberg <hans@owltronix.com> wrote:
+>=20
+> On Tue, Jan 29, 2019 at 12:19 PM Javier Gonz=C3=A1lez =
+<javier@javigon.com> wrote:
+>>> On 29 Jan 2019, at 09.47, hans@owltronix.com wrote:
+>>>=20
+>>> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>>>=20
+>>> pblk stripes writes of minimal write size across all non-offline =
+chunks
+>>> in a line, which means that the maximum write pointer delta should =
+not
+>>> exceed the minimal write size. Extend the line write pointer balance =
+check
+>>> to cover this case.
+>>>=20
+>>> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>>> ---
+>>>=20
+>>> This patch applies on top of Zhoujie's V3 of
+>>> "lightnvm: pblk: ignore bad block wp for pblk_line_wp_is_unbalanced
+>>>=20
+>>> drivers/lightnvm/pblk-recovery.c | 60 =
+++++++++++++++++++++------------
+>>> 1 file changed, 37 insertions(+), 23 deletions(-)
+>>>=20
+>>> diff --git a/drivers/lightnvm/pblk-recovery.c =
+b/drivers/lightnvm/pblk-recovery.c
+>>> index 02d466e6925e..d86f580036d3 100644
+>>> --- a/drivers/lightnvm/pblk-recovery.c
+>>> +++ b/drivers/lightnvm/pblk-recovery.c
+>>> @@ -302,41 +302,55 @@ static int pblk_pad_distance(struct pblk =
+*pblk, struct pblk_line *line)
+>>>      return (distance > line->left_msecs) ? line->left_msecs : =
+distance;
+>>> }
+>>>=20
+>>> -static int pblk_line_wp_is_unbalanced(struct pblk *pblk,
+>>> -                                   struct pblk_line *line)
+>>> +/* Return a chunk belonging to a line by stripe(write order) index =
+*/
+>>> +static struct nvm_chk_meta *pblk_get_stripe_chunk(struct pblk =
+*pblk,
+>>> +                                               struct pblk_line =
+*line,
+>>> +                                               int index)
+>>> {
+>>>      struct nvm_tgt_dev *dev =3D pblk->dev;
+>>>      struct nvm_geo *geo =3D &dev->geo;
+>>> -     struct pblk_line_meta *lm =3D &pblk->lm;
+>>>      struct pblk_lun *rlun;
+>>> -     struct nvm_chk_meta *chunk;
+>>>      struct ppa_addr ppa;
+>>> -     u64 line_wp;
+>>> -     int pos, i, bit;
+>>> +     int pos;
+>>>=20
+>>> -     bit =3D find_first_zero_bit(line->blk_bitmap, =
+lm->blk_per_line);
+>>> -     if (bit >=3D lm->blk_per_line)
+>>> -             return 0;
+>>> -     rlun =3D &pblk->luns[bit];
+>>> +     rlun =3D &pblk->luns[index];
+>>>      ppa =3D rlun->bppa;
+>>>      pos =3D pblk_ppa_to_pos(geo, ppa);
+>>> -     chunk =3D &line->chks[pos];
+>>>=20
+>>> -     line_wp =3D chunk->wp;
+>>> +     return &line->chks[pos];
+>>> +}
+>>>=20
+>>> -     for (i =3D bit + 1; i < lm->blk_per_line; i++) {
+>>> -             rlun =3D &pblk->luns[i];
+>>> -             ppa =3D rlun->bppa;
+>>> -             pos =3D pblk_ppa_to_pos(geo, ppa);
+>>> -             chunk =3D &line->chks[pos];
+>>> +static int pblk_line_wps_are_unbalanced(struct pblk *pblk,
+>>> +                                   struct pblk_line *line)
+>>> +{
+>>> +     struct pblk_line_meta *lm =3D &pblk->lm;
+>>> +     int blk_in_line =3D lm->blk_per_line;
+>>> +     struct nvm_chk_meta *chunk;
+>>> +     u64 max_wp, min_wp;
+>>> +     int i;
+>>>=20
+>>> -             if (chunk->state & NVM_CHK_ST_OFFLINE)
+>>> -                     continue;
+>>> +     i =3D find_first_zero_bit(line->blk_bitmap, blk_in_line);
+>>> +
+>>> +     /* If there is one or zero good chunks in the line,
+>>> +      * the write pointers can't be unbalanced.
+>>> +      */
+>>> +     if (i >=3D (blk_in_line - 1))
+>>> +             return 0;
+>>>=20
+>>> -             if (chunk->wp > line_wp)
+>>> +     chunk =3D pblk_get_stripe_chunk(pblk, line, i);
+>>> +     max_wp =3D chunk->wp;
+>>> +     if (max_wp > pblk->max_write_pgs)
+>>> +             min_wp =3D max_wp - pblk->max_write_pgs;
+>>> +     else
+>>> +             min_wp =3D 0;
+>>> +
+>>> +     i =3D find_next_zero_bit(line->blk_bitmap, blk_in_line, i + =
+1);
+>>> +     while (i < blk_in_line) {
+>>> +             chunk =3D pblk_get_stripe_chunk(pblk, line, i);
+>>> +             if (chunk->wp > max_wp || chunk->wp < min_wp)
+>>>                      return 1;
+>>> -             else if (chunk->wp < line_wp)
+>>> -                     line_wp =3D chunk->wp;
+>>> +
+>>> +             i =3D find_next_zero_bit(line->blk_bitmap, =
+blk_in_line, i + 1);
+>>>      }
+>>>=20
+>>>      return 0;
+>>> @@ -362,7 +376,7 @@ static int pblk_recov_scan_oob(struct pblk =
+*pblk, struct pblk_line *line,
+>>>      int ret;
+>>>      u64 left_ppas =3D pblk_sec_in_open_line(pblk, line) - =
+lm->smeta_sec;
+>>>=20
+>>> -     if (pblk_line_wp_is_unbalanced(pblk, line))
+>>> +     if (pblk_line_wps_are_unbalanced(pblk, line))
+>>>              pblk_warn(pblk, "recovering unbalanced line (%d)\n", =
+line->id);
+>>>=20
+>>>      ppa_list =3D p.ppa_list;
+>>> --
+>>> 2.17.1
+>>=20
+>> If I am understanding correctly, you want to protect against the case
+>> where a pfail has broken the ws_min partition of a chunk, right? I =
+say
+>> this because there is a guarantee that the minimal write size and =
+pblk's
+>> write size align with ws_min and ws_opt. Even if we have grown bad
+>> blocks on pfail for the current line (which is a bigger problem =
+because
+>> we have potentially lost data), this guarantee would remain.
+>>=20
+>> If this is the case, my first reaction would be to say that the
+>> controller is responsible for guaranteeing atomicity for both scalar =
+and
+>> vector I/Os. If this is not guaranteed, we have bigger problems than
+>> this (e.g., for the write error recovery path).
+>>=20
+>> Are you thinking of a different case?
+>=20
+> The write pointer check triggers a warning if something unexpected has
+> happened to the chunks.
+> i.e. if something else than pblk messed with the disk, or if the user
+> tries to recover a pblk instance with an invalid lun configuration.
 
-> Currently, these TCR configurations are set for inner-cacheable, and
-> outer-cacheable.
-> With this, is it assumed that PTW would snoop into the CPU caches for
-> any updates
-> of the page tables?
->
-`
-Yes, and if I understand the issue correctly, this snooping is costly,
-which is why you want to avoid it, right?
+But this will only solve a very specific corner case of this, right?
+This is, when you are writing at WP on a middle LUN exactly < ws_min.
 
-> When we omit 'dma-coherent', CPU will allocate non-coherent memory
-> for these page tables, and software has to explicitly flush CPU caches to
-> make the changes visible to SMMU.
+For example, If the user attempts to start pblk with a different LUN
+configuration, the alignment is the same an pblk will actually fail
+because it cannot find any emeta.
 
-Indeed. But I would expect the TCR configuration to reflect this as
-well, and that doesn't appear the case.
+For completion, the original wp_unbalanced patch attempted to protect
+against the case where several outstanding I/Os to different PUs are
+inflight and then you have a pfail. In this case, a write to a PU that
+is not "next" in the line bitmap completes and we have a whole, meaning
+that if we recover this case, we risk to overwrite valid data, as we
+break the "sequentiality" the line, which allows for recovering by
+replaying the P2L stored on the OOB.
 
-> The CPU will still mark this memory as Normal Cached, i.e. inner cached,
-> outer cached, and the non-IO coherent SMMU PTW won't be able to snoop into
-> CPU caches. Does the following code in io-pgtable-arm.c ensures that SMMU
-> sees the latest page tables?
->
->    } else if (!(cfg->quirks & IO_PGTABLE_QUIRK_NO_DMA) &&
->                     !(pte & ARM_LPAE_PTE_SW_SYNC)) {
->                  __arm_lpae_sync_pte(ptep, cfg);
->    }
->
+>=20
+> This patch adds a warning if a chunk wp is too small(i.e. if a chunk
+> was unexpectedly reset)
 
-I don't know the history of why NO_DMA is implemented as a quirk (and
-why it is called like that in the first place).
-But it indeed appears that this is where the cache maintenance occurs
-for non-coherent PTWs.
+I am not arguing against the implementation, I am just trying to
+understand what you are trying to fix. If it is the case I described
+originally, then I do not think it is possible on the Open-Channel
+architecture. If you want to add protection against corruptions, then
+this needs more work as many corruption cases are missing - you would
+need something like a OOB watermark to protect open lines and something
+like a OOB lba CRC check in emeta to validate that no data has been
+altered.
 
-> This change is mostly to get optimized PTW. As seen in the patch [1] for GPU,
-> there's a separate slice for page tables - "gpuhtw_llc_slice".
-> Let me try to get the numbers for this optimization.
->
+If you ask me, I do not think the latter belongs to pblk, and if it did,
+I would suggest a whole new (optional) feature that adds this short of
+integrity protection, ideally, reusing NVMe PI. In the original pblk, we
+have followed the same assumption as block devices do; you can go an
+write on the side to a block device that has a FS on top; the block
+device will not complain at all - if the FS detects this then they will
+try to fix it, otherwise you lost data.
 
-Yes, please. We'd need to compare page tables in the LLC with page
-tables in system RAM, and for completeness, it would be nice to
-include the cache-coherent configuration as well.
+In this context, we have discussed about a pblk tool a la fsck, which =
+can
+cover all this cases instead of adding more complexity to the recovery
+path in the kernel. Here, you patch makes sense we fail if something
+suspicious has occurred and move the burden to the pblk tool for it to
+do the repair. But again, if the goal s adding integrity protection, it
+needs to cover the rest of the cases.
+
+Hope this makes sense.
+
+Javier
+
+--Apple-Mail=_B56FF616-9AA0-41B6-928E-5C7C656C2C5B
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlxQay4ACgkQPEYBfS0l
+eOCurg//UlDMZi3CYYX0XmXUWY93+zHkBY3+/z0jZE5aPXSugFpnVxMxGnpltV9s
+VjHdLRms3F46gGv/7LI6zDXF1yJws6RtmWEMg6Ja9538Xjmy4UFNQmZii6rZQpf8
+2WziLvNwJDWFY+E6dA14EJwwsJeerrPHmkOEypiUMtZipl6ehFkVVHZMve/fm84A
+ihSzhcewbvDxaaCvjJqUStO/zQJxYhpXkdN2E2WmpjQq6styeRsT5a0bmQj2tYiI
+/3pJDTK2v3vdIIr2Vm03eEFx/IBqFjY67K85S2Udf98GYy8EAVtHNqwTLrK83N/k
+d/g3TuvkiE7OTsPVtzXGjNi/8eodngegeJp4nNlMqOi65CHvgh1VMp6HjeidLDhR
+ow3hYNvhO1+7jaHoiw/+/6EC2hnoH09D46o4b0W2OspLOIQ8LlJIKitRUmWeKYz9
+z8kkfG0/7Js846Fc8kLs+EpwEQ9m1XSaGppno5pMSRlfXa3BP97o/o4BztytU7BD
+X4RwaSC/Rak681/98XeSrup2WMamL2WbCbUIK1u9uXeJjTi9+TO22KFcg+QyBC5j
+tI9EboHVl2zC8VOwstu0CitMX7mApu6YNEwyWAy9wYsJbrIlzmUdradbkkamPkYK
+yyzF6LXoSQs+g/sVFBkhvBV5dn6KtlV2AdzSGthgrv8U+M2vWD4=
+=mJEK
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_B56FF616-9AA0-41B6-928E-5C7C656C2C5B--
