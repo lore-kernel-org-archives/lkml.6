@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C082CC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 846F9C282D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90D4B2148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AF3E2148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762654;
-	bh=AFyzQwdmwwoIk+2NzayeE0HLrbyAZ6pqw3LqqChiMRE=;
+	s=default; t=1548762656;
+	bh=eM9Br03K8qgtGEXtzjuU6brC8EdRL6IHOZQNXqjoix0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SpA6pDiGD33xiauEQJWv9OnNaxIci2CYzqijpMuo8lKD8+xnUxZs6uHwyiInDzCqb
-	 U0BYwCsrw1mxynoCHOs6kJiZUr4352+GH8lBMcb087Ak9EDYKaKzZwpvrhDWjKb8gd
-	 OrfMm5aRkWnROLD1cmNZH9+9aP6WhN+a96hGMIRg=
+	b=LiWmrngm1gXpEztmgVjjPPyazlTz+leL8ngzmRdycOu6nNqF6+EGDQZLEAJrTq7w0
+	 mWa2cTcuarVplybqaWLh936OK6D9qS6AC9jwxJT3SrienDdKUlFoBZaGAEhIdWj3c6
+	 t7CywjfxrALd+mUCG7aerznm/BZ+GyW6lP0jv3Dg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731747AbfA2Luw (ORCPT
+        id S1731759AbfA2Luz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:50:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42146 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:50:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731474AbfA2Lup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:50:45 -0500
+        id S1731725AbfA2Lur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:50:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2255E2083B;
-        Tue, 29 Jan 2019 11:50:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B32C12086C;
+        Tue, 29 Jan 2019 11:50:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762644;
-        bh=AFyzQwdmwwoIk+2NzayeE0HLrbyAZ6pqw3LqqChiMRE=;
+        s=default; t=1548762647;
+        bh=eM9Br03K8qgtGEXtzjuU6brC8EdRL6IHOZQNXqjoix0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j+L7sV9hJjIqziDyKlqjJvfzxHOQv9+bDq7k8JTgHW007gL35LXJQg+J5Ttdqt9Ng
-         mgtSYchw97ErSvhoJ/j67s8SenZaOHdnVNimd5unnc7A3gLEvbtRfCfykGeds6i/Ds
-         A1vZ6VRXbOc0vn6kK8lrRrNIVVDQMyxSQM0PPr5o=
+        b=fBmErjlPPrQu2TZgdh5w+K8ytOgzT7mnKQmxAfH/ug9UONGLfIUwh2jDnWmIZGUmE
+         t/OH6ZD5wBgIaQRYFQWe9JtFUyKyWO4FdmmL8vGyfSpkFzWMZPhqLbvvSvowMT/07A
+         21+9DuMVNVe/HPVoSnQ5KBGLmEHeFM997KyL+VWs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, bridge@lists.linux-foundation.org,
-        Nkolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Yunjian Wang <wangyunjian@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 01/44] net: bridge: Fix ethernet header pointer before check skb forwardable
-Date:   Tue, 29 Jan 2019 12:35:56 +0100
-Message-Id: <20190129113140.009177508@linuxfoundation.org>
+        stable@vger.kernel.org, Charles Yeh <charlesyeh522@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 10/44] USB: serial: pl2303: add new PID to support PL2303TB
+Date:   Tue, 29 Jan 2019 12:36:05 +0100
+Message-Id: <20190129113140.911984030@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
 References: <20190129113139.826927690@linuxfoundation.org>
@@ -69,69 +65,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunjian Wang <wangyunjian@huawei.com>
+From: Charles Yeh <charlesyeh522@gmail.com>
 
-[ Upstream commit 28c1382fa28f2e2d9d0d6f25ae879b5af2ecbd03 ]
+commit 4dcf9ddc9ad5ab649abafa98c5a4d54b1a33dabb upstream.
 
-The skb header should be set to ethernet header before using
-is_skb_forwardable. Because the ethernet header length has been
-considered in is_skb_forwardable(including dev->hard_header_len
-length).
+Add new PID to support PL2303TB (TYPE_HX)
 
-To reproduce the issue:
-1, add 2 ports on linux bridge br using following commands:
-$ brctl addbr br
-$ brctl addif br eth0
-$ brctl addif br eth1
-2, the MTU of eth0 and eth1 is 1500
-3, send a packet(Data 1480, UDP 8, IP 20, Ethernet 14, VLAN 4)
-from eth0 to eth1
-
-So the expect result is packet larger than 1500 cannot pass through
-eth0 and eth1. But currently, the packet passes through success, it
-means eth1's MTU limit doesn't take effect.
-
-Fixes: f6367b4660dd ("bridge: use is_skb_forwardable in forward path")
-Cc: bridge@lists.linux-foundation.org
-Cc: Nkolay Aleksandrov <nikolay@cumulusnetworks.com>
-Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Charles Yeh <charlesyeh522@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/bridge/br_forward.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/net/bridge/br_forward.c
-+++ b/net/bridge/br_forward.c
-@@ -35,10 +35,10 @@ static inline int should_deliver(const s
+---
+ drivers/usb/serial/pl2303.c |    1 +
+ drivers/usb/serial/pl2303.h |    2 ++
+ 2 files changed, 3 insertions(+)
+
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -47,6 +47,7 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_HCR331) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MOTOROLA) },
+ 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ZTEK) },
++	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_TB) },
+ 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID) },
+ 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID_RSAQ5) },
+ 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_ID) },
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -13,6 +13,7 @@
  
- int br_dev_queue_push_xmit(struct net *net, struct sock *sk, struct sk_buff *skb)
- {
-+	skb_push(skb, ETH_HLEN);
- 	if (!is_skb_forwardable(skb->dev, skb))
- 		goto drop;
+ #define PL2303_VENDOR_ID	0x067b
+ #define PL2303_PRODUCT_ID	0x2303
++#define PL2303_PRODUCT_ID_TB		0x2304
+ #define PL2303_PRODUCT_ID_RSAQ2		0x04bb
+ #define PL2303_PRODUCT_ID_DCU11		0x1234
+ #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
+@@ -25,6 +26,7 @@
+ #define PL2303_PRODUCT_ID_MOTOROLA	0x0307
+ #define PL2303_PRODUCT_ID_ZTEK		0xe1f1
  
--	skb_push(skb, ETH_HLEN);
- 	br_drop_fake_rtable(skb);
- 
- 	if (skb->ip_summed == CHECKSUM_PARTIAL &&
-@@ -96,12 +96,11 @@ static void __br_forward(const struct ne
- 		net = dev_net(indev);
- 	} else {
- 		if (unlikely(netpoll_tx_running(to->br->dev))) {
--			if (!is_skb_forwardable(skb->dev, skb)) {
-+			skb_push(skb, ETH_HLEN);
-+			if (!is_skb_forwardable(skb->dev, skb))
- 				kfree_skb(skb);
--			} else {
--				skb_push(skb, ETH_HLEN);
-+			else
- 				br_netpoll_send_skb(to, skb);
--			}
- 			return;
- 		}
- 		br_hook = NF_BR_LOCAL_OUT;
++
+ #define ATEN_VENDOR_ID		0x0557
+ #define ATEN_VENDOR_ID2		0x0547
+ #define ATEN_PRODUCT_ID		0x2008
 
 
