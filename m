@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A75C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A90DC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35DD22148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B1C020989
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762557;
-	bh=bjT/UeKxvhGrwLYrQLggLgAtJiAXxQT05a1yyT1Hz6o=;
+	s=default; t=1548762561;
+	bh=mEfY5z3rPCFMD3bioXmMpAe9lB/NYuxSFbBlPam4Hoo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vxf38t/xkqFCc85wQO3X6T12s3udg080KIX9CUq9zAv9J8nVU5HWJAE5OlnaqY2zc
-	 KbVJHcCJMUWSgNNGWznxtB23Uc0JeHbTafoXFSZ08rzCk7MaxZ1R7TLi38bzf0xakb
-	 D4aY/ftYSjsAewKmhSHtoPfIy8ZVwolUYJ/wTU5M=
+	b=BINrMgLlKrrSURPU2RWxmDtHLlEHHPaERDU82+wVYDnThwl2oCk+4H2LbTdhyuwq7
+	 8oo5MeGub4xGRCvsKkr/bDt7yUSrUP5kPr3JAlvpEtbFy9juxRzoDhfGTYKQl9gZHM
+	 Mhb/gsAi4PyNS09A+EUtK7Dii6q/+hsf1OjMTz0k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731440AbfA2LtP (ORCPT
+        id S1731019AbfA2LtT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:49:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40210 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:49:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731427AbfA2LtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:49:12 -0500
+        id S1731258AbfA2LtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:49:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 326D920989;
-        Tue, 29 Jan 2019 11:49:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5218220869;
+        Tue, 29 Jan 2019 11:49:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762551;
-        bh=bjT/UeKxvhGrwLYrQLggLgAtJiAXxQT05a1yyT1Hz6o=;
+        s=default; t=1548762556;
+        bh=mEfY5z3rPCFMD3bioXmMpAe9lB/NYuxSFbBlPam4Hoo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xKFFy96IMD7ne6ljtwU/ByXKnNY6cWdPhoEGdarRg5+lgl45w5IS5kedRe99ylquN
-         J0BExUdaOiEx8zthlV2KyLcLGekAi/1fs1iFKXT6iRjSSYaUR2zH/iEOaouHFXLQRb
-         b2Q2UYfT8Cg+TqX4nHh3fL86f734s0XgZUYc1IuM=
+        b=Z2mHoR4LWby1V2NhmJSyotznpj9s5GfAO/u5xmj5occxt2wurqifxR6H5DjHgUg1r
+         vqC0b5/8eVRXO73KulXYiG5VXq4rEeCJSbe7Fezcw7ks4/zbeY+z2EzF1qmzAZx/NH
+         fwsQXi1T28X1HTQLeIj5aYrn6hE0hVZAnoJRMOPI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H.J. Lu" <hjl.tools@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 4.14 45/68] posix-cpu-timers: Unbreak timer rearming
-Date:   Tue, 29 Jan 2019 12:36:07 +0100
-Message-Id: <20190129113135.820593883@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.14 47/68] can: dev: __can_get_echo_skb(): fix bogous check for non-existing skb by removing it
+Date:   Tue, 29 Jan 2019 12:36:09 +0100
+Message-Id: <20190129113136.029075291@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -67,52 +66,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
 
-commit 93ad0fc088c5b4631f796c995bdd27a082ef33a6 upstream.
+commit 7b12c8189a3dc50638e7d53714c88007268d47ef upstream.
 
-The recent commit which prevented a division by 0 issue in the alarm timer
-code broke posix CPU timers as an unwanted side effect.
+This patch revert commit 7da11ba5c506
+("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
 
-The reason is that the common rearm code checks for timer->it_interval
-being 0 now. What went unnoticed is that the posix cpu timer setup does not
-initialize timer->it_interval as it stores the interval in CPU timer
-specific storage. The reason for the separate storage is historical as the
-posix CPU timers always had a 64bit nanoseconds representation internally
-while timer->it_interval is type ktime_t which used to be a modified
-timespec representation on 32bit machines.
+After introduction of this change we encountered following new error
+message on various i.MX plattforms (flexcan):
 
-Instead of reverting the offending commit and fixing the alarmtimer issue
-in the alarmtimer code, store the interval in timer->it_interval at CPU
-timer setup time so the common code check works. This also repairs the
-existing inconistency of the posix CPU timer code which kept a single shot
-timer armed despite of the interval being 0.
+| flexcan 53fc8000.can can0: __can_get_echo_skb: BUG! Trying to echo non
+| existing skb: can_priv::echo_skb[0]
 
-The separate storage can be removed in mainline, but that needs to be a
-separate commit as the current one has to be backported to stable kernels.
+The introduction of the message was a mistake because
+priv->echo_skb[idx] = NULL is a perfectly valid in following case: If
+CAN_RAW_LOOPBACK is disabled (setsockopt) in applications, the pkt_type
+of the tx skb's given to can_put_echo_skb is set to PACKET_LOOPBACK. In
+this case can_put_echo_skb will not set priv->echo_skb[idx]. It is
+therefore kept NULL.
 
-Fixes: 0e334db6bb4b ("posix-timers: Fix division by zero bug")
-Reported-by: H.J. Lu <hjl.tools@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190111133500.840117406@linutronix.de
+As additional argument for revert: The order of check and usage of idx
+was changed. idx is used to access an array element before checking it's
+boundaries.
+
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Fixes: 7da11ba5c506 ("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/time/posix-cpu-timers.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/can/dev.c |   27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -685,6 +685,7 @@ static int posix_cpu_timer_set(struct k_
- 	 * set up the signal and overrun bookkeeping.
- 	 */
- 	timer->it.cpu.incr = timespec64_to_ns(&new->it_interval);
-+	timer->it_interval = ns_to_ktime(timer->it.cpu.incr);
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -479,8 +479,6 @@ EXPORT_SYMBOL_GPL(can_put_echo_skb);
+ struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
+ {
+ 	struct can_priv *priv = netdev_priv(dev);
+-	struct sk_buff *skb = priv->echo_skb[idx];
+-	struct canfd_frame *cf;
  
- 	/*
- 	 * This acts as a modification timestamp for the timer,
+ 	if (idx >= priv->echo_skb_max) {
+ 		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
+@@ -488,20 +486,21 @@ struct sk_buff *__can_get_echo_skb(struc
+ 		return NULL;
+ 	}
+ 
+-	if (!skb) {
+-		netdev_err(dev, "%s: BUG! Trying to echo non existing skb: can_priv::echo_skb[%u]\n",
+-			   __func__, idx);
+-		return NULL;
+-	}
++	if (priv->echo_skb[idx]) {
++		/* Using "struct canfd_frame::len" for the frame
++		 * length is supported on both CAN and CANFD frames.
++		 */
++		struct sk_buff *skb = priv->echo_skb[idx];
++		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
++		u8 len = cf->len;
+ 
+-	/* Using "struct canfd_frame::len" for the frame
+-	 * length is supported on both CAN and CANFD frames.
+-	 */
+-	cf = (struct canfd_frame *)skb->data;
+-	*len_ptr = cf->len;
+-	priv->echo_skb[idx] = NULL;
++		*len_ptr = len;
++		priv->echo_skb[idx] = NULL;
++
++		return skb;
++	}
+ 
+-	return skb;
++	return NULL;
+ }
+ 
+ /*
 
 
