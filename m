@@ -2,202 +2,87 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0698C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72736C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:39:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753522082E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:39:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ffxiBSYw"
+	by mail.kernel.org (Postfix) with ESMTP id 3FA682082E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:39:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbfA2JjV (ORCPT
+        id S1728504AbfA2Jjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:39:21 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36121 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727342AbfA2JjS (ORCPT
+        Tue, 29 Jan 2019 04:39:33 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:32844 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728242AbfA2Jie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:39:18 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x23so15607587oix.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:39:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Nm1T119/ObMPWzlbIjDOJhaxurTOMjpaUAb/kBTk4so=;
-        b=ffxiBSYwq/uNpoCkbvO9KLc1zr4H28VXciGMmTIaTzIhmwEObRT4vl2TPKOpBTLWlS
-         234Nh/yOKNs+T510GOhT1amqWCH0mO2mMp8v12ILQqKnc5mA0ts+vOPPI6/1t8JgtVJC
-         Jk8H9gh4jF//cLmvDPSkwjAQk0kFl0X6xppLs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Nm1T119/ObMPWzlbIjDOJhaxurTOMjpaUAb/kBTk4so=;
-        b=AW8Q8yS+nOvjLTsfw3KVbJ0wkU0mmZnWI2mvM7+JboXaPZCJDNO+xTGy2l1VK4rPMb
-         O7tPXDwnwkCZ/SYr6aEk3mZjItEu9AJI/JrcIXXtRLHcafCR5wzokXp/TdCWky7xNyjE
-         3QQmsWUKxLJYic1zBfuXR/+Fvy9a8XMFi+LWiUjMJ0Ugh8ZGNL4kxwqMhmb8SIruImyL
-         H8vHI2AobM8rLVhTuI/+odXANPz54B7rmJlloGsglzvqCC1c2SL3GvzAIZW2VAWRxcb6
-         ngoltQbUQDWonBlMFBECrD7MLAIJm7w5+UHx86jaHbwD6NLO9KQ+Q3hJjAb3hnVSuryg
-         5UTA==
-X-Gm-Message-State: AJcUukdn+GzumhuhS78Y7pNnJqilNMz8af1JSIcMbFo/NYHhBB0xOVU1
-        M/NjP1Yq1eTRQB7v/DkSxroYnfjtyG0=
-X-Google-Smtp-Source: AHgI3IZuRTc0Zp9AWskOvVgvSTf+ESEVXmuZ4EmMZYUnKNU/+Tb4WP1oezJI34t8c1kMBx2FXODZWw==
-X-Received: by 2002:aca:dd88:: with SMTP id u130mr8496999oig.204.1548754757372;
-        Tue, 29 Jan 2019 01:39:17 -0800 (PST)
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com. [209.85.167.181])
-        by smtp.gmail.com with ESMTPSA id x4sm6064651oix.32.2019.01.29.01.39.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 01:39:15 -0800 (PST)
-Received: by mail-oi1-f181.google.com with SMTP id r62so15650465oie.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 01:39:15 -0800 (PST)
-X-Received: by 2002:aca:ea57:: with SMTP id i84mr8842617oih.346.1548754754671;
- Tue, 29 Jan 2019 01:39:14 -0800 (PST)
+        Tue, 29 Jan 2019 04:38:34 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id D574E2761E9
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
+        bleung@chromium.org
+Subject: [PATCH v3 02/12] platform/chrome: cros_ec_debugfs: switch to SPDX identifier
+Date:   Tue, 29 Jan 2019 10:38:13 +0100
+Message-Id: <20190129093823.27137-3-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190129093823.27137-1-enric.balletbo@collabora.com>
+References: <20190129093823.27137-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-References: <776e63c9-d4a5-342a-e0f7-200ef144ffc4@rock-chips.com>
- <64c793e08d61181b78125b3956ec38623fa5d261.camel@bootlin.com>
- <D8005130-F7FD-4CBD-8396-1BB08BB08E81@soulik.info> <f982ef378a8ade075bc7077b93640e20ecebf9f4.camel@bootlin.com>
- <82FA0C3F-BC54-4D89-AECB-90D81B89B1CE@soulik.info> <c3619a00-17e7-fb92-a427-a7478b96f356@soulik.info>
- <bdf14f97e98f2fd06307545ab9038ac3c2086ae7.camel@bootlin.com>
- <42520087-4EAE-4F7F-BCA0-42E422170E91@soulik.info> <ab8ca098ad60f209fe97f79bb93b2d1e898da524.camel@bootlin.com>
- <CAPBb6MUJu3cX9A-E32bSSjxc1cvGP83ayzZzUxa5_QMf6niK4g@mail.gmail.com> <20190129080944.pfhumtugsm7mzzcc@flea>
-In-Reply-To: <20190129080944.pfhumtugsm7mzzcc@flea>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 29 Jan 2019 18:39:03 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5A=wT4RcVWmKR2vLA7e5P_mX5vDnOiaHSoA3odEqWvbDg@mail.gmail.com>
-Message-ID: <CAAFQd5A=wT4RcVWmKR2vLA7e5P_mX5vDnOiaHSoA3odEqWvbDg@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 1/2] media: v4l: Add definitions for the
- HEVC slice format and controls
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Alexandre Courbot <acourbot@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Ayaka <ayaka@soulik.info>, Randy Li <randy.li@rock-chips.com>,
-        =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 5:09 PM Maxime Ripard <maxime.ripard@bootlin.com> w=
-rote:
->
-> On Tue, Jan 29, 2019 at 04:44:35PM +0900, Alexandre Courbot wrote:
-> > On Fri, Jan 25, 2019 at 10:04 PM Paul Kocialkowski
-> > > On Thu, 2019-01-24 at 20:23 +0800, Ayaka wrote:
-> > > >
-> > > > Sent from my iPad
-> > > >
-> > > > > On Jan 24, 2019, at 6:27 PM, Paul Kocialkowski <paul.kocialkowski=
-@bootlin.com> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > > On Thu, 2019-01-10 at 21:32 +0800, ayaka wrote:
-> > > > > > I forget a important thing, for the rkvdec and rk hevc decoder,=
- it would
-> > > > > > requests cabac table, scaling list, picture parameter set and r=
-eference
-> > > > > > picture storing in one or various of DMA buffers. I am not talk=
-ing about
-> > > > > > the data been parsed, the decoder would requests a raw data.
-> > > > > >
-> > > > > > For the pps and rps, it is possible to reuse the slice header, =
-just let
-> > > > > > the decoder know the offset from the bitstream bufer, I would s=
-uggest to
-> > > > > > add three properties(with sps) for them. But I think we need a =
-method to
-> > > > > > mark a OUTPUT side buffer for those aux data.
-> > > > >
-> > > > > I'm quite confused about the hardware implementation then. From w=
-hat
-> > > > > you're saying, it seems that it takes the raw bitstream elements =
-rather
-> > > > > than parsed elements. Is it really a stateless implementation?
-> > > > >
-> > > > > The stateless implementation was designed with the idea that only=
- the
-> > > > > raw slice data should be passed in bitstream form to the decoder.=
- For
-> > > > > H.264, it seems that some decoders also need the slice header in =
-raw
-> > > > > bitstream form (because they take the full slice NAL unit), see t=
-he
-> > > > > discussions in this thread:
-> > > > > media: docs-rst: Document m2m stateless video decoder interface
-> > > >
-> > > > Stateless just mean it won=E2=80=99t track the previous result, but=
- I don=E2=80=99t
-> > > > think you can define what a date the hardware would need. Even you
-> > > > just build a dpb for the decoder, it is still stateless, but parsin=
-g
-> > > > less or more data from the bitstream doesn=E2=80=99t stop a decoder=
- become a
-> > > > stateless decoder.
-> > >
-> > > Yes fair enough, the format in which the hardware decoder takes the
-> > > bitstream parameters does not make it stateless or stateful per-se.
-> > > It's just that stateless decoders should have no particular reason fo=
-r
-> > > parsing the bitstream on their own since the hardware can be designed
-> > > with registers for each relevant bitstream element to configure the
-> > > decoding pipeline. That's how GPU-based decoder implementations are
-> > > implemented (VAAPI/VDPAU/NVDEC, etc).
-> > >
-> > > So the format we have agreed on so far for the stateless interface is
-> > > to pass parsed elements via v4l2 control structures.
-> > >
-> > > If the hardware can only work by parsing the bitstream itself, I'm no=
-t
-> > > sure what the best solution would be. Reconstructing the bitstream in
-> > > the kernel is a pretty bad option, but so is parsing in the kernel or
-> > > having the data both in parsed and raw forms. Do you see another
-> > > possibility?
-> >
-> > Is reconstructing the bitstream so bad? The v4l2 controls provide a
-> > generic interface to an encoded format which the driver needs to
-> > convert into a sequence that the hardware can understand. Typically
-> > this is done by populating hardware-specific structures. Can't we
-> > consider that in this specific instance, the hardware-specific
-> > structure just happens to be identical to the original bitstream
-> > format?
-> >
-> > I agree that this is not strictly optimal for that particular
-> > hardware, but such is the cost of abstractions, and in this specific
-> > case I don't believe the cost would be particularly high?
->
-> I mean, that argument can be made for the rockchip driver as well. If
-> reconstructing the bitstream is something we can do, and if we don't
-> care about being suboptimal for one particular hardware, then why the
-> rockchip driver doesn't just recreate the bitstream from that API?
->
-> After all, this is just a hardware specific header that happens to be
-> identical to the original bitstream format
+Adopt the SPDX license identifier headers to ease license compliance
+management.
 
-I think in another thread (about H.264 I believe), we realized that it
-could be a good idea to just include the Slice NAL units in the
-Annex.B format in the buffers and that should work for all the
-hardware we could think of (given offsets to particular parts inside
-of the buffer). Wouldn't something similar work here for HEVC?
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+---
 
-I don't really get the meaning of "raw" for "cabac table, scaling
-list, picture parameter set and reference picture", since those are
-parts of the bitstream, which needs to be parsed to obtain those.
+Changes in v3: None
+Changes in v2: None
 
-Best regards,
-Tomasz
+ drivers/platform/chrome/cros_ec_debugfs.c | 22 ++++------------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
+index 6cacac53dfce..900c7073c46f 100644
+--- a/drivers/platform/chrome/cros_ec_debugfs.c
++++ b/drivers/platform/chrome/cros_ec_debugfs.c
+@@ -1,21 +1,7 @@
+-/*
+- * cros_ec_debugfs - debug logs for Chrome OS EC
+- *
+- * Copyright 2015 Google, Inc.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+- */
++// SPDX-License-Identifier: GPL-2.0+
++// Debug logs for the ChromeOS EC
++//
++// Copyright (C) 2015 Google, Inc.
+ 
+ #include <linux/circ_buf.h>
+ #include <linux/debugfs.h>
+-- 
+2.20.1
+
