@@ -3,176 +3,156 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EDBC282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99939C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95B782087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 679582087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:58:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfA2P6J (ORCPT
+        id S1728036AbfA2P64 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:58:09 -0500
-Received: from gateway22.websitewelcome.com ([192.185.46.194]:28211 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727490AbfA2P6I (ORCPT
+        Tue, 29 Jan 2019 10:58:56 -0500
+Received: from mail02.iobjects.de ([188.40.134.68]:35786 "EHLO
+        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbfA2P64 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:58:08 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 88CD5FDE7
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 09:58:07 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id oVm3gMXWPdnCeoVm3gOQhp; Tue, 29 Jan 2019 09:58:07 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=34016 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1goVm2-002gtH-Vc; Tue, 29 Jan 2019 09:58:07 -0600
-Subject: Re: [PATCH] x86/events: Mark expected switch fall-throughs
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20190125184917.GA7289@embeddedor>
- <20190129152500.GA25706@zn.tnic>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <8aa46db0-6983-62c4-7dc6-e006d20cd84b@embeddedor.com>
-Date:   Tue, 29 Jan 2019 09:58:05 -0600
+        Tue, 29 Jan 2019 10:58:56 -0500
+X-Greylist: delayed 522 seconds by postgrey-1.27 at vger.kernel.org; Tue, 29 Jan 2019 10:58:54 EST
+Received: from tux.wizards.de (pD9EBF050.dip0.t-ipconnect.de [217.235.240.80])
+        by mail02.iobjects.de (Postfix) with ESMTPSA id D43C14160E37;
+        Tue, 29 Jan 2019 16:50:11 +0100 (CET)
+Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
+        by tux.wizards.de (Postfix) with ESMTP id 4CEE7F01620;
+        Tue, 29 Jan 2019 16:50:11 +0100 (CET)
+Subject: Re: [PATCH 4.19 006/103] net: phy: phy driver features are mandatory
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Scott Wood <oss@buserror.net>,
+        Camelia Groza <camelia.groza@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+References: <20190129113159.567154026@linuxfoundation.org>
+ <20190129113159.909710200@linuxfoundation.org>
+From:   =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <2f2aa129-e9fb-c75a-1b60-1821863986bf@applied-asynchrony.com>
+Date:   Tue, 29 Jan 2019 16:50:11 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190129152500.GA25706@zn.tnic>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190129113159.909710200@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1goVm2-002gtH-Vc
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:34016
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/29/19 9:25 AM, Borislav Petkov wrote:
-> On Fri, Jan 25, 2019 at 12:49:17PM -0600, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch
->> cases where we are expecting to fall through.
->>
->> This patch fixes the following warnings:
->>
->> In file included from arch/x86/events/intel/core.c:22:
->> arch/x86/events/intel/core.c: In function ‘intel_pmu_init’:
->> arch/x86/events/intel/../perf_event.h:668:17: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>   x86_pmu.quirks = &__quirk;     \
->>   ~~~~~~~~~~~~~~~^~~~~~~~~~
->> arch/x86/events/intel/core.c:4170:3: note: in expansion of macro ‘x86_add_quirk’
->>    x86_add_quirk(intel_clovertown_quirk);
->>    ^~~~~~~~~~~~~
->> arch/x86/events/intel/core.c:4171:2: note: here
->>   case INTEL_FAM6_CORE2_MEROM_L:
->>   ^~~~
->> arch/x86/events/intel/lbr.c:929:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>
->> Warning level 3 was used: -Wimplicit-fallthrough=3
->>
->> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  arch/x86/events/intel/core.c | 2 ++
->>  arch/x86/events/intel/lbr.c  | 1 +
->>  2 files changed, 3 insertions(+)
+On 1/29/19 12:34 PM, Greg Kroah-Hartman wrote:
+> 4.19-stable review patch.  If anyone has any objections, please let me know.
 > 
-> You do know how to use scripts/get_maintainer.pl, right?
+> ------------------
 > 
-> Because I don't see PeterZ on CC.
+> From: Camelia Groza <camelia.groza@nxp.com>
 > 
-> Please use that script when preparing patches.
+> [ Upstream commit 3e64cf7a435ed0500e3adaa8aada2272d3ae8abc ]
+> 
+> Since phy driver features became a link_mode bitmap, phy drivers that
+> don't have a list of features configured will cause the kernel to crash
+> when probed.
+> 
+> Prevent the phy driver from registering if the features field is missing.
+> 
+> Fixes: 719655a14971 ("net: phy: Replace phy driver features u32 with link_mode bitmap")
+> Reported-by: Scott Wood <oss@buserror.net>
+> Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>   drivers/net/phy/phy_device.c |    5 +++++
+>   include/linux/phy.h          |    4 ++--
+>   2 files changed, 7 insertions(+), 2 deletions(-)
+> 
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -1917,6 +1917,11 @@ int phy_driver_register(struct phy_drive
+>   {
+>   	int retval;
+>   
+> +	if (WARN_ON(!new_driver->features)) {
+> +		pr_err("%s: Driver features are missing\n", new_driver->name);
+> +		return -EINVAL;
+> +	}
+> +
+>   	new_driver->mdiodrv.flags |= MDIO_DEVICE_IS_PHY;
+>   	new_driver->mdiodrv.driver.name = new_driver->name;
+>   	new_driver->mdiodrv.driver.bus = &mdio_bus_type;
+> --- a/include/linux/phy.h
+> +++ b/include/linux/phy.h
+> @@ -491,8 +491,8 @@ struct phy_device {
+>    *   only works for PHYs with IDs which match this field
+>    * name: The friendly name of this PHY type
+>    * phy_id_mask: Defines the important bits of the phy_id
+> - * features: A list of features (speed, duplex, etc) supported
+> - *   by this PHY
+> + * features: A mandatory list of features (speed, duplex, etc)
+> + *   supported by this PHY
+>    * flags: A bitfield defining certain other features this PHY
+>    *   supports (like interrupts)
+>    *
 > 
 
-$ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback arch/x86/events/intel/core.c
-Thomas Gleixner <tglx@linutronix.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Ingo Molnar <mingo@redhat.com> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Borislav Petkov <bp@alien8.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-"H. Peter Anvin" <hpa@zytor.com> (reviewer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+This patch leads to the following dump during boot and no working
+network:
 
-$ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback arch/x86/events/intel/lbr.c
-Thomas Gleixner <tglx@linutronix.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Ingo Molnar <mingo@redhat.com> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Borislav Petkov <bp@alien8.de> (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-"H. Peter Anvin" <hpa@zytor.com> (reviewer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-x86@kernel.org (maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Jan 29 13:11:50 ragnarok kernel: RIP: 0010:phy_driver_register+0x5f/0x80 [libphy]
+Jan 29 13:11:50 ragnarok kernel: Code: dd 06 a0 48 c7 47 40 30 e4 06 a0 48 89 77 10 c7 47 24 02 00 00 00 e8 10 5c 44 e1 89 c5 85 c0 0f 85 aa 1d 00 00 89 e8 5b 5d c3 <0f> 0b 48 c7 c7 f0 20 07 a0 48 89 c6 bd ea ff ff ff e8 c9 4c 02 e1
+Jan 29 13:11:50 ragnarok kernel: RSP: 0018:ffffc90000df3c78 EFLAGS: 00010246
+Jan 29 13:11:50 ragnarok kernel: RAX: ffffffffa0071c8d RBX: 0000000000000000 RCX: 0000000000000000
+Jan 29 13:11:50 ragnarok kernel: RDX: 0000000000000000 RSI: ffffffffa0076900 RDI: ffffffffa0076040
+Jan 29 13:11:50 ragnarok kernel: RBP: ffffffffa007a000 R08: 0000000000000044 R09: 0000000000000228
+Jan 29 13:11:50 ragnarok kernel: R10: ffff888603a0d6f8 R11: 000000000000003c R12: ffff888601252d00
+Jan 29 13:11:50 ragnarok kernel: R13: 0000000000000002 R14: ffffc90000df3e98 R15: ffffffffa0076900
+Jan 29 13:11:50 ragnarok kernel: FS:  00007feea9ced800(0000) GS:ffff888607240000(0000) knlGS:0000000000000000
+Jan 29 13:11:50 ragnarok kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Jan 29 13:11:50 ragnarok kernel: CR2: 00007feea9cdfc42 CR3: 00000005fec64001 CR4: 00000000000606e0
+Jan 29 13:11:50 ragnarok kernel: Call Trace:
+Jan 29 13:11:50 ragnarok kernel:  ? 0xffffffffa007a000
+Jan 29 13:11:50 ragnarok kernel:  phy_init+0x24/0x58 [libphy]
+Jan 29 13:11:50 ragnarok kernel:  do_one_initcall+0x43/0x1af
+Jan 29 13:11:50 ragnarok kernel:  ? _cond_resched+0x15/0x30
+Jan 29 13:11:50 ragnarok kernel:  ? kmem_cache_alloc_trace+0x154/0x1b0
+Jan 29 13:11:50 ragnarok kernel:  do_init_module+0x5a/0x210
+Jan 29 13:11:50 ragnarok kernel:  load_module+0x203a/0x2500
+Jan 29 13:11:50 ragnarok kernel:  ? vfs_read+0x10d/0x130
+Jan 29 13:11:50 ragnarok kernel:  ? __se_sys_finit_module+0xb1/0xd0
+Jan 29 13:11:50 ragnarok kernel:  __se_sys_finit_module+0xb1/0xd0
+Jan 29 13:11:50 ragnarok kernel:  do_syscall_64+0x3e/0xe0
+Jan 29 13:11:50 ragnarok kernel:  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Jan 29 13:11:50 ragnarok kernel: RIP: 0033:0x7feeaa2417c9
+Jan 29 13:11:50 ragnarok kernel: Code: 00 00 00 75 05 48 83 c4 18 c3 e8 82 9c 01 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 87 c6 0c 00 f7 d8 64 89 01 48
+Jan 29 13:11:50 ragnarok kernel: RSP: 002b:00007fff6fa6ea08 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+Jan 29 13:11:50 ragnarok kernel: RAX: ffffffffffffffda RBX: 000055c6eac06db0 RCX: 00007feeaa2417c9
+Jan 29 13:11:50 ragnarok kernel: RDX: 0000000000000000 RSI: 00007feeaa4198fd RDI: 0000000000000006
+Jan 29 13:11:50 ragnarok kernel: RBP: 00007feeaa4198fd R08: 0000000000000000 R09: 000055c6eac03000
+Jan 29 13:11:50 ragnarok kernel: R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000000000
+Jan 29 13:11:50 ragnarok kernel: R13: 000055c6eabfc1d0 R14: 0000000000020000 R15: 000055c6eac06db0
+Jan 29 13:11:50 ragnarok kernel: ---[ end trace 18e05a0afeb140b2 ]---
+Jan 29 13:11:50 ragnarok kernel: libphy: Generic 10G PHY: Driver features are missing
 
-Does the MAINTAINERS file need an update?
+Apparently the r8169 driver for my NIC does something wrong wrt. this
+fix and the original commit (719655a14971), but regardless - reverting this
+patch leads to a booting & working 4.19.19:
 
---
-Gustavo
+Jan 29 13:29:16 ragnarok kernel: libphy: r8169: probed
+Jan 29 13:29:19 ragnarok kernel: RTL8211E Gigabit Ethernet r8169-400:00: attached PHY driver [RTL8211E Gigabit Ethernet] (mii_bus:phy_addr=r8169-400:00, irq=IGNORE)
+
+I've cc'ed Heiner Kallweit who might know why phylib with this fix and r8169
+don't like each other.
+
+cheers,
+Holger
