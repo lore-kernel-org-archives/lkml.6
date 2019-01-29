@@ -2,51 +2,55 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB8EC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72404C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C34920880
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FD8620882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763101;
-	bh=yIjoLqVF6rorcSbVaKqt2IS4q+KMmObAgLGtNn6SZqk=;
+	s=default; t=1548763116;
+	bh=jgNwobwcjuBaBKgm/XiNIytbEiXvDmy8fmeVvY7bxz8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=e24Xr7IdiRFbxHYBShDKauY52CBVJhxZM1rg+dj+trRzOXEBweRuQDe58YOAiD3CI
-	 X6JCCFgMIRhrSzxQ8hrMgTCBEG7TLNSE7pfX7sdy1wTNirI/KPW80jajxcFCNiaOxl
-	 eDH1Qt/9FS1BsEctfHheOaRjCDUZW0WNKRdzJXqU=
+	b=iJBj2r0zulSThO+tTvM/4GSZqJfRSTRk3PIqW6R5Le884C1Ntt7xflcb5chZsumCv
+	 7iZzvNKIlhkS3ySimBQTW3MM/jAWA23Ix2KlktgX0OYcdv5WNaSy/pv6c70S61LYKf
+	 PQjXSovtH8kNNIw5rc+eYfrlJqIjUG/G54phrMmw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbfA2LsY (ORCPT
+        id S1731288AbfA2L6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:48:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39148 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:58:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731299AbfA2LsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:15 -0500
+        id S1730337AbfA2LsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:48:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 769FC2086C;
-        Tue, 29 Jan 2019 11:48:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 135B02086C;
+        Tue, 29 Jan 2019 11:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762494;
-        bh=yIjoLqVF6rorcSbVaKqt2IS4q+KMmObAgLGtNn6SZqk=;
+        s=default; t=1548762480;
+        bh=jgNwobwcjuBaBKgm/XiNIytbEiXvDmy8fmeVvY7bxz8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QQ8MtBfDz4br21xypyPn3TVHbxNFfhPfUN60gVTaw/gbgUP9e6e6aMQi/bKw/WP4R
-         Pwa3nd0vOOXpE8MKPo11daFumBXQPJ4CjoUFSO7VQWlLCSQ1QGH0Z2xyG9KuqmfNT1
-         cMuo0TA//QCsNS3Us5UB7GyStomG/IjMpf8qh7Vg=
+        b=orOMEhiYZW3g3SMAdY+U3nK2paWGsj++/A0HEEoiJ/wzxZvn6+3bUIutez631udc9
+         uovKRDwtE8nAO6U+VRZcxFZhcuLzW/m+urZEeVFq+5p7au6AB+X92KjQsx3hbr24G/
+         OkGg3tkFiHurT2A1XV937K1kLdOlD9jJcoJo8Wmg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Straube <straube.linux@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: [PATCH 4.14 24/68] staging: rtl8188eu: Add device code for D-Link DWA-121 rev B1
-Date:   Tue, 29 Jan 2019 12:35:46 +0100
-Message-Id: <20190129113133.641403164@linuxfoundation.org>
+        stable@vger.kernel.org, bridge@lists.linux-foundation.org,
+        Nkolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Yunjian Wang <wangyunjian@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 02/68] net: bridge: Fix ethernet header pointer before check skb forwardable
+Date:   Tue, 29 Jan 2019 12:35:24 +0100
+Message-Id: <20190129113131.910742749@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -65,32 +69,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Straube <straube.linux@gmail.com>
+From: Yunjian Wang <wangyunjian@huawei.com>
 
-commit 5f74a8cbb38d10615ed46bc3e37d9a4c9af8045a upstream.
+[ Upstream commit 28c1382fa28f2e2d9d0d6f25ae879b5af2ecbd03 ]
 
-This device was added to the stand-alone driver on github.
-Add it to the staging driver as well.
+The skb header should be set to ethernet header before using
+is_skb_forwardable. Because the ethernet header length has been
+considered in is_skb_forwardable(including dev->hard_header_len
+length).
 
-Link: https://github.com/lwfinger/rtl8188eu/commit/a0619a07cd1e
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: stable <stable@vger.kernel.org>
+To reproduce the issue:
+1, add 2 ports on linux bridge br using following commands:
+$ brctl addbr br
+$ brctl addif br eth0
+$ brctl addif br eth1
+2, the MTU of eth0 and eth1 is 1500
+3, send a packet(Data 1480, UDP 8, IP 20, Ethernet 14, VLAN 4)
+from eth0 to eth1
+
+So the expect result is packet larger than 1500 cannot pass through
+eth0 and eth1. But currently, the packet passes through success, it
+means eth1's MTU limit doesn't take effect.
+
+Fixes: f6367b4660dd ("bridge: use is_skb_forwardable in forward path")
+Cc: bridge@lists.linux-foundation.org
+Cc: Nkolay Aleksandrov <nikolay@cumulusnetworks.com>
+Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/staging/rtl8188eu/os_dep/usb_intf.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/bridge/br_forward.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-@@ -43,6 +43,7 @@ static const struct usb_device_id rtw_us
- 	{USB_DEVICE(0x2001, 0x330F)}, /* DLink DWA-125 REV D1 */
- 	{USB_DEVICE(0x2001, 0x3310)}, /* Dlink DWA-123 REV D1 */
- 	{USB_DEVICE(0x2001, 0x3311)}, /* DLink GO-USB-N150 REV B1 */
-+	{USB_DEVICE(0x2001, 0x331B)}, /* D-Link DWA-121 rev B1 */
- 	{USB_DEVICE(0x2357, 0x010c)}, /* TP-Link TL-WN722N v2 */
- 	{USB_DEVICE(0x0df6, 0x0076)}, /* Sitecom N150 v2 */
- 	{USB_DEVICE(USB_VENDER_ID_REALTEK, 0xffef)}, /* Rosewill RNX-N150NUB */
+--- a/net/bridge/br_forward.c
++++ b/net/bridge/br_forward.c
+@@ -35,10 +35,10 @@ static inline int should_deliver(const s
+ 
+ int br_dev_queue_push_xmit(struct net *net, struct sock *sk, struct sk_buff *skb)
+ {
++	skb_push(skb, ETH_HLEN);
+ 	if (!is_skb_forwardable(skb->dev, skb))
+ 		goto drop;
+ 
+-	skb_push(skb, ETH_HLEN);
+ 	br_drop_fake_rtable(skb);
+ 
+ 	if (skb->ip_summed == CHECKSUM_PARTIAL &&
+@@ -96,12 +96,11 @@ static void __br_forward(const struct ne
+ 		net = dev_net(indev);
+ 	} else {
+ 		if (unlikely(netpoll_tx_running(to->br->dev))) {
+-			if (!is_skb_forwardable(skb->dev, skb)) {
++			skb_push(skb, ETH_HLEN);
++			if (!is_skb_forwardable(skb->dev, skb))
+ 				kfree_skb(skb);
+-			} else {
+-				skb_push(skb, ETH_HLEN);
++			else
+ 				br_netpoll_send_skb(to, skb);
+-			}
+ 			return;
+ 		}
+ 		br_hook = NF_BR_LOCAL_OUT;
 
 
