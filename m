@@ -2,83 +2,107 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B51E6C282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C957C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 841002177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:17:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04D4420857
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:17:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbfA2JQ5 (ORCPT
+        id S1728173AbfA2JRh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:16:57 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:49249 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725298AbfA2JQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:16:56 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id D25E2FB03;
-        Tue, 29 Jan 2019 10:16:52 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 3gK_4hb_nCtb; Tue, 29 Jan 2019 10:16:51 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 9CEA3435AD; Tue, 29 Jan 2019 10:16:51 +0100 (CET)
-Date:   Tue, 29 Jan 2019 10:16:51 +0100
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Bastien Nocera <hadess@hadess.net>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] input: goodix - support Goodix gt5688
-Message-ID: <20190129091651.GA8497@bogon.m.sigxcpu.org>
-References: <20190128170310.GA305@bogon.m.sigxcpu.org>
- <7e289e6b3410a3fdea99d7d6becfe5180a69f0c5.camel@hadess.net>
+        Tue, 29 Jan 2019 04:17:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55876 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725355AbfA2JRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:17:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ACDCFAE67;
+        Tue, 29 Jan 2019 09:17:35 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 10:17:33 +0100
+From:   Joerg Roedel <jroedel@suse.de>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>
+Subject: Re: [PATCH 1/4] IOMMU: Make dwo drivers use stateless device links
+Message-ID: <20190129091733.3ue6ifr3tpwu237j@suse.de>
+References: <2405639.4es7pRLqn0@aspire.rjw.lan>
+ <3532356.d9GMSSLOvP@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7e289e6b3410a3fdea99d7d6becfe5180a69f0c5.camel@hadess.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3532356.d9GMSSLOvP@aspire.rjw.lan>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Mon, Jan 28, 2019 at 07:24:33PM +0100, Bastien Nocera wrote:
-> On Mon, 2019-01-28 at 18:03 +0100, Guido Günther wrote:
-> > From what I've seen in vendor trees it's fine to treat this as gt1x¹.
-> > 
-> > [1]: https://github.com/TadiT7/android_kernel_mtk-4.4/tree/master/drivers/input/touchscreen/mediatek/GT5688
+On Tue, Jan 29, 2019 at 12:05:21AM +0100, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Can you please point to the exact line of code that makes you say that?
-> I'm not saying it's not compatible, but it's not the same driver that
-> the current goodix.c was based on, or even goodix.c.
->
-> Can you please elaborate?
+> The device links used by rockchip-iommu and exynos-iommu are
+> completely managed by these drivers within the IOMMU framework,
+> so there is no reason to involve the driver core in the management
+> of these links.
+> 
+> For this reason, make rockchip-iommu and exynos-iommu pass
+> DL_FLAG_STATELESS in flags to device_link_add(), so that the device
+> links used by them are stateless.
+> 
+> [Note that this change is requisite for a subsequent one that will
+>  rework the management of stateful device links in the driver core
+>  and it will not be compatible with the two drivers in question any
+>  more.]
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/iommu/exynos-iommu.c   |    1 +
+>  drivers/iommu/rockchip-iommu.c |    3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 
-I basically looked at the registers uses for the config update:
+Acked-by: Joerg Roedel <jroedel@suse.de>
 
-https://github.com/TadiT7/android_kernel_mtk-4.4/blob/master/drivers/input/touchscreen/mediatek/GT5688/include/gt1x_tpd_common.h#L152
-https://github.com/TadiT7/android_kernel_mtk-4.4/blob/master/drivers/input/touchscreen/mediatek/GT5688/gt1x_generic.c#L430
-
-That and the fact that the driver is doing it's job well made me believe
-that's good for base support. Things like hotknot, gesture wakeup and
-proximity sensor will need additional work.
-
-> Finding that data in the specs would also be fine:
-> https://github.com/hadess/gt9xx/tree/master/specifications
-
-https://github.com/hadess/gt9xx/pull/3
-
-Cheers,
- -- Guido
+> 
+> Index: linux-pm/drivers/iommu/rockchip-iommu.c
+> ===================================================================
+> --- linux-pm.orig/drivers/iommu/rockchip-iommu.c
+> +++ linux-pm/drivers/iommu/rockchip-iommu.c
+> @@ -1071,7 +1071,8 @@ static int rk_iommu_add_device(struct de
+>  	iommu_group_put(group);
+>  
+>  	iommu_device_link(&iommu->iommu, dev);
+> -	data->link = device_link_add(dev, iommu->dev, DL_FLAG_PM_RUNTIME);
+> +	data->link = device_link_add(dev, iommu->dev,
+> +				     DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME);
+>  
+>  	return 0;
+>  }
+> Index: linux-pm/drivers/iommu/exynos-iommu.c
+> ===================================================================
+> --- linux-pm.orig/drivers/iommu/exynos-iommu.c
+> +++ linux-pm/drivers/iommu/exynos-iommu.c
+> @@ -1260,6 +1260,7 @@ static int exynos_iommu_add_device(struc
+>  		 * direct calls to pm_runtime_get/put in this driver.
+>  		 */
+>  		data->link = device_link_add(dev, data->sysmmu,
+> +					     DL_FLAG_STATELESS |
+>  					     DL_FLAG_PM_RUNTIME);
+>  	}
+>  	iommu_group_put(group);
