@@ -2,234 +2,106 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2B6C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0ABC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAA9820881
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:29:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C76A20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 20:30:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BsS2lRqL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfA2U3Z (ORCPT
+        id S1729454AbfA2UaU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 15:29:25 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:48535 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726945AbfA2U3Y (ORCPT
+        Tue, 29 Jan 2019 15:30:20 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:38641 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727488AbfA2UaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 15:29:24 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0TJEYhtT_1548793753;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TJEYhtT_1548793753)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 30 Jan 2019 04:29:20 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     ktkhai@virtuozzo.com, jhubbard@nvidia.com, hughd@google.com,
-        aarcange@redhat.com, akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [v3 PATCH] mm: ksm: do not block on page lock when searching stable tree
-Date:   Wed, 30 Jan 2019 04:29:13 +0800
-Message-Id: <1548793753-62377-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 29 Jan 2019 15:30:20 -0500
+Received: by mail-ua1-f66.google.com with SMTP id p9so7315821uaa.5
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 12:30:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DPMDSDeZ5ka8wuI8qGiT3VOy9lGgNfSh41qmQU+EB7w=;
+        b=BsS2lRqLxe5uhvySYK778nw2TuF5GJs9hYGwplrLYOvn/cA4QjlBhl9K7lfrCqGD1W
+         wDYBktyO2B3KQ1bvzSc3t8C50F+LM1MS4IXmgSotEOzpiYw+42bDG8mS7W0qgdEZQYU1
+         XkW7BkbJxe/Dc2l85s0HBhdpEcjigshTTraKg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DPMDSDeZ5ka8wuI8qGiT3VOy9lGgNfSh41qmQU+EB7w=;
+        b=rv0wmgrUyWCKE430aUmJ9iYIZ95oCbrQVUTU4zWX2vjcBM+Fwha/rEqu1FKh7MT3xL
+         OdFaSuDPCtZ01naKYiM347/gM6W+li1oxmQyRAHtHnUmtYklpAF8KodSg9XdzKF8oHuW
+         JVHYFBC3aYzlEdXjBhLyp5KBw5uo26pz+RC4a50bNOhL4z9CGOluXp9BY1anBs/eR2de
+         /9tXTbfAIUMQuhek4LG7hQgvgw2nXwDrEeuIV1zY63p3X6TvXKKh2J+3a8CmmatCXwOq
+         aR8Al+MMqVYYOv3ygPTyIltsR0m3myKtDyT6TTUZgLLkMwA3d6vRDF+Zx6blJBNYFnQZ
+         jnBw==
+X-Gm-Message-State: AJcUukfZpsDL3yQIk6RN5D0fVxvTqrr7chmH4z1r2O3B3C9q7ydG+rzx
+        Dce7nzpVsakXrf2BcIAH7zGxdExRVA1wBAxW47cnvA==
+X-Google-Smtp-Source: ALg8bN5xG0bd+NADUISEXrurkr6GmkSPT8OHWdV8Pz8cJpwkeSEzCRifLCmFauM5XVbHOiUy++/u1d3BdFkga0JXM6Y=
+X-Received: by 2002:ab0:5484:: with SMTP id p4mr11772125uaa.102.1548793819297;
+ Tue, 29 Jan 2019 12:30:19 -0800 (PST)
+MIME-Version: 1.0
+References: <20190129140846.4dc4c158@canb.auug.org.au> <9e32a49c-fb78-c5f8-77cf-66b4b4a8b4a2@linaro.org>
+In-Reply-To: <9e32a49c-fb78-c5f8-77cf-66b4b4a8b4a2@linaro.org>
+From:   Andy Gross <andy.gross@linaro.org>
+Date:   Tue, 29 Jan 2019 14:30:08 -0600
+Message-ID: <CAPBZ5QeLEHOLJDBW4zGXJ8DayvDU3V=rGJ6Ty-pKruZEYv88DQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the qcom tree
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Dai <daidavid1@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ksmd need search stable tree to look for the suitable KSM page, but the
-KSM page might be locked for a while due to i.e. KSM page rmap walk.
-Basically it is not a big deal since commit 2c653d0ee2ae
-("ksm: introduce ksm_max_page_sharing per page deduplication limit"),
-since max_page_sharing limits the number of shared KSM pages.
+On Tue, 29 Jan 2019 at 05:46, Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>
+> Hi Stephen,
+>
+> On 1/29/19 05:08, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Today's linux-next merge of the char-misc tree got a conflict in:
+> >
+> >   arch/arm64/boot/dts/qcom/sdm845.dtsi
+> >
+> > between commits:
+> >
+> >   05556681948b ("arm64: dts: sdm845: Add videocc node")
+> >   5b6f186f0abb ("arm64: dts: sdm845: Add rpmh powercontroller node")
+> >
+> > from the qcom tree and commit:
+> >
+> >   ae0037dbfc5e ("arm64: dts: sdm845: Add interconnect provider DT nodes")
+> >
+> > from the char-misc tree.
+> >
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
 
-But it still sounds not worth waiting for the lock, the page can be skip,
-then try to merge it in the next scan to avoid potential stall if its
-content is still intact.
+Greg,
+I'd prefer in this instance that this patch get dropped from
+char-misc.  I have too much stuff in flight with some additional
+patches coming in to mess with this right now.  And we don't have
+clients rdy anyway for this so let's wait till next cycle on this one.
 
-Introduce trylock mode to get_ksm_page() to not block on page lock, like
-what try_to_merge_one_page() does.  And, define three possible
-operations (nolock, lock and trylock) as enum type to avoid stacking up
-bools and make the code more readable.
-
-Return -EBUSY if trylock fails, since NULL means not find suitable KSM
-page, which is a valid case.
-
-With the default max_page_sharing setting (256), there is almost no
-observed change comparing lock vs trylock.
-
-However, with ksm02 of LTP, the reduced ksmd full scan time can be
-observed, which has set max_page_sharing to 786432.  With lock version,
-ksmd may tak 10s - 11s to run two full scans, with trylock version ksmd
-may take 8s - 11s to run two full scans.  And, the number of
-pages_sharing and pages_to_scan keep same.  Basically, this change has
-no harm.
-
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Suggested-by: John Hubbard <jhubbard@nvidia.com>
-Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
-Hi folks,
-
-This patch was with "mm: vmscan: skip KSM page in direct reclaim if priority
-is low" in the initial submission.  Then Hugh and Andrea pointed out commit
-2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page deduplication
-limit") is good enough for limiting the number of shared KSM page to prevent
-from softlock when walking ksm page rmap.  This commit does solve the problem.
-So, the series was dropped by Andrew from -mm tree.
-
-However, I thought the second patch (this one) still sounds useful.  So, I did
-some test and resubmit it.  The first version was reviewed by Krill Tkhai, so
-I keep his Reviewed-by tag since there is no change to the patch except the
-commit log.
-
-So, would you please reconsider this patch?
-
-v3: Use enum to define get_ksm_page operations (nolock, lock and trylock) per
-    John Hubbard
-v2: Updated the commit log to reflect some test result and latest discussion
-
- mm/ksm.c | 46 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 36 insertions(+), 10 deletions(-)
-
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 6c48ad1..5647bc1 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -667,6 +667,12 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
- 	free_stable_node(stable_node);
- }
- 
-+enum get_ksm_page_flags {
-+	GET_KSM_PAGE_NOLOCK,
-+	GET_KSM_PAGE_LOCK,
-+	GET_KSM_PAGE_TRYLOCK
-+};
-+
- /*
-  * get_ksm_page: checks if the page indicated by the stable node
-  * is still its ksm page, despite having held no reference to it.
-@@ -686,7 +692,8 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
-  * a page to put something that might look like our key in page->mapping.
-  * is on its way to being freed; but it is an anomaly to bear in mind.
-  */
--static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
-+static struct page *get_ksm_page(struct stable_node *stable_node,
-+				 enum get_ksm_page_flags flags)
- {
- 	struct page *page;
- 	void *expected_mapping;
-@@ -728,8 +735,15 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
- 		goto stale;
- 	}
- 
--	if (lock_it) {
-+	if (flags == GET_KSM_PAGE_TRYLOCK) {
-+		if (!trylock_page(page)) {
-+			put_page(page);
-+			return ERR_PTR(-EBUSY);
-+		}
-+	} else if (flags == GET_KSM_PAGE_LOCK)
- 		lock_page(page);
-+
-+	if (flags != GET_KSM_PAGE_NOLOCK) {
- 		if (READ_ONCE(page->mapping) != expected_mapping) {
- 			unlock_page(page);
- 			put_page(page);
-@@ -763,7 +777,7 @@ static void remove_rmap_item_from_tree(struct rmap_item *rmap_item)
- 		struct page *page;
- 
- 		stable_node = rmap_item->head;
--		page = get_ksm_page(stable_node, true);
-+		page = get_ksm_page(stable_node, GET_KSM_PAGE_LOCK);
- 		if (!page)
- 			goto out;
- 
-@@ -863,7 +877,7 @@ static int remove_stable_node(struct stable_node *stable_node)
- 	struct page *page;
- 	int err;
- 
--	page = get_ksm_page(stable_node, true);
-+	page = get_ksm_page(stable_node, GET_KSM_PAGE_LOCK);
- 	if (!page) {
- 		/*
- 		 * get_ksm_page did remove_node_from_stable_tree itself.
-@@ -1385,7 +1399,7 @@ static struct page *stable_node_dup(struct stable_node **_stable_node_dup,
- 		 * stable_node parameter itself will be freed from
- 		 * under us if it returns NULL.
- 		 */
--		_tree_page = get_ksm_page(dup, false);
-+		_tree_page = get_ksm_page(dup, GET_KSM_PAGE_NOLOCK);
- 		if (!_tree_page)
- 			continue;
- 		nr += 1;
-@@ -1508,7 +1522,7 @@ static struct page *__stable_node_chain(struct stable_node **_stable_node_dup,
- 	if (!is_stable_node_chain(stable_node)) {
- 		if (is_page_sharing_candidate(stable_node)) {
- 			*_stable_node_dup = stable_node;
--			return get_ksm_page(stable_node, false);
-+			return get_ksm_page(stable_node, GET_KSM_PAGE_NOLOCK);
- 		}
- 		/*
- 		 * _stable_node_dup set to NULL means the stable_node
-@@ -1613,7 +1627,8 @@ static struct page *stable_tree_search(struct page *page)
- 			 * wrprotected at all times. Any will work
- 			 * fine to continue the walk.
- 			 */
--			tree_page = get_ksm_page(stable_node_any, false);
-+			tree_page = get_ksm_page(stable_node_any,
-+						 GET_KSM_PAGE_NOLOCK);
- 		}
- 		VM_BUG_ON(!stable_node_dup ^ !!stable_node_any);
- 		if (!tree_page) {
-@@ -1673,7 +1688,12 @@ static struct page *stable_tree_search(struct page *page)
- 			 * It would be more elegant to return stable_node
- 			 * than kpage, but that involves more changes.
- 			 */
--			tree_page = get_ksm_page(stable_node_dup, true);
-+			tree_page = get_ksm_page(stable_node_dup,
-+						 GET_KSM_PAGE_TRYLOCK);
-+
-+			if (PTR_ERR(tree_page) == -EBUSY)
-+				return ERR_PTR(-EBUSY);
-+
- 			if (unlikely(!tree_page))
- 				/*
- 				 * The tree may have been rebalanced,
-@@ -1842,7 +1862,8 @@ static struct stable_node *stable_tree_insert(struct page *kpage)
- 			 * wrprotected at all times. Any will work
- 			 * fine to continue the walk.
- 			 */
--			tree_page = get_ksm_page(stable_node_any, false);
-+			tree_page = get_ksm_page(stable_node_any,
-+						 GET_KSM_PAGE_NOLOCK);
- 		}
- 		VM_BUG_ON(!stable_node_dup ^ !!stable_node_any);
- 		if (!tree_page) {
-@@ -2060,6 +2081,10 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
- 
- 	/* We first start with searching the page inside the stable tree */
- 	kpage = stable_tree_search(page);
-+
-+	if (PTR_ERR(kpage) == -EBUSY)
-+		return;
-+
- 	if (kpage == page && rmap_item->head == stable_node) {
- 		put_page(kpage);
- 		return;
-@@ -2242,7 +2267,8 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
- 
- 			list_for_each_entry_safe(stable_node, next,
- 						 &migrate_nodes, list) {
--				page = get_ksm_page(stable_node, false);
-+				page = get_ksm_page(stable_node,
-+						    GET_KSM_PAGE_NOLOCK);
- 				if (page)
- 					put_page(page);
- 				cond_resched();
--- 
-1.8.3.1
-
+Andy
