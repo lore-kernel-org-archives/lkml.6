@@ -2,94 +2,69 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78556C282CD
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 02:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1014C282CD
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 02:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33791214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 02:02:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GlCzeKfM"
+	by mail.kernel.org (Postfix) with ESMTP id 9236920881
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 02:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbfA2CCn (ORCPT
+        id S1727090AbfA2CPT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 21:02:43 -0500
-Received: from ozlabs.org ([203.11.71.1]:35805 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbfA2CCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 21:02:43 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43pVBQ4HgXz9sDK;
-        Tue, 29 Jan 2019 13:02:38 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548727360;
-        bh=hZ7TmYQeneGRgsNEjjNaJKmhfemPDlNm4IYajKyI77k=;
-        h=Date:From:To:Cc:Subject:From;
-        b=GlCzeKfMCcxE5ybIf7Cy7suMP3MQlHkt+NSEsRl0F7zCKxbN9XPi3Y2SVJTIox7p1
-         xxrjXulbqpFFSCcCrXJyFm/Td0hYLqUJ9MtUikqrbuALDkXtySSf2IFbAyzRjvCG45
-         kVqawvYREP03hFAAWZs0Rppa1dVfE4Th3zEuSyNyTbR0FJUX5vjbOlxQ93aFt1WxP9
-         xSo5IFeC2xFqSSRVoFTWZ4my2YsXSpq7g/1GC1w9xj5TWkiN8lw0gjtKjfEWiekey3
-         mfiXwZrjB8seyjLxY6qXvTIHviw0yIZy0PdilE8o97deVBiyk0xpy9H/U+umoultKp
-         58dteHDUGMHKQ==
-Date:   Tue, 29 Jan 2019 13:02:37 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Ashish Kumar <Ashish.Kumar@nxp.com>
-Subject: linux-next: build warning after merge of the spi tree
-Message-ID: <20190129130237.677e5ac8@canb.auug.org.au>
+        Mon, 28 Jan 2019 21:15:19 -0500
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:36443 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726895AbfA2CPS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 21:15:18 -0500
+X-Greylist: delayed 1159 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Jan 2019 21:15:18 EST
+Received: from [4.30.142.84] (helo=[127.0.1.1])
+        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.82)
+        (envelope-from <srivatsa@csail.mit.edu>)
+        id 1goId2-000O3p-0C; Mon, 28 Jan 2019 20:55:56 -0500
+Subject: [PATCH] tracing: Fix documentation about disabling options using
+ trace_options
+From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+To:     rostedt@goodmis.org, mingo@redhat.com
+Cc:     srivatsa@csail.mit.edu, linux-kernel@vger.kernel.org
+Date:   Mon, 28 Jan 2019 17:55:53 -0800
+Message-ID: <154872690031.47356.5739053380942044586.stgit@srivatsa-ubuntu>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/apUL4Ig7jufd.FnWq5Z.JP3"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/apUL4Ig7jufd.FnWq5Z.JP3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
 
-Hi all,
+To disable a tracing option using the trace_options file, the option
+name needs to be prefixed with 'no', and not suffixed, as the README
+states. Fix it.
 
-After merging the spi tree, today's linux-next build (KCONFIG_NAME)
-produced this warning:
+Signed-off-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
+---
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/spi/spi-nxp-fspi.o
-see include/linux/module.h for more information
+ kernel/trace/trace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Introduced by commit
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index c521b73..d632458 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4541,7 +4541,7 @@ static const char readme_msg[] =
+ 	"  instances\t\t- Make sub-buffers with: mkdir instances/foo\n"
+ 	"\t\t\t  Remove sub-buffer with rmdir\n"
+ 	"  trace_options\t\t- Set format or modify how tracing happens\n"
+-	"\t\t\t  Disable an option by adding a suffix 'no' to the\n"
++	"\t\t\t  Disable an option by prefixing 'no' to the\n"
+ 	"\t\t\t  option name\n"
+ 	"  saved_cmdlines_size\t- echo command number in here to store comm-pid list\n"
+ #ifdef CONFIG_DYNAMIC_FTRACE
 
-  a5356aef6a90 ("spi: spi-mem: Add driver for NXP FlexSPI controller")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/apUL4Ig7jufd.FnWq5Z.JP3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxPtD0ACgkQAVBC80lX
-0GwcUQf+OOSsK0id705XZPIlNDC18ASqQkgmbzhh/YYsgbziD/M51zRM8Hv3yz1u
-3aL0ny4yYc2uGwXE0ezcZPHqoteKGzl2z6exl2gebhhHKfD8D25nruM2tJUL20Pq
-+xNuCGjDQmFxuCfv4PK7mQV1TysVss71QtdOeCdpCurAtTy/B95uaHzwQ/gs9Yud
-Er2wa9v98v42jPbYGb+0lInmLYGnOzJzKtp0OR/sHi2z/mNfZ4+6cxPvfEOq6N6J
-OcBHwyh+uT+GqN0tqahGp1m7mpcQQlPrzOqdUjOEde21yCRsm+w3G4T+PL2BY6EU
-zAPlxMu9EEc/ovZOkTCkP7G8RmaDGA==
-=2Ua7
------END PGP SIGNATURE-----
-
---Sig_/apUL4Ig7jufd.FnWq5Z.JP3--
