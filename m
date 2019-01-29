@@ -2,120 +2,124 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14800C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EE7C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E347F21473
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:28:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB62421473
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:29:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbfA2P2F (ORCPT
+        id S1727502AbfA2P3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:28:05 -0500
-Received: from mout.gmx.net ([212.227.15.19]:34001 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbfA2P2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:28:04 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0M70Td-1h38NA3m0j-00woWp; Tue, 29
- Jan 2019 16:27:30 +0100
-Date:   Tue, 29 Jan 2019 16:27:25 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Kepplinger Martin <Martin.Kepplinger@ginzinger.com>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Markus Heiser <markus.heiser@darmarit.de>,
-        Minghui Liu <minghui.liu.95@gmail.com>,
-        Michael Rodin <michael-git@rodin.online>,
-        Grigory Shipunov <mail@oxapentane.com>,
-        Alessia Mantegazza <amantegazza@vaga.pv.it>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] doc: Change LXR references to elixir.bootlin.com
-Message-ID: <20190129152725.GA19354@latitude>
-References: <20190129142923.5743-1-j.neuschaefer@gmx.net>
- <2755754cdd8e4bd3956648f9fb6315c2@ginzinger.com>
+        Tue, 29 Jan 2019 10:29:02 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58473 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725794AbfA2P3B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 10:29:01 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0TFRxcp1991517
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 29 Jan 2019 07:27:59 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0TFRvqW1991513;
+        Tue, 29 Jan 2019 07:27:57 -0800
+Date:   Tue, 29 Jan 2019 07:27:57 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Gustavo A. R. Silva" <tipbot@zytor.com>
+Message-ID: <tip-2b0fc3742bc77687f58d389c902ee092df6f8669@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        peterz@infradead.org, keescook@chromium.org, hpa@zytor.com,
+        x86@kernel.org, gustavo@embeddedor.com, qianyue.zj@alibaba-inc.com,
+        jacek.tomaka@poczta.fm, jolsa@kernel.org, ak@linux.intel.com,
+        mingo@kernel.org, bp@suse.de, kan.liang@linux.intel.com
+Reply-To: qianyue.zj@alibaba-inc.com, gustavo@embeddedor.com,
+          x86@kernel.org, hpa@zytor.com, keescook@chromium.org,
+          peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, kan.liang@linux.intel.com,
+          bp@suse.de, mingo@kernel.org, ak@linux.intel.com,
+          jolsa@kernel.org, jacek.tomaka@poczta.fm
+In-Reply-To: <20190125184917.GA7289@embeddedor>
+References: <20190125184917.GA7289@embeddedor>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/events: Mark expected switch-case
+ fall-throughs
+Git-Commit-ID: 2b0fc3742bc77687f58d389c902ee092df6f8669
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <2755754cdd8e4bd3956648f9fb6315c2@ginzinger.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:eUjZXuKwDQpXkUKKXHxMm628c2zMQJH1aGeeYMXNjTfCal5RL2P
- gu+8HBbr835LdsiCPRjZ16h6dQrEoI/FXdgxLvc3AJ6O2LRHWKww2EUQkOnTekRITBHC+OW
- IgKttBGa8tzYDOPnWvS59kGHbyd4iDlT6q7KKEi+o7kjBB8DUteyQAy2aNEKSC3Kv1A/Xxv
- wPDxVotaNJIZxYSpOiveA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4qAnvEWiT/g=:FdRXxko351pFFTnbHueEyu
- kXE9n5GbC5YoCMpCAQnK3Xitra9XhAqEgO2w4/yifcNRUPpnKBp9EAa4X4C4gbjjIA4v2Ng71
- Abki7KkTOX9RyOiTDcDLuzb/KsmlrRUQXCsMJ4679DjRMo+mWKfLjvW2ogUe/D8b09XhE7QTI
- aUkxJuetnQfGelq6MYzuXWHq2i0IHnJ6uEs0Qq7ld8uq1De76vbiDIwVMrsJjiYrW0q2/PyHm
- rkps+w2xVqI+k3w+Sn58+VTA6o0u/QVyjv9AkqLpxJkE50fYRyXt2vmdejt7RoAXq7507bA1c
- 20QBCvlHL43NBYTC0qZNQGQWeAlvI7MUctlyZXPKGdQw7HqkFj1Ymw5UxHbeKowT87E5NsUKA
- Egy42BaAVSrJPe/tMcdwQdvWViEI7izc71+/4C3qdvQod6m190GV+Mlk3blMnx5XG56tyOOA3
- +KL5CBAx4sxfwbjz/v7P1WiAU+Ph+qW43lM93erUSDC7iEsKHuaQWOAp69dDU2jm36+8PY3m1
- iT6SW/rAP7DtGsu/+6SmXazh0ue96ezmk3jCHWukHjJb2D+xBkyjKcEZG5+f9btFWWL2oY4t0
- eqChTgyFDsE9X9ZJ38LfwG7agDnmNQuqnVzhTY2KFxSyi/nn5dG7sgDnZv8zxPQ2Ji84knjfT
- M5DpIkevkstuPoKYzGxfccZcg6MtvPcqAMNYLg7BBw4ap/JZL0XPXSYfhuh0ANrnraR5ofQVS
- k1pgGI0l+f/If18FC4iCXYFXgETXgZIv2MewYT5jeDIWGOS5BYRzhxJCRu5pSRYVa+KiLf1Em
- jBbSUumIjQO2ayA2pkCY6jmfS/TYutgZS8msprgo+UOnyb8wa/6fFO2bjJabaFhuPu+YDD1I1
- IX80Z4VFkyejBN3LaBJla0dj6wrJ4x8c7bVdt8ABwSXrddm18ZFqU4xXs1YvYNElWm/G0mRq5
- z9t4wZrCdHw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  2b0fc3742bc77687f58d389c902ee092df6f8669
+Gitweb:     https://git.kernel.org/tip/2b0fc3742bc77687f58d389c902ee092df6f8669
+Author:     Gustavo A. R. Silva <gustavo@embeddedor.com>
+AuthorDate: Fri, 25 Jan 2019 12:49:17 -0600
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Tue, 29 Jan 2019 16:23:47 +0100
 
---n8g4imXOkfNTN/H1
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+x86/events: Mark expected switch-case fall-throughs
 
-On Tue, Jan 29, 2019 at 03:01:18PM +0000, Kepplinger Martin wrote:
-[...]
-> -.. [4] http://lxr.free-electrons.com/ident?i=3Dxpad_device
-> +.. [4] https://elixir.bootlin.com/ident?i=3Dxpad_device
->=20
-> that seems to be wrong. I think it's https://elixir.bootlin.com/linux/lat=
-est/ident/xpad_device
+In preparation to enable -Wimplicit-fallthrough by default, mark
+switch-case statements where fall-through is intentional, explicitly in
+order to fix a couple of -Wimplicit-fallthrough warnings.
 
-Oops. Indeed, it doesn't work with the old syntax. I'll fix this in v2.
+Warning level 3 was used: -Wimplicit-fallthrough=3.
 
-> other than that, good.
+ [ bp: Massasge and trim commit message. ]
 
-Thanks,
-Jonathan Neusch=C3=A4fer
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jacek Tomaka <jacek.tomaka@poczta.fm>
+Cc: Jia Zhang <qianyue.zj@alibaba-inc.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190125184917.GA7289@embeddedor
+---
+ arch/x86/events/intel/core.c | 2 ++
+ arch/x86/events/intel/lbr.c  | 1 +
+ 2 files changed, 3 insertions(+)
 
---n8g4imXOkfNTN/H1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlxQcNYACgkQCDBEmo7z
-X9u4Ew/9FelWYWndNdMHR93IecjDouiZCV0jCiaO1/yx2wnqPx+mnEBnIxkrTcBw
-V41za5eEdhwOX+kxS8sHupBZHbdLZxBR5xgEgnwc9P8PwogFJa6wx2CY0NnHAhSI
-B7k1BVLMYuDIAWrSyMEN8GWbKFiCdlgzQMeDK+g9bDu9Hlo41AJxxa1foTpEFPue
-d9zH0t0nL+WRwykPPOcG6MmjPMIpLfQLFHV0FOIee7KFY9ZpUPUdnpYSJEzA/7sS
-/hCu3BU+d96H8VrcmxKP6Zv2p4Y+tlz3K/AhhOBQLe2jyWORBsBAT77oqxajs6u2
-5VXABKrWmm72roFkMd4ePm9aOEsoEZmA+nYGRB2zQ6z3mXWsMlb5IOOqIEEmH8mx
-85kljFP9HUvuwaQQ956SEtBHFVWRfqubM8oVTqjz+SR61I3OrWHTX5QuZ3HBH2/R
-H1pJYkxTqEvUtQ47DEkum1SqKDnrPf4cCYrNV8herSvJC5h4tHks+whbHRH3lCzV
-Fpxmi/gbCygzfpRecNu90j+gfW3RksIp4hh1odERUR6d/eyX1Oi98OPbvYf6aoTS
-XJlK1vY2FqTV8rEdSzRwExEW8j8S2GraPTOYUUieLVTWpqV78J9yNLawS5BZxlsh
-mkMuOYNv8hP8iHzXLOOw3ywJz3uD69NjOf9/xTasM+9j2ZLLJwk=
-=Rd97
------END PGP SIGNATURE-----
-
---n8g4imXOkfNTN/H1--
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 40e12cfc87f6..ece43e7e4569 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -4168,6 +4168,8 @@ __init int intel_pmu_init(void)
+ 
+ 	case INTEL_FAM6_CORE2_MEROM:
+ 		x86_add_quirk(intel_clovertown_quirk);
++		/* fall through */
++
+ 	case INTEL_FAM6_CORE2_MEROM_L:
+ 	case INTEL_FAM6_CORE2_PENRYN:
+ 	case INTEL_FAM6_CORE2_DUNNINGTON:
+diff --git a/arch/x86/events/intel/lbr.c b/arch/x86/events/intel/lbr.c
+index c88ed39582a1..580c1b91c454 100644
+--- a/arch/x86/events/intel/lbr.c
++++ b/arch/x86/events/intel/lbr.c
+@@ -931,6 +931,7 @@ static int branch_type(unsigned long from, unsigned long to, int abort)
+ 			ret = X86_BR_ZERO_CALL;
+ 			break;
+ 		}
++		/* fall through */
+ 	case 0x9a: /* call far absolute */
+ 		ret = X86_BR_CALL;
+ 		break;
