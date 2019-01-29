@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C832C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB730C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D66220882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:00:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2A8D20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 12:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548763257;
-	bh=MoII01cU/uHZFKIeiGV2Wq6sc0aAR066wLK1Q8PhAk0=;
+	s=default; t=1548763266;
+	bh=QgJD/T9lCWiyWoChVaStS+gbKGCQyMsC6biQZm/qqu0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=amkG0P3K8kMrQxghnibOYyoARkh+saPip0JI+7gMWJqOFN7Lz1E87nH5XklIz9dNK
-	 NJP2qdiBt5JBi/Acv1kDH7kC0pkI6J5l/Ua3tXAqKMojhTykLxFw8D3igkDSwS1yqJ
-	 gGay4ZZBTHmlDM39RBoTF0OhxYPZQN5jVcztIHhU=
+	b=Ft57itp4n5BkNHl42TjnVoWoZgavh9bm/kOVKi1Wqqq4s9/ksM/hPzj3bndGztzvJ
+	 wKc9A1OacEKoei30etTXoZU3xIFayEr/8v/yZNIh+2PkMtXIu6LVLRyV1ame4ey1gC
+	 gtck2kk0NAorIp+ikbAOiEq6hY03Xtqxa7YDG+bE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbfA2MAz (ORCPT
+        id S1730856AbfA2Lpv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:00:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36504 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:45:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730882AbfA2Lp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:45:58 -0500
+        id S1729523AbfA2Lpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:45:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A5AC2083B;
-        Tue, 29 Jan 2019 11:45:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFEF22083B;
+        Tue, 29 Jan 2019 11:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762357;
-        bh=MoII01cU/uHZFKIeiGV2Wq6sc0aAR066wLK1Q8PhAk0=;
+        s=default; t=1548762347;
+        bh=QgJD/T9lCWiyWoChVaStS+gbKGCQyMsC6biQZm/qqu0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1gZPFEZLUVZBQA7lQykvx9+AS89CEJSoy55kN8dbu198G3Wd0K+QK4OnT4VxTPPnJ
-         NLN6ZWJghBEAqUq/RFavkJ3N6kyZt//5f0pmoD08oo/rA+Aqk0obTnVaTZxz+YwaY5
-         0MOLmZ9757vLozagOYS4WHsEr1BhrU3wVWp2+2K4=
+        b=x0dK/9XsRppiO5cpzqHUqOBGdJsiEGx4P8p6fu78s/yjsd+SxIg5WCkEeMrf5FMZL
+         gm1mtQMMocTmNdXDUY7Y0aybyxSUuuhazF/Lepl7Pe5NIOeCwlZJcrua4kvCH4BX1L
+         LQPEY+sN8IhTlJIrrVG512vQCN1QSvn8FUe6B6Iw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kyungtae Kim <kt0755@gmail.com>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Andre Naujoks <nautsch2@gmail.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.19 080/103] can: bcm: check timer values before ktime conversion
-Date:   Tue, 29 Jan 2019 12:35:57 +0100
-Message-Id: <20190129113206.039736741@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 059/103] Input: input_event - provide override for sparc64
+Date:   Tue, 29 Jan 2019 12:35:36 +0100
+Message-Id: <20190129113204.233323662@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113159.567154026@linuxfoundation.org>
 References: <20190129113159.567154026@linuxfoundation.org>
@@ -67,89 +66,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Hartkopp <socketcan@hartkopp.net>
+From: Deepa Dinamani <deepa.kernel@gmail.com>
 
-commit 93171ba6f1deffd82f381d36cb13177872d023f6 upstream.
+commit 2e746942ebacf1565caa72cf980745e5ce297c48 upstream.
 
-Kyungtae Kim detected a potential integer overflow in bcm_[rx|tx]_setup()
-when the conversion into ktime multiplies the given value with NSEC_PER_USEC
-(1000).
+The usec part of the timeval is defined as
+__kernel_suseconds_t	tv_usec; /* microseconds */
 
-Reference: https://marc.info/?l=linux-can&m=154732118819828&w=2
+Arnd noticed that sparc64 is the only architecture that defines
+__kernel_suseconds_t as int rather than long.
 
-Add a check for the given tv_usec, so that the value stays below one second.
-Additionally limit the tv_sec value to a reasonable value for CAN related
-use-cases of 400 days and ensure all values to be positive.
+This breaks the current y2038 fix for kernel as we only access and define
+the timeval struct for non-kernel use cases.  But, this was hidden by an
+another typo in the use of __KERNEL__ qualifier.
 
-Reported-by: Kyungtae Kim <kt0755@gmail.com>
-Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: linux-stable <stable@vger.kernel.org> # >= 2.6.26
-Tested-by: Kyungtae Kim <kt0755@gmail.com>
-Acked-by: Andre Naujoks <nautsch2@gmail.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Fix the typo, and provide an override for sparc64.
+
+Fixes: 152194fe9c3f ("Input: extend usable life of event timestamps to 2106 on 32 bit systems")
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/can/bcm.c |   27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ include/uapi/linux/input.h |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/net/can/bcm.c
-+++ b/net/can/bcm.c
-@@ -67,6 +67,9 @@
+--- a/include/uapi/linux/input.h
++++ b/include/uapi/linux/input.h
+@@ -26,13 +26,17 @@
   */
- #define MAX_NFRAMES 256
  
-+/* limit timers to 400 days for sending/timeouts */
-+#define BCM_TIMER_SEC_MAX (400 * 24 * 60 * 60)
-+
- /* use of last_frames[index].flags */
- #define RX_RECV    0x40 /* received data for this element */
- #define RX_THR     0x80 /* element not been sent due to throttle feature */
-@@ -140,6 +143,22 @@ static inline ktime_t bcm_timeval_to_kti
- 	return ktime_set(tv.tv_sec, tv.tv_usec * NSEC_PER_USEC);
- }
- 
-+/* check limitations for timeval provided by user */
-+static bool bcm_is_invalid_tv(struct bcm_msg_head *msg_head)
-+{
-+	if ((msg_head->ival1.tv_sec < 0) ||
-+	    (msg_head->ival1.tv_sec > BCM_TIMER_SEC_MAX) ||
-+	    (msg_head->ival1.tv_usec < 0) ||
-+	    (msg_head->ival1.tv_usec >= USEC_PER_SEC) ||
-+	    (msg_head->ival2.tv_sec < 0) ||
-+	    (msg_head->ival2.tv_sec > BCM_TIMER_SEC_MAX) ||
-+	    (msg_head->ival2.tv_usec < 0) ||
-+	    (msg_head->ival2.tv_usec >= USEC_PER_SEC))
-+		return true;
-+
-+	return false;
-+}
-+
- #define CFSIZ(flags) ((flags & CAN_FD_FRAME) ? CANFD_MTU : CAN_MTU)
- #define OPSIZ sizeof(struct bcm_op)
- #define MHSIZ sizeof(struct bcm_msg_head)
-@@ -873,6 +892,10 @@ static int bcm_tx_setup(struct bcm_msg_h
- 	if (msg_head->nframes < 1 || msg_head->nframes > MAX_NFRAMES)
- 		return -EINVAL;
- 
-+	/* check timeval limitations */
-+	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
-+		return -EINVAL;
-+
- 	/* check the given can_id */
- 	op = bcm_find_op(&bo->tx_ops, msg_head, ifindex);
- 	if (op) {
-@@ -1053,6 +1076,10 @@ static int bcm_rx_setup(struct bcm_msg_h
- 	     (!(msg_head->can_id & CAN_RTR_FLAG))))
- 		return -EINVAL;
- 
-+	/* check timeval limitations */
-+	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
-+		return -EINVAL;
-+
- 	/* check the given can_id */
- 	op = bcm_find_op(&bo->rx_ops, msg_head, ifindex);
- 	if (op) {
+ struct input_event {
+-#if (__BITS_PER_LONG != 32 || !defined(__USE_TIME_BITS64)) && !defined(__KERNEL)
++#if (__BITS_PER_LONG != 32 || !defined(__USE_TIME_BITS64)) && !defined(__KERNEL__)
+ 	struct timeval time;
+ #define input_event_sec time.tv_sec
+ #define input_event_usec time.tv_usec
+ #else
+ 	__kernel_ulong_t __sec;
++#ifdef CONFIG_SPARC64
++	unsigned int __usec;
++#else
+ 	__kernel_ulong_t __usec;
++#endif
+ #define input_event_sec  __sec
+ #define input_event_usec __usec
+ #endif
 
 
