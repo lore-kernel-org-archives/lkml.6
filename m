@@ -3,62 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CFAC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC6FC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 359CA20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:56:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 523102147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 22:59:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbfA2W4z (ORCPT
+        id S1728936AbfA2W7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 17:56:55 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58458 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbfA2W4z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 17:56:55 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 35E213470;
-        Tue, 29 Jan 2019 22:56:54 +0000 (UTC)
-Date:   Tue, 29 Jan 2019 14:56:52 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Andrea Arcangeli <aarcange@redhat.com>, mpe@ellerman.id.au,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH V7 0/4] mm/kvm/vfio/ppc64: Migrate compound pages out of
- CMA region
-Message-Id: <20190129145652.c4021a4adf8416618211c38d@linux-foundation.org>
-In-Reply-To: <20190114095438.32470-1-aneesh.kumar@linux.ibm.com>
-References: <20190114095438.32470-1-aneesh.kumar@linux.ibm.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 29 Jan 2019 17:59:00 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:32828 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726846AbfA2W7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 17:59:00 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gocL9-0008ND-Kp; Tue, 29 Jan 2019 15:58:48 -0700
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+References: <20190129174728.6430-1-jglisse@redhat.com>
+ <20190129174728.6430-4-jglisse@redhat.com>
+ <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
+ <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
+ <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
+ <20190129205749.GN3176@redhat.com>
+ <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
+ <20190129215028.GQ3176@redhat.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
+Date:   Tue, 29 Jan 2019 15:58:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190129215028.GQ3176@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgg@mellanox.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Jan 2019 15:24:32 +0530 "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com> wrote:
 
-> ppc64 use CMA area for the allocation of guest page table (hash page table). We won't
-> be able to start guest if we fail to allocate hash page table. We have observed
-> hash table allocation failure because we failed to migrate pages out of CMA region
-> because they were pinned. This happen when we are using VFIO. VFIO on ppc64 pins
-> the entire guest RAM. If the guest RAM pages get allocated out of CMA region, we
-> won't be able to migrate those pages. The pages are also pinned for the lifetime of the
-> guest.
+
+On 2019-01-29 2:50 p.m., Jerome Glisse wrote:
+> No this is the non HMM case i am talking about here. Fully ignore HMM
+> in this frame. A GPU driver that do not support or use HMM in anyway
+> has all the properties and requirement i do list above. So all the points
+> i was making are without HMM in the picture whatsoever. I should have
+> posted this a separate patches to avoid this confusion.
 > 
-> Currently we support migration of non-compound pages. With THP and with the addition of
->  hugetlb migration we can end up allocating compound pages from CMA region. This
-> patch series add support for migrating compound pages. 
+> Regarding your HMM question. You can not map HMM pages, all code path
+> that would try that would trigger a migration back to regular memory
+> and will use the regular memory for CPU access.
+> 
 
-Very little review activity is in evidence.  Please identify some
-appropriate reviewers and ask them to take a look?
+I thought this was the whole point of HMM... And eventually it would
+support being able to map the pages through the BAR in cooperation with
+the driver. If not, what's that whole layer for? Why not just have HMM
+handle this situation?
 
+And what struct pages are actually going to be backing these VMAs if
+it's not using HMM?
+
+
+> Again HMM has nothing to do here, ignore HMM it does not play any role
+> and it is not involve in anyway here. GPU want to control what object
+> they allow other device to access and object they do not allow. GPU driver
+> _constantly_ invalidate the CPU page table and in fact the CPU page table
+> do not have any valid pte for a vma that is an mmap of GPU device file
+> for most of the vma lifetime. Changing that would highly disrupt and
+> break GPU drivers. They need to control that, they need to control what
+> to do if another device tries to peer map some of their memory. Hence
+> why they need to implement the callback and decide on wether or not they
+> allow the peer mapping or use device memory for it (they can decide to
+> fallback to main memory).
+
+But mapping is an operation of the memory/struct pages behind the VMA;
+not of the VMA itself and I think that's evident by the code in that the
+only way the VMA layer is involved is the fact that you're abusing
+vm_ops by adding new ops there and calling it by other layers.
+
+Logan
