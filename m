@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B55C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 436F5C282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13F1F20882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15BC72086C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548762498;
-	bh=ijTdwNC5VduWmoTmQzlxRCdUGt942QlCUTDnkg29UDw=;
+	s=default; t=1548762508;
+	bh=WsSIkIxkUch3UxoQV10QzzILtiWYQRksiTAhvgqU5U4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iMDWdv+fAG4y+yfMuHphTNc5g27hERILtnCR5M2pDkjHjEfo6mZfBAzJKNUHGij8T
-	 BPOxaHOSgw2sLO+/8WBx3ZnZMoo3W7NwQBihQW7Vzt/SQ1DrM4uCVvbNMWxoCG/JLx
-	 4huIVkNwCV++WsXtM87c+gj7HszohKKMCaQ/kMe8=
+	b=v+3zKH/OKKZEWMDRJnNNoLCQDpDj7gJx9fr8zSGMi/FErpKj/tHpJDEvV3VWobAkO
+	 LTqjYJAFCYdx56jJh4blvT9IEc/B51n7Nm4A7Z+gomy2soTL3P4VTDq/wAQw4zAF2z
+	 NXtoJ7gjjIDXsR3d/0kBwoUj5aEruMQTaBraumqQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725775AbfA2LsQ (ORCPT
+        id S1731305AbfA2Ls0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:48:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39088 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 06:48:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731295AbfA2LsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:48:12 -0500
+        id S1727215AbfA2LsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 06:48:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFFE92083B;
-        Tue, 29 Jan 2019 11:48:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C115D2086C;
+        Tue, 29 Jan 2019 11:48:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548762492;
-        bh=ijTdwNC5VduWmoTmQzlxRCdUGt942QlCUTDnkg29UDw=;
+        s=default; t=1548762498;
+        bh=WsSIkIxkUch3UxoQV10QzzILtiWYQRksiTAhvgqU5U4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=auEcvNqevegteSEYj5URu1CSZpQO7K76pZoSkRuMR0LnCTHLmszLZCgSbXQ78LzyN
-         KSPfRb9fe2eKn8GH+IJtydKgsCpydTcz5bzAgx+BZPr/h2EtXXilgIvpsUHOeWMsIx
-         NqsHX93K7zmsANBFs75qnFDgX4goLDJpoRSVn9Ao=
+        b=MXX68Ruel4aUkhHPkDwOTFRvAXYvfHr9peo7ezPxtfaKARZLfTIuKouzlUup+gAII
+         zSWYuaNq4HQ8EOuWGeKAAgMcCXdZft78oglfbCQsPZcv8If7JZPUlavlGefJJ7Gtsy
+         9Sm+uA2hEfmvW+D8roDDyCWmhRcPqM9oK1MlhsDs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH 4.14 23/68] char/mwave: fix potential Spectre v1 vulnerability
-Date:   Tue, 29 Jan 2019 12:35:45 +0100
-Message-Id: <20190129113133.565498072@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: [PATCH 4.14 25/68] tty: Handle problem if line discipline does not have receive_buf
+Date:   Tue, 29 Jan 2019 12:35:47 +0100
+Message-Id: <20190129113133.736772342@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
 References: <20190129113131.751891514@linuxfoundation.org>
@@ -65,69 +64,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 701956d4018e5d5438570e39e8bda47edd32c489 upstream.
+commit 27cfb3a53be46a54ec5e0bd04e51995b74c90343 upstream.
 
-ipcnum is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Some tty line disciplines do not have a receive buf callback, so
+properly check for that before calling it.  If they do not have this
+callback, just eat the character quietly, as we can't fail this call.
 
-This issue was detected with the help of Smatch:
-
-drivers/char/mwave/mwavedd.c:299 mwave_ioctl() warn: potential spectre issue 'pDrvData->IPCs' [w] (local cap)
-
-Fix this by sanitizing ipcnum before using it to index pDrvData->IPCs.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reported-by: Jann Horn <jannh@google.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/mwave/mwavedd.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/tty/tty_io.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/char/mwave/mwavedd.c
-+++ b/drivers/char/mwave/mwavedd.c
-@@ -59,6 +59,7 @@
- #include <linux/mutex.h>
- #include <linux/delay.h>
- #include <linux/serial_8250.h>
-+#include <linux/nospec.h>
- #include "smapi.h"
- #include "mwavedd.h"
- #include "3780i.h"
-@@ -289,6 +290,8 @@ static long mwave_ioctl(struct file *fil
- 						ipcnum);
- 				return -EINVAL;
- 			}
-+			ipcnum = array_index_nospec(ipcnum,
-+						    ARRAY_SIZE(pDrvData->IPCs));
- 			PRINTK_3(TRACE_MWAVE,
- 				"mwavedd::mwave_ioctl IOCTL_MW_REGISTER_IPC"
- 				" ipcnum %x entry usIntCount %x\n",
-@@ -317,6 +320,8 @@ static long mwave_ioctl(struct file *fil
- 						" Invalid ipcnum %x\n", ipcnum);
- 				return -EINVAL;
- 			}
-+			ipcnum = array_index_nospec(ipcnum,
-+						    ARRAY_SIZE(pDrvData->IPCs));
- 			PRINTK_3(TRACE_MWAVE,
- 				"mwavedd::mwave_ioctl IOCTL_MW_GET_IPC"
- 				" ipcnum %x, usIntCount %x\n",
-@@ -383,6 +388,8 @@ static long mwave_ioctl(struct file *fil
- 						ipcnum);
- 				return -EINVAL;
- 			}
-+			ipcnum = array_index_nospec(ipcnum,
-+						    ARRAY_SIZE(pDrvData->IPCs));
- 			mutex_lock(&mwave_mutex);
- 			if (pDrvData->IPCs[ipcnum].bIsEnabled == true) {
- 				pDrvData->IPCs[ipcnum].bIsEnabled = false;
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2180,7 +2180,8 @@ static int tiocsti(struct tty_struct *tt
+ 	ld = tty_ldisc_ref_wait(tty);
+ 	if (!ld)
+ 		return -EIO;
+-	ld->ops->receive_buf(tty, &ch, &mbz, 1);
++	if (ld->ops->receive_buf)
++		ld->ops->receive_buf(tty, &ch, &mbz, 1);
+ 	tty_ldisc_deref(ld);
+ 	return 0;
+ }
 
 
