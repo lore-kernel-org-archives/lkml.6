@@ -2,114 +2,117 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A56C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CBBC282C7
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F91E2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4183120844
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 21:29:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BE9/o/N5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729601AbfA2VZP (ORCPT
+        id S1729325AbfA2V3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 16:25:15 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:35659 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727570AbfA2VZP (ORCPT
+        Tue, 29 Jan 2019 16:29:12 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37158 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727461AbfA2V3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 16:25:15 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0TLOwO32105831
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 29 Jan 2019 13:24:58 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0TLOvXa2105827;
-        Tue, 29 Jan 2019 13:24:58 -0800
-Date:   Tue, 29 Jan 2019 13:24:58 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Zhenzhong Duan <tipbot@zytor.com>
-Message-ID: <tip-34d66caf251df91ff27b24a3a786810d29989eca@git.kernel.org>
-Cc:     peterz@infradead.org, srinivas.eeda@oracle.com, tglx@linutronix.de,
-        dwmw@amazon.co.uk, zhenzhong.duan@oracle.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        konrad.wilk@oracle.com, hpa@zytor.com, bp@suse.de
-Reply-To: bp@suse.de, hpa@zytor.com, konrad.wilk@oracle.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          tglx@linutronix.de, zhenzhong.duan@oracle.com, dwmw@amazon.co.uk,
-          peterz@infradead.org, srinivas.eeda@oracle.com
-In-Reply-To: <e2e064f2-e8ef-42ca-bf4f-76b612964752@default>
-References: <e2e064f2-e8ef-42ca-bf4f-76b612964752@default>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:smp/urgent] x86/speculation: Remove redundant
- arch_smt_update() invocation
-Git-Commit-ID: 34d66caf251df91ff27b24a3a786810d29989eca
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 29 Jan 2019 16:29:12 -0500
+Received: by mail-wr1-f65.google.com with SMTP id s12so23746856wrt.4;
+        Tue, 29 Jan 2019 13:29:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=z3ULGENtuqL5tguf/8dKX/9QWEPMLkVQYxE/Khek8q0=;
+        b=BE9/o/N5/jPw61vFbCALWK6WGrmrDJnuNbyw+0eBRu9kl8/mJdGZbhnoC519Q6v0vN
+         pfouBi1cLQPNO4tlcu51UrzZ/cG65MblzRN8snO+yQNiq6Kt0dgdwK6rPLEg6gGIavD9
+         RSe85gbDSyA7AWnhpbuo76EL5wJQIiSFZV6AScHhbk5kX/F7ZsS7U8IP1lT3pG+Wcpmb
+         FqicFEYoajuKenDYi4jlHLwMJoss9n47tcIES5sRFnlRMT+GelIJzjtNeIgUUpO49Lgp
+         K4nhu+OtQ9H9/Wi9pK6hPEnW8Z+0ZYgIljy/BsHoYjz4AsBp6I48/ljOQObddstEENGc
+         eUMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=z3ULGENtuqL5tguf/8dKX/9QWEPMLkVQYxE/Khek8q0=;
+        b=af8Sa3e0jQ3xkKzsYGim/h2shBXe6jTAuDkjFZ/Of5h/bHB/odox9W0nLvdNFrxtI0
+         xe4wWRlYLneUAMVSwonTh8vere1G0FkTdfdJ6GgEjHSIbsS5LQMg9uQPgzmfZrnPlE8k
+         r0BGnHE/5WoLcGujMz0aZ75ZaxI5iur66s3kK+iahsEpp1mtT9/Sk8NQerys25QtHE1a
+         y+QcEoN5x/BxE1q27YnBJX1uEpg7/3YDAnAgLAL9voBUD3OzJ7TwrgWpsdbEMQN+JPIB
+         VSB4h25Eqq1EzDVwyu28VyeUNJB3kpiMK+SVWo05nwFd5Jh24dxmj3y2HEXe1ot1iX5Q
+         8/rg==
+X-Gm-Message-State: AJcUukejWszMFaUOEI1ZSiyz4RCr1qAMuFrTJcQcbL1bm4VidtgFKOe4
+        m+2/o6cjpfQ57NSC5v4K5RCg4whz6vNmT+dQhRQ=
+X-Google-Smtp-Source: ALg8bN4oqlozqvBx62ZOKCap1Q/HPcNNVezF3INCpbFnWNa8lhuzX+yfDeJxf3h2fdiUfk76PHTMpUi7jABP0nz7gLo=
+X-Received: by 2002:adf:d0c9:: with SMTP id z9mr26313114wrh.317.1548797350317;
+ Tue, 29 Jan 2019 13:29:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20190129174728.6430-1-jglisse@redhat.com> <20190129174728.6430-2-jglisse@redhat.com>
+ <CADnq5_N8QLA_80j+iCtMHvSZhc-WFpzdZhpk6jR9yhoNoUDFZA@mail.gmail.com> <83acb590-25a5-f8ae-1616-bdb8b069fa0f@deltatee.com>
+In-Reply-To: <83acb590-25a5-f8ae-1616-bdb8b069fa0f@deltatee.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 29 Jan 2019 16:28:57 -0500
+Message-ID: <CADnq5_NOm8DkHWCw-s9B4+n=9qezS8kg9TXDK0fz9nP1vFB+mw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/5] pci/p2p: add a function to test peer to peer capability
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Jerome Glisse <jglisse@redhat.com>, linux-mm <linux-mm@kvack.org>,
+        Joerg Roedel <jroedel@suse.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, Christoph Hellwig <hch@lst.de>,
+        iommu@lists.linux-foundation.org,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  34d66caf251df91ff27b24a3a786810d29989eca
-Gitweb:     https://git.kernel.org/tip/34d66caf251df91ff27b24a3a786810d29989eca
-Author:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-AuthorDate: Thu, 17 Jan 2019 02:10:59 -0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 29 Jan 2019 22:20:24 +0100
+On Tue, Jan 29, 2019 at 3:25 PM Logan Gunthorpe <logang@deltatee.com> wrote=
+:
+>
+>
+>
+> On 2019-01-29 12:56 p.m., Alex Deucher wrote:
+> > On Tue, Jan 29, 2019 at 12:47 PM <jglisse@redhat.com> wrote:
+> >>
+> >> From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> >>
+> >> device_test_p2p() return true if two devices can peer to peer to
+> >> each other. We add a generic function as different inter-connect
+> >> can support peer to peer and we want to genericaly test this no
+> >> matter what the inter-connect might be. However this version only
+> >> support PCIE for now.
+> >>
+> >
+> > What about something like these patches:
+> > https://cgit.freedesktop.org/~deathsimple/linux/commit/?h=3Dp2p&id=3D4f=
+ab9ff69cb968183f717551441b475fabce6c1c
+> > https://cgit.freedesktop.org/~deathsimple/linux/commit/?h=3Dp2p&id=3Df9=
+0b12d41c277335d08c9dab62433f27c0fadbe5
+> > They are a bit more thorough.
+>
+> Those new functions seem to have a lot of overlap with the code that is
+> already upstream in p2pdma.... Perhaps you should be improving the
+> p2pdma functions if they aren't suitable for what you want already
+> instead of creating new ones.
 
-x86/speculation: Remove redundant arch_smt_update() invocation
+Could be.  Those patches are pretty old.  They probably need to be
+rebased on the latest upstream p2p stuff.
 
-With commit a74cfffb03b7 ("x86/speculation: Rework SMT state change"),
-arch_smt_update() is invoked from each individual CPU hotplug function.
-
-Therefore the extra arch_smt_update() call in the sysfs SMT control is
-redundant.
-
-Fixes: a74cfffb03b7 ("x86/speculation: Rework SMT state change")
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: <konrad.wilk@oracle.com>
-Cc: <dwmw@amazon.co.uk>
-Cc: <bp@suse.de>
-Cc: <srinivas.eeda@oracle.com>
-Cc: <peterz@infradead.org>
-Cc: <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/e2e064f2-e8ef-42ca-bf4f-76b612964752@default
-
----
- kernel/cpu.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 91d5c38eb7e5..c0c7f64573ed 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2090,10 +2090,8 @@ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- 		 */
- 		cpuhp_offline_cpu_device(cpu);
- 	}
--	if (!ret) {
-+	if (!ret)
- 		cpu_smt_control = ctrlval;
--		arch_smt_update();
--	}
- 	cpu_maps_update_done();
- 	return ret;
- }
-@@ -2104,7 +2102,6 @@ static int cpuhp_smt_enable(void)
- 
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
--	arch_smt_update();
- 	for_each_present_cpu(cpu) {
- 		/* Skip online CPUs and CPUs on offline nodes */
- 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
+Alex
