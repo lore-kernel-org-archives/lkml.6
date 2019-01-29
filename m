@@ -2,91 +2,143 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E809C282D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B92DC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:24:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19AB320882
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:22:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Z0FUJXpS"
+	by mail.kernel.org (Postfix) with ESMTP id 4802E20882
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 19:24:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728818AbfA2TWp (ORCPT
+        id S1728741AbfA2TYT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 14:22:45 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:45050 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbfA2TWo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 14:22:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1548789756; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/aEekcWIhaR6pCkL1wjpjvgEdW7dbXfax+7aRkTe148=;
-        b=Z0FUJXpSAxbT7foYtXbAiy9pY+BSqaZ7Nto0V4P42ecrBkfDLEtrQIQto7eWMsdTM0Mswy
-        nIz8WgKJUiWvb393WXaE+nJ6tdyxK48dLjOWSeQV2nhu4lQOD63YoMBCF0KFx4rJSe4GHG
-        hJTaP22ZcW0duwX7FSRAy9aS+/49Vus=
-Date:   Tue, 29 Jan 2019 16:22:25 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH] clk: ingenic: jz4740: Fix gating of UDC clock
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <1548789745.2531.0@crapouillou.net>
-In-Reply-To: <154878559039.136743.10189442694979275708@swboyd.mtv.corp.google.com>
-References: <20190125153436.13517-1-paul@crapouillou.net>
-        <154844250661.136743.15303302299846585853@swboyd.mtv.corp.google.com>
-        <1548444298.1804.2@crapouillou.net>
-        <154878559039.136743.10189442694979275708@swboyd.mtv.corp.google.com>
+        Tue, 29 Jan 2019 14:24:19 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:59356 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726852AbfA2TYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 14:24:19 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1goYzN-0005nT-QG; Tue, 29 Jan 2019 12:24:06 -0700
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, linux-pci@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        iommu@lists.linux-foundation.org
+References: <20190129174728.6430-1-jglisse@redhat.com>
+ <20190129174728.6430-4-jglisse@redhat.com>
+ <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
+ <20190129191120.GE3176@redhat.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <c2c02af7-1d6f-e54f-c7fb-99c5b7776014@deltatee.com>
+Date:   Tue, 29 Jan 2019 12:24:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190129191120.GE3176@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, jgg@mellanox.com, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-Le mar. 29 janv. 2019 =E0 15:13, Stephen Boyd <sboyd@kernel.org> a=20
-=E9crit :
-> Quoting Paul Cercueil (2019-01-25 11:24:58)
->>  Hi,
->>=20
->>=20
->>  On Fri, Jan 25, 2019 at 3:55 PM, Stephen Boyd <sboyd@kernel.org>=20
->> wrote:
->>  > Quoting Paul Cercueil (2019-01-25 07:34:36)
->>  >>  The UDC clock is gated when the bit is cleared, not when it is=20
->> set.
->>  >>
->>  >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net
->>  >> <mailto:paul@crapouillou.net>>
->>  >>  Tested-by: Artur Rojek <contact@artur-rojek.eu
->>  >> <mailto:contact@artur-rojek.eu>>
->>  >>  ---
->>  >
->>  > Any Fixes tag for this?
->>  >
->>=20
->>  Fixes: 2b555a4b9cae
->>=20
->>  Should I resend?
->>=20
->=20
-> No need to resend. Is this fixing something that's broken in the=20
-> v5.0-rc
-> series? I'm trying to understand if this is a critical fix or a
-> non-critical fix that can bake until the next release cycle.
 
-It's been broken for one year and nobody noticed, it can wait for 5.1.
+On 2019-01-29 12:11 p.m., Jerome Glisse wrote:
+> On Tue, Jan 29, 2019 at 11:36:29AM -0700, Logan Gunthorpe wrote:
+>>
+>>
+>> On 2019-01-29 10:47 a.m., jglisse@redhat.com wrote:
+>>
+>>> +	/*
+>>> +	 * Optional for device driver that want to allow peer to peer (p2p)
+>>> +	 * mapping of their vma (which can be back by some device memory) to
+>>> +	 * another device.
+>>> +	 *
+>>> +	 * Note that the exporting device driver might not have map anything
+>>> +	 * inside the vma for the CPU but might still want to allow a peer
+>>> +	 * device to access the range of memory corresponding to a range in
+>>> +	 * that vma.
+>>> +	 *
+>>> +	 * FOR PREDICTABILITY IF DRIVER SUCCESSFULY MAP A RANGE ONCE FOR A
+>>> +	 * DEVICE THEN FURTHER MAPPING OF THE SAME IF THE VMA IS STILL VALID
+>>> +	 * SHOULD ALSO BE SUCCESSFUL. Following this rule allow the importing
+>>> +	 * device to map once during setup and report any failure at that time
+>>> +	 * to the userspace. Further mapping of the same range might happen
+>>> +	 * after mmu notifier invalidation over the range. The exporting device
+>>> +	 * can use this to move things around (defrag BAR space for instance)
+>>> +	 * or do other similar task.
+>>> +	 *
+>>> +	 * IMPORTER MUST OBEY mmu_notifier NOTIFICATION AND CALL p2p_unmap()
+>>> +	 * WHEN A NOTIFIER IS CALL FOR THE RANGE ! THIS CAN HAPPEN AT ANY
+>>> +	 * POINT IN TIME WITH NO LOCK HELD.
+>>> +	 *
+>>> +	 * In below function, the device argument is the importing device,
+>>> +	 * the exporting device is the device to which the vma belongs.
+>>> +	 */
+>>> +	long (*p2p_map)(struct vm_area_struct *vma,
+>>> +			struct device *device,
+>>> +			unsigned long start,
+>>> +			unsigned long end,
+>>> +			dma_addr_t *pa,
+>>> +			bool write);
+>>> +	long (*p2p_unmap)(struct vm_area_struct *vma,
+>>> +			  struct device *device,
+>>> +			  unsigned long start,
+>>> +			  unsigned long end,
+>>> +			  dma_addr_t *pa);
+>>
+>> I don't understand why we need new p2p_[un]map function pointers for
+>> this. In subsequent patches, they never appear to be set anywhere and
+>> are only called by the HMM code. I'd have expected it to be called by
+>> some core VMA code and set by HMM as that's what vm_operations_struct is
+>> for.
+>>
+>> But the code as all very confusing, hard to follow and seems to be
+>> missing significant chunks. So I'm not really sure what is going on.
+> 
+> It is set by device driver when userspace do mmap(fd) where fd comes
+> from open("/dev/somedevicefile"). So it is set by device driver. HMM
+> has nothing to do with this. It must be set by device driver mmap
+> call back (mmap callback of struct file_operations). For this patch
+> you can completely ignore all the HMM patches. Maybe posting this as
+> 2 separate patchset would make it clearer.
+> 
+> For instance see [1] for how a non HMM driver can export its memory
+> by just setting those callback. Note that a proper implementation of
+> this should also include some kind of driver policy on what to allow
+> to map and what to not allow ... All this is driver specific in any
+> way.
 
--Paul
-=
+I'd suggest [1] should be a part of the patchset so we can actually see
+a user of the stuff you're adding.
 
+But it still doesn't explain everything as without the HMM code nothing
+calls the new vm_ops. And there's still no callers for the p2p_test
+functions you added. And I still don't understand why we need the new
+vm_ops or who calls them and when. Why can't drivers use the existing
+'fault' vm_op and call a new helper function to map p2p when appropriate
+or a different helper function to map a large range in its mmap
+operation? Just like regular mmap code...
+
+Logan
