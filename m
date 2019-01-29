@@ -2,113 +2,160 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C81C3C169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 598AAC169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A21732177E
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:09:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E7C12177E
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 09:09:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbfA2JJK (ORCPT
+        id S1727841AbfA2JJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 04:09:10 -0500
-Received: from charybdis-ext.suse.de ([195.135.221.2]:28560 "EHLO suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725355AbfA2JJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 04:09:10 -0500
-Received: by suse.de (Postfix, from userid 1000)
-        id 559E540B3; Tue, 29 Jan 2019 10:09:09 +0100 (CET)
-Date:   Tue, 29 Jan 2019 10:09:08 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        gerald.schaefer@de.ibm.com, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 2/2] mm, memory_hotplug: test_pages_in_a_zone do not pass
- the end of zone
-Message-ID: <20190129090908.oms43oyjicozkvzu@d104.suse.de>
-References: <20190128144506.15603-1-mhocko@kernel.org>
- <20190128144506.15603-3-mhocko@kernel.org>
+        Tue, 29 Jan 2019 04:09:55 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60514 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725846AbfA2JJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 04:09:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DE2280D;
+        Tue, 29 Jan 2019 01:09:54 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B2A6B3F7A6;
+        Tue, 29 Jan 2019 01:09:51 -0800 (PST)
+Date:   Tue, 29 Jan 2019 09:09:50 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     rjw@rjwysocki.net, sudeep.holla@arm.com, liviu.dudau@arm.com,
+        lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, nm@ti.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        dietmar.eggemann@arm.com, mka@chromium.org
+Subject: Re: [PATCH 1/7] PM / OPP: Introduce a power estimation helper
+Message-ID: <20190129090948.3yomjtpbdsar576w@queper01-lin>
+References: <20190128165522.31749-1-quentin.perret@arm.com>
+ <20190128165522.31749-2-quentin.perret@arm.com>
+ <20190129051030.gu5nhr6vmcd35bzk@vireshk-i7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190128144506.15603-3-mhocko@kernel.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20190129051030.gu5nhr6vmcd35bzk@vireshk-i7>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 03:45:06PM +0100, Michal Hocko wrote:
-> From: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+Hi Viresh,
+
+On Tuesday 29 Jan 2019 at 10:40:30 (+0530), Viresh Kumar wrote:
+> > +int of_dev_pm_opp_get_cpu_power(unsigned long *mW, unsigned long *KHz, int cpu)
 > 
-> If memory end is not aligned with the sparse memory section boundary, the
-> mapping of such a section is only partly initialized. This may lead to
-> VM_BUG_ON due to uninitialized struct pages access from test_pages_in_a_zone()
-> function triggered by memory_hotplug sysfs handlers.
+> I would suggest to change the return type to unsigned long and return 0 for
+> errors and positive values for mW.
+
+Well, I can't really do that -- this must match the API of PM_EM:
+
+https://elixir.bootlin.com/linux/v5.0-rc4/source/include/linux/energy_model.h#L62
+
+I'll make sure to make that explicit in the commit message for v2.
+
 > 
-> Here are the the panic examples:
->  CONFIG_DEBUG_VM_PGFLAGS=y
->  kernel parameter mem=2050M
->  --------------------------
->  page:000003d082008000 is uninitialized and poisoned
->  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
->  Call Trace:
->  ([<0000000000385b26>] test_pages_in_a_zone+0xde/0x160)
->   [<00000000008f15c4>] show_valid_zones+0x5c/0x190
->   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
->   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
->   [<00000000003e4194>] seq_read+0x204/0x480
->   [<00000000003b53ea>] __vfs_read+0x32/0x178
->   [<00000000003b55b2>] vfs_read+0x82/0x138
->   [<00000000003b5be2>] ksys_read+0x5a/0xb0
->   [<0000000000b86ba0>] system_call+0xdc/0x2d8
->  Last Breaking-Event-Address:
->   [<0000000000385b26>] test_pages_in_a_zone+0xde/0x160
->  Kernel panic - not syncing: Fatal exception: panic_on_oops
+> > +{
+> > +	unsigned long mV, Hz, MHz;
 > 
-> Fix this by checking whether the pfn to check is within the zone.
+> MHz is used only once, I think you can get rid of it just open code the division
+> by 1000000. Maybe remove Hz as well and directly use kHz.
+
+I would expect/hope the compiler will optimize things like that for me
+but yes, I can try to reduce a bit the temp variables if you prefer.
+
 > 
-> [mhocko@suse.com: separated this change from
-> http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com]
-> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-
-Looks good to me:
-
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-
-> ---
->  mm/memory_hotplug.c | 3 +++
->  1 file changed, 3 insertions(+)
+> > +	struct device *cpu_dev;
+> > +	struct dev_pm_opp *opp;
+> > +	struct device_node *np;
+> > +	u32 cap;
+> > +	u64 tmp;
 > 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 07872789d778..7711d0e327b6 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1274,6 +1274,9 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
->  				i++;
->  			if (i == MAX_ORDER_NR_PAGES || pfn + i >= end_pfn)
->  				continue;
-> +			/* Check if we got outside of the zone */
-> +			if (zone && !zone_spans_pfn(zone, pfn + i))
-> +				return 0;
->  			page = pfn_to_page(pfn + i);
+> Name this mW with the above changes.
 
-Since we are already checking if the zone spans that pfn, is it safe to get
-rid of the below check? Or maybe not because we might have intersected zones?
+So that doesn't really work given what I mentioned above.
 
->  			if (zone && page_zone(page) != zone)
->  				return 0;
+> > +	int ret;
+> > +
+> > +	cpu_dev = get_cpu_device(cpu);
+> > +	if (!cpu_dev)
+> > +		return -ENODEV;
+> > +
+> > +	np = of_node_get(cpu_dev->of_node);
+> > +	if (!np)
+> > +		return -EINVAL;
+> > +
+> > +	ret = of_property_read_u32(np, "dynamic-power-coefficient", &cap);
+> > +	of_node_put(np);
+> > +	if (ret)
+> > +		return -EINVAL;
+> > +
+> > +	Hz = *KHz * 1000;
+> > +	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &Hz);
+> > +	if (IS_ERR(opp))
+> > +		return -EINVAL;
+> > +
+> > +	mV = dev_pm_opp_get_voltage(opp) / 1000;
+> > +	dev_pm_opp_put(opp);
+> > +	if (!mV)
+> > +		return -EINVAL;
+> > +
+> > +	MHz = Hz / 1000000;
+> > +	tmp = (u64)cap * mV * mV * MHz;
+> > +	do_div(tmp, 1000000000);
+> > +
+> > +	*mW = (unsigned long)tmp;
+> > +	*KHz = Hz / 1000;
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(of_dev_pm_opp_get_cpu_power);
+> > diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> > index 0a2a88e5a383..fedde14f5187 100644
+> > --- a/include/linux/pm_opp.h
+> > +++ b/include/linux/pm_opp.h
+> > @@ -322,6 +322,7 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpuma
+> >  struct device_node *dev_pm_opp_of_get_opp_desc_node(struct device *dev);
+> >  struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp);
+> >  int of_get_required_opp_performance_state(struct device_node *np, int index);
+> > +int of_dev_pm_opp_get_cpu_power(unsigned long *mW, unsigned long *KHz, int cpu);
+> >  #else
+> >  static inline int dev_pm_opp_of_add_table(struct device *dev)
+> >  {
+> > @@ -364,6 +365,10 @@ static inline int of_get_required_opp_performance_state(struct device_node *np,
+> >  {
+> >  	return -ENOTSUPP;
+> >  }
+> 
+> Add a blank line here. We missed adding the same before
+> of_get_required_opp_performance_state() earlier, maybe add the new routine
+> before of_get_required_opp_performance_state() and add blank line before and
+> after it :)
 
--- 
-Oscar Salvador
-SUSE L3
+Sounds good !
+
+> 
+> > +static inline int of_dev_pm_opp_get_cpu_power(unsigned long *mW, unsigned long *KHz, int cpu)
+> > +{
+> > +	return -ENOTSUPP;
+> > +}
+> >  #endif
+> >  
+> >  #endif		/* __LINUX_OPP_H__ */
+> > -- 
+> > 2.20.1
+> 
+> -- 
+> viresh
+
+Thanks,
+Quentin
