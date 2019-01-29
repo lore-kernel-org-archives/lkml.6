@@ -2,100 +2,100 @@ Return-Path: <SRS0=gcLq=QF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07836C282C7
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6D0C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D724C21848
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1B3B21848
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 15:25:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="EmdFrLU9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbfA2PYu convert rfc822-to-8bit (ORCPT
+        id S1728243AbfA2PZK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 10:24:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55602 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725730AbfA2PYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 10:24:50 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4E1A3ADBC;
-        Tue, 29 Jan 2019 15:24:47 +0000 (UTC)
-Date:   Tue, 29 Jan 2019 16:24:45 +0100
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH 6/7] MIPS: SGI-IP27: use generic PCI driver
-Message-Id: <20190129162445.8584b58862068c0a7693718c@suse.de>
-In-Reply-To: <20190128133215.GC744@infradead.org>
-References: <20190124174728.28812-1-tbogendoerfer@suse.de>
-        <20190124174728.28812-7-tbogendoerfer@suse.de>
-        <20190128133215.GC744@infradead.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        Tue, 29 Jan 2019 10:25:10 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:56442 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbfA2PZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 10:25:09 -0500
+Received: from zn.tnic (p200300EC2BCC54006D3D030A08A1426E.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:5400:6d3d:30a:8a1:426e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0C3C21EC03D8;
+        Tue, 29 Jan 2019 16:25:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548775508;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TP6+d2no+eIDbqN062CASqwgZolZNT+F4QuSiSVUOjg=;
+        b=EmdFrLU9pBLeWltiMB/8UZ5nt1AR6x7KMyqtStOrKmMT+FTaoNQtMteeXqZR0Q79kfSXuR
+        H2J2jRzZkGt+9RZybxofGHChAwLdf8BkvdJc8Nh40lEIJs0eUAmEPIyNMQ5ZUGzrB/8wvv
+        Vpfkk2w6CG5+1OmA9KKoMUm4e/4SMUg=
+Date:   Tue, 29 Jan 2019 16:25:00 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] x86/events: Mark expected switch fall-throughs
+Message-ID: <20190129152500.GA25706@zn.tnic>
+References: <20190125184917.GA7289@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190125184917.GA7289@embeddedor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Jan 2019 05:32:15 -0800
-Christoph Hellwig <hch@infradead.org> wrote:
-
-> > +#ifdef CONFIG_NUMA
-> > +int pcibus_to_node(struct pci_bus *bus)
-> > +{
-> > +	struct bridge_controller *bc = BRIDGE_CONTROLLER(bus);
-> > +
-> > +	return bc->nasid;
-> > +}
-> > +EXPORT_SYMBOL(pcibus_to_node);
-> > +#endif /* CONFIG_NUMA */
+On Fri, Jan 25, 2019 at 12:49:17PM -0600, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
 > 
-> From an abstraction point of view this doesn't really belong into
-> a bridge driver as it is a global exported function.  I guess we can
-> keep it here with a fixme comment, but we should probably move this
-> into a method call instead.
-
-or put the nodeid into the bus struct ?
-
-> > +dma_addr_t __phys_to_dma(struct device *dev, phys_addr_t paddr)
-> > +{
-> > +	struct pci_dev *pdev = to_pci_dev(dev);
-> > +	struct bridge_controller *bc = BRIDGE_CONTROLLER(pdev->bus);
-> > +
-> > +	return bc->baddr + paddr;
-> > +}
-> > +
-> > +phys_addr_t __dma_to_phys(struct device *dev, dma_addr_t dma_addr)
-> > +{
-> > +	return dma_addr & ~(0xffUL << 56);
-> > +}
+> This patch fixes the following warnings:
 > 
-> Similarly here - these are global platform-wide hooks, so having them
-> in a pci bridge driver is not the proper abstraction level.
+> In file included from arch/x86/events/intel/core.c:22:
+> arch/x86/events/intel/core.c: In function ‘intel_pmu_init’:
+> arch/x86/events/intel/../perf_event.h:668:17: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   x86_pmu.quirks = &__quirk;     \
+>   ~~~~~~~~~~~~~~~^~~~~~~~~~
+> arch/x86/events/intel/core.c:4170:3: note: in expansion of macro ‘x86_add_quirk’
+>    x86_add_quirk(intel_clovertown_quirk);
+>    ^~~~~~~~~~~~~
+> arch/x86/events/intel/core.c:4171:2: note: here
+>   case INTEL_FAM6_CORE2_MEROM_L:
+>   ^~~~
+> arch/x86/events/intel/lbr.c:929:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 > 
-> Note that we could probably fix these by just switching IP27 and
-> other users of the bridge chip to use the dma_pfn_offset field
-> in struct device and stop overriding these functions.
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+> 
+> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  arch/x86/events/intel/core.c | 2 ++
+>  arch/x86/events/intel/lbr.c  | 1 +
+>  2 files changed, 3 insertions(+)
 
-I'm all for it. I looked at the examples for using dma_pfn_offset and the
-only one coming close to usefull for me is arch/sh/drivers/pci/pcie-sh7786.c
-It overloads pcibios_bus_add_device() to set dma_pfn_offset, which doesn't
-look much nicer. What about having a dma_pfn_offset in struct pci_bus
-which all device inherit from ?
+You do know how to use scripts/get_maintainer.pl, right?
 
-Thomas.
+Because I don't see PeterZ on CC.
+
+Please use that script when preparing patches.
 
 -- 
-SUSE Linux GmbH
-GF: Felix Imend�rffer, Jane Smithard, Graham Norton
-HRB 21284 (AG N�rnberg)
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
