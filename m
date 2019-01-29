@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34CFC169C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF57C169C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:07:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3C1E2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:07:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DE3A2084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 29 Jan 2019 11:07:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jDOzgYh+"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YlNrCME0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbfA2LHT (ORCPT
+        id S1728654AbfA2LHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:07:19 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41232 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728604AbfA2LHQ (ORCPT
+        Tue, 29 Jan 2019 06:07:30 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33491 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728594AbfA2LHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:07:16 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so21518157wrs.8
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 03:07:14 -0800 (PST)
+        Tue, 29 Jan 2019 06:07:14 -0500
+Received: by mail-wr1-f65.google.com with SMTP id p7so21606788wru.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 03:07:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8JaSsc/YYZ/kdnvfBrrFjWTAlWsvvc6dlhkWZwzIj+Q=;
-        b=jDOzgYh+7JYBxH0+MkncQ3vaM6G1Wwz/zf4/BEGiViuG5e2T+PP/awx4hfjQQJzq4o
-         YZf+PzUJlNnIkncTTrYZrkQRjIGafwLxTEYhosPBqcbspQ3tc3VqYsXYT9acbSshwXsm
-         o+krKWN7u2PKp1ijOnxKTWPCL6r8kjlcvyqS8=
+        bh=xDzJdQaJUVbOMOgsobVLGeLVo1CynjuO1LWZuQEuQ0s=;
+        b=YlNrCME02AvhfJTfFzDA7cXLW6GkN4P602kH9FqZdMo8dfqIjrdqLc0SZVieJXCoRk
+         EjdcaZrCdjJRqKoBG9NcdFH+dOguGYF0kGl4fWzV9VPBr3jVZNgBhaVc8Z87DiCt5APe
+         jwOLIrtW+c8AGnIapiBil70XxXFnbCiHytrkY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8JaSsc/YYZ/kdnvfBrrFjWTAlWsvvc6dlhkWZwzIj+Q=;
-        b=VqnIbN58amhC9EVFTsVuSwyaUv78MaLv7Hz0/uLo8hZXI1/dEgIGF/yKQD/WBbR1Yc
-         XDsmpUL6tIPkSNHNSfVssA15mMCCX6gjqpM//dfIZQui4wsANrWSCXfgKt+hQIN+uqGC
-         ODxFx6etfC0pWm5uGJVm8nZvBJ33ln+TedKmfPeNpMfHzDQRTEHyeXdT6TqrlOs/8gcb
-         PzOZuq71D1gZrIN2jkN9VPEm/hrJqMnuslptRymPrppAt/uNgwqT9/541qFEVGTf5tjR
-         igf6IkghWjzThwPgsnXKCTCbRbbaTvz+rTd3U06fzvo9c7vUxC1tymE2l6NVlfFsYbql
-         Q8xA==
-X-Gm-Message-State: AHQUAuY3A1hULV/SJeJOAkR1RZeaq90p063lDByTG5TYkg+NxkHi2nJ9
-        oAQbyUBxhHbIIeiydXfa6cF3nw==
-X-Google-Smtp-Source: AHgI3IZp+jZT9UKS7sUYJA6gDD8eKqjxbmrelTmX1Wv1yhd73BdRwGh/3wlWrdZEzIYaNpZVUfNRrQ==
-X-Received: by 2002:adf:dcd0:: with SMTP id x16mr4708238wrm.143.1548760034065;
-        Tue, 29 Jan 2019 03:07:14 -0800 (PST)
+        bh=xDzJdQaJUVbOMOgsobVLGeLVo1CynjuO1LWZuQEuQ0s=;
+        b=UzCx4KUe0UytLqhjroHrLilW3Hx234XFV5oVNNQSFh01jkHx+YD6stbDpXpyU0VuNa
+         a8wNbeFsQBRGj+6GBKeLTVAOXT1PNDyErbGLXRS8cNC4ambQNCcgreE1OR5XAJvv3YJw
+         7x9bFdBVV1Hw1BmCQ/ljfIc9gbyGDb1YdgViGTiOaF+tlPnOOAFG1/Ju+XnDny+Cc4Ox
+         Zs3ngq+lHoj3Popdx8De/7RgTXyiZBomxmfdrpBPonSvLldIvAoIPUCfE+pAmJ/KPo2R
+         t8LjzsHydDyG/aeLka7nZt2RW56Ix0MXxEkZ7CCP6au23//87DBB9a681V2IETr/zSt+
+         FMmw==
+X-Gm-Message-State: AJcUukfvzXgq5XX750AockvLWJ5hTzeTKHbjP5w08CTRnh1Tc4Cf7oto
+        6pGy8EoiUDWr9EuzzOspE1Xo7w==
+X-Google-Smtp-Source: ALg8bN4i2QB/ggjoyUvCO+iRRW6VcZ2yv+tDBmGHgCCBvaPAOEFc754Zt/AEpp3mU/3ngl4Pq/tjNw==
+X-Received: by 2002:adf:c711:: with SMTP id k17mr24732765wrg.197.1548760032900;
+        Tue, 29 Jan 2019 03:07:12 -0800 (PST)
 Received: from localhost.localdomain ([88.147.67.218])
-        by smtp.gmail.com with ESMTPSA id s132sm2066112wmf.28.2019.01.29.03.07.12
+        by smtp.gmail.com with ESMTPSA id s132sm2066112wmf.28.2019.01.29.03.07.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 03:07:13 -0800 (PST)
+        Tue, 29 Jan 2019 03:07:12 -0800 (PST)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -60,9 +60,9 @@ Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         broonie@kernel.org, bfq-iosched@googlegroups.com,
         oleksandr@natalenko.name, mancha@tower-research.com,
         Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX IMPROVEMENT 13/14] block, bfq: do not overcharge writes in asymmetric scenarios
-Date:   Tue, 29 Jan 2019 12:06:37 +0100
-Message-Id: <20190129110638.12652-14-paolo.valente@linaro.org>
+Subject: [PATCH BUGFIX IMPROVEMENT 12/14] block, bfq: port commit "cfq-iosched: improve hw_tag detection"
+Date:   Tue, 29 Jan 2019 12:06:36 +0100
+Message-Id: <20190129110638.12652-13-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190129110638.12652-1-paolo.valente@linaro.org>
 References: <20190129110638.12652-1-paolo.valente@linaro.org>
@@ -73,37 +73,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Writes tend to starve reads. bfq counters this problem by overcharging
-writes with an inflated service w.r.t. the actual service (number of
-sector written) they receive.
+The original commit is
+commit 1a1238a7dd48 ("cfq-iosched: improve hw_tag detection")
+and has the following commit message.
 
-Yet his overcharging is useless, and actually causes unfairness in the
-opposite direction, when bfq happens to be enforcing strong I/O
-control. bfq does this enforcing when the scenario is asymmetric,
-i.e., when some bfq_queue or group of bfq_queues is to be granted a
-different bandwidth than some other bfq_queue or group of
-bfq_queues. So, in such a scenario, this commit disables write
-overcharging.
+If active queue hasn't enough requests and idle window opens, cfq will not
+dispatch sufficient requests to hardware. In such situation, current code
+will zero hw_tag. But this is because cfq doesn't dispatch enough requests
+instead of hardware queue doesn't work. Don't zero hw_tag in such case.
 
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- block/bfq-iosched.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ block/bfq-iosched.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 2ab53d93ba12..06268449d2ca 100644
+index 48b579032d14..2ab53d93ba12 100644
 --- a/block/bfq-iosched.c
 +++ b/block/bfq-iosched.c
-@@ -888,7 +888,8 @@ static struct request *bfq_find_next_rq(struct bfq_data *bfqd,
- static unsigned long bfq_serv_to_charge(struct request *rq,
- 					struct bfq_queue *bfqq)
- {
--	if (bfq_bfqq_sync(bfqq) || bfqq->wr_coeff > 1)
-+	if (bfq_bfqq_sync(bfqq) || bfqq->wr_coeff > 1 ||
-+	    !bfq_symmetric_scenario(bfqq->bfqd))
- 		return blk_rq_sectors(rq);
+@@ -4786,6 +4786,8 @@ static void bfq_insert_requests(struct blk_mq_hw_ctx *hctx,
  
- 	return blk_rq_sectors(rq) * bfq_async_charge_factor;
+ static void bfq_update_hw_tag(struct bfq_data *bfqd)
+ {
++	struct bfq_queue *bfqq = bfqd->in_service_queue;
++
+ 	bfqd->max_rq_in_driver = max_t(int, bfqd->max_rq_in_driver,
+ 				       bfqd->rq_in_driver);
+ 
+@@ -4801,6 +4803,17 @@ static void bfq_update_hw_tag(struct bfq_data *bfqd)
+ 	if (bfqd->rq_in_driver + bfqd->queued <= BFQ_HW_QUEUE_THRESHOLD)
+ 		return;
+ 
++	/*
++	 * If active queue hasn't enough requests and can idle, bfq might not
++	 * dispatch sufficient requests to hardware. Don't zero hw_tag in this
++	 * case
++	 */
++	if (bfqq && bfq_bfqq_has_short_ttime(bfqq) &&
++	    bfqq->dispatched + bfqq->queued[0] + bfqq->queued[1] <
++	    BFQ_HW_QUEUE_THRESHOLD &&
++	    bfqd->rq_in_driver < BFQ_HW_QUEUE_THRESHOLD)
++		return;
++
+ 	if (bfqd->hw_tag_samples++ < BFQ_HW_QUEUE_SAMPLES)
+ 		return;
+ 
 -- 
 2.20.1
 
