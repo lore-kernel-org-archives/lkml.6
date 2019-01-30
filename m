@@ -2,70 +2,69 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 253D9C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D687CC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E991A20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A74B920989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:00:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G96T8zeU"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ps15UBi2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733252AbfA3S7X (ORCPT
+        id S2387452AbfA3TAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:59:23 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38440 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728461AbfA3S7W (ORCPT
+        Wed, 30 Jan 2019 14:00:50 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37841 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728461AbfA3TAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:59:22 -0500
-Received: by mail-lf1-f67.google.com with SMTP id a8so456058lfk.5
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:59:21 -0800 (PST)
+        Wed, 30 Jan 2019 14:00:49 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t18-v6so542108ljd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:00:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XP/+aa8KV0RdJRkGEOst+CVjF7HcELVsTDtdEZCiVOc=;
-        b=G96T8zeUlc0YSCk1AnGOW1QWPsVOFvsMVR8DsvaQszkVPfil3yhlUcF7LDxTwyZw79
-         PCjfW+yNkQQ4UBO4Vop5J9s//EJb2NpJttjnjtPdxiFGtGozEQbBW+Rg5Z6/ULy4vgQu
-         AL6R56JRJciJPk0iv1WCbwR8wIHWhSguE67MA=
+        bh=iICV6iO5GGqy/9UyvLBZFlPh+9/PoKYpYWrjSxw2AAU=;
+        b=Ps15UBi2+dGsGjwapfletBv+573yHf6DC+OJb8tE5CbQxaNE2HEFKvYtYKiZ49sauE
+         qr3hdJPCfSK5vXOAYerx0ce6yfBZhbx5ydpwO5+nMk/tvHiBkQQHcvnbd4bHPcbwL28y
+         V//kUweAepKdxRr1pyB9Zwnju1ExglqAg1+QY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XP/+aa8KV0RdJRkGEOst+CVjF7HcELVsTDtdEZCiVOc=;
-        b=oaw6Jn8hOi14mCCW3jvDC2LVp/ev1aiYRvzHAppQlh6CNEomRHRp813E0zYdsszJ+D
-         BxAxgwiwr5kc0gNkXObobxWSxdc7g5MOrIgp8FjyhxE/yMiwfOHi2KK4YgJ65EfPoWco
-         134PrlZoANGKbhqGKXf7aRf/p1hBheZ+DZfNieh/oIRUQ0+0AAr1Lo1nmGRtcHv8GjqC
-         UzOSJKCEVjPq/UUeNd1MHkuVAk+xHby9DipK/z4YRIjGu8N38dDrNww8t6ph6PUV5BgK
-         x30OHMmsMHGZ+C+ds9H7Nw1owcgCUcLw2NHvWbudqzW8spO57pMsmkqZ9COnTEZ62fFz
-         DSjw==
-X-Gm-Message-State: AJcUukeQbdKMFBUA2PRdtIvhsVHCLXM27uKxxm4yot+wLQs1MSLPDnfs
-        fwDAS+GgdGLdBULJAA0nQxLAaBJXX8k=
-X-Google-Smtp-Source: ALg8bN6HZODGBw/vx58nETjeKIfSm9ojFmwhYA4gCsvYkqBEU0VEaEwAcVR0y1R6elwUdHKAOpKEvg==
-X-Received: by 2002:a19:8096:: with SMTP id b144mr23913858lfd.8.1548874760736;
-        Wed, 30 Jan 2019 10:59:20 -0800 (PST)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id s17sm473398lfk.9.2019.01.30.10.59.20
+        bh=iICV6iO5GGqy/9UyvLBZFlPh+9/PoKYpYWrjSxw2AAU=;
+        b=mUx5J8vvZf2/Ry7+bl8/36BE2GOfio2J92okQwqroX79RovavzZ/gMkY8HuwiAPEOu
+         6IEblD0ML5pdeSJJUTZwea3hXJyz09o68x2chtorqoPEig042sbjpDDkp2jDjaRqkKH+
+         bZo7xqc5xJIumPASO5yw7OESz+ph+UoG5PZEVzYUZe0lhM4NcEZ1ftDwuEz4bwQcy+Zh
+         fAU8b35357WNIHwozE+OWobq8n/nE+Zh5qLG2n1A/mDy3yc9z4jzGjo1EnPOYk8i6Yqo
+         1wP/IH9DODyInzsH+o87PUZwvbDO0BxXnaakNrTSGWvNLEXB0J+CifSkvJPvRTRNY7kv
+         elmg==
+X-Gm-Message-State: AJcUukd6Fp7Nu7b6Ed5bg4Tn3H22ykY8YvCQ6Ak/+XtsBqioVzYnhhQ6
+        NyfIHCAmM2TC/LTwQ0F+tz99w5wnyKg=
+X-Google-Smtp-Source: ALg8bN7tlmS+ir8sIP2HzgvEySH4E2tagMpu8KDbp1tsC+zwKkjyGp1+BE9V4UQQGBpPX5LYLxPSOw==
+X-Received: by 2002:a2e:9c52:: with SMTP id t18-v6mr25019535ljj.149.1548874847649;
+        Wed, 30 Jan 2019 11:00:47 -0800 (PST)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id s127sm436418lfe.8.2019.01.30.11.00.47
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 10:59:20 -0800 (PST)
-Received: by mail-lf1-f51.google.com with SMTP id n18so455318lfh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:59:20 -0800 (PST)
-X-Received: by 2002:a19:d381:: with SMTP id k123mr24311307lfg.101.1548873105432;
- Wed, 30 Jan 2019 10:31:45 -0800 (PST)
+        Wed, 30 Jan 2019 11:00:47 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id u89-v6so558987lje.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:00:47 -0800 (PST)
+X-Received: by 2002:a2e:9181:: with SMTP id f1-v6mr18171528ljg.64.1548873092541;
+ Wed, 30 Jan 2019 10:31:32 -0800 (PST)
 MIME-Version: 1.0
-References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-14-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1546314952-15990-14-git-send-email-yong.wu@mediatek.com>
+References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-13-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1546314952-15990-13-git-send-email-yong.wu@mediatek.com>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 30 Jan 2019 10:31:09 -0800
-X-Gmail-Original-Message-ID: <CAE=gft6nQ4uv5kqYO876sQaKo71F0RkMj4d-dKDvxi8pEy-WgQ@mail.gmail.com>
-Message-ID: <CAE=gft6nQ4uv5kqYO876sQaKo71F0RkMj4d-dKDvxi8pEy-WgQ@mail.gmail.com>
-Subject: Re: [PATCH v5 13/20] iommu/mediatek: Add mt8183 IOMMU support
+Date:   Wed, 30 Jan 2019 10:30:55 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5BS=yDQV48V1a=n8U1YyAQuQ+vxg1bFy1HFJXmvXE_gw@mail.gmail.com>
+Message-ID: <CAE=gft5BS=yDQV48V1a=n8U1YyAQuQ+vxg1bFy1HFJXmvXE_gw@mail.gmail.com>
+Subject: Re: [PATCH v5 12/20] memory: mtk-smi: Add gals support
 To:     Yong Wu <yong.wu@mediatek.com>
 Cc:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -86,50 +85,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 7:59 PM Yong Wu <yong.wu@mediatek.com> wrote:
+On Mon, Dec 31, 2018 at 7:58 PM Yong Wu <yong.wu@mediatek.com> wrote:
 >
-> The M4U IP blocks in mt8183 is MediaTek's generation2 M4U which use
-> the ARM Short-descriptor like mt8173, and most of the HW registers
-> are the same.
+> In some SoCs like mt8183, SMI add GALS(Global Async Local Sync) module
+> which can help synchronize for the modules in different clock frequency.
+> It can be seen as a "asynchronous fifo". This is a example diagram:
 >
-> Here list main differences between mt8183 and mt8173/mt2712:
-> 1) mt8183 has only one M4U HW like mt8173 while mt2712 has two.
-> 2) mt8183 don't have the "bclk" clock, it use the EMI clock instead.
-> 3) mt8183 can support the dram over 4GB, but it doesn't call this "4GB
-> mode".
-> 4) mt8183 pgtable base register(0x0) extend bit[1:0] which represent
-> the bit[33:32] in the physical address of the pgtable base, But the
-> standard ttbr0[1] means the S bit which is enabled defaultly, Hence,
-> we add a mask.
-> 5) mt8183 HW has a GALS modules, SMI should enable "has_gals" support.
-> 6) mt8183 need reset_axi like mt8173.
-> 7) the larb-id in smi-common is remapped. M4U should add its larbid_remap.
+>             M4U
+>              |
+>          ----------
+>          |        |
+>      gals0-rx   gals1-rx
+>          |        |
+>          |        |
+>      gals0-tx   gals1-tx
+>          |        |
+>         ------------
+>          SMI Common
+>         ------------
+>              |
+>   +-----+--------+-----+- ...
+>   |     |        |     |
+>   |  gals-rx  gals-rx  |
+>   |     |        |     |
+>   |     |        |     |
+>   |  gals-tx  gals-tx  |
+>   |     |        |     |
+> larb1 larb2   larb3  larb4
+>
+> GALS only help transfer the command/data while it doesn't have the
+> configuring register, thus it has the special "smi" clock and doesn't
+> have the "apb" clock. From the diagram above, we add "gals0" and
+> "gals1" clocks for smi-common and add a "gals" clock for smi-larb.
+>
+> This patch adds gals clock supporting in the SMI. Note that some larbs
+> may still don't have the "gals" clock like larb1 and larb4 above.
+>
+> This is also a preparing patch for mt8183 which has GALS.
 >
 > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> ---
->  drivers/iommu/mtk_iommu.c | 15 ++++++++++++---
->  drivers/iommu/mtk_iommu.h |  1 +
->  drivers/memory/mtk-smi.c  | 20 ++++++++++++++++++++
->  3 files changed, 33 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> index 2913ddb..66e3615 100644
-> --- a/drivers/iommu/mtk_iommu.c
-> +++ b/drivers/iommu/mtk_iommu.c
-> @@ -36,6 +36,7 @@
->  #include "mtk_iommu.h"
->
->  #define REG_MMU_PT_BASE_ADDR                   0x000
-> +#define MMU_PT_ADDR_MASK                       GENMASK(31, 7)
->
->  #define REG_MMU_INVALIDATE                     0x020
->  #define F_ALL_INVLD                            0x2
-> @@ -342,7 +343,7 @@ static int mtk_iommu_attach_device(struct iommu_domain *domain,
->         /* Update the pgtable base address register of the M4U HW */
->         if (!data->m4u_dom) {
->                 data->m4u_dom = dom;
-> -               writel(dom->cfg.arm_v7s_cfg.ttbr[0],
-> +               writel(dom->cfg.arm_v7s_cfg.ttbr[0] & MMU_PT_ADDR_MASK,
 
-So there aren't any other bits down below 7 that you need, like the
-shareable bits?
+So really from a software perspective the gals are just a couple of
+extra clocks that need to be turned on for certain larbs. Seems fine
+to me.
+
+Reviewed-by: Evan Green <evgreen@chromium.org>
