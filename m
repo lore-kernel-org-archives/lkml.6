@@ -2,142 +2,177 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACB9C282C7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F175FC282C7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 659F720870
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:44:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="cjkx6i/t";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cK5Zx94N"
+	by mail.kernel.org (Postfix) with ESMTP id B5DEC2082C
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:48:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbfA3CoX (ORCPT
+        id S1729866AbfA3Cs6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 21:44:23 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:36819 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729718AbfA3CoX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 21:44:23 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id AD6661719;
-        Tue, 29 Jan 2019 21:44:21 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 29 Jan 2019 21:44:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        Gc6FHnmci9DMdKktV5Xl7cyp+gzcAF5J3MrudSjp00c=; b=cjkx6i/tn2+/LNgN
-        oTWKlrBmSdZbUbsT8CQIaZ3z7O/TNfcINaCjAfGOFWVKVxxTZWYG1QPQh0M7xQZv
-        5gbYo+jpu36+zYFYo1IKadWsRlo+dKvyXmxRf844vYukcv112QGw2QVbyYk7Qqgl
-        pF2XILyom2W2fjRjunCD7Ri2s8AKi3GktSBeuCRTlKkOeAGoT2bVrxlaK5fmsTHn
-        bjF4Fq8M576YuLyGj+kQof4kmPDgKBT5rgjub4ZA1hFGritPvVyTEg48BBjOwVd0
-        Z9KzovBULNGE+tN1YKNvFB3Lpzu4mLp0PjUd8Q04WnCMAOjwiYKU7aF4hn1GcwVV
-        vAIchw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=Gc6FHnmci9DMdKktV5Xl7cyp+gzcAF5J3MrudSjp0
-        0c=; b=cK5Zx94NYH5L5QtVUGUQBmnXqEkXJmNXpXp6N4rKgX6FS9Bq2POZdEFLE
-        wf0BraNJssbHycx6lhLSScVGetMnDung+SaV4ngEt8GY3GndvVoKt07PYYyD5urG
-        26tjoRkUTuOk8nQyHK4zXxlsgi1uue5cA+5LEoiRCYfOMKh4O45hEX9ImkK34g9d
-        UUfY5rVUrFpJRByNZyk8Xe4nBLP8RzbQjyDwoRr8NZljbDnrTz+1v4hsGReARWvl
-        ozK8oy9J0pRTVtR1N2EobD4DTrotVH7gnmbbQWTKsldG3WW7Tw4HUXuV1UW6lubB
-        OIDmv8WXKzM7XsfAe8wfkxkSMlJaw==
-X-ME-Sender: <xms:hA9RXE_feBtCHRfpvKhdLN-r6_ckyA1bPuJYGIXIjl0lFuVRXi9xpA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeefgdehvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
-    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfh
-    gtofgggfesthejredtredtjeenucfhrhhomhepkfgrnhcumfgvnhhtuceorhgrvhgvnhes
-    thhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtkedrudeijedrheeinecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvthenucevlhhushht
-    vghrufhiiigvpedt
-X-ME-Proxy: <xmx:hQ9RXC0TG0UalWkjTOvmrgRZBMFBKPAk34VU0T1aFLm4nSpVnbnK_A>
-    <xmx:hQ9RXPk_-R1tFg79KSturUCixxu74VvkxEmhMXLEjij8WO6zHzXZOg>
-    <xmx:hQ9RXH2QS-BsJwLzg8LLHhty4IxlwLPkgDMh2RkCP_xMPbt73uTZSw>
-    <xmx:hQ9RXMk83I2CP8dhANffeolsIRUZwZ6NJ2S1KxOPoVkowysvOCVuwA>
-Received: from localhost (unknown [118.208.167.56])
-        by mail.messagingengine.com (Postfix) with ESMTPA id DB483E41F3;
-        Tue, 29 Jan 2019 21:44:18 -0500 (EST)
-Message-ID: <804b86df6fd678147da816be038b11c87333b23f.camel@themaw.net>
-Subject: Re: [PATCH 3/3] autofs: add ignore mount option
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     autofs mailing list <autofs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Wed, 30 Jan 2019 10:44:15 +0800
-In-Reply-To: <553f4a0daf09407371193d7d4782a759561a626a.camel@themaw.net>
-References: <154725122396.11260.16053424107144453867.stgit@pluto-themaw-net>
-         <154725123970.11260.6113771566924907275.stgit@pluto-themaw-net>
-         <20190129171622.5b75f794d2b1e4d1055331eb@linux-foundation.org>
-         <553f4a0daf09407371193d7d4782a759561a626a.camel@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 29 Jan 2019 21:48:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35922 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727775AbfA3Cs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 21:48:57 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6B06989AD4;
+        Wed, 30 Jan 2019 02:48:56 +0000 (UTC)
+Received: from redhat.com (ovpn-122-2.rdu2.redhat.com [10.10.122.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0DF4F19C65;
+        Wed, 30 Jan 2019 02:48:53 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 21:48:52 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Message-ID: <20190130024851.GB10462@redhat.com>
+References: <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
+ <20190129191120.GE3176@redhat.com>
+ <20190129193250.GK10108@mellanox.com>
+ <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
+ <20190129205749.GN3176@redhat.com>
+ <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
+ <20190129215028.GQ3176@redhat.com>
+ <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
+ <20190129234752.GR3176@redhat.com>
+ <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 30 Jan 2019 02:48:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-30 at 10:07 +0800, Ian Kent wrote:
-> On Tue, 2019-01-29 at 17:16 -0800, Andrew Morton wrote:
-> > On Sat, 12 Jan 2019 08:00:40 +0800 Ian Kent <raven@themaw.net> wrote:
+On Tue, Jan 29, 2019 at 06:17:43PM -0700, Logan Gunthorpe wrote:
+> 
+> 
+> On 2019-01-29 4:47 p.m., Jerome Glisse wrote:
+> > The whole point is to allow to use device memory for range of virtual
+> > address of a process when it does make sense to use device memory for
+> > that range. So they are multiple cases where it does make sense:
+> > [1] - Only the device is accessing the range and they are no CPU access
+> >       For instance the program is executing/running a big function on
+> >       the GPU and they are not concurrent CPU access, this is very
+> >       common in all the existing GPGPU code. In fact AFAICT It is the
+> >       most common pattern. So here you can use HMM private or public
+> >       memory.
+> > [2] - Both device and CPU access a common range of virtul address
+> >       concurrently. In that case if you are on a platform with cache
+> >       coherent inter-connect like OpenCAPI or CCIX then you can use
+> >       HMM public device memory and have both access the same memory.
+> >       You can not use HMM private memory.
 > > 
-> > > Add an autofs file system mount option that can be used to provide
-> > > a generic indicator to applications that the mount entry should be
-> > > ignored when displaying mount information.
+> > So far on x86 we only have PCIE and thus so far on x86 we only have
+> > private HMM device memory that is not accessible by the CPU in any
+> > way.
+> 
+> I feel like you're just moving the rug out from under us... Before you
+> said ignore HMM and I was asking about the use case that wasn't using
+> HMM and how it works without HMM. In response, you just give me *way*
+> too much information describing HMM. And still, as best as I can see,
+> managing DMA mappings (which is different from the userspace mappings)
+> for GPU P2P should be handled by HMM and the userspace mappings should
+> *just* link VMAs to HMM pages using the standard infrastructure we
+> already have.
+
+For HMM P2P mapping we need to call into the driver to know if driver
+wants to fallback to main memory (running out of BAR addresses) or if
+it can allow a peer device to directly access its memory. We also need
+the call to exporting device driver as only the exporting device driver
+can map the HMM page pfn to some physical BAR address (which would be
+allocated by driver for GPU).
+
+I wanted to make sure the HMM case was understood too, sorry if it
+caused confusion with the non HMM case which i describe below.
+
+
+> >> And what struct pages are actually going to be backing these VMAs if
+> >> it's not using HMM?
 > > 
-> > What is the reason for adding this feature?
+> > When you have some range of virtual address migrated to HMM private
+> > memory then the CPU pte are special swap entry and they behave just
+> > as if the memory was swapped to disk. So CPU access to those will
+> > fault and trigger a migration back to main memory.
 > 
-> In other OSes that provide autofs and that provide a mount list
-> to user space based on the kernel mount list a no-op mount option
-> ("ignore" is the one use on the most common OS) is allowed so that
-> autofs file system users can optionally use it.
-> 
-> The idea is that it be used by user space programs to exclude
-> autofs mounts from consideration when reading the mounts list.
-> 
-> Prior to the change to link /etc/mtab to /proc/self/mounts all
-> I needed to do to achieve this was to use mount(2) and not update
-> the mtab but now that no longer works.
-> 
-> I know the symlinking happened a long time ago and I considered
-> doing this then but, at the time I couldn't remember the commonly
-> used option name and thought persuading the various utility
-> maintainers would be too hard.
-> 
-> But now I have a RHEL request to do this for compatibility for a
-> widely used product so I want to go ahead with it and try and
-> enlist the help of some utility package maintainers.
+> This isn't answering my question at all... I specifically asked what is
+> backing the VMA when we are *not* using HMM.
 
-Al,
+So when you are not using HMM ie existing GPU object without HMM then
+like i said you do not have any valid pte most of the time inside the
+CPU page table ie the GPU driver only populate the pte with valid
+entry when they are CPU page fault and it clear those as soon as the
+corresponding object is use by the GPU. In fact some driver also unmap
+it agressively from the BAR making the memory totaly un-accessible to
+anything but the GPU.
 
-On a different note the above request also raised another
-question about statvfs(3) automount behaviour.
+GPU driver do not like CPU mapping, they are quite aggressive about
+clearing them. Then everything i said about having userspace deciding
+which object can be share, and, with who, do apply here. So for GPU you
+do want to give control to GPU driver and you do not want to require valid
+CPU pte for the vma so that the exporting driver can return valid
+address to the importing peer device only.
 
-In glibc statvfs(3) uses statfs(2) and translates the return
-to a statvfs structure.
+Also exporting device driver might decide to fallback to main memory
+(running out of BAR addresses for instance). So again here we want to
+go through the exporting device driver so that it can take the right
+action.
 
-I wasn't aware but apparently statvfs(3) (and presumably statfs(2))
-doesn't trigger an automount on Solaris whereas we do. I think
-statfs() is probably the only exception to the convention that
-stat family system calls don't trigger an automount.
+So the expected pattern (for GPU driver) is:
+    - no valid pte for the special vma (mmap of device file)
+    - importing device call p2p_map() for the vma if it succeed the
+      first time then we expect it will succeed for the same vma and
+      range next time we call it.
+    - exporting driver can either return physical address to page
+      into its BAR space that point to the correct device memory or
+      fallback to main memory
 
-So far I've said that this is a long standing behaviour in the
-Linux kernel and changing it could lead to unpleasant surprises
-for those that have come to expect this behaviour so such a change
-would not be well received.
+Then at any point in time:
+    - if GPU driver want to move the object around (for whatever
+      reasons) it calls zap_vma_ptes() the fact that there is no
+      valid CPU pte does not matter it will call mmu notifier and thus
+      any importing device driver will invalidate its mapping
+    - importing device driver that lost the mapping due to mmu
+      notification can re-map by re-calling p2p_map() (it should
+      check that the vma is still valid ...) and guideline is for
+      the exporting device driver to succeed and return valid
+      address to the new memory use for the object
 
-But I do need to ask your opinion, so what are your thoughts about
-changing this?
+This allow device driver like GPU to keep control. The expected
+pattern is still the p2p mapping to stay undisrupted for their
+whole lifetime. Invalidation should only be triggered if GPU driver
+do need to move things around.
 
-Ian
+All the above is for the no HMM case ie mmap of a device file so
+for any existing open source GPU device driver that do not support
+HMM.
 
+Cheers,
+Jérôme
