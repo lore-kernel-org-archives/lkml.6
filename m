@@ -2,116 +2,186 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D60C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57735C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28FDD2184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B6F82184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548878543;
+	bh=1WIutgr7n8g9Msl4+K35pDZGk9VAaQjURwahEOABn2Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=zWfkOP/7c0PSO2/cfs0aiWphkSNVLN0JlTH2YVfoqVMZmtv16mtNdYQFkGKyrAUgr
+	 47Oz/RfvCh7dYysYC6hPA8YKyqeZ3JcOyM4Mz6c0TFzIvEDwl7OQxMYXNJtGHmBzJb
+	 HJlxj13dFM0UoRCmcZpDU+lfLN5qnJZHhVxP9mOA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387480AbfA3UAR (ORCPT
+        id S1733244AbfA3UCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 15:00:17 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:41020 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728715AbfA3UAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 15:00:17 -0500
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.205])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gow1l-00005u-Hy; Wed, 30 Jan 2019 13:00:06 -0700
-To:     Jason Gunthorpe <jgg@mellanox.com>,
-        Jerome Glisse <jglisse@redhat.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-References: <20190129205749.GN3176@redhat.com>
- <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
- <20190129215028.GQ3176@redhat.com>
- <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
- <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
- <20190130041841.GB30598@mellanox.com>
- <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
- <20190130185652.GB17080@mellanox.com> <20190130192234.GD5061@redhat.com>
- <20190130193759.GE17080@mellanox.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <db873687-ff80-4758-0b9f-973f27db5335@deltatee.com>
-Date:   Wed, 30 Jan 2019 13:00:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 15:02:21 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37991 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728446AbfA3UCV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 15:02:21 -0500
+Received: by mail-oi1-f196.google.com with SMTP id a77so724692oii.5;
+        Wed, 30 Jan 2019 12:02:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z7U4FwF4rwvNfXRrLtt0q+Bh7E9FjuCDZRhkCbsAnKo=;
+        b=B4i9RIgYFfmvszyibkTZnv2+7kP0jI3lep3G7TF+E5tdaQN5r0AMh72dS5w733xeAd
+         ymdpEifP5JtA/b7UPEN8sxtr0cCiZ7JBldywL7fHjCkvPlNeRgpebxsnov4GCCIIFNEn
+         DpFxaQB5FQQXt6vB/VxfgKKBitccxr57HnoNb+MBCn3UbjfQM0dhNjUe/qH06CKxiMRR
+         fezsBWXL3Il+3oIRfxyixveBc5evw3tAgMOmGghw0FC25GWsozjPk0DFHO/bcgTKrUbH
+         n2hQTPgF9gBoXXMVXzlXLLhbTVI1qG4xSPBe80I62gC03q8ED0B5pNRf2VwvZHY5+AxE
+         MS9w==
+X-Gm-Message-State: AJcUukf5d1zummWQq3nHTsMbM2lCadZEEI8JK43rNto5l4MFbyJ8Jlt8
+        JvgPkFzYeWdO1MN+kf7hzw==
+X-Google-Smtp-Source: ALg8bN6UVC6iZTdLJlj4jcLfLc176T8NLD5kdGdWZIYeHNOXIPBLYnhsLAJr7zyLp9iqK1O/Pr1uUw==
+X-Received: by 2002:aca:c413:: with SMTP id u19mr12736474oif.209.1548878539803;
+        Wed, 30 Jan 2019 12:02:19 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u109sm925002otb.8.2019.01.30.12.02.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 12:02:18 -0800 (PST)
+Date:   Wed, 30 Jan 2019 14:02:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
+        jackp@codeaurora.org, andy.gross@linaro.org, swboyd@chromium.org,
+        shawn.guo@linaro.org, vkoul@kernel.org, bjorn.andersson@linaro.org,
+        khasim.mohammed@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: Add Qualcomm USB Super-Speed PHY
+ bindings
+Message-ID: <20190130200218.GB5908@bogus>
+References: <1548761715-4004-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1548761715-4004-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20190130193759.GE17080@mellanox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jglisse@redhat.com, jgg@mellanox.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548761715-4004-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019-01-30 12:38 p.m., Jason Gunthorpe wrote:
-> On Wed, Jan 30, 2019 at 02:22:34PM -0500, Jerome Glisse wrote:
+On Tue, Jan 29, 2019 at 12:35:14PM +0100, Jorge Ramirez-Ortiz wrote:
+> Binding description for Qualcomm's Synopsys 1.0.0 super-speed PHY
+> controller embedded in QCS404.
 > 
->> For GPU it would not work, GPU might want to use main memory (because
->> it is running out of BAR space) it is a lot easier if the p2p_map
->> callback calls the right dma map function (for page or io) rather than
->> having to define some format that would pass down the information.
+> Based on Sriharsha Allenki's <sallenki@codeaurora.org> original
+> definitions.
 > 
-> This is already sort of built into the sgl, you are supposed to use
-> is_pci_p2pdma_page() and pci_p2pdma_map_sg() and somehow it is supposed
-> to work out - but I think this is also fairly incomplete.
-
-
-> ie the current APIs seem to assume the SGL is homogeneous :(
-
-We never changed SGLs. We still use them to pass p2pdma pages, only we
-need to be a bit careful where we send the entire SGL. I see no reason
-why we can't continue to be careful once their in userspace if there's
-something in GUP to deny them.
-
-It would be nice to have heterogeneous SGLs and it is something we
-should work toward but in practice they aren't really necessary at the
-moment.
-
->>> Worry about optimizing away the struct page overhead later?
->>
->> Struct page do not fit well for GPU as the BAR address can be reprogram
->> to point to any page inside the device memory (think 256M BAR versus
->> 16GB device memory).
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> ---
+>  .../devicetree/bindings/usb/qcom,usb-ssphy.txt     | 73 ++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
 > 
-> The struct page only points to the BAR - it is not related to the
-> actual GPU memory in any way. The struct page is just an alternative
-> way to specify the physical address of the BAR page.
+> diff --git a/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt b/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
+> new file mode 100644
+> index 0000000..8ef6e39
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
+> @@ -0,0 +1,73 @@
+> +Qualcomm Synopsys 1.0.0 SS phy controller
+> +===========================================
+> +
+> +Synopsys 1.0.0 ss phy controller supports SS usb connectivity on Qualcomm
+> +chipsets
+> +
+> +Required properties:
+> +
+> +- compatible:
+> +    Value type: <string>
+> +    Definition: Should contain "qcom,usb-ssphy".
 
-That doesn't even necessarily need to be the case. For HMM, I
-understand, struct pages may not point to any accessible memory and the
-memory that backs it (or not) may change over the life time of it. So
-they don't have to be strictly tied to BARs addresses. p2pdma pages are
-strictly tied to BAR addresses though.
+This is in no way specific enough.
 
-Logan
+> +
+> +- reg:
+> +    Value type: <prop-encoded-array>
+> +    Definition: USB PHY base address and length of the register map.
+> +
+> +- #phy-cells:
+> +    Value type: <u32>
+> +    Definition: Should be 0. See phy/phy-bindings.txt for details.
+> +
+> +- clocks:
+> +    Value type: <prop-encoded-array>
+> +    Definition: See clock-bindings.txt section "consumers". List of
+> +		 three clock specifiers for reference, phy core and
+> +		 pipe clocks.
+> +
+> +- clock-names:
+> +    Value type: <string>
+> +    Definition: Names of the clocks in 1-1 correspondence with the "clocks"
+> +		 property. Must contain "ref", "phy" and "pipe".
+> +
+> +- vdd-supply:
+> +    Value type: <phandle>
+> +    Definition: phandle to the regulator VDD supply node.
+> +
+> +- vdda1p8-supply:
+> +    Value type: <phandle>
+> +    Definition: phandle to the regulator 1.8V supply node.
+> +
+> +
+> +Optional child nodes:
+> +
+> +- vbus-supply:
+> +    Value type: <phandle>
+> +    Definition: phandle to the VBUS supply node.
+
+Does the phy actually get supplied by Vbus? If not, then Vbus supply 
+should be defined in a USB connector node.
+
+> +
+> +- resets:
+> +    Value type: <prop-encoded-array>
+> +    Definition: See reset.txt section "consumers". PHY reset specifiers
+> +		 for phy core and COR resets.
+
+COR or COM?
+
+Looks to me the order is reversed.
+
+> +
+> +- reset-names:
+> +    Value type: <string>
+> +    Definition: Names of the resets in 1-1 correspondence with the "resets"
+> +		 property. Must contain "com" and "phy".
+> +
+> +Example:
+> +
+> +usb3_phy: phy@78000 {
+
+usb3-phy@...
+
+> +	compatible = "qcom,usb-ssphy";
+> +	reg = <0x78000 0x400>;
+> +	#phy-cells = <0>;
+> +	clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
+> +		 <&gcc GCC_USB_HS_PHY_CFG_AHB_CLK>,
+> +		 <&gcc GCC_USB3_PHY_PIPE_CLK>;
+> +	clock-names = "ref", "phy", "pipe";
+> +	resets = <&gcc GCC_USB3_PHY_BCR>,
+> +		 <&gcc GCC_USB3PHY_PHY_BCR>;
+> +	reset-names = "com", "phy";
+> +	vdd-supply = <&vreg_l3_1p05>;
+> +	vdda1p8-supply = <&vreg_l5_1p8>;
+> +	vbus-supply = <&usb3_vbus_reg>;
+> +};
+> -- 
+> 2.7.4
+> 
