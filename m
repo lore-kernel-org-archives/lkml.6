@@ -2,184 +2,107 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A3CC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA7AC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADBD2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:27:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E4122086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:28:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pWExAgf2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732557AbfA3R1N (ORCPT
+        id S1732517AbfA3R2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:27:13 -0500
-Received: from mout.gmx.net ([212.227.15.18]:48737 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727680AbfA3R1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:27:12 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MEnjW-1gw3Hg3Vik-00FwvB; Wed, 30
- Jan 2019 18:26:23 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-doc@vger.kernel.org
-Cc:     Kepplinger Martin <Martin.Kepplinger@ginzinger.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Markus Heiser <markus.heiser@darmarit.de>,
-        Alessia Mantegazza <amantegazza@vaga.pv.it>,
-        Michael Rodin <michael-git@rodin.online>,
-        Minghui Liu <minghui.liu.95@gmail.com>,
-        Grigory Shipunov <mail@oxapentane.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        Coly Li <colyli@suse.de>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Takashi Iwai <tiwai@suse.de>, linux-input@vger.kernel.org,
+        Wed, 30 Jan 2019 12:28:18 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34843 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbfA3R2S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:28:18 -0500
+Received: by mail-pg1-f193.google.com with SMTP id s198so121746pgs.2;
+        Wed, 30 Jan 2019 09:28:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jiK/5wEmnR1NSVX9k7yZPtVMnr7GbX57+YePuWAmpT4=;
+        b=pWExAgf2bsu4mYTWbL1XKcDyAmnJ8+GyvWTIxY9hM2Erb7zRZMxk5ryEC65z7EsZOO
+         OfqkzTxAHDYIzFef8eP4Oyb3vxwJRTinIfGRw468QEUwUc3Soc8SBc1SFZM8H2JqxoBr
+         BJFrvfeLSJHZUW7HeJzIqIERJuFe98i7qp9+S1G1Qf0R7thqf4/HYMDiEtw2COe8ADS7
+         27TiUbakMauNyBiuYS79TTu68gYaSJPDA1NqlEPTirxn5Q1gbFNwrD3NcjAv2slsT8Al
+         ejtfTM0VhAvy4r3pkvR6RlR8ylQQHVdULXITfUbXJD9qMD7we3FtIjAWughYS/ap305l
+         NM6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jiK/5wEmnR1NSVX9k7yZPtVMnr7GbX57+YePuWAmpT4=;
+        b=QdKCWkz/K4a1xnkLjSXLQXbRnJiczxJRPVK0Le3PpowZEIZBPkoRymMvV/wrYibkzN
+         JmZhzlyDihb4hxbh2dkDO4xXhFA/ivoDFe6yB7p/TeQ3V+l1mdvVJoOasdNNavI4wi6U
+         tTsRju2iOx8Nr3NtQE6/jghryQvCRZrTlc/jQlyC/daoi7CuS1vyU9iybgYk2RFP8p2c
+         +k6bFe0xBVVms/7FzYkrPGdIIuBQHVOL4oWGTi1tTH5o6J6B3SdVeC4qUyEovbNUPdQA
+         6izp2R4cS70BWvVMN1Y4GvAuYVsTyDPvq00n6uaTi37rNBFsgaP9UfsD+pLX6OrbVJpG
+         wtAw==
+X-Gm-Message-State: AJcUukfpVDEYSz8QIYGw28Q5XQnX5JA+NyA6NmF4G6uY09j4hYjaa0yh
+        Nus0cjbh3skiehC+PMG34Es=
+X-Google-Smtp-Source: ALg8bN6LCbDKN/XEI5GDmANFnNZg896xX3RR6Qre3qrKojKJq8RNLzP4Eo/RQmux96ewtUAFe0k0vA==
+X-Received: by 2002:a62:b9a:: with SMTP id 26mr31651730pfl.196.1548869297276;
+        Wed, 30 Jan 2019 09:28:17 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id m20sm2940854pgv.93.2019.01.30.09.28.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 09:28:16 -0800 (PST)
+Date:   Wed, 30 Jan 2019 09:28:15 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Kamil Debski <kamil@wypas.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] doc: Change LXR references to elixir.bootlin.com
-Date:   Wed, 30 Jan 2019 18:25:15 +0100
-Message-Id: <20190130172528.7552-1-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
+Subject: Re: [PATCH RFC 1/3] dt-bindings: hwmon: Add tachometer interrupt to
+ pwm-fan
+Message-ID: <20190130172815.GC14781@roeck-us.net>
+References: <1548860827-29796-1-git-send-email-stefan.wahren@i2se.com>
+ <1548860827-29796-2-git-send-email-stefan.wahren@i2se.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Izlj8DYGsbjhIDjiHvZ8LpDgM5Ec8dPM/FUjQeN9WrbKKYUM8+Z
- aPKK2quRfb2VCH1ODe4pLjFoy5A1nxoYrhNhKEqxE7d3ZR1EsPH1Dh9jWa/Q6dYILYT5lbO
- adv/rSW461RIca2K6CZuhip6ztaBXLFvxNj5j1a5CpRBfX29zb+FRBSyr5MqVl+jiqQCoCe
- jFm1/ku8TsP5E9K2kr7yg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tTyR5ZCQ/9k=:EnnhhhPiWEfitx8cp9fq8i
- EJYtmrs49u6BFoep2n07zkxvO4druC38+RJ0P7wV+3zcR0HxS3Tssk7oRrWwUwMYg+Ge5rGBT
- 4qFjqCRo8FUFUK7LWKLPk9mzJgvue3SWqbSjV+qaivPfISd9t4IsKfnAWOTcwzIN1QE8kjTiW
- LzCYIHQGUv98Dn7Yp2LAi6pHfD1hfgmV++zBBqM0pxUMcwknrunJfUwhYM1szrMS6GAo7lKW4
- AHZJD/eR9zk7PJQQQwgp41G8ybJE6x0CKIQlSSet7Mi8u453GQ0TNQEn++xY8kqZsPrtpsQHk
- ERmKVOULqdM/G2DiMiURCWrbiHr8KlLJQ0dH9JAfINDMdREffBF5JbRTXrzIxRisFoXeFvpz7
- rhZ2svUVVaKTD4wBZlBGYp+c2PY531+KNU1aYyc27DZqw9BPgXC5aHlcrl6rsheb8T6PoxzSB
- p61XTBMJkS8RxGf8kDvvnvtt3n/ZX6jWZuw4KYeKpG9Gne7MutOKtU/+tIMzOjYtPVLpZzp4j
- kuFyHUpcIkECltzihw8Snw/drcIrAbYCcqFDFCQKbdY6jRzIQgiMtBno2X+KQLeTBh0mZ4QIi
- CfIQlGPycrKacHrVWSqtetnyD001puDzni8HV5v1FDc7jABT1zlJwwO7bZ/GJPx1Y+6ZCsCl6
- XJmUW4vN3Ns+T5dr4Es2ndRtYc2ZjtATyIPF5DOFMGOWA8cBcJ1GiYrWe6aFFOWvMFBh/PArz
- atFkgmop3bcWIZZ3hcc3wpJlDKhz+U+2e82he8xVzPzWZxrTp/wNE3q8nRivomdrkUQmzMPEc
- 33duuHEbzOZDXWKQmmgWFc1lSTX9QG4oiV421SlLF9/QbwzjGXFpxSl36f5NJt36wt69i31ez
- Pcort8v2UlhkIj6WPu3ygM4mZeR8EPMgehEwPebRztC2N0JNbMyfLKRguJNkOE8mI00o37gs9
- iPNlstYhOzQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548860827-29796-2-git-send-email-stefan.wahren@i2se.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recently, Free Electrons was renamed to Bootlin[1]. Less recently, the
-Linux Cross Reference (LXR) at lxr.free-electrons.com was replaced by
-Elixir[2], and lxr.free-electrons.com redirected first to
-elixir.free-electrons.com and now to elixir.bootlin.com.
+On Wed, Jan 30, 2019 at 04:07:05PM +0100, Stefan Wahren wrote:
+> This adds the tachometer interrupt to the pwm-fan binding, which is
+> necessary for RPM support.
+> 
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> ---
+>  Documentation/devicetree/bindings/hwmon/pwm-fan.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
+> index 49ca5d8..7f69b0b 100644
+> --- a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
+> +++ b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
+> @@ -8,6 +8,9 @@ Required properties:
+>  
+>  Optional properties:
+>  - fan-supply    : phandle to the regulator that provides power to the fan
+> +- interrupts    : contains a single interrupt specifier which describes the
+> +                  tachometer pin output of a 2 pulse-per-revolution fan.
+> +                  See interrupt-controller/interrupts.txt for the format.
 
-[1]: https://bootlin.com/blog/free-electrons-becomes-bootlin/
-[2]: https://github.com/free-electrons/elixir
+So a hypothetical {1,4} pulse-per-revolution fan would explicitly not be
+supported ? Why ?
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
----
-
-v2:
-- Fix ident search URL, as suggested by Martin Kepplinger
-- Add trailing slash, which I accidentally dropped in v1 in
-  Documentation/translations/it_IT/process/howto.rst
-
-v1: https://lore.kernel.org/lkml/20190129142923.5743-1-j.neuschaefer@gmx.net/
----
- Documentation/input/devices/xpad.rst               | 2 +-
- Documentation/process/howto.rst                    | 2 +-
- Documentation/process/kernel-docs.rst              | 2 +-
- Documentation/translations/it_IT/process/howto.rst | 2 +-
- Documentation/translations/ja_JP/howto.rst         | 2 +-
- Documentation/translations/ko_KR/howto.rst         | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/input/devices/xpad.rst b/Documentation/input/devices/xpad.rst
-index b8bd65962dd8..173c2acda9fd 100644
---- a/Documentation/input/devices/xpad.rst
-+++ b/Documentation/input/devices/xpad.rst
-@@ -218,7 +218,7 @@ References
- .. [1] http://euc.jp/periphs/xbox-controller.ja.html (ITO Takayuki)
- .. [2] http://xpad.xbox-scene.com/
- .. [3] http://www.markosweb.com/www/xboxhackz.com/
--.. [4] http://lxr.free-electrons.com/ident?i=xpad_device
-+.. [4] https://elixir.bootlin.com/linux/latest/ident/xpad_device
- 
- 
- Historic Edits
-diff --git a/Documentation/process/howto.rst b/Documentation/process/howto.rst
-index 00c8ddd2ed2c..64deab5cfb3b 100644
---- a/Documentation/process/howto.rst
-+++ b/Documentation/process/howto.rst
-@@ -225,7 +225,7 @@ Cross-Reference project, which is able to present source code in a
- self-referential, indexed webpage format. An excellent up-to-date
- repository of the kernel code may be found at:
- 
--	http://lxr.free-electrons.com/
-+	https://elixir.bootlin.com/
- 
- 
- The development process
-diff --git a/Documentation/process/kernel-docs.rst b/Documentation/process/kernel-docs.rst
-index 3fb28de556e4..ab12dddc773e 100644
---- a/Documentation/process/kernel-docs.rst
-+++ b/Documentation/process/kernel-docs.rst
-@@ -565,7 +565,7 @@ Miscellaneous
- 
-     * Name: **Cross-Referencing Linux**
- 
--      :URL: http://lxr.free-electrons.com/
-+      :URL: https://elixir.bootlin.com/
-       :Keywords: Browsing source code.
-       :Description: Another web-based Linux kernel source code browser.
-         Lots of cross references to variables and functions. You can see
-diff --git a/Documentation/translations/it_IT/process/howto.rst b/Documentation/translations/it_IT/process/howto.rst
-index 909e6a55bc43..f9a44b1af89d 100644
---- a/Documentation/translations/it_IT/process/howto.rst
-+++ b/Documentation/translations/it_IT/process/howto.rst
-@@ -234,7 +234,7 @@ il progetto Linux Cross-Reference, che è in grado di presentare codice
- sorgente in un formato autoreferenziale ed indicizzato. Un eccellente ed
- aggiornata fonte di consultazione del codice del kernel la potete trovare qui:
- 
--	http://lxr.free-electrons.com/
-+	https://elixir.bootlin.com/
- 
- 
- Il processo di sviluppo
-diff --git a/Documentation/translations/ja_JP/howto.rst b/Documentation/translations/ja_JP/howto.rst
-index f3116381c26b..2ca9389d5915 100644
---- a/Documentation/translations/ja_JP/howto.rst
-+++ b/Documentation/translations/ja_JP/howto.rst
-@@ -245,7 +245,7 @@ Linux カーネルソースツリーの中に含まれる、きれいにし、
- できます。この最新の素晴しいカーネルコードのリポジトリは以下で見つかり
- ます -
- 
--	http://lxr.free-electrons.com/
-+	https://elixir.bootlin.com/
- 
- 開発プロセス
- ------------
-diff --git a/Documentation/translations/ko_KR/howto.rst b/Documentation/translations/ko_KR/howto.rst
-index a8197e072599..9fc869087e9c 100644
---- a/Documentation/translations/ko_KR/howto.rst
-+++ b/Documentation/translations/ko_KR/howto.rst
-@@ -235,7 +235,7 @@ ReST 마크업을 사용하는 문서들은 Documentation/output 에 생성된
- 소스코드를 인덱스된 웹 페이지들의 형태로 보여준다. 최신의 멋진 커널
- 코드 저장소는 다음을 통하여 참조할 수 있다.
- 
--      http://lxr.free-electrons.com/
-+      https://elixir.bootlin.com/
- 
- 
- 개발 프로세스
--- 
-2.20.1
-
+Guenter
