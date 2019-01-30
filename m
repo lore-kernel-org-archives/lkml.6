@@ -2,207 +2,154 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C48A2C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0AAC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8955F20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:30:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEABB20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:30:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gnZcDxhu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OukjHMr7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfA3Oaa (ORCPT
+        id S1730944AbfA3Oan (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 09:30:30 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34300 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725803AbfA3Oaa (ORCPT
+        Wed, 30 Jan 2019 09:30:43 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:40333 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726915AbfA3Oam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 09:30:30 -0500
-Received: by mail-io1-f68.google.com with SMTP id b16so19552201ior.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 06:30:29 -0800 (PST)
+        Wed, 30 Jan 2019 09:30:42 -0500
+Received: by mail-it1-f195.google.com with SMTP id h193so10719905ita.5;
+        Wed, 30 Jan 2019 06:30:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wFNhHmZP8t/NvS9JyJpa4C+y4vIpeaMDeoiX2ferCxI=;
-        b=gnZcDxhuPfkNmgHd73u17sEZH2y1ZnYe4/FFlvi+38ET4uFI8i/Rfx0KcVmMhN2wMn
-         L4t9YEi7knEhgbxtq0XJFz67GnuPThCOhoQ4zfao4g6Tjyzx2aPV3pcKcV6B9Grnt5wx
-         MjbExnaauYyJDk3N9b5P6HVuxyaV2/ApbTvIQ=
+        bh=3heOv7cOx5PJDXp2Uridq5nLN8cpkYDuAE2O0EFdrdE=;
+        b=OukjHMr71vp/RiG03eXX0VHzQot5L2OqJmMtCC9vCdB1byLzWEIA8DCE1r3VR4s2DH
+         vcozeYfGWMaJT1N7ytrTiYx+YoP+QEBSYll3UrfKPFy8v2ECD1XpmSSoIco/X8MlhfRO
+         nyQ8rzT4isSqh4KoW7lFrCIR0Jzzgaqs2mvCDxevGEVFAXGDv92MZk3IQoYf3uk4JwBm
+         ispLtSJkKmoIqOUMFn5MlHIVv0ySt/Qc3ZNvDm6E88Qbc6vBM+rAtYt1m7R2iaR2LjhN
+         42yFeAC9xKx7YK18UpuCcws5lfN2Bvsntn0xnF3z3gS4EfDXr/BMjH/UgWJnz4wKpac4
+         MrLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wFNhHmZP8t/NvS9JyJpa4C+y4vIpeaMDeoiX2ferCxI=;
-        b=Q7ZEkUrCQYdvikN1MSU1jZFZf3wLbFteZMMw1Xt6u7S4+daAAUdux1rGsuZhM8UQ9x
-         inV4NijvOQZhoc6B8P5WNdkClNdiExfKrPVM5sbXFwQMe+wGvNa7kgLrtJaQ/7ck2sg8
-         T7f6/LaGaQNZzZ1/ywIETJIK3I6gwHBU7zNuQ1xJVFReUOrOnrpqcAOTVKXUZTEC+Lbp
-         83gwwGp3Jg4l64vd/++22FE1cs/zh9jfrADRt+7HwYXDQv5tfkN8zZxDOIEVuk84QYMX
-         kSxTTu0LpT7Jm6aNZrPaH3xox2quB2x+Ee2IRfisTi07KVDn+MI79ovGCH+y/35XDVBy
-         wmoQ==
-X-Gm-Message-State: AJcUukeOcsSWUSETuPDd3cTMCmoKmwcb5GS4OnyETmtXeRoVJyeX1BmE
-        p9FhiWCWIAZewvTTAmDfr1/FacyZYWKbJzQR2H8Rvg==
-X-Google-Smtp-Source: ALg8bN76Flam7FFn6ZDjmYK3+1ioY1sKclO7dUr58pNVtqrKVj2L8VvuDeEBaxP+ym3JspQXrmfwZXthF4wa6Lou/88=
-X-Received: by 2002:a6b:6b02:: with SMTP id g2mr17177026ioc.18.1548858629211;
- Wed, 30 Jan 2019 06:30:29 -0800 (PST)
+        bh=3heOv7cOx5PJDXp2Uridq5nLN8cpkYDuAE2O0EFdrdE=;
+        b=nMZrwFeiPR0L5csVCl33d0904iGRV+0/jT/6Ppm4KDymkna0VOjUWtj/jSW2DPdWEN
+         gD84s2N/oRuffrOg1AAfUP1HpFnDHHJZ58b6zecTB4IKTHDpOK0kHC2ROY9XfqxkbPcJ
+         8O1pNve3LH0AWAL4hrRi9rQzlv92pLWPSgXhuF+kdw4B0I0vqUWuSGIGjiyb3k6SM5+h
+         wh14fpSyhibD7DEo6TOkb+bwipyRyPP+mnd5YdpKI5t7hfQRxAupBcPKsDVsjs/PuLIj
+         3dQzBEarFgTq4qNZGIBlMOsDwPoWesdhx4M1vhGv4lVcq9Hu+7PY42XbqTzn2Mun0GwO
+         8gyA==
+X-Gm-Message-State: AJcUukcQ+CWSjW0kH3qPNq1hvJ+WljKlYI76N6uA7ePzg+A0FYCqF2c+
+        +C00mJ3Ple+/Xx2sYftz1voV+LO1aHrO/LJBW7U=
+X-Google-Smtp-Source: AHgI3IZRaWcYL7fhyct26dXz5op/bVSqET343pPGfEFL48mHkTm1+6bGwGCpIC0afSxsd35uxqBQxR9BZN6Q7VVkbKk=
+X-Received: by 2002:a24:648f:: with SMTP id t137mr14574858itc.176.1548858641182;
+ Wed, 30 Jan 2019 06:30:41 -0800 (PST)
 MIME-Version: 1.0
-References: <1548782332-18591-1-git-send-email-vincent.guittot@linaro.org>
- <1548825767-10799-1-git-send-email-vincent.guittot@linaro.org> <20190130140104.GB2296@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190130140104.GB2296@hirez.programming.kicks-ass.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 30 Jan 2019 15:30:18 +0100
-Message-ID: <CAKfTPtAAoXiFhL6SE1WvM7U5ZJodcPDuT_meL6uPbV9LYDAZbw@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/fair: Fix insertion in rq->leaf_cfs_rq_list
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Sargun Dhillon <sargun@sargun.me>
+References: <20190110160114.GA5641@hp-pavilion-15-notebook-pc-brajeswar> <20190110141930-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190110141930-mutt-send-email-mst@kernel.org>
+From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Date:   Wed, 30 Jan 2019 20:00:27 +0530
+Message-ID: <CAFqtX7=EvqX+pyj3izFotWbhPW1ObNcma_d9ir_83_wC-oiK3A@mail.gmail.com>
+Subject: Re: [PATCH] include/linux: Remove duplicate header
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, Ariel.Elior@cavium.com, davem@davemloft.net,
+        jasowang@redhat.com, john fastabend <john.fastabend@gmail.com>,
+        Andrea Parri <parri.andrea@gmail.com>, dhowells@redhat.com,
+        ebiederm@xmission.com, james.morris@microsoft.com,
+        Paul Moore <paul@paul-moore.com>, zohar@linux.vnet.ibm.com,
+        mjg59@google.com, viro@zeniv.linux.org.uk,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019 at 15:01, Peter Zijlstra <peterz@infradead.org> wrote:
+On Fri, Jan 11, 2019 at 12:50 AM Michael S. Tsirkin <mst@redhat.com> wrote:
 >
-> On Wed, Jan 30, 2019 at 06:22:47AM +0100, Vincent Guittot wrote:
-> > Sargun reported a crash:
-> >   "I picked up c40f7d74c741a907cfaeb73a7697081881c497d0 sched/fair: Fix
-> >    infinite loop in update_blocked_averages() by reverting a9e7f6544b9c
-> >    and put it on top of 4.19.13. In addition to this, I uninlined
-> >    list_add_leaf_cfs_rq for debugging.
+> On Thu, Jan 10, 2019 at 09:31:14PM +0530, Brajeswar Ghosh wrote:
+> > Remove duplicate headers which are included more than once
 > >
-> >    This revealed a new bug that we didn't get to because we kept getting
-> >    crashes from the previous issue. When we are running with cgroups that
-> >    are rapidly changing, with CFS bandwidth control, and in addition
-> >    using the cpusets cgroup, we see this crash. Specifically, it seems to
-> >    occur with cgroups that are throttled and we change the allowed
-> >    cpuset."
+> > Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+> > ---
+> >  include/linux/perf_event.h | 1 -
+> >  include/linux/ptr_ring.h   | 1 -
+> >  include/linux/qed/qed_if.h | 1 -
+> >  include/linux/security.h   | 1 -
+> >  4 files changed, 4 deletions(-)
 > >
-> > The algorithm used to order cfs_rq in rq->leaf_cfs_rq_list assumes that
-> > it will walk down to root the 1st time a cfs_rq is used and we will finish
-> > to add either a cfs_rq without parent or a cfs_rq with a parent that is
-> > already on the list. But this is not always true in presence of throttling.
-> > Because a cfs_rq can be throttled even if it has never been used but other CPUs
-> > of the cgroup have already used all the bandwdith, we are not sure to go down to
-> > the root and add all cfs_rq in the list.
+> > diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> > index 53c500f0ca79..8d7a2b65514b 100644
+> > --- a/include/linux/perf_event.h
+> > +++ b/include/linux/perf_event.h
+> > @@ -53,7 +53,6 @@ struct perf_guest_info_callbacks {
+> >  #include <linux/atomic.h>
+> >  #include <linux/sysfs.h>
+> >  #include <linux/perf_regs.h>
+> > -#include <linux/workqueue.h>
+> >  #include <linux/cgroup.h>
+> >  #include <asm/local.h>
 > >
-> > Ensure that all cfs_rq will be added in the list even if they are throttled.
-> >
-> > Reported-by: Sargun Dhillon <sargun@sargun.me>
-> > Fixes: 9c2791f936ef ("Fix hierarchical order in rq->leaf_cfs_rq_list")
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
+> > index 6894976b54e3..627b7aa067e0 100644
+> > --- a/include/linux/ptr_ring.h
+> > +++ b/include/linux/ptr_ring.h
+> > @@ -26,7 +26,6 @@
+> >  #include <linux/cache.h>
+> >  #include <linux/types.h>
+> >  #include <linux/compiler.h>
+> > -#include <linux/cache.h>
+> >  #include <linux/slab.h>
+> >  #include <asm/errno.h>
+> >  #endif
 >
-> Given my previous patch; how about something like so instead?
+>
+> Acked-by: Michael S. Tsirkin <mst@redhat.com>
+>
+>
+> Pls merge through the trivial tree or similar.
 
-I still have to run some tests but this looks good to me
+If no further comment, can we get this patch in queue for 5.1 ?
 
 >
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -282,13 +282,15 @@ static inline struct cfs_rq *group_cfs_r
->         return grp->my_q;
->  }
 >
-> -static inline void list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
-> +static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
->  {
->         struct rq *rq = rq_of(cfs_rq);
->         int cpu = cpu_of(rq);
->
->         if (cfs_rq->on_list)
-> -               return;
-> +               return rq->tmp_alone_branch == &rq->leaf_cfs_rq_list;
-> +
-> +       cfs_rq->on_list = 1;
->
->         /*
->          * Ensure we either appear before our parent (if already
-> @@ -315,7 +317,10 @@ static inline void list_add_leaf_cfs_rq(
->                  * list.
->                  */
->                 rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
-> -       } else if (!cfs_rq->tg->parent) {
-> +               return true;
-> +       }
-> +
-> +       if (!cfs_rq->tg->parent) {
->                 /*
->                  * cfs rq without parent should be put
->                  * at the tail of the list.
-> @@ -327,23 +332,22 @@ static inline void list_add_leaf_cfs_rq(
->                  * tmp_alone_branch to the beginning of the list.
->                  */
->                 rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
-> -       } else {
-> -               /*
-> -                * The parent has not already been added so we want to
-> -                * make sure that it will be put after us.
-> -                * tmp_alone_branch points to the begin of the branch
-> -                * where we will add parent.
-> -                */
-> -               list_add_rcu(&cfs_rq->leaf_cfs_rq_list,
-> -                       rq->tmp_alone_branch);
-> -               /*
-> -                * update tmp_alone_branch to points to the new begin
-> -                * of the branch
-> -                */
-> -               rq->tmp_alone_branch = &cfs_rq->leaf_cfs_rq_list;
-> +               return true;
->         }
->
-> -       cfs_rq->on_list = 1;
-> +       /*
-> +        * The parent has not already been added so we want to
-> +        * make sure that it will be put after us.
-> +        * tmp_alone_branch points to the begin of the branch
-> +        * where we will add parent.
-> +        */
-> +       list_add_rcu(&cfs_rq->leaf_cfs_rq_list, rq->tmp_alone_branch);
-> +       /*
-> +        * update tmp_alone_branch to points to the new begin
-> +        * of the branch
-> +        */
-> +       rq->tmp_alone_branch = &cfs_rq->leaf_cfs_rq_list;
-> +       return false;
->  }
->
->  static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
-> @@ -4999,6 +5003,12 @@ static void __maybe_unused unthrottle_of
->  }
->
->  #else /* CONFIG_CFS_BANDWIDTH */
-> +
-> +static inline bool cfs_bandwidth_used(void)
-> +{
-> +       return false;
-> +}
-> +
->  static inline u64 cfs_rq_clock_task(struct cfs_rq *cfs_rq)
->  {
->         return rq_clock_task(rq_of(cfs_rq));
-> @@ -5190,6 +5200,21 @@ enqueue_task_fair(struct rq *rq, struct
->
->         }
->
-> +       if (cfs_bandwidth_used()) {
-> +               /*
-> +                * When bandwidth control is enabled; the cfs_rq_throttled()
-> +                * breaks in the above iteration can result in incomplete
-> +                * leaf list maintenance, resulting in triggering the assertion
-> +                * below.
-> +                */
-> +               for_each_sched_entity(se) {
-> +                       cfs_rq = cfs_rq_of(se);
-> +
-> +                       if (list_add_leaf_cfs_rq(cfs_rq))
-> +                               break;
-> +               }
-> +       }
-> +
->         assert_list_leaf_cfs_rq(rq);
->
->         hrtick_update(rq);
+> > diff --git a/include/linux/qed/qed_if.h b/include/linux/qed/qed_if.h
+> > index a47321a0d572..9ebdb60f605a 100644
+> > --- a/include/linux/qed/qed_if.h
+> > +++ b/include/linux/qed/qed_if.h
+> > @@ -38,7 +38,6 @@
+> >  #include <linux/netdevice.h>
+> >  #include <linux/pci.h>
+> >  #include <linux/skbuff.h>
+> > -#include <linux/types.h>
+> >  #include <asm/byteorder.h>
+> >  #include <linux/io.h>
+> >  #include <linux/compiler.h>
+> > diff --git a/include/linux/security.h b/include/linux/security.h
+> > index ac0ef467d25e..2915ea6a5b77 100644
+> > --- a/include/linux/security.h
+> > +++ b/include/linux/security.h
+> > @@ -30,7 +30,6 @@
+> >  #include <linux/err.h>
+> >  #include <linux/string.h>
+> >  #include <linux/mm.h>
+> > -#include <linux/fs.h>
+> >
+> >  struct linux_binprm;
+> >  struct cred;
+> > --
+> > 2.17.1
