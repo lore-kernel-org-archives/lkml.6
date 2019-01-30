@@ -2,112 +2,230 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14061C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E8BC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA1AB20881
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:01:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D851720881
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732013AbfA3VBv (ORCPT
+        id S1732187AbfA3VCE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 16:01:51 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:41678 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbfA3VBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 16:01:50 -0500
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.205])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gowzL-0000x8-U9; Wed, 30 Jan 2019 14:01:40 -0700
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-References: <20190129205749.GN3176@redhat.com>
- <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
- <20190129215028.GQ3176@redhat.com>
- <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
- <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
- <20190130041841.GB30598@mellanox.com> <20190130080006.GB29665@lst.de>
- <20190130190651.GC17080@mellanox.com>
- <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
- <20190130195900.GG17080@mellanox.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <35bad6d5-c06b-f2a3-08e6-2ed0197c8691@deltatee.com>
-Date:   Wed, 30 Jan 2019 14:01:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 16:02:04 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:54591 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731269AbfA3VCE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 16:02:04 -0500
+Received: by mail-io1-f69.google.com with SMTP id f24so650692ioh.21
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 13:02:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=M+EbFrqTgtPSf45Od/tFH/bMILrrV5IImTSB+v4UElo=;
+        b=CgJ8FFRlnZnZVqrMeO6FJG04KkA4dZuxWSEQ0nkDMNGULjabmyHawOD5/dYTHNzADr
+         qry+8P50WmrXR1keW82z2EOfWuNYW7yW5XWou8V7XexFVoc6ExrM01CQtSRV91E+yASD
+         DKG7VZefb4fRd39FRpU5BquS/mOE1UuMkBDtrJr99W2vhYl3uoc9rMXcnrxHwhs8s+1N
+         zeJgBX6mahe/Wd5QtzwjSzZUB8XSBmYl3ElEz2L0yYhSciT8Yq3whmbzpP7RUYJgMdEr
+         e+gucvAHstwN4c2bOk+8UavHFAismswaj+zgB3sk94IERSWUnVFUB4TfYlPZI5yfraVN
+         1qjw==
+X-Gm-Message-State: AHQUAubpWFed7Jly4RPjDt/YYJp4VsaLDucy9NVs7JMEJyu/LpfhJmaZ
+        rbn4wL20jzXz5FhullXmU8PthbMMmvATU8PdsHDry8A7G9JF
+X-Google-Smtp-Source: AHgI3Ib2UcAU+ukLqzncQtb1inBB6r3N0lOHeayFCrIwjLXH11hCctYpxKMGUMqLw1RaZ91C535rr+Oid0hR7oUl+BJJlL5W3+C0
 MIME-Version: 1.0
-In-Reply-To: <20190130195900.GG17080@mellanox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jglisse@redhat.com, hch@lst.de, jgg@mellanox.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-Received: by 2002:a24:78c:: with SMTP id f134mr7329733itf.24.1548882123344;
+ Wed, 30 Jan 2019 13:02:03 -0800 (PST)
+Date:   Wed, 30 Jan 2019 13:02:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c2e17f0580b3387c@google.com>
+Subject: KASAN: use-after-free Read in __wake_up_common_lock
+From:   syzbot <syzbot+fb065bc06d3d4054be6f@syzkaller.appspotmail.com>
+To:     isdn@linux-pingi.de, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    62967898789d Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10f0bf08c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4fceea9e2d99ac20
+dashboard link: https://syzkaller.appspot.com/bug?extid=fb065bc06d3d4054be6f
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fb065bc06d3d4054be6f@syzkaller.appspotmail.com
+
+QAT: Invalid ioctl
+==================================================================
+BUG: KASAN: use-after-free in debug_spin_lock_before  
+kernel/locking/spinlock_debug.c:83 [inline]
+BUG: KASAN: use-after-free in do_raw_spin_lock+0x303/0x360  
+kernel/locking/spinlock_debug.c:112
+Read of size 4 at addr ffff88808738e92c by task syz-executor1/8644
+
+CPU: 1 PID: 8644 Comm: syz-executor1 Not tainted 5.0.0-rc4+ #50
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:134
+  debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
+  do_raw_spin_lock+0x303/0x360 kernel/locking/spinlock_debug.c:112
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:117 [inline]
+  _raw_spin_lock_irqsave+0x9d/0xcd kernel/locking/spinlock.c:152
+  __wake_up_common_lock+0x19b/0x390 kernel/sched/wait.c:120
+  __wake_up+0xe/0x10 kernel/sched/wait.c:145
+  dev_expire_timer+0x14b/0x570 drivers/isdn/mISDN/timerdev.c:174
+  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
+  expire_timers kernel/time/timer.c:1362 [inline]
+  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
+IPVS: ftp: loaded support on port[0] = 21
+  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x180/0x1d0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:766  
+[inline]
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160  
+[inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0x95/0xe0  
+kernel/locking/spinlock.c:184
+Code: 48 c7 c0 30 82 92 89 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 80 3c  
+10 00 75 39 48 83 3d 12 d0 9d 01 00 74 24 48 89 df 57 9d <0f> 1f 44 00 00  
+bf 01 00 00 00 e8 dc 75 63 f9 65 8b 05 95 3b 0d 78
+RSP: 0018:ffff888050a7f360 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+RAX: 1ffffffff1325046 RBX: 0000000000000282 RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000001 RDI: 0000000000000282
+RBP: ffff888050a7f370 R08: ffff888088b9e000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8b72b128
+R13: ffff888088b9e000 R14: 00000000000d7480 R15: ffffffff8b72b128
+  __debug_object_init+0x1c0/0x12d0 lib/debugobjects.c:418
+  debug_object_init+0x16/0x20 lib/debugobjects.c:431
+  __init_work+0x50/0x60 kernel/workqueue.c:504
+  call_usermodehelper_setup+0x133/0x410 kernel/umh.c:389
+  call_modprobe kernel/kmod.c:94 [inline]
+  __request_module+0x4f5/0xeea kernel/kmod.c:171
+  crypto_larval_lookup crypto/api.c:237 [inline]
+  crypto_alg_mod_lookup+0x54e/0x6d0 crypto/api.c:280
+QAT: Invalid ioctl
+  crypto_find_alg crypto/api.c:504 [inline]
+  crypto_alloc_tfm+0xd9/0x2f0 crypto/api.c:537
+  crypto_alloc_skcipher+0x2d/0x40 crypto/skcipher.c:945
+  cryptd_alloc_skcipher+0x121/0x270 crypto/cryptd.c:1226
+IPVS: ftp: loaded support on port[0] = 21
+  simd_skcipher_init+0x6c/0x1c0 crypto/simd.c:119
+  crypto_skcipher_init_tfm+0x299/0x8c0 crypto/skcipher.c:862
+  crypto_create_tfm+0xec/0x310 crypto/api.c:471
+  crypto_alloc_tfm+0x104/0x2f0 crypto/api.c:543
+  crypto_alloc_skcipher+0x2d/0x40 crypto/skcipher.c:945
+QAT: Invalid ioctl
+  skcipher_bind+0x26/0x30 crypto/algif_skcipher.c:310
+  alg_bind+0x25d/0x570 crypto/af_alg.c:183
+  __sys_bind+0x30b/0x420 net/socket.c:1483
+  __do_sys_bind net/socket.c:1494 [inline]
+  __se_sys_bind net/socket.c:1492 [inline]
+  __x64_sys_bind+0x73/0xb0 net/socket.c:1492
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x458089
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f7508d5ac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000458089
+RDX: 0000000000000058 RSI: 0000000020000340 RDI: 000000000000000a
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7508d5b6d4
+R13: 00000000004be0ca R14: 00000000004ce420 R15: 00000000ffffffff
+
+Allocated by task 8647:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_kmalloc mm/kasan/common.c:496 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
+  kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3609
+  kmalloc include/linux/slab.h:545 [inline]
+  mISDN_open+0x104/0x3f0 drivers/isdn/mISDN/timerdev.c:59
+  misc_open+0x398/0x4c0 drivers/char/misc.c:141
+  chrdev_open+0x270/0x7c0 fs/char_dev.c:417
+  do_dentry_open+0x48a/0x1210 fs/open.c:771
+  vfs_open+0xa0/0xd0 fs/open.c:880
+  do_last fs/namei.c:3418 [inline]
+  path_openat+0x144f/0x5650 fs/namei.c:3534
+  do_filp_open+0x26f/0x370 fs/namei.c:3564
+  do_sys_open+0x59a/0x7c0 fs/open.c:1063
+  __do_sys_openat fs/open.c:1090 [inline]
+  __se_sys_openat fs/open.c:1084 [inline]
+  __x64_sys_openat+0x9d/0x100 fs/open.c:1084
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 8649:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+  __cache_free mm/slab.c:3487 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3806
+  mISDN_close+0x39b/0x530 drivers/isdn/mISDN/timerdev.c:97
+  __fput+0x3c5/0xb10 fs/file_table.c:278
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x32a/0x3b0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff88808738e900
+  which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 44 bytes inside of
+  192-byte region [ffff88808738e900, ffff88808738e9c0)
+The buggy address belongs to the page:
+page:ffffea00021ce380 count:1 mapcount:0 mapping:ffff88812c3f0040 index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea0002927088 ffffea000298ecc8 ffff88812c3f0040
+raw: 0000000000000000 ffff88808738e000 0000000100000010 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff88808738e800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff88808738e880: 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff88808738e900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                   ^
+  ffff88808738e980: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+  ffff88808738ea00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
 
 
-On 2019-01-30 12:59 p.m., Jason Gunthorpe wrote:
-> On Wed, Jan 30, 2019 at 12:45:46PM -0700, Logan Gunthorpe wrote:
->>
->>
->> On 2019-01-30 12:06 p.m., Jason Gunthorpe wrote:
->>>> Way less problems than not having struct page for doing anything
->>>> non-trivial.  If you map the BAR to userspace with remap_pfn_range
->>>> and friends the mapping is indeed very simple.  But any operation
->>>> that expects a page structure, which is at least everything using
->>>> get_user_pages won't work.
->>>
->>> GUP doesn't work anyhow today, and won't work with BAR struct pages in
->>> the forseeable future (Logan has sent attempts on this before).
->>
->> I don't recall ever attempting that... But patching GUP for special
->> pages or VMAS; or working around by not calling it in some cases seems
->> like the thing that's going to need to be done one way or another.
-> 
-> Remember, the long discussion we had about how to get the IOMEM
-> annotation into SGL? That is a necessary pre-condition to doing
-> anything with GUP in DMA using drivers as GUP -> SGL -> DMA map is
-> pretty much the standard flow.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Yes, but that was unrelated to GUP even if that might have been the
-eventual direction.
-
-And I feel the GUP->SGL->DMA flow should still be what we are aiming
-for. Even if we need a special GUP for special pages, and a special DMA
-map; and the SGL still has to be homogenous....
-
-> So, I see Jerome solving the GUP problem by replacing GUP entirely
-> using an API that is more suited to what these sorts of drivers
-> actually need.
-
-Yes, this is what I'm expecting and what I want. Not bypassing the whole
-thing by doing special things with VMAs.
-
-Logan
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
