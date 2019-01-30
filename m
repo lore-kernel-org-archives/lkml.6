@@ -2,117 +2,103 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A83C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 22:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BFCC282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 22:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60B73218AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 22:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548888936;
-	bh=oMrJKF17pErY8vdizP0pGkB+pQKVNwzV5MKv/m9vv2U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=1gi1svlO7Ze/5lpKZWXvhGVxXXX9E/T+q98uJGAYc/IGt97Gjs3Gk/gpwqgI2PYQT
-	 Mv79QSIqwjl2waHC9edQOcUglA1kvN9A6/yAs7rZ6irvDGzTM3t8pO0brnk6AOzR6q
-	 Hvd7If1eR0FhhcdOy5r/6G96aQAuk2rmCVWDtSDo=
+	by mail.kernel.org (Postfix) with ESMTP id 1B286218D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 22:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732075AbfA3Wze (ORCPT
+        id S1732057AbfA3Wz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 17:55:34 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46589 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728573AbfA3Wze (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 17:55:34 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w25so1108701otm.13;
-        Wed, 30 Jan 2019 14:55:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YuA330KElE94ag75CUZF0JfLlQgGpCicSadKqqJDO2M=;
-        b=TF3ZPtgmjYDUfIWCEAvj6lkOSKq9FTzRdP6LVjXzV4UbfN7MsJWW3x2YVVY1r5hEmH
-         c5Q6TnymvxyYumGuZ907+vAMTOAFB0XscJtpopGaW+/PXSmizj4GiWQzPK1p99ECVnvN
-         pE+yAzhBEJ2nM9m4zyn6izTRbMtU75JpEPEBVNgkX+/622DgoxUi8uuwxaJhyNoNe74t
-         y2IjopX8/YRk/zwe9IyYqMsbmJsaQQmRuM6Wwq/Qn0Qmo1M7+ZMm0OpWY8kt3tBo43dc
-         sPTqdvBeVAOAwjZbUr8fjJIuJlpFy1niB6ImNUu24Cq7BKfMSupcluy9pKVzxZ49KgGc
-         MbgA==
-X-Gm-Message-State: AJcUuke7mDe7qxt3X4gWWMCbcE/eVVooiwr6PTd9+qmwN2EiXvHZ8B1b
-        QOGN8R+kPLIT3RMoXF5qQYrcWBUqI3TlrUaUv1ufxA==
-X-Google-Smtp-Source: ALg8bN5WmlZghK92UzFWWO/bpgaQE+0vzBzrN5Lq8REMLjdrp+ANVFp49w+PVDNz/myAVI16mzVYyEsNcw/EoGNppFM=
-X-Received: by 2002:a9d:588c:: with SMTP id x12mr24659825otg.139.1548885192162;
- Wed, 30 Jan 2019 13:53:12 -0800 (PST)
+        Wed, 30 Jan 2019 17:55:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52478 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726802AbfA3Wz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 17:55:59 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C7A8EDF87A;
+        Wed, 30 Jan 2019 22:47:09 +0000 (UTC)
+Received: from redhat.com (ovpn-126-0.rdu2.redhat.com [10.10.126.0])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7CE701001F3D;
+        Wed, 30 Jan 2019 22:47:07 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 17:47:05 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Message-ID: <20190130224705.GI5061@redhat.com>
+References: <20190130192234.GD5061@redhat.com>
+ <20190130193759.GE17080@mellanox.com>
+ <db873687-ff80-4758-0b9f-973f27db5335@deltatee.com>
+ <20190130201114.GB17915@mellanox.com>
+ <20190130204332.GF5061@redhat.com>
+ <20190130204954.GI17080@mellanox.com>
+ <20190130214525.GG5061@redhat.com>
+ <20190130215600.GM17080@mellanox.com>
+ <20190130223027.GH5061@redhat.com>
+ <20190130223258.GB25486@mellanox.com>
 MIME-Version: 1.0
-References: <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
- <1548869162-6223-1-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1548869162-6223-1-git-send-email-vincent.guittot@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 30 Jan 2019 22:53:00 +0100
-Message-ID: <CAJZ5v0gnJ5DKvOO9OcJoMrGYpHfeQBt2Ec0pMW6=2q5aMoFpww@mail.gmail.com>
-Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190130223258.GB25486@mellanox.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 30 Jan 2019 22:47:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 6:26 PM Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> A deadlock has been seen when swicthing clocksources which use PM runtime.
-> The call path is:
-> change_clocksource
->     ...
->     write_seqcount_begin
->     ...
->     timekeeping_update
->         ...
->         sh_cmt_clocksource_enable
->             ...
->             rpm_resume
->                 pm_runtime_mark_last_busy
->                     ktime_get
->                         do
->                             read_seqcount_begin
->                         while read_seqcount_retry
->     ....
->     write_seqcount_end
->
-> Although we should be safe because we haven't yet changed the clocksource
-> at that time, we can't because of seqcount protection.
->
-> Use ktime_get_mono_fast_ns() instead which is lock safe for such case
->
-> With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
-> monotonic across an update and as a result can goes backward. According to
-> update_fast_timekeeper() description: "In the worst case, this can
-> result is a slightly wrong timestamp (a few nanoseconds)". For
-> PM runtime autosuspend, this means only that the suspend decision can
-> be slightly sub optimal.
->
-> Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
-> Reported-by: Biju Das <biju.das@bp.renesas.com>
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->
-> Hi Rafael,
->
-> Sorry, I sent the version with the typo mistake that generated the compilation error
-> reported by kbuild-test-robot
->
-> This version doesn't have the typo.
+On Wed, Jan 30, 2019 at 10:33:04PM +0000, Jason Gunthorpe wrote:
+> On Wed, Jan 30, 2019 at 05:30:27PM -0500, Jerome Glisse wrote:
+> 
+> > > What is the problem in the HMM mirror that it needs this restriction?
+> > 
+> > No restriction at all here. I think i just wasn't understood.
+> 
+> Are you are talking about from the exporting side - where the thing
+> creating the VMA can really only put one distinct object into it?
 
-OK, I've applied this one, thanks!
+The message i was trying to get accross is that HMM mirror will
+always succeed for everything* except for special vma ie mmap of
+device file. For those it can only succeed if a p2p_map() call
+succeed.
+
+So any user of HMM mirror might to know why the mirroring fail ie
+was it because something exceptional is happening ? Or is it because
+i was trying to map a special vma which can be forbiden.
+
+Hence why i assume that you might want to know about such p2p_map
+failure at the time you create the umem odp object as it might be
+some failure you might want to report differently and handle
+differently. If you do not care about differentiating OOM or
+exceptional failure from p2p_map failure than you have nothing to
+worry about you will get the same error from HMM for both.
+
+Cheers,
+Jérôme
+
+* Everything except when they are exceptional condition like OOM or
+  poisonous memory.
