@@ -2,72 +2,172 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF75C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B844C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FBB02184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DEA4218D2
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388164AbfA3VcU (ORCPT
+        id S2388178AbfA3Vci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 16:32:20 -0500
-Received: from mga17.intel.com ([192.55.52.151]:59632 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731978AbfA3VcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 16:32:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 13:32:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,542,1539673200"; 
-   d="scan'208";a="139303506"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by fmsmga002.fm.intel.com with ESMTP; 30 Jan 2019 13:32:19 -0800
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     jikos@kernel.org, benjamin.tissoires@redhat.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] HID: intel-ish-hid: Use VID/PID from ISH
-Date:   Wed, 30 Jan 2019 13:32:17 -0800
-Message-Id: <20190130213217.8060-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.17.2
+        Wed, 30 Jan 2019 16:32:38 -0500
+Received: from eddie.linux-mips.org ([148.251.95.138]:48726 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731978AbfA3Vch (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 16:32:37 -0500
+Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
+        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
+        id S23992820AbfA3VcenLVLh (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org> + 3 others);
+        Wed, 30 Jan 2019 22:32:34 +0100
+Date:   Wed, 30 Jan 2019 22:32:33 +0100
+From:   Ladislav Michl <ladis@linux-mips.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 ] PM-runtime: fix deadlock with ktime
+Message-ID: <20190130213233.GA20881@lenoch>
+References: <1548846984-2044-1-git-send-email-vincent.guittot@linaro.org>
+ <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Intel ISH HID can now have other devices attached to it, not just
-sensors. Hence ISH HID transport is no longer just used for sensors.
-Currently the vendor and product id is hardcoded for sensors, but they
-can be obtained from ISH firmware for the real device. The driver already
-extract them and store as part of device_info structure in client_data.
-So use vendor id/product id obtained from the ISH firmware.
+On Wed, Jan 30, 2019 at 02:06:07PM +0100, Rafael J. Wysocki wrote:
+> On Wed, Jan 30, 2019 at 12:16 PM Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > A deadlock has been seen when swicthing clocksources which use PM runtime.
+> > The call path is:
+> > change_clocksource
+> >     ...
+> >     write_seqcount_begin
+> >     ...
+> >     timekeeping_update
+> >         ...
+> >         sh_cmt_clocksource_enable
+> >             ...
+> >             rpm_resume
+> >                 pm_runtime_mark_last_busy
+> >                     ktime_get
+> >                         do
+> >                             read_seqcount_begin
+> >                         while read_seqcount_retry
+> >     ....
+> >     write_seqcount_end
+> >
+> > Although we should be safe because we haven't yet changed the clocksource
+> > at that time, we can't because of seqcount protection.
+> >
+> > Use ktime_get_mono_fast_ns() instead which is lock safe for such case
+> >
+> > With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
+> > monotonic across an update and as a result can goes backward. According to
+> > update_fast_timekeeper() description: "In the worst case, this can
+> > result is a slightly wrong timestamp (a few nanoseconds)". For
+> > PM runtime autosuspend, this means only that the suspend decision can
+> > be slightly sub optimal.
+> >
+> > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
+> > Reported-by: Biju Das <biju.das@bp.renesas.com>
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> 
+> I've queued this one up as a fix for 5.0, but unfortunately it clashes
+> with the patch from Ladislav Michl at
+> https://patchwork.kernel.org/patch/10755477/ which has been dropped
+> now.
+> 
+> Can you or Ladislav please rebase that patch on top of this one and repost?
+> 
+> > ---
+> >
+> > - v2: Updated commit message to explain the impact of using
+> >   ktime_get_mono_fast_ns()
+> >
+> >  drivers/base/power/runtime.c | 10 +++++-----
+> >  include/linux/pm_runtime.h   |  2 +-
+> >  2 files changed, 6 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> > index 457be03..708a13f 100644
+> > --- a/drivers/base/power/runtime.c
+> > +++ b/drivers/base/power/runtime.c
+> > @@ -130,7 +130,7 @@ u64 pm_runtime_autosuspend_expiration(struct device *dev)
+> >  {
+> >         int autosuspend_delay;
+> >         u64 last_busy, expires = 0;
+> > -       u64 now = ktime_to_ns(ktime_get());
+> > +       u64 now = ktime_get_mono_fast_ns();
+> >
+> >         if (!dev->power.use_autosuspend)
+> >                 goto out;
+> > @@ -909,7 +909,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
+> >          * If 'expires' is after the current time, we've been called
+> >          * too early.
+> >          */
+> > -       if (expires > 0 && expires < ktime_to_ns(ktime_get())) {
+> > +       if (expires > 0 && expires < ktime_get_mono_fast_ns()) {
+> >                 dev->power.timer_expires = 0;
+> >                 rpm_suspend(dev, dev->power.timer_autosuspends ?
+> >                     (RPM_ASYNC | RPM_AUTO) : RPM_ASYNC);
+> > @@ -928,7 +928,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
+> >  int pm_schedule_suspend(struct device *dev, unsigned int delay)
+> >  {
+> >         unsigned long flags;
+> > -       ktime_t expires;
+> > +       u64 expires;
+> >         int retval;
+> >
+> >         spin_lock_irqsave(&dev->power.lock, flags);
+> > @@ -945,8 +945,8 @@ int pm_schedule_suspend(struct device *dev, unsigned int delay)
+> >         /* Other scheduled or pending requests need to be canceled. */
+> >         pm_runtime_cancel_pending(dev);
+> >
+> > -       expires = ktime_add(ktime_get(), ms_to_ktime(delay));
+> > -       dev->power.timer_expires = ktime_to_ns(expires);
+> > +       expires = ktime_get_mono_fast_ns() + (u64)delay * NSEC_PER_MSEC);
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- drivers/hid/intel-ish-hid/ishtp-hid.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Just FYI, this one does not compile                                        ^
+I'm going to send updated optimization patch anyway as fixing this one will not
+break it :)
 
-diff --git a/drivers/hid/intel-ish-hid/ishtp-hid.c b/drivers/hid/intel-ish-hid/ishtp-hid.c
-index e918d78e541c..bc4c536f3c0d 100644
---- a/drivers/hid/intel-ish-hid/ishtp-hid.c
-+++ b/drivers/hid/intel-ish-hid/ishtp-hid.c
-@@ -206,8 +206,8 @@ int ishtp_hid_probe(unsigned int cur_hid_dev,
- 	hid->bus = BUS_INTEL_ISHTP;
- 	hid->dev.parent = &client_data->cl_device->dev;
- 	hid->version = le16_to_cpu(ISH_HID_VERSION);
--	hid->vendor = le16_to_cpu(ISH_HID_VENDOR);
--	hid->product = le16_to_cpu(ISH_HID_PRODUCT);
-+	hid->vendor = le16_to_cpu(client_data->hid_devices[cur_hid_dev].vid);
-+	hid->product = le16_to_cpu(client_data->hid_devices[cur_hid_dev].pid);
- 	snprintf(hid->name, sizeof(hid->name), "%s %04X:%04X", "hid-ishtp",
- 		hid->vendor, hid->product);
- 
--- 
-2.17.2
-
+> > +       dev->power.timer_expires = expires;
+> >         dev->power.timer_autosuspends = 0;
+> >         hrtimer_start(&dev->power.suspend_timer, expires, HRTIMER_MODE_ABS);
+> >
+> > diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+> > index 54af4ee..fed5be7 100644
+> > --- a/include/linux/pm_runtime.h
+> > +++ b/include/linux/pm_runtime.h
+> > @@ -105,7 +105,7 @@ static inline bool pm_runtime_callbacks_present(struct device *dev)
+> >
+> >  static inline void pm_runtime_mark_last_busy(struct device *dev)
+> >  {
+> > -       WRITE_ONCE(dev->power.last_busy, ktime_to_ns(ktime_get()));
+> > +       WRITE_ONCE(dev->power.last_busy, ktime_get_mono_fast_ns());
+> >  }
+> >
+> >  static inline bool pm_runtime_is_irq_safe(struct device *dev)
+> > --
+> > 2.7.4
+> >
