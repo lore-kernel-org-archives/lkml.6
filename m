@@ -2,303 +2,193 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8C3C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3C5C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9093320989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:25:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7724120989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:26:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=MicronCorp.onmicrosoft.com header.i=@MicronCorp.onmicrosoft.com header.b="axbjdIMh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731483AbfA3PZw (ORCPT
+        id S1731515AbfA3P0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:25:52 -0500
-Received: from shell.v3.sk ([90.176.6.54]:33868 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727586AbfA3PZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:25:51 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 8C7A4CD00F;
-        Wed, 30 Jan 2019 16:25:45 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id dn7PRA5aUiRy; Wed, 30 Jan 2019 16:25:40 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id BCCD1CD013;
-        Wed, 30 Jan 2019 16:25:40 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id zAw-v775xxio; Wed, 30 Jan 2019 16:25:39 +0100 (CET)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 84BFCCD00F;
-        Wed, 30 Jan 2019 16:25:39 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2] drm/armada: add mmp2 support
-Date:   Wed, 30 Jan 2019 16:25:36 +0100
-Message-Id: <20190130152536.1890325-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+        Wed, 30 Jan 2019 10:26:53 -0500
+Received: from mailout.micron.com ([137.201.242.129]:10173 "EHLO
+        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727586AbfA3P0w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 10:26:52 -0500
+X-Greylist: delayed 2007 seconds by postgrey-1.27 at vger.kernel.org; Wed, 30 Jan 2019 10:26:51 EST
+Received: from mail.micron.com (bowex17b.micron.com [137.201.21.210])
+        by mailout.micron.com (8.14.4/8.14.6) with ESMTP id x0UErJqw009123;
+        Wed, 30 Jan 2019 07:53:19 -0700
+Received: from BOWEX36H.micron.com (137.201.84.179) by bowex17b.micron.com
+ (137.201.21.210) with Microsoft SMTP Server (TLS) id 15.0.1365.1; Wed, 30 Jan
+ 2019 07:53:18 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (137.201.84.23)
+ by BOWEX36H.micron.com (137.201.84.179) with Microsoft SMTP Server (TLS) id
+ 15.0.1365.1 via Frontend Transport; Wed, 30 Jan 2019 07:53:18 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=MicronCorp.onmicrosoft.com; s=selector1-micron-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eRtO8/GwL9CYqVKa3hsI/C9Uuh+N8dbJUAN7916iXm0=;
+ b=axbjdIMhDZ/tNXO26JrJD74at0eEsJqkaGl0EBpnOQrPDy9p+ZsejOVRCsIw/0ZFWXJ5+IHn64s2BE3DbFcmpxrFSvdbrtRJNfyTDWJi1vmtBVA1dAxFX+EyjTP1p1+a42uIQ9BoYMADZ5YHsE2Xw4qHTiECa2GrrWx5jEv8XEQ=
+Received: from BYAPR08MB4533.namprd08.prod.outlook.com (52.135.234.15) by
+ BYAPR08MB5829.namprd08.prod.outlook.com (20.179.63.88) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.21; Wed, 30 Jan 2019 14:53:15 +0000
+Received: from BYAPR08MB4533.namprd08.prod.outlook.com
+ ([fe80::911c:eb84:5e0d:c669]) by BYAPR08MB4533.namprd08.prod.outlook.com
+ ([fe80::911c:eb84:5e0d:c669%2]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
+ 14:53:14 +0000
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Evan Green <evgreen@chromium.org>
+CC:     Avi Shchislowski <avi.shchislowski@wdc.com>,
+        Alex Lemberg <alex.lemberg@wdc.com>
+Subject: RE:  [PATCH v4 1/3] scsi: ufs-bsg: Change the calling convention for
+ write descriptor
+Thread-Topic: [PATCH v4 1/3] scsi: ufs-bsg: Change the calling convention for
+ write descriptor
+Thread-Index: AdS4q4LLvvMlcyQpRoyZYCqeKWc2YA==
+Date:   Wed, 30 Jan 2019 14:53:14 +0000
+Message-ID: <BYAPR08MB453398C5D7BD52EB90A36096DB900@BYAPR08MB4533.namprd08.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=beanhuo@micron.com; 
+x-originating-ip: [165.225.81.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR08MB5829;6:wptsd/j2X+CzqBfwN77m7OeiWbloSGfgp4P2GxFOVY49hvEMV48euMbB+6+r6popJptt/Sku/CTlAkW+vs79Il/wDnZPGlr84wnVzvu3Ce9oxYWYOTSZayvZOSyh0MXicsABUdwCR9qmg95507eiKJBHsn7K70i0EUiufImXtEkqdqoYYvmEce/RhDlLlfFLQz5T5qQ3gZpOPphuFtzUw0483vjUIM8HhCWO22NVK5DxVQiYq+av4PhftPemjsMbGWaEEZLybpFG+YnW4liHcddCJS+A98fg6kPN+oRUqqE8a4QeZbesPIUkK/2y/8mou7ml61BhrH/3r0xGD0U7coSjfQsoftDLSWAWK77Gu7vs0mVM17s8yDTroY/wHLMs41r5GsuPqGK01DKgBjAcfyTGjVUUct0CEnYNJgRb2rPJ0e6Gc0bj5kF9pjR6awHNFAuZSPnJYb0FLf/gxhxAUw==;5:HoX8MUNjye+hcRSm5/dQqZpHa/24dL076c2LI2gvS71ENnzlHPJnhTHTkJTVeqQG3uQ0WNFXiBdCg/3y7ID6T9tXwFiws/H1Cgq054aDHHkKQbRBhxW0VOBwm+v+/fECTlMrh4u+LPCt/eQXYozGnaNwKsnVVnbQFExPVZDB4BshAR7Rz8vVCVe+Ml+vkn6RG8f0nsLapvfv5zxl/0kpSQ==;7:S337K8axdEb3YekxF7sGGPdaE9m0kz+fscEgEGNcIQJJRYcNwxdbnURfPIisdyfWXPyMrb6Lsb+lv3BgjmP1xHInIuWalMB55u2sadBQnUpRvOLgzV6L7GQnwMHdToVQZ+KmjWr/0Zv3WBDnEvG30A==
+x-ms-office365-filtering-correlation-id: 73329e84-bb22-4666-1c33-08d686c2a9b8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR08MB5829;
+x-ms-traffictypediagnostic: BYAPR08MB5829:|BYAPR08MB5829:
+x-microsoft-antispam-prvs: <BYAPR08MB58293E2405C99A5E87FAF5C5DB900@BYAPR08MB5829.namprd08.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(366004)(346002)(396003)(199004)(189003)(9686003)(81156014)(8936002)(105586002)(14454004)(106356001)(478600001)(966005)(8676002)(81166006)(33656002)(3846002)(6116002)(66066001)(2906002)(229853002)(486006)(476003)(97736004)(71200400001)(316002)(6306002)(2501003)(68736007)(6506007)(99286004)(102836004)(86362001)(6436002)(55016002)(71190400001)(256004)(7696005)(4326008)(2201001)(186003)(26005)(6246003)(305945005)(7736002)(54906003)(53936002)(74316002)(110136005)(25786009)(55236004)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR08MB5829;H:BYAPR08MB4533.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: micron.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: bugKPtrdUZt3xOEso+YxbgzCKEoEQZynvU7GemJb/V3tvQbEpVIkGxEUEFda8+M6w4pLVZdz6UgDJqzJW7IyH5C7jwtqzhvW4L5phB9ZdR0+36RkjV5EdnD7r8EOUv1GdtvXyNszGtyDL1oWHHqEpIZ7APPo1oQv16DLwlWHfFKgqInDusAiY7bwbZpcn4n4kTd+KcH8Mltbqugx7uM5YKSp4CU4cAmP4nQpwwFzUlOz8CNGzXs6o8c/7AK/88wME9SsFRneY4nsK24mgYZ9KRYsJE/8UBe8lKoTikYWqCAYndPIOTGlHn+UdKNhxJ2hAL7PYVCUg3Db29WGTECW8IaywmpPAnizaqYGaOBED6sCphN+ghzBse5MoneEPbfAz01pkgISYLLm5kB2ZlRqdJS6CpItF6aSBmNb6dIlmAs=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73329e84-bb22-4666-1c33-08d686c2a9b8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 14:53:14.7675
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR08MB5829
+X-OriginatorOrg: micron.com
+X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-24396.005
+X-TM-AS-Result: No--20.268900-0.000000-31
+X-TM-AS-MatchedID: 150567-157008-139010-703788-700398-700293-707163-708060-7
+        08690-702126-121105-701236-704425-704636-704980-701475-850702-704410-700016
+        -188019-702099-702643-851458-702358-139704-780058-700818-702609-700040-7002
+        72-706290-700264-700373-702042-105700-851106-899170-148004-148007-148020-14
+        8050-20020-20043-42000-42003-63
+X-TM-AS-User-Approved-Sender: Yes
+X-TM-AS-User-Blocked-Sender: No
+X-MT-CheckInternalSenderRule: True
+X-Scanned-By: MIMEDefang 2.78 on 137.201.130.65
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Heavily based on the Armada 510 (Dove) support.
+Hi, Avri
 
-Tested to work well with Display 1 and Display 2 clocks driving the inter=
-nal
-panel on the OLPC XO 1.75 laptop. Some tweaking might be required if anyo=
-ne
-wants to use it with a MIPI or HDMI encoder.
+>
+>When we had a write descriptor query upiu, we appended the descriptor righ=
+t
+>after the bsg request.  This was fine as the bsg driver allows to allocate=
+ whatever
+>buffer we needed in its job request.
+>
+>Still, the proper way to deliver payload, however small (we only write con=
+fig
+>descriptors of 144 bytes), is by using the job request payload data buffer=
+.
+>
+>So change this ABI now, while ufs-bsg is still new, and nobody is actually=
+ using it.
+>
+>Signed-off-by: Avri Altman <avri.altman@wdc.com>
+>Reviewed-by: Evan Green <evgreen@chromium.org>
+>---
+> Documentation/scsi/ufs.txt |  6 ++++++
+> drivers/scsi/ufs/ufs_bsg.c | 47 +++++++++++++++++++++++++----------------=
+-----
+> 2 files changed, 32 insertions(+), 21 deletions(-)
+>
+>diff --git a/Documentation/scsi/ufs.txt b/Documentation/scsi/ufs.txt index
+>520b5b0..78fe7cb 100644
+>--- a/Documentation/scsi/ufs.txt
+>+++ b/Documentation/scsi/ufs.txt
+>@@ -147,6 +147,12 @@ send SG_IO with the applicable sg_io_v4:
+> 	io_hdr_v4.max_response_len =3D reply_len;
+> 	io_hdr_v4.request_len =3D request_len;
+> 	io_hdr_v4.request =3D (__u64)request_upiu;
+>+	if (dir =3D=3D SG_DXFER_TO_DEV) {
+>+		io_hdr_v4.dout_xfer_len =3D (uint32_t)byte_cnt;
+>+		io_hdr_v4.dout_xferp =3D (uintptr_t)(__u64)buff;
+>+	}
+>+
+>+If you wish to write a descriptor, use the dout_xferp sg_io_v4.
+>
+> UFS Specifications can be found at,
+> UFS - http://www.jedec.org/sites/default/files/docs/JESD220.pdf
+>diff --git a/drivers/scsi/ufs/ufs_bsg.c b/drivers/scsi/ufs/ufs_bsg.c index
+>775bb4e..2fd0769 100644
+>--- a/drivers/scsi/ufs/ufs_bsg.c
+>+++ b/drivers/scsi/ufs/ufs_bsg.c
+>@@ -27,15 +27,11 @@ static int ufs_bsg_get_query_desc_size(struct ufs_hba
+>*hba, int *desc_len,
+>
+> static int ufs_bsg_verify_query_size(struct ufs_hba *hba,
+> 				     unsigned int request_len,
+>-				     unsigned int reply_len,
+>-				     int desc_len, enum query_opcode desc_op)
+>+				     unsigned int reply_len)
+> {
+> 	int min_req_len =3D sizeof(struct ufs_bsg_request);
+> 	int min_rsp_len =3D sizeof(struct ufs_bsg_reply);
+>
+>-	if (desc_op =3D=3D UPIU_QUERY_OPCODE_WRITE_DESC)
+>-		min_req_len +=3D desc_len;
+>-
+> 	if (min_req_len > request_len || min_rsp_len > reply_len) {
+> 		dev_err(hba->dev, "not enough space assigned\n");
+> 		return -EINVAL;
+>@@ -44,14 +40,13 @@ static int ufs_bsg_verify_query_size(struct ufs_hba *h=
+ba,
+> 	return 0;
+> }
+>
+>-static int ufs_bsg_verify_query_params(struct ufs_hba *hba,
+>-				       struct ufs_bsg_request *bsg_request,
+>-				       unsigned int request_len,
+>-				       unsigned int reply_len,
+>-				       uint8_t *desc_buff, int *desc_len,
+>-				       enum query_opcode desc_op)
+>+static int ufs_bsg_alloc_desc_buffer(struct ufs_hba *hba, struct bsg_job =
+*job,
+>+				     uint8_t **desc_buff, int *desc_len,
 
-The data sheet is not available, but James Cameron of OLPC kindly
-provided some details about the LCD_SCLK_DIV register.
+Maybe here also we should use 'u8'.
 
-Link: https://lists.freedesktop.org/archives/dri-devel/2018-December/2010=
-21.html
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Reviewed-by: Bean Huo <beanhuo@beanhuo@micron.com>
 
----
-Applies on top of "drm-armada-devel" branch of
-git://git.armlinux.org.uk/~rmk/linux-arm.git
-
-Changes since v1:
-- Aligned with more recent Armada 510 support: using the same clock
-  names and allowing for more flexible pixel clock source selection.
-
- drivers/gpu/drm/armada/Makefile      |   1 +
- drivers/gpu/drm/armada/armada_610.c  | 143 +++++++++++++++++++++++++++
- drivers/gpu/drm/armada/armada_crtc.c |   4 +
- drivers/gpu/drm/armada/armada_drm.h  |   1 +
- drivers/gpu/drm/armada/armada_hw.h   |  10 ++
- 5 files changed, 159 insertions(+)
- create mode 100644 drivers/gpu/drm/armada/armada_610.c
-
-diff --git a/drivers/gpu/drm/armada/Makefile b/drivers/gpu/drm/armada/Mak=
-efile
-index 9bc3c3213724..5bbf86324cda 100644
---- a/drivers/gpu/drm/armada/Makefile
-+++ b/drivers/gpu/drm/armada/Makefile
-@@ -2,6 +2,7 @@
- armada-y	:=3D armada_crtc.o armada_drv.o armada_fb.o armada_fbdev.o \
- 		   armada_gem.o armada_overlay.o armada_plane.o armada_trace.o
- armada-y	+=3D armada_510.o
-+armada-y	+=3D armada_610.o
- armada-$(CONFIG_DEBUG_FS) +=3D armada_debugfs.o
-=20
- obj-$(CONFIG_DRM_ARMADA) :=3D armada.o
-diff --git a/drivers/gpu/drm/armada/armada_610.c b/drivers/gpu/drm/armada=
-/armada_610.c
-new file mode 100644
-index 000000000000..586965fca907
---- /dev/null
-+++ b/drivers/gpu/drm/armada/armada_610.c
-@@ -0,0 +1,143 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2012 Russell King
-+ * Copyright (C) 2018,2019 Lubomir Rintel
-+ *  Largely based on Armada 510 support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Armada MMP2 variant support
-+ */
-+#include <linux/clk.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_crtc.h>
-+#include "armada_crtc.h"
-+#include "armada_drm.h"
-+#include "armada_hw.h"
-+
-+struct armada610_variant_data {
-+	struct clk *clks[4];
-+	struct clk *sel_clk;
-+};
-+
-+static int armada610_crtc_init(struct armada_crtc *dcrtc, struct device =
-*dev)
-+{
-+	struct armada610_variant_data *v;
-+	struct property *prop;
-+	struct clk *clk;
-+	const char *s;
-+	int idx;
-+
-+	v =3D devm_kzalloc(dev, sizeof(*v), GFP_KERNEL);
-+	if (!v)
-+		return -ENOMEM;
-+
-+	dcrtc->variant_data =3D v;
-+
-+	of_property_for_each_string(dev->of_node, "clock-names", prop, s) {
-+		if (!strcmp(s, "ext_ref_clk0"))
-+			idx =3D 0;
-+		else if (!strcmp(s, "ext_ref_clk1"))
-+			idx =3D 1;
-+		else if (!strcmp(s, "plldivider"))
-+			idx =3D 2;
-+		else if (!strcmp(s, "axibus"))
-+			idx =3D 3;
-+		else
-+			continue;
-+
-+		clk =3D devm_clk_get(dev, s);
-+		if (IS_ERR(clk))
-+			return PTR_ERR(clk) =3D=3D -ENOENT ? -EPROBE_DEFER :
-+				PTR_ERR(clk);
-+		v->clks[idx] =3D clk;
-+	}
-+
-+	return 0;
-+}
-+
-+static const u32 armada610_clk_sels[] =3D {
-+	SCLK_610_DISP0,
-+	SCLK_610_DISP1,
-+	SCLK_610_PLL,
-+	SCLK_610_AXI,
-+};
-+
-+static const struct armada_clocking_params armada610_clocking =3D {
-+	/* HDMI requires -0.6%..+0.5% */
-+	.permillage_min =3D 0,
-+	.permillage_max =3D 2000,
-+	.settable =3D BIT(0) | BIT(1),
-+	.div_max =3D SCLK_610_INT_DIV_MASK,
-+};
-+
-+/*
-+ * This gets called with sclk =3D NULL to test whether the mode is
-+ * supportable, and again with sclk !=3D NULL to set the clocks up for
-+ * that.  The former can return an error, but the latter is expected
-+ * not to.
-+ */
-+static int armada610_crtc_compute_clock(struct armada_crtc *dcrtc,
-+	const struct drm_display_mode *mode, uint32_t *sclk)
-+{
-+	struct armada610_variant_data *v =3D dcrtc->variant_data;
-+	unsigned long desired_khz =3D mode->crtc_clock;
-+	struct armada_clk_result res;
-+	int ret, idx;
-+
-+	idx =3D armada_crtc_select_clock(dcrtc, &res, &armada610_clocking,
-+				       v->clks, ARRAY_SIZE(v->clks),
-+				       desired_khz);
-+	if (idx < 0)
-+		return idx;
-+
-+	ret =3D clk_prepare_enable(res.clk);
-+	if (ret)
-+		return ret;
-+
-+	if (sclk) {
-+		clk_set_rate(res.clk, res.desired_clk_hz);
-+
-+		*sclk =3D 0x00001000;	/* No idea */
-+		*sclk |=3D 1 << 8;	/* MIPI clock bypass */
-+		*sclk |=3D armada610_clk_sels[idx];
-+		*sclk |=3D res.div;
-+
-+		/* We are now using this clock */
-+		v->sel_clk =3D res.clk;
-+		swap(dcrtc->clk, res.clk);
-+	}
-+
-+	clk_disable_unprepare(res.clk);
-+
-+	return 0;
-+}
-+
-+static void armada610_crtc_disable(struct armada_crtc *dcrtc)
-+{
-+	if (dcrtc->clk) {
-+		clk_disable_unprepare(dcrtc->clk);
-+		dcrtc->clk =3D NULL;
-+	}
-+}
-+
-+static void armada610_crtc_enable(struct armada_crtc *dcrtc,
-+	const struct drm_display_mode *mode)
-+{
-+	struct armada610_variant_data *v =3D dcrtc->variant_data;
-+
-+	if (!dcrtc->clk && v->sel_clk) {
-+		if (!WARN_ON(clk_prepare_enable(v->sel_clk)))
-+			dcrtc->clk =3D v->sel_clk;
-+	}
-+}
-+
-+
-+const struct armada_variant armada610_ops =3D {
-+	.init =3D armada610_crtc_init,
-+	.compute_clock =3D armada610_crtc_compute_clock,
-+	.disable =3D armada610_crtc_disable,
-+	.enable =3D armada610_crtc_enable,
-+};
-diff --git a/drivers/gpu/drm/armada/armada_crtc.c b/drivers/gpu/drm/armad=
-a/armada_crtc.c
-index 047136fda14b..d5cf35f6dab1 100644
---- a/drivers/gpu/drm/armada/armada_crtc.c
-+++ b/drivers/gpu/drm/armada/armada_crtc.c
-@@ -1104,6 +1104,10 @@ static const struct of_device_id armada_lcd_of_mat=
-ch[] =3D {
- 		.compatible	=3D "marvell,dove-lcd",
- 		.data		=3D &armada510_ops,
- 	},
-+	{
-+		.compatible	=3D "marvell,mmp2-lcd",
-+		.data		=3D &armada610_ops,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, armada_lcd_of_match);
-diff --git a/drivers/gpu/drm/armada/armada_drm.h b/drivers/gpu/drm/armada=
-/armada_drm.h
-index b6307235f320..03aeb9c030e4 100644
---- a/drivers/gpu/drm/armada/armada_drm.h
-+++ b/drivers/gpu/drm/armada/armada_drm.h
-@@ -52,6 +52,7 @@ struct armada_variant {
-=20
- /* Variant ops */
- extern const struct armada_variant armada510_ops;
-+extern const struct armada_variant armada610_ops;
-=20
- struct armada_private {
- 	struct drm_device	drm;
-diff --git a/drivers/gpu/drm/armada/armada_hw.h b/drivers/gpu/drm/armada/=
-armada_hw.h
-index 5b1af0cc9f50..19544dfd6afb 100644
---- a/drivers/gpu/drm/armada/armada_hw.h
-+++ b/drivers/gpu/drm/armada/armada_hw.h
-@@ -219,6 +219,16 @@ enum {
- 	SCLK_510_FRAC_DIV_MASK	=3D 0xfff << 16,
- 	SCLK_510_INT_DIV_MASK	=3D 0xffff << 0,
-=20
-+	/* Armada 610 */
-+	SCLK_610_AXI		=3D 0x0 << 30,
-+	SCLK_610_DISP0		=3D 0x1 << 30,	/* LCD Display 1 */
-+	SCLK_610_DISP1		=3D 0x2 << 30,	/* LCD Display 2 */
-+	SCLK_610_PLL		=3D 0x3 << 30,	/* HDMI PLL clock */
-+	SCLK_610_PANEL_CLK_DIS	=3D 0x1 << 28,	/* 1 =3D panel clock disabled */
-+	SCLK_610_FRAC_DIV_MASK	=3D 0xfff << 16,
-+	SCLK_610_MIPI_DIV_MASK	=3D 0xf << 8,	/* 0 =3D off, 1 =3D bypass, ... */
-+	SCLK_610_INT_DIV_MASK	=3D 0xff << 0,
-+
- 	/* Armada 16x */
- 	SCLK_16X_AHB		=3D 0x0 << 28,
- 	SCLK_16X_PCLK		=3D 0x1 << 28,
---=20
-2.20.1
+//Beanhuo
 
