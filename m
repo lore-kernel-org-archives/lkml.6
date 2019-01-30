@@ -2,82 +2,169 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C168CC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA73C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F82620989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548862981;
-	bh=gDMKV8j2KfSo5hcMhcNt/HfD9/TRWVMNpTVCFGOBak4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vRTFpt9+84QuyYW0S2aa3hg4TLOsKBFaUzTVcnmc3QEzFeJrW6dTrq5MnP4HmBz+Q
-	 wkAhFslp5IXMt2OEo+7rdQM96w9JSkqwDlb/Eu0Ghd1kmFVTuajDO0Xjyqkqr7Ov2h
-	 q+YO+EkR6p/naovvV+MgFFNiTVywohQR2NFPk9M0=
+	by mail.kernel.org (Postfix) with ESMTP id 18E9120989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731536AbfA3Pm7 (ORCPT
+        id S1731550AbfA3Pnf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:42:59 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44178 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729755AbfA3Pm7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:42:59 -0500
-Received: by mail-ot1-f68.google.com with SMTP id g16so17456149otg.11;
-        Wed, 30 Jan 2019 07:42:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dPqZEMJw5cB8zPRb7QEMBKK1fjbxjFRkq/X59AUH1Ew=;
-        b=PWRZmuDGMjTsR3XlcoqQVlao88pnu6NgiwMgFVUycJFhiz5tFhZHy2DjiQYbAoOTZa
-         Ux/FpslA6RYUHTge0LjKA2insYQUqORYSh75nrMGZGfpd37OC17c7CjBlzP9tJ4YfKfH
-         mliIOx4A/nay5ldyKnZJLy8us32Sh6VDD7jegtWqtjoeLoB2b2tOLofCFWMunmF0RiVU
-         FmVphuGaSbKYyQmqIOzuAJcLE/5ZMmpj3DD641I1pknBvRoe1LE6eXJ2X69g58i5M+oN
-         lpRpdFaErNNlxTI9fFkcgTEHIbciP8wJ7dym3GnCbvnmHEb1yd7s9sGadQWdAJsx8u18
-         OFPw==
-X-Gm-Message-State: AHQUAuYyBMteJJwXGdmsNZgBDSf9vPnHKAXW59SR3ddLoib3l74VvXMQ
-        GzDS6S2tNFIVStRK2ZYTPQ==
-X-Google-Smtp-Source: AHgI3IYN0gNbQz+3+m18kilPwPqpTRjPci7Qc6UXkSV4VMTzCpfVDU3sTUhq3vEO7IHw7oWvSmXQaQ==
-X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr4093033otl.343.1548862978278;
-        Wed, 30 Jan 2019 07:42:58 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id x127sm760422oia.20.2019.01.30.07.42.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 07:42:57 -0800 (PST)
-Date:   Wed, 30 Jan 2019 09:42:57 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     mark.rutland@arm.com, balbi@kernel.org, bjorn.andersson@linaro.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: usb: Add support for msm8998
-Message-ID: <20190130154257.GA15568@bogus>
-References: <1548106307-4762-1-git-send-email-jhugo@codeaurora.org>
- <1548106366-5042-1-git-send-email-jhugo@codeaurora.org>
+        Wed, 30 Jan 2019 10:43:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36870 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727976AbfA3Pnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 10:43:35 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 28003368E6;
+        Wed, 30 Jan 2019 15:43:34 +0000 (UTC)
+Received: from redhat.com (ovpn-126-0.rdu2.redhat.com [10.10.126.0])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CB9FC5D96F;
+        Wed, 30 Jan 2019 15:43:31 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 10:43:29 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Message-ID: <20190130154328.GA3177@redhat.com>
+References: <20190129174728.6430-4-jglisse@redhat.com>
+ <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
+ <20190129191120.GE3176@redhat.com>
+ <20190129193250.GK10108@mellanox.com>
+ <20190129195055.GH3176@redhat.com>
+ <20190129202429.GL10108@mellanox.com>
+ <20190129204359.GM3176@redhat.com>
+ <20190129224016.GD4713@mellanox.com>
+ <20190130000805.GS3176@redhat.com>
+ <20190130043020.GC30598@mellanox.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1548106366-5042-1-git-send-email-jhugo@codeaurora.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190130043020.GC30598@mellanox.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 30 Jan 2019 15:43:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 02:32:46PM -0700, Jeffrey Hugo wrote:
-> msm8998 USB has a dwc3 controller just like the existing sdm845 support.
+On Wed, Jan 30, 2019 at 04:30:27AM +0000, Jason Gunthorpe wrote:
+> On Tue, Jan 29, 2019 at 07:08:06PM -0500, Jerome Glisse wrote:
+> > On Tue, Jan 29, 2019 at 11:02:25PM +0000, Jason Gunthorpe wrote:
+> > > On Tue, Jan 29, 2019 at 03:44:00PM -0500, Jerome Glisse wrote:
+> > > 
+> > > > > But this API doesn't seem to offer any control - I thought that
+> > > > > control was all coming from the mm/hmm notifiers triggering p2p_unmaps?
+> > > > 
+> > > > The control is within the driver implementation of those callbacks. 
+> > > 
+> > > Seems like what you mean by control is 'the exporter gets to choose
+> > > the physical address at the instant of map' - which seems reasonable
+> > > for GPU.
+> > > 
+> > > 
+> > > > will only allow p2p map to succeed for objects that have been tagged by the
+> > > > userspace in some way ie the userspace application is in control of what
+> > > > can be map to peer device.
+> > > 
+> > > I would have thought this means the VMA for the object is created
+> > > without the map/unmap ops? Or are GPU objects and VMAs unrelated?
+> > 
+> > GPU object and VMA are unrelated in all open source GPU driver i am
+> > somewhat familiar with (AMD, Intel, NVidia). You can create a GPU
+> > object and never map it (and thus never have it associated with a
+> > vma) and in fact this is very common. For graphic you usualy only
+> > have hand full of the hundreds of GPU object your application have
+> > mapped.
 > 
-> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  Documentation/devicetree/bindings/usb/qcom,dwc3.txt | 1 +
->  1 file changed, 1 insertion(+)
+> I mean the other way does every VMA with a p2p_map/unmap point to
+> exactly one GPU object?
+> 
+> ie I'm surprised you say that p2p_map needs to have policy, I would
+> have though the policy is applied when the VMA is created (ie objects
+> that are not for p2p do not have p2p_map set), and even for GPU
+> p2p_map should really only have to do with window allocation and pure
+> 'can I even do p2p' type functionality.
 
-You missed my R-by.
+All userspace API to enable p2p happens after object creation and in
+some case they are mutable ie you can decide to no longer share the
+object (userspace application decision). The BAR address space is a
+resource from GPU driver point of view and thus from userspace point
+of view. As such decissions that affect how it is use an what object
+can use it, can change over application lifetime.
+
+This is why i would like to allow kernel driver to apply any such
+access policy, decided by the application on its object (on top of
+which the kernel GPU driver can apply its own policy for GPU resource
+sharing by forcing some object to main memory).
+
+
+> 
+> > Idea is that we can only ask exporter to be predictable and still allow
+> > them to fail if things are really going bad.
+> 
+> I think hot unplug / PCI error recovery is one of the 'really going
+> bad' cases..
+
+GPU can hang and all data becomes _undefined_, it can also be suspended
+to save power (think laptop with discret GPU for instance). GPU threads
+can be kill ... So they are few cases i can think of where either you
+want to kill the p2p mapping and make sure the importer is aware and
+might have a change to report back through its own userspace API, or
+at very least fallback to dummy pages. In some of the above cases, for
+instance suspend, you just want to move thing around to allow to shut
+down device memory.
+
+
+> > I think i put it in the comment above the ops but in any cases i should
+> > write something in documentation with example and thorough guideline.
+> > Note that there won't be any mmu notifier to mmap of a device file
+> > unless the device driver calls for it or there is a syscall like munmap
+> > or mremap or mprotect well any syscall that work on vma.
+> 
+> This is something we might need to explore, does calling
+> zap_vma_ptes() invoke enough notifiers that a MMU notifiers or HMM
+> mirror consumer will release any p2p maps on that VMA?
+
+Yes it does.
+
+> 
+> > If we ever want to support full pin then we might have to add a
+> > flag so that GPU driver can refuse an importer that wants things
+> > pin forever.
+> 
+> This would become interesting for VFIO and RDMA at least - I don't
+> think VFIO has anything like SVA so it would want to import a p2p_map
+> and indicate that it will not respond to MMU notifiers.
+> 
+> GPU can refuse, but maybe RDMA would allow it...
+
+Ok i will add a flag field in next post. GPU could allow pin but they
+would most likely use main memory for any such object, hence it is no
+longer really p2p but at least both device look at the same data.
+
+Cheers,
+Jérôme
