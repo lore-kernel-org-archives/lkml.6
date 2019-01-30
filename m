@@ -2,36 +2,37 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE588C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6409C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 973E720815
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:18:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 927FA20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:18:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730414AbfA3JSv (ORCPT
+        id S1730506AbfA3JSx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:18:51 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:54523 "EHLO
+        Wed, 30 Jan 2019 04:18:53 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:23637 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729050AbfA3JSn (ORCPT
+        with ESMTP id S1730244AbfA3JSt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:18:43 -0500
-X-UUID: 21e839d1bf24492a989cb42be753c25d-20190130
-X-UUID: 21e839d1bf24492a989cb42be753c25d-20190130
+        Wed, 30 Jan 2019 04:18:49 -0500
+X-UUID: 29b1bafe67f243f68a6b6418a4be7af8-20190130
+X-UUID: 29b1bafe67f243f68a6b6418a4be7af8-20190130
 Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
         (envelope-from <hsin-hsiung.wang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1658512949; Wed, 30 Jan 2019 17:18:26 +0800
+        with ESMTP id 319502411; Wed, 30 Jan 2019 17:18:26 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
  mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 30 Jan 2019 17:18:25 +0800
+ 15.0.1395.4; Wed, 30 Jan 2019 17:18:24 +0800
 Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 30 Jan 2019 17:18:25 +0800
+ Transport; Wed, 30 Jan 2019 17:18:24 +0800
 From:   Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -43,353 +44,627 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Subject: [PATCH 3/6] regulator: Add document for MT6358 regulator
-Date:   Wed, 30 Jan 2019 17:18:08 +0800
-Message-ID: <1548839891-20932-4-git-send-email-hsin-hsiung.wang@mediatek.com>
+Subject: [PATCH 1/6] mfd: mt6397: extract irq related code from core driver
+Date:   Wed, 30 Jan 2019 17:18:06 +0800
+Message-ID: <1548839891-20932-2-git-send-email-hsin-hsiung.wang@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548839891-20932-1-git-send-email-hsin-hsiung.wang@mediatek.com>
 References: <1548839891-20932-1-git-send-email-hsin-hsiung.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 088AE8F48D1E977B23E122AC35C6EF351ECCB0B67411FA4D391EA4CC93889FF42000:8
+X-TM-SNTS-SMTP: 95E9344D4856C646A8B2382C26E892E4AA99CA82BCF19446D9E217118A1B1C6F2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add dt-binding document for MediaTek MT6358 PMIC
+In order to support different types of irq design,
+we decide to add separate irq drivers for different
+design and keep mt6397 mfd core simple and reusable
+to all generations of PMICs so far.
 
 Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
 ---
- .../bindings/regulator/mt6358-regulator.txt        | 318 +++++++++++++++++++++
- 1 file changed, 318 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/mt6358-regulator.txt
+ drivers/mfd/Makefile            |   2 +-
+ drivers/mfd/mt6397-core.c       | 235 +++++++---------------------------------
+ drivers/mfd/mt6397-irq.c        | 214 ++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/mt6397/core.h |  12 ++
+ 4 files changed, 265 insertions(+), 198 deletions(-)
+ create mode 100644 drivers/mfd/mt6397-irq.c
 
-diff --git a/Documentation/devicetree/bindings/regulator/mt6358-regulator.txt b/Documentation/devicetree/bindings/regulator/mt6358-regulator.txt
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 12980a4..088e249 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -230,7 +230,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
+ obj-$(CONFIG_INTEL_SOC_PMIC_BXTWC)	+= intel_soc_pmic_bxtwc.o
+ obj-$(CONFIG_INTEL_SOC_PMIC_CHTWC)	+= intel_soc_pmic_chtwc.o
+ obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+= intel_soc_pmic_chtdc_ti.o
+-obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o
++obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o mt6397-irq.o
+ 
+ obj-$(CONFIG_MFD_ALTERA_A10SR)	+= altera-a10sr.o
+ obj-$(CONFIG_MFD_SUN4I_GPADC)	+= sun4i-gpadc.o
+diff --git a/drivers/mfd/mt6397-core.c b/drivers/mfd/mt6397-core.c
+index 77b64bd..a72524d 100644
+--- a/drivers/mfd/mt6397-core.c
++++ b/drivers/mfd/mt6397-core.c
+@@ -12,23 +12,19 @@
+  * GNU General Public License for more details.
+  */
+ 
+-#include <linux/interrupt.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/of_irq.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/core.h>
+-#include <linux/mfd/mt6397/core.h>
+ #include <linux/mfd/mt6323/core.h>
+-#include <linux/mfd/mt6397/registers.h>
++#include <linux/mfd/mt6397/core.h>
+ #include <linux/mfd/mt6323/registers.h>
++#include <linux/mfd/mt6397/registers.h>
+ 
+ #define MT6397_RTC_BASE		0xe000
+ #define MT6397_RTC_SIZE		0x3e
+ 
+-#define MT6323_CID_CODE		0x23
+-#define MT6391_CID_CODE		0x91
+-#define MT6397_CID_CODE		0x97
+ 
+ static const struct resource mt6397_rtc_resources[] = {
+ 	{
+@@ -94,188 +90,46 @@
+ 	}
+ };
+ 
+-static void mt6397_irq_lock(struct irq_data *data)
+-{
+-	struct mt6397_chip *mt6397 = irq_data_get_irq_chip_data(data);
+-
+-	mutex_lock(&mt6397->irqlock);
+-}
+-
+-static void mt6397_irq_sync_unlock(struct irq_data *data)
+-{
+-	struct mt6397_chip *mt6397 = irq_data_get_irq_chip_data(data);
+-
+-	regmap_write(mt6397->regmap, mt6397->int_con[0],
+-		     mt6397->irq_masks_cur[0]);
+-	regmap_write(mt6397->regmap, mt6397->int_con[1],
+-		     mt6397->irq_masks_cur[1]);
+-
+-	mutex_unlock(&mt6397->irqlock);
+-}
+-
+-static void mt6397_irq_disable(struct irq_data *data)
+-{
+-	struct mt6397_chip *mt6397 = irq_data_get_irq_chip_data(data);
+-	int shift = data->hwirq & 0xf;
+-	int reg = data->hwirq >> 4;
+-
+-	mt6397->irq_masks_cur[reg] &= ~BIT(shift);
+-}
+-
+-static void mt6397_irq_enable(struct irq_data *data)
+-{
+-	struct mt6397_chip *mt6397 = irq_data_get_irq_chip_data(data);
+-	int shift = data->hwirq & 0xf;
+-	int reg = data->hwirq >> 4;
+-
+-	mt6397->irq_masks_cur[reg] |= BIT(shift);
+-}
+-
+-#ifdef CONFIG_PM_SLEEP
+-static int mt6397_irq_set_wake(struct irq_data *irq_data, unsigned int on)
+-{
+-	struct mt6397_chip *mt6397 = irq_data_get_irq_chip_data(irq_data);
+-	int shift = irq_data->hwirq & 0xf;
+-	int reg = irq_data->hwirq >> 4;
+-
+-	if (on)
+-		mt6397->wake_mask[reg] |= BIT(shift);
+-	else
+-		mt6397->wake_mask[reg] &= ~BIT(shift);
+-
+-	return 0;
+-}
+-#else
+-#define mt6397_irq_set_wake NULL
+-#endif
+-
+-static struct irq_chip mt6397_irq_chip = {
+-	.name = "mt6397-irq",
+-	.irq_bus_lock = mt6397_irq_lock,
+-	.irq_bus_sync_unlock = mt6397_irq_sync_unlock,
+-	.irq_enable = mt6397_irq_enable,
+-	.irq_disable = mt6397_irq_disable,
+-	.irq_set_wake = mt6397_irq_set_wake,
++struct chip_data {
++	u32 cid_addr;
+ };
+ 
+-static void mt6397_irq_handle_reg(struct mt6397_chip *mt6397, int reg,
+-		int irqbase)
+-{
+-	unsigned int status;
+-	int i, irq, ret;
+-
+-	ret = regmap_read(mt6397->regmap, reg, &status);
+-	if (ret) {
+-		dev_err(mt6397->dev, "Failed to read irq status: %d\n", ret);
+-		return;
+-	}
+-
+-	for (i = 0; i < 16; i++) {
+-		if (status & BIT(i)) {
+-			irq = irq_find_mapping(mt6397->irq_domain, irqbase + i);
+-			if (irq)
+-				handle_nested_irq(irq);
+-		}
+-	}
+-
+-	regmap_write(mt6397->regmap, reg, status);
+-}
+-
+-static irqreturn_t mt6397_irq_thread(int irq, void *data)
+-{
+-	struct mt6397_chip *mt6397 = data;
+-
+-	mt6397_irq_handle_reg(mt6397, mt6397->int_status[0], 0);
+-	mt6397_irq_handle_reg(mt6397, mt6397->int_status[1], 16);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static int mt6397_irq_domain_map(struct irq_domain *d, unsigned int irq,
+-					irq_hw_number_t hw)
+-{
+-	struct mt6397_chip *mt6397 = d->host_data;
+-
+-	irq_set_chip_data(irq, mt6397);
+-	irq_set_chip_and_handler(irq, &mt6397_irq_chip, handle_level_irq);
+-	irq_set_nested_thread(irq, 1);
+-	irq_set_noprobe(irq);
+-
+-	return 0;
+-}
++static const struct chip_data mt6323_core = {
++	.cid_addr = MT6323_CID,
++};
+ 
+-static const struct irq_domain_ops mt6397_irq_domain_ops = {
+-	.map = mt6397_irq_domain_map,
++static const struct chip_data mt6397_core = {
++	.cid_addr = MT6397_CID,
+ };
+ 
+-static int mt6397_irq_init(struct mt6397_chip *mt6397)
++static int mt6397_probe(struct platform_device *pdev)
+ {
+ 	int ret;
++	unsigned int id;
++	struct mt6397_chip *pmic;
++	struct regmap *regmap;
++	const struct chip_data *pmic_core;
+ 
+-	mutex_init(&mt6397->irqlock);
+-
+-	/* Mask all interrupt sources */
+-	regmap_write(mt6397->regmap, mt6397->int_con[0], 0x0);
+-	regmap_write(mt6397->regmap, mt6397->int_con[1], 0x0);
++	regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!regmap)
++		return -ENODEV;
+ 
+-	mt6397->irq_domain = irq_domain_add_linear(mt6397->dev->of_node,
+-		MT6397_IRQ_NR, &mt6397_irq_domain_ops, mt6397);
+-	if (!mt6397->irq_domain) {
+-		dev_err(mt6397->dev, "could not create irq domain\n");
+-		return -ENOMEM;
+-	}
++	pmic_core = of_device_get_match_data(&pdev->dev);
++	if (!pmic_core)
++		return -ENODEV;
+ 
+-	ret = devm_request_threaded_irq(mt6397->dev, mt6397->irq, NULL,
+-		mt6397_irq_thread, IRQF_ONESHOT, "mt6397-pmic", mt6397);
++	ret = regmap_read(regmap, pmic_core->cid_addr, &id);
+ 	if (ret) {
+-		dev_err(mt6397->dev, "failed to register irq=%d; err: %d\n",
+-			mt6397->irq, ret);
++		dev_err(&pdev->dev, "Failed to read chip id: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	return 0;
+-}
+-
+-#ifdef CONFIG_PM_SLEEP
+-static int mt6397_irq_suspend(struct device *dev)
+-{
+-	struct mt6397_chip *chip = dev_get_drvdata(dev);
+-
+-	regmap_write(chip->regmap, chip->int_con[0], chip->wake_mask[0]);
+-	regmap_write(chip->regmap, chip->int_con[1], chip->wake_mask[1]);
+-
+-	enable_irq_wake(chip->irq);
+-
+-	return 0;
+-}
+-
+-static int mt6397_irq_resume(struct device *dev)
+-{
+-	struct mt6397_chip *chip = dev_get_drvdata(dev);
+-
+-	regmap_write(chip->regmap, chip->int_con[0], chip->irq_masks_cur[0]);
+-	regmap_write(chip->regmap, chip->int_con[1], chip->irq_masks_cur[1]);
+-
+-	disable_irq_wake(chip->irq);
+-
+-	return 0;
+-}
+-#endif
+-
+-static SIMPLE_DEV_PM_OPS(mt6397_pm_ops, mt6397_irq_suspend,
+-			mt6397_irq_resume);
+-
+-static int mt6397_probe(struct platform_device *pdev)
+-{
+-	int ret;
+-	unsigned int id;
+-	struct mt6397_chip *pmic;
+-
+ 	pmic = devm_kzalloc(&pdev->dev, sizeof(*pmic), GFP_KERNEL);
+ 	if (!pmic)
+ 		return -ENOMEM;
+ 
+ 	pmic->dev = &pdev->dev;
++	pmic->chip_id = id & 0xff;
+ 
+ 	/*
+ 	 * mt6397 MFD is child device of soc pmic wrapper.
+@@ -287,26 +141,16 @@ static int mt6397_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, pmic);
+ 
+-	ret = regmap_read(pmic->regmap, MT6397_CID, &id);
+-	if (ret) {
+-		dev_err(pmic->dev, "Failed to read chip id: %d\n", ret);
+-		return ret;
+-	}
+-
+ 	pmic->irq = platform_get_irq(pdev, 0);
+ 	if (pmic->irq <= 0)
+ 		return pmic->irq;
+ 
+-	switch (id & 0xff) {
+-	case MT6323_CID_CODE:
+-		pmic->int_con[0] = MT6323_INT_CON0;
+-		pmic->int_con[1] = MT6323_INT_CON1;
+-		pmic->int_status[0] = MT6323_INT_STATUS0;
+-		pmic->int_status[1] = MT6323_INT_STATUS1;
+-		ret = mt6397_irq_init(pmic);
+-		if (ret)
+-			return ret;
++	ret = mt6397_irq_init(pmic);
++	if (ret)
++		return ret;
+ 
++	switch (pmic->chip_id) {
++	case MT6323_CID_CODE:
+ 		ret = devm_mfd_add_devices(&pdev->dev, -1, mt6323_devs,
+ 					   ARRAY_SIZE(mt6323_devs), NULL,
+ 					   0, pmic->irq_domain);
+@@ -314,21 +158,13 @@ static int mt6397_probe(struct platform_device *pdev)
+ 
+ 	case MT6397_CID_CODE:
+ 	case MT6391_CID_CODE:
+-		pmic->int_con[0] = MT6397_INT_CON0;
+-		pmic->int_con[1] = MT6397_INT_CON1;
+-		pmic->int_status[0] = MT6397_INT_STATUS0;
+-		pmic->int_status[1] = MT6397_INT_STATUS1;
+-		ret = mt6397_irq_init(pmic);
+-		if (ret)
+-			return ret;
+-
+ 		ret = devm_mfd_add_devices(&pdev->dev, -1, mt6397_devs,
+ 					   ARRAY_SIZE(mt6397_devs), NULL,
+ 					   0, pmic->irq_domain);
+ 		break;
+ 
+ 	default:
+-		dev_err(&pdev->dev, "unsupported chip: %d\n", id);
++		dev_err(&pdev->dev, "unsupported chip: %d\n", pmic->chip_id);
+ 		ret = -ENODEV;
+ 		break;
+ 	}
+@@ -342,9 +178,15 @@ static int mt6397_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id mt6397_of_match[] = {
+-	{ .compatible = "mediatek,mt6397" },
+-	{ .compatible = "mediatek,mt6323" },
+-	{ }
++	{
++		.compatible = "mediatek,mt6323",
++		.data = &mt6323_core,
++	}, {
++		.compatible = "mediatek,mt6397",
++		.data = &mt6397_core,
++	}, {
++		/* sentinel */
++	}
+ };
+ MODULE_DEVICE_TABLE(of, mt6397_of_match);
+ 
+@@ -359,7 +201,6 @@ static int mt6397_probe(struct platform_device *pdev)
+ 	.driver = {
+ 		.name = "mt6397",
+ 		.of_match_table = of_match_ptr(mt6397_of_match),
+-		.pm = &mt6397_pm_ops,
+ 	},
+ 	.id_table = mt6397_id,
+ };
+diff --git a/drivers/mfd/mt6397-irq.c b/drivers/mfd/mt6397-irq.c
 new file mode 100644
-index 0000000..3ea8073
+index 0000000..58a528f
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/mt6358-regulator.txt
-@@ -0,0 +1,318 @@
-+Mediatek MT6358 Regulator
++++ b/drivers/mfd/mt6397-irq.c
+@@ -0,0 +1,214 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Copyright (c) 2019 MediaTek Inc.
 +
-+Required properties:
-+- compatible: "mediatek,mt6358-regulator"
-+- mt6358regulator: List of regulators provided by this controller. It is named
-+  according to its regulator type, buck_<name> and ldo_<name>.
-+  The definition for each of these nodes is defined using the standard binding
-+  for regulators at Documentation/devicetree/bindings/regulator/regulator.txt.
++#include <linux/interrupt.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_irq.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/suspend.h>
++#include <linux/mfd/mt6323/core.h>
++#include <linux/mfd/mt6323/registers.h>
++#include <linux/mfd/mt6397/core.h>
++#include <linux/mfd/mt6397/registers.h>
 +
-+The valid names for regulators are::
-+BUCK:
-+  buck_vdram1, buck_vcore, buck_vpa, buck_vproc11, buck_vproc12, buck_vgpu,
-+  buck_vs2, buck_vmodem, buck_vs1
-+LDO:
-+  ldo_vdram2, ldo_vsim1, ldo_vibr, ldo_vrf12, ldo_vio18, ldo_vusb, ldo_vcamio,
-+  ldo_vcamd, ldo_vcn18, ldo_vfe28, ldo_vsram_proc11, ldo_vcn28, ldo_vsram_others,
-+  ldo_vsram_gpu, ldo_vxo22, ldo_vefuse, ldo_vaux18, ldo_vmch, ldo_vbif28,
-+  ldo_vsram_proc12, ldo_vcama1, ldo_vemc, ldo_vio28, ldo_va12, ldo_vrf18,
-+  ldo_vcn33_bt, ldo_vcn33_wifi, ldo_vcama2, ldo_vmc, ldo_vldo28, ldo_vaud28,
-+  ldo_vsim2
++static void mt6397_irq_lock(struct irq_data *data)
++{
++	struct mt6397_chip *mt6397 = irq_data_get_irq_chip_data(data);
 +
-+Example:
-+	pmic {
-+		compatible = "mediatek,mt6358";
++	mutex_lock(&mt6397->irqlock);
++}
 +
-+		mt6358regulator: mt6358regulator {
-+			compatible = "mediatek,mt6358-regulator";
++static void mt6397_irq_sync_unlock(struct irq_data *data)
++{
++	struct mt6397_chip *mt6397 = irq_data_get_irq_chip_data(data);
 +
-+			mt6358_vdram1_reg: buck_vdram1 {
-+				regulator-compatible = "buck_vdram1";
-+				regulator-name = "vdram1";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <2087500>;
-+				regulator-ramp-delay = <12500>;
-+				regulator-enable-ramp-delay = <0>;
-+				regulator-always-on;
-+			};
-+			mt6358_vcore_reg: buck_vcore {
-+				regulator-name = "vcore";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1293750>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-enable-ramp-delay = <200>;
-+				regulator-always-on;
-+			};
-+			mt6358_vpa_reg: buck_vpa {
-+				regulator-name = "vpa";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <3650000>;
-+				regulator-ramp-delay = <50000>;
-+				regulator-enable-ramp-delay = <250>;
-+			};
-+			mt6358_vproc11_reg: buck_vproc11 {
-+				regulator-name = "vproc11";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1293750>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-enable-ramp-delay = <200>;
-+				regulator-always-on;
-+			};
-+			mt6358_vproc12_reg: buck_vproc12 {
-+				regulator-name = "vproc12";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1293750>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-enable-ramp-delay = <200>;
-+				regulator-always-on;
-+			};
-+			mt6358_vgpu_reg: buck_vgpu {
-+				regulator-name = "vgpu";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1293750>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-enable-ramp-delay = <200>;
-+			};
-+			mt6358_vs2_reg: buck_vs2 {
-+				regulator-name = "vs2";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <2087500>;
-+				regulator-ramp-delay = <12500>;
-+				regulator-enable-ramp-delay = <0>;
-+				regulator-always-on;
-+			};
-+			mt6358_vmodem_reg: buck_vmodem {
-+				regulator-name = "vmodem";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1293750>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-enable-ramp-delay = <900>;
-+				regulator-always-on;
-+			};
-+			mt6358_vs1_reg: buck_vs1 {
-+				regulator-name = "vs1";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <2587500>;
-+				regulator-ramp-delay = <12500>;
-+				regulator-enable-ramp-delay = <0>;
-+				regulator-always-on;
-+			};
-+			mt6358_vdram2_reg: ldo_vdram2 {
-+				regulator-name = "vdram2";
-+				regulator-min-microvolt = <600000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-enable-ramp-delay = <3300>;
-+			};
-+			mt6358_vsim1_reg: ldo_vsim1 {
-+				regulator-name = "vsim1";
-+				regulator-min-microvolt = <1700000>;
-+				regulator-max-microvolt = <3100000>;
-+				regulator-enable-ramp-delay = <540>;
-+			};
-+			mt6358_vibr_reg: ldo_vibr {
-+				regulator-name = "vibr";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-enable-ramp-delay = <60>;
-+			};
-+			mt6358_vrf12_reg: ldo_vrf12 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vrf12";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-enable-ramp-delay = <120>;
-+			};
-+			mt6358_vio18_reg: ldo_vio18 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vio18";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-enable-ramp-delay = <2700>;
-+				regulator-always-on;
-+			};
-+			mt6358_vusb_reg: ldo_vusb {
-+				regulator-name = "vusb";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3100000>;
-+				regulator-enable-ramp-delay = <270>;
-+				regulator-always-on;
-+			};
-+			mt6358_vcamio_reg: ldo_vcamio {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vcamio";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vcamd_reg: ldo_vcamd {
-+				regulator-name = "vcamd";
-+				regulator-min-microvolt = <900000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vcn18_reg: ldo_vcn18 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vcn18";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vfe28_reg: ldo_vfe28 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vfe28";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vsram_proc11_reg: ldo_vsram_proc11 {
-+				regulator-name = "vsram_proc11";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1293750>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-enable-ramp-delay = <240>;
-+				regulator-always-on;
-+			};
-+			mt6358_vcn28_reg: ldo_vcn28 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vcn28";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vsram_others_reg: ldo_vsram_others {
-+				regulator-name = "vsram_others";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1293750>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-enable-ramp-delay = <240>;
-+				regulator-always-on;
-+			};
-+			mt6358_vsram_gpu_reg: ldo_vsram_gpu {
-+				regulator-name = "vsram_gpu";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1293750>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-enable-ramp-delay = <240>;
-+			};
-+			mt6358_vxo22_reg: ldo_vxo22 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vxo22";
-+				regulator-min-microvolt = <2200000>;
-+				regulator-max-microvolt = <2200000>;
-+				regulator-enable-ramp-delay = <120>;
-+				regulator-always-on;
-+			};
-+			mt6358_vefuse_reg: ldo_vefuse {
-+				regulator-name = "vefuse";
-+				regulator-min-microvolt = <1700000>;
-+				regulator-max-microvolt = <1900000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vaux18_reg: ldo_vaux18 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vaux18";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vmch_reg: ldo_vmch {
-+				regulator-name = "vmch";
-+				regulator-min-microvolt = <2900000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-enable-ramp-delay = <60>;
-+			};
-+			mt6358_vbif28_reg: ldo_vbif28 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vbif28";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vsram_proc12_reg: ldo_vsram_proc12 {
-+				regulator-name = "vsram_proc12";
-+				regulator-min-microvolt = <500000>;
-+				regulator-max-microvolt = <1293750>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-enable-ramp-delay = <240>;
-+				regulator-always-on;
-+			};
-+			mt6358_vcama1_reg: ldo_vcama1 {
-+				regulator-name = "vcama1";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vemc_reg: ldo_vemc {
-+				regulator-name = "vemc";
-+				regulator-min-microvolt = <2900000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-enable-ramp-delay = <60>;
-+				regulator-always-on;
-+			};
-+			mt6358_vio28_reg: ldo_vio28 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vio28";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_va12_reg: ldo_va12 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "va12";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-enable-ramp-delay = <270>;
-+				regulator-always-on;
-+			};
-+			mt6358_vrf18_reg: ldo_vrf18 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vrf18";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-enable-ramp-delay = <120>;
-+			};
-+			mt6358_vcn33_bt_reg: ldo_vcn33_bt {
-+				regulator-name = "vcn33_bt";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3500000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vcn33_wifi_reg: ldo_vcn33_wifi {
-+				regulator-name = "vcn33_wifi";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3500000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vcama2_reg: ldo_vcama2 {
-+				regulator-name = "vcama2";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vmc_reg: ldo_vmc {
-+				regulator-name = "vmc";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-enable-ramp-delay = <60>;
-+			};
-+			mt6358_vldo28_reg: ldo_vldo28 {
-+				regulator-name = "vldo28";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vaud28_reg: ldo_vaud28 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vaud28";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-enable-ramp-delay = <270>;
-+			};
-+			mt6358_vsim2_reg: ldo_vsim2 {
-+				regulator-name = "vsim2";
-+				regulator-min-microvolt = <1700000>;
-+				regulator-max-microvolt = <3100000>;
-+				regulator-enable-ramp-delay = <540>;
-+			};
-+		};
-+	};
++	regmap_write(mt6397->regmap, mt6397->int_con[0],
++		     mt6397->irq_masks_cur[0]);
++	regmap_write(mt6397->regmap, mt6397->int_con[1],
++		     mt6397->irq_masks_cur[1]);
++
++	mutex_unlock(&mt6397->irqlock);
++}
++
++static void mt6397_irq_disable(struct irq_data *data)
++{
++	struct mt6397_chip *mt6397 = irq_data_get_irq_chip_data(data);
++	int shift = data->hwirq & 0xf;
++	int reg = data->hwirq >> 4;
++
++	mt6397->irq_masks_cur[reg] &= ~BIT(shift);
++}
++
++static void mt6397_irq_enable(struct irq_data *data)
++{
++	struct mt6397_chip *mt6397 = irq_data_get_irq_chip_data(data);
++	int shift = data->hwirq & 0xf;
++	int reg = data->hwirq >> 4;
++
++	mt6397->irq_masks_cur[reg] |= BIT(shift);
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int mt6397_irq_set_wake(struct irq_data *irq_data, unsigned int on)
++{
++	struct mt6397_chip *mt6397 = irq_data_get_irq_chip_data(irq_data);
++	int shift = irq_data->hwirq & 0xf;
++	int reg = irq_data->hwirq >> 4;
++
++	if (on)
++		mt6397->wake_mask[reg] |= BIT(shift);
++	else
++		mt6397->wake_mask[reg] &= ~BIT(shift);
++
++	return 0;
++}
++#else
++#define mt6397_irq_set_wake NULL
++#endif
++
++static struct irq_chip mt6397_irq_chip = {
++	.name = "mt6397-irq",
++	.irq_bus_lock = mt6397_irq_lock,
++	.irq_bus_sync_unlock = mt6397_irq_sync_unlock,
++	.irq_enable = mt6397_irq_enable,
++	.irq_disable = mt6397_irq_disable,
++	.irq_set_wake = mt6397_irq_set_wake,
++};
++
++static void mt6397_irq_handle_reg(struct mt6397_chip *mt6397, int reg,
++				  int irqbase)
++{
++	unsigned int status;
++	int i, irq, ret;
++
++	ret = regmap_read(mt6397->regmap, reg, &status);
++	if (ret) {
++		dev_err(mt6397->dev, "Failed to read irq status: %d\n", ret);
++		return;
++	}
++
++	for (i = 0; i < 16; i++) {
++		if (status & BIT(i)) {
++			irq = irq_find_mapping(mt6397->irq_domain, irqbase + i);
++			if (irq)
++				handle_nested_irq(irq);
++		}
++	}
++
++	regmap_write(mt6397->regmap, reg, status);
++}
++
++static irqreturn_t mt6397_irq_thread(int irq, void *data)
++{
++	struct mt6397_chip *mt6397 = data;
++
++	mt6397_irq_handle_reg(mt6397, mt6397->int_status[0], 0);
++	mt6397_irq_handle_reg(mt6397, mt6397->int_status[1], 16);
++
++	return IRQ_HANDLED;
++}
++
++static int mt6397_irq_domain_map(struct irq_domain *d, unsigned int irq,
++				 irq_hw_number_t hw)
++{
++	struct mt6397_chip *mt6397 = d->host_data;
++
++	irq_set_chip_data(irq, mt6397);
++	irq_set_chip_and_handler(irq, &mt6397_irq_chip, handle_level_irq);
++	irq_set_nested_thread(irq, 1);
++	irq_set_noprobe(irq);
++
++	return 0;
++}
++
++static const struct irq_domain_ops mt6397_irq_domain_ops = {
++	.map = mt6397_irq_domain_map,
++};
++
++static int mt6397_irq_pm_notifier(struct notifier_block *notifier,
++				  unsigned long pm_event, void *unused)
++{
++	struct mt6397_chip *chip =
++		container_of(notifier, struct mt6397_chip, pm_nb);
++
++	switch (pm_event) {
++	case PM_SUSPEND_PREPARE:
++		regmap_write(chip->regmap,
++			     chip->int_con[0], chip->wake_mask[0]);
++		regmap_write(chip->regmap,
++			     chip->int_con[1], chip->wake_mask[1]);
++		enable_irq_wake(chip->irq);
++		break;
++
++	case PM_POST_SUSPEND:
++		regmap_write(chip->regmap,
++			     chip->int_con[0], chip->irq_masks_cur[0]);
++		regmap_write(chip->regmap,
++			     chip->int_con[1], chip->irq_masks_cur[1]);
++		disable_irq_wake(chip->irq);
++		break;
++
++	default:
++		break;
++	}
++
++	return NOTIFY_DONE;
++}
++
++int mt6397_irq_init(struct mt6397_chip *chip)
++{
++	int ret;
++
++	mutex_init(&chip->irqlock);
++
++	switch (chip->chip_id) {
++	case MT6323_CID_CODE:
++		chip->int_con[0] = MT6323_INT_CON0;
++		chip->int_con[1] = MT6323_INT_CON1;
++		chip->int_status[0] = MT6323_INT_STATUS0;
++		chip->int_status[1] = MT6323_INT_STATUS1;
++		break;
++
++	case MT6391_CID_CODE:
++	case MT6397_CID_CODE:
++		chip->int_con[0] = MT6397_INT_CON0;
++		chip->int_con[1] = MT6397_INT_CON1;
++		chip->int_status[0] = MT6397_INT_STATUS0;
++		chip->int_status[1] = MT6397_INT_STATUS1;
++		break;
++
++	default:
++		dev_err(chip->dev, "unsupported chip: 0x%x\n", chip->chip_id);
++		return -ENODEV;
++	}
++
++	/* Mask all interrupt sources */
++	regmap_write(chip->regmap, chip->int_con[0], 0x0);
++	regmap_write(chip->regmap, chip->int_con[1], 0x0);
++
++	chip->pm_nb.notifier_call = mt6397_irq_pm_notifier;
++	chip->irq_domain = irq_domain_add_linear(chip->dev->of_node,
++						 MT6397_IRQ_NR,
++						 &mt6397_irq_domain_ops,
++						 chip);
++	if (!chip->irq_domain) {
++		dev_err(chip->dev, "could not create irq domain\n");
++		return -ENOMEM;
++	}
++
++	ret = devm_request_threaded_irq(chip->dev, chip->irq, NULL,
++					mt6397_irq_thread, IRQF_ONESHOT,
++					"mt6397-pmic", chip);
++	if (ret) {
++		dev_err(chip->dev, "failed to register irq=%d; err: %d\n",
++			chip->irq, ret);
++		return ret;
++	}
++
++	register_pm_notifier(&chip->pm_nb);
++	return 0;
++}
+diff --git a/include/linux/mfd/mt6397/core.h b/include/linux/mfd/mt6397/core.h
+index d678f52..ad27d19 100644
+--- a/include/linux/mfd/mt6397/core.h
++++ b/include/linux/mfd/mt6397/core.h
+@@ -15,6 +15,14 @@
+ #ifndef __MFD_MT6397_CORE_H__
+ #define __MFD_MT6397_CORE_H__
+ 
++#include <linux/notifier.h>
++
++enum chip_id {
++	MT6323_CID_CODE = 0x23,
++	MT6391_CID_CODE = 0x91,
++	MT6397_CID_CODE = 0x97,
++};
++
+ enum mt6397_irq_numbers {
+ 	MT6397_IRQ_SPKL_AB = 0,
+ 	MT6397_IRQ_SPKR_AB,
+@@ -54,6 +62,7 @@ enum mt6397_irq_numbers {
+ struct mt6397_chip {
+ 	struct device *dev;
+ 	struct regmap *regmap;
++	struct notifier_block pm_nb;
+ 	int irq;
+ 	struct irq_domain *irq_domain;
+ 	struct mutex irqlock;
+@@ -62,6 +71,9 @@ struct mt6397_chip {
+ 	u16 irq_masks_cache[2];
+ 	u16 int_con[2];
+ 	u16 int_status[2];
++	u16 chip_id;
+ };
+ 
++int mt6397_irq_init(struct mt6397_chip *mt6397);
++
+ #endif /* __MFD_MT6397_CORE_H__ */
 -- 
 1.9.1
 
