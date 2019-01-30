@@ -2,87 +2,681 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91824C282CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2ADEC282CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 608BD20820
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:58:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8864120820
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:02:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SGdTlzVs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730110AbfA3E6O (ORCPT
+        id S1725841AbfA3FCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 23:58:14 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55312 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728356AbfA3E6N (ORCPT
+        Wed, 30 Jan 2019 00:02:02 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33760 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbfA3FCB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 23:58:13 -0500
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 516BF36FC;
-        Wed, 30 Jan 2019 04:58:12 +0000 (UTC)
-Date:   Tue, 29 Jan 2019 20:58:11 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     autofs mailing list <autofs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pan Bian <bianpan2016@163.com>
-Subject: Re: [PATCH 3/3] autofs: add ignore mount option
-Message-Id: <20190129205811.2bd83d93dbc05325a8c55954@linux-foundation.org>
-In-Reply-To: <553f4a0daf09407371193d7d4782a759561a626a.camel@themaw.net>
-References: <154725122396.11260.16053424107144453867.stgit@pluto-themaw-net>
-        <154725123970.11260.6113771566924907275.stgit@pluto-themaw-net>
-        <20190129171622.5b75f794d2b1e4d1055331eb@linux-foundation.org>
-        <553f4a0daf09407371193d7d4782a759561a626a.camel@themaw.net>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 30 Jan 2019 00:02:01 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p6so17995094eds.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 21:01:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=L8O0r64SRTqH4ZUvBV1sTUnUQtLD3hwwmVXLki3gS1Q=;
+        b=SGdTlzVsXzbHgPR0hfGgm39z4UqRR2M/Y4BgmqKCoQR+lQdVOEiB+ypelajaChG/is
+         Jr0ZLRxVQsGfN9Ak09s0D8xa66+QmclRKLmKxx7FywV1PEoJnnmYbIHXBfD9pp2rwZB5
+         DIAk8ioLz7sZvJVbHK+1WcKPqwwCHbYzSO8o8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=L8O0r64SRTqH4ZUvBV1sTUnUQtLD3hwwmVXLki3gS1Q=;
+        b=XJI1VaLqfRFft+0fq0DUjjCOUdxX+wdcRVMVE8kvSVfiw/Zykvcl22NorA4oHfmeSu
+         qSzk33MuxsLSP01BEcmlYv8PDrymrwA6RoUoyzrNa7oEEloYCesHHfBTgu3IfI9b5CgO
+         6kb+ODuo9adeCEWS4mQzJ06yZXAyd3DYJgknQS+dNVr1XU4V1/KxESkwkpdRGlLXXsa/
+         Xoqi9cHshpNaHkooU5FvERcixlspfJjlxziHn1I3VdqgfQLWAg8Z4qeuUu8gZKWQye86
+         qGZo6OyoUScs6+aVYe3EmB/VA5yxTlj5e63DxJQrXr6xt1OvFMumAJl4Svi7dtXYHtEs
+         SiIQ==
+X-Gm-Message-State: AJcUukf8yvqvXfdZhLL6m1LjUT7IV0kwu3MoZHyr8gRSCHMwH6ceR7Pd
+        4hj7e/omll02AzvXqohVbFVWIrfcIMy2tnch5IYmvw==
+X-Google-Smtp-Source: ALg8bN4pbsQsIuxMFkH7vNxf2ekjt5Nc9KbpMlhJqanWbHj/7sIXqiZ9CIk7+vugNlKoNQ+AQRLR0EC9IEqU27t0Me8=
+X-Received: by 2002:a50:8ad9:: with SMTP id k25mr28691925edk.189.1548824518205;
+ Tue, 29 Jan 2019 21:01:58 -0800 (PST)
+MIME-Version: 1.0
+References: <20190111110851.6805-1-faiz_abbas@ti.com> <20190111110851.6805-2-faiz_abbas@ti.com>
+ <bcea7bae-41c8-358a-11c1-3886f9dc0351@intel.com> <CAG2=9p-HsbghD2-m6VPEPCQVuSWC_1mZ=GL+aKZwZTgOgSO0sQ@mail.gmail.com>
+ <a68b68f6-ea5f-2193-188f-cddeec9f6ef4@ti.com> <CAG2=9p_qU8XOtyanEPfa1CSY_X5QGgGCvBg-7dcyW-BhcBChKQ@mail.gmail.com>
+ <8e9a58d3-35e0-7b0f-328d-9c049024a6aa@ti.com>
+In-Reply-To: <8e9a58d3-35e0-7b0f-328d-9c049024a6aa@ti.com>
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+Date:   Wed, 30 Jan 2019 13:01:46 +0800
+Message-ID: <CAG2=9p_mUyY=hKLN4E-ZUaJNueE-h5hHKDnJV5cG5kjtLsEgPA@mail.gmail.com>
+Subject: Re: [PATCH 1/7] mmc: sdhci: add support for using external DMA devices
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019 10:07:15 +0800 Ian Kent <raven@themaw.net> wrote:
+Hi Faiz=EF=BC=8C
 
-> On Tue, 2019-01-29 at 17:16 -0800, Andrew Morton wrote:
-> > On Sat, 12 Jan 2019 08:00:40 +0800 Ian Kent <raven@themaw.net> wrote:
-> > 
-> > > Add an autofs file system mount option that can be used to provide
-> > > a generic indicator to applications that the mount entry should be
-> > > ignored when displaying mount information.
-> > 
-> > What is the reason for adding this feature?
-> 
-> In other OSes that provide autofs and that provide a mount list
-> to user space based on the kernel mount list a no-op mount option
-> ("ignore" is the one use on the most common OS) is allowed so that
-> autofs file system users can optionally use it.
-> 
-> The idea is that it be used by user space programs to exclude
-> autofs mounts from consideration when reading the mounts list.
-> 
-> Prior to the change to link /etc/mtab to /proc/self/mounts all
-> I needed to do to achieve this was to use mount(2) and not update
-> the mtab but now that no longer works.
-> 
-> I know the symlinking happened a long time ago and I considered
-> doing this then but, at the time I couldn't remember the commonly
-> used option name and thought persuading the various utility
-> maintainers would be too hard.
-> 
-> But now I have a RHEL request to do this for compatibility for a
-> widely used product so I want to go ahead with it and try and
-> enlist the help of some utility package maintainers.
-> 
-> Clearly, without the option nothing can be done so it's at least
-> a start.
+On Tue, 29 Jan 2019 at 19:50, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>
+> Chunyan,
+>
+> On 28/01/19 5:16 PM, Chunyan Zhang wrote:
+> > On Mon, 28 Jan 2019 at 18:40, Faiz Abbas <faiz_abbas@ti.com> wrote:
+> >>
+> >> Hi,
+> >>
+> >> On 28/01/19 3:50 PM, Chunyan Zhang wrote:
+> >>> On Thu, 24 Jan 2019 at 19:41, Adrian Hunter <adrian.hunter@intel.com>=
+ wrote:
+> >>>>
+> >>>> On 11/01/19 1:08 PM, Faiz Abbas wrote:
+> >>>>> From: Chunyan Zhang <zhang.chunyan@linaro.org>
+> >>>>>
+> >>>>> Some standard SD host controllers can support both external dma
+> >>>>> controllers as well as ADMA/SDMA in which the SD host controller
+> >>>>> acts as DMA master. TI's omap controller is the case as an example.
+> >>>>>
+> >>>>> Currently the generic SDHCI code supports ADMA/SDMA integrated in
+> >>>>> the host controller but does not have any support for external DMA
+> >>>>> controllers implemented using dmaengine, meaning that custom code i=
+s
+> >>>>> needed for any systems that use an external DMA controller with SDH=
+CI.
+> >>>>>
+> >>>>> Fixes by Faiz Abbas <faiz_abbas@ti.com>:
+> >>>>> 1. Map scatterlists before dmaengine_prep_slave_sg()
+> >>>>> 2. Use dma_async() functions inside of the send_command() path and
+> >>>>> synchronize once at the start of each request.
+> >>>>
+> >>>> Sorry for the slow reply, but I do have some concerns.  Please see t=
+he comments.
+> >>>>
+> >>>>>
+> >>>>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+> >>>>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> >>>>> ---
+> >>>>>  drivers/mmc/host/Kconfig |   3 +
+> >>>>>  drivers/mmc/host/sdhci.c | 266 +++++++++++++++++++++++++++++++++++=
++++-
+> >>>>>  drivers/mmc/host/sdhci.h |   8 ++
+> >>>>>  3 files changed, 273 insertions(+), 4 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> >>>>> index e26b8145efb3..333292e8ecdd 100644
+> >>>>> --- a/drivers/mmc/host/Kconfig
+> >>>>> +++ b/drivers/mmc/host/Kconfig
+> >>>>> @@ -999,3 +999,6 @@ config MMC_SDHCI_AM654
+> >>>>>         If you have a controller with this interface, say Y or M he=
+re.
+> >>>>>
+> >>>>>         If unsure, say N.
+> >>>>> +
+> >>>>> +config MMC_SDHCI_EXTERNAL_DMA
+> >>>>> +        bool
+> >>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> >>>>> index a22e11a65658..4a9044c06e21 100644
+> >>>>> --- a/drivers/mmc/host/sdhci.c
+> >>>>> +++ b/drivers/mmc/host/sdhci.c
+> >>>>> @@ -14,6 +14,7 @@
+> >>>>>   */
+> >>>>>
+> >>>>>  #include <linux/delay.h>
+> >>>>> +#include <linux/dmaengine.h>
+> >>>>>  #include <linux/ktime.h>
+> >>>>>  #include <linux/highmem.h>
+> >>>>>  #include <linux/io.h>
+> >>>>> @@ -1118,6 +1119,226 @@ static void sdhci_prepare_data(struct sdhci=
+_host *host, struct mmc_command *cmd)
+> >>>>>       }
+> >>>>>  }
+> >>>>>
+> >>>>> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> >>>>> +static int sdhci_external_dma_init(struct sdhci_host *host)
+> >>>>> +{
+> >>>>> +     int ret =3D 0;
+> >>>>> +     struct mmc_host *mmc =3D host->mmc;
+> >>>>> +
+> >>>>> +     host->tx_chan =3D dma_request_chan(mmc->parent, "tx");
+> >>>>> +     if (IS_ERR(host->tx_chan)) {
+> >>>>> +             ret =3D PTR_ERR(host->tx_chan);
+> >>>>> +             if (ret !=3D -EPROBE_DEFER)
+> >>>>> +                     pr_warn("Failed to request TX DMA channel.\n"=
+);
+> >>>>> +             host->tx_chan =3D NULL;
+> >>>>> +             return ret;
+> >>>>> +     }
+> >>>>> +
+> >>>>> +     host->rx_chan =3D dma_request_chan(mmc->parent, "rx");
+> >>>>> +     if (IS_ERR(host->rx_chan)) {
+> >>>>> +             if (host->tx_chan) {
+> >>>>> +                     dma_release_channel(host->tx_chan);
+> >>>>> +                     host->tx_chan =3D NULL;
+> >>>>> +             }
+> >>>>> +
+> >>>>> +             ret =3D PTR_ERR(host->rx_chan);
+> >>>>> +             if (ret !=3D -EPROBE_DEFER)
+> >>>>> +                     pr_warn("Failed to request RX DMA channel.\n"=
+);
+> >>>>> +             host->rx_chan =3D NULL;
+> >>>>> +     }
+> >>>>> +
+> >>>>> +     return ret;
+> >>>>> +}
+> >>>>> +
+> >>>>> +static inline struct dma_chan *
+> >>>>> +sdhci_external_dma_channel(struct sdhci_host *host, struct mmc_dat=
+a *data)
+> >>>>> +{
+> >>>>> +     return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->r=
+x_chan;
+> >>>>> +}
+> >>>>> +
+> >>>>> +static int sdhci_external_dma_setup(struct sdhci_host *host,
+> >>>>> +                                 struct mmc_command *cmd)
+> >>>>> +{
+> >>>>> +     int ret, i;
+> >>>>> +     struct dma_async_tx_descriptor *desc;
+> >>>>> +     struct mmc_data *data =3D cmd->data;
+> >>>>> +     struct dma_chan *chan;
+> >>>>> +     struct dma_slave_config cfg;
+> >>>>> +     dma_cookie_t cookie;
+> >>>>> +     int sg_cnt;
+> >>>>> +
+> >>>>> +     if (!host->mapbase)
+> >>>>> +             return -EINVAL;
+> >>>>> +
+> >>>>> +     cfg.src_addr =3D host->mapbase + SDHCI_BUFFER;
+> >>>>> +     cfg.dst_addr =3D host->mapbase + SDHCI_BUFFER;
+> >>>>> +     cfg.src_addr_width =3D DMA_SLAVE_BUSWIDTH_4_BYTES;
+> >>>>> +     cfg.dst_addr_width =3D DMA_SLAVE_BUSWIDTH_4_BYTES;
+> >>>>> +     cfg.src_maxburst =3D data->blksz / 4;
+> >>>>> +     cfg.dst_maxburst =3D data->blksz / 4;
+> >>>>> +
+> >>>>> +     /* Sanity check: all the SG entries must be aligned by block =
+size. */
+> >>>>> +     for (i =3D 0; i < data->sg_len; i++) {
+> >>>>> +             if ((data->sg + i)->length % data->blksz)
+> >>>>> +                     return -EINVAL;
+> >>>>> +     }
+> >>>>> +
+> >>>>> +     chan =3D sdhci_external_dma_channel(host, data);
+> >>>>> +
+> >>>>> +     ret =3D dmaengine_slave_config(chan, &cfg);
+> >>>>> +     if (ret)
+> >>>>> +             return ret;
+> >>>>> +
+> >>>>> +     sg_cnt =3D sdhci_pre_dma_transfer(host, data, COOKIE_MAPPED);
+> >>>>> +     if (sg_cnt <=3D 0)
+> >>>>> +             return -EINVAL;
+> >>>>> +
+> >>>>> +     desc =3D dmaengine_prep_slave_sg(chan, data->sg, data->sg_len=
+,
+> >>>>> +                                    mmc_get_dma_dir(data),
+> >>>>> +                                    DMA_PREP_INTERRUPT | DMA_CTRL_=
+ACK);
+> >>>>> +     if (!desc)
+> >>>>> +             return -EINVAL;
+> >>>>> +
+> >>>>> +     desc->callback =3D NULL;
+> >>>>> +     desc->callback_param =3D NULL;
+> >>>>> +
+> >>>>> +     cookie =3D dmaengine_submit(desc);
+> >>>>> +     if (cookie < 0)
+> >>>>> +             ret =3D cookie;
+> >>>>> +
+> >>>>> +     return ret;
+> >>>>> +}
+> >>>>> +
+> >>>>> +static void sdhci_external_dma_release(struct sdhci_host *host)
+> >>>>> +{
+> >>>>> +     if (host->tx_chan) {
+> >>>>> +             dma_release_channel(host->tx_chan);
+> >>>>> +             host->tx_chan =3D NULL;
+> >>>>> +     }
+> >>>>> +
+> >>>>> +     if (host->rx_chan) {
+> >>>>> +             dma_release_channel(host->rx_chan);
+> >>>>> +             host->rx_chan =3D NULL;
+> >>>>> +     }
+> >>>>> +
+> >>>>> +     sdhci_switch_external_dma(host, false);
+> >>>>> +}
+> >>>>> +
+> >>>>> +static int __sdhci_external_dma_prepare_data(struct sdhci_host *ho=
+st,
+> >>>>> +                                          struct mmc_command *cmd)
+> >>>>> +{
+> >>>>> +     struct mmc_data *data =3D cmd->data;
+> >>>>> +
+> >>>>> +     host->data_timeout =3D 0;
+> >>>>> +
+> >>>>> +     if (sdhci_data_line_cmd(cmd))
+> >>>>> +             sdhci_set_timeout(host, cmd);
+> >>>>> +
+> >>>>> +     WARN_ON(host->data);
+> >>>>> +
+> >>>>> +     /* Sanity checks */
+> >>>>> +     WARN_ON(data->blksz * data->blocks > 524288);
+> >>>>> +     WARN_ON(data->blksz > host->mmc->max_blk_size);
+> >>>>> +     WARN_ON(data->blocks > 65535);
+> >>>>> +
+> >>>>> +     host->flags |=3D SDHCI_REQ_USE_DMA;
+> >>>>> +     host->data =3D data;
+> >>>>> +     host->data_early =3D 0;
+> >>>>> +     host->data->bytes_xfered =3D 0;
+> >>>>> +
+> >>>>> +     sdhci_set_transfer_irqs(host);
+> >>>>> +
+> >>>>> +     /*
+> >>>>> +      * For Version 4.10 onwards, if v4 mode is enabled, 32-bit Bl=
+ock Count
+> >>>>> +      * can be supported, in that case 16-bit block count register=
+ must be 0.
+> >>>>> +      */
+> >>>>> +     if (host->version >=3D SDHCI_SPEC_410 && host->v4_mode &&
+> >>>>> +         (host->quirks2 & SDHCI_QUIRK2_USE_32BIT_BLK_CNT)) {
+> >>>>> +             if (sdhci_readw(host, SDHCI_BLOCK_COUNT))
+> >>>>> +                     sdhci_writew(host, 0, SDHCI_BLOCK_COUNT);
+> >>>>> +             sdhci_writew(host, data->blocks, SDHCI_32BIT_BLK_CNT)=
+;
+> >>>>> +     } else {
+> >>>>> +             sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
+> >>>>> +     }
+> >>>>
+> >>>> It is probably worth factoring out the code that is shared with
+> >>>> sdhci_prepare_data() where possible.
+> >>>>
+> >>>>> +
+> >>>>> +     return 0;
+> >>>>> +}
+> >>>>> +
+> >>>>> +static void sdhci_external_dma_prepare_data(struct sdhci_host *hos=
+t,
+> >>>>> +                                         struct mmc_command *cmd)
+> >>>>> +{
+> >>>>> +     struct mmc_data *data =3D cmd->data;
+> >>>>> +
+> >>>>> +     if (!data)
+> >>>>> +             return;
+> >>>>
+> >>>> Even in the !data case, we still need to set up a timeout for comman=
+ds with
+> >>>> busy waiting.  I suggest checking the !data case before calling
+> >>>> sdhci_external_dma_prepare_data()
+> >>>
+> >>> Ok.
+> >>>
+> >>>>
+> >>>>> +
+> >>>>> +     if (sdhci_external_dma_setup(host, cmd) ||
+> >>>>> +         __sdhci_external_dma_prepare_data(host, cmd)) {
+> >>>>> +             sdhci_external_dma_release(host);
+> >>>>> +             pr_err("%s: Cannot use external DMA, switch to the DM=
+A/PIO which standard SDHCI provides.\n",
+> >>>>> +                    mmc_hostname(host->mmc));
+> >>>>> +             sdhci_prepare_data(host, cmd);
+> >>>>> +     }
+> >>>>> +}
+> >>>>> +
+> >>>>> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *hos=
+t,
+> >>>>> +                                         struct mmc_command *cmd)
+> >>>>> +{
+> >>>>> +     struct dma_chan *chan;
+> >>>>> +
+> >>>>> +     if (!cmd->data || cmd->opcode =3D=3D MMC_SET_BLOCK_COUNT)
+> >>>>
+> >>>> MMC_SET_BLOCK_COUNT never has cmd->data and so does not need to be c=
+hecked.
+> >>>
+> >>> Ok.
+> >>>
+> >>>>
+> >>>>> +             return;
+> >>>>> +
+> >>>>> +     sdhci_writew(host, cmd->data->blksz, SDHCI_BLOCK_SIZE);
+> >>>>
+> >>>> Block size is set in __sdhci_external_dma_prepare_data() so does it =
+need to
+> >>>> be set here also.
+> >>>
+> >>> Ok.
+> >>
+> >> That is BLOCK_COUNT. This is BLOCK_SIZE.
+> >>
+> >>>
+> >>>>
+> >>>>> +     chan =3D sdhci_external_dma_channel(host, cmd->data);
+> >>>>> +     if (chan)
+> >>>>> +             dma_async_issue_pending(chan);
+> >>>>> +}
+> >>>>> +
+> >>>>> +static int sdhci_external_dma_cleanup(struct sdhci_host *host,
+> >>>>> +                                 struct mmc_data *data)
+> >>>>
+> >>>> Please align parameters with open parenthesis
+> >>>>
+> >>>>> +{
+> >>>>> +     struct dma_chan *chan =3D sdhci_external_dma_channel(host, da=
+ta);
+> >>>>> +     int ret =3D 0;
+> >>>>> +
+> >>>>> +     if (chan)
+> >>>>> +             ret =3D dmaengine_terminate_async(chan);
+> >>>>> +
+> >>>>> +     return ret;
+> >>>>> +}
+> >>>>> +#else
+> >>>>> +static int sdhci_external_dma_init(struct sdhci_host *host)
+> >>>>> +{
+> >>>>> +     return -EOPNOTSUPP;
+> >>>>> +}
+> >>>>> +
+> >>>>> +static void sdhci_external_dma_release(struct sdhci_host *host)
+> >>>>> +{}
+> >>>>> +
+> >>>>> +static void sdhci_external_dma_prepare_data(struct sdhci_host *hos=
+t,
+> >>>>> +                                         struct mmc_command *cmd)
+> >>>>> +{
+> >>>>> +     /* If MMC_SDHCI_EXTERNAL_DMA not supported, PIO will be used =
+*/
+> >>>>> +     sdhci_prepare_data(host, cmd);
+> >>>>> +}
+> >>>>> +
+> >>>>> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *hos=
+t,
+> >>>>> +                                         struct mmc_command *cmd)
+> >>>>> +{}
+> >>>>> +
+> >>>>> +static int sdhci_external_dma_cleanup(struct sdhci_host *host,
+> >>>>> +                                 struct mmc_data *data)
+> >>>>
+> >>>> Please align parameters with open parenthesis
+> >>>>
+> >>>>> +{
+> >>>>> +     return 0;
+> >>>>> +}
+> >>>>> +#endif
+> >>>>> +
+> >>>>> +void sdhci_switch_external_dma(struct sdhci_host *host, bool en)
+> >>>>> +{
+> >>>>> +     host->use_external_dma =3D en;
+> >>>>> +}
+> >>>>> +EXPORT_SYMBOL_GPL(sdhci_switch_external_dma);
+> >>>>> +
+> >>>>>  static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
+> >>>>>                                   struct mmc_request *mrq)
+> >>>>>  {
+> >>>>> @@ -1374,7 +1595,10 @@ void sdhci_send_command(struct sdhci_host *h=
+ost, struct mmc_command *cmd)
+> >>>>>               host->data_cmd =3D cmd;
+> >>>>>       }
+> >>>>>
+> >>>>> -     sdhci_prepare_data(host, cmd);
+> >>>>> +     if (host->use_external_dma)
+> >>>>
+> >>>> As mentioned above wrt sdhci_external_dma_prepare_data():
+> >>>>
+> >>>>         if (host->use_external_dma && cmd->data)
+> >>>>
+> >>>
+> >>> Maybe we should move checking the !data case out of both
+> >>> _prepare_data, and add it to sdhci_send_command() before calling
+> >>> _prepare_data(), that's saying we can do set up a timeout in
+> >>> sdhci_send_command().
+> >>
+> >> Lets just factor out everything in common as Adrian said. The !data,
+> >> BLOCK_COUNT writes and busy waiting.
+> >
+> > Ok, and also BLOCK_SIZE which can be set in _prepare_data().
+> >
+> >>
+> >>>
+> >>>>> +             sdhci_external_dma_prepare_data(host, cmd);
+> >>>>> +     else
+> >>>>> +             sdhci_prepare_data(host, cmd);
+> >>>>>
+> >>>>>       sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
+> >>>>>
+> >>>>> @@ -1416,6 +1640,9 @@ void sdhci_send_command(struct sdhci_host *ho=
+st, struct mmc_command *cmd)
+> >>>>>               timeout +=3D 10 * HZ;
+> >>>>>       sdhci_mod_timer(host, cmd->mrq, timeout);
+> >>>>>
+> >>>>> +     if (host->use_external_dma)
+> >>>>> +             sdhci_external_dma_pre_transfer(host, cmd);
+> >>>>
+> >>>> Why is sdhci_external_dma_pre_transfer() needed here - couldn't it b=
+e done
+> >>>> in sdhci_external_dma_prepare_data()?
+> >>>>
+> >>>
+> >>> I'm not sure dma_async_issue_pending() can be done so early in
+> >>> sdhci_external_dma_prepare_data().
+> >>>
+> >>>>> +
+> >>>>>       sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_=
+COMMAND);
+> >>>>>  }
+> >>>>>  EXPORT_SYMBOL_GPL(sdhci_send_command);
+> >>>>> @@ -1781,6 +2008,11 @@ void sdhci_request(struct mmc_host *mmc, str=
+uct mmc_request *mrq)
+> >>>>>
+> >>>>>       sdhci_led_activate(host);
+> >>>>>
+> >>>>> +     if (host->use_external_dma && mrq->data) {
+> >>>>> +             struct dma_chan *chan =3D sdhci_external_dma_channel(=
+host,
+> >>>>> +                                                                mr=
+q->data);
+> >>>>
+> >>>> sdhci_external_dma_channel is not declared if
+> >>>> !IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> >>>
+> >>> Ok, I guess this can be moved to sdhci_external_dma_prepare_data().
+> >>
+> >> No. We have to synchronize from a guaranteed non-atomic context. Maybe
+> >> add another empty sdhci_external_dma_channel definition in the #else p=
+art?
+> >>
+> >>>
+> >>>>
+> >>>>> +             dmaengine_synchronize(chan);
+> >>>>
+> >>>> So this is to cover for using dmaengine_terminate_async()?
+> >>
+> >> Yes.
+> >>
+> >>>
+> >>> Ok.
+> >>>
+> >>>>
+> >>>>> +     }
+> >>>>>       /*
+> >>>>>        * Ensure we don't send the STOP for non-SET_BLOCK_COUNTED
+> >>>>>        * requests if Auto-CMD12 is enabled.
+> >>>>> @@ -2658,6 +2890,8 @@ static bool sdhci_request_done(struct sdhci_h=
+ost *host)
+> >>>>>                               dma_unmap_sg(mmc_dev(host->mmc), data=
+->sg,
+> >>>>>                                            data->sg_len,
+> >>>>>                                            mmc_get_dma_dir(data));
+> >>>>> +                             if (host->use_external_dma)
+> >>>>> +                                     sdhci_external_dma_cleanup(ho=
+st, data);
+> >>>>
+> >>>> Is sdhci_external_dma_cleanup() only needed in the error case?
+> >>>>
+> >>>> The DMA must be stopped before the memory is unmapped and potentiall=
+y freed.
+> >>>>
+> >>>> Isn't the DMA cleanup also needed in the bounce buffer case?
+> >>>>
+> >>>> Isn't the DMA cleanup also needed in the COOKIE_PRE_MAPPED case?
+> >>>>
+> >>>> dmaengine_terminate_async() doesn't stop the DMA but
+> >>>> dmaengine_terminate_sync() is not atomic, which looks like a problem=
+.
+> >>>>
+> >>>> Perhaps you look at scheduling some work for the external dma error =
+case
+> >>>> instead of calling __sdhci_finish_mrq()?  Then the work can do the
+> >>>> dmaengine_terminate_sync() and call __sdhci_finish_mrq().
+> >>>
+> >>> Ok, I will look at these issues.
+> >>>
+> >>>>
+> >>>>>                       }
+> >>>>>                       data->host_cookie =3D COOKIE_UNMAPPED;
+> >>>>>               }
+> >>>>> @@ -3692,12 +3926,15 @@ int sdhci_setup_host(struct sdhci_host *hos=
+t)
+> >>>>>                      mmc_hostname(mmc), host->version);
+> >>>>>       }
+> >>>>>
+> >>>>> -     if (host->quirks & SDHCI_QUIRK_FORCE_DMA)
+> >>>>> +     if (host->quirks & SDHCI_QUIRK_FORCE_DMA) {
+> >>>>>               host->flags |=3D SDHCI_USE_SDMA;
+> >>>>> -     else if (!(host->caps & SDHCI_CAN_DO_SDMA))
+> >>>>> +     } else if (!(host->caps & SDHCI_CAN_DO_SDMA)) {
+> >>>>>               DBG("Controller doesn't have SDMA capability\n");
+> >>>>> -     else
+> >>>>> +     } else if (host->use_external_dma) {
+> >>>>> +             /* Using dma-names to detect external dma capability =
+*/
+> >>>>> +     } else {
+> >>>>>               host->flags |=3D SDHCI_USE_SDMA;
+> >>>>> +     }
+> >>>>
+> >>>> These if-statements are about setting SDHCI_USE_SDMA but why is a ch=
+ange
+> >>>> needed for the host->use_external_dma case?
+> >>>
+> >>> Yes, this is not needed, otherwise the controller cannot switch back
+> >>> to SDMA if it is supported in the controller.
+> >>
+> >> The else case means that the host always uses SDMA. Needed to make sur=
+e
+> >> this doesn't happen in the external_dma case. Its not SDHCI_CAN_DO_SDM=
+A,
+> >> its SDHCI_USE_SDMA.
+> >>
+> >>>
+> >>>>
+> >>>>>
+> >>>>>       if ((host->quirks & SDHCI_QUIRK_BROKEN_DMA) &&
+> >>>>>               (host->flags & SDHCI_USE_SDMA)) {
+> >>>>> @@ -3785,6 +4022,19 @@ int sdhci_setup_host(struct sdhci_host *host=
+)
+> >>>>>               }
+> >>>>>       }
+> >>>>>
+> >>>>> +     if (host->use_external_dma) {
+> >>>>> +             ret =3D sdhci_external_dma_init(host);
+> >>>>> +             if (ret =3D=3D -EPROBE_DEFER)
+> >>>>> +                     goto unreg;
+> >>>>> +
+> >>>>> +             /*
+> >>>>> +              * Fall back to use the DMA/PIO integrated in standar=
+d SDHCI
+> >>>>> +              * instead of external DMA devices.
+> >>>>> +              */
+> >>>>> +             if (ret)
+> >>>>> +                     sdhci_switch_external_dma(host, false);
+> >>>>> +     }
+> >>>>> +
+> >>>>>       /*
+> >>>>>        * If we use DMA, then it's up to the caller to set the DMA
+> >>>>>        * mask, but PIO does not need the hw shim so we set a new
+> >>>>> @@ -4201,6 +4451,10 @@ void sdhci_cleanup_host(struct sdhci_host *h=
+ost)
+> >>>>>               dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz=
+ +
+> >>>>>                                 host->adma_table_sz, host->align_bu=
+ffer,
+> >>>>>                                 host->align_addr);
+> >>>>> +
+> >>>>> +     if (host->use_external_dma)
+> >>>>> +             sdhci_external_dma_release(host);
+> >>>>> +
+> >>>>>       host->adma_table =3D NULL;
+> >>>>>       host->align_buffer =3D NULL;
+> >>>>>  }
+> >>>>> @@ -4247,6 +4501,7 @@ int __sdhci_add_host(struct sdhci_host *host)
+> >>>>>
+> >>>>>       pr_info("%s: SDHCI controller on %s [%s] using %s\n",
+> >>>>>               mmc_hostname(mmc), host->hw_name, dev_name(mmc_dev(mm=
+c)),
+> >>>>> +             host->use_external_dma ? "External DMA" :
+> >>>>>               (host->flags & SDHCI_USE_ADMA) ?
+> >>>>>               (host->flags & SDHCI_USE_64_BIT_DMA) ? "ADMA 64-bit" =
+: "ADMA" :
+> >>>>>               (host->flags & SDHCI_USE_SDMA) ? "DMA" : "PIO");
+> >>>>> @@ -4335,6 +4590,9 @@ void sdhci_remove_host(struct sdhci_host *hos=
+t, int dead)
+> >>>>>                                 host->adma_table_sz, host->align_bu=
+ffer,
+> >>>>>                                 host->align_addr);
+> >>>>>
+> >>>>> +     if (host->use_external_dma)
+> >>>>> +             sdhci_external_dma_release(host);
+> >>>>> +
+> >>>>>       host->adma_table =3D NULL;
+> >>>>>       host->align_buffer =3D NULL;
+> >>>>>  }
+> >>>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> >>>>> index 6cc9a3c2ac66..7a52823ebef4 100644
+> >>>>> --- a/drivers/mmc/host/sdhci.h
+> >>>>> +++ b/drivers/mmc/host/sdhci.h
+> >>>>> @@ -482,6 +482,7 @@ struct sdhci_host {
+> >>>>>
+> >>>>>       int irq;                /* Device IRQ */
+> >>>>>       void __iomem *ioaddr;   /* Mapped address */
+> >>>>> +     phys_addr_t mapbase;    /* physical address base */
+> >>>>>       char *bounce_buffer;    /* For packing SDMA reads/writes */
+> >>>>>       dma_addr_t bounce_addr;
+> >>>>>       unsigned int bounce_buffer_size;
+> >>>>> @@ -531,6 +532,7 @@ struct sdhci_host {
+> >>>>>       bool pending_reset;     /* Cmd/data reset is pending */
+> >>>>>       bool irq_wake_enabled;  /* IRQ wakeup is enabled */
+> >>>>>       bool v4_mode;           /* Host Version 4 Enable */
+> >>>>> +     bool use_external_dma; /* Host selects to use external DMA */
+> >>>>
+> >>>> Please align /**/ with above i.e. use tab
+> >>
+> >> Will fix.
+> >
+> > Do you need me to address these comments and then send you a patch or
+> > you'd like to do instead?
+> >
+>
+> This would be much appreciated. Would you be able to work on it this
+> week? I would like to send a v2 by Friday.
 
-OK.  I guess I can just paste the above into the changelog.
+I will try. I just have worries about handling the external dma error case.
+Anyway I'll send you a patch by tomorrow, since I will leave 10 days
+from this Friday.
 
-Also, Documentation/filesystems/autofs*.txt are owed an update?
-
-
+Thanks,
+Chunyan
