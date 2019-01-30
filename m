@@ -2,164 +2,160 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD4EC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CE8C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC2CB20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A649920989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:59:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eZRgqpUX"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="LM47/x7c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733255AbfA3T7s (ORCPT
+        id S1733291AbfA3T7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:59:48 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53714 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730077AbfA3T7s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:59:48 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0UJxgxb113615;
-        Wed, 30 Jan 2019 13:59:42 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548878382;
-        bh=zvfRJknrDHIcRsKQceExcpFozfIp1joBR5g2o7OwTCA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=eZRgqpUXybEMFUV7Dcn807d2aMreW4QJF4O/U2TH6ZBQ5fUpf6hzp/wNI2IOSSYyD
-         8Tha1LJJpLWtVwF2ZBc2IXnNRxYoWBsAyajf+pe6RwGywUcqhSzsErQu3BGFDNEJuV
-         FEwwwMkda3GI42cnIQ6Ybca9SZYWCPqOPkFkl17s=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0UJxgaW094612
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 30 Jan 2019 13:59:42 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 30
- Jan 2019 13:59:41 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 30 Jan 2019 13:59:41 -0600
-Received: from [172.22.83.85] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0UJxfBt020525;
-        Wed, 30 Jan 2019 13:59:41 -0600
-Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        <robh+dt@kernel.org>, <pavel@ucw.cz>
-CC:     <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-References: <20190130183005.833-1-dmurphy@ti.com>
- <f3792d44-1a43-318b-1b12-d6d69275c3a8@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <333a146a-a469-5b72-5e81-ff7f522dc598@ti.com>
-Date:   Wed, 30 Jan 2019 13:59:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <f3792d44-1a43-318b-1b12-d6d69275c3a8@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        Wed, 30 Jan 2019 14:59:52 -0500
+Received: from mail-eopbgr20047.outbound.protection.outlook.com ([40.107.2.47]:64096
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728048AbfA3T7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:59:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BIdbOgJABd7KLeI1CmjED8KrMVhfM8Q7l4vQzya/ACw=;
+ b=LM47/x7c8NPDcrO/8ilxdcoxfBmd1DDT98cI1EwEqyM4Ee127D/sCSZqKl7q/7UhID4Q1yqLkd2Jh4U3FS3oTt65RunJbwqgnXAPxz3pYatehSieQp+f6tGK3zyg6lXTVReV7+D26Ih9M5YPuXmYmwrtGnf3VFeY4fsWFYkoDQI=
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
+ DBBPR05MB6299.eurprd05.prod.outlook.com (20.179.40.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.17; Wed, 30 Jan 2019 19:59:05 +0000
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
+ 19:59:05 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+CC:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAAD3dAIAAukqAgAAK3wCAAAOzAA==
+Date:   Wed, 30 Jan 2019 19:59:05 +0000
+Message-ID: <20190130195900.GG17080@mellanox.com>
+References: <20190129205749.GN3176@redhat.com>
+ <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
+ <20190129215028.GQ3176@redhat.com>
+ <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
+ <20190129234752.GR3176@redhat.com>
+ <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
+ <20190130041841.GB30598@mellanox.com> <20190130080006.GB29665@lst.de>
+ <20190130190651.GC17080@mellanox.com>
+ <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
+In-Reply-To: <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR05CA0091.namprd05.prod.outlook.com
+ (2603:10b6:104:1::17) To DBBPR05MB6426.eurprd05.prod.outlook.com
+ (2603:10a6:10:c9::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DBBPR05MB6299;6:dWaIwtpfvMT1n8d8go0E38bYF8m4oeW/q5wvQE0PDLG7d5739Ic2u5+Bm+CHql4QKxsqqnXVRWcQiDqHXY16rolSJxjZK/ONK2UtUWI1ba/Wl80+k+biwagYEGPfMlYAYKTdtTyTv2bnDcjkZLlPX02Q2g1zJGNDnJup26K/rXtJXCYpjcBV2Nw3IUJrVRxQmqI99DobJpfAv72VCqIpUHzDwVqCrqluSRKSWUYjcbsH/DxVep7Dk86hnSGg9BrrBvWnG08aTlC+JMnQ9edlPEktJI8hINdlROKPihIAm7Cr42UKqJniBLGPia5cUlym0gR7AgiQnJZjuUBCabShsUtMhlqHxUmfBKDyR6s0xupim9YL0J6q7G+q0CN34AmVDr6JONuNHXhKx7JxIaQKG8GK2wDliVM/QcU+xGS6l1qlB/7CBix8YCcW6Tg/N1cfJ+5wcOzImgtG9I+gEe6eOA==;5:uh8XZd16uOJEPg9j1IBqo6RU6lEK0mJPOQRARIVeBdBlj02U+4O6JxmBH6eWMwYAl7jpcsEw3Y1+wID+J7YgRpMXdWj1hM3lScP3+w4/pd5iuNuN2iaeoGn/tTO+5HYOjWIuy8ir+abWGSUMPz4eiu+LQtKb6EjeyTvxMU8GsAxMl2+D0XMOT+HRAFAVbL9CyMNsWNKSKknDX+/SsvXokw==;7:95BftNDrIfkiOVpkyAoN8E9WWz+SSQMSBjIz9z+a+k3/cLLsldRmZhKtNBIz1QKuLVDX6bSjCWK6LcDD44ieeLPAKZHr3rYdRWUq3zsmklIXXrc+gvXgKydBjTTUDzMKVkcZIpdh/xFBVPIlozdVjQ==
+x-ms-office365-filtering-correlation-id: a5d0ff03-7000-466f-1ede-08d686ed637c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6299;
+x-ms-traffictypediagnostic: DBBPR05MB6299:
+x-microsoft-antispam-prvs: <DBBPR05MB629918774783D976D95FA311CF900@DBBPR05MB6299.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(366004)(396003)(376002)(199004)(189003)(4326008)(305945005)(33656002)(102836004)(106356001)(14454004)(6486002)(105586002)(6116002)(3846002)(386003)(6506007)(54906003)(53546011)(186003)(6246003)(1076003)(7736002)(316002)(217873002)(26005)(229853002)(36756003)(7416002)(81166006)(8676002)(81156014)(25786009)(6436002)(93886005)(71190400001)(66066001)(2906002)(8936002)(6512007)(256004)(6916009)(2616005)(71200400001)(76176011)(446003)(97736004)(68736007)(486006)(86362001)(11346002)(476003)(478600001)(53936002)(99286004)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6299;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: AlJVLgDqBTdS7eQNfzBsoru0CLpYTzaLxiQLvoKgHwb7z6poB7cdJE3qGBz9hKyHHwybk7gIezRAjdyFRrYUJ+b/ZRC7Hr1tRxQX+XbljLMasl+VqTMbzqTiOF7MY/81zmpF5DNDaGbQ5Rn0f/IvcHWkHPI9WXiBamTqXL2vDvy7Q1kPxLjbAzmX/xW8d8Jge4BKmfANtPV5Id23m5pKiUIiadNvfJJltLlhrXx7I/OXo/1lQQD6uHdt7xTRmojRwPIGX++BXCoo+h26EmKJz4jYWhetjZ6U4CWYiuyehRVNNYNA1ZLzBvpMiO64Cyix6+ncdlbaLRdYZlqsPNRWHrr0t2Bx2lrxCift+syEino5wjSXobrTtheEMYA+o8wKA7PliC5k0+xjz3zKk3tpHdK4AO+FbYkU3hXX5Fd1ZyY=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <178449172A1D534BBB231D50EE6C616B@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5d0ff03-7000-466f-1ede-08d686ed637c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 19:59:05.3923
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6299
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+On Wed, Jan 30, 2019 at 12:45:46PM -0700, Logan Gunthorpe wrote:
+>=20
+>=20
+> On 2019-01-30 12:06 p.m., Jason Gunthorpe wrote:
+> >> Way less problems than not having struct page for doing anything
+> >> non-trivial.  If you map the BAR to userspace with remap_pfn_range
+> >> and friends the mapping is indeed very simple.  But any operation
+> >> that expects a page structure, which is at least everything using
+> >> get_user_pages won't work.
+> >=20
+> > GUP doesn't work anyhow today, and won't work with BAR struct pages in
+> > the forseeable future (Logan has sent attempts on this before).
+>=20
+> I don't recall ever attempting that... But patching GUP for special
+> pages or VMAS; or working around by not calling it in some cases seems
+> like the thing that's going to need to be done one way or another.
 
-On 1/30/19 1:37 PM, Jacek Anaszewski wrote:
-> Hi Dan,
-> 
-> Thank you for the RFC.
-> 
-> One vital thing is missing - documentation of brightness file must
-> be updated to define its semantics for LED multi color class.
-> 
-> Either we need brightness-model file returning only "onoff" option
-> available, or, for time being, fix the max_brightness for LED multi
-> color class to 1 (which will map to max intensity level for each color).
-> 
+Remember, the long discussion we had about how to get the IOMEM
+annotation into SGL? That is a necessary pre-condition to doing
+anything with GUP in DMA using drivers as GUP -> SGL -> DMA map is
+pretty much the standard flow.
+=20
+> > Jerome made the HMM mirror API use this flow, so afer his patch to
+> > switch the ODP MR to use HMM, and to switch GPU drivers, it will work
+> > for those cases. Which is more than the zero cases than we have today
+> > :)
+>=20
+> But we're getting the same bait and switch here... If you are using HMM
+> you are using struct pages, but we're told we need this special VMA hack
+> for cases that don't use HMM and thus don't have struct pages...
 
-I can make max_brightness default to 1 if not set by the LED driver.
+Well, I don't know much about HMM, but the HMM mirror API looks like a
+version of MMU notifiers that offloads a bunch of dreck to the HMM
+code core instead of drivers. The RDMA code got hundreds of lines
+shorter by using it.
 
-But the LP50xx has brightness controls so setting max_brightness from the driver should over ride
-the max of 1 in the upper level.  
+Some of that dreck is obtaining a DMA address for the user VMAs,
+including using multiple paths to get them. A driver using HMM mirror
+doesn't seem to call GUP at all, HMM mirror handles that, along with
+various special cases, including calling out to these new VMA ops.
 
-For devices that do not support brightness as a separate control we can create a file called
-max_brightness_<color> that defines the max that a specific color can be set to.  If max_brightness
-is set to 1 then create max_brightness_<color>.  If max_brightness > 1 then do not create the files.
+I don't really know how mirror relates to other parts of HMM, like the
+bits that use struct pages. Maybe it also knows about more special
+cases created by other parts of HMM?
 
-I don't think we have fully vetted the brightness-model yet so I prefer to omit
-it and possibly introduce that later.
+So, I see Jerome solving the GUP problem by replacing GUP entirely
+using an API that is more suited to what these sorts of drivers
+actually need.
 
-Dan
-
-> Best regards,
-> Jacek Anaszewski
-> 
-> On 1/30/19 7:30 PM, Dan Murphy wrote:
->> Add a documentation of LED Multicolor LED class specific
->> sysfs attributes.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>   .../ABI/testing/sysfs-class-led-multicolor    | 38 +++++++++++++++++++
->>   1 file changed, 38 insertions(+)
->>   create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Documentation/ABI/testing/sysfs-class-led-multicolor
->> new file mode 100644
->> index 000000000000..19f8da9b150e
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
->> @@ -0,0 +1,38 @@
->> +What:        /sys/class/leds/<led>/color/sync_enable
->> +Date:        January 2019
->> +KernelVersion:    5.0
->> +Contact:    Dan Murphy <dmurphy@ti.com>
->> +Description:    read/write
->> +        Writing a 1 to this file will enable the sychronization of all
->> +        the defined color LEDs within the LED node.  Writing a 0 to
->> +        this file will disable syncing.
->> +
->> +What:        /sys/class/leds/<led>/color/sync
->> +Date:        January 2019
->> +KernelVersion:    5.0
->> +Contact:    Dan Murphy <dmurphy@ti.com>
->> +Description:    write only
->> +        Writing a 1 to this file while sync_enable is set to 1 will
->> +        synchronize all defined LEDs within the LED node.  All LEDs
->> +        defined will be configured based on the brightness that has
->> +        been requested.
->> +
->> +        If sync_enable is set to 0 then writing a 1 to sync has no
->> +        affect on the LEDs.
->> +
->> +What:        /sys/class/leds/<led>/color/<led color>
->> +Date:        January 2019
->> +KernelVersion:    5.0
->> +Contact:    Dan Murphy <dmurphy@ti.com>
->> +Description:    read/write
->> +        These files are dynamically created based on the colors defined
->> +        by the registrar of the class.
->> +        The led color(s) can be but not limited to red, green, blue,
->> +        white, amber and violet.  If sync is enabled then writing the
->> +        brightness value of the LED is deferred until a 1 is
->> +        written to /sys/class/leds/<led>/color/sync.  If syncing is
->> +        disabled then the LED brightness value will be written
->> +        immediately to the LED driver.
->> +
->> +        The value of the color is from 0 to
->> +        /sys/class/leds/<led>/max_brightness.
->>
-> 
-
-
--- 
-------------------
-Dan Murphy
+Jason
