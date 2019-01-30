@@ -2,95 +2,123 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B24C8C282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F9BC282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 838BD2084C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:30:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548833459;
-	bh=Ttyxbei1fPmVxxn3tNOV5sMQ2I56pjznzWDkDfrFXQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GWkw/lv+u2FRZDgmF1fYqXURQUnZ5GaV9pz2dNwbdyGhvmU/uF092pF1zuAgpxSSL
-	 5/zy76gqsKNhCvH+Swpt9oWn6s4BiTVdvAWeNPBKW0k/rqnpo9OYLDd2aloaoXFVv9
-	 Mps5RMLdOP4vU8sMCwt8lp3O/r/lHuaCOhaY96ZA=
+	by mail.kernel.org (Postfix) with ESMTP id 23D9F2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:35:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729942AbfA3Ha5 (ORCPT
+        id S1730027AbfA3Hfi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 02:30:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbfA3Ha5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 02:30:57 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D02822084C;
-        Wed, 30 Jan 2019 07:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548833456;
-        bh=Ttyxbei1fPmVxxn3tNOV5sMQ2I56pjznzWDkDfrFXQY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SDcf5/YcGbdCsVUxZD646xhhGtQ7b8mietEaXC6EMaW2bSJUQldFaWZ7OgDRf+qTJ
-         gRiRv3tiEYkfCxeWyfCm9dpJlVAnxke5IPdH7CUfepdrioQEmm4pjZXSPGFY6877Fl
-         wemYSiuq9MmMy5fe2fcN7qj9kMwvkdCjejIxSnWQ=
-Date:   Wed, 30 Jan 2019 08:30:53 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 4.4 068/104] loop: Fold __loop_release into loop_release
-Message-ID: <20190130073053.GA4665@kroah.com>
-References: <20190124190154.968308875@linuxfoundation.org>
- <20190124190203.062416837@linuxfoundation.org>
- <20190128133103.GD27972@quack2.suse.cz>
+        Wed, 30 Jan 2019 02:35:38 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:39864 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfA3Hfi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 02:35:38 -0500
+Received: by mail-vk1-f193.google.com with SMTP id s184so5126662vkd.6;
+        Tue, 29 Jan 2019 23:35:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=YTpduAoMXxhUKgTnWFZbLAPz2z/lmnMmtAOe3HKxleY=;
+        b=Ghc8vyMeYxNb7epjXKHEw6+s8K7DNa+fSQgoujwgcEvFnBC4lFBRHSbSZKPFiz34kx
+         /b6T4bexs5WR8G5Gl1O5qUekL37zis/yanST2g+cQNhHpkkddropcpTC5bmAVVhTYh+4
+         sDi9GjgmEaDBpCGrRrGbsSgEDSpDhJygnvDY7Mf4iMzu45tjshj/eO0ZyVCP2D0csA63
+         McyatEyl+DeHNx1RaqqD02NPtOoHECiniRKZkXXmqS/4ZPIaSRlag3a3u9GRBFqyYuTo
+         FpOFDzSGXBFrCL+T6T+ErRwnX2L0K44pNJB8+J4o2p8ZBI9MSqOl/Gz2ahf/p0itqubw
+         WK3w==
+X-Gm-Message-State: AJcUukd2SBhCtVadlh+pPpdo2H0v1Btf6W/DgBXANC/7o2JIv2vLSfME
+        upS4BOAFaghZ57TlZTbLzCdSjrH8Xkb62qKaB7UN5Ug4
+X-Google-Smtp-Source: ALg8bN5LCPHQ6ZnUo1UdCWo+yhEA2ZTgicWEOxx8WCxoRtPYXNRGdAyb1Vfbq68wAi07UWJlNXrsgZi66dVem6oGp7o=
+X-Received: by 2002:a1f:a414:: with SMTP id n20mr12090963vke.83.1548833736817;
+ Tue, 29 Jan 2019 23:35:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128133103.GD27972@quack2.suse.cz>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190129205502.7741-1-jonas@norrbonn.se> <20190129205502.7741-2-jonas@norrbonn.se>
+In-Reply-To: <20190129205502.7741-2-jonas@norrbonn.se>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 30 Jan 2019 08:35:25 +0100
+Message-ID: <CAMuHMdXv6U-VeznbXrTNk9oY1kCkYu-b+_o3KH_R6BMgpVn7YA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] spi: support inter-word delay requirement for devices
+To:     Jonas Bonn <jonas@norrbonn.se>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 02:31:03PM +0100, Jan Kara wrote:
-> On Thu 24-01-19 20:19:57, Greg Kroah-Hartman wrote:
-> > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Jan Kara <jack@suse.cz>
-> > 
-> > commit 967d1dc144b50ad005e5eecdfadfbcfb399ffff6 upstream.
-> > 
-> > __loop_release() has a single call site. Fold it there. This is
-> > currently not a huge win but it will make following replacement of
-> > loop_index_mutex more obvious.
-> > 
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> 
-> Hello Greg!
-> 
-> This and the following two (patches 69 & 70) loop patches are just
-> preparatory cleanups for commits 0da03cab87e632 "loop: Fix deadlock when
-> calling blkdev_reread_part()" and 1dded9acf6dc9a "loop: Avoid circular
-> locking dependency between loop_ctl_mutex and bd_mutex". As such they don't
-> fix anything and it doesn't make sense to carry them in stable unless
-> someone backports also the other patches in the series including the fixes
-> themselves (which honestly I don't think is worth it for stable).
+Hi Jonas,
 
-Ah, you are right, sorry about that.  I was backporting the loop fixes
-and these ended up working on 4.4.y, but as you say, were not needed
-unless the later patches also showed up.  I'll go revert them now,
-thanks.
+On Tue, Jan 29, 2019 at 9:55 PM Jonas Bonn <jonas@norrbonn.se> wrote:
+> Some devices are slow and cannot keep up with the SPI bus and therefore
+> require a short delay between words of the SPI transfer.
+>
+> The example of this that I'm looking at is a SAMA5D2 with a minimum SPI
+> clock of 400kHz talking to an AVR-based SPI slave.  The AVR cannot put
+> bytes on the bus fast enough to keep up with the SoC's SPI controller
+> even at the lowest bus speed.
+>
+> This patch introduces the ability to specify a required inter-word
+> delay for SPI devices.  It is up to the controller driver to configure
+> itself accordingly in order to introduce the requested delay.
+>
+> Note that, for spi_transfer, there is already a field word_delay that
+> provides similar functionality.  This field, however, is specified in
+> clock cycles (and worse, SPI controller cycles, not SCK cycles); that
+> makes this value dependent on the master clock instead of the device
+> clock for which the delay is intended to provide some relief.  This
+> patch leaves this old word_delay in place and provides a time-based
+> word_delay_us alongside it; the new field fits in the struct padding
+> so struct size is constant.  There is only one in-kernel user of the
+> word_delay field and presumably that driver could be reworked to use
+> the time-based value instead.
 
-greg k-h
+Thanks for your patch!
+
+> The time-based delay is limited to 8 bits as these delays are intended
+> to be short.  The SAMA5D2 that I've tested this on limits delays to a
+> maximum of ~100us, which is already many word-transfer periods even at
+> the minimum transfer speed supported by the controller.
+
+Still, the similar delay_usecs uses a u16.
+
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+
+> @@ -803,6 +808,7 @@ struct spi_transfer {
+>  #define        SPI_NBITS_DUAL          0x02 /* 2bits transfer */
+>  #define        SPI_NBITS_QUAD          0x04 /* 4bits transfer */
+>         u8              bits_per_word;
+> +       u8              word_delay_us;
+
+us for µs
+
+>         u16             delay_usecs;
+
+usecs for µs
+
+Can we please try to be consistent?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
