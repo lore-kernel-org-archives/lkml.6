@@ -2,128 +2,111 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04854C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC1DC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D09EC207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:03:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C487207E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:03:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548864215;
+	bh=uOJy6HHER2vHS2dUZM9kzGlmh4vosXagwnDxutC4v6k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ntRqSm9UGGNVySFsDBMGJ22KADU1UiyNvMkq78++TeLkK8QnyDEk1M98rbiUkN2v5
+	 NKkIVJraYSIjDTMqTYNFvwYjYrgcjaT0GL1b6ADqzRj5sLPBcSj1qDAGGRbnY/Ycdi
+	 igTQnpfCHRKo4lWZGqGWYNzZ6Buq0kE+F+qQ+8qM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731970AbfA3QD1 (ORCPT
+        id S1731984AbfA3QDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:03:27 -0500
-Received: from mga02.intel.com ([134.134.136.20]:60152 "EHLO mga02.intel.com"
+        Wed, 30 Jan 2019 11:03:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731643AbfA3QDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:03:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 08:03:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,541,1539673200"; 
-   d="scan'208";a="142760969"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 30 Jan 2019 08:03:21 -0800
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 9/9] device connection: Find device connections also from device graphs
-Date:   Wed, 30 Jan 2019 19:02:59 +0300
-Message-Id: <20190130160259.46919-10-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
-References: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
+        id S1731461AbfA3QDc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:03:32 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90C8E207E0;
+        Wed, 30 Jan 2019 16:03:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548864212;
+        bh=uOJy6HHER2vHS2dUZM9kzGlmh4vosXagwnDxutC4v6k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a24js7aW/cYCaY/Vpk8cqJlVrlqw/euqCg+kBnqwwu6C+GiJbVNu858GbKi9ZYJ3f
+         S99ZKo0pYcSJ1GoDoXc9fDZSgVEYWuQF9xlPXcT6unsQBNGluA6jq1pRpLdv16esjN
+         4bXPBig8vF40CgdMnkLqWFMjzWXtZBkjgBxgTxGk=
+Date:   Wed, 30 Jan 2019 10:03:29 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     honghui.zhang@mediatek.com
+Cc:     lorenzo.pieralisi@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
+        youlin.pei@mediatek.com, jianjun.wang@mediatek.com
+Subject: Re: [PATCH] PCI: Mediatek: Use resource_size function on resource
+ object
+Message-ID: <20190130160329.GF229773@google.com>
+References: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If connections between devices are described in OF graph or
-ACPI device graph, we can find them by using the
-fwnode_graph_*() functions.
+On Wed, Jan 02, 2019 at 02:03:53PM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> 
+> drivers/pci/pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
+> 
+> Generated by: scripts/coccinelle/api/resource_size.cocci
+> 
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index e307166..0168376 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+>  	struct resource *mem = &pcie->mem;
+>  	const struct mtk_pcie_soc *soc = port->pcie->soc;
+>  	u32 val;
+> -	size_t size;
+>  	int err;
+>  
+>  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
+> @@ -706,8 +705,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+>  		mtk_pcie_enable_msi(port);
+>  
+>  	/* Set AHB to PCIe translation windows */
+> -	size = mem->end - mem->start;
+> -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
+> +	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
+>  	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
+>  
+>  	val = upper_32_bits(mem->start);
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- drivers/base/devcon.c | 38 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 35 insertions(+), 3 deletions(-)
+Unrelated to this patch, but just below this:
 
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-index 858b8d2f6ef8..04db9ae235e4 100644
---- a/drivers/base/devcon.c
-+++ b/drivers/base/devcon.c
-@@ -7,10 +7,37 @@
-  */
- 
- #include <linux/device.h>
-+#include <linux/property.h>
- 
- static DEFINE_MUTEX(devcon_lock);
- static LIST_HEAD(devcon_list);
- 
-+typedef void *(*devcon_match_fn_t)(struct device_connection *con, int ep,
-+				   void *data);
-+
-+static void *
-+fwnode_graph_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
-+			  void *data, devcon_match_fn_t match)
-+{
-+	struct device_connection con = { .id = con_id };
-+	struct fwnode_handle *ep;
-+	void *ret;
-+
-+	fwnode_graph_for_each_endpoint(fwnode, ep) {
-+		con.fwnode = fwnode_graph_get_remote_port_parent(ep);
-+		if (!fwnode_device_is_available(con.fwnode))
-+			continue;
-+
-+		ret = match(&con, -1, data);
-+		fwnode_handle_put(con.fwnode);
-+		if (ret) {
-+			fwnode_handle_put(ep);
-+			return ret;
-+		}
-+	}
-+	return NULL;
-+}
-+
- /**
-  * device_connection_find_match - Find physical connection to a device
-  * @dev: Device with the connection
-@@ -23,10 +50,9 @@ static LIST_HEAD(devcon_list);
-  * caller is expecting to be returned.
-  */
- void *device_connection_find_match(struct device *dev, const char *con_id,
--			       void *data,
--			       void *(*match)(struct device_connection *con,
--					      int ep, void *data))
-+				   void *data, devcon_match_fn_t match)
- {
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
- 	const char *devname = dev_name(dev);
- 	struct device_connection *con;
- 	void *ret = NULL;
-@@ -35,6 +61,12 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
- 	if (!match)
- 		return NULL;
- 
-+	if (fwnode) {
-+		ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	mutex_lock(&devcon_lock);
- 
- 	list_for_each_entry(con, &devcon_list, list) {
--- 
-2.20.1
+        /* Set PCIe to AXI translation memory space.*/
+        val = fls(0xffffffff) | WIN_ENABLE;
+        writel(val, port->base + PCIE_AXI_WINDOW0);
 
+Can you double-check the use of "fls(0xffffffff)"?  That expression is
+a constant and I think evaluates to 31 (0x1f), i.e.,
+
+        val = 0x1f | WIN_ENABLE;
+
+I don't know the hardware, so this might be correct, but
+"fls(0xffffffff)" looks funny because I think it's the same as
+"fls(0x80000000)".
+
+Bjorn
