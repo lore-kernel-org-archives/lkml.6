@@ -2,78 +2,80 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA67C282D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8DBC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 187542184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BBA6218A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:24:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730881AbfA3NYM (ORCPT
+        id S1731039AbfA3NY1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:24:12 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:60119 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbfA3NYL (ORCPT
+        Wed, 30 Jan 2019 08:24:27 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:47165 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbfA3NY1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:24:11 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gopqc-000290-Hr; Wed, 30 Jan 2019 06:24:10 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gopqb-00015D-MN; Wed, 30 Jan 2019 06:24:10 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Karel Zak <kzak@redhat.com>, util-linux@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>
-References: <87va2716mh.fsf@xmission.com>
-        <9151.1548852654@warthog.procyon.org.uk>
-Date:   Wed, 30 Jan 2019 07:24:00 -0600
-In-Reply-To: <9151.1548852654@warthog.procyon.org.uk> (David Howells's message
-        of "Wed, 30 Jan 2019 12:50:54 +0000")
-Message-ID: <877eemth1r.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 30 Jan 2019 08:24:27 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gopqm-0000vI-L6; Wed, 30 Jan 2019 14:24:20 +0100
+Date:   Wed, 30 Jan 2019 14:24:20 +0100
+From:   Sebastian Sewior <bigeasy@linutronix.de>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        Stefan Liebler <stli@linux.ibm.com>
+Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggered
+Message-ID: <20190130132420.spwrq2d4oxeydk5s@linutronix.de>
+References: <alpine.DEB.2.21.1901291012330.1669@nanos.tec.linutronix.de>
+ <20190129102409.GB26906@osiris>
+ <20190129103557.GF28485@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1901291402410.1513@nanos.tec.linutronix.de>
+ <20190129132303.GE26906@osiris>
+ <20190129151058.GG26906@osiris>
+ <20190129171653.ycl64psq2liy5o5c@linutronix.de>
+ <20190130094913.GC5299@osiris>
+ <alpine.DEB.2.21.1901301303320.5537@nanos.tec.linutronix.de>
+ <20190130125955.GD5299@osiris>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gopqb-00015D-MN;;;mid=<877eemth1r.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18y+i5H2fsJ1Ns5Q9Z57XL3Wyf2dIr9w7I=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFD] A mount api that notices previous mounts
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190130125955.GD5299@osiris>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
+On 2019-01-30 13:59:55 [+0100], Heiko Carstens wrote:
+> Last lines of trace below (full log attached):
 
-> You need to rebase on linus/master.  A bunch of your patches are obsoleted by
-> Al's security changes there.
+            <...>-56956 [005] ....   658.931364: handle_futex_death: uaddr: 3ff9e880c58 pi: 1
+…
+            <...>-56956 [005] ....   658.931369: handle_futex_death: uaddr: 3ff9e8808c0 success
+            <...>-56956 [005] ....   658.931370: sched_process_exit: comm=ld64.so.1 pid=56956 prio=120
 
-Before anything is merged definitely.
+not including 3ff9e880140
 
-Al dealt with mount options from the LSMs in a slightly different way
-than I did.  At a practical level Als version of the changes to the LSMs
-and mine are you say po-tae-toe I say po-tah-toe differences so I don't
-see that influencing semantics up at the api level.
+            <...>-56956 [005] ....   658.931370: sched_process_exit: comm=ld64.so.1 pid=56956 prio=120
 
-For purposes of disucssing an API (not of merging one) I chose to start
-with code I had a reasonable amount of testing against, so that other
-people could play with it without expecting trouble.
+            <...>-56496 [001] ....   658.932404: sys_futex(uaddr: 3ff9e880140, op: 6, val: 1, utime: 0, uaddr2: 5, val3: 0)
+            <...>-56496 [001] ....   658.932405: attach_to_pi_owner: Missing pid 56956
+            <...>-56496 [001] ....   658.932406: handle_exit_race: uval2 vs uval 8000de7c vs 8000de7c (-1)
+            <...>-56496 [001] ....   658.932501: sys_futex -> 0xfffffffffffffffd
+…
+            <...>-56496 [001] ....   659.020750: handle_futex_death: uaddr: 3ff9e880140 pi: 1
+            <...>-56496 [001] ....   659.020750: handle_futex_death: uaddr: 3ff9e880140 uval: 8000de7c
+            <...>-56496 [001] ....   659.020750: handle_futex_death: uaddr: 3ff9e880140 success
 
-Eric
+and here we have it.
 
+Sebastian
