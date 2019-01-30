@@ -2,134 +2,152 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAE2C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB02DC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 587BB207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:06:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMKu9+qd"
+	by mail.kernel.org (Postfix) with ESMTP id 7D003207E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:07:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548864432;
+	bh=duRPLTQ6wlSFvtGOlMxAxDxRtQ5Jacj59x197ZF423Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Efuu9uf3Z4sEIGJAdJ49BJKGasFqeNlLSJCFk+K7Ba+q8gBjLzSrYp2KIbSf5GrBo
+	 RjYYgw4vnSNfw2Idjt837eZdxpXB3xfwdmTHPWK0INh7AcDjwDM/+5ktVXeixyMttO
+	 l1nSlDupc6YfZ2Hp/OfFdNFdhmR5WoZLv977A5a0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731792AbfA3QGn (ORCPT
+        id S1731824AbfA3QHK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:06:43 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35732 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731526AbfA3QGm (ORCPT
+        Wed, 30 Jan 2019 11:07:10 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35770 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728943AbfA3QHK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:06:42 -0500
-Received: by mail-qt1-f193.google.com with SMTP id v11so81757qtc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 08:06:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hH3U0WFHZZpNJH6bCOhEbZsbYJbx6ZUSf+ECUNlMvDg=;
-        b=SMKu9+qdc5uZQIyxvfsVyQRrY05OjXhY6bdqnnQj7jimS17eQdeLPAGXSQ7dQKHItq
-         9FXeI5Y10+WYR9KObYouo0OM+KFlNfg2eJDYGQtWV/Uua1QHJ7JCmcshNjwP1SJmR5a2
-         FnkyLFFEd1bYgmSEFiOCZaZ60kTXZ19DKdl6eQ+lll0GWBRLCa2U2eHyDPBKABYc6hPw
-         Iqqwgc83k7XGITFeRB1QBGY/ew4ogGfnjo4SFmEKoJnuyckFUtJ5sA8CHEbCWdidoMYy
-         2JPOEdbi6RnEv66Vwvv+gdDHRuNk5Cbwx9R9KiYIkHKo1KTr7w+DEqkvSxBJEsfac3/q
-         r1YQ==
+        Wed, 30 Jan 2019 11:07:10 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 81so65182otj.2;
+        Wed, 30 Jan 2019 08:07:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hH3U0WFHZZpNJH6bCOhEbZsbYJbx6ZUSf+ECUNlMvDg=;
-        b=nVY5CBDSnaTjDYayvzPiZ/Zm7N6YehSdHyqoQpWM9SARKS7DleSdee4OyxlR6WVrLe
-         UMN8Rlb0w+CpjSgu3SaPl3BYWhu9vlKL9C6Wrr6V8I3zI2aCR2h6gqt+6BnTJ06hAZx+
-         1t8FzeHxZ8oAWKPU4QGoEZGC3wXHYL4lepG7QZeacbJ6l3hoS3dSogJ4mb4nvH5qbS75
-         +wmGMFSiB5k+Ehe+Iv+QZE96/U/UYAtW/5LbxHUzYdHQaV8WitWYK9hseFmFZuHXY0cN
-         Alcg1kt1HkDeMwV7Dc1E/TfMCX820JLVMB1kDN3z0jCRd5dCRSPCt2ZL0ySfDWSZ1duu
-         uucA==
-X-Gm-Message-State: AJcUukd8wFoNAxX2hKhAHg3dRHgnlnapWBOWaU1eoCI+hZy6r+p32V1Z
-        +uDupQArK2pkzsVbnmpHoY8=
-X-Google-Smtp-Source: ALg8bN62AN5MtRpb4sM9A0YfNwTP3LMSKoNQz7lz4SN59FCQAtpAVqbXaqJUwYbbm5SF7fgbbZPkzA==
-X-Received: by 2002:ac8:543:: with SMTP id c3mr30900897qth.34.1548864400728;
-        Wed, 30 Jan 2019 08:06:40 -0800 (PST)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id u4sm1547948qkk.51.2019.01.30.08.06.38
+        bh=g2YVABEOYLcMlUm2t8Parde08+vXwjS1kxc3IjzVaM0=;
+        b=bhyZi95r+mp/XCQTSZGbwIP2iJGv++ReOo7Yr+eDDX/cQcgW+HicDXAtJkTdZOM4Kw
+         H2ByyReUihGsCmmIyfS5PDj+NQYKKzS5mHHYHWmiY/bMP4+Z2Zk1ew1m5LBduqrG5GBy
+         Sm8zM0m7E2H/XLLifx+NFVoz59JP4pkSJzgqLPriIgQUwomBUXvzYLtlyfY56TfnjVbT
+         iYjmXym+DQjxAzIkF/vk72Vd/Ia2QCpF01Pt8e8aEsP2quJFw+BFlNWmGjWmiO8mHMSz
+         eek4UosvbSNk2oV3w4aYyAoq4MKb6lPh2fekNt3w/8Rki73x1RfFY5W2SZg8Kse3FFNv
+         FmSw==
+X-Gm-Message-State: AJcUukdEWvKV5uwBjwvmIuobIWI+SWHo1WFvXQY2s6JF1t6mVQGNHteU
+        /vFXKlH72FmdcUONHY7LMULa0BY=
+X-Google-Smtp-Source: ALg8bN61w4RcI3Wx58qjC+ljn2ByYOU452ZYGnsKTzGjhCHLAAxMV4BeuKBMSKz6ck77BF2PuDSEdg==
+X-Received: by 2002:a9d:2184:: with SMTP id s4mr24453896otb.46.1548864429221;
+        Wed, 30 Jan 2019 08:07:09 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 102sm668062otj.65.2019.01.30.08.07.08
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 08:06:40 -0800 (PST)
-Date:   Wed, 30 Jan 2019 14:06:36 -0200
-From:   Shayenne Moura <shayenneluzmoura@gmail.com>
-To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] drm/vkms: Bugfix extra vblank frame
-Message-ID: <171e6e1c239cbca0c3df7183ed8acdfeeace9cf4.1548856186.git.shayenneluzmoura@gmail.com>
-References: <cover.1548856186.git.shayenneluzmoura@gmail.com>
+        Wed, 30 Jan 2019 08:07:08 -0800 (PST)
+Date:   Wed, 30 Jan 2019 10:07:07 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     liaoweixiong <liaoweixiong@allwinnertech.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFC v7 2/5] dt-bindings: pstore-block: new support for blkoops
+Message-ID: <20190130160707.GA31844@bogus>
+References: <1548245116-6360-1-git-send-email-liaoweixiong@allwinnertech.com>
+ <1548245116-6360-3-git-send-email-liaoweixiong@allwinnertech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1548856186.git.shayenneluzmoura@gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <1548245116-6360-3-git-send-email-liaoweixiong@allwinnertech.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kms_flip tests are breaking on vkms when simulate vblank because vblank
-event sequence count returns one extra frame after arm vblank event to
-make a page flip.
+On Wed, Jan 23, 2019 at 08:05:13PM +0800, liaoweixiong wrote:
+> Create DT binding document for blkoops.
+> 
+> Signed-off-by: liaoweixiong <liaoweixiong@allwinnertech.com>
+> ---
+>  .../devicetree/bindings/pstore-block/blkoops.txt   | 32 ++++++++++++++++++++++
 
-When vblank interrupt happens, userspace processes the vblank event and
-issues the next page flip command. Kernel calls queue_work to call
-commit_planes and arm the new page flip. The next vblank picks up the
-newly armed vblank event and vblank interrupt happens again.
+/bindings/pstore/...
 
-The arm and vblank event are asynchronous, then, on the next vblank, we
-receive x+2 from `get_vblank_timestamp`, instead x+1, although timestamp
-and vblank seqno matches.
+I wouldn't call it blkoops either. I believe ramoops is called that to 
+maintain compatibility keeping the same kernel module name that 
+preceeded pstore.
 
-Function `get_vblank_timestamp` is reached by 2 ways:
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 33 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pstore-block/blkoops.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pstore-block/blkoops.txt b/Documentation/devicetree/bindings/pstore-block/blkoops.txt
+> new file mode 100644
+> index 0000000..a25835b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pstore-block/blkoops.txt
+> @@ -0,0 +1,32 @@
+> +Blkoops oops logger
+> +===================
+> +
+> +Blkoops provides a block partition for oops, excluding panics now, so they can
+> +be recovered after a reboot.
+> +
+> +Any space of block partition will be used for a circular buffer of oops records.
+> +These records have a configurable size, with a size of 0 indicating that they
+> +should be disabled.
+> +
+> +"partition-size" and at least one of "dmesg-size" or "pmsg-size" must be set
+> +non-zero, but are otherwise optional as listed below.
+> +
+> +Blkoops will take value from Kconfig if device tree do not set, but settings
+> +from module parameters can also overwrite them.
 
-  - from `drm_mode_page_flip_ioctl`: driver is doing one atomic operation
-    to synchronize planes in the same output. There is no vblank simulation,
-    the `drm_crtc_arm_vblank_event` function adds 1 on vblank count, and the
-    variable in_vblank_irq is false
-  - from `vkms_vblank_simulate`: since the driver is doing a vblank simulation,
-    the variable in_vblank_irq is true.
+That's all kernel details not relevant to the binidng.
 
-Fix this problem subtracting one vblank period from vblank_time when
-`get_vblank_timestamp` is called from trace `drm_mode_page_flip_ioctl`,
-i.e., is not a real vblank interrupt, and getting the timestamp and vblank
-seqno when it is a real vblank interrupt.
+> +
+> +Required properties:
+> +
+> +- compatible: must be "blkoops".
+> +
+> +- partition-size: size in kbytes, must be a multiple of 4.
 
-The reason for all this is that get_vblank_timestamp always supplies the
-timestamp for the next vblank event. The hrtimer is the vblank simulator,
-and it needs the correct previous value to present the next vblank. Since
-this is how hw timestamp registers work and what the vblank core expects.
+This seems unnecessary given a partition has a known size.
 
-Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> +
+> +Optional properties:
+> +
+> +- partition-path: strings must begin with "/dev", tell blkoops which partition
+> +  it can used. If it is not set, blkoops will drop all data when reboot.
 
----
- drivers/gpu/drm/vkms/vkms_crtc.c | 3 +++
- 1 file changed, 3 insertions(+)
+No. '/dev/...' is a Linux thing and doesn't belong in DT.
 
-diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-index d44bfc392491..23146ff2a25b 100644
---- a/drivers/gpu/drm/vkms/vkms_crtc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-@@ -87,6 +87,9 @@ bool vkms_get_vblank_timestamp(struct drm_device *dev, unsigned int pipe,
- 
- 	*vblank_time = output->vblank_hrtimer.node.expires;
- 
-+	if (!in_vblank_irq)
-+		*vblank_time -= output->period_ns;
-+
- 	return true;
- }
- 
--- 
-2.17.1
+You should define a partition UUID and/or label and the kernel can find 
+the right partition to use.
 
+> +
+> +- dmesg-size: maximum size in kbytes of each dump done on oops, which must be a
+> +  multiple of 4.
+> +
+> +- pmsg-size: maximum size in kbytes for userspace messages, which must be a
+> +  multiple of 4.
+
+Common properties shared with ramoops should be in a common doc.
+
+Rob
