@@ -2,78 +2,57 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51394C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB883C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0787F21473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD1C221473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:52:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbfA3XwE (ORCPT
+        id S1729165AbfA3Xws (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:52:04 -0500
-Received: from paleale.coelho.fi ([176.9.41.70]:53032 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727882AbfA3Xvx (ORCPT
+        Wed, 30 Jan 2019 18:52:48 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:58395 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbfA3Xws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:51:53 -0500
-Received: from 91-156-4-241.elisa-laajakaista.fi ([91.156.4.241] helo=redipa)
-        by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <luca@coelho.fi>)
-        id 1gozdy-0004Ei-6E; Thu, 31 Jan 2019 01:51:46 +0200
-Message-ID: <9455f1b9e746f2c28d1573ccdce3836ece42cd8a.camel@coelho.fi>
-From:   Luca Coelho <luca@coelho.fi>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Wireless <linux-wireless@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>
-Date:   Thu, 31 Jan 2019 01:51:44 +0200
-In-Reply-To: <20190131104626.62ff05ce@canb.auug.org.au>
-References: <20190131104626.62ff05ce@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: linux-next: build warning after merge of the
- wireless-drivers-next tree
+        Wed, 30 Jan 2019 18:52:48 -0500
+Received: from 79.184.255.169.ipv4.supernova.orange.pl (79.184.255.169) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id 9cc5c660e0879020; Thu, 31 Jan 2019 00:52:46 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Pavel Machek <pavel@ucw.cz>, Yangtao Li <tiny.windzz@gmail.com>
+Cc:     len.brown@intel.com, gregkh@linuxfoundation.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PM / wakeup: fix comment of pm_wakeup_dev_event()
+Date:   Thu, 31 Jan 2019 00:51:40 +0100
+Message-ID: <2581955.zbx2OOVCpv@aspire.rjw.lan>
+In-Reply-To: <20190124122633.GA24847@amd>
+References: <20190123162201.26366-1-tiny.windzz@gmail.com> <20190124122633.GA24847@amd>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-31 at 10:46 +1100, Stephen Rothwell wrote:
-> Hi all,
+On Thursday, January 24, 2019 1:26:33 PM CET Pavel Machek wrote:
 > 
-> After merging the wireless-drivers-next tree, today's linux-next
-> build
-> (x86_64 allmodconfig) produced this warning:
+> --tThc/1wpZn/ma/RB
+> Content-Type: text/plain; charset=us-ascii
+> Content-Disposition: inline
+> Content-Transfer-Encoding: quoted-printable
 > 
-> drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c:195:13: warning:
-> 'iwl_mvm_add_rtap_sniffer_config' defined but not used [-Wunused-
-> function]
->  static void iwl_mvm_add_rtap_sniffer_config(struct iwl_mvm *mvm,
->              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> On Wed 2019-01-23 11:22:01, Yangtao Li wrote:
+> > This brings the kernel doc in line with the function signature.
+> >=20
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > 
-> Introduced by commit
-> 
->   9bf13bee2d74 ("iwlwifi: mvm: include configured sniffer AID in
-> radiotap")
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
-This was a conflict resolution damage in one of the patches I applied. 
-We already have a fix for it[1] and Kalle will apply it to wireless-
-drivers-next soon.
-
-Sorry for the trouble, but somehow I didn't see this warning and
-kbuildbot also reported successful compilation with it. :(
-
-[1] https://patchwork.kernel.org/patch/10788503/
-
---
-Cheers,
-Luca.
+Patch applied, thanks!
 
