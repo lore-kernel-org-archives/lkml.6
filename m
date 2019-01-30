@@ -2,230 +2,159 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E340C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EACAC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5242D20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:45:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6E5F20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:45:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="PH3EW00W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730903AbfA3Mp1 (ORCPT
+        id S1730942AbfA3Mpz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:45:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41310 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725768AbfA3MpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 07:45:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 44459AFC5;
-        Wed, 30 Jan 2019 12:45:13 +0000 (UTC)
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Jiri Kosina <jikos@kernel.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Chinner <david@fromorbit.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Daniel Gruss <daniel@gruss.cc>, Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 3/3] mm/mincore: provide mapped status when cached status is not allowed
-Date:   Wed, 30 Jan 2019 13:44:20 +0100
-Message-Id: <20190130124420.1834-4-vbabka@suse.cz>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190130124420.1834-1-vbabka@suse.cz>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
- <20190130124420.1834-1-vbabka@suse.cz>
+        Wed, 30 Jan 2019 07:45:55 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:3108 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfA3Mpz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 07:45:55 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c519c660000>; Wed, 30 Jan 2019 04:45:26 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 30 Jan 2019 04:45:54 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 30 Jan 2019 04:45:54 -0800
+Received: from [10.26.11.176] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Jan
+ 2019 12:45:51 +0000
+Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
+To:     Sameer Pujar <spujar@nvidia.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <pierre-louis.bossart@linux.intel.com>
+CC:     <thierry.reding@gmail.com>, <rlokhande@nvidia.com>,
+        <sharadg@nvidia.com>, <mkumard@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <b631310f-93fa-ef4b-7014-d97fcfb2dcdf@nvidia.com>
+Date:   Wed, 30 Jan 2019 12:45:49 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548852326; bh=427mXo0QSFtnAza3h6cf9v2fdxJPo7dn1Gt4hSqFLFs=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=PH3EW00WHx69nJBASQ450mv09jOvx62CjhnEfxIzb3IRQgbp0Dq5aKIRX5MxeyUE2
+         YqO17FzFNMFX1T+UkdGqsa5C4n/OMUyVlLxRLj+JS/PVOZMLt/HuRNBkMJi99dcat4
+         cdvAcrcSrtj2gbyL2eYmsrpftDMI0qphj3pSk5vy8m6j6pwr4vhRs6MXb8Z7vmB95R
+         TiAM2pfpach8LQlND5dTryEW0mr0+sJG3gdDG2oYIov2Bfa0bTQ32DCwvWgNF4wwr8
+         1ifidqpW25gK5pISGlQSK/7pqFNbtbEh62lrMJj+dEYEQsuSG2o6NpfKYtfevcmM/B
+         DMhGpeaGt6W8A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After "mm/mincore: make mincore() more conservative" we sometimes restrict the
-information about page cache residency, which we have to do without breaking
-existing userspace, if possible. We thus fake the resulting values as 1, which
-should be safer than faking them as 0, as there might theoretically exist code
-that would try to fault in the page(s) until mincore() returns 1.
 
-Faking 1 however means that such code would not fault in a page even if it was
-not in page cache, with unwanted performance implications. We can improve the
-situation by revisting the approach of 574823bfab82 ("Change mincore() to count
-"mapped" pages rather than "cached" pages") but only applying it to cases where
-page cache residency check is restricted. Thus mincore() will return 0 for an
-unmapped page (which may or may not be resident in a pagecache), and 1 after
-the process faults it in.
+On 25/01/2019 11:06, Sameer Pujar wrote:
+> If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
+> will not be ON. This could cause issue during probe, where hda init
+> setup is done. This patch enables clocks unconditionally during probe.
+> 
+> Along with above, follwoing changes are done.
+>   * enable runtime PM before exiting from probe work. This helps to avoid
+>     usage of pm_runtime_get_sync/pm_runtime_put() in probe work.
+>   * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
+>   * runtime PM callbacks moved out of CONFIG_PM check
+> 
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  sound/pci/hda/hda_tegra.c | 26 +++++++++++++++++---------
+>  1 file changed, 17 insertions(+), 9 deletions(-)
+> 
+> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+> index c8d18dc..ba6175f 100644
+> --- a/sound/pci/hda/hda_tegra.c
+> +++ b/sound/pci/hda/hda_tegra.c
+> @@ -219,7 +219,6 @@ static int hda_tegra_enable_clocks(struct hda_tegra *data)
+>  	return rc;
+>  }
+>  
+> -#ifdef CONFIG_PM_SLEEP
+>  static void hda_tegra_disable_clocks(struct hda_tegra *data)
+>  {
+>  	clk_disable_unprepare(data->hda2hdmi_clk);
+> @@ -227,6 +226,7 @@ static void hda_tegra_disable_clocks(struct hda_tegra *data)
+>  	clk_disable_unprepare(data->hda_clk);
+>  }
+>  
+> +#ifdef CONFIG_PM_SLEEP
+>  /*
+>   * power management
+>   */
+> @@ -257,7 +257,6 @@ static int hda_tegra_resume(struct device *dev)
+>  }
+>  #endif /* CONFIG_PM_SLEEP */
+>  
+> -#ifdef CONFIG_PM
+>  static int hda_tegra_runtime_suspend(struct device *dev)
+>  {
+>  	struct snd_card *card = dev_get_drvdata(dev);
+> @@ -283,7 +282,7 @@ static int hda_tegra_runtime_resume(struct device *dev)
+>  	int rc;
+>  
+>  	rc = hda_tegra_enable_clocks(hda);
+> -	if (rc != 0)
+> +	if (rc)
+>  		return rc;
+>  	if (chip && chip->running) {
+>  		hda_tegra_init(hda);
+> @@ -292,7 +291,6 @@ static int hda_tegra_runtime_resume(struct device *dev)
+>  
+>  	return 0;
+>  }
+> -#endif /* CONFIG_PM */
+>  
+>  static const struct dev_pm_ops hda_tegra_pm = {
+>  	SET_SYSTEM_SLEEP_PM_OPS(hda_tegra_suspend, hda_tegra_resume)
+> @@ -551,9 +549,9 @@ static int hda_tegra_probe(struct platform_device *pdev)
+>  
+>  	dev_set_drvdata(&pdev->dev, card);
+>  
+> -	pm_runtime_enable(hda->dev);
+> -	if (!azx_has_pm_runtime(chip))
+> -		pm_runtime_forbid(hda->dev);
+> +	err = hda_tegra_enable_clocks(hda);
+> +	if (err)
+> +		goto out_free;
 
-One potential downside is that mincore() will be again able to recognize when a
-previously mapped page was reclaimed. While that might be useful for some
-attack scenarios, it's not as crucial as recognizing that somebody else faulted
-the page in, and there are also other ways to recognize reclaimed pages anyway.
+We also need to think about power-domains here. Enabling the clocks
+might not be enough as the appropriate power-domain needs to be enabled.
+For 64-bit Tegra runtime-pm will handle the power-domains (assuming they
+are populated in device-tree). So I still think it is better we call
+pm_runtime_get_sync() at some point rather than just replying on
+enabling the clocks.
 
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Kevin Easton <kevin@guarana.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Cyril Hrubis <chrubis@suse.cz>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Daniel Gruss <daniel@gruss.cc>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/mincore.c | 49 +++++++++++++++++++++++++++++++++----------------
- 1 file changed, 33 insertions(+), 16 deletions(-)
+Cheers
+Jon
 
-diff --git a/mm/mincore.c b/mm/mincore.c
-index 747a4907a3ac..d6784a803ae7 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -21,12 +21,18 @@
- #include <linux/uaccess.h>
- #include <asm/pgtable.h>
- 
-+struct mincore_walk_private {
-+	unsigned char *vec;
-+	bool can_check_pagecache;
-+};
-+
- static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
- 			unsigned long end, struct mm_walk *walk)
- {
- #ifdef CONFIG_HUGETLB_PAGE
- 	unsigned char present;
--	unsigned char *vec = walk->private;
-+	struct mincore_walk_private *walk_private = walk->private;
-+	unsigned char *vec = walk_private->vec;
- 
- 	/*
- 	 * Hugepages under user process are always in RAM and never
-@@ -35,7 +41,7 @@ static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
- 	present = pte && !huge_pte_none(huge_ptep_get(pte));
- 	for (; addr != end; vec++, addr += PAGE_SIZE)
- 		*vec = present;
--	walk->private = vec;
-+	walk_private->vec = vec;
- #else
- 	BUG();
- #endif
-@@ -85,7 +91,8 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
- }
- 
- static int __mincore_unmapped_range(unsigned long addr, unsigned long end,
--				struct vm_area_struct *vma, unsigned char *vec)
-+				struct vm_area_struct *vma, unsigned char *vec,
-+				bool can_check_pagecache)
- {
- 	unsigned long nr = (end - addr) >> PAGE_SHIFT;
- 	int i;
-@@ -95,7 +102,9 @@ static int __mincore_unmapped_range(unsigned long addr, unsigned long end,
- 
- 		pgoff = linear_page_index(vma, addr);
- 		for (i = 0; i < nr; i++, pgoff++)
--			vec[i] = mincore_page(vma->vm_file->f_mapping, pgoff);
-+			vec[i] = can_check_pagecache ?
-+				 mincore_page(vma->vm_file->f_mapping, pgoff)
-+				 : 0;
- 	} else {
- 		for (i = 0; i < nr; i++)
- 			vec[i] = 0;
-@@ -106,8 +115,11 @@ static int __mincore_unmapped_range(unsigned long addr, unsigned long end,
- static int mincore_unmapped_range(unsigned long addr, unsigned long end,
- 				   struct mm_walk *walk)
- {
--	walk->private += __mincore_unmapped_range(addr, end,
--						  walk->vma, walk->private);
-+	struct mincore_walk_private *walk_private = walk->private;
-+	unsigned char *vec = walk_private->vec;
-+
-+	walk_private->vec += __mincore_unmapped_range(addr, end, walk->vma,
-+				vec, walk_private->can_check_pagecache);
- 	return 0;
- }
- 
-@@ -117,7 +129,8 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 	spinlock_t *ptl;
- 	struct vm_area_struct *vma = walk->vma;
- 	pte_t *ptep;
--	unsigned char *vec = walk->private;
-+	struct mincore_walk_private *walk_private = walk->private;
-+	unsigned char *vec = walk_private->vec;
- 	int nr = (end - addr) >> PAGE_SHIFT;
- 
- 	ptl = pmd_trans_huge_lock(pmd, vma);
-@@ -128,7 +141,8 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 	}
- 
- 	if (pmd_trans_unstable(pmd)) {
--		__mincore_unmapped_range(addr, end, vma, vec);
-+		__mincore_unmapped_range(addr, end, vma, vec,
-+					walk_private->can_check_pagecache);
- 		goto out;
- 	}
- 
-@@ -138,7 +152,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 
- 		if (pte_none(pte))
- 			__mincore_unmapped_range(addr, addr + PAGE_SIZE,
--						 vma, vec);
-+				 vma, vec, walk_private->can_check_pagecache);
- 		else if (pte_present(pte))
- 			*vec = 1;
- 		else { /* pte is a swap entry */
-@@ -152,8 +166,12 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 				*vec = 1;
- 			} else {
- #ifdef CONFIG_SWAP
--				*vec = mincore_page(swap_address_space(entry),
-+				if (walk_private->can_check_pagecache)
-+					*vec = mincore_page(
-+						    swap_address_space(entry),
- 						    swp_offset(entry));
-+				else
-+					*vec = 0;
- #else
- 				WARN_ON(1);
- 				*vec = 1;
-@@ -187,22 +205,21 @@ static long do_mincore(unsigned long addr, unsigned long pages, unsigned char *v
- 	struct vm_area_struct *vma;
- 	unsigned long end;
- 	int err;
-+	struct mincore_walk_private walk_private = {
-+		.vec = vec
-+	};
- 	struct mm_walk mincore_walk = {
- 		.pmd_entry = mincore_pte_range,
- 		.pte_hole = mincore_unmapped_range,
- 		.hugetlb_entry = mincore_hugetlb,
--		.private = vec,
-+		.private = &walk_private
- 	};
- 
- 	vma = find_vma(current->mm, addr);
- 	if (!vma || addr < vma->vm_start)
- 		return -ENOMEM;
- 	end = min(vma->vm_end, addr + (pages << PAGE_SHIFT));
--	if (!can_do_mincore(vma)) {
--		unsigned long pages = (end - addr) >> PAGE_SHIFT;
--		memset(vec, 1, pages);
--		return pages;
--	}
-+	walk_private.can_check_pagecache = can_do_mincore(vma);
- 	mincore_walk.mm = vma->vm_mm;
- 	err = walk_page_range(addr, end, &mincore_walk);
- 	if (err < 0)
 -- 
-2.20.1
-
+nvpublic
