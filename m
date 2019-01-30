@@ -2,203 +2,170 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904F3C282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C4D6C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 606102087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 519AE2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:11:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i9Yr9B+D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730623AbfA3JKN (ORCPT
+        id S1730428AbfA3JLZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:10:13 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42592 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728193AbfA3JKN (ORCPT
+        Wed, 30 Jan 2019 04:11:25 -0500
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:38262 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726577AbfA3JLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:10:13 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l10so16796605lfh.9;
-        Wed, 30 Jan 2019 01:10:10 -0800 (PST)
+        Wed, 30 Jan 2019 04:11:24 -0500
+Received: by mail-qk1-f201.google.com with SMTP id v64so24953700qka.5
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:11:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=zy9e2OcfeDBWVqsvNM95yzGG2K2LaNzQTlHttzXdMkg=;
+        b=i9Yr9B+DNw8il9rBbwxCxknVWUG5dcl+LQL4AQrAIh/GJqrUNxA4RWziRuTpoc85Ju
+         FZedk3cZ1QEsC40Tzb6d5N2TbRALr1BlpZpLrWlm5JWre5LYF1laXUS/33q+CndxsMgo
+         m2EHfU802K3sApIAG5YYlPXbOfB6utbtK0b60Dh0YsHRpFureHYYFnDu+SyWil4IR+X9
+         halWkYRvbpolC8cWdGm8e/JuN9dhMZkHUpshN+6ORSzvat8v+nc74vs6w42/ZlfSr0l5
+         MfaizNF6onP9e6Dy9Uu4GZ4eNAqvzMtk3g5OFDv6/JyVCsY39jN2nWkRljzgptBuitwo
+         c39w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qNcmJLdh/fuAG9dR1RnhHjNa+v4TZUR4kRLUPCzfzw8=;
-        b=dsoguaYQUovaUm9+fN+4rLGtr/rpGU/p6oO7VvdsiC0O46nfiG/F2rrmI43thFkGX6
-         Ig9nGAet6oly44NrovRcLnW5y6k9UbYReAwIdEXpiInp1XLPC383vM4sOwtTssWhtZhU
-         Hw0oCyPQSbb9O8GZFp8O8VtcY3cPR9YNJ+yWoBHsGeYvXgIgpkofLD0G83Pc1WInu9zq
-         RjtXXDjrke8P3k9QGHtJp5kJqrGedK/cnR7C024dKDi4ri/VSM+ocelR+JC65TSGVxMN
-         GYSLO3PYPJG1MWH6PsIPLT1ZzAeLHCQR7WsC60pPM+/aAbALntH1H45bmQ9EhxYqxcs9
-         eKNg==
-X-Gm-Message-State: AJcUukf7FDt+wMA5jYbsghrplQkjUlTo/s/Mp09Y9G9+R6K4GNZDKPaC
-        Qe1ecmccG8nFqBgXhACYlkY=
-X-Google-Smtp-Source: ALg8bN5B3xdrbzM8ZrM1g44Fk50ac+63biWfFSf+4OeqgC1XVXfMd+kEOlFEA0IfbVLdo3p9odW7cg==
-X-Received: by 2002:ac2:55a3:: with SMTP id y3mr20241760lfg.93.1548839409296;
-        Wed, 30 Jan 2019 01:10:09 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id r26-v6sm174147lji.25.2019.01.30.01.10.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 01:10:08 -0800 (PST)
-Date:   Wed, 30 Jan 2019 11:09:55 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v3 06/10] devicetree: bindings: Document first ROHM
- BD70528 bindings
-Message-ID: <eb5d03f3adc72db580a10f95ff6cb07aefce5b47.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=zy9e2OcfeDBWVqsvNM95yzGG2K2LaNzQTlHttzXdMkg=;
+        b=YTS/06y8FaXlaVUx15qZlAbK40Y00fhIiI19oS06ysey+BKF1Royq31Yiky6zN0A3x
+         Q32TvuWDxsHCquK78zdCotKDUOnq1oAc7LyaYctjloU7qs2KF3rZDbb7/mwxDhb9b2si
+         /CYQbIJoEiUtDWJAvQstvARe3pvSuC82X/FctdaMwDE6LySS5AitcC9fc/uCDQWDk7xL
+         kqkU9AflUJWAEAcOyc7mZdYDw4ple3Aret5Eb537eFlrh/JJ87KUwUu0cg6PjPVyFWQD
+         7Bubpp56jphmZNJF1cTXd2Wcv0P14bvBHIgiEzq3zZSDlw1WpdByoDqu8wlkxcBxk9II
+         eryA==
+X-Gm-Message-State: AHQUAuYBS1MeKej4gZuHCkFWgX1Zg3TiQBd0wqhi1+RB829aOpDJIMgx
+        d4QFalyKX7KAEdWFas7IqD5H7BdEism2
+X-Google-Smtp-Source: AHgI3IY6WMovQ38JgsKP4PimdCYg6tFW4HI8dp7oobN477xbSnhzKYFt6+IWm3prs/W2Lshh9UFv3I3EfmTX
+X-Received: by 2002:a37:4d55:: with SMTP id a82mr5257217qkb.41.1548839483302;
+ Wed, 30 Jan 2019 01:11:23 -0800 (PST)
+Date:   Wed, 30 Jan 2019 17:11:16 +0800
+In-Reply-To: <20190128072948.45788-1-linfish@google.com>
+Message-Id: <20190130091116.256989-1-linfish@google.com>
+Mime-Version: 1.0
+References: <20190128072948.45788-1-linfish@google.com>
+X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+Subject: [PATCH v3] [media] v4l: add I / P frame min max QP definitions
+From:   Fish Lin <linfish@google.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, trivial@kernel.org,
+        Fish Lin <linfish@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-drivers) and 4 GPIO pins which can be configured for I/O or
-as interrupt sources withe configurable trigger levels.
+Add following V4L2 QP parameters for H.264:
+ * V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP
+ * V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP
+ * V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP
+ * V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+These controls will limit QP range for intra and inter frame,
+provide more manual control to improve video encode quality.
+
+Signed-off-by: Fish Lin <linfish@google.com>
 ---
- .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 104 +++++++++++++++++++++
- 1 file changed, 104 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+Changelog since v2:
+- Add interaction with V4L2_CID_MPEG_VIDEO_H264_MIN/MAX_QP
+  description in the document.
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-new file mode 100644
-index 000000000000..21801440a53a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-@@ -0,0 +1,104 @@
-+* ROHM BD70528 Power Management Integrated Circuit bindings
+Changelog since v1:
+- Add description in document.
+
+ .../media/uapi/v4l/extended-controls.rst      | 24 +++++++++++++++++++
+ drivers/media/v4l2-core/v4l2-ctrls.c          |  4 ++++
+ include/uapi/linux/v4l2-controls.h            |  6 +++++
+ 3 files changed, 34 insertions(+)
+
+diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
+index 286a2dd7ec36..402e41eb24ee 100644
+--- a/Documentation/media/uapi/v4l/extended-controls.rst
++++ b/Documentation/media/uapi/v4l/extended-controls.rst
+@@ -1214,6 +1214,30 @@ enum v4l2_mpeg_video_h264_entropy_mode -
+     Quantization parameter for an B frame for H264. Valid range: from 0
+     to 51.
+ 
++``V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP (integer)``
++    Minimum quantization parameter for H264 I frame, to limit I frame
++    quality in a range. Valid range: from 0 to 51. If
++    V4L2_CID_MPEG_VIDEO_H264_MIN_QP is set, the quantization parameter
++    should be chosen to meet both of the requirement.
 +
-+BD70528MWV is an ultra-low Iq general purpose single-chip power management IC
-+for battery-powered portable devices. The IC integrates 3 ultra-low current
-+consumption buck converters, 3 LDOs and 2 LED Drivers. Also included are 4
-+GPIOs, a real-time clock (RTC), a 32kHz clock gate, high-accuracy VREF
-+for use with an external ADC, flexible dual-input power path, 10 bits SAR ADC
-+for battery temperature monitor and 1S battery charger with scalable charge
-+currents.
++``V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP (integer)``
++    Maximum quantization parameter for H264 I frame, to limit I frame
++    quality in a range. Valid range: from 0 to 51. If
++    V4L2_CID_MPEG_VIDEO_H264_MAX_QP is set, the quantization parameter
++    should be chosen to meet both of the requirement.
 +
-+Required properties:
-+ - compatible		: Should be "rohm,bd70528"
-+ - reg			: I2C slave address.
-+ - interrupt-parent	: Phandle to the parent interrupt controller.
-+ - interrupts		: The interrupt line the device is connected to.
-+ - interrupt-controller	: To indicate bd70528 acts as an interrupt controller.
-+ - #interrupt-cells	: Should be 2. usage is compliant to the 2 cells
-+			  variant of ../interrupt-controller/interrupts.txt
-+ - gpio-controller	: To indicate bd70528 acts as a gpio controller.
-+ - #gpio-cells		: Should be 2. The first cell is the pin number and
-+			  the second cell is used to specify flags. See
-+			  ../gpio/gpio.txt for more information.
-+ - clock-frequency	: Should be 32768
-+ - #clock-cells		: Should be 0.
-+ - regulators:		: List of child nodes that specify the regulators.
-+			  Please see ../regulator/rohm,bd70528-regulator.txt
++``V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP (integer)``
++    Minimum quantization parameter for H264 P frame, to limit P frame
++    quality in a range. Valid range: from 0 to 51. If
++    V4L2_CID_MPEG_VIDEO_H264_MIN_QP is set, the quantization parameter
++    should be chosen to meet both of the requirement.
 +
-+Optional properties:
-+ - clock-output-names	: Should contain name for output clock.
++``V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP (integer)``
++    Maximum quantization parameter for H264 P frame, to limit P frame
++    quality in a range. Valid range: from 0 to 51. If
++    V4L2_CID_MPEG_VIDEO_H264_MAX_QP is set, the quantization parameter
++    should be chosen to meet both of the requirement.
 +
-+Example:
-+/* external oscillator */
-+osc: oscillator {
-+	compatible = "fixed-clock";
-+	#clock-cells = <1>;
-+	clock-frequency  = <32768>;
-+	clock-output-names = "osc";
-+};
+ ``V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP (integer)``
+     Quantization parameter for an I frame for MPEG4. Valid range: from 1
+     to 31.
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index 5e3806feb5d7..e2b0af0d2283 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -825,6 +825,10 @@ const char *v4l2_ctrl_get_name(u32 id)
+ 	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER:return "H264 Number of HC Layers";
+ 	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER_QP:
+ 								return "H264 Set QP Value for HC Layers";
++	case V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP:		return "H264 I-Frame Minimum QP Value";
++	case V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP:		return "H264 I-Frame Maximum QP Value";
++	case V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP:		return "H264 P-Frame Minimum QP Value";
++	case V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP:		return "H264 P-Frame Maximum QP Value";
+ 	case V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP:		return "MPEG4 I-Frame QP Value";
+ 	case V4L2_CID_MPEG_VIDEO_MPEG4_P_FRAME_QP:		return "MPEG4 P-Frame QP Value";
+ 	case V4L2_CID_MPEG_VIDEO_MPEG4_B_FRAME_QP:		return "MPEG4 B-Frame QP Value";
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index 3dcfc6148f99..9519673e6437 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -533,6 +533,12 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type {
+ };
+ #define V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER	(V4L2_CID_MPEG_BASE+381)
+ #define V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER_QP	(V4L2_CID_MPEG_BASE+382)
 +
-+pmic: bd70528@4b {
-+	compatible = "rohm,bd70528";
-+	reg = <0x4b>;
-+	interrupt-parent = <&gpio1>;
-+	interrupts = <29 GPIO_ACTIVE_LOW>;
-+	clocks = <&osc 0>;
-+	#clock-cells = <0>;
-+	clock-output-names = "bd70528-32k-out";
-+	#gpio-cells = <2>;
-+	gpio-controller;
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
++#define V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP	(V4L2_CID_MPEG_BASE+390)
++#define V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP	(V4L2_CID_MPEG_BASE+391)
++#define V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP	(V4L2_CID_MPEG_BASE+392)
++#define V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP	(V4L2_CID_MPEG_BASE+393)
 +
-+	regulators {
-+		buck1: BUCK1 {
-+			regulator-name = "buck1";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <3400000>;
-+			regulator-boot-on;
-+			regulator-ramp-delay = <125>;
-+		};
-+		buck2: BUCK2 {
-+			regulator-name = "buck2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-boot-on;
-+			regulator-ramp-delay = <125>;
-+		};
-+		buck3: BUCK3 {
-+			regulator-name = "buck3";
-+			regulator-min-microvolt = <800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-boot-on;
-+			regulator-ramp-delay = <250>;
-+		};
-+		ldo1: LDO1 {
-+			regulator-name = "ldo1";
-+			regulator-min-microvolt = <1650000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-boot-on;
-+		};
-+		ldo2: LDO2 {
-+			regulator-name = "ldo2";
-+			regulator-min-microvolt = <1650000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-boot-on;
-+		};
-+
-+		ldo3: LDO3 {
-+			regulator-name = "ldo3";
-+			regulator-min-microvolt = <1650000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+		led_ldo1: LED_LDO1 {
-+			regulator-name = "led_ldo1";
-+			regulator-min-microvolt = <200000>;
-+			regulator-max-microvolt = <300000>;
-+		};
-+		led_ldo2: LED_LDO2 {
-+			regulator-name = "led_ldo2";
-+			regulator-min-microvolt = <200000>;
-+			regulator-max-microvolt = <300000>;
-+		};
-+	};
-+};
+ #define V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP	(V4L2_CID_MPEG_BASE+400)
+ #define V4L2_CID_MPEG_VIDEO_MPEG4_P_FRAME_QP	(V4L2_CID_MPEG_BASE+401)
+ #define V4L2_CID_MPEG_VIDEO_MPEG4_B_FRAME_QP	(V4L2_CID_MPEG_BASE+402)
 -- 
-2.14.3
+2.20.1.495.gaa96b0ce6b-goog
 
-
--- 
-Matti Vaittinen
-ROHM Semiconductors Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
