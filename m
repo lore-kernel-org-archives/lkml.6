@@ -2,329 +2,97 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A8BC282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F685C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E97F82184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D29D821852
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548839549;
+	bh=m2Amwt5xRuAF/BtRiYoVPKvt+0oNJQzkx+zBwAntzV0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=msrm3FrYwESwWDPf5JAAuDsUjEDA1P20hSuVM2pAWb291l9ACymZ9RuKOMlIPI15t
+	 Xb+Pb+MiatAjYai3m1h0gcflurVpCMXyAjfnHRf73Qu6uKKtrJ6UXJ7VDu/uoimeoh
+	 kvJC9IczbeINsuuixJDmD3H60BxVImJi1tUrtAIQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730508AbfA3JMH (ORCPT
+        id S1730528AbfA3JM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:12:07 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40327 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfA3JMG (ORCPT
+        Wed, 30 Jan 2019 04:12:28 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39274 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfA3JM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:12:06 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v5so16803492lfe.7;
-        Wed, 30 Jan 2019 01:12:02 -0800 (PST)
+        Wed, 30 Jan 2019 04:12:27 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so25130132wra.6
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:12:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AvluvHbI2AqPoGdOpq2XGABjFr+RufaKUEWajSIDPmY=;
-        b=ny3Il3y+JXTLTw1VBlLU4P7maP+4URG5uUBr2erFwVRBLq1tdDomkodHT+qeI100/6
-         jeTwrtEw0akmHb+phnpLxPvwNGnfhOxYhMOJ0QU4dRahlJCGxqEYzFDyzkQ3xA9ZAdj9
-         PMJHGEOY0JE4wsaIIALkzNqMXmEIjiFu4TNZya4weBmwZkm7YPrjbCfnoPBTCc6C1DM1
-         8AhyzFbF8zotjQ67nJr+ZLI920e8LSpvPDtFDzaNu9AXnIrxYmf1qVDZJsCuBaEX9yp4
-         HIMbfketY2YgfArkfI27SAJhw+n4KjDSmRa01aF5QNgAZEU4lUesVz34H5FTu8XH9wjt
-         fksw==
-X-Gm-Message-State: AJcUuke1/XreesYDFtYm2SJpG0VWB/MVGGV8Sx5KyyiSl0hUyKKYsMdH
-        UAFkQsgRniMxNsNFQnNbfI0=
-X-Google-Smtp-Source: ALg8bN4eJgGrSzTW4u0GDdIjX1wi66T7YxDHJxB5i0/q0ZjmKUJ0XZvPiso6pn2XJus3iR7ZuYEFgw==
-X-Received: by 2002:a19:f619:: with SMTP id x25mr22846034lfe.163.1548839521994;
-        Wed, 30 Jan 2019 01:12:01 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id f8sm200221lfe.72.2019.01.30.01.12.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 01:12:01 -0800 (PST)
-Date:   Wed, 30 Jan 2019 11:11:47 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v3 07/10] gpio: Initial support for ROHM bd70528 GPIO
- block
-Message-ID: <f3993aeff320af1ac6ce2161a180b88e59402ab0.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m2Amwt5xRuAF/BtRiYoVPKvt+0oNJQzkx+zBwAntzV0=;
+        b=q+X95maS8v9Vb/2vjxKtu6Kje9MnLFk9jVGalYI0XdAEfM1kHnNLRWRmfogHkHPNin
+         Og1YhgkA8IE+GSjUfAk1Ily4Mi4GQbukv8hXUg29q3+f8T9zBRcYi2M2yivFKMYlXpyU
+         qOfaxBdwgTMaNXNrmhGmtJMGjq6bWu0NyMbrd1A7W0nm4sKBuZ07Yp3JalXffg/B4CqV
+         O64+6UWQCB3ppDedeYysNKB8SViB8/vpl8FBAoijAZBLU04M86ENNH11Xk+I3EcpKupJ
+         wZf4WVbE+KAEFn8nSoWn7dWFyI8TbmQkONJ0I2kS1eYV3pu4CS7bgC3AstBTwKDviXLr
+         Sfnw==
+X-Gm-Message-State: AJcUukcsw8rnhImaI+zcjd5CdGyKYSnrPWL6r7DuP+g2IRMr7dG2ia6j
+        tnXmbwvanCrweZoFpuVKGIQ=
+X-Google-Smtp-Source: ALg8bN4o3NSnbRORIiG4pA/Fv1evNFjLo0o4MeeOLg8R2mbOHP9LIlrcP7bYQJHQ8zV9o1nuBHk5MQ==
+X-Received: by 2002:adf:e6ce:: with SMTP id y14mr30456657wrm.239.1548839546420;
+        Wed, 30 Jan 2019 01:12:26 -0800 (PST)
+Received: from tiehlicka.suse.cz (ip-37-188-142-190.eurotel.cz. [37.188.142.190])
+        by smtp.gmail.com with ESMTPSA id l19sm1491875wme.21.2019.01.30.01.12.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 01:12:25 -0800 (PST)
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        gerald.schaefer@de.ibm.com, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/2] mm, memory_hotplug: fix uninitialized pages fallouts.
+Date:   Wed, 30 Jan 2019 10:12:15 +0100
+Message-Id: <20190130091217.24467-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ROHM BD70528 PMIC has 4 GPIO pins. Allow them to be
-controlled by GPIO framework.
+Hi,
+this is the second version of the series. v1 was posted [1]. There are
+no functional changes since v1. I have just fixed up the changelog of
+patch 1 which had a wrong trace (c&p mistake). I have also added
+tested-bys and reviewed-bys.
 
-IRQs are handled by regmap-irq and GPIO driver is not
-aware of the irq usage.
+Mikhail has posted fixes for the two bugs quite some time ago [2]. I
+have pushed back on those fixes because I believed that it is much
+better to plug the problem at the initialization time rather than play
+whack-a-mole all over the hotplug code and find all the places which
+expect the full memory section to be initialized. We have ended up with
+2830bf6f05fb ("mm, memory_hotplug: initialize struct pages for the full
+memory section") merged and cause a regression [3][4]. The reason is
+that there might be memory layouts when two NUMA nodes share the same
+memory section so the merged fix is simply incorrect.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/gpio/Kconfig        |  11 +++
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-bd70528.c | 191 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 203 insertions(+)
- create mode 100644 drivers/gpio/gpio-bd70528.c
+In order to plug this hole we really have to be zone range aware in
+those handlers. I have split up the original patch into two. One is
+unchanged (patch 2) and I took a different approach for `removable'
+crash. It would be great if Mikhail could test it still works for his
+memory layout.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b5a2845347ec..c82187648630 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -962,6 +962,17 @@ config GPIO_ARIZONA
- 	help
- 	  Support for GPIOs on Wolfson Arizona class devices.
- 
-+config GPIO_BD70528
-+	tristate "ROHM BD70528 GPIO support"
-+	depends on MFD_ROHM_BD70528
-+	help
-+	  Support for GPIOs on ROHM BD70528 PMIC. There are four GPIOs
-+	  available on the ROHM PMIC in total. The GPIOs can also
-+	  generate interrupts.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called gpio-bd70528.
-+
- config GPIO_BD9571MWV
- 	tristate "ROHM BD9571 GPIO support"
- 	depends on MFD_BD9571MWV
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 37628f8dbf70..6f12c83598fc 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -34,6 +34,7 @@ obj-$(CONFIG_GPIO_ATH79)	+= gpio-ath79.o
- obj-$(CONFIG_GPIO_ASPEED)	+= gpio-aspeed.o
- obj-$(CONFIG_GPIO_RASPBERRYPI_EXP)	+= gpio-raspberrypi-exp.o
- obj-$(CONFIG_GPIO_BCM_KONA)	+= gpio-bcm-kona.o
-+obj-$(CONFIG_GPIO_BD70528) 	+= gpio-bd70528.o
- obj-$(CONFIG_GPIO_BD9571MWV)	+= gpio-bd9571mwv.o
- obj-$(CONFIG_GPIO_BRCMSTB)	+= gpio-brcmstb.o
- obj-$(CONFIG_GPIO_BT8XX)	+= gpio-bt8xx.o
-diff --git a/drivers/gpio/gpio-bd70528.c b/drivers/gpio/gpio-bd70528.c
-new file mode 100644
-index 000000000000..6a8149721aaf
---- /dev/null
-+++ b/drivers/gpio/gpio-bd70528.c
-@@ -0,0 +1,191 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// gpio-bd70528.c ROHM BD70528MWV gpio driver
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/mfd/rohm-bd70528.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define GPIO_IN_REG(offset) (BD70528_REG_GPIO1_IN + offset*2)
-+#define GPIO_OUT_REG(offset) (BD70528_REG_GPIO1_OUT + offset*2)
-+
-+struct bd70528_gpio {
-+	struct rohm_regmap_dev chip;
-+	struct gpio_chip gpio;
-+};
-+
-+static int bd70528_set_debounce(struct bd70528_gpio *bdgpio,
-+				unsigned int offset, unsigned int debounce)
-+{
-+	u8 val;
-+
-+	switch (debounce) {
-+	case 0:
-+		val = BD70528_DEBOUNCE_DISABLE;
-+		break;
-+	case 1 ... 15:
-+		val = BD70528_DEBOUNCE_15MS;
-+		break;
-+	case 16 ... 30:
-+		val = BD70528_DEBOUNCE_30MS;
-+		break;
-+	case 31 ... 50:
-+		val = BD70528_DEBOUNCE_50MS;
-+		break;
-+	default:
-+		dev_err(bdgpio->chip.dev,
-+			"Invalid debouce value %u\n", debounce);
-+		return -EINVAL;
-+	}
-+	return regmap_update_bits(bdgpio->chip.regmap, GPIO_IN_REG(offset),
-+				 BD70528_DEBOUNCE_MASK, val);
-+}
-+
-+static int bd70528_get_direction(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+	int val, ret;
-+
-+	/* Do we need to do something to IRQs here? */
-+	ret = regmap_read(bdgpio->chip.regmap, GPIO_OUT_REG(offset), &val);
-+	if (ret) {
-+		dev_err(bdgpio->chip.dev, "Could not read gpio direction\n");
-+		return ret;
-+	}
-+
-+	return !(val & BD70528_GPIO_OUT_EN_MASK);
-+}
-+
-+static int bd70528_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
-+				   unsigned long config)
-+{
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		return regmap_update_bits(bdgpio->chip.regmap,
-+					  GPIO_OUT_REG(offset),
-+					  BD70528_GPIO_DRIVE_MASK,
-+					  BD70528_GPIO_OPEN_DRAIN);
-+		break;
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		return regmap_update_bits(bdgpio->chip.regmap,
-+					  GPIO_OUT_REG(offset),
-+					  BD70528_GPIO_DRIVE_MASK,
-+					  BD70528_GPIO_PUSH_PULL);
-+		break;
-+	case PIN_CONFIG_INPUT_DEBOUNCE:
-+		return bd70528_set_debounce(bdgpio, offset,
-+					    pinconf_to_config_argument(config));
-+		break;
-+	default:
-+		break;
-+	}
-+	return -ENOTSUPP;
-+}
-+
-+static int bd70528_direction_input(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+
-+	/* Do we need to do something to IRQs here? */
-+	return regmap_update_bits(bdgpio->chip.regmap, GPIO_OUT_REG(offset),
-+				 BD70528_GPIO_OUT_EN_MASK,
-+				 BD70528_GPIO_OUT_DISABLE);
-+}
-+static void bd70528_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			     int value)
-+{
-+	int ret;
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+	u8 val = (value) ? BD70528_GPIO_OUT_HI : BD70528_GPIO_OUT_LO;
-+
-+	ret = regmap_update_bits(bdgpio->chip.regmap, GPIO_OUT_REG(offset),
-+				  BD70528_GPIO_OUT_MASK, val);
-+	if (ret)
-+		dev_err(bdgpio->chip.dev, "Could not set gpio to %d\n", value);
-+}
-+
-+static int bd70528_direction_output(struct gpio_chip *chip, unsigned int offset,
-+				    int value)
-+{
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+
-+	bd70528_gpio_set(chip, offset, value);
-+	return regmap_update_bits(bdgpio->chip.regmap, GPIO_OUT_REG(offset),
-+				 BD70528_GPIO_OUT_EN_MASK,
-+				 BD70528_GPIO_OUT_ENABLE);
-+}
-+
-+#define GPIO_STATE_MASK(offset) (BD70528_GPIO_IN_STATE_BASE << offset)
-+
-+static int bd70528_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	unsigned int val;
-+	int ret = -EINVAL;
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+
-+	ret = regmap_read(bdgpio->chip.regmap, BD70528_REG_GPIO_STATE, &val);
-+
-+	if (!ret)
-+		ret = !(val & GPIO_STATE_MASK(offset));
-+
-+	return ret;
-+}
-+
-+static int  bd70528_probe(struct platform_device *pdev)
-+{
-+	struct bd70528_gpio *bdgpio;
-+	struct bd70528 *bd70528;
-+	int ret;
-+
-+	bd70528 = dev_get_drvdata(pdev->dev.parent);
-+	if (!bd70528) {
-+		dev_err(&pdev->dev, "No MFD driver data\n");
-+		return -EINVAL;
-+	}
-+
-+	bdgpio = devm_kzalloc(&pdev->dev, sizeof(*bdgpio),
-+				    GFP_KERNEL);
-+	if (!bdgpio)
-+		return -ENOMEM;
-+	bdgpio->chip.dev = &pdev->dev;
-+	bdgpio->gpio.parent = pdev->dev.parent;
-+	bdgpio->gpio.label = "bd70528-gpio";
-+	bdgpio->gpio.owner = THIS_MODULE;
-+	bdgpio->gpio.get_direction = &bd70528_get_direction;
-+	bdgpio->gpio.direction_input = &bd70528_direction_input;
-+	bdgpio->gpio.direction_output = &bd70528_direction_output;
-+	bdgpio->gpio.set_config = &bd70528_gpio_set_config;
-+	bdgpio->gpio.can_sleep = true;
-+	bdgpio->gpio.get = &bd70528_gpio_get;
-+	bdgpio->gpio.set = &bd70528_gpio_set;
-+	bdgpio->gpio.ngpio = 4;
-+	bdgpio->gpio.base = -1;
-+#ifdef CONFIG_OF_GPIO
-+	bdgpio->gpio.of_node = pdev->dev.parent->of_node;
-+#endif
-+	bdgpio->chip.regmap = bd70528->chip.regmap;
-+
-+	ret = devm_gpiochip_add_data(&pdev->dev, &bdgpio->gpio,
-+				     bdgpio);
-+	if (ret)
-+		dev_err(&pdev->dev, "gpio_init: Failed to add bd70528-gpio\n");
-+
-+	return ret;
-+}
-+
-+static struct platform_driver bd70528_gpio = {
-+	.driver = {
-+		.name = "bd70528-gpio"
-+	},
-+	.probe = bd70528_probe,
-+};
-+
-+module_platform_driver(bd70528_gpio);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD70528 voltage regulator driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+[1] http://lkml.kernel.org/r/20190128144506.15603-1-mhocko@kernel.org
+[2] http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com
+[3] https://bugzilla.redhat.com/show_bug.cgi?id=1666948
+[4] http://lkml.kernel.org/r/20190125163938.GA20411@dhcp22.suse.cz
 
 
--- 
-Matti Vaittinen
-ROHM Semiconductors Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
