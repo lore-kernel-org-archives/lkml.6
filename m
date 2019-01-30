@@ -2,125 +2,97 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F15D4C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9090EC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C43602087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:20:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 591622087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:20:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="UzX6sHRR"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KpwpN3ZF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387537AbfA3TT6 (ORCPT
+        id S2387556AbfA3TUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:19:58 -0500
-Received: from mail-eopbgr130077.outbound.protection.outlook.com ([40.107.13.77]:52977
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728197AbfA3TT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:19:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Gazb6Jp6B360Dq+MkPlp8a64vElOV9HlssPVSOq7PI=;
- b=UzX6sHRR56qy4HbKSErrFp0EcAChEVbY8N3BvrW9CePVEyW4vY+fpOg4QDe8VHDBBt5OBBuTZiGjJizPcNLUMnlotIiYO8iGAwlVBazrNyqdX9rYYOBJg4MOXFs06OsiWPWNeMApeoVn7ph52XRTWDS+ZxAgnsGIwSghnx4xzNA=
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
- DBBPR05MB6395.eurprd05.prod.outlook.com (20.179.41.213) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Wed, 30 Jan 2019 19:19:52 +0000
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 19:19:52 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-CC:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFNYCAALluAIAAoq8AgAAIC4CAABKaAA==
-Date:   Wed, 30 Jan 2019 19:19:52 +0000
-Message-ID: <20190130191946.GD17080@mellanox.com>
-References: <20190129174728.6430-1-jglisse@redhat.com>
- <20190129174728.6430-4-jglisse@redhat.com>
- <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
- <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
- <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
- <20190129205827.GM10108@mellanox.com> <20190130080208.GC29665@lst.de>
- <20190130174424.GA17080@mellanox.com>
- <bcbdfae6-cfc6-c34f-4ff2-7bb9a08f38af@deltatee.com>
-In-Reply-To: <bcbdfae6-cfc6-c34f-4ff2-7bb9a08f38af@deltatee.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CO2PR04CA0185.namprd04.prod.outlook.com
- (2603:10b6:104:5::15) To DBBPR05MB6426.eurprd05.prod.outlook.com
- (2603:10a6:10:c9::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DBBPR05MB6395;6:/EUG6rN1Pl0LhGz+YLBfOhGglyVXmjKrFuRN+IvaFnbSOe68/O6+nK72Cm6QcD7d0TSvLFJUAKBpA6bJUnI1FuDWcOvtUehF1tj+zhv0iK43AGAf0usyGG5J+PaO1uX3AFNNc3wGApQ3B6Dhy1LY9g+TjT1mH42dYeWEnXWaxyh7sqlLJdwzVQvPULfsZuWaNgXL+g255UwHb4t3feNg+Bd3l3sw2CalhRiDJvancL21/OOAJi+v8u6biUPdERh6gDySgJPOTqZboa5et7QHdyyVkjXPgllhiY9+FsXK0IKNNyHJMUunwa88Th8LAPGRtFrGBbvPrCn3Y5kbMOKgp7kfcmoTy83TPNEiLOxVo/jdmX5h+Bl+9P/kESw0GETfp3mz5S/lZFHykVMvNdHnt/vpZb7Z1y0opqIlP72tJ6T3iqQnpvSFamcI9SmIXjvBdPmSahkEEWIoc5rt3WZRFQ==;5:Crbz8a9BZD54YXFZevGAFLMvdcWZa7qezxOdj19uIrgLDz8xpGwotVj556Qa/XfI3d8rZSpzrPxQDqj25ILs8GOiyMfQumCcDMvwyarlLEpc9fHo7gPGI7XIp+2ErYoOHhWdFfq53cvB8XZ2pUmVi/KLgaGoJAuuCNUhyqtebpfDqFfExMLLrPEWtPRpVJ6z4ZohVdySHhLWERuOr8Xgqg==;7:8j6QfQXfIbjgtF1JWbSGx/TDa/PqeDpiB9Dv9g+Vyh89Ky8eMRYnssf9rBAoRHzsV4JhMUDdd7/ZetNe5SUtPVhetlPATm2m9cptMYVpfRnOsyS22InngAFQklCJLKcRiH8TaV2OBRP9A8aoSxfwVQ==
-x-ms-office365-filtering-correlation-id: 141dbce2-fcb6-438c-3fab-08d686e7e8e6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6395;
-x-ms-traffictypediagnostic: DBBPR05MB6395:
-x-microsoft-antispam-prvs: <DBBPR05MB6395CD70E422712DC53CC647CF900@DBBPR05MB6395.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(396003)(346002)(376002)(136003)(199004)(189003)(54906003)(316002)(6246003)(68736007)(105586002)(446003)(2906002)(25786009)(53936002)(97736004)(4326008)(36756003)(76176011)(2616005)(476003)(11346002)(106356001)(33656002)(53546011)(6506007)(486006)(256004)(217873002)(52116002)(26005)(99286004)(186003)(386003)(102836004)(6116002)(6916009)(3846002)(66066001)(4744005)(1076003)(6436002)(6512007)(8676002)(81166006)(305945005)(7736002)(71190400001)(6486002)(229853002)(8936002)(478600001)(81156014)(93886005)(7416002)(14454004)(71200400001)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6395;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: uZltpbhLDx/I/aSUk9bXd8dUSVjJoSxhzqz+W/18RtNysqS/wJ4mPoHP7JdgoAtsnUekdTPo/8qwYi+dogonykLMJ1Pd/2rGSRZoEf8c3xKpQ0QR+JwvdTI3+PcXk+S5aOS8flwScOXfAlrKdYdMiBiUxnhTXM5MWYKW6DCe82M34QwzLox92rry6x7I0XoIdut7dOTe7jm4L7z3TBd2gKD7/aRITwT8AEv9EMjU7t4a4wyQK+/NvqXaucg5XBshGoXZie0Fl3FJvCInwLy8i9H1ojviDjdieAytVAAz83CNLzFb1o75DuV7AaEbQQAw1tTSO//erXE20cygsJmUSWYloEDMen3fsNCzfaTMKON48DYZ/7zf3TWYIuBzBY7e3qsVAlxr/YBl4yWs17Ewht9WRm+WOIOERRsSd1gadK0=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2608ADBADE66244CAF93015265B4523A@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 30 Jan 2019 14:20:15 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38911 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728197AbfA3TUP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:20:15 -0500
+Received: by mail-lj1-f193.google.com with SMTP id c19-v6so579580lja.5
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:20:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YN5U0FYrh6FkR0o1KHBgp086/PB+j1Y8dRv+wNG//Ag=;
+        b=KpwpN3ZFQ4vbMUm9l7sXtcQy8j8YXcesm39ZIgfCoV3Sqfg9C3dlURztb0XmMmmabL
+         Xk1Q2df3biijflUKXuQ4aQx9OOH4eJJFgNjkqtnBMj2crJIjHqtWFqc2wgfqY36s3ylZ
+         Ao9FdNPWutaYb7NOX6tUeT9K9GxQBnSMPa1wA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YN5U0FYrh6FkR0o1KHBgp086/PB+j1Y8dRv+wNG//Ag=;
+        b=kIiYMRUbuZG7rdu1SIwwDIq7fMv1j5WqoPVeeAIfr7THca4TZOxEzJ385Jnlb73PCC
+         4dvaLxq8eX0juU/Sawk2dDG5ke4P0Gt1l3Sg+e5oPTLNEwOYeJDANazVX3ji/QsX4Ka7
+         6QevfPe6Qexiz36BA+Jl7FZhFL0OYFeMj9sKGtBsog+m5VYqU7Sucq/d0rP5Og0EPoj5
+         OJmwYqvFzBmwZnqU8DnxAr3JHJueEcFE7Ju4zgFsh8sRQ5Czz0PwiIvNPOa8hgQ7nyzn
+         +xCCOPQYvWurEbLvh2KhsNnEsHVR6xseERPOlyRQAzaWQe/v7AWFiq7pejdeoiAAA09p
+         tZbA==
+X-Gm-Message-State: AJcUukfJyILpyR4kqDvr1a41dxBYfV+++P3JpUP4DFHG+NcjHfU3wBKf
+        nptIyFcqovvBnHqM4DJI6NGOoi1VIh0=
+X-Google-Smtp-Source: ALg8bN4PLyr1hCrqpLDmIGEuy+LMxBi5kPD5Ad0uvrNPRmnR62T4mL3sEnNamH02FS7iopQWrV/ITQ==
+X-Received: by 2002:a2e:9c52:: with SMTP id t18-v6mr25071308ljj.149.1548876013418;
+        Wed, 30 Jan 2019 11:20:13 -0800 (PST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id m63-v6sm459071lje.81.2019.01.30.11.20.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 11:20:12 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id u89-v6so608169lje.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:20:12 -0800 (PST)
+X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr26580031ljc.97.1548876011815;
+ Wed, 30 Jan 2019 11:20:11 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 141dbce2-fcb6-438c-3fab-08d686e7e8e6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 19:19:52.2454
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6395
+References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-19-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1546314952-15990-19-git-send-email-yong.wu@mediatek.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 30 Jan 2019 11:11:59 -0800
+X-Gmail-Original-Message-ID: <CAE=gft4xwk02tM9cgnLCZDpZgX3z9w8fjXfJxJ7HtzdOaCN7=g@mail.gmail.com>
+Message-ID: <CAE=gft4xwk02tM9cgnLCZDpZgX3z9w8fjXfJxJ7HtzdOaCN7=g@mail.gmail.com>
+Subject: Re: [PATCH v5 18/20] iommu/mediatek: Fix VLD_PA_RANGE register backup
+ when suspend
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
+        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
+        Nicolas Boichat <drinkcat@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 11:13:11AM -0700, Logan Gunthorpe wrote:
->=20
->=20
-> On 2019-01-30 10:44 a.m., Jason Gunthorpe wrote:
-> > I don't see why a special case with a VMA is really that different.
->=20
-> Well one *really* big difference is the VMA changes necessarily expose
-> specialized new functionality to userspace which has to be supported
-> forever and may be difficult to change.=20
+On Mon, Dec 31, 2018 at 8:00 PM Yong Wu <yong.wu@mediatek.com> wrote:
+>
+> The register VLD_PA_RNG(0x118) was forgot to backup while adding 4GB
+> mode support for mt2712. this patch add it.
+>
+> Fixes: 30e2fccf9512 ("iommu/mediatek: Enlarge the validate PA range
+> for 4GB mode")
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 
-The only user change here is that more things will succeed when
-creating RDMA MRs (and vice versa to GPU). I don't think this
-restricts the kernel implementation at all, unless we intend to
-remove P2P entirely..
-
-Jason
+Reviewed-by: Evan Green <evgreen@chromium.org>
