@@ -2,245 +2,153 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48551C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CEBC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E5F4218A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:38:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="HASUNBdL"
+	by mail.kernel.org (Postfix) with ESMTP id 80B1420989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548841185;
+	bh=YYXwcZMW46syTItt74nGITi1+Moy++U9QHnJ68lh884=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=s32yLK+pDB33AEzajW04RI3tHTSU4Ezj8Sjmsn9lRz63KginSc6ya7nWup2XIo8BD
+	 oZ6VJJ0tf3Yv6J+VA9qTDiqFW0BUph3lfJT/4cQedAUdbI4IzDiMwmvZ7qCDyZfHuR
+	 LSXe24TPXjuJzlxo/Cz+aPkYLt/trXUWFdUWZ61E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730292AbfA3Jix (ORCPT
+        id S1730313AbfA3Jjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:38:53 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38145 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727500AbfA3Jix (ORCPT
+        Wed, 30 Jan 2019 04:39:43 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37702 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbfA3Jjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:38:53 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h50so18422754ede.5
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:38:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=VJNp/xpNxVH8NW50U+PdyKGuAzjqzoZm+ySFZy0cAGk=;
-        b=HASUNBdLgiPgxXWboHuKB/CV22vcRzGPc+r/2D1CvJx/HkKrUVJn7gtw8mhLBvYP4l
-         91sBxbyLS0s7Wj2Pnm9337lenybwmc8Efp9674SCY9B/+l/X+Z+P37bu9jLJVvLqKSlL
-         vnTJ/T1t1eF5Tg2PYUakTZOJDAfV0q7WUudzrqqAf/IYZrCQQgqK/U51I5hSVbaB+lqU
-         jHJW8WRKbJdOonTpx6o2d9p/m6or5xCkjiyxqzYkbQIqhAm+Agg6KMGdXa49+gPykhGd
-         psa4PS6/Gp26bwIPIAMitK+G1oRFNt+jjzCdm1BSrjcCMuZzuZPePYyrLWro1ficVZ6Y
-         sFPw==
+        Wed, 30 Jan 2019 04:39:43 -0500
+Received: by mail-ot1-f65.google.com with SMTP id s13so20556962otq.4;
+        Wed, 30 Jan 2019 01:39:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=VJNp/xpNxVH8NW50U+PdyKGuAzjqzoZm+ySFZy0cAGk=;
-        b=Nd0+vNNy+00xbP32hujE344S/RvYoES7Qzc/CIqFPmE43C3feJFdKgQSzCGiJI2PJ3
-         LwtbLndu9QuHOGNWxxkg4p7bVZQF63woM1C1gihuPRisHB2atfeqV0/hEYWUFJNcXj2O
-         1QgTB/5oTVIrPXnLLx4ebwPOwZsS3Sniqf1PaPJRDJ1pHy4xHZ568iG4PsY/VQWDKd1s
-         esYDyoKUOr6613csHfcUrsPf2VXHv474binB6aufy9SZK2sagO7n7Mx+/IFPzGskv6lF
-         RKDM6HdSyRwdWFoWuWc8Rpld/7NLzE+2miWSa9OAMHRfZVMwxlXiAbnlOVGvLiB6VW9q
-         //wA==
-X-Gm-Message-State: AJcUukf9zuF2MMWLcz2mh0fFnn5luprj6Cdrl/ywuzbzpI+rM3grbgw3
-        2k74rcoyZ3TNmQFWRH+GI+7qMg==
-X-Google-Smtp-Source: ALg8bN7St6jiPPe+RTnxRDms43ciTN/Pwlp4W+K4G+uHtMmvaPQK0Q61U/3Ck6xPlyqgYKpc9yH5Iw==
-X-Received: by 2002:aa7:d1d7:: with SMTP id g23mr24805379edp.217.1548841131109;
-        Wed, 30 Jan 2019 01:38:51 -0800 (PST)
-Received: from [192.168.1.85] (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
-        by smtp.gmail.com with ESMTPSA id n22-v6sm226062ejk.75.2019.01.30.01.38.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 01:38:50 -0800 (PST)
-From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <2608BA38-98D6-487C-BC50-45799D5DEE18@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_165EB6B1-9671-4854-A327-36E52B3F4BB7";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH V2] lightnvm: pblk: extend line wp balance check
-Date:   Wed, 30 Jan 2019 10:38:49 +0100
-In-Reply-To: <20190130081857.6779-1-hans@owltronix.com>
-Cc:     =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        Zhoujie Wu <zjwu@marvell.com>, linux-block@vger.kernel.org,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xfqJpYjLPJU9hr+vSJUe0Tk4KYpvDcwI3A9ccP1pAxM=;
+        b=Hra0XOE6q/A/ZqZJiHO0jzdTTdLS9iRvOh7kslD9pCQdrgLYGelzMFs+vyVOYzloDM
+         ykYuF8oQ/GurU4/9otCj+S3Pve67xFoP+gyLZoAQs8Tqh/lIz0uE6fbYgjoo/LQADVBZ
+         f2F8ldr0qO+aNQ0V0rPGzz9Tx2htVVfBla0nNW7lG7WhBjrHysOI3FbVdvI5vAc5czAj
+         cpE9LldvJX6EDKxP0kM1TZW/icxTdeLv93i7aPfstqyF9EDGtTFmSKC0wYAmo900LAB2
+         XA/eJ/8cmUuXclnK7sjiSYBmIVU2y5HDNuec7RQk9ZMXmOkW631D4dnzsGCzUV8KkP0X
+         eRhQ==
+X-Gm-Message-State: AJcUukcWbenTZoBW4NE7GOjaVX9cBeuS04okdCcXeOi6V5Tsc6ursZC3
+        10EzT+J8OIxtbCO16UEigltCBZny4bOyll15aAE=
+X-Google-Smtp-Source: ALg8bN5MauY/nMq3uFyPzgxOQRmBBRts3X2/VtxUWgqIGzsRRphC0idmZbkMleVRGOLH/jR2f0kSTW77ScG1lMeNCsY=
+X-Received: by 2002:a9d:4c84:: with SMTP id m4mr20185440otf.124.1548841182133;
+ Wed, 30 Jan 2019 01:39:42 -0800 (PST)
+MIME-Version: 1.0
+References: <1548836194-15264-1-git-send-email-vincent.guittot@linaro.org>
+ <CAMuHMdWYV-tDD2osdvs4yhD-mu2n8-JSC7rV8Zt5vW4kr8hdWQ@mail.gmail.com> <CAKfTPtBiWunvVHv=tpq7CPqAX+54d_dyPt6BME_m1_Wz+qPaTA@mail.gmail.com>
+In-Reply-To: <CAKfTPtBiWunvVHv=tpq7CPqAX+54d_dyPt6BME_m1_Wz+qPaTA@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 30 Jan 2019 10:39:30 +0100
+Message-ID: <CAJZ5v0jLJ8Tu7Gpt-4bhW59Q3=PX4wyb2rFBWuPKMFHcFXBxAA@mail.gmail.com>
+Subject: Re: [PATCH] PM-runtime: fix deadlock with ktime
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-To:     Hans Holmberg <hans@owltronix.com>
-References: <20190130081857.6779-1-hans@owltronix.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
+        <linux-omap@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 30, 2019 at 10:14 AM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> Hi Geert,
+>
+> On Wed, 30 Jan 2019 at 09:21, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >
+> > Hi Vincent,
+> >
+> > On Wed, Jan 30, 2019 at 9:16 AM Vincent Guittot
+> > <vincent.guittot@linaro.org> wrote:
+> > > A deadlock has been seen when swicthing clocksources which use PM runtime.
+> > > The call path is:
+> > > change_clocksource
+> > >     ...
+> > >     write_seqcount_begin
+> > >     ...
+> > >     timekeeping_update
+> > >         ...
+> > >         sh_cmt_clocksource_enable
+> > >             ...
+> > >             rpm_resume
+> > >                 pm_runtime_mark_last_busy
+> > >                     ktime_get
+> > >                         do
+> > >                             read_seqcount_begin
+> > >                         while read_seqcount_retry
+> > >     ....
+> > >     write_seqcount_end
+> > >
+> > > Although we should be safe because we haven't yet changed the clocksource
+> > > at that time, we can't because of seqcount protection.
+> > >
+> > > Use ktime_get_mono_fast_ns instead which is lock safe for such case
+> > >
+> > > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
+> > > Reported-by: Biju Das <biju.das@bp.renesas.com>
+> > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> >
+> > Thanks for your patch!
+> >
+> > /**
+> >  * ktime_get_mono_fast_ns - Fast NMI safe access to clock monotonic
+> >  *
+> >  * This timestamp is not guaranteed to be monotonic across an update.
+> >  * The timestamp is calculated by:
+> >  *
+> >  *      now = base_mono + clock_delta * slope
+> >  *
+> >  * So if the update lowers the slope, readers who are forced to the
+> >  * not yet updated second array are still using the old steeper slope.
+> >  *
+> >  * tmono
+> >  * ^
+> >  * |    o  n
+> >  * |   o n
+> >  * |  u
+> >  * | o
+> >  * |o
+> >  * |12345678---> reader order
+> >  *
+> >  * o = old slope
+> >  * u = update
+> >  * n = new slope
+> >  *
+> >  * So reader 6 will observe time going backwards versus reader 5.
+> >  *
+> >  * While other CPUs are likely to be able observe that, the only way
+> >  * for a CPU local observation is when an NMI hits in the middle of
+> >  * the update. Timestamps taken from that NMI context might be ahead
+> >  * of the following timestamps. Callers need to be aware of that and
+> >  * deal with it.
+> >  */
+> >
+> > As this function is not guaranteed to be monotonic, have you checked how
+> > the Runtime PM code behaves if time goes backwards? Does it just make
+> > a suboptimal decision or does it crash?
+>
+> As a worst case this will generate a suboptimal decision around the update
 
---Apple-Mail=_165EB6B1-9671-4854-A327-36E52B3F4BB7
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
-
-> On 30 Jan 2019, at 09.18, hans@owltronix.com wrote:
->=20
-> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
->=20
-> pblk stripes writes of minimal write size across all non-offline =
-chunks
-> in a line, which means that the maximum write pointer delta should not
-> exceed the minimal write size.
->=20
-> Extend the line write pointer balance check to cover this case, and
-> ignore the offline chunk wps.
->=20
-> This will render us a warning during recovery if something unexpected
-> has happened to the chunk write pointers (i.e. powerloss,  a spurious
-> chunk reset, ..).
->=20
-> Reported-by: Zhoujie Wu <zjwu@marvell.com>
-> Tested-by: Zhoujie Wu <zjwu@marvell.com>
-> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> ---
->=20
-> Changes since V1:
->=20
-> 	* Squashed with Zhoujie's:
-> 	 "lightnvm: pblk: ignore bad block wp for =
-pblk_line_wp_is_unbalanced"
-> 	* Clarified commit message based on Javier's comments.
->=20
->=20
-> drivers/lightnvm/pblk-recovery.c | 56 ++++++++++++++++++++++----------
-> 1 file changed, 38 insertions(+), 18 deletions(-)
->=20
-> diff --git a/drivers/lightnvm/pblk-recovery.c =
-b/drivers/lightnvm/pblk-recovery.c
-> index 6761d2afa4d0..d86f580036d3 100644
-> --- a/drivers/lightnvm/pblk-recovery.c
-> +++ b/drivers/lightnvm/pblk-recovery.c
-> @@ -302,35 +302,55 @@ static int pblk_pad_distance(struct pblk *pblk, =
-struct pblk_line *line)
-> 	return (distance > line->left_msecs) ? line->left_msecs : =
-distance;
-> }
->=20
-> -static int pblk_line_wp_is_unbalanced(struct pblk *pblk,
-> -				      struct pblk_line *line)
-> +/* Return a chunk belonging to a line by stripe(write order) index */
-> +static struct nvm_chk_meta *pblk_get_stripe_chunk(struct pblk *pblk,
-> +						  struct pblk_line =
-*line,
-> +						  int index)
-> {
-> 	struct nvm_tgt_dev *dev =3D pblk->dev;
-> 	struct nvm_geo *geo =3D &dev->geo;
-> -	struct pblk_line_meta *lm =3D &pblk->lm;
-> 	struct pblk_lun *rlun;
-> -	struct nvm_chk_meta *chunk;
-> 	struct ppa_addr ppa;
-> -	u64 line_wp;
-> -	int pos, i;
-> +	int pos;
->=20
-> -	rlun =3D &pblk->luns[0];
-> +	rlun =3D &pblk->luns[index];
-> 	ppa =3D rlun->bppa;
-> 	pos =3D pblk_ppa_to_pos(geo, ppa);
-> -	chunk =3D &line->chks[pos];
->=20
-> -	line_wp =3D chunk->wp;
-> +	return &line->chks[pos];
-> +}
->=20
-> -	for (i =3D 1; i < lm->blk_per_line; i++) {
-> -		rlun =3D &pblk->luns[i];
-> -		ppa =3D rlun->bppa;
-> -		pos =3D pblk_ppa_to_pos(geo, ppa);
-> -		chunk =3D &line->chks[pos];
-> +static int pblk_line_wps_are_unbalanced(struct pblk *pblk,
-> +				      struct pblk_line *line)
-> +{
-> +	struct pblk_line_meta *lm =3D &pblk->lm;
-> +	int blk_in_line =3D lm->blk_per_line;
-> +	struct nvm_chk_meta *chunk;
-> +	u64 max_wp, min_wp;
-> +	int i;
-> +
-> +	i =3D find_first_zero_bit(line->blk_bitmap, blk_in_line);
->=20
-> -		if (chunk->wp > line_wp)
-> +	/* If there is one or zero good chunks in the line,
-> +	 * the write pointers can't be unbalanced.
-> +	 */
-> +	if (i >=3D (blk_in_line - 1))
-> +		return 0;
-> +
-> +	chunk =3D pblk_get_stripe_chunk(pblk, line, i);
-> +	max_wp =3D chunk->wp;
-> +	if (max_wp > pblk->max_write_pgs)
-> +		min_wp =3D max_wp - pblk->max_write_pgs;
-> +	else
-> +		min_wp =3D 0;
-> +
-> +	i =3D find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
-> +	while (i < blk_in_line) {
-> +		chunk =3D pblk_get_stripe_chunk(pblk, line, i);
-> +		if (chunk->wp > max_wp || chunk->wp < min_wp)
-> 			return 1;
-> -		else if (chunk->wp < line_wp)
-> -			line_wp =3D chunk->wp;
-> +
-> +		i =3D find_next_zero_bit(line->blk_bitmap, blk_in_line, =
-i + 1);
-> 	}
->=20
-> 	return 0;
-> @@ -356,7 +376,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, =
-struct pblk_line *line,
-> 	int ret;
-> 	u64 left_ppas =3D pblk_sec_in_open_line(pblk, line) - =
-lm->smeta_sec;
->=20
-> -	if (pblk_line_wp_is_unbalanced(pblk, line))
-> +	if (pblk_line_wps_are_unbalanced(pblk, line))
-> 		pblk_warn(pblk, "recovering unbalanced line (%d)\n", =
-line->id);
->=20
-> 	ppa_list =3D p.ppa_list;
-> --
-> 2.17.1
-
-Looks good to me.
-
-Reviewed-by: Javier Gonz=C3=A1lez <javier@javigon.com>
-
-
---Apple-Mail=_165EB6B1-9671-4854-A327-36E52B3F4BB7
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlxRcKkACgkQPEYBfS0l
-eOAL/BAAj2R0Yi9ZJblEwPClw02i8i9h5daXnvo7yP1nedA7Hvsf5sQbSV40BfqV
-3XvcqPHru6zTXAr9pVYDmuIQInyOKfbvAteYUqlPbUwaHvLqsu89PvU/qgqJHHoO
-VpuggEhC74ICe/H3bTs0lU3JJ0m1vk01sH2N3eq3rm4OEdMaL7x6hdDNPhcPkmmv
-Myo5DKRRX7wUp8WnwrKBrQW7IgGpsmdbzEUPKwccBwZjDS7y89urLVCQL4WrQVLJ
-KKv8d3/s/5wgovx+zWbfzJs6NS+sv/X8acAmt5K06R6tV/GDWk5t2KzUCfg4+P1S
-Z9AVHezb/zvW+EpA+AojRaj9moxYAVpeiTzCOuCCmC0AKFTO7mFBi5KY4xw6LfJa
-twNgTQsDGdPK7uaKQ2TgvQTPpfAYstr83/cx6YaoON4snwwcN5BOkdoqwxYNw9Sf
-ZxkqmwZ6JoO3eXumXltSQqN/i3WrYI7kPYS7HHmm0dSAA1kHqALr9fJLoJ7tQUl+
-xBQev3C8VFEgdS94Tomlu6iMYl2Ug0DryEvEdK0WoakYGost8NycuHXO+2HO9TLd
-cLQ98NgSYJVWB0EgycbxH5/75orItLP9E6bmiaPYY2EW5Cm6s671aBbt7aE10PZD
-uEFg4Uw5g36lLI8FFZvGlzWlWk8noFHAuRbz49O5Mq97ogerScQ=
-=SqVq
------END PGP SIGNATURE-----
-
---Apple-Mail=_165EB6B1-9671-4854-A327-36E52B3F4BB7--
+So that should be explained in the changelog of the patch.  In detail,
+if poss, please.
