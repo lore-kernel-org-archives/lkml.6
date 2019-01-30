@@ -2,289 +2,194 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C02C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 852C5C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C790920844
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:00:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A48420844
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:01:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z9tGiGTv"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="alM2jx0e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730938AbfA3OAK (ORCPT
+        id S1730979AbfA3OBL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 09:00:10 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:51216 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727149AbfA3OAJ (ORCPT
+        Wed, 30 Jan 2019 09:01:11 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49298 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbfA3OBL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 09:00:09 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0UE07Lc115720;
-        Wed, 30 Jan 2019 08:00:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548856807;
-        bh=k6B26Hr7032Id0Apq8n42sIx2svtNRCg1FMEZyfTDoQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Z9tGiGTvjgK7onWrpXkfLl7xsTERlROvygrn3J6h7j47BMknSA0XxiEeeC0Fk202V
-         w+sr10z2X4XjbIGWafzwlSPCn1t5X/EZatQEPgbdQ4jqeJNRSdbLIGmEyCyTkdtEFm
-         ima0gJv9XgL6lW2ioy+/qI1180Uiuz9cahFblhvE=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0UE07Vu016004
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 30 Jan 2019 08:00:07 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 30
- Jan 2019 08:00:07 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 30 Jan 2019 08:00:07 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0UE05Z7000320;
-        Wed, 30 Jan 2019 08:00:05 -0600
-Subject: Re: [PATCH] phy: ti-pipe3: Add set_mode callback to configure usb3
- phy as pcie phy
-To:     Roger Quadros <rogerq@ti.com>
-CC:     <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20190124104822.22411-1-kishon@ti.com> <5C5180FF.1050409@ti.com>
- <ae4f41cd-dbc8-8172-a9e9-28166fc881eb@ti.com> <5C519B72.7080502@ti.com>
- <7f7ffc43-4ff0-ec8b-9918-cfc1f89c6210@ti.com> <5C51AD39.1080607@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <bc32620d-d1e8-0d19-7d94-fc6776c499b4@ti.com>
-Date:   Wed, 30 Jan 2019 19:29:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 30 Jan 2019 09:01:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QRBFRWO5UtV0fGnWJVJqrsqrL9KwVT223j8KVhJdBBM=; b=alM2jx0e67AgTtD4lpjMJeReF
+        cmFSXF5HnnQV/Hzjo4bl2vW1W/bNl2peDdJ1J8MhD4RnGuBQcKG6XjwC9gIhPHK0+ojhY5fFw64ry
+        w4fgMMk9qC+Kr9iLJ/6VqE4e/hAzYElqI/aGvWaDC0zhTjuNFrJh3nHoU/izALpvIXZrxwtGA0gmZ
+        ZKOF2cLjawnWd9gvy0i145DCHPVA7OiWEGy1iJRcyAir5yXkl53nzZvMX3NtlGBxQRCYnZzwJ/vYu
+        RGls3QFarN5YgfQc20buEsysBJwGxpR87DhWviXyuYdnuRtrPso2gvQHBG/VXd9+tMvjEk5RFP+q7
+        7DKlu4GQg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1goqQM-00021P-0b; Wed, 30 Jan 2019 14:01:06 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7B0D5200E2F88; Wed, 30 Jan 2019 15:01:04 +0100 (CET)
+Date:   Wed, 30 Jan 2019 15:01:04 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tj@kernel.org,
+        sargun@sargun.me
+Subject: Re: [PATCH v2] sched/fair: Fix insertion in rq->leaf_cfs_rq_list
+Message-ID: <20190130140104.GB2296@hirez.programming.kicks-ass.net>
+References: <1548782332-18591-1-git-send-email-vincent.guittot@linaro.org>
+ <1548825767-10799-1-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <5C51AD39.1080607@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548825767-10799-1-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jan 30, 2019 at 06:22:47AM +0100, Vincent Guittot wrote:
+> Sargun reported a crash:
+>   "I picked up c40f7d74c741a907cfaeb73a7697081881c497d0 sched/fair: Fix
+>    infinite loop in update_blocked_averages() by reverting a9e7f6544b9c
+>    and put it on top of 4.19.13. In addition to this, I uninlined
+>    list_add_leaf_cfs_rq for debugging.
+> 
+>    This revealed a new bug that we didn't get to because we kept getting
+>    crashes from the previous issue. When we are running with cgroups that
+>    are rapidly changing, with CFS bandwidth control, and in addition
+>    using the cpusets cgroup, we see this crash. Specifically, it seems to
+>    occur with cgroups that are throttled and we change the allowed
+>    cpuset."
+> 
+> The algorithm used to order cfs_rq in rq->leaf_cfs_rq_list assumes that
+> it will walk down to root the 1st time a cfs_rq is used and we will finish
+> to add either a cfs_rq without parent or a cfs_rq with a parent that is
+> already on the list. But this is not always true in presence of throttling.
+> Because a cfs_rq can be throttled even if it has never been used but other CPUs
+> of the cgroup have already used all the bandwdith, we are not sure to go down to
+> the root and add all cfs_rq in the list.
+> 
+> Ensure that all cfs_rq will be added in the list even if they are throttled.
+> 
+> Reported-by: Sargun Dhillon <sargun@sargun.me>
+> Fixes: 9c2791f936ef ("Fix hierarchical order in rq->leaf_cfs_rq_list")
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-On 30/01/19 7:27 PM, Roger Quadros wrote:
-> +Rob,
-> 
-> On 30/01/19 15:00, Kishon Vijay Abraham I wrote:
->> Hi Roger,
->>
->> On 30/01/19 6:11 PM, Roger Quadros wrote:
->>> Kishon,
->>>
->>> On 30/01/19 12:59, Kishon Vijay Abraham I wrote:
->>>> Hi Roger,
->>>>
->>>> On 30/01/19 4:18 PM, Roger Quadros wrote:
->>>>> Hi Kishon,
->>>>>
->>>>> On 24/01/19 12:48, Kishon Vijay Abraham I wrote:
->>>>>> DRA72 platform has the second instance of PHY shared between USB3
->>>>>> controller and PCIe controller with default as USB3 controller.
->>>>>> Since it is used with USB3 controller by default, it uses the
->>>>>> compatible specific to USB (ti,omap-usb3).
->>>>>>
->>>>>> Populate set_mode callback so that the USB3 PHY can be configured
->>>>>> to be used with PCIe controller.
->>>>>
->>>>> What is the use case of this? At what point and who decides the
->>>>> phy_set_mode() to be called with USB vs PCIe?
->>>>
->>>> The PHY by default is configured to be used with USB controller (That's why it
->>>> has a compatible of ti,omap-usb3). However there is a special case where this
->>>> PHY has to be used PCIe controller. So the set_mode() will help the PHY driver
->>>> to configure the USB PHY to be used with PCIe controller.
->>>>
->>>> This is not a shared PHY, so the PHY as such can be used only with USB or PCIe
->>>> and is determined at designtime
->>>
->>> If type is defined at design time then the design using the PHY for PCIe shouldn't be
->>> using "ti,omap-usb3" compatible. Right?
->> The second instance of PIPE3 PHY in dra72x SoC can be used either with USB3 or
->> as a second lane of the 1st PCIe instance. How it is connected is based on
->> board design. DRA72x EVM will need board modification for the PHY to be used
->> with PCIe (by default it is connected to USB). AM571x IDK doesn't have a USB3
->> port so the PIPE3 PHY is used with PCIe (USB2 also doesn't work with this
->> configuration but that is a different HW issue).
->>
->> I'm not sure if we should change the compatible in board dts file as it is
->> based on board design. Previously I added a dt property to indicate the PHY
->> should be configured for PCIe but Rob Herring suggested to use set_mode [1].
-> 
-> That is because you tried to add a new property "ti,configure-as-pcie" which
-> does seem unnecessary.
-> 
-> Wouldn't it work if you just use "ti,phy-pipe3-pcie" in the relevant device tree?
+Given my previous patch; how about something like so instead?
 
-No, it won't. The configuration required for a PCIe PHY is different from a USB
-PHY to be used for PCIe.
-
-Thanks
-Kishon
-
-> 
-> cheers,
-> -roger
-> 
->>
->> Thanks
->> Kishon
->>
->> [1] -> https://lore.kernel.org/patchwork/patch/865398/
->>>
->>> Maybe we should fix the DT? Which board/PHY is this about?
->>>
->>> cheers,
->>> -roger
->>>
->>>>>
->>>>>
->>>>>>
->>>>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>>>> ---
->>>>>>  drivers/phy/ti/phy-ti-pipe3.c | 66 ++++++++++++++++++++++++++++-------
->>>>>>  1 file changed, 54 insertions(+), 12 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/phy/ti/phy-ti-pipe3.c b/drivers/phy/ti/phy-ti-pipe3.c
->>>>>> index 68ce4a082b9b..8c98f366416d 100644
->>>>>> --- a/drivers/phy/ti/phy-ti-pipe3.c
->>>>>> +++ b/drivers/phy/ti/phy-ti-pipe3.c
->>>>>> @@ -56,6 +56,12 @@
->>>>>>  
->>>>>>  #define SATA_PLL_SOFT_RESET	BIT(18)
->>>>>>  
->>>>>> +#define PHY_RX_ANA_PRGRAMMABILITY_REG	0xC
->>>>>> +#define MEM_EN_PLLBYP			BIT(7)
->>>>>> +
->>>>>> +#define PHY_TX_TEST_CONFIG		0x2C
->>>>>> +#define MEM_ENTESTCLK			BIT(31)
->>>>>> +
->>>>>>  #define PIPE3_PHY_PWRCTL_CLK_CMD_MASK	0x003FC000
->>>>>>  #define PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT	14
->>>>>>  
->>>>>> @@ -110,6 +116,8 @@
->>>>>>  #define PLL_IDLE_TIME	100	/* in milliseconds */
->>>>>>  #define PLL_LOCK_TIME	100	/* in milliseconds */
->>>>>>  
->>>>>> +#define PIPE3_PHY_DISABLE_SYNC_POWER	BIT(4)
->>>>>> +
->>>>>>  struct pipe3_dpll_params {
->>>>>>  	u16	m;
->>>>>>  	u8	n;
->>>>>> @@ -141,6 +149,7 @@ struct ti_pipe3 {
->>>>>>  	unsigned int		power_reg; /* power reg. index within syscon */
->>>>>>  	unsigned int		pcie_pcs_reg; /* pcs reg. index in syscon */
->>>>>>  	bool			sata_refclk_enabled;
->>>>>> +	u32			mode;
->>>>>>  };
->>>>>>  
->>>>>>  static struct pipe3_dpll_map dpll_map_usb[] = {
->>>>>> @@ -233,7 +242,10 @@ static int ti_pipe3_power_on(struct phy *x)
->>>>>>  	rate = rate / 1000000;
->>>>>>  	mask = OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_CMD_MASK |
->>>>>>  		  OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_FREQ_MASK;
->>>>>> -	val = PIPE3_PHY_TX_RX_POWERON << PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT;
->>>>>> +	val = PIPE3_PHY_TX_RX_POWERON;
->>>>>> +	if (phy->mode == PHY_MODE_PCIE)
->>>>>> +		val |= PIPE3_PHY_DISABLE_SYNC_POWER;
->>>>>> +	val <<= PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT;
->>>>>>  	val |= rate << OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_FREQ_SHIFT;
->>>>>>  
->>>>>>  	ret = regmap_update_bits(phy->phy_power_syscon, phy->power_reg,
->>>>>> @@ -328,13 +340,11 @@ static void ti_pipe3_calibrate(struct ti_pipe3 *phy)
->>>>>>  	ti_pipe3_writel(phy->phy_rx, PCIEPHYRX_EQUALIZER, val);
->>>>>>  }
->>>>>>  
->>>>>> -static int ti_pipe3_init(struct phy *x)
->>>>>> +static int ti_pipe3_pcie_init(struct ti_pipe3 *phy)
->>>>>>  {
->>>>>> -	struct ti_pipe3 *phy = phy_get_drvdata(x);
->>>>>> -	u32 val;
->>>>>>  	int ret = 0;
->>>>>> +	u32 val;
->>>>>>  
->>>>>> -	ti_pipe3_enable_clocks(phy);
->>>>>>  	/*
->>>>>>  	 * Set pcie_pcs register to 0x96 for proper functioning of phy
->>>>>>  	 * as recommended in AM572x TRM SPRUHZ6, section 18.5.2.2, table
->>>>>> @@ -353,10 +363,31 @@ static int ti_pipe3_init(struct phy *x)
->>>>>>  			return ret;
->>>>>>  
->>>>>>  		ti_pipe3_calibrate(phy);
->>>>>> -
->>>>>> -		return 0;
->>>>>> +	} else {
->>>>>> +		val = ti_pipe3_readl(phy->phy_rx,
->>>>>> +				     PHY_RX_ANA_PRGRAMMABILITY_REG);
->>>>>> +		val |= MEM_EN_PLLBYP;
->>>>>> +		ti_pipe3_writel(phy->phy_rx, PHY_RX_ANA_PRGRAMMABILITY_REG,
->>>>>> +				val);
->>>>>> +		val = ti_pipe3_readl(phy->phy_tx, PHY_TX_TEST_CONFIG);
->>>>>> +		val |= MEM_ENTESTCLK;
->>>>>> +		ti_pipe3_writel(phy->phy_tx, PHY_TX_TEST_CONFIG, val);
->>>>>>  	}
->>>>>>  
->>>>>> +	return 0;
->>>>>> +}
->>>>>> +
->>>>>> +static int ti_pipe3_init(struct phy *x)
->>>>>> +{
->>>>>> +	struct ti_pipe3 *phy = phy_get_drvdata(x);
->>>>>> +	u32 val;
->>>>>> +	int ret = 0;
->>>>>> +
->>>>>> +	ti_pipe3_enable_clocks(phy);
->>>>>> +
->>>>>> +	if (phy->mode == PHY_MODE_PCIE)
->>>>>> +		return ti_pipe3_pcie_init(phy);
->>>>>> +
->>>>>>  	/* Bring it out of IDLE if it is IDLE */
->>>>>>  	val = ti_pipe3_readl(phy->pll_ctrl_base, PLL_CONFIGURATION2);
->>>>>>  	if (val & PLL_IDLE) {
->>>>>> @@ -395,7 +426,7 @@ static int ti_pipe3_exit(struct phy *x)
->>>>>>  		return 0;
->>>>>>  
->>>>>>  	/* PCIe doesn't have internal DPLL */
->>>>>> -	if (!of_device_is_compatible(phy->dev->of_node, "ti,phy-pipe3-pcie")) {
->>>>>> +	if (!(phy->mode == PHY_MODE_PCIE)) {
->>>>>>  		/* Put DPLL in IDLE mode */
->>>>>>  		val = ti_pipe3_readl(phy->pll_ctrl_base, PLL_CONFIGURATION2);
->>>>>>  		val |= PLL_IDLE;
->>>>>> @@ -429,11 +460,25 @@ static int ti_pipe3_exit(struct phy *x)
->>>>>>  
->>>>>>  	return 0;
->>>>>>  }
->>>>>> +
->>>>>> +static int ti_pipe3_set_mode(struct phy *x, enum phy_mode mode, int submode)
->>>>>> +{
->>>>>> +	struct ti_pipe3 *phy = phy_get_drvdata(x);
->>>>>> +
->>>>>> +	if (phy->mode != PHY_MODE_INVALID)
->>>>>> +		return -EBUSY;
->>>>>> +
->>>>>> +	phy->mode = mode;
->>>>>
->>>>> You are only saving the mode. But not really switching modes here.
->>>>> How is this intended to work?
->>>>
->>>> The PHY doesn't have a specific mode. Rather it is a set of configurations
->>>> required to operate in a particular mode.
->>>>
->>>> This mode value will be used in other init, power_on callback functions.
->>>>
->>>> Thanks
->>>> Kishon
->>>>
->>>
-> 
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -282,13 +282,15 @@ static inline struct cfs_rq *group_cfs_r
+ 	return grp->my_q;
+ }
+ 
+-static inline void list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
++static inline bool list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ {
+ 	struct rq *rq = rq_of(cfs_rq);
+ 	int cpu = cpu_of(rq);
+ 
+ 	if (cfs_rq->on_list)
+-		return;
++		return rq->tmp_alone_branch == &rq->leaf_cfs_rq_list;
++
++	cfs_rq->on_list = 1;
+ 
+ 	/*
+ 	 * Ensure we either appear before our parent (if already
+@@ -315,7 +317,10 @@ static inline void list_add_leaf_cfs_rq(
+ 		 * list.
+ 		 */
+ 		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
+-	} else if (!cfs_rq->tg->parent) {
++		return true;
++	}
++
++	if (!cfs_rq->tg->parent) {
+ 		/*
+ 		 * cfs rq without parent should be put
+ 		 * at the tail of the list.
+@@ -327,23 +332,22 @@ static inline void list_add_leaf_cfs_rq(
+ 		 * tmp_alone_branch to the beginning of the list.
+ 		 */
+ 		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
+-	} else {
+-		/*
+-		 * The parent has not already been added so we want to
+-		 * make sure that it will be put after us.
+-		 * tmp_alone_branch points to the begin of the branch
+-		 * where we will add parent.
+-		 */
+-		list_add_rcu(&cfs_rq->leaf_cfs_rq_list,
+-			rq->tmp_alone_branch);
+-		/*
+-		 * update tmp_alone_branch to points to the new begin
+-		 * of the branch
+-		 */
+-		rq->tmp_alone_branch = &cfs_rq->leaf_cfs_rq_list;
++		return true;
+ 	}
+ 
+-	cfs_rq->on_list = 1;
++	/*
++	 * The parent has not already been added so we want to
++	 * make sure that it will be put after us.
++	 * tmp_alone_branch points to the begin of the branch
++	 * where we will add parent.
++	 */
++	list_add_rcu(&cfs_rq->leaf_cfs_rq_list, rq->tmp_alone_branch);
++	/*
++	 * update tmp_alone_branch to points to the new begin
++	 * of the branch
++	 */
++	rq->tmp_alone_branch = &cfs_rq->leaf_cfs_rq_list;
++	return false;
+ }
+ 
+ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+@@ -4999,6 +5003,12 @@ static void __maybe_unused unthrottle_of
+ }
+ 
+ #else /* CONFIG_CFS_BANDWIDTH */
++
++static inline bool cfs_bandwidth_used(void)
++{
++	return false;
++}
++
+ static inline u64 cfs_rq_clock_task(struct cfs_rq *cfs_rq)
+ {
+ 	return rq_clock_task(rq_of(cfs_rq));
+@@ -5190,6 +5200,21 @@ enqueue_task_fair(struct rq *rq, struct
+ 
+ 	}
+ 
++	if (cfs_bandwidth_used()) {
++		/*
++		 * When bandwidth control is enabled; the cfs_rq_throttled()
++		 * breaks in the above iteration can result in incomplete
++		 * leaf list maintenance, resulting in triggering the assertion
++		 * below.
++		 */
++		for_each_sched_entity(se) {
++			cfs_rq = cfs_rq_of(se);
++
++			if (list_add_leaf_cfs_rq(cfs_rq))
++				break;
++		}
++	}
++
+ 	assert_list_leaf_cfs_rq(rq);
+ 
+ 	hrtick_update(rq);
