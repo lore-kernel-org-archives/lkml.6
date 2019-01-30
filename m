@@ -2,98 +2,87 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B92C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C65C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 981C82087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:29:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cID0mH/Y"
+	by mail.kernel.org (Postfix) with ESMTP id A4D062087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731740AbfA3Q3i (ORCPT
+        id S1731963AbfA3Q3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:29:38 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42971 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727371AbfA3Q3h (ORCPT
+        Wed, 30 Jan 2019 11:29:47 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:39719 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731156AbfA3Q3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:29:37 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d72so32386pga.9;
-        Wed, 30 Jan 2019 08:29:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6ARi3fgM5FB7ByuhHtUfvHSlCseInHPzRPNVTDoxzuU=;
-        b=cID0mH/YM9pv83OthwbAk/9u4x3LrFawe+AKDYLQjxQHIKRXSG3oTAc2G4DwlYk1MS
-         c/WXmT6AfqeMb2r1Q3MaiNqJbr6Jx+BLwjViFEdwc08mrj2UkETR3Ck7mZLzAo63uaml
-         uv9N7nUIgmUoREydC/tMmUq8GI6DF7EKU4BdyRvD1zhl5V17B0uCgLSLAx6H2jLlpFDY
-         Kl32j8IzNu+qgrEJr1zQjpbdeNDzIXGw+H1Eid+2A9YkgjeQf4t7ngFRYLoPTniFQ2nz
-         VP+reWLFpAh2/Hh1CXX5qG4ZTiqJml3uXbQX0ZbMVlCz5Hl6kDyLe7CjVG7N4ouQSnlc
-         tm8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6ARi3fgM5FB7ByuhHtUfvHSlCseInHPzRPNVTDoxzuU=;
-        b=NhbzPjhWaleFP5w8BBViRscZ1tPwx28/pQiYJsrdzxXP2jsG4JqgJUUWQFDUrbiFIv
-         QZHHFN/YU+wf5INtidWleBea8vtbxJizatraBok9CfPG8s40jZwo2+SAGo36JI8kKP1v
-         dxDeMk0jQ1gVjGHlLJMEtnYnKUwxgJ4NKdmbsXqZ44VrJAQVOShhCmJVwYB+vzcExa+S
-         5a3UwTg+M63jXcwSyyzqLBku3KP91BXL+A9QSu2FHzKV+IXyJXK4/JKuRdeBSkwrfELP
-         jUkHV6MSAqM7tq0QhFb0aDswwOgbnlO8VFeyypxOmvUHreqSEqCOPS8Ng67NTMAUdDmt
-         E12Q==
-X-Gm-Message-State: AJcUukfa5jS4Lv9XdXzXLHuKf/0sKntDgn67vR9Vlv2KyfPMG2a00527
-        7ozkRN0zoFVUj/AXPtwgjCA=
-X-Google-Smtp-Source: ALg8bN6GMsKlqIREzV8c2KY7Nk5ZxtD2EQ4KMB7ATl4F8BJUD1qUukZxunoQIxbTFcKP2w1i7HCvHQ==
-X-Received: by 2002:a63:9e58:: with SMTP id r24mr28789553pgo.264.1548865777005;
-        Wed, 30 Jan 2019 08:29:37 -0800 (PST)
-Received: from s15.smythies.com (mail.smythies.com. [173.180.45.4])
-        by smtp.gmail.com with ESMTPSA id u123sm3876421pfb.1.2019.01.30.08.29.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 30 Jan 2019 08:29:36 -0800 (PST)
-From:   Doug Smythies <doug.smythies@gmail.com>
-X-Google-Original-From: Doug Smythies <dsmythies@telus.net>
-To:     rjw@rjwysocki.net
-Cc:     dsmythies@telus.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] cpuidle: poll_state: Fix default time limit.
-Date:   Wed, 30 Jan 2019 08:28:22 -0800
-Message-Id: <1548865702-3524-1-git-send-email-dsmythies@telus.net>
-X-Mailer: git-send-email 2.7.4
+        Wed, 30 Jan 2019 11:29:46 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id 09BF218525;
+        Wed, 30 Jan 2019 17:29:45 +0100 (CET)
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id zkJhc9yuw9zT; Wed, 30 Jan 2019 17:29:42 +0100 (CET)
+Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
+        by bastet.se.axis.com (Postfix) with ESMTPS id E2C78184FC;
+        Wed, 30 Jan 2019 17:29:42 +0100 (CET)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D0BFC1E072;
+        Wed, 30 Jan 2019 17:29:42 +0100 (CET)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C50E11E070;
+        Wed, 30 Jan 2019 17:29:42 +0100 (CET)
+Received: from thoth.se.axis.com (unknown [10.0.2.173])
+        by boulder03.se.axis.com (Postfix) with ESMTP;
+        Wed, 30 Jan 2019 17:29:42 +0100 (CET)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by thoth.se.axis.com (Postfix) with ESMTP id B8B0825F7;
+        Wed, 30 Jan 2019 17:29:42 +0100 (CET)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id B59AB80C3B; Wed, 30 Jan 2019 17:29:42 +0100 (CET)
+Date:   Wed, 30 Jan 2019 17:29:42 +0100
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] sysctl: Add panic-fatal-signals
+Message-ID: <20190130162942.ppapys75ffvjgfct@axis.com>
+References: <20190128084959.13060-1-vincent.whitchurch@axis.com>
+ <20190128100545.b62193aa8f49e1de8d6ea8b7@linux-foundation.org>
+ <20190130144851.GK11489@garbanzo.do-not-panic.com>
+ <CAFLxGvyUpWRE3SWD2eX+M-TGKv7+6At0zsYYTTWw0y6gs3M4iw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFLxGvyUpWRE3SWD2eX+M-TGKv7+6At0zsYYTTWw0y6gs3M4iw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The default time is declared in units of microsecnds,
-but is used as nano seconds, resulting in significant
-accounting errors for idle state 0 time when all idle
-states deeper than 0 are disabled.
+On Wed, Jan 30, 2019 at 04:02:36PM +0100, Richard Weinberger wrote:
+> Hmm, why can't this be a core dump helper?
+> Such as:
+> 
+> #!/bin/sh
+> # Usage:
+> # echo "|/root/crash.sh %p %e %s" > /proc/sys/kernel/core_pattern
+> 
+> PID="$1"
+> COMM="$2"
+> SIGNAL="$3"
+> 
+> echo "$COMM ($PID) died by signal $SIGNAL, killing kernel" > /dev/kmsg
+> echo c > /proc/sysrq-trigger
 
-Under these unusual conditions, we don't really care
-about the poll time limit anyhow.
-
-Signed-off-by: Doug Smythies <dsmythies@telus.net>
----
- drivers/cpuidle/poll_state.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
-index b17d153..23a1b27 100644
---- a/drivers/cpuidle/poll_state.c
-+++ b/drivers/cpuidle/poll_state.c
-@@ -21,7 +21,7 @@ static int __cpuidle poll_idle(struct cpuidle_device *dev,
- 	local_irq_enable();
- 	if (!current_set_polling_and_test()) {
- 		unsigned int loop_count = 0;
--		u64 limit = TICK_USEC;
-+		u64 limit = TICK_NSEC;
- 		int i;
- 
- 		for (i = 1; i < drv->state_count; i++) {
--- 
-2.7.4
-
+Yes, that looks like it should work.  Thanks.
