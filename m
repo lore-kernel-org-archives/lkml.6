@@ -2,65 +2,63 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46419C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86591C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1574F21852
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548847391;
-	bh=4SIZQlJckML37BeNclnQXx/xsuQprfE2L3KdBzgn5wI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=U0KU4kip3n4409dudZZCtx7CvCKJ/rN1HxNrXvgq0CFWk2hjK50LCTATkqbFDYdRF
-	 4vqnM5SF4DD1MJ9IvuhqRt6Xwv3IUlxk7qpPfTrnstEzeIYuOiyIlM+cbjb2GGpUnw
-	 Fvf3fw1elSuRrTdGwirjftRWIr6JQsFPaaRgLqhg=
+	by mail.kernel.org (Postfix) with ESMTP id 5DF4920869
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730684AbfA3LXJ (ORCPT
+        id S1729779AbfA3L0r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 06:23:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726548AbfA3LXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 06:23:09 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 447A520869;
-        Wed, 30 Jan 2019 11:23:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548847388;
-        bh=4SIZQlJckML37BeNclnQXx/xsuQprfE2L3KdBzgn5wI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xbVPjTJ6TH9dbz1GZy/Sm0TVV/d/V3O7ztHcW+hmx60vbSvHJ2v5hZu+ZW21F+Zlm
-         ASXcBMUPpa338DUZoMrEmo+stzdmKQAhXrKJqEJT/WgXRkWUJQLXG9N7AkmIyHU1HU
-         8P9y7UDvwwbc4xS5lvJoRZPD2eOE6BGePZ1JJeVk=
-Date:   Wed, 30 Jan 2019 12:23:06 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Omar Sandoval <osandov@fb.com>,
-        syzbot <syzbot+b382ba6a802a3d242790@syzkaller.appspotmail.com>,
+        Wed, 30 Jan 2019 06:26:47 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:48549 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbfA3L0r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 06:26:47 -0500
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0UBQR7L018537;
+        Wed, 30 Jan 2019 20:26:27 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Wed, 30 Jan 2019 20:26:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0UBQRCg018534
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Wed, 30 Jan 2019 20:26:27 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: BUG: unable to handle kernel paging request in dput (2)
+To:     Omar Sandoval <osandov@fb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     syzbot <syzbot+b382ba6a802a3d242790@syzkaller.appspotmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
         Jens Axboe <axboe@fb.com>
-Subject: Re: BUG: unable to handle kernel paging request in dput (2)
-Message-ID: <20190130112306.GA28528@kroah.com>
 References: <00000000000081e6cc0580aa76a2@google.com>
  <80e90ecd-77f5-00a3-4e91-5e9eea2aa117@I-love.SAKURA.ne.jp>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <27008e5f-9dfc-a09a-cdb9-824d470fb9dd@I-love.SAKURA.ne.jp>
+Date:   Wed, 30 Jan 2019 20:26:24 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <80e90ecd-77f5-00a3-4e91-5e9eea2aa117@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 08:11:17PM +0900, Tetsuo Handa wrote:
+On 2019/01/30 20:11, Tetsuo Handa wrote:
 > Hello, Omar.
 > 
 > syzbot is reporting a crash due to dput(-EINVAL) [1]. I think the location is
@@ -82,15 +80,5 @@ On Wed, Jan 30, 2019 at 08:11:17PM +0900, Tetsuo Handa wrote:
 > [1] https://syzkaller.appspot.com/bug?extid=b382ba6a802a3d242790
 > 
 
-Obviously debugfs_lookup() should have its return value checked, so
-that's fine :)
-
-But how are we getting an error with dput()?  Are you sure this is a
-debugfs issue and not a relayfs problem?
-
-I'll send patches to clean up the tracing code's use of debugfs later,
-as it is, I don't see anything obviously wrong with it.
-
-thanks,
-
-greg k-h
+The function which returned -EINVAL instead of NULL seems to be debugfs_lookup()
+modified by commit ff9fb72bc07705c0 ("debugfs: return error values, not NULL").
