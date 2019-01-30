@@ -2,147 +2,139 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867CCC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:57:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7326BC282D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D382184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:57:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2014A2184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:57:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ZHRLmJfG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388075AbfA3U5w (ORCPT
+        id S2388086AbfA3U54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 15:57:52 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:33130 "EHLO huawei.com"
+        Wed, 30 Jan 2019 15:57:56 -0500
+Received: from mail-eopbgr720050.outbound.protection.outlook.com ([40.107.72.50]:22556
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387888AbfA3U41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 15:56:27 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 15E84CEA1104A3F49597;
-        Thu, 31 Jan 2019 04:56:25 +0800 (CST)
-Received: from SZA150611058.china.huawei.com (10.45.134.27) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 31 Jan 2019 04:56:15 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
-        <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Jian Shen <shenjian15@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 08/12] net: hns3: fix for rss result nonuniform
-Date:   Thu, 31 Jan 2019 04:55:48 +0800
-Message-ID: <20190130205552.8512-9-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.20.1.windows.1
-In-Reply-To: <20190130205552.8512-1-tanhuazhong@huawei.com>
-References: <20190130205552.8512-1-tanhuazhong@huawei.com>
+        id S2387888AbfA3U5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 15:57:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lz88SedlVWSQREzbW/rZQqXC6gX6MN15EERRQFg15L8=;
+ b=ZHRLmJfGxShB/1qGyya0t6rju4mZFb85TPl81on0A7pEZdoFA6oQuoZEgh9a+Xrf+wJIb9BPvAaue2+NgUVtms+8b+1BvBNXtqCMbqP4bCDbSS7Dli7ceSL9fbsLgWpKCnk8BKWprS7MWi90qCBUtIuI9qk9UAoVUR+litDxjIA=
+Received: from DM6PR12MB2682.namprd12.prod.outlook.com (20.176.116.31) by
+ DM6PR12MB3612.namprd12.prod.outlook.com (20.178.199.86) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.19; Wed, 30 Jan 2019 20:57:52 +0000
+Received: from DM6PR12MB2682.namprd12.prod.outlook.com
+ ([fe80::10bf:617c:4515:4ad2]) by DM6PR12MB2682.namprd12.prod.outlook.com
+ ([fe80::10bf:617c:4515:4ad2%2]) with mapi id 15.20.1558.023; Wed, 30 Jan 2019
+ 20:57:52 +0000
+From:   "Singh, Brijesh" <brijesh.singh@amd.com>
+To:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "Hook, Gary" <Gary.Hook@amd.com>
+Subject: [PATCH] crypto: ccp: fix the SEV probe in kexec boot path
+Thread-Topic: [PATCH] crypto: ccp: fix the SEV probe in kexec boot path
+Thread-Index: AQHUuN53GxbsT9pk+UaDAUjTznR12w==
+Date:   Wed, 30 Jan 2019 20:57:52 +0000
+Message-ID: <20190130205710.14268-1-brijesh.singh@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN1PR12CA0048.namprd12.prod.outlook.com
+ (2603:10b6:802:20::19) To DM6PR12MB2682.namprd12.prod.outlook.com
+ (2603:10b6:5:4a::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=brijesh.singh@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM6PR12MB3612;20:ldmQhVVEUQLy1JfWGzaCE/WGOw4SideGUsZ9CTBJqjCX4p3NNtejXmjEdWs9XfCCM9NraUbzBj5/lZbyL3T16HnNc4XoCW4RxvedWzND6cIzDb+5wf6rU8HrlNeaSb4f80m6+EP/j3Xkth1hNeP8QR77USi0CGQ+Dev8p6LCh+1SbumAZwcQszjKUnPw3eNpg+ECnCr3CRBhIOj5sZvM/R5rX+cY5zM8p6AQjzvQ55UdO/KDMj031xgcz9GB2iIC
+x-ms-office365-filtering-correlation-id: d1989338-9373-4245-6e2c-08d686f59972
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB3612;
+x-ms-traffictypediagnostic: DM6PR12MB3612:
+x-microsoft-antispam-prvs: <DM6PR12MB36122CD34595DDBF6613F40AE5900@DM6PR12MB3612.namprd12.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(136003)(346002)(366004)(189003)(199004)(6436002)(2501003)(3846002)(6116002)(86362001)(476003)(71200400001)(6512007)(66066001)(71190400001)(256004)(1076003)(6506007)(386003)(5640700003)(6916009)(102836004)(2616005)(14444005)(6486002)(99286004)(25786009)(26005)(316002)(54906003)(81156014)(81166006)(186003)(14454004)(8676002)(50226002)(53936002)(52116002)(36756003)(450100002)(305945005)(4326008)(486006)(68736007)(97736004)(8936002)(7736002)(478600001)(106356001)(105586002)(2351001)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3612;H:DM6PR12MB2682.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: t8Z1j5P2+2ife45w2CdNSnpPPrClI1eS1Q4RrPStETS7IVFV5v6N8DpplyC3mVy4icDUGidqdNQDH5osPIbZPK0PluY1du/OczDII0AQPZ5xEga9NJoP4ojKicFiYohxqJMqHyh7f/MbBBM0twiXjOD14fuUdg/jMwFSiTOaqC0LQ8VDTRg8KPthWlLI0poGGmi7qCxL0zpRhcjRg5K4ul/z6c9aAzZlzdMQ3yiesN2HuWAoYPf8aE+3oA9MKDTE3CmgqXxA1sCY2AJN79MZfTLkLergwfRpc1Ft4CkcdqZlnbm67kz7xA6HRSQqwpoLwHNdghnU3+WvNQ6LIcfFuqCjh6RQJBRpk5xU4mA3N8HWo+TU6GUAGhFq01KNMecZbjfz+rQHN48K7UBT3SrIYtdXPFa2uf9TMlMPfPzrDck=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.45.134.27]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1989338-9373-4245-6e2c-08d686f59972
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 20:57:51.1341
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3612
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+A kexec reboot may leave the firmware in INIT or WORKING state.
+Currently, we issue PLATFORM_INIT command during the probe without
+checking the current state. The PLATFORM_INIT command fails if the
+FW is already in INIT state. Lets check the current state, if FW
+is not in UNINIT state then transition it to UNINIT before
+initializing or upgrading the FW.
 
-The rss result is more uniform when use recommended hash key from
-microsoft, instead of the one generated by netdev_rss_key_fill().
-Also using hash algorithm "xor" is better than "toeplitz".
-
-This patch modifies the default hash key and hash algorithm.
-
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Gary Hook <gary.hook@amd.com>
 ---
- .../hisilicon/hns3/hns3pf/hclge_main.c         | 18 +++++++++++++++---
- .../hisilicon/hns3/hns3vf/hclgevf_main.c       | 14 +++++++++++---
- 2 files changed, 26 insertions(+), 6 deletions(-)
+ drivers/crypto/ccp/psp-dev.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 795ebedde284..42f0f8824b47 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -295,6 +295,14 @@ static const struct hclge_mac_mgr_tbl_entry_cmd hclge_mgr_table[] = {
- 	},
- };
- 
-+static const u8 hclge_hash_key[] = {
-+	0x6D, 0x5A, 0x56, 0xDA, 0x25, 0x5B, 0x0E, 0xC2,
-+	0x41, 0x67, 0x25, 0x3D, 0x43, 0xA3, 0x8F, 0xB0,
-+	0xD0, 0xCA, 0x2B, 0xCB, 0xAE, 0x7B, 0x30, 0xB4,
-+	0x77, 0xCB, 0x2D, 0xA3, 0x80, 0x30, 0xF2, 0x0C,
-+	0x6A, 0x42, 0xB7, 0x3B, 0xBE, 0xAC, 0x01, 0xFA
-+};
+diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
+index b16be8a11d92..966ca6f9cf79 100644
+--- a/drivers/crypto/ccp/psp-dev.c
++++ b/drivers/crypto/ccp/psp-dev.c
+@@ -437,6 +437,7 @@ static int sev_get_api_version(void)
+ 	psp_master->api_major =3D status->api_major;
+ 	psp_master->api_minor =3D status->api_minor;
+ 	psp_master->build =3D status->build;
++	psp_master->sev_state =3D status->state;
+=20
+ 	return 0;
+ }
+@@ -964,6 +965,21 @@ void psp_pci_init(void)
+ 	if (sev_get_api_version())
+ 		goto err;
+=20
++	/*
++	 * If platform is not in UNINIT state then firmware upgrade and/or
++	 * platform INIT command will fail. These command require UNINIT state.
++	 *
++	 * In a normal boot we should never run into case where the firmware
++	 * is not in UNINIT state on boot. But in case of kexec boot, a reboot
++	 * may not go through a typical shutdown sequence and may leave the
++	 * firmware in INIT or WORKING state.
++	 */
 +
- static int hclge_mac_update_stats_defective(struct hclge_dev *hdev)
- {
- #define HCLGE_MAC_CMD_NUM 21
-@@ -3652,8 +3660,11 @@ void hclge_rss_indir_init_cfg(struct hclge_dev *hdev)
- 
- static void hclge_rss_init_cfg(struct hclge_dev *hdev)
- {
-+	int i, rss_algo = HCLGE_RSS_HASH_ALGO_TOEPLITZ;
- 	struct hclge_vport *vport = hdev->vport;
--	int i;
++	if (psp_master->sev_state !=3D SEV_STATE_UNINIT) {
++		sev_platform_shutdown(NULL);
++		psp_master->sev_state =3D SEV_STATE_UNINIT;
++	}
 +
-+	if (hdev->pdev->revision >= 0x21)
-+		rss_algo = HCLGE_RSS_HASH_ALGO_SIMPLE;
- 
- 	for (i = 0; i < hdev->num_vmdq_vport + 1; i++) {
- 		vport[i].rss_tuple_sets.ipv4_tcp_en =
-@@ -3673,9 +3684,10 @@ static void hclge_rss_init_cfg(struct hclge_dev *hdev)
- 		vport[i].rss_tuple_sets.ipv6_fragment_en =
- 			HCLGE_RSS_INPUT_TUPLE_OTHER;
- 
--		vport[i].rss_algo = HCLGE_RSS_HASH_ALGO_TOEPLITZ;
-+		vport[i].rss_algo = rss_algo;
- 
--		netdev_rss_key_fill(vport[i].rss_hash_key, HCLGE_RSS_KEY_SIZE);
-+		memcpy(vport[i].rss_hash_key, hclge_hash_key,
-+		       HCLGE_RSS_KEY_SIZE);
- 	}
- 
- 	hclge_rss_indir_init_cfg(hdev);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index fc99a0c70164..93f306f42cf4 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -21,6 +21,14 @@ static const struct pci_device_id ae_algovf_pci_tbl[] = {
- 	{0, }
- };
- 
-+static const u8 hclgevf_hash_key[] = {
-+	0x6D, 0x5A, 0x56, 0xDA, 0x25, 0x5B, 0x0E, 0xC2,
-+	0x41, 0x67, 0x25, 0x3D, 0x43, 0xA3, 0x8F, 0xB0,
-+	0xD0, 0xCA, 0x2B, 0xCB, 0xAE, 0x7B, 0x30, 0xB4,
-+	0x77, 0xCB, 0x2D, 0xA3, 0x80, 0x30, 0xF2, 0x0C,
-+	0x6A, 0x42, 0xB7, 0x3B, 0xBE, 0xAC, 0x01, 0xFA
-+};
-+
- MODULE_DEVICE_TABLE(pci, ae_algovf_pci_tbl);
- 
- static const u32 cmdq_reg_addr_list[] = {HCLGEVF_CMDQ_TX_ADDR_L_REG,
-@@ -1789,9 +1797,9 @@ static int hclgevf_rss_init_hw(struct hclgevf_dev *hdev)
- 	rss_cfg->rss_size = hdev->rss_size_max;
- 
- 	if (hdev->pdev->revision >= 0x21) {
--		rss_cfg->hash_algo = HCLGEVF_RSS_HASH_ALGO_TOEPLITZ;
--		netdev_rss_key_fill(rss_cfg->rss_hash_key,
--				    HCLGEVF_RSS_KEY_SIZE);
-+		rss_cfg->hash_algo = HCLGEVF_RSS_HASH_ALGO_SIMPLE;
-+		memcpy(rss_cfg->rss_hash_key, hclgevf_hash_key,
-+		       HCLGEVF_RSS_KEY_SIZE);
- 
- 		ret = hclgevf_set_rss_algo_key(hdev, rss_cfg->hash_algo,
- 					       rss_cfg->rss_hash_key);
--- 
-2.20.1
-
+ 	if (SEV_VERSION_GREATER_OR_EQUAL(0, 15) &&
+ 	    sev_update_firmware(psp_master->dev) =3D=3D 0)
+ 		sev_get_api_version();
+--=20
+2.17.1
 
