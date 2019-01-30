@@ -2,37 +2,41 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D98A4C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C883C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:10:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6D8C207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:08:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06BCB2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:10:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731733AbfA3QIq (ORCPT
+        id S1731755AbfA3QKP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:08:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49184 "EHLO mx1.redhat.com"
+        Wed, 30 Jan 2019 11:10:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43604 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728042AbfA3QIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:08:45 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1727680AbfA3QKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:10:15 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7E2D6C062D16;
-        Wed, 30 Jan 2019 16:08:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4129580F7B;
+        Wed, 30 Jan 2019 16:10:14 +0000 (UTC)
 Received: from [10.36.112.68] (ovpn-112-68.ams2.redhat.com [10.36.112.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC023100164E;
-        Wed, 30 Jan 2019 16:08:43 +0000 (UTC)
-Subject: Re: [PATCH] kvm: Use struct_size() in kmalloc()
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190104162910.GA25118@embeddedor>
- <4c4093b5-814d-3337-bc26-d6a491a7944e@embeddedor.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5E7B260462;
+        Wed, 30 Jan 2019 16:10:08 +0000 (UTC)
+Subject: Re: [PATCH] svm: Fix AVIC DFR and LDR handling
+To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Cc:     "joro@8bytes.org" <joro@8bytes.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>
+References: <20190129080813.40689-1-suravee.suthikulpanit@amd.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -90,89 +94,34 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
  S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
  uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <dde9554e-4fd0-ba8d-bb3f-047c4bf3c84b@redhat.com>
-Date:   Wed, 30 Jan 2019 17:08:41 +0100
+Message-ID: <56dc4a9d-434c-7fec-f317-b0cc792fbb53@redhat.com>
+Date:   Wed, 30 Jan 2019 17:10:06 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <4c4093b5-814d-3337-bc26-d6a491a7944e@embeddedor.com>
+In-Reply-To: <20190129080813.40689-1-suravee.suthikulpanit@amd.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 30 Jan 2019 16:08:45 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 30 Jan 2019 16:10:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/01/19 18:20, Gustavo A. R. Silva wrote:
-> Hi all,
-> 
-> Friendly ping:
-> 
-> Who can take this?
+On 29/01/19 09:08, Suthikulpanit, Suravee wrote:
+> +static void avic_inv_logical_id_entry(struct kvm_vcpu *vcpu)
+> +{
+> +	struct vcpu_svm *svm = to_svm(vcpu);
+> +	bool flat = svm->dfr_reg == APIC_DFR_FLAT;
+> +	u32 *entry = avic_get_logical_id_entry(vcpu, svm->ldr_reg, flat);
+> +
+> +	if (entry)
+> +		WRITE_ONCE(*entry, (u32) ~AVIC_LOGICAL_ID_ENTRY_VALID_MASK);
+> +}
+> +
 
-I cannot find the original message in my inbox, but I've queued it from
-the quote below.
-
-Thanks,
+Renamed the function with s/inv/invalidate/ and queued, thanks.
 
 Paolo
-
-> Thanks
-> --
-> Gustavo
-> 
-> On 1/4/19 10:29 AM, Gustavo A. R. Silva wrote:
->> One of the more common cases of allocation size calculations is finding
->> the size of a structure that has a zero-sized array at the end, along
->> with memory for some number of elements for that array. For example:
->>
->> struct foo {
->>     int stuff;
->>     void *entry[];
->> };
->>
->> instance = kmalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
->>
->> Instead of leaving these open-coded and prone to type mistakes, we can
->> now use the new struct_size() helper:
->>
->> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
->>
->> This code was detected with the help of Coccinelle.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  virt/kvm/kvm_main.c | 8 ++++----
->>  1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
->> index 666d0155662d..635b12fdbab8 100644
->> --- a/virt/kvm/kvm_main.c
->> +++ b/virt/kvm/kvm_main.c
->> @@ -3709,8 +3709,8 @@ int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
->>  	if (bus->dev_count - bus->ioeventfd_count > NR_IOBUS_DEVS - 1)
->>  		return -ENOSPC;
->>  
->> -	new_bus = kmalloc(sizeof(*bus) + ((bus->dev_count + 1) *
->> -			  sizeof(struct kvm_io_range)), GFP_KERNEL);
->> +	new_bus = kmalloc(struct_size(bus, range, bus->dev_count + 1),
->> +			  GFP_KERNEL);
->>  	if (!new_bus)
->>  		return -ENOMEM;
->>  
->> @@ -3755,8 +3755,8 @@ void kvm_io_bus_unregister_dev(struct kvm *kvm, enum kvm_bus bus_idx,
->>  	if (i == bus->dev_count)
->>  		return;
->>  
->> -	new_bus = kmalloc(sizeof(*bus) + ((bus->dev_count - 1) *
->> -			  sizeof(struct kvm_io_range)), GFP_KERNEL);
->> +	new_bus = kmalloc(struct_size(bus, range, bus->dev_count - 1),
->> +			  GFP_KERNEL);
->>  	if (!new_bus)  {
->>  		pr_err("kvm: failed to shrink bus, removing it completely\n");
->>  		goto broken;
->>
-
