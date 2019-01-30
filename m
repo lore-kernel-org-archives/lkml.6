@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3718CC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B7BC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0138A2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36FB02175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:32:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQ7gapZV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="db2TIyug"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729852AbfA3C3n (ORCPT
+        id S1729847AbfA3CcA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 21:29:43 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36673 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727990AbfA3C3n (ORCPT
+        Tue, 29 Jan 2019 21:32:00 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35979 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727990AbfA3Cb7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 21:29:43 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g9so10324514plo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 18:29:42 -0800 (PST)
+        Tue, 29 Jan 2019 21:31:59 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so9669990pgm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 18:31:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0RXMQUTjYFuRZ0vKiKpicoQgVzwds0R8H6JfmM2E8yg=;
-        b=PQ7gapZVzMwG9mKHT7n5beHEIz3eLeLBSIg50o4PY3iJJ6FqGb5NM9jn/f3Y26OTv9
-         Tz4Ob1oxB75+yvOIp2xF+PWCRIXWbyoDmMFWldcRPWZe8HWWgv1QBOeZ3bRqhqDZGx9c
-         ZnHJ2AKPzRVt8nTDp+T3YB1GGZKlTtfIFwBfUomX1c7raJw3K7XhivS9oDBg3P02snfj
-         GQj0ID1g2scdOhoPq0lG2yjbkHxVYB7pLcBlmEsTOKLUeA00t47YvB8r6X3X6dsWYmCf
-         1DbBa73vNbxjWSzz501Cydap3hSfw9NyFH8L22K4/OHkiFGkMMMAjDk3c+mOzZfdKMh6
-         2Lxw==
+        bh=5VKVCmqAK7XDYxf7ZhHCYlIGgdtiK8Gfv2Vaeypfz8w=;
+        b=db2TIyugR8FAJDwOdavBhOTOJfymtN+WKcIuEHv5DfdwYYxpN5rIW2K8+PS6C3vEYx
+         gmBv/beVPC7t57ib2EocTVo6E9seMQHgJtH4eau54xhFtlMAEqTggYoaD01pxRUH7wbu
+         siZTkNSq1u0tSBwbbIhWth7EZz/GHRpuPvw7nU1/dvRBTnZ9iBMwO6f9R8ChAbN73p3i
+         08jx+r1w5L7e9tQvq7d5x5e6Z+2vvvOuTcqU4cwvuUJjCgTmhQ76Ywrv3PkLVRpbrEth
+         dDkE+uQMY/K1yIQl6mc8pzr0cwLvI89QIXLFXzlZs/NGdX8LPgvvs8mz08LFgqS9ke5E
+         KbgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0RXMQUTjYFuRZ0vKiKpicoQgVzwds0R8H6JfmM2E8yg=;
-        b=aG7H6b24nNMn9cXMrV3NRstZkbxFSnbFhZFJfiOSBbBnZSTe4YHAVEtMb5UxFa72Ev
-         vYtfVQ+C10cnht0XWu/U6kOOKakH51pZSg1AhIO0XesyIukNbhKZufd7/ZtrqmCOBNdd
-         B3zJw2lPh6aAKZOQ/lZBzwB+6yJiEJ51o9TA/92RiPpKEHpPeQF9SrKNa/70fxkJU3wE
-         DRmCyGStuUvOS2zl4AX38ys+Llnkw7xGkojILzcr04wEgHSnm2sUVPZtJ/xMul0lwKTP
-         NQSm6mN3G56VpbLPOR7Q0gjHxd8GRkmswPg+u3xZcdRdsBFAsOx2DEHwz6f8WES2gLn0
-         Shfg==
-X-Gm-Message-State: AJcUuke7OV/FgIq7Eft4zhzlitGJVLvjXVQr916sCp1n/Ikcff9CtVI7
-        ln/VbcFHr9hgkBIer6rWZDY8aYwPN+elvKSk8OU=
-X-Google-Smtp-Source: ALg8bN5nuLVvazBmaQAeZp44pc2Bq7p1kH94xsvDXnN6OKKUUBkQ4VPmnkmiRrFTU6Vu3mab0OnSzTO6ysIsA6AgNUg=
-X-Received: by 2002:a17:902:4d46:: with SMTP id o6mr27321182plh.302.1548815382491;
- Tue, 29 Jan 2019 18:29:42 -0800 (PST)
+        bh=5VKVCmqAK7XDYxf7ZhHCYlIGgdtiK8Gfv2Vaeypfz8w=;
+        b=CWCi3+YdNdED1/KhTnV7jsndsszlB0tzMj7XMP8ciRWT1DwOb8JaBHKMSlZc7FLRrC
+         Rv54I0EgFkZ5DH2fzUrbeCEip7yMvCEhiYzuRqpbrclNmzElPgcq/mv8SlMKBNb4Sccn
+         ReJqxiWCYM2UnqP2rMe0q/gC8P7tRC1W5rIe+X9z3eWGMpJ/0Id1n6pYg0kasT5MkOY5
+         WYFjDY20NmmIhCZ+5EGnYyQFG6w6zlr1vmCmNddDwzP71FVfYP14O3/gNQZbQwrTSf01
+         oZhrP9QhBwl1e0ch1137PN5gyNGDf4Z50sf4JZhn9thPa2+WeIt2HMa/eHKL8lqkuCLE
+         c8Pg==
+X-Gm-Message-State: AJcUukfEs//OOvL/053LSWp8Y+heIfbkAXeL5C7PTUouQp0OF68HfqvI
+        eSuHXXAR4SpI4/nC+8BFc/MQhzEIwSQwJ753l6k=
+X-Google-Smtp-Source: ALg8bN61y+VHNz5ozljJ7R//6MQUyMQprcVjwFzEUrBEgFcKREKHryazMMyKiI+5oyga8wTC7EFfkcQY9GtBw5p5y6E=
+X-Received: by 2002:a63:5153:: with SMTP id r19mr25783585pgl.281.1548815519335;
+ Tue, 29 Jan 2019 18:31:59 -0800 (PST)
 MIME-Version: 1.0
-References: <5c383af0.1c69fb81.c393d.125c@mx.google.com> <CAFqt6zZnc_XauKefVavwana2cMLF4arEkiqjmfd25h-MWfsuJw@mail.gmail.com>
-In-Reply-To: <CAFqt6zZnc_XauKefVavwana2cMLF4arEkiqjmfd25h-MWfsuJw@mail.gmail.com>
+References: <5c38b64a.1c69fb81.a0651.e342@mx.google.com> <CAFqt6zbaAmQCaKXDGR6hJEyh2PXJzQEsyO_TuHMg0jOX38_wog@mail.gmail.com>
+In-Reply-To: <CAFqt6zbaAmQCaKXDGR6hJEyh2PXJzQEsyO_TuHMg0jOX38_wog@mail.gmail.com>
 From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Date:   Wed, 30 Jan 2019 07:59:31 +0530
-Message-ID: <CAJr6mf16yq4gGD-GsfB+taT+JrcA3S3KaBMM-B=AMvdZPrvRaA@mail.gmail.com>
-Subject: Re: [PATCH] fs/cachefiles/namei.c: Remove duplicate header
+Date:   Wed, 30 Jan 2019 08:01:47 +0530
+Message-ID: <CAJr6mf25=-92bt9xx1nvjnGHo-Vx0msRYCpytd-diAP2PB5b2w@mail.gmail.com>
+Subject: Re: [PATCH] fs/coda/psdev.c: Remove duplicate header
 To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+Cc:     jaharkes@cs.cmu.edu, coda@cs.cmu.edu, codalist@coda.cs.cmu.edu,
         linux-kernel@vger.kernel.org,
         Brajeswar Ghosh <brajeswar.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
@@ -69,12 +69,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 1:34 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+On Mon, Jan 14, 2019 at 1:40 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
 >
-> On Fri, Jan 11, 2019 at 12:12 PM Sabyasachi Gupta
+> On Fri, Jan 11, 2019 at 8:59 PM Sabyasachi Gupta
 > <sabyasachi.linux@gmail.com> wrote:
 > >
-> > Remove linux/xattr.h which is included more than once
+> > Remove linux/poll.h which is included more than once
 > >
 > > Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
 >
@@ -82,21 +82,21 @@ On Mon, Jan 14, 2019 at 1:34 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
 >
 If no further comment, can we get this patch in queue for 5.1 ?
 > > ---
-> >  fs/cachefiles/namei.c | 1 -
+> >  fs/coda/psdev.c | 1 -
 > >  1 file changed, 1 deletion(-)
 > >
-> > diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-> > index 95983c7..edecb7f 100644
-> > --- a/fs/cachefiles/namei.c
-> > +++ b/fs/cachefiles/namei.c
-> > @@ -20,7 +20,6 @@
-> >  #include <linux/namei.h>
-> >  #include <linux/security.h>
-> >  #include <linux/slab.h>
-> > -#include <linux/xattr.h>
-> >  #include "internal.h"
+> > diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
+> > index c5234c2..f2bb798 100644
+> > --- a/fs/coda/psdev.c
+> > +++ b/fs/coda/psdev.c
+> > @@ -39,7 +39,6 @@
+> >  #include <linux/device.h>
+> >  #include <linux/pid_namespace.h>
+> >  #include <asm/io.h>
+> > -#include <linux/poll.h>
+> >  #include <linux/uaccess.h>
 > >
-> >  #define CACHEFILES_KEYBUF_SIZE 512
+> >  #include <linux/coda.h>
 > > --
 > > 2.7.4
 > >
