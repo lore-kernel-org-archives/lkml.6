@@ -2,83 +2,183 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A57C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 198B7C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992F0218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:58:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2ED42184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:01:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388049AbfA3U5r (ORCPT
+        id S1729172AbfA3VBG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 15:57:47 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:33126 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387887AbfA3U41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 15:56:27 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 12056CF92F5DA29D51E6;
-        Thu, 31 Jan 2019 04:56:25 +0800 (CST)
-Received: from SZA150611058.china.huawei.com (10.45.134.27) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 31 Jan 2019 04:56:17 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
-        <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Jian Shen <shenjian15@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 11/12] net: hns3: stop sending keep alive msg to PF when VF is resetting
-Date:   Thu, 31 Jan 2019 04:55:51 +0800
-Message-ID: <20190130205552.8512-12-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.20.1.windows.1
-In-Reply-To: <20190130205552.8512-1-tanhuazhong@huawei.com>
-References: <20190130205552.8512-1-tanhuazhong@huawei.com>
+        Wed, 30 Jan 2019 16:01:06 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:56240 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfA3VBF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 16:01:05 -0500
+Received: by mail-io1-f69.google.com with SMTP id s5so642273iom.22
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 13:01:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=hUJPm7C0FTdx2ysTcRqSOMD9TiEmJX3p9wJVFtvWoRs=;
+        b=LcplTrlexMeUT6D5cNe99dic1tmFwQ136i0veYpJsSnfuXBbfMV+vr1LA/O+3dnbnN
+         FM3P9BCrvXQLZ8glRmuR2Q8bS3MBqMGtbDWXSWHOvvNUG+DP/0NuEf6YxxvjTQS3P93v
+         Wo7SNlX2gKH9mCXxWZSgNriemhBFDby9HdmdiG6QYJsS5WCM3bu9dAEoIP+M8jAE42NB
+         vaeXmnZRdyhyFIZcfT1dzaTFxls+qKTklIAd4ybpcssEXyTOuieJe4R78GE7Hdfk277t
+         qSbpjC30rk/BW/GUEgeH3O41D6IzIk3xuTCkMqX/nIG93+gh51MqNUMX+XHwbrG8XmzG
+         +2EQ==
+X-Gm-Message-State: AHQUAuacSIDHamJqhigK+qgmVCbcWjUmfdq2et/elZx284PzixFikW/V
+        l0imuqLHFgQtI1CfhKp+Y+BNOBhJLWOI37DV30uxS2Teoruq
+X-Google-Smtp-Source: AHgI3Ial6JInk/ASJFC0r97YT1DPP3IukO6Q4/UbCZfPaZszkbJfkaNhw5EViJYLjDA95nrldyP6c10F9a6mjIrwp4Jm8WXODmjr
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.45.134.27]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a24:7515:: with SMTP id y21mr7449080itc.38.1548882064253;
+ Wed, 30 Jan 2019 13:01:04 -0800 (PST)
+Date:   Wed, 30 Jan 2019 13:01:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003d28d10580b335cd@google.com>
+Subject: KASAN: use-after-free Read in selinux_netlbl_socket_setsockopt
+From:   syzbot <syzbot+1bfc00ca3aabe5bcd4cb@syzkaller.appspotmail.com>
+To:     eparis@parisplace.org, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, sds@tycho.nsa.gov, selinux@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+Hello,
 
-When VF is resetting, it can't communicate to PF with mailbox msg.
-This patch adds reset state checking before sending keep alive msg
-to PF.
+syzbot found the following crash on:
 
-Fixes: a6d818e31d08 ("net: hns3: Add vport alive state checking support")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+HEAD commit:    62967898789d Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=167fdef8c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4fceea9e2d99ac20
+dashboard link: https://syzkaller.appspot.com/bug?extid=1bfc00ca3aabe5bcd4cb
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+1bfc00ca3aabe5bcd4cb@syzkaller.appspotmail.com
+
+8021q: adding VLAN 0 to HW filter on device team0
+==================================================================
+BUG: KASAN: use-after-free in selinux_netlbl_socket_setsockopt+0x49b/0x510  
+security/selinux/netlabel.c:525
+Read of size 8 at addr ffff8880a63cf078 by task syz-executor3/18477
+
+CPU: 1 PID: 18477 Comm: syz-executor3 Not tainted 5.0.0-rc4+ #51
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+  selinux_netlbl_socket_setsockopt+0x49b/0x510  
+security/selinux/netlabel.c:525
+  selinux_socket_setsockopt+0x67/0x90 security/selinux/hooks.c:4693
+  security_socket_setsockopt+0x7d/0xc0 security/security.c:1467
+  __sys_setsockopt+0xe4/0x3a0 net/socket.c:1892
+  __do_sys_setsockopt net/socket.c:1913 [inline]
+  __se_sys_setsockopt net/socket.c:1910 [inline]
+  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x458089
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fb988b9cc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000458089
+RDX: 0000000000000078 RSI: 0000000000000084 RDI: 000000000000000a
+RBP: 000000000073c040 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb988b9d6d4
+R13: 00000000004cc9e8 R14: 00000000004da6a8 R15: 00000000ffffffff
+
+Allocated by task 18471:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_kmalloc mm/kasan/common.c:496 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
+  __do_kmalloc mm/slab.c:3711 [inline]
+  __kmalloc+0x15c/0x740 mm/slab.c:3720
+  kmalloc include/linux/slab.h:550 [inline]
+  sk_prot_alloc+0x19c/0x2e0 net/core/sock.c:1477
+  sk_alloc+0xd7/0x1690 net/core/sock.c:1531
+  nr_create+0xb9/0x5e0 net/netrom/af_netrom.c:436
+  __sock_create+0x532/0x930 net/socket.c:1277
+  sock_create net/socket.c:1317 [inline]
+  __sys_socket+0x106/0x260 net/socket.c:1347
+  __do_sys_socket net/socket.c:1356 [inline]
+  __se_sys_socket net/socket.c:1354 [inline]
+  __x64_sys_socket+0x73/0xb0 net/socket.c:1354
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 18466:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+  __cache_free mm/slab.c:3487 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3806
+  sk_prot_free net/core/sock.c:1514 [inline]
+  __sk_destruct+0x76d/0xa60 net/core/sock.c:1596
+  sk_destruct+0x7b/0x90 net/core/sock.c:1604
+  __sk_free+0xce/0x300 net/core/sock.c:1615
+  sk_free+0x42/0x50 net/core/sock.c:1626
+  sock_put include/net/sock.h:1707 [inline]
+  nr_release+0x337/0x3c0 net/netrom/af_netrom.c:557
+  __sock_release+0xd3/0x250 net/socket.c:579
+  sock_close+0x1b/0x30 net/socket.c:1141
+  __fput+0x3c5/0xb10 fs/file_table.c:278
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x32a/0x3b0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8880a63cec80
+  which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 1016 bytes inside of
+  2048-byte region [ffff8880a63cec80, ffff8880a63cf480)
+The buggy address belongs to the page:
+page:ffffea000298f380 count:1 mapcount:0 mapping:ffff88812c3f0c40 index:0x0  
+compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea000127f888 ffffea00013a3188 ffff88812c3f0c40
+raw: 0000000000000000 ffff8880a63ce400 0000000100000003 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8880a63cef00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8880a63cef80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8880a63cf000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                                 ^
+  ffff8880a63cf080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8880a63cf100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 4 ++++
- 1 file changed, 4 insertions(+)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 95f926971e3b..b9cdbd5dd6cb 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1624,6 +1624,10 @@ static void hclgevf_keep_alive_task(struct work_struct *work)
- 	int ret;
- 
- 	hdev = container_of(work, struct hclgevf_dev, keep_alive_task);
-+
-+	if (test_bit(HCLGEVF_STATE_RST_HANDLING, &hdev->state))
-+		return;
-+
- 	ret = hclgevf_send_mbx_msg(hdev, HCLGE_MBX_KEEP_ALIVE, 0, NULL,
- 				   0, false, &respmsg, sizeof(u8));
- 	if (ret)
--- 
-2.20.1
-
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
