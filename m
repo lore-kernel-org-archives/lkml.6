@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 970CAC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8B7C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46F392075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38C1F2081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:54:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728875AbfA3Xxa (ORCPT
+        id S1727654AbfA3Xy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:53:30 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:62952 "EHLO
+        Wed, 30 Jan 2019 18:54:29 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53572 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbfA3Xx1 (ORCPT
+        with ESMTP id S1725828AbfA3Xy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:53:27 -0500
+        Wed, 30 Jan 2019 18:54:28 -0500
 Received: from 79.184.255.169.ipv4.supernova.orange.pl (79.184.255.169) (HELO aspire.rjw.lan)
  by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 90021f72662eca40; Thu, 31 Jan 2019 00:53:24 +0100
+ id 46bfe9b463a924f0; Thu, 31 Jan 2019 00:54:25 +0100
 From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Donghee Han <dh.han@samsung.com>,
-        Sangkyu Kim <skwith.kim@samsung.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: Use struct kobj_attribute instead of struct global_attr
-Date:   Thu, 31 Jan 2019 00:52:18 +0100
-Message-ID: <4097835.HudsOOQepo@aspire.rjw.lan>
-In-Reply-To: <3a0a3ec5b36380deb59797f7189dbd0548828cf8.1548400979.git.viresh.kumar@linaro.org>
-References: <3a0a3ec5b36380deb59797f7189dbd0548828cf8.1548400979.git.viresh.kumar@linaro.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Taniya Das <tdas@codeaurora.org>,
+        Anson Huang <anson.huang@nxp.com>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 1/9] thermal: cpu_cooling: Require thermal core to be compiled in
+Date:   Thu, 31 Jan 2019 00:53:19 +0100
+Message-ID: <4397205.6VUyJNULaB@aspire.rjw.lan>
+In-Reply-To: <0d63ca44cff5f47ef0102b2c86b4fe9eca9b658b.1548737236.git.amit.kucheria@linaro.org>
+References: <cover.1548737236.git.amit.kucheria@linaro.org> <0d63ca44cff5f47ef0102b2c86b4fe9eca9b658b.1548737236.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -44,185 +46,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, January 25, 2019 8:23:07 AM CET Viresh Kumar wrote:
-> The cpufreq_global_kobject is created using kobject_create_and_add()
-> helper, which assigns the kobj_type as dynamic_kobj_ktype and show/store
-> routines are set to kobj_attr_show() and kobj_attr_store().
+On Tuesday, January 29, 2019 5:55:07 AM CET Amit Kucheria wrote:
+> The CPU cooling driver (cpu_cooling.c) allows the platform's cpufreq
+> driver to register as a cooling device and cool down the platform by
+> throttling the CPU frequency. In order to be able to auto-register a
+> cpufreq driver as a cooling device from the cpufreq core, we need access
+> to code inside cpu_cooling.c which, in turn, accesses code inside
+> thermal core.
 > 
-> These routines pass struct kobj_attribute as an argument to the
-> show/store callbacks. But all the cpufreq files created using the
-> cpufreq_global_kobject expect the argument to be of type struct
-> attribute. Things work fine currently as no one accesses the "attr"
-> argument. We may not see issues even if the argument is used, as struct
-> kobj_attribute has struct attribute as its first element and so they
-> will both get same address.
+> CPU_FREQ is a bool while THERMAL is tristate.  In some configurations
+> (e.g. allmodconfig), CONFIG_THERMAL ends up as a module while
+> CONFIG_CPU_FREQ is compiled in. This leads to following error:
 > 
-> But this is logically incorrect and we should rather use struct
-> kobj_attribute instead of struct global_attr in the cpufreq core and
-> drivers and the show/store callbacks should take struct kobj_attribute
-> as argument instead.
+> drivers/cpufreq/cpufreq.o: In function `cpufreq_offline':
+> cpufreq.c:(.text+0x407c): undefined reference to `cpufreq_cooling_unregister'
+> drivers/cpufreq/cpufreq.o: In function `cpufreq_online':
+> cpufreq.c:(.text+0x70c0): undefined reference to `of_cpufreq_cooling_register'
 > 
-> This bug is caught using CFI CLANG builds in android kernel which
-> catches mismatch in function prototypes for such callbacks.
+> Given that platforms using CPU_THERMAL usually want it compiled-in so it
+> is available early in boot, make CPU_THERMAL depend on THERMAL being
+> compiled-in instead of allowing it to be a module.
 > 
-> Reported-by: Donghee Han <dh.han@samsung.com>
-> Reported-by: Sangkyu Kim <skwith.kim@samsung.com>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> As a result of this change, get rid of the ugly (!CPU_THERMAL ||
+> THERMAL) dependency in all cpufreq drivers using CPU_THERMAL.
+> 
+> Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  drivers/cpufreq/cpufreq.c      |  6 +++---
->  drivers/cpufreq/intel_pstate.c | 23 ++++++++++++-----------
->  include/linux/cpufreq.h        | 12 ++----------
->  3 files changed, 17 insertions(+), 24 deletions(-)
+>  drivers/cpufreq/Kconfig     | 3 ---
+>  drivers/cpufreq/Kconfig.arm | 5 -----
+>  drivers/thermal/Kconfig     | 1 +
+>  3 files changed, 1 insertion(+), 8 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index e35a886e00bc..ef0e33e21b98 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -545,13 +545,13 @@ EXPORT_SYMBOL_GPL(cpufreq_policy_transition_delay_us);
->   *                          SYSFS INTERFACE                          *
->   *********************************************************************/
->  static ssize_t show_boost(struct kobject *kobj,
-> -				 struct attribute *attr, char *buf)
-> +			  struct kobj_attribute *attr, char *buf)
->  {
->  	return sprintf(buf, "%d\n", cpufreq_driver->boost_enabled);
->  }
->  
-> -static ssize_t store_boost(struct kobject *kobj, struct attribute *attr,
-> -				  const char *buf, size_t count)
-> +static ssize_t store_boost(struct kobject *kobj, struct kobj_attribute *attr,
-> +			   const char *buf, size_t count)
->  {
->  	int ret, enable;
->  
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-> index dd66decf2087..5ab6a4fe93aa 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -895,7 +895,7 @@ static void intel_pstate_update_policies(void)
->  /************************** sysfs begin ************************/
->  #define show_one(file_name, object)					\
->  	static ssize_t show_##file_name					\
-> -	(struct kobject *kobj, struct attribute *attr, char *buf)	\
-> +	(struct kobject *kobj, struct kobj_attribute *attr, char *buf)	\
->  	{								\
->  		return sprintf(buf, "%u\n", global.object);		\
->  	}
-> @@ -904,7 +904,7 @@ static ssize_t intel_pstate_show_status(char *buf);
->  static int intel_pstate_update_status(const char *buf, size_t size);
->  
->  static ssize_t show_status(struct kobject *kobj,
-> -			   struct attribute *attr, char *buf)
-> +			   struct kobj_attribute *attr, char *buf)
->  {
->  	ssize_t ret;
->  
-> @@ -915,7 +915,7 @@ static ssize_t show_status(struct kobject *kobj,
->  	return ret;
->  }
->  
-> -static ssize_t store_status(struct kobject *a, struct attribute *b,
-> +static ssize_t store_status(struct kobject *a, struct kobj_attribute *b,
->  			    const char *buf, size_t count)
->  {
->  	char *p = memchr(buf, '\n', count);
-> @@ -929,7 +929,7 @@ static ssize_t store_status(struct kobject *a, struct attribute *b,
->  }
->  
->  static ssize_t show_turbo_pct(struct kobject *kobj,
-> -				struct attribute *attr, char *buf)
-> +				struct kobj_attribute *attr, char *buf)
->  {
->  	struct cpudata *cpu;
->  	int total, no_turbo, turbo_pct;
-> @@ -955,7 +955,7 @@ static ssize_t show_turbo_pct(struct kobject *kobj,
->  }
->  
->  static ssize_t show_num_pstates(struct kobject *kobj,
-> -				struct attribute *attr, char *buf)
-> +				struct kobj_attribute *attr, char *buf)
->  {
->  	struct cpudata *cpu;
->  	int total;
-> @@ -976,7 +976,7 @@ static ssize_t show_num_pstates(struct kobject *kobj,
->  }
->  
->  static ssize_t show_no_turbo(struct kobject *kobj,
-> -			     struct attribute *attr, char *buf)
-> +			     struct kobj_attribute *attr, char *buf)
->  {
->  	ssize_t ret;
->  
-> @@ -998,7 +998,7 @@ static ssize_t show_no_turbo(struct kobject *kobj,
->  	return ret;
->  }
->  
-> -static ssize_t store_no_turbo(struct kobject *a, struct attribute *b,
-> +static ssize_t store_no_turbo(struct kobject *a, struct kobj_attribute *b,
->  			      const char *buf, size_t count)
->  {
->  	unsigned int input;
-> @@ -1045,7 +1045,7 @@ static ssize_t store_no_turbo(struct kobject *a, struct attribute *b,
->  	return count;
->  }
->  
-> -static ssize_t store_max_perf_pct(struct kobject *a, struct attribute *b,
-> +static ssize_t store_max_perf_pct(struct kobject *a, struct kobj_attribute *b,
->  				  const char *buf, size_t count)
->  {
->  	unsigned int input;
-> @@ -1075,7 +1075,7 @@ static ssize_t store_max_perf_pct(struct kobject *a, struct attribute *b,
->  	return count;
->  }
->  
-> -static ssize_t store_min_perf_pct(struct kobject *a, struct attribute *b,
-> +static ssize_t store_min_perf_pct(struct kobject *a, struct kobj_attribute *b,
->  				  const char *buf, size_t count)
->  {
->  	unsigned int input;
-> @@ -1107,12 +1107,13 @@ static ssize_t store_min_perf_pct(struct kobject *a, struct attribute *b,
->  }
->  
->  static ssize_t show_hwp_dynamic_boost(struct kobject *kobj,
-> -				struct attribute *attr, char *buf)
-> +				struct kobj_attribute *attr, char *buf)
->  {
->  	return sprintf(buf, "%u\n", hwp_boost);
->  }
->  
-> -static ssize_t store_hwp_dynamic_boost(struct kobject *a, struct attribute *b,
-> +static ssize_t store_hwp_dynamic_boost(struct kobject *a,
-> +				       struct kobj_attribute *b,
->  				       const char *buf, size_t count)
->  {
->  	unsigned int input;
-> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> index c86d6d8bdfed..0b427d5df0fe 100644
-> --- a/include/linux/cpufreq.h
-> +++ b/include/linux/cpufreq.h
-> @@ -254,20 +254,12 @@ __ATTR(_name, 0644, show_##_name, store_##_name)
->  static struct freq_attr _name =			\
->  __ATTR(_name, 0200, NULL, store_##_name)
->  
-> -struct global_attr {
-> -	struct attribute attr;
-> -	ssize_t (*show)(struct kobject *kobj,
-> -			struct attribute *attr, char *buf);
-> -	ssize_t (*store)(struct kobject *a, struct attribute *b,
-> -			 const char *c, size_t count);
-> -};
-> -
->  #define define_one_global_ro(_name)		\
-> -static struct global_attr _name =		\
-> +static struct kobj_attribute _name =		\
->  __ATTR(_name, 0444, show_##_name, NULL)
->  
->  #define define_one_global_rw(_name)		\
-> -static struct global_attr _name =		\
-> +static struct kobj_attribute _name =		\
->  __ATTR(_name, 0644, show_##_name, store_##_name)
->  
->  
+> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+> index 608af20a3494..b22e6bba71f1 100644
+> --- a/drivers/cpufreq/Kconfig
+> +++ b/drivers/cpufreq/Kconfig
+> @@ -207,8 +207,6 @@ comment "CPU frequency scaling drivers"
+>  config CPUFREQ_DT
+>  	tristate "Generic DT based cpufreq driver"
+>  	depends on HAVE_CLK && OF
+> -	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
+> -	depends on !CPU_THERMAL || THERMAL
+>  	select CPUFREQ_DT_PLATDEV
+>  	select PM_OPP
+>  	help
+> @@ -327,7 +325,6 @@ endif
+>  config QORIQ_CPUFREQ
+>  	tristate "CPU frequency scaling driver for Freescale QorIQ SoCs"
+>  	depends on OF && COMMON_CLK && (PPC_E500MC || ARM || ARM64)
+> -	depends on !CPU_THERMAL || THERMAL
+>  	select CLK_QORIQ
+>  	help
+>  	  This adds the CPUFreq driver support for Freescale QorIQ SoCs
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 688f10227793..ca8567c3152c 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -29,8 +29,6 @@ config ARM_ARMADA_37XX_CPUFREQ
+>  config ARM_BIG_LITTLE_CPUFREQ
+>  	tristate "Generic ARM big LITTLE CPUfreq driver"
+>  	depends on ARM_CPU_TOPOLOGY && HAVE_CLK
+> -	# if CPU_THERMAL is on and THERMAL=m, ARM_BIT_LITTLE_CPUFREQ cannot be =y
+> -	depends on !CPU_THERMAL || THERMAL
+>  	select PM_OPP
+>  	help
+>  	  This enables the Generic CPUfreq driver for ARM big.LITTLE platforms.
+> @@ -38,7 +36,6 @@ config ARM_BIG_LITTLE_CPUFREQ
+>  config ARM_SCPI_CPUFREQ
+>  	tristate "SCPI based CPUfreq driver"
+>  	depends on ARM_SCPI_PROTOCOL && COMMON_CLK_SCPI
+> -	depends on !CPU_THERMAL || THERMAL
+>  	help
+>  	  This adds the CPUfreq driver support for ARM platforms using SCPI
+>  	  protocol for CPU power management.
+> @@ -93,7 +90,6 @@ config ARM_KIRKWOOD_CPUFREQ
+>  config ARM_MEDIATEK_CPUFREQ
+>  	tristate "CPU Frequency scaling support for MediaTek SoCs"
+>  	depends on ARCH_MEDIATEK && REGULATOR
+> -	depends on !CPU_THERMAL || THERMAL
+>  	select PM_OPP
+>  	help
+>  	  This adds the CPUFreq driver support for MediaTek SoCs.
+> @@ -233,7 +229,6 @@ config ARM_SA1110_CPUFREQ
+>  config ARM_SCMI_CPUFREQ
+>  	tristate "SCMI based CPUfreq driver"
+>  	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
+> -	depends on !CPU_THERMAL || THERMAL
+>  	select PM_OPP
+>  	help
+>  	  This adds the CPUfreq driver support for ARM platforms using SCMI
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index 30323426902e..58bb7d72dc2b 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -152,6 +152,7 @@ config CPU_THERMAL
+>  	bool "generic cpu cooling support"
+>  	depends on CPU_FREQ
+>  	depends on THERMAL_OF
+> +	depends on THERMAL=y
+>  	help
+>  	  This implements the generic cpu cooling mechanism through frequency
+>  	  reduction. An ACPI version of this already exists
 > 
 
 Applied, thanks!
