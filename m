@@ -2,158 +2,177 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A10C4C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:07:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D98A4C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EFE4207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:07:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tX5lc8qQ"
+	by mail.kernel.org (Postfix) with ESMTP id A6D8C207E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:08:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731846AbfA3QHS (ORCPT
+        id S1731733AbfA3QIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:07:18 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33594 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728726AbfA3QHR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:07:17 -0500
-Received: by mail-qt1-f194.google.com with SMTP id l11so102418qtp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 08:07:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tEC/1d7HwlRgQF4JsIh02lHiS2ctUBvLOXuE7PW9NQU=;
-        b=tX5lc8qQqbp5g+iqJQ4JUu2U0Lmtx89xg3dB9WyPxbZsrDUS3OG2NVS86u++i+nijC
-         7+7XiF+PUXR8O9Jvqti9eyQHDhPkcyXMxPUVejvZ+dSTo6RQ26eWItDJfvkUTJ/TcwSk
-         ycDj5VbTaCuSf77ZCqWqVnH4DHbOdbjd5FXQzCCO4a5KtvBfGNz6cdb9t7Yxp8Iu5+Xa
-         nMFXUJPFLZ9XS28UhonNZwjFg74TwtQaMlPfcQcjw9dAFJgBgG5WD7nAe7CbBMG0pqmC
-         bfhr0NsAnqe7f0Q/+EmuLY5ccLWKBS9sRi4aU9Y8E7vjbqwxWyKcNv2dI/1qc1snHgJN
-         2Uxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tEC/1d7HwlRgQF4JsIh02lHiS2ctUBvLOXuE7PW9NQU=;
-        b=aGgH/0dpJf5BlmtqYb8qfrLEbooRzithOT0MtN/Wm10cBraekXcO6aW7CaGEfI8+Ii
-         zhMw8D6gMwZJ7zhjpngNgtId0PMFKNIDnni/spJaqWIB1i6ba1ZHHbk6GXAJTBT7UV8C
-         rA8863bxHPUcFeUBzvWGu1E2lS4z43kIOiPXnwQM3QLxnPzngyApEzNifkNHX/Ww2OHi
-         jwlh5MyoxnZrxVyX5dj1Y29s5/2NdayWAMQHgA2UUrc8VWID2pPuuKMcAbDZRG7ff9BI
-         O1Ts8xDqqhTUc/w6oX2tJwH6ivHVAn31OaOjAXjOB+eRz+PT6mySLiH5kfZwds3eSQnj
-         PD0w==
-X-Gm-Message-State: AJcUukdanNf0yb3cZisBSPca0eOaPtgFubULe31fO5jkdFuzhOUBLPuN
-        Thw8yDLC3+ZooXXwTewhmuc=
-X-Google-Smtp-Source: ALg8bN5ZMOX1R8ucVKpM3hmvserhCd+POspecpXR13DEX2Dyq1hh/KUUwWW3wye6g80YGd9ti0Du3w==
-X-Received: by 2002:a0c:81c4:: with SMTP id 4mr30036967qve.156.1548864436074;
-        Wed, 30 Jan 2019 08:07:16 -0800 (PST)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id d85sm1790571qkb.89.2019.01.30.08.07.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 08:07:15 -0800 (PST)
-Date:   Wed, 30 Jan 2019 14:07:11 -0200
-From:   Shayenne Moura <shayenneluzmoura@gmail.com>
-To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm: vkms: Bugfix racing hrtimer vblank handle
-Message-ID: <e2e4b8f3a5cab7b2dba75bf1930f86b0a4ee08c9.1548856186.git.shayenneluzmoura@gmail.com>
-References: <cover.1548856186.git.shayenneluzmoura@gmail.com>
+        Wed, 30 Jan 2019 11:08:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49184 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728042AbfA3QIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:08:45 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7E2D6C062D16;
+        Wed, 30 Jan 2019 16:08:45 +0000 (UTC)
+Received: from [10.36.112.68] (ovpn-112-68.ams2.redhat.com [10.36.112.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AC023100164E;
+        Wed, 30 Jan 2019 16:08:43 +0000 (UTC)
+Subject: Re: [PATCH] kvm: Use struct_size() in kmalloc()
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190104162910.GA25118@embeddedor>
+ <4c4093b5-814d-3337-bc26-d6a491a7944e@embeddedor.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <dde9554e-4fd0-ba8d-bb3f-047c4bf3c84b@redhat.com>
+Date:   Wed, 30 Jan 2019 17:08:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1548856186.git.shayenneluzmoura@gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <4c4093b5-814d-3337-bc26-d6a491a7944e@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 30 Jan 2019 16:08:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the vblank irq happens, kernel time subsystem executes
-`vkms_vblank_simulate`. In parallel or not, it prepares all stuff
-necessary to the next vblank with arm, and it must flush these
-stuff before the next vblank irq. However, vblank counter is ahead
-when arm is executed in parallel with handle vblank.
+On 29/01/19 18:20, Gustavo A. R. Silva wrote:
+> Hi all,
+> 
+> Friendly ping:
+> 
+> Who can take this?
 
-CPU 0:					CPU 1:
- |					 |
-atomic_commit_tail is ongoing		 |
- |					 |
- |					hrtimer: vkms_vblank_simulate()
- |					 |
- |					drm_crtc_handle_vblank()
- |					 |
-drm_crtc_arm_vblank()			 |
- |					 |
-->get_vblank_timestamp()		 |
- |					 |
- |					hrtimer_forward_now()
+I cannot find the original message in my inbox, but I've queued it from
+the quote below.
 
-Then, we should guarantee that the vblank interval time is correct
-(not changed) before finish the vblank handle.
+Thanks,
 
-Fix the bug including the call to `hrtimer_forward_now()` in the same
-lock of `drm_crtc_handle_vblank()` to ensure that the timestamp update
-is correct when finish the vblank handle.
+Paolo
 
-Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
----
- drivers/gpu/drm/vkms/vkms_crtc.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-index 23146ff2a25b..5a095610726b 100644
---- a/drivers/gpu/drm/vkms/vkms_crtc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-@@ -10,13 +10,17 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_probe_helper.h>
- 
--static void _vblank_handle(struct vkms_output *output)
-+static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
- {
-+	struct vkms_output *output = container_of(timer, struct vkms_output,
-+						  vblank_hrtimer);
- 	struct drm_crtc *crtc = &output->crtc;
- 	struct vkms_crtc_state *state = to_vkms_crtc_state(crtc->state);
-+	int ret_overrun;
- 	bool ret;
- 
- 	spin_lock(&output->lock);
-+
- 	ret = drm_crtc_handle_vblank(crtc);
- 	if (!ret)
- 		DRM_ERROR("vkms failure on handling vblank");
-@@ -37,19 +41,9 @@ static void _vblank_handle(struct vkms_output *output)
- 			DRM_WARN("failed to queue vkms_crc_work_handle");
- 	}
- 
--	spin_unlock(&output->lock);
--}
--
--static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
--{
--	struct vkms_output *output = container_of(timer, struct vkms_output,
--						  vblank_hrtimer);
--	int ret_overrun;
--
--	_vblank_handle(output);
--
- 	ret_overrun = hrtimer_forward_now(&output->vblank_hrtimer,
- 					  output->period_ns);
-+	spin_unlock(&output->lock);
- 
- 	return HRTIMER_RESTART;
- }
--- 
-2.17.1
+> Thanks
+> --
+> Gustavo
+> 
+> On 1/4/19 10:29 AM, Gustavo A. R. Silva wrote:
+>> One of the more common cases of allocation size calculations is finding
+>> the size of a structure that has a zero-sized array at the end, along
+>> with memory for some number of elements for that array. For example:
+>>
+>> struct foo {
+>>     int stuff;
+>>     void *entry[];
+>> };
+>>
+>> instance = kmalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+>>
+>> Instead of leaving these open-coded and prone to type mistakes, we can
+>> now use the new struct_size() helper:
+>>
+>> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>>
+>> This code was detected with the help of Coccinelle.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  virt/kvm/kvm_main.c | 8 ++++----
+>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+>> index 666d0155662d..635b12fdbab8 100644
+>> --- a/virt/kvm/kvm_main.c
+>> +++ b/virt/kvm/kvm_main.c
+>> @@ -3709,8 +3709,8 @@ int kvm_io_bus_register_dev(struct kvm *kvm, enum kvm_bus bus_idx, gpa_t addr,
+>>  	if (bus->dev_count - bus->ioeventfd_count > NR_IOBUS_DEVS - 1)
+>>  		return -ENOSPC;
+>>  
+>> -	new_bus = kmalloc(sizeof(*bus) + ((bus->dev_count + 1) *
+>> -			  sizeof(struct kvm_io_range)), GFP_KERNEL);
+>> +	new_bus = kmalloc(struct_size(bus, range, bus->dev_count + 1),
+>> +			  GFP_KERNEL);
+>>  	if (!new_bus)
+>>  		return -ENOMEM;
+>>  
+>> @@ -3755,8 +3755,8 @@ void kvm_io_bus_unregister_dev(struct kvm *kvm, enum kvm_bus bus_idx,
+>>  	if (i == bus->dev_count)
+>>  		return;
+>>  
+>> -	new_bus = kmalloc(sizeof(*bus) + ((bus->dev_count - 1) *
+>> -			  sizeof(struct kvm_io_range)), GFP_KERNEL);
+>> +	new_bus = kmalloc(struct_size(bus, range, bus->dev_count - 1),
+>> +			  GFP_KERNEL);
+>>  	if (!new_bus)  {
+>>  		pr_err("kvm: failed to shrink bus, removing it completely\n");
+>>  		goto broken;
+>>
 
