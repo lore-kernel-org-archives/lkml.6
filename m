@@ -2,78 +2,92 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA83C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14ED0C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 657B621473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC612086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:50:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="QpOIx62d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732265AbfA3Qqr (ORCPT
+        id S1732089AbfA3Que (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:46:47 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46405 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728672AbfA3Qqr (ORCPT
+        Wed, 30 Jan 2019 11:50:34 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:54046 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728469AbfA3Qud (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:46:47 -0500
-Received: by mail-qk1-f193.google.com with SMTP id q1so80538qkf.13;
-        Wed, 30 Jan 2019 08:46:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dBnBWYuLFJRbcDQmCg5Vi1CYtIFdJ7zoLkwsEYFcMg4=;
-        b=ATXrqVbx3NrIr/5en6r8WoKQQTRTRiHkaDe8dn1nZoH9BSjZYOXL3PoTPQT79Gm2vu
-         h1c91LnZuI61WYXA9RINXgmtuE8ufRdG5aJLlYclkYeO/HHAZUdBCA3OUttPIn1/OI32
-         7LzJT9wRkAEaWkQwn9ifq2oSC+qvvp4Y35uu5lxeyztkSJhcodbvemqxFaczXU5BN8KN
-         vkFu7uR9/9rll3apr63kBdmqsp3U6ggFvviXFL0HjpHNGABpYDVthrPh3DKUUm+i775c
-         /fjOojzBM8cS3AzCxVxtxCjEybQgptc4tclEfxdhWs/k5oKHK8yYmB3jwgJ47+PDOJp5
-         2lmw==
-X-Gm-Message-State: AJcUukdBNd8v5JhsOyOu1GeDaheHuQyzfqYafzc17w6Vb4Ezxut789xF
-        smHHLhGC0s6f+u5QsziYEajSdjbzpblQe371lUYE+w==
-X-Google-Smtp-Source: ALg8bN6jYsmd+UgbwoTKJy9IxTvlceLNqrE+jWbHcGU8+0xxu59xNb7PYeU8M5gTWQX2yKZawf40fJ9yxHf3joB5Wiw=
-X-Received: by 2002:ae9:d8c2:: with SMTP id u185mr27015236qkf.107.1548866806420;
- Wed, 30 Jan 2019 08:46:46 -0800 (PST)
+        Wed, 30 Jan 2019 11:50:33 -0500
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id 6868224E214B;
+        Wed, 30 Jan 2019 08:50:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1548867033; bh=RZPaXkmfDA4GN4ToSvsbELRA7pbqs6LZTY7fmwWmXc4=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=QpOIx62dWEabj2uL/tA48f7+RRDsp3mgC6Za7MM8BFfuAg/xOzORKQXG82VhZD7GL
+         JyXeHHgRH6pZ7glm3hb86Xj680Jvn5iFKs6dJUwv6QwgcsuyvYLv4o1HOKeRawqaMz
+         n83Y/jl/yvYH0/lOWAVR6yFaroN6dAabV1/LObDDR+7MO9q1K3JBUTKxhlyvFUDtYg
+         BgCwMNuRD9LWpuOS1B/Srr97s8IZibKImB+c1BzUk700C+ecXw4zuGbGyov3oisaJH
+         4ZZDefjweeh/0QbzHjk7NVUzTq8M/WWXrvDKQ7/TEL4zoHp3iJAOFDoev6C1hW4f7R
+         Nn/e3iSLB+uiA==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 5AF58A0091;
+        Wed, 30 Jan 2019 16:50:33 +0000 (UTC)
+Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
+ by US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
+ 14.03.0415.000; Wed, 30 Jan 2019 08:47:52 -0800
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
+        "Eugeniy.Paltsev@synopsys.com" <eugeniy.paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <alexey.brodkin@synopsys.com>
+Subject: Re: [PATCH 2/5] ARCv2: introduce unaligned access under a Kconfig
+ option
+Thread-Topic: [PATCH 2/5] ARCv2: introduce unaligned access under a Kconfig
+ option
+Thread-Index: AQHUt8BdV97GEf2KMUGRvvMb2YNphA==
+Date:   Wed, 30 Jan 2019 16:47:52 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014642D8B6@US01WEMBX2.internal.synopsys.com>
+References: <20190129104942.31705-1-Eugeniy.Paltsev@synopsys.com>
+ <20190129104942.31705-3-Eugeniy.Paltsev@synopsys.com>
+ <C2D7FE5348E1B147BCA15975FBA23075014642D58D@US01WEMBX2.internal.synopsys.com>
+ <1548866682.29008.31.camel@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.106]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <cover.1548052878.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1548052878.git.baolin.wang@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 30 Jan 2019 17:46:29 +0100
-Message-ID: <CAK8P3a3UROFLTtEcNXKtMUN283UQ6auQUOXCR=6e3BdLu5K8Nw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Add new device nodes for Spreadtrum SC9860 platform
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        DTML <devicetree@vger.kernel.org>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 8:39 AM Baolin Wang <baolin.wang@linaro.org> wrote:
->
-> This patch set adds charger and fuel gauge device nodes for Spreadtrum
-> SC2731 PMIC, it also removes redundant irq trigger setting for PMIC
-> devices and adds nvmem cells for ADC to calibrate the ADC channel scales.
->
-> Baolin Wang (4):
->   arm64: dts: sprd: Remove PMIC INTC irq trigger type
->   arm64: dts: sprd: Add ADC calibration support
->   arm64: dts: sprd: Add SC2731 charger device
->   arm64: dts: sprd: Add SC27XX fuel gauge device
-
-I did not apply these because of the 'sc27xx' wildcard matching.
-
-Please fix those up and resend.
-
-      Arnd
+On 1/30/19 8:44 AM, Eugeniy Paltsev wrote:=0A=
+>> I'd prefer to change the define of STATUS_AD_MASK itself and keep all of=
+ this=0A=
+>> unchanged !=0A=
+>>=0A=
+> Actually I'd prefer to leave STATUS_AD_MASK untouched. Otherwise we will =
+implicitly assign=0A=
+> wrong value to STATUS_AD_MASK which is quite misleading.=0A=
+>=0A=
+> BTW, STATUS_AD_MASK is used in ASM code in v2 patch and it shouldn't be d=
+ependent on=0A=
+> CONFIG_ARC_USE_UNALIGNED_MEM_ACCESS.=0A=
+=0A=
+Agree !=0A=
+=0A=
+-Vineet=0A=
