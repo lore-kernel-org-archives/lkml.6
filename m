@@ -2,40 +2,39 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07218C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19796C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE67720882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB46920882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:48:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731046AbfA3Mra (ORCPT
+        id S1731187AbfA3MsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:47:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44024 "EHLO mx1.suse.de"
+        Wed, 30 Jan 2019 07:48:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44370 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730944AbfA3MrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 07:47:19 -0500
+        id S1730851AbfA3Mra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 07:47:30 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11E9FB034;
-        Wed, 30 Jan 2019 12:47:17 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 57B5BB10E;
+        Wed, 30 Jan 2019 12:47:28 +0000 (UTC)
 From:   Jiri Slaby <jslaby@suse.cz>
 To:     mingo@redhat.com
 Cc:     bp@alien8.de, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v7 02/28] x86/asm/suspend: drop ENTRY from local data
-Date:   Wed, 30 Jan 2019 13:46:45 +0100
-Message-Id: <20190130124711.12463-3-jslaby@suse.cz>
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org, xen-devel@lists.xenproject.org
+Subject: [PATCH v7 20/28] x86/asm: make some functions local
+Date:   Wed, 30 Jan 2019 13:47:03 +0100
+Message-Id: <20190130124711.12463-21-jslaby@suse.cz>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190130124711.12463-1-jslaby@suse.cz>
 References: <20190130124711.12463-1-jslaby@suse.cz>
@@ -46,68 +45,323 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ENTRY was intended for functions and shall be paired with ENDPROC.
-ENTRY also aligns symbols which creates unnecessary holes here between
-data.
-
-So drop ENTRY from saved_eip in wakeup_32 and many saved_* in wakeup_64,
-as these symbols are local only.
-
-We could use SYM_DATA_LOCAL for these symbols, but it was discouraged
-earlier [1].
-
-[1] https://lkml.org/lkml/2017/4/27/244
+There is a couple of assembly functions, which are invoked only locally
+in the file they are defined. In C, we mark them "static". In assembly,
+annotate them using SYM_{FUNC,CODE}_START_LOCAL (and switch their
+ENDPROC to SYM_{FUNC,CODE}_END too). Whether we use FUNC or CODE,
+depends on whether ENDPROC or END was used for a particular function
+before.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Cc: Len Brown <len.brown@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
-Cc: linux-pm@vger.kernel.org
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-efi@vger.kernel.org
+Cc: xen-devel@lists.xenproject.org
 ---
- arch/x86/kernel/acpi/wakeup_32.S |  2 +-
- arch/x86/kernel/acpi/wakeup_64.S | 12 ++++++------
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ arch/x86/boot/compressed/efi_thunk_64.S |  8 ++++----
+ arch/x86/entry/entry_64.S               | 21 +++++++++++----------
+ arch/x86/lib/copy_page_64.S             |  4 ++--
+ arch/x86/lib/memcpy_64.S                | 12 ++++++------
+ arch/x86/lib/memset_64.S                |  8 ++++----
+ arch/x86/platform/efi/efi_thunk_64.S    | 12 ++++++------
+ arch/x86/platform/pvh/head.S            |  4 ++--
+ 7 files changed, 35 insertions(+), 34 deletions(-)
 
-diff --git a/arch/x86/kernel/acpi/wakeup_32.S b/arch/x86/kernel/acpi/wakeup_32.S
-index 0c26b1b44e51..4203d4f0c68d 100644
---- a/arch/x86/kernel/acpi/wakeup_32.S
-+++ b/arch/x86/kernel/acpi/wakeup_32.S
-@@ -90,7 +90,7 @@ ret_point:
- .data
- ALIGN
- ENTRY(saved_magic)	.long	0
--ENTRY(saved_eip)	.long	0
-+saved_eip:		.long 0
+diff --git a/arch/x86/boot/compressed/efi_thunk_64.S b/arch/x86/boot/compressed/efi_thunk_64.S
+index d66000d23921..31312070db22 100644
+--- a/arch/x86/boot/compressed/efi_thunk_64.S
++++ b/arch/x86/boot/compressed/efi_thunk_64.S
+@@ -99,12 +99,12 @@ ENTRY(efi64_thunk)
+ 	ret
+ ENDPROC(efi64_thunk)
  
- # saved registers
- saved_idt:	.long	0,0
-diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
-index 50b8ed0317a3..510fa12aab73 100644
---- a/arch/x86/kernel/acpi/wakeup_64.S
-+++ b/arch/x86/kernel/acpi/wakeup_64.S
-@@ -125,12 +125,12 @@ ENTRY(do_suspend_lowlevel)
- ENDPROC(do_suspend_lowlevel)
+-ENTRY(efi_exit32)
++SYM_FUNC_START_LOCAL(efi_exit32)
+ 	movq	func_rt_ptr(%rip), %rax
+ 	push	%rax
+ 	mov	%rdi, %rax
+ 	ret
+-ENDPROC(efi_exit32)
++SYM_FUNC_END(efi_exit32)
  
- .data
--ENTRY(saved_rbp)	.quad	0
--ENTRY(saved_rsi)	.quad	0
--ENTRY(saved_rdi)	.quad	0
--ENTRY(saved_rbx)	.quad	0
-+saved_rbp:		.quad	0
-+saved_rsi:		.quad	0
-+saved_rdi:		.quad	0
-+saved_rbx:		.quad	0
+ 	.code32
+ /*
+@@ -112,7 +112,7 @@ ENDPROC(efi_exit32)
+  *
+  * The stack should represent the 32-bit calling convention.
+  */
+-ENTRY(efi_enter32)
++SYM_FUNC_START_LOCAL(efi_enter32)
+ 	movl	$__KERNEL_DS, %eax
+ 	movl	%eax, %ds
+ 	movl	%eax, %es
+@@ -172,7 +172,7 @@ ENTRY(efi_enter32)
+ 	btsl	$X86_CR0_PG_BIT, %eax
+ 	movl	%eax, %cr0
+ 	lret
+-ENDPROC(efi_enter32)
++SYM_FUNC_END(efi_enter32)
  
--ENTRY(saved_rip)	.quad	0
--ENTRY(saved_rsp)	.quad	0
-+saved_rip:		.quad	0
-+saved_rsp:		.quad	0
+ 	.data
+ 	.balign	8
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 6b60e5e6531c..2fe59c693732 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1046,7 +1046,8 @@ idtentry hypervisor_callback xen_do_hypervisor_callback has_error_code=0
+  * existing activation in its critical region -- if so, we pop the current
+  * activation and restart the handler using the previous one.
+  */
+-ENTRY(xen_do_hypervisor_callback)		/* do_hypervisor_callback(struct *pt_regs) */
++/* do_hypervisor_callback(struct *pt_regs) */
++SYM_CODE_START_LOCAL(xen_do_hypervisor_callback)
  
- ENTRY(saved_magic)	.quad	0
+ /*
+  * Since we don't modify %rdi, evtchn_do_upall(struct *pt_regs) will
+@@ -1064,7 +1065,7 @@ ENTRY(xen_do_hypervisor_callback)		/* do_hypervisor_callback(struct *pt_regs) */
+ 	call	xen_maybe_preempt_hcall
+ #endif
+ 	jmp	error_exit
+-END(xen_do_hypervisor_callback)
++SYM_CODE_END(xen_do_hypervisor_callback)
+ 
+ /*
+  * Hypervisor uses this for application faults while it executes.
+@@ -1155,7 +1156,7 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
+  * Use slow, but surefire "are we in kernel?" check.
+  * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
+  */
+-ENTRY(paranoid_entry)
++SYM_CODE_START_LOCAL(paranoid_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+ 	PUSH_AND_CLEAR_REGS save_ret=1
+@@ -1182,7 +1183,7 @@ ENTRY(paranoid_entry)
+ 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
+ 
+ 	ret
+-END(paranoid_entry)
++SYM_CODE_END(paranoid_entry)
+ 
+ /*
+  * "Paranoid" exit path from exception stack.  This is invoked
+@@ -1196,7 +1197,7 @@ END(paranoid_entry)
+  *
+  * On entry, ebx is "no swapgs" flag (1: don't need swapgs, 0: need it)
+  */
+-ENTRY(paranoid_exit)
++SYM_CODE_START_LOCAL(paranoid_exit)
+ 	UNWIND_HINT_REGS
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	TRACE_IRQS_OFF_DEBUG
+@@ -1213,12 +1214,12 @@ ENTRY(paranoid_exit)
+ 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+ .Lparanoid_exit_restore:
+ 	jmp restore_regs_and_return_to_kernel
+-END(paranoid_exit)
++SYM_CODE_END(paranoid_exit)
+ 
+ /*
+  * Save all registers in pt_regs, and switch GS if needed.
+  */
+-ENTRY(error_entry)
++SYM_CODE_START_LOCAL(error_entry)
+ 	UNWIND_HINT_FUNC
+ 	cld
+ 	PUSH_AND_CLEAR_REGS save_ret=1
+@@ -1302,16 +1303,16 @@ ENTRY(error_entry)
+ 	call	fixup_bad_iret
+ 	mov	%rax, %rsp
+ 	jmp	.Lerror_entry_from_usermode_after_swapgs
+-END(error_entry)
++SYM_CODE_END(error_entry)
+ 
+-ENTRY(error_exit)
++SYM_CODE_START_LOCAL(error_exit)
+ 	UNWIND_HINT_REGS
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	TRACE_IRQS_OFF
+ 	testb	$3, CS(%rsp)
+ 	jz	retint_kernel
+ 	jmp	retint_user
+-END(error_exit)
++SYM_CODE_END(error_exit)
+ 
+ /*
+  * Runs on exception stack.  Xen PV does not go through this path at all,
+diff --git a/arch/x86/lib/copy_page_64.S b/arch/x86/lib/copy_page_64.S
+index fd2d09afa097..f505870bd93b 100644
+--- a/arch/x86/lib/copy_page_64.S
++++ b/arch/x86/lib/copy_page_64.S
+@@ -21,7 +21,7 @@ ENTRY(copy_page)
+ ENDPROC(copy_page)
+ EXPORT_SYMBOL(copy_page)
+ 
+-ENTRY(copy_page_regs)
++SYM_FUNC_START_LOCAL(copy_page_regs)
+ 	subq	$2*8,	%rsp
+ 	movq	%rbx,	(%rsp)
+ 	movq	%r12,	1*8(%rsp)
+@@ -86,4 +86,4 @@ ENTRY(copy_page_regs)
+ 	movq	1*8(%rsp), %r12
+ 	addq	$2*8, %rsp
+ 	ret
+-ENDPROC(copy_page_regs)
++SYM_FUNC_END(copy_page_regs)
+diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
+index 68fcd8f9a48b..cac0e1ad8ed2 100644
+--- a/arch/x86/lib/memcpy_64.S
++++ b/arch/x86/lib/memcpy_64.S
+@@ -28,7 +28,7 @@
+  * rax original destination
+  */
+ SYM_FUNC_START_ALIAS(__memcpy)
+-ENTRY(memcpy)
++SYM_FUNC_START_LOCAL(memcpy)
+ 	ALTERNATIVE_2 "jmp memcpy_orig", "", X86_FEATURE_REP_GOOD, \
+ 		      "jmp memcpy_erms", X86_FEATURE_ERMS
+ 
+@@ -40,7 +40,7 @@ ENTRY(memcpy)
+ 	movl %edx, %ecx
+ 	rep movsb
+ 	ret
+-ENDPROC(memcpy)
++SYM_FUNC_END(memcpy)
+ SYM_FUNC_END_ALIAS(__memcpy)
+ EXPORT_SYMBOL(memcpy)
+ EXPORT_SYMBOL(__memcpy)
+@@ -49,14 +49,14 @@ EXPORT_SYMBOL(__memcpy)
+  * memcpy_erms() - enhanced fast string memcpy. This is faster and
+  * simpler than memcpy. Use memcpy_erms when possible.
+  */
+-ENTRY(memcpy_erms)
++SYM_FUNC_START_LOCAL(memcpy_erms)
+ 	movq %rdi, %rax
+ 	movq %rdx, %rcx
+ 	rep movsb
+ 	ret
+-ENDPROC(memcpy_erms)
++SYM_FUNC_END(memcpy_erms)
+ 
+-ENTRY(memcpy_orig)
++SYM_FUNC_START_LOCAL(memcpy_orig)
+ 	movq %rdi, %rax
+ 
+ 	cmpq $0x20, %rdx
+@@ -181,7 +181,7 @@ ENTRY(memcpy_orig)
+ 
+ .Lend:
+ 	retq
+-ENDPROC(memcpy_orig)
++SYM_FUNC_END(memcpy_orig)
+ 
+ #ifndef CONFIG_UML
+ 
+diff --git a/arch/x86/lib/memset_64.S b/arch/x86/lib/memset_64.S
+index 927ac44d34aa..564abf9ecedb 100644
+--- a/arch/x86/lib/memset_64.S
++++ b/arch/x86/lib/memset_64.S
+@@ -59,16 +59,16 @@ EXPORT_SYMBOL(__memset)
+  *
+  * rax   original destination
+  */
+-ENTRY(memset_erms)
++SYM_FUNC_START_LOCAL(memset_erms)
+ 	movq %rdi,%r9
+ 	movb %sil,%al
+ 	movq %rdx,%rcx
+ 	rep stosb
+ 	movq %r9,%rax
+ 	ret
+-ENDPROC(memset_erms)
++SYM_FUNC_END(memset_erms)
+ 
+-ENTRY(memset_orig)
++SYM_FUNC_START_LOCAL(memset_orig)
+ 	movq %rdi,%r10
+ 
+ 	/* expand byte value  */
+@@ -139,4 +139,4 @@ ENTRY(memset_orig)
+ 	subq %r8,%rdx
+ 	jmp .Lafter_bad_alignment
+ .Lfinal:
+-ENDPROC(memset_orig)
++SYM_FUNC_END(memset_orig)
+diff --git a/arch/x86/platform/efi/efi_thunk_64.S b/arch/x86/platform/efi/efi_thunk_64.S
+index 46c58b08739c..d677a7eb2d0a 100644
+--- a/arch/x86/platform/efi/efi_thunk_64.S
++++ b/arch/x86/platform/efi/efi_thunk_64.S
+@@ -67,7 +67,7 @@ ENDPROC(efi64_thunk)
+  *
+  * This function must be invoked with a 1:1 mapped stack.
+  */
+-ENTRY(__efi64_thunk)
++SYM_FUNC_START_LOCAL(__efi64_thunk)
+ 	movl	%ds, %eax
+ 	push	%rax
+ 	movl	%es, %eax
+@@ -114,14 +114,14 @@ ENTRY(__efi64_thunk)
+ 	or	%rcx, %rax
+ 1:
+ 	ret
+-ENDPROC(__efi64_thunk)
++SYM_FUNC_END(__efi64_thunk)
+ 
+-ENTRY(efi_exit32)
++SYM_FUNC_START_LOCAL(efi_exit32)
+ 	movq	func_rt_ptr(%rip), %rax
+ 	push	%rax
+ 	mov	%rdi, %rax
+ 	ret
+-ENDPROC(efi_exit32)
++SYM_FUNC_END(efi_exit32)
+ 
+ 	.code32
+ /*
+@@ -129,7 +129,7 @@ ENDPROC(efi_exit32)
+  *
+  * The stack should represent the 32-bit calling convention.
+  */
+-ENTRY(efi_enter32)
++SYM_FUNC_START_LOCAL(efi_enter32)
+ 	movl	$__KERNEL_DS, %eax
+ 	movl	%eax, %ds
+ 	movl	%eax, %es
+@@ -145,7 +145,7 @@ ENTRY(efi_enter32)
+ 	pushl	%eax
+ 
+ 	lret
+-ENDPROC(efi_enter32)
++SYM_FUNC_END(efi_enter32)
+ 
+ 	.data
+ 	.balign	8
+diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
+index 4e63480bb223..43b4d864817e 100644
+--- a/arch/x86/platform/pvh/head.S
++++ b/arch/x86/platform/pvh/head.S
+@@ -50,7 +50,7 @@
+ #define PVH_DS_SEL		(PVH_GDT_ENTRY_DS * 8)
+ #define PVH_CANARY_SEL		(PVH_GDT_ENTRY_CANARY * 8)
+ 
+-ENTRY(pvh_start_xen)
++SYM_CODE_START_LOCAL(pvh_start_xen)
+ 	cld
+ 
+ 	lgdt (_pa(gdt))
+@@ -146,7 +146,7 @@ ENTRY(pvh_start_xen)
+ 
+ 	ljmp $PVH_CS_SEL, $_pa(startup_32)
+ #endif
+-END(pvh_start_xen)
++SYM_CODE_END(pvh_start_xen)
+ 
+ 	.section ".init.data","aw"
+ 	.balign 8
 -- 
 2.20.1
 
