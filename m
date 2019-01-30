@@ -4,65 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD36C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A27C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAD0020870
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:15:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81D7620870
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:15:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sweptlaser-com.20150623.gappssmtp.com header.i=@sweptlaser-com.20150623.gappssmtp.com header.b="vTZ2B3C0"
+	dkim=pass (2048-bit key) header.d=sweptlaser-com.20150623.gappssmtp.com header.i=@sweptlaser-com.20150623.gappssmtp.com header.b="ffSkBNAz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731871AbfA3QPF (ORCPT
+        id S1731893AbfA3QPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:15:05 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37241 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731704AbfA3QPD (ORCPT
+        Wed, 30 Jan 2019 11:15:11 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:33870 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731698AbfA3QPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:15:03 -0500
-Received: by mail-it1-f195.google.com with SMTP id b5so160314iti.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 08:15:03 -0800 (PST)
+        Wed, 30 Jan 2019 11:15:02 -0500
+Received: by mail-it1-f194.google.com with SMTP id x124so5013itd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 08:15:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sweptlaser-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=IxHZdTZ6J0dpqWIVklavMlPQmX6oRc8uMd+DCSk6CDk=;
-        b=vTZ2B3C0M+IYtIE+1ZByVSr8uvDds1bkorJ/izZWC9z03JVXu7LuwmOcAq7fYn/9A9
-         dECDOKcTnhGbsU4+R66PctMZE6QSBEmZEOg0tMLmI50ViTKwGfaQOHzUii0lg7reCGEP
-         Ji1zrX01M+XLtHTl7ovxPap/JJkvfqbY8mOgO0d97h7JkFh0eWcuNVR02Gh+kLOIj2er
-         IsQnSZ00aiLf1Om6b1YoTJjus6zBQf3WRxsTO6Lb+XZVQgOqnYynfdrsokOVdaTtGNs0
-         fEBnVOZfZ+G77ScaOwoMNr7p+d+XwjCMTfaz/HtVI1qaZIr4m64KrLfsHYdrvb3wQlkZ
-         StNQ==
+        bh=n87F7pJdSAtJ20hpmsYWm9ZL9IJl9q5DpuciH9mrZRU=;
+        b=ffSkBNAzzIiEUJmsYX+I5tnojD3JHR82Kc1PkiH4ldQHewkA/E7BbKs2srQeYk92FS
+         rHJquQ/YcD6pBLRfe1Or2/1SS4G5ttZk9QOdVlwAy8DKC80OCIbz4XNyKkGwWvcRGwO/
+         UTCXNqAZyutfJqnurBHQp7WKh5ZdgBpkj66m6QDkOAGIKBW3/YBmYAj9Z8WiknF/25Je
+         QZo14vAPqObZiykfDJ+qVkRzBp2cyHaGDwh2771MxGi1T7MkvzicjWz2Cde7fRrmJYsB
+         KSJphr+kqfsmj4XUTXbYAK5K1Rs6uPd567owpo+kw1hQoqhP181UiWSzWakTnyvLOWMR
+         C1cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=IxHZdTZ6J0dpqWIVklavMlPQmX6oRc8uMd+DCSk6CDk=;
-        b=qmBh0UdHuGnfG+aHNXezOskbEkSmhqKG+jOwGEFpvjxdWI6mw9lSFIu3EbKFICcukk
-         GJozDS07nQtJFJJXtsqiTZ5rwZ8t3wPi4JK3ZwCxZzXsXNpTnRIT3jBVdIe1YEzhWwYh
-         uUkSsCWCxMsF5QJUUNqIpBrCA/fgJgVSqgW4pkArszCl2CrYzbLW9PLbDGpUdmkqLvBT
-         zAe/624tA9N7pH9MpMzAhsgR5ghW3Ty3Yjrxj6bAHM6PPx9uFMkAp1d5vdyTpecXWLnB
-         NQO1niva4Fz5lPZ79tLVMm7d3DMcGeIXYf54wzLX7lD/SOZztTxVJwlgSK4Ud/VtfpJo
-         oEwg==
-X-Gm-Message-State: AJcUukfLGZtIBo7/Wz4yjEFyae97IRzj8BlG22ckjuABu+WjKzJBegsK
-        1DAOPUVQeFDbwizNtmA0p+th6A==
-X-Google-Smtp-Source: ALg8bN6hyhlWNG+Bom6AsDIWg3dMrA988+TESAa8wqmvOcTJKaKcwDSR2/4FsfXMcE+mFTIDdDWPKg==
-X-Received: by 2002:a24:710:: with SMTP id f16mr14079927itf.121.1548864902945;
-        Wed, 30 Jan 2019 08:15:02 -0800 (PST)
+        bh=n87F7pJdSAtJ20hpmsYWm9ZL9IJl9q5DpuciH9mrZRU=;
+        b=VcJgVK+q4L87US6KM7picGGbErc2yZV5gVToFZupTU3TyQp6vz3WD/JUhCkkF4qo6r
+         UIwegO9KU5PcBM4y6KBGK6VQrWoZuSSvwXWxBItgvrTXpbkpBsfcCd4uG0g/Nik7VODm
+         ysCZZ+8BovcNOIIxm1Ti6S4TiE/vNuALsvDiK0MiI0C13WTBjghV1lrd/+ve6G/Ln9Xi
+         BkS7i9nnwzK+eqV2Bo4mfUFpQCftXLj+UE2sYBsjoQHxEhHMHniYjzCYdhJ3354OzR2p
+         gq8bvNOsapOxdSVwA4WrDIVtfN2hnl5/5GgCjE0szPH8amYBC9r5rCxvSO6BOK8Mt4cx
+         Md3w==
+X-Gm-Message-State: AJcUukdrA6XdbkKENhLx7CrPQVmeqNWeL/ZTFt6iNJa0q59cIwWtAr+a
+        N60w0pRhWdy1DsrfuRKhfaMkkTyFUsU=
+X-Google-Smtp-Source: ALg8bN4Df2QrWGqk+vY9br1bN78QbHHZPRfEdqF5QezwnZ1JVYbG7onJkyimZHh0HZ8fwTdRWdWoAQ==
+X-Received: by 2002:a24:7fce:: with SMTP id r197mr15788297itc.4.1548864901826;
+        Wed, 30 Jan 2019 08:15:01 -0800 (PST)
 Received: from yngvi.hq.sweptlaser.com ([63.147.146.226])
-        by smtp.googlemail.com with ESMTPSA id 15sm838678iog.59.2019.01.30.08.15.02
+        by smtp.googlemail.com with ESMTPSA id 15sm838678iog.59.2019.01.30.08.15.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 08:15:02 -0800 (PST)
+        Wed, 30 Jan 2019 08:15:01 -0800 (PST)
 From:   Jeremy Gebben <jgebben@sweptlaser.com>
 To:     Jean Delvare <jdelvare@suse.com>,
         Guenter Roeck <linux@roeck-us.net>,
         Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH resend 3/3] hwmon: (lm85) add support for LM96000 high frequencies
-Date:   Wed, 30 Jan 2019 09:14:47 -0700
-Message-Id: <20190130161447.19946-3-jgebben@sweptlaser.com>
+Subject: [PATCH resend 2/3] hwmon: (lm85) Document the LM96000 as supported
+Date:   Wed, 30 Jan 2019 09:14:46 -0700
+Message-Id: <20190130161447.19946-2-jgebben@sweptlaser.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190130161447.19946-1-jgebben@sweptlaser.com>
 References: <20190129212920.27921-1-jgebben@sweptlaser.com>
@@ -72,56 +72,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This chip expands the freqency field from 3 to 4 bits, to
-add more frequencies in the 22.5 to 30 kHz ranges.
+It has been supported as a generic lm85 for quite some time.
 
 Signed-off-by: Jeremy Gebben <jgebben@sweptlaser.com>
 ---
- Documentation/hwmon/lm85 | 3 +++
- drivers/hwmon/lm85.c     | 9 +++++++++
- 2 files changed, 12 insertions(+)
+ Documentation/hwmon/lm85 | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/hwmon/lm85 b/Documentation/hwmon/lm85
-index 9f3a945d1b80..264874f09196 100644
+index 7c49feaa79d2..9f3a945d1b80 100644
 --- a/Documentation/hwmon/lm85
 +++ b/Documentation/hwmon/lm85
-@@ -140,6 +140,9 @@ of voltage and temperature channels.
- SMSC EMC6D103S is similar to EMC6D103, but does not support pwm#_auto_pwm_minctl
- and temp#_auto_temp_off.
+@@ -3,9 +3,13 @@ Kernel driver lm85
  
-+The LM96000 supports additional high frequency PWM modes (22.5 kHz, 24 kHz,
-+25.7 kHz, 27.7 kHz and 30 kHz), which can be configured on a per-PWM basis.
-+
- Hardware Configurations
- -----------------------
- 
-diff --git a/drivers/hwmon/lm85.c b/drivers/hwmon/lm85.c
-index 48f59667a88c..37bfa7d105a2 100644
---- a/drivers/hwmon/lm85.c
-+++ b/drivers/hwmon/lm85.c
-@@ -202,6 +202,11 @@ static const int lm85_freq_map[] = { /* 1 Hz */
- 	10, 15, 23, 30, 38, 47, 61, 94
- };
- 
-+static const int lm85_high_freq_map[] = { /* 1 Hz */
-+	10, 15, 23, 30, 38, 47, 61, 94,
-+	22500, 24000, 25700, 25700, 27700, 27700, 30000, 30000
-+};
-+
- static const int adm1027_freq_map[] = { /* 1 Hz */
- 	11, 15, 22, 29, 35, 44, 59, 88
- };
-@@ -1574,6 +1579,10 @@ static int lm85_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		data->freq_map = adm1027_freq_map;
- 		data->freq_map_mask = ARRAY_SIZE(adm1027_freq_map) - 1;
- 		break;
-+	case lm85:
-+		data->freq_map = lm85_high_freq_map;
-+		data->freq_map_mask = ARRAY_SIZE(lm85_high_freq_map) - 1;
-+		break;
- 	default:
- 		data->freq_map = lm85_freq_map;
- 		data->freq_map_mask = ARRAY_SIZE(lm85_freq_map) - 1;
+ Supported chips:
+   * National Semiconductor LM85 (B and C versions)
+-    Prefix: 'lm85'
++    Prefix: 'lm85b' or 'lm85c'
+     Addresses scanned: I2C 0x2c, 0x2d, 0x2e
+     Datasheet: http://www.national.com/pf/LM/LM85.html
++  * Texas Instruments LM96000
++    Prefix: 'lm85'
++    Addresses scanned: I2C 0x2c, 0x2d, 0x2e
++    Datasheet: http://www.ti.com/lit/ds/symlink/lm96000.pdf
+   * Analog Devices ADM1027
+     Prefix: 'adm1027'
+     Addresses scanned: I2C 0x2c, 0x2d, 0x2e
 -- 
 2.17.1
 
