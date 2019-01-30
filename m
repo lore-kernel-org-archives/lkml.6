@@ -2,136 +2,91 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA91C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A34C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92699218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548867081;
-	bh=z4tr+Z9X6lbRF7ck4r/CaRmyfu9Hsxc+iXRtSr4ta/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=oGs8FH8UZ4zPMA27viCRUaL1945E+Vok2msDVHRCAcXmxVp1fpCR6gtKJsANcIOy8
-	 un20ISD7aH+punMc2ICycqraZhXQgLuW9lSkviRiLDAK2NoChPumbuZ/BpJQA6Rf0Z
-	 WingERjRXHO9l7rJMVG0eTcz6oLTStWSgKf5Dpe4=
+	by mail.kernel.org (Postfix) with ESMTP id E0D4F2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:52:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732246AbfA3QvT (ORCPT
+        id S1732296AbfA3QwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:51:19 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41376 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728469AbfA3QvT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:51:19 -0500
-Received: by mail-oi1-f194.google.com with SMTP id j21so165179oii.8;
-        Wed, 30 Jan 2019 08:51:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JxCXJ7F8RmSL19GAOBres6E4ajxMj6g+BItf9PLzU9I=;
-        b=MDC1rkSf/NsAIUiD3lCmaKYrHl5+3l+9TH76O6eHfrWa/FIbSLpocrHna59KMMTWOK
-         xEyoB9akc7rsQFWrc6+yJomYgjtzMFvwJ/N0OPGDbSPdzST/FdgMc3zKM1mlhc6OCcAs
-         bLJ+pqQt1e37Uqav+0xN9XFS0g1EzpMx4HP+LbPHa94OWgxj3JZ5ZW6EPw6l+8AJbmff
-         csGNOhp3WO3azKQXuCIUyQQJwhAbXsKSttRwyh8YS6yuqIDW/8wiTgdG5UbQS+yftbnZ
-         w5DGAyEPwNFUj3X5EUYiEEubgQD5wUdgRTfqWZXqdShvz0qCK0f86gA0Ni9/kxbvPiTG
-         WxYw==
-X-Gm-Message-State: AHQUAuaTcZFquU38a7Pox0d75T/E6ZUrFiz36zuVgYCjY4R4bV1GtRmi
-        0NC29yCurC4wH/rXq1TF3O3caRw=
-X-Google-Smtp-Source: ALg8bN4muYebABJbUfd1pNxttJV2OsaNaJoGUZ3/jZVpF7GjSIdNsF+IGmu5tz3bD12IFvYuEf+JjQ==
-X-Received: by 2002:aca:4e92:: with SMTP id c140mr12524157oib.97.1548867076763;
-        Wed, 30 Jan 2019 08:51:16 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s66sm893351oia.55.2019.01.30.08.51.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 08:51:16 -0800 (PST)
-Date:   Wed, 30 Jan 2019 10:51:15 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3 2/3] dt-bindings: crypto: document Exynos5433 SlimSSS
-Message-ID: <20190130165115.GA8926@bogus>
-References: <20190124154521.13589-1-k.konieczny@partner.samsung.com>
- <CGME20190124154539eucas1p16fb97dd0cab2c18d82113c511cd8a1ca@eucas1p1.samsung.com>
- <20190124154521.13589-3-k.konieczny@partner.samsung.com>
+        Wed, 30 Jan 2019 11:52:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42029 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732276AbfA3QwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:52:04 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1B3D4C0DA365;
+        Wed, 30 Jan 2019 16:52:04 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.163])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 9DA49176DE;
+        Wed, 30 Jan 2019 16:52:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 30 Jan 2019 17:52:03 +0100 (CET)
+Date:   Wed, 30 Jan 2019 17:52:01 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Roman Gushchin <guroan@gmail.com>
+Cc:     Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v6 4/7] cgroup: cgroup v2 freezer
+Message-ID: <20190130165200.GA4131@redhat.com>
+References: <20181222000307.28231-1-guro@fb.com>
+ <20181222000307.28231-5-guro@fb.com>
+ <20190125122713.GA18218@redhat.com>
+ <CALo0P13XnGiFykMXY3ZKu158ZqnBwHru0gyhQUrJSHEprnmiHQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124154521.13589-3-k.konieczny@partner.samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALo0P13XnGiFykMXY3ZKu158ZqnBwHru0gyhQUrJSHEprnmiHQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 30 Jan 2019 16:52:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 04:45:20PM +0100, Kamil Konieczny wrote:
-> Document DT bindings for crypto Samsung Exynos5433 SlimSSS (Slim Security
-> SubSystem) IP.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
->  .../devicetree/bindings/crypto/samsung-sss.txt     | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-> index 7a5ca56683cc..d9af679d38ab 100644
-> --- a/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-> +++ b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
-> @@ -1,4 +1,4 @@
-> -Samsung SoC SSS (Security SubSystem) module
-> +Samsung SoC SSS (Security SubSystem) and SlimSSS module
->  
->  The SSS module in S5PV210 SoC supports the following:
->  -- Feeder (FeedCtrl)
-> @@ -15,6 +15,12 @@ supports the following also:
->  -- True Random Number Generator (TRNG)
->  -- Secure Key Manager
->  
-> +Exynos5433 has both SSS and SlimSSS module.
+Hi Roman,
 
-That's not really relevant to the binding.
+On 01/28, Roman Gushchin wrote:
+>
+> Yes, I think you're right: cgroup_exit() should check CGRP_FREEZE bit,
+> not CGRP_FROZEN. Like cgroup_post_fork() does (a one-liner change below).
 
-What do the SSS and SlimSSS share? Only that both have a single reg and 
-interrupt based on the binding? This should probably be just 2 
-documents. If not now, it will have to be when converted to a DT schema.
+but this won't fix all problems? it seems that you missed my other concerns.
 
-> +SlimSSS in Exynos5433 supports:
-> +-- Feeder (FeedCtrl)
-> +-- Advanced Encryption Standard (AES)
-> +-- SHA-1/SHA-256/HMAC (SHA-1/SHA-256)
-> +
->  Required properties:
->  
->  - compatible : Should contain entries for this and backward compatible
-> @@ -22,11 +28,13 @@ Required properties:
->    - "samsung,s5pv210-secss" for S5PV210 SoC.
->    - "samsung,exynos4210-secss" for Exynos4210, Exynos4212, Exynos4412, Exynos5250,
->  		Exynos5260 and Exynos5420 SoCs.
-> +  - "samsung,exynos5433-slim-sss" for Exynos5433 SoCs.
->  - reg : Offset and length of the register set for the module
->  - interrupts : interrupt specifiers of SSS module interrupts (one feed
->  		control interrupt).
->  
->  - clocks : list of clock phandle and specifier pairs for all clocks  listed in
->  		clock-names property.
-> -- clock-names : list of device clock input names; should contain one entry
-> -		"secss".
-> +- clock-names : list of device clock input names; should contain "pclk" and
-> +		"aclk" for slim-sss in Exynos5433, and one entry "secss" for
-> +		other compatibles.
-> -- 
-> 2.20.0
-> 
+Firstly, this doesn't look consistent. Suppose a cgroup contains a single
+process sleeping in ptrace_stop(). Then it becomes CGRP_FROZEN right after
+"echo 1 > cgroup.freeze".
+
+OTOH. if this single task sleeps in do_freezer_trap() and gets PTRACE_INTERRUPT,
+it will equally sleep ptrace_stop() but cgroup won't be CGRP_FROZEN. Never.
+
+Worse, this looks just wrong. In the latter case, cgroup becomes CGRP_FROZEN
+right after a 2nd task migrates to this cgroup, before this new task calls
+do_freezer_trap() or cgroup_enter_stopped().
+
+
+
+> About spurious transitions (like frozen->non frozen->frozen on a task
+> being SIGKILLed):
+> in early versions of the patchset I've tried to avoid them, but then
+> following the Tejun's advice
+> switched over to expose them to a user. The logic behind is simple: if
+> the state of the cgroup has been changed (a task is gone, for
+> example), let's notify a user.
+
+OK, I won't argue...
+
+actually I can't argue because I do not really understand why do we want
+a "killable" freezer, let alone ptraceable ;)
+
+Oleg.
+
