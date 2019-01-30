@@ -2,114 +2,99 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CC3C282D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F39C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3074421473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:23:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27D362087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:25:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbfA3IXL convert rfc822-to-8bit (ORCPT
+        id S1730241AbfA3IZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:23:11 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47356 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726583AbfA3IXL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:23:11 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0U8KFfj142749
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 03:23:10 -0500
-Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.81])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qb8avg4rw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 03:23:10 -0500
-Received: from localhost
-        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
-        for <linux-kernel@vger.kernel.org> from <JOELN@il.ibm.com>;
-        Wed, 30 Jan 2019 08:23:08 -0000
-Received: from us1a3-smtp02.a3.dal06.isc4sb.com (10.106.154.159)
-        by smtp.notes.na.collabserv.com (10.106.227.88) with smtp.notes.na.collabserv.com ESMTP;
-        Wed, 30 Jan 2019 08:23:00 -0000
-Received: from us1a3-mail108.a3.dal06.isc4sb.com ([10.146.45.126])
-          by us1a3-smtp02.a3.dal06.isc4sb.com
-          with ESMTP id 2019013008225964-212703 ;
-          Wed, 30 Jan 2019 08:22:59 +0000 
-In-Reply-To: <8cdb77b6-c160-81d0-62be-5bbf84a98d69@opengridcomputing.com>
-To:     Steve Wise <swise@opengridcomputing.com>
-Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-rdma@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH 0/5] RDMA: reg_remote_mr
-From:   "Joel Nider" <JOELN@il.ibm.com>
-Date:   Wed, 30 Jan 2019 10:22:59 +0200
-References: <1548768386-28289-1-git-send-email-joeln@il.ibm.com>
- <8cdb77b6-c160-81d0-62be-5bbf84a98d69@opengridcomputing.com>
+        Wed, 30 Jan 2019 03:25:54 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2699 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725834AbfA3IZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 03:25:54 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C3DC751258FFD29DE41B;
+        Wed, 30 Jan 2019 16:25:51 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Wed, 30 Jan 2019
+ 16:25:45 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <john.garry@huawei.com>, <zhaohongjiang@huawei.com>,
+        <hare@suse.com>, <dan.j.williams@intel.com>, <jthumshirn@suse.de>,
+        <hch@lst.de>, <huangdaode@hisilicon.com>,
+        <chenxiang66@hisilicon.com>, <xiexiuqi@huawei.com>,
+        <tj@kernel.org>, <miaoxie@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+Subject: [PATCH v2 1/7] scsi: libsas: reset the negotiated_linkrate when phy is down
+Date:   Wed, 30 Jan 2019 16:24:06 +0800
+Message-ID: <20190130082412.9357-2-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20190130082412.9357-1-yanaijie@huawei.com>
+References: <20190130082412.9357-1-yanaijie@huawei.com>
 MIME-Version: 1.0
-X-KeepSent: 3A13C355:FCBF3024-C2258392:002D8AC7;
- type=4; name=$KeepSent
-X-Mailer: IBM Notes Release 9.0.1FP7 August 18, 2016
-X-LLNOutbound: False
-X-Disclaimed: 19363
-X-TNEFEvaluated: 1
-x-cbid: 19013008-7093-0000-0000-000009FC1B6E
-X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
- SC=0.425523; ST=0; TS=0; UL=0; ISC=; MB=0.235916
-X-IBM-SpamModules-Versions: BY=3.00010503; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01153828; UDB=6.00601586; IPR=6.00934202;
- BA=6.00006216; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00025352; XFM=3.00000015;
- UTC=2019-01-30 08:23:06
-X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
-X-IBM-AV-VERSION: SAVI=2019-01-30 06:41:57 - 6.00009527
-x-cbparentid: 19013008-7094-0000-0000-0000706E1CC0
-Message-Id: <OF3A13C355.FCBF3024-ONC2258392.002D8AC7-C2258392.002E0D17@notes.na.collabserv.com>
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 8BIT
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Steve Wise <swise@opengridcomputing.com> wrote on 01/29/2019 06:44:48 PM:
+If the device is unplugged or disconnected, the negotiated_linkrate
+still can be seen from the userspace by sysfs. This makes people
+confused and leaks information of the device last used. So let's reset
+the negotiated_linkrate after the phy is down.
 
-> 
-> On 1/29/2019 7:26 AM, Joel Nider wrote:
-> > As discussed at LPC'18, there is a need to be able to register a 
-memory
-> > region (MR) on behalf of another process. One example is the case of
-> > post-copy container migration, in which CRIU is responsible for 
-setting
-> > up the migration, but the contents of the memory are from the 
-migrating
-> > process. In this case, we want all RDMA READ requests to be served by
-> > the address space of the migration process directly (not by CRIU). 
-This
-> > patchset implements a new uverbs command which allows an application 
-to
-> > register a memory region in the address space of another process.
-> 
-> Hey Joel,
-> 
-> Dumb question:
-> 
-> Doesn't this open a security hole by allowing any process to register
-> memory in any other process?
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: John Garry <john.garry@huawei.com>
+CC: Johannes Thumshirn <jthumshirn@suse.de>
+CC: Ewan Milne <emilne@redhat.com>
+CC: Christoph Hellwig <hch@lst.de>
+CC: Tomas Henzl <thenzl@redhat.com>
+CC: Dan Williams <dan.j.williams@intel.com>
+CC: Hannes Reinecke <hare@suse.com>
+---
+ drivers/scsi/libsas/sas_expander.c | 2 ++
+ include/scsi/libsas.h              | 3 +++
+ 2 files changed, 5 insertions(+)
 
-Not a dumb question - there is a security problem. Jason just suggested
-I look at how ptrace solves the problem, so that's my best option at the
-moment. Still, I figured it was a good idea to let everyone take a look
-at what I have so far, and start to get feedback.
-
-> Steve.
-> 
-> 
-
+diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+index 17eb4185f29d..7b0e6dcef6e6 100644
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -1904,6 +1904,8 @@ static void sas_unregister_devs_sas_addr(struct domain_device *parent,
+ 				&parent->port->sas_port_del_list);
+ 		phy->port = NULL;
+ 	}
++	if (phy->phy)
++		phy->phy->negotiated_linkrate = SAS_LINK_RATE_UNKNOWN;
+ }
+ 
+ static int sas_discover_bfs_by_root_level(struct domain_device *root,
+diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
+index 3de3b10da19a..420156cea3ee 100644
+--- a/include/scsi/libsas.h
++++ b/include/scsi/libsas.h
+@@ -448,6 +448,9 @@ static inline void sas_phy_disconnected(struct asd_sas_phy *phy)
+ {
+ 	phy->oob_mode = OOB_NOT_CONNECTED;
+ 	phy->linkrate = SAS_LINK_RATE_UNKNOWN;
++
++	if (phy->phy)
++		phy->phy->negotiated_linkrate = SAS_LINK_RATE_UNKNOWN;
+ }
+ 
+ static inline unsigned int to_sas_gpio_od(int device, int bit)
+-- 
+2.14.4
 
