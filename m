@@ -2,134 +2,133 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 426F3C282CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B995CC282CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E7F20820
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F85420820
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:21:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="p6RgcDkI"
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="elqU6N/D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730146AbfA3ESx (ORCPT
+        id S1730043AbfA3EV2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 23:18:53 -0500
-Received: from mail-eopbgr140048.outbound.protection.outlook.com ([40.107.14.48]:64975
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727672AbfA3ESx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 23:18:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=odFD/pFRFfFYR8wF/TesPm0cK31nWbm6naTZkKG5Tkw=;
- b=p6RgcDkIdbBvDffPNVCjkEQweUEYjT3fOX36rD1t5vMdJIESNDty+5NRcaw/AewW1d8PF66Yo5Yct1pqGYqKxJiFZQfRydymYxllxIcsMR6o+qxyy04O2CjQu4miQAirtrYJhoiGDES2YLb7TGg3Xs+lr6bNMm/+bH4oSB4Liz0=
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
- DBBPR05MB6345.eurprd05.prod.outlook.com (20.179.41.75) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Wed, 30 Jan 2019 04:18:48 +0000
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 04:18:48 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-CC:     Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykIA=
-Date:   Wed, 30 Jan 2019 04:18:48 +0000
-Message-ID: <20190130041841.GB30598@mellanox.com>
-References: <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
- <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
- <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
- <20190129205749.GN3176@redhat.com>
- <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
- <20190129215028.GQ3176@redhat.com>
- <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
- <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
-In-Reply-To: <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR14CA0010.namprd14.prod.outlook.com
- (2603:10b6:300:ae::20) To DBBPR05MB6426.eurprd05.prod.outlook.com
- (2603:10a6:10:c9::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DBBPR05MB6345;6:H4A4wUJn0ItXsLQN1LgE4YdE70nyc4iTGrlE2qbmv590oIG7lqiM4MlLXBseI6Cb5faHzW216O9vJfWGxiunoOqiY/4dZ7JRCIxcusRm2wxGmmui0I+nKAJWdH7whmwT2HGuiHVh/Hk3CJ1al3ehB+Ngj0HfE+vr7Ywbvews+9XphXGFfJU+eYgNW0s+71Oc672OlQbM3+NoPbbIshawVsnjs5m2NYL+c+Ti3jb5cB6hupAOoET6XQk1zaDzdj+HoxQ4RNVPepaNKcYe95HGg2dDU9tTOs9bKU2kE2GHDrqR9KS0veoPiyQ14/JfLzAJR+VVk7PFLSjMaEnm2Wis1S/zgz7yUshobhKkGll8pzxu7RZOqQcj+h3uOpnf4/eK8irgjcm9CnUPPEnq4+Na6eYuqcKWxrMiXt2RvylRmZwy5QpdZbSnZUSOl8F9LxO1Hye4nhnFIHDdOnSTpRfp7g==;5:EJRY6VOIFbo621ZwP8pChZ1luqiGy6EBgNQqNZhsnuyOBoXvy9X5rVxeWO/eVWYJq/OmvOtq0NAJdWu0XPH/OFxxP8yXn/drjvky28ZG+K1lNH56i345p4UVn9CMmsrz8Vq7BBF2m01tu5aynB+U0tJlI/rvrKociAys+iL7rsrjo3vVnyTwGDoZo4PrPmROonv9hy0YPNUkkC1Mqg4XEw==;7:XWp6E+PllBrWgYWUNR2gsmBynyaeFVr1UhbEFtJ/QJdCqfz++qIqK3LaL0gYcwIGC185OcyHKplvmM+Vcg36U/I2L96jr7yLltJO4DnC8eYgQqOsXPYdPiUFp3fBxOogbNnTB/YU0njrG9K1k3r8UA==
-x-ms-office365-filtering-correlation-id: 4b51e9cd-5390-4465-8cca-08d6866a0842
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6345;
-x-ms-traffictypediagnostic: DBBPR05MB6345:
-x-microsoft-antispam-prvs: <DBBPR05MB63451F9433CA6C03FC51CB77CF900@DBBPR05MB6345.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(396003)(376002)(136003)(189003)(199004)(4326008)(76176011)(93886005)(6246003)(25786009)(33656002)(81166006)(8676002)(8936002)(99286004)(81156014)(52116002)(7416002)(6116002)(316002)(14454004)(54906003)(2906002)(36756003)(3846002)(478600001)(6916009)(53936002)(97736004)(66066001)(105586002)(102836004)(6512007)(86362001)(217873002)(386003)(229853002)(11346002)(6506007)(1076003)(256004)(305945005)(6486002)(26005)(476003)(4744005)(446003)(68736007)(71200400001)(71190400001)(106356001)(2616005)(6436002)(486006)(7736002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6345;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: b8GsDOImAOCI4A5iDMbH5ipBxDYzgCyqT37NgpLWL0UmrTUhLFH9cf/LLzWXIWEHtu94jPnEaqiEBaq7yLgrwOWehxWAK7Xnqad9lh1nFrZecn4h0/eeNCFYDPVumqc+81MqxY2aucrdSso0MDgwDcQQuRlYr664uNa9xLGXtXCnJbQPx9oZaRxq2zpGC4bAmET53lerI6CR/E1Wmu2nWfHDeIQhHQ+/rLGtjJ+TkzRMHZeZpoWj8dGrmy2pIOzpviicNDGIuhAP72cJeGgBXZDmR6COmi5ZeGmpp+3d+r7mplCW7G74x5OijDaxg28gBXreLC8EGu0P6PxdVzvCEPEMiTxBQwa3L2I9hBdSWbgMfbPBnFlHgEpbMn94gNai2vCqdSsLQFRF4Gi7qkAri6fhW77QZg7/s5LHQoPbxag=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <82BFF7F760AB5D47935C40953858BB8C@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b51e9cd-5390-4465-8cca-08d6866a0842
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 04:18:48.2718
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6345
+        Tue, 29 Jan 2019 23:21:28 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44741 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728196AbfA3EV1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 23:21:27 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n32so24841582qte.11
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 20:21:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=Twy2/9rCYvnncdoQjvrdkqgOccxaghfH1nzMeT7NIS0=;
+        b=elqU6N/DBFmeSoghEYpngI1Z5D3n5Nclmw0X8bbTkzK/fw67Bxvj1Boz/D3izvuszd
+         ft/jzPEfbkOtDVhIZWTdzThKC7X4pybo8R2Yk3KUZwNwgCQ1HWudwivlorZh6gwQaGaG
+         o7YrelV4b03b0tEZiZUIxenp58it4EncqkaMxTqy6z1jIN5tvCPr8QOQzXAQ0Hh3dGYs
+         apb+lUXMB5FGPum0qkp6uCa3HYY0qi3DLqA2fNd5QUDlSvXo+V1nbd3BUuIcvRVpJtZW
+         OpZX0coC/Aa5t8J1WbSjIMG+j4yShwpMrRT5K7aB7/WJOWUnOYAbM3Wa1HfSe2AbkQqv
+         qcVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=Twy2/9rCYvnncdoQjvrdkqgOccxaghfH1nzMeT7NIS0=;
+        b=ptDEqmihMEHKb/n6+IK4yHZsUpNGvk7Jvlf5R8HRMTCPialsE1lgl9yjF+oK6VtWaU
+         Pnl2ta0FY6+hwdvoW4txE1J/cBa5mueBWOxapkR/0BKgEfsNq8C+NMfCT0rWgrPPmqR/
+         8F2MIUgRWU8BsfntAbvFAV7SSwJf8X3AILIm3jrEPR5/KnAeB1Z+X55uf2ltc79mAklE
+         Y0VNCRK6IWwjWobrGdAXMdQQbEZOYLLIH1y3eVNFTKJ7Np6YtmDa6p8FXWSQUNbCW0XY
+         FX/t8HYmdD4WPQhcZbKEMgtseRmuGC7GnsMoaUXf5U+qE/nv8nr7BAMsfE5cRgl4eMXD
+         uD+g==
+X-Gm-Message-State: AJcUukesMLEpJAkLiISF3EoDRVHczIYK4aOWF+eioWFqqL5U8t99zhI6
+        olVTeiM+gJR4kITH7p2A/JPiDA==
+X-Google-Smtp-Source: ALg8bN5yjkTW66H3E6EJeesM3QQOMvDQRjysCa0sJ7yvKLtB6zPyt5iErcBWSQLaEivd9pxEk4QbPg==
+X-Received: by 2002:ac8:2d53:: with SMTP id o19mr27288858qta.21.1548822086512;
+        Tue, 29 Jan 2019 20:21:26 -0800 (PST)
+Received: from skullcanyon ([192.222.193.21])
+        by smtp.gmail.com with ESMTPSA id z18sm956499qkz.96.2019.01.29.20.21.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 20:21:25 -0800 (PST)
+Message-ID: <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
+Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
+ codec API
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>
+Date:   Tue, 29 Jan 2019 23:21:24 -0500
+In-Reply-To: <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
+         <20190117162008.25217-11-stanimir.varbanov@linaro.org>
+         <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
+         <28069a44-b188-6b89-2687-542fa762c00e@linaro.org>
+         <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
+         <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
+         <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 06:17:43PM -0700, Logan Gunthorpe wrote:
+Le mercredi 30 janvier 2019 à 12:38 +0900, Tomasz Figa a écrit :
+> > Yes, unfortunately, GStreamer still rely on G_FMT waiting a minimal
+> > amount of time of the headers to be processed. This was how things was
+> > created back in 2011, I could not program GStreamer for the future. If
+> > we stop doing this, we do break GStreamer as a valid userspace
+> > application.
+> 
+> Does it? Didn't you say earlier that you end up setting the OUTPUT
+> format with the stream resolution as parsed on your own? If so, that
+> would actually expose a matching framebuffer format on the CAPTURE
+> queue, so there is no need to wait for the real parsing to happen.
 
-> This isn't answering my question at all... I specifically asked what is
-> backing the VMA when we are *not* using HMM.
+I don't remember saying that, maybe I meant to say there might be a
+workaround ?
 
-At least for RDMA what backs the VMA today is non-struct-page BAR
-memory filled in with io_remap_pfn.
+For the fact, here we queue the headers (or first frame):
 
-And we want to expose this for P2P DMA. None of the HMM stuff applies
-here and the p2p_map/unmap are a nice simple approach that covers all
-the needs RDMA has, at least.
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2videodec.c#L624
 
-Every attempt to give BAR memory to struct page has run into major
-trouble, IMHO, so I like that this approach avoids that.
+Then few line below this helper does G_FMT internally:
 
-And if you don't have struct page then the only kernel object left to
-hang meta data off is the VMA itself.
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2videodec.c#L634
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2object.c#L3907
 
-It seems very similar to the existing P2P work between in-kernel
-consumers, just that VMA is now mediating a general user space driven
-discovery process instead of being hard wired into a driver.
+And just plainly fails if G_FMT returns an error of any type. This was
+how Kamil designed it initially for MFC driver. There was no other
+alternative back then (no EAGAIN yet either).
 
-Jason
+Nicolas
+
+p.s. it's still in my todo's to implement source change event as I
+believe it is a better mechanism (specially if you header happened to
+be corrupted, then the driver can consume the stream until it finds a
+sync). So these sleep or normally wait exist all over to support this
+legacy thing. It is unfortunate, the question is do you want to break
+userspace now ? Without having first placed a patch that would maybe
+warn or something for a while ?
+
+
+
+
+
+
+
+
