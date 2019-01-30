@@ -2,258 +2,126 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE547C4151A
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D170C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C14B221473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:50:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DF0321473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:50:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DsqqKKpw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731120AbfA3MuC (ORCPT
+        id S1731132AbfA3MuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:50:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44066 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730960AbfA3MrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 07:47:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F0BC4AE4B;
-        Wed, 30 Jan 2019 12:47:18 +0000 (UTC)
-From:   Jiri Slaby <jslaby@suse.cz>
-To:     mingo@redhat.com
-Cc:     bp@alien8.de, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH v7 06/28] x86/asm: annotate local pseudo-functions
-Date:   Wed, 30 Jan 2019 13:46:49 +0100
-Message-Id: <20190130124711.12463-7-jslaby@suse.cz>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190130124711.12463-1-jslaby@suse.cz>
-References: <20190130124711.12463-1-jslaby@suse.cz>
+        Wed, 30 Jan 2019 07:50:12 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34309 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbfA3MuL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 07:50:11 -0500
+Received: by mail-wr1-f66.google.com with SMTP id f7so26018712wrp.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 04:50:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=CLa5JjFpyyfV+TUYzZT4J1fIb+syO/uBxi2+fYGp6HI=;
+        b=DsqqKKpwvtKOarGMQyGVugys2g9ZnrVYJBb375EiGHm2FTwYv8koWIFd9YD/Q/rL5p
+         YZPGl8CcSysKoe3WdbrZcgGEi1EN0OdZyvvtZyb61nFgP9wUi9tO3bSOn/tqXJHRG8FU
+         X4+0mvGKHrYJl5L14iynCZmCe09vIw/nLWh0c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=CLa5JjFpyyfV+TUYzZT4J1fIb+syO/uBxi2+fYGp6HI=;
+        b=Wqyi5wrm4JMz0hrdysNxeTRXFl6IvzMVp+KUYfm8s05WHF2vkMI2UcEXsOXELcWS5m
+         QuBpzTaGkclTT32UC+WKbFlcOAxToDhKZ8ABGQNqR2ak9HmqHRfZzqzrUkzuqb9M4q83
+         NK3JdEDJNPALoC1wFvQ1yY6QmFUeLfqejruepU3gTokBdeRQmVp21IQGsz3F9yhHRFTR
+         UhJwqO50mSSMSA13S1MxLCw+XihCO9MMzP7D+X+8AUxGWkwDETji/XMlBNgZ9bxvdaPM
+         3JCwphdJJViXQrHyfUVv3iKDdD6BCzqvmlrrajmjCjfyFWiKsDONP+XcJF4/jXUfTwNo
+         XybA==
+X-Gm-Message-State: AJcUukci9P+8rjVEVW8t1P7wNIXYOrZxMkJiEQ60mdn2+Vk6Yy+eI2R5
+        1FvN5UN4nDtdStV3fO7ctYsHcA==
+X-Google-Smtp-Source: ALg8bN5T1Hy3+ZyNezR4q0xnUrJZWJJm361lBi49JtQZL2JAUkJHSf0eiIcIMhKmFmQjFD+lip9wHg==
+X-Received: by 2002:adf:c042:: with SMTP id c2mr31105985wrf.158.1548852609225;
+        Wed, 30 Jan 2019 04:50:09 -0800 (PST)
+Received: from dell ([2.27.35.198])
+        by smtp.gmail.com with ESMTPSA id 125sm2649363wmm.26.2019.01.30.04.50.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 04:50:08 -0800 (PST)
+Date:   Wed, 30 Jan 2019 12:50:07 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-kernel@vger.kernel.org,
+        Emeric Dupont <emeric.dupont@zii.aero>
+Subject: Re: [PATCH v3] mfd: tqmx86: IO controller with i2c, wachdog and gpio
+Message-ID: <20190130125007.GA4701@dell>
+References: <1547250965-17668-1-git-send-email-andrew@lunn.ch>
+ <20190129113532.GB24070@dell>
+ <20190129205652.GF13334@lunn.ch>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190129205652.GF13334@lunn.ch>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the newly added SYM_CODE_START_LOCAL* to annotate starts of all
-pseudo-functions (those ending END until now) which do not have ".globl"
-annotation. This is needed to balance END for tools that generate
-debuginfo. Note that we switch from END to SYM_CODE_END too so that
-everybody can see the pairing.
+On Tue, 29 Jan 2019, Andrew Lunn wrote:
 
-We are not annotating C-like functions (which handle frame ptr etc.)
-here, hence we use SYM_CODE_* macros here, not SYM_FUNC_*.  Note that
-early_idt_handler_common already had ENDPROC -- switch that to
-SYM_CODE_END for the same reason as above.
+> On Tue, Jan 29, 2019 at 11:35:32AM +0000, Lee Jones wrote:
+> > On Sat, 12 Jan 2019, Andrew Lunn wrote:
+> > 
+> > > The QMX86 is a PLD present on some TQ-Systems ComExpress modules. It
+> > > provides 1 or 2 I2C bus masters, 8 GPIOs and a watchdog timer. Add an
+> > > MFD which will instantiate the individual drivers.
+> > > 
+> > > Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> > > ---
+> > > v2:
+> > > 
+> > > Drop setting i2c bus speed, which removes the build dependencies on
+> > > the i2c ocores patches. This can be added back later.
+> > > 
+> > > v3
+> > > --
+> > 
+> > You're going to have to resend this.
+> > 
+> > Mailers tend to use '--\n' to signify the start of the mail signature
+> > (see mine as an example), so when someone (myself included) attempts
+> > to reply to the mail, it is likely that their mailer will chop
+> > everything from there down.
+> 
+> Hi Lee
+> 
+> I posted a new version.
+> 
+> Your email indicates you are using Mutt:
+> 
+> >User-Agent: Mutt/1.9.4 (2018-02-28)
+> 
+> Which is also what i use. I've never had issues with signatures like
+> this. I also cannot find any documentation as to how you configure
+> mutt remove signatures. How are you doing it?
 
-bogus_64_magic, bad_address, bad_get_user*, and bad_put_user are now
-aligned, as they are separate functions. They do not mind to be aligned
--- no need to be compact there.
+I think it's automatic.  I certainly didn't set that up.
 
-early_idt_handler_common is aligned now too, as it is after
-early_idt_handler_array, so as well no need to be compact there.
+I see my signature was not included in your reply.  Did you manually
+remove it?  Try replying to your own mail.  I should automatically
+cut.
 
-verify_cpu is self-standing and included in other .S files, so align it
-too.
-
-The others have alignment preserved to what it used to be (using the
-_NOALIGN variant of macros).
-
-[v3] annotate more functions
-[v4] describe the alignments changes
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <x86@kernel.org>
----
- arch/x86/entry/entry_32.S        | 5 ++---
- arch/x86/entry/entry_64.S        | 3 ++-
- arch/x86/kernel/acpi/wakeup_64.S | 3 ++-
- arch/x86/kernel/head_32.S        | 4 ++--
- arch/x86/kernel/head_64.S        | 4 ++--
- arch/x86/kernel/verify_cpu.S     | 4 ++--
- arch/x86/lib/getuser.S           | 8 ++++----
- arch/x86/lib/putuser.S           | 4 ++--
- 8 files changed, 18 insertions(+), 17 deletions(-)
-
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index d309f30cf7af..306ae3e9a24c 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -737,8 +737,7 @@ END(ret_from_fork)
-  */
- 
- 	# userspace resumption stub bypassing syscall exit tracing
--	ALIGN
--ret_from_exception:
-+SYM_CODE_START_LOCAL(ret_from_exception)
- 	preempt_stop(CLBR_ANY)
- ret_from_intr:
- #ifdef CONFIG_VM86
-@@ -761,7 +760,7 @@ ENTRY(resume_userspace)
- 	movl	%esp, %eax
- 	call	prepare_exit_to_usermode
- 	jmp	restore_all
--END(ret_from_exception)
-+SYM_CODE_END(ret_from_exception)
- 
- #ifdef CONFIG_PREEMPT
- ENTRY(resume_kernel)
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 1f0efdb7b629..463f9edd78a4 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1006,7 +1006,7 @@ EXPORT_SYMBOL(native_load_gs_index)
- 	_ASM_EXTABLE(.Lgs_change, bad_gs)
- 	.section .fixup, "ax"
- 	/* running with kernelgs */
--bad_gs:
-+SYM_CODE_START_LOCAL_NOALIGN(bad_gs)
- 	SWAPGS					/* switch back to user gs */
- .macro ZAP_GS
- 	/* This can't be a string because the preprocessor needs to see it. */
-@@ -1017,6 +1017,7 @@ bad_gs:
- 	xorl	%eax, %eax
- 	movl	%eax, %gs
- 	jmp	2b
-+SYM_CODE_END(bad_gs)
- 	.previous
- 
- /* Call softirq on interrupt stack. Interrupts are off. */
-diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
-index 551758f48eb7..6c60fe346583 100644
---- a/arch/x86/kernel/acpi/wakeup_64.S
-+++ b/arch/x86/kernel/acpi/wakeup_64.S
-@@ -36,8 +36,9 @@ ENTRY(wakeup_long64)
- 	jmp	*%rax
- ENDPROC(wakeup_long64)
- 
--bogus_64_magic:
-+SYM_CODE_START_LOCAL(bogus_64_magic)
- 	jmp	bogus_64_magic
-+SYM_CODE_END(bogus_64_magic)
- 
- ENTRY(do_suspend_lowlevel)
- 	FRAME_BEGIN
-diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-index d1e213da4782..0bae769b7b59 100644
---- a/arch/x86/kernel/head_32.S
-+++ b/arch/x86/kernel/head_32.S
-@@ -409,7 +409,7 @@ ENTRY(early_idt_handler_array)
- 	.endr
- ENDPROC(early_idt_handler_array)
- 	
--early_idt_handler_common:
-+SYM_CODE_START_LOCAL(early_idt_handler_common)
- 	/*
- 	 * The stack is the hardware frame, an error code or zero, and the
- 	 * vector number.
-@@ -460,7 +460,7 @@ early_idt_handler_common:
- 	decl	%ss:early_recursion_flag
- 	addl	$4, %esp	/* pop pt_regs->orig_ax */
- 	iret
--ENDPROC(early_idt_handler_common)
-+SYM_CODE_END(early_idt_handler_common)
- 
- /* This is the default interrupt "handler" :-) */
- ENTRY(early_ignore_irq)
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index d994162cce31..251f02c743fe 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -293,7 +293,7 @@ ENTRY(early_idt_handler_array)
- 	UNWIND_HINT_IRET_REGS offset=16
- END(early_idt_handler_array)
- 
--early_idt_handler_common:
-+SYM_CODE_START_LOCAL(early_idt_handler_common)
- 	/*
- 	 * The stack is the hardware frame, an error code or zero, and the
- 	 * vector number.
-@@ -335,7 +335,7 @@ early_idt_handler_common:
- 20:
- 	decl early_recursion_flag(%rip)
- 	jmp restore_regs_and_return_to_kernel
--END(early_idt_handler_common)
-+SYM_CODE_END(early_idt_handler_common)
- 
- 	__INITDATA
- 
-diff --git a/arch/x86/kernel/verify_cpu.S b/arch/x86/kernel/verify_cpu.S
-index 3d3c2f71f617..fd60f1ac5fec 100644
---- a/arch/x86/kernel/verify_cpu.S
-+++ b/arch/x86/kernel/verify_cpu.S
-@@ -33,7 +33,7 @@
- #include <asm/cpufeatures.h>
- #include <asm/msr-index.h>
- 
--ENTRY(verify_cpu)
-+SYM_FUNC_START_LOCAL(verify_cpu)
- 	pushf				# Save caller passed flags
- 	push	$0			# Kill any dangerous flags
- 	popf
-@@ -139,4 +139,4 @@ ENTRY(verify_cpu)
- 	popf				# Restore caller passed flags
- 	xorl %eax, %eax
- 	ret
--ENDPROC(verify_cpu)
-+SYM_FUNC_END(verify_cpu)
-diff --git a/arch/x86/lib/getuser.S b/arch/x86/lib/getuser.S
-index 74fdff968ea3..3ca4eab3a3e6 100644
---- a/arch/x86/lib/getuser.S
-+++ b/arch/x86/lib/getuser.S
-@@ -115,21 +115,21 @@ ENDPROC(__get_user_8)
- EXPORT_SYMBOL(__get_user_8)
- 
- 
--bad_get_user:
-+SYM_CODE_START_LOCAL(bad_get_user)
- 	xor %edx,%edx
- 	mov $(-EFAULT),%_ASM_AX
- 	ASM_CLAC
- 	ret
--END(bad_get_user)
-+SYM_CODE_END(bad_get_user)
- 
- #ifdef CONFIG_X86_32
--bad_get_user_8:
-+SYM_CODE_START_LOCAL(bad_get_user_8)
- 	xor %edx,%edx
- 	xor %ecx,%ecx
- 	mov $(-EFAULT),%_ASM_AX
- 	ASM_CLAC
- 	ret
--END(bad_get_user_8)
-+SYM_CODE_END(bad_get_user_8)
- #endif
- 
- 	_ASM_EXTABLE_UA(1b, bad_get_user)
-diff --git a/arch/x86/lib/putuser.S b/arch/x86/lib/putuser.S
-index d2e5c9c39601..67ef9b4c7eea 100644
---- a/arch/x86/lib/putuser.S
-+++ b/arch/x86/lib/putuser.S
-@@ -89,10 +89,10 @@ ENTRY(__put_user_8)
- ENDPROC(__put_user_8)
- EXPORT_SYMBOL(__put_user_8)
- 
--bad_put_user:
-+SYM_CODE_START_LOCAL(bad_put_user)
- 	movl $-EFAULT,%eax
- 	EXIT
--END(bad_put_user)
-+SYM_CODE_END(bad_put_user)
- 
- 	_ASM_EXTABLE_UA(1b, bad_put_user)
- 	_ASM_EXTABLE_UA(2b, bad_put_user)
 -- 
-2.20.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
