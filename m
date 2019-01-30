@@ -2,156 +2,143 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E1AC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12653C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00CC4207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:00:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDF0A207E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:01:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731694AbfA3QAO (ORCPT
+        id S1731615AbfA3QBY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:00:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60678 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730688AbfA3QAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:00:14 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BA318811DC;
-        Wed, 30 Jan 2019 16:00:11 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 465D1176D7;
-        Wed, 30 Jan 2019 16:00:10 +0000 (UTC)
-Subject: Re: [patch 1/2] genriq: Avoid summation loops for /proc/stat
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Colascione <dancol@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-References: <20190130123130.785636313@linutronix.de>
- <20190130123615.501708580@linutronix.de>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <00f361f9-b1ec-777b-b794-d7728a357034@redhat.com>
-Date:   Wed, 30 Jan 2019 11:00:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190130123615.501708580@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 30 Jan 2019 16:00:13 +0000 (UTC)
+        Wed, 30 Jan 2019 11:01:24 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53529 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729904AbfA3QBX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:01:23 -0500
+Received: from mail-pg1-f198.google.com ([209.85.215.198])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gosIk-0008K9-4o
+        for linux-kernel@vger.kernel.org; Wed, 30 Jan 2019 16:01:22 +0000
+Received: by mail-pg1-f198.google.com with SMTP id r16so6747pgr.15
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 08:01:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=ZTipoSoB8ykd1NY00WZypDMOTW9gdmBfncfdp+2JvVE=;
+        b=rJatSpxB3nW8Fk0w1MD6/ujSFdO7vOWSa0/FXyIsl4EfrXk2GUtllaMiCf+4aYSCRT
+         HS2VEBX9mjQLERdgZ4ielZMFkk8zRijjJq7oF3n+3U4tOvslCq4sBwRmzx7cG8csXY/x
+         d/sC/UBGwV+WHGHr5ANgqwZE86L4zUJTMV+4Tj76SakPYE4R3OVJNv4BLqbRMlNWvnzS
+         3J7Ar8RfAHobqSZ/8ouYxzYZ2q/mOPaeDkwpznHMb7Fbgr3nmv0aEJaqe0Gk/zhCna0U
+         TUHz7xH4kvLFzOflby11UEgHDahK6w6fBcFVHoe/tk1bYXoEuA99fQII+f9MwjuNljP0
+         iMVQ==
+X-Gm-Message-State: AJcUukePcRoBhQvLGNspzWEk2U1KB/sORe73SDANdaCC+mBB5IXolUkm
+        evY138MCuoIA6wAYW8RdFgc+n5QWfAsjetTjXpAJ4Okpe9fJgaSGfsAxMklBFtcn6/vFyIYALU+
+        fCa1t2D1wmxA+0+MTgK3hvhT6BagNOowgUrRZCggc+g==
+X-Received: by 2002:a62:2fc3:: with SMTP id v186mr31253937pfv.82.1548864080762;
+        Wed, 30 Jan 2019 08:01:20 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN5tATOIpt4Lw+7GdFz+qRmT0q2s+V+QlLrLOKQ5I9pHA/W66RO8mmaARxIvl/UI61FrD6QCpg==
+X-Received: by 2002:a62:2fc3:: with SMTP id v186mr31253894pfv.82.1548864080124;
+        Wed, 30 Jan 2019 08:01:20 -0800 (PST)
+Received: from [192.168.1.215] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id 84sm2891490pfk.134.2019.01.30.08.01.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 08:01:19 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2] USB: Disable USB2 LPM at shutdown
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20190130082133.GA32660@kroah.com>
+Date:   Thu, 31 Jan 2019 00:01:13 +0800
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <D84EEC8F-8B65-4B0C-9EA7-E01A0BB47398@canonical.com>
+References: <20190124061643.11663-1-kai.heng.feng@canonical.com>
+ <20190130082133.GA32660@kroah.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/30/2019 07:31 AM, Thomas Gleixner wrote:
-> Waiman reported that on large systems with a large amount of interrupts the
-> readout of /proc/stat takes a long time to sum up the interrupt
-> statistics. In principle this is not a problem. but for unknown reasons
-> some enterprise quality software reads /proc/stat with a high frequency.
->
-> The reason for this is that interrupt statistics are accounted per cpu. So
-> the /proc/stat logic has to sum up the interrupt stats for each interrupt.
->
-> This can be largely avoided for interrupts which are not marked as
-> 'PER_CPU' interrupts by simply adding a per interrupt summation counter
-> which is incremented along with the per interrupt per cpu counter.
->
-> The PER_CPU interrupts need to avoid that and use only per cpu accounting
-> because they share the interrupt number and the interrupt descriptor and
-> concurrent updates would conflict or require unwanted synchronization.
->
-> Reported-by: Waiman Long <longman@redhat.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->
-> 8<-------------
->
->  include/linux/irqdesc.h |    3 ++-
->  kernel/irq/chip.c       |   12 ++++++++++--
->  kernel/irq/internals.h  |    8 +++++++-
->  kernel/irq/irqdesc.c    |    7 ++++++-
->  4 files changed, 25 insertions(+), 5 deletions(-)
->
->
-> --- a/include/linux/irqdesc.h
-> +++ b/include/linux/irqdesc.h
-> @@ -65,9 +65,10 @@ struct irq_desc {
->  	unsigned int		core_internal_state__do_not_mess_with_it;
->  	unsigned int		depth;		/* nested irq disables */
->  	unsigned int		wake_depth;	/* nested wake enables */
-> +	unsigned int		tot_count;
->  	unsigned int		irq_count;	/* For detecting broken IRQs */
-> -	unsigned long		last_unhandled;	/* Aging timer for unhandled count */
->  	unsigned int		irqs_unhandled;
-> +	unsigned long		last_unhandled;	/* Aging timer for unhandled count */
->  	atomic_t		threads_handled;
->  	int			threads_handled_last;
->  	raw_spinlock_t		lock;
 
-Just one minor nit. Why you want to move the last_unhandled down one
-slot? There were 5 int's before. Adding one more will just fill the
-padding hole. Moving down the last_unhandled will probably leave 4-byte
-holes in both above and below it assuming that raw_spinlock_t is 4 bytes.
 
-Cheers,
-Longman
+> On Jan 30, 2019, at 16:21, Greg KH <gregkh@linuxfoundation.org> wrote:
+> 
+> On Thu, Jan 24, 2019 at 02:16:43PM +0800, Kai-Heng Feng wrote:
+>> The QCA Rome USB Bluetooth controller has several issues once LPM gets
+>> enabled:
+>> - Fails to get enumerated in coldboot. [1]
+>> - Drains more power (~ 0.2W) when the system is in S5. [2]
+>> - Disappears after a warmboot. [2]
+>> 
+>> The issue happens because the device lingers at LPM L1 in S5, so device
+>> can't get enumerated even after a reboot.
+>> 
+>> Disable LPM at shutdown to solve the issue.
+>> 
+>> [1] https://bugs.launchpad.net/bugs/1757218
+>> [2] https://patchwork.kernel.org/patch/10607097/
+>> 
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>> ---
+>> v2: Use new LPM helpers.
+>> 
+>> drivers/usb/core/port.c | 9 +++++++++
+>> 1 file changed, 9 insertions(+)
+>> 
+>> diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
+>> index 1a06a4b5fbb1..bbbb35fa639f 100644
+>> --- a/drivers/usb/core/port.c
+>> +++ b/drivers/usb/core/port.c
+>> @@ -285,6 +285,14 @@ static int usb_port_runtime_suspend(struct device *dev)
+>> }
+>> #endif
+>> 
+>> +static void usb_port_shutdown(struct device *dev)
+>> +{
+>> +	struct usb_port *port_dev = to_usb_port(dev);
+>> +
+>> +	if (port_dev->child)
+>> +		usb_disable_usb2_hardware_lpm(port_dev->child);
+>> +}
+>> +
+>> static const struct dev_pm_ops usb_port_pm_ops = {
+>> #ifdef CONFIG_PM
+>> 	.runtime_suspend =	usb_port_runtime_suspend,
+>> @@ -301,6 +309,7 @@ struct device_type usb_port_device_type = {
+>> static struct device_driver usb_port_driver = {
+>> 	.name = "usb",
+>> 	.owner = THIS_MODULE,
+>> +	.shutdown = usb_port_shutdown,
+>> };
+> 
+> So you now do this for all ports in the system, no matter what is
+> plugged in or not.  Are you _SURE_ you want to do that?  It seems like a
+> big hammer to solve just one single device's problems.
+
+Yes I think this should be universally applied.
+
+I don’t think the bug only happens to one device. Users won’t find this
+unless they connect their laptop to a power meter.
+
+Platform may not completely cut off USB bus power during shutdown,
+so the device transits to L1 after system shutdown. Now xHC is disabled
+so nothing can bring it back to L0 or L2.
+
+Kai-Heng
+
+> 
+> thanks,
+> 
+> greg k-h
+
