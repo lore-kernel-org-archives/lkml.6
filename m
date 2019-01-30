@@ -2,121 +2,106 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DABC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F855C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7878C20855
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:14:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B91420881
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:14:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="esDv+HWV"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ef5r+ypH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731612AbfA3XOQ (ORCPT
+        id S1731633AbfA3XOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:14:16 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44875 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbfA3XOO (ORCPT
+        Wed, 30 Jan 2019 18:14:25 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:48188 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbfA3XOY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:14:14 -0500
-Received: by mail-pg1-f193.google.com with SMTP id t13so480828pgr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 15:14:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:from:message-id:cc
-         :references:user-agent:to:in-reply-to:date;
-        bh=Z2kUd9T1hLZPhMu+tVqGLrjwPLXqPCCDErL6IvJu4J4=;
-        b=esDv+HWVINM0oMkbc14eE/yrjVCiFk/Rm0xqyfds7kI7hV+wF09iS2fYL+yupiezg5
-         OFiOZJ49b8wbyTHK+4trwKBUZBxb3LXmByuZwmclEuTLz2EjTAWWmPKTdpGgcBJBmSXm
-         yT+vSbNpt/i63O1NlCWIZbQqysvDq39GhNJrU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :from:message-id:cc:references:user-agent:to:in-reply-to:date;
-        bh=Z2kUd9T1hLZPhMu+tVqGLrjwPLXqPCCDErL6IvJu4J4=;
-        b=n8VRnTpi6HcxnUAS6oIj/glH1rz2hQcwTXaTtr7uL7GRHADJiJKISa1fRJCu8zzGC/
-         GU4sti57iW6FeyR0WEwOzNjmro3x726lLCUd0ZcbhBQB8QDRxifMD0b88iXz5ZZRKwjI
-         A0nP4wLdPvgAc+3lXyc9x5LpDJrgZUvQG/VasfDvydTjlGmmMbrbyIZtn76MYi2HdYO4
-         m5zu4E/obJqm0oirpojBLHSpcLleKhRQ7QWBoOA9htUKLHi6U4Fp7Py0STEKQvRvWVIo
-         7RNTaNarN3pyZS3JuOjDx4qPE+oX+kSnRTdmSRrhd4khSkhXgFe6QKNqdjjb1ipg2iNv
-         BbUw==
-X-Gm-Message-State: AJcUuke7zh8q5Yr7HFBvOyq2RN7vGe4tmvuQv+cykFPJ3guvfF7uPf+b
-        0p2W+EhamaYJsEQg2tMx8UOiytizul5f4A==
-X-Google-Smtp-Source: ALg8bN7dq+ofwpT8s8cSi66dNn6JyXssp2Zv50pDIiZAJyE2aTZNUS61quLFIS6ozt23emARl3fEug==
-X-Received: by 2002:a62:76cc:: with SMTP id r195mr32158606pfc.38.1548888330336;
-        Wed, 30 Jan 2019 14:45:30 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id l19sm5847806pfi.71.2019.01.30.14.45.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 14:45:29 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 30 Jan 2019 18:14:24 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0UNDoAD083642;
+        Wed, 30 Jan 2019 23:14:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=oRY8IIy+LzhfOUy5KtCkTy2Mvv+fVM7jDXgCUqjIfj0=;
+ b=Ef5r+ypHarZqKR2GIKCNPyLlXdwxG3W4mZ4MfIHr90RgBOf0jur7zeY0LRt8UvzbCwQv
+ FO9C8NmIMXeGFYSpBzcdexYuDWUMSFegFPloaBVQUuA0zHcI9FuEOEbjQFPg3ABI4Ud/
+ ng61oqOsGOpDzJgc06svNz7UcpZySiYB0zx91zIWbC8bRRGi2SUvKhSL4HzS6I91krsg
+ Be42tKYpeGxhsKS6KIe1VMq7A6CoYyAy9DKkPXGeHiChQesjsCZ52+eBkwgW8SJNDupc
+ 11vz38sttV6BoxZb2a9Ib2oPseTgyFfd2ClqjAp2ML/45HTIDnw6nxHQyjw3jQ6xHGCd 3w== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2q8d2edrj4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jan 2019 23:14:09 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0UNE3Wa014722
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jan 2019 23:14:03 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0UNE2Qe002159;
+        Wed, 30 Jan 2019 23:14:02 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Jan 2019 15:14:02 -0800
+Subject: Re: [LSF/MM TOPIC] NUMA remote THP vs NUMA local non-THP under
+ MADV_HUGEPAGE
+To:     Andrea Arcangeli <aarcange@redhat.com>,
+        lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Peter Xu <peterx@redhat.com>,
+        Blake Caldwell <blake.caldwell@colorado.edu>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>
+References: <20190129234058.GH31695@redhat.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <609a56e4-c8b7-154f-dcbc-a12817fb22a0@oracle.com>
+Date:   Wed, 30 Jan 2019 15:14:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 5/8] drivers: pinctrl: msm: setup GPIO irqchip hierarchy
-From:   Stephen Boyd <swboyd@chromium.org>
-Message-ID: <154888832839.169292.6913084380036629941@swboyd.mtv.corp.google.com>
-Cc:     linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
-        bjorn.andersson@linaro.org, dianders@chromium.org,
-        linus.walleij@linaro.org, Lina Iyer <ilina@codeaurora.org>
-References: <20190124202205.7940-1-ilina@codeaurora.org> <20190124202205.7940-6-ilina@codeaurora.org>
-User-Agent: alot/0.8
-To:     Lina Iyer <ilina@codeaurora.org>, evgreen@chromium.org,
-        marc.zyngier@arm.com
-In-Reply-To: <20190124202205.7940-6-ilina@codeaurora.org>
-Date:   Wed, 30 Jan 2019 14:45:28 -0800
+In-Reply-To: <20190129234058.GH31695@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9152 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901300167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2019-01-24 12:22:02)
-> To allow GPIOs to wakeup the system from suspend or deep idle, the
-> wakeup capable GPIOs are setup in hierarchy with interrupts from the
-> wakeup-parent irqchip.
->=20
-> In older SoC's, the TLMM will handover detection to the parent irqchip
-> and in newer SoC's, the parent irqchip may also be active as well as the
-> TLMM and therefore the GPIOs need to be masked at TLMM to avoid
-> duplicate interrupts. To enable both these configurations to exist,
-> allow the parent irqchip to dictate the TLMM irqchip's behavior when
-> masking/unmasking the interrupt.
->=20
-> Co-developed-by: Stephen Boyd <swboyd@chromium.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->=20
-> ---
-> Changes in v2:
->         - Fix bug when unmaksing PDC interrupt
+On 1/29/19 3:40 PM, Andrea Arcangeli wrote:
+> In addition to the above "NUMA remote THP vs NUMA local non-THP
+> tradeoff" topic, there are other developments in "userfaultfd" land that
+> are approaching merge readiness and that would be possible to provide a
+> short overview about:
+> 
+> - Peter Xu made significant progress in finalizing the userfaultfd-WP
+>   support over the last few months. That feature was planned from the
+>   start and it will allow userland to do some new things that weren't
+>   possible to achieve before. In addition to synchronously blocking
+>   write faults to be resolved by an userland manager, it has also the
+>   ability to obsolete the softdirty feature, because it can provide
+>   the same information, but with O(1) complexity (as opposed of the
+>   current softdirty O(N) complexity) similarly to what the Page
+>   Modification Logging (PML) does in hardware for EPT write accesses.
 
-What was the bug? Is that why the mask callback in this gpio chip no
-longer calls the parent irq chip? We should keep calling the parent
-irqchip from what I can tell. Otherwise, we may never mask the irq at
-the PDC and only mask it at the GPIO level, which may not even care
-about it if it's being monitored by the PDC.
+I would be interested in this topic as well.  IIRC, Peter's patches do
+not address hugetlbfs support.  I put together patches for this some
+time back.  At the time, they worked as well as userfaultfd-WP support
+for normal base pages: not too well :).  Once base page support is
+finalized, I suspect I will be involved in hugetlbfs support.
 
-This causes me to get a bunch of interrupts on my touchscreen when I
-touch it once vs. only a handful (like 4) when I fix it with the below
-patch:
-
-Can you fold it in?
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinc=
-trl-msm.c
-index dd72ec8fb8db..9b45219893bd 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -682,6 +682,9 @@ static void msm_gpio_irq_mask(struct irq_data *d)
- 	clear_bit(d->hwirq, pctrl->enabled_irqs);
-=20
- 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+
-+	if (d->parent_data)
-+		irq_chip_mask_parent(d);
- }
-=20
- static void msm_gpio_irq_unmask(struct irq_data *d)
+-- 
+Mike Kravetz
