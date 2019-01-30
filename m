@@ -2,111 +2,130 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3937C282CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F765C282CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC27621848
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:54:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YPaw46Tt"
+	by mail.kernel.org (Postfix) with ESMTP id 396992175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:57:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730019AbfA3DyA (ORCPT
+        id S1730051AbfA3D5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 22:54:00 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33712 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727527AbfA3DyA (ORCPT
+        Tue, 29 Jan 2019 22:57:45 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.78]:30724 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728196AbfA3D5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 22:54:00 -0500
-Received: by mail-qk1-f195.google.com with SMTP id d15so12974678qkj.0;
-        Tue, 29 Jan 2019 19:53:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GEyOHCwVPYw7HStNlmnz7HDoR38M6hlikqiPdfmFD4w=;
-        b=YPaw46TtlJTtAmeAsYUQ+PhjGLht5bhU+xu6nv9LVnd/QvvUXTEGidqhE16pYupEJL
-         lURyFrlud4S7ttY1SlKjpXSR9gt46QuOF2402KOurawQkmatQYP3FVfF8RwuuxMgHB/A
-         IsvMMYXJV7skZJ2NFzzdG+MKeInePyHg4+2JsY/Zd0EwFForG+gcJ0tL8eaRBwoUE6Sr
-         eK0kYjnWSYHFK5HeQPqDbBX8abL2w9X/XM1IGE7G6OfxA55XD05BnHj4jEtiDUlcQe0o
-         dQSetSPq9qufWxgFOWurduTU76S9FsNKjSjd47PFb+PhcT3Vkbs216gXBHGuNvGE6ep2
-         yYAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GEyOHCwVPYw7HStNlmnz7HDoR38M6hlikqiPdfmFD4w=;
-        b=finU3Mu2/TNVFme3NA3xXVyLHNumlBM2zLBSkPFOAuxu8CNgniYUOtsvirFQ7EDoKn
-         7sZkUfYaPif02d76z3362OLfnzFTvIbxF3RVbE1lYhhaHdX0KnNV9rZheQ+ZTUk8Nw7Z
-         +EzalcSrV00Z+/v2vntDmgDajQfkm/Oj7Jmp6T8FF6BeoCc6IbNTJ5I0R9BMHKWBvfHS
-         zbUvCNfTDZqGY+nymUPdBcqWJtEz7RNKrlG9wyvDZb8DO6VRBwr8cFKL1qRZDK4gokB9
-         McmX/xiqBshCxMSve6+5x+eA2IR0aMWjz5V25faJbvyjVWZynVay8TRlN2eaxAdIA3U5
-         J3GQ==
-X-Gm-Message-State: AJcUuketQf1iwyiFF0n8akDfv6bcc6wmQXXQKmHzrYPMFI66LJo3MdVt
-        vSVpbXFvzA0VvcWFgV3toyA=
-X-Google-Smtp-Source: ALg8bN7isfnR0LdTHXhEcIuOtq9j2i2zYf+I0jCmt8uYa5dgmsC1UGCX1BMwF84LT8iI6oBKAN4g8w==
-X-Received: by 2002:a05:620a:136e:: with SMTP id d14mr24916553qkl.344.1548820438984;
-        Tue, 29 Jan 2019 19:53:58 -0800 (PST)
-Received: from x3200.lan ([2601:152:4302:ae1f::16e])
-        by smtp.gmail.com with ESMTPSA id q5sm1094098qtq.20.2019.01.29.19.53.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 19:53:58 -0800 (PST)
-From:   George Amanakis <gamanakis@gmail.com>
-To:     davem@davemloft.net
-Cc:     linux-kernel@vger.kernel.org, sdf@google.com,
-        netdev@vger.kernel.org, George Amanakis <gamanakis@gmail.com>
-Subject: [PATCH] tun: move the call to tun_set_real_num_queues
-Date:   Tue, 29 Jan 2019 22:53:55 -0500
-Message-Id: <20190130035355.13304-1-gamanakis@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <CAKH8qBvEintAf5Dmz+8kCTW1V_BRUDxSAZy8WoYSyNoLW+JHfQ@mail.gmail.com>
-References: <CAKH8qBvEintAf5Dmz+8kCTW1V_BRUDxSAZy8WoYSyNoLW+JHfQ@mail.gmail.com>
+        Tue, 29 Jan 2019 22:57:45 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id D0EC13391EA3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 21:57:43 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id oh0RgBR7pYTGMoh0RgsfgI; Tue, 29 Jan 2019 21:57:43 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=32794 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1goh0Q-001FQr-D8; Tue, 29 Jan 2019 21:57:43 -0600
+Subject: Re: [PATCH net-next] cxgb4: cxgb4_tc_u32: use struct_size() in
+ kvzalloc()
+To:     David Miller <davem@davemloft.net>
+Cc:     arjun@chelsio.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190129170523.GA29824@embeddedor>
+ <20190129.105724.1719800687435588791.davem@davemloft.net>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <8ad97988-1c91-e693-e105-0568f6b1e1dc@embeddedor.com>
+Date:   Tue, 29 Jan 2019 21:57:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190129.105724.1719800687435588791.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1goh0Q-001FQr-D8
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:32794
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call tun_set_real_num_queues() after the increment of tun->numqueues
-since the former depends on it. Otherwise, the number of queues is not
-correctly accounted for, which results to warnings similar to:
-"vnet0 selects TX queue 11, but real number of TX queues is 11".
 
-Fixes: 0b7959b62573 ("tun: publish tfile after it's fully initialized")
-Reported-and-tested-by: George Amanakis <gamanakis@gmail.com>
-Signed-off-by: George Amanakis <gamanakis@gmail.com>
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
----
- drivers/net/tun.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 18656c4094b3..fed298c0cb39 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -866,8 +866,6 @@ static int tun_attach(struct tun_struct *tun, struct file *file,
- 	if (rtnl_dereference(tun->xdp_prog))
- 		sock_set_flag(&tfile->sk, SOCK_XDP);
- 
--	tun_set_real_num_queues(tun);
--
- 	/* device is allowed to go away first, so no need to hold extra
- 	 * refcnt.
- 	 */
-@@ -879,6 +877,7 @@ static int tun_attach(struct tun_struct *tun, struct file *file,
- 	rcu_assign_pointer(tfile->tun, tun);
- 	rcu_assign_pointer(tun->tfiles[tun->numqueues], tfile);
- 	tun->numqueues++;
-+	tun_set_real_num_queues(tun);
- out:
- 	return err;
- }
--- 
-2.20.1
+On 1/29/19 12:57 PM, David Miller wrote:
 
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Applied, thanks.
+> 
+
+Thanks, Dave.
+
+--
+Gustavo
