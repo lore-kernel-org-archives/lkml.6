@@ -5,64 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6352C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 047C6C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A1A620881
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:03:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87485218AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:05:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Na9Ojj0i"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XieAFueZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728330AbfA3XD4 (ORCPT
+        id S1727198AbfA3XFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:03:56 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33257 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbfA3XDy (ORCPT
+        Wed, 30 Jan 2019 18:05:30 -0500
+Received: from mail-wm1-f41.google.com ([209.85.128.41]:37102 "EHLO
+        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbfA3XFa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:03:54 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p7so1310435wru.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 15:03:52 -0800 (PST)
+        Wed, 30 Jan 2019 18:05:30 -0500
+Received: by mail-wm1-f41.google.com with SMTP id g67so577834wmd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 15:05:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PYnXMLVmwxkZCLSmRp9VLe1B9hoxSbKa+o67/4TAdSk=;
-        b=Na9Ojj0iW8HhpXlu7ZTV2lzv4GSLnUhUeU3qoJDjq2dCPz1lggL/emSykgEAP5WI+4
-         h3goUUZ6roDJICoPr1LjAalcIyH0sdiYh1qqExn07swBwFjcXunQx+mt+ck6ElQbZm3x
-         /youoL4zMzk/QZF+s4hEA7IKvuVw/m8SRG0n6Wl8rBNa3fp1+AV0gKCbZi/IOzLTGnS9
-         S6N9LTFZDCu0a5+9t4UEMu0BvXkGlMJ+rn5R1QUOAriH0FOZ488kxs4AwQlbiEK5lQjj
-         EeZvBnQRf+Ps2r46lIeuN8PoaufXuo2tQZPrLrxt27/Q9qII3HSjt5iD0WlsSQfIDvGu
-         VKOQ==
+        bh=oUZK7WneT6+7//mUNFfohWY11xwQhv+5dZwvaPXK38k=;
+        b=XieAFueZoZpQPAalUEUHP51N45Q9TGrRWzAalu7l6efwJeGY4oqTdUVKg0xv5BLReS
+         f0ommG8RgLeHbi/AnlFQQ2yQiAucQxFDzismMXGCXBfRcBFH9BwWx589fxgovgm4cRE9
+         CAyCj3M64U46Mfrh8fDt9KJY61QZ94XcjvdqtPqBoje9F8XCqEHRTgb8pW3O2THD+srX
+         pRRR/oGsSfTNPXSufR1XpbvKQ0iLgbOU/5HjQODszFgEKv9FAgQCBTmrW7iE8wEJLI7I
+         RAjBUX1oZ9qQpPEdNZaeE32FqSUb6P9rVHceuqTYJc4ugwQtw9YufYetZXs1fDcFqu0U
+         r+GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=PYnXMLVmwxkZCLSmRp9VLe1B9hoxSbKa+o67/4TAdSk=;
-        b=oQkrJimBygcG5qi2mvJLmFdnm7fiDaOHZSginwQnYz+Tff+bvFD+ilqlI0EMFHPbVT
-         RldjlxU1bJpc5wUJt/KGWSdjpYLWYPfYkkme8Vu5UX3n2QmXu4dzs92DnI4bJqBsIktr
-         3052bNpBCxKq5lj2YOVkhIY0rNxbkKtyfVSNP60WyxMg6NSYqhCQUmufn7Hc1cuhod8W
-         y5BMD8/bL1+auprz55L6Wl4YXfSEO0ZzZQANmwWSY033zjNeH1e9syqJ6VP5A/DhZdN9
-         Yzec31c2nY10FEWUEPpHtCIPDt41W7ui2lhXJ8A0t2PikCF8F6eTAFCAQ0zmmIc81Iyd
-         Pm0A==
-X-Gm-Message-State: AHQUAuYPHjFGxUi+C/ebFGmGSyIN804/3I7G40Sc6pLsg+Jr+SITucqz
-        Ps6y8B/ONjF7e6PEceMqQY9EplNI
-X-Google-Smtp-Source: AHgI3IasrWfiBeWGAkZWhWhJUDAilk1JEEFEXgRAocQi99MDR5Dbb27OXhk6HgL7GpKsGi27k13dnw==
-X-Received: by 2002:a5d:4046:: with SMTP id w6mr11299877wrp.92.1548885983494;
-        Wed, 30 Jan 2019 14:06:23 -0800 (PST)
+        bh=oUZK7WneT6+7//mUNFfohWY11xwQhv+5dZwvaPXK38k=;
+        b=jUMokkC1nnkah8Wy2yWBq2gS8nQU0o2A+OCELb896kS8v0vTEhxcXNDYH3f/PpjRS4
+         E41gVgAnkvzYk8787nqDGsLtlVUJfOmh1qfbfd36Jk7mgQTIK1qnOiSZ7dfKekbTAd6e
+         gC7e8Hkby+j0R8oCQkfDqx8FOwoHpJN/xnAxpXCER6EC+4WV1z0y6j3zz1RasnTFyOui
+         KYwxcJ8zOc3WjkGnZcU/sCdYUlTDIORFQ+zldiRdMNQto0LvwSsMcc5UybSkOi0u1GS+
+         YjmcdoIRlNNR2AmSw5f030QR5637fIul8/48an2JjJ9UeEOdhKXdNVGB2mMqeKj9Jk5o
+         iBhA==
+X-Gm-Message-State: AJcUukf42nqCXq2AvhhDrPtdWzf3y4sS35FMy5jak2Lgn4cDvCsNVogd
+        DK5Ut5a+JDNWPL8kWchXdpqTpjMX
+X-Google-Smtp-Source: ALg8bN6JLEcKojfMx7cOMGZjnGBKHJSz78loXVuev9++GeiXGpyIiMHdsZZDQFpg3tUKmb7L/9adLA==
+X-Received: by 2002:a1c:c87:: with SMTP id 129mr25584062wmm.116.1548886000360;
+        Wed, 30 Jan 2019 14:06:40 -0800 (PST)
 Received: from oded-ubuntu-des.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id b13sm2341349wrn.28.2019.01.30.14.06.21
+        by smtp.gmail.com with ESMTPSA id b13sm2341349wrn.28.2019.01.30.14.06.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 14:06:22 -0800 (PST)
+        Wed, 30 Jan 2019 14:06:39 -0800 (PST)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         olof@lixom.net, rppt@linux.ibm.com
 Cc:     ogabbay@habana.ai, arnd@arndb.de, joe@perches.com
-Subject: [PATCH v2 01/15] habanalabs: add skeleton driver
-Date:   Thu, 31 Jan 2019 00:06:03 +0200
-Message-Id: <20190130220617.4862-2-oded.gabbay@gmail.com>
+Subject: [PATCH v2 08/15] habanalabs: add event queue and interrupts
+Date:   Thu, 31 Jan 2019 00:06:10 +0200
+Message-Id: <20190130220617.4862-9-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190130220617.4862-1-oded.gabbay@gmail.com>
 References: <20190130220617.4862-1-oded.gabbay@gmail.com>
@@ -71,957 +70,1050 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the habanalabs skeleton driver. The driver does nothing at
-this stage except very basic operations. It contains the minimal code to
-insmod and rmmod the driver and to create a /dev/hlX file per PCI device.
+This patch adds support for receiving events from Goya's control CPU and
+for receiving MSI-X interrupts from Goya's DMA engines and CPU.
+
+Goya's PCI controller supports up to 8 MSI-X interrupts, which only 6 of
+them are currently used. The first 5 interrupts are dedicated for Goya's
+DMA engine queues. The 6th interrupt is dedicated for Goya's control CPU.
+
+The DMA queue will signal its MSI-X entry upon each completion of a command
+buffer that was placed on its primary queue. The driver will then mark that
+CB as completed and free the related resources. It will also update the
+command submission object which that CB belongs to.
+
+There is a dedicated event queue (EQ) between the driver and Goya's control
+CPU. The EQ is located on the Host memory. The control CPU writes a new
+entry to the EQ for various reasons, such as ECC error, MMU page fault, Hot
+temperature. After writing the new entry to the EQ, the control CPU will
+trigger its dedicated MSI-X entry to signal the driver that there is a new
+entry in the EQ. The driver will then read the entry and act accordingly.
 
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
 Changes in v2:
-  - Add newline in Makefile
-  - Use kasprintf to allocate device file name
-  - Define pr_fmt
-  - Use strlcpy instead of sprintf
-  - Don't use camelcase
-  - Add static keyword to pci_device_id array definition
-  - Remove print on memory allocation failure
-  - Change /** to /* in all functions
-  - Don't use three exclamation marks
-  - Remove extra spaces in habanalabs.h
-  - Change get_asic_type() to return asic type instead of doing it by
-    reference
-  - Check return value of idr_replace
-  - Remove habanalabs_device_if.h from this patch as it is not needed here
-  - Remove Author: from comment at head of files
+  - Replace /** with /* in all functions
+  - Remove unused local variables in goya_print_razwi_info()
+  - Unify consecutive values in switch statement in goya_handle_eqe()
+  - Remove Authors: from comment at start of file
+  - Remove bitfields in interface to F/W and use __le16/32/64
+  - Remove bitfields in interface to QMAN and use __le16/32/64
  
- drivers/misc/Kconfig                     |   1 +
- drivers/misc/Makefile                    |   1 +
- drivers/misc/habanalabs/Kconfig          |  22 ++
- drivers/misc/habanalabs/Makefile         |   7 +
- drivers/misc/habanalabs/device.c         | 336 +++++++++++++++++++++
- drivers/misc/habanalabs/habanalabs.h     | 138 +++++++++
- drivers/misc/habanalabs/habanalabs_drv.c | 362 +++++++++++++++++++++++
- 7 files changed, 867 insertions(+)
- create mode 100644 drivers/misc/habanalabs/Kconfig
- create mode 100644 drivers/misc/habanalabs/Makefile
- create mode 100644 drivers/misc/habanalabs/device.c
- create mode 100644 drivers/misc/habanalabs/habanalabs.h
- create mode 100644 drivers/misc/habanalabs/habanalabs_drv.c
+ drivers/misc/habanalabs/device.c           |  34 +-
+ drivers/misc/habanalabs/goya/goya.c        | 459 ++++++++++++++++++++-
+ drivers/misc/habanalabs/goya/goyaP.h       |   1 +
+ drivers/misc/habanalabs/habanalabs.h       |  39 +-
+ drivers/misc/habanalabs/include/armcp_if.h |  24 ++
+ drivers/misc/habanalabs/irq.c              | 144 +++++++
+ 6 files changed, 689 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index f417b06e11c5..fecab53c4f21 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -535,4 +535,5 @@ source "drivers/misc/echo/Kconfig"
- source "drivers/misc/cxl/Kconfig"
- source "drivers/misc/ocxl/Kconfig"
- source "drivers/misc/cardreader/Kconfig"
-+source "drivers/misc/habanalabs/Kconfig"
- endmenu
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index e39ccbbc1b3a..ae77dfd790a4 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -59,3 +59,4 @@ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+= ocxl/
- obj-y				+= cardreader/
- obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
-+obj-$(CONFIG_HABANA_AI)		+= habanalabs/
-diff --git a/drivers/misc/habanalabs/Kconfig b/drivers/misc/habanalabs/Kconfig
-new file mode 100644
-index 000000000000..b7f38a14caf5
---- /dev/null
-+++ b/drivers/misc/habanalabs/Kconfig
-@@ -0,0 +1,22 @@
-+#
-+# HabanaLabs AI accelerators driver
-+#
-+
-+config HABANA_AI
-+	tristate "HabanaAI accelerators (habanalabs)"
-+	depends on PCI
-+	select FRAME_VECTOR
-+	help
-+	  Enables PCIe card driver for Habana's AI Processors (AIP) that are
-+	  designed to accelerate Deep Learning inference and training workloads.
-+
-+	  The driver manages the PCIe devices and provides IOCTL interface for
-+	  the user to submit workloads to the devices.
-+
-+	  The user-space interface is described in
-+	  include/uapi/misc/habanalabs.h
-+
-+	  If unsure, say N.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called habanalabs.
-diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
-new file mode 100644
-index 000000000000..0910f7fa34ec
---- /dev/null
-+++ b/drivers/misc/habanalabs/Makefile
-@@ -0,0 +1,7 @@
-+#
-+# Makefile for HabanaLabs AI accelerators driver
-+#
-+
-+obj-m	:= habanalabs.o
-+
-+habanalabs-y := habanalabs_drv.o device.o
 diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-new file mode 100644
-index 000000000000..3797a4281974
---- /dev/null
+index 3f807e1419a6..e4c939899042 100644
+--- a/drivers/misc/habanalabs/device.c
 +++ b/drivers/misc/habanalabs/device.c
-@@ -0,0 +1,336 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2016-2018 HabanaLabs, Ltd.
-+ * All Rights Reserved.
-+ */
-+
-+#include "habanalabs.h"
-+
-+#include <linux/fs.h>
-+#include <linux/kthread.h>
-+#include <linux/sched/signal.h>
-+
-+static void hpriv_release(struct kref *ref)
-+{
-+	struct hl_fpriv *hpriv;
-+	struct hl_device *hdev;
-+
-+	hpriv = container_of(ref, struct hl_fpriv, refcount);
-+
-+	hdev = hpriv->hdev;
-+
-+	put_pid(hpriv->taskpid);
-+
-+	kfree(hpriv);
-+}
-+
-+void hl_hpriv_get(struct hl_fpriv *hpriv)
-+{
-+	kref_get(&hpriv->refcount);
-+}
-+
-+void hl_hpriv_put(struct hl_fpriv *hpriv)
-+{
-+	kref_put(&hpriv->refcount, hpriv_release);
-+}
-+
-+/*
-+ * hl_device_release - release function for habanalabs device
-+ *
-+ * @inode: pointer to inode structure
-+ * @filp: pointer to file structure
-+ *
-+ * Called when process closes an habanalabs device
-+ */
-+static int hl_device_release(struct inode *inode, struct file *filp)
-+{
-+	struct hl_fpriv *hpriv = filp->private_data;
-+
-+	filp->private_data = NULL;
-+
-+	hl_hpriv_put(hpriv);
-+
-+	return 0;
-+}
-+
-+static const struct file_operations hl_ops = {
-+	.owner = THIS_MODULE,
-+	.open = hl_device_open,
-+	.release = hl_device_release
-+};
-+
-+/*
-+ * device_setup_cdev - setup cdev and device for habanalabs device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ * @hclass: pointer to the class object of the device
-+ * @minor: minor number of the specific device
-+ * @fpos : file operations to install for this device
-+ *
-+ * Create a cdev and a Linux device for habanalabs's device. Need to be
-+ * called at the end of the habanalabs device initialization process,
-+ * because this function exposes the device to the user
-+ */
-+static int device_setup_cdev(struct hl_device *hdev, struct class *hclass,
-+				int minor, const struct file_operations *fops)
-+{
-+	int err, devno = MKDEV(hdev->major, minor);
-+	struct cdev *hdev_cdev = &hdev->cdev;
-+	char *name;
-+
-+	name = kasprintf(GFP_KERNEL, "hl%d", hdev->id);
-+	if (!name)
-+		return -ENOMEM;
-+
-+	cdev_init(hdev_cdev, fops);
-+	hdev_cdev->owner = THIS_MODULE;
-+	err = cdev_add(hdev_cdev, devno, 1);
-+	if (err) {
-+		pr_err("Failed to add char device %s\n", name);
-+		goto err_cdev_add;
+@@ -182,6 +182,13 @@ static int device_early_init(struct hl_device *hdev)
+ 		goto asid_fini;
+ 	}
+ 
++	hdev->eq_wq = alloc_workqueue("hl-events", WQ_UNBOUND, 0);
++	if (hdev->eq_wq == NULL) {
++		dev_err(hdev->dev, "Failed to allocate EQ workqueue\n");
++		rc = -ENOMEM;
++		goto free_cq_wq;
 +	}
 +
-+	hdev->dev = device_create(hclass, NULL, devno, NULL, "%s", name);
-+	if (IS_ERR(hdev->dev)) {
-+		pr_err("Failed to create device %s\n", name);
-+		err = PTR_ERR(hdev->dev);
-+		goto err_device_create;
-+	}
-+
-+	dev_set_drvdata(hdev->dev, hdev);
-+
-+	kfree(name);
-+
-+	return 0;
-+
-+err_device_create:
-+	cdev_del(hdev_cdev);
-+err_cdev_add:
-+	kfree(name);
-+	return err;
-+}
-+
-+/*
-+ * device_early_init - do some early initialization for the habanalabs device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Install the relevant function pointers and call the early_init function,
-+ * if such a function exists
-+ */
-+static int device_early_init(struct hl_device *hdev)
-+{
-+	switch (hdev->asic_type) {
-+	case ASIC_GOYA:
-+		strlcpy(hdev->asic_name, "GOYA", sizeof(hdev->asic_name));
-+		break;
-+	default:
-+		dev_err(hdev->dev, "Unrecognized ASIC type %d\n",
-+			hdev->asic_type);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * device_early_fini - finalize all that was done in device_early_init
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ */
-+static void device_early_fini(struct hl_device *hdev)
-+{
-+}
-+
-+/*
-+ * hl_device_suspend - initiate device suspend
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Puts the hw in the suspend state (all asics).
-+ * Returns 0 for success or an error on failure.
-+ * Called at driver suspend.
-+ */
-+int hl_device_suspend(struct hl_device *hdev)
-+{
-+	pci_save_state(hdev->pdev);
-+
-+	/* Shut down the device */
-+	pci_disable_device(hdev->pdev);
-+	pci_set_power_state(hdev->pdev, PCI_D3hot);
-+
-+	return 0;
-+}
-+
-+/*
-+ * hl_device_resume - initiate device resume
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Bring the hw back to operating state (all asics).
-+ * Returns 0 for success or an error on failure.
-+ * Called at driver resume.
-+ */
-+int hl_device_resume(struct hl_device *hdev)
-+{
-+	int rc;
-+
-+	pci_set_power_state(hdev->pdev, PCI_D0);
-+	pci_restore_state(hdev->pdev);
-+	rc = pci_enable_device(hdev->pdev);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to enable PCI device in resume\n");
-+		return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * hl_device_init - main initialization function for habanalabs device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Allocate an id for the device, do early initialization and then call the
-+ * ASIC specific initialization functions. Finally, create the cdev and the
-+ * Linux device to expose it to the user
-+ */
-+int hl_device_init(struct hl_device *hdev, struct class *hclass)
-+{
-+	int rc;
-+
-+	/* Create device */
-+	rc = device_setup_cdev(hdev, hclass, hdev->id, &hl_ops);
-+
-+	if (rc)
-+		goto out_disabled;
-+
-+	/* Initialize ASIC function pointers and perform early init */
-+	rc = device_early_init(hdev);
-+	if (rc)
-+		goto release_device;
-+
-+	dev_notice(hdev->dev,
-+		"Successfully added device to habanalabs driver\n");
-+
-+	return 0;
-+
-+release_device:
-+	device_destroy(hclass, hdev->dev->devt);
-+	cdev_del(&hdev->cdev);
-+out_disabled:
-+	hdev->disabled = true;
-+	if (hdev->pdev)
-+		dev_err(&hdev->pdev->dev,
-+			"Failed to initialize hl%d. Device is NOT usable !\n",
-+			hdev->id);
-+	else
-+		pr_err("Failed to initialize hl%d. Device is NOT usable !\n",
-+			hdev->id);
-+
-+	return rc;
-+}
-+
-+/*
-+ * hl_device_fini - main tear-down function for habanalabs device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Destroy the device, call ASIC fini functions and release the id
-+ */
-+void hl_device_fini(struct hl_device *hdev)
-+{
-+	dev_info(hdev->dev, "Removing device\n");
-+
-+	/* Mark device as disabled */
-+	hdev->disabled = true;
-+
-+	device_early_fini(hdev);
-+
-+	/* Hide device from user */
-+	device_destroy(hdev->dev->class, hdev->dev->devt);
-+	cdev_del(&hdev->cdev);
-+
-+	pr_info("removed device successfully\n");
-+}
-+
-+/*
-+ * hl_poll_timeout_memory - Periodically poll a host memory address
-+ *                              until it is not zero or a timeout occurs
-+ * @hdev: pointer to habanalabs device structure
-+ * @addr: Address to poll
-+ * @timeout_us: timeout in us
-+ * @val: Variable to read the value into
-+ *
-+ * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
-+ * case, the last read value at @addr is stored in @val. Must not
-+ * be called from atomic context if sleep_us or timeout_us are used.
-+ *
-+ * The function sleeps for 100us with timeout value of
-+ * timeout_us
-+ */
-+int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr,
-+				u32 timeout_us, u32 *val)
-+{
+ 	hl_cb_mgr_init(&hdev->kernel_cb_mgr);
+ 
+ 	mutex_init(&hdev->fd_open_cnt_lock);
+@@ -190,6 +197,8 @@ static int device_early_init(struct hl_device *hdev)
+ 
+ 	return 0;
+ 
++free_cq_wq:
++	destroy_workqueue(hdev->cq_wq);
+ asid_fini:
+ 	hl_asid_fini(hdev);
+ early_fini:
+@@ -211,6 +220,7 @@ static void device_early_fini(struct hl_device *hdev)
+ 
+ 	hl_cb_mgr_fini(hdev, &hdev->kernel_cb_mgr);
+ 
++	destroy_workqueue(hdev->eq_wq);
+ 	destroy_workqueue(hdev->cq_wq);
+ 
+ 	hl_asid_fini(hdev);
+@@ -349,11 +359,22 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		}
+ 	}
+ 
 +	/*
-+	 * paddr is defined as volatile because it points to HOST memory,
-+	 * which is being written to by the device. Therefore, we can't use
-+	 * locks to synchronize it and it is not a memory-mapped register space
++	 * Initialize the event queue. Must be done before hw_init,
++	 * because there the address of the event queue is being
++	 * passed as argument to request_irq
 +	 */
-+	volatile u32 *paddr = (volatile u32 *) addr;
-+	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us);
-+
-+	might_sleep();
-+
-+	for (;;) {
-+		*val = *paddr;
-+		if (*val)
-+			break;
-+		if (ktime_compare(ktime_get(), timeout) > 0) {
-+			*val = *paddr;
-+			break;
-+		}
-+		usleep_range((100 >> 2) + 1, 100);
-+	}
-+
-+	return *val ? 0 : -ETIMEDOUT;
-+}
-+
-+/*
-+ * hl_poll_timeout_devicememory - Periodically poll a device memory address
-+ *                                until it is not zero or a timeout occurs
-+ * @hdev: pointer to habanalabs device structure
-+ * @addr: Device address to poll
-+ * @timeout_us: timeout in us
-+ * @val: Variable to read the value into
-+ *
-+ * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
-+ * case, the last read value at @addr is stored in @val. Must not
-+ * be called from atomic context if sleep_us or timeout_us are used.
-+ *
-+ * The function sleeps for 100us with timeout value of
-+ * timeout_us
-+ */
-+int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
-+				u32 timeout_us, u32 *val)
-+{
-+	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us);
-+
-+	might_sleep();
-+
-+	for (;;) {
-+		*val = readl(addr);
-+		if (*val)
-+			break;
-+		if (ktime_compare(ktime_get(), timeout) > 0) {
-+			*val = readl(addr);
-+			break;
-+		}
-+		usleep_range((100 >> 2) + 1, 100);
-+	}
-+
-+	return *val ? 0 : -ETIMEDOUT;
-+}
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-new file mode 100644
-index 000000000000..02386dcaa3a3
---- /dev/null
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -0,0 +1,138 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright 2016-2018 HabanaLabs, Ltd.
-+ * All Rights Reserved.
-+ *
-+ */
-+
-+#ifndef HABANALABSP_H_
-+#define HABANALABSP_H_
-+
-+#define pr_fmt(fmt)			"habanalabs: " fmt
-+
-+#include <linux/pci.h>
-+#include <linux/types.h>
-+#include <linux/cdev.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/dma-fence.h>
-+#include <linux/hashtable.h>
-+#include <linux/hwmon.h>
-+
-+#define HL_NAME				"habanalabs"
-+
-+struct hl_device;
-+
-+
-+/*
-+ * ASICs
-+ */
-+
-+/**
-+ * enum hl_asic_type - supported ASIC types.
-+ * @ASIC_AUTO_DETECT: ASIC type will be automatically set.
-+ * @ASIC_GOYA: Goya device.
-+ * @ASIC_INVALID: Invalid ASIC type.
-+ */
-+enum hl_asic_type {
-+	ASIC_AUTO_DETECT,
-+	ASIC_GOYA,
-+	ASIC_INVALID
-+};
-+
-+
-+/*
-+ * FILE PRIVATE STRUCTURE
-+ */
-+
-+/**
-+ * struct hl_fpriv - process information stored in FD private data.
-+ * @hdev: habanalabs device structure.
-+ * @filp: pointer to the given file structure.
-+ * @taskpid: current process ID.
-+ * @refcount: number of related contexts.
-+ */
-+struct hl_fpriv {
-+	struct hl_device	*hdev;
-+	struct file		*filp;
-+	struct pid		*taskpid;
-+	struct kref		refcount;
-+};
-+
-+
-+/*
-+ * DEVICES
-+ */
-+
-+/* Theoretical limit only. A single host can only contain up to 4 or 8 PCIe
-+ * x16 cards. In extereme cases, there are hosts that can accommodate 16 cards
-+ */
-+#define HL_MAX_MINORS	256
-+
-+/**
-+ * struct hl_device - habanalabs device structure.
-+ * @pdev: pointer to PCI device, can be NULL in case of simulator device.
-+ * @cdev: related char device.
-+ * @dev: realted kernel basic device structure.
-+ * @asic_name: ASIC specific nmae.
-+ * @asic_type: ASIC specific type.
-+ * @major: habanalabs KMD major.
-+ * @id: device minor.
-+ * @disabled: is device disabled.
-+ */
-+struct hl_device {
-+	struct pci_dev			*pdev;
-+	struct cdev			cdev;
-+	struct device			*dev;
-+	char				asic_name[16];
-+	enum hl_asic_type		asic_type;
-+	u32				major;
-+	u16				id;
-+	u8				disabled;
-+};
-+
-+
-+/*
-+ * IOCTLs
-+ */
-+
-+/**
-+ * typedef hl_ioctl_t - typedef for ioctl function in the driver
-+ * @hpriv: pointer to the FD's private data, which contains state of
-+ *		user process
-+ * @data: pointer to the input/output arguments structure of the IOCTL
-+ *
-+ * Return: 0 for success, negative value for error
-+ */
-+typedef int hl_ioctl_t(struct hl_fpriv *hpriv, void *data);
-+
-+/**
-+ * struct hl_ioctl_desc - describes an IOCTL entry of the driver.
-+ * @cmd: the IOCTL code as created by the kernel macros.
-+ * @func: pointer to the driver's function that should be called for this IOCTL.
-+ */
-+struct hl_ioctl_desc {
-+	unsigned int cmd;
-+	hl_ioctl_t *func;
-+};
-+
-+
-+/*
-+ * Kernel module functions that can be accessed by entire module
-+ */
-+
-+int hl_device_open(struct inode *inode, struct file *filp);
-+int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
-+		enum hl_asic_type asic_type, int minor);
-+void destroy_hdev(struct hl_device *hdev);
-+int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr, u32 timeout_us,
-+				u32 *val);
-+int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
-+				u32 timeout_us, u32 *val);
-+
-+int hl_device_init(struct hl_device *hdev, struct class *hclass);
-+void hl_device_fini(struct hl_device *hdev);
-+int hl_device_suspend(struct hl_device *hdev);
-+int hl_device_resume(struct hl_device *hdev);
-+
-+#endif /* HABANALABSP_H_ */
-diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
-new file mode 100644
-index 000000000000..573349eedce4
---- /dev/null
-+++ b/drivers/misc/habanalabs/habanalabs_drv.c
-@@ -0,0 +1,362 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2016-2018 HabanaLabs, Ltd.
-+ * All Rights Reserved.
-+ *
-+ */
-+
-+#include "habanalabs.h"
-+
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/kthread.h>
-+
-+#include <linux/fs.h>
-+
-+#define HL_DRIVER_AUTHOR	"HabanaLabs Kernel Driver Team"
-+
-+#define HL_DRIVER_DESC		"Driver for HabanaLabs's AI Accelerators"
-+
-+MODULE_AUTHOR(HL_DRIVER_AUTHOR);
-+MODULE_DESCRIPTION(HL_DRIVER_DESC);
-+MODULE_LICENSE("GPL v2");
-+
-+static int hl_major;
-+static struct class *hl_class;
-+DEFINE_IDR(hl_devs_idr);
-+DEFINE_MUTEX(hl_devs_idr_lock);
-+
-+#define PCI_VENDOR_ID_HABANALABS	0x1da3
-+
-+#define PCI_IDS_GOYA			0x0001
-+
-+static const struct pci_device_id ids[] = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_HABANALABS, PCI_IDS_GOYA), },
-+	{ 0, }
-+};
-+MODULE_DEVICE_TABLE(pci, ids);
-+
-+/*
-+ * get_asic_type - translate device id to asic type
-+ *
-+ * @device: id of the PCI device
-+ *
-+ * Translate device id to asic type.
-+ * In case of unidentified device, return -1
-+ */
-+static enum hl_asic_type get_asic_type(u16 device)
-+{
-+	enum hl_asic_type asic_type;
-+
-+	switch (device) {
-+	case PCI_IDS_GOYA:
-+		asic_type = ASIC_GOYA;
-+		break;
-+	default:
-+		asic_type = ASIC_INVALID;
-+		break;
-+	}
-+
-+	return asic_type;
-+}
-+
-+/*
-+ * hl_device_open - open function for habanalabs device
-+ *
-+ * @inode: pointer to inode structure
-+ * @filp: pointer to file structure
-+ *
-+ * Called when process opens an habanalabs device.
-+ */
-+int hl_device_open(struct inode *inode, struct file *filp)
-+{
-+	struct hl_device *hdev;
-+	struct hl_fpriv *hpriv;
-+
-+	mutex_lock(&hl_devs_idr_lock);
-+	hdev = idr_find(&hl_devs_idr, iminor(inode));
-+	mutex_unlock(&hl_devs_idr_lock);
-+
-+	if (!hdev) {
-+		pr_err("Couldn't find device %d:%d\n",
-+			imajor(inode), iminor(inode));
-+		return -ENXIO;
-+	}
-+
-+	hpriv = kzalloc(sizeof(*hpriv), GFP_KERNEL);
-+	if (!hpriv)
-+		return -ENOMEM;
-+
-+	hpriv->hdev = hdev;
-+	filp->private_data = hpriv;
-+	hpriv->filp = filp;
-+	kref_init(&hpriv->refcount);
-+	nonseekable_open(inode, filp);
-+
-+	hpriv->taskpid = find_get_pid(current->pid);
-+
-+	return 0;
-+}
-+
-+/*
-+ * create_hdev - create habanalabs device instance
-+ *
-+ * @dev: will hold the pointer to the new habanalabs device structure
-+ * @pdev: pointer to the pci device
-+ * @asic_type: in case of simulator device, which device is it
-+ * @minor: in case of simulator device, the minor of the device
-+ *
-+ * Allocate memory for habanalabs device and initialize basic fields
-+ * Identify the ASIC type
-+ * Allocate ID (minor) for the device (only for real devices)
-+ */
-+int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
-+		enum hl_asic_type asic_type, int minor)
-+{
-+	struct hl_device *hdev;
-+	int rc;
-+
-+	*dev = NULL;
-+
-+	hdev = kzalloc(sizeof(*hdev), GFP_KERNEL);
-+	if (!hdev)
-+		return -ENOMEM;
-+
-+	hdev->major = hl_major;
-+
-+	hdev->disabled = true;
-+	hdev->pdev = pdev; /* can be NULL in case of simulator device */
-+
-+	if (asic_type == ASIC_AUTO_DETECT) {
-+		hdev->asic_type = get_asic_type(pdev->device);
-+		if (hdev->asic_type == ASIC_INVALID) {
-+			dev_err(&pdev->dev, "Unsupported ASIC\n");
-+			rc = -ENODEV;
-+			goto free_hdev;
-+		}
-+	} else {
-+		hdev->asic_type = asic_type;
-+	}
-+
-+	mutex_lock(&hl_devs_idr_lock);
-+
-+	if (minor == -1) {
-+		rc = idr_alloc(&hl_devs_idr, hdev, 0, HL_MAX_MINORS,
-+				GFP_KERNEL);
-+	} else {
-+		void *old_idr = idr_replace(&hl_devs_idr, hdev, minor);
-+
-+		if (IS_ERR_VALUE(old_idr)) {
-+			rc = PTR_ERR(old_idr);
-+			pr_err("Error %d when trying to replace minor %d\n",
-+				rc, minor);
-+			mutex_unlock(&hl_devs_idr_lock);
-+			goto free_hdev;
-+		}
-+		rc = minor;
-+	}
-+
-+	mutex_unlock(&hl_devs_idr_lock);
-+
-+	if (rc < 0) {
-+		if (rc == -ENOSPC) {
-+			pr_err("too many devices in the system\n");
-+			rc = -EBUSY;
-+		}
-+		goto free_hdev;
-+	}
-+
-+	hdev->id = rc;
-+
-+	*dev = hdev;
-+
-+	return 0;
-+
-+free_hdev:
-+	kfree(hdev);
-+	return rc;
-+}
-+
-+/*
-+ * destroy_hdev - destroy habanalabs device instance
-+ *
-+ * @dev: pointer to the habanalabs device structure
-+ *
-+ */
-+void destroy_hdev(struct hl_device *hdev)
-+{
-+	/* Remove device from the device list */
-+	mutex_lock(&hl_devs_idr_lock);
-+	idr_remove(&hl_devs_idr, hdev->id);
-+	mutex_unlock(&hl_devs_idr_lock);
-+
-+	kfree(hdev);
-+}
-+
-+static int hl_pmops_suspend(struct device *dev)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct hl_device *hdev = pci_get_drvdata(pdev);
-+
-+	pr_debug("Going to suspend PCI device\n");
-+
-+	if (!hdev) {
-+		pr_err("device pointer is NULL in suspend\n");
-+		return 0;
-+	}
-+
-+	return hl_device_suspend(hdev);
-+}
-+
-+static int hl_pmops_resume(struct device *dev)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct hl_device *hdev = pci_get_drvdata(pdev);
-+
-+	pr_debug("Going to resume PCI device\n");
-+
-+	if (!hdev) {
-+		pr_err("device pointer is NULL in resume\n");
-+		return 0;
-+	}
-+
-+	return hl_device_resume(hdev);
-+}
-+
-+/*
-+ * hl_pci_probe - probe PCI habanalabs devices
-+ *
-+ * @pdev: pointer to pci device
-+ * @id: pointer to pci device id structure
-+ *
-+ * Standard PCI probe function for habanalabs device.
-+ * Create a new habanalabs device and initialize it according to the
-+ * device's type
-+ */
-+static int hl_pci_probe(struct pci_dev *pdev,
-+				const struct pci_device_id *id)
-+{
-+	struct hl_device *hdev;
-+	int rc;
-+
-+	dev_info(&pdev->dev, HL_NAME
-+		 " device found [%04x:%04x] (rev %x)\n",
-+		 (int)pdev->vendor, (int)pdev->device, (int)pdev->revision);
-+
-+	rc = create_hdev(&hdev, pdev, ASIC_AUTO_DETECT, -1);
-+	if (rc)
-+		return rc;
-+
-+	pci_set_drvdata(pdev, hdev);
-+
-+	rc = hl_device_init(hdev, hl_class);
++	rc = hl_eq_init(hdev, &hdev->event_queue);
 +	if (rc) {
-+		dev_err(&pdev->dev, "Fatal error during habanalabs device init\n");
-+		rc = -ENODEV;
-+		goto disable_device;
++		dev_err(hdev->dev, "failed to initialize event queue\n");
++		goto cq_fini;
 +	}
 +
+ 	/* Allocate the kernel context */
+ 	hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx), GFP_KERNEL);
+ 	if (!hdev->kernel_ctx) {
+ 		rc = -ENOMEM;
+-		goto cq_fini;
++		goto eq_fini;
+ 	}
+ 
+ 	hdev->user_ctx = NULL;
+@@ -398,6 +419,8 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 			"kernel ctx is still alive on initialization failure\n");
+ free_ctx:
+ 	kfree(hdev->kernel_ctx);
++eq_fini:
++	hl_eq_fini(hdev, &hdev->event_queue);
+ cq_fini:
+ 	for (i = 0 ; i < cq_ready_cnt ; i++)
+ 		hl_cq_fini(hdev, &hdev->completion_queue[i]);
+@@ -439,6 +462,13 @@ void hl_device_fini(struct hl_device *hdev)
+ 	/* Mark device as disabled */
+ 	hdev->disabled = true;
+ 
++	/*
++	 * Halt the engines and disable interrupts so we won't get any more
++	 * completions from H/W and we won't have any accesses from the
++	 * H/W to the host machine
++	 */
++	hdev->asic_funcs->halt_engines(hdev, true);
++
+ 	hl_cb_pool_fini(hdev);
+ 
+ 	/* Release kernel context */
+@@ -448,6 +478,8 @@ void hl_device_fini(struct hl_device *hdev)
+ 	/* Reset the H/W. It will be in idle state after this returns */
+ 	hdev->asic_funcs->hw_fini(hdev, true);
+ 
++	hl_eq_fini(hdev, &hdev->event_queue);
++
+ 	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++)
+ 		hl_cq_fini(hdev, &hdev->completion_queue[i]);
+ 	kfree(hdev->completion_queue);
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index 15b5bb99e0c6..0773bfab2ff1 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -92,9 +92,41 @@
+ 
+ #define GOYA_MAX_INITIATORS		20
+ 
++#define GOYA_MAX_STRING_LEN		20
++
+ #define GOYA_CB_POOL_CB_CNT		512
+ #define GOYA_CB_POOL_CB_SIZE		0x20000		/* 128KB */
+ 
++static const char goya_irq_name[GOYA_MSIX_ENTRIES][GOYA_MAX_STRING_LEN] = {
++		"goya cq 0", "goya cq 1", "goya cq 2", "goya cq 3",
++		"goya cq 4", "goya cpu eq"
++};
++
++static const char *goya_axi_name[GOYA_MAX_INITIATORS] = {
++	"MME0",
++	"MME1",
++	"MME2",
++	"MME3",
++	"MME4",
++	"MME5",
++	"TPC0",
++	"TPC1",
++	"TPC2",
++	"TPC3",
++	"TPC4",
++	"TPC5",
++	"TPC6",
++	"TPC7",
++	"PCI",
++	"DMA", /* HBW */
++	"DMA", /* LBW */
++	"PSOC",
++	"CPU",
++	"MMU"
++};
++
++#define GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE 121
++
+ static void goya_get_fixed_properties(struct hl_device *hdev)
+ {
+ 	struct asic_fixed_properties *prop = &hdev->asic_prop;
+@@ -139,6 +171,7 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
+ 	prop->va_space_dram_end_address = VA_DDR_SPACE_END;
+ 	prop->cfg_size = CFG_SIZE;
+ 	prop->max_asid = MAX_ASID;
++	prop->num_of_events = GOYA_ASYNC_EVENT_ID_SIZE;
+ 	prop->cb_pool_cb_cnt = GOYA_CB_POOL_CB_CNT;
+ 	prop->cb_pool_cb_size = GOYA_CB_POOL_CB_SIZE;
+ 	prop->tpc_enabled_mask = TPC_ENABLED_MASK;
+@@ -674,15 +707,10 @@ static void goya_init_dma_qman(struct hl_device *hdev, int dma_id,
+ 	WREG32(mmDMA_QM_0_PQ_CFG1 + reg_off, 0x00020002);
+ 	WREG32(mmDMA_QM_0_CQ_CFG1 + reg_off, 0x00080008);
+ 
+-	if (dma_id == 0)
+-		WREG32(mmDMA_QM_0_GLBL_PROT + reg_off, QMAN_DMA_FULLY_TRUSTED);
++	if (goya->hw_cap_initialized & HW_CAP_MMU)
++		WREG32(mmDMA_QM_0_GLBL_PROT + reg_off, QMAN_DMA_PARTLY_TRUSTED);
+ 	else
+-		if (goya->hw_cap_initialized & HW_CAP_MMU)
+-			WREG32(mmDMA_QM_0_GLBL_PROT + reg_off,
+-					QMAN_DMA_PARTLY_TRUSTED);
+-		else
+-			WREG32(mmDMA_QM_0_GLBL_PROT + reg_off,
+-					QMAN_DMA_FULLY_TRUSTED);
++		WREG32(mmDMA_QM_0_GLBL_PROT + reg_off, QMAN_DMA_FULLY_TRUSTED);
+ 
+ 	WREG32(mmDMA_QM_0_GLBL_ERR_CFG + reg_off, QMAN_DMA_ERR_MSG_EN);
+ 	WREG32(mmDMA_QM_0_GLBL_CFG0 + reg_off, QMAN_DMA_ENABLE);
+@@ -876,6 +904,7 @@ static void goya_resume_external_queues(struct hl_device *hdev)
+ int goya_init_cpu_queues(struct hl_device *hdev)
+ {
+ 	struct goya_device *goya = hdev->asic_specific;
++	struct hl_eq *eq;
+ 	dma_addr_t bus_address;
+ 	u32 status;
+ 	struct hl_hw_queue *cpu_pq = &hdev->kernel_queues[GOYA_QUEUE_ID_CPU_PQ];
+@@ -887,17 +916,24 @@ int goya_init_cpu_queues(struct hl_device *hdev)
+ 	if (goya->hw_cap_initialized & HW_CAP_CPU_Q)
+ 		return 0;
+ 
++	eq = &hdev->event_queue;
++
+ 	bus_address = cpu_pq->bus_address +
+ 			hdev->asic_prop.host_phys_base_address;
+ 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_0, lower_32_bits(bus_address));
+ 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_1, upper_32_bits(bus_address));
+ 
++	bus_address = eq->bus_address + hdev->asic_prop.host_phys_base_address;
++	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_2, lower_32_bits(bus_address));
++	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_3, upper_32_bits(bus_address));
++
+ 	bus_address = hdev->cpu_accessible_dma_address +
+ 			hdev->asic_prop.host_phys_base_address;
+ 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_8, lower_32_bits(bus_address));
+ 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_9, upper_32_bits(bus_address));
+ 
+ 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_5, HL_QUEUE_SIZE_IN_BYTES);
++	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_4, HL_EQ_SIZE_IN_BYTES);
+ 	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_10, CPU_ACCESSIBLE_MEM_SIZE);
+ 
+ 	/* Used for EQ CI */
+@@ -1855,6 +1891,163 @@ static void goya_resume_internal_queues(struct hl_device *hdev)
+ 	WREG32(mmTPC7_CMDQ_GLBL_CFG1, 0);
+ }
+ 
++static void goya_dma_stall(struct hl_device *hdev)
++{
++	WREG32(mmDMA_QM_0_GLBL_CFG1, 1 << DMA_QM_0_GLBL_CFG1_DMA_STOP_SHIFT);
++	WREG32(mmDMA_QM_1_GLBL_CFG1, 1 << DMA_QM_1_GLBL_CFG1_DMA_STOP_SHIFT);
++	WREG32(mmDMA_QM_2_GLBL_CFG1, 1 << DMA_QM_2_GLBL_CFG1_DMA_STOP_SHIFT);
++	WREG32(mmDMA_QM_3_GLBL_CFG1, 1 << DMA_QM_3_GLBL_CFG1_DMA_STOP_SHIFT);
++	WREG32(mmDMA_QM_4_GLBL_CFG1, 1 << DMA_QM_4_GLBL_CFG1_DMA_STOP_SHIFT);
++}
++
++static void goya_tpc_stall(struct hl_device *hdev)
++{
++	WREG32(mmTPC0_CFG_TPC_STALL, 1 << TPC0_CFG_TPC_STALL_V_SHIFT);
++	WREG32(mmTPC1_CFG_TPC_STALL, 1 << TPC1_CFG_TPC_STALL_V_SHIFT);
++	WREG32(mmTPC2_CFG_TPC_STALL, 1 << TPC2_CFG_TPC_STALL_V_SHIFT);
++	WREG32(mmTPC3_CFG_TPC_STALL, 1 << TPC3_CFG_TPC_STALL_V_SHIFT);
++	WREG32(mmTPC4_CFG_TPC_STALL, 1 << TPC4_CFG_TPC_STALL_V_SHIFT);
++	WREG32(mmTPC5_CFG_TPC_STALL, 1 << TPC5_CFG_TPC_STALL_V_SHIFT);
++	WREG32(mmTPC6_CFG_TPC_STALL, 1 << TPC6_CFG_TPC_STALL_V_SHIFT);
++	WREG32(mmTPC7_CFG_TPC_STALL, 1 << TPC7_CFG_TPC_STALL_V_SHIFT);
++}
++
++static void goya_mme_stall(struct hl_device *hdev)
++{
++	WREG32(mmMME_STALL, 0xFFFFFFFF);
++}
++
++static int goya_enable_msix(struct hl_device *hdev)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	int cq_cnt = hdev->asic_prop.completion_queues_count;
++	int rc, i, irq_cnt_init, irq;
++
++	if (goya->hw_cap_initialized & HW_CAP_MSIX)
++		return 0;
++
++	rc = pci_alloc_irq_vectors(hdev->pdev, GOYA_MSIX_ENTRIES,
++				GOYA_MSIX_ENTRIES, PCI_IRQ_MSIX);
++	if (rc < 0) {
++		dev_err(hdev->dev,
++			"MSI-X: Failed to enable support -- %d/%d\n",
++			GOYA_MSIX_ENTRIES, rc);
++		return rc;
++	}
++
++	for (i = 0, irq_cnt_init = 0 ; i < cq_cnt ; i++, irq_cnt_init++) {
++		irq = pci_irq_vector(hdev->pdev, i);
++		rc = request_irq(irq, hl_irq_handler_cq, 0, goya_irq_name[i],
++				&hdev->completion_queue[i]);
++		if (rc) {
++			dev_err(hdev->dev, "Failed to request IRQ %d", irq);
++			goto free_irqs;
++		}
++	}
++
++	irq = pci_irq_vector(hdev->pdev, EVENT_QUEUE_MSIX_IDX);
++
++	rc = request_irq(irq, hl_irq_handler_eq, 0,
++			goya_irq_name[EVENT_QUEUE_MSIX_IDX],
++			&hdev->event_queue);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to request IRQ %d", irq);
++		goto free_irqs;
++	}
++
++	goya->hw_cap_initialized |= HW_CAP_MSIX;
 +	return 0;
 +
-+disable_device:
-+	pci_set_drvdata(pdev, NULL);
-+	destroy_hdev(hdev);
++free_irqs:
++	for (i = 0 ; i < irq_cnt_init ; i++)
++		free_irq(pci_irq_vector(hdev->pdev, i),
++			&hdev->completion_queue[i]);
 +
++	pci_free_irq_vectors(hdev->pdev);
 +	return rc;
 +}
 +
-+/*
-+ * hl_pci_remove - remove PCI habanalabs devices
-+ *
-+ * @pdev: pointer to pci device
-+ *
-+ * Standard PCI remove function for habanalabs device
-+ */
-+static void hl_pci_remove(struct pci_dev *pdev)
++static void goya_sync_irqs(struct hl_device *hdev)
 +{
-+	struct hl_device *hdev;
++	struct goya_device *goya = hdev->asic_specific;
++	int i;
 +
-+	hdev = pci_get_drvdata(pdev);
-+	if (!hdev)
++	if (!(goya->hw_cap_initialized & HW_CAP_MSIX))
 +		return;
 +
-+	hl_device_fini(hdev);
-+	pci_set_drvdata(pdev, NULL);
++	/* Wait for all pending IRQs to be finished */
++	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++)
++		synchronize_irq(pci_irq_vector(hdev->pdev, i));
 +
-+	destroy_hdev(hdev);
++	synchronize_irq(pci_irq_vector(hdev->pdev, EVENT_QUEUE_MSIX_IDX));
 +}
 +
-+static const struct dev_pm_ops hl_pm_ops = {
-+	.suspend = hl_pmops_suspend,
-+	.resume = hl_pmops_resume,
-+};
-+
-+static struct pci_driver hl_pci_driver = {
-+	.name = HL_NAME,
-+	.id_table = ids,
-+	.probe = hl_pci_probe,
-+	.remove = hl_pci_remove,
-+	.driver.pm = &hl_pm_ops,
-+};
-+
-+/*
-+ * hl_init - Initialize the habanalabs kernel driver
-+ */
-+static int __init hl_init(void)
++static void goya_disable_msix(struct hl_device *hdev)
 +{
++	struct goya_device *goya = hdev->asic_specific;
++	int i, irq;
++
++	if (!(goya->hw_cap_initialized & HW_CAP_MSIX))
++		return;
++
++	goya_sync_irqs(hdev);
++
++	irq = pci_irq_vector(hdev->pdev, EVENT_QUEUE_MSIX_IDX);
++	free_irq(irq, &hdev->event_queue);
++
++	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++) {
++		irq = pci_irq_vector(hdev->pdev, i);
++		free_irq(irq, &hdev->completion_queue[i]);
++	}
++
++	pci_free_irq_vectors(hdev->pdev);
++
++	goya->hw_cap_initialized &= ~HW_CAP_MSIX;
++}
++
++static void goya_halt_engines(struct hl_device *hdev, bool hard_reset)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	u32 wait_timeout_ms, cpu_timeout_ms;
++
++	dev_info(hdev->dev,
++		"Halting compute engines and disabling interrupts\n");
++
++	if (hdev->pldm) {
++		wait_timeout_ms = GOYA_PLDM_RESET_WAIT_MSEC;
++		cpu_timeout_ms = GOYA_PLDM_RESET_WAIT_MSEC;
++	} else {
++		wait_timeout_ms = GOYA_RESET_WAIT_MSEC;
++		cpu_timeout_ms = GOYA_CPU_RESET_WAIT_MSEC;
++	}
++
++	if ((hard_reset) && (goya->hw_cap_initialized & HW_CAP_CPU)) {
++		WREG32(mmPSOC_GLOBAL_CONF_UBOOT_MAGIC, KMD_MSG_GOTO_WFE);
++		if (hdev->fw_loading)
++			WREG32(mmGIC_DISTRIBUTOR__5_GICD_SETSPI_NSR,
++				GOYA_ASYNC_EVENT_ID_HALT_MACHINE);
++		msleep(cpu_timeout_ms);
++	}
++
++	goya_stop_external_queues(hdev);
++	goya_stop_internal_queues(hdev);
++
++	msleep(wait_timeout_ms);
++
++	goya_dma_stall(hdev);
++	goya_tpc_stall(hdev);
++	goya_mme_stall(hdev);
++
++	msleep(wait_timeout_ms);
++
++	goya_disable_external_queues(hdev);
++	goya_disable_internal_queues(hdev);
++
++	if (hard_reset)
++		goya_disable_msix(hdev);
++	else
++		goya_sync_irqs(hdev);
++}
+ 
+ /*
+  * goya_push_fw_to_device - Push FW code to device
+@@ -2182,11 +2375,16 @@ static int goya_hw_init(struct hl_device *hdev)
+ 
+ 	goya_init_tpc_qmans(hdev);
+ 
++	/* MSI-X must be enabled before CPU queues are initialized */
++	rc = goya_enable_msix(hdev);
++	if (rc)
++		goto disable_queues;
++
+ 	rc = goya_init_cpu_queues(hdev);
+ 	if (rc) {
+ 		dev_err(hdev->dev, "failed to initialize CPU H/W queues %d\n",
+ 			rc);
+-		goto disable_queues;
++		goto disable_msix;
+ 	}
+ 
+ 	/* CPU initialization is finished, we can now move to 48 bit DMA mask */
+@@ -2220,6 +2418,8 @@ static int goya_hw_init(struct hl_device *hdev)
+ 
+ disable_pci_access:
+ 	goya_send_pci_access_msg(hdev, ARMCP_PACKET_DISABLE_PCI_ACCESS);
++disable_msix:
++	goya_disable_msix(hdev);
+ disable_queues:
+ 	goya_disable_internal_queues(hdev);
+ 	goya_disable_external_queues(hdev);
+@@ -2285,6 +2485,7 @@ static void goya_hw_fini(struct hl_device *hdev, bool hard_reset)
+ 					HW_CAP_DMA | HW_CAP_MME |
+ 					HW_CAP_MMU | HW_CAP_TPC_MBIST |
+ 					HW_CAP_GOLDEN | HW_CAP_TPC);
++	memset(goya->events_stat, 0, sizeof(goya->events_stat));
+ 
+ 	if (!hdev->pldm) {
+ 		int rc;
+@@ -2775,6 +2976,242 @@ void goya_cpu_accessible_dma_pool_free(struct hl_device *hdev, size_t size,
+ 	gen_pool_free(hdev->cpu_accessible_dma_pool, (u64) vaddr, size);
+ }
+ 
++static void goya_update_eq_ci(struct hl_device *hdev, u32 val)
++{
++	WREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_6, val);
++}
++
++static void goya_get_axi_name(struct hl_device *hdev, u32 agent_id,
++		u16 event_type, char *axi_name, int len)
++{
++	if (!strcmp(goya_axi_name[agent_id], "DMA"))
++		if (event_type >= GOYA_ASYNC_EVENT_ID_DMA0_CH)
++			snprintf(axi_name, len, "DMA %d",
++				event_type - GOYA_ASYNC_EVENT_ID_DMA0_CH);
++		else
++			snprintf(axi_name, len, "DMA %d",
++				event_type - GOYA_ASYNC_EVENT_ID_DMA0_QM);
++	else
++		snprintf(axi_name, len, "%s", goya_axi_name[agent_id]);
++}
++
++static void goya_print_razwi_info(struct hl_device *hdev, u64 reg,
++		bool is_hbw, bool is_read, u16 event_type)
++{
++	u32 val, agent_id;
++	char axi_name[10] = {0};
++
++	val = RREG32(reg);
++
++	if (is_hbw)
++		agent_id = (val & GOYA_IRQ_HBW_AGENT_ID_MASK) >>
++				GOYA_IRQ_HBW_AGENT_ID_SHIFT;
++	else
++		agent_id = (val & GOYA_IRQ_LBW_AGENT_ID_MASK) >>
++				GOYA_IRQ_LBW_AGENT_ID_SHIFT;
++
++	if (agent_id >= GOYA_MAX_INITIATORS) {
++		dev_err(hdev->dev,
++			"Illegal %s %s with wrong initiator id %d, H/W IRQ %d\n",
++				is_read ? "read from" : "write to",
++				is_hbw ? "HBW" : "LBW",
++				agent_id,
++				event_type);
++	} else {
++		goya_get_axi_name(hdev, agent_id, event_type, axi_name,
++				sizeof(axi_name));
++		dev_err(hdev->dev, "Illegal %s by %s %s %s, H/W IRQ %d\n",
++				is_read ? "read" : "write",
++				axi_name,
++				is_read ? "from" : "to",
++				is_hbw ? "HBW" : "LBW",
++				event_type);
++	}
++}
++
++static void goya_print_irq_info(struct hl_device *hdev, u16 event_type)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	bool is_hbw = false, is_read = false, is_info = false;
++
++	if (RREG32(mmDMA_MACRO_RAZWI_LBW_WT_VLD)) {
++		goya_print_razwi_info(hdev, mmDMA_MACRO_RAZWI_LBW_WT_ID, is_hbw,
++				is_read, event_type);
++		WREG32(mmDMA_MACRO_RAZWI_LBW_WT_VLD, 0);
++		is_info = true;
++	}
++	if (RREG32(mmDMA_MACRO_RAZWI_LBW_RD_VLD)) {
++		is_read = true;
++		goya_print_razwi_info(hdev, mmDMA_MACRO_RAZWI_LBW_RD_ID, is_hbw,
++				is_read, event_type);
++		WREG32(mmDMA_MACRO_RAZWI_LBW_RD_VLD, 0);
++		is_info = true;
++	}
++	if (RREG32(mmDMA_MACRO_RAZWI_HBW_WT_VLD)) {
++		is_hbw = true;
++		goya_print_razwi_info(hdev, mmDMA_MACRO_RAZWI_HBW_WT_ID, is_hbw,
++				is_read, event_type);
++		WREG32(mmDMA_MACRO_RAZWI_HBW_WT_VLD, 0);
++		is_info = true;
++	}
++	if (RREG32(mmDMA_MACRO_RAZWI_HBW_RD_VLD)) {
++		is_hbw = true;
++		is_read = true;
++		goya_print_razwi_info(hdev, mmDMA_MACRO_RAZWI_HBW_RD_ID, is_hbw,
++				is_read, event_type);
++		WREG32(mmDMA_MACRO_RAZWI_HBW_RD_VLD, 0);
++		is_info = true;
++	}
++	if (!is_info) {
++		dev_err(hdev->dev,
++			"Received H/W interrupt %d, no additional info\n",
++			event_type);
++		return;
++	}
++
++	if (goya->hw_cap_initialized & HW_CAP_MMU) {
++		u32 val = RREG32(mmMMU_PAGE_ERROR_CAPTURE);
++		u64 addr;
++
++		if (val & MMU_PAGE_ERROR_CAPTURE_ENTRY_VALID_MASK) {
++			addr = val & MMU_PAGE_ERROR_CAPTURE_VA_49_32_MASK;
++			addr <<= 32;
++			addr |= RREG32(mmMMU_PAGE_ERROR_CAPTURE_VA);
++
++			dev_err(hdev->dev, "MMU page fault on va 0x%llx\n",
++					addr);
++
++			WREG32(mmMMU_PAGE_ERROR_CAPTURE, 0);
++		}
++	}
++}
++
++static int goya_unmask_irq(struct hl_device *hdev, u16 event_type)
++{
++	struct armcp_packet pkt;
++	long result;
 +	int rc;
-+	dev_t dev;
 +
-+	pr_info("loading driver\n");
++	memset(&pkt, 0, sizeof(pkt));
 +
-+	rc = alloc_chrdev_region(&dev, 0, HL_MAX_MINORS, HL_NAME);
-+	if (rc < 0) {
-+		pr_err("unable to get major\n");
-+		return rc;
-+	}
++	pkt.ctl = ARMCP_PACKET_UNMASK_RAZWI_IRQ << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.value = event_type;
 +
-+	hl_major = MAJOR(dev);
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++			HL_DEVICE_TIMEOUT_USEC, &result);
 +
-+	hl_class = class_create(THIS_MODULE, HL_NAME);
-+	if (IS_ERR(hl_class)) {
-+		pr_err("failed to allocate class\n");
-+		rc = PTR_ERR(hl_class);
-+		goto remove_major;
-+	}
++	if (rc)
++		dev_err(hdev->dev, "failed to unmask RAZWI IRQ %d", event_type);
 +
-+	rc = pci_register_driver(&hl_pci_driver);
-+	if (rc) {
-+		pr_err("failed to register pci device\n");
-+		goto remove_class;
-+	}
-+
-+	pr_debug("driver loaded\n");
-+
-+	return 0;
-+
-+remove_class:
-+	class_destroy(hl_class);
-+remove_major:
-+	unregister_chrdev_region(MKDEV(hl_major, 0), HL_MAX_MINORS);
 +	return rc;
 +}
 +
-+/*
-+ * hl_exit - Release all resources of the habanalabs kernel driver
-+ */
-+static void __exit hl_exit(void)
++void goya_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_entry)
 +{
-+	pci_unregister_driver(&hl_pci_driver);
++	u16 event_type = ((eq_entry->hdr.ctl & EQ_CTL_EVENT_TYPE_MASK)
++			>> EQ_CTL_EVENT_TYPE_SHIFT);
++	struct goya_device *goya = hdev->asic_specific;
 +
-+	class_destroy(hl_class);
-+	unregister_chrdev_region(MKDEV(hl_major, 0), HL_MAX_MINORS);
++	goya->events_stat[event_type]++;
 +
-+	idr_destroy(&hl_devs_idr);
++	switch (event_type) {
++	case GOYA_ASYNC_EVENT_ID_PCIE_IF:
++	case GOYA_ASYNC_EVENT_ID_TPC0_ECC:
++	case GOYA_ASYNC_EVENT_ID_TPC1_ECC:
++	case GOYA_ASYNC_EVENT_ID_TPC2_ECC:
++	case GOYA_ASYNC_EVENT_ID_TPC3_ECC:
++	case GOYA_ASYNC_EVENT_ID_TPC4_ECC:
++	case GOYA_ASYNC_EVENT_ID_TPC5_ECC:
++	case GOYA_ASYNC_EVENT_ID_TPC6_ECC:
++	case GOYA_ASYNC_EVENT_ID_TPC7_ECC:
++	case GOYA_ASYNC_EVENT_ID_MME_ECC:
++	case GOYA_ASYNC_EVENT_ID_MME_ECC_EXT:
++	case GOYA_ASYNC_EVENT_ID_MMU_ECC:
++	case GOYA_ASYNC_EVENT_ID_DMA_MACRO:
++	case GOYA_ASYNC_EVENT_ID_DMA_ECC:
++	case GOYA_ASYNC_EVENT_ID_CPU_IF_ECC:
++	case GOYA_ASYNC_EVENT_ID_PSOC_MEM:
++	case GOYA_ASYNC_EVENT_ID_PSOC_CORESIGHT:
++	case GOYA_ASYNC_EVENT_ID_SRAM0 ... GOYA_ASYNC_EVENT_ID_SRAM29:
++	case GOYA_ASYNC_EVENT_ID_GIC500:
++	case GOYA_ASYNC_EVENT_ID_PLL0:
++	case GOYA_ASYNC_EVENT_ID_PLL1:
++	case GOYA_ASYNC_EVENT_ID_PLL3:
++	case GOYA_ASYNC_EVENT_ID_PLL4:
++	case GOYA_ASYNC_EVENT_ID_PLL5:
++	case GOYA_ASYNC_EVENT_ID_PLL6:
++	case GOYA_ASYNC_EVENT_ID_AXI_ECC:
++	case GOYA_ASYNC_EVENT_ID_L2_RAM_ECC:
++	case GOYA_ASYNC_EVENT_ID_PSOC_GPIO_05_SW_RESET:
++	case GOYA_ASYNC_EVENT_ID_PSOC_GPIO_10_VRHOT_ICRIT:
++		dev_err(hdev->dev,
++			"Received H/W interrupt %d, reset the chip\n",
++			event_type);
++		break;
 +
-+	pr_debug("driver removed\n");
++	case GOYA_ASYNC_EVENT_ID_PCIE_DEC:
++	case GOYA_ASYNC_EVENT_ID_TPC0_DEC:
++	case GOYA_ASYNC_EVENT_ID_TPC1_DEC:
++	case GOYA_ASYNC_EVENT_ID_TPC2_DEC:
++	case GOYA_ASYNC_EVENT_ID_TPC3_DEC:
++	case GOYA_ASYNC_EVENT_ID_TPC4_DEC:
++	case GOYA_ASYNC_EVENT_ID_TPC5_DEC:
++	case GOYA_ASYNC_EVENT_ID_TPC6_DEC:
++	case GOYA_ASYNC_EVENT_ID_TPC7_DEC:
++	case GOYA_ASYNC_EVENT_ID_MME_WACS:
++	case GOYA_ASYNC_EVENT_ID_MME_WACSD:
++	case GOYA_ASYNC_EVENT_ID_CPU_AXI_SPLITTER:
++	case GOYA_ASYNC_EVENT_ID_PSOC_AXI_DEC:
++	case GOYA_ASYNC_EVENT_ID_PSOC:
++	case GOYA_ASYNC_EVENT_ID_TPC0_KRN_ERR:
++	case GOYA_ASYNC_EVENT_ID_TPC1_KRN_ERR:
++	case GOYA_ASYNC_EVENT_ID_TPC2_KRN_ERR:
++	case GOYA_ASYNC_EVENT_ID_TPC3_KRN_ERR:
++	case GOYA_ASYNC_EVENT_ID_TPC4_KRN_ERR:
++	case GOYA_ASYNC_EVENT_ID_TPC5_KRN_ERR:
++	case GOYA_ASYNC_EVENT_ID_TPC6_KRN_ERR:
++	case GOYA_ASYNC_EVENT_ID_TPC7_KRN_ERR:
++	case GOYA_ASYNC_EVENT_ID_TPC0_CMDQ ... GOYA_ASYNC_EVENT_ID_TPC7_QM:
++	case GOYA_ASYNC_EVENT_ID_MME_QM:
++	case GOYA_ASYNC_EVENT_ID_MME_CMDQ:
++	case GOYA_ASYNC_EVENT_ID_DMA0_QM ... GOYA_ASYNC_EVENT_ID_DMA4_QM:
++	case GOYA_ASYNC_EVENT_ID_DMA0_CH ... GOYA_ASYNC_EVENT_ID_DMA4_CH:
++		goya_print_irq_info(hdev, event_type);
++		goya_unmask_irq(hdev, event_type);
++		break;
++
++	case GOYA_ASYNC_EVENT_ID_TPC0_BMON_SPMU:
++	case GOYA_ASYNC_EVENT_ID_TPC1_BMON_SPMU:
++	case GOYA_ASYNC_EVENT_ID_TPC2_BMON_SPMU:
++	case GOYA_ASYNC_EVENT_ID_TPC3_BMON_SPMU:
++	case GOYA_ASYNC_EVENT_ID_TPC4_BMON_SPMU:
++	case GOYA_ASYNC_EVENT_ID_TPC5_BMON_SPMU:
++	case GOYA_ASYNC_EVENT_ID_TPC6_BMON_SPMU:
++	case GOYA_ASYNC_EVENT_ID_TPC7_BMON_SPMU:
++	case GOYA_ASYNC_EVENT_ID_DMA_BM_CH0:
++	case GOYA_ASYNC_EVENT_ID_DMA_BM_CH1:
++	case GOYA_ASYNC_EVENT_ID_DMA_BM_CH2:
++	case GOYA_ASYNC_EVENT_ID_DMA_BM_CH3:
++	case GOYA_ASYNC_EVENT_ID_DMA_BM_CH4:
++		dev_info(hdev->dev, "Received H/W interrupt %d\n", event_type);
++		break;
++
++	default:
++		dev_err(hdev->dev, "Received invalid H/W interrupt %d\n",
++				event_type);
++		break;
++	}
 +}
 +
-+module_init(hl_init);
-+module_exit(hl_exit);
++void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
++{
++	struct goya_device *goya = hdev->asic_specific;
++
++	*size = (u32) sizeof(goya->events_stat);
++
++	return goya->events_stat;
++}
++
+ 
+ static void goya_hw_queues_lock(struct hl_device *hdev)
+ {
+@@ -2797,6 +3234,7 @@ static const struct hl_asic_funcs goya_funcs = {
+ 	.sw_fini = goya_sw_fini,
+ 	.hw_init = goya_hw_init,
+ 	.hw_fini = goya_hw_fini,
++	.halt_engines = goya_halt_engines,
+ 	.suspend = goya_suspend,
+ 	.resume = goya_resume,
+ 	.mmap = goya_mmap,
+@@ -2811,6 +3249,9 @@ static const struct hl_asic_funcs goya_funcs = {
+ 	.dma_pool_free = goya_dma_pool_free,
+ 	.cpu_accessible_dma_pool_alloc = goya_cpu_accessible_dma_pool_alloc,
+ 	.cpu_accessible_dma_pool_free = goya_cpu_accessible_dma_pool_free,
++	.update_eq_ci = goya_update_eq_ci,
++	.handle_eqe = goya_handle_eqe,
++	.get_events_stat = goya_get_events_stat,
+ 	.hw_queues_lock = goya_hw_queues_lock,
+ 	.hw_queues_unlock = goya_hw_queues_unlock,
+ 	.send_cpu_message = goya_send_cpu_message
+diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
+index 70042c71d28a..86c054d83ebd 100644
+--- a/drivers/misc/habanalabs/goya/goyaP.h
++++ b/drivers/misc/habanalabs/goya/goyaP.h
+@@ -155,6 +155,7 @@ struct goya_device {
+ 	/* TODO: remove hw_queues_lock after moving to scheduler code */
+ 	spinlock_t	hw_queues_lock;
+ 	u64		ddr_bar_cur_addr;
++	u32		events_stat[GOYA_ASYNC_EVENT_ID_SIZE];
+ 	u32		hw_cap_initialized;
+ };
+ 
+diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
+index 5ce35e40ab81..3238893a6bc4 100644
+--- a/drivers/misc/habanalabs/habanalabs.h
++++ b/drivers/misc/habanalabs/habanalabs.h
+@@ -86,6 +86,7 @@ struct hw_queue_properties {
+  * @cfg_size: configuration space size on SRAM.
+  * @sram_size: total size of SRAM.
+  * @max_asid: maximum number of open contexts (ASIDs).
++ * @num_of_events: number of possible internal H/W IRQs.
+  * @completion_queues_count: number of completion queues.
+  * @high_pll: high PLL frequency used by the device.
+  * @cb_pool_cb_cnt: number of CBs in the CB pool.
+@@ -112,6 +113,7 @@ struct asic_fixed_properties {
+ 	u32			cfg_size;
+ 	u32			sram_size;
+ 	u32			max_asid;
++	u32			num_of_events;
+ 	u32			high_pll;
+ 	u32			cb_pool_cb_cnt;
+ 	u32			cb_pool_cb_size;
+@@ -204,6 +206,9 @@ struct hl_cs_job;
+ #define HL_CQ_LENGTH			HL_QUEUE_LENGTH
+ #define HL_CQ_SIZE_IN_BYTES		(HL_CQ_LENGTH * HL_CQ_ENTRY_SIZE)
+ 
++/* Must be power of 2 (HL_PAGE_SIZE / HL_EQ_ENTRY_SIZE) */
++#define HL_EQ_LENGTH			64
++#define HL_EQ_SIZE_IN_BYTES		(HL_EQ_LENGTH * HL_EQ_ENTRY_SIZE)
+ 
+ 
+ /**
+@@ -251,6 +256,20 @@ struct hl_cq {
+ 	atomic_t		free_slots_cnt;
+ };
+ 
++/**
++ * struct hl_eq - describes the event queue (single one per device)
++ * @hdev: pointer to the device structure
++ * @kernel_address: holds the queue's kernel virtual address
++ * @bus_address: holds the queue's DMA address
++ * @ci: ci inside the queue
++ */
++struct hl_eq {
++	struct hl_device	*hdev;
++	u64			kernel_address;
++	dma_addr_t		bus_address;
++	u32			ci;
++};
++
+ 
+ /*
+  * ASICs
+@@ -277,6 +296,9 @@ enum hl_asic_type {
+  * @sw_fini: tears down driver state, does not configure H/W.
+  * @hw_init: sets up the H/W state.
+  * @hw_fini: tears down the H/W state.
++ * @halt_engines: halt engines, needed for reset sequence. This also disables
++ *                interrupts from the device. Should be called before
++ *                hw_fini and before CS rollback.
+  * @suspend: handles IP specific H/W or SW changes for suspend.
+  * @resume: handles IP specific H/W or SW changes for resume.
+  * @mmap: mmap function, does nothing.
+@@ -298,6 +320,9 @@ enum hl_asic_type {
+  * @dma_pool_free: free small DMA allocation from pool.
+  * @cpu_accessible_dma_pool_alloc: allocate CPU PQ packet from DMA pool.
+  * @cpu_accessible_dma_pool_free: free CPU PQ packet from DMA pool.
++ * @update_eq_ci: update event queue CI.
++ * @handle_eqe: handle event queue entry (IRQ) from ArmCP.
++ * @get_events_stat: retrieve event queue entries histogram.
+  * @hw_queues_lock: acquire H/W queues lock.
+  * @hw_queues_unlock: release H/W queues lock.
+  * @send_cpu_message: send buffer to ArmCP.
+@@ -309,6 +334,7 @@ struct hl_asic_funcs {
+ 	int (*sw_fini)(struct hl_device *hdev);
+ 	int (*hw_init)(struct hl_device *hdev);
+ 	void (*hw_fini)(struct hl_device *hdev, bool hard_reset);
++	void (*halt_engines)(struct hl_device *hdev, bool hard_reset);
+ 	int (*suspend)(struct hl_device *hdev);
+ 	int (*resume)(struct hl_device *hdev);
+ 	int (*mmap)(struct hl_fpriv *hpriv, struct vm_area_struct *vma);
+@@ -331,6 +357,10 @@ struct hl_asic_funcs {
+ 				size_t size, dma_addr_t *dma_handle);
+ 	void (*cpu_accessible_dma_pool_free)(struct hl_device *hdev,
+ 				size_t size, void *vaddr);
++	void (*update_eq_ci)(struct hl_device *hdev, u32 val);
++	void (*handle_eqe)(struct hl_device *hdev,
++				struct hl_eq_entry *eq_entry);
++	void* (*get_events_stat)(struct hl_device *hdev, u32 *size);
+ 	void (*hw_queues_lock)(struct hl_device *hdev);
+ 	void (*hw_queues_unlock)(struct hl_device *hdev);
+ 	int (*send_cpu_message)(struct hl_device *hdev, u32 *msg,
+@@ -370,8 +400,6 @@ struct hl_ctx_mgr {
+ };
+ 
+ 
+-
+-
+ /**
+  * struct hl_cs_job - command submission job.
+  * @finish_work: workqueue object to run when job is completed.
+@@ -461,6 +489,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+  * @kernel_ctx: KMD context structure.
+  * @kernel_queues: array of hl_hw_queue.
+  * @kernel_cb_mgr: command buffer manager for creating/destroying/handling CGs.
++ * @event_queue: event queue for IRQ from ArmCP.
+  * @dma_pool: DMA pool for small allocations.
+  * @cpu_accessible_dma_mem: KMD <-> ArmCP shared memory CPU address.
+  * @cpu_accessible_dma_address: KMD <-> ArmCP shared memory DMA address.
+@@ -495,9 +524,11 @@ struct hl_device {
+ 	enum hl_asic_type		asic_type;
+ 	struct hl_cq			*completion_queue;
+ 	struct workqueue_struct		*cq_wq;
++	struct workqueue_struct		*eq_wq;
+ 	struct hl_ctx			*kernel_ctx;
+ 	struct hl_hw_queue		*kernel_queues;
+ 	struct hl_cb_mgr		kernel_cb_mgr;
++	struct hl_eq			event_queue;
+ 	struct dma_pool			*dma_pool;
+ 	void				*cpu_accessible_dma_mem;
+ 	dma_addr_t			cpu_accessible_dma_address;
+@@ -580,6 +611,10 @@ void hl_hw_queue_inc_ci_kernel(struct hl_device *hdev, u32 hw_queue_id);
+ 
+ int hl_cq_init(struct hl_device *hdev, struct hl_cq *q, u32 hw_queue_id);
+ void hl_cq_fini(struct hl_device *hdev, struct hl_cq *q);
++int hl_eq_init(struct hl_device *hdev, struct hl_eq *q);
++void hl_eq_fini(struct hl_device *hdev, struct hl_eq *q);
++irqreturn_t hl_irq_handler_cq(int irq, void *arg);
++irqreturn_t hl_irq_handler_eq(int irq, void *arg);
+ int hl_asid_init(struct hl_device *hdev);
+ void hl_asid_fini(struct hl_device *hdev);
+ unsigned long hl_asid_alloc(struct hl_device *hdev);
+diff --git a/drivers/misc/habanalabs/include/armcp_if.h b/drivers/misc/habanalabs/include/armcp_if.h
+index cc37003aa6b7..9dddb917e72c 100644
+--- a/drivers/misc/habanalabs/include/armcp_if.h
++++ b/drivers/misc/habanalabs/include/armcp_if.h
+@@ -10,6 +10,30 @@
+ 
+ #include <linux/types.h>
+ 
++/*
++ * EVENT QUEUE
++ */
++
++struct hl_eq_header {
++	__le32 reserved;
++	__le32 ctl;
++};
++
++struct hl_eq_entry {
++	struct hl_eq_header hdr;
++	__le64 data[7];
++};
++
++#define HL_EQ_ENTRY_SIZE		sizeof(struct hl_eq_entry)
++
++#define EQ_CTL_READY_SHIFT		31
++#define EQ_CTL_READY_MASK		0x80000000
++
++#define EQ_CTL_EVENT_TYPE_SHIFT		16
++#define EQ_CTL_EVENT_TYPE_MASK		0x03FF0000
++
++#define EVENT_QUEUE_MSIX_IDX		5
++
+ enum pq_init_status {
+ 	PQ_INIT_STATUS_NA = 0,
+ 	PQ_INIT_STATUS_READY_FOR_CP,
+diff --git a/drivers/misc/habanalabs/irq.c b/drivers/misc/habanalabs/irq.c
+index acf9a5a55476..5a7cb85ab50a 100644
+--- a/drivers/misc/habanalabs/irq.c
++++ b/drivers/misc/habanalabs/irq.c
+@@ -9,6 +9,18 @@
+ 
+ #include <linux/dma-mapping.h>
+ 
++/**
++ * This structure is used to schedule work of EQ entry and armcp_reset event
++ *
++ * @eq_work          - workqueue object to run when EQ entry is received
++ * @hdev             - pointer to device structure
++ * @eq_entry         - copy of the EQ entry
++ */
++struct hl_eqe_work {
++	struct work_struct	eq_work;
++	struct hl_device	*hdev;
++	struct hl_eq_entry	eq_entry;
++};
+ 
+ /*
+  * hl_cq_inc_ptr - increment ci or pi of cq
+@@ -26,6 +38,33 @@ inline u32 hl_cq_inc_ptr(u32 ptr)
+ 	return ptr;
+ }
+ 
++/*
++ * hl_eq_inc_ptr - increment ci of eq
++ *
++ * @ptr: the current ci value of the event queue
++ *
++ * Increment ptr by 1. If it reaches the number of event queue
++ * entries, set it to 0
++ */
++inline u32 hl_eq_inc_ptr(u32 ptr)
++{
++	ptr++;
++	if (unlikely(ptr == HL_EQ_LENGTH))
++		ptr = 0;
++	return ptr;
++}
++
++static void irq_handle_eqe(struct work_struct *work)
++{
++	struct hl_eqe_work *eqe_work = container_of(work, struct hl_eqe_work,
++							eq_work);
++	struct hl_device *hdev = eqe_work->hdev;
++
++	hdev->asic_funcs->handle_eqe(hdev, &eqe_work->eq_entry);
++
++	kfree(eqe_work);
++}
++
+ /*
+  * hl_irq_handler_cq - irq handler for completion queue
+  *
+@@ -103,6 +142,68 @@ irqreturn_t hl_irq_handler_cq(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
++/*
++ * hl_irq_handler_eq - irq handler for event queue
++ *
++ * @irq: irq number
++ * @arg: pointer to event queue structure
++ *
++ */
++irqreturn_t hl_irq_handler_eq(int irq, void *arg)
++{
++	struct hl_eq *eq = arg;
++	struct hl_device *hdev = eq->hdev;
++	struct hl_eq_entry *eq_entry;
++	struct hl_eq_entry *eq_base;
++	struct hl_eqe_work *handle_eqe_work;
++
++	eq_base = (struct hl_eq_entry *) eq->kernel_address;
++
++	while (1) {
++		bool entry_ready =
++				((eq_base[eq->ci].hdr.ctl & EQ_CTL_READY_MASK)
++						>> EQ_CTL_READY_SHIFT);
++
++		if (!entry_ready)
++			break;
++
++		eq_entry = &eq_base[eq->ci];
++
++		/*
++		 * Make sure we read EQ entry contents after we've
++		 * checked the ownership bit.
++		 */
++		dma_rmb();
++
++		if (hdev->disabled) {
++			dev_warn(hdev->dev,
++				"Device disabled but received IRQ %d for EQ\n",
++					irq);
++			goto skip_irq;
++		}
++
++		handle_eqe_work = kmalloc(sizeof(*handle_eqe_work), GFP_ATOMIC);
++		if (handle_eqe_work) {
++			INIT_WORK(&handle_eqe_work->eq_work, irq_handle_eqe);
++			handle_eqe_work->hdev = hdev;
++
++			memcpy(&handle_eqe_work->eq_entry, eq_entry,
++					sizeof(*eq_entry));
++
++			queue_work(hdev->eq_wq, &handle_eqe_work->eq_work);
++		}
++skip_irq:
++		/* Clear EQ entry ready bit */
++		eq_entry->hdr.ctl &= ~EQ_CTL_READY_MASK;
++
++		eq->ci = hl_eq_inc_ptr(eq->ci);
++
++		hdev->asic_funcs->update_eq_ci(hdev, eq->ci);
++	}
++
++	return IRQ_HANDLED;
++}
++
+ /*
+  * hl_cq_init - main initialization function for an cq object
+  *
+@@ -148,3 +249,46 @@ void hl_cq_fini(struct hl_device *hdev, struct hl_cq *q)
+ 	hdev->asic_funcs->dma_free_coherent(hdev, HL_CQ_SIZE_IN_BYTES,
+ 			(void *) q->kernel_address, q->bus_address);
+ }
++
++/*
++ * hl_eq_init - main initialization function for an event queue object
++ *
++ * @hdev: pointer to device structure
++ * @q: pointer to eq structure
++ *
++ * Allocate dma-able memory for the event queue and initialize fields
++ * Returns 0 on success
++ */
++int hl_eq_init(struct hl_device *hdev, struct hl_eq *q)
++{
++	void *p;
++
++	BUILD_BUG_ON(HL_EQ_SIZE_IN_BYTES > HL_PAGE_SIZE);
++
++	p = hdev->asic_funcs->dma_alloc_coherent(hdev, HL_EQ_SIZE_IN_BYTES,
++				&q->bus_address, GFP_KERNEL | __GFP_ZERO);
++	if (!p)
++		return -ENOMEM;
++
++	q->hdev = hdev;
++	q->kernel_address = (u64) p;
++	q->ci = 0;
++
++	return 0;
++}
++
++/*
++ * hl_eq_fini - destroy event queue
++ *
++ * @hdev: pointer to device structure
++ * @q: pointer to eq structure
++ *
++ * Free the event queue memory
++ */
++void hl_eq_fini(struct hl_device *hdev, struct hl_eq *q)
++{
++	flush_workqueue(hdev->eq_wq);
++
++	hdev->asic_funcs->dma_free_coherent(hdev, HL_EQ_SIZE_IN_BYTES,
++			(void *) q->kernel_address, q->bus_address);
++}
 -- 
 2.17.1
 
