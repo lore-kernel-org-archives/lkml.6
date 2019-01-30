@@ -2,101 +2,87 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B9BC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45503C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F22620880
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:00:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08EDE2147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:06:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548814019;
+	bh=mj7E0j0yZeceaqTDrCy+oz/1s9KlvUjY7c9Fbc8YrnQ=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=axNIn55TKDqtQ6jOkJ1ae7JqIddH4ufQtVZpSc/rusHEyyBF7l5otrLc72E7qR03b
+	 clwpVFxb2TO39ZDdcTRX2yTksrCvQBFEKWJrBSstN/hzcZ/W5Ry3vKpERU/6MPAUuc
+	 Tiv1cw2B/egDuOEeUdo+XU/annLwmq1UjEtfvvJs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729753AbfA3CAv (ORCPT
+        id S1729447AbfA3CG5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 21:00:51 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:36935 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727729AbfA3CAv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 21:00:51 -0500
-X-Greylist: delayed 2248 seconds by postgrey-1.27 at vger.kernel.org; Tue, 29 Jan 2019 21:00:50 EST
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1goeb2-0008LQ-Py; Tue, 29 Jan 2019 18:23:20 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1goeb2-0002hM-6D; Tue, 29 Jan 2019 18:23:20 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Karel Zak <kzak@redhat.com>, util-linux@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        LSM <linux-security-module@vger.kernel.org>
-References: <87va2716mh.fsf@xmission.com>
-        <03e0993b-21db-1cc4-7a33-0236de7be20d@schaufler-ca.com>
-        <87r2cvx7wz.fsf@xmission.com>
-Date:   Tue, 29 Jan 2019 19:23:12 -0600
-In-Reply-To: <87r2cvx7wz.fsf@xmission.com> (Eric W. Biederman's message of
-        "Tue, 29 Jan 2019 19:15:24 -0600")
-Message-ID: <87ef8vx7jz.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 29 Jan 2019 21:06:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727558AbfA3CG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 21:06:57 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AEAA20880;
+        Wed, 30 Jan 2019 02:06:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548814016;
+        bh=mj7E0j0yZeceaqTDrCy+oz/1s9KlvUjY7c9Fbc8YrnQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=M6onj/6N9xJcBskpxxTylaKxYjlbHNSIJOvFMQNl/nnlCh9rFGXZwDBonp904DSlP
+         ZcZXH1L5LW+f8mqeoIVhDC/16DeZvJg2NbdWxu/hJFN/EHmpeL260axVLvH2eNb3I7
+         vgc2DTaJFf49KRcnvyURbRrlIXfLKTo6Ah/izJiU=
+Subject: Re: [PATCH 4.14 00/68] 4.14.97-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190129113131.751891514@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <231eead7-75de-16dc-363b-76a757dad6e0@kernel.org>
+Date:   Tue, 29 Jan 2019 19:06:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1goeb2-0002hM-6D;;;mid=<87ef8vx7jz.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+h0u/hM65+5LW6450Qd/ruXX6rx6yJOAg=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFD] A mount api that notices previous mounts
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <20190129113131.751891514@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+On 1/29/19 4:35 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.97 release.
+> There are 68 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Jan 31 11:31:10 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.97-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-> Casey Schaufler <casey@schaufler-ca.com> writes:
->> Are you taking the LSM specific mount options into account?
->
-> In the design yes, and I allow setting them.  It appears in the code
-> to retrieve the mount options I forgot to call security_sb_show_options.
->
-> For finding the super block that you are going to mount the LSM mount
-> options are not relevant.  Even nfs will not want to set those early as
-> they do not help determine the nfs super block.  So the only place where
-> there is anything interesting in my api is in reading back the security
-> options so they can be compared to the options the mounter is setting.
->
-> I will add the missing call to security_sb_show_options which is enough
-> to fix selinux.  Unfortunately smack does not currently implement
-> .sb_show_options.  Not implementing smack_sb_show_options means
-> /proc/mounts fails to match /etc/mtab which is a bug and it is likely
-> a real workd bug for the people who use smack and don't want to depend
-> on /etc/mtab, or are transitioning away from it.
->
-> Casey do you want to implement smack_sb_show_options or should I put it
-> on my todo list?
+Compiled and booted on my test system. No dmesg regressions.
 
-Oh.  I should add that I am always parsing the LSM mount options out so
-that there is not a chance of the individual filesystems implementing
-comflicting options even when there are no LSMs active.  Without that I
-am afraid we run the risk of having LSM mount otions in conflict with
-ordinary filesystems options at some point and by the time we discover
-it it would start introducing filesystem regressions.
-
-That does help with stack though as there is no fundamental reason only
-one LSM could process mount options.
-
-Eric
-
+thanks,
+-- Shuah
 
