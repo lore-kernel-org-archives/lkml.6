@@ -2,161 +2,103 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DCBC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC261C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CFAE2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:13:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B70BE2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:14:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XhWnULIO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l8TjODhz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730062AbfA3DNz (ORCPT
+        id S1730078AbfA3DOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 22:13:55 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8331 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727672AbfA3DNm (ORCPT
+        Tue, 29 Jan 2019 22:14:35 -0500
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:34342 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729827AbfA3DOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 22:13:42 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5116490000>; Tue, 29 Jan 2019 19:13:13 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 29 Jan 2019 19:13:41 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 29 Jan 2019 19:13:41 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Jan
- 2019 03:13:41 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Jan
- 2019 03:13:40 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Wed, 30 Jan 2019 03:13:40 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.165.12]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c5116630001>; Tue, 29 Jan 2019 19:13:40 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V6 4/5] i2c: tegra: Update transfer timeout
-Date:   Tue, 29 Jan 2019 19:13:32 -0800
-Message-ID: <1548818013-21226-4-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548818013-21226-1-git-send-email-skomatineni@nvidia.com>
-References: <1548818013-21226-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548817993; bh=ou9tmwRLUf5yQA+7K82uGiUc8CWOL6bSdgQCgZYibgc=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=XhWnULIOVJX+I0CJoa3b65di+J8r6mQOYNyl/8PLEbAhIbrOjzocfcXMz/YcH+Gfh
-         unhstIjn+cUrxMKrT/jhlFyYnQM0gyxOAmjVh3wUoVaFumCUbYb0eHNImK6CzK0lLn
-         HQt3iEXO2HgI37gWMF6m8MvaaxeCRsHgpCsyUyxjUbbRqs8aGX7qHi+/7DSixEKAIc
-         jwYxoK9nPANcmfqdZiwYzgtwaotrBXqaZ1POUriGIpb+/JLjyniONtCZbdajXruB9i
-         +sZTty2m+A8lGZXoja6CTiakz+EBuNTlfqCHk+e5rdbiFm4X74hYKQ+/lukRExCnkj
-         F1dh+SHOz8z9g==
+        Tue, 29 Jan 2019 22:14:33 -0500
+Received: by mail-qt1-f202.google.com with SMTP id u32so27469509qte.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 19:14:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=O3pIKEgprI/dyamSyKpdbIBNGvXWdN0U7O3IxM7kDl0=;
+        b=l8TjODhzqqskj+pg62gWaQkMtEoyx0eQSL9NvHv+2xOAvhhaPe6gQV8Vf80vbjwcxP
+         4Uff2rV87tAhUEMNaGw9WlMPv5FglxhJ9hmLcCUg3SCFyHIin5jNSYTc9bEjYHNhxnfS
+         UdWhwbB8iH2rB/GemV//6TaSyjUIR/TKGwqkIeCGHtdYZbQIX9PKieeHsxCMxuVvWDYH
+         zC2jyOw3t1tJe0vLRnA+LHEKiSHEGO4U8ZDkuH82wJSQ6E8rsy9wsuPY0SCgnDb68fu5
+         Jo9q5mfVvR5zXGwpHi7qcalwFEOIF1K8b5W0ijdkqsgWOw5jODry6wMMcYuxKzGd+h6N
+         Tojw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=O3pIKEgprI/dyamSyKpdbIBNGvXWdN0U7O3IxM7kDl0=;
+        b=XXFcSh4g8DKLnfF1kiR92Cr/rnFkPGGzEhKbWP6lfvHs5s/jo3yLWacp1gknK8j84I
+         AHqlXiJTQxMGgIqB7oX5+OdDSkWkTzmsYNhwE5AWp4bYgFhE7SxvNPr/L+OxeRDTHQbv
+         5VUEUMCFhLYLWs/C4TxttdY9iN4jXuJHwYltFMRBwkr9aDvKNvpZGsKtArFm3QsgnE1U
+         x5/nrc65HQyBC3C/1LzBxpPVGtVoaY6HpnJhrjvw505onWSk6N/Mo1VgsBL5oX0MJDXo
+         Ouz1i0X3rqyIytvCosConrDeT574xZWkDATcWwdxnV5UyBa2th0Xe7kW6zSa84FU21hZ
+         lwig==
+X-Gm-Message-State: AHQUAuaxyqRtn3DGPLs45XLsmyMLdub4u5/PeSJbDlZ/xD++6/FYAd3q
+        SbrKp787S9RTFLbFjlFb4WIbEGqEkETE
+X-Google-Smtp-Source: AHgI3IaaaRkX4e9Fh9I7UTUwoKS6/qooIGNA7zRQa4s7o8HZD2Qifx11EXx+SCK+/+SABgsWd9rol4khEkbp
+X-Received: by 2002:a37:e40e:: with SMTP id y14mr4837145qkf.38.1548818072686;
+ Tue, 29 Jan 2019 19:14:32 -0800 (PST)
+Date:   Wed, 30 Jan 2019 11:13:53 +0800
+Message-Id: <20190130031353.100228-1-kyletso@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+Subject: [PATCH] usb: typec: tcpm: Correct the PPS out_volt calculation
+From:   Kyle Tso <kyletso@google.com>
+To:     linux@roeck-us.net, heikki.krogerus@linux.intel.com,
+        gregkh@linuxfoundation.org
+Cc:     badhri@google.com, Adam.Thomson.Opensource@diasemi.com,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kyle Tso <kyletso@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra194 allows max of 64K bytes and Tegra186 and prior allows
-max of 4K bytes of transfer per packet.
+When Sink negotiates PPS, the voltage range of selected PPS APDO might
+not cover the previous voltage (out_volt). If the previous out_volt is
+lower than the new min_volt, the output voltage in RDO might be set to
+an invalid value. For instance, supposed that the previous voltage is
+5V, and the new voltage range in the APDO is 7V-12V. Then the output
+voltage in the RDO should not be set to 5V which is lower than the
+possible min_volt 7V.
 
-one sec timeout is not enough for transfers more than 10K bytes
-at STD bus rate.
+Fix this by choosing the maximal value between the previous voltage and
+the new min_volt first. And ensure that this value will not exceed the
+new max_volt. The new out_volt will fall within the new voltage range
+while being the closest value compared to the previous out_volt.
 
-This patch updates I2C transfer timeout based on the transfer size
-and I2C bus rate to allow enough time during max transfer size at
-lower bus speed.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Kyle Tso <kyletso@google.com>
 ---
- [V5/V6] : Same as V4
- [V4] : V4 series includes bus clear support and this patch is updated with
-	fixed timeout of 1sec for bus clear operation.
- [V3] : Same as V2
- [V2] : Added this patch in V2 series to allow enough time for data transfer
-	to happen.
-	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
-	takes argument with this patch.
+ drivers/usb/typec/tcpm/tcpm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index b30b5da5ce6b..623bf4f275cd 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -25,7 +25,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- 
--#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
-+#define TEGRA_I2C_TIMEOUT(ms) (msecs_to_jiffies(ms))
- #define BYTES_PER_FIFO_WORD 4
- 
- #define I2C_CNFG				0x000
-@@ -901,8 +901,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
- 		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
- 		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 
--		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--							TEGRA_I2C_TIMEOUT);
-+		time_left = wait_for_completion_timeout(
-+						&i2c_dev->msg_complete,
-+						TEGRA_I2C_TIMEOUT(1000));
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "timed out for bus clear\n");
- 			return -ETIMEDOUT;
-@@ -929,6 +930,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	u32 *buffer = 0;
- 	int ret = 0;
- 	bool dma = false;
-+	u16 xfer_time = 100;
- 
- 	if (msg->flags & I2C_M_RD)
- 		xfer_size = msg->len;
-@@ -936,6 +938,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
- 
- 	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
-+	xfer_time += DIV_ROUND_CLOSEST((xfer_size * 9) * 1000,
-+					i2c_dev->bus_clk_rate);
-+
- 	dma = (xfer_size > I2C_PIO_MODE_MAX_LEN);
- 	if (dma) {
- 		if ((msg->flags & I2C_M_RD) && !i2c_dev->rx_dma_chan)
-@@ -1072,7 +1077,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (dma) {
- 		time_left = wait_for_completion_timeout(
- 						&i2c_dev->dma_complete,
--						TEGRA_I2C_TIMEOUT);
-+						TEGRA_I2C_TIMEOUT(xfer_time));
- 
- 		if (time_left == 0) {
- 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
-@@ -1095,7 +1100,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index f1d3e54210df..8f2af348bda5 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -2297,7 +2297,8 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
+ 					      pdo_pps_apdo_max_voltage(snk));
+ 		port->pps_data.max_curr = min_pps_apdo_current(src, snk);
+ 		port->pps_data.out_volt = min(port->pps_data.max_volt,
+-					      port->pps_data.out_volt);
++					      max(port->pps_data.min_volt,
++						  port->pps_data.out_volt));
+ 		port->pps_data.op_curr = min(port->pps_data.max_curr,
+ 					     port->pps_data.op_curr);
  	}
- 
- 	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
--						TEGRA_I2C_TIMEOUT);
-+						TEGRA_I2C_TIMEOUT(xfer_time));
- 	tegra_i2c_mask_irq(i2c_dev, int_mask);
- 
- 	if (time_left == 0) {
 -- 
-2.7.4
+2.20.1.495.gaa96b0ce6b-goog
 
