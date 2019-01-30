@@ -2,231 +2,97 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E59A3C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37810C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:00:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB49720882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A1602184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:00:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u6leFQmD"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QG8HzlYV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730515AbfA3K7m (ORCPT
+        id S1730672AbfA3LA3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 05:59:42 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:54810 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727043AbfA3K7l (ORCPT
+        Wed, 30 Jan 2019 06:00:29 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:55542 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727043AbfA3LA2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 05:59:41 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0UAxecV043679;
-        Wed, 30 Jan 2019 04:59:40 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548845980;
-        bh=EFtkR3WDKYT/YKyFnXxBfyIzPsZfu/dzq8mTFGbnCyc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=u6leFQmDryo1gttw9AT1LUsA4paAlVGpU1H01rtV0r/tRmMolJXWXB6XWwAKJoifr
-         jV4mzFvLXAv+ocKX2nYDFN6GoXQ/8F7vZzavlF1w1F8dw/2ck1ps2i/qeIyDTAt9My
-         rzcIWfO3n02lty8Cbb7eJGdWMvHAo6VzhL78gWWA=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0UAxerh112727
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 30 Jan 2019 04:59:40 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 30
- Jan 2019 04:59:39 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 30 Jan 2019 04:59:39 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0UAxbx3011940;
-        Wed, 30 Jan 2019 04:59:38 -0600
-Subject: Re: [PATCH] phy: ti-pipe3: Add set_mode callback to configure usb3
- phy as pcie phy
-To:     Roger Quadros <rogerq@ti.com>
-CC:     <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190124104822.22411-1-kishon@ti.com> <5C5180FF.1050409@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <ae4f41cd-dbc8-8172-a9e9-28166fc881eb@ti.com>
-Date:   Wed, 30 Jan 2019 16:29:05 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <5C5180FF.1050409@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+        Wed, 30 Jan 2019 06:00:28 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0UAx8pi116005;
+        Wed, 30 Jan 2019 11:00:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=61scKswmPbnHoOk96Jf+ol3O9mYXOld0qByaXCb56ns=;
+ b=QG8HzlYV9F4869aLEYwiGZCj/XYcJ4bTZiDrFGX5sK44a5Zf1BdNzdsaz4JEvMET9MWv
+ ikUK3ydrtqcO+K1hGtf+3zWFc9Twh++aj+8BCzAKOx1pD0rQpIxi7GyFzsdqQavxUBMN
+ VZEc5HPBtR/ztMu5TqjhBQ5DnHRViYYIwUxrRbh/dsYB4+Q/PjUnfIEXMpzUxr+o72Xk
+ czFgx8MdEjO75dQe7v8EnSEQG3uBIChHnipFJp/oKaVk4krpHBdsfNttLkkj0Y4ahVju
+ RARxxh4ov7jkEpbHv1Bgv/cwPBpQpKNmrqG/lwN+AuhWUqjmAaEGtCcep3lecxR+GF5l Bw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2q8eyuhukp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jan 2019 11:00:00 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0UAxs9s014114
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jan 2019 10:59:54 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0UAxrmi028591;
+        Wed, 30 Jan 2019 10:59:53 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Jan 2019 02:59:53 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.1\))
+Subject: Re: [PATCH v2 2/2] x86/xen: dont add memory above max allowed
+ allocation
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20190130082233.23840-3-jgross@suse.com>
+Date:   Wed, 30 Jan 2019 03:59:52 -0700
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        xen-devel@lists.xenproject.org, x86@kernel.org, linux-mm@kvack.org,
+        boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Message-Id: <C4A55B5E-47A5-454A-AB90-AB52DF42CD88@oracle.com>
+References: <20190130082233.23840-1-jgross@suse.com>
+ <20190130082233.23840-3-jgross@suse.com>
+To:     Juergen Gross <jgross@suse.com>
+X-Mailer: Apple Mail (2.3445.104.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9151 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=753 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901300089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Roger,
 
-On 30/01/19 4:18 PM, Roger Quadros wrote:
-> Hi Kishon,
+
+> On Jan 30, 2019, at 1:22 AM, Juergen Gross <jgross@suse.com> wrote:
 > 
-> On 24/01/19 12:48, Kishon Vijay Abraham I wrote:
->> DRA72 platform has the second instance of PHY shared between USB3
->> controller and PCIe controller with default as USB3 controller.
->> Since it is used with USB3 controller by default, it uses the
->> compatible specific to USB (ti,omap-usb3).
->>
->> Populate set_mode callback so that the USB3 PHY can be configured
->> to be used with PCIe controller.
+> +#ifdef CONFIG_MEMORY_HOTPLUG
+> +			/*
+> +			 * Don't allow adding memory not in E820 map while
+> +			 * booting the system. Once the balloon driver is up
+> +			 * it will remove that restriction again.
+> +			 */
+> +			max_mem_size = xen_e820_table.entries[i].addr +
+> +				       xen_e820_table.entries[i].size;
+> +#endif
+> 		}
 > 
-> What is the use case of this? At what point and who decides the
-> phy_set_mode() to be called with USB vs PCIe?
+> 		if (!discard)
 
-The PHY by default is configured to be used with USB controller (That's why it
-has a compatible of ti,omap-usb3). However there is a special case where this
-PHY has to be used PCIe controller. So the set_mode() will help the PHY driver
-to configure the USB PHY to be used with PCIe controller.
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 
-This is not a shared PHY, so the PHY as such can be used only with USB or PCIe
-and is determined at designtime.
-> 
-> 
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  drivers/phy/ti/phy-ti-pipe3.c | 66 ++++++++++++++++++++++++++++-------
->>  1 file changed, 54 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/phy/ti/phy-ti-pipe3.c b/drivers/phy/ti/phy-ti-pipe3.c
->> index 68ce4a082b9b..8c98f366416d 100644
->> --- a/drivers/phy/ti/phy-ti-pipe3.c
->> +++ b/drivers/phy/ti/phy-ti-pipe3.c
->> @@ -56,6 +56,12 @@
->>  
->>  #define SATA_PLL_SOFT_RESET	BIT(18)
->>  
->> +#define PHY_RX_ANA_PRGRAMMABILITY_REG	0xC
->> +#define MEM_EN_PLLBYP			BIT(7)
->> +
->> +#define PHY_TX_TEST_CONFIG		0x2C
->> +#define MEM_ENTESTCLK			BIT(31)
->> +
->>  #define PIPE3_PHY_PWRCTL_CLK_CMD_MASK	0x003FC000
->>  #define PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT	14
->>  
->> @@ -110,6 +116,8 @@
->>  #define PLL_IDLE_TIME	100	/* in milliseconds */
->>  #define PLL_LOCK_TIME	100	/* in milliseconds */
->>  
->> +#define PIPE3_PHY_DISABLE_SYNC_POWER	BIT(4)
->> +
->>  struct pipe3_dpll_params {
->>  	u16	m;
->>  	u8	n;
->> @@ -141,6 +149,7 @@ struct ti_pipe3 {
->>  	unsigned int		power_reg; /* power reg. index within syscon */
->>  	unsigned int		pcie_pcs_reg; /* pcs reg. index in syscon */
->>  	bool			sata_refclk_enabled;
->> +	u32			mode;
->>  };
->>  
->>  static struct pipe3_dpll_map dpll_map_usb[] = {
->> @@ -233,7 +242,10 @@ static int ti_pipe3_power_on(struct phy *x)
->>  	rate = rate / 1000000;
->>  	mask = OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_CMD_MASK |
->>  		  OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_FREQ_MASK;
->> -	val = PIPE3_PHY_TX_RX_POWERON << PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT;
->> +	val = PIPE3_PHY_TX_RX_POWERON;
->> +	if (phy->mode == PHY_MODE_PCIE)
->> +		val |= PIPE3_PHY_DISABLE_SYNC_POWER;
->> +	val <<= PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT;
->>  	val |= rate << OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_FREQ_SHIFT;
->>  
->>  	ret = regmap_update_bits(phy->phy_power_syscon, phy->power_reg,
->> @@ -328,13 +340,11 @@ static void ti_pipe3_calibrate(struct ti_pipe3 *phy)
->>  	ti_pipe3_writel(phy->phy_rx, PCIEPHYRX_EQUALIZER, val);
->>  }
->>  
->> -static int ti_pipe3_init(struct phy *x)
->> +static int ti_pipe3_pcie_init(struct ti_pipe3 *phy)
->>  {
->> -	struct ti_pipe3 *phy = phy_get_drvdata(x);
->> -	u32 val;
->>  	int ret = 0;
->> +	u32 val;
->>  
->> -	ti_pipe3_enable_clocks(phy);
->>  	/*
->>  	 * Set pcie_pcs register to 0x96 for proper functioning of phy
->>  	 * as recommended in AM572x TRM SPRUHZ6, section 18.5.2.2, table
->> @@ -353,10 +363,31 @@ static int ti_pipe3_init(struct phy *x)
->>  			return ret;
->>  
->>  		ti_pipe3_calibrate(phy);
->> -
->> -		return 0;
->> +	} else {
->> +		val = ti_pipe3_readl(phy->phy_rx,
->> +				     PHY_RX_ANA_PRGRAMMABILITY_REG);
->> +		val |= MEM_EN_PLLBYP;
->> +		ti_pipe3_writel(phy->phy_rx, PHY_RX_ANA_PRGRAMMABILITY_REG,
->> +				val);
->> +		val = ti_pipe3_readl(phy->phy_tx, PHY_TX_TEST_CONFIG);
->> +		val |= MEM_ENTESTCLK;
->> +		ti_pipe3_writel(phy->phy_tx, PHY_TX_TEST_CONFIG, val);
->>  	}
->>  
->> +	return 0;
->> +}
->> +
->> +static int ti_pipe3_init(struct phy *x)
->> +{
->> +	struct ti_pipe3 *phy = phy_get_drvdata(x);
->> +	u32 val;
->> +	int ret = 0;
->> +
->> +	ti_pipe3_enable_clocks(phy);
->> +
->> +	if (phy->mode == PHY_MODE_PCIE)
->> +		return ti_pipe3_pcie_init(phy);
->> +
->>  	/* Bring it out of IDLE if it is IDLE */
->>  	val = ti_pipe3_readl(phy->pll_ctrl_base, PLL_CONFIGURATION2);
->>  	if (val & PLL_IDLE) {
->> @@ -395,7 +426,7 @@ static int ti_pipe3_exit(struct phy *x)
->>  		return 0;
->>  
->>  	/* PCIe doesn't have internal DPLL */
->> -	if (!of_device_is_compatible(phy->dev->of_node, "ti,phy-pipe3-pcie")) {
->> +	if (!(phy->mode == PHY_MODE_PCIE)) {
->>  		/* Put DPLL in IDLE mode */
->>  		val = ti_pipe3_readl(phy->pll_ctrl_base, PLL_CONFIGURATION2);
->>  		val |= PLL_IDLE;
->> @@ -429,11 +460,25 @@ static int ti_pipe3_exit(struct phy *x)
->>  
->>  	return 0;
->>  }
->> +
->> +static int ti_pipe3_set_mode(struct phy *x, enum phy_mode mode, int submode)
->> +{
->> +	struct ti_pipe3 *phy = phy_get_drvdata(x);
->> +
->> +	if (phy->mode != PHY_MODE_INVALID)
->> +		return -EBUSY;
->> +
->> +	phy->mode = mode;
-> 
-> You are only saving the mode. But not really switching modes here.
-> How is this intended to work?
-
-The PHY doesn't have a specific mode. Rather it is a set of configurations
-required to operate in a particular mode.
-
-This mode value will be used in other init, power_on callback functions.
-
-Thanks
-Kishon
