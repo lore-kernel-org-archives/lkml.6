@@ -2,64 +2,88 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A2FC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F98C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CA53218A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:24:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8551D2184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:24:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730905AbfA3QYg (ORCPT
+        id S1731246AbfA3QYk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:24:36 -0500
-Received: from 8bytes.org ([81.169.241.247]:35954 "EHLO theia.8bytes.org"
+        Wed, 30 Jan 2019 11:24:40 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:30969 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbfA3QYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:24:36 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id C42D15B8; Wed, 30 Jan 2019 17:24:34 +0100 (CET)
-Date:   Wed, 30 Jan 2019 17:24:33 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Liu Yi L <yi.l.liu@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH 1/1] iommu/vt-d: Leave scalable mode default off
-Message-ID: <20190130162433.ac3gzibnurwgubzf@8bytes.org>
-References: <20190124023132.20410-1-baolu.lu@linux.intel.com>
+        id S1725808AbfA3QYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:24:38 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id C036013F899;
+        Wed, 30 Jan 2019 17:24:10 +0100 (CET)
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Subject: [PATCH v2] arm64: dts: qcom: msm8998: Add rpmcc node
+Message-ID: <40316444-9dfb-f62c-474b-854146eeffd9@free.fr>
+Date:   Wed, 30 Jan 2019 17:24:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124023132.20410-1-baolu.lu@linux.intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 10:31:32AM +0800, Lu Baolu wrote:
-> Commit 765b6a98c1de3 ("iommu/vt-d: Enumerate the scalable
-> mode capability") enables VT-d scalable mode if hardware
-> advertises the capability. As we will bring up different
-> features and use cases to upstream in different patch
-> series, it will leave some intermediate kernel versions
-> which support partial features. Hence, end user might run
-> into problems when they use such kernels on bare metals
-> or virtualization environments.
-> 
-> This leaves scalable mode default off and end users could
-> turn it on with "intel-iommu=sm_on" only when they have
-> clear ideas about which scalable features are supported
-> in the kernel.
-> 
-> Cc: Liu Yi L <yi.l.liu@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Suggested-by: Ashok Raj <ashok.raj@intel.com>
-> Suggested-by: Kevin Tian <kevin.tian@intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Add MSM8998 Resource Power Manager Clock Controller DT node.
 
-Applied to iommu/fixes, thanks.
+Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+---
+Detach this patch from UFS series
+---
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index a6d66cf77403..6f4f4b79853b 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -3,6 +3,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-msm8998.h>
++#include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+@@ -266,6 +267,11 @@
+ 		rpm_requests: rpm-requests {
+ 			compatible = "qcom,rpm-msm8998";
+ 			qcom,glink-channels = "rpm_requests";
++
++			rpmcc: clock-controller {
++				compatible = "qcom,rpmcc-msm8998", "qcom,rpmcc";
++				#clock-cells = <1>;
++			};
+ 		};
+ 	};
+ 
+-- 
+2.17.1
