@@ -2,100 +2,120 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3DFC282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C53DC282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4222E20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:35:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PcNmju34"
+	by mail.kernel.org (Postfix) with ESMTP id D215920882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:38:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbfA3Ge7 (ORCPT
+        id S1726529AbfA3Ghv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 01:34:59 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:47039 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfA3Ge7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 01:34:59 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c73so10944958pfe.13
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 22:34:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jNE+4udC0izqltLgoNQtEx1CbuDQNuojldpq4eIFanM=;
-        b=PcNmju34AKOJkMXvsX37WqzCFdsnHpkdz2LmjdOnUruddbhgMa0AW8Ur/jaTbFmUsL
-         Dk9t63qixe79JTpMPsw5XwIiU3S8vMWSnBnTcpUuHYTvmsGMt9ppoutuCdWMy7z2lNzZ
-         na4L3ZLldkTd3V86Yl1kyCK0eBRfukiQIugwg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jNE+4udC0izqltLgoNQtEx1CbuDQNuojldpq4eIFanM=;
-        b=F+J3jt+vBCzXWepkH7JBZarQQHPErA7vErHNeZHljjmD7054cF1RCubH+DGaNh4giG
-         v/VcV3PpuI8RdKgmSGXCfWfGWuil4jn2zpBkMi9zS8qvLMlk/YX311TVXJvq1WPgZsig
-         YYuZr3X44jlKEQq5BVOfbORaSadRj6utxhg9GkpGOQQeu0m3sagmbkjpCUqmwiL1w8Z0
-         ZfenE2p4e7w+nV07X3XvesXAPwhZBkPrfTZ663eLq+tps/6f9+DDH3GNBT3WXlZNXu7o
-         ngYcxiNckAKngkO8Xh8Geizvhvfgc/fA5DPbcMDg6T37LAE2guPqeXKSpZjEjm7AGP+r
-         eP8g==
-X-Gm-Message-State: AJcUukdobY4CwN28yYk1A6kSfOP6RjSksbAXYMxeisAtOm2WGSwKU+cL
-        ApiRxnm86AYSzq/rnuTnOfC7VE5TtGw=
-X-Google-Smtp-Source: ALg8bN4wqACNmNwBQWEkThd6R4S/oVreQdOj09EK79gW9oVxRIJvHJE26c4SfvGxNbfS+hBCyCcaVw==
-X-Received: by 2002:a63:184a:: with SMTP id 10mr26170579pgy.81.1548830098223;
-        Tue, 29 Jan 2019 22:34:58 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id w128sm1093953pfw.79.2019.01.29.22.34.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 22:34:57 -0800 (PST)
-Date:   Wed, 30 Jan 2019 12:04:55 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: Auto-register the driver as a thermal cooling
- device if asked
-Message-ID: <20190130063455.f7wuv27zias5k5kp@vireshk-i7>
-References: <CAJZ5v0iwq15mwoa-LBN07fgNNurtBGodG6urgfnvMbGWj8vyAw@mail.gmail.com>
- <fdff26d908c5338df44574085701ed93a64af079.1548825443.git.amit.kucheria@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fdff26d908c5338df44574085701ed93a64af079.1548825443.git.amit.kucheria@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        Wed, 30 Jan 2019 01:37:51 -0500
+Received: from mga18.intel.com ([134.134.136.126]:61994 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbfA3Ghv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 01:37:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 22:37:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
+   d="scan'208";a="134329480"
+Received: from shbuild999.sh.intel.com ([10.239.147.118])
+  by orsmga001.jf.intel.com with ESMTP; 29 Jan 2019 22:37:49 -0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Feng Tang <feng.tang@intel.com>
+Subject: [PATCH v3] async: Add cmdline option to specify drivers to be async probed
+Date:   Wed, 30 Jan 2019 14:38:07 +0800
+Message-Id: <1548830287-4281-1-git-send-email-feng.tang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30-01-19, 10:52, Amit Kucheria wrote:
-> All cpufreq drivers do similar things to register as a cooling device.
-> Provide a cpufreq driver flag so drivers can just ask the cpufreq core
-> to register the cooling device on their behalf. This allows us to get
-> rid of duplicated code in the drivers.
-> 
-> In order to allow this, we add a struct thermal_cooling_device pointer
-> to struct cpufreq_policy so that drivers don't need to store it in a
-> private data structure.
-> 
-> Suggested-by: Stephen Boyd <swboyd@chromium.org>
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> Tested-by: Matthias Kaehlcke <mka@chromium.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/cpufreq.c | 11 +++++++++++
->  include/linux/cpufreq.h   |  9 +++++++++
->  2 files changed, 20 insertions(+)
+Asynchronous driver probing can help much on kernel fastboot, and
+this option can provide a flexible way to optimize and quickly verify
+async driver probe.
 
-Thanks for the rework. This looks good now.
+Also it will help in below cases:
+* Some driver actually covers several families of HWs, some of which
+  could use async probing while others don't. So we can't simply
+  turn on the PROBE_PREFER_ASYNCHRONOUS flag in driver, but use this
+  cmdline option, like igb driver async patch discussed at
+  https://www.spinics.net/lists/netdev/msg545986.html
 
+* For SOC (System on Chip) with multiple spi or i2c controllers, most
+  of the slave spi/i2c devices will be assigned with fixed controller
+  number, while async probing may make those controllers get different
+  index for each boot, which prevents those controller drivers to be
+  async probed. For platforms not using these spi/i2c slave devices,
+  they can use this cmdline option to benefit from the async probing.
+
+Suggested-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+---
+ drivers/base/dd.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 8ac10af..e99d781 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -57,6 +57,10 @@ static atomic_t deferred_trigger_count = ATOMIC_INIT(0);
+ static struct dentry *deferred_devices;
+ static bool initcalls_done;
+ 
++/* Save the async probe drivers' name from kernel cmdline */
++#define ASYNC_DRV_NAMES_MAX_LEN	256
++static char async_probe_drv_names[ASYNC_DRV_NAMES_MAX_LEN];
++
+ /*
+  * In some cases, like suspend to RAM or hibernation, It might be reasonable
+  * to prohibit probing of devices as it could be unsafe.
+@@ -674,6 +678,22 @@ int driver_probe_device(struct device_driver *drv, struct device *dev)
+ 	return ret;
+ }
+ 
++static inline bool cmdline_requested_async_probing(const char *drv_name)
++{
++	return parse_option_str(async_probe_drv_names, drv_name);
++}
++
++/* The format is like driver_async_probe=drv_name1,drv_name2,drv_name3 */
++static int __init save_async_options(char *buf)
++{
++	if (strlen(buf) >= ASYNC_DRV_NAMES_MAX_LEN)
++		printk(KERN_WARNING "Too long list for async_probe_drv_names!");
++
++	strlcpy(async_probe_drv_names, buf, ASYNC_DRV_NAMES_MAX_LEN);
++	return 0;
++}
++__setup("driver_async_probe=", save_async_options);
++
+ bool driver_allows_async_probing(struct device_driver *drv)
+ {
+ 	switch (drv->probe_type) {
+@@ -684,6 +704,9 @@ bool driver_allows_async_probing(struct device_driver *drv)
+ 		return false;
+ 
+ 	default:
++		if (cmdline_requested_async_probing(drv->name))
++			return true;
++
+ 		if (module_requested_async_probing(drv->owner))
+ 			return true;
+ 
 -- 
-viresh
+2.7.4
+
