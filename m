@@ -2,191 +2,127 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE3CC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F381C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4D6E20855
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:25:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2206A20855
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:26:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nLYHa8w6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731404AbfA3OZi (ORCPT
+        id S1731419AbfA3O0P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 09:25:38 -0500
-Received: from mga04.intel.com ([192.55.52.120]:27023 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731052AbfA3OYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 09:24:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 06:24:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
-   d="scan'208";a="271154286"
-Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by orsmga004.jf.intel.com with ESMTP; 30 Jan 2019 06:24:50 -0800
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
-        ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 06/13] perf mem: Clean up output format
-Date:   Wed, 30 Jan 2019 06:23:47 -0800
-Message-Id: <1548858234-8872-6-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548858234-8872-1-git-send-email-kan.liang@linux.intel.com>
-References: <1548858234-8872-1-git-send-email-kan.liang@linux.intel.com>
+        Wed, 30 Jan 2019 09:26:15 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41091 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbfA3O0P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 09:26:15 -0500
+Received: by mail-pl1-f193.google.com with SMTP id u6so11120223plm.8;
+        Wed, 30 Jan 2019 06:26:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VM3p6/s4SVy5fZUAia87KEQ5MWuRdZWo7LUOAtBmQU0=;
+        b=nLYHa8w66+qrneKZnCCbqE31p44ZKWGoYR5IiBhfdXYWJkAa8uxeZe1/xbqBohz9FF
+         l3u/s74nE0bN8+lMvpbXmxM6SzQpMVRtYLDGC3JMMzgOVy3NB5swxxJAvcu/c8Iyz/BT
+         CxEcfa/ZYNw9pHkCYhmNMmhkA9IlPxh9n2+rThc9+Jo/qtJV8TFwp163z8o6H8iuidnT
+         t6UvNZwtjO8kgX0/816iYqYB6UB3m+DY5UhksR3Mq59zHpDWQZtW2+QOoyqP/iUqHoWl
+         vZQxwFV3RDrvVPpQaLYByZf3+Mwi31w2nZ0irehfrPCKbINzRrCKosixSJLP7/qbgf9r
+         GYQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VM3p6/s4SVy5fZUAia87KEQ5MWuRdZWo7LUOAtBmQU0=;
+        b=dRydQwW34cF5xoX0zZB5MUFKWRB2ECe+58MfUJa2wNp2NSq2v50x1ZimlcNr6C+aID
+         2Y/3ool8/upt7oCTPQrEG1qi52JpebIjkZs4M8Gq5mEU7Vv0s0YsvygxrlaGb59LWtai
+         a8595mNW3TodnqdTzRifvuU5KKXZ0NS8XOKomjIFBDFIR0ORkSziV/zQ8r0v/v+W3dvv
+         uKsBWH9wj7A9TGaA28G+Fp8K6vw7rbmvrfCa1I6XDopeicP6owaN4NCe90zzfFs+8rRG
+         WOopzIkZO983Gc3dGoBMbyDz+lAiVgCbd2KZjN5NX5O5RnRI5dIX/hgKFRkX+AXvq5la
+         TdBw==
+X-Gm-Message-State: AJcUukfDT7fDGQHPm1GT/rxHNuOhWWhelx4h98G3MzVBCVRXmZ+RmkYw
+        37nwvlcdXiKFLyGtFuDPAlI=
+X-Google-Smtp-Source: ALg8bN7Z2n67V/khSr8jW7o6rC2vZTkoUwukGWZqFX/Zl264nG9Ydtaze3ojN0g3enJfw3NYDk8v+w==
+X-Received: by 2002:a17:902:ab84:: with SMTP id f4mr29937393plr.207.1548858373930;
+        Wed, 30 Jan 2019 06:26:13 -0800 (PST)
+Received: from nishad ([106.51.25.107])
+        by smtp.gmail.com with ESMTPSA id l22sm3330164pfj.179.2019.01.30.06.26.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 06:26:13 -0800 (PST)
+Date:   Wed, 30 Jan 2019 19:56:03 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        NeilBrown <neil@brown.name>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, Joe Perches <joe@perches.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MIPS: Select PINCTRL_RT2880 when RALINK is enabled
+Message-ID: <20190130142601.GA26071@nishad>
+References: <20190129152522.GA24872@nishad>
+ <20190129200905.vnb3amouxq6o57fn@pburton-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129200905.vnb3amouxq6o57fn@pburton-laptop>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Tue, Jan 29, 2019 at 08:09:07PM +0000, Paul Burton wrote:
+> Hi Nishad,
+> 
+> On Tue, Jan 29, 2019 at 08:55:27PM +0530, Nishad Kamdar wrote:
+> > This patch selects config PINCTRL_RT2880 when config RALINK is
+> > enabled as per drivers/staging/mt7621-pinctrl/TODO list. PINCTRL
+> > is also selected when RALINK is enabled to avoid config dependency
+> > warnings.
+> > 
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > ---
+> >  arch/mips/Kconfig | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> > index e2fc88da0223..cea529cf6284 100644
+> > --- a/arch/mips/Kconfig
+> > +++ b/arch/mips/Kconfig
+> > @@ -623,6 +623,8 @@ config RALINK
+> >  	select CLKDEV_LOOKUP
+> >  	select ARCH_HAS_RESET_CONTROLLER
+> >  	select RESET_CONTROLLER
+> > +	select PINCTRL
+> > +	select PINCTRL_RT2880
+> >  
+> >  config SGI_IP22
+> >  	bool "SGI IP22 (Indy/Indigo2)"
+> 
+> Wouldn't this also require selecting STAGING? Perhaps that's why it
+> wasn't done in the first place?
+> 
+> Thanks,
+>     Paul
+Ok, got it.
 
-Now, "--phys-data" is the only option which impacts the output format.
-A simple "if else" is enough to handle the option. But there will be
-more options added, e.g. "--data-page-size", which also impact the
-output format. The code will become too complex to be maintained.
+Thanks for the review.
 
-Divide the big printf into several small pieces. Output the specific
-piece only if the related option is applied.
-
-No functional change.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
-
-Changes since V2:
-- Split into patch 5 and 6.
-
- tools/perf/builtin-mem.c | 93 ++++++++++++++++++++----------------------------
- 1 file changed, 38 insertions(+), 55 deletions(-)
-
-diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
-index 0647bd7..24acc2a 100644
---- a/tools/perf/builtin-mem.c
-+++ b/tools/perf/builtin-mem.c
-@@ -153,7 +153,7 @@ dump_raw_samples(struct perf_tool *tool,
- {
- 	struct perf_mem *mem = container_of(tool, struct perf_mem, tool);
- 	struct addr_location al;
--	const char *fmt;
-+	const char *fmt, *field_sep;
- 
- 	if (machine__resolve(machine, &al, sample) < 0) {
- 		fprintf(stderr, "problem processing %d event, skipping it.\n",
-@@ -167,60 +167,41 @@ dump_raw_samples(struct perf_tool *tool,
- 	if (al.map != NULL)
- 		al.map->dso->hit = 1;
- 
--	if (mem->phys_addr) {
--		if (symbol_conf.field_sep) {
--			fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s0x%016"PRIx64
--			      "%s%"PRIu64"%s0x%"PRIx64"%s%s:%s\n";
--		} else {
--			fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64
--			      "%s0x%016"PRIx64"%s%5"PRIu64"%s0x%06"PRIx64
--			      "%s%s:%s\n";
--			symbol_conf.field_sep = " ";
--		}
--
--		printf(fmt,
--			sample->pid,
--			symbol_conf.field_sep,
--			sample->tid,
--			symbol_conf.field_sep,
--			sample->ip,
--			symbol_conf.field_sep,
--			sample->addr,
--			symbol_conf.field_sep,
--			sample->phys_addr,
--			symbol_conf.field_sep,
--			sample->weight,
--			symbol_conf.field_sep,
--			sample->data_src,
--			symbol_conf.field_sep,
--			al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
--			al.sym ? al.sym->name : "???");
-+	field_sep = symbol_conf.field_sep;
-+	if (field_sep) {
-+		fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s";
- 	} else {
--		if (symbol_conf.field_sep) {
--			fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s%"PRIu64
--			      "%s0x%"PRIx64"%s%s:%s\n";
--		} else {
--			fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64
--			      "%s%5"PRIu64"%s0x%06"PRIx64"%s%s:%s\n";
--			symbol_conf.field_sep = " ";
--		}
-+		fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64"%s";
-+		symbol_conf.field_sep = " ";
-+	}
-+	printf(fmt,
-+		sample->pid,
-+		symbol_conf.field_sep,
-+		sample->tid,
-+		symbol_conf.field_sep,
-+		sample->ip,
-+		symbol_conf.field_sep,
-+		sample->addr,
-+		symbol_conf.field_sep);
- 
--		printf(fmt,
--			sample->pid,
--			symbol_conf.field_sep,
--			sample->tid,
--			symbol_conf.field_sep,
--			sample->ip,
--			symbol_conf.field_sep,
--			sample->addr,
--			symbol_conf.field_sep,
--			sample->weight,
--			symbol_conf.field_sep,
--			sample->data_src,
--			symbol_conf.field_sep,
--			al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
--			al.sym ? al.sym->name : "???");
-+	if (mem->phys_addr) {
-+		printf("0x%016"PRIx64"%s",
-+			sample->phys_addr,
-+			symbol_conf.field_sep);
- 	}
-+
-+	if (field_sep)
-+		fmt = "%"PRIu64"%s0x%"PRIx64"%s%s:%s\n";
-+	else
-+		fmt = "%5"PRIu64"%s0x%06"PRIx64"%s%s:%s\n";
-+
-+	printf(fmt,
-+		sample->weight,
-+		symbol_conf.field_sep,
-+		sample->data_src,
-+		symbol_conf.field_sep,
-+		al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
-+		al.sym ? al.sym->name : "???");
- out_put:
- 	addr_location__put(&al);
- 	return 0;
-@@ -262,10 +243,12 @@ static int report_raw_events(struct perf_mem *mem)
- 	if (ret < 0)
- 		goto out_delete;
- 
-+	printf("# PID, TID, IP, ADDR, ");
-+
- 	if (mem->phys_addr)
--		printf("# PID, TID, IP, ADDR, PHYS ADDR, LOCAL WEIGHT, DSRC, SYMBOL\n");
--	else
--		printf("# PID, TID, IP, ADDR, LOCAL WEIGHT, DSRC, SYMBOL\n");
-+		printf("PHYS ADDR, ");
-+
-+	printf("LOCAL WEIGHT, DSRC, SYMBOL\n");
- 
- 	ret = perf_session__process_events(session);
- 
--- 
-2.7.4
-
+Regards,
+Nishad
