@@ -3,93 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E357C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17281C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1333F2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2B702087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:18:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732459AbfA3RRt (ORCPT
+        id S1732466AbfA3RSK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:17:49 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:39494 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726972AbfA3RRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:17:49 -0500
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.205])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gotUV-0006Y7-9V; Wed, 30 Jan 2019 10:17:36 -0700
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-References: <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
- <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
- <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
- <20190129205749.GN3176@redhat.com>
- <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
- <20190129215028.GQ3176@redhat.com>
- <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
- <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
- <20190130041841.GB30598@mellanox.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
-Date:   Wed, 30 Jan 2019 10:17:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 12:18:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40404 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726972AbfA3RSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:18:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 848FCAD3C;
+        Wed, 30 Jan 2019 17:18:07 +0000 (UTC)
+From:   Nicolai Stange <nstange@suse.de>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        live-patching@vger.kernel.org,
+        Balbir Singh <bsingharora@gmail.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Nicolai Stange <nstange@suse.de>, Torsten Duwe <duwe@lst.de>
+Subject: Re: [PATCH 1/4] powerpc/64s: Clear on-stack exception marker upon exception return
+References: <20190122155724.27557-1-joe.lawrence@redhat.com>
+        <20190122155724.27557-2-joe.lawrence@redhat.com>
+        <87tvhqpbzd.fsf@concordia.ellerman.id.au>
+Date:   Wed, 30 Jan 2019 18:18:05 +0100
+In-Reply-To: <87tvhqpbzd.fsf@concordia.ellerman.id.au> (Michael Ellerman's
+        message of "Wed, 30 Jan 2019 23:27:02 +1100")
+Message-ID: <87a7jirrn6.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20190130041841.GB30598@mellanox.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jglisse@redhat.com, jgg@mellanox.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Michael Ellerman <mpe@ellerman.id.au> writes:
 
+> Joe Lawrence <joe.lawrence@redhat.com> writes:
+>> From: Nicolai Stange <nstange@suse.de>
+>>
+>> The ppc64 specific implementation of the reliable stacktracer,
+>> save_stack_trace_tsk_reliable(), bails out and reports an "unreliable
+>> trace" whenever it finds an exception frame on the stack. Stack frames
+>> are classified as exception frames if the STACK_FRAME_REGS_MARKER magic,
+>> as written by exception prologues, is found at a particular location.
+>>
+>> However, as observed by Joe Lawrence, it is possible in practice that
+>> non-exception stack frames can alias with prior exception frames and thus,
+>> that the reliable stacktracer can find a stale STACK_FRAME_REGS_MARKER on
+>> the stack. It in turn falsely reports an unreliable stacktrace and blocks
+>> any live patching transition to finish. Said condition lasts until the
+>> stack frame is overwritten/initialized by function call or other means.
+>>
+>> In principle, we could mitigate this by making the exception frame
+>> classification condition in save_stack_trace_tsk_reliable() stronger:
+>> in addition to testing for STACK_FRAME_REGS_MARKER, we could also take into
+>> account that for all exceptions executing on the kernel stack
+>> - their stack frames's backlink pointers always match what is saved
+>>   in their pt_regs instance's ->gpr[1] slot and that
+>> - their exception frame size equals STACK_INT_FRAME_SIZE, a value
+>>   uncommonly large for non-exception frames.
+>>
+>> However, while these are currently true, relying on them would make the
+>> reliable stacktrace implementation more sensitive towards future changes in
+>> the exception entry code. Note that false negatives, i.e. not detecting
+>> exception frames, would silently break the live patching consistency model.
+>>
+>> Furthermore, certain other places (diagnostic stacktraces, perf, xmon)
+>> rely on STACK_FRAME_REGS_MARKER as well.
+>>
+>> Make the exception exit code clear the on-stack STACK_FRAME_REGS_MARKER
+>> for those exceptions running on the "normal" kernel stack and returning
+>> to kernelspace: because the topmost frame is ignored by the reliable stack
+>> tracer anyway, returns to userspace don't need to take care of clearing
+>> the marker.
+>>
+>> Furthermore, as I don't have the ability to test this on Book 3E or
+>> 32 bits, limit the change to Book 3S and 64 bits.
+>>
+>> Finally, make the HAVE_RELIABLE_STACKTRACE Kconfig option depend on
+>> PPC_BOOK3S_64 for documentation purposes. Before this patch, it depended
+>> on PPC64 && CPU_LITTLE_ENDIAN and because CPU_LITTLE_ENDIAN implies
+>> PPC_BOOK3S_64, there's no functional change here.
+>
+> That has nothing to do with the fix and should really be in a separate
+> patch.
+>
+> I can split it when applying.
 
-On 2019-01-29 9:18 p.m., Jason Gunthorpe wrote:
-> Every attempt to give BAR memory to struct page has run into major
-> trouble, IMHO, so I like that this approach avoids that.
-> 
-> And if you don't have struct page then the only kernel object left to
-> hang meta data off is the VMA itself.
-> 
-> It seems very similar to the existing P2P work between in-kernel
-> consumers, just that VMA is now mediating a general user space driven
-> discovery process instead of being hard wired into a driver.
+If you don't mind, that would be nice! Or simply drop that
+chunk... Otherwise, let me know if I shall send a split v2 for this
+patch [1/4] only.
 
-But the kernel now has P2P bars backed by struct pages and it works
-well. And that's what we are doing in-kernel. We even have a hacky
-out-of-tree module which exposes these pages and it also works (but
-would need Jerome's solution for denying those pages in GUP, etc). So
-why do something completely different in userspace so they can't share
-any of the DMA map infrastructure?
+Thanks,
 
-Logan
+Nicolai
+
+-- 
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton,
+HRB 21284 (AG Nürnberg)
