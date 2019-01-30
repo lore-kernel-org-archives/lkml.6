@@ -2,92 +2,102 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B665FC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69806C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85C5A20855
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:28:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bBEuGwn1"
+	by mail.kernel.org (Postfix) with ESMTP id 3BEC820855
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:28:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730839AbfA3M2D (ORCPT
+        id S1730864AbfA3M2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:28:03 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33073 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730797AbfA3M2D (ORCPT
+        Wed, 30 Jan 2019 07:28:25 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:46910 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727770AbfA3M2Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 07:28:03 -0500
-Received: by mail-wm1-f68.google.com with SMTP id r24so15356640wmh.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 04:28:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=p4U/iIJj82u26qLoq46qihY0sTUO30P5OPcQP+2hQt4=;
-        b=bBEuGwn1o7o2K8JnDQ6yuznyxfZ8aIkbh6vqE/DBlyhp+6yqEURJYjfHBCAepcN1gY
-         KBDN9pSi+/C2hO3RkkPQZoWYUQsT0j/QwFPQiIjWsCYGD3KcATpFnofhfVf0hukoGC5B
-         WWeXgPNmRZNzXguHf4Daup0YWcGB6CqwaL3b8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=p4U/iIJj82u26qLoq46qihY0sTUO30P5OPcQP+2hQt4=;
-        b=fDMuqXfPqwf93dUSnjNVuun/OsZxqi1Uqb6tbxIxYHdLdipLXdY1XKm5PyQoQ0U9LX
-         GcRfaNpfdCsk7+Ku0f0F7mA4p2vLjxX8h1S24qNRVe4BNVHHuYp+HQDl/mWVIdY7EoqC
-         ctlfSGmVFl2DirKv/J/8ql0IgMcKQ2Ojp7SFc6g9BTZJuvbs6yD5MJQHKPOQifawLzuJ
-         u0KLzkQXK4XzYhRwgOBq3k0FA54ZSDA/1xCImKLJVefslbPW2svNNMoPhG2YjHsHHrc/
-         TImTRZf+8wYNxEsV6aWMjLA8uV/vDxSyB5WHWM3HJaUoLRYzZ0XsPqmzjiDzXgVhdOC+
-         tBFA==
-X-Gm-Message-State: AJcUukf64hnwYrM3qPsVy1yuOR1PeCbC0LELbzevLFpjeSp4uXRtFkZz
-        DNEl7XvHTHKKnpgGqM/vUB8fhFcrZKE=
-X-Google-Smtp-Source: ALg8bN5HK5CtsRK25o5XOzy94A9USGHN7oWCi0//bbFt7rwvoCn57KBqYeC34t2f0+YEHFUe+uiq8Q==
-X-Received: by 2002:a1c:7f0c:: with SMTP id a12mr24272697wmd.89.1548851281230;
-        Wed, 30 Jan 2019 04:28:01 -0800 (PST)
-Received: from [192.168.1.2] (99.red-79-146-83.dynamicip.rima-tde.net. [79.146.83.99])
-        by smtp.gmail.com with ESMTPSA id f199sm2273299wmd.25.2019.01.30.04.27.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 04:28:00 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] phy: qualcomm: usb: Add Super-Speed PHY driver
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
-        jackp@codeaurora.org, andy.gross@linaro.org, swboyd@chromium.org,
-        shawn.guo@linaro.org, vkoul@kernel.org, khasim.mohammed@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1548761715-4004-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1548761715-4004-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <20190129202726.GA3036@builder>
- <fbd70494-e2f1-ae04-8b14-2cc97cead8b9@linaro.org>
-Message-ID: <61bdca18-cef9-3f02-45ef-5df4f96b4f2b@linaro.org>
-Date:   Wed, 30 Jan 2019 13:27:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 30 Jan 2019 07:28:25 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gooya-0007D7-KD; Wed, 30 Jan 2019 13:28:20 +0100
+Date:   Wed, 30 Jan 2019 13:28:20 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 17/22] x86/fpu: Prepare copy_fpstate_to_sigframe() for
+ TIF_NEED_FPU_LOAD
+Message-ID: <20190130122820.qyyn4vbtkqelmp54@linutronix.de>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-18-bigeasy@linutronix.de>
+ <20190130115614.GF18383@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <fbd70494-e2f1-ae04-8b14-2cc97cead8b9@linaro.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20190130115614.GF18383@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/19 10:53, Jorge Ramirez wrote:
+On 2019-01-30 12:56:14 [+0100], Borislav Petkov wrote:
+> > diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+> > index bf4e6caad305e..a25be217f9a2c 100644
+> > --- a/arch/x86/kernel/fpu/signal.c
+> > +++ b/arch/x86/kernel/fpu/signal.c
+> > @@ -156,7 +156,16 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+> >  			sizeof(struct user_i387_ia32_struct), NULL,
+> >  			(struct _fpstate_32 __user *) buf) ? -1 : 1;
+> >  
+> > -	copy_fpregs_to_fpstate(fpu);
+> > +	__fpregs_changes_begin();
+> > +	/*
+> > +	 * If we do not need to load the FPU registers at return to userspace
+> > +	 * then the CPU has the current state and we need to save it. Otherwise
+> > +	 * it is already done and we can skip it.
+> > +	 */
+> > +	if (!test_thread_flag(TIF_NEED_FPU_LOAD))
+> > +		copy_fpregs_to_fpstate(fpu);
+> 
+> I wonder if this flag would make the code more easy to follow by calling
+> it
+> 
+> 	TIF_FPU_REGS_VALID
+> 
+> instead, to denote that the FPU registers in the CPU have a valid
+> content.
+> 
+> Then the test becomes:
+> 
+> 	if (test_thread_flag(TIF_FPU_REGS_VALID))
+> 		copy_fpregs_to_fpstate(fpu);
 
->> +	priv->vbus = devm_regulator_get_optional(priv->dev, "vbus");
-> get_optional means that if vbus-supply is not found, rather than
-> returning a dummy regulator object this will fail with -ENODEV.
+I've been asked to add comment above the sequence so it is understood. I
+think the general approach is easy to follow once the concept is
+understood. I don't mind renaming the TIF_ thingy once again (it
+happend once or twice and I think the current one was suggested by Andy
+unless I mixed things up).
+The problem I have with the above is that
 
-on this subject, is it intentional that devm_reset_control_get_optional
-behaves differently (ie, it returns a NULL if it cant be found)
+	if (test_thread_flag(TIF_NEED_FPU_LOAD))
+		do_that()
 
-IMO all *_get_optional should be semantically as well as functionally
-equivalent to avoid confusions like the one I had.
+becomes
+	if (!test_thread_flag(TIF_FPU_REGS_VALID))
+		do_that()
+
+and you could argue again the other way around. So do we want NEED_LOAD
+or NEED_SAVE flag which is another way of saying REGS_VALID?
+More importantly the logic is changed when the bit is set and this
+requires more thinking than just doing sed on the patch series.
+
+Sebastian
