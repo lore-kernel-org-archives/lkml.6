@@ -2,237 +2,199 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B0CC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F1EC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 902DD20869
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:35:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MBj49i9B"
+	by mail.kernel.org (Postfix) with ESMTP id 9DAF7218AC
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:36:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733153AbfA3Sfw (ORCPT
+        id S1733170AbfA3SgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:35:52 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45979 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733011AbfA3Sfv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:35:51 -0500
-Received: by mail-lj1-f194.google.com with SMTP id s5-v6so406057ljd.12
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:35:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vz1pJJHxFDjHYDa5FNImunQFYutxZ8wy7/pKlBaS2E0=;
-        b=MBj49i9BZps1u5Jgm124BfF4vUDqnjlxGywDrDT3pg6LUlgS8dDFSTIC8iXO0P9zw5
-         a0lLJ8AO1ydAxu6UeYNp/6Tcck53RVHTMoYfi+tjPB39bRM9vLxUnolRzFcqTitNEoog
-         Ms2oVXkF/2VFPWIKH/U0gUp1iyWlW4NlYxUDA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vz1pJJHxFDjHYDa5FNImunQFYutxZ8wy7/pKlBaS2E0=;
-        b=qrBONHYsgojJ2WIPA4TBzybsPaCi7ppU7OlxeHkYxzy4X5eBsfJdIqPwucdnQryajy
-         6MDLFSugktxlUK9CUQ5MSf5ixe1vW7+lPipZqlGNItf85HdPoO0ScUd0K7V2S8Vi/R0b
-         KjUt4efNi5GxCNtQzXabrKKR7QVdmndgpZwcEG9WVSFHDLZz8R6Hp0YNT2FoU0m0vU0N
-         +G/97hr02TbGoQQwdDMqcRNwSfMI9+G2VvEBM+Ob2h20C/vq6fJdPsO/OLtwAupN7a5g
-         GdKWznIy+OGnLcBJNEAfpo67cMFQ5Ol8vn3Jfli8wqtxMflU6dO5ptCvI/RbWclBZjkn
-         3wVg==
-X-Gm-Message-State: AJcUukeN7wAQW3y0ttVAVawxeAUkxSEaTpEWbhjIRbyP3pd6IT6IVEYi
-        ott232RxGdmwvhOfqt3AZW1TQQaWE4w=
-X-Google-Smtp-Source: ALg8bN7wS4fTMKzvPCrrR1rwJFYttsKUe2MJs35IWgUMXvja4f379fUrDux0xZnF9EzlKoV2BtYveg==
-X-Received: by 2002:a2e:145a:: with SMTP id 26-v6mr24847666lju.116.1548873348530;
-        Wed, 30 Jan 2019 10:35:48 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id k68-v6sm404400ljb.35.2019.01.30.10.35.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 10:35:48 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id e26so421303lfc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:35:48 -0800 (PST)
-X-Received: by 2002:a19:d381:: with SMTP id k123mr24301931lfg.101.1548872883637;
- Wed, 30 Jan 2019 10:28:03 -0800 (PST)
+        Wed, 30 Jan 2019 13:36:22 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41216 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733011AbfA3SgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 13:36:21 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 276822CD7EC;
+        Wed, 30 Jan 2019 18:36:20 +0000 (UTC)
+Received: from redhat.com (ovpn-126-0.rdu2.redhat.com [10.10.126.0])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 08B055C239;
+        Wed, 30 Jan 2019 18:36:18 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 13:36:17 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 09/10] mm/hmm: allow to mirror vma of a file on a DAX
+ backed filesystem
+Message-ID: <20190130183616.GB5061@redhat.com>
+References: <20190129165428.3931-1-jglisse@redhat.com>
+ <20190129165428.3931-10-jglisse@redhat.com>
+ <CAPcyv4gNtDQf0mHwhZ8g3nX6ShsjA1tx2KLU_ZzTH1Z1AeA_CA@mail.gmail.com>
+ <20190129193123.GF3176@redhat.com>
+ <CAPcyv4gkYTZ-_Et1ZriAcoHwhtPEftOt2LnR_kW+hQM5-0G4HA@mail.gmail.com>
+ <20190129212150.GP3176@redhat.com>
+ <CAPcyv4hZMcJ6r0Pw5aJsx37+YKx4qAY0rV4Ascc9LX6eFY8GJg@mail.gmail.com>
+ <20190130030317.GC10462@redhat.com>
+ <CAPcyv4jS7Y=DLOjRHbdRfwBEpxe_r7wpv0ixTGmL7kL_ThaQFA@mail.gmail.com>
 MIME-Version: 1.0
-References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-2-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1546314952-15990-2-git-send-email-yong.wu@mediatek.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 30 Jan 2019 10:27:27 -0800
-X-Gmail-Original-Message-ID: <CAE=gft4dQjUw3j52dZJYjvQ4GTf8_KcZOdW5Wn9cFtY9wu_atg@mail.gmail.com>
-Message-ID: <CAE=gft4dQjUw3j52dZJYjvQ4GTf8_KcZOdW5Wn9cFtY9wu_atg@mail.gmail.com>
-Subject: Re: [PATCH v5 01/20] dt-bindings: mediatek: Add binding for mt8183
- IOMMU and SMI
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4jS7Y=DLOjRHbdRfwBEpxe_r7wpv0ixTGmL7kL_ThaQFA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 30 Jan 2019 18:36:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 7:56 PM Yong Wu <yong.wu@mediatek.com> wrote:
->
-> This patch adds decriptions for mt8183 IOMMU and SMI.
->
-> mt8183 has only one M4U like mt8173 and is also MTK IOMMU gen2 which
-> uses ARM Short-Descriptor translation table format.
->
-> The mt8183 M4U-SMI HW diagram is as below:
->
->                           EMI
->                            |
->                           M4U
->                            |
->                        ----------
->                        |        |
->                    gals0-rx   gals1-rx
->                        |        |
->                        |        |
->                    gals0-tx   gals1-tx
->                        |        |
->                       ------------
->                        SMI Common
->                       ------------
->                            |
->   +-----+-----+--------+-----+-----+-------+-------+
->   |     |     |        |     |     |       |       |
->   |     |  gals-rx  gals-rx  |   gals-rx gals-rx gals-rx
->   |     |     |        |     |     |       |       |
->   |     |     |        |     |     |       |       |
->   |     |  gals-tx  gals-tx  |   gals-tx gals-tx gals-tx
->   |     |     |        |     |     |       |       |
-> larb0 larb1  IPU0    IPU1  larb4  larb5  larb6    CCU
-> disp  vdec   img     cam    venc   img    cam
+On Wed, Jan 30, 2019 at 09:25:21AM -0800, Dan Williams wrote:
+> On Tue, Jan 29, 2019 at 7:03 PM Jerome Glisse <jglisse@redhat.com> wrote:
+> [..]
+> > > >     1) Convert ODP to use HMM underneath so that we share code between
+> > > >     infiniband ODP and GPU drivers. ODP do support DAX today so i can
+> > > >     not convert ODP to HMM without also supporting DAX in HMM otherwise
+> > > >     i would regress the ODP features.
+> > > >
+> > > >     2) I expect people will be running GPGPU on computer with file that
+> > > >     use DAX and they will want to use HMM there too, in fact from user-
+> > > >     space point of view wether the file is DAX or not should only change
+> > > >     one thing ie for DAX file you will never be able to use GPU memory.
+> > > >
+> > > >     3) I want to convert as many user of GUP to HMM (already posted
+> > > >     several patchset to GPU mailing list for that and i intend to post
+> > > >     a v2 of those latter on). Using HMM avoids GUP and it will avoid
+> > > >     the GUP pin as here we abide by mmu notifier hence we do not want to
+> > > >     inhibit any of the filesystem regular operation. Some of those GPU
+> > > >     driver do allow GUP on DAX file. So again i can not regress them.
+> > >
+> > > Is this really a GUP to HMM conversion, or a GUP to mmu_notifier
+> > > solution? It would be good to boil this conversion down to the base
+> > > building blocks. It seems "HMM" can mean several distinct pieces of
+> > > infrastructure. Is it possible to replace some GUP usage with an
+> > > mmu_notifier based solution without pulling in all of HMM?
+> >
+> > Kind of both, some of the GPU driver i am converting will use HMM for
+> > more than just this GUP reason. But when and for what hardware they
+> > will use HMM for is not something i can share (it is up to each vendor
+> > to announce their hardware and feature on their own timeline).
+> 
+> Typically a spec document precedes specific hardware announcement and
+> Linux enabling is gated on public spec availability.
+> 
+> > So yes you could do the mmu notifier solution without pulling HMM
+> > mirror (note that you do not need to pull all of HMM, HMM as many
+> > kernel config option and for this you only need to use HMM mirror).
+> > But if you are not using HMM then you will just be duplicating the
+> > same code as HMM mirror. So i believe it is better to share this
+> > code and if we want to change core mm then we only have to update
+> > HMM while keeping the API/contract with device driver intact.
+> 
+> No. Linux should not end up with the HMM-mm as distinct from the
+> Core-mm. For long term maintainability of Linux, the target should be
+> one mm.
 
-It might be cool to put the gals in the picture in the bindings. Not a
-big deal though.
+Hu ? I do not follow here. Maybe i am unclear and we are talking past
+each other.
 
->
-> All the connections are HW fixed, SW can NOT adjust it.
->
-> Compared with mt8173, we add a GALS(Global Async Local Sync) module
-> between SMI-common and M4U, and additional GALS between larb2/3/5/6
-> and SMI-common. GALS can help synchronize for the modules in different
-> clock frequency, it can be seen as a "asynchronous fifo".
->
-> GALS can only help transfer the command/data while it doesn't have
-> the configuring register, thus it has the special "smi" clock and it
-> doesn't have the "apb" clock. From the diagram above, we add "gals0"
-> and "gals1" clocks for smi-common and add a "gals" clock for smi-larb.
->
-> From the diagram above, IPU0/IPU1(Image Processor Unit) and CCU(Camera
-> Control Unit) is connected with smi-common directly, we can take them
-> as "larb2", "larb3" and "larb7", and their register spaces are
-> different with the normal larb.
->
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/iommu/mediatek,iommu.txt   |  15 ++-
->  .../memory-controllers/mediatek,smi-common.txt     |  11 +-
->  .../memory-controllers/mediatek,smi-larb.txt       |   3 +
->  include/dt-bindings/memory/mt8183-larb-port.h      | 130 +++++++++++++++++++++
->  4 files changed, 153 insertions(+), 6 deletions(-)
->  create mode 100644 include/dt-bindings/memory/mt8183-larb-port.h
->
-> diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt b/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
-> index 6922db5..6e758996 100644
-> --- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.txt
-> @@ -36,6 +36,10 @@ each local arbiter.
->  like display, video decode, and camera. And there are different ports
->  in each larb. Take a example, There are many ports like MC, PP, VLD in the
->  video decode local arbiter, all these ports are according to the video HW.
-> +  In some SoCs, there may be a GALS(Global Async Local Sync) module between
-> +smi-common and m4u, and additional GALS module between smi-larb and
-> +smi-common. GALS can been seen as a "asynchronous fifo" which could help
-> +synchronize for the modules in different clock frequency.
->
->  Required properties:
->  - compatible : must be one of the following string:
-> @@ -44,18 +48,23 @@ Required properties:
->         "mediatek,mt7623-m4u", "mediatek,mt2701-m4u" for mt7623 which uses
->                                                      generation one m4u HW.
->         "mediatek,mt8173-m4u" for mt8173 which uses generation two m4u HW.
-> +       "mediatek,mt8183-m4u" for mt8183 which uses generation two m4u HW.
->  - reg : m4u register base and size.
->  - interrupts : the interrupt of m4u.
->  - clocks : must contain one entry for each clock-names.
-> -- clock-names : must be "bclk", It is the block clock of m4u.
-> +- clock-names : Only 1 optional clock:
-> +  - "bclk": the block clock of m4u.
-> +  Note that m4u use the EMI clock which always has been enabled before kernel
-> +  if there is no this "bclk".
+> 
+> > This
+> > is one of the motivation behind HMM ie have it as an impedence layer
+> > between mm and device drivers so that mm folks do not have to under-
+> > stand every single device driver but only have to understand the
+> > contract HMM has with all device driver that uses it.
+> 
+> This gets to heart of my critique of the approach taken with HMM. The
+> above statement is antithetical to
+> Documentation/process/stable-api-nonsense.rst. If HMM is trying to set
+> expectations that device-driver projects can write to a "stable" HMM
+> api then HMM is setting those device-drivers up for failure.
 
-Ideally bclk could be specified a little more crisply, as this is
-actually required for some SoCs and not used at all on others (as in
-patch 7).
+So i am not expressing myself correctly. If someone want to change mm
+in anyway that would affect HMM user, it can and it is welcome too
+(assuming that those change are wanted by the community and motivated
+for good reasons). Here by understanding HMM contract and preserving it
+what i mean is that all you have to do is update the HMM API in anyway
+that deliver the same result to the device driver. So what i means is
+that instead of having to understand each device driver. For instance
+you have HMM provide X so that driver can do Y; then what can be Z a
+replacement for X that allow driver to do Y. The point here is that
+HMM define what Y is and provide X for current kernel mm code. If X
+ever need to change so that core mm can evolve than you can and are
+more than welcome to do it. With HMM Y is defined and you only need to
+figure out how to achieve the same end result for the device driver.
 
->  - mediatek,larbs : List of phandle to the local arbiters in the current Socs.
->         Refer to bindings/memory-controllers/mediatek,smi-larb.txt. It must sort
->         according to the local arbiter index, like larb0, larb1, larb2...
->  - iommu-cells : must be 1. This is the mtk_m4u_id according to the HW.
->         Specifies the mtk_m4u_id as defined in
->         dt-binding/memory/mt2701-larb-port.h for mt2701, mt7623
-> -       dt-binding/memory/mt2712-larb-port.h for mt2712, and
-> -       dt-binding/memory/mt8173-larb-port.h for mt8173.
-> +       dt-binding/memory/mt2712-larb-port.h for mt2712,
-> +       dt-binding/memory/mt8173-larb-port.h for mt8173, and
-> +       dt-binding/memory/mt8183-larb-port.h for mt8183.
->
->  Example:
->         iommu: iommu@10205000 {
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
-> index e937ddd..8d3240a 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
-> +++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
-> @@ -2,9 +2,10 @@ SMI (Smart Multimedia Interface) Common
->
->  The hardware block diagram please check bindings/iommu/mediatek,iommu.txt
->
-> -Mediatek SMI have two generations of HW architecture, mt2712 and mt8173 use
-> -the second generation of SMI HW while mt2701 uses the first generation HW of
-> -SMI.
-> +Mediatek SMI have two generations of HW architecture, here is the list
-> +which generation the Socs use:
-> +generation 1: mt2701 and mt7623.
-> +generation 2: mt2712, mt8173 and mt8183.
->
->  There's slight differences between the two SMI, for generation 2, the
->  register which control the iommu port is at each larb's register base. But
-> @@ -19,6 +20,7 @@ Required properties:
->         "mediatek,mt2712-smi-common"
->         "mediatek,mt7623-smi-common", "mediatek,mt2701-smi-common"
->         "mediatek,mt8173-smi-common"
-> +       "mediatek,mt8183-smi-common"
->  - reg : the register and size of the SMI block.
->  - power-domains : a phandle to the power domain of this local arbiter.
->  - clocks : Must contain an entry for each entry in clock-names.
-> @@ -30,6 +32,9 @@ Required properties:
->             They may be the same if both source clocks are the same.
->    - "async" : asynchronous clock, it help transform the smi clock into the emi
->               clock domain, this clock is only needed by generation 1 smi HW.
-> +  and these 2 option clocks for generation 2 smi HW:
-> +  - "gals0": the path0 clock of GALS(Global Async Local Sync).
-> +  - "gals1": the path1 clock of GALS(Global Async Local Sync).
+The point is that you do not have to go read each device driver to
+figure out Y.driver_foo, Y.driver_bar, ... you only have HMM that
+define what Y means and is ie this what device driver are trying to
+do.
 
-It would also be nice to specify these more clearly too, since these
-are also required for some SoCs and not used on others (as in patch
-12).
+Obviously here i assume that we do not want to regress features ie
+we want to keep device driver features intact when we modify anything.
+
+> 
+> The possibility of refactoring driver code *across* vendors is a core
+> tenet of Linux maintainability. If the refactoring requires the API
+> exported to drivers to change then so be it. The expectation that all
+> out-of-tree device-drivers should have is that the API they are using
+> in kernel version X may not be there in version X+1. Having the driver
+> upstream is the only surefire insurance against that thrash.
+> 
+> HMM seems a bold experiment in trying to violate Linux development norms.
+
+We are definitly talking past each other. HMM is _not_ a stable API or
+any kind of contract with anybody outside upstream. If you want to change
+the API HMM expose to device driver you are free to do so provided that
+the change still allow device driver to achieve their objective.
+
+HMM is not here to hinder that, quite the opposite in fact, it is here
+to help that. Helping people that want to evolve mm by not requirement
+them to understand every single device driver.
+
+
+> 
+> > Also having each driver duplicating this code increase the risk of
+> > one getting a little detail wrong. The hope is that sharing same
+> > HMM code with all the driver then everyone benefit from debugging
+> > the same code (i am hopping i do not have many bugs left :))
+> 
+> "each driver duplicating code" begs for refactoring driver code to
+> common code and this refactoring is hindered if it must adhere to an
+> "HMM" api.
+
+Again HMM API can evolve, i am happy to help with any such change, given
+it provides benefit to either mm or device driver (ie changing the HMM
+just for the sake of changing the HMM API would not make much sense to
+me).
+
+So if after converting driver A, B and C we see that it would be nicer
+to change HMM in someway then i will definitly do that and this patchset
+is a testimony of that. Converting ODP to use HMM is easier after this
+patchset and this patchset changes the HMM API. I will be updating the
+nouveau driver to the new API and use the new API for the other driver
+patchset i am working on.
+
+If i bump again into something that would be better done any differently
+i will definitly change the HMM API and update all upstream driver
+accordingly.
+
+I am a strong believer in full freedom for internal kernel API changes
+and my intention have always been to help and facilitate such process.
+I am sorry this was unclear to any body :( and i am hopping that this
+email make my intention clear.
+
+Cheers,
+Jérôme
