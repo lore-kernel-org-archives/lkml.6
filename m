@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D7AC282D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76862C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDEFE21473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:42:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 515A621852
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:42:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730518AbfA3Imq (ORCPT
+        id S1730487AbfA3Imo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:42:46 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:60794 "EHLO
+        Wed, 30 Jan 2019 03:42:44 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:60796 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730310AbfA3ImY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730319AbfA3ImY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 Jan 2019 03:42:24 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id E39E45FD5D; Wed, 30 Jan 2019 16:42:17 +0800 (CST)
+        id EE99B5FDD0; Wed, 30 Jan 2019 16:42:17 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>,
@@ -32,9 +32,9 @@ Cc:     linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>,
         Chen-Yu Tsai <wens@csie.org>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 07/10] arm64: dts: allwinner: h5: orange-pi-pc2: Add CPU regulator supply
-Date:   Wed, 30 Jan 2019 16:42:00 +0800
-Message-Id: <20190130084203.25053-8-wens@csie.org>
+Subject: [PATCH 09/10] arm64: dts: allwinner: h5: Add clock to CPU cores
+Date:   Wed, 30 Jan 2019 16:42:02 +0800
+Message-Id: <20190130084203.25053-10-wens@csie.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190130084203.25053-1-wens@csie.org>
 References: <20190130084203.25053-1-wens@csie.org>
@@ -45,69 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The OrangePi PC 2 uses a Silergy SY8106A regulator to supply the CPU
-cores. The fixed voltage when I2C programmed regulation is not in action
-is slightly higher than 1.1V. The value in the device tree description
-is based on calculations of the resistor values from the schematics.
+The ARM CPU cores are fed by the CPU clock from the CCU. Add a
+reference to the clock for each CPU core, along with the clock
+transition latency.
 
-Cc: Andre Przywara <andre.przywara@arm.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>
-Cc: Emmanuel Vadot <manu@freebsd.org>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
 ---
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-This patch is based on the schematics and has not been tested on an
-actual board.
----
- .../dts/allwinner/sun50i-h5-orangepi-pc2.dts  | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-index 3e0d5a9c096d..23cfad7c78f4 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-pc2.dts
-@@ -132,6 +132,10 @@
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+index c22621b4b8e9..25bb8227a6fd 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi
+@@ -52,6 +52,8 @@
+ 			device_type = "cpu";
+ 			reg = <0>;
+ 			enable-method = "psci";
++			clocks = <&ccu CLK_CPUX>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
+ 		};
  
-+&cpu0 {
-+	cpu-supply = <&reg_vdd_cpux>;
-+};
-+
- &de {
- 	status = "okay";
- };
-@@ -207,6 +211,30 @@
- 	status = "okay";
- };
+ 		cpu@1 {
+@@ -59,6 +61,8 @@
+ 			device_type = "cpu";
+ 			reg = <1>;
+ 			enable-method = "psci";
++			clocks = <&ccu CLK_CPUX>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
+ 		};
  
-+&r_i2c {
-+	status = "okay";
-+
-+	reg_vdd_cpux: regulator@65 {
-+		compatible = "silergy,sy8106a";
-+		reg = <0x65>;
-+		regulator-name = "vdd-cpux";
-+		silergy,fixed-microvolt = <1108474>;
-+		/*
-+		 * The datasheet uses 1.1V as the minimum value of VDD-CPUX,
-+		 * however both the Armbian DVFS table and the official one
-+		 * have operating points with voltage under 1.1V, and both
-+		 * DVFS table are known to work properly at the lowest
-+		 * operating point.
-+		 *
-+		 * Use 1.0V as the minimum voltage instead.
-+		 */
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
- &spi0  {
- 	status = "okay";
+ 		cpu@2 {
+@@ -66,6 +70,8 @@
+ 			device_type = "cpu";
+ 			reg = <2>;
+ 			enable-method = "psci";
++			clocks = <&ccu CLK_CPUX>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
+ 		};
+ 
+ 		cpu@3 {
+@@ -73,6 +79,8 @@
+ 			device_type = "cpu";
+ 			reg = <3>;
+ 			enable-method = "psci";
++			clocks = <&ccu CLK_CPUX>;
++			clock-latency-ns = <244144>; /* 8 32k periods */
+ 		};
+ 	};
  
 -- 
 2.20.1
