@@ -2,186 +2,132 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57735C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13724C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6F82184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548878543;
-	bh=1WIutgr7n8g9Msl4+K35pDZGk9VAaQjURwahEOABn2Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zWfkOP/7c0PSO2/cfs0aiWphkSNVLN0JlTH2YVfoqVMZmtv16mtNdYQFkGKyrAUgr
-	 47Oz/RfvCh7dYysYC6hPA8YKyqeZ3JcOyM4Mz6c0TFzIvEDwl7OQxMYXNJtGHmBzJb
-	 HJlxj13dFM0UoRCmcZpDU+lfLN5qnJZHhVxP9mOA=
+	by mail.kernel.org (Postfix) with ESMTP id C9E1D20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:02:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="llcwP0Xq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733244AbfA3UCV (ORCPT
+        id S2387408AbfA3UCt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 15:02:21 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:37991 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728446AbfA3UCV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 15:02:21 -0500
-Received: by mail-oi1-f196.google.com with SMTP id a77so724692oii.5;
-        Wed, 30 Jan 2019 12:02:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z7U4FwF4rwvNfXRrLtt0q+Bh7E9FjuCDZRhkCbsAnKo=;
-        b=B4i9RIgYFfmvszyibkTZnv2+7kP0jI3lep3G7TF+E5tdaQN5r0AMh72dS5w733xeAd
-         ymdpEifP5JtA/b7UPEN8sxtr0cCiZ7JBldywL7fHjCkvPlNeRgpebxsnov4GCCIIFNEn
-         DpFxaQB5FQQXt6vB/VxfgKKBitccxr57HnoNb+MBCn3UbjfQM0dhNjUe/qH06CKxiMRR
-         fezsBWXL3Il+3oIRfxyixveBc5evw3tAgMOmGghw0FC25GWsozjPk0DFHO/bcgTKrUbH
-         n2hQTPgF9gBoXXMVXzlXLLhbTVI1qG4xSPBe80I62gC03q8ED0B5pNRf2VwvZHY5+AxE
-         MS9w==
-X-Gm-Message-State: AJcUukf5d1zummWQq3nHTsMbM2lCadZEEI8JK43rNto5l4MFbyJ8Jlt8
-        JvgPkFzYeWdO1MN+kf7hzw==
-X-Google-Smtp-Source: ALg8bN6UVC6iZTdLJlj4jcLfLc176T8NLD5kdGdWZIYeHNOXIPBLYnhsLAJr7zyLp9iqK1O/Pr1uUw==
-X-Received: by 2002:aca:c413:: with SMTP id u19mr12736474oif.209.1548878539803;
-        Wed, 30 Jan 2019 12:02:19 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u109sm925002otb.8.2019.01.30.12.02.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 12:02:18 -0800 (PST)
-Date:   Wed, 30 Jan 2019 14:02:18 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
-        jackp@codeaurora.org, andy.gross@linaro.org, swboyd@chromium.org,
-        shawn.guo@linaro.org, vkoul@kernel.org, bjorn.andersson@linaro.org,
-        khasim.mohammed@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: Add Qualcomm USB Super-Speed PHY
- bindings
-Message-ID: <20190130200218.GB5908@bogus>
-References: <1548761715-4004-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1548761715-4004-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
+        Wed, 30 Jan 2019 15:02:49 -0500
+Received: from mail-eopbgr1310094.outbound.protection.outlook.com ([40.107.131.94]:33753
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728446AbfA3UCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 15:02:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XjhgeM/MpEA3nMdo3eTx6WlQPozU1pQUhiBgxLi+O5k=;
+ b=llcwP0Xq7Da6nrg5HmKYUSX6WtVLUbEQBWJiAJTjudtP/6uk7Lq3MALEy5sKzTtipjp/IwwuwrqdwHg0bJtGwAzY8ZB8eJcDz3nIPcstK0mrhy9CwkGzk86v+Xdu2v084xDmrIeZYJg2QXRLcTCBA4rfB/DAz0ye3+0e2hpsmFE=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0170.APCP153.PROD.OUTLOOK.COM (10.170.189.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.7; Wed, 30 Jan 2019 20:02:36 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::7822:a20:e63c:de2f]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::7822:a20:e63c:de2f%9]) with mapi id 15.20.1601.008; Wed, 30 Jan 2019
+ 20:02:36 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     Dan Williams <dan.j.williams@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        Josh Poulson <jopoulso@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "driverdev-devel@linuxdriverproject.org" 
+        <driverdev-devel@linuxdriverproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+Subject: RE: [PATCH] nfit: Collect shutdown status for NVDIMM_FAMILY_HYPERV
+Thread-Topic: [PATCH] nfit: Collect shutdown status for NVDIMM_FAMILY_HYPERV
+Thread-Index: AdS4zD5pzoRrhLrvR3mTKoQx0ZwP5AABwuYAAAB92nA=
+Date:   Wed, 30 Jan 2019 20:02:36 +0000
+Message-ID: <PU1P153MB01696669DA81578B11734765BF900@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <PU1P153MB01691690696D8F83FC1872C7BF900@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20190130193752.GA21181@kroah.com>
+In-Reply-To: <20190130193752.GA21181@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-01-30T20:02:34.4739242Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=f8604085-5e6e-4891-82e8-f0a79bbdc5b5;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:9:e07a:40bd:14fc:76ab]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;PU1P153MB0170;6:8M7eoRZn3Qv9HUyksDkhKxMGvERq9KXIWeevPus2vGBeAylDuBq7tMNmbG7WcUZwk3ESwCqb/1tst4PbKynt1f3CscbyhwrtHN1b8HDERLYEKBCh+8PV6omkuDx7zHU+WcwWLo1iuYt9+X5wkYxO8JYUM30SbgrGpumYmIbe4BAOBW7K80K1Ri08TJjh0NpYiVFZsQkt8f5d9i3pI1NGcf6ThgFhYACM1XMhV49/DCf8U7VQr1+rNIc6eaTJkdbT3ux08vm6XyIuWhNSWiX53W2i8YruCEHNAV3yNJ87Z+rOhxkWsxjsfkkH4iI/Uj2FkwMQMgA9mHp9+yVszEmBYe+AWI/rlfJHFYQFVQ7RT3q/SghLWFPdmnZ1t1tQTuxU5TpJyOc9rKnq8UNKGl1i2biKtxvBMRirHL6a15Wh7Cn5dgWz7YAk/VpLDMAub2Jv+ETXnWpcZ5nCJnTXFlhkVw==;5:8QV+Q/dskMdgFvR5a530gaczZKVSRIK3dfWkk+PilMNJ6/B1QZ16VTr9oFavpQaMIbU5PLHoLdnpYqrgiRxvUWUprHOg/uBb9U3leK9/vZljUkQz5PLe/3ZkOMelaJMbz9495wzysN4AS+s6WZRvaJuL9wd7ay27k4ZV2gstdFMZA/iduoGnmxhpMk/Jl2y73MYnVHo6hffQ7l9wOR3P0w==;7:iei2KRM5j3OXDJoMuf0S2r//kNw1aFTKokPY1ikuermjlU9vMmVq0C3qVsurPEO8NBV8lie6CGhiVG1sjrHorrzqxE3m/hYDID+p8hxcUcP17j3u3UBL+Suz8WoU4Ymras7HImWCo89/GqnSTk613Q==
+x-ms-office365-filtering-correlation-id: 8bd46111-4958-4c4d-5e1c-08d686ede16c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0170;
+x-ms-traffictypediagnostic: PU1P153MB0170:
+x-ms-exchange-purlcount: -3
+x-microsoft-antispam-prvs: <PU1P153MB0170BAA77408A14E7EA04F08BF900@PU1P153MB0170.APCP153.PROD.OUTLOOK.COM>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(346002)(39860400002)(136003)(199004)(189003)(71190400001)(97736004)(71200400001)(86612001)(316002)(6916009)(4744005)(54906003)(86362001)(33656002)(68736007)(8990500004)(105586002)(10090500001)(106356001)(14454004)(14444005)(76176011)(446003)(7696005)(53936002)(486006)(6506007)(229853002)(7416002)(6436002)(2906002)(99286004)(55016002)(102836004)(186003)(8676002)(107886003)(4326008)(476003)(11346002)(46003)(7736002)(9686003)(6246003)(25786009)(74316002)(8936002)(22452003)(305945005)(81166006)(6116002)(81156014)(256004)(478600001)(10290500003);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0170;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: CTH9IfORT3Z9eYJmJ1QQ322D2Y+vUBb8YMfe2EF4lHFKF4D+j003SC9jv55pPIuJy9OXiI9HlFtWh60wOFqhUCiQWjbyaGiZUEwi6SReNWO8iwmQESgMK6weJlSgFSwPMildWwQdn7grgLsJ0iQ1tfNHKsAeCLC5jNf0jfJ3AjBfdfi7El2ojUZUSzdBajP8gI5+0cfznBImX6uWmvTseXDvRpyoJ3Pgr+1jzsJglotXcE8xi13rg/NU6AyPOqaDS6cHGQIEDKQ6MWDnSxAtbh+k2eoQylq7rgfpqLVzfFcjRB4ad4WfQ4EDQ7n4OEPbqTUgrIGmVqxloDW/mC/XR1QqEn5E6AnA4D/OXqojmOb4noFGo0HV86erooSazs7yemDwF7hW4VQGMLoxt7fNKCEi5HGU14th/lELuvPef2k=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548761715-4004-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bd46111-4958-4c4d-5e1c-08d686ede16c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 20:02:36.1503
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 12:35:14PM +0100, Jorge Ramirez-Ortiz wrote:
-> Binding description for Qualcomm's Synopsys 1.0.0 super-speed PHY
-> controller embedded in QCS404.
-> 
-> Based on Sriharsha Allenki's <sallenki@codeaurora.org> original
-> definitions.
-> 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> ---
->  .../devicetree/bindings/usb/qcom,usb-ssphy.txt     | 73 ++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt b/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
-> new file mode 100644
-> index 0000000..8ef6e39
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
-> @@ -0,0 +1,73 @@
-> +Qualcomm Synopsys 1.0.0 SS phy controller
-> +===========================================
-> +
-> +Synopsys 1.0.0 ss phy controller supports SS usb connectivity on Qualcomm
-> +chipsets
-> +
-> +Required properties:
-> +
-> +- compatible:
-> +    Value type: <string>
-> +    Definition: Should contain "qcom,usb-ssphy".
+> From: Greg KH <gregkh@linuxfoundation.org>
+> Sent: Wednesday, January 30, 2019 11:38 AM
+>=20
+> On Wed, Jan 30, 2019 at 06:48:40PM +0000, Dexuan Cui wrote:
+> >
+> > Let's expose the info to the userspace (e.g. ntctl) via sysfs.
+>=20
+> If you add a new sysfs file, you need to add a new Documentation/ABI/
+> update as well :(
 
-This is in no way specific enough.
+It's an existing sysfs node, which was originally added by Dan in Sep 2018:=
+=20
+/sys/bus/nd/devices/nmem0/nfit/dirty_shutdown.=20
 
-> +
-> +- reg:
-> +    Value type: <prop-encoded-array>
-> +    Definition: USB PHY base address and length of the register map.
-> +
-> +- #phy-cells:
-> +    Value type: <u32>
-> +    Definition: Should be 0. See phy/phy-bindings.txt for details.
-> +
-> +- clocks:
-> +    Value type: <prop-encoded-array>
-> +    Definition: See clock-bindings.txt section "consumers". List of
-> +		 three clock specifiers for reference, phy core and
-> +		 pipe clocks.
-> +
-> +- clock-names:
-> +    Value type: <string>
-> +    Definition: Names of the clocks in 1-1 correspondence with the "clocks"
-> +		 property. Must contain "ref", "phy" and "pipe".
-> +
-> +- vdd-supply:
-> +    Value type: <phandle>
-> +    Definition: phandle to the regulator VDD supply node.
-> +
-> +- vdda1p8-supply:
-> +    Value type: <phandle>
-> +    Definition: phandle to the regulator 1.8V supply node.
-> +
-> +
-> +Optional child nodes:
-> +
-> +- vbus-supply:
-> +    Value type: <phandle>
-> +    Definition: phandle to the VBUS supply node.
+Before this patch, the node doesn't appear when Linux runs on Hyper-V,
+and with this patch, the node can appear now.
 
-Does the phy actually get supplied by Vbus? If not, then Vbus supply 
-should be defined in a USB connector node.
+However, indeed, the node and the other related nodes have not been
+documented in Documentation/ABI/testing/sysfs-bus-nfit yet.
 
-> +
-> +- resets:
-> +    Value type: <prop-encoded-array>
-> +    Definition: See reset.txt section "consumers". PHY reset specifiers
-> +		 for phy core and COR resets.
+I suppose Dan would add that?
 
-COR or COM?
-
-Looks to me the order is reversed.
-
-> +
-> +- reset-names:
-> +    Value type: <string>
-> +    Definition: Names of the resets in 1-1 correspondence with the "resets"
-> +		 property. Must contain "com" and "phy".
-> +
-> +Example:
-> +
-> +usb3_phy: phy@78000 {
-
-usb3-phy@...
-
-> +	compatible = "qcom,usb-ssphy";
-> +	reg = <0x78000 0x400>;
-> +	#phy-cells = <0>;
-> +	clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
-> +		 <&gcc GCC_USB_HS_PHY_CFG_AHB_CLK>,
-> +		 <&gcc GCC_USB3_PHY_PIPE_CLK>;
-> +	clock-names = "ref", "phy", "pipe";
-> +	resets = <&gcc GCC_USB3_PHY_BCR>,
-> +		 <&gcc GCC_USB3PHY_PHY_BCR>;
-> +	reset-names = "com", "phy";
-> +	vdd-supply = <&vreg_l3_1p05>;
-> +	vdda1p8-supply = <&vreg_l5_1p8>;
-> +	vbus-supply = <&usb3_vbus_reg>;
-> +};
-> -- 
-> 2.7.4
-> 
+Thanks,
+-- Dexuan
