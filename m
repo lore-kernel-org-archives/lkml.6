@@ -2,94 +2,62 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F71C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB80C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 998612087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB364218A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:48:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548870532;
+	bh=AXR0llYBRGSYiE2vpUusekrrRCdQMUUkAr120z4LWrI=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=oCMuGuN4wbwtvxtY3dsaCTP9XkKUCjjCmsWAChNL6iuc3VgRNA0r+jq2xYH9ah4mR
+	 fzWfjFOb1JFQt2IGjQnWRO80kTnGdL++Xgn3nA1hMacfN/rq6Uw6FSNE41rN3QvCRz
+	 PClTmF9zXwEwB8bqXSzPbQeMmZ+Q8S5Ehq00Lr3A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732679AbfA3Rsn (ORCPT
+        id S1732698AbfA3Rsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:48:43 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58938 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727097AbfA3Rsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:48:42 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E0CE80D;
-        Wed, 30 Jan 2019 09:48:42 -0800 (PST)
-Received: from [10.37.12.221] (unknown [10.37.12.221])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF72C3F557;
-        Wed, 30 Jan 2019 09:48:37 -0800 (PST)
-Subject: Re: [PATCH v2 4/7] perf pmu: Moving EVENT_SOURCE_DEVICE_PATH to PMU
- header file
-To:     mathieu.poirier@linaro.org, acme@kernel.org, peterz@infradead.org
-Cc:     gregkh@linuxfoundation.org, mingo@redhat.com, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, will.deacon@arm.com,
-        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
-        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20190122181144.26645-1-mathieu.poirier@linaro.org>
- <20190122181144.26645-5-mathieu.poirier@linaro.org>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <fe640760-89b8-7ae7-f742-a9f81642d0e4@arm.com>
-Date:   Wed, 30 Jan 2019 17:50:30 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 30 Jan 2019 12:48:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45740 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728479AbfA3Rsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:48:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 77E1DAF96;
+        Wed, 30 Jan 2019 17:48:48 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 18:48:47 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     lsf-pc@lists.linux-foundation.org
+Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org
+Subject: [LSF/MM TOPIC] memory reclaim with NUMA rebalancing
+Message-ID: <20190130174847.GD18811@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20190122181144.26645-5-mathieu.poirier@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/22/2019 06:11 PM, Mathieu Poirier wrote:
-> Moving definition of EVENT_SOURCE_DEVICE_PATH to pmu.h so that it can be
-> used by other files than pmu.c
-> 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->   tools/perf/util/pmu.c | 2 --
->   tools/perf/util/pmu.h | 1 +
->   2 files changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index 11a234740632..51d437f55d18 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -29,8 +29,6 @@ struct perf_pmu_format {
->   	struct list_head list;
->   };
->   
-> -#define EVENT_SOURCE_DEVICE_PATH "/bus/event_source/devices/"
-> -
->   int perf_pmu_parse(struct list_head *list, char *name);
->   extern FILE *perf_pmu_in;
->   
-> diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-> index 76fecec7b3f9..350c54e0bd3d 100644
-> --- a/tools/perf/util/pmu.h
-> +++ b/tools/perf/util/pmu.h
-> @@ -16,6 +16,7 @@ enum {
->   };
->   
->   #define PERF_PMU_FORMAT_BITS 64
-> +#define EVENT_SOURCE_DEVICE_PATH "/bus/event_source/devices/"
->   
->   struct perf_event_attr;
->   
-> 
-
-FWIW:
-
-Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
+Hi,
+I would like to propose the following topic for the MM track. Different
+group of people would like to use NVIDMMs as a low cost & slower memory
+which is presented to the system as a NUMA node. We do have a NUMA API
+but it doesn't really fit to "balance the memory between nodes" needs.
+People would like to have hot pages in the regular RAM while cold pages
+might be at lower speed NUMA nodes. We do have NUMA balancing for
+promotion path but there is notIhing for the other direction. Can we
+start considering memory reclaim to move pages to more distant and idle
+NUMA nodes rather than reclaim them? There are certainly details that
+will get quite complicated but I guess it is time to start discussing
+this at least.
+-- 
+Michal Hocko
+SUSE Labs
