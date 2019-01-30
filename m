@@ -2,136 +2,118 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9BFC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A03C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBAD920882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:42:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="lVR5zwil"
+	by mail.kernel.org (Postfix) with ESMTP id 9C715218A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:43:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbfA3Omc (ORCPT
+        id S1731293AbfA3OnK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 09:42:32 -0500
-Received: from uho.ysoft.cz ([81.19.3.130]:55970 "EHLO uho.ysoft.cz"
+        Wed, 30 Jan 2019 09:43:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57218 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727658AbfA3Omc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 09:42:32 -0500
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-        by uho.ysoft.cz (Postfix) with ESMTP id C2CD8A432D;
-        Wed, 30 Jan 2019 15:42:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-        s=20160406-ysoft-com; t=1548859349;
-        bh=kFSOBy0+MCWnLcXVFWx39Az1MITPWwX3MA3YDoqkdqU=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=lVR5zwilm9UZLKCi+1Ex99Sjw/qSjPVszd5W8IQwggu2wEjjBeO+Sv8lKK4cKwiKb
-         2J7/ACJtL3ntj4THjRAd5vqEa19tAHDYZLP1I/eg3/whWCN+wGiAJ/KuKRd3aqt8yO
-         5XbrTYyezj2cB8JR0MTIgmAztHslKozmXniurGpw=
-From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-Subject: Re: [RFC PATCH v3 2/2] pwm: imx: Configure output to GPIO in disabled
- state
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        =?UTF-8?Q?Lothar_Wa=c3=9fmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <1544103655-104466-1-git-send-email-michal.vokac@ysoft.com>
- <1544103655-104466-3-git-send-email-michal.vokac@ysoft.com>
- <20181212080154.kcfh57mulypwuscu@pengutronix.de>
- <52ed0614-d1f5-81cb-3b17-8eb137967872@ysoft.com>
- <20181212121255.yg6b4pw7qord7ebi@pengutronix.de>
- <4b0356b7-bc7d-a026-ac90-3f0c5754ed29@ysoft.com>
- <20190124092215.zbu62lhxf667rzvs@pengutronix.de>
- <4004896e-34fc-7160-2f21-30280d96f750@ysoft.com>
- <20190124104435.e6paqwcuz3hizwnv@pengutronix.de>
-Message-ID: <72bad040-05f4-607f-f210-468e46ea3228@ysoft.com>
-Date:   Wed, 30 Jan 2019 15:42:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727555AbfA3OnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 09:43:09 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E8534A402E;
+        Wed, 30 Jan 2019 14:43:08 +0000 (UTC)
+Received: from sky.random (ovpn-121-14.rdu2.redhat.com [10.10.121.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A306718823;
+        Wed, 30 Jan 2019 14:43:05 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 09:43:04 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Peter Xu <peterx@redhat.com>,
+        Blake Caldwell <blake.caldwell@colorado.edu>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>
+Subject: Re: [LSF/MM TOPIC]: userfaultfd (was: [LSF/MM TOPIC] NUMA remote THP
+ vs NUMA local non-THP under MADV_HUGEPAGE)
+Message-ID: <20190130144304.GA19021@redhat.com>
+References: <20190129234058.GH31695@redhat.com>
+ <20190130081336.GC17937@rapoport-lnx>
 MIME-Version: 1.0
-In-Reply-To: <20190124104435.e6paqwcuz3hizwnv@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190130081336.GC17937@rapoport-lnx>
+User-Agent: Mutt/1.11.2 (2019-01-07)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 30 Jan 2019 14:43:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24.1.2019 11:44, Uwe Kleine-König wrote:
-> On Thu, Jan 24, 2019 at 11:12:12AM +0100, Michal Vokáč wrote:
->> On 24.1.2019 10:22, Uwe Kleine-König wrote:
->>> I think it might be beneficial to allow (or require) that disable acts
->>> immediately. But this is not how it used to be and in my discussion with
->>> Thierry (IIRC) he required to complete the currently running period.
->>
->> I am confused here. IFAIK it always used to be that:
->>
->> 	pwm_apply_state(pwm, { .enabled = 0 });
->>
->> immediately stops the PWM with:
->>
->> 	writel(0, imx->mmio_base + MX3_PWMCR);
->>
->> regardless of the period (for pwm-imx).
+Hello Mike,
+
+On Wed, Jan 30, 2019 at 10:13:36AM +0200, Mike Rapoport wrote:
+> We (CRIU) have some concerns about obsoleting soft-dirty in favor of
+> uffd-wp. If there are other soft-dirty users these concerns would be
+> relevant to them as well.
 > 
-> Then is is a bug since forever (well, or a fact that resulted from the
-> intended semantic not being documented and the driver author not caring
-> or knowing better).
+> With soft-dirty we collect the information about the changed memory every
+> pre-dump iteration in the following manner:
+> * freeze the tasks
+> * find entries in /proc/pid/pagemap with SOFT_DIRTY set
+> * unfreeze the tasks
+> * dump the modified pages to disk/remote host
+> 
+> While we do need to traverse the /proc/pid/pagemap to identify dirty pages,
+> in between the pre-dump iterations and during the actual memory dump the
+> tasks are running freely.
+> 
+> If we are to switch to uffd-wp, every write by the snapshotted/migrated
+> task will incur latency of uffd-wp processing by the monitor.
 
-Hi Uwe, I skimmed all the PWM drivers trying to find out how others are
-waiting for the end of a period before disabling PWM.
+That's valid concern indeed.
 
-There is 50 PWM drivers in total and I could find only two drivers that
-do something that resembles waiting for an end of a period:
+I didn't go into the details of what additional feature is needed in
+addition to what is already present present in Peter's current
+patchset, but you're correct that in order to perform well to do the
+softdirty equivalent, we'll also need to add an async event model.
 
-  - pwm-atmel.c
-    https://elixir.bootlin.com/linux/v5.0-rc3/source/drivers/pwm/pwm-atmel.c#L176
-	
-  - pwm-sun4i.c
-    https://elixir.bootlin.com/linux/v5.0-rc3/source/drivers/pwm/pwm-sun4i.c#L284
+The async event model would be set during UFFD registration. It'd work
+like async signals, you just queue up uffd events in the kernel by
+allocating them with a slab object (not in the kernel stack of the
+faulting process). Only if the monitor won't read() them fast enough
+it'll eventually block the write protect fault and release the
+mmap_sem but the page fault would always be resolved by the kernel
+even in that case. For the monitor there'll be just a stream of
+uffd_msg structures to read in multiples of the uffd_msg structure
+size with a single syscall per wakeup of the monitor. Conceptually
+it'd work the same as how PML works for EPT.
 
-I did not delve into that too much but I believe there are some HW
-requirements on those platforms to stop the PWM that way. Others
-simply stop the PWM straight away. So I am confused even more
-and wonder where your requirements came from?
+The main downside will be an allocation per fault (soft dirty doesn't
+need to do such allocation), but there will be no round-trip to
+userland latency added to the wrprotect fault that needs to be logged.
 
-Anyway, as I could not find any real example I tried to solve it
-according to your earlier suggestion. That is configure duty_cycle=0
-and some time later disable PWM.
+We need the synchronous/blocking uffd-wp for other things that aren't
+related to soft dirty and can't be achieved with an async model like
+softdirty. Adding an async model later would be a self contained
+feature inside uffd.
 
-It generates additional problems. The PWM block has a FIFO with four
-slots. Before adding the sample with duty cycle=0 into the FIFO it
-is wise to wait for a free slot in the FIFO. Then when the sample is
-added it may actually happen that the sample is the fourth in the
-FIFO. So it may take up to four periods until we can disable the PWM.
-These four periods can take up to 16s. Hmmm :(
+So the idea would be to ignore any comparison with softdirty until
+uffd-wp is finalized, and then evaluate the possibility of adding an
+async model which would be simple thing to add in comparison of the
+uffd-wp feature itself.
 
-Reconfigure the period is not an option. According to the TRM, once you
-write new value into the period register, the counter is cleared and
-new period is started. That means you can produce the spikes this way
-as well..
+The theoretical expectation would be that softdirty would perform
+better for small processes (but for those the overall logging overhead
+is small anyway), but when it gets to the hundred-gigabytes/terabytes
+regions, async uffd-wp should perform much better.
 
-I agree there are bugs in the driver and it is far from providing
-complete support of the i.MX PWM HW. Still, I believe those are totally
-independent problems from the pinctrl stuff and so should not block
-the discussion/inclusion of this series.
-
-I am sorry if this is getting on your nerves Uwe. I am doing my
-best to test all your suggestions and possible solutions to find
-a good compromise. At least I learned a lot from doing all that stuff.
-
-Thank you for your time,
-Michal
-
+Thanks,
+Andrea
