@@ -2,79 +2,118 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C2AC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398EFC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8652020989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:10:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 014C92175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:13:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="NmDGox2n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729969AbfA3DKz (ORCPT
+        id S1729596AbfA3DNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 22:10:55 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41498 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728356AbfA3DKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 22:10:55 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 067B679DCF0BA246F9F7;
-        Wed, 30 Jan 2019 11:10:52 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Wed, 30 Jan 2019
- 11:10:42 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <kvalo@codeaurora.org>, <davem@davemloft.net>,
-        <ath10k@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH][RESEND] ath10k: snoc: remove set but not used variable 'ar_snoc'
-Date:   Wed, 30 Jan 2019 11:09:00 +0800
-Message-ID: <20190130030900.18764-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Tue, 29 Jan 2019 22:13:37 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:6944 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbfA3DNh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 22:13:37 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5116380000>; Tue, 29 Jan 2019 19:12:56 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 29 Jan 2019 19:13:36 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 29 Jan 2019 19:13:36 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Jan
+ 2019 03:13:35 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 30 Jan 2019 03:13:35 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.165.12]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c51165f0000>; Tue, 29 Jan 2019 19:13:35 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V6 1/5] i2c: tegra: Sort all the include headers alphabetically
+Date:   Tue, 29 Jan 2019 19:13:29 -0800
+Message-ID: <1548818013-21226-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548817976; bh=tyRokI+8GA1gaGJzvyljyGYgOTOp70J9QWfCY28k0fs=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=NmDGox2nysbKgn2cNU0fE/R67Hyik0xrzAcoY3MQyD+3F6ugyWpo2y4QaWqPXbN4k
+         TyVBghGvW/UXPWj4iuCP4u2sSJ3jkxp1bcyjqo97JsqTjnahb8a9ESb5+P/8RssPsC
+         d28HJB64rrRVfbQxPJpT6HLz9Yjy9KEkqGyBZPM9ZeVnMBIFNm2Mc6Ze2xX6euIJFp
+         pHARNu2MlLlxHBlXj047V+pqUM9mQXDYEOgnztAp6Q3QZSwO/JifqZMk3ON/9tta7i
+         Xp/HDrgeNLVS0XSa3qDvM56BzfYcESkWgGIMwpJO0+JP6Yskic+YKBe93m8KC9JCxg
+         k3bWLwzLbGAJQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+This patch sorts all the include headers alphabetically for the
+I2C tegra driver
 
-drivers/net/wireless/ath/ath10k/snoc.c: In function 'ath10k_snoc_tx_pipe_cleanup':
-drivers/net/wireless/ath/ath10k/snoc.c:681:22: warning:
- variable 'ar_snoc' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/net/wireless/ath/ath10k/snoc.c | 2 --
- 1 file changed, 2 deletions(-)
+ [V3/V4/V5/V6] : Removed unsued headers in tegra I2C
+ [V2] : Added this in V2 to sort the headers in tegra I2C
 
-diff --git a/drivers/net/wireless/ath/ath10k/snoc.c b/drivers/net/wireless/ath/ath10k/snoc.c
-index 54efe6b..b7493df 100644
---- a/drivers/net/wireless/ath/ath10k/snoc.c
-+++ b/drivers/net/wireless/ath/ath10k/snoc.c
-@@ -875,13 +875,11 @@ static void ath10k_snoc_tx_pipe_cleanup(struct ath10k_snoc_pipe *snoc_pipe)
- {
- 	struct ath10k_ce_pipe *ce_pipe;
- 	struct ath10k_ce_ring *ce_ring;
--	struct ath10k_snoc *ar_snoc;
- 	struct sk_buff *skb;
- 	struct ath10k *ar;
- 	int i;
+ drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index e417ebf7628c..15806c984859 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,21 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
  
- 	ar = snoc_pipe->hif_ce_state;
--	ar_snoc = ath10k_snoc_priv(ar);
- 	ce_pipe = snoc_pipe->ce_hdl;
- 	ce_ring = ce_pipe->src_ring;
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
  
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
 -- 
 2.7.4
-
 
