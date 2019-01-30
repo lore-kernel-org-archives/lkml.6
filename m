@@ -2,378 +2,187 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC2FC282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDFDCC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D68EC20881
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:11:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSFB8zld"
+	by mail.kernel.org (Postfix) with ESMTP id 8AF7620881
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:11:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728623AbfA3XLA (ORCPT
+        id S1730452AbfA3XLP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:11:00 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43041 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbfA3XK5 (ORCPT
+        Wed, 30 Jan 2019 18:11:15 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37275 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbfA3XLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:10:57 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r10so1247249wrs.10
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 15:10:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NHmEpTDn555D0q5YSJ5vdHjxxVfNSHLQbn3LFD3LMek=;
-        b=MSFB8zldunXPrPT8uJqhhKybr9dg/VmFpkGryxjXpSTX+UhTEcW74ver1vwCKqIpjL
-         3xyaneBi45EfIVtUvIj131mihfWoCZ/A3FVp8aRw9c3GfAGCycGfqwvZh2KqwBV9UPtW
-         lh4GZmh2YHSypiMzSdz9VHpAhl6CSMYjT/WO6GStPT4QVYLQU8y94oR8Qm44cHj+TPMW
-         FahTESjceqdDkwELwudBdyob9nd9kYPZ1JbL2R74NhAzCMgny1GEVw6JkpN6R5EyuZvm
-         iKcwaRX2+zSLYcH5yco8OBp5L/bwXV+ng6ru5vOtjLF8O3jvxO/A7Y10AVXmYLF9DxUX
-         DREg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=NHmEpTDn555D0q5YSJ5vdHjxxVfNSHLQbn3LFD3LMek=;
-        b=V7r1LR3KyqY9CF57TEwGnEhO3PpVG4HnuJyrPWQPf4chYayg9jJXXrnJ0P+x9gP88k
-         MpRY8FAWP5bG4+C5lF6Nz/ZXSVg9o2IbMCnwaYgRnXrtX+MZZNoPD0artBeXDo5+N1iH
-         jI18d0vZ0Is6QY/NyXSCRytiQZ9X4JpgBemK10Rm3S+R56VGwQ4xraB4j3tGV84CXHKD
-         rfbBrxW+IuPBuIaALvjsLBRTwbO3OCrzT3psJ1xC46KFFI0a31lx677+DrJyLt2IuADV
-         G0iTVXu4ymxcF1lAnEWfm/FOP4QHco3OlyzedQ1CaX/sVEBLR2j7sHtY7gOC6IWmPCgK
-         9nkQ==
-X-Gm-Message-State: AHQUAuZBqALJnAJDmwXdcXBN+rmONCml8nS/me9aE6xm/kBq7dldbICr
-        EUspcKFmDO7GPUEjBo/KCl0RZZBC
-X-Google-Smtp-Source: AHgI3IarDnPP+6b+AabdspXxfZ9bd4A3N18TkLpcEc+Y1GF8QN5x2f5Ri8GasS1t98pvuCaQi9kX+A==
-X-Received: by 2002:a5d:4046:: with SMTP id w6mr11303417wrp.92.1548886063900;
-        Wed, 30 Jan 2019 14:07:43 -0800 (PST)
-Received: from oded-ubuntu-des.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id b13sm2341349wrn.28.2019.01.30.14.07.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 14:07:43 -0800 (PST)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        olof@lixom.net, rppt@linux.ibm.com
-Cc:     ogabbay@habana.ai, arnd@arndb.de, joe@perches.com
-Subject: [PATCH v2 13/15] habanalabs: implement INFO IOCTL
-Date:   Thu, 31 Jan 2019 00:06:15 +0200
-Message-Id: <20190130220617.4862-14-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190130220617.4862-1-oded.gabbay@gmail.com>
-References: <20190130220617.4862-1-oded.gabbay@gmail.com>
+        Wed, 30 Jan 2019 18:11:14 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 130A2801FE; Wed, 30 Jan 2019 23:35:36 +0100 (CET)
+Date:   Wed, 30 Jan 2019 23:35:43 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
+Message-ID: <20190130223542.GA22040@amd>
+References: <20190130183005.833-1-dmurphy@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
+Content-Disposition: inline
+In-Reply-To: <20190130183005.833-1-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the INFO IOCTL. That IOCTL is used by the user to
-query information that is relevant/needed by the user in order to submit
-deep learning jobs to Goya.
 
-The information is divided into several categories, such as H/W IP, Events
-that happened, DDR usage and more.
+--3V7upXqbjpZ4EhLz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
----
-Changes in v2:
-  - Use generic function for testing disabled or in reset
-  - Remove ioctl specific code for checking for hard reset pending
- 
- drivers/misc/habanalabs/goya/goya.c        |   6 +
- drivers/misc/habanalabs/habanalabs.h       |   2 +
- drivers/misc/habanalabs/habanalabs_ioctl.c | 126 +++++++++++++++++++++
- include/uapi/misc/habanalabs.h             |  75 +++++++++++-
- 4 files changed, 208 insertions(+), 1 deletion(-)
+On Wed 2019-01-30 12:30:05, Dan Murphy wrote:
+> Add a documentation of LED Multicolor LED class specific
+> sysfs attributes.
 
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 65dbec0e404a..b067fc5e176b 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -5111,6 +5111,11 @@ static void goya_hw_queues_unlock(struct hl_device *hdev)
- 	spin_unlock(&goya->hw_queues_lock);
- }
- 
-+static u32 goya_get_pci_id(struct hl_device *hdev)
-+{
-+	return hdev->pdev->device;
-+}
-+
- int goya_get_eeprom_data(struct hl_device *hdev, void *data, size_t max_size)
- {
- 	struct goya_device *goya = hdev->asic_specific;
-@@ -5208,6 +5213,7 @@ static const struct hl_asic_funcs goya_funcs = {
- 	.soft_reset_late_init = goya_soft_reset_late_init,
- 	.hw_queues_lock = goya_hw_queues_lock,
- 	.hw_queues_unlock = goya_hw_queues_unlock,
-+	.get_pci_id = goya_get_pci_id,
- 	.get_eeprom_data = goya_get_eeprom_data,
- 	.send_cpu_message = goya_send_cpu_message
- };
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index ab95ea123772..097fc9c00939 100644
---- a/drivers/misc/habanalabs/habanalabs.h
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -460,6 +460,7 @@ enum hl_pll_frequency {
-  * @soft_reset_late_init: perform certain actions needed after soft reset.
-  * @hw_queues_lock: acquire H/W queues lock.
-  * @hw_queues_unlock: release H/W queues lock.
-+ * @get_pci_id: retrieve PCI ID.
-  * @get_eeprom_data: retrieve EEPROM data from F/W.
-  * @send_cpu_message: send buffer to ArmCP.
-  */
-@@ -528,6 +529,7 @@ struct hl_asic_funcs {
- 	int (*soft_reset_late_init)(struct hl_device *hdev);
- 	void (*hw_queues_lock)(struct hl_device *hdev);
- 	void (*hw_queues_unlock)(struct hl_device *hdev);
-+	u32 (*get_pci_id)(struct hl_device *hdev);
- 	int (*get_eeprom_data)(struct hl_device *hdev, void *data,
- 				size_t max_size);
- 	int (*send_cpu_message)(struct hl_device *hdev, u32 *msg,
-diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/habanalabs/habanalabs_ioctl.c
-index 462413446dbb..7ea1a199467a 100644
---- a/drivers/misc/habanalabs/habanalabs_ioctl.c
-+++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
-@@ -12,10 +12,136 @@
- #include <linux/uaccess.h>
- #include <linux/cred.h>
- 
-+static int hw_ip_info(struct hl_device *hdev, struct hl_info_args *args)
-+{
-+	struct hl_info_hw_ip_info hw_ip = {0};
-+	u32 size = args->return_size;
-+	void __user *out = (void __user *) (uintptr_t) args->return_pointer;
-+	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+	u64 sram_kmd_size, dram_kmd_size;
-+
-+	if ((!size) || (!out))
-+		return -EINVAL;
-+
-+	sram_kmd_size = (prop->sram_user_base_address -
-+				prop->sram_base_address);
-+	dram_kmd_size = (prop->dram_user_base_address -
-+				prop->dram_base_address);
-+
-+	hw_ip.device_id = hdev->asic_funcs->get_pci_id(hdev);
-+	hw_ip.sram_base_address = prop->sram_user_base_address;
-+	hw_ip.dram_base_address = prop->dram_user_base_address;
-+	hw_ip.tpc_enabled_mask = prop->tpc_enabled_mask;
-+	hw_ip.sram_size = prop->sram_size - sram_kmd_size;
-+	hw_ip.dram_size = prop->dram_size - dram_kmd_size;
-+	if (hw_ip.dram_size > 0)
-+		hw_ip.dram_enabled = 1;
-+	hw_ip.num_of_events = prop->num_of_events;
-+	memcpy(hw_ip.armcp_version,
-+		prop->armcp_info.armcp_version, VERSION_MAX_LEN);
-+	hw_ip.armcp_cpld_version = prop->armcp_info.cpld_version;
-+	hw_ip.psoc_pci_pll_nr = prop->psoc_pci_pll_nr;
-+	hw_ip.psoc_pci_pll_nf = prop->psoc_pci_pll_nf;
-+	hw_ip.psoc_pci_pll_od = prop->psoc_pci_pll_od;
-+	hw_ip.psoc_pci_pll_div_factor = prop->psoc_pci_pll_div_factor;
-+
-+	return copy_to_user(out, &hw_ip,
-+		min((size_t)size, sizeof(hw_ip))) ? -EFAULT : 0;
-+}
-+
-+static int hw_events_info(struct hl_device *hdev, struct hl_info_args *args)
-+{
-+	u32 size, max_size = args->return_size;
-+	void __user *out = (void __user *) (uintptr_t) args->return_pointer;
-+	void *arr;
-+
-+	if ((!max_size) || (!out))
-+		return -EINVAL;
-+
-+	arr = hdev->asic_funcs->get_events_stat(hdev, &size);
-+
-+	return copy_to_user(out, arr, min(max_size, size)) ? -EFAULT : 0;
-+}
-+
-+static int dram_usage_info(struct hl_device *hdev, struct hl_info_args *args)
-+{
-+	struct hl_info_dram_usage dram_usage = {0};
-+	u32 max_size = args->return_size;
-+	void __user *out = (void __user *) (uintptr_t) args->return_pointer;
-+	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+	u64 dram_kmd_size;
-+
-+	if ((!max_size) || (!out))
-+		return -EINVAL;
-+
-+	dram_kmd_size = (prop->dram_user_base_address -
-+				prop->dram_base_address);
-+	dram_usage.dram_free_mem = (prop->dram_size - dram_kmd_size) -
-+					atomic64_read(&hdev->dram_used_mem);
-+	dram_usage.ctx_dram_mem = atomic64_read(&hdev->user_ctx->dram_phys_mem);
-+
-+	return copy_to_user(out, &dram_usage,
-+		min((size_t) max_size, sizeof(dram_usage))) ? -EFAULT : 0;
-+}
-+
-+static int hw_idle(struct hl_device *hdev, struct hl_info_args *args)
-+{
-+	struct hl_info_hw_idle hw_idle = {0};
-+	u32 max_size = args->return_size;
-+	void __user *out = (void __user *) (uintptr_t) args->return_pointer;
-+
-+	if ((!max_size) || (!out))
-+		return -EINVAL;
-+
-+	hw_idle.is_idle = hdev->asic_funcs->is_device_idle(hdev);
-+
-+	return copy_to_user(out, &hw_idle,
-+		min((size_t) max_size, sizeof(hw_idle))) ? -EFAULT : 0;
-+}
-+
-+static int hl_info_ioctl(struct hl_fpriv *hpriv, void *data)
-+{
-+	struct hl_info_args *args = data;
-+	struct hl_device *hdev = hpriv->hdev;
-+	int rc;
-+
-+	if (hl_device_disabled_or_in_reset(hdev)) {
-+		dev_err(hdev->dev,
-+			"Device is disabled or in reset !!! Can't execute INFO IOCTL\n");
-+		return -EBUSY;
-+	}
-+
-+	switch (args->op) {
-+	case HL_INFO_HW_IP_INFO:
-+		rc = hw_ip_info(hdev, args);
-+		break;
-+
-+	case HL_INFO_HW_EVENTS:
-+		rc = hw_events_info(hdev, args);
-+		break;
-+
-+	case HL_INFO_DRAM_USAGE:
-+		rc = dram_usage_info(hdev, args);
-+		break;
-+
-+	case HL_INFO_HW_IDLE:
-+		rc = hw_idle(hdev, args);
-+		break;
-+
-+	default:
-+		dev_err(hdev->dev, "Invalid request %d\n", args->op);
-+		rc = -EINVAL;
-+		break;
-+	}
-+
-+	return rc;
-+}
-+
- #define HL_IOCTL_DEF(ioctl, _func) \
- 	[_IOC_NR(ioctl)] = {.cmd = ioctl, .func = _func}
- 
- static const struct hl_ioctl_desc hl_ioctls[] = {
-+	HL_IOCTL_DEF(HL_IOCTL_INFO, hl_info_ioctl),
- 	HL_IOCTL_DEF(HL_IOCTL_CB, hl_cb_ioctl),
- 	HL_IOCTL_DEF(HL_IOCTL_CS, hl_cs_ioctl),
- 	HL_IOCTL_DEF(HL_IOCTL_WAIT_CS, hl_cs_wait_ioctl),
-diff --git a/include/uapi/misc/habanalabs.h b/include/uapi/misc/habanalabs.h
-index 9015043887d1..4afc1891ece8 100644
---- a/include/uapi/misc/habanalabs.h
-+++ b/include/uapi/misc/habanalabs.h
-@@ -45,6 +45,62 @@ enum goya_queue_id {
- 	GOYA_QUEUE_ID_SIZE
- };
- 
-+/* Opcode for management ioctl */
-+#define HL_INFO_HW_IP_INFO	0
-+#define HL_INFO_HW_EVENTS	1
-+#define HL_INFO_DRAM_USAGE	2
-+#define HL_INFO_HW_IDLE		3
-+
-+#define HL_INFO_VERSION_MAX_LEN	128
-+
-+struct hl_info_hw_ip_info {
-+	__u64 sram_base_address;
-+	__u64 dram_base_address;
-+	__u64 dram_size;
-+	__u32 sram_size;
-+	__u32 num_of_events;
-+	__u32 device_id; /* PCI Device ID */
-+	__u32 reserved[3];
-+	__u32 armcp_cpld_version;
-+	__u32 psoc_pci_pll_nr;
-+	__u32 psoc_pci_pll_nf;
-+	__u32 psoc_pci_pll_od;
-+	__u32 psoc_pci_pll_div_factor;
-+	__u8 tpc_enabled_mask;
-+	__u8 dram_enabled;
-+	__u8 pad[2];
-+	__u8 armcp_version[HL_INFO_VERSION_MAX_LEN];
-+};
-+
-+struct hl_info_dram_usage {
-+	__u64 dram_free_mem;
-+	__u64 ctx_dram_mem;
-+};
-+
-+struct hl_info_hw_idle {
-+	__u32 is_idle;
-+	__u32 pad;
-+};
-+
-+struct hl_info_args {
-+	/* Location of relevant struct in userspace */
-+	__u64 return_pointer;
-+	/*
-+	 * The size of the return value. Just like "size" in "snprintf",
-+	 * it limits how many bytes the kernel can write
-+	 *
-+	 * For hw_events array, the size should be
-+	 * hl_info_hw_ip_info.num_of_events * sizeof(__u32)
-+	 */
-+	__u32 return_size;
-+
-+	/* HL_INFO_* */
-+	__u32 op;
-+
-+	/* Context ID - Currently not in use */
-+	__u32 ctx_id;
-+	__u32 pad;
-+};
- 
- /* Opcode to create a new command buffer */
- #define HL_CB_OP_CREATE		0
-@@ -264,6 +320,23 @@ union hl_mem_args {
- 	struct hl_mem_out out;
- };
- 
-+/*
-+ * Various information operations such as:
-+ * - H/W IP information
-+ * - Current dram usage
-+ *
-+ * The user calls this IOCTL with an opcode that describes the required
-+ * information. The user should supply a pointer to a user-allocated memory
-+ * chunk, which will be filled by the driver with the requested information.
-+ *
-+ * The user supplies the maximum amount of size to copy into the user's memory,
-+ * in order to prevent data corruption in case of differences between the
-+ * definitions of structures in kernel and userspace, e.g. in case of old
-+ * userspace and new kernel driver
-+ */
-+#define HL_IOCTL_INFO	\
-+		_IOWR('H', 0x01, struct hl_info_args)
-+
- /*
-  * Command Buffer
-  * - Request a Command Buffer
-@@ -365,7 +438,7 @@ union hl_mem_args {
- #define HL_IOCTL_MEMORY		\
- 		_IOWR('H', 0x05, union hl_mem_args)
- 
--#define HL_COMMAND_START	0x02
-+#define HL_COMMAND_START	0x01
- #define HL_COMMAND_END		0x06
- 
- #endif /* HABANALABS_H_ */
--- 
-2.17.1
+No, sorry. This does not most of the requirements.
 
+								Pavel
+
+Requirements for RGB LED interface:
+
+1) Userspace should be able to set the white color
+
+2) Userspace should be able to arbitrary color from well known list
+and it should approximately match what would CRT, LCD or OLED monitor
+display. Color list is for example here:
+
+	 https://www.rapidtables.com/web/color/RGB_Color.html
+
+    2a) LEDs probably slightly change color as they age. That's out of
+    scope, unless the variation is much greater than on monitors.
+
+    3a) Manufacturing differences cause small color variation. Again,
+    that's out of scope, unless the variation is much greater than on
+    monitors.
+
+Nice to have features:
+
+3) Full range of available colors/intensities should be available to
+userspace
+
+4) Interface should work well with existing triggers
+
+5) It would be nice if userland knew how many lumens are produced at
+each wavelength for each setting (again, minus aging and manufacturing
+variations).
+
+6) Complexity of math in kernel should be low, and preferably it
+should be integer or fixed point
+
+Problems:
+
+a) RGB LEDs are usually not balanced. Setting 100% PWM on
+red/green/blue channels will result in nothing close to white
+light. In fact, to get white light on N900, blue and green channel's
+PWM needs to be set pretty low, as in 5%.
+
+b) LED class does not define any relation between "brightness" in
+sysfs and ammount of light in lumens. Some drivers use close to linear
+relation, some use exponential relation. Human eyes percieve logarithm
+of lumens. RGB color model uses even more complex function.
+
+	   https://en.wikipedia.org/wiki/Gamma_correction
+	   #Windows, Mac, sRGB and TV/video standard gammas
+	   https://en.wikipedia.org/wiki/SRGB#Specification_of_the_transformation
+
+c) Except for white LEDs, LEDs are basically sources of single
+wavelength of light, while CRTs and LCDs produce broader
+spectrums.
+
+d) RG, RGBW and probably other LED combinations exist.
+
+e) Not all "red" LEDs will produce same wavelength. Similar
+differences will exist for other colors.
+
+f) We have existing RGB LEDs represented as three separate
+monochromatic LEDs in sysfs.
+
+
+
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>  .../ABI/testing/sysfs-class-led-multicolor    | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Docum=
+entation/ABI/testing/sysfs-class-led-multicolor
+> new file mode 100644
+> index 000000000000..19f8da9b150e
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
+> @@ -0,0 +1,38 @@
+> +What:		/sys/class/leds/<led>/color/sync_enable
+> +Date:		January 2019
+> +KernelVersion:	5.0
+> +Contact:	Dan Murphy <dmurphy@ti.com>
+> +Description:	read/write
+> +		Writing a 1 to this file will enable the sychronization of all
+> +		the defined color LEDs within the LED node.  Writing a 0 to
+> +		this file will disable syncing.
+> +
+> +What:		/sys/class/leds/<led>/color/sync
+> +Date:		January 2019
+> +KernelVersion:	5.0
+> +Contact:	Dan Murphy <dmurphy@ti.com>
+> +Description:	write only
+> +		Writing a 1 to this file while sync_enable is set to 1 will
+> +		synchronize all defined LEDs within the LED node.  All LEDs
+> +		defined will be configured based on the brightness that has
+> +		been requested.
+> +
+> +		If sync_enable is set to 0 then writing a 1 to sync has no
+> +		affect on the LEDs.
+> +
+> +What:		/sys/class/leds/<led>/color/<led color>
+> +Date:		January 2019
+> +KernelVersion:	5.0
+> +Contact:	Dan Murphy <dmurphy@ti.com>
+> +Description:	read/write
+> +		These files are dynamically created based on the colors defined
+> +		by the registrar of the class.
+> +		The led color(s) can be but not limited to red, green, blue,
+> +		white, amber and violet.  If sync is enabled then writing the
+> +		brightness value of the LED is deferred until a 1 is
+> +		written to /sys/class/leds/<led>/color/sync.  If syncing is
+> +		disabled then the LED brightness value will be written
+> +		immediately to the LED driver.
+> +
+> +		The value of the color is from 0 to
+> +		/sys/class/leds/<led>/max_brightness.
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--3V7upXqbjpZ4EhLz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxSJr4ACgkQMOfwapXb+vKwnQCfeJ/O6IsFSsFE1Y0rSrmPQ4PZ
+VGIAnime4cDvW6qR8HXvnNHFWetJ7c6j
+=cIQe
+-----END PGP SIGNATURE-----
+
+--3V7upXqbjpZ4EhLz--
