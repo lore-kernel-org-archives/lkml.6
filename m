@@ -2,112 +2,192 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7B5C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B7AC282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DA072084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:49:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6066321473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:49:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UNFSOmSj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2eaEtGd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731172AbfA3PtA (ORCPT
+        id S1731529AbfA3PtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:49:00 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41654 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbfA3Ps7 (ORCPT
+        Wed, 30 Jan 2019 10:49:04 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35618 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726439AbfA3PtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:48:59 -0500
-Received: by mail-io1-f67.google.com with SMTP id s22so19747599ioc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 07:48:59 -0800 (PST)
+        Wed, 30 Jan 2019 10:49:04 -0500
+Received: by mail-pf1-f196.google.com with SMTP id z9so2250pfi.2;
+        Wed, 30 Jan 2019 07:49:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=w4cwLjQ6C0wJMOtjxS/EykLQeCJgFzzQE+ZVq247NQQ=;
-        b=UNFSOmSjaOp6Flr5E8NFpc8U90cUZdqC/Gw9utfy4uqIIgq4JXTqB6zUzqEMaUfLFw
-         P6iiYYXZHLQUwIqjiciICJuVqFR/oxRUGvC5w1kbkC43yK0Z1oDhMSbelSrki1Ppqnoh
-         mTgkWFJC9Jxp70+frnHE6jG2hISmx+Ko1wDzE=
+        bh=y/4Sbwm7veNDhyxOou4S/cQWZOP7XMI7wr7gNCAjko8=;
+        b=I2eaEtGdlxi2bX8QiXpMmWr4ww0356wAZPcUNkiDDRX/ynDsNBZWGHdMQBy88eOJSv
+         xEUZdMht53lWnqXkya5CnG9u5XNvaGYyZxBuIM3//+sK4WlJFz80/hdqaM9DZdkGuiG4
+         vrTl4AvZr/lugCOFRM3SuAdmwsWfTcmDN1I+53c30JW2XMuVyX2D93pn8tyZ/q/wEjjV
+         ogQHdSXHjp3hDTDDQSuLo8niiGKe85PUZ2JTvuZXO+J7/NiWyRYV4I9/Q3yj14rrR2oa
+         k2d+IG676pm4o9hYDTPrlIjz4tKU8NjBAKoIqB/z3SF/ueYrhTuB9IsE5lUIOghLUhv7
+         28jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=w4cwLjQ6C0wJMOtjxS/EykLQeCJgFzzQE+ZVq247NQQ=;
-        b=TT86Kq2Khr/xQil8X5aZF66lY+of8dLPO9kskAy5icLWk8wY14RkEn4/CrmsndW/LG
-         dpnhFrx68mtlhspR452PFiTWkWhMnjeb6u62KBVyedQ3dGJe4h7fBQnmOVT9zCLjdn4l
-         7/+gKekcoF8/oWt4Ly5JPB6YlyOjuXd3OffBeZJc4Qv2Fh4qRct80WkRsV2KXE70ZcCh
-         My4xv2nPAEyiFNRqYscIjPUzwXZf9bEx3CXgWfoofwpkLEh7l+Ey0c+kvbiY30mLq22W
-         Z8KEwreoAlxzH/qlpMK7JpbdDLVbivGbpxAtIKavhOh3sJxEoshYZ3bud79Z5xTNyy/E
-         e15Q==
-X-Gm-Message-State: AJcUuker2l0al7/8AnMXTP3hSLqhtlC+u6HLVt1ozdMBl61C/xQJOacK
-        QIGfyLrw4cwfXNH425AdPcP1a2v+UBJq3YYPB4M13Q==
-X-Google-Smtp-Source: AHgI3Iav5+nIsLa3lfhwo7guQKVaVlVViAsKtVmDl4ZgDxrtP2SbKlyGb3cmGWdtjxv8mgNiXAjnPmuOIYqMla+kIIg=
-X-Received: by 2002:a6b:fe13:: with SMTP id x19mr17212758ioh.294.1548863338848;
- Wed, 30 Jan 2019 07:48:58 -0800 (PST)
+        bh=y/4Sbwm7veNDhyxOou4S/cQWZOP7XMI7wr7gNCAjko8=;
+        b=rlBb30/N0aIpow8S4pud0vActLg0Ardm8vB9vyJo/qZZjZdZskp0blMegn0qona5zH
+         L+ijpiWM9VDP7405RwwzoFGmy/1dvUf25d759ufEwDHC0ODL6KyLefrrYfl6EQH36qi0
+         xyja8vdDr6uTVjQIp0NgKhSZJdJCCDC3smftQ2lT37yawZ6bikncg9Ni8nVPDqnacTnK
+         rAU0IdDUz/OZ8+X2WAPrU6fjsVLG4tZar9u9nJIRUI2VUERHbjzZLTjGlXVkX/R9mBuC
+         lgLhbvnwoRHi7jh6JEjXRbw4HQOs2bSJa9THVPUHFyNbAYE8FVBAsDy1rMZ5r7qVxnYB
+         GB7A==
+X-Gm-Message-State: AJcUukcGlwd25bO7HmCD9XrJaRmNRIyS3q8M48SSL32TsAacH7Cy16DE
+        wzC2j9kekROoTI2Q0tE8cAOg9JtFEXVmIX1Was4=
+X-Google-Smtp-Source: ALg8bN5uvZa4stdSVuq2cvWZ3yGJq4UiZLXCY7DzXJWjKXfJs/kREwdBkp7ZW3YtiKiZsSY7w+TV9L7sBtkHhQBhqUI=
+X-Received: by 2002:a63:3287:: with SMTP id y129mr28107066pgy.337.1548863343017;
+ Wed, 30 Jan 2019 07:49:03 -0800 (PST)
 MIME-Version: 1.0
-References: <1548782332-18591-1-git-send-email-vincent.guittot@linaro.org>
- <1548825767-10799-1-git-send-email-vincent.guittot@linaro.org>
- <20190130130410.GG2278@hirez.programming.kicks-ass.net> <20190130130620.GB3103@hirez.programming.kicks-ass.net>
- <20190130132717.GC3103@hirez.programming.kicks-ass.net> <CAKfTPtBhOomgYONsdfaaVgZCENM+QhfPie2qpu0KyOsvMiog_g@mail.gmail.com>
- <20190130134023.GA2296@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190130134023.GA2296@hirez.programming.kicks-ass.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 30 Jan 2019 16:48:47 +0100
-Message-ID: <CAKfTPtC1vRrvSH=JdQjOfeh809gRiwKGE7373zaF9jT862C1+g@mail.gmail.com>
-Subject: Re: [PATCH v2] sched/fair: Fix insertion in rq->leaf_cfs_rq_list
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Sargun Dhillon <sargun@sargun.me>
+References: <cover.1548860212.git.2pi@mok.nu> <830f6043839606c6ed04dfeaceeb0ce4d9cd1b54.1548860212.git.2pi@mok.nu>
+In-Reply-To: <830f6043839606c6ed04dfeaceeb0ce4d9cd1b54.1548860212.git.2pi@mok.nu>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 30 Jan 2019 17:48:52 +0200
+Message-ID: <CAHp75VeRVThOnL8Lo2TENB0zdcW1Sd00CL88ha6h+QGceBr7sg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] platform/x86: wmi: use MODULE_DEVICE_TABLE()
+ instead of MODULE_ALIAS()
+To:     Mattias Jacobsson <2pi@mok.nu>
+Cc:     Mario Limonciello <mario.limonciello@dell.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019 at 14:40, Peter Zijlstra <peterz@infradead.org> wrote:
+On Wed, Jan 30, 2019 at 5:15 PM Mattias Jacobsson <2pi@mok.nu> wrote:
 >
+> WMI drivers can if they have specified an array of struct wmi_device_id
+> use the MODULE_DEVICE_TABLE() macro to automatically generate the
+> appropriate MODULE_ALIAS() output. Thus avoiding to keep both the array
+> of struct wmi_device_id and the MODULE_ALIAS() declaration(s) in sync.
+>
+> Change all drivers that have specified an array of struct wmi_device_id
+> to use MODULE_DEVICE_TABLE() instead of MODULE_ALIAS().
 
+Please, split this per driver basis. It would help in maintenance phase...
+
+> Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
+
+> Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
+
+...and AFAIU Mario gave his tag only for Dell related stuff.
+
+> ---
+>  drivers/platform/x86/dell-smbios-wmi.c       | 2 +-
+>  drivers/platform/x86/dell-wmi-descriptor.c   | 2 +-
+>  drivers/platform/x86/dell-wmi.c              | 4 ++--
+>  drivers/platform/x86/huawei-wmi.c            | 3 +--
+>  drivers/platform/x86/intel-wmi-thunderbolt.c | 2 +-
+>  drivers/platform/x86/wmi-bmof.c              | 2 +-
+>  6 files changed, 7 insertions(+), 8 deletions(-)
 >
->  static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
-> @@ -352,7 +354,12 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
->         }
+> diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
+> index cf2229ece9ff..c3ed3c8c17b9 100644
+> --- a/drivers/platform/x86/dell-smbios-wmi.c
+> +++ b/drivers/platform/x86/dell-smbios-wmi.c
+> @@ -277,4 +277,4 @@ void exit_dell_smbios_wmi(void)
+>         wmi_driver_unregister(&dell_smbios_wmi_driver);
 >  }
 >
-> -/* Iterate through all leaf cfs_rq's on a runqueue: */
-> +static inline void assert_list_leaf_cfs_rq(struct rq *rq)
-> +{
-> +       SCHED_WARN_ON(rq->tmp_alone_branch != &rq->lead_cfs_rq_list);
-
-small typo : s/lead_cfs_rq_list/leaf_cfs_rq_list/
-
-> +}
-> +
-> +/* Iterate through all cfs_rq's on a runqueue in bottom-up order */
->  #define for_each_leaf_cfs_rq(rq, cfs_rq) \
->         list_for_each_entry_rcu(cfs_rq, &rq->leaf_cfs_rq_list, leaf_cfs_rq_list)
+> -MODULE_ALIAS("wmi:" DELL_WMI_SMBIOS_GUID);
+> +MODULE_DEVICE_TABLE(wmi, dell_smbios_wmi_id_table);
+> diff --git a/drivers/platform/x86/dell-wmi-descriptor.c b/drivers/platform/x86/dell-wmi-descriptor.c
+> index 072821aa47fc..14ab250b7d5a 100644
+> --- a/drivers/platform/x86/dell-wmi-descriptor.c
+> +++ b/drivers/platform/x86/dell-wmi-descriptor.c
+> @@ -207,7 +207,7 @@ static struct wmi_driver dell_wmi_descriptor_driver = {
 >
-> @@ -446,6 +453,10 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
->  {
+>  module_wmi_driver(dell_wmi_descriptor_driver);
+>
+> -MODULE_ALIAS("wmi:" DELL_WMI_DESCRIPTOR_GUID);
+> +MODULE_DEVICE_TABLE(wmi, dell_wmi_descriptor_id_table);
+>  MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
+>  MODULE_DESCRIPTION("Dell WMI descriptor driver");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
+> index 16c7f3d9a335..0602aba62b3f 100644
+> --- a/drivers/platform/x86/dell-wmi.c
+> +++ b/drivers/platform/x86/dell-wmi.c
+> @@ -50,8 +50,6 @@ MODULE_LICENSE("GPL");
+>
+>  static bool wmi_requires_smbios_request;
+>
+> -MODULE_ALIAS("wmi:"DELL_EVENT_GUID);
+> -
+>  struct dell_wmi_priv {
+>         struct input_dev *input_dev;
+>         u32 interface_version;
+> @@ -738,3 +736,5 @@ static void __exit dell_wmi_exit(void)
+>         wmi_driver_unregister(&dell_wmi_driver);
 >  }
->
-> +static inline void assert_list_leaf_cfs_rq(struct rq *rq)
-> +{
-> +}
+>  module_exit(dell_wmi_exit);
 > +
->  #define for_each_leaf_cfs_rq(rq, cfs_rq)       \
->                 for (cfs_rq = &rq->cfs; cfs_rq; cfs_rq = NULL)
+> +MODULE_DEVICE_TABLE(wmi, dell_wmi_id_table);
+> diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
+> index 59872f87b741..52fcac5b393a 100644
+> --- a/drivers/platform/x86/huawei-wmi.c
+> +++ b/drivers/platform/x86/huawei-wmi.c
+> @@ -201,8 +201,7 @@ static struct wmi_driver huawei_wmi_driver = {
 >
-> @@ -5179,6 +5190,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>  module_wmi_driver(huawei_wmi_driver);
 >
->         }
+> -MODULE_ALIAS("wmi:"WMI0_EVENT_GUID);
+> -MODULE_ALIAS("wmi:"AMW0_EVENT_GUID);
+> +MODULE_DEVICE_TABLE(wmi, huawei_wmi_id_table);
+>  MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
+>  MODULE_DESCRIPTION("Huawei WMI hotkeys");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/platform/x86/intel-wmi-thunderbolt.c b/drivers/platform/x86/intel-wmi-thunderbolt.c
+> index 9ded8e2af312..4dfa61434a76 100644
+> --- a/drivers/platform/x86/intel-wmi-thunderbolt.c
+> +++ b/drivers/platform/x86/intel-wmi-thunderbolt.c
+> @@ -88,7 +88,7 @@ static struct wmi_driver intel_wmi_thunderbolt_driver = {
 >
-> +       assert_list_leaf_cfs_rq(rq);
-> +
->         hrtick_update(rq);
->  }
+>  module_wmi_driver(intel_wmi_thunderbolt_driver);
 >
+> -MODULE_ALIAS("wmi:" INTEL_WMI_THUNDERBOLT_GUID);
+> +MODULE_DEVICE_TABLE(wmi, intel_wmi_thunderbolt_id_table);
+>  MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
+>  MODULE_DESCRIPTION("Intel WMI Thunderbolt force power driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/platform/x86/wmi-bmof.c b/drivers/platform/x86/wmi-bmof.c
+> index c4530ba715e8..8751a13134be 100644
+> --- a/drivers/platform/x86/wmi-bmof.c
+> +++ b/drivers/platform/x86/wmi-bmof.c
+> @@ -119,7 +119,7 @@ static struct wmi_driver wmi_bmof_driver = {
+>
+>  module_wmi_driver(wmi_bmof_driver);
+>
+> -MODULE_ALIAS("wmi:" WMI_BMOF_GUID);
+> +MODULE_DEVICE_TABLE(wmi, wmi_bmof_id_table);
+>  MODULE_AUTHOR("Andrew Lutomirski <luto@kernel.org>");
+>  MODULE_DESCRIPTION("WMI embedded Binary MOF driver");
+>  MODULE_LICENSE("GPL");
+> --
+> 2.20.1
+>
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
