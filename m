@@ -2,87 +2,79 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13381C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B526C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3A512147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548814081;
-	bh=iR03hfMgKqK0aS1EYCAAijDyXQzzrqW9EbdqJGdGBxU=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=VRzGh/x3gjOAqrBq3yg51TToXV7ejEXnQyOF48bVOftbx4xhQGmzAGchE8BEsX56b
-	 BqNrunEQbc448pTWAiOZkRpSMf8GrZH2NIMHzuBrI6SFWutiQkG2GytTEVYa9Yi3cQ
-	 FJooN4oqJm4Im1p/GGFkZ4pQ6aFc4dTOzPNUtL9Y=
+	by mail.kernel.org (Postfix) with ESMTP id 1CD4320869
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:12:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729834AbfA3CIA (ORCPT
+        id S1729696AbfA3CMy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 21:08:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37424 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727558AbfA3CH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 21:07:59 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B200320880;
-        Wed, 30 Jan 2019 02:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548814079;
-        bh=iR03hfMgKqK0aS1EYCAAijDyXQzzrqW9EbdqJGdGBxU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mjQ9weiy30V+p9YKR1Iz8pQkpmGPXZAaj51+vp4LcXspEEeVoMM3pvTnnmeyPjYOj
-         JBt3oXHhewR2VgvzgJ6LSYT2plGWzLxLa8989Q3b4nd43BVW9w/9eQBLCXVf/TqpmQ
-         l27otxWT2AkZtJRWS3bDkqSuZYJcfRRI9bEYtg78=
-Subject: Re: [PATCH 4.20 000/117] 4.20.6-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190129113207.477505932@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <532413d4-6e3b-19b4-5369-b02215ddb583@kernel.org>
-Date:   Tue, 29 Jan 2019 19:07:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 29 Jan 2019 21:12:54 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:28499 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727558AbfA3CMy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 21:12:54 -0500
+X-UUID: cc3ec84cf8ac4df1ad9179bc0ddd3e72-20190130
+X-UUID: cc3ec84cf8ac4df1ad9179bc0ddd3e72-20190130
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 826052328; Wed, 30 Jan 2019 10:12:40 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 30 Jan 2019 10:12:39 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 30 Jan 2019 10:12:38 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Mathias Nyman <mathias.nyman@intel.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-usb@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] usb: xhci: remove unused member 'parent' in xhci_regset struct
+Date:   Wed, 30 Jan 2019 10:12:21 +0800
+Message-ID: <1548814341-15116-1-git-send-email-chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/29/19 4:34 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.20.6 release.
-> There are 117 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Jan 31 11:31:34 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.20.6-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.20.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+The member @parent of xhci_regset struct is not used in fact,
+so remove it
 
-Compiled and booted on my test system. No dmesg regressions.
+Change-Id: Ic6727c28f7200782fe4516bcb41c789b427318a2
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+ drivers/usb/host/xhci-debugfs.h |    1 -
+ 1 file changed, 1 deletion(-)
 
-thanks,
--- Shuah
+diff --git a/drivers/usb/host/xhci-debugfs.h b/drivers/usb/host/xhci-debugfs.h
+index ac5bc40..f7a4e24 100644
+--- a/drivers/usb/host/xhci-debugfs.h
++++ b/drivers/usb/host/xhci-debugfs.h
+@@ -80,7 +80,6 @@ struct xhci_regset {
+ 	char			name[DEBUGFS_NAMELEN];
+ 	struct debugfs_regset32	regset;
+ 	size_t			nregs;
+-	struct dentry		*parent;
+ 	struct list_head	list;
+ };
+ 
+-- 
+1.7.9.5
 
