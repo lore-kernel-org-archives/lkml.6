@@ -2,168 +2,132 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CE9C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC21C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:03:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C483D2082C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:03:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D22A21473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:03:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="K2lPJ3cv"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="bu1jbjdH";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="NxUcCoGX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732578AbfA3SDu (ORCPT
+        id S1732718AbfA3SDx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:03:50 -0500
-Received: from mail.efficios.com ([167.114.142.138]:55452 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfA3SDt (ORCPT
+        Wed, 30 Jan 2019 13:03:53 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:37074 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727100AbfA3SDu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:03:49 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 03DFC9E4A4;
-        Wed, 30 Jan 2019 13:03:48 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id QuW9I1GAiEOH; Wed, 30 Jan 2019 13:03:47 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 30D8A9E49E;
-        Wed, 30 Jan 2019 13:03:47 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 30D8A9E49E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1548871427;
-        bh=uUsDbd1WHpkZTr21/ymIBW3iMqvtmfAknPUj3BifJAQ=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=K2lPJ3cveLqkqF04BGQuRHsc8BL2nTHLLALg0/SocG6ldirCl5P7XsiW/zlel2PGf
-         JlBobwjS8cnLS3CMM5Jr4rE9S5fsFkAkXUGvKOXAnUitXuuVUBCPiVAvs1H0N2Kt5o
-         hgwhMFj7hHy5twiNpOoiWJwTrnssersK63GNl5X0HwQMYzZmvktX0v8ADDgydYm/YI
-         KZBfI3HkwfRhiI1XaCt1CHxv87zcl/WqY8gEuwEf3cSJOKIVmh2ztvvgY7XwC5voKJ
-         DssyMyAei26gxetBAqjZCj5JREuGp/JHwWx98dXW3lJfgx5isKVG4kgWvsrFL3BEO3
-         bae3e7Rn1R5GQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id SyIbtafStXY1; Wed, 30 Jan 2019 13:03:47 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 0F86B9E492;
-        Wed, 30 Jan 2019 13:03:47 -0500 (EST)
-Date:   Wed, 30 Jan 2019 13:03:46 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Joseph Myers <joseph@codesourcery.com>
-Cc:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <1832200535.4162.1548871426959.JavaMail.zimbra@efficios.com>
-In-Reply-To: <alpine.DEB.2.21.1901300231210.24454@digraph.polyomino.org.uk>
-References: <20190121213530.23803-1-mathieu.desnoyers@efficios.com> <632671842.3079.1548781059601.JavaMail.zimbra@efficios.com> <alpine.DEB.2.21.1901292153190.24454@digraph.polyomino.org.uk> <596949707.3888.1548812359874.JavaMail.zimbra@efficios.com> <alpine.DEB.2.21.1901300231210.24454@digraph.polyomino.org.uk>
-Subject: Re: [RFC PATCH glibc 1/4] glibc: Perform rseq(2) registration at C
- startup and thread creation (v6)
+        Wed, 30 Jan 2019 13:03:50 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UHu4D5008075;
+        Wed, 30 Jan 2019 10:01:25 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=n9pGXSwzli54Ey+ugud3KlzFjKYSE+5ROFPNzsoBn3s=;
+ b=bu1jbjdHE0iNkgSqGccTOuGDVu+UNt/D5xQ7r4Q2JJLQd/rbWsx3wJ1stBQnjCOTmjfu
+ Sbztk1ibsVAj9Z4ZrzbRyI/hBcFLA/cXK8XK615oebqHyM5AO0fl6FGKTQiqGEcp19iI
+ M4QarfZMO5JMnvin1EV0SeL1feM+nClKGY0= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2qbev9gfbw-11
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 30 Jan 2019 10:01:25 -0800
+Received: from frc-mbx01.TheFacebook.com (2620:10d:c0a1:f82::25) by
+ frc-hub02.TheFacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Wed, 30 Jan 2019 10:01:25 -0800
+Received: from frc-hub01.TheFacebook.com (2620:10d:c021:18::171) by
+ frc-mbx01.TheFacebook.com (2620:10d:c0a1:f82::25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Wed, 30 Jan 2019 10:01:24 -0800
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Wed, 30 Jan 2019 10:01:24 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n9pGXSwzli54Ey+ugud3KlzFjKYSE+5ROFPNzsoBn3s=;
+ b=NxUcCoGXJScuNNrL5uj2Y8s7zXN8bJcyaK+Ro/qy8jQwhlo3QnpfnVgvo3Ewa6edS2SU5uoOITbQz89V4YwWr+GiEVVJHAUhUjrpAVHedNDpqZic6bFVglzgaZmIJ5PumrTUgaao+1OhAOX9YF3RmO/K/U5H2kF4RYwJOQqShLI=
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com (10.172.180.139) by
+ CY4PR15MB1158.namprd15.prod.outlook.com (10.172.175.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.21; Wed, 30 Jan 2019 18:01:23 +0000
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::b9cb:6dd8:d8bf:45c6]) by CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::b9cb:6dd8:d8bf:45c6%2]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
+ 18:01:23 +0000
+From:   Vijay Khemka <vijaykhemka@fb.com>
+To:     Joel Stanley <joel@jms.id.au>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
+Subject: Re: [PATCH 1/2] ARM: dts: aspeed: Add peci and lpc for Facebook
+Thread-Topic: [PATCH 1/2] ARM: dts: aspeed: Add peci and lpc for Facebook
+Thread-Index: AQHUs3B0EbHO5x+TOEGVuHnYyNp6D6XHMHEAgABuKgA=
+Date:   Wed, 30 Jan 2019 18:01:22 +0000
+Message-ID: <B6DFDA82-F72C-4979-B988-05C292E61228@fb.com>
+References: <20190123230733.1821501-1-vijaykhemka@fb.com>
+ <CACPK8Xc91m9TWoRSgDCT7bVJC=C=w7mse8xbdCgw5vMVgMXM=Q@mail.gmail.com>
+In-Reply-To: <CACPK8Xc91m9TWoRSgDCT7bVJC=C=w7mse8xbdCgw5vMVgMXM=Q@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2620:10d:c090:200::4:b38d]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR15MB1158;20:G58b57xKUg4uLO7z5wuz7nRQcVhgPUHjE8X6hVPjgNfWav4/D1ZC99DytfC1YFqYW8DRwnYWugkZmWHubv+lq3MzxnYBn6bZCYb1z1glkV4wFD3zRxiIrnYLvSi3y7+h/ED3fFRnPQ455/hWCTPx63AGgC3R/c9PufaKchFMMKE=
+x-ms-office365-filtering-correlation-id: db3f4cac-2581-43e0-325d-08d686dcf219
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:CY4PR15MB1158;
+x-ms-traffictypediagnostic: CY4PR15MB1158:
+x-microsoft-antispam-prvs: <CY4PR15MB1158DD2D9DCAB0C81C8FEA39DD900@CY4PR15MB1158.namprd15.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(136003)(366004)(39860400002)(47680400002)(189003)(199004)(8936002)(54906003)(33656002)(11346002)(8676002)(486006)(186003)(2616005)(99286004)(446003)(82746002)(46003)(476003)(97736004)(36756003)(83716004)(71200400001)(68736007)(6486002)(71190400001)(81166006)(316002)(81156014)(6116002)(478600001)(2906002)(7736002)(4326008)(6246003)(305945005)(4744005)(25786009)(6512007)(86362001)(76176011)(6506007)(256004)(105586002)(229853002)(106356001)(6436002)(53936002)(102836004)(6916009)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1158;H:CY4PR15MB1269.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: lgLMxTA9pktZ8NSV5+T2ZXrWNtABVMW12DD5oyb4T0w7NQKdhgDwY8qmDkif6i+mRMuL50LGRzR3W/lDqMGblS4fQ2s7ZgfSwh900+lK4GdX+JUH5+AGL/Hc4Z+IUKYxeIRl0HvKX0B/k8vCXw4MrS3oqfkf+NL2JlYEZkT96ld1AYevF2wUn9y26qH3pw81169/04NeZ8TZbQwWWqWnUHlzLMi4H9Ck4aHB+6B6ZEoUU7SCxWM4l3Xxcq1wjpQ2Z6CVENmTVThma9u1GarN8DsRKCQmGaZlG3ziQJt3OG2xA6WTlk38SIwCBPIEssz8D7meDp+5/iIXk18MDiTbYtbEI1nFnousKiP5lWGCcMWbLNdqARu585n3eLdBehVeZG0y1W0izncM19R5TRntrrUz4SwCDOZsYKWreyGYGdo=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B81C1623D3FD0743B3F483C07522169D@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3716 (ZimbraWebClient - FF65 (Linux)/8.8.10_GA_3745)
-Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v6)
-Thread-Index: sulJ8M5QtxdcyhSLifF52HPUsS3biA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: db3f4cac-2581-43e0-325d-08d686dcf219
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 18:01:23.0367
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1158
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_13:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jan 29, 2019, at 9:40 PM, Joseph Myers joseph@codesourcery.com wrote:
-
-> On Tue, 29 Jan 2019, Mathieu Desnoyers wrote:
-> 
->> My thinking was to put the #error in the generic header, so architectures that
->> are not supported yet cannot build against rseq.h at all, so we don't end up
->> in a broken upgrade scenario. I'm open to alternative ways to do it though, as
->> long as we don't let not-yet-supported architectures build broken code.
-> 
-> Any case with #error in installed glibc headers needs special-casing in
-> check-installed-headers.sh (and, thus, such errors are to be discouraged).
-
-One alternative to #error would be to have an empty generic bits/rseq.h
-that does _not_ define RSEQ_SIG. This way, it would be possible to
-include sys/rseq.h from an architecture that does not define RSEQ_SIG
-yet, but it would not cause any build failure. It's only if the code
-try to use RSEQ_SIG that it would fail to compile because undefined.
-
-> Cases where architectures commonly need their own bits/ headers,
-> especially where those are likely to need updating for new kernel
-> versions, are also discouraged.
-
-The per-arch bits/rseq.h headers, once they define a specific value for
-RSEQ_SIG, should never ever change that value.
-
-> Furthermore, a normal check for glibc
-> headers updates needed for a new kernel version would only involve
-> examining uapi headers (and the non-uapi linux/socket.h for new address
-> families, an unfortunate existing wart in this area).  As far as I can
-> see, this value isn't defined in any uapi header, which makes it
-> especially likely to be missed in such a check.  Furthermore, I'm hoping
-> to add more glibc tests for consistency of such constants between glibc
-> and the kernel, to ensure any such updates missing are caught
-> automatically through test failures - but that doesn't work if the
-> constants in question aren't in a uapi header.
-> 
-> If this constant were in a uapi header, the glibc header could just
-> include that - is the issue that it's not actually an interface between
-> glibc and the kernel at all, but some kind of purely-userspace interface?
-
-The rseq uapi headers do not enforce the value of RSEQ_SIG. The role of the
-kernel wrt signature is to receive it as sys_rseq argument, and then validate
-that abort targets are prefixed with the signature before moving the
-instruction pointer there.
-
-Therefore, it's up to user-space to agree on the RSEQ_SIG value across
-all code using rseq within a process. Since glibc will be registering
-rseq and exposing public headers, it appears that glibc would be the
-appropriate project to define the RSEQ_SIG value for each architecture.
-
-> 
-> We very definitely wish to keep to a minimum the cases where updates need
-> to be done separately in glibc by each architecture maintainer (that's
-> just a recipe for some updates getting missed accidentally) - meaning that
-> there needs to be a clear way in which someone can tell, globally for all
-> architectures, whether the set of such architecture-specific headers for
-> this constant in glibc is complete and current, and when it needs updating
-> (and this should be as similar to possible to such checks for any other
-> header constant).
-
-Currently, I use #ifdef __NR_rseq from uapi unistd.h to check whether the
-kernel headers implement the rseq system call for the target architecture.
-
-With the approach of having an empty bits/rseq.h for architecture not yet
-supporting rseq in glibc, one way to check that glibc implements RSEQ_SIG
-for all architectures that have the rseq system call wired up in uapi would
-be:
-
-#include <unistd.h>
-#include <sys/rseq.h>
-
-#if defined (__NR_rseq) && !defined (RSEQ_SIG)
-# error "UAPI headers support rseq system call, but glibc does not define RSEQ_SIG."
-#endif
-
-Would that take care of your concerns ?
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+DQoNCu+7v09uIDEvMjkvMTksIDc6MjcgUE0sICJKb2VsIFN0YW5sZXkiIDxqb2VsQGptcy5pZC5h
+dT4gd3JvdGU6DQoNCiAgICBPbiBUaHUsIDI0IEphbiAyMDE5IGF0IDEwOjA3LCBWaWpheSBLaGVt
+a2EgPHZpamF5a2hlbWthQGZiLmNvbT4gd3JvdGU6DQogICAgDQogICAgPiBpbmRleCA3M2U1OGE4
+MjE2MTMuLmQ2MGRiYjAxOWY4MiAxMDA2NDQNCiAgICA+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRz
+L2FzcGVlZC1ibWMtZmFjZWJvb2stdGlvZ2FwYXNzLmR0cw0KICAgID4gKysrIGIvYXJjaC9hcm0v
+Ym9vdC9kdHMvYXNwZWVkLWJtYy1mYWNlYm9vay10aW9nYXBhc3MuZHRzDQogICAgDQogICAgPg0K
+ICAgID4gKyZwZWNpMCB7DQogICAgPiArICAgICAgIHN0YXR1cyA9ICJva2F5IjsNCiAgICA+ICt9
+Ow0KICAgIA0KICAgIEkgZG9uJ3QgdGhpbmsgd2UgaGF2ZSBhbiB1cHN0cmVhbSB0cmVlIHRoYXQg
+Y29udGFpbnMgYSBub2RlIGNhbGxlZA0KICAgIHBlY2kwLiBUaGVyZWZvcmUgdGhpcyBkb2VzIG5v
+dCBidWlsZC4NCiAgICANCiAgICBJIGhhdmUgZHJvcHBlZCB0aGlzIGh1bmsgZnJvbSB5b3VyIHBh
+dGNoLiBQbGVhc2UgbWFrZSBzdXJlIHlvdSB0ZXN0DQogICAgYmVmb3JlIHNlbmRpbmcgcGF0Y2hl
+cy4NClRoYW5rcyBKb2VsLCBJIHdpbGwgYmUgY2FyZWZ1bC4NCiAgICANCiAgICBDaGVlcnMsDQog
+ICAgDQogICAgSm9lbA0KICAgIA0KDQo=
