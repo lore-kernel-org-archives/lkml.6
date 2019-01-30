@@ -2,130 +2,186 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5CFC282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D689C282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7FF521874
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:08:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59D3021874
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:10:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="sYKzP3rw"
+	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="S/zEGxF3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728861AbfA3IIh (ORCPT
+        id S1730032AbfA3IKS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:08:37 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:60502 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbfA3IIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:08:36 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43qGG83L6vz9v0wX;
-        Wed, 30 Jan 2019 09:08:32 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=sYKzP3rw; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id QG24T4PNc8TU; Wed, 30 Jan 2019 09:08:32 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43qGG82G3Vz9v0wS;
-        Wed, 30 Jan 2019 09:08:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548835712; bh=9vW9OR0z4S58IqvSQCrbKbsZWtlNhKwNlQ9D3jbIex4=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=sYKzP3rwYPZCGGi4Q6vyE1KvBlBGPwVwckOTPW7Kx89Lj92jYTiOn5NEne+AL37Qx
-         HqFO+TfvvPvd/yruWo5s8Sdx2ynVSEg+Gapx5pZLtu1Qvx8hgC1nkQWHHqz7RJ5IKY
-         ez6UsJhppEcCEZd7RsYBlQgTQm0oAh8JqCV/P4B4=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 446A78B7EB;
-        Wed, 30 Jan 2019 09:08:33 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id j1GNqgnD3Ty5; Wed, 30 Jan 2019 09:08:33 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1EDA18B755;
-        Wed, 30 Jan 2019 09:08:33 +0100 (CET)
-Subject: Re: [PATCH v14 01/12] powerpc/32: Fix
- CONFIG_VIRT_CPU_ACCOUNTING_NATIVE for 40x/booke
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1548346225.git.christophe.leroy@c-s.fr>
- <90ef676a0fba977259221d95dd8ffd1117f963f3.1548346225.git.christophe.leroy@c-s.fr>
-Message-ID: <9d1db23c-4a5b-6dcb-7cfe-f743a5f053db@c-s.fr>
-Date:   Wed, 30 Jan 2019 09:08:33 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Wed, 30 Jan 2019 03:10:18 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42675 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfA3IKS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 03:10:18 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l10so16674234lfh.9
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 00:10:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dgIp0yacHAj0MuoiDVX3TymhWQBcahRzjDABtOysZwI=;
+        b=S/zEGxF3D5hrWsBCOgam4D2qUmxTLcgR4guIn2woDgI2FFxDeAerleknWc7I1C3ec+
+         Cz3OSL9BdJJkAEdMoBfahHlaKzSvRk3Z1Xj7Y5Mym5iNJWh2u6iaxcP9VbDqwI+LDcTq
+         wr3Y8z4NtNYNtX/PL+xCGgWkQy6q9TagWdYT3J+/0e7xqwispFJ6EC7ljz/WqojBvl/V
+         kyEP+fR+pOvSi8pgs/Iha6io74giSRlSsKOLrSqty2T7/Tmr7Hy2E6sZMbRtUjENiBz1
+         WyK22GdN1y5gGoBych4C4HX9YnvqVW00Ebx1bxEOfMX6vRY1+0qR+onWf3GoNd/CRB0v
+         Eqkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dgIp0yacHAj0MuoiDVX3TymhWQBcahRzjDABtOysZwI=;
+        b=oTBdFthor15y/+RIwFgafHBxmMIah9N2/1nzLu3oTHuNWVJTQKXP65GKsji4YP2kSi
+         GdTnWguxFTvxuTZjyiwQuYkORGoL4Icbg13VzK8p1c23yDPfAlmKw/n4M6LB3Bc8atUA
+         wYivprLdVNUUrr9bTiSt9PtSyupzMSeCZz8eCvKaRK/T23Fv+bpTWABbjjyPy1LN1bkp
+         OyYih9k6ZVK3guJSZTNg8KkH57tyDTD2ukydaKvEwEWmer3H87TTGumjGBJ5+7so7Ilx
+         P5CrtYgnrvTniEhnXsiKUZu5JLSNhQW+r7gnjAsMjJfImY3pj6ps2/M1cLbUu6ewlgVL
+         STTQ==
+X-Gm-Message-State: AJcUukdkphUseVwT3DYfJ2SS++z9hj4PCoYTxXH77UHLyQHgnPOB+KRr
+        WDhXC2frTy3we2avCLoScdI/Tg==
+X-Google-Smtp-Source: ALg8bN6hkVn+7nqdt64ad3W1tc09CGX+LgXWdJTAclzxVzF5D0JtInfcN/JbX6VfPGHmWYqTLjTDHw==
+X-Received: by 2002:a19:22c2:: with SMTP id i185mr20426969lfi.2.1548835814836;
+        Wed, 30 Jan 2019 00:10:14 -0800 (PST)
+Received: from [192.168.1.169] (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
+        by smtp.gmail.com with ESMTPSA id 15-v6sm164345lje.18.2019.01.30.00.10.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 00:10:14 -0800 (PST)
+Subject: Re: [PATCH v5 1/2] spi: support inter-word delay requirement for
+ devices
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+References: <20190129205502.7741-1-jonas@norrbonn.se>
+ <20190129205502.7741-2-jonas@norrbonn.se>
+ <CAMuHMdXv6U-VeznbXrTNk9oY1kCkYu-b+_o3KH_R6BMgpVn7YA@mail.gmail.com>
+From:   Jonas Bonn <jonas@norrbonn.se>
+Message-ID: <d9c495ac-825e-6dd0-5455-817c3f27b840@norrbonn.se>
+Date:   Wed, 30 Jan 2019 09:10:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <90ef676a0fba977259221d95dd8ffd1117f963f3.1548346225.git.christophe.leroy@c-s.fr>
+In-Reply-To: <CAMuHMdXv6U-VeznbXrTNk9oY1kCkYu-b+_o3KH_R6BMgpVn7YA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Geert,
 
-
-Le 24/01/2019 à 17:19, Christophe Leroy a écrit :
-> 40x/booke have another path to reach 3f from transfer_to_handler,
-> so ACCOUNT_CPU_USER_ENTRY() have to be moved there.
+On 30/01/2019 08:35, Geert Uytterhoeven wrote:
+> Hi Jonas,
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-
-Now ACCOUNT_CPU_USER_ENTRY() is also in the non-user entry path.
-
-This change is crazy, please ignore it :-S
-
-Christophe
-
-> ---
->   arch/powerpc/kernel/entry_32.S | 13 ++++++-------
->   1 file changed, 6 insertions(+), 7 deletions(-)
+> On Tue, Jan 29, 2019 at 9:55 PM Jonas Bonn <jonas@norrbonn.se> wrote:
+>> Some devices are slow and cannot keep up with the SPI bus and therefore
+>> require a short delay between words of the SPI transfer.
+>>
+>> The example of this that I'm looking at is a SAMA5D2 with a minimum SPI
+>> clock of 400kHz talking to an AVR-based SPI slave.  The AVR cannot put
+>> bytes on the bus fast enough to keep up with the SoC's SPI controller
+>> even at the lowest bus speed.
+>>
+>> This patch introduces the ability to specify a required inter-word
+>> delay for SPI devices.  It is up to the controller driver to configure
+>> itself accordingly in order to introduce the requested delay.
+>>
+>> Note that, for spi_transfer, there is already a field word_delay that
+>> provides similar functionality.  This field, however, is specified in
+>> clock cycles (and worse, SPI controller cycles, not SCK cycles); that
+>> makes this value dependent on the master clock instead of the device
+>> clock for which the delay is intended to provide some relief.  This
+>> patch leaves this old word_delay in place and provides a time-based
+>> word_delay_us alongside it; the new field fits in the struct padding
+>> so struct size is constant.  There is only one in-kernel user of the
+>> word_delay field and presumably that driver could be reworked to use
+>> the time-based value instead.
 > 
-> diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
-> index 0768dfd8a64e..0165edd03b38 100644
-> --- a/arch/powerpc/kernel/entry_32.S
-> +++ b/arch/powerpc/kernel/entry_32.S
-> @@ -185,12 +185,6 @@ transfer_to_handler:
->   	addi	r12,r12,-1
->   	stw	r12,4(r11)
->   #endif
-> -#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
-> -	CURRENT_THREAD_INFO(r9, r1)
-> -	tophys(r9, r9)
-> -	ACCOUNT_CPU_USER_ENTRY(r9, r11, r12)
-> -#endif
-> -
->   	b	3f
->   
->   2:	/* if from kernel, check interrupted DOZE/NAP mode and
-> @@ -208,9 +202,14 @@ transfer_to_handler:
->   	bt-	31-TLF_NAPPING,4f
->   	bt-	31-TLF_SLEEPING,7f
->   #endif /* CONFIG_PPC_BOOK3S_32 || CONFIG_E500 */
-> +3:
-> +#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
-> +	CURRENT_THREAD_INFO(r9, r1)
-> +	tophys(r9, r9)
-> +	ACCOUNT_CPU_USER_ENTRY(r9, r11, r12)
-> +#endif
->   	.globl transfer_to_handler_cont
->   transfer_to_handler_cont:
-> -3:
->   	mflr	r9
->   	lwz	r11,0(r9)		/* virtual address of handler */
->   	lwz	r9,4(r9)		/* where to go when done */
+> Thanks for your patch!
+> 
+>> The time-based delay is limited to 8 bits as these delays are intended
+>> to be short.  The SAMA5D2 that I've tested this on limits delays to a
+>> maximum of ~100us, which is already many word-transfer periods even at
+>> the minimum transfer speed supported by the controller.
+> 
+> Still, the similar delay_usecs uses a u16.
+
+The delays are not comparable.  delay_usecs is the "end of transfer" 
+delay and represents the processing time to handle a command or a bundle 
+of data.  The inter-word delay is just a stutter to give the slave time 
+to get the next word set up.
+
+On the Microchip (Atmel... these name changes take a year or two to sink 
+in!) board that I'm using (SAMA5D2), the inter-word delay is limited to 
+8192 SPI-controller-clock cycles (not SPI bus clock, input clock).  At 
+83Mhz, that's about 100us, and it only gets shorter as you clock up. 
+The Spreadtrum board has an upper limit of 130 SPI-controller-clock 
+cycles which is just a few microseconds.
+
+Aside from that limitation, consider what's reasonable in terms of 
+delay.  More than 5x the word-transfer time and things are pretty 
+questionable.  A 250us delay with a word transfer time of 50us gives an 
+SPI-bus clock 160kHz.  That's already pretty slow in SPI terms and well 
+below what the SAMA5D2 is capable of driving with it's 83MHz input clock 
+(max divider is 255 which gives roughtly 400kHz minimum SPI bus clock).
+
+So with that, setting an inter-word delay larger than 255us is barely 
+reasonable.  If somebody finds a concrete use for such a setting, then 
+the size of the field can be expanded at that time.
+
+Just for info, the inter-word delay that I need to communicate with an 
+Atmega MCU running at 500kHz is ~20us which is on the order of the word 
+transfer time itself.  This chip is a poor example of how to design an 
+SPI slave so I suspect it can only get better from here! :)
+
+And with that said, if you insist having a u16 for this, I'll change it. 
+  Just let me know.
+
+
+> 
+>> --- a/include/linux/spi/spi.h
+>> +++ b/include/linux/spi/spi.h
+> 
+>> @@ -803,6 +808,7 @@ struct spi_transfer {
+>>   #define        SPI_NBITS_DUAL          0x02 /* 2bits transfer */
+>>   #define        SPI_NBITS_QUAD          0x04 /* 4bits transfer */
+>>          u8              bits_per_word;
+>> +       u8              word_delay_us;
+> 
+> us for µs
+> 
+>>          u16             delay_usecs;
+> 
+> usecs for µs
+> 
+> Can we please try to be consistent?
+
+
+
+I can change it to usecs if you want.  Is this a serious request to do 
+so?  _usecs and _us are used pretty interchangeably across the kernel 
+with a slight advantage to _us.
+
+/Jonas
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
 > 
