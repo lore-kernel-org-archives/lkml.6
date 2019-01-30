@@ -2,307 +2,369 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0F7C282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 151A8C282D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF4420857
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:48:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCBCA20857
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:48:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="j15oJ+Ss";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="it0uPAty"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="xtU48DQe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfA3FsV (ORCPT
+        id S1728700AbfA3Fsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 00:48:21 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:33588 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725819AbfA3FsU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 00:48:20 -0500
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x0U5iD6Z011211;
-        Tue, 29 Jan 2019 21:48:12 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=Qcs74qv/rSfIqjuncwcIcw5JfLeumK9NRTjZqv2Ogeo=;
- b=j15oJ+SsUDKLA0njGBVA09vuJRAQB2KP/55OV/e9KHDx3ncxDG6xQm34CkANDq1hntoJ
- UmQejFioJT1ZXP1NZhozN+A5PaVT83Lc46cS3SyYws1nIkYo9LcvJ9umfIPBG8EHF78y
- trb69kyZt0d2hxSMkCfsvFE7uIA39IWZvz4= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by m0089730.ppops.net with ESMTP id 2qb3gv0be2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 29 Jan 2019 21:48:12 -0800
-Received: from frc-hub05.TheFacebook.com (2620:10d:c021:18::175) by
- frc-hub01.TheFacebook.com (2620:10d:c021:18::171) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 29 Jan 2019 21:48:11 -0800
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Tue, 29 Jan 2019 21:48:11 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
+        Wed, 30 Jan 2019 00:48:41 -0500
+Received: from mail-eopbgr750082.outbound.protection.outlook.com ([40.107.75.82]:42432
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725820AbfA3Fsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 00:48:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qcs74qv/rSfIqjuncwcIcw5JfLeumK9NRTjZqv2Ogeo=;
- b=it0uPAty3x9Hi9nIZahqCSo59J34+2gfHCyGW+Nig6kJcydycfhAMu/N6exGAFhWBeXoG4kfIuUIXMOYIZFSpxVeWN6EAbWIfttyFUJIo18nWTCDO/t9hHxWX1Qh/QT/wVL3jknO9xy99fckA7kDmcYkOiFq9vpP6s+5pB5l+7s=
-Received: from BN8PR15MB2626.namprd15.prod.outlook.com (20.179.137.220) by
- BN8PR15MB2564.namprd15.prod.outlook.com (20.179.137.21) with Microsoft SMTP
+ bh=aUhgNHTSr0fPBcy6BGuluOx3OWf/ABzQnkEluIpOe8E=;
+ b=xtU48DQeOWut73g58vi++onrtAlZRvRkYVFLVi9D79nEmgDDQ4NWrFpmZCg4lYfEXZdJ/oc2Fb6obV6BKdF8Hlf49kcDppEF9VTORVI/LpqRqAj8U3yTTq/Enrt8I+2fiAexZLtNz5G52mFAxXUN+N8HfYpPFp85dCa0WZdcLnc=
+Received: from CY4PR02MB2709.namprd02.prod.outlook.com (10.175.59.19) by
+ CY4PR02MB2503.namprd02.prod.outlook.com (10.173.40.142) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.21; Wed, 30 Jan 2019 05:48:10 +0000
-Received: from BN8PR15MB2626.namprd15.prod.outlook.com
- ([fe80::41b9:104d:e330:d12d]) by BN8PR15MB2626.namprd15.prod.outlook.com
- ([fe80::41b9:104d:e330:d12d%5]) with mapi id 15.20.1558.023; Wed, 30 Jan 2019
- 05:48:10 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Dave Chinner <david@fromorbit.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH 0/2] [REGRESSION v4.19-20] mm: shrinkers are now way too
- aggressive
-Thread-Topic: [PATCH 0/2] [REGRESSION v4.19-20] mm: shrinkers are now way too
- aggressive
-Thread-Index: AQHUuFKzJHb2O8CEQki2pr5FxP/AYaXHThWA
-Date:   Wed, 30 Jan 2019 05:48:10 +0000
-Message-ID: <20190130054759.GA2107@castle.DHCP.thefacebook.com>
-References: <20190130041707.27750-1-david@fromorbit.com>
-In-Reply-To: <20190130041707.27750-1-david@fromorbit.com>
+ 15.20.1558.21; Wed, 30 Jan 2019 05:48:32 +0000
+Received: from CY4PR02MB2709.namprd02.prod.outlook.com
+ ([fe80::c41a:f0ef:3b4e:6903]) by CY4PR02MB2709.namprd02.prod.outlook.com
+ ([fe80::c41a:f0ef:3b4e:6903%3]) with mapi id 15.20.1558.023; Wed, 30 Jan 2019
+ 05:48:32 +0000
+From:   Vishal Sagar <vsagar@xilinx.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+CC:     Vishal Sagar <vishal.sagar@xilinx.com>,
+        Hyun Kwon <hyunk@xilinx.com>,
+        "laurent.pinchart@ideasonboard.com" 
+        <laurent.pinchart@ideasonboard.com>,
+        Michal Simek <michals@xilinx.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Dinesh Kumar <dineshk@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] media: dt-bindings: media: xilinx: Add Xilinx MIPI
+ CSI-2 Rx Subsystem
+Thread-Topic: [PATCH 1/2] media: dt-bindings: media: xilinx: Add Xilinx MIPI
+ CSI-2 Rx Subsystem
+Thread-Index: AQHUp1LB9yVBRVhU3kSv/sTypyy0J6WqXxWggBpUWACAAraqkA==
+Date:   Wed, 30 Jan 2019 05:48:31 +0000
+Message-ID: <CY4PR02MB270952A6BEE16CA27CE8C601A7900@CY4PR02MB2709.namprd02.prod.outlook.com>
+References: <1527620084-94864-1-git-send-email-vishal.sagar@xilinx.com>
+ <1527620084-94864-2-git-send-email-vishal.sagar@xilinx.com>
+ <20190108130457.syjuq7u7vep3km3h@paasikivi.fi.intel.com>
+ <CY4PR02MB2709C346C4BEF853C48C32DCA7800@CY4PR02MB2709.namprd02.prod.outlook.com>
+ <20190128120018.ztdxmcq4tizwwepn@paasikivi.fi.intel.com>
+In-Reply-To: <20190128120018.ztdxmcq4tizwwepn@paasikivi.fi.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: MW2PR16CA0014.namprd16.prod.outlook.com (2603:10b6:907::27)
- To BN8PR15MB2626.namprd15.prod.outlook.com (2603:10b6:408:c7::28)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::1:e58d]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vsagar@xilinx.com; 
+x-originating-ip: [149.199.50.133]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN8PR15MB2564;20:dr8X4g1cW2rXN/TFWD0kpEynWwoLTuqMVwHgvAoNi3WAyHmpCxUgGHi7uxmHWEJ+CO89ZPhhA19N8uGpjM5SNKfAk3uQ2pgiXdKXpe0Ua55Z/6NIkslJjTd3fW9lsp+kOH2Dft0Uv595/zNCkTsu/2PRw9a0MEHl5Zu2W1DmeDo=
-x-ms-office365-filtering-correlation-id: 89f7d626-7a2e-46a9-f3ec-08d6867683ec
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN8PR15MB2564;
-x-ms-traffictypediagnostic: BN8PR15MB2564:
-x-microsoft-antispam-prvs: <BN8PR15MB25642E58EE03B441BB12C30CBE900@BN8PR15MB2564.namprd15.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;CY4PR02MB2503;6:pBhFuKqI+WnaLLK8vIW0knP7cB53y4JOOsykhLFglFwRpJ+FMeJHH4rCYM4eSXOlOf53GKokOVKctUK67Hw8aSQHB6a2Svq6rZHFEir+E9KCChtiJfEOnv0VZSJoh2By9dk/cab0/brdS6VKxGI8xbtXSzfpd1IJ56r+Mu7G6DwPPVggAtE30PRQHsoq3sEHjOAh8W8MBAzK9Ji5hTGuX37DxaT37m9/mx45eNbDinNzMfsyoWvixrxzQJy8JHPvQo+zifwh0c4tOfu9hJuBLaXtUo3U/sEd4AJgDcqIx5cpZXaV6ANAGfPO4XnMr2RTeGscxKjix0+9+1vrU2w5ZK4vFYaqXVqxOI6daBLFt1Ikyi9db9aBjyg2WnUTCl72YzyEGXLU7X0J9WVBht9PBZU1xFqV4tZn9tT0Qwc6HxUnXiOOIwZ9Sor2fl31EsUHrEuKtorabbzRuhmYY/7tpA==;5:tlYfOgvnY1ipOrocmmQrv284MvG4gFyh9YoTs8aS/6jsEDQTMl8qUnDNkkVIHST1D1478VLdbiaIAEc8bgPlQcAWJ4AasMeJ41l0yDxL65mnrZQUwML7bciLatZteQVRkrhPWjiC5BbWx3PWAM1xHjlG7OwaRNTiDyQICkDQ8KdHcM4A9scGbAvUcRBrGk7B4zQT4othavOgKglTmcOKKg==;7:Gzp7qgxsg4q5xvKJEm37k7vAelAYPUIUuGvipPYZux7RECARQ4VFX6fFMTCXiYzd2tb3zA94ZYdW9RWoyJ/K3P6TBAu90Y9ceIGMtXuDlQyN0MI0F0AxOUzG535+HdnFu4oJXQ2+phyiD8leKR1iew==
+x-ms-office365-filtering-correlation-id: 4e76d553-4daf-4c5c-c1ae-08d68676913e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:CY4PR02MB2503;
+x-ms-traffictypediagnostic: CY4PR02MB2503:
+x-microsoft-antispam-prvs: <CY4PR02MB250373CD48F15BB1BDFE9198A7900@CY4PR02MB2503.namprd02.prod.outlook.com>
 x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(346002)(39860400002)(376002)(136003)(189003)(199004)(54906003)(6486002)(2906002)(46003)(53936002)(25786009)(81166006)(102836004)(229853002)(8936002)(33656002)(186003)(39060400002)(71200400001)(11346002)(486006)(81156014)(476003)(71190400001)(68736007)(8676002)(6116002)(446003)(105586002)(106356001)(97736004)(386003)(966005)(5024004)(52116002)(14454004)(6916009)(14444005)(6436002)(256004)(1076003)(9686003)(6512007)(6246003)(86362001)(6306002)(4326008)(7736002)(478600001)(33896004)(305945005)(6506007)(316002)(76176011)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR15MB2564;H:BN8PR15MB2626.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(39860400002)(396003)(136003)(346002)(366004)(376002)(13464003)(199004)(189003)(486006)(2906002)(446003)(6436002)(11346002)(6246003)(229853002)(476003)(106356001)(6306002)(478600001)(97736004)(81166006)(316002)(14454004)(99286004)(8936002)(93886005)(9686003)(66066001)(7736002)(74316002)(55016002)(105586002)(81156014)(8676002)(25786009)(76176011)(256004)(54906003)(4326008)(26005)(305945005)(53936002)(7696005)(3846002)(71190400001)(6916009)(33656002)(6506007)(53546011)(68736007)(6116002)(186003)(7416002)(14444005)(102836004)(71200400001)(86362001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR02MB2503;H:CY4PR02MB2709.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: qpO1qRrK49jIvaRuW+e956UGPp7JPLIIJT+nH0bphjrfzZgm/3MR/uZNYx3w3N2KZTMejylAV+5B4Y2wCC7NuNGt/ECZfv/OmrXawKyV/jSTX0qvRGqJaW5s/TSuKe0PYexzmIwm4aXpkBSS+kJKYp7EsB0tYhTfGnWYZeBFj3pni8mBILxu3d1z0akIP9JuUMIL0IUOBWn/yVQ8kBbh19SBc6HTfgPA6s5/BmuMCESfJYt2xdsK0axJ+zBN8cR5cYqr/4mgwsERuZfT50MY1tQS7Uc251VG2j2Izt33pEDgzlml8brczJXzAU6QXj9qhjoTnv9cNavGyNZvkVI57Tu8CKEaLtEgtbj3GE2HQhPXT/2WaFbTO6lAI4/0JOQn2gCE+IzL8FNiWg/Ro3x6vyCbLG2SRAeh1RKfEbTLtc0=
+x-microsoft-antispam-message-info: qsT9nKBOVmGr2Jugkup7EWJtVLitOO95jnElVBQoNFVlvG5MsWmsYVSp8BEfFxNuumm9oouAekFaHDQ6tNhwd3iMZUZulWewN30MK7O3lJnd2FVNI8TIcGG5i6knfygYmkVwfM8Dvgym27eG6bjhRlqMFtkMcPzh+xgsOJiUhN9+TKBVa5UL2/CgKIVihSB+b0ka9RU07LyPAcS3cvicbzAvLzoUd40r1WND/3DULg+3R/6wBYAFDATPgjK/r9JJoz+mYRLdDR8MLFQMISPE8t53sTNbL9kRkQF1xa1/UY359GhL+AYTOy1F1s/+qqg/INPx0Pigo4+uW8H4lApetk1UK9WehQFLgFzWwT0kfrwgh75yMDUyeqbAb2wq4v2jTbwpUh9MOB1o7hXh7OWL26E9R2w504o4+eDUyQoWMV0=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <451195CB67CA7D4791CBCB9D696AC099@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89f7d626-7a2e-46a9-f3ec-08d6867683ec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 05:48:07.8947
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e76d553-4daf-4c5c-c1ae-08d68676913e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 05:48:31.9414
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR15MB2564
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_05:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR02MB2503
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Dave!
+Hi Sakari,
 
-Instead of reverting (which will bring back the memcg memory leak),
-can you, please, try Rik's patch: https://lkml.org/lkml/2019/1/28/1865 ?
+> -----Original Message-----
+> From: Sakari Ailus [mailto:sakari.ailus@linux.intel.com]
+> Sent: Monday, January 28, 2019 5:30 PM
+> To: Vishal Sagar <vsagar@xilinx.com>
+> Cc: Vishal Sagar <vishal.sagar@xilinx.com>; Hyun Kwon <hyunk@xilinx.com>;
+> laurent.pinchart@ideasonboard.com; Michal Simek <michals@xilinx.com>;
+> linux-media@vger.kernel.org; devicetree@vger.kernel.org;
+> hans.verkuil@cisco.com; mchehab@kernel.org; robh+dt@kernel.org;
+> mark.rutland@arm.com; Dinesh Kumar <dineshk@xilinx.com>; linux-arm-
+> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 1/2] media: dt-bindings: media: xilinx: Add Xilinx MI=
+PI CSI-2
+> Rx Subsystem
+>=20
+> Hi Vishal,
+>=20
+> On Mon, Jan 14, 2019 at 09:47:41AM +0000, Vishal Sagar wrote:
+> > Hi Sakari,
+> >
+> > Thanks for reviewing this.
+> >
+> > > -----Original Message-----
+> > > From: Sakari Ailus [mailto:sakari.ailus@linux.intel.com]
+> > > Sent: Tuesday, January 08, 2019 6:35 PM
+> > > To: Vishal Sagar <vishal.sagar@xilinx.com>
+> > > Cc: Hyun Kwon <hyunk@xilinx.com>; laurent.pinchart@ideasonboard.com;
+> > > Michal Simek <michals@xilinx.com>; linux-media@vger.kernel.org;
+> > > devicetree@vger.kernel.org; hans.verkuil@cisco.com; mchehab@kernel.or=
+g;
+> > > robh+dt@kernel.org; mark.rutland@arm.com; Dinesh Kumar
+> > > <dineshk@xilinx.com>; linux-arm-kernel@lists.infradead.org; linux-
+> > > kernel@vger.kernel.org
+> > > Subject: Re: [PATCH 1/2] media: dt-bindings: media: xilinx: Add Xilin=
+x MIPI
+> CSI-2
+> > > Rx Subsystem
+> > >
+> > > EXTERNAL EMAIL
+> > >
+> > > Hi Vishal,
+> > >
+> > > The patchset hard escaped me somehow earlier and your reply to Rob ma=
+de
+> me
+> > > notice it again. Thanks. :-)
+> > >
+> > > On Wed, May 30, 2018 at 12:24:43AM +0530, Vishal Sagar wrote:
+> > > > Add bindings documentation for Xilinx MIPI CSI-2 Rx Subsystem.
+> > > >
+> > > > The Xilinx MIPI CSI-2 Rx Subsystem consists of a DPHY, CSI-2 Rx, an
+> > > > optional I2C controller and an optional Video Format Bridge (VFB). =
+The
+> > > > active lanes can be configured at run time if enabled in the IP. Th=
+e
+> > > > DPHY register interface may also be enabled.
+> > > >
+> > > > Signed-off-by: Vishal Sagar <vishal.sagar@xilinx.com>
+> > > > ---
+> > > >  .../bindings/media/xilinx/xlnx,csi2rxss.txt        | 117
+> > > +++++++++++++++++++++
+> > > >  1 file changed, 117 insertions(+)
+> > > >  create mode 100644
+> > > Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
+> > > >
+> > > > diff --git
+> a/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
+> > > b/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
+> > > > new file mode 100644
+> > > > index 0000000..31ed721
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.=
+txt
+> > > > @@ -0,0 +1,117 @@
+> > > > +
+> > >
+> > > Extra newline.
+> > >
+> >
+> > Will remove it in next version.
+> >
+> > > > +Xilinx MIPI CSI2 Receiver Subsystem Device Tree Bindings
+> > > > +--------------------------------------------------------
+> > > > +
+> > > > +The Xilinx MIPI CSI2 Receiver Subsystem is used to capture MIPI CS=
+I2
+> traffic
+> > > > +from compliant camera sensors and send the output as AXI4 Stream
+> video
+> > > data
+> > > > +for image processing.
+> > > > +
+> > > > +The subsystem consists of a MIPI DPHY in slave mode which captures=
+ the
+> > > > +data packets. This is passed along the MIPI CSI2 Rx IP which extra=
+cts the
+> > > > +packet data. This data is taken in by the Video Format Bridge (VFB=
+),
+> > > > +if selected, and converted into AXI4 Stream video data at selected
+> > > > +pixels per clock as per AXI4-Stream Video IP and System Design UG9=
+34.
+> > > > +
+> > > > +For more details, please refer to PG232 MIPI CSI-2 Receiver Subsys=
+tem.
+> > > >
+> > >
+> +https://www.xilinx.com/support/documentation/ip_documentation/mipi_csi
+> > > 2_rx_subsystem/v3_0/pg232-mipi-csi2-rx.pdf
+> > > > +
+> > > > +Required properties:
+> > > > +
+> > > > +- compatible: Must contain "xlnx,mipi-csi2-rx-subsystem-2.0" or
+> > > > +  "xlnx,mipi-csi2-rx-subsystem-3.0"
+> > > > +
+> > > > +- reg: Physical base address and length of the registers set for t=
+he device.
+> > > > +
+> > > > +- interrupt-parent: specifies the phandle to the parent interrupt
+> controller
+> > > > +
+> > > > +- interrupts: Property with a value describing the interrupt numbe=
+r.
+> > > > +
+> > > > +- xlnx,max-lanes: Maximum active lanes in the design.
+> > > > +
+> > > > +- xlnx,vc: Virtual Channel, specifies virtual channel number to be=
+ filtered.
+> > > > +  If this is 4 then all virtual channels are allowed.
+> > >
+> > > This seems like something a driver should configure, based on the
+> > > configuration of the connected device.
+> > >
+> >
+> > The filtering of the Virtual channels is property of the hardware IP an=
+d is fixed
+> in design.
+> > This is not software controlled.
+>=20
+> So... you have different IP blocks between which (one of) the difference(=
+s)
+> is the virtual channel?
+>=20
 
-It should protect small cgroups from being scanned too hard by the memory
-pressure, however keeping the pressure big enough to avoid memory leaks.
+Your understanding is correct.=20
 
-Thanks!
+The Xilinx CSI2 Rx subsystem has the 3 blocks -
+1 - Xilinx CSI2 Rx controller
+2 - Xilinx DPHY in Rx mode (whose register interface may be disabled/fixed =
+configuration to reduce logic gate count).
+3 - Xilinx I2C controller (used as CCI - camera control interface)
 
-On Wed, Jan 30, 2019 at 03:17:05PM +1100, Dave Chinner wrote:
-> Hi mm-folks,
+The virtual channel filtering is a property of the CSI2 Rx controller.
+This was present in v1 as I wanted the IP configuration to be available for=
+ debug.
+This has been removed in v2 as it is not really used in the driver.
+
+> >
+> > > > +
+> > > > +- xlnx,csi-pxl-format: This denotes the CSI Data type selected in =
+hw
+> design.
+> > > > +  Packets other than this data type (except for RAW8 and User defi=
+ned
+> data
+> > > > +  types) will be filtered out. Possible values are RAW6, RAW7, RAW=
+8,
+> RAW10,
+> > > > +  RAW12, RAW14, RGB444, RGB555, RGB565, RGB666, RGB888 and
+> > > YUV4228bit.
+> > >
+> > > This should be configured at runtime instead through V4L2 sub-device
+> > > interface; it's not a property of the hardware.
+> > >
+> >
+> > This too is a property of the hardware IP and is fixed to one data type
+> > during design to reduce gate count. So for e.g. if RGB888 is selected
+> > during design, then the hardware will only pass across RGB888 packet da=
+ta
+> > to output. (RAW8 packets are also allowed to pass through for all data
+> > types selected) This is used in the driver to determine the media bus
+> > format of the connected pads.
 >=20
-> TL;DR: these two commits break system wide memory VFS cache reclaim
-> balance badly, cause severe performance regressions in stable
-> kernels and they need to be reverted ASAP.
+> If I understand this correctly, RAW8 and user defined data types will
+> always pass through, plus the other data types listed here. Is that right=
+?
+
+Correct.
+
 >=20
-> For background, let's start with the bug reports that have come from
-> desktop users on 4.19 stable kernels. First this one:
+> >
+> > > > +
+> > > > +- xlnx,axis-tdata-width: AXI Stream width, This denotes the AXI St=
+ream
+> width.
+> > > > +  It depends on Data type chosen, Video Format Bridge enabled/disa=
+bled
+> and
+> > > > +  pixels per clock. If VFB is disabled then its value is either 0x=
+20 (32 bit)
+> > > > +  or 0x40(64 bit) width.
+> > > > +
+> > > > +- xlnx,video-format, xlnx,video-width: Video format and width, as =
+defined
+> in
+> > > > +  video.txt.
+> > >
+> > > Ditto.
+> > >
+> > Again these are fixed values and can't be changed at run time.
+> > These are used to determine the media bus format.
 >=20
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D202349
+> What kind of values can the xlnx,video-format property have? How about
+> xlnx.video-width? Where can video.txt be found?
 >=20
-> Whereby copying a large amount of data to files on an XFS filesystem
-> would cause the desktop to freeze for multiple seconds and,
-> apparently occasionally hang completely. Basically, GPU based
-> GFP_KERNEL allocations getting stuck in shrinkers under realtively
-> light memory loads killing desktop interactivity. Kernel 4.19.16
+
+The video.txt is present at Documentation/devicetree/bindings/media/xilinx/=
+video.txt
+But I have removed this from v2 as the media bus format can be derived from=
+ the CSI pixel format=20
+as described above.
+
+> >
+> > > > +
+> > > > +- port: Video port, using the DT bindings defined in ../video-inte=
+rfaces.txt.
+> > > > +  The CSI 2 Rx Subsystem has a two ports, one input port for conne=
+cting
+> to
+> > > > +  camera sensor and other is output port.
+> > > > +
+> > > > +- data-lanes: The number of data lanes through which CSI2 Rx Subsy=
+stem
+> is
+> > > > +  connected to the camera sensor as per video-interfaces.txt
+> > >
+> > > This is somewhat different from the documentation in video-interfaces=
+.txt.
+> > > Could you align the two? I don't think there's a need to document sta=
+ndard
+> > > properties in device binding files elaborately; rather just the hardw=
+are
+> > > specific bits.
+> > >
+> >
+> > Agree. In this current IP there is no way to re-order the lanes which a=
+re set at
+> design time.
+> > So physical and logical lanes are at same index. This could only be use=
+d to
+> determine how many lanes are allowed to be programmed.
+> > For e.g. if design has set the number of lanes as 4 and xlnx,en-active-=
+lanes is
+> present, then the number of lanes
+> > can be set from 1 to 4.
 >=20
-> The second:
+> Ack.
 >=20
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D202441
+> --
+> Regards,
 >=20
-> Whereby copying a large data set across NFS filesystems at the same
-> time as running a kernel compile on a local XFS filesystem results
-> in the kernel compile going from 3m30s to over an hour and file copy
-> performance tanking.
->=20
-> We ran an abbreviated bisect from 4.18 through to 4.19.18, and found
-> two things:
->=20
-> 	1: there was a major change in page cache reclaim behaviour
-> 	introduced in 4.19-rc5. Basically the page cache would get
-> 	trashed periodically for no apparent reason, the
-> 	characteristic being a sawtooth cache usage pattern.
->=20
-> 	2: in 4.19.3, kernel compile performance turned to crap.
->=20
-> The kernel compile regression is essentially caused by memory
-> reclaim driving the XFS inode shrinker hard in to reclaiming dirty
-> inodes and getting blocked, essentially slowing reclaim down to the
-> rate at which a slow SATA drive could write back inodes. There were
-> also indications of a similar GPU-based GFP_KERNEL allocation
-> stalls, but most of the testing was done from the CLI with no X so
-> that could be discounted.
->=20
-> It was reported that less severe slowdowns also occurred on ext2,
-> ext3, ext4 and jfs, so XFS is really just the messenger here - it is
-> most definitely not the cause of the problem being seen, so stop and
-> thing before you go and blame XFS.
->=20
-> Looking at the change history of the mm/ subsystem after the first
-> bug report, I noticed and red-flagged this commit for deeper
-> analysis:
->=20
-> 172b06c32b94 ("mm: slowly shrink slabs with a relatively small number of =
-objects")
->=20
-> That "simple" change ran a read flag because it makes shrinker
-> reclaim far, far more agressive at initial priority reclaims (ie..
-> reclaim priority =3D 12). And it also means that small caches that
-> don't need reclaim (because they are small) will be agressively
-> scanned and reclaimed when there is very little memory pressure,
-> too. It also means tha tlarge caches are reclaimed very agressively
-> under light memory pressure - pressure that would have resulted in
-> single digit scan count now gets run out to batch size, which for
-> filesystems is 1024 objects. i.e. we increase reclaim filesystem
-> superblock shrinker pressure by an order of 100x at light reclaim.
->=20
-> That's a *bad thing* because it means we can't retain working sets
-> of small caches even under light memory pressure - they get
-> excessively reclaimed in comparison to large caches instead of in
-> proptortion to the rest of the system caches.
->=20
-> So, yeah, red flag. Big one. And the patch never got sent to
-> linux-fsdevel so us filesystem people didn't ahve any idea that
-> there were changes to VFS cache balances coming down the line. Hence
-> our users reporting problems ar the first sign we get of a
-> regression...
->=20
-> So when Roger reported that the page cache behaviour changed
-> massively in 4.19-rc5, and I found that commit was between -rc4 and
-> -rc5? Yeah, that kinda proved my theory that it changed the
-> fundamental cache balance of the system and the red flag is real...
->=20
-> So, the second, performance killing change? Well, I think you all
-> know what's coming:
->=20
-> a76cf1a474d7 mm: don't reclaim inodes with many attached pages
->=20
-> [ Yup, a "MM" tagged patch that changed code in fs/inode.c and wasn't
-> cc'd to any fileystem list. There's a pattern emerging here. Did
-> anyone think to cc the guy who originally designed ithe numa aware
-> shrinker infrastucture and helped design the memcg shrinker
-> infrastructure on fundamental changes? ]
->=20
-> So, that commit was an attempt to fix the shitty behaviour
-> introduced by 172b06c32b94 - it's a bandaid over a symptom rather
-> than something that attempts to correct the actual bug that was
-> introduced. i.e. the increased inode cache reclaim pressure was now
-> reclaiming inodes faster than the page cache reclaim was reclaiming
-> pages on the inode, and so inode cache reclaim is trashing the
-> working set of the page cache.
->=20
-> This is actually necessary behaviour - when you have lots of
-> temporary inodes and are turning the inode cache over really fast
-> (think recursive grep) we want the inode cache to immediately
-> reclaim the cached pages on the inode because it's typically a
-> single use file. Why wait for the page cache to detect it's single
-> use when we already know it's not part of the working file set?
->=20
-> And what's a kernel compile? it's a recursive read of a large number
-> of files, intermixed with the creation of a bunch of temporary
-> files.  What happens when you have a mixed large file workload
-> (background file copy) and lots of small files being created and
-> removed (kernel compile)?
->=20
-> Yup, we end up in a situation where inode reclaim can no longer
-> reclaim clean inodes because they have cached pages, yet page reclaim
-> doesn't keep up  in reclaiming pages because it hasn't realised they
-> are single use pages yet and hence don't get reclaimed. And
-> because the page cache preossure is relatively light, we are
-> putting a huge amount of scanning pressure put on the shrinkers.
->=20
-> The result is the shrinkers are driven into corners where they try
-> *really hard* to free objects because there's nothing left that is
-> easy to reclaim. e.g. it drives the XFS inode cache shrinker into
-> "need to clean dirty reclaimable inodes" land on workloads where the
-> working set of cached inodes should never, ever get anywhere near
-> that threshold because there are hge amounts of clean pages and
-> inodes that should have been reclaimed first.
->=20
-> IOWs, the fix to prevent inode cache reclaim from reclaiming inodes
-> with pages attached to them essentially breaks a key page cache
-> memory reclaim interlock that our systems have implicitly depended
-> on for ages.
->=20
-> And, in reality, changing fundamental memory reclaim balance is not
-> the way to fix a "dying memcg" memory leak. Trying to solve a "we've
-> got referenced memory we need to clean up" by faking memory
-> pressure and winding up shrinker based reclaim so dying memcg's are
-> reclaimed fast is, well, just insane. It's a nasty hack at best.
->=20
-> e.g. add a garbage collector via a background workqueue that sits on
-> the dying memcg calling something like:
->=20
-> void drop_slab_memcg(struct mem_cgroup *dying_memcg)
-> {
->         unsigned long freed;
->=20
->         do {
->                 struct mem_cgroup *memcg =3D NULL;
->=20
->                 freed =3D 0;
->                 memcg =3D mem_cgroup_iter(dying_memcg, NULL, NULL);
->                 do {
->                         freed +=3D shrink_slab_memcg(GFP_KERNEL, 0, memcg=
-, 0);
->                 } while ((memcg =3D mem_cgroup_iter(NULL, memcg, NULL)) !=
-=3D NULL);
->         } while (freed > 0);
-> }
->=20
-> (or whatever the NUMA aware, rate limited variant should really be)
->=20
-> so that it kills off all the slab objects accounted to the memcg
-> as quickly as possible? The memcg teardown code is full of these
-> "put it on a work queue until something goes away and calls the next
-> teardown function" operations, so it makes no sense to me to be
-> relying on system wide memory pressure to drive this reclaim faster.
->=20
-> Sure, it won't get rid of all of the dying memcgs all of the time,
-> but it's a hell of a lot better changing memory reclaim behaviour
-> and cache balance for everyone to fix what is, at it's core, a memcg
-> lifecycle problem, not a memory reclaim problem.
->=20
-> So, revert these broken, misguided commits ASAP, please.
->=20
-> -Dave.
->=20
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
+
+Regards
+Vishal Sagar
+
