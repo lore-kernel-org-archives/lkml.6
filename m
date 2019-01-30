@@ -2,155 +2,85 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8B7C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E493C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38C1F2081B
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:54:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FBF0218FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbfA3Xy3 (ORCPT
+        id S1727882AbfA3Xz0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:54:29 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:53572 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbfA3Xy2 (ORCPT
+        Wed, 30 Jan 2019 18:55:26 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48411 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfA3Xz0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:54:28 -0500
-Received: from 79.184.255.169.ipv4.supernova.orange.pl (79.184.255.169) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 46bfe9b463a924f0; Thu, 31 Jan 2019 00:54:25 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        Anson Huang <anson.huang@nxp.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 1/9] thermal: cpu_cooling: Require thermal core to be compiled in
-Date:   Thu, 31 Jan 2019 00:53:19 +0100
-Message-ID: <4397205.6VUyJNULaB@aspire.rjw.lan>
-In-Reply-To: <0d63ca44cff5f47ef0102b2c86b4fe9eca9b658b.1548737236.git.amit.kucheria@linaro.org>
-References: <cover.1548737236.git.amit.kucheria@linaro.org> <0d63ca44cff5f47ef0102b2c86b4fe9eca9b658b.1548737236.git.amit.kucheria@linaro.org>
+        Wed, 30 Jan 2019 18:55:26 -0500
+Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gozhP-0008S7-7V; Thu, 31 Jan 2019 00:55:19 +0100
+Date:   Thu, 31 Jan 2019 00:55:18 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+cc:     Sebastian Sewior <bigeasy@linutronix.de>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        Stefan Liebler <stli@linux.ibm.com>
+Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggerede
+In-Reply-To: <20190130233557.GA4240@linux.ibm.com>
+Message-ID: <alpine.DEB.2.21.1901310049440.8200@nanos.tec.linutronix.de>
+References: <20190129171653.ycl64psq2liy5o5c@linutronix.de> <20190130094913.GC5299@osiris> <alpine.DEB.2.21.1901301303320.5537@nanos.tec.linutronix.de> <20190130125955.GD5299@osiris> <20190130132420.spwrq2d4oxeydk5s@linutronix.de>
+ <alpine.DEB.2.21.1901301428390.5537@nanos.tec.linutronix.de> <alpine.DEB.2.21.1901301517220.1950@nanos.tec.linutronix.de> <alpine.DEB.2.21.1901301853290.1622@nanos.tec.linutronix.de> <20190130210733.mg6aascw2gzl3oqz@linutronix.de>
+ <alpine.DEB.2.21.1901302314590.8200@nanos.tec.linutronix.de> <20190130233557.GA4240@linux.ibm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, January 29, 2019 5:55:07 AM CET Amit Kucheria wrote:
-> The CPU cooling driver (cpu_cooling.c) allows the platform's cpufreq
-> driver to register as a cooling device and cool down the platform by
-> throttling the CPU frequency. In order to be able to auto-register a
-> cpufreq driver as a cooling device from the cpufreq core, we need access
-> to code inside cpu_cooling.c which, in turn, accesses code inside
-> thermal core.
+On Wed, 30 Jan 2019, Paul E. McKenney wrote:
+> On Thu, Jan 31, 2019 at 12:13:51AM +0100, Thomas Gleixner wrote:
+> > I might be wrong as usual, but this would definitely explain the fail very
+> > well.
 > 
-> CPU_FREQ is a bool while THERMAL is tristate.  In some configurations
-> (e.g. allmodconfig), CONFIG_THERMAL ends up as a module while
-> CONFIG_CPU_FREQ is compiled in. This leads to following error:
+> On recent versions of GCC, the fix would be to put this between the two
+> stores that need ordering:
 > 
-> drivers/cpufreq/cpufreq.o: In function `cpufreq_offline':
-> cpufreq.c:(.text+0x407c): undefined reference to `cpufreq_cooling_unregister'
-> drivers/cpufreq/cpufreq.o: In function `cpufreq_online':
-> cpufreq.c:(.text+0x70c0): undefined reference to `of_cpufreq_cooling_register'
+> 	__atomic_thread_fence(__ATOMIC_RELEASE);
 > 
-> Given that platforms using CPU_THERMAL usually want it compiled-in so it
-> is available early in boot, make CPU_THERMAL depend on THERMAL being
-> compiled-in instead of allowing it to be a module.
-> 
-> As a result of this change, get rid of the ugly (!CPU_THERMAL ||
-> THERMAL) dependency in all cpufreq drivers using CPU_THERMAL.
-> 
-> Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  drivers/cpufreq/Kconfig     | 3 ---
->  drivers/cpufreq/Kconfig.arm | 5 -----
->  drivers/thermal/Kconfig     | 1 +
->  3 files changed, 1 insertion(+), 8 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> index 608af20a3494..b22e6bba71f1 100644
-> --- a/drivers/cpufreq/Kconfig
-> +++ b/drivers/cpufreq/Kconfig
-> @@ -207,8 +207,6 @@ comment "CPU frequency scaling drivers"
->  config CPUFREQ_DT
->  	tristate "Generic DT based cpufreq driver"
->  	depends on HAVE_CLK && OF
-> -	# if CPU_THERMAL is on and THERMAL=m, CPUFREQ_DT cannot be =y:
-> -	depends on !CPU_THERMAL || THERMAL
->  	select CPUFREQ_DT_PLATDEV
->  	select PM_OPP
->  	help
-> @@ -327,7 +325,6 @@ endif
->  config QORIQ_CPUFREQ
->  	tristate "CPU frequency scaling driver for Freescale QorIQ SoCs"
->  	depends on OF && COMMON_CLK && (PPC_E500MC || ARM || ARM64)
-> -	depends on !CPU_THERMAL || THERMAL
->  	select CLK_QORIQ
->  	help
->  	  This adds the CPUFreq driver support for Freescale QorIQ SoCs
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 688f10227793..ca8567c3152c 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -29,8 +29,6 @@ config ARM_ARMADA_37XX_CPUFREQ
->  config ARM_BIG_LITTLE_CPUFREQ
->  	tristate "Generic ARM big LITTLE CPUfreq driver"
->  	depends on ARM_CPU_TOPOLOGY && HAVE_CLK
-> -	# if CPU_THERMAL is on and THERMAL=m, ARM_BIT_LITTLE_CPUFREQ cannot be =y
-> -	depends on !CPU_THERMAL || THERMAL
->  	select PM_OPP
->  	help
->  	  This enables the Generic CPUfreq driver for ARM big.LITTLE platforms.
-> @@ -38,7 +36,6 @@ config ARM_BIG_LITTLE_CPUFREQ
->  config ARM_SCPI_CPUFREQ
->  	tristate "SCPI based CPUfreq driver"
->  	depends on ARM_SCPI_PROTOCOL && COMMON_CLK_SCPI
-> -	depends on !CPU_THERMAL || THERMAL
->  	help
->  	  This adds the CPUfreq driver support for ARM platforms using SCPI
->  	  protocol for CPU power management.
-> @@ -93,7 +90,6 @@ config ARM_KIRKWOOD_CPUFREQ
->  config ARM_MEDIATEK_CPUFREQ
->  	tristate "CPU Frequency scaling support for MediaTek SoCs"
->  	depends on ARCH_MEDIATEK && REGULATOR
-> -	depends on !CPU_THERMAL || THERMAL
->  	select PM_OPP
->  	help
->  	  This adds the CPUFreq driver support for MediaTek SoCs.
-> @@ -233,7 +229,6 @@ config ARM_SA1110_CPUFREQ
->  config ARM_SCMI_CPUFREQ
->  	tristate "SCMI based CPUfreq driver"
->  	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-> -	depends on !CPU_THERMAL || THERMAL
->  	select PM_OPP
->  	help
->  	  This adds the CPUfreq driver support for ARM platforms using SCMI
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index 30323426902e..58bb7d72dc2b 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -152,6 +152,7 @@ config CPU_THERMAL
->  	bool "generic cpu cooling support"
->  	depends on CPU_FREQ
->  	depends on THERMAL_OF
-> +	depends on THERMAL=y
->  	help
->  	  This implements the generic cpu cooling mechanism through frequency
->  	  reduction. An ACPI version of this already exists
-> 
+> I must defer to Heiko on whether s390 GCC might tear the stores.  My
+> guess is "probably not".  ;-)
 
-Applied, thanks!
+So I just checked the latest glibc code. It has:
 
+            /* We must not enqueue the mutex before we have acquired it.
+               Also see comments at ENQUEUE_MUTEX.  */
+            __asm ("" ::: "memory");
+            ENQUEUE_MUTEX_PI (mutex);
+            /* We need to clear op_pending after we enqueue the mutex.  */
+            __asm ("" ::: "memory");
+            THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending, NULL);
 
+8f9450a0b7a9 ("Add compiler barriers around modifications of the robust mutex list.")
+
+in the glibc repository, There since Dec 24 2016 ...
+
+So the question is whether this is sufficient. That ordering only only
+matters vs. the thread itself and not for others.
+
+Thanks,
+
+	tglx
