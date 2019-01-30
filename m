@@ -2,113 +2,84 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983AFC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD34C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D53C21473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:58:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C59792084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:59:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NSgHBoYU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732309AbfA3Q6H (ORCPT
+        id S1732326AbfA3Q7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:58:07 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57928 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732159AbfA3Q6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:58:07 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81B4880D;
-        Wed, 30 Jan 2019 08:58:06 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 064D33F589;
-        Wed, 30 Jan 2019 08:58:04 -0800 (PST)
-Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
- in unsafe region
-To:     Julien Thierry <julien.thierry@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, james.morse@arm.com, hpa@zytor.com
-References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
- <1547560709-56207-4-git-send-email-julien.thierry@arm.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <9ba3c7a7-80a8-da29-ffb7-3841ea8548b5@arm.com>
-Date:   Wed, 30 Jan 2019 16:58:03 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 30 Jan 2019 11:59:08 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:51720 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729755AbfA3Q7I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:59:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=biPdfHCjkM8Wb7MrNHX+rn/6pn6KlfFdOtgZDYIiBU4=; b=NSgHBoYULMwH7UEPluJGlY13+
+        uABm1YRoRrpiBz3IRpjYqdje/RHWvFp03vs5CtOOd0yDGOyvuVyOTc6CGL2mqQQdkuLLR33sqTeSC
+        noKno4MNgWPBiP89+gwSC+5V8X7Qz4znF58UFIZlyT7/Ar73jI+2SPFLuBuHE3qDJkEfKFVMqyX8u
+        FZshosbi6KfDGOq4zhCdSZ8yzK8OMfelV7AkzbX41dgEhgA/QpATB5IagpMudnmhbI0swMINsjD1J
+        rsT5//uBMVGEAGAg0iCLU1ZRf2TtFV4ma+b4A1Gp19Kju6L8JO4DHlWxk8d/KDCuQpFGCYuDOLhDQ
+        BzM/T6+6A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gotCY-0004sg-6R; Wed, 30 Jan 2019 16:59:02 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0F23921408DC2; Wed, 30 Jan 2019 17:58:59 +0100 (CET)
+Date:   Wed, 30 Jan 2019 17:58:59 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Sargun Dhillon <sargun@sargun.me>
+Subject: Re: [PATCH v2] sched/fair: Fix insertion in rq->leaf_cfs_rq_list
+Message-ID: <20190130165859.GE2296@hirez.programming.kicks-ass.net>
+References: <1548782332-18591-1-git-send-email-vincent.guittot@linaro.org>
+ <1548825767-10799-1-git-send-email-vincent.guittot@linaro.org>
+ <20190130130410.GG2278@hirez.programming.kicks-ass.net>
+ <20190130130620.GB3103@hirez.programming.kicks-ass.net>
+ <20190130132717.GC3103@hirez.programming.kicks-ass.net>
+ <CAKfTPtBhOomgYONsdfaaVgZCENM+QhfPie2qpu0KyOsvMiog_g@mail.gmail.com>
+ <20190130134023.GA2296@hirez.programming.kicks-ass.net>
+ <CAKfTPtC1vRrvSH=JdQjOfeh809gRiwKGE7373zaF9jT862C1+g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1547560709-56207-4-git-send-email-julien.thierry@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtC1vRrvSH=JdQjOfeh809gRiwKGE7373zaF9jT862C1+g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/01/2019 13:58, Julien Thierry wrote:
-[...]> @@ -6151,6 +6159,20 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
->  EXPORT_SYMBOL(___might_sleep);
->  #endif
+On Wed, Jan 30, 2019 at 04:48:47PM +0100, Vincent Guittot wrote:
+> On Wed, 30 Jan 2019 at 14:40, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
 > 
-> +#ifdef CONFIG_DEBUG_UACCESS_SLEEP
-> +void __might_resched(const char *file, int line)
-> +{
-> +	if (!unsafe_user_region_active())
-> +		return;
-> +
-> +	printk(KERN_ERR
-> +		"BUG: rescheduling function called from user access context at %s:%d\n",
-> +			file, line);
-> +	dump_stack();
-
-Since I've been staring intensely at ___might_sleep() lately, I was thinking
-we could "copy" it a bit more closely (sorry for going back on what I said
-earlier).
-
-Coming back to the double warnings (__might_resched() + schedule_debug()),
-it might be better to drop the schedule_debug() warning and just have the
-one in __might_resched() - if something goes wrong, there'll already be a
-"BUG" in the log.
-
-> +}
-> +EXPORT_SYMBOL(__might_resched);
-> +#endif
-> +
->  #ifdef CONFIG_MAGIC_SYSRQ
->  void normalize_rt_tasks(void)
->  {
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index d4df5b2..d030e31 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -2069,6 +2069,14 @@ config IO_STRICT_DEVMEM
+> >
+> >  static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+> > @@ -352,7 +354,12 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+> >         }
+> >  }
+> >
+> > -/* Iterate through all leaf cfs_rq's on a runqueue: */
+> > +static inline void assert_list_leaf_cfs_rq(struct rq *rq)
+> > +{
+> > +       SCHED_WARN_ON(rq->tmp_alone_branch != &rq->lead_cfs_rq_list);
 > 
->  	  If in doubt, say Y.
-> 
-> +config DEBUG_UACCESS_SLEEP
-> +	bool "Check sleep inside a user access region"
-> +	depends on DEBUG_KERNEL
-> +	help
-> +	  If you say Y here, various routines which may sleep will become very
-> +	  noisy if they are called inside a user access region (i.e. between
-> +	  a user_access_begin() and a user_access_end())
+> small typo : s/lead_cfs_rq_list/leaf_cfs_rq_list/
 
-If it does get noisy, we should go for some ratelimiting - it's probably
-good practice even if it is not noisy actually.
-
-___might_sleep() has this:
-
-  if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
-  	return;
-  prev_jiffy = jiffies;
-
-> +
->  source "arch/$(SRCARCH)/Kconfig.debug"
-> 
->  endmenu # Kernel hacking
-> --
-> 1.9.1
-> 
+D'0h, thanks!
