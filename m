@@ -2,144 +2,107 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D60C282CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE8BC282CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BF1E20820
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:22:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="nbq9QAUJ"
+	by mail.kernel.org (Postfix) with ESMTP id 7B36520857
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:29:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730101AbfA3EWV (ORCPT
+        id S1730003AbfA3E3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 23:22:21 -0500
-Received: from nat-hk.nvidia.com ([203.18.50.4]:63856 "EHLO nat-hk.nvidia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbfA3EWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 23:22:20 -0500
-Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.77]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5126780000>; Wed, 30 Jan 2019 12:22:16 +0800
-Received: from HKMAIL104.nvidia.com ([10.18.16.13])
-  by hkpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 29 Jan 2019 20:22:15 -0800
-X-PGP-Universal: processed;
-        by hkpgpgate102.nvidia.com on Tue, 29 Jan 2019 20:22:15 -0800
-Received: from HKMAIL101.nvidia.com (10.18.16.10) by HKMAIL104.nvidia.com
- (10.18.16.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Jan
- 2019 04:22:14 +0000
-Received: from NAM04-BN3-obe.outbound.protection.outlook.com (104.47.46.52) by
- HKMAIL101.nvidia.com (10.18.16.10) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Wed, 30 Jan 2019 04:22:14 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
- BYAPR12MB3127.namprd12.prod.outlook.com (20.178.54.220) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Wed, 30 Jan 2019 04:22:10 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 04:22:10 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        "Shardar Mohammed" <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: RE: [PATCH V5 3/5] i2c: tegra: Add DMA Support
-Thread-Topic: [PATCH V5 3/5] i2c: tegra: Add DMA Support
-Thread-Index: AQHUuCjcFQq4Ugnr9EajTUu9v/+Er6XHCbsAgAACEcCAABenIIAAEeJA
-Date:   Wed, 30 Jan 2019 04:22:10 +0000
-Message-ID: <BYAPR12MB3398502D8F00D4F7BFF25D27C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1548803771-13424-1-git-send-email-skomatineni@nvidia.com>
-        <1548803771-13424-3-git-send-email-skomatineni@nvidia.com>
- <20190130044214.65991195@dimatab>
- <BYAPR12MB339850895826781B4E6AF028C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
- <BYAPR12MB339812A2E876B76E95828EA1C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
-In-Reply-To: <BYAPR12MB339812A2E876B76E95828EA1C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [24.176.232.13]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB3127;6:GzxhGurT+fZtockNM+CvPWRrC1A1bnz7TeO4XBXNKzroDOW5Dl53+BVk8MGoWQL3MfNGujomVap57UgyRsjfor0C+xXUZCTcS38e0nVA0dOMSouAMzk7CJzFI5jWITR0THx7Y1d4icnVopgNIyp8e++KNNC5b2auVxtWLMmEYbJYQHuxb5oSFF7LVn9SzPwh2Q/7QeiLIvsg8OdR2G/DQ97lrfINirHh6PGoG6bhfv1YfyNDxyLDyVKTYFju1UTOLUs3gX8reJpPS5U3A7eXTnyT0QQyQ9sf+2eeh7lO5hgwjS+mQ326zLUc/iSmoKc6maTRZkWLUNRmHiC5lTGVkzTGBV1aLhrMcKr9OoMo7ig12xaIsBrJhjgQXlF0o4QIYNMmvsqHNcWXGIntLCsnUDmXCSlrDgoHKqaBULQv1cqvoRx0om1BtdHeY67Hwkp4RAxLSfED+vLgzGVYWeY+bw==;5:LglH/mXKvflJCmhYSw2iQY5rdaQDD2wZjHCCkwAgU8knoxRK7zvjBXzdfVysNGct/xs3BBhPFdyMVq4ixSlvSYFGXjDCwTc5qBTbuXYCZmGgpdqDUzEbVl/it9Q13l881YxKnjhV8zQnrh1Hf0qM6hCXNmLZxXGUSaWT3BT1hsOjlWe4GpoXUUk24hsdkcRs7x+XgobAsRqigAHneprZFg==;7:NW5TbTPdkvJqqq2m5/29uOtiHevwun4zyP+ooI3UTEffb8E01aUi5gzoc0QCmxAboPgiCfM5IHMzN9MvzFrtBJtH0j5jCEDlJMMoy9Depq4S1f9SIpgCDLunKKhvH6xxV33p0RxUttkkqsUng1oWAA==
-x-ms-office365-filtering-correlation-id: 445c40b8-e581-4552-5677-08d6866a8109
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3127;
-x-ms-traffictypediagnostic: BYAPR12MB3127:
-x-microsoft-antispam-prvs: <BYAPR12MB312752F1674962E3416ECDABC2900@BYAPR12MB3127.namprd12.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(396003)(376002)(366004)(25584004)(199004)(189003)(26005)(97736004)(71190400001)(102836004)(4326008)(6506007)(8936002)(229853002)(71200400001)(8676002)(478600001)(81166006)(81156014)(1411001)(2940100002)(6246003)(6436002)(25786009)(66066001)(99286004)(3846002)(305945005)(966005)(7736002)(6116002)(93156006)(7696005)(53936002)(74316002)(6306002)(68736007)(33656002)(55016002)(256004)(76176011)(86362001)(14444005)(446003)(11346002)(316002)(106356001)(105586002)(54906003)(9686003)(39060400002)(186003)(486006)(93886005)(6916009)(14454004)(2906002)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3127;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: rQ7YaH+jbuu7I4flyP7vzxZbd1uay/n6536EFoiumU9HcEw8tcM9EPTtFsMxYWhCLz1W9Qd+SsQLvZiS7tbLbt3laQP4YJoBef4s7IFnAlUOCiURabuASYpuMKYSbw9N2empMW+6GpbeM/QFpb0FAZ7ZYeltn5C3F4ipXjlrP0yylMDOfGUkwj9DotlTwyOLei6HrBze3zg8Boggq7mShQoM1pOLRLD3k5PbpRVvtokHvPOcFTD+YXXDvrcZYAmWzOTzb9/v2mVtpYa9uaLH3Sxo65OyDhFF5V2bRWubgkV+q/YbrK1+jMhcoxnJHnOmugwbJv4MjkIxw23H+NMB+FqUiaC0HWCNfE1R6ktroAigKxViU5+VkHXSk6diK5NgrI9qSxbWDe6GtBBp0ISuN19xb6y8bfXdWCFs+39MGuU=
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 445c40b8-e581-4552-5677-08d6866a8109
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 04:22:10.7070
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3127
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548822136; bh=5CU3z6Q4OP8TfynzFWFXdu+wI50Ks2RIMONxzkP/z6w=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=nbq9QAUJq1tDFBd41pjCaTAICZRR5mtR2YaEgDxFAu3FrZL1U5duwasnOhDBX75iU
-         /tn/jz8hHrEw4kgikpPP4Lh0DAk+uOMxMs86dcZTh79uMGl8t4PbmPjSKHojvR/cr8
-         7KXiNLH4sCPybxico3It2QEOVVVksr1yHhCe+dEJR5PgR/wABPZP8IC+uuGc+Gfc3/
-         7KuPrM8r3HNJ+9BoiR3RKrO0YhhTL9zKYWDboJLeMSBgSuEUzDcIBgND8qiU3uujVD
-         qCULkY0HpZg7buIUrZ2+Ig8G5Etw2D6nrQGLI/xuHxPA0jVTS1AOrmtKMlhzQz/7Cm
-         vUkX28ESm+6vA==
+        Tue, 29 Jan 2019 23:29:44 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:33840 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727720AbfA3E3n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 23:29:43 -0500
+Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x0U4TfSi018256
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:29:41 -0500
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x0U4TaOi020181
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:29:41 -0500
+Received: by mail-qk1-f199.google.com with SMTP id d196so24175255qkb.6
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 20:29:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:subject:in-reply-to:references
+         :mime-version:date:message-id;
+        bh=Jps3n6PSXK0yCZsJRdQHZLGg22Bqo8S7sPKjWDkfAz4=;
+        b=FXooBP8mtSjn20p/KD+CyCVuXrxYixib5XolsYCqIa13ALou/7G1IyDsOnPOhH8YeY
+         Pp0dz/Y1rovssY1K33gysAeOCJtarqNX7oIhWFb4HkERRQPA3++PJsdXZuDF0kkkklbB
+         iX6iZtdVm+FWmkuRBNpeBkZXrGekCztOnwGK9wfUoy0YrjEVBotqMh+ZGEpfPTHdejVI
+         ptrC3p3//THixnSxr9xD9bhk42Q40iAoIOhpxSHTkihNcmCbKDnNdyYu1N/TfDSJ8WTM
+         d1dPrBlR+5bfIzd7tf0Xd+IVsHgXE3Ww4n3OIdaU6WOyPi03f2x54+yO4tu4kqGuRBXH
+         usWQ==
+X-Gm-Message-State: AJcUukdDuriLSNP3yMAuEIago+LcJBfGeSiP0IzXTWHOOE58ccKJ1335
+        2RCBKa/BRFon+FLEm9qmomwTsTEjgkipOLkZxBkPiMT8UPtRirY4Wu4n0Wa9cUlX42eiqN1xGNd
+        B55siDXHUHkqxyWB8NpPpUsFfvHOApDSl3F0=
+X-Received: by 2002:a0c:d792:: with SMTP id z18mr27386596qvi.183.1548822576678;
+        Tue, 29 Jan 2019 20:29:36 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN6Ls3B/Q0dYC+qBSN2wwftQIyMZe8ugyJfnO6f/dYNG10pWcCgq2W/i9IS0ZpUTHzYQCv1oXw==
+X-Received: by 2002:a0c:d792:: with SMTP id z18mr27386577qvi.183.1548822576322;
+        Tue, 29 Jan 2019 20:29:36 -0800 (PST)
+Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4341::936])
+        by smtp.gmail.com with ESMTPSA id 128sm245158qkn.77.2019.01.29.20.29.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 20:29:35 -0800 (PST)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Jan Kara <jack@suse.cz>, Pavel Machek <pavel@ucw.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@osdl.org>, vbabka@suse.cz,
+        aarcange@redhat.com, rientjes@google.com, mhocko@kernel.org,
+        zi.yan@cs.rutgers.edu, hannes@cmpxchg.org
+Subject: Re: [regression -next0117] What is kcompactd and why is he eating 100% of my cpu?
+In-reply-to: <14875.1548810399@turing-police.cc.vt.edu>
+References: <20190126200005.GB27513@amd> <12171.1548557813@turing-police.cc.vt.edu> <20190127141556.GB9565@techsingularity.net> <20190127160027.GA9340@amd> <13417.1548624994@turing-police.cc.vt.edu> <20190128091627.GA27972@quack2.suse.cz>
+ <14875.1548810399@turing-police.cc.vt.edu>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Date:   Tue, 29 Jan 2019 23:29:37 -0500
+Message-ID: <9618.1548822577@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-W0NvcnJlY3Rpb25dDQoNCj4gPiBDb3VsZCB5b3UgcGxlYXNlIHRlbGwgd2hldGhlciB5b3UgbWlz
-c2VkIG15IGNvbW1lbnRzIHRvIFYzIFswXSBvciBjaG9zZSB0byBpZ25vcmUgdGhlbT8gSWYgdGhl
-IGZvcm1lciwgdGhlbiBJJ2Qgd2FudCB0byBnZXQgYW5zd2VycyB0byB0aG9zZSBxdWVzdGlvbnMg
-YW5kIGNvbW1lbnRzLiBJJ2xsIHN0b3AgaGVyZSBmb3Igbm93Lg0KPiA+IA0KPiA+IFswXSBodHRw
-czovL3BhdGNod29yay5vemxhYnMub3JnL3BhdGNoLzEwMzEzNzkvDQo+DQo+IFNvbWVob3cgbWlz
-c2VkIHRob3NlIGZyb20gbXVsdGlwbGUgY29tbWVudHMuIFdpbGwgZ28gdGhydSBhbmQgcmVzcG9u
-ZCBiYWNrLg0KDQpWNiBpbmNsdWRlcyBmZWVkYmFjayBjaGFuZ2VzLiBXYW50IHRvIGNsYXJpZnkg
-b24gZmV3IGZlZWRiYWNrIHBvaW50cw0KDQotIEFMSUdOIGlzIHVzZWQgZm9yIDQgYnl0ZSBib3Vu
-ZGFyeSB0byB1c2Ugd2l0aCBETUEgYnV0IGV4dHJhIGJ5dGVzIGRvZXNu4oCZdCBnZXQgdHJhbnNm
-ZXJyZWQgb3ZlciBJMkMgYXMgSTJDIGNvbnRyb2xsZXIgdHJhbnNmZXIgYnl0ZXMgYmFzZWQgb24g
-c2l6ZSBzcGVjaWZpZWQgaW4gdGhlIHBhY2tldCBoZWFkZXIuDQogIERNQSBsZW5ndGggYW5kIG1l
-bW9yeSBhZGRyZXNzIG5lZWQgdG8gYmUgNCBieXRlIGJvdW5kYXJ5Lg0KDQotIFJYIGNoYW5uZWwg
-cmVsZWFzaW5nIHdoZW4gVFggaW5pdCBmYWlscz8NCiAgRm9yIEkyQyBib3RoIFRYIGFuZCBSWCBk
-b2VzbuKAmXQgaGFwcGVuIGluIHNhbWUgdHJhbnNhY3Rpb24gYW5kIG5vIGRlcGVuZGVuY3kuIA0K
-U28gaWYgUlggY2hhbm5lbCByZXF1ZXN0ICYgYnVmZmVyIGFsbG9jYXRpb24gc3VjY2VlZHMgYnV0
-IFRYIGNoYW5uZWwgcmVxdWVzdCBmYWlscywgdGhlbiBSWCBETUEgY2FuIHN0aWxsIGJlIHVzZWQg
-Zm9yIE1zZyByZWFkcyBhbmQgdHJhbnNtaXRzIGNhbiBoYXBwZW4gb24gUElPIG1vZGUNCg0KLSBk
-bWFfYnVyc3QgPCA4IG5lZ2F0aXZlbHkgYWZmZWN0cyB0cmFuc2ZlciBlZmZpY2llbmN5PyBQZXJm
-b3JtYW5jZSBzdGF0cyBmb3IgRE1BIFZzIFBJTyBtb2RlLg0KVGVzdGVkIHdpdGggMjU2IGJ5dGVz
-IG9mIHRyYW5zZmVyIGFuZCBETUEgVnMgUElPIG1vZGUgdHJhbnNmZXIgcmF0ZSBpcyBhbG1vc3Qg
-c2FtZS4NCkJ1dCB0aGUgbWFpbiByZWFzb24gZm9yIGFkZGluZyBETUEgbW9kZSBpcyB0byBhZGRy
-ZXNzIGNvdXBsZSBvZiBjYXNlcyBtZW50aW9uZWQgZWFybGllciBhbmQgbm90IG1haW5seSBmcm9t
-IHRoZSB0cmFuc2ZlciBwZXJmb3JtYW5jZSBwZXJzcGVjdGl2ZS4gDQoNCg0K
+On Tue, 29 Jan 2019 20:06:39 -0500, valdis.kletnieks@vt.edu said:
+> On Mon, 28 Jan 2019 10:16:27 +0100, Jan Kara said:
+>
+> > So my buffer_migrate_page_norefs() is certainly buggy in its current
+> > incarnation (as a result block device page cache is not migratable at all).
+> > I've sent Andrew a patch over week ago but so far it got ignored. The patch
+> > is attached, can you give it a try whether it changes something for you?
+> > Thanks!
+>
+> Been running with the patch for about 24 hours, haven't seen kcompactd
+> misbehave.  I even fired up a Chrome with a lot of tabs open, a Firefox, and a
+> kernel build, intentionally drove the system into swapping, and kcompactd
+> didn't make it into the top 10 on 'top'.
+>
+> I'm willing to say put a "tested-by:" on that one,  it looks fixed from here.
+> If there's any remaining bugs, they're ones I can't seem to trigger...
+
+Spoke too soon.  Sitting here not stressing the laptop at all, plenty of free
+memory, and ka-blam.
+
+Will keep my eyes open and do the data gathering Mel Gorban wanted - I discovered
+too late that trace-cmd wasn't installed, and things broke free by themselves (probably
+not coincidence that I launched a terminal window and then it cleared....)
+
+top - 23:24:03 up  2:19,  1 user,  load average: 2.70, 2.00, 1.55
+Tasks: 221 total,   3 running, 218 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.6 us, 67.3 sy,  0.0 ni,  9.5 id,  0.0 wa,  5.6 hi,  2.0 si,  0.0 st
+GiB Mem :      7.6 total,      2.7 free,      3.1 used,      1.8 buff/cache
+GiB Swap:      8.0 total,      8.0 free,      0.0 used.      4.1 avail Mem 
+
+  PID  PPID  %MEM  PR  NI S    VIRT    RES    SHR   SWAP   UID  %CPU     TIME+ COMMAND                                 
+   27     2   0.0  20   0 R    0.0m   0.0m   0.0m   0.0m     0  78.5   2:11.91 kcompactd0
+
