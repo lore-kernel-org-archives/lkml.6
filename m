@@ -2,99 +2,294 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 627AEC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 323EDC282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C74D20855
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548868873;
-	bh=RQtcdk/R8L4tDjBvAw5e5DwzsQUK3bOrQIKxSFHlHu8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=RDxiuAEu49aKJOHrMgqpCouiPTV7y5AHkJZKTkZkGQg0DZwHF6oGgL/UUgTdFmiBU
-	 QTO4aEyhNogBeAh9l8RR+CWbgmIBNuoNQ3zc1VrT6YLWtuiZVt/DaaslNxg2cNDqtX
-	 W3b1oKhwmzh+hkQxRxPsSa0aDHOW8Vq6QBvM7ako=
+	by mail.kernel.org (Postfix) with ESMTP id 73B7020855
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:22:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="DL55WQFz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732452AbfA3RVL (ORCPT
+        id S1732495AbfA3RWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:21:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50652 "EHLO mail.kernel.org"
+        Wed, 30 Jan 2019 12:22:23 -0500
+Received: from cock.li ([185.100.85.212]:33920 "EHLO cock.li"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbfA3RVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:21:11 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0761F20855;
-        Wed, 30 Jan 2019 17:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548868870;
-        bh=RQtcdk/R8L4tDjBvAw5e5DwzsQUK3bOrQIKxSFHlHu8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PMTX5C9QwHmQCdUbNV1tS5hkrkyl2TLbnUCvHPaqWu1H8n3ljG4z399fsxhxTKEee
-         rXc+shwkMegZqMajh6yneZf6LR48ne6E0Dy8MgblH1OtaYWb7A0+EGpGnJ+sSSrhel
-         b28LO+l/5kAj77HWehuXmCGELXTgwyT8oDWx1rAc=
-Date:   Wed, 30 Jan 2019 18:21:00 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     <Tudor.Ambarus@microchip.com>
-Cc:     <broonie@kernel.org>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH 5/9] spi: atmel-quadspi: return appropriate error code
-Message-ID: <20190130182100.3429fa36@bbrezillon>
-In-Reply-To: <20190130150818.24902-6-tudor.ambarus@microchip.com>
-References: <20190130150818.24902-1-tudor.ambarus@microchip.com>
-        <20190130150818.24902-6-tudor.ambarus@microchip.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1732386AbfA3RWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:22:23 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1548868936; bh=r2Tqf9NtMA/Z6w9s8JLhxFn2GEfjst0KJMrSojyppm4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=DL55WQFzVBVKf86HPrOPlF0KZc9Up2GhN6eEFdCOumtWCf4v6RlpEWZArG0YPU7Iy
+         stWs9xLZsea1v+xXpl/3QPLYa1HN25uNUo3Rax5ve0jTvcPttUiPaj07cWGYgCHjia
+         Cza+aydhrkpgJB0IfRwFzr+mmx/19VaRJSu+LCPyigtU1Z5Lky7fnLlX4y5KQvKL9Y
+         OyB8RUR1bYGBgJBeW+yF5jijsoH2vlNlJAJgufQbKyRVNubG3pYEm0UFPCBmVkzlaw
+         W9XQnvWaKNcKCaIs4fcMbsgwUmferX4Q1Z1ittiIPJIqhTwudsE1xVdDft4/d8Mh9y
+         mtKdmotENS4eA==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Wed, 30 Jan 2019 17:22:16 +0000
+From:   mikeeusa@redchan.it
+To:     copyright@github.com
+Cc:     legal@github.com, legal@microsoft.com, copyright@microsoft.com,
+        linux-kernel@vger.kernel.org, misc@openbsd.org,
+        gentoo-user@lists.gentoo.org, freebsd-chat@freebsd.org
+Subject: DMCA take-down request to GitHub regarding: GPC-Slots2 (after GPL
+ Revocation from "John Doe")
+Message-ID: <e9acdc7b7fdcfe9350ba165800e86a05@redchan.it>
+X-Sender: mikeeusa@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019 15:08:38 +0000
-<Tudor.Ambarus@microchip.com> wrote:
+I have a good faith belief that use of the copyrighted materials 
+described above on the infringing web pages is not authorized by the 
+copyright owner, or its agent, or the law. I have taken fair use into 
+consideration.
 
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
-> 
-> Return -ENOTSUPP when atmel_qspi_find_mode() fails. Propagate
-> the error in atmel_qspi_exec_op().
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+I swear, under penalty of perjury, that the information in this 
+notification is accurate and that I am the copyright owner, or am 
+authorized to act on behalf of the owner, of an exclusive right that is 
+allegedly infringed.
+:
 
-Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
 
-> ---
->  drivers/spi/atmel-quadspi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+As you may know, In the United States; a license, absent an attached 
+interest, is revocable.
+
+A "John Doe" had his non-exclusive license regarding the game 
+"GPC-Slots2" terminated by the copyright owner (me: MikeeUSA).
+The copyright owner may do this as-of-right, unless there is an attached 
+interest (ie: unless the licensee paid good consideration for the 
+license).
+
+The "John Doe" then proceeded to belligerently upload a copy of 
+"GPC-Slots2" to your host, GitHub.
+This violated Author's (my) copyright, since "John Doe"'s gratuitous 
+bare license had been terminated by the copyright holder (me).
+
+The "John Doe" then proceeded to modify my work, which again violated my 
+copyright since I had previously revoked his license.
+The license flows from me, the copyright owner, not any text. It is 
+permission to use, redistribute, modify, etc. Instructions on how to use 
+my property.
+When such permission is not supported by any consideration, it may be 
+rescinded by the owner, at his will.
+(/Regardless/ of the "terms". "Terms" are only enforceable against the 
+grantor if the licensee has paid consideration for them, essentially, 
+under US law.)
+
+I have done so.
+
+I reiterated to the "John Doe" that his license had been terminated.
+
+"John Doe" then informed me that I "can't do that". I tried to explain 
+to him US law.
+"John Doe" declared that he did not care and would keep the violating 
+work up, in defiance of me.
+(IE: he would "pirate" it)
+
+He then cited works from a discredited paralegal while I cited published 
+works by lawyers studied in their field.
+
+(Note: I make no claim to PERL, the color ansi library, any supporting 
+libraries, or the -2 split screen function. My copyright covers the game 
+code of GPC-Slots2. I (MikeeUSA) am the original author of the work and 
+never signed over copyright to the work.)
+(Note: "obeying the terms" (obeying the copyright holders instructions 
+regarding the use of his property) is not consideration: it is a 
+preexisting legal duty: outside of the "terms" there is no right for the 
+licensee to copy, modify, make derivative works, distribute, distribute 
+derivative works)
+
+[Additionally "John Doe" registered a fraudulent account under my 
+long-held non-de-gurre, adding a Code of Conduct ("CoC"), something I 
+would never do (being opposed to "CoC" for gratis projects on 
+principal)]
+
+I now have no choice but to issue a DMCA take-down request, to you, 
+GitHub.
+
+Regrettably;
+--MikeeUSA--
+(electronic signature)
+Jan 29, 2019
+
+Contact information:
+email: mikeeusa@redchan.it
+
+infringing content: github.com/MikeeUSA/GPC-Slots-2
+The material is not authorized by me, the copyright owner of the 
+GPC-Slots2 game code, as I explicitly rescinded the license from the 
+"John Doe", and he acknowledged that I had informed him of such and 
+communicated that he would defy my will regarding my property and 
+copyright.
+Everything stated within this above communication is accurate to the 
+best of my knowledge and ability.
+
+Some notices to you, github:
+1) Yes I viewed your page at: 
+https://help.github.com/articles/guide-to-submitting-a-dmca-takedown-notice/
+2) Yes this is "opensource" code.
+3) No that does not matter:
+The GPL(any version), being a bare license, is revocable 
+("retroactively").
+Just as any bare license, not supported by an interest, in the US.
+The "John Doe" is not in privity of contract with me and has paid me no 
+consideration.
+He cannot "bind" me (the grantor) to the terms.
+It is his duty to abide by my instructions regarding my property.
+I did not transfer my property away, the license is just that: a license 
+(temporary permission, that can be rescinded unless a "term" was indeed 
+"purchased")
+It is also his duty to cease all use, modification, distribution of my 
+property at my demand.
+I have made such a demand.
+4) Yes I will consider taking legal action against you if you do not 
+heed my request.
+Cite the paralegal from groklaw, ZDnet, the FSF, and the SFConservancy 
+all you want.
+They are wrong on the law and have been wrong for 10 years.
+
+-----
+
+The conversation with the "John Doe" can be found here: 
+8ch.net/tech/res/1018729.html#1024398
+
+Some excerpts:
+
+ From me to "John Doe":
+> >>1024390
 > 
-> diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-> index 3643f0c851b0..e6de6e3d1345 100644
-> --- a/drivers/spi/atmel-quadspi.c
-> +++ b/drivers/spi/atmel-quadspi.c
-> @@ -208,7 +208,7 @@ static int atmel_qspi_find_mode(const struct spi_mem_op *op)
->  		if (atmel_qspi_is_compatible(op, &sama5d2_qspi_modes[i]))
->  			return i;
->  
-> -	return -1;
-> +	return -ENOTSUPP;
->  }
->  
->  static bool atmel_qspi_supports_op(struct spi_mem *mem,
-> @@ -239,7 +239,7 @@ static int atmel_qspi_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
->  
->  	mode = atmel_qspi_find_mode(op);
->  	if (mode < 0)
-> -		return -ENOTSUPP;
-> +		return mode;
->  
->  	ifr |= sama5d2_qspi_modes[mode].config;
->  
+> 1) I rescind your permission to modify, make derivative works, 
+> distribute the program. The GPL license you "have" been granted from 
+> me, is revoked.
+> 
+> 2) you are impersonating me.
+
+
+
+> >>1024400
+> I rescind the license from you.
+> I am going to sue you if I find out who you are.
+
+----
+
+ From "John Doe"
+> >Your license was rescinded by author.
+> You can't :^)
+> I'm not taking it down.
+
+
+> >>1024597
+> >HOW MUCH DID YOU FUCKING PAY ME?
+> Nothing. Thank God for that.
+> 
+> >ARE WE IN A CONTRACT?
+> No.
+> 
+> >IT IS A BARE LICENSE.
+> Is this lawyer speak? I'm not a lawyer, sorry.
+> 
+> >I CAN RESCIND IT AT ANY TIME.
+> wrong
+> 
+> >THE CODE IS NOT YOUR PROPERTY. IT IS _MY_ PROPERTY.
+> It is your intellectual property that you have licensed to me under the 
+> GPLv2+.
+> 
+> >I ALLOWED YOU A LICENSE TO USE IT.
+> correct
+> 
+> >I HAVE NOW REVOKED THAT LICENSE FROM YOU YOU [...].
+> no
+> 
+> >Show me a case otherwise.
+> why???????????
+> 
+> >Gratis licenses, without an attached interest, are revocable.
+> sorry m8. you are wrong
+
+
+
+
+-----
+
+Remeber: A license, absent an interest, is revocable in the US.
+
+-----
+Some study materials:
+(From: Open Source Licensing - Sofware Freedom and Intellectual 
+property):
+
+> p46  "As long as the project continues to honor the terms of the 
+> licenses under which it received contributions, the licenses continue 
+> in effect. There is one important caveat: Even a perpetual license can 
+> be revoked.   See the discussion of bare licenses and contracts in 
+> Chapter 4"
+--Lawrence Rosen
+
+> p56  "A third problem with bare licenses is that they may be revocable 
+> by the licensor. Specifically, /a license not coupled with an interest 
+> may be revoked./ The term /interest/ in this context usually means the 
+> payment of some royalty or license fee, but there are other more 
+> complicated ways to satisfy the interest requirement. For example, a 
+> licensee can demonstrate that he or she has paid some consideration-a 
+> contract law term not found in copyright or patent law-in order to 
+> avoid revocation. Or a licensee may claim that he or she relied on the 
+> software licensed under an open source license and now is dependent 
+> upon that software, but this contract law concept, called promissory 
+> estoppel, is both difficult to prove and unreliable in court tests. 
+> (The concepts of /consideration/ and /promissory estoppel/ are 
+> explained more fully in the next section.) Unless the courts allow us 
+> to apply these contract law principles to a license, we are faced with 
+> a bare license that is revocable.
+--Lawrence Rosen
+
+> p278  "Notice that in a copyright dispute over a bare license,  the 
+> plaintiff will almost certainly be the copyright owner. If a licensee 
+> were foolish enough to sue to enforce the terms and conditions of the 
+> license, the licensor can simply revoke the bare license, thus ending 
+> the dispute. Remember that a bare license in the absence of an interest 
+> is revocable."
+--Lawrence Rosen
+
+Lawrence Rosen - Open Source Licensing - Sofware Freedom and 
+Intellectual property Law
+
+
+
+> p65 "Of all the licenses described in this book,  only the GPL makes 
+> the explicitly point that it wants nothing of /acceptance/ of 
+> /consideration/:
+> ...
+> The GPL authors intend that it not be treated as a contract.  I will 
+> say much more about this license and these two provisions in Chapter 6. 
+> For now, I simply point out that the GPL licensors are in essentially 
+> the same situation as other open source licensors who cannot prove 
+> offer, acceptance, or consideration. There is no contract."
+--Lawrence Rosen
+
+----
+(Additionally:)
+> David McGowan, Professor of Law, University of Minnesota Law School:
+
+> "Termination of rights
+
+> [...]  The most plausible assumption is that a developer who releases 
+> code under the GPL may terminate GPL rights, probably at will.
+
+> [...]  My point is not that termination is a great risk, it is that it 
+> is not recognized as a risk even though it is probably relevant to 
+> commercial end-users, accustomed to having contractual rights they can 
+> enforce themselves.
 
