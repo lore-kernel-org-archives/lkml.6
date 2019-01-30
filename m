@@ -2,125 +2,114 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FD1C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FA6C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62D26205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:32:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="0w0jjpO4"
+	by mail.kernel.org (Postfix) with ESMTP id D481B21473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:34:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548862493;
+	bh=kE1XxCFEdT4aiygJ3Mqnrvvef9WFtqdWnimE3s8rvQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VXUqkFoLgj0sfnRKneKVVuJdz9F3tscnJx25VdFIpMnWSyPh1RIX9AGwCdYnovLuF
+	 1vYOh+WTGWQtAOLO5WI7CNmQdW3yGs20lGc0cL91dDrVDU/6xxgyMHBkiR4NnQkp4m
+	 WJgYarVR+kFa/9O9FGDE1RpTZXRyjJxp708KRBLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731468AbfA3Pcc (ORCPT
+        id S1731339AbfA3Pev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:32:32 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42704 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727977AbfA3Pcc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:32:32 -0500
-Received: by mail-qt1-f195.google.com with SMTP id d19so26628727qtq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 07:32:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=ogMbMWCbaPKXCxe13GQRtAoEFG/dyH2jH/CrprzGxr0=;
-        b=0w0jjpO4fdNODtpHiNha+HZMbP1zY37miF06vcpSs4Q8y8Fc4dBEpJ7rQqlffiy+hs
-         e2fawZtAwr+MPstTuEwB0s/byHTh7AONQMUADPrXbgHGuqZDG45kXq2F0JnAd9GYNsU7
-         2o/Tx+NJbt5rB4CdsqLZ2oFmK/iJpA1dDe8EV752GcT0j6GZ19cB4aUkgEbGraw6aYg9
-         gf4e70noWAYk2896OI0gixYSbKprCBAxYvh/lgtJkt0Hd60jBkWdWmhBomKLWdRY2AQM
-         Qu6pH2Hk/E7ENOeLb1+iPS47d9nFmBG2evFYp00Z150NdLfz4+ZzlQ9uEPjhQdi/1cCH
-         dGEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=ogMbMWCbaPKXCxe13GQRtAoEFG/dyH2jH/CrprzGxr0=;
-        b=H8sqXAtuSMLXdd34/z5zKy6X1IXYxInsUwUeECXChr6Gwm5PFL8tMPqkan3FM9tHlA
-         xGVbqotteNEE5zf6c8ngDzy3juj/KHhPpNKqLRrpLeniokHbcy0ApVS4tu2TdU73dfvH
-         ypxk2j8RELgvq4mrijKpQ7epTyQrXl7BAcMnGc2mM9n13U6vi9tvX7Sb4nr4UVlCcN0b
-         K3EDVxgjwAWL/GlduBWFJZEjjhPLLat8zb76cz91pa+O3ya/eIpnxknoULDg6K0xNHit
-         eXX+C6046jVcqZjII+b3840I8m0HB7WXayLdGSOgVEYPPEfyaNXyfBwccFY7x5V016PE
-         m8Cg==
-X-Gm-Message-State: AJcUukeDBTwHUev2E346rC492wpju4a2qhQeBG1yzKfeY95pQtXMErUC
-        e9Z/EqwbSDbD6OXyoUlJ1BaWDA==
-X-Google-Smtp-Source: ALg8bN5IcFzRI6RW6sCe2/QhmafHaLe1WGIw06L3Fgvi9WnQXsKsNTJd7ZQAYv8mrMdEr6AtO1wrXg==
-X-Received: by 2002:a0c:c138:: with SMTP id f53mr28955133qvh.225.1548862351152;
-        Wed, 30 Jan 2019 07:32:31 -0800 (PST)
-Received: from skullcanyon ([192.222.193.21])
-        by smtp.gmail.com with ESMTPSA id t40sm1367912qth.46.2019.01.30.07.32.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 07:32:30 -0800 (PST)
-Message-ID: <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
-Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
- codec API
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Date:   Wed, 30 Jan 2019 10:32:28 -0500
-In-Reply-To: <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
-         <20190117162008.25217-11-stanimir.varbanov@linaro.org>
-         <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
-         <28069a44-b188-6b89-2687-542fa762c00e@linaro.org>
-         <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
-         <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
-         <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
-         <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
-         <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 30 Jan 2019 10:34:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36968 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726230AbfA3Peu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 10:34:50 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E45A2084C;
+        Wed, 30 Jan 2019 15:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548862489;
+        bh=kE1XxCFEdT4aiygJ3Mqnrvvef9WFtqdWnimE3s8rvQs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RuqVEzSleYDIqdx+g7l46FZ31N/2ebfIdThZzTcUokAA3dwRqgEyKXVBFfBS2dYO7
+         /G9ZHwHqHtpbN18cUqrEsiwl67HgvBZSqzaeMckIZhm9Auf+dGadt9VBT/cgzOV5Vg
+         IF8oKJTeAOgOQLTm28OuHxr1QAW1hjara4pu1tzM=
+Date:   Wed, 30 Jan 2019 09:34:47 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>
+Subject: Re: [PATCHv3 00/27] PCI: refactor Mobiveil driver and add PCIe Gen4
+ driver for NXP Layerscape SoCs
+Message-ID: <20190130153447.GB229773@google.com>
+References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le mercredi 30 janvier 2019 à 15:17 +0900, Tomasz Figa a écrit :
-> > I don't remember saying that, maybe I meant to say there might be a
-> > workaround ?
-> > 
-> > For the fact, here we queue the headers (or first frame):
-> > 
-> > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2videodec.c#L624
-> > 
-> > Then few line below this helper does G_FMT internally:
-> > 
-> > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2videodec.c#L634
-> > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2object.c#L3907
-> > 
-> > And just plainly fails if G_FMT returns an error of any type. This was
-> > how Kamil designed it initially for MFC driver. There was no other
-> > alternative back then (no EAGAIN yet either).
+On Tue, Jan 29, 2019 at 08:08:28AM +0000, Z.q. Hou wrote:
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 > 
-> Hmm, was that ffmpeg then?
+> This patch set is aim to refactor the Mobiveil driver and add
+> PCIe support for NXP Layerscape series SoCs integrated Mobiveil's
+> PCIe Gen4 controller.
 > 
-> So would it just set the OUTPUT width and height to 0? Does it mean
-> that gstreamer doesn't work with coda and mtk-vcodec, which don't have
-> such wait in their g_fmt implementations?
+> Hou Zhiqiang (27):
+>   PCI: mobiveil: uniform the register accessors
+>   PCI: mobiveil: format the code without function change
+>   PCI: mobiveil: correct the returned error number
+>   PCI: mobiveil: remove flag MSI_FLAG_MULTI_PCI_MSI
+>   PCI: mobiveil: correct PCI base address in MEM/IO outbound windows
+>   PCI: mobiveil: replace the resource list iteration function
+>   PCI: mobiveil: use WIN_NUM_0 explicitly for CFG outbound window
+>   PCI: mobiveil: use the 1st inbound window for MEM inbound transactions
+>   PCI: mobiveil: correct inbound/outbound window setup routines
+>   PCI: mobiveil: fix the INTx process error
+>   PCI: mobiveil: only fix up the Class Code field
+>   PCI: mobiveil: move out the link up waiting from mobiveil_host_init
+>   PCI: mobiveil: move irq chained handler setup out of DT parse
+>   PCI: mobiveil: initialize Primary/Secondary/Subordinate bus number
+>   dt-bindings: pci: mobiveil: change gpio_slave and apb_csr to optional
+>   PCI: mobiveil: refactor Mobiveil PCIe Host Bridge IP driver
+>   PCI: mobiveil: fix the checking of valid device
+>   PCI: mobiveil: continue to initialize the host upon no PCIe link
+>   PCI: mobiveil: disabled IB and OB windows set by bootloader
+>   PCI: mobiveil: add Byte and Half-Word width register accessors
+>   PCI: mobiveil: make mobiveil_host_init can be used to re-init host
+>   dt-bindings: pci: Add NXP Layerscape SoCs PCIe Gen4 controller
+>   PCI: mobiveil: add PCIe Gen4 RC driver for NXP Layerscape SoCs
+>   PCI: mobiveil: ls_pcie_g4: add Workaround for A-011577
+>   PCI: mobiveil: ls_pcie_g4: add Workaround for A-011451
+>   arm64: dts: freescale: lx2160a: add pcie DT nodes
+>   arm64: defconfig: Enable CONFIG_PCI_LAYERSCAPE_GEN4
 
-I don't know for MTK, I don't have the hardware and didn't integrate
-their vendor pixel format. For the CODA, I know it works, if there is
-no wait in the G_FMT, then I suppose we are being really lucky with the
-timing (it would be that the drivers process the SPS/PPS synchronously,
-and a simple lock in the G_FMT call is enough to wait). Adding Philipp
-in CC, he could explain how this works, I know they use GStreamer in
-production, and he would have fixed GStreamer already if that was
-causing important issue.
-
-Nicolas
-
+If/when you repost this, please pay attention to the changelog
+conventions, e.g., capitalize the first word of the sentence ("Remove
+flag ...", "Correct PCI base address ...", etc), capitalize acronyms
+like "PCI" and "IRQ", use parentheses after function names, etc.  You
+can see the conventions by running "git log --oneline
+drivers/pci/controller".
