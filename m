@@ -2,187 +2,150 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7C1C282DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 22:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A16C282DC
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 22:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 797B520863
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 22:53:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9995220863
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 22:54:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="GGajD6r8"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="Qkgm03hH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731583AbfA3Wxy (ORCPT
+        id S1731710AbfA3Wyn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 17:53:54 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42138 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfA3Wxx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 17:53:53 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 64so506815pfr.9
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 14:53:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RwUVPqZYtJ4/qC/YA4rShqVKVS/62hvbzlxn0+9DHfU=;
-        b=GGajD6r8JZS51Dfjgulo6Te9yoS8F0DIvFTQThgjCy5ERlpYnlAH65nCX5iyQUPlM1
-         g/SVzX0E3oyKGD95zoMYvRS41mBXupvy6pBzNa8miatzOHXvbXpqcBpvyJY/OPQ2hfm4
-         QODnBgHJWKqQhQDPVTq30FpqKmU76eBKT5hfKXJmz8xO9zl8j1PrVgEKluwLMKe9b7dY
-         SVaJhzK5sxd6wBMQreHDor1BXNnhz8DTTNkEnmVcqyCq9fTuL6hzHSkR9gFXj4IUrwcS
-         tEOa5mRJFC/ZyG+KjbwxIrB9QhvfmwzDhqCkIoDSa/xilvOvTZmPaif3BM5UkNxxLjX4
-         2NlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RwUVPqZYtJ4/qC/YA4rShqVKVS/62hvbzlxn0+9DHfU=;
-        b=VPRnBu8mfkxNr2DrbFhvtfXanhdPhhzoUa+CDYJtEDnhg4lcNLWJACObUhynZmOlRS
-         G4Eiqhl8X8lxUmpV5Q5NgKMfHnxKYmL3hSn5UhdG/8ttR52J+C70MUSKWNINLEEi83nS
-         lb+QapyxOcj5DrNKtPW32YzOjAAF+77y7/td3hfCp8/Xt0nMWA3bFWzsaGsFdncS6IdK
-         XtEsM/Tq4Y0ULf1Xxkip5TXG4pzk52rZ/BRqUlnAqXylPe9emSXowDPGcl4ClnEqKz8v
-         IuY4ZrNPLB4kOVsJDrJdUuDioAJa4OlPxDcidzwbzw9xqPmdlDXI7pBpJt0JcTE5coBE
-         PozQ==
-X-Gm-Message-State: AJcUukfb5r0E7ePmnk2/uKIMSlDKAsIxSF6cU2KYnEqbGMV8EdRoE7vk
-        oPuLCCFKh6sBmQhW+MZM20eL2Q==
-X-Google-Smtp-Source: ALg8bN4LSXDcPGZ97ZMmQy0cbjO5jKUUD1sDBofkslSqg0sQfwT91Ts6fSHErBq6Ffss9BRoJAeB7Q==
-X-Received: by 2002:a63:40c6:: with SMTP id n189mr28731645pga.355.1548888437277;
-        Wed, 30 Jan 2019 14:47:17 -0800 (PST)
-Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
-        by smtp.googlemail.com with ESMTPSA id w136sm4219190pfd.169.2019.01.30.14.47.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 14:47:16 -0800 (PST)
-From:   Todd Kjos <tkjos@android.com>
-X-Google-Original-From: Todd Kjos <tkjos@google.com>
-To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        maco@google.com
-Cc:     joel@joelfernandes.org, kernel-team@android.com
-Subject: [PATCH v2 5/7] binder: remove kernel vm_area for buffer space
-Date:   Wed, 30 Jan 2019 14:46:53 -0800
-Message-Id: <20190130224655.255149-6-tkjos@google.com>
-X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
-In-Reply-To: <20190130224655.255149-1-tkjos@google.com>
-References: <20190130224655.255149-1-tkjos@google.com>
+        Wed, 30 Jan 2019 17:54:43 -0500
+Received: from mail-eopbgr140048.outbound.protection.outlook.com ([40.107.14.48]:54597
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725890AbfA3Wym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 17:54:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FJd4xUozB+7alcoxw8jbCUD16duz5AkzXpB6eFOXgcA=;
+ b=Qkgm03hHl6K7CLlq4yQKkprpUrxBViHzIgHcb7GRHn3/CFxCLuwf6a3kHlqK3sjLUerdmDPDd4jmv4I+K9uz/zGf/Dg2cmjzohSwoB6PgE7WjbJGpbpwwpGfvycRREInvzJuU5G978+jxJZyMQe4lfUe0Xs4pbP6Q0oqhVmRcyo=
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
+ DBBPR05MB6571.eurprd05.prod.outlook.com (20.179.44.82) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.17; Wed, 30 Jan 2019 22:51:55 +0000
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
+ 22:51:55 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+CC:     Logan Gunthorpe <logang@deltatee.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAANmWgIAAG8YAgAAHLwCAAAROgIAABioAgAADIQCAAAkGAIAAAccAgAAPg4CAAAL1AIAACaCAgAAAtACAAAPygIAAAVEA
+Date:   Wed, 30 Jan 2019 22:51:55 +0000
+Message-ID: <20190130225148.GC25486@mellanox.com>
+References: <20190130193759.GE17080@mellanox.com>
+ <db873687-ff80-4758-0b9f-973f27db5335@deltatee.com>
+ <20190130201114.GB17915@mellanox.com> <20190130204332.GF5061@redhat.com>
+ <20190130204954.GI17080@mellanox.com> <20190130214525.GG5061@redhat.com>
+ <20190130215600.GM17080@mellanox.com> <20190130223027.GH5061@redhat.com>
+ <20190130223258.GB25486@mellanox.com> <20190130224705.GI5061@redhat.com>
+In-Reply-To: <20190130224705.GI5061@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR04CA0064.namprd04.prod.outlook.com
+ (2603:10b6:102:1::32) To DBBPR05MB6426.eurprd05.prod.outlook.com
+ (2603:10a6:10:c9::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DBBPR05MB6571;6:tcUhX8ThEQ1aqoCcrz7tThKNVH24ni6UrZhdSi0v60Pq98v/yXy46EAPtW2KlrtjHXuTNFdfXCgaxTB3wj17J7n9Swd4VmasEMxjEBMR+h1wOfpP0D4cN1GFPWM4niWKCXnC7dVpXz9tGyQ3W34BwM+S9+DA0L8Ev7Z3vQ86Tlm7V4blhaAr3z//0ueKcXI+D3qpXX94XqLs9FjW3Mz5PRxZQpQcyhHNA0JxXe3g0hmcvyGNtK9xQu+qqYV/CSiXfbevbl0j3Lmaq0AzagJSMG/YkDRQvmQL7xjWqbWVc5IWngCalniZnDBQL6CX/p5Ggip6K6pKkM4bVUWQu+Y9nQlxc2y7Y90yMu8+mllCci/9W3QJXr6FRS0aChrq02ftEtSK7rCrhHRkt78CN8wrpWOj/S6vIYJRbMjU4p2K5DM+9u9k+hDg33BD+CMeNexmLLY7hYrSk2Q8pBHGZqTDzA==;5:/YsijxgDm4VbarTBUVZLw2K8snPVd220AJ/HMlLhL3GS5/6iN3k5N8IoW2X51YAa+eNRSDnuIyo92yFNrM+paRr8tsH9uqv5kNgwzZ9LyOtfliBzRTFBDnGlHYLdZuc4Ld+e3GQEnmwG3b/jLZ+J2O6nUR1XA6cz+NvhgxVE0e4ysaulKdZSOKL0wKkSuD/3VtSZIC3Q35+W8Zj1Rozw7A==;7:yg7K6I68IbX3Gy3rz3nuhBl/liRC2PBP+HjTsTdticSf09NwUuPnHW9mX+iTw7ti0lGgTvDvICXAFBX5SvWZi0xBw0rjIz2z4IcQRYOp8VzPZOcw2OCHpTHcwxITRNg5ZqnMcegH3/iR2uppKsM5Eg==
+x-ms-office365-filtering-correlation-id: 078e7a37-f6da-4fe8-93e9-08d687058822
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6571;
+x-ms-traffictypediagnostic: DBBPR05MB6571:
+x-microsoft-antispam-prvs: <DBBPR05MB6571E973DC7AFBD367E865A1CF900@DBBPR05MB6571.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(39860400002)(366004)(346002)(199004)(189003)(36756003)(3846002)(33656002)(186003)(76176011)(6916009)(106356001)(71190400001)(71200400001)(53936002)(26005)(52116002)(105586002)(25786009)(8676002)(54906003)(6116002)(7416002)(8936002)(1076003)(81156014)(81166006)(229853002)(4326008)(6436002)(2906002)(305945005)(6486002)(93886005)(66066001)(11346002)(446003)(217873002)(6506007)(386003)(99286004)(476003)(2616005)(97736004)(478600001)(316002)(6512007)(7736002)(14444005)(256004)(68736007)(86362001)(6246003)(14454004)(102836004)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6571;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Ox6/vquQvZO3t8TlBC23AglV3FJLS2Y2rhSWx6Nhy+V/0jPESVFPDmbyho2z+q2Ky6qaRUuTTyRaEksTtDWDFl1T+V5RRKx047iOpnCEmqcuCkFxbVjnM0oct6DvQrREihZTv5lx2KyeJBUI0SuaMFIy1g6hkrf5awwlJ8m0T6qE04BLqmaKTzBON7HrvPaW35XczB0Eah8BId/U1svGjIAdfIz/Fq7yAUndzbQh4WVNbgBWGxeyWwsO2JceE8mAi1ccdMz4jbw7dT3zSPYeD7AfWor/LdWFd29C438G9DfvkBG0bs1Y+eTGvB4uFCiHjUI7p3YP5+hd0NJOee5XZXS6+DWiU0vzAJVfLDDyfNwFVHSHVLaYJi9C8KyzC1ArDCJamS6ycxY96Z3X3kLFq7U9/BeFwnCBUOyRybacKMk=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <35A69DD96A70BF4186715D7C3E6F4417@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 078e7a37-f6da-4fe8-93e9-08d687058822
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 22:51:54.8037
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6571
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the kernel's vm_area and the code that maps
-buffer pages into it.
+On Wed, Jan 30, 2019 at 05:47:05PM -0500, Jerome Glisse wrote:
+> On Wed, Jan 30, 2019 at 10:33:04PM +0000, Jason Gunthorpe wrote:
+> > On Wed, Jan 30, 2019 at 05:30:27PM -0500, Jerome Glisse wrote:
+> >=20
+> > > > What is the problem in the HMM mirror that it needs this restrictio=
+n?
+> > >=20
+> > > No restriction at all here. I think i just wasn't understood.
+> >=20
+> > Are you are talking about from the exporting side - where the thing
+> > creating the VMA can really only put one distinct object into it?
+>=20
+> The message i was trying to get accross is that HMM mirror will
+> always succeed for everything* except for special vma ie mmap of
+> device file. For those it can only succeed if a p2p_map() call
+> succeed.
+>=20
+> So any user of HMM mirror might to know why the mirroring fail ie
+> was it because something exceptional is happening ? Or is it because
+> i was trying to map a special vma which can be forbiden.
+>=20
+> Hence why i assume that you might want to know about such p2p_map
+> failure at the time you create the umem odp object as it might be
+> some failure you might want to report differently and handle
+> differently. If you do not care about differentiating OOM or
+> exceptional failure from p2p_map failure than you have nothing to
+> worry about you will get the same error from HMM for both.
 
-Signed-off-by: Todd Kjos <tkjos@google.com>
----
- drivers/android/binder_alloc.c | 40 ++--------------------------------
- 1 file changed, 2 insertions(+), 38 deletions(-)
+I think my hope here was that we could have some kind of 'trial'
+interface where very eary users can call
+'hmm_mirror_is_maybe_supported(dev, user_ptr, len)' and get a failure
+indication.
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 2eebff4be83e..d4cbe4b3947a 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -265,16 +265,6 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
- 		page->alloc = alloc;
- 		INIT_LIST_HEAD(&page->lru);
- 
--		ret = map_kernel_range_noflush((unsigned long)page_addr,
--					       PAGE_SIZE, PAGE_KERNEL,
--					       &page->page_ptr);
--		flush_cache_vmap((unsigned long)page_addr,
--				(unsigned long)page_addr + PAGE_SIZE);
--		if (ret != 1) {
--			pr_err("%d: binder_alloc_buf failed to map page at %pK in kernel\n",
--			       alloc->pid, page_addr);
--			goto err_map_kernel_failed;
--		}
- 		user_page_addr =
- 			(uintptr_t)page_addr + alloc->user_buffer_offset;
- 		ret = vm_insert_page(vma, user_page_addr, page[0].page_ptr);
-@@ -314,8 +304,6 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
- 		continue;
- 
- err_vm_insert_page_failed:
--		unmap_kernel_range((unsigned long)page_addr, PAGE_SIZE);
--err_map_kernel_failed:
- 		__free_page(page->page_ptr);
- 		page->page_ptr = NULL;
- err_alloc_page_failed:
-@@ -695,7 +683,6 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
- 			      struct vm_area_struct *vma)
- {
- 	int ret;
--	struct vm_struct *area;
- 	const char *failure_string;
- 	struct binder_buffer *buffer;
- 
-@@ -706,28 +693,10 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
- 		goto err_already_mapped;
- 	}
- 
--	area = get_vm_area(vma->vm_end - vma->vm_start, VM_ALLOC);
--	if (area == NULL) {
--		ret = -ENOMEM;
--		failure_string = "get_vm_area";
--		goto err_get_vm_area_failed;
--	}
--	alloc->buffer = area->addr;
--	alloc->user_buffer_offset =
--		vma->vm_start - (uintptr_t)alloc->buffer;
-+	alloc->buffer = (void *)vma->vm_start;
-+	alloc->user_buffer_offset = 0;
- 	mutex_unlock(&binder_alloc_mmap_lock);
- 
--#ifdef CONFIG_CPU_CACHE_VIPT
--	if (cache_is_vipt_aliasing()) {
--		while (CACHE_COLOUR(
--				(vma->vm_start ^ (uint32_t)alloc->buffer))) {
--			pr_info("%s: %d %lx-%lx maps %pK bad alignment\n",
--				__func__, alloc->pid, vma->vm_start,
--				vma->vm_end, alloc->buffer);
--			vma->vm_start += PAGE_SIZE;
--		}
--	}
--#endif
- 	alloc->pages = kcalloc((vma->vm_end - vma->vm_start) / PAGE_SIZE,
- 			       sizeof(alloc->pages[0]),
- 			       GFP_KERNEL);
-@@ -760,9 +729,7 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
- 	alloc->pages = NULL;
- err_alloc_pages_failed:
- 	mutex_lock(&binder_alloc_mmap_lock);
--	vfree(alloc->buffer);
- 	alloc->buffer = NULL;
--err_get_vm_area_failed:
- err_already_mapped:
- 	mutex_unlock(&binder_alloc_mmap_lock);
- 	binder_alloc_debug(BINDER_DEBUG_USER_ERROR,
-@@ -821,12 +788,10 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
- 				     "%s: %d: page %d at %pK %s\n",
- 				     __func__, alloc->pid, i, page_addr,
- 				     on_lru ? "on lru" : "active");
--			unmap_kernel_range((unsigned long)page_addr, PAGE_SIZE);
- 			__free_page(alloc->pages[i].page_ptr);
- 			page_count++;
- 		}
- 		kfree(alloc->pages);
--		vfree(alloc->buffer);
- 	}
- 	mutex_unlock(&alloc->mutex);
- 	if (alloc->vma_vm_mm)
-@@ -988,7 +953,6 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- 
- 	trace_binder_unmap_kernel_start(alloc, index);
- 
--	unmap_kernel_range(page_addr, PAGE_SIZE);
- 	__free_page(page->page_ptr);
- 	page->page_ptr = NULL;
- 
--- 
-2.20.1.495.gaa96b0ce6b-goog
+We probably wouldn't call this on the full address space though
 
+Beyond that it is just inevitable there can be problems faulting if
+the memory map is messed with after MR is created.
+
+And here again, I don't want to worry about any particular VMA
+boundaries..
+
+Jason
