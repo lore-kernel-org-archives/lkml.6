@@ -2,112 +2,134 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8077EC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B02C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E82021473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:43:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfdgr/EV"
+	by mail.kernel.org (Postfix) with ESMTP id 1380B21473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:46:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731568AbfA3Pnr (ORCPT
+        id S1730047AbfA3Pqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:43:47 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46037 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727976AbfA3Pnr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:43:47 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so11562653pfd.12;
-        Wed, 30 Jan 2019 07:43:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jkWcEhfUSaW3+qq2QeySS+iZcEjyvZo8uXYJm1mSdpo=;
-        b=kfdgr/EVYnERKR4XZeInirT0flpg3zeEXsmvhuOivw1msNdthZFrAuUtDlGp4TUYq2
-         Cx4NEXGTJNAicqol2w2L4jXZCgPnURnBFAwxpMl0+B6C/K0Gi+VyihV1kdSIUdNJRjsV
-         +EbgRGYpryM7yd7zLKYn80gRTeXUxFXZfa33UklMJwn/QK0A+3NH36k7jzn7Mw/+Gvrr
-         IX4UIon1L5Ef3tr82mhPRtSmKDGfN9nAIMJZA6r8HQTrTDnXL7ASd6jS5OEMoOOvNCI2
-         L9buf8aUf10yQP0jWrh6D66AOA5uwccZTq9HDetIjS/nmgY3gmQtKADky3amEc0fPo0D
-         0VQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jkWcEhfUSaW3+qq2QeySS+iZcEjyvZo8uXYJm1mSdpo=;
-        b=oEvpCeqKNyOsMVtmPIH2h65VxDb3GPsT0wrne9zXo0qlsbyid2m6gdfhB1D2xJWpL1
-         NvC8XDQkCjGJ7jTlaLspXdJslTsfp/eKKp0YnUUEiKkyOtcqmY/62JAm3As3RM566FlK
-         NXMUd2mcIuaWSlluQ7rzQOZ/Fb5GEvNK7HaqaKZJ0tEp/c4tvjdISVGT1FntH6JDEEDu
-         +6m/OJUj+JkMO/HnTumLFr/J+FRgiWpN+pcVxGjuW3LhpG4LaUqHXJ0jRuAn1p8ckWbQ
-         80ZXD6IbfrI3zZ/7lzhoqFqFazsKLCae1Raqnh35zh4RUZWbXk/LtvGoglWEuY6PJG4j
-         02+A==
-X-Gm-Message-State: AJcUukelX2zt+kduZ6ygfP73OD3QG6taPubAEq+B7XdkzozXALMUC54Y
-        reNQ6RuZMq532r+yfDD8tzSJKz6PAG42H835fkg=
-X-Google-Smtp-Source: ALg8bN6Al14ylPiAEMTooOFoosKabogLtocrAd2N8f8lp1Px9yc8zp1oMC6KYQH6PfOmJGO4yWhLLQ0r3Cng3WFXXoo=
-X-Received: by 2002:a63:f615:: with SMTP id m21mr28500777pgh.428.1548863026673;
- Wed, 30 Jan 2019 07:43:46 -0800 (PST)
+        Wed, 30 Jan 2019 10:46:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41284 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726439AbfA3Pqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 10:46:36 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 203CB3C2CF2;
+        Wed, 30 Jan 2019 15:46:35 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A2FC176C4;
+        Wed, 30 Jan 2019 15:46:33 +0000 (UTC)
+Subject: Re: [patch 0/2] genirq, proc: Speedup /proc/stat interrupt statistics
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+References: <20190130123130.785636313@linutronix.de>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <5c312294-773b-8b50-71dc-63a13af2d736@redhat.com>
+Date:   Wed, 30 Jan 2019 10:46:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190130151424.28140-1-2pi@mok.nu>
-In-Reply-To: <20190130151424.28140-1-2pi@mok.nu>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 30 Jan 2019 17:43:34 +0200
-Message-ID: <CAHp75VfHDN7Q1YjFd7XM8tFpCcPphaDm0fvOaxHzko5AvF6jEw@mail.gmail.com>
-Subject: Re: [PATCH v2] platform/x86: wmi: fix potential null pointer dereference
-To:     Mattias Jacobsson <2pi@mok.nu>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190130123130.785636313@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 30 Jan 2019 15:46:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 5:15 PM Mattias Jacobsson <2pi@mok.nu> wrote:
+On 01/30/2019 07:31 AM, Thomas Gleixner wrote:
+> Waiman reported that on large systems with a large amount of interrupts the
+> readout of /proc/stat takes a long time to sum up the interrupt
+> statistics. In principle this is not a problem. but for unknown reasons
+> some enterprise quality software reads /proc/stat with a high frequency.
 >
-> In the function wmi_dev_match() the variable id is dereferenced without
-> first performing a NULL check. The variable can for example be NULL if
-> a WMI driver is registered without specifying the id_table field in
-> struct wmi_driver.
+> The reason for this is that interrupt statistics are accounted per cpu. So
+> the /proc/stat logic has to sum up the interrupt stats for each interrupt.
 >
-> Add a NULL check and return that the driver can't handle the device if
-> the variable is NULL.
+> The following series addresses this by making the interrupt statitics code
+> in the core generate the sum directly and by making the loop in the
+> /proc/stat read function smarter.
 >
+> Thanks,
+>
+> 	tglx
+>
+> 8<----------------
+>  fs/proc/stat.c          |   28 +++++++++++++++++++++++++---
+>  include/linux/irqdesc.h |    3 ++-
+>  kernel/irq/chip.c       |   12 ++++++++++--
+>  kernel/irq/internals.h  |    8 +++++++-
+>  kernel/irq/irqdesc.c    |    7 ++++++-
+>  5 files changed, 50 insertions(+), 8 deletions(-)
+>
+>
+>
+For the whole series,
 
-Good for me, thanks!
+Acked-by: Waiman Long <longman@redhat.com>
 
-> Fixes: 844af950da94 ("platform/x86: wmi: Turn WMI into a bus driver")
-> Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
-> ---
->  drivers/platform/x86/wmi.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-> index bea35be68706..b0f3d8ecd898 100644
-> --- a/drivers/platform/x86/wmi.c
-> +++ b/drivers/platform/x86/wmi.c
-> @@ -768,6 +768,9 @@ static int wmi_dev_match(struct device *dev, struct device_driver *driver)
->         struct wmi_block *wblock = dev_to_wblock(dev);
->         const struct wmi_device_id *id = wmi_driver->id_table;
->
-> +       if (id == NULL)
-> +               return 0;
-> +
->         while (id->guid_string) {
->                 uuid_le driver_guid;
->
-> --
-> 2.20.1
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
