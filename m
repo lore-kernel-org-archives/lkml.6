@@ -2,69 +2,88 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F078CC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C33AC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C454320857
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:37:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548859051;
-	bh=xP7Y2PV7QxqUFRW84hEpSMQVIFUeEAf3y+y/DT+da5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=aVnWoptBPQjoY381hK+CDHX2X+HO35EKIU/y3lt6Dq+MtDzYqBttMZEz7aeGnPu2o
-	 xG8Uzr509fSl8vH9ijnC8GKEEnFgKWGDBO3FNI8tixi13t1YmmNlmsGfFKJHrGZIgk
-	 +h868y7JdU4sHcpIgIrzjieCR/IuKRqw3YnQbeKI=
+	by mail.kernel.org (Postfix) with ESMTP id 512D220882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:39:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="tFT+n6ob"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731356AbfA3Oha (ORCPT
+        id S1731227AbfA3Ojk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 09:37:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbfA3Oha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 09:37:30 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09E9F20882;
-        Wed, 30 Jan 2019 14:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548859049;
-        bh=xP7Y2PV7QxqUFRW84hEpSMQVIFUeEAf3y+y/DT+da5s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tEGnCJ3NhjIoTmNZWTyVS3iUtzbCR7hKGT897DRKeo9cIebBJVmttXJi3AOhT8daP
-         iJnE9mG6vWRnN2K8nEcC4GiCpuQn5gSP+x456l57zYZDedd9UEnpywAEdFps/FsCDh
-         Kh7Eis2/694o3OrMRQEMGPiqAiKY5EBB3CEu7/VM=
-Date:   Wed, 30 Jan 2019 15:37:26 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Michiel Schuurmans <michielschuurmans@gmail.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Staging: rtl8192e: Replaced spaces with tab.
-Message-ID: <20190130143726.GA1744@kroah.com>
-References: <20190126173121.GA20043@michiel-dev.local>
+        Wed, 30 Jan 2019 09:39:40 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:27286 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727149AbfA3Ojk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 09:39:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1548859178;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=lOHjx49VveWcbpzwKb8LwDQ/AQ7msHuvzFJK5Zg+ZQA=;
+        b=tFT+n6obLMLzQ5aGqyxs3s2Y/j/QceG/DLlMi4Y5c8icGLB2qI5LX2LGDw2sHxmzoj
+        s9b2OMH+7HX8NcZhS0smJ8upjfB8hpmvknotN4fOy7LSH0dC8RW62cQNOhUcoc1XDa+Y
+        OuU5i9Cb2qV34az+499KoQmTNfZMHiQeMxQR2mnS09LW7TPLOFlnN4Ccm9l1hgAUAfVG
+        NU0sDj9hLrwaZ+riyTh8+txvMWUE1yT+EysgTQ2ZRzxdYzlWsIdHTuCD4DHPo5kbQncc
+        vERwyK116caccSNm55CbglpqUd3fWQVKhZrmjm+TPEpkhSMwOUhUqLvWlu/Dn+BdZaE7
+        XU3g==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9x24dP3Zg1I6xSGfZ"
+X-RZG-CLASS-ID: mo00
+Received: from tauon.chronox.de
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id 309bcfv0UEdCLXm
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 30 Jan 2019 15:39:12 +0100 (CET)
+From:   Stephan Mueller <smueller@chronox.de>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] General Key Derivation Function Support
+Date:   Wed, 30 Jan 2019 15:39:10 +0100
+Message-ID: <12103603.N4N57GesWC@tauon.chronox.de>
+In-Reply-To: <20190130100854.iey2mbmz6777pn2n@gondor.apana.org.au>
+References: <20190103143227.9138-1-jlee@suse.com> <5418064.ltLFQScYi2@tauon.chronox.de> <20190130100854.iey2mbmz6777pn2n@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190126173121.GA20043@michiel-dev.local>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 06:31:21PM +0100, Michiel Schuurmans wrote:
-> Replaced the spaces with tabs as suggested by checkpatch.
-> 
-> This is my first patch.
+Am Mittwoch, 30. Januar 2019, 11:08:54 CET schrieb Herbert Xu:
 
-No need for that line :)
+Hi Herbert,
 
-Also, please use scripts/get_maintainer.pl to determine who to send a
-patch to, and what mailing list next time.
+> I'm still not convinced why this needs to go into the crypto API
+> instead of being hosted in a helper which should achieve pretty
+> much the same result.
 
-thanks,
+How do you propose to handle the FIPS 140-2 related requirements of enforcing 
+the integrity test result and the known-answer self tests?
 
-greg k-h
+Thanks
+Stephan
+
+
