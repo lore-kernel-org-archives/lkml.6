@@ -2,199 +2,101 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B619C282C7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91ABDC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA2182175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 564412175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:35:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="zkMOIG0v"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="spcdmv2P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729908AbfA3CdJ (ORCPT
+        id S1729844AbfA3CfJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 21:33:09 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35200 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbfA3CdJ (ORCPT
+        Tue, 29 Jan 2019 21:35:09 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42155 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727942AbfA3CfJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 21:33:09 -0500
-Received: by mail-oi1-f194.google.com with SMTP id v6so18037074oif.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 18:33:08 -0800 (PST)
+        Tue, 29 Jan 2019 21:35:09 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d72so9657562pga.9;
+        Tue, 29 Jan 2019 18:35:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DFk4DyEvclK+8w2TnSvj0LqgeUXFJr8aVANymRD6ZfM=;
-        b=zkMOIG0vjevsi9Mv0WqU+3yNvs++6SBvK/B14pG0FHHXcbYzUeCQ3QttFBaK5rUBZ0
-         Jyfx8A838fitn9Me2M7zCnpUe23jgl8gfmtB+fWUn57YMJTTq8+1lUezsWVoA7ZzJG8f
-         r6Brd1sMZBX/xsaurHSYVVicYUSy3+TYN3wW4g1J26lF0o+yD93Q7z/TaF7zdpVEG6DF
-         Xyx+mVKsEmoaMQj4gvUk09T7Yee66tGwb5H1B+Z1kBbL3bOktgklUoGe4JmrBFuAJ8Xj
-         PBt3WMtPS4rqQ0WNsisNe9HqxVVMuld9rDGy9TIDPRZzSlfSAIfRrkBQeIR2p44E+tYf
-         qv+A==
+         :cc;
+        bh=pkj4FDWIV5lIKpY0+itOe11Q3GZ3pjdq8PP46ONWA6Q=;
+        b=spcdmv2PPRm7uC4FA0Ftq9G7GwDBQutgce949h9wvbivjdDtdgxS9fy9WMlfyWaJFc
+         yFx4u5q6MFilsFz3zjWk0d6XdbOoh3Ux5eT2EwnhUu77Y/b8lBlrYX4rKqN0sOqgRxTj
+         TQc4gk6wass1x/g/75aSYvKzJIbl8B2p5LuNZ/8fjO5gnlM0LuLDUs7reY+O2bwH1DaH
+         apAOfgDgqi3gtHxlMlRZKEaWG+3dXeEHzeiwZecjSaZ3QadkLXnrUW+Z6lzUIvi9kgxg
+         6ISKO7MXJUUTn2zN6Ufhp4Lw0QMnpRAL7c83q2cYnuZTbidlz3MdXwGO+VSg3g5k5zWy
+         IBoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DFk4DyEvclK+8w2TnSvj0LqgeUXFJr8aVANymRD6ZfM=;
-        b=J7FkJsUgpzzag9SufjtJvANiHXCerSr1wlM1+c0Qkggid0U47ue4OcFCKr+gDc/Ldd
-         kiaQi7oZarMGgBV3btYDWGkmPq7xfXnTZsjQxQHlnFziclqnhZeUlbus9+VVGlPaqBnW
-         abEDh1QJxWUcLhPEK7zuI20ms/GxVhtax7DkOsaofWdmwfQuWgKT71TPY0lsw6tG9B82
-         7uFYc92dd6lMAkIEQiw2Amxh1lrn+4+IKQh/WqZF4vjYg63xxrG70e1Vei9hczvQeXq6
-         86TwzRhjuECXFyKsU9fY06hvKZGGGkwWVRr98V5iROYuCXJ6j1oR3YTfP+wQYC6yeQbs
-         kd3A==
-X-Gm-Message-State: AJcUukchlE6QlJJl8p/EEu7BM8Fyn14LSDzSyyEx9GqrQJ7rC02waCA9
-        81CqEMgxsRT6L3eBYz8nXwUdIPivK+YLsgxEd4xdZQ==
-X-Google-Smtp-Source: AHgI3IZp4QvEu7bsDnw9bu9Us3x/gXp2eB+1jym2+L1ygp3eKt/9CT7Qbye3IL6MOH/8+9Npp3ecTea8M8P9XeKv80M=
-X-Received: by 2002:aca:b804:: with SMTP id i4mr10776538oif.280.1548815587948;
- Tue, 29 Jan 2019 18:33:07 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=pkj4FDWIV5lIKpY0+itOe11Q3GZ3pjdq8PP46ONWA6Q=;
+        b=YhopgjA3tSfO7lMiZb/sZbsQM0UYyIYaMZNlOsW2hhyrHjUbEc5EKdb3KeQQj1WzJX
+         LmZMVGPnqt472z1GkFjaYpGJoGh88PBuaYDmsxUUSvIItQ52NSUhMhOYAUn+dgB0X/SO
+         PpavShgP28xE3F3X5txTBj5/m2B/Xjiy9C6DJbbZvzpGGwyljTzuTA9jbcYsG8JIifRh
+         RrzkCMxNEulvqmeD8uFKrFySl6p2raRvGyKQnDzzib62tmzpaDiMoYTDZiVno0r5irQq
+         tS7DfseM4/A+lDdI6+tnulC4FqfcGxayj8TwnE/SzOE62u/6JRUHnWUW6jJPT5TRA8Mt
+         H+sQ==
+X-Gm-Message-State: AJcUukePvMxBNrFMlkzB0pKA2Swge4F9sMD9+pHYM3adXE72V40XnjG/
+        6+qXjpSdn47+nGQZD0ZKJfhYxTQrCA4+TNjeXxI=
+X-Google-Smtp-Source: ALg8bN7pDGTqgj1Smn8uYdkTcB/n/leD0v3EYTH+XmHVDJTk4W/MKws2cidEEmSoxnrWX5Yx+PxDE42ows7AeB3qT3Y=
+X-Received: by 2002:a62:43c1:: with SMTP id l62mr29239497pfi.22.1548815708365;
+ Tue, 29 Jan 2019 18:35:08 -0800 (PST)
 MIME-Version: 1.0
-References: <20190129165428.3931-1-jglisse@redhat.com> <20190129165428.3931-10-jglisse@redhat.com>
- <CAPcyv4gNtDQf0mHwhZ8g3nX6ShsjA1tx2KLU_ZzTH1Z1AeA_CA@mail.gmail.com>
- <20190129193123.GF3176@redhat.com> <CAPcyv4gkYTZ-_Et1ZriAcoHwhtPEftOt2LnR_kW+hQM5-0G4HA@mail.gmail.com>
- <20190129212150.GP3176@redhat.com>
-In-Reply-To: <20190129212150.GP3176@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 29 Jan 2019 18:32:56 -0800
-Message-ID: <CAPcyv4hZMcJ6r0Pw5aJsx37+YKx4qAY0rV4Ascc9LX6eFY8GJg@mail.gmail.com>
-Subject: Re: [PATCH 09/10] mm/hmm: allow to mirror vma of a file on a DAX
- backed filesystem
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <5c40acf3.1c69fb81.5b02f.880c@mx.google.com> <CAFqt6zaHuWfVWS1Aa4MQm-qE9Wjj68Bq5ioEWbk+hrg32VNRCw@mail.gmail.com>
+In-Reply-To: <CAFqt6zaHuWfVWS1Aa4MQm-qE9Wjj68Bq5ioEWbk+hrg32VNRCw@mail.gmail.com>
+From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Date:   Wed, 30 Jan 2019 08:04:56 +0530
+Message-ID: <CAJr6mf1j+nyYDanjX7pCvSjVjdqy9Y0WG5sJHtR42_E6U9_LbA@mail.gmail.com>
+Subject: Re: [PATCH] sh: Remove duplicate header
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>, dalias@libc.org,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 1:21 PM Jerome Glisse <jglisse@redhat.com> wrote:
+On Thu, Jan 17, 2019 at 11:11 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
 >
-> On Tue, Jan 29, 2019 at 12:51:25PM -0800, Dan Williams wrote:
-> > On Tue, Jan 29, 2019 at 11:32 AM Jerome Glisse <jglisse@redhat.com> wro=
-te:
-> > >
-> > > On Tue, Jan 29, 2019 at 10:41:23AM -0800, Dan Williams wrote:
-> > > > On Tue, Jan 29, 2019 at 8:54 AM <jglisse@redhat.com> wrote:
-> > > > >
-> > > > > From: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
-> > > > >
-> > > > > This add support to mirror vma which is an mmap of a file which i=
-s on
-> > > > > a filesystem that using a DAX block device. There is no reason no=
-t to
-> > > > > support that case.
-> > > > >
-> > > >
-> > > > The reason not to support it would be if it gets in the way of futu=
-re
-> > > > DAX development. How does this interact with MAP_SYNC? I'm also
-> > > > concerned if this complicates DAX reflink support. In general I'd
-> > > > rather prioritize fixing the places where DAX is broken today befor=
-e
-> > > > adding more cross-subsystem entanglements. The unit tests for
-> > > > filesystems (xfstests) are readily accessible. How would I go about
-> > > > regression testing DAX + HMM interactions?
-> > >
-> > > HMM mirror CPU page table so anything you do to CPU page table will
-> > > be reflected to all HMM mirror user. So MAP_SYNC has no bearing here
-> > > whatsoever as all HMM mirror user must do cache coherent access to
-> > > range they mirror so from DAX point of view this is just _exactly_
-> > > the same as CPU access.
-> > >
-> > > Note that you can not migrate DAX memory to GPU memory and thus for a
-> > > mmap of a file on a filesystem that use a DAX block device then you c=
-an
-> > > not do migration to device memory. Also at this time migration of fil=
-e
-> > > back page is only supported for cache coherent device memory so for
-> > > instance on OpenCAPI platform.
+> On Thu, Jan 17, 2019 at 9:57 PM Sabyasachi Gupta
+> <sabyasachi.linux@gmail.com> wrote:
 > >
-> > Ok, this addresses the primary concern about maintenance burden. Thanks=
-.
+> > Remove linux/irq.h which is included more than once.
 > >
-> > However the changelog still amounts to a justification of "change
-> > this, because we can". At least, that's how it reads to me. Is there
-> > any positive benefit to merging this patch? Can you spell that out in
-> > the changelog?
+> > Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
 >
-> There is 3 reasons for this:
-
-Thanks for this.
-
->     1) Convert ODP to use HMM underneath so that we share code between
->     infiniband ODP and GPU drivers. ODP do support DAX today so i can
->     not convert ODP to HMM without also supporting DAX in HMM otherwise
->     i would regress the ODP features.
+> Acked-by: Souptick Joarder <jrdr.linux@gmail.com>
 >
->     2) I expect people will be running GPGPU on computer with file that
->     use DAX and they will want to use HMM there too, in fact from user-
->     space point of view wether the file is DAX or not should only change
->     one thing ie for DAX file you will never be able to use GPU memory.
->
->     3) I want to convert as many user of GUP to HMM (already posted
->     several patchset to GPU mailing list for that and i intend to post
->     a v2 of those latter on). Using HMM avoids GUP and it will avoid
->     the GUP pin as here we abide by mmu notifier hence we do not want to
->     inhibit any of the filesystem regular operation. Some of those GPU
->     driver do allow GUP on DAX file. So again i can not regress them.
-
-Is this really a GUP to HMM conversion, or a GUP to mmu_notifier
-solution? It would be good to boil this conversion down to the base
-building blocks. It seems "HMM" can mean several distinct pieces of
-infrastructure. Is it possible to replace some GUP usage with an
-mmu_notifier based solution without pulling in all of HMM?
-
-> > > Bottom line is you just have to worry about the CPU page table. What
-> > > ever you do there will be reflected properly. It does not add any
-> > > burden to people working on DAX. Unless you want to modify CPU page
-> > > table without calling mmu notifier but in that case you would not
-> > > only break HMM mirror user but other thing like KVM ...
-> > >
-> > >
-> > > For testing the issue is what do you want to test ? Do you want to te=
-st
-> > > that a device properly mirror some mmap of a file back by DAX ? ie
-> > > device driver which use HMM mirror keep working after changes made to
-> > > DAX.
-> > >
-> > > Or do you want to run filesystem test suite using the GPU to access
-> > > mmap of the file (read or write) instead of the CPU ? In that case an=
-y
-> > > such test suite would need to be updated to be able to use something
-> > > like OpenCL for. At this time i do not see much need for that but may=
-be
-> > > this is something people would like to see.
+If no further comment, can we get this patch in queue for 5.1 ?
+> > ---
+> >  arch/sh/boards/mach-dreamcast/irq.c | 1 -
+> >  1 file changed, 1 deletion(-)
 > >
-> > In general, as HMM grows intercept points throughout the mm it would
-> > be helpful to be able to sanity check the implementation.
->
-> I usualy use a combination of simple OpenCL programs and hand tailor dire=
-ct
-> ioctl hack to force specific code path to happen. I should probably creat=
-e
-> a repository with a set of OpenCL tests so that other can also use them.
-> I need to clean those up into something not too ugly so i am not ashame
-> of them.
-
-That would be great, even it is messy.
-
-> Also at this time the OpenCL bits are not in any distro, most of the bits
-> are in mesa and Karol and others are doing a great jobs at polishing thin=
-gs
-> and getting all the bits in. I do expect that in couple months the mainli=
-ne
-> of all projects (LLVM, Mesa, libdrm, ...) will have all the bits and then=
- it
-> will trickle down to your favorite distribution (assuming they build mesa
-> with OpenCL enabled).
-
-Ok.
+> > diff --git a/arch/sh/boards/mach-dreamcast/irq.c b/arch/sh/boards/mach-dreamcast/irq.c
+> > index 2789647..69fa91c 100644
+> > --- a/arch/sh/boards/mach-dreamcast/irq.c
+> > +++ b/arch/sh/boards/mach-dreamcast/irq.c
+> > @@ -10,7 +10,6 @@
+> >   */
+> >  #include <linux/irq.h>
+> >  #include <linux/io.h>
+> > -#include <linux/irq.h>
+> >  #include <linux/export.h>
+> >  #include <linux/err.h>
+> >  #include <mach/sysasic.h>
+> > --
+> > 2.7.4
+> >
