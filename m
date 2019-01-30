@@ -2,124 +2,168 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EF6C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E81C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1368620989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7782520989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:34:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ag78r9d/"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AcrBtipu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731075AbfA3Nd7 (ORCPT
+        id S1731103AbfA3Nex (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:33:59 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:56059 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727227AbfA3Nd7 (ORCPT
+        Wed, 30 Jan 2019 08:34:53 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37960 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbfA3New (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:33:59 -0500
-Received: by mail-it1-f196.google.com with SMTP id m62so10221745ith.5;
-        Wed, 30 Jan 2019 05:33:58 -0800 (PST)
+        Wed, 30 Jan 2019 08:34:52 -0500
+Received: by mail-lf1-f65.google.com with SMTP id a8so17397417lfk.5
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 05:34:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S5cdkgdNcTluzV7ErxQTrVc9Y3rcoh9266HOxln35YM=;
-        b=ag78r9d/QsJ13JJIVBoHbqFQpbVFDFl6I7YTCK8t2LwUWuWvCWExXiS6Y6gEILKlEy
-         IyDOHYwM5LVl/9isIBc6o9OnU9420uaohazlV9gjSFScT2EXtVAry1uuxDWlY5X8baPC
-         Qc8cykr2v5OargLzg7Plpr9sjTIYYIuja9I8f/ja0XbM6RFc4Qh5ArumUnPWGhHL9/P9
-         jWuZR5PGq697Y8BNneUMnG6JWGAv2z1o12hII2tnxVkfGGDnwcaSWnRDsNwZxRSUVSnu
-         yeu7xKJL/PJD9UEak2rKzlvTFaoWFqUI/eeIL3n2rNcIt9kMUX5miDQwQAyiwAuJCgBE
-         BJ+A==
+         :cc:content-transfer-encoding;
+        bh=PPFUVs23F3IQMY0otjl/q4H1tIl5qPJJIi3mOpn5sOg=;
+        b=AcrBtipus1RR9IxL2qr4FVp1IbGiUPJyu5OYGSoKGlJP63e4Sahwvq/eFdg8g+yKxn
+         mLThrV6h3gA5c1YtMTBez0j61WmVlnE/CSUZub+gh/YRybm4ik1tmqIZbohPDCGI5XYK
+         m75vqOdyHYHJoGB6QCOTRSnPLoFF/9yBNB9mw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S5cdkgdNcTluzV7ErxQTrVc9Y3rcoh9266HOxln35YM=;
-        b=LT20h2GXeI83yk9xIPpj5jyLFZSD/JVUMggwKjYBNiOk/lA96AaHimolz91oF5SZiT
-         Ajhk8cGhWOth5LHb3kWxVwmrxDkMLjTxJrri5nMJ8Yv8eG1CSY80pPHULl4wurpu2U74
-         hlRed9fKlleurn/AOot7FVaZBAnrnqa5yiiD2rlEPC+7o8ma00tHFezCC6O93b23DJnN
-         Oj676jqVwRzEQbRIcdw1wLlZp09ydQzkQzrYkdZWP7JKZeuEyz9YCPEconfw1LEKyZ+R
-         ke+5+HfEYG6yWQo0tPPvv6Sac9qT+slFu0FaAX7DyPk/22dnqBujB+mygFyXIihRXhUr
-         cuQw==
-X-Gm-Message-State: AJcUukeSK7LqYeT66CrOlFKd5xq+vDubGu5w9d70LCzgEYF0/CCcZnVC
-        JHF/DH0qTcfvR+Sw9rC/y5IWTmg4GwzmlIXzyPslKw==
-X-Google-Smtp-Source: ALg8bN5UPHF/sDemIE55aSZwXevNPHFIXLFyyWmVN54K+NSHh49RGEqQo+iQK2Q8wJdAysID/FdesUqUDyCeIT2tXmI=
-X-Received: by 2002:a02:49c9:: with SMTP id p70mr18999360jad.40.1548855237942;
- Wed, 30 Jan 2019 05:33:57 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PPFUVs23F3IQMY0otjl/q4H1tIl5qPJJIi3mOpn5sOg=;
+        b=q5sftcddzXoYkDyfgymTxPpb3d25bbyarFPz9DqwiWSZVFssceKRDWd6U/Tgnlbt7N
+         SacJoQQzohahc3hrCWSykBnGwuULtUK73CdjZKadQGfTlVctr7dkyq1RT3HZRAHsSUaw
+         /CsrvxxwaUk1V4qH1IN4oTeLUHjMc0Wd2/JdS0p2WDApPXt+8/fH3FGaHVdJl9QQ5EGq
+         53x2k6JWMqbQAnGwVy/laEUdbbuDBHttfVazTtktdsuG/jCpfvzlwjY3yb4kvQE6lCH+
+         x1h42K3esvoRs6r+VoslULe5G9LF7Vdcy4ibxEKMdiDN1iWXNLqNTr74oWS/okW8tN/7
+         dl6g==
+X-Gm-Message-State: AJcUukfeBj0xviwbf+SI0W1pUGdsXZ1N/espAnYokDjaJEbs915chl6u
+        gzMe8rr6N+etR0A2lyi6TuyP5sziyx4tcVB4JHiY2A==
+X-Google-Smtp-Source: ALg8bN6WRr+mMpWp3Vxu5s1mzRRuqjl2cjzdralzAC390vNJh3KN+F71g08xMCtsCCF1g1BwTzQ2DuLBnMR49WZUaMg=
+X-Received: by 2002:a19:2755:: with SMTP id n82mr23634276lfn.94.1548855290693;
+ Wed, 30 Jan 2019 05:34:50 -0800 (PST)
 MIME-Version: 1.0
-References: <1548853196-11447-1-git-send-email-aisheng.dong@nxp.com>
- <1548853196-11447-3-git-send-email-aisheng.dong@nxp.com> <1548854330.6869.22.camel@pengutronix.de>
-In-Reply-To: <1548854330.6869.22.camel@pengutronix.de>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Wed, 30 Jan 2019 21:33:47 +0800
-Message-ID: <CAA+hA=QCYzjqDx1ELSu4dbrwy8JNr4TUr8N1fzKunjT13KEvYA@mail.gmail.com>
-Subject: Re: [PATCH V2 2/4] dt-bindings: irq: imx-irqsteer: add multi output
- interrupts support
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
+References: <20190129113207.477505932@linuxfoundation.org>
+In-Reply-To: <20190129113207.477505932@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 30 Jan 2019 19:04:39 +0530
+Message-ID: <CA+G9fYsUa=upA5=juDqNtU1tEEXoPzQbXRoajjSLyyaiOw9BSw@mail.gmail.com>
+Subject: Re: [PATCH 4.20 000/117] 4.20.6-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 9:21 PM Lucas Stach <l.stach@pengutronix.de> wrote:
+On Tue, 29 Jan 2019 at 17:08, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Am Mittwoch, den 30.01.2019, 13:05 +0000 schrieb Aisheng Dong:
-> > One irqsteer channel can support up to 8 output interrupts.
-> >
-> > > Cc: Marc Zyngier <marc.zyngier@arm.com>
-> > > Cc: Rob Herring <robh+dt@kernel.org>
-> > > Cc: Lucas Stach <l.stach@pengutronix.de>
-> > > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: devicetree@vger.kernel.org
-> > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > ---
-> > ChangeLog:
-> > v1->v2:
-> >  * remove one unnecessary note.
-> > ---
-> >  .../devicetree/bindings/interrupt-controller/fsl,irqsteer.txt        | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
-> > index 6d0a41b..984ab92 100644
-> > --- a/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
-> > @@ -6,8 +6,9 @@ Required properties:
-> > >     - "fsl,imx8m-irqsteer"
-> > >     - "fsl,imx-irqsteer"
-> >  - reg: Physical base address and size of registers.
-> > -- interrupts: Should contain the parent interrupt line used to multiplex the
-> > -  input interrupts.
-> > +- interrupts: Should contain the up to 8 parent interrupt lines used to
-> > +  multiplex the input interrupts. They should be sepcified seqencially
+> This is the start of the stable review cycle for the 4.20.6 release.
+> There are 117 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Typos here, should be: "specified sequentially"
+> Responses should be made by Thu Jan 31 11:31:34 UTC 2019.
+> Anything received after that time might be too late.
 >
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.20.6-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.20.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Nice catch. Will update in new version.
-Thanks
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Regards
-Dong Aisheng
+Summary
+------------------------------------------------------------------------
 
-> > +  from output 0 to 7.
-> >  - clocks: Should contain one clock for entry in clock-names
-> >    see Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >  - clock-names:
+kernel: 4.20.6-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.20.y
+git commit: ef18d4260339bf79aa387199f912d366aa7e4b93
+git describe: v4.20.5-119-gef18d4260339
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.20-oe/bu=
+ild/v4.20.5-119-gef18d4260339
+
+No regressions (compared to build v4.20.5)
+
+
+Fixes (compared to build v4.20.5)
+------------------------------------------------------------------------
+LTP syscalls test case "keyctl05" fixed and getting pass on all devices.
+
+Ran 21254 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-fs-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
