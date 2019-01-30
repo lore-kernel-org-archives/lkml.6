@@ -2,114 +2,100 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACA0C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BD4C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E46E20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:17:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9336F20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:17:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WbkQr0Kp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRBYwUMk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730611AbfA3KRV (ORCPT
+        id S1730629AbfA3KRo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 05:17:21 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35449 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbfA3KRV (ORCPT
+        Wed, 30 Jan 2019 05:17:44 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:36694 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726476AbfA3KRo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 05:17:21 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p8so10851341plo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 02:17:20 -0800 (PST)
+        Wed, 30 Jan 2019 05:17:44 -0500
+Received: by mail-it1-f196.google.com with SMTP id c9so9672293itj.1;
+        Wed, 30 Jan 2019 02:17:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=qtqFBfcBpvpDSs7hW0mzxMLq7yUG6Ahbo+VkJvD38cc=;
-        b=WbkQr0KpBVamQsPJnuV4Q60cgeFnnSFMWEpBLNO4BdSer+fvP3I58cLUHT3yV0kthv
-         G0LrXs8LUMdPbR6SSt83G4rsQcnQh4ayWNMZXqSVDbQRNOYq8JmvqWxwqz4cX054YNJq
-         Ku8KZdtOueYzAbykjyvkFsVFsCadn8WIayL0g=
+        bh=Red5zHbN+lfXs3TYegn7hFfQkcfngwOiw9+CgmEYEx4=;
+        b=GRBYwUMkCBmM+fjs8B0DOm3e2M43i3pzNKgORHuRgs+RkctA+fRuVTxW8qEalrywtI
+         JCSyZozfbC1jNtc5+3GASxIt0tEqFJqiL2qWw9i4a6WjJnacKBL9e9ifCpKRHq2tvxvD
+         bpNy4b5vsmkvovTxVoEN+9poFAnEAn8Cw2y0GR+m95uRI5SSFSLvrkIZxlhT7xVFDH2h
+         Po/nX9soVLXHRuFqPKiy4QJ7ZKywS8+Ai+PHZ1a1F79YL9tOoqXme7C2V2zUuB3j04Mq
+         8GzaVv4Zgk2nSE5MEXSCdIotZCv1jKwjYgU7Wg2pOy/dyM1oVumsX/qCo3rdGjpR4SW2
+         LfWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qtqFBfcBpvpDSs7hW0mzxMLq7yUG6Ahbo+VkJvD38cc=;
-        b=H+PtWKDGcOqd2USBIeNoPGCzaoBJzKY+jkaBdcMw+XsMlGevHbqZB9NMHb7PRzNW+c
-         iJnPU6n/jnDFu+X9IboGiSxGw7RAQ523HmZQN5J1g3hvt3KbdOxOrqbRCxoySlO3y7zx
-         9MJZtFeOV7lBD1TRnpNLgpBR8TqEMOtbl0RSxkPS2KlJVuVYtOkSJA3SbXt9Pj7Jb36h
-         nk42D8camFJnJLoN/gjjpdhOqIsq8NcTJnMOukGD0rD+YFir+BTTUYqc+ZNLlXEzjNua
-         jN4zOeb4Q2C/mz8vX7wFf6oDP+euvRY/4968jLd4pV3EKdpFt6qVVZ6D9rAN2sCaaTxZ
-         p4LA==
-X-Gm-Message-State: AJcUukeJbgoSei7n0NM1uhjV2D5MBB0v2eAe9Q3Exy3PyI5u0Vymm4Na
-        yElc1zR3ph8JzOkh33JiKjpB0w==
-X-Google-Smtp-Source: ALg8bN5ZP+pqxSK3+axrtFel8s0idJS1nrrba4mwyQA9QsMSf7ul+5tOWzvQUh00Y2lV4S3+QJfVvA==
-X-Received: by 2002:a17:902:780a:: with SMTP id p10mr30442782pll.54.1548843440166;
-        Wed, 30 Jan 2019 02:17:20 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id x28sm2871896pge.66.2019.01.30.02.17.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 02:17:18 -0800 (PST)
-Date:   Wed, 30 Jan 2019 15:47:15 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Matthias Kaehlcke <mka@chromium.org>, rjw@rjwysocki.net,
-        sudeep.holla@arm.com, liviu.dudau@arm.com,
-        lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, nm@ti.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        dietmar.eggemann@arm.com
-Subject: Re: [PATCH 2/7] cpufreq: dt: Register an Energy Model
-Message-ID: <20190130101715.nz2bpqnust7gv4at@vireshk-i7>
-References: <20190128165522.31749-1-quentin.perret@arm.com>
- <20190128165522.31749-3-quentin.perret@arm.com>
- <20190128193656.GI81583@google.com>
- <20190129052144.plicqu4vozh3l3ss@vireshk-i7>
- <20190129091546.tfh3lo4w4sosfuba@queper01-lin>
- <20190130051806.fdsos27jaekkwgbs@vireshk-i7>
- <20190130091055.zjj2jrjvi2n3ht66@queper01-lin>
+        bh=Red5zHbN+lfXs3TYegn7hFfQkcfngwOiw9+CgmEYEx4=;
+        b=syq3G+lKoBaEmG7+MQsHW5MO0W+efft5GKUoEls2LD0fPiEnRIVEt0nqLgvikrow4J
+         OiWDaOv3VWPT2l2e8e0H4drksM1g6aKAZFgUx71NxsSEMSz5DIMjixmzI9WDetwntWNY
+         uiqhXdNtAHbVDhs0eGhJqfaM850xkYy6CtS5uTTCWeVjKtfcAeLOsDL/bct1IeR6pfI9
+         oR5ZaVrHH4UPCY9ko56otf1yfsiOB0yW9hni1+0tyu1l90UAG5OK17sNENfthrThphnv
+         409uEFqQJn9Z7PAdVKk3x+VF0MeoGR7SDAv3CCezrQmisJ0uV6+huI3XJvSlT0zo5sGy
+         4kyQ==
+X-Gm-Message-State: AJcUukc/zsi4gx8BfAzpxaYYztMSGemKn7XWLbZz4OGLMFKYgIY0LjuD
+        QZxLU+mGlW22EQqJIYh43kk=
+X-Google-Smtp-Source: ALg8bN5TrmLkzM14Wyo8DIIg1HLOoi12MTd7ep/HcZryUSXiPepcK5naikZO/oBjmICCwb2XS2ealw==
+X-Received: by 2002:a24:5a8f:: with SMTP id v137mr14864048ita.65.1548843463078;
+        Wed, 30 Jan 2019 02:17:43 -0800 (PST)
+Received: from icarus ([2001:268:c0a5:3348:60b5:ec84:e7a7:e417])
+        by smtp.gmail.com with ESMTPSA id 79sm1005090itx.11.2019.01.30.02.17.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 02:17:42 -0800 (PST)
+Date:   Wed, 30 Jan 2019 19:18:14 +0900
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>, linus.walleij@linaro.org
+Cc:     linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com,
+        linux@rasmusvillemoes.dk
+Subject: Re: [PATCH v8 0/8] Introduce the for_each_set_clump8 macro
+Message-ID: <20190130101814.GA3668@icarus>
+References: <cover.1547445576.git.vilhelm.gray@gmail.com>
+ <20190129170734.688a6adf91267cc6f1b5fa08@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190130091055.zjj2jrjvi2n3ht66@queper01-lin>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20190129170734.688a6adf91267cc6f1b5fa08@linux-foundation.org>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30-01-19, 09:12, Quentin Perret wrote:
-> What I had in mind is something as simple as:
-> 
-> 	void of_dev_pm_opp_register_em(struct cpumask *cpus)
-> 	{
-> 		/* Bail out if an EM is there */
-> 		if (em_cpu_get(cpumask_first(cpus)))
-> 			return;
-> 
-> 		/* Check prerequisites: dpc coeff in DT, ... */
-> 		...
-> 
-> 		em_register_perf_domain(...);
-> 	}
-> 
-> IIUC, Matthias' point was that if the EM is already registered, there is
-> no good reason to call em_register_perf_domain() again. Now, that should
-> in fact be harmless because em_register_perf_domain() already does that
-> check. It's just cleaner and easier to understand from a conceptual
-> standpoint to not call that function several times for no reason I
-> assume.
+On Tue, Jan 29, 2019 at 05:07:34PM -0800, Andrew Morton wrote:
+> Do we have any expectation that these facilities will be used by
+> anything other than GPIO?  If not then perhaps they should be sited
+> within drivers/gpio (presumably as a standalone module) until such a
+> need is found?
 
-If there is no good reason to call em_register_perf_domain() several
-times, then the same applies to of_dev_pm_opp_register_em() as well,
-isn't it ?
+I can move it within drivers/gpio since my only use at moment is for
+these gpio drivers I maintain. However, moving it to the gpio subsystem
+does make it less likely to be seen by authors in other subsystems who
+may have use for it -- so there is the chance that this becomes isolated
+and untilized only amonst the gpio drivers. That may not be such a bad
+thing in the end; I suspect it will be easy to spot if other subsystems
+start implementing their own for_each_set_clump (if other subsystems
+would even have such a need for it).
 
-This is init code anyway isn't going to run a lot, so I wouldn't
-suggest adding any such (duplicate) checks in
-of_dev_pm_opp_register_em().
+Linus, if I move the for_each_set_clump macro and related functions to
+drivers/gpio, should I move the code into the gpiolib.h and gpiolib.c
+files? Or would it be best to implement this as a separate standalone
+module, and make a Kconfig dependency for those gpio drivers which
+require it? A standalone module feels somewhat overkill for such little
+code in my opinion.
 
--- 
-viresh
+William Breathitt Gray
