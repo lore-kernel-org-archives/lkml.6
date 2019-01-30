@@ -5,87 +5,117 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 805EBC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19692C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 586B02086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:06:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB4152086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:07:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfA3BGs (ORCPT
+        id S1728299AbfA3BHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 20:06:48 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:39454 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726693AbfA3BGs (ORCPT
+        Tue, 29 Jan 2019 20:07:37 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40030 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726904AbfA3BHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 20:06:48 -0500
-Received: from mr4.cc.vt.edu (mr4.cc.ipv6.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x0U16lFn001290
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 20:06:47 -0500
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x0U16gkR014393
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 20:06:47 -0500
-Received: by mail-qt1-f198.google.com with SMTP id w18so26607734qts.8
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 17:06:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:date:message-id;
-        bh=KCfxyw28pJTkT4Pxa5YE6ES0HyYW9dDOm+XE6a0guVM=;
-        b=KUoqu0Fx5CktN8QsXjxsf5hwRzErEXAbYt5m8B9kifGrTFYN5mAgmEcVjVF0DQoyMB
-         1tmMIHYxZ30I1sVm1M/RGEfzYoegbB8ZVSkOyhWWHfQUZrq0gfMgubld5P0EwTbAvXzo
-         ufP5ptY5q2lbYr4vtNIUVmq0z/I4FgsOLHq0fW0WU0zzVApBbL+wiGk9tP8UXNkLHM74
-         ZirqNyo35O8KYy5EiFL2eFYKT9nwBpqbBoBA4Oyvb0cbDcYFlZ9s7t8fQwuGQL5xXn/T
-         Hj34+4+B3UXXEoZyKQqnUGNd30dybh7dNbQbXL5RVJiJh3rFuL9OSTD97bmHcoru5MRr
-         VMJQ==
-X-Gm-Message-State: AJcUukcIcBxD/oN1RY7JiA0I+OqUemwo0itueGYYAJFB7Jpplxzirbuf
-        VQ3ZW8sJXKtgZsW1af9oSqWP4mS/5gXvJeT0sMeIG3NeHlhGKQTPd0LhqMz6t6TnG0TjQCKWDHg
-        YOTUKKL75ocRkKLT8/5tkmx1IlvTFjnDUSG4=
-X-Received: by 2002:a0c:f8cb:: with SMTP id h11mr27142555qvo.134.1548810402116;
-        Tue, 29 Jan 2019 17:06:42 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN4NENS8kOPtZCwisiX+XNzRSNeiRRAIhAwQOu/X0TDutUDpoy4NN4J5/GgheBSh9ZxV+I9uJA==
-X-Received: by 2002:a0c:f8cb:: with SMTP id h11mr27142544qvo.134.1548810401911;
-        Tue, 29 Jan 2019 17:06:41 -0800 (PST)
-Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4341::936])
-        by smtp.gmail.com with ESMTPSA id r47sm3631qtc.77.2019.01.29.17.06.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 17:06:40 -0800 (PST)
-From:   valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Jan Kara <jack@suse.cz>
-cc:     Pavel Machek <pavel@ucw.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@osdl.org>, vbabka@suse.cz,
-        aarcange@redhat.com, rientjes@google.com, mhocko@kernel.org,
-        zi.yan@cs.rutgers.edu, hannes@cmpxchg.org
-Subject: Re: [regression -next0117] What is kcompactd and why is he eating 100% of my cpu?
-In-reply-to: <20190128091627.GA27972@quack2.suse.cz>
-References: <20190126200005.GB27513@amd> <12171.1548557813@turing-police.cc.vt.edu> <20190127141556.GB9565@techsingularity.net> <20190127160027.GA9340@amd> <13417.1548624994@turing-police.cc.vt.edu>
- <20190128091627.GA27972@quack2.suse.cz>
+        Tue, 29 Jan 2019 20:07:37 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE19331ED;
+        Wed, 30 Jan 2019 01:07:35 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 17:07:34 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc:     linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk
+Subject: Re: [PATCH v8 0/8] Introduce the for_each_set_clump8 macro
+Message-Id: <20190129170734.688a6adf91267cc6f1b5fa08@linux-foundation.org>
+In-Reply-To: <cover.1547445576.git.vilhelm.gray@gmail.com>
+References: <cover.1547445576.git.vilhelm.gray@gmail.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Date:   Tue, 29 Jan 2019 20:06:39 -0500
-Message-ID: <14875.1548810399@turing-police.cc.vt.edu>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Jan 2019 10:16:27 +0100, Jan Kara said:
+On Mon, 14 Jan 2019 15:19:17 +0900 William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
 
-> So my buffer_migrate_page_norefs() is certainly buggy in its current
-> incarnation (as a result block device page cache is not migratable at all).
-> I've sent Andrew a patch over week ago but so far it got ignored. The patch
-> is attached, can you give it a try whether it changes something for you?
-> Thanks!
+> While adding GPIO get_multiple/set_multiple callback support for various
+> drivers, I noticed a pattern of looping manifesting that would be useful
+> standardized as a macro.
+> 
+> This patchset introduces the for_each_set_clump8 macro and utilizes it
+> in several GPIO drivers. The for_each_set_clump macro8 facilitates a
+> for-loop syntax that iterates over a memory region entire groups of set
+> bits at a time.
+> 
+> For example, suppose you would like to iterate over a 32-bit integer 8
+> bits at a time, skipping over 8-bit groups with no set bit, where
+> XXXXXXXX represents the current 8-bit group:
+> 
+>     Example:        10111110 00000000 11111111 00110011
+>     First loop:     10111110 00000000 11111111 XXXXXXXX
+>     Second loop:    10111110 00000000 XXXXXXXX 00110011
+>     Third loop:     XXXXXXXX 00000000 11111111 00110011
+> 
+> Each iteration of the loop returns the next 8-bit group that has at
+> least one set bit.
+> 
+> The for_each_set_clump8 macro has four parameters:
+> 
+>     * start: set to the bit offset of the current clump
+>     * clump: set to the current clump value
+>     * bits: bitmap to search within
+>     * size: bitmap size in number of bits
+> 
+> In this version of the patchset, the for_each_set_clump macro has been
+> reimplemented and simplified based on the suggestions provided by Rasmus
+> Villemoes and Andy Shevchenko in the version 4 submission.
+> 
+> In particular, the function of the for_each_set_clump macro has been
+> restricted to handle only 8-bit clumps; the drivers that use the
+> for_each_set_clump macro only handle 8-bit ports so a generic
+> for_each_set_clump implementation is not necessary. Thus, a solution for
+> large clumps (i.e. those larger than the width of a bitmap word) can be
+> postponed until a driver appears that actually requires such a generic
+> for_each_set_clump implementation.
+> 
+> For what it's worth, a semi-generic for_each_set_clump (i.e. for clumps
+> smaller than the width of a bitmap word) can be implemented by simply
+> replacing the hardcoded '8' and '0xFF' instances with respective
+> variables. I have not yet had a need for such an implementation, and
+> since it falls short of a true generic for_each_set_clump function, I
+> have decided to forgo such an implementation for now.
+> 
+> In addition, the bitmap_get_value8 and bitmap_set_value8 functions are
+> introduced to get and set 8-bit values respectively. Their use is based
+> on the behavior suggested in the patchset version 4 review.
 
-Been running with the patch for about 24 hours, haven't seen kcompactd
-misbehave.  I even fired up a Chrome with a lot of tabs open, a Firefox, and a
-kernel build, intentionally drove the system into swapping, and kcompactd
-didn't make it into the top 10 on 'top'.
+Nice-looking code.
 
-I'm willing to say put a "tested-by:" on that one,  it looks fixed from here.
-If there's any remaining bugs, they're ones I can't seem to trigger...
+>  drivers/gpio/gpio-104-dio-48e.c   |  73 ++++++--------------
+>  drivers/gpio/gpio-104-idi-48.c    |  37 +++-------
+>  drivers/gpio/gpio-gpio-mm.c       |  73 ++++++--------------
+>  drivers/gpio/gpio-pci-idio-16.c   |  75 ++++++++------------
+>  drivers/gpio/gpio-pcie-idio-24.c  | 111 +++++++++++-------------------
+>  drivers/gpio/gpio-ws16c48.c       |  72 ++++++-------------
+>  include/asm-generic/bitops/find.h |  14 ++++
+>  include/linux/bitops.h            |   5 ++
+>  lib/find_bit.c                    |  81 ++++++++++++++++++++++
+>  lib/test_bitmap.c                 |  65 +++++++++++++++++
+>  10 files changed, 307 insertions(+), 299 deletions(-)
+
+It's a shame that it doesn't actually dercease the kernel line count,
+but there are other benefits.
+
+The patches are missing the hoped-for acks, but I think you maintain
+most/all of those drivers.
+
+Do we have any expectation that these facilities will be used by
+anything other than GPIO?  If not then perhaps they should be sited
+within drivers/gpio (presumably as a standalone module) until such a
+need is found?
 
