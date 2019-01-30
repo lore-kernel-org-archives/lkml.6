@@ -2,134 +2,171 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807D5C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAD5C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B752175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E69CC2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:00:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729693AbfA3M5a convert rfc822-to-8bit (ORCPT
+        id S1730719AbfA3NA4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:57:30 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48258 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725851AbfA3M53 (ORCPT
+        Wed, 30 Jan 2019 08:00:56 -0500
+Received: from www1392ue.sakura.ne.jp ([219.94.233.166]:57280 "EHLO
+        www1392ue.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbfA3NAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 07:57:29 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UCtV7d075931
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 07:57:28 -0500
-Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.73])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qba7qee76-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 07:57:27 -0500
-Received: from localhost
-        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
-        for <linux-kernel@vger.kernel.org> from <JOELN@il.ibm.com>;
-        Wed, 30 Jan 2019 12:57:26 -0000
-Received: from us1a3-smtp01.a3.dal06.isc4sb.com (10.106.154.95)
-        by smtp.notes.na.collabserv.com (10.106.227.90) with smtp.notes.na.collabserv.com ESMTP;
-        Wed, 30 Jan 2019 12:57:21 -0000
-Received: from us1a3-mail108.a3.dal06.isc4sb.com ([10.146.45.126])
-          by us1a3-smtp01.a3.dal06.isc4sb.com
-          with ESMTP id 2019013012572150-480607 ;
-          Wed, 30 Jan 2019 12:57:21 +0000 
-In-Reply-To: <1548151235-386-1-git-send-email-joeln@il.ibm.com>
-To:     "Jonathan Corbet" <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Mike Rapoport" <rppt@linux.ibm.com>
-Subject: Re: [PATCH v3 0/3] update infiniband uverbs documentation
-From:   "Joel Nider" <JOELN@il.ibm.com>
-Date:   Wed, 30 Jan 2019 14:57:21 +0200
-References: <1548151235-386-1-git-send-email-joeln@il.ibm.com>
+        Wed, 30 Jan 2019 08:00:55 -0500
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: alicef@alicef.me)
+        by www1392ue.sakura.ne.jp (Postcow) with ESMTPSA id 5522B20C51;
+        Wed, 30 Jan 2019 22:00:52 +0900 (JST)
 MIME-Version: 1.0
-X-KeepSent: 639BB113:4704AA4E-C2258392:004719E1;
- type=4; name=$KeepSent
-X-Mailer: IBM Notes Release 9.0.1FP7 August 18, 2016
-X-LLNOutbound: False
-X-Disclaimed: 51099
-X-TNEFEvaluated: 1
-x-cbid: 19013012-3107-0000-0000-000009CF548B
-X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
- SC=0.40962; ST=0; TS=0; UL=0; ISC=; MB=0.037177
-X-IBM-SpamModules-Versions: BY=3.00010503; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01153919; UDB=6.00601641; IPR=6.00934293;
- BA=6.00006218; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
- ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00025353; XFM=3.00000015;
- UTC=2019-01-30 12:57:25
-X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
-X-IBM-AV-VERSION: SAVI=2019-01-30 06:25:17 - 6.00009527
-x-cbparentid: 19013012-3108-0000-0000-000031F36174
-Message-Id: <OF639BB113.4704AA4E-ONC2258392.004719E1-C2258392.00472B4C@notes.na.collabserv.com>
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 8BIT
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 30 Jan 2019 22:00:51 +0900
+From:   alicef <alicef@alicef.me>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, jeyu@kernel.org,
+        jikos@kernel.org, mbenes@suse.cz, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>,
+        live-patching-owner@vger.kernel.org
+Subject: Re: [PATCH] livepatch: core: Return ENOTSUPP instead of ENOSYS
+In-Reply-To: <20190130124156.qjtbvrkjctu6wi62@pathway.suse.cz>
+References: <20190126192630.6163-1-alicef@alicef.me>
+ <20190128194943.GA18515@redhat.com> <20190129165054.vyi7n6in5v2omkpu@treble>
+ <20190130124156.qjtbvrkjctu6wi62@pathway.suse.cz>
+Message-ID: <0ae0746120590dc3c5f7c1d602321f28@alicef.me>
+X-Sender: alicef@alicef.me
+User-Agent: Roundcube Webmail/1.3.8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jon,
+On 2019-01-30 21:41, Petr Mladek wrote:
+> On Tue 2019-01-29 10:50:54, Josh Poimboeuf wrote:
+>> On Mon, Jan 28, 2019 at 02:49:43PM -0500, Joe Lawrence wrote:
+>> > On Sun, Jan 27, 2019 at 04:26:30AM +0900, Alice Ferrazzi wrote:
+>> > > This patch fixes a checkpatch warning:
+>> > >     WARNING: ENOSYS means 'invalid syscall nr' and nothing else
+>> > >
+>> > > Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+>> > > ---
+>> > >  kernel/livepatch/core.c | 2 +-
+>> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> > >
+>> > > diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+>> > > index 5b77a7314e01..eea6b94fef89 100644
+>> > > --- a/kernel/livepatch/core.c
+>> > > +++ b/kernel/livepatch/core.c
+>> > > @@ -897,7 +897,7 @@ int klp_register_patch(struct klp_patch *patch)
+>> > >
+>> > >  	if (!klp_have_reliable_stack()) {
+>> > >  		pr_err("This architecture doesn't have support for the livepatch consistency model.\n");
+>> > > -		return -ENOSYS;
+>> > > +		return -ENOTSUPP;
+>> > >  	}
+>> > >
+>> > >  	return klp_init_patch(patch);
+>> > > --
+>> > > 2.19.2
+>> > >
+>> >
+>> > Hi Alice,
+>> >
+>> > Patches should be based off the upstream livepatching tree, found here:
+>> >
+>> >   git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.git
+>> >
+>> > and in this case, the for-next branch, which holds patches that have
+>> > already been queued up for the next release.  This one:
+>> >
+>> >   958ef1e39d24 ("livepatch: Simplify API by removing registration step")
+>> >
+>> > has moved the code in question from klp_register_patch() to
+>> > klp_enable_patch().
+>> >
+>> >
+>> > As far as the change itself, I don't have strong opinion about it
+>> > either way.
+>> >
+>> > On the one hand, there is the checkpatch warning and -ENOTSUPP reads
+>> > more intuitively than -ENOSYS.
+>> >
+>> > However, the current pattern seems to be more prevelent in the kernel.
+>> > I wonder if the checkpatch warning would be better specified for return
+>> > values that are actually passed back to userspace.
+>> >
+>> > Also, klp_register_patch(), now klp_enable_patch(), is exported for
+>> > module use, though I don't believe anyone (samples / tests / kpatch /
+>> > kgraft?) is inspecting which error value is returned.
+>> >
+>> > I would defer to whichever convention the maintainers prefer here.
+>> 
+>> Based on the commit description from 91c9afaf97ee ("checkpatch.pl: new
+>> instances of ENOSYS are errors"), it sounds like there was a decision 
+>> at
+>> Kernel Summit to limit ENOSYS to mean "bad syscall" and nothing else.
+> 
+> Hmm, the error code is passed to the syscall, for example:
+> 
+> + SYSCALL_DEFINE3(init_module
+>   + load_module()
+>     + do_init_module()
+>       + do_one_initcall(mod->init);
+> 
+> I am not sure if we are allowed to return -ENOTSUPP (-524).
+> It is defined in the internal include/linux/errno.h. There
+> is the following commnent:
+> 
+> /*
+>  * These should never be seen by user programs...
+> 
+> 
+> 
+> I tried to find a better alternative and found:
+> 
+> #define	EOPNOTSUPP	95	/* Operation not supported on transport endpoint 
+> */
+> 
+> 
+> There is the following note in man errno:
+> 
+>        ENOTSUP         Operation not supported (POSIX.1)
+> 
+>        EOPNOTSUPP      Operation not supported on socket (POSIX.1)
+> 		       (ENOTSUP and EOPNOTSUPP have the same value
+> 		       on Linux, but according to POSIX.1 these error
+> 		       values should be distinct.)
+> 
+> And it looks that -EOPNOTSUPP is used widely in many subsystes (not
+> only network).
+> 
+> Best Regards,
+> Petr
 
-Have you had a chance to review this patchset?
+
+EOPNOTSUPP works also for me.
+looks better adopted than ENOTSUP.
+
+I will send a new patch based off the upstream from 
+git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.git 
+as suggested by Joe
 
 Thanks,
-
-Joel Nider/Haifa/IBM@IBMIL wrote on 01/22/2019 12:00:32 PM:
-
-> From: Joel Nider/Haifa/IBM@IBMIL
-> To: "Jonathan Corbet" <corbet@lwn.net>
-> Cc: "Jason Gunthorpe" <jgg@ziepe.ca>, "Leon Romanovsky" 
-<leon@kernel.org>, 
-> "Doug Ledford" <dledford@redhat.com>, "Mike Rapoport" 
-<rppt@linux.ibm.com>, 
-> Joel Nider/Haifa/IBM@IBMIL, linux-doc@vger.kernel.org, 
-linux-kernel@vger.kernel.org
-> Date: 01/22/2019 12:00 PM
-> Subject: [PATCH v3 0/3] update infiniband uverbs documentation
-> 
-> A small patchset to update the verbs API documentation with some
-> information regarding the ioctl syscall. First patch converts the
-> file format to ReST, since this is the new preferred format, moves
-> the file to Documentation/userspace-api, and updates the index.
-> The 2nd patch adds the new content, documenting a bit of the internal
-> workings of the kernel side of the API functions. The goal is to make
-> it easier for developers unfamiliar with the structure to understand
-> what is going on when adding a new function.
-> The 3rd patch updates the MAINTAINERS file.
-> 
-> v3 addresses comments from Jon, Willy and Jason:
->  The location of the new content should be driver-api
->  The location of the old (converted) content should be userspace-api
->  MAINTAINERS file must be updated
-> 
-> Joel Nider (3):
->   docs-rst: Convert user verbs doc to rst
->   docs-rst: driver-api: Add infiniband interface documentation
->   MAINTAINERS: add new RDMA/Infiniband documentation
-> 
->  Documentation/driver-api/index.rst              |  1 +
->  Documentation/driver-api/infiniband.rst         | 73 
-+++++++++++++++++++++++++
->  Documentation/infiniband/user_verbs.txt         | 69 
------------------------
->  Documentation/userspace-api/index.rst           |  1 +
->  Documentation/userspace-api/rdma_user_verbs.rst | 70 
-++++++++++++++++++++++++
->  MAINTAINERS                                     |  2 +
->  6 files changed, 147 insertions(+), 69 deletions(-)
->  create mode 100644 Documentation/driver-api/infiniband.rst
->  delete mode 100644 Documentation/infiniband/user_verbs.txt
->  create mode 100644 Documentation/userspace-api/rdma_user_verbs.rst
-> 
-> -- 
-> 2.7.4
-> 
+Alice
 
 
+-- 
+======================================
+Alice Ferrazzi
+alicef@alicef.me
+PGP: 2E4E 0856 461C 0585 1336 F496 5621 A6B2 8638 781A
+======================================
