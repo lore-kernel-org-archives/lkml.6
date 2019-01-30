@@ -2,82 +2,83 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADA1C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F9EC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 856B820882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:05:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65ACB20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:05:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="WrYa70Rq";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="CV4qykW9"
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="Ecm//g9d";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="HG81EJ66"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730706AbfA3LFG (ORCPT
+        id S1730731AbfA3LFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 06:05:06 -0500
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:39558 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729299AbfA3LFF (ORCPT
+        Wed, 30 Jan 2019 06:05:17 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:51410 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729299AbfA3LFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 06:05:05 -0500
-Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UB1xMV017316;
-        Wed, 30 Jan 2019 03:04:21 -0800
+        Wed, 30 Jan 2019 06:05:16 -0500
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UAwtC5016613;
+        Wed, 30 Jan 2019 03:04:42 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=proofpoint;
- bh=NS+Djnbls55K7scJ8ayM505mmeKsuOJuEa6P4pPjvlw=;
- b=WrYa70RqTAy0+OwMxHfmlp9vQqpZTJPJrYpZOQzNpVZRVK+Kz0dGenNGahaVT0m/e2zm
- Qe2ASruWXYbrEeXnEYBfGwdyrV9EF1Q6BFGKNx29WuEVQLTksf0B4apVY4XtTKtEuNFd
- Sbt8TqYm9ZWN43/PiDq5rwOb+auCJ2caXp2oaWpuAE45CZkjHSxPvMxVJ2jzwccpN7QN
- AVwk2kNc9yMbvqosip6BjytLjBRUFpewYlNpx5x+uA2HdBVYVCj6e2pyTawu9R0lWmRw
- rMiY8zhV9Iyu/1SSHZn6cBJbaVLTTvRSkweRXeEvXQWL6CsA4WSHg20y8tUfA+rWaaHr Xw== 
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=proofpoint;
+ bh=dyrt4WwUr/k46KnPUxgwpKZHPEh2EMjOWoGSRSthEg4=;
+ b=Ecm//g9d3fPDhzqpb9yGwM5RbKTlVURnTNHW3FSd7k3iha1NVvKbALcUiR2T+qfRIIPL
+ zPaWFZ6bRegzaKAzVB28NT1JzhYasX7BrbP5i0xwFR3O5DRBf75UGuvaeRXie6eZQ/B3
+ Y7UyT/b9dDx2YMxT1399J5jXNe4l8hoEGwReCFjY6QJYagerGqwxvhTJ8KzDguZdMR8E
+ E+Npbdr5eBVcVyv/RUtZe9SSWocrcL04YVeJ5tfX/4kWvZGvFXukK6IV0+74DEStKFvR
+ VZMX//oGsn6RBWHY/ptJqKHW2LyJ+xoDM6GOUNv080pJHsPBbs/uCNr50i5II/47qypZ fQ== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=dkos@cadence.com
-Received: from nam04-sn1-obe.outbound.protection.outlook.com (mail-sn1nam04lp2053.outbound.protection.outlook.com [104.47.44.53])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2q8n008ba7-1
+Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2053.outbound.protection.outlook.com [104.47.45.53])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2qa8178d8j-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 30 Jan 2019 03:04:20 -0800
+        Wed, 30 Jan 2019 03:04:41 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NS+Djnbls55K7scJ8ayM505mmeKsuOJuEa6P4pPjvlw=;
- b=CV4qykW90kdbIlm1q5Syz3r63VKKXDCEQcJbAfbwrEvQvuJ/vdha9Wu+sATcdJnQRFhAODUa3JTFqWjbZ9AaCrvdAreL+s6Zi+lYJUER2AZMbvV5EnjaEIz4/KhLpMbqjNxCPumMg8JgK6Z7te+GdM8iOOX1YyoHqhIsDSGOQOo=
-Received: from SN4PR0701CA0010.namprd07.prod.outlook.com
- (2603:10b6:803:28::20) by MWHPR07MB3103.namprd07.prod.outlook.com
- (2603:10b6:300:de::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1558.21; Wed, 30 Jan
- 2019 11:04:18 +0000
-Received: from DM3NAM05FT039.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::203) by SN4PR0701CA0010.outlook.office365.com
- (2603:10b6:803:28::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.17 via Frontend
- Transport; Wed, 30 Jan 2019 11:04:17 +0000
+ bh=dyrt4WwUr/k46KnPUxgwpKZHPEh2EMjOWoGSRSthEg4=;
+ b=HG81EJ66n1/c8tqOriTN80izfZYckexa4fWYQ4kMI1dijyOvXlHyAHilaQ4Mu2dk9nsSPsBB5l6jZFvtujhf50cNMajS+V1r6kn0vpY8Fa5BRjhr2U0VAXt2aznhwIrXkOCfzbI8Rd0hwBb+WiJduSoXp87LARF2jIstJVn7OL8=
+Received: from DM5PR07CA0039.namprd07.prod.outlook.com (2603:10b6:3:16::25) by
+ BN6PR07MB3090.namprd07.prod.outlook.com (2603:10b6:404:a5::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.16; Wed, 30 Jan 2019 11:04:38 +0000
+Received: from DM3NAM05FT064.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::206) by DM5PR07CA0039.outlook.office365.com
+ (2603:10b6:3:16::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1558.17 via Frontend
+ Transport; Wed, 30 Jan 2019 11:04:38 +0000
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
-Received: from sjmaillnx2.cadence.com (158.140.1.28) by
- DM3NAM05FT039.mail.protection.outlook.com (10.152.98.153) with Microsoft SMTP
+Received: from sjmaillnx1.cadence.com (158.140.1.28) by
+ DM3NAM05FT064.mail.protection.outlook.com (10.152.98.188) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1580.2 via Frontend Transport; Wed, 30 Jan 2019 11:04:16 +0000
+ 15.20.1580.2 via Frontend Transport; Wed, 30 Jan 2019 11:04:37 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id x0UB4CHI028030
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x0UB4Xif009639
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Wed, 30 Jan 2019 03:04:13 -0800
+        Wed, 30 Jan 2019 03:04:34 -0800
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Wed, 30 Jan 2019 12:04:11 +0100
+ 15.0.1367.3; Wed, 30 Jan 2019 12:04:31 +0100
 Received: from lvloginb.cadence.com (10.165.177.11) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Wed, 30 Jan 2019 12:04:10 +0100
+ 15.0.1367.3 via Frontend Transport; Wed, 30 Jan 2019 12:04:31 +0100
 Received: from lvloginb.cadence.com (localhost [127.0.0.1])
-        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id x0UB4BIW017599;
-        Wed, 30 Jan 2019 11:04:11 GMT
+        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id x0UB4VbI018087;
+        Wed, 30 Jan 2019 11:04:31 GMT
 Received: (from dkos@localhost)
-        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id x0UB42Of017398;
-        Wed, 30 Jan 2019 11:04:02 GMT
+        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id x0UB4Uj5018077;
+        Wed, 30 Jan 2019 11:04:30 GMT
 From:   Damian Kos <dkos@cadence.com>
 To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         "Rob Herring" <robh+dt@kernel.org>,
@@ -93,58 +94,62 @@ To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-rockchip@lists.infradead.org>
 CC:     <dkos@cadence.com>, <rafalc@cadence.com>, <piotrs@cadence.com>,
-        <quentin.schulz@bootlin.com>, <jbergsagel@ti.com>
-Subject: [PATCH v7 0/4] drm: add support for Cadence MHDP DPI/DP bridge.
-Date:   Wed, 30 Jan 2019 11:03:17 +0000
-Message-ID: <1548846209-16406-1-git-send-email-dkos@cadence.com>
+        <quentin.schulz@bootlin.com>, <jbergsagel@ti.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>
+Subject: [PATCH v7 2/4] drm/dp: fix link probing for devices supporting DP 1.4+
+Date:   Wed, 30 Jan 2019 11:03:19 +0000
+Message-ID: <1548846209-16406-3-git-send-email-dkos@cadence.com>
 X-Mailer: git-send-email 1.9.0
+In-Reply-To: <1548846209-16406-1-git-send-email-dkos@cadence.com>
+References: <1548846209-16406-1-git-send-email-dkos@cadence.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(346002)(39860400002)(2980300002)(3190300001)(189003)(199004)(36092001)(246002)(47776003)(48376002)(14444005)(110136005)(54906003)(316002)(42186006)(16586007)(486006)(7416002)(50226002)(6666004)(336012)(36756003)(186003)(2616005)(478600001)(106466001)(126002)(476003)(426003)(305945005)(2906002)(105596002)(26005)(50466002)(4326008)(356004)(51416003)(86362001)(7636002)(87636003)(8936002)(2201001)(26826003)(8676002)(21314003)(921003)(1121003)(83996005)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR07MB3103;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT039;1:DcfqyPPYONaK9YBt5pFQpY2+jjdLdDgvgEe3+HAjrGmK/hoFzQntqmDjWaukQ+tgGaP0UgYGSpJ9RlEr8zhDheVDAXjYvdc38/IWjrijPyXLTSlUdDfxeGMoN50NZ+810O6FRV/W+HoOynpfSj0SQmX0rNysSsusXo1KuYTsi6c=
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(396003)(376002)(2980300002)(3190300001)(36092001)(189003)(199004)(6666004)(14444005)(356004)(26826003)(106466001)(105596002)(48376002)(54906003)(87636003)(50466002)(478600001)(316002)(8936002)(16586007)(42186006)(110136005)(8676002)(50226002)(36756003)(86362001)(305945005)(4326008)(76176011)(51416003)(2201001)(186003)(7636002)(426003)(446003)(336012)(26005)(11346002)(246002)(476003)(486006)(7416002)(47776003)(2906002)(126002)(2616005)(921003)(1121003)(2101003)(83996005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR07MB3090;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT064;1:7KTQnPLRY4xVupWq3BhdILspWqxV97ls5aEh1CmydAruVddjHJ0tlHXVlW2pQ9uol3yq4LnUYGYs6plEyemCeZz4TbPQX49j5Tjbk2jUKiiHeXVO2V6aTCcuNU/6+uluAVtF8QFAAn//6VG9GAyHdoGCyz3Y3u5xUS2j2PrX38Y=
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d13c7d40-db4e-44f8-fce9-08d686a2ad62
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060);SRVR:MWHPR07MB3103;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR07MB3103;3:fKt5Enlh8BxccMAR8t0+NXYrUwr71+/NeUuHXuFrU7c9aupZQbcOtun9BBwVp30+P8pw9opGTzz7YY9ZOqOBbNZ/4LnmugmWYeJIxrPKqZZe74hgA2Y5/u5/V4LHfeKmJMwe6qmtMgmg/mtv795+B69aKq2e5cfEaZUUZm+oMLUr8UOFTxSKW+HIkh6FN5hlLBQb8N6XZB6Vtkw3gIwWstcepaZ+TmvhKA3K8uq1U1Mz8LxkNgRJA9VYphDAxMttJ3jKSE9xsA6PFh6MWWMPWaScJH+fyy0PF+OVBZPj/C39PUTEEo955W4P9gKxaq5ZtKoExA4dCMTq4gPPvPPe6RJsRz+NS57dWE/WidQBKbwTOOHnPwcaiyz8WvDTpkye;25:ImiCoiefC/xDi9f10ZIzRx59pK87SDcUvLFGlSLXfpFCh2fClO58A1U+ZdvxBpxXe48kJAYhgDhmyrrOdRCAJDASEvp25Ahhs9aIfq7DTFMAin7qq2qPPLZh/6jkvP5XW4FaCV4+3yB68SFpuS3qUnj2v+hS7m+3toi6TFCKvGSsgBrfKGz1bPAPAa0SHr5HoABf8IcEZJbYv/ORP+XsU52aQov1msmIt5uD/vG4EZkDKhIJN8x1+9JlZhVoRsBufMiA9Ys3GIPpNQPe6fCypMjRFRiLbzuOKwqHgzpfgt6xcEt0mOTpBGRA9JmTEcEg316hyzFNOqiccnMSm7cWww==
-X-MS-TrafficTypeDiagnostic: MWHPR07MB3103:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR07MB3103;31:/vuv4YZMiYHUeGbGf71lR+/vcYg38CHqZGSaYl9FutkuMhOzWGGiz8JeD2dwGC8yMP/JBVASBftMOYxkfKwZNZlqmm/i+GqhBrRugoEX+ky0JyouJs5q3ghF/bqGZIYxrnUlTu0nemI/6k027XdurKHkKyYL5A2Mk7Wkd6YUW8emeuMJN7bR20WU2mC7x0XkY1UlpY0h0G77qpRFNaj/FInIDrK6iOGN9q5XGDBuVrI=;20:MZebNxOvslECfNiOHjeAOwwznzaKoLf7gJrhde8HQnir9hvGkufNUrSG4xOznchXrRKdJViNM7qLeJcOJDq72OZm7epyetb6h5/Bw7IuLTImOJqAXyTxMgq77R7fenfuBEFZ7q/pJCWFAVb05v7yJB8wj3U7npHXbpXLNWF1GXnSQeSs13p3uYcvZ145lA8PHbA/sT+Lw1t5BNAyyslMxUPfTIRgWWd9jsRxwwkwy8SVqPozKm7q2c23sIsXNs1ee8cOEr9ObOMZrltq2ZMTHzW4O7ulqXU6EMpiuMne9xiwp1HDUHsfghe2wg4MIg8y/Uf3B0pKaWtssYpPzIlTkT/I1ZvCVvRb5/Fp2mQeS0UkOtIEO/d1tZ5wdtHtpKNlmVL+4q7KWvGjjk0gTzGTtIThP4d0hMQAmKwdsz5m7WXYPa4gX3NDft5bYEVLRzeiPTIiuvmBPk+IyFvHAQU1b3W02QL34ARRkEu2Bvhbwcc/nWjgrOR32y4cLk55QwtP
-X-Microsoft-Antispam-PRVS: <MWHPR07MB31037F3AC9F81D862E7B07EBCD900@MWHPR07MB3103.namprd07.prod.outlook.com>
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR07MB3103;4:fT7bge30a1Xu2oJeu0qtgsbhBndUDbFz7Sja27bs2H2ZQ2WxGm6aoTUF6gL14rI+IcG1h9PEpmrgKliuIvA/ysQfsb2t17vJ2+a9iJ/8LdmlRlkPFzCSupgqhiYqjTaR5+pJuL4/BuQpjuQstbsdaDAN8IhssDMvQN8RPc9Vc/u1j8noB4SAICxDdnY2MZXyhuxHGKmKrCm16/2qIcACPnRLl29T6tdHrB1C22nnkB4DPUcSPQb5QQpIb0k8BbW2eOgsF176LiprTdZdNg9Kew525C45OQ8qgsCqcm74dFc=
+X-MS-Office365-Filtering-Correlation-Id: fc231dcb-486e-448a-9733-08d686a2b9f4
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060);SRVR:BN6PR07MB3090;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB3090;3:Nwh4Rx5ja+LHLZ0d/Yhg/w02mEXXtt1+P5/ht3HgWEu1CWO8uaHGiuvurR4cuc5CKH2KpsAHZLeIYa8yqkp4piyQqJy1tX/Aw/Rpaxgt3D2WmKOww/Mh4ab15bIu+PIhqDvh36GjoTTxpcYIy5Ukdq1Ywpgm9YqoikkcXWiEtzWtnAX5q8XXSCcU+MO8M/wD8kRtC4HVrYuk61HiCfjmhTNFH0gT6ZVblITVXdwx+HXdOX+Eux183Patl/Ua3bGCfhhGDSBTJURANXx7I5pb97JSwowrIM/oRStouOJtqDvDThqUQUrWJA7gTfou7RlP3w6U6yyuT91QTDaHKRuBqMvzC/5Tpe6q6AiMD4XjkOake83hvGmeFKz96mtMXYSA;25:5cbkLeOZbyMHspT8u7lEaZ82Fu1ofUJHG6KP97uEd6W9HE1LVuFMNM+fvfr6LkDoRDUDBWqpoSlLdv67eEF4uNK3GMCyE0R/YUgQ5HuAKqKF/VUOt9sv5OifhhGCG0N+6v52QnFa3kiW8vxlG3k5hAmBmrWMvMopJOeoPB0A++G4W8ajYZ9yPH/miNqR2kkkHT0cPdM/vfpvrb0WoCrmqW1WcSAiUXwUtLzEeAcxKbBkOngH6xzyJs+xnNP+e0I/33VJdWinJfU7yN6PZLdX9taZeGmFyatYCpLHy3Kgcx00dqtHUZ/1fanYinhOOZhE6NdFq34tf4UFrpC38lg5SQ==
+X-MS-TrafficTypeDiagnostic: BN6PR07MB3090:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB3090;31:1lhETgAgcD+rujtUZZS7D5R9FIxeX748p0icaF/0327XQ9ocjxdV7cvTdUJl+QVx9fVX14f0LB2A6EaXi4AVt+Zjy1nr4ZGog18AJvO/c+DE1UDRx96lQMVavJMjmn4alAJrIzPp/sMu8HN0FKW6Wx3fDHZnCWbpvFXkXw1O1Rz0ytqfFS1tEYXjIVAliERolgkaodvhwC57qubIbxAdLqtCv1T9PVBa1KitFANg6Ig=;20:w3zwvSLk8/X4kdNqtZXdrmWQwb/IgVSno+TLb0Yzd8uNrdPrDH8/bJiMd1X0FMhGt5rFOCH8quBzrtjMwfUlN1gOBKWi8A/VZalEfK301MtL0zrEGUufbOWG/SkFpbldt15D/yirAfzJo2OZC1oIaNuYnQ+8NhwUMdfKieDJbkLYRhC0jBQVzGPeMEo5p3y30tbapYiMcL6XPIi9lhEfIRkWTkma4HUcSkCFJ1YtQiGJEBiUmz4SKr2JAYPFi24/U6Rd/o6zP5n4Ybr4XQE1IZTueqCRSLLB9q7+fqJeGEvTFUIx9oSVodJ0h2Mj8AxmJ9iH5Vc03VMl+taNUEzZflHBr9OLbye9KCAokozILTHbiWTKwUWkSOHUJB1SfbhY2Od9Mc7FNdv6RFUBPqL422IqqStcNVpygF/hkdPSRRZZj8YnhQk/GBIAmlf9IL91eF5ZuQpPtam39pn9nRbqRmgCtL3ipbqjZmob72U9z4ndXSVtJ6TN0e/Lv6F8FGzP
+X-Microsoft-Antispam-PRVS: <BN6PR07MB3090034782975A8AD1A02636CD900@BN6PR07MB3090.namprd07.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB3090;4:61rIBxoBh156NU2dtqjUQVzXX2leid/+gWrfz7wsuEip/A7dR0N1rWL1YAPd1rP4LOePejybA8czwt0lr42N6SM2HKUDCaffzlUm5POgRU5FDyYfuYxmafZ+i2uyyoQLd2/UEl8XIvAtLAKBlx0qw1UDAHwPQb+ocwy+3TZ2Zp5FWi+yp9OQVdVHQVM1oNz40Og53RSzFWLD1X14B1Vkh6UGqqs3CHemczZF9y79E+8/ahfE+Zx44JBJza+4NpAjT1DUH62JxO5sKbZGnkMkV/kF1uz2BqQ1hSFLlLTA310=
 X-Forefront-PRVS: 0933E9FD8D
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR07MB3103;23:cbezB8d/Zg6y4ApVZWVcHvsMREK3DlLIocLcSB74J?=
- =?us-ascii?Q?AwoJsRp0jE/KgBgcEInh7DYzgQo/+pDHncXTSKVzP2q+xaHiNpjmWeX3BSfr?=
- =?us-ascii?Q?jE2LVh8Vmb/nXyVBb6rJTIC2k+4gG5WivhIOC8C8v3Jq/UbwHkxMjn+vjhRD?=
- =?us-ascii?Q?9KoXwg4K1M0w3TeGWfoXsEQpyupFcG3SHYuvJNfM2Fx/oaMp+rwaovcQvIwI?=
- =?us-ascii?Q?D9RDH5IGEvKAFHGS3BriNs97xLTMitmXVTSvlWhCMlJiWbHincfHAXJsT7V3?=
- =?us-ascii?Q?HWFkrnWOfqBqysC2fGqg4dqcKv3PM5+fVDkdbXvOjuGoCaDhtArIGjqMEOU7?=
- =?us-ascii?Q?GXCY0eMuzCfhwea7p8SHalQ8mXYUF5CyXZ3+WM0Cw82q1IC16/lBdV+1w6C4?=
- =?us-ascii?Q?xtzt2nW7ZigqRBnVG4B15zhw7RhGt9I8qAvRaCoSf2Cfd/ZaKxh0YUqsV0pZ?=
- =?us-ascii?Q?FOAU0M3J+q8yDQEDkADNiU05IXXMNCvR6UhPY6esG0W78Li203ktFPRmRW2R?=
- =?us-ascii?Q?Cty4kLZaH4jI552Ik99vfkX0d6BYK+X79/Lhw4SwR2Hqim+mL5aWEdjlIZ5r?=
- =?us-ascii?Q?ZuF3udINgPd6jgyv6q5SN4oiBjLzrzf98r7K4Qfc+ArmSoK5GeMA91YNj3kh?=
- =?us-ascii?Q?EvAO63+f0RUzWQTXNHlcEX1SzrCz2JXgJbIGZUBxkGdcnRwwS0YrRB2wFh9H?=
- =?us-ascii?Q?NnPLLHCtY2yegjDc2/UaMhWL1MwjYhrUYPPliBB7pm6+VMEAXVFB9GErMJ11?=
- =?us-ascii?Q?2YzHqkHKoAx+fPueyiesSB75+9nh/IW0PLqNPw+6x8QMZ3uDEYQ3aiSwQx12?=
- =?us-ascii?Q?iaf4KiDRlMV7JeOj5Fgn5kY+P3wZypRgBb1537F00qouDk8VgbB6JlXPlLkg?=
- =?us-ascii?Q?8sr2ipJZSQKyxCmUMn27baWrfWGqMXFRGs4ittJpjya0jHD7TDJ15ZV35s/E?=
- =?us-ascii?Q?PpCWw1Vd/cdRiLbKOCxXRloeA31bo+zdRd2Qpr0TBPF6rzSa+QVrmTCAHzIS?=
- =?us-ascii?Q?qj+gg0oxtyv3sg4ai8sHfYFjS958uTYsx/dcSUkhuFImdFXpcHHy6HBwYOrs?=
- =?us-ascii?Q?TLaJ5KnY2DLFb1dOQzxfnJnoerI4MO5vmyvXiT5apyp6Z2yQpm+JRvspshBI?=
- =?us-ascii?Q?M+iB2ES8mwrMfHJGVhAhRAol/baqRqZ?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR07MB3090;23:LLEKAeCSTDkJNIFAcCFOIuZ3mS4L35yHTWP4NwJws?=
+ =?us-ascii?Q?E30g1ucQams71gt6rJPVVv2ie1zIWON7lEbZF2PbLbAXhK5+PUwqM8+0Fpn4?=
+ =?us-ascii?Q?uJ2Im9aURAebMedGxalKoRE2RjyXKkoOyT/xfdbtXjaFuiOOgtqurFEkXpBG?=
+ =?us-ascii?Q?mJ1KT6vdOLc+SNrtNhmHMLHaCfiy4R6CmuaJ3/xsOx6Hlq6+JVWX8TJIHrgk?=
+ =?us-ascii?Q?BpdRNk9pqxt1KR4e7toyno39EOzibBQ+cfn3rzVpehDDVkTkXAgkTJaozTiG?=
+ =?us-ascii?Q?IBIZNsCFEfYHLqVx/LVVR/yLXDVd36AbBnJ5knuqowfJY2ttBXTGSq5zchxU?=
+ =?us-ascii?Q?dZ0qFlcgRUzJHGF9Xym2ThHVDzhqQU6KmX3E6SPHA9xxic6wuWYq017UI30y?=
+ =?us-ascii?Q?H0rXkyErIIYnkajLiOtndszpQtxh+KozL4/YqNukJq7FSZbQhXmT3iW5lnF9?=
+ =?us-ascii?Q?tvko/j+uMr1qZK8zz7FLA9ivjXc4RUm8X06GEVbrJhYbpCB22/RvFqKOMhjJ?=
+ =?us-ascii?Q?yhcPeLFnjjWtCuCoY0h9llcvi1nYCJWiBpsofXokJ4LYIhKgIy790CMeKm95?=
+ =?us-ascii?Q?kRqrXcficwcwwb9zthdm9ALxcG5uVq7eAzGaAfnBcdJ+56q5I7gPJgxUpqXF?=
+ =?us-ascii?Q?wfc/7BTMGRTZ1TdW+tONBE7gyRMnprYdGDpTw6eGBrxfS+PoStYh2Gm+mAns?=
+ =?us-ascii?Q?LUttbkklbO0RUj7haVIcLSot5SEKbXMq/uij/ZKpbIs/VfajMLXXvQ9fNHoX?=
+ =?us-ascii?Q?jerY5pvq4bFcZnojvkIhCCsEpg0LqMNO8M9xeBpwDn0A484fZQFrFnUddDpc?=
+ =?us-ascii?Q?87N/RwgbmXlVJuoxOu5LWAlhjqCUZTx3MBEWs2xMfDDW0tFksxS1RVkVtd00?=
+ =?us-ascii?Q?nPnaO/v1uhsNW45fIdwSZbH0uw7JwFO1c62AjbhaUu7zVKiXMgusUhVlDmza?=
+ =?us-ascii?Q?4kTizATrxdKDpO5cEJudBtvLq+h+h0RLKEj/13XLNzkhizNP4XCvmjlFlwhz?=
+ =?us-ascii?Q?W9MYJzBD5dGHnGYx3i2OTlqrNdQcyakFHNWL8GxVM7gdNQ1Y0L4EkksL3H54?=
+ =?us-ascii?Q?ZtM+kjCbQMllykXqrectaog5zt3Im2XDl8fdXU4ZLhQnGVi89Igdxa+hdQl9?=
+ =?us-ascii?Q?8cVm5j+RADKO71oFl3d9c2c5RZ86lomhYTSOFa1TO/5S7mKh3CRIu2UVjR12?=
+ =?us-ascii?Q?Lz9nDfrinNkZko=3D?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 3jvO/GcblnZ5EIEn2vzgaisLCS621Wpb7lvJnRah1of/nzG9OniG22J+nPrdOkjMlCDSXiVEF7RUTmaFkt5tjA+fFIpA47NMjIo+MGAPid/YXcRiakBR8U/QUf9v6w7AvkeCzptnGS1R5yclXw7Opf5oAFZz1tEHm0jwGHdc4vuzoAxEWV/IKwuIRSGqNWEezbj+KJA3XVOO1nHBM5GIg6vgVQ8uovL2VIax+M7LhTcsgz+Y6VzNwvxrVvhLit5UrIbSc89FN5PAaPkKTRds8r43EM3D1BhP5m8TsJNDZWzbM3pttx8lWF6fwO55oaSUSQNGI1pt3aTu+qdcNxCK/2bZZ3DIT+6TaMhe8nC9kyBXO9sOUfg2pk7DkmUZk3ZTuLqXvdJ4S98vesE8jxcByC9pSKZOedNnDH2Rjr+C+N4=
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR07MB3103;6:ZmjU3y/SPmcDhg/9cBkux/QR5NER6yhsKa3M0lfjJvhEVgrVuHURE4/a88yki2OujSxQ3PElFiQqslfzaeYzWobUewYLHgNzzM4i830N1nlpU0n7MN2ShKyGRqRbEHeFdXxSCvrt2IOM9x+Omp5zM9bLwBPcw9KV40uVZkyZ9gcmUuvDZOPvsot4jG3J8yy61m2D5ck1901aMM/MJktprVs+nYDOUUfaPW4k81fd4Up1n74KOMfgzsqoAb69z4cTer/zsN9CTiu1Wfu1BBQWttRRg2cGL1hLglJvVatj94zxJSrrxcL+2kiEzkIX6sqNXTAhfHSqK3YF7IeZO2/W/xPye1GbPww5hg83UBtsTSaqabDu9NnGYY6mR5RgrCKphwJW0JPnIIXyAXM6nr8s5ezwH2PrgNMNKfxQGYb/kdEV4HOK63wehioliPQ/ivmd/UF6I5ezpt5PBzO0STsSTw==;5:c7rfZByahthh8Cr0ju678Chq9ifUa9LfxU8xFk2acztUJXuCNHAAgA5AMJzVIMkdgLdWQtAVn2MhuUljDffQ3YSgROjN3Nnuy9UBozjpxwaotWCQGFmXL490w3DRoHgnAk1QG6eqOBrUqTcjSWIfir7wwQAPB+N4lKtbODPIewDV6lbdNR20Rw3WRNZ0RceeChOZWrbzb+kg9/tPo459UA==;7:lSee5RW6JaqomvfwdYsE7D7UVCm9+YQ7xh6Rtt++Oi28hJ21QHS24GgRjDXoRamER9Vpzk/aldFc5VGbEFc7B8P2d8Ia3A+7LsSltYM0ZQsfgyPtupU0DSkKd+oz2b8KqGQSgbHH4sZZhOIRmUDHoA==
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR07MB3103;20:lziBX/1VK/O5eJgQsZoAhkPA51QIzarVbviK3Gl4irDzOJgIDJTY++coL4B4lzyehNPSstM5Ll4CNFALZrZQwtNiaHI5DToUr4FdpHtJ7k2eRLC2iM+VIhVTiobNucDuAfOSrYvcfmCvxk7I3PTWeBY849Hw88SKnkRJxP2bffQiazZH7lEn62FwRj2jUyUY3bzK3Qp0PVp/C4vbrSJH+wPFy6F+YgR5Wqj9Iofjdn399rugFojleDyfP+YnZzgM
+X-Microsoft-Antispam-Message-Info: 4sOyrDcVKhILa901+EPQRlRMyp3AVu2FLWYMbWn2rEiKY2MnaL69DvJPwcybwK+ZE05cFh0z9mJSm2ct7sR77WOkF+rsQQdW5zuilue6+TtLgwar3msucU4rjBi+Gdbf4vslYQTm9cIcs5w3X0eiJB6GPC/puFNgdi9+6TSsFT1DgywzraRNrVXh6cDrw6W9p02vlwYVno3WONl00gg5B0y9awvEfXsQDYd0KRpn4z3ccVkUSu+5sz5pPsU3oLCdCCCKUd4MzC7of7uQS2m8tctYzUcsFxXOc8HzLOqMaaCuEtZEbGyhsS+wC4rfY25dPFGcLoitMo88wya2FkJ6dH0KMBP1cZbX6hA8OFKBwIDo07eEAT5Pz1isO6dDDF98uuZdHP+ECLQ0sb7xcUqtHfcFnZjhHBOBp30WIvXYZXg=
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB3090;6:roW0wKE2+hcc/Roxupb1t+zZfExnTV233gBIdLagxF+Lztw/R3zBip/KiZxuUB0kfWufzZmcMXCN61B5GYmEBiBWOaGE4S1FKzYzR6qlnkenZFd8aGIF6pOy230jx8fDRaMiWjkR27G+2+vUqnXxZLQeUqRSOOTMBwXfi01ByJOIYYv07qRncFdMBmjRmCaNfbaA5GDlppTPXxZS2d3RCBVA0zrIdmFSxOSxJpYXjYS27lw6IHeGBI+yG9jFKlLdApZborYkSb1+LwcYnqltnSKHQ01dD8H+ep9FdaIWA74zZ4S0b0bOkueWfD2zFNz6/s8dYD7kQBEVZ0PipwHBr6ucgfegwFOp3Zfef08JAI+oWMYiOS5iPWR+LNoMANBkSBK4ZcIgLJoYEAWlQVwnzDJgjiJUdxCbG2E4PJK+BspMTYDsgY/qLHtI9YWiOVXDKKiKjdnA5o4aj/hxo0rbhQ==;5:3/xz5tNULfAbjZv3t52p1fpBGHatu+XJWp2I2Dq6IkGtaoySnp5svuNJRV39fAe5TYr8Z14HR/0bd7yl+srOuECKRH7XD02Ra0QupkqNhvYjb86s37UULOKZzzhFUMFxG7PUenWl75o5pUF3yD8ou/vgMBcfbre5FkEHsrAahOB1VptfEorHI8Uir59viww5+QJTVEpKaEAnwkeb+TVL+Q==;7:La17AD5e7Lm3fiOasuajHeccDobJM2AWE02u3X9U2GT1SJw1vGaO66bnbo2nO35hq/JXTtpPDnea4K6BS+IjmOzqywvMpgRfWcY61UWpp29XyCle5wNLrjZB4OrumiT1tZfJ+fWP4CsZtRBtR9/Haw==
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB3090;20:vdN7nbK2AciL0JUZbiUC2Hhs7owZ7GoGuoW/a7lhrcle9JVekA0cA/QoJz754XgTBMwGylZRGr4uojNqOgS696R9Jff6TXaifVxRgDURVG9j08A48hwS3rEL72VUB9rMqabU4L0gu4uj7z5QVh4J+a19mnOuQEnTu0CrL/AAMAIeuGwLT/vznDlAq0Wc9VrTSTEPV1D0OLg1GjYvYsQJL2WaCuTThZ2APH7FO3QsvZV+FrGZVpbe7FOJDWWckLtN
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2019 11:04:16.1735
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2019 11:04:37.1393
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d13c7d40-db4e-44f8-fce9-08d686a2ad62
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc231dcb-486e-448a-9733-08d686a2b9f4
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR07MB3103
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR07MB3090
 X-Proofpoint-SPF-Result: pass
 X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
  include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
@@ -152,135 +157,86 @@ X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0
  spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=748 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901300089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+From: Quentin Schulz <quentin.schulz@free-electrons.com>
 
-This is the series of patches that will add support for the Cadence's DPI/DP
-bridge. Please note that this is a preliminary version of the driver and there
-will be more patches in the future with updates, fixes and improvements.
-Please keep that in mind when looking at FIXME/TODO/XXX comments.
+DP 1.4 introduced a DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT bit in
+DP_TRAINING_AUX_RD_INTERVAL register. If set, DPCD registers from
+DP_DPCD_REV to DP_ADAPTER_CAP should be retrieved starting from
+DP_DPCD_REV_EXTENDED. All registers are copied except DP_DPCD_REV,
+DP_MAX_LINK_RATE and DP_DOWNSTREAMPORT_PRESENT which represent the
+"true capabilities" of DPRX device.
 
-Initially, MHDP driver was developed as a DRM bridge driver and was planed to
-be placed in drivers/gpu/drm/bridge/mhdp.c.  However, there was already
-a driver for Cadence's DP controller developed by RockChip, but that driver
-uses the different DRM framework and looks like a part of a bigger system.
-Both controllers (including firmware) are quite different internally
-(MST/FEC/DSC support, link training done by driver, additional commands, IRQ's
-etc.) but they have similar register map, except for Framer/Streamer (which is
-noticeably different), so they appear similar.
+Original DP_DPCD_REV, DP_MAX_LINK_RATE and DP_DOWNSTREAMPORT_PRESENT
+might falsely return lower capabilities to "avoid interoperability
+issues with some of the existing DP Source devices that malfunction
+when they discover the higher capabilities within those three
+registers.".
 
-The following patches contain:
-- Moving common code to drivers/gpu/drm/bridge/cdns-mhdp-common.* and
-  modifying it a bit (mostly new prefixes for functions and data types) so it
-  can be used by two, higher level, drivers.
-- Modifying existing RockChip's DP driver to use the common code after changes
-  made to it (use the new cdns_mhdp_device structure and new function names).
-- Modifying DRM helpers a bit. Some are required for new driver, some are
-  updates from DP 1.2 to 1.3 or 1.4.
-- Adding documentation for device tree bindings.
-- Adding preliminary Cadence DPI/DP bridge driver.
+Before DP 1.4, DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT bit was reserved
+and read 0 so it's safe to check against it even if DP revision is
+<1.4
 
-Some of the things that will be added later on include (but are not limited
-to):
-- DSC support
-- FEC support
-- HDCP support
+Signed-off-by: Quentin Schulz <quentin.schulz@free-electrons.com>
+Signed-off-by: Damian Kos <dkos@cadence.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Reviewed-by: Manasi Navare <manasi.d.navare@intel.com>
+---
+ drivers/gpu/drm/drm_dp_helper.c | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-
-Changes in v7:
-- Overal code cleanup
-- Patched memory leak after EDID read
-- Fixed SPDX-License-Identifier tags
-- Sorted includes
-- In patch 4/6:
-  Cleanup and fix in mhdp_transfer
-  Replaced byteshifts with {put|get}_unaligned_be{32|24|16} (added 24bit one)
-- In patch 5/6:
-  Removed cdns_mhdp_mst_set_threshold (not needed anymore as HW does that)
-  Updated cdns_mhdp_mst_set_rate_governing
-  Replaced request_irq with devm_request_irq
-  And then merged with 4/6 (as many changes in this patch altered the SST part)
-- In patch 6/6:
-  Fix in checking devm_phy_get result
-  Updated bindings doc
-  And then merged with 4/6 (as this should be in the driver in the first place)
-
-Changes in v6:
-- Added Reviewed-bys for already reviewed patches
-- Dropped patch v5-0003 (that made dp_get_lane_status helper public)
-- Added patch with MST support
-- Added patch with Cadence SD0801 PHY init
-
-Changes in v5:
-- Fixed Kconfig in drm/rockchip again
-- Moved cdn-dp-reg.h (cdns-mhdp-common.h) to include/drm/bridge instead of
-    drivers/gpu/drm/bridge/
-- Updated the mhdp_validate_cr function
-
-Changes in v4:
-- Fixed Kconfig in drm/rockchip
-- Fixed Signed-offs
-- dp_link_status() is no longer public since it's used only in drm_dp_helper.c
-- Replaced EXTRA_CFLAGS with ccflags-y in drm/rockchip Makefile
-
-Changes in v3:
-- Corrected dt-bindings document
-- Enabled some clocks at startup (since FW doesn't do that anymore).
-- Changed Firmware file name to match the file on Linux Firmware repo.
-- Added SST audio support
-- Made common functions (in cdns-mhdp-common.*) public.
-
-Changes in v2:
-- Added actual description of what the patch contains, what is it for and
-  what's going on here in general.
-- New structure. Now we have one common low level driver + two high level
-  drivers - one for RockChip with minimum changes and one, more general, for
-  Cadence.
-- Dropped some changes made to DRM helpers.
-- Updated the device tree bindings document.
-
-
-Damian Kos (1):
-  drm/rockchip: prepare common code for cdns and rk dpi/dp driver
-
-Quentin Schulz (3):
-  drm/dp: fix link probing for devices supporting DP 1.4+
-  dt-bindings: drm/bridge: Document Cadence MHDP bridge bindings
-  drm: bridge: add support for Cadence MHDP DPI/DP bridge
-
- .../bindings/display/bridge/cdns,mhdp.txt     |   47 +
- drivers/gpu/drm/bridge/Kconfig                |    9 +
- drivers/gpu/drm/bridge/Makefile               |    3 +
- drivers/gpu/drm/bridge/cdns-mhdp-common.c     | 1103 ++++++++++++++
- drivers/gpu/drm/bridge/cdns-mhdp-mst.c        |  549 +++++++
- drivers/gpu/drm/bridge/cdns-mhdp.c            | 1349 +++++++++++++++++
- drivers/gpu/drm/bridge/cdns-mhdp.h            |  209 +++
- drivers/gpu/drm/drm_dp_helper.c               |   30 +-
- drivers/gpu/drm/rockchip/Kconfig              |    4 +-
- drivers/gpu/drm/rockchip/Makefile             |    2 +-
- drivers/gpu/drm/rockchip/cdn-dp-core.c        |  234 +--
- drivers/gpu/drm/rockchip/cdn-dp-core.h        |   43 +-
- drivers/gpu/drm/rockchip/cdn-dp-reg.c         |  969 ------------
- include/drm/bridge/cdns-mhdp-cbs.h            |   29 +
- .../drm/bridge/cdns-mhdp-common.h             |  176 ++-
- 15 files changed, 3606 insertions(+), 1150 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt
- create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp-common.c
- create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp-mst.c
- create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp.c
- create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp.h
- delete mode 100644 drivers/gpu/drm/rockchip/cdn-dp-reg.c
- create mode 100644 include/drm/bridge/cdns-mhdp-cbs.h
- rename drivers/gpu/drm/rockchip/cdn-dp-reg.h => include/drm/bridge/cdns-mhdp-common.h (77%)
-
+diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
+index 54120b6319e7..4e36d708fdce 100644
+--- a/drivers/gpu/drm/drm_dp_helper.c
++++ b/drivers/gpu/drm/drm_dp_helper.c
+@@ -372,10 +372,38 @@ int drm_dp_link_probe(struct drm_dp_aux *aux, struct drm_dp_link *link)
+ {
+ 	u8 values[3];
+ 	int err;
++	unsigned int addr;
+ 
+ 	memset(link, 0, sizeof(*link));
+ 
+-	err = drm_dp_dpcd_read(aux, DP_DPCD_REV, values, sizeof(values));
++	/*
++	 * DP 1.4 introduced a DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT bit in
++	 * DP_TRAINING_AUX_RD_INTERVAL register. If set, DPCD registers from
++	 * DP_DPCD_REV to DP_ADAPTER_CAP should be retrieved starting from
++	 * DP_DPCD_REV_EXTENDED. All registers are copied except DP_DPCD_REV,
++	 * DP_MAX_LINK_RATE and DP_DOWNSTREAMPORT_PRESENT which represent the
++	 * "true capabilities" of DPRX device.
++	 *
++	 * Original DP_DPCD_REV, DP_MAX_LINK_RATE and DP_DOWNSTREAMPORT_PRESENT
++	 * might falsely return lower capabilities to "avoid interoperability
++	 * issues with some of the existing DP Source devices that malfunction
++	 * when they discover the higher capabilities within those three
++	 * registers.".
++	 *
++	 * Before DP 1.4, DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT bit was
++	 * reserved and read 0 so it's safe to check against it even if
++	 * DP revision is <1.4
++	 */
++	err = drm_dp_dpcd_readb(aux, DP_TRAINING_AUX_RD_INTERVAL, values);
++	if (err < 0)
++		return err;
++
++	if (values[0] & DP_EXTENDED_RECEIVER_CAP_FIELD_PRESENT)
++		addr = DP_DP13_DPCD_REV;
++	else
++		addr = DP_DPCD_REV;
++
++	err = drm_dp_dpcd_read(aux, addr, values, sizeof(values));
+ 	if (err < 0)
+ 		return err;
+ 
 -- 
 2.17.1
 
