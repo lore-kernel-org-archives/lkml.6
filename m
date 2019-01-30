@@ -2,71 +2,248 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA086C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104F2C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FDEE20881
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AED1720881
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:48:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388201AbfA3VsE (ORCPT
+        id S2388215AbfA3Vsa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 16:48:04 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:48315 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfA3VsD (ORCPT
+        Wed, 30 Jan 2019 16:48:30 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:40691 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfA3Vsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 16:48:03 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1goxiB-0006Nl-Qx; Wed, 30 Jan 2019 22:48:00 +0100
-Date:   Wed, 30 Jan 2019 22:47:54 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Alan Cox <alan@llwyncelyn.cymru>
-cc:     Jessica Yu <jeyu@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Christoph Hellwig <hch@lst.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Subject: Re: [PATCH][RFC] module: Cure the MODULE_LICENSE "GPL" vs. "GPL v2"
- bogosity
-In-Reply-To: <20190130204848.19fc6912@alans-desktop>
-Message-ID: <alpine.DEB.2.21.1901302243040.8200@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1901282105450.1669@nanos.tec.linutronix.de> <20190129130658.GA19205@linux-8ccs> <alpine.DEB.2.21.1901291510060.1513@nanos.tec.linutronix.de> <20190130204848.19fc6912@alans-desktop>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 30 Jan 2019 16:48:30 -0500
+X-Originating-IP: 86.202.150.119
+Received: from localhost (lfbn-lyo-1-59-119.w86-202.abo.wanadoo.fr [86.202.150.119])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 4312B20002;
+        Wed, 30 Jan 2019 21:48:27 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 22:48:28 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Artem Panfilov <panfilov.artyom@gmail.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] rtc: add AB-RTCMC-32.768kHz-EOZ9 RTC support
+Message-ID: <20190130214828.GK19959@piout.net>
+References: <20190117184608.20987-1-panfilov.artyom@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190117184608.20987-1-panfilov.artyom@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019, Alan Cox wrote:
+Hi,
 
-> > > > +    "GPL and additional rights"   Historical variant of expressing that the
-> > > > +				  module source is dual licensed under a
-> > > > +				  GPL v2 variant and MIT license. Please do
-> > > > +				  not use in new code.
+This seems pretty good.
+
+On 17/01/2019 21:46:07+0300, Artem Panfilov wrote:
+> +static int abeoz9_rtc_get_time(struct device *dev, struct rtc_time *tm)
+> +{
+> +	struct abeoz9_rtc_data *data = dev_get_drvdata(dev);
+> +	u8 regs[ABEOZ9_SEC_LEN];
+> +	int ret;
+> +
+
+I would check the validity here, there is no point in reading many
+registers just to drop the result afterwards.
+
+> +	ret = regmap_bulk_read(data->regmap, ABEOZ9_REG_SEC,
+> +			       regs,
+> +			       sizeof(regs));
+> +	if (ret) {
+> +		dev_err(dev, "reading RTC time failed (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	tm->tm_sec = bcd2bin(regs[ABEOZ9_REG_SEC - ABEOZ9_REG_SEC] & 0x7F);
+> +	tm->tm_min = bcd2bin(regs[ABEOZ9_REG_MIN - ABEOZ9_REG_SEC] & 0x7F);
+> +
+> +	if (regs[ABEOZ9_REG_HOURS - ABEOZ9_REG_SEC] & ABEOZ9_HOURS_PM) {
+> +		tm->tm_hour =
+> +			bcd2bin(regs[ABEOZ9_REG_HOURS - ABEOZ9_REG_SEC] & 0x1f);
+> +		if (regs[ABEOZ9_REG_HOURS - ABEOZ9_REG_SEC] & ABEOZ9_HOURS_PM)
+> +			tm->tm_hour += 12;
+> +	} else {
+> +		tm->tm_hour = bcd2bin(regs[ABEOZ9_REG_HOURS - ABEOZ9_REG_SEC]);
+> +	}
+> +
+> +	tm->tm_mday = bcd2bin(regs[ABEOZ9_REG_DAYS - ABEOZ9_REG_SEC]);
+> +	tm->tm_wday = bcd2bin(regs[ABEOZ9_REG_WEEKDAYS - ABEOZ9_REG_SEC]);
+> +	tm->tm_mon  = bcd2bin(regs[ABEOZ9_REG_MONTHS - ABEOZ9_REG_SEC]) - 1;
+> +	tm->tm_year = bcd2bin(regs[ABEOZ9_REG_YEARS - ABEOZ9_REG_SEC]) + 100;
+> +
+> +	return abeoz9_check_validity(dev);
+> +}
+> +
+> +static int abeoz9_rtc_set_time(struct device *dev, struct rtc_time *tm)
+> +{
+> +	struct abeoz9_rtc_data *data = dev_get_drvdata(dev);
+> +	struct regmap *regmap = data->regmap;
+> +	u8 regs[ABEOZ9_SEC_LEN];
+> +	int ret;
+> +
+> +	regs[ABEOZ9_REG_SEC - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_sec);
+> +	regs[ABEOZ9_REG_MIN - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_min);
+> +	regs[ABEOZ9_REG_HOURS - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_hour);
+> +	regs[ABEOZ9_REG_DAYS - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_mday);
+> +	regs[ABEOZ9_REG_WEEKDAYS - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_wday);
+> +	regs[ABEOZ9_REG_MONTHS - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_mon + 1);
+> +	regs[ABEOZ9_REG_YEARS - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_year - 100);
+> +
+> +	ret = regmap_bulk_write(data->regmap, ABEOZ9_REG_SEC,
+> +				regs,
+> +				sizeof(regs));
+> +
+
+ret should be checked.
+
+> +	return abeoz9_reset_validity(regmap);
+> +}
+> +
+> +#if IS_REACHABLE(CONFIG_HWMON)
+> +
+> +static int abeoz9z3_temp_read(struct device *dev,
+> +			      enum hwmon_sensor_types type,
+> +			      u32 attr, int channel, long *temp)
+> +{
+> +	struct abeoz9_rtc_data *data = dev_get_drvdata(dev);
+> +	struct regmap *regmap = data->regmap;
+> +	int ret;
+> +	unsigned int regval = 37;
+> +
+
+Maybe this should also check V1F/V2F because the thermometer may be
+disabled.
+
+> +	switch (attr) {
+> +	case hwmon_temp_input:
+> +		ret = regmap_read(regmap, ABEOZ9_REG_REG_TEMP, &regval);
+> +		if (ret < 0)
+> +			return ret;
+> +		*temp = 1000 * (regval + ABEOZ953_TEMP_MIN);
+> +		return 0;
+> +	case hwmon_temp_max:
+> +		*temp = 1000 * ABEOZ953_TEMP_MAX;
+> +		return 0;
+> +	case hwmon_temp_min:
+> +		*temp = 1000 * ABEOZ953_TEMP_MIN;
+> +		return 0;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+
+
+> +#endif /* CONFIG_RTC_DRV_ABEOZ9_HWMON */
+This comment is not correct
+
+
+> +static int abeoz9_probe(struct i2c_client *client,
+> +			const struct i2c_device_id *id)
+> +{
+> +	struct abeoz9_rtc_data *data = NULL;
+> +	struct device *dev = &client->dev;
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C |
+> +				     I2C_FUNC_SMBUS_BYTE_DATA |
+> +				     I2C_FUNC_SMBUS_I2C_BLOCK)) {
+> +		ret = -ENODEV;
+> +		goto err;
+> +	}
+> +
+> +	regmap = devm_regmap_init_i2c(client, &abeoz9_rtc_regmap_config);
+> +	if (IS_ERR(regmap)) {
+> +		ret = PTR_ERR(regmap);
+> +		dev_err(dev, "regmap allocation failed: %d\n", ret);
+> +		goto err;
+> +	}
+> +
+> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data) {
+> +		ret = -ENOMEM;
+> +		goto err;
+> +	}
+> +
+> +	data->regmap = regmap;
+> +	dev_set_drvdata(dev, data);
+> +
+> +	ret = abeoz9_rtc_setup(dev, client->dev.of_node);
+> +	if (ret)
+> +		goto err;
+> +
+> +	data->rtc = devm_rtc_allocate_device(dev);
+> +	ret = PTR_ERR_OR_ZERO(data->rtc);
+> +	if (ret)
+> +		goto err;
+> +
+> +	data->rtc->ops = &rtc_ops;
+> +	data->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+> +	data->rtc->range_max = RTC_TIMESTAMP_END_2099;
+> +
+> +	ret = rtc_register_device(data->rtc);
+> +	if (ret)
+> +		goto err;
+> +
+> +	abeoz9_hwmon_register(dev, data);
+> +	return 0;
+
+I would add a blank line here.
+
+> +err:
+> +	dev_err(dev, "unable to register RTC device (%d)\n", ret);
+> +	return ret;
+> +}
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id abeoz9_dt_match[] = {
+> +	{ .compatible = "abracon,abeoz9" },
+> +	{ },
+> +};
+> +#endif
+> +
+> +MODULE_DEVICE_TABLE(of, abeoz9_dt_match);
+
+This should probably be included in the previous #ifdef
+
+> +
+> +static const struct i2c_device_id abeoz9_id[] = {
+> +	{ "abeoz9", 0 },
+> +	{ }
+> +};
+> +
+> +static struct i2c_driver abeoz9_driver = {
+> +	.driver = {
+> +		.name = "rtc-ab-eoz9",
+> +		.of_match_table = of_match_ptr(abeoz9_dt_match),
+> +	},
+> +	.probe	  = abeoz9_probe,
+> +	.id_table = abeoz9_id,
+> +};
+> +
+> +module_i2c_driver(abeoz9_driver);
+> +
+> +MODULE_AUTHOR("Artem Panfilov <panfilov.artyom@gmail.com>");
+> +MODULE_DESCRIPTION("Abracon AB-RTCMC-32.768kHz-EOZ9 RTC driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.19.1
 > 
-> Actually it was a historic fix for the fact that some slimeballs were
-> going to use a proposed "BSD" tag and just ship binaries only whilst
-> claiming that they were totally compliant with the BSD licence.
 
-Ah, that is valuable information. I spent quite some time NOT to find it :)
-
-Thanks,
-
-	tglx
-
-
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
