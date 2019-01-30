@@ -2,210 +2,215 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E47C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FEAFC282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BFC8218D2
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548883818;
-	bh=qw1hvxr/BiWWag2oXsyZ/XX5yBpJZkhqZgKVzhoHO90=;
-	h=Subject:From:Cc:References:To:In-Reply-To:Date:List-ID:From;
-	b=nnuVT3JngF1jCl9sgAku87WA/h1xPSA2Xzt5Ih6eVj/YkGwd7JqOnSURbdQZuoRTA
-	 3RbmPX2IkfSPJrJavvq3+bh2tdLiKKEk1YrKXd9+RAlqdn2a/lb3cZBPRvRJoB+VgN
-	 4ytw0uJ+oP13RUpWmAjsIYakXffJa5BygoBJ8EXY=
+	by mail.kernel.org (Postfix) with ESMTP id 04EA6218D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:30:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="GPUnviTe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388122AbfA3VaQ (ORCPT
+        id S2388136AbfA3VaX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 16:30:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727165AbfA3VaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 16:30:16 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2C792184D;
-        Wed, 30 Jan 2019 21:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548883814;
-        bh=qw1hvxr/BiWWag2oXsyZ/XX5yBpJZkhqZgKVzhoHO90=;
-        h=Subject:From:Cc:References:To:In-Reply-To:Date:From;
-        b=hsKIL2Zksheg4JpcvUmHWhjDsstP9htXQHrQEQ4cK+79/QEaIVa8b+2e5hBu+qyB+
-         Rcq6gC/Agc16CUquMfC9I/tijeglyQ8oSoSBqda/CQm6wvVAHl/bXUr9A+E/zSjBfC
-         aObp/Rz42KeJIfK5MuNM+84zPGYKnPZgxfo6k/Lo=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 30 Jan 2019 16:30:23 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43332 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388124AbfA3VaX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 16:30:23 -0500
+Received: by mail-lf1-f66.google.com with SMTP id u18so703323lff.10
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 13:30:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QxbJNlcYOWQD7I804T9eY0kZ8OeJP4Ne7Nni2Pz0Ur0=;
+        b=GPUnviTegusV6p6B0UVQQ0Wu2GIu2LdigaTRCljEsSXhcokzCpY0oNkdQebvTkN8e5
+         WSDUQ5VnLyPMclVJvDfV+GwLj1TC8U0PjPPeb0SIQghw0msLCLhe9SfNiE3p1CA3IwfO
+         kZhBSEnsw65CvhPXBw+SPDAvHgnltpycf7Wz0ceoWGm+NCmAIuGydsjlRaM8tb+8t9+Z
+         6MxFZzVqQdNu9kSHW/N24YDSIcH/hRgXWMT/oNN2dc3uAkD6YeJBUMgC6Tj4lwTP80cR
+         d0KxjqwRa0gJK3Hnmvo5gOJMz9pNId43Bdy37pdkBVVvU7i/jP+ORAhwTzc8R420tnYN
+         ciVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QxbJNlcYOWQD7I804T9eY0kZ8OeJP4Ne7Nni2Pz0Ur0=;
+        b=jE2PfJAbsJySKYvxoVildIiTOtmQyIT6iLm/B7bmistnmi95pp2hgn/6N829AhoTnz
+         IEf7JdVd0L63dI7OimeIT83wxmDPdoZg90mRSw0LogiqjdsVxLqeE/iZZL9RGxSUmnTW
+         EdQoiGeot7CQrxadV17PtDM7wxbpFS+0ghrus+ZUzR/omDa11cJn0F8iPJoDsFSYc/f0
+         wQw/K35H/PGeOBMOD80dbDyn3NM5QIggXio5KyJEbzjxbwsRaJIZcvpjUVDS4PtcK9Yk
+         13vK+SWwoi7GwXUwIo+zvnEj3jIK5CwUQ6UUU6Kd1Q0Y1YVWqVSIkfVzD5wePC3lA0kB
+         CZhA==
+X-Gm-Message-State: AJcUukfYtRP+vs+O7C9iXw2ErGng336R7r3o5Mxh+I6vomHE76pjJ/x2
+        XtURhhUM2k9RYaYTWU/nkDFoGFaL7XAZ2gXqeFBQ
+X-Google-Smtp-Source: ALg8bN6psN2ZSx2L4qZFCBc46eU4NKBcJ6wXCDsreCqG/XKo1Qar9N7T15IMVcdNkwanW3NfSgo1qBvIRNQZjij1r7g=
+X-Received: by 2002:a19:4287:: with SMTP id p129mr25707683lfa.135.1548883820203;
+ Wed, 30 Jan 2019 13:30:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-From:   Stephen Boyd <sboyd@kernel.org>
-Message-ID: <154888381385.169292.12776041058756822056@swboyd.mtv.corp.google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-3-sboyd@kernel.org> <e303573aefeaf6a7e3a4b1d820e801354ff900b4.camel@baylibre.com> <154879654428.136743.10048771201181501034@swboyd.mtv.corp.google.com> <ff76dcdb4ceb3209619e5348ed7b575a8ae9df8d.camel@baylibre.com>
-User-Agent: alot/0.8
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <ff76dcdb4ceb3209619e5348ed7b575a8ae9df8d.camel@baylibre.com>
-Date:   Wed, 30 Jan 2019 13:30:13 -0800
+References: <0000000000003d28d10580b335cd@google.com>
+In-Reply-To: <0000000000003d28d10580b335cd@google.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 30 Jan 2019 16:30:09 -0500
+Message-ID: <CAHC9VhR9wwqVcnmAVcqfwmRuX02F8oMVzNNNQym-TeceHFLqOQ@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in selinux_netlbl_socket_setsockopt
+To:     syzbot <syzbot+1bfc00ca3aabe5bcd4cb@syzkaller.appspotmail.com>
+Cc:     Eric Paris <eparis@parisplace.org>, linux-kernel@vger.kernel.org,
+        Stephen Smalley <sds@tycho.nsa.gov>, selinux@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jerome Brunet (2019-01-30 01:53:41)
->=20
-> It is the value we find in the register after the bootloader. Since we ha=
-ve no
-> idea what it is, we must assume it is invalid.
-
-Ok, so my understanding is correct.
-
->=20
-> The problem was that there only one known parent for this particular cloc=
-k,
-> and the CCF quirk (call get_parent() only if num_parent =3D=3D 1) is maki=
-ng things
-> difficult for us.
->=20
-> We found a work around to this. We declare a non existing parent, which m=
-ake
-> num_parent =3D=3D 2 and force CCF to call get_parent(), and later on set_=
-parent()
-> ... It works but it sucks.
-
-Yes that is bad.
-
+On Wed, Jan 30, 2019 at 4:01 PM syzbot
+<syzbot+1bfc00ca3aabe5bcd4cb@syzkaller.appspotmail.com> wrote:
 >
-> Sure, good idea.
->=20
-> If clk_hw_get_parent_by_index() may return an error, it because get_paren=
-t()
-> could provide an invalid index.
->=20
-> Which brings us back to the original point, if it is possible for get_par=
-ent()
-> to return invalid index, which means out of bounds, it shall be called ev=
-en if
-> num_parent =3D=3D 1.
->=20
-> To be coherent, either:
-> 1) the return value of get_parent() *MUST* be valid, it is fine to not ca=
-ll it
-> if num_parent =3D=3D 1 because we already know the only possible result.
->=20
-> 2) the return value of get_parent *MAY* be invalid, then it should be cal=
-led
-> regarless of num_parent.
->=20
-> IMO, (2) is the only valid option because any existing muxes could alread=
-y be
-> returning invalid indexes. I know we do on Amlogic (with various muxes, e=
-ven
-> with num_parent >=3D 1) and I'm sure we are not the only ones. Plus a dri=
-ver
-> needs to have a mean to tell CCF that things are not as expected.
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    62967898789d Merge git://git.kernel.org/pub/scm/linux/kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=167fdef8c00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4fceea9e2d99ac20
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1bfc00ca3aabe5bcd4cb
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+1bfc00ca3aabe5bcd4cb@syzkaller.appspotmail.com
+>
+> 8021q: adding VLAN 0 to HW filter on device team0
+> ==================================================================
+> BUG: KASAN: use-after-free in selinux_netlbl_socket_setsockopt+0x49b/0x510
+> security/selinux/netlabel.c:525
+> Read of size 8 at addr ffff8880a63cf078 by task syz-executor3/18477
+>
+> CPU: 1 PID: 18477 Comm: syz-executor3 Not tainted 5.0.0-rc4+ #51
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+>   print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+>   kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+>   __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+>   selinux_netlbl_socket_setsockopt+0x49b/0x510
+> security/selinux/netlabel.c:525
 
-Right. Having drivers specify more clks than the kernel knows about or
-having the return value of get_parent() be out of range is non-obvious.
-I'd rather see any drivers that want to express errors during the parent
-initialization phase return an error pointer through the get_parent_hw
-clk op instead.
+At first glance this seems odd.  The line above is simply
+dereferencing sock->sk_security (getting the "sksec"), which we also
+do higher up selinux_socket_setsockopt() via sock_has_perm().  Unless
+somehow the socket is being released/freed in the middle of a
+setsockopt() syscall this looks like maybe it's something else?
 
-Put another way, if you have any edge case like this you should migrate
-to this new clk op and stop using .get_parent and playing tricks with
-.num_parents and return values from .get_parent.
+>   selinux_socket_setsockopt+0x67/0x90 security/selinux/hooks.c:4693
+>   security_socket_setsockopt+0x7d/0xc0 security/security.c:1467
+>   __sys_setsockopt+0xe4/0x3a0 net/socket.c:1892
+>   __do_sys_setsockopt net/socket.c:1913 [inline]
+>   __se_sys_setsockopt net/socket.c:1910 [inline]
+>   __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
+>   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x458089
+> Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007fb988b9cc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+> RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000458089
+> RDX: 0000000000000078 RSI: 0000000000000084 RDI: 000000000000000a
+> RBP: 000000000073c040 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb988b9d6d4
+> R13: 00000000004cc9e8 R14: 00000000004da6a8 R15: 00000000ffffffff
+>
+> Allocated by task 18471:
+>   save_stack+0x45/0xd0 mm/kasan/common.c:73
+>   set_track mm/kasan/common.c:85 [inline]
+>   __kasan_kmalloc mm/kasan/common.c:496 [inline]
+>   __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+>   kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
+>   __do_kmalloc mm/slab.c:3711 [inline]
+>   __kmalloc+0x15c/0x740 mm/slab.c:3720
+>   kmalloc include/linux/slab.h:550 [inline]
+>   sk_prot_alloc+0x19c/0x2e0 net/core/sock.c:1477
+>   sk_alloc+0xd7/0x1690 net/core/sock.c:1531
+>   nr_create+0xb9/0x5e0 net/netrom/af_netrom.c:436
+>   __sock_create+0x532/0x930 net/socket.c:1277
+>   sock_create net/socket.c:1317 [inline]
+>   __sys_socket+0x106/0x260 net/socket.c:1347
+>   __do_sys_socket net/socket.c:1356 [inline]
+>   __se_sys_socket net/socket.c:1354 [inline]
+>   __x64_sys_socket+0x73/0xb0 net/socket.c:1354
+>   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Freed by task 18466:
+>   save_stack+0x45/0xd0 mm/kasan/common.c:73
+>   set_track mm/kasan/common.c:85 [inline]
+>   __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+>   kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+>   __cache_free mm/slab.c:3487 [inline]
+>   kfree+0xcf/0x230 mm/slab.c:3806
+>   sk_prot_free net/core/sock.c:1514 [inline]
+>   __sk_destruct+0x76d/0xa60 net/core/sock.c:1596
+>   sk_destruct+0x7b/0x90 net/core/sock.c:1604
+>   __sk_free+0xce/0x300 net/core/sock.c:1615
+>   sk_free+0x42/0x50 net/core/sock.c:1626
+>   sock_put include/net/sock.h:1707 [inline]
+>   nr_release+0x337/0x3c0 net/netrom/af_netrom.c:557
+>   __sock_release+0xd3/0x250 net/socket.c:579
+>   sock_close+0x1b/0x30 net/socket.c:1141
+>   __fput+0x3c5/0xb10 fs/file_table.c:278
+>   ____fput+0x16/0x20 fs/file_table.c:309
+>   task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
+>   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+>   exit_to_usermode_loop+0x32a/0x3b0 arch/x86/entry/common.c:166
+>   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+>   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+>   do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> The buggy address belongs to the object at ffff8880a63cec80
+>   which belongs to the cache kmalloc-2k of size 2048
+> The buggy address is located 1016 bytes inside of
+>   2048-byte region [ffff8880a63cec80, ffff8880a63cf480)
+> The buggy address belongs to the page:
+> page:ffffea000298f380 count:1 mapcount:0 mapping:ffff88812c3f0c40 index:0x0
+> compound_mapcount: 0
+> flags: 0x1fffc0000010200(slab|head)
+> raw: 01fffc0000010200 ffffea000127f888 ffffea00013a3188 ffff88812c3f0c40
+> raw: 0000000000000000 ffff8880a63ce400 0000000100000003 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>   ffff8880a63cef00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>   ffff8880a63cef80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ffff8880a63cf000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                                                  ^
+>   ffff8880a63cf080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>   ffff8880a63cf100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
 
->=20
-> >=20
-> > so I took
-> > the route of adding another callback with semantics that we can define
-> > now because there aren't any users. The difference between the two is
-> > made intentionally.
->=20
-> I still think that the drivers relying on this quirk (only 1 AFAIK) are b=
-roken
-> and should be fixed, rather that keeping the quirk for everyone else.=20
 
-Agreed. Use the new API?
 
->=20
-> With this quirk, CCF is making an assumption that might be wrong.
->=20
-> The quirk is very easy put in the get_parent() callback of the said drive=
-r, or
-> even better, don't provide the callback if it should not be called.
->=20
-> I understand the need for a cautious approach. It seems I'm only one with=
- that
-> issue right now and since I have a work around, there is no rush. But we =
-must
-> have plan to make it right.
->=20
-> To be clear, I'm not against your new API but I don't think it should be a
-> reason to keep a broken behavior the framework.
->=20
-
-So do you think you can use this new clk_op and ignore the problems with
-the .get_parent clk op? Putting effort into fixing the .get_parent
-design isn't very useful from my perspective. There's more than just the
-problem that we don't call it when .num_parents is 1. There's the
-inability to return errors without doing weird things to return an index
-out of range and there isn't any way for us to really know if the clk is
-an orphan or not. If we can migrate all drivers to use the new clk op
-then we can fix these problems too, and deprecate and eventually remove
-the broken by design .get_parent clk op API.
-
-BTW, I included this patch in this series because I'm wondering if it
-would be useful for there to be a 'parent cookie' pointer that we pass
-between the framework and providers instead using a raw index.
-
-	struct clk_parent {
-		struct clk_hw *hw;
-	};
-
-Then drivers could embed these structs into their parent_data structure
-and the framework could pass pointers to these structures in struct
-clk_rate_request. That may make it easier for drivers to attach extra
-data to the parent for a particular clk when changing parents or rates.
-For example, if the index of the parent is not a linear monotonic range
-of [0, num_parents) then we could let them throw the index into either a
-wrapper structure or a void *data field.
-
-	struct my_clk_parent {
-		struct clk_parent parent;
-		u32 mask;
-		u8 select_bit;
-	};
-
-Or
-	struct my_clk_parent_data {
-		u32 mask;
-		u8 select_bit;
-	};
-
-	struct clk_parent {
-		struct clk_hw *hw;
-		void *data;
-	};
-
-And have data point to struct my_clk_parent. There's code in various clk
-drivers that maps between the framework's view of the parent index and
-the providers view, i.e. the hardware index. If we already have the
-parent_map structure, maybe we should let that live in the provider
-driver near the hardware and then just pass a pointer to it so drivers
-can do container_of() or ->data accesses to get any driver data they
-associate with that parent index.
-
-If we did something like this, it may reduce code further and let us get
-rid of the u8 index in the clk framework entirely. But we may want to
-have the .get_parent_hw op return a pointer to a struct clk_parent
-instead of a struct clk_hw now to make this easier to implement in the
-future. Or this could all be overkill and only help a few drivers skip a
-mapping step.
-
+-- 
+paul moore
+www.paul-moore.com
