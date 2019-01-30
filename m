@@ -2,254 +2,268 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9CEC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D573FC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17BA420855
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548855546;
-	bh=ANOq4Ks1VkJXQZwpn5WfSy/7ddeh4wvUO4vsJLizLVE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=1AUmpOBu9E4aeTY2VZlvF9B0n5OIX7XFQEaL1HIdwqGwHwLHnorRBDDYE3higW9Y0
-	 jFnYjqrh4N5lim4Hep57QMxAnySIc6s1Wz6bMSIHQ9aqZBNZCprXdQ2vPkI+KDRZuF
-	 pGxAvD/eG3lHlzrzqRHRS9H4STqMdRhqwAMaJ30o=
+	by mail.kernel.org (Postfix) with ESMTP id 9A87C218A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:40:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RmcetwdC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731263AbfA3NjE (ORCPT
+        id S1730739AbfA3Nk1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:39:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54890 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731245AbfA3NjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:39:00 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EC5820855;
-        Wed, 30 Jan 2019 13:38:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548855539;
-        bh=ANOq4Ks1VkJXQZwpn5WfSy/7ddeh4wvUO4vsJLizLVE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pmThoYpmP6fsqamk8NCXT8ISBKJajscJGIo9LSBi3RdnY2kPTtX0CRQ6pQdwiomyt
-         9XDhvMDSxFot/sLpbrpghRzNr4Qo/8hKfpKkxnvsJ/Y6FaxgCQOmLCoDUL8+gPLs7i
-         w2PMUBrDC5lxZw7OeymL9CDDvgGeNoxQZdNB1lEk=
-Date:   Wed, 30 Jan 2019 14:38:49 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/5] mtd: nand: Make flags for bad block marker
- position more granular
-Message-ID: <20190130143849.73501e65@bbrezillon>
-In-Reply-To: <20190130130111.32724-3-frieder.schrempf@kontron.de>
-References: <20190130130111.32724-1-frieder.schrempf@kontron.de>
-        <20190130130111.32724-3-frieder.schrempf@kontron.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 30 Jan 2019 08:40:27 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48858 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726233AbfA3Nk1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 08:40:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=w7uhVDMnb5iOTArrxUzZpNAfMoYz/9iS0wloR+aaLi0=; b=RmcetwdCl9v9NGhxUTULdu3vC
+        hhgoGypkD8xDYC4wheRqf7G9wVjOmPnw9vpwOv9WJMVMvYvBv1v7RsBSkP3Y5Fs3I1/FTdnagJHdY
+        boqkWu/GhDgrrHbvZRf98fJd3KCe9zGG8gj5LkLd9xbfe+XGgpA8wt6KZZGMPEIVaFhdKdC6InOv3
+        wyu5FnqhIKz5GvWDf0xOITaSkgL8zdAwwwpqGWywg6vXcvLDhgv2vkWdtiCsu1RhnxYKsNRTazywe
+        yRvNps1prOOKlm8/sWQwx2oEDxRFsMVZfInSyaHDmqjjuDyJSROKt7gfHiHazm+n4OKftuyHOmRbf
+        gAk3fZVng==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1goq6L-000734-Pt; Wed, 30 Jan 2019 13:40:25 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6DC612072FAD2; Wed, 30 Jan 2019 14:40:23 +0100 (CET)
+Date:   Wed, 30 Jan 2019 14:40:23 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Sargun Dhillon <sargun@sargun.me>
+Subject: Re: [PATCH v2] sched/fair: Fix insertion in rq->leaf_cfs_rq_list
+Message-ID: <20190130134023.GA2296@hirez.programming.kicks-ass.net>
+References: <1548782332-18591-1-git-send-email-vincent.guittot@linaro.org>
+ <1548825767-10799-1-git-send-email-vincent.guittot@linaro.org>
+ <20190130130410.GG2278@hirez.programming.kicks-ass.net>
+ <20190130130620.GB3103@hirez.programming.kicks-ass.net>
+ <20190130132717.GC3103@hirez.programming.kicks-ass.net>
+ <CAKfTPtBhOomgYONsdfaaVgZCENM+QhfPie2qpu0KyOsvMiog_g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtBhOomgYONsdfaaVgZCENM+QhfPie2qpu0KyOsvMiog_g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019 13:01:47 +0000
-Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
+On Wed, Jan 30, 2019 at 02:29:42PM +0100, Vincent Guittot wrote:
+> On Wed, 30 Jan 2019 at 14:27, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Wed, Jan 30, 2019 at 02:06:20PM +0100, Peter Zijlstra wrote:
+> > > On Wed, Jan 30, 2019 at 02:04:10PM +0100, Peter Zijlstra wrote:
+> >
+> > > > So I don't much like this; at all. But maybe I misunderstand, this is
+> > > > somewhat tricky stuff and I've not looked at it in a while.
+> > > >
+> > > > So per normal we do:
+> > > >
+> > > >     enqueue_task_fair()
+> > > >       for_each_sched_entity() {
+> > > >         if (se->on_rq)
+> > > >           break;
+> > > >         enqueue_entity()
+> > > >           list_add_leaf_cfs_rq();
+> > > >       }
+> > > >
+> > > > This ensures that all parents are already enqueued, right? because this
+> > > > is what enqueues those parents.
+> > > >
+> > > > And in this case you add an unconditional second
+> > > > for_each_sched_entity(); even though it is completely redundant, afaict.
+> > >
+> > > Ah, it doesn't do a second iteration; it continues where the previous
+> > > two left off.
+> > >
+> > > Still, why isn't this in unthrottle?
+> >
+> > Aah, I see, because we need:
+> >
+> >   rq->tmp_alone_branch == &rq->lead_cfs_rq_list
+> >
+> > at the end of enqueue_task_fair(); having had that assertion would've
+> 
+> Yes exactly.
 
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
-> 
-> To be able to check and set bad block markers in the first and
-> second page of a block independently of each other, we create
-> separate flags for both cases.
-> 
-> Previously NAND_BBM_SECONDPAGE meant, that both, the first and the
-> second page were used. With this patch NAND_BBM_FIRSTPAGE stands for
-> using the first page and NAND_BBM_SECONDPAGE for using the second
-> page.
-> 
-> This patch is only for preparation of subsequent changes and does
-> not implement the logic to actually handle both flags separately.
-> 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+How's this ?
 
-Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+---
+ kernel/sched/fair.c | 125 +++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 69 insertions(+), 56 deletions(-)
 
-> ---
->  drivers/mtd/nand/raw/nand_amd.c      | 2 +-
->  drivers/mtd/nand/raw/nand_base.c     | 6 ++++--
->  drivers/mtd/nand/raw/nand_bbt.c      | 3 ++-
->  drivers/mtd/nand/raw/nand_esmt.c     | 2 +-
->  drivers/mtd/nand/raw/nand_hynix.c    | 2 +-
->  drivers/mtd/nand/raw/nand_macronix.c | 2 +-
->  drivers/mtd/nand/raw/nand_micron.c   | 2 +-
->  drivers/mtd/nand/raw/nand_samsung.c  | 2 +-
->  drivers/mtd/nand/raw/nand_toshiba.c  | 2 +-
->  drivers/mtd/nand/raw/sh_flctl.c      | 2 +-
->  include/linux/mtd/rawnand.h          | 1 +
->  11 files changed, 15 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_amd.c b/drivers/mtd/nand/raw/nand_amd.c
-> index 6e248bdcc797..6202cbf7ee8d 100644
-> --- a/drivers/mtd/nand/raw/nand_amd.c
-> +++ b/drivers/mtd/nand/raw/nand_amd.c
-> @@ -40,7 +40,7 @@ static void amd_nand_decode_id(struct nand_chip *chip)
->  static int amd_nand_init(struct nand_chip *chip)
->  {
->  	if (nand_is_slc(chip))
-> -		chip->options |= NAND_BBM_SECONDPAGE;
-> +		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
->  
->  	return 0;
->  }
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index c6199cc68d2f..9ef7b86cdc42 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -302,7 +302,8 @@ static int nand_block_bad(struct nand_chip *chip, loff_t ofs)
->  		ofs += mtd->erasesize - mtd->writesize;
->  
->  	page = (int)(ofs >> chip->page_shift) & chip->pagemask;
-> -	page_end = page + ((chip->options & NAND_BBM_SECONDPAGE) ? 2 : 1);
-> +	page_end = page + (((chip->options & NAND_BBM_FIRSTPAGE) &&
-> +			    (chip->options & NAND_BBM_SECONDPAGE)) ? 2 : 1);
->  
->  	for (; page < page_end; page++) {
->  		res = chip->ecc.read_oob(chip, page);
-> @@ -550,7 +551,8 @@ static int nand_default_block_markbad(struct nand_chip *chip, loff_t ofs)
->  
->  		i++;
->  		ofs += mtd->writesize;
-> -	} while ((chip->options & NAND_BBM_SECONDPAGE) && i < 2);
-> +	} while ((chip->options & NAND_BBM_FIRSTPAGE) &&
-> +		 (chip->options & NAND_BBM_SECONDPAGE) && i < 2);
->  
->  	return ret;
->  }
-> diff --git a/drivers/mtd/nand/raw/nand_bbt.c b/drivers/mtd/nand/raw/nand_bbt.c
-> index 862eaa3a0552..c095c04d566d 100644
-> --- a/drivers/mtd/nand/raw/nand_bbt.c
-> +++ b/drivers/mtd/nand/raw/nand_bbt.c
-> @@ -466,7 +466,8 @@ static int create_bbt(struct nand_chip *this, uint8_t *buf,
->  
->  	pr_info("Scanning device for bad blocks\n");
->  
-> -	if (this->options & NAND_BBM_SECONDPAGE)
-> +	if ((this->options & NAND_BBM_FIRSTPAGE) &&
-> +	    (this->options & NAND_BBM_SECONDPAGE))
->  		numpages = 2;
->  	else
->  		numpages = 1;
-> diff --git a/drivers/mtd/nand/raw/nand_esmt.c b/drivers/mtd/nand/raw/nand_esmt.c
-> index 80d2d3a1b5f2..99a8092969a7 100644
-> --- a/drivers/mtd/nand/raw/nand_esmt.c
-> +++ b/drivers/mtd/nand/raw/nand_esmt.c
-> @@ -36,7 +36,7 @@ static void esmt_nand_decode_id(struct nand_chip *chip)
->  static int esmt_nand_init(struct nand_chip *chip)
->  {
->  	if (nand_is_slc(chip))
-> -		chip->options |= NAND_BBM_SECONDPAGE;
-> +		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
->  
->  	return 0;
->  }
-> diff --git a/drivers/mtd/nand/raw/nand_hynix.c b/drivers/mtd/nand/raw/nand_hynix.c
-> index 2789bf3857c9..e685d70c1618 100644
-> --- a/drivers/mtd/nand/raw/nand_hynix.c
-> +++ b/drivers/mtd/nand/raw/nand_hynix.c
-> @@ -674,7 +674,7 @@ static int hynix_nand_init(struct nand_chip *chip)
->  	if (!nand_is_slc(chip))
->  		chip->options |= NAND_BBM_LASTPAGE;
->  	else
-> -		chip->options |= NAND_BBM_SECONDPAGE;
-> +		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
->  
->  	hynix = kzalloc(sizeof(*hynix), GFP_KERNEL);
->  	if (!hynix)
-> diff --git a/drivers/mtd/nand/raw/nand_macronix.c b/drivers/mtd/nand/raw/nand_macronix.c
-> index 6db7ced4b96b..e287e71347c5 100644
-> --- a/drivers/mtd/nand/raw/nand_macronix.c
-> +++ b/drivers/mtd/nand/raw/nand_macronix.c
-> @@ -62,7 +62,7 @@ static void macronix_nand_fix_broken_get_timings(struct nand_chip *chip)
->  static int macronix_nand_init(struct nand_chip *chip)
->  {
->  	if (nand_is_slc(chip))
-> -		chip->options |= NAND_BBM_SECONDPAGE;
-> +		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
->  
->  	macronix_nand_fix_broken_get_timings(chip);
->  
-> diff --git a/drivers/mtd/nand/raw/nand_micron.c b/drivers/mtd/nand/raw/nand_micron.c
-> index ea6b6e80d6f8..ca80e09783c7 100644
-> --- a/drivers/mtd/nand/raw/nand_micron.c
-> +++ b/drivers/mtd/nand/raw/nand_micron.c
-> @@ -448,7 +448,7 @@ static int micron_nand_init(struct nand_chip *chip)
->  		goto err_free_manuf_data;
->  
->  	if (mtd->writesize == 2048)
-> -		chip->options |= NAND_BBM_SECONDPAGE;
-> +		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
->  
->  	ondie = micron_supports_on_die_ecc(chip);
->  
-> diff --git a/drivers/mtd/nand/raw/nand_samsung.c b/drivers/mtd/nand/raw/nand_samsung.c
-> index 3be737139210..ace50522dd19 100644
-> --- a/drivers/mtd/nand/raw/nand_samsung.c
-> +++ b/drivers/mtd/nand/raw/nand_samsung.c
-> @@ -123,7 +123,7 @@ static int samsung_nand_init(struct nand_chip *chip)
->  	if (!nand_is_slc(chip))
->  		chip->options |= NAND_BBM_LASTPAGE;
->  	else
-> -		chip->options |= NAND_BBM_SECONDPAGE;
-> +		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
->  
->  	return 0;
->  }
-> diff --git a/drivers/mtd/nand/raw/nand_toshiba.c b/drivers/mtd/nand/raw/nand_toshiba.c
-> index 222a66bf0aa6..0031e6727193 100644
-> --- a/drivers/mtd/nand/raw/nand_toshiba.c
-> +++ b/drivers/mtd/nand/raw/nand_toshiba.c
-> @@ -147,7 +147,7 @@ static void toshiba_nand_decode_id(struct nand_chip *chip)
->  static int toshiba_nand_init(struct nand_chip *chip)
->  {
->  	if (nand_is_slc(chip))
-> -		chip->options |=  NAND_BBM_SECONDPAGE;
-> +		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
->  
->  	/* Check that chip is BENAND and ECC mode is on-die */
->  	if (nand_is_slc(chip) && chip->ecc.mode == NAND_ECC_ON_DIE &&
-> diff --git a/drivers/mtd/nand/raw/sh_flctl.c b/drivers/mtd/nand/raw/sh_flctl.c
-> index 2017b00fadd8..971d9afd55e5 100644
-> --- a/drivers/mtd/nand/raw/sh_flctl.c
-> +++ b/drivers/mtd/nand/raw/sh_flctl.c
-> @@ -1176,7 +1176,7 @@ static int flctl_probe(struct platform_device *pdev)
->  	if (pdata->flcmncr_val & SEL_16BIT)
->  		nand->options |= NAND_BUSWIDTH_16;
->  
-> -	nand->options |= NAND_BBM_SECONDPAGE;
-> +	nand->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
->  
->  	pm_runtime_enable(&pdev->dev);
->  	pm_runtime_resume(&pdev->dev);
-> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index da785d92e26e..23ad4ad790af 100644
-> --- a/include/linux/mtd/rawnand.h
-> +++ b/include/linux/mtd/rawnand.h
-> @@ -176,6 +176,7 @@ enum nand_ecc_algo {
->   * Position within the block: Each of these pages needs to be checked for a
->   * bad block marking pattern.
->   */
-> +#define NAND_BBM_FIRSTPAGE		0x01000000
->  #define NAND_BBM_SECONDPAGE		0x02000000
->  #define NAND_BBM_LASTPAGE		0x04000000
->  
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e2ff4b69dcf6..747976ca84ea 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -284,64 +284,66 @@ static inline struct cfs_rq *group_cfs_rq(struct sched_entity *grp)
+ 
+ static inline void list_add_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ {
+-	if (!cfs_rq->on_list) {
+-		struct rq *rq = rq_of(cfs_rq);
+-		int cpu = cpu_of(rq);
++	struct rq *rq = rq_of(cfs_rq);
++	int cpu = cpu_of(rq);
++
++	if (cfs_rq->on_list)
++		return;
++
++	/*
++	 * Ensure we either appear before our parent (if already
++	 * enqueued) or force our parent to appear after us when it is
++	 * enqueued. The fact that we always enqueue bottom-up
++	 * reduces this to two cases and a special case for the root
++	 * cfs_rq. Furthermore, it also means that we will always reset
++	 * tmp_alone_branch either when the branch is connected
++	 * to a tree or when we reach the top of the tree
++	 */
++	if (cfs_rq->tg->parent &&
++	    cfs_rq->tg->parent->cfs_rq[cpu]->on_list) {
+ 		/*
+-		 * Ensure we either appear before our parent (if already
+-		 * enqueued) or force our parent to appear after us when it is
+-		 * enqueued. The fact that we always enqueue bottom-up
+-		 * reduces this to two cases and a special case for the root
+-		 * cfs_rq. Furthermore, it also means that we will always reset
+-		 * tmp_alone_branch either when the branch is connected
+-		 * to a tree or when we reach the beg of the tree
++		 * If parent is already on the list, we add the child
++		 * just before. Thanks to circular linked property of
++		 * the list, this means to put the child at the tail
++		 * of the list that starts by parent.
+ 		 */
+-		if (cfs_rq->tg->parent &&
+-		    cfs_rq->tg->parent->cfs_rq[cpu]->on_list) {
+-			/*
+-			 * If parent is already on the list, we add the child
+-			 * just before. Thanks to circular linked property of
+-			 * the list, this means to put the child at the tail
+-			 * of the list that starts by parent.
+-			 */
+-			list_add_tail_rcu(&cfs_rq->leaf_cfs_rq_list,
+-				&(cfs_rq->tg->parent->cfs_rq[cpu]->leaf_cfs_rq_list));
+-			/*
+-			 * The branch is now connected to its tree so we can
+-			 * reset tmp_alone_branch to the beginning of the
+-			 * list.
+-			 */
+-			rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
+-		} else if (!cfs_rq->tg->parent) {
+-			/*
+-			 * cfs rq without parent should be put
+-			 * at the tail of the list.
+-			 */
+-			list_add_tail_rcu(&cfs_rq->leaf_cfs_rq_list,
+-				&rq->leaf_cfs_rq_list);
+-			/*
+-			 * We have reach the beg of a tree so we can reset
+-			 * tmp_alone_branch to the beginning of the list.
+-			 */
+-			rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
+-		} else {
+-			/*
+-			 * The parent has not already been added so we want to
+-			 * make sure that it will be put after us.
+-			 * tmp_alone_branch points to the beg of the branch
+-			 * where we will add parent.
+-			 */
+-			list_add_rcu(&cfs_rq->leaf_cfs_rq_list,
+-				rq->tmp_alone_branch);
+-			/*
+-			 * update tmp_alone_branch to points to the new beg
+-			 * of the branch
+-			 */
+-			rq->tmp_alone_branch = &cfs_rq->leaf_cfs_rq_list;
+-		}
+-
+-		cfs_rq->on_list = 1;
++		list_add_tail_rcu(&cfs_rq->leaf_cfs_rq_list,
++			&(cfs_rq->tg->parent->cfs_rq[cpu]->leaf_cfs_rq_list));
++		/*
++		 * The branch is now connected to its tree so we can
++		 * reset tmp_alone_branch to the beginning of the
++		 * list.
++		 */
++		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
++	} else if (!cfs_rq->tg->parent) {
++		/*
++		 * cfs rq without parent should be put
++		 * at the tail of the list.
++		 */
++		list_add_tail_rcu(&cfs_rq->leaf_cfs_rq_list,
++			&rq->leaf_cfs_rq_list);
++		/*
++		 * We have reach the top of a tree so we can reset
++		 * tmp_alone_branch to the beginning of the list.
++		 */
++		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
++	} else {
++		/*
++		 * The parent has not already been added so we want to
++		 * make sure that it will be put after us.
++		 * tmp_alone_branch points to the begin of the branch
++		 * where we will add parent.
++		 */
++		list_add_rcu(&cfs_rq->leaf_cfs_rq_list,
++			rq->tmp_alone_branch);
++		/*
++		 * update tmp_alone_branch to points to the new begin
++		 * of the branch
++		 */
++		rq->tmp_alone_branch = &cfs_rq->leaf_cfs_rq_list;
+ 	}
++
++	cfs_rq->on_list = 1;
+ }
+ 
+ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+@@ -352,7 +354,12 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ 	}
+ }
+ 
+-/* Iterate through all leaf cfs_rq's on a runqueue: */
++static inline void assert_list_leaf_cfs_rq(struct rq *rq)
++{
++	SCHED_WARN_ON(rq->tmp_alone_branch != &rq->lead_cfs_rq_list);
++}
++
++/* Iterate through all cfs_rq's on a runqueue in bottom-up order */
+ #define for_each_leaf_cfs_rq(rq, cfs_rq) \
+ 	list_for_each_entry_rcu(cfs_rq, &rq->leaf_cfs_rq_list, leaf_cfs_rq_list)
+ 
+@@ -446,6 +453,10 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
+ {
+ }
+ 
++static inline void assert_list_leaf_cfs_rq(struct rq *rq)
++{
++}
++
+ #define for_each_leaf_cfs_rq(rq, cfs_rq)	\
+ 		for (cfs_rq = &rq->cfs; cfs_rq; cfs_rq = NULL)
+ 
+@@ -5179,6 +5190,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 
+ 	}
+ 
++	assert_list_leaf_cfs_rq(rq);
++
+ 	hrtick_update(rq);
+ }
+ 
