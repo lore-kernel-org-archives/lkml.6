@@ -2,109 +2,683 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F79DC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDE0C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1079820881
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:19:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 890D920881
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:20:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qj7NMenm"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DbosmKER"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbfA3XTl (ORCPT
+        id S1731173AbfA3XUe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:19:41 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46283 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725613AbfA3XTl (ORCPT
+        Wed, 30 Jan 2019 18:20:34 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:52804 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbfA3XUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:19:41 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c73so523632pfe.13;
-        Wed, 30 Jan 2019 15:19:40 -0800 (PST)
+        Wed, 30 Jan 2019 18:20:33 -0500
+Received: by mail-it1-f194.google.com with SMTP id d11so1055958itf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 15:20:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=uLrGv32OAsu5hxU0ZZv/booutnheOKWF6T9iFMfuAFI=;
-        b=Qj7NMenmN+fYwXSguI65ODKuj+9K/kkLYdMEruLq59Er7GoHVUPG6m+qI3gnoXGj9k
-         Hxsd22UpnpPPNEnVtEb+aFkN9BDQgMTVfyrpnBIx1coBm5pHfuSn4DZFosLGQSivP8NJ
-         8qJ6QGmLGE3/IESV6uDfZDBnHy0rffGDiyRkZ+lmqcI5LgAW8K6M0sB9TNdz9PuYTo2B
-         +SufcenGi44unIoPhtuNqWec2TGPeqV4yQqvXtf/cPuHbKgTExfmg7LWuDALhB/GJgoi
-         GJIc3z+eMnLq4i/5T0sLcwYOKgrIpxT56nKv5Um/R60YZqGF3hYvY2FH5iasxivVjyyQ
-         vNeg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=hQupFlNZSB5TGGSPpOH3szjeQJcp7W2rFknzMAxdUDg=;
+        b=DbosmKERLO0QQ18yq2iw0VI4jiBUAtltWq/+svkPMHkSrgsJo0IS/DYW1/XeEKT05G
+         iftXzrJnYxB8ooISl4JUGe17/30OY0xE9JDmekHTzs0k6LRjdbllgS9JRW+2+jd5zzej
+         KJecl+6653PN+8/3k1uzHctLo2hdVZ6MTH+gY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uLrGv32OAsu5hxU0ZZv/booutnheOKWF6T9iFMfuAFI=;
-        b=ZOtx9mapzw3mszT20Ape0TgKbzVtgzlVPycC0HHDfVAfhms5syvs1YBHMU45xXPVzU
-         baYsVW4514+r2CALrjRaubpRk33IFqGAba5dtE6gp61d7YBFbrhYOrvhFgwyaDr7dUBw
-         8yqwcq2QNKZ5DiX+XKUAAWDqos4shqgpm0Q7LXbki//W2azjCEkj7ywT3VfzSYuuCfQE
-         QbB8wLWHj4r+v9y/WDV/QN4T7YVjJ7ygdrxPjJW9nIdPU4rrgewGDKLuw+9Q9K1FOsPo
-         Q2w1O5B+b7Ecm1ixeuxC60CEDoZVuHYG2HDqZYS0zrYNC7s+GhM05gDt6rfiMkcnepdt
-         YSSw==
-X-Gm-Message-State: AJcUuke9yOzLV8xbJPL9WH6OunmNuYzqnN1QzPkYRt5ypT9342YhGw3R
-        GbVHI8qqZfhG6cH7a3B6jBz/recP
-X-Google-Smtp-Source: ALg8bN50exHxFFA3uT8QHlfjcp3GSmzSeT1ajMXrQMhNkkr6rxp2wt8yctXgyoqauQMDc741Nls2EA==
-X-Received: by 2002:a62:2c81:: with SMTP id s123mr32206788pfs.174.1548890379856;
-        Wed, 30 Jan 2019 15:19:39 -0800 (PST)
-Received: from ?IPv6:2601:282:800:fd80:25a3:bebf:496f:8788? ([2601:282:800:fd80:25a3:bebf:496f:8788])
-        by smtp.googlemail.com with ESMTPSA id z7sm3493931pga.6.2019.01.30.15.19.37
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=hQupFlNZSB5TGGSPpOH3szjeQJcp7W2rFknzMAxdUDg=;
+        b=l/AXKGVUTgfXodpGOmJWvU8U3PLJWj+U0D4jJWEI3oNVSnUdrJ3W2WiwWQXa6CWbNi
+         K/Ykpq0v9XRbOumn6Vr4sIYHx9e0OXFX/ft5Q/dAnv8M4ETbJUezeo/qPy4hIXu3X8n+
+         RbksEMxa00LpXS2r0kjqff6HtVf9CTlWUp4zATCjDKY4B7H7rrbYJy17IIVdR9K6GWxY
+         MPExbyoaZDNUWzj41O0lxdLBYGoqn5yGjOZXeWNh01F4lbasnz3bJTXi77zyCO4o5QaZ
+         ui470EPaApFu25Fd9vw4Vvw6LU9/G3Q54hKdx1wDxO5XkgJ66pOcFLmfMDsZVgoK9g/G
+         Yjqw==
+X-Gm-Message-State: AJcUukeSAFYXX74mYHMs4Ewk1ar9oiBddye6Z/U8tUHBdTVBjgkQeFAW
+        8iULYsnZu9SBvVFJLmfpZY7dgcrcYyo=
+X-Google-Smtp-Source: ALg8bN6/tN4QDY+s2xxlDEbo95JI4QLJlNyq7IN1KfYHEijgg6hWsvIASskwaPt2mOezassYIkVBuA==
+X-Received: by 2002:a02:1583:: with SMTP id 3mr20886767jaq.9.1548886765381;
+        Wed, 30 Jan 2019 14:19:25 -0800 (PST)
+Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:8140:8e3f:aea5:bcdf])
+        by smtp.gmail.com with ESMTPSA id x128sm1945475itb.8.2019.01.30.14.19.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 15:19:38 -0800 (PST)
-Subject: Re: [PATCH] selftests: net: fix "from" match test in
- fib_rule_tests.sh
-To:     Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190130181903.16465-1-marcelo.cerri@canonical.com>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <07230159-a2e3-31a9-6ada-d9bd24313d13@gmail.com>
-Date:   Wed, 30 Jan 2019 16:19:36 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 30 Jan 2019 14:19:24 -0800 (PST)
+From:   Nick Crews <ncrews@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     groeck@chromium.org, sjg@chromium.org, dmitry.torokhov@gmail.com,
+        dlaurie@chromium.org, Duncan Laurie <dlaurie@google.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Nick Crews <ncrews@chromium.org>,
+        Benson Leung <bleung@chromium.org>
+Subject: [PATCH v5 2/3] platform/chrome: Add new driver for Wilco EC
+Date:   Wed, 30 Jan 2019 15:19:16 -0700
+Message-Id: <20190130221917.229071-3-ncrews@chromium.org>
+X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+In-Reply-To: <20190130221917.229071-1-ncrews@chromium.org>
+References: <20190130221917.229071-1-ncrews@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20190130181903.16465-1-marcelo.cerri@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/19 11:19 AM, Marcelo Henrique Cerri wrote:
-> Fix the IPv4 address of the dummy0 interface and ensure that ip_forward
-> is enabled in the network space to get a valid response when checking
-> for routes between the gateway and other hosts.
+From: Duncan Laurie <dlaurie@google.com>
 
-you need a Fixes tag and to cc the author of said commit.
+This EC is an incompatible variant of the typical Chrome OS embedded
+controller.  It uses the same low-level communication and a similar
+protocol with some significant differences.  The EC firmware does
+not support the same mailbox commands so it is not registered as a
+cros_ec device type.
 
-> 
-> Signed-off-by: Marcelo Henrique Cerri <marcelo.cerri@canonical.com>
-> ---
->  tools/testing/selftests/net/fib_rule_tests.sh | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/net/fib_rule_tests.sh b/tools/testing/selftests/net/fib_rule_tests.sh
-> index d4cfb6a7a086..552a9784e759 100755
-> --- a/tools/testing/selftests/net/fib_rule_tests.sh
-> +++ b/tools/testing/selftests/net/fib_rule_tests.sh
-> @@ -54,9 +54,11 @@ setup()
->  
->  	$IP link add dummy0 type dummy
->  	$IP link set dev dummy0 up
-> -	$IP address add 198.51.100.1/24 dev dummy0
-> +	$IP address add 192.51.100.1/24 dev dummy0
->  	$IP -6 address add 2001:db8:1::1/64 dev dummy0
->  
-> +	ip netns exec testns sysctl -w net.ipv4.ip_forward=1
+Signed-off-by: Duncan Laurie <dlaurie@google.com>
+Acked-for-chrome-platform-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Nick Crews <ncrews@chromium.org>
+---
 
-ip_forward is not relevant for this test. It just adds routes and rules
-and uses ip route get to verify; no traffic is actually genrated.
+Changes in v5:
+- move checking of NO_RESPONSE flag before timeout check,
+  so now timeout doesn't always happen when EC isn't supposed
+  to respond.
+- rm WILCO_EC_FLAG_EXTENDED_DATA, that is already obvious from
+  wilco_ec_message.response_size
+
+Changes in v4:
+- add #define DRV_NAME
+- remove redundant Kconfig nesting
+- changed my email to @chromium.org
+- Add better explanation of what core.c does
+
+Changes in v3:
+- remove unused ret in probe()
+- Add newline spacer in probe()
+- rm unnecessary res in get_resource()
+- s/8bit/8-bit
+- rm first sleep when sending command to EC
+
+Changes in v2:
+- Remove COMPILE_TEST from Kconfig because inb()/outb()
+won't work on anything but X86
+- Add myself as module author
+- Tweak mailbox()
+
+ drivers/platform/chrome/Kconfig            |   4 +-
+ drivers/platform/chrome/Makefile           |   2 +
+ drivers/platform/chrome/wilco_ec/Kconfig   |  11 +
+ drivers/platform/chrome/wilco_ec/Makefile  |   4 +
+ drivers/platform/chrome/wilco_ec/core.c    | 106 ++++++++++
+ drivers/platform/chrome/wilco_ec/mailbox.c | 232 +++++++++++++++++++++
+ include/linux/platform_data/wilco-ec.h     | 138 ++++++++++++
+ 7 files changed, 496 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/platform/chrome/wilco_ec/Kconfig
+ create mode 100644 drivers/platform/chrome/wilco_ec/Makefile
+ create mode 100644 drivers/platform/chrome/wilco_ec/core.c
+ create mode 100644 drivers/platform/chrome/wilco_ec/mailbox.c
+ create mode 100644 include/linux/platform_data/wilco-ec.h
+
+diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+index 16b1615958aa..bf889adfd4ef 100644
+--- a/drivers/platform/chrome/Kconfig
++++ b/drivers/platform/chrome/Kconfig
+@@ -49,6 +49,8 @@ config CHROMEOS_TBMC
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called chromeos_tbmc.
+ 
++source "drivers/platform/chrome/wilco_ec/Kconfig"
++
+ config CROS_EC_CTL
+         tristate
+ 
+@@ -86,7 +88,7 @@ config CROS_EC_LPC
+ 
+ config CROS_EC_LPC_MEC
+ 	bool "ChromeOS Embedded Controller LPC Microchip EC (MEC) variant"
+-	depends on CROS_EC_LPC
++	depends on CROS_EC_LPC || WILCO_EC
+ 	default n
+ 	help
+ 	  If you say Y here, a variant LPC protocol for the Microchip EC
+diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+index cd591bf872bb..7242ee2b13c5 100644
+--- a/drivers/platform/chrome/Makefile
++++ b/drivers/platform/chrome/Makefile
+@@ -13,3 +13,5 @@ cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)	+= cros_ec_lpc_mec.o
+ obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
+ obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o
+ obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
++
++obj-$(CONFIG_WILCO_EC)			+= wilco_ec/
+diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
+new file mode 100644
+index 000000000000..20945a301ec6
+--- /dev/null
++++ b/drivers/platform/chrome/wilco_ec/Kconfig
+@@ -0,0 +1,11 @@
++config WILCO_EC
++	tristate "ChromeOS Wilco Embedded Controller"
++	depends on ACPI && X86
++	select CROS_EC_LPC_MEC
++	help
++	  If you say Y here, you get support for talking to the ChromeOS
++	  Wilco EC over an eSPI bus. This uses a simple byte-level protocol
++	  with a checksum.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called wilco_ec.
+diff --git a/drivers/platform/chrome/wilco_ec/Makefile b/drivers/platform/chrome/wilco_ec/Makefile
+new file mode 100644
+index 000000000000..03b32301dc61
+--- /dev/null
++++ b/drivers/platform/chrome/wilco_ec/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++
++wilco_ec-objs				:= core.o mailbox.o
++obj-$(CONFIG_WILCO_EC)			+= wilco_ec.o
+diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
+new file mode 100644
+index 000000000000..7dcb3bde132a
+--- /dev/null
++++ b/drivers/platform/chrome/wilco_ec/core.c
+@@ -0,0 +1,106 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Core driver for Wilco Embedded Controller
++ *
++ * Copyright 2018 Google LLC
++ *
++ * This is the entry point for the drivers that control the Wilco EC.
++ * This driver is responsible for several tasks:
++ * - Initialize the register interface that is used by wilco_ec_mailbox()
++ * - Create a platform device which is picked up by the debugfs driver
++ * - Create a platform device which is picked up by the RTC driver
++ * - Initialize the sysfs entries
++ * - Set up event handling
++ */
++
++#include <linux/acpi.h>
++#include <linux/device.h>
++#include <linux/ioport.h>
++#include <linux/module.h>
++#include <linux/platform_data/wilco-ec.h>
++#include <linux/platform_device.h>
++
++#include "../cros_ec_lpc_mec.h"
++
++#define DRV_NAME "wilco-ec"
++
++static struct resource *wilco_get_resource(struct platform_device *pdev,
++					   int index)
++{
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++
++	res = platform_get_resource(pdev, IORESOURCE_IO, index);
++	if (!res) {
++		dev_dbg(dev, "couldn't find IO resource %d\n", index);
++		return res;
++	}
++
++	return devm_request_region(dev, res->start, resource_size(res),
++				   dev_name(dev));
++}
++
++static int wilco_ec_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct wilco_ec_device *ec;
++
++	ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
++	if (!ec)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, ec);
++	ec->dev = dev;
++	mutex_init(&ec->mailbox_lock);
++
++	/* Largest data buffer size requirement is extended data response */
++	ec->data_size = sizeof(struct wilco_ec_response) +
++		EC_MAILBOX_DATA_SIZE_EXTENDED;
++	ec->data_buffer = devm_kzalloc(dev, ec->data_size, GFP_KERNEL);
++	if (!ec->data_buffer)
++		return -ENOMEM;
++
++	/* Prepare access to IO regions provided by ACPI */
++	ec->io_data = wilco_get_resource(pdev, 0);	/* Host Data */
++	ec->io_command = wilco_get_resource(pdev, 1);	/* Host Command */
++	ec->io_packet = wilco_get_resource(pdev, 2);	/* MEC EMI */
++	if (!ec->io_data || !ec->io_command || !ec->io_packet)
++		return -ENODEV;
++
++	/* Initialize cros_ec register interface for communication */
++	cros_ec_lpc_mec_init(ec->io_packet->start,
++			     ec->io_packet->start + EC_MAILBOX_DATA_SIZE);
++
++	return 0;
++}
++
++static int wilco_ec_remove(struct platform_device *pdev)
++{
++	/* Teardown cros_ec interface */
++	cros_ec_lpc_mec_destroy();
++
++	return 0;
++}
++
++static const struct acpi_device_id wilco_ec_acpi_device_ids[] = {
++	{ "GOOG000C", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, wilco_ec_acpi_device_ids);
++
++static struct platform_driver wilco_ec_driver = {
++	.driver = {
++		.name = DRV_NAME,
++		.acpi_match_table = wilco_ec_acpi_device_ids,
++	},
++	.probe = wilco_ec_probe,
++	.remove = wilco_ec_remove,
++};
++
++module_platform_driver(wilco_ec_driver);
++
++MODULE_AUTHOR("Nick Crews <ncrews@chromium.org>");
++MODULE_AUTHOR("Duncan Laurie <dlaurie@chromium.org>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("ChromeOS Wilco Embedded Controller driver");
++MODULE_ALIAS("platform:" DRV_NAME);
+diff --git a/drivers/platform/chrome/wilco_ec/mailbox.c b/drivers/platform/chrome/wilco_ec/mailbox.c
+new file mode 100644
+index 000000000000..6b5cd550dd6e
+--- /dev/null
++++ b/drivers/platform/chrome/wilco_ec/mailbox.c
+@@ -0,0 +1,232 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Mailbox interface for Wilco Embedded Controller
++ *
++ * Copyright 2018 Google LLC
++ *
++ * The Wilco EC is similar to a typical ChromeOS embedded controller.
++ * It uses the same MEC based low-level communication and a similar
++ * protocol, but with some important differences.  The EC firmware does
++ * not support the same mailbox commands so it is not registered as a
++ * cros_ec device type.
++ *
++ * Most messages follow a standard format, but there are some exceptions
++ * and an interface is provided to do direct/raw transactions that do not
++ * make assumptions about byte placement.
++ */
++
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/platform_data/wilco-ec.h>
++#include <linux/platform_device.h>
++
++#include "../cros_ec_lpc_mec.h"
++
++/* Version of mailbox interface */
++#define EC_MAILBOX_VERSION		0
++
++/* Command to start mailbox transaction */
++#define EC_MAILBOX_START_COMMAND	0xda
++
++/* Version of EC protocol */
++#define EC_MAILBOX_PROTO_VERSION	3
++
++/* Number of header bytes to be counted as data bytes */
++#define EC_MAILBOX_DATA_EXTRA		2
++
++/* Maximum timeout */
++#define EC_MAILBOX_TIMEOUT		HZ
++
++/* EC response flags */
++#define EC_CMDR_DATA		BIT(0)	/* Data ready for host to read */
++#define EC_CMDR_PENDING		BIT(1)	/* Write pending to EC */
++#define EC_CMDR_BUSY		BIT(2)	/* EC is busy processing a command */
++#define EC_CMDR_CMD		BIT(3)	/* Last host write was a command */
++
++/**
++ * wilco_ec_response_timed_out() - Wait for EC response.
++ * @ec: EC device.
++ *
++ * Return: true if EC timed out, false if EC did not time out.
++ */
++static bool wilco_ec_response_timed_out(struct wilco_ec_device *ec)
++{
++	unsigned long timeout = jiffies + EC_MAILBOX_TIMEOUT;
++
++	do {
++		if (!(inb(ec->io_command->start) &
++		      (EC_CMDR_PENDING | EC_CMDR_BUSY)))
++			return false;
++		usleep_range(100, 200);
++	} while (time_before(jiffies, timeout));
++
++	return true;
++}
++
++/**
++ * wilco_ec_checksum() - Compute 8-bit checksum over data range.
++ * @data: Data to checksum.
++ * @size: Number of bytes to checksum.
++ *
++ * Return: 8-bit checksum of provided data.
++ */
++static u8 wilco_ec_checksum(const void *data, size_t size)
++{
++	u8 *data_bytes = (u8 *)data;
++	u8 checksum = 0;
++	size_t i;
++
++	for (i = 0; i < size; i++)
++		checksum += data_bytes[i];
++
++	return checksum;
++}
++
++/**
++ * wilco_ec_prepare() - Prepare the request structure for the EC.
++ * @msg: EC message with request information.
++ * @rq: EC request structure to fill.
++ */
++static void wilco_ec_prepare(struct wilco_ec_message *msg,
++			     struct wilco_ec_request *rq)
++{
++	memset(rq, 0, sizeof(*rq));
++
++	/* Handle messages without trimming bytes from the request */
++	if (msg->request_size && msg->flags & WILCO_EC_FLAG_RAW_REQUEST) {
++		rq->reserved_raw = *(u8 *)msg->request_data;
++		msg->request_size--;
++		memmove(msg->request_data, msg->request_data + 1,
++			msg->request_size);
++	}
++
++	/* Fill in request packet */
++	rq->struct_version = EC_MAILBOX_PROTO_VERSION;
++	rq->mailbox_id = msg->type;
++	rq->mailbox_version = EC_MAILBOX_VERSION;
++	rq->data_size = msg->request_size + EC_MAILBOX_DATA_EXTRA;
++	rq->command = msg->command;
++
++	/* Checksum header and data */
++	rq->checksum = wilco_ec_checksum(rq, sizeof(*rq));
++	rq->checksum += wilco_ec_checksum(msg->request_data, msg->request_size);
++	rq->checksum = -rq->checksum;
++}
++
++/**
++ * wilco_ec_transfer() - Perform actual data transfer.
++ * @ec: EC device.
++ * @msg: EC message data for request and response.
++ * @rq: Filled in request structure
++ *
++ * Context: ec->mailbox_lock should be held while using this function.
++ * Return: number of bytes received or negative error code on failure.
++ */
++int wilco_ec_transfer(struct wilco_ec_device *ec, struct wilco_ec_message *msg,
++		      struct wilco_ec_request *rq)
++{
++	struct wilco_ec_response *rs;
++	u8 checksum;
++	u8 flag;
++	size_t skip_size;
++
++	/* Write request header, then data */
++	cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE, 0, sizeof(*rq), (u8 *)rq);
++	cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE, sizeof(*rq), msg->request_size,
++				 msg->request_data);
++
++	/* Start the command */
++	outb(EC_MAILBOX_START_COMMAND, ec->io_command->start);
++
++	/* For some commands (eg shutdown) the EC will not respond, that's OK */
++	if (msg->flags & WILCO_EC_FLAG_NO_RESPONSE) {
++		dev_dbg(ec->dev, "EC does not respond to this command\n");
++		return 0;
++	}
++
++	/* Wait for it to complete */
++	if (wilco_ec_response_timed_out(ec)) {
++		dev_dbg(ec->dev, "response timed out\n");
++		return -ETIMEDOUT;
++	}
++
++	/* Check result */
++	flag = inb(ec->io_data->start);
++	if (flag) {
++		dev_dbg(ec->dev, "bad response: 0x%02x\n", flag);
++		return -EIO;
++	}
++
++	/* Read back response */
++	rs = ec->data_buffer;
++	checksum = cros_ec_lpc_io_bytes_mec(MEC_IO_READ, 0,
++					    sizeof(*rs) + msg->response_size,
++					    (u8 *)rs);
++	if (checksum) {
++		dev_dbg(ec->dev, "bad packet checksum 0x%02x\n", rs->checksum);
++		return -EBADMSG;
++	}
++
++	/* Check that the EC reported success */
++	msg->result = rs->result;
++	if (msg->result) {
++		dev_dbg(ec->dev, "bad msg result: 0x%02x\n", msg->result);
++		return -EBADMSG;
++	}
++
++	/* Check the returned data size, skipping the header */
++	if (rs->data_size != msg->response_size) {
++		dev_dbg(ec->dev, "unexpected packet size (%u != %zu)",
++			rs->data_size, msg->response_size);
++		return -EMSGSIZE;
++	}
++
++	/* Skip 1 response data byte unless specified */
++	skip_size = (msg->flags & WILCO_EC_FLAG_RAW_RESPONSE) ? 0 : 1;
++	if ((ssize_t) rs->data_size - skip_size < msg->response_size) {
++		dev_dbg(ec->dev, "response data too short (%zd < %zu)",
++			(ssize_t) rs->data_size - skip_size, msg->response_size);
++		return -EMSGSIZE;
++	}
++
++	/* Ignore response data bytes as requested */
++	memcpy(msg->response_data, rs->data + skip_size, msg->response_size);
++
++	/* Return actual amount of data received */
++	return msg->response_size;
++}
++
++/**
++ * wilco_ec_mailbox() - Send EC request and receive EC response.
++ * @ec: EC device.
++ * @msg: EC message data for request and response.
++ *
++ * On entry msg->type, msg->flags, msg->command, msg->request_size,
++ * msg->response_size, and msg->request_data should all be filled in.
++ *
++ * On exit msg->result and msg->response_data will be filled.
++ *
++ * Return: number of bytes received or negative error code on failure.
++ */
++int wilco_ec_mailbox(struct wilco_ec_device *ec, struct wilco_ec_message *msg)
++{
++	struct wilco_ec_request *rq;
++	int ret;
++
++	dev_dbg(ec->dev, "cmd=%02x type=%04x flags=%02x rslen=%zu rqlen=%zu\n",
++		msg->command, msg->type, msg->flags, msg->response_size,
++		msg->request_size);
++
++	/* Prepare request packet */
++	rq = ec->data_buffer;
++	wilco_ec_prepare(msg, rq);
++
++	mutex_lock(&ec->mailbox_lock);
++	ret = wilco_ec_transfer(ec, msg, rq);
++	mutex_unlock(&ec->mailbox_lock);
++
++	return ret;
++
++}
++EXPORT_SYMBOL_GPL(wilco_ec_mailbox);
+diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platform_data/wilco-ec.h
+new file mode 100644
+index 000000000000..0f41b31f3bbd
+--- /dev/null
++++ b/include/linux/platform_data/wilco-ec.h
+@@ -0,0 +1,138 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * ChromeOS Wilco Embedded Controller
++ *
++ * Copyright 2018 Google LLC
++ */
++
++#ifndef WILCO_EC_H
++#define WILCO_EC_H
++
++#include <linux/device.h>
++#include <linux/kernel.h>
++
++#define WILCO_EC_FLAG_NO_RESPONSE	BIT(0) /* EC does not respond */
++#define WILCO_EC_FLAG_RAW_REQUEST	BIT(1) /* Do not trim request data */
++#define WILCO_EC_FLAG_RAW_RESPONSE	BIT(2) /* Do not trim response data */
++#define WILCO_EC_FLAG_RAW		(WILCO_EC_FLAG_RAW_REQUEST | \
++					 WILCO_EC_FLAG_RAW_RESPONSE)
++
++/* Normal commands have a maximum 32 bytes of data */
++#define EC_MAILBOX_DATA_SIZE		32
++
++/* Extended commands have 256 bytes of response data */
++#define EC_MAILBOX_DATA_SIZE_EXTENDED	256
++
++/**
++ * struct wilco_ec_device - Wilco Embedded Controller handle.
++ * @dev: Device handle.
++ * @mailbox_lock: Mutex to ensure one mailbox command at a time.
++ * @io_command: I/O port for mailbox command.  Provided by ACPI.
++ * @io_data: I/O port for mailbox data.  Provided by ACPI.
++ * @io_packet: I/O port for mailbox packet data.  Provided by ACPI.
++ * @data_buffer: Buffer used for EC communication.  The same buffer
++ *               is used to hold the request and the response.
++ * @data_size: Size of the data buffer used for EC communication.
++ */
++struct wilco_ec_device {
++	struct device *dev;
++	struct mutex mailbox_lock;
++	struct resource *io_command;
++	struct resource *io_data;
++	struct resource *io_packet;
++	void *data_buffer;
++	size_t data_size;
++};
++
++/**
++ * enum wilco_ec_msg_type - Message type to select a set of command codes.
++ * @WILCO_EC_MSG_LEGACY: Legacy EC messages for standard EC behavior.
++ * @WILCO_EC_MSG_PROPERTY: Get/Set/Sync EC controlled NVRAM property.
++ * @WILCO_EC_MSG_TELEMETRY: Telemetry data provided by the EC.
++ */
++enum wilco_ec_msg_type {
++	WILCO_EC_MSG_LEGACY = 0x00f0,
++	WILCO_EC_MSG_PROPERTY = 0x00f2,
++	WILCO_EC_MSG_TELEMETRY_SHORT = 0x00f5,
++	WILCO_EC_MSG_TELEMETRY_LONG = 0x00f6,
++};
++
++/**
++ * struct wilco_ec_message - Request and response message.
++ * @type: Mailbox message type.
++ * @flags: Message flags.
++ * @command: Mailbox command code.
++ * @result: Result code from the EC.  Non-zero indicates an error.
++ * @request_size: Number of bytes to send to the EC.
++ * @request_data: Buffer containing the request data.
++ * @response_size: Number of bytes expected from the EC.
++ *                 This is 32 by default and 256 if the flag
++ *                 is set for %WILCO_EC_FLAG_EXTENDED_DATA
++ * @response_data: Buffer containing the response data, should be
++ *                 response_size bytes and allocated by caller.
++ */
++struct wilco_ec_message {
++	enum wilco_ec_msg_type type;
++	u8 flags;
++	u8 command;
++	u8 result;
++	size_t request_size;
++	void *request_data;
++	size_t response_size;
++	void *response_data;
++};
++
++/**
++ * struct wilco_ec_request - Mailbox request message format.
++ * @struct_version: Should be %EC_MAILBOX_PROTO_VERSION
++ * @checksum: Sum of all bytes must be 0.
++ * @mailbox_id: Mailbox identifier, specifies the command set.
++ * @mailbox_version: Mailbox interface version %EC_MAILBOX_VERSION
++ * @reserved: Set to zero.
++ * @data_size: Length of request, data + last 2 bytes of the header.
++ * @command: Mailbox command code, unique for each mailbox_id set.
++ * @reserved_raw: Set to zero for most commands, but is used by
++ *                some command types and for raw commands.
++ */
++struct wilco_ec_request {
++	u8 struct_version;
++	u8 checksum;
++	u16 mailbox_id;
++	u8 mailbox_version;
++	u8 reserved;
++	u16 data_size;
++	u8 command;
++	u8 reserved_raw;
++} __packed;
++
++/**
++ * struct wilco_ec_response - Mailbox response message format.
++ * @struct_version: Should be %EC_MAILBOX_PROTO_VERSION
++ * @checksum: Sum of all bytes must be 0.
++ * @result: Result code from the EC.  Non-zero indicates an error.
++ * @data_size: Length of the response data buffer.
++ * @reserved: Set to zero.
++ * @mbox0: EC returned data at offset 0 is unused (always 0) so this byte
++ *         is treated as part of the header instead of the data.
++ * @data: Response data buffer.  Max size is %EC_MAILBOX_DATA_SIZE_EXTENDED.
++ */
++struct wilco_ec_response {
++	u8 struct_version;
++	u8 checksum;
++	u16 result;
++	u16 data_size;
++	u8 reserved[2];
++	u8 mbox0;
++	u8 data[0];
++} __packed;
++
++/**
++ * wilco_ec_mailbox() - Send request to the EC and receive the response.
++ * @ec: Wilco EC device.
++ * @msg: Wilco EC message.
++ *
++ * Return: Number of bytes received or negative error code on failure.
++ */
++int wilco_ec_mailbox(struct wilco_ec_device *ec, struct wilco_ec_message *msg);
++
++#endif /* WILCO_EC_H */
+-- 
+2.20.1.495.gaa96b0ce6b-goog
+
