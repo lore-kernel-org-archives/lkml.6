@@ -2,169 +2,162 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FCFC282CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A25EC282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D08802087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:13:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WvdhWaER"
+	by mail.kernel.org (Postfix) with ESMTP id 4B0142184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:14:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725849AbfA3FNP (ORCPT
+        id S1725920AbfA3FOs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 00:13:15 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:53302 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbfA3FNP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 00:13:15 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0U58v4a001581;
-        Wed, 30 Jan 2019 05:13:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
- bh=WItGHf9nOAdYHChIFTXl5rw6TmM3xVQC+SnZeHiHN4E=;
- b=WvdhWaER5z8dajm6zAc1/cm2TElGmyQxXLkyM4rFE1yCDW/K8gdRH+hSCpa5oAc8bJtM
- NyTf6JNjhJHrduy/N8k2kuchgJ6Eg3wnJ/HEBh8N8FsB/5NWSy3YfDH8olBMGRSfTvIH
- S65foOGebUjCbTIxCamv3MnLAwbkUe/bUwcL/inJ262NyB4pLdQtARoiom9EbnxrY92A
- fxWFOLeKTOFoCrt6gg7EDaMrmU6O3UAc5Fxwo1wgAq2F2bDUWUM1TeOSZCS7YekJe4l7
- 47lZ509l36G3rKB0Q4FFgT+yvFF4QjRGi6AtBynPUjL35NvaY5xLCtBDBvHlIKWXRUiT dQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2q8g6r8a0b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jan 2019 05:13:09 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0U5D9hD025126
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jan 2019 05:13:09 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0U5D82w019150;
-        Wed, 30 Jan 2019 05:13:08 GMT
-Received: from kadam (/197.157.0.43)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 29 Jan 2019 21:13:07 -0800
-Date:   Wed, 30 Jan 2019 08:12:59 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Todd Kjos <tkjos@google.com>
-Cc:     "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        Todd Kjos <tkjos@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Martijn Coenen <maco@google.com>, joel@joelfernandes.org,
-        Android Kernel Team <kernel-team@android.com>
-Subject: Re: [PATCH 1/7] binder: create userspace-to-binder-buffer copy
- function
-Message-ID: <20190130051259.GO1795@kadam>
-References: <20190129004934.85885-1-tkjos@google.com>
- <20190129004934.85885-2-tkjos@google.com>
- <20190129081218.GL1795@kadam>
- <CAHRSSEzjgtrouqJkhduaZt99RbmtA5a4Lc2xgyp_pt4cg7Vpmg@mail.gmail.com>
+        Wed, 30 Jan 2019 00:14:48 -0500
+Received: from mga14.intel.com ([192.55.52.115]:6052 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725372AbfA3FOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 00:14:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 21:14:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,539,1539673200"; 
+   d="scan'208";a="316032024"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga005.fm.intel.com with ESMTP; 29 Jan 2019 21:14:47 -0800
+Subject: [PATCH v9 0/3] mm: Randomize free memory
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 29 Jan 2019 21:02:10 -0800
+Message-ID: <154882453052.1338686.16411162273671426494.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHRSSEzjgtrouqJkhduaZt99RbmtA5a4Lc2xgyp_pt4cg7Vpmg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9151 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901300038
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 04:32:09PM -0800, Todd Kjos wrote:
-> On Tue, Jan 29, 2019 at 12:12 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > On Mon, Jan 28, 2019 at 04:49:28PM -0800, Todd Kjos wrote:
-> > > +/**
-> > > + * binder_alloc_copy_user_to_buffer() - copy src user to tgt user
-> > > + * @alloc: binder_alloc for this proc
-> > > + * @buffer: binder buffer to be accessed
-> > > + * @buffer_offset: offset into @buffer data
-> > > + * @from: userspace pointer to source buffer
-> > > + * @bytes: bytes to copy
-> > > + *
-> > > + * Copy bytes from source userspace to target buffer.
-> > > + *
-> > > + * Return: bytes remaining to be copied
-> > > + */
-> > > +unsigned long
-> > > +binder_alloc_copy_user_to_buffer(struct binder_alloc *alloc,
-> > > +                              struct binder_buffer *buffer,
-> > > +                              binder_size_t buffer_offset,
-> > > +                              const void __user *from,
-> > > +                              size_t bytes)
-> > > +{
-> > > +     if (!check_buffer(alloc, buffer, buffer_offset, bytes))
-> > > +             return bytes;
-> > > +
-> > > +     while (bytes) {
-> > > +             unsigned long size;
-> > > +             unsigned long ret;
-> > > +             struct page *page;
-> > > +             pgoff_t pgoff;
-> > > +             void *kptr;
-> > > +
-> > > +             page = binder_alloc_get_page(alloc, buffer,
-> > > +                                          buffer_offset, &pgoff);
-> > > +             size = min(bytes, (size_t)(PAGE_SIZE - pgoff));
-> >
-> > This code has so much more casting than necessary.  To me casting says
-> > that we haven't got the types correct or something.  I've just pulled
-> > this function out as an example really, but none of the casts here are
-> > required...  This could just be:
-> >
-> >                 size = min(bytes, PAGE_SIZE - pgoff);
-> 
-> Dan,
-> 
-> Thanks for the feedback.
-> 
-> The one above: "size = min(bytes, PAGE_SIZE - pgoff);", results in
-> 32-bit compile warnings:
-> 
-> ./include/linux/kernel.h:846:29: warning: comparison of distinct
-> pointer types lacks a cast
->    (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-> [...]
-> drivers/android/binder_alloc.c:1157:10: note: in expansion of macro ‘min’
->    size = min(bytes, PAGE_SIZE - pgoff);
-> 
-> so, I took your suggestion:
-> 
->   size = min_t(size_t, bytes, PAGE_SIZE - pgoff);
-> 
-> >
-> > Btw, if you really need to do a cast inside a min() (you don't in this
-> > cast) then use min_t().
-> >
-> > > +             kptr = (void *)((uintptr_t)kmap(page) + pgoff);
-> >
-> > This would be a lot cleaner as:
-> >
-> >                 kptr = kmap(page) + pgoff;
-> 
-> It definitely is cleaner, but the clean version is doing arithmetic on
-> a void pointer which is generally not considered good practice (but is
-> supported by gcc). Is this acceptable in the kernel? I don't see any
-> statement on it in Documentation/process/coding-style.rst.
+Changes since v8 [1]:
+* Rework shuffle call sites from 3 locations to 2, i.e. one for the
+  initial memory online path, and one for the hotplug memory online path.
+  This simplification results in an incremental diffstat of "7 files
+  changed, 31 insertions(+), 82 deletions(-)". The consolidation of the
+  initial shuffle in page_alloc_init_late() leads to a beneficial increase
+  in the number of shuffles performed in a qemu-VM test. (Michal)
 
-Yeah, it's a GCCism but to me it seems so nice.  We do it all the time.
+* Drop the CONFIG_SHUFFLE_PAGE_ORDER configuration option. If it turns out
+  that there is a use case to make the shuffle-order dynamic that can be
+  addressed in a follow on update, but no such case is known at present.
+  (Michal)
 
-We'd like to get Clang to compile the kernel, but we've done very little
-work to make that happen.  Removing variable length arrays was really
-done for other reasons...
+* Replace lkml.org links with lkml.kernel.org, where possible.
+  Unfortunately lkml.kernel.org failed to capture Mel's feedback, so the
+  lkml.org link remains for that one. (Michal)
 
-regards,
-dan carpenter
+* Fix definition of pfn_present() in the !sparsemem case. (Michal)
 
+* Collect Michal's ack on patch2, and open code rmv_page_order() in its
+  only caller.
+
+[1]: https://lkml.kernel.org/r/154767945660.1983228.12167020940431682725.stgit@dwillia2-desk3.amr.corp.intel.com
+
+---
+
+Hi Andrew,
+
+As you can see the series is improved thanks to Michal's review. Please
+await his ack, but I believe this version addresses all pending
+feedback.
+
+Still based on v5.0-rc1 for my tests, but it applies and builds cleanly
+to current linux-next.
+
+---
+
+Quote Patch 1:
+
+Randomization of the page allocator improves the average utilization of
+a direct-mapped memory-side-cache. Memory side caching is a platform
+capability that Linux has been previously exposed to in HPC
+(high-performance computing) environments on specialty platforms. In
+that instance it was a smaller pool of high-bandwidth-memory relative to
+higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
+be found on general purpose server platforms where DRAM is a cache in
+front of higher latency persistent memory [2].
+
+Robert offered an explanation of the state of the art of Linux
+interactions with memory-side-caches [3], and I copy it here:
+
+    It's been a problem in the HPC space:
+    http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
+
+    A kernel module called zonesort is available to try to help:
+    https://software.intel.com/en-us/articles/xeon-phi-software
+
+    and this abandoned patch series proposed that for the kernel:
+    https://lkml.kernel.org/r/20170823100205.17311-1-lukasz.daniluk@intel.com
+
+    Dan's patch series doesn't attempt to ensure buffers won't conflict, but
+    also reduces the chance that the buffers will. This will make performance
+    more consistent, albeit slower than "optimal" (which is near impossible
+    to attain in a general-purpose kernel).  That's better than forcing
+    users to deploy remedies like:
+        "To eliminate this gradual degradation, we have added a Stream
+         measurement to the Node Health Check that follows each job;
+         nodes are rebooted whenever their measured memory bandwidth
+         falls below 300 GB/s."
+
+A replacement for zonesort was merged upstream in commit cc9aec03e58f
+"x86/numa_emulation: Introduce uniform split capability". With this
+numa_emulation capability, memory can be split into cache sized
+("near-memory" sized) numa nodes. A bind operation to such a node, and
+disabling workloads on other nodes, enables full cache performance.
+However, once the workload exceeds the cache size then cache conflicts
+are unavoidable. While HPC environments might be able to tolerate
+time-scheduling of cache sized workloads, for general purpose server
+platforms, the oversubscribed cache case will be the common case.
+
+The worst case scenario is that a server system owner benchmarks a
+workload at boot with an un-contended cache only to see that performance
+degrade over time, even below the average cache performance due to
+excessive conflicts. Randomization clips the peaks and fills in the
+valleys of cache utilization to yield steady average performance.
+
+See patch 1 for more details.
+
+[2]: https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
+[3]: https://lkml.kernel.org/r/AT5PR8401MB1169D656C8B5E121752FC0F8AB120@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM
+
+---
+
+Dan Williams (3):
+      mm: Shuffle initial free memory to improve memory-side-cache utilization
+      mm: Move buddy list manipulations into helpers
+      mm: Maintain randomization of page free lists
+
+
+ include/linux/list.h     |   17 ++++
+ include/linux/mm.h       |    3 -
+ include/linux/mm_types.h |    3 +
+ include/linux/mmzone.h   |   62 ++++++++++++++
+ include/linux/shuffle.h  |   57 +++++++++++++
+ init/Kconfig             |   23 +++++
+ mm/Makefile              |    7 +-
+ mm/compaction.c          |    4 -
+ mm/memblock.c            |    1 
+ mm/memory_hotplug.c      |    3 +
+ mm/page_alloc.c          |   85 +++++++++----------
+ mm/shuffle.c             |  204 ++++++++++++++++++++++++++++++++++++++++++++++
+ 12 files changed, 419 insertions(+), 50 deletions(-)
+ create mode 100644 include/linux/shuffle.h
+ create mode 100644 mm/shuffle.c
