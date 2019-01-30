@@ -2,154 +2,117 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 199FCC282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E78C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEB8A21852
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:40:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548848457;
-	bh=+uVntEzx9FxaFLxAyBRoVVxPNN/4wCGj0FgM2KObn/c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Iy9Td/ZNlqCW66b1OZ610RXmuVmldECnKLBgvm9OIHnQVzlVbQqvQVdEHQG1N4HU5
-	 VrNT4O/U09UzEOKP1XH3cE0/3q3GH+uW2//1DiBYthzrygPtCIiLYvLdWh4HUsu2Ez
-	 B3P0ZeA1FrdsFXOTm/aJeUywQlw+b353/7N+yPxM=
+	by mail.kernel.org (Postfix) with ESMTP id C331220882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:43:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="lyC7/EIw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbfA3Lk4 (ORCPT
+        id S1730795AbfA3Ln2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 06:40:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44622 "EHLO mail.kernel.org"
+        Wed, 30 Jan 2019 06:43:28 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:59820 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726857AbfA3Lk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 06:40:56 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1730680AbfA3Ln1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 06:43:27 -0500
+Received: from zn.tnic (p200300EC2BCAED00302FA729E39312A6.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:ed00:302f:a729:e393:12a6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43AD92175B;
-        Wed, 30 Jan 2019 11:40:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548848454;
-        bh=+uVntEzx9FxaFLxAyBRoVVxPNN/4wCGj0FgM2KObn/c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LoYmqMDPmJRYw/SekU68n6A5GXgPa3LxypXYqTgIiFadJNKzpO17j2jL+JoOd+u7q
-         HkWwFAqoOwEWvmlusmXOp24i7+S68kQ2XnQDpEJh72C1u4/5UBRqA3Q7oBrjz1Xg5A
-         8VEIaDzccs+3BMF/gbiraotOXt1Ux5+Li8NTsiOk=
-Date:   Wed, 30 Jan 2019 12:40:52 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Omar Sandoval <osandov@fb.com>,
-        syzbot <syzbot+b382ba6a802a3d242790@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@fb.com>
-Subject: Re: BUG: unable to handle kernel paging request in dput (2)
-Message-ID: <20190130114052.GB30781@kroah.com>
-References: <00000000000081e6cc0580aa76a2@google.com>
- <80e90ecd-77f5-00a3-4e91-5e9eea2aa117@I-love.SAKURA.ne.jp>
- <27008e5f-9dfc-a09a-cdb9-824d470fb9dd@I-love.SAKURA.ne.jp>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 815DE1EC0338;
+        Wed, 30 Jan 2019 12:43:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548848605;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6dIWZsK/S1Dcdfk00N8urUtaJYC5S5Df1g37fOPLXBo=;
+        b=lyC7/EIw71YTNK/MDB15plI8Ft0OrwuiRn8nCxEYBxA7SoFs60Nj0JaGN47bhkxWWza932
+        V5yD95lCU5oVctDhI7yB9wa9dC2XWdIU8Snlj4bdvaaQfiuCCZA61eq/Hueu3Y8Di27ZZ/
+        /rrmg8d0XvdCOyIeo6biudNUS1HpTVg=
+Date:   Wed, 30 Jan 2019 12:43:22 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 16/22] x86/fpu: Always store the registers in
+ copy_fpstate_to_sigframe()
+Message-ID: <20190130114322.GD18383@zn.tnic>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-17-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <27008e5f-9dfc-a09a-cdb9-824d470fb9dd@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190109114744.10936-17-bigeasy@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 08:26:24PM +0900, Tetsuo Handa wrote:
-> On 2019/01/30 20:11, Tetsuo Handa wrote:
-> > Hello, Omar.
-> > 
-> > syzbot is reporting a crash due to dput(-EINVAL) [1]. I think the location is
-> > 
-> >         dir = debugfs_lookup(buts->name, blk_debugfs_root);
-> >         if (!dir)
-> >                 bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
-> > 
-> > added by commit 6ac93117ab009d39 ("blktrace: use existing disk debugfs directory").
-> > 
-> > Currently, Greg Kroah-Hartman is posting patches:
-> > 
-> >   When calling debugfs functions, there is no need to ever check the
-> >   return value.  The function can work or not, but the code logic should
-> >   never do something different based on this.
-> > 
-> > Omar, what do you want to do for this case?
-> > 
-> > [1] https://syzkaller.appspot.com/bug?extid=b382ba6a802a3d242790
-> > 
+On Wed, Jan 09, 2019 at 12:47:38PM +0100, Sebastian Andrzej Siewior wrote:
+> From: Rik van Riel <riel@surriel.com>
 > 
-> The function which returned -EINVAL instead of NULL seems to be debugfs_lookup()
-> modified by commit ff9fb72bc07705c0 ("debugfs: return error values, not NULL").
+> copy_fpstate_to_sigframe() stores the registers directly to user space.
+> This is okay because the FPU register are valid and saving it directly
+> avoids saving it into kernel memory and making a copy.
+> However… We can't keep doing this if we are going to restore the FPU
+> registers on the return to userland. It is possible that the FPU
+> registers will be invalidated in the middle of the save operation and
+> this should be done with disabled preemption / BH.
+> 
+> Save the FPU registers to task's FPU struct and copy them to the user
+> memory later on.
+> 
+> This code is extracted from an earlier version of the patchset while
+> there still was lazy-FPU on x86.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  arch/x86/include/asm/fpu/internal.h | 45 -----------------------------
+>  arch/x86/kernel/fpu/signal.c        | 29 +++++++------------
+>  2 files changed, 10 insertions(+), 64 deletions(-)
 
-Ok, the patch below should fix this up.
+...
 
-thanks,
+> @@ -171,9 +156,15 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+>  			sizeof(struct user_i387_ia32_struct), NULL,
+>  			(struct _fpstate_32 __user *) buf) ? -1 : 1;
+>  
+> -	/* Save the live register state to the user directly. */
+> -	if (copy_fpregs_to_sigframe(buf_fx))
+> -		return -1;
+> +	copy_fpregs_to_fpstate(fpu);
+> +
+> +	if (using_compacted_format()) {
+> +		copy_xstate_to_user(buf_fx, xsave, 0, size);
+> +	} else {
+> +		fpstate_sanitize_xstate(fpu);
+> +		if (__copy_to_user(buf_fx, xsave, fpu_user_xstate_size))
+> +			return -1;
+> +	}
+>  
+>  	/* Save the fsave header for the 32-bit frames. */
+>  	if ((ia32_fxstate || !use_fxsr()) && save_fsave_header(tsk, buf))
 
-greg k-h
+Comments above that function need updating.
 
--------------------------
-
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] debugfs: debugfs_lookup() should return NULL if not found
-
-Lots of callers of debugfs_lookup() were just checking NULL to see if
-the file/directory was found or not.  By changing this in ff9fb72bc077
-("debugfs: return error values, not NULL") we caused some subsystems to
-easily crash.
-
-Fixes: ff9fb72bc077 ("debugfs: return error values, not NULL")
-Reported-by: syzbot+b382ba6a802a3d242790@syzkaller.appspotmail.com
-Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Omar Sandoval <osandov@fb.com>
-Cc: Jens Axboe <axboe@fb.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/debugfs/inode.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-index b16f8035b1af..29c68c5d44d5 100644
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -254,8 +254,8 @@ MODULE_ALIAS_FS("debugfs");
-  * @parent: a pointer to the parent dentry of the file.
-  *
-  * This function will return a pointer to a dentry if it succeeds.  If the file
-- * doesn't exist or an error occurs, %ERR_PTR(-ERROR) will be returned.  The
-- * returned dentry must be passed to dput() when it is no longer needed.
-+ * doesn't exist or an error occurs, %NULL will be returned.  The returned
-+ * dentry must be passed to dput() when it is no longer needed.
-  *
-  * If debugfs is not enabled in the kernel, the value -%ENODEV will be
-  * returned.
-@@ -265,17 +265,17 @@ struct dentry *debugfs_lookup(const char *name, struct dentry *parent)
- 	struct dentry *dentry;
- 
- 	if (IS_ERR(parent))
--		return parent;
-+		return NULL;
- 
- 	if (!parent)
- 		parent = debugfs_mount->mnt_root;
- 
- 	dentry = lookup_one_len_unlocked(name, parent, strlen(name));
- 	if (IS_ERR(dentry))
--		return dentry;
-+		return NULL;
- 	if (!d_really_is_positive(dentry)) {
- 		dput(dentry);
--		return ERR_PTR(-EINVAL);
-+		return NULL;
- 	}
- 	return dentry;
- }
 -- 
-2.20.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
