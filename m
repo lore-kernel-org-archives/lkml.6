@@ -2,193 +2,426 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EE7C282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E02A2C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E207521473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:46:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dJyelnfU";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gdBiM+XQ"
+	by mail.kernel.org (Postfix) with ESMTP id 9AF692080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:49:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730306AbfA3Iqs (ORCPT
+        id S1730258AbfA3ItM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:46:48 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37446 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbfA3Iqs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:46:48 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6AD5760986; Wed, 30 Jan 2019 08:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548838006;
-        bh=SngnR312UUBc7kgdXAXv8mMNi1jeffZM8A2EyH1z7YQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dJyelnfUWpKKG60YUkddetHPOFgErCDrBKh/Lwus9bxzAXGaXu/TNiNGTBviRNwQp
-         oHafhzY6yOtzVdx7Tf9UigQKdwvuwlDYQl9eliyXqHRoUQHmsLsX7ODJp7h/vbwFvA
-         r3PXnZl27B/sfBmeCtDf2TFsTyJvnDJ2NzN5bE/k=
-Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Wed, 30 Jan 2019 03:49:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:5512 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726583AbfA3ItL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 03:49:11 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: rohitkr@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 99DAB60886;
-        Wed, 30 Jan 2019 08:46:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548838003;
-        bh=SngnR312UUBc7kgdXAXv8mMNi1jeffZM8A2EyH1z7YQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=gdBiM+XQ415MOpmwckgp2WjqcUXp/VhnZ5voMcXSFzw8ntQmq+CIpnkwqGk7Gxtcq
-         7EoxuAs1FgHSpO4ZDGQL0WV0dlCRasnwm/DUhCyN6S1X3uNMfOcxEG2g5b8wSOUrWQ
-         +rmLoM8V6Kg73CN2oc2StNjDq/WBownIY1w1BPiU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99DAB60886
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-From:   Rohit kumar <rohitkr@codeaurora.org>
-To:     dianders@chromium.org, andy.gross@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, plai@codeaurora.org,
-        bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org,
-        linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org,
-        rohkumar@qti.qualcomm.com
-Cc:     Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH v2] arm64: dts: sdm845: Add Q6V5 ADSP node
-Date:   Wed, 30 Jan 2019 14:16:29 +0530
-Message-Id: <1548837989-22904-1-git-send-email-rohitkr@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 8AF1AA0907;
+        Wed, 30 Jan 2019 08:49:10 +0000 (UTC)
+Received: from [10.36.116.75] (ovpn-116-75.ams2.redhat.com [10.36.116.75])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 94D4F5D97E;
+        Wed, 30 Jan 2019 08:49:01 +0000 (UTC)
+Subject: Re: [RFC v3 02/21] iommu: Introduce cache_invalidate API
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
+        jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, kevin.tian@intel.com, ashok.raj@intel.com,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        peter.maydell@linaro.org
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-3-eric.auger@redhat.com>
+ <20190111143042.183a27a7@x1.home>
+ <66653430-514f-2b4b-3d93-348deb6cd490@redhat.com>
+ <20190129161630.5668cf33@w520.home>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <62d81d02-667c-8213-4f75-38319a435ab6@redhat.com>
+Date:   Wed, 30 Jan 2019 09:48:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190129161630.5668cf33@w520.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 30 Jan 2019 08:49:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds Q6V5 ADSP pil remoteproc node
-for SDM845 SoC.
+Hi Alex,
 
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
----
-Changes since v1:
-Addressed comments given by Bjorn.
+On 1/30/19 12:16 AM, Alex Williamson wrote:
+> On Fri, 25 Jan 2019 17:49:20 +0100
+> Auger Eric <eric.auger@redhat.com> wrote:
+> 
+>> Hi Alex,
+>>
+>> On 1/11/19 10:30 PM, Alex Williamson wrote:
+>>> On Tue,  8 Jan 2019 11:26:14 +0100
+>>> Eric Auger <eric.auger@redhat.com> wrote:
+>>>   
+>>>> From: "Liu, Yi L" <yi.l.liu@linux.intel.com>
+>>>>
+>>>> In any virtualization use case, when the first translation stage
+>>>> is "owned" by the guest OS, the host IOMMU driver has no knowledge
+>>>> of caching structure updates unless the guest invalidation activities
+>>>> are trapped by the virtualizer and passed down to the host.
+>>>>
+>>>> Since the invalidation data are obtained from user space and will be
+>>>> written into physical IOMMU, we must allow security check at various
+>>>> layers. Therefore, generic invalidation data format are proposed here,
+>>>> model specific IOMMU drivers need to convert them into their own format.
+>>>>
+>>>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+>>>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>>>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+>>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>>>
+>>>> ---
+>>>> v1 -> v2:
+>>>> - add arch_id field
+>>>> - renamed tlb_invalidate into cache_invalidate as this API allows
+>>>>   to invalidate context caches on top of IOTLBs
+>>>>
+>>>> v1:
+>>>> renamed sva_invalidate into tlb_invalidate and add iommu_ prefix in
+>>>> header. Commit message reworded.
+>>>> ---
+>>>>  drivers/iommu/iommu.c      | 14 ++++++
+>>>>  include/linux/iommu.h      | 14 ++++++
+>>>>  include/uapi/linux/iommu.h | 95 ++++++++++++++++++++++++++++++++++++++
+>>>>  3 files changed, 123 insertions(+)
+>>>>
+>>>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>>>> index 0f2b7f1fc7c8..b2e248770508 100644
+>>>> --- a/drivers/iommu/iommu.c
+>>>> +++ b/drivers/iommu/iommu.c
+>>>> @@ -1403,6 +1403,20 @@ int iommu_set_pasid_table(struct iommu_domain *domain,
+>>>>  }
+>>>>  EXPORT_SYMBOL_GPL(iommu_set_pasid_table);
+>>>>  
+>>>> +int iommu_cache_invalidate(struct iommu_domain *domain, struct device *dev,
+>>>> +			   struct iommu_cache_invalidate_info *inv_info)
+>>>> +{
+>>>> +	int ret = 0;
+>>>> +
+>>>> +	if (unlikely(!domain->ops->cache_invalidate))
+>>>> +		return -ENODEV;
+>>>> +
+>>>> +	ret = domain->ops->cache_invalidate(domain, dev, inv_info);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(iommu_cache_invalidate);
+>>>> +
+>>>>  static void __iommu_detach_device(struct iommu_domain *domain,
+>>>>  				  struct device *dev)
+>>>>  {
+>>>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>>>> index 1da2a2357ea4..96d59886f230 100644
+>>>> --- a/include/linux/iommu.h
+>>>> +++ b/include/linux/iommu.h
+>>>> @@ -186,6 +186,7 @@ struct iommu_resv_region {
+>>>>   * @of_xlate: add OF master IDs to iommu grouping
+>>>>   * @pgsize_bitmap: bitmap of all possible supported page sizes
+>>>>   * @set_pasid_table: set pasid table
+>>>> + * @cache_invalidate: invalidate translation caches
+>>>>   */
+>>>>  struct iommu_ops {
+>>>>  	bool (*capable)(enum iommu_cap);
+>>>> @@ -231,6 +232,9 @@ struct iommu_ops {
+>>>>  	int (*set_pasid_table)(struct iommu_domain *domain,
+>>>>  			       struct iommu_pasid_table_config *cfg);
+>>>>  
+>>>> +	int (*cache_invalidate)(struct iommu_domain *domain, struct device *dev,
+>>>> +				struct iommu_cache_invalidate_info *inv_info);
+>>>> +
+>>>>  	unsigned long pgsize_bitmap;
+>>>>  };
+>>>>  
+>>>> @@ -294,6 +298,9 @@ extern void iommu_detach_device(struct iommu_domain *domain,
+>>>>  				struct device *dev);
+>>>>  extern int iommu_set_pasid_table(struct iommu_domain *domain,
+>>>>  				 struct iommu_pasid_table_config *cfg);
+>>>> +extern int iommu_cache_invalidate(struct iommu_domain *domain,
+>>>> +				struct device *dev,
+>>>> +				struct iommu_cache_invalidate_info *inv_info);
+>>>>  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+>>>>  extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+>>>>  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+>>>> @@ -709,6 +716,13 @@ int iommu_set_pasid_table(struct iommu_domain *domain,
+>>>>  {
+>>>>  	return -ENODEV;
+>>>>  }
+>>>> +static inline int
+>>>> +iommu_cache_invalidate(struct iommu_domain *domain,
+>>>> +		       struct device *dev,
+>>>> +		       struct iommu_cache_invalidate_info *inv_info)
+>>>> +{
+>>>> +	return -ENODEV;
+>>>> +}
+>>>>  
+>>>>  #endif /* CONFIG_IOMMU_API */
+>>>>  
+>>>> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+>>>> index 7a7cf7a3de7c..4605f5cfac84 100644
+>>>> --- a/include/uapi/linux/iommu.h
+>>>> +++ b/include/uapi/linux/iommu.h
+>>>> @@ -47,4 +47,99 @@ struct iommu_pasid_table_config {
+>>>>  	};
+>>>>  };
+>>>>  
+>>>> +/**
+>>>> + * enum iommu_inv_granularity - Generic invalidation granularity
+>>>> + * @IOMMU_INV_GRANU_DOMAIN_ALL_PASID:	TLB entries or PASID caches of all
+>>>> + *					PASIDs associated with a domain ID
+>>>> + * @IOMMU_INV_GRANU_PASID_SEL:		TLB entries or PASID cache associated
+>>>> + *					with a PASID and a domain
+>>>> + * @IOMMU_INV_GRANU_PAGE_PASID:		TLB entries of selected page range
+>>>> + *					within a PASID
+>>>> + *
+>>>> + * When an invalidation request is passed down to IOMMU to flush translation
+>>>> + * caches, it may carry different granularity levels, which can be specific
+>>>> + * to certain types of translation caches.
+>>>> + * This enum is a collection of granularities for all types of translation
+>>>> + * caches. The idea is to make it easy for IOMMU model specific driver to
+>>>> + * convert from generic to model specific value. Each IOMMU driver
+>>>> + * can enforce check based on its own conversion table. The conversion is
+>>>> + * based on 2D look-up with inputs as follows:
+>>>> + * - translation cache types
+>>>> + * - granularity
+>>>> + *
+>>>> + *             type |   DTLB    |    TLB    |   PASID   |
+>>>> + *  granule         |           |           |   cache   |
+>>>> + * -----------------+-----------+-----------+-----------+
+>>>> + *  DN_ALL_PASID    |   Y       |   Y       |   Y       |
+>>>> + *  PASID_SEL       |   Y       |   Y       |   Y       |
+>>>> + *  PAGE_PASID      |   Y       |   Y       |   N/A     |
+>>>> + *
+>>>> + */
+>>>> +enum iommu_inv_granularity {
+>>>> +	IOMMU_INV_GRANU_DOMAIN_ALL_PASID,
+>>>> +	IOMMU_INV_GRANU_PASID_SEL,
+>>>> +	IOMMU_INV_GRANU_PAGE_PASID,
+>>>> +	IOMMU_INV_NR_GRANU,
+>>>> +};
+>>>> +
+>>>> +/**
+>>>> + * enum iommu_inv_type - Generic translation cache types for invalidation
+>>>> + *
+>>>> + * @IOMMU_INV_TYPE_DTLB:	device IOTLB
+>>>> + * @IOMMU_INV_TYPE_TLB:		IOMMU paging structure cache
+>>>> + * @IOMMU_INV_TYPE_PASID:	PASID cache
+>>>> + * Invalidation requests sent to IOMMU for a given device need to indicate
+>>>> + * which type of translation cache to be operated on. Combined with enum
+>>>> + * iommu_inv_granularity, model specific driver can do a simple lookup to
+>>>> + * convert from generic to model specific value.
+>>>> + */
+>>>> +enum iommu_inv_type {
+>>>> +	IOMMU_INV_TYPE_DTLB,
+>>>> +	IOMMU_INV_TYPE_TLB,
+>>>> +	IOMMU_INV_TYPE_PASID,
+>>>> +	IOMMU_INV_NR_TYPE
+>>>> +};
+>>>> +
+>>>> +/**
+>>>> + * Translation cache invalidation header that contains mandatory meta data.
+>>>> + * @version:	info format version, expecting future extesions
+>>>> + * @type:	type of translation cache to be invalidated
+>>>> + */
+>>>> +struct iommu_cache_invalidate_hdr {
+>>>> +	__u32 version;
+>>>> +#define TLB_INV_HDR_VERSION_1 1
+>>>> +	enum iommu_inv_type type;
+>>>> +};
+>>>> +
+>>>> +/**
+>>>> + * Translation cache invalidation information, contains generic IOMMU
+>>>> + * data which can be parsed based on model ID by model specific drivers.
+>>>> + * Since the invalidation of second level page tables are included in the
+>>>> + * unmap operation, this info is only applicable to the first level
+>>>> + * translation caches, i.e. DMA request with PASID.
+>>>> + *
+>>>> + * @granularity:	requested invalidation granularity, type dependent
+>>>> + * @size:		2^size of 4K pages, 0 for 4k, 9 for 2MB, etc.  
+>>>
+>>> Why is this a 4K page centric interface?  
+>> This matches the vt-d Address Mask (AM) field of the IOTLB Invalidate
+>> Descriptor. We can pass a log2size instead.
+> 
+> Could some options not require a power of two size?
+> 
+>>>> + * @nr_pages:		number of pages to invalidate
+>>>> + * @pasid:		processor address space ID value per PCI spec.
+>>>> + * @arch_id:		architecture dependent id characterizing a context
+>>>> + *			and tagging the caches, ie. domain Identfier on VTD,
+>>>> + *			asid on ARM SMMU
+>>>> + * @addr:		page address to be invalidated
+>>>> + * @flags		IOMMU_INVALIDATE_ADDR_LEAF: leaf paging entries
+>>>> + *			IOMMU_INVALIDATE_GLOBAL_PAGE: global pages  
+>>>
+>>> Shouldn't some of these be tied the the granularity of the
+>>> invalidation?  It seems like this should be more similar to
+>>> iommu_pasid_table_config where the granularity of the invalidation
+>>> defines which entry within a union at the end of the structure is valid
+>>> and populated.  Otherwise we have fields that don't make sense for
+>>> certain invalidations.  
+>>
+>> I am a little bit embarrassed here as this API version is the outcome of
+>> long discussions held by Jacob, jean-Philippe and many others. I don't
+>> want to hijack that work as I am "simply" reusing this API. Nevertheless
+>> I am willing to help on this. So following your recommendation above I
+>> dare to propose an updated API:
+>>
+>> struct iommu_device_iotlb_inv_info {
+>>         __u32   version;
+>> #define IOMMU_DEV_IOTLB_INV_GLOBAL   0
+>> #define IOMMU_DEV_IOTLB_INV_SOURCEID (1 << 0)
+>> #define IOMMU_DEV_IOTLB_INV_PASID    (1 << 1)
+>>         __u8    granularity;
+>>         __u64   addr;
+>>         __u8    log2size;
+>>         __u64   sourceid;
+>>         __u64   pasid;
+>>         __u8    padding[2];
+>> };
+>>
+>> struct iommu_iotlb_inv_info {
+>>         __u32   version;
+>> #define IOMMU_IOTLB_INV_GLOBAL  0
+>> #define IOMMU_IOTLB_INV_ARCHID  (1 << 0)
+>> #define IOMMU_IOTLB_INV_PASID   (1 << 1)
+>> #define IOMMU_IOTLB_INV_PAGE    (1 << 2)
+>>         __u8    granularity;
+>>         __u64   archid;
+>>         __u64   pasid;
+>>         __u64   addr;
+>>         __u8    log2size;
+>>         __u8    padding[2];
+>> };
+>>
+>> struct iommu_pasid_inv_info {
+>>         __u32   version;
+>> #define IOMMU_PASID_INV_GLOBAL     0
+>> #define IOMMU_PASID_INV_ARCHID     (1 << 0)
+>> #define IOMMU_PASID_INV_PASID      (1 << 1)
+>> #define IOMMU_PASID_INV_SOURCEID   (1 << 2)
+>>         __u8    granularity;
+>>         __u64   archid;
+>>         __u64   pasid;
+>>         __u64   sourceid;
+>>         __u8    padding[3];
+>> };
+>> /**
+>>  * Translation cache invalidation information, contains generic IOMMU
+>>  * data which can be parsed based on model ID by model specific drivers.
+>>  * Since the invalidation of second level page tables are included in
+>>  * the unmap operation, this info is only applicable to the first level
+>>  * translation caches, i.e. DMA request with PASID.
+>>  *
+>>  */
+>> struct iommu_cache_invalidate_info {
+>> #define IOMMU_CACHE_INVALIDATE_INFO_VERSION_1 1
+>>         __u32 version;
+>> #define IOMMU_INV_TYPE_IOTLB        1 /* IOMMU paging structure cache */
+>> #define IOMMU_INV_TYPE_DEV_IOTLB    2 /* Device IOTLB */
+>> #define IOMMU_INV_TYPE_PASID        3 /* PASID cache */
+>>         __u8 type;
+>>         union {
+>>                 struct iommu_iotlb_invalidate_info iotlb_inv_info;
+>>                 struct iommu_dev_iotlb_invalidate_info dev_iotlb_inv_info;
+>>                 struct iommu_pasid_inv_info pasid_inv_info;
+>>         };
+>> };
+>>
+>> At the moment I ignore the leaf bool parameter used on ARM for PASID
+>> invalidation and TLB invalidation. Maybe we can just invalidate more
+>> that the leaf cache structures at the moment?
+>>
+>> on ARM the PASID table can be invalidated per streamid. On vt-d, as far
+>> as I understand the sourceid does not tag the entries.
+>>
+>>>   
+>>>> + *
+>>>> + */
+>>>> +struct iommu_cache_invalidate_info {
+>>>> +	struct iommu_cache_invalidate_hdr	hdr;
+>>>> +	enum iommu_inv_granularity	granularity;  
+>>>
+>>> A separate structure for hdr seems a little pointless.  
+>> removed
+>>>   
+>>>> +	__u32		flags;
+>>>> +#define IOMMU_INVALIDATE_ADDR_LEAF	(1 << 0)
+>>>> +#define IOMMU_INVALIDATE_GLOBAL_PAGE	(1 << 1)
+>>>> +	__u8		size;  
+>>>
+>>> Really need some padding or packing here for any hope of having
+>>> consistency with userspace.
+>>>   
+>>>> +	__u64		nr_pages;
+>>>> +	__u32		pasid;  
+>>>
+>>> Sub-optimal ordering for packing/padding.  Thanks,  
+>> I introduced some padding above. Is that OK?
+> 
+> No, you're not taking field alignment into account, processors don't
+> like unaligned data.  If we have:
+> 
+> struct foo {
+> 	uint32_t	a;
+> 	uint8_t		b;
+> 	uint64_t	c;
+> 	uint8_t		d;
+> 	uint64_t	e;
+> };
+> 
+> In memory on a 64 bit system, that would look like:
+> 
+> aaaab...ccccccccd.......eeeeeeee
+> 
+> While on a 32 bit system, it would look like:
+> 
+> aaaab...ccccccccd...eeeeeeee
+> 
+> In this example we have 22 bytes of data (4 + 1 + 8 + 1 + 8), but the
+> structure is 32 bytes when provided by a 64 bit userspace or 28 bytes
+> when provided by a 32 bit userspace and the start address of the 'e'
+> field changes.  A 64 bit kernel would process the latter structure
+> incorrectly or fault trying to copy the expected length from userspace.
+> Adding padding to the end doesn't solve this. If we instead reconstruct
+> the structure as:
+> 
+> struct foo {
+> 	uint32_t	a;
+> 	uint8_t		b;
+> 	uint8_t		d;
+> 	uint8_t		pad[2];
+> 	uint64_t	c;
+> 	uint64_t	e;
+> };
+> 
+> Then we create a structure that looks the same from either a 32 bit or
+> 64 bit userspace, is only 24 bytes in memory, and works for any
+> reasonable compiler, though we might choose to add a packed attribute to
+> make sure the compiler doesn't do anything screwy if we were paranoid.
+> Thanks,
 
-This depends on below upstream patch which defines adsp_mem node:
-https://lkml.org/lkml/2019/1/29/1392
+Thank you very much for your time and explanations. That's understood now.
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 89 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 33f5f4b..31cb8db 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -18,6 +18,7 @@
- #include <dt-bindings/reset/qcom,sdm845-aoss.h>
- #include <dt-bindings/reset/qcom,sdm845-pdc.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
-+#include <dt-bindings/soc/qcom,apr.h>
- 
- / {
- 	interrupt-parent = <&intc>;
-@@ -2048,6 +2049,94 @@
- 			status = "disabled";
- 		};
- 
-+		adsp_pil: remoteproc-adsp-pil@17300000 {
-+			compatible = "qcom,sdm845-adsp-pil";
-+
-+			reg = <0x17300000 0x410>;
-+			interrupts-extended =
-+				<&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-+				<&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_LPASS_SWAY_CLK>,
-+				 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
-+				 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
-+				 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
-+				 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
-+				 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
-+
-+			clock-names = "xo", "sway_cbcr", "lpass_ahbs_aon_cbcr",
-+				      "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
-+				      "qdsp6ss_sleep", "qdsp6ss_core";
-+
-+			resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
-+				 <&aoss_reset AOSS_CC_LPASS_RESTART>;
-+			reset-names = "pdc_sync", "cc_lpass";
-+
-+			qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
-+
-+			memory-region = <&adsp_mem>;
-+
-+			qcom,smem-states = <&adsp_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			status = "disabled";
-+			glink-edge {
-+				interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
-+				label = "lpass";
-+				qcom,remote-pid = <2>;
-+				mboxes = <&apss_shared 8>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				apr@4 {
-+					compatible = "qcom,apr-v2";
-+					qcom,glink-channels = "apr_audio_svc";
-+					reg = <APR_DOMAIN_ADSP>;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					q6core {
-+						compatible = "qcom,q6core";
-+						reg = <APR_SVC_ADSP_CORE>;
-+					};
-+
-+					q6afe {
-+						compatible = "qcom,q6afe";
-+						reg = <APR_SVC_AFE>;
-+						q6afedai: afedais {
-+							compatible = "qcom,q6afe-dais";
-+							#sound-dai-cells = <1>;
-+							#address-cells = <1>;
-+							#size-cells = <0>;
-+						};
-+					};
-+
-+					q6asm {
-+						compatible = "qcom,q6asm";
-+						reg = <APR_SVC_ASM>;
-+						q6asmdai: asmdai{
-+							compatible = "qcom,q6asm-dais";
-+							iommus = <&apps_smmu 0x1821 0x0>;
-+							#sound-dai-cells = <1>;
-+						};
-+					};
-+
-+					q6adm {
-+						compatible = "qcom,q6adm";
-+						reg = <APR_SVC_ADM>;
-+						q6routing: routing {
-+							compatible = "qcom,q6adm-routing";
-+							#sound-dai-cells = <0>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+
- 		apss_shared: mailbox@17990000 {
- 			compatible = "qcom,sdm845-apss-shared";
- 			reg = <0 0x17990000 0 0x1000>;
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+Eric
+> 
+> Alex
+> 
