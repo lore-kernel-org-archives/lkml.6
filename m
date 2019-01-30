@@ -2,86 +2,143 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103C1C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03313C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D61D820989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:31:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bzhs9qXf"
+	by mail.kernel.org (Postfix) with ESMTP id CFF7120882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:31:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730223AbfA3JbX (ORCPT
+        id S1730440AbfA3Jbf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:31:23 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43832 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726577AbfA3JbX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:31:23 -0500
-Received: by mail-lf1-f66.google.com with SMTP id u18so16835035lff.10
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:31:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5olWaqjb7x80gD4BNcQwMsktXckzDlly11atHEqv1Jk=;
-        b=bzhs9qXfjjXjLbxKwmn8if/G9l+scj73HmsErDyC+qIZcRlh2jmewpzo777mbUsmnS
-         hb/L/MSyTGN1yft22M8W/BS9qpB2cAV5KAG9SmViCjpN8RBJVL/q+YO+3Zb9iHpENYB6
-         Va2B8QW/T2LiBx7X1gmDCamqb2AgnqHmSvZNA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5olWaqjb7x80gD4BNcQwMsktXckzDlly11atHEqv1Jk=;
-        b=p2Lj5tMGcj2hpHV2RzpN65b7ZrVKM3YkHBmUCrBQV8rI6cTDVHp30pfJ5fGRYftdkC
-         Afcif7w0X1iGnQc/xuuiQ7csfNZ7vBu9Fmd5ky3Ps8zo4D8nX2s8H3eXKXlO03TlHepk
-         jDhBRQICqLSzVM9M8uxU9crStRzMrlfYoNGFcvH/WRGVFp2nRuPNRX/T2t5jujD76yDQ
-         OnHaE4ZrbiJULfsNsPTDRUsHIGbnZ1ctW5eWjnKLqjWeeqqcnlUqHY2rn/izNX95CgvC
-         6ye3sKmBdLDuduZOyucXKwkTxgO+cPyXZlW9tmbpDo36pJmfKdC4ox8vUhxU1uCpuYBw
-         dIhg==
-X-Gm-Message-State: AJcUukdZIhUraqSWwBWOO7hcpfTJpppq240HZJKg7T5u+3zXVEGT2tv2
-        PhMHfaIW54FMD8PHEDapT5J5YgQLOoorVf9kawSKTg==
-X-Google-Smtp-Source: ALg8bN5WjYLj1ouCzDt95/wRbCJWkdbndIvPkJlioVcbT5asJOv1NwrC8rjdUm7l/s5kH/HMS47Q3ula4mLhuunwo8k=
-X-Received: by 2002:a19:f20:: with SMTP id e32mr22594885lfi.51.1548840681740;
- Wed, 30 Jan 2019 01:31:21 -0800 (PST)
+        Wed, 30 Jan 2019 04:31:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49966 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727097AbfA3Jbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 04:31:35 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 28BEBC06A7F2;
+        Wed, 30 Jan 2019 09:31:34 +0000 (UTC)
+Received: from [10.36.112.46] (ovpn-112-46.ams2.redhat.com [10.36.112.46])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A67FC19743;
+        Wed, 30 Jan 2019 09:31:29 +0000 (UTC)
+Subject: Re: [PATCH v2] KVM: x86: Sync the pending Posted-Interrupts
+To:     "Kang, Luwei" <luwei.kang@intel.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1548809972-32100-1-git-send-email-luwei.kang@intel.com>
+ <0e8444a1-39a3-d217-8602-ae175fedc8b2@redhat.com>
+ <82D7661F83C1A047AF7DC287873BF1E172CD5EE4@SHSMSX101.ccr.corp.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <a876245b-6094-1767-ac63-dc8d31de9b84@redhat.com>
+Date:   Wed, 30 Jan 2019 10:31:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <1548410393-6981-1-git-send-email-zhouyanjie@zoho.com>
- <1548688799-129840-1-git-send-email-zhouyanjie@zoho.com> <1548688799-129840-4-git-send-email-zhouyanjie@zoho.com>
-In-Reply-To: <1548688799-129840-4-git-send-email-zhouyanjie@zoho.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 30 Jan 2019 10:31:10 +0100
-Message-ID: <CACRpkdYgj-Ng-b4PVWdZx3knR9ac6srp6uxeu72K=4KyMj2VGw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] Pinctrl: Ingenic: Unify the function name prefix
- to "ingenic_gpio_".
-To:     Zhou Yanjie <zhouyanjie@zoho.com>
-Cc:     linux-mips@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Paul Cercueil <paul@crapouillou.net>, syq@debian.org,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>, 772753199@qq.com,
-        Zhou Yanjie <zhouyanjie@cduestc.edu.cn>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <82D7661F83C1A047AF7DC287873BF1E172CD5EE4@SHSMSX101.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 30 Jan 2019 09:31:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 4:29 PM Zhou Yanjie <zhouyanjie@zoho.com> wrote:
+On 30/01/19 10:01, Kang, Luwei wrote:
+>> This is not what I asked.  You should instead do the check after pi_clear_sn.
+>>
+> 
+> I think the SN has been cleared here before test the bitmap.
+> The SN will be set when the  vCPU is schedule out. ID: 28b835d60fcc2498e717cf5e6f0c3691c24546f7
+> But SN will be cleared when sched in.
+> 
+> Another place is when vCPU run out of the vcpu_run() function:
+>      kvm_arch_vcpu_ioctl_run()
+>          vcpu_load(vcpu); -> kvm_arch_vcpu_load -> vmx_vcpu_load -> vmx_vcpu_pi_load -> new.sn = 0;
+>          vcpu_run(vcpu);
+>              for(;;)
+>          vcpu_put(vcpu); -> kvm_arch_vcpu_put -> vmx_vcpu_put -> vmx_vcpu_pi_put -> pi_set_sn()
+> But SN will be cleared in vcpu_load() before back to vcpu_run()
 
-> From: Zhou Yanjie <zhouyanjie@cduestc.edu.cn>
->
-> In the original code, some function names begin with "ingenic_gpio_",
-> and some with "gpio_ingenic_". For the sake of uniform style,
-> all of them are changed to the beginning of "ingenic_gpio_".
->
-> Signed-off-by: Zhou Yanjie <zhouyanjie@cduestc.edu.cn>
+Yes, but you're changing the wrong path.  The patch is affecting _all_
+vmentries, not just those after PID.SN has been cleared.
 
-Patch applied with Paul's ACK!
+As I mentioned in the previous email, KVM relies on the SDM's invariant
+that ON where PID.ON=1 whenever PID.PIR!=0.  Invariants are your best
+friend when dealing with complicated multi-processor code so I don't
+want to change that.
 
-Yours,
-Linus Walleij
+It's the VT-d pi_clear_sn path that I want to be changed, because it's
+VT-d and specifically SN that complicates the very simple definition in
+the SDM.  By modifying the pi_clear_sn path, you ensure the invariant is
+respected and everyone is happy.
+
+Paolo
