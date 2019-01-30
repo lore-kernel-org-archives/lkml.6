@@ -2,145 +2,80 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A1FC282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C888C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:22:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 620CF218AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03C5D21473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:22:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbfA3IVy (ORCPT
+        id S1730269AbfA3IWi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:21:54 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42932 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbfA3IVy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:21:54 -0500
-Received: by mail-vs1-f66.google.com with SMTP id b74so13711779vsd.9;
-        Wed, 30 Jan 2019 00:21:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UXRoeRbZly/zcIscio6rfCE5e28iEH5JSota4EpbSNQ=;
-        b=drxDBs4t4mjF9Kp6kQMr+mbR/SPGRGKr5YyrhVuxP5Hn5Vb653hSOgCUcdSS8QRPW8
-         aDhmHXlZ7WfAT8TNA/66XWn83BEpdGlM6kuHZ7WiMqFdr++hftkboMlckzi5muW9XOGG
-         2ihzYS2TBtWQoizzqt8eeRs/bVpbho7EClsIY4q+cgPSf17/3s6/pgC2gQjkuB3UedQ0
-         RCVKVaX3xItQi61ten0sM/UA1qABXgFofjctlT4wtsmfteyCATO2gR+UfPZnmxyheRQN
-         lzZO0kJek7FMcecA9wSUP7RqrFuokorkutyEs6XjGrDWOCs7t68EvTOQpa8NEALItgwy
-         QcXQ==
-X-Gm-Message-State: AJcUukeej7obpU94ptyVS7PWoNAYQXchUUm+aPqYDYZ/ukd88CiN+i1H
-        urgNbltpKaZlXUuhzS3Tk80zpBB9rPKpg8kWrwk=
-X-Google-Smtp-Source: ALg8bN4Tcw9HDIoapB7MuAWG2VV78bc4r7NqYlnepWvt9ph8hOZQ5WJoqrEpETHahfxCo6RFRg4xwGkLyr/USHRgwaw=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr12335445vsp.166.1548836512519;
- Wed, 30 Jan 2019 00:21:52 -0800 (PST)
-MIME-Version: 1.0
-References: <1548836194-15264-1-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1548836194-15264-1-git-send-email-vincent.guittot@linaro.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 30 Jan 2019 09:21:41 +0100
-Message-ID: <CAMuHMdWYV-tDD2osdvs4yhD-mu2n8-JSC7rV8Zt5vW4kr8hdWQ@mail.gmail.com>
-Subject: Re: [PATCH] PM-runtime: fix deadlock with ktime
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 30 Jan 2019 03:22:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52732 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726452AbfA3IWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 03:22:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DE5C6B0DB;
+        Wed, 30 Jan 2019 08:22:36 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, linux-mm@kvack.org
+Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH v2 0/2] x86: respect memory size limits
+Date:   Wed, 30 Jan 2019 09:22:31 +0100
+Message-Id: <20190130082233.23840-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+On a customer system running Xen a boot problem was observed due to
+the kernel not respecting the memory size limit imposed by the Xen
+hypervisor.
 
-On Wed, Jan 30, 2019 at 9:16 AM Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
-> A deadlock has been seen when swicthing clocksources which use PM runtime.
-> The call path is:
-> change_clocksource
->     ...
->     write_seqcount_begin
->     ...
->     timekeeping_update
->         ...
->         sh_cmt_clocksource_enable
->             ...
->             rpm_resume
->                 pm_runtime_mark_last_busy
->                     ktime_get
->                         do
->                             read_seqcount_begin
->                         while read_seqcount_retry
->     ....
->     write_seqcount_end
->
-> Although we should be safe because we haven't yet changed the clocksource
-> at that time, we can't because of seqcount protection.
->
-> Use ktime_get_mono_fast_ns instead which is lock safe for such case
->
-> Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
-> Reported-by: Biju Das <biju.das@bp.renesas.com>
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+During analysis I found the same problem should be able to occur on
+bare metal in case the memory would be limited via the "mem=" boot
+parameter.
 
-Thanks for your patch!
+The system this problem has been observed on has tons of memory
+added via PCI. So while in the E820 map the not to be used memory has
+been wiped out the additional PCI memory is detected during ACPI scan
+and it is added via __add_memory().
 
-/**
- * ktime_get_mono_fast_ns - Fast NMI safe access to clock monotonic
- *
- * This timestamp is not guaranteed to be monotonic across an update.
- * The timestamp is calculated by:
- *
- *      now = base_mono + clock_delta * slope
- *
- * So if the update lowers the slope, readers who are forced to the
- * not yet updated second array are still using the old steeper slope.
- *
- * tmono
- * ^
- * |    o  n
- * |   o n
- * |  u
- * | o
- * |o
- * |12345678---> reader order
- *
- * o = old slope
- * u = update
- * n = new slope
- *
- * So reader 6 will observe time going backwards versus reader 5.
- *
- * While other CPUs are likely to be able observe that, the only way
- * for a CPU local observation is when an NMI hits in the middle of
- * the update. Timestamps taken from that NMI context might be ahead
- * of the following timestamps. Callers need to be aware of that and
- * deal with it.
- */
+This small series tries to repair the issue by testing the imposed
+memory limit during the memory hotplug process and refusing to add it
+in case the limit is being violated.
 
-As this function is not guaranteed to be monotonic, have you checked how
-the Runtime PM code behaves if time goes backwards? Does it just make
-a suboptimal decision or does it crash?
+I've chosen to refuse adding the complete memory chunk in case the
+limit is reached instead of adding only some of the memory, as I
+thought this would result in less problems (e.g. avoiding to add
+only parts of a 128MB memory bar which might be difficult to remove
+later).
 
-Thanks!
+Changes in V2:
+- patch 1: set initial allowed size to U64_MAX instead -1
+- patch 2: set initial allowed size to end of E820 RAM
 
-Gr{oetje,eeting}s,
+Juergen Gross (2):
+  x86: respect memory size limiting via mem= parameter
+  x86/xen: dont add memory above max allowed allocation
 
-                        Geert
+ arch/x86/kernel/e820.c         |  5 +++++
+ arch/x86/xen/setup.c           | 10 ++++++++++
+ drivers/xen/xen-balloon.c      |  6 ++++++
+ include/linux/memory_hotplug.h |  2 ++
+ mm/memory_hotplug.c            |  6 ++++++
+ 5 files changed, 29 insertions(+)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.16.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
