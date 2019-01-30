@@ -2,638 +2,345 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B46BFC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A68C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78F9721852
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 003212184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:12:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1K6N7yP7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730638AbfA3JMo (ORCPT
+        id S1730650AbfA3JM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:12:44 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46907 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730545AbfA3JMn (ORCPT
+        Wed, 30 Jan 2019 04:12:56 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45098 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727431AbfA3JMz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:12:43 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f5so16778705lfc.13;
-        Wed, 30 Jan 2019 01:12:39 -0800 (PST)
+        Wed, 30 Jan 2019 04:12:55 -0500
+Received: by mail-oi1-f194.google.com with SMTP id y1so18592019oie.12
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:12:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zEHiJ6X42KnikKy8hVZcznQNrRxmxs9IBM6mcXj8Ew0=;
+        b=1K6N7yP76PtaXLZAW0tbpORDp96aX7KtRWaqkWEEd6AE1YW+HuY6wNLAMY0/9VMq92
+         78W1QZ8sKE5E6N+dfpZBBA4KM+n48ebAHWNLLRFZ85AjXoEO3PjbpJr6dBe9MDTIJw8N
+         tum5Cjm6dCShI1L5dhWIUILv+5k7L+kqEKsVLd7lwZGQFV/c6AHJMICLRv74PhwCDsir
+         4HXIymV6F2GQ40GGJCyWagvsxSiRs2ybuEABYo/CwWdrQXXC2mVvxmwW7PifMkMc5a52
+         jaEbtrt10Ry3r+04j8ooWFI4StjhfTOGDsMsLOejxw2gvssFIrCBXcxvlL97HctBv3aZ
+         cP2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HniqBMHqrYLk0+B9gDEMhELoM6eJ4cisGT+hWLRye2U=;
-        b=Jp6m9bpYU7FRNg92hyJxnKaUjOeUwrJo7f+tjBZ0QJvtYnUFSe/1ix6NxRstGuGvjw
-         mYZ9Ujfk5nG4Tkx4HWZ1PZD6lOs2Oex0IIJj+/oab9AxbOHDLsuwqWzODz4KlqQ9faE/
-         LcNTnjTGmazkkz0FCpaoC1uglxlmtbiZhB95C7tGb7aQ/SNoDPnJfI34b51omd3ON29h
-         rWyPHUl3R5y4yl9roBxS2lOHWK53uKnFr43yrV2ajeMvO0N9E1lpWSjPp14vA/6yx9x/
-         nYTr/wapkKICC8KgQSjcCIbx/k58I1yuxSpuJ42l7H49rxFyypnSDzBSMUDkfrIazWK9
-         B1fw==
-X-Gm-Message-State: AJcUukcVtvDt4UB4WlDAzlv7Z6UFU8qvzRnhNQD63fXYbQITgWcyaR4o
-        CqCUQnkHzVu2ErvDyj6EACE=
-X-Google-Smtp-Source: ALg8bN5K5MF4e6dC3dkFydy/UJGquavNutc/HqxpasQmqD4Lxjtr8C6J29z/6IN5Ge8K/3mLnN45jA==
-X-Received: by 2002:ac2:4194:: with SMTP id z20mr22367356lfh.74.1548839558632;
-        Wed, 30 Jan 2019 01:12:38 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id j12-v6sm173682ljh.66.2019.01.30.01.12.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 01:12:37 -0800 (PST)
-Date:   Wed, 30 Jan 2019 11:12:25 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v3 08/10] rtc: bd70528: Initial support for ROHM bd70528
- RTC
-Message-ID: <27d20980a2c0ca9b07f3c433d11f6a28b9c21169.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zEHiJ6X42KnikKy8hVZcznQNrRxmxs9IBM6mcXj8Ew0=;
+        b=lFCso558UHmpnjYgVwVBtmKsti7uFND//8f6J3ah8fSF8H7fXcfxsL80D/hvTh6UR/
+         Be/Fpx8Rc01HQ3oQK5r3T8vmDy+wX2Ew1XtFzZvl3u473UXz0hX/NMjL+KMB2FS6HXFs
+         fkikk6rPKrFtaKKMtRgXTI3r4EdRmcNwtohHbLYWNpELpCqde5U3JbAXKCV0BEn2KnG9
+         MoGA4zaRiA7ylWoiVq6eytfKbpATwXbjcu7YnkQ0UhXde3RBhk8BjoTX89OlAtxN/QqX
+         9/IqAB5D8JGMsVzAfGsNJKQdI6IafspKcpXQrF7SfCJ/b91wob9RrVPWXmmmPfxBaHar
+         p4JQ==
+X-Gm-Message-State: AHQUAubzSFKvWgMylb4lOGFjAOZ0Y/W67pdHgFsMN4aRmxugjH6vevzR
+        iywIvBz6VSDO5H5ygU4Ae3cRKdsnkApmH0NCRZMZ7+TRE7c=
+X-Google-Smtp-Source: AHgI3IYkY0jIO1cUswOSW2dlOymi/ReD6rkB+Bwxmc+b/VV5NgtDLXAgpNQKvdIQAlvdEpmCXJ9kW63OlhaqYZ4e0PM=
+X-Received: by 2002:aca:bcc6:: with SMTP id m189mr12190358oif.337.1548839574635;
+ Wed, 30 Jan 2019 01:12:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20190130090722.24134-1-axel.lin@ingics.com> <20190130090722.24134-2-axel.lin@ingics.com>
+In-Reply-To: <20190130090722.24134-2-axel.lin@ingics.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 30 Jan 2019 10:12:43 +0100
+Message-ID: <CAMpxmJX9pSJ1L9NoyKY7wMGm2FCuC5KWxCZcfnTF_dGwdD9+AQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] regulator: max77650: Convert to use regulator_enable/disable/is_enabled_regmap
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support RTC block in ROHM bd70528 power management IC. Support
-getting and setting the time and date as well as arming an alarm
-which can also be used to wake the PMIC from standby state.
+=C5=9Br., 30 sty 2019 o 10:07 Axel Lin <axel.lin@ingics.com> napisa=C5=82(a=
+):
+>
+> By setting enable_reg, enable_mask, enable_val and disable_val, we can
+> use the regulator_enable/disable/is_enabled_regmap helpers. With this
+> change, then regB field can be removed from struct max77650_regulator_des=
+c.
+>
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+> Hi Bartosz,
+> I don't have this h/w, please help to review and test it.
+>
+> I think the only difference is the is_enabled checking:
+> Before the patch, it returns en !=3D MAX77650_REGULATOR_DISABLED;
+> After the patch, it returns en =3D=3D MAX77650_REGULATOR_ENABLED
+> I'm not sure if this difference does matter or not.
+>
 
-HW supports wake interrupt only for the next 24 hours (sec, minute
-and hour information only) so we limit also the alarm interrupt to
-this 24 hours for the sake of consistency.
+NACK. I intend to support the FPS feature of the regulator module in
+the future (see a similar thing in max77620) and I will need to extend
+these callbacks as there will be more possible values here. Regmap
+generics will not be enough.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/rtc/Kconfig       |   8 +
- drivers/rtc/Makefile      |   1 +
- drivers/rtc/rtc-bd70528.c | 502 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 511 insertions(+)
- create mode 100644 drivers/rtc/rtc-bd70528.c
+Best regards,
+Bartosz Golaszewski
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 225b0b8516f3..df6211cbd83f 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -487,6 +487,14 @@ config RTC_DRV_M41T80_WDT
- 	help
- 	  If you say Y here you will get support for the
- 	  watchdog timer in the ST M41T60 and M41T80 RTC chips series.
-+config RTC_DRV_BD70528
-+	tristate "ROHM BD70528 PMIC RTC"
-+	help
-+	  If you say Y here you will get support for the RTC
-+	  on ROHM BD70528 Power Management IC.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called rtc-bd70528.
- 
- config RTC_DRV_BQ32K
- 	tristate "TI BQ32000"
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index df022d820bee..740b13840913 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_RTC_DRV_ASM9260)	+= rtc-asm9260.o
- obj-$(CONFIG_RTC_DRV_AT91RM9200)+= rtc-at91rm9200.o
- obj-$(CONFIG_RTC_DRV_AT91SAM9)	+= rtc-at91sam9.o
- obj-$(CONFIG_RTC_DRV_AU1XXX)	+= rtc-au1xxx.o
-+obj-$(CONFIG_RTC_DRV_BD70528)	+= rtc-bd70528.o
- obj-$(CONFIG_RTC_DRV_BQ32K)	+= rtc-bq32k.o
- obj-$(CONFIG_RTC_DRV_BQ4802)	+= rtc-bq4802.o
- obj-$(CONFIG_RTC_DRV_BRCMSTB)	+= rtc-brcmstb-waketimer.o
-diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
-new file mode 100644
-index 000000000000..081d4c6e7172
---- /dev/null
-+++ b/drivers/rtc/rtc-bd70528.c
-@@ -0,0 +1,502 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// Copyright (C) 2018 ROHM Semiconductors
-+//
-+// RTC driver for ROHM BD70528 PMIC
-+
-+#include <linux/bcd.h>
-+#include <linux/mfd/rohm-bd70528.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/rtc.h>
-+
-+/*
-+ * We read regs RTC_SEC => RTC_YEAR
-+ * this struct is ordered according to chip registers.
-+ * Keep it u8 only to avoid padding issues.
-+ */
-+struct bd70528_rtc_day {
-+	u8 sec;
-+	u8 min;
-+	u8 hour;
-+} __packed;
-+
-+struct bd70528_rtc_data {
-+	struct bd70528_rtc_day time;
-+	u8 week;
-+	u8 day;
-+	u8 month;
-+	u8 year;
-+} __packed;
-+
-+struct bd70528_rtc_wake {
-+	struct bd70528_rtc_day time;
-+	u8 ctrl;
-+} __packed;
-+
-+struct bd70528_rtc_alm {
-+	struct bd70528_rtc_data data;
-+	u8 alm_mask;
-+	u8 alm_repeat;
-+} __packed;
-+
-+struct bd70528_rtc {
-+	struct bd70528 *mfd;
-+	struct device *dev;
-+};
-+
-+static int bd70528_set_wake(struct bd70528 *bd70528,
-+			    int enable, int *old_state)
-+{
-+	int ret;
-+	unsigned int ctrl_reg;
-+
-+	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WAKE_EN, &ctrl_reg);
-+	if (ret)
-+		return ret;
-+
-+	if (old_state) {
-+		if (ctrl_reg & BD70528_MASK_WAKE_EN)
-+			*old_state |= BD70528_WAKE_STATE_BIT;
-+		else
-+			*old_state &= ~BD70528_WAKE_STATE_BIT;
-+
-+		if (!enable == !(*old_state & BD70528_WAKE_STATE_BIT))
-+			return 0;
-+	}
-+
-+	if (enable)
-+		ctrl_reg |= BD70528_MASK_WAKE_EN;
-+	else
-+		ctrl_reg &= ~BD70528_MASK_WAKE_EN;
-+
-+	return regmap_write(bd70528->chip.regmap, BD70528_REG_WAKE_EN,
-+			    ctrl_reg);
-+}
-+
-+static int bd70528_set_elapsed_tmr(struct bd70528 *bd70528,
-+				   int enable, int *old_state)
-+{
-+	int ret;
-+	unsigned int ctrl_reg;
-+
-+	/*
-+	 * TBD
-+	 * What is the purpose of elapsed timer ?
-+	 * Is the timeout registers counting down, or is the disable - re-enable
-+	 * going to restart the elapsed-time counting? If counting is restarted
-+	 * the timeout should be decreased by the amount of time that has
-+	 * elapsed since starting the timer. Maybe we should store the monotonic
-+	 * clock value when timer is started so that if RTC is set while timer
-+	 * is armed we could do the compensation. This is a hack if RTC/system
-+	 * clk are drifting. OTOH, RTC controlled via I2C is in any case
-+	 * inaccurate...
-+	 */
-+	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_ELAPSED_TIMER_EN,
-+			  &ctrl_reg);
-+	if (ret)
-+		return ret;
-+
-+	if (old_state) {
-+		if (ctrl_reg & BD70528_MASK_ELAPSED_TIMER_EN)
-+			*old_state |= BD70528_ELAPSED_STATE_BIT;
-+		else
-+			*old_state &= ~BD70528_ELAPSED_STATE_BIT;
-+
-+		if ((!enable) == (!(*old_state & BD70528_ELAPSED_STATE_BIT)))
-+			return 0;
-+	}
-+
-+	if (enable)
-+		ctrl_reg |= BD70528_MASK_ELAPSED_TIMER_EN;
-+	else
-+		ctrl_reg &= ~BD70528_MASK_ELAPSED_TIMER_EN;
-+
-+	return regmap_write(bd70528->chip.regmap, BD70528_REG_ELAPSED_TIMER_EN,
-+			    ctrl_reg);
-+}
-+
-+static int bd70528_set_rtc_based_timers(struct bd70528_rtc *r, int new_state,
-+							int *old_state)
-+{
-+	int ret;
-+
-+	ret = r->mfd->wdt_set(r->mfd, new_state & BD70528_WDT_STATE_BIT,
-+			       old_state);
-+	if (ret) {
-+		dev_err(r->dev,
-+			"Failed to disable WDG for RTC setting (%d)\n", ret);
-+		return ret;
-+	}
-+	ret = bd70528_set_elapsed_tmr(r->mfd,
-+				      new_state & BD70528_ELAPSED_STATE_BIT,
-+				      old_state);
-+	if (ret) {
-+		dev_err(r->dev,
-+			"Failed to disable 'elapsed timer' for RTC setting\n");
-+		return ret;
-+	}
-+	ret = bd70528_set_wake(r->mfd, new_state & BD70528_WAKE_STATE_BIT,
-+			       old_state);
-+	if (ret) {
-+		dev_err(r->dev,
-+			"Failed to disable 'wake timer' for RTC setting\n");
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+static int bd70528_re_enable_rtc_based_timers(struct bd70528_rtc *r,
-+							int old_state)
-+{
-+	return bd70528_set_rtc_based_timers(r, old_state, NULL);
-+}
-+
-+static int bd70528_disable_rtc_based_timers(struct bd70528_rtc *r,
-+							int *old_state)
-+{
-+	return bd70528_set_rtc_based_timers(r, 0, old_state);
-+}
-+
-+static inline void tmday2rtc(struct rtc_time *t, struct bd70528_rtc_day *d)
-+{
-+	d->sec &= ~BD70528_MASK_RTC_SEC;
-+	d->min &= ~BD70528_MASK_RTC_MINUTE;
-+	d->hour &= ~BD70528_MASK_RTC_HOUR;
-+	d->sec |= bin2bcd(t->tm_sec);
-+	d->min |= bin2bcd(t->tm_min);
-+	d->hour |= bin2bcd(t->tm_hour);
-+}
-+
-+static inline void tm2rtc(struct rtc_time *t, struct bd70528_rtc_data *r)
-+{
-+	r->day &= ~BD70528_MASK_RTC_DAY;
-+	r->week &= ~BD70528_MASK_RTC_WEEK;
-+	r->month &= ~BD70528_MASK_RTC_MONTH;
-+	/*
-+	 * PM and 24H bits are not used by Wake - thus we clear them
-+	 * here and not in tmday2rtc() which is also used by wake.
-+	 */
-+	r->time.hour &= ~(BD70528_MASK_RTC_HOUR_PM | BD70528_MASK_RTC_HOUR_24H);
-+
-+	tmday2rtc(t, &r->time);
-+	/*
-+	 * We do always set time in 24H mode.
-+	 */
-+	r->time.hour |= BD70528_MASK_RTC_HOUR_24H;
-+	r->day |= bin2bcd(t->tm_mday);
-+	r->week |= bin2bcd(t->tm_wday);
-+	r->month |= bin2bcd(t->tm_mon + 1);
-+	r->year = bin2bcd(t->tm_year-100);
-+}
-+
-+static inline void rtc2tm(struct bd70528_rtc_data *r, struct rtc_time *t)
-+{
-+	t->tm_sec = bcd2bin(r->time.sec & BD70528_MASK_RTC_SEC);
-+	t->tm_min = bcd2bin(r->time.min & BD70528_MASK_RTC_MINUTE);
-+	t->tm_hour = bcd2bin(r->time.hour & BD70528_MASK_RTC_HOUR);
-+	/*
-+	 * If RTC is in 12H mode, then bit BD70528_MASK_RTC_HOUR_PM
-+	 * is not BCD value but tells whether it is AM or PM
-+	 */
-+	if (!(r->time.hour & BD70528_MASK_RTC_HOUR_24H)) {
-+		t->tm_hour %= 12;
-+		if (r->time.hour & BD70528_MASK_RTC_HOUR_PM)
-+			t->tm_hour += 12;
-+	}
-+	t->tm_mday = bcd2bin(r->day & BD70528_MASK_RTC_DAY);
-+	t->tm_mon = bcd2bin(r->month & BD70528_MASK_RTC_MONTH) - 1;
-+	t->tm_year = 100 + bcd2bin(r->year & BD70528_MASK_RTC_YEAR);
-+	t->tm_wday = bcd2bin(r->week & BD70528_MASK_RTC_WEEK);
-+}
-+
-+static int bd70528_set_alarm(struct device *dev, struct rtc_wkalrm *a)
-+{
-+	struct bd70528_rtc_wake wake;
-+	struct bd70528_rtc_alm alm;
-+	int ret;
-+	struct bd70528_rtc *r = dev_get_drvdata(dev);
-+	struct bd70528 *bd70528 = r->mfd;
-+
-+	ret = regmap_bulk_read(bd70528->chip.regmap, BD70528_REG_RTC_WAKE_START,
-+			       &wake, sizeof(wake));
-+	if (ret) {
-+		dev_err(dev, "Failed to read wake regs\n");
-+		return ret;
-+	}
-+
-+	ret = regmap_bulk_read(bd70528->chip.regmap, BD70528_REG_RTC_ALM_START,
-+			       &alm, sizeof(alm));
-+	if (ret) {
-+		dev_err(dev, "Failed to read alarm regs\n");
-+		return ret;
-+	}
-+
-+	tm2rtc(&a->time, &alm.data);
-+	tmday2rtc(&a->time, &wake.time);
-+
-+	if (a->enabled) {
-+		alm.alm_mask &= ~BD70528_MASK_ALM_EN;
-+		wake.ctrl |= BD70528_MASK_WAKE_EN;
-+	} else {
-+		alm.alm_mask |= BD70528_MASK_ALM_EN;
-+		wake.ctrl &= ~BD70528_MASK_WAKE_EN;
-+	}
-+
-+	ret = regmap_bulk_write(bd70528->chip.regmap,
-+				BD70528_REG_RTC_WAKE_START, &wake,
-+				sizeof(wake));
-+	if (ret) {
-+		dev_err(dev, "Failed to set wake time\n");
-+		return ret;
-+	}
-+	ret = regmap_bulk_write(bd70528->chip.regmap, BD70528_REG_RTC_ALM_START,
-+				&alm, sizeof(alm));
-+	if (ret)
-+		dev_err(dev, "Failed to set alarm time\n");
-+
-+	return ret;
-+}
-+
-+static int bd70528_read_alarm(struct device *dev, struct rtc_wkalrm *a)
-+{
-+	struct bd70528_rtc_alm alm;
-+	int ret;
-+	struct bd70528_rtc *r = dev_get_drvdata(dev);
-+	struct bd70528 *bd70528 = r->mfd;
-+
-+	ret = regmap_bulk_read(bd70528->chip.regmap, BD70528_REG_RTC_ALM_START,
-+			  &alm, sizeof(alm));
-+	if (ret) {
-+		dev_err(dev, "Failed to read alarm regs\n");
-+		return ret;
-+	}
-+
-+	rtc2tm(&alm.data, &a->time);
-+	a->time.tm_mday = -1;
-+	a->time.tm_mon = -1;
-+	a->time.tm_year = -1;
-+	a->enabled = !(alm.alm_mask & BD70528_MASK_ALM_EN);
-+	a->pending = 0;
-+
-+	return 0;
-+}
-+
-+static int bd70528_set_time_locked(struct device *dev, struct rtc_time *t)
-+{
-+	int ret, tmpret, old_states;
-+	struct bd70528_rtc_data rtc_data;
-+	struct bd70528_rtc *r = dev_get_drvdata(dev);
-+	struct bd70528 *bd70528 = r->mfd;
-+
-+	ret = bd70528_disable_rtc_based_timers(r, &old_states);
-+	if (ret)
-+		return ret;
-+
-+	tmpret = regmap_bulk_read(bd70528->chip.regmap,
-+			       BD70528_REG_RTC_START, &rtc_data,
-+			       sizeof(rtc_data));
-+	if (tmpret) {
-+		dev_err(dev, "Failed to read RTC time registers\n");
-+		goto renable_out;
-+	}
-+	tm2rtc(t, &rtc_data);
-+
-+	tmpret = regmap_bulk_write(bd70528->chip.regmap,
-+				BD70528_REG_RTC_START, &rtc_data,
-+				sizeof(rtc_data));
-+	if (tmpret) {
-+		dev_err(dev, "Failed to set RTC time\n");
-+		goto renable_out;
-+	}
-+
-+renable_out:
-+	ret = bd70528_re_enable_rtc_based_timers(r, old_states);
-+	if (tmpret)
-+		ret = tmpret;
-+
-+	return ret;
-+}
-+
-+static int bd70528_set_time(struct device *dev, struct rtc_time *t)
-+{
-+	int ret;
-+	struct bd70528_rtc *r = dev_get_drvdata(dev);
-+
-+	mutex_lock(&r->mfd->rtc_timer_lock);
-+	ret = bd70528_set_time_locked(dev, t);
-+	mutex_unlock(&r->mfd->rtc_timer_lock);
-+	return ret;
-+}
-+
-+static int bd70528_get_time(struct device *dev, struct rtc_time *t)
-+{
-+	struct bd70528_rtc *r = dev_get_drvdata(dev);
-+	struct bd70528 *bd70528 = r->mfd;
-+	struct bd70528_rtc_data rtc_data;
-+	int ret;
-+
-+	/* read the RTC date and time registers all at once */
-+	ret = regmap_bulk_read(bd70528->chip.regmap,
-+			       BD70528_REG_RTC_START, &rtc_data,
-+			       sizeof(rtc_data));
-+	if (ret) {
-+		dev_err(dev, "Failed to read RTC time (err %d)\n", ret);
-+		return ret;
-+	}
-+
-+	rtc2tm(&rtc_data, t);
-+
-+	return 0;
-+}
-+
-+static int bd70528_alm_enable(struct device *dev, unsigned int enabled)
-+{
-+	int ret;
-+	unsigned int enableval = BD70528_MASK_ALM_EN;
-+	struct bd70528_rtc *r = dev_get_drvdata(dev);
-+
-+	if (enabled)
-+		enableval = 0;
-+
-+	mutex_lock(&r->mfd->rtc_timer_lock);
-+	ret = bd70528_set_wake(r->mfd, enabled, NULL);
-+	if (ret) {
-+		dev_err(dev, "Failed to change wake state\n");
-+		goto out_unlock;
-+	}
-+	ret = regmap_update_bits(r->mfd->chip.regmap, BD70528_REG_RTC_ALM_MASK,
-+				 BD70528_MASK_ALM_EN, enableval);
-+	if (ret)
-+		dev_err(dev, "Failed to change alarm state\n");
-+
-+out_unlock:
-+	mutex_unlock(&r->mfd->rtc_timer_lock);
-+	return ret;
-+}
-+
-+static const struct rtc_class_ops bd70528_rtc_ops = {
-+	.read_time		= bd70528_get_time,
-+	.set_time		= bd70528_set_time,
-+	.read_alarm		= bd70528_read_alarm,
-+	.set_alarm		= bd70528_set_alarm,
-+	.alarm_irq_enable	= bd70528_alm_enable,
-+};
-+
-+static irqreturn_t alm_hndlr(int irq, void *data)
-+{
-+	struct rtc_device *rtc = data;
-+
-+	rtc_update_irq(rtc, 1, RTC_IRQF | RTC_AF | RTC_PF);
-+	return IRQ_HANDLED;
-+}
-+
-+static int bd70528_probe(struct platform_device *pdev)
-+{
-+	struct bd70528_rtc *bd_rtc;
-+	struct bd70528 *mfd;
-+	int ret;
-+	struct rtc_device *rtc;
-+	int irq;
-+	unsigned int hr;
-+
-+	mfd = dev_get_drvdata(pdev->dev.parent);
-+	if (!mfd) {
-+		dev_err(&pdev->dev, "No MFD driver data\n");
-+		return -EINVAL;
-+	}
-+	bd_rtc = devm_kzalloc(&pdev->dev, sizeof(*bd_rtc), GFP_KERNEL);
-+	if (!bd_rtc)
-+		return -ENOMEM;
-+
-+	bd_rtc->mfd = mfd;
-+	bd_rtc->dev = &pdev->dev;
-+
-+	irq = platform_get_irq_byname(pdev, "bd70528-rtc-alm");
-+
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "Failed to get irq\n");
-+		return irq;
-+	}
-+
-+	platform_set_drvdata(pdev, bd_rtc);
-+
-+	ret = regmap_read(mfd->chip.regmap, BD70528_REG_RTC_HOUR, &hr);
-+
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to reag RTC clock\n");
-+		return ret;
-+	}
-+
-+	if (!(hr & BD70528_MASK_RTC_HOUR_24H)) {
-+		struct rtc_time t;
-+
-+		ret = bd70528_get_time(&pdev->dev, &t);
-+
-+		if (!ret)
-+			ret = bd70528_set_time(&pdev->dev, &t);
-+
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"Setting 24H clock for RTC failed\n");
-+			return ret;
-+		}
-+	}
-+
-+	device_set_wakeup_capable(&pdev->dev, true);
-+	device_wakeup_enable(&pdev->dev);
-+
-+	rtc = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(rtc)) {
-+		dev_err(&pdev->dev, "RTC device creation failed\n");
-+		return PTR_ERR(rtc);
-+	}
-+
-+	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-+	rtc->range_max = RTC_TIMESTAMP_END_2099;
-+	rtc->ops = &bd70528_rtc_ops;
-+
-+	/* Request alarm IRQ prior to registerig the RTC */
-+	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL, &alm_hndlr,
-+					IRQF_ONESHOT, "bd70528-rtc", rtc);
-+	if (ret)
-+		return ret;
-+
-+	ret = rtc_register_device(rtc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Registering RTC failed\n");
-+		return ret;
-+	}
-+
-+
-+	/*
-+	 *  BD70528 irq controller is not touching the main mask register.
-+	 *  So enable the RTC block interrupts at main level. We can just
-+	 *  leave them enabled as irq-controller should disable irqs
-+	 *  from sub-registers when IRQ is disabled or freed.
-+	 */
-+	ret = regmap_update_bits(mfd->chip.regmap,
-+				 BD70528_REG_INT_MAIN_MASK,
-+				 BD70528_INT_RTC_MASK, 0);
-+
-+	if (ret)
-+		dev_err(&pdev->dev, "Failed to enable RTC interrupts\n");
-+
-+	return ret;
-+}
-+
-+static struct platform_driver bd70528_rtc = {
-+	.driver = {
-+		.name = "bd70528-rtc"
-+	},
-+	.probe = bd70528_probe,
-+};
-+
-+module_platform_driver(bd70528_rtc);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD70528 RTC driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
-
-
--- 
-Matti Vaittinen
-ROHM Semiconductors Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+> Thanks,
+> Axel
+>  drivers/regulator/max77650-regulator.c | 87 +++++++-------------------
+>  1 file changed, 23 insertions(+), 64 deletions(-)
+>
+> diff --git a/drivers/regulator/max77650-regulator.c b/drivers/regulator/m=
+ax77650-regulator.c
+> index 5afb91400832..90c0f73f3fad 100644
+> --- a/drivers/regulator/max77650-regulator.c
+> +++ b/drivers/regulator/max77650-regulator.c
+> @@ -13,8 +13,6 @@
+>  #include <linux/regulator/driver.h>
+>
+>  #define MAX77650_REGULATOR_EN_CTRL_MASK                GENMASK(3, 0)
+> -#define MAX77650_REGULATOR_EN_CTRL_BITS(_reg) \
+> -               ((_reg) & MAX77650_REGULATOR_EN_CTRL_MASK)
+>  #define MAX77650_REGULATOR_ENABLED             GENMASK(2, 1)
+>  #define MAX77650_REGULATOR_DISABLED            BIT(2)
+>
+> @@ -41,7 +39,6 @@ enum {
+>  struct max77650_regulator_desc {
+>         struct regulator_desc desc;
+>         unsigned int regA;
+> -       unsigned int regB;
+>  };
+>
+>  static const u32 max77651_sbb1_regulator_volt_table[] =3D {
+> @@ -86,50 +83,6 @@ static const int max77650_current_limit_table[] =3D {
+>         1000000, 866000, 707000, 500000,
+>  };
+>
+> -static int max77650_regulator_is_enabled(struct regulator_dev *rdev)
+> -{
+> -       struct max77650_regulator_desc *rdesc;
+> -       struct regmap *map;
+> -       int val, rv, en;
+> -
+> -       rdesc =3D rdev_get_drvdata(rdev);
+> -       map =3D rdev_get_regmap(rdev);
+> -
+> -       rv =3D regmap_read(map, rdesc->regB, &val);
+> -       if (rv)
+> -               return rv;
+> -
+> -       en =3D MAX77650_REGULATOR_EN_CTRL_BITS(val);
+> -
+> -       return en !=3D MAX77650_REGULATOR_DISABLED;
+> -}
+> -
+> -static int max77650_regulator_enable(struct regulator_dev *rdev)
+> -{
+> -       struct max77650_regulator_desc *rdesc;
+> -       struct regmap *map;
+> -
+> -       rdesc =3D rdev_get_drvdata(rdev);
+> -       map =3D rdev_get_regmap(rdev);
+> -
+> -       return regmap_update_bits(map, rdesc->regB,
+> -                                 MAX77650_REGULATOR_EN_CTRL_MASK,
+> -                                 MAX77650_REGULATOR_ENABLED);
+> -}
+> -
+> -static int max77650_regulator_disable(struct regulator_dev *rdev)
+> -{
+> -       struct max77650_regulator_desc *rdesc;
+> -       struct regmap *map;
+> -
+> -       rdesc =3D rdev_get_drvdata(rdev);
+> -       map =3D rdev_get_regmap(rdev);
+> -
+> -       return regmap_update_bits(map, rdesc->regB,
+> -                                 MAX77650_REGULATOR_EN_CTRL_MASK,
+> -                                 MAX77650_REGULATOR_DISABLED);
+> -}
+> -
+>  static int max77650_regulator_set_voltage_sel(struct regulator_dev *rdev=
+,
+>                                               unsigned int sel)
+>  {
+> @@ -140,7 +93,7 @@ static int max77650_regulator_set_voltage_sel(struct r=
+egulator_dev *rdev,
+>          * If the regulator is disabled, we can program the desired
+>          * voltage right away.
+>          */
+> -       if (!max77650_regulator_is_enabled(rdev))
+> +       if (!regulator_is_enabled_regmap(rdev))
+>                 return regulator_set_voltage_sel_regmap(rdev, sel);
+>
+>         /*
+> @@ -189,7 +142,7 @@ static int max77651_regulator_sbb1_set_voltage_sel(st=
+ruct regulator_dev *rdev,
+>          * If the regulator is disabled, we can program the desired
+>          * voltage right away.
+>          */
+> -       if (!max77650_regulator_is_enabled(rdev))
+> +       if (!regulator_is_enabled_regmap(rdev))
+>                 return regulator_set_voltage_sel_regmap(rdev, sel);
+>
+>         curr =3D regulator_get_voltage_sel_regmap(rdev);
+> @@ -264,9 +217,9 @@ static int max77650_regulator_set_current_limit(struc=
+t regulator_dev *rdev,
+>  }
+>
+>  static const struct regulator_ops max77650_regulator_LDO_ops =3D {
+> -       .is_enabled             =3D max77650_regulator_is_enabled,
+> -       .enable                 =3D max77650_regulator_enable,
+> -       .disable                =3D max77650_regulator_disable,
+> +       .is_enabled             =3D regulator_is_enabled_regmap,
+> +       .enable                 =3D regulator_enable_regmap,
+> +       .disable                =3D regulator_disable_regmap,
+>         .list_voltage           =3D regulator_list_voltage_linear,
+>         .map_voltage            =3D regulator_map_voltage_linear,
+>         .get_voltage_sel        =3D regulator_get_voltage_sel_regmap,
+> @@ -275,9 +228,9 @@ static const struct regulator_ops max77650_regulator_=
+LDO_ops =3D {
+>  };
+>
+>  static const struct regulator_ops max77650_regulator_SBB_ops =3D {
+> -       .is_enabled             =3D max77650_regulator_is_enabled,
+> -       .enable                 =3D max77650_regulator_enable,
+> -       .disable                =3D max77650_regulator_disable,
+> +       .is_enabled             =3D regulator_is_enabled_regmap,
+> +       .enable                 =3D regulator_enable_regmap,
+> +       .disable                =3D regulator_disable_regmap,
+>         .list_voltage           =3D regulator_list_voltage_linear,
+>         .map_voltage            =3D regulator_map_voltage_linear,
+>         .get_voltage_sel        =3D regulator_get_voltage_sel_regmap,
+> @@ -289,9 +242,9 @@ static const struct regulator_ops max77650_regulator_=
+SBB_ops =3D {
+>
+>  /* Special case for max77651 SBB1 - non-linear voltage mapping. */
+>  static const struct regulator_ops max77651_SBB1_regulator_ops =3D {
+> -       .is_enabled             =3D max77650_regulator_is_enabled,
+> -       .enable                 =3D max77650_regulator_enable,
+> -       .disable                =3D max77650_regulator_disable,
+> +       .is_enabled             =3D regulator_is_enabled_regmap,
+> +       .enable                 =3D regulator_enable_regmap,
+> +       .disable                =3D regulator_disable_regmap,
+>         .list_voltage           =3D regulator_list_voltage_table,
+>         .get_voltage_sel        =3D regulator_get_voltage_sel_regmap,
+>         .set_voltage_sel        =3D max77651_regulator_sbb1_set_voltage_s=
+el,
+> @@ -313,6 +266,10 @@ static struct max77650_regulator_desc max77650_LDO_d=
+esc =3D {
+>                 .n_voltages             =3D 128,
+>                 .vsel_mask              =3D MAX77650_REGULATOR_V_LDO_MASK=
+,
+>                 .vsel_reg               =3D MAX77650_REG_CNFG_LDO_A,
+> +               .enable_reg             =3D MAX77650_REG_CNFG_LDO_B,
+> +               .enable_mask            =3D MAX77650_REGULATOR_EN_CTRL_MA=
+SK,
+> +               .enable_val             =3D MAX77650_REGULATOR_ENABLED,
+> +               .disable_val            =3D MAX77650_REGULATOR_DISABLED,
+>                 .active_discharge_off   =3D MAX77650_REGULATOR_AD_DISABLE=
+D,
+>                 .active_discharge_on    =3D MAX77650_REGULATOR_AD_ENABLED=
+,
+>                 .active_discharge_mask  =3D MAX77650_REGULATOR_AD_MASK,
+> @@ -321,7 +278,6 @@ static struct max77650_regulator_desc max77650_LDO_de=
+sc =3D {
+>                 .type                   =3D REGULATOR_VOLTAGE,
+>         },
+>         .regA           =3D MAX77650_REG_CNFG_LDO_A,
+> -       .regB           =3D MAX77650_REG_CNFG_LDO_B,
+>  };
+>
+>  static struct max77650_regulator_desc max77650_SBB0_desc =3D {
+> @@ -337,6 +293,10 @@ static struct max77650_regulator_desc max77650_SBB0_=
+desc =3D {
+>                 .n_voltages             =3D 64,
+>                 .vsel_mask              =3D MAX77650_REGULATOR_V_SBB_MASK=
+,
+>                 .vsel_reg               =3D MAX77650_REG_CNFG_SBB0_A,
+> +               .enable_reg             =3D MAX77650_REG_CNFG_LDO_B,
+> +               .enable_mask            =3D MAX77650_REGULATOR_EN_CTRL_MA=
+SK,
+> +               .enable_val             =3D MAX77650_REGULATOR_ENABLED,
+> +               .disable_val            =3D MAX77650_REGULATOR_DISABLED,
+>                 .active_discharge_off   =3D MAX77650_REGULATOR_AD_DISABLE=
+D,
+>                 .active_discharge_on    =3D MAX77650_REGULATOR_AD_ENABLED=
+,
+>                 .active_discharge_mask  =3D MAX77650_REGULATOR_AD_MASK,
+> @@ -345,7 +305,6 @@ static struct max77650_regulator_desc max77650_SBB0_d=
+esc =3D {
+>                 .type                   =3D REGULATOR_VOLTAGE,
+>         },
+>         .regA           =3D MAX77650_REG_CNFG_SBB0_A,
+> -       .regB           =3D MAX77650_REG_CNFG_SBB0_B,
+>  };
+>
+>  static struct max77650_regulator_desc max77650_SBB1_desc =3D {
+> @@ -361,6 +320,10 @@ static struct max77650_regulator_desc max77650_SBB1_=
+desc =3D {
+>                 .n_voltages             =3D 64,
+>                 .vsel_mask              =3D MAX77650_REGULATOR_V_SBB_MASK=
+,
+>                 .vsel_reg               =3D MAX77650_REG_CNFG_SBB1_A,
+> +               .enable_reg             =3D MAX77650_REG_CNFG_LDO_B,
+> +               .enable_mask            =3D MAX77650_REGULATOR_EN_CTRL_MA=
+SK,
+> +               .enable_val             =3D MAX77650_REGULATOR_ENABLED,
+> +               .disable_val            =3D MAX77650_REGULATOR_DISABLED,
+>                 .active_discharge_off   =3D MAX77650_REGULATOR_AD_DISABLE=
+D,
+>                 .active_discharge_on    =3D MAX77650_REGULATOR_AD_ENABLED=
+,
+>                 .active_discharge_mask  =3D MAX77650_REGULATOR_AD_MASK,
+> @@ -369,7 +332,6 @@ static struct max77650_regulator_desc max77650_SBB1_d=
+esc =3D {
+>                 .type                   =3D REGULATOR_VOLTAGE,
+>         },
+>         .regA           =3D MAX77650_REG_CNFG_SBB1_A,
+> -       .regB           =3D MAX77650_REG_CNFG_SBB1_B,
+>  };
+>
+>  static struct max77650_regulator_desc max77651_SBB1_desc =3D {
+> @@ -392,7 +354,6 @@ static struct max77650_regulator_desc max77651_SBB1_d=
+esc =3D {
+>                 .type                   =3D REGULATOR_VOLTAGE,
+>         },
+>         .regA           =3D MAX77650_REG_CNFG_SBB1_A,
+> -       .regB           =3D MAX77650_REG_CNFG_SBB1_B,
+>  };
+>
+>  static struct max77650_regulator_desc max77650_SBB2_desc =3D {
+> @@ -416,7 +377,6 @@ static struct max77650_regulator_desc max77650_SBB2_d=
+esc =3D {
+>                 .type                   =3D REGULATOR_VOLTAGE,
+>         },
+>         .regA           =3D MAX77650_REG_CNFG_SBB2_A,
+> -       .regB           =3D MAX77650_REG_CNFG_SBB2_B,
+>  };
+>
+>  static struct max77650_regulator_desc max77651_SBB2_desc =3D {
+> @@ -440,7 +400,6 @@ static struct max77650_regulator_desc max77651_SBB2_d=
+esc =3D {
+>                 .type                   =3D REGULATOR_VOLTAGE,
+>         },
+>         .regA           =3D MAX77650_REG_CNFG_SBB2_A,
+> -       .regB           =3D MAX77650_REG_CNFG_SBB2_B,
+>  };
+>
+>  static int max77650_regulator_probe(struct platform_device *pdev)
+> --
+> 2.17.1
+>
