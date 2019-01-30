@@ -2,112 +2,111 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D520BC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EDEC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:38:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A774D218A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:35:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hLjlHbVq"
+	by mail.kernel.org (Postfix) with ESMTP id F23D0218AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:38:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730769AbfA3Kf6 (ORCPT
+        id S1730661AbfA3Kia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 05:35:58 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38043 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730394AbfA3Kf5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 05:35:57 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m22so21142921wml.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 02:35:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZFJINRnvRiZX6jz//vRVRyvCkB+8htjpB1+oo+t/RnI=;
-        b=hLjlHbVqmRv9OPWJ1rbNFjjlBJlxo5iGhC1clvjVhp5z8sSlIiaAiDuqLbscexrIQB
-         LSuqnUpqHZrzSi4QQqdVKtTZvknHDbv0RcU4l4y5o1BHi3sREJt/z98xM/0+fyrpubDZ
-         qJXd3kBpgxqRfXpxmFoKyN0Q1tCo4THk4GtNM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZFJINRnvRiZX6jz//vRVRyvCkB+8htjpB1+oo+t/RnI=;
-        b=Khg6eWJaXBspQAH9mCRYzQEBla9HVw26wSU2lRzlWkb0mz/SkzJ62NluvRQlEb4JSj
-         /tgjD5xwsZPNEKkaBMq36L/1yC05nyamSEdCS1RZXp+z5WMR4H7ZUS/5MuGetPIZBV0n
-         PLNBqIJl/MsL3Iohg7z4EddmaN6sOfZRyU6WoHfmASYPTzlVc4K1F6+DRmfk5fYVRiAL
-         hw2eILQNuYKkqdzpYGS7XuQLPjikH4MPNbUQyeTssCDQskkfeKuzSBBeew/v5K0so9+S
-         RHRoBCCd0ewryay2T26v0MuWHgyjXe89D4uZmoy1Zbs/dT5JpBF2w73956cJVAbLtXmL
-         yAOQ==
-X-Gm-Message-State: AJcUukdI7OgRZkhv6p/6SULSm7irb9oF7mek2cnW/xyR6iMnw2jRI7hJ
-        HvV6NSR6RieohplRvLUxCzeQ6BhhL18=
-X-Google-Smtp-Source: ALg8bN4mpUeb8C5ls4myWN2TbMKuil2Cc4HdVH+y/bpBsw+GlEV+yAwIIVAYrV86Bm6TnW3NgdUnuA==
-X-Received: by 2002:a1c:a104:: with SMTP id k4mr24386330wme.54.1548844555718;
-        Wed, 30 Jan 2019 02:35:55 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id d4sm1611373wrp.89.2019.01.30.02.35.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 02:35:55 -0800 (PST)
-Subject: Re: [PATCH v2] venus: enc: fix enum_frameintervals
-To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        linux-media@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190122105322.22096-1-stanimir.varbanov@linaro.org>
- <9651c01bf3f2adcc405963bfab48b7e7a5656494.camel@ndufresne.ca>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <3062ef17-ad35-68ba-5cad-be9de037e637@linaro.org>
-Date:   Wed, 30 Jan 2019 12:35:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <9651c01bf3f2adcc405963bfab48b7e7a5656494.camel@ndufresne.ca>
-Content-Type: text/plain; charset=utf-8
+        Wed, 30 Jan 2019 05:38:30 -0500
+Received: from mga02.intel.com ([134.134.136.20]:61973 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726548AbfA3Kia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 05:38:30 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 02:38:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
+   d="scan'208";a="140048603"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Jan 2019 02:38:29 -0800
+Received: from fmsmsx115.amr.corp.intel.com (10.18.116.19) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 30 Jan 2019 02:38:29 -0800
+Received: from shsmsx105.ccr.corp.intel.com (10.239.4.158) by
+ fmsmsx115.amr.corp.intel.com (10.18.116.19) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 30 Jan 2019 02:38:28 -0800
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.110]) by
+ SHSMSX105.ccr.corp.intel.com ([169.254.11.253]) with mapi id 14.03.0415.000;
+ Wed, 30 Jan 2019 18:38:26 +0800
+From:   "Kang, Luwei" <luwei.kang@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] KVM: x86: Sync the pending Posted-Interrupts
+Thread-Topic: [PATCH v2] KVM: x86: Sync the pending Posted-Interrupts
+Thread-Index: AQHUuDc/JCDEt2PmwEi/JWQKAeKmNaXG9FYAgACJIZD//4kjgIAAl80Q
+Date:   Wed, 30 Jan 2019 10:38:26 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E172CD60FB@SHSMSX101.ccr.corp.intel.com>
+References: <1548809972-32100-1-git-send-email-luwei.kang@intel.com>
+ <0e8444a1-39a3-d217-8602-ae175fedc8b2@redhat.com>
+ <82D7661F83C1A047AF7DC287873BF1E172CD5EE4@SHSMSX101.ccr.corp.intel.com>
+ <a876245b-6094-1767-ac63-dc8d31de9b84@redhat.com>
+In-Reply-To: <a876245b-6094-1767-ac63-dc8d31de9b84@redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzUyNTI0MTgtMmJiNy00OTdiLTlhNWMtZWE3ZDU0YTQzZDg4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTlA5NkJHdk1qYjFjQlk0a1E0MHlhQjJRc2JMY25PbVNpaStOUjk4QVZ1dTNRN1V2MEpQU3JQQUR5ZkV2bzhwWiJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
-
-On 1/30/19 5:28 AM, Nicolas Dufresne wrote:
-> Le mardi 22 janvier 2019 à 12:53 +0200, Stanimir Varbanov a écrit :
->> This ixes an issue when setting the encoder framerate because of
-> 
-> ixes -> fixes
-> 
->> missing precision. Now the frameinterval type is changed to
->> TYPE_CONTINUOUS and step = 1. Also the math is changed when
->> framerate property is called - the firmware side expects that
->> the framerate one is 1 << 16 units.
-> 
-> Note sure, maybe you didn't mean to add 'one' here ? Why not just say
-> that that firmware expect values in Q16 ?
-
-yes, thanks for the suggestion.
-
-> 
->>
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> 
-> Looking toward testing it, but I had the bad luck of using an USB
-> storage rootfs, and apparently USB no longer works on 5.0rc+, if you
-> have a baseline tree to suggest, I'll take it. Thanks for this patch.
-
-try qcomlt-4.14 release branch at [1].
-
--- 
-regards,
-Stan
-
-[1]
-https://git.linaro.org/landing-teams/working/qualcomm/kernel.git/log/?h=release/qcomlt-4.14
+PiA+PiBUaGlzIGlzIG5vdCB3aGF0IEkgYXNrZWQuICBZb3Ugc2hvdWxkIGluc3RlYWQgZG8gdGhl
+IGNoZWNrIGFmdGVyIHBpX2NsZWFyX3NuLg0KPiA+Pg0KPiA+DQo+ID4gSSB0aGluayB0aGUgU04g
+aGFzIGJlZW4gY2xlYXJlZCBoZXJlIGJlZm9yZSB0ZXN0IHRoZSBiaXRtYXAuDQo+ID4gVGhlIFNO
+IHdpbGwgYmUgc2V0IHdoZW4gdGhlICB2Q1BVIGlzIHNjaGVkdWxlIG91dC4gSUQ6DQo+ID4gMjhi
+ODM1ZDYwZmNjMjQ5OGU3MTdjZjVlNmYwYzM2OTFjMjQ1NDZmNw0KPiA+IEJ1dCBTTiB3aWxsIGJl
+IGNsZWFyZWQgd2hlbiBzY2hlZCBpbi4NCj4gPg0KPiA+IEFub3RoZXIgcGxhY2UgaXMgd2hlbiB2
+Q1BVIHJ1biBvdXQgb2YgdGhlIHZjcHVfcnVuKCkgZnVuY3Rpb246DQo+ID4gICAgICBrdm1fYXJj
+aF92Y3B1X2lvY3RsX3J1bigpDQo+ID4gICAgICAgICAgdmNwdV9sb2FkKHZjcHUpOyAtPiBrdm1f
+YXJjaF92Y3B1X2xvYWQgLT4gdm14X3ZjcHVfbG9hZCAtPiB2bXhfdmNwdV9waV9sb2FkIC0+IG5l
+dy5zbiA9IDA7DQo+ID4gICAgICAgICAgdmNwdV9ydW4odmNwdSk7DQo+ID4gICAgICAgICAgICAg
+IGZvcig7OykNCj4gPiAgICAgICAgICB2Y3B1X3B1dCh2Y3B1KTsgLT4ga3ZtX2FyY2hfdmNwdV9w
+dXQgLT4gdm14X3ZjcHVfcHV0IC0+DQo+ID4gdm14X3ZjcHVfcGlfcHV0IC0+IHBpX3NldF9zbigp
+IEJ1dCBTTiB3aWxsIGJlIGNsZWFyZWQgaW4gdmNwdV9sb2FkKCkNCj4gPiBiZWZvcmUgYmFjayB0
+byB2Y3B1X3J1bigpDQo+IA0KPiBZZXMsIGJ1dCB5b3UncmUgY2hhbmdpbmcgdGhlIHdyb25nIHBh
+dGguICBUaGUgcGF0Y2ggaXMgYWZmZWN0aW5nIF9hbGxfIHZtZW50cmllcywgbm90IGp1c3QgdGhv
+c2UgYWZ0ZXIgUElELlNOIGhhcyBiZWVuIGNsZWFyZWQuDQo+IA0KPiBBcyBJIG1lbnRpb25lZCBp
+biB0aGUgcHJldmlvdXMgZW1haWwsIEtWTSByZWxpZXMgb24gdGhlIFNETSdzIGludmFyaWFudCB0
+aGF0IE9OIHdoZXJlIFBJRC5PTj0xIHdoZW5ldmVyIFBJRC5QSVIhPTAuICBJbnZhcmlhbnRzIGFy
+ZSB5b3VyDQo+IGJlc3QgZnJpZW5kIHdoZW4gZGVhbGluZyB3aXRoIGNvbXBsaWNhdGVkIG11bHRp
+LXByb2Nlc3NvciBjb2RlIHNvIEkgZG9uJ3Qgd2FudCB0byBjaGFuZ2UgdGhhdC4NCj4gDQo+IEl0
+J3MgdGhlIFZULWQgcGlfY2xlYXJfc24gcGF0aCB0aGF0IEkgd2FudCB0byBiZSBjaGFuZ2VkLCBi
+ZWNhdXNlIGl0J3MgVlQtZCBhbmQgc3BlY2lmaWNhbGx5IFNOIHRoYXQgY29tcGxpY2F0ZXMgdGhl
+IHZlcnkgc2ltcGxlIGRlZmluaXRpb24gaW4NCj4gdGhlIFNETS4gIEJ5IG1vZGlmeWluZyB0aGUg
+cGlfY2xlYXJfc24gcGF0aCwgeW91IGVuc3VyZSB0aGUgaW52YXJpYW50IGlzIHJlc3BlY3RlZCBh
+bmQgZXZlcnlvbmUgaXMgaGFwcHkuDQoNCkhpIFBhb2xvLA0KICAgIEhvdyBhYm91dCBsaWtlIHRo
+aXM6DQoNCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rdm0vdm14L3ZteC5jIGIvYXJjaC94ODYva3Zt
+L3ZteC92bXguYw0KaW5kZXggODIwYTAzYi4uZGZjNWUzZCAxMDA2NDQNCi0tLSBhL2FyY2gveDg2
+L2t2bS92bXgvdm14LmMNCisrKyBiL2FyY2gveDg2L2t2bS92bXgvdm14LmMNCkBAIC0xMjE5LDYg
+KzEyMTksOSBAQCBzdGF0aWMgdm9pZCB2bXhfdmNwdV9waV9sb2FkKHN0cnVjdCBrdm1fdmNwdSAq
+dmNwdSwgaW50IGNwdSkNCiAgICAgICAgICAgICAgICAgICAgICAgIG5ldy5uZHN0ID0gKGRlc3Qg
+PDwgOCkgJiAweEZGMDA7DQoNCiAgICAgICAgICAgICAgICBuZXcuc24gPSAwOw0KKw0KKyAgICAg
+ICAgICAgICAgIGlmICghYml0bWFwX2VtcHR5KCh1bnNpZ25lZCBsb25nICopbmV3LnBpciwgTlJf
+VkVDVE9SUykpDQorICAgICAgICAgICAgICAgICAgICAgICBuZXcub24gPSAxOw0KICAgICAgICB9
+IHdoaWxlIChjbXB4Y2hnNjQoJnBpX2Rlc2MtPmNvbnRyb2wsIG9sZC5jb250cm9sLA0KICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgbmV3LmNvbnRyb2wpICE9IG9sZC5jb250cm9sKTsNCiB9DQoN
+ClRoYW5rcywNCkx1d2VpIEthbmcNCg==
