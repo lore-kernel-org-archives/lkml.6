@@ -2,136 +2,189 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E655C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8101DC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D21C12184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:14:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ACB22184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:20:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E5UwMToC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azOq5qT2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731671AbfA3UOF (ORCPT
+        id S2387564AbfA3UUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 15:14:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36622 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728446AbfA3UOE (ORCPT
+        Wed, 30 Jan 2019 15:20:16 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33560 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726857AbfA3UUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 15:14:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IAxl67UUajweenS+RqqsqKt9ooBaZ0TFo8mDUHMa8SM=; b=E5UwMToCrvwAsoT5YCJOivoCt
-        1F8eElxTBRyfGgHpohsq3ue3VBcfsGt2KHE0lJX5CheWRkFRgoKsCJ+5w4HtJv4dPONwDkZw+N6mA
-        tDSW2NlMKeXT/5HMcrYUeGFEUNxgwOtnrD6uuD8EJZEgSwskzy8Z+UoqXTu98yTrftFqbwIzkNPyG
-        c14NHTPEiCMpRTN+pFBzgNw3XH445szbDQsBikv2qGkLyZ7LyUNMg0nP50dze+x4c31GOfuy2wtwn
-        luPYydoX5+BN5Pl7Rszp6eSvDQD6JdLTJtYSdBTG0wfN+6vts727bO8yrmJGjx0aDAS+8L5+4pNot
-        CjMcRTfIQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gowFF-0007WB-Uo; Wed, 30 Jan 2019 20:14:02 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 52DEB20179289; Wed, 30 Jan 2019 21:14:00 +0100 (CET)
-Date:   Wed, 30 Jan 2019 21:14:00 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>
-Subject: Re: [PATCH] sched/debug: initialize sd_sysctl_cpus if
- !CONFIG_CPUMASK_OFFSTACK
-Message-ID: <20190130201400.GH2278@hirez.programming.kicks-ass.net>
-References: <20190129151245.5073-1-msys.mizuma@gmail.com>
+        Wed, 30 Jan 2019 15:20:16 -0500
+Received: by mail-lf1-f68.google.com with SMTP id i26so659298lfc.0;
+        Wed, 30 Jan 2019 12:20:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sHh6R0cj+Zd+YyixiSqQDixoTsB4Kn6GO0L0R/czJN8=;
+        b=azOq5qT2yRtd2binatQwsCftpQyd4nj1G7iyzsW20eig4DFdXaAemGHih4k4OMHMno
+         yVCtO+G7lpSopBR9drCaX0qtO6AJFGfRvJYjhlUaFj/Pu11dwXfYEA3jr2cEO8G6u1Oy
+         Lvwr9zsrQRU3mZq+Hl26znFuheCE4Vc24gyG7KeRFAOsaoh+tw9xoYi7CfBKhbOTLDIg
+         8KWTMo/a3lT7uADgwsGxuFj2wlU8Wm4aHypFu0FgamDQ0myUcfk6iMtCxp3X1HM2UEQN
+         +wRE4H0Gjtgi5qJ6m7noHPkjDSjhA2hdzdipSPDFwUIhYDQ1OsmoQLNOCoLOqxpsKd51
+         +UQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sHh6R0cj+Zd+YyixiSqQDixoTsB4Kn6GO0L0R/czJN8=;
+        b=oKjyQFCfYHjre8hrkoDZeE8fbspdKyS6mPpBytE6ne20/FAyIiSdKmXNb+hRCW38UT
+         0e0QWimbg/szpTdjVWM6IZ+HKEA5M1QQG2jPcXbc8NzjX997zCeMf5BsmOcdU+/jWh4I
+         LlO8D62CbLiyIHNI6V/MEahZtL4Q5GiXq7JQ1EToJTyGw7v5R3XkGH1bkhxNlVTAwN6B
+         PkX8Kd7d5DcS17oavGe/DbSLZ7jjsxc4H8S4WqNvpM+lIGxj5dPltsEdgnKU1rY3jHHk
+         7U+nr5Wg6UMo+vQC4EkNAmHZi0tzGYDL7agErkWiRKwAdqYP83JRc60HaAL78uzmCd8m
+         uX8g==
+X-Gm-Message-State: AJcUukfXPe548rnS5pGu2reyCXui74SqJJG6VcLmFbMehxGJk6ZJW4k1
+        0mpjrUege5MQugIYBpQ68yk0gFQx
+X-Google-Smtp-Source: ALg8bN6zQAP7H2zlx+RHisI+8/HNmUImTfj0lcAeLJxZ+7ewf4Yn8/Ax7bZwDXYL9d9FF0v5Bl7fhA==
+X-Received: by 2002:a19:4849:: with SMTP id v70mr26429604lfa.62.1548879612483;
+        Wed, 30 Jan 2019 12:20:12 -0800 (PST)
+Received: from [192.168.1.18] (dks71.neoplus.adsl.tpnet.pl. [83.24.22.71])
+        by smtp.gmail.com with ESMTPSA id p23sm453685lfh.47.2019.01.30.12.20.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 12:20:11 -0800 (PST)
+Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
+To:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
+Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+References: <20190130183005.833-1-dmurphy@ti.com>
+ <f3792d44-1a43-318b-1b12-d6d69275c3a8@gmail.com>
+ <333a146a-a469-5b72-5e81-ff7f522dc598@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <c65ca84d-8054-2244-1899-e4a9cb0842da@gmail.com>
+Date:   Wed, 30 Jan 2019 21:20:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129151245.5073-1-msys.mizuma@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <333a146a-a469-5b72-5e81-ff7f522dc598@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 10:12:45AM -0500, Masayoshi Mizuma wrote:
-> From: Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>
-> 
-> register_sched_domain_sysctl() copies the cpu_possible_mask into
-> sd_sysctl_cpus, but only if sd_sysctl_cpus hasn't already been
-> allocated (ie, CONFIG_CPUMASK_OFFSTACK is set).  However, when
-> CONFIG_CPUMASK_OFFSTACK is not set, sd_sysctl_cpus is left uninitialized
-> (all zeroes) and the kernel may fail to initialize sched_domain sysctl
-> entries for all possible cpus.
-> 
-> This is visible to the user if the kernel is booted with maxcpus=n, or
-> if ACPI tables have been modified to leave cpus offline, and then
-> checking for missing /proc/sys/kernel/sched_domain/cpu* entries.
-> 
-> Fix this by separating the allocataion and initialization, and adding
-> a flag to initialize the possible cpu entries while system booting only.
-> 
-> Signed-off-by: Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>
-> Reviewed-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> Tested-by: Syuuichirou Ishii <ishii.shuuichir@jp.fujitsu.com>
-> Tested-by: Tarumizu, Kohei <tarumizu.kohei@jp.fujitsu.com>
-> ---
->  kernel/sched/debug.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-> index de3de997e245..9c6637f3e21d 100644
-> --- a/kernel/sched/debug.c
-> +++ b/kernel/sched/debug.c
-> @@ -310,6 +310,7 @@ static struct ctl_table *sd_alloc_ctl_cpu_table(int cpu)
->  
->  static cpumask_var_t		sd_sysctl_cpus;
->  static struct ctl_table_header	*sd_sysctl_header;
-> +static int register_sched_domain_sysctl_on_boot = 1;
->  
->  void register_sched_domain_sysctl(void)
->  {
-> @@ -344,9 +345,12 @@ void register_sched_domain_sysctl(void)
->  	if (!cpumask_available(sd_sysctl_cpus)) {
->  		if (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
->  			return;
-> +	}
->  
-> +	if (register_sched_domain_sysctl_on_boot) {
->  		/* init to possible to not have holes in @cpu_entries */
->  		cpumask_copy(sd_sysctl_cpus, cpu_possible_mask);
-> +		register_sched_domain_sysctl_on_boot = 0;
->  	}
->  
->  	for_each_cpu(i, sd_sysctl_cpus) {
+Dan,
 
-I change it like the below. By keeping the initial value 0 it can go
-into .bss instead of .data.
+On 1/30/19 8:59 PM, Dan Murphy wrote:
+> Jacek
+> 
+> On 1/30/19 1:37 PM, Jacek Anaszewski wrote:
+>> Hi Dan,
+>>
+>> Thank you for the RFC.
+>>
+>> One vital thing is missing - documentation of brightness file must
+>> be updated to define its semantics for LED multi color class.
+>>
+>> Either we need brightness-model file returning only "onoff" option
+>> available, or, for time being, fix the max_brightness for LED multi
+>> color class to 1 (which will map to max intensity level for each color).
+>>
+> 
+> I can make max_brightness default to 1 if not set by the LED driver.
+> 
+> But the LP50xx has brightness controls so setting max_brightness from the driver should over ride
+> the max of 1 in the upper level.
 
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -315,6 +315,7 @@ void register_sched_domain_sysctl(void)
- {
- 	static struct ctl_table *cpu_entries;
- 	static struct ctl_table **cpu_idx;
-+	static bool init_done = false;
- 	char buf[32];
- 	int i;
- 
-@@ -344,7 +345,10 @@ void register_sched_domain_sysctl(void)
- 	if (!cpumask_available(sd_sysctl_cpus)) {
- 		if (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
- 			return;
-+	}
- 
-+	if (!init_done) {
-+		init_done = true;
- 		/* init to possible to not have holes in @cpu_entries */
- 		cpumask_copy(sd_sysctl_cpus, cpu_possible_mask);
- 	}
+Yes, so the max_brightness should be updated basing on current
+brightness-model. For LEDn_BRIGHTNESS of LP50xx we could have
+"hw" or maybe even better just "lp50xx-linear" and "lp50xx-logarithmic"
+- I just forgot about that capability of the device.
+
+> For devices that do not support brightness as a separate control we can create a file called
+> max_brightness_<color> that defines the max that a specific color can be set to.  If max_brightness
+> is set to 1 then create max_brightness_<color>.  If max_brightness > 1 then do not create the files.
+
+Right. We will need dedicated max_brightness for each color.
+They should be placed also in the colors directory, next to the color
+files.
+
+> I don't think we have fully vetted the brightness-model yet so I prefer to omit
+> it and possibly introduce that later.
+
+We need to start from something. It will give better overview of the
+whole idea.
+
+Best regards,
+Jacek Anaszewski
+
+> Dan
+> 
+>> Best regards,
+>> Jacek Anaszewski
+>>
+>> On 1/30/19 7:30 PM, Dan Murphy wrote:
+>>> Add a documentation of LED Multicolor LED class specific
+>>> sysfs attributes.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>>>    .../ABI/testing/sysfs-class-led-multicolor    | 38 +++++++++++++++++++
+>>>    1 file changed, 38 insertions(+)
+>>>    create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+>>>
+>>> diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Documentation/ABI/testing/sysfs-class-led-multicolor
+>>> new file mode 100644
+>>> index 000000000000..19f8da9b150e
+>>> --- /dev/null
+>>> +++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
+>>> @@ -0,0 +1,38 @@
+>>> +What:        /sys/class/leds/<led>/color/sync_enable
+>>> +Date:        January 2019
+>>> +KernelVersion:    5.0
+>>> +Contact:    Dan Murphy <dmurphy@ti.com>
+>>> +Description:    read/write
+>>> +        Writing a 1 to this file will enable the sychronization of all
+>>> +        the defined color LEDs within the LED node.  Writing a 0 to
+>>> +        this file will disable syncing.
+>>> +
+>>> +What:        /sys/class/leds/<led>/color/sync
+>>> +Date:        January 2019
+>>> +KernelVersion:    5.0
+>>> +Contact:    Dan Murphy <dmurphy@ti.com>
+>>> +Description:    write only
+>>> +        Writing a 1 to this file while sync_enable is set to 1 will
+>>> +        synchronize all defined LEDs within the LED node.  All LEDs
+>>> +        defined will be configured based on the brightness that has
+>>> +        been requested.
+>>> +
+>>> +        If sync_enable is set to 0 then writing a 1 to sync has no
+>>> +        affect on the LEDs.
+>>> +
+>>> +What:        /sys/class/leds/<led>/color/<led color>
+>>> +Date:        January 2019
+>>> +KernelVersion:    5.0
+>>> +Contact:    Dan Murphy <dmurphy@ti.com>
+>>> +Description:    read/write
+>>> +        These files are dynamically created based on the colors defined
+>>> +        by the registrar of the class.
+>>> +        The led color(s) can be but not limited to red, green, blue,
+>>> +        white, amber and violet.  If sync is enabled then writing the
+>>> +        brightness value of the LED is deferred until a 1 is
+>>> +        written to /sys/class/leds/<led>/color/sync.  If syncing is
+>>> +        disabled then the LED brightness value will be written
+>>> +        immediately to the LED driver.
+>>> +
+>>> +        The value of the color is from 0 to
+>>> +        /sys/class/leds/<led>/max_brightness.
+>>>
+>>
+> 
+> 
+
+
