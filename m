@@ -4,119 +4,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4965DC282D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D3FC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1952F218A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA52221473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:50:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548863398;
-	bh=+INOyHZAeZt27HReDRQNgCdW/5pwXbyqrHJoIGYAwHA=;
+	s=default; t=1548863421;
+	bh=f9eUobC1VsZ90U7dWwfPWz4IuNQfa+BPjW3Th2m1JS4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=T8YTXmr46xDMGo7LjJQYdR4WjJLqr9GlQHttSP+Rpc8hTbGa3EXi+JIICezqNARhr
-	 W4u54OcpROFKiCH+1Bfic5LkOVVp+qLDnQAvPhi+eQ+dkk2oj5YL8Y2iOvw3PtUMgX
-	 BJ2O/6Ar2NGBHzUCMJveJc1UmO94mUlIsXi4CJWI=
+	b=pg0OlkQRFBAEAm70UY5E/QrUq9zXtnF9ePWe4r+P1LmNb7DkSlISCMTOpY8uIH5sM
+	 5T7bSQkbGKokSrXszkddtpOi1Jcb36WoX16mfx9LzRAmgjjufq/KbYyf2H3bdOWdHZ
+	 /Us6CBdi5Pze3ujgLqG85IuEHA7aH6Y9uZW2nnwY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731597AbfA3Pt4 (ORCPT
+        id S1731616AbfA3PuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:49:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728943AbfA3Pt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:49:56 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4063121473;
-        Wed, 30 Jan 2019 15:49:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548863395;
-        bh=+INOyHZAeZt27HReDRQNgCdW/5pwXbyqrHJoIGYAwHA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f0Gi6IUeLtioxqatr7i0DNPhfTdOzXHsjtPn06LuC5R5Pu9LvHwaiF6cORC215d2O
-         b+pzwQbSR2yn4fc54wZNHqpkt2JyDlmSNYCyv6lGcUF9YjrjthrDD7vcnkDqKIQZ3h
-         SKqtLWr8NnftuEyaPR+kyDo/zw9U2bw9D17VvJJU=
-Date:   Wed, 30 Jan 2019 09:49:50 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     honghui.zhang@mediatek.com
-Cc:     lorenzo.pieralisi@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
-        youlin.pei@mediatek.com, jianjun.wang@mediatek.com
-Subject: Re: [PATCH] PCI: Mediatek: Use resource_size function on resource
- object
-Message-ID: <20190130154950.GD229773@google.com>
-References: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
+        Wed, 30 Jan 2019 10:50:19 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43219 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728943AbfA3PuT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 10:50:19 -0500
+Received: by mail-oi1-f196.google.com with SMTP id u18so19547569oie.10;
+        Wed, 30 Jan 2019 07:50:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P2qq8+E4g/m+cCmMeaSfpaPEUpdAovlDLmemICtL6O4=;
+        b=q0nUslTyT5ZV9gGtv4qtB087U72h2Xu+hjxLWnmbJ9+ClkgxVAYqDx+R55aeh9/1Bk
+         RmwKPtSpU90B/02eFCzPBwgSrp4g7YS228P5cO6Wpz/MCOER/IW1UYfzpN2nKo+Rcbd1
+         X7DCz5I1vpO9qHFhB7Dn5/PCIGHiydbfIPhX92JSNdOF4O3W6zkjVeYnitae2rKIVDfp
+         Fkn9Ob1eZJfHfNhXeOvg70co6Zuc6I+u8eJtvyN7rljQvpgBlaA/7fHxAN104SZk4lD5
+         cINGiH5y6Woa0pYEZsQ/OI7HIwyqEZzyZ9CX1D1HvVFDqN7UrRQX/YKYNmgq0kyS6nPr
+         Ly3A==
+X-Gm-Message-State: AJcUukfa/AnoUbH0UJoxpKz6sQ8o0P6IO1DpWrxAnQoNOZr4Un+GRr3w
+        5x2J8MxbgV1B68gPS6J6Mw==
+X-Google-Smtp-Source: ALg8bN7YUdJsKMpCX953MaNa6vxwhOhFB2rvS6C+vX5gSNPtizkLZmOQ0v4ZTva+YKvus3IQry/J6A==
+X-Received: by 2002:aca:ba02:: with SMTP id k2mr13254932oif.177.1548863417913;
+        Wed, 30 Jan 2019 07:50:17 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t201sm751720oie.37.2019.01.30.07.50.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 07:50:17 -0800 (PST)
+Date:   Wed, 30 Jan 2019 09:50:16 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Loys Ollivier <lollivier@baylibre.com>
+Cc:     devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v3 2/4] dt-bindings: gnss: add mediatek binding
+Message-ID: <20190130155016.GA26536@bogus>
+References: <1548693481-1162-1-git-send-email-lollivier@baylibre.com>
+ <1548693481-1162-3-git-send-email-lollivier@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
+In-Reply-To: <1548693481-1162-3-git-send-email-lollivier@baylibre.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 02:03:53PM +0800, honghui.zhang@mediatek.com wrote:
-> From: Honghui Zhang <honghui.zhang@mediatek.com>
+On Mon, Jan 28, 2019 at 05:37:59PM +0100, Loys Ollivier wrote:
+> Add binding for Mediatek-based GNSS receivers.
 > 
-> drivers/pci/pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
-> 
-> Generated by: scripts/coccinelle/api/resource_size.cocci
-> 
-> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
 > ---
->  drivers/pci/controller/pcie-mediatek.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index e307166..0168376 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
->  	struct resource *mem = &pcie->mem;
->  	const struct mtk_pcie_soc *soc = port->pcie->soc;
->  	u32 val;
-> -	size_t size;
->  	int err;
->  
->  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
-> @@ -706,8 +705,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
->  		mtk_pcie_enable_msi(port);
->  
->  	/* Set AHB to PCIe translation windows */
-> -	size = mem->end - mem->start;
-> -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
-> +	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
+> v3:
+> Removed the I2C and SPI interfaces references.
+> Removed the "mediatek,mt3339" compatible line.
+> Added the optional propertied (reset, fix)
+> Added the pin names for the optional properties.
+> 
+> v2:
+> Renamed bindings from Globaltop/gtop to Mediatek/mtk.
+> Moved current-speed as an optional propertie.
+> Removed the status line in the example.
+> Added "mediatek,mt3339" compatible.
+> 
+>  .../devicetree/bindings/gnss/mediatek.txt          | 37 ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gnss/mediatek.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gnss/mediatek.txt b/Documentation/devicetree/bindings/gnss/mediatek.txt
+> new file mode 100644
+> index 000000000000..00650d81c5c8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gnss/mediatek.txt
+> @@ -0,0 +1,37 @@
+> +Mediatek-based GNSS Receiver DT binding
+> +
+> +Mediatek chipsets are used in GNSS-receiver modules produced by several
+> +vendors and can use an UART interface.
+> +
+> +Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
+> +properties.
+> +
+> +Required properties:
+> +
+> +- compatible	: Must be
+> +
+> +			"globaltop,pa6h"
+> +
+> +- vcc-supply	: Main voltage regulator (pin name: VCC)
+> +
+> +Optional properties:
+> +
+> +- gtop,reset-gpios	: GPIO used to reset the device
+> +  			  (pin name: RESET, NRESET)
 
-This is actually a fairly interesting change because it effectively
-changes this:
+reset-gpios is the standard name.
 
-  fls(mem->end - mem->start)
-
-to this:
-
-  fls(mem->end - mem->start + 1)
-
-And mem->end is the last valid address, so it changes something like
-this:
-
-  fls(0xffff)         # == 15
-
-to this:
-
-  fls(0x10000)        # == 16
-
-So while this *looks* like a trivial warning fix, it likely fixes an
-important bug, and it's worth pointing out what that bug is in the
-changelog.
-
->  	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
->  
->  	val = upper_32_bits(mem->start);
+> +- gtop,fix-gpios	: GPIO used to determine device position fix state
+> +			  (pin name: FIX, 3D_FIX)
+> +- timepulse-gpios	: Time pulse GPIO (pin name: PPS1, 1PPS)
+> +- v-bckp-supply		: Backup voltage regulator
+> +  			  (pin name: VBAT, VBACKUP)
+> +- current-speed		: Default UART baud rate
+> +
+> +Example:
+> +
+> +serial@1234 {
+> +	compatible = "ns16550a";
+> +
+> +	gnss {
+> +		compatible = "globaltop,pa6h";
+> +		vcc-supply = <&vcc_3v3>;
+> +	};
+> +};
 > -- 
-> 2.6.4
+> 2.7.4
 > 
