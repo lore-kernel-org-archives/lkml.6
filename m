@@ -2,93 +2,138 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DA1C282D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822CEC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E446D20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C11321473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:33:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="McPqcDwM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732512AbfA3RcQ (ORCPT
+        id S1732540AbfA3Rds (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:32:16 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:39644 "EHLO ale.deltatee.com"
+        Wed, 30 Jan 2019 12:33:48 -0500
+Received: from mx2.ucr.edu ([138.23.62.3]:29657 "EHLO mx2.ucr.edu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726341AbfA3RcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:32:16 -0500
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.205])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gotiY-0006g6-4S; Wed, 30 Jan 2019 10:32:07 -0700
-To:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>
-Cc:     "Koenig, Christian" <Christian.Koenig@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Kuehling, Felix" <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-References: <20190129174728.6430-1-jglisse@redhat.com>
- <20190129174728.6430-4-jglisse@redhat.com>
- <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
- <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
- <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
- <20190129205827.GM10108@mellanox.com> <20190130080208.GC29665@lst.de>
- <4e0637ba-0d7c-66a5-d3de-bc1e7dc7c0ef@amd.com>
- <20190130155543.GC3177@redhat.com> <20190130172653.GA6707@lst.de>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <39edda88-acd8-c8ec-a6a5-64898006b69f@deltatee.com>
-Date:   Wed, 30 Jan 2019 10:32:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190130172653.GA6707@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgg@mellanox.com, Christian.Koenig@amd.com, jglisse@redhat.com, hch@lst.de
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1726341AbfA3Rds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:33:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1548869627; x=1580405627;
+  h=from:to:cc:subject:date:message-id;
+  bh=sD3YsFFxFFf5mI1/Slp1q9iWxdDGyH2Fo/moTt7ef6w=;
+  b=McPqcDwMyzq1+BEvk/iTtp9+LanhmI+7eJFmiAVzyBxJI1Odvu2M3h7s
+   vj8wInRizSiFp8KcH8uKqA0blhtr/8pTDqEwy0QGCaeeYy7QZCVnD944C
+   iNF/T4UdXUeFz/isrm7kJgjmFk/2cU3Cy93EUnAV5yT3jrfsz2Q/wnkUu
+   Xjoz77D6wwvmznA4wMVpYZDq79vKwssF5dkl+3c52l1cLAXNpkDtS5ID8
+   0JdzCsxsY9PjvxcG+uPcJKzx8ADnJ8pMExnobpCprWkvakmp26vOqAOvQ
+   HdmH7+jJ4LwIlffsmkfSn7UQ2eji0Tnulfrp1wpUFcpwemrdZCsuJzraE
+   Q==;
+IronPort-PHdr: =?us-ascii?q?9a23=3AomGvURNMXO+xM7bTI6Yl6mtUPXoX/o7sNwtQ0KIM?=
+ =?us-ascii?q?zox0LfT5rarrMEGX3/hxlliBBdydt6oUzbKO+4nbGkU4qa6bt34DdJEeHzQksu?=
+ =?us-ascii?q?4x2zIaPcieFEfgJ+TrZSFpVO5LVVti4m3peRMNQJW2aFLduGC94iAPERvjKwV1?=
+ =?us-ascii?q?Ov71GonPhMiryuy+4ZLebxlLiTanfb9+MAi9oBnMuMURnYZsMLs6xAHTontPde?=
+ =?us-ascii?q?RWxGdoKkyWkh3h+Mq+/4Nt/jpJtf45+MFOTav1f6IjTbxFFzsmKHw65NfqtRbY?=
+ =?us-ascii?q?UwSC4GYXX3gMnRpJBwjF6wz6Xov0vyDnuOdxxDWWMMvrRr0vRz+s87lkRwPpiC?=
+ =?us-ascii?q?cfNj427mfXitBrjKlGpB6tvgFzz5LIbI2QMvd+e6LdfcgBRWpAWMZRWDFKDJ2l?=
+ =?us-ascii?q?YYASAeoBPPhXr43gqFATqRezCxWgCObpxzRVhHH5wLc63vwhHw/YwQIuEdEAvn?=
+ =?us-ascii?q?PPodnpKKsfS/y5wbPUwTnfaf5dxDfz6JLPchAkufyDX7NwcMvRyUkyEAPOk1Kd?=
+ =?us-ascii?q?qIzkPjOVzOsNsnSX4/ZuWO+0lm4otxtxriKxycgxl4nEn4QYwU3H+yVh2Is5O8?=
+ =?us-ascii?q?G0RUphbdOnEJZcrT+WO5Z2T884XW1kpDo2xqUbtZO6eCUG0ooryhDfZvCdbYSF?=
+ =?us-ascii?q?4wjvWeSeLDp+mXlrYqiwhwyo/kil0uD8U86030tUoSddidnMs2wN1wTU6siaVv?=
+ =?us-ascii?q?tx5keh1iiL1wDU8uxEJFo7lavfK5I42r4wmYcfvV3NHiPohEn6kLWadkoj+uiv?=
+ =?us-ascii?q?5OTnZqvpqoWAOI9zjwHyKqUumsqhDuQkKgUCQXSX9OCm2LDg/UD1WqtGguA2n6?=
+ =?us-ascii?q?XDrpzWOdgXqra8AwBP04Yj7xi/Dy2h0NQdhXQGLFNEeBKdgIjoJ13CPP71AOyi?=
+ =?us-ascii?q?g1uwijdn3e7JMaD8ApnVNHjMjK/hfaph605b0AczydFf55RJCrAOOf7zWVH+tM?=
+ =?us-ascii?q?beDhAnNwy52PjnCNpj2YMEQ26PAbGWMLnUsVCW4uIjOe6MZJUauGW1BeIi4qvf?=
+ =?us-ascii?q?jG05hFhVKbi73ZIWMCjjNultOQOUbWe60YRJKnsDogdrFL+is1aFSzMGIinqUg?=
+ =?us-ascii?q?=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2DHAgCT31Fcf8jXVdFkHAEBAQQBAQcEA?=
+ =?us-ascii?q?QGBZQKDOkoPjHyLZwaKZBhthViCc4cJAQoBASyEQIMJIkoBAwEBAgEDARMBAQk?=
+ =?us-ascii?q?LCwgnMUIBDgGBaCmCXzZSgRUBBQE1W4JHAYF0DaBIPIwXM4hjAQeBSwkBCIdth?=
+ =?us-ascii?q?EGBD4EHg26Ef4NUgkMCgSwBAQGPdZEzAQYCAYFjgUKPASSDMoZ1iAsBLZsOAgQ?=
+ =?us-ascii?q?CBAUCBQ8hgzNNJYFsCoFEglGOLB4zgQeGSIVrgk0B?=
+X-IPAS-Result: =?us-ascii?q?A2DHAgCT31Fcf8jXVdFkHAEBAQQBAQcEAQGBZQKDOkoPjHy?=
+ =?us-ascii?q?LZwaKZBhthViCc4cJAQoBASyEQIMJIkoBAwEBAgEDARMBAQkLCwgnMUIBDgGBa?=
+ =?us-ascii?q?CmCXzZSgRUBBQE1W4JHAYF0DaBIPIwXM4hjAQeBSwkBCIdthEGBD4EHg26Ef4N?=
+ =?us-ascii?q?UgkMCgSwBAQGPdZEzAQYCAYFjgUKPASSDMoZ1iAsBLZsOAgQCBAUCBQ8hgzNNJ?=
+ =?us-ascii?q?YFsCoFEglGOLB4zgQeGSIVrgk0B?=
+X-IronPort-AV: E=Sophos;i="5.56,541,1539673200"; 
+   d="scan'208";a="1054440854"
+Received: from mail-pg1-f200.google.com ([209.85.215.200])
+  by smtp2.ucr.edu with ESMTP/TLS/AES128-GCM-SHA256; 30 Jan 2019 09:33:46 -0800
+Received: by mail-pg1-f200.google.com with SMTP id f3so187103pgq.13
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 09:33:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GtM9J7PYJtxRl5BZuKcAvjHRXIRqsfAVBpYWSsT6ylE=;
+        b=r3lShEhuxMBG+mZVAEzjVcVcAxEquFm9qp/jBztrUExRVKM+1aXlP1VXLdV1iRCBX+
+         OlNPGWtm86fP8LjRMAN9yFD4gayGJu4BgL4KXAj7AMeqOPYRt3nV4h7rx94YQE1grCr0
+         SWexDD3F2BGmUBgN2Hnl965K/+4hVs75oiLTa16atq/RIJ3NQjsy92cLVIEhOZrPGKUg
+         Zmrs38k3PxOrAMAkvYmn9IHgSlFFGhjywuitzLInpHlcKI55NrdxUkjahXuQtKLnYa84
+         zGaLk0kMtuDkDo3CC1XYbKfXeEJVA3uAJAxL3wUT9ATxfh1fYSrwQDsPdP6FjHPudI6c
+         KQpw==
+X-Gm-Message-State: AJcUukft2ipyWCTZt7h7lJ3VJT0HtL9n3+b1XLUC/FvCcs2+QQoZvAgZ
+        BXVmhq58+fJ2DTXbr2HINqepL7QKBYagBv2LgmUTYoPkOjDZZkMIW2e7U0rs2jK5Yz6+sqFYLmg
+        Bs6d2dc+7I1YOuH7MvKmhGqmoFQ==
+X-Received: by 2002:a17:902:7e0d:: with SMTP id b13mr31671333plm.154.1548869626533;
+        Wed, 30 Jan 2019 09:33:46 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN7aw1Nz1H93FMudfOy5NE53BPL9EwY5HYqHDs8E/VMwVrjm5xUaIJqekqsExzUDQEqM1xFAxA==
+X-Received: by 2002:a17:902:7e0d:: with SMTP id b13mr31671312plm.154.1548869626143;
+        Wed, 30 Jan 2019 09:33:46 -0800 (PST)
+Received: from Yizhuo.cs.ucr.edu (yizhuo.cs.ucr.edu. [169.235.26.74])
+        by smtp.googlemail.com with ESMTPSA id x27sm6729222pfe.178.2019.01.30.09.33.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 09:33:45 -0800 (PST)
+From:   Yizhuo <yzhai003@ucr.edu>
+Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu, Yizhuo <yzhai003@ucr.edu>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [media] ts2020: Variable "utmp" in function ts2020_set_tuner_rf() could be uninitialized
+Date:   Wed, 30 Jan 2019 09:33:30 -0800
+Message-Id: <20190130173331.4672-1-yzhai003@ucr.edu>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In function ts2020_set_tuner_rf(), local variable "utmp" could
+be uninitialized if function regmap_read() returns -EINVAL.
+However, this value is used in if statement and written to
+the register, which is potentially unsafe.
 
+Signed-off-by: Yizhuo <yzhai003@ucr.edu>
+---
+ drivers/media/dvb-frontends/ts2020.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-On 2019-01-30 10:26 a.m., Christoph Hellwig wrote:
-> On Wed, Jan 30, 2019 at 10:55:43AM -0500, Jerome Glisse wrote:
->> Even outside GPU driver, device driver like RDMA just want to share their
->> doorbell to other device and they do not want to see those doorbell page
->> use in direct I/O or anything similar AFAICT.
-> 
-> At least Mellanox HCA support and inline data feature where you
-> can copy data directly into the BAR.  For something like a usrspace
-> NVMe target it might be very useful to do direct I/O straight into
-> the BAR for that.
+diff --git a/drivers/media/dvb-frontends/ts2020.c b/drivers/media/dvb-frontends/ts2020.c
+index 931e5c98da8a..e351039f2eae 100644
+--- a/drivers/media/dvb-frontends/ts2020.c
++++ b/drivers/media/dvb-frontends/ts2020.c
+@@ -177,9 +177,12 @@ static int ts2020_set_tuner_rf(struct dvb_frontend *fe)
+ {
+ 	struct ts2020_priv *dev = fe->tuner_priv;
+ 	int ret;
+-	unsigned int utmp;
++	unsigned int utmp = 0;
+ 
+ 	ret = regmap_read(dev->regmap, 0x3d, &utmp);
++	if (ret)
++		return ret;
++
+ 	utmp &= 0x7f;
+ 	if (utmp < 0x16)
+ 		utmp = 0xa1;
+-- 
+2.17.1
 
-Yup, these are things we definitely want to be able to do, and have done
-with hacky garbage code: Direct I/O from NVMe to P2P BAR, then we could
-Direct I/O to another drive or map it as an MR and send it over an RNIC.
-
-We'd definitely like to move in that direction. And a world where such
-userspace mappings are gimpped by the fact that they are only some
-special feature of userspace VMAs that can only be used in specialized
-userspace interfaces is not useful to us.
-
-Logan
