@@ -2,200 +2,206 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E831C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 999C8C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74E720857
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:19:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O+1VduTU"
+	by mail.kernel.org (Postfix) with ESMTP id 6353C218A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:22:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731165AbfA3NTC (ORCPT
+        id S1729788AbfA3NWF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:19:02 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37122 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730905AbfA3NTB (ORCPT
+        Wed, 30 Jan 2019 08:22:05 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51301 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfA3NWF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:19:01 -0500
-Received: by mail-it1-f195.google.com with SMTP id b5so10411394iti.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 05:19:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ANeoDmbUb0/8sfBPLXSO9VTANf6KaL0CAlPTKb85IhY=;
-        b=O+1VduTU8SIV7R/owFlkvbSyLNgk4wSG1UWLtjayt3FHHoiS0yDasSfXaW5Zi09NcF
-         I64aRLi22tdK7lmm5OdRLkFlyjZLM7BuC4OWPYo9pS1JhObF3ebmSIw8hw1jnir/sXov
-         K/eyBOlOIpjz+6lPeDxiAegTHCTpQFAyNgYTc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ANeoDmbUb0/8sfBPLXSO9VTANf6KaL0CAlPTKb85IhY=;
-        b=h6FmyuF/VGoUcmInTR95D9MlpsTfR4/nhXRnMzw+PQlVtXo8jSb9/mkUezzqQ1P6m+
-         exR0pmnCP2YFQjeBq6EptvuVGeH3cERvTj4csjcfKZTujYQELrAp+sGEHlkUId4uYkSG
-         tovTFtfJKv6BM02x66fkcl0uVFqbdo4gz9sJtzqdyyI8xLuj2+K/P/2VuEtBbYFGskqU
-         ueLZvOQxYoo00fCVIBi519Wd9ys5k3OnYyOgpy1+XMcqEZPx1LzV4h4j+WutUcUWNIE0
-         Q4fFSdpykj88bULvQPWL0S0gHKx8szuogkcTk2yIqo946tnsuqyYYZBq9VtET92wQouf
-         KONA==
-X-Gm-Message-State: AJcUukfXmrhqOQa3yuyc8Fogms43uZdDOcVjMEFNS9YyuUn3VYD1JfhJ
-        VIlN5gA7TwAbs2uCwB+ucgTdAizq3tU58dHnxhSM8w==
-X-Google-Smtp-Source: ALg8bN62J/QuGU0am7/BE/gEge7sczYQSEz/4n1yumxu6JS3Qag/8Pz+XpFV9jXdxAbQerhtFMwQAS6oPrmrbI7gDUA=
-X-Received: by 2002:a02:6019:: with SMTP id i25mr19758965jac.137.1548854340418;
- Wed, 30 Jan 2019 05:19:00 -0800 (PST)
-MIME-Version: 1.0
-References: <1548846984-2044-1-git-send-email-vincent.guittot@linaro.org> <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 30 Jan 2019 14:18:49 +0100
-Message-ID: <CAKfTPtAO--5rkKAwExbKoKDz9pM7MApbEqe0R9pS1-1avv2Gzw@mail.gmail.com>
-Subject: Re: [PATCH v2 ] PM-runtime: fix deadlock with ktime
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Ladislav Michl <ladis@linux-mips.org>
+        Wed, 30 Jan 2019 08:22:05 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gopoZ-0004m3-8i; Wed, 30 Jan 2019 14:22:03 +0100
+Message-ID: <1548854523.6869.25.camel@pengutronix.de>
+Subject: Re: [PATCH V2 3/4] irq: imx-irqsteer: change to use reg_num instead
+ of irq_group
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Date:   Wed, 30 Jan 2019 14:22:03 +0100
+In-Reply-To: <1548853196-11447-4-git-send-email-aisheng.dong@nxp.com>
+References: <1548853196-11447-1-git-send-email-aisheng.dong@nxp.com>
+         <1548853196-11447-4-git-send-email-aisheng.dong@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019 at 14:06, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Wed, Jan 30, 2019 at 12:16 PM Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
-> >
-> > A deadlock has been seen when swicthing clocksources which use PM runtime.
-> > The call path is:
-> > change_clocksource
-> >     ...
-> >     write_seqcount_begin
-> >     ...
-> >     timekeeping_update
-> >         ...
-> >         sh_cmt_clocksource_enable
-> >             ...
-> >             rpm_resume
-> >                 pm_runtime_mark_last_busy
-> >                     ktime_get
-> >                         do
-> >                             read_seqcount_begin
-> >                         while read_seqcount_retry
-> >     ....
-> >     write_seqcount_end
-> >
-> > Although we should be safe because we haven't yet changed the clocksource
-> > at that time, we can't because of seqcount protection.
-> >
-> > Use ktime_get_mono_fast_ns() instead which is lock safe for such case
-> >
-> > With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
-> > monotonic across an update and as a result can goes backward. According to
-> > update_fast_timekeeper() description: "In the worst case, this can
-> > result is a slightly wrong timestamp (a few nanoseconds)". For
-> > PM runtime autosuspend, this means only that the suspend decision can
-> > be slightly sub optimal.
-> >
-> > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
-> > Reported-by: Biju Das <biju.das@bp.renesas.com>
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->
-> I've queued this one up as a fix for 5.0, but unfortunately it clashes
-> with the patch from Ladislav Michl at
-> https://patchwork.kernel.org/patch/10755477/ which has been dropped
-> now.
+Am Mittwoch, den 30.01.2019, 13:06 +0000 schrieb Aisheng Dong:
+> One group can manage 64 interrupts by using two registers (e.g. STATUS/SET).
+> However, the integrated irqsteer may support only 32 interrupts which
+> needs only one register in a group. But the current driver assume there's
+> a mininum of two registers in a group which result in a wrong register map
+> for 32 interrupts per channel irqsteer. Let's use the reg_num caculated by
+> interrupts per channel instead of irq_group to cover this case.
+> 
+> > Cc: Marc Zyngier <marc.zyngier@arm.com>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Lucas Stach <l.stach@pengutronix.de>
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Thanks for adding Ladislav in this thread.
-I'm sorry I forgot to add him in the loop.
+Minor nit below, otherwise:
 
->
-> Can you or Ladislav please rebase that patch on top of this one and repost?
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-Ladislav,
+> ---
+> v1->v2:
+>  * The using of property name updated accordingly
+> ---
+>  drivers/irqchip/irq-imx-irqsteer.c | 35 +++++++++++++++++++----------------
+>  1 file changed, 19 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irqsteer.c
+> index 5b3f1d7..67ed862 100644
+> --- a/drivers/irqchip/irq-imx-irqsteer.c
+> +++ b/drivers/irqchip/irq-imx-irqsteer.c
+> @@ -13,7 +13,7 @@
+>  #include <linux/of_platform.h>
+>  #include <linux/spinlock.h>
+>  
+> > -#define CTRL_STRIDE_OFF(_t, _r)	(_t * 8 * _r)
+> > +#define CTRL_STRIDE_OFF(_t, _r)	(_t * 4 * _r)
+> >  #define CHANCTRL		0x0
+> >  #define CHANMASK(n, t)		(CTRL_STRIDE_OFF(t, 0) + 0x4 * (n) + 0x4)
+> >  #define CHANSET(n, t)		(CTRL_STRIDE_OFF(t, 1) + 0x4 * (n) + 0x4)
+> @@ -26,7 +26,7 @@ struct irqsteer_data {
+> > >  	struct clk		*ipg_clk;
+> > >  	int			irq;
+> > >  	raw_spinlock_t		lock;
+> > > -	int			irq_groups;
+> > > +	int			reg_num;
+> > >  	int			channel;
+> > >  	struct irq_domain	*domain;
+> > >  	u32			*saved_reg;
+> @@ -35,7 +35,7 @@ struct irqsteer_data {
+>  static int imx_irqsteer_get_reg_index(struct irqsteer_data *data,
+> >  				      unsigned long irqnum)
+>  {
+> > -	return (data->irq_groups * 2 - irqnum / 32 - 1);
+> > +	return (data->reg_num - irqnum / 32 - 1);
+>  }
+>  
+>  static void imx_irqsteer_irq_unmask(struct irq_data *d)
+> @@ -46,9 +46,9 @@ static void imx_irqsteer_irq_unmask(struct irq_data *d)
+> >  	u32 val;
+>  
+> >  	raw_spin_lock_irqsave(&data->lock, flags);
+> > -	val = readl_relaxed(data->regs + CHANMASK(idx, data->irq_groups));
+> > +	val = readl_relaxed(data->regs + CHANMASK(idx, data->reg_num));
+> >  	val |= BIT(d->hwirq % 32);
+> > -	writel_relaxed(val, data->regs + CHANMASK(idx, data->irq_groups));
+> > +	writel_relaxed(val, data->regs + CHANMASK(idx, data->reg_num));
+> >  	raw_spin_unlock_irqrestore(&data->lock, flags);
+>  }
+>  
+> @@ -60,9 +60,9 @@ static void imx_irqsteer_irq_mask(struct irq_data *d)
+> >  	u32 val;
+>  
+> >  	raw_spin_lock_irqsave(&data->lock, flags);
+> > -	val = readl_relaxed(data->regs + CHANMASK(idx, data->irq_groups));
+> > +	val = readl_relaxed(data->regs + CHANMASK(idx, data->reg_num));
+> >  	val &= ~BIT(d->hwirq % 32);
+> > -	writel_relaxed(val, data->regs + CHANMASK(idx, data->irq_groups));
+> > +	writel_relaxed(val, data->regs + CHANMASK(idx, data->reg_num));
+> >  	raw_spin_unlock_irqrestore(&data->lock, flags);
+>  }
+>  
+> @@ -94,13 +94,13 @@ static void imx_irqsteer_irq_handler(struct irq_desc *desc)
+>  
+> >  	chained_irq_enter(irq_desc_get_chip(desc), desc);
+>  
+> > -	for (i = 0; i < data->irq_groups * 64; i += 32) {
+> > +	for (i = 0; i < data->reg_num * 32; i += 32) {
+> >  		int idx = imx_irqsteer_get_reg_index(data, i);
+> >  		unsigned long irqmap;
+> >  		int pos, virq;
+>  
+> >  		irqmap = readl_relaxed(data->regs +
+> > -				       CHANSTATUS(idx, data->irq_groups));
+> > +				       CHANSTATUS(idx, data->reg_num));
+>  
+> >  		for_each_set_bit(pos, &irqmap, 32) {
+> >  			virq = irq_find_mapping(data->domain, pos + i);
+> @@ -146,12 +146,15 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
+>  
+> >  	raw_spin_lock_init(&data->lock);
+>  
+> > -	of_property_read_u32(np, "fsl,irq-groups", &data->irq_groups);
+> > +	of_property_read_u32(np, "fsl,num-irqs", &data->reg_num);
+> >  	of_property_read_u32(np, "fsl,channel", &data->channel);
+>  
+> > +	/* one register bit map represents 32 input interrupts */
+> > +	data->reg_num /= 32;
+> +
+> >  	if (IS_ENABLED(CONFIG_PM_SLEEP)) {
+> >  		data->saved_reg = devm_kzalloc(&pdev->dev,
+> > -					sizeof(u32) * data->irq_groups * 2,
+> > +					sizeof(u32) * data->reg_num,
+>  					GFP_KERNEL);
 
-Let me know if you prefer to rebase and repost your patch of if you
-want me to do.
+Does this last parameter now fit on the line above?
 
-Regards,
-Vincent
-
->
-> > ---
-> >
-> > - v2: Updated commit message to explain the impact of using
-> >   ktime_get_mono_fast_ns()
-> >
-> >  drivers/base/power/runtime.c | 10 +++++-----
-> >  include/linux/pm_runtime.h   |  2 +-
-> >  2 files changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> > index 457be03..708a13f 100644
-> > --- a/drivers/base/power/runtime.c
-> > +++ b/drivers/base/power/runtime.c
-> > @@ -130,7 +130,7 @@ u64 pm_runtime_autosuspend_expiration(struct device *dev)
-> >  {
-> >         int autosuspend_delay;
-> >         u64 last_busy, expires = 0;
-> > -       u64 now = ktime_to_ns(ktime_get());
-> > +       u64 now = ktime_get_mono_fast_ns();
-> >
-> >         if (!dev->power.use_autosuspend)
-> >                 goto out;
-> > @@ -909,7 +909,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
-> >          * If 'expires' is after the current time, we've been called
-> >          * too early.
-> >          */
-> > -       if (expires > 0 && expires < ktime_to_ns(ktime_get())) {
-> > +       if (expires > 0 && expires < ktime_get_mono_fast_ns()) {
-> >                 dev->power.timer_expires = 0;
-> >                 rpm_suspend(dev, dev->power.timer_autosuspends ?
-> >                     (RPM_ASYNC | RPM_AUTO) : RPM_ASYNC);
-> > @@ -928,7 +928,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
-> >  int pm_schedule_suspend(struct device *dev, unsigned int delay)
-> >  {
-> >         unsigned long flags;
-> > -       ktime_t expires;
-> > +       u64 expires;
-> >         int retval;
-> >
-> >         spin_lock_irqsave(&dev->power.lock, flags);
-> > @@ -945,8 +945,8 @@ int pm_schedule_suspend(struct device *dev, unsigned int delay)
-> >         /* Other scheduled or pending requests need to be canceled. */
-> >         pm_runtime_cancel_pending(dev);
-> >
-> > -       expires = ktime_add(ktime_get(), ms_to_ktime(delay));
-> > -       dev->power.timer_expires = ktime_to_ns(expires);
-> > +       expires = ktime_get_mono_fast_ns() + (u64)delay * NSEC_PER_MSEC);
-> > +       dev->power.timer_expires = expires;
-> >         dev->power.timer_autosuspends = 0;
-> >         hrtimer_start(&dev->power.suspend_timer, expires, HRTIMER_MODE_ABS);
-> >
-> > diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
-> > index 54af4ee..fed5be7 100644
-> > --- a/include/linux/pm_runtime.h
-> > +++ b/include/linux/pm_runtime.h
-> > @@ -105,7 +105,7 @@ static inline bool pm_runtime_callbacks_present(struct device *dev)
-> >
-> >  static inline void pm_runtime_mark_last_busy(struct device *dev)
-> >  {
-> > -       WRITE_ONCE(dev->power.last_busy, ktime_to_ns(ktime_get()));
-> > +       WRITE_ONCE(dev->power.last_busy, ktime_get_mono_fast_ns());
-> >  }
-> >
-> >  static inline bool pm_runtime_is_irq_safe(struct device *dev)
-> > --
-> > 2.7.4
-> >
+>  		if (!data->saved_reg)
+> >  			return -ENOMEM;
+> @@ -166,7 +169,7 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
+> >  	/* steer all IRQs into configured channel */
+> >  	writel_relaxed(BIT(data->channel), data->regs + CHANCTRL);
+>  
+> > -	data->domain = irq_domain_add_linear(np, data->irq_groups * 64,
+> > +	data->domain = irq_domain_add_linear(np, data->reg_num * 32,
+> >  					     &imx_irqsteer_domain_ops, data);
+> >  	if (!data->domain) {
+> >  		dev_err(&pdev->dev, "failed to create IRQ domain\n");
+> @@ -199,9 +202,9 @@ static void imx_irqsteer_save_regs(struct irqsteer_data *data)
+>  {
+> >  	int i;
+>  
+> > -	for (i = 0; i < data->irq_groups * 2; i++)
+> > +	for (i = 0; i < data->reg_num; i++)
+> >  		data->saved_reg[i] = readl_relaxed(data->regs +
+> > -						CHANMASK(i, data->irq_groups));
+> > +						CHANMASK(i, data->reg_num));
+>  }
+>  
+>  static void imx_irqsteer_restore_regs(struct irqsteer_data *data)
+> @@ -209,9 +212,9 @@ static void imx_irqsteer_restore_regs(struct irqsteer_data *data)
+> >  	int i;
+>  
+> >  	writel_relaxed(BIT(data->channel), data->regs + CHANCTRL);
+> > -	for (i = 0; i < data->irq_groups * 2; i++)
+> > +	for (i = 0; i < data->reg_num; i++)
+> >  		writel_relaxed(data->saved_reg[i],
+> > -			       data->regs + CHANMASK(i, data->irq_groups));
+> > +			       data->regs + CHANMASK(i, data->reg_num));
+>  }
+>  
+>  static int imx_irqsteer_suspend(struct device *dev)
