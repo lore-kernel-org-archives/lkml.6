@@ -2,261 +2,210 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3722CC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E47C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A1220833
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:29:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="k0vZR2U+"
+	by mail.kernel.org (Postfix) with ESMTP id 2BFC8218D2
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548883818;
+	bh=qw1hvxr/BiWWag2oXsyZ/XX5yBpJZkhqZgKVzhoHO90=;
+	h=Subject:From:Cc:References:To:In-Reply-To:Date:List-ID:From;
+	b=nnuVT3JngF1jCl9sgAku87WA/h1xPSA2Xzt5Ih6eVj/YkGwd7JqOnSURbdQZuoRTA
+	 3RbmPX2IkfSPJrJavvq3+bh2tdLiKKEk1YrKXd9+RAlqdn2a/lb3cZBPRvRJoB+VgN
+	 4ytw0uJ+oP13RUpWmAjsIYakXffJa5BygoBJ8EXY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388114AbfA3V3N (ORCPT
+        id S2388122AbfA3VaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 16:29:13 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37072 "EHLO mail.skyhub.de"
+        Wed, 30 Jan 2019 16:30:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727165AbfA3V3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 16:29:13 -0500
-Received: from zn.tnic (p200300EC2BCAED00380C712EC8B20768.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:ed00:380c:712e:c8b2:768])
+        id S1727165AbfA3VaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 16:30:16 -0500
+Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AAEB91EC0338;
-        Wed, 30 Jan 2019 22:29:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548883750;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MEeHe92ZSQkwbo0RtBegqQ7Xoyl6dFsNSQy2ffkBucE=;
-        b=k0vZR2U+KtPoCWeLezW26HiylgJlogUo5dFZDSGvETSB64j+DUkwIUFHtOkB6TI8Qi9sa1
-        NkXgdf0gzRzBbfKpODYdpQ2WtcA4coc0Gvp82ItdOjobm9uvRSfm1geM/e6estsVAAihI3
-        4rEaNMkonmRVObZQNzYwRFtRx8ILOPI=
-Date:   Wed, 30 Jan 2019 22:29:03 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 20/22] x86/fpu: Let __fpu__restore_sig() restore the
- !32bit+fxsr frame from kernel memory
-Message-ID: <20190130212903.GI18383@zn.tnic>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190109114744.10936-21-bigeasy@linutronix.de>
+        by mail.kernel.org (Postfix) with ESMTPSA id A2C792184D;
+        Wed, 30 Jan 2019 21:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548883814;
+        bh=qw1hvxr/BiWWag2oXsyZ/XX5yBpJZkhqZgKVzhoHO90=;
+        h=Subject:From:Cc:References:To:In-Reply-To:Date:From;
+        b=hsKIL2Zksheg4JpcvUmHWhjDsstP9htXQHrQEQ4cK+79/QEaIVa8b+2e5hBu+qyB+
+         Rcq6gC/Agc16CUquMfC9I/tijeglyQ8oSoSBqda/CQm6wvVAHl/bXUr9A+E/zSjBfC
+         aObp/Rz42KeJIfK5MuNM+84zPGYKnPZgxfo6k/Lo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190109114744.10936-21-bigeasy@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
+From:   Stephen Boyd <sboyd@kernel.org>
+Message-ID: <154888381385.169292.12776041058756822056@swboyd.mtv.corp.google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>
+References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-3-sboyd@kernel.org> <e303573aefeaf6a7e3a4b1d820e801354ff900b4.camel@baylibre.com> <154879654428.136743.10048771201181501034@swboyd.mtv.corp.google.com> <ff76dcdb4ceb3209619e5348ed7b575a8ae9df8d.camel@baylibre.com>
+User-Agent: alot/0.8
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <ff76dcdb4ceb3209619e5348ed7b575a8ae9df8d.camel@baylibre.com>
+Date:   Wed, 30 Jan 2019 13:30:13 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 12:47:42PM +0100, Sebastian Andrzej Siewior wrote:
-> The !32bit+fxsr case loads the new state from user memory. In case we
-      ^^^^^^^^^^^
+Quoting Jerome Brunet (2019-01-30 01:53:41)
+>=20
+> It is the value we find in the register after the bootloader. Since we ha=
+ve no
+> idea what it is, we must assume it is invalid.
 
-Let's "decrypt" that: "The 64-bit case where fast FXSAVE/FXRSTOR are used... "
+Ok, so my understanding is correct.
 
-But looking at the patch, it is not only about the fxsr but also the
-use_xsave() case. So pls write out exactly what you mean here.
+>=20
+> The problem was that there only one known parent for this particular cloc=
+k,
+> and the CCF quirk (call get_parent() only if num_parent =3D=3D 1) is maki=
+ng things
+> difficult for us.
+>=20
+> We found a work around to this. We declare a non existing parent, which m=
+ake
+> num_parent =3D=3D 2 and force CCF to call get_parent(), and later on set_=
+parent()
+> ... It works but it sucks.
 
-Ditto for the patch title.
+Yes that is bad.
 
-> restore the FPU state on return to userland we can't do this. It would
-> be required to disable preemption in order to avoid a context switch
-> which would set TIF_NEED_FPU_LOAD. If this happens before the "restore"
-> operation then the loaded registers would become volatile.
-> 
-> Disabling preemption while accessing user memory requires to disable the
-> pagefault handler. An error during XRSTOR would then mean that either a
-> page fault occured (and we have to retry with enabled page fault
-> handler) or a #GP occured because the xstate is bogus (after all the
-> sig-handler can modify it).
-> 
-> In order to avoid that mess, copy the FPU state from userland, validate
-> it and then load it. The copy_users_…() helper are basically the old
-> helper except that they operate on kernel memory and the fault handler
-> just sets the error value and the caller handles it.
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  arch/x86/include/asm/fpu/internal.h | 32 ++++++++++-----
->  arch/x86/kernel/fpu/signal.c        | 62 +++++++++++++++++++++++------
->  2 files changed, 71 insertions(+), 23 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-> index 16ea30235b025..672e51bc0e9b5 100644
-> --- a/arch/x86/include/asm/fpu/internal.h
-> +++ b/arch/x86/include/asm/fpu/internal.h
-> @@ -120,6 +120,21 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
->  	err;								\
->  })
->  
-> +#define kernel_insn_norestore(insn, output, input...)			\
-> +({									\
-> +	int err;							\
-> +	asm volatile("1:" #insn "\n\t"					\
-> +		     "2:\n"						\
-> +		     ".section .fixup,\"ax\"\n"				\
-> +		     "3:  movl $-1,%[err]\n"				\
-> +		     "    jmp  2b\n"					\
-> +		     ".previous\n"					\
-> +		     _ASM_EXTABLE(1b, 3b)				\
-> +		     : [err] "=r" (err), output				\
-> +		     : "0"(0), input);					\
-> +	err;								\
-> +})
+>
+> Sure, good idea.
+>=20
+> If clk_hw_get_parent_by_index() may return an error, it because get_paren=
+t()
+> could provide an invalid index.
+>=20
+> Which brings us back to the original point, if it is possible for get_par=
+ent()
+> to return invalid index, which means out of bounds, it shall be called ev=
+en if
+> num_parent =3D=3D 1.
+>=20
+> To be coherent, either:
+> 1) the return value of get_parent() *MUST* be valid, it is fine to not ca=
+ll it
+> if num_parent =3D=3D 1 because we already know the only possible result.
+>=20
+> 2) the return value of get_parent *MAY* be invalid, then it should be cal=
+led
+> regarless of num_parent.
+>=20
+> IMO, (2) is the only valid option because any existing muxes could alread=
+y be
+> returning invalid indexes. I know we do on Amlogic (with various muxes, e=
+ven
+> with num_parent >=3D 1) and I'm sure we are not the only ones. Plus a dri=
+ver
+> needs to have a mean to tell CCF that things are not as expected.
 
-user_insn above looks unused - just repurpose it.
+Right. Having drivers specify more clks than the kernel knows about or
+having the return value of get_parent() be out of range is non-obvious.
+I'd rather see any drivers that want to express errors during the parent
+initialization phase return an error pointer through the get_parent_hw
+clk op instead.
 
-> +
->  #define kernel_insn(insn, output, input...)				\
->  	asm volatile("1:" #insn "\n\t"					\
->  		     "2:\n"						\
-> @@ -140,15 +155,15 @@ static inline void copy_kernel_to_fxregs(struct fxregs_state *fx)
->  	}
->  }
->  
-> -static inline int copy_user_to_fxregs(struct fxregs_state __user *fx)
-> +static inline int copy_users_to_fxregs(struct fxregs_state *fx)
+Put another way, if you have any edge case like this you should migrate
+to this new clk op and stop using .get_parent and playing tricks with
+.num_parents and return values from .get_parent.
 
-Why "users" ?
+>=20
+> >=20
+> > so I took
+> > the route of adding another callback with semantics that we can define
+> > now because there aren't any users. The difference between the two is
+> > made intentionally.
+>=20
+> I still think that the drivers relying on this quirk (only 1 AFAIK) are b=
+roken
+> and should be fixed, rather that keeping the quirk for everyone else.=20
 
->  {
->  	if (IS_ENABLED(CONFIG_X86_32))
-> -		return user_insn(fxrstor %[fx], "=m" (*fx), [fx] "m" (*fx));
-> +		return kernel_insn_norestore(fxrstor %[fx], "=m" (*fx), [fx] "m" (*fx));
->  	else if (IS_ENABLED(CONFIG_AS_FXSAVEQ))
-> -		return user_insn(fxrstorq %[fx], "=m" (*fx), [fx] "m" (*fx));
-> +		return kernel_insn_norestore(fxrstorq %[fx], "=m" (*fx), [fx] "m" (*fx));
->  
->  	/* See comment in copy_fxregs_to_kernel() below. */
-> -	return user_insn(rex64/fxrstor (%[fx]), "=m" (*fx), [fx] "R" (fx),
-> +	return kernel_insn_norestore(rex64/fxrstor (%[fx]), "=m" (*fx), [fx] "R" (fx),
->  			  "m" (*fx));
->  }
->  
-> @@ -157,9 +172,9 @@ static inline void copy_kernel_to_fregs(struct fregs_state *fx)
->  	kernel_insn(frstor %[fx], "=m" (*fx), [fx] "m" (*fx));
->  }
->  
-> -static inline int copy_user_to_fregs(struct fregs_state __user *fx)
-> +static inline int copy_users_to_fregs(struct fregs_state *fx)
->  {
-> -	return user_insn(frstor %[fx], "=m" (*fx), [fx] "m" (*fx));
-> +	return kernel_insn_norestore(frstor %[fx], "=m" (*fx), [fx] "m" (*fx));
->  }
->  
->  static inline void copy_fxregs_to_kernel(struct fpu *fpu)
-> @@ -339,16 +354,13 @@ static inline void copy_kernel_to_xregs(struct xregs_state *xstate, u64 mask)
->  /*
->   * Restore xstate from user space xsave area.
->   */
-> -static inline int copy_user_to_xregs(struct xregs_state __user *buf, u64 mask)
-> +static inline int copy_users_to_xregs(struct xregs_state *xstate, u64 mask)
->  {
-> -	struct xregs_state *xstate = ((__force struct xregs_state *)buf);
->  	u32 lmask = mask;
->  	u32 hmask = mask >> 32;
->  	int err;
->  
-> -	stac();
->  	XSTATE_OP(XRSTOR, xstate, lmask, hmask, err);
-> -	clac();
->  
->  	return err;
->  }
-> diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-> index 970091fb011e9..4ed5c400cac58 100644
-> --- a/arch/x86/kernel/fpu/signal.c
-> +++ b/arch/x86/kernel/fpu/signal.c
-> @@ -217,7 +217,8 @@ sanitize_restored_xstate(union fpregs_state *state,
->  		 */
->  		xsave->i387.mxcsr &= mxcsr_feature_mask;
->  
-> -		convert_to_fxsr(&state->fxsave, ia32_env);
-> +		if (ia32_env)
-> +			convert_to_fxsr(&state->fxsave, ia32_env);
->  	}
->  }
->  
-> @@ -299,28 +300,63 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
->  		kfree(tmp);
->  		return err;
->  	} else {
-> +		union fpregs_state *state;
-> +		void *tmp;
->  		int ret;
->  
-> +		tmp = kzalloc(sizeof(*state) + fpu_kernel_xstate_size + 64, GFP_KERNEL);
-> +		if (!tmp)
-> +			return -ENOMEM;
+Agreed. Use the new API?
 
-<---- newline here.
+>=20
+> With this quirk, CCF is making an assumption that might be wrong.
+>=20
+> The quirk is very easy put in the get_parent() callback of the said drive=
+r, or
+> even better, don't provide the callback if it should not be called.
+>=20
+> I understand the need for a cautious approach. It seems I'm only one with=
+ that
+> issue right now and since I have a work around, there is no rush. But we =
+must
+> have plan to make it right.
+>=20
+> To be clear, I'm not against your new API but I don't think it should be a
+> reason to keep a broken behavior the framework.
+>=20
 
-> +		state = PTR_ALIGN(tmp, 64);
-> +
->  		/*
->  		 * For 64-bit frames and 32-bit fsave frames, restore the user
->  		 * state to the registers directly (with exceptions handled).
->  		 */
-> -		if (use_xsave()) {
-> -			if ((unsigned long)buf_fx % 64 || fx_only) {
-> +		if ((unsigned long)buf_fx % 64)
-> +			fx_only = 1;
-> +
-> +		if (use_xsave() && !fx_only) {
-> +			u64 init_bv = xfeatures_mask & ~xfeatures;
+So do you think you can use this new clk_op and ignore the problems with
+the .get_parent clk op? Putting effort into fixing the .get_parent
+design isn't very useful from my perspective. There's more than just the
+problem that we don't call it when .num_parents is 1. There's the
+inability to return errors without doing weird things to return an index
+out of range and there isn't any way for us to really know if the clk is
+an orphan or not. If we can migrate all drivers to use the new clk op
+then we can fix these problems too, and deprecate and eventually remove
+the broken by design .get_parent clk op API.
 
-Define that init_bv in the function prologue above and then you don't
-need to define it again here and below in a narrower scope.
+BTW, I included this patch in this series because I'm wondering if it
+would be useful for there to be a 'parent cookie' pointer that we pass
+between the framework and providers instead using a raw index.
 
-> +
-> +			if (using_compacted_format()) {
-> +				ret = copy_user_to_xstate(&state->xsave, buf_fx);
-> +			} else {
-> +				ret = __copy_from_user(&state->xsave, buf_fx, state_size);
-> +
-> +				if (!ret && state_size > offsetof(struct xregs_state, header))
-> +					ret = validate_xstate_header(&state->xsave.header);
-> +			}
-> +			if (ret)
-> +				goto err_out;
+	struct clk_parent {
+		struct clk_hw *hw;
+	};
 
-<---- newline here.
+Then drivers could embed these structs into their parent_data structure
+and the framework could pass pointers to these structures in struct
+clk_rate_request. That may make it easier for drivers to attach extra
+data to the parent for a particular clk when changing parents or rates.
+For example, if the index of the parent is not a linear monotonic range
+of [0, num_parents) then we could let them throw the index into either a
+wrapper structure or a void *data field.
 
-> +			sanitize_restored_xstate(state, NULL, xfeatures,
-> +						 fx_only);
+	struct my_clk_parent {
+		struct clk_parent parent;
+		u32 mask;
+		u8 select_bit;
+	};
 
-Let that stick out.
+Or
+	struct my_clk_parent_data {
+		u32 mask;
+		u8 select_bit;
+	};
 
-And then do that here:
+	struct clk_parent {
+		struct clk_hw *hw;
+		void *data;
+	};
 
-			init_bv = xfeatures_mask & ~xfeatures;> +
-> +			if (unlikely(init_bv))
-> +				copy_kernel_to_xregs(&init_fpstate.xsave, init_bv);
+And have data point to struct my_clk_parent. There's code in various clk
+drivers that maps between the framework's view of the parent index and
+the providers view, i.e. the hardware index. If we already have the
+parent_map structure, maybe we should let that live in the provider
+driver near the hardware and then just pass a pointer to it so drivers
+can do container_of() or ->data accesses to get any driver data they
+associate with that parent index.
 
-and add a newline here so that this code above belongs together visually.
+If we did something like this, it may reduce code further and let us get
+rid of the u8 index in the clk framework entirely. But we may want to
+have the .get_parent_hw op return a pointer to a struct clk_parent
+instead of a struct clk_hw now to make this easier to implement in the
+future. Or this could all be overkill and only help a few drivers skip a
+mapping step.
 
-> +			ret = copy_users_to_xregs(&state->xsave, xfeatures);
-> +
-
-...
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
