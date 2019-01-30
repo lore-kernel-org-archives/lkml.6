@@ -2,107 +2,147 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDEAC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B32C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F14CC218DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:35:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E29A02184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:37:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HYB+Xu+l"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIi2HoN2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387684AbfA3TfU (ORCPT
+        id S2387685AbfA3Thu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:35:20 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41606 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727114AbfA3TfT (ORCPT
+        Wed, 30 Jan 2019 14:37:50 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36455 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbfA3Tht (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:35:19 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j21so629347oii.8
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:35:19 -0800 (PST)
+        Wed, 30 Jan 2019 14:37:49 -0500
+Received: by mail-lj1-f195.google.com with SMTP id g11-v6so639591ljk.3;
+        Wed, 30 Jan 2019 11:37:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Yshu7Nu72+Dtk8rXL7JZUEueFPkhXdQ3uQBa9T7+FI8=;
-        b=HYB+Xu+lqUkubBO9J+MbB83KhACX2c6ZCtNkmClbu5N4zCrW3Mu7YVFuwbEeXs1hcy
-         BVAJNOjpO1VF6DXo4DlaRzWieNFvTz7eWJJgXe6dzEgcPnWrVQzMeLzqSn277CHoSS6D
-         upGbxRbGy4ngHeuqNHJ6MdF+hWfabsm3ChRunH+F2aZVfnlAD23XMHxWfNGcUQQvRciP
-         0PjrelBuZgpe/j4jIdecT7oL6cgtu088WSjJRWbkglD7wRM7TUipK9ZCwF6AVXOw/yCT
-         sO/pp7u3Qkz43e0yV4hlOCmre9lifyq5FrP8NYiwpJWk/uGDtUXMpF8hUd2y0bklWom2
-         psJA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Elo3/JXipF3FwxvD0Zr6N6lx3RzkXmsEwagJJ0bd9aI=;
+        b=CIi2HoN2fz23srqKLqbQ1Ik0qlI45hajHB+o+AOmMU7XtX+D+Qv7XVEMYvza6v7LDV
+         wy5ydoJNwZ4pofGnSkcW45vaFkFNGY6CPPjs3Inz11M6q0godmLHi6VC66LRXIEaLOBd
+         OXmIzvUisCzHzqWgWTswzerUVzM06MOmDrNCAFFwE5cfTSinjpmoGnaOUftZrX9AL/PD
+         PKWJRTX8RW9oXvoWfuGLYm/oVWs8ONM5lOt6muGON3C0Cq2I/8N612TxJWJ3xVLY3WV8
+         r9ib/2eYSzSC1wSTlasbIGlNlb0DkDgDW0PkujdvTjoQuRCoJeHtUGp9rytUhzVygCym
+         3V4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Yshu7Nu72+Dtk8rXL7JZUEueFPkhXdQ3uQBa9T7+FI8=;
-        b=oMpcqF5rJ3rzMk85dJZaNe2ZqevIR+ESsN9//1g6cKpqH8VvknsQFaloPCLNpYQ60D
-         RJKF8wvKZkSs4wNPeYUV3XUNSXpS4Ua0ZfLaMu6CMmQgfRMGSTE+Iwv2tpthi/TSMO7f
-         p+L5+XFSQ9i9DdyKf5CuD2dIDyVDdEP87ZODPdNMvIrU/nM/d+smaYmknl7Wn3gGGD7h
-         jaegqqdzIrMtFQN/osij92TiZziFnwI1YuFWtzOc0IUir+rsaH2qo2KjSrpRGXrd+cJr
-         qJD+8Eq2ic7g57yXjbJ6g8ssXpW0tUq6CzuYpDrbUhXDWaVRKh+I29jDfxLDRgRYkZG+
-         KDew==
-X-Gm-Message-State: AJcUukfqqhsP80/iy30FgfRaaGyyQ+8sdZab/w4Nk8P+HxtIrUHh7p/y
-        mM8p17f8PYUM8KMchP0klES2qR7vKlqqfHCLpCidZQ==
-X-Google-Smtp-Source: ALg8bN6hGKJnwAHsVa0igPx6WrWGeK6tM0dXYVfZJXpbjOb3IwGwK4BPXPa9qEXCDMEobRiXHFXi75Ss6vjpxle5Wd0=
-X-Received: by 2002:aca:c413:: with SMTP id u19mr12681145oif.209.1548876918558;
- Wed, 30 Jan 2019 11:35:18 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Elo3/JXipF3FwxvD0Zr6N6lx3RzkXmsEwagJJ0bd9aI=;
+        b=U7LOoh6nlUXjzZ6jRi5WbhaXR3NOMPzwMxDe2ll5f6V9wDi69h9HBljBi+XbXfPGxv
+         yx05U4xu2aY52WzsLdu7prP3TAqGVP3URJz7y8FaFF0B+ggF0NBIP6yQjEVL3n55mV7u
+         18V/fuXC8jxEX3Imm4EUa8OxCBQ7Xyowrlxev7R1tmIazr99IMrU9tVzx/KiaYtO30o7
+         /oEjjzJtGQ7yMNAWmXt+XyMMgwUSqYnEr1NJdNkybIYs7MIwmpuy/Jyos6yE23tVLVPg
+         3hx0IR2Y54iSSOWQcew76nh4lcFQ8/lWpk+DfZHpIn27Rk1nb+C2C5PsBEp7zOS8E9j2
+         ur4Q==
+X-Gm-Message-State: AJcUukemOr5iZOE9cqerfp38mVDOODG/SHnMyUmg4h4JwtGs2vT8FYdt
+        h7Ns7vdnIJW5gU6IvicRACDN2HDs
+X-Google-Smtp-Source: ALg8bN7lfpt3tTPPs/4v0UhUBPb5EDXvbK4HtmbKTrECJtxHanQGBdmErk1MCjTvzXkAIKWdng2TGw==
+X-Received: by 2002:a2e:9715:: with SMTP id r21-v6mr26170949lji.30.1548877067218;
+        Wed, 30 Jan 2019 11:37:47 -0800 (PST)
+Received: from [192.168.1.18] (dks71.neoplus.adsl.tpnet.pl. [83.24.22.71])
+        by smtp.gmail.com with ESMTPSA id l3-v6sm425753ljg.21.2019.01.30.11.37.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 11:37:46 -0800 (PST)
+Subject: Re: [RFC PATCH] leds: multicolor: Add sysfs interface definition
+To:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
+Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+References: <20190130183005.833-1-dmurphy@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <f3792d44-1a43-318b-1b12-d6d69275c3a8@gmail.com>
+Date:   Wed, 30 Jan 2019 20:37:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <CAG48ez0QRmU9fGV3x7nceGqBGADNTb66MnG4PW_xu+xnGUqg=g@mail.gmail.com>
- <20190130182157.GP18558@fuggles.cambridge.arm.com>
-In-Reply-To: <20190130182157.GP18558@fuggles.cambridge.arm.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 30 Jan 2019 20:34:52 +0100
-Message-ID: <CAG48ez2FMfyagDedETV54sFEit_mJy00iqBFsNngyeT=g=a4PA@mail.gmail.com>
-Subject: Re: ARM64 suggestion: reduce the compat address limit (currently 0x100000000)?
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190130183005.833-1-dmurphy@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 7:22 PM Will Deacon <will.deacon@arm.com> wrote:
-> On Wed, Jan 30, 2019 at 05:32:00PM +0100, Jann Horn wrote:
-> > At the moment, compat tasks running on ARM64 can allocate memory up to
-> > 0x100000000 (TASK_SIZE_32). Testing on an Android device (with an
-> > admittedly somewhat old kernel):
->
-> [...]
->
-> > ffff1000-100000000 rw-p 00000000 00:00 0
-> >
-> > This means that mmap() allocations do not adhere to section 6.5.8 of
-> > C99 ("If the
-> > expression P points to an element of an array object and the
-> > expression Q points to the
-> > last element of the same array object, the pointer expression Q+1
-> > compares greater than
-> > P.") if you treat mmap() allocations as returning an array.
->
-> Oh, good point.
->
-> > In practice, I've also seen code that does things like computing a
-> > pointer that is out of bounds by a few bytes and then comparing it
-> > against the end of the array; while this is UB according to C99, it
-> > probably makes sense to try to avoid breaking such code.
->
-> Agreed, and since the current behaviour isn't something you can portably
-> rely on anyway, I think we're ok to change it.
->
-> > X86-64's compat code uses the limit 0xFFFFe000 (IA32_PAGE_OFFSET),
-> > which I think makes more sense. Would it make sense to do something
-> > like the following (untested)?
->
-> Can't we just go with 0x100000000 - PAGE_SIZE instead?
+Hi Dan,
 
-Ah, yeah, sounds good. I think x86 probably only chose 0xFFFFe000 to
-keep user allocations out of the way for the 32-bit vsyscall page.
+Thank you for the RFC.
+
+One vital thing is missing - documentation of brightness file must
+be updated to define its semantics for LED multi color class.
+
+Either we need brightness-model file returning only "onoff" option
+available, or, for time being, fix the max_brightness for LED multi
+color class to 1 (which will map to max intensity level for each color).
+
+Best regards,
+Jacek Anaszewski
+
+On 1/30/19 7:30 PM, Dan Murphy wrote:
+> Add a documentation of LED Multicolor LED class specific
+> sysfs attributes.
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>   .../ABI/testing/sysfs-class-led-multicolor    | 38 +++++++++++++++++++
+>   1 file changed, 38 insertions(+)
+>   create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Documentation/ABI/testing/sysfs-class-led-multicolor
+> new file mode 100644
+> index 000000000000..19f8da9b150e
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
+> @@ -0,0 +1,38 @@
+> +What:		/sys/class/leds/<led>/color/sync_enable
+> +Date:		January 2019
+> +KernelVersion:	5.0
+> +Contact:	Dan Murphy <dmurphy@ti.com>
+> +Description:	read/write
+> +		Writing a 1 to this file will enable the sychronization of all
+> +		the defined color LEDs within the LED node.  Writing a 0 to
+> +		this file will disable syncing.
+> +
+> +What:		/sys/class/leds/<led>/color/sync
+> +Date:		January 2019
+> +KernelVersion:	5.0
+> +Contact:	Dan Murphy <dmurphy@ti.com>
+> +Description:	write only
+> +		Writing a 1 to this file while sync_enable is set to 1 will
+> +		synchronize all defined LEDs within the LED node.  All LEDs
+> +		defined will be configured based on the brightness that has
+> +		been requested.
+> +
+> +		If sync_enable is set to 0 then writing a 1 to sync has no
+> +		affect on the LEDs.
+> +
+> +What:		/sys/class/leds/<led>/color/<led color>
+> +Date:		January 2019
+> +KernelVersion:	5.0
+> +Contact:	Dan Murphy <dmurphy@ti.com>
+> +Description:	read/write
+> +		These files are dynamically created based on the colors defined
+> +		by the registrar of the class.
+> +		The led color(s) can be but not limited to red, green, blue,
+> +		white, amber and violet.  If sync is enabled then writing the
+> +		brightness value of the LED is deferred until a 1 is
+> +		written to /sys/class/leds/<led>/color/sync.  If syncing is
+> +		disabled then the LED brightness value will be written
+> +		immediately to the LED driver.
+> +
+> +		The value of the color is from 0 to
+> +		/sys/class/leds/<led>/max_brightness.
+> 
+
