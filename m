@@ -2,92 +2,135 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7014C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3201C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD71F2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:43:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 858A32087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:43:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548870207;
+	bh=3XBGqaxbIgirgGdiwL2FpJd4AZ+2J/mt9qBsXw7eYSs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=ulKf9T4rLgtm3LgB2F6l7owgE/6MYwmaIVks3n2cv/6xiOqcQR1HMaavYJfGZolaM
+	 YD4eK6V6p/2qQGEvEKwqrMyIePxh0GEGnJq3t1YOChkKl22zNUSQpPoZ3uNh94Lo6k
+	 qYwwb06p/CJRCnoJ8TKk8x6GWRSGIMjmrcurwQe0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732653AbfA3RnO (ORCPT
+        id S1732670AbfA3RnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:43:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59882 "EHLO mx1.redhat.com"
+        Wed, 30 Jan 2019 12:43:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732541AbfA3RnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:43:13 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1732527AbfA3RnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:43:24 -0500
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8BEEAC7912;
-        Wed, 30 Jan 2019 17:43:13 +0000 (UTC)
-Received: from ws.net.home (ovpn-117-196.ams2.redhat.com [10.36.117.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 17921608C8;
-        Wed, 30 Jan 2019 17:43:10 +0000 (UTC)
-Date:   Wed, 30 Jan 2019 18:43:06 +0100
-From:   Karel Zak <kzak@redhat.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        util-linux@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [RFD] A mount api that notices previous mounts
-Message-ID: <20190130174306.4nbrh2m53re35qch@ws.net.home>
-References: <20190130120654.q5zqcexquca7u337@ws.net.home>
- <87va2716mh.fsf@xmission.com>
- <9871.1548853314@warthog.procyon.org.uk>
+        by mail.kernel.org (Postfix) with ESMTPSA id 38D6E2087F;
+        Wed, 30 Jan 2019 17:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548870203;
+        bh=3XBGqaxbIgirgGdiwL2FpJd4AZ+2J/mt9qBsXw7eYSs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MZNG4yQGUa+lUxsCA/fw9zcPYVkyoxVdiFJfMqbl7klNSZ8SzkkgavUmTo7bC+quu
+         2BXZZAiNHyHGfji9HE/JWb6YRlXhhxe/1hGuEacutxk//vsBkiM1oRPvsAE7hXewUv
+         pp1+i8nlTK8nNJBlSfOvAIv2JFZu6D41PmtvBMME=
+Date:   Wed, 30 Jan 2019 18:43:13 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     <Tudor.Ambarus@microchip.com>
+Cc:     <broonie@kernel.org>, <Nicolas.Ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 9/9] spi: atmel-quadspi: add support for sam9x60 qspi
+ controller
+Message-ID: <20190130184313.281f5374@bbrezillon>
+In-Reply-To: <20190130150818.24902-10-tudor.ambarus@microchip.com>
+References: <20190130150818.24902-1-tudor.ambarus@microchip.com>
+        <20190130150818.24902-10-tudor.ambarus@microchip.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9871.1548853314@warthog.procyon.org.uk>
-User-Agent: NeoMutt/20180716-1023-ca4e12
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 30 Jan 2019 17:43:13 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 01:01:54PM +0000, David Howells wrote:
-> Karel Zak <kzak@redhat.com> wrote:
-> 
-> > It seems more elegant is to ask for Nth option as expected by fsinfo().
-> 
-> More elegant yes, but there's an issue with atomiticity[*].  I'm in the
-> process of switching to something that returns you a single buffer with all
-> the options in, but each key and each value is preceded by a length count.
+On Wed, 30 Jan 2019 15:08:47 +0000
+<Tudor.Ambarus@microchip.com> wrote:
 
-Sounds good, for me is important to avoid all the split/join
-operations with the strings.
+> +static int atmel_sam9x60_qspi_clk_prepare_enable(struct atmel_qspi *aq)
+> +{
+> +	struct device *dev = &aq->pdev->dev;
+> +	int ret;
+> +
+> +	if (!aq->clk) {
+> +		/* Get the peripheral clock */
+> +		aq->clk = devm_clk_get(dev, "pclk");
+> +		if (IS_ERR(aq->clk)) {
+> +			dev_err(dev, "missing peripheral clock\n");
+> +			return PTR_ERR(aq->clk);
+> +		}
+> +	}
+> +
+> +	if (!aq->qspick) {
+> +		/* Get the QSPI system clock */
+> +		aq->qspick = devm_clk_get(dev, "qspick");
+> +		if (IS_ERR(aq->qspick)) {
+> +			dev_err(dev, "missing system clock\n");
+> +			return PTR_ERR(aq->qspick);
+> +		}
+> +	}
 
-> The reasons for not using separator characters are:
-> 
->  (1) There's no separator char that cannot validly occur within an option[**].
+Move the devm_clk_get() calls to the probe path instead of doing it at
+prepare time, and you can make it generic for both compats with
+something like:
 
-Yes, it's pretty common for selinux mount options where "," is
-used within an option, so mount options string looks like
+	aq->clk = devm_clk_get(dev, "pclk");
+	if (IS_ERR(aq->clk))
+		aq->clk = devm_clk_get(dev, NULL);
 
-    'context="system_u:object_r:tmp_t:s0:c127,c456",noexec'
+	if (IS_ERR(aq->clk))
+		return PTR_ERR(aq->clk);
 
-and I have doubts all the parses in userspace are compatible with this
-use case...
+	if (aq->caps->qspick_required) {
+		aq->qspick = devm_clk_get(dev, "qspick");
+		if (IS_ERR(aq->qspick)) {
+			return PTR_ERR(aq->qspick);
+	}
 
->  (2) Makes it possible to return binary values if we need to.
+> +
+> +	/* Enable the peripheral clock */
+> +	ret = clk_prepare_enable(aq->clk);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable the peripheral clock\n");
+> +		return ret;
+> +	}
+> +
+> +	/* Enable the QSPI system clock */
+> +	ret = clk_prepare_enable(aq->qspick);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable the QSPI system clock\n");
+> +		clk_disable_unprepare(aq->clk);
+> +	}
 
-Yes.
+Again, you can make the enable function generic since
+clk_prepare_enable(NULL) is a NO-OP that returns 0 and aq->qspick will
+be NULL when it's not required.
 
-> [**] Oh, and look at cifs where you can *change* the separator char during
->      option parsing ("sep=<char>").
+> +
+> +	return ret;
+> +}
+> +
+> +static void atmel_sam9x60_qspi_clk_disable_unprepare(struct atmel_qspi *aq)
+> +{
+> +	clk_disable_unprepare(aq->qspick);
+> +	clk_disable_unprepare(aq->clk);
 
-No comment :-)
+Ditto.
 
-    Karel
-
--- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
+> +}
