@@ -2,243 +2,102 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F38EC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D89C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:58:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCFDA20857
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83EAB2184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:58:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="BCPgb+Ti"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVnbM0GT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730408AbfA3K4j (ORCPT
+        id S1730298AbfA3K6V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 05:56:39 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:12720 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbfA3K4j (ORCPT
+        Wed, 30 Jan 2019 05:58:21 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41597 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727043AbfA3K6V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 05:56:39 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5182e70000>; Wed, 30 Jan 2019 02:56:39 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 30 Jan 2019 02:56:37 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 30 Jan 2019 02:56:37 -0800
-Received: from [10.24.44.212] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Jan
- 2019 10:56:34 +0000
-Subject: Re: [PATCH] ALSA: hda/tegra: enable clock during probe
-To:     Takashi Iwai <tiwai@suse.de>, Jon Hunter <jonathanh@nvidia.com>
-CC:     <pierre-louis.bossart@linux.intel.com>, <perex@perex.cz>,
-        <alsa-devel@alsa-project.org>, <thierry.reding@gmail.com>,
-        <rlokhande@nvidia.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <1548351403-1875-1-git-send-email-spujar@nvidia.com>
- <s5h5zudc1qw.wl-tiwai@suse.de>
- <06c00ce1-32ed-8aa9-0340-d00202a8fa62@nvidia.com>
- <s5hr2d0zz96.wl-tiwai@suse.de>
- <b64f5d05-f352-7b46-d70d-3809aab8ddda@nvidia.com>
- <s5hef90zvo0.wl-tiwai@suse.de>
- <1f4c5185-e518-5674-4a8c-4e7db64aa0d3@nvidia.com>
- <da021878-5d89-c6d3-e5b2-4ab20f9b573b@nvidia.com>
- <ef05ac7a-8fa8-5776-312a-afecdeae10c6@nvidia.com>
- <s5h8sz2e8ev.wl-tiwai@suse.de>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <4aee601a-f72c-7c94-60cb-ec2546900b8c@nvidia.com>
-Date:   Wed, 30 Jan 2019 16:26:31 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 05:58:21 -0500
+Received: by mail-ot1-f67.google.com with SMTP id u16so20730106otk.8;
+        Wed, 30 Jan 2019 02:58:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=22PfJD3VvWjZA5JzWoMtRlbmBHWVyVih0KBEdwGiUVo=;
+        b=hVnbM0GTfaAd+3EMYqIyDC2C/hmAEBq0TxEVwsgu8YOtSemw6Ng1v54iS89Oe8F9nc
+         CeoFYO9umZ8dMASQX6GyCbos+wRkwocUrdEKoLUkhi6yPBsY8z1xImDiSaMrSS4im6Ys
+         HUk2Gi+1XXB9V3XhlwhW00Ei3HB8iN8Y5iSqefpr/z9G9oUyh8CTnRoyjuT71gNBIE1A
+         tbUU8Tx8yhVnUg+kXBX2nvUAqOT/tj+6pGI1XdqBF2nar7glf/p0CAs/EyEGRcp0Gu1D
+         1jzkfSt6XqEAPEDdDpikr0Nog7scE50egSKwSpmMczzMF/4mAeDGhgkAprjVUMEl10/Y
+         n9ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=22PfJD3VvWjZA5JzWoMtRlbmBHWVyVih0KBEdwGiUVo=;
+        b=dNqV1CvV0TdlSweim3tOomJy/RQoVmu/nzXPa2ozqyrL+28IqgHyq4tfZ4HaeRANo0
+         KiXTbgyRbKGvE6MHCNuSqnqDaqDfnpVRw8FhCx/32ydCILB1ARRLWeHHmlZvS/AIsLib
+         bX7vApeqB0Zvs6duH+eXUNAf/tj4J4EX4D9yo1Utc1ymNRlkfvxrYF6hqZAtyM7cVLmv
+         SEDviJhDL1fnn67JPsgOoD5MbC+2xKatCqkWebFSHrPk/y1GmSc7v5JSotHY5ze1qpOE
+         TLxoJomQ0jM3kI6LHRxjfx9UKpaU08ZuR+0H3CXaHRvh55W6CsJ6jz3D8m6srpMGOxw1
+         jaYg==
+X-Gm-Message-State: AJcUukdDvxOi0rLSarc4rYNL6B+4qbE3IcXRnZx8pTkrTsgyZ3k26coX
+        zK6VjtEyn+31e3+MnUm8Eg==
+X-Google-Smtp-Source: ALg8bN7VboMDpcYzRcct0WWZ2eNuU/XCnIkqMKmmgmZKwKsWnKDmpNBTHmmOIT2TK9YAcpYGnDs0wQ==
+X-Received: by 2002:a9d:75da:: with SMTP id c26mr23652333otl.39.1548845900313;
+        Wed, 30 Jan 2019 02:58:20 -0800 (PST)
+Received: from kmo-pixel ([2600:380:b941:37c4:9e42:6f9a:8369:8e52])
+        by smtp.gmail.com with ESMTPSA id o8sm478974oia.53.2019.01.30.02.58.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 02:58:19 -0800 (PST)
+Date:   Wed, 30 Jan 2019 05:58:17 -0500
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     colyli@suse.de, linux-kernel@vger.kernel.org,
+        linux-bcache@vger.kernel.org
+Subject: Re: [PATCH -next] bcache: Fix potential NULL pointer dereference
+Message-ID: <20190130105817.GA12598@kmo-pixel>
+References: <20190130102112.11228-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <s5h8sz2e8ev.wl-tiwai@suse.de>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-GB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548845799; bh=2+1zAyodgP2UzOJoxbEAtjNNYvFD/WJsP4T5J2h6yJc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=BCPgb+TivNkOEl/jnFzVOL2VPiun3heqfua/gDuyzMwigxE60czpnr0Qj3zYuFUCz
-         l0sxU5MSDUsxNi5ugdi8qsNMqQ/hUw642AUIuvt7wyB/fJRes/y/IEU7NisQRKHbKK
-         k6QtOMt9gAUR9uy+CZXWdqYKu1Df/jKB8aUe78mMEaffmPJvYXuvtQ6mWAngVb7ntU
-         1fFz2SmdDOXHN2F/+W+jLYLFO6u4szzQYSGFioipeZmF5PzQTnzNwlEGejO+Jj07vu
-         r9WvtdB9F9YDzXZ3u/NH+LeUQTCvlVPjnBnpWKxI29z9+BWCKuB2CU0mGRgrVfhMP1
-         qmInxQLGsAAuA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190130102112.11228-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 30, 2019 at 06:21:12PM +0800, YueHaibing wrote:
+> There is a potential NULL pointer dereference in case
+> kzalloc() fails and returns NULL.
+> 
+> Fixes: bc082a55d25c ("bcache: fix inaccurate io state for detached bcache devices")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/md/bcache/request.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+> index 1507041..a50afa4 100644
+> --- a/drivers/md/bcache/request.c
+> +++ b/drivers/md/bcache/request.c
+> @@ -1094,6 +1094,8 @@ static void detached_dev_do_request(struct bcache_device *d, struct bio *bio)
+>  	 * which would call closure_get(&dc->disk.cl)
+>  	 */
+>  	ddip = kzalloc(sizeof(struct detached_dev_io_private), GFP_NOIO);
+> +	if (!ddip)
+> +		return;
+>  	ddip->d = d;
+>  	ddip->start_time = jiffies;
+>  	ddip->bi_end_io = bio->bi_end_io;
 
-On 1/30/2019 4:09 PM, Takashi Iwai wrote:
-> On Wed, 30 Jan 2019 10:35:35 +0100,
-> Jon Hunter wrote:
->>
->> On 28/01/2019 06:06, Sameer Pujar wrote:
->>> On 1/25/2019 7:34 PM, Jon Hunter wrote:
->>>> On 25/01/2019 13:58, Takashi Iwai wrote:
->>>>> On Fri, 25 Jan 2019 14:26:27 +0100,
->>>>> Jon Hunter wrote:
->>>>>> On 25/01/2019 12:40, Takashi Iwai wrote:
->>>>>>> On Fri, 25 Jan 2019 12:36:00 +0100,
->>>>>>> Jon Hunter wrote:
->>>>>>>> On 24/01/2019 19:08, Takashi Iwai wrote:
->>>>>>>>> On Thu, 24 Jan 2019 18:36:43 +0100,
->>>>>>>>> Sameer Pujar wrote:
->>>>>>>>>> If CONFIG_PM is disabled or runtime PM calls are forbidden, the
->>>>>>>>>> clocks
->>>>>>>>>> will not be ON. This could cause issue during probe, where hda i=
-nit
->>>>>>>>>> setup is done. This patch checks whether runtime PM is enabled
->>>>>>>>>> or not.
->>>>>>>>>> If disabled, clocks are enabled in probe() and disabled in remov=
-e()
->>>>>>>>>>
->>>>>>>>>> This patch does following minor changes as cleanup,
->>>>>>>>>>  =C2=A0=C2=A0 * return code check for pm_runtime_get_sync() to t=
-ake care of
->>>>>>>>>> failure
->>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0 and exit gracefully.
->>>>>>>>>>  =C2=A0=C2=A0 * In remove path runtime PM is disabled before cal=
-ling
->>>>>>>>>> snd_card_free().
->>>>>>>>>>  =C2=A0=C2=A0 * hda_tegra_disable_clocks() is moved out of CONFI=
-G_PM_SLEEP
->>>>>>>>>> check.
->>>>>>>>>>  =C2=A0=C2=A0 * runtime PM callbacks moved out of CONFIG_PM chec=
-k
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->>>>>>>>>> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
->>>>>>>>>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->>>>>>>>> (snip)
->>>>>>>>>> @@ -555,6 +553,13 @@ static int hda_tegra_probe(struct
->>>>>>>>>> platform_device *pdev)
->>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!azx_has_pm_runtime(chip))
->>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pm_runti=
-me_forbid(hda->dev);
->>>>>>>>>>  =C2=A0 +=C2=A0=C2=A0=C2=A0 /* explicit resume if runtime PM is =
-disabled */
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!pm_runtime_enabled(hda->dev)) {
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D hda_tegra_ru=
-ntime_resume(hda->dev);
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 goto out_free;
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0 }
->>>>>>>>>> +
->>>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 schedule_work(&hda->probe_work);
->>>>>>>>> Calling runtime_resume here is really confusing...
->>>>>>>> Why? IMO it is better to have a single handler for resuming the
->>>>>>>> device
->>>>>>>> and so if RPM is not enabled we call the handler directly. This is
->>>>>>>> what
->>>>>>>> we have been advised to do in the past and do in other drivers.
->>>>>>>> See ...
->>>>>>> The point is that we're not "resuming" anything there.=C2=A0 It's i=
-n the
->>>>>>> early probe stage, and the device state is uninitialized, not reall=
-y
->>>>>>> suspended.=C2=A0 It'd end up with just calling the same helper
->>>>>>> (hda_tegra_enable_clocks()), though.
->>>>>> Yes and you can make the same argument for every driver that calls
->>>>>> pm_runtime_get_sync() during probe to turn on clocks, handle resets,
->>>>>> etc, because at the end of the day the very first call to
->>>>>> pm_runtime_get_sync() invokes the runtime_resume callback, when we h=
-ave
->>>>>> never been suspended.
->>>>> Although there are some magical pm_runtime_*() in some places, most o=
-f
->>>>> such pm_runtime_get_sync() is for the actual runtime PM management (t=
-o
->>>>> prevent the runtime suspend), while the code above is for explicitly
->>>>> setting up something for non-PM cases.
->>>>>
->>>>> And if pm_runtime_get_sync() is obviously superfluous, we should
->>>>> remove such calls.=C2=A0 Really.
->>>> Yes agree.
->>>>
->>>>>> Yes at the end of the day it is the same and given that we have done
->>>>>> this elsewhere I think it is good to be consistent if/where we can.
->>>>> The code becomes less readable, and that's a good reason against it :=
-)
->>>> I don't its less readable. However, I do think it is less error prone =
-:-)
->>> Do we have a consensus here? Request others to provide opinions to help
->>> close on this.
->> I am not going to block this and ultimately it is Iwai-san call.
->>
->> However, I wonder if it would be appropriate to move the whole ...
->>
->>   if (pm_runtime_enabled())
->>           ret =3D pm_runtime_get_sync();
->>   else
->>           ret =3D hda_tegra_runtime_resume();
->>
->> ... into the probe_work function? In other words, we are just resuming
->> when we really need to. Unless I am still misunderstanding Iwai-san
->> comment. Otherwise if Iwai-san is happy with V2 then go with that.
-> Only from my personal taste, I find the v2 patch is better.
-> It like simpler, after all.  That is, the code in v1 patch
->
-> 	probe() {
-> 		....
-> 		pm_runtime_enable();
-> 		....
-> 		if (!pm_runtime_enabled())
-> 			hda_tegra_runtime_resume();
-> 		schedule_work();
-> 	}
->
-> 	work() {
-> 		pm_runtime_get_sync();
-> 		....
-> 		pm_runtime_put();
-> 	}
->
-> becomes shorter in v2:
->
-> 	probe() {
-> 		....
-> 		hda_tegra_enable_clocks();
-> 		schedule_work();
-> 	}
->
-> 	work() {
-> 		....
-> 		pm_runtime_enable();
-> 	}
->
->
-> However, the point about hda_tegra_remove() you raised in the v2 patch
-> is still valid.  (BTW, I guess the discussion followed in that thread
-> was somehow misunderstood; your argument was about hda_tegra_remove()
-> while Sameer discussed about the probe.)  It can be with
-> hda_tegra_disable_clocks() if we want more consistency.
->
-> Though, I don't mind too much about that as long as the proper comment
-> is given.
-We might need entire functionality of hda_tegra_runtime_suspend()=20
-replicated here,
-if hda_tegra_disable_clocks() were to be used. Right now it takes care=20
-of both the
-cases where runtime PM is enabled/disabled. If you all agree, we can=20
-move the
-discussion to v2 patch.
-
-Thanks,
-Sameer.
->
-> thanks,
->
-> Takashi
+This should be using a mempool/bioset... just returning from a make_request
+function is not correct, that's a serious bug - you're just dropping an IO on
+the floor, which is going to cause whatever submitted that IO to hang.
