@@ -2,137 +2,187 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB23C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00343C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 143FC2184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:38:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="gyS4DX77"
+	by mail.kernel.org (Postfix) with ESMTP id D0F0F20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:39:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387725AbfA3TiK (ORCPT
+        id S2387710AbfA3Tjb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:38:10 -0500
-Received: from mail-eopbgr00055.outbound.protection.outlook.com ([40.107.0.55]:33920
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387587AbfA3TiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:38:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sHIT1DeIPKnCvYcUeyhE0EtGWZMDqKh59X54jLmVJUU=;
- b=gyS4DX77O7CddFILxhwoDmTZHPNRUFeeiwygODXQ0HaKzhbKCXpHHl8n0EcfDF9zK15x6QwUucqkfU2oD9e4kujECqXol0rc6g+EIbWmTHlmgaifpfAtyEvzvL+c4pp7hLsRTiXZpPFME9ma34+74znidtJ0u9JCPW8OS9qTZTs=
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
- DBBPR05MB6443.eurprd05.prod.outlook.com (20.179.42.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Wed, 30 Jan 2019 19:38:05 +0000
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 19:38:05 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Logan Gunthorpe <logang@deltatee.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAANmWgIAAG8YAgAAHLwCAAAROgA==
-Date:   Wed, 30 Jan 2019 19:38:05 +0000
-Message-ID: <20190130193759.GE17080@mellanox.com>
-References: <20190129205749.GN3176@redhat.com>
- <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
- <20190129215028.GQ3176@redhat.com>
- <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
- <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
- <20190130041841.GB30598@mellanox.com>
- <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
- <20190130185652.GB17080@mellanox.com> <20190130192234.GD5061@redhat.com>
-In-Reply-To: <20190130192234.GD5061@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CO2PR04CA0147.namprd04.prod.outlook.com (2603:10b6:104::25)
- To DBBPR05MB6426.eurprd05.prod.outlook.com (2603:10a6:10:c9::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DBBPR05MB6443;6:8BjT0lPRGd/Bloy3I7se0owRa2eHox+OA3DG0HZqboKrfnk+nhBaZgiAHtWmWQTZgDJvfa3pAvYGLv0k97LV94I1xVio2b+Bbj827mAclCL+6ObT7pUrwx1nbTfJMVUVnHxP081fXmVZHLWUZGHVXRRdJ+HpMFRLYDHmV5l+QD/J4xdp/tpW2Eb6zmNTY82T/Lk4yJWxY7ZNUkw8+q4HjZiQcCeO7j0C71lN90Um6hh0Stc6qifTrcS8Ma9sXgIRmuAouxIEQBW3i1fW6k+xuhgjrCctWTXqNHnyLBqZgKlVy+KUnPnLNUYcFhZMQVi6LZZXXJ8/r+ZnfbGCZgprhmf+sW16CYz3Ve7lL/6YIAsGAEkAtbjd5REqEbYqPWyEehUbjMPHv1aQ3mvTwscs6E+18iKGvuw/Rg2w8hUZu5/KAxdalye3k9ib52JzeoC0MNc9cVes78FAnRZRT5xXwA==;5:GWwq+9oYouQYxo57/Jdm0Nk8hjAgkLD0W1mBLEpDhyA9ndsLEZuBpoeWJfcwow/vnJqMeqWuRfSzc964rMvOdT/1h/S33j+wuDNgpyzCY/biPrdVXaZuq+BnYD/P8uq6PLTbej4FsxdacOnnUElIVAo/A85I5Wzbh8m/DnrFtXu0qqV7v5nJ+0J/7Oz9h7hAoL6ToODzs4p3awRBt8BEEw==;7:joN3VKlx4Mnz/0jEG16C0H6erp7x6hJ4HLf4DwcClPN5VBQdHgsdPtWnvR3fAeLOl+0qrlZE8WHkZk5OSCQp8R3EwBsOj5yIX5SHEzkvzO4i38mxXWaNrIPb5m4lniEmoNN0LVCbZEQon60JU+VaUQ==
-x-ms-office365-filtering-correlation-id: c97efedb-b36b-4a44-82bb-08d686ea7420
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6443;
-x-ms-traffictypediagnostic: DBBPR05MB6443:
-x-microsoft-antispam-prvs: <DBBPR05MB64432A3005A1BAD293C027D3CF900@DBBPR05MB6443.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(396003)(376002)(346002)(199004)(189003)(6436002)(53936002)(7736002)(6486002)(105586002)(76176011)(6246003)(33656002)(54906003)(81166006)(8936002)(81156014)(25786009)(316002)(8676002)(3846002)(6116002)(99286004)(6916009)(305945005)(7416002)(229853002)(4326008)(106356001)(52116002)(86362001)(66066001)(478600001)(97736004)(2906002)(26005)(386003)(14454004)(102836004)(2616005)(486006)(11346002)(476003)(446003)(186003)(6506007)(256004)(93886005)(68736007)(1076003)(71200400001)(217873002)(71190400001)(36756003)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6443;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: K2yF2AViWQZEc7ZI+pKRZyGM0T/vFd3ojbLsQvfXogDk3dndY7jjH9jsls8HSXnI52t+b5vSTqSqIq27m8soebCv+WX9wsMaVPY/o5FVX2h4NfWg0vvyoMNrwbMPBK4mMMOmErAktsps2xsXjBmL87PKV8EadBXrui+WDUPPIOf5LtLkgnJ5sx37UmqZ2GY6gXOmTWecpBWID+DqFKHqAm9NxdpC+sFkjYdX/QIqY9m8XFiJCfjJtJUZqInN+7EYwuLui6WLMVpddEvtYCRw2kaaYjcMeLkaoV/h7JBAfG+fSZ8lpRmgvK869WRwZSBLDnQ0TCLtcOrCRBZHUhXZX/Vyf9jivlrPYkIH+CrPnPphAScoYrlHQRxpFvE1vVM2UgTiz1U6vRMLM1FfFbDLKBEWInSn28alpnICZuzggFE=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D90F85F4D783CE409C5D0F40D1A5C001@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 30 Jan 2019 14:39:31 -0500
+Received: from eddie.linux-mips.org ([148.251.95.138]:38660 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387587AbfA3Tjb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:39:31 -0500
+Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
+        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
+        id S23992819AbfA3Tj05RT5K (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org> + 3 others);
+        Wed, 30 Jan 2019 20:39:26 +0100
+Date:   Wed, 30 Jan 2019 20:39:25 +0100
+From:   Ladislav Michl <ladis@linux-mips.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 ] PM-runtime: fix deadlock with ktime
+Message-ID: <20190130193925.GA11090@lenoch>
+References: <1548846984-2044-1-git-send-email-vincent.guittot@linaro.org>
+ <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
+ <CAKfTPtAO--5rkKAwExbKoKDz9pM7MApbEqe0R9pS1-1avv2Gzw@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c97efedb-b36b-4a44-82bb-08d686ea7420
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 19:38:04.8240
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6443
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtAO--5rkKAwExbKoKDz9pM7MApbEqe0R9pS1-1avv2Gzw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 02:22:34PM -0500, Jerome Glisse wrote:
+On Wed, Jan 30, 2019 at 02:18:49PM +0100, Vincent Guittot wrote:
+> On Wed, 30 Jan 2019 at 14:06, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Wed, Jan 30, 2019 at 12:16 PM Vincent Guittot
+> > <vincent.guittot@linaro.org> wrote:
+> > >
+> > > A deadlock has been seen when swicthing clocksources which use PM runtime.
+> > > The call path is:
+> > > change_clocksource
+> > >     ...
+> > >     write_seqcount_begin
+> > >     ...
+> > >     timekeeping_update
+> > >         ...
+> > >         sh_cmt_clocksource_enable
+> > >             ...
+> > >             rpm_resume
+> > >                 pm_runtime_mark_last_busy
+> > >                     ktime_get
+> > >                         do
+> > >                             read_seqcount_begin
+> > >                         while read_seqcount_retry
+> > >     ....
+> > >     write_seqcount_end
+> > >
+> > > Although we should be safe because we haven't yet changed the clocksource
+> > > at that time, we can't because of seqcount protection.
+> > >
+> > > Use ktime_get_mono_fast_ns() instead which is lock safe for such case
+> > >
+> > > With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
+> > > monotonic across an update and as a result can goes backward. According to
+> > > update_fast_timekeeper() description: "In the worst case, this can
+> > > result is a slightly wrong timestamp (a few nanoseconds)". For
+> > > PM runtime autosuspend, this means only that the suspend decision can
+> > > be slightly sub optimal.
+> > >
+> > > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
+> > > Reported-by: Biju Das <biju.das@bp.renesas.com>
+> > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> >
+> > I've queued this one up as a fix for 5.0, but unfortunately it clashes
+> > with the patch from Ladislav Michl at
+> > https://patchwork.kernel.org/patch/10755477/ which has been dropped
+> > now.
+> 
+> Thanks for adding Ladislav in this thread.
+> I'm sorry I forgot to add him in the loop.
+> 
+> >
+> > Can you or Ladislav please rebase that patch on top of this one and repost?
+> 
+> Ladislav,
+> 
+> Let me know if you prefer to rebase and repost your patch of if you
+> want me to do.
 
-> For GPU it would not work, GPU might want to use main memory (because
-> it is running out of BAR space) it is a lot easier if the p2p_map
-> callback calls the right dma map function (for page or io) rather than
-> having to define some format that would pass down the information.
+I'll rebase it on top of Rafael's bleeding-edge branch.
 
-This is already sort of built into the sgl, you are supposed to use
-is_pci_p2pdma_page() and pci_p2pdma_map_sg() and somehow it is supposed
-to work out - but I think this is also fairly incomplete.
+Best regards,
+	ladis
 
-ie the current APIs seem to assume the SGL is homogeneous :(
-
-> > Worry about optimizing away the struct page overhead later?
->=20
-> Struct page do not fit well for GPU as the BAR address can be reprogram
-> to point to any page inside the device memory (think 256M BAR versus
-> 16GB device memory).
-
-The struct page only points to the BAR - it is not related to the
-actual GPU memory in any way. The struct page is just an alternative
-way to specify the physical address of the BAR page.
-
-I think this boils down to one call to setup the entire BAR, like nvme
-does, and then using the struct page in the p2p_map SGL??
-
-Jason
+> Regards,
+> Vincent
+> 
+> >
+> > > ---
+> > >
+> > > - v2: Updated commit message to explain the impact of using
+> > >   ktime_get_mono_fast_ns()
+> > >
+> > >  drivers/base/power/runtime.c | 10 +++++-----
+> > >  include/linux/pm_runtime.h   |  2 +-
+> > >  2 files changed, 6 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> > > index 457be03..708a13f 100644
+> > > --- a/drivers/base/power/runtime.c
+> > > +++ b/drivers/base/power/runtime.c
+> > > @@ -130,7 +130,7 @@ u64 pm_runtime_autosuspend_expiration(struct device *dev)
+> > >  {
+> > >         int autosuspend_delay;
+> > >         u64 last_busy, expires = 0;
+> > > -       u64 now = ktime_to_ns(ktime_get());
+> > > +       u64 now = ktime_get_mono_fast_ns();
+> > >
+> > >         if (!dev->power.use_autosuspend)
+> > >                 goto out;
+> > > @@ -909,7 +909,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
+> > >          * If 'expires' is after the current time, we've been called
+> > >          * too early.
+> > >          */
+> > > -       if (expires > 0 && expires < ktime_to_ns(ktime_get())) {
+> > > +       if (expires > 0 && expires < ktime_get_mono_fast_ns()) {
+> > >                 dev->power.timer_expires = 0;
+> > >                 rpm_suspend(dev, dev->power.timer_autosuspends ?
+> > >                     (RPM_ASYNC | RPM_AUTO) : RPM_ASYNC);
+> > > @@ -928,7 +928,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
+> > >  int pm_schedule_suspend(struct device *dev, unsigned int delay)
+> > >  {
+> > >         unsigned long flags;
+> > > -       ktime_t expires;
+> > > +       u64 expires;
+> > >         int retval;
+> > >
+> > >         spin_lock_irqsave(&dev->power.lock, flags);
+> > > @@ -945,8 +945,8 @@ int pm_schedule_suspend(struct device *dev, unsigned int delay)
+> > >         /* Other scheduled or pending requests need to be canceled. */
+> > >         pm_runtime_cancel_pending(dev);
+> > >
+> > > -       expires = ktime_add(ktime_get(), ms_to_ktime(delay));
+> > > -       dev->power.timer_expires = ktime_to_ns(expires);
+> > > +       expires = ktime_get_mono_fast_ns() + (u64)delay * NSEC_PER_MSEC);
+> > > +       dev->power.timer_expires = expires;
+> > >         dev->power.timer_autosuspends = 0;
+> > >         hrtimer_start(&dev->power.suspend_timer, expires, HRTIMER_MODE_ABS);
+> > >
+> > > diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+> > > index 54af4ee..fed5be7 100644
+> > > --- a/include/linux/pm_runtime.h
+> > > +++ b/include/linux/pm_runtime.h
+> > > @@ -105,7 +105,7 @@ static inline bool pm_runtime_callbacks_present(struct device *dev)
+> > >
+> > >  static inline void pm_runtime_mark_last_busy(struct device *dev)
+> > >  {
+> > > -       WRITE_ONCE(dev->power.last_busy, ktime_to_ns(ktime_get()));
+> > > +       WRITE_ONCE(dev->power.last_busy, ktime_get_mono_fast_ns());
+> > >  }
+> > >
+> > >  static inline bool pm_runtime_is_irq_safe(struct device *dev)
+> > > --
+> > > 2.7.4
+> > >
