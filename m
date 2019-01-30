@@ -2,106 +2,148 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A506C282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBD8C282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:18:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2D7521848
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D59FD2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:18:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kb3qU0xJ"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HlYComox"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbfA3GLD (ORCPT
+        id S1729479AbfA3GSE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 01:11:03 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40014 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbfA3GLD (ORCPT
+        Wed, 30 Jan 2019 01:18:04 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37210 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbfA3GSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 01:11:03 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i12so10927849pfo.7
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 22:11:03 -0800 (PST)
+        Wed, 30 Jan 2019 01:18:02 -0500
+Received: by mail-ot1-f66.google.com with SMTP id s13so20183135otq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 22:18:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=s3pPF054WEm8OyrXxyPjZFhtv/s9dWvBEg00z0qjpF4=;
-        b=kb3qU0xJ3xOSzyns5X5241P6RvtUWe5fYq2dcvHBCTuUo5QP4+jScF4cJxrwRVQCC1
-         lwJiVU977td9AAhJ4qJepv6W7Btxrki3ok2SsPteqi7JE0Dj6SYiC8bXLnaZuphqZmJ1
-         Ty5IvCNp0L5ffFvP9KtRYnKBWyZC5CoOpEIXM=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GfCCtscXzLcTgBfRtd84na+8CHfmvOKBgex8G5OBlQU=;
+        b=HlYComox3+pCn2czVeA91Mt70maiWPhR92XarngZ15ztgKD9tzMUbwAzZb2Gmwmnnp
+         XuFBC9Pob6HZymPD5s5gSJX1K+aXG4wO6o6GrxDX/zsKR60h5Nk50BKKiTsMDIVkmdk6
+         TKIduGAvBOuE3RtHP+AEtfD9b/rcSPNZMqpic=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=s3pPF054WEm8OyrXxyPjZFhtv/s9dWvBEg00z0qjpF4=;
-        b=JlOER9HCa26Sw+s1Yu8gRMJGU3elgfPXayLfzddI+k0hMKGX5V5xqLH0tfJoR6USC5
-         IUAxaZbw5D2S3ttEA+bk38Xqty16VvO3Z/LH2ndUeLfL4TA5B3G41NKg0Io0FC5e/MFP
-         gR8dvNsvRgKcvC33qDiTkeaADncCnqKFMat22nT4QNtpl/oM0wm4TZOGh3b3pDbbD0Mc
-         8UJ6bdVh5AOUQqy24Ftvh6T2wwUJhtnm2JYcz2+oUahUjLxxQRfZkZZcrkBkBlTeOMDE
-         McOeCcQs3jLrIo3TXRXiugDsqEjgoTRUDtrm+bKwGCsU7h5wbiw1hiOkkzoNdutcOmlG
-         TJ7w==
-X-Gm-Message-State: AJcUukdhzgsmsWL3j3Zhg5XZvFGi3egJhShM3U/d4VuIONOP2qMyH15D
-        KZEtZYe0Jg/hv7DR3LeQrYJeCQ==
-X-Google-Smtp-Source: ALg8bN6RPg4y7Z4+W8+BchPwK3kz+yolMBfg7BW738pfnZp4EzIEkA6M5jbQrPOooq4YIttrU0H/Bg==
-X-Received: by 2002:a62:4156:: with SMTP id o83mr29164466pfa.72.1548828662467;
-        Tue, 29 Jan 2019 22:11:02 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b13sm1556889pfj.66.2019.01.29.22.11.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 22:11:01 -0800 (PST)
-Date:   Tue, 29 Jan 2019 22:10:59 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Kalle Valo <kvalo@codeaurora.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org,
-        Govind Singh <govinds@codeaurora.org>,
-        Erik Stromdahl <erik.stromdahl@gmail.com>,
-        Wen Gong <wgong@codeaurora.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-5.0] ath10k: correct bus type for WCN3990
-Message-ID: <20190130061059.GA2387@tuxbook-pro>
-References: <20190129231201.42230-1-briannorris@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GfCCtscXzLcTgBfRtd84na+8CHfmvOKBgex8G5OBlQU=;
+        b=aHrajrsuBNEw9zcYu85rvW7h+cyJhYpFnI4ws/TwuarIPZorqr4UyMtqXU+ENObu4D
+         ttI+ARPJ0QQeqdB4AufasFZkgghTU7FUxGbxJClIbEFZP+5b+k79bXaGlq9UWEMqmzMI
+         LqzNnbRiD2fCrhYnVtDOtMK7qxrY4zvc9Re/QP9NKRAHsGdgTnOJKSu/hvUtncMpc/Fk
+         kycnBNHylVvjPZBSORD0PXxj1agkhHPh94ro5z+Xjafak9BCRdjhZnDlg8I+0kEJ6n01
+         ZtLaAEussvmZ4GF9PzGO/c3hO2cTeECDT5ysOd6yW9C6aHzu6acDwS/7JDzmqhdVQnNK
+         SVEA==
+X-Gm-Message-State: AJcUukfz9+20TYUKo4+8zOQyVwm1E4mipoj3p9f7LgbNBLzeyo7elpNa
+        0s7wUicLnkiujUgGa8DE7vp5Nh+0wD4=
+X-Google-Smtp-Source: ALg8bN442liN3/H0ShFznjPBWn6xl19P7ksz8fuaIGCBjc146nxADItFmFIrBQNPi61fwo8fYlOnBQ==
+X-Received: by 2002:a9d:6197:: with SMTP id g23mr21007032otk.324.1548829081389;
+        Tue, 29 Jan 2019 22:18:01 -0800 (PST)
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com. [209.85.210.44])
+        by smtp.gmail.com with ESMTPSA id y25sm249382otk.50.2019.01.29.22.17.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 22:17:58 -0800 (PST)
+Received: by mail-ot1-f44.google.com with SMTP id n8so20185142otl.6
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 22:17:58 -0800 (PST)
+X-Received: by 2002:a9d:6546:: with SMTP id q6mr22782709otl.288.1548829077886;
+ Tue, 29 Jan 2019 22:17:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129231201.42230-1-briannorris@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
+ <20190117162008.25217-11-stanimir.varbanov@linaro.org> <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
+ <28069a44-b188-6b89-2687-542fa762c00e@linaro.org> <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
+ <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
+ <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com> <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
+In-Reply-To: <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 30 Jan 2019 15:17:46 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
+Message-ID: <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
+Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
+ codec API
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 29 Jan 15:12 PST 2019, Brian Norris wrote:
+On Wed, Jan 30, 2019 at 1:21 PM Nicolas Dufresne <nicolas@ndufresne.ca> wro=
+te:
+>
+> Le mercredi 30 janvier 2019 =C3=A0 12:38 +0900, Tomasz Figa a =C3=A9crit =
+:
+> > > Yes, unfortunately, GStreamer still rely on G_FMT waiting a minimal
+> > > amount of time of the headers to be processed. This was how things wa=
+s
+> > > created back in 2011, I could not program GStreamer for the future. I=
+f
+> > > we stop doing this, we do break GStreamer as a valid userspace
+> > > application.
+> >
+> > Does it? Didn't you say earlier that you end up setting the OUTPUT
+> > format with the stream resolution as parsed on your own? If so, that
+> > would actually expose a matching framebuffer format on the CAPTURE
+> > queue, so there is no need to wait for the real parsing to happen.
+>
+> I don't remember saying that, maybe I meant to say there might be a
+> workaround ?
+>
+> For the fact, here we queue the headers (or first frame):
+>
+> https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys=
+/v4l2/gstv4l2videodec.c#L624
+>
+> Then few line below this helper does G_FMT internally:
+>
+> https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys=
+/v4l2/gstv4l2videodec.c#L634
+> https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys=
+/v4l2/gstv4l2object.c#L3907
+>
+> And just plainly fails if G_FMT returns an error of any type. This was
+> how Kamil designed it initially for MFC driver. There was no other
+> alternative back then (no EAGAIN yet either).
 
-> WCN3990 is SNOC, not PCI. This prevents probing WCN3990.
-> 
-> Fixes: 367c899f622c ("ath10k: add bus type check in ath10k_init_hw_params")
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+Hmm, was that ffmpeg then?
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+So would it just set the OUTPUT width and height to 0? Does it mean
+that gstreamer doesn't work with coda and mtk-vcodec, which don't have
+such wait in their g_fmt implementations?
 
-> ---
-> This was a regression in 4.20.
-> 
->  drivers/net/wireless/ath/ath10k/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
-> index 399b501f3c3c..e8891f5fc83a 100644
-> --- a/drivers/net/wireless/ath/ath10k/core.c
-> +++ b/drivers/net/wireless/ath/ath10k/core.c
-> @@ -548,7 +548,7 @@ static const struct ath10k_hw_params ath10k_hw_params_list[] = {
->  	{
->  		.id = WCN3990_HW_1_0_DEV_VERSION,
->  		.dev_id = 0,
-> -		.bus = ATH10K_BUS_PCI,
-> +		.bus = ATH10K_BUS_SNOC,
->  		.name = "wcn3990 hw1.0",
->  		.continuous_frag_desc = true,
->  		.tx_chain_mask = 0x7,
-> -- 
-> 2.20.1.495.gaa96b0ce6b-goog
-> 
+>
+> Nicolas
+>
+> p.s. it's still in my todo's to implement source change event as I
+> believe it is a better mechanism (specially if you header happened to
+> be corrupted, then the driver can consume the stream until it finds a
+> sync). So these sleep or normally wait exist all over to support this
+> legacy thing. It is unfortunate, the question is do you want to break
+> userspace now ? Without having first placed a patch that would maybe
+> warn or something for a while ?
+>
+
+I don't want and my understanding was that we could workaround it by
+the propagation of format from OUTPUT to CAPTURE. Also see above.
+
+Best regards,
+Tomasz
