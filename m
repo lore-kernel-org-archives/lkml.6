@@ -2,128 +2,171 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC55EC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A1CC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA5B20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:06:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37BD8218A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:06:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcdpxPVm"
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="a02mUaxD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731464AbfA3PGW (ORCPT
+        id S1731488AbfA3PG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:06:22 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36016 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727162AbfA3PGU (ORCPT
+        Wed, 30 Jan 2019 10:06:26 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:36111 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbfA3PGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:06:20 -0500
-Received: by mail-qt1-f194.google.com with SMTP id t13so26532249qtn.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 07:06:19 -0800 (PST)
+        Wed, 30 Jan 2019 10:06:25 -0500
+Received: by mail-qk1-f195.google.com with SMTP id o125so13844889qkf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 07:06:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fRCmJioATJL5WYGPiQvnI00ogVwM6ieigySHAUm7H0w=;
-        b=NcdpxPVm5QS3oX2P3MqCk8+rZV2yMw7n8XE0GHi670d1YCK3PdRxGt06foxuCb4Es5
-         LD3+Zyil4xgws2q9WwO6+f8mGAI+0xfRX4PiRGdQa2rGG31ntX9PxALEwYfLNAiixayJ
-         XDJINutv9+G46lrV6ph8TS3OXAmpz5VsqMG6YMw/6qkrtX4hGo6rLCq5Smgam7yoysC3
-         XMOWkIAlR/MbTqcyVW3mod2LOPdqRNtraUgVbkwahZl2BDKAiswBKSbzG54fFW4GvF0D
-         rTKBcBQWfGiLmYv0gCNKODFfv6F1zP9b7WIVq3OPcKOvCCICTLDS5q0x54zHQMMJO3Xk
-         DUxg==
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=48KG1ySv4BJnImKF0uZfw8xudC3hcA6deg837Zyrt70=;
+        b=a02mUaxDkYnmf+kwpv37ZN0onQOOOswUz3jJwdaeQKwAQoc71mmpa+0k87PGnAP9to
+         ombt3XgD3/5KIqzoKi4JDjXtLcNa/vqQX093OBo2s612LZQ7+RL0m9SCOAIo20DAGU8E
+         VmmVZqlXn69bP2kfXe+8kJHb9jCHF+a9L1JtOxn0SrlAF4oz4tzfJh/L3lOJO/zyyAZc
+         I0+RiYSH8RTE201akNeLomAFUqvY5qIS8X5XPOeok97B7QsluKtYuYeWjmEM8qsCuEfg
+         RnFXtwlKER86SIP5BA7QT4Ak9gLolvtY1ynCrcbKbA+Y7de7DDB1VHr3sdowOsSERRcp
+         uFAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fRCmJioATJL5WYGPiQvnI00ogVwM6ieigySHAUm7H0w=;
-        b=WB1sqYa2hecYEOf+efmp67LmSZNSaHOdYbBMKv0KxEXotUowqGJTIVUx6ooFk4kgs+
-         6J63HUcHBaXxKCQWdNPI2TWnEW3bGHLDBbZs72zpTAlRqGmSBRPODLxITMAc7uOyZlOE
-         aJaod3XtIlhH5NIHJ2qp7gJNPaM+ARHArw445rHYRlbQZ4Zhi7bvL873W25dZqw+ucLc
-         jqVID48ujJfqfE4iHrRD62sWG5+8HQ7p3Zqu68DvZkgeu3AAz+l6ZxgEt5V8HA4OmW04
-         JJpMcZ3YsxOJNXyac2ujiCjOZLSxd86fSn3Jx58W693o+zpSYZX78FM1CLKIh8Hq3lEj
-         YTtw==
-X-Gm-Message-State: AHQUAuautqmdLQJ6vF/wgn+ldBICD23JDXgu/SGOXG3xf5+inF4Yps+7
-        qHk6V3DeQTlTdEbU0/LoFR7cHtuvA2JSTx0FbDQ=
-X-Google-Smtp-Source: AHgI3IbmtfLbymWCOu21q40TIvtfhAsJWjkmqXmqBEjRD5rm1+Ubnzk8LvR6sFFgRjq5jguuooaPtRjyj3fjwFCaBos=
-X-Received: by 2002:ac8:4284:: with SMTP id o4mr9259179qtl.389.1548860779118;
- Wed, 30 Jan 2019 07:06:19 -0800 (PST)
-MIME-Version: 1.0
-References: <20190121071833.43443-1-pihsun@chromium.org> <20190121071833.43443-6-pihsun@chromium.org>
- <20190130130738.GC4701@dell>
-In-Reply-To: <20190130130738.GC4701@dell>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Wed, 30 Jan 2019 16:06:08 +0100
-Message-ID: <CAFqH_51-WCxyRpb6fDhm_y6gE+XsJo9Ezp-QZuAPAyxXqZgPdQ@mail.gmail.com>
-Subject: Re: [RFC v3 5/5] cros_ec: differentiate SCP from EC by feature bit.
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        open list <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=48KG1ySv4BJnImKF0uZfw8xudC3hcA6deg837Zyrt70=;
+        b=GUCTRpNuWrvGZdoCa1XJ6pFWA4iW/8n4bEsEvj0f8WDM02zCt+VawvLMunZnle5CSD
+         AuLr8wNHg8hWyKnD+EAmYNRRzpDbND72JGHJyvTkFA3G+GHLC/Sfa3oeeTQ0346QAmm/
+         kbnZBsRjCCJc0pgZ0B2h9x8SFLj2V+ZiMHhM1YCM0y2RXcS8nUqZGXWlsj8fSll3Onjf
+         DSabPJuWOlnldhk+ODs6twHnIaTf+MUvthSCjq1QUpBbVnnwRrDQ08EoHojyXeQRflzZ
+         eGdhE/yBjjMT8MIeZXXZFB8pFLNzCFreHR7AHZPfbsTC3rTDhizlI0YZiYG5Tso/Q89P
+         XO0g==
+X-Gm-Message-State: AJcUukcNQ8dFh7O3sfhnDPxT5TIjN/UvBz44cUojqgZPHjLF5PDWvcAB
+        1KBQTsrXCxNo+zT94FkkIJRIl6X3J2Gaen11
+X-Google-Smtp-Source: ALg8bN6o1fDiqCFll0zL1NY5z3VmiXB5qx7eWPka3Sm4J0jLOcvBuAqr7kYngN1+G2ZivY4HQk2rOg==
+X-Received: by 2002:a37:dc04:: with SMTP id v4mr28340578qki.101.1548860784301;
+        Wed, 30 Jan 2019 07:06:24 -0800 (PST)
+Received: from skullcanyon ([192.222.193.21])
+        by smtp.gmail.com with ESMTPSA id b17sm2185698qkj.69.2019.01.30.07.06.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 07:06:23 -0800 (PST)
+Message-ID: <9fd20ee01384d0bd8e395c6cf52ed8dc9d47ff06.camel@ndufresne.ca>
+Subject: Re: [PATCH v2 2/2] media: docs-rst: Document memory-to-memory video
+ encoder interface
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        =?UTF-8?Q?Pawe=C5=82_O=C5=9Bciak?= <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Kamil Debski <kamil@wypas.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Date:   Wed, 30 Jan 2019 10:06:22 -0500
+In-Reply-To: <CAAFQd5DGQvmdvV42Qz_yRVk1XCaYH6AMxWJgJ_PrECBM+U65uA@mail.gmail.com>
+References: <20181022144901.113852-1-tfiga@chromium.org>
+         <20181022144901.113852-3-tfiga@chromium.org>
+         <4cd223f0-b09c-da07-f26c-3b3f7a8868d7@xs4all.nl>
+         <CAAFQd5DthE3vL+gycEBgm+aF0YhRncrfBVBNLLF4g+oKhBHEWQ@mail.gmail.com>
+         <75334288-69af-6680-fbe7-2dd5ef2462ea@xs4all.nl>
+         <0452db20a894c1c4cce263b7e07ba274a58aa8fa.camel@ndufresne.ca>
+         <CAAFQd5DGQvmdvV42Qz_yRVk1XCaYH6AMxWJgJ_PrECBM+U65uA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee, Pi-Hsun,
+Le vendredi 25 janvier 2019 à 12:59 +0900, Tomasz Figa a écrit :
+> On Fri, Jan 25, 2019 at 5:14 AM Nicolas Dufresne <nicolas@ndufresne.ca> wrote:
+> > Le mercredi 23 janvier 2019 à 14:04 +0100, Hans Verkuil a écrit :
+> > > > > Does this return the same set of formats as in the 'Querying Capabilities' phase?
+> > > > > 
+> > > > 
+> > > > It's actually an interesting question. At this point we wouldn't have
+> > > > the OUTPUT resolution set yet, so that would be the same set as in the
+> > > > initial query. If we set the resolution (with some arbitrary
+> > > > pixelformat), it may become a subset...
+> > > 
+> > > But doesn't setting the capture format also set the resolution?
+> > > 
+> > > To quote from the text above:
+> > > 
+> > > "The encoder will derive a new ``OUTPUT`` format from the ``CAPTURE`` format
+> > >  being set, including resolution, colorimetry parameters, etc."
+> > > 
+> > > So you set the capture format with a resolution (you know that), then
+> > > ENUM_FMT will return the subset for that codec and resolution.
+> > > 
+> > > But see also the comment at the end of this email.
+> > 
+> > I'm thinking that the fact that there is no "unset" value for pixel
+> > format creates a certain ambiguity. Maybe we could create a new pixel
+> > format, and all CODEC driver could have that set by default ? Then we
+> > can just fail STREAMON if that format is set.
+> 
+> The state on the CAPTURE queue is actually not "unset". The queue is
+> simply not ready (yet) and any operations on it will error out.
 
-Missatge de Lee Jones <lee.jones@linaro.org> del dia dc., 30 de gen.
-2019 a les 14:07:
->
-> On Mon, 21 Jan 2019, Pi-Hsun Shih wrote:
->
-> > Since a SCP and EC would both exist on a system, and use the cros_ec_de=
-v
-> > driver, we need to differentiate between them for the userspace, or the=
-y
-> > would both be registered at /dev/cros_ec, causing a conflict.
-> >
-> > Cc: Enric Balletbo Serra <eballetbo@gmail.com>
-> > Cc: Guenter Roeck <groeck@chromium.org>
-> > Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-> > ---
-> > Changes from v2:
-> >  - No change.
-> >
-> > Changes from v1:
-> >  - New patch extracted from Patch 5.
-> > ---
-> >  drivers/mfd/cros_ec_dev.c            | 9 +++++++++
-> >  include/linux/mfd/cros_ec.h          | 1 +
-> >  include/linux/mfd/cros_ec_commands.h | 2 ++
-> >  3 files changed, 12 insertions(+)
->
-> Just to clarify to the new Cc'ed list, I'm waiting on one of the
-> Chromium guys to review before I put my mucky paws over it.
->
+My point was that it's just awkward to have this "not ready" state, in
+which you cannot go back. And in which the enum-format will ignore the
+format configured on the other side.
 
-Pi-Hsun, is this patchset still an RFC or you really want to see this
-merged ASAP? If I am not mistaken there is still some work in progress
-trying to push all the SCP stuff?
+What I wanted to say is that this special case is not really needed.
 
-Lee, personally I have some concerns. Looks like the cros_* family is
-increasing quickly lately (cros_ec, cros_pd, cros_scp, cros_ish,
-cros_fp ...) and I am wondering if we are really doing well all this.
-To be honest, I'd like to take a deeper look before merge this, btw I
-thought there was no hurry because of the RFC and I guess there are
-still some scp things that are missing. I might be wrong, and if
-that's not the case I can take a look deeper and the end of the week.
+> 
+> Once the application sets the coded resolution on the OUTPUT queue or
+> the decoder parses the stream information, the CAPTURE queue becomes
+> ready and one can do the ioctls on it.
+> 
+> > That being said, in GStreamer, I have split each elements per CODEC,
+> > and now only enumerate the information "per-codec". That makes me think
+> > this "global" enumeration was just a miss-use of the API / me learning
+> > to use it. Not having to implement this rather complex thing in the
+> > driver would be nice. Notably, the new Amlogic driver does not have
+> > this "Querying Capabilities" phase, and with latest GStreamer works
+> > just fine.
+> 
+> What do you mean by "doesn't have"? Does it lack an implementation of
+> VIDIOC_ENUM_FMT and VIDIOC_ENUM_FRAMESIZES?
 
-Best regards,
- Enric
+What it does is that it sets a default value for the codec format, so
+if you just open the device and do enum_fmt/framesizes, you get that is
+possible for the default codec that was selected. And I thin it's
+entirely correct, doing ENUM_FMT(capture) without doing an
+S_FMT(output) can easily be documented as undefined behaviour.
 
+For proper enumeration would be:
 
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+for formats on OUTPUT device:
+  S_FMT(OUTPUT):
+  for formats on CAPTURE device:
+    ...
+
+(the pseudo for look represent an enum operation)
+
+> 
+> Best regards,
+> Tomasz
+
