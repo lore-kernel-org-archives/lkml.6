@@ -2,91 +2,103 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C384C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6213C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4F3B20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:55:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548860156;
-	bh=7G5T/KsM8XC2WiSdPDQavJovP2/zcBe1Um2PBAdj+3U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=hyuAi5m3dJfWKa7lMpXdn52HpXwZ56Kd2kIUq7VgybAANkGJ1SsWiz9v4Htk2XgvW
-	 +49QIJ1UL4qxcHP1fplaHy3iTr1dlimEWaIZKiZae+gDHPEmR75HXjkXQ2mpgqbW78
-	 8Waw55Lfovj9tzFablA7RjZ37THKkxlLnzk7/UCI=
+	by mail.kernel.org (Postfix) with ESMTP id 9A68E20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731423AbfA3Ozy (ORCPT
+        id S1731406AbfA3O44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 09:55:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51884 "EHLO mail.kernel.org"
+        Wed, 30 Jan 2019 09:56:56 -0500
+Received: from foss.arm.com ([217.140.101.70]:55622 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbfA3Ozx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 09:55:53 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26E6720882;
-        Wed, 30 Jan 2019 14:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548860153;
-        bh=7G5T/KsM8XC2WiSdPDQavJovP2/zcBe1Um2PBAdj+3U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qYrh5hlh2iq0rXjNpgxGqwFfe9+n0Q19rZ5e+wKjmh5QIhPMaXcuVuFbSBk/3FuvK
-         Fnvwybt9jQXos2z9hGma+lbCo+R52J7f1m/uVb3zORhES0EJtEUxNuLeQ2VnS9MZ90
-         m57b0AF9SbonKN69LhTV7QsYGSpIO6amJ3+I6f48=
-Date:   Wed, 30 Jan 2019 15:55:43 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Nguyen An Hoan <na-hoan@jinso.co.jp>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] eeprom: at25: SPI transfer improvements
-Message-ID: <20190130155543.5ab749b5@bbrezillon>
-In-Reply-To: <CAMuHMdVfVHUQnjwvFikqQJ8HBD+0A7DSCTcdDN4e7V4c=4Usug@mail.gmail.com>
-References: <20190118140525.29189-1-geert+renesas@glider.be>
-        <20190118230740.44239fcf@bbrezillon>
-        <CAMuHMdVfVHUQnjwvFikqQJ8HBD+0A7DSCTcdDN4e7V4c=4Usug@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725768AbfA3O44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 09:56:56 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A53B5EBD;
+        Wed, 30 Jan 2019 06:56:55 -0800 (PST)
+Received: from [10.37.9.196] (unknown [10.37.9.196])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24B3C3F589;
+        Wed, 30 Jan 2019 06:56:53 -0800 (PST)
+Subject: Re: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
+ 010001
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
+Cc:     "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        'Mark Rutland' <mark.rutland@arm.com>,
+        "'linux-arm-kernel@lists.infradead.org'" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "'will.deacon@arm.com'" <will.deacon@arm.com>
+References: <8898674D84E3B24BA3A2D289B872026A6A2C04E6@G01JPEXMBKW03>
+ <20190129181032.GC224095@arrakis.emea.arm.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <57c09d48-2c09-f1e1-0f70-c8249bc8329f@arm.com>
+Date:   Wed, 30 Jan 2019 14:56:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190129181032.GC224095@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Jan 2019 20:02:37 +0100
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Hi guys,
 
-> Hi Boris,
+On 01/29/2019 06:10 PM, Catalin Marinas wrote:
+> Could you please copy the whole description from the cover letter to the
+> actual patch and only send one email (full description as in here
+> together with the patch)? If we commit this to the kernel, it would be
+> useful to have the information in the log for reference later on.
 > 
-> On Fri, Jan 18, 2019 at 11:07 PM Boris Brezillon <bbrezillon@kernel.org> wrote:
-> > Did you consider converting this driver to spimem? Looks like the
-> > protocol used to communicate with the memory resembles the one used on
-> > SPI NANDs/NORs and fits pretty well in the spi_mem_op representation.
-> >
-> > By doing this conversion you'd allow people to connect an AT25 EEPROM
-> > to an advanced SPI controller that does not support regular SPI
-> > transfers and you wouldn't have to forge SPI messages manually.
-> >
-> > Here is a patch (only compile tested) doing that. The diffstat is not in
-> > favor of this conversion, but I find the resulting code cleaner and more
-> > future proof.  
+> More comments below:
 > 
-> Thanks, seems to work fine, with the 512-byte 25LC040 I have!
+> On Tue, Jan 29, 2019 at 12:29:58PM +0000, Zhang, Lei wrote:
+>> On some variants of the Fujitsu-A64FX cores ver(1.0, 1.1),
+>> memory accesses may cause undefined fault (Data abort, DFSC=0b111111).
+>> This problem will be fixed by next version of Fujitsu-A64FX.
+>>
+>> This fault occurs under a specific hardware condition
+>> when a load/store instruction perform an address translation using:
+>>    case-1  TTBR0_EL1 with TCR_EL1.NFD0 == 1.
+>>    case-2  TTBR0_EL2 with TCR_EL2.NFD0 == 1.
+>>    case-3  TTBR1_EL1 with TCR_EL1.NFD1 == 1.
+>>    case-4  TTBR1_EL2 with TCR_EL2.NFD1 == 1.
+>> And this fault occurs completely spurious.
 > 
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> So this looks like new information on the hardware behaviour since the
+> v2 of the patch. Can this fault occur for any type of instruction
+> accessing the memory or only for SVE instructions?
 > 
-> I did notice that the first two-byte transfer (command+offset) of each
-> message is now split in two one-byte transfers, though.
+>> Since TCR_ELx.NFD1 is set to '1' at the kernel in versions
+>> past 4.17, the case-3 or case-4 may happen.
+>>
+>> This fault can be taken only at stage-1,
+>> so this fault is taken from EL0 to EL1/EL2, from EL1 to EL1,
+>> or from EL2 to EL2.
+>>
+>> I would like to post a workaround to avoid this problem on
+>> existing Fujitsu-A64FX version.
+> 
+> How likely is it to trigger this erratum? In other words, aren't we
+> better off with a spurious fault that we ignore rather than toggling the
+> TCR_ELx.NFD1 bit?
 
-That's something we can optimize in drivers/spi/spi-mem.c if you think
-it makes a difference.
+It sounds like the spurious fault can occur as a result of load/store. 
+('there is no load/store instruction between'...).
+
+If this can happen in kernel_enter it will overwrite the exception 
+registers, and we lose the original ELR.
+
+If load/store trigger it, I don't think we can ignore it.
+
+Thanks,
+
+James
