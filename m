@@ -2,171 +2,121 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A1CC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B77C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37BD8218A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:06:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="a02mUaxD"
+	by mail.kernel.org (Postfix) with ESMTP id CB79020989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:06:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731488AbfA3PG0 (ORCPT
+        id S1731509AbfA3PG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 30 Jan 2019 10:06:28 -0500
+Received: from 8bytes.org ([81.169.241.247]:35880 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731473AbfA3PG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 Jan 2019 10:06:26 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36111 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727162AbfA3PGZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:06:25 -0500
-Received: by mail-qk1-f195.google.com with SMTP id o125so13844889qkf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 07:06:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=48KG1ySv4BJnImKF0uZfw8xudC3hcA6deg837Zyrt70=;
-        b=a02mUaxDkYnmf+kwpv37ZN0onQOOOswUz3jJwdaeQKwAQoc71mmpa+0k87PGnAP9to
-         ombt3XgD3/5KIqzoKi4JDjXtLcNa/vqQX093OBo2s612LZQ7+RL0m9SCOAIo20DAGU8E
-         VmmVZqlXn69bP2kfXe+8kJHb9jCHF+a9L1JtOxn0SrlAF4oz4tzfJh/L3lOJO/zyyAZc
-         I0+RiYSH8RTE201akNeLomAFUqvY5qIS8X5XPOeok97B7QsluKtYuYeWjmEM8qsCuEfg
-         RnFXtwlKER86SIP5BA7QT4Ak9gLolvtY1ynCrcbKbA+Y7de7DDB1VHr3sdowOsSERRcp
-         uFAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=48KG1ySv4BJnImKF0uZfw8xudC3hcA6deg837Zyrt70=;
-        b=GUCTRpNuWrvGZdoCa1XJ6pFWA4iW/8n4bEsEvj0f8WDM02zCt+VawvLMunZnle5CSD
-         AuLr8wNHg8hWyKnD+EAmYNRRzpDbND72JGHJyvTkFA3G+GHLC/Sfa3oeeTQ0346QAmm/
-         kbnZBsRjCCJc0pgZ0B2h9x8SFLj2V+ZiMHhM1YCM0y2RXcS8nUqZGXWlsj8fSll3Onjf
-         DSabPJuWOlnldhk+ODs6twHnIaTf+MUvthSCjq1QUpBbVnnwRrDQ08EoHojyXeQRflzZ
-         eGdhE/yBjjMT8MIeZXXZFB8pFLNzCFreHR7AHZPfbsTC3rTDhizlI0YZiYG5Tso/Q89P
-         XO0g==
-X-Gm-Message-State: AJcUukcNQ8dFh7O3sfhnDPxT5TIjN/UvBz44cUojqgZPHjLF5PDWvcAB
-        1KBQTsrXCxNo+zT94FkkIJRIl6X3J2Gaen11
-X-Google-Smtp-Source: ALg8bN6o1fDiqCFll0zL1NY5z3VmiXB5qx7eWPka3Sm4J0jLOcvBuAqr7kYngN1+G2ZivY4HQk2rOg==
-X-Received: by 2002:a37:dc04:: with SMTP id v4mr28340578qki.101.1548860784301;
-        Wed, 30 Jan 2019 07:06:24 -0800 (PST)
-Received: from skullcanyon ([192.222.193.21])
-        by smtp.gmail.com with ESMTPSA id b17sm2185698qkj.69.2019.01.30.07.06.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 07:06:23 -0800 (PST)
-Message-ID: <9fd20ee01384d0bd8e395c6cf52ed8dc9d47ff06.camel@ndufresne.ca>
-Subject: Re: [PATCH v2 2/2] media: docs-rst: Document memory-to-memory video
- encoder interface
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?Q?Pawe=C5=82_O=C5=9Bciak?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Date:   Wed, 30 Jan 2019 10:06:22 -0500
-In-Reply-To: <CAAFQd5DGQvmdvV42Qz_yRVk1XCaYH6AMxWJgJ_PrECBM+U65uA@mail.gmail.com>
-References: <20181022144901.113852-1-tfiga@chromium.org>
-         <20181022144901.113852-3-tfiga@chromium.org>
-         <4cd223f0-b09c-da07-f26c-3b3f7a8868d7@xs4all.nl>
-         <CAAFQd5DthE3vL+gycEBgm+aF0YhRncrfBVBNLLF4g+oKhBHEWQ@mail.gmail.com>
-         <75334288-69af-6680-fbe7-2dd5ef2462ea@xs4all.nl>
-         <0452db20a894c1c4cce263b7e07ba274a58aa8fa.camel@ndufresne.ca>
-         <CAAFQd5DGQvmdvV42Qz_yRVk1XCaYH6AMxWJgJ_PrECBM+U65uA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 365842F5; Wed, 30 Jan 2019 16:06:25 +0100 (CET)
+Date:   Wed, 30 Jan 2019 16:06:23 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [git pull] IOMMU Fixes for Linux v5.0-rc4
+Message-ID: <20190130150619.p36c4rzds3lhl4xp@8bytes.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="aadaewmv5to66yg7"
+Content-Disposition: inline
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le vendredi 25 janvier 2019 à 12:59 +0900, Tomasz Figa a écrit :
-> On Fri, Jan 25, 2019 at 5:14 AM Nicolas Dufresne <nicolas@ndufresne.ca> wrote:
-> > Le mercredi 23 janvier 2019 à 14:04 +0100, Hans Verkuil a écrit :
-> > > > > Does this return the same set of formats as in the 'Querying Capabilities' phase?
-> > > > > 
-> > > > 
-> > > > It's actually an interesting question. At this point we wouldn't have
-> > > > the OUTPUT resolution set yet, so that would be the same set as in the
-> > > > initial query. If we set the resolution (with some arbitrary
-> > > > pixelformat), it may become a subset...
-> > > 
-> > > But doesn't setting the capture format also set the resolution?
-> > > 
-> > > To quote from the text above:
-> > > 
-> > > "The encoder will derive a new ``OUTPUT`` format from the ``CAPTURE`` format
-> > >  being set, including resolution, colorimetry parameters, etc."
-> > > 
-> > > So you set the capture format with a resolution (you know that), then
-> > > ENUM_FMT will return the subset for that codec and resolution.
-> > > 
-> > > But see also the comment at the end of this email.
-> > 
-> > I'm thinking that the fact that there is no "unset" value for pixel
-> > format creates a certain ambiguity. Maybe we could create a new pixel
-> > format, and all CODEC driver could have that set by default ? Then we
-> > can just fail STREAMON if that format is set.
-> 
-> The state on the CAPTURE queue is actually not "unset". The queue is
-> simply not ready (yet) and any operations on it will error out.
 
-My point was that it's just awkward to have this "not ready" state, in
-which you cannot go back. And in which the enum-format will ignore the
-format configured on the other side.
+--aadaewmv5to66yg7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-What I wanted to say is that this special case is not really needed.
+Hi Linus,
 
-> 
-> Once the application sets the coded resolution on the OUTPUT queue or
-> the decoder parses the stream information, the CAPTURE queue becomes
-> ready and one can do the ioctls on it.
-> 
-> > That being said, in GStreamer, I have split each elements per CODEC,
-> > and now only enumerate the information "per-codec". That makes me think
-> > this "global" enumeration was just a miss-use of the API / me learning
-> > to use it. Not having to implement this rather complex thing in the
-> > driver would be nice. Notably, the new Amlogic driver does not have
-> > this "Querying Capabilities" phase, and with latest GStreamer works
-> > just fine.
-> 
-> What do you mean by "doesn't have"? Does it lack an implementation of
-> VIDIOC_ENUM_FMT and VIDIOC_ENUM_FRAMESIZES?
+The following changes since commit e8e683ae9a736407a20135df7809090a446db707:
 
-What it does is that it sets a default value for the codec format, so
-if you just open the device and do enum_fmt/framesizes, you get that is
-possible for the default codec that was selected. And I thin it's
-entirely correct, doing ENUM_FMT(capture) without doing an
-S_FMT(output) can easily be documented as undefined behaviour.
+  iommu/of: Fix probe-deferral (2019-01-11 12:28:24 +0100)
 
-For proper enumeration would be:
+are available in the git repository at:
 
-for formats on OUTPUT device:
-  S_FMT(OUTPUT):
-  for formats on CAPTURE device:
-    ...
+  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fixes-v5.0-rc4
 
-(the pseudo for look represent an enum operation)
+for you to fetch changes up to 9825bd94e3a2baae1f4874767ae3a7d4c049720e:
 
-> 
-> Best regards,
-> Tomasz
+  iommu/amd: Fix IOMMU page flush when detach device from a domain (2019-01-24 15:24:49 +0100)
 
+----------------------------------------------------------------
+IOMMU Fixes for Linux v5.0-rc4
+
+A few more fixes this time:
+
+	- Two patches to fix the error path of the map_sg implementation
+	  of the AMD IOMMU driver.
+
+	- Also a missing IOTLB flush is fixed in the AMD IOMMU driver.
+
+	- Memory leak fix for the Intel IOMMU driver.
+
+	- Fix a regression in the Mediatek IOMMU driver which caused
+	  device initialization to fail (seen as broken HDMI output).
+
+----------------------------------------------------------------
+Gerald Schaefer (1):
+      iommu/vt-d: Fix memory leak in intel_iommu_put_resv_regions()
+
+Jerry Snitselaar (2):
+      iommu/amd: Call free_iova_fast with pfn in map_sg
+      iommu/amd: Unmap all mapped pages in error path of map_sg
+
+Joerg Roedel (1):
+      iommu/mediatek: Use correct fwspec in mtk_iommu_add_device()
+
+Suravee Suthikulpanit (1):
+      iommu/amd: Fix IOMMU page flush when detach device from a domain
+
+ drivers/iommu/amd_iommu.c    | 19 +++++++++++++------
+ drivers/iommu/intel-iommu.c  |  2 +-
+ drivers/iommu/mtk_iommu_v1.c |  4 ++++
+ 3 files changed, 18 insertions(+), 7 deletions(-)
+
+Please pull.
+
+Thanks,
+
+	Joerg
+
+--aadaewmv5to66yg7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJcUb1rAAoJECvwRC2XARrjlPAP/3h/QtSqtYk2Wa85tdNjbuoM
+qAjZWJ+gEDP3g4VHpGvcZ50/0yQwQT1IBC7Nc3OgU5zm8WXOjxDkaPlQho5wNxux
+sk/BwwUGYRT9P5z0W5xpygv49qqK3M+OxHIkyqO/on32O7NfkVn1aUhwKPeU1st/
+PNo1qGokccUS4JharyPGw993TyDkzenAW+Mqs7Js9Btf1/Fb2dFam6/jQ1ptEHLs
+XDG8kbQBUQ7TvmbiTg+GT4e5ZCuvMtGDCsLrvO4CTXWsE4T7WRnrjxBC6pQte0h1
+HywjqrRC3OEuzPjknEW4fcpkwDLj0FaVftngiYI+HRyGzZhD5nffarY7ecRExbfK
+Qzhc6pcwg+R5yjxsU9ihd18JQQUHzAjMk6Lh9ieTr9u1eexkIstDl5QFyB+XQHul
+530ITnnLLMrLO2XZQMJBiSpQAxMDA0jtU52jTNLhp19LsPwrEngLtLEjI1UpbO/v
+aonfq9B1wwlDJuN2iwUwWOMlJXC8UptyC6pZPtPCKxaBiCFVI/0WQmq05U3q9Np5
+nLnBlefONSEuUyrOs6WopBYbUxzmMt41PFewRklh+Sz0k+So3N3VG5scXfdQGacO
+2woCYkne1OibZQ+LPvH6R/NnrTUaWafcXT2uW0nvK92zq7wXb52GzJwoAT1wfmzM
+v/16ovbf4lUgxwfJdqs+
+=/kNy
+-----END PGP SIGNATURE-----
+
+--aadaewmv5to66yg7--
