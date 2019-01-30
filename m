@@ -2,106 +2,137 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13031C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAE5C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:22:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D18DC218A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:18:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548861517;
-	bh=k/8uLhtlJk8cjXf0wAcRsnsi06/XSOcxGradFxBbaoQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AjedmyuMZIcXj0y8sAtbtTc/NawgdfNLvKj5oEQv1eEJoImlvIlm4C+HVIHonAmuh
-	 2Nr8xgp02m6ObEfmZlRUtaegQ7JuJMkjKTu5UvYseAM7RNyFu8hu7ICfSmQj2WV7KU
-	 Nt+MaTyGrO0SHY3LfvtMyTH05RYzEVw9I4b1hy4Y=
+	by mail.kernel.org (Postfix) with ESMTP id 24E0D20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:22:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730319AbfA3PSg (ORCPT
+        id S1730580AbfA3PWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:18:36 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39440 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbfA3PSg (ORCPT
+        Wed, 30 Jan 2019 10:22:25 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55874 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726332AbfA3PWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:18:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gxnR5oWhLd3lQKrlIvE02j5DEvzUXaEu7fAA/lsg4RU=; b=evinLO5P8nPTc9zTahKm3579t
-        M4stWoa2c9dkviTq+De8brSVDi9kXAydD0jpzLBDkRdNelg3m2SR8OilKZPYeHpc+IDIQEQ7fhXSj
-        iQDXGij6eDgxf6KUjl9Ql+fGFd5vo9wnVXZhxOYj3DaiNNek0jqaYecMBo6uxBLb3pPcc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gordC-0006OH-5B; Wed, 30 Jan 2019 15:18:26 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 9A2E61127D43; Wed, 30 Jan 2019 15:18:25 +0000 (GMT)
-Date:   Wed, 30 Jan 2019 15:18:25 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        srv_heupstream@mediatek.com
-Subject: Re: [PATCH 5/6] regulator: mt6358: Add support for MT6358 regulator
-Message-ID: <20190130151825.GA10665@sirena.org.uk>
-References: <1548839891-20932-1-git-send-email-hsin-hsiung.wang@mediatek.com>
- <1548839891-20932-6-git-send-email-hsin-hsiung.wang@mediatek.com>
+        Wed, 30 Jan 2019 10:22:25 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UFFFr7024126
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:22:24 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbeckrfky-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:22:23 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 30 Jan 2019 15:22:22 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 30 Jan 2019 15:22:19 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0UFMIYf23920828
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 30 Jan 2019 15:22:18 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AA4C8B2064;
+        Wed, 30 Jan 2019 15:22:18 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D267B205F;
+        Wed, 30 Jan 2019 15:22:18 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.57])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 30 Jan 2019 15:22:18 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 3FC3416C35BC; Wed, 30 Jan 2019 07:22:18 -0800 (PST)
+Date:   Wed, 30 Jan 2019 07:22:18 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] rcu docs: repair some whitespace damage
+Reply-To: paulmck@linux.ibm.com
+References: <20190129220546.12934-1-tycho@tycho.ws>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548839891-20932-6-git-send-email-hsin-hsiung.wang@mediatek.com>
-X-Cookie: Remember the... the... uhh.....
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190129220546.12934-1-tycho@tycho.ws>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19013015-0040-0000-0000-000004B9BBCD
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010504; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01153968; UDB=6.00593882; IPR=6.00934342;
+ MB=3.00025354; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-30 15:22:21
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013015-0041-0000-0000-000008C4D133
+Message-Id: <20190130152218.GU4240@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901300119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 29, 2019 at 03:05:46PM -0700, Tycho Andersen wrote:
+> While reading the docs I noticed some whitespace damage in diagram. Let's
+> fix it up to be consistent with elsewhere in the document: use one leading
+> tab, followed by spaces for any additional whitespace required.
+> 
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Good eyes!  ;-)
 
-On Wed, Jan 30, 2019 at 05:18:10PM +0800, Hsin-Hsiung Wang wrote:
+Applied, thank you!
 
-> +static const struct of_device_id mt6358_of_match[] = {
-> +	{ .compatible = "mediatek,mt6358-regulator", },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, mt6358_of_match);
+							Thanx, Paul
 
-There should be no need for a separate compatbile string here - we
-aren't describing the hardware any more than we already did with the
-parent node for the MFD, we're describing how Linux currently splits the
-software that controls the hardware up.  Just have the MFD instantiate
-the regulator driver when it probes.
+> ---
+>  Documentation/RCU/whatisRCU.txt | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
+> index 4a6854318b17..419ec18b87bd 100644
+> --- a/Documentation/RCU/whatisRCU.txt
+> +++ b/Documentation/RCU/whatisRCU.txt
+> @@ -310,7 +310,7 @@ reader, updater, and reclaimer.
+>  
+>  
+>  	    rcu_assign_pointer()
+> -	    			    +--------+
+> +	                            +--------+
+>  	    +---------------------->| reader |---------+
+>  	    |                       +--------+         |
+>  	    |                           |              |
+> @@ -318,12 +318,12 @@ reader, updater, and reclaimer.
+>  	    |                           |              | rcu_read_lock()
+>  	    |                           |              | rcu_read_unlock()
+>  	    |        rcu_dereference()  |              |
+> -       +---------+                      |              |
+> -       | updater |<---------------------+              |
+> -       +---------+                                     V
+> +	    +---------+                 |              |
+> +	    | updater |<----------------+              |
+> +	    +---------+                                V
+>  	    |                                    +-----------+
+>  	    +----------------------------------->| reclaimer |
+> -	    				         +-----------+
+> +	                                         +-----------+
+>  	      Defer:
+>  	      synchronize_rcu() & call_rcu()
+>  
+> -- 
+> 2.19.1
+> 
 
-Otherwise this driver looks very good and clean.
-
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxRwEAACgkQJNaLcl1U
-h9Aikgf/Y+gvwbaHHnHQ0m8MNdKRqSYNJudae95ToA35RJTxhcN+utenn65RCAbl
-wMdcbp2yfyGBbfGu8AMOG9P+9aF+IIaigPFsLWqo7PMhIz7GwoVW0lqo7viKIXv8
-EZe5yLTk9famVTksAOQaDpd3KymoSU5r5keiK+4StsPw3+uc4xAgmOnNrRHBQyCD
-1Sjy8egYfQHEKtP0anNEoIqVN6nKGk+cpdXyuTum32aE5P7cUuQrX5sVBVQ+jNlw
-kKxIa8Pesrr3VJivGgtrcwIC3UIXEbOPS2MjBKe/qplqeuxqkdfz+3k5DfygC/5T
-k0gmxZsGWBc4PlqPX9Q0MLTKsT8h4A==
-=iJPx
------END PGP SIGNATURE-----
-
---vkogqOf2sHV7VnPd--
