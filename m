@@ -2,159 +2,260 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 562F7C282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BB4C282D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2301221874
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:26:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3339C2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730413AbfA3I0N (ORCPT
+        id S1730391AbfA3I0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:26:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56298 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730384AbfA3I0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:26:10 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 90C8D81F0F;
-        Wed, 30 Jan 2019 08:26:10 +0000 (UTC)
-Received: from [10.36.112.46] (ovpn-112-46.ams2.redhat.com [10.36.112.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 90B6B5C236;
-        Wed, 30 Jan 2019 08:26:07 +0000 (UTC)
-Subject: Re: [PATCH v2] KVM: x86: Sync the pending Posted-Interrupts
-To:     Luwei Kang <luwei.kang@intel.com>, rkrcmar@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1548809972-32100-1-git-send-email-luwei.kang@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <0e8444a1-39a3-d217-8602-ae175fedc8b2@redhat.com>
-Date:   Wed, 30 Jan 2019 09:26:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Wed, 30 Jan 2019 03:26:11 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2706 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730310AbfA3I0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 03:26:01 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0FC7C59403CD7288EAD6;
+        Wed, 30 Jan 2019 16:25:57 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Wed, 30 Jan 2019
+ 16:25:49 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <john.garry@huawei.com>, <zhaohongjiang@huawei.com>,
+        <hare@suse.com>, <dan.j.williams@intel.com>, <jthumshirn@suse.de>,
+        <hch@lst.de>, <huangdaode@hisilicon.com>,
+        <chenxiang66@hisilicon.com>, <xiexiuqi@huawei.com>,
+        <tj@kernel.org>, <miaoxie@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+Subject: [PATCH v2 5/7] scsi: libsas: check if the same device when flutter
+Date:   Wed, 30 Jan 2019 16:24:10 +0800
+Message-ID: <20190130082412.9357-6-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20190130082412.9357-1-yanaijie@huawei.com>
+References: <20190130082412.9357-1-yanaijie@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1548809972-32100-1-git-send-email-luwei.kang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 30 Jan 2019 08:26:10 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/01/19 01:59, Luwei Kang wrote:
-> Some Posted-Interrupts from passthrough devices may be lost or
-> overwritten when the vCPU is in runnable state.
-> 
-> The SN (Suppress Notification) of PID (Posted Interrupt Descriptor) will
-> be set when the vCPU is preempted (vCPU in KVM_MP_STATE_RUNNABLE state
-> but not running on physical CPU). If a posted interrupt coming at this
-> time, the irq remmaping facility will set the bit of PIR (Posted
-> Interrupt Requests) without ON (Outstanding Notification).
-> So this interrupt can't be sync to APIC virtualization register and
-> will not be handled by Guest because ON is zero.
-> 
-> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 2 +-
->  arch/x86/kvm/x86.c     | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index f6915f1..820a03b 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6048,7 +6048,7 @@ static int vmx_sync_pir_to_irr(struct kvm_vcpu *vcpu)
->  	bool max_irr_updated;
->  
->  	WARN_ON(!vcpu->arch.apicv_active);
-> -	if (pi_test_on(&vmx->pi_desc)) {
-> +	if (!bitmap_empty((unsigned long *)vmx->pi_desc.pir, NR_VECTORS)) {
->  		pi_clear_on(&vmx->pi_desc);
->  		/*
->  		 * IOMMU can write to PIR.ON, so the barrier matters even on UP.
+The ata device do not have a real sas address. If a ata device is
+replaced with another one, the sas address is the same. Now libsas treat
+this scenario as flutter and do not delete the old one and discover the
+new one. This will cause the data read from or write to the wrong
+device.
 
-This is not what I asked.  You should instead do the check after
-pi_clear_sn.
+And also when hotplugging a sata device, libsas entered to the flutter
+case and sometimes found the phy attached address is abnormal. The log
+is like this:
 
-Paolo
+sas: ex 500e004aaaaaaa1f phy6 originated BROADCAST(CHANGE)
+sas: ex 500e004aaaaaaa1f phy06:U:0 attached: 0000000000000000 (no device)
+sas: ex 500e004aaaaaaa1f phy 0x6 broadcast flutter
 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 02c8e09..c31b608 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -7793,7 +7793,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
->  	 * 1) We should set ->mode before checking ->requests.  Please see
->  	 * the comment in kvm_vcpu_exiting_guest_mode().
->  	 *
-> -	 * 2) For APICv, we should set ->mode before checking PIR.ON.  This
-> +	 * 2) For APICv, we should set ->mode before checking PID.PIR. This
->  	 * pairs with the memory barrier implicit in pi_test_and_set_on
->  	 * (see vmx_deliver_posted_interrupt).
->  	 *
-> 
+Fix this issue by checking the phy attached address and the ata device's
+class and id if they are the same as the origin. The ata class and id is
+readed in ata EH process. When ata EH is scheduled, revalidate will be
+deferred and a new bcast will be raised.
+
+Tested-by: Chen Liangfei <chenliangfei1@huawei.com>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+Reviewed-by: John Garry <john.garry@huawei.com>
+CC: chenxiang <chenxiang66@hisilicon.com>
+CC: John Garry <john.garry@huawei.com>
+CC: Johannes Thumshirn <jthumshirn@suse.de>
+CC: Ewan Milne <emilne@redhat.com>
+CC: Christoph Hellwig <hch@lst.de>
+CC: Tomas Henzl <thenzl@redhat.com>
+CC: Dan Williams <dan.j.williams@intel.com>
+CC: Tejun Heo <tj@kernel.org>
+CC: Hannes Reinecke <hare@suse.com>
+---
+ drivers/ata/libata-core.c          |  3 +-
+ drivers/scsi/libsas/sas_ata.c      | 18 ++++++++++
+ drivers/scsi/libsas/sas_expander.c | 67 ++++++++++++++++++++++++++++++++------
+ include/linux/libata.h             |  2 ++
+ include/scsi/libsas.h              |  1 +
+ 5 files changed, 80 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index b8c3f9e6af89..67e77fa3c63a 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4225,7 +4225,7 @@ void ata_std_postreset(struct ata_link *link, unsigned int *classes)
+  *	RETURNS:
+  *	1 if @dev matches @new_class and @new_id, 0 otherwise.
+  */
+-static int ata_dev_same_device(struct ata_device *dev, unsigned int new_class,
++int ata_dev_same_device(struct ata_device *dev, unsigned int new_class,
+ 			       const u16 *new_id)
+ {
+ 	const u16 *old_id = dev->id;
+@@ -7400,6 +7400,7 @@ EXPORT_SYMBOL_GPL(ata_eh_analyze_ncq_error);
+ EXPORT_SYMBOL_GPL(ata_do_eh);
+ EXPORT_SYMBOL_GPL(ata_std_error_handler);
+ 
++EXPORT_SYMBOL_GPL(ata_dev_same_device);
+ EXPORT_SYMBOL_GPL(ata_cable_40wire);
+ EXPORT_SYMBOL_GPL(ata_cable_80wire);
+ EXPORT_SYMBOL_GPL(ata_cable_unknown);
+diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
+index 6f93fee2b21b..a9f5523f0347 100644
+--- a/drivers/scsi/libsas/sas_ata.c
++++ b/drivers/scsi/libsas/sas_ata.c
+@@ -625,6 +625,22 @@ static int sas_get_ata_command_set(struct domain_device *dev)
+ 	return ata_dev_classify(&tf);
+ }
+ 
++static void sas_ata_store_id(struct domain_device *dev)
++{
++	struct ata_device *ata_dev = sas_to_ata_dev(dev);
++	unsigned char model[ATA_ID_PROD_LEN + 1];
++	unsigned char serial[ATA_ID_SERNO_LEN + 1];
++
++	/* store the ata device's class and id */
++	memcpy(dev->sata_dev.id, ata_dev->id, ATA_ID_WORDS);
++	dev->sata_dev.class = ata_dev->class;
++
++	ata_id_c_string(ata_dev->id, model, ATA_ID_PROD, sizeof(model));
++	ata_id_c_string(ata_dev->id, serial, ATA_ID_SERNO, sizeof(serial));
++
++	sas_ata_printk(KERN_INFO, dev, "model:%s serial:%s\n", model, serial);
++}
++
+ void sas_probe_sata(struct asd_sas_port *port)
+ {
+ 	struct domain_device *dev, *n;
+@@ -649,6 +665,8 @@ void sas_probe_sata(struct asd_sas_port *port)
+ 		 */
+ 		if (!ata_dev_enabled(sas_to_ata_dev(dev)))
+ 			sas_fail_probe(dev, __func__, -ENODEV);
++		else
++			sas_ata_store_id(dev);
+ 	}
+ 
+ }
+diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+index cdbf8d8a28bf..6e56ebdc2148 100644
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -1994,6 +1994,61 @@ static bool dev_type_flutter(enum sas_device_type new, enum sas_device_type old)
+ 	return false;
+ }
+ 
++/*
++ * we think the device is fluttering so just read the phy state and update
++ * some information of the device, but if some important things changed
++ * such as the sas address, or the linkrate, or the ata devices id and class,
++ * we have to unregister the device and re-probe it.
++ */
++static bool sas_process_flutter(struct domain_device *dev, struct ex_phy *phy,
++				int phy_id, u8 *sas_addr)
++{
++	struct domain_device *ata_dev = sas_ex_to_ata(dev, phy_id);
++	enum sas_linkrate linkrate = phy->linkrate;
++	char *action = "";
++
++	sas_ex_phy_discover(dev, phy_id);
++
++	if (ata_dev && phy->attached_dev_type == SAS_SATA_PENDING)
++		action = ", needs recovery";
++	pr_debug("ex %016llx phy%d broadcast flutter%s\n",
++		 SAS_ADDR(dev->sas_addr), phy_id, action);
++
++	if (linkrate != phy->linkrate) {
++		pr_debug("ex %016llx phy%d linkrate changed from %d to %d\n",
++			 SAS_ADDR(dev->sas_addr), phy_id,
++			 linkrate, phy->linkrate);
++		return false;
++	}
++
++	/* the phy attached address will be updated by sas_ex_phy_discover()
++	 * and sometimes become abnormal
++	 */
++	if (SAS_ADDR(phy->attached_sas_addr) != SAS_ADDR(sas_addr) ||
++	    SAS_ADDR(phy->attached_sas_addr) == 0) {
++		/* if attached_sas_addr become abnormal, we must set the
++		 * original address back so that the device can be unregistered
++		 */
++		memcpy(phy->attached_sas_addr, sas_addr, SAS_ADDR_SIZE);
++		pr_debug("phy address(%016llx) abnormal, origin:%016llx\n",
++			 SAS_ADDR(phy->attached_sas_addr),
++			 SAS_ADDR(sas_addr));
++		return false;
++	}
++
++	if (ata_dev) {
++		struct ata_device *adev = sas_to_ata_dev(ata_dev);
++		unsigned int class = ata_dev->sata_dev.class;
++		u16 *id = ata_dev->sata_dev.id;
++
++		/* to see if the disk is replaced with another one */
++		if (!ata_dev_same_device(adev, class, id))
++			return false;
++	}
++
++	return true;
++}
++
+ static int sas_unregister(struct domain_device *dev, int phy_id, bool last,
+ 			      bool *retry)
+ {
+@@ -2028,16 +2083,8 @@ static int sas_unregister(struct domain_device *dev, int phy_id, bool last,
+ 		return res;
+ 	} else if (SAS_ADDR(sas_addr) == SAS_ADDR(phy->attached_sas_addr) &&
+ 		   dev_type_flutter(type, phy->attached_dev_type)) {
+-		struct domain_device *ata_dev = sas_ex_to_ata(dev, phy_id);
+-		char *action = "";
+-
+-		sas_ex_phy_discover(dev, phy_id);
+-
+-		if (ata_dev && phy->attached_dev_type == SAS_SATA_PENDING)
+-			action = ", needs recovery";
+-		pr_debug("ex %016llx phy 0x%x broadcast flutter%s\n",
+-			 SAS_ADDR(dev->sas_addr), phy_id, action);
+-		return res;
++		if (sas_process_flutter(dev, phy, phy_id, sas_addr))
++			return res;
+ 	}
+ 
+ 	/* we always have to delete the old device when we went here */
+diff --git a/include/linux/libata.h b/include/linux/libata.h
+index 68133842e6d7..b253cfcdd6ae 100644
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -1144,6 +1144,8 @@ extern int sata_scr_write(struct ata_link *link, int reg, u32 val);
+ extern int sata_scr_write_flush(struct ata_link *link, int reg, u32 val);
+ extern bool ata_link_online(struct ata_link *link);
+ extern bool ata_link_offline(struct ata_link *link);
++extern int ata_dev_same_device(struct ata_device *dev, unsigned int new_class,
++			     const u16 *new_id);
+ #ifdef CONFIG_PM
+ extern int ata_host_suspend(struct ata_host *host, pm_message_t mesg);
+ extern void ata_host_resume(struct ata_host *host);
+diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
+index deb75765e555..2da5d085b11a 100644
+--- a/include/scsi/libsas.h
++++ b/include/scsi/libsas.h
+@@ -164,6 +164,7 @@ struct sata_device {
+ 	struct ata_host *ata_host;
+ 	struct smp_resp rps_resp ____cacheline_aligned; /* report_phy_sata_resp */
+ 	u8     fis[ATA_RESP_FIS_SIZE];
++	u16    id[ATA_ID_WORDS];
+ };
+ 
+ struct ssp_device {
+-- 
+2.14.4
 
