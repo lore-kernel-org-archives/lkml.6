@@ -2,258 +2,222 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6C1C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1661CC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:40:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0EF420882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:40:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE7E020882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:40:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548877229;
-	bh=ZwC5ug0fT89926ZSwrAbbsDI4Pz5kpEbJElNVUVBGjM=;
+	s=default; t=1548877256;
+	bh=C482ThCpoJRymZ0ui9yx/2Twc1fp7mxm5mKVSbzjIxA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=QxbSXX/ULrCbkv6tjp7gyjd4Am858YHpvHWc0N8Hej9avyrjjgMRp37BvcXWfEyfr
-	 hGC9lTA49XdFaG5+OlEkrAFD2hOOO4+Xt61r0p5NFt5/u1F6jW5GBj4IwXCZZsDnJk
-	 FKF8AC6UJF7C3RTtNenjJ6DOx4oQRpHzf3buYvVc=
+	b=r+EbdZbxeY+QjBNrwhUiavaVHhnXoEL5MwZN0KwPlR0Ls/RV7NNdPHwF/71vOVMcF
+	 Z3/En4G0xXNeQb4/vXsZYsMZTZTQzfpWAinm+ttbyiCxbJYa+npaQ5GBBPESu3Gtl/
+	 mCxM/q7QcJkM/IYHLyhpRpEa/z8AkvSa5XgUxn0Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387736AbfA3Tk1 (ORCPT
+        id S2387748AbfA3Tkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:40:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387587AbfA3Tk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:40:27 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5546220882;
-        Wed, 30 Jan 2019 19:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548877225;
-        bh=ZwC5ug0fT89926ZSwrAbbsDI4Pz5kpEbJElNVUVBGjM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BnNWqEdG5fQqo3rtgsCDajL/9MKsGnYzpwbosmZF3T5uBY22jVgSEAHubpIv7dGgF
-         O1xkGvCnXgXQfJhvEQK4t/z1V9MYXK3pLwVe9+0hXBpkGT5RBGn6dbwwenONuoj7GF
-         VJuB+DWEx0ydTKox5SqkSJm65MDzzPVcXsFGw5FM=
-Date:   Wed, 30 Jan 2019 20:40:23 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     arnd@arndb.de, sudeep.dutt@intel.com, ashutosh.dixit@intel.com,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, tiwei.bie@intel.com,
-        luto@kernel.org, Vincent Whitchurch <rabinv@axis.com>
-Subject: Re: [PATCH v2] mic: vop: Fix broken virtqueues
-Message-ID: <20190130194023.GB21181@kroah.com>
-References: <20190130162809.14620-1-vincent.whitchurch@axis.com>
+        Wed, 30 Jan 2019 14:40:55 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:39975 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387587AbfA3Tky (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:40:54 -0500
+Received: by mail-ot1-f68.google.com with SMTP id s5so669485oth.7;
+        Wed, 30 Jan 2019 11:40:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Pzed3W/0Z0OCxQkoAsbcMNZwHTcCFLmcZxWxeac8a/I=;
+        b=EK+/v+wZEu8Frqnd+OgwSjEeCeZa4rkE2is3zFEc96oMjliIb6yJZCVUxHS0ExwR7F
+         TpspsV5TTL70Ogi2RPLg2DCVWo0Qke8C6nCU1NpcxAkVQ9ObJCh5pl9pmGJ+vcjAUn5M
+         8jpIC2zH3n6OvrBLbJiOSMPeagtXrqRm94kGdifL9vjXwhXNJxoERgHvncV+zE620LIF
+         k1Dap4as/qq2LKXdtJmdwa/lmi5q37qJoaJBS4Mz4Ll06/Mo4aUl8cqzowYnSq14OHWn
+         hXYUYmnd8pX7XDX75325ydUk2pXhBn/dmdcO13YkOPGjmcNKg9CL2W+WBQiEY80o4vXc
+         DFjg==
+X-Gm-Message-State: AJcUukeMSuoz6IK6Xo5gkaLNAMDrZx9Ts0W/DBTivuUN3wCKUbnBZ5m4
+        CkgTTt68JMli6sdkigis3A==
+X-Google-Smtp-Source: ALg8bN6IkUHTJZug2xNP1ip8Z2xgvxBQnDeycRl0IzbdTdfJ7fpiSOukORCC1SijvRRIKCqcmma7ow==
+X-Received: by 2002:a9d:2f64:: with SMTP id h91mr23653203otb.14.1548877253388;
+        Wed, 30 Jan 2019 11:40:53 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m131sm1055633oia.6.2019.01.30.11.40.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 11:40:52 -0800 (PST)
+Date:   Wed, 30 Jan 2019 13:40:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Vishal Sagar <vishal.sagar@xilinx.com>
+Cc:     hyun.kwon@xilinx.com, laurent.pinchart@ideasonboard.com,
+        mchehab@kernel.org, mark.rutland@arm.com, michal.simek@xilinx.com,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        sakari.ailus@linux.intel.com, hans.verkuil@cisco.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dineshk@xilinx.com, sandipk@xilinx.com
+Subject: Re: [PATCH v2 1/2] media: dt-bindings: media: xilinx: Add Xilinx
+ MIPI CSI-2 Rx Subsystem
+Message-ID: <20190130194052.GA9543@bogus>
+References: <1548438777-11203-1-git-send-email-vishal.sagar@xilinx.com>
+ <1548438777-11203-2-git-send-email-vishal.sagar@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190130162809.14620-1-vincent.whitchurch@axis.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <1548438777-11203-2-git-send-email-vishal.sagar@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 05:28:09PM +0100, Vincent Whitchurch wrote:
-> VOP is broken in mainline since commit 1ce9e6055fa0a9043 ("virtio_ring:
-> introduce packed ring support"); attempting to use the virtqueues leads
-> to various kernel crashes.  I'm testing it with my not-yet-merged
-> loopback patches, but even the in-tree MIC hardware cannot work.
+On Fri, Jan 25, 2019 at 11:22:56PM +0530, Vishal Sagar wrote:
+> Add bindings documentation for Xilinx MIPI CSI-2 Rx Subsystem.
 > 
-> The problem is not in the referenced commit per se, but is due to the
-> following hack in vop_find_vq() which depends on the layout of private
-> structures in other source files, which that commit happened to change:
+> The Xilinx MIPI CSI-2 Rx Subsystem consists of a CSI-2 Rx controller, a
+> DPHY in Rx mode, an optional I2C controller and a Video Format Bridge.
 > 
->   /*
->    * To reassign the used ring here we are directly accessing
->    * struct vring_virtqueue which is a private data structure
->    * in virtio_ring.c. At the minimum, a BUILD_BUG_ON() in
->    * vring_new_virtqueue() would ensure that
->    *  (&vq->vring == (struct vring *) (&vq->vq + 1));
->    */
->   vr = (struct vring *)(vq + 1);
->   vr->used = used;
-> 
-> Fix vop by using __vring_new_virtqueue() to create the needed vring
-> layout from the start, instead of attempting to patch in the used ring
-> later.  __vring_new_virtqueue() was added way back in commit
-> 2a2d1382fe9dcc ("virtio: Add improved queue allocation API") in order to
-> address mic's usecase, according to the commit message.
-> 
-> The removal patch also has the hack and we need to save the used ring
-> pointer separately to remove it.
-> 
-> Fixes: 1ce9e6055fa0 ("virtio_ring: introduce packed ring support")
-> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> Signed-off-by: Vishal Sagar <vishal.sagar@xilinx.com>
 > ---
-> v2: fix removal path also
+> v2
+> - updated the compatible string to latest version supported
+> - removed DPHY related parameters
+> - added CSI v2.0 related property (including VCX for supporting upto 16
+>   virtual channels).
+> - modified csi-pxl-format from string to unsigned int type where the value
+>   is as per the CSI specification
+> - Defined port 0 and port 1 as sink and source ports.
+> - Removed max-lanes property as suggested by Rob and Sakari
 > 
->  drivers/misc/mic/vop/vop_main.c | 69 +++++++++++++++++++--------------
->  1 file changed, 40 insertions(+), 29 deletions(-)
+>  .../bindings/media/xilinx/xlnx,csi2rxss.txt        | 105 +++++++++++++++++++++
+>  1 file changed, 105 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
 > 
-> diff --git a/drivers/misc/mic/vop/vop_main.c b/drivers/misc/mic/vop/vop_main.c
-> index b60b5ec4a28a..c4517703dc1d 100644
-> --- a/drivers/misc/mic/vop/vop_main.c
-> +++ b/drivers/misc/mic/vop/vop_main.c
-> @@ -48,7 +48,8 @@
->   * @dc: Virtio device control
->   * @vpdev: VOP device which is the parent for this virtio device
->   * @vr: Buffer for accessing the VRING
-> - * @used: Buffer for used
-> + * @used_virt: Virtual address of used ring
-> + * @used: DMA address of used ring
->   * @used_size: Size of the used buffer
->   * @reset_done: Track whether VOP reset is complete
->   * @virtio_cookie: Cookie returned upon requesting a interrupt
-> @@ -62,6 +63,7 @@ struct _vop_vdev {
->  	struct mic_device_ctrl __iomem *dc;
->  	struct vop_device *vpdev;
->  	void __iomem *vr[VOP_MAX_VRINGS];
-> +	void *used_virt[VOP_MAX_VRINGS];
->  	dma_addr_t used[VOP_MAX_VRINGS];
->  	int used_size[VOP_MAX_VRINGS];
->  	struct completion reset_done;
-> @@ -261,12 +263,12 @@ static bool vop_notify(struct virtqueue *vq)
->  static void vop_del_vq(struct virtqueue *vq, int n)
->  {
->  	struct _vop_vdev *vdev = to_vopvdev(vq->vdev);
-> -	struct vring *vr = (struct vring *)(vq + 1);
->  	struct vop_device *vpdev = vdev->vpdev;
->  
->  	dma_unmap_single(&vpdev->dev, vdev->used[n],
->  			 vdev->used_size[n], DMA_BIDIRECTIONAL);
-> -	free_pages((unsigned long)vr->used, get_order(vdev->used_size[n]));
-> +	free_pages((unsigned long)vdev->used_virt[n],
-> +		   get_order(vdev->used_size[n]));
->  	vring_del_virtqueue(vq);
->  	vpdev->hw_ops->unmap(vpdev, vdev->vr[n]);
->  	vdev->vr[n] = NULL;
-> @@ -284,6 +286,26 @@ static void vop_del_vqs(struct virtio_device *dev)
->  		vop_del_vq(vq, idx++);
->  }
->  
-> +static struct virtqueue *vop_new_virtqueue(unsigned int index,
-> +				      unsigned int num,
-> +				      struct virtio_device *vdev,
-> +				      bool context,
-> +				      void *pages,
-> +				      bool (*notify)(struct virtqueue *vq),
-> +				      void (*callback)(struct virtqueue *vq),
-> +				      const char *name,
-> +				      void *used)
-> +{
-> +	bool weak_barriers = false;
-> +	struct vring vring;
+> diff --git a/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt b/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
+> new file mode 100644
+> index 0000000..98781cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/xilinx/xlnx,csi2rxss.txt
+> @@ -0,0 +1,105 @@
+> +Xilinx MIPI CSI2 Receiver Subsystem Device Tree Bindings
+> +--------------------------------------------------------
 > +
-> +	vring_init(&vring, num, pages, MIC_VIRTIO_RING_ALIGN);
-> +	vring.used = used;
+> +The Xilinx MIPI CSI2 Receiver Subsystem is used to capture MIPI CSI2 traffic
+> +from compliant camera sensors and send the output as AXI4 Stream video data
+> +for image processing.
 > +
-> +	return __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
-> +				     notify, callback, name);
-> +}
+> +The subsystem consists of a MIPI DPHY in slave mode which captures the
+> +data packets. This is passed along the MIPI CSI2 Rx IP which extracts the
+> +packet data. The Video Format Bridge (VFB) converts this data to AXI4 Stream
+> +video data.
 > +
->  /*
->   * This routine will assign vring's allocated in host/io memory. Code in
->   * virtio_ring.c however continues to access this io memory as if it were local
-> @@ -303,7 +325,6 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
->  	struct _mic_vring_info __iomem *info;
->  	void *used;
->  	int vr_size, _vr_size, err, magic;
-> -	struct vring *vr;
->  	u8 type = ioread8(&vdev->desc->type);
->  
->  	if (index >= ioread8(&vdev->desc->num_vq))
-> @@ -322,17 +343,7 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
->  		return ERR_PTR(-ENOMEM);
->  	vdev->vr[index] = va;
->  	memset_io(va, 0x0, _vr_size);
-> -	vq = vring_new_virtqueue(
-> -				index,
-> -				le16_to_cpu(config.num), MIC_VIRTIO_RING_ALIGN,
-> -				dev,
-> -				false,
-> -				ctx,
-> -				(void __force *)va, vop_notify, callback, name);
-> -	if (!vq) {
-> -		err = -ENOMEM;
-> -		goto unmap;
-> -	}
+> +For more details, please refer to PG232 Xilinx MIPI CSI-2 Receiver Subsystem.
 > +
->  	info = va + _vr_size;
->  	magic = ioread32(&info->magic);
->  
-> @@ -341,18 +352,27 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
->  		goto unmap;
->  	}
->  
-> -	/* Allocate and reassign used ring now */
->  	vdev->used_size[index] = PAGE_ALIGN(sizeof(__u16) * 3 +
->  					     sizeof(struct vring_used_elem) *
->  					     le16_to_cpu(config.num));
->  	used = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
->  					get_order(vdev->used_size[index]));
-> +	vdev->used_virt[index] = used;
->  	if (!used) {
->  		err = -ENOMEM;
->  		dev_err(_vop_dev(vdev), "%s %d err %d\n",
->  			__func__, __LINE__, err);
-> -		goto del_vq;
-> +		goto unmap;
-> +	}
+> +Required properties:
+> +--------------------
+> +- compatible: Must contain "xlnx,mipi-csi2-rx-subsystem-4.0".
+> +- reg: Physical base address and length of the registers set for the device.
+> +- interrupt-parent: specifies the phandle to the parent interrupt controller
+
+Don't document this. It is implied.
+
+> +- interrupts: Property with a value describing the interrupt number.
+> +- clocks: List of phandles to AXI Lite, Video and 200 MHz DPHY clocks.
+> +- clock-names: Must contain "lite_aclk", "video_aclk" and "dphy_clk_200M" in
+> +  the same order as clocks listed in clocks property.
+> +- xlnx,csi-pxl-format: This denotes the CSI Data type selected in hw design.
+> +  Packets other than this data type (except for RAW8 and User defined data
+> +  types) will be filtered out. Possible values are as below -
+> +  0x1E - YUV4228B
+> +  0x1F - YUV42210B
+> +  0x20 - RGB444
+> +  0x21 - RGB555
+> +  0x22 - RGB565
+> +  0x23 - RGB666
+> +  0x24 - RGB888
+> +  0x28 - RAW6
+> +  0x29 - RAW7
+> +  0x2A - RAW8
+> +  0x2B - RAW10
+> +  0x2C - RAW12
+> +  0x2D - RAW14
+> +  0x2E - RAW16
+> +  0x2F - RAW20
+> +- xlnx,vfb: This is present when Video Format Bridge is enabled.
+
+boolean?
+
 > +
-> +	vq = vop_new_virtqueue(index, le16_to_cpu(config.num), dev, ctx,
-> +			       (void __force *)va, vop_notify, callback,
-> +			       name, used);
-> +	if (!vq) {
-> +		err = -ENOMEM;
-> +		goto free_used;
->  	}
+> +Optional properties:
+> +--------------------
+> +- xlnx,en-csi-v2-0: Present if CSI v2 is enabled in IP configuration.
+> +- xlnx,en-vcx: When present, there are maximum 16 virtual channels, else
+> +  only 4. This is present only if xlnx,en-csi-v2-0 is present.
+> +- xlnx,en-active-lanes: Enable Active lanes configuration in Protocol
+> +  Configuration Register.
+> +- xlnx,cfa-pattern: This goes in the sink port to indicate bayer pattern.
+> +  Valid values are "bggr", "rggb", "gbrg" and "grbg".
+
+This should go in the endpoint with the other properties. I'd also move 
+it down below 'Ports' to be clear it goes in a different node.
+
 > +
->  	vdev->used[index] = dma_map_single(&vpdev->dev, used,
->  					    vdev->used_size[index],
->  					    DMA_BIDIRECTIONAL);
-> @@ -360,26 +380,17 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
->  		err = -ENOMEM;
->  		dev_err(_vop_dev(vdev), "%s %d err %d\n",
->  			__func__, __LINE__, err);
-> -		goto free_used;
-> +		goto del_vq;
->  	}
->  	writeq(vdev->used[index], &vqconfig->used_address);
-> -	/*
-> -	 * To reassign the used ring here we are directly accessing
-> -	 * struct vring_virtqueue which is a private data structure
-> -	 * in virtio_ring.c. At the minimum, a BUILD_BUG_ON() in
-> -	 * vring_new_virtqueue() would ensure that
-> -	 *  (&vq->vring == (struct vring *) (&vq->vq + 1));
-> -	 */
-> -	vr = (struct vring *)(vq + 1);
-> -	vr->used = used;
->  
->  	vq->priv = vdev;
->  	return vq;
-> +del_vq:
-> +	vring_del_virtqueue(vq);
->  free_used:
->  	free_pages((unsigned long)used,
->  		   get_order(vdev->used_size[index]));
-> -del_vq:
-> -	vring_del_virtqueue(vq);
->  unmap:
->  	vpdev->hw_ops->unmap(vpdev, vdev->vr[index]);
->  	return ERR_PTR(err);
+> +Ports
+> +-----
+> +The device node shall contain two 'port' child nodes as defined in
+> +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> +
+> +The port@0 is sink port and shall connect to CSI2 source like camera.
+> +It must have the data-lanes property. It may have the xlnx,cfa-pattern
+> +property to indicate bayer pattern of source.
+> +
+> +The port@1 is source port could be connected to any video processing IP
+> +which can work with AXI4 Stream data.
+> +
+> +Both ports must have remote-endpoints.
+
+No need to state that. That's implicit for the graph to work...
+> +
+> +Example:
+> +
+> +	csiss_1: csiss@a0020000 {
+> +		compatible = "xlnx,mipi-csi2-rx-subsystem-4.0";
+> +		reg = <0x0 0xa0020000 0x0 0x10000>;
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <0 95 4>;
+> +		xlnx,csi-pxl-format = <0x2a>;
+> +		xlnx,vfb;
+> +		xlnx,en-active-lanes;
+> +		xlnx,en-csi-v2-0;
+> +		xlnx,en-vcx;
+> +		clock-names = "lite_aclk", "dphy_clk_200M", "video_aclk";
+> +		clocks = <&misc_clk_0>, <&misc_clk_1>, <&misc_clk_2>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				/* Sink port */
+> +				reg = <0>;
+> +				xlnx,cfa-pattern = "bggr"
+> +				csiss_in: endpoint {
+> +					data-lanes = <1 2 3 4>;
+> +					/* MIPI CSI2 Camera handle */
+> +					remote-endpoint = <&camera_out>;
+> +				};
+> +			};
+> +			port@1 {
+> +				/* Source port */
+> +				reg = <1>;
+> +				csiss_out: endpoint {
+> +					remote-endpoint = <&vproc_in>;
+> +				};
+> +			};
+> +		};
+> +	};
 > -- 
-> 2.20.0
-
-This patch is already in my tree, can you just send a "fixup" patch
-instead of me  having to revert the old one and then adding this one
-again?
-
-thanks,
-
-greg k-h
+> 2.7.4
+> 
