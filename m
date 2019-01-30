@@ -2,106 +2,95 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 612DBC282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B24C8C282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB9E2084C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:28:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pkgv7g/t"
+	by mail.kernel.org (Postfix) with ESMTP id 838BD2084C
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548833459;
+	bh=Ttyxbei1fPmVxxn3tNOV5sMQ2I56pjznzWDkDfrFXQY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GWkw/lv+u2FRZDgmF1fYqXURQUnZ5GaV9pz2dNwbdyGhvmU/uF092pF1zuAgpxSSL
+	 5/zy76gqsKNhCvH+Swpt9oWn6s4BiTVdvAWeNPBKW0k/rqnpo9OYLDd2aloaoXFVv9
+	 Mps5RMLdOP4vU8sMCwt8lp3O/r/lHuaCOhaY96ZA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbfA3H2g (ORCPT
+        id S1729942AbfA3Ha5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 02:28:36 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56199 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfA3H2f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 02:28:35 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y139so20310999wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:28:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eRvZZZ80Im6H5Kxc7wgfh4tQhcBXe/w36rsryBat30M=;
-        b=Pkgv7g/tXR0AQ6SCHMcL8ENMUMF1iznkszxQojw+8axK8VrKWA9bwZoKlVByEH+0RT
-         Azdee+es3m75iQ07HvQJJKKN41XL61O2njT9TEdyA2gw4tj7AjF+PFSmfCs5U78CNoPU
-         6c+9Mj1N8AlGrwRA9IzFUusdbXV4ZZnBT+a48=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eRvZZZ80Im6H5Kxc7wgfh4tQhcBXe/w36rsryBat30M=;
-        b=GKZehM4c4exYdk8tsKhOWnjNgXkfL4Uiz/hA3Ek+iLWNnH1f2bv7j839LAHu8Mrn+5
-         XGRWYZ1ryNATGPhznyMzkBmAdf/dfgM18oLGUWeX3db3q6A7OcfrsVxnye91Y2GzUoPz
-         fDN26JREXWanZVoE7eIRgEAfzqR5917A0LqoZbq2gX4Zcy11Qsyn6S618N6VWXrrijgA
-         b0IkNLquDeObkhhJLovwlQakfPr+Uns9zBln+ymLsYasE2kCjtg1q+8PasEnjcMZLYnu
-         XQiKDkIV9YO/nI9284B0rL5uXqu22I7znKPI2kkAiko3fE1J/Z1XeXk09NuIQx5qsN4q
-         aW8A==
-X-Gm-Message-State: AJcUukcPALx8ZFpQt/8FRsjT8GEGiB73PtI2+Tcj9ho02PYqQDJWsBOt
-        LC+LKbLgkuXt064GtJ7SXFBuwQ==
-X-Google-Smtp-Source: ALg8bN7tC9pOAycbL6CoRERd4tK3235zTVflWqXeq6GjidRct/Fx4SWxSy8V+ucSrAzPLASF5DkmLw==
-X-Received: by 2002:a1c:e18a:: with SMTP id y132mr25700851wmg.48.1548833313793;
-        Tue, 29 Jan 2019 23:28:33 -0800 (PST)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id b7sm320424wrs.47.2019.01.29.23.28.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 23:28:33 -0800 (PST)
-Subject: Re: [PATCH] cpufreq: Auto-register the driver as a thermal cooling
- device if asked
-To:     Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org
-References: <CAJZ5v0iwq15mwoa-LBN07fgNNurtBGodG6urgfnvMbGWj8vyAw@mail.gmail.com>
- <fdff26d908c5338df44574085701ed93a64af079.1548825443.git.amit.kucheria@linaro.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <0b43f925-b1c8-56ed-c276-a2413bdcd75e@linaro.org>
-Date:   Wed, 30 Jan 2019 08:28:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 30 Jan 2019 02:30:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42350 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbfA3Ha5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 02:30:57 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D02822084C;
+        Wed, 30 Jan 2019 07:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548833456;
+        bh=Ttyxbei1fPmVxxn3tNOV5sMQ2I56pjznzWDkDfrFXQY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SDcf5/YcGbdCsVUxZD646xhhGtQ7b8mietEaXC6EMaW2bSJUQldFaWZ7OgDRf+qTJ
+         gRiRv3tiEYkfCxeWyfCm9dpJlVAnxke5IPdH7CUfepdrioQEmm4pjZXSPGFY6877Fl
+         wemYSiuq9MmMy5fe2fcN7qj9kMwvkdCjejIxSnWQ=
+Date:   Wed, 30 Jan 2019 08:30:53 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 4.4 068/104] loop: Fold __loop_release into loop_release
+Message-ID: <20190130073053.GA4665@kroah.com>
+References: <20190124190154.968308875@linuxfoundation.org>
+ <20190124190203.062416837@linuxfoundation.org>
+ <20190128133103.GD27972@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <fdff26d908c5338df44574085701ed93a64af079.1548825443.git.amit.kucheria@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128133103.GD27972@quack2.suse.cz>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/01/2019 06:22, Amit Kucheria wrote:
-> All cpufreq drivers do similar things to register as a cooling device.
-> Provide a cpufreq driver flag so drivers can just ask the cpufreq core
-> to register the cooling device on their behalf. This allows us to get
-> rid of duplicated code in the drivers.
+On Mon, Jan 28, 2019 at 02:31:03PM +0100, Jan Kara wrote:
+> On Thu 24-01-19 20:19:57, Greg Kroah-Hartman wrote:
+> > 4.4-stable review patch.  If anyone has any objections, please let me know.
+> > 
+> > ------------------
+> > 
+> > From: Jan Kara <jack@suse.cz>
+> > 
+> > commit 967d1dc144b50ad005e5eecdfadfbcfb399ffff6 upstream.
+> > 
+> > __loop_release() has a single call site. Fold it there. This is
+> > currently not a huge win but it will make following replacement of
+> > loop_index_mutex more obvious.
+> > 
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > 
 > 
-> In order to allow this, we add a struct thermal_cooling_device pointer
-> to struct cpufreq_policy so that drivers don't need to store it in a
-> private data structure.
+> Hello Greg!
 > 
-> Suggested-by: Stephen Boyd <swboyd@chromium.org>
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> Tested-by: Matthias Kaehlcke <mka@chromium.org>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> This and the following two (patches 69 & 70) loop patches are just
+> preparatory cleanups for commits 0da03cab87e632 "loop: Fix deadlock when
+> calling blkdev_reread_part()" and 1dded9acf6dc9a "loop: Avoid circular
+> locking dependency between loop_ctl_mutex and bd_mutex". As such they don't
+> fix anything and it doesn't make sense to carry them in stable unless
+> someone backports also the other patches in the series including the fixes
+> themselves (which honestly I don't think is worth it for stable).
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Ah, you are right, sorry about that.  I was backporting the loop fixes
+and these ended up working on 4.4.y, but as you say, were not needed
+unless the later patches also showed up.  I'll go revert them now,
+thanks.
 
-[ ... ]
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+greg k-h
