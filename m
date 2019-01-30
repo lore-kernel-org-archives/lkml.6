@@ -2,111 +2,169 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B647CC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91732C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7250321848
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:18:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="BTr8ZwRi"
+	by mail.kernel.org (Postfix) with ESMTP id 5BA3A2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:26:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbfA3DSz (ORCPT
+        id S1729213AbfA3D0l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 22:18:55 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40724 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728356AbfA3DSz (ORCPT
+        Tue, 29 Jan 2019 22:26:41 -0500
+Received: from gateway30.websitewelcome.com ([192.185.148.2]:40972 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727527AbfA3D0k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 22:18:55 -0500
-Received: by mail-qt1-f193.google.com with SMTP id k12so24759653qtf.7
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 19:18:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=fl9voM1VvOfNsaq/GFHX4XGKpHr/7LxDwir8ClxdnYs=;
-        b=BTr8ZwRiuWATkO3viznd4bJM+EvCa6U9xuXPatJUpruVwgrS7TRqqnVNwZ3gc4GFc2
-         VkSNQYCnh6D/feqpeI2PtTtZn46f+gQqXsQ0xLIr69y7Qmpv6BprfIm9ZXUQeECvMzCR
-         IRCPR8kUD4gInq26TOA1eTw4qhCY0gbKbuq6oXTvo6F/lifp78KM/1bGWe0aTdfAhy4r
-         jYMFq+kh0HPKs4h6H9kJ9NhAtii8Nau4WWjKsLK2xgoKyAVaofHm97MroAFNEeV6KOyQ
-         K0iP7SHAk6tfsVcr0F5oAW1U8H6SGMgzOITtGnbir3TX3qcxhbTQ2HhZ7btd7AvbaqG7
-         kj5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=fl9voM1VvOfNsaq/GFHX4XGKpHr/7LxDwir8ClxdnYs=;
-        b=txJoixy/7YbBjDhmDlc78mf1aA59kuUcVK+/peHINRd+Dsk6pOvRfPhjXjOg+vvYl1
-         cPaiBAFMWsk+UF+0Q+QltxtW44iBVQWXYKmNJh52O4Cd1P6NBZjQnL2GcogJ2PzpVjFM
-         PpSJJLIDrrWY0oA8HyVAZkrLCGhk2RvLY9UDI2m8nGxdhyMOQEUKNjCr7HlzQ6UrqKJt
-         9hOEGlRaMwveUsExvCA4L6JasKxSLt43oP+0JHvLjwbxZUJZJi/wfVJr/IHh+ZZo+k7/
-         xSTNffbZJvOFXORzo4cMfSxTEDkrxrRgPDb3bzqZQ7+X26FL7CAnsa36gGPbBtbjWdm0
-         u5wA==
-X-Gm-Message-State: AJcUukfPcglOJ9GUcPmonmfnKekgWQMUqlRUbHAQvoZqS4TgNQV7r3OJ
-        td7oSw+kS3I7+GeuKKHUEOUgPw==
-X-Google-Smtp-Source: ALg8bN7+Zuz552c2MI6OZe50xngUKb1HTZ1A8nHHW/1hRPVmPRdPKZOnxvzvpB01lTre1RvysHrcDQ==
-X-Received: by 2002:ac8:2d2b:: with SMTP id n40mr27421936qta.38.1548818334060;
-        Tue, 29 Jan 2019 19:18:54 -0800 (PST)
-Received: from skullcanyon ([192.222.193.21])
-        by smtp.gmail.com with ESMTPSA id n62sm174904qkn.43.2019.01.29.19.18.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 19:18:53 -0800 (PST)
-Message-ID: <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
-Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
- codec API
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Tomasz Figa <tfiga@chromium.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-Date:   Tue, 29 Jan 2019 22:18:52 -0500
-In-Reply-To: <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
-         <20190117162008.25217-11-stanimir.varbanov@linaro.org>
-         <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
-         <28069a44-b188-6b89-2687-542fa762c00e@linaro.org>
-         <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 29 Jan 2019 22:26:40 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 2ABA6E753
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 21:05:36 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ogC0gYroFdnCeogC0gafap; Tue, 29 Jan 2019 21:05:36 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=57532 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gogAF-000hdt-E9; Tue, 29 Jan 2019 21:05:35 -0600
+Subject: Re: [Nouveau] [PATCH] drm/nouveau: mark expected switch fall-through
+To:     Ben Skeggs <skeggsb@gmail.com>
+Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20190129203046.GA28384@embeddedor>
+ <CACAvsv7KU_fyyvAW3L6aCXPon599=tC4CyXdCF6sVOqqOu3SDA@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <f57bdbe8-5096-f36c-4997-9200847449f5@embeddedor.com>
+Date:   Tue, 29 Jan 2019 21:03:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CACAvsv7KU_fyyvAW3L6aCXPon599=tC4CyXdCF6sVOqqOu3SDA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gogAF-000hdt-E9
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:57532
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le lundi 28 janvier 2019 à 16:38 +0900, Tomasz Figa a écrit :
-> > > Nope, that's not what is expected to happen here. Especially since
-> > > you're potentially in non-blocking IO mode. Regardless of that, the
-> > 
-> > OK, how to handle that when userspace (for example gstreamer) hasn't
-> > support for v4l2 events? The s5p-mfc decoder is doing the same sleep in
-> > g_fmt.
+Ben,
+
+I wonder if you can take this too:
+
+https://lore.kernel.org/patchwork/patch/1001180/
+
+Thanks
+--
+Gustavo
+
+On 1/29/19 8:51 PM, Ben Skeggs wrote:
+> Got it, thanks.
 > 
-> I don't think that sleep in s5p-mfc was needed for gstreamer and
-> AFAICT other drivers don't have it. Doesn't gstreamer just set the
-> coded format on OUTPUT queue on its own? That should propagate the
-> format to the CAPTURE queue, without the need to parse the stream.
-
-Yes, unfortunately, GStreamer still rely on G_FMT waiting a minimal
-amount of time of the headers to be processed. This was how things was
-created back in 2011, I could not program GStreamer for the future. If
-we stop doing this, we do break GStreamer as a valid userspace
-application.
-
-This is not what I want long term, but I haven't got time to add event
-support, and there is a certain amount of time (years) when this is
-implemented before all the old code goes away.
-
-Nicolas
-
+> On Wed, 30 Jan 2019 at 06:55, Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> This patch fixes the following warning:
+>>
+>> drivers/gpu/drm/nouveau/nouveau_bo.c:1434:53: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> This patch is part of the ongoing efforts to enabling
+>> -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  drivers/gpu/drm/nouveau/nouveau_bo.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
+>> index 73eff52036d2..a72be71c45b4 100644
+>> --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
+>> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
+>> @@ -1434,7 +1434,7 @@ nouveau_ttm_io_mem_reserve(struct ttm_bo_device *bdev, struct ttm_mem_reg *reg)
+>>                 if (drm->client.mem->oclass < NVIF_CLASS_MEM_NV50 || !mem->kind)
+>>                         /* untiled */
+>>                         break;
+>> -               /* fallthrough, tiled memory */
+>> +               /* fall through - tiled memory */
+>>         case TTM_PL_VRAM:
+>>                 reg->bus.offset = reg->start << PAGE_SHIFT;
+>>                 reg->bus.base = device->func->resource_addr(device, 1);
+>> --
+>> 2.20.1
+>>
+>> _______________________________________________
+>> Nouveau mailing list
+>> Nouveau@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/nouveau
