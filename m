@@ -8,29 +8,29 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1620DC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED790C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D98E82184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:16:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE342218A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:16:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="b3T6Vhou"
+	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="OqE+F+z8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731015AbfA3NQN (ORCPT
+        id S1730899AbfA3NQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:16:13 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25458 "EHLO
+        Wed, 30 Jan 2019 08:16:40 -0500
+Received: from sender-pp-092.zoho.com ([135.84.80.237]:25470 "EHLO
         sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbfA3NQN (ORCPT
+        with ESMTP id S1726151AbfA3NQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:16:13 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548854125; cv=none; 
+        Wed, 30 Jan 2019 08:16:40 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1548854127; cv=none; 
         d=zoho.com; s=zohoarc; 
-        b=QJQMZk4Wz+NTCNpCZwrd0WFBHT74qPiNS2xbjf0VF/mYcoLsJgsPg4ktKiY/4hNPRitJ7M+CTBB2WXzQPaRQorOHla2ZVDBHWr4YnrJS3tnGTxOTOQh1KwS+N7BPdaiUqAdzznBv/aVYlyQMSBoQ3Kb4yQKuWQwSFT63VHdx/0M=
+        b=ixwHy8Vz1wUz52kQcGvzanxJxt7Dc0cbqAZdN2fRReGj6/SJLqsIGHsyDqt2x4lFkaaH249niogwgF8gbWrwTwPk270AwtIRjuudqYJC2ECoDVt2y3j/CwA/ZGahr2hcOThmviU3D4p5u+tnXvNfg31bWJ97sTwCrKBNnWc7Z0w=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548854125; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=pLCrqxlzDG7EbqBrfzQMxkdKY42dewHOXwqfmcwB+Cc=; 
-        b=QsNDaVswPUGxBahO+hQ3GjQRYpy8od5TsrJWfBQzCxLGdRJYaa8+U4qX3UwIp7tQc+S6K05Rr73g8XIEFub8jyf5KsQpOrWVxX/BmTOUyoBPnsamuI0EyuPTl3zF9jKOOL5qqSGk6WdgTrEvLmGh4L5gz95Adds1XJeauD3KGGU=
+        t=1548854127; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=IWwCosK24C5ph0LjsBwJCVLTjMI7bSWxouf5emc+fbs=; 
+        b=bXTPSTLxR166c2EbcLjqQD7CUFsHotQ2Bs+r6S3hujlpbBO3Gi278uZJugQmzYdr8GYc5kOVwKgk4YS9s9uJ+m+Sx9j3LNPABCJTXwx87SUPl5jWkIOoBASofrJCozRrfzj/qh3DRgav759s2Ie5zOWrpjxjz4UoUhxj1jVqQHM=
 ARC-Authentication-Results: i=1; mx.zoho.com;
         dkim=pass  header.i=zoho.com;
         spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
@@ -38,17 +38,17 @@ ARC-Authentication-Results: i=1; mx.zoho.com;
 DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
   s=zapps768; d=zoho.com; 
   h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=gYaGFqQqjIo9S3J3MQzg3fStJVXXpyqYgitTMRGyckY00X91ojbtf7FRs0FjN/+5lvl54SdvFONM
-    +x++r/J7+duaVaF5qwjOB6HWsX2fflzRyEEk+Fweceu6DKW9A+j7  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548854125;
+  b=uahffS5OIdRzNqx9aq+yAcdvH5ZfAnWGrtB+hc/so7lsuU7+EUiZp6bW39Mav+4r7xphUM930bQK
+    +so6/tHe+2ZdU1NSrTZ5XmoDPxZ/qrwXM/DdsS5taYu2sad/Ku+w  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548854127;
         s=default; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; l=982;
-        bh=pLCrqxlzDG7EbqBrfzQMxkdKY42dewHOXwqfmcwB+Cc=;
-        b=b3T6Vhoun0bmfv0LCxPb0E7qWxQCkRdeibunDzacoa53V4YogCsDzIHEgkEPYkAd
-        5rVBRqlGhytLLoNYLdxGBrngdVmdEQA/jUg9dk+otX6IaGSgOEae9ekDzJlQy8Hfb6o
-        /0+AQm8cUbUK4P8bSx/d98xxBcKcQ6IjdvSRfnzY=
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
+        l=1229; bh=IWwCosK24C5ph0LjsBwJCVLTjMI7bSWxouf5emc+fbs=;
+        b=OqE+F+z8+tAlYedREppjMlz+B9GMA0Qaiw0vTS83/yvhGSIWR/oCv8PFgG0/2p50
+        g+R14y1OZt59A8hW74Znga76+GBvjPHdqr9lUukZsvLm4L8cdb87rAzLBwo4/5fc/cb
+        1ZSANaIqkJKV2YtQcIq1zLzPnjRlHuTXRFDBYmb4=
 Received: from localhost.localdomain (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
-        with SMTPS id 1548854116789837.2517901828285; Wed, 30 Jan 2019 05:15:16 -0800 (PST)
+        with SMTPS id 1548854122327747.3997723790026; Wed, 30 Jan 2019 05:15:22 -0800 (PST)
 From:   Zhou Yanjie <zhouyanjie@zoho.com>
 To:     linux-mips@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         robh+dt@kernel.org, ezequiel@collabora.co.uk, paul@crapouillou.net,
         mark.rutland@arm.com, syq@debian.org, jiaxun.yang@flygoat.com,
         772753199@qq.com, ulf.hansson@linaro.org, malat@debian.org
-Subject: [PATCH 1/2] dt-bindings: MIPS: Add doc about Ingenic CPU node.
-Date:   Wed, 30 Jan 2019 21:14:03 +0800
-Message-Id: <1548854044-56483-2-git-send-email-zhouyanjie@zoho.com>
+Subject: [PATCH 2/2] DTS: CI20: Add CPU nodes and L2 cache nodes.
+Date:   Wed, 30 Jan 2019 21:14:04 +0800
+Message-Id: <1548854044-56483-3-git-send-email-zhouyanjie@zoho.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548854044-56483-1-git-send-email-zhouyanjie@zoho.com>
 References: <1548854044-56483-1-git-send-email-zhouyanjie@zoho.com>
@@ -68,37 +68,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dt-bindings doc about CPU node of Ingenic XBurst based SOCs.
+Current kernels complain when booting on CI20:
+[    0.329630] cacheinfo: Failed to find cpu0 device node
+[    0.335023] cacheinfo: Unable to detect cache hierarchy for CPU 0
+Add the CPU node and the L2 cache node, then let each CPU point to it.
 
 Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
 ---
- .../devicetree/bindings/mips/ingenic/ingenic,cpu.txt    | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.txt
+ arch/mips/boot/dts/ingenic/jz4780.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.txt b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.txt
-new file mode 100644
-index 0000000..38e3cd3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.txt
-@@ -0,0 +1,17 @@
-+Ingenic Soc CPU
+diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+index b03cdec..7c0a853 100644
+--- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+@@ -7,6 +7,31 @@
+ 	#size-cells = <1>;
+ 	compatible = "ingenic,jz4780";
+ 
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+Required properties:
-+- device_type: Must be "cpu".
-+- compatible: One of:
-+  - "ingenic,xburst".
-+- reg: The number of the CPU.
-+- next-level-cache: If there is a next level cache, point to it.
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "ingenic,xburst";
++			reg = <0>;
++			next-level-cache = <&l2c>;
++		};
 +
-+Example:
-+cpu0: cpu@0 {
-+	device_type = "cpu";
-+	compatible = "ingenic,xburst";
-+	reg = <0>;
-+	next-level-cache = <&l2c>;
-+};
++		cpu1: cpu@1 {
++			device_type = "cpu";
++			compatible = "ingenic,xburst";
++			reg = <1>;
++			next-level-cache = <&l2c>;
++			clocks = <&cgu JZ4780_CLK_CORE1>;
++		};
 +
++		l2c: l2-cache {
++			compatible = "cache";
++			cache-level = <2>;
++		};
++	};
++
+ 	cpuintc: interrupt-controller {
+ 		#address-cells = <0>;
+ 		#interrupt-cells = <1>;
 -- 
 2.7.4
 
