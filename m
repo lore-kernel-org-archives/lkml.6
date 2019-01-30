@@ -2,96 +2,124 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13EC7C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BBDC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC0372087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:29:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB9662087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:30:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TJvwOn6Q"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lviWGFZx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733060AbfA3S3L (ORCPT
+        id S1733068AbfA3SaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:29:11 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44085 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733036AbfA3S3K (ORCPT
+        Wed, 30 Jan 2019 13:30:21 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41590 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732841AbfA3SaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:29:10 -0500
-Received: by mail-lf1-f66.google.com with SMTP id z13so355509lfe.11
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:29:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lcw5vt9zbl++2RXOENtvs4XQX4dr/6bQWVR0Pe9YBiI=;
-        b=TJvwOn6QwSVGUiDeb09oklzogw6mAA0r+OL2c9ehh3L//6bdR3mD03hcoKP1ausY9r
-         46Iu8d4YSJIzjEPla7bDxNqxFGy+/Matc4dXOkm/riEjy0+6VPYb5AfyN95joo/dNZ1n
-         Lu4gCpPgrKOiE1Zb7SSLvEjp3sEHx25BMSDKU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lcw5vt9zbl++2RXOENtvs4XQX4dr/6bQWVR0Pe9YBiI=;
-        b=esU5BqKND1OZclWDqo7xZOzBpaGfCFmYLfX7d/5O7JG7doA+fDq09J0QRw/cB5L7kQ
-         G1NYrb91q0y07rx/GdrAWWgUqfUHRPY6VXat14L2Da0bQam8CYq6hXFXIIRmp0HMqQlx
-         Fwmj7QnCbW9DC1tZBcph3UJr/8T4fApgDpM7/unyz+YkrLIjuqCwbd3XJMSEEWNPoS38
-         VwcmvFExr6VxFols02bvE8X5pmCN9PWaI4C4SlHyVBT9g0EXIVp+Gzg6lPFhed1vD0TH
-         VZBRoZB6khQlsV2mI3AfX0KbvxT7kX5zpZMRIifs5kFjgmsaxC9Mx3V+JMvFnmoGW7W6
-         Kj7A==
-X-Gm-Message-State: AJcUukfxrIcy7P5EKfPa415h6QKo8EVTx/T7eKz6VM0Ox8UvrcqJEEmO
-        0Oas8mzGBYYNmpwnMigowRzEASMJzpg=
-X-Google-Smtp-Source: ALg8bN5U6aLSEtAmPzYdnguWcBRj+5kzZuYv7jiivISVEmANoZDtqwAw8Pm9AYN7jizXusS8emd/rg==
-X-Received: by 2002:a19:cbcc:: with SMTP id b195mr24410163lfg.117.1548872948602;
-        Wed, 30 Jan 2019 10:29:08 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id s17sm461187lfk.9.2019.01.30.10.29.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 10:29:07 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id s5-v6so389042ljd.12
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:29:07 -0800 (PST)
-X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr26439768ljc.97.1548872946625;
- Wed, 30 Jan 2019 10:29:06 -0800 (PST)
+        Wed, 30 Jan 2019 13:30:21 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0UIUFht079194;
+        Wed, 30 Jan 2019 12:30:15 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548873015;
+        bh=8/Ve5jGtKFD4bjrx1aYX6fb1Ri9Pdg9X4iDb7Z8QW+Q=;
+        h=From:To:CC:Subject:Date;
+        b=lviWGFZxrCxWVzWLxO08dXO+r25ZsEAjirBSkEe6fyUOjr0fFBXnLzVOyUjl5+QuT
+         RIjKg+e6EjIcpEmTIWQ3xSMNCpW7PQYKYaTmHCUXVwAW1A6FrVHA1I5kAebGoZCi8p
+         5qcrxAzouIeF3KWp2GRUAKMrdv4TA7lzpXwwEnvw=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0UIUFeK070308
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 30 Jan 2019 12:30:15 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 30
+ Jan 2019 12:30:15 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 30 Jan 2019 12:30:15 -0600
+Received: from legion.dal.desgin.ti.com (legion.dal.design.ti.com [128.247.22.53])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0UIUFjp012679;
+        Wed, 30 Jan 2019 12:30:15 -0600
+Received: from localhost (a0272616local-lt.dhcp.ti.com [172.22.83.85])
+        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x0UIUEU02207;
+        Wed, 30 Jan 2019 12:30:14 -0600 (CST)
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [RFC PATCH] leds: multicolor: Add sysfs interface definition
+Date:   Wed, 30 Jan 2019 12:30:05 -0600
+Message-ID: <20190130183005.833-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.12.2
 MIME-Version: 1.0
-References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-6-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1546314952-15990-6-git-send-email-yong.wu@mediatek.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 30 Jan 2019 10:28:30 -0800
-X-Gmail-Original-Message-ID: <CAE=gft6KiXmP2Dm8ksnATUcy8Mhnfo8wL=SVpwGZrC0M1CoxpA@mail.gmail.com>
-Message-ID: <CAE=gft6KiXmP2Dm8ksnATUcy8Mhnfo8wL=SVpwGZrC0M1CoxpA@mail.gmail.com>
-Subject: Re: [PATCH v5 05/20] iommu/io-pgtable-arm-v7s: Add paddr_to_iopte and
- iopte_to_paddr helpers
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 7:57 PM Yong Wu <yong.wu@mediatek.com> wrote:
->
-> Add two helper functions: paddr_to_iopte and iopte_to_paddr.
->
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Add a documentation of LED Multicolor LED class specific
+sysfs attributes.
 
-Reviewed-by: Evan Green <evgreen@chromium.org>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+ .../ABI/testing/sysfs-class-led-multicolor    | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+
+diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Documentation/ABI/testing/sysfs-class-led-multicolor
+new file mode 100644
+index 000000000000..19f8da9b150e
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
+@@ -0,0 +1,38 @@
++What:		/sys/class/leds/<led>/color/sync_enable
++Date:		January 2019
++KernelVersion:	5.0
++Contact:	Dan Murphy <dmurphy@ti.com>
++Description:	read/write
++		Writing a 1 to this file will enable the sychronization of all
++		the defined color LEDs within the LED node.  Writing a 0 to
++		this file will disable syncing.
++
++What:		/sys/class/leds/<led>/color/sync
++Date:		January 2019
++KernelVersion:	5.0
++Contact:	Dan Murphy <dmurphy@ti.com>
++Description:	write only
++		Writing a 1 to this file while sync_enable is set to 1 will
++		synchronize all defined LEDs within the LED node.  All LEDs
++		defined will be configured based on the brightness that has
++		been requested.
++
++		If sync_enable is set to 0 then writing a 1 to sync has no
++		affect on the LEDs.
++
++What:		/sys/class/leds/<led>/color/<led color>
++Date:		January 2019
++KernelVersion:	5.0
++Contact:	Dan Murphy <dmurphy@ti.com>
++Description:	read/write
++		These files are dynamically created based on the colors defined
++		by the registrar of the class.
++		The led color(s) can be but not limited to red, green, blue,
++		white, amber and violet.  If sync is enabled then writing the
++		brightness value of the LED is deferred until a 1 is
++		written to /sys/class/leds/<led>/color/sync.  If syncing is
++		disabled then the LED brightness value will be written
++		immediately to the LED driver.
++
++		The value of the color is from 0 to
++		/sys/class/leds/<led>/max_brightness.
+-- 
+2.20.1.98.gecbdaf0899
+
