@@ -2,234 +2,200 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C45FC282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7276BC282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D064E20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:55:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Szk2rfrF"
+	by mail.kernel.org (Postfix) with ESMTP id 49FF620882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:56:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729727AbfA3Hzq (ORCPT
+        id S1729899AbfA3H4s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 02:55:46 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46439 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfA3Hzp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 02:55:45 -0500
-Received: by mail-ua1-f66.google.com with SMTP id v24so7769274uap.13
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:55:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nZIvWLr2bMHRAYkCkGLBjoPGhk0MGw5PKfGobTQT1ZQ=;
-        b=Szk2rfrF2gujhUb+9JkuNLLUBR7BHzwf/XFuWtKivbr3nb7Z+1Gm8UvfjIpktekj23
-         dkoLuGVZehQYf1oSAjlVMQTaJa3IGvvrP5PNk4OHeaEuV900QRq/2sc3i4V+22VXouQT
-         zOfBgxWif96Ibh6QBI1nX3oQcrsA/NqaDTawI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nZIvWLr2bMHRAYkCkGLBjoPGhk0MGw5PKfGobTQT1ZQ=;
-        b=VsY8JdwRCHx4iZp8V9fgtNDl9Wop79cxikcgpOa2g5fNCzfBtfaZncKGLEQjEVzgGY
-         0/4qsxKVjZakjVoXCdSoNeEMDd9hXqDiVrAPnc+iHAEPCt0oFdtGM/Xozc/3Nwk4bkKp
-         F3qPAsyMu813obVmFDVJw4FVMIfs0WRsaUfZIzaL3bvyE401BqIXfNeU76CdenQrqmHL
-         eeH07xSIY4HXdQXA5ECnstuHn+sXaeq1QAAvl0taVzB45TWjLrF5RVtflptUdZgF3bYf
-         sPBLO3A6a0/K13WrbEmdxNjtWN3VJZWaB5Tir49CU/zbxnqidL7Ky41bMZ75Hc5pXT4y
-         nOww==
-X-Gm-Message-State: AJcUukefiYV7rzuDrHvKYdpg8BUH2vJSzxfczcD9VprttjzmMx0IymJK
-        2u1SnfTBgKbVkiAurLdp8HQ1Ia998PoQBl9XirnVfA==
-X-Google-Smtp-Source: ALg8bN4q+O5UBStmvc5vY8XFWUOvO2/8XYi/PZrtpkxbGUhBFnbCsFCpmQ4TCQWax7jPK3go3FhGDiH4O7OPytidBHs=
-X-Received: by 2002:ab0:b83:: with SMTP id c3mr11514419uak.77.1548834943903;
- Tue, 29 Jan 2019 23:55:43 -0800 (PST)
+        Wed, 30 Jan 2019 02:56:48 -0500
+Received: from mga12.intel.com ([192.55.52.136]:25882 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725830AbfA3H4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 02:56:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 23:56:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
+   d="scan'208";a="142623893"
+Received: from cvg-ubt08.iil.intel.com (HELO [143.185.152.136]) ([143.185.152.136])
+  by fmsmga001.fm.intel.com with ESMTP; 29 Jan 2019 23:56:43 -0800
+Subject: Re: [PATCH] lib: 64bit IO
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20190129154102.17655-1-vladimir.kondratiev@linux.intel.com>
+ <20190129160130.GA19439@kroah.com>
+From:   Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
+Message-ID: <da950dbf-1e07-6cdf-7b25-626d77e6c6c3@linux.intel.com>
+Date:   Wed, 30 Jan 2019 09:56:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190114095804.27978-1-hch@lst.de> <20190114095804.27978-8-hch@lst.de>
-In-Reply-To: <20190114095804.27978-8-hch@lst.de>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 30 Jan 2019 08:55:07 +0100
-Message-ID: <CAPDyKFrtJmaS33=yZz7ubUVVb5UB-Euq5pcaBMSFeQyubDYvGA@mail.gmail.com>
-Subject: Re: [PATCH 07/11] mmc: mvsdio: handle highmem pages
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Ben Dooks <ben-linux@fluff.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190129160130.GA19439@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Jan 2019 at 10:58, Christoph Hellwig <hch@lst.de> wrote:
->
-> Instead of setting up a kernel pointer to track the current PIO address,
-> track the offset in the current page, and do an atomic kmap for the page
-> while doing the actual PIO operations.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/mmc/host/mvsdio.c | 48 +++++++++++++++++++++++----------------
->  1 file changed, 29 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/mmc/host/mvsdio.c b/drivers/mmc/host/mvsdio.c
-> index e22bbff89c8d..545e370d6dae 100644
-> --- a/drivers/mmc/host/mvsdio.c
-> +++ b/drivers/mmc/host/mvsdio.c
-> @@ -12,6 +12,7 @@
->  #include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/io.h>
-> +#include <linux/highmem.h>
->  #include <linux/platform_device.h>
->  #include <linux/mbus.h>
->  #include <linux/delay.h>
-> @@ -42,7 +43,8 @@ struct mvsd_host {
->         unsigned int intr_en;
->         unsigned int ctrl;
->         unsigned int pio_size;
-> -       void *pio_ptr;
-> +       struct scatterlist *pio_sg;
-> +       unsigned int pio_offset; /* offset in words into the segment */
->         unsigned int sg_frags;
->         unsigned int ns_per_clk;
->         unsigned int clock;
-> @@ -96,9 +98,9 @@ static int mvsd_setup_data(struct mvsd_host *host, struct mmc_data *data)
->         if (tmout_index > MVSD_HOST_CTRL_TMOUT_MAX)
->                 tmout_index = MVSD_HOST_CTRL_TMOUT_MAX;
->
-> -       dev_dbg(host->dev, "data %s at 0x%08x: blocks=%d blksz=%d tmout=%u (%d)\n",
-> +       dev_dbg(host->dev, "data %s at 0x%08llx: blocks=%d blksz=%d tmout=%u (%d)\n",
->                 (data->flags & MMC_DATA_READ) ? "read" : "write",
-> -               (u32)sg_virt(data->sg), data->blocks, data->blksz,
-> +               (u64)sg_phys(data->sg), data->blocks, data->blksz,
->                 tmout, tmout_index);
->
->         host->ctrl &= ~MVSD_HOST_CTRL_TMOUT_MASK;
-> @@ -118,10 +120,11 @@ static int mvsd_setup_data(struct mvsd_host *host, struct mmc_data *data)
->                  * boundary.
->                  */
->                 host->pio_size = data->blocks * data->blksz;
-> -               host->pio_ptr = sg_virt(data->sg);
-> +               host->pio_sg = data->sg;
-> +               host->pio_offset = data->sg->offset / 2;
->                 if (!nodma)
-> -                       dev_dbg(host->dev, "fallback to PIO for data at 0x%p size %d\n",
-> -                               host->pio_ptr, host->pio_size);
-> +                       dev_dbg(host->dev, "fallback to PIO for data at 0x%x size %d\n",
-> +                               host->pio_offset, host->pio_size);
->                 return 1;
->         } else {
->                 dma_addr_t phys_addr;
-> @@ -291,8 +294,9 @@ static u32 mvsd_finish_data(struct mvsd_host *host, struct mmc_data *data,
->  {
->         void __iomem *iobase = host->base;
->
-> -       if (host->pio_ptr) {
-> -               host->pio_ptr = NULL;
-> +       if (host->pio_sg) {
-> +               host->pio_sg = NULL;
-> +               host->pio_offset = 0;
->                 host->pio_size = 0;
->         } else {
->                 dma_unmap_sg(mmc_dev(host->mmc), data->sg, host->sg_frags,
-> @@ -376,11 +380,12 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
->         if (host->pio_size &&
->             (intr_status & host->intr_en &
->              (MVSD_NOR_RX_READY | MVSD_NOR_RX_FIFO_8W))) {
-> -               u16 *p = host->pio_ptr;
-> +               u16 *p = kmap_atomic(sg_page(host->pio_sg));
 
-Seems like a corresponding kunmap_atomic() is missing somewhere.
 
-> +               unsigned int o = host->pio_offset;
->                 int s = host->pio_size;
->                 while (s >= 32 && (intr_status & MVSD_NOR_RX_FIFO_8W)) {
-> -                       readsw(iobase + MVSD_FIFO, p, 16);
-> -                       p += 16;
-> +                       readsw(iobase + MVSD_FIFO, p + o, 16);
-> +                       o += 16;
->                         s -= 32;
->                         intr_status = mvsd_read(MVSD_NOR_INTR_STATUS);
->                 }
-> @@ -391,8 +396,10 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
->                  */
->                 if (s <= 32) {
->                         while (s >= 4 && (intr_status & MVSD_NOR_RX_READY)) {
-> -                               put_unaligned(mvsd_read(MVSD_FIFO), p++);
-> -                               put_unaligned(mvsd_read(MVSD_FIFO), p++);
-> +                               put_unaligned(mvsd_read(MVSD_FIFO), p + o);
-> +                               o++;
-> +                               put_unaligned(mvsd_read(MVSD_FIFO), p + o);
-> +                               o++;
->                                 s -= 4;
->                                 intr_status = mvsd_read(MVSD_NOR_INTR_STATUS);
->                         }
-> @@ -400,7 +407,7 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
->                                 u16 val[2] = {0, 0};
->                                 val[0] = mvsd_read(MVSD_FIFO);
->                                 val[1] = mvsd_read(MVSD_FIFO);
-> -                               memcpy(p, ((void *)&val) + 4 - s, s);
-> +                               memcpy(p + o, ((void *)&val) + 4 - s, s);
->                                 s = 0;
->                                 intr_status = mvsd_read(MVSD_NOR_INTR_STATUS);
->                         }
-> @@ -416,13 +423,14 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
->                 }
->                 dev_dbg(host->dev, "pio %d intr 0x%04x hw_state 0x%04x\n",
->                         s, intr_status, mvsd_read(MVSD_HW_STATE));
-> -               host->pio_ptr = p;
-> +               host->pio_offset = o;
->                 host->pio_size = s;
->                 irq_handled = 1;
->         } else if (host->pio_size &&
->                    (intr_status & host->intr_en &
->                     (MVSD_NOR_TX_AVAIL | MVSD_NOR_TX_FIFO_8W))) {
-> -               u16 *p = host->pio_ptr;
-> +               u16 *p = kmap_atomic(sg_page(host->pio_sg));
+On 1/29/19 6:01 PM, Greg Kroah-Hartman wrote:
+> On Tue, Jan 29, 2019 at 05:41:02PM +0200, Vladimir Kondratiev wrote:
+>> implement missing io{read|write}64
+>>
+>> For 64-bit platforms, these 64-bit io functions are defined in
+>> include/asm-generic/iomap.h,
+>> but actual implementation missing. Provide it.
+> 
+> What is in include/asm-generic/io.h?
+> 
+> $ git grep iowrite64be | grep generic
+> include/asm-generic/io.h:#ifndef iowrite64be
+> include/asm-generic/io.h:#define iowrite64be iowrite64be
+> include/asm-generic/io.h:static inline void iowrite64be(u64 value, volatile void __iomem *addr)
+> include/asm-generic/iomap.h:extern void iowrite64be(u64, void __iomem *);
+> 
+> so are you sure this is needed?
+> 
+> What code is failing to build for you?
 
-Ditto.
+The code you mentioned is under
+#ifndef CONFIG_GENERIC_IOMAP
 
-> +               unsigned int o = host->pio_offset;
->                 int s = host->pio_size;
->                 /*
->                  * The TX_FIFO_8W bit is unreliable. When set, bursting
-> @@ -431,8 +439,10 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
->                  * TX_FIFO_8W remains set.
->                  */
->                 while (s >= 4 && (intr_status & MVSD_NOR_TX_AVAIL)) {
-> -                       mvsd_write(MVSD_FIFO, get_unaligned(p++));
-> -                       mvsd_write(MVSD_FIFO, get_unaligned(p++));
-> +                       mvsd_write(MVSD_FIFO, get_unaligned(p + o));
-> +                       o++;
-> +                       mvsd_write(MVSD_FIFO, get_unaligned(p + o));
-> +                       o++;
->                         s -= 4;
->                         intr_status = mvsd_read(MVSD_NOR_INTR_STATUS);
->                 }
-> @@ -453,7 +463,7 @@ static irqreturn_t mvsd_irq(int irq, void *dev)
->                 }
->                 dev_dbg(host->dev, "pio %d intr 0x%04x hw_state 0x%04x\n",
->                         s, intr_status, mvsd_read(MVSD_HW_STATE));
-> -               host->pio_ptr = p;
-> +               host->pio_offset = o;
->                 host->pio_size = s;
->                 irq_handled = 1;
->         }
-> --
-> 2.20.1
->
+i.e. it works for platforms that does not define CONFIG_GENERIC_IOMAP
+This currently defined for quite a lot of platforms, all these should 
+not use these inlines and use lib/iomap.c - it selected by the same 
+symbol, from lib/Makefile:
 
-Kind regards
-Uffe
+obj-$(CONFIG_GENERIC_IOMAP) += iomap.o
+
+
+linux$ git grep GENERIC_IOMAP | grep Kconfig
+arch/hexagon/Kconfig:	select GENERIC_IOMAP
+arch/ia64/Kconfig:	select GENERIC_IOMAP
+arch/m68k/Kconfig:	select GENERIC_IOMAP
+arch/mips/Kconfig:	select GENERIC_IOMAP
+arch/openrisc/Kconfig:	select GENERIC_IOMAP
+arch/powerpc/platforms/Kconfig:	select GENERIC_IOMAP
+arch/unicore32/Kconfig:	select GENERIC_IOMAP
+arch/x86/Kconfig:	select GENERIC_IOMAP
+lib/Kconfig:config GENERIC_IOMAP
+
+Actually, I am using 64-bit MIPS platform for now, and some pieces of 
+code was not compiling without this patch; but this looks like code all 
+platforms above need in order to use 64-bit transactions in 
+"io{redd|write}xx" style
+
+Also, I figured out most platforms does not bother providing PIO in 
+64-bit quantities, so see below version 2 with MMIO-only implementation.
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
+
+
+ From 7f0d31a7cdcc535e0248cb4c4cf8f1d16dc0133d Mon Sep 17 00:00:00 2001
+From: Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
+Date: Thu, 24 Jan 2019 16:59:20 +0200
+Subject: [PATCH v2] lib: 64bit IO
+
+implement missing io{read|write}64
+
+For 64-bit platforms, these 64-bit io functions are defined in
+include/asm-generic/iomap.h,
+but actual implementation missing. Provide it.
+Most platforms does not provide 64-bit PIO functions, thus
+implement 64-bit transactions as MMIO only
+
+Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
+---
+  lib/iomap.c | 38 ++++++++++++++++++++++++++++++++++++++
+  1 file changed, 38 insertions(+)
+
+diff --git a/lib/iomap.c b/lib/iomap.c
+index 541d926da95e..86501bccdf72 100644
+--- a/lib/iomap.c
++++ b/lib/iomap.c
+@@ -67,6 +67,9 @@ static void bad_io_access(unsigned long port, const 
+char *access)
+  #ifndef mmio_read16be
+  #define mmio_read16be(addr) be16_to_cpu(__raw_readw(addr))
+  #define mmio_read32be(addr) be32_to_cpu(__raw_readl(addr))
++#ifdef CONFIG_64BIT
++#define mmio_read64be(addr) be64_to_cpu(__raw_readq(addr))
++#endif
+  #endif
+
+  unsigned int ioread8(void __iomem *addr)
+@@ -100,6 +103,22 @@ EXPORT_SYMBOL(ioread16be);
+  EXPORT_SYMBOL(ioread32);
+  EXPORT_SYMBOL(ioread32be);
+
++#ifdef CONFIG_64BIT
++
++u64 ioread64(void __iomem *addr)
++{
++	return readq(addr);
++}
++EXPORT_SYMBOL(ioread64);
++
++u64 ioread64be(void __iomem *addr)
++{
++	return mmio_read64be(addr);
++}
++EXPORT_SYMBOL(ioread64be);
++
++#endif /* CONFIG_64BIT */
++
+  #ifndef pio_write16be
+  #define pio_write16be(val,port) outw(swab16(val),port)
+  #define pio_write32be(val,port) outl(swab32(val),port)
+@@ -108,6 +127,9 @@ EXPORT_SYMBOL(ioread32be);
+  #ifndef mmio_write16be
+  #define mmio_write16be(val,port) __raw_writew(be16_to_cpu(val),port)
+  #define mmio_write32be(val,port) __raw_writel(be32_to_cpu(val),port)
++#ifdef CONFIG_64BIT
++#define mmio_write64be(val, port) __raw_writeq(be64_to_cpu(val), port)
++#endif
+  #endif
+
+  void iowrite8(u8 val, void __iomem *addr)
+@@ -136,6 +158,22 @@ EXPORT_SYMBOL(iowrite16be);
+  EXPORT_SYMBOL(iowrite32);
+  EXPORT_SYMBOL(iowrite32be);
+
++#ifdef CONFIG_64BIT
++
++void iowrite64(u64 val, void __iomem *addr)
++{
++	writeq(val, addr);
++}
++EXPORT_SYMBOL(iowrite64);
++
++void iowrite64be(u64 val, void __iomem *addr)
++{
++	mmio_write64be(val, addr);
++}
++EXPORT_SYMBOL(iowrite64be);
++
++#endif /* CONFIG_64BIT */
++
+  /*
+   * These are the "repeat MMIO read/write" functions.
+   * Note the "__raw" accesses, since we don't want to
+-- 
+2.19.1
