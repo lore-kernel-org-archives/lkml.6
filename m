@@ -2,97 +2,180 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD24EC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7D9C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91CC12184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548878288;
-	bh=auzSKkbIEQQTzGpRyUPk07IQZuonZSp+zZ7+wEqWpfw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WOzU4Mx3nOBZMsHVfrq1WEC5AcWdf+fkp2/TCUgei17GpBCHnfXy3RGRV9MAxjDX9
-	 +EwRupbLXkTtsRa/VXPy1hAvUeUt0W+YYxPAHifSV6AAR9owsja4cEWFhP2HcrVerm
-	 tPv9ESijECCvebPpORpBmorqIUlGLpYloMN2aGh8=
+	by mail.kernel.org (Postfix) with ESMTP id A7E542184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:58:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gSFLzELa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733037AbfA3T6H (ORCPT
+        id S1733195AbfA3T6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:58:07 -0500
-Received: from mail-oi1-f170.google.com ([209.85.167.170]:33671 "EHLO
-        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728446AbfA3T6G (ORCPT
+        Wed, 30 Jan 2019 14:58:34 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43705 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728048AbfA3T6d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:58:06 -0500
-Received: by mail-oi1-f170.google.com with SMTP id c206so742734oib.0;
-        Wed, 30 Jan 2019 11:58:06 -0800 (PST)
+        Wed, 30 Jan 2019 14:58:33 -0500
+Received: by mail-lf1-f65.google.com with SMTP id u18so556242lff.10;
+        Wed, 30 Jan 2019 11:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kOnrdBoDl+6QiotbwvFUKNpP9qP7se/5Kibtn2OpwJs=;
+        b=gSFLzELaX7JoecUcnXJ6k2uRGKnMMgAr6qLItHkH8wSMzLN4f154vXIBUWiRVKPTcO
+         jRr/iAsP5IZvmCMgrFKvXOKCpiJqXscOqloNgCfLKb739n1PtqjLrQ7jCnRsaVQvVbyi
+         IgH7XYdl7j27jD8XutNPU/8DDyFBlsauhdC96MRUiYwwSoYgSkwGb6/LQs4wd47IdbHP
+         /vk7CxMP62OZVgT7naL4uZvlH90uLspgws/zI73rQbDcB276GmK5yQrkGln7uGtKvlzV
+         K0PrccaDHfuxekM2z08fBD2aMC+5Fx5Hq5MHnmQsKK2E4LnU3Mp6BXz28bDzn2Kd4Q8i
+         xUUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2ZcYzu0XjnK7ywS/pcBhJtKfTj5X5hJvMdL0Iq5P8/Y=;
-        b=B6zdlDVsqC/QrNclgGDto1OgtMzN2iCjA9jGNo4zbMLtdw8xQQahilzrHVVhjHQqKE
-         eXUIca22ipu7e0rm5Pbx/5SH9/zOwQuL796ZWcBbaGiv8vq4JxWXu5ysXXa7MLkW+hTO
-         2OyBOe20hbksq0ZbZegVJFK66vMHSRulXu41NS1PyNd6zSoRdyOJ6JXfFTOTZbP5mdVO
-         Iq4Z3GVd9uDnDIVqpYdoK/PBANgBSrgDJop/y5JNTCCyhnGyI1qCHjzosUYw+At4R6fI
-         dYlVYHKnNFEWZyTXbxDl8f8nDZH1+4rSVQLkLOOEvhsbCyG9filfJZsWRzbdzgkJEQBe
-         df9g==
-X-Gm-Message-State: AJcUukfJ+Wqs559YH2N93lCYSXH3ghgFBXFFUzlwqal6T2bZ1uuAgbtT
-        cxLFDPX/y0h3JLKfH2r0gcQLm+yI/w==
-X-Google-Smtp-Source: ALg8bN6hYc4WHO50wzh4bDO+i49t3fFwjsPXLqrIpVkGXV4X4Ic1T0rL0FTHyckX5dygEsZAoOTTAA==
-X-Received: by 2002:aca:1702:: with SMTP id j2mr13514559oii.267.1548878285580;
-        Wed, 30 Jan 2019 11:58:05 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c9sm945599otb.38.2019.01.30.11.58.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 11:58:04 -0800 (PST)
-Date:   Wed, 30 Jan 2019 13:58:04 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
-        jackp@codeaurora.org, andy.gross@linaro.org, swboyd@chromium.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-usb@vger.kernel.org, khasim.mohammed@linaro.org,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
-        vkoul@kernel.org, shawn.guo@linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/2] USB SS PHY for Qualcomm's QCS404
-Message-ID: <20190130195804.GA5908@bogus>
-References: <1548761715-4004-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kOnrdBoDl+6QiotbwvFUKNpP9qP7se/5Kibtn2OpwJs=;
+        b=mZvcLqYqM4KR33fjlOaBWDOnSx1GUvqkO2RcNvfiz5bDHsIv2vX0SDNr5Rg54V/INZ
+         2AzyVz//hEXhdL3lQPHStWT7vrvKF96LjjUJuCt69HwmzDXR487EP6K0qSC0aqfzTi0u
+         2iMz6VDVSTrif1Y3iuUhzsW7lOVi8kQw7DGUfG2IOYY6zotwyuBHfXcXUwWWJdXdBW5f
+         jJPHVZ2O4MtXMEJmTgsHm3v4jiA08uQiMXtO0ZZ2H3ZngxJ4bvl+RXATPMqDzGbr82/C
+         GSC2Cu4mjpTh4bj36K5wDb6g2LdfBK9Api8EorfVQXCWsFtfdueOd4fAQ4Fte3roo4cl
+         UZOg==
+X-Gm-Message-State: AJcUukdpOYX7Rf5w8/mbP7Yo7UZdgzJPCUmhLSCss8/nQ5Cax7hEzFD9
+        GIRIj0LrWH3izngFuUdlGg8=
+X-Google-Smtp-Source: ALg8bN6QuktHhDq295BvGcBP/QJdwlD3UizASZcMk8qSPF+MhXae+nHmeLBN0C9Gv4A9Iww0gQT/1g==
+X-Received: by 2002:a19:4cc3:: with SMTP id z186mr23983636lfa.37.1548878310234;
+        Wed, 30 Jan 2019 11:58:30 -0800 (PST)
+Received: from [192.168.1.18] (dks71.neoplus.adsl.tpnet.pl. [83.24.22.71])
+        by smtp.gmail.com with ESMTPSA id c5-v6sm419825lja.62.2019.01.30.11.58.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 11:58:29 -0800 (PST)
+Subject: Re: [PATCH v2 05/13] dt-bindings: leds: add DT bindings for max77650
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190129133545.1931-1-brgl@bgdev.pl>
+ <20190129133545.1931-7-brgl@bgdev.pl>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <0c9e7c6c-d1c0-8acc-88cb-16b01f75e134@gmail.com>
+Date:   Wed, 30 Jan 2019 20:58:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548761715-4004-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190129133545.1931-7-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 12:35:13PM +0100, Jorge Ramirez-Ortiz wrote:
-> This set adds USB SS PHY support to Qualcomm's QCS404 SoC
-> The PHY is implemented using Synopsys SS PHY 1.0.0 IP
-> 
-> The code is losely based on Sriharsha Allenki's
-> <sallenki@codeaurora.org> original implementation.
-> 
-> v2:
->   enable OTG mode detection
->   move vdd voltage levels to driver
->   use bulk_ control interfaces
->   ss-phy-bindings [1]
-> 
-> [1] ss-phy-binding discussion:
->  - qcom,dwc3-ss-usb-phy exist for a generic usb2/usb3 phy driver that
->  was never merged. Rather than trying to re-use these bindings (or
->  delete them) I  propose that we go ahead with the new separate
->  bindings for HS and SS: if  not now - investigation  in progress- in
->  the  future  it might be  possible to have again a common phy driver
->  for  which these old  bindings would be the binding agreement. 
+Hi Bartosz,
 
-Either use/extend the old binding or remove it if it is not being used.
+Thank you for addressing my remarks.
 
-Rob
+On 1/29/19 2:35 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Add the DT binding document for the LEDs module of max77650.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   .../bindings/leds/leds-max77650.txt           | 57 +++++++++++++++++++
+>   1 file changed, 57 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-max77650.txt b/Documentation/devicetree/bindings/leds/leds-max77650.txt
+> new file mode 100644
+> index 000000000000..b2fac8e719a6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-max77650.txt
+> @@ -0,0 +1,57 @@
+> +LED driver for MAX77650 PMIC from Maxim Integrated.
+> +
+> +This module is part of the MAX77650 MFD device. For more details
+> +see Documentation/devicetree/bindings/mfd/max77650.txt.
+> +
+> +The LED controller is represented as a sub-node of the PMIC node on
+> +the device tree.
+> +
+> +This device has three current sinks.
+> +
+> +Required properties:
+> +--------------------
+> +- compatible:		Must be "maxim,max77650-led"
+> +- #address-cells:	Must be <1>.
+> +- #size-cells:		Must be <0>.
+> +
+> +Each LED is represented as a sub-node of the LED-controller node. Up to
+> +three sub-nodes can be defined.
+> +
+> +Required properties of the sub-node:
+> +------------------------------------
+> +
+> +- reg:			Must be <0>, <1> or <2>.
+> +
+> +Optional properties of the sub-node:
+> +------------------------------------
+> +
+> +- label:		See Documentation/devicetree/bindings/leds/common.txt
+> +- linux,default-trigger: See Documentation/devicetree/bindings/leds/common.txt
+> +
+> +For more details, please refer to the generic GPIO DT binding document
+> +<devicetree/bindings/gpio/gpio.txt>.
+> +
+> +Example:
+> +--------
+> +
+> +	leds {
+> +		compatible = "maxim,max77650-leds";
+
+s/leds/led/
+
+With that:
+
+Acked-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		led@0 {
+> +			reg = <0>;
+> +			label = "blue:usr0";
+> +		};
+> +
+> +		led@1 {
+> +			reg = <1>;
+> +			label = "red:usr1";
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +
+> +		led@2 {
+> +			reg = <2>;
+> +			label = "green:usr2";
+> +		};
+> +	};
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
