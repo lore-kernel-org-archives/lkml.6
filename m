@@ -2,85 +2,108 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3194FC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D46C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4BE20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:29:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39DD220989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:29:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dlmTjeKH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731026AbfA3N3c (ORCPT
+        id S1731073AbfA3N3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:29:32 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:47191 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbfA3N3c (ORCPT
+        Wed, 30 Jan 2019 08:29:54 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:34510 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726233AbfA3N3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:29:32 -0500
-Received: from [2a01:598:b890:92b7:fc90:b8ff:fed0:1fb6] (helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gopvj-00011j-4l; Wed, 30 Jan 2019 14:29:27 +0100
-Date:   Wed, 30 Jan 2019 14:29:21 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Sebastian Sewior <bigeasy@linutronix.de>
-cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
-        Stefan Liebler <stli@linux.ibm.com>
-Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggered
-In-Reply-To: <20190130132420.spwrq2d4oxeydk5s@linutronix.de>
-Message-ID: <alpine.DEB.2.21.1901301428390.5537@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1901291012330.1669@nanos.tec.linutronix.de> <20190129102409.GB26906@osiris> <20190129103557.GF28485@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1901291402410.1513@nanos.tec.linutronix.de> <20190129132303.GE26906@osiris>
- <20190129151058.GG26906@osiris> <20190129171653.ycl64psq2liy5o5c@linutronix.de> <20190130094913.GC5299@osiris> <alpine.DEB.2.21.1901301303320.5537@nanos.tec.linutronix.de> <20190130125955.GD5299@osiris> <20190130132420.spwrq2d4oxeydk5s@linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 30 Jan 2019 08:29:54 -0500
+Received: by mail-it1-f194.google.com with SMTP id x124so16653247itd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 05:29:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3uwFeQHIVQy35WsZ5wssVHAlzcrQzug78g9MjzOiFAk=;
+        b=dlmTjeKHZq5CmjoyYS3f9cUIYm90I5KTGsmcOcSxfiYpfSd5J+8tIL872GlC/qBPyk
+         BX1JAM2H+PQLsPpg8zrcxJyyf79xAT5dxs89j8q7keaQYDugwPOT141UdElQN8fkzQm1
+         zOTNw77d15Lsm7F1noSnbDclNKDscuk6vra78=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3uwFeQHIVQy35WsZ5wssVHAlzcrQzug78g9MjzOiFAk=;
+        b=dGyWnVjLHOsgrucNMW9ZQLuNr4thTGO9WH/2PFKEMoO0TIuwgtN3q2hzYhdcJJyAit
+         hhirZlP/6pOjIphbiQQNtLNP8DODKKbkeGC3TRjShzBg7e8cU+bdH/OGAcfge1dtIajl
+         hzgSS7o0ettnvXOwDAjSf8D+5IfhsBxW6wa1MpJRSqtp7npNNCyqQ3abI0opub0uaXwc
+         OA74vIzom+q2R3PvfCeeomn9Adu/tUCoEFt+4vJ+DnkeMKHU1XrCx/1WkwfOVReSFcV5
+         7BcCVSfpVoGsDHm94fDIuCUeb9Db6kd3RMLsMOLCyxqhzhCGv1oAVSgAB4mVtl/xgP3u
+         NyzQ==
+X-Gm-Message-State: AJcUukeBoS/HvDPMY9+lO6arxgGi73MgCkpn3xifMm1MMDKfyfiFUYTh
+        TqlwMkSg4XNdkZ7+QEeBEwUmM4TK4XKQcnoc+qBq6BHC5jSxaQ==
+X-Google-Smtp-Source: ALg8bN7BYHhnoWStKV9VSeK1CaYJ5bHejTQyie6c7jDCTyluCHIKd4E25ligvK4oLFrSjay1kG12mMIYEEmFKPS/0Qw=
+X-Received: by 2002:a02:98d2:: with SMTP id c18mr17410947jak.11.1548854993436;
+ Wed, 30 Jan 2019 05:29:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-526666077-1548854967=:5537"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <1548782332-18591-1-git-send-email-vincent.guittot@linaro.org>
+ <1548825767-10799-1-git-send-email-vincent.guittot@linaro.org>
+ <20190130130410.GG2278@hirez.programming.kicks-ass.net> <20190130130620.GB3103@hirez.programming.kicks-ass.net>
+ <20190130132717.GC3103@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190130132717.GC3103@hirez.programming.kicks-ass.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 30 Jan 2019 14:29:42 +0100
+Message-ID: <CAKfTPtBhOomgYONsdfaaVgZCENM+QhfPie2qpu0KyOsvMiog_g@mail.gmail.com>
+Subject: Re: [PATCH v2] sched/fair: Fix insertion in rq->leaf_cfs_rq_list
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Sargun Dhillon <sargun@sargun.me>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, 30 Jan 2019 at 14:27, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Wed, Jan 30, 2019 at 02:06:20PM +0100, Peter Zijlstra wrote:
+> > On Wed, Jan 30, 2019 at 02:04:10PM +0100, Peter Zijlstra wrote:
+>
+> > > So I don't much like this; at all. But maybe I misunderstand, this is
+> > > somewhat tricky stuff and I've not looked at it in a while.
+> > >
+> > > So per normal we do:
+> > >
+> > >     enqueue_task_fair()
+> > >       for_each_sched_entity() {
+> > >         if (se->on_rq)
+> > >           break;
+> > >         enqueue_entity()
+> > >           list_add_leaf_cfs_rq();
+> > >       }
+> > >
+> > > This ensures that all parents are already enqueued, right? because this
+> > > is what enqueues those parents.
+> > >
+> > > And in this case you add an unconditional second
+> > > for_each_sched_entity(); even though it is completely redundant, afaict.
+> >
+> > Ah, it doesn't do a second iteration; it continues where the previous
+> > two left off.
+> >
+> > Still, why isn't this in unthrottle?
+>
+> Aah, I see, because we need:
+>
+>   rq->tmp_alone_branch == &rq->lead_cfs_rq_list
+>
+> at the end of enqueue_task_fair(); having had that assertion would've
 
---8323329-526666077-1548854967=:5537
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Yes exactly.
+You have been quicker than me to reply
 
-On Wed, 30 Jan 2019, Sebastian Sewior wrote:
-
-> On 2019-01-30 13:59:55 [+0100], Heiko Carstens wrote:
-> > Last lines of trace below (full log attached):
-> 
->             <...>-56956 [005] ....   658.931364: handle_futex_death: uaddr: 3ff9e880c58 pi: 1
-> …
->             <...>-56956 [005] ....   658.931369: handle_futex_death: uaddr: 3ff9e8808c0 success
->             <...>-56956 [005] ....   658.931370: sched_process_exit: comm=ld64.so.1 pid=56956 prio=120
-> 
-> not including 3ff9e880140
-> 
->             <...>-56956 [005] ....   658.931370: sched_process_exit: comm=ld64.so.1 pid=56956 prio=120
-> 
->             <...>-56496 [001] ....   658.932404: sys_futex(uaddr: 3ff9e880140, op: 6, val: 1, utime: 0, uaddr2: 5, val3: 0)
->             <...>-56496 [001] ....   658.932405: attach_to_pi_owner: Missing pid 56956
->             <...>-56496 [001] ....   658.932406: handle_exit_race: uval2 vs uval 8000de7c vs 8000de7c (-1)
->             <...>-56496 [001] ....   658.932501: sys_futex -> 0xfffffffffffffffd
-> …
->             <...>-56496 [001] ....   659.020750: handle_futex_death: uaddr: 3ff9e880140 pi: 1
->             <...>-56496 [001] ....   659.020750: handle_futex_death: uaddr: 3ff9e880140 uval: 8000de7c
->             <...>-56496 [001] ....   659.020750: handle_futex_death: uaddr: 3ff9e880140 success
-> 
-> and here we have it.
-
-Bah. I was looking at the wrong trace. /me goes to give a talk and stares
-at that mess later.
---8323329-526666077-1548854967=:5537--
+> saved some pain I suppose.
