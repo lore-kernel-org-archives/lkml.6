@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D284C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6CB0C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C5120882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:24:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 818F220855
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:24:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731223AbfA3OYy (ORCPT
+        id S1731264AbfA3OY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 09:24:54 -0500
+        Wed, 30 Jan 2019 09:24:57 -0500
 Received: from mga04.intel.com ([192.55.52.120]:27023 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725803AbfA3OYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 09:24:52 -0500
+        id S1725803AbfA3OYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 09:24:55 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 06:24:52 -0800
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 06:24:54 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
-   d="scan'208";a="271154289"
+   d="scan'208";a="271154296"
 Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by orsmga004.jf.intel.com with ESMTP; 30 Jan 2019 06:24:52 -0800
+  by orsmga004.jf.intel.com with ESMTP; 30 Jan 2019 06:24:54 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
         mingo@redhat.com, linux-kernel@vger.kernel.org
 Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
         ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 07/13] perf mem: Support data page size
-Date:   Wed, 30 Jan 2019 06:23:48 -0800
-Message-Id: <1548858234-8872-7-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH V3 09/13] perf/core, x86: Add support for PERF_SAMPLE_CODE_PAGE_SIZE
+Date:   Wed, 30 Jan 2019 06:23:50 -0800
+Message-Id: <1548858234-8872-9-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548858234-8872-1-git-send-email-kan.liang@linux.intel.com>
 References: <1548858234-8872-1-git-send-email-kan.liang@linux.intel.com>
@@ -44,157 +44,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Stephane Eranian <eranian@google.com>
 
-Add option --data-page-size in "perf mem" to record/report data page
-size.
+When studying code layout, it is useful to capture the page size of the
+sampled code address.
 
-Here are some examples.
-perf mem --phys-data --data-page-size report -D
+Add a new sample type for code page size.
+The new sample type requires collecting the ip. The code page size can
+be calculated from the IRQ-safe perf_get_page_size().
 
- # PID, TID, IP, ADDR, PHYS ADDR, DATA PAGE SIZE, LOCAL WEIGHT, DSRC,
- # SYMBOL
-20134 20134 0xffffffffb5bd2fd0 0x016ffff9a274e96a308 0x000000044e96a308
-4K  1168 0x5080144
-/lib/modules/4.18.0-rc7+/build/vmlinux:perf_ctx_unlock
-20134 20134 0xffffffffb63f645c 0xffffffffb752b814 0xcfb52b814 2M 225
-0x26a100142 /lib/modules/4.18.0-rc7+/build/vmlinux:_raw_spin_lock
-20134 20134 0xffffffffb660300c 0xfffffe00016b8bb0 0x0 4K 0 0x5080144
-/lib/modules/4.18.0-rc7+/build/vmlinux:__x86_indirect_thunk_rax
+Only the generic support is covered. The large PEBS will be disabled
+with this sample type.
 
-perf mem --phys-data --data-page-size report --stdio
-
- # To display the perf.data header info, please use
- # --header/--header-only options.
- #
- #
- # Total Lost Samples: 0
- #
- # Samples: 5K of event 'cpu/mem-loads,ldlat=30/P'
- # Total weight : 281234
- # Sort order   :
- # mem,sym,dso,symbol_daddr,dso_daddr,tlb,locked,phys_daddr,data_page_size
- #
- # Overhead       Samples  Memory access             Symbol
- # Shared Object     Data Symbol                                  Data
- # Object              TLB access              Locked  Data Physical
- # Address   Data Page Size
- # ........  ............  ........................
- # ................................  ................
- # ...........................................  .......................
- # ......................  ......  ......................
- # ......................
- #
-    28.54%          1826  L1 or L1 hit              [k]
-__x86_indirect_thunk_rax      [kernel.vmlinux]  [k] 0xffffb0df31b0ff28
-[unknown]                L1 or L2 hit            No      [k]
-0000000000000000    4K
-     6.02%           256  L1 or L1 hit              [.] touch_buffer
-dtlb              [.] 0x00007ffd50109da8                       [stack]
-L1 or L2 hit            No      [.] 0x000000042454ada8  4K
-     3.23%             5  L1 or L1 hit              [k] clear_huge_page
-[kernel.vmlinux]  [k] 0xffff9a2753b8ce60                       [unknown]
-L1 or L2 hit            No      [k] 0x0000000453b8ce60  2M
-     2.98%             4  L1 or L1 hit              [k] clear_page_erms
-[kernel.vmlinux]  [k] 0xffffb0df31b0fd00                       [unknown]
-L1 or L2 hit            No      [k] 0000000000000000    4K
-
+Signed-off-by: Stephane Eranian <eranian@google.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
-changes since V2:
-- Update has_extra_options 
+No changes since V1
 
- tools/perf/Documentation/perf-mem.txt |  3 +++
- tools/perf/builtin-mem.c              | 19 ++++++++++++++++++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ include/linux/perf_event.h      |  1 +
+ include/uapi/linux/perf_event.h |  4 +++-
+ kernel/events/core.c            | 11 ++++++++++-
+ 3 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documentation/perf-mem.txt
-index f8d2167..9110692 100644
---- a/tools/perf/Documentation/perf-mem.txt
-+++ b/tools/perf/Documentation/perf-mem.txt
-@@ -63,6 +63,9 @@ OPTIONS
- --phys-data::
- 	Record/Report sample physical addresses
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 0e048ab..10c23f9 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -938,6 +938,7 @@ struct perf_sample_data {
  
-+--data-page-size::
-+	Record/Report sample data address page size
+ 	u64				phys_addr;
+ 	u64				data_page_size;
++	u64				code_page_size;
+ } ____cacheline_aligned;
+ 
+ /* default value for data source */
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 79daacd..6e97ab2 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -142,8 +142,9 @@ enum perf_event_sample_format {
+ 	PERF_SAMPLE_REGS_INTR			= 1U << 18,
+ 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
+ 	PERF_SAMPLE_DATA_PAGE_SIZE		= 1U << 20,
++	PERF_SAMPLE_CODE_PAGE_SIZE		= 1U << 21,
+ 
+-	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
++	PERF_SAMPLE_MAX = 1U << 22,		/* non-ABI */
+ 
+ 	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
+ };
+@@ -865,6 +866,7 @@ enum perf_event_type {
+ 	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
+ 	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
+ 	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
++	 *	{ u64			code_page_size;} && PERF_SAMPLE_CODE_PAGE_SIZE
+ 	 * };
+ 	 */
+ 	PERF_RECORD_SAMPLE			= 9,
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index eb721b5..9c25bd2 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -1756,6 +1756,9 @@ static void __perf_event_header_size(struct perf_event *event, u64 sample_type)
+ 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
+ 		size += sizeof(data->data_page_size);
+ 
++	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
++		size += sizeof(data->code_page_size);
 +
- RECORD OPTIONS
- --------------
- -e::
-diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
-index 24acc2a..efe669f 100644
---- a/tools/perf/builtin-mem.c
-+++ b/tools/perf/builtin-mem.c
-@@ -25,6 +25,7 @@ struct perf_mem {
- 	bool			dump_raw;
- 	bool			force;
- 	bool			phys_addr;
-+	bool			data_page_size;
- 	int			operation;
- 	const char		*cpu_list;
- 	DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
-@@ -106,6 +107,9 @@ static int __cmd_record(int argc, const char **argv, struct perf_mem *mem)
- 	if (mem->phys_addr)
- 		rec_argv[i++] = "--phys-data";
- 
-+	if (mem->data_page_size)
-+		rec_argv[i++] = "--data-page-size";
-+
- 	for (j = 0; j < PERF_MEM_EVENTS__MAX; j++) {
- 		if (!perf_mem_events[j].record)
- 			continue;
-@@ -190,6 +194,12 @@ dump_raw_samples(struct perf_tool *tool,
- 			symbol_conf.field_sep);
- 	}
- 
-+	if (mem->data_page_size) {
-+		printf("%s%s",
-+			get_page_size_name(sample->data_page_size),
-+			symbol_conf.field_sep);
-+	}
-+
- 	if (field_sep)
- 		fmt = "%"PRIu64"%s0x%"PRIx64"%s%s:%s\n";
- 	else
-@@ -248,6 +258,9 @@ static int report_raw_events(struct perf_mem *mem)
- 	if (mem->phys_addr)
- 		printf("PHYS ADDR, ");
- 
-+	if (mem->data_page_size)
-+		printf("DATA PAGE SIZE, ");
-+
- 	printf("LOCAL WEIGHT, DSRC, SYMBOL\n");
- 
- 	ret = perf_session__process_events(session);
-@@ -258,7 +271,7 @@ static int report_raw_events(struct perf_mem *mem)
- }
- static char *get_sort_order(struct perf_mem *mem)
- {
--	bool has_extra_options = mem->phys_addr ? true : false;
-+	bool has_extra_options = (mem->phys_addr | mem->data_page_size) ? true : false;
- 	char sort[128];
- 
- 	/*
-@@ -277,6 +290,9 @@ static char *get_sort_order(struct perf_mem *mem)
- 	if (mem->phys_addr)
- 		strcat(sort, ",phys_daddr");
- 
-+	if (mem->data_page_size)
-+		strcat(sort, ",data_page_size");
-+
- 	return strdup(sort);
+ 	event->header_size = size;
  }
  
-@@ -418,6 +434,7 @@ int cmd_mem(int argc, const char **argv)
- 		   " between columns '.' is reserved."),
- 	OPT_BOOLEAN('f', "force", &mem.force, "don't complain, do it"),
- 	OPT_BOOLEAN('p', "phys-data", &mem.phys_addr, "Record/Report sample physical addresses"),
-+	OPT_BOOLEAN(0, "data-page-size", &mem.data_page_size, "Record/Report sample data address page size"),
- 	OPT_END()
- 	};
- 	const char *const mem_subcommands[] = { "record", "report", NULL };
+@@ -6311,6 +6314,9 @@ void perf_output_sample(struct perf_output_handle *handle,
+ 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
+ 		perf_output_put(handle, data->data_page_size);
+ 
++	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
++		perf_output_put(handle, data->code_page_size);
++
+ 	if (!event->attr.watermark) {
+ 		int wakeup_events = event->attr.wakeup_events;
+ 
+@@ -6399,7 +6405,7 @@ void perf_prepare_sample(struct perf_event_header *header,
+ 
+ 	__perf_event_header__init_id(header, data, event);
+ 
+-	if (sample_type & PERF_SAMPLE_IP)
++	if (sample_type & (PERF_SAMPLE_IP | PERF_SAMPLE_CODE_PAGE_SIZE))
+ 		data->ip = perf_instruction_pointer(regs);
+ 
+ 	if (sample_type & PERF_SAMPLE_CALLCHAIN) {
+@@ -6508,6 +6514,9 @@ void perf_prepare_sample(struct perf_event_header *header,
+ 
+ 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
+ 		data->data_page_size = perf_get_page_size(data->addr);
++
++	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
++		data->code_page_size = perf_get_page_size(data->ip);
+ }
+ 
+ static __always_inline int
 -- 
 2.7.4
 
