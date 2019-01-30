@@ -2,135 +2,120 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FECAC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 946FCC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D138B218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:26:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52337218D2
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:30:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730883AbfA3X0w (ORCPT
+        id S1728240AbfA3XaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:26:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53272 "EHLO mx1.redhat.com"
+        Wed, 30 Jan 2019 18:30:06 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:42800 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbfA3X0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:26:52 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9C957A7FC9;
-        Wed, 30 Jan 2019 22:07:00 +0000 (UTC)
-Received: from cantor.redhat.com (ovpn-116-165.phx2.redhat.com [10.3.116.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5DB3F608EB;
-        Wed, 30 Jan 2019 22:07:00 +0000 (UTC)
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 1/2] tpm: don't return bool from update_timeouts
-Date:   Wed, 30 Jan 2019 15:06:58 -0700
-Message-Id: <20190130220659.10102-1-jsnitsel@redhat.com>
+        id S1726865AbfA3XaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 18:30:05 -0500
+Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.205])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1goyiP-0002Sm-FK; Wed, 30 Jan 2019 15:52:18 -0700
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+References: <20190129215028.GQ3176@redhat.com>
+ <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
+ <20190129234752.GR3176@redhat.com>
+ <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
+ <20190130041841.GB30598@mellanox.com> <20190130080006.GB29665@lst.de>
+ <20190130190651.GC17080@mellanox.com>
+ <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
+ <20190130195900.GG17080@mellanox.com>
+ <35bad6d5-c06b-f2a3-08e6-2ed0197c8691@deltatee.com>
+ <20190130215019.GL17080@mellanox.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <07baf401-4d63-b830-57e1-5836a5149a0c@deltatee.com>
+Date:   Wed, 30 Jan 2019 15:52:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 30 Jan 2019 22:07:00 +0000 (UTC)
+In-Reply-To: <20190130215019.GL17080@mellanox.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.80.180
+X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jglisse@redhat.com, hch@lst.de, jgg@mellanox.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set tpm_chip->timeouts_adjusted directly in the update_timeouts
-code instead of returning bool. In case of tpm read failing
-print warning that the read failed and continue on.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
----
- drivers/char/tpm/tpm1-cmd.c     |  3 +--
- drivers/char/tpm/tpm_tis_core.c | 15 +++++++++------
- include/linux/tpm.h             |  2 +-
- 3 files changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 6f306338953b..bda9a16b44f6 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -380,8 +380,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 	 * of misreporting.
- 	 */
- 	if (chip->ops->update_timeouts)
--		chip->timeout_adjusted =
--			chip->ops->update_timeouts(chip, timeout_eff);
-+		chip->ops->update_timeouts(chip, timeout_eff);
- 
- 	if (!chip->timeout_adjusted) {
- 		/* Restore default if chip reported 0 */
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index bf7e49cfa643..45e29fd1f5d7 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -521,35 +521,38 @@ static const struct tis_vendor_timeout_override vendor_timeout_overrides[] = {
- 			(TIS_SHORT_TIMEOUT*1000), (TIS_SHORT_TIMEOUT*1000) } },
- };
- 
--static bool tpm_tis_update_timeouts(struct tpm_chip *chip,
-+static void tpm_tis_update_timeouts(struct tpm_chip *chip,
- 				    unsigned long *timeout_cap)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int i, rc;
- 	u32 did_vid;
- 
-+	chip->timeout_adjusted = false;
-+
- 	if (chip->ops->clk_enable != NULL)
- 		chip->ops->clk_enable(chip, true);
- 
- 	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &did_vid);
--	if (rc < 0)
-+	if (rc < 0) {
-+		dev_warn(&chip->dev, "%s: failed to read did_vid: %d\n",
-+			 __func__, rc);
- 		goto out;
-+	}
- 
- 	for (i = 0; i != ARRAY_SIZE(vendor_timeout_overrides); i++) {
- 		if (vendor_timeout_overrides[i].did_vid != did_vid)
- 			continue;
- 		memcpy(timeout_cap, vendor_timeout_overrides[i].timeout_us,
- 		       sizeof(vendor_timeout_overrides[i].timeout_us));
--		rc = true;
-+		chip->timeout_adjusted = true;
- 	}
- 
--	rc = false;
--
- out:
- 	if (chip->ops->clk_enable != NULL)
- 		chip->ops->clk_enable(chip, false);
- 
--	return rc;
-+	return;
- }
- 
- /*
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index b49a55cf775f..13563b8c0c3a 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -41,7 +41,7 @@ struct tpm_class_ops {
- 	int (*send) (struct tpm_chip *chip, u8 *buf, size_t len);
- 	void (*cancel) (struct tpm_chip *chip);
- 	u8 (*status) (struct tpm_chip *chip);
--	bool (*update_timeouts)(struct tpm_chip *chip,
-+	void (*update_timeouts)(struct tpm_chip *chip,
- 				unsigned long *timeout_cap);
- 	int (*go_idle)(struct tpm_chip *chip);
- 	int (*cmd_ready)(struct tpm_chip *chip);
--- 
-2.20.1.98.gecbdaf0899
+On 2019-01-30 2:50 p.m., Jason Gunthorpe wrote:
+> On Wed, Jan 30, 2019 at 02:01:35PM -0700, Logan Gunthorpe wrote:
+> 
+>> And I feel the GUP->SGL->DMA flow should still be what we are aiming
+>> for. Even if we need a special GUP for special pages, and a special DMA
+>> map; and the SGL still has to be homogenous....
+> 
+> *shrug* so what if the special GUP called a VMA op instead of
+> traversing the VMA PTEs today? Why does it really matter? It could
+> easily change to a struct page flow tomorrow..
 
+Well it's so that it's composable. We want the SGL->DMA side to work for
+APIs from kernel space and not have to run a completely different flow
+for kernel drivers than from userspace memory.
+
+For GUP to do a special VMA traversal it would now need to return
+something besides struct pages which means no SGL and it means a
+completely different DMA mapping call.
+> Would you feel better if this also came along with a:
+> 
+>   struct dma_sg_table *sgl_dma_map_user(struct device *dma_device, 
+>              void __user *prt, size_t len)
+
+That seems like a nice API. But certainly the implementation would need
+to use existing dma_map or pci_p2pdma_map calls, or whatever as part of
+it...
+
+,
+> flow which returns a *DMA MAPPED* sgl that does not have struct page
+> pointers as another interface?
+> 
+> We can certainly call an API like this from RDMA for non-ODP MRs.
+> 
+> Eliminating the page pointers also eliminates the __iomem
+> problem. However this sgl object is not copyable or accessible from
+> the CPU, so the caller must be sure it doesn't need CPU access when
+> using this API. 
+
+We actually stopped caring about the __iomem problem. We are working
+under the assumption that pages returned by devm_memremap_pages() can be
+accessed as normal RAM and does not need the __iomem designation. The
+main problem now is that code paths need to know to use pci_p2pdma_map
+or not. And in theory this could be pushed into regular dma_map
+implementations but we'd have to get it into all of them which is a pain.
+
+Logan
