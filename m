@@ -2,103 +2,142 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2817C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACB9C282C7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C188720870
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 659F720870
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:44:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="cjkx6i/t";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cK5Zx94N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729959AbfA3Cks (ORCPT
+        id S1729925AbfA3CoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 21:40:48 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:57615 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729814AbfA3Cks (ORCPT
+        Tue, 29 Jan 2019 21:44:23 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:36819 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729718AbfA3CoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 21:40:48 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gofnu-0004Tv-N0 from joseph_myers@mentor.com ; Tue, 29 Jan 2019 18:40:42 -0800
-Received: from digraph.polyomino.org.uk (137.202.0.90) by
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 30 Jan 2019 02:40:38 +0000
-Received: from jsm28 (helo=localhost)
-        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
-        (envelope-from <joseph@codesourcery.com>)
-        id 1gofnp-0004Hs-OH; Wed, 30 Jan 2019 02:40:37 +0000
-Date:   Wed, 30 Jan 2019 02:40:37 +0000
-From:   Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH glibc 1/4] glibc: Perform rseq(2) registration at C
- startup and thread creation (v6)
-In-Reply-To: <596949707.3888.1548812359874.JavaMail.zimbra@efficios.com>
-Message-ID: <alpine.DEB.2.21.1901300231210.24454@digraph.polyomino.org.uk>
-References: <20190121213530.23803-1-mathieu.desnoyers@efficios.com> <632671842.3079.1548781059601.JavaMail.zimbra@efficios.com> <alpine.DEB.2.21.1901292153190.24454@digraph.polyomino.org.uk> <596949707.3888.1548812359874.JavaMail.zimbra@efficios.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+        Tue, 29 Jan 2019 21:44:23 -0500
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id AD6661719;
+        Tue, 29 Jan 2019 21:44:21 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Tue, 29 Jan 2019 21:44:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
+        Gc6FHnmci9DMdKktV5Xl7cyp+gzcAF5J3MrudSjp00c=; b=cjkx6i/tn2+/LNgN
+        oTWKlrBmSdZbUbsT8CQIaZ3z7O/TNfcINaCjAfGOFWVKVxxTZWYG1QPQh0M7xQZv
+        5gbYo+jpu36+zYFYo1IKadWsRlo+dKvyXmxRf844vYukcv112QGw2QVbyYk7Qqgl
+        pF2XILyom2W2fjRjunCD7Ri2s8AKi3GktSBeuCRTlKkOeAGoT2bVrxlaK5fmsTHn
+        bjF4Fq8M576YuLyGj+kQof4kmPDgKBT5rgjub4ZA1hFGritPvVyTEg48BBjOwVd0
+        Z9KzovBULNGE+tN1YKNvFB3Lpzu4mLp0PjUd8Q04WnCMAOjwiYKU7aF4hn1GcwVV
+        vAIchw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=Gc6FHnmci9DMdKktV5Xl7cyp+gzcAF5J3MrudSjp0
+        0c=; b=cK5Zx94NYH5L5QtVUGUQBmnXqEkXJmNXpXp6N4rKgX6FS9Bq2POZdEFLE
+        wf0BraNJssbHycx6lhLSScVGetMnDung+SaV4ngEt8GY3GndvVoKt07PYYyD5urG
+        26tjoRkUTuOk8nQyHK4zXxlsgi1uue5cA+5LEoiRCYfOMKh4O45hEX9ImkK34g9d
+        UUfY5rVUrFpJRByNZyk8Xe4nBLP8RzbQjyDwoRr8NZljbDnrTz+1v4hsGReARWvl
+        ozK8oy9J0pRTVtR1N2EobD4DTrotVH7gnmbbQWTKsldG3WW7Tw4HUXuV1UW6lubB
+        OIDmv8WXKzM7XsfAe8wfkxkSMlJaw==
+X-ME-Sender: <xms:hA9RXE_feBtCHRfpvKhdLN-r6_ckyA1bPuJYGIXIjl0lFuVRXi9xpA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeefgdehvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfh
+    gtofgggfesthejredtredtjeenucfhrhhomhepkfgrnhcumfgvnhhtuceorhgrvhgvnhes
+    thhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtkedrudeijedrheeinecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvthenucevlhhushht
+    vghrufhiiigvpedt
+X-ME-Proxy: <xmx:hQ9RXC0TG0UalWkjTOvmrgRZBMFBKPAk34VU0T1aFLm4nSpVnbnK_A>
+    <xmx:hQ9RXPk_-R1tFg79KSturUCixxu74VvkxEmhMXLEjij8WO6zHzXZOg>
+    <xmx:hQ9RXH2QS-BsJwLzg8LLHhty4IxlwLPkgDMh2RkCP_xMPbt73uTZSw>
+    <xmx:hQ9RXMk83I2CP8dhANffeolsIRUZwZ6NJ2S1KxOPoVkowysvOCVuwA>
+Received: from localhost (unknown [118.208.167.56])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DB483E41F3;
+        Tue, 29 Jan 2019 21:44:18 -0500 (EST)
+Message-ID: <804b86df6fd678147da816be038b11c87333b23f.camel@themaw.net>
+Subject: Re: [PATCH 3/3] autofs: add ignore mount option
+From:   Ian Kent <raven@themaw.net>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     autofs mailing list <autofs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Wed, 30 Jan 2019 10:44:15 +0800
+In-Reply-To: <553f4a0daf09407371193d7d4782a759561a626a.camel@themaw.net>
+References: <154725122396.11260.16053424107144453867.stgit@pluto-themaw-net>
+         <154725123970.11260.6113771566924907275.stgit@pluto-themaw-net>
+         <20190129171622.5b75f794d2b1e4d1055331eb@linux-foundation.org>
+         <553f4a0daf09407371193d7d4782a759561a626a.camel@themaw.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Jan 2019, Mathieu Desnoyers wrote:
+On Wed, 2019-01-30 at 10:07 +0800, Ian Kent wrote:
+> On Tue, 2019-01-29 at 17:16 -0800, Andrew Morton wrote:
+> > On Sat, 12 Jan 2019 08:00:40 +0800 Ian Kent <raven@themaw.net> wrote:
+> > 
+> > > Add an autofs file system mount option that can be used to provide
+> > > a generic indicator to applications that the mount entry should be
+> > > ignored when displaying mount information.
+> > 
+> > What is the reason for adding this feature?
+> 
+> In other OSes that provide autofs and that provide a mount list
+> to user space based on the kernel mount list a no-op mount option
+> ("ignore" is the one use on the most common OS) is allowed so that
+> autofs file system users can optionally use it.
+> 
+> The idea is that it be used by user space programs to exclude
+> autofs mounts from consideration when reading the mounts list.
+> 
+> Prior to the change to link /etc/mtab to /proc/self/mounts all
+> I needed to do to achieve this was to use mount(2) and not update
+> the mtab but now that no longer works.
+> 
+> I know the symlinking happened a long time ago and I considered
+> doing this then but, at the time I couldn't remember the commonly
+> used option name and thought persuading the various utility
+> maintainers would be too hard.
+> 
+> But now I have a RHEL request to do this for compatibility for a
+> widely used product so I want to go ahead with it and try and
+> enlist the help of some utility package maintainers.
 
-> My thinking was to put the #error in the generic header, so architectures that
-> are not supported yet cannot build against rseq.h at all, so we don't end up
-> in a broken upgrade scenario. I'm open to alternative ways to do it though, as
-> long as we don't let not-yet-supported architectures build broken code.
+Al,
 
-Any case with #error in installed glibc headers needs special-casing in 
-check-installed-headers.sh (and, thus, such errors are to be discouraged).
+On a different note the above request also raised another
+question about statvfs(3) automount behaviour.
 
-Cases where architectures commonly need their own bits/ headers, 
-especially where those are likely to need updating for new kernel 
-versions, are also discouraged.  Furthermore, a normal check for glibc 
-headers updates needed for a new kernel version would only involve 
-examining uapi headers (and the non-uapi linux/socket.h for new address 
-families, an unfortunate existing wart in this area).  As far as I can 
-see, this value isn't defined in any uapi header, which makes it 
-especially likely to be missed in such a check.  Furthermore, I'm hoping 
-to add more glibc tests for consistency of such constants between glibc 
-and the kernel, to ensure any such updates missing are caught 
-automatically through test failures - but that doesn't work if the 
-constants in question aren't in a uapi header.
+In glibc statvfs(3) uses statfs(2) and translates the return
+to a statvfs structure.
 
-If this constant were in a uapi header, the glibc header could just 
-include that - is the issue that it's not actually an interface between 
-glibc and the kernel at all, but some kind of purely-userspace interface?
+I wasn't aware but apparently statvfs(3) (and presumably statfs(2))
+doesn't trigger an automount on Solaris whereas we do. I think
+statfs() is probably the only exception to the convention that
+stat family system calls don't trigger an automount.
 
-We very definitely wish to keep to a minimum the cases where updates need 
-to be done separately in glibc by each architecture maintainer (that's 
-just a recipe for some updates getting missed accidentally) - meaning that 
-there needs to be a clear way in which someone can tell, globally for all 
-architectures, whether the set of such architecture-specific headers for 
-this constant in glibc is complete and current, and when it needs updating 
-(and this should be as similar to possible to such checks for any other 
-header constant).
+So far I've said that this is a long standing behaviour in the
+Linux kernel and changing it could lead to unpleasant surprises
+for those that have come to expect this behaviour so such a change
+would not be well received.
 
--- 
-Joseph S. Myers
-joseph@codesourcery.com
+But I do need to ask your opinion, so what are your thoughts about
+changing this?
+
+Ian
+
