@@ -2,207 +2,162 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E34C282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DE0C282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2637820989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EF9E20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:59:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="rqxXDOmU";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="LM3Rcg/s"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VECr5WqP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729347AbfA3F7G (ORCPT
+        id S1729686AbfA3F7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 00:59:06 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:52952 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725827AbfA3F7G (ORCPT
+        Wed, 30 Jan 2019 00:59:25 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44106 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbfA3F7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 00:59:06 -0500
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0U5wLW1031484;
-        Tue, 29 Jan 2019 21:58:45 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=qacUTFCp+1uILO9XDTzOCUn5G1Ez43fF+ggbvaxfpVg=;
- b=rqxXDOmU5nTTc6tR2rcYS2wmc2Oziq5TVkOYOTpZKalREOawH+wUHTflvnfR9m+LztGn
- mvBXbZLSbEfqMXOoItFJNviyGv3BYJ03+QA62ew6bnrR+ceeQZHI1W40YfusYqamn5j0
- PDVtzKkczN+is5pyXm6Obk/vizm5/AcUEtg= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qb0xugsnk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 29 Jan 2019 21:58:45 -0800
-Received: from frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) by
- frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 29 Jan 2019 21:58:45 -0800
-Received: from frc-hub03.TheFacebook.com (2620:10d:c021:18::173) by
- frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 29 Jan 2019 21:58:44 -0800
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Tue, 29 Jan 2019 21:58:44 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qacUTFCp+1uILO9XDTzOCUn5G1Ez43fF+ggbvaxfpVg=;
- b=LM3Rcg/s5mL/rxTq2YDI/L5U8Zd8ZjqXAjIMPxdHgCFTu9hxcdVS09GSfFBK8qbyngZ71FzNYYe6QWilT6fS5IksD6O1RC609chujGdiDfPEGyQdDmPJrmvQLoj6wbsyRQqp8jqrlncDw7qgJ8ROPk/6Km/wWSezZ4cmiIp2XLE=
-Received: from BN8PR15MB2626.namprd15.prod.outlook.com (20.179.137.220) by
- BN8PR15MB2660.namprd15.prod.outlook.com (20.179.138.87) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.21; Wed, 30 Jan 2019 05:58:43 +0000
-Received: from BN8PR15MB2626.namprd15.prod.outlook.com
- ([fe80::41b9:104d:e330:d12d]) by BN8PR15MB2626.namprd15.prod.outlook.com
- ([fe80::41b9:104d:e330:d12d%5]) with mapi id 15.20.1558.023; Wed, 30 Jan 2019
- 05:58:43 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Sasha Levin <sashal@kernel.org>
-CC:     Greg KH <greg@kroah.com>, Michal Hocko <mhocko@kernel.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Rik van Riel <riel@surriel.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Stable@vger.kernel.org" <Stable@vger.kernel.org>
-Subject: Re: Will the recent memory leak fixes be backported to longterm
- kernels?
-Thread-Topic: Will the recent memory leak fixes be backported to longterm
- kernels?
-Thread-Index: AdRyQEG5VIfdELkdR3eQ5BGm0rZVc///mGwAgACTWwCAAFjogIAADIgAgAB8LwD//41GgIAAfX+A//+UKoCAAHungP//qWqAAI/9poAKbIt2AAZlvz8AAAuwAYA=
-Date:   Wed, 30 Jan 2019 05:58:42 +0000
-Message-ID: <20190130055834.GC2107@castle.DHCP.thefacebook.com>
-References: <20181102154844.GA17619@tower.DHCP.thefacebook.com>
- <20181102161314.GF28039@dhcp22.suse.cz>
- <20181102162237.GB17619@tower.DHCP.thefacebook.com>
- <20181102165147.GG28039@dhcp22.suse.cz>
- <20181102172547.GA19042@tower.DHCP.thefacebook.com>
- <20181102174823.GI28039@dhcp22.suse.cz>
- <20181102193827.GA18024@castle.DHCP.thefacebook.com>
- <20181105092053.GC4361@dhcp22.suse.cz> <20181228105008.GB15967@kroah.com>
- <20190130002356.GQ3973@sasha-vm>
-In-Reply-To: <20190130002356.GQ3973@sasha-vm>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR02CA0039.namprd02.prod.outlook.com
- (2603:10b6:a03:54::16) To BN8PR15MB2626.namprd15.prod.outlook.com
- (2603:10b6:408:c7::28)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::1:e58d]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN8PR15MB2660;20:ivn52B2lGg81h7huiwy5Fz4iBUhkMX6yrRwwyt3QtLEQ+bLBAvDqG9XxaYRnkI4K8MSR3Qc5c8DkqCpdpUGYwFLkpLgZWrAkF1SdWebkYVxS8RsMl65bUUie4rmxUcXYi4lUK5wdWNm6SphsM3J1FG1wYrIEzFxgwYRPKRxduAU=
-x-ms-office365-filtering-correlation-id: f7714dc6-dc35-4041-d020-08d68677fd2a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN8PR15MB2660;
-x-ms-traffictypediagnostic: BN8PR15MB2660:
-x-microsoft-antispam-prvs: <BN8PR15MB2660A0E7EFEB372ED93E3FE3BE900@BN8PR15MB2660.namprd15.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(346002)(376002)(39860400002)(396003)(189003)(199004)(93886005)(6436002)(33896004)(966005)(8936002)(11346002)(229853002)(14454004)(52116002)(102836004)(6486002)(33656002)(106356001)(6506007)(316002)(386003)(105586002)(6246003)(99286004)(54906003)(46003)(76176011)(86362001)(97736004)(53936002)(6306002)(9686003)(39060400002)(6512007)(186003)(81156014)(256004)(7416002)(25786009)(2906002)(5024004)(6116002)(446003)(1076003)(4326008)(305945005)(6916009)(478600001)(476003)(486006)(8676002)(68736007)(81166006)(71200400001)(71190400001)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR15MB2660;H:BN8PR15MB2626.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: JSSnj+ol5PVV/6rAMm21DQW2icnhG0lQan1Z1TvsfEKjjE62jOUXfYt1BU9N3hcsT5Gl2lI6RCnLahVfIuv2jK2fJqnoZBFHaEgi8vbWfudqaJ5LURDIgvQ83isZB0e2oNd4+11WOgpisCyuOdSfiupAGW6RglBzfxHuN9FId6CCWrgKm9bOxD/czsUsb7gf9ipus7sVLH0RPywlBkcRuO5GHfMSXo0vGGXKXpogG21VM4PTBeMYny78mrmqJTZHMyjqd7Ih19Qnrm9c6nguU+yt3OPj1pSnEr35xAGlVSCI16ru8l3w45xYmRedzOzN6YjDboj64819wfbtnVhdNI7lch427RYCCOuE40gaW3xLCxT0ZfyQLLmvFDie22N8Ui97GNFM2MoaK9nxNA9iRs38MA51wiDqWqiBuLF8td8=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <A448C720D72766408B6E0024614816BA@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 30 Jan 2019 00:59:25 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u6so10890532pfh.11
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 21:59:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HlqPkWRicV9BOj0h7GSFdFM+t2KAK/T/3R7673j2NLg=;
+        b=VECr5WqPbfw8w43Ly2MhUA5agL0OXJDwOCwlKyKwVzgS134IfRzrAf/O4fSolT4hZX
+         eIStVsu2RBzbBZNVWaWaH6DmYwzZWKevpvilFlAx3Z7FdRjo6NAmjXj3SVAChgMhOq3v
+         SSylbVcihT/vSCAq7mBWPGYGVSa00HkODgg00=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HlqPkWRicV9BOj0h7GSFdFM+t2KAK/T/3R7673j2NLg=;
+        b=H4jY+whfU/cQojWe705AUoMrNR4IyOMPMiV9m5MDK1VjZRl5BxX6D3kV7+OEFw1ci5
+         qSDKWwfNl2Dj8Tl6X48wysh5XHKWOxH9OgNY17kI5+4ZqxL0MtzA0yWXXKzbmgWGn5WY
+         ZG/jOv5rkME2iShkYH8OauCm7AzMmI6Vm7ykN8/BoUuItDi/WnTXpQmyr5V+oLQPpCs6
+         LhG+wrZKLmuqM1Y+Hyq15w3/lPw4gP0YbQ/HFRgR4bXXd4Xf5cY1RAUKqSXu9ZwuoEbm
+         4BgVDgc34kB3bkPVRloAylBdufSQbWg+vjsG5Ev+G3LKs95uarjeQ23+mJ7y/8a7c/4c
+         NeBw==
+X-Gm-Message-State: AJcUukfu85bqguRyL9hCZbN97K0ROveoZUEWJrD/vN3MZNRmWn+O0D2L
+        CGYiO/531RoWggPoAp4zdbWw1Q==
+X-Google-Smtp-Source: ALg8bN6W3WgkVXMV9e3mjQxX/hEuiG3E8VBXzEYhpqp+JLOFAZ35AnbEivgODr5j0j0zjLhtsfELbQ==
+X-Received: by 2002:a63:d50f:: with SMTP id c15mr26409996pgg.287.1548827964113;
+        Tue, 29 Jan 2019 21:59:24 -0800 (PST)
+Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
+        by smtp.gmail.com with ESMTPSA id x186sm787141pfb.59.2019.01.29.21.59.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 21:59:23 -0800 (PST)
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Subject: Re: [PATCH 03/10] soc: mediatek: move the CMDQ_IRQ_MASK into cmdq
+ driver data
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
+Cc:     devicetree@vger.kernel.org,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        srv_heupstream@mediatek.com,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        kendrick.hsu@mediatek.com, linux-mediatek@lists.infradead.org,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Frederic Chen <Frederic.Chen@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, ginny.chen@mediatek.com
+References: <1548747128-60136-1-git-send-email-bibby.hsieh@mediatek.com>
+ <1548747128-60136-4-git-send-email-bibby.hsieh@mediatek.com>
+Message-ID: <e5cffd3f-5b65-b3f3-80d8-b0567bd4baf3@chromium.org>
+Date:   Wed, 30 Jan 2019 13:59:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7714dc6-dc35-4041-d020-08d68677fd2a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 05:58:38.5656
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR15MB2660
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_05:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <1548747128-60136-4-git-send-email-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 07:23:56PM -0500, Sasha Levin wrote:
-> On Fri, Dec 28, 2018 at 11:50:08AM +0100, Greg KH wrote:
-> > On Mon, Nov 05, 2018 at 10:21:23AM +0100, Michal Hocko wrote:
-> > > On Fri 02-11-18 19:38:35, Roman Gushchin wrote:
-> > > > On Fri, Nov 02, 2018 at 06:48:23PM +0100, Michal Hocko wrote:
-> > > > > On Fri 02-11-18 17:25:58, Roman Gushchin wrote:
-> > > > > > On Fri, Nov 02, 2018 at 05:51:47PM +0100, Michal Hocko wrote:
-> > > > > > > On Fri 02-11-18 16:22:41, Roman Gushchin wrote:
-> > > > > [...]
-> > > > > > > > 2) We do forget to scan the last page in the LRU list. So i=
-f we ended up with
-> > > > > > > > 1-page long LRU, it can stay there basically forever.
-> > > > > > >
-> > > > > > > Why
-> > > > > > > 		/*
-> > > > > > > 		 * If the cgroup's already been deleted, make sure to
-> > > > > > > 		 * scrape out the remaining cache.
-> > > > > > > 		 */
-> > > > > > > 		if (!scan && !mem_cgroup_online(memcg))
-> > > > > > > 			scan =3D min(size, SWAP_CLUSTER_MAX);
-> > > > > > >
-> > > > > > > in get_scan_count doesn't work for that case?
-> > > > > >
-> > > > > > No, it doesn't. Let's look at the whole picture:
-> > > > > >
-> > > > > > 		size =3D lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
-> > > > > > 		scan =3D size >> sc->priority;
-> > > > > > 		/*
-> > > > > > 		 * If the cgroup's already been deleted, make sure to
-> > > > > > 		 * scrape out the remaining cache.
-> > > > > > 		 */
-> > > > > > 		if (!scan && !mem_cgroup_online(memcg))
-> > > > > > 			scan =3D min(size, SWAP_CLUSTER_MAX);
-> > > > > >
-> > > > > > If size =3D=3D 1, scan =3D=3D 0 =3D> scan =3D min(1, 32) =3D=3D=
- 1.
-> > > > > > And after proportional adjustment we'll have 0.
-> > > > >
-> > > > > My friday brain hurst when looking at this but if it doesn't work=
- as
-> > > > > advertized then it should be fixed. I do not see any of your patc=
-hes to
-> > > > > touch this logic so how come it would work after them applied?
-> > > >
-> > > > This part works as expected. But the following
-> > > > 	scan =3D div64_u64(scan * fraction[file], denominator);
-> > > > reliable turns 1 page to scan to 0 pages to scan.
-> > >=20
-> > > OK, 68600f623d69 ("mm: don't miss the last page because of round-off
-> > > error") sounds like a good and safe stable backport material.
-> >=20
-> > Thanks for this, now queued up.
-> >=20
-> > greg k-h
->=20
-> It seems that 172b06c32b949 ("mm: slowly shrink slabs with a relatively
-> small number of objects") and a76cf1a474d ("mm: don't reclaim inodes
-> with many attached pages") cause a regression reported against the 4.19
-> stable tree: https://bugzilla.kernel.org/show_bug.cgi?id=3D202441 .
->=20
-> Given the history and complexity of these (and other patches from that
-> series) it would be nice to understand if this is something that will be
-> fixed soon or should we look into reverting the series for now?
+On 01/29/2019 03:32 PM, Bibby Hsieh wrote:
+> The interrupt mask and thread number has positive correlation,
+> so we move the CMDQ_IRQ_MASK into cmdq driver data and calculate
+> it by thread number.
+>
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> ---
+>   drivers/mailbox/mtk-cmdq-mailbox.c | 12 ++++++++----
+>   1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c 
+b/drivers/mailbox/mtk-cmdq-mailbox.c
+> index 909eb23..f6174ca 100644
+> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
+> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+> @@ -17,7 +17,6 @@
+>   #include <linux/of_device.h>
+>
+>   #define CMDQ_OP_CODE_MASK		(0xff << CMDQ_OP_CODE_SHIFT)
+> -#define CMDQ_IRQ_MASK			0xffff
+>   #define CMDQ_NUM_CMD(t)			(t->cmd_buf_size / CMDQ_INST_SIZE)
+>
+>   #define CMDQ_CURR_IRQ_STATUS		0x10
+> @@ -71,6 +70,7 @@ struct cmdq {
+>   	void __iomem		*base;
+>   	u32			irq;
+>   	u32			thread_nr;
+> +	u32			irq_mask;
+>   	struct cmdq_thread	*thread;
+>   	struct clk		*clock;
+>   	bool			suspended;
+> @@ -284,11 +284,11 @@ static irqreturn_t cmdq_irq_handler(int irq, 
+void *dev)
+>   	unsigned long irq_status, flags = 0L;
+>   	int bit;
+>
+> -	irq_status = readl(cmdq->base + CMDQ_CURR_IRQ_STATUS) & CMDQ_IRQ_MASK;
+> -	if (!(irq_status ^ CMDQ_IRQ_MASK))
+> +	irq_status = readl(cmdq->base + CMDQ_CURR_IRQ_STATUS) & cmdq->irq_mask;
+> +	if (!(irq_status ^ cmdq->irq_mask))
+>   		return IRQ_NONE;
+>
+> -	for_each_clear_bit(bit, &irq_status, fls(CMDQ_IRQ_MASK)) {
+> +	for_each_clear_bit(bit, &irq_status, fls(cmdq->irq_mask)) {
+>   		struct cmdq_thread *thread = &cmdq->thread[bit];
+>
+>   		spin_lock_irqsave(&thread->chan->lock, flags);
+> @@ -472,6 +472,9 @@ static int cmdq_probe(struct platform_device *pdev)
+>   		dev_err(dev, "failed to get irq\n");
+>   		return -EINVAL;
+>   	}
+> +
+> +	cmdq->thread_nr = (u32)(unsigned long)of_device_get_match_data(dev);
+> +	cmdq->irq_mask = GENMASK(cmdq->thread_nr - 1, 0);
+>   	err = devm_request_irq(dev, cmdq->irq, cmdq_irq_handler, IRQF_SHARED,
+>   			       "mtk_cmdq", cmdq);
+>   	if (err < 0) {
+> @@ -489,6 +492,7 @@ static int cmdq_probe(struct platform_device *pdev)
+>   	}
+>
+>   	cmdq->thread_nr = (u32)(unsigned long)of_device_get_match_data(dev);
+> +	cmdq->irq_mask = GENMASK(cmdq->thread_nr - 1, 0);
 
-In that thread I've just suggested to give a chance to Rik's patch, which
-hopefully will mitigate or easy the regression (
-https://lkml.org/lkml/2019/1/28/1865 ).
+The cmdq->thread_nr and cmdq->irq_mask are already set above, so these 
+two lines can be removed.
 
-Of course, we can simple revert those changes, but this will re-introduce
-the memory leak, so I'd leave it as a last option.
-
-Thanks!
+>   	cmdq->mbox.dev = dev;
+>   	cmdq->mbox.chans = devm_kcalloc(dev, cmdq->thread_nr,
+>   					sizeof(*cmdq->mbox.chans), GFP_KERNEL);
+>
