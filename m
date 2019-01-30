@@ -2,185 +2,123 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A24C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 448ECC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1936521473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:06:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 125CF20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548867984;
-	bh=iJCfhl4idjAo8RareOx2BQFx3jKZU6evYVhqWFVbUFc=;
+	s=default; t=1548868025;
+	bh=vWonZD63zHIueYk1mnrhqOa5gX34Z8JCSm1pmbo/rfM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BahI/mI/qkKdWEfQziRJ/jYYhKYAPbe3bAJypubszOaFpoMOba1oFUmOBmY4yCWXm
-	 n3gGqT1yqtOtE9nlXJgBn16ZOJW915/iYTR3m6TKrJ3BzdIMpSWIMoHOH8LSVgPWPE
-	 zJKjKgEru/BoiqsXW4cm4W7lJVCGmEtxmJ5rro3c=
+	b=kVZzcLzrvPmTM8DBeJlaMinWq0wGmrMGZTEB1oPBXZkpknpR0Pg4QD5RWf/Qyd4Po
+	 1MK6E/svUtdMMkVrDDBT9pr+kzFgPiM/K77Ewk1B1kV83AhlKhALTSFaDD7QclBJdo
+	 EEdHWQfRUZTuf+IieLzJaZJHt8ujz0/Imp1qA2SI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732437AbfA3RGW (ORCPT
+        id S1732441AbfA3RHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:06:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46734 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732307AbfA3RGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:06:22 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 381DD20989;
-        Wed, 30 Jan 2019 17:06:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548867980;
-        bh=iJCfhl4idjAo8RareOx2BQFx3jKZU6evYVhqWFVbUFc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1fie8BrC5rjM3TNwbOPhnuVOvfrum0Ulwq+aPQ8jvn9BMUjupGVgSDVd/70dbbhTx
-         O8Rx/nuRvjRzaR3K2K8oDY6r0Z13Dsf/fWpvz+wVEQYvbQmW+HXezZ+2mUrRwIIdfN
-         lqsgGAkfwtKsJxLjdn9finik1eRF36DLwxUWVPdI=
-Date:   Wed, 30 Jan 2019 11:06:12 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     honghui.zhang@mediatek.com
-Cc:     lorenzo.pieralisi@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
-        youlin.pei@mediatek.com, devicetree@vger.kernel.org,
-        ulf.hansson@linaro.org, marc.zyngier@arm.com,
-        jianjun.wang@mediatek.com, yt.shen@mediatek.com,
-        matthias.bgg@gmail.com, yingjoe.chen@mediatek.com,
-        eddie.huang@mediatek.com
-Subject: Re: [PATCH v9 2/9] PCI: Using PCI configuration space header type
- instead of class type to assign resource
-Message-ID: <20190130170612.GH229773@google.com>
-References: <1539686690-24068-1-git-send-email-honghui.zhang@mediatek.com>
- <1539686690-24068-3-git-send-email-honghui.zhang@mediatek.com>
+        Wed, 30 Jan 2019 12:07:03 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:39830 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731717AbfA3RHD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:07:03 -0500
+Received: by mail-yw1-f65.google.com with SMTP id k188so99923ywa.6;
+        Wed, 30 Jan 2019 09:07:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=r4FvnOpw+Kp/xo1E/oIUXzj02pZKaUP0vrX/v1MVF3s=;
+        b=rQjmckmzAv1TtgaDTf+xwGnxDCZf/qt62fsajJvyFlBof5l/0CVKAG0/RQdHbYUU8Z
+         YV3pupMl9wakI8GJ2a6Q6X1czRWRbqRIrvDYdBGenYJH/AT+DrU6hAeWiAJeKafhh47f
+         jEDi7+H+xXmSLP+84wuhC/kTT1At/AlXUGMc7YbhpX92ShXurAJwHvoI1VXRc8cN2NoO
+         uMKjdB5EwWa9+9c0xWSBmyKrQBV0LdzTOgzkmuI9iU0gbxpf1N+yxqips6zJE2ehg/yz
+         2hltgR4GXOpilyhCa+c/RA4A40XOj85aph8KTQMtFbCHYe82rL28IeBb2qbM1WjpktGs
+         JPnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r4FvnOpw+Kp/xo1E/oIUXzj02pZKaUP0vrX/v1MVF3s=;
+        b=M43qP5h7yQ8fAgwm+u05Ivs11rDJ6i/fgp+nYNhI9ZWQQ6s+/s5sKD5BkHsIdbgsZL
+         Z4TovPKTrqR9BLoHV1DWeHb26VMpEbLLs2Negl56qvtCdfjM2rq9ThueSXJHvbnlRQ7d
+         FP2rNg2dlwCuLkhDCARWy/Nux9+ga+0h/1li8O+ox+Qi2OpCy2PLMra3JLSxeC2Q6IZf
+         izFjmDKDCrgBnFn25ogGvmc5a7k4o6mFWnpE/hxQ91sXtMJrYpgZiv4fIr6tqvf5bndc
+         9Vm0/aHr3HXp+TELwCCjh5xe/+hft0mpR1SBIJQtKBhzwyNo4R2VtaukR6BOsSUObz96
+         oS8Q==
+X-Gm-Message-State: AJcUukcRLc4rXREAXae5O/XGbIeadPqVE6rWkWkk9MUp216OeUd/c4Ko
+        eZj+m6xUNueUIQfTnqxeVIY=
+X-Google-Smtp-Source: ALg8bN46/CyjNniPd/uEyCmyWWAS1mahMjoWkazGoUDEhY78foz8Nqb7qCmY2P58ISnLM36C8mVYug==
+X-Received: by 2002:a81:3413:: with SMTP id b19mr29798236ywa.297.1548868021695;
+        Wed, 30 Jan 2019 09:07:01 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:e55d])
+        by smtp.gmail.com with ESMTPSA id g84sm2015945ywg.9.2019.01.30.09.07.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 09:07:00 -0800 (PST)
+Date:   Wed, 30 Jan 2019 09:06:58 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Chris Down <chris@chrisdown.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+Message-ID: <20190130170658.GY50184@devbig004.ftw2.facebook.com>
+References: <20190128142816.GM50184@devbig004.ftw2.facebook.com>
+ <20190128145210.GM18811@dhcp22.suse.cz>
+ <20190128145407.GP50184@devbig004.ftw2.facebook.com>
+ <20190128151859.GO18811@dhcp22.suse.cz>
+ <20190128154150.GQ50184@devbig004.ftw2.facebook.com>
+ <20190128170526.GQ18811@dhcp22.suse.cz>
+ <20190128174905.GU50184@devbig004.ftw2.facebook.com>
+ <20190129144306.GO18811@dhcp22.suse.cz>
+ <20190129145240.GX50184@devbig004.ftw2.facebook.com>
+ <20190130165058.GA18811@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1539686690-24068-3-git-send-email-honghui.zhang@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190130165058.GA18811@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 06:44:43PM +0800, honghui.zhang@mediatek.com wrote:
-> From: Honghui Zhang <honghui.zhang@mediatek.com>
+Hello, Michal.
+
+On Wed, Jan 30, 2019 at 05:50:58PM +0100, Michal Hocko wrote:
+> > Yeah, cgroup.events and .stat files as some of the local stats would
+> > be useful too, so if we don't flip memory.events we'll end up with sth
+> > like cgroup.events.local, memory.events.tree and memory.stats.local,
+> > which is gonna be hilarious.
 > 
-> The PCI configuration space header type defines the layout of the rest
-> of the header (PCI r3.0 sec 6.1, PCIe r4.0 sec 7.5.1.1.9) while the
-> resource assignment is based on the configuration space layout instead
-> of its class type. Using configuration space header type instead of
-> class type for the resource assignment.
+> Why cannot we simply have memory.events_tree and be done with it? Sure
+> the file names are not goin to be consistent which is a minus but that
+> ship has already sailed some time ago.
+
+Because the overall cost of shitty interface will be way higher in the
+longer term.  cgroup2 interface is far from perfect but is way better
+than cgroup1 especially for the memory controller.  Why do you think
+that is?
+
+> > If you aren't willing to change your mind, the only option seems to be
+> > introducing a mount option to gate the flip and additions of local
+> > files.  Most likely, userspace will enable the option by default
+> > everywhere, so the end result will be exactly the same but I guess
+> > it'll better address your concern.
 > 
-> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> How does the consumer of the API learns about the mount type?
 
-I applied the patch below to pci/enumeration for v5.1.
+It's gonna be a mount flag exposed in /sys/kernel/cgroup/features.
 
-I dropped the hunk that removed the PCI_CLASS_BRIDGE_HOST check per
-Lorenzo's concern.  Let me know if you have any other concerns.
+Thanks.
 
-
-commit b2fb5cc57469
-Author: Honghui Zhang <honghui.zhang@mediatek.com>
-Date:   Tue Oct 16 18:44:43 2018 +0800
-
-    PCI: Rely on config space header type, not class code
-    
-    The PCI configuration space header type tells us whether the device is a
-    bridge, a CardBus bridge, or a normal device, and defines the layout of the
-    rest of the header (PCI r3.0 sec 6.1, PCIe r4.0 sec 7.5.1.1.9).
-    
-    When we rely on the header format, e.g., when we're dealing with bridge
-    windows, we should check the header type, not the class code.  The class
-    code is loosely related to the header type, but is often incorrect and the
-    spec doesn't actually require it to be related to the header format.
-    
-    Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-    Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-    [bhelgaas: changelog, keep the PCI_CLASS_BRIDGE_HOST check]
-    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index c9d8e3c837de..e9d938e14ba8 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -6000,8 +6000,7 @@ void pci_reassigndev_resource_alignment(struct pci_dev *dev)
- 	 * to enable the kernel to reassign new resource
- 	 * window later on.
- 	 */
--	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE &&
--	    (dev->class >> 8) == PCI_CLASS_BRIDGE_PCI) {
-+	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
- 		for (i = PCI_BRIDGE_RESOURCES; i < PCI_NUM_RESOURCES; i++) {
- 			r = &dev->resource[i];
- 			if (!(r->flags & IORESOURCE_MEM))
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 8e2e4154cdd9..128459a0ffba 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1779,9 +1779,6 @@ int pci_setup_device(struct pci_dev *dev)
- 		break;
- 
- 	case PCI_HEADER_TYPE_BRIDGE:		    /* bridge header */
--		if (class != PCI_CLASS_BRIDGE_PCI)
--			goto bad;
--
- 		/*
- 		 * The PCI-to-PCI bridge spec requires that subtractive
- 		 * decoding (i.e. transparent) bridge must have programming
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 1941bb0a6c13..ec44a0f3a7ac 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -1186,12 +1186,12 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
- 		if (!b)
- 			continue;
- 
--		switch (dev->class >> 8) {
--		case PCI_CLASS_BRIDGE_CARDBUS:
-+		switch (dev->hdr_type) {
-+		case PCI_HEADER_TYPE_CARDBUS:
- 			pci_bus_size_cardbus(b, realloc_head);
- 			break;
- 
--		case PCI_CLASS_BRIDGE_PCI:
-+		case PCI_HEADER_TYPE_BRIDGE:
- 		default:
- 			__pci_bus_size_bridges(b, realloc_head);
- 			break;
-@@ -1202,12 +1202,12 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
- 	if (pci_is_root_bus(bus))
- 		return;
- 
--	switch (bus->self->class >> 8) {
--	case PCI_CLASS_BRIDGE_CARDBUS:
-+	switch (bus->self->hdr_type) {
-+	case PCI_HEADER_TYPE_CARDBUS:
- 		/* don't size cardbuses yet. */
- 		break;
- 
--	case PCI_CLASS_BRIDGE_PCI:
-+	case PCI_HEADER_TYPE_BRIDGE:
- 		pci_bridge_check_ranges(bus);
- 		if (bus->self->is_hotplug_bridge) {
- 			additional_io_size  = pci_hotplug_io_size;
-@@ -1356,13 +1356,13 @@ void __pci_bus_assign_resources(const struct pci_bus *bus,
- 
- 		__pci_bus_assign_resources(b, realloc_head, fail_head);
- 
--		switch (dev->class >> 8) {
--		case PCI_CLASS_BRIDGE_PCI:
-+		switch (dev->hdr_type) {
-+		case PCI_HEADER_TYPE_BRIDGE:
- 			if (!pci_is_enabled(dev))
- 				pci_setup_bridge(b);
- 			break;
- 
--		case PCI_CLASS_BRIDGE_CARDBUS:
-+		case PCI_HEADER_TYPE_CARDBUS:
- 			pci_setup_cardbus(b);
- 			break;
- 
+-- 
+tejun
