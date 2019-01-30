@@ -2,188 +2,90 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F728C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1990C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C43DD20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:35:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="RNax8oLO"
+	by mail.kernel.org (Postfix) with ESMTP id 7CF8920882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730265AbfA3Jfo (ORCPT
+        id S1729934AbfA3JhJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:35:44 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10492 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfA3Jfn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:35:43 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c516fd10000>; Wed, 30 Jan 2019 01:35:13 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 30 Jan 2019 01:35:41 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 30 Jan 2019 01:35:41 -0800
-Received: from [10.26.11.176] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Jan
- 2019 09:35:37 +0000
-Subject: Re: [PATCH] ALSA: hda/tegra: enable clock during probe
-To:     Sameer Pujar <spujar@nvidia.com>, Takashi Iwai <tiwai@suse.de>
-CC:     <pierre-louis.bossart@linux.intel.com>, <perex@perex.cz>,
-        <alsa-devel@alsa-project.org>, <thierry.reding@gmail.com>,
-        <rlokhande@nvidia.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <1548351403-1875-1-git-send-email-spujar@nvidia.com>
- <s5h5zudc1qw.wl-tiwai@suse.de>
- <06c00ce1-32ed-8aa9-0340-d00202a8fa62@nvidia.com>
- <s5hr2d0zz96.wl-tiwai@suse.de>
- <b64f5d05-f352-7b46-d70d-3809aab8ddda@nvidia.com>
- <s5hef90zvo0.wl-tiwai@suse.de>
- <1f4c5185-e518-5674-4a8c-4e7db64aa0d3@nvidia.com>
- <da021878-5d89-c6d3-e5b2-4ab20f9b573b@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <ef05ac7a-8fa8-5776-312a-afecdeae10c6@nvidia.com>
-Date:   Wed, 30 Jan 2019 09:35:35 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 04:37:09 -0500
+Received: from mga05.intel.com ([192.55.52.43]:14777 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726452AbfA3JhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 04:37:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 01:37:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
+   d="scan'208";a="316091199"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga005.fm.intel.com with SMTP; 30 Jan 2019 01:37:05 -0800
+Received: by lahna (sSMTP sendmail emulation); Wed, 30 Jan 2019 11:37:05 +0200
+Date:   Wed, 30 Jan 2019 11:37:05 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 03/28] thunderbolt: Enable TMU access when accessing port
+ space on legacy devices
+Message-ID: <20190130093705.GF7875@lahna.fi.intel.com>
+References: <20190129150143.12681-1-mika.westerberg@linux.intel.com>
+ <20190129150143.12681-4-mika.westerberg@linux.intel.com>
+ <20190129215858.c2yws2ce76d7qm62@wunner.de>
 MIME-Version: 1.0
-In-Reply-To: <da021878-5d89-c6d3-e5b2-4ab20f9b573b@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548840913; bh=Nxe4ULhCqwrnlcVCbBZ7Bh0n4O1Eoo4OwxAjTp5vngo=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=RNax8oLOrgvpsisb16UnbVSDPXUPqTBEE47Fa4hoNe/Hx6JKuQ46jmZsolIE3A7gP
-         33eoZvT/uRzND+a5QXsi+qnBTmgK3ORxJHR34aQOUVxdg9os64ITS7U34la4GiO/8T
-         0O1caCJG+Ry+QmaARhPhDMimihYV6KObQC/bgcQmFPSywurNTCAE7HoNzOGh+BdAFi
-         CajItCKxsmUiNve4N5+WnoxYpMM7b2dKJebjDy6a3bFIUnm/LHIgXtcEOMTER7YmRs
-         DUxPoIJ4DSIHnm2k4dXoZCswhT0XWmBSZVKFsRiXhFuHBVm2GucsSbI976FDjRRJwp
-         1DPNHg7dmIs3A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129215858.c2yws2ce76d7qm62@wunner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 29, 2019 at 10:58:58PM +0100, Lukas Wunner wrote:
+> On Tue, Jan 29, 2019 at 06:01:18PM +0300, Mika Westerberg wrote:
+> > +	if (enable)
+> > +		value |= BIT(20);
+> 
+> Can we have a macro for this bit?
 
-On 28/01/2019 06:06, Sameer Pujar wrote:
->=20
-> On 1/25/2019 7:34 PM, Jon Hunter wrote:
->> On 25/01/2019 13:58, Takashi Iwai wrote:
->>> On Fri, 25 Jan 2019 14:26:27 +0100,
->>> Jon Hunter wrote:
->>>>
->>>> On 25/01/2019 12:40, Takashi Iwai wrote:
->>>>> On Fri, 25 Jan 2019 12:36:00 +0100,
->>>>> Jon Hunter wrote:
->>>>>>
->>>>>> On 24/01/2019 19:08, Takashi Iwai wrote:
->>>>>>> On Thu, 24 Jan 2019 18:36:43 +0100,
->>>>>>> Sameer Pujar wrote:
->>>>>>>> If CONFIG_PM is disabled or runtime PM calls are forbidden, the
->>>>>>>> clocks
->>>>>>>> will not be ON. This could cause issue during probe, where hda ini=
-t
->>>>>>>> setup is done. This patch checks whether runtime PM is enabled
->>>>>>>> or not.
->>>>>>>> If disabled, clocks are enabled in probe() and disabled in remove(=
-)
->>>>>>>>
->>>>>>>> This patch does following minor changes as cleanup,
->>>>>>>> =C2=A0=C2=A0 * return code check for pm_runtime_get_sync() to take=
- care of
->>>>>>>> failure
->>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 and exit gracefully.
->>>>>>>> =C2=A0=C2=A0 * In remove path runtime PM is disabled before callin=
-g
->>>>>>>> snd_card_free().
->>>>>>>> =C2=A0=C2=A0 * hda_tegra_disable_clocks() is moved out of CONFIG_P=
-M_SLEEP
->>>>>>>> check.
->>>>>>>> =C2=A0=C2=A0 * runtime PM callbacks moved out of CONFIG_PM check
->>>>>>>>
->>>>>>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->>>>>>>> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
->>>>>>>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->>>>>>> (snip)
->>>>>>>> @@ -555,6 +553,13 @@ static int hda_tegra_probe(struct
->>>>>>>> platform_device *pdev)
->>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!azx_has_pm_runtime(chip))
->>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pm_runtime_=
-forbid(hda->dev);
->>>>>>>> =C2=A0 +=C2=A0=C2=A0=C2=A0 /* explicit resume if runtime PM is dis=
-abled */
->>>>>>>> +=C2=A0=C2=A0=C2=A0 if (!pm_runtime_enabled(hda->dev)) {
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D hda_tegra_runt=
-ime_resume(hda->dev);
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 goto out_free;
->>>>>>>> +=C2=A0=C2=A0=C2=A0 }
->>>>>>>> +
->>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 schedule_work(&hda->probe_work);
->>>>>>> Calling runtime_resume here is really confusing...
->>>>>> Why? IMO it is better to have a single handler for resuming the
->>>>>> device
->>>>>> and so if RPM is not enabled we call the handler directly. This is
->>>>>> what
->>>>>> we have been advised to do in the past and do in other drivers.
->>>>>> See ...
->>>>> The point is that we're not "resuming" anything there.=C2=A0 It's in =
-the
->>>>> early probe stage, and the device state is uninitialized, not really
->>>>> suspended.=C2=A0 It'd end up with just calling the same helper
->>>>> (hda_tegra_enable_clocks()), though.
->>>> Yes and you can make the same argument for every driver that calls
->>>> pm_runtime_get_sync() during probe to turn on clocks, handle resets,
->>>> etc, because at the end of the day the very first call to
->>>> pm_runtime_get_sync() invokes the runtime_resume callback, when we hav=
-e
->>>> never been suspended.
->>> Although there are some magical pm_runtime_*() in some places, most of
->>> such pm_runtime_get_sync() is for the actual runtime PM management (to
->>> prevent the runtime suspend), while the code above is for explicitly
->>> setting up something for non-PM cases.
->>>
->>> And if pm_runtime_get_sync() is obviously superfluous, we should
->>> remove such calls.=C2=A0 Really.
->> Yes agree.
->>
->>>> Yes at the end of the day it is the same and given that we have done
->>>> this elsewhere I think it is good to be consistent if/where we can.
->>> The code becomes less readable, and that's a good reason against it :)
->> I don't its less readable. However, I do think it is less error prone :-=
-)
->=20
-> Do we have a consensus here? Request others to provide opinions to help
-> close on this.
+Sure.
 
-I am not going to block this and ultimately it is Iwai-san call.
+> > +int tb_port_find_cap(struct tb_port *port, enum tb_port_cap cap)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = tb_port_enable_tmu(port, true);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = __tb_port_find_cap(port, cap);
+> > +
+> > +	tb_port_enable_tmu(port, false);
+> > +
+> > +	return ret;
+> > +}
+> 
+> Would there be a downside to setting the TMU bit on all ports all the time
+> (e.g. on switch enumeration)?
 
-However, I wonder if it would be appropriate to move the whole ...
+You mean turn it on once and keep it like that? Quick experimentation
+with a couple of LR devices did not show any side-effects so I guess we
+could just turn it on once during the enumeration in affected devices.
 
- if (pm_runtime_enabled())
-         ret =3D pm_runtime_get_sync();
- else
-         ret =3D hda_tegra_runtime_resume();
-
-... into the probe_work function? In other words, we are just resuming
-when we really need to. Unless I am still misunderstanding Iwai-san
-comment. Otherwise if Iwai-san is happy with V2 then go with that.
-
-Cheers
-Jon
---=20
-nvpublic
+Main reason it is now in cap.c is because we only need it to be enabled
+during the cap walk and that allows keeping both workarounds in the same
+file close to the place where it is used.
