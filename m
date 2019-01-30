@@ -2,112 +2,122 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD86C282D0
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAFAC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F4832184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:51:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548813087;
-	bh=caZ/kYG6FJohv1co6rwbPb/YwgejF20sCfrIlTh5PeA=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=geZXaZxrbuPcCNl/fXWLkhPACW56wKzz7pQqSOE+8/rA1Gg5Mecyl4gISQWguAcx5
-	 rF6L3cVyHyecpnEx7ZRTkrnwI+9FacnaJK9F6YMd9gkiRni0pteBpmS2fP8diS1Ulo
-	 qRE6nMNgBsPeijiFn8lZdfzfTohFMb6mAnNIqfNQ=
+	by mail.kernel.org (Postfix) with ESMTP id 5355B21473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:53:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729769AbfA3BvX (ORCPT
+        id S1729043AbfA3Bxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 20:51:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57020 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727618AbfA3BvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 20:51:22 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7829121473;
-        Wed, 30 Jan 2019 01:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548813082;
-        bh=caZ/kYG6FJohv1co6rwbPb/YwgejF20sCfrIlTh5PeA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ll9f1LuFg8NktCc2YDKfjrb4o+MVYzM9q9J5uhef9kO2suyKHRC/gy7cbn3ZlH+EA
-         NJdmpWRt5p0jHcBrNuxvWbZebmJqchGKyvWgVZWJGjXtAqdz/+jmekNLIQMZaugz5e
-         g17DE/GKh+/dkyEg3U0sH3XMPRyDDidrdr+RNfk4=
-Subject: Re: [PATCH 4.9 00/44] 4.9.154-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190129113139.826927690@linuxfoundation.org>
- <20190129190220.GA6116@roeck-us.net> <20190129192624.GA21847@kroah.com>
- <20190129194323.GA32069@kroah.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <93ef15ea-9391-47ab-4e37-46c46ef9bf59@kernel.org>
-Date:   Tue, 29 Jan 2019 18:51:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 29 Jan 2019 20:53:54 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:58605 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727618AbfA3Bxy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 20:53:54 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TJEZP5._1548813231;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TJEZP5._1548813231)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 30 Jan 2019 09:53:51 +0800
+Subject: Re: [PATCH] sched/debug: Show intergroup and hierarchy sum wait time
+ of a task group
+To:     =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Cc:     mingo@redhat.com, Peter Zijlstra <peterz@infradead.org>,
+        Wind Yu <yuzhoujian@didichuxing.com>,
+        linux-kernel@vger.kernel.org
+References: <1548236816-18712-1-git-send-email-ufo19890607@gmail.com>
+ <3680160f-a439-02a3-3d40-56de18096c4b@linux.alibaba.com>
+ <CAHCio2iYoKOSgxJWFX6KcRcn7GK=aEJP7Sz0vU6SwXK2C56mew@mail.gmail.com>
+ <6625b261-d199-6b37-de65-1b576dcbad5b@linux.alibaba.com>
+ <CAHCio2jP7mZpE6sAb_Rewbc2nx4s0NY3sOYmsF69EqE4Ysbo=w@mail.gmail.com>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <4840cfe6-161a-5d2e-361d-732bedcaee87@linux.alibaba.com>
+Date:   Wed, 30 Jan 2019 09:53:51 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190129194323.GA32069@kroah.com>
+In-Reply-To: <CAHCio2jP7mZpE6sAb_Rewbc2nx4s0NY3sOYmsF69EqE4Ysbo=w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/29/19 12:43 PM, Greg Kroah-Hartman wrote:
-> On Tue, Jan 29, 2019 at 08:26:24PM +0100, Greg Kroah-Hartman wrote:
->> On Tue, Jan 29, 2019 at 11:02:20AM -0800, Guenter Roeck wrote:
->>> On Tue, Jan 29, 2019 at 12:35:55PM +0100, Greg Kroah-Hartman wrote:
->>>> This is the start of the stable review cycle for the 4.9.154 release.
->>>> There are 44 patches in this series, all will be posted as a response
->>>> to this one.  If anyone has any issues with these being applied, please
->>>> let me know.
->>>>
->>>> Responses should be made by Thu Jan 31 11:31:22 UTC 2019.
->>>> Anything received after that time might be too late.
->>>>
->>>
->>> fs/cifs/connect.c: In function 'zero_credits':
->>> fs/cifs/connect.c:527:34: error: 'struct TCP_Server_Info' has no member named 'echo_credits'
->>> fs/cifs/connect.c:527:57: error: 'struct TCP_Server_Info' has no member named 'oplock_credits'
->>>
->>> Seen with:
->>>
->>> arm:s3c2410_defconfig
->>> arm:nhk8815_defconfig
->>> arm:cm_x2xx_defconfig
->>> ia64:defconfig
->>> m68k:defconfig
->>> m68k:sun3_defconfig
->>> microblaze:mmu_defconfig
->>> mips:defconfig
->>> mips:nlm_xlp_defconfig
->>> parisc:defconfig
->>> parisc:generic-32bit_defconfig
->>> parisc:a500_defconfig
->>> powerpc:defconfig
->>> powerpc:ppc64e_defconfig
->>> powerpc:ppc6xx_defconfig
->>> s390:performance_defconfig
->>> tile:tilegx_defconfig
->>
->> Ugh, this is due to CONFIG_CIFS_SMB2 not being enabled there.  But it's
->> removed in newer kernels.  Let me see if I should just drop the
->> offending patch, give me a bit...
+
+
+On 2019/1/28 下午3:21, 禹舟键 wrote:
+[snip]
+>> No offense but I'm afraid you misunderstand the problem we try to solve
+>> by wait_sum, if your purpose is to have a way to tell whether there are
+>> sufficient CPU inside a container, please try lxcfs + top, if there are
+>> almost no idle and load is high, then the CPU resource is not sufficient.
 > 
-> I've just dropped the patch now and pushed out a -rc2.
+> emmmm... Maybe I didn't make it clear.  We need to dynamically adjust the
+> number of CPUs for a container based on the running state of tasks inside
+> the container. If we find tasks' wait_sum are really high, we will add more
+> CPU cores to this container, or else we will decline some CPU to this container.
+> In a word, we want to ensure 'co-scheduling' for high priority containers.
 > 
 
-rc2 compiled and booted on my test system. No dmesg regressions.
+I understand that you want to use task wait time which is a raw metric, but IMHO
+when task wait more, idle will be less and load will be high, they are more
+general metric to tell whether there are CPU starving rather then task wait
+time on rq, and we rely on these too.
 
-thanks,
--- Shuah
+The only issue we got previously is that we don't know what caused the less idle
+and high load, could be wrong resource assignment or cgroup competition, and now
+with wait_sum we can firstly make sure competition is low, then if idle is still
+low and load is still high inside container, time to assign more CPU.
+
+> 
+>> Frankly speaking this sounds like a supplement rather than a missing piece,
+>> although we don't rely on lxcfs and modify the kernel ourselves to support
+>> container environment, I still don't think such kind of solutions should be
+>> in kernel.
+> 
+> I don't care if this value is considered as a supplement or a missing piece. I
+> only care about how can I assess the running state inside a container. I think
+> lxcfs is really a good solution to improve the visibility of container
+> resources,
+> but it is not good enough at the moment.
+> 
+> /proc/cpuinfo
+> /proc/diskstats
+> /proc/meminfo
+> /proc/stat
+> /proc/swaps
+> /proc/uptime
+> 
+> we can read this procfs file inside a container,but this file still
+> cannot reflect
+> real-time information. Please think about the following scenario: a
+> 'rabbit' process
+> will generate 2000 tasks in every 30ms, and these children tasks just run 1~5ms
+> and then exit. How can we detect this thrashing workload without
+> hierarchy wait_sum?
+
+As mentioned, we implement the isolation on ourselves, so we will see the isolated
+idle and load information inside container, rather then the host data, we don't
+rely on lxcfs but we know it's something doing similar work, so what you got by
+reading /proc/stat, does it tell the isolated idle data? And you need a isolated
+/proc/loadavg too.
+
+Anyway, IMHO this is a special requirement only for container environment, not a
+general solution for kernel problem, so I would suggest either help improve
+the lxcfs to make it useful for your production, or do the modification in your own
+kernel.
+
+Regards,
+Michael Wang
+
+> 
+> Thanks,
+> Yuzhoujian
+> 
