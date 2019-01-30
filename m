@@ -2,146 +2,169 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E2DC282CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FCFC282CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E2082082C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:09:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D08802087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 05:13:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UOYQEBvu";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YZ5uT7B+"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WvdhWaER"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725852AbfA3FI6 (ORCPT
+        id S1725849AbfA3FNP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 00:08:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45138 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfA3FI6 (ORCPT
+        Wed, 30 Jan 2019 00:13:15 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:53302 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbfA3FNP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 00:08:58 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 71DF2607F4; Wed, 30 Jan 2019 05:08:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548824936;
-        bh=p3uynaBT4EN36pZ9tyHmVAJb+1BKBY1xfLs+n6nam6c=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=UOYQEBvuxYBbMFByODJav1E0iC0Vw09D+jIuenCqUU/d31dX8dGqCOKuXJFdzs5xs
-         pmD5j2LKViEJwV9JfKnESpFCu4E7t4Af1CjOS6COds/+aMhkhy7D6Kbva+bFE9J0MA
-         DXNGBN/bY5YDbOEcT5bW4Mt/Zx9DtQtYX5E9pGZg=
-Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A9AFC607F1;
-        Wed, 30 Jan 2019 05:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548824935;
-        bh=p3uynaBT4EN36pZ9tyHmVAJb+1BKBY1xfLs+n6nam6c=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=YZ5uT7B+AonhMPnoa112YOlESd/VbCfbil0m69NI8jT7G3r5C1+5p8rAPmuaOLT0s
-         EURChAeRBcyLxJQzRImDGySpylqVp6KdCV8TB9hzAo46yrXVboPduaKCuXHt3b+X9t
-         GFmpsepi1EkkV4HzrW2Y9vL3eUK6kWyVOxX40T34=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A9AFC607F1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [PATCH 2/2] remoteproc: q6v5_adsp: Remove voting for lpass_aon
- clock
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, plai@codeaurora.org,
-        bgoswami@codeaurora.org
-References: <1543562950-23997-1-git-send-email-rohitkr@codeaurora.org>
- <1543562950-23997-3-git-send-email-rohitkr@codeaurora.org>
- <f6f9b4a2-6205-0ba5-9a3a-b34bd814d303@codeaurora.org>
- <20190107071359.GK31596@builder>
- <214831ef-2139-7b48-1654-537634f898f4@codeaurora.org>
-Message-ID: <d90f7817-294e-a96e-0eb0-293a06e9190a@codeaurora.org>
-Date:   Wed, 30 Jan 2019 10:38:50 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 00:13:15 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0U58v4a001581;
+        Wed, 30 Jan 2019 05:13:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=WItGHf9nOAdYHChIFTXl5rw6TmM3xVQC+SnZeHiHN4E=;
+ b=WvdhWaER5z8dajm6zAc1/cm2TElGmyQxXLkyM4rFE1yCDW/K8gdRH+hSCpa5oAc8bJtM
+ NyTf6JNjhJHrduy/N8k2kuchgJ6Eg3wnJ/HEBh8N8FsB/5NWSy3YfDH8olBMGRSfTvIH
+ S65foOGebUjCbTIxCamv3MnLAwbkUe/bUwcL/inJ262NyB4pLdQtARoiom9EbnxrY92A
+ fxWFOLeKTOFoCrt6gg7EDaMrmU6O3UAc5Fxwo1wgAq2F2bDUWUM1TeOSZCS7YekJe4l7
+ 47lZ509l36G3rKB0Q4FFgT+yvFF4QjRGi6AtBynPUjL35NvaY5xLCtBDBvHlIKWXRUiT dQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2q8g6r8a0b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jan 2019 05:13:09 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0U5D9hD025126
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jan 2019 05:13:09 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0U5D82w019150;
+        Wed, 30 Jan 2019 05:13:08 GMT
+Received: from kadam (/197.157.0.43)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 29 Jan 2019 21:13:07 -0800
+Date:   Wed, 30 Jan 2019 08:12:59 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Todd Kjos <tkjos@google.com>
+Cc:     "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        Todd Kjos <tkjos@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Martijn Coenen <maco@google.com>, joel@joelfernandes.org,
+        Android Kernel Team <kernel-team@android.com>
+Subject: Re: [PATCH 1/7] binder: create userspace-to-binder-buffer copy
+ function
+Message-ID: <20190130051259.GO1795@kadam>
+References: <20190129004934.85885-1-tkjos@google.com>
+ <20190129004934.85885-2-tkjos@google.com>
+ <20190129081218.GL1795@kadam>
+ <CAHRSSEzjgtrouqJkhduaZt99RbmtA5a4Lc2xgyp_pt4cg7Vpmg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <214831ef-2139-7b48-1654-537634f898f4@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <CAHRSSEzjgtrouqJkhduaZt99RbmtA5a4Lc2xgyp_pt4cg7Vpmg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9151 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901300038
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Bjorn,
+On Tue, Jan 29, 2019 at 04:32:09PM -0800, Todd Kjos wrote:
+> On Tue, Jan 29, 2019 at 12:12 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > On Mon, Jan 28, 2019 at 04:49:28PM -0800, Todd Kjos wrote:
+> > > +/**
+> > > + * binder_alloc_copy_user_to_buffer() - copy src user to tgt user
+> > > + * @alloc: binder_alloc for this proc
+> > > + * @buffer: binder buffer to be accessed
+> > > + * @buffer_offset: offset into @buffer data
+> > > + * @from: userspace pointer to source buffer
+> > > + * @bytes: bytes to copy
+> > > + *
+> > > + * Copy bytes from source userspace to target buffer.
+> > > + *
+> > > + * Return: bytes remaining to be copied
+> > > + */
+> > > +unsigned long
+> > > +binder_alloc_copy_user_to_buffer(struct binder_alloc *alloc,
+> > > +                              struct binder_buffer *buffer,
+> > > +                              binder_size_t buffer_offset,
+> > > +                              const void __user *from,
+> > > +                              size_t bytes)
+> > > +{
+> > > +     if (!check_buffer(alloc, buffer, buffer_offset, bytes))
+> > > +             return bytes;
+> > > +
+> > > +     while (bytes) {
+> > > +             unsigned long size;
+> > > +             unsigned long ret;
+> > > +             struct page *page;
+> > > +             pgoff_t pgoff;
+> > > +             void *kptr;
+> > > +
+> > > +             page = binder_alloc_get_page(alloc, buffer,
+> > > +                                          buffer_offset, &pgoff);
+> > > +             size = min(bytes, (size_t)(PAGE_SIZE - pgoff));
+> >
+> > This code has so much more casting than necessary.  To me casting says
+> > that we haven't got the types correct or something.  I've just pulled
+> > this function out as an example really, but none of the casts here are
+> > required...  This could just be:
+> >
+> >                 size = min(bytes, PAGE_SIZE - pgoff);
+> 
+> Dan,
+> 
+> Thanks for the feedback.
+> 
+> The one above: "size = min(bytes, PAGE_SIZE - pgoff);", results in
+> 32-bit compile warnings:
+> 
+> ./include/linux/kernel.h:846:29: warning: comparison of distinct
+> pointer types lacks a cast
+>    (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+> [...]
+> drivers/android/binder_alloc.c:1157:10: note: in expansion of macro ‘min’
+>    size = min(bytes, PAGE_SIZE - pgoff);
+> 
+> so, I took your suggestion:
+> 
+>   size = min_t(size_t, bytes, PAGE_SIZE - pgoff);
+> 
+> >
+> > Btw, if you really need to do a cast inside a min() (you don't in this
+> > cast) then use min_t().
+> >
+> > > +             kptr = (void *)((uintptr_t)kmap(page) + pgoff);
+> >
+> > This would be a lot cleaner as:
+> >
+> >                 kptr = kmap(page) + pgoff;
+> 
+> It definitely is cleaner, but the clean version is doing arithmetic on
+> a void pointer which is generally not considered good practice (but is
+> supported by gcc). Is this acceptable in the kernel? I don't see any
+> statement on it in Documentation/process/coding-style.rst.
 
-On 1/14/2019 4:14 PM, Rohit Kumar wrote:
->
-> On 1/7/2019 12:43 PM, Bjorn Andersson wrote:
->> On Thu 03 Jan 20:36 PST 2019, Rohit Kumar wrote:
->>
->>> Hello Bjorn,
->>>
->>> Can you please review this patch series too.
->>>
->>> LPASS_AON clock support is already removed from lpass clock driver.
->>>
->> Applied the two patches.
->
-I did not see this in next yet. Can you please pick this up.
+Yeah, it's a GCCism but to me it seems so nice.  We do it all the time.
 
-Thanks,
+We'd like to get Clang to compile the kernel, but we've done very little
+work to make that happen.  Removing variable length arrays was really
+done for other reasons...
 
-Rohit
-
-> Hello Bjorn,
->
->
-> Can you please point me to the tree where this is applied.
->
->
-> Thanks,
->
-> Rohit
->
->> Thanks,
->> Bjorn
->>
->>> Thanks,
->>>
->>> Rohit
->>>
->>> On 11/30/2018 12:59 PM, Rohit kumar wrote:
->>>> Lpass_aon clock is on by default. Remove it from lpass
->>>> clock list to avoid voting for it.
->>>>
->>>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
->>>> ---
->>>>    drivers/remoteproc/qcom_q6v5_adsp.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c 
->>>> b/drivers/remoteproc/qcom_q6v5_adsp.c
->>>> index 79374d1..4829173 100644
->>>> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
->>>> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
->>>> @@ -48,7 +48,7 @@
->>>>    /* list of clocks required by ADSP PIL */
->>>>    static const char * const adsp_clk_id[] = {
->>>> -    "sway_cbcr", "lpass_aon", "lpass_ahbs_aon_cbcr", 
->>>> "lpass_ahbm_aon_cbcr",
->>>> +    "sway_cbcr", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
->>>>        "qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core",
->>>>    };
->>> -- 
->>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a 
->>> member
->>> of the Code Aurora Forum, hosted by the Linux Foundation.
->>>
--- 
-
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the Linux Foundation.
+regards,
+dan carpenter
 
