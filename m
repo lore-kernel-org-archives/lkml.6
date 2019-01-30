@@ -2,90 +2,103 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA57C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D49C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79FB22087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:37:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548866251;
-	bh=Xovs7zzscOfkLExa0sKV+MfLDMGn4e8B/iWpoIrLy3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=T5HyUupkTcaav0oISH8FZCnL0yvK3HZG6thGUrjapCl56flQJihePhBOqKsYf67wv
-	 qlLkbkTvU4VteME62h6Eyo562qawC3JavZVpTGUwZInlQgU1rVUwrOd0Vba4d49h8x
-	 JqMAxMwpW76MQAfN7mWzAldvh4avZuvHWS7NBaMs=
+	by mail.kernel.org (Postfix) with ESMTP id 4286C20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:38:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oLYl71C3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732084AbfA3Qha (ORCPT
+        id S1732116AbfA3Qi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:37:30 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37398 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfA3Qh3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:37:29 -0500
-Received: by mail-ot1-f66.google.com with SMTP id s13so152013otq.4;
-        Wed, 30 Jan 2019 08:37:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LM1RAGH3n+6lR88MIvu5YuNbIs4+YEQmWLTLxBYIKZo=;
-        b=LpXbJGFDbJWIWu6jx3xY9cr5JJTUR6PWAXu6SVkNj5dg7G9GABamYVnn6I2VvQZwj+
-         67REMXkzL2yKIIftxajuqvHoTBWyTGlhYsdhN8lILMhW0oYPkbqli/8IeKTtYC/oKC7+
-         0EqGAhFGPZb9RWGqza7Hu160LLq46RnkVw7P+VN2fxWvAkIYSSWg0iqdZauNxsxXdHkf
-         lvc0AzU3ilo4iHQiVct5iQe+yKmMM78ZS8ORHLyf0cc4Rw8bCtWRZGo+gVnaEiCTCGJ5
-         sSd68k2klvOBXEJ5GLk/sppLtAygAg6SnWIt6dWaCdFRU12V9IWzhne9SwlVqf8Z3PO0
-         rr/A==
-X-Gm-Message-State: AHQUAuY7m5VWGG6mm44EK2QpZLAjHkcln+/0Y4pr6yo+zNb/BjH2DIh7
-        ReVEg/z0uD8Tm05ygua/Kg==
-X-Google-Smtp-Source: ALg8bN7A28O3be2wzTegqUkMWd3BgmIaae4tdr3LEEWzQitv/SmK5DHYuBucAyajSoENQ9w3AxrvGg==
-X-Received: by 2002:a9d:740e:: with SMTP id n14mr14357687otk.340.1548866248844;
-        Wed, 30 Jan 2019 08:37:28 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b18sm826859oii.51.2019.01.30.08.37.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 08:37:28 -0800 (PST)
-Date:   Wed, 30 Jan 2019 10:37:27 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     robh+dt@kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
-        bkumar@qti.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        thierry.escande@linaro.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v4 1/5] misc: dt-bindings: Add Qualcomm Fastrpc bindings
-Message-ID: <20190130163727.GA28911@bogus>
-References: <20190124152412.10503-1-srinivas.kandagatla@linaro.org>
- <20190124152412.10503-2-srinivas.kandagatla@linaro.org>
+        Wed, 30 Jan 2019 11:38:26 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:32768 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726230AbfA3Qi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:38:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=Awb+e7KyeVsQY0L1pRZuEHWubonzwcbqoNNQPfvskxY=; b=oLYl71C3EZwLUlZPRYSbe0nUXy
+        C34Ofv0t26OdOMUNAiOoACSOArAQnP3VTqsPWUj+Hi1lvSJ1ohWiYWdECwQ5t+iEbddx9xb7NMRMP
+        /AIiwYlXlJ4EN4acSu5kp24FEbCPA10gihRfnZx/9cCbrxjK/HGt7IJIrXwKLNXQI3Lw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gossT-0004w7-1U; Wed, 30 Jan 2019 17:38:17 +0100
+Date:   Wed, 30 Jan 2019 17:38:17 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Carlos Henrique Lima Melara <charlesmelara@outlook.com>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "neil@brown.name" <neil@brown.name>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] staging: mt7621-eth/ethtool.c: Correction of SPDX
+ license identifier
+Message-ID: <20190130163817.GF21904@lunn.ch>
+References: <SC1P15201MB2014C3E0CAB4DA9ADF330797A8900@SC1P15201MB2014.LAMP152.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124152412.10503-2-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <SC1P15201MB2014C3E0CAB4DA9ADF330797A8900@SC1P15201MB2014.LAMP152.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 15:24:08 +0000, Srinivas Kandagatla wrote:
-> The FastRPC driver implements an IPC (Inter-Processor Communication)
-> mechanism that allows for clients to transparently make remote method
-> invocations across DSP and APPS boundaries. This enables developers
-> to offload tasks to the DSP and free up the application processor for
-> other tasks.
+On Wed, Jan 30, 2019 at 02:48:27PM +0000, Carlos Henrique Lima Melara wrote:
+> 	This patch fix the checkpatch.p1 warning:
 > 
-> Co-developed-by: Thierry Escande <thierry.escande@linaro.org>
-> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 	WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+> 	+/*
+> 
+> 	It includes the SPDX expression for GPL-2.0 and corrects the comment format to suit the kernel's coding style.
+> 
+> Signed-off-by: Carlos (Charles) Henrique Lima Melara <charlesmelara@outlook.com>
 > ---
->  .../devicetree/bindings/misc/qcom,fastrpc.txt | 78 +++++++++++++++++++
->  1 file changed, 78 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
+>  drivers/staging/mt7621-eth/ethtool.c | 22 ++++++++++++----------
+>  1 file changed, 12 insertions(+), 10 deletions(-)
 > 
+> diff --git a/drivers/staging/mt7621-eth/ethtool.c b/drivers/staging/mt7621-eth/ethtool.c
+> index 40a7d47be913..49d417de64c8 100644
+> --- a/drivers/staging/mt7621-eth/ethtool.c
+> +++ b/drivers/staging/mt7621-eth/ethtool.c
+> @@ -1,15 +1,17 @@
+> -/*   This program is free software; you can redistribute it and/or modify
+> - *   it under the terms of the GNU General Public License as published by
+> - *   the Free Software Foundation; version 2 of the License
+> +// SPDX-License-Identifier: GPL-2.0
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hi Carlos
+
+drivers/staging/mt7621-eth$ grep LICENSE *
+gsw_mt7621.c:MODULE_LICENSE("GPL");
+mtk_eth_soc.c:MODULE_LICENSE("GPL");
+
+And include/linux/module.h 
+says:
+
+/*
+ * The following license idents are currently accepted as indicating free
+ * software modules
+ *
+ *      "GPL"                           [GNU Public License v2 or later]
+ *      "GPL v2"                        [GNU Public License v2]
+
+So the SPDX string probably does not match the MODULE_LICENSE.
+
+   Andrew
