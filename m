@@ -2,106 +2,116 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2644C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 702E3C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F151218DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548840421;
-	bh=tUq72VSzYnNFVYGVT8BF1ZCDNBx1RY5oWvsyX6oy5MQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=SYsG8kq/5mTPuK76Mm1EXFPQ4sTGDtkQvoRFLKQvwRxyy9m+zUh0yXDd5ySCxdFU4
-	 3ZcBeLNiAS8ykiSGEAFvvcxeZdo6sl4+L7Pf5Xi8etTG53pD8Jl5KjDcDZ5L+FHCSs
-	 BfJ2GmnkZai4q1vDmWQuc/5M1dzxhDevw1WIZmDY=
+	by mail.kernel.org (Postfix) with ESMTP id 3C63A20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:28:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZCQ3Ikc1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730453AbfA3J07 (ORCPT
+        id S1730117AbfA3J2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:26:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbfA3J07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:26:59 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A76820882;
-        Wed, 30 Jan 2019 09:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548840418;
-        bh=tUq72VSzYnNFVYGVT8BF1ZCDNBx1RY5oWvsyX6oy5MQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ONG0lOxvnARllj/oVOC/uCAsh30UDos1+xUH2PSbsFCAuPQPT6UW8SyDPxK9P3Tgn
-         RXRHnWnTObp0rwsdvjPWzv1SLvA6vTRyBnCPelNWWfGTW8VVtM3bBicDXIcnqCBV0K
-         CAxEBjvtFNzvSXliH5gczu7xspCf1cMdNPADzpT4=
-Date:   Wed, 30 Jan 2019 10:26:46 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     masonccyang@mxic.com.tw, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
-        zhengxunli@mxic.com.tw
-Subject: Re: [PATCH v7 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI
- controller driver
-Message-ID: <20190130102646.23c798fc@bbrezillon>
-In-Reply-To: <e4351834-5c7d-b751-b3c7-97dce5207783@gmail.com>
-References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
-        <1548227352-14910-2-git-send-email-masonccyang@mxic.com.tw>
-        <bb63b646-b549-dc3b-a604-17ba156e735c@gmail.com>
-        <OF767ACC95.EECC73BE-ON4825838C.000BD6A3-4825838C.000D23A6@mxic.com.tw>
-        <67fa5f94-886b-f09c-c93d-832e427ffec8@gmail.com>
-        <OF891E176A.614DBEEF-ON4825838C.0022D454-4825838C.002396ED@mxic.com.tw>
-        <0b3ea94f-a4f3-0780-301b-f88ff2ad2fb1@gmail.com>
-        <OFEAAE10B4.20C3E45D-ON48258390.0007CD37-48258390.0009066E@mxic.com.tw>
-        <2d762c16-d714-9171-9450-b6adf1a6509c@gmail.com>
-        <OF1DC7FF88.3574E5B9-ON48258391.000A5001-48258391.000D5DDE@mxic.com.tw>
-        <a0f86e7c-dd16-f3fa-5387-b0da6900975c@gmail.com>
-        <OFA6EF1EB2.198B44D0-ON48258392.00099520-48258392.000D03A4@mxic.com.tw>
-        <e4351834-5c7d-b751-b3c7-97dce5207783@gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 30 Jan 2019 04:28:52 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43651 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727430AbfA3J2v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 04:28:51 -0500
+Received: by mail-lf1-f65.google.com with SMTP id u18so16829290lff.10
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:28:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bAHyGO+lnhPxkCWAbECpUO67RxYdWDgKVewRjoakAYI=;
+        b=ZCQ3Ikc1sERKhKD0GzADeHcKGVAVT0dPyXCqsanEEOUlJs1mPB1VLvMYf8n8zeTfjs
+         KH1P3BbLc8cNONeCuIRrU2fv9fXi4sA6MHz08PBQ6586JjCxX36q10l6+PCZne4CA8n5
+         sWby4c2ZX05lGtnaa18wkrtchGw0xRmtfUg2E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bAHyGO+lnhPxkCWAbECpUO67RxYdWDgKVewRjoakAYI=;
+        b=NFA3hup7BhY0v/770AHgPX75ma21+5405ZXlR7KxCHApO9OY1pGkyeQwRFV8JLnVtq
+         ZHumPOBXX9lBh5xa4B8M6+yP2SBfes02iXfPjdJuPiSYA6jT2HII2VkjjKl7JRbjvbb8
+         e17jL+KvvpqTcyv+9Xfv0S8USGLzP516p+XjdCaVoXIbYukf0fFXttQs9DlH6SsTqj3U
+         5sKOqeVGxZWLT5bH0iWNKUkEVxtqPdYZjnDiKuJXTysDW8IsFaIsLoX/YvyyI9nHaY1V
+         020Pl9EIR0MLq6uSyzbv5f0K3/e6ZYncmHZZKCRzyz8rHFk6E974b0KpDqScw2tc76Uu
+         +YwA==
+X-Gm-Message-State: AJcUukePu8+zwAPW4bPfGIGTE/HGlGG1d5EaIGBk5dHSx/c1lyNC6hro
+        YbC0OsA7+chwiFTiiVxgRbJVLSZ4k53h480y93xGqw==
+X-Google-Smtp-Source: ALg8bN466+fXTSbL5WwKHV6aeDxmersWbdmvjuobfmSxhx4W8Xo5kVP8PDTZ0banaCj/fyanfGIArUo0W0lEo26RlRo=
+X-Received: by 2002:ac2:53b1:: with SMTP id j17mr22324090lfh.167.1548840529706;
+ Wed, 30 Jan 2019 01:28:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1548410393-6981-1-git-send-email-zhouyanjie@zoho.com>
+ <1548688799-129840-1-git-send-email-zhouyanjie@zoho.com> <1548688799-129840-2-git-send-email-zhouyanjie@zoho.com>
+In-Reply-To: <1548688799-129840-2-git-send-email-zhouyanjie@zoho.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 30 Jan 2019 10:28:38 +0100
+Message-ID: <CACRpkdZHxB=iTZQvdjG7npLtEXz1x9iZfiPOpHMWXTJup3ubxg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] Pinctrl: Ingenic: Fix bugs caused by differences
+ between JZ4770 and JZ4780.
+To:     Zhou Yanjie <zhouyanjie@zoho.com>
+Cc:     linux-mips@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Paul Cercueil <paul@crapouillou.net>, syq@debian.org,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>, 772753199@qq.com,
+        Zhou Yanjie <zhouyanjie@cduestc.edu.cn>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019 08:15:25 +0100
-Marek Vasut <marek.vasut@gmail.com> wrote:
+On Mon, Jan 28, 2019 at 4:28 PM Zhou Yanjie <zhouyanjie@zoho.com> wrote:
 
-> >> > So far as I know that HF is provided by Cypress only and
-> >> > any mass production product use the component which is provided by only
-> >> > one provider
-> >> > will be a big risk.
-> >> >
-> >> > Compare to HF, there are more provider of SPI/Octa could support the
-> >> > mass production product
-> >> > as their second provider.
-> >> >
-> >> > In addition, from the technical points of view, mx25uw51245g is more
-> >> > powerful than HF and
-> >> > good for complicate user application, i.e., OTA and so on.  
-> >>
-> >> Did you consider protocol overhead too ? I don't think you can compare
-> >> them just by raw numbers of pins and bus frequency.
-> >>
-> >> Note that over-the-air update (if that's what you mean by OTA) is
-> >> completely separate from the underlying storage device.  
-> > 
-> > It's key feature of mx25uw51245g supports Read-while-Write capability
-> > that allows read access from one memory bank while writing to another
-> > memory bank.  
-> 
-> Note that this sales pitch is rather off-topic.
-> 
+> From: Zhou Yanjie <zhouyanjie@cduestc.edu.cn>
+>
+> Delete uart4 and i2c3/4 from JZ4770:
+> According to the datasheet, only JZ4780 have uart4 and i2c3/4. So we
+> remove it from the JZ4770 code and add a section corresponding the JZ4780.
+>
+> Fix bugs in i2c0/1:
+> The pin number was wrong in the original code.
+>
+> Fix bugs in uart2:
+> JZ4770 and JZ4780 have different uart2 pins. So the original section JZ4770
+> has been modified and the corresponding section of JZ4780 has been added.
+>
+> Fix bugs in mmc0:
+> JZ4770 and JZ4780 assigned different pins to mmc0's 4~7 data lines. So the
+> original section JZ4770 has been modified and the corresponding section of
+> JZ4780 has been added.
+>
+> Fix bugs in mmc1:
+> JZ4770's mmc1 has 8bit mode, while JZ4780 doesn't. So the original
+> section JZ4770 has been modified and the corresponding section of
+> JZ4780 has been added.
+>
+> Fix bugs in nemc:
+> JZ4770's nemc has 16bit mode, while JZ4780 doesn't. So the original section
+> JZ4770 has been modified and the corresponding section of JZ4780 has been
+> added. And add missing cs2~5 groups for JZ4770 and JZ4780.
+>
+> Fix bugs in cim:
+> JZ4770's cim has 12bit mode, while JZ4780 doesn't. So the original
+> section JZ4770 has been modified and the corresponding section of
+> JZ4780 has been added.
+>
+> Fix bugs in lcd:
+> Both JZ4770 and JZ4780 lcd should be 24bit instead of 32bit.
+>
+> Signed-off-by: Zhou Yanjie <zhouyanjie@cduestc.edu.cn>
 
-Fully agree with Marek on that point. The discussion is about
-supporting both HF and SPI-MEM modes (or, at least have a plan to
-support HF at some point) not figuring out which option is better.
+Patch applied for v5.1 with Paul's review tag.
+
+Yours,
+Linus Walleij
