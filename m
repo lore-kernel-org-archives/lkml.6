@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CD3C282D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8645C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B97221852
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8855221473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:43:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730384AbfA3ImX (ORCPT
+        id S1730522AbfA3InC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:42:23 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:60686 "EHLO
+        Wed, 30 Jan 2019 03:43:02 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:60792 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbfA3ImV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:42:21 -0500
+        id S1730314AbfA3ImX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 03:42:23 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id C6BB65FD0F; Wed, 30 Jan 2019 16:42:17 +0800 (CST)
+        id E8E315FDC1; Wed, 30 Jan 2019 16:42:17 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>,
@@ -32,9 +32,9 @@ Cc:     linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>,
         Chen-Yu Tsai <wens@csie.org>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 03/10] arm64: dts: allwinner: h5: Hook up cpu regulator supplies
-Date:   Wed, 30 Jan 2019 16:41:56 +0800
-Message-Id: <20190130084203.25053-4-wens@csie.org>
+Subject: [PATCH 08/10] arm64: dts: allwinner: h5: orange-pi-prime: Add CPU regulator supply
+Date:   Wed, 30 Jan 2019 16:42:01 +0800
+Message-Id: <20190130084203.25053-9-wens@csie.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190130084203.25053-1-wens@csie.org>
 References: <20190130084203.25053-1-wens@csie.org>
@@ -45,47 +45,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the device trees for H5 boards already have the CPU supply
-regulator defined, but they are not referenced in the CPU node.
+The OrangePi Prime uses a Silergy SY8106A regulator to supply the CPU
+cores. The fixed voltage when I2C programmed regulation is not in action
+is slightly higher than 1.1V. The value in the device tree description
+is based on calculations of the resistor values from the schematics.
 
-Add the reference, so CPU DVFS mechanisms can see them.
-
+Cc: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- .../boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts | 4 ++++
- arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts  | 4 ++++
- 2 files changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
-index 85e7993a74e7..0c7b2b3d92f9 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-emlid-neutis-n5-devboard.dts
-@@ -71,6 +71,10 @@
+---
+
+This patch is based on the schematics and has not been tested on an
+actual board.
+---
+ .../allwinner/sun50i-h5-orangepi-prime.dts    | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
+index b75ca4d7d001..e866a0734bb3 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-orangepi-prime.dts
+@@ -139,6 +139,10 @@
  	status = "okay";
  };
  
 +&cpu0 {
-+	cpu-supply = <&vdd_cpux>;
++	cpu-supply = <&reg_vdd_cpux>;
 +};
 +
  &de {
  	status = "okay";
  };
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
-index 506e25ba028a..10e52b612892 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-nanopi-neo-plus2.dts
-@@ -126,6 +126,10 @@
+@@ -222,6 +226,30 @@
  	status = "okay";
  };
  
-+&cpu0 {
-+	cpu-supply = <&vdd_cpux>;
++&r_i2c {
++	status = "okay";
++
++	reg_vdd_cpux: regulator@65 {
++		compatible = "silergy,sy8106a";
++		reg = <0x65>;
++		regulator-name = "vdd-cpux";
++		silergy,fixed-microvolt = <1108474>;
++		/*
++		 * The datasheet uses 1.1V as the minimum value of VDD-CPUX,
++		 * however both the Armbian DVFS table and the official one
++		 * have operating points with voltage under 1.1V, and both
++		 * DVFS table are known to work properly at the lowest
++		 * operating point.
++		 *
++		 * Use 1.0V as the minimum voltage instead.
++		 */
++		regulator-min-microvolt = <1000000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
 +};
 +
- &ehci0 {
- 	status = "okay";
- };
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
 -- 
 2.20.1
 
