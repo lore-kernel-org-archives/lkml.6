@@ -2,195 +2,283 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A51C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 012A3C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD34218D2
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:30:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="BG2ngckA"
+	by mail.kernel.org (Postfix) with ESMTP id A7716218D2
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:30:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729468AbfA3Xad (ORCPT
+        id S1730826AbfA3Xai (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:30:33 -0500
-Received: from mail-eopbgr70080.outbound.protection.outlook.com ([40.107.7.80]:39328
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725768AbfA3Xad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:30:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AkrI65YSQkqMDp5eITnkz7Pyjb8BFrmH3NI4zh+OjiY=;
- b=BG2ngckA3U/fu29wFBUSI06McqU92VoLkoftpkm9+9TfOfobHJk8zMUKDrhf1/031pryexZffF2ayXRjuP6C3zxt1R6FPl4Z9NSw51CmCX+p2HI2E62adW7qgW3FdMskzsNmW29ZuoFQ6IXsiqCjMcTPAvIHwdz38DP3hRgOgiI=
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
- DBBPR05MB6330.eurprd05.prod.outlook.com (20.179.41.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.21; Wed, 30 Jan 2019 23:30:27 +0000
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 23:30:27 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-CC:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAAD3dAIAAukqAgAAK3wCAAAOzAIAAEXyAgAANnoCAABFLgIAACqiA
-Date:   Wed, 30 Jan 2019 23:30:27 +0000
-Message-ID: <20190130233021.GD25486@mellanox.com>
-References: <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
- <20190130041841.GB30598@mellanox.com> <20190130080006.GB29665@lst.de>
- <20190130190651.GC17080@mellanox.com>
- <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
- <20190130195900.GG17080@mellanox.com>
- <35bad6d5-c06b-f2a3-08e6-2ed0197c8691@deltatee.com>
- <20190130215019.GL17080@mellanox.com>
- <07baf401-4d63-b830-57e1-5836a5149a0c@deltatee.com>
-In-Reply-To: <07baf401-4d63-b830-57e1-5836a5149a0c@deltatee.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR2201CA0005.namprd22.prod.outlook.com
- (2603:10b6:301:28::18) To DBBPR05MB6426.eurprd05.prod.outlook.com
- (2603:10a6:10:c9::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DBBPR05MB6330;6:FO6cZ7ml1hQQ881Cww0x+E6DnXIiYnwHhnWzLeazT5tDISxxG3ZGpbWCSONWjglc5rOedRuXCrjagt/TTwS77n3Dh0Wv6jfCYIpa7lMKSR2jPgH8X43fNCZ9dyaNkJN7YeiwulhNE5Q2JRPnSmBzijuasTi6JfnWLnQutBDz7PGKZbA6D+NXjEYGHzvGeCDtimFnOKl3THyGkLJETSPYQUr275eAHYsVM2Irz8g79CvS1+bsNzrHW5CQAWrrX1wJiHhA6bYKWlQowcaRW04YxdDBvyXwyiMqYMhCLzgoVGV5G4NlQGXtZcztCeg0kUKBZ5F5elvB5WxLCCokUfBSo2OeEFUwEzuExD+PnY8ZxnNasyuehvM+qsQbKg1skg91QHrs7GOia1kBhK4BqAHGJNqzrpScgW9ImHT8VDwWjdqIH1FAs3g3/txbMWX92xhs5YZXQ/8ngzBMxnWtTcpSHA==;5:RCErp/n031cdMsQ/QDm3tOm0vJ77MFW4qaNC4EpygSkNYdWdkjYaSnJkfmhlALKhmhbaEcUpchF0iGqw+gcUe65kUkY5a73lvf4vVxXGlZvWozCrQr62XZ5fxi5E2cCIK1YEmD30PvOaRH+MT3FSMkyigBkwLArFyqKQtVe5B9p9/pGuBlFk7xMfxZFVfoYL7wPVOffZ3T3ES2nRLIw+Cw==;7:IKhYBrlAUW+b4PqifcfHNDW9Fp2rIpNeSWlxniW5AfsEjPRbOLBQDsShpF/3DGe34Bj6suBfS3X7EexICeTJNgBNQMP2RvwCZZzWSB+xc5b9ghDPJFyOcBiV9ErRQ5NXkUqfmz5XwGHtw36EcwJJ0w==
-x-ms-office365-filtering-correlation-id: 8b7fc471-867e-471f-6161-08d6870aea8c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6330;
-x-ms-traffictypediagnostic: DBBPR05MB6330:
-x-microsoft-antispam-prvs: <DBBPR05MB6330F6633BB35F3E4D456832CF900@DBBPR05MB6330.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(136003)(376002)(39860400002)(199004)(189003)(486006)(446003)(316002)(2616005)(6436002)(476003)(102836004)(97736004)(6506007)(11346002)(26005)(4326008)(386003)(2906002)(6512007)(54906003)(99286004)(36756003)(86362001)(14454004)(52116002)(6486002)(229853002)(7416002)(71190400001)(53936002)(71200400001)(478600001)(8676002)(81166006)(66066001)(33656002)(105586002)(81156014)(68736007)(3846002)(6116002)(8936002)(106356001)(6246003)(1076003)(53546011)(76176011)(93886005)(305945005)(25786009)(217873002)(7736002)(186003)(6916009)(256004)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6330;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: hj/dmzC7U+OSVRBT/MoeeEdhCEO9wjaPT0CXw/bezhgAkgRq+lxA6z/e6OIn9kNEsJcTFsRS6FnxXuZePjMVL0K96+pgomWq8nyQ3MS7vt+UWS20pjtKvkSXc8Zas/BqgbQPxsPptlAb2a0gMXE8xupBR+ONlLeWbrdBEAUcy2a4/UTm5vCJR+HFuNbQy6VeEdEJKffjYn1ph415C6dsQbRhc6JWO/GNgjE9fI6+KuMnlNFAgtCG/EBJn2h9fZ0jz8yFTUgwHZyqwYQ7xtomV92x8IZT8LDN/W48+MXUya9Md4T6Xhg8uGcoUNOvUM/LimIqbxXAxgMWmPDllYpyKHSE1lwpCHACmvs/59jaJ9eEHWHPgWgswMS+z4cae7NZR+2FGdtqGbSz0mNz/2NEquFAdc1+qDlHUM5fII4mhT0=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <95781CBA468AA44CA09FE9E7B761A943@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 30 Jan 2019 18:30:38 -0500
+Received: from gateway34.websitewelcome.com ([192.185.149.62]:35986 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725768AbfA3Xah (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 18:30:37 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id EAA5EEA9D
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 17:30:35 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ozJTgaxDR90onozJTg0q7z; Wed, 30 Jan 2019 17:30:35 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=57884 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gozJT-0017Wf-KM; Wed, 30 Jan 2019 17:30:35 -0600
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+References: <20190129233426.GA7999@embeddedor>
+ <CAGXu5jJVqbUdF6bVAQYuw9r8emzvy=oJFNJWxM-iSu-t3igeYw@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] lib: zstd: Mark expected switch fall-throughs
+Message-ID: <ac8f9634-e298-3daa-e85d-c4b2478ee0a2@embeddedor.com>
+Date:   Wed, 30 Jan 2019 17:30:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b7fc471-867e-471f-6161-08d6870aea8c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 23:30:27.3975
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6330
+In-Reply-To: <CAGXu5jJVqbUdF6bVAQYuw9r8emzvy=oJFNJWxM-iSu-t3igeYw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gozJT-0017Wf-KM
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:57884
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 03:52:13PM -0700, Logan Gunthorpe wrote:
->=20
->=20
-> On 2019-01-30 2:50 p.m., Jason Gunthorpe wrote:
-> > On Wed, Jan 30, 2019 at 02:01:35PM -0700, Logan Gunthorpe wrote:
-> >=20
-> >> And I feel the GUP->SGL->DMA flow should still be what we are aiming
-> >> for. Even if we need a special GUP for special pages, and a special DM=
-A
-> >> map; and the SGL still has to be homogenous....
-> >=20
-> > *shrug* so what if the special GUP called a VMA op instead of
-> > traversing the VMA PTEs today? Why does it really matter? It could
-> > easily change to a struct page flow tomorrow..
->=20
-> Well it's so that it's composable. We want the SGL->DMA side to work for
-> APIs from kernel space and not have to run a completely different flow
-> for kernel drivers than from userspace memory.
 
-If we want to have these DMA-only SGLs anyhow, then the kernel flow
-can use them too.
 
-In the kernel it easier because the 'exporter' already knows it is
-working with BAR memory, so it can just do something like this:
+On 1/30/19 1:58 AM, Kees Cook wrote:
+> On Wed, Jan 30, 2019 at 12:34 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+>> cases where we are expecting to fall through.
+>>
+>> This patch fixes the following warnings:
+>>
+>> lib/zstd/bitstream.h:261:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/zstd/bitstream.h:262:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/zstd/bitstream.h:263:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/zstd/bitstream.h:264:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/zstd/bitstream.h:265:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/zstd/compress.c:3183:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/zstd/decompress.c:1770:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/zstd/decompress.c:2376:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/zstd/decompress.c:2404:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/zstd/decompress.c:2435:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/zstd/huf_compress.c: In function ‘HUF_compress1X_usingCTable’:
+>> lib/zstd/huf_compress.c:535:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>   if (sizeof((stream)->bitContainer) * 8 < HUF_TABLELOG_MAX * 4 + 7) \
+>>      ^
+>> lib/zstd/huf_compress.c:558:54: note: in expansion of macro ‘HUF_FLUSHBITS_2’
+>>   case 3: HUF_encodeSymbol(&bitC, ip[n + 2], CTable); HUF_FLUSHBITS_2(&bitC);
+>>                                                       ^~~~~~~~~~~~~~~
+>> lib/zstd/huf_compress.c:559:2: note: here
+>>   case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bitC);
+>>   ^~~~
+>> lib/zstd/huf_compress.c:531:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>   if (sizeof((stream)->bitContainer) * 8 < HUF_TABLELOG_MAX * 2 + 7) \
+>>      ^
+>> lib/zstd/huf_compress.c:559:54: note: in expansion of macro ‘HUF_FLUSHBITS_1’
+>>   case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bitC);
+>>                                                       ^~~~~~~~~~~~~~~
+>> lib/zstd/huf_compress.c:560:2: note: here
+>>   case 1: HUF_encodeSymbol(&bitC, ip[n + 0], CTable); HUF_FLUSHBITS(&bitC);
+>>   ^~~~
+>>   AR      lib/zstd//built-in.a
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  lib/zstd/bitstream.h    | 5 +++++
+>>  lib/zstd/compress.c     | 1 +
+>>  lib/zstd/decompress.c   | 5 ++++-
+>>  lib/zstd/huf_compress.c | 2 ++
+>>  4 files changed, 12 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/lib/zstd/bitstream.h b/lib/zstd/bitstream.h
+>> index a826b99e1d63..3a49784d5c61 100644
+>> --- a/lib/zstd/bitstream.h
+>> +++ b/lib/zstd/bitstream.h
+>> @@ -259,10 +259,15 @@ ZSTD_STATIC size_t BIT_initDStream(BIT_DStream_t *bitD, const void *srcBuffer, s
+>>                 bitD->bitContainer = *(const BYTE *)(bitD->start);
+>>                 switch (srcSize) {
+>>                 case 7: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[6]) << (sizeof(bitD->bitContainer) * 8 - 16);
+>> +                       /* fall through */
+>>                 case 6: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[5]) << (sizeof(bitD->bitContainer) * 8 - 24);
+>> +                       /* fall through */
+>>                 case 5: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[4]) << (sizeof(bitD->bitContainer) * 8 - 32);
+>> +                       /* fall through */
+>>                 case 4: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[3]) << 24;
+>> +                       /* fall through */
+>>                 case 3: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[2]) << 16;
+>> +                       /* fall through */
+>>                 case 2: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[1]) << 8;
+>>                 default:;
+>>                 }
+>> diff --git a/lib/zstd/compress.c b/lib/zstd/compress.c
+>> index f9166cf4f7a9..5e0b67003e55 100644
+>> --- a/lib/zstd/compress.c
+>> +++ b/lib/zstd/compress.c
+>> @@ -3182,6 +3182,7 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream *zcs, void *dst, size_t *
+>>                                 zcs->outBuffFlushedSize = 0;
+>>                                 zcs->stage = zcss_flush; /* pass-through to flush stage */
+>>                         }
+>> +                       /* fall through */
+> 
+> Perhaps reword the existing comment and move it down?
+> 
+>>
+>>                 case zcss_flush: {
+>>                         size_t const toFlush = zcs->outBuffContentSize - zcs->outBuffFlushedSize;
+>> diff --git a/lib/zstd/decompress.c b/lib/zstd/decompress.c
+>> index b17846725ca0..269ee9a796c1 100644
+>> --- a/lib/zstd/decompress.c
+>> +++ b/lib/zstd/decompress.c
+>> @@ -1768,6 +1768,7 @@ size_t ZSTD_decompressContinue(ZSTD_DCtx *dctx, void *dst, size_t dstCapacity, c
+>>                         return 0;
+>>                 }
+>>                 dctx->expected = 0; /* not necessary to copy more */
+>> +               /* fall through */
+>>
+>>         case ZSTDds_decodeFrameHeader:
+>>                 memcpy(dctx->headerBuffer + ZSTD_frameHeaderSize_prefix, src, dctx->expected);
+>> @@ -2375,7 +2376,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZSTD_outBuffer *output, ZSTD_inB
+>>                         }
+>>                         zds->stage = zdss_read;
+>>                 }
+>> -               /* pass-through */
+>> +               /* fall through */
+>>
+>>                 case zdss_read: {
+>>                         size_t const neededInSize = ZSTD_nextSrcSizeToDecompress(zds->dctx);
+>> @@ -2404,6 +2405,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZSTD_outBuffer *output, ZSTD_inB
+>>                         zds->stage = zdss_load;
+>>                         /* pass-through */
+>>                 }
+>> +               /* fall through */
+> 
+> Same ("pass-through" exists a couple lines up)
+> 
+>>
+>>                 case zdss_load: {
+>>                         size_t const neededInSize = ZSTD_nextSrcSizeToDecompress(zds->dctx);
+>> @@ -2436,6 +2438,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZSTD_outBuffer *output, ZSTD_inB
+>>                                 /* pass-through */
+>>                         }
+>>                 }
+>> +               /* fall through */
+> 
+> Same
 
-struct dma_sg_table *sgl_dma_map_pci_bar(struct pci_device *from,
-                                         struct device *to,
-                                         unsigned long bar_ptr,
-                                         size_t length)
+Yeah. The thing is that the pass-though comment is embedded in two nested blocks of code. And GCC triggers
+a warning if the fall-through comments are not placed at the very bottom of the case statement (some people
+dislike this 'feature').
 
-And then it falls down the same DMA-SGL-only kind of flow that would
-exist to support the user side. ie it is the kernel version of the API
-I described below.
+That's the reason why I didn't want to change any of the pass-through comments, and instead added the
+fall-through comments at the bottom of every case.
 
-> For GUP to do a special VMA traversal it would now need to return
-> something besides struct pages which means no SGL and it means a
-> completely different DMA mapping call.
+What do you think about this 'feature'?
 
-GUP cannot support BAR memory because it must only return CPU memory -
-I think too many callers make this assumption for it to be possible to
-change it.. (see below)
+> 
+>>
+>>                 case zdss_flush: {
+>>                         size_t const toFlushSize = zds->outEnd - zds->outStart;
+>> diff --git a/lib/zstd/huf_compress.c b/lib/zstd/huf_compress.c
+>> index 40055a7016e6..e727812d12aa 100644
+>> --- a/lib/zstd/huf_compress.c
+>> +++ b/lib/zstd/huf_compress.c
+>> @@ -556,7 +556,9 @@ size_t HUF_compress1X_usingCTable(void *dst, size_t dstSize, const void *src, si
+>>         n = srcSize & ~3; /* join to mod 4 */
+>>         switch (srcSize & 3) {
+>>         case 3: HUF_encodeSymbol(&bitC, ip[n + 2], CTable); HUF_FLUSHBITS_2(&bitC);
+>> +               /* fall through */
+>>         case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bitC);
+>> +               /* fall through */
+>>         case 1: HUF_encodeSymbol(&bitC, ip[n + 0], CTable); HUF_FLUSHBITS(&bitC);
+>>         case 0:
+>>         default:;
+>> --
+>> 2.20.1
+>>
+> 
+> Otherwise, yup, looks good.
+> 
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
 
-A new-GUP can return DMA addresses - so it doesn't have this problem.
+Thanks
 
-> > Would you feel better if this also came along with a:
-> >=20
-> >   struct dma_sg_table *sgl_dma_map_user(struct device *dma_device,=20
-> >              void __user *prt, size_t len)
->=20
-> That seems like a nice API. But certainly the implementation would need
-> to use existing dma_map or pci_p2pdma_map calls, or whatever as part of
-> it...
-
-I wonder how Jerome worked the translation, I haven't looked yet..
-
-> We actually stopped caring about the __iomem problem. We are working
-> under the assumption that pages returned by devm_memremap_pages() can be
-> accessed as normal RAM and does not need the __iomem designation.
-
-As far as CPU mapped uncached BAR memory goes, this is broadly not
-true.
-
-s390x for instance requires dedicated CPU instructions to access BAR
-memory.
-
-x86 will fault if you attempt to use a SSE algorithm on uncached BAR
-memory. The kernel has many SSE accelerated algorithsm so you can
-never pass these special p2p SGL's through to them either. (think
-parity or encryption transformations through the block stack)
-
-Many platforms have limitations on alignment and access size for BAR
-memory - you can't just blindly call memcpy and expect it to work.
-(TPM is actually struggling with this now, confusingly different
-versions of memcpy are giving different results on some x86 io memory)
-
-Other platforms might fault or corrupt if an unaligned access is
-attempted to BAR memory.
-
-In short - I don't see a way to avoid knowing about __iomem in the
-sgl. There are too many real use cases that require this knowledge,
-and too many places that touch the SGL pages with the CPU.
-
-I think we must have 'DMA only' SGLs and code paths that are known
-DMA-only clean to make it work properly with BAR memory.
-
-Jason
+--
+Gustavo
