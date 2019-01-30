@@ -2,127 +2,182 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CCA0C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB04C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA73C218AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:59:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgZnM72Z"
+	by mail.kernel.org (Postfix) with ESMTP id 98A0A2184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:59:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730255AbfA3J7K (ORCPT
+        id S1730516AbfA3J7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:59:10 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41500 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726406AbfA3J7J (ORCPT
+        Wed, 30 Jan 2019 04:59:17 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:42769 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbfA3J7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:59:09 -0500
-Received: by mail-lj1-f195.google.com with SMTP id k15-v6so20140300ljc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:59:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fO9lml+l22jOIyAkjdHX9mgdNk63cVEuzFUCTmyVOGY=;
-        b=FgZnM72ZgZjEW0ORM0btMd9MaPOSZrwy4G9BeQws0rUHuJHemFIVbE0ZCoZpaoosFw
-         N3PdCNT6kXYw8DLArD26ROZeZzX8+8jjnLe36XfsiwPdVYaU43zXcTbDoeiwCN+mqekZ
-         zsoH+T/bie3kWtmE8bXeQ2qFizuDognaAGSBbIlF5jIr4yvCiyJNi5O0iEa6OXD864pj
-         BpkiZ0YjlrSKJQbkgDtZBfRpE+Ti0E2FKogNXGRbdJ+XauSFmM8wamMDzXg6IiWxAQg2
-         S+Sq6rxtBEO6tnO7W5lo0N1bX0uEQxNNNyjyTB1Ey2rgMaID4CY2GUA+/xaXoy8YJvrH
-         vAxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fO9lml+l22jOIyAkjdHX9mgdNk63cVEuzFUCTmyVOGY=;
-        b=YzVujh0A0GDdbMxinmrhiEFW+ers5FHx2Jdmmz4G6Xszg57VwspP1rgtlFo0R73BsA
-         ibULt2AVjea60+ohd06yhsBLjFnUSLP2CwJJNy+mJPIeCyTVHoUtDu5arHWKahgyxvM7
-         x3L4RttwvWHAuHf6otKMjl7G/M11f95ou0IpWdCGZCz19To/j73eChHKN68D8gXSuTpS
-         rheX4O7rT7DDDUOvivL50AEuCIXGdpNENU4LN/HNMEE+Nmq/yNwY7MO8OwaO7OGY3Pg3
-         RuMJqAWxfNOsg579y0m8YinuaaKEd5dF53cSyUpNZqV/JVuE42xNMkV1r47hM8Tqanb0
-         YDQg==
-X-Gm-Message-State: AJcUukcC01+skE0l8xPzbpYLT3sFkO4vSSE3AN14cKVc4zKZ9UKQsYbS
-        xtnq6tF9WCNjdN1cPRAT9G8wnCWG40onViPHKXw=
-X-Google-Smtp-Source: ALg8bN7/li39XaGpJQ6EMr2lSSqiHUCbw+mdn4YxxMLFOWbC7mmMJ4AR7eu7vhwFRP/Adj9lqWbSZT1zXyytNWz3m6c=
-X-Received: by 2002:a2e:5854:: with SMTP id x20-v6mr23772381ljd.31.1548842347483;
- Wed, 30 Jan 2019 01:59:07 -0800 (PST)
+        Wed, 30 Jan 2019 04:59:17 -0500
+X-Originating-IP: 90.88.147.226
+Received: from localhost (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id B8E951BF20A;
+        Wed, 30 Jan 2019 09:59:12 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 10:59:12 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-sunxi <linux-sunxi@googlegroups.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Emmanuel Vadot <manu@freebsd.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Sergey Matyukevich <geomatsi@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 10/10] arm64: dts: allwinner: h5: Add CPU Operating
+ Performance Points table
+Message-ID: <20190130095912.yq6anxqnczi6btpv@flea>
+References: <20190130084203.25053-1-wens@csie.org>
+ <20190130084203.25053-11-wens@csie.org>
+ <20190130092927.x65ihy3je5n6324w@flea>
+ <CAGb2v64ZFZty-jeeKmPU8Ecg+rAE6zEm65tedb_ZZTTSXMEPOA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190111150834.GA2744@jordon-HP-15-Notebook-PC> <CAFqt6zYLDrC7CtLawWUAQPyB_M+5H8BikDR6LOm+v0qaq1GvZw@mail.gmail.com>
-In-Reply-To: <CAFqt6zYLDrC7CtLawWUAQPyB_M+5H8BikDR6LOm+v0qaq1GvZw@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Wed, 30 Jan 2019 15:28:55 +0530
-Message-ID: <CAFqt6zY4YgsCUPFqR2yYegjqtHJ_aeE1Ao6p=fE92s2__3XTsA@mail.gmail.com>
-Subject: Re: [PATCH 3/9] drivers/firewire/core-iso.c: Convert to use vm_insert_range_buggy
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, stefanr@s5r6.in-berlin.de,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com
-Cc:     linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wfmp6bpod2cyevow"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v64ZFZty-jeeKmPU8Ecg+rAE6zEm65tedb_ZZTTSXMEPOA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 11:55 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> On Fri, Jan 11, 2019 at 8:34 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >
-> > Convert to use vm_insert_range_buggy to map range of kernel memory
-> > to user vma.
-> >
-> > This driver has ignored vm_pgoff and mapped the entire pages. We
-> > could later "fix" these drivers to behave according to the normal
-> > vm_pgoff offsetting simply by removing the _buggy suffix on the
-> > function name and if that causes regressions, it gives us an easy
-> > way to revert.
-> >
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->
-> Any comment on this patch ?
 
-Any comment on this patch ?
+--wfmp6bpod2cyevow
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> > ---
-> >  drivers/firewire/core-iso.c | 15 ++-------------
-> >  1 file changed, 2 insertions(+), 13 deletions(-)
+On Wed, Jan 30, 2019 at 05:41:16PM +0800, Chen-Yu Tsai wrote:
+> On Wed, Jan 30, 2019 at 5:29 PM Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
 > >
-> > diff --git a/drivers/firewire/core-iso.c b/drivers/firewire/core-iso.c
-> > index 35e784c..99a6582 100644
-> > --- a/drivers/firewire/core-iso.c
-> > +++ b/drivers/firewire/core-iso.c
-> > @@ -107,19 +107,8 @@ int fw_iso_buffer_init(struct fw_iso_buffer *buffer, struct fw_card *card,
-> >  int fw_iso_buffer_map_vma(struct fw_iso_buffer *buffer,
-> >                           struct vm_area_struct *vma)
-> >  {
-> > -       unsigned long uaddr;
-> > -       int i, err;
-> > -
-> > -       uaddr = vma->vm_start;
-> > -       for (i = 0; i < buffer->page_count; i++) {
-> > -               err = vm_insert_page(vma, uaddr, buffer->pages[i]);
-> > -               if (err)
-> > -                       return err;
-> > -
-> > -               uaddr += PAGE_SIZE;
-> > -       }
-> > -
-> > -       return 0;
-> > +       return vm_insert_range_buggy(vma, buffer->pages,
-> > +                                       buffer->page_count);
-> >  }
+> > On Wed, Jan 30, 2019 at 04:42:03PM +0800, Chen-Yu Tsai wrote:
+> > >                       enable-method =3D "psci";
+> > >                       clocks =3D <&ccu CLK_CPUX>;
+> > >                       clock-latency-ns =3D <244144>; /* 8 32k periods=
+ */
+> > > +                     operating-points-v2 =3D <&cpu_opp_table>;
+> > > +                     #cooling-cells =3D <2>;
+> > > +             };
+> > > +     };
+> > > +
+> > > +     cpu_opp_table: opp_table {
+> > > +             compatible =3D "operating-points-v2";
+> > > +             opp-shared;
+> > > +
+> > > +             opp@408000000 {
+> > > +                     opp-hz =3D /bits/ 64 <408000000>;
+> > > +                     opp-microvolt =3D <1000000 1000000 1310000>;
+> > > +                     clock-latency-ns =3D <244144>; /* 8 32k periods=
+ */
+> > > +             };
+> > > +
+> > > +             opp@648000000 {
+> > > +                     opp-hz =3D /bits/ 64 <648000000>;
+> > > +                     opp-microvolt =3D <1040000 1040000 1310000>;
+> > > +                     clock-latency-ns =3D <244144>; /* 8 32k periods=
+ */
+> > > +             };
+> > > +
+> > > +             opp@816000000 {
+> > > +                     opp-hz =3D /bits/ 64 <816000000>;
+> > > +                     opp-microvolt =3D <1080000 1080000 1310000>;
+> > > +                     clock-latency-ns =3D <244144>; /* 8 32k periods=
+ */
+> > > +             };
+> > > +
+> > > +             opp@912000000 {
+> > > +                     opp-hz =3D /bits/ 64 <912000000>;
+> > > +                     opp-microvolt =3D <1120000 1120000 1310000>;
+> > > +                     clock-latency-ns =3D <244144>; /* 8 32k periods=
+ */
+> > > +             };
+> > > +
+> > > +             opp@960000000 {
+> > > +                     opp-hz =3D /bits/ 64 <960000000>;
+> > > +                     opp-microvolt =3D <1160000 1160000 1310000>;
+> > > +                     clock-latency-ns =3D <244144>; /* 8 32k periods=
+ */
+> > > +             };
+> > > +
+> > > +             opp@1008000000 {
+> > > +                     opp-hz =3D /bits/ 64 <1008000000>;
+> > > +                     opp-microvolt =3D <1200000 1200000 1310000>;
+> > > +                     clock-latency-ns =3D <244144>; /* 8 32k periods=
+ */
+> > > +             };
+> > > +
+> > > +             opp@1056000000 {
+> > > +                     opp-hz =3D /bits/ 64 <1056000000>;
+> > > +                     opp-microvolt =3D <1240000 1240000 1310000>;
+> > > +                     clock-latency-ns =3D <244144>; /* 8 32k periods=
+ */
+> > > +             };
+> > > +
+> > > +             opp@1104000000 {
+> > > +                     opp-hz =3D /bits/ 64 <1104000000>;
+> > > +                     opp-microvolt =3D <1260000 1260000 1310000>;
+> > > +                     clock-latency-ns =3D <244144>; /* 8 32k periods=
+ */
+> > > +             };
+> > > +
+> > > +             opp@1152000000 {
+> > > +                     opp-hz =3D /bits/ 64 <1152000000>;
+> > > +                     opp-microvolt =3D <1300000 1300000 1310000>;
+> > > +                     clock-latency-ns =3D <244144>; /* 8 32k periods=
+ */
 > >
-> >  void fw_iso_buffer_destroy(struct fw_iso_buffer *buffer,
-> > --
-> > 1.9.1
-> >
+> > What is the frequency and voltage that U-Boot sets up?
+>=20
+> 1008 MHz, and whatever voltage the board design defaults to (typically
+> the higher setting).
+>=20
+> > We've had the issue with the A33 that it's started at 1008MHz, with
+> > the matching voltage, and ramping up the frequency to 1.2GHz on boards
+> > without PMIC support would increase the frequency but not the voltage,
+> > resulting in a brownout.
+>=20
+> Which is why I added the regulator to all boards before this patch. At
+> least for Linux, once the regulator supply is described in the device
+> tree, if the driver is missing, regulator_get_* and thus cpufreq should
+> fail with -EPROBE_DEFER.
+>=20
+> Or we could drop the extra OPPs.
+
+Ok, if you covered all of them then fine by me. For the whole series,
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--wfmp6bpod2cyevow
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFF1bwAKCRDj7w1vZxhR
+xbZhAP46JffbKB3rQtH3OZZp/Q8KDlrR+H9ZICzLbzMMU9z0rwEA15eZqCKQVZgW
+jF6e24cIZ8zqdNsUMVB8SlklJRRa7wo=
+=/pAR
+-----END PGP SIGNATURE-----
+
+--wfmp6bpod2cyevow--
