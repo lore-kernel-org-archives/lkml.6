@@ -2,91 +2,83 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88955C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B941C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FB9321473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:52:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548863520;
-	bh=ZhhlYqwvLh9toud0CIF64YLwTruget2QIq7kzw0Xoh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XBD0U3ys4Pca6vjOZQjf8sFeY3TRKfwi9v0bnFiXtyLFbYaKJivFCuZaI572OXELI
-	 wHZhKUnZzBWNes42vl3JJUYnIDj6zUytiKfMrStdT77nT9YsIRRcpFDNIJyviFVOHZ
-	 vqN8okOKKA6861tCmkXkG/mlfezNaBUg+TuJTH20=
+	by mail.kernel.org (Postfix) with ESMTP id 07D40218A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:52:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="M4++wIso"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731579AbfA3Pv7 (ORCPT
+        id S1731518AbfA3Pwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:51:59 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43858 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbfA3Pv6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:51:58 -0500
-Received: by mail-ot1-f65.google.com with SMTP id a11so21478582otr.10;
-        Wed, 30 Jan 2019 07:51:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tDG0s+kaRFhXQDSossJsUVaZPHCqOg9/B1OVXT7MWPQ=;
-        b=MOH2wKwJTV+o6TBqHeAH30eeOgbEl9yonCOk1DTaEIrugK9LGx5rKZ9uw3h0zl7UnK
-         RIg050UFbGxpgk6X2ONFgBHxzn8sZK3exctie+4qhgNNw/ipF7A7oHuAgSx2yT/927i9
-         uyTLlFkIruc98VZ7O+KzO+8bORWHb8dR5UGdD1v9/8ZlJ9RbmmdFoOaA/6JQ/XF7oNSk
-         cN/YBEgUXuOg0zUEFOAwiN0hHNklLnYQA8wwzGoH7SgQpAfKfDEL164NKzS/wTVsG67M
-         SAF1Q9K5nKjmSbrDujIQP+ZnMLJvjtUwSsZJJOVoSU2vZHR2H3mR3zbKqqB4HhU+fnEO
-         FEKQ==
-X-Gm-Message-State: AJcUukehFw05jX3fQGqBhgZwcUTzU1Q6IipFEmy+tglbkS+vTuoc1/Ne
-        TuszEEMvNcnHyEPWL6HE7w==
-X-Google-Smtp-Source: ALg8bN5JJSb/d1Q125YIh3Kk1fY2HVw6r+pOO50dRa6r7FNdKv9cj+l8uOUQmYxhQ9YqZD8nSIJ9mg==
-X-Received: by 2002:a9d:18f:: with SMTP id e15mr23999437ote.84.1548863517715;
-        Wed, 30 Jan 2019 07:51:57 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q26sm652009otf.73.2019.01.30.07.51.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 07:51:57 -0800 (PST)
-Date:   Wed, 30 Jan 2019 09:51:56 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com,
-        chunyan.zhang@unisoc.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, adrian.hunter@intel.com,
-        ulf.hansson@linaro.org, anrao@nvidia.com,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V11 1/4] dt-bindings: mmc: Add supports-cqe property
-Message-ID: <20190130155156.GA31692@bogus>
-References: <1548271854-1765-1-git-send-email-skomatineni@nvidia.com>
+        Wed, 30 Jan 2019 10:52:31 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:60940 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725808AbfA3Pwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 10:52:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=aWHq6t0m0kVjw1eL0/I/a69qtHvKLb7OFVkH95zAux8=; b=M4++wIso5RHeCcbQERqo0HOSlB
+        Ddi1a16ct3fu+8n/IB6dmu15U3sFyfUfj+c2VjleXd8pfbrm0Xdn28OQBlYPKp9CXwdtBhKu1QXC1
+        9s99NZcgDvlgEuh9jdXeR4aYoWA9O7tB6RrVBtTMx7CDx7pqEhiOXWU2fa6hJ/HOAg2I=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gosA7-0004BP-1E; Wed, 30 Jan 2019 16:52:27 +0100
+Date:   Wed, 30 Jan 2019 16:52:27 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Emeric Dupont <emeric.dupont@zii.aero>
+Subject: Re: [PATCH v3] mfd: tqmx86: IO controller with i2c, wachdog and gpio
+Message-ID: <20190130155227.GC15050@lunn.ch>
+References: <1547250965-17668-1-git-send-email-andrew@lunn.ch>
+ <20190129113532.GB24070@dell>
+ <20190129205652.GF13334@lunn.ch>
+ <20190130125007.GA4701@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548271854-1765-1-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190130125007.GA4701@dell>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Jan 2019 11:30:51 -0800, Sowjanya Komatineni wrote:
-> Add supports-cqe optional property for MMC hosts.
+> > Hi Lee
+> > 
+> > I posted a new version.
+> > 
+> > Your email indicates you are using Mutt:
+> > 
+> > >User-Agent: Mutt/1.9.4 (2018-02-28)
+> > 
+> > Which is also what i use. I've never had issues with signatures like
+> > this. I also cannot find any documentation as to how you configure
+> > mutt remove signatures. How are you doing it?
 > 
-> This property is used to identify the specific host controller
-> supporting command queue.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
-> ---
->  [V11]: Same as V10
->  [V10]: This patch version moves supports-cqe property from vendor
-> 	specific MMC property to common MMC property.
-> 
->  Documentation/devicetree/bindings/mmc/mmc.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+> I think it's automatic.  I certainly didn't set that up.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Interesting. My mutt installation does not do this. I trim emails
+manually to be netiquette compliant.
+
+> Try replying to your own mail.  I should automatically cut.
+
+Replying to my patch works fine. It does not cut the patch.
+
+This is a bug somewhere, since the marker i used is not a signature
+marker. It did not have the space on the end.
+
+Anyway, getting the patch reviewed is more important to me than
+tracing down the bug...
+
+	 Andrew
