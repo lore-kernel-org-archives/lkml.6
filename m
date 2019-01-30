@@ -2,93 +2,107 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF518C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDEAC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8762A218AC
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548876833;
-	bh=BPlEQH+U/bnY6PnlU3AcTWtT2I3p4HH7404MougbRnw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CRAmBWfg9PLxnCKu6QaKWS6qwbfwvMHzy8++I6uHYOI/tR6W3/3e/gboL3Bj/qQjE
-	 C/DfdIlC8lRpaN5e8kRMke5aoTamcst4/DOgk1bxXs4NkcXzKkCn9CZADauLcvf573
-	 9ygdhNRuZCVYR+cLbVrsFf7Qp+25xYmHwU2ph00w=
+	by mail.kernel.org (Postfix) with ESMTP id F14CC218DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:35:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HYB+Xu+l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387673AbfA3Tdw (ORCPT
+        id S2387684AbfA3TfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:33:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727114AbfA3Tdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:33:51 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6E69218A4;
-        Wed, 30 Jan 2019 19:33:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548876831;
-        bh=BPlEQH+U/bnY6PnlU3AcTWtT2I3p4HH7404MougbRnw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cz1sufCOo0cnVukVf7WWGKhlH3dH+4drmdLKXF/bBrh59twqGNpwVmAZEGf4UNcnG
-         x69OuPi708GaUqq/40s5MneEtmPeok2Ta2UBmVxx2ITQDqIY5EVU7zxFcIMfTUXfKJ
-         yAoIY0sI6RgbHkEY2kCQNyokz9iNaGE+gX7qEc50=
-Date:   Wed, 30 Jan 2019 20:33:48 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Wed, 30 Jan 2019 14:35:20 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41606 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbfA3TfT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:35:19 -0500
+Received: by mail-oi1-f196.google.com with SMTP id j21so629347oii.8
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:35:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Yshu7Nu72+Dtk8rXL7JZUEueFPkhXdQ3uQBa9T7+FI8=;
+        b=HYB+Xu+lqUkubBO9J+MbB83KhACX2c6ZCtNkmClbu5N4zCrW3Mu7YVFuwbEeXs1hcy
+         BVAJNOjpO1VF6DXo4DlaRzWieNFvTz7eWJJgXe6dzEgcPnWrVQzMeLzqSn277CHoSS6D
+         upGbxRbGy4ngHeuqNHJ6MdF+hWfabsm3ChRunH+F2aZVfnlAD23XMHxWfNGcUQQvRciP
+         0PjrelBuZgpe/j4jIdecT7oL6cgtu088WSjJRWbkglD7wRM7TUipK9ZCwF6AVXOw/yCT
+         sO/pp7u3Qkz43e0yV4hlOCmre9lifyq5FrP8NYiwpJWk/uGDtUXMpF8hUd2y0bklWom2
+         psJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Yshu7Nu72+Dtk8rXL7JZUEueFPkhXdQ3uQBa9T7+FI8=;
+        b=oMpcqF5rJ3rzMk85dJZaNe2ZqevIR+ESsN9//1g6cKpqH8VvknsQFaloPCLNpYQ60D
+         RJKF8wvKZkSs4wNPeYUV3XUNSXpS4Ua0ZfLaMu6CMmQgfRMGSTE+Iwv2tpthi/TSMO7f
+         p+L5+XFSQ9i9DdyKf5CuD2dIDyVDdEP87ZODPdNMvIrU/nM/d+smaYmknl7Wn3gGGD7h
+         jaegqqdzIrMtFQN/osij92TiZziFnwI1YuFWtzOc0IUir+rsaH2qo2KjSrpRGXrd+cJr
+         qJD+8Eq2ic7g57yXjbJ6g8ssXpW0tUq6CzuYpDrbUhXDWaVRKh+I29jDfxLDRgRYkZG+
+         KDew==
+X-Gm-Message-State: AJcUukfqqhsP80/iy30FgfRaaGyyQ+8sdZab/w4Nk8P+HxtIrUHh7p/y
+        mM8p17f8PYUM8KMchP0klES2qR7vKlqqfHCLpCidZQ==
+X-Google-Smtp-Source: ALg8bN6hGKJnwAHsVa0igPx6WrWGeK6tM0dXYVfZJXpbjOb3IwGwK4BPXPa9qEXCDMEobRiXHFXi75Ss6vjpxle5Wd0=
+X-Received: by 2002:aca:c413:: with SMTP id u19mr12681145oif.209.1548876918558;
+ Wed, 30 Jan 2019 11:35:18 -0800 (PST)
+MIME-Version: 1.0
+References: <CAG48ez0QRmU9fGV3x7nceGqBGADNTb66MnG4PW_xu+xnGUqg=g@mail.gmail.com>
+ <20190130182157.GP18558@fuggles.cambridge.arm.com>
+In-Reply-To: <20190130182157.GP18558@fuggles.cambridge.arm.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 30 Jan 2019 20:34:52 +0100
+Message-ID: <CAG48ez2FMfyagDedETV54sFEit_mJy00iqBFsNngyeT=g=a4PA@mail.gmail.com>
+Subject: Re: ARM64 suggestion: reduce the compat address limit (currently 0x100000000)?
 To:     Will Deacon <will.deacon@arm.com>
 Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Peng Donglin <dolinux.peng@gmail.com>
-Subject: Re: [PATCH 1/4] arm64: dump: no need to check return value of
- debugfs_create functions
-Message-ID: <20190130193348.GC20667@kroah.com>
-References: <20190122144114.9816-1-gregkh@linuxfoundation.org>
- <20190122144114.9816-2-gregkh@linuxfoundation.org>
- <20190130182102.GK18558@fuggles.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190130182102.GK18558@fuggles.cambridge.arm.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        linux-arm-kernel@lists.infradead.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 06:21:02PM +0000, Will Deacon wrote:
-> Hi Greg,
-> 
-> On Tue, Jan 22, 2019 at 03:41:11PM +0100, Greg Kroah-Hartman wrote:
-> > When calling debugfs functions, there is no need to ever check the
-> > return value.  The function can work or not, but the code logic should
-> > never do something different based on this.
-> > 
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: Marc Zyngier <marc.zyngier@arm.com>
-> > Cc: Peng Donglin <dolinux.peng@gmail.com>
-> > Cc: <linux-arm-kernel@lists.infradead.org>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >  arch/arm64/include/asm/ptdump.h | 9 +++------
-> >  arch/arm64/mm/dump.c            | 4 ++--
-> >  arch/arm64/mm/ptdump_debugfs.c  | 7 ++-----
-> >  3 files changed, 7 insertions(+), 13 deletions(-)
-> 
-> Are you taking this via your tree, or would you like us to queue it in
-> arm64?
+On Wed, Jan 30, 2019 at 7:22 PM Will Deacon <will.deacon@arm.com> wrote:
+> On Wed, Jan 30, 2019 at 05:32:00PM +0100, Jann Horn wrote:
+> > At the moment, compat tasks running on ARM64 can allocate memory up to
+> > 0x100000000 (TASK_SIZE_32). Testing on an Android device (with an
+> > admittedly somewhat old kernel):
+>
+> [...]
+>
+> > ffff1000-100000000 rw-p 00000000 00:00 0
+> >
+> > This means that mmap() allocations do not adhere to section 6.5.8 of
+> > C99 ("If the
+> > expression P points to an element of an array object and the
+> > expression Q points to the
+> > last element of the same array object, the pointer expression Q+1
+> > compares greater than
+> > P.") if you treat mmap() allocations as returning an array.
+>
+> Oh, good point.
+>
+> > In practice, I've also seen code that does things like computing a
+> > pointer that is out of bounds by a few bytes and then comparing it
+> > against the end of the array; while this is UB according to C99, it
+> > probably makes sense to try to avoid breaking such code.
+>
+> Agreed, and since the current behaviour isn't something you can portably
+> rely on anyway, I think we're ok to change it.
+>
+> > X86-64's compat code uses the limit 0xFFFFe000 (IA32_PAGE_OFFSET),
+> > which I think makes more sense. Would it make sense to do something
+> > like the following (untested)?
+>
+> Can't we just go with 0x100000000 - PAGE_SIZE instead?
 
-What ever is easiest for you is fine with me, I can handle it either
-way, just let me know.
-
-thanks,
-
-greg k-h
+Ah, yeah, sounds good. I think x86 probably only chose 0xFFFFe000 to
+keep user allocations out of the way for the 32-bit vsyscall page.
