@@ -2,122 +2,137 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D73C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB23C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 162D42184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:37:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 143FC2184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:38:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hEKKgLcC"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="gyS4DX77"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387700AbfA3Thz (ORCPT
+        id S2387725AbfA3TiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:37:55 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:39956 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387654AbfA3Thy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:37:54 -0500
-Received: by mail-yb1-f194.google.com with SMTP id y13so301379ybr.7
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:37:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ynztbY1mL0CpFlAEvrgll//q6zMLgn4eN+pIRdt4AAk=;
-        b=hEKKgLcCzb2TF8FQN9P2G70rLcqxOf+LMks/+bF+A75PISRGD8IJ9dC5LM2uk05Xwq
-         55VsBJhulcECv3kpovgOaIni5zJcPfJUS59855DCJ7ExDIP5ewLYj3ZjEVsiCG6PTEPM
-         Zqiv5d0Kub8BDoQ50wztXVuUhutgHbqGzcZzom1m9me6gBYX7Vl5RrUWDnYxTiznNLZs
-         gSZPPN52kSVg6gWY1zJ5H1OUEUDHNjAOiFC+pL2T/p3giL4aVbqLAjXkrufL5hGaOC6Z
-         tlCSEkC13nHm6KoldXcMhad4Ey3Nrts77/IJMgMhS0kiTkyCLuCCX209hI2fh1TRz8xD
-         uO7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ynztbY1mL0CpFlAEvrgll//q6zMLgn4eN+pIRdt4AAk=;
-        b=Wtf89BX/eyX7ykexIZ3Au3Kcn4Vou38Coa5MqOdWM3OYQkH6N+9lR1B3LXpILKD48v
-         7cl6MzHz7Z90ubsePGCf4TkohVMF/9Zr50pvvdu/gQpAYof+uCyons/YSbFFBkQKn70K
-         48OVOiGeVN+XD/BW4zDJYSMVBijHiZO1ysmDkyy2G/36/ZVfiUawjR8fFpfqPu8kjyHJ
-         oQZU+Uuw+U+oA+S7jM3Ye6/RDUx3AIMExkXXWuEPeS8zqfNLQsUU9HPksobrYNvBZxeG
-         xXeIPTOsYEM3KEkH2bq6+z3KQ30Ws//GSflxoUMgjGgSEapCdPvz1pr03MBRNW5liZBy
-         x8EQ==
-X-Gm-Message-State: AJcUukfzWhBXSimmUV4d8kWRU4RsHp0qJO9q3bqQ/s3Le3Yco+vg9WbG
-        6IinGw8T49B7QPyZ5DhKx2Zkn2jCDkvYTKR09XHYzg==
-X-Google-Smtp-Source: ALg8bN4m6DdZb64I2TwM1WAOhkdzCmwIj2WgVfJC+FcPK4G0gACjv2e4CSsynpbc+jp0qKmatItJpljIxuFrLjpZ2A4=
-X-Received: by 2002:a25:6f8b:: with SMTP id k133mr29688224ybc.496.1548877073376;
- Wed, 30 Jan 2019 11:37:53 -0800 (PST)
+        Wed, 30 Jan 2019 14:38:10 -0500
+Received: from mail-eopbgr00055.outbound.protection.outlook.com ([40.107.0.55]:33920
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387587AbfA3TiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:38:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sHIT1DeIPKnCvYcUeyhE0EtGWZMDqKh59X54jLmVJUU=;
+ b=gyS4DX77O7CddFILxhwoDmTZHPNRUFeeiwygODXQ0HaKzhbKCXpHHl8n0EcfDF9zK15x6QwUucqkfU2oD9e4kujECqXol0rc6g+EIbWmTHlmgaifpfAtyEvzvL+c4pp7hLsRTiXZpPFME9ma34+74znidtJ0u9JCPW8OS9qTZTs=
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
+ DBBPR05MB6443.eurprd05.prod.outlook.com (20.179.42.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.16; Wed, 30 Jan 2019 19:38:05 +0000
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
+ 19:38:05 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+CC:     Logan Gunthorpe <logang@deltatee.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAANmWgIAAG8YAgAAHLwCAAAROgA==
+Date:   Wed, 30 Jan 2019 19:38:05 +0000
+Message-ID: <20190130193759.GE17080@mellanox.com>
+References: <20190129205749.GN3176@redhat.com>
+ <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
+ <20190129215028.GQ3176@redhat.com>
+ <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
+ <20190129234752.GR3176@redhat.com>
+ <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
+ <20190130041841.GB30598@mellanox.com>
+ <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
+ <20190130185652.GB17080@mellanox.com> <20190130192234.GD5061@redhat.com>
+In-Reply-To: <20190130192234.GD5061@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR04CA0147.namprd04.prod.outlook.com (2603:10b6:104::25)
+ To DBBPR05MB6426.eurprd05.prod.outlook.com (2603:10a6:10:c9::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DBBPR05MB6443;6:8BjT0lPRGd/Bloy3I7se0owRa2eHox+OA3DG0HZqboKrfnk+nhBaZgiAHtWmWQTZgDJvfa3pAvYGLv0k97LV94I1xVio2b+Bbj827mAclCL+6ObT7pUrwx1nbTfJMVUVnHxP081fXmVZHLWUZGHVXRRdJ+HpMFRLYDHmV5l+QD/J4xdp/tpW2Eb6zmNTY82T/Lk4yJWxY7ZNUkw8+q4HjZiQcCeO7j0C71lN90Um6hh0Stc6qifTrcS8Ma9sXgIRmuAouxIEQBW3i1fW6k+xuhgjrCctWTXqNHnyLBqZgKlVy+KUnPnLNUYcFhZMQVi6LZZXXJ8/r+ZnfbGCZgprhmf+sW16CYz3Ve7lL/6YIAsGAEkAtbjd5REqEbYqPWyEehUbjMPHv1aQ3mvTwscs6E+18iKGvuw/Rg2w8hUZu5/KAxdalye3k9ib52JzeoC0MNc9cVes78FAnRZRT5xXwA==;5:GWwq+9oYouQYxo57/Jdm0Nk8hjAgkLD0W1mBLEpDhyA9ndsLEZuBpoeWJfcwow/vnJqMeqWuRfSzc964rMvOdT/1h/S33j+wuDNgpyzCY/biPrdVXaZuq+BnYD/P8uq6PLTbej4FsxdacOnnUElIVAo/A85I5Wzbh8m/DnrFtXu0qqV7v5nJ+0J/7Oz9h7hAoL6ToODzs4p3awRBt8BEEw==;7:joN3VKlx4Mnz/0jEG16C0H6erp7x6hJ4HLf4DwcClPN5VBQdHgsdPtWnvR3fAeLOl+0qrlZE8WHkZk5OSCQp8R3EwBsOj5yIX5SHEzkvzO4i38mxXWaNrIPb5m4lniEmoNN0LVCbZEQon60JU+VaUQ==
+x-ms-office365-filtering-correlation-id: c97efedb-b36b-4a44-82bb-08d686ea7420
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6443;
+x-ms-traffictypediagnostic: DBBPR05MB6443:
+x-microsoft-antispam-prvs: <DBBPR05MB64432A3005A1BAD293C027D3CF900@DBBPR05MB6443.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(396003)(376002)(346002)(199004)(189003)(6436002)(53936002)(7736002)(6486002)(105586002)(76176011)(6246003)(33656002)(54906003)(81166006)(8936002)(81156014)(25786009)(316002)(8676002)(3846002)(6116002)(99286004)(6916009)(305945005)(7416002)(229853002)(4326008)(106356001)(52116002)(86362001)(66066001)(478600001)(97736004)(2906002)(26005)(386003)(14454004)(102836004)(2616005)(486006)(11346002)(476003)(446003)(186003)(6506007)(256004)(93886005)(68736007)(1076003)(71200400001)(217873002)(71190400001)(36756003)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6443;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: K2yF2AViWQZEc7ZI+pKRZyGM0T/vFd3ojbLsQvfXogDk3dndY7jjH9jsls8HSXnI52t+b5vSTqSqIq27m8soebCv+WX9wsMaVPY/o5FVX2h4NfWg0vvyoMNrwbMPBK4mMMOmErAktsps2xsXjBmL87PKV8EadBXrui+WDUPPIOf5LtLkgnJ5sx37UmqZ2GY6gXOmTWecpBWID+DqFKHqAm9NxdpC+sFkjYdX/QIqY9m8XFiJCfjJtJUZqInN+7EYwuLui6WLMVpddEvtYCRw2kaaYjcMeLkaoV/h7JBAfG+fSZ8lpRmgvK869WRwZSBLDnQ0TCLtcOrCRBZHUhXZX/Vyf9jivlrPYkIH+CrPnPphAScoYrlHQRxpFvE1vVM2UgTiz1U6vRMLM1FfFbDLKBEWInSn28alpnICZuzggFE=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D90F85F4D783CE409C5D0F40D1A5C001@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190128151859.GO18811@dhcp22.suse.cz> <20190128154150.GQ50184@devbig004.ftw2.facebook.com>
- <20190128170526.GQ18811@dhcp22.suse.cz> <20190128174905.GU50184@devbig004.ftw2.facebook.com>
- <20190129144306.GO18811@dhcp22.suse.cz> <20190129145240.GX50184@devbig004.ftw2.facebook.com>
- <20190130165058.GA18811@dhcp22.suse.cz> <20190130170658.GY50184@devbig004.ftw2.facebook.com>
- <CALvZod5ma62fRKqrAhMcuNT3GYT3FpRX+DCmeVr2nDg1u=9T8w@mail.gmail.com>
- <20190130192712.GA21279@cmpxchg.org> <20190130193026.GA21410@cmpxchg.org>
-In-Reply-To: <20190130193026.GA21410@cmpxchg.org>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 30 Jan 2019 11:37:41 -0800
-Message-ID: <CALvZod65htZmApWkv-MrAjg6V1OGBLmdyFP_030LARD7ajS3mw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Tejun Heo <tj@kernel.org>, Michal Hocko <mhocko@kernel.org>,
-        Chris Down <chris@chrisdown.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c97efedb-b36b-4a44-82bb-08d686ea7420
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 19:38:04.8240
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6443
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 11:30 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Wed, Jan 30, 2019 at 02:27:12PM -0500, Johannes Weiner wrote:
-> > On Wed, Jan 30, 2019 at 11:11:44AM -0800, Shakeel Butt wrote:
-> > > Hi Tejun,
-> > >
-> > > On Wed, Jan 30, 2019 at 9:07 AM Tejun Heo <tj@kernel.org> wrote:
-> > > >
-> > > > Hello, Michal.
-> > > >
-> > > > On Wed, Jan 30, 2019 at 05:50:58PM +0100, Michal Hocko wrote:
-> > > > > > Yeah, cgroup.events and .stat files as some of the local stats would
-> > > > > > be useful too, so if we don't flip memory.events we'll end up with sth
-> > > > > > like cgroup.events.local, memory.events.tree and memory.stats.local,
-> > > > > > which is gonna be hilarious.
-> > > > >
-> > > > > Why cannot we simply have memory.events_tree and be done with it? Sure
-> > > > > the file names are not goin to be consistent which is a minus but that
-> > > > > ship has already sailed some time ago.
-> > > >
-> > > > Because the overall cost of shitty interface will be way higher in the
-> > > > longer term.  cgroup2 interface is far from perfect but is way better
-> > > > than cgroup1 especially for the memory controller.  Why do you think
-> > > > that is?
-> > > >
-> > >
-> > > I thought you are fine with the separate interface for the hierarchical events.
-> >
-> > Every other file in cgroup2 is hierarchical, but for recursive
-> > memory.events you'd need to read memory.events_tree?
-> >
-> > Do we hate our users that much? :(
->
-> FTR, I would be okay with adding .local versions to existing files
-> where such a behavior could be useful. But that seems to be a separate
-> discussion from fixing memory.events here.
+On Wed, Jan 30, 2019 at 02:22:34PM -0500, Jerome Glisse wrote:
 
-Oh ok, the dispute is on the name of the interface. I am fine with
-whatever the decision is made as we (Google) are still not using these
-interfaces. However what's the way forward here?
+> For GPU it would not work, GPU might want to use main memory (because
+> it is running out of BAR space) it is a lot easier if the p2p_map
+> callback calls the right dma map function (for page or io) rather than
+> having to define some format that would pass down the information.
 
-thanks,
-Shakeel
+This is already sort of built into the sgl, you are supposed to use
+is_pci_p2pdma_page() and pci_p2pdma_map_sg() and somehow it is supposed
+to work out - but I think this is also fairly incomplete.
+
+ie the current APIs seem to assume the SGL is homogeneous :(
+
+> > Worry about optimizing away the struct page overhead later?
+>=20
+> Struct page do not fit well for GPU as the BAR address can be reprogram
+> to point to any page inside the device memory (think 256M BAR versus
+> 16GB device memory).
+
+The struct page only points to the BAR - it is not related to the
+actual GPU memory in any way. The struct page is just an alternative
+way to specify the physical address of the BAR page.
+
+I think this boils down to one call to setup the entire BAR, like nvme
+does, and then using the struct page in the p2p_map SGL??
+
+Jason
