@@ -2,108 +2,143 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0D8C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AFFC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C23C02087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33D972087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:16:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="azkJLUZ8"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OJbapiJn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387533AbfA3TL6 (ORCPT
+        id S2387530AbfA3TQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:11:58 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:46499 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727114AbfA3TL5 (ORCPT
+        Wed, 30 Jan 2019 14:16:04 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:36810 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbfA3TQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:11:57 -0500
-Received: by mail-yb1-f193.google.com with SMTP id 7so245810ybp.13
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:11:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=M4j223sTiX4eMGkNGmN1WWkhqrWqcQOSV+aX1N0vGfU=;
-        b=azkJLUZ8/StL/5E53v70C5unuQk4f6Ciqs5ZgN9hYqf0WgprVCpGmJfw35DSNFFigH
-         JVmOK/jHtzt8P/JqqIEwed/TX1ZFf0ud6XffSASmHI6C8ghY79KgnZYb6Isd5RNkClua
-         FQaIW69ilbPoeutkgd0gm95mrYy1COvWQrd88dpMGnxQ/PkebF5X5yUvjgS2yoSNBlUN
-         OM0upjn5ctZEGvNWDVcPkYrC2dDtFHVzqK69UsO8y+FvOF106czYSuDNEtf1vGESZlVM
-         koBSwBSPYR2tcLjlCvJxtcRP7SRjAYCkyAf0Ruy8coYoG1kClerdGq0mQntTghNaeEoZ
-         /Hsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M4j223sTiX4eMGkNGmN1WWkhqrWqcQOSV+aX1N0vGfU=;
-        b=WJKX6/c2JhxXXOEHIBRyILcJqOFdFGqv1d4rY4WOwGp3lJdnQ+QTmXuYt43qvUW186
-         50seVVKogwP5X3GSRHAwGPsaLiej9ywx2cG0GE/LzrywgIaAv9KH35Vbk+kMN1/CEuRi
-         NNMZwclq++hWtc/QDRCFuIkx0FQKCnhoaPaAwNIC0njOWeQTue4s5cRFE/5HbXdddT9t
-         WEhixBvexgdhhKl4q0ZYolXWWp2isZUuGoYfIr9vVQTm24pqQqBePiMJ+NvHy9LvDTwh
-         DRgBx8fgRzF2B50n3glEVFN1UeP02LhpUHbQdMQDTCmwH+fc4UOG2EeHg+BKePt56vlw
-         BZNw==
-X-Gm-Message-State: AJcUukcuWPtOpBujwhLcdsLO5wfXVrm1nV71Upy86ZhNAr+PR2hTlcBk
-        GadGy2kEdIKu1sGiXFlvgC/mMV38lA4CTcGHBXq47g==
-X-Google-Smtp-Source: ALg8bN7h5YVXFcOyF0zDnaKnKlQI+SKdghtxY8KdSlfgBjAb4L5Eo4ra6uGIeVkTzTMf2C553vztFJkeE8sMkZo4rY0=
-X-Received: by 2002:a25:6f8b:: with SMTP id k133mr29606576ybc.496.1548875515746;
- Wed, 30 Jan 2019 11:11:55 -0800 (PST)
+        Wed, 30 Jan 2019 14:16:01 -0500
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id E2D8D10C06F2;
+        Wed, 30 Jan 2019 11:16:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1548875760; bh=/pvBDtZDxRQN8DTgfIUdAXTARX82NKrDdRwAqBfyUOU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=OJbapiJnOW+tbhJ+x1uuFunq4mSoQhf8xtZVRTeRjXlqIl2GWlR8nIP00tpi+k+VL
+         BGyQfwEsbKTecSlYcyGWl9HET/A/ygkDX9oCwz5e5iAFi4nEamN3rI1YzK9GdBDoQb
+         ePRJzrqqT0uKcO0mNVlWUT3adEs1C2VZe50E5fjy92R9o4GC8gcmoYUpmQ2bbZ+H2L
+         PXw0qzvkERboe9PkwyFBiPj/XdB9Oc0TdLieBjByYfFOeEnLYM9a0NliuYkCYLN0kz
+         mWpx97a4XcJrCN5TwoNIWQv3LeBX+Skgr8zXjMIGktlzLivxyagv9nbVcdNTJUwFzU
+         lKgcWfmByKHsw==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id A5A54A00E4;
+        Wed, 30 Jan 2019 19:16:00 +0000 (UTC)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 30 Jan 2019 11:16:00 -0800
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 30 Jan 2019 20:15:58 +0100
+Received: from [10.107.25.113] (10.107.25.113) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 30 Jan 2019 20:15:58 +0100
+Subject: Re: [PATCH for-next] scsi: ufs: Update dwc driver maintainer to Pedro
+ Sousa
+To:     Bart Van Assche <bvanassche@acm.org>,
+        Joao Pinto <joao.pinto@synopsys.com>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <pedrom.sousa@synopsys.com>, <marc.w.gonzalez@free.fr>,
+        <Alex.Lemberg@wdc.com>
+References: <812e9e1426555808ad1bd5fbfda320c6684abc81.1548869844.git.jpinto@synopsys.com>
+ <1548870848.213038.3.camel@acm.org>
+From:   Joao Pinto <joao.pinto@synopsys.com>
+Message-ID: <f0ff398e-cc13-d70d-0488-d35faa126a5a@synopsys.com>
+Date:   Wed, 30 Jan 2019 19:15:56 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190128142816.GM50184@devbig004.ftw2.facebook.com>
- <20190128145210.GM18811@dhcp22.suse.cz> <20190128145407.GP50184@devbig004.ftw2.facebook.com>
- <20190128151859.GO18811@dhcp22.suse.cz> <20190128154150.GQ50184@devbig004.ftw2.facebook.com>
- <20190128170526.GQ18811@dhcp22.suse.cz> <20190128174905.GU50184@devbig004.ftw2.facebook.com>
- <20190129144306.GO18811@dhcp22.suse.cz> <20190129145240.GX50184@devbig004.ftw2.facebook.com>
- <20190130165058.GA18811@dhcp22.suse.cz> <20190130170658.GY50184@devbig004.ftw2.facebook.com>
-In-Reply-To: <20190130170658.GY50184@devbig004.ftw2.facebook.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 30 Jan 2019 11:11:44 -0800
-Message-ID: <CALvZod5ma62fRKqrAhMcuNT3GYT3FpRX+DCmeVr2nDg1u=9T8w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Chris Down <chris@chrisdown.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        kernel-team@fb.com
+In-Reply-To: <1548870848.213038.3.camel@acm.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.107.25.113]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tejun,
+Hello Bart,
 
-On Wed, Jan 30, 2019 at 9:07 AM Tejun Heo <tj@kernel.org> wrote:
+First of all thanks for the feedback.
+
+On 1/30/2019 5:54 PM, Bart Van Assche wrote:
+> On Wed, 2019-01-30 at 18:48 +0100, Joao Pinto wrote:
+>> Currently I am managing the Synopsys drivers & tools team (full-time) and
+>> so I am passing the DWC UFS driver maintenance to Pedro Sousa.
+>>
+>> Signed-off-by: Joao Pinto <jpinto@synopsys.com>
+>> Cc: Pedro Sousa <pedrom.sousa@synopsys.com>
+>> Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>
+>> Cc: Alex Lemberg <Alex.Lemberg@wdc.com>
+>> ---
+>>  MAINTAINERS | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 70c93b1..458a2a2 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -15673,7 +15673,7 @@ F:	Documentation/scsi/ufs.txt
+>>  F:	drivers/scsi/ufs/
+>>  
+>>  UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER DWC HOOKS
+>> -M:	Joao Pinto <jpinto@synopsys.com>
+>> +M:	Pedro Sousa <pedrom.sousa@synopsys.com>
+>>  L:	linux-scsi@vger.kernel.org
+>>  S:	Supported
+>>  F:	drivers/scsi/ufs/*dwc*
+> Shouldn't people have proven to be willing to stick around before being
+> added as a kernel maintainer? Additionally, what is the experience level of
+> Pedro with kernel development? All I know is the following:
+
+Pedro Sousa is my team member and has been working in Unipro/UFS Synopsys
+drivers for almost 2 years.
+
+His work has been mainly internal, and now our goal is to start using the
+mainline DWC UFS driver I submitted 2 years ago in our regular activities,
+update and maintain it effectively as we are doing in other titles.
+
+Currently I am Pedro' manager, and in my opinion he has the right experience for
+this step and that is why I am suggesting to transfer Synopsys driver
+maintenance from me to him.
+
 >
-> Hello, Michal.
+> $ git log --author "Pedro Sousa" | wc -l
+> 0
+> $ git log | grep -c "Pedro Sousa"
+> 0
 >
-> On Wed, Jan 30, 2019 at 05:50:58PM +0100, Michal Hocko wrote:
-> > > Yeah, cgroup.events and .stat files as some of the local stats would
-> > > be useful too, so if we don't flip memory.events we'll end up with sth
-> > > like cgroup.events.local, memory.events.tree and memory.stats.local,
-> > > which is gonna be hilarious.
-> >
-> > Why cannot we simply have memory.events_tree and be done with it? Sure
-> > the file names are not goin to be consistent which is a minus but that
-> > ship has already sailed some time ago.
+> Are you aware that people who are not mentioned in the MAINTAINERS file are
+> allowed to review kernel patches?
+
+Yes, I am aware and Pedro is perfectly capable of doing that, and for that
+reason I am suggesting him as the right person to maintain Synopsys UFS driver.
+
 >
-> Because the overall cost of shitty interface will be way higher in the
-> longer term.  cgroup2 interface is far from perfect but is way better
-> than cgroup1 especially for the memory controller.  Why do you think
-> that is?
+> Thanks,
 >
+> Bart.
+>
+Thanks,
 
-I thought you are fine with the separate interface for the hierarchical events.
+Joao
 
-https://lkml.kernel.org/r/20190128161201.GS50184@devbig004.ftw2.facebook.com
 
-Is that not the case?
-
-Shakeel
