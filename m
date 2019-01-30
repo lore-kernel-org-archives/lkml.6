@@ -2,97 +2,192 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DB2C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 391C2C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 838EC2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:41:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A78542086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:43:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bzuk+pZX"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="Ij3oHlVB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733149AbfA3SlO (ORCPT
+        id S1733184AbfA3SnE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:41:14 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33934 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732328AbfA3SlO (ORCPT
+        Wed, 30 Jan 2019 13:43:04 -0500
+Received: from out002.mailprotect.be ([83.217.72.86]:50901 "EHLO
+        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733112AbfA3SnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:41:14 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p6so437474lfc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:41:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zCIG9VzWuYh+4Bf06Auxq3qGZen7OwOELA8vsXd/35o=;
-        b=bzuk+pZXi21YAEqDDpBSJtx9ETbV3TvSPPgDua49V5H1nPuLiSNyTMzEwu9o6wqcBT
-         2Af5cWanIGXkR2qaTuvjKsVwQa8DDgjqvGHCq1zl/tUs9v05MjF+k1Imnz+LGUQDOypo
-         sXJI6OZvqz5CzhCSD/SmkcWXJQcZcH2BuZqVM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zCIG9VzWuYh+4Bf06Auxq3qGZen7OwOELA8vsXd/35o=;
-        b=s6dHI1jAO4IniwsTO6hVDjy2NqplH727SL+lV5594XzCswGVTWYt0FOUJLfvloRJi1
-         Dh5sq1NkVF7z+RZFZWgm1QGWIL0Q0KPQHBGCOqCAxDdi8Q967POCor3i963x5mCY8Zx2
-         +Gv3pOo03QwWeb70y+xS2ooqTSyicPYpvDzRqNDnrtcgoWiN/QREDWCdK9qfCWndJOVc
-         64b5ulCcWzPTQ8ROlxHe9Ff3tVsdvaD1w08E+G72hn/IgJfhmacC8xT1hvmRnXd3rL8H
-         rC4TYQ+G9GR6yvigeE1EheS01sKPlYXgRFsWtgVEbx8xJHbCIzjsLmg2x6rI5bfVp0+z
-         3g2A==
-X-Gm-Message-State: AJcUukfezN5WkVH0+OxS+NTUttO6HD2rzafEwxxoYrrTe4EQ7ImxBFGX
-        +ZgwqdExen66JqdM0tc2qhwt81xRClc=
-X-Google-Smtp-Source: ALg8bN73qwzq+8N/9682aQN9h3WxIJaKhdlVeZd63KmCtcUOgvdN6OU7kNoZj9L/jp9PhAZLr8iBNg==
-X-Received: by 2002:a19:d04d:: with SMTP id h74mr22542372lfg.52.1548873671654;
-        Wed, 30 Jan 2019 10:41:11 -0800 (PST)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id j18-v6sm394579ljc.52.2019.01.30.10.41.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 10:41:11 -0800 (PST)
-Received: by mail-lj1-f172.google.com with SMTP id t18-v6so492712ljd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:41:11 -0800 (PST)
-X-Received: by 2002:a2e:3509:: with SMTP id z9-v6mr26573226ljz.54.1548873324599;
- Wed, 30 Jan 2019 10:35:24 -0800 (PST)
+        Wed, 30 Jan 2019 13:43:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:Message-Id
+        :Date:Subject:Cc:To:From:reply-to:sender:bcc:in-reply-to:references:
+        content-type; bh=dq53XnxvImjhYdTpozLq/G0IAfEsOjLU25WNVx3PUe8=; b=Ij3oHlVBZZR8
+        yZT2S2iEhV6oF35+Gh0xvh80sNJ3nbRzU6SXD0xa8KCmf3Zd+zGLgFi83PLOP0lUk7ln7gUg2xBjm
+        iwnutDTdJDq9+Sx5x3r62aMHJUgjoURvPLKg8QrIYIib6asFDl1K31YOkHsRHcp78B5bOoV7lufYz
+        Uh5eRtIv+/5w4fDmn7RdNfCXMnA3Jvkei+4sfGdU3zNwTzHtNDaN40TEkg+H/5Gj+UTwmCWXOf+S6
+        3nJvgBeyERoX18veGBYqQzy1WolbEyNvehDxI/SSjwXc4Hb1aPsZ55ESM+aGBNcj4qQSCsq0Q5Reg
+        vuH5aoq2gZDy5pyLcqLuoQ==;
+Received: from smtp-auth.mailprotect.be ([178.208.39.155])
+        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
+        (envelope-from <bvanassche@acm.org>)
+        id 1goup7-000Cfb-O2; Wed, 30 Jan 2019 19:42:58 +0100
+Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 68BB5C06A2;
+        Wed, 30 Jan 2019 19:42:38 +0100 (CET)
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     tgraf@suug.ch, herbert@gondor.apana.org.au, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: [PATCH v3] lib/test_rhashtable: Make test_insert_dup() allocate its hash table dynamically
+Date:   Wed, 30 Jan 2019 10:42:30 -0800
+Message-Id: <20190130184230.225631-1-bvanassche@acm.org>
+X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 MIME-Version: 1.0
-References: <1544824384-17668-1-git-send-email-longman@redhat.com>
- <CAHk-=wi-V7LjAAzFuxg+eLQAdp+Ay4WmVJdTNxgPjqKXaj-3Xw@mail.gmail.com>
- <0433488a-c8ad-e31a-6144-648e45478c07@redhat.com> <260e6cdb-42b7-1891-e525-54048d168b5c@redhat.com>
-In-Reply-To: <260e6cdb-42b7-1891-e525-54048d168b5c@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 30 Jan 2019 10:35:08 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi1raFRkRH1HEe_awy7HVy7XWxFRv9aZY-cgNL5zMqW4A@mail.gmail.com>
-Message-ID: <CAHk-=wi1raFRkRH1HEe_awy7HVy7XWxFRv9aZY-cgNL5zMqW4A@mail.gmail.com>
-Subject: Re: [RESEND PATCH v4 0/3] fs/dcache: Track # of negative dentries
-To:     Waiman Long <longman@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, linux-doc@vger.kernel.org,
-        mcgrof@kernel.org, Kees Cook <keescook@chromium.org>,
-        Jan Kara <jack@suse.cz>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, lwoodman@redhat.com,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        wangkai86@huawei.com, Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: 178.208.39.155
+X-SpamExperts-Domain: mailprotect.be
+X-SpamExperts-Username: 178.208.39.128/27
+Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.0097166291703)
+X-Recommended-Action: accept
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5hBwnhHxisHXJ2ZDrjGFjIt602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO1tLifGj39bI0bcPyaJsYTacR+7WyMgzHjz+T9oPWai2IJR/LLbceaqS8MKPufzxmLzw
+ 3dG7A6WkH7JGigdteN57+5HzsJAARNaiXTEXf82VAjw9nUyHRh+vaTE+a8V78gnvcbqWawZgc1Ck
+ ONz2E71TYi2bf0F0JzgUQ/o6tR7CgJ80+L1CwdwW3n1LPAFa7+c6TEzHGFGmPNVo8HWtwIVEU4Np
+ wlX9XR0IIh324LASWmuNA8WTybi1JN85FSnfKQ92CA+JoVmy/OGFlzvQk2JpuRcJDn/ll9Yr9I5t
+ rl5dAEGFmG79FtSD1SRlrgY4Dlka3AWSQBObYIhoDqsjjxMlPZ+d+6dQltnW35dYHDi4YsOSYzzr
+ WOkGpzUJhy0xLBRKoVbdmzfZG7WP8P7/emcDFPZI3xOxBaPpD+a4iBFJkhqbiTdTlYcOHnVgVGtC
+ G4wbZOs8jS5huW0TMlFixpjfwluHZS9DYzoq+lLuZqz83M7Ww0eLZ1l+e/PS3uVC5/d3N4FddjCf
+ vYOfsOukDu+8Ksk+aedMfNWSnJswrtlNvWbHGI2+m0+ABcNCsbvofnPw17RyTo/iK8p1aZEnH6Bz
+ NDLxjWz0QzgSBbh99tCA5vonz7NsiF1Wku49QqQ+LGzAvyupJc20TI861x/0g31oh9VoIekQHpwU
+ fpYnEThmWzvKaMsOConpeq4LHy2DsLpXe1qVfkTgn5TLJkwLFwPGHCARYNoMeTrkG4WVbRYvdPWn
+ 7hDOYOe8sGu7H1VUX1W5oROgRKAzAuHd1vG0h9GFbgn7TuZnYUlh3bpzUOwUiwQzKw+6v3CaIMG6
+ s7LqJNS3q9vHJFJ767GRArkeCwErqfuPkiSUNJJzVxjk2aTJzoVzPCnKZEE42SuSg/NfCZyY6pr3
+ 146Uqm4m9tbvBOhm4zuNRcgRKiGg7nXFaZTxfQCdpoStj1b4PiBxau2y91dTfVE/15N9exgRcyw6
+ YPrfly1dqLUcanDXocuiazc9GaiTXW7z2lMqAnbumOwh0nKiJJlTUtUtkMEjlh8WtYUKxRzgMtX+
+ /JPiP15vkhnohqUvgugTwCBLPD4olaNxG9f4jbPawL16SV9H9Ey1DpC733jp2G77DhwvG2R8wFno
+ PxlZX4C5LAOoA8zsQ2/Rcw==
+X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 8:40 AM Waiman Long <longman@redhat.com> wrote:
->
-> Ping. Will this patch be picked up?
+The test_insert_dup() function from lib/test_rhashtable.c passes a
+pointer to a stack object to rhltable_init(). Allocate the hash table
+dynamically to avoid that the following is reported with object
+debugging enabled:
 
-Can you re-send the patch-set and I'll just apply it directly since it
-seems to be languishing otherwise.
+ODEBUG: object (ptrval) is on stack (ptrval), but NOT annotated.
+WARNING: CPU: 0 PID: 1 at lib/debugobjects.c:368 __debug_object_init+0x312/0x480
+Modules linked in:
+EIP: __debug_object_init+0x312/0x480
+Call Trace:
+ ? debug_object_init+0x1a/0x20
+ ? __init_work+0x16/0x30
+ ? rhashtable_init+0x1e1/0x460
+ ? sched_clock_cpu+0x57/0xe0
+ ? rhltable_init+0xb/0x20
+ ? test_insert_dup+0x32/0x20f
+ ? trace_hardirqs_on+0x38/0xf0
+ ? ida_dump+0x10/0x10
+ ? jhash+0x130/0x130
+ ? my_hashfn+0x30/0x30
+ ? test_rht_init+0x6aa/0xab4
+ ? ida_dump+0x10/0x10
+ ? test_rhltable+0xc5c/0xc5c
+ ? do_one_initcall+0x67/0x28e
+ ? trace_hardirqs_off+0x22/0xe0
+ ? restore_all_kernel+0xf/0x70
+ ? trace_hardirqs_on_thunk+0xc/0x10
+ ? restore_all_kernel+0xf/0x70
+ ? kernel_init_freeable+0x142/0x213
+ ? rest_init+0x230/0x230
+ ? kernel_init+0x10/0x110
+ ? schedule_tail_wrapper+0x9/0xc
+ ? ret_from_fork+0x19/0x24
 
-                Linus
+Cc: Thomas Graf <tgraf@suug.ch>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+---
+
+Changes compared to v2: fixed build error.
+
+Changes compared to v1: instead of modifying rhashtable_init(), modify its
+   caller.
+
+lib/test_rhashtable.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
+
+diff --git a/lib/test_rhashtable.c b/lib/test_rhashtable.c
+index 6a8ac7626797..e52f8cafe227 100644
+--- a/lib/test_rhashtable.c
++++ b/lib/test_rhashtable.c
+@@ -541,38 +541,45 @@ static unsigned int __init print_ht(struct rhltable *rhlt)
+ static int __init test_insert_dup(struct test_obj_rhl *rhl_test_objects,
+ 				  int cnt, bool slow)
+ {
+-	struct rhltable rhlt;
++	struct rhltable *rhlt;
+ 	unsigned int i, ret;
+ 	const char *key;
+ 	int err = 0;
+ 
+-	err = rhltable_init(&rhlt, &test_rht_params_dup);
+-	if (WARN_ON(err))
++	rhlt = kmalloc(sizeof(*rhlt), GFP_KERNEL);
++	if (WARN_ON(!rhlt))
++		return -EINVAL;
++
++	err = rhltable_init(rhlt, &test_rht_params_dup);
++	if (WARN_ON(err)) {
++		kfree(rhlt);
+ 		return err;
++	}
+ 
+ 	for (i = 0; i < cnt; i++) {
+ 		rhl_test_objects[i].value.tid = i;
+-		key = rht_obj(&rhlt.ht, &rhl_test_objects[i].list_node.rhead);
++		key = rht_obj(&rhlt->ht, &rhl_test_objects[i].list_node.rhead);
+ 		key += test_rht_params_dup.key_offset;
+ 
+ 		if (slow) {
+-			err = PTR_ERR(rhashtable_insert_slow(&rhlt.ht, key,
++			err = PTR_ERR(rhashtable_insert_slow(&rhlt->ht, key,
+ 							     &rhl_test_objects[i].list_node.rhead));
+ 			if (err == -EAGAIN)
+ 				err = 0;
+ 		} else
+-			err = rhltable_insert(&rhlt,
++			err = rhltable_insert(rhlt,
+ 					      &rhl_test_objects[i].list_node,
+ 					      test_rht_params_dup);
+ 		if (WARN(err, "error %d on element %d/%d (%s)\n", err, i, cnt, slow? "slow" : "fast"))
+ 			goto skip_print;
+ 	}
+ 
+-	ret = print_ht(&rhlt);
++	ret = print_ht(rhlt);
+ 	WARN(ret != cnt, "missing rhltable elements (%d != %d, %s)\n", ret, cnt, slow? "slow" : "fast");
+ 
+ skip_print:
+-	rhltable_destroy(&rhlt);
++	rhltable_destroy(rhlt);
++	kfree(rhlt);
+ 
+ 	return 0;
+ }
+-- 
+2.20.1.495.gaa96b0ce6b-goog
+
