@@ -4,96 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 950D2C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00375C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 634C821473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3B4B21473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:51:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548863460;
-	bh=tS+PJm7qswqqTlYC2vL10l2V4MGr1LtLfus5W6c0lF8=;
+	s=default; t=1548863482;
+	bh=7Qxb5oV8vmVrO7eTVIN1wtOFNmtsw8Yl6pSVDQ3LuSE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qpmG+Gji4gfWDyb/G1l8NUXY7JDlCRYeY3+DPWg1huUHqHPIYYIkebUm4VSu+aS3G
-	 F3m+NSNpUzMHKMd3mNASTlcaiwxkWuS1Iu8Tfu9Mb9RqZyhCL4Uy5OlWsLy/xmNZVF
-	 mbvuMmtS/0D1WODsWoHki04kFOk/BKBxZ+kwvzFQ=
+	b=Q/DmFzUilrJbT4uu/0DFnjaZlhKew6eoqnF4ErfdKY5pNbHK/TT6Tbzd9tXhTwPWL
+	 lM8PXDJEceda9nAdT1TMmCchWUGLqYpG58N3mdYRgUuemQ11w353gzAtMlpsMMZOza
+	 rVHZwBUEJNY/2Rw46qmxzSa9lupCxn+TAeL+jdj8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730863AbfA3Pu7 (ORCPT
+        id S1731636AbfA3PvV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:50:59 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:32995 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730796AbfA3Pu6 (ORCPT
+        Wed, 30 Jan 2019 10:51:21 -0500
+Received: from mail-ot1-f49.google.com ([209.85.210.49]:44888 "EHLO
+        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728720AbfA3PvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:50:58 -0500
-Received: by mail-oi1-f195.google.com with SMTP id c206so26952oib.0;
-        Wed, 30 Jan 2019 07:50:57 -0800 (PST)
+        Wed, 30 Jan 2019 10:51:20 -0500
+Received: by mail-ot1-f49.google.com with SMTP id g16so17482348otg.11;
+        Wed, 30 Jan 2019 07:51:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=05UvbpA+SO3/QdrZgEcALrEGdL+Mq+yrGswYqrrf44U=;
-        b=BeCLUT8tybMQsIfSWikN2SVW4RPCaUkFVrgcEXzwqevYS3uUCBecSK5zop7JcDD88J
-         28pZ4nFHaRUzWJhtmHP17gwl15kr54D+fjuwVP7xoENqMHMDeUnpj8eKOxfqjxyC8W0H
-         EgmIwqpN1cSN9qyJSno9ktWwgYvv5mmZTi8Me/eIlbTpWCmcnJn7gVMNvyIlwDNx9KPY
-         a5ViUzLjLeOvsefwfd6ALxpzrT44w2/0j5QsWy68ou2tOmaTvkl1yOEeEoTgD8nhRwnw
-         Dc6GrpizX+qRJlyf/3/80eylOOCV6vheQCvYLU71ecbzhkQVNCX6kOvf6Fbsx4/UGK58
-         CI/A==
-X-Gm-Message-State: AHQUAuaseCIHjJXQtShMS7px2o07Wd+1gNnvnb66o7fLJDCD0c/sC87g
-        o5eH/t2td30ILLLLSHvkpw==
-X-Google-Smtp-Source: ALg8bN72Ne5t03XE4AobX6pT4fLRbfP+oNoK62UjK5QXWyHpowmhKmB1v68TCkX7r+z8W3d9i/tcKw==
-X-Received: by 2002:aca:b58b:: with SMTP id e133mr12934157oif.25.1548863457510;
-        Wed, 30 Jan 2019 07:50:57 -0800 (PST)
+        bh=a6KhZ/RV34XWL8J67/X0hcpg51Ps39ws0uRDWZ+Jn08=;
+        b=hksy+RvrPWL/H2/owtZb6rxiSGY8Vd6RWlaiscT49jfAJCMzDX+HdwlJ3OzYcAI4wc
+         Ru/1RgItJWEsJM5OrcLAQnKwrTv8HJPyG3zdAFXeRCzlDs3XjLxhANC9gRg6H2PuOW35
+         6UkLdHx/KXKyQ4Tdgxno3mz6+RvW0tAXDQFe13HOVhED7+q0bQl5ALwVtXCj2TFC37Ti
+         X99c6/WdVeq16bqdR54LanpvAg2Z1OM5/bHKcMGjFouLsAzvjhg5vuF6oLWtFIFMZ2Do
+         5q58K8D2ZvWVroIpOFZzM8yX4hnJU2tS4VtoGWIJsAufzex+xf8kdAR+2VQTrmNPMqap
+         wWyQ==
+X-Gm-Message-State: AHQUAubC03DMA0aXF8RveBaQWT2dzbe5kFZhFXbZiyPZPbDwp18Njwn6
+        mDbENVdyMxgrWO8j8z01qw==
+X-Google-Smtp-Source: AHgI3IbPCpSr4frSE4DFFnyI28JcrHoO2LLNY94lhKjo6YsKjckM/xxAze38HrYmYXaf15hydLE8kQ==
+X-Received: by 2002:a05:6830:1310:: with SMTP id p16mr13183255otq.309.1548863479707;
+        Wed, 30 Jan 2019 07:51:19 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k16sm646894otl.58.2019.01.30.07.50.56
+        by smtp.gmail.com with ESMTPSA id m26sm661431otl.32.2019.01.30.07.51.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 07:50:56 -0800 (PST)
-Date:   Wed, 30 Jan 2019 09:50:56 -0600
+        Wed, 30 Jan 2019 07:51:19 -0800 (PST)
+Date:   Wed, 30 Jan 2019 09:51:18 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, jassisinghbrar@gmail.com,
-        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
-        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
-        heiko@sntech.de, sibis@codeaurora.org,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, vkoul@kernel.org, niklas.cassel@linaro.org,
-        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
+To:     thor.thayer@linux.intel.com
+Cc:     lee.jones@linaro.org, arnd@arndb.de, dinguyen@kernel.org,
+        linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, peppe.cavallaro@st.com,
+        alexandre.torgue@st.com, joabreu@synopsys.com, davem@davemloft.net,
+        mcoquelin.stm32@gmail.com, mchehab+samsung@kernel.org,
+        mark.rutland@arm.com, bjorn.andersson@linaro.org, olof@lixom.net,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-Subject: Re: [PATCH v2 04/14] dt-bindings: mailbox: qcom: Add clock-name
- optional property
-Message-ID: <20190130155056.GA28494@bogus>
-References: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1548700381-22376-5-git-send-email-jorge.ramirez-ortiz@linaro.org>
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+        Thor Thayer <thor.thayer@linux.intel.com>
+Subject: Re: [PATCHv3 2/6] Documentation: dt: socfpga: Add S10 System Manager
+ binding
+Message-ID: <20190130155118.GA29638@bogus>
+References: <1548713655-25940-1-git-send-email-thor.thayer@linux.intel.com>
+ <1548713655-25940-3-git-send-email-thor.thayer@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548700381-22376-5-git-send-email-jorge.ramirez-ortiz@linaro.org>
+In-Reply-To: <1548713655-25940-3-git-send-email-thor.thayer@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Jan 2019 19:32:51 +0100, Jorge Ramirez-Ortiz wrote:
-> When the APCS clock is registered (platform dependent), it retrieves
-> its parent names from hardcoded values in the driver.
+On Mon, 28 Jan 2019 16:14:11 -0600, thor.thayer@linux.intel.com wrote:
+> From: Thor Thayer <thor.thayer@linux.intel.com>
 > 
-> The following commit allows the DT node to provide such clock names to
-> the platform data based clock driver therefore avoiding having to
-> explicitly embed those names in the clock driver source code.
+> Add the device tree bindings for the Stratix10 System Manager.
 > 
-> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
 > ---
->  .../bindings/mailbox/qcom,apcs-kpss-global.txt     | 24 +++++++++++++++++++---
->  1 file changed, 21 insertions(+), 3 deletions(-)
+> v2  New compatible string and usage for Stratix10
+> v3  No change
+> ---
+>  .../devicetree/bindings/arm/altera/socfpga-system.txt        | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
 
 Please add Acked-by/Reviewed-by tags when posting new versions. However,
