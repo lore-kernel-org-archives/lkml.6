@@ -2,87 +2,94 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE37C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49389C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1998B21873
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:17:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NjuaUyU7"
+	by mail.kernel.org (Postfix) with ESMTP id 12BC12083B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbfA3JRL (ORCPT
+        id S1730164AbfA3JSe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:17:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58886 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfA3JRJ (ORCPT
+        Wed, 30 Jan 2019 04:18:34 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:12666 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727431AbfA3JSc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:17:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PkkRrH7Upoq4Qs5K73ZsT40YYfKo1vrfTnkSOGPXaak=; b=NjuaUyU7G/RQx2NHQ5Wzvm+DT
-        2B4zkjV/NFMgartmyl2XVNLBduYK8e/7ut80VVYoMtvL2KMv+9JMlb9QLIGQBTAXmInTCWmweXS62
-        dwMQwTWmKHf3RBK2GaKDSWSvRQtW7D2OAwwZMGsx1vH2Git2v2whu8YDZo/IYuWiW7HPZBxadXq0Y
-        GyBu3WakPbpGyUKCtaY39ReWA4DGzWDz7gKEi18Du6KorP8bjUkSVnyakgGg3FnjWOteXVpZy8Se0
-        oupSKfK7f9ddCb+wyBtiPKHgYCqCwYdFaiDEZgju8Q2L1rBmaIMI0JxTCP7+BhxdA9+wd4BGR/nY+
-        1/Ho4IRig==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1golzW-0004Dc-6L; Wed, 30 Jan 2019 09:17:06 +0000
-Date:   Wed, 30 Jan 2019 01:17:06 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        James Hogan <jhogan@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH 6/7] MIPS: SGI-IP27: use generic PCI driver
-Message-ID: <20190130091706.GA3617@infradead.org>
-References: <20190124174728.28812-1-tbogendoerfer@suse.de>
- <20190124174728.28812-7-tbogendoerfer@suse.de>
- <20190128133215.GC744@infradead.org>
- <20190129162445.8584b58862068c0a7693718c@suse.de>
+        Wed, 30 Jan 2019 04:18:32 -0500
+X-UUID: f151d4fa5c6b46478a99266b8305966d-20190130
+X-UUID: f151d4fa5c6b46478a99266b8305966d-20190130
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <hsin-hsiung.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1218932438; Wed, 30 Jan 2019 17:18:25 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 30 Jan 2019 17:18:24 +0800
+Received: from mtkslt302.mediatek.inc (10.21.14.115) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 30 Jan 2019 17:18:24 +0800
+From:   Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH 0/6] Add Support for MediaTek PMIC MT6358 MFD Core and Regulator
+Date:   Wed, 30 Jan 2019 17:18:05 +0800
+Message-ID: <1548839891-20932-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129162445.8584b58862068c0a7693718c@suse.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 04:24:45PM +0100, Thomas Bogendoerfer wrote:
-> > From an abstraction point of view this doesn't really belong into
-> > a bridge driver as it is a global exported function.  I guess we can
-> > keep it here with a fixme comment, but we should probably move this
-> > into a method call instead.
-> 
-> or put the nodeid into the bus struct ?
+This patchset including refactoring interrupt add support to MT6358 PMIC.
+MT6358 is the primary PMIC for MT8183 platform.
 
-Doesn't sound to bad to me, you'll just have to update a fair
-amount of arch implementations.
+Hsin-Hsiung Wang (6):
+  mfd: mt6397: extract irq related code from core driver
+  dt-bindings: mfd: Add compatible for the MediaTek MT6358 PMIC
+  regulator: Add document for MT6358 regulator
+  mfd: Add support for the MediaTek MT6358 PMIC
+  regulator: mt6358: Add support for MT6358 regulator
+  arm64: dts: mt6358: add PMIC MT6358 related nodes
 
-> I'm all for it. I looked at the examples for using dma_pfn_offset and the
-> only one coming close to usefull for me is arch/sh/drivers/pci/pcie-sh7786.c
-> It overloads pcibios_bus_add_device() to set dma_pfn_offset, which doesn't
-> look much nicer. What about having a dma_pfn_offset in struct pci_bus
-> which all device inherit from ?
+ Documentation/devicetree/bindings/mfd/mt6397.txt   |    9 +-
+ .../bindings/regulator/mt6358-regulator.txt        |  318 ++++
+ arch/arm64/boot/dts/mediatek/mt6358.dtsi           |  318 ++++
+ drivers/mfd/Makefile                               |    2 +-
+ drivers/mfd/mt6358-irq.c                           |  236 +++
+ drivers/mfd/mt6397-core.c                          |  291 +--
+ drivers/mfd/mt6397-irq.c                           |  214 +++
+ drivers/regulator/Kconfig                          |    9 +
+ drivers/regulator/Makefile                         |    1 +
+ drivers/regulator/mt6358-regulator.c               |  607 ++++++
+ include/linux/mfd/mt6358/core.h                    |  158 ++
+ include/linux/mfd/mt6358/registers.h               | 1926 ++++++++++++++++++++
+ include/linux/mfd/mt6397/core.h                    |   15 +
+ include/linux/regulator/mt6358-regulator.h         |   56 +
+ 14 files changed, 3962 insertions(+), 198 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/regulator/mt6358-regulator.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6358.dtsi
+ create mode 100644 drivers/mfd/mt6358-irq.c
+ create mode 100644 drivers/mfd/mt6397-irq.c
+ create mode 100644 drivers/regulator/mt6358-regulator.c
+ create mode 100644 include/linux/mfd/mt6358/core.h
+ create mode 100644 include/linux/mfd/mt6358/registers.h
+ create mode 100644 include/linux/regulator/mt6358-regulator.h
 
-Or add a add_dev callback, similar to what I did for a previous series
-that we didn't end up needing after all:
-
-http://git.infradead.org/users/hch/misc.git/commitdiff/06d9b4fc7deed336edc1292fe2e661729e98ec39
+-- 
+1.9.1
 
