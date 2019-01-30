@@ -2,304 +2,178 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B3DC282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D357CC282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F1462087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:07:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="gUJPeyIb"
+	by mail.kernel.org (Postfix) with ESMTP id ABD132087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:07:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbfA3JHj (ORCPT
+        id S1730551AbfA3JH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:07:39 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41615 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfA3JHi (ORCPT
+        Wed, 30 Jan 2019 04:07:57 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40046 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfA3JH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:07:38 -0500
-Received: by mail-pl1-f195.google.com with SMTP id u6so10775466plm.8
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vFpH/LFKq6cj1JtU5kThBc1TATjp4OQx5J43SNcVP5Q=;
-        b=gUJPeyIb/Xw6pVY6BgbolXRBztuaYLAg20drbdCyLOsGGokF5lGzmcbIZ2KaIbiB5t
-         27vBBCvr+PZuqEbz8Anx/wGXsS2gwTezxkRGLczi4BZVKQjVOhYNGrEYxiAHoh9NFcmK
-         z2xRceEG2ieYUHwoGHfts2iSwusqFl8MaCFF6IRbIJmjLt+1d088mZWDRv/hR+K3zZpb
-         Yz7i5WNU+QzwqbakRJpXPIdTb3BrHPxxllOIluZLnOm/0JVTZ03k4U8QoJO8+3GYhnCv
-         jCUh+Dm64Yp/rqEtW/yiGO9Gn5GzoKqc7Tr64i5xHOjb/AB1uj7hly9roO2lcW3PMDEF
-         Fplg==
+        Wed, 30 Jan 2019 04:07:56 -0500
+Received: by mail-lf1-f67.google.com with SMTP id v5so16794371lfe.7;
+        Wed, 30 Jan 2019 01:07:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vFpH/LFKq6cj1JtU5kThBc1TATjp4OQx5J43SNcVP5Q=;
-        b=e3T42Um6WKkkB0UMhZIlH+p4pj68doaj6DKHuyO0v9BBmPTAUBdp1iMCEEUnhBXXWn
-         1fUDPUDjoZHt7w9t6ysjV+fQoUgSXU6hss8BtO9C1zmkpgrepHDE7K7RdJWLTy9q8Lol
-         eA8yn7/vZ9Zqd3X03WrUwUAlUSe+mJTKOrqXPaEF5/oRSOzBjxBUn4pXIVMBtXJjwDSR
-         mTh1QWVKjXAMpGo5IFR0Mimw0JT3ztF9Xx2x+6P1LU79DZKbnEgx0gpMZVcXNfrvBmjj
-         2cgJWTTk4ruNxNG1dE97HV2VOTW4lD52tMuzAd6s+yR71T5G7rwZPkVVm3wsD5OXZHgG
-         ij1A==
-X-Gm-Message-State: AJcUukcgn3KdL8p2KqjxrroYljMUrW+HNyeizxtAAUnkhj30ea2JwBCp
-        SL3SncFitr9R66yB4EMOEk98/1FKTeM=
-X-Google-Smtp-Source: ALg8bN5aAvX6YDtxQJZFQvQ1+C975AFmpVBEYcFhK9DrlYAggxTgvqD3NEhziAU8pIIzR+dkFEs1Cw==
-X-Received: by 2002:a17:902:7d82:: with SMTP id a2mr29767883plm.163.1548839257574;
-        Wed, 30 Jan 2019 01:07:37 -0800 (PST)
-Received: from localhost.localdomain (36-239-242-165.dynamic-ip.hinet.net. [36.239.242.165])
-        by smtp.gmail.com with ESMTPSA id k14sm4486805pgs.52.2019.01.30.01.07.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 01:07:36 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH 2/2] regulator: max77650: Convert to use regulator_enable/disable/is_enabled_regmap
-Date:   Wed, 30 Jan 2019 17:07:22 +0800
-Message-Id: <20190130090722.24134-2-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190130090722.24134-1-axel.lin@ingics.com>
-References: <20190130090722.24134-1-axel.lin@ingics.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HR1o3sBwR/+ciyVwBzAQbIdfCuQpEwUZq5F1y9sU/7M=;
+        b=QALN9DYRBMXa/jqMV7yFA25hcjRO4jGvmUaeDvzim3V0HLWCZ10mYKCM+JF/9yUUcL
+         +eytZNRQjibk6VUNUoiZAVfUe6Cg+AEyHBmw4jRGFHvAmnZxTRegbHyCblZiADZkN0X8
+         trdADK2EWaXXz6qzR17NZKqYKTkiRs14/V/N+sI6tO46SzLdveoVRe/6yU/gNb3LPnFS
+         CcVZ6QdhT/MIYkUxYyjDVHANyE0AcB9YeRlURHPse9P8+1arxt9Be/5loqChz3sdynIq
+         j4FJXlr6VFvxxx20LK9XPu43KSm9cW8xRgVQejmn9PBRqgFI8e5NmFrcHxsEXMiQe1kn
+         y0ZA==
+X-Gm-Message-State: AJcUukc8FzJzMnHArtjTIkYc0/9kfeuGxqaGxLdd41/Jq3HShMcKW2q5
+        PpxOLBe+8udgDv8eR5ksy6g=
+X-Google-Smtp-Source: ALg8bN57JUcxIm/s2epB2oAtTPTVLXZ5s9r+53hG2JbrIk1ZPX9DKjc1nAjvv6hRoMV/365R8cR6dA==
+X-Received: by 2002:a19:3809:: with SMTP id f9mr23033684lfa.148.1548839273285;
+        Wed, 30 Jan 2019 01:07:53 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id z6sm177563lfa.87.2019.01.30.01.07.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 01:07:52 -0800 (PST)
+Date:   Wed, 30 Jan 2019 11:07:39 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [RFC PATCH v3 02/10] regulator: bd718x7 use chip specific and
+ generic data structs
+Message-ID: <5c58562b069b8b09ae44b344bb20252ed385993b.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By setting enable_reg, enable_mask, enable_val and disable_val, we can
-use the regulator_enable/disable/is_enabled_regmap helpers. With this
-change, then regB field can be removed from struct max77650_regulator_desc.
+Header rohm-bd718x7.h was split to generic and component specific
+parts. This changed the struct bd718x7. Adapt the regulator driver to
+these changes.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-by: Mark Brown <broonie@kernel.org>
 ---
-Hi Bartosz,
-I don't have this h/w, please help to review and test it.
+ drivers/regulator/bd718x7-regulator.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-I think the only difference is the is_enabled checking:
-Before the patch, it returns en != MAX77650_REGULATOR_DISABLED;
-After the patch, it returns en == MAX77650_REGULATOR_ENABLED
-I'm not sure if this difference does matter or not.
-
-Thanks,
-Axel
- drivers/regulator/max77650-regulator.c | 87 +++++++-------------------
- 1 file changed, 23 insertions(+), 64 deletions(-)
-
-diff --git a/drivers/regulator/max77650-regulator.c b/drivers/regulator/max77650-regulator.c
-index 5afb91400832..90c0f73f3fad 100644
---- a/drivers/regulator/max77650-regulator.c
-+++ b/drivers/regulator/max77650-regulator.c
-@@ -13,8 +13,6 @@
- #include <linux/regulator/driver.h>
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index ccea133778c8..9109920b4a06 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -1018,11 +1018,11 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 	struct bd718xx *mfd;
+ 	struct regulator_config config = { 0 };
+ 	struct bd718xx_pmic_inits pmic_regulators[] = {
+-		[BD718XX_TYPE_BD71837] = {
++		[ROHM_CHIP_TYPE_BD71837] = {
+ 			.r_datas = bd71837_regulators,
+ 			.r_amount = ARRAY_SIZE(bd71837_regulators),
+ 		},
+-		[BD718XX_TYPE_BD71847] = {
++		[ROHM_CHIP_TYPE_BD71847] = {
+ 			.r_datas = bd71847_regulators,
+ 			.r_amount = ARRAY_SIZE(bd71847_regulators),
+ 		},
+@@ -1037,15 +1037,15 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
  
- #define MAX77650_REGULATOR_EN_CTRL_MASK		GENMASK(3, 0)
--#define MAX77650_REGULATOR_EN_CTRL_BITS(_reg) \
--		((_reg) & MAX77650_REGULATOR_EN_CTRL_MASK)
- #define MAX77650_REGULATOR_ENABLED		GENMASK(2, 1)
- #define MAX77650_REGULATOR_DISABLED		BIT(2)
+-	if (mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
+-	    !pmic_regulators[mfd->chip_type].r_datas) {
++	if (mfd->chip.chip_type >= ROHM_CHIP_TYPE_AMOUNT ||
++	    !pmic_regulators[mfd->chip.chip_type].r_datas) {
+ 		dev_err(&pdev->dev, "Unsupported chip type\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
  
-@@ -41,7 +39,6 @@ enum {
- struct max77650_regulator_desc {
- 	struct regulator_desc desc;
- 	unsigned int regA;
--	unsigned int regB;
- };
- 
- static const u32 max77651_sbb1_regulator_volt_table[] = {
-@@ -86,50 +83,6 @@ static const int max77650_current_limit_table[] = {
- 	1000000, 866000, 707000, 500000,
- };
- 
--static int max77650_regulator_is_enabled(struct regulator_dev *rdev)
--{
--	struct max77650_regulator_desc *rdesc;
--	struct regmap *map;
--	int val, rv, en;
--
--	rdesc = rdev_get_drvdata(rdev);
--	map = rdev_get_regmap(rdev);
--
--	rv = regmap_read(map, rdesc->regB, &val);
--	if (rv)
--		return rv;
--
--	en = MAX77650_REGULATOR_EN_CTRL_BITS(val);
--
--	return en != MAX77650_REGULATOR_DISABLED;
--}
--
--static int max77650_regulator_enable(struct regulator_dev *rdev)
--{
--	struct max77650_regulator_desc *rdesc;
--	struct regmap *map;
--
--	rdesc = rdev_get_drvdata(rdev);
--	map = rdev_get_regmap(rdev);
--
--	return regmap_update_bits(map, rdesc->regB,
--				  MAX77650_REGULATOR_EN_CTRL_MASK,
--				  MAX77650_REGULATOR_ENABLED);
--}
--
--static int max77650_regulator_disable(struct regulator_dev *rdev)
--{
--	struct max77650_regulator_desc *rdesc;
--	struct regmap *map;
--
--	rdesc = rdev_get_drvdata(rdev);
--	map = rdev_get_regmap(rdev);
--
--	return regmap_update_bits(map, rdesc->regB,
--				  MAX77650_REGULATOR_EN_CTRL_MASK,
--				  MAX77650_REGULATOR_DISABLED);
--}
--
- static int max77650_regulator_set_voltage_sel(struct regulator_dev *rdev,
- 					      unsigned int sel)
- {
-@@ -140,7 +93,7 @@ static int max77650_regulator_set_voltage_sel(struct regulator_dev *rdev,
- 	 * If the regulator is disabled, we can program the desired
- 	 * voltage right away.
+ 	/* Register LOCK release */
+-	err = regmap_update_bits(mfd->regmap, BD718XX_REG_REGLOCK,
++	err = regmap_update_bits(mfd->chip.regmap, BD718XX_REG_REGLOCK,
+ 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to unlock PMIC (%d)\n", err);
+@@ -1065,7 +1065,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 	 * for all reset types because OTP loading at READY will clear SEL
+ 	 * bit allowing HW defaults for power rails to be used
  	 */
--	if (!max77650_regulator_is_enabled(rdev))
-+	if (!regulator_is_enabled_regmap(rdev))
- 		return regulator_set_voltage_sel_regmap(rdev, sel);
+-	err = regmap_update_bits(mfd->regmap, BD718XX_REG_TRANS_COND1,
++	err = regmap_update_bits(mfd->chip.regmap, BD718XX_REG_TRANS_COND1,
+ 				 BD718XX_ON_REQ_POWEROFF_MASK |
+ 				 BD718XX_SWRESET_POWEROFF_MASK |
+ 				 BD718XX_WDOG_POWEROFF_MASK |
+@@ -1078,17 +1078,17 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		dev_dbg(&pdev->dev, "Changed all resets from SVNS to READY\n");
+ 	}
  
- 	/*
-@@ -189,7 +142,7 @@ static int max77651_regulator_sbb1_set_voltage_sel(struct regulator_dev *rdev,
- 	 * If the regulator is disabled, we can program the desired
- 	 * voltage right away.
- 	 */
--	if (!max77650_regulator_is_enabled(rdev))
-+	if (!regulator_is_enabled_regmap(rdev))
- 		return regulator_set_voltage_sel_regmap(rdev, sel);
+-	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
++	for (i = 0; i < pmic_regulators[mfd->chip.chip_type].r_amount; i++) {
  
- 	curr = regulator_get_voltage_sel_regmap(rdev);
-@@ -264,9 +217,9 @@ static int max77650_regulator_set_current_limit(struct regulator_dev *rdev,
- }
+ 		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
  
- static const struct regulator_ops max77650_regulator_LDO_ops = {
--	.is_enabled		= max77650_regulator_is_enabled,
--	.enable			= max77650_regulator_enable,
--	.disable		= max77650_regulator_disable,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -275,9 +228,9 @@ static const struct regulator_ops max77650_regulator_LDO_ops = {
- };
+-		r = &pmic_regulators[mfd->chip_type].r_datas[i];
++		r = &pmic_regulators[mfd->chip.chip_type].r_datas[i];
+ 		desc = &r->desc;
  
- static const struct regulator_ops max77650_regulator_SBB_ops = {
--	.is_enabled		= max77650_regulator_is_enabled,
--	.enable			= max77650_regulator_enable,
--	.disable		= max77650_regulator_disable,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -289,9 +242,9 @@ static const struct regulator_ops max77650_regulator_SBB_ops = {
+ 		config.dev = pdev->dev.parent;
+-		config.regmap = mfd->regmap;
++		config.regmap = mfd->chip.regmap;
  
- /* Special case for max77651 SBB1 - non-linear voltage mapping. */
- static const struct regulator_ops max77651_SBB1_regulator_ops = {
--	.is_enabled		= max77650_regulator_is_enabled,
--	.enable			= max77650_regulator_enable,
--	.disable		= max77650_regulator_disable,
-+	.is_enabled		= regulator_is_enabled_regmap,
-+	.enable			= regulator_enable_regmap,
-+	.disable		= regulator_disable_regmap,
- 	.list_voltage		= regulator_list_voltage_table,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
- 	.set_voltage_sel	= max77651_regulator_sbb1_set_voltage_sel,
-@@ -313,6 +266,10 @@ static struct max77650_regulator_desc max77650_LDO_desc = {
- 		.n_voltages		= 128,
- 		.vsel_mask		= MAX77650_REGULATOR_V_LDO_MASK,
- 		.vsel_reg		= MAX77650_REG_CNFG_LDO_A,
-+		.enable_reg		= MAX77650_REG_CNFG_LDO_B,
-+		.enable_mask		= MAX77650_REGULATOR_EN_CTRL_MASK,
-+		.enable_val		= MAX77650_REGULATOR_ENABLED,
-+		.disable_val		= MAX77650_REGULATOR_DISABLED,
- 		.active_discharge_off	= MAX77650_REGULATOR_AD_DISABLED,
- 		.active_discharge_on	= MAX77650_REGULATOR_AD_ENABLED,
- 		.active_discharge_mask	= MAX77650_REGULATOR_AD_MASK,
-@@ -321,7 +278,6 @@ static struct max77650_regulator_desc max77650_LDO_desc = {
- 		.type			= REGULATOR_VOLTAGE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_LDO_A,
--	.regB		= MAX77650_REG_CNFG_LDO_B,
- };
- 
- static struct max77650_regulator_desc max77650_SBB0_desc = {
-@@ -337,6 +293,10 @@ static struct max77650_regulator_desc max77650_SBB0_desc = {
- 		.n_voltages		= 64,
- 		.vsel_mask		= MAX77650_REGULATOR_V_SBB_MASK,
- 		.vsel_reg		= MAX77650_REG_CNFG_SBB0_A,
-+		.enable_reg		= MAX77650_REG_CNFG_LDO_B,
-+		.enable_mask		= MAX77650_REGULATOR_EN_CTRL_MASK,
-+		.enable_val		= MAX77650_REGULATOR_ENABLED,
-+		.disable_val		= MAX77650_REGULATOR_DISABLED,
- 		.active_discharge_off	= MAX77650_REGULATOR_AD_DISABLED,
- 		.active_discharge_on	= MAX77650_REGULATOR_AD_ENABLED,
- 		.active_discharge_mask	= MAX77650_REGULATOR_AD_MASK,
-@@ -345,7 +305,6 @@ static struct max77650_regulator_desc max77650_SBB0_desc = {
- 		.type			= REGULATOR_VOLTAGE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_SBB0_A,
--	.regB		= MAX77650_REG_CNFG_SBB0_B,
- };
- 
- static struct max77650_regulator_desc max77650_SBB1_desc = {
-@@ -361,6 +320,10 @@ static struct max77650_regulator_desc max77650_SBB1_desc = {
- 		.n_voltages		= 64,
- 		.vsel_mask		= MAX77650_REGULATOR_V_SBB_MASK,
- 		.vsel_reg		= MAX77650_REG_CNFG_SBB1_A,
-+		.enable_reg		= MAX77650_REG_CNFG_LDO_B,
-+		.enable_mask		= MAX77650_REGULATOR_EN_CTRL_MASK,
-+		.enable_val		= MAX77650_REGULATOR_ENABLED,
-+		.disable_val		= MAX77650_REGULATOR_DISABLED,
- 		.active_discharge_off	= MAX77650_REGULATOR_AD_DISABLED,
- 		.active_discharge_on	= MAX77650_REGULATOR_AD_ENABLED,
- 		.active_discharge_mask	= MAX77650_REGULATOR_AD_MASK,
-@@ -369,7 +332,6 @@ static struct max77650_regulator_desc max77650_SBB1_desc = {
- 		.type			= REGULATOR_VOLTAGE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_SBB1_A,
--	.regB		= MAX77650_REG_CNFG_SBB1_B,
- };
- 
- static struct max77650_regulator_desc max77651_SBB1_desc = {
-@@ -392,7 +354,6 @@ static struct max77650_regulator_desc max77651_SBB1_desc = {
- 		.type			= REGULATOR_VOLTAGE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_SBB1_A,
--	.regB		= MAX77650_REG_CNFG_SBB1_B,
- };
- 
- static struct max77650_regulator_desc max77650_SBB2_desc = {
-@@ -416,7 +377,6 @@ static struct max77650_regulator_desc max77650_SBB2_desc = {
- 		.type			= REGULATOR_VOLTAGE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_SBB2_A,
--	.regB		= MAX77650_REG_CNFG_SBB2_B,
- };
- 
- static struct max77650_regulator_desc max77651_SBB2_desc = {
-@@ -440,7 +400,6 @@ static struct max77650_regulator_desc max77651_SBB2_desc = {
- 		.type			= REGULATOR_VOLTAGE,
- 	},
- 	.regA		= MAX77650_REG_CNFG_SBB2_A,
--	.regB		= MAX77650_REG_CNFG_SBB2_B,
- };
- 
- static int max77650_regulator_probe(struct platform_device *pdev)
+ 		rdev = devm_regulator_register(&pdev->dev, desc, &config);
+ 		if (IS_ERR(rdev)) {
+@@ -1104,7 +1104,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		 * can now switch the control from PMIC state machine to the
+ 		 * register interface
+ 		 */
+-		err = regmap_update_bits(mfd->regmap, r->init.reg,
++		err = regmap_update_bits(mfd->chip.regmap, r->init.reg,
+ 					 r->init.mask, r->init.val);
+ 		if (err) {
+ 			dev_err(&pdev->dev,
+@@ -1113,7 +1113,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 			goto err;
+ 		}
+ 		for (j = 0; j < r->additional_init_amnt; j++) {
+-			err = regmap_update_bits(mfd->regmap,
++			err = regmap_update_bits(mfd->chip.regmap,
+ 						 r->additional_inits[j].reg,
+ 						 r->additional_inits[j].mask,
+ 						 r->additional_inits[j].val);
 -- 
-2.17.1
+2.14.3
 
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
