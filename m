@@ -2,154 +2,84 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50C9C282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813E9C282D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3FA22087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:09:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EC0B21874
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:09:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548839391;
+	bh=32D9OagwTaxStn/ZAQ22u7/rdWwWkySaxp1IprbjQ1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=e7NRohuxfgMmJvo2BckPKXWZE+E0+IaNC29L8q0JJVvd+eakdyAlokupvouR1MKCz
+	 40xfGWjQUmuqlTUVSkZ1gMLRsre0QJ9ZRYciUXqnW6IZ7khqtiNuGWyEYuE+4HekIu
+	 GWxWitxG2vf9iQU+zuHXPtBeXqv+Im0mtCQQP9d8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730606AbfA3JJg (ORCPT
+        id S1730619AbfA3JJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:09:36 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41699 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727433AbfA3JJf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:09:35 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k15-v6so20018390ljc.8;
-        Wed, 30 Jan 2019 01:09:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BSVh99D67Xs2mzUIJFkPf1jemRC0I/XvdUPN37rOlpE=;
-        b=VG+qjy8HoLWYHYWLVx/j+7d2Bv4LtfEOLaRt099fC3dEkPnu6FbhjRkfyNls7urSAl
-         Ep7UMYgMp66+Cv1hs/2H/of+ex8LC1QT9NgQGznKnvWqAcGLOFnfwVHplDIBC6jaqInp
-         5FplwZP23h4TUjCfuVRcvx82iw0ozxALkB1X2m3SWKMXbZ334+1X7ATvmDdqD2CW3/FU
-         5L1AgEAMErVri0ixU/l0MvY5+3HPDKrYwmPO79wermJP2JTzXc9jZOYYY5bFM2ZXYNIk
-         M92eZVeguWBHkpZJENpjzgHZwNj/wr4bklERqlWnAM4RWh0i4q0FKQEc/D6LEiRjwXGq
-         Mh/Q==
-X-Gm-Message-State: AHQUAuZ8uvslhFunlIOGXtV24JFZZn7Q3jlek9OehvcYv/deFhglFOXe
-        RFKWX1yLlG4qvyFB54EI0RI=
-X-Google-Smtp-Source: AHgI3IZE0dweHsM44CegytdoPPn1B/lWrYRNRoLQCmZApsxwdO//ijO2TiyOYo5RT9nq4GazfiujjQ==
-X-Received: by 2002:a2e:97d7:: with SMTP id m23-v6mr1986440ljj.18.1548839372615;
-        Wed, 30 Jan 2019 01:09:32 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id r10-v6sm171240ljj.71.2019.01.30.01.09.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 01:09:32 -0800 (PST)
-Date:   Wed, 30 Jan 2019 11:09:19 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v3 05/10] clk: bd718x7: Support ROHM BD70528 clk block
-Message-ID: <b72bdb7c851496834d66d6f69221788d70a43990.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+        Wed, 30 Jan 2019 04:09:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42980 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730479AbfA3JJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 04:09:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4118FAD73;
+        Wed, 30 Jan 2019 09:09:47 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 10:09:45 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190130090945.GS18811@dhcp22.suse.cz>
+References: <nycvar.YFH.7.76.1901240009560.6626@cbobk.fhfr.pm>
+ <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com>
+ <20190124002455.GA23181@nautica>
+ <20190124124501.GA18012@nautica>
+ <nycvar.YFH.7.76.1901241523500.6626@cbobk.fhfr.pm>
+ <nycvar.YFH.7.76.1901272335040.6626@cbobk.fhfr.pm>
+ <20190128000547.GA25155@nautica>
+ <nycvar.YFH.7.76.1901300050550.6626@cbobk.fhfr.pm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <nycvar.YFH.7.76.1901300050550.6626@cbobk.fhfr.pm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ROHM BD70528 is an ultra low power PMIC with similar 32K clk as
-bd718x7. Only difference (from clk perspective) is register address.
-Add support for controlling BD70528 clk using bd718x7 driver.
+On Wed 30-01-19 00:52:02, Jiri Kosina wrote:
+> On Mon, 28 Jan 2019, Dominique Martinet wrote:
+> 
+> > > So, any objections to aproaching it this way?
+> > 
+> > I'm not sure why I'm the main recipient of that mail but answering
+> > because I am -- let's get these patches in through the regular -mm tree
+> > though
+> 
+> *prod to mm maintainers* (at least for an opinion)
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/Kconfig       |  6 +++---
- drivers/clk/clk-bd718x7.c | 21 +++++++++++++++++----
- 2 files changed, 20 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index e5b2fe80eab4..992cfb86f2ca 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -285,10 +285,10 @@ config COMMON_CLK_STM32H7
- 
- config COMMON_CLK_BD718XX
- 	tristate "Clock driver for ROHM BD718x7 PMIC"
--	depends on MFD_ROHM_BD718XX
-+	depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528
- 	help
--	  This driver supports ROHM BD71837 and ROHM BD71847
--	  PMICs clock gates.
-+	  This driver supports ROHM BD71837, ROHM BD71847 and
-+	  ROHM BD70528 PMICs clock gates.
- 
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
-diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-index 461228ebf703..41c1374f4217 100644
---- a/drivers/clk/clk-bd718x7.c
-+++ b/drivers/clk/clk-bd718x7.c
-@@ -8,6 +8,7 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/mfd/rohm-bd718x7.h>
-+#include <linux/mfd/rohm-bd70528.h>
- #include <linux/clk-provider.h>
- #include <linux/clkdev.h>
- #include <linux/regmap.h>
-@@ -86,9 +87,21 @@ static int bd71837_clk_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "No parent clk found\n");
- 		return -EINVAL;
- 	}
--
--	c->reg = BD718XX_REG_OUT32K;
--	c->mask = BD718XX_OUT32K_EN;
-+	switch (mfd->chip_type) {
-+	case ROHM_CHIP_TYPE_BD71837:
-+	case ROHM_CHIP_TYPE_BD71847:
-+
-+		c->reg = BD718XX_REG_OUT32K;
-+		c->mask = BD718XX_OUT32K_EN;
-+		break;
-+	case ROHM_CHIP_TYPE_BD70528:
-+		c->reg = BD70528_REG_CLK_OUT;
-+		c->mask = BD70528_CLK_OUT_EN_MASK;
-+		break;
-+	default:
-+		dev_err(&pdev->dev, "Unknown clk chip\n");
-+		return -EINVAL;
-+	}
- 	c->mfd = mfd;
- 	c->pdev = pdev;
- 	c->hw.init = &init;
-@@ -119,5 +132,5 @@ static struct platform_driver bd71837_clk = {
- module_platform_driver(bd71837_clk);
- 
- MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
--MODULE_DESCRIPTION("BD71837/BD71847 chip clk driver");
-+MODULE_DESCRIPTION("BD71837/BD71847/BD70528 chip clk driver");
- MODULE_LICENSE("GPL");
+Could you repost those patches please? The thread is long and it is not
+really clear what is the most up-to-date state of patches (at least to
+me).
 -- 
-2.14.3
-
-
--- 
-Matti Vaittinen
-ROHM Semiconductors Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Michal Hocko
+SUSE Labs
