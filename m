@@ -2,103 +2,71 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B57C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DEFAC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C34B3218A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:09:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 373692184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:10:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730571AbfA3KJv (ORCPT
+        id S1730318AbfA3KKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 05:09:51 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:37442 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbfA3KJu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 05:09:50 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gomnq-0006RY-7X; Wed, 30 Jan 2019 18:09:06 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gomne-0000ZS-Uz; Wed, 30 Jan 2019 18:08:54 +0800
-Date:   Wed, 30 Jan 2019 18:08:54 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Stephan Mueller <smueller@chronox.de>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] General Key Derivation Function Support
-Message-ID: <20190130100854.iey2mbmz6777pn2n@gondor.apana.org.au>
-References: <20190103143227.9138-1-jlee@suse.com>
- <9733066.Vrs4h5eWcW@positron.chronox.de>
- <2082192.jPI8ve1O8G@positron.chronox.de>
- <5418064.ltLFQScYi2@tauon.chronox.de>
+        Wed, 30 Jan 2019 05:10:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50322 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726476AbfA3KKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 05:10:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A7C95AFDE;
+        Wed, 30 Jan 2019 10:10:08 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 11:10:08 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3] livepatch: non static warnings fix
+Message-ID: <20190130101008.bki7aozn6qo4vrmc@pathway.suse.cz>
+References: <1548226584-20579-1-git-send-email-hofrat@osadl.org>
+ <alpine.LSU.2.21.1901231518320.31908@pobox.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5418064.ltLFQScYi2@tauon.chronox.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <alpine.LSU.2.21.1901231518320.31908@pobox.suse.cz>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 11:07:28AM +0100, Stephan Mueller wrote:
-> Am Mittwoch, 16. Januar 2019, 12:06:54 CET schrieb Stephan Müller:
+On Wed 2019-01-23 15:30:57, Miroslav Benes wrote:
+> Hi,
 > 
-> Hi Herbert,
+> On Wed, 23 Jan 2019, Nicholas Mc Guire wrote:
 > 
-> > Changes v2:
-> > * Incorporation of all comments from Eric Biggers
+> > Sparse reported warnings about non-static symbols. For the variables
+> > a simple static attribute is fine - for the functions referenced by
+> > livepatch via klp_func the symbol-names must be unmodified in the
+> > symbol table and the patchable code has to be emitted. The resolution
+> > is to attach __used attribute to the shared statically declared functions.
 > > 
-> > Stephan Mueller (6):
-> >   crypto: add template handling for RNGs
-> >   crypto: kdf - SP800-108 Key Derivation Function
-> >   crypto: kdf - add known answer tests
-> >   crypto: hkdf - HMAC-based Extract-and-Expand KDF
-> >   crypto: hkdf - add known answer tests
-> >   crypto: tcrypt - add KDF test invocation
-> > 
-> >  crypto/Kconfig                |  13 +
-> >  crypto/Makefile               |   2 +
-> >  crypto/hkdf.c                 | 272 +++++++++++++++++++
-> >  crypto/kdf_sp800108.c         | 491 ++++++++++++++++++++++++++++++++++
-> >  crypto/rng.c                  |  44 +++
-> >  crypto/tcrypt.c               |   8 +
-> >  crypto/testmgr.c              | 245 +++++++++++++++++
-> >  crypto/testmgr.h              | 198 ++++++++++++++
-> >  include/crypto/internal/rng.h |  26 ++
-> >  9 files changed, 1299 insertions(+)
-> >  create mode 100644 crypto/hkdf.c
-> >  create mode 100644 crypto/kdf_sp800108.c
+> > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> > Suggested-by: Joe Lawrence <joe.lawrence@redhat.com>
+> > Link: https://lkml.org/lkml/2018/12/13/827
 > 
-> Do you happen to have any comments on this patch set?
+> could you reorder the tags and change Link: tag to 
+> https://lkml.kernel.org/r/<message_id> as asked for when we reviewed v2?
 
-I'm still not convinced why this needs to go into the crypto API
-instead of being hosted in a helper which should achieve pretty
-much the same result.
+Just for record. My understanding is that the Link: tag usually points
+to the mail with the final patch that was pushed.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+It means that it is usually added by the maintainer and not the patch
+sender.
+
+Best Regards,
+Petr
