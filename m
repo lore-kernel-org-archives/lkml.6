@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDE7C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C34C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2AF420882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FDA120882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:48:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731236AbfA3Msg (ORCPT
+        id S1731277AbfA3Mst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:48:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44354 "EHLO mx1.suse.de"
+        Wed, 30 Jan 2019 07:48:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44152 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730133AbfA3Mr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 07:47:29 -0500
+        id S1731029AbfA3Mr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 07:47:28 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A7BC0B102;
-        Wed, 30 Jan 2019 12:47:27 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id A57E4B0ED;
+        Wed, 30 Jan 2019 12:47:26 +0000 (UTC)
 From:   Jiri Slaby <jslaby@suse.cz>
 To:     mingo@redhat.com
 Cc:     bp@alien8.de, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH v7 19/28] x86/asm: kill the last GLOBAL user and remove the macro
-Date:   Wed, 30 Jan 2019 13:47:02 +0100
-Message-Id: <20190130124711.12463-20-jslaby@suse.cz>
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Subject: [PATCH v7 16/28] x86/asm: do not annotate functions by GLOBAL
+Date:   Wed, 30 Jan 2019 13:46:59 +0100
+Message-Id: <20190130124711.12463-17-jslaby@suse.cz>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190130124711.12463-1-jslaby@suse.cz>
 References: <20190130124711.12463-1-jslaby@suse.cz>
@@ -42,83 +42,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the remaining 32bit users and remove GLOBAL macro finally. In
-particular, this means to use SYM_ENTRY for the singlestepping hack
-region.
+GLOBAL is an x86's custom macro and is going to die very soon. It was
+meant for global symbols, but here, it was used for functions. Instead,
+use the new macros SYM_FUNC_START* and SYM_CODE_START* (depending on the
+type of a function) which are dedicated for global functions. And since
+they both require a closing by SYM_*_END, we do this here too.
 
-Exclude the global definition of GLOBAL from x86 too.
+startup_64, which does not use GLOBAL, but uses .globl explicitly, is
+converted too.
+
+in_pm32 should not be global at all as it is used only locally, so
+switch to SYM_FUNC_START_LOCAL_NOALIGN.
+
+"No alignments" are preserved.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
+Cc: <x86@kernel.org>
 ---
- arch/x86/entry/entry_32.S      | 4 ++--
- arch/x86/include/asm/linkage.h | 8 --------
- include/linux/linkage.h        | 2 ++
- 3 files changed, 4 insertions(+), 10 deletions(-)
+ arch/x86/boot/copy.S      | 16 ++++++++--------
+ arch/x86/boot/pmjump.S    |  8 ++++----
+ arch/x86/kernel/head_64.S |  5 +++--
+ 3 files changed, 15 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 2a37764f498e..07029b98111d 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -775,7 +775,7 @@ ENTRY(resume_kernel)
- END(resume_kernel)
- #endif
+diff --git a/arch/x86/boot/copy.S b/arch/x86/boot/copy.S
+index 15d9f74b0008..73aa8307a10f 100644
+--- a/arch/x86/boot/copy.S
++++ b/arch/x86/boot/copy.S
+@@ -17,7 +17,7 @@
+ 	.code16
+ 	.text
  
--GLOBAL(__begin_SYSENTER_singlestep_region)
-+SYM_ENTRY(__begin_SYSENTER_singlestep_region, SYM_L_GLOBAL, SYM_A_NONE)
+-GLOBAL(memcpy)
++SYM_FUNC_START_NOALIGN(memcpy)
+ 	pushw	%si
+ 	pushw	%di
+ 	movw	%ax, %di
+@@ -31,9 +31,9 @@ GLOBAL(memcpy)
+ 	popw	%di
+ 	popw	%si
+ 	retl
+-ENDPROC(memcpy)
++SYM_FUNC_END(memcpy)
+ 
+-GLOBAL(memset)
++SYM_FUNC_START_NOALIGN(memset)
+ 	pushw	%di
+ 	movw	%ax, %di
+ 	movzbl	%dl, %eax
+@@ -46,22 +46,22 @@ GLOBAL(memset)
+ 	rep; stosb
+ 	popw	%di
+ 	retl
+-ENDPROC(memset)
++SYM_FUNC_END(memset)
+ 
+-GLOBAL(copy_from_fs)
++SYM_FUNC_START_NOALIGN(copy_from_fs)
+ 	pushw	%ds
+ 	pushw	%fs
+ 	popw	%ds
+ 	calll	memcpy
+ 	popw	%ds
+ 	retl
+-ENDPROC(copy_from_fs)
++SYM_FUNC_END(copy_from_fs)
+ 
+-GLOBAL(copy_to_fs)
++SYM_FUNC_START_NOALIGN(copy_to_fs)
+ 	pushw	%es
+ 	pushw	%fs
+ 	popw	%es
+ 	calll	memcpy
+ 	popw	%es
+ 	retl
+-ENDPROC(copy_to_fs)
++SYM_FUNC_END(copy_to_fs)
+diff --git a/arch/x86/boot/pmjump.S b/arch/x86/boot/pmjump.S
+index 3e0edc6d2a20..b90e42eb1a62 100644
+--- a/arch/x86/boot/pmjump.S
++++ b/arch/x86/boot/pmjump.S
+@@ -23,7 +23,7 @@
  /*
-  * All code from here through __end_SYSENTER_singlestep_region is subject
-  * to being single-stepped if a user program sets TF and executes SYSENTER.
-@@ -954,7 +954,7 @@ ENTRY(entry_SYSENTER_32)
- 	pushl	$X86_EFLAGS_FIXED
- 	popfl
- 	jmp	.Lsysenter_flags_fixed
--GLOBAL(__end_SYSENTER_singlestep_region)
-+SYM_ENTRY(__end_SYSENTER_singlestep_region, SYM_L_GLOBAL, SYM_A_NONE)
- ENDPROC(entry_SYSENTER_32)
+  * void protected_mode_jump(u32 entrypoint, u32 bootparams);
+  */
+-GLOBAL(protected_mode_jump)
++SYM_FUNC_START_NOALIGN(protected_mode_jump)
+ 	movl	%edx, %esi		# Pointer to boot_params table
  
- /*
-diff --git a/arch/x86/include/asm/linkage.h b/arch/x86/include/asm/linkage.h
-index e07188e8d763..365111789cc6 100644
---- a/arch/x86/include/asm/linkage.h
-+++ b/arch/x86/include/asm/linkage.h
-@@ -13,14 +13,6 @@
+ 	xorl	%ebx, %ebx
+@@ -44,11 +44,11 @@ GLOBAL(protected_mode_jump)
+ 	.byte	0x66, 0xea		# ljmpl opcode
+ 2:	.long	in_pm32			# offset
+ 	.word	__BOOT_CS		# segment
+-ENDPROC(protected_mode_jump)
++SYM_FUNC_END(protected_mode_jump)
  
- #ifdef __ASSEMBLY__
+ 	.code32
+ 	.section ".text32","ax"
+-GLOBAL(in_pm32)
++SYM_FUNC_START_LOCAL_NOALIGN(in_pm32)
+ 	# Set up data segments for flat 32-bit mode
+ 	movl	%ecx, %ds
+ 	movl	%ecx, %es
+@@ -74,4 +74,4 @@ GLOBAL(in_pm32)
+ 	lldt	%cx
  
--/*
-- * GLOBAL is DEPRECATED
-- *
-- * use SYM_DATA_START, SYM_FUNC_START, SYM_INNER_LABEL, SYM_CODE_START, or
-- * similar
-- */
--#define GLOBAL(name)	SYM_ENTRY(name, SYM_L_GLOBAL, SYM_A_NONE)
--
- #if defined(CONFIG_X86_64) || defined(CONFIG_X86_ALIGNMENT_16)
- #define __ALIGN		.p2align 4, 0x90
- #define __ALIGN_STR	__stringify(__ALIGN)
-diff --git a/include/linux/linkage.h b/include/linux/linkage.h
-index f3ae8f3dea2c..cb1108dde385 100644
---- a/include/linux/linkage.h
-+++ b/include/linux/linkage.h
-@@ -105,12 +105,14 @@
- 
- /* === DEPRECATED annotations === */
- 
-+#ifndef CONFIG_X86
- #ifndef GLOBAL
- /* deprecated, use SYM_DATA*, SYM_ENTRY, or similar */
- #define GLOBAL(name) \
- 	.globl name ASM_NL \
- 	name:
- #endif
-+#endif
- 
- #ifndef ENTRY
- /* deprecated, use SYM_FUNC_START */
+ 	jmpl	*%eax			# Jump to the 32-bit entrypoint
+-ENDPROC(in_pm32)
++SYM_FUNC_END(in_pm32)
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 5b7a3b430dea..f6ed36c3aa17 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -51,8 +51,7 @@ L3_START_KERNEL = pud_index(__START_KERNEL_map)
+ 	.text
+ 	__HEAD
+ 	.code64
+-	.globl startup_64
+-startup_64:
++SYM_CODE_START_NOALIGN(startup_64)
+ 	UNWIND_HINT_EMPTY
+ 	/*
+ 	 * At this point the CPU runs in 64bit mode CS.L = 1 CS.D = 0,
+@@ -92,6 +91,8 @@ startup_64:
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+ 	addq	$(early_top_pgt - __START_KERNEL_map), %rax
+ 	jmp 1f
++SYM_CODE_END(startup_64)
++
+ ENTRY(secondary_startup_64)
+ 	UNWIND_HINT_EMPTY
+ 	/*
 -- 
 2.20.1
 
