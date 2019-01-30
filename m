@@ -2,149 +2,111 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3CEC282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 064E1C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3CC620989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C436020844
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:53:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548878039;
+	bh=eti9CeJAmWpw5OvvVyvDa3+VHxSwGAN1fDk3DR1H75E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0X83oVA5tKQHlLUVPuZkZc6Qw+4fDPTtz3EklFejJLHQg4xqB6u/EkgzaEtZtjdDz
+	 TXcmNSEIr94HfTRospUxBBn2aZJKPcMJw7TS7XQ5nKfwtdoYUB1c6N78CiFIav4Ned
+	 pjXmqpn4FObWpHf7HFx7WuhM99OaBSTCJHVSX+4s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733271AbfA3Tw7 (ORCPT
+        id S1733138AbfA3Tx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:52:59 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:40932 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728715AbfA3Tw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:52:58 -0500
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.205])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1govui-0008T2-Ew; Wed, 30 Jan 2019 12:52:49 -0700
-To:     Jerome Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-References: <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
- <20190129205749.GN3176@redhat.com>
- <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
- <20190129215028.GQ3176@redhat.com>
- <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
- <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
- <20190130041841.GB30598@mellanox.com>
- <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
- <20190130185652.GB17080@mellanox.com> <20190130192234.GD5061@redhat.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <5a60507e-e781-d0a4-353e-32105ca7ace3@deltatee.com>
-Date:   Wed, 30 Jan 2019 12:52:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 14:53:58 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43811 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728446AbfA3Tx5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:53:57 -0500
+Received: by mail-oi1-f195.google.com with SMTP id u18so667858oie.10;
+        Wed, 30 Jan 2019 11:53:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=luO45oTOWLznaLwqm9yVxe7pJFQCo4Ni5EhYDjDDZo4=;
+        b=BDT/RR1sXOB8baOJ1xi0798asKr4R3NIsNmyNMQrLvg9KZ+JsPeutAtV9MFxlXrtPe
+         hjTvx7yz0Gtvx9u+mdFgGeNTnveNxzFjrRVc43sF/aLzMNoGYcRgtApTCywL3MdfWjaT
+         3HFKQfnx4+8b+qjJPaNT0KV3gUS3ROlLm5szrlqu7Ne4WyHtb6ql206MxKXfwTaZXD6H
+         SFnLdx8Ewel9f454P8C6atYBj81Q+pRt8xX+UTUvBM9JO6dXs1+O08rlS+CUd19tuodX
+         bTjkvo2vwxZA2cPtLGoJ6vPiR0PtevE14hGW34gDpAPFAjTpHxwIj3nWcxsVt6sXsVsC
+         SmsA==
+X-Gm-Message-State: AHQUAuY2SbfWPrT1UkrWm9RJQOTz+H7FX3fj8DZWOFhuhNFizHKOLbVw
+        XeBvNUJc2UBt786He3wvRg==
+X-Google-Smtp-Source: AHgI3IbpedcSYbsEqtIjTDOqlk68rPUdh6kaOFqTSW58BTXcFUgezC8N80bJoFXFuZ78ENeWVcc68A==
+X-Received: by 2002:aca:1918:: with SMTP id l24mr1473331oii.236.1548878036874;
+        Wed, 30 Jan 2019 11:53:56 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 127sm1052663oid.36.2019.01.30.11.53.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 11:53:56 -0800 (PST)
+Date:   Wed, 30 Jan 2019 13:53:55 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Mark Zhang <markz@nvidia.com>
+Cc:     lee.jones@linaro.org, blaws05@gmail.com, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] mfd: max77620: add documentation for low battery
+ monitoring
+Message-ID: <20190130195355.GA1652@bogus>
+References: <20190129085531.32364-1-markz@nvidia.com>
+ <20190129085531.32364-5-markz@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20190130192234.GD5061@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, hch@lst.de, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jgg@mellanox.com, jglisse@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129085531.32364-5-markz@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019-01-30 12:22 p.m., Jerome Glisse wrote:
-> On Wed, Jan 30, 2019 at 06:56:59PM +0000, Jason Gunthorpe wrote:
->> On Wed, Jan 30, 2019 at 10:17:27AM -0700, Logan Gunthorpe wrote:
->>>
->>>
->>> On 2019-01-29 9:18 p.m., Jason Gunthorpe wrote:
->>>> Every attempt to give BAR memory to struct page has run into major
->>>> trouble, IMHO, so I like that this approach avoids that.
->>>>
->>>> And if you don't have struct page then the only kernel object left to
->>>> hang meta data off is the VMA itself.
->>>>
->>>> It seems very similar to the existing P2P work between in-kernel
->>>> consumers, just that VMA is now mediating a general user space driven
->>>> discovery process instead of being hard wired into a driver.
->>>
->>> But the kernel now has P2P bars backed by struct pages and it works
->>> well. 
->>
->> I don't think it works that well..
->>
->> We ended up with a 'sgl' that is not really a sgl, and doesn't work
->> with many of the common SGL patterns. sg_copy_buffer doesn't work,
->> dma_map, doesn't work, sg_page doesn't work quite right, etc.
->>
->> Only nvme and rdma got the special hacks to make them understand these
->> p2p-sgls, and I'm still not convinced some of the RDMA drivers that
->> want access to CPU addresses from the SGL (rxe, usnic, hfi, qib) don't
->> break in this scenario.
->>
->> Since the SGLs become broken, it pretty much means there is no path to
->> make GUP work generically, we have to go through and make everything
->> safe to use with p2p-sgls before allowing GUP. Which, frankly, sounds
->> impossible with all the competing objections.
->>
->> But GPU seems to have a problem unrelated to this - what Jerome wants
->> is to have two faulting domains for VMA's - visible-to-cpu and
->> visible-to-dma. The new op is essentially faulting the pages into the
->> visible-to-dma category and leaving them invisible-to-cpu.
->>
->> So that duality would still have to exists, and I think p2p_map/unmap
->> is a much simpler implementation than trying to create some kind of
->> special PTE in the VMA..
->>
->> At least for RDMA, struct page or not doesn't really matter. 
->>
->> We can make struct pages for the BAR the same way NVMe does.  GPU is
->> probably the same, just with more mememory at stake?  
->>
->> And maybe this should be the first implementation. The p2p_map VMA
->> operation should return a SGL and the caller should do the existing
->> pci_p2pdma_map_sg() flow.. 
+On Tue, Jan 29, 2019 at 04:55:31PM +0800, Mark Zhang wrote:
+> Adding documentation for low battery monitor properties:
+> - maxim,low-battery-dac-enable
+> - maxim,low-battery-dac-disable
+> - maxim,low-battery-shutdown-enable
+> - maxim,low-battery-shutdown-disable
+> - maxim,low-battery-reset-enable
+> - maxim,low-battery-reset-disable
 > 
-> For GPU it would not work, GPU might want to use main memory (because
-> it is running out of BAR space) it is a lot easier if the p2p_map
-> callback calls the right dma map function (for page or io) rather than
-> having to define some format that would pass down the information.
-
->>
->> Worry about optimizing away the struct page overhead later?
+> Signed-off-by: Mark Zhang <markz@nvidia.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/max77620.txt | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> Struct page do not fit well for GPU as the BAR address can be reprogram
-> to point to any page inside the device memory (think 256M BAR versus
-> 16GB device memory). Forcing struct page on GPU driver would require
-> major surgery to the GPU driver inner working and there is no benefit
-> to have from the struct page. So it is hard to justify this.
+> diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
+> index 484b17e4fba5..5fed0a463b80 100644
+> --- a/Documentation/devicetree/bindings/mfd/max77620.txt
+> +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
+> @@ -142,6 +142,20 @@ Optional properties:
+>  			Device supports 100/1000/3000/6000 Ohms.
+>  			Default will be set to 1000 Ohm.
+>  
+> +Low-Battery Monitor:
+> +==================
+> +This sub-node configure low battery monitor configuration registers. Device has
+> +support for low-battery monitor configuration through child DT node
+> +"low-battery-monitor".
+> +
+> +Optional properties:
+> +	- maxim,low-battery-dac-enable: Enable low battery DAC.
+> +	- maxim,low-battery-dac-disable: Disable low battery DAC.
+> +	- maxim,low-battery-shutdown-enable: Enable low battery shutdown.
+> +	- maxim,low-battery-shutdown-disable: Disable low battery shutdown.
+> +	- maxim,low-battery-reset-enable: Enable low battery reset.
+> +	- maxim,low-battery-reset-disable: Disable low battery reset.
 
-I think we have to consider the struct pages to track the address space,
-not what backs it (essentially what HMM is doing). If we need to add
-operations for the driver to map the address space/struct pages back to
-physical memory then do that. Creating a whole new idea that's tied to
-userspace VMAs still seems wrong to me.
+Do you really need 3 states with the 3rd being prop not present.
 
-Logan
+Rob
