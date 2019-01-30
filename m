@@ -2,283 +2,193 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 012A3C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A37C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7716218D2
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:30:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE91E20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:36:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730826AbfA3Xai (ORCPT
+        id S1727554AbfA3XgF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:30:38 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.62]:35986 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725768AbfA3Xah (ORCPT
+        Wed, 30 Jan 2019 18:36:05 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48478 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725768AbfA3XgE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:30:37 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id EAA5EEA9D
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 17:30:35 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ozJTgaxDR90onozJTg0q7z; Wed, 30 Jan 2019 17:30:35 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=57884 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gozJT-0017Wf-KM; Wed, 30 Jan 2019 17:30:35 -0600
-To:     Kees Cook <keescook@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-References: <20190129233426.GA7999@embeddedor>
- <CAGXu5jJVqbUdF6bVAQYuw9r8emzvy=oJFNJWxM-iSu-t3igeYw@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] lib: zstd: Mark expected switch fall-throughs
-Message-ID: <ac8f9634-e298-3daa-e85d-c4b2478ee0a2@embeddedor.com>
-Date:   Wed, 30 Jan 2019 17:30:34 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 30 Jan 2019 18:36:04 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UNY3hj035302
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 18:36:03 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbnmvg73v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 18:36:02 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 30 Jan 2019 23:36:02 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 30 Jan 2019 23:35:59 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0UNZvlL18874456
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 30 Jan 2019 23:35:57 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2A1E0B2066;
+        Wed, 30 Jan 2019 23:35:57 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EE38CB2064;
+        Wed, 30 Jan 2019 23:35:56 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.57])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 30 Jan 2019 23:35:56 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0FE1E16C69B0; Wed, 30 Jan 2019 15:35:57 -0800 (PST)
+Date:   Wed, 30 Jan 2019 15:35:57 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Sebastian Sewior <bigeasy@linutronix.de>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        Stefan Liebler <stli@linux.ibm.com>
+Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggerede
+Reply-To: paulmck@linux.ibm.com
+References: <20190129171653.ycl64psq2liy5o5c@linutronix.de>
+ <20190130094913.GC5299@osiris>
+ <alpine.DEB.2.21.1901301303320.5537@nanos.tec.linutronix.de>
+ <20190130125955.GD5299@osiris>
+ <20190130132420.spwrq2d4oxeydk5s@linutronix.de>
+ <alpine.DEB.2.21.1901301428390.5537@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1901301517220.1950@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1901301853290.1622@nanos.tec.linutronix.de>
+ <20190130210733.mg6aascw2gzl3oqz@linutronix.de>
+ <alpine.DEB.2.21.1901302314590.8200@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJVqbUdF6bVAQYuw9r8emzvy=oJFNJWxM-iSu-t3igeYw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gozJT-0017Wf-KM
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:57884
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1901302314590.8200@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19013023-0072-0000-0000-000003F26274
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010506; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01154130; UDB=6.00601769; IPR=6.00934507;
+ MB=3.00025361; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-30 23:36:01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013023-0073-0000-0000-00004B00DBEC
+Message-Id: <20190130233557.GA4240@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_18:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901300168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 31, 2019 at 12:13:51AM +0100, Thomas Gleixner wrote:
+> On Wed, 30 Jan 2019, Sebastian Sewior wrote:
+> 
+> > On 2019-01-30 18:56:54 [+0100], Thomas Gleixner wrote:
+> > > TBH, no clue. Below are some more traceprintks which hopefully shed some
+> > > light on that mystery. See kernel/futex.c line 30  ...
+> > 
+> > The robust list it somehow buggy. In the last trace we had the
+> > handle_futex_death() of uaddr 3ff9e880140 as the last action. That means
+> > it was an entry in 56496's ->list_op_pending entry. This makes sense
+> > because it tried to acquire the lock, failed, got killed.
+> 
+> The robust list of the failing task seems to be correct. 
+> 
+> > According to uaddr pid 56956 is the owner. So 56956 invoked one of
+> > pthread_mutex_lock() / pthread_mutex_timedlock() /
+> > pthread_mutex_trylock() and should have obtained the lock in userland.
+> > Depending on where it got killed, that mutex should be either recorded in
+> > ->list_op_pending or the robust_list (or both if it didn't clear
+> > ->list_op_pending yet). But it is not.
+> > Similar for pthread_mutex_unlock().
+> 
+> > We don't have a trace_point if we abort processing the list.
+> 
+> The only reason why it would abort is due a page fault because that cannot
+> be handled in the exit code anymore.
+> 
+> > On the other hand, it didn't trigger on x86 for hours. Could the atomic
+> 
+> s/hours/days/ ....
+> 
+> > ops be the culprit?
+> 
+> The glibc code does:
+> 
+>        THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending,
+>        		     (void *) (((uintptr_t) &mutex->__data.__list.__next)
+>                                    | 1));
+> 
+>        ....
+>        lock in user space
+> 
+>        or
+> 
+>        lock in kernel space
+> 
+>        ENQUEUE_MUTEX_PI (mutex);
+>        THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending, NULL);
+> 
+>        ENQUEUE_MUTEX_PI() resolves to a THREAD_GETMEM() which reads the
+>        list head from TLS, some list manipulation operations and the final
+>        THREAD_SETMEM() which stores the new list head
+> 
+> Now on x86 THREAD_GETMEM() and THREAD_SETMEM() are resolving to
+> 
+>     asm volatile ("movX .....")
+> 
+> on s390 they are
+> 
+>    descr->member
+> 
+> based operations.
+> 
+> Now the important part of the robust list is the store sequence, i.e. the
+> list head and final update to the TLS visible part need to come _before_
+> list_op_pending is cleared.
+> 
+> I might be missing something, but there is no compiler barrier in that code
+> which would prevent the compiler from reordering the stores. It can
+> rightfully do so because there is no compiler visible dependency of these
+> two operations.
+> 
+> On x8664 the asm volatile might prevent it by chance, but it does not have
+> a 'memory' specified which would guarantee a compiler barrier.
+> 
+> On s390 there is certainly nothing.
+> 
+> So assumed that clearing list_op_pending comes before the list head update,
+> then the robust exit code in the kernel will fail to see either of
+> them. FAIL.
+> 
+> I might be wrong as usual, but this would definitely explain the fail very
+> well.
 
+On recent versions of GCC, the fix would be to put this between the two
+stores that need ordering:
 
-On 1/30/19 1:58 AM, Kees Cook wrote:
-> On Wed, Jan 30, 2019 at 12:34 PM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->>
->> In preparation to enabling -Wimplicit-fallthrough, mark switch
->> cases where we are expecting to fall through.
->>
->> This patch fixes the following warnings:
->>
->> lib/zstd/bitstream.h:261:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/zstd/bitstream.h:262:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/zstd/bitstream.h:263:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/zstd/bitstream.h:264:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/zstd/bitstream.h:265:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/zstd/compress.c:3183:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/zstd/decompress.c:1770:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/zstd/decompress.c:2376:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/zstd/decompress.c:2404:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/zstd/decompress.c:2435:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/zstd/huf_compress.c: In function ‘HUF_compress1X_usingCTable’:
->> lib/zstd/huf_compress.c:535:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>   if (sizeof((stream)->bitContainer) * 8 < HUF_TABLELOG_MAX * 4 + 7) \
->>      ^
->> lib/zstd/huf_compress.c:558:54: note: in expansion of macro ‘HUF_FLUSHBITS_2’
->>   case 3: HUF_encodeSymbol(&bitC, ip[n + 2], CTable); HUF_FLUSHBITS_2(&bitC);
->>                                                       ^~~~~~~~~~~~~~~
->> lib/zstd/huf_compress.c:559:2: note: here
->>   case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bitC);
->>   ^~~~
->> lib/zstd/huf_compress.c:531:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>   if (sizeof((stream)->bitContainer) * 8 < HUF_TABLELOG_MAX * 2 + 7) \
->>      ^
->> lib/zstd/huf_compress.c:559:54: note: in expansion of macro ‘HUF_FLUSHBITS_1’
->>   case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bitC);
->>                                                       ^~~~~~~~~~~~~~~
->> lib/zstd/huf_compress.c:560:2: note: here
->>   case 1: HUF_encodeSymbol(&bitC, ip[n + 0], CTable); HUF_FLUSHBITS(&bitC);
->>   ^~~~
->>   AR      lib/zstd//built-in.a
->>
->> Warning level 3 was used: -Wimplicit-fallthrough=3
->>
->> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  lib/zstd/bitstream.h    | 5 +++++
->>  lib/zstd/compress.c     | 1 +
->>  lib/zstd/decompress.c   | 5 ++++-
->>  lib/zstd/huf_compress.c | 2 ++
->>  4 files changed, 12 insertions(+), 1 deletion(-)
->>
->> diff --git a/lib/zstd/bitstream.h b/lib/zstd/bitstream.h
->> index a826b99e1d63..3a49784d5c61 100644
->> --- a/lib/zstd/bitstream.h
->> +++ b/lib/zstd/bitstream.h
->> @@ -259,10 +259,15 @@ ZSTD_STATIC size_t BIT_initDStream(BIT_DStream_t *bitD, const void *srcBuffer, s
->>                 bitD->bitContainer = *(const BYTE *)(bitD->start);
->>                 switch (srcSize) {
->>                 case 7: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[6]) << (sizeof(bitD->bitContainer) * 8 - 16);
->> +                       /* fall through */
->>                 case 6: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[5]) << (sizeof(bitD->bitContainer) * 8 - 24);
->> +                       /* fall through */
->>                 case 5: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[4]) << (sizeof(bitD->bitContainer) * 8 - 32);
->> +                       /* fall through */
->>                 case 4: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[3]) << 24;
->> +                       /* fall through */
->>                 case 3: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[2]) << 16;
->> +                       /* fall through */
->>                 case 2: bitD->bitContainer += (size_t)(((const BYTE *)(srcBuffer))[1]) << 8;
->>                 default:;
->>                 }
->> diff --git a/lib/zstd/compress.c b/lib/zstd/compress.c
->> index f9166cf4f7a9..5e0b67003e55 100644
->> --- a/lib/zstd/compress.c
->> +++ b/lib/zstd/compress.c
->> @@ -3182,6 +3182,7 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream *zcs, void *dst, size_t *
->>                                 zcs->outBuffFlushedSize = 0;
->>                                 zcs->stage = zcss_flush; /* pass-through to flush stage */
->>                         }
->> +                       /* fall through */
-> 
-> Perhaps reword the existing comment and move it down?
-> 
->>
->>                 case zcss_flush: {
->>                         size_t const toFlush = zcs->outBuffContentSize - zcs->outBuffFlushedSize;
->> diff --git a/lib/zstd/decompress.c b/lib/zstd/decompress.c
->> index b17846725ca0..269ee9a796c1 100644
->> --- a/lib/zstd/decompress.c
->> +++ b/lib/zstd/decompress.c
->> @@ -1768,6 +1768,7 @@ size_t ZSTD_decompressContinue(ZSTD_DCtx *dctx, void *dst, size_t dstCapacity, c
->>                         return 0;
->>                 }
->>                 dctx->expected = 0; /* not necessary to copy more */
->> +               /* fall through */
->>
->>         case ZSTDds_decodeFrameHeader:
->>                 memcpy(dctx->headerBuffer + ZSTD_frameHeaderSize_prefix, src, dctx->expected);
->> @@ -2375,7 +2376,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZSTD_outBuffer *output, ZSTD_inB
->>                         }
->>                         zds->stage = zdss_read;
->>                 }
->> -               /* pass-through */
->> +               /* fall through */
->>
->>                 case zdss_read: {
->>                         size_t const neededInSize = ZSTD_nextSrcSizeToDecompress(zds->dctx);
->> @@ -2404,6 +2405,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZSTD_outBuffer *output, ZSTD_inB
->>                         zds->stage = zdss_load;
->>                         /* pass-through */
->>                 }
->> +               /* fall through */
-> 
-> Same ("pass-through" exists a couple lines up)
-> 
->>
->>                 case zdss_load: {
->>                         size_t const neededInSize = ZSTD_nextSrcSizeToDecompress(zds->dctx);
->> @@ -2436,6 +2438,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZSTD_outBuffer *output, ZSTD_inB
->>                                 /* pass-through */
->>                         }
->>                 }
->> +               /* fall through */
-> 
-> Same
+	__atomic_thread_fence(__ATOMIC_RELEASE);
 
-Yeah. The thing is that the pass-though comment is embedded in two nested blocks of code. And GCC triggers
-a warning if the fall-through comments are not placed at the very bottom of the case statement (some people
-dislike this 'feature').
+I must defer to Heiko on whether s390 GCC might tear the stores.  My
+guess is "probably not".  ;-)
 
-That's the reason why I didn't want to change any of the pass-through comments, and instead added the
-fall-through comments at the bottom of every case.
+							Thanx, Paul
 
-What do you think about this 'feature'?
-
-> 
->>
->>                 case zdss_flush: {
->>                         size_t const toFlushSize = zds->outEnd - zds->outStart;
->> diff --git a/lib/zstd/huf_compress.c b/lib/zstd/huf_compress.c
->> index 40055a7016e6..e727812d12aa 100644
->> --- a/lib/zstd/huf_compress.c
->> +++ b/lib/zstd/huf_compress.c
->> @@ -556,7 +556,9 @@ size_t HUF_compress1X_usingCTable(void *dst, size_t dstSize, const void *src, si
->>         n = srcSize & ~3; /* join to mod 4 */
->>         switch (srcSize & 3) {
->>         case 3: HUF_encodeSymbol(&bitC, ip[n + 2], CTable); HUF_FLUSHBITS_2(&bitC);
->> +               /* fall through */
->>         case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bitC);
->> +               /* fall through */
->>         case 1: HUF_encodeSymbol(&bitC, ip[n + 0], CTable); HUF_FLUSHBITS(&bitC);
->>         case 0:
->>         default:;
->> --
->> 2.20.1
->>
-> 
-> Otherwise, yup, looks good.
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> 
-
-Thanks
-
---
-Gustavo
