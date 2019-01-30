@@ -5,87 +5,75 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 489CCC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51394C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00E0821473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0787F21473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:52:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbfA3Xvx (ORCPT
+        id S1729363AbfA3XwE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:51:53 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:54837 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfA3Xvw (ORCPT
+        Wed, 30 Jan 2019 18:52:04 -0500
+Received: from paleale.coelho.fi ([176.9.41.70]:53032 "EHLO
+        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727882AbfA3Xvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:51:52 -0500
-Received: from 79.184.255.169.ipv4.supernova.orange.pl (79.184.255.169) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id b487e0d7d9f64c44; Thu, 31 Jan 2019 00:51:49 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thara.gopinath@linaro.org, linux@roeck-us.net,
-        ulf.hansson@linaro.org
-Subject: Re: [PATCH v7 0/3] Move pm_runtime accounted time to raw nsec
-Date:   Thu, 31 Jan 2019 00:50:44 +0100
-Message-ID: <2577730.BvIW2u5g9k@aspire.rjw.lan>
-In-Reply-To: <1548229814-24913-1-git-send-email-vincent.guittot@linaro.org>
-References: <1548229814-24913-1-git-send-email-vincent.guittot@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 30 Jan 2019 18:51:53 -0500
+Received: from 91-156-4-241.elisa-laajakaista.fi ([91.156.4.241] helo=redipa)
+        by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <luca@coelho.fi>)
+        id 1gozdy-0004Ei-6E; Thu, 31 Jan 2019 01:51:46 +0200
+Message-ID: <9455f1b9e746f2c28d1573ccdce3836ece42cd8a.camel@coelho.fi>
+From:   Luca Coelho <luca@coelho.fi>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Wireless <linux-wireless@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Date:   Thu, 31 Jan 2019 01:51:44 +0200
+In-Reply-To: <20190131104626.62ff05ce@canb.auug.org.au>
+References: <20190131104626.62ff05ce@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: linux-next: build warning after merge of the
+ wireless-drivers-next tree
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, January 23, 2019 8:50:12 AM CET Vincent Guittot wrote:
-> Move pm_runtime accounted time to raw nsec. The subject of the patchset
-> has changed as 1st patch o the previous versions has been queued by
-> Rafael.
+On Thu, 2019-01-31 at 10:46 +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Patch 1 set accounting_timestamp to 0 in pm_runtime_init and update it when enable.
-> So we remove ordering constraint between timekeeping_init and pm_runtime_init
+> After merging the wireless-drivers-next tree, today's linux-next
+> build
+> (x86_64 allmodconfig) produced this warning:
 > 
-> Patch 2 moves time accounting on raw ns. This patch initially used
-> ktime instead of raw ns but it was easier to move i915 driver on raw ns
-> than on ktime.
+> drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c:195:13: warning:
+> 'iwl_mvm_add_rtap_sniffer_config' defined but not used [-Wunused-
+> function]
+>  static void iwl_mvm_add_rtap_sniffer_config(struct iwl_mvm *mvm,
+>              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 > 
-> Change since v6:
-> - move code that set accounting_timestamp in pm_runtime_enable
+> Introduced by commit
 > 
-> Changes since v5:
-> - removed patches already queued.
-> - set accounting_timestamp to 0 in pm_runtime_init and update it when enable
-> 
-> Changes since v4:
-> -Update commit message
-> 
-> Changes since v3:
-> - Rebase on v4.20-rc7 without patch that has been queued by Rafael
-> - Simplify the new interface pm_runtime_suspended_time()
-> 
-> Changes since v2:
-> - remove patch1 that has been queued by rafael
-> - add new interface in pm_runtime to get accounted time
-> - reorder patchset to prevent compilation error
-> 
-> Changes since v1:
-> - updated commit message of patch 1
-> - Added patches 2 & 3 to move runtime_pm accounting on raw ns
->   
-> Thara Gopinath (1):
->   PM-runtime: Replace jiffies based accounting with ktime-based
->     accounting
-> 
-> Vincent Guittot (1):
->   PM-runtime: update accounting_timestamp only when enable
-> 
->  drivers/base/power/runtime.c | 26 ++++++++++++++++----------
->  drivers/base/power/sysfs.c   | 11 ++++++++---
->  include/linux/pm.h           |  6 +++---
->  3 files changed, 27 insertions(+), 16 deletions(-)
+>   9bf13bee2d74 ("iwlwifi: mvm: include configured sniffer AID in
+> radiotap")
 
-Both patches applied, thanks!
+This was a conflict resolution damage in one of the patches I applied. 
+We already have a fix for it[1] and Kalle will apply it to wireless-
+drivers-next soon.
+
+Sorry for the trouble, but somehow I didn't see this warning and
+kbuildbot also reported successful compilation with it. :(
+
+[1] https://patchwork.kernel.org/patch/10788503/
+
+--
+Cheers,
+Luca.
 
