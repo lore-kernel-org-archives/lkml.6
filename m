@@ -2,157 +2,81 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDEBC282D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BBBC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1270B218AC
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:50:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F60D218D2
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:52:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="xjrVTduh"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="ElQOXG/7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387813AbfA3Uuo (ORCPT
+        id S2387827AbfA3UwP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 15:50:44 -0500
-Received: from mail-eopbgr60041.outbound.protection.outlook.com ([40.107.6.41]:21078
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730599AbfA3Uuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 15:50:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ukM+GfOJlhFO402vYkxSp1drM1ADaTz3gryXQC6v/A8=;
- b=xjrVTduhTNVPS37/wUS/I/RDJIt7+GfUOAh2W7gCvCaQaOGw9QrcRL+xr8eQXrjeaNPJNP0xA19qhMi0izTGtIHn/X0DYEV3eGTMLs+hhi5t52OsCsFFgWwAe3qsFx4J/f6rvVM1N8NUctrQdUru60Dab+u4H37PcJbokaAESKA=
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
- DBBPR05MB6364.eurprd05.prod.outlook.com (20.179.41.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Wed, 30 Jan 2019 20:50:00 +0000
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 20:50:00 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Logan Gunthorpe <logang@deltatee.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAANmWgIAAG8YAgAAHLwCAAAROgIAABioAgAADIQCAAAkGAIAAAccA
-Date:   Wed, 30 Jan 2019 20:50:00 +0000
-Message-ID: <20190130204954.GI17080@mellanox.com>
-References: <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
- <20190130041841.GB30598@mellanox.com>
- <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
- <20190130185652.GB17080@mellanox.com> <20190130192234.GD5061@redhat.com>
- <20190130193759.GE17080@mellanox.com>
- <db873687-ff80-4758-0b9f-973f27db5335@deltatee.com>
- <20190130201114.GB17915@mellanox.com> <20190130204332.GF5061@redhat.com>
-In-Reply-To: <20190130204332.GF5061@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR22CA0042.namprd22.prod.outlook.com
- (2603:10b6:300:69::28) To DBBPR05MB6426.eurprd05.prod.outlook.com
- (2603:10a6:10:c9::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DBBPR05MB6364;6:45iwF2MyI8HvFCyFYG/4MKjkKDDFxIydf/ewovgftAaPLE5NcP4GAKNzPUtx2Jdz6+XgDBpjsGA1IBB4zpz1mWFqdj1LC/C91WDymUSPKiomnTVGtoh9hDOHaQaAjfaCPDcvuK7oDOliaGpWsZ65W99sgYs9MORmXUdl0UEKDnXdx9Gj4LwsDNhYDNAbT3rgwOZCA0A1b6Z6SwPdLssnacdnGhXzLuDskK0yXqiZybGrpEr7B1aC1XACHhqIJaWGN32+e0sbr36OGnPawr0Q2KziNFHy+6tMzgyQ/LHu4Wil4QYf3pb4uksioxhs/APdae2W9l8fr2Io4r7tLDQo1iylzUA2uorFBlBztX08B3Lv4xXooCf6KA23iuo2DgfARXfSlvFY70HV8P2SywhDwcU28XMKerxZ4doXccBAoUvAaQ6mDkul1M5UFwAOM8Xpvbld1XuFvmKdcCnAkbKEDA==;5:W5+l8CUYjGrBFcNURPWDvm8mz+i7pm1SDg4sO5+/tBA6/9CHuYYwOfzRA83QxAke37yQboSZzwnQFa2eVOS0hTOtTRY6V/b7mfzUzLDfvr4+uO3YxQ4sCheg+zytzFapc83JDwHM65AbgDIG1Yf5Zi9++pqDMRTLAndnibZ7Y4krRroSwURFCpjlfYBmlyeu5sRWJrV/UM1p09iwB2Q0Kg==;7:IZweDm6srMYohxalZ8pdlPaov6P8jZyKWnB2bWeZMOjm5m4qGmH88T17SCyP2u56Gfe395RfqHEwC/gFPTifdWEj9uj2MSRKKi294OU9m2OdzXoT9MIP1i5ykSlPjT7eFBH9Oc5JVKs/+0RgN6wvIw==
-x-ms-office365-filtering-correlation-id: c4c99d73-c147-413b-3088-08d686f4807d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6364;
-x-ms-traffictypediagnostic: DBBPR05MB6364:
-x-microsoft-antispam-prvs: <DBBPR05MB63643DFF81382BAF3BAA1305CF900@DBBPR05MB6364.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(136003)(39860400002)(396003)(346002)(199004)(189003)(8936002)(1076003)(305945005)(316002)(68736007)(86362001)(26005)(81156014)(7736002)(53936002)(93886005)(478600001)(6506007)(81166006)(6512007)(7416002)(229853002)(14454004)(386003)(54906003)(8676002)(36756003)(71200400001)(71190400001)(102836004)(6916009)(66066001)(4326008)(97736004)(14444005)(256004)(6486002)(217873002)(99286004)(6436002)(11346002)(486006)(186003)(2906002)(446003)(476003)(105586002)(76176011)(2616005)(106356001)(3846002)(6116002)(6246003)(52116002)(25786009)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6364;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pTIPAPloGX8Fdepj1af5kHbQyHbt1qki7SR8aUDvaF8I54SvSOymycX3jVDnE+da9fHmp7JTla7P3IBh3QnG8O2CL6G5edLiKeptIFXneFd8hUFp22exMRELY8Ee4s7Tknrlb3LDfT4QZNOHRGl2Xfuv5Ukzgb/6NHuQungXkdtiaeZ/8u62vVGMxGF67VSfZKbExGeBB5adfNU6tnY9J8C09hIuhcdWjyxehhlbut4F68EGRaZMcfo0uwAENL4yCKmECmziJdfMl+H+o3OKfJZ7meQDHg5Kq/yaiEUZt7+DUHQa3peOC5lNWGKbRnwvhpSnLjXonhRKwqhPOl6ODUovs2DCgp1ISMcys1bIsfEUp4RhpWNDMmXgJol5hxbf2S7ZPaQcHp8xMsPP//MBo1604YYwyDD1hPw/q4aqzgQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5026D2D732A5D3409D2B6B23F246B7D1@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 30 Jan 2019 15:52:15 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:50429 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731744AbfA3UwO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 15:52:14 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 42E9D83645;
+        Thu, 31 Jan 2019 09:52:11 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1548881531;
+        bh=IKPOlqWea0KTz/1sD9lvXrfzSLG7pNh7TsnyhuGpAq4=;
+        h=From:To:Cc:Subject:Date;
+        b=ElQOXG/7xU7KDjc8oJjxHuzKffG0p9hb4SghdxyM1SNE6hol9DPghI+jjSbon/EYp
+         WrI4c5xi8kEDgi8pWxr5Vf+n2KN/cwj7ierVm9q1Z7orY+ppec3zlx0PS5E3pkWhkn
+         mx3k1Cs8Ju2ZJJrRI5UyTgdiJ9ejoP6ReMx24Q+5DyavFuNDXCnK8TzErZ+KwCz2HE
+         UF0it5nFUG6Y55rrscrmIHYssc7Qj5Y6/F58I2wAfXiMay0L6AUp6mNaGY7+18UmwU
+         XA96tW2iwKI8Pst7y652/ZEOL8U4hRkeNYc4vfcs4xGIsCjUDE2Wk9CNtPGyPqs7Uq
+         AGwKqfLeYXfog==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5c520e7a0000>; Thu, 31 Jan 2019 09:52:11 +1300
+Received: from callums-dl.ws.atlnz.lc (callums-dl.ws.atlnz.lc [10.33.22.12])
+        by smtp (Postfix) with ESMTP id 7237413EDD6;
+        Thu, 31 Jan 2019 09:52:16 +1300 (NZDT)
+Received: by callums-dl.ws.atlnz.lc (Postfix, from userid 1764)
+        id 854403A0987; Thu, 31 Jan 2019 09:52:10 +1300 (NZDT)
+From:   Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+Subject: [PATCH] ipmr: ip6mr: Create new sockopt to clear mfc cache only
+Date:   Thu, 31 Jan 2019 09:52:08 +1300
+Message-Id: <20190130205209.18183-1-callum.sinclair@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4c99d73-c147-413b-3088-08d686f4807d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 20:50:00.5304
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6364
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 03:43:32PM -0500, Jerome Glisse wrote:
-> On Wed, Jan 30, 2019 at 08:11:19PM +0000, Jason Gunthorpe wrote:
-> > On Wed, Jan 30, 2019 at 01:00:02PM -0700, Logan Gunthorpe wrote:
-> >=20
-> > > We never changed SGLs. We still use them to pass p2pdma pages, only w=
-e
-> > > need to be a bit careful where we send the entire SGL. I see no reaso=
-n
-> > > why we can't continue to be careful once their in userspace if there'=
-s
-> > > something in GUP to deny them.
-> > >=20
-> > > It would be nice to have heterogeneous SGLs and it is something we
-> > > should work toward but in practice they aren't really necessary at th=
-e
-> > > moment.
-> >=20
-> > RDMA generally cannot cope well with an API that requires homogeneous
-> > SGLs.. User space can construct complex MRs (particularly with the
-> > proposed SGL MR flow) and we must marshal that into a single SGL or
-> > the drivers fall apart.
-> >=20
-> > Jerome explained that GPU is worse, a single VMA may have a random mix
-> > of CPU or device pages..
-> >=20
-> > This is a pretty big blocker that would have to somehow be fixed.
->=20
-> Note that HMM takes care of that RDMA ODP with my ODP to HMM patch,
-> so what you get for an ODP umem is just a list of dma address you
-> can program your device to. The aim is to avoid the driver to care
-> about that. The access policy when the UMEM object is created by
-> userspace through verbs API should however ascertain that for mmap
-> of device file it is only creating a UMEM that is fully covered by
-> one and only one vma. GPU device driver will have one vma per logical
-> GPU object. I expect other kind of device do that same so that they
-> can match a vma to a unique object in their driver.
+Created a way to clear the multicast forwarding cache on a socket
+without having to either remove the entries manually using the delete
+entry socket option or destroy and recreate the multicast socket.
 
-A one VMA rule is not really workable.
+Patch Set 2:
+  - Fix Compile Errors
 
-With ODP VMA boundaries can move around across the lifetime of the MR
-and we have no obvious way to fail anything if userpace puts a VMA
-boundary in the middle of an existing ODP MR address range.
+Callum Sinclair (1):
+  ipmr: ip6mr: Create new sockopt to clear mfc cache only
 
-I think the HMM mirror API really needs to deal with this for the
-driver somehow.
+ include/uapi/linux/mroute.h  |  3 ++-
+ include/uapi/linux/mroute6.h |  3 ++-
+ net/ipv4/ipmr.c              | 40 +++++++++++++++++++++----------
+ net/ipv6/ip6mr.c             | 46 +++++++++++++++++++++++-------------
+ 4 files changed, 61 insertions(+), 31 deletions(-)
 
-Jason
+--=20
+2.20.1
+
