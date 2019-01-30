@@ -2,334 +2,146 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEEAC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FB2C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 639BE20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:23:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1317D20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:23:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730234AbfA3JXI (ORCPT
+        id S1730280AbfA3JXM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:23:08 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46612 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfA3JXI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:23:08 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f5so16801666lfc.13;
-        Wed, 30 Jan 2019 01:23:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tHD0yld5GAUcW9W114qQXhEzJmBkSWftuB7b5ybDW+A=;
-        b=nNM91gLr4Pq4fpit0EmHQJE12x2BebDrf5nkI7DgFZz7IbDbhTL5V3jxbIabigvAEe
-         ug8jiiU9RZIapKfN6vXXrMzFIn3dIOcRhFWLXyQg6lT0gsLr5ORW2m1hYNlvlWWyu3ij
-         S+WKZEA+29c5gNVT3GJGvgnXOXZXr3uWlR5xhEZtnIa160Z9DDMmM+atkCXi3dyvjS9+
-         n8b1SDPKp+6dHuOBZXDaKJPKWYObxKBAVemTieefFWLYpcfonpZHqnGV3OaLcr0cfEko
-         CMbu9lkv62khDehz9Rcae+5d+SM7S0yrArFYKVqck/x2+e03KsvW214MtjbLj1gm77/5
-         1XEA==
-X-Gm-Message-State: AHQUAubSHJf7Z4DbnZW8ydbfVtnV+Tx7OEMwRijrwVlPwn27Xcd41pNE
-        tusuHkhPMUY8kYFfrtRPKDWy+Il8tA4=
-X-Google-Smtp-Source: AHgI3IYbT1fEXz8rys10TZmwPIOElfXmyfSSRhMtIH6sTun7rzhjcPOXgwD8xUg2qtGq/IztwotxYg==
-X-Received: by 2002:a19:f718:: with SMTP id z24mr3237682lfe.97.1548840183962;
-        Wed, 30 Jan 2019 01:23:03 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id b17-v6sm177162ljj.93.2019.01.30.01.23.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 01:23:03 -0800 (PST)
-Date:   Wed, 30 Jan 2019 11:22:50 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v3 10/10] watchdog: bd70528: Initial support for ROHM
- BD70528 watchdog block
-Message-ID: <b8d625a56d206dd6458c8f9495be4fdef0d10ebe.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+        Wed, 30 Jan 2019 04:23:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56088 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726427AbfA3JXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 04:23:12 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9AEF98AE6F;
+        Wed, 30 Jan 2019 09:23:11 +0000 (UTC)
+Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 256A71A7CE;
+        Wed, 30 Jan 2019 09:23:04 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 17:23:02 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Blake Caldwell <blake.caldwell@colorado.edu>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>
+Subject: Re: [LSF/MM TOPIC]: userfaultfd (was: [LSF/MM TOPIC] NUMA remote THP
+ vs NUMA local non-THP under MADV_HUGEPAGE)
+Message-ID: <20190130092302.GA25119@xz-x1>
+References: <20190129234058.GH31695@redhat.com>
+ <20190130081336.GC17937@rapoport-lnx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190130081336.GC17937@rapoport-lnx>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 30 Jan 2019 09:23:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initial support for watchdog block included in ROHM BD70528
-power management IC.
+On Wed, Jan 30, 2019 at 10:13:36AM +0200, Mike Rapoport wrote:
+> Hi,
+> 
+> (changed the subject and added CRIU folks)
+> 
+> On Tue, Jan 29, 2019 at 06:40:58PM -0500, Andrea Arcangeli wrote:
+> > Hello,
+> > 
+> > --
+> > 
+> > In addition to the above "NUMA remote THP vs NUMA local non-THP
+> > tradeoff" topic, there are other developments in "userfaultfd" land that
+> > are approaching merge readiness and that would be possible to provide a
+> > short overview about:
+> > 
+> > - Peter Xu made significant progress in finalizing the userfaultfd-WP
+> >   support over the last few months. That feature was planned from the
+> >   start and it will allow userland to do some new things that weren't
+> >   possible to achieve before. In addition to synchronously blocking
+> >   write faults to be resolved by an userland manager, it has also the
+> >   ability to obsolete the softdirty feature, because it can provide
+> >   the same information, but with O(1) complexity (as opposed of the
+> >   current softdirty O(N) complexity) similarly to what the Page
+> >   Modification Logging (PML) does in hardware for EPT write accesses.
+>  
+> We (CRIU) have some concerns about obsoleting soft-dirty in favor of
+> uffd-wp. If there are other soft-dirty users these concerns would be
+> relevant to them as well.
+> 
+> With soft-dirty we collect the information about the changed memory every
+> pre-dump iteration in the following manner:
+> * freeze the tasks
+> * find entries in /proc/pid/pagemap with SOFT_DIRTY set
+> * unfreeze the tasks
+> * dump the modified pages to disk/remote host
+> 
+> While we do need to traverse the /proc/pid/pagemap to identify dirty pages,
+> in between the pre-dump iterations and during the actual memory dump the
+> tasks are running freely.
+> 
+> If we are to switch to uffd-wp, every write by the snapshotted/migrated
+> task will incur latency of uffd-wp processing by the monitor.
+> 
+> We'd need to see how this affects overall slowdown of the workload under
+> migration before moving forward with obsoleting soft-dirty.
+> 
+> > - Blake Caldwell maintained the UFFDIO_REMAP support to atomically
+> >   remove memory from a mapping with userfaultfd (which can't be done
+> >   with a copy as in UFFDIO_COPY and it requires a slow TLB flush to be
+> >   safe) as an alternative to host swapping (which of course also
+> >   requires a TLB flush for similar reasons). Notably UFFDIO_REMAP was
+> >   rightfully naked early on and quickly replaced by UFFDIO_COPY which
+> >   is more optimal to add memory to a mapping is small chunks, but we
+> >   can't remove memory with UFFDIO_COPY and UFFDIO_REMAP should be as
+> >   efficient as it gets when it comes to removing memory from a
+> >   mapping.
+> 
+> If we are to discuss userfaultfd, I'd like also to bring the subject of COW
+> mappings.
+> The pages populated with UFFDIO_COPY cannot be COW-shared between related
+> processes which unnecessarily increases memory footprint of a migrated
+> process tree.
+> I've posted a patch [1] a (real) while ago, but nobody reacted and I've put
+> this aside.
+> Maybe it's time to discuss it again :)
 
-Configurations for low power states are still to be checked.
+Hi, Mike,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
+It's interesting to know such a work...
 
-I decided to see how it looks if I don't include the MFD data
-pointer to struct wdtbd70528 and if I just use lock pointer
-and offset_of() when I need the struct bd70528.
+Since I really don't have much context on this, so sorry if I'm going
+to ask a silly question... but I'd say when reading this I'm thinking
+of KSM.  I think KSM does not suite in this case since when doing
+UFFDIO_COPY_COW it'll contain hinting information while KSM was only
+scanning over the pages between processes which seems to be O(N*N) if
+assuming there're two processes.  However, would it make any sense to
+provide a general interface to scan for same pages between any two
+processes within specific range and merge them if found (rather than a
+specific interface for userfaultfd only)?  Then it might even be used
+by KSM admins (just as an example) when the admin knows exactly that
+memory range (addr1, len) of process A should very probably has many
+same contents as the memory range (addr2, len) of process B?
 
-By the way, the WDG provides an IRQ - would it be nice to
-get a print spilled out if the dog barks? There's some small
-delay after interrupt before the power goes down, so the print
-_might_ make it to the log (depending on system of course).
-
- drivers/watchdog/Kconfig       |  12 +++
- drivers/watchdog/Makefile      |   1 +
- drivers/watchdog/bd70528_wdt.c | 187 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 200 insertions(+)
- create mode 100644 drivers/watchdog/bd70528_wdt.c
-
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 57f017d74a97..f30e3a3e886e 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -90,6 +90,18 @@ config SOFT_WATCHDOG_PRETIMEOUT
- 	  watchdog. Be aware that governors might affect the watchdog because it
- 	  is purely software, e.g. the panic governor will stall it!
- 
-+config BD70528_WATCHDOG
-+	tristate "ROHM BD70528 PMIC Watchdog"
-+	depends on MFD_ROHM_BD70528
-+	select WATCHDOG_CORE
-+	help
-+	  Support for the watchdog in the ROHM BD70528 PMIC. Watchdog trigger
-+	  cause system reset.
-+
-+	  Say Y here to include support for the ROHM BD70528 watchdog.
-+	  Alternatively say M to compile the driver as a module,
-+	  which will be called bd70528_wdt.
-+
- config DA9052_WATCHDOG
- 	tristate "Dialog DA9052 Watchdog"
- 	depends on PMIC_DA9052 || COMPILE_TEST
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index a0917ef28e07..1ce87a3b1172 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -204,6 +204,7 @@ obj-$(CONFIG_WATCHDOG_SUN4V)		+= sun4v_wdt.o
- obj-$(CONFIG_XEN_WDT) += xen_wdt.o
- 
- # Architecture Independent
-+obj-$(CONFIG_BD70528_WATCHDOG) += bd70528_wdt.o
- obj-$(CONFIG_DA9052_WATCHDOG) += da9052_wdt.o
- obj-$(CONFIG_DA9055_WATCHDOG) += da9055_wdt.o
- obj-$(CONFIG_DA9062_WATCHDOG) += da9062_wdt.o
-diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd70528_wdt.c
-new file mode 100644
-index 000000000000..c24d4cce5e9c
---- /dev/null
-+++ b/drivers/watchdog/bd70528_wdt.c
-@@ -0,0 +1,187 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// ROHM BD70528MWV watchdog driver
-+
-+#include <linux/bcd.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/rohm-bd70528.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/watchdog.h>
-+
-+struct wdtbd70528 {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct mutex *rtc_lock;
-+	struct watchdog_device wdt;
-+};
-+
-+static int bd70528_wdt_set_locked(struct wdtbd70528 *w, int enable)
-+{
-+	struct bd70528 *bd70528;
-+
-+	bd70528 = container_of(w->rtc_lock, struct bd70528, rtc_timer_lock);
-+	return bd70528->wdt_set(bd70528, enable, NULL);
-+}
-+static int bd70528_wdt_set(struct wdtbd70528 *w, int enable)
-+{
-+	int ret;
-+
-+	mutex_lock(w->rtc_lock);
-+	ret = bd70528_wdt_set_locked(w, enable);
-+	mutex_unlock(w->rtc_lock);
-+
-+	return ret;
-+}
-+
-+static int bd70528_wdt_start(struct watchdog_device *wdt)
-+{
-+	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-+
-+	dev_dbg(w->dev, "WDT ping...\n");
-+	return bd70528_wdt_set(w, 1);
-+}
-+
-+static int bd70528_wdt_stop(struct watchdog_device *wdt)
-+{
-+	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-+
-+	dev_dbg(w->dev, "WDT stopping...\n");
-+	return bd70528_wdt_set(w, 0);
-+}
-+
-+static int bd70528_wdt_set_timeout(struct watchdog_device *wdt,
-+				    unsigned int timeout)
-+{
-+	unsigned int hours;
-+	unsigned int minutes;
-+	unsigned int seconds;
-+	int ret;
-+	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-+
-+	seconds = timeout;
-+	hours = timeout / (60 * 60);
-+	/* Maximum timeout is 1h 59m 59s => hours is 1 or 0 */
-+	if (hours)
-+		seconds -= (60 * 60);
-+	minutes = seconds / 60;
-+	seconds = seconds % 60;
-+
-+	mutex_lock(w->rtc_lock);
-+
-+	ret = bd70528_wdt_set_locked(w, 0);
-+	if (ret)
-+		goto out_unlock;
-+
-+	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_HOUR,
-+				 BD70528_MASK_WDT_HOUR, hours);
-+	if (ret) {
-+		dev_err(w->dev, "Failed to set WDT hours\n");
-+		goto out_en_unlock;
-+	}
-+	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_MINUTE,
-+				 BD70528_MASK_WDT_MINUTE, bin2bcd(minutes));
-+	if (ret) {
-+		dev_err(w->dev, "Failed to set WDT minutes\n");
-+		goto out_en_unlock;
-+	}
-+	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_SEC,
-+				 BD70528_MASK_WDT_SEC, bin2bcd(seconds));
-+	if (ret)
-+		dev_err(w->dev, "Failed to set WDT seconds\n");
-+	else
-+		dev_dbg(w->dev, "WDT tmo set to %u\n", timeout);
-+
-+out_en_unlock:
-+	ret = bd70528_wdt_set_locked(w, 1);
-+out_unlock:
-+	mutex_unlock(w->rtc_lock);
-+
-+	return ret;
-+}
-+
-+static const struct watchdog_info bd70528_wdt_info = {
-+	.identity = "bd70528-wdt",
-+	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-+};
-+
-+static const struct watchdog_ops bd70528_wdt_ops = {
-+	.start		= bd70528_wdt_start,
-+	.stop		= bd70528_wdt_stop,
-+	.set_timeout	= bd70528_wdt_set_timeout,
-+};
-+
-+/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
-+#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
-+/* Minimum time is 1 second */
-+#define WDT_MIN_MS 1000
-+#define DEFAULT_TIMEOUT 60
-+
-+static int bd70528_wdt_probe(struct platform_device *pdev)
-+{
-+	struct bd70528 *bd70528;
-+	struct wdtbd70528 *w;
-+	int ret;
-+	unsigned int reg;
-+
-+	bd70528 = dev_get_drvdata(pdev->dev.parent);
-+	if (!bd70528) {
-+		dev_err(&pdev->dev, "No MFD driver data\n");
-+		return -EINVAL;
-+	}
-+	w = devm_kzalloc(&pdev->dev, sizeof(*w), GFP_KERNEL);
-+	if (!w)
-+		return -ENOMEM;
-+
-+	w->regmap = bd70528->chip.regmap;
-+	w->rtc_lock = &bd70528->rtc_timer_lock;
-+	w->dev = &pdev->dev;
-+
-+	w->wdt.info = &bd70528_wdt_info;
-+	w->wdt.ops =  &bd70528_wdt_ops;
-+	w->wdt.min_hw_heartbeat_ms = WDT_MIN_MS;
-+	w->wdt.max_hw_heartbeat_ms = WDT_MAX_MS;
-+	w->wdt.parent = pdev->dev.parent;
-+	w->wdt.timeout = DEFAULT_TIMEOUT;
-+	watchdog_set_drvdata(&w->wdt, w);
-+	watchdog_init_timeout(&w->wdt, 0, pdev->dev.parent);
-+
-+	ret = bd70528_wdt_set_timeout(&w->wdt, w->wdt.timeout);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to set the watchdog timeout\n");
-+		return ret;
-+	}
-+
-+	mutex_lock(w->rtc_lock);
-+	ret = regmap_read(w->regmap, BD70528_REG_WDT_CTRL, &reg);
-+	mutex_unlock(w->rtc_lock);
-+
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to get the watchdog state\n");
-+		return ret;
-+	}
-+	if (reg & BD70528_MASK_WDT_EN) {
-+		dev_dbg(&pdev->dev, "watchdog was running during probe\n");
-+		set_bit(WDOG_HW_RUNNING, &w->wdt.status);
-+	}
-+
-+	ret = devm_watchdog_register_device(&pdev->dev, &w->wdt);
-+	if (ret < 0)
-+		dev_err(&pdev->dev, "watchdog registration failed: %d\n", ret);
-+
-+	return ret;
-+}
-+static struct platform_driver bd70528_wdt = {
-+	.driver = {
-+		.name = "bd70528-wdt"
-+	},
-+	.probe = bd70528_wdt_probe,
-+};
-+
-+module_platform_driver(bd70528_wdt);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD70528 watchdog driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
-
+Thanks,
 
 -- 
-Matti Vaittinen
-ROHM Semiconductors Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Peter Xu
