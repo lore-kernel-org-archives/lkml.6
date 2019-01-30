@@ -2,154 +2,139 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0AAC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787CFC282D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEABB20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:30:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B4BA20857
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:30:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OukjHMr7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WMlwppvM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730944AbfA3Oan (ORCPT
+        id S1731196AbfA3Oau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 09:30:43 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40333 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbfA3Oam (ORCPT
+        Wed, 30 Jan 2019 09:30:50 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54760 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728469AbfA3Oar (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 09:30:42 -0500
-Received: by mail-it1-f195.google.com with SMTP id h193so10719905ita.5;
-        Wed, 30 Jan 2019 06:30:41 -0800 (PST)
+        Wed, 30 Jan 2019 09:30:47 -0500
+Received: by mail-it1-f194.google.com with SMTP id i145so10493346ita.4
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 06:30:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3heOv7cOx5PJDXp2Uridq5nLN8cpkYDuAE2O0EFdrdE=;
-        b=OukjHMr71vp/RiG03eXX0VHzQot5L2OqJmMtCC9vCdB1byLzWEIA8DCE1r3VR4s2DH
-         vcozeYfGWMaJT1N7ytrTiYx+YoP+QEBSYll3UrfKPFy8v2ECD1XpmSSoIco/X8MlhfRO
-         nyQ8rzT4isSqh4KoW7lFrCIR0Jzzgaqs2mvCDxevGEVFAXGDv92MZk3IQoYf3uk4JwBm
-         ispLtSJkKmoIqOUMFn5MlHIVv0ySt/Qc3ZNvDm6E88Qbc6vBM+rAtYt1m7R2iaR2LjhN
-         42yFeAC9xKx7YK18UpuCcws5lfN2Bvsntn0xnF3z3gS4EfDXr/BMjH/UgWJnz4wKpac4
-         MrLQ==
+        bh=ZOM0zPYYY9Po+taasPsv0r8kfU7hbJO/hDTgEGjkrL8=;
+        b=WMlwppvMLf8afgeoOZ0N2300BdCEJ4lMcCKfVv5r1eTDqOUS4cfcdO6wk6NXOQ3b4V
+         +PbKcd5PiK1QQy3dZE05egNnAxyExFSlVUHKBHYJYyB9GX/AXg9zMPI3yIm/GQsPmo2E
+         vBxO0orZoMIuoke0PrLoUS1vt7JqVnKoa6z8OPlDfkkFTW2IWmf5GKwynLgw3jTiDaqU
+         ZZlqSyGm9RcLC7K4GwtiH0OKfz4ZlcPV/GiwAEdAQfR3VP3C7kNreLI7Rub95w/UJ/KS
+         A003TnnlMski80hRj+nvOqcltp23FuZDfaPz1t0/yyTquqc/TBOiqUE81IYVAlfXsm94
+         2pBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3heOv7cOx5PJDXp2Uridq5nLN8cpkYDuAE2O0EFdrdE=;
-        b=nMZrwFeiPR0L5csVCl33d0904iGRV+0/jT/6Ppm4KDymkna0VOjUWtj/jSW2DPdWEN
-         gD84s2N/oRuffrOg1AAfUP1HpFnDHHJZ58b6zecTB4IKTHDpOK0kHC2ROY9XfqxkbPcJ
-         8O1pNve3LH0AWAL4hrRi9rQzlv92pLWPSgXhuF+kdw4B0I0vqUWuSGIGjiyb3k6SM5+h
-         wh14fpSyhibD7DEo6TOkb+bwipyRyPP+mnd5YdpKI5t7hfQRxAupBcPKsDVsjs/PuLIj
-         3dQzBEarFgTq4qNZGIBlMOsDwPoWesdhx4M1vhGv4lVcq9Hu+7PY42XbqTzn2Mun0GwO
-         8gyA==
-X-Gm-Message-State: AJcUukcQ+CWSjW0kH3qPNq1hvJ+WljKlYI76N6uA7ePzg+A0FYCqF2c+
-        +C00mJ3Ple+/Xx2sYftz1voV+LO1aHrO/LJBW7U=
-X-Google-Smtp-Source: AHgI3IZRaWcYL7fhyct26dXz5op/bVSqET343pPGfEFL48mHkTm1+6bGwGCpIC0afSxsd35uxqBQxR9BZN6Q7VVkbKk=
-X-Received: by 2002:a24:648f:: with SMTP id t137mr14574858itc.176.1548858641182;
- Wed, 30 Jan 2019 06:30:41 -0800 (PST)
+        bh=ZOM0zPYYY9Po+taasPsv0r8kfU7hbJO/hDTgEGjkrL8=;
+        b=c6ayAxHbyuh0Sgmv4AI2Av87CaM/bbnjzN+tlKRaFoDsjp/L2SWM3SqOI7CDGh56QH
+         gHZWxWHn6mM14QRuUF81xpCqmiezNyIBL4fxC2zQdmdcy7KXymTD26vtM0YE+AhGbAHj
+         79i5bUFkvQvQCG0af6Z85HX8ci99tb8qq5b0xXNF+7pjjEpOxl4/hgbx9YdkQM9+DM4h
+         Jd1kh0m3ryKjkJiG6SaOx+7DUSlsQvooVWP8AgUHxuIDwT9eK4T5Vx+jzFZLrsW5uojY
+         vOeSN74E+7kJt0tK4by1qn2PynMIJR+GRpbvfb24wkBpz0M1SGPOqw/GXkGLF/IMrMaw
+         nRwg==
+X-Gm-Message-State: AJcUukd0uhUEt86NA04q6dUZgV61p72NPXEfOrx1tvxlXZbplLtZOjc2
+        G7uTzNbq2W/CKZ1NaEe1v7MTwO0/MFfsba+DIpdXBA==
+X-Google-Smtp-Source: ALg8bN6MQ8ar1quzHxt/sQg0llF/vzOgFNdOsBSCZkASNXxy9ujphxMrQSuqedVkWwUvtr2gEnGTTJGbYX/FWPWPKko=
+X-Received: by 2002:a24:f14d:: with SMTP id q13mr12909209iti.166.1548858646506;
+ Wed, 30 Jan 2019 06:30:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20190110160114.GA5641@hp-pavilion-15-notebook-pc-brajeswar> <20190110141930-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20190110141930-mutt-send-email-mst@kernel.org>
-From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Date:   Wed, 30 Jan 2019 20:00:27 +0530
-Message-ID: <CAFqtX7=EvqX+pyj3izFotWbhPW1ObNcma_d9ir_83_wC-oiK3A@mail.gmail.com>
-Subject: Re: [PATCH] include/linux: Remove duplicate header
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, Ariel.Elior@cavium.com, davem@davemloft.net,
-        jasowang@redhat.com, john fastabend <john.fastabend@gmail.com>,
-        Andrea Parri <parri.andrea@gmail.com>, dhowells@redhat.com,
-        ebiederm@xmission.com, james.morris@microsoft.com,
-        Paul Moore <paul@paul-moore.com>, zohar@linux.vnet.ibm.com,
-        mjg59@google.com, viro@zeniv.linux.org.uk,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+References: <0000000000007b129305809553da@google.com> <20190129094144.bln4dnirr5kz3dl4@breakpoint.cc>
+ <CACT4Y+YB_icD2B6Bj6=5KjAvfamyCUeLnYHm5i5PQKO35=RMFA@mail.gmail.com> <20190130142050.ilcccckfatn2zj6o@breakpoint.cc>
+In-Reply-To: <20190130142050.ilcccckfatn2zj6o@breakpoint.cc>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 30 Jan 2019 15:30:35 +0100
+Message-ID: <CACT4Y+ZWafAqKCt0ubJREcuHx4EiKhNKL0X-et_Y9YZBr8adbg@mail.gmail.com>
+Subject: Re: general protection fault in __xfrm_policy_bysel_ctx
+To:     Florian Westphal <fw@strlen.de>
+Cc:     syzbot <syzbot+e6e1fe9148cffa18cf97@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 12:50 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+On Wed, Jan 30, 2019 at 3:20 PM Florian Westphal <fw@strlen.de> wrote:
 >
-> On Thu, Jan 10, 2019 at 09:31:14PM +0530, Brajeswar Ghosh wrote:
-> > Remove duplicate headers which are included more than once
+> Dmitry Vyukov <dvyukov@google.com> wrote:
+> > > syzbot <syzbot+e6e1fe9148cffa18cf97@syzkaller.appspotmail.com> wrote:
+> > > > Hello,
+> > > >
+> > > > syzbot found the following crash on:
+> > > >
+> > > > HEAD commit:    085c4c7dd2b6 net: lmc: remove -I. header search path
+> > > > git tree:       net-next
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=12347128c00000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=e6e1fe9148cffa18cf97
+> > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > >
+> > > > Unfortunately, I don't have any reproducer for this crash yet.
+> > >
+> > > net-next doesn't contain the fixes for the rbtree fallout yet, so
+> > > this might already be fixed (fingers crossed).
 > >
-> > Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
-> > ---
-> >  include/linux/perf_event.h | 1 -
-> >  include/linux/ptr_ring.h   | 1 -
-> >  include/linux/qed/qed_if.h | 1 -
-> >  include/linux/security.h   | 1 -
-> >  4 files changed, 4 deletions(-)
+> > Hi Florian,
 > >
-> > diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> > index 53c500f0ca79..8d7a2b65514b 100644
-> > --- a/include/linux/perf_event.h
-> > +++ b/include/linux/perf_event.h
-> > @@ -53,7 +53,6 @@ struct perf_guest_info_callbacks {
-> >  #include <linux/atomic.h>
-> >  #include <linux/sysfs.h>
-> >  #include <linux/perf_regs.h>
-> > -#include <linux/workqueue.h>
-> >  #include <linux/cgroup.h>
-> >  #include <asm/local.h>
-> >
-> > diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
-> > index 6894976b54e3..627b7aa067e0 100644
-> > --- a/include/linux/ptr_ring.h
-> > +++ b/include/linux/ptr_ring.h
-> > @@ -26,7 +26,6 @@
-> >  #include <linux/cache.h>
-> >  #include <linux/types.h>
-> >  #include <linux/compiler.h>
-> > -#include <linux/cache.h>
-> >  #include <linux/slab.h>
-> >  #include <asm/errno.h>
-> >  #endif
+> > What is that fix for the record?
 >
+> I don't know.  I managed to add every bug class imagineable in that series 8-(
 >
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
+> The last (most recent) fix from the 'fallout cleanup' is:
+> 12750abad517a991c4568969bc748db302ab52cd
+> ("xfrm: policy: fix infinite loop when merging src-nodes")
 >
+> so if syzkaller can generate a splat with that change present
+> something is still broken.
 >
-> Pls merge through the trivial tree or similar.
+> > We will need to close this later. Or perhaps we can already mark this
+> > as fixed by that patch with "#syz fix:" command?
+>
+> There are a lot of open xfrm related splats that could all be explained
+> by the rbtree bugs (one had a reproducer, the fix has appropriate
+> reported-by tag).
+>
+> It would be great if there was a way to tell syzkaller to report those
+> again if they still appear.
 
-If no further comment, can we get this patch in queue for 5.1 ?
+That's exactly what "#syz fix:" will do.
+syzbot will wait until the fixing commit appears in all builds/trees
+it tests, then close this bug, and then any new similarly looking
+crash will produce a new bug report. So if the patch indeed fixes the
+bug, then the bug will be closed and we are done. If it does not fix
+this bug, then we will get another report but at that time on a tree
+that includes the commit.
 
+> I could pretend and claim above commit as "sys-fix", but it seems fishy.
 >
->
-> > diff --git a/include/linux/qed/qed_if.h b/include/linux/qed/qed_if.h
-> > index a47321a0d572..9ebdb60f605a 100644
-> > --- a/include/linux/qed/qed_if.h
-> > +++ b/include/linux/qed/qed_if.h
-> > @@ -38,7 +38,6 @@
-> >  #include <linux/netdevice.h>
-> >  #include <linux/pci.h>
-> >  #include <linux/skbuff.h>
-> > -#include <linux/types.h>
-> >  #include <asm/byteorder.h>
-> >  #include <linux/io.h>
-> >  #include <linux/compiler.h>
-> > diff --git a/include/linux/security.h b/include/linux/security.h
-> > index ac0ef467d25e..2915ea6a5b77 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -30,7 +30,6 @@
-> >  #include <linux/err.h>
-> >  #include <linux/string.h>
-> >  #include <linux/mm.h>
-> > -#include <linux/fs.h>
-> >
-> >  struct linux_binprm;
-> >  struct cred;
-> > --
-> > 2.17.1
+> Let me know and I can tag all of them.
+
+It's "safe" to mark these crashes as fixed when we are not 100% sure
+in the sense that we won't lose the bug (it will be reported again
+later if it's not fixed).
+It's also useful to keep the list of open/active bugs shorter and more
+precise (don't leave too many obsoleted open bugs). What happened
+multiple times is that a bug was fixed but left open, and then a
+similarly looking crashes started happening again (a new bug), but it
+wasn't reported by syzbot because for syzbot it looked like the old
+still unfixed bug.
