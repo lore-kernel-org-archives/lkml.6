@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2073CC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B16D5C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:05:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DED9A21473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C1A120869
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:05:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732783AbfA3SEz (ORCPT
+        id S1732794AbfA3SFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:04:55 -0500
-Received: from foss.arm.com ([217.140.101.70]:59260 "EHLO foss.arm.com"
+        Wed, 30 Jan 2019 13:05:12 -0500
+Received: from foss.arm.com ([217.140.101.70]:59286 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727057AbfA3SEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:04:54 -0500
+        id S1727057AbfA3SFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 13:05:11 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00B3180D;
-        Wed, 30 Jan 2019 10:04:54 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A17C15AD;
+        Wed, 30 Jan 2019 10:05:10 -0800 (PST)
 Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54C6B3F557;
-        Wed, 30 Jan 2019 10:04:51 -0800 (PST)
-Date:   Wed, 30 Jan 2019 18:04:47 +0000
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F403F3F7D7;
+        Wed, 30 Jan 2019 10:05:07 -0800 (PST)
+Date:   Wed, 30 Jan 2019 18:05:04 +0000
 From:   Andre Przywara <andre.przywara@arm.com>
 To:     Jeremy Linton <jeremy.linton@arm.com>
 Cc:     linux-arm-kernel@lists.infradead.org, stefan.wahren@i2se.com,
         mlangsdo@redhat.com, suzuki.poulose@arm.com, marc.zyngier@arm.com,
         catalin.marinas@arm.com, julien.thierry@arm.com,
         will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        steven.price@arm.com, Christoffer Dall <christoffer.dall@arm.com>,
-        kvmarm@lists.cs.columbia.edu, ykaukab@suse.de, dave.martin@arm.com,
+        steven.price@arm.com, ykaukab@suse.de, dave.martin@arm.com,
         shankerd@codeaurora.org
-Subject: Re: [PATCH v4 04/12] arm64: remove the ability to build a kernel
- without hardened branch predictors
-Message-ID: <20190130180447.70373425@donnerap.cambridge.arm.com>
-In-Reply-To: <20190125180711.1970973-5-jeremy.linton@arm.com>
+Subject: Re: [PATCH v4 05/12] arm64: remove the ability to build a kernel
+ without kpti
+Message-ID: <20190130180504.78a7e274@donnerap.cambridge.arm.com>
+In-Reply-To: <20190125180711.1970973-6-jeremy.linton@arm.com>
 References: <20190125180711.1970973-1-jeremy.linton@arm.com>
-        <20190125180711.1970973-5-jeremy.linton@arm.com>
+        <20190125180711.1970973-6-jeremy.linton@arm.com>
 Organization: ARM
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 MIME-Version: 1.0
@@ -51,7 +50,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Jan 2019 12:07:03 -0600
+On Fri, 25 Jan 2019 12:07:04 -0600
 Jeremy Linton <jeremy.linton@arm.com> wrote:
 
 > Buried behind EXPERT is the ability to build a kernel without
@@ -63,256 +62,365 @@ Jeremy Linton <jeremy.linton@arm.com> wrote:
 > Since its also possible to disable it at boot time, lets remove
 > the config option.
 
-Same comment as before about removing the CONFIG_ options here.
+Same comment as for the other two before: Disabling at boot time is not
+the same as not configuring.
 
+Otherwise looks good to me.
+
+Cheers,
+Andre.
+
+> 
 > Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: kvmarm@lists.cs.columbia.edu
 > ---
->  arch/arm64/Kconfig               | 17 -----------------
->  arch/arm64/include/asm/kvm_mmu.h | 12 ------------
->  arch/arm64/include/asm/mmu.h     | 12 ------------
->  arch/arm64/kernel/cpu_errata.c   | 19 -------------------
->  arch/arm64/kernel/entry.S        |  2 --
->  arch/arm64/kvm/Kconfig           |  3 ---
->  arch/arm64/kvm/hyp/hyp-entry.S   |  2 --
->  7 files changed, 67 deletions(-)
+>  arch/arm64/Kconfig              | 12 ------------
+>  arch/arm64/include/asm/fixmap.h |  2 --
+>  arch/arm64/include/asm/mmu.h    |  7 +------
+>  arch/arm64/include/asm/sdei.h   |  2 +-
+>  arch/arm64/kernel/asm-offsets.c |  2 --
+>  arch/arm64/kernel/cpufeature.c  |  4 ----
+>  arch/arm64/kernel/entry.S       | 11 +----------
+>  arch/arm64/kernel/sdei.c        |  2 --
+>  arch/arm64/kernel/vmlinux.lds.S |  8 --------
+>  arch/arm64/mm/context.c         |  6 ------
+>  arch/arm64/mm/mmu.c             |  2 --
+>  arch/arm64/mm/proc.S            |  2 --
+>  12 files changed, 3 insertions(+), 57 deletions(-)
 > 
 > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 0baa632bf0a8..6b4c6d3fdf4d 100644
+> index 6b4c6d3fdf4d..09a85410d814 100644
 > --- a/arch/arm64/Kconfig
 > +++ b/arch/arm64/Kconfig
-> @@ -1005,23 +1005,6 @@ config UNMAP_KERNEL_AT_EL0
->  
->  	  If unsure, say Y.
->  
-> -config HARDEN_BRANCH_PREDICTOR
-> -	bool "Harden the branch predictor against aliasing attacks"
-> if EXPERT
+> @@ -993,18 +993,6 @@ config FORCE_MAX_ZONEORDER
+>  	  However for 4K, we choose a higher default value, 11 as
+> opposed to 10, giving us 4M allocations matching the default size
+> used by generic code. 
+> -config UNMAP_KERNEL_AT_EL0
+> -	bool "Unmap kernel when running in userspace (aka
+> \"KAISER\")" if EXPERT
 > -	default y
 > -	help
 > -	  Speculation attacks against some high-performance
-> processors rely on
-> -	  being able to manipulate the branch predictor for a victim
-> context by
-> -	  executing aliasing branches in the attacker context.  Such
-> attacks
-> -	  can be partially mitigated against by clearing internal
-> branch
-> -	  predictor state and limiting the prediction logic in some
-> situations. -
-> -	  This config option will take CPU-specific actions to
-> harden the
-> -	  branch predictor against aliasing attacks and may rely on
-> specific
-> -	  instruction sequences or control bits being set by the
-> system
-> -	  firmware.
+> processors can
+> -	  be used to bypass MMU permission checks and leak kernel
+> data to
+> -	  userspace. This can be defended against by unmapping the
+> kernel
+> -	  when running in userspace, mapping it back in on exception
+> entry
+> -	  via a trampoline page in the vector table.
 > -
 > -	  If unsure, say Y.
 > -
 >  config HARDEN_EL2_VECTORS
 >  	bool "Harden EL2 vector mapping against system register
 > leak" if EXPERT default y
-> diff --git a/arch/arm64/include/asm/kvm_mmu.h
-> b/arch/arm64/include/asm/kvm_mmu.h index a5c152d79820..9dd680194db9
-> 100644 --- a/arch/arm64/include/asm/kvm_mmu.h
-> +++ b/arch/arm64/include/asm/kvm_mmu.h
-> @@ -444,7 +444,6 @@ static inline int kvm_read_guest_lock(struct kvm
-> *kvm, return ret;
->  }
+> diff --git a/arch/arm64/include/asm/fixmap.h
+> b/arch/arm64/include/asm/fixmap.h index ec1e6d6fa14c..62371f07d4ce
+> 100644 --- a/arch/arm64/include/asm/fixmap.h
+> +++ b/arch/arm64/include/asm/fixmap.h
+> @@ -58,11 +58,9 @@ enum fixed_addresses {
+>  	FIX_APEI_GHES_NMI,
+>  #endif /* CONFIG_ACPI_APEI_GHES */
 >  
-> -#ifdef CONFIG_KVM_INDIRECT_VECTORS
->  /*
->   * EL2 vectors can be mapped and rerouted in a number of ways,
->   * depending on the kernel configuration and CPU present:
-
-Directly after this comment there is a #include line, can you please
-move this up to the beginning of this file, now that it is
-unconditional?
-
-> @@ -529,17 +528,6 @@ static inline int kvm_map_vectors(void)
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  	FIX_ENTRY_TRAMP_DATA,
+>  	FIX_ENTRY_TRAMP_TEXT,
+>  #define TRAMP_VALIAS
+> (__fix_to_virt(FIX_ENTRY_TRAMP_TEXT)) -#endif /*
+> CONFIG_UNMAP_KERNEL_AT_EL0 */ __end_of_permanent_fixed_addresses,
 >  
->  	return 0;
->  }
-> -#else
-> -static inline void *kvm_get_hyp_vector(void)
-> -{
-> -	return kern_hyp_va(kvm_ksym_ref(__kvm_hyp_vector));
-> -}
-> -
-> -static inline int kvm_map_vectors(void)
-> -{
-> -	return 0;
-> -}
-> -#endif
->  
->  DECLARE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
->  
+>  	/*
 > diff --git a/arch/arm64/include/asm/mmu.h
-> b/arch/arm64/include/asm/mmu.h index 3e8063f4f9d3..20fdf71f96c3 100644
+> b/arch/arm64/include/asm/mmu.h index 20fdf71f96c3..9d689661471c 100644
 > --- a/arch/arm64/include/asm/mmu.h
 > +++ b/arch/arm64/include/asm/mmu.h
-> @@ -95,13 +95,9 @@ struct bp_hardening_data {
->  	bp_hardening_cb_t	fn;
->  };
+> @@ -42,18 +42,13 @@ typedef struct {
 >  
-> -#if (defined(CONFIG_HARDEN_BRANCH_PREDICTOR) ||	\
-> -     defined(CONFIG_HARDEN_EL2_VECTORS))
->  extern char __bp_harden_hyp_vecs_start[], __bp_harden_hyp_vecs_end[];
->  extern atomic_t arm64_el2_vector_last_slot;
-> -#endif  /* CONFIG_HARDEN_BRANCH_PREDICTOR ||
-> CONFIG_HARDEN_EL2_VECTORS */ 
-> -#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
->  DECLARE_PER_CPU_READ_MOSTLY(struct bp_hardening_data,
-> bp_hardening_data); 
->  static inline struct bp_hardening_data
-> *arm64_get_bp_hardening_data(void) @@ -120,14 +116,6 @@ static inline
-> void arm64_apply_bp_hardening(void) if (d->fn)
->  		d->fn();
+>  static inline bool arm64_kernel_unmapped_at_el0(void)
+>  {
+> -	return IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0) &&
+> -	       cpus_have_const_cap(ARM64_UNMAP_KERNEL_AT_EL0);
+> +	return cpus_have_const_cap(ARM64_UNMAP_KERNEL_AT_EL0);
 >  }
-> -#else
-> -static inline struct bp_hardening_data
-> *arm64_get_bp_hardening_data(void) -{
-> -	return NULL;
-> -}
+>  
+>  static inline bool arm64_kernel_use_ng_mappings(void)
+>  {
+>  	bool tx1_bug;
+>  
+> -	/* What's a kpti? Use global mappings if we don't know. */
+> -	if (!IS_ENABLED(CONFIG_UNMAP_KERNEL_AT_EL0))
+> -		return false;
 > -
-> -static inline void arm64_apply_bp_hardening(void)	{ }
-> -#endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+>  	/*
+>  	 * Note: this function is called before the CPU capabilities
+> have
+>  	 * been configured, so our early mappings will be global. If
+> we diff --git a/arch/arm64/include/asm/sdei.h
+> b/arch/arm64/include/asm/sdei.h index ffe47d766c25..82c3e9b6a4b0
+> 100644 --- a/arch/arm64/include/asm/sdei.h
+> +++ b/arch/arm64/include/asm/sdei.h
+> @@ -23,7 +23,7 @@ extern unsigned long sdei_exit_mode;
+>  asmlinkage void __sdei_asm_handler(unsigned long event_num, unsigned
+> long arg, unsigned long pc, unsigned long pstate);
 >  
->  extern void paging_init(void);
->  extern void bootmem_init(void);
-> diff --git a/arch/arm64/kernel/cpu_errata.c
-> b/arch/arm64/kernel/cpu_errata.c index 934d50788ca3..de09a3537cd4
-> 100644 --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@ -109,13 +109,11 @@ cpu_enable_trap_ctr_access(const struct
-> arm64_cpu_capabilities *__unused) 
->  atomic_t arm64_el2_vector_last_slot = ATOMIC_INIT(-1);
->  
-> -#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
->  #include <asm/mmu_context.h>
->  #include <asm/cacheflush.h>
-
-Same here, those should move up.
-
->  DEFINE_PER_CPU_READ_MOSTLY(struct bp_hardening_data,
-> bp_hardening_data); 
-> -#ifdef CONFIG_KVM_INDIRECT_VECTORS
->  extern char __smccc_workaround_1_smc_start[];
->  extern char __smccc_workaround_1_smc_end[];
->  
-> @@ -165,17 +163,6 @@ static void
-> __install_bp_hardening_cb(bp_hardening_cb_t fn,
-> __this_cpu_write(bp_hardening_data.fn, fn); raw_spin_unlock(&bp_lock);
->  }
-> -#else
-> -#define __smccc_workaround_1_smc_start		NULL
-> -#define __smccc_workaround_1_smc_end		NULL
-> -
-> -static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
-> -				      const char *hyp_vecs_start,
-> -				      const char *hyp_vecs_end)
-> -{
-> -	__this_cpu_write(bp_hardening_data.fn, fn);
-> -}
-> -#endif	/* CONFIG_KVM_INDIRECT_VECTORS */
->  
->  static void  install_bp_hardening_cb(const struct
-> arm64_cpu_capabilities *entry, bp_hardening_cb_t fn,
-> @@ -279,7 +266,6 @@ enable_smccc_arch_workaround_1(const struct
-> arm64_cpu_capabilities *entry) 
->  	return;
->  }
-> -#endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
->  
->  DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
->  
-> @@ -516,7 +502,6 @@ cpu_enable_cache_maint_trap(const struct
-> arm64_cpu_capabilities *__unused) .type =
-> ARM64_CPUCAP_LOCAL_CPU_ERRATUM,			\
-> CAP_MIDR_RANGE_LIST(midr_list) 
-> -#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
->  
->  /*
->   * List of CPUs where we need to issue a psci call to
-> @@ -535,8 +520,6 @@ static const struct midr_range
-> arm64_bp_harden_smccc_cpus[] = { {},
->  };
->  
+> -/* and its CONFIG_UNMAP_KERNEL_AT_EL0 trampoline */
+> +/* and its unmap kernel at el0 trampoline */
+>  asmlinkage void __sdei_asm_entry_trampoline(unsigned long event_num,
+>  						   unsigned long arg,
+>  						   unsigned long pc,
+> diff --git a/arch/arm64/kernel/asm-offsets.c
+> b/arch/arm64/kernel/asm-offsets.c index 65b8afc84466..6a6f83de91b8
+> 100644 --- a/arch/arm64/kernel/asm-offsets.c
+> +++ b/arch/arm64/kernel/asm-offsets.c
+> @@ -165,9 +165,7 @@ int main(void)
+>    DEFINE(HIBERN_PBE_NEXT,	offsetof(struct pbe, next));
+>    DEFINE(ARM64_FTR_SYSVAL,	offsetof(struct arm64_ftr_reg,
+> sys_val)); BLANK();
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>    DEFINE(TRAMP_VALIAS,		TRAMP_VALIAS);
 > -#endif
-> -
->  #ifdef CONFIG_HARDEN_EL2_VECTORS
+>  #ifdef CONFIG_ARM_SDE_INTERFACE
+>    DEFINE(SDEI_EVENT_INTREGS,	offsetof(struct
+> sdei_registered_event, interrupted_regs));
+> DEFINE(SDEI_EVENT_PRIORITY,	offsetof(struct
+> sdei_registered_event, priority)); diff --git
+> a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index d1a7fd7972f9..a9e18b9cdc1e 100644 ---
+> a/arch/arm64/kernel/cpufeature.c +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -944,7 +944,6 @@ has_useable_cnp(const struct
+> arm64_cpu_capabilities *entry, int scope) return
+> has_cpuid_feature(entry, scope); } 
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  static int __kpti_forced; /* 0: not forced, >0: forced on, <0:
+> forced off */ 
+>  static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities
+> *entry, @@ -1035,7 +1034,6 @@ static int __init parse_kpti(char *str)
+>  	return 0;
+>  }
+>  early_param("kpti", parse_kpti);
+> -#endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
 >  
->  static const struct midr_range arm64_harden_el2_vectors[] = {
-> @@ -710,13 +693,11 @@ const struct arm64_cpu_capabilities
-> arm64_errata[] = { ERRATA_MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
+>  #ifdef CONFIG_ARM64_HW_AFDBM
+>  static inline void __cpu_enable_hw_dbm(void)
+> @@ -1284,7 +1282,6 @@ static const struct arm64_cpu_capabilities
+> arm64_features[] = { .field_pos = ID_AA64PFR0_EL0_SHIFT,
+>  		.min_field_value = ID_AA64PFR0_EL0_32BIT_64BIT,
 >  	},
->  #endif
-> -#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
 >  	{
->  		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
->  		.cpu_enable = enable_smccc_arch_workaround_1,
->  		ERRATA_MIDR_RANGE_LIST(arm64_bp_harden_smccc_cpus),
+>  		.desc = "Kernel page table isolation (KPTI)",
+>  		.capability = ARM64_UNMAP_KERNEL_AT_EL0,
+> @@ -1300,7 +1297,6 @@ static const struct arm64_cpu_capabilities
+> arm64_features[] = { .matches = unmap_kernel_at_el0,
+>  		.cpu_enable = kpti_install_ng_mappings,
 >  	},
 > -#endif
->  #ifdef CONFIG_HARDEN_EL2_VECTORS
 >  	{
->  		.desc = "EL2 vector hardening",
+>  		/* FP/SIMD is not implemented */
+>  		.capability = ARM64_HAS_NO_FPSIMD,
 > diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index bee54b7d17b9..3f0eaaf704c8 100644
+> index 3f0eaaf704c8..1d8efc144b04 100644
 > --- a/arch/arm64/kernel/entry.S
 > +++ b/arch/arm64/kernel/entry.S
-> @@ -842,11 +842,9 @@ el0_irq_naked:
+> @@ -70,7 +70,6 @@
+>  
+>  	.macro kernel_ventry, el, label, regsize = 64
+>  	.align 7
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  alternative_if ARM64_UNMAP_KERNEL_AT_EL0
+>  	.if	\el == 0
+>  	.if	\regsize == 64
+> @@ -81,7 +80,6 @@ alternative_if ARM64_UNMAP_KERNEL_AT_EL0
+>  	.endif
+>  	.endif
+>  alternative_else_nop_endif
+> -#endif
+>  
+>  	sub	sp, sp, #S_FRAME_SIZE
+>  #ifdef CONFIG_VMAP_STACK
+> @@ -345,7 +343,6 @@ alternative_else_nop_endif
+>  
+>  	.if	\el == 0
+>  alternative_insn eret, nop, ARM64_UNMAP_KERNEL_AT_EL0
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  	bne	4f
+>  	msr	far_el1, x30
+>  	tramp_alias	x30, tramp_exit_native
+> @@ -353,7 +350,7 @@ alternative_insn eret, nop,
+> ARM64_UNMAP_KERNEL_AT_EL0 4:
+>  	tramp_alias	x30, tramp_exit_compat
+>  	br	x30
+> -#endif
+> +
+>  	.else
+>  	eret
+>  	.endif
+> @@ -913,7 +910,6 @@ ENDPROC(el0_svc)
+>  
+>  	.popsection				// .entry.text
+>  
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  /*
+>   * Exception vectors trampoline.
+>   */
+> @@ -1023,7 +1019,6 @@ __entry_tramp_data_start:
+>  	.quad	vectors
+>  	.popsection				// .rodata
+>  #endif /* CONFIG_RANDOMIZE_BASE */
+> -#endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
+>  
+>  /*
+>   * Register switch for AArch64. The callee-saved registers need to
+> be saved @@ -1086,7 +1081,6 @@ NOKPROBE(ret_from_fork)
+>  	b	.
+>  .endm
+>  
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  /*
+>   * The regular SDEI entry point may have been unmapped along with
+> the rest of
+>   * the kernel. This trampoline restores the kernel mapping to make
+> the x1 memory @@ -1146,7 +1140,6 @@
+> __sdei_asm_trampoline_next_handler: .quad	__sdei_asm_handler
+>  .popsection		// .rodata
+>  #endif /* CONFIG_RANDOMIZE_BASE */
+> -#endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
+>  
+>  /*
+>   * Software Delegated Exception entry point.
+> @@ -1240,10 +1233,8 @@ alternative_if_not ARM64_UNMAP_KERNEL_AT_EL0
+>  	sdei_handler_exit exit_mode=x2
+>  alternative_else_nop_endif
+>  
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  	tramp_alias	dst=x5, sym=__sdei_asm_exit_trampoline
+>  	br	x5
+> -#endif
+>  ENDPROC(__sdei_asm_handler)
+>  NOKPROBE(__sdei_asm_handler)
+>  #endif /* CONFIG_ARM_SDE_INTERFACE */
+> diff --git a/arch/arm64/kernel/sdei.c b/arch/arm64/kernel/sdei.c
+> index 5ba4465e44f0..a0dbdb962019 100644
+> --- a/arch/arm64/kernel/sdei.c
+> +++ b/arch/arm64/kernel/sdei.c
+> @@ -157,7 +157,6 @@ unsigned long sdei_arch_get_entry_point(int
+> conduit) 
+>  	sdei_exit_mode = (conduit == CONDUIT_HVC) ? SDEI_EXIT_HVC :
+> SDEI_EXIT_SMC; 
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  	if (arm64_kernel_unmapped_at_el0()) {
+>  		unsigned long offset;
+>  
+> @@ -165,7 +164,6 @@ unsigned long sdei_arch_get_entry_point(int
+> conduit) (unsigned long)__entry_tramp_text_start;
+>  		return TRAMP_VALIAS + offset;
+>  	} else
+> -#endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
+>  		return (unsigned long)__sdei_asm_handler;
+>  
+>  }
+> diff --git a/arch/arm64/kernel/vmlinux.lds.S
+> b/arch/arm64/kernel/vmlinux.lds.S index 7fa008374907..a4dbee11bcb5
+> 100644 --- a/arch/arm64/kernel/vmlinux.lds.S
+> +++ b/arch/arm64/kernel/vmlinux.lds.S
+> @@ -57,16 +57,12 @@ jiffies = jiffies_64;
+>  #define HIBERNATE_TEXT
 >  #endif
 >  
->  	ct_user_exit
-> -#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
->  	tbz	x22, #55, 1f
->  	bl	do_el0_irq_bp_hardening
->  1:
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  #define TRAMP_TEXT					\
+>  	. = ALIGN(PAGE_SIZE);				\
+>  	__entry_tramp_text_start = .;			\
+>  	*(.entry.tramp.text)				\
+>  	. = ALIGN(PAGE_SIZE);				\
+>  	__entry_tramp_text_end = .;
+> -#else
+> -#define TRAMP_TEXT
 > -#endif
->  	irq_handler
 >  
->  #ifdef CONFIG_TRACE_IRQFLAGS
-> diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
-> index a3f85624313e..402bcfb85f25 100644
-> --- a/arch/arm64/kvm/Kconfig
-> +++ b/arch/arm64/kvm/Kconfig
-> @@ -58,9 +58,6 @@ config KVM_ARM_PMU
->  	  Adds support for a virtual Performance Monitoring Unit
-> (PMU) in virtual machines.
+>  /*
+>   * The size of the PE/COFF section that covers the kernel image,
+> which @@ -143,10 +139,8 @@ SECTIONS
+>  	idmap_pg_dir = .;
+>  	. += IDMAP_DIR_SIZE;
 >  
-> -config KVM_INDIRECT_VECTORS
-> -       def_bool KVM && (HARDEN_BRANCH_PREDICTOR ||
-> HARDEN_EL2_VECTORS) -
-
-That sounds tempting, but breaks compilation when CONFIG_KVM is not
-defined (in arch/arm64/kernel/cpu_errata.c). So either we keep
-CONFIG_KVM_INDIRECT_VECTORS or we replace the guards in the code with
-CONFIG_KVM.
-
-Cheers,
-Andre.
-
->  source "drivers/vhost/Kconfig"
->  
->  endif # VIRTUALIZATION
-> diff --git a/arch/arm64/kvm/hyp/hyp-entry.S
-> b/arch/arm64/kvm/hyp/hyp-entry.S index 53c9344968d4..e02ddf40f113
-> 100644 --- a/arch/arm64/kvm/hyp/hyp-entry.S
-> +++ b/arch/arm64/kvm/hyp/hyp-entry.S
-> @@ -272,7 +272,6 @@ ENTRY(__kvm_hyp_vector)
->  	valid_vect	el1_error		// Error 32-bit
-> EL1 ENDPROC(__kvm_hyp_vector)
->  
-> -#ifdef CONFIG_KVM_INDIRECT_VECTORS
->  .macro hyp_ventry
->  	.align 7
->  1:	.rept 27
-> @@ -331,4 +330,3 @@ ENTRY(__smccc_workaround_1_smc_start)
->  	ldp	x0, x1, [sp, #(8 * 2)]
->  	add	sp, sp, #(8 * 4)
->  ENTRY(__smccc_workaround_1_smc_end)
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  	tramp_pg_dir = .;
+>  	. += PAGE_SIZE;
 > -#endif
+>  
+>  #ifdef CONFIG_ARM64_SW_TTBR0_PAN
+>  	reserved_ttbr0 = .;
+> @@ -257,10 +251,8 @@ ASSERT(__idmap_text_end - (__idmap_text_start &
+> ~(SZ_4K - 1)) <= SZ_4K, ASSERT(__hibernate_exit_text_end -
+> (__hibernate_exit_text_start & ~(SZ_4K - 1)) <= SZ_4K, "Hibernate
+> exit text too big or misaligned") #endif
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  ASSERT((__entry_tramp_text_end - __entry_tramp_text_start) ==
+> PAGE_SIZE, "Entry trampoline text too big")
+> -#endif
+>  /*
+>   * If padding is applied before .head.text, virt<->phys conversions
+> will fail. */
+> diff --git a/arch/arm64/mm/context.c b/arch/arm64/mm/context.c
+> index 1f0ea2facf24..e99f3e645e06 100644
+> --- a/arch/arm64/mm/context.c
+> +++ b/arch/arm64/mm/context.c
+> @@ -40,15 +40,9 @@ static cpumask_t tlb_flush_pending;
+>  #define ASID_MASK		(~GENMASK(asid_bits - 1, 0))
+>  #define ASID_FIRST_VERSION	(1UL << asid_bits)
+>  
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  #define NUM_USER_ASIDS		(ASID_FIRST_VERSION >> 1)
+>  #define asid2idx(asid)		(((asid) & ~ASID_MASK) >> 1)
+>  #define idx2asid(idx)		(((idx) << 1) & ~ASID_MASK)
+> -#else
+> -#define NUM_USER_ASIDS		(ASID_FIRST_VERSION)
+> -#define asid2idx(asid)		((asid) & ~ASID_MASK)
+> -#define idx2asid(idx)		asid2idx(idx)
+> -#endif
+>  
+>  /* Get the ASIDBits supported by the current CPU */
+>  static u32 get_cpu_asid_bits(void)
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index b6f5aa52ac67..97252baf4700 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -570,7 +570,6 @@ static int __init parse_rodata(char *arg)
+>  }
+>  early_param("rodata", parse_rodata);
+>  
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  static int __init map_entry_trampoline(void)
+>  {
+>  	pgprot_t prot = rodata_enabled ? PAGE_KERNEL_ROX :
+> PAGE_KERNEL_EXEC; @@ -597,7 +596,6 @@ static int __init
+> map_entry_trampoline(void) return 0;
+>  }
+>  core_initcall(map_entry_trampoline);
+> -#endif
+>  
+>  /*
+>   * Create fine-grained mappings for the kernel.
+> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+> index 73886a5f1f30..e9ca5cbb93bc 100644
+> --- a/arch/arm64/mm/proc.S
+> +++ b/arch/arm64/mm/proc.S
+> @@ -217,7 +217,6 @@ ENTRY(idmap_cpu_replace_ttbr1)
+>  ENDPROC(idmap_cpu_replace_ttbr1)
+>  	.popsection
+>  
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  	.pushsection ".idmap.text", "awx"
+>  
+>  	.macro	__idmap_kpti_get_pgtable_ent, type
+> @@ -406,7 +405,6 @@ __idmap_kpti_secondary:
+>  	.unreq	pte
+>  ENDPROC(idmap_kpti_install_ng_mappings)
+>  	.popsection
+> -#endif
+>  
+>  /*
+>   *	__cpu_setup
 
