@@ -2,79 +2,94 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB2EC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F71C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80F3721473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:48:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="GBWZMvfB"
+	by mail.kernel.org (Postfix) with ESMTP id 998612087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:48:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732666AbfA3RsT (ORCPT
+        id S1732679AbfA3Rsn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:48:19 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:56710 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727097AbfA3RsT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:48:19 -0500
-Received: from mailhost1.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 2357B24E096E;
-        Wed, 30 Jan 2019 09:48:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1548870499; bh=u+7rKHYnuXjx40KGiN6ttBD50059Hc8O9yiA6VbbLo0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GBWZMvfB3g49ndMoIXwzWO6sdnXaQi0X0Yld4pGh6iOkngVFQUh8LM2kFEMXm5zIw
-         Hbo9RvFAFPCmH4h/r38ldR69pJAgDJD0+kxoQQTiGVBoIDY1lb+i5vkzkDvFA0H3Ls
-         LMmUbrG00KCiLalAxZyqrxxp38HtTzCQ5KXagGef2yuZzPuLYWPaK2Yx9rQqEDlU7B
-         qQsq3sV4jHuEnovAFzkek+1qX8dEQ/anhnawppZAvlZRMfmrv7FhI6VvUPypsAL5WW
-         Ctb/ySn5ztAAqcN/NV0EmAPMt+agRWiz5jj/AF5k6pCPif10zkB2p8mymNryePqfvX
-         iXV01vOiEkWAA==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost1.synopsys.com (Postfix) with ESMTP id 9ADDB594C;
-        Wed, 30 Jan 2019 09:48:17 -0800 (PST)
-From:   Joao Pinto <joao.pinto@synopsys.com>
-To:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     joao.pinto@synopsys.com, pedrom.sousa@synopsys.com,
-        marc.w.gonzalez@free.fr, Alex.Lemberg@wdc.com
-Subject: [PATCH for-next] scsi: ufs: Update dwc driver maintainer to Pedro Sousa
-Date:   Wed, 30 Jan 2019 18:48:13 +0100
-Message-Id: <812e9e1426555808ad1bd5fbfda320c6684abc81.1548869844.git.jpinto@synopsys.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 30 Jan 2019 12:48:43 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58938 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727097AbfA3Rsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:48:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E0CE80D;
+        Wed, 30 Jan 2019 09:48:42 -0800 (PST)
+Received: from [10.37.12.221] (unknown [10.37.12.221])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF72C3F557;
+        Wed, 30 Jan 2019 09:48:37 -0800 (PST)
+Subject: Re: [PATCH v2 4/7] perf pmu: Moving EVENT_SOURCE_DEVICE_PATH to PMU
+ header file
+To:     mathieu.poirier@linaro.org, acme@kernel.org, peterz@infradead.org
+Cc:     gregkh@linuxfoundation.org, mingo@redhat.com, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190122181144.26645-1-mathieu.poirier@linaro.org>
+ <20190122181144.26645-5-mathieu.poirier@linaro.org>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <fe640760-89b8-7ae7-f742-a9f81642d0e4@arm.com>
+Date:   Wed, 30 Jan 2019 17:50:30 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190122181144.26645-5-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently I am managing the Synopsys drivers & tools team (full-time) and
-so I am passing the DWC UFS driver maintenance to Pedro Sousa.
+On 01/22/2019 06:11 PM, Mathieu Poirier wrote:
+> Moving definition of EVENT_SOURCE_DEVICE_PATH to pmu.h so that it can be
+> used by other files than pmu.c
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>   tools/perf/util/pmu.c | 2 --
+>   tools/perf/util/pmu.h | 1 +
+>   2 files changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index 11a234740632..51d437f55d18 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -29,8 +29,6 @@ struct perf_pmu_format {
+>   	struct list_head list;
+>   };
+>   
+> -#define EVENT_SOURCE_DEVICE_PATH "/bus/event_source/devices/"
+> -
+>   int perf_pmu_parse(struct list_head *list, char *name);
+>   extern FILE *perf_pmu_in;
+>   
+> diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+> index 76fecec7b3f9..350c54e0bd3d 100644
+> --- a/tools/perf/util/pmu.h
+> +++ b/tools/perf/util/pmu.h
+> @@ -16,6 +16,7 @@ enum {
+>   };
+>   
+>   #define PERF_PMU_FORMAT_BITS 64
+> +#define EVENT_SOURCE_DEVICE_PATH "/bus/event_source/devices/"
+>   
+>   struct perf_event_attr;
+>   
+> 
 
-Signed-off-by: Joao Pinto <jpinto@synopsys.com>
-Cc: Pedro Sousa <pedrom.sousa@synopsys.com>
-Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc: Alex Lemberg <Alex.Lemberg@wdc.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+FWIW:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 70c93b1..458a2a2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15673,7 +15673,7 @@ F:	Documentation/scsi/ufs.txt
- F:	drivers/scsi/ufs/
- 
- UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER DWC HOOKS
--M:	Joao Pinto <jpinto@synopsys.com>
-+M:	Pedro Sousa <pedrom.sousa@synopsys.com>
- L:	linux-scsi@vger.kernel.org
- S:	Supported
- F:	drivers/scsi/ufs/*dwc*
--- 
-2.7.4
+Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
