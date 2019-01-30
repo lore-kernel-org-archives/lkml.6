@@ -2,118 +2,93 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A03C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:43:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6FD9C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C715218A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99B55218A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548859459;
+	bh=Mv7v1jASFdV0HKzfj6lGR0f2LAWScrDFZ5xpARsyotY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BYWUaiyKKTLnG5rySXGuZfVvpWYhhUdD4PebCIp1bDytZq/IWK0pTeGwuUmrMYzdJ
+	 Tc04TlZ6O8Kx+rnzr+9Klm1GHoNpYit0n+gO23UITtT5XDVAMuU3JwOVvvndh6bgR+
+	 IDqb0SFPoPl+aR5f805bZjypLP3eXqu7OSwVayRY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731293AbfA3OnK (ORCPT
+        id S1731313AbfA3OoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 09:43:10 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57218 "EHLO mx1.redhat.com"
+        Wed, 30 Jan 2019 09:44:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727555AbfA3OnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 09:43:09 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727371AbfA3OoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 09:44:17 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E8534A402E;
-        Wed, 30 Jan 2019 14:43:08 +0000 (UTC)
-Received: from sky.random (ovpn-121-14.rdu2.redhat.com [10.10.121.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A306718823;
-        Wed, 30 Jan 2019 14:43:05 +0000 (UTC)
-Date:   Wed, 30 Jan 2019 09:43:04 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Peter Xu <peterx@redhat.com>,
-        Blake Caldwell <blake.caldwell@colorado.edu>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>
-Subject: Re: [LSF/MM TOPIC]: userfaultfd (was: [LSF/MM TOPIC] NUMA remote THP
- vs NUMA local non-THP under MADV_HUGEPAGE)
-Message-ID: <20190130144304.GA19021@redhat.com>
-References: <20190129234058.GH31695@redhat.com>
- <20190130081336.GC17937@rapoport-lnx>
+        by mail.kernel.org (Postfix) with ESMTPSA id 99B2C20882;
+        Wed, 30 Jan 2019 14:44:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548859457;
+        bh=Mv7v1jASFdV0HKzfj6lGR0f2LAWScrDFZ5xpARsyotY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ptbFeVZ+7MBrlVSQDqapqjwKRaMFjyEsW51jIrO6g0k4EvLaAeXlpKOLgjx945w3+
+         f5Mnakwu4f1OfxllFuxPZm/d7P99YA4ZPWLKHR/qaN9GZ/3kftUJI5R4mEawxPoNfa
+         iirPCKPnti+UdlmeoZpd0lZzY3bqpeZNsFEo9Zr4=
+Date:   Wed, 30 Jan 2019 15:44:14 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Roman Kiryanov <rkir@google.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] drivers: platform: goldfish:
+ goldfish_address_space: add a driver
+Message-ID: <20190130144414.GA8357@kroah.com>
+References: <20190109021112.5836-1-rkir@google.com>
+ <20190109021112.5836-2-rkir@google.com>
+ <20190122110712.GA1004@kroah.com>
+ <CAOGAQeo1Kv55EUn2sYPOt9EgBMfN=+o_A4KOPVgqbJHo+HN-Sw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190130081336.GC17937@rapoport-lnx>
+In-Reply-To: <CAOGAQeo1Kv55EUn2sYPOt9EgBMfN=+o_A4KOPVgqbJHo+HN-Sw@mail.gmail.com>
 User-Agent: Mutt/1.11.2 (2019-01-07)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 30 Jan 2019 14:43:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mike,
-
-On Wed, Jan 30, 2019 at 10:13:36AM +0200, Mike Rapoport wrote:
-> We (CRIU) have some concerns about obsoleting soft-dirty in favor of
-> uffd-wp. If there are other soft-dirty users these concerns would be
-> relevant to them as well.
+On Tue, Jan 29, 2019 at 12:32:12AM -0800, Roman Kiryanov wrote:
+> > How does QEMU do this today?  There isn't a virtio or some other virtual
+> > memory device that allows memory regions to be shared?  I can't believe
+> > that there isn't one yet.  If not, then this should be some kind of
+> > "generic" QEMU memory device, not a "goldfish" specific one, right?
 > 
-> With soft-dirty we collect the information about the changed memory every
-> pre-dump iteration in the following manner:
-> * freeze the tasks
-> * find entries in /proc/pid/pagemap with SOFT_DIRTY set
-> * unfreeze the tasks
-> * dump the modified pages to disk/remote host
+> I also thought this should not be something unique to us. So I asked
+> in our internal mailing list, I heard nothing back.
 > 
-> While we do need to traverse the /proc/pid/pagemap to identify dirty pages,
-> in between the pre-dump iterations and during the actual memory dump the
-> tasks are running freely.
+> > Please work with the QEMU developers on this, I need their ack before I
+> > can take something like this.
 > 
-> If we are to switch to uffd-wp, every write by the snapshotted/migrated
-> task will incur latency of uffd-wp processing by the monitor.
+> This is a good point. I asked there (nothing since 1/24):
+> 
+> http://lists.nongnu.org/archive/html/qemu-discuss/2019-01/msg00055.html
+> 
+> When we were working on our device side, we had to change some QEMU
+> code and later noticed that HAXM also requires some fixes (we had
+> meetings with Intel). I suppose QEMU does not have this feature yet.
+> 
+> Could you please tell if we can proceed with upstreaming as is?
 
-That's valid concern indeed.
+Also, why does the other Android "emulator", cuttlefish, not need
+special drivers like this and the other goldfish drivers?  Shouldn't you
+be using the same interfaces that they use that are already merged
+upstream?
 
-I didn't go into the details of what additional feature is needed in
-addition to what is already present present in Peter's current
-patchset, but you're correct that in order to perform well to do the
-softdirty equivalent, we'll also need to add an async event model.
+Actually, now that cuttlefish works on a mainline kernel, can't we just
+delete the existing goldfish code?
 
-The async event model would be set during UFFD registration. It'd work
-like async signals, you just queue up uffd events in the kernel by
-allocating them with a slab object (not in the kernel stack of the
-faulting process). Only if the monitor won't read() them fast enough
-it'll eventually block the write protect fault and release the
-mmap_sem but the page fault would always be resolved by the kernel
-even in that case. For the monitor there'll be just a stream of
-uffd_msg structures to read in multiples of the uffd_msg structure
-size with a single syscall per wakeup of the monitor. Conceptually
-it'd work the same as how PML works for EPT.
+thanks,
 
-The main downside will be an allocation per fault (soft dirty doesn't
-need to do such allocation), but there will be no round-trip to
-userland latency added to the wrprotect fault that needs to be logged.
-
-We need the synchronous/blocking uffd-wp for other things that aren't
-related to soft dirty and can't be achieved with an async model like
-softdirty. Adding an async model later would be a self contained
-feature inside uffd.
-
-So the idea would be to ignore any comparison with softdirty until
-uffd-wp is finalized, and then evaluate the possibility of adding an
-async model which would be simple thing to add in comparison of the
-uffd-wp feature itself.
-
-The theoretical expectation would be that softdirty would perform
-better for small processes (but for those the overall logging overhead
-is small anyway), but when it gets to the hundred-gigabytes/terabytes
-regions, async uffd-wp should perform much better.
-
-Thanks,
-Andrea
+greg k-h
