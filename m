@@ -2,119 +2,128 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D42C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A45E1C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9929421473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7720620882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:49:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731360AbfA3Mtp (ORCPT
+        id S1731351AbfA3Mtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:49:45 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:54233 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730967AbfA3MrW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 07:49:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44132 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730985AbfA3MrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 Jan 2019 07:47:22 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gopGy-0006AC-21; Wed, 30 Jan 2019 05:47:20 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gopGx-0001gZ-7c; Wed, 30 Jan 2019 05:47:19 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Karel Zak <kzak@redhat.com>, util-linux@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        LSM <linux-security-module@vger.kernel.org>
-References: <87va2716mh.fsf@xmission.com>
-        <03e0993b-21db-1cc4-7a33-0236de7be20d@schaufler-ca.com>
-        <87r2cvx7wz.fsf@xmission.com> <87ef8vx7jz.fsf@xmission.com>
-Date:   Wed, 30 Jan 2019 06:47:09 -0600
-In-Reply-To: <87ef8vx7jz.fsf@xmission.com> (Eric W. Biederman's message of
-        "Tue, 29 Jan 2019 19:23:12 -0600")
-Message-ID: <8736pawbw2.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9F653B0C6;
+        Wed, 30 Jan 2019 12:47:21 +0000 (UTC)
+From:   Jiri Slaby <jslaby@suse.cz>
+To:     mingo@redhat.com
+Cc:     bp@alien8.de, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+Subject: [PATCH v7 08/28] x86/boot/compressed: annotate local functions
+Date:   Wed, 30 Jan 2019 13:46:51 +0100
+Message-Id: <20190130124711.12463-9-jslaby@suse.cz>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190130124711.12463-1-jslaby@suse.cz>
+References: <20190130124711.12463-1-jslaby@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gopGx-0001gZ-7c;;;mid=<8736pawbw2.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18a+etU5hIAZJSftdtZ1VtryMrnkJhAie4=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFD] A mount api that notices previous mounts
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+relocated, paging_enabled, and no_longmode are self-standing local
+functions, annotate them as such. paging_enabled is annotated as
+NOALIGN, since the trampoline code has to be compact.
 
-> ebiederm@xmission.com (Eric W. Biederman) writes:
->
->> Casey Schaufler <casey@schaufler-ca.com> writes:
->>> Are you taking the LSM specific mount options into account?
->>
->> In the design yes, and I allow setting them.  It appears in the code
->> to retrieve the mount options I forgot to call security_sb_show_options.
->>
->> For finding the super block that you are going to mount the LSM mount
->> options are not relevant.  Even nfs will not want to set those early as
->> they do not help determine the nfs super block.  So the only place where
->> there is anything interesting in my api is in reading back the security
->> options so they can be compared to the options the mounter is setting.
->>
->> I will add the missing call to security_sb_show_options which is enough
->> to fix selinux.  Unfortunately smack does not currently implement
->> .sb_show_options.  Not implementing smack_sb_show_options means
->> /proc/mounts fails to match /etc/mtab which is a bug and it is likely
->> a real workd bug for the people who use smack and don't want to depend
->> on /etc/mtab, or are transitioning away from it.
->>
->> Casey do you want to implement smack_sb_show_options or should I put it
->> on my todo list?
->
-> Oh.  I should add that I am always parsing the LSM mount options out so
-> that there is not a chance of the individual filesystems implementing
-> comflicting options even when there are no LSMs active.  Without that I
-> am afraid we run the risk of having LSM mount otions in conflict with
-> ordinary filesystems options at some point and by the time we discover
-> it it would start introducing filesystem regressions.
->
-> That does help with stack though as there is no fundamental reason only
-> one LSM could process mount options.
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: x86@kernel.org
+---
+ arch/x86/boot/compressed/head_32.S | 3 ++-
+ arch/x86/boot/compressed/head_64.S | 9 ++++++---
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-Sigh.  I just realized that there is a smack variant of the bug I am
-working to fix.
-
-smack on remount does not fail if you change the smack mount options.
-It just silently ignores the smack mount options.  Which is exactly the
-same poor interaction with userspace that has surprised user space
-and caused CVEs.
-
-How much do you think the smack users will care if you start verifying
-that if smack options are present in remount that they are unchanged
-from mount?
-
-I suspect the smack userbase is small enough, and the corner case is
-crazy enough we can fix this poor communication by smack.  Otherwise it
-looks like there needs to be a new security hook so old and new remounts
-can be distinguished by the LSMs, and smack can be fixed in the new
-version.
-
-Eric
+diff --git a/arch/x86/boot/compressed/head_32.S b/arch/x86/boot/compressed/head_32.S
+index 37380c0d5999..7e8ab0bb6968 100644
+--- a/arch/x86/boot/compressed/head_32.S
++++ b/arch/x86/boot/compressed/head_32.S
+@@ -209,7 +209,7 @@ ENDPROC(efi32_stub_entry)
+ #endif
+ 
+ 	.text
+-relocated:
++SYM_FUNC_START_LOCAL(relocated)
+ 
+ /*
+  * Clear BSS (stack is currently empty)
+@@ -260,6 +260,7 @@ relocated:
+  */
+ 	xorl	%ebx, %ebx
+ 	jmp	*%eax
++SYM_FUNC_END(relocated)
+ 
+ #ifdef CONFIG_EFI_STUB
+ 	.data
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index 64037895b085..b840618edd58 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -508,7 +508,7 @@ ENDPROC(efi64_stub_entry)
+ #endif
+ 
+ 	.text
+-relocated:
++SYM_FUNC_START_LOCAL(relocated)
+ 
+ /*
+  * Clear BSS (stack is currently empty)
+@@ -537,6 +537,7 @@ relocated:
+  * Jump to the decompressed kernel.
+  */
+ 	jmp	*%rax
++SYM_FUNC_END(relocated)
+ 
+ /*
+  * Adjust the global offset table
+@@ -622,9 +623,10 @@ ENTRY(trampoline_32bit_src)
+ 	lret
+ 
+ 	.code64
+-paging_enabled:
++SYM_FUNC_START_LOCAL_NOALIGN(paging_enabled)
+ 	/* Return from the trampoline */
+ 	jmp	*%rdi
++SYM_FUNC_END(paging_enabled)
+ 
+ 	/*
+          * The trampoline code has a size limit.
+@@ -634,11 +636,12 @@ paging_enabled:
+ 	.org	trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_SIZE
+ 
+ 	.code32
+-no_longmode:
++SYM_FUNC_START_LOCAL(no_longmode)
+ 	/* This isn't an x86-64 CPU, so hang intentionally, we cannot continue */
+ 1:
+ 	hlt
+ 	jmp     1b
++SYM_FUNC_END(no_longmode)
+ 
+ #include "../../kernel/verify_cpu.S"
+ 
+-- 
+2.20.1
 
