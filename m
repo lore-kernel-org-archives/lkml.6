@@ -2,169 +2,96 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5BBC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4CAC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A2FE2084C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1634C2084C
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:40:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548862810;
+	bh=G0gJjHBKp6BFs3XfPsE/2DOPMPqljkASXnoDiOLOIXw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=mIV6XxcoQ+1voi2v0CEUiDq8NB+M3hXIcc0NKjUVpQ2z09NZnxqMw9KkE2qhDuZ9n
+	 owj6Cxdiwk8zKR2Y2sWlTE/ojiyNFIfVRhRw1OHlLVr6S9rjhSeczC6JMfeNga/ejF
+	 93MzNoJVoaM5iOWlBk1qbBxda5ydrDoUob4Awz+U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730736AbfA3Pja (ORCPT
+        id S1731486AbfA3PkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:39:30 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41557 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfA3Pj3 (ORCPT
+        Wed, 30 Jan 2019 10:40:08 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47340 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfA3PkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:39:29 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gorxT-0003O4-Cs; Wed, 30 Jan 2019 16:39:23 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gorxR-00078q-30; Wed, 30 Jan 2019 16:39:21 +0100
-Date:   Wed, 30 Jan 2019 16:39:21 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH v3 2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20190130153921.met3kipvdsoctjoa@pengutronix.de>
-References: <1544103655-104466-1-git-send-email-michal.vokac@ysoft.com>
- <1544103655-104466-3-git-send-email-michal.vokac@ysoft.com>
- <20181212080154.kcfh57mulypwuscu@pengutronix.de>
- <52ed0614-d1f5-81cb-3b17-8eb137967872@ysoft.com>
- <20181212121255.yg6b4pw7qord7ebi@pengutronix.de>
- <4b0356b7-bc7d-a026-ac90-3f0c5754ed29@ysoft.com>
- <20190124092215.zbu62lhxf667rzvs@pengutronix.de>
- <4004896e-34fc-7160-2f21-30280d96f750@ysoft.com>
- <20190124104435.e6paqwcuz3hizwnv@pengutronix.de>
- <72bad040-05f4-607f-f210-468e46ea3228@ysoft.com>
+        Wed, 30 Jan 2019 10:40:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=G0gJjHBKp6BFs3XfPsE/2DOPMPqljkASXnoDiOLOIXw=; b=mxiCYy2GHbDO3c3z2eGOfC6GO
+        25eEtm9uJ2ezYxpx23QnIVhQnjJhWchkWTuDHquFqNz3NzQMPWsrrpPP0sFw6URjP/neuYqjBjjvj
+        pVZI/yKNdCcUBFUzBgaKCN6jIc+p79qeihrcOcQots96+Q1WoHP8QilMQ996rvUKiQFVI=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gory1-0006Rd-8P; Wed, 30 Jan 2019 15:39:57 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 99D911127D43; Wed, 30 Jan 2019 15:39:56 +0000 (GMT)
+Date:   Wed, 30 Jan 2019 15:39:56 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Otavio Salvador <otavio@ossystems.com.br>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Jason Zhu <jason.zhu@rock-chips.com>,
+        Vicent Chi <vicent.chi@rock-chips.com>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Tomsic <philipp.tomsich@theobroma-systems.com>,
+        Tony Xie <tony.xie@rock-chips.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] regulator: rk808: Fix BUCK1/2 voltages on rk805
+Message-ID: <20190130153956.GB10665@sirena.org.uk>
+References: <20190129195424.10161-1-otavio@ossystems.com.br>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <72bad040-05f4-607f-f210-468e46ea3228@ysoft.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20190129195424.10161-1-otavio@ossystems.com.br>
+X-Cookie: Remember the... the... uhh.....
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Michal,
 
-On Wed, Jan 30, 2019 at 03:42:29PM +0100, Michal Vokáč wrote:
-> On 24.1.2019 11:44, Uwe Kleine-König wrote:
-> > On Thu, Jan 24, 2019 at 11:12:12AM +0100, Michal Vokáč wrote:
-> > > On 24.1.2019 10:22, Uwe Kleine-König wrote:
-> > > > I think it might be beneficial to allow (or require) that disable acts
-> > > > immediately. But this is not how it used to be and in my discussion with
-> > > > Thierry (IIRC) he required to complete the currently running period.
-> > > 
-> > > I am confused here. IFAIK it always used to be that:
-> > > 
-> > > 	pwm_apply_state(pwm, { .enabled = 0 });
-> > > 
-> > > immediately stops the PWM with:
-> > > 
-> > > 	writel(0, imx->mmio_base + MX3_PWMCR);
-> > > 
-> > > regardless of the period (for pwm-imx).
-> > 
-> > Then is is a bug since forever (well, or a fact that resulted from the
-> > intended semantic not being documented and the driver author not caring
-> > or knowing better).
-> 
-> Hi Uwe, I skimmed all the PWM drivers trying to find out how others are
-> waiting for the end of a period before disabling PWM.
-> 
-> There is 50 PWM drivers in total and I could find only two drivers that
-> do something that resembles waiting for an end of a period:
-> 
->  - pwm-atmel.c
->    https://elixir.bootlin.com/linux/v5.0-rc3/source/drivers/pwm/pwm-atmel.c#L176
-> 	
->  - pwm-sun4i.c
->    https://elixir.bootlin.com/linux/v5.0-rc3/source/drivers/pwm/pwm-sun4i.c#L284
+--lEGEL1/lMxI0MVQ2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-There are quite some drivers known (to me) being buggy here. My feeling
-is that Thierry doesn't share that impression and I think the only
-reasonable path forward is to first fix the requirements for drivers and
-when this is done, look at the implementations and fix them or conclude
-that the requirements are not practical and shift them accordingly.
+On Tue, Jan 29, 2019 at 05:54:21PM -0200, Otavio Salvador wrote:
+> RK805 has the following voltage range for the BUCK1 and BUCK2 regulators:
 
-From my POV the situation is as follows: I suggested a few changes that
-seemed reasonable to me (e.g.: don't rely on the pin state to be
-inactive after disable; don't rely on a driver to block in .apply until
-the new configuration is active; thought about dropping .disable
-altogether) and Thierry shot them down indicating that he is not willing
-to change the API and all affected users for only one or a few
-implementations. My consequence is to be strict about the requirements
-because that's the only way to show the resulting pain (or see there
-isn't so much pain).
+I'm missing the other patches in this series and don't see a cover
+letter - what's the story with dependencies?
 
-> I did not delve into that too much but I believe there are some HW
-> requirements on those platforms to stop the PWM that way. Others
-> simply stop the PWM straight away. So I am confused even more
-> and wonder where your requirements came from?
+--lEGEL1/lMxI0MVQ2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I'm aware that many drivers don't adhere to these requirements. IMHO
-this is related to the poor situation regarding documentation for
-pwm-driver authors and lack of time for in-deep reviews by Thierry.
-Never the less: The requirement to complete the currently running period
-comes from Thierry. There is a patch by me waiting for review that
-targets improving the documentation and you already have to suffer from
-my plan to spend some time on pwm-reviews :-)
+-----BEGIN PGP SIGNATURE-----
 
-> Anyway, as I could not find any real example I tried to solve it
-> according to your earlier suggestion. That is configure duty_cycle=0
-> and some time later disable PWM.
-> 
-> It generates additional problems. The PWM block has a FIFO with four
-> slots. Before adding the sample with duty cycle=0 into the FIFO it
-> is wise to wait for a free slot in the FIFO. Then when the sample is
-> added it may actually happen that the sample is the fourth in the
-> FIFO. So it may take up to four periods until we can disable the PWM.
-> These four periods can take up to 16s. Hmmm :(
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxRxUsACgkQJNaLcl1U
+h9ChBAf/XVHqjJDE4f6/KMdt3ImoJBZgtxg2TGTThPA9aBsS25nL2VI9ElBmDvVK
+Y7lSAlOe8XFpmWXidFopMQfbV/9T708b5xaRY1QWkY73bq7OszPzHqq7SPwuvn7f
+mEeDlM8xtR0dOkxR2JT/r0UT4VvjWx3eSDt2zwND1tFGeQhoQ2mec0Rk5b1DLW/c
+njN8MUAOkNVV5Z2jA0x3JiE5zeBGArt5zkfq2LN3yLE0DQ1AKAA65xUze3bN+SkG
+koHBkMNsO8jc1J3HwW6WBDqrndgowfw8UDwQ8lHBvF/3cC8tk3ks4fEHFV5jjDG8
+xEReJXlbMI0j3OyG368x3RuyeIKhww==
+=2+s5
+-----END PGP SIGNATURE-----
 
-No it cannot. Because if you put a new configuration into the FIFO you
-have to block until the requested configuration is active, so it must
-not happen that you hit the FIFO with 4 busy entries. (Unless a user
-calls pwm_apply_state() in four contexts in parallel, which should not
-happen. And if it does, we should implement serialization in the
-pwm-framework such that pwm-drivers doesn't need to care.)
-
-> I agree there are bugs in the driver and it is far from providing
-> complete support of the i.MX PWM HW. Still, I believe those are totally
-> independent problems from the pinctrl stuff and so should not block
-> the discussion/inclusion of this series.
-
-I think while there are people who care about a driver, the known
-problems should be addressed before a change is "sneaked" in that makes
-the contributor happy and care about other stuff.
- 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+--lEGEL1/lMxI0MVQ2--
