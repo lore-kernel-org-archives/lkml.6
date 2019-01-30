@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6CB0C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8051EC282D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 818F220855
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:24:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51540218A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 14:24:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbfA3OY5 (ORCPT
+        id S1731285AbfA3OY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 09:24:57 -0500
+        Wed, 30 Jan 2019 09:24:58 -0500
 Received: from mga04.intel.com ([192.55.52.120]:27023 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725803AbfA3OYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 09:24:55 -0500
+        id S1731210AbfA3OYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 09:24:53 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 06:24:54 -0800
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 06:24:53 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
-   d="scan'208";a="271154296"
+   d="scan'208";a="271154295"
 Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by orsmga004.jf.intel.com with ESMTP; 30 Jan 2019 06:24:54 -0800
+  by orsmga004.jf.intel.com with ESMTP; 30 Jan 2019 06:24:53 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
         mingo@redhat.com, linux-kernel@vger.kernel.org
 Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
         ak@linux.intel.com, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 09/13] perf/core, x86: Add support for PERF_SAMPLE_CODE_PAGE_SIZE
-Date:   Wed, 30 Jan 2019 06:23:50 -0800
-Message-Id: <1548858234-8872-9-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH V3 08/13] perf test: Add test case for PERF_SAMPLE_DATA_PAGE_SIZE
+Date:   Wed, 30 Jan 2019 06:23:49 -0800
+Message-Id: <1548858234-8872-8-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548858234-8872-1-git-send-email-kan.liang@linux.intel.com>
 References: <1548858234-8872-1-git-send-email-kan.liang@linux.intel.com>
@@ -44,107 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephane Eranian <eranian@google.com>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-When studying code layout, it is useful to capture the page size of the
-sampled code address.
+Extend sample-parsing test cases to support new sample type
+PERF_SAMPLE_DATA_PAGE_SIZE.
 
-Add a new sample type for code page size.
-The new sample type requires collecting the ip. The code page size can
-be calculated from the IRQ-safe perf_get_page_size().
-
-Only the generic support is covered. The large PEBS will be disabled
-with this sample type.
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
 No changes since V1
 
- include/linux/perf_event.h      |  1 +
- include/uapi/linux/perf_event.h |  4 +++-
- kernel/events/core.c            | 11 ++++++++++-
- 3 files changed, 14 insertions(+), 2 deletions(-)
+ tools/perf/tests/sample-parsing.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 0e048ab..10c23f9 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -938,6 +938,7 @@ struct perf_sample_data {
+diff --git a/tools/perf/tests/sample-parsing.c b/tools/perf/tests/sample-parsing.c
+index 0e2d00d..1de5fa0 100644
+--- a/tools/perf/tests/sample-parsing.c
++++ b/tools/perf/tests/sample-parsing.c
+@@ -145,6 +145,9 @@ static bool samples_same(const struct perf_sample *s1,
+ 	if (type & PERF_SAMPLE_PHYS_ADDR)
+ 		COMP(phys_addr);
  
- 	u64				phys_addr;
- 	u64				data_page_size;
-+	u64				code_page_size;
- } ____cacheline_aligned;
++	if (type & PERF_SAMPLE_DATA_PAGE_SIZE)
++		COMP(data_page_size);
++
+ 	return true;
+ }
  
- /* default value for data source */
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 79daacd..6e97ab2 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -142,8 +142,9 @@ enum perf_event_sample_format {
- 	PERF_SAMPLE_REGS_INTR			= 1U << 18,
- 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
- 	PERF_SAMPLE_DATA_PAGE_SIZE		= 1U << 20,
-+	PERF_SAMPLE_CODE_PAGE_SIZE		= 1U << 21,
- 
--	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
-+	PERF_SAMPLE_MAX = 1U << 22,		/* non-ABI */
- 
- 	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
- };
-@@ -865,6 +866,7 @@ enum perf_event_type {
- 	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
- 	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
- 	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
-+	 *	{ u64			code_page_size;} && PERF_SAMPLE_CODE_PAGE_SIZE
- 	 * };
+@@ -210,7 +213,9 @@ static int do_test(u64 sample_type, u64 sample_regs, u64 read_format)
+ 			.mask	= sample_regs,
+ 			.regs	= regs,
+ 		},
++
+ 		.phys_addr	= 113,
++		.data_page_size	= PERF_PAGE_SIZE_4K,
+ 	};
+ 	struct sample_read_value values[] = {{1, 5}, {9, 3}, {2, 7}, {6, 4},};
+ 	struct perf_sample sample_out;
+@@ -310,7 +315,7 @@ int test__sample_parsing(struct test *test __maybe_unused, int subtest __maybe_u
+ 	 * were added.  Please actually update the test rather than just change
+ 	 * the condition below.
  	 */
- 	PERF_RECORD_SAMPLE			= 9,
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index eb721b5..9c25bd2 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1756,6 +1756,9 @@ static void __perf_event_header_size(struct perf_event *event, u64 sample_type)
- 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
- 		size += sizeof(data->data_page_size);
- 
-+	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
-+		size += sizeof(data->code_page_size);
-+
- 	event->header_size = size;
- }
- 
-@@ -6311,6 +6314,9 @@ void perf_output_sample(struct perf_output_handle *handle,
- 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
- 		perf_output_put(handle, data->data_page_size);
- 
-+	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
-+		perf_output_put(handle, data->code_page_size);
-+
- 	if (!event->attr.watermark) {
- 		int wakeup_events = event->attr.wakeup_events;
- 
-@@ -6399,7 +6405,7 @@ void perf_prepare_sample(struct perf_event_header *header,
- 
- 	__perf_event_header__init_id(header, data, event);
- 
--	if (sample_type & PERF_SAMPLE_IP)
-+	if (sample_type & (PERF_SAMPLE_IP | PERF_SAMPLE_CODE_PAGE_SIZE))
- 		data->ip = perf_instruction_pointer(regs);
- 
- 	if (sample_type & PERF_SAMPLE_CALLCHAIN) {
-@@ -6508,6 +6514,9 @@ void perf_prepare_sample(struct perf_event_header *header,
- 
- 	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
- 		data->data_page_size = perf_get_page_size(data->addr);
-+
-+	if (sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)
-+		data->code_page_size = perf_get_page_size(data->ip);
- }
- 
- static __always_inline int
+-	if (PERF_SAMPLE_MAX > PERF_SAMPLE_PHYS_ADDR << 1) {
++	if (PERF_SAMPLE_MAX > PERF_SAMPLE_DATA_PAGE_SIZE << 1) {
+ 		pr_debug("sample format has changed, some new PERF_SAMPLE_ bit was introduced - test needs updating\n");
+ 		return -1;
+ 	}
 -- 
 2.7.4
 
