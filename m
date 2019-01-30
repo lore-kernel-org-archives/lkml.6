@@ -2,258 +2,102 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D16CC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C813C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E3232184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C4992175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:26:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="gjQv14xg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJQcxTuS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729890AbfA3CZW (ORCPT
+        id S1729893AbfA3C0Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 21:25:22 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:49162 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727990AbfA3CZU (ORCPT
+        Tue, 29 Jan 2019 21:26:24 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44927 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727990AbfA3C0Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 21:25:20 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 4C7148781F;
-        Wed, 30 Jan 2019 15:25:17 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1548815117;
-        bh=D5QaqGKOetgx6E1UtzmNF8NDDqU7mPwGS/Xlj5gfkwo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=gjQv14xgs86GdLpgoQQeHRzkO5cQwv5TilYcbSutpkgE9uUGmQUm9H3DCNuIkAyiH
-         vYSwek00PqQlBNATgi9CmJtCxKAWyYE8TxgqClNWCzSjsNoKqwsIVyPpfe65b9OhVE
-         LN5+56ciBiVgSCVdy07epk+oZcyvTt9m/5/TwR0DN9dsHxTJ+YNiPAF4g6XTk5YeGc
-         KwE54RXVr/rjemFzaB4TKgGm1SjoPZkr2rSKQ9TbmdhZWCy2sbNkAfw6cXHF4w9Vph
-         kJ/HIfHbUFFtMGHU25RJ6FB936YRfIuZnkrh4/rm2wjewBUevQfV2+gzpu8WZNBvsA
-         Rc/Ay3oJrdb3g==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5c510b0d0000>; Wed, 30 Jan 2019 15:25:17 +1300
-Received: from callums-dl.ws.atlnz.lc (callums-dl.ws.atlnz.lc [10.33.22.12])
-        by smtp (Postfix) with ESMTP id F289213EEFB;
-        Wed, 30 Jan 2019 15:25:22 +1300 (NZDT)
-Received: by callums-dl.ws.atlnz.lc (Postfix, from userid 1764)
-        id 12B883A041A; Wed, 30 Jan 2019 15:25:17 +1300 (NZDT)
-From:   Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
-Subject: [PATCH] ipmr: ip6mr: Create new sockopt to clear mfc cache only
-Date:   Wed, 30 Jan 2019 15:25:09 +1300
-Message-Id: <20190130022509.25303-2-callum.sinclair@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190130022509.25303-1-callum.sinclair@alliedtelesis.co.nz>
-References: <20190130022509.25303-1-callum.sinclair@alliedtelesis.co.nz>
+        Tue, 29 Jan 2019 21:26:24 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e11so10304330plt.11;
+        Tue, 29 Jan 2019 18:26:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9v18WNnlxt2j5NxBkqvzTad9BMWhmAfeZLIKxCBDpTA=;
+        b=TJQcxTuSs3jEy3nq/JWmtxcrhNFImnpEcDuNzARif3Suqs+cgH2aGJAuv3Cxs6nN5H
+         ntyl78QGL8n+Snc8c+wja9bfNpoP4RTxFub4N9aHX0SpeAnGoC87lLeCM6tEA+2Kg7zU
+         mWxaFzlLc6pJ9YkUAv5ieo6oj04a/IfVvzuRaGzoJVvVsclulAypCQsQBfgiGOagpeBw
+         O7H7FCfTqXg1yBNp9+UodpmX6Hwk9imukQ5jgZ9Rrid4uT84xGjtccdPsqaK+DjjYT1n
+         NNr8Q8ufyjB37IZqQ5j+Korf/ez7L1CP+TBgtMrGsUQuzBZ/BC/DsoMz/UOrITof/2t4
+         K8MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9v18WNnlxt2j5NxBkqvzTad9BMWhmAfeZLIKxCBDpTA=;
+        b=I81lugtga7+sOlUzDzCy38m4VDR0NCtdKmmPAb7kTolZEsKcGh3/CAok+LghY4OE7Q
+         gdGONxMq8aZAHfCwouXXXtx0upB5wJtCe55VM/1qStTZ/5prgDW21MEHkz1Dr86WfyvT
+         DzZDjnBMYBiSYiTlpqsXmz+1i0q/G2THImWzdofJQtRHv4+Zc1isqpn1yW1igy18lKw4
+         iRNk8RPaRTCtNRkUZ7AgBayCs4dC8mlTluXdgvH/g3RaqKZZKzkO5JcUBiF3J6o4jj0B
+         Ua+E0dJbCpibfV8vyz/v10907ZqlKvOKAb8QYIcBs5V7M4I088x0L/UhPifCjBhrogtr
+         OxyA==
+X-Gm-Message-State: AJcUukf+T2DIvc6XcpnmC9ykup0lm4WIkUCMRYOr2cpYgmJNIDiCs5qN
+        lOxCX7aO70aPOtp4Chx7bz1CWzuxd/hBMbtdHW8=
+X-Google-Smtp-Source: ALg8bN7o43r4//EpL9ATFeNcIXSUvRBez0yxvIiW1oZe6iBuavkV7ErL9cph9Nif061Sw7VFmU1OGo7GFiRTKaLtOco=
+X-Received: by 2002:a17:902:4d46:: with SMTP id o6mr27311476plh.302.1548815183394;
+ Tue, 29 Jan 2019 18:26:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+References: <5c3763f1.1c69fb81.f2570.4457@mx.google.com> <CAFqt6zawA928gHRtSiKbBC0QcXxZs3U-rZdDF1yyaLjdTHqgFQ@mail.gmail.com>
+In-Reply-To: <CAFqt6zawA928gHRtSiKbBC0QcXxZs3U-rZdDF1yyaLjdTHqgFQ@mail.gmail.com>
+From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Date:   Wed, 30 Jan 2019 07:56:11 +0530
+Message-ID: <CAJr6mf02+B4BrWC8AyLCXNu5wE8u5MPfWC4WrgrJ_9B6Z9DMbQ@mail.gmail.com>
+Subject: Re: [PATCH] fs/block_dev.c: Remove duplicate header
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the only way to clear the mfc cache was to delete the entries
-one by one using the MRT_DEL_MFC socket option or to destroy and
-recreate the socket.
-
-Create a new socket option which will clear the multicast forwarding
-cache on the socket without destroying the socket.
-
-Signed-off-by: Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
----
- include/uapi/linux/mroute.h  |  3 ++-
- include/uapi/linux/mroute6.h |  3 ++-
- net/ipv4/ipmr.c              | 41 +++++++++++++++++++++-----------
- net/ipv6/ip6mr.c             | 45 +++++++++++++++++++++++-------------
- 4 files changed, 60 insertions(+), 32 deletions(-)
-
-diff --git a/include/uapi/linux/mroute.h b/include/uapi/linux/mroute.h
-index 5d37a9ccce63..8a0beb885cd9 100644
---- a/include/uapi/linux/mroute.h
-+++ b/include/uapi/linux/mroute.h
-@@ -28,7 +28,8 @@
- #define MRT_TABLE	(MRT_BASE+9)	/* Specify mroute table ID		*/
- #define MRT_ADD_MFC_PROXY	(MRT_BASE+10)	/* Add a (*,*|G) mfc entry	*/
- #define MRT_DEL_MFC_PROXY	(MRT_BASE+11)	/* Del a (*,*|G) mfc entry	*/
--#define MRT_MAX		(MRT_BASE+11)
-+#define MRT_DEL_MFC_ALL		(MRT_BASE+12)	/* Del all multicast entries	*/
-+#define MRT_MAX		(MRT_BASE+12)
-=20
- #define SIOCGETVIFCNT	SIOCPROTOPRIVATE	/* IP protocol privates */
- #define SIOCGETSGCNT	(SIOCPROTOPRIVATE+1)
-diff --git a/include/uapi/linux/mroute6.h b/include/uapi/linux/mroute6.h
-index 9999cc006390..7def70cdf571 100644
---- a/include/uapi/linux/mroute6.h
-+++ b/include/uapi/linux/mroute6.h
-@@ -31,7 +31,8 @@
- #define MRT6_TABLE	(MRT6_BASE+9)	/* Specify mroute table ID		*/
- #define MRT6_ADD_MFC_PROXY	(MRT6_BASE+10)	/* Add a (*,*|G) mfc entry	*/
- #define MRT6_DEL_MFC_PROXY	(MRT6_BASE+11)	/* Del a (*,*|G) mfc entry	*/
--#define MRT6_MAX	(MRT6_BASE+11)
-+#define MRT6_DEL_MFC_ALL	(MRT6_BASE+12)	/* Del all multicast entries	*/
-+#define MRT6_MAX	(MRT6_BASE+12)
-=20
- #define SIOCGETMIFCNT_IN6	SIOCPROTOPRIVATE	/* IP protocol privates */
- #define SIOCGETSGCNT_IN6	(SIOCPROTOPRIVATE+1)
-diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
-index ddbf8c9a1abb..bbbce5ec8a0c 100644
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -1298,22 +1298,10 @@ static int ipmr_mfc_add(struct net *net, struct m=
-r_table *mrt,
- 	return 0;
- }
-=20
--/* Close the multicast socket, and clear the vif tables etc */
--static void mroute_clean_tables(struct mr_table *mrt, bool all)
-+/* Clear the vif tables */
-+static void mroute_clean_cache(struct mr_table *mrt, bool all)
- {
--	struct net *net =3D read_pnet(&mrt->net);
- 	struct mr_mfc *c, *tmp;
--	struct mfc_cache *cache;
--	LIST_HEAD(list);
--	int i;
--
--	/* Shut down all active vif entries */
--	for (i =3D 0; i < mrt->maxvif; i++) {
--		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
--			continue;
--		vif_delete(mrt, i, 0, &list);
--	}
--	unregister_netdevice_many(&list);
-=20
- 	/* Wipe the cache */
- 	list_for_each_entry_safe(c, tmp, &mrt->mfc_cache_list, list) {
-@@ -1340,6 +1328,24 @@ static void mroute_clean_tables(struct mr_table *m=
-rt, bool all)
- 	}
- }
-=20
-+/* Close the multicast socket, and clear the vif tables etc */
-+static void mroute_clean_tables(struct mr_table *mrt, bool all)
-+{
-+	struct net *net =3D read_pnet(&mrt->net);
-+	LIST_HEAD(list);
-+	int i;
-+
-+	/* Shut down all active vif entries */
-+	for (i =3D 0; i < mrt->maxvif; i++) {
-+		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
-+			continue;
-+		vif_delete(mrt, i, 0, &list);
-+	}
-+	unregister_netdevice_many(&list);
-+
-+	mroute_clean_cache (mrt, all);
-+}
-+
- /* called from ip_ra_control(), before an RCU grace period,
-  * we dont need to call synchronize_rcu() here
-  */
-@@ -1482,6 +1488,13 @@ int ip_mroute_setsockopt(struct sock *sk, int optn=
-ame, char __user *optval,
- 					   sk =3D=3D rtnl_dereference(mrt->mroute_sk),
- 					   parent);
- 		break;
-+	case MRT_DEL_MFC_ALL:
-+		rtnl_lock();
-+		ipmr_for_each_table(mrt, net) {
-+			mroute_clean_cache(mrt, true);
-+		}
-+		rtnl_unlock();
-+		break;
- 	/* Control PIM assert. */
- 	case MRT_ASSERT:
- 		if (optlen !=3D sizeof(val)) {
-diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
-index 30337b38274b..64631f85dcf4 100644
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -1492,25 +1492,11 @@ static int ip6mr_mfc_add(struct net *net, struct =
-mr_table *mrt,
- 	return 0;
- }
-=20
--/*
-- *	Close the multicast socket, and clear the vif tables etc
-- */
--
--static void mroute_clean_tables(struct mr_table *mrt, bool all)
-+/* Clear the vif tables */
-+static void mroute_clean_cache(struct mr_table *mrt, bool all)
- {
- 	struct mr_mfc *c, *tmp;
--	LIST_HEAD(list);
--	int i;
--
--	/* Shut down all active vif entries */
--	for (i =3D 0; i < mrt->maxvif; i++) {
--		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
--			continue;
--		mif6_delete(mrt, i, 0, &list);
--	}
--	unregister_netdevice_many(&list);
-=20
--	/* Wipe the cache */
- 	list_for_each_entry_safe(c, tmp, &mrt->mfc_cache_list, list) {
- 		if (!all && (c->mfc_flags & MFC_STATIC))
- 			continue;
-@@ -1535,6 +1521,26 @@ static void mroute_clean_tables(struct mr_table *m=
-rt, bool all)
- 		spin_unlock_bh(&mfc_unres_lock);
- 	}
- }
-+/*
-+ *	Close the multicast socket, and clear the vif tables etc
-+ */
-+
-+static void mroute_clean_tables(struct mr_table *mrt, bool all)
-+{
-+	LIST_HEAD(list);
-+	int i;
-+
-+	/* Shut down all active vif entries */
-+	for (i =3D 0; i < mrt->maxvif; i++) {
-+		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
-+			continue;
-+		mif6_delete(mrt, i, 0, &list);
-+	}
-+	unregister_netdevice_many(&list);
-+
-+	/* Wipe the cache */
-+	mroute_clean_cache(mrt, all);
-+}
-=20
- static int ip6mr_sk_init(struct mr_table *mrt, struct sock *sk)
- {
-@@ -1703,6 +1709,13 @@ int ip6_mroute_setsockopt(struct sock *sk, int opt=
-name, char __user *optval, uns
- 					    parent);
- 		rtnl_unlock();
- 		return ret;
-+	case MRT6_DEL_MFC_ALL:
-+		rtnl_lock();
-+		ip6mr_for_each_table(mrt, net) {
-+			mroute_clean_cache(mrt, true);
-+		}
-+		rtnl_unlock();
-+		return 0;
-=20
- 	/*
- 	 *	Control PIM assert (to activate pim will activate assert)
---=20
-2.20.1
-
+On Wed, Jan 16, 2019 at 5:46 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> On Thu, Jan 10, 2019 at 8:55 PM Sabyasachi Gupta
+> <sabyasachi.linux@gmail.com> wrote:
+> >
+> > Remove linux/dax.h which is included more than once.
+> >
+> > Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+>
+> Acked-by: Souptick Joarder <jrdr.linux@gmail.com>
+>
+If no further comment, can we get this patch in queue for 5.1 ?
+> > ---
+> >  fs/block_dev.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> > diff --git a/fs/block_dev.c b/fs/block_dev.c
+> > index cdda48f..8abcdb6 100644
+> > --- a/fs/block_dev.c
+> > +++ b/fs/block_dev.c
+> > @@ -29,7 +29,6 @@
+> >  #include <linux/namei.h>
+> >  #include <linux/log2.h>
+> >  #include <linux/cleancache.h>
+> > -#include <linux/dax.h>
+> >  #include <linux/badblocks.h>
+> >  #include <linux/task_io_accounting_ops.h>
+> >  #include <linux/falloc.h>
+> > --
+> > 2.7.4
+> >
