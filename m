@@ -2,53 +2,107 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D713C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089C4C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 473BA20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5EDF2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731931AbfA3QcC (ORCPT
+        id S1732015AbfA3QcG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:32:02 -0500
-Received: from 8bytes.org ([81.169.241.247]:35976 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728008AbfA3QcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:32:02 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 521375B8; Wed, 30 Jan 2019 17:32:01 +0100 (CET)
-Date:   Wed, 30 Jan 2019 17:32:00 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jason Wang <jasowang@redhat.com>,
-        Jerome Glisse <jglisse@redhat.com>
-Subject: Re: [PATCH 1/2] iommu/vt-d: Remove change_pte notifier
-Message-ID: <20190130163159.t2633rwpjbffjyvz@8bytes.org>
-References: <20190130055758.3994-1-peterx@redhat.com>
- <20190130055758.3994-2-peterx@redhat.com>
+        Wed, 30 Jan 2019 11:32:06 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57314 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730556AbfA3QcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:32:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EFA4EBD;
+        Wed, 30 Jan 2019 08:32:02 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A45243F589;
+        Wed, 30 Jan 2019 08:32:00 -0800 (PST)
+Date:   Wed, 30 Jan 2019 16:31:55 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     honghui.zhang@mediatek.com, youlin.pei@mediatek.com,
+        ryder.lee@mediatek.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jianjun.wang@mediatek.com,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] PCI: Mediatek: Use resource_size function on resource
+ object
+Message-ID: <20190130163155.GA5847@e107981-ln.cambridge.arm.com>
+References: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
+ <20190130123347.GB30991@e107981-ln.cambridge.arm.com>
+ <20190130155853.GE229773@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190130055758.3994-2-peterx@redhat.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20190130155853.GE229773@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 01:57:57PM +0800, Peter Xu wrote:
-> The change_pte() interface is tailored for PFN updates, while the
-> other notifier invalidate_range() should be enough for Intel IOMMU
-> cache flushing.  Actually we've done similar thing for AMD IOMMU
-> already in 8301da53fbc1 ("iommu/amd: Remove change_pte mmu_notifier
-> call-back", 2014-07-30) but the Intel IOMMU driver still have it.
+On Wed, Jan 30, 2019 at 09:58:53AM -0600, Bjorn Helgaas wrote:
+> On Wed, Jan 30, 2019 at 12:33:47PM +0000, Lorenzo Pieralisi wrote:
+> > On Wed, Jan 02, 2019 at 02:03:53PM +0800, honghui.zhang@mediatek.com wrote:
+> > > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > 
+> > > drivers/pci/pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
+> > > 
+> > > Generated by: scripts/coccinelle/api/resource_size.cocci
+> > > 
+> > > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > ---
+> > >  drivers/pci/controller/pcie-mediatek.c | 4 +---
+> > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> > > index e307166..0168376 100644
+> > > --- a/drivers/pci/controller/pcie-mediatek.c
+> > > +++ b/drivers/pci/controller/pcie-mediatek.c
+> > > @@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> > >  	struct resource *mem = &pcie->mem;
+> > >  	const struct mtk_pcie_soc *soc = port->pcie->soc;
+> > >  	u32 val;
+> > > -	size_t size;
+> > >  	int err;
+> > >  
+> > >  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
+> > > @@ -706,8 +705,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> > >  		mtk_pcie_enable_msi(port);
+> > >  
+> > >  	/* Set AHB to PCIe translation windows */
+> > > -	size = mem->end - mem->start;
+> > > -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
+> > > +	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
+> > 
+> > checkpatch warns on this line, please make sure patches pass it before
+> > posting them.
 > 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
+> I didn't actually run checkpatch myself, so I don't know why it
+> complained.
 
-Applied to x86/vt-d, thanks.
+WARNING: line over 80 characters
+#35: FILE: drivers/pci/controller/pcie-mediatek.c:708:
++	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
 
+I do run it as a sanity check.
+
+> The patch you merged moves "mem_size = resource_size(mem)" higher up,
+> away from the previous location and its use, which makes it a little
+> harder to read.
+
+That's because it was how the original code (which as you pointed out
+is likely buggy) was written.
+
+Anyway patch dropped waiting for a v2 consistent with your review -
+apologies for missing some key review points.
+
+Lorenzo
