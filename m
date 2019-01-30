@@ -2,174 +2,236 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6FFC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F71C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4917220882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:46:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDM2v5pM"
+	by mail.kernel.org (Postfix) with ESMTP id E3BBB20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:47:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730852AbfA3Mqr (ORCPT
+        id S1730885AbfA3MrO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:46:47 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40426 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfA3Mqr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 07:46:47 -0500
-Received: by mail-io1-f68.google.com with SMTP id k2so19250917iog.7
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 04:46:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mzr4ARbu1TjAJHS3g9jhoTSUIRon+Ua3EZgbCU4NmpM=;
-        b=GDM2v5pMEse2iQm6bSsuV5UVIP0VjgRMA6ramkeol82YtrVdtd4Par+3h+hCvbrVzw
-         1DV4uxTgUAzZZ2tuMzI/B673fLbs6mWkA5r0byaLmHwtMOgqty7/s/X5Wi/2YPH054i1
-         QcbixkX+aEwWjAcSoRHbDhAdr7fON+Ld2lf3Zq0CGQRWC8WCBJVQHv2+yGuQJ7LLogZ5
-         xAArSfC1hJwEf6cQ/JlbEWT519L2w7kmn0N36Stmo0Oe8c6vVnyGRTL73UMLYH5hkOVM
-         fMJXkIYEWkS4ajs6VF+fmLVeW4cypQjXQHAfke1yKJOX5i5yEaho2RD3tcc6mT5truDw
-         gFRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mzr4ARbu1TjAJHS3g9jhoTSUIRon+Ua3EZgbCU4NmpM=;
-        b=qWN+Vl3Qc7ezy49H74Mtv78MMkV28irTC/XmjthUyAz6yryByNtuq+pzzTq01+r+yj
-         5N97TrOOkZAgWSPxDelVrZXax2hKxfBQxnwjBMqLBPDivhbRUu2CzARB4i33O3i/lUEg
-         KVup8hNUgsrIvi4yP1KfaX11RsLJS4kr2uYhuBTQoWHv4EmuCNE7K4YHiB1oFtbWA0FO
-         OaSgq5B4h52y+d7Av1zKwEUde/iWJytRODijxPaGgy7qCgcn02EsSZk4CRhGuzXd4OV7
-         wmFpq/XN5G+2iyBjDVU1puU4ljec60WBkIpFCWTSiTA75I7PWSMCRk/fHtnr4hr77tqd
-         HGYw==
-X-Gm-Message-State: AHQUAub5m9X1VA5/ugY1I6F1uHDZ+/7DwV4sP6bQq/2wKK59V7dRga1d
-        WF4upRquWWKplKQ4Dz8ejgq559/RUrLIjDmsh4M=
-X-Google-Smtp-Source: AHgI3Ia2MHeEdqbgKMaIi6axve2Mh8Pu5dfNmgDGM7u3sNA0XqCauHSh9mPjAGD8nYLdiGMG0WWXfiFcrcnOlM0EIdE=
-X-Received: by 2002:a5e:8517:: with SMTP id i23mr15184935ioj.28.1548852406261;
- Wed, 30 Jan 2019 04:46:46 -0800 (PST)
+        Wed, 30 Jan 2019 07:47:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43876 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726246AbfA3MrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 07:47:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 61813AE4B;
+        Wed, 30 Jan 2019 12:47:12 +0000 (UTC)
+From:   Jiri Slaby <jslaby@suse.cz>
+To:     mingo@redhat.com
+Cc:     bp@alien8.de, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH v7 00/28] New macros for assembler symbols
+Date:   Wed, 30 Jan 2019 13:46:43 +0100
+Message-Id: <20190130124711.12463-1-jslaby@suse.cz>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190130095749.8952-1-daniel.baluta@nxp.com>
-In-Reply-To: <20190130095749.8952-1-daniel.baluta@nxp.com>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Wed, 30 Jan 2019 20:46:35 +0800
-Message-ID: <CAA+hA=Tz0p8Ea9f8wuqUZFkmuDrqMHj8_4sLvT8wi6qrTnaVKQ@mail.gmail.com>
-Subject: Re: [PATCH v2] firmware: imx: Add support to start/stop a CPU
-To:     Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "daniel.baluta@gmail.com" <daniel.baluta@gmail.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 5:59 PM Daniel Baluta <daniel.baluta@nxp.com> wrote:
->
-> This is done via RPC call to SCU.
->
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
-> Changes since v1:
->         - remove unused variable ret
->         - add documentation for imx_sc_pm_cpu_start function
->
->  drivers/firmware/imx/misc.c           | 38 +++++++++++++++++++++++++++
->  include/linux/firmware/imx/svc/misc.h |  3 +++
->  2 files changed, 41 insertions(+)
->
-> diff --git a/drivers/firmware/imx/misc.c b/drivers/firmware/imx/misc.c
-> index 97f5424dbac9..f511d6f624fd 100644
-> --- a/drivers/firmware/imx/misc.c
-> +++ b/drivers/firmware/imx/misc.c
-> @@ -18,6 +18,14 @@ struct imx_sc_msg_req_misc_set_ctrl {
->         u16 resource;
->  } __packed;
->
-> +struct imx_sc_msg_req_cpu_start {
-> +       struct imx_sc_rpc_msg hdr;
-> +       u32 address_hi;
-> +       u32 address_lo;
-> +       u16 resource;
-> +       u8 enable;
-> +} __packed;
-> +
->  struct imx_sc_msg_req_misc_get_ctrl {
->         struct imx_sc_rpc_msg hdr;
->         u32 ctrl;
-> @@ -97,3 +105,33 @@ int imx_sc_misc_get_control(struct imx_sc_ipc *ipc, u32 resource,
->         return 0;
->  }
->  EXPORT_SYMBOL(imx_sc_misc_get_control);
-> +
-> +/*
-> + * This function starts/stops a CPU identified by @resource
-> + *
-> + * @param[in]     ipc         IPC handle
-> + * @param[in]     resource    resource the control is associated with
-> + * @param[in]     enable      true for start, false for stop
-> + * @param[out]    address     initial instruction address to be executed
-> + *
-> + * @return Returns 0 for success and < 0 for errors.
-> + */
-> +int imx_sc_pm_cpu_start(struct imx_sc_ipc *ipc, u32 resource,
-> +                       bool enable, u64 address)
-> +{
-> +       struct imx_sc_msg_req_cpu_start msg;
-> +       struct imx_sc_rpc_msg *hdr = &msg.hdr;
-> +
-> +       hdr->ver = IMX_SC_RPC_VERSION;
-> +       hdr->svc = (uint8_t)IMX_SC_RPC_SVC_PM;
-> +       hdr->func = (uint8_t)IMX_SC_PM_FUNC_CPU_START;
+This series introduces new macros for assembly as was discussed [1]. The
+rationale is that now we use several undocumented random macros
+collected over time. There are even some defined for different
+architectures differently.  In many cases, developers do not know the
+difference in semantics between two basic macros END and ENDPROC. But in
+this very case, the difference is crucial especially for objtool when
+generating e.g. debuginfo for assembly. For this reason, we define a set
+of macros with documented meanings and hopefully intuitive names. These
+macros greatly support automatic tools working on the generated code
+from assembly or on the assembly proper.
 
-pls drop the unneccesary unit8_t
+The macros are introduced in the first patch of the series. The rest
+of patches start using these new macros in x86, converting *all* uses
+of the old macros to the new ones throughout the last patch. With
+every last user of some old macro, the macro is immediately made
+forbidden for x86.
 
-> +       hdr->size = 4;
-> +
-> +       msg.address_hi = address >> 32;
-> +       msg.address_lo = address;
-> +       msg.resource = resource;
-> +       msg.enable = enable;
-> +
-> +       return imx_scu_call_rpc(ipc, &msg, false);
+When this settles down, conversion of other architectures can be done
+too.
 
-s/false/true
+For introduction, documentation, use and examples, please see
+Documentation/asm-annotations.rst from the first patch of the series.
 
-> +}
-> +EXPORT_SYMBOL(imx_sc_pm_cpu_start);
-> diff --git a/include/linux/firmware/imx/svc/misc.h b/include/linux/firmware/imx/svc/misc.h
-> index e21c49aba92f..c03bf2a23add 100644
-> --- a/include/linux/firmware/imx/svc/misc.h
-> +++ b/include/linux/firmware/imx/svc/misc.h
-> @@ -52,4 +52,7 @@ int imx_sc_misc_set_control(struct imx_sc_ipc *ipc, u32 resource,
->  int imx_sc_misc_get_control(struct imx_sc_ipc *ipc, u32 resource,
->                             u8 ctrl, u32 *val);
->
-> +int imx_sc_pm_cpu_start(struct imx_sc_ipc *ipc, u32 resource,
-> +                       bool enable, u64 address);
+Changes among v1..v7 of this series are documented per patch. v7 is
+in fact only rebase on the current codebase as v6 was sent in May 2018
+and received only a single comment which was answered without code
+change.
 
-Nitpick: phy_addr
+[1] https://lkml.org/lkml/2017/3/1/742
 
-Otherwise, looks good to me.
+Jiri Slaby (28):
+  linkage: new macros for assembler symbols
+  x86/asm/suspend: drop ENTRY from local data
+  x86/asm/suspend: use SYM_DATA for data
+  x86/asm: annotate relocate_kernel
+  x86/asm/entry: annotate THUNKs
+  x86/asm: annotate local pseudo-functions
+  x86/asm/crypto: annotate local functions
+  x86/boot/compressed: annotate local functions
+  x86/asm: annotate aliases
+  x86/asm/entry: annotate interrupt symbols properly
+  x86/asm/head: annotate data appropriatelly
+  x86/boot/compressed: annotate data appropriatelly
+  um: annotate data appropriatelly
+  xen/pvh: annotate data appropriatelly
+  x86/asm/purgatory: start using annotations
+  x86/asm: do not annotate functions by GLOBAL
+  x86/asm: use SYM_INNER_LABEL instead of GLOBAL
+  x86/asm/realmode: use SYM_DATA_* instead of GLOBAL
+  x86/asm: kill the last GLOBAL user and remove the macro
+  x86/asm: make some functions local
+  x86/asm/ftrace: mark function_hook as function
+  x86_64/asm: add ENDs to some functions and relabel with SYM_CODE_*
+  x86_64/asm: change all ENTRY+END to SYM_CODE_*
+  x86_64/asm: change all ENTRY+ENDPROC to SYM_FUNC_*
+  x86_32/asm: add ENDs to some functions and relabel with SYM_CODE_*
+  x86_32/asm: change all ENTRY+END to SYM_CODE_*
+  x86_32/asm: change all ENTRY+ENDPROC to SYM_FUNC_*
+  x86/asm: replace WEAK uses by SYM_INNER_LABEL_ALIGN
 
-Regards
-Dong Aisheng
+ Documentation/asm-annotations.rst            | 217 ++++++++++++++++
+ arch/x86/boot/compressed/efi_stub_32.S       |   4 +-
+ arch/x86/boot/compressed/efi_thunk_64.S      |  33 +--
+ arch/x86/boot/compressed/head_32.S           |  15 +-
+ arch/x86/boot/compressed/head_64.S           |  63 ++---
+ arch/x86/boot/compressed/mem_encrypt.S       |  11 +-
+ arch/x86/boot/copy.S                         |  16 +-
+ arch/x86/boot/pmjump.S                       |   8 +-
+ arch/x86/crypto/aegis128-aesni-asm.S         |  36 +--
+ arch/x86/crypto/aegis128l-aesni-asm.S        |  36 +--
+ arch/x86/crypto/aegis256-aesni-asm.S         |  36 +--
+ arch/x86/crypto/aes-i586-asm_32.S            |   8 +-
+ arch/x86/crypto/aes-x86_64-asm_64.S          |   4 +-
+ arch/x86/crypto/aes_ctrby8_avx-x86_64.S      |  12 +-
+ arch/x86/crypto/aesni-intel_asm.S            | 114 ++++-----
+ arch/x86/crypto/aesni-intel_avx-x86_64.S     |  32 +--
+ arch/x86/crypto/blowfish-x86_64-asm_64.S     |  16 +-
+ arch/x86/crypto/camellia-aesni-avx-asm_64.S  |  44 ++--
+ arch/x86/crypto/camellia-aesni-avx2-asm_64.S |  44 ++--
+ arch/x86/crypto/camellia-x86_64-asm_64.S     |  16 +-
+ arch/x86/crypto/cast5-avx-x86_64-asm_64.S    |  24 +-
+ arch/x86/crypto/cast6-avx-x86_64-asm_64.S    |  32 +--
+ arch/x86/crypto/chacha-avx2-x86_64.S         |  12 +-
+ arch/x86/crypto/chacha-avx512vl-x86_64.S     |  12 +-
+ arch/x86/crypto/chacha-ssse3-x86_64.S        |  16 +-
+ arch/x86/crypto/crc32-pclmul_asm.S           |   4 +-
+ arch/x86/crypto/crc32c-pcl-intel-asm_64.S    |   4 +-
+ arch/x86/crypto/crct10dif-pcl-asm_64.S       |   4 +-
+ arch/x86/crypto/des3_ede-asm_64.S            |   8 +-
+ arch/x86/crypto/ghash-clmulni-intel_asm.S    |  12 +-
+ arch/x86/crypto/morus1280-avx2-asm.S         |  44 ++--
+ arch/x86/crypto/morus1280-sse2-asm.S         |  44 ++--
+ arch/x86/crypto/morus640-sse2-asm.S          |  44 ++--
+ arch/x86/crypto/nh-avx2-x86_64.S             |   4 +-
+ arch/x86/crypto/nh-sse2-x86_64.S             |   4 +-
+ arch/x86/crypto/poly1305-avx2-x86_64.S       |   4 +-
+ arch/x86/crypto/poly1305-sse2-x86_64.S       |   8 +-
+ arch/x86/crypto/serpent-avx-x86_64-asm_64.S  |  32 +--
+ arch/x86/crypto/serpent-avx2-asm_64.S        |  32 +--
+ arch/x86/crypto/serpent-sse2-i586-asm_32.S   |   8 +-
+ arch/x86/crypto/serpent-sse2-x86_64-asm_64.S |   8 +-
+ arch/x86/crypto/sha1_avx2_x86_64_asm.S       |   4 +-
+ arch/x86/crypto/sha1_ni_asm.S                |   4 +-
+ arch/x86/crypto/sha1_ssse3_asm.S             |   4 +-
+ arch/x86/crypto/sha256-avx-asm.S             |   4 +-
+ arch/x86/crypto/sha256-avx2-asm.S            |   4 +-
+ arch/x86/crypto/sha256-ssse3-asm.S           |   4 +-
+ arch/x86/crypto/sha256_ni_asm.S              |   4 +-
+ arch/x86/crypto/sha512-avx-asm.S             |   4 +-
+ arch/x86/crypto/sha512-avx2-asm.S            |   4 +-
+ arch/x86/crypto/sha512-ssse3-asm.S           |   4 +-
+ arch/x86/crypto/twofish-avx-x86_64-asm_64.S  |  32 +--
+ arch/x86/crypto/twofish-i586-asm_32.S        |   8 +-
+ arch/x86/crypto/twofish-x86_64-asm_64-3way.S |   8 +-
+ arch/x86/crypto/twofish-x86_64-asm_64.S      |   8 +-
+ arch/x86/entry/entry_32.S                    | 155 ++++++------
+ arch/x86/entry/entry_64.S                    |  99 ++++----
+ arch/x86/entry/entry_64_compat.S             |  16 +-
+ arch/x86/entry/thunk_32.S                    |   4 +-
+ arch/x86/entry/thunk_64.S                    |   8 +-
+ arch/x86/entry/vdso/vdso32/system_call.S     |   2 +-
+ arch/x86/include/asm/linkage.h               |   4 -
+ arch/x86/kernel/acpi/wakeup_32.S             |  11 +-
+ arch/x86/kernel/acpi/wakeup_64.S             |  25 +-
+ arch/x86/kernel/ftrace_32.S                  |  23 +-
+ arch/x86/kernel/ftrace_64.S                  |  42 ++--
+ arch/x86/kernel/head_32.S                    |  60 ++---
+ arch/x86/kernel/head_64.S                    | 106 ++++----
+ arch/x86/kernel/irqflags.S                   |   8 +-
+ arch/x86/kernel/relocate_kernel_32.S         |  13 +-
+ arch/x86/kernel/relocate_kernel_64.S         |  13 +-
+ arch/x86/kernel/verify_cpu.S                 |   4 +-
+ arch/x86/kvm/vmx/vmenter.S                   |   8 +-
+ arch/x86/lib/atomic64_386_32.S               |   4 +-
+ arch/x86/lib/atomic64_cx8_32.S               |  32 +--
+ arch/x86/lib/checksum_32.S                   |  16 +-
+ arch/x86/lib/clear_page_64.S                 |  12 +-
+ arch/x86/lib/cmpxchg16b_emu.S                |   4 +-
+ arch/x86/lib/cmpxchg8b_emu.S                 |   4 +-
+ arch/x86/lib/copy_page_64.S                  |   8 +-
+ arch/x86/lib/copy_user_64.S                  |  16 +-
+ arch/x86/lib/csum-copy_64.S                  |   4 +-
+ arch/x86/lib/getuser.S                       |  24 +-
+ arch/x86/lib/hweight.S                       |   8 +-
+ arch/x86/lib/iomap_copy_64.S                 |   4 +-
+ arch/x86/lib/memcpy_64.S                     |  20 +-
+ arch/x86/lib/memmove_64.S                    |   8 +-
+ arch/x86/lib/memset_64.S                     |  16 +-
+ arch/x86/lib/msr-reg.S                       |   8 +-
+ arch/x86/lib/putuser.S                       |  20 +-
+ arch/x86/lib/retpoline.S                     |   4 +-
+ arch/x86/lib/rwsem.S                         |  24 +-
+ arch/x86/math-emu/div_Xsig.S                 |   4 +-
+ arch/x86/math-emu/div_small.S                |   4 +-
+ arch/x86/math-emu/mul_Xsig.S                 |  12 +-
+ arch/x86/math-emu/polynom_Xsig.S             |   4 +-
+ arch/x86/math-emu/reg_norm.S                 |   8 +-
+ arch/x86/math-emu/reg_round.S                |   4 +-
+ arch/x86/math-emu/reg_u_add.S                |   4 +-
+ arch/x86/math-emu/reg_u_div.S                |   4 +-
+ arch/x86/math-emu/reg_u_mul.S                |   4 +-
+ arch/x86/math-emu/reg_u_sub.S                |   4 +-
+ arch/x86/math-emu/round_Xsig.S               |   8 +-
+ arch/x86/math-emu/shr_Xsig.S                 |   4 +-
+ arch/x86/math-emu/wm_shrx.S                  |   8 +-
+ arch/x86/math-emu/wm_sqrt.S                  |   4 +-
+ arch/x86/mm/mem_encrypt_boot.S               |   8 +-
+ arch/x86/platform/efi/efi_stub_32.S          |   4 +-
+ arch/x86/platform/efi/efi_stub_64.S          |   4 +-
+ arch/x86/platform/efi/efi_thunk_64.S         |  16 +-
+ arch/x86/platform/olpc/xo1-wakeup.S          |   3 +-
+ arch/x86/platform/pvh/head.S                 |  18 +-
+ arch/x86/power/hibernate_asm_32.S            |  14 +-
+ arch/x86/power/hibernate_asm_64.S            |  14 +-
+ arch/x86/purgatory/entry64.S                 |  21 +-
+ arch/x86/purgatory/setup-x86_64.S            |  14 +-
+ arch/x86/purgatory/stack.S                   |   7 +-
+ arch/x86/realmode/rm/header.S                |   8 +-
+ arch/x86/realmode/rm/reboot.S                |  13 +-
+ arch/x86/realmode/rm/stack.S                 |  14 +-
+ arch/x86/realmode/rm/trampoline_32.S         |  16 +-
+ arch/x86/realmode/rm/trampoline_64.S         |  29 ++-
+ arch/x86/realmode/rm/trampoline_common.S     |   4 +-
+ arch/x86/realmode/rm/wakeup_asm.S            |  15 +-
+ arch/x86/realmode/rmpiggy.S                  |  10 +-
+ arch/x86/um/vdso/vdso.S                      |   6 +-
+ arch/x86/xen/xen-asm.S                       |  20 +-
+ arch/x86/xen/xen-asm_32.S                    |   7 +-
+ arch/x86/xen/xen-asm_64.S                    |  34 +--
+ arch/x86/xen/xen-head.S                      |   8 +-
+ include/linux/linkage.h                      | 249 ++++++++++++++++++-
+ 131 files changed, 1583 insertions(+), 1107 deletions(-)
+ create mode 100644 Documentation/asm-annotations.rst
 
-> +
->  #endif /* _SC_MISC_API_H */
-> --
-> 2.17.1
->
+-- 
+2.20.1
+
