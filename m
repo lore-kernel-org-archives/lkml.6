@@ -2,98 +2,119 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E92C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CC6C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0789020881
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:03:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548889401;
-	bh=WB9YTB3IGDqXlagMfR3MgcyVEbCXaUNE9pb9x2wIap4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=XbNMa5qimkstLoo99Bl5/aakHTpmD3c7o3URpPd8N1KdicWNCn81z+f+j1YCT79at
-	 PYhLpdWkw/U9s3v+UctBUp52j2gTTfL0M5YtUFHLQKwKJm1zD03v9ZOrn1vOpS/aTz
-	 7ai1nbKmkdY6Ia5TdkdWwWJs4+3LMb511p5dKC/c=
+	by mail.kernel.org (Postfix) with ESMTP id D89FA20881
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbfA3XDT (ORCPT
+        id S1731005AbfA3XD0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:03:19 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:47085 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727397AbfA3XDR (ORCPT
+        Wed, 30 Jan 2019 18:03:26 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48382 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727890AbfA3XDW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:03:17 -0500
-Received: by mail-ot1-f65.google.com with SMTP id w25so1125429otm.13;
-        Wed, 30 Jan 2019 15:03:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZmpQdef8f038zp00bn5PgvnDguDchYKFykOeFqHWKXM=;
-        b=lX40XB9wFgsmemoWl22uQ2P97qMHjOvUGKAHTGGU//Y0YLIs026x7JgfEQPqlL6K7D
-         LqSM/vGrx7vXWWileHeQsBaG8+9Hz67iptGdaLfs/cySxHG1VpoTSYk97Ug9mzvDN2Mu
-         zpUlxQElrNWmEVWPsEisk9N4qu8odt5sl0qmCJ05Z7umWgP90li/HKFmuP2Qwybqiob0
-         9CJFRJt28f2rO5QPrFYTuXgIBxevnm3eQufQgcAUS05KHyPRxWRGARYbIYfBjwATBOKX
-         4K7e8cmUts1J17+vpY8Ncz0bJ2wfdX2GCxENfQWyVIayTQGpmI9CI7MvYURrN3XHeXo9
-         hbcQ==
-X-Gm-Message-State: AJcUukfjgYMOYLYIgAWPdyRibYJyfvQHY4+WpYM0FNS6qGyHFOf6fvcj
-        xA2I27/497naA6/BD7zJgaLplQgAnoQ+uXA2WcgWNg==
-X-Google-Smtp-Source: ALg8bN5Eg+4pTx1ZoFWSyQarPLhbSk7m/4U7YqVnqrpEinCGdjDy+5CqUYATXbkUJEsetm4YmQPWN/byKebmsxeDveo=
-X-Received: by 2002:a9d:588c:: with SMTP id x12mr24671950otg.139.1548885559725;
- Wed, 30 Jan 2019 13:59:19 -0800 (PST)
+        Wed, 30 Jan 2019 18:03:22 -0500
+Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1goxu4-0006Z1-1W; Wed, 30 Jan 2019 23:00:16 +0100
+Date:   Wed, 30 Jan 2019 23:00:15 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Alan Cox <alan@llwyncelyn.cymru>
+cc:     Rusty Russell <rusty@rustcorp.com.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Jessica Yu <jeyu@kernel.org>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Subject: Re: [PATCH][RFC] module: Cure the MODULE_LICENSE "GPL" vs. "GPL v2"
+ bogosity
+In-Reply-To: <20190130204544.1b50027d@alans-desktop>
+Message-ID: <alpine.DEB.2.21.1901302248430.8200@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1901282105450.1669@nanos.tec.linutronix.de> <875zu620yn.fsf@rustcorp.com.au> <20190130204544.1b50027d@alans-desktop>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <1548865702-3524-1-git-send-email-dsmythies@telus.net>
-In-Reply-To: <1548865702-3524-1-git-send-email-dsmythies@telus.net>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 30 Jan 2019 22:59:08 +0100
-Message-ID: <CAJZ5v0iXNfn9Bn7V-XApb6A3D43hsmir0m7zCyG5Rky=qAbZmA@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: poll_state: Fix default time limit.
-To:     Doug Smythies <doug.smythies@gmail.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Doug Smythies <dsmythies@telus.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 5:29 PM Doug Smythies <doug.smythies@gmail.com> wrote:
->
-> The default time is declared in units of microsecnds,
-> but is used as nano seconds, resulting in significant
-> accounting errors for idle state 0 time when all idle
-> states deeper than 0 are disabled.
->
-> Under these unusual conditions, we don't really care
-> about the poll time limit anyhow.
->
-> Signed-off-by: Doug Smythies <dsmythies@telus.net>
-> ---
->  drivers/cpuidle/poll_state.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
-> index b17d153..23a1b27 100644
-> --- a/drivers/cpuidle/poll_state.c
-> +++ b/drivers/cpuidle/poll_state.c
-> @@ -21,7 +21,7 @@ static int __cpuidle poll_idle(struct cpuidle_device *dev,
->         local_irq_enable();
->         if (!current_set_polling_and_test()) {
->                 unsigned int loop_count = 0;
-> -               u64 limit = TICK_USEC;
-> +               u64 limit = TICK_NSEC;
+On Wed, 30 Jan 2019, Alan Cox wrote:
+> On Wed, 30 Jan 2019 15:31:20 +1030
+> Rusty Russell <rusty@rustcorp.com.au> wrote:
+> 
+> > Thanks taking on such a thankless task Thomas,
+> > 
+> > Might have been overzealous in assuming a verionless GPL string meant
+> > "or later" (I'm happy for that for my own code, FWIW).  My memory is
+> > fuzzy, but I don't think anyone cared at the time.
+> 
+> Versionless always meant 'or later' outside of the tags. It's the default
+> version of the licence. (Whether v2 only has any meaning beyond intent is
+> another debate that I guess some year a lawyer will have to figure out).
+> 
+> I think the description change makes sense given the ambiguity and the
+> fact we now have SPDX headers. (IANAL etc)
+> 
+> > >  2) The dual licensed strings became ill defined as well because following
+> > >     the "GPL" vs. "GPL v2" distinction all dual licensed (or additional
+> 
+> The dual ones were IMHO a mistake. They should just have used GPL and
+> additional rights. Either you have GPL rights (and it's ok to use in the
+> kernel) or you don't (and it's proprietary and the rest is down to
+> derivative works).
+> 
+> We don't actually care whether its dual licensed BSD, or whether it
+> merely grants you an additional right to cheap pizza.
 
-Good catch!
+Actually for the purpose of module loading the only relevant information is
+whether there are GPL rights or not. Whether there are additional rights is
+irrelevant for the binary blob. That only matters vs. the source code
+itself.
 
->                 int i;
->
->                 for (i = 1; i < drv->state_count; i++) {
-> --
+> > > As of 5.0-rc2 2873 out of 9200 instances of MODULE_LICENSE() strings are
+> > > conflicting with the actual license in the source code (either SPDX or
+> > > license boilerplate/reference). A comparison between the scan of the
+> 
+> The SPDX tag isn't correctly capable of expressing the licence anyway. If
+> you have functions in a file and two of them are GPL v2+ and someone
+> added a GPLv2 only one and updated the header there isn't a valid SPDX tag
+> for it because I can still use the GPLv2+ bits with GPLv3.
+ >
+> This is nothing new - the headers on the files provided no more data on
+> that and took up lots more space 8) We've simply never tracked licence
+> data by line.
 
-Applied, thanks!
+Correct, there are files which have both a v2 only and a v2 or later
+boilerplate and there is no way to figure out what that actually means for
+the affected source file.
+
+I found a recent patch adding the v2 or later boilerplate right next to the
+v2 only and the patch content is mostly fiddling with the existing code.
+
+Most people simply do not care and I'd say most do not understand what
+licensing means in the first place. But at the same time a lot of people do
+not care at all what they are doing.
+
+Thanks,
+
+	tglx
+
+
+
+
+
