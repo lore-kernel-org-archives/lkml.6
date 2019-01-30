@@ -2,160 +2,307 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CE8C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DB7C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A649920989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:59:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C39E20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:59:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="LM47/x7c"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZyKIIesq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733291AbfA3T7w (ORCPT
+        id S2387445AbfA3T76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:59:52 -0500
-Received: from mail-eopbgr20047.outbound.protection.outlook.com ([40.107.2.47]:64096
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728048AbfA3T7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:59:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BIdbOgJABd7KLeI1CmjED8KrMVhfM8Q7l4vQzya/ACw=;
- b=LM47/x7c8NPDcrO/8ilxdcoxfBmd1DDT98cI1EwEqyM4Ee127D/sCSZqKl7q/7UhID4Q1yqLkd2Jh4U3FS3oTt65RunJbwqgnXAPxz3pYatehSieQp+f6tGK3zyg6lXTVReV7+D26Ih9M5YPuXmYmwrtGnf3VFeY4fsWFYkoDQI=
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
- DBBPR05MB6299.eurprd05.prod.outlook.com (20.179.40.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.17; Wed, 30 Jan 2019 19:59:05 +0000
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 19:59:05 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-CC:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAAD3dAIAAukqAgAAK3wCAAAOzAA==
-Date:   Wed, 30 Jan 2019 19:59:05 +0000
-Message-ID: <20190130195900.GG17080@mellanox.com>
-References: <20190129205749.GN3176@redhat.com>
- <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
- <20190129215028.GQ3176@redhat.com>
- <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
- <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
- <20190130041841.GB30598@mellanox.com> <20190130080006.GB29665@lst.de>
- <20190130190651.GC17080@mellanox.com>
- <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
-In-Reply-To: <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CO2PR05CA0091.namprd05.prod.outlook.com
- (2603:10b6:104:1::17) To DBBPR05MB6426.eurprd05.prod.outlook.com
- (2603:10a6:10:c9::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DBBPR05MB6299;6:dWaIwtpfvMT1n8d8go0E38bYF8m4oeW/q5wvQE0PDLG7d5739Ic2u5+Bm+CHql4QKxsqqnXVRWcQiDqHXY16rolSJxjZK/ONK2UtUWI1ba/Wl80+k+biwagYEGPfMlYAYKTdtTyTv2bnDcjkZLlPX02Q2g1zJGNDnJup26K/rXtJXCYpjcBV2Nw3IUJrVRxQmqI99DobJpfAv72VCqIpUHzDwVqCrqluSRKSWUYjcbsH/DxVep7Dk86hnSGg9BrrBvWnG08aTlC+JMnQ9edlPEktJI8hINdlROKPihIAm7Cr42UKqJniBLGPia5cUlym0gR7AgiQnJZjuUBCabShsUtMhlqHxUmfBKDyR6s0xupim9YL0J6q7G+q0CN34AmVDr6JONuNHXhKx7JxIaQKG8GK2wDliVM/QcU+xGS6l1qlB/7CBix8YCcW6Tg/N1cfJ+5wcOzImgtG9I+gEe6eOA==;5:uh8XZd16uOJEPg9j1IBqo6RU6lEK0mJPOQRARIVeBdBlj02U+4O6JxmBH6eWMwYAl7jpcsEw3Y1+wID+J7YgRpMXdWj1hM3lScP3+w4/pd5iuNuN2iaeoGn/tTO+5HYOjWIuy8ir+abWGSUMPz4eiu+LQtKb6EjeyTvxMU8GsAxMl2+D0XMOT+HRAFAVbL9CyMNsWNKSKknDX+/SsvXokw==;7:95BftNDrIfkiOVpkyAoN8E9WWz+SSQMSBjIz9z+a+k3/cLLsldRmZhKtNBIz1QKuLVDX6bSjCWK6LcDD44ieeLPAKZHr3rYdRWUq3zsmklIXXrc+gvXgKydBjTTUDzMKVkcZIpdh/xFBVPIlozdVjQ==
-x-ms-office365-filtering-correlation-id: a5d0ff03-7000-466f-1ede-08d686ed637c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6299;
-x-ms-traffictypediagnostic: DBBPR05MB6299:
-x-microsoft-antispam-prvs: <DBBPR05MB629918774783D976D95FA311CF900@DBBPR05MB6299.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(366004)(396003)(376002)(199004)(189003)(4326008)(305945005)(33656002)(102836004)(106356001)(14454004)(6486002)(105586002)(6116002)(3846002)(386003)(6506007)(54906003)(53546011)(186003)(6246003)(1076003)(7736002)(316002)(217873002)(26005)(229853002)(36756003)(7416002)(81166006)(8676002)(81156014)(25786009)(6436002)(93886005)(71190400001)(66066001)(2906002)(8936002)(6512007)(256004)(6916009)(2616005)(71200400001)(76176011)(446003)(97736004)(68736007)(486006)(86362001)(11346002)(476003)(478600001)(53936002)(99286004)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6299;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: AlJVLgDqBTdS7eQNfzBsoru0CLpYTzaLxiQLvoKgHwb7z6poB7cdJE3qGBz9hKyHHwybk7gIezRAjdyFRrYUJ+b/ZRC7Hr1tRxQX+XbljLMasl+VqTMbzqTiOF7MY/81zmpF5DNDaGbQ5Rn0f/IvcHWkHPI9WXiBamTqXL2vDvy7Q1kPxLjbAzmX/xW8d8Jge4BKmfANtPV5Id23m5pKiUIiadNvfJJltLlhrXx7I/OXo/1lQQD6uHdt7xTRmojRwPIGX++BXCoo+h26EmKJz4jYWhetjZ6U4CWYiuyehRVNNYNA1ZLzBvpMiO64Cyix6+ncdlbaLRdYZlqsPNRWHrr0t2Bx2lrxCift+syEino5wjSXobrTtheEMYA+o8wKA7PliC5k0+xjz3zKk3tpHdK4AO+FbYkU3hXX5Fd1ZyY=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <178449172A1D534BBB231D50EE6C616B@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 30 Jan 2019 14:59:58 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45289 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730077AbfA3T7y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:59:54 -0500
+Received: by mail-lj1-f195.google.com with SMTP id s5-v6so617689ljd.12;
+        Wed, 30 Jan 2019 11:59:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=soWgSVtzCUMbistladgy42gO+8F6jxheWByJgJp8ogE=;
+        b=ZyKIIesqeUO3rTZC9Bo3rHj2JVpnrWlHMQQcNj5BHpC+X5HVW+6RCRRf5maM6GdRBk
+         M4BRoPX5pFV0Wb6YLl1lrECXs6DNKqgK5ekbkLRCZwm1i3uyFoz7c/gBjqSVYYdlKYuo
+         8gzDKN9x5IPvTb2ZNtjXvIOFr+ChrBAe4BAS9oKpremJDEpyqweIh0cooumE2UwJy2z0
+         jOJLRXdQlD7E3M0UPF6Ime8jStMhFOTMzMjRca6rGcdI+XvukPRmh8ya/SSnSz38rSqs
+         maqnothmPyI4Wp0qv4pOYICiWzUP4J4FIkLwy4JcRjLenrfnGCKzSjBnv6GfNfXEwmWk
+         rhEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=soWgSVtzCUMbistladgy42gO+8F6jxheWByJgJp8ogE=;
+        b=bAK4arHFzTSUDl0/uZPPlzRnd78X+7vxFBLDYrocrscPe7LN5kjFvUJp0IkMzwy5aU
+         w6cj9DdKP6yROnHSIzsLnv9zCRfUKQvgmKCsGDBRpDSJnOpUY+sDeeKMG7Bx9VsBbAcL
+         k5C+qwyxQPPpcGcqYMZDGg5v3DHiBuh5wn+32fy9Gof0xYGG0yiudFDBW7ozXM4dAUYu
+         knDyJ2W73fbYV7sTF1g1z9FFdvHzcFWQe4ogKhWRSRR56xO/7dP6iFTVWg2AAyBISpOm
+         9NupPCP3t0lGsmsi70EyxP5uTZhQfxRZj8oKNAQ83Zyx89EV8BlQlv1e73jq4yLzLGMY
+         c4Eg==
+X-Gm-Message-State: AJcUukfeVyxUw5kA8KrUhOGKxAlS6qsd9ylnxcm+Hyz1AfEb2GZpERZo
+        o3JMhP2UGSHO+AyfKnZWBZg=
+X-Google-Smtp-Source: ALg8bN5bTGNm+DC9/5RsfxDeg5HIQySTJF1ZIV9CiR6QUr5jPOuPUOHGfhM9fze48SRwGdQljOq3sw==
+X-Received: by 2002:a2e:9c7:: with SMTP id 190-v6mr25906841ljj.120.1548878389790;
+        Wed, 30 Jan 2019 11:59:49 -0800 (PST)
+Received: from [192.168.1.18] (dks71.neoplus.adsl.tpnet.pl. [83.24.22.71])
+        by smtp.gmail.com with ESMTPSA id d23sm442938lfc.11.2019.01.30.11.59.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 11:59:49 -0800 (PST)
+Subject: Re: [PATCH v2 11/13] leds: max77650: add LEDs support
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190129133545.1931-1-brgl@bgdev.pl>
+ <20190129133545.1931-13-brgl@bgdev.pl>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <3cf54618-90f7-03f9-88e0-03df1c15d0bd@gmail.com>
+Date:   Wed, 30 Jan 2019 20:59:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5d0ff03-7000-466f-1ede-08d686ed637c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 19:59:05.3923
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6299
+In-Reply-To: <20190129133545.1931-13-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 12:45:46PM -0700, Logan Gunthorpe wrote:
->=20
->=20
-> On 2019-01-30 12:06 p.m., Jason Gunthorpe wrote:
-> >> Way less problems than not having struct page for doing anything
-> >> non-trivial.  If you map the BAR to userspace with remap_pfn_range
-> >> and friends the mapping is indeed very simple.  But any operation
-> >> that expects a page structure, which is at least everything using
-> >> get_user_pages won't work.
-> >=20
-> > GUP doesn't work anyhow today, and won't work with BAR struct pages in
-> > the forseeable future (Logan has sent attempts on this before).
->=20
-> I don't recall ever attempting that... But patching GUP for special
-> pages or VMAS; or working around by not calling it in some cases seems
-> like the thing that's going to need to be done one way or another.
+Hi Bartosz,
 
-Remember, the long discussion we had about how to get the IOMEM
-annotation into SGL? That is a necessary pre-condition to doing
-anything with GUP in DMA using drivers as GUP -> SGL -> DMA map is
-pretty much the standard flow.
-=20
-> > Jerome made the HMM mirror API use this flow, so afer his patch to
-> > switch the ODP MR to use HMM, and to switch GPU drivers, it will work
-> > for those cases. Which is more than the zero cases than we have today
-> > :)
->=20
-> But we're getting the same bait and switch here... If you are using HMM
-> you are using struct pages, but we're told we need this special VMA hack
-> for cases that don't use HMM and thus don't have struct pages...
+Thank you for the update.
 
-Well, I don't know much about HMM, but the HMM mirror API looks like a
-version of MMU notifiers that offloads a bunch of dreck to the HMM
-code core instead of drivers. The RDMA code got hundreds of lines
-shorter by using it.
+One more thing drew my attention, please refer below.
 
-Some of that dreck is obtaining a DMA address for the user VMAs,
-including using multiple paths to get them. A driver using HMM mirror
-doesn't seem to call GUP at all, HMM mirror handles that, along with
-various special cases, including calling out to these new VMA ops.
+On 1/29/19 2:35 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> This adds basic support for LEDs for the max77650 PMIC. The device has
+> three current sinks for driving LEDs.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   drivers/leds/Kconfig         |   6 ++
+>   drivers/leds/Makefile        |   1 +
+>   drivers/leds/leds-max77650.c | 152 +++++++++++++++++++++++++++++++++++
+>   3 files changed, 159 insertions(+)
+>   create mode 100644 drivers/leds/leds-max77650.c
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index a72f97fca57b..6e7a8f51eccc 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -608,6 +608,12 @@ config LEDS_TLC591XX
+>   	  This option enables support for Texas Instruments TLC59108
+>   	  and TLC59116 LED controllers.
+>   
+> +config LEDS_MAX77650
+> +	tristate "LED support for Maxim MAX77650 PMIC"
+> +	depends on MFD_MAX77650
+> +	help
+> +	  LEDs driver for MAX77650 family of PMICs from Maxim Integrated."
+> +
+>   config LEDS_MAX77693
+>   	tristate "LED support for MAX77693 Flash"
+>   	depends on LEDS_CLASS_FLASH
+> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> index 4c1b0054f379..f48b2404dbb7 100644
+> --- a/drivers/leds/Makefile
+> +++ b/drivers/leds/Makefile
+> @@ -61,6 +61,7 @@ obj-$(CONFIG_LEDS_MC13783)		+= leds-mc13783.o
+>   obj-$(CONFIG_LEDS_NS2)			+= leds-ns2.o
+>   obj-$(CONFIG_LEDS_NETXBIG)		+= leds-netxbig.o
+>   obj-$(CONFIG_LEDS_ASIC3)		+= leds-asic3.o
+> +obj-$(CONFIG_LEDS_MAX77650)		+= leds-max77650.o
+>   obj-$(CONFIG_LEDS_MAX77693)		+= leds-max77693.o
+>   obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
+>   obj-$(CONFIG_LEDS_LM355x)		+= leds-lm355x.o
+> diff --git a/drivers/leds/leds-max77650.c b/drivers/leds/leds-max77650.c
+> new file mode 100644
+> index 000000000000..e3a3c0e79b7a
+> --- /dev/null
+> +++ b/drivers/leds/leds-max77650.c
+> @@ -0,0 +1,152 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2018 BayLibre SAS
+> +// Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> +//
+> +// LED driver for MAXIM 77650/77651 charger/power-supply.
+> +
+> +#include <linux/i2c.h>
+> +#include <linux/leds.h>
+> +#include <linux/mfd/max77650.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#define MAX77650_NUM_LEDS		3
+> +
+> +#define MAX77650_LED_A_BASE		0x40
+> +#define MAX77650_LED_B_BASE		0x43
+> +
+> +#define MAX77650_LED_BR_MASK		GENMASK(4, 0)
+> +#define MAX77650_LED_EN_MASK		GENMASK(7, 6)
+> +
+> +/* Enable EN_LED_MSTR. */
+> +#define MAX77650_LED_TOP_DEFAULT	BIT(0)
+> +
+> +#define MAX77650_LED_ENABLE		GENMASK(7, 6)
+> +#define MAX77650_LED_DISABLE		0x00
+> +
+> +#define MAX77650_LED_A_DEFAULT		MAX77650_LED_DISABLE
+> +/* 100% on duty */
+> +#define MAX77650_LED_B_DEFAULT		GENMASK(3, 0)
+> +
+> +struct max77650_led {
+> +	struct led_classdev cdev;
+> +	struct regmap *map;
+> +	unsigned int regA;
+> +	unsigned int regB;
+> +};
+> +
+> +static struct max77650_led *max77650_to_led(struct led_classdev *cdev)
+> +{
+> +	return container_of(cdev, struct max77650_led, cdev);
+> +}
+> +
+> +static int max77650_led_brightness_set(struct led_classdev *cdev,
+> +				       enum led_brightness brightness)
+> +{
+> +	struct max77650_led *led = max77650_to_led(cdev);
+> +	int val, mask;
+> +
+> +	mask = MAX77650_LED_BR_MASK | MAX77650_LED_EN_MASK;
+> +
+> +	if (brightness == LED_OFF) {
+> +		val = MAX77650_LED_DISABLE;
+> +	} else {
+> +		val = MAX77650_LED_ENABLE;
+> +		/*
+> +		 * We can set the brightness with 5-bit resolution.
+> +		 *
+> +		 * For brightness == 1, the bits we're writing will be 0, but
+> +		 * since we keep LED_FS0 set to 12.8mA full-scale range, the
+> +		 * LED will be lit slightly.
+> +		 */
+> +		val |= brightness / 8;
 
-I don't really know how mirror relates to other parts of HMM, like the
-bits that use struct pages. Maybe it also knows about more special
-cases created by other parts of HMM?
+We have max_brightness property and you seem not to use it.
+With 5-bit brightness resolution it should be initialized
+to 32 and then we will be able to avoid the division here.
 
-So, I see Jerome solving the GUP problem by replacing GUP entirely
-using an API that is more suited to what these sorts of drivers
-actually need.
+> +	}
+> +
+> +	return regmap_update_bits(led->map, led->regA, mask, val);
+> +}
+> +
+> +static int max77650_led_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *of_node, *child;
+> +	struct max77650_led *leds, *led;
+> +	struct device *parent;
+> +	struct device *dev;
+> +	struct regmap *map;
+> +	const char *label;
+> +	int rv, num_leds;
+> +	u32 reg;
+> +
+> +	dev = &pdev->dev;
+> +	parent = dev->parent;
+> +	of_node = dev->of_node;
+> +
+> +	if (!of_node)
+> +		return -ENODEV;
+> +
+> +	leds = devm_kcalloc(dev, sizeof(*leds), MAX77650_NUM_LEDS, GFP_KERNEL);
+> +	if (!leds)
+> +		return -ENOMEM;
+> +
+> +	map = dev_get_regmap(dev->parent, NULL);
+> +	if (!map)
+> +		return -ENODEV;
+> +
+> +	num_leds = of_get_child_count(of_node);
+> +	if (!num_leds || num_leds > MAX77650_NUM_LEDS)
+> +		return -ENODEV;
+> +
+> +	for_each_child_of_node(of_node, child) {
+> +		rv = of_property_read_u32(child, "reg", &reg);
+> +		if (rv || reg >= MAX77650_NUM_LEDS)
+> +			return -EINVAL;
+> +
+> +		led = &leds[reg];
+> +		led->map = map;
+> +		led->regA = MAX77650_LED_A_BASE + reg;
+> +		led->regB = MAX77650_LED_B_BASE + reg;
+> +		led->cdev.brightness_set_blocking = max77650_led_brightness_set;
+> +
+> +		label = of_get_property(child, "label", NULL);
+> +		if (!label) {
+> +			led->cdev.name = "max77650::";
+> +		} else {
+> +			led->cdev.name = devm_kasprintf(dev, GFP_KERNEL,
+> +							"max77650:%s", label);
+> +			if (!led->cdev.name)
+> +				return -ENOMEM;
+> +		}
+> +
+> +		of_property_read_string(child, "linux,default-trigger",
+> +					&led->cdev.default_trigger);
+> +
+> +		rv = devm_of_led_classdev_register(dev, child, &led->cdev);
+> +		if (rv)
+> +			return rv;
+> +
+> +		rv = regmap_write(map, led->regA, MAX77650_LED_A_DEFAULT);
+> +		if (rv)
+> +			return rv;
+> +
+> +		rv = regmap_write(map, led->regB, MAX77650_LED_B_DEFAULT);
+> +		if (rv)
+> +			return rv;
+> +	}
+> +
+> +	return regmap_write(map,
+> +			    MAX77650_REG_CNFG_LED_TOP,
+> +			    MAX77650_LED_TOP_DEFAULT);
+> +}
+> +
+> +static struct platform_driver max77650_led_driver = {
+> +	.driver = {
+> +		.name = "max77650-led",
+> +	},
+> +	.probe = max77650_led_probe,
+> +};
+> +module_platform_driver(max77650_led_driver);
+> +
+> +MODULE_DESCRIPTION("MAXIM 77650/77651 LED driver");
+> +MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
+> +MODULE_LICENSE("GPL v2");
+> 
 
-Jason
+-- 
+Best regards,
+Jacek Anaszewski
