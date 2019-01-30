@@ -2,109 +2,117 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD78C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C6BC282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5D22086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:26:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 497792087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:27:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="ZohvWTSu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387601AbfA3T0n (ORCPT
+        id S2387639AbfA3T1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:26:43 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40250 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727114AbfA3T0m (ORCPT
+        Wed, 30 Jan 2019 14:27:15 -0500
+Received: from mail-yb1-f181.google.com ([209.85.219.181]:40448 "EHLO
+        mail-yb1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbfA3T1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:26:42 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UJEEb9014877
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 14:26:41 -0500
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbgr9kq18-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 14:26:41 -0500
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <seroyer@linux.ibm.com>;
-        Wed, 30 Jan 2019 19:26:40 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 30 Jan 2019 19:26:38 -0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0UJQa9811796632
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 30 Jan 2019 19:26:36 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9AE0A6E053;
-        Wed, 30 Jan 2019 19:26:36 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7AB1F6E052;
-        Wed, 30 Jan 2019 19:26:36 +0000 (GMT)
-Received: from ltc.linux.ibm.com (unknown [9.16.170.189])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 30 Jan 2019 19:26:36 +0000 (GMT)
+        Wed, 30 Jan 2019 14:27:15 -0500
+Received: by mail-yb1-f181.google.com with SMTP id y13so287038ybr.7
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:27:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lCaOFzEC9GUOriuVkX8NdFG1tjkodE5DqXV/LschmsI=;
+        b=ZohvWTSuJ0FjLHNrBU/NhCidpuP6uTp++17i5m8r0Y4BdXn5gysuarYBmwXmDnXh2E
+         5q1Zg6iKy575V4xaQ+3m+w3YaXK2epGUUWapRT4Qk1pYbJ8e24CWTlXowEvP0d0EY1gj
+         VGdefopA01lh0af6fU5Lw/yDe5q6HouSDwamc8EyJLf8rHD0F+4MvHD+Rji3pspKlXkr
+         R6EGixTm/VAe72WpuMNrIokMPUZJvqGh3qMbrMlYCi/rzPY0ozgqJnu4a8UmGQDrTYkI
+         couibxZPlwtjEDeLQU1PlYXif1ZmmnuJtzPzfiRz4zqRA+irU0fT/tlOc4Upb6sHSWXJ
+         0PAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lCaOFzEC9GUOriuVkX8NdFG1tjkodE5DqXV/LschmsI=;
+        b=Nw7+8v7yiJyQb7yRz16+apKhlz9mBwXBMKOelFr2GHD0JaM+WnF4tseolCBaOK0PZg
+         sWiSx2NT7nE5S7P+Pfdi0v0QZizIxS67TxIR2G39mMYLZQTWSF/M2TTXBCp6iJ2crgAa
+         oaDnO9/5yvcwTM+1h2U4h5b6sa1eLPXxtqZuCjTwHIl3jzE+CqiOsD5pBvi0XV3q1COO
+         gn2LGzx/9Te0LKD4jZsyM7ehn5jJZbH97fCUQwy+OyAevtIrdxnDT2FyiTksYdJV0mvK
+         mBiNhdJfi0O8G+aRrV1PcviP0VCEgFZhyEx7oe6YduBoFDDkoDKfSGr7bGC3nyZGYj16
+         5J6Q==
+X-Gm-Message-State: AJcUukdh66oRaV58Yakm8xiTUO9yJWG3fvRbxudNyFtSCC/Hl0LAACrR
+        KVshO0Xi1RxgECxvu5ZUvkXLKA==
+X-Google-Smtp-Source: ALg8bN4HOZ2BceRWudY9fcvRQQG06wEy+HZBcWR1nYVuLTVCr2JVnKVx5gChDjnH9Skuez+BhBA8lQ==
+X-Received: by 2002:a25:5e03:: with SMTP id s3mr29744932ybb.8.1548876433952;
+        Wed, 30 Jan 2019 11:27:13 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:6c95])
+        by smtp.gmail.com with ESMTPSA id k83sm781960ywe.90.2019.01.30.11.27.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 11:27:13 -0800 (PST)
+Date:   Wed, 30 Jan 2019 14:27:12 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Tejun Heo <tj@kernel.org>, Michal Hocko <mhocko@kernel.org>,
+        Chris Down <chris@chrisdown.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+Message-ID: <20190130192712.GA21279@cmpxchg.org>
+References: <20190128145407.GP50184@devbig004.ftw2.facebook.com>
+ <20190128151859.GO18811@dhcp22.suse.cz>
+ <20190128154150.GQ50184@devbig004.ftw2.facebook.com>
+ <20190128170526.GQ18811@dhcp22.suse.cz>
+ <20190128174905.GU50184@devbig004.ftw2.facebook.com>
+ <20190129144306.GO18811@dhcp22.suse.cz>
+ <20190129145240.GX50184@devbig004.ftw2.facebook.com>
+ <20190130165058.GA18811@dhcp22.suse.cz>
+ <20190130170658.GY50184@devbig004.ftw2.facebook.com>
+ <CALvZod5ma62fRKqrAhMcuNT3GYT3FpRX+DCmeVr2nDg1u=9T8w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 30 Jan 2019 13:32:48 -0600
-From:   Steven Royer <seroyer@linux.ibm.com>
-To:     Brad Warrum <bwarrum@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: add myself as maintainer of ibmvmc driver
-In-Reply-To: <1548459386-4596-1-git-send-email-bwarrum@linux.ibm.com>
-References: <1548459386-4596-1-git-send-email-bwarrum@linux.ibm.com>
-X-Sender: seroyer@linux.ibm.com
-User-Agent: Roundcube Webmail/1.0.1
-X-TM-AS-GCONF: 00
-x-cbid: 19013019-0020-0000-0000-00000EB4250B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010505; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01154047; UDB=6.00601719; IPR=6.00934424;
- MB=3.00025357; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-30 19:26:39
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013019-0021-0000-0000-0000649E4790
-Message-Id: <8f9022a1c2f928b6db0249a4e6e43af0@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=990 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901300145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod5ma62fRKqrAhMcuNT3GYT3FpRX+DCmeVr2nDg1u=9T8w@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for taking over Brad!
+On Wed, Jan 30, 2019 at 11:11:44AM -0800, Shakeel Butt wrote:
+> Hi Tejun,
+> 
+> On Wed, Jan 30, 2019 at 9:07 AM Tejun Heo <tj@kernel.org> wrote:
+> >
+> > Hello, Michal.
+> >
+> > On Wed, Jan 30, 2019 at 05:50:58PM +0100, Michal Hocko wrote:
+> > > > Yeah, cgroup.events and .stat files as some of the local stats would
+> > > > be useful too, so if we don't flip memory.events we'll end up with sth
+> > > > like cgroup.events.local, memory.events.tree and memory.stats.local,
+> > > > which is gonna be hilarious.
+> > >
+> > > Why cannot we simply have memory.events_tree and be done with it? Sure
+> > > the file names are not goin to be consistent which is a minus but that
+> > > ship has already sailed some time ago.
+> >
+> > Because the overall cost of shitty interface will be way higher in the
+> > longer term.  cgroup2 interface is far from perfect but is way better
+> > than cgroup1 especially for the memory controller.  Why do you think
+> > that is?
+> >
+> 
+> I thought you are fine with the separate interface for the hierarchical events.
 
-On 2019-01-25 17:36, Brad Warrum wrote:
-> Steve Royer has moved on to another project and has
-> requested that I maintain the IBM Power Virtual Management
-> Channel driver in his stead.
-> 
-> Cc: Steve Royer <seroyer@linux.ibm.com>
-> Signed-off-by: Brad Warrum <bwarrum@linux.ibm.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 51029a4..9a20eae 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7244,7 +7244,7 @@ S:	Supported
->  F:	drivers/scsi/ibmvscsi/ibmvfc*
-> 
->  IBM Power Virtual Management Channel Driver
-> -M:	Steven Royer <seroyer@linux.ibm.com>
-> +M:	Brad Warrum <bwarrum@linux.ibm.com>
->  S:	Supported
->  F:	drivers/misc/ibmvmc.*
+Every other file in cgroup2 is hierarchical, but for recursive
+memory.events you'd need to read memory.events_tree?
 
+Do we hate our users that much? :(
