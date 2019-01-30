@@ -2,149 +2,157 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F38C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAA9C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72EB120989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF3D420989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:01:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="fC+DRBSn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732290AbfA3RAh (ORCPT
+        id S1732350AbfA3RBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:00:37 -0500
-Received: from gateway34.websitewelcome.com ([192.185.148.109]:30307 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730693AbfA3RAg (ORCPT
+        Wed, 30 Jan 2019 12:01:09 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41104 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732338AbfA3RBJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:00:36 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 0B37C40581
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:00:35 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id otE3gV0PR2qH7otE3g5epf; Wed, 30 Jan 2019 11:00:35 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=47094 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gotDx-001OoQ-UU; Wed, 30 Jan 2019 11:00:34 -0600
-Subject: Re: [PATCH] drm/savage: mark expected switch fall-throughs
-To:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20190129202005.GA25789@embeddedor>
- <20190130163535.GH3271@phenom.ffwll.local>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <eb0e8d50-7068-278e-df66-14eef468688b@embeddedor.com>
-Date:   Wed, 30 Jan 2019 11:00:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 30 Jan 2019 12:01:09 -0500
+Received: by mail-ed1-f68.google.com with SMTP id a20so176732edc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 09:01:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xB8TVOqQ38SsN1+u5qq8WNps6391MAN699+3LR2JMUg=;
+        b=fC+DRBSnGa1nCHPZjeOHwzLn2N4mbEGUBl6fHagwGW1CkqYZ9Ibrksp/Mq4MnJuzqd
+         uqd6wlL0iGhM9K9TWF6eKBGjqTwjEokvf2lHt9p0821ul7wCn2gXFD7k+T2jQiAIB13c
+         WR5pl9Zjeab25o0B4C6Ie1CYFze4tXAcNrKc7fBadph/lgV4TtAWmn5WLyG5sy9e0+k1
+         BUhr35GlgbRppQFv/eAmRJUYpIVHM0y6uT6jYHrAX7qeHJGLduQfIa2V9nN9aLHhcyh0
+         PVW4870lzVBPXzM1XlLcXqWiWUdYtV0GSk0F7Nn5RVc1p2Eah518aY72s13Wr2wS7qnv
+         kO4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xB8TVOqQ38SsN1+u5qq8WNps6391MAN699+3LR2JMUg=;
+        b=UDAcFXNbB/B71cvBAm2ma7o3RyiDByxoIm6HNgr28QT25auPPaWBHCt3aMm7CQUNyD
+         ppQOad+IdDByoVSIAOj5j90kb8V2FAhYebXOSO6kA2F3wt5AAp1CyTdIlG0vqXLsCo8b
+         9L3yW6kR7wnZK+9YjrWKeVwlbRSCIv2/v8drtSuNlw0R+adTtBMwjisxcJ2jC6jxJS6d
+         lxUsmvYTDlYMUNNiw7cRRaNsDcWOw/yZAtnN7OTDuEWmqdpi0VnIxGiEXRAvHTjNWQUv
+         hbEXqt9SDfhHeOYH7LiGomzUcqlf8Q1So3Th3s1SFFj9gmOoMstZyHMtBBmyDrpCjrsn
+         AlMQ==
+X-Gm-Message-State: AJcUuke8kSjx5YrcoyEJMIHNczUNj/RP/q1+K+lvQ6+OUhQ/9v4FnAd2
+        1eUDonk8PbkoQi6b1qAmYGaSM795dNj+Lg==
+X-Google-Smtp-Source: ALg8bN7T/ka4Z8+MSBgclczdHtdnB6EW53AxL0pTpy0cf8tp/NqDmF147ObmiRA0bP7IRz/JUxIDow==
+X-Received: by 2002:a50:95b4:: with SMTP id w49mr30215742eda.186.1548867667136;
+        Wed, 30 Jan 2019 09:01:07 -0800 (PST)
+Received: from brauner.io (84-199-88-155.iFiber.telenet-ops.be. [84.199.88.155])
+        by smtp.gmail.com with ESMTPSA id a38sm642781edd.44.2019.01.30.09.01.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 09:01:05 -0800 (PST)
+Date:   Wed, 30 Jan 2019 18:01:02 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, arve@android.com, maco@android.com,
+        joel@joelfernandes.org, tkjos@google.com
+Subject: Re: [PATCH 2/2] binderfs: remove separate device_initcall()
+Message-ID: <20190130170101.wfdrqc3374az75yo@brauner.io>
+References: <20190123114116.5251-1-christian@brauner.io>
+ <20190123114116.5251-2-christian@brauner.io>
+ <20190130142412.GA13798@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20190130163535.GH3271@phenom.ffwll.local>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gotDx-001OoQ-UU
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:47094
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Disposition: inline
+In-Reply-To: <20190130142412.GA13798@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/30/19 10:35 AM, Daniel Vetter wrote:
-> On Tue, Jan 29, 2019 at 02:20:06PM -0600, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
->>
->> This patch fixes the following warnings:
->>
->> drivers/gpu/drm/savage/savage_state.c:301:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> drivers/gpu/drm/savage/savage_state.c:438:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> drivers/gpu/drm/savage/savage_state.c:559:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> drivers/gpu/drm/savage/savage_state.c:697:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>
->> Warning level 3 was used: -Wimplicit-fallthrough=3
->>
->> This patch is part of the ongoing efforts to enabling
->> -Wimplicit-fallthrough.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Wed, Jan 30, 2019 at 03:24:12PM +0100, Greg KH wrote:
+> On Wed, Jan 23, 2019 at 12:41:16PM +0100, Christian Brauner wrote:
+> > binderfs should not have a separate device_initcall(). When a kernel is
+> > compiled with CONFIG_ANDROID_BINDERFS register the filesystem alongside
+> > CONFIG_ANDROID_IPC. This use-case is especially sensible when users specify
+> > CONFIG_ANDROID_IPC=y, CONFIG_ANDROID_BINDERFS=y and
+> > ANDROID_BINDER_DEVICES="".
+> > When CONFIG_ANDROID_BINDERFS=n then this always succeeds so there's no
+> > regression potential for legacy workloads.
+> > 
+> > Signed-off-by: Christian Brauner <christian@brauner.io>
+> > ---
+> >  drivers/android/binder.c          | 4 ++++
+> >  drivers/android/binder_internal.h | 9 +++++++++
+> >  drivers/android/binderfs.c        | 4 +---
+> >  3 files changed, 14 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > index cdfc87629efb..751d76173f81 100644
+> > --- a/drivers/android/binder.c
+> > +++ b/drivers/android/binder.c
+> > @@ -5915,6 +5915,10 @@ static int __init binder_init(void)
+> >  			goto err_init_binder_device_failed;
+> >  	}
+> >  
+> > +	ret = init_binderfs();
+> > +	if (ret)
+> > +		goto err_init_binder_device_failed;
+> > +
+> >  	return ret;
+> >  
+> >  err_init_binder_device_failed:
+> > diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
+> > index 7fb97f503ef2..045b3e42d98b 100644
+> > --- a/drivers/android/binder_internal.h
+> > +++ b/drivers/android/binder_internal.h
+> > @@ -46,4 +46,13 @@ static inline bool is_binderfs_device(const struct inode *inode)
+> >  }
+> >  #endif
+> >  
+> > +#ifdef CONFIG_ANDROID_BINDERFS
+> > +extern int __init init_binderfs(void);
+> > +#else
+> > +static inline int __init init_binderfs(void)
+> > +{
+> > +	return 0;
+> > +}
+> > +#endif
+> > +
+> >  #endif /* _LINUX_BINDER_INTERNAL_H */
+> > diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+> > index 7a550104a722..e773f45d19d9 100644
+> > --- a/drivers/android/binderfs.c
+> > +++ b/drivers/android/binderfs.c
+> > @@ -550,7 +550,7 @@ static struct file_system_type binder_fs_type = {
+> >  	.fs_flags	= FS_USERNS_MOUNT,
+> >  };
+> >  
+> > -static int __init init_binderfs(void)
+> > +int __init init_binderfs(void)
+> >  {
+> >  	int ret;
+> >  
+> > @@ -568,5 +568,3 @@ static int __init init_binderfs(void)
+> >  
+> >  	return ret;
+> >  }
+> > -
+> > -device_initcall(init_binderfs);
 > 
-> This and the via patch merged to drm-misc-next, thanks.
-> -Daniel
-> 
+> I get a build warning when applying this patch :(
 
-Daniel,
+Hm, I can't reproduce that build error with this patch applied to what
+you currently have in char-misc-linus. :(
+Any chance you can give me the config that produced this warning?
+I tried with CONFIG_BINDERFS=y and CONFIG_BINDERFS=n.
 
-I wonder if you can take this one too:
-
-https://lore.kernel.org/patchwork/patch/1001180/
-
-Thanks
---
-Gustavo
-
+Thanks!
+Christian
