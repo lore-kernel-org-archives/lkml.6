@@ -2,137 +2,98 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAE5C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A40DAC282D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24E0D20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:22:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7529C20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:25:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="IxsFY/D7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730580AbfA3PWZ (ORCPT
+        id S1731438AbfA3PZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:22:25 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55874 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726332AbfA3PWZ (ORCPT
+        Wed, 30 Jan 2019 10:25:46 -0500
+Received: from sonic309-24.consmr.mail.ir2.yahoo.com ([77.238.179.82]:35773
+        "EHLO sonic309-24.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727586AbfA3PZq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:22:25 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UFFFr7024126
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:22:24 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbeckrfky-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:22:23 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 30 Jan 2019 15:22:22 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 30 Jan 2019 15:22:19 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0UFMIYf23920828
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 30 Jan 2019 15:22:18 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AA4C8B2064;
-        Wed, 30 Jan 2019 15:22:18 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D267B205F;
-        Wed, 30 Jan 2019 15:22:18 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.57])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 30 Jan 2019 15:22:18 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 3FC3416C35BC; Wed, 30 Jan 2019 07:22:18 -0800 (PST)
-Date:   Wed, 30 Jan 2019 07:22:18 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] rcu docs: repair some whitespace damage
-Reply-To: paulmck@linux.ibm.com
-References: <20190129220546.12934-1-tycho@tycho.ws>
+        Wed, 30 Jan 2019 10:25:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1548861944; bh=9RxO7x6mthyd/YJOcw5eaXI1EKQhxA95JGtdea6n19o=; h=Date:From:Reply-To:To:Cc:Subject:References:From:Subject; b=IxsFY/D7ZX8Nvv9mRHf1VlA9ZkAAW8YooDoqKajtkEB+ElKd/7VJ8jLOMqa3BpVSAMlGSrN0jYExoANxLQzAyKslI9wQKiVixYE0CjcK75iupYmQh3G5BAVQsjnrJ49ueGFmzlXwbqIfpebEXiiKAXf/qz3xysugmmFqsAR6SI/npzom4ITY/XANm7JapIdLNcRepdtGEqdkCG507DMoWeONU3Skkic1ZW/8rLSSYA8FJPrUIGcSo45s4wZHB6vK9UhQ5m0rJoIeD7Q2pp3Yl9v6veD4lsFy7z+Qqvchj9uAnqbCC1d7+lFgmIJsE+gR4PnR4ASpnW8YdkeUxNt1jg==
+X-YMail-OSG: 3isxlxEVM1lPBd3XPx7n0WmOZfBCKn3zyc7vGAL3s9mwA263FGPXRU7vRINEyyr
+ QpBbn77HvyfJ2htLy_HCro4W6A9Pu_UYx8BEAFDjkW3xkCqx4JETyrVWRh0hJjeybrC0Qsqu___i
+ TG8HUd8Edv9hqAT0OkEhJIA5uV1Xa1Bb7MTKpqgs.AtwRXrb9iOcFu9VgwU6O2K.eEKsMSYulG_c
+ QANXz7QtDiJO5OKCWAJMdPjBVpvlikIBZ_iXgRaeEENeA1PnhFyKuzpd_DLrjAZdikH1GmmU6EKr
+ .6_ioCvz2g4WQ6oK1q03QdqhMKgyhrobjbYyGmMyVSw0lhPBfFnFua0GmeNAlBRceQ64bJwju3U.
+ RnUUYPE8nUdA4WEP8ahmvz2tWx.dhTsy0dt8WwdrgQ0wCOVXm1V2gX18A2tc6Y_D72MLCb_fWdLw
+ vssc0fCjgrOftRlekh2kMy1H9IqnvJE7k9k_bjeMZdsEsPuHtlWbAWKDcGhrmk5vBQY3Vmw7Et7U
+ K3.jZKCrit7DFmWVN8FQVpMRbSlLj0XWUBI87yvuV_dQb.4gREfSo.dFlEY.IPKfl8TokkAXfLon
+ Zu__CeGkLU8ioHWgu6r.jGjMHd.o4ILsV.3xl0rlCgaZPLBZdyRxE7wJYQ3vb27GvxKaM32QTYvr
+ 8uQfJdIa_T5eMmrOgt4IQ3EPL29kd4pj8Y5NENcjX_5FQBhS3VH91d8.pXgC1U5ZRsMyv3nRZSJF
+ uoE3AXH54PCVOzjo5xsx1j8otVG7DdTgcgxlDcVCAcLNFn2SQYrct28FX0P.w2XuuklE9.tWux.q
+ 58MrX6qlX0qmrm_6ihRxHTSuT16U.6Jhh5h9xsbaqqsKqYMF22cvH5f.EfQ6MH25qdKl75qw4hXp
+ NvThBaA.U7h2EfddVyfhHakeo1fMgs_SL3tF8U255FCHo8X9FaR3RRGAEQ5zRCztekcSA56Rn45_
+ w.Ol.Ko7Yhw8hzkCu3kKkHNvKwVyd9u3fkzsl35EOs4vNxVC80NlEbjm5GU3Yyq93tcHYrG9IuKg
+ PHepUlw.4sMbHA.xl6_y17OgVqfZ9qflHMT.a8kd1zf63jxygLlyICLQSyv.m7u4c0hsgLjDPCON
+ ubw9crNK9633Nt87T0MDJyp39R9I02Lmc6qdETPXhkVnXKw--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ir2.yahoo.com with HTTP; Wed, 30 Jan 2019 15:25:44 +0000
+Date:   Wed, 30 Jan 2019 15:25:42 +0000 (UTC)
+From:   Hin-Tak Leung <htl10@users.sourceforge.net>
+Reply-To: Hin-Tak Leung <htl10@users.sourceforge.net>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        <linux-wireless@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     <netdev@vger.kernel.org>, Larry Finger <Larry.Finger@lwfinger.net>,
+        <linux-kernel@vger.kernel.org>
+Message-ID: <883460220.650537.1548861942189@mail.yahoo.com>
+Subject: Re: [PATCH] net: wireless: prefix header search paths with
+ $(srctree)/
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129220546.12934-1-tycho@tycho.ws>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19013015-0040-0000-0000-000004B9BBCD
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010504; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01153968; UDB=6.00593882; IPR=6.00934342;
- MB=3.00025354; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-30 15:22:21
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013015-0041-0000-0000-000008C4D133
-Message-Id: <20190130152218.GU4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901300119
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+References: <883460220.650537.1548861942189.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.13027 YahooMailBasic Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/71.0.3578.98 Chrome/71.0.3578.98 Safari/537.36
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 03:05:46PM -0700, Tycho Andersen wrote:
-> While reading the docs I noticed some whitespace damage in diagram. Let's
-> fix it up to be consistent with elsewhere in the document: use one leading
-> tab, followed by spaces for any additional whitespace required.
-> 
-> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+--------------------------------------------
+On Fri, 25/1/19, Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+=20
+> Currently, the Kbuild core manipulates header
+> search paths in a crazy
+> way [1].
+=20
+> To fix this mess, I want all Makefiles
+> to add explicit $(srctree)/ to
+> the search paths in the srctree. Some
+> Makefiles are already written in
+> that way, but not all. The goal of this
+> work is to make the notation
+> consistent, and finally get rid of the
+> gross hacks.
+=20
+> Having whitespaces after -I does not
+> matter since commit 48f6e3cf5bc6
+> ("kbuild: do not drop -I without
+> parameter").
+=20
+> I also removed one header search path
+> in:
+=20
+ =C2=A0
+> drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile
+=20
+> I was able to compile without it.
+=20
+> [1]: https://patchwork.kernel.org/patch/9632347/
+=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Good eyes!  ;-)
+Acked-by: Hin-Tak Leung <htl10@users.sourceforge.net>
 
-Applied, thank you!
-
-							Thanx, Paul
-
-> ---
->  Documentation/RCU/whatisRCU.txt | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
-> index 4a6854318b17..419ec18b87bd 100644
-> --- a/Documentation/RCU/whatisRCU.txt
-> +++ b/Documentation/RCU/whatisRCU.txt
-> @@ -310,7 +310,7 @@ reader, updater, and reclaimer.
->  
->  
->  	    rcu_assign_pointer()
-> -	    			    +--------+
-> +	                            +--------+
->  	    +---------------------->| reader |---------+
->  	    |                       +--------+         |
->  	    |                           |              |
-> @@ -318,12 +318,12 @@ reader, updater, and reclaimer.
->  	    |                           |              | rcu_read_lock()
->  	    |                           |              | rcu_read_unlock()
->  	    |        rcu_dereference()  |              |
-> -       +---------+                      |              |
-> -       | updater |<---------------------+              |
-> -       +---------+                                     V
-> +	    +---------+                 |              |
-> +	    | updater |<----------------+              |
-> +	    +---------+                                V
->  	    |                                    +-----------+
->  	    +----------------------------------->| reclaimer |
-> -	    				         +-----------+
-> +	                                         +-----------+
->  	      Defer:
->  	      synchronize_rcu() & call_rcu()
->  
-> -- 
-> 2.19.1
-> 
-
+Looks okay for the rtl818x parts.
