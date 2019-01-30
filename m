@@ -2,210 +2,108 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BE6C3E8A4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCF7C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E1B8218AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:38:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="aD4YVWZ+"
+	by mail.kernel.org (Postfix) with ESMTP id 58C35218A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:38:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731193AbfA3Niw (ORCPT
+        id S1731239AbfA3Ni5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 30 Jan 2019 08:38:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49510 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730905AbfA3Niw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 Jan 2019 08:38:52 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37915 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfA3Niv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:38:51 -0500
-Received: by mail-pg1-f196.google.com with SMTP id g189so10345786pgc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 05:38:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UbldZgzglEVBjotXYNAVrfgzOgX2xvDiVJz3EoKTJmw=;
-        b=aD4YVWZ+KyUxtd766Gha/weYyaLK8RkVFjSNgEGr+LvHI80BQym7kiGoHOx7uXKWQo
-         l9D+706/1Oc2d6n3NFNMrDQz2gfauSUdROyNtMd+Z3nowpAeSIHoPSx7Enq+lsaVoslK
-         G++Q0Pv1d3pOWGs+29swvavodnf9SdjeaG3tR4sCPX8+cRBtfoYVHctxI0q7LSi3pQi+
-         uAhT2UVO5yVd1fHtTQXL8EJPNXlFIayu4RqaD9em5UQPE38O22LjynmZjjLcx3a3EG+u
-         ulAySC4MhhPqNre/qavCsMmdcdJqlZMF9+62pInpSf481Rm6rKJXphWfrta6iN+DNNkw
-         PGZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UbldZgzglEVBjotXYNAVrfgzOgX2xvDiVJz3EoKTJmw=;
-        b=VYuqHMoBrI/6ZPNElv3jMqv/6smEZThcKJPZFeC6PU1RHh54dw8aDEtkDq7XiZteyO
-         rpsh7ynly1KfDjg9OBH4v51FkwQm0bmKp4FfJ8xCqg/5ZhK9bboX6EwmwWl55p+0yzB2
-         zslS93El/aZGvRFtk+E94x7JGMbM8hgl3NLWME9cY7vWsE0hARf4NPJH5lQ7i08iiMS/
-         EuYisJzPmrs0NDVW8t3McJlvPFLC6j1HUl9UAef7+XvYtbyV617RTCMTFrwh3ANVQB1P
-         rlGj9bgYCu4yUarFt26IGhm72IfuU3HUzhDq1XxYePCUy1wEO/7nE1AeYe+3nAESjFD+
-         buAg==
-X-Gm-Message-State: AJcUukfa5rZO7GemIhbZJAviG7SCEMUBsAtXiJZKDsbiQJUAjLwQ4Kfr
-        E112nRl9ktqBZTHfvdvi2JuzYWBiymel4A==
-X-Google-Smtp-Source: ALg8bN5+zioWIRLAha/LaqJMEUkRGGDNh+I08Z0zmSfLhS9hOarsOmQ+zkNicm7RVDTFDUUPutaEkQ==
-X-Received: by 2002:a62:32c4:: with SMTP id y187mr31655189pfy.195.1548855529909;
-        Wed, 30 Jan 2019 05:38:49 -0800 (PST)
-Received: from [192.168.15.224] (71-6-111-190.static-ip.telepacific.net. [71.6.111.190])
-        by smtp.gmail.com with ESMTPSA id d13sm2978298pfd.58.2019.01.30.05.38.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 05:38:48 -0800 (PST)
-Subject: Re: [PATCH V2] lightnvm: pblk: prevent stall due to wb threshold
-To:     =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>
-Cc:     hans.holmberg@cnexlabs.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190130102604.14496-1-javier@javigon.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <aeba3235-9f86-bab0-5d05-0790ddb8f503@lightnvm.io>
-Date:   Wed, 30 Jan 2019 14:38:47 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DCEF8AE9D;
+        Wed, 30 Jan 2019 13:38:48 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 14:38:45 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 21/21] memblock: drop memblock_alloc_*_nopanic()
+ variants
+Message-ID: <20190130133845.nps4itatl4fm6dcl@pathway.suse.cz>
+References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
+ <1548057848-15136-22-git-send-email-rppt@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190130102604.14496-1-javier@javigon.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548057848-15136-22-git-send-email-rppt@linux.ibm.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/19 11:26 AM, Javier González wrote:
-> In order to respect mw_cuinits, pblk's write buffer maintains a
-> backpointer to protect data not yet persisted; when writing to the write
-> buffer, this backpointer defines a threshold that pblk's rate-limiter
-> enforces.
+On Mon 2019-01-21 10:04:08, Mike Rapoport wrote:
+> As all the memblock allocation functions return NULL in case of error
+> rather than panic(), the duplicates with _nopanic suffix can be removed.
 > 
-> On small PU configurations, the following scenarios might take place: (i)
-> the threshold is larger than the write buffer and (ii) the threshold is
-> smaller than the write buffer, but larger than the maximun allowed
-> split bio - 256KB at this moment (Note that writes are not always
-> split - we only do this when we the size of the buffer is smaller
-> than the buffer). In both cases, pblk's rate-limiter prevents the I/O to
-> be written to the buffer, thus stalling.
-> 
-> This patch fixes the original backpointer implementation by considering
-> the threshold both on buffer creation and on the rate-limiters path,
-> when bio_split is triggered (case (ii) above).
-> 
-> Fixes: 766c8ceb16fc ("lightnvm: pblk: guarantee that backpointer is respected on writer stall")
-> Signed-off-by: Javier González <javier@javigon.com>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > ---
-> 
->    Changes since V1:
->      - Fix a bad arithmetinc on the rate-limiter max_io calculation (from
->        Hans)
-> 
->   drivers/lightnvm/pblk-rb.c | 25 +++++++++++++++++++------
->   drivers/lightnvm/pblk-rl.c |  5 ++---
->   drivers/lightnvm/pblk.h    |  2 +-
->   3 files changed, 22 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-> index d4ca8c64ee0f..a6133b50ed9c 100644
-> --- a/drivers/lightnvm/pblk-rb.c
-> +++ b/drivers/lightnvm/pblk-rb.c
-> @@ -45,10 +45,23 @@ void pblk_rb_free(struct pblk_rb *rb)
->   /*
->    * pblk_rb_calculate_size -- calculate the size of the write buffer
->    */
-> -static unsigned int pblk_rb_calculate_size(unsigned int nr_entries)
-> +static unsigned int pblk_rb_calculate_size(unsigned int nr_entries,
-> +					   unsigned int threshold)
->   {
-> -	/* Alloc a write buffer that can at least fit 128 entries */
-> -	return (1 << max(get_count_order(nr_entries), 7));
-> +	unsigned int thr_sz = 1 << (get_count_order(threshold + NVM_MAX_VLBA));
-> +	unsigned int max_sz = max(thr_sz, nr_entries);
-> +	unsigned int max_io;
-> +
-> +	/* Alloc a write buffer that can (i) fit at least two split bios
-> +	 * (considering max I/O size NVM_MAX_VLBA, and (ii) guarantee that the
-> +	 * threshold will be respected
-> +	 */
-> +	max_io = (1 << max((int)(get_count_order(max_sz)),
-> +				(int)(get_count_order(NVM_MAX_VLBA << 1))));
-> +	if ((threshold + NVM_MAX_VLBA) >= max_io)
-> +		max_io <<= 1;
-> +
-> +	return max_io;
->   }
->   
->   /*
-> @@ -67,12 +80,12 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
->   	unsigned int alloc_order, order, iter;
->   	unsigned int nr_entries;
->   
-> -	nr_entries = pblk_rb_calculate_size(size);
-> +	nr_entries = pblk_rb_calculate_size(size, threshold);
->   	entries = vzalloc(array_size(nr_entries, sizeof(struct pblk_rb_entry)));
->   	if (!entries)
->   		return -ENOMEM;
->   
-> -	power_size = get_count_order(size);
-> +	power_size = get_count_order(nr_entries);
->   	power_seg_sz = get_count_order(seg_size);
->   
->   	down_write(&pblk_rb_lock);
-> @@ -149,7 +162,7 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
->   	 * Initialize rate-limiter, which controls access to the write buffer
->   	 * by user and GC I/O
->   	 */
-> -	pblk_rl_init(&pblk->rl, rb->nr_entries);
-> +	pblk_rl_init(&pblk->rl, rb->nr_entries, threshold);
->   
->   	return 0;
->   }
-> diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
-> index 76116d5f78e4..e9e0af0df165 100644
-> --- a/drivers/lightnvm/pblk-rl.c
-> +++ b/drivers/lightnvm/pblk-rl.c
-> @@ -207,7 +207,7 @@ void pblk_rl_free(struct pblk_rl *rl)
->   	del_timer(&rl->u_timer);
->   }
->   
-> -void pblk_rl_init(struct pblk_rl *rl, int budget)
-> +void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold)
->   {
->   	struct pblk *pblk = container_of(rl, struct pblk, rl);
->   	struct nvm_tgt_dev *dev = pblk->dev;
-> @@ -217,7 +217,6 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
->   	int sec_meta, blk_meta;
->   	unsigned int rb_windows;
->   
-> -
->   	/* Consider sectors used for metadata */
->   	sec_meta = (lm->smeta_sec + lm->emeta_sec[0]) * l_mg->nr_free_lines;
->   	blk_meta = DIV_ROUND_UP(sec_meta, geo->clba);
-> @@ -234,7 +233,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
->   	/* To start with, all buffer is available to user I/O writers */
->   	rl->rb_budget = budget;
->   	rl->rb_user_max = budget;
-> -	rl->rb_max_io = budget >> 1;
-> +	rl->rb_max_io = budget - threshold;
->   	rl->rb_gc_max = 0;
->   	rl->rb_state = PBLK_RL_HIGH;
->   
-> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-> index 72ae8755764e..a6386d5acd73 100644
-> --- a/drivers/lightnvm/pblk.h
-> +++ b/drivers/lightnvm/pblk.h
-> @@ -924,7 +924,7 @@ int pblk_gc_sysfs_force(struct pblk *pblk, int force);
->   /*
->    * pblk rate limiter
->    */
-> -void pblk_rl_init(struct pblk_rl *rl, int budget);
-> +void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold);
->   void pblk_rl_free(struct pblk_rl *rl);
->   void pblk_rl_update_rates(struct pblk_rl *rl);
->   int pblk_rl_high_thrs(struct pblk_rl *rl);
-> 
+>  arch/arc/kernel/unwind.c       |  3 +--
+>  arch/sh/mm/init.c              |  2 +-
+>  arch/x86/kernel/setup_percpu.c | 10 +++++-----
+>  arch/x86/mm/kasan_init_64.c    | 14 ++++++++------
+>  drivers/firmware/memmap.c      |  2 +-
+>  drivers/usb/early/xhci-dbc.c   |  2 +-
+>  include/linux/memblock.h       | 35 -----------------------------------
+>  kernel/dma/swiotlb.c           |  2 +-
+>  kernel/printk/printk.c         |  9 +--------
 
-Thanks Javier. Applied for 5.1.
+For printk:
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Petr Mladek <pmladek@suse.com>
+
+Best Regards,
+Petr
+
+>  mm/memblock.c                  | 35 -----------------------------------
+>  mm/page_alloc.c                | 10 +++++-----
+>  mm/page_ext.c                  |  2 +-
+>  mm/percpu.c                    | 11 ++++-------
+>  mm/sparse.c                    |  6 ++----
+>  14 files changed, 31 insertions(+), 112 deletions(-)
+> 
