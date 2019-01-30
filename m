@@ -2,122 +2,148 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91279C282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE34C282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50D6F20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 726D221848
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:08:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lpWYcu2O"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5OdNA/d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbfA3GEy (ORCPT
+        id S1727726AbfA3GIp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 01:04:54 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40760 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfA3GEy (ORCPT
+        Wed, 30 Jan 2019 01:08:45 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39717 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfA3GIo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 01:04:54 -0500
-Received: by mail-ed1-f65.google.com with SMTP id g22so18008178edr.7
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 22:04:53 -0800 (PST)
+        Wed, 30 Jan 2019 01:08:44 -0500
+Received: by mail-lj1-f193.google.com with SMTP id t9-v6so19640568ljh.6;
+        Tue, 29 Jan 2019 22:08:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:cc;
-        bh=aJTjGP6xuRvN5ml+k+nOAP5sZjlzx1oTAMIdkprynv0=;
-        b=lpWYcu2O8idu2AvZOES6EGCS7R4zW9JSKzrx9qM1j8xVnuOT6vBc2iqeD9SmfZnl5y
-         yU5/U3BhAzV37UBcpsLgX6MWgQJBp/JNKOZqSV/iOsXFa4SHy2uerRdb7Sx3yP4PiCsv
-         wL/i9LVhnh0CTokQkNmy4WGalv1r2zg7K+txY=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tK9mSywMDOVGyM/DNFGFSATJj9vh7JMH2LOwZoMxCSU=;
+        b=C5OdNA/dZVLi++NRbdwbRb/GMtJvl/Xicn6gxjRWYNRcF3TmontlmU1lTiQEmkwqoB
+         BhTTgGNx1w7iLP3IdZFH1owU2nUGy9gHn8zJo8hlPydipnQxMkhYFrwRLqRWJv8agl5+
+         krCF7oMQHMd4FSwPyuMQzmwT5jyyuPPDnyaM1IO1UTp1zqdyQZ0RZrqdrqR7xX5YsCeK
+         kgHcAS7wC11OFPgUsjaE/XYl1xwrzjRn9V4ETMdTtSt/e8gvJ0tVgykOTsXTjb9xZQyA
+         G7LUQ4BJh4vRXV/j7hgb+/N9PvFzZQhImxtWIHw1VUkAgPTkJ9Jj/fXlOvlvCdhM26RR
+         RdEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:cc;
-        bh=aJTjGP6xuRvN5ml+k+nOAP5sZjlzx1oTAMIdkprynv0=;
-        b=VtegwtzFHeGB01LcjzcRXwjJ7J9lxvwTYHuEJBmTPLEb96pospz5J3VfHwDHrO7m3E
-         uGNkslRS1G5biDAot6qyEYCTofSfqWnoleoh63rnjigpUHAirJcxVxQzfFM4T/W887Mj
-         0i9MLReFp9zk5qz7fUwVGdzL9mwbaEDOw+NKk/33oORBT3/+2x5koOlpx+MJ2h24Ndyl
-         QvdCIDvrn0xa2LTM9Jv8kejretrgqXkWdhhdWOA/UgbT6HxxeLDjXBJ6tNMfCqGIIKaM
-         y1E1XaT4ase0VZanzfpOSQR2qUNEF4srbNK+Wb4uvN26oftJKPBrQIcSujvjsyVphf8x
-         J+nw==
-X-Gm-Message-State: AJcUukfeUgtXcPHY38twRqbeT8kZO0uBJZuLq4XzfAfjhRD8bR4JgrN6
-        cjr4YHfSnnGdg2BjHerJiuBkvyeqZIT7mItty+7jCg==
-X-Received: by 2002:a50:f5af:: with SMTP id u44mt25022648edm.172.1548828292400;
- Tue, 29 Jan 2019 22:04:52 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=tK9mSywMDOVGyM/DNFGFSATJj9vh7JMH2LOwZoMxCSU=;
+        b=ImiNU2wG4DfpG+v8Vx7oWAwKuOOEh/4iyur/E5kzU3/I57UTlLsAVDX7c9n4p9ikNC
+         y/Bimo5OsYwWAh3Zp3rRJP0VzW0DDMSPGXou2RWlkwwHUQJdPAGJ3xJ0abL9EIZZNiX3
+         sEVevW2M3yAHk0NWP4jMWt3Qh2ei3TZk+venBtBNQ+PQ2g1pdOXqguK+EPEIVu1Pz9v7
+         Huhq0t37agAM60lWnGUl1bAqPnFpeD9caDbWSdkPLFhLDknH7yVT9uejI160NJRUOc+R
+         joeqKxFqlTQt2Yc7QmiZLojV1mAzyuCkNYLp2sgqiunpalMO5J9U4Hq0DTB5LVvsESz1
+         KLJQ==
+X-Gm-Message-State: AJcUukdxMId7GXtdO+0EiA//0ybIbn+xMvqjJZdP3KjjL1/ZGKSthSu/
+        P18IPte0ZCV53QHQ0bbtlQ1YEEsfd9OgRCLxa/I=
+X-Google-Smtp-Source: ALg8bN7iYMwPXszwp3vtyKv8V/4Hnn2sE0fNEzApNWxJGKodCBxAAidMGvxSKGF41DyvRdXfoPvYYDgtGnKnLob34/4=
+X-Received: by 2002:a2e:9c87:: with SMTP id x7-v6mr22035012lji.196.1548828522133;
+ Tue, 29 Jan 2019 22:08:42 -0800 (PST)
 MIME-Version: 1.0
-References: <20190109055724.184692-1-pihsun@chromium.org>
-In-Reply-To: <20190109055724.184692-1-pihsun@chromium.org>
-From:   Peter Shih <pihsun@chromium.org>
-Date:   Wed, 30 Jan 2019 14:04:40 +0800
-Message-ID: <CANdKZ0fRckMSUwHyChgBw162cVQe9_mnd_G9vwt=+CV+Y0WFfw@mail.gmail.com>
-Subject: Re: [PATCH] thermal: mtk: Allocate enough space for mtk_thermal.
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Michael.Kao@mediatek.com
+References: <20190129200858.19773-1-goldsimon@gmx.de> <CANk1AXTcbqgoCYkTY-ssMvpAbdoncrkOxyRfu-piLE2tQ15a2g@mail.gmail.com>
+In-Reply-To: <CANk1AXTcbqgoCYkTY-ssMvpAbdoncrkOxyRfu-piLE2tQ15a2g@mail.gmail.com>
+From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+Date:   Wed, 30 Jan 2019 07:08:30 +0100
+Message-ID: <CAAh8qsz9g-20ZOZpT2Fh5003ZkH=HQ9sUBVHWqooB2Pt-OXA4Q@mail.gmail.com>
+Subject: Re: [PATCH] ARM: socfpga: fix base address of SDR controller
+To:     Alan Tull <atull@kernel.org>
+Cc:     Dinh Nguyen <dinguyen@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Moritz Fischer <mdf@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Michael Kao to cc list.
+On Tue, Jan 29, 2019 at 11:31 PM Alan Tull <atull@kernel.org> wrote:
+>
+> On Tue, Jan 29, 2019 at 2:09 PM Simon Goldschmidt
+> <simon.k.r.goldschmidt@gmail.com> wrote:
+>
+> Hi Simon,
+>
+> Thanks for submitting.   A couple of things...
+>
+> > diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+> > index f365003f0..8f6c1a5d6 100644
+> > --- a/arch/arm/boot/dts/socfpga.dtsi
+> > +++ b/arch/arm/boot/dts/socfpga.dtsi
+> > @@ -788,9 +788,9 @@
+> >                         reg = <0xfffec000 0x100>;
+> >                 };
+> >
+> > -               sdr: sdr@ffc25000 {
+> > +               sdr: sdr@ffc20000 {
+> >                         compatible = "altr,sdr-ctl", "syscon";
+> > -                       reg = <0xffc25000 0x1000>;
+> > +                       reg = <0xffc20000 0x6000>;
+>
+> The binding doc will also need this change (in a separate patch)
+> Documentation/devicetree/bindings/arm/altera/socfpga-sdram-controller.txt
 
-On Wed, Jan 9, 2019 at 1:57 PM Pi-Hsun Shih <pihsun@chromium.org> wrote:
+Right. I didn't realise there is an actual address in that file as it says
+"Example"...
+
+But I'll make sure to change that if this patch is accepted.
+
 >
-> The mtk_thermal struct contains a 'struct mtk_thermal_bank banks[];',
-> but the allocation only allocates sizeof(struct mtk_thermal) bytes,
-> which cause out of bound access with the ->banks[] member. Change it to
-> a fixed size array instead.
+> > diff --git a/arch/arm/mach-socfpga/self-refresh.S b/arch/arm/mach-socfpga/self-refresh.S
+> > index f2d7f883e..bd7759357 100644
+> > --- a/arch/arm/mach-socfpga/self-refresh.S
+> > +++ b/arch/arm/mach-socfpga/self-refresh.S
+> > @@ -19,8 +19,8 @@
+> >  #define MAX_LOOP_COUNT         1000
+> >
+> >  /* Register offset */
+> > -#define SDR_CTRLGRP_LOWPWREQ_ADDR       0x54
+> > -#define SDR_CTRLGRP_LOWPWRACK_ADDR      0x58
+> > +#define SDR_CTRLGRP_LOWPWREQ_ADDR       0x5054
+> > +#define SDR_CTRLGRP_LOWPWRACK_ADDR      0x5058
 >
-> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-> ---
->  drivers/thermal/mtk_thermal.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> These offsets are used for ldr/sdr and are limited to 12 bits.  This
+> won't build if CONFIG_SOCFPGA_SUSPEND is enabled.
 >
-> diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
-> index 0691f260f6eabe..ea11edb3fcced6 100644
-> --- a/drivers/thermal/mtk_thermal.c
-> +++ b/drivers/thermal/mtk_thermal.c
-> @@ -159,6 +159,9 @@
->  #define MT7622_NUM_SENSORS_PER_ZONE    1
->  #define MT7622_TS1     0
->
-> +/* The maximum number of banks */
-> +#define MAX_NUM_ZONES          8
-> +
->  struct mtk_thermal;
->
->  struct thermal_bank_cfg {
-> @@ -178,7 +181,7 @@ struct mtk_thermal_data {
->         const int *sensor_mux_values;
->         const int *msr;
->         const int *adcpnp;
-> -       struct thermal_bank_cfg bank_data[];
-> +       struct thermal_bank_cfg bank_data[MAX_NUM_ZONES];
->  };
->
->  struct mtk_thermal {
-> @@ -197,7 +200,7 @@ struct mtk_thermal {
->         s32 vts[MT8173_NUM_SENSORS];
->
->         const struct mtk_thermal_data *conf;
-> -       struct mtk_thermal_bank banks[];
-> +       struct mtk_thermal_bank banks[MAX_NUM_ZONES];
->  };
->
->  /* MT8173 thermal sensor data */
-> --
-> 2.20.1.97.g81188d93c3-goog
->
+> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:
+> Assembler messages:
+> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:65:
+> Error: bad immediate value for offset (20564)
+> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:67:
+> Error: bad immediate value for offset (20564)
+> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:72:
+> Error: bad immediate value for offset (20568)
+> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:101:
+> Error: bad immediate value for offset (20564)
+> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:103:
+> Error: bad immediate value for offset (20564)
+> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:108:
+> Error: bad immediate value for offset (20568)
+> /home/atull/repos/linux-socfpga/scripts/Makefile.build:367: recipe for
+> target 'arch/arm/mach-socfpga/self-refresh.o' failed
+
+Oops, you're right. Sorry for that. I just saw now that socfpga_defconfig
+leaves CONFIG_SOCFPGA_SUSPEND inactive. I'll make sure to test that if it
+comes to v2 (depending on the discussion).
+
+Thanks,
+Simon
