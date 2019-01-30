@@ -2,129 +2,119 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA63C282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E36DCC282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7809420870
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:02:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548838963;
-	bh=qpyPna99WYyUFMeih5kVLxmmC5xeXgQ5XqYOddQchxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kHCfvgXYcDKGqXUZa4PrVPU3c6sp2iWhLgbbt9r3KbyZwEygx53pg4ZBl93+eQOwM
-	 TQYEY28PjQ4CIGlKJ9xvivsEBLTLpHbG6qmRwQ52Au5jHlHRR/HIfpg+6QhA4jlKXl
-	 bMP4hOYVf+l6ax1Dfh19NhN35fH0aLNyZ0UHFmM0=
+	by mail.kernel.org (Postfix) with ESMTP id B45D120870
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:03:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SlvlyFid"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730423AbfA3JCl (ORCPT
+        id S1730445AbfA3JDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:02:41 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39825 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfA3JCl (ORCPT
+        Wed, 30 Jan 2019 04:03:14 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:52248 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbfA3JDN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:02:41 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n18so16792952lfh.6;
-        Wed, 30 Jan 2019 01:02:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f/hmv/BD3dVn/TN64uCAc70GpQAfJ94e2TwTQxaVaFA=;
-        b=QmilTJ/4BT4LeT/rZflSDgAIlsUOtr1IMtYfSXyLPN/qbs9fwzdTByCNzXii1tZaoy
-         mFCh8T0cOIDSyKJTRZLAp3cxpEIRQ6rm0PkxikdSlNmCZ4eaTVaUm8v5a/iOl5OxGUgc
-         4wLfIB0eONpFvHc5BUf3SKKEa4yw+rgWzDzOpzW1U1ZWtZXMqsBlmR4bFT5YlTXVTzaS
-         6imPCIjJQvHoNX7YgA8JLrN5kGa3dAq8Xzhq4f947xTTZew2yMFregMheFMxp7ZMA1FF
-         jfIOMjEkPfIuG3TOuPO8eNaA9tt+5uTpR4d9l7HP9EIvcyk3B/OP8nQ0vXCAQZloMH+9
-         LshA==
-X-Gm-Message-State: AJcUukcA/So6WOohFEkd9vsOnrwJMqUlQtQb3hotjuOUOSNSauS/jSiv
-        5Z0y0zk+i9z0MZg1ycQFmCKC/UnX
-X-Google-Smtp-Source: ALg8bN6Gcu3ae0kZblaZ84Y+q70CMfn7OBnz7D/hd1Ij/6BsMhYFuZGfCuIQvrEV2vzFnOgivfu3QQ==
-X-Received: by 2002:a19:ef15:: with SMTP id n21mr23184744lfh.21.1548838958525;
-        Wed, 30 Jan 2019 01:02:38 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id 6sm196636lfa.27.2019.01.30.01.02.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 01:02:37 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gollQ-0000u1-FI; Wed, 30 Jan 2019 10:02:32 +0100
-Date:   Wed, 30 Jan 2019 10:02:32 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Johan Hovold <johan@kernel.org>, bcousson@baylibre.com,
-        tony@atomide.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
-Subject: Re: [PATCH] arm: dts: gta04: add gps support
-Message-ID: <20190130090232.GL3691@localhost>
-References: <20190125194310.11170-1-andreas@kemnade.info>
- <20190128075356.GJ3691@localhost>
- <20190128163025.7daa385b@kemnade.info>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128163025.7daa385b@kemnade.info>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Wed, 30 Jan 2019 04:03:13 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0U8wf66153750;
+        Wed, 30 Jan 2019 09:03:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=qyn410wvLlaCQXa4w+QoXzv2LmM8/MQC4WXbMeQGAow=;
+ b=SlvlyFid0eAmvM9Yj9WzMrhOw3qSlZn6MGf3uBnmo9/X0TbDtugZNYGqBpoEpVNR8R/K
+ B13LavqI/XWA3+nKcMjPl8Q4nEq/+qQM4VP/mDBUEYtBqnYwOLTZe63KuMi0eB1ylmZU
+ nFL9tcja13DI5UzwMsVpnuvK0Qh8a5DCp/o98gtbmt5nPBW0A87LB/uOMICShiGkg8wk
+ rZxmXbh5MvkSyfIvJNhjKDTBlHVKudYZka76HBVkl3cp6vVxbn4KdxK7XnnH2D+QmJON
+ 88tuV4mAJ0bYwmCnjxLCTjul4Df7u495KO+RMAaXD4BY16Zs7d5NjGyaWGqTnX2B7qTB yQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2q8d2e9eb4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jan 2019 09:03:08 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0U937rJ002034
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jan 2019 09:03:07 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0U936PM000575;
+        Wed, 30 Jan 2019 09:03:07 GMT
+Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Jan 2019 01:03:06 -0800
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     m19@florianstecker.de, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] blk-mq: fix a hung issue when fsync
+Date:   Wed, 30 Jan 2019 17:01:56 +0800
+Message-Id: <1548838916-25051-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9151 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901300072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 05:44:29PM +0100, Andreas Kemnade wrote:
-> On Mon, 28 Jan 2019 08:53:56 +0100
-> Johan Hovold <johan@kernel.org> wrote:
-> 
-> > On Fri, Jan 25, 2019 at 08:43:10PM +0100, Andreas Kemnade wrote:
-> > > The GTA04 has a w2sg0004 or w2sg0084 gps chip. Not detectable
-> > > which one is mounted so use the compatibility entry for w2sg0004
-> > > for all which will work for both.
-> > > 
-> > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > > ---
-> > > w2sg0004 bindings (together with the corresponding support is in
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/johan/gnss gnss-next)
-> > >  arch/arm/boot/dts/omap3-gta04.dtsi | 13 +++++++++++++
-> > >  1 file changed, 13 insertions(+)
+Florian reported a io hung issue when fsync(). It should be
+triggered by following race condition.
 
-> > > +	gps: gps {  
-> > 
-> > The node should be named "gnss" as per the binding.
-> > 
-> > > +		compatible = "wi2wi,w2sg0004";
-> > > +		pinctrl-names = "default";
-> > > +		pinctrl-0 = <&gps_pins>;
-> > > +		sirf,onoff-gpios = <&gpio5 17 GPIO_ACTIVE_HIGH>;
-> > > +		lna-supply = <&vsim>;  
-> > 
-> > Also, the vcc-supply is a required property.
-> > 
-> well, it is not require in the driver and it has different behavior
-> (on even when not opened if on-off is there) than the lna-supply used
-> here. So maybe fix the binding documentation?
+data + post flush         a flush
 
-The device-tree describes hardware, and how a particular driver happens
-to implement a binding is not relevant.
+blk_flush_complete_seq
+  case REQ_FSEQ_DATA
+    blk_flush_queue_rq
+    issued to driver      blk_mq_dispatch_rq_list
+                            try to issue a flush req
+                            failed due to NON-NCQ command
+                            .queue_rq return BLK_STS_DEV_RESOURCE
 
-That said, there is a bit of an on-going, shall we say philosophical,
-debate about this. The regulator maintainer takes a firm position that
-all mandatory physical supplies should be represented in firmware
-	
-	https://lore.kernel.org/lkml/20181123133126.GF2089@sirena.org.uk/T/#u
-	https://lore.kernel.org/lkml/20180409102244.GB11532@sirena.org.uk/T/#u
+request completion
+  req->end_io // doesn't check RESTART
+  mq_flush_data_end_io
+    case REQ_FSEQ_POSTFLUSH
+      blk_kick_flush
+        do nothing because previous flush
+        has not been completed
+     blk_mq_run_hw_queue
+                              insert rq to hctx->dispatch
+                              due to RESTART is still set, do nothing
 
-while Rob appears to take a slightly different stance on fixed
-regulators while admitting that this an issue which has not yet been
-fully resolved:
+To fix this, replace the blk_mq_run_hw_queue in mq_flush_data_end_io
+with blk_mq_sched_restart to check and clear the RESTART flag.
 
-	https://lore.kernel.org/lkml/20180425171123.xhyoay3nu463btoq@rob-hp-laptop/T/#u
+Fixes: bd166ef1 (blk-mq-sched: add framework for MQ capable IO schedulers)
+Reported-by: Florian Stecker <m19@florianstecker.de>
+Tested-by: Florian Stecker <m19@florianstecker.de>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ block/blk-flush.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Since this is a new binding, and the hardware requires the vcc supply
-and this is reflected in the binding, I think you should add a fixed
-regulator. At least until you hear otherwise. ;)
+diff --git a/block/blk-flush.c b/block/blk-flush.c
+index a3fc7191..6e0f2d9 100644
+--- a/block/blk-flush.c
++++ b/block/blk-flush.c
+@@ -335,7 +335,7 @@ static void mq_flush_data_end_io(struct request *rq, blk_status_t error)
+ 	blk_flush_complete_seq(rq, fq, REQ_FSEQ_DATA, error);
+ 	spin_unlock_irqrestore(&fq->mq_flush_lock, flags);
+ 
+-	blk_mq_run_hw_queue(hctx, true);
++	blk_mq_sched_restart(hctx);
+ }
+ 
+ /**
+-- 
+2.7.4
 
-Johan
