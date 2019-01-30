@@ -2,106 +2,210 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBADC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BE6C3E8A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE28218A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E1B8218AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:38:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="aD4YVWZ+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731121AbfA3Niq (ORCPT
+        id S1731193AbfA3Niw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:38:46 -0500
-Received: from mga18.intel.com ([134.134.136.126]:34163 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbfA3Nip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:38:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 05:38:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
-   d="scan'208";a="139178088"
-Received: from wchen25-mobl9.ccr.corp.intel.com ([10.249.173.109])
-  by fmsmga002.fm.intel.com with ESMTP; 30 Jan 2019 05:38:42 -0800
-Message-ID: <1548855520.2161.3.camel@intel.com>
-Subject: Re: [PATCH] thermal: mtk: Allocate enough space for mtk_thermal.
-From:   Zhang Rui <rui.zhang@intel.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Pi-Hsun Shih <pihsun@chromium.org>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Michael.Kao@mediatek.com
-Date:   Wed, 30 Jan 2019 21:38:40 +0800
-In-Reply-To: <49dbd0af-975e-cafb-d1b9-4e491a6c9383@linaro.org>
-References: <20190109055724.184692-1-pihsun@chromium.org>
-         <CANdKZ0fRckMSUwHyChgBw162cVQe9_mnd_G9vwt=+CV+Y0WFfw@mail.gmail.com>
-         <81115ad5-521e-557b-d229-1effb92068a4@linaro.org>
-         <CANdKZ0eDwTgKoFsAOboCz=q+nsUWepecXA7wmR=jGhkWEzLvnA@mail.gmail.com>
-         <49dbd0af-975e-cafb-d1b9-4e491a6c9383@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
+        Wed, 30 Jan 2019 08:38:52 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37915 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfA3Niv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 08:38:51 -0500
+Received: by mail-pg1-f196.google.com with SMTP id g189so10345786pgc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 05:38:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UbldZgzglEVBjotXYNAVrfgzOgX2xvDiVJz3EoKTJmw=;
+        b=aD4YVWZ+KyUxtd766Gha/weYyaLK8RkVFjSNgEGr+LvHI80BQym7kiGoHOx7uXKWQo
+         l9D+706/1Oc2d6n3NFNMrDQz2gfauSUdROyNtMd+Z3nowpAeSIHoPSx7Enq+lsaVoslK
+         G++Q0Pv1d3pOWGs+29swvavodnf9SdjeaG3tR4sCPX8+cRBtfoYVHctxI0q7LSi3pQi+
+         uAhT2UVO5yVd1fHtTQXL8EJPNXlFIayu4RqaD9em5UQPE38O22LjynmZjjLcx3a3EG+u
+         ulAySC4MhhPqNre/qavCsMmdcdJqlZMF9+62pInpSf481Rm6rKJXphWfrta6iN+DNNkw
+         PGZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UbldZgzglEVBjotXYNAVrfgzOgX2xvDiVJz3EoKTJmw=;
+        b=VYuqHMoBrI/6ZPNElv3jMqv/6smEZThcKJPZFeC6PU1RHh54dw8aDEtkDq7XiZteyO
+         rpsh7ynly1KfDjg9OBH4v51FkwQm0bmKp4FfJ8xCqg/5ZhK9bboX6EwmwWl55p+0yzB2
+         zslS93El/aZGvRFtk+E94x7JGMbM8hgl3NLWME9cY7vWsE0hARf4NPJH5lQ7i08iiMS/
+         EuYisJzPmrs0NDVW8t3McJlvPFLC6j1HUl9UAef7+XvYtbyV617RTCMTFrwh3ANVQB1P
+         rlGj9bgYCu4yUarFt26IGhm72IfuU3HUzhDq1XxYePCUy1wEO/7nE1AeYe+3nAESjFD+
+         buAg==
+X-Gm-Message-State: AJcUukfa5rZO7GemIhbZJAviG7SCEMUBsAtXiJZKDsbiQJUAjLwQ4Kfr
+        E112nRl9ktqBZTHfvdvi2JuzYWBiymel4A==
+X-Google-Smtp-Source: ALg8bN5+zioWIRLAha/LaqJMEUkRGGDNh+I08Z0zmSfLhS9hOarsOmQ+zkNicm7RVDTFDUUPutaEkQ==
+X-Received: by 2002:a62:32c4:: with SMTP id y187mr31655189pfy.195.1548855529909;
+        Wed, 30 Jan 2019 05:38:49 -0800 (PST)
+Received: from [192.168.15.224] (71-6-111-190.static-ip.telepacific.net. [71.6.111.190])
+        by smtp.gmail.com with ESMTPSA id d13sm2978298pfd.58.2019.01.30.05.38.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 05:38:48 -0800 (PST)
+Subject: Re: [PATCH V2] lightnvm: pblk: prevent stall due to wb threshold
+To:     =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>
+Cc:     hans.holmberg@cnexlabs.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190130102604.14496-1-javier@javigon.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <aeba3235-9f86-bab0-5d05-0790ddb8f503@lightnvm.io>
+Date:   Wed, 30 Jan 2019 14:38:47 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190130102604.14496-1-javier@javigon.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 三, 2019-01-30 at 11:04 +0100, Daniel Lezcano wrote:
-> On 30/01/2019 10:25, Pi-Hsun Shih wrote:
-> > 
-> > On Wed, Jan 30, 2019 at 3:44 PM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote:
-> > > 
-> > > 
-> > > On 30/01/2019 07:04, Peter Shih wrote:
-> > > > 
-> > > > Adding Michael Kao to cc list.
-> > > > 
-> > > > On Wed, Jan 9, 2019 at 1:57 PM Pi-Hsun Shih <pihsun@chromium.or
-> > > > g> wrote:
-> > > > > 
-> > > > > 
-> > > > > The mtk_thermal struct contains a 'struct mtk_thermal_bank
-> > > > > banks[];',
-> > > > > but the allocation only allocates sizeof(struct mtk_thermal)
-> > > > > bytes,
-> > > > > which cause out of bound access with the ->banks[] member.
-> > > > > Change it to
-> > > > > a fixed size array instead.
-> > > Even if the fix is correct, it pushes back the bug later in time
-> > > if a
-> > > new board containing more than MAX_NUM_ZONES is introduced. I
-> > > suggest to
-> > > dynamically allocate the array with the 'num_banks' value.
-> > > 
-> > For the current code structure, those mtk_thermal_data are
-> > statically declared,
-> > so if there's new board containing more than MAX_NUM_ZONES of
-> > bank_data, it
-> > would actually be a compile error.
-> > 
-> > I'm fine with either way, but feel like that this is simpler than
-> > manually
-> > calculating the size needed for allocation.
-> Right, I missed it can be caught at compile time.
+On 1/30/19 11:26 AM, Javier González wrote:
+> In order to respect mw_cuinits, pblk's write buffer maintains a
+> backpointer to protect data not yet persisted; when writing to the write
+> buffer, this backpointer defines a threshold that pblk's rate-limiter
+> enforces.
 > 
-> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> On small PU configurations, the following scenarios might take place: (i)
+> the threshold is larger than the write buffer and (ii) the threshold is
+> smaller than the write buffer, but larger than the maximun allowed
+> split bio - 256KB at this moment (Note that writes are not always
+> split - we only do this when we the size of the buffer is smaller
+> than the buffer). In both cases, pblk's rate-limiter prevents the I/O to
+> be written to the buffer, thus stalling.
 > 
-As this is a bugfix, I will take it and queue it for next -rc.
+> This patch fixes the original backpointer implementation by considering
+> the threshold both on buffer creation and on the rate-limiters path,
+> when bio_split is triggered (case (ii) above).
+> 
+> Fixes: 766c8ceb16fc ("lightnvm: pblk: guarantee that backpointer is respected on writer stall")
+> Signed-off-by: Javier González <javier@javigon.com>
+> ---
+> 
+>    Changes since V1:
+>      - Fix a bad arithmetinc on the rate-limiter max_io calculation (from
+>        Hans)
+> 
+>   drivers/lightnvm/pblk-rb.c | 25 +++++++++++++++++++------
+>   drivers/lightnvm/pblk-rl.c |  5 ++---
+>   drivers/lightnvm/pblk.h    |  2 +-
+>   3 files changed, 22 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
+> index d4ca8c64ee0f..a6133b50ed9c 100644
+> --- a/drivers/lightnvm/pblk-rb.c
+> +++ b/drivers/lightnvm/pblk-rb.c
+> @@ -45,10 +45,23 @@ void pblk_rb_free(struct pblk_rb *rb)
+>   /*
+>    * pblk_rb_calculate_size -- calculate the size of the write buffer
+>    */
+> -static unsigned int pblk_rb_calculate_size(unsigned int nr_entries)
+> +static unsigned int pblk_rb_calculate_size(unsigned int nr_entries,
+> +					   unsigned int threshold)
+>   {
+> -	/* Alloc a write buffer that can at least fit 128 entries */
+> -	return (1 << max(get_count_order(nr_entries), 7));
+> +	unsigned int thr_sz = 1 << (get_count_order(threshold + NVM_MAX_VLBA));
+> +	unsigned int max_sz = max(thr_sz, nr_entries);
+> +	unsigned int max_io;
+> +
+> +	/* Alloc a write buffer that can (i) fit at least two split bios
+> +	 * (considering max I/O size NVM_MAX_VLBA, and (ii) guarantee that the
+> +	 * threshold will be respected
+> +	 */
+> +	max_io = (1 << max((int)(get_count_order(max_sz)),
+> +				(int)(get_count_order(NVM_MAX_VLBA << 1))));
+> +	if ((threshold + NVM_MAX_VLBA) >= max_io)
+> +		max_io <<= 1;
+> +
+> +	return max_io;
+>   }
+>   
+>   /*
+> @@ -67,12 +80,12 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
+>   	unsigned int alloc_order, order, iter;
+>   	unsigned int nr_entries;
+>   
+> -	nr_entries = pblk_rb_calculate_size(size);
+> +	nr_entries = pblk_rb_calculate_size(size, threshold);
+>   	entries = vzalloc(array_size(nr_entries, sizeof(struct pblk_rb_entry)));
+>   	if (!entries)
+>   		return -ENOMEM;
+>   
+> -	power_size = get_count_order(size);
+> +	power_size = get_count_order(nr_entries);
+>   	power_seg_sz = get_count_order(seg_size);
+>   
+>   	down_write(&pblk_rb_lock);
+> @@ -149,7 +162,7 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
+>   	 * Initialize rate-limiter, which controls access to the write buffer
+>   	 * by user and GC I/O
+>   	 */
+> -	pblk_rl_init(&pblk->rl, rb->nr_entries);
+> +	pblk_rl_init(&pblk->rl, rb->nr_entries, threshold);
+>   
+>   	return 0;
+>   }
+> diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
+> index 76116d5f78e4..e9e0af0df165 100644
+> --- a/drivers/lightnvm/pblk-rl.c
+> +++ b/drivers/lightnvm/pblk-rl.c
+> @@ -207,7 +207,7 @@ void pblk_rl_free(struct pblk_rl *rl)
+>   	del_timer(&rl->u_timer);
+>   }
+>   
+> -void pblk_rl_init(struct pblk_rl *rl, int budget)
+> +void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold)
+>   {
+>   	struct pblk *pblk = container_of(rl, struct pblk, rl);
+>   	struct nvm_tgt_dev *dev = pblk->dev;
+> @@ -217,7 +217,6 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+>   	int sec_meta, blk_meta;
+>   	unsigned int rb_windows;
+>   
+> -
+>   	/* Consider sectors used for metadata */
+>   	sec_meta = (lm->smeta_sec + lm->emeta_sec[0]) * l_mg->nr_free_lines;
+>   	blk_meta = DIV_ROUND_UP(sec_meta, geo->clba);
+> @@ -234,7 +233,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+>   	/* To start with, all buffer is available to user I/O writers */
+>   	rl->rb_budget = budget;
+>   	rl->rb_user_max = budget;
+> -	rl->rb_max_io = budget >> 1;
+> +	rl->rb_max_io = budget - threshold;
+>   	rl->rb_gc_max = 0;
+>   	rl->rb_state = PBLK_RL_HIGH;
+>   
+> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+> index 72ae8755764e..a6386d5acd73 100644
+> --- a/drivers/lightnvm/pblk.h
+> +++ b/drivers/lightnvm/pblk.h
+> @@ -924,7 +924,7 @@ int pblk_gc_sysfs_force(struct pblk *pblk, int force);
+>   /*
+>    * pblk rate limiter
+>    */
+> -void pblk_rl_init(struct pblk_rl *rl, int budget);
+> +void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold);
+>   void pblk_rl_free(struct pblk_rl *rl);
+>   void pblk_rl_update_rates(struct pblk_rl *rl);
+>   int pblk_rl_high_thrs(struct pblk_rl *rl);
+> 
 
-thanks,
-rui
-> 
-> 
+Thanks Javier. Applied for 5.1.
