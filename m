@@ -2,141 +2,211 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FC7C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20340C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 811F120815
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:33:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D320C218A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:34:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="xoadB6Lr"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QOY7RZKw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730807AbfA3Kdp (ORCPT
+        id S1730704AbfA3Ke0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 05:33:45 -0500
-Received: from mail-eopbgr700046.outbound.protection.outlook.com ([40.107.70.46]:31125
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727555AbfA3Kdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 05:33:43 -0500
+        Wed, 30 Jan 2019 05:34:26 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:53752 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727043AbfA3KeZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 05:34:25 -0500
+Received: by mail-it1-f195.google.com with SMTP id g85so9474937ita.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 02:34:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D+ebTc0+10tslO8wD4HXKAboq0wLl7gDqKO2drmwrK0=;
- b=xoadB6Lrys/AU7ic2NaXXhgQ7gnN3HzQ/i1w6cgHRvsLrUvdROGkP61fZ+kBl4ZR3HNBEkjs3taGd4kVKAJuIrkF3hhE3sCVwuaF2Q9stKYraS7YA3ujrcE9tE4RHAKGsB2WmyBTvsSf/2eRdFnaBoXOVW525vxWvQ9z1r9Rctk=
-Received: from DM5PR12MB1546.namprd12.prod.outlook.com (10.172.36.23) by
- DM5PR12MB1531.namprd12.prod.outlook.com (10.172.34.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.18; Wed, 30 Jan 2019 10:33:40 +0000
-Received: from DM5PR12MB1546.namprd12.prod.outlook.com
- ([fe80::35a3:c1b4:5ad0:ec6e]) by DM5PR12MB1546.namprd12.prod.outlook.com
- ([fe80::35a3:c1b4:5ad0:ec6e%10]) with mapi id 15.20.1558.023; Wed, 30 Jan
- 2019 10:33:40 +0000
-From:   "Koenig, Christian" <Christian.Koenig@amd.com>
-To:     Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@mellanox.com>
-CC:     Logan Gunthorpe <logang@deltatee.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Kuehling, Felix" <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Index: AQHUt/rAgVEbp32b0EuMjAjrX5/WJ6XGkyOAgAAJwICAAAYHgIAAEq6AgAAFP4CAALlkAIAAKk0A
-Date:   Wed, 30 Jan 2019 10:33:39 +0000
-Message-ID: <4e0637ba-0d7c-66a5-d3de-bc1e7dc7c0ef@amd.com>
-References: <20190129174728.6430-1-jglisse@redhat.com>
- <20190129174728.6430-4-jglisse@redhat.com>
- <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
- <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
- <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
- <20190129205827.GM10108@mellanox.com> <20190130080208.GC29665@lst.de>
-In-Reply-To: <20190130080208.GC29665@lst.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-x-originating-ip: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
-x-clientproxiedby: AM6PR05CA0027.eurprd05.prod.outlook.com
- (2603:10a6:20b:2e::40) To DM5PR12MB1546.namprd12.prod.outlook.com
- (2603:10b6:4:8::23)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1531;20:FloESh8INSWxgfyoZKWhQ8zAB+q9wNINSjE+hwqS7lrM+vEfhaK9aXKHPCBnCjjKY/vIJDY8Uw7bRc9l/dQ/ji5rz5ipoN3frBcblJ5BAozuR2tzzbYUsqTHvERtSlM3w0xiWVT5Xa5h+okk7ReCZprJI+JzDUMfk7FXxmhSDpXL/jrfoHkCBVDa/GI5Ud0e5ImKSpHsnRODwxxuLyoCaD2b6h2GcpzamDKHS5jHfvrNi3cCAjVN0FrN+Q6tPk5j
-x-ms-office365-filtering-correlation-id: 6c32b3c0-d7dc-4204-2d2e-08d6869e6629
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1531;
-x-ms-traffictypediagnostic: DM5PR12MB1531:
-x-microsoft-antispam-prvs: <DM5PR12MB153189765275979C9F6E9FA883900@DM5PR12MB1531.namprd12.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(39860400002)(366004)(136003)(199004)(189003)(305945005)(4326008)(64126003)(110136005)(86362001)(54906003)(316002)(53936002)(58126008)(256004)(72206003)(81166006)(8676002)(8936002)(81156014)(2906002)(217873002)(7736002)(478600001)(93886005)(386003)(25786009)(186003)(99286004)(65826007)(76176011)(65806001)(52116002)(68736007)(65956001)(102836004)(36756003)(6246003)(229853002)(14454004)(46003)(6116002)(446003)(7416002)(71200400001)(6506007)(11346002)(105586002)(31696002)(6486002)(97736004)(6436002)(71190400001)(486006)(2616005)(6512007)(31686004)(476003)(106356001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1531;H:DM5PR12MB1546.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 9aiyJXBkI1aV6nhi+ENcbwQFQxjsBTCy2lYBNKahnq+5cEWYvFhhKrxgA1BWYUzd8gy7mm7Tj27e/bUh2uK6c6D0AqGjc2rpQ1sx+TM2OFsYbcm2WfRXE/j7at3jBWf2HvyKK76tvScRL5Oczng23TCDog6Ep/4aI0qhYWp0GvG9hPGOnXsKopcW61Ex0kIIaeW/NC2FUgLbWqxPcGAoSM81E440DAlSwpR19qg2rThXlHChI80Hde8uUoYKCybh25e21kclDxSLPadh43ar4Q4zfVhwJsxAGSA3HJk0YZWFSGOdP1k5ajfj8gn/cVWi81N/9BFVo9u+ubJA3sfGe/ns5AJwsqZv4EjYX57MEdIuhTQJX5UHQkafZ30cQ/nxJaxUJKOeK4QxVB1Qef832IozbGFtXJTMa0VhwukVFh0=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0297C7D5305B774FB9CFD8B1E00EE95C@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WfmBU1SOE6jbN5pTRQsbsythjkmyR25xQoNf3627yp4=;
+        b=QOY7RZKwfKsWRg8Fao3kQ/KZ9yh35Wv9PI8uFFENAMRHrZQD91DDxQ85HBDbm7YB9M
+         Tc1X2HXvEYS0jNBrNJzoI0sMrEFKS8zP8WnoSN+A3ci79ktbqE43mhnOjRRto1W7eret
+         5vg6kI+XZEMA+F5bWvI/60pVmDr+3yQBBrXa2Z8SfpY1GTpfqHAxcr5DROgvWP0BPzKA
+         5Shh0RjLEB6kU9pAVDbmZhVL8yskuQ4EfP1acWV7Y74yE4L4ZIUnTtrtsTBJilYVKdg7
+         y2d22OY31Eqkd5A+TB4v4tjQ4KTRnZfVNYZHtL3jUNsx+xP8/ec0SzgLhIOKqtkrxa7A
+         yRxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WfmBU1SOE6jbN5pTRQsbsythjkmyR25xQoNf3627yp4=;
+        b=Vmnh+cJfJblqx4bbty2vrh4EIiNGF4tWhN7qLGz4WeCXMHULoru9uHiYq8fAWIymjX
+         FqbQepM1f5kor5c4+vjvPMnmU7wVDjM7odLTpk7jvzF13vQtahVu0tdGcB4qZimpi7g6
+         BOJC4ClxhklIn10+KTkQutvXwokSvuYMKIItiH0+zkn7sUZMWoTfwmIaRUqT5bmmo2O8
+         8SmrA4VB5fFwBoX70/PVxGOo7BA7Jgl17Voc8pnEDdFB5DDRRYcewYLWjTQuwbN+xClA
+         135r5PTc7bKC9LBuGgsTWBzFnRvvPK0IHh/vDRgNd+IsTCkTVEoCfBYSc+ECPcP79kK8
+         kEpQ==
+X-Gm-Message-State: AJcUukc3VLngQqYizxtHKQP8OYENXk6X5dioTxXE2j0iYfFMD3UPsxOm
+        l0CD29c03VNDc+MI6/ExpSXkF8cJCkBAr/ZmSn8bTPwgZTM=
+X-Google-Smtp-Source: ALg8bN4O4Zl/xwsbodE1iNlKyGUQoNTKD8+EpwR9r2QMNNyF13MrHOQQz4T+lRUTQ+XT6lC0WqYNd2Fgs5U8rBHRCuk=
+X-Received: by 2002:a24:f14d:: with SMTP id q13mr12441472iti.166.1548844464475;
+ Wed, 30 Jan 2019 02:34:24 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c32b3c0-d7dc-4204-2d2e-08d6869e6629
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 10:33:36.8750
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1531
+References: <1548677377-22177-1-git-send-email-elena.reshetova@intel.com>
+ <CACT4Y+aw1L7u+WJb8Ug8ED2bESfZccVK3o_7OBbjyQbQrLskbg@mail.gmail.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4B99139@IRSMSX102.ger.corp.intel.com>
+ <20190130032701.GA3739@andrea> <2236FBA76BA1254E88B949DDB74E612BA4B9A2B5@IRSMSX102.ger.corp.intel.com>
+In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4B9A2B5@IRSMSX102.ger.corp.intel.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 30 Jan 2019 11:34:13 +0100
+Message-ID: <CACT4Y+Y2GFQ2dt2GiNP4k+9F1kYw3BzeqhBBJ-QzjZmSux9gHA@mail.gmail.com>
+Subject: Re: [PATCH] refcount_t: add ACQUIRE ordering on success for
+ dec(sub)_and_test variants
+To:     "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alan Stern <stern@rowland.harvard.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QW0gMzAuMDEuMTkgdW0gMDk6MDIgc2NocmllYiBDaHJpc3RvcGggSGVsbHdpZzoNCj4gT24gVHVl
-LCBKYW4gMjksIDIwMTkgYXQgMDg6NTg6MzVQTSArMDAwMCwgSmFzb24gR3VudGhvcnBlIHdyb3Rl
-Og0KPj4gT24gVHVlLCBKYW4gMjksIDIwMTkgYXQgMDE6Mzk6NDlQTSAtMDcwMCwgTG9nYW4gR3Vu
-dGhvcnBlIHdyb3RlOg0KPj4NCj4+PiBpbXBsZW1lbnQgdGhlIG1hcHBpbmcuIEFuZCBJIGRvbid0
-IHRoaW5rIHdlIHNob3VsZCBoYXZlICdzcGVjaWFsJyB2bWEncw0KPj4+IGZvciB0aGlzICh0aG91
-Z2ggd2UgbWF5IG5lZWQgc29tZXRoaW5nIHRvIGVuc3VyZSB3ZSBkb24ndCBnZXQgbWFwcGluZw0K
-Pj4+IHJlcXVlc3RzIG1peGVkIHdpdGggZGlmZmVyZW50IHR5cGVzIG9mIHBhZ2VzLi4uKS4NCj4+
-IEkgdGhpbmsgSmVyb21lIGV4cGxhaW5lZCB0aGUgcG9pbnQgaGVyZSBpcyB0byBoYXZlIGEgJ3Nw
-ZWNpYWwgdm1hJw0KPj4gcmF0aGVyIHRoYW4gYSAnc3BlY2lhbCBzdHJ1Y3QgcGFnZScgYXMsIHJl
-YWxseSwgd2UgZG9uJ3QgbmVlZCBhDQo+PiBzdHJ1Y3QgcGFnZSBhdCBhbGwgdG8gbWFrZSB0aGlz
-IHdvcmsuDQo+Pg0KPj4gSWYgSSByZWNhbGwgeW91ciBlYXJsaWVyIGF0dGVtcHRzIGF0IGFkZGlu
-ZyBzdHJ1Y3QgcGFnZSBmb3IgQkFSDQo+PiBtZW1vcnksIGl0IHJhbiBhZ3JvdW5kIG9uIGlzc3Vl
-cyByZWxhdGVkIHRvIE9fRElSRUNUL3NnbHMsIGV0YywgZXRjLg0KPiBTdHJ1Y3QgcGFnZSBpcyB3
-aGF0IG1ha2VzIE9fRElSRUNUIHdvcmssIHVzaW5nIHNnbHMgb3IgYmlvdmVjcywgZXRjIG9uDQo+
-IGl0IHdvcmsuICBXaXRob3V0IHN0cnVjdCBwYWdlIG5vbmUgb2YgdGhlIGFib3ZlIGNhbiB3b3Jr
-IGF0IGFsbC4gIFRoYXQNCj4gaXMgd2h5IHdlIHVzZSBzdHJ1Y3QgcGFnZSBmb3IgYmFja2luZyBC
-QVJzIGluIHRoZSBleGlzdGluZyBQMlAgY29kZS4NCj4gTm90IHRoYXQgSSdtIGEgcGFydGljdWxh
-ciBmYW4gb2YgY3JlYXRpbmcgc3RydWN0IHBhZ2UgZm9yIHRoaXMgZGV2aWNlDQo+IG1lbW9yeSwg
-YnV0IHdpdGhvdXQgbWFqb3IgaW52YXNpdmUgc3VyZ2VyeSB0byBsYXJnZSBwYXJ0cyBvZiB0aGUg
-a2VybmVsDQo+IGl0IGlzIHRoZSBvbmx5IHdheSB0byBtYWtlIGl0IHdvcmsuDQoNClRoZSBwcm9i
-bGVtIHNlZW1zIHRvIGJlIHRoYXQgc3RydWN0IHBhZ2UgZG9lcyB0d28gdGhpbmdzOg0KDQoxLiBN
-ZW1vcnkgbWFuYWdlbWVudCBmb3Igc3lzdGVtIG1lbW9yeS4NCjIuIFRoZSBvYmplY3QgdG8gd29y
-ayB3aXRoIGluIHRoZSBJL08gbGF5ZXIuDQoNClRoaXMgd2FzIGRvbmUgYmVjYXVzZSBhIGdvb2Qg
-cGFydCBvZiB0aGF0IHN0dWZmIG92ZXJsYXBzLCBsaWtlIHJlZmVyZW5jZSANCmNvdW50aW5nIGhv
-dyBvZnRlbiBhIHBhZ2UgaXMgdXNlZC7CoCBUaGUgcHJvYmxlbSBub3cgaXMgdGhhdCB0aGlzIGRv
-ZXNuJ3QgDQp3b3JrIHZlcnkgd2VsbCBmb3IgZGV2aWNlIG1lbW9yeSBpbiBzb21lIGNhc2VzLg0K
-DQpGb3IgZXhhbXBsZSBvbiBHUFVzIHlvdSB1c3VhbGx5IGhhdmUgYSBsYXJnZSBhbW91bnQgb2Yg
-bWVtb3J5IHdoaWNoIGlzIA0Kbm90IGV2ZW4gYWNjZXNzaWJsZSBieSB0aGUgQ1BVLiBJbiBvdGhl
-ciB3b3JkcyB5b3UgY2FuJ3QgZWFzaWx5IGNyZWF0ZSBhIA0Kc3RydWN0IHBhZ2UgZm9yIGl0IGJl
-Y2F1c2UgeW91IGNhbid0IHJlZmVyZW5jZSBpdCB3aXRoIGEgcGh5c2ljYWwgQ1BVIA0KYWRkcmVz
-cy4NCg0KTWF5YmUgc3RydWN0IHBhZ2Ugc2hvdWxkIGJlIHNwbGl0IHVwIGludG8gc21hbGxlciBz
-dHJ1Y3R1cmVzPyBJIG1lYW4gDQppdCdzIHJlYWxseSBvdmVybG9hZGVkIHdpdGggZGF0YS4NCg0K
-Q2hyaXN0aWFuLg0KDQoNCg==
+On Wed, Jan 30, 2019 at 11:19 AM Reshetova, Elena
+<elena.reshetova@intel.com> wrote:
+>
+>  > So, you are saying that ACQUIRE does not guarantee that "po-later stores
+> > > on the same CPU and all propagated stores from other CPUs
+> > > must propagate to all other CPUs after the acquire operation "?
+> > > I was reading about acquire before posting this and trying to understand,
+> > > and this was my conclusion that it should provide this, but I can easily be wrong
+> > > on this.
+> > >
+> > > Andrea, Peter, could you please comment?
+> >
+> > Short version:  I am not convinced by the above sentence, and I suggest
+> > to remove it (as done in
+> >
+> >   http://lkml.kernel.org/r/20190128142910.GA7232@andrea ).
+>
+> Sorry, I misunderstood your previous email on this. I somehow misread it
+> that " A-cumulative property" as a notion that is not used in LKMM for ACQUIRE,
+> so I should not mention the notion, but the guarantees stay, but it is guarantees
+> that are also wrong, which is much worse.
+>
+> >
+> > ---
+> > To elaborate:  I think that we should first discuss the meaning of that
+> > "[...] after the acquire operation (does)",  because there is no notion
+> > of "ACQUIRE (or more generally, load) propagation" in the LKMM:
+> >
+> > Stores propagate (after being executed) to other CPUs.  Loads _execute_
+> > (possibly multiple times /speculatively, but this is irrelevant for the
+> > discussion below).
+> >
+> > A detailed, but still informal, description of these concepts is in:
+> >
+> >   tools/memory-model/Documentation/explanation.txt
+> >
+> > (c.f., in particular, section "AN OPERATIONAL MODEL"); I can illustrate
+> > them with an example:
+> >
+> >       { initially: x=0, y=0; }
+> >
+> >       CPU0                    CPU1
+> >       --------------------------------------
+> >       LOAD-ACQUIRE x=0        LOAD y=1
+> >       STORE y=1
+> >
+> > In this scenario,
+> >
+> >   a) CPU0's "LOAD-ACQUIRE x=0" executes before CPU0's "STORE y=1"
+> >      executes (this is guaranteed by the ACQUIRE),
+> >
+> >   b) CPU0's "STORE y=1" executes before "STORE y=1" propagates to
+> >      CPU1 (a store cannot be propagated before being executed),
+> >
+> >   c) CPU0's "STORE y=1" propagates to CPU1 before CPU1's "LOAD y=1"
+> >      executes (since CPU1 "sees the store").
+> >
+> > The example also illustrates the following property:
+> >
+> >   ACQUIRE guarantees that po-later stores on the same CPU must
+> >   propagate to all other CPUs after the acquire _executes_.
+> >
+> > (combine (a) and (b) ).
+> >
+> > OTOH, please notice that:
+> >
+> >   ACQUIRE does _NOT_ guarantee that all propagated stores from
+> >   other CPUs (to the CPU executing the ACQUIRE) must propagate
+> >   to all other CPUs after the acquire operation _executes_.
+>
+> Thank you very much Andrea, this example and explanation clarifies it nicely!
+> So Acquire only really affects the current CPU "view of the world" and operation
+> propagation from it, and not anything else, which is actually very logical.
+>
+> My initial confusion was because I was thinking of ACQUIRE as a pair
+> for RELEASE, i.e. it should provide a complementary guarantees to
+>  RELEASE ones, just on po-later operations.
+>
+> >
+> > In fact, we've already seen how full barriers can be used to break such
+> > "guarantee"; for example, in
+> >
+> >       { initially: x=0, y=0; }
+> >
+> >       CPU0                    CPU1
+> >               ...
+> >       ---------------------------------------------------
+> >       STORE x=1               LOAD x=1
+> >                               FULL-BARRIER
+> >                               LOAD-ACQUIRE y=0
+> >
+> > the full barrier forces CPU0's "STORE x=1" (seen by/propagated to CPU1)
+> > to be propagated to all CPUs _before_ "LOAD-ACQUIRE y=0" is executed.
+> >
+> > Does this make sense?
+>
+> Yes, thank you again! I think it would take me still a long while to be familiar
+> with all these notions and not to be confused even in simple things.
+>
+> >
+> >
+> > > > Is ACQUIRE strictly stronger than control dependency?
+> > >
+> > > In my understanding yes.
+> >
+> > +1 (or we have a problem)
+> >
+> >
+> > >
+> > > > It generally looks so unless there is something very subtle that I am
+> > > > missing. If so, should we replace it with just "RELEASE ordering +
+> > > > ACQUIRE ordering on success"? Looks simpler with less magic trickery.
+> > >
+> > > I was just trying to mention all the applicable orderings/guarantees.
+> > > I can remove "control dependency" part if it is easier for people to understand
+> > > (the main goal of documentation).
+> >
+> > This sounds like a good idea; thank you, Dmitry, for pointing this out.
+>
+> I will remove it. So, the rule that we always mention the strongest type of barrier
+> When we mention some ordering guarantees, right?
+
+
+My reasoning here was that control dependency is just a very subtle
+thing so I think it's better if people just not see it at all and not
+start thinking in terms of control dependencies until absolutely
+necessary.
+
+I am not sure how to generalize this. There are not too many other
+cases where one barrier type is a full superset of another. E.g.
+rmb/wmb are orthogonal to acquire/release.
+
+But if we take full barrier, then, yes, it definitely makes sense to
+just say that an operation provides full barrier rather than full
+barrier, acquire barrier, release barrier, read barrier, write
+barrier, control dependency, ... :)
