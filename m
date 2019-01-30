@@ -2,171 +2,147 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DATE_IN_PAST_12_24,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7E0C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BAEC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 371BB218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9A1B218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:23:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731530AbfAaIUJ (ORCPT
+        id S1728829AbfAaIXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:20:09 -0500
-Received: from protonic.xs4all.nl ([83.163.252.89]:57185 "EHLO protonic.nl"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725855AbfAaIUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 03:20:09 -0500
-Received: from erd987 (unknown [192.168.2.69])
-        by sparta (Postfix) with ESMTP id AB3D244A0058;
-        Thu, 31 Jan 2019 09:21:21 +0100 (CET)
-Date:   Thu, 31 Jan 2019 09:20:06 +0100
-From:   Robin van der Gracht <robin@protonic.nl>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Martin Kepplinger <martink@posteo.de>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: Re: [PATCH v4] mmc: mxs-mmc: Introduce regulator support
-Message-ID: <20190131092006.363d1dd4@erd987>
-In-Reply-To: <CAPDyKFo7949rcxEX5U2QUS0c2xhC_z+JGeOiF2HC6+QukVpEaQ@mail.gmail.com>
-References: <20190128144119.10092-1-martink@posteo.de>
-        <CAPDyKFo7949rcxEX5U2QUS0c2xhC_z+JGeOiF2HC6+QukVpEaQ@mail.gmail.com>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 31 Jan 2019 03:23:04 -0500
+Received: from mga03.intel.com ([134.134.136.65]:24089 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725855AbfAaIXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 03:23:04 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 00:23:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,543,1539673200"; 
+   d="scan'208";a="140371944"
+Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
+  by fmsmga004.fm.intel.com with ESMTP; 31 Jan 2019 00:23:01 -0800
+Date:   Wed, 30 Jan 2019 23:16:48 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, mst@redhat.com,
+        yu-cheng.yu@intel.com, yi.z.zhang@intel.com, hjl.tools@gmail.com,
+        Zhang Yi Z <yi.z.zhang@linux.intel.com>
+Subject: Re: [PATCH v2 6/7] KVM:VMX: Load Guest CET via VMCS when CET is
+ enabled in Guest
+Message-ID: <20190130151648.GA1126@local-michael-cet-test.sh.intel.com>
+References: <20190122205909.24165-1-weijiang.yang@intel.com>
+ <20190122205909.24165-7-weijiang.yang@intel.com>
+ <20190125225625.GF21849@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125225625.GF21849@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Jan 2019 22:15:23 +0100
-Ulf Hansson <ulf.hansson@linaro.org> wrote:
-
-> On Mon, 28 Jan 2019 at 15:41, Martin Kepplinger <martink@posteo.de> wrote:
-> >
-> > From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-> >
-> > This adds support for explicitly switching the mmc's power on and off
-> > which is needed for example for WL1837 WL1271 wifi controllers on imx28.
-> >
-> > While the wifi's vmmc-supply regulator can be configured in devicetree,
-> > "ip link set wlan0 down" doesn't turn off the VMMC regulator which leads
-> > to hangs when loading firmware, for example.
-> >
-> > Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+On Fri, Jan 25, 2019 at 02:56:25PM -0800, Sean Christopherson wrote:
+> On Wed, Jan 23, 2019 at 04:59:08AM +0800, Yang Weijiang wrote:
+> > "Load Guest CET state" bit controls whether guest CET states
+> > will be loaded on Guest entry. Before doing that, KVM needs
+> > to check if CET feature is exposed to Guest.
+> > 
+> > Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
 > > ---
-> >
-> >
-> > revision history
-> > ----------------
-> > v4: re-added forgotten regulator_enable() during probe
-> > v3: improve API usage as suggested by Ulf
-> > v2: tested patch with changes suggested by Robin
-> > v1: question, why https://patchwork.kernel.org/patch/4365751/ didn't get in
-> >
-> >
-> >  drivers/mmc/host/mxs-mmc.c | 34 +++++++++++++++++++++++++---------
-> >  1 file changed, 25 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
-> > index add1e70195ea..23d275269d61 100644
-> > --- a/drivers/mmc/host/mxs-mmc.c
-> > +++ b/drivers/mmc/host/mxs-mmc.c
-> > @@ -517,6 +517,22 @@ static void mxs_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
-> >         else
-> >                 host->bus_width = 0;
-> >
-> > +       switch (ios->power_mode) {
-> > +       case MMC_POWER_OFF:
-> > +               if (!IS_ERR(host->mmc->supply.vmmc))
-> > +                       mmc_regulator_set_ocr(host->mmc,
-> > +                                             host->mmc->supply.vmmc, 0);
-> > +               break;
-> > +       case MMC_POWER_UP:
-> > +               if (!IS_ERR(host->mmc->supply.vmmc))
-> > +                       mmc_regulator_set_ocr(host->mmc,
-> > +                                             host->mmc->supply.vmmc,
-> > +                                             ios->vdd);
-> > +               break;
-> > +       default:
-> > +               break;
-> > +       }
-> > +
-> >         if (ios->clock)
-> >                 mxs_ssp_set_clk_rate(&host->ssp, ios->clock);
-> >  }
-> > @@ -588,7 +604,6 @@ static int mxs_mmc_probe(struct platform_device *pdev)
-> >         struct mmc_host *mmc;
-> >         struct resource *iores;
-> >         int ret = 0, irq_err;
-> > -       struct regulator *reg_vmmc;
-> >         struct mxs_ssp *ssp;
-> >
-> >         irq_err = platform_get_irq(pdev, 0);
-> > @@ -614,14 +629,15 @@ static int mxs_mmc_probe(struct platform_device *pdev)
-> >         host->mmc = mmc;
-> >         host->sdio_irq_en = 0;
-> >
-> > -       reg_vmmc = devm_regulator_get(&pdev->dev, "vmmc");
-> > -       if (!IS_ERR(reg_vmmc)) {
-> > -               ret = regulator_enable(reg_vmmc);
-> > -               if (ret) {
-> > -                       dev_err(&pdev->dev,
-> > -                               "Failed to enable vmmc regulator: %d\n", ret);
-> > -                       goto out_mmc_free;
-> > -               }
-> > +       ret = mmc_regulator_get_supply(mmc);
-> > +       if (ret == -EPROBE_DEFER)
-> > +               goto out_mmc_free;
-> > +
-> > +       ret = regulator_enable(mmc->supply.vmmc);  
-> 
-> This is wrong, as it may cause the regulator usage count to become
-> wrongly balanced.
-> 
-> Instead, via ->set_ios() when calling mmc_regulator_set_ocr(), it will
-> take care of enabling and disabling the regulator depending of the
-> requested vdd voltage level.
-> 
-> > +       if (ret) {
-> > +               dev_err(&pdev->dev,
-> > +                       "Failed to enable vmmc regulator: %d\n", ret);
-> > +               goto out_mmc_free;
-> >         }
-> >
-> >         ssp->clk = devm_clk_get(&pdev->dev, NULL);
-> > --
-> > 2.20.1
+> >  arch/x86/kvm/vmx.c | 33 +++++++++++++++++++++++++++++++++
+> >  1 file changed, 33 insertions(+)
+> > 
+> > diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> > index 68c0e5e41cb1..9c8cecac80ea 100644
+> > --- a/arch/x86/kvm/vmx.c
+> > +++ b/arch/x86/kvm/vmx.c
+> > @@ -55,6 +55,7 @@
+> >  #include <asm/mmu_context.h>
+> >  #include <asm/spec-ctrl.h>
+> >  #include <asm/mshyperv.h>
+> > +#include <asm/cet.h>
 > >  
+> >  #include "trace.h"
+> >  #include "pmu.h"
+> > @@ -4065,6 +4066,18 @@ static inline bool vmx_feature_control_msr_valid(struct kvm_vcpu *vcpu,
+> >  	return !(val & ~valid_bits);
+> >  }
+> >  
+> > +static int vmx_guest_cet_cap(struct kvm_vcpu *vcpu)
+> > +{
+> > +	struct kvm_cpuid_entry2 *best;
+> > +	int r = 0;
+> > +
+> > +	best = kvm_find_cpuid_entry(vcpu, 7, 0);
+> > +	if (best && best->function == 0x7)
+> > +		r = (best->ecx & bit(X86_FEATURE_SHSTK)) |
+> > +		    (best->edx & bit(X86_FEATURE_IBT)) ? 1 : 0;
+> > +	return r;
+> > +}
+> > +
+> >  static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
+> >  {
+> >  	switch (msr->index) {
+> > @@ -5409,6 +5422,26 @@ static int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+> >  			return 1;
+> >  	}
+> >  
+> > +	/*
+> > +	 * To enable Guest CET, first check if Guest CET feature is
+> > +	 * available, if it's not available but its CR4.CET is being set,
+> > +	 * return a fault to Guest; then check if Host CET is enabled and
+> > +	 * CR4.CET is toggled, if they are, then enable loading CET state
 > 
-> BTW, you didn't really answer my earlier question about the TI WiFi
-> chip. Doesn't you need a special clock for WiFi chip as well? How do
-> you intend to manage that?
+> Comment doesn't match the code.  Comment says "toggled", code is just
+> looking at "enabled".
+> 
+> > +	 * bit in entry control, otherwise, clear the bit to
+> > +	 * disable guest CET state loading.
+> 
+> What happens to CET state if the control is clear?  Is host state
+> retained but inaccessible?
+>
+Hi, Sean, 
+I consulted the CET arch for the feature enabling in guest, actually, it
+can be enabled independent to host CET feature, i.e., guest CET feature
+can work even without host CET feature off, I did experiments, it's
+proved true. So, in next version, I'll remove host CET dependencies to
+make the KVM code look much cleaner. Thanks for your comments.
 
-I used an external 32K oscillator (SLOW_CLK) for my wl1271. Other
-clocks ware generated on the module.
-
-I had to supply a 'vmmc-supply' in your wl1271 devicetree node,
-which will be used to power on/off the wlan module. The supply should
-be a (delayed) GPIO controlled 'fixed-regulator' attached to the
-wlan_en pin on the module.
-
-1: Documentation/devicetree/bindings/net/wireless/ti,wlcore.txt
-
-Kind regards,
-
--- 
-Robin van der Gracht
-Protonic Holland
-tel.: +31 (0) 229 212928
-fax.: +31 (0) 229 210930
-Factorij 36 / 1689 AL Zwaag
+> > +	 */
+> > +	if (vmx_guest_cet_cap(vcpu)) {
+> 
+> Why not?
+> 
+> 	if (guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) ||
+> 	    guest_cpuid_has(vcpu, X86_FEATURE_IBT)) {
+> 
+> > +		if (hw_cr4 & cr4 & X86_CR4_CET) {
+> > +			vmcs_set_bits(VM_ENTRY_CONTROLS,
+> > +				      VM_ENTRY_LOAD_GUEST_CET_STATE);
+> > +		} else {
+> > +			vmcs_clear_bits(VM_ENTRY_CONTROLS,
+> > +					VM_ENTRY_LOAD_GUEST_CET_STATE);
+> > +		}
+> > +	} else if (cr4 & X86_CR4_CET) {
+> > +		return 1;
+> > +	}
+> > +
+> >  	if (to_vmx(vcpu)->nested.vmxon && !nested_cr4_valid(vcpu, cr4))
+> >  		return 1;
+> >  
+> > -- 
+> > 2.17.1
+> > 
