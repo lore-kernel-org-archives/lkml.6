@@ -2,99 +2,100 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D080C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49796C282D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 674872084C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 128DB20869
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:49:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548877786;
+	bh=jt5EqLxLDRkblvBxX981tGRhwPBdHsZhHw2lzsx4a1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=O79HAH88+1+TkBAD+0RH82u0+ywP2+Esnb5SJd4c56ta0VSX1P/wf3WN9EEkWDn3R
+	 RHT/dIoNeIh99Wi1nRwBUcrc6tQnOdkaYFFHGi7gat0foBbx41kKqGLotumoxKNJ29
+	 nNEV7iP9+uF0zZz3BojlKnGeel1j8qj5Ba0qUbUE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733135AbfA3Tso (ORCPT
+        id S1733165AbfA3Tto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:48:44 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:40874 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727046AbfA3Tso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:48:44 -0500
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.205])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1govqd-0008Qp-Gb; Wed, 30 Jan 2019 12:48:36 -0700
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-References: <20190129174728.6430-1-jglisse@redhat.com>
- <20190129174728.6430-4-jglisse@redhat.com>
- <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
- <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
- <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
- <20190129205827.GM10108@mellanox.com> <20190130080208.GC29665@lst.de>
- <20190130174424.GA17080@mellanox.com>
- <bcbdfae6-cfc6-c34f-4ff2-7bb9a08f38af@deltatee.com>
- <20190130191946.GD17080@mellanox.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <3793c115-2451-1479-29a9-04bed2831e4b@deltatee.com>
-Date:   Wed, 30 Jan 2019 12:48:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 14:49:44 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43997 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727046AbfA3Tto (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:49:44 -0500
+Received: by mail-ot1-f65.google.com with SMTP id a11so668765otr.10;
+        Wed, 30 Jan 2019 11:49:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=OvardPA1uBvO82uMchFXr5jTvrFamqjB5tZrxQ4qH+o=;
+        b=ti0A51TZsCcd5R8sO4tnS0ZjLsKBw4cs5L4VhS3vZVkWmvEWGiScFkEmjDS5Phff4n
+         +tKTleaiL3Lje9o5xxi7dh4z2AIGd7NfxhKhC06edwG7/KIkZZ2eqJut8h1EQFMS05xX
+         IplKkoJ02hjX/va2bAeP4tqfEPYZrtVnz7dUHHXNJ0VJy0IAMdZYRDjT0MJAtUJtaNtj
+         x/oW4TRSA8/zwCj1wbAYqgWthecz7hLo5byas0JMRL3bINan2oolVfDjxuJYvqrlYFFa
+         VJ/0qyD9OgV1zkjBqyLS1+Kt/7c6/wfM6LTq7rNeOVLrsR2etJ4015ohRaWUTFwI1t3Z
+         9U9Q==
+X-Gm-Message-State: AJcUukcCTTPcohUwuZahVVsEeFkJptKY6x/ga/Nu3ECY5zJ9uO5S9zYt
+        yYjLRckX1NXoZvOTotbr0w==
+X-Google-Smtp-Source: ALg8bN49//Hsgm0n//ZYZ1UVNyKQkT3EtuqgTComqJoiYvXrZ4h40CPNmDJk28x3ekod6KQre6SjeQ==
+X-Received: by 2002:a9d:ac8:: with SMTP id 66mr25212420otq.315.1548877783670;
+        Wed, 30 Jan 2019 11:49:43 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w5sm1001046oif.48.2019.01.30.11.49.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 11:49:42 -0800 (PST)
+Date:   Wed, 30 Jan 2019 13:49:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Randolph =?iso-8859-1?Q?Maa=DFen?= <gaireg@gaireg.de>
+Cc:     gaireg@gaireg.de, Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Brian Masney <masneyb@onstation.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Douglas Fischer <fischerdouglasc@gmail.com>,
+        Martin Kelly <mkelly@xevo.com>,
+        Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: imu: add icm20602 bindings to
+ mpu6050
+Message-ID: <20190130194942.GA30767@bogus>
+References: <20190128185010.8275-1-gaireg@gaireg.de>
 MIME-Version: 1.0
-In-Reply-To: <20190130191946.GD17080@mellanox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jglisse@redhat.com, hch@lst.de, jgg@mellanox.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190128185010.8275-1-gaireg@gaireg.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019-01-30 12:19 p.m., Jason Gunthorpe wrote:
-> On Wed, Jan 30, 2019 at 11:13:11AM -0700, Logan Gunthorpe wrote:
->>
->>
->> On 2019-01-30 10:44 a.m., Jason Gunthorpe wrote:
->>> I don't see why a special case with a VMA is really that different.
->>
->> Well one *really* big difference is the VMA changes necessarily expose
->> specialized new functionality to userspace which has to be supported
->> forever and may be difficult to change. 
+On Mon, 28 Jan 2019 19:50:02 +0100, =?UTF-8?q?Randolph=20Maa=C3=9Fen?= wrote:
+> Adding the invensense ICM-20602 to the compatible list of the mpu6050
+> driver
 > 
-> The only user change here is that more things will succeed when
-> creating RDMA MRs (and vice versa to GPU). I don't think this
-> restricts the kernel implementation at all, unless we intend to
-> remove P2P entirely..
+> Signed-off-by: Randolph Maaﬂen <gaireg@gaireg.de>
+> 
+> ---
+> Changes in v2:
+> - write i2c disable register using reg_set instead of define
+> - decide to write to i2c disable register based on reg_set instead of
+>   chip type
+> ---
+>  Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Well for MRs I'd expect you are using struct pages to track the memory
-some how.... VMAs that aren't backed by pages and use this special
-interface must therefore be creating new special interfaces that can
-call p2p_[un]map...
-
-I'd much rather see special cases around struct page so we can find ways
-to generalize it in the future than create special cases tied to random
-userspace interfaces.
-
-Logan
+Reviewed-by: Rob Herring <robh@kernel.org>
