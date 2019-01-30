@@ -2,271 +2,323 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 453DAC282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F958C282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0817921473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5923E20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:58:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a6aK/P9r"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NG8SNScv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730173AbfA3H6Q (ORCPT
+        id S1730188AbfA3H6Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 02:58:16 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:34100 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfA3H6Q (ORCPT
+        Wed, 30 Jan 2019 02:58:24 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:46993 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbfA3H6Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 02:58:16 -0500
-Received: by mail-vk1-f196.google.com with SMTP id y14so5157679vkd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:58:14 -0800 (PST)
+        Wed, 30 Jan 2019 02:58:24 -0500
+Received: by mail-vk1-f193.google.com with SMTP id j23so5140371vke.13
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:58:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2+V/2eP7cpSyDnC+qg1kCiKmtNthe2VPeFd4bfbfcck=;
-        b=a6aK/P9rpzb7oLJuraIKlJoNCQmgUycg7IvJz7I94jRX+VhfV0PQxkdEltKk89FNJ5
-         azdSeG2XXYt9+k69G0zWL3PMssGGTCSFG1q3y7PIQerqvn2AhoMFTeQo2Df8BTuuuxfq
-         TAI0X8i36oQ60uj5yMnTXWpr8E9ZX8TbOLBl8=
+         :cc;
+        bh=41MuKyrwn7veWgy22wgbZKTsiLLBQLoVXZfnrZfE764=;
+        b=NG8SNScvuLRifqYAZ6cp2jznp2+9QoQoHZTpg38Ikqk+nEojwzV7DBrd81ZqrFFA9T
+         yBiA/Bf21TaLAzwMslRTu7GNtbNtxg3LpaJwUcX0Mv38VPGbwjIxwWrDgiPBmZnzHnNb
+         LZqFK2WwfnEffF7VOMauLWu1H/dHMSNKFJHT4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2+V/2eP7cpSyDnC+qg1kCiKmtNthe2VPeFd4bfbfcck=;
-        b=TcTpMfojjjyNPfJO8YIvWFs5FQCJyTuk+lxa/2VApl3p99XoQtzBVdqtce/x+ODvm9
-         6NvyrNJQJKY/Om2T259m0w79Y+A2MSbNXxKI2RavKMfmvlb+ar5mC8C6UohvUiwg0hAL
-         aJHy+ncl5xuoFNEJP+1bjQ8SJGkaaO9I6CRiRQjcsnnCIrtwvqG0EKZOKAT6eKmfdA7V
-         KEwXq8qIUPYe0WuOB+GdRboYSftaeMxUH0ZWUW9laBds3ZyLFDe6TOh6fRcZR1Tn94lY
-         UfCkzA4e32++AJL4zO9nPQfK81O31xQIu6bEC9eKJLo1nNilIqj1TZDKlG0l4UsajeOp
-         8epA==
-X-Gm-Message-State: AJcUukeJQGR8kYY/cHIQxkROv7TW/T0uqv9oUf78VbH0uv15W3U4P1Je
-        3Fulzw64Q8e4aMAStcDI6ihtH+9PT/4=
-X-Google-Smtp-Source: ALg8bN45x1v7EydPV/A8zBn7LHAvyzw3ZCXDV4InQXetfakxy22Mj3KGNeUIfPpwAuDs18n9B9AnCw==
-X-Received: by 2002:a1f:2f48:: with SMTP id v69mr12078563vkv.20.1548835094104;
-        Tue, 29 Jan 2019 23:58:14 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id l197sm789378vke.18.2019.01.29.23.58.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 23:58:13 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id v24so7770727uap.13
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:58:12 -0800 (PST)
-X-Received: by 2002:ab0:470d:: with SMTP id h13mr12528245uac.122.1548835092521;
- Tue, 29 Jan 2019 23:58:12 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=41MuKyrwn7veWgy22wgbZKTsiLLBQLoVXZfnrZfE764=;
+        b=G1caGSLoFUD74fL/ti6PRv76JIzPm8GWjMz1WrziJ8oyL+2iohLZroNntmLYyg2wkA
+         k+4bUn6eoUYGk31xaDJTCPZqUIi/8UoaONhXvsnoVlrdVg9pRYHrZ46Uf5ZsO9Ehbxek
+         j7WbglflaDevGN1ca11fHm+xriQchMv7pTCAmMXdzsVDy6SZdi2p+Yx3kb0JhIw3Drjf
+         rarACXtfL4CSBwFYFg5rSBXYogN7tATDLXoCuRJH7Y7SiETbdQA2YrkFAhWpcnjQf5KZ
+         Z/RBfz881MHflqhFGL4y+MjG5sTAymV+CYSyR8WOYpIOGRclLnbxLlPLEAtGEBLwfgts
+         dU/w==
+X-Gm-Message-State: AJcUukfc+rJJmCnj2xFg4soqqKmlj28Oc5pa57AW8e/nFGR82PbjGGNY
+        yl83Jo0fP7cGpTzHNr5pSt/rJ/bJbTc7kRZvhc4Kjg==
+X-Google-Smtp-Source: ALg8bN4zeoJdNSancnSSoihtHyYsuJwF/DVGcb40jwf6gjxQokiQ+hgT4+xOo7hekXB6MkhfLNH3Ww8bO9AM8dyiHjU=
+X-Received: by 2002:a1f:298e:: with SMTP id p136mr12190154vkp.40.1548835102933;
+ Tue, 29 Jan 2019 23:58:22 -0800 (PST)
 MIME-Version: 1.0
-References: <20190129233426.GA7999@embeddedor>
-In-Reply-To: <20190129233426.GA7999@embeddedor>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 30 Jan 2019 20:58:00 +1300
-X-Gmail-Original-Message-ID: <CAGXu5jJVqbUdF6bVAQYuw9r8emzvy=oJFNJWxM-iSu-t3igeYw@mail.gmail.com>
-Message-ID: <CAGXu5jJVqbUdF6bVAQYuw9r8emzvy=oJFNJWxM-iSu-t3igeYw@mail.gmail.com>
-Subject: Re: [PATCH] lib: zstd: Mark expected switch fall-throughs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>
+References: <20190114095804.27978-1-hch@lst.de> <20190114095804.27978-6-hch@lst.de>
+In-Reply-To: <20190114095804.27978-6-hch@lst.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 30 Jan 2019 08:57:47 +0100
+Message-ID: <CAPDyKFpcHv7KwuVpWcKjxj--n4YOFADWD5WzOCJ6Dca_JjqnAw@mail.gmail.com>
+Subject: Re: [PATCH 05/11] mmc: s3cmci: handle highmem pages
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Ben Dooks <ben-linux@fluff.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 12:34 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
+On Mon, 14 Jan 2019 at 10:58, Christoph Hellwig <hch@lst.de> wrote:
 >
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
+> Instead of setting up a kernel pointer to track the current PIO address,
+> track the offset in the current page, and do an atomic kmap for the page
+> while doing the actual PIO operations.
 >
-> This patch fixes the following warnings:
->
-> lib/zstd/bitstream.h:261:30: warning: this statement may fall through [-W=
-implicit-fallthrough=3D]
-> lib/zstd/bitstream.h:262:30: warning: this statement may fall through [-W=
-implicit-fallthrough=3D]
-> lib/zstd/bitstream.h:263:30: warning: this statement may fall through [-W=
-implicit-fallthrough=3D]
-> lib/zstd/bitstream.h:264:30: warning: this statement may fall through [-W=
-implicit-fallthrough=3D]
-> lib/zstd/bitstream.h:265:30: warning: this statement may fall through [-W=
-implicit-fallthrough=3D]
-> lib/zstd/compress.c:3183:16: warning: this statement may fall through [-W=
-implicit-fallthrough=3D]
-> lib/zstd/decompress.c:1770:18: warning: this statement may fall through [=
--Wimplicit-fallthrough=3D]
-> lib/zstd/decompress.c:2376:15: warning: this statement may fall through [=
--Wimplicit-fallthrough=3D]
-> lib/zstd/decompress.c:2404:15: warning: this statement may fall through [=
--Wimplicit-fallthrough=3D]
-> lib/zstd/decompress.c:2435:16: warning: this statement may fall through [=
--Wimplicit-fallthrough=3D]
-> lib/zstd/huf_compress.c: In function =E2=80=98HUF_compress1X_usingCTable=
-=E2=80=99:
-> lib/zstd/huf_compress.c:535:5: warning: this statement may fall through [=
--Wimplicit-fallthrough=3D]
->   if (sizeof((stream)->bitContainer) * 8 < HUF_TABLELOG_MAX * 4 + 7) \
->      ^
-> lib/zstd/huf_compress.c:558:54: note: in expansion of macro =E2=80=98HUF_=
-FLUSHBITS_2=E2=80=99
->   case 3: HUF_encodeSymbol(&bitC, ip[n + 2], CTable); HUF_FLUSHBITS_2(&bi=
-tC);
->                                                       ^~~~~~~~~~~~~~~
-> lib/zstd/huf_compress.c:559:2: note: here
->   case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bi=
-tC);
->   ^~~~
-> lib/zstd/huf_compress.c:531:5: warning: this statement may fall through [=
--Wimplicit-fallthrough=3D]
->   if (sizeof((stream)->bitContainer) * 8 < HUF_TABLELOG_MAX * 2 + 7) \
->      ^
-> lib/zstd/huf_compress.c:559:54: note: in expansion of macro =E2=80=98HUF_=
-FLUSHBITS_1=E2=80=99
->   case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS_1(&bi=
-tC);
->                                                       ^~~~~~~~~~~~~~~
-> lib/zstd/huf_compress.c:560:2: note: here
->   case 1: HUF_encodeSymbol(&bitC, ip[n + 0], CTable); HUF_FLUSHBITS(&bitC=
-);
->   ^~~~
->   AR      lib/zstd//built-in.a
->
-> Warning level 3 was used: -Wimplicit-fallthrough=3D3
->
-> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthro=
-ugh.
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Nitpick: This one have some trailing whitespace errors, which git
+complains about when I apply it.
+
+No need to re-spin due to this, I can fix it  up.
+
+Kind regards
+Uffe
+
 > ---
->  lib/zstd/bitstream.h    | 5 +++++
->  lib/zstd/compress.c     | 1 +
->  lib/zstd/decompress.c   | 5 ++++-
->  lib/zstd/huf_compress.c | 2 ++
->  4 files changed, 12 insertions(+), 1 deletion(-)
+>  drivers/mmc/host/s3cmci.c | 107 +++++++++++++++++++-------------------
+>  drivers/mmc/host/s3cmci.h |   3 +-
+>  2 files changed, 55 insertions(+), 55 deletions(-)
 >
-> diff --git a/lib/zstd/bitstream.h b/lib/zstd/bitstream.h
-> index a826b99e1d63..3a49784d5c61 100644
-> --- a/lib/zstd/bitstream.h
-> +++ b/lib/zstd/bitstream.h
-> @@ -259,10 +259,15 @@ ZSTD_STATIC size_t BIT_initDStream(BIT_DStream_t *b=
-itD, const void *srcBuffer, s
->                 bitD->bitContainer =3D *(const BYTE *)(bitD->start);
->                 switch (srcSize) {
->                 case 7: bitD->bitContainer +=3D (size_t)(((const BYTE *)(=
-srcBuffer))[6]) << (sizeof(bitD->bitContainer) * 8 - 16);
-> +                       /* fall through */
->                 case 6: bitD->bitContainer +=3D (size_t)(((const BYTE *)(=
-srcBuffer))[5]) << (sizeof(bitD->bitContainer) * 8 - 24);
-> +                       /* fall through */
->                 case 5: bitD->bitContainer +=3D (size_t)(((const BYTE *)(=
-srcBuffer))[4]) << (sizeof(bitD->bitContainer) * 8 - 32);
-> +                       /* fall through */
->                 case 4: bitD->bitContainer +=3D (size_t)(((const BYTE *)(=
-srcBuffer))[3]) << 24;
-> +                       /* fall through */
->                 case 3: bitD->bitContainer +=3D (size_t)(((const BYTE *)(=
-srcBuffer))[2]) << 16;
-> +                       /* fall through */
->                 case 2: bitD->bitContainer +=3D (size_t)(((const BYTE *)(=
-srcBuffer))[1]) << 8;
->                 default:;
+> diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
+> index 10f5219b3b40..1be84426c817 100644
+> --- a/drivers/mmc/host/s3cmci.c
+> +++ b/drivers/mmc/host/s3cmci.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/dmaengine.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/clk.h>
+> +#include <linux/highmem.h>
+>  #include <linux/mmc/host.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/cpufreq.h>
+> @@ -317,26 +318,17 @@ static void s3cmci_check_sdio_irq(struct s3cmci_host *host)
+>         }
+>  }
+>
+> -static inline int get_data_buffer(struct s3cmci_host *host,
+> -                                 u32 *bytes, u32 **pointer)
+> +static inline int get_data_buffer(struct s3cmci_host *host)
+>  {
+> -       struct scatterlist *sg;
+> -
+> -       if (host->pio_active == XFER_NONE)
+> -               return -EINVAL;
+> -
+> -       if ((!host->mrq) || (!host->mrq->data))
+> -               return -EINVAL;
+> -
+>         if (host->pio_sgptr >= host->mrq->data->sg_len) {
+>                 dbg(host, dbg_debug, "no more buffers (%i/%i)\n",
+>                       host->pio_sgptr, host->mrq->data->sg_len);
+>                 return -EBUSY;
+>         }
+> -       sg = &host->mrq->data->sg[host->pio_sgptr];
+> +       host->cur_sg = &host->mrq->data->sg[host->pio_sgptr];
+>
+> -       *bytes = sg->length;
+> -       *pointer = sg_virt(sg);
+> +       host->pio_bytes = host->cur_sg->length;
+> +       host->pio_offset = host->cur_sg->offset;
+>
+>         host->pio_sgptr++;
+>
+> @@ -422,11 +414,16 @@ static void s3cmci_disable_irq(struct s3cmci_host *host, bool transfer)
+>
+>  static void do_pio_read(struct s3cmci_host *host)
+>  {
+> -       int res;
+>         u32 fifo;
+>         u32 *ptr;
+>         u32 fifo_words;
+>         void __iomem *from_ptr;
+> +       void *buf;
+> +
+> +       if (host->pio_active == XFER_NONE)
+> +               goto done;
+> +       if (!host->mrq || !host->mrq->data)
+> +               goto done;
+>
+>         /* write real prescaler to host, it might be set slow to fix */
+>         writel(host->prescaler, host->base + S3C2410_SDIPRE);
+> @@ -435,20 +432,12 @@ static void do_pio_read(struct s3cmci_host *host)
+>
+>         while ((fifo = fifo_count(host))) {
+>                 if (!host->pio_bytes) {
+> -                       res = get_data_buffer(host, &host->pio_bytes,
+> -                                             &host->pio_ptr);
+> -                       if (res) {
+> -                               host->pio_active = XFER_NONE;
+> -                               host->complete_what = COMPLETION_FINALIZE;
+> -
+> -                               dbg(host, dbg_pio, "pio_read(): "
+> -                                   "complete (no more data).\n");
+> -                               return;
+> -                       }
+> +                       if (get_data_buffer(host) < 0)
+> +                               goto done;
+>
+>                         dbg(host, dbg_pio,
+> -                           "pio_read(): new target: [%i]@[%p]\n",
+> -                           host->pio_bytes, host->pio_ptr);
+> +                           "pio_read(): new target: [%i]@[%zu]\n",
+> +                           host->pio_bytes, host->pio_offset);
 >                 }
-> diff --git a/lib/zstd/compress.c b/lib/zstd/compress.c
-> index f9166cf4f7a9..5e0b67003e55 100644
-> --- a/lib/zstd/compress.c
-> +++ b/lib/zstd/compress.c
-> @@ -3182,6 +3182,7 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStr=
-eam *zcs, void *dst, size_t *
->                                 zcs->outBuffFlushedSize =3D 0;
->                                 zcs->stage =3D zcss_flush; /* pass-throug=
-h to flush stage */
+>
+>                 dbg(host, dbg_pio,
+> @@ -470,63 +459,65 @@ static void do_pio_read(struct s3cmci_host *host)
+>                 host->pio_count += fifo;
+>
+>                 fifo_words = fifo >> 2;
+> -               ptr = host->pio_ptr;
+> -               while (fifo_words--)
+> +
+> +               buf = (kmap_atomic(sg_page(host->cur_sg)) + host->pio_offset);
+> +               ptr = buf;
+> +               while (fifo_words--) {
+>                         *ptr++ = readl(from_ptr);
+> -               host->pio_ptr = ptr;
+> +                       host->pio_offset += 4;
+> +               }
+>
+>                 if (fifo & 3) {
+>                         u32 n = fifo & 3;
+>                         u32 data = readl(from_ptr);
+> -                       u8 *p = (u8 *)host->pio_ptr;
+> +                       u8 *p = (u8 *)ptr;
+>
+>                         while (n--) {
+>                                 *p++ = data;
+>                                 data >>= 8;
+> +                               host->pio_offset++;
 >                         }
-> +                       /* fall through */
-
-Perhaps reword the existing comment and move it down?
-
->
->                 case zcss_flush: {
->                         size_t const toFlush =3D zcs->outBuffContentSize =
-- zcs->outBuffFlushedSize;
-> diff --git a/lib/zstd/decompress.c b/lib/zstd/decompress.c
-> index b17846725ca0..269ee9a796c1 100644
-> --- a/lib/zstd/decompress.c
-> +++ b/lib/zstd/decompress.c
-> @@ -1768,6 +1768,7 @@ size_t ZSTD_decompressContinue(ZSTD_DCtx *dctx, voi=
-d *dst, size_t dstCapacity, c
->                         return 0;
 >                 }
->                 dctx->expected =3D 0; /* not necessary to copy more */
-> +               /* fall through */
+> +               kunmap_atomic(buf);
+>         }
 >
->         case ZSTDds_decodeFrameHeader:
->                 memcpy(dctx->headerBuffer + ZSTD_frameHeaderSize_prefix, =
-src, dctx->expected);
-> @@ -2375,7 +2376,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZST=
-D_outBuffer *output, ZSTD_inB
->                         }
->                         zds->stage =3D zdss_read;
+>         if (!host->pio_bytes) {
+> -               res = get_data_buffer(host, &host->pio_bytes, &host->pio_ptr);
+> -               if (res) {
+> -                       dbg(host, dbg_pio,
+> -                           "pio_read(): complete (no more buffers).\n");
+> -                       host->pio_active = XFER_NONE;
+> -                       host->complete_what = COMPLETION_FINALIZE;
+> -
+> -                       return;
+> -               }
+> +               if (get_data_buffer(host) < 0)
+> +                       goto done;
+>         }
+>
+>         enable_imask(host,
+>                      S3C2410_SDIIMSK_RXFIFOHALF | S3C2410_SDIIMSK_RXFIFOLAST);
+> +       return;
+> +
+> +done:
+> +       host->pio_active = XFER_NONE;
+> +       host->complete_what = COMPLETION_FINALIZE;
+> +       dbg(host, dbg_pio, "pio_read(): complete (no more data).\n");
+>  }
+>
+>  static void do_pio_write(struct s3cmci_host *host)
+>  {
+>         void __iomem *to_ptr;
+> -       int res;
+> +       void *buf;
+>         u32 fifo;
+>         u32 *ptr;
+>
+> +       if (host->pio_active == XFER_NONE)
+> +               goto done;
+> +       if (!host->mrq || !host->mrq->data)
+> +               goto done;
+> +
+>         to_ptr = host->base + host->sdidata;
+>
+>         while ((fifo = fifo_free(host)) > 3) {
+>                 if (!host->pio_bytes) {
+> -                       res = get_data_buffer(host, &host->pio_bytes,
+> -                                                       &host->pio_ptr);
+> -                       if (res) {
+> -                               dbg(host, dbg_pio,
+> -                                   "pio_write(): complete (no more data).\n");
+> -                               host->pio_active = XFER_NONE;
+> -
+> -                               return;
+> -                       }
+> +                       if (get_data_buffer(host) < 0)
+> +                               goto done;
+>
+>                         dbg(host, dbg_pio,
+> -                           "pio_write(): new source: [%i]@[%p]\n",
+> -                           host->pio_bytes, host->pio_ptr);
+> +                           "pio_write(): new source: [%i]@[%zd]\n",
+> +                           host->pio_bytes, host->pio_offset);
+>
 >                 }
-> -               /* pass-through */
-> +               /* fall through */
 >
->                 case zdss_read: {
->                         size_t const neededInSize =3D ZSTD_nextSrcSizeToD=
-ecompress(zds->dctx);
-> @@ -2404,6 +2405,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZST=
-D_outBuffer *output, ZSTD_inB
->                         zds->stage =3D zdss_load;
->                         /* pass-through */
->                 }
-> +               /* fall through */
-
-Same ("pass-through" exists a couple lines up)
-
+> @@ -543,13 +534,20 @@ static void do_pio_write(struct s3cmci_host *host)
+>                 host->pio_count += fifo;
 >
->                 case zdss_load: {
->                         size_t const neededInSize =3D ZSTD_nextSrcSizeToD=
-ecompress(zds->dctx);
-> @@ -2436,6 +2438,7 @@ size_t ZSTD_decompressStream(ZSTD_DStream *zds, ZST=
-D_outBuffer *output, ZSTD_inB
->                                 /* pass-through */
->                         }
->                 }
-> +               /* fall through */
-
-Same
-
+>                 fifo = (fifo + 3) >> 2;
+> -               ptr = host->pio_ptr;
+> -               while (fifo--)
+> +               buf = (kmap_atomic(sg_page(host->cur_sg)) + host->pio_offset);
+> +               ptr = buf;
+> +               while (fifo--) {
+>                         writel(*ptr++, to_ptr);
+> -               host->pio_ptr = ptr;
+> +                       host->pio_offset += 4;
+> +               }
+> +               kunmap_atomic(buf);
+>         }
 >
->                 case zdss_flush: {
->                         size_t const toFlushSize =3D zds->outEnd - zds->o=
-utStart;
-> diff --git a/lib/zstd/huf_compress.c b/lib/zstd/huf_compress.c
-> index 40055a7016e6..e727812d12aa 100644
-> --- a/lib/zstd/huf_compress.c
-> +++ b/lib/zstd/huf_compress.c
-> @@ -556,7 +556,9 @@ size_t HUF_compress1X_usingCTable(void *dst, size_t d=
-stSize, const void *src, si
->         n =3D srcSize & ~3; /* join to mod 4 */
->         switch (srcSize & 3) {
->         case 3: HUF_encodeSymbol(&bitC, ip[n + 2], CTable); HUF_FLUSHBITS=
-_2(&bitC);
-> +               /* fall through */
->         case 2: HUF_encodeSymbol(&bitC, ip[n + 1], CTable); HUF_FLUSHBITS=
-_1(&bitC);
-> +               /* fall through */
->         case 1: HUF_encodeSymbol(&bitC, ip[n + 0], CTable); HUF_FLUSHBITS=
-(&bitC);
->         case 0:
->         default:;
+>         enable_imask(host, S3C2410_SDIIMSK_TXFIFOHALF);
+> +       return;
+> +done:
+> +       dbg(host, dbg_pio, "pio_write(): complete (no more data).\n");
+> +       host->pio_active = XFER_NONE;
+>  }
+>
+>  static void pio_tasklet(unsigned long data)
+> @@ -1055,6 +1053,7 @@ static int s3cmci_prepare_pio(struct s3cmci_host *host, struct mmc_data *data)
+>         BUG_ON((data->flags & BOTH_DIR) == BOTH_DIR);
+>
+>         host->pio_sgptr = 0;
+> +       host->cur_sg = &host->mrq->data->sg[host->pio_sgptr];
+>         host->pio_bytes = 0;
+>         host->pio_count = 0;
+>         host->pio_active = rw ? XFER_WRITE : XFER_READ;
+> diff --git a/drivers/mmc/host/s3cmci.h b/drivers/mmc/host/s3cmci.h
+> index 30c2c0dd1bc8..4320f7d832dc 100644
+> --- a/drivers/mmc/host/s3cmci.h
+> +++ b/drivers/mmc/host/s3cmci.h
+> @@ -50,10 +50,11 @@ struct s3cmci_host {
+>
+>         int                     dma_complete;
+>
+> +       struct scatterlist      *cur_sg;
+>         u32                     pio_sgptr;
+>         u32                     pio_bytes;
+>         u32                     pio_count;
+> -       u32                     *pio_ptr;
+> +       u32                     pio_offset;
+>  #define XFER_NONE 0
+>  #define XFER_READ 1
+>  #define XFER_WRITE 2
 > --
 > 2.20.1
 >
-
-Otherwise, yup, looks good.
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
---=20
-Kees Cook
