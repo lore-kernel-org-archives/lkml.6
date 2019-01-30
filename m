@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B02C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839E0C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5EFD2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:46:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 442C121473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:50:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbfA3Xqv (ORCPT
+        id S1726994AbfA3Xt6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:46:51 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57465 "EHLO
+        Wed, 30 Jan 2019 18:49:58 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:49285 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfA3Xqv (ORCPT
+        with ESMTP id S1725828AbfA3Xt6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:46:51 -0500
+        Wed, 30 Jan 2019 18:49:58 -0500
 Received: from 79.184.255.169.ipv4.supernova.orange.pl (79.184.255.169) (HELO aspire.rjw.lan)
  by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id c04a275bb1e7ccb6; Thu, 31 Jan 2019 00:46:48 +0100
+ id 36cded6a8c53d7d1; Thu, 31 Jan 2019 00:49:54 +0100
 From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        mcgrof@kernel.org, linux-nvdimm@lists.01.org, tj@kernel.org,
-        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
-        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
-        pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
-        dave.jiang@intel.com, bvanassche@acm.org
-Subject: Re: [driver-core PATCH v10 6/9] driver core: Attach devices on CPU local to device node
-Date:   Thu, 31 Jan 2019 00:45:42 +0100
-Message-ID: <2520015.o9hhCCUgSl@aspire.rjw.lan>
-In-Reply-To: <154818237710.18753.13303508368380513033.stgit@ahduyck-desk1.amr.corp.intel.com>
-References: <154818223154.18753.12374915684623789884.stgit@ahduyck-desk1.amr.corp.intel.com> <154818237710.18753.13303508368380513033.stgit@ahduyck-desk1.amr.corp.intel.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jisheng Zhang <jszhang@marvell.com>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [RFC PATCH] drivers core: cpu: add hotplug callback to update cpu_dev state to resumed
+Date:   Thu, 31 Jan 2019 00:48:49 +0100
+Message-ID: <2397404.eE4apdlqQK@aspire.rjw.lan>
+In-Reply-To: <20190125150906.27614-1-sudeep.holla@arm.com>
+References: <20190125130701.GA855@vmlxhi-102.adit-jv.com> <20190125150906.27614-1-sudeep.holla@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -44,49 +44,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, January 22, 2019 7:39:37 PM CET Alexander Duyck wrote:
-> Call the asynchronous probe routines on a CPU local to the device node. By
-> doing this we should be able to improve our initialization time
-> significantly as we can avoid having to access the device from a remote
-> node which may introduce higher latency.
+On Friday, January 25, 2019 4:09:06 PM CET Sudeep Holla wrote:
+> The sysfs for the cpu caches are managed by adding devices with cpu
+> as the parent in cpu_device_create() when secondary cpu is brought
+> onlin. Generally when the secondary CPUs are hotplugged back is as part
+> of resume from suspend-to-ram, we call cpu_device_create() from the cpu
+> hotplug state machine while the cpu device associated with that CPU is
+> not yet ready to be resumed as the device_resume() call happens bit later.
+> It's not really needed to set the flag is_prepared for cpu devices are
+> they are mostly pseudo device and hotplug framework deals with state
+> machine and not managed through the cpu device.
 > 
-> For example, in the case of initializing memory for NVDIMM this can have a
-> significant impact as initialing 3TB on remote node can take up to 39
-> seconds while initialing it on a local node only takes 23 seconds. It is
-> situations like this where we will see the biggest improvement.
+> This often results in annoying warning when resuming:
+> Enabling non-boot CPUs ...
+> CPU1: Booted secondary processor
+>  cache: parent cpu1 should not be sleeping
+> CPU1 is up
+> CPU2: Booted secondary processor
+>  cache: parent cpu2 should not be sleeping
+> CPU2 is up
+> .... and so on.
 > 
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
+> Just fix the warning by updating the device state quite early.
+> 
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Reported-by: Jisheng Zhang <jszhang@marvell.com>
+> Reported-by: Steve Longerbeam <slongerbeam@gmail.com>
+> Reported-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 > ---
->  drivers/base/dd.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/base/cpu.c         | 20 +++++++++++++++++++-
+>  include/linux/cpuhotplug.h |  1 +
+>  2 files changed, 20 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index 627ad05064e0..aa6a9c613595 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -829,7 +829,7 @@ static int __device_attach(struct device *dev, bool allow_async)
->  			 */
->  			dev_dbg(dev, "scheduling asynchronous probe\n");
->  			get_device(dev);
-> -			async_schedule(__device_attach_async_helper, dev);
-> +			async_schedule_dev(__device_attach_async_helper, dev);
->  		} else {
->  			pm_request_idle(dev);
->  		}
-> @@ -989,7 +989,7 @@ static int __driver_attach(struct device *dev, void *data)
->  		if (!dev->driver) {
->  			get_device(dev);
->  			dev->p->async_driver = drv;
-> -			async_schedule(__driver_attach_async_helper, dev);
-> +			async_schedule_dev(__driver_attach_async_helper, dev);
->  		}
->  		device_unlock(dev);
->  		return 0;
+> Hi Rafael,
+> 
+> This is getting reported for quite some time. Let me know if you have
+> better solution to fix this harmless yet annoying warnings during system
+> resume.
+
+I'd rather have a flag in struct dev_pm_info that will cause the message to
+be suppressed if set.
+
+It could be used for other purposes too then in princple (like skipping the
+creation of empty "power" attr groups in sysfs for devices that don't
+need them etc.).
+
+
+> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> index eb9443d5bae1..ae0403528bff 100644
+> --- a/drivers/base/cpu.c
+> +++ b/drivers/base/cpu.c
+> @@ -80,6 +80,8 @@ void unregister_cpu(struct cpu *cpu)
+> 
+>  	device_unregister(&cpu->dev);
+>  	per_cpu(cpu_sys_devices, logical_cpu) = NULL;
+> +
+> +	cpuhp_remove_state_nocalls(CPUHP_CPUDEV_PM_PREPARE);
+>  	return;
+>  }
+> 
+> @@ -355,6 +357,20 @@ static int cpu_uevent(struct device *dev, struct kobj_uevent_env *env)
+>  }
+>  #endif
+> 
+> +static int cpu_dev_pm_unset_is_prepared(unsigned int cpu)
+> +{
+> +	struct device *cpu_dev = get_cpu_device(cpu);
+> +
+> +	/*
+> +	 * device_resume sets this for cpu_dev bit later but the child
+> +	 * devices are resumes in the cpu hotplug state machine much
+> +	 * before device_resume is called.
+> +	 */
+> +	if (cpu_dev)
+> +		cpu_dev->power.is_prepared = false;
+> +
+> +	return 0;
+> +}
+>  /*
+>   * register_cpu - Setup a sysfs device for a CPU.
+>   * @cpu - cpu->hotpluggable field set to 1 will generate a control file in
+> @@ -392,7 +408,9 @@ int register_cpu(struct cpu *cpu, int num)
+>  	dev_pm_qos_expose_latency_limit(&cpu->dev,
+>  					PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
+> 
+> -	return 0;
+> +	return cpuhp_setup_state_nocalls(CPUHP_CPUDEV_PM_PREPARE,
+> +					 "base/cpu/dev_pm:prepare",
+> +					 cpu_dev_pm_unset_is_prepared, NULL);
+>  }
+> 
+>  struct device *get_cpu_device(unsigned cpu)
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index fd586d0301e7..2ecb4c9370ce 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -69,6 +69,7 @@ enum cpuhp_state {
+>  	CPUHP_SLAB_PREPARE,
+>  	CPUHP_MD_RAID5_PREPARE,
+>  	CPUHP_RCUTREE_PREP,
+> +	CPUHP_CPUDEV_PM_PREPARE,
+>  	CPUHP_CPUIDLE_COUPLED_PREPARE,
+>  	CPUHP_POWERPC_PMAC_PREPARE,
+>  	CPUHP_POWERPC_MMU_CTX_PREPARE,
+> --
+> 2.17.1
 > 
 > 
 
