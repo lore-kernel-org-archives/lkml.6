@@ -3,168 +3,214 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91732C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483C1C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA3A2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 113DC2077B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 03:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729213AbfA3D0l (ORCPT
+        id S1729927AbfA3D1C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 22:26:41 -0500
-Received: from gateway30.websitewelcome.com ([192.185.148.2]:40972 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727527AbfA3D0k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 22:26:40 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 2ABA6E753
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 21:05:36 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ogC0gYroFdnCeogC0gafap; Tue, 29 Jan 2019 21:05:36 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=57532 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gogAF-000hdt-E9; Tue, 29 Jan 2019 21:05:35 -0600
-Subject: Re: [Nouveau] [PATCH] drm/nouveau: mark expected switch fall-through
-To:     Ben Skeggs <skeggsb@gmail.com>
-Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20190129203046.GA28384@embeddedor>
- <CACAvsv7KU_fyyvAW3L6aCXPon599=tC4CyXdCF6sVOqqOu3SDA@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <f57bdbe8-5096-f36c-4997-9200847449f5@embeddedor.com>
-Date:   Tue, 29 Jan 2019 21:03:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 29 Jan 2019 22:27:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54208 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727527AbfA3D1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 22:27:02 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6C54D19CF2C;
+        Wed, 30 Jan 2019 03:27:00 +0000 (UTC)
+Received: from redhat.com (ovpn-123-79.rdu2.redhat.com [10.10.123.79])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7765B183B0;
+        Wed, 30 Jan 2019 03:26:58 +0000 (UTC)
+Date:   Tue, 29 Jan 2019 22:26:57 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        virtualization@lists.linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Alexey Kardashevskiy <aik@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
+Message-ID: <20190129222021-mutt-send-email-mst@kernel.org>
+References: <87zhrj8kcp.fsf@morokweng.localdomain>
+ <87womn8inf.fsf@morokweng.localdomain>
+ <20190129134750-mutt-send-email-mst@kernel.org>
+ <6c68f7f7-1b28-6eba-9b8b-2c32efac9701@redhat.com>
+ <20190129213137-mutt-send-email-mst@kernel.org>
+ <94ab8910-594e-a056-c799-5536d8ae2b0e@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CACAvsv7KU_fyyvAW3L6aCXPon599=tC4CyXdCF6sVOqqOu3SDA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gogAF-000hdt-E9
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:57532
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <94ab8910-594e-a056-c799-5536d8ae2b0e@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 30 Jan 2019 03:27:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ben,
-
-I wonder if you can take this too:
-
-https://lore.kernel.org/patchwork/patch/1001180/
-
-Thanks
---
-Gustavo
-
-On 1/29/19 8:51 PM, Ben Skeggs wrote:
-> Got it, thanks.
+On Wed, Jan 30, 2019 at 11:05:42AM +0800, Jason Wang wrote:
 > 
-> On Wed, 30 Jan 2019 at 06:55, Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->>
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
->>
->> This patch fixes the following warning:
->>
->> drivers/gpu/drm/nouveau/nouveau_bo.c:1434:53: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>
->> Warning level 3 was used: -Wimplicit-fallthrough=3
->>
->> This patch is part of the ongoing efforts to enabling
->> -Wimplicit-fallthrough.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/gpu/drm/nouveau/nouveau_bo.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
->> index 73eff52036d2..a72be71c45b4 100644
->> --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
->> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
->> @@ -1434,7 +1434,7 @@ nouveau_ttm_io_mem_reserve(struct ttm_bo_device *bdev, struct ttm_mem_reg *reg)
->>                 if (drm->client.mem->oclass < NVIF_CLASS_MEM_NV50 || !mem->kind)
->>                         /* untiled */
->>                         break;
->> -               /* fallthrough, tiled memory */
->> +               /* fall through - tiled memory */
->>         case TTM_PL_VRAM:
->>                 reg->bus.offset = reg->start << PAGE_SHIFT;
->>                 reg->bus.base = device->func->resource_addr(device, 1);
->> --
->> 2.20.1
->>
->> _______________________________________________
->> Nouveau mailing list
->> Nouveau@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/nouveau
+> On 2019/1/30 上午10:36, Michael S. Tsirkin wrote:
+> > On Wed, Jan 30, 2019 at 10:24:01AM +0800, Jason Wang wrote:
+> > > On 2019/1/30 上午3:02, Michael S. Tsirkin wrote:
+> > > > On Tue, Jan 29, 2019 at 03:42:44PM -0200, Thiago Jung Bauermann wrote:
+> > > > > Fixing address of powerpc mailing list.
+> > > > > 
+> > > > > Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
+> > > > > 
+> > > > > > Hello,
+> > > > > > 
+> > > > > > With Christoph's rework of the DMA API that recently landed, the patch
+> > > > > > below is the only change needed in virtio to make it work in a POWER
+> > > > > > secure guest under the ultravisor.
+> > > > > > 
+> > > > > > The other change we need (making sure the device's dma_map_ops is NULL
+> > > > > > so that the dma-direct/swiotlb code is used) can be made in
+> > > > > > powerpc-specific code.
+> > > > > > 
+> > > > > > Of course, I also have patches (soon to be posted as RFC) which hook up
+> > > > > > <linux/mem_encrypt.h> to the powerpc secure guest support code.
+> > > > > > 
+> > > > > > What do you think?
+> > > > > > 
+> > > > > >   From d0629a36a75c678b4a72b853f8f7f8c17eedd6b3 Mon Sep 17 00:00:00 2001
+> > > > > > From: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> > > > > > Date: Thu, 24 Jan 2019 22:08:02 -0200
+> > > > > > Subject: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
+> > > > > > 
+> > > > > > The host can't access the guest memory when it's encrypted, so using
+> > > > > > regular memory pages for the ring isn't an option. Go through the DMA API.
+> > > > > > 
+> > > > > > Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> > > > Well I think this will come back to bite us (witness xen which is now
+> > > > reworking precisely this path - but at least they aren't to blame, xen
+> > > > came before ACCESS_PLATFORM).
+> > > > 
+> > > > I also still think the right thing would have been to set
+> > > > ACCESS_PLATFORM for all systems where device can't access all memory.
+> > > > 
+> > > > But I also think I don't have the energy to argue about power secure
+> > > > guest anymore.  So be it for power secure guest since the involved
+> > > > engineers disagree with me.  Hey I've been wrong in the past ;).
+> > > > 
+> > > > But the name "sev_active" makes me scared because at least AMD guys who
+> > > > were doing the sensible thing and setting ACCESS_PLATFORM (unless I'm
+> > > > wrong? I reemember distinctly that's so) will likely be affected too.
+> > > > We don't want that.
+> > > > 
+> > > > So let's find a way to make sure it's just power secure guest for now
+> > > > pls.
+> > > > 
+> > > > I also think we should add a dma_api near features under virtio_device
+> > > > such that these hacks can move off data path.
+> > > 
+> > > Anyway the current Xen code is conflict with spec which said:
+> > > 
+> > > "If this feature bit is set to 0, then the device has same access to memory
+> > > addresses supplied to it as the driver has. In particular, the device will
+> > > always use physical addresses matching addresses used by the driver
+> > > (typically meaning physical addresses used by the CPU) and not translated
+> > > further, and can access any address supplied to it by the driver. When
+> > > clear, this overrides any platform-specific description of whether device
+> > > access is limited or translated in any way, e.g. whether an IOMMU may be
+> > > present. "
+> > > 
+> > > I wonder how much value that the above description can give us. It's kind of
+> > > odd that the behavior of "when the feature is not negotiated" is described
+> > > in the spec.
+> > Hmm what's odd about it? We need to describe the behaviour is all cases.
+> 
+> 
+> Well, try to limit the behavior of 'legacy' driver is tricky or even
+> impossible. Xen is an exact example for this.
+
+So don't. Xen got grand-fathered in because when that came
+along we thought it's a one off thing. Was easier to just
+add that as a special case. But really >99% of people
+have a hypervisor device with direct guest memory access.
+All else is esoterica.
+
+> 
+> > 
+> > > Personally I think we can remove the above and then we can
+> > > switch to use DMA API unconditionally in guest driver. It may have single
+> > > digit regression probably, we can try to overcome it.
+> > > 
+> > > Thanks
+> > This has been discussed ad nauseum. virtio is all about compatibility.
+> > Losing a couple of lines of code isn't worth breaking working setups.
+> > People that want "just use DMA API no tricks" now have the option.
+> > Setting a flag in a feature bit map is literally a single line
+> > of code in the hypervisor. So stop pushing for breaking working
+> > legacy setups and just fix it in the right place.
+> 
+> 
+> I may miss soemthing, which kind of legacy setup is broken? Do you mean
+> using virtio without IOMMU_PLATFORM on platform with IOMMU? We actually
+> unbreak this setup.
+> 
+> Thanks
+
+
+Legacy setups by definition are working setups.  The rules are pretty
+simple. By default virtio == full guest memory access.
+If your access is limited or translated in any way, you use a device
+with ACCESS_PLATFORM. When in doubt use ACCESS_PLATFORM.
+
+Xen was there before, and it does not have a flag and it still
+wants ACCESS_PLATFORM semantics without setting ACCESS_PLATFORM
+sometimes. So we don't want to break existing setups,
+and we make an exception in that case.
+I don't really see any good reason to make more exceptions.
+
+Nor IMHO should we trust all platform people to know about virtio
+and have special kind of DMA API just for virtio.
+
+
+> 
+> > 
+> > > > By the way could you please respond about virtio-iommu and
+> > > > why there's no support for ACCESS_PLATFORM on power?
+> > > > 
+> > > > I have Cc'd you on these discussions.
+> > > > 
+> > > > 
+> > > > Thanks!
+> > > > 
+> > > > 
+> > > > > > ---
+> > > > > >    drivers/virtio/virtio_ring.c | 5 ++++-
+> > > > > >    1 file changed, 4 insertions(+), 1 deletion(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > > > > index cd7e755484e3..321a27075380 100644
+> > > > > > --- a/drivers/virtio/virtio_ring.c
+> > > > > > +++ b/drivers/virtio/virtio_ring.c
+> > > > > > @@ -259,8 +259,11 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
+> > > > > >    	 * not work without an even larger kludge.  Instead, enable
+> > > > > >    	 * the DMA API if we're a Xen guest, which at least allows
+> > > > > >    	 * all of the sensible Xen configurations to work correctly.
+> > > > > > +	 *
+> > > > > > +	 * Also, if guest memory is encrypted the host can't access
+> > > > > > +	 * it directly. In this case, we'll need to use the DMA API.
+> > > > > >    	 */
+> > > > > > -	if (xen_domain())
+> > > > > > +	if (xen_domain() || sev_active())
+> > > > > >    		return true;
+> > > > > > 
+> > > > > >    	return false;
+> > > > > -- 
+> > > > > Thiago Jung Bauermann
+> > > > > IBM Linux Technology Center
