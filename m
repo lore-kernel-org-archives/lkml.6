@@ -2,96 +2,137 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82094C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CA7C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588C52087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0817218D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X1qxyF/E"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="4Bxx/y76"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733110AbfA3SfG (ORCPT
+        id S1733126AbfA3Sff (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:35:06 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36491 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733050AbfA3SfG (ORCPT
+        Wed, 30 Jan 2019 13:35:35 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:60862 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733050AbfA3Sff (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:35:06 -0500
-Received: by mail-lf1-f68.google.com with SMTP id a16so416596lfg.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:35:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GQ0dKTYavvdRK2craM+1+cJoElQMefWKTyFdjDSik8w=;
-        b=X1qxyF/EyL/kleGQ7Tjtw1XsuimunA+g7IjHYnNk1jOhzaYVvBUM7mgt7jI/8yksWs
-         JVKtOIkOam8fvkOTAcT+EXX3nID0pJa4msDaSJfu6FhX51lOFDNEkRoVKyRdpuRXZn2p
-         krfsJtBNAN0w5pzx0qDZrkyfQX17HUpefJ+9g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GQ0dKTYavvdRK2craM+1+cJoElQMefWKTyFdjDSik8w=;
-        b=HhproeilB2vtQk/FnYvWLus1ky+QtwqvbB2DRxhNde8P26XAbO3hv0obRuoYt13g68
-         J0oEooHONGf9eIjKktJwZ4C/Q3Z4cnA1BLI6ZM/zg8C15xWtgd/ZWqAWZf++Rmf5IlCU
-         T3b7rj8KurtkeP/0+dgsTtVt+sAgAvGyec4H/I0atwDHWhQGaJwNSqjF9kkCHU7xhm8/
-         IqwTmbxcv6K87EzUfA0vyEaVNjtCW0tw2ZqJhN/DbbQMtPZ1gJ4Ca9zCUa0+Q6cCztIa
-         XhUjnYHhDzgkoHWqsqVjmnObnElegDuzicDIwI2c6qrUpDn4B7CcszTFeZCsTbOFgYKw
-         GSlQ==
-X-Gm-Message-State: AJcUukee0tGU31gaooidDa2Qm0cMCZVEea/w1sbdi5QkFJOYqIZCdna2
-        29VLOctELwqbgOdM4BW1lpjIw/uBq2g=
-X-Google-Smtp-Source: ALg8bN788JLZ9sSWeFBVIjMLH64thmQwdhQhOjDNUlN7/FmrNiT0jbAi/oUNF2v1UnF+tGdCDuTA8Q==
-X-Received: by 2002:ac2:55a3:: with SMTP id y3mr21806194lfg.93.1548873304083;
-        Wed, 30 Jan 2019 10:35:04 -0800 (PST)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id p67sm418231lfe.14.2019.01.30.10.35.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 10:35:03 -0800 (PST)
-Received: by mail-lf1-f47.google.com with SMTP id u18so374367lff.10
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:35:03 -0800 (PST)
-X-Received: by 2002:a19:7018:: with SMTP id h24mr24289646lfc.162.1548872894574;
- Wed, 30 Jan 2019 10:28:14 -0800 (PST)
+        Wed, 30 Jan 2019 13:35:35 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0UIT0lt075111;
+        Wed, 30 Jan 2019 18:35:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=ACWEh6HzBHmJZCdYbSI2j5nHsH2aiDUTZoXaRxS6Trs=;
+ b=4Bxx/y76EXVwScZPSGQuTfKPiJKcfDZEtUUGcw62nQW3uR8mo9khoF3bRuOCzjkWMKoi
+ +MauwVUxNx29FZJBOEKtP7ns8zjJxbYLtYyXQl9gRFT4V4tKJMwaumt4K2N6v7hqYGoE
+ jmyXlzx7poziEP1aCjQth13xJ/8yXp6xhTSR66HYJDnOt51KeqZ9aME1WpDi4Y5+V4Ar
+ BuPh81crZLSH3ZM8sGv1dmhFqx535Xv0eV3GETNZ4Db5U3gD7prWsnndshLi6AlHbSvq
+ 6wslai1g9cVx+BtPaSbFIf2bIifkK3VEYrjfT3Nkyepvfavc7xcz/vKlJpP9LILdTcOa mg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2q8g6rc908-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jan 2019 18:35:17 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0UIZGQh005864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Jan 2019 18:35:16 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0UIZGQe026214;
+        Wed, 30 Jan 2019 18:35:16 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Jan 2019 10:35:15 -0800
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id E8DB66A05F7; Wed, 30 Jan 2019 13:35:13 -0500 (EST)
+Date:   Wed, 30 Jan 2019 13:35:13 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de,
+        Thomas.Lendacky@amd.com
+Subject: Re: [PATCH 0/5 v5] Fix virtio-blk issue with SWIOTLB
+Message-ID: <20190130183513.GB27284@char.us.oracle.com>
+References: <20190130164007.26497-1-joro@8bytes.org>
 MIME-Version: 1.0
-References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-3-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1546314952-15990-3-git-send-email-yong.wu@mediatek.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 30 Jan 2019 10:27:37 -0800
-X-Gmail-Original-Message-ID: <CAE=gft61E614+kXLGr7Z1MZOrPAsTAcM2qU8GGqKq61vfSFvOg@mail.gmail.com>
-Message-ID: <CAE=gft61E614+kXLGr7Z1MZOrPAsTAcM2qU8GGqKq61vfSFvOg@mail.gmail.com>
-Subject: Re: [PATCH v5 02/20] iommu/mediatek: Use a struct as the platform data
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190130164007.26497-1-joro@8bytes.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9152 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901300140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 7:56 PM Yong Wu <yong.wu@mediatek.com> wrote:
->
-> Use a struct as the platform special data instead of the enumeration.
-> This is a prepare patch for adding mt8183 iommu support.
->
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+On Wed, Jan 30, 2019 at 05:40:02PM +0100, Joerg Roedel wrote:
+> Hi,
+> 
+> here is the next version of this patch-set. Previous
+> versions can be found here:
+> 
+> 	V1: https://lore.kernel.org/lkml/20190110134433.15672-1-joro@8bytes.org/
+> 
+> 	V2: https://lore.kernel.org/lkml/20190115132257.6426-1-joro@8bytes.org/
+> 
+> 	V3: https://lore.kernel.org/lkml/20190123163049.24863-1-joro@8bytes.org/
+> 
+> 	V4: https://lore.kernel.org/lkml/20190129084342.26030-1-joro@8bytes.org/
+> 
+> The problem solved here is a limitation of the SWIOTLB implementation,
+> which does not support allocations larger than 256kb.  When the
+> virtio-blk driver tries to read/write a block larger than that, the
+> allocation of the dma-handle fails and an IO error is reported.
+> 
+> Changes to v4 are:
+> 
+> 	- Added Reviewed-by tags from Christoph
+> 
+> 	- Added missing EXPORT_SYMBOL(_GPL) lines
+> 
+> Please review.
 
-Reviewed-by: Evan Green <evgreen@chromium.org>
+I can put it in my tree and send it to Linus .. unless folks want
+to do it through a different tree?
+
+
+> 
+> Thanks,
+> 
+> 	Joerg
+> Joerg Roedel (5):
+>   swiotlb: Introduce swiotlb_max_mapping_size()
+>   swiotlb: Add is_swiotlb_active() function
+>   dma: Introduce dma_max_mapping_size()
+>   virtio: Introduce virtio_max_dma_size()
+>   virtio-blk: Consider virtio_max_dma_size() for maximum segment size
+> 
+>  Documentation/DMA-API.txt    |  8 ++++++++
+>  drivers/block/virtio_blk.c   | 10 ++++++----
+>  drivers/virtio/virtio_ring.c | 11 +++++++++++
+>  include/linux/dma-mapping.h  | 16 ++++++++++++++++
+>  include/linux/swiotlb.h      | 11 +++++++++++
+>  include/linux/virtio.h       |  2 ++
+>  kernel/dma/direct.c          | 12 ++++++++++++
+>  kernel/dma/swiotlb.c         | 14 ++++++++++++++
+>  8 files changed, 80 insertions(+), 4 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
