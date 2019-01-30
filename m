@@ -2,96 +2,122 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 393B8C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B59AC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B12020882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548876503;
-	bh=VnzoG7/iCKa9YCYAgbYp0VXwFOAxlljWOU2eIxuF4sk=;
-	h=Subject:From:Cc:References:To:In-Reply-To:Date:List-ID:From;
-	b=U8NdlZjipQX1dOpUmwYF8WMlkDLSJW9hprhazVJ4j7C0Ez1VCY7Rta49lBirImy1x
-	 c4XPA4yHbF5LGT9F3NXNseruwNyKGMfcZeI8hmbGqv2rAyAT+V58dCaeMI4CcIlBqd
-	 oZUF/KZLR8cIIRsR5hyjA5b/lNqVLq0oWKoC2P2Q=
+	by mail.kernel.org (Postfix) with ESMTP id 70C9B20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:30:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="MBC71ieo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387663AbfA3T2V (ORCPT
+        id S2387629AbfA3Tae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:28:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727114AbfA3T2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:28:20 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33E712087F;
-        Wed, 30 Jan 2019 19:28:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548876500;
-        bh=VnzoG7/iCKa9YCYAgbYp0VXwFOAxlljWOU2eIxuF4sk=;
-        h=Subject:From:Cc:References:To:In-Reply-To:Date:From;
-        b=AggPMcUF7RLNvhPGgW2gMnw+EwBkDQWOhHiKY2zsUBxusIojzXPAwu5qXHJJ/Qoww
-         nskqddWBt++L0xTALced66op570KM9i32NN/1cympGwU7JRCCR2NPXEs7okHEMTILj
-         VTeyIQjVs/eWCWh6Ez0TCVZp2nHR7+IotMkSZqo8=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 30 Jan 2019 14:30:34 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:33013 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387575AbfA3Tae (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:30:34 -0500
+Received: by mail-yb1-f196.google.com with SMTP id m132so316244ybf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:30:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=u4lGJa1eqm311IjOZIxyEEk5pH4RS2fwSIKRlT/c2bc=;
+        b=MBC71ieoROyzpJYMm/RoM48yebOSHThzuo7d3oPiagXJfjLAD5AOCg12b0GXqJMHgo
+         byQdg6fKygYXahH3gh70/beX8rcnd9A2w876UhzSUZRp1EC54kTTM02cUEIHzQF34GZP
+         9/ViuRdoaByPgSw4yx6n4p8Dlns+T5Pw4L87bee6Hw8nuxjJXB+l8mHHb+lYM9bSEsYh
+         p5FehOxBq3izQVdqa3zLxdA2sCUSafZvMUY7D91qtNGspuKGT1tm/XhwTSyKShEMwbNq
+         n0dQ3h57xSEY0s45uLv7teLyVuciOaDK0y8LFHR9WeANLuoFKihiVwRYKw4TT3+TpzQm
+         g2Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=u4lGJa1eqm311IjOZIxyEEk5pH4RS2fwSIKRlT/c2bc=;
+        b=R7H73/HSX7C3lfnNK56M2aT5jd8wn4e6xWCwY/boNZaUb0I5It/Rg0EiyKG4ivNb57
+         mcigafHUXoohdV0FQ1bApf5TpCEhMiHzRAi/dFU7G0YgjBZeJ0JR3rUIAFojZkcKiup+
+         aAI8Btp3rQiXXCffslmv1iiUGqisVdxg/ydchjPjE20z3Iv4JQZja0ksaBO9FO5dj57r
+         iMJ4VG5dKcFE1bhWXHCJNommbDB0kVvnynIgZXuxT1wbUn/gs8wQzs/QfNzSJfO8pyMQ
+         0IOJ/vKSRAx3JRCgpWoLtBlYFpKTOl6GW3grhfcX3L3/5GEhT7EuNDuJV5tYTbBNT1fw
+         uX3Q==
+X-Gm-Message-State: AJcUukfHNyY3L+CeryC0voVseGUhfnvT1r9Ik0NEphCHQ5SlHdS18a03
+        YgCBUrbPPlUkD3qeoVAOO8C4tg==
+X-Google-Smtp-Source: ALg8bN6aWM4PfrnEWZ0n7/syAfcjFDV7n2/VR+Rg6LPSuim4pyDJ52BuMPbRR8vl2JyQ6Vsoq/7SFg==
+X-Received: by 2002:a25:9001:: with SMTP id s1mr29449505ybl.493.1548876628452;
+        Wed, 30 Jan 2019 11:30:28 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:6c95])
+        by smtp.gmail.com with ESMTPSA id c127sm789304ywb.67.2019.01.30.11.30.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 11:30:27 -0800 (PST)
+Date:   Wed, 30 Jan 2019 14:30:26 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Tejun Heo <tj@kernel.org>, Michal Hocko <mhocko@kernel.org>,
+        Chris Down <chris@chrisdown.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+Message-ID: <20190130193026.GA21410@cmpxchg.org>
+References: <20190128151859.GO18811@dhcp22.suse.cz>
+ <20190128154150.GQ50184@devbig004.ftw2.facebook.com>
+ <20190128170526.GQ18811@dhcp22.suse.cz>
+ <20190128174905.GU50184@devbig004.ftw2.facebook.com>
+ <20190129144306.GO18811@dhcp22.suse.cz>
+ <20190129145240.GX50184@devbig004.ftw2.facebook.com>
+ <20190130165058.GA18811@dhcp22.suse.cz>
+ <20190130170658.GY50184@devbig004.ftw2.facebook.com>
+ <CALvZod5ma62fRKqrAhMcuNT3GYT3FpRX+DCmeVr2nDg1u=9T8w@mail.gmail.com>
+ <20190130192712.GA21279@cmpxchg.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] clk: aspeed: Setup video engine clocking
-From:   Stephen Boyd <sboyd@kernel.org>
-Message-ID: <154887649939.169292.7755423118611897741@swboyd.mtv.corp.google.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <1544559161-21468-1-git-send-email-eajames@linux.ibm.com> <1544559161-21468-3-git-send-email-eajames@linux.ibm.com> <CACPK8XcY_c9NzNv-WyZcz+mZ5c2jixyCzEQAK-+t0QvQ_uJXwg@mail.gmail.com> <81b100b7-252e-3145-fb34-17a9c0cdd91e@linux.ibm.com>
-User-Agent: alot/0.8
-To:     Eddie James <eajames@linux.ibm.com>, Joel Stanley <joel@jms.id.au>
-In-Reply-To: <81b100b7-252e-3145-fb34-17a9c0cdd91e@linux.ibm.com>
-Date:   Wed, 30 Jan 2019 11:28:19 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190130192712.GA21279@cmpxchg.org>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Eddie James (2018-12-14 07:47:53)
->=20
->=20
-> On 12/13/2018 07:02 PM, Joel Stanley wrote:
->=20
-> >
-> >> +       { 0x0, 2 },
-> >> +       { 0x1, 2 },
-> >> +       { 0x2, 3 },
-> >> +       { 0x3, 4 },
-> >> +       { 0x4, 5 },
-> >> +       { 0x5, 6 },
-> >> +       { 0x6, 7 },
-> >> +       { 0x7, 8 },
-> >> +       { 0 }
-> >> +};
-> >> @@ -317,6 +338,7 @@ struct aspeed_reset {
-> >>          [ASPEED_RESET_PECI]     =3D 10,
-> >>          [ASPEED_RESET_I2C]      =3D  2,
-> >>          [ASPEED_RESET_AHB]      =3D  1,
-> >> +       [ASPEED_RESET_VIDEO]    =3D  6,
-> > You've added the reset line to the ASPEED_CLK_GATE_ECLK clock so you
-> > do not need to separately expose the reset controller. Instead
-> > enabling the clock will deassert the rest line for you.
-> >
-> > This means you should drop the change from the header too, and it
-> > affects the bindings document for the video engine.
->=20
-> I want that reset available separately for use in the video engine=20
-> actually. I could do without it, but it's somewhat useful.
->=20
+On Wed, Jan 30, 2019 at 02:27:12PM -0500, Johannes Weiner wrote:
+> On Wed, Jan 30, 2019 at 11:11:44AM -0800, Shakeel Butt wrote:
+> > Hi Tejun,
+> > 
+> > On Wed, Jan 30, 2019 at 9:07 AM Tejun Heo <tj@kernel.org> wrote:
+> > >
+> > > Hello, Michal.
+> > >
+> > > On Wed, Jan 30, 2019 at 05:50:58PM +0100, Michal Hocko wrote:
+> > > > > Yeah, cgroup.events and .stat files as some of the local stats would
+> > > > > be useful too, so if we don't flip memory.events we'll end up with sth
+> > > > > like cgroup.events.local, memory.events.tree and memory.stats.local,
+> > > > > which is gonna be hilarious.
+> > > >
+> > > > Why cannot we simply have memory.events_tree and be done with it? Sure
+> > > > the file names are not goin to be consistent which is a minus but that
+> > > > ship has already sailed some time ago.
+> > >
+> > > Because the overall cost of shitty interface will be way higher in the
+> > > longer term.  cgroup2 interface is far from perfect but is way better
+> > > than cgroup1 especially for the memory controller.  Why do you think
+> > > that is?
+> > >
+> > 
+> > I thought you are fine with the separate interface for the hierarchical events.
+> 
+> Every other file in cgroup2 is hierarchical, but for recursive
+> memory.events you'd need to read memory.events_tree?
+> 
+> Do we hate our users that much? :(
 
-Joel, are you happy with these patches? I'm tempted to drop these
-changes from my queue because there hasn't been any news in over a
-month.
-
+FTR, I would be okay with adding .local versions to existing files
+where such a behavior could be useful. But that seems to be a separate
+discussion from fixing memory.events here.
