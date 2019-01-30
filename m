@@ -2,148 +2,106 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE34C282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A506C282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 726D221848
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2D7521848
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 06:11:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5OdNA/d"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kb3qU0xJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfA3GIp (ORCPT
+        id S1728893AbfA3GLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 01:08:45 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39717 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbfA3GIo (ORCPT
+        Wed, 30 Jan 2019 01:11:03 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40014 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfA3GLD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 01:08:44 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t9-v6so19640568ljh.6;
-        Tue, 29 Jan 2019 22:08:43 -0800 (PST)
+        Wed, 30 Jan 2019 01:11:03 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i12so10927849pfo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 22:11:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tK9mSywMDOVGyM/DNFGFSATJj9vh7JMH2LOwZoMxCSU=;
-        b=C5OdNA/dZVLi++NRbdwbRb/GMtJvl/Xicn6gxjRWYNRcF3TmontlmU1lTiQEmkwqoB
-         BhTTgGNx1w7iLP3IdZFH1owU2nUGy9gHn8zJo8hlPydipnQxMkhYFrwRLqRWJv8agl5+
-         krCF7oMQHMd4FSwPyuMQzmwT5jyyuPPDnyaM1IO1UTp1zqdyQZ0RZrqdrqR7xX5YsCeK
-         kgHcAS7wC11OFPgUsjaE/XYl1xwrzjRn9V4ETMdTtSt/e8gvJ0tVgykOTsXTjb9xZQyA
-         G7LUQ4BJh4vRXV/j7hgb+/N9PvFzZQhImxtWIHw1VUkAgPTkJ9Jj/fXlOvlvCdhM26RR
-         RdEg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=s3pPF054WEm8OyrXxyPjZFhtv/s9dWvBEg00z0qjpF4=;
+        b=kb3qU0xJ3xOSzyns5X5241P6RvtUWe5fYq2dcvHBCTuUo5QP4+jScF4cJxrwRVQCC1
+         lwJiVU977td9AAhJ4qJepv6W7Btxrki3ok2SsPteqi7JE0Dj6SYiC8bXLnaZuphqZmJ1
+         Ty5IvCNp0L5ffFvP9KtRYnKBWyZC5CoOpEIXM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tK9mSywMDOVGyM/DNFGFSATJj9vh7JMH2LOwZoMxCSU=;
-        b=ImiNU2wG4DfpG+v8Vx7oWAwKuOOEh/4iyur/E5kzU3/I57UTlLsAVDX7c9n4p9ikNC
-         y/Bimo5OsYwWAh3Zp3rRJP0VzW0DDMSPGXou2RWlkwwHUQJdPAGJ3xJ0abL9EIZZNiX3
-         sEVevW2M3yAHk0NWP4jMWt3Qh2ei3TZk+venBtBNQ+PQ2g1pdOXqguK+EPEIVu1Pz9v7
-         Huhq0t37agAM60lWnGUl1bAqPnFpeD9caDbWSdkPLFhLDknH7yVT9uejI160NJRUOc+R
-         joeqKxFqlTQt2Yc7QmiZLojV1mAzyuCkNYLp2sgqiunpalMO5J9U4Hq0DTB5LVvsESz1
-         KLJQ==
-X-Gm-Message-State: AJcUukdxMId7GXtdO+0EiA//0ybIbn+xMvqjJZdP3KjjL1/ZGKSthSu/
-        P18IPte0ZCV53QHQ0bbtlQ1YEEsfd9OgRCLxa/I=
-X-Google-Smtp-Source: ALg8bN7iYMwPXszwp3vtyKv8V/4Hnn2sE0fNEzApNWxJGKodCBxAAidMGvxSKGF41DyvRdXfoPvYYDgtGnKnLob34/4=
-X-Received: by 2002:a2e:9c87:: with SMTP id x7-v6mr22035012lji.196.1548828522133;
- Tue, 29 Jan 2019 22:08:42 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=s3pPF054WEm8OyrXxyPjZFhtv/s9dWvBEg00z0qjpF4=;
+        b=JlOER9HCa26Sw+s1Yu8gRMJGU3elgfPXayLfzddI+k0hMKGX5V5xqLH0tfJoR6USC5
+         IUAxaZbw5D2S3ttEA+bk38Xqty16VvO3Z/LH2ndUeLfL4TA5B3G41NKg0Io0FC5e/MFP
+         gR8dvNsvRgKcvC33qDiTkeaADncCnqKFMat22nT4QNtpl/oM0wm4TZOGh3b3pDbbD0Mc
+         8UJ6bdVh5AOUQqy24Ftvh6T2wwUJhtnm2JYcz2+oUahUjLxxQRfZkZZcrkBkBlTeOMDE
+         McOeCcQs3jLrIo3TXRXiugDsqEjgoTRUDtrm+bKwGCsU7h5wbiw1hiOkkzoNdutcOmlG
+         TJ7w==
+X-Gm-Message-State: AJcUukdhzgsmsWL3j3Zhg5XZvFGi3egJhShM3U/d4VuIONOP2qMyH15D
+        KZEtZYe0Jg/hv7DR3LeQrYJeCQ==
+X-Google-Smtp-Source: ALg8bN6RPg4y7Z4+W8+BchPwK3kz+yolMBfg7BW738pfnZp4EzIEkA6M5jbQrPOooq4YIttrU0H/Bg==
+X-Received: by 2002:a62:4156:: with SMTP id o83mr29164466pfa.72.1548828662467;
+        Tue, 29 Jan 2019 22:11:02 -0800 (PST)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id b13sm1556889pfj.66.2019.01.29.22.11.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 22:11:01 -0800 (PST)
+Date:   Tue, 29 Jan 2019 22:10:59 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Kalle Valo <kvalo@codeaurora.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>,
+        Erik Stromdahl <erik.stromdahl@gmail.com>,
+        Wen Gong <wgong@codeaurora.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH for-5.0] ath10k: correct bus type for WCN3990
+Message-ID: <20190130061059.GA2387@tuxbook-pro>
+References: <20190129231201.42230-1-briannorris@chromium.org>
 MIME-Version: 1.0
-References: <20190129200858.19773-1-goldsimon@gmx.de> <CANk1AXTcbqgoCYkTY-ssMvpAbdoncrkOxyRfu-piLE2tQ15a2g@mail.gmail.com>
-In-Reply-To: <CANk1AXTcbqgoCYkTY-ssMvpAbdoncrkOxyRfu-piLE2tQ15a2g@mail.gmail.com>
-From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-Date:   Wed, 30 Jan 2019 07:08:30 +0100
-Message-ID: <CAAh8qsz9g-20ZOZpT2Fh5003ZkH=HQ9sUBVHWqooB2Pt-OXA4Q@mail.gmail.com>
-Subject: Re: [PATCH] ARM: socfpga: fix base address of SDR controller
-To:     Alan Tull <atull@kernel.org>
-Cc:     Dinh Nguyen <dinguyen@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Moritz Fischer <mdf@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129231201.42230-1-briannorris@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 11:31 PM Alan Tull <atull@kernel.org> wrote:
->
-> On Tue, Jan 29, 2019 at 2:09 PM Simon Goldschmidt
-> <simon.k.r.goldschmidt@gmail.com> wrote:
->
-> Hi Simon,
->
-> Thanks for submitting.   A couple of things...
->
-> > diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
-> > index f365003f0..8f6c1a5d6 100644
-> > --- a/arch/arm/boot/dts/socfpga.dtsi
-> > +++ b/arch/arm/boot/dts/socfpga.dtsi
-> > @@ -788,9 +788,9 @@
-> >                         reg = <0xfffec000 0x100>;
-> >                 };
-> >
-> > -               sdr: sdr@ffc25000 {
-> > +               sdr: sdr@ffc20000 {
-> >                         compatible = "altr,sdr-ctl", "syscon";
-> > -                       reg = <0xffc25000 0x1000>;
-> > +                       reg = <0xffc20000 0x6000>;
->
-> The binding doc will also need this change (in a separate patch)
-> Documentation/devicetree/bindings/arm/altera/socfpga-sdram-controller.txt
+On Tue 29 Jan 15:12 PST 2019, Brian Norris wrote:
 
-Right. I didn't realise there is an actual address in that file as it says
-"Example"...
+> WCN3990 is SNOC, not PCI. This prevents probing WCN3990.
+> 
+> Fixes: 367c899f622c ("ath10k: add bus type check in ath10k_init_hw_params")
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
 
-But I'll make sure to change that if this patch is accepted.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
->
-> > diff --git a/arch/arm/mach-socfpga/self-refresh.S b/arch/arm/mach-socfpga/self-refresh.S
-> > index f2d7f883e..bd7759357 100644
-> > --- a/arch/arm/mach-socfpga/self-refresh.S
-> > +++ b/arch/arm/mach-socfpga/self-refresh.S
-> > @@ -19,8 +19,8 @@
-> >  #define MAX_LOOP_COUNT         1000
-> >
-> >  /* Register offset */
-> > -#define SDR_CTRLGRP_LOWPWREQ_ADDR       0x54
-> > -#define SDR_CTRLGRP_LOWPWRACK_ADDR      0x58
-> > +#define SDR_CTRLGRP_LOWPWREQ_ADDR       0x5054
-> > +#define SDR_CTRLGRP_LOWPWRACK_ADDR      0x5058
->
-> These offsets are used for ldr/sdr and are limited to 12 bits.  This
-> won't build if CONFIG_SOCFPGA_SUSPEND is enabled.
->
-> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:
-> Assembler messages:
-> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:65:
-> Error: bad immediate value for offset (20564)
-> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:67:
-> Error: bad immediate value for offset (20564)
-> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:72:
-> Error: bad immediate value for offset (20568)
-> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:101:
-> Error: bad immediate value for offset (20564)
-> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:103:
-> Error: bad immediate value for offset (20564)
-> /home/atull/repos/linux-socfpga/arch/arm/mach-socfpga/self-refresh.S:108:
-> Error: bad immediate value for offset (20568)
-> /home/atull/repos/linux-socfpga/scripts/Makefile.build:367: recipe for
-> target 'arch/arm/mach-socfpga/self-refresh.o' failed
-
-Oops, you're right. Sorry for that. I just saw now that socfpga_defconfig
-leaves CONFIG_SOCFPGA_SUSPEND inactive. I'll make sure to test that if it
-comes to v2 (depending on the discussion).
-
-Thanks,
-Simon
+> ---
+> This was a regression in 4.20.
+> 
+>  drivers/net/wireless/ath/ath10k/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
+> index 399b501f3c3c..e8891f5fc83a 100644
+> --- a/drivers/net/wireless/ath/ath10k/core.c
+> +++ b/drivers/net/wireless/ath/ath10k/core.c
+> @@ -548,7 +548,7 @@ static const struct ath10k_hw_params ath10k_hw_params_list[] = {
+>  	{
+>  		.id = WCN3990_HW_1_0_DEV_VERSION,
+>  		.dev_id = 0,
+> -		.bus = ATH10K_BUS_PCI,
+> +		.bus = ATH10K_BUS_SNOC,
+>  		.name = "wcn3990 hw1.0",
+>  		.continuous_frag_desc = true,
+>  		.tx_chain_mask = 0x7,
+> -- 
+> 2.20.1.495.gaa96b0ce6b-goog
+> 
