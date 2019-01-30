@@ -4,58 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B010C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 103C1C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDE6D20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:30:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D61D820989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:31:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SPqa7QQR"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bzhs9qXf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730374AbfA3JaR (ORCPT
+        id S1730223AbfA3JbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:30:17 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40134 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726577AbfA3JaQ (ORCPT
+        Wed, 30 Jan 2019 04:31:23 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43832 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726577AbfA3JbX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:30:16 -0500
-Received: by mail-lj1-f193.google.com with SMTP id n18-v6so20072074lji.7
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:30:16 -0800 (PST)
+        Wed, 30 Jan 2019 04:31:23 -0500
+Received: by mail-lf1-f66.google.com with SMTP id u18so16835035lff.10
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:31:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aYTNODS+SExLCzBWxNqtKae9gWk4/P8WpLgQQjinLvQ=;
-        b=SPqa7QQRafsp8Wa3PQ2G3cPCkhbH2aJ/3H+HhbSRePIXlZgBDHmcfGhxpeTY8Wzsrm
-         JOkqw/fDdN/EwiszgzSAoxVGqYbKqFf6NPM0EXVyC3f8I4JBioFlmOV5CnuHdoTDsRio
-         MbQtmcAwDlG7sGNilXBdZdjiIhhlshbZmb94M=
+        bh=5olWaqjb7x80gD4BNcQwMsktXckzDlly11atHEqv1Jk=;
+        b=bzhs9qXfjjXjLbxKwmn8if/G9l+scj73HmsErDyC+qIZcRlh2jmewpzo777mbUsmnS
+         hb/L/MSyTGN1yft22M8W/BS9qpB2cAV5KAG9SmViCjpN8RBJVL/q+YO+3Zb9iHpENYB6
+         Va2B8QW/T2LiBx7X1gmDCamqb2AgnqHmSvZNA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aYTNODS+SExLCzBWxNqtKae9gWk4/P8WpLgQQjinLvQ=;
-        b=kf5IDsKJXtQn4aAdYSWyyJVwRSnIodnxlQlAym8JARNv7sIc6E4lyxgJrdWAZIFxuI
-         KSY2TGeGhADox4HoQ9uXdutFLPjYM6qJvZ9zbFqNP+j26xgVKQcvoQe+UIshSetlBWjC
-         J7t123idKQTR11r+FplSyZZvYQ9W1hpsI+A/KsD18BZYIPqidUdLlLTQ6Tyvb5V0+Kal
-         kf/CGotTSX4cXS27pzZP2t0m45IGlVSQGIshpP96uvMEe7r9Gfbxy+1oxj6nQ5fXBVO9
-         RxsObeN7m1x2h85NruNfvXWYN2hiCIv7hrwpg2hchqlBQ00ubHYwIGI99XeuJblXeu+B
-         biLw==
-X-Gm-Message-State: AJcUukdtr2BC7dRYmunj5bc2oWbjFHil5H0RZnC+1J0c4Tpnb2rPVPg6
-        5M+oEFSz76TN70ArJfQH0prVmUNLEUswJ3CSTPKh4g==
-X-Google-Smtp-Source: ALg8bN4qP+N1rJBTWoMbcuXJmJDOU4FQrncPwvitjBpwNkNt36N5QxQZAOaOgHtbY553EGlgXsY/GLAlFU/dFJtnvpQ=
-X-Received: by 2002:a2e:9356:: with SMTP id m22-v6mr23590611ljh.135.1548840615446;
- Wed, 30 Jan 2019 01:30:15 -0800 (PST)
+        bh=5olWaqjb7x80gD4BNcQwMsktXckzDlly11atHEqv1Jk=;
+        b=p2Lj5tMGcj2hpHV2RzpN65b7ZrVKM3YkHBmUCrBQV8rI6cTDVHp30pfJ5fGRYftdkC
+         Afcif7w0X1iGnQc/xuuiQ7csfNZ7vBu9Fmd5ky3Ps8zo4D8nX2s8H3eXKXlO03TlHepk
+         jDhBRQICqLSzVM9M8uxU9crStRzMrlfYoNGFcvH/WRGVFp2nRuPNRX/T2t5jujD76yDQ
+         OnHaE4ZrbiJULfsNsPTDRUsHIGbnZ1ctW5eWjnKLqjWeeqqcnlUqHY2rn/izNX95CgvC
+         6ye3sKmBdLDuduZOyucXKwkTxgO+cPyXZlW9tmbpDo36pJmfKdC4ox8vUhxU1uCpuYBw
+         dIhg==
+X-Gm-Message-State: AJcUukdZIhUraqSWwBWOO7hcpfTJpppq240HZJKg7T5u+3zXVEGT2tv2
+        PhMHfaIW54FMD8PHEDapT5J5YgQLOoorVf9kawSKTg==
+X-Google-Smtp-Source: ALg8bN5WjYLj1ouCzDt95/wRbCJWkdbndIvPkJlioVcbT5asJOv1NwrC8rjdUm7l/s5kH/HMS47Q3ula4mLhuunwo8k=
+X-Received: by 2002:a19:f20:: with SMTP id e32mr22594885lfi.51.1548840681740;
+ Wed, 30 Jan 2019 01:31:21 -0800 (PST)
 MIME-Version: 1.0
 References: <1548410393-6981-1-git-send-email-zhouyanjie@zoho.com>
- <1548688799-129840-1-git-send-email-zhouyanjie@zoho.com> <1548688799-129840-3-git-send-email-zhouyanjie@zoho.com>
-In-Reply-To: <1548688799-129840-3-git-send-email-zhouyanjie@zoho.com>
+ <1548688799-129840-1-git-send-email-zhouyanjie@zoho.com> <1548688799-129840-4-git-send-email-zhouyanjie@zoho.com>
+In-Reply-To: <1548688799-129840-4-git-send-email-zhouyanjie@zoho.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 30 Jan 2019 10:30:04 +0100
-Message-ID: <CACRpkdZ08riGsySXzKsPgRxdTJL0UPLYSd95y54AP6KeUchR1A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] Pinctrl: Ingenic: Add missing parts for JZ4770 and JZ4780.
+Date:   Wed, 30 Jan 2019 10:31:10 +0100
+Message-ID: <CACRpkdYgj-Ng-b4PVWdZx3knR9ac6srp6uxeu72K=4KyMj2VGw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] Pinctrl: Ingenic: Unify the function name prefix
+ to "ingenic_gpio_".
 To:     Zhou Yanjie <zhouyanjie@zoho.com>
 Cc:     linux-mips@vger.kernel.org,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
@@ -70,22 +71,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 4:28 PM Zhou Yanjie <zhouyanjie@zoho.com> wrote:
+On Mon, Jan 28, 2019 at 4:29 PM Zhou Yanjie <zhouyanjie@zoho.com> wrote:
 
 > From: Zhou Yanjie <zhouyanjie@cduestc.edu.cn>
 >
-> Add mmc2 for JZ4770 and JZ4780:
-> According to the datasheet, both JZ4770 and JZ4780 have mmc2. But this
-> part of the original code is missing. It is worth noting that JZ4770's
-> mmc2 supports 8bit mode while JZ4780's does not, so we added the
-> corresponding code for both models.
->
-> Add nemc-wait for JZ4770 and JZ4780:
-> Both JZ4770 and JZ4780 have a nemc-wait pin. But this part of the
-> original code is missing.
->
-> Add mac for JZ4770:
-> JZ4770 have a mac. But this part of the original code is missing.
+> In the original code, some function names begin with "ingenic_gpio_",
+> and some with "gpio_ingenic_". For the sake of uniform style,
+> all of them are changed to the beginning of "ingenic_gpio_".
 >
 > Signed-off-by: Zhou Yanjie <zhouyanjie@cduestc.edu.cn>
 
