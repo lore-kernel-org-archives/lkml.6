@@ -2,225 +2,152 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF005C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFD9C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7838520821
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548874431;
-	bh=8THRmyz+fgVaniTI/ueITJ/39qS9j7bJWcj5iJMtXUo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=VTbmMkbIuFsmy2zQnJq0ScVC+sXe6ss0OEJON74Qz1Xivji9mVU8H1r14Z1/O5Djo
-	 zfbyAqMYtuYLTWIxYoho2xX5FqbyYGnaeYIcSr22vqm2b2mCQEw+Q1yJ/9NRBRnUbB
-	 G5ZcQNNjQ0YxRY0WU0VwWvf1H14asiyqd5Z8FEbI=
+	by mail.kernel.org (Postfix) with ESMTP id C0D1920989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387499AbfA3Sxt (ORCPT
+        id S1733264AbfA3SxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:53:49 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34972 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387480AbfA3Sxr (ORCPT
+        Wed, 30 Jan 2019 13:53:05 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:42993 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbfA3SxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:53:47 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 81so568625otj.2;
-        Wed, 30 Jan 2019 10:53:45 -0800 (PST)
+        Wed, 30 Jan 2019 13:53:05 -0500
+Received: by mail-io1-f70.google.com with SMTP id a2so402956ioq.9
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:53:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n82G04yy4y3goYBawCI7wFPB8cbwDuNMggACM2cuDHk=;
-        b=inQi00FgZD7pqz/FUfro3jR2gfmKOf0aO1hq07xCKaerZoCijF7YEAgusecES6nvxZ
-         5z0/Kc/bAeybKi1tSjEaDQaEcCjU3Wl655/m0+k6Nz/uoEOy+6/Zv0bfIbpK2ypfKQdJ
-         tbOvYoprDWUBPXPug0LugwmtJ1cQxH+KXj5hrQhzDUBQWkEyTcyO4abJEg4S6wTozwtd
-         3w/qRcRpLXLlDsdeO0YwaI/hg0LcFSFJx4faqLSKXy7j056V+4HCmvRa8+Wwa8Xl5045
-         9k9uNjZAigVGCN6TdEUCvRQ46Wer2jl6g91xsXmqPHmKVLniGWbZbDbM1S6xHWh75twm
-         wGDg==
-X-Gm-Message-State: AJcUukc12ujspAztjD0HG2U4Nn9y6wNN+28jSnn2xNwOPRbuG/65KUik
-        p4n6mcHPZ4nF2LYCbLWflg==
-X-Google-Smtp-Source: ALg8bN78dpbhX+G1WlRrgcaNgGSK7wsj/zturmTUWLqS9PIiYBxcZiupeuhNZ1kO86BSOnAWgnL4Cw==
-X-Received: by 2002:a9d:e8c:: with SMTP id 12mr23937974otj.297.1548874425431;
-        Wed, 30 Jan 2019 10:53:45 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q26sm830341otf.73.2019.01.30.10.53.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 10:53:44 -0800 (PST)
-Date:   Wed, 30 Jan 2019 12:53:44 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
-        mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [RFC PATCH v3 06/10] devicetree: bindings: Document first ROHM
- BD70528 bindings
-Message-ID: <20190130185344.GA14789@bogus>
-References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
- <eb5d03f3adc72db580a10f95ff6cb07aefce5b47.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=vOcTGncngWsW3rYNwCIuTM9LGApBnxFnXzN6J6+oUhs=;
+        b=awqdrF5A6qdZK3wvOPo7wFq3SDnlKdfhQIqRD/yL3Ic2jyLcXhLSCMTv2LUO1FuBmR
+         bXvaqwrailtewADUBP9FVBsgQ0cB12beMehB8GWyWVsFJuUPeTmm3SodzwTF5yKwJmmo
+         L+S6paiHbBcL6qWF3Aeha5/x4jf7VD2b8qFAOKrC3em5pLNNlcgbV9EomC61ldHhopYL
+         J6jzCGhMlZ6XR3Yn8Qmnxl4ssgOdxXkChKyrBo1cDlHhtIWwWuzyF6cagTfQzyxztW3t
+         46UGbhXLNp4AUG/flUAnskFXyHZCV4T6VSyDLMenxWXZOxDSJ7QG2o39lgEn4XArgPpB
+         84qQ==
+X-Gm-Message-State: AHQUAub+4LIA5Usynb89nsx3uK0PxXcslw8XBykZHBU9DkdHzR1s6adW
+        HZ/AE5DFwafNJPIUP//mI/nSjbz7Z5kbYxyYqLaNZFDDLEWP
+X-Google-Smtp-Source: AHgI3IYFlHfHT+zxkK36+K8SMD4wyVONsEmq4kUDAjArdvgqM9LEr8aPa6iX93I9tSmuLGl/PU1/wEf8QneavaPksulUOJlNU2dN
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb5d03f3adc72db580a10f95ff6cb07aefce5b47.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a6b:f614:: with SMTP id n20mr7145355ioh.15.1548874383934;
+ Wed, 30 Jan 2019 10:53:03 -0800 (PST)
+Date:   Wed, 30 Jan 2019 10:53:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000074cbc30580b16bc3@google.com>
+Subject: general protection fault in relay_open_buf
+From:   syzbot <syzbot+16c3a70e1e9b29346c43@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, ebiggers@google.com,
+        jrdr.linux@gmail.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, rientjes@google.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 11:09:55AM +0200, Matti Vaittinen wrote:
-> Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-> drivers) and 4 GPIO pins which can be configured for I/O or
-> as interrupt sources withe configurable trigger levels.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 104 +++++++++++++++++++++
->  1 file changed, 104 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> new file mode 100644
-> index 000000000000..21801440a53a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
-> @@ -0,0 +1,104 @@
-> +* ROHM BD70528 Power Management Integrated Circuit bindings
-> +
-> +BD70528MWV is an ultra-low Iq general purpose single-chip power management IC
-> +for battery-powered portable devices. The IC integrates 3 ultra-low current
-> +consumption buck converters, 3 LDOs and 2 LED Drivers. Also included are 4
-> +GPIOs, a real-time clock (RTC), a 32kHz clock gate, high-accuracy VREF
-> +for use with an external ADC, flexible dual-input power path, 10 bits SAR ADC
-> +for battery temperature monitor and 1S battery charger with scalable charge
-> +currents.
-> +
-> +Required properties:
-> + - compatible		: Should be "rohm,bd70528"
-> + - reg			: I2C slave address.
-> + - interrupt-parent	: Phandle to the parent interrupt controller.
+Hello,
 
-Don't document this. It is implied and could be in a parent node.
+syzbot found the following crash on:
 
-> + - interrupts		: The interrupt line the device is connected to.
-> + - interrupt-controller	: To indicate bd70528 acts as an interrupt controller.
-> + - #interrupt-cells	: Should be 2. usage is compliant to the 2 cells
-> +			  variant of ../interrupt-controller/interrupts.txt
-> + - gpio-controller	: To indicate bd70528 acts as a gpio controller.
-> + - #gpio-cells		: Should be 2. The first cell is the pin number and
-> +			  the second cell is used to specify flags. See
-> +			  ../gpio/gpio.txt for more information.
-> + - clock-frequency	: Should be 32768
+HEAD commit:    02495e76ded5 Add linux-next specific files for 20190130
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12cf10df400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a2b2e9c0bc43c14d
+dashboard link: https://syzkaller.appspot.com/bug?extid=16c3a70e1e9b29346c43
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13266698c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1715bb64c00000
 
-Forget to drop this?
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+16c3a70e1e9b29346c43@syzkaller.appspotmail.com
 
-> + - #clock-cells		: Should be 0.
-> + - regulators:		: List of child nodes that specify the regulators.
-> +			  Please see ../regulator/rohm,bd70528-regulator.txt
-> +
-> +Optional properties:
-> + - clock-output-names	: Should contain name for output clock.
-> +
-> +Example:
-> +/* external oscillator */
-> +osc: oscillator {
-> +	compatible = "fixed-clock";
-> +	#clock-cells = <1>;
-> +	clock-frequency  = <32768>;
-> +	clock-output-names = "osc";
-> +};
-> +
-> +pmic: bd70528@4b {
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 8092 Comm: syz-executor405 Not tainted 5.0.0-rc4-next-20190130  
+#22
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:relay_set_buf_dentry kernel/relay.c:412 [inline]
+RIP: 0010:relay_open_buf.part.0+0x7cb/0xb40 kernel/relay.c:458
+Code: c1 ea 03 80 3c 02 00 0f 85 4c 03 00 00 49 8d 7d 58 4d 89 ac 24 90 00  
+00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 1b 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffff888088897670 EFLAGS: 00010203
+RAX: dffffc0000000000 RBX: ffff88809f2b3080 RCX: 1ffff110110c6919
+RDX: 0000000000000008 RSI: ffffffff81833b80 RDI: 0000000000000047
+RBP: ffff8880888976e8 R08: 0000000000000006 R09: ffff8880886348c8
+R10: ffff888088634000 R11: 0000000000000000 R12: ffff88809f5ef580
+R13: ffffffffffffffef R14: 0000000000000000 R15: 0000000000000000
+FS:  00000000021c4880(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000006cf090 CR3: 00000000a4ccd000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  relay_open_buf kernel/relay.c:447 [inline]
+  relay_open kernel/relay.c:597 [inline]
+  relay_open+0x5f3/0xaf0 kernel/relay.c:561
+  do_blk_trace_setup+0x50d/0xdb0 kernel/trace/blktrace.c:532
+  __blk_trace_setup+0xe3/0x190 kernel/trace/blktrace.c:577
+  blk_trace_ioctl+0x170/0x300 kernel/trace/blktrace.c:716
+  blkdev_ioctl+0x141/0x2120 block/ioctl.c:591
+  block_ioctl+0xee/0x130 fs/block_dev.c:1914
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x444af9
+Code: e8 cc ab 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 db ce fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffd22903da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000444af9
+RDX: 0000000020000040 RSI: 00000000c0481273 RDI: 0000000000000003
+RBP: 000000000000d8fa R08: 00000000021c4880 R09: 00000000004002e0
+R10: 000000000000000f R11: 0000000000000246 R12: 0000000000401e60
+R13: 0000000000401ef0 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace d79fd6b85e15805c ]---
+RIP: 0010:relay_set_buf_dentry kernel/relay.c:412 [inline]
+RIP: 0010:relay_open_buf.part.0+0x7cb/0xb40 kernel/relay.c:458
+Code: c1 ea 03 80 3c 02 00 0f 85 4c 03 00 00 49 8d 7d 58 4d 89 ac 24 90 00  
+00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 1b 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffff888088897670 EFLAGS: 00010203
+RAX: dffffc0000000000 RBX: ffff88809f2b3080 RCX: 1ffff110110c6919
+RDX: 0000000000000008 RSI: ffffffff81833b80 RDI: 0000000000000047
+RBP: ffff8880888976e8 R08: 0000000000000006 R09: ffff8880886348c8
+R10: ffff888088634000 R11: 0000000000000000 R12: ffff88809f5ef580
+R13: ffffffffffffffef R14: 0000000000000000 R15: 0000000000000000
+FS:  00000000021c4880(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000006cf090 CR3: 00000000a4ccd000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-pmic@4b
 
-Node names should be generic.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> +	compatible = "rohm,bd70528";
-> +	reg = <0x4b>;
-> +	interrupt-parent = <&gpio1>;
-> +	interrupts = <29 GPIO_ACTIVE_LOW>;
-> +	clocks = <&osc 0>;
-> +	#clock-cells = <0>;
-> +	clock-output-names = "bd70528-32k-out";
-> +	#gpio-cells = <2>;
-> +	gpio-controller;
-> +	interrupt-controller;
-> +	#interrupt-cells = <2>;
-> +
-> +	regulators {
-> +		buck1: BUCK1 {
-> +			regulator-name = "buck1";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <3400000>;
-> +			regulator-boot-on;
-> +			regulator-ramp-delay = <125>;
-> +		};
-> +		buck2: BUCK2 {
-> +			regulator-name = "buck2";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-boot-on;
-> +			regulator-ramp-delay = <125>;
-> +		};
-> +		buck3: BUCK3 {
-> +			regulator-name = "buck3";
-> +			regulator-min-microvolt = <800000>;
-> +			regulator-max-microvolt = <1800000>;
-> +			regulator-boot-on;
-> +			regulator-ramp-delay = <250>;
-> +		};
-> +		ldo1: LDO1 {
-> +			regulator-name = "ldo1";
-> +			regulator-min-microvolt = <1650000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-boot-on;
-> +		};
-> +		ldo2: LDO2 {
-> +			regulator-name = "ldo2";
-> +			regulator-min-microvolt = <1650000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			regulator-boot-on;
-> +		};
-> +
-> +		ldo3: LDO3 {
-> +			regulator-name = "ldo3";
-> +			regulator-min-microvolt = <1650000>;
-> +			regulator-max-microvolt = <3300000>;
-> +		};
-> +		led_ldo1: LED_LDO1 {
-> +			regulator-name = "led_ldo1";
-> +			regulator-min-microvolt = <200000>;
-> +			regulator-max-microvolt = <300000>;
-> +		};
-> +		led_ldo2: LED_LDO2 {
-> +			regulator-name = "led_ldo2";
-> +			regulator-min-microvolt = <200000>;
-> +			regulator-max-microvolt = <300000>;
-> +		};
-> +	};
-> +};
-> -- 
-> 2.14.3
-> 
-> 
-> -- 
-> Matti Vaittinen
-> ROHM Semiconductors Finland SWDC
-> Kiviharjunlenkki 1E
-> 90220 OULU
-> FINLAND
-> 
-> ~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
