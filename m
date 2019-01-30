@@ -2,143 +2,112 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD4EC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E4EC282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E61120989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D200620989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733312AbfA3SxF (ORCPT
+        id S2387414AbfA3SxK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:53:05 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:58063 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729363AbfA3SxF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:53:05 -0500
-Received: by mail-it1-f197.google.com with SMTP id n124so446489itb.7
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:53:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=fg+s8VemDqIS1Dm3ntxKLLmNxG7rXfSeD/eYWANBE04=;
-        b=GxmyJtrFXLB+i6FP7vbOeYdW/2cYumXLCnkUvmuqkcFdi/60xQ/Lluj33SIXZxufzQ
-         R8z+C5w/E5q1wK7VS4x32yQHiZW/UomsRQXzzFyBz8M+EIcuApSU6A3/bFsBfo6sgjcp
-         dtoslyTEGR6SilFONI67/g4szUBMAhlgTRzxoxph83dgGsAwiAU5bOkILL1t6mZr8zkR
-         DRe2CA7fGoEuwqPzTNC+wchfzFZCszRxukZI3Od4qW7oqImnHXLN9gP2enCOMSyHH39J
-         2A4Qpx7b+dv05CdOWcac9NB5R4aBDDFwbPA4lnWSUenuIpL4QOeXUEpX069D8hGx1xZy
-         5pvg==
-X-Gm-Message-State: AHQUAuY99+933Qln1d6p4FIpOTPSWeKXPdAL5x+wPV14A9pYrg6Ezb3c
-        BAh/C8+N+WYAi8qB8Prcfn1Pu0q4VSmROlWnWuOb9DQlazVa
-X-Google-Smtp-Source: AHgI3IaFmCwo0MU1pG/2QLdd3BLlHpj8O3UibzM+1ha9h58jtUuUA8TYjQHO7wC0WyTfylviYed+epjNesHzR3R2SCZZmb6UCCRU
-MIME-Version: 1.0
-X-Received: by 2002:a02:3b2b:: with SMTP id c43mr7160347jaa.15.1548874384164;
- Wed, 30 Jan 2019 10:53:04 -0800 (PST)
-Date:   Wed, 30 Jan 2019 10:53:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000784c000580b16bdd@google.com>
-Subject: general protection fault in debugfs_create_files
-From:   syzbot <syzbot+a9d09761be47db706560@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Wed, 30 Jan 2019 13:53:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729401AbfA3SxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 13:53:08 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1F1B37AE8B;
+        Wed, 30 Jan 2019 18:53:07 +0000 (UTC)
+Received: from llong.com (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E2A925D6A6;
+        Wed, 30 Jan 2019 18:53:02 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Waiman Long <longman@redhat.com>
+Subject: [RESEND PATCH v4 0/3] fs/dcache: Track # of negative dentries
+Date:   Wed, 30 Jan 2019 13:52:35 -0500
+Message-Id: <1548874358-6189-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 30 Jan 2019 18:53:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+ v3->v4:
+  - Drop patch 4 as it is just a minor optimization.
+  - Add a cc:stable tag to patch 1.
+  - Clean up some comments in patch 3.
 
-syzbot found the following crash on:
+ v2->v3:
+  - With confirmation that the dummy array in dentry_stat structure
+    was never a replacement of a previously used field, patch 3 is now
+    reverted back to use one of dummy field as the negative dentry count
+    instead of adding a new field.
 
-HEAD commit:    02495e76ded5 Add linux-next specific files for 20190130
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=172ed528c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a2b2e9c0bc43c14d
-dashboard link: https://syzkaller.appspot.com/bug?extid=a9d09761be47db706560
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149209ef400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e00c2f400000
+ v1->v2:
+  - Clarify what the new nr_dentry_negative per-cpu counter is tracking
+    and open-code the increment and decrement as suggested by Dave Chinner.
+  - Append the new nr_dentry_negative count as the 7th element of dentry-state
+    instead of replacing one of the dummy entries.
+  - Remove patch "fs/dcache: Make negative dentries easier to be
+    reclaimed" for now as I need more time to think about what
+    to do with it.
+  - Add 2 more patches to address issues found while reviewing the
+    dentry code.
+  - Add another patch to change the conditional branch of
+    nr_dentry_negative accounting to conditional move so as to reduce
+    the performance impact of the accounting code.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a9d09761be47db706560@syzkaller.appspotmail.com
+This patchset addresses 2 issues found in the dentry code and adds a
+new nr_dentry_negative per-cpu counter to track the total number of
+negative dentries in all the LRU lists.
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 8264 Comm: syz-executor060 Not tainted 5.0.0-rc4-next-20190130  
-#22
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:debugfs_create_files+0x2e/0x140 block/blk-mq-debugfs.c:842
-Code: 41 56 49 89 fe 41 55 41 54 49 89 f4 53 48 89 d3 e8 87 d0 f3 fd 49 8d  
-7e 58 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 e3 00 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-RSP: 0018:ffff88809331f868 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffffffff8881d400 RCX: ffffffff82d9f665
-RDX: 0000000000000008 RSI: ffffffff838e48c9 RDI: 0000000000000047
-RBP: ffff88809331f888 R08: ffff8880a0c76400 R09: fffffbfff13024e6
-R10: fffffbfff13024e5 R11: ffffffff8981272b R12: ffff888099398ed0
-R13: ffff888099398ed0 R14: ffffffffffffffef R15: ffff888099398f98
-FS:  0000000001edd880(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f835b5dc6f0 CR3: 00000000a0365000 CR4: 00000000001406e0
-Call Trace:
-  blk_mq_debugfs_register+0xec/0x4e0 block/blk-mq-debugfs.c:865
-  blk_register_queue+0x1bc/0x370 block/blk-sysfs.c:944
-  __device_add_disk+0xe9f/0x13c0 block/genhd.c:723
-  device_add_disk+0x2b/0x40 block/genhd.c:739
-  add_disk include/linux/genhd.h:422 [inline]
-  loop_add+0x71d/0xa30 drivers/block/loop.c:1999
-  loop_control_ioctl+0x18e/0x470 drivers/block/loop.c:2100
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4420d9
-Code: e8 6c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffddb7abd48 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004420d9
-RDX: 0000000000000000 RSI: 0000000000004c80 RDI: 0000000000000003
-RBP: 0000000000010555 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402f30
-R13: 0000000000402fc0 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace 5909b82e24594aac ]---
-RIP: 0010:debugfs_create_files+0x2e/0x140 block/blk-mq-debugfs.c:842
-Code: 41 56 49 89 fe 41 55 41 54 49 89 f4 53 48 89 d3 e8 87 d0 f3 fd 49 8d  
-7e 58 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 e3 00 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-RSP: 0018:ffff88809331f868 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffffffff8881d400 RCX: ffffffff82d9f665
-RDX: 0000000000000008 RSI: ffffffff838e48c9 RDI: 0000000000000047
-RBP: ffff88809331f888 R08: ffff8880a0c76400 R09: fffffbfff13024e6
-R10: fffffbfff13024e5 R11: ffffffff8981272b R12: ffff888099398ed0
-R13: ffff888099398ed0 R14: ffffffffffffffef R15: ffff888099398f98
-FS:  0000000001edd880(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f835b5dc6f0 CR3: 00000000a0365000 CR4: 00000000001406e0
+Patch 1 fixes a bug in the accounting of nr_dentry_unused in
+shrink_dcache_sb().
 
+Patch 2 removes the ____cacheline_aligned_in_smp tag from super_block
+LRU lists.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Patch 3 adds the new nr_dentry_negative per-cpu counter.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Various filesystem related tests were run and no statistically
+significant changes in performance outside of the possible noise range
+was observed.
+
+Waiman Long (3):
+  fs/dcache: Fix incorrect nr_dentry_unused accounting in
+    shrink_dcache_sb()
+  fs: Don't need to put list_lru into its own cacheline
+  fs/dcache: Track & report number of negative dentries
+
+ Documentation/sysctl/fs.txt | 26 ++++++++++++++++----------
+ fs/dcache.c                 | 38 +++++++++++++++++++++++++++++++++-----
+ include/linux/dcache.h      |  7 ++++---
+ include/linux/fs.h          |  9 +++++----
+ 4 files changed, 58 insertions(+), 22 deletions(-)
+
+-- 
+1.8.3.1
+
