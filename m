@@ -2,101 +2,165 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6F6C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E03C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:57:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E03D820989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:57:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 741FA20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:57:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="jrmkeiyJ"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="nwd/mVqG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387423AbfA3S5m (ORCPT
+        id S2387454AbfA3S5r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:57:42 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40586 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732343AbfA3S5m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:57:42 -0500
-Received: by mail-ot1-f66.google.com with SMTP id s5so548041oth.7
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:57:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s4H+MWh/dES/Ms4FXiZklCwn4GhqLleEMus9FXGLxxo=;
-        b=jrmkeiyJv5z21YXhH0wtf1bxDLIqRek/IsthQLmaoMF6mvxiKFCfRdXM7emIDs4p1s
-         terTzTZ+/0OgAFz3KcFtoGLp0BRUljSsZo9eUX4UouJDv4NJ80xmbbcE1kliKnMeNd1z
-         XF9fiNkIfAQnXIZw/Kujryh+hV+lvgzhVpLcaKuCX2xhXe8dAvbEIxUlODE0/7v3h0JL
-         Ifli0fyzCEi0qQPkde68j2BaqfI6l2F4jalfs1TVS4VDRhMsjTMbS1+ceeMsRUqkxsG/
-         DDLjK3zkHiBxQLc5njnxT5NTb+PbW/oLdDD3BwZDYqqUzy7nWQBf8XPcn7mnE/kyS381
-         WmVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s4H+MWh/dES/Ms4FXiZklCwn4GhqLleEMus9FXGLxxo=;
-        b=cY28POYhw3+DQD6gfyPSPs4wF0oQkS5P+Pqo/RoyGVH0UwxJVCWt/Y9cowZ0j2vm49
-         uQvzlobkkvBy5gw/nrfPnYx5ecwhsu+wniw+XDj/uzWrxCbLod/+lI1GTmVab/F9GhrE
-         ENLqe+3cfyOvJqjRJZXp+GdfFcueDDgWM8yFII6ZS0AHk4C85eTUakNFcR9UgOHRd3zk
-         G4gL12tI4AbmdByLOznVBVhUYPJnYv4Wx/kWEgVjR6yh5LKU9fszHPlhKs9Eh9xtQ+vG
-         7X7vRoHK5vSmloMp2/uzZ8K2xJJtjUNExAQ/rJlFByAx39wnR26NP3N+V9Snpnt6/GNs
-         Rx0A==
-X-Gm-Message-State: AJcUukfFTxKblf3mW6l4XskLofWUcg1qLKu6/J2t3VOawJPAJWUEe6C/
-        KqIezbbWBAOZe0s5fmFrk2OmXdO1gqgglEA1pnEiaw==
-X-Google-Smtp-Source: ALg8bN6DFEV6xmP/DaqnEQTaHxLxgfr3pTUoo02Ez3lwnmUvU2wTGLxCDeMbvYBXSYAf2l2hRv9Wlpe1KrTZH04zdHI=
-X-Received: by 2002:a9d:775a:: with SMTP id t26mr22254635otl.32.1548874661692;
- Wed, 30 Jan 2019 10:57:41 -0800 (PST)
-MIME-Version: 1.0
-References: <PU1P153MB01691690696D8F83FC1872C7BF900@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-In-Reply-To: <PU1P153MB01691690696D8F83FC1872C7BF900@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 30 Jan 2019 10:57:30 -0800
-Message-ID: <CAPcyv4g_dmR77ofqCR3Zy_V2inD_0WTgLLJOqTcB6=SSZZjp8w@mail.gmail.com>
-Subject: Re: [PATCH] nfit: Collect shutdown status for NVDIMM_FAMILY_HYPERV
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     Ross Zwisler <zwisler@kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        Josh Poulson <jopoulso@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "driverdev-devel@linuxdriverproject.org" 
-        <driverdev-devel@linuxdriverproject.org>,
+        Wed, 30 Jan 2019 13:57:47 -0500
+Received: from mail-eopbgr20075.outbound.protection.outlook.com ([40.107.2.75]:39568
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729401AbfA3S5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 13:57:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sAsLbJvqRKAMHlESUaU/IF1CHDloyaFofQ4JdwO+j/Q=;
+ b=nwd/mVqGQA9Jjn46fjuEEcMgSAPxJvX53n3VdgPDMzL09QaaPEUUO6BchlmkzGauqhv9BRw18mntznyxbiUhJEIvmYVQ//COD494s5IX/6lhmv3SLCEy7JVT7q8Ym6tVid2qu2bs8fHoLwvYPaG0JwpjlFDvO6ik6yvwi1fTa4g=
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
+ DBBPR05MB6588.eurprd05.prod.outlook.com (20.179.44.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.21; Wed, 30 Jan 2019 18:57:00 +0000
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
+ 18:56:59 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+CC:     Jerome Glisse <jglisse@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAANmWgIAAG8YA
+Date:   Wed, 30 Jan 2019 18:56:59 +0000
+Message-ID: <20190130185652.GB17080@mellanox.com>
+References: <20190129193250.GK10108@mellanox.com>
+ <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
+ <20190129205749.GN3176@redhat.com>
+ <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
+ <20190129215028.GQ3176@redhat.com>
+ <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
+ <20190129234752.GR3176@redhat.com>
+ <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
+ <20190130041841.GB30598@mellanox.com>
+ <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
+In-Reply-To: <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR0201CA0023.namprd02.prod.outlook.com
+ (2603:10b6:301:74::36) To DBBPR05MB6426.eurprd05.prod.outlook.com
+ (2603:10a6:10:c9::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DBBPR05MB6588;6:wIiOV3+XQykijZwlFzhpj1cxN0rawntoo8s8I71A8AEKJqkgEfFnm+BXP+9w112YlRn9AJqEDWRbm5y2EoA9D8BLyQoRvM0GOFyunv2ycQWnnVhqZ9ygA9sKvAgwWtGAvvJHCE2lq1NlvXPNSw8NLzffi6YdJRWcvkUskS73J8JcivfTZplMQFnXVpzLFXesvvGMibEXcE5u0r1K7oAZhTjBy4Q873U7+nlA0s+RnqmRN3WBEzPJNGKpuTYr1HOi6k7HA1v7T6jbiX3viXWqgWWVneSzACzZJQbQeB8XXK1TRPCY1O4BDWEeiFkhXlbB255ZvEB0s6ZKy+YMa3MiuunwYqoTkbIhxYvUKhaZh49RTDmRn2Sbsw5c2wT0jSCN0NeUGHCZT1zCC7qEGYHImOFcnWPxHRaPxEIkvYk1hP8oplQtSgLRWyRDOBCtvWn1GyTYzvZNMhLI7jvxUVgOsQ==;5:kLnoR96kojFrXkX2i7PVIa4OYm2UGndMIJ987fT/h+re/4nVh4s0II5Egg2BBIBrWP6EdnVQ71eOiGSDwuxSUpSE2l/v9ueHb4R5YY4ALbelCSJpsP1f6XE1s3L/ncDWmL/hwBMquxNp4zvzEsGSVnpnVVnyIaLLqrxdTug52pwc+FRrMiALwxRhH8NhWh9XK8iJ7cju7r/7SJhKSlnxeA==;7:81IiBmz0idVcuPFhtYyY7qaPPQvQ6Ak1oaRBFiIIQuTrAWOo3UlGiUooBKL5KR+ShximYq9oUpK/4o45Dk3Kyg2TMkUS/pwyFD7UPU3ONXiQQjYOrMIrFC8wnrolMlxjpeD9sshCvo6HV0OaduqxVA==
+x-ms-office365-filtering-correlation-id: 16ed2920-6eaa-4ab6-1122-08d686e4b6b3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6588;
+x-ms-traffictypediagnostic: DBBPR05MB6588:
+x-microsoft-antispam-prvs: <DBBPR05MB658802F63D4F24D94EFC3412CF900@DBBPR05MB6588.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(376002)(396003)(366004)(189003)(199004)(6436002)(7736002)(4326008)(305945005)(102836004)(7416002)(53546011)(6246003)(386003)(6506007)(53936002)(2906002)(26005)(81166006)(11346002)(2616005)(446003)(81156014)(6512007)(8936002)(486006)(8676002)(476003)(93886005)(229853002)(6486002)(6916009)(186003)(25786009)(316002)(33656002)(54906003)(71190400001)(71200400001)(36756003)(66066001)(52116002)(217873002)(14444005)(478600001)(106356001)(105586002)(68736007)(86362001)(97736004)(3846002)(99286004)(256004)(6116002)(14454004)(1076003)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6588;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: TovT0yk2P4qIQIbZSaqyL3mj23l7X2/W8kzyn0bmx6bPT8mY97uLGwQqYfaKtPq386CRPm85fgD+FkGZvcrxDXrOTjLP1vNz4xMilW1k07DgKvCKi+ADVlscxak3FxowpYoi8C9ZK6xNV/JZyFJruT5q69VG8fsXsNJe2H36/XUd+zErv6Ns7eJ0kJCN8aqPcgAevtDrjhmTqyPzDjSxPC/5NsjuY7p1MARtyv8q3a7xSCWO8I4meV1C620JQl+eC5HGK3A7wZxAGdmpCVo0G8dafDg3d6UVnPClvvpJJ2RGmLCFS9RPhKx9Vgv+nWvDl98KvcW0kLy/tCLF/H6g8KI+74NkvZN+7+dikrbz+NwAaV8qsWCKogMK5QLQH0wmwkXfVekgUwzfiA7v4RwspCM6QgI0ALFJlGzEplvSv3Y=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1BE0E9896BD5F9418A483EBA3D393F33@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16ed2920-6eaa-4ab6-1122-08d686e4b6b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 18:56:59.5337
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6588
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 10:49 AM Dexuan Cui <decui@microsoft.com> wrote:
->
->
-> See http://www.uefi.org/RFIC_LIST ("Virtual NVDIMM 0x1901"):
-> "Get Unsafe Shutdown Count (Function Index 2)".
->
-> Let's expose the info to the userspace (e.g. ntctl) via sysfs.
->
-> Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> ---
->  drivers/acpi/nfit/core.c   | 51 ++++++++++++++++++++++++++++++++++++++
->  drivers/acpi/nfit/hyperv.h | 26 +++++++++++++++++++
->  2 files changed, 77 insertions(+)
->  create mode 100644 drivers/acpi/nfit/hyperv.h
+On Wed, Jan 30, 2019 at 10:17:27AM -0700, Logan Gunthorpe wrote:
+>=20
+>=20
+> On 2019-01-29 9:18 p.m., Jason Gunthorpe wrote:
+> > Every attempt to give BAR memory to struct page has run into major
+> > trouble, IMHO, so I like that this approach avoids that.
+> >=20
+> > And if you don't have struct page then the only kernel object left to
+> > hang meta data off is the VMA itself.
+> >=20
+> > It seems very similar to the existing P2P work between in-kernel
+> > consumers, just that VMA is now mediating a general user space driven
+> > discovery process instead of being hard wired into a driver.
+>=20
+> But the kernel now has P2P bars backed by struct pages and it works
+> well.=20
 
-Looks ok to me, but if we grow any more of these "shutdown count"
-retrievals I'll want to take a look at being able to call
-acpi_nfit_ctl() earlier in the init process so that this data
-marshaling can be unified.
+I don't think it works that well..
+
+We ended up with a 'sgl' that is not really a sgl, and doesn't work
+with many of the common SGL patterns. sg_copy_buffer doesn't work,
+dma_map, doesn't work, sg_page doesn't work quite right, etc.
+
+Only nvme and rdma got the special hacks to make them understand these
+p2p-sgls, and I'm still not convinced some of the RDMA drivers that
+want access to CPU addresses from the SGL (rxe, usnic, hfi, qib) don't
+break in this scenario.
+
+Since the SGLs become broken, it pretty much means there is no path to
+make GUP work generically, we have to go through and make everything
+safe to use with p2p-sgls before allowing GUP. Which, frankly, sounds
+impossible with all the competing objections.
+
+But GPU seems to have a problem unrelated to this - what Jerome wants
+is to have two faulting domains for VMA's - visible-to-cpu and
+visible-to-dma. The new op is essentially faulting the pages into the
+visible-to-dma category and leaving them invisible-to-cpu.
+
+So that duality would still have to exists, and I think p2p_map/unmap
+is a much simpler implementation than trying to create some kind of
+special PTE in the VMA..
+
+At least for RDMA, struct page or not doesn't really matter.=20
+
+We can make struct pages for the BAR the same way NVMe does.  GPU is
+probably the same, just with more mememory at stake? =20
+
+And maybe this should be the first implementation. The p2p_map VMA
+operation should return a SGL and the caller should do the existing
+pci_p2pdma_map_sg() flow..=20
+
+Worry about optimizing away the struct page overhead later?
+
+Jason
