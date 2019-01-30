@@ -2,248 +2,146 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD86DC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 879CDC282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7348420882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:41:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KgRZEIjF"
+	by mail.kernel.org (Postfix) with ESMTP id 6267520869
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 12:42:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730680AbfA3Ml1 (ORCPT
+        id S1730799AbfA3Ml7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:41:27 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:42084 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfA3Ml1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 07:41:27 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0UCfPgs080630;
-        Wed, 30 Jan 2019 06:41:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548852085;
-        bh=lofmm7jT+pKbOaadjt6uqp2rkSP7e2v8SR9Lc/9xdlA=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=KgRZEIjFB1BKIOR+EDnai7ACl1RgbdulaSc8ti6m8yJq1dvPU8ChJZjp6lEMAZddN
-         R/99lhaVyfv8ZHNShEGHgCv61H1qj3h5DU0N/QQBtRHiclAvarKv0bOPO3OaxdLSPn
-         srm4dy1BjcqDVFzGPMugBouHyR9I2eLbvzKnSgsg=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0UCfP4v051579
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 30 Jan 2019 06:41:25 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 30
- Jan 2019 06:41:23 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 30 Jan 2019 06:41:23 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0UCfMm6011473;
-        Wed, 30 Jan 2019 06:41:23 -0600
-Subject: Re: [PATCH] phy: ti-pipe3: Add set_mode callback to configure usb3
- phy as pcie phy
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-References: <20190124104822.22411-1-kishon@ti.com> <5C5180FF.1050409@ti.com>
- <ae4f41cd-dbc8-8172-a9e9-28166fc881eb@ti.com>
-CC:     <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C519B72.7080502@ti.com>
-Date:   Wed, 30 Jan 2019 14:41:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Wed, 30 Jan 2019 07:41:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36150 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729193AbfA3Ml7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 07:41:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E40A1AFC5;
+        Wed, 30 Jan 2019 12:41:56 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 13:41:56 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
+        Alice Ferrazzi <alicef@alicef.me>, jeyu@kernel.org,
+        jikos@kernel.org, mbenes@suse.cz, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+Subject: Re: [PATCH] livepatch: core: Return ENOTSUPP instead of ENOSYS
+Message-ID: <20190130124156.qjtbvrkjctu6wi62@pathway.suse.cz>
+References: <20190126192630.6163-1-alicef@alicef.me>
+ <20190128194943.GA18515@redhat.com>
+ <20190129165054.vyi7n6in5v2omkpu@treble>
 MIME-Version: 1.0
-In-Reply-To: <ae4f41cd-dbc8-8172-a9e9-28166fc881eb@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129165054.vyi7n6in5v2omkpu@treble>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kishon,
+On Tue 2019-01-29 10:50:54, Josh Poimboeuf wrote:
+> On Mon, Jan 28, 2019 at 02:49:43PM -0500, Joe Lawrence wrote:
+> > On Sun, Jan 27, 2019 at 04:26:30AM +0900, Alice Ferrazzi wrote:
+> > > This patch fixes a checkpatch warning:
+> > >     WARNING: ENOSYS means 'invalid syscall nr' and nothing else
+> > > 
+> > > Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+> > > ---
+> > >  kernel/livepatch/core.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> > > index 5b77a7314e01..eea6b94fef89 100644
+> > > --- a/kernel/livepatch/core.c
+> > > +++ b/kernel/livepatch/core.c
+> > > @@ -897,7 +897,7 @@ int klp_register_patch(struct klp_patch *patch)
+> > >  
+> > >  	if (!klp_have_reliable_stack()) {
+> > >  		pr_err("This architecture doesn't have support for the livepatch consistency model.\n");
+> > > -		return -ENOSYS;
+> > > +		return -ENOTSUPP;
+> > >  	}
+> > >  
+> > >  	return klp_init_patch(patch);
+> > > -- 
+> > > 2.19.2
+> > > 
+> > 
+> > Hi Alice,
+> > 
+> > Patches should be based off the upstream livepatching tree, found here:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.git
+> > 
+> > and in this case, the for-next branch, which holds patches that have
+> > already been queued up for the next release.  This one:
+> > 
+> >   958ef1e39d24 ("livepatch: Simplify API by removing registration step")
+> > 
+> > has moved the code in question from klp_register_patch() to
+> > klp_enable_patch().
+> > 
+> > 
+> > As far as the change itself, I don't have strong opinion about it
+> > either way.
+> > 
+> > On the one hand, there is the checkpatch warning and -ENOTSUPP reads
+> > more intuitively than -ENOSYS. 
+> > 
+> > However, the current pattern seems to be more prevelent in the kernel.
+> > I wonder if the checkpatch warning would be better specified for return
+> > values that are actually passed back to userspace.
+> > 
+> > Also, klp_register_patch(), now klp_enable_patch(), is exported for
+> > module use, though I don't believe anyone (samples / tests / kpatch /
+> > kgraft?) is inspecting which error value is returned.
+> > 
+> > I would defer to whichever convention the maintainers prefer here.
+> 
+> Based on the commit description from 91c9afaf97ee ("checkpatch.pl: new
+> instances of ENOSYS are errors"), it sounds like there was a decision at
+> Kernel Summit to limit ENOSYS to mean "bad syscall" and nothing else.
 
-On 30/01/19 12:59, Kishon Vijay Abraham I wrote:
-> Hi Roger,
-> 
-> On 30/01/19 4:18 PM, Roger Quadros wrote:
->> Hi Kishon,
->>
->> On 24/01/19 12:48, Kishon Vijay Abraham I wrote:
->>> DRA72 platform has the second instance of PHY shared between USB3
->>> controller and PCIe controller with default as USB3 controller.
->>> Since it is used with USB3 controller by default, it uses the
->>> compatible specific to USB (ti,omap-usb3).
->>>
->>> Populate set_mode callback so that the USB3 PHY can be configured
->>> to be used with PCIe controller.
->>
->> What is the use case of this? At what point and who decides the
->> phy_set_mode() to be called with USB vs PCIe?
-> 
-> The PHY by default is configured to be used with USB controller (That's why it
-> has a compatible of ti,omap-usb3). However there is a special case where this
-> PHY has to be used PCIe controller. So the set_mode() will help the PHY driver
-> to configure the USB PHY to be used with PCIe controller.
-> 
-> This is not a shared PHY, so the PHY as such can be used only with USB or PCIe
-> and is determined at designtime.
+Hmm, the error code is passed to the syscall, for example:
 
-If type is defined at design time then the design using the PHY for PCIe shouldn't be
-using "ti,omap-usb3" compatible. Right?
++ SYSCALL_DEFINE3(init_module
+  + load_module()
+    + do_init_module()
+      + do_one_initcall(mod->init);
 
-Maybe we should fix the DT? Which board/PHY is this about?
+I am not sure if we are allowed to return -ENOTSUPP (-524).
+It is defined in the internal include/linux/errno.h. There
+is the following commnent:
 
-cheers,
--roger
+/*
+ * These should never be seen by user programs...
 
->>
->>
->>>
->>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>> ---
->>>  drivers/phy/ti/phy-ti-pipe3.c | 66 ++++++++++++++++++++++++++++-------
->>>  1 file changed, 54 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/drivers/phy/ti/phy-ti-pipe3.c b/drivers/phy/ti/phy-ti-pipe3.c
->>> index 68ce4a082b9b..8c98f366416d 100644
->>> --- a/drivers/phy/ti/phy-ti-pipe3.c
->>> +++ b/drivers/phy/ti/phy-ti-pipe3.c
->>> @@ -56,6 +56,12 @@
->>>  
->>>  #define SATA_PLL_SOFT_RESET	BIT(18)
->>>  
->>> +#define PHY_RX_ANA_PRGRAMMABILITY_REG	0xC
->>> +#define MEM_EN_PLLBYP			BIT(7)
->>> +
->>> +#define PHY_TX_TEST_CONFIG		0x2C
->>> +#define MEM_ENTESTCLK			BIT(31)
->>> +
->>>  #define PIPE3_PHY_PWRCTL_CLK_CMD_MASK	0x003FC000
->>>  #define PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT	14
->>>  
->>> @@ -110,6 +116,8 @@
->>>  #define PLL_IDLE_TIME	100	/* in milliseconds */
->>>  #define PLL_LOCK_TIME	100	/* in milliseconds */
->>>  
->>> +#define PIPE3_PHY_DISABLE_SYNC_POWER	BIT(4)
->>> +
->>>  struct pipe3_dpll_params {
->>>  	u16	m;
->>>  	u8	n;
->>> @@ -141,6 +149,7 @@ struct ti_pipe3 {
->>>  	unsigned int		power_reg; /* power reg. index within syscon */
->>>  	unsigned int		pcie_pcs_reg; /* pcs reg. index in syscon */
->>>  	bool			sata_refclk_enabled;
->>> +	u32			mode;
->>>  };
->>>  
->>>  static struct pipe3_dpll_map dpll_map_usb[] = {
->>> @@ -233,7 +242,10 @@ static int ti_pipe3_power_on(struct phy *x)
->>>  	rate = rate / 1000000;
->>>  	mask = OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_CMD_MASK |
->>>  		  OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_FREQ_MASK;
->>> -	val = PIPE3_PHY_TX_RX_POWERON << PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT;
->>> +	val = PIPE3_PHY_TX_RX_POWERON;
->>> +	if (phy->mode == PHY_MODE_PCIE)
->>> +		val |= PIPE3_PHY_DISABLE_SYNC_POWER;
->>> +	val <<= PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT;
->>>  	val |= rate << OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_FREQ_SHIFT;
->>>  
->>>  	ret = regmap_update_bits(phy->phy_power_syscon, phy->power_reg,
->>> @@ -328,13 +340,11 @@ static void ti_pipe3_calibrate(struct ti_pipe3 *phy)
->>>  	ti_pipe3_writel(phy->phy_rx, PCIEPHYRX_EQUALIZER, val);
->>>  }
->>>  
->>> -static int ti_pipe3_init(struct phy *x)
->>> +static int ti_pipe3_pcie_init(struct ti_pipe3 *phy)
->>>  {
->>> -	struct ti_pipe3 *phy = phy_get_drvdata(x);
->>> -	u32 val;
->>>  	int ret = 0;
->>> +	u32 val;
->>>  
->>> -	ti_pipe3_enable_clocks(phy);
->>>  	/*
->>>  	 * Set pcie_pcs register to 0x96 for proper functioning of phy
->>>  	 * as recommended in AM572x TRM SPRUHZ6, section 18.5.2.2, table
->>> @@ -353,10 +363,31 @@ static int ti_pipe3_init(struct phy *x)
->>>  			return ret;
->>>  
->>>  		ti_pipe3_calibrate(phy);
->>> -
->>> -		return 0;
->>> +	} else {
->>> +		val = ti_pipe3_readl(phy->phy_rx,
->>> +				     PHY_RX_ANA_PRGRAMMABILITY_REG);
->>> +		val |= MEM_EN_PLLBYP;
->>> +		ti_pipe3_writel(phy->phy_rx, PHY_RX_ANA_PRGRAMMABILITY_REG,
->>> +				val);
->>> +		val = ti_pipe3_readl(phy->phy_tx, PHY_TX_TEST_CONFIG);
->>> +		val |= MEM_ENTESTCLK;
->>> +		ti_pipe3_writel(phy->phy_tx, PHY_TX_TEST_CONFIG, val);
->>>  	}
->>>  
->>> +	return 0;
->>> +}
->>> +
->>> +static int ti_pipe3_init(struct phy *x)
->>> +{
->>> +	struct ti_pipe3 *phy = phy_get_drvdata(x);
->>> +	u32 val;
->>> +	int ret = 0;
->>> +
->>> +	ti_pipe3_enable_clocks(phy);
->>> +
->>> +	if (phy->mode == PHY_MODE_PCIE)
->>> +		return ti_pipe3_pcie_init(phy);
->>> +
->>>  	/* Bring it out of IDLE if it is IDLE */
->>>  	val = ti_pipe3_readl(phy->pll_ctrl_base, PLL_CONFIGURATION2);
->>>  	if (val & PLL_IDLE) {
->>> @@ -395,7 +426,7 @@ static int ti_pipe3_exit(struct phy *x)
->>>  		return 0;
->>>  
->>>  	/* PCIe doesn't have internal DPLL */
->>> -	if (!of_device_is_compatible(phy->dev->of_node, "ti,phy-pipe3-pcie")) {
->>> +	if (!(phy->mode == PHY_MODE_PCIE)) {
->>>  		/* Put DPLL in IDLE mode */
->>>  		val = ti_pipe3_readl(phy->pll_ctrl_base, PLL_CONFIGURATION2);
->>>  		val |= PLL_IDLE;
->>> @@ -429,11 +460,25 @@ static int ti_pipe3_exit(struct phy *x)
->>>  
->>>  	return 0;
->>>  }
->>> +
->>> +static int ti_pipe3_set_mode(struct phy *x, enum phy_mode mode, int submode)
->>> +{
->>> +	struct ti_pipe3 *phy = phy_get_drvdata(x);
->>> +
->>> +	if (phy->mode != PHY_MODE_INVALID)
->>> +		return -EBUSY;
->>> +
->>> +	phy->mode = mode;
->>
->> You are only saving the mode. But not really switching modes here.
->> How is this intended to work?
-> 
-> The PHY doesn't have a specific mode. Rather it is a set of configurations
-> required to operate in a particular mode.
-> 
-> This mode value will be used in other init, power_on callback functions.
-> 
-> Thanks
-> Kishon
-> 
 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
+I tried to find a better alternative and found:
+
+#define	EOPNOTSUPP	95	/* Operation not supported on transport endpoint */
+
+
+There is the following note in man errno:
+
+       ENOTSUP         Operation not supported (POSIX.1)
+
+       EOPNOTSUPP      Operation not supported on socket (POSIX.1)
+		       (ENOTSUP and EOPNOTSUPP have the same value
+		       on Linux, but according to POSIX.1 these error
+		       values should be distinct.)
+
+And it looks that -EOPNOTSUPP is used widely in many subsystes (not
+only network).
+
+Best Regards,
+Petr
