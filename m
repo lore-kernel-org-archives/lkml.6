@@ -2,75 +2,65 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67157C282D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3C2C282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 417B121473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:02:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7700221473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:04:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729427AbfA3ICL (ORCPT
+        id S1729506AbfA3IEZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:02:11 -0500
-Received: from verein.lst.de ([213.95.11.211]:50781 "EHLO newverein.lst.de"
+        Wed, 30 Jan 2019 03:04:25 -0500
+Received: from verein.lst.de ([213.95.11.211]:50789 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725830AbfA3ICL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:02:11 -0500
+        id S1725830AbfA3IEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 03:04:25 -0500
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id BF4D968CEC; Wed, 30 Jan 2019 09:02:08 +0100 (CET)
-Date:   Wed, 30 Jan 2019 09:02:08 +0100
+        id 4A33868CEC; Wed, 30 Jan 2019 09:04:23 +0100 (CET)
+Date:   Wed, 30 Jan 2019 09:04:23 +0100
 From:   Christoph Hellwig <hch@lst.de>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Message-ID: <20190130080208.GC29665@lst.de>
-References: <20190129174728.6430-1-jglisse@redhat.com> <20190129174728.6430-4-jglisse@redhat.com> <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com> <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com> <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com> <20190129205827.GM10108@mellanox.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Ben Dooks <ben-linux@fluff.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 05/11] mmc: s3cmci: handle highmem pages
+Message-ID: <20190130080423.GA29937@lst.de>
+References: <20190114095804.27978-1-hch@lst.de> <20190114095804.27978-6-hch@lst.de> <CAPDyKFpcHv7KwuVpWcKjxj--n4YOFADWD5WzOCJ6Dca_JjqnAw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129205827.GM10108@mellanox.com>
+In-Reply-To: <CAPDyKFpcHv7KwuVpWcKjxj--n4YOFADWD5WzOCJ6Dca_JjqnAw@mail.gmail.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 08:58:35PM +0000, Jason Gunthorpe wrote:
-> On Tue, Jan 29, 2019 at 01:39:49PM -0700, Logan Gunthorpe wrote:
+On Wed, Jan 30, 2019 at 08:57:47AM +0100, Ulf Hansson wrote:
+> On Mon, 14 Jan 2019 at 10:58, Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > Instead of setting up a kernel pointer to track the current PIO address,
+> > track the offset in the current page, and do an atomic kmap for the page
+> > while doing the actual PIO operations.
+> >
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > 
-> > implement the mapping. And I don't think we should have 'special' vma's
-> > for this (though we may need something to ensure we don't get mapping
-> > requests mixed with different types of pages...).
+> Nitpick: This one have some trailing whitespace errors, which git
+> complains about when I apply it.
 > 
-> I think Jerome explained the point here is to have a 'special vma'
-> rather than a 'special struct page' as, really, we don't need a
-> struct page at all to make this work.
-> 
-> If I recall your earlier attempts at adding struct page for BAR
-> memory, it ran aground on issues related to O_DIRECT/sgls, etc, etc.
+> No need to re-spin due to this, I can fix it  up.
 
-Struct page is what makes O_DIRECT work, using sgls or biovecs, etc on
-it work.  Without struct page none of the above can work at all.  That
-is why we use struct page for backing BARs in the existing P2P code.
-Not that I'm a particular fan of creating struct page for this device
-memory, but without major invasive surgery to large parts of the kernel
-it is the only way to make it work.
+I'll need to respin to limit the segment size to a page anyway, so I
+will take this into account as well for v2.
