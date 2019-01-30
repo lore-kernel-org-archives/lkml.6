@@ -2,147 +2,158 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C716BC282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA80C282D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9391A20869
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE38320869
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 07:45:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MF08K1N/"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SvEqdk7X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730150AbfA3Hog (ORCPT
+        id S1730163AbfA3Hpa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 02:44:36 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43987 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfA3Hof (ORCPT
+        Wed, 30 Jan 2019 02:45:30 -0500
+Received: from mail-oi1-f202.google.com ([209.85.167.202]:43528 "EHLO
+        mail-oi1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfA3Hpa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 02:44:35 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10so24842978wrs.10
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:44:34 -0800 (PST)
+        Wed, 30 Jan 2019 02:45:30 -0500
+Received: by mail-oi1-f202.google.com with SMTP id p131so12070831oig.10
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:45:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=X4QCf+1aoDy366tLdrMDAEPagCHQZQgMBcUSlcgghUw=;
-        b=MF08K1N/yysxuch0gDLytcVb4nyipvQoeLO0UEoO7ZgkE6iICkQlj1PVmsYMRRKISh
-         4u7NMtuiJAX05C+FeNzFdu5NtQEICje2nF3CeBqE0Qjoc/YPNJ2ssbb52oPp/M8vkPGl
-         yeo9NwGD6DwCo1MB/+kD27xOEbQ1yNSmt6gjw=
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=gSk9CBvTiJCDvm7KwhFiEgBIDJYi51//IAq1RM0Z+/I=;
+        b=SvEqdk7XVMB9mctvFfoAGuL8yIvx9W4j1UwdPDxj63bt4FbxKMuvLEhIDQODmezuXx
+         n6cCRyKpa7WebqlduPfrKnxuGdDJEgywXP2eK/Z34SoV7hEsrsUNX2nIJLdEHlko8nqA
+         9maSMlhJo1ESwXD+4WGW25P8M/lOsGZvX6QVoqnPYau4wGJZvPHY1gifWkMyU/q9eMw7
+         TFzxMuwzX657CnCiajrbEeRWVB1iQeznjCrQPt4vg/u4V1La4vb0uPW32zLCLG1I5Wnc
+         CfOdsj0wfe731ayVbNJbKBxp4kmx5jiwuyT2HYS3gwfJq65S2gHLKw9gnJuVzCmiWVkx
+         hgTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=X4QCf+1aoDy366tLdrMDAEPagCHQZQgMBcUSlcgghUw=;
-        b=jY8aaZpYxypFMzl85G2iLZIAydkeRvY2KLix+a9DOG5JI6U0RxA9WP+XJLd4qjdtJV
-         auKU7oSJhkoUpLEOsVVbvjdIufgb5d80I7Ofpmw+erCICzSJubQBAYwJN9U/JNNE95Xz
-         Jmz9Rr/sSdQxrBmNQ2H6MohiaRqjVeds+P+WoMMuro6i1DSQDAsAhvCtnpywVgJc3nI1
-         yno3b8ddVdh8f7NT1ZyuiFBEWW8L96Oir4pIDgRlDHQLNFsRU6Cu2KethJ4TiP0Gwpu3
-         LJs8E40a4J0TW3L8rmNMTz18MukWxLoCbqumCQkupReMizTPXzOFTNGgk83ne74k8m1y
-         pO8g==
-X-Gm-Message-State: AHQUAuYHS2MDNl+WdG6mtN9/jRTpxPUTiHpU0ZwWvBV99l/l8mRoW++A
-        7igAhRDT2WNcqzcSUamTVNLU2w==
-X-Google-Smtp-Source: AHgI3Iakylj+iVzhLALJzuTReayxq9BWnMAXiIZ+C1YZnsmExAcA9nwkLX8acKZQ1Wwxx3AybZ6iVw==
-X-Received: by 2002:a5d:678b:: with SMTP id v11mr7013843wru.245.1548834273590;
-        Tue, 29 Jan 2019 23:44:33 -0800 (PST)
-Received: from [192.168.0.41] (164.30.95.92.rev.sfr.net. [92.95.30.164])
-        by smtp.googlemail.com with ESMTPSA id f191sm1034950wmg.12.2019.01.29.23.44.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 23:44:32 -0800 (PST)
-Subject: Re: [PATCH] thermal: mtk: Allocate enough space for mtk_thermal.
-To:     Peter Shih <pihsun@chromium.org>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Michael.Kao@mediatek.com
-References: <20190109055724.184692-1-pihsun@chromium.org>
- <CANdKZ0fRckMSUwHyChgBw162cVQe9_mnd_G9vwt=+CV+Y0WFfw@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <81115ad5-521e-557b-d229-1effb92068a4@linaro.org>
-Date:   Wed, 30 Jan 2019 08:44:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CANdKZ0fRckMSUwHyChgBw162cVQe9_mnd_G9vwt=+CV+Y0WFfw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=gSk9CBvTiJCDvm7KwhFiEgBIDJYi51//IAq1RM0Z+/I=;
+        b=anPyW8BMKzjtHv7xo5c+orco9ux4r74tZdmf/27gltFftrHDmGrEU3nc0tsjuxdGRi
+         uLfuoeV4OcSgbjKDIFrJ41mxNSVMtZgPhz0DUALurycUz1FhmZdXRlYGmufAsCPFNpoZ
+         pNpY8vFLu7LTak7PxzOsWsczwyk9kDqNGycIAPofDHkQAK2JXecsBxm+SCIpjeSpoeNB
+         pof9uYlrpcDPk39VdJq0jfqnqoyjObZPWwKYjRQVbofcz0mZKUZsqO/XPuL0D4t0a3gS
+         EilI14OCaQYeHswTqM7PiqQJD+wdzbsbwX/RDkv60EiC25SFCbX0c5HjVyvo+h61PTwO
+         f7Fw==
+X-Gm-Message-State: AHQUAualf4IMb6TsXVkvL8sFfWpl9vCG+synh3er3GjXYWP6+xt4PpOb
+        vFnX5S22HBfYdEDp14JjnEHXRBijVocQ
+X-Google-Smtp-Source: AHgI3IYxXVB5aOhw/o/8DIzsXhm3/mmemjygkPJzarc3V7Eza3T5RI9nl625KSowfcf163fcluKPE/QeIE4f
+X-Received: by 2002:a05:6808:654:: with SMTP id z20mr5652506oih.46.1548834328956;
+ Tue, 29 Jan 2019 23:45:28 -0800 (PST)
+Date:   Wed, 30 Jan 2019 15:45:22 +0800
+In-Reply-To: <20190128072948.45788-1-linfish@google.com>
+Message-Id: <20190130074522.155770-1-linfish@google.com>
+Mime-Version: 1.0
+References: <20190128072948.45788-1-linfish@google.com>
+X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+Subject: [PATCH v2] [media] v4l: add I / P frame min max QP definitions
+From:   Fish Lin <linfish@google.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, trivial@kernel.org,
+        Fish Lin <linfish@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/01/2019 07:04, Peter Shih wrote:
-> Adding Michael Kao to cc list.
-> 
-> On Wed, Jan 9, 2019 at 1:57 PM Pi-Hsun Shih <pihsun@chromium.org> wrote:
->>
->> The mtk_thermal struct contains a 'struct mtk_thermal_bank banks[];',
->> but the allocation only allocates sizeof(struct mtk_thermal) bytes,
->> which cause out of bound access with the ->banks[] member. Change it to
->> a fixed size array instead.
+Add following V4L2 QP parameters for H.264:
+ * V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP
+ * V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP
+ * V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP
+ * V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP
 
-Even if the fix is correct, it pushes back the bug later in time if a
-new board containing more than MAX_NUM_ZONES is introduced. I suggest to
-dynamically allocate the array with the 'num_banks' value.
+These controls will limit QP range for intra and inter frame,
+provide more manual control to improve video encode quality.
 
+Signed-off-by: Fish Lin <linfish@google.com>
+---
+Changelog since v1:
+- Add description in document.
 
->> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
->> ---
->>  drivers/thermal/mtk_thermal.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
->> index 0691f260f6eabe..ea11edb3fcced6 100644
->> --- a/drivers/thermal/mtk_thermal.c
->> +++ b/drivers/thermal/mtk_thermal.c
->> @@ -159,6 +159,9 @@
->>  #define MT7622_NUM_SENSORS_PER_ZONE    1
->>  #define MT7622_TS1     0
->>
->> +/* The maximum number of banks */
->> +#define MAX_NUM_ZONES          8
->> +
->>  struct mtk_thermal;
->>
->>  struct thermal_bank_cfg {
->> @@ -178,7 +181,7 @@ struct mtk_thermal_data {
->>         const int *sensor_mux_values;
->>         const int *msr;
->>         const int *adcpnp;
->> -       struct thermal_bank_cfg bank_data[];
->> +       struct thermal_bank_cfg bank_data[MAX_NUM_ZONES];
->>  };
->>
->>  struct mtk_thermal {
->> @@ -197,7 +200,7 @@ struct mtk_thermal {
->>         s32 vts[MT8173_NUM_SENSORS];
->>
->>         const struct mtk_thermal_data *conf;
->> -       struct mtk_thermal_bank banks[];
->> +       struct mtk_thermal_bank banks[MAX_NUM_ZONES];
->>  };
->>
->>  /* MT8173 thermal sensor data */
->> --
->> 2.20.1.97.g81188d93c3-goog
->>
+ .../media/uapi/v4l/extended-controls.rst         | 16 ++++++++++++++++
+ drivers/media/v4l2-core/v4l2-ctrls.c             |  4 ++++
+ include/uapi/linux/v4l2-controls.h               |  6 ++++++
+ 3 files changed, 26 insertions(+)
 
-
+diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
+index 286a2dd7ec36..f5989fad34f9 100644
+--- a/Documentation/media/uapi/v4l/extended-controls.rst
++++ b/Documentation/media/uapi/v4l/extended-controls.rst
+@@ -1214,6 +1214,22 @@ enum v4l2_mpeg_video_h264_entropy_mode -
+     Quantization parameter for an B frame for H264. Valid range: from 0
+     to 51.
+ 
++``V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP (integer)``
++    Minimum quantization parameter for H264 I frame, to limit I frame
++    quality in a range. Valid range: from 0 to 51.
++
++``V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP (integer)``
++    Maximum quantization parameter for H264 I frame, to limit I frame
++    quality in a range. Valid range: from 0 to 51.
++
++``V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP (integer)``
++    Minimum quantization parameter for H264 P frame, to limit P frame
++    quality in a range. Valid range: from 0 to 51.
++
++``V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP (integer)``
++    Maximum quantization parameter for H264 P frame, to limit P frame
++    quality in a range. Valid range: from 0 to 51.
++
+ ``V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP (integer)``
+     Quantization parameter for an I frame for MPEG4. Valid range: from 1
+     to 31.
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index 5e3806feb5d7..e2b0af0d2283 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -825,6 +825,10 @@ const char *v4l2_ctrl_get_name(u32 id)
+ 	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER:return "H264 Number of HC Layers";
+ 	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER_QP:
+ 								return "H264 Set QP Value for HC Layers";
++	case V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP:		return "H264 I-Frame Minimum QP Value";
++	case V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP:		return "H264 I-Frame Maximum QP Value";
++	case V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP:		return "H264 P-Frame Minimum QP Value";
++	case V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP:		return "H264 P-Frame Maximum QP Value";
+ 	case V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP:		return "MPEG4 I-Frame QP Value";
+ 	case V4L2_CID_MPEG_VIDEO_MPEG4_P_FRAME_QP:		return "MPEG4 P-Frame QP Value";
+ 	case V4L2_CID_MPEG_VIDEO_MPEG4_B_FRAME_QP:		return "MPEG4 B-Frame QP Value";
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index 3dcfc6148f99..9519673e6437 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -533,6 +533,12 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type {
+ };
+ #define V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER	(V4L2_CID_MPEG_BASE+381)
+ #define V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER_QP	(V4L2_CID_MPEG_BASE+382)
++
++#define V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MIN_QP	(V4L2_CID_MPEG_BASE+390)
++#define V4L2_CID_MPEG_VIDEO_H264_I_FRAME_MAX_QP	(V4L2_CID_MPEG_BASE+391)
++#define V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MIN_QP	(V4L2_CID_MPEG_BASE+392)
++#define V4L2_CID_MPEG_VIDEO_H264_P_FRAME_MAX_QP	(V4L2_CID_MPEG_BASE+393)
++
+ #define V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP	(V4L2_CID_MPEG_BASE+400)
+ #define V4L2_CID_MPEG_VIDEO_MPEG4_P_FRAME_QP	(V4L2_CID_MPEG_BASE+401)
+ #define V4L2_CID_MPEG_VIDEO_MPEG4_B_FRAME_QP	(V4L2_CID_MPEG_BASE+402)
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.20.1.495.gaa96b0ce6b-goog
 
