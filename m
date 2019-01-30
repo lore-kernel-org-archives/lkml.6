@@ -2,140 +2,131 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17016C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3E1C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C04F120882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A3BF218AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:43:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A4ICsNpM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g++mkcpN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbfA3XlN (ORCPT
+        id S1727359AbfA3Xni (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:41:13 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37101 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbfA3XlC (ORCPT
+        Wed, 30 Jan 2019 18:43:38 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44668 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfA3Xni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:41:02 -0500
-Received: by mail-wr1-f68.google.com with SMTP id s12so1336545wrt.4
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 15:41:00 -0800 (PST)
+        Wed, 30 Jan 2019 18:43:38 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e11so556963plt.11
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 15:43:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=N0+MiYkl2FyUrNQhM06/7391PqinzSAuv8ZoqqjUEE4=;
-        b=A4ICsNpMFi+QJWC1G7cGMifLk7QGKMRGBKWrFYbboVsNH/8mdeQwKL1b0XE/rNcup7
-         2T/DIqLlU0K0Zzd98Q7j+cTCFsCSlGookt7jBeM9iSepujof5qpJlckNf7cprfPxfi2S
-         9ytIC2pIsbtAFcrytL90m0Qo+vFW3Jz7h0KVc=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8Wvobjb7NXQXMRdiH7DXdrRGNV4CSwZvCBzL1HMhp2k=;
+        b=g++mkcpNt4ogoblxrJB7HU2HhGK0ymLo3U2/y+ghDam7ii19bVVW5Zms7g2g9VRYUW
+         XheG0BrJOUy1pEdQ7J4PDnsg5C8cyb0gNbzuGZdMn8QBH8lmk4EbxSreyNS2tN4JBM5F
+         hAsfPJeXKaFMjXbYJ1yzUimNcIPN9FZ6up++Ha0o0tN1JRNMxvmm45I9ecCs0T26/TDD
+         zJKWB4OtumoqGhd9njn1OapXfnWvUCaCikO1xc3ttg1fm21vMI3aBOMFN02K+5DNfuko
+         UpSs697MF6vKR4JtKzHKDprB6YvOjz9LVbXsh4Qb4srjkfxkBmXUVg8AYVhJy3flYkwI
+         ucyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=N0+MiYkl2FyUrNQhM06/7391PqinzSAuv8ZoqqjUEE4=;
-        b=Wvs1uZZOpuGNpuxh2iI7RtFcjtHnP8gOGL5EpTRElkuonl4Gt4aTlgO5UTC28GtOuR
-         BQA4Pl7tObmCbu3cvGukfkIBppWPrVKkmq69Wv8YTz+f4HXRa8JIuhhYK0CBo6tDJNV1
-         QFWwKfERm2GdEHpzdH0tBRtc1i4fjzJUrPfoh1cSnOQDUUCikuTd2jYFYNI8Q00ZKkO1
-         BX98vuBobP2YZpZ7NkWqFjYJxZoPrllDpQqYhSpNq0OdMFWkZoGAd53mvxQEEhrT2oul
-         9vSf35xC+OWt3rsz2f4iX8VdL2J97A0DjmyFAHnTl6MDZsszfCVV30zmQcblM30Y9X3g
-         ujdg==
-X-Gm-Message-State: AJcUukeNqI0QSAg2xZFUR2TVhMwrd93Op3QJ0lDZXKJfWCarS0HV0m78
-        NZK3MBqR68ypXkSnk/g3aBHlUg==
-X-Google-Smtp-Source: ALg8bN7+R3FvVFV+Gg8YnqDPIMvID5fvaGHBJxBJp8GNh1mkKpMabsZfkZ9IUjywIsWSd5vEfueGRA==
-X-Received: by 2002:a5d:4b01:: with SMTP id v1mr30735806wrq.5.1548891660014;
-        Wed, 30 Jan 2019 15:41:00 -0800 (PST)
-Received: from linaro.org ([2a00:23c5:6815:3901:cf0e:17bd:f425:fac3])
-        by smtp.gmail.com with ESMTPSA id s3sm2344770wmj.23.2019.01.30.15.40.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 30 Jan 2019 15:40:59 -0800 (PST)
-From:   Mike Leach <mike.leach@linaro.org>
-To:     mike.leach@linaro.org, linux-arm-kernel@lists.infradead.org,
-        coresight@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc:     linux@armlinux.org.uk, saiprakash.ranjan@codeaurora.org,
-        mathieu.poirier@linaro.org, suzuki.poulose@arm.com, arm@kernel.org
-Subject: [PATCH v4 3/3] coresight: etmv4: Update ID register table to add UCI support
-Date:   Wed, 30 Jan 2019 23:40:51 +0000
-Message-Id: <20190130234051.2294-4-mike.leach@linaro.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190130234051.2294-1-mike.leach@linaro.org>
-References: <20190130234051.2294-1-mike.leach@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8Wvobjb7NXQXMRdiH7DXdrRGNV4CSwZvCBzL1HMhp2k=;
+        b=fhoY5gvBzgILSqKnJ6vWC/GQmCZ1/js+MxeeCypsGL4igivQWUfi4MuZv45sxThSrl
+         7+2xHDW7gJMk80GofJdDk8b6lCLqVY/zQ8NoZ3VhwutGQIlD23HIIRFuXYcna9eSPuSV
+         FQnek26v7pkVkXPmiuoA6uA4SkNmToOeIqDhCDalq4mIIglQzvQ+c9zJxiJO2ZRea0Wz
+         zXnwjiJ8WJjPC9uLU8p5BNLlcUS+UAskhUZ12njlB5o9Pcs321CzJPHw3UIRZHT6cbfp
+         MabpgJySvfQKUf4VvWRAYkbLLRO1cpzmBtMhyixawtJQoB2ynVVfUTzJkRzQ7gdVaasD
+         T5LQ==
+X-Gm-Message-State: AJcUukcKMqHL+dXp9I/utBGT5/maTxuozGj0BmEGvAtCNn64jNoALOmf
+        9vfnrbWVLxpHcnoIsgb37kk=
+X-Google-Smtp-Source: ALg8bN72QtYBpvMlaKHQYPmdt+RCjdmqAgw+yiRjJsepixkCR+Rp4t979WFU/SjNIeLYGMxIt9k2ig==
+X-Received: by 2002:a17:902:161:: with SMTP id 88mr33224195plb.306.1548891411914;
+        Wed, 30 Jan 2019 15:36:51 -0800 (PST)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id d68sm4850566pfa.64.2019.01.30.15.36.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 15:36:51 -0800 (PST)
+Subject: Re: [PATCH] Documentation/process: hardcoded core.abbrev considered
+ harmful!
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <1396949135-27122-1-git-send-email-jeffrey.t.kirsher@intel.com>
+ <20181220000112.24891-1-avarab@gmail.com>
+ <20190130111846.0a6b8e2c@canb.auug.org.au>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <82a0b13b-edfc-46cc-ac7c-005f973009c4@gmail.com>
+Date:   Wed, 30 Jan 2019 15:36:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20190130111846.0a6b8e2c@canb.auug.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds macro to enable UCI entries to be added to AMBA ID tables.
+On 1/29/19 4:18 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Thu, 20 Dec 2018 01:01:12 +0100 Ævar Arnfjörð Bjarmason <avarab@gmail.com> wrote:
+>>
+>> Stop recommending that core.abbrev=12 be hardcoded when referring to
+>> kernel commits, and instead rely on the git's default abbreviation.
+>>
+>> Hardcoding this at "12" was done in
+>> 8401aa1f5997 ("Documentation/SubmittingPatches: describe the Fixes:
+>> tag", 2014-06-06), back then Linus's git/git@e6c587c733 ("abbrev: auto
+>> size the default abbreviation", 2016-09-30) had not yet landed, and
+>> the default abbreviation was "7".
+>>
+>> At the time linux.git had around 3.5 million objects, so if the auto
+>> sizing had been in effect "11" would have been picked. Now "12" is
+>> what we pick by default anyway.
+>>
+>> More importantly, we'll roll over to "13" at around 16 million
+>> objects, which given the growth rate isn't that far off. At that point
+>> this documentation will be worse than the default.
+>>
+>> Let's just stop doing this. Git versions as of 2.11 released over 2
+>> years ago use the auto-sizing, and it seems like a fair assumption
+>> that kernel developers use a fairly recent git version.
 
-Updates the ID register tables to contain a UCI entry for the A35 ETM
-device to allow correct matching of driver in the amba bus code.
+That might not be a fair assumption.  The two systems that I submit
+patches from have git versions older than 2.11.
 
-Signed-off-by: Mike Leach <mike.leach@linaro.org>
----
- drivers/hwtracing/coresight/coresight-etm4x.c | 21 +++++++++++--------
- drivers/hwtracing/coresight/coresight-priv.h  |  8 +++++++
- 2 files changed, 20 insertions(+), 9 deletions(-)
+-Frank
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
-index 53e2fb6e86f6..dd9b9b5ebb84 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x.c
-@@ -1067,18 +1067,21 @@ static int etm4_probe(struct amba_device *adev, const struct amba_id *id)
- 	return ret;
- }
- 
--#define ETM4x_AMBA_ID(pid)			\
--	{					\
--		.id	= pid,			\
--		.mask	= 0x000fffff,		\
-+static struct amba_cs_uci_id uci_id_etm4[] = {
-+	{
-+		/*  ETMv4 UCI data */
-+		.devarch	= 0x47704a13,
-+		.devarch_mask	= 0xfff0ffff,
-+		.devtype	= 0x00000013,
- 	}
-+};
- 
- static const struct amba_id etm4_ids[] = {
--	ETM4x_AMBA_ID(0x000bb95d),		/* Cortex-A53 */
--	ETM4x_AMBA_ID(0x000bb95e),		/* Cortex-A57 */
--	ETM4x_AMBA_ID(0x000bb95a),		/* Cortex-A72 */
--	ETM4x_AMBA_ID(0x000bb959),		/* Cortex-A73 */
--	ETM4x_AMBA_ID(0x000bb9da),		/* Cortex-A35 */
-+	CS_AMBA_ID(0x000bb95d),		/* Cortex-A53 */
-+	CS_AMBA_ID(0x000bb95e),		/* Cortex-A57 */
-+	CS_AMBA_ID(0x000bb95a),		/* Cortex-A72 */
-+	CS_AMBA_ID(0x000bb959),		/* Cortex-A73 */
-+	CS_AMBA_UCI_ID(0x000bb9da, uci_id_etm4),	/* Cortex-A35 */
- 	{},
- };
- 
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-index 02a1f5204f9d..fd69ad24432a 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -183,6 +183,14 @@ static inline int etm_writel_cp14(u32 off, u32 val) { return 0; }
- 			}				\
- 	}
- 
-+/* coresight AMBA ID, full UCI structure: id table entry. */
-+#define CS_AMBA_UCI_ID(pid, uci_ptr)	\
-+	{				\
-+		.id	= pid,		\
-+		.mask	= 0x000fffff,	\
-+		.data	= uci_ptr	\
-+	}
-+
- /* extract the data value from a UCI structure given amba_id pointer. */
- static inline void *coresight_get_uci_data(const struct amba_id *id)
- {
--- 
-2.19.1
+
+>>
+>> Signed-off-by: Ævar Arnfjörð Bjarmason <avarab@gmail.com>
+> 
+> Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> 
+> Since I have been checking Fixes: tags, it has become obvious that some
+> kernel developers have core.abbrev set to 7, 9 or 10 (or maybe they are
+> running very old versions of git).  Hopefully this will encourage them
+> to remove that setting (and upgrade).
+> 
+> Can someone (Jon?) please apply this patch?
+> 
 
