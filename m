@@ -2,120 +2,242 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F312BC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CA2C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC79A2184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:25:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B37D22184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:26:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731340AbfA3QZ2 (ORCPT
+        id S1731439AbfA3Q0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:25:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44814 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbfA3QZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:25:28 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9E5FE8667E;
-        Wed, 30 Jan 2019 16:25:27 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3F16D1839F;
-        Wed, 30 Jan 2019 16:25:26 +0000 (UTC)
-Subject: Re: [PATCH v3 0/4] locking/qspinlock: Handle > 4 nesting levels
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        James Morse <james.morse@arm.com>,
-        SRINIVAS <srinivas.eeda@oracle.com>
-References: <1548798828-16156-1-git-send-email-longman@redhat.com>
- <20190130140707.GC2296@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <cfb25527-01fc-d51f-b4fb-ea1a6cb90c99@redhat.com>
-Date:   Wed, 30 Jan 2019 11:25:25 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 30 Jan 2019 11:26:04 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53162 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729299AbfA3Q0D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:26:03 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UGPmhA075181
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:26:02 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbddcy5cj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:25:55 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 30 Jan 2019 16:24:55 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 30 Jan 2019 16:24:51 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0UGOoq656426514
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 30 Jan 2019 16:24:50 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3FF6BAE057;
+        Wed, 30 Jan 2019 16:24:50 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83550AE053;
+        Wed, 30 Jan 2019 16:24:49 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 30 Jan 2019 16:24:49 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v6 12/13] KVM: s390: add gib_alert_irq_handler()
+To:     mimu@linux.ibm.com, Halil Pasic <pasic@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+References: <20190124125939.130763-1-mimu@linux.ibm.com>
+ <20190124125939.130763-13-mimu@linux.ibm.com>
+ <20190129142642.3a94a5f1@oc2783563651>
+ <3819a46e-b2cf-96e3-b3b8-6cdf35eeb616@linux.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Wed, 30 Jan 2019 17:24:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190130140707.GC2296@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <3819a46e-b2cf-96e3-b3b8-6cdf35eeb616@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 30 Jan 2019 16:25:28 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19013016-4275-0000-0000-00000307E97F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013016-4276-0000-0000-00003815F012
+Message-Id: <7f33ff97-9503-9b32-b244-1e8104d0408e@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=845 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901300128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/30/2019 09:07 AM, Peter Zijlstra wrote:
->> Waiman Long (4):
->>   locking/qspinlock: Handle > 4 slowpath nesting levels
->>   locking/qspinlock_stat: Track the no MCS node available case
-> I've taken these two,
->
->>   locking/qspinlock_stat: Introduce a generic lockevent counting APIs
->>   locking/lock_events: Make lock_events available for all archs & other
->>     locks
-> while no real objection to these; I feel we should wait until there are
-> in fact more users of this.
+On 29/01/2019 16:29, Michael Mueller wrote:
+> 
+> 
+> On 29.01.19 14:26, Halil Pasic wrote:
+>> On Thu, 24 Jan 2019 13:59:38 +0100
+>> Michael Mueller <mimu@linux.ibm.com> wrote:
+>>
+>>> The patch implements a handler for GIB alert interruptions
+>>> on the host. Its task is to alert guests that interrupts are
+>>> pending for them.
+>>>
+>>> A GIB alert interrupt statistic counter is added as well:
+>>>
+>>> $ cat /proc/interrupts
+>>>            CPU0       CPU1
+>>>    ...
+>>>    GAL:      23         37   [I/O] GIB Alert
+>>>    ...
+>>>
+>>> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+>> [..]
+>>> +/**
+>>> + * gisa_get_ipm_or_restore_iam - return IPM or restore GISA IAM
+>>> + *
+>>> + * @gi: gisa interrupt struct to work on
+>>> + *
+>>> + * Atomically restores the interruption alert mask if none of the
+>>> + * relevant ISCs are pending and return the IPM.
+>>
+>> The word 'relevant' probably reflects some previous state. It does not
+>> bother me too much.
+> 
+> "relevant" refers to the ISCs handled by the GAL mechanism, i.e those
+> registered in the kvm->arch.gisa_int.alert.mask.
+> 
+>>
+>> [..]
+>>
+>>> +static void __airqs_kick_single_vcpu(struct kvm *kvm, u8 
+>>> deliverable_mask)
+>>> +{
+>>> +    int vcpu_id, online_vcpus = atomic_read(&kvm->online_vcpus);
+>>> +    struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
+>>> +    struct kvm_vcpu *vcpu;
+>>> +
+>>> +    for_each_set_bit(vcpu_id, kvm->arch.idle_mask, online_vcpus) {
+>>> +        vcpu = kvm_get_vcpu(kvm, vcpu_id);
+>>> +        if (psw_ioint_disabled(vcpu))
+>>> +            continue;
+>>> +        deliverable_mask &= (u8)(vcpu->arch.sie_block->gcr[6] >> 24);
+>>> +        if (deliverable_mask) {
+>>> +            /* lately kicked but not yet running */
+>>
+>> How about /* was kicked but didn't run yet */?
+> 
+> what is the difference here...
+> 
+>>
+>>> +            if (test_and_set_bit(vcpu_id, gi->kicked_mask))
+>>> +                return;
+>>> +            kvm_s390_vcpu_wakeup(vcpu);
+>>> +            return;
+>>> +        }
+>>> +    }
+>>> +}
+>>> +
+>>
+>> [..]
+>>
+>>> +static void process_gib_alert_list(void)
+>>> +{
+>>> +    struct kvm_s390_gisa_interrupt *gi;
+>>> +    struct kvm_s390_gisa *gisa;
+>>> +    struct kvm *kvm;
+>>> +    u32 final, origin = 0UL;
+>>> +
+>>> +    do {
+>>> +        /*
+>>> +         * If the NONE_GISA_ADDR is still stored in the alert list
+>>> +         * origin, we will leave the outer loop. No further GISA has
+>>> +         * been added to the alert list by millicode while processing
+>>> +         * the current alert list.
+>>> +         */
+>>> +        final = (origin & NONE_GISA_ADDR);
+>>> +        /*
+>>> +         * Cut off the alert list and store the NONE_GISA_ADDR in the
+>>> +         * alert list origin to avoid further GAL interruptions.
+>>> +         * A new alert list can be build up by millicode in parallel
+>>> +         * for guests not in the yet cut-off alert list. When in the
+>>> +         * final loop, store the NULL_GISA_ADDR instead. This will re-
+>>> +         * enable GAL interruptions on the host again.
+>>> +         */
+>>> +        origin = xchg(&gib->alert_list_origin,
+>>> +                  (!final) ? NONE_GISA_ADDR : NULL_GISA_ADDR);
+>>> +        /*
+>>> +         * Loop through the just cut-off alert list and start the
+>>> +         * gisa timers to kick idle vcpus to consume the pending
+>>> +         * interruptions asap.
+>>> +         */
+>>> +        while (origin & GISA_ADDR_MASK) {
+>>> +            gisa = (struct kvm_s390_gisa *)(u64)origin;
+>>> +            origin = gisa->next_alert;
+>>> +            gisa->next_alert = (u32)(u64)gisa;
+>>> +            kvm = container_of(gisa, struct sie_page2, gisa)->kvm;
+>>> +            gi = &kvm->arch.gisa_int;
+>>> +            if (hrtimer_active(&gi->timer))
+>>> +                hrtimer_cancel(&gi->timer);
+>>> +            hrtimer_start(&gi->timer, 0, HRTIMER_MODE_REL);
+>>> +        }
+>>> +    } while (!final);
+>>> +
+>>> +}
+>>> +
+>>>   void kvm_s390_gisa_clear(struct kvm *kvm)
+>>>   {
+>>>       struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
+>>>       if (!gi->origin)
+>>>           return;
+>>> -    memset(gi->origin, 0, sizeof(struct kvm_s390_gisa));
+>>> -    gi->origin->next_alert = (u32)(u64)gi->origin;
+>>> +    gisa_clear_ipm(gi->origin);
+>>
+>> This could be a separate patch. I would like little more explanation
+>> to this.
+> 
+> I can break at out as I had before... ;)
+> 
+>>
+>>>       VM_EVENT(kvm, 3, "gisa 0x%pK cleared", gi->origin);
+>>>   }
+>>> @@ -2940,13 +3078,25 @@ void kvm_s390_gisa_init(struct kvm *kvm)
+>>>       gi->origin = &kvm->arch.sie_page2->gisa;
+>>>       gi->alert.mask = 0;
+>>>       spin_lock_init(&gi->alert.ref_lock);
+>>> -    kvm_s390_gisa_clear(kvm);
+>>> +    gi->expires = 50 * 1000; /* 50 usec */
+>>
+>> I blindly trust your choice here ;)
+> 
+> You know I will increase it to 1 ms together with the change that I
+> proposed. (gisa_get_ipm_or_restore_iam() in kvm_s390_handle_wait()).
 
-I am actually working on a rwsem patch which I plan to use the event
-counting for my testing purpose. I will include this two patches in my
-patch series.
+With this.
+Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
 
-Thanks,
-Longman
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
