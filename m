@@ -2,132 +2,337 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC21C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0776BC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D22A21473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:03:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="bu1jbjdH";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="NxUcCoGX"
+	by mail.kernel.org (Postfix) with ESMTP id C750020869
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732718AbfA3SDx (ORCPT
+        id S1732742AbfA3SEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:03:53 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:37074 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727100AbfA3SDu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:03:50 -0500
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0UHu4D5008075;
-        Wed, 30 Jan 2019 10:01:25 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=n9pGXSwzli54Ey+ugud3KlzFjKYSE+5ROFPNzsoBn3s=;
- b=bu1jbjdHE0iNkgSqGccTOuGDVu+UNt/D5xQ7r4Q2JJLQd/rbWsx3wJ1stBQnjCOTmjfu
- Sbztk1ibsVAj9Z4ZrzbRyI/hBcFLA/cXK8XK615oebqHyM5AO0fl6FGKTQiqGEcp19iI
- M4QarfZMO5JMnvin1EV0SeL1feM+nClKGY0= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qbev9gfbw-11
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 30 Jan 2019 10:01:25 -0800
-Received: from frc-mbx01.TheFacebook.com (2620:10d:c0a1:f82::25) by
- frc-hub02.TheFacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 30 Jan 2019 10:01:25 -0800
-Received: from frc-hub01.TheFacebook.com (2620:10d:c021:18::171) by
- frc-mbx01.TheFacebook.com (2620:10d:c0a1:f82::25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 30 Jan 2019 10:01:24 -0800
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Wed, 30 Jan 2019 10:01:24 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n9pGXSwzli54Ey+ugud3KlzFjKYSE+5ROFPNzsoBn3s=;
- b=NxUcCoGXJScuNNrL5uj2Y8s7zXN8bJcyaK+Ro/qy8jQwhlo3QnpfnVgvo3Ewa6edS2SU5uoOITbQz89V4YwWr+GiEVVJHAUhUjrpAVHedNDpqZic6bFVglzgaZmIJ5PumrTUgaao+1OhAOX9YF3RmO/K/U5H2kF4RYwJOQqShLI=
-Received: from CY4PR15MB1269.namprd15.prod.outlook.com (10.172.180.139) by
- CY4PR15MB1158.namprd15.prod.outlook.com (10.172.175.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.21; Wed, 30 Jan 2019 18:01:23 +0000
-Received: from CY4PR15MB1269.namprd15.prod.outlook.com
- ([fe80::b9cb:6dd8:d8bf:45c6]) by CY4PR15MB1269.namprd15.prod.outlook.com
- ([fe80::b9cb:6dd8:d8bf:45c6%2]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 18:01:23 +0000
-From:   Vijay Khemka <vijaykhemka@fb.com>
-To:     Joel Stanley <joel@jms.id.au>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
-Subject: Re: [PATCH 1/2] ARM: dts: aspeed: Add peci and lpc for Facebook
-Thread-Topic: [PATCH 1/2] ARM: dts: aspeed: Add peci and lpc for Facebook
-Thread-Index: AQHUs3B0EbHO5x+TOEGVuHnYyNp6D6XHMHEAgABuKgA=
-Date:   Wed, 30 Jan 2019 18:01:22 +0000
-Message-ID: <B6DFDA82-F72C-4979-B988-05C292E61228@fb.com>
-References: <20190123230733.1821501-1-vijaykhemka@fb.com>
- <CACPK8Xc91m9TWoRSgDCT7bVJC=C=w7mse8xbdCgw5vMVgMXM=Q@mail.gmail.com>
-In-Reply-To: <CACPK8Xc91m9TWoRSgDCT7bVJC=C=w7mse8xbdCgw5vMVgMXM=Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2620:10d:c090:200::4:b38d]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR15MB1158;20:G58b57xKUg4uLO7z5wuz7nRQcVhgPUHjE8X6hVPjgNfWav4/D1ZC99DytfC1YFqYW8DRwnYWugkZmWHubv+lq3MzxnYBn6bZCYb1z1glkV4wFD3zRxiIrnYLvSi3y7+h/ED3fFRnPQ455/hWCTPx63AGgC3R/c9PufaKchFMMKE=
-x-ms-office365-filtering-correlation-id: db3f4cac-2581-43e0-325d-08d686dcf219
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:CY4PR15MB1158;
-x-ms-traffictypediagnostic: CY4PR15MB1158:
-x-microsoft-antispam-prvs: <CY4PR15MB1158DD2D9DCAB0C81C8FEA39DD900@CY4PR15MB1158.namprd15.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(136003)(366004)(39860400002)(47680400002)(189003)(199004)(8936002)(54906003)(33656002)(11346002)(8676002)(486006)(186003)(2616005)(99286004)(446003)(82746002)(46003)(476003)(97736004)(36756003)(83716004)(71200400001)(68736007)(6486002)(71190400001)(81166006)(316002)(81156014)(6116002)(478600001)(2906002)(7736002)(4326008)(6246003)(305945005)(4744005)(25786009)(6512007)(86362001)(76176011)(6506007)(256004)(105586002)(229853002)(106356001)(6436002)(53936002)(102836004)(6916009)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1158;H:CY4PR15MB1269.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: lgLMxTA9pktZ8NSV5+T2ZXrWNtABVMW12DD5oyb4T0w7NQKdhgDwY8qmDkif6i+mRMuL50LGRzR3W/lDqMGblS4fQ2s7ZgfSwh900+lK4GdX+JUH5+AGL/Hc4Z+IUKYxeIRl0HvKX0B/k8vCXw4MrS3oqfkf+NL2JlYEZkT96ld1AYevF2wUn9y26qH3pw81169/04NeZ8TZbQwWWqWnUHlzLMi4H9Ck4aHB+6B6ZEoUU7SCxWM4l3Xxcq1wjpQ2Z6CVENmTVThma9u1GarN8DsRKCQmGaZlG3ziQJt3OG2xA6WTlk38SIwCBPIEssz8D7meDp+5/iIXk18MDiTbYtbEI1nFnousKiP5lWGCcMWbLNdqARu585n3eLdBehVeZG0y1W0izncM19R5TRntrrUz4SwCDOZsYKWreyGYGdo=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B81C1623D3FD0743B3F483C07522169D@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 30 Jan 2019 13:04:23 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59224 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727057AbfA3SEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 13:04:23 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C52B80D;
+        Wed, 30 Jan 2019 10:04:22 -0800 (PST)
+Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D1DA3F557;
+        Wed, 30 Jan 2019 10:04:19 -0800 (PST)
+Date:   Wed, 30 Jan 2019 18:04:15 +0000
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Jeremy Linton <jeremy.linton@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, stefan.wahren@i2se.com,
+        mlangsdo@redhat.com, suzuki.poulose@arm.com, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, julien.thierry@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        steven.price@arm.com, Christoffer Dall <christoffer.dall@arm.com>,
+        kvmarm@lists.cs.columbia.edu, ykaukab@suse.de, dave.martin@arm.com,
+        shankerd@codeaurora.org
+Subject: Re: [PATCH v4 03/12] arm64: Remove the ability to build a kernel
+ without ssbd
+Message-ID: <20190130180415.0cab24e0@donnerap.cambridge.arm.com>
+In-Reply-To: <20190125180711.1970973-4-jeremy.linton@arm.com>
+References: <20190125180711.1970973-1-jeremy.linton@arm.com>
+        <20190125180711.1970973-4-jeremy.linton@arm.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: db3f4cac-2581-43e0-325d-08d686dcf219
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 18:01:23.0367
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1158
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_13:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCu+7v09uIDEvMjkvMTksIDc6MjcgUE0sICJKb2VsIFN0YW5sZXkiIDxqb2VsQGptcy5pZC5h
-dT4gd3JvdGU6DQoNCiAgICBPbiBUaHUsIDI0IEphbiAyMDE5IGF0IDEwOjA3LCBWaWpheSBLaGVt
-a2EgPHZpamF5a2hlbWthQGZiLmNvbT4gd3JvdGU6DQogICAgDQogICAgPiBpbmRleCA3M2U1OGE4
-MjE2MTMuLmQ2MGRiYjAxOWY4MiAxMDA2NDQNCiAgICA+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRz
-L2FzcGVlZC1ibWMtZmFjZWJvb2stdGlvZ2FwYXNzLmR0cw0KICAgID4gKysrIGIvYXJjaC9hcm0v
-Ym9vdC9kdHMvYXNwZWVkLWJtYy1mYWNlYm9vay10aW9nYXBhc3MuZHRzDQogICAgDQogICAgPg0K
-ICAgID4gKyZwZWNpMCB7DQogICAgPiArICAgICAgIHN0YXR1cyA9ICJva2F5IjsNCiAgICA+ICt9
-Ow0KICAgIA0KICAgIEkgZG9uJ3QgdGhpbmsgd2UgaGF2ZSBhbiB1cHN0cmVhbSB0cmVlIHRoYXQg
-Y29udGFpbnMgYSBub2RlIGNhbGxlZA0KICAgIHBlY2kwLiBUaGVyZWZvcmUgdGhpcyBkb2VzIG5v
-dCBidWlsZC4NCiAgICANCiAgICBJIGhhdmUgZHJvcHBlZCB0aGlzIGh1bmsgZnJvbSB5b3VyIHBh
-dGNoLiBQbGVhc2UgbWFrZSBzdXJlIHlvdSB0ZXN0DQogICAgYmVmb3JlIHNlbmRpbmcgcGF0Y2hl
-cy4NClRoYW5rcyBKb2VsLCBJIHdpbGwgYmUgY2FyZWZ1bC4NCiAgICANCiAgICBDaGVlcnMsDQog
-ICAgDQogICAgSm9lbA0KICAgIA0KDQo=
+On Fri, 25 Jan 2019 12:07:02 -0600
+Jeremy Linton <jeremy.linton@arm.com> wrote:
+
+Hi,
+
+> Buried behind EXPERT is the ability to build a kernel without
+> SSBD, this needlessly clutters up the code as well as creates
+> the opportunity for bugs. It also removes the kernel's ability
+> to determine if the machine its running on is vulnerable.
+
+I don't know the original motivation for this config option, typically
+they are not around for no reason.
+I see the benefit of dropping those config options, but we want to make
+sure that people don't start hacking around to remove them again.
+
+> Since its also possible to disable it at boot time, lets remove
+> the config option.
+
+Given the level of optimisation a compiler can do with the state being
+known at compile time, I would imagine that it's not the same (though
+probably very close).
+
+But that's not my call, it would be good to hear some maintainer's
+opinion on this.
+
+Apart from the nit mentioned below, the technical part looks correct to
+me (also compile tested).
+
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: kvmarm@lists.cs.columbia.edu
+> ---
+>  arch/arm64/Kconfig                  | 9 ---------
+>  arch/arm64/include/asm/cpufeature.h | 8 --------
+>  arch/arm64/include/asm/kvm_mmu.h    | 7 -------
+>  arch/arm64/kernel/Makefile          | 3 +--
+>  arch/arm64/kernel/cpu_errata.c      | 4 ----
+>  arch/arm64/kernel/cpufeature.c      | 4 ----
+>  arch/arm64/kernel/entry.S           | 2 --
+>  arch/arm64/kvm/hyp/hyp-entry.S      | 2 --
+>  arch/arm64/kvm/hyp/switch.c         | 4 ----
+>  9 files changed, 1 insertion(+), 42 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index a4168d366127..0baa632bf0a8 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1038,15 +1038,6 @@ config HARDEN_EL2_VECTORS
+>  
+>  	  If unsure, say Y.
+>  
+> -config ARM64_SSBD
+> -	bool "Speculative Store Bypass Disable" if EXPERT
+> -	default y
+> -	help
+> -	  This enables mitigation of the bypassing of previous stores
+> -	  by speculative loads.
+> -
+> -	  If unsure, say Y.
+> -
+>  config RODATA_FULL_DEFAULT_ENABLED
+>  	bool "Apply r/o permissions of VM areas also to their linear
+> aliases" default y
+> diff --git a/arch/arm64/include/asm/cpufeature.h
+> b/arch/arm64/include/asm/cpufeature.h index
+> dfcfba725d72..bbed2067a1a4 100644 ---
+> a/arch/arm64/include/asm/cpufeature.h +++
+> b/arch/arm64/include/asm/cpufeature.h @@ -620,19 +620,11 @@ static
+> inline bool system_supports_generic_auth(void) 
+>  static inline int arm64_get_ssbd_state(void)
+>  {
+> -#ifdef CONFIG_ARM64_SSBD
+>  	extern int ssbd_state;
+
+Wouldn't this be a good opportunity to move this declaration outside of
+this function, so that it looks less awkward?
+
+Cheers,
+Andre.
+
+>  	return ssbd_state;
+> -#else
+> -	return ARM64_SSBD_UNKNOWN;
+> -#endif
+>  }
+>  
+> -#ifdef CONFIG_ARM64_SSBD
+>  void arm64_set_ssbd_mitigation(bool state);
+> -#else
+> -static inline void arm64_set_ssbd_mitigation(bool state) {}
+> -#endif
+>  
+>  extern int do_emulate_mrs(struct pt_regs *regs, u32 sys_reg, u32 rt);
+>  
+> diff --git a/arch/arm64/include/asm/kvm_mmu.h
+> b/arch/arm64/include/asm/kvm_mmu.h index 8af4b1befa42..a5c152d79820
+> 100644 --- a/arch/arm64/include/asm/kvm_mmu.h
+> +++ b/arch/arm64/include/asm/kvm_mmu.h
+> @@ -541,7 +541,6 @@ static inline int kvm_map_vectors(void)
+>  }
+>  #endif
+>  
+> -#ifdef CONFIG_ARM64_SSBD
+>  DECLARE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
+>  
+>  static inline int hyp_map_aux_data(void)
+> @@ -558,12 +557,6 @@ static inline int hyp_map_aux_data(void)
+>  	}
+>  	return 0;
+>  }
+> -#else
+> -static inline int hyp_map_aux_data(void)
+> -{
+> -	return 0;
+> -}
+> -#endif
+>  
+>  #define kvm_phys_to_vttbr(addr)		phys_to_ttbr(addr)
+>  
+> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+> index cd434d0719c1..306336a2fa34 100644
+> --- a/arch/arm64/kernel/Makefile
+> +++ b/arch/arm64/kernel/Makefile
+> @@ -19,7 +19,7 @@ obj-y			:= debug-monitors.o
+> entry.o irq.o fpsimd.o		\ return_address.o cpuinfo.o
+> cpu_errata.o		\ cpufeature.o alternative.o
+> cacheinfo.o		\ smp.o smp_spin_table.o topology.o
+> smccc-call.o	\
+> -			   syscall.o
+> +			   syscall.o ssbd.o
+>  
+>  extra-$(CONFIG_EFI)			:= efi-entry.o
+>  
+> @@ -57,7 +57,6 @@ arm64-reloc-test-y := reloc_test_core.o
+> reloc_test_syms.o obj-$(CONFIG_CRASH_DUMP)		+=
+> crash_dump.o obj-$(CONFIG_CRASH_CORE)		+= crash_core.o
+>  obj-$(CONFIG_ARM_SDE_INTERFACE)		+= sdei.o
+> -obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
+>  obj-$(CONFIG_ARM64_PTR_AUTH)		+= pointer_auth.o
+>  
+>  obj-y					+= vdso/ probes/
+> diff --git a/arch/arm64/kernel/cpu_errata.c
+> b/arch/arm64/kernel/cpu_errata.c index 9a7b5fca51a0..934d50788ca3
+> 100644 --- a/arch/arm64/kernel/cpu_errata.c
+> +++ b/arch/arm64/kernel/cpu_errata.c
+> @@ -281,7 +281,6 @@ enable_smccc_arch_workaround_1(const struct
+> arm64_cpu_capabilities *entry) }
+>  #endif	/* CONFIG_HARDEN_BRANCH_PREDICTOR */
+>  
+> -#ifdef CONFIG_ARM64_SSBD
+>  DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
+>  
+>  int ssbd_state __read_mostly = ARM64_SSBD_KERNEL;
+> @@ -473,7 +472,6 @@ static bool has_ssbd_mitigation(const struct
+> arm64_cpu_capabilities *entry, 
+>  	return required;
+>  }
+> -#endif	/* CONFIG_ARM64_SSBD */
+>  
+>  static void __maybe_unused
+>  cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities
+> *__unused) @@ -726,14 +724,12 @@ const struct arm64_cpu_capabilities
+> arm64_errata[] = { ERRATA_MIDR_RANGE_LIST(arm64_harden_el2_vectors),
+>  	},
+>  #endif
+> -#ifdef CONFIG_ARM64_SSBD
+>  	{
+>  		.desc = "Speculative Store Bypass Disable",
+>  		.capability = ARM64_SSBD,
+>  		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
+>  		.matches = has_ssbd_mitigation,
+>  	},
+> -#endif
+>  #ifdef CONFIG_ARM64_ERRATUM_1188873
+>  	{
+>  		/* Cortex-A76 r0p0 to r2p0 */
+> diff --git a/arch/arm64/kernel/cpufeature.c
+> b/arch/arm64/kernel/cpufeature.c index f6d84e2c92fe..d1a7fd7972f9
+> 100644 --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1131,7 +1131,6 @@ static void cpu_has_fwb(const struct
+> arm64_cpu_capabilities *__unused) WARN_ON(val & (7 << 27 | 7 << 21));
+>  }
+>  
+> -#ifdef CONFIG_ARM64_SSBD
+>  static int ssbs_emulation_handler(struct pt_regs *regs, u32 instr)
+>  {
+>  	if (user_mode(regs))
+> @@ -1171,7 +1170,6 @@ static void cpu_enable_ssbs(const struct
+> arm64_cpu_capabilities *__unused) arm64_set_ssbd_mitigation(true);
+>  	}
+>  }
+> -#endif /* CONFIG_ARM64_SSBD */
+>  
+>  #ifdef CONFIG_ARM64_PAN
+>  static void cpu_enable_pan(const struct arm64_cpu_capabilities
+> *__unused) @@ -1400,7 +1398,6 @@ static const struct
+> arm64_cpu_capabilities arm64_features[] = { .field_pos =
+> ID_AA64ISAR0_CRC32_SHIFT, .min_field_value = 1,
+>  	},
+> -#ifdef CONFIG_ARM64_SSBD
+>  	{
+>  		.desc = "Speculative Store Bypassing Safe (SSBS)",
+>  		.capability = ARM64_SSBS,
+> @@ -1412,7 +1409,6 @@ static const struct arm64_cpu_capabilities
+> arm64_features[] = { .min_field_value = ID_AA64PFR1_SSBS_PSTATE_ONLY,
+>  		.cpu_enable = cpu_enable_ssbs,
+>  	},
+> -#endif
+>  #ifdef CONFIG_ARM64_CNP
+>  	{
+>  		.desc = "Common not Private translations",
+> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> index 0ec0c46b2c0c..bee54b7d17b9 100644
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@ -137,7 +137,6 @@ alternative_else_nop_endif
+>  	// This macro corrupts x0-x3. It is the caller's duty
+>  	// to save/restore them if required.
+>  	.macro	apply_ssbd, state, tmp1, tmp2
+> -#ifdef CONFIG_ARM64_SSBD
+>  alternative_cb	arm64_enable_wa2_handling
+>  	b	.L__asm_ssbd_skip\@
+>  alternative_cb_end
+> @@ -151,7 +150,6 @@ alternative_cb	arm64_update_smccc_conduit
+>  	nop					// Patched to
+> SMC/HVC #0 alternative_cb_end
+>  .L__asm_ssbd_skip\@:
+> -#endif
+>  	.endm
+>  
+>  	.macro	kernel_entry, el, regsize = 64
+> diff --git a/arch/arm64/kvm/hyp/hyp-entry.S
+> b/arch/arm64/kvm/hyp/hyp-entry.S index 73c1b483ec39..53c9344968d4
+> 100644 --- a/arch/arm64/kvm/hyp/hyp-entry.S
+> +++ b/arch/arm64/kvm/hyp/hyp-entry.S
+> @@ -114,7 +114,6 @@ el1_hvc_guest:
+>  			  ARM_SMCCC_ARCH_WORKAROUND_2)
+>  	cbnz	w1, el1_trap
+>  
+> -#ifdef CONFIG_ARM64_SSBD
+>  alternative_cb	arm64_enable_wa2_handling
+>  	b	wa2_end
+>  alternative_cb_end
+> @@ -141,7 +140,6 @@ alternative_cb_end
+>  wa2_end:
+>  	mov	x2, xzr
+>  	mov	x1, xzr
+> -#endif
+>  
+>  wa_epilogue:
+>  	mov	x0, xzr
+> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+> index b0b1478094b4..9ce43ae6fc13 100644
+> --- a/arch/arm64/kvm/hyp/switch.c
+> +++ b/arch/arm64/kvm/hyp/switch.c
+> @@ -436,7 +436,6 @@ static inline bool __hyp_text
+> __needs_ssbd_off(struct kvm_vcpu *vcpu) 
+>  static void __hyp_text __set_guest_arch_workaround_state(struct
+> kvm_vcpu *vcpu) {
+> -#ifdef CONFIG_ARM64_SSBD
+>  	/*
+>  	 * The host runs with the workaround always present. If the
+>  	 * guest wants it disabled, so be it...
+> @@ -444,19 +443,16 @@ static void __hyp_text
+> __set_guest_arch_workaround_state(struct kvm_vcpu *vcpu) if
+> (__needs_ssbd_off(vcpu) &&
+> __hyp_this_cpu_read(arm64_ssbd_callback_required))
+> arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, 0, NULL); -#endif
+>  }
+>  
+>  static void __hyp_text __set_host_arch_workaround_state(struct
+> kvm_vcpu *vcpu) {
+> -#ifdef CONFIG_ARM64_SSBD
+>  	/*
+>  	 * If the guest has disabled the workaround, bring it back
+> on. */
+>  	if (__needs_ssbd_off(vcpu) &&
+>  	    __hyp_this_cpu_read(arm64_ssbd_callback_required))
+>  		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_WORKAROUND_2, 1,
+> NULL); -#endif
+>  }
+>  
+>  /* Switch to the guest for VHE systems running in EL2 */
+
