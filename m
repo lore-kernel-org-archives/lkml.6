@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1FFC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24941C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D4072184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D73A32184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:56:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387953AbfA3U4f (ORCPT
+        id S2387956AbfA3U4e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 15:56:35 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3252 "EHLO huawei.com"
+        Wed, 30 Jan 2019 15:56:34 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3250 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387878AbfA3U41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387876AbfA3U41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 30 Jan 2019 15:56:27 -0500
 Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3F2A17A37204E1F3160C;
+        by Forcepoint Email with ESMTP id 35B369F352B2750815CF;
         Thu, 31 Jan 2019 04:56:25 +0800 (CST)
 Received: from SZA150611058.china.huawei.com (10.45.134.27) by
  DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 31 Jan 2019 04:56:14 +0800
+ 14.3.408.0; Thu, 31 Jan 2019 04:56:17 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
+        Jian Shen <shenjian15@huawei.com>,
         Peng Li <lipeng321@huawei.com>,
         Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 05/12] net: hns3: only support tc 0 for VF
-Date:   Thu, 31 Jan 2019 04:55:45 +0800
-Message-ID: <20190130205552.8512-6-tanhuazhong@huawei.com>
+Subject: [PATCH net-next 12/12] net: hns3: keep flow director state unchanged when reset
+Date:   Thu, 31 Jan 2019 04:55:52 +0800
+Message-ID: <20190130205552.8512-13-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.20.1.windows.1
 In-Reply-To: <20190130205552.8512-1-tanhuazhong@huawei.com>
 References: <20190130205552.8512-1-tanhuazhong@huawei.com>
@@ -49,126 +49,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Jian Shen <shenjian15@huawei.com>
 
-When the VF shares the same TC config as PF, the business
-running on PF and VF must have samiliar module.
+In orginal codes, driver always enables flow director when
+intializing. When user disable flow director with command
+ethtool -K, the flow director will be enabled again after
+resetting.
 
-For simplicity, we are not considering VF sharing the same tc
-configuration as PF use case, so this patch removes the support
-of TC configuration from VF and forcing VF to just use single
-TC.
+This patch fixes it by only enabling it when first initialzing.
 
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Fixes: 6871af29b3ab ("net: hns3: Add reset handle for flow director")
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- .../hisilicon/hns3/hns3pf/hclge_dcb.c         | 12 +++++-----
- .../hisilicon/hns3/hns3pf/hclge_mbx.c         | 10 ++++++---
- .../ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 22 ++++++++++++++-----
- 3 files changed, 28 insertions(+), 16 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 10 ++++++----
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  2 +-
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-index 961aedb0e20f..1161361a973b 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-@@ -93,13 +93,11 @@ static int hclge_dcb_common_validate(struct hclge_dev *hdev, u8 num_tc,
- 		}
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index b531eac12fea..2ffbf07ff829 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -1007,6 +1007,9 @@ static int hclge_configure(struct hclge_dev *hdev)
+ 	hdev->tm_info.hw_pfc_map = 0;
+ 	hdev->wanted_umv_size = cfg.umv_space;
+ 
++	if (hnae3_dev_fd_supported(hdev))
++		hdev->fd_en = true;
++
+ 	ret = hclge_parse_speed(cfg.default_speed, &hdev->hw.mac.speed);
+ 	if (ret) {
+ 		dev_err(&hdev->pdev->dev, "Get wrong speed ret=%d.\n", ret);
+@@ -3973,7 +3976,6 @@ static int hclge_init_fd_config(struct hclge_dev *hdev)
+ 		return -EOPNOTSUPP;
  	}
  
--	for (i = 0; i < hdev->num_alloc_vport; i++) {
--		if (num_tc > hdev->vport[i].alloc_tqps) {
--			dev_err(&hdev->pdev->dev,
--				"allocated tqp(%u) checking failed, %u > tqp(%u)\n",
--				i, num_tc, hdev->vport[i].alloc_tqps);
--			return -EINVAL;
--		}
-+	if (num_tc > hdev->vport[0].alloc_tqps) {
-+		dev_err(&hdev->pdev->dev,
-+			"allocated tqp checking failed, %u > tqp(%u)\n",
-+			num_tc, hdev->vport[0].alloc_tqps);
-+		return -EINVAL;
- 	}
+-	hdev->fd_cfg.fd_en = true;
+ 	hdev->fd_cfg.proto_support =
+ 		TCP_V4_FLOW | UDP_V4_FLOW | SCTP_V4_FLOW | TCP_V6_FLOW |
+ 		UDP_V6_FLOW | SCTP_V6_FLOW | IPV4_USER_FLOW | IPV6_USER_FLOW;
+@@ -4731,7 +4733,7 @@ static int hclge_add_fd_entry(struct hnae3_handle *handle,
+ 	if (!hnae3_dev_fd_supported(hdev))
+ 		return -EOPNOTSUPP;
  
- 	return 0;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-index 3603034aa45c..6afb0a4b73f7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-@@ -319,10 +319,14 @@ static int hclge_get_vf_tcinfo(struct hclge_vport *vport,
- 			       struct hclge_mbx_vf_to_pf_cmd *mbx_req,
- 			       bool gen_resp)
- {
--	struct hclge_dev *hdev = vport->back;
--	int ret;
-+	struct hnae3_knic_private_info *kinfo = &vport->nic.kinfo;
-+	u8 vf_tc_map = 0;
-+	int i, ret;
-+
-+	for (i = 0; i < kinfo->num_tc; i++)
-+		vf_tc_map |= BIT(i);
+-	if (!hdev->fd_cfg.fd_en) {
++	if (!hdev->fd_en) {
+ 		dev_warn(&hdev->pdev->dev,
+ 			 "Please enable flow director first\n");
+ 		return -EOPNOTSUPP;
+@@ -4884,7 +4886,7 @@ static int hclge_restore_fd_entries(struct hnae3_handle *handle)
+ 		return 0;
  
--	ret = hclge_gen_resp_to_vf(vport, mbx_req, 0, &hdev->hw_tc_map,
-+	ret = hclge_gen_resp_to_vf(vport, mbx_req, 0, &vf_tc_map,
- 				   sizeof(u8));
+ 	/* if fd is disabled, should not restore it when reset */
+-	if (!hdev->fd_cfg.fd_en)
++	if (!hdev->fd_en)
+ 		return 0;
  
- 	return ret;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index 9f4069fb786b..aafc69f4bfdd 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -520,8 +520,14 @@ static void hclge_tm_vport_tc_info_update(struct hclge_vport *vport)
- 	u16 max_rss_size;
- 	u8 i;
+ 	hlist_for_each_entry_safe(rule, node, &hdev->fd_rule_list, rule_node) {
+@@ -5170,7 +5172,7 @@ static void hclge_enable_fd(struct hnae3_handle *handle, bool enable)
+ 	struct hclge_vport *vport = hclge_get_vport(handle);
+ 	struct hclge_dev *hdev = vport->back;
  
--	vport->bw_limit = hdev->tm_info.pg_info[0].bw_limit;
--	kinfo->num_tc = min_t(u16, vport->alloc_tqps, hdev->tm_info.num_tc);
-+	/* TC configuration is shared by PF/VF in one port, only allow
-+	 * one tc for VF for simplicity. VF's vport_id is non zero.
-+	 */
-+	kinfo->num_tc = vport->vport_id ? 1 :
-+			min_t(u16, vport->alloc_tqps, hdev->tm_info.num_tc);
-+	vport->qs_offset = (vport->vport_id ? hdev->tm_info.num_tc : 0) +
-+				(vport->vport_id ? (vport->vport_id - 1) : 0);
-+
- 	max_rss_size = min_t(u16, hdev->rss_size_max,
- 			     vport->alloc_tqps / kinfo->num_tc);
+-	hdev->fd_cfg.fd_en = enable;
++	hdev->fd_en = enable;
+ 	if (!enable)
+ 		hclge_del_all_fd_entries(handle, false);
+ 	else
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 2c413c63c6c9..c939f4a7f5f0 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -583,7 +583,6 @@ struct hclge_fd_key_cfg {
  
-@@ -538,12 +544,12 @@ static void hclge_tm_vport_tc_info_update(struct hclge_vport *vport)
- 	}
+ struct hclge_fd_cfg {
+ 	u8 fd_mode;
+-	u8 fd_en;
+ 	u16 max_key_length;
+ 	u32 proto_support;
+ 	u32 rule_num[2]; /* rule entry number */
+@@ -758,6 +757,7 @@ struct hclge_dev {
+ 	struct hclge_fd_cfg fd_cfg;
+ 	struct hlist_head fd_rule_list;
+ 	u16 hclge_fd_rule_num;
++	u8 fd_en;
  
- 	kinfo->num_tqps = kinfo->num_tc * kinfo->rss_size;
--	vport->qs_offset = hdev->tm_info.num_tc * vport->vport_id;
- 	vport->dwrr = 100;  /* 100 percent as init */
- 	vport->alloc_rss_size = kinfo->rss_size;
-+	vport->bw_limit = hdev->tm_info.pg_info[0].bw_limit;
- 
- 	for (i = 0; i < HNAE3_MAX_TC; i++) {
--		if (hdev->hw_tc_map & BIT(i)) {
-+		if (hdev->hw_tc_map & BIT(i) && i < kinfo->num_tc) {
- 			kinfo->tc_info[i].enable = true;
- 			kinfo->tc_info[i].tqp_offset = i * kinfo->rss_size;
- 			kinfo->tc_info[i].tqp_count = kinfo->rss_size;
-@@ -766,13 +772,17 @@ static int hclge_tm_pri_q_qs_cfg(struct hclge_dev *hdev)
- 
- 	if (hdev->tx_sch_mode == HCLGE_FLAG_TC_BASE_SCH_MODE) {
- 		/* Cfg qs -> pri mapping, one by one mapping */
--		for (k = 0; k < hdev->num_alloc_vport; k++)
--			for (i = 0; i < hdev->tm_info.num_tc; i++) {
-+		for (k = 0; k < hdev->num_alloc_vport; k++) {
-+			struct hnae3_knic_private_info *kinfo =
-+				&vport[k].nic.kinfo;
-+
-+			for (i = 0; i < kinfo->num_tc; i++) {
- 				ret = hclge_tm_qs_to_pri_map_cfg(
- 					hdev, vport[k].qs_offset + i, i);
- 				if (ret)
- 					return ret;
- 			}
-+		}
- 	} else if (hdev->tx_sch_mode == HCLGE_FLAG_VNET_BASE_SCH_MODE) {
- 		/* Cfg qs -> pri mapping,  qs = tc, pri = vf, 8 qs -> 1 pri */
- 		for (k = 0; k < hdev->num_alloc_vport; k++)
+ 	u16 wanted_umv_size;
+ 	/* max available unicast mac vlan space */
 -- 
 2.20.1
 
