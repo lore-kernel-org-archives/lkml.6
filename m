@@ -2,184 +2,154 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC0AC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 199FCC282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C09C520844
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:38:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BDwKOLyG"
+	by mail.kernel.org (Postfix) with ESMTP id DEB8A21852
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 11:40:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548848457;
+	bh=+uVntEzx9FxaFLxAyBRoVVxPNN/4wCGj0FgM2KObn/c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Iy9Td/ZNlqCW66b1OZ610RXmuVmldECnKLBgvm9OIHnQVzlVbQqvQVdEHQG1N4HU5
+	 VrNT4O/U09UzEOKP1XH3cE0/3q3GH+uW2//1DiBYthzrygPtCIiLYvLdWh4HUsu2Ez
+	 B3P0ZeA1FrdsFXOTm/aJeUywQlw+b353/7N+yPxM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730701AbfA3LiZ (ORCPT
+        id S1728606AbfA3Lk4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 06:38:25 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37047 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729299AbfA3LiY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 06:38:24 -0500
-Received: by mail-wm1-f68.google.com with SMTP id g67so21211609wmd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 03:38:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Pws+GKp8yzQgeZUGmCTNNkAjBgitoirunLrvoyopzpM=;
-        b=BDwKOLyGOAN8UF7lWBQZog94zQTb43MRJqfkAK4C1R7Wssy3/boI+Y4T8691aR1Fwu
-         Yq2kCu9MPzNq9K+tqg0uw8uO2pltj1lI6fcyPHvS2FjhKdRyM7z+JZ5A0VhcqA9ylC8p
-         NCvrunMUFv/w9Tc1LojR3yB7smTcKf6p5o/Os=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Pws+GKp8yzQgeZUGmCTNNkAjBgitoirunLrvoyopzpM=;
-        b=A75pXpz6IAf2XfmyuqbKhMKM0cVRGHuhOaWK9Ryhq13HpeUhQO2L5hcrMNVn3X7mFI
-         2aLCOe+jHE66d6GieEDiLXJVbpMNrU0nlZUzu6rq4uMNpIrXOCTWMEN1eSuisyAmh46K
-         IHxB3oB+3fp8N9x5PJG3fbvwuYJDpRsJKA0sXFMDKVaHkIPGEw8JNX/W1+9rqnKLsGGC
-         hr143OVDsEPRT0aS38GGySyiLnT7PAQEk7k6FKtcRFScFcbbkIDYvunO6w6BGquVe1gk
-         ERXj527WXDoyx54ykvF0KqvN8KVCbkbcqVrhPY2uFXySzU+5YBQNRZebm52kzr+LVouK
-         ym7Q==
-X-Gm-Message-State: AJcUukcdn1/oQy9OLJ7Pw4XDTuZAyA7EDAo/PKRVtM4YzQbqOJkWqO8v
-        VovQlSUBi7LF/cwv2CN/iKEjniuTnM0=
-X-Google-Smtp-Source: ALg8bN4hXEAXeE1ZjOjDi69zhQEtsFcJvcuJdc21L/CLrsWUSckv/gAjPnplD1LpbI1kOyifRDg66A==
-X-Received: by 2002:a1c:48d:: with SMTP id 135mr24454264wme.1.1548848302712;
-        Wed, 30 Jan 2019 03:38:22 -0800 (PST)
-Received: from [192.168.1.2] (99.red-79-146-83.dynamicip.rima-tde.net. [79.146.83.99])
-        by smtp.gmail.com with ESMTPSA id y34sm3326299wrd.68.2019.01.30.03.38.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 03:38:21 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] phy: qualcomm: usb: Add Super-Speed PHY driver
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
-        jackp@codeaurora.org, andy.gross@linaro.org, swboyd@chromium.org,
-        shawn.guo@linaro.org, vkoul@kernel.org, khasim.mohammed@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1548761715-4004-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1548761715-4004-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <20190129202726.GA3036@builder>
- <fbd70494-e2f1-ae04-8b14-2cc97cead8b9@linaro.org>
-Message-ID: <8986d1ea-e009-6f15-e9ca-93cd64284ff7@linaro.org>
-Date:   Wed, 30 Jan 2019 12:38:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 30 Jan 2019 06:40:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44622 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726857AbfA3Lk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 06:40:56 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43AD92175B;
+        Wed, 30 Jan 2019 11:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548848454;
+        bh=+uVntEzx9FxaFLxAyBRoVVxPNN/4wCGj0FgM2KObn/c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LoYmqMDPmJRYw/SekU68n6A5GXgPa3LxypXYqTgIiFadJNKzpO17j2jL+JoOd+u7q
+         HkWwFAqoOwEWvmlusmXOp24i7+S68kQ2XnQDpEJh72C1u4/5UBRqA3Q7oBrjz1Xg5A
+         8VEIaDzccs+3BMF/gbiraotOXt1Ux5+Li8NTsiOk=
+Date:   Wed, 30 Jan 2019 12:40:52 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Omar Sandoval <osandov@fb.com>,
+        syzbot <syzbot+b382ba6a802a3d242790@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@fb.com>
+Subject: Re: BUG: unable to handle kernel paging request in dput (2)
+Message-ID: <20190130114052.GB30781@kroah.com>
+References: <00000000000081e6cc0580aa76a2@google.com>
+ <80e90ecd-77f5-00a3-4e91-5e9eea2aa117@I-love.SAKURA.ne.jp>
+ <27008e5f-9dfc-a09a-cdb9-824d470fb9dd@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <fbd70494-e2f1-ae04-8b14-2cc97cead8b9@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27008e5f-9dfc-a09a-cdb9-824d470fb9dd@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/19 10:53, Jorge Ramirez wrote:
-> On 1/29/19 21:27, Bjorn Andersson wrote:
->> On Tue 29 Jan 03:35 PST 2019, Jorge Ramirez-Ortiz wrote:
->>> diff --git a/drivers/phy/qualcomm/phy-qcom-usb-ss.c b/drivers/phy/qualcomm/phy-qcom-usb-ss.c
->>> new file mode 100644
->>> index 0000000..e6ae96e
->>> --- /dev/null
->>> +++ b/drivers/phy/qualcomm/phy-qcom-usb-ss.c
->>> @@ -0,0 +1,347 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Copyright (c) 2012-2014,2017 The Linux Foundation. All rights reserved.
->>> + * Copyright (c) 2018, Linaro Limited
->>> + */
->>> +
->>> +#include <linux/clk.h>
->>> +#include <linux/delay.h>
->>> +#include <linux/err.h>
->>> +#include <linux/io.h>
->>> +#include <linux/kernel.h>
->>> +#include <linux/module.h>
->>> +#include <linux/of.h>
->>> +#include <linux/phy/phy.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/regulator/consumer.h>
->>> +#include <linux/reset.h>
->>> +#include <linux/slab.h>
->>> +
->>> +#define PHY_CTRL0			0x6C
->>> +#define PHY_CTRL1			0x70
->>> +#define PHY_CTRL2			0x74
->>> +#define PHY_CTRL4			0x7C
->>> +
->>> +/* PHY_CTRL bits */
->>> +#define REF_PHY_EN			BIT(0)
->>> +#define LANE0_PWR_ON			BIT(2)
->>> +#define SWI_PCS_CLK_SEL			BIT(4)
->>> +#define TST_PWR_DOWN			BIT(4)
->>> +#define PHY_RESET			BIT(7)
->>> +
->>> +enum phy_vdd_ctrl { ENABLE, DISABLE, };
->>
->> Use bool to describe boolean values.
+On Wed, Jan 30, 2019 at 08:26:24PM +0900, Tetsuo Handa wrote:
+> On 2019/01/30 20:11, Tetsuo Handa wrote:
+> > Hello, Omar.
+> > 
+> > syzbot is reporting a crash due to dput(-EINVAL) [1]. I think the location is
+> > 
+> >         dir = debugfs_lookup(buts->name, blk_debugfs_root);
+> >         if (!dir)
+> >                 bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+> > 
+> > added by commit 6ac93117ab009d39 ("blktrace: use existing disk debugfs directory").
+> > 
+> > Currently, Greg Kroah-Hartman is posting patches:
+> > 
+> >   When calling debugfs functions, there is no need to ever check the
+> >   return value.  The function can work or not, but the code logic should
+> >   never do something different based on this.
+> > 
+> > Omar, what do you want to do for this case?
+> > 
+> > [1] https://syzkaller.appspot.com/bug?extid=b382ba6a802a3d242790
+> > 
 > 
-> um, ok, but these are not booleans, they are actions (ie ctrl = action
-> not true or false).
-> 
-> anyway will change it to something else
-> 
->>
->>> +enum phy_regulator { VDD, VDDA1P8, };
->>
->> It doesn't look like you need either of these if you remove the
->> set_voltage calls.
-> 
-> we need to point to the regulator in the array so we need an index to it
-> somehow.
+> The function which returned -EINVAL instead of NULL seems to be debugfs_lookup()
+> modified by commit ff9fb72bc07705c0 ("debugfs: return error values, not NULL").
 
-you are right, we dont
+Ok, the patch below should fix this up.
 
-> 
->>
->>> +
->>> +struct ssphy_priv {
->>> +	void __iomem *base;
->>> +	struct device *dev;
->>> +	struct reset_control *reset_com;
->>> +	struct reset_control *reset_phy;
->>> +	struct regulator *vbus;
->>> +	struct regulator_bulk_data *regs;
->>> +	int num_regs;
->>> +	struct clk_bulk_data *clks;
->>> +	int num_clks;
->>> +	enum phy_mode mode;
->>> +};
->>> +
->>> +static inline void qcom_ssphy_updatel(void __iomem *addr, u32 mask, u32 val)
->>> +{
->>> +	writel((readl(addr) & ~mask) | val, addr);
->>> +}
->>> +
->>> +static inline int qcom_ssphy_vbus_enable(struct regulator *vbus)
->>> +{
->>> +	return !regulator_is_enabled(vbus) ? regulator_enable(vbus) : 0;
->>
->> regulator_is_enabled() will check if the actual regulator is on, not if
->> you already voted for it.
->>
->> So if something else is enabling the vbus regulator you will skip your
->> enable and be in the mercy of them not releasing it. Presumably there's
->> only one consumer of this particular regulator, but it's a bad habit.
-> 
-> yep
-> 
->>
->> Please keep track of this drivers requested state in this driver, if
->> qcom_ssphy_vbus_ctrl() is called not only for the state changes.
-> 
-> um, there is not such a function: the ctrl function is not for vbus but
-> for vdd
+thanks,
 
-argh, sorry, it is me who misread my own driver. ok I know what you
-mean. will send the updated driver shortly.
+greg k-h
+
+-------------------------
+
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] debugfs: debugfs_lookup() should return NULL if not found
+
+Lots of callers of debugfs_lookup() were just checking NULL to see if
+the file/directory was found or not.  By changing this in ff9fb72bc077
+("debugfs: return error values, not NULL") we caused some subsystems to
+easily crash.
+
+Fixes: ff9fb72bc077 ("debugfs: return error values, not NULL")
+Reported-by: syzbot+b382ba6a802a3d242790@syzkaller.appspotmail.com
+Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Omar Sandoval <osandov@fb.com>
+Cc: Jens Axboe <axboe@fb.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/debugfs/inode.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index b16f8035b1af..29c68c5d44d5 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -254,8 +254,8 @@ MODULE_ALIAS_FS("debugfs");
+  * @parent: a pointer to the parent dentry of the file.
+  *
+  * This function will return a pointer to a dentry if it succeeds.  If the file
+- * doesn't exist or an error occurs, %ERR_PTR(-ERROR) will be returned.  The
+- * returned dentry must be passed to dput() when it is no longer needed.
++ * doesn't exist or an error occurs, %NULL will be returned.  The returned
++ * dentry must be passed to dput() when it is no longer needed.
+  *
+  * If debugfs is not enabled in the kernel, the value -%ENODEV will be
+  * returned.
+@@ -265,17 +265,17 @@ struct dentry *debugfs_lookup(const char *name, struct dentry *parent)
+ 	struct dentry *dentry;
+ 
+ 	if (IS_ERR(parent))
+-		return parent;
++		return NULL;
+ 
+ 	if (!parent)
+ 		parent = debugfs_mount->mnt_root;
+ 
+ 	dentry = lookup_one_len_unlocked(name, parent, strlen(name));
+ 	if (IS_ERR(dentry))
+-		return dentry;
++		return NULL;
+ 	if (!d_really_is_positive(dentry)) {
+ 		dput(dentry);
+-		return ERR_PTR(-EINVAL);
++		return NULL;
+ 	}
+ 	return dentry;
+ }
+-- 
+2.20.1
+
