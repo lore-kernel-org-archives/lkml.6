@@ -2,156 +2,94 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF44C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F39C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 712BD20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:25:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ErO9o3wm"
+	by mail.kernel.org (Postfix) with ESMTP id 0F69920882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:26:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730230AbfA3JZk (ORCPT
+        id S1730281AbfA3JZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:25:40 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38106 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730091AbfA3JZk (ORCPT
+        Wed, 30 Jan 2019 04:25:57 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:7233 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727433AbfA3JZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:25:40 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h50so18391985ede.5
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:25:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5a7NvQkWOISkNnAGXM7TAeezdcdvrRYnkbW1NYEQoWw=;
-        b=ErO9o3wmAG1rh48oPZST8SDvEgdzFIqMvwpSRCPjOjyqqlur6MUak6HZl+Oy26YyOg
-         uLoFAHxWCHYNAoQG+tt2Ovu3T26/bRS/31WTOk8maA0APDQMX6nEL+fFYbomuxvo5X30
-         qzsn/KqGl6vdguVGcIFERkIplb6ICppSv8F5w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5a7NvQkWOISkNnAGXM7TAeezdcdvrRYnkbW1NYEQoWw=;
-        b=VrLoLwZ1jj/vR7L3WdaPvMsGp9I8+IjMICQDFlH5SFaQX5M9uNLoDLoz5MNVnAtWLj
-         ioKFT+EIEGlmMt3qYu1HyA1MzTPCIw+Ot5ezyhTD03slqZbU51aJfGpNS1Pawydh5EzL
-         WRrVQxADUUzP1mgk+5uFopoMIKZxXEVHFiIyQu9Uhwe7tHxYkkH0cCSIMHBxZjuxdoJR
-         zPueNgvTHyQ8AYLqDi1Pcgq8/dBqiVxnqP8u7ihC/zYgqO/91j2kXFj1S6+i+iO9DlNA
-         CXXsmsB9aIbqSHlUnlhvJkKkeXMnY9aqaIpIW6rAHYHkvBzxXVNwWoK1KqzSeAieCa4M
-         ptUA==
-X-Gm-Message-State: AJcUukcL2zYbgh2ylOopyOxcN0Gd0tT8WVCuWjlqUefdOhF7//aAY2CI
-        Qy2py7hwwTv/528SfawPIzSq52ClDrU4zNCu/Uh5mA==
-X-Google-Smtp-Source: ALg8bN6eDeahTmyePeL/rIwr+a3UJTI5G0WFFLJFcWc/OJ7ixVMBE8XghKL8df0HI4K1ASmS9q50ZqOCKK7n/rNDyXA=
-X-Received: by 2002:a17:906:4691:: with SMTP id a17mr25821356ejr.58.1548840338153;
- Wed, 30 Jan 2019 01:25:38 -0800 (PST)
-MIME-Version: 1.0
-References: <20190109055724.184692-1-pihsun@chromium.org> <CANdKZ0fRckMSUwHyChgBw162cVQe9_mnd_G9vwt=+CV+Y0WFfw@mail.gmail.com>
- <81115ad5-521e-557b-d229-1effb92068a4@linaro.org>
-In-Reply-To: <81115ad5-521e-557b-d229-1effb92068a4@linaro.org>
-From:   Pi-Hsun Shih <pihsun@chromium.org>
-Date:   Wed, 30 Jan 2019 17:25:27 +0800
-Message-ID: <CANdKZ0eDwTgKoFsAOboCz=q+nsUWepecXA7wmR=jGhkWEzLvnA@mail.gmail.com>
-Subject: Re: [PATCH] thermal: mtk: Allocate enough space for mtk_thermal.
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
+        Wed, 30 Jan 2019 04:25:57 -0500
+Received: from [10.28.18.236] (10.28.18.236) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 30 Jan
+ 2019 17:26:39 +0800
+Subject: Re: [PATCH] mtd: rawnand: meson: Fix linking error on 32-bit
+ platforms
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     Richard Weinberger <richard@nod.at>,
+        Kevin Hilman <khilman@baylibre.com>,
+        <linux-mtd@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Michael.Kao@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20190129214657.5877-1-natechancellor@gmail.com>
+From:   Liang Yang <liang.yang@amlogic.com>
+Message-ID: <42d2e92e-9f5a-62b2-c0af-b7f3544d79d2@amlogic.com>
+Date:   Wed, 30 Jan 2019 17:26:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190129214657.5877-1-natechancellor@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.18.236]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 3:44 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 30/01/2019 07:04, Peter Shih wrote:
-> > Adding Michael Kao to cc list.
-> >
-> > On Wed, Jan 9, 2019 at 1:57 PM Pi-Hsun Shih <pihsun@chromium.org> wrote=
-:
-> >>
-> >> The mtk_thermal struct contains a 'struct mtk_thermal_bank banks[];',
-> >> but the allocation only allocates sizeof(struct mtk_thermal) bytes,
-> >> which cause out of bound access with the ->banks[] member. Change it t=
-o
-> >> a fixed size array instead.
->
-> Even if the fix is correct, it pushes back the bug later in time if a
-> new board containing more than MAX_NUM_ZONES is introduced. I suggest to
-> dynamically allocate the array with the 'num_banks' value.
->
+Hi Nathan,
 
-For the current code structure, those mtk_thermal_data are statically decla=
-red,
-so if there's new board containing more than MAX_NUM_ZONES of bank_data, it
-would actually be a compile error.
+On 2019/1/30 5:46, Nathan Chancellor wrote:
+> On arm little endian allyesconfig:
+> 
+>    ld.lld: error: undefined symbol: __aeabi_uldivmod
+>    >>> referenced by meson_nand.c
+>    >>> mtd/nand/raw/meson_nand.o:(meson_nfc_setup_data_interface) in archive drivers/built-in.a
+> 
+> The dividend tBERS_max is u64, meaning we need to use DIV_ROUND_UP_ULL
+> (which wraps do_div) to prevent the compiler from emitting
+> __aebi_uldivmod.
+> 
+> Fixes: 2d570b34b41a ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>   drivers/mtd/nand/raw/meson_nand.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
+> index e858d58d97b0..6f12a96195d1 100644
+> --- a/drivers/mtd/nand/raw/meson_nand.c
+> +++ b/drivers/mtd/nand/raw/meson_nand.c
+> @@ -1116,8 +1116,8 @@ int meson_nfc_setup_data_interface(struct nand_chip *nand, int csline,
+>   				       div * NFC_CLK_CYCLE);
+>   	meson_chip->tadl = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tADL_min),
+>   					div * NFC_CLK_CYCLE);
+> -	tbers_clocks = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tBERS_max),
+> -				    div * NFC_CLK_CYCLE);
+> +	tbers_clocks = DIV_ROUND_UP_ULL(PSEC_TO_NSEC(timings->tBERS_max),
+> +					div * NFC_CLK_CYCLE);
 
-I'm fine with either way, but feel like that this is simpler than manually
-calculating the size needed for allocation.
+Looks good to me:
 
->
-> >> Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
-> >> ---
-> >>  drivers/thermal/mtk_thermal.c | 7 +++++--
-> >>  1 file changed, 5 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_therm=
-al.c
-> >> index 0691f260f6eabe..ea11edb3fcced6 100644
-> >> --- a/drivers/thermal/mtk_thermal.c
-> >> +++ b/drivers/thermal/mtk_thermal.c
-> >> @@ -159,6 +159,9 @@
-> >>  #define MT7622_NUM_SENSORS_PER_ZONE    1
-> >>  #define MT7622_TS1     0
-> >>
-> >> +/* The maximum number of banks */
-> >> +#define MAX_NUM_ZONES          8
-> >> +
-> >>  struct mtk_thermal;
-> >>
-> >>  struct thermal_bank_cfg {
-> >> @@ -178,7 +181,7 @@ struct mtk_thermal_data {
-> >>         const int *sensor_mux_values;
-> >>         const int *msr;
-> >>         const int *adcpnp;
-> >> -       struct thermal_bank_cfg bank_data[];
-> >> +       struct thermal_bank_cfg bank_data[MAX_NUM_ZONES];
-> >>  };
-> >>
-> >>  struct mtk_thermal {
-> >> @@ -197,7 +200,7 @@ struct mtk_thermal {
-> >>         s32 vts[MT8173_NUM_SENSORS];
-> >>
-> >>         const struct mtk_thermal_data *conf;
-> >> -       struct mtk_thermal_bank banks[];
-> >> +       struct mtk_thermal_bank banks[MAX_NUM_ZONES];
-> >>  };
-> >>
-> >>  /* MT8173 thermal sensor data */
-> >> --
-> >> 2.20.1.97.g81188d93c3-goog
-> >>
->
->
-> --
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
-RM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
+Acked-by: Liang Yang <liang.yang@amlogic.com>
+
+>   	meson_chip->tbers_max = ilog2(tbers_clocks);
+>   	if (!is_power_of_2(tbers_clocks))
+>   		meson_chip->tbers_max++;
+> 
