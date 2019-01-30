@@ -2,130 +2,275 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCCBC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC272C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92A1D2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:30:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="JKpyZVHw"
+	by mail.kernel.org (Postfix) with ESMTP id 810992184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733080AbfA3Sa3 (ORCPT
+        id S1733085AbfA3SbP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:30:29 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45897 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732806AbfA3Sa2 (ORCPT
+        Wed, 30 Jan 2019 13:31:15 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:50375 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732323AbfA3SbP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:30:28 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 32so433324ota.12
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:30:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9j79+mJlVivCZg8r9eXgCwMYenun/QvjMBX1vH8qwVk=;
-        b=JKpyZVHwBzbZoi3xFBOJzn2IbpF802PLabqHWw8ZD026IfIn5OszULaE+vwKkiPb3S
-         o/QUb9/hfz1n2Y6gak73YSduWwoX9jik/GbhVfYtK/DSG7mHLVLqgU5vhonAtUF2jow+
-         L/38FpMlBqKHRgq6Hjwk5QvfkmtLNTw8xGz2Vpt5n/zOeBgZhvmBRLGfqr4WkF6KlIaZ
-         hnQABc+30eTr722VZw3wwe+YZYrwRrWZc/rtNP/K5itYlVAQIxPwxbER+yLhyf6viRHS
-         rcnIOmtzVlVFjfhdTF0es0jpUzl2S7LVV+g4hHtsF2yIqjKyHavd7Bmbyp+TBQhRpdsF
-         45HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9j79+mJlVivCZg8r9eXgCwMYenun/QvjMBX1vH8qwVk=;
-        b=ZW+w4wPZDRjqYwgPZ6Gj2etN8trywVns0U4yMLnyXOk/0BaLmQ9txitN2NyWnx5nWU
-         45QdvkhRXpwz8ebHIbdY9Qcv4MvA06PB1nFDTraIGhblHy5HLRxdYnVY5uiUQGnbXC6t
-         BNvlBtptGkq5Ymak6y54jugXvYsceURhy66asjUfQ/Qza0nYML7fR+2uorZMBw7NBIB8
-         H/ECAokT9dpyfMpnN1m3ut/R0b0KOSFh1MEeyXn3bdkqn6GXSWwX/FBYRPLWdKhFY9VA
-         HAL7yIMs4cdc75z8m8m6qtD4FNibqEqH/sICG9PvXNdG8UGQpdf/5XQ/CuwbGDQVZaof
-         4poQ==
-X-Gm-Message-State: AJcUukefUqQeFO0v9OTz7ltx9KWaa4uuqoMCwQKlmj/jXP7dXR914BHG
-        mABpDmYrsszHAeEG/S5KSs37keCyswgjAqAwSss55Q==
-X-Google-Smtp-Source: ALg8bN50PZrZSvg9p519hj+hk5qFch5Xc+sgKgpSmNfdxTt09IU1nK4fd3JVClOirb4JtDKnB6nQh9pcLz+sNphIw58=
-X-Received: by 2002:a9d:394:: with SMTP id f20mr22353389otf.98.1548873027799;
- Wed, 30 Jan 2019 10:30:27 -0800 (PST)
+        Wed, 30 Jan 2019 13:31:15 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0UIUwml2528416
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 30 Jan 2019 10:30:58 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0UIUvTq2528413;
+        Wed, 30 Jan 2019 10:30:57 -0800
+Date:   Wed, 30 Jan 2019 10:30:57 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-b284909abad48b07d3071a9fc9b5692b3e64914b@git.kernel.org>
+Cc:     jpoimboe@redhat.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@kernel.org, jmario@redhat.com, peterz@infradead.org,
+        imammedo@redhat.com, jikos@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, jikos@kernel.org,
+          imammedo@redhat.com, peterz@infradead.org, jmario@redhat.com,
+          mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+          jpoimboe@redhat.com
+In-Reply-To: <e3a85d585da28cc333ecbc1e78ee9216e6da9396.1548794349.git.jpoimboe@redhat.com>
+References: <e3a85d585da28cc333ecbc1e78ee9216e6da9396.1548794349.git.jpoimboe@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:smp/urgent] cpu/hotplug: Fix "SMT disabled by BIOS" detection
+ for KVM
+Git-Commit-ID: b284909abad48b07d3071a9fc9b5692b3e64914b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <154882453052.1338686.16411162273671426494.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154882453604.1338686.15108059741397800728.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190130064856.GB17937@rapoport-lnx>
-In-Reply-To: <20190130064856.GB17937@rapoport-lnx>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 30 Jan 2019 10:30:16 -0800
-Message-ID: <CAPcyv4jLFQ_ZGqBJK_xaVctMopdhdXEi7BzD=MA_VRucoNhKXQ@mail.gmail.com>
-Subject: Re: [PATCH v9 1/3] mm: Shuffle initial free memory to improve
- memory-side-cache utilization
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 10:49 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
->
-> On Tue, Jan 29, 2019 at 09:02:16PM -0800, Dan Williams wrote:
-> > Randomization of the page allocator improves the average utilization of
-> > a direct-mapped memory-side-cache. Memory side caching is a platform
-> > capability that Linux has been previously exposed to in HPC
-> > (high-performance computing) environments on specialty platforms. In
-> > that instance it was a smaller pool of high-bandwidth-memory relative to
-> > higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
-> > be found on general purpose server platforms where DRAM is a cache in
-> > front of higher latency persistent memory [1].
->
-> [ ... ]
->
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: Mike Rapoport <rppt@linux.ibm.com>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > ---
-> >  include/linux/list.h    |   17 ++++
-> >  include/linux/mmzone.h  |    4 +
-> >  include/linux/shuffle.h |   45 +++++++++++
-> >  init/Kconfig            |   23 ++++++
-> >  mm/Makefile             |    7 ++
-> >  mm/memblock.c           |    1
-> >  mm/memory_hotplug.c     |    3 +
-> >  mm/page_alloc.c         |    6 +-
-> >  mm/shuffle.c            |  188 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  9 files changed, 292 insertions(+), 2 deletions(-)
-> >  create mode 100644 include/linux/shuffle.h
-> >  create mode 100644 mm/shuffle.c
->
-> ...
->
-> > diff --git a/mm/memblock.c b/mm/memblock.c
-> > index 022d4cbb3618..c0cfbfae4a03 100644
-> > --- a/mm/memblock.c
-> > +++ b/mm/memblock.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/poison.h>
-> >  #include <linux/pfn.h>
-> >  #include <linux/debugfs.h>
-> > +#include <linux/shuffle.h>
->
-> Nit: does not seem to be required
->
-> >  #include <linux/kmemleak.h>
-> >  #include <linux/seq_file.h>
-> >  #include <linux/memblock.h>
+Commit-ID:  b284909abad48b07d3071a9fc9b5692b3e64914b
+Gitweb:     https://git.kernel.org/tip/b284909abad48b07d3071a9fc9b5692b3e64914b
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Wed, 30 Jan 2019 07:13:58 -0600
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 30 Jan 2019 19:27:00 +0100
 
-Good catch. Notch one more line saved in the incremental diffstat from
-v8. I'll wait for Michal's thumbs up on the rest before re-spinning,
-or perhaps Andrew can drop this line on applying?
+cpu/hotplug: Fix "SMT disabled by BIOS" detection for KVM
+
+With the following commit:
+
+  73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
+
+... the hotplug code attempted to detect when SMT was disabled by BIOS,
+in which case it reported SMT as permanently disabled.  However, that
+code broke a virt hotplug scenario, where the guest is booted with only
+primary CPU threads, and a sibling is brought online later.
+
+The problem is that there doesn't seem to be a way to reliably
+distinguish between the HW "SMT disabled by BIOS" case and the virt
+"sibling not yet brought online" case.  So the above-mentioned commit
+was a bit misguided, as it permanently disabled SMT for both cases,
+preventing future virt sibling hotplugs.
+
+Going back and reviewing the original problems which were attempted to
+be solved by that commit, when SMT was disabled in BIOS:
+
+  1) /sys/devices/system/cpu/smt/control showed "on" instead of
+     "notsupported"; and
+
+  2) vmx_vm_init() was incorrectly showing the L1TF_MSG_SMT warning.
+
+I'd propose that we instead consider #1 above to not actually be a
+problem.  Because, at least in the virt case, it's possible that SMT
+wasn't disabled by BIOS and a sibling thread could be brought online
+later.  So it makes sense to just always default the smt control to "on"
+to allow for that possibility (assuming cpuid indicates that the CPU
+supports SMT).
+
+The real problem is #2, which has a simple fix: change vmx_vm_init() to
+query the actual current SMT state -- i.e., whether any siblings are
+currently online -- instead of looking at the SMT "control" sysfs value.
+
+So fix it by:
+
+  a) reverting the original "fix" and its followup fix:
+
+     73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
+     bc2d8d262cba ("cpu/hotplug: Fix SMT supported evaluation")
+
+     and
+
+  b) changing vmx_vm_init() to query the actual current SMT state --
+     instead of the sysfs control value -- to determine whether the L1TF
+     warning is needed.  This also requires the 'sched_smt_present'
+     variable to exported, instead of 'cpu_smt_control'.
+
+Fixes: 73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
+Reported-by: Igor Mammedov <imammedo@redhat.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Joe Mario <jmario@redhat.com>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kvm@vger.kernel.org
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/e3a85d585da28cc333ecbc1e78ee9216e6da9396.1548794349.git.jpoimboe@redhat.com
+
+---
+ arch/x86/kernel/cpu/bugs.c |  2 +-
+ arch/x86/kvm/vmx/vmx.c     |  3 ++-
+ include/linux/cpu.h        |  2 --
+ kernel/cpu.c               | 33 ++++-----------------------------
+ kernel/sched/fair.c        |  1 +
+ kernel/smp.c               |  2 --
+ 6 files changed, 8 insertions(+), 35 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 1de0f4170178..01874d54f4fd 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -71,7 +71,7 @@ void __init check_bugs(void)
+ 	 * identify_boot_cpu() initialized SMT support information, let the
+ 	 * core code know.
+ 	 */
+-	cpu_smt_check_topology_early();
++	cpu_smt_check_topology();
+ 
+ 	if (!IS_ENABLED(CONFIG_SMP)) {
+ 		pr_info("CPU: ");
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 4341175339f3..95d618045001 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -26,6 +26,7 @@
+ #include <linux/mod_devicetable.h>
+ #include <linux/mm.h>
+ #include <linux/sched.h>
++#include <linux/sched/smt.h>
+ #include <linux/slab.h>
+ #include <linux/tboot.h>
+ #include <linux/trace_events.h>
+@@ -6823,7 +6824,7 @@ static int vmx_vm_init(struct kvm *kvm)
+ 			 * Warn upon starting the first VM in a potentially
+ 			 * insecure environment.
+ 			 */
+-			if (cpu_smt_control == CPU_SMT_ENABLED)
++			if (sched_smt_active())
+ 				pr_warn_once(L1TF_MSG_SMT);
+ 			if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER)
+ 				pr_warn_once(L1TF_MSG_L1D);
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index 218df7f4d3e1..5041357d0297 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -180,12 +180,10 @@ enum cpuhp_smt_control {
+ #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
+ extern enum cpuhp_smt_control cpu_smt_control;
+ extern void cpu_smt_disable(bool force);
+-extern void cpu_smt_check_topology_early(void);
+ extern void cpu_smt_check_topology(void);
+ #else
+ # define cpu_smt_control		(CPU_SMT_ENABLED)
+ static inline void cpu_smt_disable(bool force) { }
+-static inline void cpu_smt_check_topology_early(void) { }
+ static inline void cpu_smt_check_topology(void) { }
+ #endif
+ 
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index c0c7f64573ed..d1c6d152da89 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -376,9 +376,6 @@ void __weak arch_smt_update(void) { }
+ 
+ #ifdef CONFIG_HOTPLUG_SMT
+ enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
+-EXPORT_SYMBOL_GPL(cpu_smt_control);
+-
+-static bool cpu_smt_available __read_mostly;
+ 
+ void __init cpu_smt_disable(bool force)
+ {
+@@ -397,25 +394,11 @@ void __init cpu_smt_disable(bool force)
+ 
+ /*
+  * The decision whether SMT is supported can only be done after the full
+- * CPU identification. Called from architecture code before non boot CPUs
+- * are brought up.
+- */
+-void __init cpu_smt_check_topology_early(void)
+-{
+-	if (!topology_smt_supported())
+-		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+-}
+-
+-/*
+- * If SMT was disabled by BIOS, detect it here, after the CPUs have been
+- * brought online. This ensures the smt/l1tf sysfs entries are consistent
+- * with reality. cpu_smt_available is set to true during the bringup of non
+- * boot CPUs when a SMT sibling is detected. Note, this may overwrite
+- * cpu_smt_control's previous setting.
++ * CPU identification. Called from architecture code.
+  */
+ void __init cpu_smt_check_topology(void)
+ {
+-	if (!cpu_smt_available)
++	if (!topology_smt_supported())
+ 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+ }
+ 
+@@ -428,18 +411,10 @@ early_param("nosmt", smt_cmdline_disable);
+ 
+ static inline bool cpu_smt_allowed(unsigned int cpu)
+ {
+-	if (topology_is_primary_thread(cpu))
++	if (cpu_smt_control == CPU_SMT_ENABLED)
+ 		return true;
+ 
+-	/*
+-	 * If the CPU is not a 'primary' thread and the booted_once bit is
+-	 * set then the processor has SMT support. Store this information
+-	 * for the late check of SMT support in cpu_smt_check_topology().
+-	 */
+-	if (per_cpu(cpuhp_state, cpu).booted_once)
+-		cpu_smt_available = true;
+-
+-	if (cpu_smt_control == CPU_SMT_ENABLED)
++	if (topology_is_primary_thread(cpu))
+ 		return true;
+ 
+ 	/*
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 50aa2aba69bd..310d0637fe4b 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5980,6 +5980,7 @@ static inline int find_idlest_cpu(struct sched_domain *sd, struct task_struct *p
+ 
+ #ifdef CONFIG_SCHED_SMT
+ DEFINE_STATIC_KEY_FALSE(sched_smt_present);
++EXPORT_SYMBOL_GPL(sched_smt_present);
+ 
+ static inline void set_idle_cores(int cpu, int val)
+ {
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 163c451af42e..f4cf1b0bb3b8 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -584,8 +584,6 @@ void __init smp_init(void)
+ 		num_nodes, (num_nodes > 1 ? "s" : ""),
+ 		num_cpus,  (num_cpus  > 1 ? "s" : ""));
+ 
+-	/* Final decision about SMT support */
+-	cpu_smt_check_topology();
+ 	/* Any cleanup work */
+ 	smp_cpus_done(setup_max_cpus);
+ }
