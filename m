@@ -2,106 +2,46 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A23C282D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA097C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A2832087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:41:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548862876;
-	bh=nHm7eOy82+tzDzSBzaBfZdPdLctcjTIhgr5gGa+okSI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Q3NFFzqHmwgH9PQ/bk4+wLhJZYwFdKP9bskQ7BX1JpeJsAhsmoTSbmyvSHZs7mQ+G
-	 tPxZfzxlx+bkB5E3FTNDs9/pyN+LnfXxajEEJW9mpdPauQ+nMbaw1MVSM2vz0wIGMv
-	 BxVuyY3GUvBgNo2stuy+ziQaxMkrFSLA3XjDdu90=
+	by mail.kernel.org (Postfix) with ESMTP id B663920989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:42:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730985AbfA3PlO (ORCPT
+        id S1731510AbfA3Pmr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:41:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbfA3PlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:41:13 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B43272084C;
-        Wed, 30 Jan 2019 15:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548862873;
-        bh=nHm7eOy82+tzDzSBzaBfZdPdLctcjTIhgr5gGa+okSI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hNGiPyC/2mtbImVGxmhjNjcrdUSOYao/wiyRwzYE92nc4QIXcwxTXuIgp5UOe3TzX
-         xCysz01Eo8IoRLJvpaSdCc0miZmt/jBkZ/+YBhcu7UUGeW7s8m8djQHi1l+hCeQJ2R
-         P9vmAY2hl5VLlycA78fFklejIP31Xhzg80/WcLAs=
-Date:   Wed, 30 Jan 2019 09:41:11 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     honghui.zhang@mediatek.com
-Cc:     lorenzo.pieralisi@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
-        youlin.pei@mediatek.com, jianjun.wang@mediatek.com
-Subject: Re: [PATCH] PCI: Mediatek: Use resource_size function on resource
- object
-Message-ID: <20190130154111.GC229773@google.com>
-References: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
+        Wed, 30 Jan 2019 10:42:47 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48172 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729884AbfA3Pmr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 10:42:47 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gos0j-00046N-Sn; Wed, 30 Jan 2019 15:42:45 +0000
+Date:   Wed, 30 Jan 2019 15:42:45 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Cyrill Gorcunov <gorcunov@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH next] fs/splice: iter_to_pipe -- Use PIPE_DEF_BUFFERS
+ instead of hardcoded number
+Message-ID: <20190130154245.GK2217@ZenIV.linux.org.uk>
+References: <20190130153911.GJ2332@uranus.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
+In-Reply-To: <20190130153911.GJ2332@uranus.lan>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please pay attention to the changelog conventions, e.g., next time use
-"PCI: mediatek: ..." so yours matches "git log --oneline
-drivers/pci/controller/pcie-mediatek.c"
+On Wed, Jan 30, 2019 at 06:39:11PM +0300, Cyrill Gorcunov wrote:
+> And use ARRAY_SIZE for easier code modification if we ever need in future.
 
-On Wed, Jan 02, 2019 at 02:03:53PM +0800, honghui.zhang@mediatek.com wrote:
-> From: Honghui Zhang <honghui.zhang@mediatek.com>
-> 
-> drivers/pci/pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
-> 
-> Generated by: scripts/coccinelle/api/resource_size.cocci
-
-This is not a changelog; it's only a restatement of the warning.  Next
-time please include a description of the change.  It's OK if it
-repeats the subject.
-
-> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> ---
->  drivers/pci/controller/pcie-mediatek.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index e307166..0168376 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
->  	struct resource *mem = &pcie->mem;
->  	const struct mtk_pcie_soc *soc = port->pcie->soc;
->  	u32 val;
-> -	size_t size;
->  	int err;
->  
->  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
-> @@ -706,8 +705,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
->  		mtk_pcie_enable_msi(port);
->  
->  	/* Set AHB to PCIe translation windows */
-> -	size = mem->end - mem->start;
-> -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
-> +	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
->  	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
->  
->  	val = upper_32_bits(mem->start);
-> -- 
-> 2.6.4
-> 
+Umm...  Why PIPE_DEF_BUFFERS, though?  Because it's a constant from more or
+less the same area that happens to be equal to the value we use here?
