@@ -2,158 +2,121 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C98C282D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80E2C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB4D7218AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:35:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E3AE218AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:35:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vE10Ib9j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387654AbfA3Uf0 (ORCPT
+        id S2387697AbfA3Ufb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 15:35:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40000 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387609AbfA3UfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 15:35:25 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 63599461CF;
-        Wed, 30 Jan 2019 20:35:24 +0000 (UTC)
-Received: from redhat.com (ovpn-126-0.rdu2.redhat.com [10.10.126.0])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 712C460462;
-        Wed, 30 Jan 2019 20:35:21 +0000 (UTC)
-Date:   Wed, 30 Jan 2019 15:35:16 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Message-ID: <20190130203516.GE5061@redhat.com>
-References: <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
- <20190129215028.GQ3176@redhat.com>
- <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
- <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
- <20190130041841.GB30598@mellanox.com>
- <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
- <20190130185652.GB17080@mellanox.com>
- <20190130192234.GD5061@redhat.com>
- <5a60507e-e781-d0a4-353e-32105ca7ace3@deltatee.com>
+        Wed, 30 Jan 2019 15:35:31 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40736 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387609AbfA3Uf2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 15:35:28 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u18so348926plq.7;
+        Wed, 30 Jan 2019 12:35:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GmctxZS15y5z2V85O1PU0CkJgxCRKgIbZyDbKcO3Mk4=;
+        b=vE10Ib9j33MNS8aeBLU3oTRIYMUczk7bWwdZ8xzpTtLOmD8IoWlK9IaPZFkT5imD50
+         FAQbxastdeP+5TMqtCHqLGba+9Iuqf9Rm79lpHt2KSt1OwZFT0RRH3nw7qwmR8H2kB6P
+         cdEKXHTs1UO9fSniiytt9s3SIc+l4FR5rAwRk52J0/sv95gya4cHVguCmtfV8W9YLMdF
+         GjakZfeyCRYjhSiTlnMr67chMEspOnTAxGg+Wou2p1+MOSpTfVw7g1B3DTfCLoryh6uH
+         1TnkOg2bT6Hh2ryFVfgJrGDlxSfcTagzEwIG+u9STjfTI7+PVmX4D8shJFZSCwkNHMtp
+         Tz7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GmctxZS15y5z2V85O1PU0CkJgxCRKgIbZyDbKcO3Mk4=;
+        b=a9G5+6d3GEyQJrz89cfKJC12+49pYVrX+sjPwZ4B7LRDQEDuVV/MNn10TZADOsxEjb
+         f1kP5VtyQxwLzTwqkkXzyFjY5jYADD70x0m6R9F9KuZpYERheAroe1Y9d4ok3LC0MLmm
+         RsGh9TriIbKyPUrQFzDBMhCj8Sh97hK9kOK8ti6iBVmZS6A7yJeR6rdfXA/6YmIkBj5Y
+         mY172uDG9Mb5MJqDVUQ/z/uL1DN+QMTN5rzE+V291fZoG80BLSqjrY1aMmD86lWRBSvt
+         hzE2k3e0oPuAh9Xx2C5KFMPNcjFFxIqXg3Q3SMiRH3OS7zQbR3me7lYKV89YaDmuP5bp
+         Kdyw==
+X-Gm-Message-State: AJcUukd34c4rq9CAlQxknayKnQnQqrcb4mGPj7pML54DJNszxEFvrP46
+        Jcku2v0OAGratniFyJ96Vyv1qW+F
+X-Google-Smtp-Source: ALg8bN5iGhvp3GNJ9Ecjt5mQ6fhf1lHT8zqiIyfAQXw6CRg/SxunR0dFOF2QJcAgOKh1tRC2N97zQg==
+X-Received: by 2002:a17:902:5ac7:: with SMTP id g7mr32224925plm.212.1548880527936;
+        Wed, 30 Jan 2019 12:35:27 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id m19sm6404798pgn.35.2019.01.30.12.35.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 12:35:26 -0800 (PST)
+Date:   Wed, 30 Jan 2019 12:35:25 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Kamil Debski <kamil@wypas.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/3] dt-bindings: hwmon: Add tachometer interrupt to
+ pwm-fan
+Message-ID: <20190130203525.GA23614@roeck-us.net>
+References: <1548860827-29796-1-git-send-email-stefan.wahren@i2se.com>
+ <1548860827-29796-2-git-send-email-stefan.wahren@i2se.com>
+ <20190130172815.GC14781@roeck-us.net>
+ <625436113.118199.1548879811777@email.ionos.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5a60507e-e781-d0a4-353e-32105ca7ace3@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 30 Jan 2019 20:35:25 +0000 (UTC)
+In-Reply-To: <625436113.118199.1548879811777@email.ionos.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 12:52:44PM -0700, Logan Gunthorpe wrote:
+On Wed, Jan 30, 2019 at 09:23:31PM +0100, Stefan Wahren wrote:
+> Hi Guenter,
 > 
-> 
-> On 2019-01-30 12:22 p.m., Jerome Glisse wrote:
-> > On Wed, Jan 30, 2019 at 06:56:59PM +0000, Jason Gunthorpe wrote:
-> >> On Wed, Jan 30, 2019 at 10:17:27AM -0700, Logan Gunthorpe wrote:
-> >>>
-> >>>
-> >>> On 2019-01-29 9:18 p.m., Jason Gunthorpe wrote:
-> >>>> Every attempt to give BAR memory to struct page has run into major
-> >>>> trouble, IMHO, so I like that this approach avoids that.
-> >>>>
-> >>>> And if you don't have struct page then the only kernel object left to
-> >>>> hang meta data off is the VMA itself.
-> >>>>
-> >>>> It seems very similar to the existing P2P work between in-kernel
-> >>>> consumers, just that VMA is now mediating a general user space driven
-> >>>> discovery process instead of being hard wired into a driver.
-> >>>
-> >>> But the kernel now has P2P bars backed by struct pages and it works
-> >>> well. 
-> >>
-> >> I don't think it works that well..
-> >>
-> >> We ended up with a 'sgl' that is not really a sgl, and doesn't work
-> >> with many of the common SGL patterns. sg_copy_buffer doesn't work,
-> >> dma_map, doesn't work, sg_page doesn't work quite right, etc.
-> >>
-> >> Only nvme and rdma got the special hacks to make them understand these
-> >> p2p-sgls, and I'm still not convinced some of the RDMA drivers that
-> >> want access to CPU addresses from the SGL (rxe, usnic, hfi, qib) don't
-> >> break in this scenario.
-> >>
-> >> Since the SGLs become broken, it pretty much means there is no path to
-> >> make GUP work generically, we have to go through and make everything
-> >> safe to use with p2p-sgls before allowing GUP. Which, frankly, sounds
-> >> impossible with all the competing objections.
-> >>
-> >> But GPU seems to have a problem unrelated to this - what Jerome wants
-> >> is to have two faulting domains for VMA's - visible-to-cpu and
-> >> visible-to-dma. The new op is essentially faulting the pages into the
-> >> visible-to-dma category and leaving them invisible-to-cpu.
-> >>
-> >> So that duality would still have to exists, and I think p2p_map/unmap
-> >> is a much simpler implementation than trying to create some kind of
-> >> special PTE in the VMA..
-> >>
-> >> At least for RDMA, struct page or not doesn't really matter. 
-> >>
-> >> We can make struct pages for the BAR the same way NVMe does.  GPU is
-> >> probably the same, just with more mememory at stake?  
-> >>
-> >> And maybe this should be the first implementation. The p2p_map VMA
-> >> operation should return a SGL and the caller should do the existing
-> >> pci_p2pdma_map_sg() flow.. 
+> > Guenter Roeck <linux@roeck-us.net> hat am 30. Januar 2019 um 18:28 geschrieben:
 > > 
-> > For GPU it would not work, GPU might want to use main memory (because
-> > it is running out of BAR space) it is a lot easier if the p2p_map
-> > callback calls the right dma map function (for page or io) rather than
-> > having to define some format that would pass down the information.
-> 
-> >>
-> >> Worry about optimizing away the struct page overhead later?
 > > 
-> > Struct page do not fit well for GPU as the BAR address can be reprogram
-> > to point to any page inside the device memory (think 256M BAR versus
-> > 16GB device memory). Forcing struct page on GPU driver would require
-> > major surgery to the GPU driver inner working and there is no benefit
-> > to have from the struct page. So it is hard to justify this.
+> > On Wed, Jan 30, 2019 at 04:07:05PM +0100, Stefan Wahren wrote:
+> > > This adds the tachometer interrupt to the pwm-fan binding, which is
+> > > necessary for RPM support.
+> > > 
+> > > Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/hwmon/pwm-fan.txt | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
+> > > index 49ca5d8..7f69b0b 100644
+> > > --- a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
+> > > +++ b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
+> > > @@ -8,6 +8,9 @@ Required properties:
+> > >  
+> > >  Optional properties:
+> > >  - fan-supply    : phandle to the regulator that provides power to the fan
+> > > +- interrupts    : contains a single interrupt specifier which describes the
+> > > +                  tachometer pin output of a 2 pulse-per-revolution fan.
+> > > +                  See interrupt-controller/interrupts.txt for the format.
+> > 
+> > So a hypothetical {1,4} pulse-per-revolution fan would explicitly not be
+> > supported ? Why ?
 > 
-> I think we have to consider the struct pages to track the address space,
-> not what backs it (essentially what HMM is doing). If we need to add
-> operations for the driver to map the address space/struct pages back to
-> physical memory then do that. Creating a whole new idea that's tied to
-> userspace VMAs still seems wrong to me.
+> i could add an additional property to specify the pulse per revolution and use the 2 as default (according to the Intel spec for 4 pin pwm fan) which should fit in most cases.
+> 
+That would be a possibility and make sense, but that is not
+the point here.  The "interrupts" property does not and should
+not care how many pulses per revolution the fan provides.
 
-VMA is the object RDMA works on, GPU driver have been working with
-VMA too, where VMA is tie to only one specific GPU object. So the most
-disrupting approach here is using struct page. It was never use and
-will not be use in many driver. Updating those to struct page is too
-risky and too much changes. The vma call back is something you can
-remove at any time if you have something better that do not need major
-surgery to GPU driver.
-
-Cheers,
-Jérôme
+Guenter
