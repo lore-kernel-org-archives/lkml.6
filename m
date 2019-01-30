@@ -2,93 +2,95 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8361CC282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAF5C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5575E20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39A5C20882
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:45:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X2nQ9RDc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730659AbfA3JoI (ORCPT
+        id S1730400AbfA3JpM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:44:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45286 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729050AbfA3JoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:44:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 22EDFACC6;
-        Wed, 30 Jan 2019 09:44:06 +0000 (UTC)
-Date:   Wed, 30 Jan 2019 10:44:05 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Jiri Kosina <jikos@kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] livepatch: Remove the redundant enabled flag in
- struct klp_patch
-Message-ID: <20190130094405.qbm7nynam3dryq4h@pathway.suse.cz>
-References: <20190116161720.796-1-pmladek@suse.com>
- <20190116161720.796-5-pmladek@suse.com>
- <alpine.LSU.2.21.1901221100020.16809@pobox.suse.cz>
- <d0f53387-1b6f-3d9a-2336-89485b0680ac@redhat.com>
- <20190129200049.aarlvssu7fihfpwh@treble>
+        Wed, 30 Jan 2019 04:45:12 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46186 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729227AbfA3JpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 04:45:12 -0500
+Received: by mail-lf1-f67.google.com with SMTP id f5so16849191lfc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:45:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IHYDpmbEo5hTGFgl7UscPI40cBT4uBEAauRqHmh6yPM=;
+        b=X2nQ9RDcrW19PNss7xXsk95Ag8XJBTwoU9IKQlLVtYXKK/c3n9bMZMCIPtV847v7Ok
+         4Jnwp25v69wlCm9CTGaGDDf3J7dkmRSo3l/51bKKFWSdHBgpEr9cVpxqSHKjWDEfQghl
+         whieKtNUc2fY0roXkEG2c3oqomK64geJjZRkY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IHYDpmbEo5hTGFgl7UscPI40cBT4uBEAauRqHmh6yPM=;
+        b=Jbcd9F70T0x1LWCKXyXmVRP7jEnyxUl7GG1SwKM2FB5WDz3QN32jfB13ef3HieYUpn
+         Gp8E96pOamcWSKxp0OtrhuwD2vs3GriqaPHGbJ5Ecyvvq2KMTuq2EuEQEmLTggNoa+/D
+         ihWghJ/Ih9VdY4JZL8GYMBKMWjVI3bfMpqLcMxYm48VIzqa0mtDrXkwsDaq05TK8YeUx
+         tQDIPKjlsieaEzt4m31qQbvEeQyjNrYMRNeubghVlFLJVyv1ls4Dba79Z/VuD0CGTH4B
+         yQuCisC65S0oRW2GiJviyCcrVzRxDPLz6dAAvOKua3UUBffd4iAmu+X4uQGctHjsLyP6
+         DNpg==
+X-Gm-Message-State: AJcUukc+TVdnZlXVIvPUjh7OEcfQy8dz2cWNu3Hy6X5hyPGdKjN7NB81
+        NzjqFeJ1tf7WXWM3iasJwzCdH5c+fNDoBxodogc49w==
+X-Google-Smtp-Source: ALg8bN6tYYioQsOEzdhAWlrtMCm0zqehL6JWXmn2G0ozwbCoG75haDetRYkSY1wb/rnG8Z8heJNrUVW8x0XShTLNYOE=
+X-Received: by 2002:ac2:53b1:: with SMTP id j17mr22369995lfh.167.1548841509880;
+ Wed, 30 Jan 2019 01:45:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129200049.aarlvssu7fihfpwh@treble>
-User-Agent: NeoMutt/20170421 (1.8.2)
+References: <cover.1547445576.git.vilhelm.gray@gmail.com> <20190129170734.688a6adf91267cc6f1b5fa08@linux-foundation.org>
+In-Reply-To: <20190129170734.688a6adf91267cc6f1b5fa08@linux-foundation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 30 Jan 2019 10:44:58 +0100
+Message-ID: <CACRpkdZi1BHUq4mT==5OOepq=o4Pus1=DJBY-fWBZyjG5bdpoA@mail.gmail.com>
+Subject: Re: [PATCH v8 0/8] Introduce the for_each_set_clump8 macro
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-arch@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-01-29 14:00:49, Josh Poimboeuf wrote:
-> On Wed, Jan 23, 2019 at 01:27:59PM -0500, Joe Lawrence wrote:
-> > > I wanted to ask why there is list_empty() and not klp_patch_enabled(), so
-> > > just to be sure... the patch was added to klp_patches list, so patch->list
-> > > is not empty (should not be). We could achieve the same by calling
-> > > !klp_patch_enabled() given its implementation, but it would look
-> > > counter-intuitive here.
-> > > 
-> > > The rest looks fine.
-> > > 
-> > > However, I am not sure if the outcome is better than what we have. Yes,
-> > > patch->enabled is not technically necessary and we can live with that (as
-> > > the patch proves). On the other hand, it gives the reader clear guidance
-> > > about the patch's state. klp_patch_enabled() is not a complete
-> > > replacement. We have to call list_empty() in __klp_enable_patch() or check
-> > > the original klp_target_state in klp_try_complete_transition().
-> > > 
-> > > I am not against the change, I am glad to see it is achievable, but I am
-> > > not sure if the code is better with it. Joe acked it. What do the others
-> > > think?
-> > 
-> > Let me qualify my ack -- I think minimizing the number of state variables
-> > like patch->enabled can help readability... on the other hand, deducing the
-> > same information from other properties like list-empty can be confusing, ie,
-> > klp_patch_enabled() is generally a lot clearer than
-> > list_empty(&patch->list)).
-> > 
-> > So I like this idea and would be interested to hear what folks think about
-> > the exception cases you pointed out.
-> 
-> I share Miroslav and Joe's ambivalence.  It's interesting to see that it
-> can be done, and normally I'd prefer to get rid of extraneous data
-> fields, but the patch doesn't reduce code, and it even makes the code
-> slightly more complex IMO, because klp_patch_enabled() doesn't always
-> work like you'd expect.
-> 
-> So while I suggested it to begin with, I'm going to go with a NACK :-)
+On Wed, Jan 30, 2019 at 2:07 AM Andrew Morton <akpm@linux-foundation.org> wrote:
+> On Mon, 14 Jan 2019 15:19:17 +0900 William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
 
-Fair enough. I took this patch as an experiment that might fail :-)
+> >  drivers/gpio/gpio-104-dio-48e.c   |  73 ++++++--------------
+> >  drivers/gpio/gpio-104-idi-48.c    |  37 +++-------
+> >  drivers/gpio/gpio-gpio-mm.c       |  73 ++++++--------------
+> >  drivers/gpio/gpio-pci-idio-16.c   |  75 ++++++++------------
+> >  drivers/gpio/gpio-pcie-idio-24.c  | 111 +++++++++++-------------------
+> >  drivers/gpio/gpio-ws16c48.c       |  72 ++++++-------------
+> >  include/asm-generic/bitops/find.h |  14 ++++
+> >  include/linux/bitops.h            |   5 ++
+> >  lib/find_bit.c                    |  81 ++++++++++++++++++++++
+> >  lib/test_bitmap.c                 |  65 +++++++++++++++++
+> >  10 files changed, 307 insertions(+), 299 deletions(-)
+>
+> It's a shame that it doesn't actually dercease the kernel line count,
+> but there are other benefits.
+>
+> The patches are missing the hoped-for acks, but I think you maintain
+> most/all of those drivers.
 
-Best Regards,
-Petr
+He does, but FWIW:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
