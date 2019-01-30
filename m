@@ -2,257 +2,197 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 458DDC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF17C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 196CC20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D7620989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:33:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="IvQ/madw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730983AbfA3NcU (ORCPT
+        id S1730957AbfA3NdY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:32:20 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50903 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbfA3NcU (ORCPT
+        Wed, 30 Jan 2019 08:33:24 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37923 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbfA3NdY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:32:20 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gopyU-0005sN-RT; Wed, 30 Jan 2019 14:32:18 +0100
-Message-ID: <1548855138.6869.27.camel@pengutronix.de>
-Subject: Re: [PATCH V2 4/4] irq: imx: irqsteer: add multi output interrupts
- support
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Date:   Wed, 30 Jan 2019 14:32:18 +0100
-In-Reply-To: <1548853196-11447-5-git-send-email-aisheng.dong@nxp.com>
-References: <1548853196-11447-1-git-send-email-aisheng.dong@nxp.com>
-         <1548853196-11447-5-git-send-email-aisheng.dong@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 30 Jan 2019 08:33:24 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so11067493plb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 05:33:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MWOHj8i9VGFnozURvSgdoAGxbNrdHu0U7DXiOt979AI=;
+        b=IvQ/madwRTrRb9HueMOLTd4fGcNH1NgZWXvdQVVrunQcOlMR2Tb/mEXxcPJcGW+CzJ
+         RlGuBO+kmjexKCWipsEFo6iDtxDGdzJ/JaPrMq0W2hDG6cDrSBiFMyLCPTSzcQyfOmv/
+         HMO36GdEYVcy5bh3XAS2DTT4UktmR1hLLzXmxT4nUQk70kFozYVf+uTMp4u610jBectL
+         rN3K/IE76sYq+ySLhfBPjfA5E/Ez1X1Fw2kOqhj9plJUj3Vc865x4b+PdkrZKfaIjo5J
+         FkDRlmMNXySbV7h1FSnw3xHI92RKzV6lDCi2Tn5NTREtkLVV+uScAVgNmXLG7zdzMDVC
+         UOeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MWOHj8i9VGFnozURvSgdoAGxbNrdHu0U7DXiOt979AI=;
+        b=eh1L1XlRrDuDAUTuM/KTsbzVcLCQaeWc6KbU3B5OTCWjI/QRIZVzIlZIYyyvZ9vOg5
+         k1YemYBQ6ML6bZR9wg13Ho7Q1p7fQ5WhJZ2e6j9TgPPBnlY7DUVvYrJcD4wnKujhu1Dh
+         AM4nuIGlL3JszVhS8OYE/gBaWzjoNxiU/uzp7ww5G0NjnstabFgZhttXX3sBxzWMtful
+         fDf48s+JqwmauldR0sf24gFIHe6pkzYyvtX5NdE33EciYMX3xvPhxZfZF5gf/x5ZeP6p
+         RDxj4JwQI/wbMD4/aHLJ0/ck2Xhs7up8zrVRWA8ZluVdsGRfIadvJO3goG2VJLi7FrZ2
+         knyA==
+X-Gm-Message-State: AJcUukd+GaB2sTpckPLbNl43aed0Sx7aJjm6WKPsMnvJFqOoJVMih9ih
+        W5h102JwuvOWRwErwpsBiyqfaxm33WyY5w==
+X-Google-Smtp-Source: ALg8bN5qVeRnN/CoDiqVnICpTq/rt4L+i4kdHmAoYoaHimEVtF1+f6CyXJaGcgPOmsH+f3lt1P+Eqg==
+X-Received: by 2002:a17:902:780a:: with SMTP id p10mr31103181pll.54.1548855203207;
+        Wed, 30 Jan 2019 05:33:23 -0800 (PST)
+Received: from [192.168.15.224] (71-6-111-190.static-ip.telepacific.net. [71.6.111.190])
+        by smtp.gmail.com with ESMTPSA id y89sm3331224pfa.136.2019.01.30.05.33.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 05:33:22 -0800 (PST)
+Subject: Re: [PATCH V2] lightnvm: pblk: extend line wp balance check
+To:     hans@owltronix.com
+Cc:     javier@javigon.com, Zhoujie Wu <zjwu@marvell.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+References: <20190130081857.6779-1-hans@owltronix.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <b653e741-27ec-1a79-0375-3d5f375cbbe4@lightnvm.io>
+Date:   Wed, 30 Jan 2019 14:33:19 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190130081857.6779-1-hans@owltronix.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 30.01.2019, 13:06 +0000 schrieb Aisheng Dong:
-> One irqsteer channel can support up to 8 output interrupts.
+On 1/30/19 9:18 AM, hans@owltronix.com wrote:
+> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 > 
-> > Cc: Marc Zyngier <marc.zyngier@arm.com>
-> > Cc: Lucas Stach <l.stach@pengutronix.de>
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-> ChangeLog:
-> v1->v2:
->  * calculate irq_count by fsl,num-irqs instead of parsing interrupts
->    property from devicetree to match the input interrupts and outputs
->  * improve output interrupt handler by searching only two registers
->    withint the same group
-> ---
->  drivers/irqchip/irq-imx-irqsteer.c | 76 +++++++++++++++++++++++++++++---------
->  1 file changed, 59 insertions(+), 17 deletions(-)
+> pblk stripes writes of minimal write size across all non-offline chunks
+> in a line, which means that the maximum write pointer delta should not
+> exceed the minimal write size.
 > 
-> diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irqsteer.c
-> index 67ed862..cc40039 100644
-> --- a/drivers/irqchip/irq-imx-irqsteer.c
-> +++ b/drivers/irqchip/irq-imx-irqsteer.c
-> @@ -10,6 +10,7 @@
->  #include <linux/irqchip/chained_irq.h>
->  #include <linux/irqdomain.h>
->  #include <linux/kernel.h>
-> +#include <linux/of_irq.h>
->  #include <linux/of_platform.h>
->  #include <linux/spinlock.h>
->  
-> @@ -21,10 +22,13 @@
-> >  #define CHAN_MINTDIS(t)		(CTRL_STRIDE_OFF(t, 3) + 0x4)
-> >  #define CHAN_MASTRSTAT(t)	(CTRL_STRIDE_OFF(t, 3) + 0x8)
->  
-> > +#define CHAN_MAX_OUTPUT_INT	0x8
-> +
->  struct irqsteer_data {
-> > >  	void __iomem		*regs;
-> > >  	struct clk		*ipg_clk;
-> > > -	int			irq;
-> > > +	int			irq[CHAN_MAX_OUTPUT_INT];
-> > > +	int			irq_count;
-> > >  	raw_spinlock_t		lock;
-> > >  	int			reg_num;
-> > >  	int			channel;
-> @@ -87,26 +91,45 @@ static const struct irq_domain_ops imx_irqsteer_domain_ops = {
-> > >  	.xlate		= irq_domain_xlate_onecell,
->  };
->  
-> +static int imx_irqsteer_get_hwirq_base(struct irqsteer_data *data, u32 irq)
-> +{
-> > +	int i;
-> +
-> > +	for (i = 0; i < data->irq_count; i++) {
-> > +		if (data->irq[i] == irq)
-> +			break;
-
-return i * 64; here...
-> +	}
-> +
-> +	return i * 64;
-
-... and -EINVAL or something here, so we don't return a out of bounds
-hwirq base if the loop ever doesn't match something?
- 
+> Extend the line write pointer balance check to cover this case, and
+> ignore the offline chunk wps.
+> 
+> This will render us a warning during recovery if something unexpected
+> has happened to the chunk write pointers (i.e. powerloss,  a spurious
+> chunk reset, ..).
+> 
+> Reported-by: Zhoujie Wu <zjwu@marvell.com>
+> Tested-by: Zhoujie Wu <zjwu@marvell.com>
+> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> ---
+> 
+> Changes since V1:
+> 
+> 	* Squashed with Zhoujie's:
+> 	 "lightnvm: pblk: ignore bad block wp for pblk_line_wp_is_unbalanced"
+> 	* Clarified commit message based on Javier's comments.
+> 		
+> 
+>   drivers/lightnvm/pblk-recovery.c | 56 ++++++++++++++++++++++----------
+>   1 file changed, 38 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+> index 6761d2afa4d0..d86f580036d3 100644
+> --- a/drivers/lightnvm/pblk-recovery.c
+> +++ b/drivers/lightnvm/pblk-recovery.c
+> @@ -302,35 +302,55 @@ static int pblk_pad_distance(struct pblk *pblk, struct pblk_line *line)
+>   	return (distance > line->left_msecs) ? line->left_msecs : distance;
+>   }
+>   
+> -static int pblk_line_wp_is_unbalanced(struct pblk *pblk,
+> -				      struct pblk_line *line)
+> +/* Return a chunk belonging to a line by stripe(write order) index */
+> +static struct nvm_chk_meta *pblk_get_stripe_chunk(struct pblk *pblk,
+> +						  struct pblk_line *line,
+> +						  int index)
+>   {
+>   	struct nvm_tgt_dev *dev = pblk->dev;
+>   	struct nvm_geo *geo = &dev->geo;
+> -	struct pblk_line_meta *lm = &pblk->lm;
+>   	struct pblk_lun *rlun;
+> -	struct nvm_chk_meta *chunk;
+>   	struct ppa_addr ppa;
+> -	u64 line_wp;
+> -	int pos, i;
+> +	int pos;
+>   
+> -	rlun = &pblk->luns[0];
+> +	rlun = &pblk->luns[index];
+>   	ppa = rlun->bppa;
+>   	pos = pblk_ppa_to_pos(geo, ppa);
+> -	chunk = &line->chks[pos];
+>   
+> -	line_wp = chunk->wp;
+> +	return &line->chks[pos];
 > +}
+>   
+> -	for (i = 1; i < lm->blk_per_line; i++) {
+> -		rlun = &pblk->luns[i];
+> -		ppa = rlun->bppa;
+> -		pos = pblk_ppa_to_pos(geo, ppa);
+> -		chunk = &line->chks[pos];
+> +static int pblk_line_wps_are_unbalanced(struct pblk *pblk,
+> +				      struct pblk_line *line)
+> +{
+> +	struct pblk_line_meta *lm = &pblk->lm;
+> +	int blk_in_line = lm->blk_per_line;
+> +	struct nvm_chk_meta *chunk;
+> +	u64 max_wp, min_wp;
+> +	int i;
 > +
->  static void imx_irqsteer_irq_handler(struct irq_desc *desc)
->  {
-> >  	struct irqsteer_data *data = irq_desc_get_handler_data(desc);
-> > +	int hwirq;
-> >  	int i;
->  
-> >  	chained_irq_enter(irq_desc_get_chip(desc), desc);
->  
-> > -	for (i = 0; i < data->reg_num * 32; i += 32) {
-> > -		int idx = imx_irqsteer_get_reg_index(data, i);
-> > +	hwirq = imx_irqsteer_get_hwirq_base(data, irq_desc_get_irq(desc));
+> +	i = find_first_zero_bit(line->blk_bitmap, blk_in_line);
+>   
+> -		if (chunk->wp > line_wp)
+> +	/* If there is one or zero good chunks in the line,
+> +	 * the write pointers can't be unbalanced.
+> +	 */
+> +	if (i >= (blk_in_line - 1))
+> +		return 0;
 > +
-> > +	for (i = 0; i < 2; i++) {
-> > +		int idx = imx_irqsteer_get_reg_index(data, hwirq);
-> >  		unsigned long irqmap;
-> >  		int pos, virq;
->  
-> > +		if (hwirq >= data->reg_num * 32)
-> > +			break;
+> +	chunk = pblk_get_stripe_chunk(pblk, line, i);
+> +	max_wp = chunk->wp;
+> +	if (max_wp > pblk->max_write_pgs)
+> +		min_wp = max_wp - pblk->max_write_pgs;
+> +	else
+> +		min_wp = 0;
 > +
-> >  		irqmap = readl_relaxed(data->regs +
-> >  				       CHANSTATUS(idx, data->reg_num));
->  
-> >  		for_each_set_bit(pos, &irqmap, 32) {
-> > -			virq = irq_find_mapping(data->domain, pos + i);
-> +			virq = irq_find_mapping(data->domain, pos + hwirq);
-
-The irq index calculation need to be "pos + i * 32 + hwirq", otherwise
-this will map to the wrong virqs for the second register in each group.
-
->  			if (virq)
-> >  				generic_handle_irq(virq);
-> >  		}
-> +		hwirq += 32;
-
-Could be folded into the loop head.
-
->  	}
->  
-> >  	chained_irq_exit(irq_desc_get_chip(desc), desc);
-> @@ -117,7 +140,8 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
-> >  	struct device_node *np = pdev->dev.of_node;
-> >  	struct irqsteer_data *data;
-> >  	struct resource *res;
-> > -	int ret;
-> > +	u32 irqs_num;
-> > +	int i, ret;
->  
-> >  	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> >  	if (!data)
-> @@ -130,12 +154,6 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
-> >  		return PTR_ERR(data->regs);
-> >  	}
->  
-> > -	data->irq = platform_get_irq(pdev, 0);
-> > -	if (data->irq <= 0) {
-> > -		dev_err(&pdev->dev, "failed to get irq\n");
-> > -		return -ENODEV;
-> > -	}
-> -
-> >  	data->ipg_clk = devm_clk_get(&pdev->dev, "ipg");
-> >  	if (IS_ERR(data->ipg_clk)) {
-> >  		ret = PTR_ERR(data->ipg_clk);
-> @@ -146,11 +164,17 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
->  
-> >  	raw_spin_lock_init(&data->lock);
->  
-> > -	of_property_read_u32(np, "fsl,num-irqs", &data->reg_num);
-> > +	of_property_read_u32(np, "fsl,num-irqs", &irqs_num);
-> >  	of_property_read_u32(np, "fsl,channel", &data->channel);
->  
-> > -	/* one register bit map represents 32 input interrupts */
-> > -	data->reg_num /= 32;
-> > +	/*
-> +	 * There is one output irqs for each group of 64 inputs.
-
-"irq", singular.
-
-> +	 * One register bit map can represent 32 input interrupts.
-> > +	 */
-> > +	data->irq_count = irqs_num / 64;
-> > +	if (irqs_num % 64)
-> +		data->irq_count += 1;
-
-This is a weird way of writing DIV_ROUND_UP.
-
-> +	data->reg_num = irqs_num / 32;
->  
-> >  	if (IS_ENABLED(CONFIG_PM_SLEEP)) {
-> >  		data->saved_reg = devm_kzalloc(&pdev->dev,
-> @@ -177,8 +201,22 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
-> >  		return -ENOMEM;
-> >  	}
->  
-> > -	irq_set_chained_handler_and_data(data->irq, imx_irqsteer_irq_handler,
-> > -					 data);
-> > +	if (!data->irq_count || data->irq_count > CHAN_MAX_OUTPUT_INT) {
-> > +		clk_disable_unprepare(data->ipg_clk);
-> > +		return -EINVAL;
-> > +	}
+> +	i = find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
+> +	while (i < blk_in_line) {
+> +		chunk = pblk_get_stripe_chunk(pblk, line, i);
+> +		if (chunk->wp > max_wp || chunk->wp < min_wp)
+>   			return 1;
+> -		else if (chunk->wp < line_wp)
+> -			line_wp = chunk->wp;
 > +
-> > +	for (i = 0; i < data->irq_count; i++) {
-> > +		data->irq[i] = irq_of_parse_and_map(np, i);
-> > +		if (!data->irq[i]) {
-> > +			clk_disable_unprepare(data->ipg_clk);
-> +			return -EINVAL;
+> +		i = find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
+>   	}
+>   
+>   	return 0;
+> @@ -356,7 +376,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
+>   	int ret;
+>   	u64 left_ppas = pblk_sec_in_open_line(pblk, line) - lm->smeta_sec;
+>   
+> -	if (pblk_line_wp_is_unbalanced(pblk, line))
+> +	if (pblk_line_wps_are_unbalanced(pblk, line))
+>   		pblk_warn(pblk, "recovering unbalanced line (%d)\n", line->id);
+>   
+>   	ppa_list = p.ppa_list;
+> 
 
-With a lot of failure paths now replicating the clk_disable_unprepare,
-return error, I think this warrants a common cleanup path that all
-those paths could reach via simple goto.
-
-> +		}
-> +
-> > +		irq_set_chained_handler_and_data(data->irq[i],
-> > +						 imx_irqsteer_irq_handler,
-> > +						 data);
-> > +	}
->  
-> >  	platform_set_drvdata(pdev, data);
->  
-> @@ -188,8 +226,12 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
->  static int imx_irqsteer_remove(struct platform_device *pdev)
->  {
-> >  	struct irqsteer_data *irqsteer_data = platform_get_drvdata(pdev);
-> > +	int i;
-> +
-> > +	for (i = 0; i < irqsteer_data->irq_count; i++)
-> > +		irq_set_chained_handler_and_data(irqsteer_data->irq[i],
-> > +						 NULL, NULL);
->  
-> > -	irq_set_chained_handler_and_data(irqsteer_data->irq, NULL, NULL);
-> >  	irq_domain_remove(irqsteer_data->domain);
->  
-> >  	clk_disable_unprepare(irqsteer_data->ipg_clk);
+Thanks Hans and Zhoujie. I've applied it for 5.1.
