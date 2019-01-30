@@ -2,122 +2,130 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D83C282CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73F8C282CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2169F20881
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E5E420881
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:49:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="Tpfu72H/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jIIcfl8C"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cVYtttwI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730116AbfA3Epc (ORCPT
+        id S1730097AbfA3Ete (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 23:45:32 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:50719 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728101AbfA3Epc (ORCPT
+        Tue, 29 Jan 2019 23:49:34 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:47024 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728101AbfA3Ete (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 23:45:32 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id E8220126C;
-        Tue, 29 Jan 2019 23:45:30 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 29 Jan 2019 23:45:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm2; bh=
-        TRqi3YjCcZMqCQhIuENB8coPNnKiDQuW4r+yfgLZhm8=; b=Tpfu72H/vPCstQih
-        UWR7Z8dw4hLIr2XvnjeUM+8aOmY5tJOlmc+QEMzpASNnkV5cDvTD0oHGp9FV6Xuc
-        pKxoRxHrZEZeMbtIS8em6FkvdUhNotYRMAkOj+5YauPIwdMMSA8XViL09j4uYk6M
-        lGiUlsqIvO91/5K2OBiAnjUNOIU84EBLanw72je5xECgnuzRB10BhHssFByF3Bkk
-        krfZRPTmBuexqkSaICDzTLXUh2MLcQgMdOxQAWCERsD8AnSUQobpqNF8xUqinlGK
-        DCoAKtpbjekfDWtroALzjr001UAIZqpeF9Z5ErWHVpBTicyFCbD31DimXrgceN4o
-        nIo8zg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=TRqi3YjCcZMqCQhIuENB8coPNnKiDQuW4r+yfgLZh
-        m8=; b=jIIcfl8CQy1tkz2vc0My9dtpKEHCG7GhtUDuGqOcHAr2aCua656b9cknC
-        1cOUICiDSW/70Ug7kGHgFft5DvX6dkakE3Gx5KCHLyFeuAg3eFCNf7zrLqk70rod
-        iw0XtIn12/2t4vYaKD4gwsoV97SBYadgihN22O4vWwdbKH34bxwMZ9cdYPiqY7HG
-        PmYI67dukQbC6xq9QtNKCeEVWADXZX9dP6qGEFqnE4NzAMrrDQcZ/TpJRLTZO81U
-        hqYmXfNn2zGIs35xNF2ZxCHjew82atxJf331Wtjg8TuTkSCkeDyffcLD9Yt62SjS
-        uboxFVcm5fsyCpH0bv6BPZsJuts7w==
-X-ME-Sender: <xms:6StRXN-Rnan2N57D0DoN9XMAvUD4bcONM5UHFb_9EssE2u0yKQHjsg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeefgdejjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
-    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkffuhffvffgjfh
-    gtofgggfesthejredtredtjeenucfhrhhomhepkfgrnhcumfgvnhhtuceorhgrvhgvnhes
-    thhhvghmrgifrdhnvghtqeenucfkphepuddukedrvddtkedrudeijedrheeinecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvthenucevlhhushht
-    vghrufhiiigvpedt
-X-ME-Proxy: <xmx:6itRXOBiZGamcl6yNdexEIoiMG6U2KgYAD2fGM5OZxZz9W3tJABG8A>
-    <xmx:6itRXNxiEj_Q0MmcIt2BPBF-KBFteiyfW2NKcCfwjJd98S4NKJKGUg>
-    <xmx:6itRXDRfCSMbzlkp-SC8BO4M5HjOHoUH364xJsqzUMAUtRWeKw2u5g>
-    <xmx:6itRXFtcDtjQWkGTbGbIPFLYeaCJjkd1Nc1UxODuY-F_nhRJ9fkd0Q>
-Received: from localhost (unknown [118.208.167.56])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E5B8EE4016;
-        Tue, 29 Jan 2019 23:45:27 -0500 (EST)
-Message-ID: <052b4fbe375f09a7e8b55eef4a6b9451e056fb0f.camel@themaw.net>
-Subject: Re: [PATCH 3/3] autofs: add ignore mount option
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     autofs mailing list <autofs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Wed, 30 Jan 2019 12:45:24 +0800
-In-Reply-To: <20190130041827.GI2217@ZenIV.linux.org.uk>
-References: <154725122396.11260.16053424107144453867.stgit@pluto-themaw-net>
-         <154725123970.11260.6113771566924907275.stgit@pluto-themaw-net>
-         <20190129171622.5b75f794d2b1e4d1055331eb@linux-foundation.org>
-         <553f4a0daf09407371193d7d4782a759561a626a.camel@themaw.net>
-         <804b86df6fd678147da816be038b11c87333b23f.camel@themaw.net>
-         <20190130041827.GI2217@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 29 Jan 2019 23:49:34 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f5so16346090lfc.13;
+        Tue, 29 Jan 2019 20:49:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JO6H46CTHBzFm/XOD+n/nEDz7rrFEwNgn/lOiGCKwNA=;
+        b=cVYtttwIJcE6AN1NAHWJQVq3d6iGonpk3fWhj6C384+JDzPSYlIpOl8T/Ujt1PK2r+
+         5EIZI+7pOFFp3lBAgO5D2SEY5oxaMAme9DaS+eBO2cgp6y0A21X5OC7n4tsFnL6laqlA
+         PrrXrASoeAbQclMGyWGDK1W5jReFnRBmrSJPUlV4JGF5mEo3GqUCCoGgWtmgGsGE+nnb
+         uMfBwTvSUUhTSAqzxzwduAYYrBAFo8Z6gOV2r7QmdXhl5vYqGXBkrEVzAa6pVYoxf/Tg
+         A/I6b1Cf3BQ197TwPsbircYHK9FGQfq2820PFwo4MqcDkgbOv1YMWlizrdPz4Kziv8L/
+         A2xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JO6H46CTHBzFm/XOD+n/nEDz7rrFEwNgn/lOiGCKwNA=;
+        b=inaZxrBul2YQa5wnN368UtmRsto+tsH7xBeOB5TkVLNz+UldL4DHOcTMRkTO+jh3SX
+         LCMZOinLyruE8PsbHdWk1ELCHf3sV5P7Da3ez7drbK81G0AOEcQw8BdjnDYvA8JgrKIo
+         pIFt5bEN8qDllcyUBuNS0d59cK7Sx3SR/uZdjZ5V6Z57YhwlO/A4AH4GAR4D5ASx6hxn
+         zI81wh+C7oJHSvZmuO+nQNtJRE0dADmwr4xl03s1aW80rLAtCGHSRsZsMsMAPNBDtjnG
+         XiXD33z3MYzgCpTlQJ8TTnWKO4/x/ePuJW/iwIOcERINmpGuKw+JqMlJGrNVfCYh9xFH
+         sdeg==
+X-Gm-Message-State: AJcUukeJYmqya+d4KtnrX5JO2Ia7Qy2Kkbym+3JVqiufWz3lCnAVtUol
+        GsfbYkjWqWHwTvqGUQpnHso=
+X-Google-Smtp-Source: ALg8bN4kAKNhpttgpjMrcdB15QUCqPImEIiiOnHwdGyuGEJf8VNuyVtepLPU6g7DAKJHL7ps1P77jw==
+X-Received: by 2002:a19:980f:: with SMTP id a15mr22150227lfe.103.1548823771621;
+        Tue, 29 Jan 2019 20:49:31 -0800 (PST)
+Received: from dimatab (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.gmail.com with ESMTPSA id j138sm74825lfg.64.2019.01.29.20.49.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jan 2019 20:49:31 -0800 (PST)
+Date:   Wed, 30 Jan 2019 07:49:51 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        "Shardar Mohammed" <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH V5 3/5] i2c: tegra: Add DMA Support
+Message-ID: <20190130074951.154cf037@dimatab>
+In-Reply-To: <BYAPR12MB3398502D8F00D4F7BFF25D27C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1548803771-13424-1-git-send-email-skomatineni@nvidia.com>
+        <1548803771-13424-3-git-send-email-skomatineni@nvidia.com>
+        <20190130044214.65991195@dimatab>
+        <BYAPR12MB339850895826781B4E6AF028C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
+        <BYAPR12MB339812A2E876B76E95828EA1C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
+        <BYAPR12MB3398502D8F00D4F7BFF25D27C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-30 at 04:18 +0000, Al Viro wrote:
-> On Wed, Jan 30, 2019 at 10:44:15AM +0800, Ian Kent wrote:
-> 
-> > Al,
-> > 
-> > On a different note the above request also raised another
-> > question about statvfs(3) automount behaviour.
-> > 
-> > In glibc statvfs(3) uses statfs(2) and translates the return
-> > to a statvfs structure.
-> > 
-> > I wasn't aware but apparently statvfs(3) (and presumably statfs(2))
-> > doesn't trigger an automount on Solaris whereas we do. I think
-> > statfs() is probably the only exception to the convention that
-> > stat family system calls don't trigger an automount.
-> > 
-> > So far I've said that this is a long standing behaviour in the
-> > Linux kernel and changing it could lead to unpleasant surprises
-> > for those that have come to expect this behaviour so such a change
-> > would not be well received.
-> > 
-> > But I do need to ask your opinion, so what are your thoughts about
-> > changing this?
-> 
-> Probably should've done it that way, but I'm afraid it's much too
-> late by now...
+=D0=92 Wed, 30 Jan 2019 04:22:10 +0000
+Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-Yeah, thought you'd say that.
-Thanks for confirming.
+> [Correction]
+>=20
+> > > Could you please tell whether you missed my comments to V3 [0] or
+> > > chose to ignore them? If the former, then I'd want to get answers
+> > > to those questions and comments. I'll stop here for now.
+> > >=20
+> > > [0] https://patchwork.ozlabs.org/patch/1031379/ =20
+> >
+> > Somehow missed those from multiple comments. Will go thru and
+> > respond back. =20
+>=20
+> V6 includes feedback changes. Want to clarify on few feedback points
+>=20
+> - ALIGN is used for 4 byte boundary to use with DMA but extra bytes
+> doesn=E2=80=99t get transferred over I2C as I2C controller transfer bytes
+> based on size specified in the packet header. DMA length and memory
+> address need to be 4 byte boundary.
 
-Ian
+Okay, I see now. Thanks.
 
+> - RX channel releasing when TX init fails?
+>   For I2C both TX and RX doesn=E2=80=99t happen in same transaction and no
+> dependency. So if RX channel request & buffer allocation succeeds but
+> TX channel request fails, then RX DMA can still be used for Msg reads
+> and transmits can happen on PIO mode
+
+That's not what my point is about. In a case of TX initing failure, the
+RX channel and DMA buffer are not getting released in the probe
+function. Please be more careful about managing allocated resources.
+
+> - dma_burst < 8 negatively affects transfer efficiency? Performance
+> stats for DMA Vs PIO mode. Tested with 256 bytes of transfer and DMA
+> Vs PIO mode transfer rate is almost same. But the main reason for
+> adding DMA mode is to address couple of cases mentioned earlier and
+> not mainly from the transfer performance perspective.=20
+
+Could you please add a clarifying comment to the code, saying that the
+whole purpose of the DMA transfer is solely to avoid delaying of the
+transactions?
+
+Thanks for the replies! I'll take a look at V6 later today.
