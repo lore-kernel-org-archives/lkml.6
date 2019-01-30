@@ -2,132 +2,69 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B922C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0C3C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A70C21852
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:25:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQeWgZG+"
+	by mail.kernel.org (Postfix) with ESMTP id 87520218DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730616AbfA3KZh (ORCPT
+        id S1730483AbfA3K1Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 05:25:37 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55369 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727752AbfA3KZh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 05:25:37 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y139so20853106wmc.5;
-        Wed, 30 Jan 2019 02:25:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=HMfAj4RzlX1XnDfgUELyfPYynmQa4PT0FdtcX8nLAvg=;
-        b=nQeWgZG+3okJ3xJP/5vtiHEjozfG9PNxu1TD1aBQ6Ti7TWdzgJl2Q3GvVpAMRKj/gG
-         v8VmvqoUOflO8tKhAN+hVgGBm1P89zcR9zQUNE0NjWcnxyHSBBn8rOvgFsYFNTl5juKA
-         r5qu3AQtx6M2I0xOOjyECQmKJ7nyG1rywSLDaDLospHbPc9RwQbRtL38x4uGb+cHv6sB
-         dNsBLpPZOUTq57Rwc/KiVyXMYhrixeu8p26WfD0lPXUiyp6Uc7C5T7nVgAi841mhcnKN
-         9ALOQy3epnrxWJJXr89K51wqUMPQWoiWI+uGj1KFif/arpEid/MQKSI1yVFjCMvtTXp/
-         jtJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=HMfAj4RzlX1XnDfgUELyfPYynmQa4PT0FdtcX8nLAvg=;
-        b=IZNti7bvrE4wuGnMivXDreB+ha/ZOJeSM+6xVyJs5OTOviHraNP7brjoyBLi8rw0cJ
-         oFMJHFAogl+P3sUP4JbghBgoJKh62yIiF7S0Auo6cOzmsLUHc0oS3Nuc/KP7VVB6N7/C
-         gjtmiJTjxUcUP8fkhe+uQWbeg2Pu4WbisWYzQIfcMOEaNk445iDGdiYJ3Mt09Xm1smzV
-         mrpYkWI5QSug6qoXz13BHfkFf4Bl4Zi144Co14fRN1//Xe9zC1ULtS0BVlI3DE6c6sSX
-         +Amhg7y2SWTE1jy/r6DgN7kW6ZMMBZ6JIXlTPHvDAQb529MwsDGk+mNFR5/clrxrU2iN
-         MQrQ==
-X-Gm-Message-State: AJcUuke9e5XGQ+GRwBtB6myBDuZTQNt/i6boEXtpUcJYx395hgLfSsxu
-        bc360VmCMuIdzasmirxtuRg=
-X-Google-Smtp-Source: ALg8bN7YvuWVZeFypre8aGXXvQP91o/M7l9lFXYWW0v/0gLd419E55sGFQXtn4PBsmBOuDaRwvY+iA==
-X-Received: by 2002:a1c:be11:: with SMTP id o17mr24245832wmf.111.1548843935769;
-        Wed, 30 Jan 2019 02:25:35 -0800 (PST)
-Received: from ?IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7? ([2a02:908:1252:fb60:be8a:bd56:1f94:86e7])
-        by smtp.gmail.com with ESMTPSA id y13sm665205wrn.73.2019.01.30.02.25.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 02:25:34 -0800 (PST)
-Reply-To: christian.koenig@amd.com
-Subject: Re: [RFC PATCH 1/5] pci/p2p: add a function to test peer to peer
- capability
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        Alex Deucher <alexdeucher@gmail.com>,
-        Jerome Glisse <jglisse@redhat.com>
-Cc:     Joerg Roedel <jroedel@suse.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Christian Koenig <christian.koenig@amd.com>,
-        linux-mm <linux-mm@kvack.org>, iommu@lists.linux-foundation.org,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20190129174728.6430-1-jglisse@redhat.com>
- <20190129174728.6430-2-jglisse@redhat.com>
- <CADnq5_N8QLA_80j+iCtMHvSZhc-WFpzdZhpk6jR9yhoNoUDFZA@mail.gmail.com>
- <83acb590-25a5-f8ae-1616-bdb8b069fa0f@deltatee.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <6739544c-0122-ad8c-d3cf-86a4d8a1d7a2@gmail.com>
-Date:   Wed, 30 Jan 2019 11:25:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 05:27:24 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58484 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727752AbfA3K1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 05:27:24 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7E47E9F1A09BC7C80563;
+        Wed, 30 Jan 2019 18:27:22 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Wed, 30 Jan 2019
+ 18:27:15 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <dsterba@suse.com>, <gregkh@linuxfoundation.org>, <jslaby@suse.com>
+CC:     <linux-kernel@vger.kernel.org>, <jikos@kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] tty: ipwireless: Fix potential NULL pointer dereference
+Date:   Wed, 30 Jan 2019 18:26:45 +0800
+Message-ID: <20190130102645.17200-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <83acb590-25a5-f8ae-1616-bdb8b069fa0f@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 29.01.19 um 21:24 schrieb Logan Gunthorpe:
->
-> On 2019-01-29 12:56 p.m., Alex Deucher wrote:
->> On Tue, Jan 29, 2019 at 12:47 PM <jglisse@redhat.com> wrote:
->>> From: Jérôme Glisse <jglisse@redhat.com>
->>>
->>> device_test_p2p() return true if two devices can peer to peer to
->>> each other. We add a generic function as different inter-connect
->>> can support peer to peer and we want to genericaly test this no
->>> matter what the inter-connect might be. However this version only
->>> support PCIE for now.
->>>
->> What about something like these patches:
->> https://cgit.freedesktop.org/~deathsimple/linux/commit/?h=p2p&id=4fab9ff69cb968183f717551441b475fabce6c1c
->> https://cgit.freedesktop.org/~deathsimple/linux/commit/?h=p2p&id=f90b12d41c277335d08c9dab62433f27c0fadbe5
->> They are a bit more thorough.
-> Those new functions seem to have a lot of overlap with the code that is
-> already upstream in p2pdma.... Perhaps you should be improving the
-> p2pdma functions if they aren't suitable for what you want already
-> instead of creating new ones.
+There is a potential NULL pointer dereference in case
+alloc_ctrl_packet() fails and returns NULL.
 
-Yeah, well that's what I was suggesting for the very beginning :)
+Fixes: 099dc4fb6265 ("ipwireless: driver for PC Card 3G/UMTS modem")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/tty/ipwireless/hardware.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-But completely agree the existing functions should be improved instead 
-of adding new ones,
-Christian.
+diff --git a/drivers/tty/ipwireless/hardware.c b/drivers/tty/ipwireless/hardware.c
+index b0baa4c..1e21ae3 100644
+--- a/drivers/tty/ipwireless/hardware.c
++++ b/drivers/tty/ipwireless/hardware.c
+@@ -1516,6 +1516,8 @@ static void ipw_send_setup_packet(struct ipw_hardware *hw)
+ 			sizeof(struct ipw_setup_get_version_query_packet),
+ 			ADDR_SETUP_PROT, TL_PROTOCOLID_SETUP,
+ 			TL_SETUP_SIGNO_GET_VERSION_QRY);
++	if (!ver_packet)
++		return -ENOMEM;
+ 	ver_packet->header.length = sizeof(struct tl_setup_get_version_qry);
+ 
+ 	/*
+-- 
+2.7.0
 
->
-> Logan
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
