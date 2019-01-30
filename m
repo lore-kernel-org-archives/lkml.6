@@ -2,97 +2,229 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62ECBC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 970CAC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BA812075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:53:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bK4TeC23"
+	by mail.kernel.org (Postfix) with ESMTP id 46F392075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:53:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbfA3Xx0 (ORCPT
+        id S1728875AbfA3Xxa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:53:26 -0500
-Received: from mail-qt1-f182.google.com ([209.85.160.182]:44375 "EHLO
-        mail-qt1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbfA3Xx0 (ORCPT
+        Wed, 30 Jan 2019 18:53:30 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:62952 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfA3Xx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:53:26 -0500
-Received: by mail-qt1-f182.google.com with SMTP id n32so1587041qte.11
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 15:53:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yHTmlSdsw0ddv0WZw6NQBaf+Lx/v0lncj03Huj6mH3Y=;
-        b=bK4TeC23YsjsP8RNdRKPxHm1ViwVEHRD6VQtzGDNTmcZTErjiXAPaCF5azuC4F2rkC
-         kYLbhBtHWvyDyAhDY02uEB6Zpw0kjXIHiTDSjqNitSW3exLUEtHNV8gbs0pZ8CKknGlZ
-         cBx50IZSB3mHYo/gce5rIAlWQVq1cE0SY7EyXWosrf+7BS4DXcnGNYpi+6YaFAa7UFBY
-         2Z+9okFNtpOOcvWqOz68sRKeuvbMx0oHNhcUgZOu8+y1pfuWnYRQzJblcGGGY8XokKS0
-         aRe/2cK9DvDfKzFucfkjVYhv0reC1415nsQagi5tHgpJwt1Fs1Ovl4u3qXdQeNTvjtZt
-         S7VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yHTmlSdsw0ddv0WZw6NQBaf+Lx/v0lncj03Huj6mH3Y=;
-        b=ignxDNLyIKn3W00sHxCUURYipSMTvtiA3shXXUgpiUII4PpcNajxlAwNJPtwasR7VE
-         WGop+36I+7SiD/S3yoAzBcPKk+Kjl1/r2y7vMfXRnKV2Qe7DHq69QV2gnlhCWvKTrRFY
-         0CF77YuWrwD6NhSVjNoV5A1ylz0+y8P9CeJTXWvYDNTwQB98RIgkYQFnCVgLOHJGhwRL
-         WhL4j8xow78zQb6QMEaA36N1IK7OU4nYgozhxDcs1FnTljPFrh7Dii55BeA49Jt1jJcE
-         vGWKq+Y2NgSYRojlZ6iooJKm+qa9lpYddicgP1FS/upRT247I9wdsCk/UL5M1ewRh8ua
-         umEw==
-X-Gm-Message-State: AJcUukfNtuxjJqKRhQwrPlqceqUK7Bnk4RBUf7KYB+A90w5cONL2AfWw
-        rgt0gRZaSZA0/rKfiHFH4lv0soLix8KuMy/aoa8+Rg==
-X-Google-Smtp-Source: ALg8bN7l1pcTFadDQJBk1003WV7PL3Ec7DdZpdu4BhZ+NzS6ABGQhPB26K4s11LeGdULTR4OOaaLmo987JTe5Yg9c5w=
-X-Received: by 2002:a0c:d29b:: with SMTP id q27mr30512882qvh.62.1548892405083;
- Wed, 30 Jan 2019 15:53:25 -0800 (PST)
+        Wed, 30 Jan 2019 18:53:27 -0500
+Received: from 79.184.255.169.ipv4.supernova.orange.pl (79.184.255.169) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id 90021f72662eca40; Thu, 31 Jan 2019 00:53:24 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Donghee Han <dh.han@samsung.com>,
+        Sangkyu Kim <skwith.kim@samsung.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: Use struct kobj_attribute instead of struct global_attr
+Date:   Thu, 31 Jan 2019 00:52:18 +0100
+Message-ID: <4097835.HudsOOQepo@aspire.rjw.lan>
+In-Reply-To: <3a0a3ec5b36380deb59797f7189dbd0548828cf8.1548400979.git.viresh.kumar@linaro.org>
+References: <3a0a3ec5b36380deb59797f7189dbd0548828cf8.1548400979.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-References: <20190130174847.GD18811@dhcp22.suse.cz>
-In-Reply-To: <20190130174847.GD18811@dhcp22.suse.cz>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 30 Jan 2019 15:53:13 -0800
-Message-ID: <CAHbLzkpbWEVpeH9YsbBNy-Etfe0Pza5rPAe3b50sXq4rV4C+xQ@mail.gmail.com>
-Subject: Re: [LSF/MM TOPIC] memory reclaim with NUMA rebalancing
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     lsf-pc@lists.linux-foundation.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 9:48 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> Hi,
-> I would like to propose the following topic for the MM track. Different
-> group of people would like to use NVIDMMs as a low cost & slower memory
-> which is presented to the system as a NUMA node. We do have a NUMA API
-> but it doesn't really fit to "balance the memory between nodes" needs.
-> People would like to have hot pages in the regular RAM while cold pages
-> might be at lower speed NUMA nodes. We do have NUMA balancing for
-> promotion path but there is notIhing for the other direction. Can we
-> start considering memory reclaim to move pages to more distant and idle
-> NUMA nodes rather than reclaim them? There are certainly details that
-> will get quite complicated but I guess it is time to start discussing
-> this at least.
+On Friday, January 25, 2019 8:23:07 AM CET Viresh Kumar wrote:
+> The cpufreq_global_kobject is created using kobject_create_and_add()
+> helper, which assigns the kobj_type as dynamic_kobj_ktype and show/store
+> routines are set to kobj_attr_show() and kobj_attr_store().
+> 
+> These routines pass struct kobj_attribute as an argument to the
+> show/store callbacks. But all the cpufreq files created using the
+> cpufreq_global_kobject expect the argument to be of type struct
+> attribute. Things work fine currently as no one accesses the "attr"
+> argument. We may not see issues even if the argument is used, as struct
+> kobj_attribute has struct attribute as its first element and so they
+> will both get same address.
+> 
+> But this is logically incorrect and we should rather use struct
+> kobj_attribute instead of struct global_attr in the cpufreq core and
+> drivers and the show/store callbacks should take struct kobj_attribute
+> as argument instead.
+> 
+> This bug is caught using CFI CLANG builds in android kernel which
+> catches mismatch in function prototypes for such callbacks.
+> 
+> Reported-by: Donghee Han <dh.han@samsung.com>
+> Reported-by: Sangkyu Kim <skwith.kim@samsung.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  drivers/cpufreq/cpufreq.c      |  6 +++---
+>  drivers/cpufreq/intel_pstate.c | 23 ++++++++++++-----------
+>  include/linux/cpufreq.h        | 12 ++----------
+>  3 files changed, 17 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index e35a886e00bc..ef0e33e21b98 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -545,13 +545,13 @@ EXPORT_SYMBOL_GPL(cpufreq_policy_transition_delay_us);
+>   *                          SYSFS INTERFACE                          *
+>   *********************************************************************/
+>  static ssize_t show_boost(struct kobject *kobj,
+> -				 struct attribute *attr, char *buf)
+> +			  struct kobj_attribute *attr, char *buf)
+>  {
+>  	return sprintf(buf, "%d\n", cpufreq_driver->boost_enabled);
+>  }
+>  
+> -static ssize_t store_boost(struct kobject *kobj, struct attribute *attr,
+> -				  const char *buf, size_t count)
+> +static ssize_t store_boost(struct kobject *kobj, struct kobj_attribute *attr,
+> +			   const char *buf, size_t count)
+>  {
+>  	int ret, enable;
+>  
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> index dd66decf2087..5ab6a4fe93aa 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -895,7 +895,7 @@ static void intel_pstate_update_policies(void)
+>  /************************** sysfs begin ************************/
+>  #define show_one(file_name, object)					\
+>  	static ssize_t show_##file_name					\
+> -	(struct kobject *kobj, struct attribute *attr, char *buf)	\
+> +	(struct kobject *kobj, struct kobj_attribute *attr, char *buf)	\
+>  	{								\
+>  		return sprintf(buf, "%u\n", global.object);		\
+>  	}
+> @@ -904,7 +904,7 @@ static ssize_t intel_pstate_show_status(char *buf);
+>  static int intel_pstate_update_status(const char *buf, size_t size);
+>  
+>  static ssize_t show_status(struct kobject *kobj,
+> -			   struct attribute *attr, char *buf)
+> +			   struct kobj_attribute *attr, char *buf)
+>  {
+>  	ssize_t ret;
+>  
+> @@ -915,7 +915,7 @@ static ssize_t show_status(struct kobject *kobj,
+>  	return ret;
+>  }
+>  
+> -static ssize_t store_status(struct kobject *a, struct attribute *b,
+> +static ssize_t store_status(struct kobject *a, struct kobj_attribute *b,
+>  			    const char *buf, size_t count)
+>  {
+>  	char *p = memchr(buf, '\n', count);
+> @@ -929,7 +929,7 @@ static ssize_t store_status(struct kobject *a, struct attribute *b,
+>  }
+>  
+>  static ssize_t show_turbo_pct(struct kobject *kobj,
+> -				struct attribute *attr, char *buf)
+> +				struct kobj_attribute *attr, char *buf)
+>  {
+>  	struct cpudata *cpu;
+>  	int total, no_turbo, turbo_pct;
+> @@ -955,7 +955,7 @@ static ssize_t show_turbo_pct(struct kobject *kobj,
+>  }
+>  
+>  static ssize_t show_num_pstates(struct kobject *kobj,
+> -				struct attribute *attr, char *buf)
+> +				struct kobj_attribute *attr, char *buf)
+>  {
+>  	struct cpudata *cpu;
+>  	int total;
+> @@ -976,7 +976,7 @@ static ssize_t show_num_pstates(struct kobject *kobj,
+>  }
+>  
+>  static ssize_t show_no_turbo(struct kobject *kobj,
+> -			     struct attribute *attr, char *buf)
+> +			     struct kobj_attribute *attr, char *buf)
+>  {
+>  	ssize_t ret;
+>  
+> @@ -998,7 +998,7 @@ static ssize_t show_no_turbo(struct kobject *kobj,
+>  	return ret;
+>  }
+>  
+> -static ssize_t store_no_turbo(struct kobject *a, struct attribute *b,
+> +static ssize_t store_no_turbo(struct kobject *a, struct kobj_attribute *b,
+>  			      const char *buf, size_t count)
+>  {
+>  	unsigned int input;
+> @@ -1045,7 +1045,7 @@ static ssize_t store_no_turbo(struct kobject *a, struct attribute *b,
+>  	return count;
+>  }
+>  
+> -static ssize_t store_max_perf_pct(struct kobject *a, struct attribute *b,
+> +static ssize_t store_max_perf_pct(struct kobject *a, struct kobj_attribute *b,
+>  				  const char *buf, size_t count)
+>  {
+>  	unsigned int input;
+> @@ -1075,7 +1075,7 @@ static ssize_t store_max_perf_pct(struct kobject *a, struct attribute *b,
+>  	return count;
+>  }
+>  
+> -static ssize_t store_min_perf_pct(struct kobject *a, struct attribute *b,
+> +static ssize_t store_min_perf_pct(struct kobject *a, struct kobj_attribute *b,
+>  				  const char *buf, size_t count)
+>  {
+>  	unsigned int input;
+> @@ -1107,12 +1107,13 @@ static ssize_t store_min_perf_pct(struct kobject *a, struct attribute *b,
+>  }
+>  
+>  static ssize_t show_hwp_dynamic_boost(struct kobject *kobj,
+> -				struct attribute *attr, char *buf)
+> +				struct kobj_attribute *attr, char *buf)
+>  {
+>  	return sprintf(buf, "%u\n", hwp_boost);
+>  }
+>  
+> -static ssize_t store_hwp_dynamic_boost(struct kobject *a, struct attribute *b,
+> +static ssize_t store_hwp_dynamic_boost(struct kobject *a,
+> +				       struct kobj_attribute *b,
+>  				       const char *buf, size_t count)
+>  {
+>  	unsigned int input;
+> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> index c86d6d8bdfed..0b427d5df0fe 100644
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -254,20 +254,12 @@ __ATTR(_name, 0644, show_##_name, store_##_name)
+>  static struct freq_attr _name =			\
+>  __ATTR(_name, 0200, NULL, store_##_name)
+>  
+> -struct global_attr {
+> -	struct attribute attr;
+> -	ssize_t (*show)(struct kobject *kobj,
+> -			struct attribute *attr, char *buf);
+> -	ssize_t (*store)(struct kobject *a, struct attribute *b,
+> -			 const char *c, size_t count);
+> -};
+> -
+>  #define define_one_global_ro(_name)		\
+> -static struct global_attr _name =		\
+> +static struct kobj_attribute _name =		\
+>  __ATTR(_name, 0444, show_##_name, NULL)
+>  
+>  #define define_one_global_rw(_name)		\
+> -static struct global_attr _name =		\
+> +static struct kobj_attribute _name =		\
+>  __ATTR(_name, 0644, show_##_name, store_##_name)
+>  
+>  
+> 
 
-I would be interested in this topic too.  We (Alibaba) do have some
-usecases with using NVDIMM as NUMA node.  The node balancing (or
-cold/hot data migration) is one of our needs to achieve optimal
-performance for some workloads.  I also proposed a related topic.
+Applied, thanks!
 
-Regards,
-Yang
 
-> --
-> Michal Hocko
-> SUSE Labs
->
