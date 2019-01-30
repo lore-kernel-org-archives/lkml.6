@@ -2,107 +2,89 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089C4C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5CCC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5EDF2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 785642087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732015AbfA3QcG (ORCPT
+        id S1732032AbfA3QcU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:32:06 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57314 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730556AbfA3QcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:32:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EFA4EBD;
-        Wed, 30 Jan 2019 08:32:02 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A45243F589;
-        Wed, 30 Jan 2019 08:32:00 -0800 (PST)
-Date:   Wed, 30 Jan 2019 16:31:55 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     honghui.zhang@mediatek.com, youlin.pei@mediatek.com,
-        ryder.lee@mediatek.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jianjun.wang@mediatek.com,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] PCI: Mediatek: Use resource_size function on resource
- object
-Message-ID: <20190130163155.GA5847@e107981-ln.cambridge.arm.com>
-References: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
- <20190130123347.GB30991@e107981-ln.cambridge.arm.com>
- <20190130155853.GE229773@google.com>
+        Wed, 30 Jan 2019 11:32:20 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:24646 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731623AbfA3QcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:32:19 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 6B1C513F8D5;
+        Wed, 30 Jan 2019 17:31:52 +0100 (CET)
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Subject: [RESEND PATCH v2] arm64: dts: qcom: msm8998: Add rpmcc node
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>
+Message-ID: <6da00186-e7c9-c93d-a80a-65eda2516451@free.fr>
+Date:   Wed, 30 Jan 2019 17:31:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190130155853.GE229773@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 09:58:53AM -0600, Bjorn Helgaas wrote:
-> On Wed, Jan 30, 2019 at 12:33:47PM +0000, Lorenzo Pieralisi wrote:
-> > On Wed, Jan 02, 2019 at 02:03:53PM +0800, honghui.zhang@mediatek.com wrote:
-> > > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> > > 
-> > > drivers/pci/pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
-> > > 
-> > > Generated by: scripts/coccinelle/api/resource_size.cocci
-> > > 
-> > > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> > > ---
-> > >  drivers/pci/controller/pcie-mediatek.c | 4 +---
-> > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> > > index e307166..0168376 100644
-> > > --- a/drivers/pci/controller/pcie-mediatek.c
-> > > +++ b/drivers/pci/controller/pcie-mediatek.c
-> > > @@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
-> > >  	struct resource *mem = &pcie->mem;
-> > >  	const struct mtk_pcie_soc *soc = port->pcie->soc;
-> > >  	u32 val;
-> > > -	size_t size;
-> > >  	int err;
-> > >  
-> > >  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
-> > > @@ -706,8 +705,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
-> > >  		mtk_pcie_enable_msi(port);
-> > >  
-> > >  	/* Set AHB to PCIe translation windows */
-> > > -	size = mem->end - mem->start;
-> > > -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
-> > > +	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
-> > 
-> > checkpatch warns on this line, please make sure patches pass it before
-> > posting them.
-> 
-> I didn't actually run checkpatch myself, so I don't know why it
-> complained.
+Add MSM8998 Resource Power Manager Clock Controller DT node.
 
-WARNING: line over 80 characters
-#35: FILE: drivers/pci/controller/pcie-mediatek.c:708:
-+	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
+Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+---
+Detach this patch from UFS series
+Resend because SMTP server was blacklisted.
+---
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-I do run it as a sanity check.
-
-> The patch you merged moves "mem_size = resource_size(mem)" higher up,
-> away from the previous location and its use, which makes it a little
-> harder to read.
-
-That's because it was how the original code (which as you pointed out
-is likely buggy) was written.
-
-Anyway patch dropped waiting for a v2 consistent with your review -
-apologies for missing some key review points.
-
-Lorenzo
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index a6d66cf77403..6f4f4b79853b 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -3,6 +3,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-msm8998.h>
++#include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+@@ -266,6 +267,11 @@
+ 		rpm_requests: rpm-requests {
+ 			compatible = "qcom,rpm-msm8998";
+ 			qcom,glink-channels = "rpm_requests";
++
++			rpmcc: clock-controller {
++				compatible = "qcom,rpmcc-msm8998", "qcom,rpmcc";
++				#clock-cells = <1>;
++			};
+ 		};
+ 	};
+ 
+-- 
+2.17.1
