@@ -2,77 +2,121 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AE8C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 466A1C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3167920989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:00:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14CFA20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:02:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HlDxTZ5t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731374AbfA3PAc (ORCPT
+        id S1731300AbfA3PCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:00:32 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55694 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727162AbfA3PAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:00:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9CAC7EBD;
-        Wed, 30 Jan 2019 07:00:31 -0800 (PST)
-Received: from [10.37.9.196] (unknown [10.37.9.196])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D38463F589;
-        Wed, 30 Jan 2019 07:00:29 -0800 (PST)
-Subject: Re: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-To:     "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-References: <8898674D84E3B24BA3A2D289B872026A6A2C04E6@G01JPEXMBKW03>
-From:   James Morse <james.morse@arm.com>
-Cc:     'Catalin Marinas' <catalin.marinas@arm.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        'Mark Rutland' <mark.rutland@arm.com>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "'will.deacon@arm.com'" <will.deacon@arm.com>
-Message-ID: <cb7544e2-bd85-df4c-1f48-0afeedefc962@arm.com>
-Date:   Wed, 30 Jan 2019 15:00:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 30 Jan 2019 10:02:51 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45741 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbfA3PCv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 10:02:51 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t6so26363956wrr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 07:02:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sB/R9A+G+1Bml2j6jV9rxRkbOGpZb2kYG6xIswMoOV4=;
+        b=HlDxTZ5t3ywYhp9mzWTd4LZa+loyIRRQw/8Ev6pWD6Azy4v+ahkp4Kk0ibJmpz9FoH
+         YdaG8Aobh3NqGxssUTKARnBwch4MaiA96hcYKIFqno+/1bh237kAuDIdIoKprhTLnp7D
+         9LH3AaAYt8gyzXc7y6ryD8gB5gOjV6bQbZ+DybDNorFlrP8wto1FGrYUzOXwNH9mMtet
+         tpcxPsI3Bq3IREviG5R20PzQSD4TymiCBq2ts+rrNhRNQsQzPuo0LDf8siJxtmVwF56G
+         YYZqFnxuzq128CLk3UpvgyPlV/+ognoN/iu8gwmm28Zv5TsSPLQFC7EMGQVr1CxW2LwN
+         ljQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sB/R9A+G+1Bml2j6jV9rxRkbOGpZb2kYG6xIswMoOV4=;
+        b=bmgg8OtMTouArUdnUR21CoRKTHiPwnwtqGbIVhyDgXMu8opGjbBzaRH9B+FYot71TF
+         RQzYcDYa5s92aHlkG78gWciJgRPUvpaaijQTn92GRCqT1qbFki7YSiMTzIaiQlTy0XPD
+         RqrFhTLdJUG/bU3kH9Su1arELbHzRL4K8CfSdXzGmARJZBJAawFojgEV2Iny3LgSYZpU
+         RwE+nTRN/iWjTvABOq/6lMsqnAMbAY4uVLY4TwguaRTAqk5CuemMPQPGsK2vUsCZ9Xc2
+         UQkZnenSo7LcffBheUQdQCIvYdShvqyiAzJo1jSfWrzCUQHbOW4nO6WVFMJSQ1N0DH6I
+         RAvQ==
+X-Gm-Message-State: AJcUukcG3UigkYxMshSIcc1iAxb4yAU7xyCytJBTyBQCQdqZiAlmw9cM
+        hZr/IN56d+TrxaAY75XIt3R1jWCfaIMW423F9IQ8LlE3
+X-Google-Smtp-Source: ALg8bN5taZJSaqaoFh3J7m1uerq9WZmGt5UTv68yaGqIINNbIFAz0INqpOLZiRvZaDGW6qotQ+29en/GgflZFP9zrSU=
+X-Received: by 2002:adf:9d08:: with SMTP id k8mr32264971wre.203.1548860568662;
+ Wed, 30 Jan 2019 07:02:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <8898674D84E3B24BA3A2D289B872026A6A2C04E6@G01JPEXMBKW03>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190128084959.13060-1-vincent.whitchurch@axis.com>
+ <20190128100545.b62193aa8f49e1de8d6ea8b7@linux-foundation.org> <20190130144851.GK11489@garbanzo.do-not-panic.com>
+In-Reply-To: <20190130144851.GK11489@garbanzo.do-not-panic.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Wed, 30 Jan 2019 16:02:36 +0100
+Message-ID: <CAFLxGvyUpWRE3SWD2eX+M-TGKv7+6At0zsYYTTWw0y6gs3M4iw@mail.gmail.com>
+Subject: Re: [PATCH v2] sysctl: Add panic-fatal-signals
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Vincent Whitchurch <rabinv@axis.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+On Wed, Jan 30, 2019 at 3:49 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Mon, Jan 28, 2019 at 10:05:45AM -0800, Andrew Morton wrote:
+> > On Mon, 28 Jan 2019 09:49:59 +0100 Vincent Whitchurch <vincent.whitchurch@axis.com> wrote:
+> > > --- a/init/Kconfig
+> > > +++ b/init/Kconfig
+> > > @@ -1242,6 +1242,20 @@ config SYSCTL_SYSCALL
+> > >
+> > >       If unsure say N here.
+> > >
+> > > +config SYSCTL_PANIC_FATAL_SIGNALS
+> > > +   bool "panic-fatal-signals sysctl" if EXPERT
+> > > +   depends on PROC_SYSCTL
+> > > +   help
+> > > +     If you say Y here, a kernel.panic-fatal-signals sysctl will be
+> > > +     offered.  If this sysctl is turned on, the kernel will panic if any
+> > > +     userspace process receives a fatal signal which would trigger a core
+> > > +     dump.
+> > > +
+> > > +     When used together with kernel core dumps, this can be useful for
+> > > +     debugging some system-wide problems, primarily on embedded systems.
+> > > +
+> > > +     If unsure, say N.
+> >
+> > I suggest that the Kconfig help and the forthcoming documentation
+> > should clearly explain the dangers of enabling this!
+>
+> And so, should default to n.
+>
+>   Luis
 
-On 01/29/2019 12:29 PM, Zhang, Lei wrote:
-> On some variants of the Fujitsu-A64FX cores ver(1.0, 1.1),
-> memory accesses may cause undefined fault (Data abort, DFSC=0b111111).
-> This problem will be fixed by next version of Fujitsu-A64FX.
-> 
-> This fault occurs under a specific hardware condition
-> when a load/store instruction perform an address translation using:
->    case-1  TTBR0_EL1 with TCR_EL1.NFD0 == 1.
->    case-2  TTBR0_EL2 with TCR_EL2.NFD0 == 1.
->    case-3  TTBR1_EL1 with TCR_EL1.NFD1 == 1.
->    case-4  TTBR1_EL2 with TCR_EL2.NFD1 == 1.
-> And this fault occurs completely spurious.
-> 
-> Since TCR_ELx.NFD1 is set to '1' at the kernel in versions
-> past 4.17, the case-3 or case-4 may happen.
+Hmm, why can't this be a core dump helper?
+Such as:
 
-e03e61c3173c ("arm64: kaslr: Set TCR_EL1.NFD1 when 
-CONFIG_RANDOMIZE_BASE=y") ?
+#!/bin/sh
+# Usage:
+# echo "|/root/crash.sh %p %e %s" > /proc/sys/kernel/core_pattern
 
-So you'd never see it if you disabled CONFIG_RANDOMIZE_BASE?
+PID="$1"
+COMM="$2"
+SIGNAL="$3"
 
+echo "$COMM ($PID) died by signal $SIGNAL, killing kernel" > /dev/kmsg
+echo c > /proc/sysrq-trigger
 
+-- 
 Thanks,
-
-James
+//richard
