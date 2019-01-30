@@ -2,103 +2,96 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D49C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70295C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4286C20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:38:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oLYl71C3"
+	by mail.kernel.org (Postfix) with ESMTP id 4016520989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732116AbfA3Qi0 (ORCPT
+        id S1732179AbfA3Qie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:38:26 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:32768 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726230AbfA3Qi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:38:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=Awb+e7KyeVsQY0L1pRZuEHWubonzwcbqoNNQPfvskxY=; b=oLYl71C3EZwLUlZPRYSbe0nUXy
-        C34Ofv0t26OdOMUNAiOoACSOArAQnP3VTqsPWUj+Hi1lvSJ1ohWiYWdECwQ5t+iEbddx9xb7NMRMP
-        /AIiwYlXlJ4EN4acSu5kp24FEbCPA10gihRfnZx/9cCbrxjK/HGt7IJIrXwKLNXQI3Lw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gossT-0004w7-1U; Wed, 30 Jan 2019 17:38:17 +0100
-Date:   Wed, 30 Jan 2019 17:38:17 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Carlos Henrique Lima Melara <charlesmelara@outlook.com>
-Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "neil@brown.name" <neil@brown.name>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2] staging: mt7621-eth/ethtool.c: Correction of SPDX
- license identifier
-Message-ID: <20190130163817.GF21904@lunn.ch>
-References: <SC1P15201MB2014C3E0CAB4DA9ADF330797A8900@SC1P15201MB2014.LAMP152.PROD.OUTLOOK.COM>
+        Wed, 30 Jan 2019 11:38:34 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:49508 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfA3Qie (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:38:34 -0500
+Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id E69F93A82D7;
+        Wed, 30 Jan 2019 17:30:35 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 54AAC20000F;
+        Wed, 30 Jan 2019 16:30:32 +0000 (UTC)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Peter Chen <Peter.Chen@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2] usb: chipidea: Grab the (legacy) USB PHY by phandle first
+Date:   Wed, 30 Jan 2019 17:30:11 +0100
+Message-Id: <20190130163011.26437-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SC1P15201MB2014C3E0CAB4DA9ADF330797A8900@SC1P15201MB2014.LAMP152.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 02:48:27PM +0000, Carlos Henrique Lima Melara wrote:
-> 	This patch fix the checkpatch.p1 warning:
-> 
-> 	WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-> 	+/*
-> 
-> 	It includes the SPDX expression for GPL-2.0 and corrects the comment format to suit the kernel's coding style.
-> 
-> Signed-off-by: Carlos (Charles) Henrique Lima Melara <charlesmelara@outlook.com>
-> ---
->  drivers/staging/mt7621-eth/ethtool.c | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/staging/mt7621-eth/ethtool.c b/drivers/staging/mt7621-eth/ethtool.c
-> index 40a7d47be913..49d417de64c8 100644
-> --- a/drivers/staging/mt7621-eth/ethtool.c
-> +++ b/drivers/staging/mt7621-eth/ethtool.c
-> @@ -1,15 +1,17 @@
-> -/*   This program is free software; you can redistribute it and/or modify
-> - *   it under the terms of the GNU General Public License as published by
-> - *   the Free Software Foundation; version 2 of the License
-> +// SPDX-License-Identifier: GPL-2.0
+According to the chipidea driver bindings, the USB PHY is specified via
+the "phys" phandle node. However, this only takes effect for USB PHYs
+that use the common PHY framework. For legacy USB PHYs, a simple lookup
+based on the USB PHY type is done instead.
 
-Hi Carlos
+This does not play out well when more than USB PHY is registered, since
+the first registered PHY matching the type will always be returned
+regardless of what the driver was bound to.
 
-drivers/staging/mt7621-eth$ grep LICENSE *
-gsw_mt7621.c:MODULE_LICENSE("GPL");
-mtk_eth_soc.c:MODULE_LICENSE("GPL");
+Fix this by looking up the PHY based on the "phys" phandle node.
+Although generic PHYS and rather matched by their "phys-name" and not
+the "phys" phandle directly, there is no helper for similar lookup on
+legacy PHYs and it's probably not worth the effort to add it.
 
-And include/linux/module.h 
-says:
+When no legacy USB PHY is found by phandle, fallback to grabbing any
+registered USB2 PHY. This ensures backward compatibility if some users
+were actually relying on this mechanism.
 
-/*
- * The following license idents are currently accepted as indicating free
- * software modules
- *
- *      "GPL"                           [GNU Public License v2 or later]
- *      "GPL v2"                        [GNU Public License v2]
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+Changes since v1:
+* Only consider legacy USB PHY error for fallback as suggested;
+* Checked against EPROBE_DEFER before entering fallback.
 
-So the SPDX string probably does not match the MODULE_LICENSE.
+ drivers/usb/chipidea/core.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-   Andrew
+diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
+index 7bfcbb23c2a4..016e4004fe9d 100644
+--- a/drivers/usb/chipidea/core.c
++++ b/drivers/usb/chipidea/core.c
+@@ -954,8 +954,15 @@ static int ci_hdrc_probe(struct platform_device *pdev)
+ 	} else if (ci->platdata->usb_phy) {
+ 		ci->usb_phy = ci->platdata->usb_phy;
+ 	} else {
++		ci->usb_phy = devm_usb_get_phy_by_phandle(dev->parent, "phys",
++							  0);
+ 		ci->phy = devm_phy_get(dev->parent, "usb-phy");
+-		ci->usb_phy = devm_usb_get_phy(dev->parent, USB_PHY_TYPE_USB2);
++
++		/* Fallback to grabbing any registered USB2 PHY */
++		if (IS_ERR(ci->usb_phy) &&
++		    PTR_ERR(ci->usb_phy) != -EPROBE_DEFER)
++			ci->usb_phy = devm_usb_get_phy(dev->parent,
++						       USB_PHY_TYPE_USB2);
+ 
+ 		/* if both generic PHY and USB PHY layers aren't enabled */
+ 		if (PTR_ERR(ci->phy) == -ENOSYS &&
+-- 
+2.20.1
+
