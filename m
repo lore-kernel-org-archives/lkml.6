@@ -2,192 +2,83 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 391C2C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EDCC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A78542086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:43:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="Ij3oHlVB"
+	by mail.kernel.org (Postfix) with ESMTP id B6BCB2086C
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:46:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548874011;
+	bh=9PIODHe1QNIgJUP62RcbYEoaZSOh7URJ5X5r5Ba18MU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DJQmxfLTxgzR7jsdOjxcZEfncpvpoM6FK7nidtK4gS7chdJdD7ZwQXe5udG5Ww+Vx
+	 jseKk44FWOTJkoMb9XtzOmGt+8I1UX6UxBXhyiH6WGaMUl6vwQl7Q0MZxWhW8EmwXN
+	 q4qAR0zSrBx1blAc3zAc//UMnciHJ9IhXC89sdro=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733184AbfA3SnE (ORCPT
+        id S1733201AbfA3Squ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:43:04 -0500
-Received: from out002.mailprotect.be ([83.217.72.86]:50901 "EHLO
-        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733112AbfA3SnD (ORCPT
+        Wed, 30 Jan 2019 13:46:50 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33135 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733116AbfA3Squ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:43:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:Message-Id
-        :Date:Subject:Cc:To:From:reply-to:sender:bcc:in-reply-to:references:
-        content-type; bh=dq53XnxvImjhYdTpozLq/G0IAfEsOjLU25WNVx3PUe8=; b=Ij3oHlVBZZR8
-        yZT2S2iEhV6oF35+Gh0xvh80sNJ3nbRzU6SXD0xa8KCmf3Zd+zGLgFi83PLOP0lUk7ln7gUg2xBjm
-        iwnutDTdJDq9+Sx5x3r62aMHJUgjoURvPLKg8QrIYIib6asFDl1K31YOkHsRHcp78B5bOoV7lufYz
-        Uh5eRtIv+/5w4fDmn7RdNfCXMnA3Jvkei+4sfGdU3zNwTzHtNDaN40TEkg+H/5Gj+UTwmCWXOf+S6
-        3nJvgBeyERoX18veGBYqQzy1WolbEyNvehDxI/SSjwXc4Hb1aPsZ55ESM+aGBNcj4qQSCsq0Q5Reg
-        vuH5aoq2gZDy5pyLcqLuoQ==;
-Received: from smtp-auth.mailprotect.be ([178.208.39.155])
-        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
-        (envelope-from <bvanassche@acm.org>)
-        id 1goup7-000Cfb-O2; Wed, 30 Jan 2019 19:42:58 +0100
-Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 68BB5C06A2;
-        Wed, 30 Jan 2019 19:42:38 +0100 (CET)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     David Miller <davem@davemloft.net>
-Cc:     tgraf@suug.ch, herbert@gondor.apana.org.au, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH v3] lib/test_rhashtable: Make test_insert_dup() allocate its hash table dynamically
-Date:   Wed, 30 Jan 2019 10:42:30 -0800
-Message-Id: <20190130184230.225631-1-bvanassche@acm.org>
-X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+        Wed, 30 Jan 2019 13:46:50 -0500
+Received: by mail-ot1-f68.google.com with SMTP id i20so563112otl.0;
+        Wed, 30 Jan 2019 10:46:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zUFgm+bdpz05HgTHierrfJ+rd8bRW1Fod3fFuhlSPl0=;
+        b=gXYWwMBemflepgkVaF9q5yaVKhP7fSg+uDv0w1DvgtbpDEHqWYmNGClu+18pP8/Fhw
+         UEAaeub5NBPrjUOxdNnkZKJUFqvzqLlnhF5mdusLssBMDVCOGOg8VVDk54eiYPWtSOXM
+         9dv6VUpM4E/E3jfJ58bijD2+Q8sgmwczV1fSbyKLkKl5/Dmru3HqSFvTkgxXybEn46ak
+         RkhL9tAqX7ffdxTjpikGKnYZI8LTZIeNAGlQO2CSdElNL3FWKtiKzo62LVO02MPHrq8d
+         MsJR23Th9yofB8YVCe+L9u2Tr2X8DAhX29F1hoyGygL+eX1Lumu7gwIq8V3cbifj5ifU
+         GYOw==
+X-Gm-Message-State: AJcUukeqcVg473R5SVBj9S6PVBn2OSaV0dTnuK/6smw4SPEQ8K1JW7w9
+        Fo3Iqe+crUeftzbwdMlV0g==
+X-Google-Smtp-Source: ALg8bN7FJXCJY890U4hH6beoQpoSOHVMCF45sOumbB/XomPagwJNbc8acVrBGS8F1ER3NeADvxEEXg==
+X-Received: by 2002:a9d:7d10:: with SMTP id v16mr22652727otn.114.1548874009307;
+        Wed, 30 Jan 2019 10:46:49 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v20sm832393otp.10.2019.01.30.10.46.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 10:46:48 -0800 (PST)
+Date:   Wed, 30 Jan 2019 12:46:47 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Zhou Yanjie <zhouyanjie@zoho.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com,
+        gregkh@linuxfoundation.org, jslaby@suse.com, mark.rutland@arm.com,
+        syq@debian.org, jiaxun.yang@flygoat.com, 772753199@qq.com
+Subject: Re: [PATCH v3 2/2] Dt-bindings: Serial: Add X1000 serial bindings.
+Message-ID: <20190130184647.GA9520@bogus>
+References: <1548667176-119830-1-git-send-email-zhouyanjie@zoho.com>
+ <1548695029-11900-1-git-send-email-zhouyanjie@zoho.com>
+ <1548695029-11900-3-git-send-email-zhouyanjie@zoho.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: 178.208.39.155
-X-SpamExperts-Domain: mailprotect.be
-X-SpamExperts-Username: 178.208.39.128/27
-Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.0097166291703)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5hBwnhHxisHXJ2ZDrjGFjIt602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO1tLifGj39bI0bcPyaJsYTacR+7WyMgzHjz+T9oPWai2IJR/LLbceaqS8MKPufzxmLzw
- 3dG7A6WkH7JGigdteN57+5HzsJAARNaiXTEXf82VAjw9nUyHRh+vaTE+a8V78gnvcbqWawZgc1Ck
- ONz2E71TYi2bf0F0JzgUQ/o6tR7CgJ80+L1CwdwW3n1LPAFa7+c6TEzHGFGmPNVo8HWtwIVEU4Np
- wlX9XR0IIh324LASWmuNA8WTybi1JN85FSnfKQ92CA+JoVmy/OGFlzvQk2JpuRcJDn/ll9Yr9I5t
- rl5dAEGFmG79FtSD1SRlrgY4Dlka3AWSQBObYIhoDqsjjxMlPZ+d+6dQltnW35dYHDi4YsOSYzzr
- WOkGpzUJhy0xLBRKoVbdmzfZG7WP8P7/emcDFPZI3xOxBaPpD+a4iBFJkhqbiTdTlYcOHnVgVGtC
- G4wbZOs8jS5huW0TMlFixpjfwluHZS9DYzoq+lLuZqz83M7Ww0eLZ1l+e/PS3uVC5/d3N4FddjCf
- vYOfsOukDu+8Ksk+aedMfNWSnJswrtlNvWbHGI2+m0+ABcNCsbvofnPw17RyTo/iK8p1aZEnH6Bz
- NDLxjWz0QzgSBbh99tCA5vonz7NsiF1Wku49QqQ+LGzAvyupJc20TI861x/0g31oh9VoIekQHpwU
- fpYnEThmWzvKaMsOConpeq4LHy2DsLpXe1qVfkTgn5TLJkwLFwPGHCARYNoMeTrkG4WVbRYvdPWn
- 7hDOYOe8sGu7H1VUX1W5oROgRKAzAuHd1vG0h9GFbgn7TuZnYUlh3bpzUOwUiwQzKw+6v3CaIMG6
- s7LqJNS3q9vHJFJ767GRArkeCwErqfuPkiSUNJJzVxjk2aTJzoVzPCnKZEE42SuSg/NfCZyY6pr3
- 146Uqm4m9tbvBOhm4zuNRcgRKiGg7nXFaZTxfQCdpoStj1b4PiBxau2y91dTfVE/15N9exgRcyw6
- YPrfly1dqLUcanDXocuiazc9GaiTXW7z2lMqAnbumOwh0nKiJJlTUtUtkMEjlh8WtYUKxRzgMtX+
- /JPiP15vkhnohqUvgugTwCBLPD4olaNxG9f4jbPawL16SV9H9Ey1DpC733jp2G77DhwvG2R8wFno
- PxlZX4C5LAOoA8zsQ2/Rcw==
-X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548695029-11900-3-git-send-email-zhouyanjie@zoho.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The test_insert_dup() function from lib/test_rhashtable.c passes a
-pointer to a stack object to rhltable_init(). Allocate the hash table
-dynamically to avoid that the following is reported with object
-debugging enabled:
+On Tue, 29 Jan 2019 01:03:49 +0800, Zhou Yanjie wrote:
+> Add the serial bindings for the X1000 Soc from Ingenic.
+> 
+> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+> ---
+>  Documentation/devicetree/bindings/serial/ingenic,uart.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 
-ODEBUG: object (ptrval) is on stack (ptrval), but NOT annotated.
-WARNING: CPU: 0 PID: 1 at lib/debugobjects.c:368 __debug_object_init+0x312/0x480
-Modules linked in:
-EIP: __debug_object_init+0x312/0x480
-Call Trace:
- ? debug_object_init+0x1a/0x20
- ? __init_work+0x16/0x30
- ? rhashtable_init+0x1e1/0x460
- ? sched_clock_cpu+0x57/0xe0
- ? rhltable_init+0xb/0x20
- ? test_insert_dup+0x32/0x20f
- ? trace_hardirqs_on+0x38/0xf0
- ? ida_dump+0x10/0x10
- ? jhash+0x130/0x130
- ? my_hashfn+0x30/0x30
- ? test_rht_init+0x6aa/0xab4
- ? ida_dump+0x10/0x10
- ? test_rhltable+0xc5c/0xc5c
- ? do_one_initcall+0x67/0x28e
- ? trace_hardirqs_off+0x22/0xe0
- ? restore_all_kernel+0xf/0x70
- ? trace_hardirqs_on_thunk+0xc/0x10
- ? restore_all_kernel+0xf/0x70
- ? kernel_init_freeable+0x142/0x213
- ? rest_init+0x230/0x230
- ? kernel_init+0x10/0x110
- ? schedule_tail_wrapper+0x9/0xc
- ? ret_from_fork+0x19/0x24
-
-Cc: Thomas Graf <tgraf@suug.ch>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
-
-Changes compared to v2: fixed build error.
-
-Changes compared to v1: instead of modifying rhashtable_init(), modify its
-   caller.
-
-lib/test_rhashtable.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
-
-diff --git a/lib/test_rhashtable.c b/lib/test_rhashtable.c
-index 6a8ac7626797..e52f8cafe227 100644
---- a/lib/test_rhashtable.c
-+++ b/lib/test_rhashtable.c
-@@ -541,38 +541,45 @@ static unsigned int __init print_ht(struct rhltable *rhlt)
- static int __init test_insert_dup(struct test_obj_rhl *rhl_test_objects,
- 				  int cnt, bool slow)
- {
--	struct rhltable rhlt;
-+	struct rhltable *rhlt;
- 	unsigned int i, ret;
- 	const char *key;
- 	int err = 0;
- 
--	err = rhltable_init(&rhlt, &test_rht_params_dup);
--	if (WARN_ON(err))
-+	rhlt = kmalloc(sizeof(*rhlt), GFP_KERNEL);
-+	if (WARN_ON(!rhlt))
-+		return -EINVAL;
-+
-+	err = rhltable_init(rhlt, &test_rht_params_dup);
-+	if (WARN_ON(err)) {
-+		kfree(rhlt);
- 		return err;
-+	}
- 
- 	for (i = 0; i < cnt; i++) {
- 		rhl_test_objects[i].value.tid = i;
--		key = rht_obj(&rhlt.ht, &rhl_test_objects[i].list_node.rhead);
-+		key = rht_obj(&rhlt->ht, &rhl_test_objects[i].list_node.rhead);
- 		key += test_rht_params_dup.key_offset;
- 
- 		if (slow) {
--			err = PTR_ERR(rhashtable_insert_slow(&rhlt.ht, key,
-+			err = PTR_ERR(rhashtable_insert_slow(&rhlt->ht, key,
- 							     &rhl_test_objects[i].list_node.rhead));
- 			if (err == -EAGAIN)
- 				err = 0;
- 		} else
--			err = rhltable_insert(&rhlt,
-+			err = rhltable_insert(rhlt,
- 					      &rhl_test_objects[i].list_node,
- 					      test_rht_params_dup);
- 		if (WARN(err, "error %d on element %d/%d (%s)\n", err, i, cnt, slow? "slow" : "fast"))
- 			goto skip_print;
- 	}
- 
--	ret = print_ht(&rhlt);
-+	ret = print_ht(rhlt);
- 	WARN(ret != cnt, "missing rhltable elements (%d != %d, %s)\n", ret, cnt, slow? "slow" : "fast");
- 
- skip_print:
--	rhltable_destroy(&rhlt);
-+	rhltable_destroy(rhlt);
-+	kfree(rhlt);
- 
- 	return 0;
- }
--- 
-2.20.1.495.gaa96b0ce6b-goog
-
+Reviewed-by: Rob Herring <robh@kernel.org>
