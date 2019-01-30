@@ -2,134 +2,140 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A42C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DEBC282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9F9E2086C
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:22:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mhzLAC8f"
+	by mail.kernel.org (Postfix) with ESMTP id 002722087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:22:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387581AbfA3TWU (ORCPT
+        id S2387591AbfA3TWj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:22:20 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35180 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387554AbfA3TWU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:22:20 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so608791ljb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:22:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xexnQxVTr0JWe6DMyf7KO14a0l6N+WxdulLMNHMHrpc=;
-        b=mhzLAC8fG3PFzHNIiR53TJOj6/vdE+TDDmJ71ouQsTiIkIoPW71qH7yeYs/xA3iDiX
-         Czvz2WgAUaBOub83O0lMCp+3c1NZxCjAMZ+XMgzpYBQx94HVmJvm/Nxhb/Qxn3PjbMD5
-         axw1m8o1zkBLq/aEOgbaqRCf0BVtjeiWuq6jg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xexnQxVTr0JWe6DMyf7KO14a0l6N+WxdulLMNHMHrpc=;
-        b=quH+QzEJGZOugDnRiXOTC+P7JzHwTbj1ovgl6qUnkG+W+Ke1r1PuL+kYFK7zATUpec
-         kBYj/6NGKGV5OYnnFwpuzD1O6GOdMPDzcBx/e7W0j9ohEWhVe+Ws3kd5IemeDX3sR995
-         QQPS/p2aytyjp8nYxegjnIGOV4m6CX6ktK3LSybv80S2dGqpDNEXnRcZqWJeqqHdrohY
-         dKRapyx4UdQ2msklgLiWNaAb8j5IJSD+lq8gGTsIjnAqCw2zhczi33wFk1i40N8A093d
-         vjKIi8LPBJSJ1IkfFDbbHrYZF46CxCAxJc0Tjsg6x5WHOqC1AzslgXdxI4TY8zRb12St
-         ITlA==
-X-Gm-Message-State: AJcUukczYnXlMFgKObSeiKHqhitzqOWzgQShm1oA7pVTFac2Xr4THdIk
-        4KhpOjlJUNs4ern2g7gyn7zm8EpcEOo=
-X-Google-Smtp-Source: ALg8bN4UmyOEdq8+8EwMVW4wlYkMFznyT8njC8telWiEOMZ0xBpKwkuRxKhktGbLF01xwtC9BnMb5A==
-X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr27751402ljj.61.1548876138461;
-        Wed, 30 Jan 2019 11:22:18 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id v17-v6sm409952ljg.32.2019.01.30.11.22.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 11:22:17 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id v1-v6so621729ljd.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:22:16 -0800 (PST)
-X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr26585860ljc.97.1548876135969;
- Wed, 30 Jan 2019 11:22:15 -0800 (PST)
-MIME-Version: 1.0
-References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-18-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1546314952-15990-18-git-send-email-yong.wu@mediatek.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 30 Jan 2019 11:11:39 -0800
-X-Gmail-Original-Message-ID: <CAE=gft4vOxt7G0CqZxvNUxCmuGq_L4wc2Wv6LF4Y62BoJQEUXw@mail.gmail.com>
-Message-ID: <CAE=gft4vOxt7G0CqZxvNUxCmuGq_L4wc2Wv6LF4Y62BoJQEUXw@mail.gmail.com>
-Subject: Re: [PATCH v5 17/20] memory: mtk-smi: Get rid of need_larbid
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        Wed, 30 Jan 2019 14:22:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50712 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387545AbfA3TWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:22:39 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9CA64C04959F;
+        Wed, 30 Jan 2019 19:22:38 +0000 (UTC)
+Received: from redhat.com (ovpn-126-0.rdu2.redhat.com [10.10.126.0])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A81C45D96F;
+        Wed, 30 Jan 2019 19:22:36 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 14:22:34 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Message-ID: <20190130192234.GD5061@redhat.com>
+References: <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
+ <20190129205749.GN3176@redhat.com>
+ <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
+ <20190129215028.GQ3176@redhat.com>
+ <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
+ <20190129234752.GR3176@redhat.com>
+ <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
+ <20190130041841.GB30598@mellanox.com>
+ <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
+ <20190130185652.GB17080@mellanox.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190130185652.GB17080@mellanox.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 30 Jan 2019 19:22:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 7:59 PM Yong Wu <yong.wu@mediatek.com> wrote:
->
-> The "mediatek,larb-id" has already been parsed in MTK IOMMU driver.
-> It's no need to parse it again in SMI driver. Only clean some codes.
-> This patch is fit for all the current mt2701, mt2712, mt7623, mt8173
-> and mt8183.
->
-> After this patch, the "mediatek,larb-id" only be needed for mt2712
-> which have 2 M4Us. In the other SoCs, we can get the larb-id from M4U
-> in which the larbs in the "mediatek,larbs" always are ordered.
->
-> CC: Matthias Brugger <matthias.bgg@gmail.com>
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> ---
->  drivers/memory/mtk-smi.c | 26 ++------------------------
->  1 file changed, 2 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-> index 08cf40d..10e6493 100644
-> --- a/drivers/memory/mtk-smi.c
-> +++ b/drivers/memory/mtk-smi.c
-> @@ -67,7 +67,6 @@ struct mtk_smi_common_plat {
->  };
->
->  struct mtk_smi_larb_gen {
-> -       bool need_larbid;
->         int port_in_larb[MTK_LARB_NR_MAX + 1];
->         void (*config_port)(struct device *);
->         unsigned int larb_direct_to_common_mask;
-> @@ -153,18 +152,9 @@ void mtk_smi_larb_put(struct device *larbdev)
->         struct mtk_smi_iommu *smi_iommu = data;
->         unsigned int         i;
->
-> -       if (larb->larb_gen->need_larbid) {
-> -               larb->mmu = &smi_iommu->larb_imu[larb->larbid].mmu;
-> -               return 0;
-> -       }
-> -
-> -       /*
-> -        * If there is no larbid property, Loop to find the corresponding
-> -        * iommu information.
-> -        */
-> -       for (i = 0; i < smi_iommu->larb_nr; i++) {
-> +       for (i = 0; i < MTK_LARB_NR_MAX; i++) {
+On Wed, Jan 30, 2019 at 06:56:59PM +0000, Jason Gunthorpe wrote:
+> On Wed, Jan 30, 2019 at 10:17:27AM -0700, Logan Gunthorpe wrote:
+> > 
+> > 
+> > On 2019-01-29 9:18 p.m., Jason Gunthorpe wrote:
+> > > Every attempt to give BAR memory to struct page has run into major
+> > > trouble, IMHO, so I like that this approach avoids that.
+> > > 
+> > > And if you don't have struct page then the only kernel object left to
+> > > hang meta data off is the VMA itself.
+> > > 
+> > > It seems very similar to the existing P2P work between in-kernel
+> > > consumers, just that VMA is now mediating a general user space driven
+> > > discovery process instead of being hard wired into a driver.
+> > 
+> > But the kernel now has P2P bars backed by struct pages and it works
+> > well. 
+> 
+> I don't think it works that well..
+> 
+> We ended up with a 'sgl' that is not really a sgl, and doesn't work
+> with many of the common SGL patterns. sg_copy_buffer doesn't work,
+> dma_map, doesn't work, sg_page doesn't work quite right, etc.
+> 
+> Only nvme and rdma got the special hacks to make them understand these
+> p2p-sgls, and I'm still not convinced some of the RDMA drivers that
+> want access to CPU addresses from the SGL (rxe, usnic, hfi, qib) don't
+> break in this scenario.
+> 
+> Since the SGLs become broken, it pretty much means there is no path to
+> make GUP work generically, we have to go through and make everything
+> safe to use with p2p-sgls before allowing GUP. Which, frankly, sounds
+> impossible with all the competing objections.
+> 
+> But GPU seems to have a problem unrelated to this - what Jerome wants
+> is to have two faulting domains for VMA's - visible-to-cpu and
+> visible-to-dma. The new op is essentially faulting the pages into the
+> visible-to-dma category and leaving them invisible-to-cpu.
+> 
+> So that duality would still have to exists, and I think p2p_map/unmap
+> is a much simpler implementation than trying to create some kind of
+> special PTE in the VMA..
+> 
+> At least for RDMA, struct page or not doesn't really matter. 
+> 
+> We can make struct pages for the BAR the same way NVMe does.  GPU is
+> probably the same, just with more mememory at stake?  
+> 
+> And maybe this should be the first implementation. The p2p_map VMA
+> operation should return a SGL and the caller should do the existing
+> pci_p2pdma_map_sg() flow.. 
 
-Looks like this was the only use of mtk_smi_iommu.larb_nr. Should we
-remove that now?
+For GPU it would not work, GPU might want to use main memory (because
+it is running out of BAR space) it is a lot easier if the p2p_map
+callback calls the right dma map function (for page or io) rather than
+having to define some format that would pass down the information.
+
+> 
+> Worry about optimizing away the struct page overhead later?
+
+Struct page do not fit well for GPU as the BAR address can be reprogram
+to point to any page inside the device memory (think 256M BAR versus
+16GB device memory). Forcing struct page on GPU driver would require
+major surgery to the GPU driver inner working and there is no benefit
+to have from the struct page. So it is hard to justify this.
+
+Cheers,
+Jérôme
