@@ -2,236 +2,106 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09722C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD55C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBFD32087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:23:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F12D2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548869051;
+	bh=+qexuxyzZUXCvUAFV0o1R9tjZx4Et7tW4L3+Zv2mgis=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=Sg2TweBBgkXYQDsdFfrO1stJNTcFJMSlcwb0IxEM+UOqplthowLycX1hks81BP7lf
+	 vHANAPzmzwJgMDAbH4hX9VTxqqGH3b6SZj6ZwEC1oIccpmpOxwd2kf/ZWcQxAF2cVg
+	 dM7oZR+kFi6GsZQgO//2g8hkr4yciWsvniUxH76E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732488AbfA3RXJ (ORCPT
+        id S1732491AbfA3RYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:23:09 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3248 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726972AbfA3RXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:23:09 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9E61FD9D045FA5C07869;
-        Thu, 31 Jan 2019 01:23:06 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.43) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Thu, 31 Jan 2019
- 01:22:56 +0800
-Subject: Re: [PATCH v2 4/7] scsi: libsas: split the replacement of sas disks
- in two steps
-To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20190130082412.9357-1-yanaijie@huawei.com>
- <20190130082412.9357-5-yanaijie@huawei.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <17908564-35f2-4c5d-e9e4-4fe109fae4cc@huawei.com>
-Date:   Wed, 30 Jan 2019 17:22:47 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Wed, 30 Jan 2019 12:24:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51628 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726972AbfA3RYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:24:09 -0500
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B92DB2082F;
+        Wed, 30 Jan 2019 17:24:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548869048;
+        bh=+qexuxyzZUXCvUAFV0o1R9tjZx4Et7tW4L3+Zv2mgis=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ANd4YPqqC6IyP3tlK8Ra9P/rIpieQeuauCECrQA21M/0YqDThQKdIamrmhEzlEx97
+         vNA7FNVXfuS3Ze1hoT67VHaPhjHM8PIdNtzmhgMS/yr362T8iZoXsumOey1uFuvz9s
+         DkAf851PTC84gyG/0KsJTylhltxLgjbWd61h4RTs=
+Date:   Wed, 30 Jan 2019 18:23:58 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     <Tudor.Ambarus@microchip.com>
+Cc:     <broonie@kernel.org>, <Nicolas.Ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 6/9] spi: atmel-quadspi: switch to SPDX license
+ identifiers
+Message-ID: <20190130182344.07e1d635@bbrezillon>
+In-Reply-To: <20190130150818.24902-7-tudor.ambarus@microchip.com>
+References: <20190130150818.24902-1-tudor.ambarus@microchip.com>
+        <20190130150818.24902-7-tudor.ambarus@microchip.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190130082412.9357-5-yanaijie@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/01/2019 08:24, Jason Yan wrote:
-> Now if a new device replaced a old device, the sas address will change.
+On Wed, 30 Jan 2019 15:08:40 +0000
+<Tudor.Ambarus@microchip.com> wrote:
 
-Hmmm... not if it's a SATA disk, which would have some same invented SAS 
-address.
+> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+> 
+> Adopt the SPDX license identifiers to ease license compliance
+> management.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-> We unregister the old device and discover the new device in one
-> revalidation process. But after we deferred the sas_port_delete(), the
-> sas port is not deleted when we registering the new port and device.
-> The sas port cannot be added because the name of the new port is the
-> same as the old.
->
-> Fix this by doing the replacement in two steps. The first revalidation
-> only delete the old device and trigger a new revalidation. The second
-> revalidation discover the new device. To keep the event processing
-> synchronised to the original event,
+Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
 
-Did I originally suggest this? It seems to needlessly make the code more 
-complicated.
-
-we wrapped a loop and added a new
-> parameter to see if we should revalidate again.
->
-> Signed-off-by: Jason Yan <yanaijie@huawei.com>
-> CC: chenxiang <chenxiang66@hisilicon.com>
-> CC: John Garry <john.garry@huawei.com>
-> CC: Johannes Thumshirn <jthumshirn@suse.de>
-> CC: Ewan Milne <emilne@redhat.com>
-> CC: Christoph Hellwig <hch@lst.de>
-> CC: Tomas Henzl <thenzl@redhat.com>
-> CC: Dan Williams <dan.j.williams@intel.com>
-> CC: Hannes Reinecke <hare@suse.com>
 > ---
->  drivers/scsi/libsas/sas_discover.c | 20 +++++++++++++++-----
->  drivers/scsi/libsas/sas_expander.c | 20 ++++++++++++++------
->  include/scsi/libsas.h              |  2 +-
->  3 files changed, 30 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
-> index ffc571a12916..c825c89fbddd 100644
-> --- a/drivers/scsi/libsas/sas_discover.c
-> +++ b/drivers/scsi/libsas/sas_discover.c
-> @@ -498,12 +498,10 @@ static void sas_discover_domain(struct work_struct *work)
->  		 task_pid_nr(current), error);
->  }
->
-> -static void sas_revalidate_domain(struct work_struct *work)
-> +static void sas_do_revalidate_domain(struct asd_sas_port *port, bool *retry)
->  {
-> -	struct sas_discovery_event *ev = to_sas_discovery_event(work);
-> -	struct asd_sas_port *port = ev->port;
-> -	struct sas_ha_struct *ha = port->ha;
->  	struct domain_device *ddev = port->port_dev;
-> +	struct sas_ha_struct *ha = port->ha;
->
->  	/* prevent revalidation from finding sata links in recovery */
->  	mutex_lock(&ha->disco_mutex);
-> @@ -520,7 +518,7 @@ static void sas_revalidate_domain(struct work_struct *work)
->
->  	if (ddev && (ddev->dev_type == SAS_FANOUT_EXPANDER_DEVICE ||
->  		     ddev->dev_type == SAS_EDGE_EXPANDER_DEVICE))
-> -		sas_ex_revalidate_domain(ddev);
-> +		sas_ex_revalidate_domain(ddev, retry);
->
->  	pr_debug("done REVALIDATING DOMAIN on port %d, pid:%d\n",
->  		 port->id, task_pid_nr(current));
-> @@ -532,6 +530,18 @@ static void sas_revalidate_domain(struct work_struct *work)
->  	sas_probe_devices(port);
->  }
->
-> +static void sas_revalidate_domain(struct work_struct *work)
-> +{
-> +	struct sas_discovery_event *ev = to_sas_discovery_event(work);
-> +	struct asd_sas_port *port = ev->port;
-> +	bool retry;
-> +
-> +	do {
-> +		retry = false;
-> +		sas_do_revalidate_domain(port, &retry);
-> +	} while (retry);
-> +}
-> +
->  /* ---------- Events ---------- */
->
->  static void sas_chain_work(struct sas_ha_struct *ha, struct sas_work *sw)
-> diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-> index 5cd720f93f96..cdbf8d8a28bf 100644
-> --- a/drivers/scsi/libsas/sas_expander.c
-> +++ b/drivers/scsi/libsas/sas_expander.c
-> @@ -1994,7 +1994,8 @@ static bool dev_type_flutter(enum sas_device_type new, enum sas_device_type old)
->  	return false;
->  }
->
-> -static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
-> +static int sas_unregister(struct domain_device *dev, int phy_id, bool last,
-> +			      bool *retry)
->  {
->  	struct expander_device *ex = &dev->ex_dev;
->  	struct ex_phy *phy = &ex->ex_phy[phy_id];
-> @@ -2045,7 +2046,12 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
->  		SAS_ADDR(phy->attached_sas_addr));
->  	sas_unregister_devs_sas_addr(dev, phy_id, last);
->
-> -	return sas_discover_new(dev, phy_id);
-> +	/* force the next revalidation find this phy and bring it up */
-> +	phy->phy_change_count = -1;
-> +	ex->ex_change_count = -1;
-> +	*retry = true;
-
-Ohh, sorry to say, but that's a real hack :)
-
-Could we just add a flag for the expander PHY to force a discovery 
-instead of this?
-
-I assume that you need to do this as the expander PHY change count will 
-not be modified for the next revalidation (so no discovery on that PHY).
-
-> +
-> +	return 0;
->  }
->
->  /**
-> @@ -2062,7 +2068,8 @@ static int sas_rediscover_dev(struct domain_device *dev, int phy_id, bool last)
->   * first phy,for other phys in this port, we add it to the port to
->   * forming the wide-port.
->   */
-> -static void sas_rediscover(struct domain_device *dev, const int phy_id)
-> +static void sas_rediscover(struct domain_device *dev, const int phy_id,
-> +			   bool *retry)
->  {
->  	struct expander_device *ex = &dev->ex_dev;
->  	struct ex_phy *changed_phy = &ex->ex_phy[phy_id];
-> @@ -2087,7 +2094,7 @@ static void sas_rediscover(struct domain_device *dev, const int phy_id)
->  				break;
->  			}
->  		}
-> -		res = sas_rediscover_dev(dev, phy_id, last);
-> +		res = sas_unregister(dev, phy_id, last, retry);
->  	} else
->  		res = sas_discover_new(dev, phy_id);
->
-> @@ -2098,13 +2105,14 @@ static void sas_rediscover(struct domain_device *dev, const int phy_id)
->  /**
->   * sas_ex_revalidate_domain - revalidate the domain
->   * @port_dev: port domain device.
-> + * @retry: do we need to revalidate again
+>  drivers/spi/atmel-quadspi.c | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
+> 
+> diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
+> index e6de6e3d1345..1d21db7851e9 100644
+> --- a/drivers/spi/atmel-quadspi.c
+> +++ b/drivers/spi/atmel-quadspi.c
+> @@ -1,3 +1,4 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Driver for Atmel QSPI Controller
 >   *
->   * NOTE: this process _must_ quit (return) as soon as any connection
->   * errors are encountered.  Connection recovery is done elsewhere.
->   * Discover process only interrogates devices in order to discover the
->   * domain.
+> @@ -7,18 +8,6 @@
+>   * Author: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+>   * Author: Piotr Bugalski <bugalski.piotr@gmail.com>
+>   *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - *
+> - * This program is distributed in the hope that it will be useful, but WITHOUT
+> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> - * more details.
+> - *
+> - * You should have received a copy of the GNU General Public License along with
+> - * this program.  If not, see <http://www.gnu.org/licenses/>.
+> - *
+>   * This driver is based on drivers/mtd/spi-nor/fsl-quadspi.c from Freescale.
 >   */
-> -void sas_ex_revalidate_domain(struct domain_device *port_dev)
-> +void sas_ex_revalidate_domain(struct domain_device *port_dev, bool *retry)
->  {
->  	int res;
->  	struct domain_device *dev = NULL;
-> @@ -2119,7 +2127,7 @@ void sas_ex_revalidate_domain(struct domain_device *port_dev)
->  			res = sas_find_bcast_phy(dev, &phy_id, i, true);
->  			if (phy_id == -1)
->  				break;
-> -			sas_rediscover(dev, phy_id);
-> +			sas_rediscover(dev, phy_id, retry);
->  			i = phy_id + 1;
->  		} while (i < ex->num_phys);
->  	}
-> diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
-> index e557bcb0c266..deb75765e555 100644
-> --- a/include/scsi/libsas.h
-> +++ b/include/scsi/libsas.h
-> @@ -692,7 +692,7 @@ int  sas_discover_root_expander(struct domain_device *);
->
->  void sas_init_ex_attr(void);
->
-> -void sas_ex_revalidate_domain(struct domain_device *);
-> +void sas_ex_revalidate_domain(struct domain_device *port_dev, bool *retry);
->
->  void sas_unregister_domain_devices(struct asd_sas_port *port, int gone);
->  void sas_init_disc(struct sas_discovery *disc, struct asd_sas_port *);
->
-
+>  
 
