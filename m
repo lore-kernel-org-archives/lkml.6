@@ -2,123 +2,141 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 448ECC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4D9C282D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 125CF20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C46620989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548868025;
-	bh=vWonZD63zHIueYk1mnrhqOa5gX34Z8JCSm1pmbo/rfM=;
+	s=default; t=1548868047;
+	bh=hxHgq29i2ahJqFGbr8mtwjzZWXgzJy1DV+B+YGysbic=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kVZzcLzrvPmTM8DBeJlaMinWq0wGmrMGZTEB1oPBXZkpknpR0Pg4QD5RWf/Qyd4Po
-	 1MK6E/svUtdMMkVrDDBT9pr+kzFgPiM/K77Ewk1B1kV83AhlKhALTSFaDD7QclBJdo
-	 EEdHWQfRUZTuf+IieLzJaZJHt8ujz0/Imp1qA2SI=
+	b=F/DFkJ2tjlYUNfkXg9BnIP29NFUr52NQZBeHO1BmwsJUO9I36lvGfR3BmRBQofzfn
+	 yo2f55vBYBe2BQr2vsTWZbvk7J9EswJjmwSZPA4aNjfSXAoURoPE9oUDhx8cAZdCOo
+	 rQI07cTuepTCZgNBOxJGOb9V+BLyP4M7lVF0BJDk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732441AbfA3RHD (ORCPT
+        id S1732431AbfA3RHZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:07:03 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:39830 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731717AbfA3RHD (ORCPT
+        Wed, 30 Jan 2019 12:07:25 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41755 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731717AbfA3RHZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:07:03 -0500
-Received: by mail-yw1-f65.google.com with SMTP id k188so99923ywa.6;
-        Wed, 30 Jan 2019 09:07:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=r4FvnOpw+Kp/xo1E/oIUXzj02pZKaUP0vrX/v1MVF3s=;
-        b=rQjmckmzAv1TtgaDTf+xwGnxDCZf/qt62fsajJvyFlBof5l/0CVKAG0/RQdHbYUU8Z
-         YV3pupMl9wakI8GJ2a6Q6X1czRWRbqRIrvDYdBGenYJH/AT+DrU6hAeWiAJeKafhh47f
-         jEDi7+H+xXmSLP+84wuhC/kTT1At/AlXUGMc7YbhpX92ShXurAJwHvoI1VXRc8cN2NoO
-         uMKjdB5EwWa9+9c0xWSBmyKrQBV0LdzTOgzkmuI9iU0gbxpf1N+yxqips6zJE2ehg/yz
-         2hltgR4GXOpilyhCa+c/RA4A40XOj85aph8KTQMtFbCHYe82rL28IeBb2qbM1WjpktGs
-         JPnQ==
+        Wed, 30 Jan 2019 12:07:25 -0500
+Received: by mail-oi1-f196.google.com with SMTP id j21so215499oii.8;
+        Wed, 30 Jan 2019 09:07:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r4FvnOpw+Kp/xo1E/oIUXzj02pZKaUP0vrX/v1MVF3s=;
-        b=M43qP5h7yQ8fAgwm+u05Ivs11rDJ6i/fgp+nYNhI9ZWQQ6s+/s5sKD5BkHsIdbgsZL
-         Z4TovPKTrqR9BLoHV1DWeHb26VMpEbLLs2Negl56qvtCdfjM2rq9ThueSXJHvbnlRQ7d
-         FP2rNg2dlwCuLkhDCARWy/Nux9+ga+0h/1li8O+ox+Qi2OpCy2PLMra3JLSxeC2Q6IZf
-         izFjmDKDCrgBnFn25ogGvmc5a7k4o6mFWnpE/hxQ91sXtMJrYpgZiv4fIr6tqvf5bndc
-         9Vm0/aHr3HXp+TELwCCjh5xe/+hft0mpR1SBIJQtKBhzwyNo4R2VtaukR6BOsSUObz96
-         oS8Q==
-X-Gm-Message-State: AJcUukcRLc4rXREAXae5O/XGbIeadPqVE6rWkWkk9MUp216OeUd/c4Ko
-        eZj+m6xUNueUIQfTnqxeVIY=
-X-Google-Smtp-Source: ALg8bN46/CyjNniPd/uEyCmyWWAS1mahMjoWkazGoUDEhY78foz8Nqb7qCmY2P58ISnLM36C8mVYug==
-X-Received: by 2002:a81:3413:: with SMTP id b19mr29798236ywa.297.1548868021695;
-        Wed, 30 Jan 2019 09:07:01 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:e55d])
-        by smtp.gmail.com with ESMTPSA id g84sm2015945ywg.9.2019.01.30.09.07.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 09:07:00 -0800 (PST)
-Date:   Wed, 30 Jan 2019 09:06:58 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Chris Down <chris@chrisdown.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@fb.com
-Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
-Message-ID: <20190130170658.GY50184@devbig004.ftw2.facebook.com>
-References: <20190128142816.GM50184@devbig004.ftw2.facebook.com>
- <20190128145210.GM18811@dhcp22.suse.cz>
- <20190128145407.GP50184@devbig004.ftw2.facebook.com>
- <20190128151859.GO18811@dhcp22.suse.cz>
- <20190128154150.GQ50184@devbig004.ftw2.facebook.com>
- <20190128170526.GQ18811@dhcp22.suse.cz>
- <20190128174905.GU50184@devbig004.ftw2.facebook.com>
- <20190129144306.GO18811@dhcp22.suse.cz>
- <20190129145240.GX50184@devbig004.ftw2.facebook.com>
- <20190130165058.GA18811@dhcp22.suse.cz>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VWbOUAUiSBkf45uCURxayCf9HX7azBkvTGSQB7xn/GY=;
+        b=HErlxLXqDf3tP4lpS/bVtvNASEaYBoaWQq3DusP/S46PuYX6zc8ZTdcsOU2Sv2lv+U
+         FWQNxMRNtxZGYwMDowr8WB7DMlQ6Poy3O8BddYUD31Q33x9cALK0d13mSPjP2SQWWDg+
+         /Dt5PoUWRm1CcR0I2tRZmPucrHGR5JCj2VHNja5D5JAYtrJP4IYjZJZUmXQDY1GytMHZ
+         7O+zZ127GGZylpETquRO23f9oponD7Up2BDs151VCaeVebzYOXF0q2clWC3R8GgxHLyr
+         aureMlDuUlTYAu3Zbpj7cwumtN4vWn+TiPUUohTPMS5Mvo5+x26k4iIPv8RovbxjJ1dG
+         BQxg==
+X-Gm-Message-State: AJcUukd1XiEPkuQ4eCPVkuhk5YI9MXwWTrBEmuvV00YVsFRcXUz9HDNM
+        QLW5C71yLk2bY1VMp4ZLW/MqGIo=
+X-Google-Smtp-Source: ALg8bN5Gwwah8J0X4bckThL9HrT8iI87ApNh6M4NAQd8dcvu8fqfTg9f1Lt+A0f8KbBlyW9sROTWXw==
+X-Received: by 2002:aca:dec1:: with SMTP id v184mr12280171oig.217.1548868044279;
+        Wed, 30 Jan 2019 09:07:24 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id z15sm784342oib.23.2019.01.30.09.07.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 09:07:23 -0800 (PST)
+Date:   Wed, 30 Jan 2019 11:07:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] iio:dac:dac7612: device tree bindings
+Message-ID: <20190130170723.GA24708@bogus>
+References: <20190128094931.4430-1-ricardo@ribalda.com>
+ <20190128094931.4430-2-ricardo@ribalda.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190130165058.GA18811@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190128094931.4430-2-ricardo@ribalda.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Michal.
-
-On Wed, Jan 30, 2019 at 05:50:58PM +0100, Michal Hocko wrote:
-> > Yeah, cgroup.events and .stat files as some of the local stats would
-> > be useful too, so if we don't flip memory.events we'll end up with sth
-> > like cgroup.events.local, memory.events.tree and memory.stats.local,
-> > which is gonna be hilarious.
+On Mon, Jan 28, 2019 at 10:49:31AM +0100, Ricardo Ribalda Delgado wrote:
+> Bindings for dac7612.
 > 
-> Why cannot we simply have memory.events_tree and be done with it? Sure
-> the file names are not goin to be consistent which is a minus but that
-> ship has already sailed some time ago.
-
-Because the overall cost of shitty interface will be way higher in the
-longer term.  cgroup2 interface is far from perfect but is way better
-than cgroup1 especially for the memory controller.  Why do you think
-that is?
-
-> > If you aren't willing to change your mind, the only option seems to be
-> > introducing a mount option to gate the flip and additions of local
-> > files.  Most likely, userspace will enable the option by default
-> > everywhere, so the end result will be exactly the same but I guess
-> > it'll better address your concern.
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
+> ---
+>  .../bindings/iio/dac/ti,dac7612.txt           | 29 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 30 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
 > 
-> How does the consumer of the API learns about the mount type?
+> diff --git a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+> new file mode 100644
+> index 000000000000..e1b8158fab35
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+> @@ -0,0 +1,29 @@
+> +* Texas Instruments Dual, 12-Bit Serial Input Digital-to-Analog Converter
+> +
+> +The DAC7612 is a dual, 12-bit digital-to-analog converter (DAC) with guaranteed
+> +12-bit monotonicity performance over the industrial temperature range.
+> +Is is programmable through an SPI interface.
+> +
+> +The internal DACs are loaded when the LOADDACS pin is pulled down.
+> +
+> +http://www.ti.com/lit/ds/sbas106/sbas106.pdf
+> +
+> +Required Properties:
+> +- compatible: Should be one of:
+> +		"ti,dac7612"
+> +		"ti,dac7612u"
+> +		"ti,dac7612b"
 
-It's gonna be a mount flag exposed in /sys/kernel/cgroup/features.
+What's the difference? I can only find 'u' and 'ub' variants and nothing 
+about how those are different. So maybe just 1 string is enough?
 
-Thanks.
+> +- reg: Definition as per Documentation/devicetree/bindings/spi/spi-bus.txt
+> +
+> +Optional Properties:
+> +- loaddacs-gpios: GPIO descriptor for the LOADDACS pin.
 
--- 
-tejun
+Needs a 'ti' vendor prefix.
+
+> +- spi-*: Definition as per Documentation/devicetree/bindings/spi/spi-bus.txt
+> +
+> +Example:
+> +
+> +	dac7612@1 {
+
+dac@1
+
+> +		compatible = "ti,dac7612";
+> +		reg = <0x1>;
+> +		loaddacs-gpios = <&msmgpio 25 GPIO_ACTIVE_LOW>;
+> +	};
+> +
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 30ba5435906b..e28e5afaae16 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14882,6 +14882,7 @@ M:	Ricardo Ribalda <ricardo@ribalda.com>
+>  L:	linux-iio@vger.kernel.org
+>  S:	Supported
+>  F:	drivers/iio/dac/ti-dac7612.c
+> +F:	Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+>  
+>  THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+>  M:	Hans Verkuil <hverkuil@xs4all.nl>
+> -- 
+> 2.20.1
+> 
