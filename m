@@ -2,165 +2,134 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E03C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 253D9C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 741FA20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E991A20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="nwd/mVqG"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G96T8zeU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387454AbfA3S5r (ORCPT
+        id S1733252AbfA3S7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:57:47 -0500
-Received: from mail-eopbgr20075.outbound.protection.outlook.com ([40.107.2.75]:39568
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729401AbfA3S5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:57:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sAsLbJvqRKAMHlESUaU/IF1CHDloyaFofQ4JdwO+j/Q=;
- b=nwd/mVqGQA9Jjn46fjuEEcMgSAPxJvX53n3VdgPDMzL09QaaPEUUO6BchlmkzGauqhv9BRw18mntznyxbiUhJEIvmYVQ//COD494s5IX/6lhmv3SLCEy7JVT7q8Ym6tVid2qu2bs8fHoLwvYPaG0JwpjlFDvO6ik6yvwi1fTa4g=
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
- DBBPR05MB6588.eurprd05.prod.outlook.com (20.179.44.87) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.21; Wed, 30 Jan 2019 18:57:00 +0000
-Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
- ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 18:56:59 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-CC:     Jerome Glisse <jglisse@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAANmWgIAAG8YA
-Date:   Wed, 30 Jan 2019 18:56:59 +0000
-Message-ID: <20190130185652.GB17080@mellanox.com>
-References: <20190129193250.GK10108@mellanox.com>
- <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
- <20190129205749.GN3176@redhat.com>
- <2b704e96-9c7c-3024-b87f-364b9ba22208@deltatee.com>
- <20190129215028.GQ3176@redhat.com>
- <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
- <20190129234752.GR3176@redhat.com>
- <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
- <20190130041841.GB30598@mellanox.com>
- <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
-In-Reply-To: <bdf03cd5-f5b1-4b78-a40e-b24024ca8c9f@deltatee.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR0201CA0023.namprd02.prod.outlook.com
- (2603:10b6:301:74::36) To DBBPR05MB6426.eurprd05.prod.outlook.com
- (2603:10a6:10:c9::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DBBPR05MB6588;6:wIiOV3+XQykijZwlFzhpj1cxN0rawntoo8s8I71A8AEKJqkgEfFnm+BXP+9w112YlRn9AJqEDWRbm5y2EoA9D8BLyQoRvM0GOFyunv2ycQWnnVhqZ9ygA9sKvAgwWtGAvvJHCE2lq1NlvXPNSw8NLzffi6YdJRWcvkUskS73J8JcivfTZplMQFnXVpzLFXesvvGMibEXcE5u0r1K7oAZhTjBy4Q873U7+nlA0s+RnqmRN3WBEzPJNGKpuTYr1HOi6k7HA1v7T6jbiX3viXWqgWWVneSzACzZJQbQeB8XXK1TRPCY1O4BDWEeiFkhXlbB255ZvEB0s6ZKy+YMa3MiuunwYqoTkbIhxYvUKhaZh49RTDmRn2Sbsw5c2wT0jSCN0NeUGHCZT1zCC7qEGYHImOFcnWPxHRaPxEIkvYk1hP8oplQtSgLRWyRDOBCtvWn1GyTYzvZNMhLI7jvxUVgOsQ==;5:kLnoR96kojFrXkX2i7PVIa4OYm2UGndMIJ987fT/h+re/4nVh4s0II5Egg2BBIBrWP6EdnVQ71eOiGSDwuxSUpSE2l/v9ueHb4R5YY4ALbelCSJpsP1f6XE1s3L/ncDWmL/hwBMquxNp4zvzEsGSVnpnVVnyIaLLqrxdTug52pwc+FRrMiALwxRhH8NhWh9XK8iJ7cju7r/7SJhKSlnxeA==;7:81IiBmz0idVcuPFhtYyY7qaPPQvQ6Ak1oaRBFiIIQuTrAWOo3UlGiUooBKL5KR+ShximYq9oUpK/4o45Dk3Kyg2TMkUS/pwyFD7UPU3ONXiQQjYOrMIrFC8wnrolMlxjpeD9sshCvo6HV0OaduqxVA==
-x-ms-office365-filtering-correlation-id: 16ed2920-6eaa-4ab6-1122-08d686e4b6b3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6588;
-x-ms-traffictypediagnostic: DBBPR05MB6588:
-x-microsoft-antispam-prvs: <DBBPR05MB658802F63D4F24D94EFC3412CF900@DBBPR05MB6588.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(346002)(376002)(396003)(366004)(189003)(199004)(6436002)(7736002)(4326008)(305945005)(102836004)(7416002)(53546011)(6246003)(386003)(6506007)(53936002)(2906002)(26005)(81166006)(11346002)(2616005)(446003)(81156014)(6512007)(8936002)(486006)(8676002)(476003)(93886005)(229853002)(6486002)(6916009)(186003)(25786009)(316002)(33656002)(54906003)(71190400001)(71200400001)(36756003)(66066001)(52116002)(217873002)(14444005)(478600001)(106356001)(105586002)(68736007)(86362001)(97736004)(3846002)(99286004)(256004)(6116002)(14454004)(1076003)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6588;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: TovT0yk2P4qIQIbZSaqyL3mj23l7X2/W8kzyn0bmx6bPT8mY97uLGwQqYfaKtPq386CRPm85fgD+FkGZvcrxDXrOTjLP1vNz4xMilW1k07DgKvCKi+ADVlscxak3FxowpYoi8C9ZK6xNV/JZyFJruT5q69VG8fsXsNJe2H36/XUd+zErv6Ns7eJ0kJCN8aqPcgAevtDrjhmTqyPzDjSxPC/5NsjuY7p1MARtyv8q3a7xSCWO8I4meV1C620JQl+eC5HGK3A7wZxAGdmpCVo0G8dafDg3d6UVnPClvvpJJ2RGmLCFS9RPhKx9Vgv+nWvDl98KvcW0kLy/tCLF/H6g8KI+74NkvZN+7+dikrbz+NwAaV8qsWCKogMK5QLQH0wmwkXfVekgUwzfiA7v4RwspCM6QgI0ALFJlGzEplvSv3Y=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1BE0E9896BD5F9418A483EBA3D393F33@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 30 Jan 2019 13:59:23 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38440 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728461AbfA3S7W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 13:59:22 -0500
+Received: by mail-lf1-f67.google.com with SMTP id a8so456058lfk.5
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:59:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XP/+aa8KV0RdJRkGEOst+CVjF7HcELVsTDtdEZCiVOc=;
+        b=G96T8zeUlc0YSCk1AnGOW1QWPsVOFvsMVR8DsvaQszkVPfil3yhlUcF7LDxTwyZw79
+         PCjfW+yNkQQ4UBO4Vop5J9s//EJb2NpJttjnjtPdxiFGtGozEQbBW+Rg5Z6/ULy4vgQu
+         AL6R56JRJciJPk0iv1WCbwR8wIHWhSguE67MA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XP/+aa8KV0RdJRkGEOst+CVjF7HcELVsTDtdEZCiVOc=;
+        b=oaw6Jn8hOi14mCCW3jvDC2LVp/ev1aiYRvzHAppQlh6CNEomRHRp813E0zYdsszJ+D
+         BxAxgwiwr5kc0gNkXObobxWSxdc7g5MOrIgp8FjyhxE/yMiwfOHi2KK4YgJ65EfPoWco
+         134PrlZoANGKbhqGKXf7aRf/p1hBheZ+DZfNieh/oIRUQ0+0AAr1Lo1nmGRtcHv8GjqC
+         UzOSJKCEVjPq/UUeNd1MHkuVAk+xHby9DipK/z4YRIjGu8N38dDrNww8t6ph6PUV5BgK
+         x30OHMmsMHGZ+C+ds9H7Nw1owcgCUcLw2NHvWbudqzW8spO57pMsmkqZ9COnTEZ62fFz
+         DSjw==
+X-Gm-Message-State: AJcUukeQbdKMFBUA2PRdtIvhsVHCLXM27uKxxm4yot+wLQs1MSLPDnfs
+        fwDAS+GgdGLdBULJAA0nQxLAaBJXX8k=
+X-Google-Smtp-Source: ALg8bN6HZODGBw/vx58nETjeKIfSm9ojFmwhYA4gCsvYkqBEU0VEaEwAcVR0y1R6elwUdHKAOpKEvg==
+X-Received: by 2002:a19:8096:: with SMTP id b144mr23913858lfd.8.1548874760736;
+        Wed, 30 Jan 2019 10:59:20 -0800 (PST)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id s17sm473398lfk.9.2019.01.30.10.59.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 10:59:20 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id n18so455318lfh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:59:20 -0800 (PST)
+X-Received: by 2002:a19:d381:: with SMTP id k123mr24311307lfg.101.1548873105432;
+ Wed, 30 Jan 2019 10:31:45 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16ed2920-6eaa-4ab6-1122-08d686e4b6b3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 18:56:59.5337
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6588
+References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-14-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1546314952-15990-14-git-send-email-yong.wu@mediatek.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 30 Jan 2019 10:31:09 -0800
+X-Gmail-Original-Message-ID: <CAE=gft6nQ4uv5kqYO876sQaKo71F0RkMj4d-dKDvxi8pEy-WgQ@mail.gmail.com>
+Message-ID: <CAE=gft6nQ4uv5kqYO876sQaKo71F0RkMj4d-dKDvxi8pEy-WgQ@mail.gmail.com>
+Subject: Re: [PATCH v5 13/20] iommu/mediatek: Add mt8183 IOMMU support
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
+        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
+        Nicolas Boichat <drinkcat@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 10:17:27AM -0700, Logan Gunthorpe wrote:
->=20
->=20
-> On 2019-01-29 9:18 p.m., Jason Gunthorpe wrote:
-> > Every attempt to give BAR memory to struct page has run into major
-> > trouble, IMHO, so I like that this approach avoids that.
-> >=20
-> > And if you don't have struct page then the only kernel object left to
-> > hang meta data off is the VMA itself.
-> >=20
-> > It seems very similar to the existing P2P work between in-kernel
-> > consumers, just that VMA is now mediating a general user space driven
-> > discovery process instead of being hard wired into a driver.
->=20
-> But the kernel now has P2P bars backed by struct pages and it works
-> well.=20
+On Mon, Dec 31, 2018 at 7:59 PM Yong Wu <yong.wu@mediatek.com> wrote:
+>
+> The M4U IP blocks in mt8183 is MediaTek's generation2 M4U which use
+> the ARM Short-descriptor like mt8173, and most of the HW registers
+> are the same.
+>
+> Here list main differences between mt8183 and mt8173/mt2712:
+> 1) mt8183 has only one M4U HW like mt8173 while mt2712 has two.
+> 2) mt8183 don't have the "bclk" clock, it use the EMI clock instead.
+> 3) mt8183 can support the dram over 4GB, but it doesn't call this "4GB
+> mode".
+> 4) mt8183 pgtable base register(0x0) extend bit[1:0] which represent
+> the bit[33:32] in the physical address of the pgtable base, But the
+> standard ttbr0[1] means the S bit which is enabled defaultly, Hence,
+> we add a mask.
+> 5) mt8183 HW has a GALS modules, SMI should enable "has_gals" support.
+> 6) mt8183 need reset_axi like mt8173.
+> 7) the larb-id in smi-common is remapped. M4U should add its larbid_remap.
+>
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> ---
+>  drivers/iommu/mtk_iommu.c | 15 ++++++++++++---
+>  drivers/iommu/mtk_iommu.h |  1 +
+>  drivers/memory/mtk-smi.c  | 20 ++++++++++++++++++++
+>  3 files changed, 33 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+> index 2913ddb..66e3615 100644
+> --- a/drivers/iommu/mtk_iommu.c
+> +++ b/drivers/iommu/mtk_iommu.c
+> @@ -36,6 +36,7 @@
+>  #include "mtk_iommu.h"
+>
+>  #define REG_MMU_PT_BASE_ADDR                   0x000
+> +#define MMU_PT_ADDR_MASK                       GENMASK(31, 7)
+>
+>  #define REG_MMU_INVALIDATE                     0x020
+>  #define F_ALL_INVLD                            0x2
+> @@ -342,7 +343,7 @@ static int mtk_iommu_attach_device(struct iommu_domain *domain,
+>         /* Update the pgtable base address register of the M4U HW */
+>         if (!data->m4u_dom) {
+>                 data->m4u_dom = dom;
+> -               writel(dom->cfg.arm_v7s_cfg.ttbr[0],
+> +               writel(dom->cfg.arm_v7s_cfg.ttbr[0] & MMU_PT_ADDR_MASK,
 
-I don't think it works that well..
-
-We ended up with a 'sgl' that is not really a sgl, and doesn't work
-with many of the common SGL patterns. sg_copy_buffer doesn't work,
-dma_map, doesn't work, sg_page doesn't work quite right, etc.
-
-Only nvme and rdma got the special hacks to make them understand these
-p2p-sgls, and I'm still not convinced some of the RDMA drivers that
-want access to CPU addresses from the SGL (rxe, usnic, hfi, qib) don't
-break in this scenario.
-
-Since the SGLs become broken, it pretty much means there is no path to
-make GUP work generically, we have to go through and make everything
-safe to use with p2p-sgls before allowing GUP. Which, frankly, sounds
-impossible with all the competing objections.
-
-But GPU seems to have a problem unrelated to this - what Jerome wants
-is to have two faulting domains for VMA's - visible-to-cpu and
-visible-to-dma. The new op is essentially faulting the pages into the
-visible-to-dma category and leaving them invisible-to-cpu.
-
-So that duality would still have to exists, and I think p2p_map/unmap
-is a much simpler implementation than trying to create some kind of
-special PTE in the VMA..
-
-At least for RDMA, struct page or not doesn't really matter.=20
-
-We can make struct pages for the BAR the same way NVMe does.  GPU is
-probably the same, just with more mememory at stake? =20
-
-And maybe this should be the first implementation. The p2p_map VMA
-operation should return a SGL and the caller should do the existing
-pci_p2pdma_map_sg() flow..=20
-
-Worry about optimizing away the struct page overhead later?
-
-Jason
+So there aren't any other bits down below 7 that you need, like the
+shareable bits?
