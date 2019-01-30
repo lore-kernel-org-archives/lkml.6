@@ -2,73 +2,77 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52736C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B246DC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2777F2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:21:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91C93218D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:21:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732992AbfA3SVH (ORCPT
+        id S1733002AbfA3SV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:21:07 -0500
-Received: from foss.arm.com ([217.140.101.70]:59612 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732949AbfA3SVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:21:07 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D634580D;
-        Wed, 30 Jan 2019 10:21:06 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CCF63F557;
-        Wed, 30 Jan 2019 10:21:05 -0800 (PST)
-Date:   Wed, 30 Jan 2019 18:21:02 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Peng Donglin <dolinux.peng@gmail.com>
-Subject: Re: [PATCH 1/4] arm64: dump: no need to check return value of
- debugfs_create functions
-Message-ID: <20190130182102.GK18558@fuggles.cambridge.arm.com>
-References: <20190122144114.9816-1-gregkh@linuxfoundation.org>
- <20190122144114.9816-2-gregkh@linuxfoundation.org>
+        Wed, 30 Jan 2019 13:21:27 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48056 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732919AbfA3SV1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 13:21:27 -0500
+Received: from [2a01:598:b88e:c0a2:20d0:59ff:fe6e:bab9] (helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gouUE-0007WM-G0; Wed, 30 Jan 2019 19:21:23 +0100
+Date:   Wed, 30 Jan 2019 19:21:09 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Rusty Russell <rusty@rustcorp.com.au>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Jessica Yu <jeyu@kernel.org>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Subject: Re: [PATCH][RFC] module: Cure the MODULE_LICENSE "GPL" vs. "GPL v2"
+ bogosity
+In-Reply-To: <875zu620yn.fsf@rustcorp.com.au>
+Message-ID: <alpine.DEB.2.21.1901301916330.4548@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1901282105450.1669@nanos.tec.linutronix.de> <875zu620yn.fsf@rustcorp.com.au>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122144114.9816-2-gregkh@linuxfoundation.org>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Wed, 30 Jan 2019, Rusty Russell wrote:
 
-On Tue, Jan 22, 2019 at 03:41:11PM +0100, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
+> Thanks taking on such a thankless task Thomas,
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Peng Donglin <dolinux.peng@gmail.com>
-> Cc: <linux-arm-kernel@lists.infradead.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  arch/arm64/include/asm/ptdump.h | 9 +++------
->  arch/arm64/mm/dump.c            | 4 ++--
->  arch/arm64/mm/ptdump_debugfs.c  | 7 ++-----
->  3 files changed, 7 insertions(+), 13 deletions(-)
+> Might have been overzealous in assuming a verionless GPL string meant
+> "or later" (I'm happy for that for my own code, FWIW).  My memory is
+> fuzzy, but I don't think anyone cared at the time.
+> 
+> Frankly, this should be autogenerated rather than "fixed" if we want
+> this done properly.
 
-Are you taking this via your tree, or would you like us to queue it in
-arm64?
+Yes, but for that we need to have the SPDX-Identifiers in place and the
+whole licensing mess of the kernel cleaned up. We're working on that, but
+that's a herculanean task.
 
-Will
+Btw, this was the third thing on that day which made me curse a certain
+Rusty dude. Guess what the other presents were which that guy
+left.... hotplug and futexes.
+
+Somehow that all that stuff sticks to me now and because that dude left
+into buzzword land I can't make him fix it anymore :)
+
+Thanks,
+
+	tglx
