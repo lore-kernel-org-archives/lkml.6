@@ -2,134 +2,130 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C6AC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 381FEC282D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15AC121848
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:16:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F139921852
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 02:22:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W6BvxeSI"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="sPI+brV6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbfA3CQo (ORCPT
+        id S1729783AbfA3CV7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 21:16:44 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46863 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726912AbfA3CQn (ORCPT
+        Tue, 29 Jan 2019 21:21:59 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5651 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727658AbfA3CV7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 21:16:43 -0500
-Received: by mail-qt1-f193.google.com with SMTP id y20so24605458qtm.13
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 18:16:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kVeK2UYY64OtAaLVdJw3/+jH5KxxkNwDEq/USDWjX2w=;
-        b=W6BvxeSIPx93Rii/lcRJWVtL80InLzKRXG4Pbwvy+6LfeGeimifsaGnA3Q7Y5axhx8
-         Saiz05RabqdZrYbHJzfiCAA5CfQTUtYNNVZn8Xd5sKY6AftaZ+I6MZDazlcVLQlSDh6E
-         51R1K/5S1C/ybZxLVU1bpMWUcmirH1b+AOXbmubGqLAe7i0/iiusILxzPGN2X0mVvaFk
-         zXRdV62yjjsDi5ZEAUGnZu+Clk6DLNLQ2243u7NhIWyKIb0v5hPqAZnrh8K37DJdDoRu
-         RKt4ZN2s2hY81vhE08RQNrLv5iaBQhmU9w0LqTuh5OqYgMxALkapX1dTDoWNP7P4duxG
-         1PhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kVeK2UYY64OtAaLVdJw3/+jH5KxxkNwDEq/USDWjX2w=;
-        b=po1zsFm6iG762wJ0cq+QhdpWBR+Ozn/pw8SzQqZf9bL0N1aPvyK9TJOrWzvpX5hCvN
-         OepS54aCwcq4ELPRtxhtCpJ/uOkQzUA5fR/gkvE1fYMO1GWnqe05mrH8jGh6Oj4V/ltU
-         KWXP8RExb8OwssuxhUTGfE6oha5KaDEJw7u4zFuRr+LUSAwtgIuYtrbLNhWjCOuun9eF
-         Y1ad/KRWwSABkm4M96k6TWWXiGsQoKFH2zzrrk/NyzaQlr3IvB7S1ivOwl4xr6Ak3Poi
-         OMR1+JcGoyas6Z+7oZjShwnc8W5Jal0eCJlkLVpWHeX3s2Zh8FLG34taRBPR7kEcQ3d5
-         Vw2g==
-X-Gm-Message-State: AJcUukc/K4IxwIV+YifUxKBtqLauFtaAXrFLXzXzTq+9ADB0eD10TCbZ
-        wrl+LWWdfQfo+TnPMYIT9/HO2Tgu
-X-Google-Smtp-Source: ALg8bN5MEgD/RjNEh05W8ubStgoMtzKZMjJw4i9gSawIluJvqXeYPcgBXyanl12pG6sY0es1ixhh5Q==
-X-Received: by 2002:ac8:90c:: with SMTP id t12mr27727704qth.335.1548814602133;
-        Tue, 29 Jan 2019 18:16:42 -0800 (PST)
-Received: from x3200.lan ([2601:152:4302:ae1f::16e])
-        by smtp.gmail.com with ESMTPSA id c48sm370394qtd.9.2019.01.29.18.16.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 18:16:41 -0800 (PST)
-From:   George Amanakis <gamanakis@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     sdf@google.com, George Amanakis <gamanakis@gmail.com>
-Subject: BUG: vnet0 selects TX queue 11, but real number of TX queues is 11
-Date:   Tue, 29 Jan 2019 21:16:21 -0500
-Message-Id: <20190130021621.17250-1-gamanakis@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 29 Jan 2019 21:21:59 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c510a290000>; Tue, 29 Jan 2019 18:21:29 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 29 Jan 2019 18:21:57 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 29 Jan 2019 18:21:57 -0800
+Received: from [10.110.48.28] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Jan
+ 2019 02:21:56 +0000
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     Jan Kara <jack@suse.cz>
+CC:     Jerome Glisse <jglisse@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, <mike.marciniszyn@intel.com>,
+        <rcampbell@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20190116130813.GA3617@redhat.com>
+ <20190117093047.GB9378@quack2.suse.cz> <20190117151759.GA3550@redhat.com>
+ <20190122152459.GG13149@quack2.suse.cz> <20190122164613.GA3188@redhat.com>
+ <20190123180230.GN13149@quack2.suse.cz> <20190123190409.GF3097@redhat.com>
+ <8492163b-8c50-6ea2-8bc9-8c445495ecb4@nvidia.com>
+ <20190129012312.GB3359@redhat.com>
+ <3c3bb2a3-907b-819d-83ee-2b29802a5bda@nvidia.com>
+ <20190129101225.GB29981@quack2.suse.cz>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <1e4e9c5f-c04a-0e8e-cdfb-b41e365cc2a2@nvidia.com>
+Date:   Tue, 29 Jan 2019 18:21:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190129101225.GB29981@quack2.suse.cz>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548814889; bh=fhXjDs+tpYnR9fC2/TPq13qS+GooJ05aAT+eGKah/Nc=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=sPI+brV6Qvw/eIScEgWNgUoEvVL196Fgzc04hVs5GBaB8Rk8KYZVPak3EyeDQwzkJ
+         53atJ5nzMIrLtx0nUOU2Qrm/tOEStFQUGy7NEgJEnrzi+8M6cuhOyCZYCAFQzGvZgY
+         uAF//7owMXO/sGw0hSJPAtCdIVA32fkAEQoGkjG3On8pdYURsezHM6IH0gysC8Ason
+         WrU3V8JLeChDW6y5KMA2yh5xSHa6J2Uw70jeRTfraQxT7wLnoDhMqXl2mtQQNOKCua
+         RyFyxucd2MaJBEW0O5tEpa2PxijtV75UrYcc9gql21NkQuzcoEWy2dJkXpTXWQI5b0
+         EpFZMJA3cNb1Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since 4.20.4 when running a KVM with vhost_net I am seeing in dmesg:
-vnet0 selects TX queue 11, but real number of TX queues is 11
+On 1/29/19 2:12 AM, Jan Kara wrote:
+> On Mon 28-01-19 22:41:41, John Hubbard wrote:
+[...]
+>> Here is the case I'm wondering about:
+>>
+>> thread A                             thread B
+>> --------                             --------
+>>                                      gup_fast
+>> page_mkclean
+>>     is page gup-pinned?(no)
+>>                                          page_cache_get_speculative
+>>                                              (gup-pins the page here)
+>>                                          check pte_val unchanged (yes)
+>>        set_pte_at()
+>>
+>> ...and now thread A has created a read-only PTE, after gup_fast walked
+>> the page tables and found a writeable entry. And so far, thread A has
+>> not seen that the page is pinned.
+>>
+>> What am I missing here? The above seems like a problem even before we
+>> change anything.
+> 
+> Your implementation of page_mkclean() is wrong :) It needs to first call
+> set_pte_at() and only after that ask "is page gup pinned?". In fact,
+> page_mkclean() probably has no bussiness in checking for page pins
+> whatsoever. It is clear_page_dirty_for_io() that cares, so that should
+> check for page pins after page_mkclean() has returned.
+> 
 
-The corresponding part in the xml definition of the virtual machine is:
--------8<-------
-<interface type='bridge'>
-  <mac address='xx:xx:xx:xx:xx:xx'/>
-  <source bridge='br0'/>
-  <model type='virtio'/>
-  <driver name='vhost' queues='12'>
-  </driver>
-  <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
-</interface>
--------8<-------
+Perfect, that was the missing piece for me: page_mkclean() internally doesn't
+need the consistent view, just the caller does. The whole situation with
+two distinct lock-free algorithms going on here actually seems clear at last. :)
 
-Doing a git-bisect with 4.20.3 last known good, and 4.20.4 as bad, this
-commit turned up:
--------8<-------
-commit 9ff0436e2c3575ffe64d359fb3b67aee237dc519
-Author: Stanislav Fomichev <sdf@google.com>
-Date:   Mon Jan 7 13:38:38 2019 -0800
+Thanks (also to Jerome) for explaining this!
 
-    tun: publish tfile after it's fully initialized
-
-    [ Upstream commit 0b7959b6257322f7693b08a459c505d4938646f2 ]
-
-    BUG: unable to handle kernel NULL pointer dereference at
-00000000000000d1
--------8<-------
-
-
-Applying the following patch corrects it in 4.20.5. Would this be the
-correct thing to do?
----
- drivers/net/tun.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 6658658246d2..e0dc004c6483 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -862,8 +862,6 @@ static int tun_attach(struct tun_struct *tun, struct file *file,
- 	if (rtnl_dereference(tun->xdp_prog))
- 		sock_set_flag(&tfile->sk, SOCK_XDP);
- 
--	tun_set_real_num_queues(tun);
--
- 	/* device is allowed to go away first, so no need to hold extra
- 	 * refcnt.
- 	 */
-@@ -875,6 +873,9 @@ static int tun_attach(struct tun_struct *tun, struct file *file,
- 	rcu_assign_pointer(tfile->tun, tun);
- 	rcu_assign_pointer(tun->tfiles[tun->numqueues], tfile);
- 	tun->numqueues++;
-+
-+	tun_set_real_num_queues(tun);
-+
- out:
- 	return err;
- }
+thanks,
 -- 
-2.20.1
-
+John Hubbard
+NVIDIA
