@@ -2,239 +2,93 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01777C282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A71A1C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C50C920870
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74E1520870
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 09:07:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="bFc7A360"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730426AbfA3JHP (ORCPT
+        id S1730512AbfA3JHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:07:15 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33435 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfA3JHO (ORCPT
+        Wed, 30 Jan 2019 04:07:35 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38133 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfA3JHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:07:14 -0500
-Received: by mail-lf1-f67.google.com with SMTP id i26so16858831lfc.0;
-        Wed, 30 Jan 2019 01:07:11 -0800 (PST)
+        Wed, 30 Jan 2019 04:07:35 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e5so10781793plb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 01:07:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=9ngn2EqMUIjUg8AoZAqTwCdyghXJc0dAyju25U+WQ7k=;
+        b=bFc7A3602YA+Ipg6j4d9E0QpN8Vncl18Gw6v/h3wmXVJ3omjz6pJYJ1c1Jb2rHuuus
+         gB9BDwOAewvTqFSrCUfJD4SPOatZZu8Bgho3SXKLarIjqR4fDqyBMijppttoFI7S4inM
+         QgaiYDOJwDs1S5n340swgCqbV8FeFyq+Ro1LVnukFQJMDFbKwJOTHeCA0nxS6ILuAR+y
+         Pulhh4a9c0VR1qYj83ed8pTyWX2VMBnUYwTfn0b6YTIECxLh6+MK5XoBbdoF3OJpQE1p
+         kPf0N6iaSf4c/W2xYsZNzos4271UBW/br0qUL7KkvN8+37O3ant9wk9FSjPY2rapaKEP
+         CftQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R5OYKIdcCV4vIKb8/0wFd++WaCQ0fv7KebS5NOkmvz8=;
-        b=NMP2Jp4dZQLEPh6Rij4f0aiTxdqbX6k5ujbXjX/MMGLZCtrl3zOyhbuFiWAHXw3ALN
-         T6GStPGL6vdR0cWCFw+Zk3iA3ZpC+jEtnR9fcVK6NNhtp8XFCy7d4dH5NHOMBNA7lLt0
-         eqR9kWbGng3PH+WlG9NaJDQBufJmMW50s53j9RBR66rLJwImOND9zZJOhGyIXt1k4pIL
-         c7dUGC7nXCEh/jAla1WGD83VYYFGm/aVvyMf5F3iyJFU+/N/DL8OFvwcQK+xvTSMSNWs
-         neTHywQFwM5Fe6uN6/RkGsu0Oa96bGZlm5ALX9R4c1hCqD53ECi3Y0wHh8Dd9ZymlOKz
-         39cA==
-X-Gm-Message-State: AJcUukf9JCemPQO05xlTKX3EDmcMlz/Mfo6vGE5wn9LjE66KbE9LtKQI
-        406H5Nzz6OkXJvB16VoN5pg=
-X-Google-Smtp-Source: ALg8bN4t/VtQRfa8Px1cP4gOm8E3IYooqWT1UAUIO2xaPxJIX95aMRH7mE0Hu5fQk3qGRA4DxSewBw==
-X-Received: by 2002:ac2:53b1:: with SMTP id j17mr22264469lfh.167.1548839230900;
-        Wed, 30 Jan 2019 01:07:10 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id r4sm183529lfe.60.2019.01.30.01.07.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 01:07:10 -0800 (PST)
-Date:   Wed, 30 Jan 2019 11:06:57 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v3 01/10] mfd: bd718x7.h split to ROHM common and bd718x7
- specific parts
-Message-ID: <0f5a3b94f936556c1ad05da58bfb35182ae20a96.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9ngn2EqMUIjUg8AoZAqTwCdyghXJc0dAyju25U+WQ7k=;
+        b=cgzocCXqStbAi6eEUF0OY/MGjF3QTGXlvM0a2DAl5fC9nL/fYJk4FzZn0yndvIt4Zz
+         wRyYypr+AFNwAQuJ0KTNgjmOlsHnnPT08U49qG1wd2rZ1OV8SFR8PijQHXgmBBkDzgKf
+         +3WVX9zVbDvmgpmtzMltht3NrDxyi3TiNVdPwsiu15TdQRfoPJ8mNoxmdZbHo+Qho1H1
+         4eeahOVPcJOwHYu6rs8NqaiA5haZg4vYyfxwAHf/MeToWZYuLU34AjN/VhmznlPwCmpc
+         EskalkyNXk6Wv7ys6I8e/J4iskZN6K8Z0tPAl3Mtt7fdVbQJFnLsODif2Kvd4PUhPDTq
+         dnsA==
+X-Gm-Message-State: AJcUukcuKALb6XF8m0QJ/wiBcjj+kfcxkjcTTDV6esj5HdrHQlbdDOpH
+        yE97kx3fSMkw5phAYli5wqXFIAk5Fi0=
+X-Google-Smtp-Source: ALg8bN6oFUc4ZOK3NMNAdU5s2cp23/r89BIaQEsgyyDDMDrMxc8Sb2gjLuiYA505QH9R6db3m/8Lkg==
+X-Received: by 2002:a17:902:a5c3:: with SMTP id t3mr29072590plq.117.1548839254794;
+        Wed, 30 Jan 2019 01:07:34 -0800 (PST)
+Received: from localhost.localdomain (36-239-242-165.dynamic-ip.hinet.net. [36.239.242.165])
+        by smtp.gmail.com with ESMTPSA id k14sm4486805pgs.52.2019.01.30.01.07.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 01:07:34 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/2] regulator: max77650: Fix include files
+Date:   Wed, 30 Jan 2019 17:07:21 +0800
+Message-Id: <20190130090722.24134-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split the bd718x7.h to ROHM common and bd718x7 specific parts
-so that we do not need to add same things in every new ROHM
-PMIC header. Please note that this change requires changes also
-in bd718x7 sub-device drivers for regulators and clk.
+This is a platform driver, no need to include linux/i2c.h.
+Include linux/of.h for of_match_ptr.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/mfd/rohm-bd718x7.c       | 23 ++++++++++++-----------
- include/linux/mfd/rohm-bd718x7.h | 22 ++++++++--------------
- include/linux/mfd/rohm-generic.h | 20 ++++++++++++++++++++
- 3 files changed, 40 insertions(+), 25 deletions(-)
- create mode 100644 include/linux/mfd/rohm-generic.h
+ drivers/regulator/max77650-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/rohm-bd718x7.c b/drivers/mfd/rohm-bd718x7.c
-index a29d529a96f4..7beb444a57cb 100644
---- a/drivers/mfd/rohm-bd718x7.c
-+++ b/drivers/mfd/rohm-bd718x7.c
-@@ -98,18 +98,19 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
- 		return -ENOMEM;
+diff --git a/drivers/regulator/max77650-regulator.c b/drivers/regulator/max77650-regulator.c
+index 474f2c02f2d5..5afb91400832 100644
+--- a/drivers/regulator/max77650-regulator.c
++++ b/drivers/regulator/max77650-regulator.c
+@@ -5,7 +5,7 @@
+ //
+ // Regulator driver for MAXIM 77650/77651 charger/power-supply.
  
- 	bd718xx->chip_irq = i2c->irq;
--	bd718xx->chip_type = (unsigned int)(uintptr_t)
-+	bd718xx->chip.chip_type = (unsigned int)(uintptr_t)
- 				of_device_get_match_data(&i2c->dev);
--	bd718xx->dev = &i2c->dev;
-+	bd718xx->chip.dev = &i2c->dev;
- 	dev_set_drvdata(&i2c->dev, bd718xx);
- 
--	bd718xx->regmap = devm_regmap_init_i2c(i2c, &bd718xx_regmap_config);
--	if (IS_ERR(bd718xx->regmap)) {
-+	bd718xx->chip.regmap = devm_regmap_init_i2c(i2c,
-+						    &bd718xx_regmap_config);
-+	if (IS_ERR(bd718xx->chip.regmap)) {
- 		dev_err(&i2c->dev, "regmap initialization failed\n");
--		return PTR_ERR(bd718xx->regmap);
-+		return PTR_ERR(bd718xx->chip.regmap);
- 	}
- 
--	ret = devm_regmap_add_irq_chip(&i2c->dev, bd718xx->regmap,
-+	ret = devm_regmap_add_irq_chip(&i2c->dev, bd718xx->chip.regmap,
- 				       bd718xx->chip_irq, IRQF_ONESHOT, 0,
- 				       &bd718xx_irq_chip, &bd718xx->irq_data);
- 	if (ret) {
-@@ -118,7 +119,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
- 	}
- 
- 	/* Configure short press to 10 milliseconds */
--	ret = regmap_update_bits(bd718xx->regmap,
-+	ret = regmap_update_bits(bd718xx->chip.regmap,
- 				 BD718XX_REG_PWRONCONFIG0,
- 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
- 				 BD718XX_PWRBTN_SHORT_PRESS_10MS);
-@@ -129,7 +130,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
- 	}
- 
- 	/* Configure long press to 10 seconds */
--	ret = regmap_update_bits(bd718xx->regmap,
-+	ret = regmap_update_bits(bd718xx->chip.regmap,
- 				 BD718XX_REG_PWRONCONFIG1,
- 				 BD718XX_PWRBTN_PRESS_DURATION_MASK,
- 				 BD718XX_PWRBTN_LONG_PRESS_10S);
-@@ -149,7 +150,7 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
- 
- 	button.irq = ret;
- 
--	ret = devm_mfd_add_devices(bd718xx->dev, PLATFORM_DEVID_AUTO,
-+	ret = devm_mfd_add_devices(bd718xx->chip.dev, PLATFORM_DEVID_AUTO,
- 				   bd718xx_mfd_cells,
- 				   ARRAY_SIZE(bd718xx_mfd_cells), NULL, 0,
- 				   regmap_irq_get_domain(bd718xx->irq_data));
-@@ -162,11 +163,11 @@ static int bd718xx_i2c_probe(struct i2c_client *i2c,
- static const struct of_device_id bd718xx_of_match[] = {
- 	{
- 		.compatible = "rohm,bd71837",
--		.data = (void *)BD718XX_TYPE_BD71837,
-+		.data = (void *)ROHM_CHIP_TYPE_BD71837,
- 	},
- 	{
- 		.compatible = "rohm,bd71847",
--		.data = (void *)BD718XX_TYPE_BD71847,
-+		.data = (void *)ROHM_CHIP_TYPE_BD71847,
- 	},
- 	{ }
- };
-diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
-index fd194bfc836f..7f2dbde402a1 100644
---- a/include/linux/mfd/rohm-bd718x7.h
-+++ b/include/linux/mfd/rohm-bd718x7.h
-@@ -4,14 +4,9 @@
- #ifndef __LINUX_MFD_BD718XX_H__
- #define __LINUX_MFD_BD718XX_H__
- 
-+#include <linux/mfd/rohm-generic.h>
- #include <linux/regmap.h>
- 
--enum {
--	BD718XX_TYPE_BD71837 = 0,
--	BD718XX_TYPE_BD71847,
--	BD718XX_TYPE_AMOUNT
--};
--
- enum {
- 	BD718XX_BUCK1 = 0,
- 	BD718XX_BUCK2,
-@@ -321,18 +316,17 @@ enum {
- 	BD718XX_PWRBTN_LONG_PRESS_15S
- };
- 
--struct bd718xx_clk;
--
- struct bd718xx {
--	unsigned int chip_type;
--	struct device *dev;
--	struct regmap *regmap;
--	unsigned long int id;
-+	/*
-+	 * Please keep this as the first member here as some
-+	 * drivers (clk) supporting more than one chip may only know this
-+	 * generic struct 'struct rohm_regmap_dev' and assume it is
-+	 * the first chunk of parent device's private data.
-+	 */
-+	struct rohm_regmap_dev chip;
- 
- 	int chip_irq;
- 	struct regmap_irq_chip_data *irq_data;
--
--	struct bd718xx_clk *clk;
- };
- 
- #endif /* __LINUX_MFD_BD718XX_H__ */
-diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
-new file mode 100644
-index 000000000000..bff15ac26f2c
---- /dev/null
-+++ b/include/linux/mfd/rohm-generic.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* Copyright (C) 2018 ROHM Semiconductors */
-+
-+#ifndef __LINUX_MFD_ROHM_H__
-+#define __LINUX_MFD_ROHM_H__
-+
-+enum {
-+	ROHM_CHIP_TYPE_BD71837 = 0,
-+	ROHM_CHIP_TYPE_BD71847,
-+	ROHM_CHIP_TYPE_BD70528,
-+	ROHM_CHIP_TYPE_AMOUNT
-+};
-+
-+struct rohm_regmap_dev {
-+	unsigned int chip_type;
-+	struct device *dev;
-+	struct regmap *regmap;
-+};
-+
-+#endif
+-#include <linux/i2c.h>
++#include <linux/of.h>
+ #include <linux/mfd/max77650.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
 -- 
-2.14.3
+2.17.1
 
-
--- 
-Matti Vaittinen
-ROHM Semiconductors Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
