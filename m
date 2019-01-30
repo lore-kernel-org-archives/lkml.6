@@ -2,100 +2,126 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BD4C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA21FC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9336F20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:17:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRBYwUMk"
+	by mail.kernel.org (Postfix) with ESMTP id 89D6820833
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548843559;
+	bh=vRx06fUlConj2xK/3BjttDMmHNSAQBWU8KS/doGHuc4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qYVAHnxrT3xzEemrllspQPXt0fzqoW+Y+MP8QBXpLPjiikzGtXKMPApPpxpQsOw8M
+	 kdwbAzzlKfKTLGvRCq/pCD1fd6Wa0jSwwKE8LQzzAizLw5wJsQdpOLnj/d47wPOIqZ
+	 j30u9BHXwaM3yB9XhXxX8leEUMi8cWA9YW13BPZc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730629AbfA3KRo (ORCPT
+        id S1730103AbfA3KTR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 05:17:44 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:36694 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbfA3KRo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 05:17:44 -0500
-Received: by mail-it1-f196.google.com with SMTP id c9so9672293itj.1;
-        Wed, 30 Jan 2019 02:17:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Red5zHbN+lfXs3TYegn7hFfQkcfngwOiw9+CgmEYEx4=;
-        b=GRBYwUMkCBmM+fjs8B0DOm3e2M43i3pzNKgORHuRgs+RkctA+fRuVTxW8qEalrywtI
-         JCSyZozfbC1jNtc5+3GASxIt0tEqFJqiL2qWw9i4a6WjJnacKBL9e9ifCpKRHq2tvxvD
-         bpNy4b5vsmkvovTxVoEN+9poFAnEAn8Cw2y0GR+m95uRI5SSFSLvrkIZxlhT7xVFDH2h
-         Po/nX9soVLXHRuFqPKiy4QJ7ZKywS8+Ai+PHZ1a1F79YL9tOoqXme7C2V2zUuB3j04Mq
-         8GzaVv4Zgk2nSE5MEXSCdIotZCv1jKwjYgU7Wg2pOy/dyM1oVumsX/qCo3rdGjpR4SW2
-         LfWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Red5zHbN+lfXs3TYegn7hFfQkcfngwOiw9+CgmEYEx4=;
-        b=syq3G+lKoBaEmG7+MQsHW5MO0W+efft5GKUoEls2LD0fPiEnRIVEt0nqLgvikrow4J
-         OiWDaOv3VWPT2l2e8e0H4drksM1g6aKAZFgUx71NxsSEMSz5DIMjixmzI9WDetwntWNY
-         uiqhXdNtAHbVDhs0eGhJqfaM850xkYy6CtS5uTTCWeVjKtfcAeLOsDL/bct1IeR6pfI9
-         oR5ZaVrHH4UPCY9ko56otf1yfsiOB0yW9hni1+0tyu1l90UAG5OK17sNENfthrThphnv
-         409uEFqQJn9Z7PAdVKk3x+VF0MeoGR7SDAv3CCezrQmisJ0uV6+huI3XJvSlT0zo5sGy
-         4kyQ==
-X-Gm-Message-State: AJcUukc/zsi4gx8BfAzpxaYYztMSGemKn7XWLbZz4OGLMFKYgIY0LjuD
-        QZxLU+mGlW22EQqJIYh43kk=
-X-Google-Smtp-Source: ALg8bN5TrmLkzM14Wyo8DIIg1HLOoi12MTd7ep/HcZryUSXiPepcK5naikZO/oBjmICCwb2XS2ealw==
-X-Received: by 2002:a24:5a8f:: with SMTP id v137mr14864048ita.65.1548843463078;
-        Wed, 30 Jan 2019 02:17:43 -0800 (PST)
-Received: from icarus ([2001:268:c0a5:3348:60b5:ec84:e7a7:e417])
-        by smtp.gmail.com with ESMTPSA id 79sm1005090itx.11.2019.01.30.02.17.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 02:17:42 -0800 (PST)
-Date:   Wed, 30 Jan 2019 19:18:14 +0900
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, linus.walleij@linaro.org
-Cc:     linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk
-Subject: Re: [PATCH v8 0/8] Introduce the for_each_set_clump8 macro
-Message-ID: <20190130101814.GA3668@icarus>
-References: <cover.1547445576.git.vilhelm.gray@gmail.com>
- <20190129170734.688a6adf91267cc6f1b5fa08@linux-foundation.org>
+        Wed, 30 Jan 2019 05:19:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39878 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726476AbfA3KTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 05:19:17 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 632A420833;
+        Wed, 30 Jan 2019 10:19:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548843556;
+        bh=vRx06fUlConj2xK/3BjttDMmHNSAQBWU8KS/doGHuc4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IrpH1aTECYaK4fmQAh8NWZof1VcBOgtfp14ar3PuVp8mGMSG64K04XOP3a72/1Cka
+         eJcTgXZKWq7itrJ+SnDE/KiyA1Fem0m2BvBE0PqozFppwH0B4J/WKhB0f2w9lI0bNQ
+         4Dmloc+t9isiPsvJ1tXdKyFD7HguSkmwAlPq+W0c=
+Date:   Wed, 30 Jan 2019 11:19:14 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Li RongQing <lirongqing@baidu.com>
+Cc:     jslaby@suse.com, linux-kernel@vger.kernel.org,
+        gkohli@codeaurora.org
+Subject: Re: [PATCH][v4] tty: fix race between flush_to_ldisc and tty_open
+Message-ID: <20190130101914.GA30587@kroah.com>
+References: <1547803637-29135-1-git-send-email-lirongqing@baidu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129170734.688a6adf91267cc6f1b5fa08@linux-foundation.org>
+In-Reply-To: <1547803637-29135-1-git-send-email-lirongqing@baidu.com>
 User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 05:07:34PM -0800, Andrew Morton wrote:
-> Do we have any expectation that these facilities will be used by
-> anything other than GPIO?  If not then perhaps they should be sited
-> within drivers/gpio (presumably as a standalone module) until such a
-> need is found?
+On Fri, Jan 18, 2019 at 05:27:17PM +0800, Li RongQing wrote:
+> There still is a race window after the commit b027e2298bd588
+> ("tty: fix data race between tty_init_dev and flush of buf"),
+> and we encountered this crash issue if receive_buf call comes
+> before tty initialization completes in n_tty_open and
+> tty->driver_data may be NULL.
+> 
+> CPU0                                    CPU1
+> ----                                    ----
+>                                  n_tty_open
+>                                    tty_init_dev
+>                                      tty_ldisc_unlock
+>                                        schedule
+> flush_to_ldisc
+>  receive_buf
+>   tty_port_default_receive_buf
+>    tty_ldisc_receive_buf
+>     n_tty_receive_buf_common
+>       __receive_buf
+>        uart_flush_chars
+>         uart_start
+>         /*tty->driver_data is NULL*/
+>                                    tty->ops->open
+>                                    /*init tty->driver_data*/
+> 
+> it can be fixed by extending ldisc semaphore lock in tty_init_dev
+> to driver_data initialized completely after tty->ops->open(), but
+> this will lead to put lock on one function and unlock in some other
+> function, and hard to maintain, so fix this race only by checking
+> tty->driver_data when receiving, and return if tty->driver_data
+> is NULL
+> 
+> Signed-off-by: Wang Li <wangli39@baidu.com>
+> Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+> V4: add version information
+> V3: not used ldisc semaphore lock, only checking tty->driver_data with NULL
+> V2: fix building error by EXPORT_SYMBOL tty_ldisc_unlock
+> V1: extend ldisc lock to protect that tty->driver_data is inited 
+> 
+> drivers/tty/tty_port.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c
+> index 044c3cbdcfa4..86d0bec38322 100644
+> --- a/drivers/tty/tty_port.c
+> +++ b/drivers/tty/tty_port.c
+> @@ -31,6 +31,9 @@ static int tty_port_default_receive_buf(struct tty_port *port,
+>  	if (!tty)
+>  		return 0;
+>  
+> +	if (!tty->driver_data)
+> +		return 0;
+> +
 
-I can move it within drivers/gpio since my only use at moment is for
-these gpio drivers I maintain. However, moving it to the gpio subsystem
-does make it less likely to be seen by authors in other subsystems who
-may have use for it -- so there is the chance that this becomes isolated
-and untilized only amonst the gpio drivers. That may not be such a bad
-thing in the end; I suspect it will be easy to spot if other subsystems
-start implementing their own for_each_set_clump (if other subsystems
-would even have such a need for it).
+How is this working?  What is setting driver_data to NULL to "stop" this
+race?
 
-Linus, if I move the for_each_set_clump macro and related functions to
-drivers/gpio, should I move the code into the gpiolib.h and gpiolib.c
-files? Or would it be best to implement this as a separate standalone
-module, and make a Kconfig dependency for those gpio drivers which
-require it? A standalone module feels somewhat overkill for such little
-code in my opinion.
+There's no requirement that a tty driver set this field to NULL when it
+is "done" with the tty device, so I think you are just getting lucky in
+that your specific driver happens to be doing this.
 
-William Breathitt Gray
+What driver are you testing this against?
+
+thanks,
+
+greg k-h
