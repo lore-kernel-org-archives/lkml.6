@@ -2,84 +2,124 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 934B6C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE66C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4529D218AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22650218AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548882756;
+	bh=Yqt6SM7PMKFBikFCGORlO+/wGTguLWm650gwRlVzdfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=o57rVMyVhQlvWc5R09nJuPpuAQTe5FPkbuSUpVtoWhAx93CUPxuYdFzOGBno9COKn
+	 4JPQMkNNU7D9xP4kUxJOrBzB19hTFkx8Jsy+9qbksDeywY9LBIuoT9hW798VR94HoD
+	 Vrv+cCZ9qzhAsJoY0cxvtV1vfT9efLxntkR1Lt08=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732687AbfA3VKQ (ORCPT
+        id S1732754AbfA3VMe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 16:10:16 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:43979 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbfA3VKP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 16:10:15 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gox7b-0003bh-AT from joseph_myers@mentor.com ; Wed, 30 Jan 2019 13:10:11 -0800
-Received: from digraph.polyomino.org.uk (137.202.0.90) by
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 30 Jan 2019 21:10:08 +0000
-Received: from jsm28 (helo=localhost)
-        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
-        (envelope-from <joseph@codesourcery.com>)
-        id 1gox7X-0004yy-Fg; Wed, 30 Jan 2019 21:10:07 +0000
-Date:   Wed, 30 Jan 2019 21:10:07 +0000
-From:   Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH glibc 1/4] glibc: Perform rseq(2) registration at C
- startup and thread creation (v6)
-In-Reply-To: <1832200535.4162.1548871426959.JavaMail.zimbra@efficios.com>
-Message-ID: <alpine.DEB.2.21.1901302104360.16754@digraph.polyomino.org.uk>
-References: <20190121213530.23803-1-mathieu.desnoyers@efficios.com> <632671842.3079.1548781059601.JavaMail.zimbra@efficios.com> <alpine.DEB.2.21.1901292153190.24454@digraph.polyomino.org.uk> <596949707.3888.1548812359874.JavaMail.zimbra@efficios.com>
- <alpine.DEB.2.21.1901300231210.24454@digraph.polyomino.org.uk> <1832200535.4162.1548871426959.JavaMail.zimbra@efficios.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 30 Jan 2019 16:12:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40990 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727068AbfA3VMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 16:12:34 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBFA2218AF;
+        Wed, 30 Jan 2019 21:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548882753;
+        bh=Yqt6SM7PMKFBikFCGORlO+/wGTguLWm650gwRlVzdfQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yghME5ROvkceOHz0qC/lzqRWBdIK3ynwBTmFPhftUBoeJ4oe6LuMuWHomuT8Ge3/z
+         bgYlJsjY7qcHZdhh7+mL0kLzWYEBXqoWmOsOP9fg5UystRulO4GoO7NGafhU39GlbF
+         TTLVtfKucBwB4HrzOLxttDjrN63IPIqEkMi656B8=
+Date:   Wed, 30 Jan 2019 22:12:31 +0100
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     Carlos Henrique Lima Melara <charlesmelara@outlook.com>
+Cc:     "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "neil@brown.name" <neil@brown.name>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] staging: mt7621-eth/ethtool.c: Correction of SPDX
+ license identifier
+Message-ID: <20190130211231.GA25919@kroah.com>
+References: <SC1P15201MB2014C3E0CAB4DA9ADF330797A8900@SC1P15201MB2014.LAMP152.PROD.OUTLOOK.COM>
+ <20190130152956.GA4195@kroah.com>
+ <RO1P15201MB201234F951531D13328C4FF2A8900@RO1P15201MB2012.LAMP152.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <RO1P15201MB201234F951531D13328C4FF2A8900@RO1P15201MB2012.LAMP152.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019, Mathieu Desnoyers wrote:
-
-> #if defined (__NR_rseq) && !defined (RSEQ_SIG)
-> # error "UAPI headers support rseq system call, but glibc does not define RSEQ_SIG."
-> #endif
+On Wed, Jan 30, 2019 at 08:01:13PM +0000, Carlos Henrique Lima Melara wrote:
+> On 30/01/2019 13:29, gregkh@linuxfoundation.org wrote:
+> > On Wed, Jan 30, 2019 at 02:48:27PM +0000, Carlos Henrique Lima Melara wrote:
+> >> 	This patch fix the checkpatch.p1 warning:
+> >>
+> >> 	WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+> >> 	+/*
+> >
+> > Why did you not fix up the indentation that was already mentioned?
 > 
-> Would that take care of your concerns ?
+> The Warning was about the missing SPDX License Identifier, so I added the 
+> identifier according to the "license-rules.rst" for C source that is:
 
-That would of course need appropriate conditionals based on the most 
-recent kernel version for which a given glibc version has been updated, so 
-that using new kernel headers with an existing glibc release does not make 
-the build fail (cf. the test of syscall-names.list).  And being able to 
-write such a test only solves one half of the problem - it needs to be 
-easy to determine what value to put in that header in glibc for an 
-architecture that's newly gained support in the kernel, *without* needing 
-any architecture expertise.
+I mean the indentation of the text in your changelog, nothing to do with
+the actual change in your patch below, sorry for the confusion.
 
--- 
-Joseph S. Myers
-joseph@codesourcery.com
+> >   The SPDX license identifier is added in form of a comment.  The comment
+> >   style depends on the file type::
+> >
+> >      C source:	// SPDX-License-Identifier: <SPDX License Expression>
+> >      C header:	/* SPDX-License-Identifier: <SPDX License Expression> */
+> >      ASM:	/* SPDX-License-Identifier: <SPDX License Expression> */
+> >      scripts:	# SPDX-License-Identifier: <SPDX License Expression>
+> >      .rst:	.. SPDX-License-Identifier: <SPDX License Expression>
+> >      .dts{i}:	// SPDX-License-Identifier: <SPDX License Expression>
+> 
+> I think that was the correction needed, right?
+
+Yes.
+
+> Still have a question about the license comment in the "ethtooll.c". 
+> 
+> > /*   This program is free software; you can redistribute it and/or modify
+> >  *   it under the terms of the GNU General Public License as published by
+> >  *   the Free Software Foundation; version 2 of the License
+> >  *
+> >  *   This program is distributed in the hope that it will be useful,
+> >  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+> >  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> >  *   GNU General Public License for more details.
+> >  *
+> >  *   Copyright (C) 2009-2016 John Crispin <blogic@openwrt.org>
+> >  *   Copyright (C) 2009-2016 Felix Fietkau <nbd@openwrt.org>
+> >  *   Copyright (C) 2013-2016 Michael Lee <igvtee@gmail.com>
+> >  */
+> 
+> It puts 3 spaces between the * and the text, should it be corrected to 
+> only one space?
+
+If you really want to, but it's not needed.
+
+All of the "boilerplate" license text can also be removed after the SPDX
+line is added, if you want to do that.  But leave the copyright lines,
+that needs to stay.
+
+thanks,
+
+greg k-h
