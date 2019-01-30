@@ -2,133 +2,107 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57506C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB1AC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6432084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:04:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48B7C2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:04:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G/NBzqBv"
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="NGnMFEka"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730131AbfA3NEU (ORCPT
+        id S1730854AbfA3NEi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:04:20 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48740 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbfA3NEU (ORCPT
+        Wed, 30 Jan 2019 08:04:38 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46233 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726915AbfA3NEi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:04:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ieN+maPc5SkGkNMwK4+wedVQ+1PNHVZjypfiaXCPLRM=; b=G/NBzqBveoRkqu36u0kpxk+s+
-        EqJvT51TLHw8QfKk/2dn6abqcZIye7jRhqMqwhPAGomUNOJmHD5lslz3EViodl5+9FdkgVclcuBKB
-        QFruAaGVayjvqJYIdXi4IumYWOvdnAUIZwTRjzy9YpZfLPs9PvnaZT5z13uuNCC+UpBr/YikbKgsN
-        DhiDh/AoZG4FykwNZQq8NIUjYBHVtyHKgY1mD3CX97maG2Az/LsZ1Ll81MkfTGeG+iHWQ6z2s0klW
-        +r7G7XMOi8hQlVa4/+80psKg23tzLLvA7FISGv2wCRMviZ2bTVcFciM5N7HRmcxRu0eD7q9o3XqVK
-        +sdeYGbfQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gopXI-0001Jf-Og; Wed, 30 Jan 2019 13:04:13 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4B1CF21408885; Wed, 30 Jan 2019 14:04:10 +0100 (CET)
-Date:   Wed, 30 Jan 2019 14:04:10 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tj@kernel.org,
-        sargun@sargun.me
-Subject: Re: [PATCH v2] sched/fair: Fix insertion in rq->leaf_cfs_rq_list
-Message-ID: <20190130130410.GG2278@hirez.programming.kicks-ass.net>
-References: <1548782332-18591-1-git-send-email-vincent.guittot@linaro.org>
- <1548825767-10799-1-git-send-email-vincent.guittot@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548825767-10799-1-git-send-email-vincent.guittot@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 30 Jan 2019 08:04:38 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w7so10289938pgp.13
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 05:04:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=IOJh5cFz0hYqAE0BPjw73b9BbMxTZ+YqYtizXRisyaI=;
+        b=NGnMFEkaYq04HnY0Elo6WcH9a9g8m3P6gTrd+vrC/iqLHB2XWwwxHKpSdwaNFJHZIk
+         ooeX3UU1lOzI7PpUFVuW+u3hhiUqbk4b1iNMPqc2My1cF+Mmy1uddVw2Sg+o9ospZjDb
+         SnNzDDxwHasV1BIEiAUXX49LfYvL3aghA2OpXT0ylJ1gw4xXf4nWgMrETnS++EaWTIxb
+         SFQCFI1yMt9xT+U/0L0DckymRON/mFtqKLIWzDzk/Y6QviVXvPTppcjIJa674sxlzGVd
+         isGR/Kjhn+ADHnvGUZiWKhO4hSYyUXXzZ0s2Wo2nGUb5Dbglv8RObh+sMNCPGIbub0N4
+         dV1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=IOJh5cFz0hYqAE0BPjw73b9BbMxTZ+YqYtizXRisyaI=;
+        b=GxJbciiZv05P4QM+wIn9LJDmE39ub+BfdCgkX1XTHVtDkWr0iWxiImS+5tHzA4FFS+
+         UbVA/oSrGzgdIFQwHJDCzlbw6oMDiUEh5hJFYg230oNni0IzdatXDRv9/OiTiwaUlQoc
+         Ky4v4XrGPgrsuyFSNemGY/6E3ck7auixGpdj/UQGbQfiClH/WOkBOOuZ/StbSHiKbIUm
+         DClDdOs1sPP80yNXoorrgpyyF4HrsxkZYlzcIOb8A+WAaIb/3asNdsmG7x8/ihENVFT6
+         dOy3atc52rf7X1SrL5nvLH0XzBBnZIhRkdBUIZF0KjuhduUt2AM3Ef1u/9BvdlgwPOFQ
+         kVeQ==
+X-Gm-Message-State: AJcUukcaIhAhDbiHnjUmPAVpbGJUnfw+84zrcYN9+d0zckFtLhmWaxR7
+        2BtICHc0gnWfu5EIypGQ8diBPg==
+X-Google-Smtp-Source: ALg8bN4JrB8WOAmY86audoPue+Jm635UY0/811HUq5oJJ6SKGOdHkQT7dltP+Cx49kNKhtAjO5ro2w==
+X-Received: by 2002:a63:a401:: with SMTP id c1mr27698035pgf.403.1548853477419;
+        Wed, 30 Jan 2019 05:04:37 -0800 (PST)
+Received: from localhost.localdomain (36-239-242-165.dynamic-ip.hinet.net. [36.239.242.165])
+        by smtp.gmail.com with ESMTPSA id m3sm5128033pff.173.2019.01.30.05.04.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 05:04:36 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Milo Kim <milo.kim@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH 1/2] regulator: lp8788-ldo: Remove *desc and *regulator from struct lp8788_ldo
+Date:   Wed, 30 Jan 2019 21:04:18 +0800
+Message-Id: <20190130130419.23548-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 06:22:47AM +0100, Vincent Guittot wrote:
+They are not used at all, remove them.
 
-> The algorithm used to order cfs_rq in rq->leaf_cfs_rq_list assumes that
-> it will walk down to root the 1st time a cfs_rq is used and we will finish
-> to add either a cfs_rq without parent or a cfs_rq with a parent that is
-> already on the list. But this is not always true in presence of throttling.
-> Because a cfs_rq can be throttled even if it has never been used but other CPUs
-> of the cgroup have already used all the bandwdith, we are not sure to go down to
-> the root and add all cfs_rq in the list.
-> 
-> Ensure that all cfs_rq will be added in the list even if they are throttled.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/lp8788-ldo.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index e2ff4b6..826fbe5 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -352,6 +352,20 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq *cfs_rq)
->  	}
->  }
->  
-> +static inline void list_add_branch_cfs_rq(struct sched_entity *se, struct rq *rq)
-> +{
-> +	struct cfs_rq *cfs_rq;
-> +
-> +	for_each_sched_entity(se) {
-> +		cfs_rq = cfs_rq_of(se);
-> +		list_add_leaf_cfs_rq(cfs_rq);
-> +
-> +		/* If parent is already in the list, we can stop */
-> +		if (rq->tmp_alone_branch == &rq->leaf_cfs_rq_list)
-> +			break;
-> +	}
-> +}
-> +
->  /* Iterate through all leaf cfs_rq's on a runqueue: */
->  #define for_each_leaf_cfs_rq(rq, cfs_rq) \
->  	list_for_each_entry_rcu(cfs_rq, &rq->leaf_cfs_rq_list, leaf_cfs_rq_list)
-
-> @@ -5179,6 +5197,9 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->  
->  	}
->  
-> +	/* Ensure that all cfs_rq have been added to the list */
-> +	list_add_branch_cfs_rq(se, rq);
-> +
->  	hrtick_update(rq);
->  }
-
-So I don't much like this; at all. But maybe I misunderstand, this is
-somewhat tricky stuff and I've not looked at it in a while.
-
-So per normal we do:
-
-	enqueue_task_fair()
-	  for_each_sched_entity() {
-	    if (se->on_rq)
-	      break;
-	    enqueue_entity()
-	      list_add_leaf_cfs_rq();
-	  }
-
-This ensures that all parents are already enqueued, right? because this
-is what enqueues those parents.
-
-And in this case you add an unconditional second
-for_each_sched_entity(); even though it is completely redundant, afaict.
-
-
-The problem seems to stem from the whole throttled crud; which (also)
-breaks the above enqueue loop on throttle state, and there the parent can
-go missing.
-
-So why doesn't this live in unthrottle_cfs_rq() ?
+diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
+index a2ef146e6b3a..172b5f9355dd 100644
+--- a/drivers/regulator/lp8788-ldo.c
++++ b/drivers/regulator/lp8788-ldo.c
+@@ -113,8 +113,6 @@ enum lp8788_ldo_id {
+ 
+ struct lp8788_ldo {
+ 	struct lp8788 *lp;
+-	struct regulator_desc *desc;
+-	struct regulator_dev *regulator;
+ 	struct gpio_desc *ena_gpiod;
+ };
+ 
+@@ -558,7 +556,6 @@ static int lp8788_dldo_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ldo->regulator = rdev;
+ 	platform_set_drvdata(pdev, ldo);
+ 
+ 	return 0;
+@@ -605,7 +602,6 @@ static int lp8788_aldo_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ldo->regulator = rdev;
+ 	platform_set_drvdata(pdev, ldo);
+ 
+ 	return 0;
+-- 
+2.17.1
 
