@@ -2,69 +2,70 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D687CC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA59C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A74B920989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B1FA20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:02:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ps15UBi2"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hTsBX6nZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387452AbfA3TAu (ORCPT
+        id S1730199AbfA3TCx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:00:50 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37841 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728461AbfA3TAt (ORCPT
+        Wed, 30 Jan 2019 14:02:53 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35885 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727069AbfA3TCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:00:49 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t18-v6so542108ljd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:00:48 -0800 (PST)
+        Wed, 30 Jan 2019 14:02:53 -0500
+Received: by mail-lj1-f195.google.com with SMTP id g11-v6so551101ljk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:02:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=iICV6iO5GGqy/9UyvLBZFlPh+9/PoKYpYWrjSxw2AAU=;
-        b=Ps15UBi2+dGsGjwapfletBv+573yHf6DC+OJb8tE5CbQxaNE2HEFKvYtYKiZ49sauE
-         qr3hdJPCfSK5vXOAYerx0ce6yfBZhbx5ydpwO5+nMk/tvHiBkQQHcvnbd4bHPcbwL28y
-         V//kUweAepKdxRr1pyB9Zwnju1ExglqAg1+QY=
+        bh=ncM9ihRYoY9Br1fhJmYOdQ+HKk2h3TZyaw64RU6uDOw=;
+        b=hTsBX6nZyMVwIEswxD/WcNLQml5CzOjZ/eIFeenhQo2k9utHzPfOKU6pXzOiqGfI3v
+         FCIgXw7/im16Zgta/ZoxDvMysKaz+zFEGf4fXxAS0C8exFQuokKRynieGyP/ZQfKZLlO
+         IPk57E1LMea0CIZ8XUDH7fJYup0061Bx3vKBk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=iICV6iO5GGqy/9UyvLBZFlPh+9/PoKYpYWrjSxw2AAU=;
-        b=mUx5J8vvZf2/Ry7+bl8/36BE2GOfio2J92okQwqroX79RovavzZ/gMkY8HuwiAPEOu
-         6IEblD0ML5pdeSJJUTZwea3hXJyz09o68x2chtorqoPEig042sbjpDDkp2jDjaRqkKH+
-         bZo7xqc5xJIumPASO5yw7OESz+ph+UoG5PZEVzYUZe0lhM4NcEZ1ftDwuEz4bwQcy+Zh
-         fAU8b35357WNIHwozE+OWobq8n/nE+Zh5qLG2n1A/mDy3yc9z4jzGjo1EnPOYk8i6Yqo
-         1wP/IH9DODyInzsH+o87PUZwvbDO0BxXnaakNrTSGWvNLEXB0J+CifSkvJPvRTRNY7kv
-         elmg==
-X-Gm-Message-State: AJcUukd6Fp7Nu7b6Ed5bg4Tn3H22ykY8YvCQ6Ak/+XtsBqioVzYnhhQ6
-        NyfIHCAmM2TC/LTwQ0F+tz99w5wnyKg=
-X-Google-Smtp-Source: ALg8bN7tlmS+ir8sIP2HzgvEySH4E2tagMpu8KDbp1tsC+zwKkjyGp1+BE9V4UQQGBpPX5LYLxPSOw==
-X-Received: by 2002:a2e:9c52:: with SMTP id t18-v6mr25019535ljj.149.1548874847649;
-        Wed, 30 Jan 2019 11:00:47 -0800 (PST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id s127sm436418lfe.8.2019.01.30.11.00.47
+        bh=ncM9ihRYoY9Br1fhJmYOdQ+HKk2h3TZyaw64RU6uDOw=;
+        b=UxyI9QMDL5MaIDe+MNC60RnmaVjLLuaKlDFP6Rl15DpWb8XvK02ybov3oT2hvfuR3B
+         prVQRo7H0hjOabXbiudLLn9ek/t3FANkrY0Ghuv1/AUlFAC3vzBnJ/w7jKh3hGwPV9qm
+         UtfTFqycWqxDQbgSWxXLTjcUWQvBmzDyduIF6OahMbm1aGs1jEsOyJ+Bq0rON+kYV84m
+         qN5PrJjCOo9chpyfzxmjPUoQMjpSmqbfEtg2IokeDUcN/iI9ZeN/0IeJAYUT9gOdNFXB
+         HIY9bzXaldYd8NcfAq0/eV2civckCMOQUAE8TWqK3R4iF/W0UasgEobog5UDbtP5XuY9
+         JdCg==
+X-Gm-Message-State: AJcUukeDsClHoP62gDoB/D8L3qztZ/Q+sGvOlez5A7m4ES/0FgEp7aSa
+        59k3NssguMr+XvkIySDvuKyOTbS51JY=
+X-Google-Smtp-Source: ALg8bN6AdzbcYPESXN2oaSbAs/wCpqRQYLyiq0Fq1e5p8Ufsku1b1c0Cea2FAiwq7VKbepAIQ27eeQ==
+X-Received: by 2002:a2e:e02:: with SMTP id 2-v6mr25354992ljo.10.1548874970872;
+        Wed, 30 Jan 2019 11:02:50 -0800 (PST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id m10-v6sm407144ljj.34.2019.01.30.11.02.50
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 11:00:47 -0800 (PST)
-Received: by mail-lj1-f182.google.com with SMTP id u89-v6so558987lje.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:00:47 -0800 (PST)
-X-Received: by 2002:a2e:9181:: with SMTP id f1-v6mr18171528ljg.64.1548873092541;
- Wed, 30 Jan 2019 10:31:32 -0800 (PST)
+        Wed, 30 Jan 2019 11:02:50 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id g11-v6so551072ljk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:02:50 -0800 (PST)
+X-Received: by 2002:a2e:6109:: with SMTP id v9-v6mr24571224ljb.126.1548874581917;
+ Wed, 30 Jan 2019 10:56:21 -0800 (PST)
 MIME-Version: 1.0
-References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-13-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1546314952-15990-13-git-send-email-yong.wu@mediatek.com>
+References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-15-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1546314952-15990-15-git-send-email-yong.wu@mediatek.com>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 30 Jan 2019 10:30:55 -0800
-X-Gmail-Original-Message-ID: <CAE=gft5BS=yDQV48V1a=n8U1YyAQuQ+vxg1bFy1HFJXmvXE_gw@mail.gmail.com>
-Message-ID: <CAE=gft5BS=yDQV48V1a=n8U1YyAQuQ+vxg1bFy1HFJXmvXE_gw@mail.gmail.com>
-Subject: Re: [PATCH v5 12/20] memory: mtk-smi: Add gals support
+Date:   Wed, 30 Jan 2019 10:55:45 -0800
+X-Gmail-Original-Message-ID: <CAE=gft58E0p3KEYLtKZBfvGysNq+CfX5LDR38incdM+tjDr-1g@mail.gmail.com>
+Message-ID: <CAE=gft58E0p3KEYLtKZBfvGysNq+CfX5LDR38incdM+tjDr-1g@mail.gmail.com>
+Subject: Re: [PATCH v5 14/20] iommu/mediatek: Add mmu1 support
 To:     Yong Wu <yong.wu@mediatek.com>
 Cc:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -85,48 +86,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 31, 2018 at 7:58 PM Yong Wu <yong.wu@mediatek.com> wrote:
+On Mon, Dec 31, 2018 at 7:59 PM Yong Wu <yong.wu@mediatek.com> wrote:
 >
-> In some SoCs like mt8183, SMI add GALS(Global Async Local Sync) module
-> which can help synchronize for the modules in different clock frequency.
-> It can be seen as a "asynchronous fifo". This is a example diagram:
+> Normally the M4U HW connect EMI with smi. the diagram is like below:
+>               EMI
+>                |
+>               M4U
+>                |
+>             smi-common
+>                |
+>        -----------------
+>        |    |    |     |    ...
+>     larb0 larb1  larb2 larb3
 >
->             M4U
->              |
->          ----------
->          |        |
->      gals0-rx   gals1-rx
->          |        |
->          |        |
->      gals0-tx   gals1-tx
->          |        |
->         ------------
->          SMI Common
->         ------------
->              |
->   +-----+--------+-----+- ...
->   |     |        |     |
->   |  gals-rx  gals-rx  |
->   |     |        |     |
->   |     |        |     |
->   |  gals-tx  gals-tx  |
->   |     |        |     |
-> larb1 larb2   larb3  larb4
+> Actually there are 2 mmu cells in the M4U HW, like this diagram:
 >
-> GALS only help transfer the command/data while it doesn't have the
-> configuring register, thus it has the special "smi" clock and doesn't
-> have the "apb" clock. From the diagram above, we add "gals0" and
-> "gals1" clocks for smi-common and add a "gals" clock for smi-larb.
+>               EMI
+>            ---------
+>             |     |
+>            mmu0  mmu1     <- M4U
+>             |     |
+>            ---------
+>                |
+>             smi-common
+>                |
+>        -----------------
+>        |    |    |     |    ...
+>     larb0 larb1  larb2 larb3
 >
-> This patch adds gals clock supporting in the SMI. Note that some larbs
-> may still don't have the "gals" clock like larb1 and larb4 above.
+> This patch add support for mmu1. In order to get better performance,
+> we could adjust some larbs go to mmu1 while the others still go to
+> mmu0. This is controlled by a SMI COMMON register SMI_BUS_SEL(0x220).
 >
-> This is also a preparing patch for mt8183 which has GALS.
+> mt2712, mt8173 and mt8183 M4U HW all have 2 mmu cells. the default
+> value of that register is 0 which means all the larbs go to mmu0
+> defaultly.
+>
+> This is a preparing patch for adjusting SMI_BUS_SEL for mt8183.
 >
 > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> ---
+>  drivers/iommu/mtk_iommu.c | 47 +++++++++++++++++++++++++++++------------------
+>  1 file changed, 29 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+> index 66e3615..7fcef19 100644
+> --- a/drivers/iommu/mtk_iommu.c
+> +++ b/drivers/iommu/mtk_iommu.c
+> @@ -70,27 +70,32 @@
+>  #define F_MISS_FIFO_ERR_INT_EN                 BIT(6)
+>  #define F_INT_CLR_BIT                          BIT(12)
+>
+> -#define REG_MMU_INT_MAIN_CONTROL               0x124
+> -#define F_INT_TRANSLATION_FAULT                        BIT(0)
+> -#define F_INT_MAIN_MULTI_HIT_FAULT             BIT(1)
+> -#define F_INT_INVALID_PA_FAULT                 BIT(2)
+> -#define F_INT_ENTRY_REPLACEMENT_FAULT          BIT(3)
+> -#define F_INT_TLB_MISS_FAULT                   BIT(4)
+> -#define F_INT_MISS_TRANSACTION_FIFO_FAULT      BIT(5)
+> -#define F_INT_PRETETCH_TRANSATION_FIFO_FAULT   BIT(6)
+> +#define REG_MMU_INT_MAIN_CONTROL               0x124 /* mmu0 | mmu1 */
 
-So really from a software perspective the gals are just a couple of
-extra clocks that need to be turned on for certain larbs. Seems fine
-to me.
+The comment being on that line is kind of weird, since the comment
+really applies to the lines below it. Maybe the comment should be on
+its own line, or on the TRANSLATION_FAULT line.
 
+Other than that,
 Reviewed-by: Evan Green <evgreen@chromium.org>
