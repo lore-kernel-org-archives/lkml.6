@@ -6,58 +6,60 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5265C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A2FC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D0292184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:23:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CA53218A4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:24:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730875AbfA3QXn (ORCPT
+        id S1730905AbfA3QYg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:23:43 -0500
-Received: from 8bytes.org ([81.169.241.247]:35946 "EHLO theia.8bytes.org"
+        Wed, 30 Jan 2019 11:24:36 -0500
+Received: from 8bytes.org ([81.169.241.247]:35954 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbfA3QXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:23:42 -0500
+        id S1725808AbfA3QYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:24:36 -0500
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id D86625B8; Wed, 30 Jan 2019 17:23:40 +0100 (CET)
-Date:   Wed, 30 Jan 2019 17:23:39 +0100
+        id C42D15B8; Wed, 30 Jan 2019 17:24:34 +0100 (CET)
+Date:   Wed, 30 Jan 2019 17:24:33 +0100
 From:   Joerg Roedel <joro@8bytes.org>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Christoph Hellwig <hch@lst.de>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v2] iommu/vt-d: Implement dma_[un]map_resource()
-Message-ID: <20190130162339.d7uiqikoo7plthfs@8bytes.org>
-References: <20190122213045.5667-1-logang@deltatee.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Liu Yi L <yi.l.liu@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH 1/1] iommu/vt-d: Leave scalable mode default off
+Message-ID: <20190130162433.ac3gzibnurwgubzf@8bytes.org>
+References: <20190124023132.20410-1-baolu.lu@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122213045.5667-1-logang@deltatee.com>
+In-Reply-To: <20190124023132.20410-1-baolu.lu@linux.intel.com>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 02:30:45PM -0700, Logan Gunthorpe wrote:
-> Currently the Intel IOMMU uses the default dma_[un]map_resource()
-> implementations does nothing and simply returns the physical address
-> unmodified.
+On Thu, Jan 24, 2019 at 10:31:32AM +0800, Lu Baolu wrote:
+> Commit 765b6a98c1de3 ("iommu/vt-d: Enumerate the scalable
+> mode capability") enables VT-d scalable mode if hardware
+> advertises the capability. As we will bring up different
+> features and use cases to upstream in different patch
+> series, it will leave some intermediate kernel versions
+> which support partial features. Hence, end user might run
+> into problems when they use such kernels on bare metals
+> or virtualization environments.
 > 
-> However, this doesn't create the IOVA entries necessary for addresses
-> mapped this way to work when the IOMMU is enabled. Thus, when the
-> IOMMU is enabled, drivers relying on dma_map_resource() will trigger
-> DMAR errors. We see this when running ntb_transport with the IOMMU
-> enabled, DMA, and switchtec hardware.
+> This leaves scalable mode default off and end users could
+> turn it on with "intel-iommu=sm_on" only when they have
+> clear ideas about which scalable features are supported
+> in the kernel.
 > 
-> The implementation for intel_map_resource() is nearly identical to
-> intel_map_page(), we just have to re-create __intel_map_single().
-> dma_unmap_resource() uses intel_unmap_page() directly as the
-> functions are identical.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Liu Yi L <yi.l.liu@intel.com>
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Suggested-by: Ashok Raj <ashok.raj@intel.com>
+> Suggested-by: Kevin Tian <kevin.tian@intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-Applied, thanks.
+Applied to iommu/fixes, thanks.
