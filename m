@@ -3,215 +3,130 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8F1C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F5DC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25C9121473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:42:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46F5E21473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbfA3Bmd (ORCPT
+        id S1729431AbfA3Bnk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 20:42:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60374 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726292AbfA3Bmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 20:42:32 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DD3B8AD0A;
-        Wed, 30 Jan 2019 01:42:30 +0000 (UTC)
-Subject: Re: [RFC net-next 1/4] net: Reserve protocol identifiers for EnOcean
-To:     Alexander Aring <aring@mojatatu.com>
-Cc:     linux-lpwan@lists.infradead.org, linux-wpan@vger.kernel.org,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        support@enocean.com, Jonathan Cameron <jic23@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20190129050130.10932-1-afaerber@suse.de>
- <20190129050130.10932-2-afaerber@suse.de>
- <20190129125708.plsbgcpcwhtezgo5@x220t>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Organization: SUSE Linux GmbH
-Message-ID: <6a220f80-1c75-12e6-1f8c-53b76412257a@suse.de>
-Date:   Wed, 30 Jan 2019 02:42:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 29 Jan 2019 20:43:40 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:31209 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727641AbfA3Bnj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 20:43:39 -0500
+X-UUID: e0fc40f7579a42c8a52c759f1b901ea8-20190130
+X-UUID: e0fc40f7579a42c8a52c759f1b901ea8-20190130
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1568784036; Wed, 30 Jan 2019 09:43:28 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkexhb02.mediatek.inc (172.21.101.103) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 30 Jan 2019 09:43:27 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 30 Jan 2019 09:43:27 +0800
+Message-ID: <1548812607.3832.11.camel@mtkswgap22>
+Subject: Re: [PATCH v2] mm/slub: introduce SLAB_WARN_ON_ERROR
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Christopher Lameter <cl@linux.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Wed, 30 Jan 2019 09:43:27 +0800
+In-Reply-To: <010001689b25e696-3caebea9-56c2-46eb-bb49-34e504a123ee-000000@email.amazonses.com>
+References: <1548313223-17114-1-git-send-email-miles.chen@mediatek.com>
+         <20190128122954.949c2e6699d6e5ef060a325c@linux-foundation.org>
+         <0100016898251824-359bbfae-e32b-43a6-8c58-8811a7b24520-000000@email.amazonses.com>
+         <1548748424.18511.34.camel@mtkswgap22>
+         <010001689b25e696-3caebea9-56c2-46eb-bb49-34e504a123ee-000000@email.amazonses.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-In-Reply-To: <20190129125708.plsbgcpcwhtezgo5@x220t>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
-
-Am 29.01.19 um 13:57 schrieb Alexander Aring:
-> On Tue, Jan 29, 2019 at 06:01:27AM +0100, Andreas Färber wrote:
->> EnOcean wireless technology is based on ASK (ERP1) and FSK (ERP2) modulations
->> for sub-GHz and on IEEE 802.15.4 for 2.4 GHz.
->>
+On Tue, 2019-01-29 at 19:46 +0000, Christopher Lameter wrote:
+> On Tue, 29 Jan 2019, Miles Chen wrote:
 > 
-> I am not sure what you try to do here. If I see that correctly you
-> want to add for some special protocol vendor specific transceiver which
-> is underneath an 802.15.4 transceiver a new ARPHRD type and even more
-> for each modulation what it supports?
+> > a) classic slub issue. e.g., use-after-free, redzone overwritten. It's
+> > more efficient to report a issue as soon as slub detects it. (comparing
+> > to monitor the log, set a breakpoint, and re-produce the issue). With
+> > the coredump file, we can analyze the issue.
+> 
+> What usually happens is that the systems fails with a strange error
+> message. Then the system is rebooted using slub_debug options and the
+> issue is reproduced yielding more information about the problem.
+> 
+> Then you run the scenario again with additional debugging in the subsystem
+> that caused the problem.
 
-No. EnOcean uses a 4-byte node ID across PHY layers, which I am using a
-single ARPHRD_ENOCEAN for (which you conveniently cut off above).
+Thanks your comments and patient.
 
-As indicated above, the 868 MHz transceiver is _not_ using 802.15.4 PHY
-or MAC to my knowledge. It does sound like you spotted "IEEE 802.15.4"
-and literally blended out all the rest...
+I now understand the difference between us.
+I usually enable CONFIG_SLUB_DEBUG=y, CONFIG_SLUB_DEBUG_ON=y and setup
+slub_debug by default and do all tests. (eng mode).
+Not hit an issue first, then setup slub_debug and reproduce the issue
+again.
+
+CONFIG_SLUB_DEBUG is disabled for products.
 
 > 
-> If it's a 802.15.4 transceiver why not using the 802.15.4 subsystem?
+> So you are already reproducing the issue because you need to activate
+> debugging to get more information. Doing it for the 3rd time is not that
+> much more difficult.
 > 
-> For me it sounds more like a HardMAC transceiver driver for doing the
-> vendor protocol. The different modulations is part of a 802.15.4 phy
-> device class. Similar like in wireless.
+> None of your modifications will be active in a production kernel.
+> slub_debug must be activated to use it and thus you are already
+> reproducing the issue.
+> 
+> > b) memory corruption issues caused by h/w write. e.g., memory
+> > overwritten by a DMA engine. Memory corruptions may or may not related
+> > to the slab cache that reports any error. For example: kmalloc-256 or
+> > dentry may report the same errors. If we can preserve the the coredump
+> > file without any restore/reset processing in slub, we could have more
+> > information of this memory corruption.
+> 
+> If debugging is active then reporting will include the accurate slab cache
+> affected. The memory layout is already changing when you enable the
+> existing debugging code. None of your code runs without that and thus is
+> cannot add a coredump for the prod case without debugging.
 
-I've tried to design this exactly so that one _could_ implement it based
-on 802.15.4 PHY framework for 2.4 GHz or based on an FSK PHY for sub-GHz
-as a soft-MAC, layered similarly to LoRaWAN vs. LoRa, alongside the ESP
-serdev driver in this series.
+I usually set slub_debug by default and get the coredump file.
 
-In ESP3 the only 802.15.4 specific operations are getting/setting the
-channel (COMMAND_2_4 packet type), and there's a CO_GET_FREQUENCY_INFO
-command to discover frequency and protocol, with 802.15.4 having a
-different ID than ERP2 (and I spot a value 0x30 for "Long Range" :-)).
-So in theory it might be possible to instantiate an 802.15.4 PHY after
-discovering that ESP3 value, but neither is this a generic 802.15.4 PHY
-nor a generic FSK PHY, and none of that relates to above ARPHRD really.
+> > c) memory corruption issues caused by unstable h/w. e.g., bit flipping
+> > because of xxxx DRAM die or applying new power settings. It's hard to
+> > re-produce this kind of issue and it much easier to tell this kind of
+> > issue in the coredump file without any restore/reset processing.
+> 
+> But then you patch does not help in this situation because the code has to
+> be enabled by special  slub debug options.
+> 
+> 
+> > Users can set the option by slub_debug. We can still have the original
+> > behavior(keep the system alive) if the option is not set. We can turn on
+> > the option when we need the coredump file. (with panic_on_warn is set,
+> > of course).
+> 
+> I think we would need to turn on debugging by default and have your patch
+> for this to make sense. We already reproducing the issue multiple times
+> for debugging. This patch does not change that.
+> 
+yes. I turn on the debugging by default. Does that make sense now?
 
-PF_PACKET with SOCK_DGRAM for ETH_P_ERP2 gives me the subtelegram
-contents to transmit via ESP, whereas SOCK_RAW would give the full frame
-to transmit via FSK PHY. By avoiding a custom PF_ENOCEAN we seem to lose
-the ability to prepend any protocol headers on the skb for SOCK_DGRAM.
+Thanks again for your comments.
 
-Did you actually read my P.S. in the cover letter? I was glad to avoid
-much PF_ socket boilerplate code here (as a playground for LoRa), and
-now you're complaining about a single ARPHRD constant! :-/
-By that standard we could stop implementing anything new... If you're
-worried about number space, why has no one commented on the values added
-for LoRa and other previous wireless technologies? No one had any such
-comments on my LoRa RFC, nor on Jian-Hong's LoRaWAN patches, so I've
-been reserving new ARPHRD_ constants for each technology I work on. If
-ARPHRD_NONE would be a better value to use for PHY layers, no one
-bothered to point it out so far! Nor did anyone suggest to Jian-Hong to
-reuse ARPHRD_EUI64! And yet I spot nothing more suitable for EnOcean
-addresses than a custom value. Fact is, the net_device wants some value.
-Note that you have two ARPHRD constants assigned for 802.15.4 alone, so
-please be fair to others.
-
-An 802.15.4 PHY won't help me for 868 MHz FSK - by my reading 802.15.4
-is PSK (BPSK/OQPSK), thus incompatible with ASK/OOK and FSK/MSK.
-
-As noted in the cover letter, Semtech chips have FSK and OOK support
-alongside LoRa modulation; so I am looking into FSK PHY support, both
-for those chips as well as for some pure FSK/OOK transceivers posted to
-linux-lpwan list (and potentially more, given time):
-https://lists.infradead.org/pipermail/linux-lpwan/2019-January/000116.html
-https://lists.infradead.org/pipermail/linux-lpwan/2019-January/000117.html
-https://en.opensuse.org/User:A_faerber/LoRa_interop
-
-Therefore an FSK PHY's netlink interface will need to be able to handle
-the requirements of upper-layer protocols, such as:
-* Wireless M-Bus (which I could not yet find a suitable 868MHz hard-MAC
-for to test against, only 169MHz; Si4432 has an Application Note AN451),
-* KNX RF (which I have not come across a hard-MAC for either),
-* Sigfox downstream (cf. mm002 LoRa driver as hard-MAC; no public docs),
-* Z-Wave (not enough docs to implement much more for now), and here
-* EnOcean Radio Protocol 2.
-
-In general I want to make sure my implementations can work with both
-soft- and hard-MAC hardware out there, as demonstrated for LoRaWAN.
-Pointing a user with hard-MAC device to a theoretical generic subsystem
-of your preference doesn't help them, nor does it help to split the
-community into separate hard-MAC vs. soft-MAC implementation camps that
-make it hard for users to switch.
-* For example, when looking for how to actually use the Pine64 Z-Wave
-adapter, back in the day I merely found an OpenHAB Raspbian(?) image
-that as an openSUSE contributor I would surely not block my board with;
-no explanations, no instructions, nothing. And when you have a pure Java
-application on the one hand and a C/Python/whatever application on the
-other, chances are that the kernel is the only common point of reuse. I
-surely mentioned that I hate any userspace applications that attempt to
-detect hardware on spidev/i2c-dev/tty without using the kernel-provided
-facilities such as DT; finally, serdev allows to move any such
-hardware-dependent tty code into the kernel - we just need to figure out
-how to best expose functionality there (and ideally grow some more
-helpers). Just note how patch 3/4 reuses the kernel's crc8
-implementation instead of re-implementing it from scratch. Similarly I'd
-love for my AT based LoRa drivers to share more serdev code, despite
-line ending and response styles differing greatly (think
-serdev_device_readline w/args?); binary protocols like ESP here are
-luckily not affected as much. It could also use some more/better
-documentation, some of the return values are wrong.
-* As another example, we seem to be lacking a generic SDR subsystem:
-People with SDR hardware seem to use either downstream kernel modules,
-possibly application-generated, or closed-source userspace libraries?
-Neither seems able to currently reuse the net subsystem for protocols.
-And yet I've been asked repeatedly to design drivers in a way they could
-be used with SDR, too, but without any way to actually test that today.
-Has anyone talked to the SDR chipset/equipment vendors to remedy that?
-The one I was in contact with simply chose not to reply again to date...
-
-For ETH_P_ we seem to be far away from 0xffff, so I don't see a problem
-there? Not just was it the easiest thing to implement & test short-term,
-but as outlined in the cover letter I saw no way here to turn that into
-a non-net-subsystem because the data transmitted is not self-describing
-(mostly battery-less sensors/actuators with ca. 4 byte data payload).
-You must know that your device with id 0x12345678 conforms to profile X.
-
-Is describing remote devices in DT an option? (CC'ing Rob and Jonathan)
-
-/.../uart@foo {
-	enocean {
-		compatible = "enocean,esp3";
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		window-handle@41424344 {
-			compatible = "manufacturer1,handle";
-			reg = <0x41424344>;
-			enocean,equipment-profile = <1 2 3>;
-			#io-channel-cells = <1>;
-		};
-
-		light-switch@41424348 {
-			compatible = "manufacturer2,rocker";
-			reg = <0x41424348>;
-			enocean,equipment-profile = <4 5 6>;
-			#io-channel-cells = <2>;
-		};
-	};
-};
-
-Pro: This would allow to abstract sensors (iio?) and actuators (gpio?).
-     Cf. https://patchwork.ozlabs.org/patch/1028209/ for comparison.
-Con: How to deal with it on ACPI or on DT platforms without Overlays?
-     How would the kernel preserve remote device state across reboots?
-
-So no, I don't think we can or should shoehorn non-802.15.4 PHYs into
-your ieee802154 PHY layer. If you see ways to share code between the
-various wireless PHYs, that would be great, but at present it seems like
-mostly boilerplate code with nothing in your phy struct applying to FSK
-or LoRa. Compare my cfglora series pointed to and Xue Liu's recent sysfs
-patch under discussion. If no more comments turn up on my cfglora series
-I'll copy it into a cfgfsk, so that I can integrate both into sx127x as
-a base for further discussions at Netdevconf. Thanks.
-
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
