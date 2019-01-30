@@ -2,107 +2,176 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE8BC282CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E826C282CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B36520857
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F23F820857
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 04:30:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="IiKv+TF4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbfA3E3o (ORCPT
+        id S1730095AbfA3Ead (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 23:29:44 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:33840 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727720AbfA3E3n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 23:29:43 -0500
-Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x0U4TfSi018256
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:29:41 -0500
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x0U4TaOi020181
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 23:29:41 -0500
-Received: by mail-qk1-f199.google.com with SMTP id d196so24175255qkb.6
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jan 2019 20:29:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:subject:in-reply-to:references
-         :mime-version:date:message-id;
-        bh=Jps3n6PSXK0yCZsJRdQHZLGg22Bqo8S7sPKjWDkfAz4=;
-        b=FXooBP8mtSjn20p/KD+CyCVuXrxYixib5XolsYCqIa13ALou/7G1IyDsOnPOhH8YeY
-         Pp0dz/Y1rovssY1K33gysAeOCJtarqNX7oIhWFb4HkERRQPA3++PJsdXZuDF0kkkklbB
-         iX6iZtdVm+FWmkuRBNpeBkZXrGekCztOnwGK9wfUoy0YrjEVBotqMh+ZGEpfPTHdejVI
-         ptrC3p3//THixnSxr9xD9bhk42Q40iAoIOhpxSHTkihNcmCbKDnNdyYu1N/TfDSJ8WTM
-         d1dPrBlR+5bfIzd7tf0Xd+IVsHgXE3Ww4n3OIdaU6WOyPi03f2x54+yO4tu4kqGuRBXH
-         usWQ==
-X-Gm-Message-State: AJcUukdDuriLSNP3yMAuEIago+LcJBfGeSiP0IzXTWHOOE58ccKJ1335
-        2RCBKa/BRFon+FLEm9qmomwTsTEjgkipOLkZxBkPiMT8UPtRirY4Wu4n0Wa9cUlX42eiqN1xGNd
-        B55siDXHUHkqxyWB8NpPpUsFfvHOApDSl3F0=
-X-Received: by 2002:a0c:d792:: with SMTP id z18mr27386596qvi.183.1548822576678;
-        Tue, 29 Jan 2019 20:29:36 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN6Ls3B/Q0dYC+qBSN2wwftQIyMZe8ugyJfnO6f/dYNG10pWcCgq2W/i9IS0ZpUTHzYQCv1oXw==
-X-Received: by 2002:a0c:d792:: with SMTP id z18mr27386577qvi.183.1548822576322;
-        Tue, 29 Jan 2019 20:29:36 -0800 (PST)
-Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4341::936])
-        by smtp.gmail.com with ESMTPSA id 128sm245158qkn.77.2019.01.29.20.29.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 29 Jan 2019 20:29:35 -0800 (PST)
-From:   valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Jan Kara <jack@suse.cz>, Pavel Machek <pavel@ucw.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@osdl.org>, vbabka@suse.cz,
-        aarcange@redhat.com, rientjes@google.com, mhocko@kernel.org,
-        zi.yan@cs.rutgers.edu, hannes@cmpxchg.org
-Subject: Re: [regression -next0117] What is kcompactd and why is he eating 100% of my cpu?
-In-reply-to: <14875.1548810399@turing-police.cc.vt.edu>
-References: <20190126200005.GB27513@amd> <12171.1548557813@turing-police.cc.vt.edu> <20190127141556.GB9565@techsingularity.net> <20190127160027.GA9340@amd> <13417.1548624994@turing-police.cc.vt.edu> <20190128091627.GA27972@quack2.suse.cz>
- <14875.1548810399@turing-police.cc.vt.edu>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Date:   Tue, 29 Jan 2019 23:29:37 -0500
-Message-ID: <9618.1548822577@turing-police.cc.vt.edu>
+        Tue, 29 Jan 2019 23:30:33 -0500
+Received: from mail-eopbgr00050.outbound.protection.outlook.com ([40.107.0.50]:53569
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730022AbfA3Eac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 23:30:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bZ7dGrVrH4fix/RckSJysHNQQzMdwLNZNKxx2zgBqog=;
+ b=IiKv+TF4ExYJhrimZaR5omiiTbTu56jhpIZXxcdLcUxjtbyQO7jjbMiTcFMz64nrWh8r5U5KRQvLnX6JHx2qeROXK3EBtsfXZlAhuswr/MBeWQeoJMSIanE0GobTD3/djssHDpZU8i/JM8Z3Zab/YhbkjthSoWZfxmHWHFY68AY=
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
+ DBBPR05MB6490.eurprd05.prod.outlook.com (20.179.43.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.16; Wed, 30 Jan 2019 04:30:28 +0000
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
+ 04:30:27 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Jerome Glisse <jglisse@redhat.com>
+CC:     Logan Gunthorpe <logang@deltatee.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAABQ6AgAAJYICAAAV0AIAAIHwAgAAYiwCAAElEAA==
+Date:   Wed, 30 Jan 2019 04:30:27 +0000
+Message-ID: <20190130043020.GC30598@mellanox.com>
+References: <20190129174728.6430-1-jglisse@redhat.com>
+ <20190129174728.6430-4-jglisse@redhat.com>
+ <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
+ <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
+ <20190129195055.GH3176@redhat.com> <20190129202429.GL10108@mellanox.com>
+ <20190129204359.GM3176@redhat.com> <20190129224016.GD4713@mellanox.com>
+ <20190130000805.GS3176@redhat.com>
+In-Reply-To: <20190130000805.GS3176@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO1PR15CA0053.namprd15.prod.outlook.com
+ (2603:10b6:101:1f::21) To DBBPR05MB6426.eurprd05.prod.outlook.com
+ (2603:10a6:10:c9::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DBBPR05MB6490;6:WNVa5kmtNYhrQecH5NtzMyEqe9Mj7Ofw9RtBgyxD5sVzCYc0J3dxq0OEgL6P0DRivVOwlAA8OT2Pnx4yiKq99O9pjw4CIzKKglcF6g8xYnLaciZfm/JfJ83mQ2xPNbPnh2wKstmfE/WNODNshIZS8hnfZQlQdIj+vo1PBFvIRcZFhNJq8UMO//3gCn7bWFpOdhQaq//ZzI9+JhfYCzxeWSC5a9unoXUhfqSVHBmlY8Jr4aoLJdac7mxiB8YuGLMSy42cuHlrAU90huUlFl9GMztnzyTKp88NiT1XjaqBFcB5YJrWTvyKPBvKZzZXJCTotVKx4HrI5bvOhgrmKO4wOtHcG1KYDXFymmpcyVjsjxvFPApi5Gk4NH72Dt00cKn7eSZ9axckgAvBUMbP220KHdD5AdSrboCNwwbO5vPNlR+v+0sqh0Ti2POHmDMj0Soia5l7wYzjDPJW9+3JmLdGNQ==;5:EajzuQwWBqn2oE2IZNKS12h0FCcYr8hQpMe23XCfOZSNtgSCZnA0IheuKb6Ta6aOobTYV+OiT0lGA0teu0tvyWV7SCm42mLQ69apAFQdedaZPeybVVr4rFl82hDcD739Wln5CzkEUGq/LN8M4VU7ds5FyJLBXCKWOkjGl2OwrOBW5kfFQJS7bVlu95WBVbTURHJFQKRMOaGeLHkQAqeYuA==;7:MS9/5eCcjLlpqAUtk2YC+x3ULHFTZdstvpWiHm1Ztfjjwutaog+a9HdPyxd3ESPylpySemRi6fbV81XWoNbCkAugYi06Allg4VwgSTKWh5Gsi9BU85Xya66ueSZpPvIL6NxiSAv3cR/JSOwDmzqjIQ==
+x-ms-office365-filtering-correlation-id: 69aa6100-69ea-4065-8f44-08d6866ba8f7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6490;
+x-ms-traffictypediagnostic: DBBPR05MB6490:
+x-microsoft-antispam-prvs: <DBBPR05MB6490E6A61E114209483BFF08CF900@DBBPR05MB6490.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(136003)(366004)(396003)(189003)(199004)(4326008)(6916009)(81156014)(36756003)(68736007)(33656002)(106356001)(6486002)(6512007)(229853002)(53936002)(6436002)(105586002)(99286004)(93886005)(2906002)(6246003)(25786009)(71200400001)(71190400001)(97736004)(316002)(54906003)(1076003)(486006)(256004)(217873002)(478600001)(186003)(102836004)(81166006)(14454004)(7416002)(8936002)(26005)(386003)(3846002)(6116002)(476003)(7736002)(6506007)(2616005)(305945005)(446003)(11346002)(52116002)(66066001)(8676002)(76176011)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6490;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: q2PIQOHUZ507shIRaCG+bIPhKbAiXcpwhGrgHPLttJJwJ0HcZnzmWZkLOlbXrj+fzKTBhRIOwRIgtLMQ3Oemajr8yAwGWEM8mYvs+d4FHqKVNO+bSRgce9USmr9hZNAAyd7MJZ637D3LRREjASk6L0vjUmZfap3esfAEaQEq9BCHaUuFxN7BEbHxGlarIDQ54En5waxRholjtyc3v5U30J1/JFirDI9zZ2C3Q3W979st8Gc7lsGLZwiD4BQ1FvMNq/VpK6tIqgrzPeJKesIyR+isgYNXAdzgHKcbMbE1G1pIPTjrurqiBkAr1xFkLdXrt1FehSwZu/zHJjm58pwonwJSrg0+h8atEWY1sNnxBcjEeUWtaV32v6alH/FvkdR8YamlBhcqnisX9VIvY+Jri2mcLCICdu/rf5MNoSMXs18=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <653ABEE3FDEFC347BC03CDDE1CA5AC65@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69aa6100-69ea-4065-8f44-08d6866ba8f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 04:30:27.3902
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6490
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Jan 2019 20:06:39 -0500, valdis.kletnieks@vt.edu said:
-> On Mon, 28 Jan 2019 10:16:27 +0100, Jan Kara said:
->
-> > So my buffer_migrate_page_norefs() is certainly buggy in its current
-> > incarnation (as a result block device page cache is not migratable at all).
-> > I've sent Andrew a patch over week ago but so far it got ignored. The patch
-> > is attached, can you give it a try whether it changes something for you?
-> > Thanks!
->
-> Been running with the patch for about 24 hours, haven't seen kcompactd
-> misbehave.  I even fired up a Chrome with a lot of tabs open, a Firefox, and a
-> kernel build, intentionally drove the system into swapping, and kcompactd
-> didn't make it into the top 10 on 'top'.
->
-> I'm willing to say put a "tested-by:" on that one,  it looks fixed from here.
-> If there's any remaining bugs, they're ones I can't seem to trigger...
+On Tue, Jan 29, 2019 at 07:08:06PM -0500, Jerome Glisse wrote:
+> On Tue, Jan 29, 2019 at 11:02:25PM +0000, Jason Gunthorpe wrote:
+> > On Tue, Jan 29, 2019 at 03:44:00PM -0500, Jerome Glisse wrote:
+> >=20
+> > > > But this API doesn't seem to offer any control - I thought that
+> > > > control was all coming from the mm/hmm notifiers triggering p2p_unm=
+aps?
+> > >=20
+> > > The control is within the driver implementation of those callbacks.=20
+> >=20
+> > Seems like what you mean by control is 'the exporter gets to choose
+> > the physical address at the instant of map' - which seems reasonable
+> > for GPU.
+> >=20
+> >=20
+> > > will only allow p2p map to succeed for objects that have been tagged =
+by the
+> > > userspace in some way ie the userspace application is in control of w=
+hat
+> > > can be map to peer device.
+> >=20
+> > I would have thought this means the VMA for the object is created
+> > without the map/unmap ops? Or are GPU objects and VMAs unrelated?
+>=20
+> GPU object and VMA are unrelated in all open source GPU driver i am
+> somewhat familiar with (AMD, Intel, NVidia). You can create a GPU
+> object and never map it (and thus never have it associated with a
+> vma) and in fact this is very common. For graphic you usualy only
+> have hand full of the hundreds of GPU object your application have
+> mapped.
 
-Spoke too soon.  Sitting here not stressing the laptop at all, plenty of free
-memory, and ka-blam.
+I mean the other way does every VMA with a p2p_map/unmap point to
+exactly one GPU object?
 
-Will keep my eyes open and do the data gathering Mel Gorban wanted - I discovered
-too late that trace-cmd wasn't installed, and things broke free by themselves (probably
-not coincidence that I launched a terminal window and then it cleared....)
+ie I'm surprised you say that p2p_map needs to have policy, I would
+have though the policy is applied when the VMA is created (ie objects
+that are not for p2p do not have p2p_map set), and even for GPU
+p2p_map should really only have to do with window allocation and pure
+'can I even do p2p' type functionality.
 
-top - 23:24:03 up  2:19,  1 user,  load average: 2.70, 2.00, 1.55
-Tasks: 221 total,   3 running, 218 sleeping,   0 stopped,   0 zombie
-%Cpu(s): 15.6 us, 67.3 sy,  0.0 ni,  9.5 id,  0.0 wa,  5.6 hi,  2.0 si,  0.0 st
-GiB Mem :      7.6 total,      2.7 free,      3.1 used,      1.8 buff/cache
-GiB Swap:      8.0 total,      8.0 free,      0.0 used.      4.1 avail Mem 
+> Idea is that we can only ask exporter to be predictable and still allow
+> them to fail if things are really going bad.
 
-  PID  PPID  %MEM  PR  NI S    VIRT    RES    SHR   SWAP   UID  %CPU     TIME+ COMMAND                                 
-   27     2   0.0  20   0 R    0.0m   0.0m   0.0m   0.0m     0  78.5   2:11.91 kcompactd0
+I think hot unplug / PCI error recovery is one of the 'really going
+bad' cases..
 
+> I think i put it in the comment above the ops but in any cases i should
+> write something in documentation with example and thorough guideline.
+> Note that there won't be any mmu notifier to mmap of a device file
+> unless the device driver calls for it or there is a syscall like munmap
+> or mremap or mprotect well any syscall that work on vma.
+
+This is something we might need to explore, does calling
+zap_vma_ptes() invoke enough notifiers that a MMU notifiers or HMM
+mirror consumer will release any p2p maps on that VMA?
+
+> If we ever want to support full pin then we might have to add a
+> flag so that GPU driver can refuse an importer that wants things
+> pin forever.
+
+This would become interesting for VFIO and RDMA at least - I don't
+think VFIO has anything like SVA so it would want to import a p2p_map
+and indicate that it will not respond to MMU notifiers.
+
+GPU can refuse, but maybe RDMA would allow it...
+
+Jason
