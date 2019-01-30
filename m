@@ -2,186 +2,112 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB82C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A65C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CDF62087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:19:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="q9ZQk53S"
+	by mail.kernel.org (Postfix) with ESMTP id D61F721473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:21:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548836499;
+	bh=V5kTva0AhhdC9svKRu+stdKYb1ceZEqFS3eg6CRKLEY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=on/CFgaKr4bUt6rMqq0AstBJF565nA0i/f4vCCeXDGFLZN+XruguQJXIcZObv4KBM
+	 43M9diEiLjRgFZI5N8jKbmrGdZm5PJIj0SmVoVNk8rNytfwUku0PvrAyRoaXhseWzq
+	 bKStsqVBh0sTz/30izisr3OqBgOgAEawRco7nvXw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730142AbfA3ITN (ORCPT
+        id S1730180AbfA3IVi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:19:13 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39545 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfA3ITM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:19:12 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t9-v6so19899944ljh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 00:19:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=FMk7KZzFNOQZxopX51HKzZjFFbjWtJbENRSvLHUIma8=;
-        b=q9ZQk53SePSRAjbg79biacXEPnGYHdd7oZcsugOIgExR7zXyogkAtKpHTlpwEyR0of
-         7IODch6/i/NFGOkiZV9U1vYWIqjaU+qZB6IfW7cMeIMA+wnNucCxwW55ldCy4g5SRz4s
-         +l+AJV3RBLw7hTT2BYgMS8vsHr6bIlxwBbiqO35DqVNAxvNKJULOwNYig/+hJkUxB4CG
-         rJawu69iKJvKSPfIOq1hSVlAe5BgMC2tdjO6Ym4tryUJhri6z63vEXeDu8gvy5D16elO
-         ++Knka9U0KyDfpq5af0JxeK6zYdTfWFgdkBRwotWg+eaJ7N/qoJ4fK/sFwSBP8HTOh9/
-         9uMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FMk7KZzFNOQZxopX51HKzZjFFbjWtJbENRSvLHUIma8=;
-        b=PO8HH/amVmv5ezZhEWwzc7HoeM8FKHEPJXwMxQNU1tpLkI9p0X7gl2V0XMF46Ogwi5
-         2TWuqVLYFNbhCBSZBxsAtYUxR7igrmZ/L7pbeUYWUdIez4uTO7haB1QBXVCHLVJgvCIK
-         90XHqQd6TeSKPipp08w1ANogLRbDVWFZLdPliIFvdcSmypo7B8obtzAc6H6GWsjz1Y+0
-         xilSKAXfbyNBnxcv22jtAtp74/DKywu7GvGUz8yZULbKx7fUTjWZa3k92i2joulFeaFY
-         o9P8yDPXcHHTlWi1a1nCzzW4RRftCBdEvOJqLmj9H+K45IP34V9McfAwi11sB/Hf1c5U
-         u4lQ==
-X-Gm-Message-State: AJcUukdZyIOlenlRRG+D2Jue9+zi9J+U4ueAqLqtQ0HKL3Uv3e3tpDXc
-        IdxYouymhkGYBsbM6KPTlypiAg==
-X-Google-Smtp-Source: ALg8bN51VHxAoSWcNKirSyrcWCyQaqpWx7A56YqoV5GAGXrc1rVtrHhmiKdAr2+6CBgP5wCHYveENA==
-X-Received: by 2002:a2e:5054:: with SMTP id v20-v6mr24196237ljd.45.1548836350284;
-        Wed, 30 Jan 2019 00:19:10 -0800 (PST)
-Received: from ch-lap-hans.bredbandsbolaget.se (c-0bf2e055.03-91-6d6c6d4.bbcust.telenor.se. [85.224.242.11])
-        by smtp.gmail.com with ESMTPSA id r29-v6sm151220ljd.44.2019.01.30.00.19.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 00:19:09 -0800 (PST)
-From:   hans@owltronix.com
-To:     Matias Bjorling <mb@lightnvm.io>
-Cc:     javier@javigon.com, Zhoujie Wu <zjwu@marvell.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH V2] lightnvm: pblk: extend line wp balance check
-Date:   Wed, 30 Jan 2019 09:18:57 +0100
-Message-Id: <20190130081857.6779-1-hans@owltronix.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 30 Jan 2019 03:21:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58362 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725834AbfA3IVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 03:21:37 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C1DD2087F;
+        Wed, 30 Jan 2019 08:21:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548836496;
+        bh=V5kTva0AhhdC9svKRu+stdKYb1ceZEqFS3eg6CRKLEY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YcZasmwbwBTg8WI9QH2n8tRsZqSE+Z2/yBuKXZ0UQGP6PvyHlD0Re8t3vhRg15MYd
+         Lssde145DvSdLEbEoDQ05j7/oE91qmUNbMOXvTJNbKYjMGSxZhN+Py+1YWYzeOf0pW
+         oun9NSUY2T2hXFvwjuxSzwjzv7T4ho+55Me1vjr8=
+Date:   Wed, 30 Jan 2019 09:21:33 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] USB: Disable USB2 LPM at shutdown
+Message-ID: <20190130082133.GA32660@kroah.com>
+References: <20190124061643.11663-1-kai.heng.feng@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124061643.11663-1-kai.heng.feng@canonical.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+On Thu, Jan 24, 2019 at 02:16:43PM +0800, Kai-Heng Feng wrote:
+> The QCA Rome USB Bluetooth controller has several issues once LPM gets
+> enabled:
+> - Fails to get enumerated in coldboot. [1]
+> - Drains more power (~ 0.2W) when the system is in S5. [2]
+> - Disappears after a warmboot. [2]
+> 
+> The issue happens because the device lingers at LPM L1 in S5, so device
+> can't get enumerated even after a reboot.
+> 
+> Disable LPM at shutdown to solve the issue.
+> 
+> [1] https://bugs.launchpad.net/bugs/1757218
+> [2] https://patchwork.kernel.org/patch/10607097/
+> 
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+> v2: Use new LPM helpers.
+> 
+>  drivers/usb/core/port.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
+> index 1a06a4b5fbb1..bbbb35fa639f 100644
+> --- a/drivers/usb/core/port.c
+> +++ b/drivers/usb/core/port.c
+> @@ -285,6 +285,14 @@ static int usb_port_runtime_suspend(struct device *dev)
+>  }
+>  #endif
+>  
+> +static void usb_port_shutdown(struct device *dev)
+> +{
+> +	struct usb_port *port_dev = to_usb_port(dev);
+> +
+> +	if (port_dev->child)
+> +		usb_disable_usb2_hardware_lpm(port_dev->child);
+> +}
+> +
+>  static const struct dev_pm_ops usb_port_pm_ops = {
+>  #ifdef CONFIG_PM
+>  	.runtime_suspend =	usb_port_runtime_suspend,
+> @@ -301,6 +309,7 @@ struct device_type usb_port_device_type = {
+>  static struct device_driver usb_port_driver = {
+>  	.name = "usb",
+>  	.owner = THIS_MODULE,
+> +	.shutdown = usb_port_shutdown,
+>  };
 
-pblk stripes writes of minimal write size across all non-offline chunks
-in a line, which means that the maximum write pointer delta should not
-exceed the minimal write size.
+So you now do this for all ports in the system, no matter what is
+plugged in or not.  Are you _SURE_ you want to do that?  It seems like a
+big hammer to solve just one single device's problems.
 
-Extend the line write pointer balance check to cover this case, and
-ignore the offline chunk wps.
+thanks,
 
-This will render us a warning during recovery if something unexpected
-has happened to the chunk write pointers (i.e. powerloss,  a spurious
-chunk reset, ..).
-
-Reported-by: Zhoujie Wu <zjwu@marvell.com>
-Tested-by: Zhoujie Wu <zjwu@marvell.com>
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
----
-
-Changes since V1:
-
-	* Squashed with Zhoujie's:
-	 "lightnvm: pblk: ignore bad block wp for pblk_line_wp_is_unbalanced"
-	* Clarified commit message based on Javier's comments.
-		
-
- drivers/lightnvm/pblk-recovery.c | 56 ++++++++++++++++++++++----------
- 1 file changed, 38 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 6761d2afa4d0..d86f580036d3 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -302,35 +302,55 @@ static int pblk_pad_distance(struct pblk *pblk, struct pblk_line *line)
- 	return (distance > line->left_msecs) ? line->left_msecs : distance;
- }
- 
--static int pblk_line_wp_is_unbalanced(struct pblk *pblk,
--				      struct pblk_line *line)
-+/* Return a chunk belonging to a line by stripe(write order) index */
-+static struct nvm_chk_meta *pblk_get_stripe_chunk(struct pblk *pblk,
-+						  struct pblk_line *line,
-+						  int index)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct nvm_geo *geo = &dev->geo;
--	struct pblk_line_meta *lm = &pblk->lm;
- 	struct pblk_lun *rlun;
--	struct nvm_chk_meta *chunk;
- 	struct ppa_addr ppa;
--	u64 line_wp;
--	int pos, i;
-+	int pos;
- 
--	rlun = &pblk->luns[0];
-+	rlun = &pblk->luns[index];
- 	ppa = rlun->bppa;
- 	pos = pblk_ppa_to_pos(geo, ppa);
--	chunk = &line->chks[pos];
- 
--	line_wp = chunk->wp;
-+	return &line->chks[pos];
-+}
- 
--	for (i = 1; i < lm->blk_per_line; i++) {
--		rlun = &pblk->luns[i];
--		ppa = rlun->bppa;
--		pos = pblk_ppa_to_pos(geo, ppa);
--		chunk = &line->chks[pos];
-+static int pblk_line_wps_are_unbalanced(struct pblk *pblk,
-+				      struct pblk_line *line)
-+{
-+	struct pblk_line_meta *lm = &pblk->lm;
-+	int blk_in_line = lm->blk_per_line;
-+	struct nvm_chk_meta *chunk;
-+	u64 max_wp, min_wp;
-+	int i;
-+
-+	i = find_first_zero_bit(line->blk_bitmap, blk_in_line);
- 
--		if (chunk->wp > line_wp)
-+	/* If there is one or zero good chunks in the line,
-+	 * the write pointers can't be unbalanced.
-+	 */
-+	if (i >= (blk_in_line - 1))
-+		return 0;
-+
-+	chunk = pblk_get_stripe_chunk(pblk, line, i);
-+	max_wp = chunk->wp;
-+	if (max_wp > pblk->max_write_pgs)
-+		min_wp = max_wp - pblk->max_write_pgs;
-+	else
-+		min_wp = 0;
-+
-+	i = find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
-+	while (i < blk_in_line) {
-+		chunk = pblk_get_stripe_chunk(pblk, line, i);
-+		if (chunk->wp > max_wp || chunk->wp < min_wp)
- 			return 1;
--		else if (chunk->wp < line_wp)
--			line_wp = chunk->wp;
-+
-+		i = find_next_zero_bit(line->blk_bitmap, blk_in_line, i + 1);
- 	}
- 
- 	return 0;
-@@ -356,7 +376,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 	int ret;
- 	u64 left_ppas = pblk_sec_in_open_line(pblk, line) - lm->smeta_sec;
- 
--	if (pblk_line_wp_is_unbalanced(pblk, line))
-+	if (pblk_line_wps_are_unbalanced(pblk, line))
- 		pblk_warn(pblk, "recovering unbalanced line (%d)\n", line->id);
- 
- 	ppa_list = p.ppa_list;
--- 
-2.17.1
-
+greg k-h
