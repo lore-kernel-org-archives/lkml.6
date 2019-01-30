@@ -2,409 +2,300 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6DFC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FACAC282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58AF218D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07BE52087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 19:05:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XwWx8N2i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387462AbfA3TDL (ORCPT
+        id S2387515AbfA3TFs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 14:03:11 -0500
-Received: from mga03.intel.com ([134.134.136.65]:20816 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727069AbfA3TDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 14:03:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 11:03:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,541,1539673200"; 
-   d="scan'208";a="113989599"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga008.jf.intel.com with ESMTP; 30 Jan 2019 11:03:10 -0800
-Date:   Wed, 30 Jan 2019 11:05:07 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     jacob.jun.pan@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>, ashok.raj@intel.com,
-        sanjay.k.kumar@intel.com, kevin.tian@intel.com,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
-        tiwei.bie@intel.com, Zeng Xin <xin.zeng@intel.com>,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/5] iommu: Add APIs for IOMMU PASID management
-Message-ID: <20190130110507.54e8bfad@jacob-builder>
-In-Reply-To: <20181112064501.2290-2-baolu.lu@linux.intel.com>
-References: <20181112064501.2290-1-baolu.lu@linux.intel.com>
-        <20181112064501.2290-2-baolu.lu@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Wed, 30 Jan 2019 14:05:48 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:32819 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387478AbfA3TFp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 14:05:45 -0500
+Received: by mail-lf1-f66.google.com with SMTP id i26so500741lfc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:05:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ynAO8iDI7f1xWNXGggBNd8fyyz0/WqPhtdZq74Lk9Kk=;
+        b=XwWx8N2iqXBW8tR4GiISRfUVRyqQl1/XsIGA6Llvmg35sX/xq36kgBGdg6UieKvBNU
+         +FeVWdSuDV6Gy5mmG5o0RafiNBlihZPGVO52Lu3dE7Y5m+rJk+4uSkiK4Ok+gYDuC091
+         5gfsbYG6j8OibgG5BnZzI2uTzqCco6dkc2tuQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ynAO8iDI7f1xWNXGggBNd8fyyz0/WqPhtdZq74Lk9Kk=;
+        b=IY25zlX20wTj5oGKLCtefolIAxNDVM6MNqtHX5rlC1lezNflZ5z2XDhRlVGq6lIUoy
+         VdIrojMeJdrjpEfKyV4flaCwApMr9IuMWay4PLLvHFcf3g4psoR7s4mGRwjxWC6XgxES
+         KH3LKCrF8a2JxMsA4e83RTTukqnGxmA36+2KCUCpYWcOKiZ6RqX3xV5iVU+dFeTvDQsT
+         ubvVVmlMSmsvINSfdDAdEjy2wt7BxsFk8wge6MHcLWoWYJHY54ihbcFWw8obj5fx54Jh
+         2xOHPbBygCAjezafqPhSenFcdcnXcXeGybMggIg5DPaue78zZ1kDhY/5snJlQrgPcCI4
+         uX1A==
+X-Gm-Message-State: AJcUukd0KMF9gxPDZPSx0LOfS2P06IPQkpPxdLntnFeZSS57Wf5B4lSe
+        8aHh9su0oiviUzBWPsuk3Yk0vVYNPsI=
+X-Google-Smtp-Source: ALg8bN4/kaeg3yy6ir5jIuQEk84NJvylYyjXtG8YqZVpYqw7V9aaAbi9wJr+/X1hh8fInmHtsQIpLQ==
+X-Received: by 2002:a19:6e0b:: with SMTP id j11mr24555817lfc.124.1548875142455;
+        Wed, 30 Jan 2019 11:05:42 -0800 (PST)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id k68-v6sm414807ljb.35.2019.01.30.11.05.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 11:05:41 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id y11so480682lfj.4
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 11:05:40 -0800 (PST)
+X-Received: by 2002:a19:7d42:: with SMTP id y63mr25062787lfc.47.1548875140072;
+ Wed, 30 Jan 2019 11:05:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-16-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1546314952-15990-16-git-send-email-yong.wu@mediatek.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 30 Jan 2019 11:05:03 -0800
+X-Gmail-Original-Message-ID: <CAE=gft6XDC3YGe20iDOpCO0ASg99hucu7rKJwt+5i+3vgrEFvg@mail.gmail.com>
+Message-ID: <CAE=gft6XDC3YGe20iDOpCO0ASg99hucu7rKJwt+5i+3vgrEFvg@mail.gmail.com>
+Subject: Re: [PATCH v5 15/20] memory: mtk-smi: Invoke pm runtime_callback to
+ enable clocks
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
+        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
+        Nicolas Boichat <drinkcat@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Nov 2018 14:44:57 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+On Mon, Dec 31, 2018 at 7:59 PM Yong Wu <yong.wu@mediatek.com> wrote:
+>
+> This patch only move the clk_prepare_enable and config_port into the
+> runtime suspend/resume callback. It doesn't change the code content
+> and sequence.
+>
+> This is a preparing patch for adjusting SMI_BUS_SEL for mt8183.
+> (SMI_BUS_SEL need to be restored after smi-common resume every time.)
+> Also it gives a chance to get rid of mtk_smi_larb_get/put which could
+> be a next topic.
+>
+> CC: Matthias Brugger <matthias.bgg@gmail.com>
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 
-> This adds APIs for IOMMU drivers and device drivers to manage
-> the PASIDs used for DMA transfer and translation. It bases on
-> I/O ASID allocator for PASID namespace management and relies
-> on vendor specific IOMMU drivers for paravirtual PASIDs.
-> 
-Trying to integrate this with VT-d SVM code had some thoughts.
-First of all, it seems to me the problem we are trying to solve here is
-to allow custom PASID/IOASID allocator.
-IOASID, as in driver base, is a common infrastructure of its own right.
-So it is OK to let device drivers such as VT-d driver directly
-communicate with IOASID w/o going through common IOMMU layer. Therefore
-I see little value of adding this wrapper to ioasid code, instead I
-feel it might be less work to enhance ioasid with the following:
+I believe this refactoring is a no-op as described, because the order is still:
+1) mtk_smi_clk_enable(common)
+2) mtk_smi_clk_enable(larb)
+3) larb_gen->config_port()
 
-1. allow ioasid code to register a system wide custom asid allocator,
-which takes precedence over the idr allocator
-e.g.
-typedef ioasid_t (*ioasid_alloc_fn_t)(ioasid_t min, ioasid_t max, void *data);
-void ioasid_set_allocator(ioasid_alloc_fn_t fn)
-{}
-We can still use idr for tracking ioasid and private data lookup, since
-the ioasid idr is exclusively owned by ioasid_alloc, we can rest and be
-sure there is no conflict with other callers. See code comments below.
+And teardown still happens in the opposite order, except for
+config_port, which they seem not to do in suspend.
+So, looks good to me.
 
-2. support setting asid private data _after_ asid is allocated. The use
-case is that PASID allocation and mm bind can be split into separate
-stages. Private data (mm related) are not available at the time of
-allocation, only bind time.
-Since IDR needs the data pointer at allocation time, we can still
-create an empty ioasid_data for ioasid tracking at alloc time. i.e.
-struct ioasid_data {
-	void *ptr; /* private data */
-};
+Reviewed-by: Evan Green <evgreen@chromium.org>
 
-
-3. allow NULL ioasid_set
-I also had a hard time understanding the use of ioasid_set, since there
-is already a private data associated with each ioasid, is it not enough
-to group ioasid based on private data?
-
-So the usage scenarios can be.
-1. during boot, vt-d driver register a custom ioasid allocator (vcmd) if
-it detects its running as a guest.
-
-2. Running as a guest, all pasid allocation via ioasid_alloc() will go
-to this custom allocators and tracked
-
-3. for native case, there is no custom allocator, ioasid just use IDR
-alloc
-
-4. for native bind mm, pasid allocation already has private data filled
-in when calling ioasid_alloc
-
-5. for guest bind, pasid is allocated with empty private data (called
-by VFIO layer), but private data is filled in later by bind guest
-pasid inside the vt-d driver.
-
-So my thinking is that we can avoid having another layer of APIs as
-below and keep everything within ioasid. Also allows private data to be
-managed at lower level as compared to VFIO.
-
-
-Thanks,
-
-Jacob
-
-> Below APIs are added:
-> 
-> * iommu_pasid_init(pasid)
->   - Initialize a PASID consumer. The vendor specific IOMMU
->     drivers are able to set the PASID range imposed by IOMMU
->     hardware through a callback in iommu_ops.
-> 
-> * iommu_pasid_exit(pasid)
->   - The PASID consumer stops consuming any PASID.
-> 
-> * iommu_pasid_alloc(pasid, min, max, private, *ioasid)
->   - Allocate a PASID and associate a @private data with this
->     PASID. The PASID value is stored in @ioaisd if returning
->     success.
-> 
-> * iommu_pasid_free(pasid, ioasid)
->   - Free a PASID to the pool so that it could be consumed by
->     others.
-> 
-> This also adds below helpers to lookup or iterate PASID items
-> associated with a consumer.
-> 
-> * iommu_pasid_for_each(pasid, func, data)
->   - Iterate PASID items of the consumer identified by @pasid,
->     and call @func() against each item. An error returned from
->     @func() will break the iteration.
-> 
-> * iommu_pasid_find(pasid, ioasid)
->   - Retrieve the private data associated with @ioasid.
-> 
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > ---
->  drivers/iommu/Kconfig |  1 +
->  drivers/iommu/iommu.c | 89
-> +++++++++++++++++++++++++++++++++++++++++++ include/linux/iommu.h |
-> 73 +++++++++++++++++++++++++++++++++++ 3 files changed, 163
-> insertions(+)
-> 
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index d9a25715650e..39f2bb76c7b8 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -1,6 +1,7 @@
->  # IOMMU_API always gets selected by whoever wants it.
->  config IOMMU_API
->  	bool
-> +	select IOASID
->  
->  menuconfig IOMMU_SUPPORT
->  	bool "IOMMU Hardware Support"
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 0b7c96d1425e..570b244897bb 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -2082,3 +2082,92 @@ void iommu_detach_device_aux(struct
-> iommu_domain *domain, struct device *dev) }
->  }
->  EXPORT_SYMBOL_GPL(iommu_detach_device_aux);
-> +
-> +/*
-> + * APIs for PASID used by IOMMU and the device drivers which depend
-> + * on IOMMU.
-> + */
-> +struct iommu_pasid *iommu_pasid_init(struct bus_type *bus)
-> +{
-> +	struct iommu_pasid *pasid;
-> +	int ret;
-> +
-> +	if (!bus || !bus->iommu_ops)
-> +		return NULL;
-> +
-> +	pasid = kzalloc(sizeof(*pasid), GFP_KERNEL);
-> +	if (!pasid)
-> +		return NULL;
-> +
-> +	pasid->ops = bus->iommu_ops;
-> +	/*
-> +	 * The default range of an IOMMU PASID is from 0 to the full
-> +	 * 20bit integer.
-> +	 */
-> +	pasid->min = 0;
-> +	pasid->max = 0x100000;
-> +	/*
-> +	 * Give vendor specific iommu drivers a chance to set the
-> pasid
-> +	 * limits imposed by the iommu hardware.
-> +	 */
-> +	if (bus->iommu_ops->pasid_init) {
-> +		ret = bus->iommu_ops->pasid_init(pasid);
-> +		if (ret) {
-> +			kfree(pasid);
-> +			return NULL;
-> +		}
-> +	}
-> +
-> +	return pasid;
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_pasid_init);
-> +
-> +void iommu_pasid_exit(struct iommu_pasid *pasid)
-> +{
-> +	kfree(pasid);
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_pasid_exit);
-> +
-> +int iommu_pasid_alloc(struct iommu_pasid *pasid, ioasid_t min,
-> +		      ioasid_t max, void *private, ioasid_t *ioasid)
-> +{
-> +	ioasid_t start, end, hw, val;
-> +	int ret = -EAGAIN;
-> +
-> +	start = max_t(int, min, pasid->min);
-> +	end = min_t(int, max, pasid->max);
-> +
-> +	if (pasid->ops->pasid_alloc)
-> +		ret = pasid->ops->pasid_alloc(pasid, start, end,
-> &hw); +
-> +	if (ret == -EAGAIN)
-> +                val = ioasid_alloc(&pasid->set, start, end, private);
-> +	else if (ret == 0)
-> +		val = ioasid_alloc(&pasid->set, hw, hw + 1, private);
-this may fail due to conflict with other callers of ioasic_alloc(), but
-we should really respect the iommu ops allocator. If we move the
-pasid_alloc op into ioasid code, then we don't need to worry about the
-conflict.
-> +	else
-> +		goto hw_ret;
-> +
-> +	if (val == INVALID_IOASID)
-> +		goto ioasid_ret;
-> +
-> +	*ioasid = val;
-> +
-> +        return 0;
-> +
-> +ioasid_ret:
-> +	if (pasid->ops->pasid_free)
-> +		pasid->ops->pasid_free(pasid, hw);
-> +
-> +hw_ret:
-> +	return -ENODEV;
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_pasid_alloc);
-> +
-> +void iommu_pasid_free(struct iommu_pasid *pasid, ioasid_t ioasid)
-> +{
-> +	if (pasid->ops->pasid_free)
-> +		pasid->ops->pasid_free(pasid, ioasid);
-> +
-> +	ioasid_free(ioasid);
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_pasid_free);
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 9bf1b3f2457a..4f5202c8170b 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -20,6 +20,7 @@
->  #define __LINUX_IOMMU_H
->  
->  #include <linux/scatterlist.h>
-> +#include <linux/ioasid.h>
->  #include <linux/device.h>
->  #include <linux/types.h>
->  #include <linux/errno.h>
-> @@ -48,6 +49,7 @@ struct bus_type;
->  struct device;
->  struct iommu_domain;
->  struct notifier_block;
-> +struct iommu_pasid;
->  
->  /* iommu fault flags */
->  #define IOMMU_FAULT_READ	0x0
-> @@ -194,6 +196,9 @@ enum iommu_dev_attr {
->   * @of_xlate: add OF master IDs to iommu grouping
->   * @get_dev_attr: get per device IOMMU attributions
->   * @set_dev_attr: set per device IOMMU attributions
-> + * @pasid_init: initialize a pasid consumer
-> + * @pasid_alloc: allocate a pasid from low level driver
-> + * @pasid_free: free a pasid to low level driver
->   * @pgsize_bitmap: bitmap of all possible supported page sizes
->   */
->  struct iommu_ops {
-> @@ -246,6 +251,12 @@ struct iommu_ops {
->  	int (*attach_dev_aux)(struct iommu_domain *domain, struct
-> device *dev); void (*detach_dev_aux)(struct iommu_domain *domain,
-> struct device *dev); 
-> +	/* IOMMU pasid callbacks */
-> +	int (*pasid_init)(struct iommu_pasid *pasid);
-> +	int (*pasid_alloc)(struct iommu_pasid *pasid, ioasid_t start,
-> +			   ioasid_t end, ioasid_t *ioasid);
-> +	void (*pasid_free)(struct iommu_pasid *pasid, ioasid_t
-> ioasid); +
->  	unsigned long pgsize_bitmap;
+>  drivers/memory/mtk-smi.c | 113 ++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 72 insertions(+), 41 deletions(-)
+>
+> diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+> index a430721..9790801 100644
+> --- a/drivers/memory/mtk-smi.c
+> +++ b/drivers/memory/mtk-smi.c
+> @@ -86,17 +86,13 @@ struct mtk_smi_larb { /* larb: local arbiter */
+>         u32                             *mmu;
 >  };
->  
-> @@ -428,12 +439,41 @@ extern int iommu_attach_device_aux(struct
-> iommu_domain *domain, extern void iommu_detach_device_aux(struct
-> iommu_domain *domain, struct device *dev);
->  
-> +/*
-> + * Per IOMMU PASID consumer data.
-> + */
-> +struct iommu_pasid {
-> +	ioasid_t		max;
-> +	ioasid_t		min;
-> +	struct ioasid_set	set;
-> +	const struct iommu_ops	*ops;
+>
+> -static int mtk_smi_enable(const struct mtk_smi *smi)
+> +static int mtk_smi_clk_enable(const struct mtk_smi *smi)
+>  {
+>         int ret;
+>
+> -       ret = pm_runtime_get_sync(smi->dev);
+> -       if (ret < 0)
+> -               return ret;
+> -
+>         ret = clk_prepare_enable(smi->clk_apb);
+>         if (ret)
+> -               goto err_put_pm;
+> +               return ret;
+>
+>         ret = clk_prepare_enable(smi->clk_smi);
+>         if (ret)
+> @@ -118,59 +114,28 @@ static int mtk_smi_enable(const struct mtk_smi *smi)
+>         clk_disable_unprepare(smi->clk_smi);
+>  err_disable_apb:
+>         clk_disable_unprepare(smi->clk_apb);
+> -err_put_pm:
+> -       pm_runtime_put_sync(smi->dev);
+>         return ret;
+>  }
+>
+> -static void mtk_smi_disable(const struct mtk_smi *smi)
+> +static void mtk_smi_clk_disable(const struct mtk_smi *smi)
+>  {
+>         clk_disable_unprepare(smi->clk_gals1);
+>         clk_disable_unprepare(smi->clk_gals0);
+>         clk_disable_unprepare(smi->clk_smi);
+>         clk_disable_unprepare(smi->clk_apb);
+> -       pm_runtime_put_sync(smi->dev);
+>  }
+>
+>  int mtk_smi_larb_get(struct device *larbdev)
+>  {
+> -       struct mtk_smi_larb *larb = dev_get_drvdata(larbdev);
+> -       const struct mtk_smi_larb_gen *larb_gen = larb->larb_gen;
+> -       struct mtk_smi *common = dev_get_drvdata(larb->smi_common_dev);
+> -       int ret;
+> +       int ret = pm_runtime_get_sync(larbdev);
+>
+> -       /* Enable the smi-common's power and clocks */
+> -       ret = mtk_smi_enable(common);
+> -       if (ret)
+> -               return ret;
+> -
+> -       /* Enable the larb's power and clocks */
+> -       ret = mtk_smi_enable(&larb->smi);
+> -       if (ret) {
+> -               mtk_smi_disable(common);
+> -               return ret;
+> -       }
+> -
+> -       /* Configure the iommu info for this larb */
+> -       larb_gen->config_port(larbdev);
+> -
+> -       return 0;
+> +       return (ret < 0) ? ret : 0;
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_smi_larb_get);
+>
+>  void mtk_smi_larb_put(struct device *larbdev)
+>  {
+> -       struct mtk_smi_larb *larb = dev_get_drvdata(larbdev);
+> -       struct mtk_smi *common = dev_get_drvdata(larb->smi_common_dev);
+> -
+> -       /*
+> -        * Don't de-configure the iommu info for this larb since there may be
+> -        * several modules in this larb.
+> -        * The iommu info will be reset after power off.
+> -        */
+> -
+> -       mtk_smi_disable(&larb->smi);
+> -       mtk_smi_disable(common);
+> +       pm_runtime_put_sync(larbdev);
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_smi_larb_put);
+>
+> @@ -385,12 +350,52 @@ static int mtk_smi_larb_remove(struct platform_device *pdev)
+>         return 0;
+>  }
+>
+> +static int __maybe_unused mtk_smi_larb_resume(struct device *dev)
+> +{
+> +       struct mtk_smi_larb *larb = dev_get_drvdata(dev);
+> +       const struct mtk_smi_larb_gen *larb_gen = larb->larb_gen;
+> +       int ret;
 > +
-> +	/* vendor specific iommu private data */
-> +	void			*priv;
+> +       /* Power on smi-common. */
+> +       ret = pm_runtime_get_sync(larb->smi_common_dev);
+> +       if (ret < 0) {
+> +               dev_err(dev, "Failed to pm get for smi-common(%d).\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       ret = mtk_smi_clk_enable(&larb->smi);
+> +       if (ret < 0) {
+> +               dev_err(dev, "Failed to enable clock(%d).\n", ret);
+> +               pm_runtime_put_sync(larb->smi_common_dev);
+> +               return ret;
+> +       }
+> +
+> +       /* Configure the basic setting for this larb */
+> +       larb_gen->config_port(dev);
+> +
+> +       return 0;
+> +}
+> +
+> +static int __maybe_unused mtk_smi_larb_suspend(struct device *dev)
+> +{
+> +       struct mtk_smi_larb *larb = dev_get_drvdata(dev);
+> +
+> +       mtk_smi_clk_disable(&larb->smi);
+> +       pm_runtime_put_sync(larb->smi_common_dev);
+> +       return 0;
+> +}
+> +
+> +static const struct dev_pm_ops smi_larb_pm_ops = {
+> +       SET_RUNTIME_PM_OPS(mtk_smi_larb_suspend, mtk_smi_larb_resume, NULL)
 > +};
 > +
-> +struct iommu_pasid *iommu_pasid_init(struct bus_type *bus);
-> +void iommu_pasid_exit(struct iommu_pasid *pasid);
-> +int iommu_pasid_alloc(struct iommu_pasid *pasid, ioasid_t min,
-> +		      ioasid_t max, void *private, ioasid_t *ioasid);
-> +void iommu_pasid_free(struct iommu_pasid *pasid, ioasid_t iosid);
-> +static inline int
-> +iommu_pasid_for_each(struct iommu_pasid *pasid, ioasid_iter_t func,
-> void *data) +{
-> +	return ioasid_for_each(&pasid->set, func, data);
-> +}
-> +static inline void*
-> +iommu_pasid_find(struct iommu_pasid *pasid, ioasid_t ioasid)
-> +{
-> +	return ioasid_find(&pasid->set, ioasid);
-> +}
->  #else /* CONFIG_IOMMU_API */
->  
->  struct iommu_ops {};
->  struct iommu_group {};
->  struct iommu_fwspec {};
->  struct iommu_device {};
-> +struct iommu_pasid {};
->  
->  static inline bool iommu_present(struct bus_type *bus)
->  {
-> @@ -734,6 +774,39 @@ static inline void
->  iommu_detach_device_aux(struct iommu_domain *domain, struct device
-> *dev) {
+>  static struct platform_driver mtk_smi_larb_driver = {
+>         .probe  = mtk_smi_larb_probe,
+>         .remove = mtk_smi_larb_remove,
+>         .driver = {
+>                 .name = "mtk-smi-larb",
+>                 .of_match_table = mtk_smi_larb_of_ids,
+> +               .pm             = &smi_larb_pm_ops,
+>         }
+>  };
+>
+> @@ -489,12 +494,38 @@ static int mtk_smi_common_remove(struct platform_device *pdev)
+>         return 0;
 >  }
-> +
-> +static inline struct iommu_pasid *
-> +iommu_pasid_init(struct bus_type *bus)
+>
+> +static int __maybe_unused mtk_smi_common_resume(struct device *dev)
 > +{
-> +	return NULL;
+> +       struct mtk_smi *common = dev_get_drvdata(dev);
+> +       int ret;
+> +
+> +       ret = mtk_smi_clk_enable(common);
+> +       if (ret) {
+> +               dev_err(common->dev, "Failed to enable clock(%d).\n", ret);
+> +               return ret;
+> +       }
+> +       return 0;
 > +}
 > +
-> +static inline void iommu_pasid_exit(struct iommu_pasid *pasid)
+> +static int __maybe_unused mtk_smi_common_suspend(struct device *dev)
 > +{
+> +       struct mtk_smi *common = dev_get_drvdata(dev);
+> +
+> +       mtk_smi_clk_disable(common);
+> +       return 0;
 > +}
 > +
-> +static inline int
-> +iommu_pasid_alloc(struct iommu_pasid *pasid, ioasid_t min,
-> +		  ioasid_t max, void *private, ioasid_t *ioasid)
-> +{
-> +	return -ENODEV;
-> +}
+> +static const struct dev_pm_ops smi_common_pm_ops = {
+> +       SET_RUNTIME_PM_OPS(mtk_smi_common_suspend, mtk_smi_common_resume, NULL)
+> +};
 > +
-> +static inline void iommu_pasid_free(struct iommu_pasid *pasid,
-> ioasid_t iosid) +{
-> +}
-> +
-> +static inline int
-> +iommu_pasid_for_each(struct iommu_pasid *pasid, ioasid_iter_t func,
-> void *data) +{
-> +	return -ENODEV;
-> +}
-> +
-> +static inline void*
-> +iommu_pasid_find(struct iommu_pasid *pasid, ioasid_t ioasid)
-> +{
-> +	return NULL;
-> +}
->  #endif /* CONFIG_IOMMU_API */
->  
->  #ifdef CONFIG_IOMMU_DEBUGFS
-
-[Jacob Pan]
+>  static struct platform_driver mtk_smi_common_driver = {
+>         .probe  = mtk_smi_common_probe,
+>         .remove = mtk_smi_common_remove,
+>         .driver = {
+>                 .name = "mtk-smi-common",
+>                 .of_match_table = mtk_smi_common_of_ids,
+> +               .pm             = &smi_common_pm_ops,
+>         }
+>  };
+>
+> --
+> 1.9.1
+>
