@@ -2,161 +2,135 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A50C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF24C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33099218AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:15:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DAD2218AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:17:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GkJ93X0V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNfK2ulf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732897AbfA3VPO (ORCPT
+        id S1732969AbfA3VRX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 16:15:14 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:55236 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729410AbfA3VPO (ORCPT
+        Wed, 30 Jan 2019 16:17:23 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44167 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729410AbfA3VRW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 16:15:14 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0UL49WS184680;
-        Wed, 30 Jan 2019 21:15:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=rIMxUgtCRDVG/wcjmAlSmIOvfoTijxHPeFRFSa1Tavw=;
- b=GkJ93X0VCjyIV801XmWlC6UeUB/GCUYojQMy2FQosiwGh3DBOK/0IdCg143XqPAYC2CZ
- wfDsz4LFxWEHH58K6WjudPj2vMVZVLbNo9butG2yu7i24H4IgiZVWkX1w4sIeFvSSJRG
- 7LjD84TGcBA+t48FQVytOk9OCsMV6BoqRCJ7ST//SYC0BThE+1Hsz00qJipaP+DkLtyK
- f++tsrKBoGajB9FUi0V2S04X5VwTE4E4XN3GEP3QK4kXNpdMN2U3j+OGrNpaAg30WYM4
- oEPRSY+0PjX6soREV/rzFLDoM9WTcRzc76d0ZEC4FxyH+WIi8TaVz0Smk/z2XEuOO9SH sA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2q8d2edah2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jan 2019 21:15:00 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0ULEwIe011439
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jan 2019 21:14:59 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0ULEvN7006299;
-        Wed, 30 Jan 2019 21:14:57 GMT
-Received: from monkey.oracle.com (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 30 Jan 2019 13:14:57 -0800
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>, stable@vger.kernel.org
-Subject: [PATCH] huegtlbfs: fix page leak during migration of file pages
-Date:   Wed, 30 Jan 2019 13:14:43 -0800
-Message-Id: <20190130211443.16678-1-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.17.2
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9152 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=499 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1901300156
+        Wed, 30 Jan 2019 16:17:22 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e11so388075plt.11;
+        Wed, 30 Jan 2019 13:17:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hwsXWhqhObmoCvm6HCrYpY1W9DGqdyw1V/0UwP7b1B0=;
+        b=ZNfK2ulfgT4A1e4nhgSIqo9tRFGidREQLZip6W/re+jWfr6HzH/qJ5Y5gFOVSHDJ5H
+         rPhIA7GM9rAoU61ouPoWRGn2QQLABkeefcwMZwpECS/Fpno1z0uVmxlfuTW/3oaEFD2z
+         fNFP2s9XXll2laQ2J4CgNqhRSzBwZo1CQTePowSo0B5O3e05dLL22EzdbyCXZyFeRR9e
+         UxMz7guVQqgIEfjjO9fzOghw+ZrsYJPkhGjrTyKrZZRifX90J+T5TON+24tUU460nZV/
+         k0kyZIxHaOohNKoR3YaurWkSCAK0hmdZX7+a+ErbJ8aFGYzdT2NRKG9SuKmBqHU75jxM
+         t4Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hwsXWhqhObmoCvm6HCrYpY1W9DGqdyw1V/0UwP7b1B0=;
+        b=bA3JCL4mcaxPcaOxgFEPjaT2TTw3x2hZhGapdxodpUEGuiMp3MqJtSm+4gSf6I0okL
+         CqW2QIrwduhkIa11TAFrBpmsUwZ5ef2AjCdwmJWXPSZApOedsKwTX6585dgJKqB1xmqD
+         px2aFuBblCM9vOkYBXi7KUbGWVs35TivmiTi1isMitYdB4mtibYV++ngxzgFypSYM2Vq
+         hfXcVX0xJGVybCNp+//R1TKDvBBz/OteZO0gDIGW0jt37/n9OrARC5audC5NAAoZ6awu
+         /afINpUq0AF/NRCUN+rTYcWiFYZ556rcXlZybn05qjYMbGFaW58G4OFdb2nJuWSh6/7G
+         1HWQ==
+X-Gm-Message-State: AJcUukdc7PxtVv6+KoeRfXgsqtp0uu9VhxQ9VQMdkhDgTWYNwov8zFil
+        mowCsBeppzTRM2Ca2TJR7Z5HVHovzghZ5FI8MPGawSct
+X-Google-Smtp-Source: ALg8bN6pHgHK2/vNGGh/SMblifFRv9MV+5on6+Dbxek81zRYcgojtyceA3rEWkY5ohSq5GTjPImep/Y+5RzDfT8GvWk=
+X-Received: by 2002:a17:902:2468:: with SMTP id m37mr31965097plg.314.1548883041547;
+ Wed, 30 Jan 2019 13:17:21 -0800 (PST)
+MIME-Version: 1.0
+References: <0b74e9ad12360b56bc0a3c2ca972798c424f2610.1548790896.git.lsun@mellanox.com>
+ <CAHp75VfpmBMmR_zU8JxN3Apb__QyWXyU9wD8e03z0N3TTRpMYg@mail.gmail.com> <DB6PR05MB32230728A361BD68D14D7B69A1900@DB6PR05MB3223.eurprd05.prod.outlook.com>
+In-Reply-To: <DB6PR05MB32230728A361BD68D14D7B69A1900@DB6PR05MB3223.eurprd05.prod.outlook.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 30 Jan 2019 23:17:09 +0200
+Message-ID: <CAHp75VcsYsxSfUT6Sc9-59gXaQRXs0ugpPRAvAzFr2+DYJHeCg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] platform/mellanox: Add bootctl driver for Mellanox
+ BlueField Soc
+To:     Liming Sun <lsun@mellanox.com>
+Cc:     Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Vadim Pasternak <vadimp@mellanox.com>,
+        David Woods <dwoods@mellanox.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Files can be created and mapped in an explicitly mounted hugetlbfs
-filesystem.  If pages in such files are migrated, the filesystem
-usage will not be decremented for the associated pages.  This can
-result in mmap or page allocation failures as it appears there are
-fewer pages in the filesystem than there should be.
+On Wed, Jan 30, 2019 at 10:47 PM Liming Sun <lsun@mellanox.com> wrote:
 
-For example, a test program which hole punches, faults and migrates
-pages in such a file (1G in size) will eventually fail because it
-can not allocate a page.  Reported counts and usage at time of failure:
+> > First of all, is it a real watchdog with a driver? I think watchdog in
+> > that case should be set up through standard watchdog facilities.
+>
+> This is not a watchdog driver itself. Instead, it provides interface to
+> user-space and use ARM SMC calls to ATF to configure registers and
+> watchdog. I'll update the commit message in v2 to clarify it.
 
-node0
-537	free_hugepages
-1024	nr_hugepages
-0	surplus_hugepages
-node1
-1000	free_hugepages
-1024	nr_hugepages
-0	surplus_hugepages
+Hmm... For example Intel MID platforms have SCU (system controller
+unit) that provides a watchdog facility. In the kernel we have a
+watchdog driver for that.
+Can't you do similar for your case?
 
-Filesystem                         Size  Used Avail Use% Mounted on
-nodev                              4.0G  4.0G     0 100% /var/opt/hugepool
+> > > +       if (mlxbf_bootctl_smc_call1(MLXBF_BOOTCTL_SET_POST_RESET_WDOG,
+> > > +                                   watchdog) < 0)
+> > > +               return -EINVAL;
+> >
+> > If that call returns an error it shouldn't be shadowed here.
+>
+> Not sure I understand this comment correctly or not.
+> This function is defined by DRIVER_ATTR_RW(), which appears to expect
+> ssize_t or an error code as return value according to other examples I saw.
 
-Note that the filesystem shows 4G of pages used, while actual usage is
-511 pages (just under 1G).  Failed trying to allocate page 512.
+What is returned by mlx...call1() should be propagated to the actual caller.
+Same comment for all similar cases.
 
-If a hugetlb page is associated with an explicitly mounted filesystem,
-this information in contained in the page_private field.  At migration
-time, this information is not preserved.  To fix, simply transfer
-page_private from old to new page at migration time if necessary. Also,
-migrate_page_states() unconditionally clears page_private and PagePrivate
-of the old page.  It is unlikely, but possible that these fields could
-be non-NULL and are needed at hugetlb free page time.  So, do not touch
-these fields for hugetlb pages.
+> > > +       lc_state &= (MLXBF_BOOTCTL_SB_MODE_TEST_MASK |
+> > > +                    MLXBF_BOOTCTL_SB_MODE_SECURE_MASK);
+> >
+> > Better to split like
+> >
+> > xxx =
+> >  (A | B);
+>
+> It seems hard to do "(A | B);" within 80 characters plus the indents.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 290408d4a250 ("hugetlb: hugepage migration core")
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- fs/hugetlbfs/inode.c | 10 ++++++++++
- mm/migrate.c         | 10 ++++++++--
- 2 files changed, 18 insertions(+), 2 deletions(-)
+Repeating myself, it's still better than your variant for readability.
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 32920a10100e..fb6de1db8806 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -859,6 +859,16 @@ static int hugetlbfs_migrate_page(struct address_space *mapping,
- 	rc = migrate_huge_page_move_mapping(mapping, newpage, page);
- 	if (rc != MIGRATEPAGE_SUCCESS)
- 		return rc;
-+
-+	/*
-+	 * page_private is subpool pointer in hugetlb pages, transfer
-+	 * if needed.
-+	 */
-+	if (page_private(page) && !page_private(newpage)) {
-+		set_page_private(newpage, page_private(page));
-+		set_page_private(page, 0);
-+	}
-+
- 	if (mode != MIGRATE_SYNC_NO_COPY)
- 		migrate_page_copy(newpage, page);
- 	else
-diff --git a/mm/migrate.c b/mm/migrate.c
-index f7e4bfdc13b7..0d9708803553 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -703,8 +703,14 @@ void migrate_page_states(struct page *newpage, struct page *page)
- 	 */
- 	if (PageSwapCache(page))
- 		ClearPageSwapCache(page);
--	ClearPagePrivate(page);
--	set_page_private(page, 0);
-+	/*
-+	 * Unlikely, but PagePrivate and page_private could potentially
-+	 * contain information needed at hugetlb free page time.
-+	 */
-+	if (!PageHuge(page)) {
-+		ClearPagePrivate(page);
-+		set_page_private(page, 0);
-+	}
- 
- 	/*
- 	 * If any waiters have accumulated on the new page then
+> > > +       if (res.a0 != 0x89c036b4 || res.a1 != 0x11e6e7d7 ||
+> > > +           res.a2 != 0x1a009787 || res.a3 != 0xc4bf00ca)
+> >
+> > What is this?!
+> >
+> > Can you use UUID API?
+>
+> Yes, it is UUID comparison. The SMC call returns four 'unsigned long' from ATF
+> to represent the UUID. There seems no existing APIs in uapi/linux/uuid.h to
+> compare such special format. How about replacing it with comment and MACROs
+> instead of the hardcoded values to make it more readable?
+
+Should be no magic numbers involved inside the function at the end.
+Use descriptive definitions and I still recommend to give a look at
+UUID API how it can be utilized here.
+(hint: Thunderbolt hw is operating with integers, though driver uses
+UUID API at the end)
+
 -- 
-2.17.2
-
+With Best Regards,
+Andy Shevchenko
