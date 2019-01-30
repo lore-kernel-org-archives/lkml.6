@@ -2,95 +2,96 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B71C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A53C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C687A20869
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD78020869
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:02:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfA3SBg convert rfc822-to-8bit (ORCPT
+        id S1728909AbfA3SCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:01:36 -0500
-Received: from mga14.intel.com ([192.55.52.115]:10892 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbfA3SBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:01:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 10:01:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,541,1539673200"; 
-   d="scan'208";a="112386287"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by orsmga006.jf.intel.com with ESMTP; 30 Jan 2019 10:01:35 -0800
-Received: from fmsmsx155.amr.corp.intel.com (10.18.116.71) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 30 Jan 2019 10:01:34 -0800
-Received: from crsmsx152.amr.corp.intel.com (172.18.7.35) by
- FMSMSX155.amr.corp.intel.com (10.18.116.71) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 30 Jan 2019 10:01:34 -0800
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.57]) by
- CRSMSX152.amr.corp.intel.com ([169.254.5.81]) with mapi id 14.03.0415.000;
- Wed, 30 Jan 2019 12:01:33 -0600
-From:   "Weiny, Ira" <ira.weiny@intel.com>
-To:     'Jason Gunthorpe' <jgg@ziepe.ca>
-CC:     Davidlohr Bueso <dave@stgolabs.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "dledford@redhat.com" <dledford@redhat.com>,
-        "jack@suse.de" <jack@suse.de>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: RE: [PATCH 3/6] drivers/IB,qib: do not use mmap_sem
-Thread-Topic: [PATCH 3/6] drivers/IB,qib: do not use mmap_sem
-Thread-Index: AQHUt2Gl37+5b+zRw0atYrNw3MHiB6XGEOqAgABlsYCAANFCgP//rILg
-Date:   Wed, 30 Jan 2019 18:01:33 +0000
-Message-ID: <2807E5FD2F6FDA4886F6618EAC48510E79BA6A27@CRSMSX101.amr.corp.intel.com>
-References: <20190121174220.10583-1-dave@stgolabs.net>
- <20190121174220.10583-4-dave@stgolabs.net> <20190128233140.GA12530@ziepe.ca>
- <20190129044607.GL25106@ziepe.ca>
- <20190129185005.GC10129@iweiny-DESK2.sc.intel.com>
- <20190129231903.GA5352@ziepe.ca>
-In-Reply-To: <20190129231903.GA5352@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMWIyZWE0MzUtMzA2OS00NmE5LTkyMDgtODAwZDFjNTRiZGMxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicmRSckVBakdiVzVYZ2k5Y3JFVCtETWc1Z2M4QWp1TFhLaVwvTmNnaXhjNXVYSW1hcGcrS0hDK2JGRFdYb2JpZVcifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.18.205.10]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 30 Jan 2019 13:02:54 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59120 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725770AbfA3SCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 13:02:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4217F80D;
+        Wed, 30 Jan 2019 10:02:53 -0800 (PST)
+Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 935993F557;
+        Wed, 30 Jan 2019 10:02:50 -0800 (PST)
+Date:   Wed, 30 Jan 2019 18:02:47 +0000
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Jeremy Linton <jeremy.linton@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, stefan.wahren@i2se.com,
+        Jonathan Corbet <corbet@lwn.net>, mlangsdo@redhat.com,
+        linux-doc@vger.kernel.org, suzuki.poulose@arm.com,
+        marc.zyngier@arm.com, catalin.marinas@arm.com,
+        julien.thierry@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, steven.price@arm.com,
+        ykaukab@suse.de, dave.martin@arm.com, shankerd@codeaurora.org
+Subject: Re: [PATCH v4 01/12] Documentation: Document arm64 kpti control
+Message-ID: <20190130180247.15ab0577@donnerap.cambridge.arm.com>
+In-Reply-To: <20190125180711.1970973-2-jeremy.linton@arm.com>
+References: <20190125180711.1970973-1-jeremy.linton@arm.com>
+        <20190125180711.1970973-2-jeremy.linton@arm.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> On Tue, Jan 29, 2019 at 10:50:05AM -0800, Ira Weiny wrote:
-> > > .. and I'm looking at some of the other conversions here.. *most
-> > > likely* any caller that is manipulating rlimit for get_user_pages
-> > > should really be calling get_user_pages_longterm, so they should not
-> > > be converted to use _fast?
-> >
-> > Is this a question?  I'm not sure I understand the meaning here?
-> 
-> More an invitation to disprove the statement
+On Fri, 25 Jan 2019 12:07:00 -0600
+Jeremy Linton <jeremy.linton@arm.com> wrote:
 
-Generally I agree.  But would be best if we could get fast GUP for performance.  I have not worked out if that will be possible with the final "longterm" solutions.
+Hi,
 
-IRa
-
+> For a while Arm64 has been capable of force enabling
+> or disabling the kpti mitigations. Lets make sure the
+> documentation reflects that.
 > 
-> Jason
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-doc@vger.kernel.org
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt
+> b/Documentation/admin-guide/kernel-parameters.txt index
+> b799bcf67d7b..9475f02c79da 100644 ---
+> a/Documentation/admin-guide/kernel-parameters.txt +++
+> b/Documentation/admin-guide/kernel-parameters.txt @@ -1982,6 +1982,12
+> @@ Built with CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF=y,
+>  			the default is off.
+>  
+> +	kpti=		[ARM64] Control page table isolation of
+> user
+> +			and kernel address spaces.
+> +			Default: enabled on cores which need
+> mitigation.
+
+Would this be a good place to mention that we enable it when
+CONFIG_RANDOMIZE_BASE is enabled and we have a valid kaslr_offset? I
+found this somewhat surprising, also it's unrelated to the
+vulnerability.
+
+Cheers,
+Andre
+
+> +			0: force disabled
+> +			1: force enabled
+> +
+>  	kvm.ignore_msrs=[KVM] Ignore guest accesses to unhandled
+> MSRs. Default is 0 (don't ignore, but inject #GP)
+>  
+
