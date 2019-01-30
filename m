@@ -2,117 +2,193 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99A5C282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EE7C282D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A063021473
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:46:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E207521473
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:46:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dJyelnfU";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gdBiM+XQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730235AbfA3IqG (ORCPT
+        id S1730306AbfA3Iqs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:46:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38320 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725850AbfA3IqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:46:05 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4EE75AEB4;
-        Wed, 30 Jan 2019 08:46:04 +0000 (UTC)
-Date:   Wed, 30 Jan 2019 09:46:03 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] livepatch: Handle failing allocation of shadow
- variables in the selftest
-Message-ID: <20190130084603.bxm57h6wf47b45fs@pathway.suse.cz>
-References: <20190116161720.796-1-pmladek@suse.com>
- <20190116161720.796-3-pmladek@suse.com>
- <alpine.LSU.2.21.1901211311401.31573@pobox.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1901211311401.31573@pobox.suse.cz>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Wed, 30 Jan 2019 03:46:48 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37446 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbfA3Iqs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 03:46:48 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6AD5760986; Wed, 30 Jan 2019 08:46:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548838006;
+        bh=SngnR312UUBc7kgdXAXv8mMNi1jeffZM8A2EyH1z7YQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dJyelnfUWpKKG60YUkddetHPOFgErCDrBKh/Lwus9bxzAXGaXu/TNiNGTBviRNwQp
+         oHafhzY6yOtzVdx7Tf9UigQKdwvuwlDYQl9eliyXqHRoUQHmsLsX7ODJp7h/vbwFvA
+         r3PXnZl27B/sfBmeCtDf2TFsTyJvnDJ2NzN5bE/k=
+Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 99DAB60886;
+        Wed, 30 Jan 2019 08:46:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548838003;
+        bh=SngnR312UUBc7kgdXAXv8mMNi1jeffZM8A2EyH1z7YQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gdBiM+XQ415MOpmwckgp2WjqcUXp/VhnZ5voMcXSFzw8ntQmq+CIpnkwqGk7Gxtcq
+         7EoxuAs1FgHSpO4ZDGQL0WV0dlCRasnwm/DUhCyN6S1X3uNMfOcxEG2g5b8wSOUrWQ
+         +rmLoM8V6Kg73CN2oc2StNjDq/WBownIY1w1BPiU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 99DAB60886
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+From:   Rohit kumar <rohitkr@codeaurora.org>
+To:     dianders@chromium.org, andy.gross@linaro.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, plai@codeaurora.org,
+        bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org,
+        linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org,
+        rohkumar@qti.qualcomm.com
+Cc:     Rohit kumar <rohitkr@codeaurora.org>
+Subject: [PATCH v2] arm64: dts: sdm845: Add Q6V5 ADSP node
+Date:   Wed, 30 Jan 2019 14:16:29 +0530
+Message-Id: <1548837989-22904-1-git-send-email-rohitkr@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-01-21 13:14:38, Miroslav Benes wrote:
-> Hi,
-> 
-> On Wed, 16 Jan 2019, Petr Mladek wrote:
-> 
-> > Do not dereference pointers to the shadow variables when either
-> > klp_shadow_alloc() or klp_shadow_get() fail.
-> 
-> I may misunderstand the patch, so bear with me, please. Is this because of 
-> a possible null pointer dereference? If yes, shouldn't this say rather 
-> "when both klp_shadow_alloc() and klp_shadow_get() fail"?
+This patch adds Q6V5 ADSP pil remoteproc node
+for SDM845 SoC.
 
-Well, klp_shadow_get() could fail also from other reasons if there is
-a bug in the implementation.
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+---
+Changes since v1:
+Addressed comments given by Bjorn.
 
-> > There is no need to check the other locations explicitly. The test
-> > would fail if any allocation fails. And the existing messages, printed
-> > during the test, provide enough information to debug eventual problems.
+This depends on below upstream patch which defines adsp_mem node:
+https://lkml.org/lkml/2019/1/29/1392
 
-Heh, this is actually the reason why I did not add the check
-for shadow_alloc(). Any error would be detected later
-with klp_shadow_get() calls that should get tested anyway.
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 89 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
 
-Hmm, when I think about it. A good practice is to handle
-klp_shadow_allow() or klp_shadow_get() failures immediately.
-After all, it is the sample code that people might follow.
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 33f5f4b..31cb8db 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -18,6 +18,7 @@
+ #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+ #include <dt-bindings/reset/qcom,sdm845-pdc.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
++#include <dt-bindings/soc/qcom,apr.h>
+ 
+ / {
+ 	interrupt-parent = <&intc>;
+@@ -2048,6 +2049,94 @@
+ 			status = "disabled";
+ 		};
+ 
++		adsp_pil: remoteproc-adsp-pil@17300000 {
++			compatible = "qcom,sdm845-adsp-pil";
++
++			reg = <0x17300000 0x410>;
++			interrupts-extended =
++				<&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
++				<&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++				<&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++				<&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++				<&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog", "fatal", "ready",
++					  "handover", "stop-ack";
++
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <&gcc GCC_LPASS_SWAY_CLK>,
++				 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
++				 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
++				 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
++				 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
++				 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
++
++			clock-names = "xo", "sway_cbcr", "lpass_ahbs_aon_cbcr",
++				      "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
++				      "qdsp6ss_sleep", "qdsp6ss_core";
++
++			resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
++				 <&aoss_reset AOSS_CC_LPASS_RESTART>;
++			reset-names = "pdc_sync", "cc_lpass";
++
++			qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
++
++			memory-region = <&adsp_mem>;
++
++			qcom,smem-states = <&adsp_smp2p_out 0>;
++			qcom,smem-state-names = "stop";
++
++			status = "disabled";
++			glink-edge {
++				interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
++				label = "lpass";
++				qcom,remote-pid = <2>;
++				mboxes = <&apss_shared 8>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				apr@4 {
++					compatible = "qcom,apr-v2";
++					qcom,glink-channels = "apr_audio_svc";
++					reg = <APR_DOMAIN_ADSP>;
++					#address-cells = <1>;
++					#size-cells = <0>;
++					q6core {
++						compatible = "qcom,q6core";
++						reg = <APR_SVC_ADSP_CORE>;
++					};
++
++					q6afe {
++						compatible = "qcom,q6afe";
++						reg = <APR_SVC_AFE>;
++						q6afedai: afedais {
++							compatible = "qcom,q6afe-dais";
++							#sound-dai-cells = <1>;
++							#address-cells = <1>;
++							#size-cells = <0>;
++						};
++					};
++
++					q6asm {
++						compatible = "qcom,q6asm";
++						reg = <APR_SVC_ASM>;
++						q6asmdai: asmdai{
++							compatible = "qcom,q6asm-dais";
++							iommus = <&apps_smmu 0x1821 0x0>;
++							#sound-dai-cells = <1>;
++						};
++					};
++
++					q6adm {
++						compatible = "qcom,q6adm";
++						reg = <APR_SVC_ADM>;
++						q6routing: routing {
++							compatible = "qcom,q6adm-routing";
++							#sound-dai-cells = <0>;
++						};
++					};
++				};
++			};
++		};
++
+ 		apss_shared: mailbox@17990000 {
+ 			compatible = "qcom,sdm845-apss-shared";
+ 			reg = <0 0x17990000 0 0x1000>;
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-
-> > Signed-off-by: Petr Mladek <pmladek@suse.com>
-> > ---
-> >  lib/livepatch/test_klp_shadow_vars.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/lib/livepatch/test_klp_shadow_vars.c b/lib/livepatch/test_klp_shadow_vars.c
-> > index 02f892f941dc..55e6820430dc 100644
-> > --- a/lib/livepatch/test_klp_shadow_vars.c
-> > +++ b/lib/livepatch/test_klp_shadow_vars.c
-> > @@ -162,15 +162,15 @@ static int test_klp_shadow_vars_init(void)
-> >  	 * to expected data.
-> >  	 */
-> >  	ret = shadow_get(obj, id);
-> > -	if (ret == sv1 && *sv1 == &var1)
-> > +	if (ret && ret == sv1 && *sv1 == &var1)
-> >  		pr_info("  got expected PTR%d -> PTR%d result\n",
-> >  			ptr_id(sv1), ptr_id(*sv1));
-> >  	ret = shadow_get(obj + 1, id);
-> > -	if (ret == sv2 && *sv2 == &var2)
-> > +	if (ret && ret == sv2 && *sv2 == &var2)
-> >  		pr_info("  got expected PTR%d -> PTR%d result\n",
-> >  			ptr_id(sv2), ptr_id(*sv2));
-> >  	ret = shadow_get(obj, id + 1);
-> > -	if (ret == sv3 && *sv3 == &var3)
-> > +	if (ret && ret == sv3 && *sv3 == &var3)
-> >  		pr_info("  got expected PTR%d -> PTR%d result\n",
-> >  			ptr_id(sv3), ptr_id(*sv3));
-> 
-> There is one more similar site calling shadow_get(obj, id + 1) which is 
-> fixed.
-
-Heh, I think that I did not add the check there on purpose.
-If we are here, shadow_get(obj, id + 1) must have already succeeded
-above.
-
-But it is a bad practice. We should always check the output.
-I'll do so in v2.
-
-Best Regards,
-Petr
