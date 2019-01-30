@@ -2,157 +2,144 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAA9C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5045C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF3D420989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:01:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="fC+DRBSn"
+	by mail.kernel.org (Postfix) with ESMTP id 8502B20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:02:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732350AbfA3RBJ (ORCPT
+        id S1732339AbfA3RCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:01:09 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41104 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732338AbfA3RBJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:01:09 -0500
-Received: by mail-ed1-f68.google.com with SMTP id a20so176732edc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 09:01:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xB8TVOqQ38SsN1+u5qq8WNps6391MAN699+3LR2JMUg=;
-        b=fC+DRBSnGa1nCHPZjeOHwzLn2N4mbEGUBl6fHagwGW1CkqYZ9Ibrksp/Mq4MnJuzqd
-         uqd6wlL0iGhM9K9TWF6eKBGjqTwjEokvf2lHt9p0821ul7wCn2gXFD7k+T2jQiAIB13c
-         WR5pl9Zjeab25o0B4C6Ie1CYFze4tXAcNrKc7fBadph/lgV4TtAWmn5WLyG5sy9e0+k1
-         BUhr35GlgbRppQFv/eAmRJUYpIVHM0y6uT6jYHrAX7qeHJGLduQfIa2V9nN9aLHhcyh0
-         PVW4870lzVBPXzM1XlLcXqWiWUdYtV0GSk0F7Nn5RVc1p2Eah518aY72s13Wr2wS7qnv
-         kO4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xB8TVOqQ38SsN1+u5qq8WNps6391MAN699+3LR2JMUg=;
-        b=UDAcFXNbB/B71cvBAm2ma7o3RyiDByxoIm6HNgr28QT25auPPaWBHCt3aMm7CQUNyD
-         ppQOad+IdDByoVSIAOj5j90kb8V2FAhYebXOSO6kA2F3wt5AAp1CyTdIlG0vqXLsCo8b
-         9L3yW6kR7wnZK+9YjrWKeVwlbRSCIv2/v8drtSuNlw0R+adTtBMwjisxcJ2jC6jxJS6d
-         lxUsmvYTDlYMUNNiw7cRRaNsDcWOw/yZAtnN7OTDuEWmqdpi0VnIxGiEXRAvHTjNWQUv
-         hbEXqt9SDfhHeOYH7LiGomzUcqlf8Q1So3Th3s1SFFj9gmOoMstZyHMtBBmyDrpCjrsn
-         AlMQ==
-X-Gm-Message-State: AJcUuke8kSjx5YrcoyEJMIHNczUNj/RP/q1+K+lvQ6+OUhQ/9v4FnAd2
-        1eUDonk8PbkoQi6b1qAmYGaSM795dNj+Lg==
-X-Google-Smtp-Source: ALg8bN7T/ka4Z8+MSBgclczdHtdnB6EW53AxL0pTpy0cf8tp/NqDmF147ObmiRA0bP7IRz/JUxIDow==
-X-Received: by 2002:a50:95b4:: with SMTP id w49mr30215742eda.186.1548867667136;
-        Wed, 30 Jan 2019 09:01:07 -0800 (PST)
-Received: from brauner.io (84-199-88-155.iFiber.telenet-ops.be. [84.199.88.155])
-        by smtp.gmail.com with ESMTPSA id a38sm642781edd.44.2019.01.30.09.01.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 09:01:05 -0800 (PST)
-Date:   Wed, 30 Jan 2019 18:01:02 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, arve@android.com, maco@android.com,
-        joel@joelfernandes.org, tkjos@google.com
-Subject: Re: [PATCH 2/2] binderfs: remove separate device_initcall()
-Message-ID: <20190130170101.wfdrqc3374az75yo@brauner.io>
-References: <20190123114116.5251-1-christian@brauner.io>
- <20190123114116.5251-2-christian@brauner.io>
- <20190130142412.GA13798@kroah.com>
+        Wed, 30 Jan 2019 12:02:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41158 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731582AbfA3RCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:02:42 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0827D804EE;
+        Wed, 30 Jan 2019 17:02:41 +0000 (UTC)
+Received: from [10.36.112.68] (ovpn-112-68.ams2.redhat.com [10.36.112.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AA45A5D96F;
+        Wed, 30 Jan 2019 17:02:31 +0000 (UTC)
+Subject: Re: [PATCH 2/3] perf/x86/intel/pt: Inject PMI for KVM guest
+To:     Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, songliubraving@fb.com, rkrcmar@redhat.com,
+        peterz@infradead.org, zsm@chromium.org,
+        alexander.shishkin@linux.intel.com, konrad.wilk@oracle.com,
+        ak@linux.intel.com
+References: <1547928284-2915-1-git-send-email-luwei.kang@intel.com>
+ <1547928284-2915-3-git-send-email-luwei.kang@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <94fdce1b-9c42-e551-3099-ef7c4071a6ba@redhat.com>
+Date:   Wed, 30 Jan 2019 18:02:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <1547928284-2915-3-git-send-email-luwei.kang@intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190130142412.GA13798@kroah.com>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 30 Jan 2019 17:02:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 03:24:12PM +0100, Greg KH wrote:
-> On Wed, Jan 23, 2019 at 12:41:16PM +0100, Christian Brauner wrote:
-> > binderfs should not have a separate device_initcall(). When a kernel is
-> > compiled with CONFIG_ANDROID_BINDERFS register the filesystem alongside
-> > CONFIG_ANDROID_IPC. This use-case is especially sensible when users specify
-> > CONFIG_ANDROID_IPC=y, CONFIG_ANDROID_BINDERFS=y and
-> > ANDROID_BINDER_DEVICES="".
-> > When CONFIG_ANDROID_BINDERFS=n then this always succeeds so there's no
-> > regression potential for legacy workloads.
-> > 
-> > Signed-off-by: Christian Brauner <christian@brauner.io>
-> > ---
-> >  drivers/android/binder.c          | 4 ++++
-> >  drivers/android/binder_internal.h | 9 +++++++++
-> >  drivers/android/binderfs.c        | 4 +---
-> >  3 files changed, 14 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> > index cdfc87629efb..751d76173f81 100644
-> > --- a/drivers/android/binder.c
-> > +++ b/drivers/android/binder.c
-> > @@ -5915,6 +5915,10 @@ static int __init binder_init(void)
-> >  			goto err_init_binder_device_failed;
-> >  	}
-> >  
-> > +	ret = init_binderfs();
-> > +	if (ret)
-> > +		goto err_init_binder_device_failed;
-> > +
-> >  	return ret;
-> >  
-> >  err_init_binder_device_failed:
-> > diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
-> > index 7fb97f503ef2..045b3e42d98b 100644
-> > --- a/drivers/android/binder_internal.h
-> > +++ b/drivers/android/binder_internal.h
-> > @@ -46,4 +46,13 @@ static inline bool is_binderfs_device(const struct inode *inode)
-> >  }
-> >  #endif
-> >  
-> > +#ifdef CONFIG_ANDROID_BINDERFS
-> > +extern int __init init_binderfs(void);
-> > +#else
-> > +static inline int __init init_binderfs(void)
-> > +{
-> > +	return 0;
-> > +}
-> > +#endif
-> > +
-> >  #endif /* _LINUX_BINDER_INTERNAL_H */
-> > diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-> > index 7a550104a722..e773f45d19d9 100644
-> > --- a/drivers/android/binderfs.c
-> > +++ b/drivers/android/binderfs.c
-> > @@ -550,7 +550,7 @@ static struct file_system_type binder_fs_type = {
-> >  	.fs_flags	= FS_USERNS_MOUNT,
-> >  };
-> >  
-> > -static int __init init_binderfs(void)
-> > +int __init init_binderfs(void)
-> >  {
-> >  	int ret;
-> >  
-> > @@ -568,5 +568,3 @@ static int __init init_binderfs(void)
-> >  
-> >  	return ret;
-> >  }
-> > -
-> > -device_initcall(init_binderfs);
-> 
-> I get a build warning when applying this patch :(
+On 19/01/19 21:04, Luwei Kang wrote:
+>  static struct pt_pmu pt_pmu;
+>  
+> @@ -1260,6 +1262,14 @@ void intel_pt_interrupt(void)
+>  	struct pt_buffer *buf;
+>  	struct perf_event *event = pt->handle.event;
+>  
+> +	if (pt->vcpu) {
+> +		/* Inject PMI to Guest */
+> +		kvm_make_request(KVM_REQ_PMI, pt->vcpu);
+> +		__set_bit(MSR_CORE_PERF_GLOBAL_OVF_CTRL_TRACE_TOPA_PMI_BIT,
+> +			(unsigned long *)&pt->vcpu->arch.pmu.global_status);
+> +		return;
+> +	}
+> +
 
-Hm, I can't reproduce that build error with this patch applied to what
-you currently have in char-misc-linus. :(
-Any chance you can give me the config that produced this warning?
-I tried with CONFIG_BINDERFS=y and CONFIG_BINDERFS=n.
+There is no need to touch struct pt and to know details of KVM in
+arch/x86/events.  Please add a function pointer
 
-Thanks!
-Christian
+	void (*kvm_handle_pt_interrupt)(void);
+
+to some header, and in handle_pmi_common do
+
+	if (unlikely(kvm_handle_intel_pt_interrupt))
+		kvm_handle_intel_pt_interrupt();
+	else
+		intel_pt_interrupt();
+
+The function pointer can be assigned in
+kvm_before_interrupt/kvm_after_interrupt just like you do now.
+
+This should be a simpler patch too.
+
+Paolo
