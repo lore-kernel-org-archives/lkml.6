@@ -2,154 +2,191 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31F5C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C635DC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B10AB2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:45:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="okc51cUX"
+	by mail.kernel.org (Postfix) with ESMTP id A0ABA2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:47:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732693AbfA3Rp4 (ORCPT
+        id S1732610AbfA3RrY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:45:56 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54188 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727765AbfA3Rpz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:45:55 -0500
-Received: by mail-wm1-f65.google.com with SMTP id d15so417143wmb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 09:45:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=hZA5+6dQ0IxnpOhRlyCjf/F14kZPf1RywVQbHEFcjqE=;
-        b=okc51cUXHqqXNL3G7utUzTl23uA1urroBt3P62QmwoG0J9h0hyStetIpwJu7HTyqj6
-         aMRRTAyEJr4IgNUhgqiicYBhVuAfEr5qJMP+32UfRxJry313XBwAhrXzRaxt1a3YDcbv
-         5Dv827vxmaS/KEe78gYuakdxAi4pnKNulYweaWVHIasV0F/VgRhOr3F2T7NfcIm//kS9
-         v4g9SrCAivbkh+P2hQD+Xe7nPWwUWdeDrAJUm1Zpgq8H+/zVDkov99h16avS6KKzQikw
-         joJzY4okvLp1d5zAVmV1svTwDQ4uqhczyfy0fHmoUh/xgBGnYOrjN5zT2inJMnU/Q6uA
-         Czxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hZA5+6dQ0IxnpOhRlyCjf/F14kZPf1RywVQbHEFcjqE=;
-        b=jySurToi6l8X3C9TZoIoyGcOK4m1di7f7jrnotzhl7wE+yAMAeQI+uA0Uf7tYz5uyk
-         kd4wK1gpRYmm1pMup7JeVLBe9NlyS8WmjP7xB60cqe3DUW14ZkUfgBYh3ilxOKp7i9j+
-         jZDFpRyDi4HCnJjP1CyxmwEnaypQ2SNkh9PXWufP3s3oK3BqeE/HqbxEtF1oKrMUVBJB
-         R0MiXQTHkr8D6sXTqWeynjsT5Y+CuNv+qinfqyHAqX86ytTKq0xQw5tITVWyDufEkID2
-         pHsi0gkp45OTksQ3SXtaiVRahp7yefR2xF5tpCHdNq1GRmH9z8ec1B+kHnyBgt+HkDQa
-         zhmw==
-X-Gm-Message-State: AJcUukfuSujtL4dfbmtIzB2EZ/s4i4Wh8wYre9c1vMkm5EhpRQWmN1fF
-        sH/cRSEocgvMpn8ZBs7pAoJ95kzIhG4=
-X-Google-Smtp-Source: ALg8bN76JHRmyfMdjE0WGcGYrJN7uuYpcGzaOPyYE88zHx0IbQK5WkPYVn6qoqgyDBwuC7AOFv/KRA==
-X-Received: by 2002:a1c:a6c2:: with SMTP id p185mr23832431wme.133.1548870354166;
-        Wed, 30 Jan 2019 09:45:54 -0800 (PST)
-Received: from localhost.localdomain ([141.72.240.238])
-        by smtp.gmail.com with ESMTPSA id x12sm2278187wrt.20.2019.01.30.09.45.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 09:45:53 -0800 (PST)
-From:   SandeshKa07 <kas.sandesh@gmail.com>
-To:     gregkh@linuxfoundation.org, osdevtc@gmail.com,
-        eklikeroomys@gmail.com, omer.efrat@tandemg.com
-Cc:     linux-kernel@vger.kernel.org,
-        Sandesh Kenjana Ashok <kas.sandesh@gmail.com>
-Subject: [PATCH] staging:wlan-ng:cfg80211.c Fixed line more than 80 characters.
-Date:   Wed, 30 Jan 2019 18:45:38 +0100
-Message-Id: <20190130174538.9189-1-kas.sandesh@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 30 Jan 2019 12:47:24 -0500
+Received: from foss.arm.com ([217.140.101.70]:58888 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732271AbfA3RrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:47:23 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EE9C80D;
+        Wed, 30 Jan 2019 09:47:23 -0800 (PST)
+Received: from [10.37.12.221] (unknown [10.37.12.221])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 385933F557;
+        Wed, 30 Jan 2019 09:47:19 -0800 (PST)
+Subject: Re: [PATCH v2 3/7] coresight: Use event attributes for sink selection
+To:     mathieu.poirier@linaro.org, acme@kernel.org, peterz@infradead.org
+Cc:     gregkh@linuxfoundation.org, mingo@redhat.com, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190122181144.26645-1-mathieu.poirier@linaro.org>
+ <20190122181144.26645-4-mathieu.poirier@linaro.org>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <5ce969d1-847f-cc89-a074-1697e21ce6e5@arm.com>
+Date:   Wed, 30 Jan 2019 17:49:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190122181144.26645-4-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sandesh Kenjana Ashok <kas.sandesh@gmail.com>
+On 01/22/2019 06:11 PM, Mathieu Poirier wrote:
+> This patch uses the information conveyed by perf_event::attr::config2
+> to select a sink to use for the session.  That way a sink can easily be
+> selected to be used by more than one source, something that isn't currently
+> possible with the sysfs implementation.
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>   .../hwtracing/coresight/coresight-etm-perf.c  | 24 ++++++------
+>   drivers/hwtracing/coresight/coresight-priv.h  |  1 +
+>   drivers/hwtracing/coresight/coresight.c       | 39 +++++++++++++++++++
+>   3 files changed, 52 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> index c68a0036532c..ea031eb673b3 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -31,11 +31,14 @@ static DEFINE_PER_CPU(struct coresight_device *, csdev_src);
+>   PMU_FORMAT_ATTR(cycacc,		"config:" __stringify(ETM_OPT_CYCACC));
+>   PMU_FORMAT_ATTR(timestamp,	"config:" __stringify(ETM_OPT_TS));
+>   PMU_FORMAT_ATTR(retstack,	"config:" __stringify(ETM_OPT_RETSTK));
+> +/* Sink ID - same for all ETMs */
+> +PMU_FORMAT_ATTR(sinkid,		"config2:0-31");
+>   
+>   static struct attribute *etm_config_formats_attr[] = {
+>   	&format_attr_cycacc.attr,
+>   	&format_attr_timestamp.attr,
+>   	&format_attr_retstack.attr,
+> +	&format_attr_sinkid.attr,
+>   	NULL,
+>   };
+>   
+> @@ -191,6 +194,7 @@ static void etm_free_aux(void *data)
+>   static void *etm_setup_aux(struct perf_event *event, void **pages,
+>   			   int nr_pages, bool overwrite)
+>   {
+> +	u32 id;
+>   	int cpu = event->cpu;
+>   	cpumask_t *mask;
+>   	struct coresight_device *sink;
+> @@ -201,18 +205,14 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+>   		return NULL;
+>   	INIT_WORK(&event_data->work, free_event_data);
+>   
+> -	/*
+> -	 * In theory nothing prevent tracers in a trace session from being
+> -	 * associated with different sinks, nor having a sink per tracer.  But
+> -	 * until we have HW with this kind of topology we need to assume tracers
+> -	 * in a trace session are using the same sink.  Therefore go through
+> -	 * the coresight bus and pick the first enabled sink.
+> -	 *
+> -	 * When operated from sysFS users are responsible to enable the sink
+> -	 * while from perf, the perf tools will do it based on the choice made
+> -	 * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
+> -	 */
+> -	sink = coresight_get_enabled_sink(true);
+> +	/* First get the selected sink from user space. */
+> +	if (event->attr.config2) {
+> +		id = (u32)event->attr.config2;
+> +		sink = coresight_get_sink_by_id(id);
+> +	} else {
+> +		sink = coresight_get_enabled_sink(true);
+> +	}
+> +
+>   	if (!sink || !sink_ops(sink)->alloc_buffer)
+>   		goto err;
+>   
+> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+> index 579f34943bf1..b936c6d7e13f 100644
+> --- a/drivers/hwtracing/coresight/coresight-priv.h
+> +++ b/drivers/hwtracing/coresight/coresight-priv.h
+> @@ -147,6 +147,7 @@ void coresight_disable_path(struct list_head *path);
+>   int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data);
+>   struct coresight_device *coresight_get_sink(struct list_head *path);
+>   struct coresight_device *coresight_get_enabled_sink(bool reset);
+> +struct coresight_device *coresight_get_sink_by_id(u32 id);
+>   struct list_head *coresight_build_path(struct coresight_device *csdev,
+>   				       struct coresight_device *sink);
+>   void coresight_release_path(struct list_head *path);
+> diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
+> index d7fa90be6f42..c5f2df186a19 100644
+> --- a/drivers/hwtracing/coresight/coresight.c
+> +++ b/drivers/hwtracing/coresight/coresight.c
+> @@ -11,6 +11,7 @@
+>   #include <linux/err.h>
+>   #include <linux/export.h>
+>   #include <linux/slab.h>
+> +#include <linux/stringhash.h>
+>   #include <linux/mutex.h>
+>   #include <linux/clk.h>
+>   #include <linux/coresight.h>
+> @@ -541,6 +542,44 @@ struct coresight_device *coresight_get_enabled_sink(bool deactivate)
+>   	return dev ? to_coresight_device(dev) : NULL;
+>   }
+>   
+> +static int coresight_sink_by_id(struct device *dev, void *data)
+> +{
+> +	struct coresight_device *csdev = to_coresight_device(dev);
+> +	u32 hash;
+> +
+> +	if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
+> +	     csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
+> +		/*
+> +		 * See function etm_perf_sink_name_show() to know where this
+> +		 * comes from.
+> +		 */
+> +		hash = hashlen_hash(hashlen_string(NULL, dev_name(dev)));
+> +
+> +		if (hash == (*(u32 *)data))
+> +			return 1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * coresight_get_sink_by_id - returns the sink that matches the id
+> + * @id: Id of the sink to match
+> + *
+> + * The name of a sink is unique, whether it is found on the AMBA bus or
+> + * otherwise.  As such the hash of that name can easily be used to identify
+> + * a sink.
+> + */
+> +struct coresight_device *coresight_get_sink_by_id(u32 id)
+> +{
+> +	struct device *dev = NULL;
+> +
+> +	dev = bus_find_device(&coresight_bustype, NULL, &id,
+> +			      coresight_sink_by_id);
+> +
+> +	return dev ? to_coresight_device(dev) : NULL;
+> +}
+> +
 
-Lines over 80 characters are adjusted according to standards
+The patch looks good to me. As mentioned in the previous patch, we may
+be able to optimize the look up a bit using dev_ext_attribute. Either
+way,
 
-Signed-off-by: Sandesh Kenjana Ashok <kas.sandesh@gmail.com>
----
- drivers/staging/wlan-ng/cfg80211.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/staging/wlan-ng/cfg80211.c b/drivers/staging/wlan-ng/cfg80211.c
-index e5d7def1f366..7687f619ee34 100644
---- a/drivers/staging/wlan-ng/cfg80211.c
-+++ b/drivers/staging/wlan-ng/cfg80211.c
-@@ -373,7 +373,8 @@ static int prism2_scan(struct wiphy *wiphy,
- 			msg2.beaconperiod.data,
- 			ie_buf,
- 			ie_len,
--			(msg2.signal.data - 65536) * 100, /* Conversion to signed type */
-+			/*Conversion to signed type*/
-+			(msg2.signal.data - 65536) * 100,
- 			GFP_KERNEL
- 		);
- 
-@@ -410,7 +411,7 @@ static int prism2_set_wiphy_params(struct wiphy *wiphy, u32 changed)
- 			data = wiphy->rts_threshold;
- 
- 		result = prism2_domibset_uint32(wlandev,
--						DIDMIB_DOT11MAC_OPERATIONTABLE_RTSTHRESHOLD,
-+				DIDMIB_DOT11MAC_OPERATIONTABLE_RTSTHRESHOLD,
- 						data);
- 		if (result) {
- 			err = -EFAULT;
-@@ -425,7 +426,7 @@ static int prism2_set_wiphy_params(struct wiphy *wiphy, u32 changed)
- 			data = wiphy->frag_threshold;
- 
- 		result = prism2_domibset_uint32(wlandev,
--						DIDMIB_DOT11MAC_OPERATIONTABLE_FRAGMENTATIONTHRESHOLD,
-+			DIDMIB_DOT11MAC_OPERATIONTABLE_FRAGMENTATIONTHRESHOLD,
- 						data);
- 		if (result) {
- 			err = -EFAULT;
-@@ -455,7 +456,7 @@ static int prism2_connect(struct wiphy *wiphy, struct net_device *dev,
- 	if (channel) {
- 		chan = ieee80211_frequency_to_channel(channel->center_freq);
- 		result = prism2_domibset_uint32(wlandev,
--						DIDMIB_DOT11PHY_DSSSTABLE_CURRENTCHANNEL,
-+				DIDMIB_DOT11PHY_DSSSTABLE_CURRENTCHANNEL,
- 						chan);
- 		if (result)
- 			goto exit;
-@@ -502,13 +503,13 @@ static int prism2_connect(struct wiphy *wiphy, struct net_device *dev,
- 		 * seems reasonable anyways
- 		 */
- 		result = prism2_domibset_uint32(wlandev,
--						DIDMIB_DOT11SMT_PRIVACYTABLE_PRIVACYINVOKED,
-+				DIDMIB_DOT11SMT_PRIVACYTABLE_PRIVACYINVOKED,
- 						P80211ENUM_truth_true);
- 		if (result)
- 			goto exit;
- 
- 		result = prism2_domibset_uint32(wlandev,
--						DIDMIB_DOT11SMT_PRIVACYTABLE_EXCLUDEUNENCRYPTED,
-+				DIDMIB_DOT11SMT_PRIVACYTABLE_EXCLUDEUNENCRYPTED,
- 						P80211ENUM_truth_true);
- 		if (result)
- 			goto exit;
-@@ -518,13 +519,13 @@ static int prism2_connect(struct wiphy *wiphy, struct net_device *dev,
- 		 * and exclude unencrypted
- 		 */
- 		result = prism2_domibset_uint32(wlandev,
--						DIDMIB_DOT11SMT_PRIVACYTABLE_PRIVACYINVOKED,
-+				DIDMIB_DOT11SMT_PRIVACYTABLE_PRIVACYINVOKED,
- 						P80211ENUM_truth_false);
- 		if (result)
- 			goto exit;
- 
- 		result = prism2_domibset_uint32(wlandev,
--						DIDMIB_DOT11SMT_PRIVACYTABLE_EXCLUDEUNENCRYPTED,
-+				DIDMIB_DOT11SMT_PRIVACYTABLE_EXCLUDEUNENCRYPTED,
- 						P80211ENUM_truth_false);
- 		if (result)
- 			goto exit;
--- 
-2.17.1
-
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
