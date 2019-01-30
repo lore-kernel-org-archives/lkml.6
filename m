@@ -7,65 +7,66 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA9CC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13EC7C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0F862087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:28:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC0372087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:29:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i+nPMG1r"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TJvwOn6Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733033AbfA3S2d (ORCPT
+        id S1733060AbfA3S3L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:28:33 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39156 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732982AbfA3S2d (ORCPT
+        Wed, 30 Jan 2019 13:29:11 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44085 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733036AbfA3S3K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:28:33 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n18so386695lfh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:28:31 -0800 (PST)
+        Wed, 30 Jan 2019 13:29:10 -0500
+Received: by mail-lf1-f66.google.com with SMTP id z13so355509lfe.11
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:29:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/8Po7PAew1Si7r0kpsvoOXR+vsOhQ/wQS/c90BOpM+o=;
-        b=i+nPMG1r3BI/2v4XPoi3Qxk/kyH3G1OXuf0sHhgCbPAbYcXLYROQd0o7vHLB8tIMVG
-         0wHlqSAI/zcWD35MQr0mMRtLSOoWn49YJoMDi8M/DkYsRnrA3ldMNB66BLD0mS2BTcUs
-         +NLvcXdtfk1Kb419xwb8cwo3+bS9vjDC5MH6k=
+        bh=lcw5vt9zbl++2RXOENtvs4XQX4dr/6bQWVR0Pe9YBiI=;
+        b=TJvwOn6QwSVGUiDeb09oklzogw6mAA0r+OL2c9ehh3L//6bdR3mD03hcoKP1ausY9r
+         46Iu8d4YSJIzjEPla7bDxNqxFGy+/Matc4dXOkm/riEjy0+6VPYb5AfyN95joo/dNZ1n
+         Lu4gCpPgrKOiE1Zb7SSLvEjp3sEHx25BMSDKU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/8Po7PAew1Si7r0kpsvoOXR+vsOhQ/wQS/c90BOpM+o=;
-        b=EBRRg1xHvA1Qq2tXbt4kSthayT05zXM0j8nbNASaVYZMH1VKNRSXRwXZ2deFhzZMIS
-         kfHib9Ea7yMbRLS5QYC7lNkJTFFYmoPnMT7QZ1RkqIhJmNqaL/Y8x3VurctHtkv4Spun
-         dW1TL9jjj1JMtZu6dHDMPGIJ2UpWEZXRZTAl1u4q2Oz25CqvZceAMkB8bHd/ZrGA2sz8
-         hLULWm9sE87NG+tWje1A9k1Kpe8q376HVgwvU0V0KKN6YcwGMO7cMaWXGV9vYEtAT63t
-         GjyM3bNAP0qDvOsaHsrZBv0WKnu6ayjcrxUpA0zxo6686pYVg8UiqsYYhTL6/CsVsSCR
-         09oA==
-X-Gm-Message-State: AJcUukcdLu8PU0cdMMzwY/M07wed947IdXcqC6sUwQW9FWCgGSVJBpun
-        BlIDjMin2Y8Vmr06DygL1LnMIFXaJE8=
-X-Google-Smtp-Source: ALg8bN7qetJBwcOrOY0hKDANiZgrWV735w3Sy2g2g6qnBarUkpoXKiFMGiG+Zwtx9Yd5syQBugmD/w==
-X-Received: by 2002:a19:a60c:: with SMTP id p12mr24889856lfe.63.1548872910985;
-        Wed, 30 Jan 2019 10:28:30 -0800 (PST)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id 10sm410529lff.62.2019.01.30.10.28.29
+        bh=lcw5vt9zbl++2RXOENtvs4XQX4dr/6bQWVR0Pe9YBiI=;
+        b=esU5BqKND1OZclWDqo7xZOzBpaGfCFmYLfX7d/5O7JG7doA+fDq09J0QRw/cB5L7kQ
+         G1NYrb91q0y07rx/GdrAWWgUqfUHRPY6VXat14L2Da0bQam8CYq6hXFXIIRmp0HMqQlx
+         Fwmj7QnCbW9DC1tZBcph3UJr/8T4fApgDpM7/unyz+YkrLIjuqCwbd3XJMSEEWNPoS38
+         VwcmvFExr6VxFols02bvE8X5pmCN9PWaI4C4SlHyVBT9g0EXIVp+Gzg6lPFhed1vD0TH
+         VZBRoZB6khQlsV2mI3AfX0KbvxT7kX5zpZMRIifs5kFjgmsaxC9Mx3V+JMvFnmoGW7W6
+         Kj7A==
+X-Gm-Message-State: AJcUukfxrIcy7P5EKfPa415h6QKo8EVTx/T7eKz6VM0Ox8UvrcqJEEmO
+        0Oas8mzGBYYNmpwnMigowRzEASMJzpg=
+X-Google-Smtp-Source: ALg8bN5U6aLSEtAmPzYdnguWcBRj+5kzZuYv7jiivISVEmANoZDtqwAw8Pm9AYN7jizXusS8emd/rg==
+X-Received: by 2002:a19:cbcc:: with SMTP id b195mr24410163lfg.117.1548872948602;
+        Wed, 30 Jan 2019 10:29:08 -0800 (PST)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id s17sm461187lfk.9.2019.01.30.10.29.07
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 10:28:30 -0800 (PST)
-Received: by mail-lf1-f45.google.com with SMTP id u18so359503lff.10
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:28:29 -0800 (PST)
-X-Received: by 2002:a19:7352:: with SMTP id o79mr25471998lfc.104.1548872909383;
- Wed, 30 Jan 2019 10:28:29 -0800 (PST)
+        Wed, 30 Jan 2019 10:29:07 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id s5-v6so389042ljd.12
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:29:07 -0800 (PST)
+X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr26439768ljc.97.1548872946625;
+ Wed, 30 Jan 2019 10:29:06 -0800 (PST)
 MIME-Version: 1.0
-References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-4-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1546314952-15990-4-git-send-email-yong.wu@mediatek.com>
+References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-6-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1546314952-15990-6-git-send-email-yong.wu@mediatek.com>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 30 Jan 2019 10:27:52 -0800
-X-Gmail-Original-Message-ID: <CAE=gft6AouN2DDzgF6d4f52n+mqiOyeeKg1=Og+=YxQsMoBnLw@mail.gmail.com>
-Message-ID: <CAE=gft6AouN2DDzgF6d4f52n+mqiOyeeKg1=Og+=YxQsMoBnLw@mail.gmail.com>
-Subject: Re: [PATCH v5 03/20] memory: mtk-smi: Use a general config_port interface
+Date:   Wed, 30 Jan 2019 10:28:30 -0800
+X-Gmail-Original-Message-ID: <CAE=gft6KiXmP2Dm8ksnATUcy8Mhnfo8wL=SVpwGZrC0M1CoxpA@mail.gmail.com>
+Message-ID: <CAE=gft6KiXmP2Dm8ksnATUcy8Mhnfo8wL=SVpwGZrC0M1CoxpA@mail.gmail.com>
+Subject: Re: [PATCH v5 05/20] iommu/io-pgtable-arm-v7s: Add paddr_to_iopte and
+ iopte_to_paddr helpers
 To:     Yong Wu <yong.wu@mediatek.com>
 Cc:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -88,19 +89,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Dec 31, 2018 at 7:57 PM Yong Wu <yong.wu@mediatek.com> wrote:
 >
-> The config_port of mt2712 and mt8183 are the same. Use a general
-> config_port interface instead.
->
-> In addition, in mt2712, larb8 and larb9 are the bdpsys larbs which
-> are not the normal larb, their register space are different from the
-> normal one. thus, we can not call the general config_port. In mt8183,
-> IPU0/1 and CCU connect with smi-common directly, they also are not
-> the normal larb. Hence, we add a "larb_direct_to_common_mask" for these
-> larbs which connect to smi-commmon directly.
->
-> This is also a preparing patch for adding mt8183 SMI support.
+> Add two helper functions: paddr_to_iopte and iopte_to_paddr.
 >
 > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
 Reviewed-by: Evan Green <evgreen@chromium.org>
