@@ -2,66 +2,86 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 078FAC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33645C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D365520870
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11DD420870
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:13:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732873AbfA3SNI (ORCPT
+        id S1732886AbfA3SNZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:13:08 -0500
-Received: from mga02.intel.com ([134.134.136.20]:25848 "EHLO mga02.intel.com"
+        Wed, 30 Jan 2019 13:13:25 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:40016 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727473AbfA3SNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:13:08 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 10:13:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,541,1539673200"; 
-   d="scan'208";a="113978754"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga008.jf.intel.com with ESMTP; 30 Jan 2019 10:13:07 -0800
-Date:   Wed, 30 Jan 2019 11:12:22 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org
-Subject: Re: [LSF/MM TOPIC] memory reclaim with NUMA rebalancing
-Message-ID: <20190130181221.GA19525@localhost.localdomain>
-References: <20190130174847.GD18811@dhcp22.suse.cz>
+        id S1727473AbfA3SNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 13:13:25 -0500
+Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.205])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gouMO-0007KC-FJ; Wed, 30 Jan 2019 11:13:17 -0700
+To:     Jason Gunthorpe <jgg@mellanox.com>, Christoph Hellwig <hch@lst.de>
+Cc:     Jerome Glisse <jglisse@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+References: <20190129174728.6430-1-jglisse@redhat.com>
+ <20190129174728.6430-4-jglisse@redhat.com>
+ <ae928aa5-a659-74d5-9734-15dfefafd3ea@deltatee.com>
+ <20190129191120.GE3176@redhat.com> <20190129193250.GK10108@mellanox.com>
+ <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
+ <20190129205827.GM10108@mellanox.com> <20190130080208.GC29665@lst.de>
+ <20190130174424.GA17080@mellanox.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <bcbdfae6-cfc6-c34f-4ff2-7bb9a08f38af@deltatee.com>
+Date:   Wed, 30 Jan 2019 11:13:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190130174847.GD18811@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20190130174424.GA17080@mellanox.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.80.180
+X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jglisse@redhat.com, hch@lst.de, jgg@mellanox.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 06:48:47PM +0100, Michal Hocko wrote:
-> Hi,
-> I would like to propose the following topic for the MM track. Different
-> group of people would like to use NVIDMMs as a low cost & slower memory
-> which is presented to the system as a NUMA node. We do have a NUMA API
-> but it doesn't really fit to "balance the memory between nodes" needs.
-> People would like to have hot pages in the regular RAM while cold pages
-> might be at lower speed NUMA nodes. We do have NUMA balancing for
-> promotion path but there is notIhing for the other direction. Can we
-> start considering memory reclaim to move pages to more distant and idle
-> NUMA nodes rather than reclaim them? There are certainly details that
-> will get quite complicated but I guess it is time to start discussing
-> this at least.
 
-Yes, thanks for the proposal. I would be very interested in this
-discussion for MM. I think some of the details for determining such a
-migration path are related to the heterogeneous memory attributes I'm
-currently trying to export.
+
+On 2019-01-30 10:44 a.m., Jason Gunthorpe wrote:
+> I don't see why a special case with a VMA is really that different.
+
+Well one *really* big difference is the VMA changes necessarily expose
+specialized new functionality to userspace which has to be supported
+forever and may be difficult to change. The p2pdma code is largely
+in-kernel and we can rework and change the interfaces all we want as we
+improve our struct page infrastructure.
+
+I'd also argue that p2pdma isn't nearly as specialized as this VMA thing
+and can be used pretty generically to do other things. Though, the other
+ideas we've talked about doing are pretty far off and may have other
+challenges.
+
+Logan
