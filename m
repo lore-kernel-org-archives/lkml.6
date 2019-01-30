@@ -2,164 +2,85 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8D7C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3194FC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1F52084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:28:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548854933;
-	bh=qavFVLHOnztYwoAr490K7QpDJg81d45YuBOQPHprG6k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=IzXocQG0zjg7VKP2Ez32jdS1ABCMSqXAr3PAXEfbJezCsD9HlPlF/8zpd9TBMXFk9
-	 GalfRcdS263IZqYkZPQxgoBGKmBoGgomVurkk7nSu00wTZUTc2gv4wAU+pE8pOieNY
-	 /9lfJBL3rU83b5CBbgqvjdO+rK0H09maL2s9n5KM=
+	by mail.kernel.org (Postfix) with ESMTP id 0E4BE20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:29:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731003AbfA3N2v (ORCPT
+        id S1731026AbfA3N3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:28:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51786 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726233AbfA3N2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:28:51 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF82920989;
-        Wed, 30 Jan 2019 13:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548854929;
-        bh=qavFVLHOnztYwoAr490K7QpDJg81d45YuBOQPHprG6k=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=udQRjtYqYAV3tiBLoPP6EeR8oRLUeKGt9IiKjpyIDwcCZkXEvDg5yzIJQhuXwJ05m
-         R2QWjJ/P14lwKTeinjzUVce5lp3havNOTTOSW1jy+uUl3jti/Q5VvVHQI4xVGyaqhk
-         RhEJnhFTTMANOINH4gdtgDb3PKmP/x2g6WHh5MoQ=
-Date:   Wed, 30 Jan 2019 14:28:38 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        "Marek Vasut" <marek.vasut@gmail.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/5] mtd: nand: Always store info about bad block
- markers in chip struct
-Message-ID: <20190130142838.5590f8b4@bbrezillon>
-In-Reply-To: <20190130130111.32724-2-frieder.schrempf@kontron.de>
-References: <20190130130111.32724-1-frieder.schrempf@kontron.de>
-        <20190130130111.32724-2-frieder.schrempf@kontron.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 30 Jan 2019 08:29:32 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:47191 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbfA3N3c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 08:29:32 -0500
+Received: from [2a01:598:b890:92b7:fc90:b8ff:fed0:1fb6] (helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gopvj-00011j-4l; Wed, 30 Jan 2019 14:29:27 +0100
+Date:   Wed, 30 Jan 2019 14:29:21 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Sebastian Sewior <bigeasy@linutronix.de>
+cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
+        Stefan Liebler <stli@linux.ibm.com>
+Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggered
+In-Reply-To: <20190130132420.spwrq2d4oxeydk5s@linutronix.de>
+Message-ID: <alpine.DEB.2.21.1901301428390.5537@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1901291012330.1669@nanos.tec.linutronix.de> <20190129102409.GB26906@osiris> <20190129103557.GF28485@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1901291402410.1513@nanos.tec.linutronix.de> <20190129132303.GE26906@osiris>
+ <20190129151058.GG26906@osiris> <20190129171653.ycl64psq2liy5o5c@linutronix.de> <20190130094913.GC5299@osiris> <alpine.DEB.2.21.1901301303320.5537@nanos.tec.linutronix.de> <20190130125955.GD5299@osiris> <20190130132420.spwrq2d4oxeydk5s@linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323329-526666077-1548854967=:5537"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019 13:01:44 +0000
-Schrempf Frieder <frieder.schrempf@kontron.de> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+--8323329-526666077-1548854967=:5537
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+
+On Wed, 30 Jan 2019, Sebastian Sewior wrote:
+
+> On 2019-01-30 13:59:55 [+0100], Heiko Carstens wrote:
+> > Last lines of trace below (full log attached):
 > 
-> The information about where the manufacturer puts the bad block
-> markers inside the bad block and in the OOB data is stored in
-> different places. Let's move this information to nand_chip.options
-> and nand_chip.badblockpos.
+>             <...>-56956 [005] ....   658.931364: handle_futex_death: uaddr: 3ff9e880c58 pi: 1
+> …
+>             <...>-56956 [005] ....   658.931369: handle_futex_death: uaddr: 3ff9e8808c0 success
+>             <...>-56956 [005] ....   658.931370: sched_process_exit: comm=ld64.so.1 pid=56956 prio=120
 > 
-> As this chip-specific information is not directly related to the
-> bad block table (BBT), we also rename the flags to NAND_BBM_*.
+> not including 3ff9e880140
 > 
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-> ---
->  drivers/mtd/nand/onenand/onenand_base.c |  2 +-
->  drivers/mtd/nand/onenand/onenand_bbt.c  |  2 +-
->  drivers/mtd/nand/raw/nand_amd.c         |  2 +-
->  drivers/mtd/nand/raw/nand_base.c        | 12 ++++++------
->  drivers/mtd/nand/raw/nand_bbt.c         |  4 ++--
->  drivers/mtd/nand/raw/nand_esmt.c        |  2 +-
->  drivers/mtd/nand/raw/nand_hynix.c       |  4 ++--
->  drivers/mtd/nand/raw/nand_macronix.c    |  2 +-
->  drivers/mtd/nand/raw/nand_micron.c      |  2 +-
->  drivers/mtd/nand/raw/nand_samsung.c     |  4 ++--
->  drivers/mtd/nand/raw/nand_toshiba.c     |  2 +-
->  drivers/mtd/nand/raw/sh_flctl.c         |  4 ++--
->  include/linux/mtd/bbm.h                 | 14 +-------------
->  include/linux/mtd/rawnand.h             | 15 +++++++++++++++
-
-Might be better to split that in 2 patches:
-- update onenand logic
-- update rawnand logic
-
->  14 files changed, 37 insertions(+), 34 deletions(-)
+>             <...>-56956 [005] ....   658.931370: sched_process_exit: comm=ld64.so.1 pid=56956 prio=120
 > 
-> diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/nand/onenand/onenand_base.c
-> index 4ca4b194e7d7..d6701b8f031f 100644
-> --- a/drivers/mtd/nand/onenand/onenand_base.c
-> +++ b/drivers/mtd/nand/onenand/onenand_base.c
-> @@ -2458,7 +2458,7 @@ static int onenand_default_block_markbad(struct mtd_info *mtd, loff_t ofs)
->                  bbm->bbt[block >> 2] |= 0x01 << ((block & 0x03) << 1);
->  
->          /* We write two bytes, so we don't have to mess with 16-bit access */
-> -        ofs += mtd->oobsize + (bbm->badblockpos & ~0x01);
-> +        ofs += mtd->oobsize + (this->badblockpos & ~0x01);
+>             <...>-56496 [001] ....   658.932404: sys_futex(uaddr: 3ff9e880140, op: 6, val: 1, utime: 0, uaddr2: 5, val3: 0)
+>             <...>-56496 [001] ....   658.932405: attach_to_pi_owner: Missing pid 56956
+>             <...>-56496 [001] ....   658.932406: handle_exit_race: uval2 vs uval 8000de7c vs 8000de7c (-1)
+>             <...>-56496 [001] ....   658.932501: sys_futex -> 0xfffffffffffffffd
+> …
+>             <...>-56496 [001] ....   659.020750: handle_futex_death: uaddr: 3ff9e880140 pi: 1
+>             <...>-56496 [001] ....   659.020750: handle_futex_death: uaddr: 3ff9e880140 uval: 8000de7c
+>             <...>-56496 [001] ....   659.020750: handle_futex_death: uaddr: 3ff9e880140 success
+> 
+> and here we have it.
 
-Looks like the ->badblockpos field does not exist in struct
-onenand_chip, which means you didn't compile test this part ;-).
-
->  	/* FIXME : What to do when marking SLC block in partition
->  	 * 	   with MLC erasesize? For now, it is not advisable to
->  	 *	   create partitions containing both SLC and MLC regions.
-> diff --git a/drivers/mtd/nand/onenand/onenand_bbt.c b/drivers/mtd/nand/onenand/onenand_bbt.c
-> index dde20487937d..880b0abd36c8 100644
-> --- a/drivers/mtd/nand/onenand/onenand_bbt.c
-> +++ b/drivers/mtd/nand/onenand/onenand_bbt.c
-> @@ -191,7 +191,7 @@ static int onenand_scan_bbt(struct mtd_info *mtd, struct nand_bbt_descr *bd)
->  		return -ENOMEM;
->  
->  	/* Set the bad block position */
-> -	bbm->badblockpos = ONENAND_BADBLOCK_POS;
-> +	this->badblockpos = NAND_BBM_POS_ONENAND;
-
-This should be done in onenand_base.c not onenand_bbt.c.
-
->  
->  	/* Set erase shift */
->  	bbm->bbt_erase_shift = this->erase_shift;
-
-...
-
-> diff --git a/drivers/mtd/nand/raw/nand_bbt.c b/drivers/mtd/nand/raw/nand_bbt.c
-> index 1b722fe9213c..862eaa3a0552 100644
-> --- a/drivers/mtd/nand/raw/nand_bbt.c
-> +++ b/drivers/mtd/nand/raw/nand_bbt.c
-> @@ -466,7 +466,7 @@ static int create_bbt(struct nand_chip *this, uint8_t *buf,
->  
->  	pr_info("Scanning device for bad blocks\n");
->  
-> -	if (bd->options & NAND_BBT_SCAN2NDPAGE)
-> +	if (this->options & NAND_BBM_SECONDPAGE)
->  		numpages = 2;
->  	else
->  		numpages = 1;
-> @@ -487,7 +487,7 @@ static int create_bbt(struct nand_chip *this, uint8_t *buf,
->  		from = (loff_t)startblock << this->bbt_erase_shift;
->  	}
->  
-> -	if (this->bbt_options & NAND_BBT_SCANLASTPAGE)
-> +	if (this->bbt_options & NAND_BBM_LASTPAGE)
-
-You're not checking the right field here:
-
-	if (this->options & NAND_BBM_LASTPAGE)
-
->  		from += mtd->erasesize - (mtd->writesize * numpages);
->  
->  	for (i = startblock; i < numblocks; i++) {
+Bah. I was looking at the wrong trace. /me goes to give a talk and stares
+at that mess later.
+--8323329-526666077-1548854967=:5537--
