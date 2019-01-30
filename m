@@ -2,152 +2,142 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFD9C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B56F1C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0D1920989
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89DF120989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:55:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UKdQOyNv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733264AbfA3SxF (ORCPT
+        id S2387397AbfA3Sz4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:53:05 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:42993 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbfA3SxF (ORCPT
+        Wed, 30 Jan 2019 13:55:56 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46123 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728446AbfA3Szz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:53:05 -0500
-Received: by mail-io1-f70.google.com with SMTP id a2so402956ioq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:53:04 -0800 (PST)
+        Wed, 30 Jan 2019 13:55:55 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v15-v6so455434ljh.13
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:55:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RDw5sWCs3kR4DAIs/UO/8X+8choKwOZ5wTyIJOu2aRs=;
+        b=UKdQOyNvx/BWDWSTNPC6tCnq5oeqeUJiU+8c1WMG5VPWiNVOZC3xob/9/lTjsb931f
+         +ByBZtzXD6pRNIJ/Q8XS90VMonipSiLwqgvq1+UJ3AeHowdf/7G0U+7uZZut/QLelldH
+         nn2AIwgWxdIPm1lA1Uj/aMmybZkOLbE2hYYIQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=vOcTGncngWsW3rYNwCIuTM9LGApBnxFnXzN6J6+oUhs=;
-        b=awqdrF5A6qdZK3wvOPo7wFq3SDnlKdfhQIqRD/yL3Ic2jyLcXhLSCMTv2LUO1FuBmR
-         bXvaqwrailtewADUBP9FVBsgQ0cB12beMehB8GWyWVsFJuUPeTmm3SodzwTF5yKwJmmo
-         L+S6paiHbBcL6qWF3Aeha5/x4jf7VD2b8qFAOKrC3em5pLNNlcgbV9EomC61ldHhopYL
-         J6jzCGhMlZ6XR3Yn8Qmnxl4ssgOdxXkChKyrBo1cDlHhtIWwWuzyF6cagTfQzyxztW3t
-         46UGbhXLNp4AUG/flUAnskFXyHZCV4T6VSyDLMenxWXZOxDSJ7QG2o39lgEn4XArgPpB
-         84qQ==
-X-Gm-Message-State: AHQUAub+4LIA5Usynb89nsx3uK0PxXcslw8XBykZHBU9DkdHzR1s6adW
-        HZ/AE5DFwafNJPIUP//mI/nSjbz7Z5kbYxyYqLaNZFDDLEWP
-X-Google-Smtp-Source: AHgI3IYFlHfHT+zxkK36+K8SMD4wyVONsEmq4kUDAjArdvgqM9LEr8aPa6iX93I9tSmuLGl/PU1/wEf8QneavaPksulUOJlNU2dN
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RDw5sWCs3kR4DAIs/UO/8X+8choKwOZ5wTyIJOu2aRs=;
+        b=IIlohve8bm8KKwRx4gMCcRuYHg2MPxVemYTD7yrP8LIEwgl4TWu2FsGqoD5B9cRbs6
+         5dIIb6fmVyPjRik+6yd7UWNbc2XeXCQtO4YFFtbOM5ej6LciPy0kTs+SegLAI3qKARgi
+         xtOqxFiBEEW6hIPGAGdQTme5hTZGXth1zQiFYRyx//OcZ54FGKsck0w76cNvbzHeikqi
+         C6sb7q2IJkkhWuvlN9Mpxm7LIJIqTC/tgJNpohTHsu6so/Sxs+BTHOcrfeHSHr2hzwoQ
+         GPe5u4UI7VuGcr7B8Y7c4ly+HaswGXZ/hf4xcj1/Wf5t/sqYboP3L+aGYrm19p4udsDf
+         ychQ==
+X-Gm-Message-State: AHQUAubOpkT6K1Z1zdRPRTpmajUaOOnR6fy3E99s8NZFaYEOIrkl3fUZ
+        DSL6rVmu2ooVm+IY0/3T6ZcFcQ7BriQ=
+X-Google-Smtp-Source: AHgI3IbYAr1VbPP8YXQwXTqnJCR4b4GYXHPkY7U1+bcgRAGlhHeEDx+4WdpiABzteaGCaXfvkUbNRA==
+X-Received: by 2002:a2e:3308:: with SMTP id d8-v6mr9611280ljc.38.1548874553001;
+        Wed, 30 Jan 2019 10:55:53 -0800 (PST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id y131sm415979lfc.43.2019.01.30.10.55.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 10:55:52 -0800 (PST)
+Received: by mail-lj1-f177.google.com with SMTP id t18-v6so529526ljd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:55:52 -0800 (PST)
+X-Received: by 2002:a2e:7011:: with SMTP id l17-v6mr24947251ljc.147.1548873036569;
+ Wed, 30 Jan 2019 10:30:36 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f614:: with SMTP id n20mr7145355ioh.15.1548874383934;
- Wed, 30 Jan 2019 10:53:03 -0800 (PST)
-Date:   Wed, 30 Jan 2019 10:53:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000074cbc30580b16bc3@google.com>
-Subject: general protection fault in relay_open_buf
-From:   syzbot <syzbot+16c3a70e1e9b29346c43@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, ebiggers@google.com,
-        jrdr.linux@gmail.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, rientjes@google.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-10-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1546314952-15990-10-git-send-email-yong.wu@mediatek.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 30 Jan 2019 10:30:00 -0800
+X-Gmail-Original-Message-ID: <CAE=gft7TnvSDskOmeXp4Z-D45uwOfwyiJo0CYY=Q93NR0PvRnA@mail.gmail.com>
+Message-ID: <CAE=gft7TnvSDskOmeXp4Z-D45uwOfwyiJo0CYY=Q93NR0PvRnA@mail.gmail.com>
+Subject: Re: [PATCH v5 09/20] iommu/mediatek: Refine protect memory definition
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
+        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
+        Nicolas Boichat <drinkcat@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Dec 31, 2018 at 7:58 PM Yong Wu <yong.wu@mediatek.com> wrote:
+>
+> The protect memory setting is a little different in the different SoCs.
+> In the register REG_MMU_CTRL_REG(0x110), the TF_PROT(translation fault
+> protect) shift bit is normally 4 while it shift 5 bits only in the
+> mt8173. This patch delete the complex MACRO and use a common if-else
+> instead.
+>
+> Also, use "F_MMU_TF_PROT_TO_PROGRAM_ADDR" instead of the hard code(2)
+> which means the M4U will output the dirty data to the programmed
+> address that we allocated dynamically when translation fault occurs.
+>
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> ---
+> @Nicalos, I don't put it in the plat_data since only the previous mt8173
+> shift 5. As I know, the latest SoC always use the new setting like mt2712
+> and mt8183. Thus, I think it is unnecessary to put it in plat_data and
+> let all the latest SoC set it. Hence, I still keep "== mt8173" for this
+> like the reg REG_MMU_CTRL_REG.
+> ---
+>  drivers/iommu/mtk_iommu.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+> index eca1536..35a1263 100644
+> --- a/drivers/iommu/mtk_iommu.c
+> +++ b/drivers/iommu/mtk_iommu.c
+> @@ -53,11 +53,7 @@
+>
+>  #define REG_MMU_CTRL_REG                       0x110
+>  #define F_MMU_PREFETCH_RT_REPLACE_MOD          BIT(4)
+> -#define F_MMU_TF_PROTECT_SEL_SHIFT(data) \
+> -       ((data)->plat_data->m4u_plat == M4U_MT2712 ? 4 : 5)
+> -/* It's named by F_MMU_TF_PROT_SEL in mt2712. */
+> -#define F_MMU_TF_PROTECT_SEL(prot, data) \
+> -       (((prot) & 0x3) << F_MMU_TF_PROTECT_SEL_SHIFT(data))
+> +#define F_MMU_TF_PROT_TO_PROGRAM_ADDR          2
+>
+>  #define REG_MMU_IVRP_PADDR                     0x114
+>
+> @@ -521,9 +517,11 @@ static int mtk_iommu_hw_init(const struct mtk_iommu_data *data)
+>                 return ret;
+>         }
+>
+> -       regval = F_MMU_TF_PROTECT_SEL(2, data);
+>         if (data->plat_data->m4u_plat == M4U_MT8173)
+> -               regval |= F_MMU_PREFETCH_RT_REPLACE_MOD;
+> +               regval = F_MMU_PREFETCH_RT_REPLACE_MOD |
+> +                         (F_MMU_TF_PROT_TO_PROGRAM_ADDR << 5);
+> +       else
+> +               regval = F_MMU_TF_PROT_TO_PROGRAM_ADDR << 4;
 
-syzbot found the following crash on:
-
-HEAD commit:    02495e76ded5 Add linux-next specific files for 20190130
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12cf10df400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a2b2e9c0bc43c14d
-dashboard link: https://syzkaller.appspot.com/bug?extid=16c3a70e1e9b29346c43
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13266698c00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1715bb64c00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+16c3a70e1e9b29346c43@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8092 Comm: syz-executor405 Not tainted 5.0.0-rc4-next-20190130  
-#22
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:relay_set_buf_dentry kernel/relay.c:412 [inline]
-RIP: 0010:relay_open_buf.part.0+0x7cb/0xb40 kernel/relay.c:458
-Code: c1 ea 03 80 3c 02 00 0f 85 4c 03 00 00 49 8d 7d 58 4d 89 ac 24 90 00  
-00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 1b 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-RSP: 0018:ffff888088897670 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffff88809f2b3080 RCX: 1ffff110110c6919
-RDX: 0000000000000008 RSI: ffffffff81833b80 RDI: 0000000000000047
-RBP: ffff8880888976e8 R08: 0000000000000006 R09: ffff8880886348c8
-R10: ffff888088634000 R11: 0000000000000000 R12: ffff88809f5ef580
-R13: ffffffffffffffef R14: 0000000000000000 R15: 0000000000000000
-FS:  00000000021c4880(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cf090 CR3: 00000000a4ccd000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  relay_open_buf kernel/relay.c:447 [inline]
-  relay_open kernel/relay.c:597 [inline]
-  relay_open+0x5f3/0xaf0 kernel/relay.c:561
-  do_blk_trace_setup+0x50d/0xdb0 kernel/trace/blktrace.c:532
-  __blk_trace_setup+0xe3/0x190 kernel/trace/blktrace.c:577
-  blk_trace_ioctl+0x170/0x300 kernel/trace/blktrace.c:716
-  blkdev_ioctl+0x141/0x2120 block/ioctl.c:591
-  block_ioctl+0xee/0x130 fs/block_dev.c:1914
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0x107b/0x17d0 fs/ioctl.c:696
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444af9
-Code: e8 cc ab 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 db ce fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd22903da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000444af9
-RDX: 0000000020000040 RSI: 00000000c0481273 RDI: 0000000000000003
-RBP: 000000000000d8fa R08: 00000000021c4880 R09: 00000000004002e0
-R10: 000000000000000f R11: 0000000000000246 R12: 0000000000401e60
-R13: 0000000000401ef0 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace d79fd6b85e15805c ]---
-RIP: 0010:relay_set_buf_dentry kernel/relay.c:412 [inline]
-RIP: 0010:relay_open_buf.part.0+0x7cb/0xb40 kernel/relay.c:458
-Code: c1 ea 03 80 3c 02 00 0f 85 4c 03 00 00 49 8d 7d 58 4d 89 ac 24 90 00  
-00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 1b 03 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-RSP: 0018:ffff888088897670 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffff88809f2b3080 RCX: 1ffff110110c6919
-RDX: 0000000000000008 RSI: ffffffff81833b80 RDI: 0000000000000047
-RBP: ffff8880888976e8 R08: 0000000000000006 R09: ffff8880886348c8
-R10: ffff888088634000 R11: 0000000000000000 R12: ffff88809f5ef580
-R13: ffffffffffffffef R14: 0000000000000000 R15: 0000000000000000
-FS:  00000000021c4880(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cf090 CR3: 00000000a4ccd000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+I agree with Nicolas with regard to not having the random 4 and 5
+sprinkled in the function.
+-Evan
