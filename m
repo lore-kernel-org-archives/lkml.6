@@ -2,137 +2,97 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CA7C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F1CC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0817218D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:35:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4994820869
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 18:35:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="4Bxx/y76"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SsQZ4kix"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733126AbfA3Sff (ORCPT
+        id S1733140AbfA3Sfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:35:35 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:60862 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733050AbfA3Sff (ORCPT
+        Wed, 30 Jan 2019 13:35:44 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37223 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733050AbfA3Sfo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:35:35 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0UIT0lt075111;
-        Wed, 30 Jan 2019 18:35:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=ACWEh6HzBHmJZCdYbSI2j5nHsH2aiDUTZoXaRxS6Trs=;
- b=4Bxx/y76EXVwScZPSGQuTfKPiJKcfDZEtUUGcw62nQW3uR8mo9khoF3bRuOCzjkWMKoi
- +MauwVUxNx29FZJBOEKtP7ns8zjJxbYLtYyXQl9gRFT4V4tKJMwaumt4K2N6v7hqYGoE
- jmyXlzx7poziEP1aCjQth13xJ/8yXp6xhTSR66HYJDnOt51KeqZ9aME1WpDi4Y5+V4Ar
- BuPh81crZLSH3ZM8sGv1dmhFqx535Xv0eV3GETNZ4Db5U3gD7prWsnndshLi6AlHbSvq
- 6wslai1g9cVx+BtPaSbFIf2bIifkK3VEYrjfT3Nkyepvfavc7xcz/vKlJpP9LILdTcOa mg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2q8g6rc908-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jan 2019 18:35:17 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0UIZGQh005864
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Jan 2019 18:35:16 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0UIZGQe026214;
-        Wed, 30 Jan 2019 18:35:16 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 30 Jan 2019 10:35:15 -0800
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id E8DB66A05F7; Wed, 30 Jan 2019 13:35:13 -0500 (EST)
-Date:   Wed, 30 Jan 2019 13:35:13 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jfehlig@suse.com,
-        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de,
-        Thomas.Lendacky@amd.com
-Subject: Re: [PATCH 0/5 v5] Fix virtio-blk issue with SWIOTLB
-Message-ID: <20190130183513.GB27284@char.us.oracle.com>
-References: <20190130164007.26497-1-joro@8bytes.org>
+        Wed, 30 Jan 2019 13:35:44 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y11so411672lfj.4
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:35:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AgDn3w54X8Bk6az8BYFqZSk6Fe3enX65M4AMBH8XrNw=;
+        b=SsQZ4kixnoSxfSuaoIuMgqaZLJDcbUnwWAd/PcuSMGF2HaTTXdVhB+7tRqWfXYnEoF
+         ZtqSQ+s+i840ezBg8svi6ps5YDISOnFZn1JQsQCAtxGsDEGYrLnEIeCo2IzVtb+V4a3R
+         HYxWErI31o6esVYwtfKwmzdSLvgR0Vn2UKWLo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AgDn3w54X8Bk6az8BYFqZSk6Fe3enX65M4AMBH8XrNw=;
+        b=gvDanoRckJqVj9BCDveORTy0cNf/29/QVY4gi5IV91yQSR03vKo3UkLmrBUVKi+WnP
+         dxwHfFBGWe/bhD1++n+m++WHCCwv8TMREpu7pfEF4ImaK4TR69nzymz4orNwWJT4UgvO
+         Km+50do9jsofctdmURg+zGc0ngERa5Wm6bQoIMRIsJBo04X8KTArgOtjiomcNbRUT8Dy
+         40Hk5mtNhg8dhSEW8WlRnE6PEBIuilQKE8orV3AySc9vmyp7A492hHuEoQaYqHG8kWli
+         Q6nl6VzGWJaW7QSVkc8rOK6t/7Ya8WCFyyR0hYxyx6R1+wPUqupdoRhMSL87zWkQU+Nv
+         DVNg==
+X-Gm-Message-State: AJcUukf7B1+vCdJncolSzuWUjW9/qqwkV+7LTXO+JL1quHrOJkx2arhu
+        tmLUHmnfMYknlsK4WZcXI9gifd6LMWY=
+X-Google-Smtp-Source: ALg8bN7nQWIy6my0HE5GgBkeD2I0Tu+mTMNJj4VV59xJXl2Q37ePzveiY7W3G3oN1wgjle4OqPaMWA==
+X-Received: by 2002:a19:7018:: with SMTP id h24mr24308833lfc.162.1548873342166;
+        Wed, 30 Jan 2019 10:35:42 -0800 (PST)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id f8sm427241lfb.2.2019.01.30.10.35.42
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 10:35:42 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id a8so402985lfk.5
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 10:35:42 -0800 (PST)
+X-Received: by 2002:a19:8c1b:: with SMTP id o27mr23773604lfd.90.1548872984375;
+ Wed, 30 Jan 2019 10:29:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190130164007.26497-1-joro@8bytes.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9152 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1901300140
+References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com> <1546314952-15990-8-git-send-email-yong.wu@mediatek.com>
+In-Reply-To: <1546314952-15990-8-git-send-email-yong.wu@mediatek.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 30 Jan 2019 10:29:08 -0800
+X-Gmail-Original-Message-ID: <CAE=gft7ZVjJH-9f=ryoiegkjt+=Tnig=DRhc0z_5j=O7v4dQxg@mail.gmail.com>
+Message-ID: <CAE=gft7ZVjJH-9f=ryoiegkjt+=Tnig=DRhc0z_5j=O7v4dQxg@mail.gmail.com>
+Subject: Re: [PATCH v5 07/20] iommu/mediatek: Add bclk can be supported optionally
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
+        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
+        Nicolas Boichat <drinkcat@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 05:40:02PM +0100, Joerg Roedel wrote:
-> Hi,
-> 
-> here is the next version of this patch-set. Previous
-> versions can be found here:
-> 
-> 	V1: https://lore.kernel.org/lkml/20190110134433.15672-1-joro@8bytes.org/
-> 
-> 	V2: https://lore.kernel.org/lkml/20190115132257.6426-1-joro@8bytes.org/
-> 
-> 	V3: https://lore.kernel.org/lkml/20190123163049.24863-1-joro@8bytes.org/
-> 
-> 	V4: https://lore.kernel.org/lkml/20190129084342.26030-1-joro@8bytes.org/
-> 
-> The problem solved here is a limitation of the SWIOTLB implementation,
-> which does not support allocations larger than 256kb.  When the
-> virtio-blk driver tries to read/write a block larger than that, the
-> allocation of the dma-handle fails and an IO error is reported.
-> 
-> Changes to v4 are:
-> 
-> 	- Added Reviewed-by tags from Christoph
-> 
-> 	- Added missing EXPORT_SYMBOL(_GPL) lines
-> 
-> Please review.
+On Mon, Dec 31, 2018 at 7:57 PM Yong Wu <yong.wu@mediatek.com> wrote:
+>
+> In some SoCs, M4U doesn't have its "bclk", it will use the EMI
+> clock instead which has always been enabled when entering kernel.
+>
+> This also is a preparing patch for mt8183.
+>
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 
-I can put it in my tree and send it to Linus .. unless folks want
-to do it through a different tree?
-
-
-> 
-> Thanks,
-> 
-> 	Joerg
-> Joerg Roedel (5):
->   swiotlb: Introduce swiotlb_max_mapping_size()
->   swiotlb: Add is_swiotlb_active() function
->   dma: Introduce dma_max_mapping_size()
->   virtio: Introduce virtio_max_dma_size()
->   virtio-blk: Consider virtio_max_dma_size() for maximum segment size
-> 
->  Documentation/DMA-API.txt    |  8 ++++++++
->  drivers/block/virtio_blk.c   | 10 ++++++----
->  drivers/virtio/virtio_ring.c | 11 +++++++++++
->  include/linux/dma-mapping.h  | 16 ++++++++++++++++
->  include/linux/swiotlb.h      | 11 +++++++++++
->  include/linux/virtio.h       |  2 ++
->  kernel/dma/direct.c          | 12 ++++++++++++
->  kernel/dma/swiotlb.c         | 14 ++++++++++++++
->  8 files changed, 80 insertions(+), 4 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+Reviewed-by: Evan Green <evgreen@chromium.org>
