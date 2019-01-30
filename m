@@ -2,122 +2,248 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3974BC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E34C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3AA22184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:12:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ktIo+OeL"
+	by mail.kernel.org (Postfix) with ESMTP id 8721B2184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 13:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730932AbfA3NMb (ORCPT
+        id S1730972AbfA3NOI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 08:12:31 -0500
-Received: from mail-eopbgr70084.outbound.protection.outlook.com ([40.107.7.84]:48780
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725768AbfA3NMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 08:12:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o8BbTiEmfTjgib/yt8bvr/LhNAB7SHb796LPPgcvNzw=;
- b=ktIo+OeLQERBFiQFrPt1XgfmJ8ikNp2wjN6rf4SBNCrdCVI65N9uTVevvVnbOlbxU/dO9W4nyU99CSthE+YORix8LroQk0Clqx48iaI/T6SSU1IVUc/OO8SH4N16h+I04Frr7T1voxKVLBHW8Sa6YSlXxv62BUHHd4hakMkxrOE=
-Received: from VI1PR0402MB3357.eurprd04.prod.outlook.com (52.134.1.18) by
- VI1PR0402MB3325.eurprd04.prod.outlook.com (52.134.7.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.17; Wed, 30 Jan 2019 13:12:25 +0000
-Received: from VI1PR0402MB3357.eurprd04.prod.outlook.com
- ([fe80::2d83:eb90:f977:f649]) by VI1PR0402MB3357.eurprd04.prod.outlook.com
- ([fe80::2d83:eb90:f977:f649%3]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 13:12:25 +0000
-From:   Daniel Baluta <daniel.baluta@nxp.com>
-To:     "dongas86@gmail.com" <dongas86@gmail.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel.baluta@gmail.com" <daniel.baluta@gmail.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
-Subject: Re: [PATCH v2] firmware: imx: Add support to start/stop a CPU
-Thread-Topic: [PATCH v2] firmware: imx: Add support to start/stop a CPU
-Thread-Index: AQHUuIJIb5ERbmz8Z0ilGZjHtOs21aXHwqaAgAAHN4A=
-Date:   Wed, 30 Jan 2019 13:12:25 +0000
-Message-ID: <fc0ef2f1709cb678f29cd37d618e28a7ed606791.camel@nxp.com>
-References: <20190130095749.8952-1-daniel.baluta@nxp.com>
-         <CAA+hA=Tz0p8Ea9f8wuqUZFkmuDrqMHj8_4sLvT8wi6qrTnaVKQ@mail.gmail.com>
-In-Reply-To: <CAA+hA=Tz0p8Ea9f8wuqUZFkmuDrqMHj8_4sLvT8wi6qrTnaVKQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=daniel.baluta@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3325;6:POv9+r9GP0ezFLNDHwGpagrpkaB0L7rxtDjHoxM0eGXQ6qDwioi3g69LADfLN+O0PO6bV0XZ7ZkyVxik/NcMxnDgTqML2rmlLa8CmVTVyKweA5DJMz2WmLyPw86HZ9QQ/iMVIlzKTw/exV9kLoWImRDoU2xNjAHd4cglyqF7oMaOQJXUZomW4OSQG2XHVhLj3xGKO8GQeshFQEmW8JuyykMeCfR9GhWhegqia2hZnl35pEcOy6q6DromUOO2HOyVz12pCQkhIQR5tNAgfeNLPyOVBJ+vnqn//YmCxHi2a8JIubbMoCqGjwGegGTjS9s+8ta19bfjrIX7fLQC4b6zN70nz4wmJzQH12Duq/wRL5uOe4/WOH4lyEIgaA8GkwBfM+f8NocS2q+eguwL2RiQz29dY2UZtqtt3NfQTek2DlRmAS2p50YBl3yRZOqA53iMrKLqdW8GeAjKyj2MThxVzQ==;5:n3XpJldxLDXSxGhfrHmPO71P3XwWrtEd0SuRkUywTl3nyQuj+oLEQXOkMPFn6dIX4m0CPblHSJ6+rA5qXH28x411uRNAIew9o99IYztxodpSRqaM0g/WLCn9BBTsQr5EU6y0oCA8DZQljDf5mWk2iQOtSLW1BzzrQDAxXWIpTLnNfjpREzou/s0NJMx+87Qax/TFWsFGDWY1p/CDjpszDA==;7:mrTcdnD/zSP/w/deay3Zal2IEC3K78CErWD0teqc2xzPtOjmsrrDEErHi+tQqt7ZG6ngcl+M4zvgQRbsqTWoaPvZ9vhkM1b0hQa/QByp4eJrVJVRkwcio+iIT81um2RmM/jLicV4Lz+o4ADs9rHAhw==
-x-ms-office365-filtering-correlation-id: 8d1b9f81-e9cc-411d-53f5-08d686b49447
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3325;
-x-ms-traffictypediagnostic: VI1PR0402MB3325:
-x-microsoft-antispam-prvs: <VI1PR0402MB332578725EC593001CD36D57F9900@VI1PR0402MB3325.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(396003)(366004)(136003)(199004)(189003)(316002)(6116002)(3846002)(66066001)(6916009)(478600001)(39060400002)(81156014)(81166006)(486006)(54906003)(446003)(11346002)(2616005)(476003)(4326008)(25786009)(44832011)(5640700003)(106356001)(99286004)(2351001)(68736007)(6506007)(105586002)(186003)(7736002)(26005)(305945005)(102836004)(6512007)(97736004)(76176011)(8676002)(71190400001)(6486002)(71200400001)(6436002)(53936002)(14454004)(118296001)(1411001)(6246003)(8936002)(2906002)(1361003)(86362001)(256004)(229853002)(36756003)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3325;H:VI1PR0402MB3357.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: TOdKSgblq4bpmqRDd0CcHw7BQLC5ldDF2d2PIGAmihD6i5nJdsA8aB8gLaHHW7w8BRGFSeKksrOd3QDyo4WvIC65nMnl9f20+V4QmfTPzlRQSeH/XJsxxdaLGCfiamyW3KGB9DtZAFsItiSPgVOxeNjx6RB6536Fm8ar/L2yAScoVpnnoWoSHmG03xhHGcBd2/sSU5URDv6pC4qRA+x2rpGQOU4IAD/ct9ZSghM1mbWTCffTmCtxQOa0/7to6jD9FAr4B0BPrDFCOWLwi/Cjm+wcclUwasg6iFkUp6JxX0ZQJNhZdC92qes42/+PO4k8x4za1RtsE+nARjKaqhvupfXZqZrVJrmvPypjjldn+jUNm7mPmw7pSxM3HSE98BVOLF6MjPhBw5wvIKZm31k3wy/2ITn6e4e0uKz6fE/XwvA=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5A7123B49DE5604F812E02A28FED717D@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d1b9f81-e9cc-411d-53f5-08d686b49447
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 13:12:25.8320
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3325
+        Wed, 30 Jan 2019 08:14:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36660 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727227AbfA3NOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 08:14:07 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D22B78CAF;
+        Wed, 30 Jan 2019 13:14:06 +0000 (UTC)
+Received: from treble.redhat.com (ovpn-120-91.rdu2.redhat.com [10.10.120.91])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 97DB65D717;
+        Wed, 30 Jan 2019 13:14:05 +0000 (UTC)
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Joe Mario <jmario@redhat.com>, Jiri Kosina <jikos@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, kvm@vger.kernel.org,
+        Igor Mammedov <imammedo@redhat.com>
+Subject: [PATCH v2] cpu/hotplug: Fix "SMT disabled by BIOS" detection for KVM
+Date:   Wed, 30 Jan 2019 07:13:58 -0600
+Message-Id: <e3a85d585da28cc333ecbc1e78ee9216e6da9396.1548794349.git.jpoimboe@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 30 Jan 2019 13:14:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhhbmtzIEFpc2hlbmcgZm9yIHRoZSBjb21tZW50cyENCg0KPHNuaXA+DQoNCitpbnQgaW14X3Nj
-X3BtX2NwdV9zdGFydChzdHJ1Y3QgaW14X3NjX2lwYyAqaXBjLCB1MzIgcmVzb3VyY2UsDQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgYm9vbCBlbmFibGUsIHU2NCBhZGRyZXNzKQ0KPiA+ICt7
-DQo+ID4gKyAgICAgICBzdHJ1Y3QgaW14X3NjX21zZ19yZXFfY3B1X3N0YXJ0IG1zZzsNCj4gPiAr
-ICAgICAgIHN0cnVjdCBpbXhfc2NfcnBjX21zZyAqaGRyID0gJm1zZy5oZHI7DQo+ID4gKw0KPiA+
-ICsgICAgICAgaGRyLT52ZXIgPSBJTVhfU0NfUlBDX1ZFUlNJT047DQo+ID4gKyAgICAgICBoZHIt
-PnN2YyA9ICh1aW50OF90KUlNWF9TQ19SUENfU1ZDX1BNOw0KPiA+ICsgICAgICAgaGRyLT5mdW5j
-ID0gKHVpbnQ4X3QpSU1YX1NDX1BNX0ZVTkNfQ1BVX1NUQVJUOw0KPiANCj4gcGxzIGRyb3AgdGhl
-IHVubmVjY2VzYXJ5IHVuaXQ4X3QNCg0KT2ssIEkgY2FuIGRvIHRoYXQuIEkgaGFkIGJvcnJvd2Vk
-IGl0IGZyb20gdGhlIGFscmVhZHkgZXhpc3RpbmcNCmZ1bmN0aW9ucyBpbXhfc2NfbWlzY19nZXRf
-Y29udHJvbCAvIGlteF9zY19taXNjX3NldF9jb250cm9sDQoNCj4gDQo+ID4gKyAgICAgICBoZHIt
-PnNpemUgPSA0Ow0KPiA+ICsNCj4gPiArICAgICAgIG1zZy5hZGRyZXNzX2hpID0gYWRkcmVzcyA+
-PiAzMjsNCj4gPiArICAgICAgIG1zZy5hZGRyZXNzX2xvID0gYWRkcmVzczsNCj4gPiArICAgICAg
-IG1zZy5yZXNvdXJjZSA9IHJlc291cmNlOw0KPiA+ICsgICAgICAgbXNnLmVuYWJsZSA9IGVuYWJs
-ZTsNCj4gPiArDQo+ID4gKyAgICAgICByZXR1cm4gaW14X3NjdV9jYWxsX3JwYyhpcGMsICZtc2cs
-IGZhbHNlKTsNCj4gDQo+IHMvZmFsc2UvdHJ1ZQ0KDQpOaWNlIGNhdGNoIQ0KDQpJbmRlZCwgdGhl
-IG9sZCBBUEkgaGFkIGEgZGlmZmVyZW50IHNlbWFudGljIGZvciB0aGlzIHBhcmFtZXRlci4NCj4g
-DQo+ID4gK30NCj4gPiArRVhQT1JUX1NZTUJPTChpbXhfc2NfcG1fY3B1X3N0YXJ0KTsNCj4gPiBk
-aWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9maXJtd2FyZS9pbXgvc3ZjL21pc2MuaA0KPiA+IGIv
-aW5jbHVkZS9saW51eC9maXJtd2FyZS9pbXgvc3ZjL21pc2MuaA0KPiA+IGluZGV4IGUyMWM0OWFi
-YTkyZi4uYzAzYmYyYTIzYWRkIDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvZmlybXdh
-cmUvaW14L3N2Yy9taXNjLmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L2Zpcm13YXJlL2lteC9z
-dmMvbWlzYy5oDQo+ID4gQEAgLTUyLDQgKzUyLDcgQEAgaW50IGlteF9zY19taXNjX3NldF9jb250
-cm9sKHN0cnVjdCBpbXhfc2NfaXBjDQo+ID4gKmlwYywgdTMyIHJlc291cmNlLA0KPiA+ICBpbnQg
-aW14X3NjX21pc2NfZ2V0X2NvbnRyb2woc3RydWN0IGlteF9zY19pcGMgKmlwYywgdTMyIHJlc291
-cmNlLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1OCBjdHJsLCB1MzIgKnZhbCk7
-DQo+ID4gDQo+ID4gK2ludCBpbXhfc2NfcG1fY3B1X3N0YXJ0KHN0cnVjdCBpbXhfc2NfaXBjICpp
-cGMsIHUzMiByZXNvdXJjZSwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBib29sIGVuYWJs
-ZSwgdTY0IGFkZHJlc3MpOw0KPiANCj4gTml0cGljazogcGh5X2FkZHINCg0KT2ssIHdpbGwgZml4
-Lg0KDQoNCg==
+With the following commit:
+
+  73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
+
+... the hotplug code attempted to detect when SMT was disabled by BIOS,
+in which case it reported SMT as permanently disabled.  However, that
+code broke a virt hotplug scenario, where the guest is booted with only
+primary CPU threads, and a sibling is brought online later.
+
+The problem is that there doesn't seem to be a way to reliably
+distinguish between the HW "SMT disabled by BIOS" case and the virt
+"sibling not yet brought online" case.  So the above-mentioned commit
+was a bit misguided, as it permanently disabled SMT for both cases,
+preventing future virt sibling hotplugs.
+
+Going back and reviewing the original problems which were attempted to
+be solved by that commit, when SMT was disabled in BIOS:
+
+  1) /sys/devices/system/cpu/smt/control showed "on" instead of
+     "notsupported"; and
+
+  2) vmx_vm_init() was incorrectly showing the L1TF_MSG_SMT warning.
+
+I'd propose that we instead consider #1 above to not actually be a
+problem.  Because, at least in the virt case, it's possible that SMT
+wasn't disabled by BIOS and a sibling thread could be brought online
+later.  So it makes sense to just always default the smt control to "on"
+to allow for that possibility (assuming cpuid indicates that the CPU
+supports SMT).
+
+The real problem is #2, which has a simple fix: change vmx_vm_init() to
+query the actual current SMT state -- i.e., whether any siblings are
+currently online -- instead of looking at the SMT "control" sysfs value.
+
+So fix it by:
+
+  a) reverting the original "fix" and its followup fix:
+
+     73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
+     bc2d8d262cba ("cpu/hotplug: Fix SMT supported evaluation")
+
+     and
+
+  b) changing vmx_vm_init() to query the actual current SMT state --
+     instead of the sysfs control value -- to determine whether the L1TF
+     warning is needed.  This also requires the 'sched_smt_present'
+     variable to exported, instead of 'cpu_smt_control'.
+
+Fixes: 73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
+Reported-by: Igor Mammedov <imammedo@redhat.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+v2: export sched_smt_present; unexport cpu_smt_control
+
+ arch/x86/kernel/cpu/bugs.c |  2 +-
+ arch/x86/kvm/vmx/vmx.c     |  3 ++-
+ include/linux/cpu.h        |  2 --
+ kernel/cpu.c               | 33 ++++-----------------------------
+ kernel/sched/fair.c        |  1 +
+ kernel/smp.c               |  2 --
+ 6 files changed, 8 insertions(+), 35 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 1de0f4170178..01874d54f4fd 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -71,7 +71,7 @@ void __init check_bugs(void)
+ 	 * identify_boot_cpu() initialized SMT support information, let the
+ 	 * core code know.
+ 	 */
+-	cpu_smt_check_topology_early();
++	cpu_smt_check_topology();
+ 
+ 	if (!IS_ENABLED(CONFIG_SMP)) {
+ 		pr_info("CPU: ");
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f6915f10e584..e2d6fa3c60d5 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -26,6 +26,7 @@
+ #include <linux/mod_devicetable.h>
+ #include <linux/mm.h>
+ #include <linux/sched.h>
++#include <linux/sched/smt.h>
+ #include <linux/slab.h>
+ #include <linux/tboot.h>
+ #include <linux/trace_events.h>
+@@ -6816,7 +6817,7 @@ static int vmx_vm_init(struct kvm *kvm)
+ 			 * Warn upon starting the first VM in a potentially
+ 			 * insecure environment.
+ 			 */
+-			if (cpu_smt_control == CPU_SMT_ENABLED)
++			if (sched_smt_active())
+ 				pr_warn_once(L1TF_MSG_SMT);
+ 			if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER)
+ 				pr_warn_once(L1TF_MSG_L1D);
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index 218df7f4d3e1..5041357d0297 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -180,12 +180,10 @@ enum cpuhp_smt_control {
+ #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
+ extern enum cpuhp_smt_control cpu_smt_control;
+ extern void cpu_smt_disable(bool force);
+-extern void cpu_smt_check_topology_early(void);
+ extern void cpu_smt_check_topology(void);
+ #else
+ # define cpu_smt_control		(CPU_SMT_ENABLED)
+ static inline void cpu_smt_disable(bool force) { }
+-static inline void cpu_smt_check_topology_early(void) { }
+ static inline void cpu_smt_check_topology(void) { }
+ #endif
+ 
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 34e40ef2f6e0..7d3486a13431 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -385,9 +385,6 @@ void __weak arch_smt_update(void) { }
+ 
+ #ifdef CONFIG_HOTPLUG_SMT
+ enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
+-EXPORT_SYMBOL_GPL(cpu_smt_control);
+-
+-static bool cpu_smt_available __read_mostly;
+ 
+ void __init cpu_smt_disable(bool force)
+ {
+@@ -406,25 +403,11 @@ void __init cpu_smt_disable(bool force)
+ 
+ /*
+  * The decision whether SMT is supported can only be done after the full
+- * CPU identification. Called from architecture code before non boot CPUs
+- * are brought up.
+- */
+-void __init cpu_smt_check_topology_early(void)
+-{
+-	if (!topology_smt_supported())
+-		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+-}
+-
+-/*
+- * If SMT was disabled by BIOS, detect it here, after the CPUs have been
+- * brought online. This ensures the smt/l1tf sysfs entries are consistent
+- * with reality. cpu_smt_available is set to true during the bringup of non
+- * boot CPUs when a SMT sibling is detected. Note, this may overwrite
+- * cpu_smt_control's previous setting.
++ * CPU identification. Called from architecture code.
+  */
+ void __init cpu_smt_check_topology(void)
+ {
+-	if (!cpu_smt_available)
++	if (!topology_smt_supported())
+ 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+ }
+ 
+@@ -437,18 +420,10 @@ early_param("nosmt", smt_cmdline_disable);
+ 
+ static inline bool cpu_smt_allowed(unsigned int cpu)
+ {
+-	if (topology_is_primary_thread(cpu))
++	if (cpu_smt_control == CPU_SMT_ENABLED)
+ 		return true;
+ 
+-	/*
+-	 * If the CPU is not a 'primary' thread and the booted_once bit is
+-	 * set then the processor has SMT support. Store this information
+-	 * for the late check of SMT support in cpu_smt_check_topology().
+-	 */
+-	if (per_cpu(cpuhp_state, cpu).booted_once)
+-		cpu_smt_available = true;
+-
+-	if (cpu_smt_control == CPU_SMT_ENABLED)
++	if (topology_is_primary_thread(cpu))
+ 		return true;
+ 
+ 	/*
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index e2ff4b69dcf6..a51f3b78fa5c 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5982,6 +5982,7 @@ static inline int find_idlest_cpu(struct sched_domain *sd, struct task_struct *p
+ 
+ #ifdef CONFIG_SCHED_SMT
+ DEFINE_STATIC_KEY_FALSE(sched_smt_present);
++EXPORT_SYMBOL_GPL(sched_smt_present);
+ 
+ static inline void set_idle_cores(int cpu, int val)
+ {
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 163c451af42e..f4cf1b0bb3b8 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -584,8 +584,6 @@ void __init smp_init(void)
+ 		num_nodes, (num_nodes > 1 ? "s" : ""),
+ 		num_cpus,  (num_cpus  > 1 ? "s" : ""));
+ 
+-	/* Final decision about SMT support */
+-	cpu_smt_check_topology();
+ 	/* Any cleanup work */
+ 	smp_cpus_done(setup_max_cpus);
+ }
+-- 
+2.17.2
+
