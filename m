@@ -2,248 +2,156 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 104F2C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AF9C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AED1720881
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:48:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1083820989
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 21:50:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="A/86TZq6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388215AbfA3Vsa (ORCPT
+        id S2388224AbfA3Vun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 16:48:30 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:40691 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfA3Vsa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 16:48:30 -0500
-X-Originating-IP: 86.202.150.119
-Received: from localhost (lfbn-lyo-1-59-119.w86-202.abo.wanadoo.fr [86.202.150.119])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 4312B20002;
-        Wed, 30 Jan 2019 21:48:27 +0000 (UTC)
-Date:   Wed, 30 Jan 2019 22:48:28 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Artem Panfilov <panfilov.artyom@gmail.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] rtc: add AB-RTCMC-32.768kHz-EOZ9 RTC support
-Message-ID: <20190130214828.GK19959@piout.net>
-References: <20190117184608.20987-1-panfilov.artyom@gmail.com>
+        Wed, 30 Jan 2019 16:50:43 -0500
+Received: from mail-eopbgr140047.outbound.protection.outlook.com ([40.107.14.47]:65515
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725890AbfA3Vum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 16:50:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J5R9sqWOITm7dIyh8ey3iJowDVHZ5LzCc0tWGLQrbn0=;
+ b=A/86TZq6JplZ6MHYUWyKqLPZuJ6Fpp3KMm7qQbApZVYQ6fvdvllytD6K/yhphmrwHCVsYqQx8UVJJX3dIoJCktg4T/7nllNbrLLxT0Bi7txoy6+A9RUQL4ZXGtnNl0yfO4dx2EzP9YsWj9qRuTmDqK2jfKTMFpxKD76vuw1ho+Q=
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
+ DBBPR05MB6554.eurprd05.prod.outlook.com (20.179.44.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.18; Wed, 30 Jan 2019 21:50:25 +0000
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
+ 21:50:25 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+CC:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAAD3dAIAAukqAgAAK3wCAAAOzAIAAEXyAgAANnoA=
+Date:   Wed, 30 Jan 2019 21:50:25 +0000
+Message-ID: <20190130215019.GL17080@mellanox.com>
+References: <20190129215028.GQ3176@redhat.com>
+ <deb7ba21-77f8-0513-2524-ee40a8ee35d5@deltatee.com>
+ <20190129234752.GR3176@redhat.com>
+ <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
+ <20190130041841.GB30598@mellanox.com> <20190130080006.GB29665@lst.de>
+ <20190130190651.GC17080@mellanox.com>
+ <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
+ <20190130195900.GG17080@mellanox.com>
+ <35bad6d5-c06b-f2a3-08e6-2ed0197c8691@deltatee.com>
+In-Reply-To: <35bad6d5-c06b-f2a3-08e6-2ed0197c8691@deltatee.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR0201CA0082.namprd02.prod.outlook.com
+ (2603:10b6:301:75::23) To DBBPR05MB6426.eurprd05.prod.outlook.com
+ (2603:10a6:10:c9::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DBBPR05MB6554;6:lF5SEsb64Df0LE8YFuXf4y4OBgNnsukVHdYOSH2Lc2RMjFEe6VdNuTHQjkeVmt/czO/NeJF5pjYEUni8zVCtlafoaX2HCu2WCpDiAOhCddwAR8KFVQH/PuFDBwniVn9vR7kODSQM+GBXHDLBSwXCUpEqRjOl9EfHWXAmQmjhCv4+cDVRRUS1wLUGLvRAfnvvMTxPjkaAZi7p9VEuIWqRAVgIz9UL48rGTdQhjFYeddtiGCMf6hUQS5lXbmbmp7R3KjPehvUNzei+09r3+s9czlS7i8km8fd8H7vjKYRBrTVbIOfOb9mEFDSSINvM0AX46d5FLWPMD5g0qTtjof1EoS01agqiMeXpyggOE5P/C3wEjjNgQKDKpHrGyGBi/XhWhUB6kSt1Tq5nB7BPAqY2qi3ctd5XPwvrjeUI7EhBOZ/FwlE7jz3FSRxc/7gC09JoyMfF/jJzLXQz83dlhlHT7g==;5:sihb7+NhE+g0a2mp78iwoP9gIPXafpWnZy63+WIKKb5AoN3//C1jxr6p5SuGVsQBpJIbGodc5avE8qMe09Zv5eIRROiEQldCC0N35wac/6ajo+x0qWktxTVz2zPHk2vWD6M2L6B98nDumZZS+L5pmJb3zVOslPQ5e2bLs8alHexYaJOfxq3h3jHeTthyXs5kNpzbnTrqQC6c7DcVEjA1Ag==;7:kWEf8/PqEyRDBjPtSqBgYtOUn58c3iQSWzpVfRltaoqgNECRLtK5wgEB8wS6MaPJ4avyfrYtIHQPg0UjkypeT4yWKFKuPtYEXUGzt5j02BdhgMzUrb/Xxo4rsWfdYxGqp2x0EQZMZMryRvOLUq4azw==
+x-ms-office365-filtering-correlation-id: b37cf5ca-620e-4554-d3c3-08d686fcf0cc
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6554;
+x-ms-traffictypediagnostic: DBBPR05MB6554:
+x-microsoft-antispam-prvs: <DBBPR05MB6554425514EA090623BD3B5ACF900@DBBPR05MB6554.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(39860400002)(366004)(136003)(189003)(199004)(36756003)(4326008)(305945005)(33656002)(186003)(71190400001)(71200400001)(217873002)(93886005)(3846002)(6116002)(7736002)(14444005)(86362001)(8936002)(229853002)(66066001)(6436002)(6486002)(1076003)(256004)(2616005)(81166006)(81156014)(11346002)(8676002)(99286004)(6916009)(446003)(105586002)(97736004)(6512007)(106356001)(25786009)(7416002)(478600001)(14454004)(68736007)(386003)(316002)(6506007)(76176011)(26005)(102836004)(6246003)(52116002)(53936002)(486006)(476003)(2906002)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6554;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: icMs6LNg3KpTqcAW+YiwqLE6NzY93sFIGgVBLIVvSjthgEyYhwaQoh6HN4jkEHjFtbjh804K9TxQmTdu48czF+WXUaMTLqzD6RqOG0O43g41+0IWIPcYEduMC1Ta707BltDlJSVjh23+SREFcTpBqY0fa3EozrjhIr/OHmAMcFfuG3wsnpVKnxUDbYia65pa7FKG+MZD4RFV4NKG4+I9HzpR0rwt3I66knXBGs1/BTHUkT/7v823Y6oUqhd6ycqgC0bC71e86X6gIV7eq4AxyU9AU5lk9fld+zpf26ij+vwKuPkrdrbJGCaB/GAGiAZLfM09QnEhXIjcE+wS2R0Gvsr5hx2IQeyPmcalczaQsKMhJ5xiZc+NQ9aPWc0zdwdZ3ht52zxQh7kImi7YLdEc7R/EbXOfLn4yG80NUZCpEhY=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <22458AAABB3536449FE7EBE58980F139@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117184608.20987-1-panfilov.artyom@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b37cf5ca-620e-4554-d3c3-08d686fcf0cc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 21:50:24.9309
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6554
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jan 30, 2019 at 02:01:35PM -0700, Logan Gunthorpe wrote:
 
-This seems pretty good.
+> And I feel the GUP->SGL->DMA flow should still be what we are aiming
+> for. Even if we need a special GUP for special pages, and a special DMA
+> map; and the SGL still has to be homogenous....
 
-On 17/01/2019 21:46:07+0300, Artem Panfilov wrote:
-> +static int abeoz9_rtc_get_time(struct device *dev, struct rtc_time *tm)
-> +{
-> +	struct abeoz9_rtc_data *data = dev_get_drvdata(dev);
-> +	u8 regs[ABEOZ9_SEC_LEN];
-> +	int ret;
-> +
+*shrug* so what if the special GUP called a VMA op instead of
+traversing the VMA PTEs today? Why does it really matter? It could
+easily change to a struct page flow tomorrow..
 
-I would check the validity here, there is no point in reading many
-registers just to drop the result afterwards.
+> > So, I see Jerome solving the GUP problem by replacing GUP entirely
+> > using an API that is more suited to what these sorts of drivers
+> > actually need.
+>=20
+> Yes, this is what I'm expecting and what I want. Not bypassing the whole
+> thing by doing special things with VMAs.
 
-> +	ret = regmap_bulk_read(data->regmap, ABEOZ9_REG_SEC,
-> +			       regs,
-> +			       sizeof(regs));
-> +	if (ret) {
-> +		dev_err(dev, "reading RTC time failed (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	tm->tm_sec = bcd2bin(regs[ABEOZ9_REG_SEC - ABEOZ9_REG_SEC] & 0x7F);
-> +	tm->tm_min = bcd2bin(regs[ABEOZ9_REG_MIN - ABEOZ9_REG_SEC] & 0x7F);
-> +
-> +	if (regs[ABEOZ9_REG_HOURS - ABEOZ9_REG_SEC] & ABEOZ9_HOURS_PM) {
-> +		tm->tm_hour =
-> +			bcd2bin(regs[ABEOZ9_REG_HOURS - ABEOZ9_REG_SEC] & 0x1f);
-> +		if (regs[ABEOZ9_REG_HOURS - ABEOZ9_REG_SEC] & ABEOZ9_HOURS_PM)
-> +			tm->tm_hour += 12;
-> +	} else {
-> +		tm->tm_hour = bcd2bin(regs[ABEOZ9_REG_HOURS - ABEOZ9_REG_SEC]);
-> +	}
-> +
-> +	tm->tm_mday = bcd2bin(regs[ABEOZ9_REG_DAYS - ABEOZ9_REG_SEC]);
-> +	tm->tm_wday = bcd2bin(regs[ABEOZ9_REG_WEEKDAYS - ABEOZ9_REG_SEC]);
-> +	tm->tm_mon  = bcd2bin(regs[ABEOZ9_REG_MONTHS - ABEOZ9_REG_SEC]) - 1;
-> +	tm->tm_year = bcd2bin(regs[ABEOZ9_REG_YEARS - ABEOZ9_REG_SEC]) + 100;
-> +
-> +	return abeoz9_check_validity(dev);
-> +}
-> +
-> +static int abeoz9_rtc_set_time(struct device *dev, struct rtc_time *tm)
-> +{
-> +	struct abeoz9_rtc_data *data = dev_get_drvdata(dev);
-> +	struct regmap *regmap = data->regmap;
-> +	u8 regs[ABEOZ9_SEC_LEN];
-> +	int ret;
-> +
-> +	regs[ABEOZ9_REG_SEC - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_sec);
-> +	regs[ABEOZ9_REG_MIN - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_min);
-> +	regs[ABEOZ9_REG_HOURS - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_hour);
-> +	regs[ABEOZ9_REG_DAYS - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_mday);
-> +	regs[ABEOZ9_REG_WEEKDAYS - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_wday);
-> +	regs[ABEOZ9_REG_MONTHS - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_mon + 1);
-> +	regs[ABEOZ9_REG_YEARS - ABEOZ9_REG_SEC] = bin2bcd(tm->tm_year - 100);
-> +
-> +	ret = regmap_bulk_write(data->regmap, ABEOZ9_REG_SEC,
-> +				regs,
-> +				sizeof(regs));
-> +
+IMHO struct page is a big pain for this application, and if we can
+build flows that don't actually need it then we shouldn't require it
+just because the old flows needed it.
 
-ret should be checked.
+HMM mirror is a new flow that doesn't need struct page.
 
-> +	return abeoz9_reset_validity(regmap);
-> +}
-> +
-> +#if IS_REACHABLE(CONFIG_HWMON)
-> +
-> +static int abeoz9z3_temp_read(struct device *dev,
-> +			      enum hwmon_sensor_types type,
-> +			      u32 attr, int channel, long *temp)
-> +{
-> +	struct abeoz9_rtc_data *data = dev_get_drvdata(dev);
-> +	struct regmap *regmap = data->regmap;
-> +	int ret;
-> +	unsigned int regval = 37;
-> +
+Would you feel better if this also came along with a:
 
-Maybe this should also check V1F/V2F because the thermometer may be
-disabled.
+  struct dma_sg_table *sgl_dma_map_user(struct device *dma_device,=20
+             void __user *prt, size_t len)
 
-> +	switch (attr) {
-> +	case hwmon_temp_input:
-> +		ret = regmap_read(regmap, ABEOZ9_REG_REG_TEMP, &regval);
-> +		if (ret < 0)
-> +			return ret;
-> +		*temp = 1000 * (regval + ABEOZ953_TEMP_MIN);
-> +		return 0;
-> +	case hwmon_temp_max:
-> +		*temp = 1000 * ABEOZ953_TEMP_MAX;
-> +		return 0;
-> +	case hwmon_temp_min:
-> +		*temp = 1000 * ABEOZ953_TEMP_MIN;
-> +		return 0;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
+flow which returns a *DMA MAPPED* sgl that does not have struct page
+pointers as another interface?
 
+We can certainly call an API like this from RDMA for non-ODP MRs.
 
-> +#endif /* CONFIG_RTC_DRV_ABEOZ9_HWMON */
-This comment is not correct
+Eliminating the page pointers also eliminates the __iomem
+problem. However this sgl object is not copyable or accessible from
+the CPU, so the caller must be sure it doesn't need CPU access when
+using this API.=20
 
+For RDMA I'd include some flag in the struct ib_device if the driver
+requires CPU accessible SGLs and call the right API. Maybe the block
+layer could do the same trick for O_DIRECT?
 
-> +static int abeoz9_probe(struct i2c_client *client,
-> +			const struct i2c_device_id *id)
-> +{
-> +	struct abeoz9_rtc_data *data = NULL;
-> +	struct device *dev = &client->dev;
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C |
-> +				     I2C_FUNC_SMBUS_BYTE_DATA |
-> +				     I2C_FUNC_SMBUS_I2C_BLOCK)) {
-> +		ret = -ENODEV;
-> +		goto err;
-> +	}
-> +
-> +	regmap = devm_regmap_init_i2c(client, &abeoz9_rtc_regmap_config);
-> +	if (IS_ERR(regmap)) {
-> +		ret = PTR_ERR(regmap);
-> +		dev_err(dev, "regmap allocation failed: %d\n", ret);
-> +		goto err;
-> +	}
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +
-> +	data->regmap = regmap;
-> +	dev_set_drvdata(dev, data);
-> +
-> +	ret = abeoz9_rtc_setup(dev, client->dev.of_node);
-> +	if (ret)
-> +		goto err;
-> +
-> +	data->rtc = devm_rtc_allocate_device(dev);
-> +	ret = PTR_ERR_OR_ZERO(data->rtc);
-> +	if (ret)
-> +		goto err;
-> +
-> +	data->rtc->ops = &rtc_ops;
-> +	data->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-> +	data->rtc->range_max = RTC_TIMESTAMP_END_2099;
-> +
-> +	ret = rtc_register_device(data->rtc);
-> +	if (ret)
-> +		goto err;
-> +
-> +	abeoz9_hwmon_register(dev, data);
-> +	return 0;
+This would also directly solve the P2P problem with hfi1/qib/rxe, as
+I'd likely also say that pci_p2pdma_map_sg() returns the same DMA only
+sgl thing.
 
-I would add a blank line here.
-
-> +err:
-> +	dev_err(dev, "unable to register RTC device (%d)\n", ret);
-> +	return ret;
-> +}
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id abeoz9_dt_match[] = {
-> +	{ .compatible = "abracon,abeoz9" },
-> +	{ },
-> +};
-> +#endif
-> +
-> +MODULE_DEVICE_TABLE(of, abeoz9_dt_match);
-
-This should probably be included in the previous #ifdef
-
-> +
-> +static const struct i2c_device_id abeoz9_id[] = {
-> +	{ "abeoz9", 0 },
-> +	{ }
-> +};
-> +
-> +static struct i2c_driver abeoz9_driver = {
-> +	.driver = {
-> +		.name = "rtc-ab-eoz9",
-> +		.of_match_table = of_match_ptr(abeoz9_dt_match),
-> +	},
-> +	.probe	  = abeoz9_probe,
-> +	.id_table = abeoz9_id,
-> +};
-> +
-> +module_i2c_driver(abeoz9_driver);
-> +
-> +MODULE_AUTHOR("Artem Panfilov <panfilov.artyom@gmail.com>");
-> +MODULE_DESCRIPTION("Abracon AB-RTCMC-32.768kHz-EOZ9 RTC driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.19.1
-> 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Jason
