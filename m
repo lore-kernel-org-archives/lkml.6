@@ -3,146 +3,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4515C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 143E9C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67B9C2147A
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548813041;
-	bh=8JSfvr7xzjWZ/s7MSEBllp/t5WgyJpD1zGBAczrcuKQ=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=C5akUbH04L1PvxA99RMG5j3NZ96VQVZSTsCIc8gUURxYNe4Q+QlddE7HqN23qbAxe
-	 eSn3evV+4mGLbzMi1Ui/ln9eItga75x/63KthhGYlDaagpQTlbwNcv93meZcY4Pts+
-	 GthBdICK2mwt0W36toUe+OeArxwC7VRspWd8Uueo=
+	by mail.kernel.org (Postfix) with ESMTP id C8FB42147A
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 01:51:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="RIFeyEqO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728625AbfA3Bug (ORCPT
+        id S1729653AbfA3Buy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 29 Jan 2019 20:50:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56602 "EHLO mail.kernel.org"
+        Tue, 29 Jan 2019 20:50:54 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:21713 "EHLO nat-hk.nvidia.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727618AbfA3Bug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 29 Jan 2019 20:50:36 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD4CC21473;
-        Wed, 30 Jan 2019 01:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548813035;
-        bh=8JSfvr7xzjWZ/s7MSEBllp/t5WgyJpD1zGBAczrcuKQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=JERxPAbY1/DQpa3Xgud3RExTofWKb7fzUcOs5DXw2NPzeVu9r6d4VEW6mIN7NZ3x+
-         2X6P492TCKFrz7rx91BkORXo/y4RKjCH2BTw0piBFuiDm4GLhgr7ZKR/eRtigwAPDV
-         vYXX1gW+vS/y7YRHju9FFqhOt/mlNc8I8rf8g/7k=
-Subject: Re: [PATCH v10 0/4] Media Device Allocator API
-To:     Hans Verkuil <hverkuil@xs4all.nl>, mchehab@kernel.org,
-        perex@perex.cz, tiwai@suse.com
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, shuah <shuah@kernel.org>
-References: <cover.1548360791.git.shuah@kernel.org>
- <e8717d11-1eff-2e07-53d5-6cd55356c66a@xs4all.nl>
- <481787e7-112a-80dd-228c-2497a12547b9@kernel.org>
- <d9ae1073-f6a9-1085-c8f8-8edd05daece5@xs4all.nl>
-From:   shuah <shuah@kernel.org>
-Message-ID: <b9a62121-8ab0-5c1c-79ff-8bb39fc8b762@kernel.org>
-Date:   Tue, 29 Jan 2019 18:50:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727618AbfA3Bux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 29 Jan 2019 20:50:53 -0500
+Received: from hkpgpgate101.nvidia.com (Not Verified[10.18.92.100]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5102fa0000>; Wed, 30 Jan 2019 09:50:51 +0800
+Received: from HKMAIL104.nvidia.com ([10.18.16.13])
+  by hkpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 29 Jan 2019 17:50:49 -0800
+X-PGP-Universal: processed;
+        by hkpgpgate101.nvidia.com on Tue, 29 Jan 2019 17:50:49 -0800
+Received: from DRBGMAIL101.nvidia.com (10.18.16.20) by HKMAIL104.nvidia.com
+ (10.18.16.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Jan
+ 2019 01:50:48 +0000
+Received: from HKMAIL103.nvidia.com (10.18.16.12) by DRBGMAIL101.nvidia.com
+ (10.18.16.20) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Jan
+ 2019 01:50:47 +0000
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (104.47.32.54) by
+ HKMAIL103.nvidia.com (10.18.16.12) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Wed, 30 Jan 2019 01:50:47 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
+ BYAPR12MB3638.namprd12.prod.outlook.com (20.178.54.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.16; Wed, 30 Jan 2019 01:50:44 +0000
+Received: from BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
+ ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
+ 01:50:44 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        "Shardar Mohammed" <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: RE: [PATCH V5 3/5] i2c: tegra: Add DMA Support
+Thread-Topic: [PATCH V5 3/5] i2c: tegra: Add DMA Support
+Thread-Index: AQHUuCjcFQq4Ugnr9EajTUu9v/+Er6XHCbsAgAACEcA=
+Date:   Wed, 30 Jan 2019 01:50:44 +0000
+Message-ID: <BYAPR12MB339850895826781B4E6AF028C2900@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1548803771-13424-1-git-send-email-skomatineni@nvidia.com>
+        <1548803771-13424-3-git-send-email-skomatineni@nvidia.com>
+ <20190130044214.65991195@dimatab>
+In-Reply-To: <20190130044214.65991195@dimatab>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-originating-ip: [24.176.232.13]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR12MB3638;6:mrIUnK9JR+HicPVFPLWut1+8u+RsB8VX091psVEW0bBpwwZvmhYqIfyVvbeQELIV5G2QNlDsMGNklqCkPHuKMI8mv61Z36SkA14Sun40r0gZ00Z1hbzqd3z6CRTa/YwzijTTzIooytUgHUS5SU4x5IEbhwv3Igy93l+b3T50dPX/Q9mvHewSQXXs7LxJ0icjBrUug7253G/ULWDnBMJefA4FUWiXrOP4knCEWnIqOZl/xFpLnb3iqT+nJ/1ht60MdL0jHj96sOXzgmhtkbVh/z6dSYhazNm1EByl6tl8uwKGSwzoVe3qFHzzjhmJUcx4Css1i7GoGqf68Lqu73RaNmE3Vw81jPhKecnCQL6MeLDBdj5SPbwtEgWlzIVqlybinaoMQS1meVJwVAvF79hv44p3IPmvwT7S1R4KSSUZAOzh70LDbYWNIgH1Jy6kycYM90eVjR5+5LwdEMS0C58iCw==;5:9g2wZR9dFsDz4oT6hNgUo+Y5AvF7KArAjr05+RmW1w7CWp3SP3NIPNBPV5qLNEoVpCkhkDNu3kVDDwCtgWE27D55EGA12YoMYqsEb8mfp2o1qua6TcZB1brgW03wCIVAlu13604ZJYA2+mYLBdf8pAQDSfUQMmFKHDb/jB52OjSOtWuDvInbvvOOW2lp3lbgA9PRX4Hy2NgaG5rGHG6YSg==;7:Jgh3STBj7NQxUe6STYC41RtEQpLD3sTB0I38jNMXXNUQDxs1HdH/7+lJ32ZxKtk2MboZDZ8KovDpeCBcSHuEhgmNl9FzM1z1t02tHJRNZhCVYyEqZs/lIqcVbOn72feX99c7MxyzlANXvVviPDRc/A==
+x-ms-office365-filtering-correlation-id: 9e072037-47dc-4bf6-2cd1-08d686555904
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3638;
+x-ms-traffictypediagnostic: BYAPR12MB3638:
+x-microsoft-antispam-prvs: <BYAPR12MB36387C644C441661E08BD2C9C2900@BYAPR12MB3638.namprd12.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(396003)(376002)(136003)(189003)(25584004)(199004)(305945005)(3846002)(7736002)(966005)(229853002)(6116002)(186003)(14454004)(74316002)(6506007)(6436002)(55016002)(2906002)(4744005)(33656002)(6246003)(53936002)(97736004)(478600001)(54906003)(316002)(4326008)(11346002)(256004)(446003)(476003)(7696005)(99286004)(39060400002)(486006)(86362001)(105586002)(6306002)(76176011)(106356001)(6916009)(66066001)(1411001)(25786009)(26005)(8936002)(102836004)(81166006)(68736007)(71190400001)(9686003)(71200400001)(8676002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3638;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: dCK8Nqrxkk8W6Rq+cW7H5mV8lLpnDNE/nL6BmrCbgTV1OPpCtL94UQFNB6fdWyiIcM5alDvutvUeK5POka0Y/NQ5Z2VzHB/S3S6DUQ0wy3uImUru7JgNqTvyZbVlgnS4PkgXMfZ+saI1ce1koIjC6Q7JXOKoxGPgUN81eHa8JsA+xhq0n0AE8SJfg44Q95BVl96DIC+2pyQZq7TF1jCODU2RnHK2VQoPHfmFAPe0xwnLJXz2lSsCZoG1MdnzGQsnkdL7PaBrm7hiJDHyIgCoe4hN7EaElgnLdyeWhGrHV8XOKjDsF5WpaFTJXKEmkXmNOroWL466DWxQN192oUNAQTlLffNExT0KLVlJLZ1RJrqaaGYLGDW+VgpSBYrXz1hS0+WPMUE5kosA/GDctIan89IdNM06mMmyg2gcrj6mn2E=
 MIME-Version: 1.0
-In-Reply-To: <d9ae1073-f6a9-1085-c8f8-8edd05daece5@xs4all.nl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e072037-47dc-4bf6-2cd1-08d686555904
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 01:50:44.1880
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3638
+X-OriginatorOrg: Nvidia.com
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548813051; bh=qo13gShy8ikaA/i6RLhxBH63CfrL1CsWyO0ogKysX+4=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
+         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-forefront-prvs:x-forefront-antispam-report:received-spf:
+         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
+         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=RIFeyEqOTi9sbc0vEN+CwibvIagmDknHboYed/zGPwzsiABv4Tyli0U1NZ5zJ/c9s
+         oh0mEUysrpnrcyst1HLlp8usysXi4JeqdnYMQS5dHRo6LZnToPo2SA1mAr+4kbxV7l
+         7E65+q5Q60ibd42VKwajFVu8mT1oDVuA8ATIvEsjsf4xlJudtKxAQCkk5CrjKtFoYJ
+         kuEeYA8/hAI2E/4mf5gI/+t44j6Ccrms7qy2bZyh48/1YTlDpRU0Ka9nexbsB7hZJt
+         sTZjxR1muierrBorYtolGhu/A+cBqzuFLssZJSLB+rM1VLkLBuPGtbba5/Lr4k1WEj
+         v33ksKtxCcwdg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/29/19 2:43 AM, Hans Verkuil wrote:
-> On 1/29/19 12:48 AM, shuah wrote:
->> Hi Hans,
->>
->> On 1/28/19 5:03 AM, Hans Verkuil wrote:
->>> Hi Shuah,
->>>
->>> On 1/24/19 9:32 PM, Shuah Khan wrote:
->>>> Media Device Allocator API to allows multiple drivers share a media device.
->>>> This API solves a very common use-case for media devices where one physical
->>>> device (an USB stick) provides both audio and video. When such media device
->>>> exposes a standard USB Audio class, a proprietary Video class, two or more
->>>> independent drivers will share a single physical USB bridge. In such cases,
->>>> it is necessary to coordinate access to the shared resource.
->>>>
->>>> Using this API, drivers can allocate a media device with the shared struct
->>>> device as the key. Once the media device is allocated by a driver, other
->>>> drivers can get a reference to it. The media device is released when all
->>>> the references are released.
->>>>
->>>> - This patch series is tested on 5.0-rc3 and addresses comments on
->>>>     v9 series from Hans Verkuil.
->>>> - v9 was tested on 4.20-rc6.
->>>> - Tested sharing resources with kaffeine, vlc, xawtv, tvtime, and
->>>>     arecord. When analog is streaming, digital and audio user-space
->>>>     applications detect that the tuner is busy and exit. When digital
->>>>     is streaming, analog and audio applications detect that the tuner is
->>>>     busy and exit. When arecord is owns the tuner, digital and analog
->>>>     detect that the tuner is busy and exit.
->>>
->>> I've been doing some testing with my au0828, and I am confused about one
->>> thing, probably because it has been too long ago since I last looked into
->>> this in detail:
->>>
->>
->> Great.
->>
->>> Why can't I change the tuner frequency if arecord (and only arecord) is
->>> streaming audio? If arecord is streaming, then it is recording the audio
->>> from the analog TV tuner, right? So changing the analog TV frequency
->>> should be fine.
->>>
->>
->> Changing analog TV frequency would be s_frequency. The way it works is
->> any s_* calls would require holding the pipeline. In Analog TV case, it
->> would mean holding both audio and video pipelines for any changes
->> including TV.
->>
->> As I recall, we discussed this design and the decision was to make all
->> s_* calls interfaces to hold the tuner. A special exception is g_tuner
->> in case of au0828. au0828 initializes the tuner from s_* interfaces and
->> its g_tuner interfaces. Allowing s_frequency to proceed will disrupt the
->> arecord audio stream.
->>
->> Query (q_*) works just fine without holding the pipeline. I limited the
->> analog holds to just the ones that are required. The current set is
->> required to avoid audio stream disruptions.
-> 
-> So I am not sure about that ('avoid audio stream disruptions'): if I
-> stream video AND use arecord, then I can just set the frequency while
-> streaming. Doesn't that interrupt audio as well? And are you sure changing
-> the tuner frequency actually disrupts audio? And if audio is disrupted,
-> are we talking about a glitch or is audio permanently disrupted?
-
-I think it is a glitch. I will run some tests and let you know.
-> 
-> That's basically the inconsistent behavior I noticed: just running arecord
-> will prevent me from changing the frequency, but if I run arecord and stream
-> video, then it is suddenly OK to change the frequency.
-
-How are you changing frequency? I want to duplicate what you are doing.
-
-> 
-> BTW, I think there was also inconsistent behavior in the order of streaming
-> audio and video: if I stream video first, then I can stream audio afterwards.
-> But if I stream audio first, then (if I remember correctly) I can't start
-> video streaming.
-> 
-
-I will run some tests tomorrow and see what I find. Which video apps are
-you running for these tests?
-
-thanks,
--- Shuah
+DQoNCj4gQ291bGQgeW91IHBsZWFzZSB0ZWxsIHdoZXRoZXIgeW91IG1pc3NlZCBteSBjb21tZW50
+cyB0byBWMyBbMF0gb3IgY2hvc2UgdG8gaWdub3JlIHRoZW0/IElmIHRoZSBmb3JtZXIsIHRoZW4g
+SSdkIHdhbnQgdG8gZ2V0IGFuc3dlcnMgdG8gdGhvc2UgcXVlc3Rpb25zIGFuZCBjb21tZW50cy4g
+SSdsbCBzdG9wIGhlcmUgZm9yIG5vdy4NCj4gDQo+IFswXSBodHRwczovL3BhdGNod29yay5vemxh
+YnMub3JnL3BhdGNoLzEwMzEzNzkvDQoNClNvbWVob3cgbWlzc2VkIHRob3NlIGZyb20gbXVsdGlw
+bGUgY29tbWVudHMuIFdpbGwgZ28gdGhydSBhbmQgcmVzcG9uZCBiYWNrLg0KDQpUaGFua3MNCnNv
+d2phbnlhDQo=
