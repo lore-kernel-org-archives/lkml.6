@@ -2,138 +2,124 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0066C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5FEC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C52AE218A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D8D82184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 10:05:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2ri7Tjm"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UphX7E/q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730669AbfA3KAJ (ORCPT
+        id S1729227AbfA3KE7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 05:00:09 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46869 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfA3KAI (ORCPT
+        Wed, 30 Jan 2019 05:04:59 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34997 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbfA3KE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 05:00:08 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v15-v6so20115738ljh.13
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 02:00:07 -0800 (PST)
+        Wed, 30 Jan 2019 05:04:58 -0500
+Received: by mail-wm1-f65.google.com with SMTP id t200so21070965wmt.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 02:04:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/ahPDIIFv/MMPOGpeZxT3pmApwBNz3CD4N0VP4gKld8=;
-        b=B2ri7TjmimvAXTVQ6NpGSwysKvPv1hRX+3Oh7rms+F5kl5dzWJHrIFOwJuF4qThTKO
-         I04XKp6YookGQQmu5HRlrq8WM8/edqRbmryusF30k9Tmj3RyeHRH1aMeSyc+mATq5BgQ
-         Z40SqAe9+PkppudAohfQEIxSSDOoIhBa1tFqVWxK3HgblGGMvyid0d57zye3T4U5GjiD
-         3sUbwI3/bkTL+5Nm02NbviKLld0N+TdVirbLuwg+Dmh71heG9+55XVbxGeryWKgXNc5x
-         +lferOF3M5QO8an0Kmgzwnfy9oM1GjM2QE8henvXUlnxEA9X8MLoUvsfFTLfaXycLlZ1
-         h1Sg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oo1kQyMUGCUjislYa6LlOze0vrMNQ5FaLTM41ZieqG8=;
+        b=UphX7E/quzi2ltMApn41JSicUG4t2G10B5oXDGv4/PHrDm+nYV12oO/oa6khUAqite
+         YpGzHx2Ddj+hSrUuhGj4aUwnqwXHUUZnAGHP0ESuZt6W8AMo5FRxejjMTq2Q+I/yFbA/
+         RAQqYclkyy+3PyjN7lBbU4UoWD8p6Sg2NguHQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/ahPDIIFv/MMPOGpeZxT3pmApwBNz3CD4N0VP4gKld8=;
-        b=hTgoDly/w3WcofPxoQlpZqIz+qGirpgijJMuEJ7fcC6pd/Stu8C0C8Sc4UF0a2Lq1G
-         xT0z7IYTqk5be5vpIrxjkIXVQv9MFCzQGZWPOKIGxubrTTy/Hpltd6tYRnRvygDWzgeo
-         qhXrsyKkmQ3KLe4vEpDXwdZMY1cPe1jmmlRnXugY5XRyzYJ6EDU0jkraSOKJ5nvcAiGr
-         w5RzfwKElO4kh/Pzr/B+q4CDD78Y0ZWfZ98bfs6aWE6aNbgdLhjHWNx4NcoFusEFPwTB
-         3/OD6bHLOjDPgI16SPYv5jCFwxVb7W06W0N97RwxYIpgDmlOoY3FGSe9ETSb+8ADvEvk
-         SgtA==
-X-Gm-Message-State: AJcUukeLVrNhG6bTG9N/E8qPHQ1e0zdMTXix6pyeQ4Fy/0vScYwXNs0A
-        MpIgmRZh+pG95V93ko8osoo1eMNp0PVvp9wSrro=
-X-Google-Smtp-Source: ALg8bN5A2L7T88ZjEk542s9LF+gJzDLfcz24saQivM+b0ybEgO7nrHTut38OlFHM6aQVTbEJTgLEJ+q5EvHTEynOpcQ=
-X-Received: by 2002:a2e:8643:: with SMTP id i3-v6mr25670564ljj.43.1548842406798;
- Wed, 30 Jan 2019 02:00:06 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oo1kQyMUGCUjislYa6LlOze0vrMNQ5FaLTM41ZieqG8=;
+        b=aHDp7vW9IbiduLX31+5OAdSF87DNeGHBzbAjQTvVf1y+d6x4DmEcUlvhe6u2vlhL1Q
+         tun63a+JjaJ6gdkqciQlDih1Wai3lvORbJWyobsF/I60en3hDT2e2RiTDUv5rOy2anUJ
+         /RFv2VE0nvPDYigVNK64eMZDKeIAtC1mOc+59YT7GY700lkfzyL1sjdfEik7AEgiScJO
+         1tmvzbw8e429ILkWtuJALCbX/RVXbVJIyONE/6nd+cyhWpss/+fDL8xPR8CwC2hUYeea
+         lg+C2JMTz3oqIlvWK7IDtR2ODuRWlcavQdtvLKNji6DQexVTm9uXX0LV3HNoD7UAbMDl
+         4FOw==
+X-Gm-Message-State: AJcUukdBCTHsKkfGFuihG8rwnglWgo5NjFdYfMW4E+pvCglJfdvJ6H87
+        KbrjxHQcfA0ocPOP0SKSK5WQnw==
+X-Google-Smtp-Source: ALg8bN5VdDVfSK3jkpzTR7ScNQNvZQWNx+b8Vq5n67G0YQrVb9MhxKbQlqlECx9+AZSGNsAQ5TGH3g==
+X-Received: by 2002:a1c:968a:: with SMTP id y132mr24391391wmd.107.1548842695839;
+        Wed, 30 Jan 2019 02:04:55 -0800 (PST)
+Received: from [192.168.0.41] (164.30.95.92.rev.sfr.net. [92.95.30.164])
+        by smtp.googlemail.com with ESMTPSA id a1sm978712wrw.76.2019.01.30.02.04.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 02:04:55 -0800 (PST)
+Subject: Re: [PATCH] thermal: mtk: Allocate enough space for mtk_thermal.
+To:     Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Michael.Kao@mediatek.com
+References: <20190109055724.184692-1-pihsun@chromium.org>
+ <CANdKZ0fRckMSUwHyChgBw162cVQe9_mnd_G9vwt=+CV+Y0WFfw@mail.gmail.com>
+ <81115ad5-521e-557b-d229-1effb92068a4@linaro.org>
+ <CANdKZ0eDwTgKoFsAOboCz=q+nsUWepecXA7wmR=jGhkWEzLvnA@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <49dbd0af-975e-cafb-d1b9-4e491a6c9383@linaro.org>
+Date:   Wed, 30 Jan 2019 11:04:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190111150801.GA2714@jordon-HP-15-Notebook-PC> <CAFqt6zZx9qxx_Xv=n-PY45OvS7E8ZBq+ZqaeEKfsaCirwaASSg@mail.gmail.com>
-In-Reply-To: <CAFqt6zZx9qxx_Xv=n-PY45OvS7E8ZBq+ZqaeEKfsaCirwaASSg@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Wed, 30 Jan 2019 15:29:55 +0530
-Message-ID: <CAFqt6zboe40Ss6C6h9zhkO71pxKOkA1zV6OrH-+aU3-1yVzeWA@mail.gmail.com>
-Subject: Re: [PATCH 2/9] arch/arm/mm/dma-mapping.c: Convert to use vm_insert_range
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
-        Kees Cook <keescook@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CANdKZ0eDwTgKoFsAOboCz=q+nsUWepecXA7wmR=jGhkWEzLvnA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 11:54 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> On Fri, Jan 11, 2019 at 8:33 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >
-> > Convert to use vm_insert_range() to map range of kernel
-> > memory to user vma.
-> >
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->
-> Any comment on this patch ?
+On 30/01/2019 10:25, Pi-Hsun Shih wrote:
+> On Wed, Jan 30, 2019 at 3:44 PM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 30/01/2019 07:04, Peter Shih wrote:
+>>> Adding Michael Kao to cc list.
+>>>
+>>> On Wed, Jan 9, 2019 at 1:57 PM Pi-Hsun Shih <pihsun@chromium.org> wrote:
+>>>>
+>>>> The mtk_thermal struct contains a 'struct mtk_thermal_bank banks[];',
+>>>> but the allocation only allocates sizeof(struct mtk_thermal) bytes,
+>>>> which cause out of bound access with the ->banks[] member. Change it to
+>>>> a fixed size array instead.
+>>
+>> Even if the fix is correct, it pushes back the bug later in time if a
+>> new board containing more than MAX_NUM_ZONES is introduced. I suggest to
+>> dynamically allocate the array with the 'num_banks' value.
+>>
+> 
+> For the current code structure, those mtk_thermal_data are statically declared,
+> so if there's new board containing more than MAX_NUM_ZONES of bank_data, it
+> would actually be a compile error.
+> 
+> I'm fine with either way, but feel like that this is simpler than manually
+> calculating the size needed for allocation.
 
-Any comment on this patch ?
+Right, I missed it can be caught at compile time.
 
->
-> > ---
-> >  arch/arm/mm/dma-mapping.c | 22 ++++++----------------
-> >  1 file changed, 6 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> > index 78de138..5334391 100644
-> > --- a/arch/arm/mm/dma-mapping.c
-> > +++ b/arch/arm/mm/dma-mapping.c
-> > @@ -1582,31 +1582,21 @@ static int __arm_iommu_mmap_attrs(struct device *dev, struct vm_area_struct *vma
-> >                     void *cpu_addr, dma_addr_t dma_addr, size_t size,
-> >                     unsigned long attrs)
-> >  {
-> > -       unsigned long uaddr = vma->vm_start;
-> > -       unsigned long usize = vma->vm_end - vma->vm_start;
-> >         struct page **pages = __iommu_get_pages(cpu_addr, attrs);
-> >         unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> > -       unsigned long off = vma->vm_pgoff;
-> > +       int err;
-> >
-> >         if (!pages)
-> >                 return -ENXIO;
-> >
-> > -       if (off >= nr_pages || (usize >> PAGE_SHIFT) > nr_pages - off)
-> > +       if (vma->vm_pgoff >= nr_pages)
-> >                 return -ENXIO;
-> >
-> > -       pages += off;
-> > -
-> > -       do {
-> > -               int ret = vm_insert_page(vma, uaddr, *pages++);
-> > -               if (ret) {
-> > -                       pr_err("Remapping memory failed: %d\n", ret);
-> > -                       return ret;
-> > -               }
-> > -               uaddr += PAGE_SIZE;
-> > -               usize -= PAGE_SIZE;
-> > -       } while (usize > 0);
-> > +       err = vm_insert_range(vma, pages, nr_pages);
-> > +       if (err)
-> > +               pr_err("Remapping memory failed: %d\n", err);
-> >
-> > -       return 0;
-> > +       return err;
-> >  }
-> >  static int arm_iommu_mmap_attrs(struct device *dev,
-> >                 struct vm_area_struct *vma, void *cpu_addr,
-> > --
-> > 1.9.1
-> >
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
