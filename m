@@ -2,136 +2,249 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4495C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0625C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EFDE2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:16:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A048F2184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 17:17:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732447AbfA3RQq (ORCPT
+        id S1732449AbfA3RRS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 12:16:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47922 "EHLO mx1.redhat.com"
+        Wed, 30 Jan 2019 12:17:18 -0500
+Received: from mga01.intel.com ([192.55.52.88]:25183 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727680AbfA3RQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 12:16:44 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 71D2CC050061;
-        Wed, 30 Jan 2019 17:16:43 +0000 (UTC)
-Received: from [10.36.112.68] (ovpn-112-68.ams2.redhat.com [10.36.112.68])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E078B101F97A;
-        Wed, 30 Jan 2019 17:16:37 +0000 (UTC)
-Subject: Re: [PATCH v2 0/2] KVM: x86: expose direct stores instructions into
- VM.
-To:     Liu Jingqi <jingqi.liu@intel.com>, rkrcmar@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com
-Cc:     bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tao3.xu@intel.com
-References: <1541483728-7826-1-git-send-email-jingqi.liu@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <6462fea6-7963-3fcb-dbcd-c94f1971c30b@redhat.com>
-Date:   Wed, 30 Jan 2019 18:16:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <1541483728-7826-1-git-send-email-jingqi.liu@intel.com>
-Content-Type: text/plain; charset=utf-8
+        id S1726972AbfA3RRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 12:17:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 09:17:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,541,1539673200"; 
+   d="scan'208";a="120724727"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by fmsmga008.fm.intel.com with ESMTP; 30 Jan 2019 09:17:16 -0800
+Received: from fmsmsx122.amr.corp.intel.com ([169.254.5.2]) by
+ fmsmsx107.amr.corp.intel.com ([169.254.6.186]) with mapi id 14.03.0415.000;
+ Wed, 30 Jan 2019 09:17:16 -0800
+From:   "Mani, Rajmohan" <rajmohan.mani@intel.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        "Qiu, Tian Shu" <tian.shu.qiu@intel.com>,
+        "Cao, Bingbu" <bingbu.cao@intel.com>,
+        "Zhi@paasikivi.fi.intel.com" <Zhi@paasikivi.fi.intel.com>,
+        "Zhi, Yong" <yong.zhi@intel.com>,
+        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+        "tfiga@chromium.org" <tfiga@chromium.org>
+Subject: RE: [PATCH] media: staging/intel-ipu3: Implement lock for stream
+ on/off operations
+Thread-Topic: [PATCH] media: staging/intel-ipu3: Implement lock for stream
+ on/off operations
+Thread-Index: AQHUuCOItqk09SukTkm5qxVbw0DkOqXICeuAgAACepA=
+Date:   Wed, 30 Jan 2019 17:17:15 +0000
+Message-ID: <6F87890CF0F5204F892DEA1EF0D77A599B325222@fmsmsx122.amr.corp.intel.com>
+References: <20190129222736.6216-1-rajmohan.mani@intel.com>
+ <20190130085901.w2ogdoax7t4yfyj6@paasikivi.fi.intel.com>
+In-Reply-To: <20190130085901.w2ogdoax7t4yfyj6@paasikivi.fi.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 30 Jan 2019 17:16:43 +0000 (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOWNkMzA3MmUtN2RlYS00ODhhLWE0YjktODc0NDA1YzJiZDUzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVXd2SGJxZjVkR2pnQldRNWlFT3JOZFdGZmlwQnJaWEN4YTBPOERzY2xoTWdkM2xuUDRORDNzVEpSM2plT1AwViJ9
+x-originating-ip: [10.1.200.106]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/18 06:55, Liu Jingqi wrote:
-> Direct stores instructions MOVDIRI and MOVDIR64B will be available in
-> Tremont and other future x86 processors,
-> and need to be exposed to guest VM.
+Hi Sakari,
+
+> -----Original Message-----
+> From: Sakari Ailus [mailto:sakari.ailus@linux.intel.com]
+> Sent: Wednesday, January 30, 2019 12:59 AM
+> To: Mani, Rajmohan <rajmohan.mani@intel.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>; Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>; linux-media@vger.kernel.org;
+> devel@driverdev.osuosl.org; linux-kernel@vger.kernel.org; Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com>; Jacopo Mondi <jacopo@jmondi.org>;
+> Qiu, Tian Shu <tian.shu.qiu@intel.com>; Cao, Bingbu
+> <bingbu.cao@intel.com>; Zhi@paasikivi.fi.intel.com; Zhi, Yong
+> <yong.zhi@intel.com>; hverkuil@xs4all.nl; tfiga@chromium.org
+> Subject: Re: [PATCH] media: staging/intel-ipu3: Implement lock for stream
+> on/off operations
 > 
-> The release document ref below link:
-> https://software.intel.com/sites/default/files/managed/c5/15/\
-> architecture-instruction-set-extensions-programming-reference.pdf
+> Hi Rajmohan,
 > 
-> This series expose movdiri and movdir64b features to guest VM.
+> On Tue, Jan 29, 2019 at 02:27:36PM -0800, Rajmohan Mani wrote:
+> > Currently concurrent stream off operations on ImgU nodes are not
+> > synchronized, leading to use-after-free bugs (as reported by KASAN).
+> >
+> > [  250.090724] BUG: KASAN: use-after-free in
+> > ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu] [  250.090726] Read of size 8
+> > at addr ffff888127b29bc0 by task yavta/18836 [  250.090731] Hardware
+> > name: HP Soraka/Soraka, BIOS Google_Soraka.10431.17.0 03/22/2018 [
+> 250.090732] Call Trace:
+> > [  250.090735]  dump_stack+0x6a/0xb1
+> > [  250.090739]  print_address_description+0x8e/0x279
+> > [  250.090743]  ? ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu] [
+> > 250.090746]  kasan_report+0x260/0x28a [  250.090750]
+> > ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu] [  250.090754]
+> > ipu3_css_pool_cleanup+0x24/0x37 [ipu3_imgu] [  250.090759]
+> > ipu3_css_pipeline_cleanup+0x61/0xb9 [ipu3_imgu] [  250.090763]
+> > ipu3_css_stop_streaming+0x1f2/0x321 [ipu3_imgu] [  250.090768]
+> > imgu_s_stream+0x94/0x443 [ipu3_imgu] [  250.090772]  ?
+> > ipu3_vb2_buf_queue+0x280/0x280 [ipu3_imgu] [  250.090775]  ?
+> > vb2_dma_sg_unmap_dmabuf+0x16/0x6f [videobuf2_dma_sg] [  250.090778]
+> ?
+> > vb2_buffer_in_use+0x36/0x58 [videobuf2_common] [  250.090782]
+> > ipu3_vb2_stop_streaming+0xf9/0x135 [ipu3_imgu]
+> >
+> > Implemented a lock to synchronize imgu stream on / off operations and
+> > the modification of streaming flag (in struct imgu_device), to prevent
+> > these issues.
+> >
+> > Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >
+> > Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
+> > ---
+> >  drivers/staging/media/ipu3/ipu3-v4l2.c | 6 ++++++
+> >  drivers/staging/media/ipu3/ipu3.c      | 3 +++
+> >  drivers/staging/media/ipu3/ipu3.h      | 4 ++++
+> >  3 files changed, 13 insertions(+)
+> >
+> > diff --git a/drivers/staging/media/ipu3/ipu3-v4l2.c
+> > b/drivers/staging/media/ipu3/ipu3-v4l2.c
+> > index c7936032beb9..cf7e917cd0c8 100644
+> > --- a/drivers/staging/media/ipu3/ipu3-v4l2.c
+> > +++ b/drivers/staging/media/ipu3/ipu3-v4l2.c
+> > @@ -507,12 +507,15 @@ static int ipu3_vb2_start_streaming(struct
+> vb2_queue *vq, unsigned int count)
+> >  			goto fail_stop_pipeline;
+> >  	}
+> >
+> > +	mutex_lock(&imgu->streaming_lock);
+> > +
 > 
-> Changelog:
-> v2:
-> 	Separated from the series https://lkml.org/lkml/2018/7/10/160
-> 	since umonitor/umwait/tpause instructions patches are not ready yet.
-> v1:
-> 	Sent out with umonitor/umwait/tpause instructions patches.
-> 
-> Liu Jingqi (2):
->   KVM: x86: expose MOVDIRI CPU feature into VM.
->   KVM: x86: expose MOVDIR64B CPU feature into VM.
-> 
->  arch/x86/kvm/cpuid.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> You appear to be using imgu_device.lock (while searching buffers to queue to
+> the device) as well as imgu_video_device.lock (qbuf, dqbuf) to serialise access
+> to imgu_video_device.buffers list.
+
+Ack
+
+> The two locks may be acquired at the same
+> time but each by different processes. That needs to be addressed, but
+> probably not in this patch.
 > 
 
-Queued, thanks.
+The node specific locks will be used by different processes and all of these processes
+will be competing commonly (and successfully) for the imgu_device lock.
+I will look into this more.
 
-Paolo
+> I wonder if it'd be more simple to use imgu->lock here instead of adding a new
+> one.
+> 
+
+Extending imgu->lock here, does not work in this case, as imgu_queue_buffers()
+will be stuck acquiring imgu->lock, which was already acquired by imgu_s_stream()
+through ipu3_vb2_start_streaming().
+
+> >  	/* Start streaming of the whole pipeline now */
+> >  	dev_dbg(dev, "IMGU streaming is ready to start");
+> >  	r = imgu_s_stream(imgu, true);
+> >  	if (!r)
+> >  		imgu->streaming = true;
+> >
+> > +	mutex_unlock(&imgu->streaming_lock);
+> >  	return 0;
+> >
+> >  fail_stop_pipeline:
+> > @@ -543,6 +546,8 @@ static void ipu3_vb2_stop_streaming(struct
+> vb2_queue *vq)
+> >  		dev_err(&imgu->pci_dev->dev,
+> >  			"failed to stop subdev streaming\n");
+> >
+> > +	mutex_lock(&imgu->streaming_lock);
+> > +
+> >  	/* Was this the first node with streaming disabled? */
+> >  	if (imgu->streaming && ipu3_all_nodes_streaming(imgu, node)) {
+> >  		/* Yes, really stop streaming now */ @@ -552,6 +557,7 @@
+> static
+> > void ipu3_vb2_stop_streaming(struct vb2_queue *vq)
+> >  			imgu->streaming = false;
+> >  	}
+> >
+> > +	mutex_unlock(&imgu->streaming_lock);
+> >  	ipu3_return_all_buffers(imgu, node, VB2_BUF_STATE_ERROR);
+> 
+> >  	media_pipeline_stop(&node->vdev.entity);
+> >  }
+> > diff --git a/drivers/staging/media/ipu3/ipu3.c
+> > b/drivers/staging/media/ipu3/ipu3.c
+> > index d521b3afb8b1..2daee51cd845 100644
+> > --- a/drivers/staging/media/ipu3/ipu3.c
+> > +++ b/drivers/staging/media/ipu3/ipu3.c
+> > @@ -635,6 +635,7 @@ static int imgu_pci_probe(struct pci_dev *pci_dev,
+> >  		return r;
+> >
+> >  	mutex_init(&imgu->lock);
+> > +	mutex_init(&imgu->streaming_lock);
+> >  	atomic_set(&imgu->qbuf_barrier, 0);
+> >  	init_waitqueue_head(&imgu->buf_drain_wq);
+> >
+> > @@ -699,6 +700,7 @@ static int imgu_pci_probe(struct pci_dev *pci_dev,
+> >  	ipu3_css_set_powerdown(&pci_dev->dev, imgu->base);
+> >  out_mutex_destroy:
+> >  	mutex_destroy(&imgu->lock);
+> > +	mutex_destroy(&imgu->streaming_lock);
+> >
+> >  	return r;
+> >  }
+> > @@ -716,6 +718,7 @@ static void imgu_pci_remove(struct pci_dev
+> *pci_dev)
+> >  	ipu3_dmamap_exit(imgu);
+> >  	ipu3_mmu_exit(imgu->mmu);
+> >  	mutex_destroy(&imgu->lock);
+> > +	mutex_destroy(&imgu->streaming_lock);
+> >  }
+> >
+> >  static int __maybe_unused imgu_suspend(struct device *dev) diff --git
+> > a/drivers/staging/media/ipu3/ipu3.h
+> > b/drivers/staging/media/ipu3/ipu3.h
+> > index 04fc99f47ebb..f732315f0701 100644
+> > --- a/drivers/staging/media/ipu3/ipu3.h
+> > +++ b/drivers/staging/media/ipu3/ipu3.h
+> > @@ -146,6 +146,10 @@ struct imgu_device {
+> >  	 * vid_buf.list and css->queue
+> >  	 */
+> >  	struct mutex lock;
+> > +
+> > +	/* Lock to protect writes to streaming flag in this struct */
+> > +	struct mutex streaming_lock;
+> > +
+> >  	/* Forbit streaming and buffer queuing during system suspend. */
+> >  	atomic_t qbuf_barrier;
+> >  	/* Indicate if system suspend take place while imgu is streaming. */
+> 
+> --
+> Regards,
+> 
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
