@@ -2,157 +2,147 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF1DC282D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B5DC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45C702184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE11721852
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 08:34:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730182AbfA3IdK (ORCPT
+        id S1730259AbfA3IeQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:33:10 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49263 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbfA3IdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:33:10 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8C5867AEAA;
-        Wed, 30 Jan 2019 08:33:09 +0000 (UTC)
-Received: from [10.36.112.46] (ovpn-112-46.ams2.redhat.com [10.36.112.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 29E175D96F;
-        Wed, 30 Jan 2019 08:33:01 +0000 (UTC)
-Subject: Re: [PATCH v2 1/7] KVM:VMX: Define CET VMCS fields and bits
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     rkrcmar@redhat.com, sean.j.christopherson@intel.com,
-        jmattson@google.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, mst@redhat.com, yu-cheng.yu@intel.com,
-        yi.z.zhang@intel.com, hjl.tools@gmail.com,
-        Zhang Yi Z <yi.z.zhang@linux.intel.com>
-References: <20190122205909.24165-1-weijiang.yang@intel.com>
- <20190122205909.24165-2-weijiang.yang@intel.com>
- <5a31eef0-2b6c-bdc2-c54b-5dc4cecf084d@redhat.com>
- <20190128103345.GA29895@local-michael-cet-test.sh.intel.com>
- <4d9a5393-163b-f32a-4657-cec54093ee88@redhat.com>
- <20190129082917.GA32725@local-michael-cet-test.sh.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <e80bd3f5-7276-6c2a-3ad9-3ce0d0d0bff7@redhat.com>
-Date:   Wed, 30 Jan 2019 09:32:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Wed, 30 Jan 2019 03:34:16 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56796 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730190AbfA3IeP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 03:34:15 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0U8XlDn124848
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 03:34:14 -0500
+Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.91])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qb6jh4raa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 03:34:14 -0500
+Received: from localhost
+        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
+        for <linux-kernel@vger.kernel.org> from <JOELN@il.ibm.com>;
+        Wed, 30 Jan 2019 08:34:13 -0000
+Received: from us1a3-smtp03.a3.dal06.isc4sb.com (10.106.154.98)
+        by smtp.notes.na.collabserv.com (10.106.227.143) with smtp.notes.na.collabserv.com ESMTP;
+        Wed, 30 Jan 2019 08:34:05 -0000
+Received: from us1a3-mail108.a3.dal06.isc4sb.com ([10.146.45.126])
+          by us1a3-smtp03.a3.dal06.isc4sb.com
+          with ESMTP id 2019013008340388-215235 ;
+          Wed, 30 Jan 2019 08:34:03 +0000 
+In-Reply-To: <20190129170406.GD10094@ziepe.ca>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-rdma@vger.kernel.org, linux-rdma-owner@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH 5/5] RDMA/uverbs: add UVERBS_METHOD_REG_REMOTE_MR
+From:   "Joel Nider" <JOELN@il.ibm.com>
+Date:   Wed, 30 Jan 2019 10:34:02 +0200
+References: <1548768386-28289-1-git-send-email-joeln@il.ibm.com>
+ <1548768386-28289-6-git-send-email-joeln@il.ibm.com>
+ <20190129170406.GD10094@ziepe.ca>
 MIME-Version: 1.0
-In-Reply-To: <20190129082917.GA32725@local-michael-cet-test.sh.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 30 Jan 2019 08:33:09 +0000 (UTC)
+X-KeepSent: 8090F111:AEB0B591-C2258392:002E4215;
+ type=4; name=$KeepSent
+X-Mailer: IBM Notes Release 9.0.1FP7 August 18, 2016
+X-LLNOutbound: False
+X-Disclaimed: 46851
+X-TNEFEvaluated: 1
+x-cbid: 19013008-9951-0000-0000-00000B265F7C
+X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
+ SC=0.425523; ST=0; TS=0; UL=0; ISC=; MB=0.000759
+X-IBM-SpamModules-Versions: BY=3.00010503; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01153831; UDB=6.00601589; IPR=6.00934206;
+ BA=6.00006216; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00025352; XFM=3.00000015;
+ UTC=2019-01-30 08:34:10
+X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
+X-IBM-AV-VERSION: SAVI=2019-01-30 05:59:00 - 6.00009527
+x-cbparentid: 19013008-9952-0000-0000-00001B34A862
+Message-Id: <OF8090F111.AEB0B591-ONC2258392.002E4215-C2258392.002F0FDE@notes.na.collabserv.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 8BIT
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/01/19 09:29, Yang Weijiang wrote:
-> On Tue, Jan 29, 2019 at 04:19:34PM +0100, Paolo Bonzini wrote:
->> On 28/01/19 11:33, Yang Weijiang wrote:
->>>> There is no code in this series to pass these fields to and from
->>>> userspace, and also to save/restore U_CET, INT_SSP_TAB, PL0_SSP and
->>>> PL3_SSP across context switches.
->>>>
->>> The kernel consumes these MSRs, please see kernel CET patch:
->>> https://lkml.org/lkml/fancy/2018/11/20/225
->>
->> Still, even if the kernel saves these fields across context switch in
->> XSAVE areas, KVM must support accesses to the MSRs from userspace, for
->> example in order to perform live migration.
->>
->> For example, when reading/writing these in kvm_set_msr or
->> kvm_get_msr_common, you would have to do a read/write from the host
->> MSRs.  You also have to put kvm_load_guest_fpu/kvm_put_guest_fpu calls
->> in __msr_io.
-> Thanks, you're right, if we want to support live migration we need do that.
-> However, this feature relies on quite a few external
-> dependencies, e.g., cpu capabilities, kernel version and configuration, we
-> don't support live migration right now. what's your opinion?
+linux-rdma-owner@vger.kernel.org wrote on 01/29/2019 07:04:06 PM:
 
-Live migration is generally a requirement for a feature to be accepted
-in KVM.
+> On Tue, Jan 29, 2019 at 03:26:26PM +0200, Joel Nider wrote:
+> > Add a new handler for new uverb reg_remote_mr. The purpose is to 
+register
+> > a memory region in a different address space (i.e. process) than the
+> > caller.
+> > 
+> > The main use case which motivated this change is post-copy container
+> > migration. When a migration manager (i.e. CRIU) starts a migration, it
+> > must have an open connection for handling any page faults that occur
+> > in the container after restoration on the target machine. Even though
+> > CRIU establishes and maintains the connection, ultimately the memory
+> > is copied from the container being migrated (i.e. a remote address
+> > space). This container must remain passive -- meaning it cannot have
+> > any knowledge of the RDMA connection; therefore the migration manager
+> > must have the ability to register a remote memory region. This remote
+> > memory region will serve as the source for any memory pages that must
+> > be copied (on-demand or otherwise) during the migration.
+> > 
+> > Signed-off-by: Joel Nider <joeln@il.ibm.com>
+> >  drivers/infiniband/core/uverbs_std_types_mr.c | 129 
++++++++++++++++++++++++++-
+> >  include/rdma/ib_verbs.h                       |   8 ++
+> >  include/uapi/rdma/ib_user_ioctl_cmds.h        |  13 +++
+> >  3 files changed, 149 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/infiniband/core/uverbs_std_types_mr.c b/drivers/
+> infiniband/core/uverbs_std_types_mr.c
+> > index 4d4be0c..bf7b4b2 100644
+> > +++ b/drivers/infiniband/core/uverbs_std_types_mr.c
+> > @@ -150,6 +150,99 @@ static int 
+UVERBS_HANDLER(UVERBS_METHOD_DM_MR_REG)(
+> >     return ret;
+> >  }
+> > 
+> > +static int UVERBS_HANDLER(UVERBS_METHOD_REG_REMOTE_MR)(
+> > +   struct uverbs_attr_bundle *attrs)
+> > +{
+> 
+> I think this should just be REG_MR with an optional remote PID
+> argument
 
-Paolo
+Maybe I missed something.  Isn't REG_MR only implemented as a write() 
+command? In our earlier conversation you told me all new commands must be 
+implemented as ioctl() commands.
 
->> Thanks,
->>
->> Paolo
->>
->>>> In addition, PL1_SSP and PL2_SSP should be supported even if the guest
->>>> doesn't use them.  It makes sense to avoid intercepting them, but they
->>>> should still be supported and switched (possibly only if nonzero).
->>>>
->>>> Am I missing something, for example a dependency on host CET support?
->>>> If not, how was this series tested?
->>>>
->>> The guest CET feature is tested with kernel CET patches on internal
->>> virtual platform.
->>>
+
+> >  DECLARE_UVERBS_NAMED_OBJECT(
+> >     UVERBS_OBJECT_MR,
+> >     UVERBS_TYPE_ALLOC_IDR(uverbs_free_mr),
+> >     &UVERBS_METHOD(UVERBS_METHOD_DM_MR_REG),
+> >     &UVERBS_METHOD(UVERBS_METHOD_MR_DESTROY),
+> > -   &UVERBS_METHOD(UVERBS_METHOD_ADVISE_MR));
+> > +   &UVERBS_METHOD(UVERBS_METHOD_ADVISE_MR),
+> > +   &UVERBS_METHOD(UVERBS_METHOD_REG_REMOTE_MR),
+> > +);
+> 
+> I'm kind of surprised this compiles with the trailing comma?
+Personally, I think it is nicer with the trailing comma. Of course 
+syntactically it makes no sense, but when adding a new entry, you don't 
+have to touch the previous line, which makes the diff cleaner. If this is 
+against standard practices I will remove the comma.
+
+
 
