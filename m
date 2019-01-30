@@ -2,94 +2,121 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78EBC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DABC282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFA22082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:14:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7878C20855
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:14:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LIbUetxy"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="esDv+HWV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731564AbfA3XOL (ORCPT
+        id S1731612AbfA3XOQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:14:11 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43335 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727619AbfA3XOK (ORCPT
+        Wed, 30 Jan 2019 18:14:16 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44875 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbfA3XOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:14:10 -0500
-Received: by mail-pf1-f195.google.com with SMTP id w73so526489pfk.10;
-        Wed, 30 Jan 2019 15:14:10 -0800 (PST)
+        Wed, 30 Jan 2019 18:14:14 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t13so480828pgr.11
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 15:14:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5n1+cIrWtv2S9KD3Xm+6tUPSq7KGqqGhy9S8hO6zw8w=;
-        b=LIbUetxyW0GONSuLb/bsF4zpShJUDCSG7sUK6lSN5JbI8TuXR1+xfWWQifunsz8cXy
-         hZMtxa3lRza/Md6rLKk/GIKtkiS6hknwGnDEPjO8iH70LsWs/1JBbkAo1q0vgw1Z8FFF
-         FZJplgmm3VHEQJPufQ0M7nXbxtBXbFKwTBsRJZnRbLnkzZwDeAtswwzuVUs/PIaw9/zT
-         uH7k6u72ymD8TxDdcX3pF9E+cr/dkDGcb9tI7a6WodaY2ZYT9d8psCyM1KMebTAuo6Sl
-         03t3+nP1zNapRwJd6ztyfknZopAP/mpF3mbO1FuDR8fOfq0PCGBrFVYykkKHNSSCFN49
-         eqbA==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:subject:from:message-id:cc
+         :references:user-agent:to:in-reply-to:date;
+        bh=Z2kUd9T1hLZPhMu+tVqGLrjwPLXqPCCDErL6IvJu4J4=;
+        b=esDv+HWVINM0oMkbc14eE/yrjVCiFk/Rm0xqyfds7kI7hV+wF09iS2fYL+yupiezg5
+         OFiOZJ49b8wbyTHK+4trwKBUZBxb3LXmByuZwmclEuTLz2EjTAWWmPKTdpGgcBJBmSXm
+         yT+vSbNpt/i63O1NlCWIZbQqysvDq39GhNJrU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5n1+cIrWtv2S9KD3Xm+6tUPSq7KGqqGhy9S8hO6zw8w=;
-        b=FOdb3Li5KkFAE5YTT3XbOeL599tLN51r3f6UebYhHsWVAvXgV3p1r5eMGMgOr1f+Ht
-         8eOA1RYv2SD7WeseG++8aHWyZYfLYde92wr8+IS/X9HwTxpiwRfM6NzRYgbAz2+HR6Os
-         XrsrzWH356gjfor192tKJ/hXVCwyXuoiCHUY+nXz3yc9r6Ot21nYwsroJO9Ic0xTckl5
-         SG7ueNmNlO8OJ2jnsulVJyWxG0KgEGOPDtsXxX+XNcEi/i2rFLKYK/ar2Cvc6MtdX2Sw
-         dPYKTnRKu8DLx9lipoSSbzgLMq6p23Xcoh9xg5461KQf55ibaAFtiyveKLf6oLoqBrXA
-         X+Eg==
-X-Gm-Message-State: AJcUukfK3PgjTIf5yX+L4QCaOpxc8Ha4zoJUGgGGizLli2X8cSPwuZ14
-        fzh60UqFicRs3tAFWIo9qLxE/6RE
-X-Google-Smtp-Source: ALg8bN54lBtNAGAJe43khZaxOAndRuQjYtei06wfBmcHa32RZ7QTkvlITyPjo4+ZEcIgRkz+rPqqGg==
-X-Received: by 2002:a62:4587:: with SMTP id n7mr32000051pfi.118.1548886373792;
-        Wed, 30 Jan 2019 14:12:53 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id q7sm3356998pgp.40.2019.01.30.14.12.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 14:12:52 -0800 (PST)
-Date:   Wed, 30 Jan 2019 14:12:51 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/44] 4.9.154-stable review
-Message-ID: <20190130221251.GA26954@roeck-us.net>
-References: <20190129113139.826927690@linuxfoundation.org>
+        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
+         :from:message-id:cc:references:user-agent:to:in-reply-to:date;
+        bh=Z2kUd9T1hLZPhMu+tVqGLrjwPLXqPCCDErL6IvJu4J4=;
+        b=n8VRnTpi6HcxnUAS6oIj/glH1rz2hQcwTXaTtr7uL7GRHADJiJKISa1fRJCu8zzGC/
+         GU4sti57iW6FeyR0WEwOzNjmro3x726lLCUd0ZcbhBQB8QDRxifMD0b88iXz5ZZRKwjI
+         A0nP4wLdPvgAc+3lXyc9x5LpDJrgZUvQG/VasfDvydTjlGmmMbrbyIZtn76MYi2HdYO4
+         m5zu4E/obJqm0oirpojBLHSpcLleKhRQ7QWBoOA9htUKLHi6U4Fp7Py0STEKQvRvWVIo
+         7RNTaNarN3pyZS3JuOjDx4qPE+oX+kSnRTdmSRrhd4khSkhXgFe6QKNqdjjb1ipg2iNv
+         BbUw==
+X-Gm-Message-State: AJcUuke7zh8q5Yr7HFBvOyq2RN7vGe4tmvuQv+cykFPJ3guvfF7uPf+b
+        0p2W+EhamaYJsEQg2tMx8UOiytizul5f4A==
+X-Google-Smtp-Source: ALg8bN7dq+ofwpT8s8cSi66dNn6JyXssp2Zv50pDIiZAJyE2aTZNUS61quLFIS6ozt23emARl3fEug==
+X-Received: by 2002:a62:76cc:: with SMTP id r195mr32158606pfc.38.1548888330336;
+        Wed, 30 Jan 2019 14:45:30 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id l19sm5847806pfi.71.2019.01.30.14.45.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 14:45:29 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129113139.826927690@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 5/8] drivers: pinctrl: msm: setup GPIO irqchip hierarchy
+From:   Stephen Boyd <swboyd@chromium.org>
+Message-ID: <154888832839.169292.6913084380036629941@swboyd.mtv.corp.google.com>
+Cc:     linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
+        bjorn.andersson@linaro.org, dianders@chromium.org,
+        linus.walleij@linaro.org, Lina Iyer <ilina@codeaurora.org>
+References: <20190124202205.7940-1-ilina@codeaurora.org> <20190124202205.7940-6-ilina@codeaurora.org>
+User-Agent: alot/0.8
+To:     Lina Iyer <ilina@codeaurora.org>, evgreen@chromium.org,
+        marc.zyngier@arm.com
+In-Reply-To: <20190124202205.7940-6-ilina@codeaurora.org>
+Date:   Wed, 30 Jan 2019 14:45:28 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 12:35:55PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.154 release.
-> There are 44 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Jan 31 11:31:22 UTC 2019.
-> Anything received after that time might be too late.
-> 
+Quoting Lina Iyer (2019-01-24 12:22:02)
+> To allow GPIOs to wakeup the system from suspend or deep idle, the
+> wakeup capable GPIOs are setup in hierarchy with interrupts from the
+> wakeup-parent irqchip.
+>=20
+> In older SoC's, the TLMM will handover detection to the parent irqchip
+> and in newer SoC's, the parent irqchip may also be active as well as the
+> TLMM and therefore the GPIOs need to be masked at TLMM to avoid
+> duplicate interrupts. To enable both these configurations to exist,
+> allow the parent irqchip to dictate the TLMM irqchip's behavior when
+> masking/unmasking the interrupt.
+>=20
+> Co-developed-by: Stephen Boyd <swboyd@chromium.org>
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>=20
+> ---
+> Changes in v2:
+>         - Fix bug when unmaksing PDC interrupt
 
-For v4.9.153-43-g6674590d15d2:
+What was the bug? Is that why the mask callback in this gpio chip no
+longer calls the parent irq chip? We should keep calling the parent
+irqchip from what I can tell. Otherwise, we may never mask the irq at
+the PDC and only mask it at the GPIO level, which may not even care
+about it if it's being monitored by the PDC.
 
-Build results:
-	total: 172 pass: 172 fail: 0
-Qemu test results:
-	total: 315 pass: 315 fail: 0
+This causes me to get a bunch of interrupts on my touchscreen when I
+touch it once vs. only a handful (like 4) when I fix it with the below
+patch:
 
-Guenter
+Can you fold it in?
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinc=
+trl-msm.c
+index dd72ec8fb8db..9b45219893bd 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -682,6 +682,9 @@ static void msm_gpio_irq_mask(struct irq_data *d)
+ 	clear_bit(d->hwirq, pctrl->enabled_irqs);
+=20
+ 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
++
++	if (d->parent_data)
++		irq_chip_mask_parent(d);
+ }
+=20
+ static void msm_gpio_irq_unmask(struct irq_data *d)
