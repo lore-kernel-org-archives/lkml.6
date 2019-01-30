@@ -2,94 +2,117 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E423C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C12C282D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C7952184D
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:26:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nldxZ75+"
+	by mail.kernel.org (Postfix) with ESMTP id 3B7EC2184D
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:26:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731555AbfA3Q0o (ORCPT
+        id S1731696AbfA3Q0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:26:44 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35050 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727371AbfA3Q0o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:26:44 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so122971ljb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 08:26:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3SVNRQz+X4Hk9bSAF5GyFdZKD0z7Vt5Oq5UNt9Q9q6Q=;
-        b=nldxZ75+1lLZYS1pcbAgSQ18WXPSb7H9T4+DSVwhkjeYNDaRZ+3cd/fzHKh7q0hp1v
-         kVZwh5M50p4Lpqd88YRvIfWL5QH05Y8z2/Cb/KpU44L/x324pnQ1ycEhVXa7GbJLMVit
-         0WDPvGw9gQIgEfjP8Bo/qQgb9fMCzqF+vfRdetA5nMkblr4N1y0h/ATSrcYzFMiN9UMm
-         iy4FKBdJnJ9nT3dqz+CQ0LzFgQ0hWVvmuM8eTCLj5m7xg8RO2ANjpBAqDMbfb0dYGFX3
-         AHkNcyBWC4R+xgSKn5XSSJ/KoiPhi6vjLGpgo5MKomDp9Q+epyi8DpMT52lOLqFfn3P+
-         m6lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3SVNRQz+X4Hk9bSAF5GyFdZKD0z7Vt5Oq5UNt9Q9q6Q=;
-        b=D53bwkw8TD8vSOur7lJVPsn8Izul+KxV5sVAviTYwxvDCYLOdmHHUjmkcyosYJnCP6
-         dtwPN1KlKYrjjW7w8rL7Fz/Zwf8Je3001STMwjYR9Y3XNsvQqlvTBP5hsfbKmgCiG0Zh
-         3h+zAgDfTFQo0jBuw9jtXrMQIMX3bOuvZnRhe/0mdxwzeek5eRA2qpyn7HWyJyBOGvW5
-         R68pRAWpa9NzOgGN27bUaazkEzSV/3F9P6lgZMBrtEc0ZpjG/qjbjETRMFDbc+vfvDUm
-         Ly/yl7Qc25So7ODumrfbMjEgsK5UPoBzfpZR7pW+LAmstEuG7Q91WdDMUN7Zekx5jx16
-         REyQ==
-X-Gm-Message-State: AJcUukf4BkJc181SsgBWsQZqeDaOnLsQ2yrZEPv+zR1DbEP/xi04lvnG
-        7onr/2E0/WxjoD/K2AKjTpvuElXj
-X-Google-Smtp-Source: ALg8bN4pRQjnb36ixk+6o86Pzm/aqRRsQ6PYtW7uDc9JBrul8QnYPDEnDyccaTvUues47rdDduvTmw==
-X-Received: by 2002:a2e:9cd5:: with SMTP id g21-v6mr24742223ljj.48.1548865601896;
-        Wed, 30 Jan 2019 08:26:41 -0800 (PST)
-Received: from uranus.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id 11-v6sm345985ljv.1.2019.01.30.08.26.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 08:26:41 -0800 (PST)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id DFA9E46077D; Wed, 30 Jan 2019 19:26:39 +0300 (MSK)
-Date:   Wed, 30 Jan 2019 19:26:39 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH next] fs/splice: iter_to_pipe -- Use PIPE_DEF_BUFFERS
- instead of hardcoded number
-Message-ID: <20190130162639.GA25251@uranus>
-References: <20190130153911.GJ2332@uranus.lan>
- <20190130154245.GK2217@ZenIV.linux.org.uk>
- <20190130154851.GK2332@uranus.lan>
+        Wed, 30 Jan 2019 11:26:50 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:40542 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727371AbfA3Q0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:26:50 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B393965C72E10CEA2CC0;
+        Thu, 31 Jan 2019 00:26:43 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.43) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Thu, 31 Jan 2019
+ 00:26:37 +0800
+Subject: Re: [PATCH v2 2/7] scsi: libsas: only clear phy->in_shutdown after
+ shutdown event done
+To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20190130082412.9357-1-yanaijie@huawei.com>
+ <20190130082412.9357-3-yanaijie@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <5643a038-a62f-e19c-1073-d845a8344b9f@huawei.com>
+Date:   Wed, 30 Jan 2019 16:26:28 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190130154851.GK2332@uranus.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190130082412.9357-3-yanaijie@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 06:48:51PM +0300, Cyrill Gorcunov wrote:
-> On Wed, Jan 30, 2019 at 03:42:45PM +0000, Al Viro wrote:
-> > On Wed, Jan 30, 2019 at 06:39:11PM +0300, Cyrill Gorcunov wrote:
-> > > And use ARRAY_SIZE for easier code modification if we ever need in future.
-> > 
-> > Umm...  Why PIPE_DEF_BUFFERS, though?  Because it's a constant from more or
-> > less the same area that happens to be equal to the value we use here?
-> 
-> Yes. Since plain 16 value completely unclear where it comes from. I looked
-> into your commit which made this change and seems previously we've had this
-> constant related (79fddc4efd5d4de5cf210fe5ecf4d2734140849a). Am I wrong?
+On 30/01/2019 08:24, Jason Yan wrote:
+> When the event queue is full of phy up and down events and reached the
+> threshold, we will queue a shutdown-event, and set phy->in_shutdown so
+> that we will not queue a shutdown-event again. But before the
+> shutdown-event can be executed, every phy-down event will clear
+> phy->in_shutdown and a new shutdown-event will be queued. The queue will
+> be full of these shutdown-events.
+>
+> Fix this by only clear phy->in_shutdown in sas_phye_shutdown(), that is
+> after the first shutdown-event has been executed.
+>
 
-Thinking more I'm more convinced that i'm wrong. Also it is related to
-this default size, the code can pretty well use (alsmost) any other
-constant here. Al, drop it please.
+Seems ok as a fix:
+Reviewed-by: John Garry <john.garry@huawei.com>
+
+After this fix, could we change to use a static per-PHY shutdown event 
+so that we cannot re-queue it? I know that this is going against idea of 
+dynamic events, but it's easier than messing with flags like this.
+
+> Fixes: f12486e06ae8 ("scsi: libsas: shut down the PHY if events reached the threshold")
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> CC: John Garry <john.garry@huawei.com>
+> CC: Johannes Thumshirn <jthumshirn@suse.de>
+> CC: Ewan Milne <emilne@redhat.com>
+> CC: Christoph Hellwig <hch@lst.de>
+> CC: Tomas Henzl <thenzl@redhat.com>
+> CC: Dan Williams <dan.j.williams@intel.com>
+> CC: Hannes Reinecke <hare@suse.com>
+> ---
+>  drivers/scsi/libsas/sas_phy.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/scsi/libsas/sas_phy.c b/drivers/scsi/libsas/sas_phy.c
+> index 0374243c85d0..762bb13cca74 100644
+> --- a/drivers/scsi/libsas/sas_phy.c
+> +++ b/drivers/scsi/libsas/sas_phy.c
+> @@ -35,7 +35,6 @@ static void sas_phye_loss_of_signal(struct work_struct *work)
+>  	struct asd_sas_event *ev = to_asd_sas_event(work);
+>  	struct asd_sas_phy *phy = ev->phy;
+>
+> -	phy->in_shutdown = 0;
+>  	phy->error = 0;
+>  	sas_deform_port(phy, 1);
+>  }
+> @@ -45,7 +44,6 @@ static void sas_phye_oob_done(struct work_struct *work)
+>  	struct asd_sas_event *ev = to_asd_sas_event(work);
+>  	struct asd_sas_phy *phy = ev->phy;
+>
+> -	phy->in_shutdown = 0;
+>  	phy->error = 0;
+>  }
+>
+> @@ -127,6 +125,7 @@ static void sas_phye_shutdown(struct work_struct *work)
+>  	} else
+>  		pr_notice("phy%02d is not enabled, cannot shutdown\n",
+>  			  phy->id);
+> +	phy->in_shutdown = 0;
+>  }
+>
+>  /* ---------- Phy class registration ---------- */
+>
+
+
