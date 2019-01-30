@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE226C282D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C61C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5CBA207E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADB42207E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 16:03:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731884AbfA3QDM (ORCPT
+        id S1731900AbfA3QDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:03:12 -0500
+        Wed, 30 Jan 2019 11:03:14 -0500
 Received: from mga02.intel.com ([134.134.136.20]:60152 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731863AbfA3QDK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:03:10 -0500
+        id S1731880AbfA3QDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:03:12 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 08:03:09 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 08:03:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,541,1539673200"; 
-   d="scan'208";a="142760896"
+   d="scan'208";a="142760902"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 30 Jan 2019 08:03:07 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 30 Jan 2019 08:03:09 -0800
 From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
         Hans de Goede <hdegoede@redhat.com>,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/9] platform/x86: intel_cht_int33fe: Remove old style mux connections
-Date:   Wed, 30 Jan 2019 19:02:53 +0300
-Message-Id: <20190130160259.46919-4-heikki.krogerus@linux.intel.com>
+Subject: [PATCH v2 4/9] device connection: Add fwnode member to struct device_connection
+Date:   Wed, 30 Jan 2019 19:02:54 +0300
+Message-Id: <20190130160259.46919-5-heikki.krogerus@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
 References: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
@@ -47,59 +47,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new mux connection naming scheme is now in use, so
-dropping the connections still using the old names. From now
-on the same connection description named "mode-switch" is
-used with both the port and the alternate modes, so on CHT
-the DP alt mode will use the same connection as the port to
-get a handle to the mux device.
+This will prepare the device connection API for connections
+described in firmware.
 
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
- drivers/platform/x86/intel_cht_int33fe.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+ include/linux/device.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-index 295fe19ad4c2..6fa3cced6f8e 100644
---- a/drivers/platform/x86/intel_cht_int33fe.c
-+++ b/drivers/platform/x86/intel_cht_int33fe.c
-@@ -32,7 +32,7 @@ struct cht_int33fe_data {
- 	struct i2c_client *fusb302;
- 	struct i2c_client *pi3usb30532;
- 	/* Contain a list-head must be per device */
--	struct device_connection connections[7];
-+	struct device_connection connections[4];
- };
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 5663003a95eb..1fb077f5a936 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -757,11 +757,17 @@ struct device_dma_parameters {
  
- /*
-@@ -174,22 +174,13 @@ static int cht_int33fe_probe(struct platform_device *pdev)
- 
- 	data->connections[0].endpoint[0] = "port0";
- 	data->connections[0].endpoint[1] = "i2c-pi3usb30532";
--	data->connections[0].id = "typec-switch";
-+	data->connections[0].id = "orientation-switch";
- 	data->connections[1].endpoint[0] = "port0";
- 	data->connections[1].endpoint[1] = "i2c-pi3usb30532";
--	data->connections[1].id = "typec-mux";
--	data->connections[2].endpoint[0] = "port0";
--	data->connections[2].endpoint[1] = "i2c-pi3usb30532";
--	data->connections[2].id = "idff01m01";
--	data->connections[3].endpoint[0] = "i2c-fusb302";
--	data->connections[3].endpoint[1] = "intel_xhci_usb_sw-role-switch";
--	data->connections[3].id = "usb-role-switch";
--	data->connections[4].endpoint[0] = "port0";
--	data->connections[4].endpoint[1] = "i2c-pi3usb30532";
--	data->connections[4].id = "orientation-switch";
--	data->connections[5].endpoint[0] = "port0";
--	data->connections[5].endpoint[1] = "i2c-pi3usb30532";
--	data->connections[5].id = "mode-switch";
-+	data->connections[1].id = "mode-switch";
-+	data->connections[2].endpoint[0] = "i2c-fusb302";
-+	data->connections[2].endpoint[1] = "intel_xhci_usb_sw-role-switch";
-+	data->connections[2].id = "usb-role-switch";
- 
- 	device_connections_add(data->connections);
- 
+ /**
+  * struct device_connection - Device Connection Descriptor
++ * @fwnode: The device node of the connected device
+  * @endpoint: The names of the two devices connected together
+  * @id: Unique identifier for the connection
+  * @list: List head, private, for internal use only
++ *
++ * NOTE: @fwnode is not used together with @endpoint. @fwnode is used when
++ * platform firmware defines the connection. When the connection is registered
++ * with device_connection_add() @endpoint is used instead.
+  */
+ struct device_connection {
++	struct fwnode_handle	*fwnode;
+ 	const char		*endpoint[2];
+ 	const char		*id;
+ 	struct list_head	list;
 -- 
 2.20.1
 
