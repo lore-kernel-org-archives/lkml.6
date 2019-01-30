@@ -2,85 +2,125 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 133C4C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FD1C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8D2205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548862200;
-	bh=IXgzgPI1HHyYdEP5PJixV7WwTg2x7VC9pHLBFT0zbTw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kPCRZkMKBig0z4C3BnmpqI9n1xu3j8eVbWjCeFJrsgIaG9BQuytVQAAaf4HgN/UWR
-	 hvPToM5+ejqOmskmIedhZ7udVGKDdsWUP5l+kgycUjhehdSSdnnugEjzIYBfaX3aUE
-	 mnyzKCI/x+4OlCmbB+wbPdOkSK6ufLessTJo3log=
+	by mail.kernel.org (Postfix) with ESMTP id 62D26205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 15:32:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="0w0jjpO4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731408AbfA3P37 (ORCPT
+        id S1731468AbfA3Pcc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:29:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726332AbfA3P37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 10:29:59 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37AE9205C9;
-        Wed, 30 Jan 2019 15:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548862198;
-        bh=IXgzgPI1HHyYdEP5PJixV7WwTg2x7VC9pHLBFT0zbTw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fs8YZApBs2jFVZzSUXIg74H1W73LNFl6Bl++1JoUY1booKCMgMZpWomZdQRANqMkO
-         z60EB1jQWDvvIse25Q3j3bNuHUK/PSivLTaRFdZ8D7/b/bAdE0RBgh2V5XY3ouYqoA
-         g4tX+xnN5Vvpb5OGXVms5Wc0jJWKLLJWTQ5fjGYg=
-Date:   Wed, 30 Jan 2019 16:29:56 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Carlos Henrique Lima Melara <charlesmelara@outlook.com>
-Cc:     "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "neil@brown.name" <neil@brown.name>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2] staging: mt7621-eth/ethtool.c: Correction of SPDX
- license identifier
-Message-ID: <20190130152956.GA4195@kroah.com>
-References: <SC1P15201MB2014C3E0CAB4DA9ADF330797A8900@SC1P15201MB2014.LAMP152.PROD.OUTLOOK.COM>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SC1P15201MB2014C3E0CAB4DA9ADF330797A8900@SC1P15201MB2014.LAMP152.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Wed, 30 Jan 2019 10:32:32 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42704 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727977AbfA3Pcc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 10:32:32 -0500
+Received: by mail-qt1-f195.google.com with SMTP id d19so26628727qtq.9
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 07:32:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=ogMbMWCbaPKXCxe13GQRtAoEFG/dyH2jH/CrprzGxr0=;
+        b=0w0jjpO4fdNODtpHiNha+HZMbP1zY37miF06vcpSs4Q8y8Fc4dBEpJ7rQqlffiy+hs
+         e2fawZtAwr+MPstTuEwB0s/byHTh7AONQMUADPrXbgHGuqZDG45kXq2F0JnAd9GYNsU7
+         2o/Tx+NJbt5rB4CdsqLZ2oFmK/iJpA1dDe8EV752GcT0j6GZ19cB4aUkgEbGraw6aYg9
+         gf4e70noWAYk2896OI0gixYSbKprCBAxYvh/lgtJkt0Hd60jBkWdWmhBomKLWdRY2AQM
+         Qu6pH2Hk/E7ENOeLb1+iPS47d9nFmBG2evFYp00Z150NdLfz4+ZzlQ9uEPjhQdi/1cCH
+         dGEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=ogMbMWCbaPKXCxe13GQRtAoEFG/dyH2jH/CrprzGxr0=;
+        b=H8sqXAtuSMLXdd34/z5zKy6X1IXYxInsUwUeECXChr6Gwm5PFL8tMPqkan3FM9tHlA
+         xGVbqotteNEE5zf6c8ngDzy3juj/KHhPpNKqLRrpLeniokHbcy0ApVS4tu2TdU73dfvH
+         ypxk2j8RELgvq4mrijKpQ7epTyQrXl7BAcMnGc2mM9n13U6vi9tvX7Sb4nr4UVlCcN0b
+         K3EDVxgjwAWL/GlduBWFJZEjjhPLLat8zb76cz91pa+O3ya/eIpnxknoULDg6K0xNHit
+         eXX+C6046jVcqZjII+b3840I8m0HB7WXayLdGSOgVEYPPEfyaNXyfBwccFY7x5V016PE
+         m8Cg==
+X-Gm-Message-State: AJcUukeDBTwHUev2E346rC492wpju4a2qhQeBG1yzKfeY95pQtXMErUC
+        e9Z/EqwbSDbD6OXyoUlJ1BaWDA==
+X-Google-Smtp-Source: ALg8bN5IcFzRI6RW6sCe2/QhmafHaLe1WGIw06L3Fgvi9WnQXsKsNTJd7ZQAYv8mrMdEr6AtO1wrXg==
+X-Received: by 2002:a0c:c138:: with SMTP id f53mr28955133qvh.225.1548862351152;
+        Wed, 30 Jan 2019 07:32:31 -0800 (PST)
+Received: from skullcanyon ([192.222.193.21])
+        by smtp.gmail.com with ESMTPSA id t40sm1367912qth.46.2019.01.30.07.32.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 07:32:30 -0800 (PST)
+Message-ID: <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
+Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
+ codec API
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Date:   Wed, 30 Jan 2019 10:32:28 -0500
+In-Reply-To: <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
+         <20190117162008.25217-11-stanimir.varbanov@linaro.org>
+         <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
+         <28069a44-b188-6b89-2687-542fa762c00e@linaro.org>
+         <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
+         <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
+         <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
+         <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
+         <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 02:48:27PM +0000, Carlos Henrique Lima Melara wrote:
-> 	This patch fix the checkpatch.p1 warning:
+Le mercredi 30 janvier 2019 à 15:17 +0900, Tomasz Figa a écrit :
+> > I don't remember saying that, maybe I meant to say there might be a
+> > workaround ?
+> > 
+> > For the fact, here we queue the headers (or first frame):
+> > 
+> > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2videodec.c#L624
+> > 
+> > Then few line below this helper does G_FMT internally:
+> > 
+> > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2videodec.c#L634
+> > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2object.c#L3907
+> > 
+> > And just plainly fails if G_FMT returns an error of any type. This was
+> > how Kamil designed it initially for MFC driver. There was no other
+> > alternative back then (no EAGAIN yet either).
 > 
-> 	WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-> 	+/*
-
-Why did you not fix up the indentation that was already mentioned?
-
-> 	It includes the SPDX expression for GPL-2.0 and corrects the comment format to suit the kernel's coding style.
-
-Always properly line-wrap your comments.
-
+> Hmm, was that ffmpeg then?
 > 
-> Signed-off-by: Carlos (Charles) Henrique Lima Melara <charlesmelara@outlook.com>
+> So would it just set the OUTPUT width and height to 0? Does it mean
+> that gstreamer doesn't work with coda and mtk-vcodec, which don't have
+> such wait in their g_fmt implementations?
 
-This needs to match your "From:" line.
+I don't know for MTK, I don't have the hardware and didn't integrate
+their vendor pixel format. For the CODA, I know it works, if there is
+no wait in the G_FMT, then I suppose we are being really lucky with the
+timing (it would be that the drivers process the SPS/PPS synchronously,
+and a simple lock in the G_FMT call is enough to wait). Adding Philipp
+in CC, he could explain how this works, I know they use GStreamer in
+production, and he would have fixed GStreamer already if that was
+causing important issue.
 
-thanks,
+Nicolas
 
-greg k-h
