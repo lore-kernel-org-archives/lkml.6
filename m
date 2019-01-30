@@ -2,121 +2,141 @@ Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E80E2C282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D58D0C282D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E3AE218AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:35:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D03C218AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 20:35:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vE10Ib9j"
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="VwM3v9EQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387697AbfA3Ufb (ORCPT
+        id S2387746AbfA3Ufj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 15:35:31 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40736 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387609AbfA3Uf2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 15:35:28 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u18so348926plq.7;
-        Wed, 30 Jan 2019 12:35:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GmctxZS15y5z2V85O1PU0CkJgxCRKgIbZyDbKcO3Mk4=;
-        b=vE10Ib9j33MNS8aeBLU3oTRIYMUczk7bWwdZ8xzpTtLOmD8IoWlK9IaPZFkT5imD50
-         FAQbxastdeP+5TMqtCHqLGba+9Iuqf9Rm79lpHt2KSt1OwZFT0RRH3nw7qwmR8H2kB6P
-         cdEKXHTs1UO9fSniiytt9s3SIc+l4FR5rAwRk52J0/sv95gya4cHVguCmtfV8W9YLMdF
-         GjakZfeyCRYjhSiTlnMr67chMEspOnTAxGg+Wou2p1+MOSpTfVw7g1B3DTfCLoryh6uH
-         1TnkOg2bT6Hh2ryFVfgJrGDlxSfcTagzEwIG+u9STjfTI7+PVmX4D8shJFZSCwkNHMtp
-         Tz7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GmctxZS15y5z2V85O1PU0CkJgxCRKgIbZyDbKcO3Mk4=;
-        b=a9G5+6d3GEyQJrz89cfKJC12+49pYVrX+sjPwZ4B7LRDQEDuVV/MNn10TZADOsxEjb
-         f1kP5VtyQxwLzTwqkkXzyFjY5jYADD70x0m6R9F9KuZpYERheAroe1Y9d4ok3LC0MLmm
-         RsGh9TriIbKyPUrQFzDBMhCj8Sh97hK9kOK8ti6iBVmZS6A7yJeR6rdfXA/6YmIkBj5Y
-         mY172uDG9Mb5MJqDVUQ/z/uL1DN+QMTN5rzE+V291fZoG80BLSqjrY1aMmD86lWRBSvt
-         hzE2k3e0oPuAh9Xx2C5KFMPNcjFFxIqXg3Q3SMiRH3OS7zQbR3me7lYKV89YaDmuP5bp
-         Kdyw==
-X-Gm-Message-State: AJcUukd34c4rq9CAlQxknayKnQnQqrcb4mGPj7pML54DJNszxEFvrP46
-        Jcku2v0OAGratniFyJ96Vyv1qW+F
-X-Google-Smtp-Source: ALg8bN5iGhvp3GNJ9Ecjt5mQ6fhf1lHT8zqiIyfAQXw6CRg/SxunR0dFOF2QJcAgOKh1tRC2N97zQg==
-X-Received: by 2002:a17:902:5ac7:: with SMTP id g7mr32224925plm.212.1548880527936;
-        Wed, 30 Jan 2019 12:35:27 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id m19sm6404798pgn.35.2019.01.30.12.35.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 12:35:26 -0800 (PST)
-Date:   Wed, 30 Jan 2019 12:35:25 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Kamil Debski <kamil@wypas.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/3] dt-bindings: hwmon: Add tachometer interrupt to
- pwm-fan
-Message-ID: <20190130203525.GA23614@roeck-us.net>
-References: <1548860827-29796-1-git-send-email-stefan.wahren@i2se.com>
- <1548860827-29796-2-git-send-email-stefan.wahren@i2se.com>
- <20190130172815.GC14781@roeck-us.net>
- <625436113.118199.1548879811777@email.ionos.de>
+        Wed, 30 Jan 2019 15:35:39 -0500
+Received: from mail-eopbgr1320133.outbound.protection.outlook.com ([40.107.132.133]:25184
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387609AbfA3Ufi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 15:35:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kvquaKx42gXLhPmyqBpJgmxRyWFt+hdZBF/O779AfNU=;
+ b=VwM3v9EQkjji0FNLxT0cgd5ehetyKm/DehUxLjDHWqraKyTeTed1sFxUdRMvdHkC+C9nxS1gA8iCdozq4ZG73KQyEdWk0GfjumAw4RgU9GFHvhTbuB2QsRBAiW2WIYHuG5BDM9g4nDShcSkjJV88Tjxn3beLYl4/U7MYq9N7xrI=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0201.APCP153.PROD.OUTLOOK.COM (10.170.190.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.6; Wed, 30 Jan 2019 20:35:32 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::7822:a20:e63c:de2f]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::7822:a20:e63c:de2f%9]) with mapi id 15.20.1601.008; Wed, 30 Jan 2019
+ 20:35:32 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+CC:     Josh Poulson <jopoulso@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "driverdev-devel@linuxdriverproject.org" 
+        <driverdev-devel@linuxdriverproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>
+Subject: [PATCH] nfit: Document sysfs interface dirty_shutdown
+Thread-Topic: [PATCH] nfit: Document sysfs interface dirty_shutdown
+Thread-Index: AdS42zb+6lKJngzXS46K40iCynMfvg==
+Date:   Wed, 30 Jan 2019 20:35:32 +0000
+Message-ID: <PU1P153MB0169A031D0ED4BEEE272829ABF900@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-01-30T20:35:28.0779207Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=972b0a80-c1bd-4e88-be58-7b26132e6dc3;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:9:e07a:40bd:14fc:76ab]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;PU1P153MB0201;6:SutmMDojCeIbqpKE9Uvow0hR5/GQ5kWA72EhJV96K0mhEzokeYx6qHkdGXVDfVOqCLwNM2zTB6UOK/gkwU3qzREs3Pu6Iz6CRK71UtJO8qQMDqEbjhN43LRT9/AQ8ot8Tj9ccUgjPhzjnxQNF0NmFalb2YbTHPTQJ1OSB0JNJma5SMZTONYD+FxxgX44hh3EvZlzNjGvZj47FqXIKN8d2CI5jSYH0uPGNx60Lpjry3fYhTQCGXBBYUg6GNe6UA9tThJ4xM8lW8uaNQ64pbyKCXcIp17xFBhg7x+eCnuRHE9h3r72+CfD7pU4ytsxjG0Oq7JuB+wtup8OO1LKI+LkLMuGFy6MIB7mSYrNBgDLLgMK17OFaRWoQf3WtMkCQNW0Xx/sQFgZHPKoaURmnEbvjKWf4RvIc07HIXzbKoFvKUl5NtIQi8YV7bUaIoo8sK/Sw20+02uJZZHJy7ngKcAIAw==;5:iGidG0SlBwbmRp/bqQClR9Sn+hFzmNIbRqqTVlOWKTNQ/uIHNPccuw1Qxr4s1/71adGNTGnKeeJuOgOdkmxNrygtoOFE7BDQZs+d66txt+siNlVJkAPlWsIW02O2Dw60MHFrO0DzUBBvpiDENRqeZclR2bct32itg+Rl6KQsneU+cCDnkm/gEsczPmE3wkHZ89AEdeSC/vAsruMQzekBkA==;7:SkBmbJHT+xvLwuO1SPqxtYHmKUNIvH/9csiy6tdx0TusEKZAyB7/pBUlHAeIK7Xy4x0JbEYp5Fzw3Sm9NpbGlIG4pp5abcowaOY/OwrzACW6FYwrhYugMuCokhkhNGQxDpwRIQfZYzM2cBARs1KiVg==
+x-ms-office365-filtering-correlation-id: 9589271e-8c5b-4fad-daf3-08d686f27b1e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0201;
+x-ms-traffictypediagnostic: PU1P153MB0201:
+x-ms-exchange-purlcount: -3
+x-microsoft-antispam-prvs: <PU1P153MB0201FF8848207B1A014B813BBF900@PU1P153MB0201.APCP153.PROD.OUTLOOK.COM>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(396003)(346002)(366004)(39860400002)(189003)(199004)(99286004)(2501003)(8990500004)(107886003)(7416002)(71200400001)(2906002)(55016002)(53936002)(25786009)(4326008)(7696005)(10090500001)(9686003)(33656002)(6436002)(4744005)(71190400001)(68736007)(86362001)(2201001)(476003)(110136005)(486006)(22452003)(46003)(105586002)(14454004)(97736004)(6506007)(186003)(102836004)(81166006)(7736002)(106356001)(8676002)(305945005)(54906003)(478600001)(81156014)(74316002)(6116002)(256004)(10290500003)(8936002)(86612001)(316002)(14143004);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0201;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 5xtTcVirOueKLvBaWBSg1fwpnxsxmKBnaPfoca1p8k14uCoMQL+SO7M3lsok/4dTd1hGBq6XZboTvQxIDRDne9dapVwHgN0/Fx4c97Lnz6jrAG6HlprGX45n/QIqSxuGbjz8JC7WMQ7mKsBh7nJUsZqOrAjguzNmBrDTQZB1bJd8OPYXyjKF9SKl3+yba5KmIZxRtzwGBsY9e6DnMXFU1rKJPIqt8QzvDbKjF/E1U732pl7vIRl2S45GNzQ6DklUaG6tTq+gY2i3KsZ3dLYagVn1NpKXHfAsYmXg/TQUuxZNgItic+k6CxKkAhJYUAxDmRk6Z2TFyDYRFuk6qDi0CyOiN9zFgCH1C0xqte7ipXHbYGgswSWN06Gji1kTxnSUjkhYYy+3WLyrH+zX42CGKhpbA8Leif9ztKIA+SqeaTM=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <625436113.118199.1548879811777@email.ionos.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9589271e-8c5b-4fad-daf3-08d686f27b1e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 20:35:32.0194
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0201
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 09:23:31PM +0100, Stefan Wahren wrote:
-> Hi Guenter,
-> 
-> > Guenter Roeck <linux@roeck-us.net> hat am 30. Januar 2019 um 18:28 geschrieben:
-> > 
-> > 
-> > On Wed, Jan 30, 2019 at 04:07:05PM +0100, Stefan Wahren wrote:
-> > > This adds the tachometer interrupt to the pwm-fan binding, which is
-> > > necessary for RPM support.
-> > > 
-> > > Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/hwmon/pwm-fan.txt | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> > > index 49ca5d8..7f69b0b 100644
-> > > --- a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> > > +++ b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> > > @@ -8,6 +8,9 @@ Required properties:
-> > >  
-> > >  Optional properties:
-> > >  - fan-supply    : phandle to the regulator that provides power to the fan
-> > > +- interrupts    : contains a single interrupt specifier which describes the
-> > > +                  tachometer pin output of a 2 pulse-per-revolution fan.
-> > > +                  See interrupt-controller/interrupts.txt for the format.
-> > 
-> > So a hypothetical {1,4} pulse-per-revolution fan would explicitly not be
-> > supported ? Why ?
-> 
-> i could add an additional property to specify the pulse per revolution and use the 2 as default (according to the Intel spec for 4 pin pwm fan) which should fit in most cases.
-> 
-That would be a possibility and make sense, but that is not
-the point here.  The "interrupts" property does not and should
-not care how many pulses per revolution the fan provides.
 
-Guenter
+The new sysfs node was added in Sep 2018 in:
+commit 0ead11181fe0 ("acpi, nfit: Collect shutdown status")
+
+Now let's document it.
+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+---
+ Documentation/ABI/testing/sysfs-bus-nfit | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/Documentation/ABI/testing/sysfs-bus-nfit b/Documentation/ABI/t=
+esting/sysfs-bus-nfit
+index a1cb44dcb908..bd6cde8c0ea9 100644
+--- a/Documentation/ABI/testing/sysfs-bus-nfit
++++ b/Documentation/ABI/testing/sysfs-bus-nfit
+@@ -153,6 +153,14 @@ Description:
+ 		subsystem controller vendor.
+=20
+=20
++What:		/sys/bus/nd/devices/nmemX/nfit/dirty_shutdown
++Date:		Sep, 2018
++KernelVersion:	v4.20
++Contact:	linux-nvdimm@lists.01.org
++Description:
++		(RO) Unsafe Shutdown Count for the NVDIMM device.
++
++
+ What:		/sys/bus/nd/devices/ndbusX/nfit/revision
+ Date:		Jun, 2015
+ KernelVersion:	v4.2
+--=20
+2.19.1
+
