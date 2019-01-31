@@ -2,96 +2,233 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183E3C4151A
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CB6C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D39D92075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:23:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548930232;
-	bh=q31fqADB2XqHYhQxy+W9kqv1qG2N+Mmssvwo7ert4Pg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=m7/vQNieJ84XWtbGNtKFfin6xNl0Hc/zs6TlSMah8FJ23N+8ZN+danzA9EyxJLcKJ
-	 mSX5OMRk24Bd1RAcvfXU6/VOL+p/UohaUnQVGe1E5ak5KNs6hiMEFssKQXiizV/m6l
-	 VxceR0w6iFSusYabdudF3MD/SmH4CN3OiWENI4Jo=
+	by mail.kernel.org (Postfix) with ESMTP id 33E91218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:25:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732014AbfAaKXv (ORCPT
+        id S1731924AbfAaKZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:23:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53104 "EHLO mx1.suse.de"
+        Thu, 31 Jan 2019 05:25:34 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43704 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726462AbfAaKXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:23:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7619CB049;
-        Thu, 31 Jan 2019 10:23:49 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 11:23:48 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Chinner <david@fromorbit.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Daniel Gruss <daniel@gruss.cc>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm/filemap: initiate readahead even if IOCB_NOWAIT
- is set for the I/O
-Message-ID: <20190131102348.GT18811@dhcp22.suse.cz>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
- <20190130124420.1834-1-vbabka@suse.cz>
- <20190130124420.1834-3-vbabka@suse.cz>
- <20190131095644.GR18811@dhcp22.suse.cz>
- <nycvar.YFH.7.76.1901311114260.6626@cbobk.fhfr.pm>
+        id S1726434AbfAaKZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 05:25:33 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7F30F69E8479B4414E85;
+        Thu, 31 Jan 2019 18:25:31 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.43) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Thu, 31 Jan 2019
+ 18:25:21 +0800
+Subject: Re: [PATCH v2 3/7] scsi: libsas: optimize the debug print of the
+ revalidate process
+To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20190130082412.9357-1-yanaijie@huawei.com>
+ <20190130082412.9357-4-yanaijie@huawei.com>
+ <2ffa6821-93d4-7925-d435-e34338f323ec@huawei.com>
+ <5C524FE2.9070801@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <50358ca3-5350-2f82-b94e-02e27a64873f@huawei.com>
+Date:   Thu, 31 Jan 2019 10:25:11 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1901311114260.6626@cbobk.fhfr.pm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5C524FE2.9070801@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 31-01-19 11:15:28, Jiri Kosina wrote:
-> On Thu, 31 Jan 2019, Michal Hocko wrote:
-> 
-> > > diff --git a/mm/filemap.c b/mm/filemap.c
-> > > index 9f5e323e883e..7bcdd36e629d 100644
-> > > --- a/mm/filemap.c
-> > > +++ b/mm/filemap.c
-> > > @@ -2075,8 +2075,6 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
-> > >  
-> > >  		page = find_get_page(mapping, index);
-> > >  		if (!page) {
-> > > -			if (iocb->ki_flags & IOCB_NOWAIT)
-> > > -				goto would_block;
-> > >  			page_cache_sync_readahead(mapping,
-> > >  					ra, filp,
-> > >  					index, last_index - index);
-> > 
-> > Maybe a stupid question but I am not really familiar with this path but
-> > what exactly does prevent a sync read down page_cache_sync_readahead
-> > path?
-> 
-> page_cache_sync_readahead() only submits the read ahead request(s), it 
-> doesn't wait for it to finish.
+On 31/01/2019 01:31, Jason Yan wrote:
+>
+>
+> On 2019/1/31 0:41, John Garry wrote:
+>> On 30/01/2019 08:24, Jason Yan wrote:
+>>> sas_rediscover() returns error code if discover failed for a expander
+>>> phy. And sas_ex_revalidate_domain() only returns the last phy's error
+>>> code. So when sas_revalidate_domain() prints the return value of the
+>>> discover process, we do not know if the revalidation for every phy is
+>>> successful or not. We just know the last bcast phy revalidation
+>>> succeeded or not.
+>>>
+>>> No need to return a error code for sas_ex_revalidate_domain() and
+>>> sas_rediscover(), and just print the debug log for each bcast phy
+>>> directly
+>>> in sas_rediscover().
+>>
+>> do we want to know about every PHY, or just the PHY where res != 0?
+>>
+>
+> Here I mean every PHY that raises bcast.
 
-OK, I guess my question was not precise. What does prevent taking fs
-locks down the path?
--- 
-Michal Hocko
-SUSE Labs
+
+This may be better added at the sas_rediscover() callsite. And do you 
+feel adding this for every bcast phy is useful, or just those whose 
+rediscover error'ed?
+
+>
+>>>
+>>
+>> I don't see any optimisation here. Maybe an improvement.
+>>
+>
+> Thanks, I will change the wording.
+>
+>>
+>>> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+>>> CC: John Garry <john.garry@huawei.com>
+>>> CC: Johannes Thumshirn <jthumshirn@suse.de>
+>>> CC: Ewan Milne <emilne@redhat.com>
+>>> CC: Christoph Hellwig <hch@lst.de>
+>>> CC: Tomas Henzl <thenzl@redhat.com>
+>>> CC: Dan Williams <dan.j.williams@intel.com>
+>>> CC: Hannes Reinecke <hare@suse.com>
+>>> ---
+>>>  drivers/scsi/libsas/sas_discover.c |  7 +++----
+>>>  drivers/scsi/libsas/sas_expander.c | 11 ++++++-----
+>>>  include/scsi/libsas.h              |  2 +-
+>>>  3 files changed, 10 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/scsi/libsas/sas_discover.c
+>>> b/drivers/scsi/libsas/sas_discover.c
+>>> index 726ada9b8c79..ffc571a12916 100644
+>>> --- a/drivers/scsi/libsas/sas_discover.c
+>>> +++ b/drivers/scsi/libsas/sas_discover.c
+>>> @@ -500,7 +500,6 @@ static void sas_discover_domain(struct work_struct
+>>> *work)
+>>>
+>>>  static void sas_revalidate_domain(struct work_struct *work)
+>>>  {
+>>> -    int res = 0;
+>>>      struct sas_discovery_event *ev = to_sas_discovery_event(work);
+>>>      struct asd_sas_port *port = ev->port;
+>>>      struct sas_ha_struct *ha = port->ha;
+>>> @@ -521,10 +520,10 @@ static void sas_revalidate_domain(struct
+>>> work_struct *work)
+>>>
+>>>      if (ddev && (ddev->dev_type == SAS_FANOUT_EXPANDER_DEVICE ||
+>>>               ddev->dev_type == SAS_EDGE_EXPANDER_DEVICE))
+>>> -        res = sas_ex_revalidate_domain(ddev);
+>>> +        sas_ex_revalidate_domain(ddev);
+>>>
+>>> -    pr_debug("done REVALIDATING DOMAIN on port %d, pid:%d, res 0x%x\n",
+>>> -         port->id, task_pid_nr(current), res);
+>>> +    pr_debug("done REVALIDATING DOMAIN on port %d, pid:%d\n",
+>>> +         port->id, task_pid_nr(current));
+>>>   out:
+>>>      mutex_unlock(&ha->disco_mutex);
+>>>
+>>> diff --git a/drivers/scsi/libsas/sas_expander.c
+>>> b/drivers/scsi/libsas/sas_expander.c
+>>> index 7b0e6dcef6e6..5cd720f93f96 100644
+>>> --- a/drivers/scsi/libsas/sas_expander.c
+>>> +++ b/drivers/scsi/libsas/sas_expander.c
+>>> @@ -2062,7 +2062,7 @@ static int sas_rediscover_dev(struct
+>>> domain_device *dev, int phy_id, bool last)
+>>>   * first phy,for other phys in this port, we add it to the port to
+>>>   * forming the wide-port.
+>>>   */
+>>> -static int sas_rediscover(struct domain_device *dev, const int phy_id)
+>>> +static void sas_rediscover(struct domain_device *dev, const int phy_id)
+>>>  {
+>>>      struct expander_device *ex = &dev->ex_dev;
+>>>      struct ex_phy *changed_phy = &ex->ex_phy[phy_id];
+>>> @@ -2090,7 +2090,9 @@ static int sas_rediscover(struct domain_device
+>>> *dev, const int phy_id)
+>>>          res = sas_rediscover_dev(dev, phy_id, last);
+>>>      } else
+>>>          res = sas_discover_new(dev, phy_id);
+>>> -    return res;
+>>> +
+>>> +    pr_debug("ex %016llx phy%d discover returned 0x%x\n",
+>>
+>> Hmmm.. this is not just discover, but also rediscover
+>>
+>
+> Yes, will fix.
+>
+>>> +         SAS_ADDR(dev->sas_addr), phy_id, res);
+>>>  }
+>>>
+>>>  /**
+>>> @@ -2102,7 +2104,7 @@ static int sas_rediscover(struct domain_device
+>>> *dev, const int phy_id)
+>>>   * Discover process only interrogates devices in order to discover the
+>>>   * domain.
+>>>   */
+>>> -int sas_ex_revalidate_domain(struct domain_device *port_dev)
+>>> +void sas_ex_revalidate_domain(struct domain_device *port_dev)
+>>>  {
+>>>      int res;
+>>>      struct domain_device *dev = NULL;
+>>> @@ -2117,11 +2119,10 @@ int sas_ex_revalidate_domain(struct
+>>> domain_device *port_dev)
+>>>              res = sas_find_bcast_phy(dev, &phy_id, i, true);
+>>
+>> this was missed
+>
+> Yes, the return value of sas_find_bcast_phy() is actually unused, and
+> inside the function debug info has been printed. So we can directly
+> make it a void function.
+
+ok, but how about add a comment like:
+
+-if (phy_id == -1)
++if (phy_id == -1) /* no remaining broadcast phy found */
+
+>
+>>
+>>>              if (phy_id == -1)
+>>>                  break;
+>>> -            res = sas_rediscover(dev, phy_id);
+>>> +            sas_rediscover(dev, phy_id);
+>>>              i = phy_id + 1;
+>>>          } while (i < ex->num_phys);
+>>>      }
+>>> -    return res;
+>>>  }
+>>>
+>>>  void sas_smp_handler(struct bsg_job *job, struct Scsi_Host *shost,
+>>> diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
+>>> index 420156cea3ee..e557bcb0c266 100644
+>>> --- a/include/scsi/libsas.h
+>>> +++ b/include/scsi/libsas.h
+>>> @@ -692,7 +692,7 @@ int  sas_discover_root_expander(struct
+>>> domain_device *);
+>>>
+>>>  void sas_init_ex_attr(void);
+>>>
+>>> -int  sas_ex_revalidate_domain(struct domain_device *);
+>>> +void sas_ex_revalidate_domain(struct domain_device *);
+>>>
+>>>  void sas_unregister_domain_devices(struct asd_sas_port *port, int
+>>> gone);
+>>>  void sas_init_disc(struct sas_discovery *disc, struct asd_sas_port *);
+>>>
+>>
+>>
+>>
+>> .
+>>
+>
+>
+> .
+>
+
+
