@@ -2,159 +2,89 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC8CFC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4BCC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AF4C20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:58:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXfqnpiL"
+	by mail.kernel.org (Postfix) with ESMTP id DC9292084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:59:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbfAaR6p (ORCPT
+        id S1727885AbfAaR7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:58:45 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33306 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbfAaR6o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:58:44 -0500
-Received: by mail-pl1-f195.google.com with SMTP id z23so1826382plo.0;
-        Thu, 31 Jan 2019 09:58:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7myhdk7E3+TT6ebRJum3PKNz1A/U8y95id46q85qWFA=;
-        b=UXfqnpiLb0sYTMfuyEsUT0NBpBdE06FJHLeRZ7haUPKD65qD77qsiiANhtRkh5WiS6
-         7xI3PqooWpkAow5y57Alo6FSQg1m6OdCLx0YsIUAHQhlzOR3Ivq2eR2Rp7+2Nvo7CAll
-         pVmTVVrYeoU5p7ZXstHUDoSOMT1BqY/AUDCI1xzRJcKRVY9jZTC1Ud1BrmCRkGG/apjf
-         8uM9oZaVNM/kFRbxMhkFaO26x44GhdldnfiwEgtyhsd3MJ04tm/1xh1NgpbnELjJ3ZTt
-         pVEeHmfghISK1/hH2PPvyH3ZcuI8szfYnBqNPDIE5v811hWtBfyaG+ZZ2r/mOOKITwlw
-         x8GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7myhdk7E3+TT6ebRJum3PKNz1A/U8y95id46q85qWFA=;
-        b=A7/yq/bIS4dpgC1NGlKnwxjZ7IPXtLvJK6NZ2LhEeQoFXDuYOB5tbie8RNZRCANcnN
-         ILzIOlXS67mfe3+n8DTXTs1nEyz/BL8GyG3nhnoXzeUJUBi3A6RXuWnRj7WVJlurdlTr
-         Pb5nyDW8gcyOkuWXhjkydAcDINZlgi5tx0Ov0TVbnxa1ljUI2ycYYGJyUBZRfpTRqJty
-         muv6qBKPpLbdZ2uWgnKjOO85s0/zmnT7zyV4QtgU79ill1g9sdJhkfFXVG8iBIgu9b8n
-         +PiOELrCma9ZNXjfW3uUOiPfDzEkDKnAc7QEPVSSqzS+el2ZF69ELN3WIVHaqWaAzTtm
-         Vt+g==
-X-Gm-Message-State: AJcUukdQAdHJxeTucHSSIjMImSK4QUWY7Ai1+TUoA0bC9EfNeulSU5ne
-        kPkzXGmiyDt9h93GWTYidllb9hmv
-X-Google-Smtp-Source: ALg8bN4KJvqqw2eCRobOJkD02z7VPnFh1yRzToU/Qcr6F19L33adkSsHJMwQDTmOU3MkDQZ2MFtj4g==
-X-Received: by 2002:a17:902:5ac2:: with SMTP id g2mr35884774plm.313.1548957523423;
-        Thu, 31 Jan 2019 09:58:43 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id c9sm9396278pfc.92.2019.01.31.09.58.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 09:58:42 -0800 (PST)
-Date:   Thu, 31 Jan 2019 09:58:42 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Eddie James <eajames@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        joel@jms.id.au, jdelvare@suse.com, tglx@linutronix.de
-Subject: Re: [PATCH v2 1/2] hwmon (occ): Fix license headers
-Message-ID: <20190131175842.GA16851@roeck-us.net>
-References: <1548692604-9899-1-git-send-email-eajames@linux.ibm.com>
- <1548692604-9899-2-git-send-email-eajames@linux.ibm.com>
+        Thu, 31 Jan 2019 12:59:04 -0500
+Received: from foss.arm.com ([217.140.101.70]:48998 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727838AbfAaR7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 12:59:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96CDCA78;
+        Thu, 31 Jan 2019 09:59:02 -0800 (PST)
+Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDFEA3F59C;
+        Thu, 31 Jan 2019 09:58:59 -0800 (PST)
+Date:   Thu, 31 Jan 2019 17:58:56 +0000
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Jeremy Linton <jeremy.linton@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, stefan.wahren@i2se.com,
+        Jonathan Corbet <corbet@lwn.net>, mlangsdo@redhat.com,
+        linux-doc@vger.kernel.org, suzuki.poulose@arm.com,
+        marc.zyngier@arm.com, catalin.marinas@arm.com,
+        julien.thierry@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, steven.price@arm.com,
+        ykaukab@suse.de, dave.martin@arm.com, shankerd@codeaurora.org
+Subject: Re: [PATCH v4 01/12] Documentation: Document arm64 kpti control
+Message-ID: <20190131175856.2ce5e226@donnerap.cambridge.arm.com>
+In-Reply-To: <20190125180711.1970973-2-jeremy.linton@arm.com>
+References: <20190125180711.1970973-1-jeremy.linton@arm.com>
+        <20190125180711.1970973-2-jeremy.linton@arm.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548692604-9899-2-git-send-email-eajames@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 10:23:23AM -0600, Eddie James wrote:
-> Files have inconsistent license information.
+On Fri, 25 Jan 2019 12:07:00 -0600
+Jeremy Linton <jeremy.linton@arm.com> wrote:
+
+> For a while Arm64 has been capable of force enabling
+> or disabling the kpti mitigations. Lets make sure the
+> documentation reflects that.
 > 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-doc@vger.kernel.org
 
-Applied.
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-Thanks,
-Guenter
+Cheers,
+Andre.
 
 > ---
->  drivers/hwmon/occ/common.c |  3 ++-
->  drivers/hwmon/occ/common.h |  3 ++-
->  drivers/hwmon/occ/p8_i2c.c |  3 ++-
->  drivers/hwmon/occ/p9_sbe.c |  3 ++-
->  drivers/hwmon/occ/sysfs.c  | 13 ++-----------
->  5 files changed, 10 insertions(+), 15 deletions(-)
+>  Documentation/admin-guide/kernel-parameters.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/drivers/hwmon/occ/common.c b/drivers/hwmon/occ/common.c
-> index 391118c..b91a80a 100644
-> --- a/drivers/hwmon/occ/common.c
-> +++ b/drivers/hwmon/occ/common.c
-> @@ -1,4 +1,5 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> +// SPDX-License-Identifier: GPL-2.0+
-> +// Copyright IBM Corp 2019
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt
+> b/Documentation/admin-guide/kernel-parameters.txt
+> index b799bcf67d7b..9475f02c79da 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1982,6 +1982,12 @@
+>  			Built with CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF=y,
+>  			the default is off.
 >  
->  #include <linux/device.h>
->  #include <linux/hwmon.h>
-> diff --git a/drivers/hwmon/occ/common.h b/drivers/hwmon/occ/common.h
-> index 7c44df3..ed2cf42 100644
-> --- a/drivers/hwmon/occ/common.h
-> +++ b/drivers/hwmon/occ/common.h
-> @@ -1,4 +1,5 @@
-> -/* SPDX-License-Identifier: GPL-2.0 */
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/* Copyright IBM Corp 2019 */
+> +	kpti=		[ARM64] Control page table isolation of user
+> +			and kernel address spaces.
+> +			Default: enabled on cores which need mitigation.
+> +			0: force disabled
+> +			1: force enabled
+> +
+>  	kvm.ignore_msrs=[KVM] Ignore guest accesses to unhandled MSRs.
+>   			Default is 0 (don't ignore, but inject #GP)
 >  
->  #ifndef OCC_COMMON_H
->  #define OCC_COMMON_H
-> diff --git a/drivers/hwmon/occ/p8_i2c.c b/drivers/hwmon/occ/p8_i2c.c
-> index b59efc9..76fb787 100644
-> --- a/drivers/hwmon/occ/p8_i2c.c
-> +++ b/drivers/hwmon/occ/p8_i2c.c
-> @@ -1,4 +1,5 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> +// SPDX-License-Identifier: GPL-2.0+
-> +// Copyright IBM Corp 2019
->  
->  #include <linux/device.h>
->  #include <linux/errno.h>
-> diff --git a/drivers/hwmon/occ/p9_sbe.c b/drivers/hwmon/occ/p9_sbe.c
-> index b65c1d1..f6387cc 100644
-> --- a/drivers/hwmon/occ/p9_sbe.c
-> +++ b/drivers/hwmon/occ/p9_sbe.c
-> @@ -1,4 +1,5 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> +// SPDX-License-Identifier: GPL-2.0+
-> +// Copyright IBM Corp 2019
->  
->  #include <linux/device.h>
->  #include <linux/errno.h>
-> diff --git a/drivers/hwmon/occ/sysfs.c b/drivers/hwmon/occ/sysfs.c
-> index 743b26ec..fe3d15e 100644
-> --- a/drivers/hwmon/occ/sysfs.c
-> +++ b/drivers/hwmon/occ/sysfs.c
-> @@ -1,14 +1,5 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -/*
-> - * OCC hwmon driver sysfs interface
-> - *
-> - * Copyright (C) IBM Corporation 2018
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0+
-> +// Copyright IBM Corp 2019
->  
->  #include <linux/bitops.h>
->  #include <linux/device.h>
