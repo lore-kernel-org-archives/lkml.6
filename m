@@ -2,122 +2,116 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C65D9C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1794AC282C7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C82218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548928609;
-	bh=vVKwJ9+Mcyd228DL8OVxmMc9ZjcmXUQUybG0ywA4CXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SVTWZzdGngS5MFvcEdTVYA3RD/G85URLKR3m/jm4MExTv2w188llObFASAAOKjUfu
-	 uCUUD7/tJn0u/wV0aW24GTcOJAJsOzlkpSXSpuNV9wvv5oY7meLtxXNe+rCLO3Fzt6
-	 /mzWNQxbL93uknna1dmSUduNr9VVY4Foi9AO38wM=
+	by mail.kernel.org (Postfix) with ESMTP id E174E218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:56:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IPmI1Jyz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731880AbfAaJ4r (ORCPT
+        id S1731944AbfAaJ4x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 04:56:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45660 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726316AbfAaJ4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 04:56:47 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 603D8AD3C;
-        Thu, 31 Jan 2019 09:56:45 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 10:56:44 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>, Jiri Kosina <jkosina@suse.cz>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Chinner <david@fromorbit.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Daniel Gruss <daniel@gruss.cc>, Jiri Kosina <jikos@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm/filemap: initiate readahead even if IOCB_NOWAIT
- is set for the I/O
-Message-ID: <20190131095644.GR18811@dhcp22.suse.cz>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
- <20190130124420.1834-1-vbabka@suse.cz>
- <20190130124420.1834-3-vbabka@suse.cz>
+        Thu, 31 Jan 2019 04:56:53 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57948 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbfAaJ4w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 04:56:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KN65jVycwBIWs0n5vnAR5t/2bKTkjompeuCCWRbFckA=; b=IPmI1JyzbnKkgM7McXrYqBrrz
+        FHSkE2SujZs2P1mG3fxLyarSMbT1ikrQ1/oSj9ptbDkfAkfPSeLH1ugHbHKjIH4vXBvVRfs5McXmh
+        G0J2hadUwy6AsBgvrCjgEWA1mnir+bLWJ4niH5mXyhXeVm0fkKdbZsDkf1HwM+Kl8HhdyVGUg+6ZK
+        lyZY7k5IZXEpCAWWFi816Cy8mvHWGeWPsf8EGpTk+nBOlJfoWbl8FSyC7ncDyw6igeaFRnp9KUqyR
+        frxJb0AslimxFlTlEn0fRs7KaoxAhRYPG8mmlkKnHoKLguczt9jMJTIo8wTHQy2y4/hDhtoZkSSpI
+        3Zzyq3OUw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gp95M-0005cu-J7; Thu, 31 Jan 2019 09:56:40 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3164A20423039; Thu, 31 Jan 2019 10:56:38 +0100 (CET)
+Date:   Thu, 31 Jan 2019 10:56:38 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alex Kogan <alex.kogan@oracle.com>
+Cc:     linux@armlinux.org.uk, mingo@redhat.com, will.deacon@arm.com,
+        arnd@arndb.de, longman@redhat.com, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        dave.dice@oracle.com, rahul.x.yadav@oracle.com
+Subject: Re: [PATCH 0/3] Add NUMA-awareness to qspinlock
+Message-ID: <20190131095638.GA31534@hirez.programming.kicks-ass.net>
+References: <20190131030136.56999-1-alex.kogan@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190130124420.1834-3-vbabka@suse.cz>
+In-Reply-To: <20190131030136.56999-1-alex.kogan@oracle.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc fs-devel]
+On Wed, Jan 30, 2019 at 10:01:32PM -0500, Alex Kogan wrote:
+> Lock throughput can be increased by handing a lock to a waiter on the
+> same NUMA socket as the lock holder, provided care is taken to avoid
+> starvation of waiters on other NUMA sockets. This patch introduces CNA
+> (compact NUMA-aware lock) as the slow path for qspinlock.
 
-On Wed 30-01-19 13:44:19, Vlastimil Babka wrote:
-> From: Jiri Kosina <jkosina@suse.cz>
-> 
-> preadv2(RWF_NOWAIT) can be used to open a side-channel to pagecache contents, as
-> it reveals metadata about residency of pages in pagecache.
-> 
-> If preadv2(RWF_NOWAIT) returns immediately, it provides a clear "page not
-> resident" information, and vice versa.
-> 
-> Close that sidechannel by always initiating readahead on the cache if we
-> encounter a cache miss for preadv2(RWF_NOWAIT); with that in place, probing
-> the pagecache residency itself will actually populate the cache, making the
-> sidechannel useless.
+Since you use NUMA, use the term node, not socket. The two are not
+strictly related.
 
-I guess the current wording doesn't disallow background IO to be
-triggered for EAGAIN case. I am not sure whether that breaks clever
-applications which try to perform larger IO for those cases though.
-
-> Originally-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Dominique Martinet <asmadeus@codewreck.org>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Kevin Easton <kevin@guarana.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Cyril Hrubis <chrubis@suse.cz>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Kirill A. Shutemov <kirill@shutemov.name>
-> Cc: Daniel Gruss <daniel@gruss.cc>
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  mm/filemap.c | 2 --
->  1 file changed, 2 deletions(-)
+> CNA is a NUMA-aware version of the MCS spin-lock. Spinning threads are
+> organized in two queues, a main queue for threads running on the same
+> socket as the current lock holder, and a secondary queue for threads
+> running on other sockets. Threads record the ID of the socket on which
+> they are running in their queue nodes. At the unlock time, the lock
+> holder scans the main queue looking for a thread running on the same
+> socket. If found (call it thread T), all threads in the main queue
+> between the current lock holder and T are moved to the end of the
+> secondary queue, and the lock is passed to T. If such T is not found, the
+> lock is passed to the first node in the secondary queue. Finally, if the
+> secondary queue is empty, the lock is passed to the next thread in the
+> main queue.
 > 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 9f5e323e883e..7bcdd36e629d 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2075,8 +2075,6 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
->  
->  		page = find_get_page(mapping, index);
->  		if (!page) {
-> -			if (iocb->ki_flags & IOCB_NOWAIT)
-> -				goto would_block;
->  			page_cache_sync_readahead(mapping,
->  					ra, filp,
->  					index, last_index - index);
+> Full details are available at https://arxiv.org/abs/1810.05600.
 
-Maybe a stupid question but I am not really familiar with this path but
-what exactly does prevent a sync read down page_cache_sync_readahead
-path?
--- 
-Michal Hocko
-SUSE Labs
+Full details really should also be in the Changelog. You can skip much
+of the academic bla-bla, but the Changelog should be self contained.
+
+> We have done some performance evaluation with the locktorture module
+> as well as with several benchmarks from the will-it-scale repo.
+> The following locktorture results are from an Oracle X5-4 server
+> (four Intel Xeon E7-8895 v3 @ 2.60GHz sockets with 18 hyperthreaded
+> cores each). Each number represents an average (over 5 runs) of the
+> total number of ops (x10^7) reported at the end of each run. The stock
+> kernel is v4.20.0-rc4+ compiled in the default configuration.
+> 
+> #thr  stock  patched speedup (patched/stock)
+>   1   2.710   2.715  1.002
+>   2   3.108   3.001  0.966
+>   4   4.194   3.919  0.934
+
+So low contention is actually worse. Funnily low contention is the
+majority of our locks and is _really_ important.
+
+>   8   5.309   6.894  1.299
+>  16   6.722   9.094  1.353
+>  32   7.314   9.885  1.352
+>  36   7.562   9.855  1.303
+>  72   6.696  10.358  1.547
+> 108   6.364  10.181  1.600
+> 142   6.179  10.178  1.647
+> 
+> When the kernel is compiled with lockstat enabled, CNA 
+
+I'll ignore that, lockstat/lockdep enabled runs are not what one would
+call performance relevant.
