@@ -2,89 +2,85 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EDDC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A2BC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19C36218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:15:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548929733;
-	bh=8ta0af5GXjFNyKb5XJuCkDoevoKD/PvAd/s+EaxL3qc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=0igJfvCpY2Op6CEH8OTfFGt/VJEQKcstaeXeSb4GFLnE00sY7Ypc14nt4Sm8BEHBm
-	 yVo6T1KUaz7/bJeAQrt+lrNLWliqTMUHgUcoPQX4B/MhIMy2FcizVSnYdaMOSkbEz2
-	 R4L9tTL39caOYaKT+2JF0E0ucd+ms4c9AA5GD0Zc=
+	by mail.kernel.org (Postfix) with ESMTP id 43022218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732071AbfAaKPb (ORCPT
+        id S1732103AbfAaKPi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:15:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51392 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726368AbfAaKPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:15:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7BF68B010;
-        Thu, 31 Jan 2019 10:15:29 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 11:15:28 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Chinner <david@fromorbit.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Daniel Gruss <daniel@gruss.cc>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm/filemap: initiate readahead even if IOCB_NOWAIT
- is set for the I/O
-In-Reply-To: <20190131095644.GR18811@dhcp22.suse.cz>
-Message-ID: <nycvar.YFH.7.76.1901311114260.6626@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm> <20190130124420.1834-1-vbabka@suse.cz> <20190130124420.1834-3-vbabka@suse.cz> <20190131095644.GR18811@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Thu, 31 Jan 2019 05:15:38 -0500
+Received: from mga01.intel.com ([192.55.52.88]:48871 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726434AbfAaKPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 05:15:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 02:15:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,543,1539673200"; 
+   d="scan'208";a="271410419"
+Received: from irsmsx106.ger.corp.intel.com ([163.33.3.31])
+  by orsmga004.jf.intel.com with ESMTP; 31 Jan 2019 02:15:34 -0800
+Received: from irsmsx102.ger.corp.intel.com ([169.254.2.65]) by
+ IRSMSX106.ger.corp.intel.com ([169.254.8.161]) with mapi id 14.03.0415.000;
+ Thu, 31 Jan 2019 10:12:28 +0000
+From:   "Reshetova, Elena" <elena.reshetova@intel.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        "Oleg Nesterov" <oleg@redhat.com>
+CC:     "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "alexander.shishkin@linux.intel.com" 
+        <alexander.shishkin@linux.intel.com>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: RE: [PATCH] uprobes: convert uprobe.ref to refcount_t
+Thread-Topic: [PATCH] uprobes: convert uprobe.ref to refcount_t
+Thread-Index: AQHUrY2Yq0EjPRAwRUCLAKsVmClMRaWx6DQAgAc3rACAEB97sA==
+Date:   Thu, 31 Jan 2019 10:12:28 +0000
+Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4B9BCAD@IRSMSX102.ger.corp.intel.com>
+References: <1547637627-29526-1-git-send-email-elena.reshetova@intel.com>
+        <20190116084452.773833d4@gandalf.local.home>
+ <20190121125756.b06de37c0c52b1b882b3df67@kernel.org>
+In-Reply-To: <20190121125756.b06de37c0c52b1b882b3df67@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTlkN2U2NTUtZjg2MC00MTc3LWEwMTktYjdlYzcwZWM4M2Q3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNGJSZ1U4Q0c3aFMrc2plMU1oYVdOZHp6b3RLQ0NZeTRub1JNR2t2SUJrWnV3RUZKU0dzXC93cDF2RUVzaGJiR2UifQ==
+x-originating-ip: [163.33.239.182]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Jan 2019, Michal Hocko wrote:
-
-> > diff --git a/mm/filemap.c b/mm/filemap.c
-> > index 9f5e323e883e..7bcdd36e629d 100644
-> > --- a/mm/filemap.c
-> > +++ b/mm/filemap.c
-> > @@ -2075,8 +2075,6 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
-> >  
-> >  		page = find_get_page(mapping, index);
-> >  		if (!page) {
-> > -			if (iocb->ki_flags & IOCB_NOWAIT)
-> > -				goto would_block;
-> >  			page_cache_sync_readahead(mapping,
-> >  					ra, filp,
-> >  					index, last_index - index);
+ > [ Cc'ing Masami as he maintains uprobes (we need to add uprobes to
+> >   the MAINTAINERS file ]
 > 
-> Maybe a stupid question but I am not really familiar with this path but
-> what exactly does prevent a sync read down page_cache_sync_readahead
-> path?
+> Thanks Steve, I think it is maintained mainly by Srikar and Oleg.
+> Srikar, Oleg, could you update MAINTAINERS file to add UPROBES entry?
+> And ack this change?
 
-page_cache_sync_readahead() only submits the read ahead request(s), it 
-doesn't wait for it to finish.
+Srikar, Oleg, could you please take a look on the change, if possible, it is
+really a trivial one in this case.
 
--- 
-Jiri Kosina
-SUSE Labs
-
+Best Regards,
+Elena.
