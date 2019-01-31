@@ -4,75 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F175EC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DE1C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB740218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40AD020B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bummAweV"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cRyQFI2W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729449AbfAaT3V (ORCPT
+        id S1729459AbfAaT3a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:29:21 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36849 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbfAaT3U (ORCPT
+        Thu, 31 Jan 2019 14:29:30 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45166 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbfAaT32 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:29:20 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g9so1934675plo.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:29:19 -0800 (PST)
+        Thu, 31 Jan 2019 14:29:28 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so1762086pgc.12
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:29:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MFJ2wRRAA6IcXGO+/YjG1KwDtDZI3ZJyGSkT8C93+ng=;
-        b=bummAweVarfI8k6oygDBubQOq0LmgOcN0J+QZblexpy8/IhsmXIWhZQep1j4JxBHCi
-         9M3wp41b1RA0JpXrPwzKUXMe2wlknzlm38/yVJxZ2VisEsShjKcd37T3/XgmFxqWOxEH
-         mrkHCwpMgxQiKPgnIa990XbwbI1+A6HThvwIk=
+        bh=9s0Jc+lgI+C1BSYL5mSt9awnQxS0L/t2p2g0lX4vn1Q=;
+        b=cRyQFI2WCS8FjD1FVnnc6pGqW7DxKqoEtMnP1mmIEFR3MaERnlX0Puu/0PhnlM+XnV
+         wj1Zu9JymVQIG0BQbr/QSfDksLbnH6IbwmpUkPyB4Rr9K9zCZS+DRK1IqDVDc/dEwJvJ
+         jtlmFRtnCcDFprijI1AGoinebjPLceATP7Zis=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MFJ2wRRAA6IcXGO+/YjG1KwDtDZI3ZJyGSkT8C93+ng=;
-        b=VxWq2igk83wLFAUEAQeU/2is+mvARjQ5TFTdS7aIznI3pH5SZSBDh3Eg3lE8q/8Im1
-         GR3TSQeWYjz0NegNql4t/dOn+GLs0uHOTglrvUK0Pj5cPjctxZp69mumXJAyuCDhioz8
-         ROoxPTBTa+4EKtRMkc2krBNGiMEAHgCJeOKtbZMfN1B1X4sMC0BL4I6Bx5/2DpiU7rF5
-         RE70w6fvBvuRRTZ0iLYJAqIQnAyyH51dcPOgjOcKqj2EmaQt+9WHXBjJUj53wEmJ2b12
-         WbajC4HQLD2pcIeXFGvCpDYYTPWBH+FX/DeP8pjAEftpC9vgYihGK/0Mga9lFbb58oN5
-         nwBg==
-X-Gm-Message-State: AJcUukeenH9/G+yMnEnT9uuuMPSbiuaxxJ1AVS6Bz5R+aZ46M/Iuq51P
-        t+5L3pQbDBgu5zQjW63vgRW7hg==
-X-Google-Smtp-Source: ALg8bN620UGZSWSXLJlom6YH/iGy7rMQgOcXdIpYO/yDV0hBkdq6i4rBx/QaIGQWhCFld0FOFHOD0w==
-X-Received: by 2002:a17:902:704b:: with SMTP id h11mr36294891plt.157.1548962959435;
-        Thu, 31 Jan 2019 11:29:19 -0800 (PST)
+        bh=9s0Jc+lgI+C1BSYL5mSt9awnQxS0L/t2p2g0lX4vn1Q=;
+        b=C2YiDI+fA7vg4vTrSEav4G//3d6wLSDAJReMbBnjAd8X1ZvmiHXFA5u28IgoNqrGXW
+         zB3RzkN7TQal0yd90VFP1MersNMf0AFUodIR7u1o+ZNaEF8WuOG6EtmNWlMZzA5EQIN4
+         MAVWbVNpKqoV8HGrcDvukBNjPiEn9BG8s2HJKVPGUa1+kQXEhdki4rW5Y620JcAIK361
+         rH+KXXiTetBQtIgHbILoHLl4ORKkr+cm73Th5M6WXfKpjQi2J/86GChNVfO39cQqn5kV
+         wZ/vthIXHAUx2PngeGRySsmz1DudcCu29+5PSCkpoJd7T+VD73Z4NCUm8EWNsIsDu8Up
+         j7xQ==
+X-Gm-Message-State: AJcUukfbg87P/zbwPxFV26OPwHwQK9AQQNn6SPa3IoaC5pLu8Pl7CF4e
+        nbPNRjWt35qexR4ZXinZdLFjTBjRipc=
+X-Google-Smtp-Source: ALg8bN7y05ZWZkA8E4kxBIiqovexlhMvMxOCDxhr2UjvxJYUcSVRfW/5iY2KzYWPpZcaTG1skj0GFQ==
+X-Received: by 2002:a62:3c1:: with SMTP id 184mr36365576pfd.56.1548962967192;
+        Thu, 31 Jan 2019 11:29:27 -0800 (PST)
 Received: from skynet.sea.corp.google.com ([2620:15c:17:4:29de:3bb1:1270:e679])
-        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.29.18
+        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.29.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 11:29:18 -0800 (PST)
+        Thu, 31 Jan 2019 11:29:26 -0800 (PST)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, Thomas Garnier <thgarnie@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Baoquan He <bhe@redhat.com>,
         Thomas Garnier <thgarnie@google.com>,
-        Alexander Popov <alex.popov@linux.com>,
         Joerg Roedel <jroedel@suse.de>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: [PATCH v6 22/27] x86/modules: Add option to start module section after kernel
-Date:   Thu, 31 Jan 2019 11:24:29 -0800
-Message-Id: <20190131192533.34130-23-thgarnie@chromium.org>
+        Andy Lutomirski <luto@kernel.org>,
+        Francis Deslauriers <francis.deslauriers@efficios.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 23/27] x86/modules: Adapt module loading for PIE support
+Date:   Thu, 31 Jan 2019 11:24:30 -0800
+Message-Id: <20190131192533.34130-24-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 In-Reply-To: <20190131192533.34130-1-thgarnie@chromium.org>
 References: <20190131192533.34130-1-thgarnie@chromium.org>
@@ -83,114 +80,309 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an option so the module section is just after the mapped kernel. It
-will ensure position independent modules are always at the right
-distance from the kernel and do not require mcmodule=large. It also
-optimize the available size for modules by getting rid of the empty
-space on kernel randomization range.
+Adapt module loading to support PIE relocations. Generate dynamic GOT if
+a symbol requires it but no entry exists in the kernel GOT.
+
+Position Independent Executable (PIE) support will allow to extend the
+KASLR randomization range below 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
 ---
- Documentation/x86/x86_64/mm.txt         | 3 +++
- arch/x86/Kconfig                        | 4 ++++
- arch/x86/include/asm/pgtable_64_types.h | 6 ++++++
- arch/x86/kernel/head64.c                | 5 ++++-
- arch/x86/mm/dump_pagetables.c           | 3 ++-
- 5 files changed, 19 insertions(+), 2 deletions(-)
+ arch/x86/Makefile               |   4 +
+ arch/x86/include/asm/module.h   |  11 ++
+ arch/x86/include/asm/sections.h |   4 +
+ arch/x86/kernel/module.c        | 181 +++++++++++++++++++++++++++++++-
+ arch/x86/kernel/module.lds      |   3 +
+ 5 files changed, 198 insertions(+), 5 deletions(-)
+ create mode 100644 arch/x86/kernel/module.lds
 
-diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
-index 804f9426ed17..35b845d695d5 100644
---- a/Documentation/x86/x86_64/mm.txt
-+++ b/Documentation/x86/x86_64/mm.txt
-@@ -151,3 +151,6 @@ correct as KASAN disables KASLR.
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 65d6d9a1dd22..5e9c1b02cf87 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -129,8 +129,12 @@ else
+         KBUILD_CFLAGS += $(cflags-y)
  
- For both 4- and 5-level layouts, the STACKLEAK_POISON value in the last 2MB
- hole: ffffffffffff4111
-+
-+If CONFIG_DYNAMIC_MODULE_BASE is enabled, the module section follows the end of
-+the mapped kernel.
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 263d81c570b2..c3ad1b0ae1a1 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2221,6 +2221,10 @@ config RANDOMIZE_MEMORY_PHYSICAL_PADDING
+         KBUILD_CFLAGS += -mno-red-zone
++ifdef CONFIG_X86_PIE
++        KBUILD_LDFLAGS_MODULE += -T $(srctree)/arch/x86/kernel/module.lds
++else
+         KBUILD_CFLAGS += -mcmodel=kernel
+ endif
++endif
  
- 	   If unsure, leave at the default value.
+ ifdef CONFIG_X86_GLOBAL_STACKPROTECTOR
+         ifeq ($(call cc-option, -mstack-protector-guard=global),)
+diff --git a/arch/x86/include/asm/module.h b/arch/x86/include/asm/module.h
+index 7948a17febb4..68ff05e14288 100644
+--- a/arch/x86/include/asm/module.h
++++ b/arch/x86/include/asm/module.h
+@@ -5,12 +5,23 @@
+ #include <asm-generic/module.h>
+ #include <asm/orc_types.h>
  
-+# Module section starts just after the end of the kernel module
-+config DYNAMIC_MODULE_BASE
-+	bool
-+
- config X86_GLOBAL_STACKPROTECTOR
- 	bool "Stack cookie using a global variable"
- 	depends on CC_STACKPROTECTOR_AUTO
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 88bca456da99..d1bb676ec376 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -7,6 +7,7 @@
- #ifndef __ASSEMBLY__
- #include <linux/types.h>
- #include <asm/kaslr.h>
-+#include <asm/sections.h>
- 
- /*
-  * These are used to make use of C type-checking..
-@@ -141,7 +142,12 @@ extern unsigned int ptrs_per_p4d;
- 
- #define VMALLOC_END		(VMALLOC_START + (VMALLOC_SIZE_TB << 40) - 1)
- 
-+#ifdef CONFIG_DYNAMIC_MODULE_BASE
-+#define MODULES_VADDR		ALIGN(((unsigned long)_end + PAGE_SIZE), PMD_SIZE)
-+#else
- #define MODULES_VADDR		(__START_KERNEL_map + KERNEL_IMAGE_SIZE)
++#ifdef CONFIG_X86_PIE
++struct mod_got_sec {
++	struct elf64_shdr	*got;
++	int			got_num_entries;
++	int			got_max_entries;
++};
 +#endif
 +
- /* The module sections ends with the start of the fixmap */
- #define MODULES_END		_AC(0xffffffffff000000, UL)
- #define MODULES_LEN		(MODULES_END - MODULES_VADDR)
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 22e81275495b..ca2f6ff431af 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -411,12 +411,15 @@ asmlinkage __visible void __init x86_64_start_kernel(char * real_mode_data)
- 	 * Build-time sanity checks on the kernel image and module
- 	 * area mappings. (these are purely build-time and produce no code)
- 	 */
-+#ifndef CONFIG_DYNAMIC_MODULE_BASE
- 	BUILD_BUG_ON(MODULES_VADDR < __START_KERNEL_map);
- 	BUILD_BUG_ON(MODULES_VADDR - __START_KERNEL_map < KERNEL_IMAGE_SIZE);
--	BUILD_BUG_ON(MODULES_LEN + KERNEL_IMAGE_SIZE > 2*PUD_SIZE);
-+	BUILD_BUG_ON(!IS_ENABLED(CONFIG_RANDOMIZE_BASE_LARGE) &&
-+		     MODULES_LEN + KERNEL_IMAGE_SIZE > 2*PUD_SIZE);
- 	BUILD_BUG_ON((__START_KERNEL_map & ~PMD_MASK) != 0);
- 	BUILD_BUG_ON((MODULES_VADDR & ~PMD_MASK) != 0);
- 	BUILD_BUG_ON(!(MODULES_VADDR > __START_KERNEL));
+ struct mod_arch_specific {
+ #ifdef CONFIG_UNWINDER_ORC
+ 	unsigned int num_orcs;
+ 	int *orc_unwind_ip;
+ 	struct orc_entry *orc_unwind;
+ #endif
++#ifdef CONFIG_X86_PIE
++	struct mod_got_sec	core;
 +#endif
- 	MAYBE_BUILD_BUG_ON(!(((MODULES_END - 1) & PGDIR_MASK) ==
- 				(__START_KERNEL & PGDIR_MASK)));
- 	BUILD_BUG_ON(__fix_to_virt(__end_of_fixed_addresses) <= MODULES_END);
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index e3cdc85ce5b6..3172bd968215 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -104,7 +104,7 @@ static struct addr_marker address_markers[] = {
- 	[EFI_END_NR]		= { EFI_VA_END,		"EFI Runtime Services" },
+ };
+ 
+ #ifdef CONFIG_X86_64
+diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+index 8ea1cfdbeabc..d4468309d743 100644
+--- a/arch/x86/include/asm/sections.h
++++ b/arch/x86/include/asm/sections.h
+@@ -13,4 +13,8 @@ extern char __end_rodata_aligned[];
+ extern char __end_rodata_hpage_align[];
  #endif
- 	[HIGH_KERNEL_NR]	= { __START_KERNEL_map,	"High Kernel Mapping" },
--	[MODULES_VADDR_NR]	= { MODULES_VADDR,	"Modules" },
-+	[MODULES_VADDR_NR]	= { 0/*MODULES_VADDR*/,	"Modules" },
- 	[MODULES_END_NR]	= { MODULES_END,	"End Modules" },
- 	[FIXADDR_START_NR]	= { FIXADDR_START,	"Fixmap Area" },
- 	[END_OF_SPACE_NR]	= { -1,			NULL }
-@@ -623,6 +623,7 @@ static int __init pt_dump_init(void)
- 	address_markers[KASAN_SHADOW_START_NR].start_address = KASAN_SHADOW_START;
- 	address_markers[KASAN_SHADOW_END_NR].start_address = KASAN_SHADOW_END;
+ 
++#if defined(CONFIG_X86_PIE)
++extern char __start_got[], __end_got[];
++#endif
++
+ #endif	/* _ASM_X86_SECTIONS_H */
+diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+index b052e883dd8c..f0d3ed92049e 100644
+--- a/arch/x86/kernel/module.c
++++ b/arch/x86/kernel/module.c
+@@ -30,6 +30,7 @@
+ #include <linux/gfp.h>
+ #include <linux/jump_label.h>
+ #include <linux/random.h>
++#include <linux/sort.h>
+ 
+ #include <asm/text-patching.h>
+ #include <asm/page.h>
+@@ -77,6 +78,173 @@ static unsigned long int get_module_load_offset(void)
+ }
  #endif
-+	address_markers[MODULES_VADDR_NR].start_address = MODULES_VADDR;
+ 
++#ifdef CONFIG_X86_PIE
++static u64 find_got_kernel_entry(Elf64_Sym *sym, const Elf64_Rela *rela)
++{
++	u64 *pos;
++
++	for (pos = (u64 *)__start_got; pos < (u64 *)__end_got; pos++) {
++		if (*pos == sym->st_value)
++			return (u64)pos + rela->r_addend;
++	}
++
++	return 0;
++}
++
++static u64 module_emit_got_entry(struct module *mod, void *loc,
++				 const Elf64_Rela *rela, Elf64_Sym *sym)
++{
++	struct mod_got_sec *gotsec = &mod->arch.core;
++	u64 *got = (u64 *)gotsec->got->sh_addr;
++	int i = gotsec->got_num_entries;
++	u64 ret;
++
++	/* Check if we can use the kernel GOT */
++	ret = find_got_kernel_entry(sym, rela);
++	if (ret)
++		return ret;
++
++	got[i] = sym->st_value;
++
++	/*
++	 * Check if the entry we just created is a duplicate. Given that the
++	 * relocations are sorted, this will be the last entry we allocated.
++	 * (if one exists).
++	 */
++	if (i > 0 && got[i] == got[i - 2]) {
++		ret = (u64)&got[i - 1];
++	} else {
++		gotsec->got_num_entries++;
++		BUG_ON(gotsec->got_num_entries > gotsec->got_max_entries);
++		ret = (u64)&got[i];
++	}
++
++	return ret + rela->r_addend;
++}
++
++#define cmp_3way(a, b)	((a) < (b) ? -1 : (a) > (b))
++
++static int cmp_rela(const void *a, const void *b)
++{
++	const Elf64_Rela *x = a, *y = b;
++	int i;
++
++	/* sort by type, symbol index and addend */
++	i = cmp_3way(ELF64_R_TYPE(x->r_info), ELF64_R_TYPE(y->r_info));
++	if (i == 0)
++		i = cmp_3way(ELF64_R_SYM(x->r_info), ELF64_R_SYM(y->r_info));
++	if (i == 0)
++		i = cmp_3way(x->r_addend, y->r_addend);
++	return i;
++}
++
++static bool duplicate_rel(const Elf64_Rela *rela, int num)
++{
++	/*
++	 * Entries are sorted by type, symbol index and addend. That means
++	 * that, if a duplicate entry exists, it must be in the preceding
++	 * slot.
++	 */
++	return num > 0 && cmp_rela(rela + num, rela + num - 1) == 0;
++}
++
++static unsigned int count_gots(Elf64_Sym *syms, Elf64_Rela *rela, int num)
++{
++	unsigned int ret = 0;
++	Elf64_Sym *s;
++	int i;
++
++	for (i = 0; i < num; i++) {
++		switch (ELF64_R_TYPE(rela[i].r_info)) {
++		case R_X86_64_GOTPCREL:
++			s = syms + ELF64_R_SYM(rela[i].r_info);
++
++			/*
++			 * Use the kernel GOT when possible, else reserve a
++			 * custom one for this module.
++			 */
++			if (!duplicate_rel(rela, i) &&
++			    !find_got_kernel_entry(s, rela + i))
++				ret++;
++			break;
++		}
++	}
++	return ret;
++}
++
++/*
++ * Generate GOT entries for GOTPCREL relocations that do not exists in the
++ * kernel GOT. Based on arm64 module-plts implementation.
++ */
++int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
++			      char *secstrings, struct module *mod)
++{
++	unsigned long gots = 0;
++	Elf_Shdr *symtab = NULL;
++	Elf64_Sym *syms = NULL;
++	char *strings, *name;
++	int i;
++
++	/*
++	 * Find the empty .got section so we can expand it to store the PLT
++	 * entries. Record the symtab address as well.
++	 */
++	for (i = 0; i < ehdr->e_shnum; i++) {
++		if (!strcmp(secstrings + sechdrs[i].sh_name, ".got")) {
++			mod->arch.core.got = sechdrs + i;
++		} else if (sechdrs[i].sh_type == SHT_SYMTAB) {
++			symtab = sechdrs + i;
++			syms = (Elf64_Sym *)symtab->sh_addr;
++		}
++	}
++
++	if (!mod->arch.core.got) {
++		pr_err("%s: module GOT section missing\n", mod->name);
++		return -ENOEXEC;
++	}
++	if (!syms) {
++		pr_err("%s: module symtab section missing\n", mod->name);
++		return -ENOEXEC;
++	}
++
++	for (i = 0; i < ehdr->e_shnum; i++) {
++		Elf64_Rela *rels = (void *)ehdr + sechdrs[i].sh_offset;
++		int numrels = sechdrs[i].sh_size / sizeof(Elf64_Rela);
++
++		if (sechdrs[i].sh_type != SHT_RELA)
++			continue;
++
++		/* sort by type, symbol index and addend */
++		sort(rels, numrels, sizeof(Elf64_Rela), cmp_rela, NULL);
++
++		gots += count_gots(syms, rels, numrels);
++	}
++
++	mod->arch.core.got->sh_type = SHT_NOBITS;
++	mod->arch.core.got->sh_flags = SHF_ALLOC;
++	mod->arch.core.got->sh_addralign = L1_CACHE_BYTES;
++	mod->arch.core.got->sh_size = (gots + 1) * sizeof(u64);
++	mod->arch.core.got_num_entries = 0;
++	mod->arch.core.got_max_entries = gots;
++
++	/*
++	 * If a _GLOBAL_OFFSET_TABLE_ symbol exists, make it absolute for
++	 * modules to correctly reference it. Similar to s390 implementation.
++	 */
++	strings = (void *) ehdr + sechdrs[symtab->sh_link].sh_offset;
++	for (i = 0; i < symtab->sh_size/sizeof(Elf_Sym); i++) {
++		if (syms[i].st_shndx != SHN_UNDEF)
++			continue;
++		name = strings + syms[i].st_name;
++		if (!strcmp(name, "_GLOBAL_OFFSET_TABLE_")) {
++			syms[i].st_shndx = SHN_ABS;
++			break;
++		}
++	}
++	return 0;
++}
++#endif
++
+ void *module_alloc(unsigned long size)
+ {
+ 	void *p;
+@@ -190,16 +358,20 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+ 			if ((s64)val != *(s32 *)loc)
+ 				goto overflow;
+ 			break;
++#ifdef CONFIG_X86_PIE
++		case R_X86_64_GOTPCREL:
++			val = module_emit_got_entry(me, loc, rel + i, sym);
++			/* fallthrough */
++#endif
+ 		case R_X86_64_PC32:
+ 		case R_X86_64_PLT32:
+ 			if (*(u32 *)loc != 0)
+ 				goto invalid_relocation;
+ 			val -= (u64)loc;
+ 			*(u32 *)loc = val;
+-#if 0
+-			if ((s64)val != *(s32 *)loc)
++			if (IS_ENABLED(CONFIG_X86_PIE) &&
++			    (s64)val != *(s32 *)loc)
+ 				goto overflow;
+-#endif
+ 			break;
+ 		case R_X86_64_PC64:
+ 			if (*(u64 *)loc != 0)
+@@ -223,8 +395,7 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
+ overflow:
+ 	pr_err("overflow in relocation type %d val %Lx\n",
+ 	       (int)ELF64_R_TYPE(rel[i].r_info), val);
+-	pr_err("`%s' likely not compiled with -mcmodel=kernel\n",
+-	       me->name);
++	pr_err("`%s' likely too far from the kernel\n", me->name);
+ 	return -ENOEXEC;
+ }
  #endif
- #ifdef CONFIG_X86_32
- 	address_markers[VMALLOC_START_NR].start_address = VMALLOC_START;
+diff --git a/arch/x86/kernel/module.lds b/arch/x86/kernel/module.lds
+new file mode 100644
+index 000000000000..fd6e95a4b454
+--- /dev/null
++++ b/arch/x86/kernel/module.lds
+@@ -0,0 +1,3 @@
++SECTIONS {
++	.got (NOLOAD) : { BYTE(0) }
++}
 -- 
 2.20.1.495.gaa96b0ce6b-goog
 
