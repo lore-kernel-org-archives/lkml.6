@@ -6,123 +6,100 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD73C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDC5C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EBE0218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:59:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 563522087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:59:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbfAaH7Q (ORCPT
+        id S1728719AbfAaH7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:59:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43982 "EHLO mx1.redhat.com"
+        Thu, 31 Jan 2019 02:59:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35214 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbfAaH7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:59:16 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1725855AbfAaH7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 02:59:46 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 68BB213A98;
-        Thu, 31 Jan 2019 07:59:15 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-108.pek2.redhat.com [10.72.12.108])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3C4E5600D7;
-        Thu, 31 Jan 2019 07:59:10 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 15:59:07 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Pingfan Liu <kernelfans@gmail.com>, kexec@lists.infradead.org,
-        Baoquan He <bhe@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, yinghai@kernel.org,
-        vgoyal@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-Message-ID: <20190131075907.GB19091@dhcp-128-65.nay.redhat.com>
-References: <1548047768-7656-1-git-send-email-kernelfans@gmail.com>
- <20190125103924.GB27998@zn.tnic>
- <20190125134518.GA23595@dhcp-128-65.nay.redhat.com>
- <20190125140823.GC27998@zn.tnic>
+        by mx1.redhat.com (Postfix) with ESMTPS id E1DFD9D435;
+        Thu, 31 Jan 2019 07:59:45 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-72.pek2.redhat.com [10.72.12.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B41C21001938;
+        Thu, 31 Jan 2019 07:59:43 +0000 (UTC)
+Date:   Thu, 31 Jan 2019 15:59:41 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jerome Glisse <jglisse@redhat.com>,
+        Jason Wang <jasowang@redhat.com>
+Subject: Re: [PATCH 2/2] iommu/amd: Remove clear_flush_young notifier
+Message-ID: <20190131075941.GB25119@xz-x1>
+References: <20190130055758.3994-1-peterx@redhat.com>
+ <20190130055758.3994-3-peterx@redhat.com>
+ <69af2b6f-bfc1-a4b9-675a-6fc93a7efef2@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190125140823.GC27998@zn.tnic>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 31 Jan 2019 07:59:15 +0000 (UTC)
+In-Reply-To: <69af2b6f-bfc1-a4b9-675a-6fc93a7efef2@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 31 Jan 2019 07:59:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/25/19 at 03:08pm, Borislav Petkov wrote:
-> On Fri, Jan 25, 2019 at 09:45:18PM +0800, Dave Young wrote:
-> > AFAIK, some people prefer to explictly reserve crash memory at high
-> > region even if it is possible to reserve at low area.  May because
-> > <4G memory is limited on large server, they want to leave this for other
-> > use. 
-> > 
-> > Yinghai or Vivek should know more about the history, probably they can
-> > recall some initial reason.
-> 
-> Yes, just "prefer" is not good enough. There should be a technical
-> reason why that's there.
+On Wed, Jan 30, 2019 at 12:27:40PM +0000, Jean-Philippe Brucker wrote:
+> Hi Peter,
 
-Got more about this, actually the thing is for large server with very
-huge memory and also possible a lot of io devices.  The UEFI IO drivers
-could allocate a lot memory under 896M,  so it will leave small room for
-crashkernel=X
-
-Also if the memory is huge, then copying the vmcore will be very slow,
-people want to use big makedumpfile bitmap buffer, and multithread, then
-kdump kernel needs more memory, they can choose ,high to get more
-memory.
-
-But for common use cases, if one does not need so much kdump memory
-reserved he/she can just use crashkernel=X.
-
+Hi, Jean,
 
 > 
-> Also, if the user doesn't care, then the code should be free to force
-> "high" and thus probe a different range for allocation.
-
-As Pingfan/me mentioned in another reply, there are two reasons:
-1. old kexec-tools can not load kernel to high memory
-2. ,high will not work on some systems without some amounts of low
-memory so it nees reserve extra low memory, it is bad for people who do
-not want it. 
-
+> On 30/01/2019 05:57, Peter Xu wrote:
+> > AMD IOMMU driver is using the clear_flush_young() to do cache flushing
+> > but that's actually already covered by invalidate_range().  Remove the
+> > extra notifier and the chunks.
 > 
-> > Good question, still it may be some historical reason, but it is good to
-> > make them clear and rethink about it after long time.
-> > 
-> > I also want to understand, need dig the log more.
+> Aren't uses of clear_flush_young() and invalidate_range() orthogonal? If
+> I understood correctly, when doing reclaim the kernel clears the young
+> bit from the PTE. This requires flushing secondary TLBs (ATCs), so that
+> new accesses from devices will go through the IOMMU, set the young bit
+> again and the kernel can accurately track page use. I didn't see
+> invalidate_range() being called by rmap or vmscan in this case, but
+> might just be missing it.
 > 
-> Good idea. That would be a very nice cleanup. :-)
+> Two MMU notifiers are used for the young bit, clear_flush_young() and
+> clear_young(). I believe the former should invalidate ATCs so that DMA
+> accesses participate in PTE aging. Otherwise the kernel can't know that
+> the device is still using entries marked 'old'. The latter,
+> clear_young() is exempted from invalidating the secondary TLBs by
+> mmu_notifier.h and the IOMMU driver doesn't need to implement it.
 
-Let's review these different parameters:
->         crashkernel=size[KMG][@offset[KMG]]
+Yes I agree most of your analysis, but IMHO the problem is that the
+AMD IOMMU is not really participating in the PTE aging after all.
+Please have a look at mn_clear_flush_young() below at [1] - it's
+always returning zero, no matter whether the page has been accessed by
+device or not.  A real user of it could be someone like KVM (please
+see kvm_mmu_notifier_clear_flush_young) where we'll try to lookup the
+shadow PTEs and do test-and-clear on that, then return the result to
+the core mm.  That's why I think currently the AMD driver was only
+trying to use that as a way to do an extra flush however IMHO it's
+redundant.
 
-Did not get the initial commit for this, it should be the very old
-format, and kernel did not find the base address automatically for the
-size
+Thanks,
 
-Other arches still use this, for example mips code seems needs explict
-@offset, see the function mips_parse_crashkernel in
-arch/mips/kernel/setup.c
+> > -static int mn_clear_flush_young(struct mmu_notifier *mn,
+> > -				struct mm_struct *mm,
+> > -				unsigned long start,
+> > -				unsigned long end)
+> > -{
+> > -	for (; start < end; start += PAGE_SIZE)
+> > -		__mn_flush_page(mn, start);
+> > -
+> > -	return 0;
 
-Probably there are other arches as well which only support this format.
+[1]
 
->         crashkernel=range1:size1[,range2:size2,...][@offset]
-
-This is nice param which can help to dynamically reserve different size
-depends on system memory.
-
->         crashkernel=size[KMG],high
->         crashkernel=size[KMG],low
-
-We have talked about these two.  It is not graceful, but seems no way to
-improve it due to the swiotlb issue.
-
-Thanks
-Dave
+-- 
+Peter Xu
