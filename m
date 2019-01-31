@@ -2,83 +2,137 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82EA6C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A6CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:58:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 527B020881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:55:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF51C20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:58:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="xt6nMu2V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbfAaTzj (ORCPT
+        id S1727468AbfAaT6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:55:39 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41754 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbfAaTzi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:55:38 -0500
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B13464860;
-        Thu, 31 Jan 2019 19:55:36 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 11:55:35 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
+        Thu, 31 Jan 2019 14:58:10 -0500
+Received: from mail-eopbgr30087.outbound.protection.outlook.com ([40.107.3.87]:2375
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726634AbfAaT6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 14:58:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p7QQR3lOval8t8mi1Iy1sYHtvwDu1Oz9bkTNPNNjp+U=;
+ b=xt6nMu2VTEWg4e1vF3c9JnqyzY4DzzqHHUNUnDSc3mFKPdDH8ykzqlQbUJmrKC93nkSWjlSinHHK0pw6KK9oBzk9z6XLzGrrcR1aKKCL1EZstVKIg40XuZO2V9jdgpZG09Iy3Hw/XkWmjzQf4rVb+66oyhcB6eFHtHTaKQvX1NQ=
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
+ DBBPR05MB6538.eurprd05.prod.outlook.com (20.179.43.209) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.17; Thu, 31 Jan 2019 19:58:05 +0000
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Thu, 31 Jan 2019
+ 19:58:05 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
 To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jan Kara <jack@suse.cz>,
+CC:     Christoph Hellwig <hch@lst.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
         Felix Kuehling <Felix.Kuehling@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 0/9] mmu notifier provide context informations
-Message-Id: <20190131115535.7eeecf501615f8bad2f139eb@linux-foundation.org>
-In-Reply-To: <20190131161006.GA16593@redhat.com>
-References: <20190123222315.1122-1-jglisse@redhat.com>
-        <20190131161006.GA16593@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAAD3dAIAAukqAgAAK3wCAAAOzAIAAEXyAgAANnoCAABFLgIAAnPCAgAC1FQCAAAlHAIAABluA
+Date:   Thu, 31 Jan 2019 19:58:05 +0000
+Message-ID: <20190131195759.GF7548@mellanox.com>
+References: <20190130080006.GB29665@lst.de>
+ <20190130190651.GC17080@mellanox.com>
+ <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
+ <20190130195900.GG17080@mellanox.com>
+ <35bad6d5-c06b-f2a3-08e6-2ed0197c8691@deltatee.com>
+ <20190130215019.GL17080@mellanox.com>
+ <07baf401-4d63-b830-57e1-5836a5149a0c@deltatee.com>
+ <20190131081355.GC26495@lst.de> <20190131190202.GC7548@mellanox.com>
+ <20190131193513.GC16593@redhat.com>
+In-Reply-To: <20190131193513.GC16593@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR04CA0200.namprd04.prod.outlook.com
+ (2603:10b6:104:5::30) To DBBPR05MB6426.eurprd05.prod.outlook.com
+ (2603:10a6:10:c9::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DBBPR05MB6538;6:emXo7VDo8e4JXSMA0pMHUck9ow4onMJqUSZp9e59FL3XeTCSUl40BjmQWyTehu31c4Un0e7DsDZRCWOFQPW5nj/YGh7uXjKcryp6fRpZjJqDqZiWw3070J3Nr7F+KBwjTiUOUii93TPmwteo/Y//UCc+s7kHUeY+RCd3RNttQh9hPtXbkU5VQF+KCOHXxgHOLtf3Bx0G72oKgzMl13CPjpVJ8gkxl2QD8G1WG/mxk2Tpu8C6JKBrsrM8NrIVMYCbvarw7w2X1Xxo9QTtcoyFZDu8nPMLx4mqvTl2y0SmGY2my3YYzkyhzfpMB/iT2LDuZTGdrPQNBi1eHA0Br59HunzjIFVWpoB75FckCSZMzZGCWr+ncGx256xhuJub47xdXo0aH/bfSRr8KnzepGtqvF2bvjupDzx0dVqASxKfvpm8hWxIhC5hP8bJKZugnnUvR/Z3ZS3y9z+8VT0NDhCdtg==;5:fDO5gWmtrEPdiefLbaSnpsQdjYdhsblgLkqJwzzO8+gAH1k5Uum+3Md8bqo4Ztz9U//jWpPdgr7P2LbxwdzdgfBnLuYM4eORApNG+r6wyw4V46OojS3OnpmfQxAneUxctX4Rl7IXwGntjfwqfg+A5TPcZv6K52Cik0nI+Q2XgOrrvD0yTuVt5k6JBj7ZC/PAL9CCeMcvN+A4xm+0dHkoCQ==;7:XCh1wvXuCHkf+iVmrQ2Orfk2v3OwM0ObdW/tBeC5uttyIWShDNW88QLUwOzz/Dma7o1lY4C1Mih3IsuPKwt3Hlpw1x0UX1LWeoStjhCjFV8swnvSAxFu8W8KRdiQohAsGP3mTF46CEShK49Hr+OoDg==
+x-ms-office365-filtering-correlation-id: 40acb946-c78f-4d62-d5db-08d687b669f7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6538;
+x-ms-traffictypediagnostic: DBBPR05MB6538:
+x-microsoft-antispam-prvs: <DBBPR05MB65386A123D9FBB1664E69FA2CF910@DBBPR05MB6538.eurprd05.prod.outlook.com>
+x-forefront-prvs: 09347618C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(376002)(136003)(396003)(346002)(189003)(199004)(97736004)(6916009)(2906002)(76176011)(66066001)(93886005)(26005)(316002)(4326008)(33656002)(1076003)(53936002)(217873002)(36756003)(6246003)(52116002)(6116002)(3846002)(256004)(14444005)(86362001)(7416002)(71190400001)(71200400001)(6436002)(7736002)(478600001)(106356001)(476003)(229853002)(6506007)(2616005)(25786009)(11346002)(446003)(6486002)(54906003)(68736007)(99286004)(186003)(486006)(81156014)(81166006)(14454004)(8676002)(102836004)(105586002)(8936002)(386003)(6512007)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6538;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /h7vM6jCrY+s60IYJuxncVW2a2w8E6E5t7tI64sI2JkH6SDG+MBxte4QtueocRq6W4RwiovBzclytnmnrqxzWKlIWsMaO2hZLlul+zhg55LagS9vYSa0zWaUajS/eygwVgRMSo8jlIA2sMqt/Izyky83Gav3BEsZuZo1aTmcQsrbO+DFhip1/b5zuCDbOVQHoO3tf/3++iOQptBHLSR6y2lQZX+p7i3XZqYQLzLJ1O2vu2gRbXXBONV4wOrNsnvEUtCb2IlTCQdJIQT3v9foI7NCDrJaUBF/PLtIUiVsrymE3mjD/Gookh3LdFOcr0LJbRe1WdcdyT22+CalIC3387wERSJD5vVtJ9HBHAgQ4ZHhC6LNikruzT5rRt2DBPJPEBJdo0WHsfY/ki9ZKJbqldFrnxU3YNQ+n5us6+xPg8s=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <899A3F71B570B941926CEF47667C9170@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40acb946-c78f-4d62-d5db-08d687b669f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 19:58:05.1131
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6538
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Jan 2019 11:10:06 -0500 Jerome Glisse <jglisse@redhat.com> wrote:
+On Thu, Jan 31, 2019 at 02:35:14PM -0500, Jerome Glisse wrote:
 
-> Andrew what is your plan for this ? I had a discussion with Peter Xu
-> and Andrea about change_pte() and kvm. Today the change_pte() kvm
-> optimization is effectively disabled because of invalidate_range
-> calls. With a minimal couple lines patch on top of this patchset
-> we can bring back the kvm change_pte optimization and we can also
-> optimize some other cases like for instance when write protecting
-> after fork (but i am not sure this is something qemu does often so
-> it might not help for real kvm workload).
-> 
-> I will be posting a the extra patch as an RFC, but in the meantime
-> i wanted to know what was the status for this.
+> > Basically invert the API flow - the DMA map would be done close to
+> > GUP, not buried in the driver. This absolutely doesn't work for every
+> > flow we have, but it does enable the ones that people seem to care
+> > about when talking about P2P.
+>=20
+> This does not work for GPU really i do not want to have to rewrite GPU
+> driver for this. Struct page is a burden and it does not bring anything
+> to the table. I rather provide an all in one stop for driver to use
+> this without having to worry between regular vma and special vma.
 
-The various drm patches appear to be headed for collisions with drm
-tree development so we'll need to figure out how to handle that and in
-what order things happen.
+I'm talking about almost exactly what you've done in here - make a
+'sgl' that is dma addresses only.=20
 
-It's quite unclear from the v4 patchset's changelogs that this has
-anything to do with KVM and "the change_pte() kvm optimization" hasn't
-been described anywhere(?).
+In these VMA patches you used a simple array of physical addreses -
+I'm only talking about moving that array into a 'dma sgl'.
 
-So..  I expect the thing to do here is to get everything finished, get
-the changelogs completed with this new information and do a resend.
+The flow is still basically the same - the driver directly gets DMA
+physical addresses with no possibility to get a struct page or CPU
+memory.
 
-Can we omit the drm and rdma patches for now?  Feed them in via the
-subsystem maintainers when the dust has settled?
+And then we can build more stuff around the 'dma sgl', including
+the in-kernel users Logan is worrying about.
 
+Jason
