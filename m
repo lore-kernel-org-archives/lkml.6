@@ -2,74 +2,67 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13818C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 049A4C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF793218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:50:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B400420881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:53:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="btvwuliI"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OlQ3jKPt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387832AbfAaPuF (ORCPT
+        id S2387749AbfAaPxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 10:50:05 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50443 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733167AbfAaPuE (ORCPT
+        Thu, 31 Jan 2019 10:53:38 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39873 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732719AbfAaPxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 10:50:04 -0500
-Received: by mail-wm1-f68.google.com with SMTP id n190so3032099wmd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 07:50:02 -0800 (PST)
+        Thu, 31 Jan 2019 10:53:37 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t27so3857272wra.6
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 07:53:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=AZlchqHweeitmzFOVEd86L1QbQOzSms3bkTBkjj4nY8=;
-        b=btvwuliIZO16Ip78BinCXjrvPMsV0zNyEu/5o+0I9PE8jeKZyf4a/p8qy6xuRqvcm/
-         uCV2vHD26HCbnnbqptdgppmZrgpRj/yXgDEOr3XfnHUHgxB9GLZvrJMsMDUTh4QJNJ17
-         uz3pr7XRxcplZAB686N2pjiZ3hRjQ4KrgBf1iinBNowAuUNKOzPZ54uTpDxemWkvi9/l
-         0v0LS44Rnn4db5bZ1s/eCObFkTHEEVskiHREUCqIgbgOdG2JC8ulywTpQPlw2kEC7W0s
-         t7cSAZqn9Yc/TE7gep8whTVzPQoh2aaTJq6I0Bhk4L6zRgSTfzNbNj/7BzRwbUsxFRdy
-         6TDg==
+        bh=dRc25rJI4tiY9YddNYzEMJbcEVjclgz0jDWxqWuLBkY=;
+        b=OlQ3jKPt0e+wq3C9F5WDwXSXYLFySYQaZ6OQwJE2w2EYhRHqF3aWfknP0xqKwzTDdw
+         HqBkaNpoEIad9OWzPv4CTryj856Iqu1ypGeOcuohgbLZuBG3+CYhdR9kf8pWoUgPPkgK
+         76xYVQirOZ0PvBOMfkUXuH8Rqb9NGa0KLCTsb3R8CySo5YXRtvh80LFbWPGBnNsjp7UO
+         qqPZB8L0l/9ICqngEBeu0kUTw0bGQfnYszLF5o+D/SFEDlCYb9a3mH5tXq88hywxXb7B
+         +FyUQlZHRjgUec+pfYOgaQmGXIncQiDWbV78G+yRUK4CgUTN9dgW043M31CfNuS7z4A4
+         caNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=AZlchqHweeitmzFOVEd86L1QbQOzSms3bkTBkjj4nY8=;
-        b=OrrDQEPezVarAO/CxfhVK1UJf8LQiSXox0g/dk0ToUK7s2ZRDXD83H1sEA3txLiRWB
-         5DHx5ayrNzEW52JuYcQFnJMPAvqENqsA4XRTTzBicsK5uZNENHBHmJTlb0XnvbNrSgUM
-         sJpkfAqtvoS6C/OG/yFlr530Nvr47ueumHyLK43JoHtR3M6eo3dP14EAKQf2+DQ5jgDw
-         EQ1izz41Kkw76YhtvANWpzwQE4C9aWiKdG6Ow1oBShvu0Rg9KQDlwWVjOUT7gAmUzWDe
-         alla2DNoRNNvoFYdeUbhm11kTt9u0gIlc/q7UqvKZSrR8Y4vxTuI9pU4y/9KK1W22J74
-         JTHA==
-X-Gm-Message-State: AJcUukej3hwFmKe4nnoehXw2ViV8tkdgV43jSRBUjOPFNBqCtXDaOrz+
-        DWY0/YEyYkWYw6tCqKdG9wF34w==
-X-Google-Smtp-Source: ALg8bN5FXLrDkTvNVMJJ4ry3WKdpPwuqV9ojFR2rEx5/7D8rjIP3tbp1QPrVKhzzOSvQRBQvm4wD8g==
-X-Received: by 2002:a1c:1d8e:: with SMTP id d136mr29294760wmd.98.1548949801696;
-        Thu, 31 Jan 2019 07:50:01 -0800 (PST)
+        bh=dRc25rJI4tiY9YddNYzEMJbcEVjclgz0jDWxqWuLBkY=;
+        b=RgLdoLoI3CjNZDVrwb9mKfbqIuRibUOwM2xfcyx+tQhjbrBzXYzEdKlBMTfoE4MFnS
+         oqo1FTXwl7OqqKoEfo/yT0SiOw8HPqiVTIgq97uCXv35JlRL0wfu48vzHuvZpwuQ56yv
+         W7TXbcgddaU4w6ycS/5atlFocfyST+rDa6qA+IL0PHxpoSJsPa8EZuX85FMfZHHDUnGw
+         K7PAchqtiYuYp6D2l0xkpHb2AM+qk3br/I+ZGOjpU6/gI/FPhNxLKAtwt7XULIuvOCWP
+         F6rDCyseCugglhNL43KEIHvnI+4aYYMDp2S+Ql5SY7eNZ5aH4QO3L5acKO+OcZ4wIN5v
+         8Gvw==
+X-Gm-Message-State: AHQUAuaAbgaFIIEt465k+hE9NvspVTvTitzXClsqtDTt1zZgH6O7LFWZ
+        BgRQiNFBTTKRd6SxgsnGeY+6vd4lfYqUIg==
+X-Google-Smtp-Source: AHgI3IaZvF35krU5Qg3S0VCHbPpFKFze/vzbgQEdKDnaYwl468v1xil3psuQgla66MfRs7gYEPnLBg==
+X-Received: by 2002:a5d:4046:: with SMTP id w6mr14559070wrp.92.1548950015241;
+        Thu, 31 Jan 2019 07:53:35 -0800 (PST)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id r12sm6572022wrq.3.2019.01.31.07.50.00
+        by smtp.gmail.com with ESMTPSA id s66sm3857891wmf.34.2019.01.31.07.53.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 07:50:01 -0800 (PST)
-Subject: Re: [PATCH 0/8] drm/meson: Add support for HDMI2.0 4k60
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent.pinchart@ideasonboard.com,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        maxime.ripard@bootlin.com
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20190115123315.11069-1-narmstrong@baylibre.com>
- <CGME20190131132546epcas5p264ec54cb60053b409f0459f809825eef@epcas5p2.samsung.com>
- <a3de23a8-3fa4-f8c5-5b2a-33109c09a863@baylibre.com>
- <0fa602d6-a57e-0248-fcfd-929e3d9ceab1@samsung.com>
+        Thu, 31 Jan 2019 07:53:34 -0800 (PST)
+Subject: Re: [PATCH] dt-bindings: gpu: add bindings for the ARM Mali Bifrost
+ GPU
+To:     daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190131132939.2263-1-narmstrong@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -122,12 +115,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <3f28a247-f6d3-be03-ca9f-15dfee1939c2@baylibre.com>
-Date:   Thu, 31 Jan 2019 16:50:00 +0100
+Message-ID: <0d80f33a-32ba-4d87-0f40-bd5a4b7d23c0@baylibre.com>
+Date:   Thu, 31 Jan 2019 16:53:34 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <0fa602d6-a57e-0248-fcfd-929e3d9ceab1@samsung.com>
+In-Reply-To: <20190131132939.2263-1-narmstrong@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -136,135 +129,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/2019 15:13, Andrzej Hajda wrote:
-> On 31.01.2019 14:25, Neil Armstrong wrote:
->> Hi Andrzej, Laurent,
->>
->> On 15/01/2019 13:33, Neil Armstrong wrote:
->>> This patchset aims to add support for the following HDMI2.0 4k60 modes:
->>> - 594Mhz TMDS frequency needing TMDS Scramling and 1/40 rate for RGB/YUV4:4:4
->>> - 297MHz TMDS frequency with YUV4:2:0 encoding
->>>
->>> The first mode uses the SCDC helpers introduced by intel to :
->>> - discover where the monitor support SCDC
->>> - setup the SCDC parameters
->>> This is implemented in the dw-hdmi bridge driver by handling scrambling
->>> support during the bridge setup and by exporting an helper for the PHY
->>> setup to setup the SCDC configuration for the 1/40 TMDS rate.
->>> This code will only be active if the encoder support a TMDS rate > 340MHz.
->>>
->>> This patch could eventually break support on different SoC when connected
->>> on a 4k60 monitor with SCDC :
->>> - i.MX correctly discards pixel clocks > 216MHz
->>> - R-CAR discards discards pixel clocks > 297MHz since [1]
->>> - Rockchip discards invalid pixel clocks not in the rockchip_mpll_cfg table
->>> - sun8i correctly discards pixel clocks > 297MHz on a83t
->>> - sun8i discards discards pixel clocks > 594Mhz on h6, which is already broken
->>>
->>> First patch should fix support for Allwinner H6.
->>>
->>> The second mode is implemented by added the missing 4:2:0 bypass handling
->>> in the dw-hdmi bridge driver and adding a "mtmdsclock" separating the
->>> pixel clock from the tmds clock in the mode setup phase.
->>> We also enable support for these modes in the connector only if the platform
->>> glue code explicits the support.
->> Do you think patches 1-4 could be applied ?
+On 31/01/2019 14:29, Neil Armstrong wrote:
+> Add the bindings for the Bifrost family of ARM Mali GPUs.
 > 
+> The Bifrost GPU architecture is similar to the Midgard family,
+> but with a different Shader Core & Execution Engine structures.
 > 
-> For me they are OK.
+> Bindings are based on the Midgard family bindings, but the inner
+> architectural changes makes it a separate family needing separate
+> bindings.
 > 
-> Should I take them via drm-misc?
+> The Bifrost GPUs are present in a number of recent SoCs, like the
+> Amlogic G12A Family, and many other vendors.
+> The Amlogic vendor specific compatible is added to handle the
+> specific IP integration differences and dependencies.
+> 
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  .../bindings/gpu/arm,mali-bifrost.txt         | 94 +++++++++++++++++++
+>  1 file changed, 94 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt
+> new file mode 100644
+> index 000000000000..a632f5136b08
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt
+> @@ -0,0 +1,94 @@
+> +ARM Mali Bifrost GPU
+> +====================
+> +
+> +Required properties:
+> +
+> +- compatible :
+> +  * Must contain one of the following:
+> +    + "arm,mali-g71"
+> +    + "arm,mali-g51"
+> +    + "arm,mali-g72"
+> +    + "arm,mali-g76"
 
-OK for me !
+Wrong order and forgot the G31 and G52 cores.
 
 Neil
 
-> 
-> 
->>
->> Then we could focus on how we manage the bus format between the encoder
->> and the bridge ?
->>
->> Especially patch 5 linked to patch 7.
->>
->> Will one of you be at FOSDEM 2019 ? we could chat about this.
-> 
-> 
-> Nope.
-> 
-> 
-> Regards
-> 
-> Andrzej
-> 
-> 
->>
->> Following subjects on the table will be :
->> - HDR metadata transmission aligned with the last patchset sent by intel-gfx
->> - Colorspace connector property aligned with the last patchset sent by intel-gfx
->> - HDCP 1.4 and 2.2 handling
->>
->> Neil
->>
->>> Only the meson DRM dw_hdmi glue allows ycbcr420 modes, so no breakage
->>> is expected here.
->>>
->>> The remaining patches adds support for :
->>> - 1/40 TMDS rate aka DIV40 in the dw-hdmi meson PHY setup
->>> - 4:2:0 output and clock setup
->>>
->>> The dw-hdmi support re-uses the support done by Rockchip engineers on the
->>> Linux 4.4 BSP kernel.
->>>
->>> These modes has been validated using a MuxLab HDMI Signal Analyser in
->>> addition to different UHD TVs supporting full 4k60 or the 4:2:0 variant.
->>>
->>> Changes since RFC v2 at [3]:
->>> - Collected tested-by and reviewed-by tags
->>> - Changed if condition in "add HDMI div40 TMDS mode"
->>> - Updated "Add YUV420 output support" with the same if condition
->>>
->>> Changes since RFC v1 at [2]:
->>> - Fix all comments from Laurent :
->>> - Add define for HDMI 1.4 max tmds clock and SCDC supported version
->>> - Call dw_hdmi_set_high_tmds_clock_ratio() in dw_hdmi_phy_enable_powerdown()
->>> to unbreak Allwinner H6
->>> - Pass in_t(u8, bytes, SCDC_MIN_SOURCE_VERSION) as SCDC version
->>> - Finally add comments for SCDC and Scrambling process
->>>
->>> [1] https://patchwork.freedesktop.org/patch/263616/
->>> [2] https://patchwork.freedesktop.org/series/52950/#rev1
->>> [3] https://patchwork.freedesktop.org/series/52950/#rev2
->>>
->>> Neil Armstrong (7):
->>>   drm/bridge: dw-hdmi: Add SCDC and TMDS Scrambling support
->>>   drm/meson: add HDMI div40 TMDS mode
->>>   drm/meson: add support for HDMI2.0 2160p modes
->>>   drm/bridge: dw-hdmi: add support for YUV420 output
->>>   drm/bridge: dw-hdmi: allow ycbcr420 modes for >= 0x200a
->>>   drm/meson: Add YUV420 output support
->>>   drm/meson: Output in YUV444 if sink supports it
->>>
->>> Zheng Yang (1):
->>>   drm/bridge: dw-hdmi: support dynamically get input/out color info
->>>
->>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 182 +++++++++++++++++++---
->>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |   1 +
->>>  drivers/gpu/drm/meson/meson_dw_hdmi.c     | 128 ++++++++++++---
->>>  drivers/gpu/drm/meson/meson_vclk.c        |  93 ++++++++---
->>>  drivers/gpu/drm/meson/meson_vclk.h        |   7 +-
->>>  drivers/gpu/drm/meson/meson_venc.c        |   8 +-
->>>  drivers/gpu/drm/meson/meson_venc.h        |  11 ++
->>>  drivers/gpu/drm/meson/meson_venc_cvbs.c   |   3 +-
->>>  include/drm/bridge/dw_hdmi.h              |   7 +
->>>  9 files changed, 374 insertions(+), 66 deletions(-)
->>>
->>
->>
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> +  * which must be preceded by one of the following vendor specifics:
+> +    + "amlogic,meson-g12a-mali"
+> +
+> +- reg : Physical base address of the device and length of the register area.
+> +
+> +- interrupts : Contains the three IRQ lines required by Mali Bifrost devices.
+> +
+> +- interrupt-names : Contains the names of IRQ resources in the order they were
+> +  provided in the interrupts property. Must contain: "job", "mmu", "gpu".
+> +
+> +
+> +Optional properties:
+> +
+> +- clocks : Phandle to clock for the Mali Bifrost device.
+> +
+> +- mali-supply : Phandle to regulator for the Mali device. Refer to
+> +  Documentation/devicetree/bindings/regulator/regulator.txt for details.
+> +
+> +- operating-points-v2 : Refer to Documentation/devicetree/bindings/opp/opp.txt
+> +  for details.
+> +
+> +- resets : Phandle of the GPU reset line.
+> +
+> +Vendor-specific bindings
+> +------------------------
+> +
+> +The Mali GPU is integrated very differently from one SoC to
+> +another. In order to accomodate those differences, you have the option
+> +to specify one more vendor-specific compatible, among:
+> +
+> +- "amlogic,meson-g12a-mali"
+> +  Required properties:
+> +  - resets : Should contain phandles of :
+> +    + GPU reset line
+> +    + GPU APB glue reset line
+> +
+> +Example for a Mali-G71:
+> +
+> +gpu@ffa30000 {
+> +	compatible = "amlogic,meson-g12a-mali", "arm,mali-g71";
+
+
+It's a typo, it's a G31 on Amlogic G12A, anyway the example is still valid.
+
+> +	reg = <0xffe40000 0x10000>;
+> +	interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+> +		     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+> +		     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
+> +	interrupt-names = "job", "mmu", "gpu";
+> +	clocks = <&clk CLKID_MALI>;
+> +	mali-supply = <&vdd_gpu>;
+> +	operating-points-v2 = <&gpu_opp_table>;
+> +	resets = <&reset RESET_DVALIN_CAPB3>, <&reset RESET_DVALIN>;
+> +};
+> +
+> +gpu_opp_table: opp_table0 {
+> +	compatible = "operating-points-v2";
+> +
+> +	opp@533000000 {
+> +		opp-hz = /bits/ 64 <533000000>;
+> +		opp-microvolt = <1250000>;
+> +	};
+> +	opp@450000000 {
+> +		opp-hz = /bits/ 64 <450000000>;
+> +		opp-microvolt = <1150000>;
+> +	};
+> +	opp@400000000 {
+> +		opp-hz = /bits/ 64 <400000000>;
+> +		opp-microvolt = <1125000>;
+> +	};
+> +	opp@350000000 {
+> +		opp-hz = /bits/ 64 <350000000>;
+> +		opp-microvolt = <1075000>;
+> +	};
+> +	opp@266000000 {
+> +		opp-hz = /bits/ 64 <266000000>;
+> +		opp-microvolt = <1025000>;
+> +	};
+> +	opp@160000000 {
+> +		opp-hz = /bits/ 64 <160000000>;
+> +		opp-microvolt = <925000>;
+> +	};
+> +	opp@100000000 {
+> +		opp-hz = /bits/ 64 <100000000>;
+> +		opp-microvolt = <912500>;
+> +	};
+> +};
 > 
 
