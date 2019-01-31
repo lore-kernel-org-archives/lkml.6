@@ -2,343 +2,109 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6659DC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B9DC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235C620869
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:25:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F96rOdYo"
+	by mail.kernel.org (Postfix) with ESMTP id 5208B20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729674AbfAaWZY (ORCPT
+        id S1729690AbfAaW2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 17:25:24 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38716 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbfAaWZY (ORCPT
+        Thu, 31 Jan 2019 17:28:02 -0500
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:43092 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725776AbfAaW2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 17:25:24 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m22so4234415wml.3;
-        Thu, 31 Jan 2019 14:25:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TxRVzwmr43MFYtitLEnUc5MTY10C4drP5BE48d+eRmo=;
-        b=F96rOdYoEnKLkn70Uc6m1OpSQ+hBdAv66nWXqdoGPSQO9Q2EUrb80y1UYzIVlN3eVs
-         +aNxFVBzy1/w90lHFQHhGW/tsLf+XpWKyIBECI8z9GMIQG/PrL7MHlyHDAELXly08ALZ
-         CKV2gBH6R3y6+4SuBz7bKlNfNFoqtBdvf2fbPRrYFKS1kwfa1R7CC+RF9UX4m0+mJcMk
-         CaDP7+pGzpnmqi3qo5e/yjUaSManX2ikiNiaBCt1DjOlQuHjvn4uSL7Iyq10ooE7FxBb
-         fWwDdgc363gDBFee9x87gcd0+ar+TIIqXSQiEOIj6an2SeQluNUPrG0xxum2f3kuMh4Q
-         3tZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TxRVzwmr43MFYtitLEnUc5MTY10C4drP5BE48d+eRmo=;
-        b=ffDkXAuQA0IENyUz67/nwNNMuWAdE89dUJB8LAFPYOO84F6CuP7mt7UWk+CbzOxAtV
-         QzmyA0fZSqwKVV9KklkpYQB+lwyy/vPBlne9RsZdFPcFVQRc1NSq/Uc/2s22CQFfILZz
-         OzPMNWI4xxsCtD57MmQaJht/Y/kL1O6BiM/nWGgCcnQxIqGFS92KYt4FwYzy0wm41pY6
-         qyLMGihHLRvZWHaaAms901Ude/k2wtFdeW1U3wgwUNG2pQtA2BRWTabI9m9XZvWJyDop
-         1R144gKHuWY+1IsTEdfwiPKiwMfUNnEq965ZrefiD0wTyjedG7zWhTS246hCG5ziElUT
-         yf5g==
-X-Gm-Message-State: AJcUukfFMogTXQl/0F7/fIDr+xtXEu/tzzEtCdaoev8trmzxl55lJcgc
-        +oDOvUzHwaBUpJs1IRTwTVU=
-X-Google-Smtp-Source: ALg8bN7lj5rwqOuFcu6r7j7j6Fd8nCDnyflk4OEQOpY0EH+YLRHh03KoV3GHISoKXHbJFCWCRafWew==
-X-Received: by 2002:a1c:8851:: with SMTP id k78mr31791846wmd.51.1548973520843;
-        Thu, 31 Jan 2019 14:25:20 -0800 (PST)
-Received: from localhost (p200300E41F128C00021F3CFFFE37B91B.dip0.t-ipconnect.de. [2003:e4:1f12:8c00:21f:3cff:fe37:b91b])
-        by smtp.gmail.com with ESMTPSA id m4sm401746wml.2.2019.01.31.14.25.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 14:25:20 -0800 (PST)
-Date:   Thu, 31 Jan 2019 23:25:18 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Bo Yan <byan@nvidia.com>
-Cc:     jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        mark.rutland@arm.com, robh+dt@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: add topology data for Tegra194 cpu
-Message-ID: <20190131222517.GB13156@mithrandir>
-References: <1548959754-3941-1-git-send-email-byan@nvidia.com>
+        Thu, 31 Jan 2019 17:28:02 -0500
+Received: from pps.filterd (m0134424.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VMRZjL031650;
+        Thu, 31 Jan 2019 22:27:35 GMT
+Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2qc71yhats-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 31 Jan 2019 22:27:35 +0000
+Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
+        by g9t5008.houston.hpe.com (Postfix) with ESMTP id BDC7C4F;
+        Thu, 31 Jan 2019 22:27:34 +0000 (UTC)
+Received: from anatevka (anatevka.americas.hpqcorp.net [10.34.81.61])
+        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id 06B6749;
+        Thu, 31 Jan 2019 22:27:32 +0000 (UTC)
+Date:   Thu, 31 Jan 2019 15:27:32 -0700
+From:   Jerry Hoemann <jerry.hoemann@hpe.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Dave Young <dyoung@redhat.com>, x86@kernel.org,
+        Baoquan He <bhe@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pingfan Liu <kernelfans@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, yinghai@kernel.org,
+        vgoyal@redhat.com
+Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+Message-ID: <20190131222732.GA946@anatevka>
+Reply-To: Jerry.Hoemann@hpe.com
+References: <1548047768-7656-1-git-send-email-kernelfans@gmail.com>
+ <20190125103924.GB27998@zn.tnic>
+ <20190125134518.GA23595@dhcp-128-65.nay.redhat.com>
+ <20190125140823.GC27998@zn.tnic>
+ <20190131075907.GB19091@dhcp-128-65.nay.redhat.com>
+ <20190131105732.GC6749@zn.tnic>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jq0ap7NbKX2Kqbes"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548959754-3941-1-git-send-email-byan@nvidia.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190131105732.GC6749@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=649 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 31, 2019 at 11:57:32AM +0100, Borislav Petkov wrote:
+> On Thu, Jan 31, 2019 at 03:59:07PM +0800, Dave Young wrote:
+> > As Pingfan/me mentioned in another reply, there are two reasons:
+> > 1. old kexec-tools can not load kernel to high memory
+> > 2. ,high will not work on some systems without some amounts of low
+> > memory so it nees reserve extra low memory, it is bad for people who do
+> > not want it.
+> 
+> Let's see: we don't enable high by default because of old kexec-tools
+> and some systems which do some funky reservations.
+> 
+> But this patch kinda enables high by trying a couple more regions.
+> 
+> So we don't really need this - we simply need to tell people to use high
+> if it fails with KASLR, AFAICT.
 
---jq0ap7NbKX2Kqbes
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Borris,
 
-On Thu, Jan 31, 2019 at 10:35:54AM -0800, Bo Yan wrote:
-> The xavier CPU architecture includes 8 CPU cores organized in
-> 4 clusters. Add cpu-map data for topology initialization, add
-> cache data for cache node creation in sysfs.
->=20
-> Signed-off-by: Bo Yan <byan@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 148 +++++++++++++++++++++++++=
-++++--
->  1 file changed, 140 insertions(+), 8 deletions(-)
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/d=
-ts/nvidia/tegra194.dtsi
-> index 6dfa1ca..7c2a1fb 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -870,63 +870,195 @@
->  		#address-cells =3D <1>;
->  		#size-cells =3D <0>;
-> =20
-> -		cpu@0 {
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu =3D <&cl0_0>;
-> +				};
-> +
-> +				core1 {
-> +					cpu =3D <&cl0_1>;
-> +				};
-> +			};
-> +
-> +			cluster1 {
-> +				core0 {
-> +					cpu =3D <&cl1_0>;
-> +				};
-> +
-> +				core1 {
-> +					cpu =3D <&cl1_1>;
-> +				};
-> +			};
-> +
-> +			cluster2 {
-> +				core0 {
-> +					cpu =3D <&cl2_0>;
-> +				};
-> +
-> +				core1 {
-> +					cpu =3D <&cl2_1>;
-> +				};
-> +			};
-> +
-> +			cluster3 {
-> +				core0 {
-> +					cpu =3D <&cl3_0>;
-> +				};
-> +
-> +				core1 {
-> +					cpu =3D <&cl3_1>;
-> +				};
-> +			};
-> +		};
-> +
-> +		cl0_0: cpu@0 {
->  			compatible =3D "nvidia,tegra194-carmel", "arm,armv8";
->  			device_type =3D "cpu";
->  			reg =3D <0x10000>;
->  			enable-method =3D "psci";
-> +			i-cache-size =3D <131072>;
-> +			i-cache-line-size =3D <64>;
-> +			i-cache-sets =3D <512>;
-> +			d-cache-size =3D <65536>;
-> +			d-cache-line-size =3D <64>;
-> +			d-cache_sets =3D <256>;
+The testing I've done shows that the allocation failure caused by KASLR 
+is intermittent.  On one SUT that I've seen this issue on, the crash
+kernel allocation fails less than 10% of the time.
 
-These don't seem to be well-defined. They are mentioned in a very weird
-locations (Documentation/devicetree/booting-without-of.txt) but there
-seem to be examples and other device tree files that use them so maybe
-those are all valid. It might be worth mentioning these in other places
-where people can more easily find them.
+So even if a system administrator is diligent and tests
+that a chosen kdump configuration works, that configuration
+might not work on some random reboot 7 months in the future.
+Unfortunately, that will be the time that the system crashes
+and we won't be able to collect the crash dump due to the
+crashkernel allocation failure.
 
-According to the above document, {i,d}-cache-line-size are deprecated in
-favour of {i,d}-cache-block-size.
+Jerry
 
-I also don't see any mention of {i,d}-cache_sets in the device tree
-bindings, though riscv/cpus.txt mentions {i,d}-cache-sets (note the
-hyphen instead of underscore) in the examples. arm/l2c2x0.txt and
-arm/uniphier/cache-unifier.txt describe cache-sets, though that's
-slightly different.
+-- 
 
-Might make sense to document all these in more standard places. Maybe
-adding them to arm/cpus.txt. For consistency with other properties, I
-think there should be called {i,d}-cache-sets like for RISC-V.
-
-> +			l2-cache =3D <&l2_0>;
-
-This seems to be called next-level-cache everywhere else, though it's
-only formally described in arm/uniphier/cache-uniphier.txt. So might
-also make sense to add this to arm/cpus.txt.
-
->  		};
-> =20
-> -		cpu@1 {
-> +		cl0_1: cpu@1 {
->  			compatible =3D "nvidia,tegra194-carmel", "arm,armv8";
->  			device_type =3D "cpu";
->  			reg =3D <0x10001>;
->  			enable-method =3D "psci";
-> +			i-cache-size =3D <131072>;
-> +			i-cache-line-size =3D <64>;
-> +			i-cache-sets =3D <512>;
-> +			d-cache-size =3D <65536>;
-> +			d-cache-line-size =3D <64>;
-> +			d-cache_sets =3D <256>;
-> +			l2-cache =3D <&l2_0>;
->  		};
-> =20
-> -		cpu@2 {
-> +		cl1_0: cpu@2 {
->  			compatible =3D "nvidia,tegra194-carmel", "arm,armv8";
->  			device_type =3D "cpu";
->  			reg =3D <0x100>;
->  			enable-method =3D "psci";
-> +			i-cache-size =3D <131072>;
-> +			i-cache-line-size =3D <64>;
-> +			i-cache-sets =3D <512>;
-> +			d-cache-size =3D <65536>;
-> +			d-cache-line-size =3D <64>;
-> +			d-cache_sets =3D <256>;
-> +			l2-cache =3D <&l2_1>;
->  		};
-> =20
-> -		cpu@3 {
-> +		cl1_1: cpu@3 {
->  			compatible =3D "nvidia,tegra194-carmel", "arm,armv8";
->  			device_type =3D "cpu";
->  			reg =3D <0x101>;
->  			enable-method =3D "psci";
-> +			i-cache-size =3D <131072>;
-> +			i-cache-line-size =3D <64>;
-> +			i-cache-sets =3D <512>;
-> +			d-cache-size =3D <65536>;
-> +			d-cache-line-size =3D <64>;
-> +			d-cache_sets =3D <256>;
-> +			l2-cache =3D <&l2_1>;
->  		};
-> =20
-> -		cpu@4 {
-> +		cl2_0: cpu@4 {
->  			compatible =3D "nvidia,tegra194-carmel", "arm,armv8";
->  			device_type =3D "cpu";
->  			reg =3D <0x200>;
->  			enable-method =3D "psci";
-> +			i-cache-size =3D <131072>;
-> +			i-cache-line-size =3D <64>;
-> +			i-cache-sets =3D <512>;
-> +			d-cache-size =3D <65536>;
-> +			d-cache-line-size =3D <64>;
-> +			d-cache_sets =3D <256>;
-> +			l2-cache =3D <&l2_2>;
->  		};
-> =20
-> -		cpu@5 {
-> +		cl2_1: cpu@5 {
->  			compatible =3D "nvidia,tegra194-carmel", "arm,armv8";
->  			device_type =3D "cpu";
->  			reg =3D <0x201>;
->  			enable-method =3D "psci";
-> +			i-cache-size =3D <131072>;
-> +			i-cache-line-size =3D <64>;
-> +			i-cache-sets =3D <512>;
-> +			d-cache-size =3D <65536>;
-> +			d-cache-line-size =3D <64>;
-> +			d-cache_sets =3D <256>;
-> +			l2-cache =3D <&l2_2>;
->  		};
-> =20
-> -		cpu@6 {
-> +		cl3_0: cpu@6 {
->  			compatible =3D "nvidia,tegra194-carmel", "arm,armv8";
->  			device_type =3D "cpu";
->  			reg =3D <0x10300>;
->  			enable-method =3D "psci";
-> +			i-cache-size =3D <131072>;
-> +			i-cache-line-size =3D <64>;
-> +			i-cache-sets =3D <512>;
-> +			d-cache-size =3D <65536>;
-> +			d-cache-line-size =3D <64>;
-> +			d-cache_sets =3D <256>;
-> +			l2-cache =3D <&l2_3>;
->  		};
-> =20
-> -		cpu@7 {
-> +		cl3_1: cpu@7 {
->  			compatible =3D "nvidia,tegra194-carmel", "arm,armv8";
->  			device_type =3D "cpu";
->  			reg =3D <0x10301>;
->  			enable-method =3D "psci";
-> +			i-cache-size =3D <131072>;
-> +			i-cache-line-size =3D <64>;
-> +			i-cache-sets =3D <512>;
-> +			d-cache-size =3D <65536>;
-> +			d-cache-line-size =3D <64>;
-> +			d-cache_sets =3D <256>;
-> +			l2-cache =3D <&l2_3>;
->  		};
->  	};
-> =20
-> +	l2_0: l2-cache0 {
-> +		cache-size =3D <2097152>;
-> +		cache-line-size =3D <64>;
-> +		cache-sets =3D <2048>;
-> +		next-level-cache =3D <&l3>;
-> +	};
-
-Does this need a compatible string? Also, are there controllers behind
-these caches? I'm just wondering if these also need reg properties and
-unit-addresses.
-
-arm/l2c2x0.txt and arm/uniphier/cache-uniphier.txt describe an
-additional property that you don't specify here: cache-level. This
-sounds useful to have so that we don't have to guess the cache level
-=66rom the name, which may or may not work depending on what people name
-the nodes.
-
-Also, similar to the L1 cache, cache-block-size is preferred over
-cache-line-size.
-
-> +	l3: l3-cache {
-> +		cache-size =3D <4194304>;
-> +		cache-line-size =3D <64>;
-> +		cache-sets =3D <4096>;
-> +	};
-
-The same comments apply as for the L2 caches.
-
-Thierry
-
---jq0ap7NbKX2Kqbes
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxTdcYACgkQ3SOs138+
-s6FzABAAjbztv50UkzwKg4xpgqcu8AkBW++ovcczpqHF6n78vgNJIy3INrdJEj4p
-fU7XAWA2WvkrCuQj8yXW/2cGli8Ud8HV8+oHxLDLDCAn4mooQHZPE2oRA14aT8Mw
-JU2XIjfrjF292vaKAahohJuvJMQOl1JIXc247qHd90QLvUeT8lJKlL8NSX/KPxpL
-Gs5WhFEAlcrIo7Yk1X4kpjG6CmtXC1NxVXBbYiP5XkWjezfOKovQUlvFxlgnNP/z
-leQq6s0VqzGtVm5LUan6GR1iK/ACtbkbAvpZUCa4Wqh1Rf1Mhckrz1cf6oxB2fic
-iqBwbJAzi5v5JCjAN39zcKxujpUL/g/Q5gP3Rtpv7Mt3wKG1xl1qdMy18T+oH1Cf
-AS+LSXFANk8+q53PdmLajlt/0mk6P3mEYWNw/s0QNix4xfy1Q2Mp65UDW++TrpXZ
-JewQAJ91sri0rukZlKq64cOj6lmyq06EwuqwvFcgXNCpvFdq2jmBTGXOXrEO3Usc
-t/MVmkGrIJPxMsaroaQ8xViXdejcOIauv8royGZq9aluZN4LcKAuFrwkKoKSBWYg
-9gPjscvhSAB9PHv2Uk33xWIHWgIOxEV6OiTlfaZGu0R2asTn7nnqfv3iYA+OSdaG
-bHhGZTSbjeaoBM5h8OzDsZyASXsAwo2r1RUvcHe0jBmPh1AI31U=
-=8xhE
------END PGP SIGNATURE-----
-
---jq0ap7NbKX2Kqbes--
+-----------------------------------------------------------------------------
+Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
+-----------------------------------------------------------------------------
