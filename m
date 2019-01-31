@@ -2,62 +2,64 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52174C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE03EC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D5420881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:02:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548950540;
-	bh=wohEdbgOCuPdgkvHmnpRJPW8xKx4RpBpT9mqtD37Aic=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=kimTJFBby5Lq+OoFJ7wuCcgSmwnIsKjeUI6Jm5TQ3tC3rHPaiY3nwtINcZgEOmhIb
-	 LUwJRpWLpgITDmAOj7/XvWjz4M9yocX49dn69kEHS2KZRMJyWfbsk9v6qxzBBzjDHp
-	 QGIsV1jVggEoSB6t4cZ6Q8RtRm7pkIu6sQf7xU0I=
+	by mail.kernel.org (Postfix) with ESMTP id AE9C220881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:03:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HTvkBGP6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387964AbfAaQCS (ORCPT
+        id S2387971AbfAaQDt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:02:18 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45887 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387869AbfAaQCS (ORCPT
+        Thu, 31 Jan 2019 11:03:49 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:45643 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbfAaQDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:02:18 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 32so3179191ota.12;
-        Thu, 31 Jan 2019 08:02:17 -0800 (PST)
+        Thu, 31 Jan 2019 11:03:48 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x28so2231737vsh.12
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 08:03:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dfkb2JVbRDTEbj1zSGa+POfZs3pStSG55ZC3VHRiOkI=;
+        b=HTvkBGP6bPF70CtpCEmhX1jTzjlerKIEBopJ3TENVCW+hbWgrWzC+tjWuj4MSytQ5S
+         hk8NJ7/CQs+vmANbU05MmbTXhj6vDcPq943G4CZnYnWfuAXSwII5g/Nb/YVcPvJqtKPH
+         7kdULbfT1To5TobCuxkHFN0tlmOw1NyhudXT4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=GHzLS7mIKc0ZR77vn0J6nivm+8YWR56sVzoII/qAshE=;
-        b=dwJHkT7KVlZsBrNXgTq81bl/SmyeyAkVSUMYZgZnvfakA56z8nn57wciNGLfCn1q1n
-         Za6H0ky525ogR6mycWsLv5ze5v/JRz1rbUnBQ9/b8bkpvL1+HJXoqzqDB/n+mLXZFkKI
-         7u/irnWQqHuys3yMwvge5RBEZS53Zr1CAEn4QUnSMj12j2W4hIASvsE87djRt+U8n0ah
-         TowoVBwNsdha6HnNdRo2ibmwgkb2KPkG/l1lwVvFRK9x4x11ke4kaWYtKX1ww61CECyw
-         ZqiZQANm2pDV+BJlugwscf6j9eFEaxqQhXXPfPPqptpjoU4kRjk20va1crBNiP3dM/XQ
-         XO2w==
-X-Gm-Message-State: AJcUukd3HFle4j1LOaedvfaOHdq5F+oyXAstw0VFpZjeVtyE5ykjeHym
-        AEU5ecKQ+UYtUyXnVOBc81++XyvG+c0snr15JKQ=
-X-Google-Smtp-Source: ALg8bN4Hl6/WhmNF5d943lTQS3CLZr+dlG0FlhrsIRk5MBT9SRgP7NneN/Aw92TUH+naUcD6f6Clr2qLsGEbM4UKQFQ=
-X-Received: by 2002:a9d:588c:: with SMTP id x12mr26894774otg.139.1548950536774;
- Thu, 31 Jan 2019 08:02:16 -0800 (PST)
+        bh=dfkb2JVbRDTEbj1zSGa+POfZs3pStSG55ZC3VHRiOkI=;
+        b=NNuHQBmv8VuxEbpJtpN/SZM7TWAVcCvTgiTJTOfFMth0dPlksTZNJPHNOkDKu6hI8G
+         28X0BeyarwHln0mC/zoH9vQKij6iMdCvSUuR0IPHrxNPsPP06o9OPimaDj0gjJzsDaoL
+         ukMRcxt3HCCP7U8SUyoezzdwFJIStT9Bs/Fkbzazf9wWIkEBrQn9oXP569UbyRQCGdgm
+         waLJjUzTr/sIwo212ijLuUPcFdOYX2185g93GUU8lilO/MuHzhIMLYnxuqM8nb//HOh7
+         iHnCDdE8TwLKBCX72RNSegIrVUQ0GBSh+1koEjucHMCqtAMzqiA/f7yqcj/9JOLKBfNI
+         4yZw==
+X-Gm-Message-State: AJcUukd/4NFujtMfrIk87Kdn/qrxQ2rJOm0OKq/ltLpZZkwGqszm4HVf
+        N9/ZDaHpmvy83b9BYTmbfTMrTOd56cB9OeWEQxhncA==
+X-Google-Smtp-Source: ALg8bN41EZScf3vVgGuMEUkMKk4ZnQZv8XMmmKkN2urZTsBRtDJIs56Iag4DvsgqS2ga05uinlnJsV6keGUqD/OyQEA=
+X-Received: by 2002:a67:b245:: with SMTP id s5mr14627592vsh.200.1548950627580;
+ Thu, 31 Jan 2019 08:03:47 -0800 (PST)
 MIME-Version: 1.0
 References: <2493187.oiOpCWJBV7@aspire.rjw.lan> <CAJZ5v0hsBNYZ7mu6SrhBY+LiOQZKz2K_3OtsCb9Jt8QR1YRhOA@mail.gmail.com>
  <20190131132247.GA6837@kroah.com> <20190131132409.GA16084@kroah.com>
 In-Reply-To: <20190131132409.GA16084@kroah.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 31 Jan 2019 17:02:05 +0100
-Message-ID: <CAJZ5v0geMbgNKBFT104o4Jf38q7yo46ha+qFbd+9Mbr+P8n--A@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 31 Jan 2019 17:03:11 +0100
+Message-ID: <CAPDyKFr6gehF1iXq6BnUmfg3duDmCtXpQg97euAvH_dyJ785gg@mail.gmail.com>
 Subject: Re: [PATCH 0/6] driver core: Fix some issues related to device links
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Linux PM <linux-pm@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
         Daniel Vetter <daniel@ffwll.ch>,
         Lukas Wunner <lukas@wunner.de>,
         Andrzej Hajda <a.hajda@samsung.com>,
@@ -72,7 +74,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 2:24 PM Greg Kroah-Hartman
+On Thu, 31 Jan 2019 at 14:24, Greg Kroah-Hartman
 <gregkh@linuxfoundation.org> wrote:
 >
 > On Thu, Jan 31, 2019 at 02:22:47PM +0100, Greg Kroah-Hartman wrote:
@@ -119,7 +121,12 @@ On Thu, Jan 31, 2019 at 2:24 PM Greg Kroah-Hartman
 >
 > To make this clearer, I have no objection to take this through my tree
 > now, along with your second set of patches.  Is that ok?
+>
 
-Yes, it is, AFAICS.  Thank you!
+Greg, Rafael,
 
-Do you need me to resend all of this as one series?
+FWIW, I intend to review these patches during tomorrow, or at latest
+on Monday as I have been a bit busy lately.
+
+Kind regards
+Uffe
