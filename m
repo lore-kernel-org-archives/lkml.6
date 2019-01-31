@@ -2,70 +2,187 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5410C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D64C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9655A20833
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:16:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548908167;
-	bh=/zZvhYd0VGdsV7BF7WxAJ7nWi1/WUUedIQYhmzPckzM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iQ3BlLkL+wRN8kAfvWe8uILAvN33DO/H+loaOiFM3LSpjgqM9EiDWnyrASQookXeM
-	 j3toYqi4hTPUXFhxQDAq+L04mdUIal4ISdcVJUAKksK+aqthfoN5wNGhAQpDFIUb0O
-	 GLMXv9GQXCeZWJVKNE79TAxenI13uNbp3jqARd1Y=
+	by mail.kernel.org (Postfix) with ESMTP id 6FC2920833
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:16:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730982AbfAaEQG (ORCPT
+        id S1731258AbfAaEQp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 23:16:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32994 "EHLO mail.kernel.org"
+        Wed, 30 Jan 2019 23:16:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39854 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726536AbfAaEQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 23:16:05 -0500
-Received: from localhost (unknown [171.76.100.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726217AbfAaEQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 23:16:45 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B5DE20833;
-        Thu, 31 Jan 2019 04:16:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548908165;
-        bh=/zZvhYd0VGdsV7BF7WxAJ7nWi1/WUUedIQYhmzPckzM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mjplm7F4ctZyeoTqxVPugirNcK54s25NLrgcnH9qS2dZZBpTPWIPE7BpuziXmq7Q1
-         TRdaAofgsT4W70gpVY7EvWRisYHixAyioD6L+x/3mfUeNL/M7qX0GgmD3t1dmb9i+K
-         8ES9a5E/0oHeTnXTysaQ5sNjIAgnhspO79Hu8tWg=
-Date:   Thu, 31 Jan 2019 09:44:34 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Khasim Syed Mohammed <khasim.mohammed@linaro.org>
-Subject: Re: [PATCH] arm64: dts: qcom: qcs404: Add rpmcc node
-Message-ID: <20190131041434.GI4635@vkoul-mobl>
-References: <20190125181422.21434-1-bjorn.andersson@linaro.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id B5F1B369CA;
+        Thu, 31 Jan 2019 04:16:44 +0000 (UTC)
+Received: from redhat.com (ovpn-126-0.rdu2.redhat.com [10.10.126.0])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C5825194B6;
+        Thu, 31 Jan 2019 04:16:43 +0000 (UTC)
+Date:   Wed, 30 Jan 2019 23:16:41 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 09/10] mm/hmm: allow to mirror vma of a file on a DAX
+ backed filesystem
+Message-ID: <20190131041641.GK5061@redhat.com>
+References: <20190129165428.3931-10-jglisse@redhat.com>
+ <CAPcyv4gNtDQf0mHwhZ8g3nX6ShsjA1tx2KLU_ZzTH1Z1AeA_CA@mail.gmail.com>
+ <20190129193123.GF3176@redhat.com>
+ <CAPcyv4gkYTZ-_Et1ZriAcoHwhtPEftOt2LnR_kW+hQM5-0G4HA@mail.gmail.com>
+ <20190129212150.GP3176@redhat.com>
+ <CAPcyv4hZMcJ6r0Pw5aJsx37+YKx4qAY0rV4Ascc9LX6eFY8GJg@mail.gmail.com>
+ <20190130030317.GC10462@redhat.com>
+ <CAPcyv4jS7Y=DLOjRHbdRfwBEpxe_r7wpv0ixTGmL7kL_ThaQFA@mail.gmail.com>
+ <20190130183616.GB5061@redhat.com>
+ <CAPcyv4hB4p6po1+-hJ4Podxoan35w+T6uZJzqbw=zvj5XdeNVQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190125181422.21434-1-bjorn.andersson@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4hB4p6po1+-hJ4Podxoan35w+T6uZJzqbw=zvj5XdeNVQ@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 31 Jan 2019 04:16:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-01-19, 10:14, Bjorn Andersson wrote:
-> Add the rpm clock controller node, to provide the low-noise baseband
-> clock for the USB PHYs, among other things.
+On Wed, Jan 30, 2019 at 07:28:12PM -0800, Dan Williams wrote:
+> On Wed, Jan 30, 2019 at 10:36 AM Jerome Glisse <jglisse@redhat.com> wrote:
+> [..]
+> > > > This
+> > > > is one of the motivation behind HMM ie have it as an impedence layer
+> > > > between mm and device drivers so that mm folks do not have to under-
+> > > > stand every single device driver but only have to understand the
+> > > > contract HMM has with all device driver that uses it.
+> > >
+> > > This gets to heart of my critique of the approach taken with HMM. The
+> > > above statement is antithetical to
+> > > Documentation/process/stable-api-nonsense.rst. If HMM is trying to set
+> > > expectations that device-driver projects can write to a "stable" HMM
+> > > api then HMM is setting those device-drivers up for failure.
+> >
+> > So i am not expressing myself correctly. If someone want to change mm
+> > in anyway that would affect HMM user, it can and it is welcome too
+> > (assuming that those change are wanted by the community and motivated
+> > for good reasons). Here by understanding HMM contract and preserving it
+> > what i mean is that all you have to do is update the HMM API in anyway
+> > that deliver the same result to the device driver. So what i means is
+> > that instead of having to understand each device driver. For instance
+> > you have HMM provide X so that driver can do Y; then what can be Z a
+> > replacement for X that allow driver to do Y. The point here is that
+> > HMM define what Y is and provide X for current kernel mm code. If X
+> > ever need to change so that core mm can evolve than you can and are
+> > more than welcome to do it. With HMM Y is defined and you only need to
+> > figure out how to achieve the same end result for the device driver.
+> >
+> > The point is that you do not have to go read each device driver to
+> > figure out Y.driver_foo, Y.driver_bar, ... you only have HMM that
+> > define what Y means and is ie this what device driver are trying to
+> > do.
+> >
+> > Obviously here i assume that we do not want to regress features ie
+> > we want to keep device driver features intact when we modify anything.
+> 
+> The specific concern is HMM attempting to expand the regression
+> boundary beyond drivers that exist in the kernel. The regression
+> contract that has priority is the one established for in-tree users.
+> If an in-tree change to mm semantics is fine for in-tree mm users, but
+> breaks out of tree users the question to those out of tree users is
+> "why isn't your use case upstream?". HMM is not that use case in and
+> of itself.
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
+I do not worry about out of tree user and we should not worry about
+them. I care only about upstream driver (AMD, Intel, NVidia) and i
+will not do an HMM feature if i do not intend to use it in at least
+one of those upstream driver. Yes i have work with NVidia on the
+design simply because they are the market leader on GPU compute and
+have talented engineers that know a little about what would work
+well. Not working with them to get their input on design just because
+their driver is closed source seems radical to me. I believe i
+benefited from their valuable input. But in the end my aim is, and
+have always been, to make the upstream kernel driver the best as
+possible. I will talk with anyone that can help in achieving that
+objective.
 
--- 
-~Vinod
+So do not worry about non upstream driver.
+
+
+> [..]
+> > Again HMM API can evolve, i am happy to help with any such change, given
+> > it provides benefit to either mm or device driver (ie changing the HMM
+> > just for the sake of changing the HMM API would not make much sense to
+> > me).
+> >
+> > So if after converting driver A, B and C we see that it would be nicer
+> > to change HMM in someway then i will definitly do that and this patchset
+> > is a testimony of that. Converting ODP to use HMM is easier after this
+> > patchset and this patchset changes the HMM API. I will be updating the
+> > nouveau driver to the new API and use the new API for the other driver
+> > patchset i am working on.
+> >
+> > If i bump again into something that would be better done any differently
+> > i will definitly change the HMM API and update all upstream driver
+> > accordingly.
+> >
+> > I am a strong believer in full freedom for internal kernel API changes
+> > and my intention have always been to help and facilitate such process.
+> > I am sorry this was unclear to any body :( and i am hopping that this
+> > email make my intention clear.''
+> 
+> A simple way to ensure that out-of-tree consumers don't come beat us
+> up over a backwards incompatible HMM change is to mark all the exports
+> with _GPL. I'm not requiring that, the devm_memremap_pages() fight was
+> hard enough, but the pace of new exports vs arrival of consumers for
+> those exports has me worried that this arrangement will fall over at
+> some point.
+
+I was reluctant with the devm_memremap_pages() GPL changes because i
+think we should not change symbol export after an initial choice have
+been made on those.
+
+I don't think GPL or non GPL export change one bit in respect to out
+of tree user. They know they can not make any legitimate regression
+claim, nor should we care. So i fail to see how GPL export would make
+it any different.
+
+> Another way to help allay these worries is commit to no new exports
+> without in-tree users. In general, that should go without saying for
+> any core changes for new or future hardware.
+
+I always intend to have an upstream user the issue is that the device
+driver tree and the mm tree move a different pace and there is always
+a chicken and egg problem. I do not think Andrew wants to have to
+merge driver patches through its tree, nor Linus want to have to merge
+drivers and mm trees in specific order. So it is easier to introduce
+mm change in one release and driver change in the next. This is what
+i am doing with ODP. Adding things necessary in 5.1 and working with
+Mellanox to have the ODP HMM patch fully tested and ready to go in
+5.2 (the patch is available today and Mellanox have begin testing it
+AFAIK). So this is the guideline i will be following. Post mm bits
+with driver patches, push to merge mm bits one release and have the
+driver bits in the next. I do hope this sound fine to everyone.
+
+It is also easier for the driver folks as then they do not need to
+have a special tree just to test my changes. They can integrate it
+in their regular workflow ie merge the new kernel release in their
+tree and then start pilling up changes to their driver for the next
+kernel release.
+
+Cheers,
+Jérôme
