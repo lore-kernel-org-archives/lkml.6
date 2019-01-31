@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 181E0C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F362C282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E58B02086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B9B52086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:47:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733148AbfAaMrW (ORCPT
+        id S1733203AbfAaMra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:47:22 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40187 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732650AbfAaMrV (ORCPT
+        Thu, 31 Jan 2019 07:47:30 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37645 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732650AbfAaMr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:47:21 -0500
-Received: by mail-qk1-f196.google.com with SMTP id y16so1748294qki.7;
-        Thu, 31 Jan 2019 04:47:21 -0800 (PST)
+        Thu, 31 Jan 2019 07:47:29 -0500
+Received: by mail-qt1-f195.google.com with SMTP id t33so3264703qtt.4;
+        Thu, 31 Jan 2019 04:47:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :organization:content-transfer-encoding;
-        bh=HQswkCzqG31A9o+Cr/uokIq8kA6vxCiTIvuOp30FHCM=;
-        b=LVuILAbXrXzmxLzn0uQKnh79T0+D9IbqY1G1FOlEgymy6LIFmNzILmvnYuEPpbVnbh
-         wtZGRPJX2oVTj/AQ7fiMDi3UVp6oSQBE7/haAynwnrdtx/lby5LwXppl+ada6i7IquS5
-         +cpw3p0JVdTd3x1bYLcVAWu9c3+aBbUR3XCykfxxs0CFegA45zfTtDHQ0wjBQotT8JIy
-         Hu3yrjv8UH49Qj6BIJvGSfrFKCxGe66VL5JbwaKY8Vto4WdY7gjidY9HXmi5rNW1GA8S
-         NxpxEu/Ub7F7HJObBRTr33pzyNfObdsHcaqus7NX3gAca1+6i1yi2pAHzBw2ufW9mD5o
-         2zTA==
-X-Gm-Message-State: AJcUukdpqQ3kEJjOwLJHwYzMD4s7pktJu8PafzVoPbkYXeL0FUgjbAhl
-        ZRbwZvleQ2up7kH9/RigpcY=
-X-Google-Smtp-Source: ALg8bN5D4iYg9xlqNIE0ppsqyfPMKXpHpCs7SVzfT0yjmXvVJO0j2uhjcPZTSnci+TeXn4QOaJYFCw==
-X-Received: by 2002:a37:62d3:: with SMTP id w202mr30651678qkb.357.1548938840744;
-        Thu, 31 Jan 2019 04:47:20 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:organization:content-transfer-encoding;
+        bh=DOY0na8Wg7iyK4mJ/SZnMyCR5yw4bav4pLPRTRGmFrg=;
+        b=CrOdzKAlBnGfSyfuqi2xci1QoT5uT5VicRXYzBpyZxfXHkKtRwG91FVENOTqTMSa2v
+         KCYBjkd1p7/eHyuS+0+/KFtBfa44qTVjmQCwAn+tmobKOVlrE1Thu8xKSb+YI72bco6X
+         2gAJ1GxjDMLAPLxFiYXzUvmmQ3fgDJ5jVrJnPSmcSHVwIB+ChdQJaq/8QRxaA7RbznBQ
+         cqmsL59CYl5bKBIdaRS/w8oC5lq+8krXI2/ptFKugBNMH0NWIQvZOD7zpRk9VYWpQ/2C
+         61Q7wE2/Hah4x6QvzAcHpR8xwAy/YECHf7TI/iKuWqVZUqXw6XXnBjOPZPxx0tbjSMKj
+         mXoA==
+X-Gm-Message-State: AJcUukdSdByyLqLx5HZJelXQr7VafR5YwQXuaJnYKuFBx/HhXqOWrgZ/
+        3iExG+cKdcaSBo42MBu6Ll7btUCU
+X-Google-Smtp-Source: ALg8bN6ZFd7Wi+q3Xu4AZh7PdCMFxAFu+vydlguUiIFOCGI22nIgqT5+2P09Nq3yMWONZazJQ6WA7Q==
+X-Received: by 2002:a0c:d065:: with SMTP id d34mr31290726qvh.209.1548938848924;
+        Thu, 31 Jan 2019 04:47:28 -0800 (PST)
 Received: from localhost.localdomain ([181.220.86.121])
-        by smtp.gmail.com with ESMTPSA id o21sm3706286qto.18.2019.01.31.04.47.15
+        by smtp.gmail.com with ESMTPSA id y68sm2886835qkd.49.2019.01.31.04.47.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 04:47:20 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Thu, 31 Jan 2019 10:47:11 -0200
+        Thu, 31 Jan 2019 04:47:27 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Thu, 31 Jan 2019 10:47:21 -0200
 From:   Otavio Salvador <otavio@ossystems.com.br>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Jason Zhu <jason.zhu@rock-chips.com>,
@@ -55,10 +55,12 @@ Cc:     Jason Zhu <jason.zhu@rock-chips.com>,
         linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 1/3] ARM: dts: rockchip: rv1108-elgin: Fix vcc5/6-supply representation
-Date:   Thu, 31 Jan 2019 10:47:07 -0200
-Message-Id: <20190131124710.30238-1-otavio@ossystems.com.br>
+Subject: [PATCH v2 2/3] ARM: dts: rockchip: rv1108-elgin: Use the correct regulator properties
+Date:   Thu, 31 Jan 2019 10:47:08 -0200
+Message-Id: <20190131124710.30238-2-otavio@ossystems.com.br>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190131124710.30238-1-otavio@ossystems.com.br>
+References: <20190131124710.30238-1-otavio@ossystems.com.br>
 MIME-Version: 1.0
 Organization: O.S. Systems Software LTDA.
 Content-Transfer-Encoding: 8bit
@@ -67,53 +69,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On rv1108-elgin-r1 board the RK805 VCC5 and VCC6 supplies come from
-the BUCK2 regulator at 2.2V, so fix the representation in the
-device tree.
+The following properties:
 
-While at it, rename it from vdd_cam to vdd_buck2, which is a better
-name for the regulator label.
+- regulator-state-enabled
+- regulator-state-disabled
+- regulator-state-uv
+
+are not valid ones as per
+Documentation/devicetree/bindings/regulator/regulator.txt
+
+Fix it by using the correct properties as per the dt bindings.
 
 Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 ---
 
 Changes in v2: None
 
- arch/arm/boot/dts/rv1108-elgin-r1.dts | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/rv1108-elgin-r1.dts | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/arch/arm/boot/dts/rv1108-elgin-r1.dts b/arch/arm/boot/dts/rv1108-elgin-r1.dts
-index 658057d871af..66688fdf4fd8 100644
+index 66688fdf4fd8..1c4507b66fdd 100644
 --- a/arch/arm/boot/dts/rv1108-elgin-r1.dts
 +++ b/arch/arm/boot/dts/rv1108-elgin-r1.dts
-@@ -74,8 +74,8 @@
- 		vcc2-supply = <&vcc_sys>;
- 		vcc3-supply = <&vcc_sys>;
- 		vcc4-supply = <&vcc_sys>;
--		vcc5-supply = <&vcc_sys>;
--		vcc6-supply = <&vcc_sys>;
-+		vcc5-supply = <&vdd_buck2>;
-+		vcc6-supply = <&vdd_buck2>;
- 
- 		regulators {
- 			vdd_core: DCDC_REG1 {
-@@ -90,10 +90,12 @@
+@@ -85,8 +85,8 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+-					regulator-state-enabled;
+-					regulator-state-uv = <900000>;
++					regulator-on-in-suspend;
++					regulator-suspend-microvolt = <900000>;
  				};
  			};
  
--			vdd_cam: DCDC_REG2 {
--				regulator-name= "vdd_cam";
--				regulator-min-microvolt = <700000>;
--				regulator-max-microvolt = <2000000>;
-+			vdd_buck2: DCDC_REG2 {
-+				regulator-name= "vdd_buck2";
-+				regulator-min-microvolt = <2200000>;
-+				regulator-max-microvolt = <2200000>;
-+				regulator-always-on;
-+				regulator-boot-on;
+@@ -97,7 +97,7 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
  				regulator-state-mem {
- 					regulator-state-disabled;
+-					regulator-state-disabled;
++					regulator-off-in-suspend;
  				};
+ 			};
+ 
+@@ -106,7 +106,7 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+-					regulator-state-enabled;
++					regulator-on-in-suspend;
+ 				};
+ 			};
+ 
+@@ -117,8 +117,8 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+-					regulator-state-enabled;
+-					regulator-state-uv = <3300000>;
++					regulator-on-in-suspend;
++					regulator-suspend-microvolt = <3300000>;
+ 				};
+ 			};
+ 
+@@ -129,7 +129,7 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+-					regulator-state-disabled;
++					regulator-off-in-suspend;
+ 				};
+ 			};
+ 
+@@ -140,7 +140,7 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+-					regulator-state-disabled;
++					regulator-off-in-suspend;
+ 				};
+ 			};
+ 
+@@ -151,8 +151,8 @@
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-state-mem {
+-					regulator-state-enabled;
+-					regulator-state-uv = <1000000>;
++					regulator-on-in-suspend;
++					regulator-suspend-microvolt = <1000000>;
+ 				};
+ 			};
+ 		};
 -- 
 2.20.1
 
