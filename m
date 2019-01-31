@@ -7,54 +7,53 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78878C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D004C282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4914421939
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E334821939
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="s8rwtno1"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="G+xk3fTs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728632AbfAaU1Q (ORCPT
+        id S1728750AbfAaU1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:27:16 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:4315 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728510AbfAaU1O (ORCPT
+        Thu, 31 Jan 2019 15:27:18 -0500
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:18358 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728614AbfAaU1Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:27:14 -0500
+        Thu, 31 Jan 2019 15:27:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1548966434; x=1580502434;
+  t=1548966435; x=1580502435;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=me9z6wzjmpjhEX2s1lpu2qPDIfP/6uqKoj24b307Bsw=;
-  b=s8rwtno15R2v+TQU8IKosQOWeWpZyu/F8/XlJbM4NICwixTUToNu5s2A
-   ssxEloPsxzvi24xrjnOKHi4XlL75M4EjI2cBi5hP9Pt2uyUqbQYdegyPh
-   p/qhcXUHzkc0/Fi9/ejIwi/8eY4MjTzaTunv1yTh3o2CZSS5eJfyKaQVQ
-   0=;
+  bh=jfyjGv9g5xU0ZRTdgZ3MlRsZNZ0NVJf/Pg95NKC1DMg=;
+  b=G+xk3fTsc6iZ+i6U2/Wt0bhBQRt5+el4rvQiXLdK4aMvvl0l3CHYG6k6
+   Hd/rOLiyg/syfQ0Ntrej0C9Q4n/A9Q4qO7il3JdTpJ15lfcGoevOMHiWP
+   zKostfn9D7n18ZtW/Fi+eoiWuZSjtXt73Zy6n0WZd4uZ46RXgAkHczwCr
+   U=;
 X-IronPort-AV: E=Sophos;i="5.56,545,1539648000"; 
-   d="scan'208";a="656822847"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1e-97fdccfd.us-east-1.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jan 2019 20:27:13 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
-        by email-inbound-relay-1e-97fdccfd.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id x0VKR6Xs007883
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 31 Jan 2019 20:27:08 GMT
+   d="scan'208";a="756877149"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-c6afef2e.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 31 Jan 2019 20:27:12 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
+        by email-inbound-relay-2c-c6afef2e.us-west-2.amazon.com (Postfix) with ESMTPS id 85212A20F1;
+        Thu, 31 Jan 2019 20:27:11 +0000 (UTC)
 Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x0VKR5b9029022;
-        Thu, 31 Jan 2019 21:27:05 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x0VKR97w029041;
+        Thu, 31 Jan 2019 21:27:09 +0100
 Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x0VKR4cU029015;
-        Thu, 31 Jan 2019 21:27:04 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x0VKR8rL029036;
+        Thu, 31 Jan 2019 21:27:08 +0100
 From:   KarimAllah Ahmed <karahmed@amazon.de>
 To:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>
 Cc:     KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v6 11/14] KVM/nVMX: Use kvm_vcpu_map for accessing the shadow VMCS
-Date:   Thu, 31 Jan 2019 21:24:41 +0100
-Message-Id: <1548966284-28642-12-git-send-email-karahmed@amazon.de>
+Subject: [PATCH v6 14/14] kvm, x86: Properly check whether a pfn is an MMIO or not
+Date:   Thu, 31 Jan 2019 21:24:44 +0100
+Message-Id: <1548966284-28642-15-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
 References: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
@@ -63,84 +62,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use kvm_vcpu_map for accessing the shadow VMCS since using
-kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory that has
-a "struct page".
+pfn_valid check is not sufficient because it only checks if a page has a struct
+page or not, if "mem=" was passed to the kernel some valid pages won't have a
+struct page. This means that if guests were assigned valid memory that lies
+after the mem= boundary it will be passed uncached to the guest no matter what
+the guest caching attributes are for this memory.
+
+Introduce a new function e820__mapped_raw_any which is equivalent to
+e820__mapped_any but uses the original e820 unmodified and use it to
+identify real *RAM*.
 
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Reviewed-by: Konrad Rzessutek Wilk <konrad.wilk@oracle.com>
 ---
-v4 -> v5:
-- unmap with dirty flag
+v1 -> v2:
+- Introduce e820__mapped_raw_any
 ---
- arch/x86/kvm/vmx/nested.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ arch/x86/include/asm/e820/api.h |  1 +
+ arch/x86/kernel/e820.c          | 18 +++++++++++++++---
+ arch/x86/kvm/mmu.c              |  5 ++++-
+ 3 files changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 53b1063..3c173b9 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -588,20 +588,20 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
- static void nested_cache_shadow_vmcs12(struct kvm_vcpu *vcpu,
- 				       struct vmcs12 *vmcs12)
+diff --git a/arch/x86/include/asm/e820/api.h b/arch/x86/include/asm/e820/api.h
+index 4562062..b3f6e89 100644
+--- a/arch/x86/include/asm/e820/api.h
++++ b/arch/x86/include/asm/e820/api.h
+@@ -12,6 +12,7 @@ extern unsigned long e820_saved_max_low_pfn;
+ 
+ extern unsigned long pci_mem_start;
+ 
++extern bool e820__mapped_raw_any(u64 start, u64 end, enum e820_type type);
+ extern bool e820__mapped_any(u64 start, u64 end, enum e820_type type);
+ extern bool e820__mapped_all(u64 start, u64 end, enum e820_type type);
+ 
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index ef914d0..3039659 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -75,12 +75,13 @@ EXPORT_SYMBOL(pci_mem_start);
+  * This function checks if any part of the range <start,end> is mapped
+  * with type.
+  */
+-bool e820__mapped_any(u64 start, u64 end, enum e820_type type)
++static bool _e820__mapped_any(struct e820_table *table,
++			      u64 start, u64 end, enum e820_type type)
  {
-+	struct kvm_host_map map;
- 	struct vmcs12 *shadow;
--	struct page *page;
+ 	int i;
  
- 	if (!nested_cpu_has_shadow_vmcs(vmcs12) ||
- 	    vmcs12->vmcs_link_pointer == -1ull)
- 		return;
+-	for (i = 0; i < e820_table->nr_entries; i++) {
+-		struct e820_entry *entry = &e820_table->entries[i];
++	for (i = 0; i < table->nr_entries; i++) {
++		struct e820_entry *entry = &table->entries[i];
  
- 	shadow = get_shadow_vmcs12(vcpu);
--	page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->vmcs_link_pointer);
+ 		if (type && entry->type != type)
+ 			continue;
+@@ -90,6 +91,17 @@ bool e820__mapped_any(u64 start, u64 end, enum e820_type type)
+ 	}
+ 	return 0;
+ }
++
++bool e820__mapped_raw_any(u64 start, u64 end, enum e820_type type)
++{
++	return _e820__mapped_any(e820_table_firmware, start, end, type);
++}
++EXPORT_SYMBOL_GPL(e820__mapped_raw_any);
++
++bool e820__mapped_any(u64 start, u64 end, enum e820_type type)
++{
++	return _e820__mapped_any(e820_table, start, end, type);
++}
+ EXPORT_SYMBOL_GPL(e820__mapped_any);
  
--	memcpy(shadow, kmap(page), VMCS12_SIZE);
-+	if (kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->vmcs_link_pointer), &map))
-+		return;
+ /*
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index da9c423..abf6a0d 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -44,6 +44,7 @@
+ #include <asm/page.h>
+ #include <asm/pat.h>
+ #include <asm/cmpxchg.h>
++#include <asm/e820/api.h>
+ #include <asm/io.h>
+ #include <asm/vmx.h>
+ #include <asm/kvm_page_track.h>
+@@ -2875,7 +2876,9 @@ static bool kvm_is_mmio_pfn(kvm_pfn_t pfn)
+ 			 */
+ 			(!pat_enabled() || pat_pfn_immune_to_uc_mtrr(pfn));
  
--	kunmap(page);
--	kvm_release_page_clean(page);
-+	memcpy(shadow, map.hva, VMCS12_SIZE);
-+	kvm_vcpu_unmap(vcpu, &map, false);
+-	return true;
++	return !e820__mapped_raw_any(pfn_to_hpa(pfn),
++				     pfn_to_hpa(pfn + 1) - 1,
++				     E820_TYPE_RAM);
  }
  
- static void nested_flush_cached_shadow_vmcs12(struct kvm_vcpu *vcpu,
-@@ -2637,9 +2637,9 @@ static int nested_vmx_check_vmentry_prereqs(struct kvm_vcpu *vcpu,
- static int nested_vmx_check_vmcs_link_ptr(struct kvm_vcpu *vcpu,
- 					  struct vmcs12 *vmcs12)
- {
--	int r;
--	struct page *page;
-+	int r = 0;
- 	struct vmcs12 *shadow;
-+	struct kvm_host_map map;
- 
- 	if (vmcs12->vmcs_link_pointer == -1ull)
- 		return 0;
-@@ -2647,17 +2647,16 @@ static int nested_vmx_check_vmcs_link_ptr(struct kvm_vcpu *vcpu,
- 	if (!page_address_valid(vcpu, vmcs12->vmcs_link_pointer))
- 		return -EINVAL;
- 
--	page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->vmcs_link_pointer);
--	if (is_error_page(page))
-+	if (kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->vmcs_link_pointer), &map))
- 		return -EINVAL;
- 
--	r = 0;
--	shadow = kmap(page);
-+	shadow = map.hva;
-+
- 	if (shadow->hdr.revision_id != VMCS12_REVISION ||
- 	    shadow->hdr.shadow_vmcs != nested_cpu_has_shadow_vmcs(vmcs12))
- 		r = -EINVAL;
--	kunmap(page);
--	kvm_release_page_clean(page);
-+
-+	kvm_vcpu_unmap(vcpu, &map, false);
- 	return r;
- }
- 
+ /* Bits which may be returned by set_spte() */
 -- 
 2.7.4
 
