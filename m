@@ -2,212 +2,115 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E95C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2BC6C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0378218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80685218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:51:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0E51bZc"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="1PshaaEu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbfAaTra (ORCPT
+        id S1727778AbfAaTvB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:47:30 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35664 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbfAaTra (ORCPT
+        Thu, 31 Jan 2019 14:51:01 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41870 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbfAaTvA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:47:30 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so4689840wrb.2;
-        Thu, 31 Jan 2019 11:47:28 -0800 (PST)
+        Thu, 31 Jan 2019 14:51:00 -0500
+Received: by mail-pg1-f194.google.com with SMTP id m1so1796319pgq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:50:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p0Hcy4j3cg8oVMWjkbhKHH5DwwGnanaWuPdTR4ZJqz0=;
-        b=N0E51bZcfzts/MaY3X30WsI0CM7Qy4YuxETyqMuCrqNLL7XdFiinDPqXUY/GqjFW0E
-         GRWLemaqb8s2e08id7Rg266uuzEcV6k8ldXV9aKPE7GVu9cJ4kgJ0srrRMWETO89mYec
-         RkO8B2eB2SzAPA8oN8ccoktivR8uoy49YsHaKfvME4fr6872ItQ8CbQ+snMP+isKAwwX
-         teu7jZ37JQINZyr2iPvapq+r5jj3yQyHPTfTt7zX7F6ErnyW0aryQXGKSU3WEg7U2Utv
-         9c2cSDsm5QdPg1ckcwkDfH9ITqi5FQiOLqFfBfzBePDoZnwANYafF77amQN5VLnYwXe3
-         +oew==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BrWqBFX8Sxzuvb7eYAR/Dr8ZYdGJ8ANkxgVoI0vKZPU=;
+        b=1PshaaEuoALyCYV1xYTbjz/ySkbnA0mrjUzdU6d4IkQ+51B0A06ekeKF6+8HgJTTB0
+         XbhDmFKn19ha1Ez4PedtOhi7pcgiqukD1jioxgw9yLc9Y0htGm/0cMI6HlTrQGCR1MXt
+         iU6PCC5994oYLvBT/3nmU2MeUIw5PzJeTwyzkGOdqAUjzakP79Y8NHBlQcpO0duJ8ZT3
+         F+CziaKi079LBRBTgtjKIx6HAys3obRwklk5NCbw1jPJF4nhV5uwD7SGEMjLymLXv3uk
+         cv0ChfUlsU65YPhNE/VV6C6p2Twrdb3IeG23FEulgpvhGbUJvFrpyHHH6u8J4M6l0itt
+         UxVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p0Hcy4j3cg8oVMWjkbhKHH5DwwGnanaWuPdTR4ZJqz0=;
-        b=sFbG09MsIEn0sGzfkScoIq8VshhIsUHOu6ar7cW9fsIauCNKwHH2xRPib8y2Wt0x5c
-         SrM5RMrG0dIgYGc7VTM/m4Ufr078uvpBPPphrE7OODMV/YGMInLwl+BiFisEIZtKjimC
-         VpBHy6n+eL0ORCqkZcRm/o3tQ/dY63Bm0IrnNPh0jSzKljEYv5xboazwNqvolXPAi3Kh
-         Sfx2OuYP79z5t5R9U6rf4i0lNVLsBDGav2Q0ABFxQ5/Wuz0ffKoJ0+rNuyHyrHcHyDR5
-         2u8MOOvlENnkWwT3pa6YkztVnQEckuVuCsknAB5hdMH65CArW9WTKDOElzE0q3OwfVZP
-         zqHw==
-X-Gm-Message-State: AJcUukeGrdQyPu5qOOon1uABUcPaDUpUDdQVGFSQXRcZ2AOebbpSl2uH
-        xiKhxc0Kxql3/OIHNolMX7Nn7rkEzsAso8Rv6vk=
-X-Google-Smtp-Source: ALg8bN4FkTmH+RDnqLOqD31MyPzU4iOPlRbStcYvaeieK1s9YNX7/G1TGZB6LUmsF2vCQqxoTlAvE+9hdKiAfojWIWE=
-X-Received: by 2002:adf:9521:: with SMTP id 30mr33736275wrs.192.1548964047555;
- Thu, 31 Jan 2019 11:47:27 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BrWqBFX8Sxzuvb7eYAR/Dr8ZYdGJ8ANkxgVoI0vKZPU=;
+        b=QWYEEUlqUz8+9Mg2s0yGkIewWK7GL8aUz1eYRxsKzFAgvFNM2W2NcIRIx07r//piwT
+         i0Oy5mdyY6fo4Qvmd09PcbGlmwrQalvkFzVyVAiC7lO/DhkbW4n165QlvubVDknFCf/n
+         X/QLTr+lkjtXWEggYdnLw6TQlbrjoVqOk+S32tSva5h2YsZe5e2eilYGnWvA1EdkDrxY
+         vQOD2sis8d+cxd6AOmZu9hKKRp7rTor390kvKtvRuUhp6YuMZrRYY9C0BnZG1AAamMCB
+         2lw3FfXaObGJdLH3Nvdm8RplVy+fZuru7hPwTIhIXGWdFqcr1KV6FiJcHIRixRR/OokY
+         u8QA==
+X-Gm-Message-State: AJcUukd0tgcgEQGb09a0TEZYOEzDFCYfLDkvOKrgBwqbCFNDovISjs0u
+        ZrxihnTAxeukXjIQB2SQ81MRcg==
+X-Google-Smtp-Source: ALg8bN4FiTwx/69TlwaH+fRrCoSW9ysBG2KtIqdMykSIyM6GDPQ1r/uwTLCOu4oPYs+YltsjpliN4g==
+X-Received: by 2002:a63:d252:: with SMTP id t18mr32992159pgi.133.1548964259231;
+        Thu, 31 Jan 2019 11:50:59 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id l74sm10051982pfb.145.2019.01.31.11.50.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 11:50:58 -0800 (PST)
+Subject: Re: [PATCH BUGFIX IMPROVEMENT 00/14] batch of patches for next linux
+ release
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        broonie@kernel.org, bfq-iosched@googlegroups.com,
+        oleksandr@natalenko.name, mancha@tower-research.com
+References: <20190129110638.12652-1-paolo.valente@linaro.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6e296dbe-7d3c-39fc-0e80-4e62ad13cc45@kernel.dk>
+Date:   Thu, 31 Jan 2019 12:50:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20180924143719.22191-1-hdegoede@redhat.com>
-In-Reply-To: <20180924143719.22191-1-hdegoede@redhat.com>
-From:   Maxim Mikityanskiy <maxtram95@gmail.com>
-Date:   Thu, 31 Jan 2019 21:47:00 +0200
-Message-ID: <CAKErNvoeMs9cDDAvMfxaGLsKY3-q_JmrjCUB8VK4ZUXUVytwsQ@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: intel_int0002_vgpio: Implement irq_set_wake
-To:     Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190129110638.12652-1-paolo.valente@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 1/29/19 4:06 AM, Paolo Valente wrote:
+> Hi,
+> this batch of patches provides fixes and improvements for throughput
+> and latency. Every patch has been under test for at least one month,
+> some patches for much longer.
+> 
+> Thanks,
+> Paolo
+> 
+> Paolo Valente (14):
+>   block, bfq: do not consider interactive queues in srt filtering
+>   block, bfq: avoid selecting a queue w/o budget
+>   block, bfq: make sure queue budgets are not below service received
+>   block, bfq: remove case of redirected bic from insert_request
+>   block, bfq: consider also ioprio classes in symmetry detection
+>   block, bfq: split function bfq_better_to_idle
+>   block, bfq: do not plug I/O of in-service queue when harmful
+>   block, bfq: unconditionally plug I/O in asymmetric scenarios
+>   block, bfq: fix sequential rq detection in rate estimation
+>   block, bfq: fix queue removal from weights tree
+>   block, bfq: reduce threshold for detecting command queueing
+>   block, bfq: port commit "cfq-iosched: improve hw_tag detection"
+>   block, bfq: do not overcharge writes in asymmetric scenarios
+>   block, bfq: fix in-service-queue check for queue merging
+> 
+>  block/bfq-iosched.c | 705 ++++++++++++++++++++++++--------------------
+>  block/bfq-iosched.h |  11 +-
+>  block/bfq-wf2q.c    |  18 +-
+>  3 files changed, 400 insertions(+), 334 deletions(-)
 
-On Mon, Sep 24, 2018 at 5:37 PM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> We were relying on the interrupt being shared with the ACPI SCI and the
-> ACPI core calling irq_set_wake. But that does not always happen on
-> Bay Trail devices, so we should do it ourselves.
->
-> This fixes wake from USB not working on various Bay Trail devices.
+Applied, thanks.
 
-This patch breaks suspend on ASUS E202SA (bisecting pointed me to this
-patch, and if I revert it and build 4.20.5 without this patch,
-everything works flawlessly).
+-- 
+Jens Axboe
 
-This command fails with the following message:
-
-# echo mem > /sys/power/state
-Error while writing to stdout
-write_loop: Device or resource busy
-
-And here is dmesg output:
-
-[  224.077275] PM: suspend entry (deep)
-[  224.077286] PM: Syncing filesystems ... done.
-[  225.495014] Freezing user space processes ... (elapsed 0.003 seconds) done.
-[  225.498540] OOM killer disabled.
-[  225.498543] Freezing remaining freezable tasks ... (elapsed 0.002
-seconds) done.
-[  225.500693] printk: Suspending console(s) (use no_console_suspend to debug)
-[  225.502793] wlp1s0: deauthenticating from 00:03:7f:12:34:56 by
-local choice (Reason: 3=DEAUTH_LEAVING)
-[  225.535333] sd 0:0:0:0: [sda] Synchronizing SCSI cache
-[  225.535882] sd 0:0:0:0: [sda] Stopping disk
-[  226.969070] ACPI: EC: interrupt blocked
-[  227.002156] ACPI: Preparing to enter system sleep state S3
-[  227.007890] ACPI: EC: event blocked
-[  227.007895] ACPI: EC: EC stopped
-[  227.007900] PM: Saving platform NVS memory
-[  227.008264] Disabling non-boot CPUs ...
-[  227.034114] smpboot: CPU 1 is now offline
-[  227.088320] smpboot: CPU 2 is now offline
-[  227.141513] smpboot: CPU 3 is now offline
-[  227.147086] Enabling non-boot CPUs ...
-[  227.147187] x86: Booting SMP configuration:
-[  227.147190] smpboot: Booting Node 0 Processor 1 APIC 0x2
-[  227.147916]  cache: parent cpu1 should not be sleeping
-[  227.148354] CPU1 is up
-[  227.148424] smpboot: Booting Node 0 Processor 2 APIC 0x4
-[  227.149800]  cache: parent cpu2 should not be sleeping
-[  227.151143] CPU2 is up
-[  227.151187] smpboot: Booting Node 0 Processor 3 APIC 0x6
-[  227.152399]  cache: parent cpu3 should not be sleeping
-[  227.153883] CPU3 is up
-[  227.154876] ACPI: EC: EC started
-[  227.155282] ACPI: Waking up from system sleep state S3
-[  227.159874] ACPI: button: The lid device is not compliant to SW_LID.
-[  227.169441] ACPI: EC: interrupt unblocked
-[  228.236790] ACPI: EC: event unblocked
-[  228.241950] rtlwifi: rtlwifi: wireless switch is on
-[  228.251865] sd 0:0:0:0: [sda] Starting disk
-[  228.476637] usb 1-4: reset full-speed USB device number 2 using xhci_hcd
-[  228.562879] ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
-[  228.563924] ata2: SATA link down (SStatus 4 SControl 300)
-[  228.564979] ata1.00: supports DRM functions and may not be fully accessible
-[  228.565493] ata1.00: NCQ Send/Recv Log not supported
-[  228.567649] ata1.00: supports DRM functions and may not be fully accessible
-[  228.568252] ata1.00: NCQ Send/Recv Log not supported
-[  228.570075] ata1.00: configured for UDMA/133
-[  228.580412] ahci 0000:00:13.0: port does not support device sleep
-[  228.639349] Bluetooth: hci0: RTL: rtl: examining hci_ver=06
-hci_rev=0e2f lmp_ver=06 lmp_subver=a041
-
-[  228.639368] Bluetooth: hci0: RTL: rtl: unknown IC info, lmp subver
-a041, hci rev 0e2f, hci ver 0006
-[  228.639742] acpi LNXPOWER:01: Turning OFF
-[  228.640033] OOM killer enabled.
-[  228.640040] Restarting tasks ... done.
-[  228.795406] PM: suspend exit
-[  228.800399] audit: type=1130 audit(1548962671.104:94): pid=1 uid=0
-auid=4294967295 ses=4294967295 msg='unit=systemd-rfkill comm="systemd"
-exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=?
-res=success'
-[  229.067206] wlp1s0: authenticate with 12:34:56:78:90:12
-[  229.067823] wlp1s0: send auth to 12:34:56:78:90:12 (try 1/3)
-[  229.070955] wlp1s0: authenticated
-[  229.072395] wlp1s0: associate with 12:34:56:78:90:12 (try 1/3)
-[  229.074505] wlp1s0: RX AssocResp from 12:34:56:78:90:12 (capab=0x11
-status=0 aid=2)
-[  229.074819] wlp1s0: associated
-[  233.809200] audit: type=1131 audit(1548962676.106:95): pid=1 uid=0
-auid=4294967295 ses=4294967295 msg='unit=systemd-rfkill comm="systemd"
-exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=?
-res=success'
-
-The laptop doesn't go to sleep, the screen turns off, and in a couple
-of seconds it turns on.
-
-Please take a look at this regression. Feel free to ask me for any
-additional information you need.
-
-Thanks,
-Max
-
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/platform/x86/intel_int0002_vgpio.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/platform/x86/intel_int0002_vgpio.c b/drivers/platform/x86/intel_int0002_vgpio.c
-> index 987a3b03f225..33c3489f5bc1 100644
-> --- a/drivers/platform/x86/intel_int0002_vgpio.c
-> +++ b/drivers/platform/x86/intel_int0002_vgpio.c
-> @@ -106,6 +106,21 @@ static void int0002_irq_mask(struct irq_data *data)
->         outl(gpe_en_reg, GPE0A_EN_PORT);
->  }
->
-> +static int int0002_irq_set_wake(struct irq_data *data, unsigned int on)
-> +{
-> +       struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
-> +       struct platform_device *pdev = to_platform_device(chip->parent);
-> +       int irq = platform_get_irq(pdev, 0);
-> +
-> +       /* Propagate to parent irq */
-> +       if (on)
-> +               enable_irq_wake(irq);
-> +       else
-> +               disable_irq_wake(irq);
-> +
-> +       return 0;
-> +}
-> +
->  static irqreturn_t int0002_irq(int irq, void *data)
->  {
->         struct gpio_chip *chip = data;
-> @@ -128,6 +143,7 @@ static struct irq_chip int0002_irqchip = {
->         .irq_ack                = int0002_irq_ack,
->         .irq_mask               = int0002_irq_mask,
->         .irq_unmask             = int0002_irq_unmask,
-> +       .irq_set_wake           = int0002_irq_set_wake,
->  };
->
->  static int int0002_probe(struct platform_device *pdev)
