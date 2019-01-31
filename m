@@ -2,114 +2,93 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE6AC282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1E6C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A010B20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EF5820833
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:14:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="L4Kf1drA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R25mjrc/"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZO8iZeIB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731382AbfAaELM (ORCPT
+        id S1729804AbfAaEOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 23:11:12 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:43919 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731290AbfAaELK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 23:11:10 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id AC8262221E;
-        Wed, 30 Jan 2019 23:11:09 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 30 Jan 2019 23:11:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=from
-        :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=+qm6IAuBdYJ0K
-        JEezxlGA4lLZCD+PJm0pFyznNM0TqM=; b=L4Kf1drAhsQV9rdCZsdUaatbA2lCl
-        kGJljvJbkTAT2b2Tt9MYfnwGbOqVdw7DjKOrXfWtEIQHdBu96VGKlow56UQy/Cgu
-        gOCe6dnmYpRsmvTe4wCHweH1DQ0yb0nJv2kfcAHvNh3LqFSGRAKc/+Ob9OqlVzPP
-        t5dV7dgLy0zy8pU9ksi1r3Ka5DsLGCp/5ctjpC79d63qgymuVTQJawiNni3b6aeJ
-        O84oaOJpJ7BOoUJyjywmbK/JU3a3bhTg8fpWXw7j2VmARIDH/jh1Jj2ZhG1eqBUd
-        Ekobj4sOmRHlnV/1diYWfgd1AA+T3N8aHZzLSb8S2cmL/HuMq/RmH55nQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=+qm6IAuBdYJ0KJEezxlGA4lLZCD+PJm0pFyznNM0TqM=; b=R25mjrc/
-        LAGhD40XbnnU9l/QhALVsTi9Tu6c7taouJNs3lmWj2JGWbjcS65Leyh+R3Dc5em+
-        DH3DD5yCow/9lRE7XBLHSg8zOgmICS+K2rXkCAhx00DH+nOLYaR0RgPqAxcFFnx9
-        iaa6TzJ50qjamNzeHtmYFwCSEiZEG8YcPrfJ83sq4QrNr7+3KcpcajvXOTItTuit
-        BRSDkrHp/FcKgA9ot5q1Jf2QiDSpG0QajojpUP8X/GMd/XJmlV0egimdP3/41pr+
-        NS23fjvGqtMFv3Tyb4oGsUPqePVhIR2yE3BvWrijXUtr908cquvOEBU9lpTmn9jF
-        y+rR2ifAqgDPww==
-X-ME-Sender: <xms:XXVSXO21kSLiHAp1m2PEN4-OVMrjgTVd3UZW-tFEPUHzOmH9MVt4qw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeehgdeijecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
-    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegfrhhlucfvnfffucdlfedtmd
-    enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepfdfvohgs
-    ihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtohgsihhnrdgttgeqnecukfhppeduud
-    ekrddvuddurddvudefrdduvddvnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvgesthho
-    sghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:XXVSXFVZHn9vA7AK_7wbaObvp4SM6DyPBkBugSIH8aANI3CG9bAdrw>
-    <xmx:XXVSXB5UNTauek0eN9f7_PZhczRzW9Lz58c2O6HE_O7K3Rjb5BsHGA>
-    <xmx:XXVSXELO7pzSPBpkfFn7eiPJr9cJaL8VpqYlTz7hXCbU5Nvd-IF6vQ>
-    <xmx:XXVSXFNdNsuk7grXB-DrY3L2HZp-1PvyZW6fg4Enj4IW380K5mROBQ>
-Received: from eros.localdomain (ppp118-211-213-122.bras1.syd2.internode.on.net [118.211.213.122])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9F7B110086;
-        Wed, 30 Jan 2019 23:11:06 -0500 (EST)
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] slub: Use C89 comment style
-Date:   Thu, 31 Jan 2019 15:10:03 +1100
-Message-Id: <20190131041003.15772-4-me@tobin.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190131041003.15772-1-me@tobin.cc>
-References: <20190131041003.15772-1-me@tobin.cc>
+        Wed, 30 Jan 2019 23:14:15 -0500
+Received: from ozlabs.org ([203.11.71.1]:42945 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725771AbfAaEOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 23:14:15 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43qn1K22Qtz9sBb;
+        Thu, 31 Jan 2019 15:14:13 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548908053;
+        bh=c6xd4b1IgYiz06n3B9p8ejvsy4TWlW5IvVIROWMzprI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZO8iZeIBRjAIloF8Gp8w0l2t0yaa45EOn9cWBKwDwzEmD4ZxlDakVITw71BOb/Emm
+         F+BGdV7B5+duey49WN/8zTwQKnBTkjAzW1aKo9Rc1QdnRrYeFDgS5zjlwdCMCOPKHm
+         KvKy8cqqysaSa2JWLuHHZNgg8C6bbxs5986K+wJhom7GziPfu7dnB/KEnx29Xh/3l1
+         eB+ekUL4Kp+npes0PAHA1MJrSj6lzJWvEZ1wza/Xd5DToE38DNPr5aOVUSdK3s53qz
+         6ZLMG7lWGqGpejpRjNX+14Zd9Ijsp2bIzzD7fMnR+I5e3jVb5mUgp0RVGVJzMJU1vi
+         HUvfTM8jT/4UQ==
+Date:   Thu, 31 Jan 2019 15:14:11 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the ext3 tree
+Message-ID: <20190131151411.7e8b89b3@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8o/_ST.PInOHu0vP8rsGp0e"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tobin C. Harding" <tobin@kernel.org>
+--Sig_/8o/_ST.PInOHu0vP8rsGp0e
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-SLUB include file uses a c99 comment style.  In line with the rest of
-the kernel lets use c89 comment style.
+Hi Jan,
 
-Use C89 comment style.
+After merging the ext3 tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
----
- include/linux/slub_def.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ld: fs/ext2/super.o: in function `ext2_fill_super':
+super.c:(.text+0x1494): undefined reference to `__divdi3'
+ld: super.c:(.text+0x14bc): undefined reference to `__divdi3'
 
-diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
-index d12d0e9300f5..c8e52206a761 100644
---- a/include/linux/slub_def.h
-+++ b/include/linux/slub_def.h
-@@ -151,7 +151,7 @@ struct kmem_cache {
- #else
- #define slub_cpu_partial(s)		(0)
- #define slub_set_cpu_partial(s, n)
--#endif // CONFIG_SLUB_CPU_PARTIAL
-+#endif /* CONFIG_SLUB_CPU_PARTIAL */
- 
- #ifdef CONFIG_SYSFS
- #define SLAB_SUPPORTS_SYSFS
--- 
-2.20.1
+Caused by commit
 
+  455d38a0e62f ("ext2: Fix underflow in ext2_max_size()")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/8o/_ST.PInOHu0vP8rsGp0e
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxSdhMACgkQAVBC80lX
+0GxR9gf9FEto0xpI7MLQl7zy+a/dkbLaUuljzr5mdaRNn39EFCQhiujoPRtDAtRZ
+rTGRelCJ9mMpnjXNmYFtCEmrGSsJs0zEMh2ZxdHjsj+QIAeBhXv+J+6Tof1U31OZ
+25fNTfjKk/uOUESQ/MtWg6k2LI5k7iguaWZajCK9B1Rb4HfGC8K198+T2brdC2Cy
+0Mp060+akFsii7J7x+ECvaX+9NSG1p6iR2tn4KC/JUJ0X6w8k8axc6artsm0FhUG
+/V1/i22SyPz0Kpyjl5nnaW4Bgt0kvyYSjW7VPo1vy3DXUQoYGlFQIf+lvb6bCmmR
+bs1Xzjiljm2YW5O56mGvtg3Ca1TUOA==
+=m/j+
+-----END PGP SIGNATURE-----
+
+--Sig_/8o/_ST.PInOHu0vP8rsGp0e--
