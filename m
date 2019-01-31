@@ -2,93 +2,149 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB07C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940FCC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99B4A20869
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:47:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUOrc1Mr"
+	by mail.kernel.org (Postfix) with ESMTP id 6385E20869
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbfAaVrR (ORCPT
+        id S1729347AbfAaVsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 16:47:17 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33281 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbfAaVrR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 16:47:17 -0500
-Received: by mail-ot1-f66.google.com with SMTP id i20so4264637otl.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 13:47:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kL3+GDISpQZ58uwge/BkM8/zP44zX0DhbSWXoUUF9SA=;
-        b=jUOrc1MrRT08E0dwyXHhA71uDuyjdfXWS8+4yFHWmkt98ybVJw5P93J3DfbNY2Yevf
-         kdTPtsvL+JipSQttZiUqLjJ/BfEIKmjpt+kcJU1o7Tliy8pctozRxX5ZikqbK5Fg2Fwj
-         f511KUNPUrKZh2BYIipzDUX2Em72uqgB2s3IoY9lInG74TlmAMGGvy+YhQlT5kmvAeHo
-         yjJ0uR5/3dlwxyl22RnFEw0m1t5TublZpVEBAHKNM3NqXNsX1D5QfDkH1xQjwEqc1cWG
-         PVePcxpGJgZa2/fU96ptXPaL/hRLH4GeV7TwX/RTN9jGqasx9XuAmdG3JwqQS4RVZOM5
-         klmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kL3+GDISpQZ58uwge/BkM8/zP44zX0DhbSWXoUUF9SA=;
-        b=lN+sPZIiJJcAh6PPP5Fl1cjAYAleuI053pCYj4bKAANisNBDxQ+EKgV/Z+D4OpqMEH
-         FvuCMjwZNilX6rAyEUzJepBVg9x0yx79kXV1+xTj6AEQz4KjXg6FCJeacXkA4k5q6TYi
-         07avtoAHpykyLaYi2/s4d+gRef1Lc1gLcb7W8QrtAA+n2y8fx/DPBlER/2iwRcj7a9qn
-         1MMrbxkWRJj9ZeiZoXwPj7OL2ZfwIBYsXrqqfAoQj8ctRizwynBTFMwBRhWsnaH0CN9g
-         ia04o4143NRJxYThFJkMJj4lWexp7TXFVDTviteCktVdfusFpyG0qqG5cP1cMHON98co
-         e9VA==
-X-Gm-Message-State: AJcUukf8LUheqoR2ROieKiZhW9gz1Oi1XQ08z24EtGP/YkD3b/lkRIB0
-        mlqMjWjdse17YdaUUgBj2ZEbKCCfkzjQWGP1nqc=
-X-Google-Smtp-Source: ALg8bN7TI3U5L3SG3mgwt87r70JQeWsyKD1APwwwVJiKY7H8kxex1+kIuc/86beJ7A3jlSVWHs0EKVpZrhNHSP6KgEs=
-X-Received: by 2002:a9d:aa9:: with SMTP id 38mr28414254otq.255.1548971236353;
- Thu, 31 Jan 2019 13:47:16 -0800 (PST)
+        Thu, 31 Jan 2019 16:48:06 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51490 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726233AbfAaVsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 16:48:06 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD27BA78;
+        Thu, 31 Jan 2019 13:48:05 -0800 (PST)
+Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7D213F59C;
+        Thu, 31 Jan 2019 13:48:04 -0800 (PST)
+Subject: Re: [PATCH v4 07/12] arm64: add sysfs vulnerability show for meltdown
+To:     Julien Thierry <julien.thierry@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
+        suzuki.poulose@arm.com, dave.martin@arm.com,
+        shankerd@codeaurora.org, linux-kernel@vger.kernel.org,
+        ykaukab@suse.de, mlangsdo@redhat.com, steven.price@arm.com,
+        stefan.wahren@i2se.com
+References: <20190125180711.1970973-1-jeremy.linton@arm.com>
+ <20190125180711.1970973-8-jeremy.linton@arm.com>
+ <915f945c-eeb7-9cdf-2d95-d7da7552f229@arm.com>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <d1d7fd58-f7c6-c5e3-e5f3-618303d161d6@arm.com>
+Date:   Thu, 31 Jan 2019 15:48:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20190131204524.1218-1-andrew.smirnov@gmail.com>
-In-Reply-To: <20190131204524.1218-1-andrew.smirnov@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 31 Jan 2019 19:47:06 -0200
-Message-ID: <CAOMZO5Dgz1TS_KgCR5ikdYsM=VAS3iJ-TDGuythzxvGULuaC-g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: imx8mq: Make GPC default interrupt parent
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <915f945c-eeb7-9cdf-2d95-d7da7552f229@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrey
+Hi,
 
-On Thu, Jan 31, 2019 at 7:11 PM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
->
-> Now that the GPCv2 driver supports i.MX8MQ, make GPC default interrupt
-> parent.
->
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+On 01/31/2019 03:28 AM, Julien Thierry wrote:
+> Hi Jeremy,
+> 
+> On 25/01/2019 18:07, Jeremy Linton wrote:
+>> Display the mitigation status if active, otherwise
+>> assume the cpu is safe unless it doesn't have CSV3
+>> and isn't in our whitelist.
+>>
+>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+>> ---
+>>   arch/arm64/kernel/cpufeature.c | 33 +++++++++++++++++++++++++++------
+>>   1 file changed, 27 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+>> index a9e18b9cdc1e..624dfe0b5cdd 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -944,6 +944,8 @@ has_useable_cnp(const struct arm64_cpu_capabilities *entry, int scope)
+>>   	return has_cpuid_feature(entry, scope);
+>>   }
+>>   
+>> +/* default value is invalid until unmap_kernel_at_el0() runs */
+>> +static bool __meltdown_safe = true;
+>>   static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
+>>   
+>>   static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+>> @@ -962,6 +964,16 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+>>   		{ /* sentinel */ }
+>>   	};
+>>   	char const *str = "command line option";
+>> +	bool meltdown_safe;
+>> +
+>> +	meltdown_safe = is_midr_in_range_list(read_cpuid_id(), kpti_safe_list);
+>> +
+>> +	/* Defer to CPU feature registers */
+>> +	if (has_cpuid_feature(entry, scope))
+>> +		meltdown_safe = true;
+> 
+> Do we need to check the cpuid registers if the CPU is in the known safe
+> list?
 
-Lucas has already submitted this same change and another one that
-selects the GPC driver as part of a series.
+I don't believe so. In the previous patch where this was broken out 
+these checks were just or'ed together. In this path it just seemed a 
+little cleaner than adding the additional check/or'ing the results 
+here/whatever as we only want to set it safe (never the other way 
+around). AKA, i'm running out of horizontal space, and I want to keep 
+the 'defer to registers' comment.
 
-My feedback was to send the GPC selection patch first in order to
-avoid boot hang when people try to boot without the GPC driver
-selected.
+
+> 
+> Otherwise:
+> 
+> Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+> 
+>> +
+>> +	if (!meltdown_safe)
+>> +		__meltdown_safe = false;
+>>   
+>>   	/*
+>>   	 * For reasons that aren't entirely clear, enabling KPTI on Cavium
+>> @@ -984,12 +996,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+>>   	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+>>   		return kaslr_offset() > 0;
+>>   
+>> -	/* Don't force KPTI for CPUs that are not vulnerable */
+>> -	if (is_midr_in_range_list(read_cpuid_id(), kpti_safe_list))
+>> -		return false;
+>> -
+>> -	/* Defer to CPU feature registers */
+>> -	return !has_cpuid_feature(entry, scope);
+>> +	return !meltdown_safe;
+>>   }
+>>   
+>>   static void
+>> @@ -2055,3 +2062,17 @@ static int __init enable_mrs_emulation(void)
+>>   }
+>>   
+>>   core_initcall(enable_mrs_emulation);
+>> +
+>> +#ifdef CONFIG_GENERIC_CPU_VULNERABILITIES
+>> +ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr,
+>> +		char *buf)
+>> +{
+>> +	if (arm64_kernel_unmapped_at_el0())
+>> +		return sprintf(buf, "Mitigation: KPTI\n");
+>> +
+>> +	if (__meltdown_safe)
+>> +		return sprintf(buf, "Not affected\n");
+>> +
+>> +	return sprintf(buf, "Vulnerable\n");
+>> +}
+>> +#endif
+>>
+> 
+
