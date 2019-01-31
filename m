@@ -2,71 +2,258 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E27FC282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B20C282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 320DE218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548963015;
-	bh=P2CKffarzBuaNCKQxwaJUdy+fP5mJ71SI6gHv5kIAlQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=YgewrrvPVrHsnIQZqvpoivn/bC2br4+aAwUjDDgi7deNgBOVOtQuB/UEO8BD6JE1b
-	 +E91s/JeuoU9Fjb7GWNB6CC5eeYlAITC5rNRYXUJ5eqsVxjuP2QS4fvZmBDMFM/K55
-	 LBtpf15pFWNeH9w3m4XAkryygE225zlGPNT8HGNI=
+	by mail.kernel.org (Postfix) with ESMTP id 1CDCE20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:30:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kXG53jTW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729575AbfAaTaJ (ORCPT
+        id S1729599AbfAaTaX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:30:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53692 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727704AbfAaTaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:30:06 -0500
-Subject: Re: [GIT PULL] Kselftest update for Linux 5.0-rc5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548963005;
-        bh=P2CKffarzBuaNCKQxwaJUdy+fP5mJ71SI6gHv5kIAlQ=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ubqE1u6KjiM2m1aq75W/AkGkT50FWWi59CETPvBH6nKGAWhrrnpI6yoqxbm5c5Mis
-         HCsYyTBvJc9YPNQ1xkff95mRE5fCUyh9fn4HkRgkmpjRAy6hhL4prJ/3cqF1dQ/Zi/
-         uSO+q9oZaIcYEee7IV1pQwh95qNZckyj2IoHR7ZU=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <861aa0ec-3f5e-27aa-8cfb-d7f2d3fdb24b@kernel.org>
-References: <861aa0ec-3f5e-27aa-8cfb-d7f2d3fdb24b@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <861aa0ec-3f5e-27aa-8cfb-d7f2d3fdb24b@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
- tags/linux-kselftest-5.0-rc5
-X-PR-Tracked-Commit-Id: 7d4e591bc051d3382c45caaa2530969fb42ed23d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9f789567142c0cd1ffd6c28c56eed40cb36495ca
-Message-Id: <154896300579.28776.22792124579750379.pr-tracker-bot@kernel.org>
-Date:   Thu, 31 Jan 2019 19:30:05 +0000
-To:     shuah <shuah@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        shuah <shuah@kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thu, 31 Jan 2019 14:30:23 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:32851 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728878AbfAaT26 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 14:28:58 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c123so1945902pfb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:28:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GKcEbfDIMSrPrVixT5BD9LSa5OolOUG2G2K+MrytE6s=;
+        b=kXG53jTWDiPnDqnCrD93KvecTJw97lzCa24n79U7SLk3tSsC/t7K1AxGuy4QijnC4U
+         nM1lXu1tX3IJu65siaVJ1FrX5+YVzMaHoIC5MnvbHoIbEPV1H0qvcVP0Y0iyn4IIJQUm
+         GkPoGUFAsIC5soah/cuPjlfx6v+aNuGwyt2mk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GKcEbfDIMSrPrVixT5BD9LSa5OolOUG2G2K+MrytE6s=;
+        b=pkNnB6T9hO32F1a42iIgnP/on7ib0gz3dYXZ21rpNWvW4PIDmpuR9po2Balpilkh5W
+         Djnoh6uL5/IyQe8Tqcb0nLAjN6Psyml8eUncAMOk6kU9OIB3TDaNp520TWiEsQaBdxrW
+         sC9a6NoQHiAadoulSl66G9ZvfnPMpQWlzBwClgw0c6pt7MztxgCCRA2V7X5Vprp9WIjg
+         22EbQCdtOGWKC9BqDWVMKn4nNE1SWZe3+F7Mm3ldy/gHZLiGcYB+DQcwz+Tzsvq97xpv
+         eFx1yyvbqYs03KjQIDqoRfE4/4tfNpGD+DpcwA+9aQhrWmTa3U12W6tgBUurPpwohidw
+         XC1w==
+X-Gm-Message-State: AJcUukeODKl0rOE+w34vscKqsfqA70k2gARDOv7OpXXpEZYsHYLstksO
+        54aYtHiZSp1L7mQQ6WALFNmIEQ==
+X-Google-Smtp-Source: ALg8bN6xvQ5DHBgR3OgkW8oBt2YR0zT9akkDUWSq1SaPxPXts1eaKtkUEyy2wB9cxJUcUon8yDE07g==
+X-Received: by 2002:a62:1d8f:: with SMTP id d137mr35754813pfd.11.1548962937714;
+        Thu, 31 Jan 2019 11:28:57 -0800 (PST)
+Received: from skynet.sea.corp.google.com ([2620:15c:17:4:29de:3bb1:1270:e679])
+        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.28.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 11:28:57 -0800 (PST)
+From:   Thomas Garnier <thgarnie@chromium.org>
+To:     kernel-hardening@lists.openwall.com
+Cc:     kristen@linux.intel.com, Thomas Garnier <thgarnie@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Thomas Garnier <thgarnie@google.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Joerg Roedel <jroedel@suse.de>,
+        Jordan Borgner <mail@jordan-borgner.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 17/27] x86/relocs: Handle PIE relocations
+Date:   Thu, 31 Jan 2019 11:24:24 -0800
+Message-Id: <20190131192533.34130-18-thgarnie@chromium.org>
+X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+In-Reply-To: <20190131192533.34130-1-thgarnie@chromium.org>
+References: <20190131192533.34130-1-thgarnie@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 31 Jan 2019 11:35:36 -0700:
+Change the relocation tool to correctly handle relocations generated by
+-fPIE option:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-5.0-rc5
+ - Add relocation for each entry of the .got section given the linker does not
+   generate R_X86_64_GLOB_DAT on a simple link.
+ - Ignore R_X86_64_GOTPCREL.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9f789567142c0cd1ffd6c28c56eed40cb36495ca
+Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
+---
+ arch/x86/tools/relocs.c | 96 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 95 insertions(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
+index b629f6992d9f..2a3c703218cc 100644
+--- a/arch/x86/tools/relocs.c
++++ b/arch/x86/tools/relocs.c
+@@ -32,6 +32,7 @@ struct section {
+ 	Elf_Sym        *symtab;
+ 	Elf_Rel        *reltab;
+ 	char           *strtab;
++	Elf_Addr       *got;
+ };
+ static struct section *secs;
+ 
+@@ -295,6 +296,36 @@ static Elf_Sym *sym_lookup(const char *symname)
+ 	return 0;
+ }
+ 
++static Elf_Sym *sym_lookup_addr(Elf_Addr addr, const char **name)
++{
++	int i;
++
++	for (i = 0; i < ehdr.e_shnum; i++) {
++		struct section *sec = &secs[i];
++		long nsyms;
++		Elf_Sym *symtab;
++		Elf_Sym *sym;
++
++		if (sec->shdr.sh_type != SHT_SYMTAB)
++			continue;
++
++		nsyms = sec->shdr.sh_size/sizeof(Elf_Sym);
++		symtab = sec->symtab;
++
++		for (sym = symtab; --nsyms >= 0; sym++) {
++			if (sym->st_value == addr) {
++				if (name) {
++					*name = sym_name(sec->link->strtab,
++							 sym);
++				}
++				return sym;
++			}
++		}
++	}
++	return 0;
++}
++
++
+ #if BYTE_ORDER == LITTLE_ENDIAN
+ #define le16_to_cpu(val) (val)
+ #define le32_to_cpu(val) (val)
+@@ -515,6 +546,35 @@ static void read_relocs(FILE *fp)
+ 	}
+ }
+ 
++static void read_got(FILE *fp)
++{
++	int i;
++
++	for (i = 0; i < ehdr.e_shnum; i++) {
++		struct section *sec = &secs[i];
++
++		sec->got = NULL;
++		if (sec->shdr.sh_type != SHT_PROGBITS ||
++		    strcmp(sec_name(i), ".got")) {
++			continue;
++		}
++		sec->got = malloc(sec->shdr.sh_size);
++		if (!sec->got) {
++			die("malloc of %d bytes for got failed\n",
++				sec->shdr.sh_size);
++		}
++		if (fseek(fp, sec->shdr.sh_offset, SEEK_SET) < 0) {
++			die("Seek to %d failed: %s\n",
++				sec->shdr.sh_offset, strerror(errno));
++		}
++		if (fread(sec->got, 1, sec->shdr.sh_size, fp)
++		    != sec->shdr.sh_size) {
++			die("Cannot read got: %s\n",
++				strerror(errno));
++		}
++	}
++}
++
+ 
+ static void print_absolute_symbols(void)
+ {
+@@ -645,6 +705,32 @@ static void add_reloc(struct relocs *r, uint32_t offset)
+ 	r->offset[r->count++] = offset;
+ }
+ 
++/*
++ * The linker does not generate relocations for the GOT for the kernel.
++ * If a GOT is found, simulate the relocations that should have been included.
++ */
++static void walk_got_table(int (*process)(struct section *sec, Elf_Rel *rel,
++					  Elf_Sym *sym, const char *symname),
++			   struct section *sec)
++{
++	int i;
++	Elf_Addr entry;
++	Elf_Sym *sym;
++	const char *symname;
++	Elf_Rel rel;
++
++	for (i = 0; i < sec->shdr.sh_size/sizeof(Elf_Addr); i++) {
++		entry = sec->got[i];
++		sym = sym_lookup_addr(entry, &symname);
++		if (!sym)
++			die("Could not found got symbol for entry %d\n", i);
++		rel.r_offset = sec->shdr.sh_addr + i * sizeof(Elf_Addr);
++		rel.r_info = ELF_BITS == 64 ? R_X86_64_GLOB_DAT
++			     : R_386_GLOB_DAT;
++		process(sec, &rel, sym, symname);
++	}
++}
++
+ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
+ 			Elf_Sym *sym, const char *symname))
+ {
+@@ -658,6 +744,8 @@ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
+ 		struct section *sec = &secs[i];
+ 
+ 		if (sec->shdr.sh_type != SHT_REL_TYPE) {
++			if (sec->got)
++				walk_got_table(process, sec);
+ 			continue;
+ 		}
+ 		sec_symtab  = sec->link;
+@@ -767,6 +855,7 @@ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
+ 		offset += per_cpu_load_addr;
+ 
+ 	switch (r_type) {
++	case R_X86_64_GOTPCREL:
+ 	case R_X86_64_NONE:
+ 		/* NONE can be ignored. */
+ 		break;
+@@ -820,7 +909,7 @@ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
+ 		 * the relocations are processed.
+ 		 * Make sure that the offset will fit.
+ 		 */
+-		if ((int32_t)offset != (int64_t)offset)
++		if (r_type != R_X86_64_64 && (int32_t)offset != (int64_t)offset)
+ 			die("Relocation offset doesn't fit in 32 bits\n");
+ 
+ 		if (r_type == R_X86_64_64)
+@@ -829,6 +918,10 @@ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
+ 			add_reloc(&relocs32, offset);
+ 		break;
+ 
++	case R_X86_64_GLOB_DAT:
++		add_reloc(&relocs64, offset);
++		break;
++
+ 	default:
+ 		die("Unsupported relocation type: %s (%d)\n",
+ 		    rel_type(r_type), r_type);
+@@ -1098,6 +1191,7 @@ void process(FILE *fp, int use_real_mode, int as_text,
+ 	read_strtabs(fp);
+ 	read_symtabs(fp);
+ 	read_relocs(fp);
++	read_got(fp);
+ 	if (ELF_BITS == 64)
+ 		percpu_init();
+ 	if (show_absolute_syms) {
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.20.1.495.gaa96b0ce6b-goog
+
