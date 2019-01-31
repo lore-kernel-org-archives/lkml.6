@@ -2,295 +2,230 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C7EC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 922D9C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9726120881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 665DD218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:40:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731386AbfAaHgh (ORCPT
+        id S1731235AbfAaHka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:36:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52840 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726543AbfAaHgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:36:37 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E0976E3E05;
-        Thu, 31 Jan 2019 07:36:35 +0000 (UTC)
-Received: from krava (ovpn-204-189.brq.redhat.com [10.40.204.189])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 326E86019F;
-        Thu, 31 Jan 2019 07:36:32 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 08:36:32 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, eranian@google.com,
-        vincent.weaver@maine.edu,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: System crash with perf_fuzzer (kernel: 5.0.0-rc3)
-Message-ID: <20190131073632.GB24233@krava>
-References: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com>
- <20190130183648.GA24233@krava>
+        Thu, 31 Jan 2019 02:40:30 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45672 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727112AbfAaHka (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 02:40:30 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V7d8A0029426
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:40:29 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbur637ug-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:40:28 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 31 Jan 2019 07:40:25 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Jan 2019 07:40:22 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V7eLhv7799146
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 07:40:21 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 56A1311C04A;
+        Thu, 31 Jan 2019 07:40:21 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 98BE011C05B;
+        Thu, 31 Jan 2019 07:40:20 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.84])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 31 Jan 2019 07:40:20 +0000 (GMT)
+Date:   Thu, 31 Jan 2019 09:40:18 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: Re: linux-next: powerpc le qemu boot failure after merge of the akpm
+ tree
+References: <20190131163854.307e17ab@canb.auug.org.au>
+ <20190131170629.2cc20600@canb.auug.org.au>
+ <962e7dd7-779b-2c32-59db-9ced6751dede@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190130183648.GA24233@krava>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 31 Jan 2019 07:36:36 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <962e7dd7-779b-2c32-59db-9ced6751dede@c-s.fr>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19013107-0020-0000-0000-0000030F2DC3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013107-0021-0000-0000-000021602F43
+Message-Id: <20190131074018.GD28876@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 07:36:48PM +0100, Jiri Olsa wrote:
-> On Fri, Jan 25, 2019 at 12:16:27PM +0530, Ravi Bangoria wrote:
-> 
-> SNIP
-> 
-> > [ 1432.176374] general protection fault: 0000 [#1] SMP PTI         
-> > [ 1432.182253] CPU: 1 PID: 0 Comm: swapper/1 Tainted: G        W         5.0.0-rc3-ravi-pfuzzer+ #1                                                                              
-> > [ 1432.192088] Hardware name: IBM CPU PLANAR                                           -[8722xyz]-/00FL808, BIOS -[KOE162DUS-2.30]- 08/27/2018                          [264/488]
-> > [ 1432.206120] RIP: 0010:perf_prepare_sample+0x8f/0x510                              
-> > [ 1432.211679] Code: ff ff 41 f6 c4 01 0f 85 22 02 00 00 41 f6 c4 20 74 26 4d 85 e4 0f 88 0c 01 00 00 4c 89 f6 4c 89 ff e8 f5 fe ff ff 49 89 45 70 <48> 8b 00 8d 04 c5 08 00 00 0
-> > 0 66 01 43 06 41 f7 c4 00 04 00 00 74                                           
-> > [ 1432.232699] RSP: 0000:ffff95b3ff843a78 EFLAGS: 00010082                           
-> > [ 1432.238548] RAX: 8d1217eb826cce00 RBX: ffff95b3ff843ad8 RCX: 000000000000001f
-> > [ 1432.246536] RDX: 0000000000000000 RSI: 00000000355563e5 RDI: 0000000000000000
-> > [ 1432.254522] RBP: ffff95b3ff843ab0 R08: ffffd016493f3b42 R09: 0000000000000000
-> > [ 1432.262508] R10: ffff95b3ff843a08 R11: 0000000000000000 R12: 80000000000306e5
-> > [ 1432.270495] R13: ffff95b3ff843bc0 R14: ffff95b3ff843b18 R15: ffff95b3f6b65800                                                                                                 
-> > [ 1432.278483] FS:  0000000000000000(0000) GS:ffff95b3ff840000(0000) knlGS:0000000000000000
-> > [ 1432.287539] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [ 1432.293969] CR2: 000055bf7f768c90 CR3: 0000001fd220e005 CR4: 00000000000606e0
-> > [ 1432.301956] Call Trace:                                                      
-> > [ 1432.304697]  <IRQ>                                                                                                                                                            
-> > [ 1432.306956]  ? intel_pmu_drain_bts_buffer+0x194/0x230                                                                                                                         
-> > [ 1432.312615]  intel_pmu_drain_bts_buffer+0x160/0x230                                                                                                                           
-> > [ 1432.318078]  ? tick_nohz_irq_exit+0x31/0x40                                                                                                                                   
-> > [ 1432.322765]  ? smp_call_function_single_interrupt+0x48/0xe0
-> > [ 1432.328993]  ? call_function_single_interrupt+0xf/0x20    
-> > [ 1432.334745]  ? call_function_single_interrupt+0xa/0x20                                              
-> > [ 1432.340501]  ? x86_schedule_events+0x1a0/0x2f0                                                                                                                                
-> > [ 1432.345475]  ? x86_pmu_commit_txn+0xb4/0x100                                                                                                                                  
-> > [ 1432.350258]  ? find_busiest_group+0x47/0x5d0                                                                                                                                  
-> > [ 1432.355039]  ? perf_event_set_state.part.42+0x12/0x50                                                                                                                         
-> > [ 1432.360694]  ? perf_mux_hrtimer_restart+0x40/0xb0                            
-> > [ 1432.365960]  intel_pmu_disable_event+0xae/0x100                                                 
-> > [ 1432.371031]  ? intel_pmu_disable_event+0xae/0x100                                                                                          
-> > [ 1432.376297]  x86_pmu_stop+0x7a/0xb0                                          
-> > [ 1432.380201]  x86_pmu_del+0x57/0x120                                                                                                                                           
-> > [ 1432.384105]  event_sched_out.isra.101+0x83/0x180             
-> > [ 1432.389272]  group_sched_out.part.103+0x57/0xe0                              
-> > [ 1432.394343]  ctx_sched_out+0x188/0x240                                       
-> > [ 1432.398539]  ctx_resched+0xa8/0xd0                                                                                    
-> > [ 1432.402345]  __perf_event_enable+0x193/0x1e0                                      
-> > [ 1432.407125]  event_function+0x8e/0xc0                                        
-> > [ 1432.411222]  remote_function+0x41/0x50                                                                                                                                        
-> > [ 1432.415418]  flush_smp_call_function_queue+0x68/0x100                                               
-> > [ 1432.421071]  generic_smp_call_function_single_interrupt+0x13/0x30                                                                                                             
-> > [ 1432.427893]  smp_call_function_single_interrupt+0x3e/0xe0                                                                                                                     
-> > [ 1432.433936]  call_function_single_interrupt+0xf/0x20                                                                                                                          
-> > [ 1432.440204]  </IRQ>                                                                                                                                                           
-> 
-> hi,
-> I finaly managed to reproduced this one ;-)
+(added Andrey Konovalov)
 
-ugh.. and fuzzer managed to reproduce it again even with the patch below :-\
-there's some other way the event could become bts with callchain
+On Thu, Jan 31, 2019 at 07:15:26AM +0100, Christophe Leroy wrote:
+> 
+> Le 31/01/2019 à 07:06, Stephen Rothwell a écrit :
+> >Hi all,
+> >
+> >On Thu, 31 Jan 2019 16:38:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >>
+> >>[I am guessing that is is something in Andrew's tree that has caused
+> >>this.]
+> >>
+> >>My qemu boot of the powerpc pseries_le_defconfig config failed like this:
+> >>
+> >>htab_hash_mask    = 0x1ffff
+> >>-----------------------------------------------------
+> >>numa:   NODE_DATA [mem 0x7ffe7000-0x7ffebfff]
+> >>Kernel panic - not syncing: sparse_buffer_init: Failed to allocate 2147483648 bytes align=0x10000 nid=0 from=fffffffffffffff
+> >>CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc4 #2
+> >>Call Trace:
+> >>[c00000000105bbd0] [c000000000b1345c] dump_stack+0xb0/0xf4 (unreliable)
+> >>[c00000000105bc10] [c000000000111120] panic+0x168/0x3b8
+> >>[c00000000105bcb0] [c000000000e701c8] sparse_init_nid+0x178/0x550
+> >>[c00000000105bd70] [c000000000e709b4] sparse_init+0x210/0x238
+> >>[c00000000105bdb0] [c000000000e468f4] initmem_init+0x1e0/0x260
+> >>[c00000000105be80] [c000000000e3b9b0] setup_arch+0x354/0x3d4
+> >>[c00000000105bef0] [c000000000e33afc] start_kernel+0x98/0x648
+> >>[c00000000105bf90] [c00000000000b270] start_here_common+0x1c/0x52c
+> >
+> >A quick bisect leads to this:
+> >
+> >1c3c9328cde027eb875ba4692f0a5d66b0afe862 is the first bad commit
+> >commit 1c3c9328cde027eb875ba4692f0a5d66b0afe862
+> >Author: Mike Rapoport <rppt@linux.ibm.com>
+> >Date:   Thu Jan 31 10:51:32 2019 +1100
+> >
+> >     treewide: add checks for the return value of memblock_alloc*()
+> >     Add check for the return value of memblock_alloc*() functions and call
+> >     panic() in case of error.  The panic message repeats the one used by
+> >     panicing memblock allocators with adjustment of parameters to include only
+> >     relevant ones.
+> >
+> >Which is just adding the panic we hit.  So, presumably, the bug is in a
+> >preceding patch :-(
+> >
+> >I have left the kernel not booting for today.
+> >
+> 
+> No I think the error is really in that patch, see my other mail.
+> 
+> See https://elixir.bootlin.com/linux/v5.0-rc4/source/mm/memblock.c#L1455,
+> memblock_alloc_try_nid_raw() is not supposed to panic, so the last hunk of
+> this patch should be reverted.
+> 
+> Found in total three problematic hunks in that patch:
+> 
+> @@ -48,6 +53,11 @@ static phys_addr_t __init kasan_alloc_raw_page(int node)
+>  	void *p = memblock_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
+>  						__pa(MAX_DMA_ADDRESS),
+>  						MEMBLOCK_ALLOC_KASAN, node);
+> +	if (!p)
+> +		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%llx\n",
+> +		      __func__, PAGE_SIZE, PAGE_SIZE, node,
+> +		      __pa(MAX_DMA_ADDRESS));
+> +
+>  	return __pa(p);
+>  }
+ 
+I've looked more closely to the code that uses this function and it does
+not seem to handle allocation error.
+I can replace the panic with WARN(), but I think that panic() here is
+appropriate.
 
-jirka
+Andrey, can you comment?
 
+
+> @@ -211,6 +211,9 @@ static int __init iob_init(struct device_node *dn)
+>  	iob_l2_base = memblock_alloc_try_nid_raw(1UL << 21, 1UL << 21,
+>  					MEMBLOCK_LOW_LIMIT, 0x80000000,
+>  					NUMA_NO_NODE);
+> +	if (!iob_l2_base)
+> +		panic("%s: Failed to allocate %lu bytes align=0x%lx max_addr=%x\n",
+> +		      __func__, 1UL << 21, 1UL << 21, 0x80000000);
 > 
-> also I found reproducer for crash on my server, now I'm running
-> the fuzzer to see if it cures it as well.. so far so good ;-)
-> 
-> the crash happens when I create 'almost bts' event with:
->   event = branch-instructions:up
->   sample_period = 2
->   sample_type = CALLCHAIN
-> 
-> after I open the event I change the sample_period via ioctl to '1',
-> which will make the event 'full bts', but no bts checks are performed
-> so the bts drain crashes
-> 
-> the patch adds check_eriod pmu callback.. I need to check if there's
-> better way to do this, but so far it fixes the crash for me
-> 
-> if you guys could check this patch, that'd be great
-> 
-> thanks,
-> jirka
-> 
-> 
-> ---
->  arch/x86/events/core.c       |  6 ++++++
->  arch/x86/events/intel/core.c |  9 +++++++++
->  arch/x86/events/perf_event.h |  2 ++
->  include/linux/perf_event.h   |  5 +++++
->  kernel/events/core.c         | 31 +++++++++++++++++++++++++++++++
->  5 files changed, 53 insertions(+)
-> 
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 374a19712e20..e5db4fad517e 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -2278,6 +2278,11 @@ void perf_check_microcode(void)
->  		x86_pmu.check_microcode();
+>  	pr_info("IOBMAP L2 allocated at: %p\n", iob_l2_base);
+ 
+This one is actually fixes my own mistake from one of the previous patches
+that converted memblock_alloc_base() to memblock_alloc_try_nid_raw() without
+adding the panic() (commit 47e382eb08cfa0199c4ea9f9cc73f1b48a3a4b1d
+"powerpc: prefer memblock APIs returning virtual address")
+ 
+> @@ -425,6 +436,10 @@ static void __init sparse_buffer_init(unsigned long
+> size, int nid)
+>  		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
+>  						__pa(MAX_DMA_ADDRESS),
+>  						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+> +	if (!sparsemap_buf)
+> +		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%lx\n",
+> +		      __func__, size, PAGE_SIZE, nid, __pa(MAX_DMA_ADDRESS));
+> +
+>  	sparsemap_buf_end = sparsemap_buf + size;
 >  }
->  
-> +static int x86_pmu_check_period(struct perf_event *event)
-> +{
-> +	return x86_pmu.check_period ? x86_pmu.check_period(event) : 0;
-> +}
-> +
->  static struct pmu pmu = {
->  	.pmu_enable		= x86_pmu_enable,
->  	.pmu_disable		= x86_pmu_disable,
-> @@ -2302,6 +2307,7 @@ static struct pmu pmu = {
->  	.event_idx		= x86_pmu_event_idx,
->  	.sched_task		= x86_pmu_sched_task,
->  	.task_ctx_size          = sizeof(struct x86_perf_task_context),
-> +	.check_period		= x86_pmu_check_period,
->  };
->  
->  void arch_perf_update_userpage(struct perf_event *event,
-> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> index 40e12cfc87f6..125930e328c8 100644
-> --- a/arch/x86/events/intel/core.c
-> +++ b/arch/x86/events/intel/core.c
-> @@ -3584,6 +3584,11 @@ static void intel_pmu_sched_task(struct perf_event_context *ctx,
->  	intel_pmu_lbr_sched_task(ctx, sched_in);
->  }
->  
-> +static int intel_pmu_check_period(struct perf_event *event)
-> +{
-> +	return intel_pmu_has_bts(event) ? -EINVAL : 0;
-> +}
-> +
->  PMU_FORMAT_ATTR(offcore_rsp, "config1:0-63");
->  
->  PMU_FORMAT_ATTR(ldlat, "config1:0-15");
-> @@ -3663,6 +3668,8 @@ static __initconst const struct x86_pmu core_pmu = {
->  	.cpu_prepare		= intel_pmu_cpu_prepare,
->  	.cpu_starting		= intel_pmu_cpu_starting,
->  	.cpu_dying		= intel_pmu_cpu_dying,
-> +
-> +	.check_period		= intel_pmu_check_period,
->  };
->  
->  static struct attribute *intel_pmu_attrs[];
-> @@ -3705,6 +3712,8 @@ static __initconst const struct x86_pmu intel_pmu = {
->  	.cpu_dying		= intel_pmu_cpu_dying,
->  	.guest_get_msrs		= intel_guest_get_msrs,
->  	.sched_task		= intel_pmu_sched_task,
-> +
-> +	.check_period		= intel_pmu_check_period,
->  };
->  
->  static __init void intel_clovertown_quirk(void)
-> diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-> index 78d7b7031bfc..170b58d48710 100644
-> --- a/arch/x86/events/perf_event.h
-> +++ b/arch/x86/events/perf_event.h
-> @@ -646,6 +646,8 @@ struct x86_pmu {
->  	 * Intel host/guest support (KVM)
->  	 */
->  	struct perf_guest_switch_msr *(*guest_get_msrs)(int *nr);
-> +
-> +	int (*check_period) (struct perf_event *event);
->  };
->  
->  struct x86_perf_task_context {
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index a79e59fc3b7d..749a5c3110e2 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -447,6 +447,11 @@ struct pmu {
->  	 * Filter events for PMU-specific reasons.
->  	 */
->  	int (*filter_match)		(struct perf_event *event); /* optional */
-> +
-> +	/*
-> +	 * Check period for PERF_EVENT_IOC_PERIOD ioctl.
-> +	 */
-> +	int (*check_period)		(struct perf_event *event); /* optional */
->  };
->  
->  enum perf_addr_filter_action_t {
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 280a72b3a553..22ec63a0782e 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -4969,6 +4969,26 @@ static void __perf_event_period(struct perf_event *event,
->  	}
->  }
->  
-> +static int check_period(struct perf_event *event, u64 value)
-> +{
-> +	u64 sample_period_attr = event->attr.sample_period;
-> +	u64 sample_period_hw   = event->hw.sample_period;
-> +	int ret;
-> +
-> +	if (event->attr.freq) {
-> +		event->attr.sample_freq = value;
-> +	} else {
-> +		event->attr.sample_period = value;
-> +		event->hw.sample_period = value;
-> +	}
-> +
-> +	ret = event->pmu->check_period(event);
-> +
-> +	event->attr.sample_period = sample_period_attr;
-> +	event->hw.sample_period   = sample_period_hw;
-> +	return ret;
-> +}
-> +
->  static int perf_event_period(struct perf_event *event, u64 __user *arg)
->  {
->  	u64 value;
-> @@ -4985,6 +5005,9 @@ static int perf_event_period(struct perf_event *event, u64 __user *arg)
->  	if (event->attr.freq && value > sysctl_perf_event_sample_rate)
->  		return -EINVAL;
->  
-> +	if (check_period(event, value))
-> +		return -EINVAL;
-> +
->  	event_function_call(event, __perf_event_period, &value);
->  
->  	return 0;
-> @@ -9601,6 +9624,11 @@ static int perf_pmu_nop_int(struct pmu *pmu)
->  	return 0;
->  }
->  
-> +static int perf_event_nop_int(struct perf_event *event)
-> +{
-> +	return 0;
-> +}
-> +
->  static DEFINE_PER_CPU(unsigned int, nop_txn_flags);
->  
->  static void perf_pmu_start_txn(struct pmu *pmu, unsigned int flags)
-> @@ -9901,6 +9929,9 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
->  		pmu->pmu_disable = perf_pmu_nop_void;
->  	}
->  
-> +	if (!pmu->check_period)
-> +		pmu->check_period = perf_event_nop_int;
-> +
->  	if (!pmu->event_idx)
->  		pmu->event_idx = perf_event_idx_default;
->  
-> -- 
-> 2.17.2
-> 
+ 
+This hunk was not needed as sparse can deal with this allocation failure.
+
+Andrew, can you please add the below patch to as a fixup to "treewide: add
+checks for the return value of memblock_alloc*()"?
+ 
+From 854f54b9d4fe52f477765b905a4b2c421d30f46e Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.ibm.com>
+Date: Thu, 31 Jan 2019 09:18:50 +0200
+Subject: [PATCH] mm/sparse: don't panic if the allocation in
+ sparse_buffer_init fails
+
+Addition of panic if memblock_alloc_try_nid_raw() call in
+sparse_buffer_init() fails was over enthusiastic as the system is perfectly
+capable to deal with that allocation failure.
+Remove the panic().
+
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ mm/sparse.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 1471f06..c11aba0 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -434,10 +434,6 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
+ 		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
+ 						__pa(MAX_DMA_ADDRESS),
+ 						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+-	if (!sparsemap_buf)
+-		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%lx\n",
+-		      __func__, size, PAGE_SIZE, nid, __pa(MAX_DMA_ADDRESS));
+-
+ 	sparsemap_buf_end = sparsemap_buf + size;
+ }
+ 
+-- 
+2.7.4
+
