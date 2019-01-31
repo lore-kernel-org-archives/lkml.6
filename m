@@ -2,221 +2,122 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63065C282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDCEC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4183420833
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:19:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41A70218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:21:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ID4MQap5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fnlakalu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730756AbfAaETU (ORCPT
+        id S1731084AbfAaEVu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 23:19:20 -0500
-Received: from ozlabs.org ([203.11.71.1]:38217 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbfAaETU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 23:19:20 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Wed, 30 Jan 2019 23:21:50 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53920 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbfAaEVu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 23:21:50 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B503F6060A; Thu, 31 Jan 2019 04:21:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548908508;
+        bh=qxcsN9MK8rmsU1FaomWHr3Yq25d6yLE/xAvCdnbz8d4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ID4MQap5fYKstO9DMaYruPTIB5B4o3ojh2r0++oE/eb0fpIoMeVipo7q2O8vEXA80
+         H5hjkvsG2JQidGbaeIF3ViMElqTwctpejiWW6Z/NlVu4OkQQw+3CAaDNEKNrG0pHrR
+         NOQ3EuxR0OYJpbC8Dj1iV4AUtDelzGO92zQQUWkE=
+Received: from [10.79.129.198] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43qn7810Tdz9sBb;
-        Thu, 31 Jan 2019 15:19:16 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v3 2/2] powerpc: use probe_user_read()
-In-Reply-To: <afd95fa4747f1c1eb66677025c2c7c9055f43cce.1547652372.git.christophe.leroy@c-s.fr>
-References: <39fb6c5a191025378676492e140dc012915ecaeb.1547652372.git.christophe.leroy@c-s.fr> <afd95fa4747f1c1eb66677025c2c7c9055f43cce.1547652372.git.christophe.leroy@c-s.fr>
-Date:   Thu, 31 Jan 2019 15:19:13 +1100
-Message-ID: <878sz1pigu.fsf@concordia.ellerman.id.au>
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 02801602CB;
+        Thu, 31 Jan 2019 04:21:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548908507;
+        bh=qxcsN9MK8rmsU1FaomWHr3Yq25d6yLE/xAvCdnbz8d4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fnlakalu104GpxU1bryqTz9GUnNauif2d2eu3fITJQ3xpor/QLPZd7A9shQMfMdYL
+         f5A3F58Jr0ZAYfiuOv6WUT7qMbRSm1egh8ZpVLA7w35flx6DWVLVig/bEyhBsVyiY4
+         A0aaK//Q3f88o5xbafDRB3nX5Ds5wtEGSbsJAU+E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 02801602CB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [RESEND PATCH v2] arm64: dts: qcom: msm8998: Add rpmcc node
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>
+References: <6da00186-e7c9-c93d-a80a-65eda2516451@free.fr>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <afcb4d79-9888-3c48-bdc2-1475d93c860b@codeaurora.org>
+Date:   Thu, 31 Jan 2019 09:51:42 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <6da00186-e7c9-c93d-a80a-65eda2516451@free.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-
-> Instead of opencoding, use probe_user_read() to failessly
-> read a user location.
->
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+On 1/30/2019 10:01 PM, Marc Gonzalez wrote:
+> Add MSM8998 Resource Power Manager Clock Controller DT node.
+> 
+> Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 > ---
->  v3: No change
->
->  v2: Using probe_user_read() instead of probe_user_address()
->
->  arch/powerpc/kernel/process.c   | 12 +-----------
->  arch/powerpc/mm/fault.c         |  6 +-----
->  arch/powerpc/perf/callchain.c   | 20 +++-----------------
->  arch/powerpc/perf/core-book3s.c |  8 +-------
->  arch/powerpc/sysdev/fsl_pci.c   | 10 ++++------
->  5 files changed, 10 insertions(+), 46 deletions(-)
+> Detach this patch from UFS series
+> Resend because SMTP server was blacklisted.
+> ---
+>   arch/arm64/boot/dts/qcom/msm8998.dtsi | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> index a6d66cf77403..6f4f4b79853b 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> @@ -3,6 +3,7 @@
+>   
+>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>   #include <dt-bindings/clock/qcom,gcc-msm8998.h>
+> +#include <dt-bindings/clock/qcom,rpmcc.h>
+>   #include <dt-bindings/gpio/gpio.h>
+>   
+>   / {
+> @@ -266,6 +267,11 @@
+>   		rpm_requests: rpm-requests {
+>   			compatible = "qcom,rpm-msm8998";
+>   			qcom,glink-channels = "rpm_requests";
+> +
+> +			rpmcc: clock-controller {
+> +				compatible = "qcom,rpmcc-msm8998", "qcom,rpmcc";
+> +				#clock-cells = <1>;
+> +			};
+>   		};
+>   	};
+>   
+> 
 
-Looks good.
+Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-
-cheers
-
-> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-> index ce393df243aa..6a4b59d574c2 100644
-> --- a/arch/powerpc/kernel/process.c
-> +++ b/arch/powerpc/kernel/process.c
-> @@ -1298,16 +1298,6 @@ void show_user_instructions(struct pt_regs *regs)
->  
->  	pc = regs->nip - (NR_INSN_TO_PRINT * 3 / 4 * sizeof(int));
->  
-> -	/*
-> -	 * Make sure the NIP points at userspace, not kernel text/data or
-> -	 * elsewhere.
-> -	 */
-> -	if (!__access_ok(pc, NR_INSN_TO_PRINT * sizeof(int), USER_DS)) {
-> -		pr_info("%s[%d]: Bad NIP, not dumping instructions.\n",
-> -			current->comm, current->pid);
-> -		return;
-> -	}
-> -
->  	seq_buf_init(&s, buf, sizeof(buf));
->  
->  	while (n) {
-> @@ -1318,7 +1308,7 @@ void show_user_instructions(struct pt_regs *regs)
->  		for (i = 0; i < 8 && n; i++, n--, pc += sizeof(int)) {
->  			int instr;
->  
-> -			if (probe_kernel_address((const void *)pc, instr)) {
-> +			if (probe_user_read(&instr, (void __user *)pc, sizeof(instr))) {
->  				seq_buf_printf(&s, "XXXXXXXX ");
->  				continue;
->  			}
-> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-> index 887f11bcf330..ec74305fa330 100644
-> --- a/arch/powerpc/mm/fault.c
-> +++ b/arch/powerpc/mm/fault.c
-> @@ -276,12 +276,8 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
->  		if ((flags & FAULT_FLAG_WRITE) && (flags & FAULT_FLAG_USER) &&
->  		    access_ok(nip, sizeof(*nip))) {
->  			unsigned int inst;
-> -			int res;
->  
-> -			pagefault_disable();
-> -			res = __get_user_inatomic(inst, nip);
-> -			pagefault_enable();
-> -			if (!res)
-> +			if (!probe_user_read(&inst, nip, sizeof(inst)))
->  				return !store_updates_sp(inst);
->  			*must_retry = true;
->  		}
-> diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
-> index 0af051a1974e..0680efb2237b 100644
-> --- a/arch/powerpc/perf/callchain.c
-> +++ b/arch/powerpc/perf/callchain.c
-> @@ -159,12 +159,8 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
->  	    ((unsigned long)ptr & 7))
->  		return -EFAULT;
->  
-> -	pagefault_disable();
-> -	if (!__get_user_inatomic(*ret, ptr)) {
-> -		pagefault_enable();
-> +	if (!probe_user_read(ret, ptr, sizeof(*ret)))
->  		return 0;
-> -	}
-> -	pagefault_enable();
->  
->  	return read_user_stack_slow(ptr, ret, 8);
->  }
-> @@ -175,12 +171,8 @@ static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
->  	    ((unsigned long)ptr & 3))
->  		return -EFAULT;
->  
-> -	pagefault_disable();
-> -	if (!__get_user_inatomic(*ret, ptr)) {
-> -		pagefault_enable();
-> +	if (!probe_user_read(ret, ptr, sizeof(*ret)))
->  		return 0;
-> -	}
-> -	pagefault_enable();
->  
->  	return read_user_stack_slow(ptr, ret, 4);
->  }
-> @@ -307,17 +299,11 @@ static inline int current_is_64bit(void)
->   */
->  static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
->  {
-> -	int rc;
-> -
->  	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
->  	    ((unsigned long)ptr & 3))
->  		return -EFAULT;
->  
-> -	pagefault_disable();
-> -	rc = __get_user_inatomic(*ret, ptr);
-> -	pagefault_enable();
-> -
-> -	return rc;
-> +	return probe_user_read(ret, ptr, sizeof(*ret));
->  }
->  
->  static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
-> diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
-> index b0723002a396..4b64ddf0db68 100644
-> --- a/arch/powerpc/perf/core-book3s.c
-> +++ b/arch/powerpc/perf/core-book3s.c
-> @@ -416,7 +416,6 @@ static void power_pmu_sched_task(struct perf_event_context *ctx, bool sched_in)
->  static __u64 power_pmu_bhrb_to(u64 addr)
->  {
->  	unsigned int instr;
-> -	int ret;
->  	__u64 target;
->  
->  	if (is_kernel_addr(addr)) {
-> @@ -427,13 +426,8 @@ static __u64 power_pmu_bhrb_to(u64 addr)
->  	}
->  
->  	/* Userspace: need copy instruction here then translate it */
-> -	pagefault_disable();
-> -	ret = __get_user_inatomic(instr, (unsigned int __user *)addr);
-> -	if (ret) {
-> -		pagefault_enable();
-> +	if (probe_user_read(&instr, (unsigned int __user *)addr, sizeof(instr)))
->  		return 0;
-> -	}
-> -	pagefault_enable();
->  
->  	target = branch_target(&instr);
->  	if ((!target) || (instr & BRANCH_ABSOLUTE))
-> diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
-> index 918be816b097..c8a1b26489f5 100644
-> --- a/arch/powerpc/sysdev/fsl_pci.c
-> +++ b/arch/powerpc/sysdev/fsl_pci.c
-> @@ -1068,13 +1068,11 @@ int fsl_pci_mcheck_exception(struct pt_regs *regs)
->  	addr += mfspr(SPRN_MCAR);
->  
->  	if (is_in_pci_mem_space(addr)) {
-> -		if (user_mode(regs)) {
-> -			pagefault_disable();
-> -			ret = get_user(inst, (__u32 __user *)regs->nip);
-> -			pagefault_enable();
-> -		} else {
-> +		if (user_mode(regs))
-> +			ret = probe_user_read(&inst, (void __user *)regs->nip,
-> +					      sizeof(inst));
-> +		else
->  			ret = probe_kernel_address((void *)regs->nip, inst);
-> -		}
->  
->  		if (!ret && mcheck_handle_load(regs, inst)) {
->  			regs->nip += 4;
-> -- 
-> 2.13.3
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
