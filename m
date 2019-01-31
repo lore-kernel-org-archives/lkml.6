@@ -2,144 +2,69 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2954C282D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1D7C282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFA3220870
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64E4E218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:23:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731281AbfAaDWi (ORCPT
+        id S1730943AbfAaDXr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 22:22:38 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:47111 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725535AbfAaDWh (ORCPT
+        Wed, 30 Jan 2019 22:23:47 -0500
+Received: from smtprelay0094.hostedemail.com ([216.40.44.94]:52148 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725535AbfAaDXr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 22:22:37 -0500
-X-UUID: ed683dd48cba48979fdad166c2250e71-20190131
-X-UUID: ed683dd48cba48979fdad166c2250e71-20190131
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 63297672; Thu, 31 Jan 2019 11:22:33 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
- 2019 11:22:31 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 31 Jan 2019 11:22:31 +0800
-Message-ID: <1548904951.19710.41.camel@mhfsdcap03>
-Subject: Re: [PATCH v5 14/20] iommu/mediatek: Add mmu1 support
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Evan Green <evgreen@chromium.org>
-CC:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
-        <yingjoe.chen@mediatek.com>, <youlin.pei@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Date:   Thu, 31 Jan 2019 11:22:31 +0800
-In-Reply-To: <CAE=gft58E0p3KEYLtKZBfvGysNq+CfX5LDR38incdM+tjDr-1g@mail.gmail.com>
-References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com>
-         <1546314952-15990-15-git-send-email-yong.wu@mediatek.com>
-         <CAE=gft58E0p3KEYLtKZBfvGysNq+CfX5LDR38incdM+tjDr-1g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Wed, 30 Jan 2019 22:23:47 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 735DB837F242;
+        Thu, 31 Jan 2019 03:23:46 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: skirt86_3be7e75e494e
+X-Filterd-Recvd-Size: 1541
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 31 Jan 2019 03:23:45 +0000 (UTC)
+Message-ID: <df314ee9176095b5d59af8659c95a274fb0613c4.camel@perches.com>
+Subject: Re: Fwd: [PATCH v14 0/3] PPS: pps-gpio PPS ECHO implementation
+From:   Joe Perches <joe@perches.com>
+To:     tom burkart <tom@aussec.com>,
+        Rodolfo Giometti <giometti@enneenne.com>
+Cc:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Date:   Wed, 30 Jan 2019 19:23:44 -0800
+In-Reply-To: <20190131124008.64023l78rw406lfc@www.aussec.com>
+References: <20190129124357.17396k708szaibbx@www.aussec.com>
+         <7abdee30-91fb-4d11-52e1-1778e418c7b8@enneenne.com>
+         <20190131124008.64023l78rw406lfc@www.aussec.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-30 at 10:55 -0800, Evan Green wrote:
-> On Mon, Dec 31, 2018 at 7:59 PM Yong Wu <yong.wu@mediatek.com> wrote:
-> >
-> > Normally the M4U HW connect EMI with smi. the diagram is like below:
-> >               EMI
-> >                |
-> >               M4U
-> >                |
-> >             smi-common
-> >                |
-> >        -----------------
-> >        |    |    |     |    ...
-> >     larb0 larb1  larb2 larb3
-> >
-> > Actually there are 2 mmu cells in the M4U HW, like this diagram:
-> >
-> >               EMI
-> >            ---------
-> >             |     |
-> >            mmu0  mmu1     <- M4U
-> >             |     |
-> >            ---------
-> >                |
-> >             smi-common
-> >                |
-> >        -----------------
-> >        |    |    |     |    ...
-> >     larb0 larb1  larb2 larb3
-> >
-> > This patch add support for mmu1. In order to get better performance,
-> > we could adjust some larbs go to mmu1 while the others still go to
-> > mmu0. This is controlled by a SMI COMMON register SMI_BUS_SEL(0x220).
-> >
-> > mt2712, mt8173 and mt8183 M4U HW all have 2 mmu cells. the default
-> > value of that register is 0 which means all the larbs go to mmu0
-> > defaultly.
-> >
-> > This is a preparing patch for adjusting SMI_BUS_SEL for mt8183.
-> >
-> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> > ---
-> >  drivers/iommu/mtk_iommu.c | 47 +++++++++++++++++++++++++++++------------------
-> >  1 file changed, 29 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> > index 66e3615..7fcef19 100644
-> > --- a/drivers/iommu/mtk_iommu.c
-> > +++ b/drivers/iommu/mtk_iommu.c
-> > @@ -70,27 +70,32 @@
-> >  #define F_MISS_FIFO_ERR_INT_EN                 BIT(6)
-> >  #define F_INT_CLR_BIT                          BIT(12)
-> >
-> > -#define REG_MMU_INT_MAIN_CONTROL               0x124
-> > -#define F_INT_TRANSLATION_FAULT                        BIT(0)
-> > -#define F_INT_MAIN_MULTI_HIT_FAULT             BIT(1)
-> > -#define F_INT_INVALID_PA_FAULT                 BIT(2)
-> > -#define F_INT_ENTRY_REPLACEMENT_FAULT          BIT(3)
-> > -#define F_INT_TLB_MISS_FAULT                   BIT(4)
-> > -#define F_INT_MISS_TRANSACTION_FIFO_FAULT      BIT(5)
-> > -#define F_INT_PRETETCH_TRANSATION_FIFO_FAULT   BIT(6)
-> > +#define REG_MMU_INT_MAIN_CONTROL               0x124 /* mmu0 | mmu1 */
+On Thu, 2019-01-31 at 12:40 +1100, tom burkart wrote:
+> Quoting Rodolfo Giometti <giometti@enneenne.com>:
+> --------
+> Subject	Re: [PATCH v14 2/3] dt-bindings: pps: pps-gpio PPS ECHO implementation
 > 
-> The comment being on that line is kind of weird, since the comment
-> really applies to the lines below it. Maybe the comment should be on
-> its own line, or on the TRANSLATION_FAULT line.
+> I think this patch it's OK but I'm asking to myself if it should be  
+> merged with
+> next one... logically it describes what patch 3/3 does so why do we keep them
+> separated?
+> -------
+> I have separated it because scripts/checkpatch.pl insists it needs to  
+> be separated.
 
-Sharp eye. You are right, this comment applies the lines below.
-But If I move it below, then the next line will be over 80 chars.
+checkpatch doesn't insist on anything.  It's a stupid script.
 
-How about I add a "below:" like this: 
-> +#define REG_MMU_INT_MAIN_CONTROL               0x124 /* below: mmu0 |
-mmu1 */
-
-> 
-> Other than that,
-> Reviewed-by: Evan Green <evgreen@chromium.org>
+Always prefer your best judgment over a stupid script.
 
 
