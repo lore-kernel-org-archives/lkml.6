@@ -2,156 +2,229 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D70C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA46EC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4CD22085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8253A218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:40:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="me+VEtqi"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oALGTAWW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbfAaRjR (ORCPT
+        id S1727784AbfAaRko (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:39:17 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8007 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbfAaRjQ (ORCPT
+        Thu, 31 Jan 2019 12:40:44 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38909 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725822AbfAaRko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:39:16 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5332990000>; Thu, 31 Jan 2019 09:38:33 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 31 Jan 2019 09:39:14 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 31 Jan 2019 09:39:14 -0800
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
- 2019 17:39:14 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
- 2019 17:39:09 +0000
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (104.47.45.59) by
- HQMAIL109.nvidia.com (172.20.187.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Thu, 31 Jan 2019 17:39:09 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
- BYAPR12MB3350.namprd12.prod.outlook.com (20.178.55.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Thu, 31 Jan 2019 17:38:51 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1580.017; Thu, 31 Jan 2019
- 17:38:51 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-CC:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: RE: [PATCH V8 3/5] i2c: tegra: Add DMA Support
-Thread-Topic: [PATCH V8 3/5] i2c: tegra: Add DMA Support
-Thread-Index: AQHUuSyS8D4y2PEYbkigLw9+iOz1C6XJfImAgAADNwCAABXfQIAACAqAgAAEBwCAAAKP0A==
-Date:   Thu, 31 Jan 2019 17:38:50 +0000
-Message-ID: <BYAPR12MB339858E4B4E8F1336702AC8EC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
- <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
- <4663c7b9-d306-1cd4-1bdc-f7be84af0667@gmail.com>
- <8a88f8ee-24d3-00ac-f1fa-c43b576ed82c@gmail.com>
- <BYAPR12MB3398CFEE7E912513AE48DD2FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
- <e50a353c-94c4-1a47-92a4-5f41f4f64aa7@gmail.com>
- <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
-In-Reply-To: <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [24.176.232.13]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB3350;6:1o+krH6HikqUcT7Ad92unlKB1j41CVR66bJkncByr3TnvRJdl8c91Sa67yPyxmuxeceAvxvAItdEGdwgirmQimKJpM/19ieH1yAxOfBhMKKN6ed9K8MAJ+/QGblwwkxlpiURDUDBV9CI2zEthv7SmGtl8o+4xBaSzoF7dX8qJdzQQmp17wkygtq4Ow7T35Dqro98gcdC4ENaiUcVoqL3nbgLVMfU8qnXUmcLaa/Njnkhdh45Cyh3DFmiqERrhBIDuYBy+A8KbTUEigqBJgZuftRzl38SFSroFJehVatgaY/Y18Q+qirp0VPmkqlkJCEYUFm0A5XWF9Lkhb629UpRSx4HhFQaGlLbsZjfhhczWZc9aSSWUj2MAJm1zyW6cZoiMP4A7TGnrehX2Wsk/q0iWjavzmVLUEDLv7hx+4FjlgeiWbFvPqQ61Pm3a2KAv2/68BkQM4A3/ilmwTzwGeOc8w==;5:MPKb2RbZZGU9tlPNZ5284e/m96TqT9Em3x166BR7fSEKJGSJnkHcMObauTraFxwa3TYU1JPZNHQB/l/vOAYJEAimdQF3+Ankg8uznpezDcf/lSWcwQrkAc0G5JijhBCteUbe6pRTmr19RyAQ47qZfKDa+/rYhJPM89FsWNGFkZ6eZWvhVVtnW3DmEAW8eOx5b4Cjk5MkFQ3G60dchYDd7w==;7:zWgH5paycnaG50mAN76bWUvyVzYGqnnvIJMmxSPNQY8bvoiIf24ZAT+LCegtJAseu1NMx79eKkMjJbtUurlY8MaBckvW4wfbyOUb5iTR0COVXi47yQZr2acecHh8DR0yu1UdHAzugRKI+zkEYRbqFA==
-x-ms-office365-filtering-correlation-id: 206d8871-4bb4-45bc-f8c5-08d687a2f697
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3350;
-x-ms-traffictypediagnostic: BYAPR12MB3350:
-x-microsoft-antispam-prvs: <BYAPR12MB3350928D2336B4A507985C3FC2910@BYAPR12MB3350.namprd12.prod.outlook.com>
-x-forefront-prvs: 09347618C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(346002)(376002)(39860400002)(396003)(189003)(199004)(86362001)(6506007)(2906002)(53936002)(229853002)(76176011)(106356001)(39060400002)(6246003)(33656002)(256004)(105586002)(97736004)(4326008)(26005)(25786009)(110136005)(6116002)(3846002)(71200400001)(71190400001)(102836004)(446003)(9686003)(6636002)(486006)(99286004)(305945005)(11346002)(93886005)(74316002)(81156014)(8676002)(476003)(186003)(7736002)(2501003)(316002)(8936002)(6436002)(478600001)(66066001)(81166006)(7696005)(54906003)(68736007)(14454004)(55016002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3350;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: UXOcmYl+8vOaztffjIp5kz3xiIBScuvnU/LK/u8horXsltC6wHA4lN8rvHEvVhA+Zu0TMYCjSMohKMQXOENhXxGkxmhJJ3/0ooBCEVpv1FemSzkoCEp0oomqY5CltCsxXhFw6CHOIxdRqceEDu1HpySY89nDnhO5YT/ZNqw5fqfr/6U5fJwhLuB8ox1TWfHn+iHizRgzgaJ2M+ocwgevuoS/nzITzv1k7PmoUP5/1B4FGTtEy4Snh1DfaA8SZNvwyhMezlqbADn/WQQY/6WS+dxOWWMbYpYwZch5Z1tvOVoRRg8rhqGNte4iKPNOXYxIEvi4p0SFBtIrfiS94c/GmkpVTNPye+kw62/ILpvegalPxAgWH4wUghXhLuAWDumidIu+0ylxmdRnMJruRimJAsr3HcZhQ2mTMS0wHwXYSEk=
+        Thu, 31 Jan 2019 12:40:44 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q1so1796329pfi.5;
+        Thu, 31 Jan 2019 09:40:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CH7NqMeH7U9k+dTRiNnxtrCogZdiuJTC0dcyxd2NyuA=;
+        b=oALGTAWWj8qCFFDuBUvf8a0UFpOE4/zhU2jIXjJHoFE8gRZxnjcAaRpzmmZu4Mz2Xt
+         J+Ok5XtHvJL3HL8XZWAp9xJqT3yYpp1jHxGbguGQ6QMJjbbTR4/zWxCmF+UCh6+uFE/J
+         AUCOYzW+3LWziMcVITkvMM4V6xg/0iLldsJiRADXza60oq0uvir1uUzDb6wcB0MR2FZd
+         Jllbbt0jqrhW/P4x030MCGQKeweqe7Uy4F22Ax2AmvOD1wYM17UMmXGpLSWCt5CntvYk
+         W6L6lfSf59JqVhNwdQ3PC62fd2g+CTsKWM01cqJe7vv84RbXY3DvBmfio7TohB3YUoeY
+         v7bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CH7NqMeH7U9k+dTRiNnxtrCogZdiuJTC0dcyxd2NyuA=;
+        b=YN6Kk962Nu1XD733h5I08rzaIF7Ite6RLPPIBIgqTq7AseKlgYKocu+fa5/jwFIIPz
+         Wu/ZODwcBw6+aT8GGFwHjnWez7zyov7BIhPlanemoOTijgFkdMOv1t/ZkrfYGUkPEqDh
+         lvcpiHwjEsr6J7wPuZkpaszbsx7t8yzYw19xlA4gls6D1UQQzVrcbnTUGJSLefJfw3Gu
+         XOzjZDd7XX5Xd0Fkbtm9GO099cHsPBbiMnKiinmIXqvPw52RJHdEz+5sG8YskA4QL1AP
+         aYENJVXWg0+n0tQ1KxdajB0ToFMaPJ18meZaERwPXOF+HSsItzdBhs1b+znV3Ys9zrXF
+         eLRQ==
+X-Gm-Message-State: AJcUukevRSEULMc8424vpnYE4NEZeAfyL1fBeuwIhOuehYGp0yeu7Qho
+        brEnc3LgN0/UKb1bAcqd9Ms=
+X-Google-Smtp-Source: ALg8bN6g1HaUXxAvMRdVmPtO3dt2rYR8R6gUudjZdo/aS4VmJsh778ni+uL7Uf4OVfc6BqDbPN2wDA==
+X-Received: by 2002:a62:4886:: with SMTP id q6mr36671869pfi.182.1548956442935;
+        Thu, 31 Jan 2019 09:40:42 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id b10sm7740106pfj.183.2019.01.31.09.40.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 09:40:41 -0800 (PST)
+Date:   Thu, 31 Jan 2019 09:40:40 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Kamil Debski <kamil@wypas.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 3/3] hwmon: pwm-fan: Add RPM support via external
+ interrupt
+Message-ID: <20190131174040.GA15498@roeck-us.net>
+References: <1548860827-29796-1-git-send-email-stefan.wahren@i2se.com>
+ <1548860827-29796-4-git-send-email-stefan.wahren@i2se.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 206d8871-4bb4-45bc-f8c5-08d687a2f697
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 17:38:50.9829
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3350
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548956313; bh=8RcAcCEAMLsJu1qm1Bw5Ha1oaLJq6ajbPMVnLyt8+EA=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=me+VEtqiPgZpjBTdeO7k5BXCz6/Z9iFFYoljc80YHFk7/dCxcMcza9Nk8XC2rqUAp
-         UTTNhPDA9AHKQw9687ZKQ57+Y3PmlMkKiJ3YT0ilGynS1KjjytWMSsc5g64Zv2e8Sr
-         22padbAIHDg9nkrnGCKebrA4chTjEAW4MyGF6EgeyXKP6kf6cc7IjtOz607w/ip9JO
-         NUKW7vyOnVOJDdamjEaQYNLXLdiUL8TWKf3TujjQ8kmyI19D0QIFr7Jq997ev+DoRO
-         Cvzjp3Qup1Yr0u1nYsbscJT3RFsIthEVgPX229Mnjs3TTF/oAXOyv/rYPkumYJ6SXn
-         g3rPyGPZ+1dHw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548860827-29796-4-git-send-email-stefan.wahren@i2se.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4+Pg0KPj4gQlVHX09OIGxpbmUgaXMgbm90IHBhcnQgb2YgdGhpcyBjaGFuZ2UuIEl0IHdh
-cyBhbHJlYWR5IHRoZXJlIGluIGV4aXN0aW5nIGRyaXZlci4NCj4+IEJhc2VkIG9uIGxvZywgSSBz
-ZWUgRE1BIHRyYW5zZmVyIGlzIGRvbmUgZm9yIDIyNCBieXRlcyBmb2xsb3dlZCBieSAxIHN1Y2Nl
-c3NmdWwgUElPIHRyYW5zZmVyIGFuZCB0aGVuIG9uIG5leHQgUElPIHRyYW5zZmVyIGl0IHJlY2Vp
-dmVkIHBhY2tldCB4ZmVyIGNvbXBsZXRlIGludGVycnVwdCB3aXRoIGluY29tcGxldGUgdHJhbnNm
-ZXIgYnl0ZXMgYW5kIHRoYXQgd2hlcmUgaXQgaGl0IEJVR19PTiBjb25kaXRpb24uDQo+Pg0KPj4N
-Cj4gDQo+IFllcywgdGhhdCBCVUdfT04gaXMgY2F1c2VkIGJ5IHRoZSBETUEgdHJhbnNmZXJyaW5n
-LiBFdmVyeXRoaW5nIHdvcmtzIGZpbmUgYmUgc2V0dGluZyBkbWE9ZmFsc2UgaW4gdGhlIGNvZGUs
-IGhlbmNlIGl0J3MgbGlrZWx5IG5vdCBhIGJ1ZyBpbiB0aGUgY29kZSAoYXQgbGVhc3QgZm9yIG5v
-dyBpdCBsb29rcyBmaW5lKSwgYnV0IGxpa2VseSB0aGF0IEhXIGlzIG5vdCBwcm9ncmFtbWVkIGNv
-cnJlY3RseS4NCj4gDQoNCj4gSXQgd29ya3Mgd2l0aCB0aGlzIGNoYW5nZToNCj4NCj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyBiL2RyaXZlcnMvaTJjL2J1c3Nl
-cy9pMmMtdGVncmEuYyBpbmRleCBmZTViODlhYmM1NzYuLjhlMDU5ZTk0Yjk0ZSAxMDA2NDQNCj4g
-LS0tIGEvZHJpdmVycy9pMmMvYnVzc2VzL2kyYy10ZWdyYS5jDQo+ICsrKyBiL2RyaXZlcnMvaTJj
-L2J1c3Nlcy9pMmMtdGVncmEuYw0KPiBAQCAtMTE3MCwxMCArMTE3MCwxMSBAQCBzdGF0aWMgaW50
-IHRlZ3JhX2kyY194ZmVyX21zZyhzdHJ1Y3QgdGVncmFfaTJjX2RldiAqaTJjX2RldiwNCj4gICAg
-ICAgICAgICAgICAgIHRpbWVfbGVmdCwgY29tcGxldGlvbl9kb25lKCZpMmNfZGV2LT5tc2dfY29t
-cGxldGUpLA0KPiAgICAgICAgICAgICAgICAgaTJjX2Rldi0+bXNnX2Vycik7DQo+DQo+ICsgICAg
-ICAgdGVncmFfaTJjX2luaXQoaTJjX2RldiwgdHJ1ZSk7DQo+ICsNCj4gICAgICAgICBpZiAobGlr
-ZWx5KGkyY19kZXYtPm1zZ19lcnIgPT0gSTJDX0VSUl9OT05FKSkNCj4gICAgICAgICAgICAgICAg
-IHJldHVybiAwOw0KPiAgDQo+IC0gICAgICAgdGVncmFfaTJjX2luaXQoaTJjX2RldiwgdHJ1ZSk7
-DQo+ICAgICAgICAgLyogc3RhcnQgcmVjb3ZlcnkgdXBvbiBhcmJpdHJhdGlvbiBsb3NzIGluIHNp
-bmdsZSBtYXN0ZXIgbW9kZSAqLw0KPiAgICAgICAgIGlmIChpMmNfZGV2LT5tc2dfZXJyID09IEky
-Q19FUlJfQVJCSVRSQVRJT05fTE9TVCkgew0KPiAgICAgICAgICAgICAgICAgaWYgKCFpMmNfZGV2
-LT5pc19tdWx0aW1hc3Rlcl9tb2RlKQ0KPg0KPg0KPiBXaGljaCBtZWFucyB0aGF0IEhXIHN0YXRl
-IGlzIGtlcHQgZGlydHkgYWZ0ZXIgRE1BIHRyYW5zZmVyLiBQbGVhc2UgY2hlY2sgZXZlcnl0aGlu
-ZyBjYXJlZnVsbHkuDQoNCkZJRk8gdHJpZ2dlciBsZXZlbHMgYXJlIGRpZmYgZm9yIFBJTyBWcyBE
-TUEgc28gaXQgbmVlZCB0byBiZSBtb3ZlZCB0byB4ZmVyIGZ1bmN0aW9uLiBXaWxsIGZpeCB0aGF0
-Lg0K
+On Wed, Jan 30, 2019 at 04:07:07PM +0100, Stefan Wahren wrote:
+> This adds RPM support to the pwm-fan driver in order to use with
+> fancontrol/pwmconfig. This feature is intended for 2 pulse-per-revolution
+> fans which provides a tachometer output signal.
+> 
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> ---
+>  drivers/hwmon/pwm-fan.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> index 9e0591e..731fdc6 100644
+> --- a/drivers/hwmon/pwm-fan.c
+> +++ b/drivers/hwmon/pwm-fan.c
+> @@ -18,6 +18,7 @@
+>  
+>  #include <linux/hwmon.h>
+>  #include <linux/hwmon-sysfs.h>
+> +#include <linux/interrupt.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  #include <linux/of.h>
+> @@ -26,13 +27,22 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/sysfs.h>
+>  #include <linux/thermal.h>
+> +#include <linux/timer.h>
+>  
+>  #define MAX_PWM 255
+> +#define SAMPLE_TIME		1 /* seconds */
+> +#define PULSE_PER_REVOLUTION	2
+>  
+>  struct pwm_fan_ctx {
+>  	struct mutex lock;
+>  	struct pwm_device *pwm;
+>  	struct regulator *reg_en;
+> +
+> +	int irq;
+> +	unsigned int pulses;
+> +	unsigned int rpm;
+> +	struct timer_list sample_timer;
+> +
+>  	unsigned int pwm_value;
+>  	unsigned int pwm_fan_state;
+>  	unsigned int pwm_fan_max_state;
+> @@ -40,6 +50,27 @@ struct pwm_fan_ctx {
+>  	struct thermal_cooling_device *cdev;
+>  };
+>  
+> +static irqreturn_t pulse_handler(int irq, void *dev_id)
+> +{
+> +	struct pwm_fan_ctx *ctx = dev_id;
+> +
+> +	if (ctx->pulses < INT_MAX / 2)
+> +		ctx->pulses++;
+
+Please explain the limit. With this code, the maximum number
+for pulses is INT_MAX / 2. The calculation below multiplies
+that with 60, which is well above UINT_MAX. Either use a 
+realistic limit or drop the if statement (it is kind of
+unlikely to get that many interrupts per second).
+
+> +
+> +	return IRQ_HANDLED;
+
+This assumes a self resetting edge triggered interrupt ?
+You might want to mention that somewhere.
+
+> +}
+> +
+> +static void sample_timer(struct timer_list *t)
+> +{
+> +	struct pwm_fan_ctx *ctx = from_timer(ctx, t, sample_timer);
+> +	unsigned int pulses;
+> +
+> +	pulses = ctx->pulses;
+> +	ctx->pulses -= pulses;
+
+This is racy; the substract operation is not atomic, and neither
+is the addition in the interrupt handler.
+
+> +	ctx->rpm = pulses * 60 / SAMPLE_TIME / PULSE_PER_REVOLUTION;
+
+The calculation assumes that sample_timer is called exactly after one
+second. Have to tested how much variation this causes on a loaded system ?
+
+> +	mod_timer(&ctx->sample_timer, jiffies + (HZ * SAMPLE_TIME));
+> +}
+> +
+>  static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+>  {
+>  	unsigned long period;
+> @@ -100,11 +131,20 @@ static ssize_t pwm_show(struct device *dev, struct device_attribute *attr,
+>  	return sprintf(buf, "%u\n", ctx->pwm_value);
+>  }
+>  
+> +static ssize_t rpm_show(struct device *dev,
+> +			struct device_attribute *attr, char *buf)
+> +{
+> +	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
+> +
+> +	return sprintf(buf, "%u\n", ctx->rpm);
+> +}
+>  
+>  static SENSOR_DEVICE_ATTR_RW(pwm1, pwm, 0);
+> +static SENSOR_DEVICE_ATTR_RO(fan1_input, rpm, 0);
+>  
+>  static struct attribute *pwm_fan_attrs[] = {
+>  	&sensor_dev_attr_pwm1.dev_attr.attr,
+> +	&sensor_dev_attr_fan1_input.dev_attr.attr,
+
+This attribute is visible even if not supported, meaning it will
+report a fan speed of 0 rpm in that case. Please make the attribute
+conditional.
+
+>  	NULL,
+>  };
+>  
+> @@ -263,6 +303,19 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> +	timer_setup(&ctx->sample_timer, sample_timer, 0);
+> +
+> +	ctx->irq = platform_get_irq(pdev, 0);
+> +	if (ctx->irq >= 0) {
+> +		ret = devm_request_irq(&pdev->dev, ctx->irq, pulse_handler, 0,
+> +				       pdev->name, ctx);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "Can't get interrupt working.\n");
+> +			return ret;
+> +		}
+> +		mod_timer(&ctx->sample_timer, jiffies + (HZ * SAMPLE_TIME));
+> +	}
+> +
+>  	hwmon = devm_hwmon_device_register_with_groups(&pdev->dev, "pwmfan",
+>  						       ctx, pwm_fan_groups);
+>  	if (IS_ERR(hwmon)) {
+> @@ -304,6 +357,8 @@ static int pwm_fan_remove(struct platform_device *pdev)
+>  	struct pwm_fan_ctx *ctx = platform_get_drvdata(pdev);
+>  
+>  	thermal_cooling_device_unregister(ctx->cdev);
+> +	del_timer_sync(&ctx->sample_timer);
+> +
+>  	if (ctx->pwm_value)
+>  		pwm_disable(ctx->pwm);
+>  
