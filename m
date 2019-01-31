@@ -2,278 +2,126 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AC8C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4974C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BE7B2084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:39:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A823A20855
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbfAaIjC (ORCPT
+        id S1726798AbfAaIk2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:39:02 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40140 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725787AbfAaIjC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 03:39:02 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V8UTj0017399
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:39:01 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbu80f046-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:39:01 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 31 Jan 2019 08:38:58 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 08:38:48 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V8clRi8782276
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 08:38:48 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BF89342052;
-        Thu, 31 Jan 2019 08:38:46 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4515642042;
-        Thu, 31 Jan 2019 08:38:44 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 31 Jan 2019 08:38:44 +0000 (GMT)
-Date:   Thu, 31 Jan 2019 10:38:42 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, vbabka@suse.cz, riel@surriel.com,
-        sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
-        peterz@infradead.org, linux@armlinux.org.uk, robin.murphy@arm.com,
-        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
-        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
-        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-Subject: Re: [PATCHv2 1/9] mm: Introduce new vm_insert_range and
- vm_insert_range_buggy API
-References: <20190131030812.GA2174@jordon-HP-15-Notebook-PC>
+        Thu, 31 Jan 2019 03:40:28 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56072 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725797AbfAaIk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 03:40:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4B23FAFD2;
+        Thu, 31 Jan 2019 08:40:26 +0000 (UTC)
+Date:   Thu, 31 Jan 2019 09:40:25 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] livepatch: Handle failing allocation of shadow
+ variables in the selftest
+In-Reply-To: <20190130084603.bxm57h6wf47b45fs@pathway.suse.cz>
+Message-ID: <alpine.LSU.2.21.1901310936510.26726@pobox.suse.cz>
+References: <20190116161720.796-1-pmladek@suse.com> <20190116161720.796-3-pmladek@suse.com> <alpine.LSU.2.21.1901211311401.31573@pobox.suse.cz> <20190130084603.bxm57h6wf47b45fs@pathway.suse.cz>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131030812.GA2174@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19013108-0008-0000-0000-000002B93473
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013108-0009-0000-0000-000022253606
-Message-Id: <20190131083842.GE28876@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310068
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 08:38:12AM +0530, Souptick Joarder wrote:
-> Previouly drivers have their own way of mapping range of
-> kernel pages/memory into user vma and this was done by
-> invoking vm_insert_page() within a loop.
-> 
-> As this pattern is common across different drivers, it can
-> be generalized by creating new functions and use it across
-> the drivers.
-> 
-> vm_insert_range() is the API which could be used to mapped
-> kernel memory/pages in drivers which has considered vm_pgoff
-> 
-> vm_insert_range_buggy() is the API which could be used to map
-> range of kernel memory/pages in drivers which has not considered
-> vm_pgoff. vm_pgoff is passed default as 0 for those drivers.
-> 
-> We _could_ then at a later "fix" these drivers which are using
-> vm_insert_range_buggy() to behave according to the normal vm_pgoff
-> offsetting simply by removing the _buggy suffix on the function
-> name and if that causes regressions, it gives us an easy way to revert.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Suggested-by: Russell King <linux@armlinux.org.uk>
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> ---
->  include/linux/mm.h |  4 +++
->  mm/memory.c        | 81 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  mm/nommu.c         | 14 ++++++++++
->  3 files changed, 99 insertions(+)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 80bb640..25752b0 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2565,6 +2565,10 @@ unsigned long change_prot_numa(struct vm_area_struct *vma,
->  int remap_pfn_range(struct vm_area_struct *, unsigned long addr,
->  			unsigned long pfn, unsigned long size, pgprot_t);
->  int vm_insert_page(struct vm_area_struct *, unsigned long addr, struct page *);
-> +int vm_insert_range(struct vm_area_struct *vma, struct page **pages,
-> +				unsigned long num);
-> +int vm_insert_range_buggy(struct vm_area_struct *vma, struct page **pages,
-> +				unsigned long num);
->  vm_fault_t vmf_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
->  			unsigned long pfn);
->  vm_fault_t vmf_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
-> diff --git a/mm/memory.c b/mm/memory.c
-> index e11ca9d..0a4bf57 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1520,6 +1520,87 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
->  }
->  EXPORT_SYMBOL(vm_insert_page);
-> 
-> +/**
-> + * __vm_insert_range - insert range of kernel pages into user vma
-> + * @vma: user vma to map to
-> + * @pages: pointer to array of source kernel pages
-> + * @num: number of pages in page array
-> + * @offset: user's requested vm_pgoff
-> + *
-> + * This allows drivers to insert range of kernel pages they've allocated
-> + * into a user vma.
-> + *
-> + * If we fail to insert any page into the vma, the function will return
-> + * immediately leaving any previously inserted pages present.  Callers
-> + * from the mmap handler may immediately return the error as their caller
-> + * will destroy the vma, removing any successfully inserted pages. Other
-> + * callers should make their own arrangements for calling unmap_region().
-> + *
-> + * Context: Process context.
-> + * Return: 0 on success and error code otherwise.
-> + */
-> +static int __vm_insert_range(struct vm_area_struct *vma, struct page **pages,
-> +				unsigned long num, unsigned long offset)
-> +{
-> +	unsigned long count = vma_pages(vma);
-> +	unsigned long uaddr = vma->vm_start;
-> +	int ret, i;
-> +
-> +	/* Fail if the user requested offset is beyond the end of the object */
-> +	if (offset > num)
-> +		return -ENXIO;
-> +
-> +	/* Fail if the user requested size exceeds available object size */
-> +	if (count > num - offset)
-> +		return -ENXIO;
-> +
-> +	for (i = 0; i < count; i++) {
-> +		ret = vm_insert_page(vma, uaddr, pages[offset + i]);
-> +		if (ret < 0)
-> +			return ret;
-> +		uaddr += PAGE_SIZE;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * vm_insert_range - insert range of kernel pages starts with non zero offset
-> + * @vma: user vma to map to
-> + * @pages: pointer to array of source kernel pages
-> + * @num: number of pages in page array
-> + *
-> + * Maps an object consisting of `num' `pages', catering for the user's
-> + * requested vm_pgoff
-> + *
+On Wed, 30 Jan 2019, Petr Mladek wrote:
 
-The elaborate description you've added to __vm_insert_range() is better put
-here, as this is the "public" function.
-
-> + * Context: Process context. Called by mmap handlers.
-> + * Return: 0 on success and error code otherwise.
-> + */
-> +int vm_insert_range(struct vm_area_struct *vma, struct page **pages,
-> +				unsigned long num)
-> +{
-> +	return __vm_insert_range(vma, pages, num, vma->vm_pgoff);
-> +}
-> +EXPORT_SYMBOL(vm_insert_range);
-> +
-> +/**
-> + * vm_insert_range_buggy - insert range of kernel pages starts with zero offset
-> + * @vma: user vma to map to
-> + * @pages: pointer to array of source kernel pages
-> + * @num: number of pages in page array
-> + *
-> + * Maps a set of pages, always starting at page[0]
-
-Here I'd add something like:
-
-Similar to vm_insert_range(), except that it explicitly sets @vm_pgoff to
-0. This function is intended for the drivers that did not consider
-@vm_pgoff.
-
-> vm_insert_range_buggy() is the API which could be used to map
-> range of kernel memory/pages in drivers which has not considered
-> vm_pgoff. vm_pgoff is passed default as 0 for those drivers.
-
-> + *
-> + * Context: Process context. Called by mmap handlers.
-> + * Return: 0 on success and error code otherwise.
-> + */
-> +int vm_insert_range_buggy(struct vm_area_struct *vma, struct page **pages,
-> +				unsigned long num)
-> +{
-> +	return __vm_insert_range(vma, pages, num, 0);
-> +}
-> +EXPORT_SYMBOL(vm_insert_range_buggy);
-> +
->  static vm_fault_t insert_pfn(struct vm_area_struct *vma, unsigned long addr,
->  			pfn_t pfn, pgprot_t prot, bool mkwrite)
->  {
-> diff --git a/mm/nommu.c b/mm/nommu.c
-> index 749276b..21d101e 100644
-> --- a/mm/nommu.c
-> +++ b/mm/nommu.c
-> @@ -473,6 +473,20 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
->  }
->  EXPORT_SYMBOL(vm_insert_page);
+> On Mon 2019-01-21 13:14:38, Miroslav Benes wrote:
+> > Hi,
+> > 
+> > On Wed, 16 Jan 2019, Petr Mladek wrote:
+> > 
+> > > Do not dereference pointers to the shadow variables when either
+> > > klp_shadow_alloc() or klp_shadow_get() fail.
+> > 
+> > I may misunderstand the patch, so bear with me, please. Is this because of 
+> > a possible null pointer dereference? If yes, shouldn't this say rather 
+> > "when both klp_shadow_alloc() and klp_shadow_get() fail"?
 > 
-> +int vm_insert_range(struct vm_area_struct *vma, struct page **pages,
-> +			unsigned long num)
-> +{
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL(vm_insert_range);
-> +
-> +int vm_insert_range_buggy(struct vm_area_struct *vma, struct page **pages,
-> +				unsigned long num)
-> +{
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL(vm_insert_range_buggy);
-> +
->  /*
->   *  sys_brk() for the most part doesn't need the global kernel
->   *  lock, except when an application is doing something nasty
-> -- 
-> 1.9.1
+> Well, klp_shadow_get() could fail also from other reasons if there is
+> a bug in the implementation.
+
+Yes, but I meant that if only klp_shadow_alloc() or klp_shadow_get() 
+failed, it would be caught by ret == sv1 comparison and you would not need 
+to add checking of ret at the beginning.
+ 
+> > > There is no need to check the other locations explicitly. The test
+> > > would fail if any allocation fails. And the existing messages, printed
+> > > during the test, provide enough information to debug eventual problems.
 > 
+> Heh, this is actually the reason why I did not add the check
+> for shadow_alloc(). Any error would be detected later
+> with klp_shadow_get() calls that should get tested anyway.
+> 
+> Hmm, when I think about it. A good practice is to handle
+> klp_shadow_allow() or klp_shadow_get() failures immediately.
+> After all, it is the sample code that people might follow.
 
--- 
-Sincerely yours,
-Mike.
+I think so. 
 
+> > > Signed-off-by: Petr Mladek <pmladek@suse.com>
+> > > ---
+> > >  lib/livepatch/test_klp_shadow_vars.c | 8 ++++----
+> > >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/lib/livepatch/test_klp_shadow_vars.c b/lib/livepatch/test_klp_shadow_vars.c
+> > > index 02f892f941dc..55e6820430dc 100644
+> > > --- a/lib/livepatch/test_klp_shadow_vars.c
+> > > +++ b/lib/livepatch/test_klp_shadow_vars.c
+> > > @@ -162,15 +162,15 @@ static int test_klp_shadow_vars_init(void)
+> > >  	 * to expected data.
+> > >  	 */
+> > >  	ret = shadow_get(obj, id);
+> > > -	if (ret == sv1 && *sv1 == &var1)
+> > > +	if (ret && ret == sv1 && *sv1 == &var1)
+> > >  		pr_info("  got expected PTR%d -> PTR%d result\n",
+> > >  			ptr_id(sv1), ptr_id(*sv1));
+> > >  	ret = shadow_get(obj + 1, id);
+> > > -	if (ret == sv2 && *sv2 == &var2)
+> > > +	if (ret && ret == sv2 && *sv2 == &var2)
+> > >  		pr_info("  got expected PTR%d -> PTR%d result\n",
+> > >  			ptr_id(sv2), ptr_id(*sv2));
+> > >  	ret = shadow_get(obj, id + 1);
+> > > -	if (ret == sv3 && *sv3 == &var3)
+> > > +	if (ret && ret == sv3 && *sv3 == &var3)
+> > >  		pr_info("  got expected PTR%d -> PTR%d result\n",
+> > >  			ptr_id(sv3), ptr_id(*sv3));
+> > 
+> > There is one more similar site calling shadow_get(obj, id + 1) which is 
+> > fixed.
+> 
+> Heh, I think that I did not add the check there on purpose.
+> If we are here, shadow_get(obj, id + 1) must have already succeeded
+> above.
+
+Yes, but if it failed, you would not notice. The message would not be 
+printed and that's all. So it is possible to run into the same problematic 
+error condition here.
+
+> But it is a bad practice. We should always check the output.
+> I'll do so in v2.
+
+Agreed.
+
+Miroslav
