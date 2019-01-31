@@ -2,175 +2,157 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E92C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA1AC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE5B320869
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB69E20869
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:07:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="coTzZoRN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387526AbfAaOFO (ORCPT
+        id S2387583AbfAaOG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 09:05:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60500 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727237AbfAaOFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 09:05:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C863EAF28;
-        Thu, 31 Jan 2019 14:05:11 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id C8822DA832; Thu, 31 Jan 2019 15:04:36 +0100 (CET)
-Date:   Thu, 31 Jan 2019 15:04:36 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     dsterba@suse.cz, David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/11] btrfs: add zstd compression level support
-Message-ID: <20190131140436.GD2900@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Dennis Zhou <dennis@kernel.org>,
-        David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
-        Chris Mason <clm@fb.com>, Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190128212437.11597-1-dennis@kernel.org>
- <20190129171830.GP2900@twin.jikos.cz>
- <20190130174059.GA18660@dennisz-mbp>
+        Thu, 31 Jan 2019 09:06:59 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39357 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727452AbfAaOG6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 09:06:58 -0500
+Received: by mail-pf1-f196.google.com with SMTP id r136so1516377pfc.6;
+        Thu, 31 Jan 2019 06:06:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PBGHXxo/4xPfjZbhM7pmhohV6uZrEQUB7ZW4IVLGDTc=;
+        b=coTzZoRNkCRz/0RDKPLEWOG0A71WsZCLBU1RFm1ljIDyMVSpTEjChe94xH6Hnd2une
+         t2G8l5jHslsLGNQn1umD+WMg9IZA2QkiLWmBLq66HGiJ2EKnorTjuLgfoUMFqRz1Ea0f
+         +gc56lF2dQXou1fUvkmpXUE1l/sJBo2R93VLkbsBKvL/6tEtgtk+lwk0scenCQ8MgWHI
+         ACXRGzSKnxxgKZ93ct/nu+Kx/lf+c8XTxyPbXi+TcP5brgzYWakzqVf61VOCdM1U27iC
+         DvRAMwjs0OcWKe/lBESLufKnQqBgLQSr3OHu0boE+dwaK3bk4QmYZ4vwh3FOHBASKPkN
+         ZtiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PBGHXxo/4xPfjZbhM7pmhohV6uZrEQUB7ZW4IVLGDTc=;
+        b=RGPFTu4u/eXSjaKvUNlTy/GHQjdJB8Unqtis5diYr1KfRUAO23U4yvaB9Du18CsK1+
+         Utbnmkp4QZDB5Tsy9B0hl+FboZcbMHkvtWq3PLb6cJvG8m4Kb4noNGQjrKk1pBOyIHJx
+         vwpHS+hDdXnEWbJWxJ5YTkjuzCsn4OE0G1eaGjlD2Uw138Vyeg8Xo1g5JfyC5l2sohct
+         C9xvI4aEPm4biOAwQ1JkKMWs1UYib5Wd1dF6bP3+Fut2/RwY5NvVAiNT1gDhw4Bo0vFK
+         hpCWr5egxWRtB+UusjNKmT4j81ZVBJsqXpsK2RcY1E1jI0JKo2+Up9uKLIj2mfsTE8cf
+         KRdg==
+X-Gm-Message-State: AJcUukdPcbYooEG00qSPw/EJ33WTrW9tpH8SMa4xCxnVivdTeAMMlXPR
+        GTPITpxdpfCvMdmIGHRQsAFIxmof
+X-Google-Smtp-Source: ALg8bN5LJ6rHaTMIQBvXKC3WRtYEEi2AHDaVVT/B72dOwB57plY2AibkSIl2DZ0EcGX8RRPmo0VAow==
+X-Received: by 2002:a63:da45:: with SMTP id l5mr31904863pgj.111.1548943617197;
+        Thu, 31 Jan 2019 06:06:57 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id r4sm21164983pgn.54.2019.01.31.06.06.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 06:06:55 -0800 (PST)
+Subject: Re: [PATCH V7 3/5] i2c: tegra: Add DMA Support
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
+ <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
+ <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
+ <20190131120640.GF23438@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0e832fa6-f143-7b24-2685-b88a55e77e51@gmail.com>
+Date:   Thu, 31 Jan 2019 17:06:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190130174059.GA18660@dennisz-mbp>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <20190131120640.GF23438@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 12:40:59PM -0500, Dennis Zhou wrote:
-> Hi David,
+31.01.2019 15:06, Thierry Reding пишет:
+> On Thu, Jan 31, 2019 at 03:05:48AM +0300, Dmitry Osipenko wrote:
+>> 30.01.2019 19:01, Sowjanya Komatineni пишет:
+> [...]
+>>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> [...]
+>>> +		return -EIO;
+>>> +	}
+>>> +
+>>> +	dma_desc->callback = tegra_i2c_dma_complete;
+>>> +	dma_desc->callback_param = i2c_dev;
+>>> +	dmaengine_submit(dma_desc);
+>>> +	dma_async_issue_pending(chan);
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +static int tegra_i2c_init_dma_param(struct tegra_i2c_dev *i2c_dev,
+>>> +				    bool dma_to_memory)
+>>> +{
+>>> +	struct dma_chan *dma_chan;
+>>> +	u32 *dma_buf;
+>>> +	dma_addr_t dma_phys;
+>>> +	int ret;
+>>> +	const char *chan_name = dma_to_memory ? "rx" : "tx";
+>>
+>> What about to move out chan_name into the function arguments?
 > 
-> On Tue, Jan 29, 2019 at 06:18:30PM +0100, David Sterba wrote:
-> > On Mon, Jan 28, 2019 at 04:24:26PM -0500, Dennis Zhou wrote:
-> > > As mentioned above, a requirement that differs zstd from zlib is that
-> > > higher levels of compression require more memory. To manage this, each
-> > > compression level has its own queue of workspaces. A global LRU is used
-> > > to help with reclaim. To guarantee forward progress, a max level
-> > > workspace is preallocated and hidden from the LRU.
-> > 
-> > Here I'd like to bring up what was mentioned in previous iteration, the
-> > workspace sizes.
-> > 
-> > Level   Compression Memory
-> > 1       0.8 MB
-> > 2       1.0 MB
-> > 3       1.3 MB
-> > 4       0.9 MB
-> > 5       1.4 MB
-> > 6       1.5 MB
-> > 7       1.4 MB
-> > 8       1.8 MB
-> > 9       1.8 MB
-> > 10      1.8 MB
-> > 11      1.8 MB
-> > 12      1.8 MB
-> > 13      2.3 MB
-> > 14      2.6 MB
-> > 15      2.6 MB
-> > 
-> > and decompression needs memory of level 1. The sizes can be grouped
-> > together to say 3 sizes, I'm not sure that we'd really need 15 distinct
-> > workspaces. The reclaim mechanism helps, but I'd rather keep a smaller
-> > number of workspaces that covers average use.
-> > 
-> > Default level is 3, that's 1.3 MiB, that also covers level 1, 2 and 4.
-> > For 5 to 12 it's 1.8 and the rest is 2.6 MiB.
-> > 
+> That opens up the possibility of passing dma_to_memory = true and
+> chan_name as "tx" and create an inconsistency.
 > 
-> I realize the current implementation doesn't have a monotonic memory
-> requirement guarantee. I've added that, and below is updated memory
-> requirements per level. I've updated the commit to include this too.
+>>> @@ -884,6 +1187,8 @@ static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
+>>>  
+>>>  	i2c_dev->is_multimaster_mode = of_property_read_bool(np,
+>>>  			"multi-master");
+>>> +
+>>> +	i2c_dev->has_dma = of_property_read_bool(np, "dmas");
+>>
+>> Not only the existence of "dmas" property defines whether DMA is available. DMA subsystem could be disabled in the kernels configuration.
+>>
+>> Hence there is a need to check for DMA driver presence in the code:
+>>
+>> 	if (IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
+>> 		i2c_dev->has_dma = of_property_read_bool(np, "dmas");
 > 
-> Level     Memory (KB)
-> 1            780 
-> 2           1004
-> 3           1260
-> 4           1260
-> 5           1388
-> 6           1516
-> 7           1516
-> 8           1772
-> 9           1772
-> 10          1772
-> 11          1772
-> 12          1772
-> 13          2284
-> 14          2547
-> 15          2547
+> Do we even need the ->has_dma at all? We can just go ahead and request
+> the channels at probe time and respond accordingly. If there's no dmas
+> property in DT, dma_request_slave_channel_reason() returns an error so
+> we can just deal with it at that time.
 > 
-> > > btrfs filesystem 10 times and then read back after dropping the caches.
-> > > The btrfs filesystem was on an SSD.
-> > > 
-> > > Level   Ratio   Compression (MB/s)  Decompression (MB/s)
-> > > 1       2.658        438.47                910.51
-> > > 2       2.744        364.86                886.55
-> > > 3       2.801        336.33                828.41
-> > > 4       2.858        286.71                886.55
-> > > 5       2.916        212.77                556.84
-> > > 6       2.363        119.82                990.85
-> > > 7       3.000        154.06                849.30
-> > > 8       3.011        159.54                875.03
-> > > 9       3.025        100.51                940.15
-> > > 10      3.033        118.97                616.26
-> > > 11      3.036         94.19                802.11
-> > > 12      3.037         73.45                931.49
-> > > 13      3.041         55.17                835.26
-> > > 14      3.087         44.70                716.78
-> > > 15      3.126         37.30                878.84
-> > 
-> > From my casual user's perspective, I'd use the level 1 for speed, 7 for
-> > better ratio and 15 for the best compression. Anything else does not
-> > look good, though the results would vary based on the data set. I
-> > assume that the silesia corpus serves as a good approximation of the
-> > worst case average.
-> > 
-> > The levels 7-14 strike particularly obvious pattern: same ratio but the
-> > speed gets worse with each level. Taking the default level into account,
-> > (my) recommended levels would be 1, 3, 7, 15.
-> > 
+> So if we get -EPROBE_DEFER we can propagate that, for any other errors
+> we can simply fallback to PIO. Or perhaps we want to restrict fallback
+> to PIO for -ENODEV?
 > 
-> I do see why we want to limit the number of levels as the memory
-> requirements do kind of bucket themselves. But, this means when zstd
-> gets updated, we'd have to reevaluate the compression levels btrfs
-> supports. I'm not sure it's a great idea to have that dependency.
-> I imagine we could offer some level of guidance, but it really would be
-> up to the user to figure out what works best for them.
+> I wouldn't want to add an IS_ENABLED(CONFIG_TEGRA20_APB_DMA) in here.
+> The purpose of these subsystems it to abstract all of that away.
+> Otherwise we could just as well use custom APIs, if we're tying together
+> drivers in this way anyway.
 
-If it was not clear, I did not mean to have only 4 levels, keep all 15
-same as there are 9 for zlib. The guildelines would be desirable and I
-don't want to make decision for the user which level to pick. So we
-don't disagree.
+DMA API doesn't fully abstract the dependencies between drivers, hence I disagree.
 
-> The reclaim mechanism only keeps workspaces around if they are being
-> used by the appropriate level. So, the memory overhead is actively used
-> memory and if not, it is reclaimed after at most ~2 minutes later. I
-> also scan up before allocating a workspace, so that should help limit
-> the number of workspaces in circulation.
+>> Also Tegra I2C driver should select DMA driver in Kconfig to make DMA
+>> driver built-in when I2C driver is built-in:
+> 
+> I don't think there's a requirement for that. The only dependency we
+> really have here is the one on the DMA engine API. Since dmaengine.h
+> already provides dummy implementations, there's really no need for
+> us to have the dependency. If the DMA engine API is completely disabled,
+> a call to dma_request_slave_channel_reason() will return -ENODEV and we
+> should just deal with that the same way we would if there was no "dmas"
+> property present.
 
-We'd need to observe that in practice before doing refinements, simpler
-logic is better for the start.
+In my opinion it is much better to avoid I2C driver probe failing with -EPROBE_DEFER if we could. It's just one line in code and one in Kconfig.. really. 
 
-There's some penalty caused by the allocation if there are no workspaces
-at all, as the amount of memory is quite large for kernel.
-This could stress the memory subsystem also because the memory has to be
-either contiguous or vmalloced. As the memory is released soon, all the
-work might need to be done again and again. So, more than one
-preallocated workspace could be good but the number of levels does not
-make it easy to choose which one.
+Good point about handling -ENODEV of dma_request_slave_channel_reason(), +1 for it.
