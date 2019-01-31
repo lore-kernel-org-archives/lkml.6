@@ -2,193 +2,97 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056D6C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3562DC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D122D2087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:26:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 105A5218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:27:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aCIt3mQd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oyVleIXc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731397AbfAaH0h (ORCPT
+        id S1731421AbfAaH12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:26:37 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:32858 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726543AbfAaH0g (ORCPT
+        Thu, 31 Jan 2019 02:27:28 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:40328 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726543AbfAaH12 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:26:36 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so1107650plo.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 23:26:36 -0800 (PST)
+        Thu, 31 Jan 2019 02:27:28 -0500
+Received: by mail-it1-f196.google.com with SMTP id h193so2475110ita.5;
+        Wed, 30 Jan 2019 23:27:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UnrYeubApCq/+0X7gGe4NXl9ZaHuao0U3/2CArPUokc=;
-        b=aCIt3mQd6UL5e+OqkpGMLrqT6JTN9FEoEs4eXoSzVyjDr6l8jRas7N+dCEKaK05CHj
-         7Mrspf4epo0lt+rfkMIhJS7h/5F5sQtivF5jKbmVyewgH+Wj8tEc6uz2Dqr7MG3PoOL5
-         svxZDzC4C6LS6unq34KyrnJZ0XZ/+SHBMyF3k=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/eCYAkvyeadpqPRlU1R0w7M++z7FL/w1/uEMj/8FkFE=;
+        b=oyVleIXcEVhJsz1SCvyKrbwpazPyieCcqWIM4J66mf8DPjuzYOCgk3PSL59N50ORej
+         gUPTopV18FLtF1JHAY++ZEU8p6j3g4tX4hQEuX+G1CoPEw/pDxGfSccUm5tgHi27w5aS
+         BPCXFoXJeijOakEqzSU+Qv78s/MAUjkDn+E4fsVInLvuoC7b/R+a1AcxNgXqEvsBfneo
+         M673h5sZ5pHdSSdIxWmcHqgdOelCI39RfOM2kYsLAXjzq1GQobetwUTPZL6topeotkwW
+         ak0X3keg70k4cgZrMg4ix2GeEQaPcQudnp73Ct5fxrhhszU+OgpQFSqsgVVYSOFFzu56
+         iPpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UnrYeubApCq/+0X7gGe4NXl9ZaHuao0U3/2CArPUokc=;
-        b=Q1zL+3ppnbZijg2dZj2G6Pm+dhZcpGRUSPjHiOrf09Netny89sWdEgtIhREHifke0g
-         oCdBgrQrh3KoU5vKm9CfCeT1AxcEJ4gL74h2NJFP92WnbdKz/AEs/KlXuvwrvpAUl4P9
-         Ad4QpzdBSlqXdH6edoAPmKL57G8lzKFDaru3/br0j8mRIZVSPoe4rLIM5yCkNF0pUbSe
-         FRBQzVnS5cAwN7PugxSDOc4yxpRiC3RrsQ4YY2d/+5vb0BpFV8UKm0h8SVGOk42yTsbL
-         Zym5BEt+rwVAslmK8pw59A4nBHys/OIP/b2zaLkT0HWLiQK+ELdSF6owOtyg8ZUWCsDa
-         jQkg==
-X-Gm-Message-State: AJcUukeReIDshOI37saTc6mQB+rVTGwy1XRjJpmplZbXZOu3PLz8FMGQ
-        d2VQf+R6QuTZ3xU4RWPukCUlQw==
-X-Google-Smtp-Source: ALg8bN5Yu2fhJvbbNMdhN2xDmQJK0Q2QimJ2AuBY9WHuBzUGxKsYmBZGYc6+I9/YZ4NSSwl9aATViw==
-X-Received: by 2002:a17:902:4025:: with SMTP id b34mr34117301pld.181.1548919595981;
-        Wed, 30 Jan 2019 23:26:35 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id p77sm7546037pfi.85.2019.01.30.23.26.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 23:26:35 -0800 (PST)
-Date:   Thu, 31 Jan 2019 12:56:33 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     sudeep.holla@arm.com, rjw@rjwysocki.net, nm@ti.com,
-        sboyd@kernel.org, mka@chromium.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dietmar.eggemann@arm.com
-Subject: Re: [PATCH v2 1/5] PM / OPP: Introduce a power estimation helper
-Message-ID: <20190131072633.bcqc75s6jmyt7fgx@vireshk-i7>
-References: <20190130170506.20450-1-quentin.perret@arm.com>
- <20190130170506.20450-2-quentin.perret@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/eCYAkvyeadpqPRlU1R0w7M++z7FL/w1/uEMj/8FkFE=;
+        b=kUZfCHQqxbBiQbiFNOvLgolGkjvRIAs/dWh/tG/csTtW7524eIoyagV63fByPutUed
+         Boj/lDM8dBzCbE4wAUf4Wm6t/92UipYqBrPA0UExN/qgRdNy9igvL70A83F++TQIep5o
+         p0fbl8IHe5B7ZmjA+KhoIgVnJYh3ZfbEdXshz08+uAklTAb32hvDOevtk+DBXLJPTOTn
+         yzXyzfmTUpf6rprhqeJiWaZS3TFaHHhYCd8rNFPFrt7XSIW+ZkwXdJeA4fsv803vLbNq
+         8NtRXctDdQ2CYNnOvcwTEmwQiRaUX3SpC/61Ph5bwzP6TOWhMvNhYfmlym8OIjT3n0JH
+         8q5A==
+X-Gm-Message-State: AHQUAuaiWfxTvZSF7I5fECAUP9ajq1+V1rwpGwzv328wd0r77Cpb9aQO
+        iWUon7FZ06w+AUOuiTLUZ5p6Hca+gKz/WiPk65Q=
+X-Google-Smtp-Source: AHgI3IYqEIxysIWWuLWpPnLi6EfEBbGyUppFOr77z5GO73Avwq5q9HOyHVDmMP8epfUbdagI6H3MAZANjNvC+YK4QsU=
+X-Received: by 2002:a24:9b87:: with SMTP id o129mr3966987itd.128.1548919647379;
+ Wed, 30 Jan 2019 23:27:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190130170506.20450-2-quentin.perret@arm.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+References: <1548853196-11447-1-git-send-email-aisheng.dong@nxp.com>
+ <1548853196-11447-4-git-send-email-aisheng.dong@nxp.com> <1548854523.6869.25.camel@pengutronix.de>
+In-Reply-To: <1548854523.6869.25.camel@pengutronix.de>
+From:   Dong Aisheng <dongas86@gmail.com>
+Date:   Thu, 31 Jan 2019 15:27:16 +0800
+Message-ID: <CAA+hA=RMjER6v3u4GzvCiOEJXJyBrpVed7KWUJPGQKhZvne0AQ@mail.gmail.com>
+Subject: Re: [PATCH V2 3/4] irq: imx-irqsteer: change to use reg_num instead
+ of irq_group
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30-01-19, 17:05, Quentin Perret wrote:
-> +static int __maybe_unused _get_cpu_power(unsigned long *mW, unsigned long *kHz,
-> +					 int cpu)
-> +{
-> +	struct device *cpu_dev;
-> +	struct dev_pm_opp *opp;
-> +	struct device_node *np;
-> +	unsigned long mV, Hz;
-> +	u32 cap;
-> +	u64 tmp;
-> +	int ret;
-> +
-> +	cpu_dev = get_cpu_device(cpu);
-> +	if (!cpu_dev)
-> +		return -ENODEV;
-> +
-> +	np = of_node_get(cpu_dev->of_node);
-> +	if (!np)
-> +		return -EINVAL;
-> +
-> +	ret = of_property_read_u32(np, "dynamic-power-coefficient", &cap);
-> +	of_node_put(np);
-> +	if (ret)
-> +		return -EINVAL;
-> +
-> +	Hz = *kHz * 1000;
-> +	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &Hz);
-> +	if (IS_ERR(opp))
-> +		return -EINVAL;
-> +
-> +	mV = dev_pm_opp_get_voltage(opp) / 1000;
+On Wed, Jan 30, 2019 at 9:23 PM Lucas Stach <l.stach@pengutronix.de> wrote:
+[...]
+> > > +   /* one register bit map represents 32 input interrupts */
+> > > +   data->reg_num /= 32;
+> > +
+> > >     if (IS_ENABLED(CONFIG_PM_SLEEP)) {
+> > >             data->saved_reg = devm_kzalloc(&pdev->dev,
+> > > -                                   sizeof(u32) * data->irq_groups * 2,
+> > > +                                   sizeof(u32) * data->reg_num,
+> >                                       GFP_KERNEL);
+>
+> Does this last parameter now fit on the line above?
+>
 
-The voltage is also stored as triplet now a days and we must consider
-the higher value for these calculations. Also what about the case of
-multiple regulators here or performance-states ?
+No, 81 now. :)
 
-> +	dev_pm_opp_put(opp);
-> +	if (!mV)
-> +		return -EINVAL;
-> +
-> +	tmp = (u64)cap * mV * mV * (Hz / 1000000);
-> +	do_div(tmp, 1000000000);
-> +
-> +	*mW = (unsigned long)tmp;
-
-I was thinking will it be better if we just save this information in
-opp->power field during init, so we can just read a value here
-instead. But I am still not sure :(
-
-> +	*kHz = Hz / 1000;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * dev_pm_opp_of_register_em() - Attempt to register an Energy Model
-> + * @cpus	: CPUs for which an Energy Model has to be registered
-> + * @nr_opp	: Number of OPPs to register in the Energy Model
-> + *
-> + * This checks whether the "dynamic-power-coefficient" devicetree binding has
-> + * been specified, and tries to register an Energy Model with it if it has.
-> + */
-> +void dev_pm_opp_of_register_em(struct cpumask *cpus, int nr_opp)
-> +{
-> +	struct em_data_callback em_cb = EM_DATA_CB(_get_cpu_power);
-> +	int ret, cpu = cpumask_first(cpus);
-> +	struct device *cpu_dev;
-> +	struct device_node *np;
-> +	u32 cap;
-> +
-> +	cpu_dev = get_cpu_device(cpu);
-> +	if (!cpu_dev)
-> +		return;
-> +
-> +	np = of_node_get(cpu_dev->of_node);
-> +	if (!np)
-> +		return;
-> +
-> +	/* Don't register an EM without the right DT binding */
-> +	ret = of_property_read_u32(np, "dynamic-power-coefficient", &cap);
-> +	of_node_put(np);
-> +	if (ret || !cap)
-> +		return;
-
-What if no voltage is supplied in DT ?
-
-> +
-> +	em_register_perf_domain(cpus, nr_opp, &em_cb);
-> +}
-> +EXPORT_SYMBOL_GPL(dev_pm_opp_of_register_em);
-> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-> index b895f4e79868..58ae08b024bd 100644
-> --- a/include/linux/pm_opp.h
-> +++ b/include/linux/pm_opp.h
-> @@ -327,6 +327,7 @@ int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpuma
->  struct device_node *dev_pm_opp_of_get_opp_desc_node(struct device *dev);
->  struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp);
->  int of_get_required_opp_performance_state(struct device_node *np, int index);
-> +void dev_pm_opp_of_register_em(struct cpumask *cpus, int nr_opp);
->  #else
->  static inline int dev_pm_opp_of_add_table(struct device *dev)
->  {
-> @@ -365,6 +366,11 @@ static inline struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp)
->  {
->  	return NULL;
->  }
-> +
-> +static inline void dev_pm_opp_of_register_em(struct cpumask *cpus, int nr_opp)
-> +{
-> +}
-> +
->  static inline int of_get_required_opp_performance_state(struct device_node *np, int index)
->  {
->  	return -ENOTSUPP;
-> -- 
-> 2.20.1
-
--- 
-viresh
+Regards
+Dong Aisheng
