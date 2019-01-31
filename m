@@ -2,113 +2,123 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAE4C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7656EC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F2E218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:07:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47E8C218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:07:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="PKFP6OYg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kaVku2eO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728082AbfAaSHI (ORCPT
+        id S1727989AbfAaSG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:07:08 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:43826 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727995AbfAaSG5 (ORCPT
+        Thu, 31 Jan 2019 13:06:56 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45922 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727957AbfAaSGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 13:06:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=H0Tis6IjbQNc+fhhasNQsHQgzjddKfbMGzHek0faQ9U=; b=PKFP6OYgLX+jlR/z6zZ4EXzp7
-        VAEvzL+1gPSG1X5mBhvxAQk+723N8YdpnSRBb7bLO73wXqVrzzVyuk4A+lJnr9vjapEkp9g/DXJwp
-        Elc3D4HTtekr/s0GewuRMy0xDlEOEtaxfslPw617o83plyoWmxTYIa5xFrlBYnXt0XxiM=;
-Received: from p5dcc395f.dip0.t-ipconnect.de ([93.204.57.95] helo=localhost)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gpGjf-0001J0-5k; Thu, 31 Jan 2019 19:06:47 +0100
-Received: from andi by localhost with local (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gpGje-0003mc-Cm; Thu, 31 Jan 2019 19:06:46 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Johan Hovold <johan@kernel.org>, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, letux-kernel@openphoenux.org,
-        tony@atomide.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        bcousson@baylibre.com, linux-omap@vger.kernel.org
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v3 2/2] arm: dts: gta04: add gps support
-Date:   Thu, 31 Jan 2019 19:06:40 +0100
-Message-Id: <20190131180640.14480-3-andreas@kemnade.info>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190131180640.14480-1-andreas@kemnade.info>
-References: <20190131180640.14480-1-andreas@kemnade.info>
+        Thu, 31 Jan 2019 13:06:55 -0500
+Received: by mail-ed1-f66.google.com with SMTP id d39so3305268edb.12;
+        Thu, 31 Jan 2019 10:06:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Spvj1aXjtPpiHKV6tIt1Dff7PW1cp6KBnnoKkHYDIwo=;
+        b=kaVku2eOA5PY99iDda5fa6jQcUgVZVErdLGHjsUrhm7dfj/uD2PlvQNh2qgZwD1qsX
+         xLoM2IxZp0UpHDFs8hRSVYRdc2ZLnXKa28ZVTaSCQZgOum+HWmRarE2v8p2oWDklOnC0
+         x8bnXg0XO09BBcPn8HuBYBnuWES7mqgZGKNZ3zQ7rVYuiE+JU7R2neSYa1U+yjvITQok
+         6Ql9VfWrox6aRlKfonQHzuGWRrjxZfep1sVl7dN/0bVfRHMQbadQpSinPMeZDSjm4ECj
+         0v/KVV8V95U4608BsUgi577OSncF8Vn4mpPvBsaXbhwL9BeDCxbwOHM3e+Pe+2sG9mxE
+         pdiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Spvj1aXjtPpiHKV6tIt1Dff7PW1cp6KBnnoKkHYDIwo=;
+        b=hn5vfq8Pr/2TnzA2LUc0ZJvqIrbL9e5oSlCnE0JG4v/kkJloldl6dHJjNs1bVG7LpH
+         Eu9EgJIi8EOeBXeQEFt4pWJGG0TUcZutXlD707inBKD0iwCjx7ySfK03iLvNccfHMrDM
+         WEhLQ3QCkUFGQgUdXsd6/deE0JFyTo35GTr3k+hSOTO2rxvBHWrXlqi4xDyITzubWYE/
+         65kM4VxPTVGAQOgr8hjmwknLHaAgNB1wFyLcGFz/WpPw/Rs7/7JRZvASRLouJAXcKIL4
+         1FMeSSGrxJtxbhUk9rB5zbL9jkt5Zz7omEq5y3YPjUd5PxwkfH+EGilAiiusXNn4xeAz
+         RAlQ==
+X-Gm-Message-State: AJcUukcSXju4zKcs3Dey0JPTedIkv85kHg9LYH0MAx4wEgod3+fo27MA
+        D6YMkWQ9I4tZ4FpxOo+1Jog=
+X-Google-Smtp-Source: ALg8bN6I044GGdctYhw7YLNI+sj6rT1xzCGad80eNZdVzssn4k/JWMMAsThg0pC4VzDabf3nextjgQ==
+X-Received: by 2002:aa7:c248:: with SMTP id y8mr34675650edo.205.1548958013470;
+        Thu, 31 Jan 2019 10:06:53 -0800 (PST)
+Received: from localhost.localdomain ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id e51sm1476890edd.35.2019.01.31.10.06.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 10:06:52 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vladimir Murzin <vladimir.murzin@arm.com>
+Cc:     Jiri Slaby <jslaby@suse.com>, Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] serial: mps2-uart: Add parentheses around conditional in mps2_uart_shutdown
+Date:   Thu, 31 Jan 2019 11:06:28 -0700
+Message-Id: <20190131180627.19944-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The GTA04 has a w2sg0004 or w2sg0084 gps chip. Not detectable
-which one is mounted so use the compatibility entry for w2sg0004
-for all which will work for both.
+Clang warns:
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+drivers/tty/serial/mps2-uart.c:351:6: warning: logical not is only
+applied to the left hand side of this bitwise operator
+[-Wlogical-not-parentheses]
+        if (!mps_port->flags & UART_PORT_COMBINED_IRQ) {
+            ^                ~
+drivers/tty/serial/mps2-uart.c:351:6: note: add parentheses after the
+'!' to evaluate the bitwise operator first
+        if (!mps_port->flags & UART_PORT_COMBINED_IRQ) {
+            ^
+             (                                       )
+drivers/tty/serial/mps2-uart.c:351:6: note: add parentheses around left
+hand side expression to silence this warning
+        if (!mps_port->flags & UART_PORT_COMBINED_IRQ) {
+            ^
+            (               )
+1 warning generated.
+
+As it was intended for this check to be the inverse of the one at the
+bottom of mps2_init_port, add parentheses around the whole conditional.
+
+Fixes: 775ea4ea2fd9 ("serial: mps2-uart: support combined irq")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
-Changes in v3:
-- converted to a patchset
-- added vcc-supply
+ drivers/tty/serial/mps2-uart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
-- some s/gps/gnss/
-- not added vcc-supply because the regulator is not modelled
-  in dts at all
-
-w2sg0004 bindings are in next-20190129
-
- arch/arm/boot/dts/omap3-gta04.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-index 02d8274a2f47..4ea0f7dc37c6 100644
---- a/arch/arm/boot/dts/omap3-gta04.dtsi
-+++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-@@ -320,6 +320,12 @@
- 		>;
-        };
+diff --git a/drivers/tty/serial/mps2-uart.c b/drivers/tty/serial/mps2-uart.c
+index 4404eb7d118f..587b42f754cb 100644
+--- a/drivers/tty/serial/mps2-uart.c
++++ b/drivers/tty/serial/mps2-uart.c
+@@ -348,7 +348,7 @@ static void mps2_uart_shutdown(struct uart_port *port)
  
-+	gps_pins: pinmux_gps_pins {
-+		pinctrl-single,pins = <
-+			OMAP3_CORE1_IOPAD(0x2176, PIN_OUTPUT_PULLDOWN | MUX_MODE4) /* gpio145 */
-+		>;
-+	};
-+
- 	hdq_pins: hdq_pins {
- 		pinctrl-single,pins = <
- 			OMAP3_CORE1_IOPAD(0x21c6, PIN_INPUT_PULLUP | MUX_MODE0) /* i2c3_sda.hdq */
-@@ -652,6 +658,14 @@
- &uart2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart2_pins>;
-+	gnss: gnss {
-+		compatible = "wi2wi,w2sg0004";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gps_pins>;
-+		sirf,onoff-gpios = <&gpio5 17 GPIO_ACTIVE_HIGH>;
-+		lna-supply = <&vsim>;
-+		vcc-supply = <&ldo_3v3>;
-+	};
- };
+ 	mps2_uart_write8(port, control, UARTn_CTRL);
  
- &uart3 {
+-	if (!mps_port->flags & UART_PORT_COMBINED_IRQ) {
++	if (!(mps_port->flags & UART_PORT_COMBINED_IRQ)) {
+ 		free_irq(mps_port->rx_irq, mps_port);
+ 		free_irq(mps_port->tx_irq, mps_port);
+ 	}
 -- 
-2.11.0
+2.20.1
 
