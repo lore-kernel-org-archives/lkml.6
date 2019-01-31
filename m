@@ -2,227 +2,132 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C855C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C65AC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19B02218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:11:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548918697;
-	bh=Heoxb3Sndt16o+bIMZrysz3EOcZIgyhkvTQAf76VTYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=t9yIkQQ9yMCD+CRhLNociWLOE4ScaVyKGQeQXomWb/AYSgfDVUhkXAZTJJ4VcdZ6v
-	 s0A5RAup8HOXzGA1cej/vbUstAgTRZ5wz4jdNwb6yihb9RshD2p0oh9E0h9i3aMI8G
-	 Cc8WaGDT4MQUgz50vPQUlz20NAL0KQaAU97CTdGE=
+	by mail.kernel.org (Postfix) with ESMTP id 63BD52087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:13:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MtFxrPn1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbfAaHLf (ORCPT
+        id S1730546AbfAaHN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:11:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43204 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725963AbfAaHLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:11:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B2B03AF51;
-        Thu, 31 Jan 2019 07:11:32 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 08:11:30 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
-        Yong-Taek Lee <ytk.lee@samsung.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mm, oom: Tolerate processes sharing mm with different
- view of oom_score_adj.
-Message-ID: <20190131071130.GM18811@dhcp22.suse.cz>
-References: <1547636121-9229-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20190116110937.GI24149@dhcp22.suse.cz>
- <88e10029-f3d9-5bb5-be46-a3547c54de28@I-love.SAKURA.ne.jp>
- <20190116121915.GJ24149@dhcp22.suse.cz>
- <6118fa8a-7344-b4b2-36ce-d77d495fba69@i-love.sakura.ne.jp>
- <20190116134131.GP24149@dhcp22.suse.cz>
- <20190117155159.GA4087@dhcp22.suse.cz>
- <edad66e0-1947-eb42-f4db-7f826d3157d7@i-love.sakura.ne.jp>
+        Thu, 31 Jan 2019 02:13:28 -0500
+Received: from ozlabs.org ([203.11.71.1]:32865 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725963AbfAaHN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 02:13:28 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43qs040yCQz9sDX;
+        Thu, 31 Jan 2019 18:13:24 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548918804;
+        bh=Sh+qWcZmCFTXDL4E2MTdKlxXnuDL5PJc0pFwnB2iMPs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MtFxrPn1Ru+WF6o5vmogBy7yYbHW8VbUFfU6X6AXkuuh3w0aE2hNAxj9b7Ro+YSfT
+         318tSdf8Xwb7GNIixvIuRuRMi4EYFEksSM3T8CvR5qGRR/cIeq6bfGVVe318aRv+Td
+         VM7609QVyz1opG2zl80ftvpo1Nw7PXQdiG+XEYpU4yYpzo4/gb/t9a6dZlUFW7SFJd
+         K5qKLpBMCLgyoFte3fyDrCBEw4MOFauUCnnvhxoxeABWquF0jTsUoRYuFr+YkXfzJe
+         0wrmu6Weyu1EnkF9XhRVJ46QzM3PpJmWQnTHNX0YW4dIv3K9VNp1awk1v72FjWB3sd
+         ffV786sXQ5qag==
+Date:   Thu, 31 Jan 2019 18:13:15 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: linux-next: powerpc le qemu boot failure after merge of the
+ akpm tree
+Message-ID: <20190131181315.7075054c@canb.auug.org.au>
+In-Reply-To: <20190131063930.GA28876@rapoport-lnx>
+References: <20190131163854.307e17ab@canb.auug.org.au>
+        <20190131170629.2cc20600@canb.auug.org.au>
+        <962e7dd7-779b-2c32-59db-9ced6751dede@c-s.fr>
+        <20190131063930.GA28876@rapoport-lnx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <edad66e0-1947-eb42-f4db-7f826d3157d7@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Begdjz6ZnAceTu6a=esW_K="; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 31-01-19 07:49:35, Tetsuo Handa wrote:
-> This patch reverts both commit 44a70adec910d692 ("mm, oom_adj: make sure
-> processes sharing mm have same view of oom_score_adj") and commit
-> 97fd49c2355ffded ("mm, oom: kill all tasks sharing the mm") in order to
-> close a race and reduce the latency at __set_oom_adj(), and reduces the
-> warning at __oom_kill_process() in order to minimize the latency.
-> 
-> Commit 36324a990cf578b5 ("oom: clear TIF_MEMDIE after oom_reaper managed
-> to unmap the address space") introduced the worst case mentioned in
-> 44a70adec910d692. But since the OOM killer skips mm with MMF_OOM_SKIP set,
-> only administrators can trigger the worst case.
-> 
-> Since 44a70adec910d692 did not take latency into account, we can "hold RCU
-> for minutes and trigger RCU stall warnings" by calling printk() on many
-> thousands of thread groups. Also, current code becomes a DoS attack vector
-> which will allow "stalling for more than one month in unkillable state"
-> simply printk()ing same messages when many thousands of thread groups
-> tried to iterate __set_oom_adj() on each other.
-> 
-> I also noticed that 44a70adec910d692 is racy [1], and trying to fix the
-> race will require a global lock which is too costly for rare events. And
-> Michal Hocko is thinking to change the oom_score_adj implementation to per
-> mm_struct (with shadowed score stored in per task_struct in order to
-> support vfork() => __set_oom_adj() => execve() sequence) so that we don't
-> need the global lock.
-> 
-> If the worst case in 44a70adec910d692 happened, it is an administrator's
-> request. Therefore, before changing the oom_score_adj implementation,
-> let's eliminate the DoS attack vector first.
+--Sig_/Begdjz6ZnAceTu6a=esW_K=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-This is really ridiculous. I have already nacked the previous version
-and provided two ways around. The simplest one is to drop the printk.
-The second one is to move oom_score_adj to the mm struct. Could you
-explain why do you still push for this?
+Hi Mike,
 
-> [1] https://lkml.kernel.org/r/20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: Yong-Taek Lee <ytk.lee@samsung.com>
-> Nacked-by: Michal Hocko <mhocko@suse.com>
-> ---
->  fs/proc/base.c     | 46 ----------------------------------------------
->  include/linux/mm.h |  2 --
->  mm/oom_kill.c      | 10 ++++++----
->  3 files changed, 6 insertions(+), 52 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 633a634..41ece8f 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1020,7 +1020,6 @@ static ssize_t oom_adj_read(struct file *file, char __user *buf, size_t count,
->  static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
->  {
->  	static DEFINE_MUTEX(oom_adj_mutex);
-> -	struct mm_struct *mm = NULL;
->  	struct task_struct *task;
->  	int err = 0;
->  
-> @@ -1050,55 +1049,10 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
->  		}
->  	}
->  
-> -	/*
-> -	 * Make sure we will check other processes sharing the mm if this is
-> -	 * not vfrok which wants its own oom_score_adj.
-> -	 * pin the mm so it doesn't go away and get reused after task_unlock
-> -	 */
-> -	if (!task->vfork_done) {
-> -		struct task_struct *p = find_lock_task_mm(task);
-> -
-> -		if (p) {
-> -			if (atomic_read(&p->mm->mm_users) > 1) {
-> -				mm = p->mm;
-> -				mmgrab(mm);
-> -			}
-> -			task_unlock(p);
-> -		}
-> -	}
-> -
->  	task->signal->oom_score_adj = oom_adj;
->  	if (!legacy && has_capability_noaudit(current, CAP_SYS_RESOURCE))
->  		task->signal->oom_score_adj_min = (short)oom_adj;
->  	trace_oom_score_adj_update(task);
-> -
-> -	if (mm) {
-> -		struct task_struct *p;
-> -
-> -		rcu_read_lock();
-> -		for_each_process(p) {
-> -			if (same_thread_group(task, p))
-> -				continue;
-> -
-> -			/* do not touch kernel threads or the global init */
-> -			if (p->flags & PF_KTHREAD || is_global_init(p))
-> -				continue;
-> -
-> -			task_lock(p);
-> -			if (!p->vfork_done && process_shares_mm(p, mm)) {
-> -				pr_info("updating oom_score_adj for %d (%s) from %d to %d because it shares mm with %d (%s). Report if this is unexpected.\n",
-> -						task_pid_nr(p), p->comm,
-> -						p->signal->oom_score_adj, oom_adj,
-> -						task_pid_nr(task), task->comm);
-> -				p->signal->oom_score_adj = oom_adj;
-> -				if (!legacy && has_capability_noaudit(current, CAP_SYS_RESOURCE))
-> -					p->signal->oom_score_adj_min = (short)oom_adj;
-> -			}
-> -			task_unlock(p);
-> -		}
-> -		rcu_read_unlock();
-> -		mmdrop(mm);
-> -	}
->  err_unlock:
->  	mutex_unlock(&oom_adj_mutex);
->  	put_task_struct(task);
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 80bb640..28879c1 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2690,8 +2690,6 @@ static inline int in_gate_area(struct mm_struct *mm, unsigned long addr)
->  }
->  #endif	/* __HAVE_ARCH_GATE_AREA */
->  
-> -extern bool process_shares_mm(struct task_struct *p, struct mm_struct *mm);
-> -
->  #ifdef CONFIG_SYSCTL
->  extern int sysctl_drop_caches;
->  int drop_caches_sysctl_handler(struct ctl_table *, int,
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index f0e8cd9..c7005b1 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -478,7 +478,7 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
->   * task's threads: if one of those is using this mm then this task was also
->   * using it.
->   */
-> -bool process_shares_mm(struct task_struct *p, struct mm_struct *mm)
-> +static bool process_shares_mm(struct task_struct *p, struct mm_struct *mm)
->  {
->  	struct task_struct *t;
->  
-> @@ -896,12 +896,14 @@ static void __oom_kill_process(struct task_struct *victim)
->  			continue;
->  		if (same_thread_group(p, victim))
->  			continue;
-> -		if (is_global_init(p)) {
-> +		if (is_global_init(p) ||
-> +		    p->signal->oom_score_adj == OOM_SCORE_ADJ_MIN) {
->  			can_oom_reap = false;
-> -			set_bit(MMF_OOM_SKIP, &mm->flags);
-> -			pr_info("oom killer %d (%s) has mm pinned by %d (%s)\n",
-> +			if (!test_bit(MMF_OOM_SKIP, &mm->flags))
-> +				pr_info("oom killer %d (%s) has mm pinned by %d (%s)\n",
->  					task_pid_nr(victim), victim->comm,
->  					task_pid_nr(p), p->comm);
-> +			set_bit(MMF_OOM_SKIP, &mm->flags);
->  			continue;
->  		}
->  		/*
-> -- 
-> 1.8.3.1
+On Thu, 31 Jan 2019 08:39:30 +0200 Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> On Thu, Jan 31, 2019 at 07:15:26AM +0100, Christophe Leroy wrote:
+> >=20
+> > Le 31/01/2019 =C3=A0 07:06, Stephen Rothwell a =C3=A9crit=C2=A0: =20
+> > >>My qemu boot of the powerpc pseries_le_defconfig config failed like t=
+his:
+> > >>
+> > >>htab_hash_mask    =3D 0x1ffff
+> > >>-----------------------------------------------------
+> > >>numa:   NODE_DATA [mem 0x7ffe7000-0x7ffebfff]
+> > >>Kernel panic - not syncing: sparse_buffer_init: Failed to allocate 21=
+47483648 bytes align=3D0x10000 nid=3D0 from=3Dfffffffffffffff =20
+>=20
+> This means that sparse_buffer_init tries to allocate 2G for the sparsemap=
+_buf...
+>=20
+> Stephen, how many memory do you give to your VM?
 
--- 
-Michal Hocko
-SUSE Labs
+Exactly 2G.
+
+     qemu-system-ppc64 -M pseries -m 2G ....
+
+The boot normally continue like this:
+
+    rfi-flush: fallback displacement flush available
+    count-cache-flush: software flush disabled.
+    stf-barrier: hwsync barrier available
+    PCI host bridge /pci@800000020000000  ranges:
+      IO 0x0000200000000000..0x000020000000ffff -> 0x0000000000000000
+     MEM 0x0000200080000000..0x00002000ffffffff -> 0x0000000080000000
+     MEM 0x0000210000000000..0x000021ffffffffff -> 0x0000210000000000
+    PPC64 nvram contains 65536 bytes
+    barrier-nospec: using ORI speculation barrier
+    Zone ranges:
+      Normal   [mem 0x0000000000000000-0x000000007fffffff]
+    Movable zone start for each node
+    Early memory node ranges
+      node   0: [mem 0x0000000000000000-0x000000007fffffff]
+    Initmem setup node 0 [mem 0x0000000000000000-0x000000007fffffff]
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Begdjz6ZnAceTu6a=esW_K=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxSoAsACgkQAVBC80lX
+0GxEMgf/VRv09NYFHoUPNG66k6XeBsetwQXhtNaX4Sml3GO6x2Dpr0tieVJTxc3L
+FHecP5pPqRrEnnopnwTQdVrXc0NY/SnJyYnailD3S+XqzhgxaefGye80tlwbHtNb
+Ww8mGnuTjQInOkwQQvma3DQpn37jotf7Rq8kLnAxu4UV3iMwk8rX4YFVc6/cnpQ4
+/U7Nr5eBN8TcDOozjlEYWzezGp+b2ow1pX2xYbHKn7EUzrG3L7usHbw0ZCTa15ON
+nee8do/07Z1KUxP7FAmac2u83+oWcR0cK3JcT4ODzQlBBsKZY5Z6q7irUI20CTKP
+ccafb4iTjc0/we1rdH670XqRUK0u0Q==
+=UW+q
+-----END PGP SIGNATURE-----
+
+--Sig_/Begdjz6ZnAceTu6a=esW_K=--
