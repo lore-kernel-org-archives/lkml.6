@@ -2,549 +2,162 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 350BAC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 931CDC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE861218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 590FC218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:53:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="KuHzHjN0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388700AbfAaQx3 (ORCPT
+        id S2388715AbfAaQxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:53:29 -0500
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:51413 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388687AbfAaQx3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:53:29 -0500
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from lsun@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 31 Jan 2019 18:53:17 +0200
-Received: from farm-0002.mtbu.labs.mlnx (farm-0002.mtbu.labs.mlnx [10.15.2.32])
-        by mtbu-labmailer.labs.mlnx (8.14.4/8.14.4) with ESMTP id x0VGrGdB026566;
-        Thu, 31 Jan 2019 11:53:16 -0500
-Received: (from lsun@localhost)
-        by farm-0002.mtbu.labs.mlnx (8.14.7/8.13.8/Submit) id x0VGrEnP012759;
-        Thu, 31 Jan 2019 11:53:14 -0500
+        Thu, 31 Jan 2019 11:53:33 -0500
+Received: from mail-eopbgr00051.outbound.protection.outlook.com ([40.107.0.51]:36635
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388687AbfAaQxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:53:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6PBIbp2JX8VrQQThHopKF9j70qgjvb+LiZ+OXraA3jc=;
+ b=KuHzHjN0apu8YUxFPjKgmxcyq1t9gaeFVJhMMHWaQiTp3l0AVB9rHxuSUdxMFpIhbAkni7/9WTI8gvKqC6duQXI2q5tFDa59oRXIIcB8381DZgaOuPVkAx0tyGTM8mJyfqfN0c3YSMsObTsu39RRO9Ponh90DP80Fx89sdS47zo=
+Received: from DB6PR05MB3223.eurprd05.prod.outlook.com (10.175.232.149) by
+ DB6PR05MB4518.eurprd05.prod.outlook.com (10.168.25.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.17; Thu, 31 Jan 2019 16:53:27 +0000
+Received: from DB6PR05MB3223.eurprd05.prod.outlook.com
+ ([fe80::d935:9a6c:c7a3:1320]) by DB6PR05MB3223.eurprd05.prod.outlook.com
+ ([fe80::d935:9a6c:c7a3:1320%2]) with mapi id 15.20.1580.017; Thu, 31 Jan 2019
+ 16:53:27 +0000
 From:   Liming Sun <lsun@mellanox.com>
-To:     Andy Shevchenko <andy@infradead.org>,
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Andy Shevchenko <andy@infradead.org>,
         Darren Hart <dvhart@infradead.org>,
         Vadim Pasternak <vadimp@mellanox.com>,
-        David Woods <dwoods@mellanox.com>
-Cc:     Liming Sun <lsun@mellanox.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] platform/mellanox: Add bootctl driver for Mellanox BlueField Soc
-Date:   Thu, 31 Jan 2019 11:53:07 -0500
-Message-Id: <1548953587-12719-1-git-send-email-lsun@mellanox.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <0b74e9ad12360b56bc0a3c2ca972798c424f2610.1548790896.git.lsun@mellanox.com>
+        David Woods <dwoods@mellanox.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v1 1/1] platform/mellanox: Add bootctl driver for Mellanox
+ BlueField Soc
+Thread-Topic: [PATCH v1 1/1] platform/mellanox: Add bootctl driver for
+ Mellanox BlueField Soc
+Thread-Index: AQHUuBWSgorN9Oha0kyXFJVXsER32KXGzLEAgAE3meCAAE3cgIABKbWg
+Date:   Thu, 31 Jan 2019 16:53:27 +0000
+Message-ID: <DB6PR05MB3223132246F702D41F7399ECA1910@DB6PR05MB3223.eurprd05.prod.outlook.com>
 References: <0b74e9ad12360b56bc0a3c2ca972798c424f2610.1548790896.git.lsun@mellanox.com>
+ <CAHp75VfpmBMmR_zU8JxN3Apb__QyWXyU9wD8e03z0N3TTRpMYg@mail.gmail.com>
+ <DB6PR05MB32230728A361BD68D14D7B69A1900@DB6PR05MB3223.eurprd05.prod.outlook.com>
+ <CAHp75VcsYsxSfUT6Sc9-59gXaQRXs0ugpPRAvAzFr2+DYJHeCg@mail.gmail.com>
+In-Reply-To: <CAHp75VcsYsxSfUT6Sc9-59gXaQRXs0ugpPRAvAzFr2+DYJHeCg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=lsun@mellanox.com; 
+x-originating-ip: [216.156.69.42]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB6PR05MB4518;6:pQVaVWbHRxFZf35GI7KZK9Eu2ibtv5GvDOrcKL+YeARhY8eJmxeXLafR1VJton0wu6bwjho0x7tu/uw6j5iGEslku/qfnjMInEhmoNQgVAJuiC5YHw+9nnrqPn4hAMWF6PrZi2mWC6zYTqlPmRGSLAZf2LTuWr+Zq6h0vCfxX9PK+wnOfcuCNnJkVMhK3zY/JvmR/5pQRZ0upa5rvXuqfVMbIKKODflqDPfpbmXN32MJisD4Wzipmn9NFJPFPyffF3oULZFyqSDmPDFCkqWkS1/BFcz2dFT+K7CZ0qZWU8FcIiKs04Wx3lm00S7NHjuIQdjQEr99mYXMKqW9Q3AZnIkMQCFoavk5JjMPYnpiTWydZw7cDbeV76Wjkre2MG2lMwiAqgEztkXMtL73F9EATYDAiJLFq/tEl6/tScvoH7W4dExMAz+k5Ed1GPsf0u9mHDw6xgdOcLB36httzqjbGw==;5:DVgq/xmOdU3rq3tqrEjgHmTWh0Kp/1yjRz/U5JCHy9kuX2xfmvez+xHaeEKFxFMCtwNsrZhyTjv9FsO+25FK3ENOuQbtOpcfqs/IVSLilAvJxrDILG/0lZc44qzCGDI58uAVlfgo62dgUVTQ9PDUUByna2A3TEi5C4xXaiSyc4kiCDJusHsnrEriwW7tnoEgIqLEjcV/wUw2+ntuVNmsjQ==;7:AAwPo3xC81zq+CLQJDNtrEw9PBDUCypAvtjIGDl7gx0ohVelAlCbcSPCVOPkCnZguDpWWsII8rDbYGmn6YgKKQaKepet7S/WzR+kqC2Gio2OgFX1Ej3h248GNSP4zQV5PqVItwGem1yuS29bcgA2zw==
+x-ms-office365-filtering-correlation-id: 7aa2ebcd-736f-4be4-70a1-08d6879c9f3f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR05MB4518;
+x-ms-traffictypediagnostic: DB6PR05MB4518:
+x-microsoft-antispam-prvs: <DB6PR05MB4518C70D230574CBBF1E68FFA1910@DB6PR05MB4518.eurprd05.prod.outlook.com>
+x-forefront-prvs: 09347618C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(39860400002)(396003)(346002)(13464003)(51914003)(199004)(189003)(106356001)(68736007)(86362001)(25786009)(476003)(39060400002)(54906003)(11346002)(105586002)(71200400001)(71190400001)(76176011)(99286004)(4326008)(33656002)(486006)(446003)(97736004)(102836004)(53546011)(6116002)(66066001)(7696005)(3846002)(316002)(26005)(186003)(6506007)(6916009)(7736002)(9686003)(81166006)(81156014)(6246003)(74316002)(93886005)(6436002)(8676002)(2906002)(55016002)(8936002)(305945005)(229853002)(53936002)(14454004)(478600001)(14444005)(256004)(21314003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR05MB4518;H:DB6PR05MB3223.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 61/JVzDtdYGVmDAeH4nfqWxXOSiXv+5CMWsqeXCa27W1Y8/kSsSpTo++QxnvR1/UNnNKnOoDvcQJ/2JW3sIbMuuurT695zmpBZL4pSBExdr75Yle98/yUgzGNP7cfmAwtptq4cYa4ORuGUXXopUwbPLjaSKZTFJd+7iRdHvtVU7EpGD8xhestty0P7FhyG1ZUf2zkptRiTIJGcu4ob4zzHF97VDeCDNgpiaZuAws7rBkpMVRtQOGnepOC5KbhR/mI4yRSZVcUMLg3Sjwj/B4y8hm6YhDdaGKa9/x+YvU969s1l1yoInal3N+JJxMRKZtulZdq8Vb07SMrHg0hcdLaQ/xTRcwG0OPVedAYJugZJfXlYNGmEbfoih8B5r9stEDfeEJdIUkhRNNSFQzynkyGYq5rUpiRk1GIFX2kNrQqIA=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7aa2ebcd-736f-4be4-70a1-08d6879c9f3f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 16:53:27.4475
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR05MB4518
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds the bootctl platform driver for Mellanox BlueField
-Soc, which controls the eMMC boot partition swapping and sends SMC
-calls to ATF running at exception level EL3 to program some system
-register. This register is only accessible in secure code and is
-used to enable the watchdog after reboot.
-
-Below are the sequences of a typical use case.
-
-  1. User-space tool upgrades one eMMC boot partition and requests
-     the boot partition swapping;
-
-  2. The bootctl driver handles such request and sends SMC call
-     to ATF. ATF programs register BREADCRUMB0 which has value
-     preserved during software reset. It also programs eMMC to
-     swap the boot partition;
-
-  3. After software reset (rebooting), ATF BL1 (BootRom) checks
-     register BREADCRUMB0 to enable watchdog if configured;
-
-  4. If booting fails, the watchdog timer will trigger rebooting.
-     In such case, ATF BootRom will switch the boot partition
-     to the previous one.
-
-Reviewed-by: David Woods <dwoods@mellanox.com>
-Signed-off-by: Liming Sun <lsun@mellanox.com>
----
- drivers/platform/mellanox/Kconfig         |  14 +-
- drivers/platform/mellanox/Makefile        |   1 +
- drivers/platform/mellanox/mlxbf-bootctl.c | 306 ++++++++++++++++++++++++++++++
- drivers/platform/mellanox/mlxbf-bootctl.h | 108 +++++++++++
- 4 files changed, 428 insertions(+), 1 deletion(-)
- create mode 100644 drivers/platform/mellanox/mlxbf-bootctl.c
- create mode 100644 drivers/platform/mellanox/mlxbf-bootctl.h
-
-diff --git a/drivers/platform/mellanox/Kconfig b/drivers/platform/mellanox/Kconfig
-index cd8a908..e3c6a5e 100644
---- a/drivers/platform/mellanox/Kconfig
-+++ b/drivers/platform/mellanox/Kconfig
-@@ -5,7 +5,7 @@
- 
- menuconfig MELLANOX_PLATFORM
- 	bool "Platform support for Mellanox hardware"
--	depends on X86 || ARM || COMPILE_TEST
-+	depends on X86 || ARM || ARM64 || COMPILE_TEST
- 	---help---
- 	  Say Y here to get to see options for platform support for
- 	  Mellanox systems. This option alone does not add any kernel code.
-@@ -34,4 +34,16 @@ config MLXREG_IO
- 	  to system resets operation, system reset causes monitoring and some
- 	  kinds of mux selection.
- 
-+config MLXBF_BOOTCTL
-+	tristate "Mellanox BlueField Firmware Boot Control driver"
-+	depends on ARM64
-+	help
-+          The Mellanox BlueField firmware implements functionality to
-+          request swapping the primary and alternate eMMC boot
-+          partition, and to set up a watchdog that can undo that swap
-+          if the system does not boot up correctly.  This driver
-+          provides sysfs access to the firmware, to be used in
-+          conjunction with the eMMC device driver to do any necessary
-+          initial swap of the boot partition.
-+
- endif # MELLANOX_PLATFORM
-diff --git a/drivers/platform/mellanox/Makefile b/drivers/platform/mellanox/Makefile
-index 57074d9c..76b0370 100644
---- a/drivers/platform/mellanox/Makefile
-+++ b/drivers/platform/mellanox/Makefile
-@@ -5,3 +5,4 @@
- #
- obj-$(CONFIG_MLXREG_HOTPLUG)	+= mlxreg-hotplug.o
- obj-$(CONFIG_MLXREG_IO) += mlxreg-io.o
-+obj-$(CONFIG_MLXBF_BOOTCTL)	+= mlxbf-bootctl.o
-diff --git a/drivers/platform/mellanox/mlxbf-bootctl.c b/drivers/platform/mellanox/mlxbf-bootctl.c
-new file mode 100644
-index 0000000..7efa535
---- /dev/null
-+++ b/drivers/platform/mellanox/mlxbf-bootctl.c
-@@ -0,0 +1,306 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Mellanox boot control driver
-+ * This driver provides a sysfs interface for systems management
-+ * software to manage reset-time actions.
-+ *
-+ * Copyright (C) 2019 Mellanox Technologies
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/arm-smccc.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include "mlxbf-bootctl.h"
-+
-+#define MLXBF_BOOTCTL_DRIVER_NAME		"mlxbf-bootctl"
-+#define MLXBF_BOOTCTL_DRIVER_DESCRIPTION	"Mellanox boot control driver"
-+
-+#define MLXBF_BOOTCTL_SB_SECURE_MASK		0x03
-+#define MLXBF_BOOTCTL_SB_TEST_MASK		0x0c
-+
-+#define MLXBF_SB_KEY_NUM			4
-+
-+/* UUID used to probe ATF service. */
-+static const char * const mlxbf_bootctl_svc_uuid_str =
-+	"89c036b4-e7d7-11e6-8797-001aca00bfc4";
-+
-+/*
-+ * UUID structure used to match the returned value from ATF in
-+ * four 32-bit words. No need to do endian conversion here.
-+ */
-+union mlxbf_bootctl_uuid {
-+	guid_t guid;
-+	u32 words[4];
-+};
-+
-+struct mlxbf_bootctl_name {
-+	u32 value;
-+	const char *name;
-+};
-+
-+static struct mlxbf_bootctl_name boot_names[] = {
-+	{ MLXBF_BOOTCTL_EXTERNAL,	"external"	},
-+	{ MLXBF_BOOTCTL_EMMC,		"emmc"		},
-+	{ MLNX_BOOTCTL_SWAP_EMMC,	"swap_emmc"	},
-+	{ MLXBF_BOOTCTL_EMMC_LEGACY,	"emmc_legacy"	},
-+	{ MLXBF_BOOTCTL_NONE,		"none"		},
-+};
-+
-+static const char * const mlxbf_bootctl_lifecycle_states[] = {
-+	[0] = "soft_non_secure",
-+	[1] = "secure",
-+	[2] = "hard_non_secure",
-+	[3] = "rma",
-+};
-+
-+/* The SMC calls in question are atomic, so we don't have to lock here. */
-+static int mlxbf_bootctl_smc_call1(unsigned int smc_op, int smc_arg)
-+{
-+	struct arm_smccc_res res;
-+
-+	arm_smccc_smc(smc_op, smc_arg, 0, 0, 0, 0, 0, 0, &res);
-+
-+	return res.a0;
-+}
-+
-+/* Syntactic sugar to avoid having to specify an unused argument. */
-+#define mlxbf_bootctl_smc_call0(smc_op) mlxbf_bootctl_smc_call1(smc_op, 0)
-+
-+static int mlxbf_bootctl_reset_action_to_val(const char *action)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(boot_names); i++)
-+		if (sysfs_streq(boot_names[i].name, action))
-+			return boot_names[i].value;
-+
-+	return MLXBF_BOOTCTL_INVALID;
-+}
-+
-+static const char *mlxbf_bootctl_reset_action_to_string(int action)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(boot_names); i++)
-+		if (boot_names[i].value == action)
-+			return boot_names[i].name;
-+
-+	return "";
-+}
-+
-+static ssize_t post_reset_wdog_show(struct device_driver *drv, char *buf)
-+{
-+	return sprintf(buf, "%d\n",
-+		mlxbf_bootctl_smc_call0(MLXBF_BOOTCTL_GET_POST_RESET_WDOG));
-+}
-+
-+static ssize_t post_reset_wdog_store(struct device_driver *drv,
-+				     const char *buf, size_t count)
-+{
-+	unsigned long watchdog;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 10, &watchdog);
-+	if (ret)
-+		return ret;
-+
-+	ret = mlxbf_bootctl_smc_call1(MLXBF_BOOTCTL_SET_POST_RESET_WDOG,
-+				      watchdog);
-+	if (ret < 0)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static ssize_t reset_action_show(struct device_driver *drv, char *buf)
-+{
-+	int action;
-+
-+	action = mlxbf_bootctl_smc_call0(MLXBF_BOOTCTL_GET_RESET_ACTION);
-+
-+	return sprintf(buf, "%s\n",
-+		       mlxbf_bootctl_reset_action_to_string(action));
-+}
-+
-+static ssize_t reset_action_store(struct device_driver *drv,
-+				  const char *buf, size_t count)
-+{
-+	int ret, action = mlxbf_bootctl_reset_action_to_val(buf);
-+
-+	if (action == MLXBF_BOOTCTL_INVALID || action == MLXBF_BOOTCTL_NONE)
-+		return -EINVAL;
-+
-+	ret = (mlxbf_bootctl_smc_call1(MLXBF_BOOTCTL_SET_RESET_ACTION, action));
-+	if (ret < 0)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static ssize_t second_reset_action_show(struct device_driver *drv, char *buf)
-+{
-+	int action;
-+	const char *name;
-+
-+	action = mlxbf_bootctl_smc_call0(MLXBF_BOOTCTL_GET_SECOND_RESET_ACTION);
-+	name = mlxbf_bootctl_reset_action_to_string(action);
-+
-+	return sprintf(buf, "%s\n", name);
-+}
-+
-+static ssize_t second_reset_action_store(struct device_driver *drv,
-+					 const char *buf, size_t count)
-+{
-+	int ret, action = mlxbf_bootctl_reset_action_to_val(buf);
-+
-+	if (action < 0)
-+		return action;
-+
-+	ret = mlxbf_bootctl_smc_call1(MLXBF_BOOTCTL_SET_SECOND_RESET_ACTION,
-+				      action);
-+	if (ret < 0)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static ssize_t lifecycle_state_show(struct device_driver *drv, char *buf)
-+{
-+	int lc_state;
-+
-+	lc_state = mlxbf_bootctl_smc_call1(
-+					   MLXBF_BOOTCTL_GET_TBB_FUSE_STATUS,
-+					   MLXBF_BOOTCTL_FUSE_STATUS_LIFECYCLE);
-+
-+	if (lc_state < 0)
-+		return lc_state;
-+
-+	lc_state &=
-+		(MLXBF_BOOTCTL_SB_TEST_MASK | MLXBF_BOOTCTL_SB_SECURE_MASK);
-+
-+	/*
-+	 * If the test bits are set, we specify that the current state may be
-+	 * due to using the test bits.
-+	 */
-+	if (lc_state & MLXBF_BOOTCTL_SB_TEST_MASK) {
-+
-+		lc_state &= MLXBF_BOOTCTL_SB_SECURE_MASK;
-+
-+		return sprintf(buf, "%s(test)\n",
-+			       mlxbf_bootctl_lifecycle_states[lc_state]);
-+	}
-+
-+	return sprintf(buf, "%s\n", mlxbf_bootctl_lifecycle_states[lc_state]);
-+}
-+
-+static ssize_t secure_boot_fuse_state_show(struct device_driver *drv, char *buf)
-+{
-+	int sb_key_state = mlxbf_bootctl_smc_call1(
-+				MLXBF_BOOTCTL_GET_TBB_FUSE_STATUS,
-+				MLXBF_BOOTCTL_FUSE_STATUS_KEYS);
-+	int upper_key_used = 0;
-+	int buf_len = 0;
-+	const char *status;
-+	int key;
-+
-+	if (sb_key_state < 0)
-+		return sb_key_state;
-+
-+	for (key = MLXBF_SB_KEY_NUM - 1; key >= 0; key--) {
-+		int burnt = sb_key_state & (1 << key);
-+		int valid = sb_key_state &
-+			      (1 << (key + MLXBF_SB_KEY_NUM));
-+
-+		buf_len += sprintf(buf + buf_len, "Ver%d:", key);
-+		if (upper_key_used) {
-+			if (burnt)
-+				status = valid ? "Used" : "Wasted";
-+			else
-+				status = valid ? "Invalid" : "Skipped";
-+		} else {
-+			if (burnt) {
-+				status = valid ? "In use" : "Burn incomplete";
-+				if (valid)
-+					upper_key_used = 1;
-+			} else
-+				status = valid ? "Invalid" : "Free";
-+		}
-+		buf_len += sprintf(buf + buf_len, status);
-+		if (key != 0)
-+			buf_len += sprintf(buf + buf_len, "; ");
-+	}
-+
-+	return buf_len;
-+}
-+
-+static DRIVER_ATTR_RW(post_reset_wdog);
-+static DRIVER_ATTR_RW(reset_action);
-+static DRIVER_ATTR_RW(second_reset_action);
-+static DRIVER_ATTR_RO(lifecycle_state);
-+static DRIVER_ATTR_RO(secure_boot_fuse_state);
-+
-+static struct attribute *mlxbf_bootctl_dev_attrs[] = {
-+	&driver_attr_post_reset_wdog.attr,
-+	&driver_attr_reset_action.attr,
-+	&driver_attr_second_reset_action.attr,
-+	&driver_attr_lifecycle_state.attr,
-+	&driver_attr_secure_boot_fuse_state.attr,
-+	NULL
-+};
-+
-+static struct attribute_group mlxbf_bootctl_attr_group = {
-+	.attrs = mlxbf_bootctl_dev_attrs
-+};
-+
-+static const struct attribute_group *mlxbf_bootctl_attr_groups[] = {
-+	&mlxbf_bootctl_attr_group,
-+	NULL
-+};
-+
-+static const struct acpi_device_id mlxbf_bootctl_acpi_ids[] = {
-+	{"MLNXBF04", 0},
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(acpi, mlxbf_bootctl_acpi_ids);
-+
-+static int mlxbf_bootctl_probe(struct platform_device *pdev)
-+{
-+	struct arm_smccc_res res;
-+	union mlxbf_bootctl_uuid uuid;
-+
-+	/* Ensure we have the UUID we expect for this service. */
-+	arm_smccc_smc(MLXBF_BOOTCTL_SIP_SVC_UID, 0, 0, 0, 0, 0, 0, 0, &res);
-+	guid_parse(mlxbf_bootctl_svc_uuid_str, &uuid.guid);
-+	if (res.a0 != uuid.words[0] || res.a1 != uuid.words[1] ||
-+	    res.a2 != uuid.words[2] || res.a3 != uuid.words[3])
-+		return -ENODEV;
-+
-+	/*
-+	 * When watchdog is used, it sets boot mode to MLXBF_BOOTCTL_SWAP_EMMC
-+	 * in case of boot failures. However it doesn't clear the state if there
-+	 * is no failure. Restore the default boot mode here to avoid any
-+	 * unnecessary boot partition swapping.
-+	 */
-+	if (mlxbf_bootctl_smc_call1(MLXBF_BOOTCTL_SET_RESET_ACTION,
-+				    MLXBF_BOOTCTL_EMMC) < 0)
-+		dev_err(&pdev->dev, "Unable to reset the EMMC boot mode\n");
-+
-+	return 0;
-+}
-+
-+static struct platform_driver mlxbf_bootctl_driver = {
-+	.probe = mlxbf_bootctl_probe,
-+	.driver = {
-+		.name = MLXBF_BOOTCTL_DRIVER_NAME,
-+		.groups = mlxbf_bootctl_attr_groups,
-+		.acpi_match_table = ACPI_PTR(mlxbf_bootctl_acpi_ids),
-+	}
-+};
-+
-+module_platform_driver(mlxbf_bootctl_driver);
-+
-+MODULE_DESCRIPTION(DRIVER_DESCRIPTION);
-+MODULE_AUTHOR("Mellanox Technologies");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/platform/mellanox/mlxbf-bootctl.h b/drivers/platform/mellanox/mlxbf-bootctl.h
-new file mode 100644
-index 0000000..5ca19db
---- /dev/null
-+++ b/drivers/platform/mellanox/mlxbf-bootctl.h
-@@ -0,0 +1,108 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2019, Mellanox Technologies. All rights reserved.
-+ */
-+
-+#ifndef __MLXBF_BOOTCTL_H__
-+#define __MLXBF_BOOTCTL_H__
-+
-+/*
-+ * Request that the on-chip watchdog be enabled, or disabled, after
-+ * the next chip soft reset. This call does not affect the current
-+ * status of the on-chip watchdog. If non-zero, the argument
-+ * specifies the watchdog interval in seconds. If zero, the watchdog
-+ * will not be enabled after the next soft reset. Non-zero errors are
-+ * returned as documented below.
-+ */
-+#define MLXBF_BOOTCTL_SET_POST_RESET_WDOG	0x82000000
-+
-+/*
-+ * Query the status which has been requested for the on-chip watchdog
-+ * after the next chip soft reset. Returns the interval as set by
-+ * MLXBF_BOOTCTL_SET_POST_RESET_WDOG.
-+ */
-+#define MLXBF_BOOTCTL_GET_POST_RESET_WDOG	0x82000001
-+
-+/*
-+ * Request that a specific boot action be taken at the next soft
-+ * reset. By default, the boot action is set by external chip pins,
-+ * which are sampled on hard reset. Note that the boot action
-+ * requested by this call will persist on subsequent resets unless
-+ * this service, or the MLNX_SET_SECOND_RESET_ACTION service, is
-+ * invoked. See below for the available MLNX_BOOT_xxx parameter
-+ * values. Non-zero errors are returned as documented below.
-+ */
-+#define MLXBF_BOOTCTL_SET_RESET_ACTION		0x82000002
-+
-+/*
-+ * Return the specific boot action which will be taken at the next
-+ * soft reset. Returns the reset action (see below for the parameter
-+ * values for MLXBF_BOOTCTL_SET_RESET_ACTION).
-+ */
-+#define MLXBF_BOOTCTL_GET_RESET_ACTION		0x82000003
-+
-+/*
-+ * Request that a specific boot action be taken at the soft reset
-+ * after the next soft reset. For a specified valid boot mode, the
-+ * effect of this call is identical to that of invoking
-+ * MLXBF_BOOTCTL_SET_RESET_ACTION after the next chip soft reset; in
-+ * particular, after that reset, the action for the now next reset can
-+ * be queried with MLXBF_BOOTCTL_GET_RESET_ACTION and modified with
-+ * MLXBF_BOOTCTL_SET_RESET_ACTION. You may also specify the parameter as
-+ * MLNX_BOOT_NONE, which is equivalent to specifying that no call to
-+ * MLXBF_BOOTCTL_SET_RESET_ACTION be taken after the next chip soft reset.
-+ * This call does not affect the action to be taken at the next soft
-+ * reset. Non-zero errors are returned as documented below.
-+ */
-+#define MLXBF_BOOTCTL_SET_SECOND_RESET_ACTION	0x82000004
-+
-+/*
-+ * Return the specific boot action which will be taken at the soft
-+ * reset after the next soft reset; this will be one of the valid
-+ * actions for MLXBF_BOOTCTL_SET_SECOND_RESET_ACTION.
-+ */
-+#define MLXBF_BOOTCTL_GET_SECOND_RESET_ACTION	0x82000005
-+
-+/*
-+ * Return the fuse status of the current chip. The caller should specify
-+ * with the second argument if the state of the lifecycle fuses or the
-+ * version of secure boot fuse keys left should be returned.
-+ */
-+#define MLXBF_BOOTCTL_GET_TBB_FUSE_STATUS	0x82000006
-+
-+/*
-+ * Reset eMMC by programming the RST_N register.
-+ */
-+#define MLXBF_BOOTCTL_SET_EMMC_RST_N		0x82000007
-+
-+#define MLXBF_BOOTCTL_GET_DIMM_INFO		0x82000008
-+
-+/* SMC function IDs for SiP Service queries */
-+#define MLXBF_BOOTCTL_SIP_SVC_CALL_COUNT	0x8200ff00
-+#define MLXBF_BOOTCTL_SIP_SVC_UID		0x8200ff01
-+#define MLXBF_BOOTCTL_SIP_SVC_VERSION		0x8200ff03
-+
-+/* ARM Standard Service Calls version numbers */
-+#define MLXBF_BOOTCTL_SVC_VERSION_MAJOR		0x0
-+#define MLXBF_BOOTCTL_SVC_VERSION_MINOR		0x2
-+
-+/* Number of svc calls defined. */
-+#define MLXBF_BOOTCTL_NUM_SVC_CALLS 12
-+
-+/* Valid reset actions for MLXBF_BOOTCTL_SET_RESET_ACTION. */
-+#define MLXBF_BOOTCTL_EXTERNAL	0 /* Not boot from eMMC */
-+#define MLXBF_BOOTCTL_EMMC	1 /* From primary eMMC boot partition */
-+#define MLNX_BOOTCTL_SWAP_EMMC	2 /* Swap eMMC boot partitions and reboot */
-+#define MLXBF_BOOTCTL_EMMC_LEGACY	3 /* From primary eMMC in legacy mode */
-+
-+/* Valid arguments for requesting the fuse status. */
-+#define MLXBF_BOOTCTL_FUSE_STATUS_LIFECYCLE	0 /* Return lifecycle status. */
-+#define MLXBF_BOOTCTL_FUSE_STATUS_KEYS	1 /* Return secure boot key status */
-+
-+/* Additional value to disable the MLXBF_BOOTCTL_SET_SECOND_RESET_ACTION. */
-+#define MLXBF_BOOTCTL_NONE	0x7fffffff /* Don't change next boot action */
-+
-+/* Invalid mode */
-+#define MLXBF_BOOTCTL_INVALID	0xffffffff
-+
-+#endif /* __MLXBF_BOOTCTL_H__ */
--- 
-1.8.3.1
-
+VGhhbmtzISAgdjIgaGFzIGJlZW4gcG9zdGVkIHRyeWluZyB0byBzb2x2ZSBhbGwgdGhlIGNvbW1l
+bnRzLiBQbGVhc2UgYWxzbyBzZWUgcmVzcG9uc2UgaW5saW5lLg0KDQpSZWdhcmRzLA0KTGltaW5n
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtv
+IDxhbmR5LnNoZXZjaGVua29AZ21haWwuY29tPg0KPiBTZW50OiBXZWRuZXNkYXksIEphbnVhcnkg
+MzAsIDIwMTkgNDoxNyBQTQ0KPiBUbzogTGltaW5nIFN1biA8bHN1bkBtZWxsYW5veC5jb20+DQo+
+IENjOiBBbmR5IFNoZXZjaGVua28gPGFuZHlAaW5mcmFkZWFkLm9yZz47IERhcnJlbiBIYXJ0IDxk
+dmhhcnRAaW5mcmFkZWFkLm9yZz47IFZhZGltIFBhc3Rlcm5hayA8dmFkaW1wQG1lbGxhbm94LmNv
+bT47IERhdmlkDQo+IFdvb2RzIDxkd29vZHNAbWVsbGFub3guY29tPjsgUGxhdGZvcm0gRHJpdmVy
+IDxwbGF0Zm9ybS1kcml2ZXIteDg2QHZnZXIua2VybmVsLm9yZz47IExpbnV4IEtlcm5lbCBNYWls
+aW5nIExpc3QgPGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnPg0KPiBTdWJqZWN0OiBS
+ZTogW1BBVENIIHYxIDEvMV0gcGxhdGZvcm0vbWVsbGFub3g6IEFkZCBib290Y3RsIGRyaXZlciBm
+b3IgTWVsbGFub3ggQmx1ZUZpZWxkIFNvYw0KPiANCj4gT24gV2VkLCBKYW4gMzAsIDIwMTkgYXQg
+MTA6NDcgUE0gTGltaW5nIFN1biA8bHN1bkBtZWxsYW5veC5jb20+IHdyb3RlOg0KPiANCj4gPiA+
+IEZpcnN0IG9mIGFsbCwgaXMgaXQgYSByZWFsIHdhdGNoZG9nIHdpdGggYSBkcml2ZXI/IEkgdGhp
+bmsgd2F0Y2hkb2cgaW4NCj4gPiA+IHRoYXQgY2FzZSBzaG91bGQgYmUgc2V0IHVwIHRocm91Z2gg
+c3RhbmRhcmQgd2F0Y2hkb2cgZmFjaWxpdGllcy4NCj4gPg0KPiA+IFRoaXMgaXMgbm90IGEgd2F0
+Y2hkb2cgZHJpdmVyIGl0c2VsZi4gSW5zdGVhZCwgaXQgcHJvdmlkZXMgaW50ZXJmYWNlIHRvDQo+
+ID4gdXNlci1zcGFjZSBhbmQgdXNlIEFSTSBTTUMgY2FsbHMgdG8gQVRGIHRvIGNvbmZpZ3VyZSBy
+ZWdpc3RlcnMgYW5kDQo+ID4gd2F0Y2hkb2cuIEknbGwgdXBkYXRlIHRoZSBjb21taXQgbWVzc2Fn
+ZSBpbiB2MiB0byBjbGFyaWZ5IGl0Lg0KPiANCj4gSG1tLi4uIEZvciBleGFtcGxlIEludGVsIE1J
+RCBwbGF0Zm9ybXMgaGF2ZSBTQ1UgKHN5c3RlbSBjb250cm9sbGVyDQo+IHVuaXQpIHRoYXQgcHJv
+dmlkZXMgYSB3YXRjaGRvZyBmYWNpbGl0eS4gSW4gdGhlIGtlcm5lbCB3ZSBoYXZlIGENCj4gd2F0
+Y2hkb2cgZHJpdmVyIGZvciB0aGF0Lg0KPiBDYW4ndCB5b3UgZG8gc2ltaWxhciBmb3IgeW91ciBj
+YXNlPw0KDQpUaGUgcHJvY2VzcyBtaWdodCBiZSBkaWZmZXJlbnQgdGhhbiB3aGF0J3MgZG9uZSBv
+biB0aGUgQmx1ZUZpZWxkIFNvQy4NCg0KQWZ0ZXIgdGhlIGJvb3QtcGFydGl0aW9uIHN3YXBwaW5n
+LCB0aGUgQVJNIHdhdGNoZG9nIGlzIG5vdCBzdGFydGVkDQpyaWdodCBhd2F5LiBJdCBpcyBzdGFy
+dGVkIGR1cmluZyBuZXh0IHJlYm9vdGluZyBieSB0aGUgQVRGIEJMMSBjb2RlIA0KKHdoaWNoIGlz
+IHRoZSBCb290IFJPTSBjb2RlIHRoYW4gY291bGRuJ3QgY2hhbmdlKS4gVGhlIEJvb3QtUk9NIA0K
+Y2hlY2tzIHNvbWUgcmVnaXN0ZXIgdmFsdWUgd2hpY2ggaXMgcHJlc2VydmVkIGR1cmluZyByZWJv
+b3RpbmcsIGFuZCANCmtub3dzIHRoYXQgYSBib290LXBhcnRpdGlvbiBzd2FwcGluZyBpcyBpbiBw
+cm9jZXNzLCB0aHVzIGVuYWJsZSB0aGUgDQp3YXRjaGRvZyB0aW1lciBpZiBjb25maWd1cmVkLiBB
+dCB0aGlzIHRpbWUsIG5vIFVFRkkgb3IgTGludXggaXMgcnVubmluZywgDQpqdXN0IHRoZSBib290
+IFJPTSBjb2RlIGF0IHRoZSB2ZXJ5IGJlZ2lubmluZy4NCg0KSSdsbCBhZGQgdGhlIHNlcXVlbmNl
+IG9mIHN1Y2ggdXNlIGNhc2UgaW4gdGhlIGNvbW1pdCBtZXNzYWdlIG9mIHYyLg0KDQo+IA0KPiA+
+ID4gPiArICAgICAgIGlmIChtbHhiZl9ib290Y3RsX3NtY19jYWxsMShNTFhCRl9CT09UQ1RMX1NF
+VF9QT1NUX1JFU0VUX1dET0csDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHdhdGNoZG9nKSA8IDApDQo+ID4gPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVJ
+TlZBTDsNCj4gPiA+DQo+ID4gPiBJZiB0aGF0IGNhbGwgcmV0dXJucyBhbiBlcnJvciBpdCBzaG91
+bGRuJ3QgYmUgc2hhZG93ZWQgaGVyZS4NCj4gPg0KPiA+IE5vdCBzdXJlIEkgdW5kZXJzdGFuZCB0
+aGlzIGNvbW1lbnQgY29ycmVjdGx5IG9yIG5vdC4NCj4gPiBUaGlzIGZ1bmN0aW9uIGlzIGRlZmlu
+ZWQgYnkgRFJJVkVSX0FUVFJfUlcoKSwgd2hpY2ggYXBwZWFycyB0byBleHBlY3QNCj4gPiBzc2l6
+ZV90IG9yIGFuIGVycm9yIGNvZGUgYXMgcmV0dXJuIHZhbHVlIGFjY29yZGluZyB0byBvdGhlciBl
+eGFtcGxlcyBJIHNhdy4NCj4gDQo+IFdoYXQgaXMgcmV0dXJuZWQgYnkgbWx4Li4uY2FsbDEoKSBz
+aG91bGQgYmUgcHJvcGFnYXRlZCB0byB0aGUgYWN0dWFsIGNhbGxlci4NCj4gU2FtZSBjb21tZW50
+IGZvciBhbGwgc2ltaWxhciBjYXNlcy4NCg0KTWFrZSBzZW5zZSEgVGhhbmtzIGZvciB0aGUgZXhw
+bGFuYXRpb24uIFVwZGF0ZWQgaXQgaW4gdjIuDQoNCj4gDQo+ID4gPiA+ICsgICAgICAgbGNfc3Rh
+dGUgJj0gKE1MWEJGX0JPT1RDVExfU0JfTU9ERV9URVNUX01BU0sgfA0KPiA+ID4gPiArICAgICAg
+ICAgICAgICAgICAgICBNTFhCRl9CT09UQ1RMX1NCX01PREVfU0VDVVJFX01BU0spOw0KPiA+ID4N
+Cj4gPiA+IEJldHRlciB0byBzcGxpdCBsaWtlDQo+ID4gPg0KPiA+ID4geHh4ID0NCj4gPiA+ICAo
+QSB8IEIpOw0KPiA+DQo+ID4gSXQgc2VlbXMgaGFyZCB0byBkbyAiKEEgfCBCKTsiIHdpdGhpbiA4
+MCBjaGFyYWN0ZXJzIHBsdXMgdGhlIGluZGVudHMuDQo+IA0KPiBSZXBlYXRpbmcgbXlzZWxmLCBp
+dCdzIHN0aWxsIGJldHRlciB0aGFuIHlvdXIgdmFyaWFudCBmb3IgcmVhZGFiaWxpdHkuDQoNCkRv
+bmUuIE1hbmFnZWQgdG8gc2hvcnRlbiB0aGUgdmFyaWFibGUgbmFtZSBhIGxpdHRsZSBiaXQuDQpV
+cGRhdGVkIGl0IGluIHYyLg0KDQo+IA0KPiA+ID4gPiArICAgICAgIGlmIChyZXMuYTAgIT0gMHg4
+OWMwMzZiNCB8fCByZXMuYTEgIT0gMHgxMWU2ZTdkNyB8fA0KPiA+ID4gPiArICAgICAgICAgICBy
+ZXMuYTIgIT0gMHgxYTAwOTc4NyB8fCByZXMuYTMgIT0gMHhjNGJmMDBjYSkNCj4gPiA+DQo+ID4g
+PiBXaGF0IGlzIHRoaXM/IQ0KPiA+ID4NCj4gPiA+IENhbiB5b3UgdXNlIFVVSUQgQVBJPw0KPiA+
+DQo+ID4gWWVzLCBpdCBpcyBVVUlEIGNvbXBhcmlzb24uIFRoZSBTTUMgY2FsbCByZXR1cm5zIGZv
+dXIgJ3Vuc2lnbmVkIGxvbmcnIGZyb20gQVRGDQo+ID4gdG8gcmVwcmVzZW50IHRoZSBVVUlELiBU
+aGVyZSBzZWVtcyBubyBleGlzdGluZyBBUElzIGluIHVhcGkvbGludXgvdXVpZC5oIHRvDQo+ID4g
+Y29tcGFyZSBzdWNoIHNwZWNpYWwgZm9ybWF0LiBIb3cgYWJvdXQgcmVwbGFjaW5nIGl0IHdpdGgg
+Y29tbWVudCBhbmQgTUFDUk9zDQo+ID4gaW5zdGVhZCBvZiB0aGUgaGFyZGNvZGVkIHZhbHVlcyB0
+byBtYWtlIGl0IG1vcmUgcmVhZGFibGU/DQo+IA0KPiBTaG91bGQgYmUgbm8gbWFnaWMgbnVtYmVy
+cyBpbnZvbHZlZCBpbnNpZGUgdGhlIGZ1bmN0aW9uIGF0IHRoZSBlbmQuDQo+IFVzZSBkZXNjcmlw
+dGl2ZSBkZWZpbml0aW9ucyBhbmQgSSBzdGlsbCByZWNvbW1lbmQgdG8gZ2l2ZSBhIGxvb2sgYXQN
+Cj4gVVVJRCBBUEkgaG93IGl0IGNhbiBiZSB1dGlsaXplZCBoZXJlLg0KPiAoaGludDogVGh1bmRl
+cmJvbHQgaHcgaXMgb3BlcmF0aW5nIHdpdGggaW50ZWdlcnMsIHRob3VnaCBkcml2ZXIgdXNlcw0K
+PiBVVUlEIEFQSSBhdCB0aGUgZW5kKQ0KPiANCg0KVXBkYXRlZCBpbiB2Mi4gTm93IGl0IHNob3Vs
+ZCBsb29rIGJldHRlciA6KQ0KDQo+IC0tDQo+IFdpdGggQmVzdCBSZWdhcmRzLA0KPiBBbmR5IFNo
+ZXZjaGVua28NCg==
