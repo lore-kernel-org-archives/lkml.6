@@ -2,152 +2,130 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3214C282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DE5C282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C51B821900
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04F0421916
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="p1JC3YVd"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="Zgy1gWU2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbfAaU1C (ORCPT
+        id S1728287AbfAaU1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:27:02 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:45267 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726848AbfAaU05 (ORCPT
+        Thu, 31 Jan 2019 15:27:06 -0500
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:49881 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727997AbfAaU1C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:26:57 -0500
+        Thu, 31 Jan 2019 15:27:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1548966416; x=1580502416;
-  h=from:to:cc:subject:date:message-id;
-  bh=AwlZoG+GdDHirdFGtVxNhsjSqiLfpzuSgI13aMAJA1g=;
-  b=p1JC3YVdiHzrZu0ohd2GJmRocKrU28K4RO9b0C4c5GD8kreGuqiNOnxZ
-   h6YAc960bjSq26scCXrDaFJd8xFlQbdDrxVKHy6egjek7/GeOjrHddyQM
-   bU0UarT0SCFYbjNhzleB6rJKcwuVGs7hmrVfwnDNvQwVC0YMQEPmYFUCn
-   I=;
+  t=1548966421; x=1580502421;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=yyv/ktHqXfbgyu4K/Sv+eYMPLlWFGHe4R+6uDph1f1A=;
+  b=Zgy1gWU2cH4x4KiMEl0go19cDGM+GzECgJW1uP5PR5htdShR71E5yn7Z
+   yUJB65volDgHalDQZITjZz8NjyKKiv0l/DvSIOBwBqy2rlpWJ/l3cz4mT
+   S7TLJB2r2A6ADK7zWrWP14Tc7JQ6h5MZbXj7KBS8pE0prF6fs8ZQ4fGuS
+   s=;
 X-IronPort-AV: E=Sophos;i="5.56,545,1539648000"; 
-   d="scan'208";a="780024355"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jan 2019 20:26:52 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
-        by email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id x0VKQiVc016430
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 31 Jan 2019 20:26:47 GMT
+   d="scan'208";a="384482656"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-4e7c8266.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 31 Jan 2019 20:27:00 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
+        by email-inbound-relay-2c-4e7c8266.us-west-2.amazon.com (Postfix) with ESMTPS id 8E1D6A23A5;
+        Thu, 31 Jan 2019 20:26:59 +0000 (UTC)
 Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x0VKQhZX028877;
-        Thu, 31 Jan 2019 21:26:43 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x0VKQvDb028959;
+        Thu, 31 Jan 2019 21:26:57 +0100
 Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x0VKQgS5028874;
-        Thu, 31 Jan 2019 21:26:42 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x0VKQuJf028958;
+        Thu, 31 Jan 2019 21:26:56 +0100
 From:   KarimAllah Ahmed <karahmed@amazon.de>
 To:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>
 Cc:     KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v6 00/14] KVM/X86: Introduce a new guest mapping interface
-Date:   Thu, 31 Jan 2019 21:24:30 +0100
-Message-Id: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
+Subject: [PATCH v6 05/14] X86/nVMX: handle_vmptrld: Use kvm_vcpu_map when copying VMCS12 from guest memory
+Date:   Thu, 31 Jan 2019 21:24:35 +0100
+Message-Id: <1548966284-28642-6-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
+References: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guest memory can either be directly managed by the kernel (i.e. have a "struct
-page") or they can simply live outside kernel control (i.e. do not have a
-"struct page"). KVM mostly support these two modes, except in a few places
-where the code seems to assume that guest memory must have a "struct page".
+Use kvm_vcpu_map to the map the VMCS12 from guest memory because
+kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory that has
+a "struct page".
 
-This patchset introduces a new mapping interface to map guest memory into host
-kernel memory which also supports PFN-based memory (i.e. memory without 'struct
-page'). It also converts all offending code to this interface or simply
-read/write directly from guest memory. Patch 2 is additionally fixing an
-incorrect page release and marking the page as dirty (i.e. as a side-effect of
-using the helper function to write).
-
-As far as I can see all offending code is now fixed except the APIC-access page
-which I will handle in a seperate series along with dropping
-kvm_vcpu_gfn_to_page and kvm_vcpu_gpa_to_page from the internal KVM API.
-
-The current implementation of the new API uses memremap to map memory that does
-not have a "struct page". This proves to be very slow for high frequency
-mappings. Since this does not affect the normal use-case where a "struct page"
-is available, the performance of this API will be handled by a seperate patch
-series.
-
-So the simple way to use memory outside kernel control is:
-
-1- Pass 'mem=' in the kernel command-line to limit the amount of memory managed 
-   by the kernel.
-2- Map this physical memory you want to give to the guest with:
-   mmap("/dev/mem", physical_address_offset, ..)
-3- Use the user-space virtual address as the "userspace_addr" field in
-   KVM_SET_USER_MEMORY_REGION ioctl.
-
-v5 -> v6:
-- Added one extra patch to ensure that support for this mem= case is complete
-  for x86.
-- Added a helper function to check if the mapping is mapped or not.
-- Added more comments on the struct.
-- Setting ->page to NULL on unmap and to a poison ptr if unused during map
-- Checking for map ptr before using it.
-- Change kvm_vcpu_unmap to also mark page dirty for LM. That requires
-  passing the vCPU pointer again to this function.
-
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+---
 v4 -> v5:
-- Introduce a new parameter 'dirty' into kvm_vcpu_unmap
-- A horrible rebase due to nested.c :)
-- Dropped a couple of hyperv patches as the code was fixed already as a
-  side-effect of another patch.
-- Added a new trivial cleanup patch.
-
+- Switch to the new guest mapping API instead of reading directly from
+  guest.
+- unmap with dirty flag
 v3 -> v4:
-- Rebase
-- Add a new patch to also fix the newly introduced enlightned VMCS.
+- Return VMXERR_VMPTRLD_INCORRECT_VMCS_REVISION_ID on failure (jmattson@)
+v1 -> v2:
+- Massage commit message a bit.
+---
+ arch/x86/kvm/vmx/nested.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-v2 -> v3:
-- Rebase
-- Add a new patch to also fix the newly introduced shadow VMCS.
-
-Filippo Sironi (1):
-  X86/KVM: Handle PFNs outside of kernel reach when touching GPTEs
-
-KarimAllah Ahmed (13):
-  X86/nVMX: handle_vmon: Read 4 bytes from guest memory
-  X86/nVMX: Update the PML table without mapping and unmapping the page
-  KVM: Introduce a new guest mapping API
-  X86/nVMX: handle_vmptrld: Use kvm_vcpu_map when copying VMCS12 from
-    guest memory
-  KVM/nVMX: Use kvm_vcpu_map when mapping the L1 MSR bitmap
-  KVM/nVMX: Use kvm_vcpu_map when mapping the virtual APIC page
-  KVM/nVMX: Use kvm_vcpu_map when mapping the posted interrupt
-    descriptor table
-  KVM/X86: Use kvm_vcpu_map in emulator_cmpxchg_emulated
-  KVM/nSVM: Use the new mapping API for mapping guest memory
-  KVM/nVMX: Use kvm_vcpu_map for accessing the shadow VMCS
-  KVM/nVMX: Use kvm_vcpu_map for accessing the enlightened VMCS
-  KVM/nVMX: Use page_address_valid in a few more locations
-  kvm, x86: Properly check whether a pfn is an MMIO or not
-
- arch/x86/include/asm/e820/api.h |   1 +
- arch/x86/kernel/e820.c          |  18 ++++-
- arch/x86/kvm/mmu.c              |   5 +-
- arch/x86/kvm/paging_tmpl.h      |  38 +++++++---
- arch/x86/kvm/svm.c              |  97 ++++++++++++------------
- arch/x86/kvm/vmx/nested.c       | 160 +++++++++++++++-------------------------
- arch/x86/kvm/vmx/vmx.c          |  19 ++---
- arch/x86/kvm/vmx/vmx.h          |   9 ++-
- arch/x86/kvm/x86.c              |  14 ++--
- include/linux/kvm_host.h        |  28 +++++++
- virt/kvm/kvm_main.c             |  64 ++++++++++++++++
- 11 files changed, 267 insertions(+), 186 deletions(-)
-
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 11b44a9..8fc327f 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -4521,11 +4521,10 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+ 		return 1;
+ 
+ 	if (vmx->nested.current_vmptr != vmptr) {
++		struct kvm_host_map map;
+ 		struct vmcs12 *new_vmcs12;
+-		struct page *page;
+ 
+-		page = kvm_vcpu_gpa_to_page(vcpu, vmptr);
+-		if (is_error_page(page)) {
++		if (kvm_vcpu_map(vcpu, gpa_to_gfn(vmptr), &map)) {
+ 			/*
+ 			 * Reads from an unbacked page return all 1s,
+ 			 * which means that the 32 bits located at the
+@@ -4535,12 +4534,13 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+ 			return nested_vmx_failValid(vcpu,
+ 				VMXERR_VMPTRLD_INCORRECT_VMCS_REVISION_ID);
+ 		}
+-		new_vmcs12 = kmap(page);
++
++		new_vmcs12 = map.hva;
++
+ 		if (new_vmcs12->hdr.revision_id != VMCS12_REVISION ||
+ 		    (new_vmcs12->hdr.shadow_vmcs &&
+ 		     !nested_cpu_has_vmx_shadow_vmcs(vcpu))) {
+-			kunmap(page);
+-			kvm_release_page_clean(page);
++			kvm_vcpu_unmap(vcpu, &map, false);
+ 			return nested_vmx_failValid(vcpu,
+ 				VMXERR_VMPTRLD_INCORRECT_VMCS_REVISION_ID);
+ 		}
+@@ -4552,8 +4552,7 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+ 		 * cached.
+ 		 */
+ 		memcpy(vmx->nested.cached_vmcs12, new_vmcs12, VMCS12_SIZE);
+-		kunmap(page);
+-		kvm_release_page_clean(page);
++		kvm_vcpu_unmap(vcpu, &map, false);
+ 
+ 		set_current_vmptr(vmx, vmptr);
+ 	}
 -- 
 2.7.4
 
