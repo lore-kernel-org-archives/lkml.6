@@ -2,116 +2,119 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1794AC282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E74C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E174E218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:56:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IPmI1Jyz"
+	by mail.kernel.org (Postfix) with ESMTP id D9D6120B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:58:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548928721;
+	bh=WyuRz3FAuL0GeNECNl3ySe5BrZg8WRASwrzJTqXiegg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=rSKzH8Bj3O3Wx/iMAMbOWWhOuvIGgXONJWA6cgBf8Mp7BAD/xFhyqJhy5wvyJ38gf
+	 +4gMTcZ8n6EfbQJFNYWQZW8pWDCY2Wl6H/5v8ZY6uy6jEpb+2DS3eLUCOEVvtoma4V
+	 fyqjd/KF3dNN3Dije6IAZ7cpSYBBN/0JEOhgX51Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731944AbfAaJ4x (ORCPT
+        id S1731623AbfAaJ6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 04:56:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57948 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbfAaJ4w (ORCPT
+        Thu, 31 Jan 2019 04:58:40 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45252 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbfAaJ6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 04:56:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KN65jVycwBIWs0n5vnAR5t/2bKTkjompeuCCWRbFckA=; b=IPmI1JyzbnKkgM7McXrYqBrrz
-        FHSkE2SujZs2P1mG3fxLyarSMbT1ikrQ1/oSj9ptbDkfAkfPSeLH1ugHbHKjIH4vXBvVRfs5McXmh
-        G0J2hadUwy6AsBgvrCjgEWA1mnir+bLWJ4niH5mXyhXeVm0fkKdbZsDkf1HwM+Kl8HhdyVGUg+6ZK
-        lyZY7k5IZXEpCAWWFi816Cy8mvHWGeWPsf8EGpTk+nBOlJfoWbl8FSyC7ncDyw6igeaFRnp9KUqyR
-        frxJb0AslimxFlTlEn0fRs7KaoxAhRYPG8mmlkKnHoKLguczt9jMJTIo8wTHQy2y4/hDhtoZkSSpI
-        3Zzyq3OUw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gp95M-0005cu-J7; Thu, 31 Jan 2019 09:56:40 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3164A20423039; Thu, 31 Jan 2019 10:56:38 +0100 (CET)
-Date:   Thu, 31 Jan 2019 10:56:38 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alex Kogan <alex.kogan@oracle.com>
-Cc:     linux@armlinux.org.uk, mingo@redhat.com, will.deacon@arm.com,
-        arnd@arndb.de, longman@redhat.com, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        dave.dice@oracle.com, rahul.x.yadav@oracle.com
-Subject: Re: [PATCH 0/3] Add NUMA-awareness to qspinlock
-Message-ID: <20190131095638.GA31534@hirez.programming.kicks-ass.net>
-References: <20190131030136.56999-1-alex.kogan@oracle.com>
+        Thu, 31 Jan 2019 04:58:39 -0500
+Received: by mail-oi1-f196.google.com with SMTP id y1so2182280oie.12;
+        Thu, 31 Jan 2019 01:58:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/HaQjbfS7FrYlrpLEePwCO05qGMrqLC1DJNvUWq7MyM=;
+        b=NGvYnB6wF3nLVo9nGBVBdz7VMnjx5CPStuajpShwIUDi2CP2thRUOQE4efQVCjh7gR
+         OHFYIoHiu9QcNsZ+ShPdfWTwrvxoPp5dmQNEtI50fSiJDilmVLLsCsVObH25U3XN/vG4
+         JD3176LnC1UVmLgOoQeMKAzLRA/bGmtDI7R43zZAD/fQ9JreYhMYUQDZmDHR2Jasxlmt
+         WGkPOtC8z1VQhDZ5ra0ZhklmjsmLVsw3deiggVu40+EuHgOyBwiEAKP9Y2Di4XAxWbAI
+         59sFlb7s8T/EfBunvCL6SMFf/K2PLFtMvuKRVNpMG2Ubt2iEi/kKAlbtQ+FOjo4IdjeR
+         oXEA==
+X-Gm-Message-State: AJcUuke4TxPuX1SYrIIi0I/2tlD9cXZuwssxagW5Y1zx4afwNIoo7ln9
+        bh2bdwxbFnc+08gELRcRvpjttB3M76m8Xo3li8WSXQ==
+X-Google-Smtp-Source: ALg8bN7nXANm5mx4Lc+ZLo2FNaxDhtrriMP3WIJD7UFoFkm8ZhQPopr/tHCRnYI8TncmIVynkT0/92NiXJbNeFxvrwc=
+X-Received: by 2002:a54:4d01:: with SMTP id v1mr14248256oix.246.1548928718301;
+ Thu, 31 Jan 2019 01:58:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131030136.56999-1-alex.kogan@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190129015547.213276-1-swboyd@chromium.org> <20190131092349.fksfqemm23qddkhw@vireshk-i7>
+In-Reply-To: <20190131092349.fksfqemm23qddkhw@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 31 Jan 2019 10:58:26 +0100
+Message-ID: <CAJZ5v0jY5Zjg0R7uC6ewJT5Pi-15Mohotj=im9k8w4THJSM0Dw@mail.gmail.com>
+Subject: Re: [RFC/PATCH 0/5] DVFS in the OPP core
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        grahamr@codeaurora.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 10:01:32PM -0500, Alex Kogan wrote:
-> Lock throughput can be increased by handing a lock to a waiter on the
-> same NUMA socket as the lock holder, provided care is taken to avoid
-> starvation of waiters on other NUMA sockets. This patch introduces CNA
-> (compact NUMA-aware lock) as the slow path for qspinlock.
+On Thu, Jan 31, 2019 at 10:23 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> Adding few folks to the thread who might be interested in this stuff.
+>
+> On 28-01-19, 17:55, Stephen Boyd wrote:
+> > This patch series is an RFC around how we can implement DVFS for devices
+> > that aren't your typical OPPish device (i.e. GPU/CPU). They don't have a
+> > strict set of frequencies that they have been tested at to derive some
+> > operating performance point. Instead they have a coarser set of
+> > frequency max or 'fmax' OPPs that describe the maiximum frequency the
+> > device can operate at with a given voltage.
+> >
+> > The approach we take is to let the devm_pm_opp_set_rate() API accept 0
+> > as a valid frequency indicating the frequency isn't required anymore and
+> > to make the same API use the clk framework to round the frequency passed
+> > in instead of relying on the OPP table to specify each frequency that
+> > can be used. Once we have these two patches in place, we can use the OPP
+> > API to change clk rates instead of clk_set_rate() and use all the recent
+> > OPP enhancements that have been made around required-opps and genpd
+> > performance states to do DVFS for all devices.
+>
+> Generally speaking I am fine with such an approach but I am not sure
+> about what others would say on this as they had objections to using
+> OPP core for setting the rate itself.
+>
+> FWIW, I suggested exactly this solution sometime back [1]
+>
+> - Drivers need to use two API sets to change clock rate (OPP helpers)
+>   and enable/disable them (CLK framework helpers) and this leads us to
+>   exactly that combination. Is that acceptable ? It doesn't look great
+>   to me as well..
 
-Since you use NUMA, use the term node, not socket. The two are not
-strictly related.
+I agree here.
 
-> CNA is a NUMA-aware version of the MCS spin-lock. Spinning threads are
-> organized in two queues, a main queue for threads running on the same
-> socket as the current lock holder, and a secondary queue for threads
-> running on other sockets. Threads record the ID of the socket on which
-> they are running in their queue nodes. At the unlock time, the lock
-> holder scans the main queue looking for a thread running on the same
-> socket. If found (call it thread T), all threads in the main queue
-> between the current lock holder and T are moved to the end of the
-> secondary queue, and the lock is passed to T. If such T is not found, the
-> lock is passed to the first node in the secondary queue. Finally, if the
-> secondary queue is empty, the lock is passed to the next thread in the
-> main queue.
-> 
-> Full details are available at https://arxiv.org/abs/1810.05600.
+> - Do we expect the callers will disable clk before calling
+>   opp-set-rate with 0 ? We should remove the regulator requirements as
+>   well along with perf-state.
 
-Full details really should also be in the Changelog. You can skip much
-of the academic bla-bla, but the Changelog should be self contained.
+Well, disabling clk affects HW in general, doesn't it?
 
-> We have done some performance evaluation with the locktorture module
-> as well as with several benchmarks from the will-it-scale repo.
-> The following locktorture results are from an Oracle X5-4 server
-> (four Intel Xeon E7-8895 v3 @ 2.60GHz sockets with 18 hyperthreaded
-> cores each). Each number represents an average (over 5 runs) of the
-> total number of ops (x10^7) reported at the end of each run. The stock
-> kernel is v4.20.0-rc4+ compiled in the default configuration.
-> 
-> #thr  stock  patched speedup (patched/stock)
->   1   2.710   2.715  1.002
->   2   3.108   3.001  0.966
->   4   4.194   3.919  0.934
+> - What about enabling/disabling clock as well from OPP framework. We
+>   can enable it on the very first call to opp-set-rate and disable
+>   when freq is 0. That will simplify the drivers as well.
 
-So low contention is actually worse. Funnily low contention is the
-majority of our locks and is _really_ important.
-
->   8   5.309   6.894  1.299
->  16   6.722   9.094  1.353
->  32   7.314   9.885  1.352
->  36   7.562   9.855  1.303
->  72   6.696  10.358  1.547
-> 108   6.364  10.181  1.600
-> 142   6.179  10.178  1.647
-> 
-> When the kernel is compiled with lockstat enabled, CNA 
-
-I'll ignore that, lockstat/lockdep enabled runs are not what one would
-call performance relevant.
+That sounds compelling, but I guess there are cases in which you can
+gate the clock regardless of the frequency setting.  How would that
+work then?
