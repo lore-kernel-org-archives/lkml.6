@@ -2,308 +2,126 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D374CC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB71C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 997A121939
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C3BE21939
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="PNOpj08m"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntOtFr5p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728774AbfAaU1j (ORCPT
+        id S1728818AbfAaU1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:27:39 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:4315 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728434AbfAaU1N (ORCPT
+        Thu, 31 Jan 2019 15:27:53 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36635 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727483AbfAaU1v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:27:13 -0500
+        Thu, 31 Jan 2019 15:27:51 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b85so2009625pfc.3;
+        Thu, 31 Jan 2019 12:27:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1548966432; x=1580502432;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=tXHcXp0oejvNpwb2bYW13MOU2GCjQA3lBdfWKRB2by4=;
-  b=PNOpj08m3m12wNljLytWtgww7MpeakZujnCSFUt+ytw4bwcQAocSApSB
-   HcmYwuj40kKMehh6ahv6yWhC96FDSW6MPAlALZQiqerzrNr6HSI4iVtEh
-   fCMl3CBvX2KlpV6/+TAILoEE4US4hSPfXPEkYyx/DXgSBvJIgD6eYf3Jn
-   c=;
-X-IronPort-AV: E=Sophos;i="5.56,545,1539648000"; 
-   d="scan'208";a="656822841"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1e-303d0b0e.us-east-1.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jan 2019 20:27:11 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
-        by email-inbound-relay-1e-303d0b0e.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id x0VKR49f123804
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 31 Jan 2019 20:27:07 GMT
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x0VKR3gJ029007;
-        Thu, 31 Jan 2019 21:27:04 +0100
-Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x0VKR38k028999;
-        Thu, 31 Jan 2019 21:27:03 +0100
-From:   KarimAllah Ahmed <karahmed@amazon.de>
-To:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v6 10/14] KVM/nSVM: Use the new mapping API for mapping guest memory
-Date:   Thu, 31 Jan 2019 21:24:40 +0100
-Message-Id: <1548966284-28642-11-git-send-email-karahmed@amazon.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
-References: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0+R+sOwjvxkktDI2qKjnNKh9P8mjjTi1aFLaDo5oF34=;
+        b=ntOtFr5pHOK82wNoRRayr4kI3bstk2BPoo9oLa2aEXnR0hjtxzezx/OWTVRyIXfkJG
+         nAMJa0ylrLAkdEteuazt5xBHMoH/BFbWcaBF0estTf3z7YCQEllcMZDqIA/KREUJh7fx
+         wwOrpkh+sW7k+RBGjVl32jeo4ZMjM4AnOIstddQzuEdUTVhI//7qoNInS3bxDVfkW8qc
+         88ppGNiMjM/EmhbIgTkEroiYoX/kO7ErgPsEcf5TyWZjkz238EtNW1yqGR5Daag5yKYz
+         e6QlnBA2jJNpyV/5yAi+WWM+AyN5wAWuhrtw4GhUGnJcapxX4/ZDhxviXsRP7tCDQn0q
+         FBaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0+R+sOwjvxkktDI2qKjnNKh9P8mjjTi1aFLaDo5oF34=;
+        b=E5o6iHS3SrZM/zE0XjsaZjWU3wfdG6v6ABUgQrUdr3hVdy3RYypd9ShpYbnMh1Ihys
+         bP5lCvxPsUMQN8Xd8uvnLXQ7p0vOiEq8rAmkyxDkhvurQ+JpTicmwBeoenYS3FrfTgYL
+         H952/b0fBP56U5yct9JrNfBcAnE7JdgB0mxvd95jS/u6ZYIKyud0MboOAy5edSumZrkM
+         hHW86CIhb87pJPoNDXTz6FTFmHikk7E4UbHj7PUVfxmc1nTuoZn/iHehMg/pyCgL/k6J
+         WO9dYQ+UhwZEFMlIYt/sS7To0Z90e8jLCQlPh/Vqshfzp5vBaoyCZQRtJtKxuanHVCak
+         vDyw==
+X-Gm-Message-State: AJcUukdZOgmeZwAhlx4rX6DrciqAcwV/4tHYfpXQMEAnl8wwWsVhI2Tt
+        gmU5ujMiX2cnl/OeHRqeXpwJDawaQMRzaUHnqM0=
+X-Google-Smtp-Source: ALg8bN5v60lbXDq1i3BnkNTVGOsq0Ou0Gn2no84jla8i7tgqTaZ3LkrL5fXAtPqili7PWaFZkRe38rIKrvKvcbFwy4I=
+X-Received: by 2002:a63:5026:: with SMTP id e38mr32931296pgb.123.1548966470114;
+ Thu, 31 Jan 2019 12:27:50 -0800 (PST)
+MIME-Version: 1.0
+References: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com> <20190125160056.GG6118@tassilo.jf.intel.com>
+In-Reply-To: <20190125160056.GG6118@tassilo.jf.intel.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Thu, 31 Jan 2019 12:27:38 -0800
+Message-ID: <CAM_iQpVtyCR=BTBkpDtbEFJ8REczpvYRTGPQnBsV=8rznXn6fg@mail.gmail.com>
+Subject: Re: System crash with perf_fuzzer (kernel: 5.0.0-rc3)
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        eranian@google.com, vincent.weaver@maine.edu,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new mapping API for mapping guest memory to avoid depending on
-"struct page".
+On Fri, Jan 25, 2019 at 8:02 AM Andi Kleen <ak@linux.intel.com> wrote:
+>
+> > [Fri Jan 25 10:28:53 2019] perf: interrupt took too long (2501 > 2500), lowering kernel.perf_event_max_sample_rate to 79750
+> > [Fri Jan 25 10:29:08 2019] perf: interrupt took too long (3136 > 3126), lowering kernel.perf_event_max_sample_rate to 63750
+> > [Fri Jan 25 10:29:11 2019] perf: interrupt took too long (4140 > 3920), lowering kernel.perf_event_max_sample_rate to 48250
+> > [Fri Jan 25 10:29:11 2019] perf: interrupt took too long (5231 > 5175), lowering kernel.perf_event_max_sample_rate to 38000
+> > [Fri Jan 25 10:29:11 2019] perf: interrupt took too long (6736 > 6538), lowering kernel.perf_event_max_sample_rate to 29500
+>
+> These are fairly normal.
+>
+> > [Fri Jan 25 10:32:44 2019] ------------[ cut here ]------------
+> > [Fri Jan 25 10:32:44 2019] perfevents: irq loop stuck!
+>
+> I believe it's always possible to cause an irq loop. This happens when
+> the PMU is programmed to cause PMIs on multiple counters
+> too quickly. Maybe should just recover from it without printing such
+> scary messages.
 
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
----
-v4 -> v5:
-- unmap with dirty flag
----
- arch/x86/kvm/svm.c | 97 +++++++++++++++++++++++++++---------------------------
- 1 file changed, 49 insertions(+), 48 deletions(-)
+Yeah, a loop stuck looks really scary inside an NMI handler.
+Should I just go ahead to send a patch to remove this warning?
+Or probably turn it into a pr_info()?
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index f13a3a2..d30a35b 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -3062,32 +3062,6 @@ static inline bool nested_svm_nmi(struct vcpu_svm *svm)
- 	return false;
- }
- 
--static void *nested_svm_map(struct vcpu_svm *svm, u64 gpa, struct page **_page)
--{
--	struct page *page;
--
--	might_sleep();
--
--	page = kvm_vcpu_gfn_to_page(&svm->vcpu, gpa >> PAGE_SHIFT);
--	if (is_error_page(page))
--		goto error;
--
--	*_page = page;
--
--	return kmap(page);
--
--error:
--	kvm_inject_gp(&svm->vcpu, 0);
--
--	return NULL;
--}
--
--static void nested_svm_unmap(struct page *page)
--{
--	kunmap(page);
--	kvm_release_page_dirty(page);
--}
--
- static int nested_svm_intercept_ioio(struct vcpu_svm *svm)
- {
- 	unsigned port, size, iopm_len;
-@@ -3290,10 +3264,11 @@ static inline void copy_vmcb_control_area(struct vmcb *dst_vmcb, struct vmcb *fr
- 
- static int nested_svm_vmexit(struct vcpu_svm *svm)
- {
-+	int rc;
- 	struct vmcb *nested_vmcb;
- 	struct vmcb *hsave = svm->nested.hsave;
- 	struct vmcb *vmcb = svm->vmcb;
--	struct page *page;
-+	struct kvm_host_map map;
- 
- 	trace_kvm_nested_vmexit_inject(vmcb->control.exit_code,
- 				       vmcb->control.exit_info_1,
-@@ -3302,9 +3277,14 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
- 				       vmcb->control.exit_int_info_err,
- 				       KVM_ISA_SVM);
- 
--	nested_vmcb = nested_svm_map(svm, svm->nested.vmcb, &page);
--	if (!nested_vmcb)
-+	rc = kvm_vcpu_map(&svm->vcpu, gfn_to_gpa(svm->nested.vmcb), &map);
-+	if (rc) {
-+		if (rc == -EINVAL)
-+			kvm_inject_gp(&svm->vcpu, 0);
- 		return 1;
-+	}
-+
-+	nested_vmcb = map.hva;
- 
- 	/* Exit Guest-Mode */
- 	leave_guest_mode(&svm->vcpu);
-@@ -3408,7 +3388,7 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
- 
- 	mark_all_dirty(svm->vmcb);
- 
--	nested_svm_unmap(page);
-+	kvm_vcpu_unmap(&svm->vcpu, &map, true);
- 
- 	nested_svm_uninit_mmu_context(&svm->vcpu);
- 	kvm_mmu_reset_context(&svm->vcpu);
-@@ -3474,7 +3454,7 @@ static bool nested_vmcb_checks(struct vmcb *vmcb)
- }
- 
- static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
--				 struct vmcb *nested_vmcb, struct page *page)
-+				 struct vmcb *nested_vmcb, struct kvm_host_map *map)
- {
- 	if (kvm_get_rflags(&svm->vcpu) & X86_EFLAGS_IF)
- 		svm->vcpu.arch.hflags |= HF_HIF_MASK;
-@@ -3558,7 +3538,7 @@ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
- 	svm->vmcb->control.pause_filter_thresh =
- 		nested_vmcb->control.pause_filter_thresh;
- 
--	nested_svm_unmap(page);
-+	kvm_vcpu_unmap(&svm->vcpu, map, true);
- 
- 	/* Enter Guest-Mode */
- 	enter_guest_mode(&svm->vcpu);
-@@ -3578,17 +3558,23 @@ static void enter_svm_guest_mode(struct vcpu_svm *svm, u64 vmcb_gpa,
- 
- static bool nested_svm_vmrun(struct vcpu_svm *svm)
- {
-+	int rc;
- 	struct vmcb *nested_vmcb;
- 	struct vmcb *hsave = svm->nested.hsave;
- 	struct vmcb *vmcb = svm->vmcb;
--	struct page *page;
-+	struct kvm_host_map map;
- 	u64 vmcb_gpa;
- 
- 	vmcb_gpa = svm->vmcb->save.rax;
- 
--	nested_vmcb = nested_svm_map(svm, svm->vmcb->save.rax, &page);
--	if (!nested_vmcb)
-+	rc = kvm_vcpu_map(&svm->vcpu, gfn_to_gpa(vmcb_gpa), &map);
-+	if (rc) {
-+		if (rc == -EINVAL)
-+			kvm_inject_gp(&svm->vcpu, 0);
- 		return false;
-+	}
-+
-+	nested_vmcb = map.hva;
- 
- 	if (!nested_vmcb_checks(nested_vmcb)) {
- 		nested_vmcb->control.exit_code    = SVM_EXIT_ERR;
-@@ -3596,7 +3582,7 @@ static bool nested_svm_vmrun(struct vcpu_svm *svm)
- 		nested_vmcb->control.exit_info_1  = 0;
- 		nested_vmcb->control.exit_info_2  = 0;
- 
--		nested_svm_unmap(page);
-+		kvm_vcpu_unmap(&svm->vcpu, &map, true);
- 
- 		return false;
- 	}
-@@ -3640,7 +3626,7 @@ static bool nested_svm_vmrun(struct vcpu_svm *svm)
- 
- 	copy_vmcb_control_area(hsave, vmcb);
- 
--	enter_svm_guest_mode(svm, vmcb_gpa, nested_vmcb, page);
-+	enter_svm_guest_mode(svm, vmcb_gpa, nested_vmcb, &map);
- 
- 	return true;
- }
-@@ -3664,21 +3650,26 @@ static void nested_svm_vmloadsave(struct vmcb *from_vmcb, struct vmcb *to_vmcb)
- static int vmload_interception(struct vcpu_svm *svm)
- {
- 	struct vmcb *nested_vmcb;
--	struct page *page;
-+	struct kvm_host_map map;
- 	int ret;
- 
- 	if (nested_svm_check_permissions(svm))
- 		return 1;
- 
--	nested_vmcb = nested_svm_map(svm, svm->vmcb->save.rax, &page);
--	if (!nested_vmcb)
-+	ret = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm->vmcb->save.rax), &map);
-+	if (ret) {
-+		if (ret == -EINVAL)
-+			kvm_inject_gp(&svm->vcpu, 0);
- 		return 1;
-+	}
-+
-+	nested_vmcb = map.hva;
- 
- 	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 
- 	nested_svm_vmloadsave(nested_vmcb, svm->vmcb);
--	nested_svm_unmap(page);
-+	kvm_vcpu_unmap(&svm->vcpu, &map, true);
- 
- 	return ret;
- }
-@@ -3686,21 +3677,26 @@ static int vmload_interception(struct vcpu_svm *svm)
- static int vmsave_interception(struct vcpu_svm *svm)
- {
- 	struct vmcb *nested_vmcb;
--	struct page *page;
-+	struct kvm_host_map map;
- 	int ret;
- 
- 	if (nested_svm_check_permissions(svm))
- 		return 1;
- 
--	nested_vmcb = nested_svm_map(svm, svm->vmcb->save.rax, &page);
--	if (!nested_vmcb)
-+	ret = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm->vmcb->save.rax), &map);
-+	if (ret) {
-+		if (ret == -EINVAL)
-+			kvm_inject_gp(&svm->vcpu, 0);
- 		return 1;
-+	}
-+
-+	nested_vmcb = map.hva;
- 
- 	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 
- 	nested_svm_vmloadsave(svm->vmcb, nested_vmcb);
--	nested_svm_unmap(page);
-+	kvm_vcpu_unmap(&svm->vcpu, &map, true);
- 
- 	return ret;
- }
-@@ -6219,7 +6215,7 @@ static int svm_pre_leave_smm(struct kvm_vcpu *vcpu, u64 smbase)
- {
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 	struct vmcb *nested_vmcb;
--	struct page *page;
-+	struct kvm_host_map map;
- 	struct {
- 		u64 guest;
- 		u64 vmcb;
-@@ -6233,11 +6229,16 @@ static int svm_pre_leave_smm(struct kvm_vcpu *vcpu, u64 smbase)
- 
- 	if (svm_state_save.guest) {
- 		vcpu->arch.hflags &= ~HF_SMM_MASK;
--		nested_vmcb = nested_svm_map(svm, svm_state_save.vmcb, &page);
-+		if (kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm_state_save.vmcb), &map) == -EINVAL)
-+			kvm_inject_gp(&svm->vcpu, 0);
-+
-+		nested_vmcb = map.hva;
-+
- 		if (nested_vmcb)
--			enter_svm_guest_mode(svm, svm_state_save.vmcb, nested_vmcb, page);
-+			enter_svm_guest_mode(svm, svm_state_save.vmcb, nested_vmcb, &map);
- 		else
- 			ret = 1;
-+
- 		vcpu->arch.hflags |= HF_SMM_MASK;
- 	}
- 	return ret;
--- 
-2.7.4
+>
+> Right now the scary message is justified because it resets the complete
+> PMU. Perhaps need to be a bit more selective resetting on only
+> the events that loop.
+>
+> > [Fri Jan 25 10:32:44 2019] WARNING: CPU: 1 PID: 0 at arch/x86/events/intel/core.c:2440 intel_pmu_handle_irq+0x158/0x170
+>
+> This looks independent.
+>
+> I would apply the following patch (cut'n'pasted, so may need manual apply)
+> and then run with
+>
 
+I would like to help as we keep seeing this warning for a rather long time,
+but unfortunately the reproducer provided by Ravi doesn't trigger any warning
+or crash here. Maybe I don't use a right hardware to trigger it?
+
+[    0.132136] Performance Events: PEBS fmt2+, Broadwell events,
+16-deep LBR, full-width counters, Intel PMU driver.
+[    0.133003] ... version:                3
+[    0.134001] ... bit width:              48
+[    0.135001] ... generic registers:      4
+[    0.136001] ... value mask:             0000ffffffffffff
+[    0.137001] ... max period:             00007fffffffffff
+[    0.138001] ... fixed-purpose events:   3
+[    0.139001] ... event mask:             000000070000000f
+
+
+Thanks!
