@@ -2,171 +2,117 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDF1C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3390FC4151A
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 822A620870
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3FF82184D
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:01:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Qg2fhbC+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbfAaJBG (ORCPT
+        id S1728608AbfAaJBX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 04:01:06 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3254 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725787AbfAaJBG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 04:01:06 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C3373141C5C0E960690E;
-        Thu, 31 Jan 2019 17:01:03 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.43) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Thu, 31 Jan 2019
- 17:00:57 +0800
-Subject: Re: [PATCH v2 1/7] scsi: libsas: reset the negotiated_linkrate when
- phy is down
-To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20190130082412.9357-1-yanaijie@huawei.com>
- <20190130082412.9357-2-yanaijie@huawei.com>
- <6b06f81e-9ede-014d-b678-1996044106e3@huawei.com>
- <5C524B3B.5030007@huawei.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <21c9fcdb-b0ce-6205-d53a-12ff68b0a5f7@huawei.com>
-Date:   Thu, 31 Jan 2019 09:00:47 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Thu, 31 Jan 2019 04:01:23 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:3328 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbfAaJBW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 04:01:22 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c52b95f0000>; Thu, 31 Jan 2019 01:01:19 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 31 Jan 2019 01:01:17 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 31 Jan 2019 01:01:17 -0800
+Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
+ HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 31 Jan 2019 09:01:16 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 69C964197C; Thu, 31 Jan 2019 11:01:14 +0200 (EET)
+Date:   Thu, 31 Jan 2019 11:01:14 +0200
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Joseph Lo <josephl@nvidia.com>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH V2 2/6] clocksource: tegra: add Tegra210 timer driver
+Message-ID: <20190131090114.GZ7714@pdeschrijver-desktop.Nvidia.com>
+References: <20190128091815.7040-1-josephl@nvidia.com>
+ <20190128091815.7040-3-josephl@nvidia.com>
+ <20190128150908.GB31317@ulmo>
+ <20190129084155.GX7714@pdeschrijver-desktop.Nvidia.com>
+ <20190129102912.GC28850@ulmo>
+ <8d5b6a61-8fb8-2f83-5378-9b1a1e5bd03d@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <5C524B3B.5030007@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <8d5b6a61-8fb8-2f83-5378-9b1a1e5bd03d@nvidia.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548925279; bh=HtN3DGYlflCHFOl7WE+ocafJmSJEbCEg17DDUDX5mfk=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=Qg2fhbC+Mxg+ehN8AJkZnN9hCefruXjO0WHnO0jviodQtdqPZKqFE1CLiH2thRhMs
+         0EzsjhDsUk6HqO1yAqvZy5arNVBqrTzLw9xA7SwwCer/E6oOj2fWqZmTpQffTuZxHa
+         LvDX4nQuqgZwb8AQPVJAuj44D32Fr6yHhYfOk2GQk5JdC5bUJSG//3BhA2qFnPgs6c
+         jWKhDdI4C0uVkjGrcGAjbsGcyTdTfMxw5bQHHollfpbrIA/AHkB1ZAjhNdqxUoXqNZ
+         n9ix2sJ0cx9tAPIXv2gWDXJL+j+Zk6rpiiV4kRKy6hEVz5dwM13c+lYKU7xUSo8qBQ
+         tKnN9x0Ry9vWw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/2019 01:11, Jason Yan wrote:
->
->
-> On 2019/1/30 21:08, John Garry wrote:
->> On 30/01/2019 08:24, Jason Yan wrote:
->>> If the device is unplugged or disconnected, the negotiated_linkrate
->>> still can be seen from the userspace by sysfs. This makes people
->>> confused and leaks information of the device last used. So let's reset
->>> the negotiated_linkrate after the phy is down.
->>>
->>> Signed-off-by: Jason Yan <yanaijie@huawei.com>
->>> CC: John Garry <john.garry@huawei.com>
->>> CC: Johannes Thumshirn <jthumshirn@suse.de>
->>> CC: Ewan Milne <emilne@redhat.com>
->>> CC: Christoph Hellwig <hch@lst.de>
->>> CC: Tomas Henzl <thenzl@redhat.com>
->>> CC: Dan Williams <dan.j.williams@intel.com>
->>> CC: Hannes Reinecke <hare@suse.com>
->>> ---
->>>  drivers/scsi/libsas/sas_expander.c | 2 ++
->>>  include/scsi/libsas.h              | 3 +++
->>>  2 files changed, 5 insertions(+)
->>>
->>> diff --git a/drivers/scsi/libsas/sas_expander.c
->>> b/drivers/scsi/libsas/sas_expander.c
->>> index 17eb4185f29d..7b0e6dcef6e6 100644
->>> --- a/drivers/scsi/libsas/sas_expander.c
->>> +++ b/drivers/scsi/libsas/sas_expander.c
->>> @@ -1904,6 +1904,8 @@ static void sas_unregister_devs_sas_addr(struct
->>> domain_device *parent,
->>>                  &parent->port->sas_port_del_list);
->>>          phy->port = NULL;
->>>      }
->>> +    if (phy->phy)
->>> +        phy->phy->negotiated_linkrate = SAS_LINK_RATE_UNKNOWN;
->>
->> Does this work for both PHYs which were either directly attached or just
->> forming part of a wideport?
->>
->> Please also note that the expander PHY which was previously attached may
->> also show the incorrect value.
->
-> Good catch, all PHYs need to do this, not only the last PHY of the
-> wideport.
+On Wed, Jan 30, 2019 at 10:40:06AM +0800, Joseph Lo wrote:
+> On 1/29/19 6:29 PM, Thierry Reding wrote:
+> > On Tue, Jan 29, 2019 at 10:41:55AM +0200, Peter De Schrijver wrote:
+> > > On Mon, Jan 28, 2019 at 04:09:08PM +0100, Thierry Reding wrote:
+> > > 
+> > > ...
+> > > 
+> > > > 
+> > > > Up to here this is a duplicate of timer-tegra20.c. And a lot of
+> > > > tegra210_timer_init() is the same as tegra20_timer_init() as well. Can't
+> > > > we unify the two drivers instead?
+> > > > 
+> > > > The power cycle restrictions of the architected timer, do they not apply
+> > > > to chips earlier than Tegra210 either? So don't we need all of these
+> > > > additional features on the timer-tegra20.c driver as well? If so that
+> > > 
+> > > No. Chips prior to Tegra114 do not have an arch timer and the arch timer
+> > > does work correctly on Cortex-A15 so Tegra114 and Tegra124 can use it.
+> > > It's broken on Cortex-A57 though, so we can't use it as a wakeup source
+> > > on Tegra210.
+> > 
+> > If chips prior to Tegra114 don't have an architected timer, then we
+> > can't remove the timer-tegra20 driver, because we still need it on
+> > Tegra20 and Tegra30, right?
+> > 
+> 
+> For Tegra20/30, it's Cortext-A9 with TWD timer. (arch/arm/kernel/smp_twd.c)
+> 
+> Originally, I thought the functionality of timer-tegra20 would be fully
+> replaced by TWD timer driver. But from the log in the kernelci test
+> farm[1][2], it looks to me the timer-tegra20 driver still works as
+> clocksource driver for Tegra20/30. I cannot confirm if the clock event
+> device has been replaced by TWD timer in the log. It could be replaced in
+> the background. And by looking into the driver, it should be.
 
-Please also consider this:
-- For the expander host PHY, it will also go down. I find however on my 
-system that this generates no broadcast event, but the I find that the 
-event count has changed for that PHY. So the expander PHY's state would 
-also be wrong.  So maybe we need to yet again inject a broadcast.
+The TWD timer runs from the CPU clock so its frequency changes with
+CPU DVFS. That makes it difficult to use.
 
-- we should update PHY sysfs entries for device_type, sas_addr, and 
-target protocols
-
->
->>
->>>  }
->>>
->>>  static int sas_discover_bfs_by_root_level(struct domain_device *root,
->>> diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
->>> index 3de3b10da19a..420156cea3ee 100644
->>> --- a/include/scsi/libsas.h
->>> +++ b/include/scsi/libsas.h
->>> @@ -448,6 +448,9 @@ static inline void sas_phy_disconnected(struct
->>> asd_sas_phy *phy)
->>>  {
->>>      phy->oob_mode = OOB_NOT_CONNECTED;
->>>      phy->linkrate = SAS_LINK_RATE_UNKNOWN;
->>> +
->>
->> Then idea behind sas_phy_disconnected() was to set root PHY values only:
->>
->> /* Before calling a notify event, LLDD should use this function
->>   * when the link is severed (possibly from its tasklet).
->>   * The idea is that the Class only reads those, while the LLDD,
->>   * can R/W these (thus avoiding a race)
->>
->> libsas does set sas_phy negotiated_linkrate (but only for expander
->> PHYs), so not the perfect place to set this. I'm nitpicking a bit here.
->>
->
-> I don't want to put it here. I asked chenxiang to fix this in LLDD, but
-> he insist libsas to do this. Would you please discuss with chenxiang and
-> come to an agreement?
-
-I'm ok with the LLDD.
-
-For sure, adding it here is convenient and would resolve the issue for 
-other LLDDs using libsas, but setting it directly in the LLDD seems like 
-the right thing to do, since this is what we do for other sas_phy rates.
-
->
->>
->>> +    if (phy->phy)
->>> +        phy->phy->negotiated_linkrate = SAS_LINK_RATE_UNKNOWN;
->>>  }
->>>
->>>  static inline unsigned int to_sas_gpio_od(int device, int bit)
->>
->> Thanks,
->>
->>>
->>
->>
->>
->>
->>
->> .
->>
->
->
-> .
->
-
-
+Peter.
