@@ -2,117 +2,132 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C94D7C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAA0C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D2F20B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:23:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="b5GUbtW7"
+	by mail.kernel.org (Postfix) with ESMTP id 88CC2218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbfAaSXp (ORCPT
+        id S1728325AbfAaSX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:23:45 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38365 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726455AbfAaSXp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 13:23:45 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h50so3388826ede.5
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:23:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3kKnYCZxaOl+LKcbycFNrKujZW9Tg4jDb8LtbcdDLSw=;
-        b=b5GUbtW7MhAlicI5s0cgkMZ0ZcpEhGZliGBO/xRLBz3mcv59Y+rSyqpGt95Zwd8Cfa
-         nB4b6js3PgMn4oxSLp1TMz6khmPOIuR3MfgKp5L2MwIRw9RBdeZP1rISOY9WX5yz4qRB
-         aR6KhDajLQvKGyR2GwRafxFaAp+IM9AwR60+c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3kKnYCZxaOl+LKcbycFNrKujZW9Tg4jDb8LtbcdDLSw=;
-        b=oozLeANS49cOck6R/6O/9CXWtVNTCSZ9XdEngl7YVKL/Yn663E0VQ2gqlKZznnNK9I
-         qMgg2SP1MF7jjAxGUmtRwJIicggkRzrqnxn39xjK2ytIs1LqpcLN9He1fUk5m/588bOP
-         vEsuJl3GomEoT25GjP1h6gRkXC3nQTp77SqmhvHOUc+Ct4tyuRXNWKkoG7XoB0jNzP4a
-         g80giZEzyqk5yx3qarV2NcLrqpuD6rLaCFqg0CO4E4pn/2xphRpyXOuLyau3QeBos+7l
-         MCGRxhRH8eLYP2a20fxc5fpDnitUCJx1w4Z7n8eBZ6otGOk+sY6tDub8y4Am9Zj4X5BO
-         5pPg==
-X-Gm-Message-State: AJcUukfdWa5hT1A29/shYx4yYFjH8UAtYAZsRXgAf6S/Rbx1KvR6GXfk
-        Y9Waxaaj85TDp0GQmA5/PhIoDw==
-X-Google-Smtp-Source: ALg8bN4owv1fL3L8hLNulH7OZ4Re0xTMsyE+2rCIiS5Ey9ESers0fFI1zyuYuvAxHergkttYtavuTw==
-X-Received: by 2002:a50:9291:: with SMTP id k17mr35543939eda.243.1548959023158;
-        Thu, 31 Jan 2019 10:23:43 -0800 (PST)
-Received: from andrea ([91.253.220.247])
-        by smtp.gmail.com with ESMTPSA id f31sm1512097eda.16.2019.01.31.10.23.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 10:23:42 -0800 (PST)
-Date:   Thu, 31 Jan 2019 19:23:34 +0100
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs: Add missing memory barriers in afs_manage_cell()
-Message-ID: <20190131182334.GA3847@andrea>
-References: <20181126164412.11184-1-andrea.parri@amarulasolutions.com>
- <20190117153132.GA10932@andrea>
+        Thu, 31 Jan 2019 13:23:56 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49358 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726455AbfAaSXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 13:23:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 16EAEA78;
+        Thu, 31 Jan 2019 10:23:55 -0800 (PST)
+Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8DA963F59C;
+        Thu, 31 Jan 2019 10:23:52 -0800 (PST)
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [RFC PATCH 0/3] arm/arm64: entry: Remove need_resched() loop
+Date:   Thu, 31 Jan 2019 18:23:36 +0000
+Message-Id: <20190131182339.9835-1-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117153132.GA10932@andrea>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 04:31:32PM +0100, Andrea Parri wrote:
-> On Mon, Nov 26, 2018 at 05:44:12PM +0100, Andrea Parri wrote:
-> > As the comments for wake_up_bit() and waitqueue_active() point out,
-> > the barriers are needed to order the clearing of the _FL_NOT_READY
-> > bit and the waitqueue_active() load; match the implicit barrier in
-> > prepare_to_wait().
-> > 
-> > Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> 
-> Hi David, do you have any feedback on this?
+A while back (before [1]), i386 had this in the tail of its irq
+handling code:
 
-ping
+  need_resched:
+	  movl TI_flags(%ebp), %ecx       # need_resched set ?
+	  testb $_TIF_NEED_RESCHED, %cl
+	  jz restore_all
+	  testl $IF_MASK,EFLAGS(%esp)     # interrupts off (exception path) ?
+	  jz restore_all
+	  sti
+	  call preempt_schedule
+	  cli
+	  movl $0,TI_preempt_count(%ebp)
+	  jmp need_resched
+
+preempt_schedule() already had an inner need_resched() loop introduced by
+
+  commit 4d0b85ea4610 ("[PATCH] kernel preemption bits (2/2)")
+
+and the outer loop was needed since, as the above commit explains, it
+was possible to return from preempt_schedule(), get an interrupt and
+have need_resched() true.
+
+This was eventually changed when preempt_schedule_irq() was introduced
+by [1]:
+
+  commit b268264c6299 ("[PATCH] sched: fix preemption race (Core/i386)")
+
+which moved the enabling & disabling of interrupts inside the then
+new preempt_schedule_irq(). From then on, the arch-code loop was no
+longer necessary, providing preempt_schedule_irq() was used. This was
+talked over on LKML in [2].
+
+It's worth noting that it seems most archs calling
+preempt_schedule_irq() have that outer loop, and for most of them it
+really looks like they could get rid of it as well.
+
+FWIW the suspects are
+
+$ grep -r -I "preempt_schedule_irq" arch/ | cut -d/ -f2 | sort | uniq
+
+  arc
+  arm
+  arm64
+  c6x
+  csky
+  h8300
+  ia64
+  m68k
+  microblaze
+  mips
+  nds32
+  nios2
+  parisc
+  powerpc
+  s390
+  sh
+  sparc
+  x86
+  xtensa
 
 
-> 
->   Andrea
-> 
-> 
-> > ---
-> >  fs/afs/cell.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-> > index cf445dbd5f2e0..a9488abe56029 100644
-> > --- a/fs/afs/cell.c
-> > +++ b/fs/afs/cell.c
-> > @@ -637,6 +637,7 @@ static void afs_manage_cell(struct work_struct *work)
-> >  		cell->state = AFS_CELL_ACTIVE;
-> >  		smp_wmb();
-> >  		clear_bit(AFS_CELL_FL_NOT_READY, &cell->flags);
-> > +		smp_mb__after_atomic(); /* see comment for wake_up_bit() */
-> >  		wake_up_bit(&cell->flags, AFS_CELL_FL_NOT_READY);
-> >  		goto again;
-> >  
-> > @@ -678,6 +679,7 @@ static void afs_manage_cell(struct work_struct *work)
-> >  	cell->state = AFS_CELL_ACTIVE;
-> >  	smp_wmb();
-> >  	clear_bit(AFS_CELL_FL_NOT_READY, &cell->flags);
-> > +	smp_mb__after_atomic(); /* see comment for wake_up_bit() */
-> >  	wake_up_bit(&cell->flags, AFS_CELL_FL_NOT_READY);
-> >  	_leave(" [deact->act]");
-> >  	return;
-> > -- 
-> > 2.17.1
-> > 
+- Patches 1-2 remove the loop for arm & arm64
+- Patch 3 adds a bit of documentation to point out the loop isn't needed
+  to try and spread the word.
+
+[2]: https://lore.kernel.org/lkml/cc989920-a13b-d53b-db83-1584a7f53edc@arm.com/
+
+Valentin Schneider (3):
+  arm64: entry: Remove unneeded need_resched() loop
+  ARM: entry: Remove unneeded need_resched() loop
+  sched/Documentation: Point out use of preempt_schedule_irq()
+
+ Documentation/scheduler/sched-arch.txt | 10 ++++++++++
+ arch/arm/kernel/entry-armv.S           | 12 +-----------
+ arch/arm64/kernel/entry.S              | 11 +----------
+ 3 files changed, 12 insertions(+), 21 deletions(-)
+
+--
+2.20.1
+
