@@ -2,91 +2,150 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F1DC282DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BDD5C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 735B32087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19A8220881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:57:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LOz9+D+Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbfAaXwR (ORCPT
+        id S1727111AbfAaX5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 18:52:17 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:52340 "EHLO ale.deltatee.com"
+        Thu, 31 Jan 2019 18:57:42 -0500
+Received: from ozlabs.org ([203.11.71.1]:46985 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726132AbfAaXwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 18:52:16 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gpM7v-0005lf-5k; Thu, 31 Jan 2019 16:52:12 -0700
-To:     Dave Jiang <dave.jiang@intel.com>, linux-kernel@vger.kernel.org,
-        linux-ntb@googlegroups.com, linux-pci@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
-        Jon Mason <jdmason@kudzu.us>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Allen Hubbe <allenbh@gmail.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>
-References: <20190131185656.17972-1-logang@deltatee.com>
- <345197a6-89e6-c0de-5f7b-a646b5f396c9@intel.com>
- <bafe9db4-6d5b-0453-d7e7-e49e9293dd01@deltatee.com>
- <ea7b7c3c-8ed5-51ec-022a-7d28a5afce82@intel.com>
- <29f7e3fe-5354-6156-1243-7248ffb2249f@deltatee.com>
- <7e3eed52-8e3a-c472-392a-5dc5689290ae@intel.com>
- <5f8b1616-a005-7658-978f-16466fcc3886@deltatee.com>
- <d46ce09c-d493-3d63-a854-b68a09345a75@intel.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <59a4f188-0d37-bf40-baf6-80b4fa46df52@deltatee.com>
-Date:   Thu, 31 Jan 2019 16:52:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726246AbfAaX5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 18:57:41 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43rHGp4WtQz9s4Z;
+        Fri,  1 Feb 2019 10:57:37 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548979059;
+        bh=xzhhudWbwGV5dH5aatfey98FzA7s8sgHIze9sbhiP/8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=LOz9+D+YjJ+QSMIWqyRqhHOS8FImbiCmT+Pr5PMlsOD6BREe6FWe9JI3u5NNXn8NQ
+         1LbecIo6NyJypTEiRrMLhF3+Q08gETylaRhyCbFz8/+65vtZrnfl5py+REu10Rxk1p
+         mLciWHvxhHWIg4UGH1Q4hdTMWw0gbM7qtxKtD2O0x83misj1yyg33OMbIzGnaoyTyL
+         FA9vQpQKh3IqZswsjIFkBDUrXygmH2+jQF26WB9axpdzs4Ddbkqq1bSg04GU9rRgT3
+         /pRdJpGfkuUI2DTNIcKNGppSjiLIZ3TbiemrOU4JCOY9myS3eMxkTczht7K7arCkyd
+         cd/PJxrJtKIxA==
+Date:   Fri, 1 Feb 2019 10:57:36 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Ken Chalmers <ken.chalmers@amd.com>,
+        Kent Russell <kent.russell@amd.com>
+Subject: linux-next: Fixes tags need some work in the drm tree
+Message-ID: <20190201105736.1428c9fc@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <d46ce09c-d493-3d63-a854-b68a09345a75@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: epilmore@gigaio.com, fancer.lancer@gmail.com, allenbh@gmail.com, joro@8bytes.org, bhelgaas@google.com, jdmason@kudzu.us, linux-kselftest@vger.kernel.org, iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, dave.jiang@intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 0/9] Support using MSI interrupts in ntb_transport
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Q7A6sF2/x+N6AAYNC/JNS11"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/Q7A6sF2/x+N6AAYNC/JNS11
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2019-01-31 4:48 p.m., Dave Jiang wrote:
-> 
-> On 1/31/2019 4:41 PM, Logan Gunthorpe wrote:
->>
->> On 2019-01-31 3:46 p.m., Dave Jiang wrote:
->>> I believe irqbalance writes to the file /proc/irq/N/smp_affinity. So
->>> maybe take a look at the code that starts from there and see if it would
->>> have any impact on your stuff.
->> Ok, well on my system I can write to the smp_affinity all day and the
->> MSI interrupts still work fine.
-> 
-> Maybe your code is ok then. If the stats show up in /proc/interrupts 
-> then you can see it moving to different cores.
+In commit
 
-Yes, I did check that the stats change CPU in proc interrupts.
+  a93587b31e34 ("drm/amd/display: Only get the connector state for VRR when=
+ toggled")
 
-> Yeah I'm not sure what to do about it either as I'm not super familiar 
-> with that area either. Just making note of what I encountered. And you 
-> are right, the updated info has to go over NTB for the other side to 
-> write to the updated place. So there's a lot of latency involved.
+Fixes tag
 
-Ok, well I'll implement the callback anyway for v2. Better safe than
-sorry. We can operate on the assumption that someone thought of the race
-condition and if we ever see reports of lost interrupts we'll know where
-to look.
+  Fixes: 3cc22f281318 ("drm/amdgpu: Set FreeSync state using drm VRR proper=
+ties")
 
-Logan
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe instead:
+
+  FIxes: bb47de736661 ("drm/amdgpu: Set FreeSync state using drm VRR proper=
+ties")
+
+In commit
+
+  32e61361b82e ("drm/amd/display: Fix 64-bit division for 32-bit builds")
+
+Fixes tag
+
+  Fixes: https://lists.freedesktop.org/archives/dri-devel/2018-December/201=
+008.html
+
+has these problem(s):
+
+  - No SHA1 recognised
+
+Maybe instead:
+
+  Fixes: 80604e27bc9 ("drm/amd/display: Use 100 Hz precision for pipe pixel=
+ clocks")
+
+In commit
+
+  c4312c27c826 ("drm/amdgpu: Cleanup 2 compiler warnings")
+
+Fixes tag
+
+  Fixes: e4ae0fc drm/amdgpu: implement gfx8 post_soft_reset
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+Fixes tag
+
+  Fixes: 5e01c09 drm/amdgpu/gfx_v8_0: Reorder the gfx, kiq and kcq rings
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe instead:
+
+  Fixes: c6064de4b734 ("drm/amdgpu/gfx_v8_0: Reorder the gfx, kiq and kcq r=
+ings test sequence")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Q7A6sF2/x+N6AAYNC/JNS11
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxTi3AACgkQAVBC80lX
+0GwzRwf8DBWijKBMDHpG/ElUnWlulbVi9qYhXRJxHKvmLEnHRNlPnjFC4qXS65ci
+Fm7U27XnpTKYNN86dtGCELE6V1whHZaCGgyV6yZZUneD2JmmJYVv9AnGeEygkBzX
+xuFS1l3C8DNrf290dWP9QPABCD1Vcpw5EXgqEjd1EgRs6v1tvu+s0yoR2BIvWDzf
+nF38r46RSYZoc3pq0xorKJ6MX8onfi5lZBjMA2zntmswKPDcga31d6vjfwlEBp+G
+U7rb1xsTHJKaanjp9AOyHm1dphpXR98LX1phRBRxshu9Z7ypuOGD9Xrs5bwOP/55
+uGJYarSgcjICevRyBSX6CRnqIat0dg==
+=xPLZ
+-----END PGP SIGNATURE-----
+
+--Sig_/Q7A6sF2/x+N6AAYNC/JNS11--
