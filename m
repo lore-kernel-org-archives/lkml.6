@@ -2,139 +2,111 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC2EC282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 694A4C282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1953420823
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 237E020B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:05:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="E7hgDPZg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfAaAFo (ORCPT
+        id S1727417AbfAaAFs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 19:05:44 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:52562 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfAaAFo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 19:05:44 -0500
-Received: from 79.184.255.169.ipv4.supernova.orange.pl (79.184.255.169) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id f48b32f07f17685e; Thu, 31 Jan 2019 01:05:41 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux PM <linux-pm@vger.kernel.org>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Doug Smythies <dsmythies@telus.net>
-Subject: [PATCH] cpufreq: intel_pstate: Rework iowait boosting to be less aggressive
-Date:   Thu, 31 Jan 2019 01:04:36 +0100
-Message-ID: <2038590.kmssd2ZIyd@aspire.rjw.lan>
+        Wed, 30 Jan 2019 19:05:48 -0500
+Received: from ozlabs.org ([203.11.71.1]:52489 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725768AbfAaAFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 19:05:47 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43qgVZ26ydz9s3q;
+        Thu, 31 Jan 2019 11:05:42 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548893144;
+        bh=DonUQzEEBGDyYwmOCo2p664Zw99a2MZIRS32AnH80DE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=E7hgDPZgK4HHRM87p11kLaIf7rORCnGBc6qmeVPgQV4ASl3GThCazTEczZ372E2IX
+         WbP4Y2JciAqw9mQ1YNCLOoDNznmLllyck3hJT4yPq4utUeJPWl2Z2oyJxLPhbfdxqh
+         KGX6A7wbRjVYEBTqdgzU32Er0a0O1+/YBVs9nbwmA0s5ndJF1NVVrhe4hrOmct+7mS
+         zeDP//tlJMLElnJdG07upMBLgXCKZHeca9cPmTenNW71y/AVR1GInSOnL37qu5hvAU
+         C3zyHgo+Gk6Og324z73HRSSewRYevoFG2cfJCwyXk2iGwsVOHB16y3k/uDCN9AM4sm
+         Y9WLFA+xlJzYQ==
+Date:   Thu, 31 Jan 2019 11:05:41 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Liviu Dudau <liviu@dudau.co.uk>, Qian Cai <cai@lca.pw>
+Subject: linux-next: Fixes tags needs some work in the akpm-current tree
+Message-ID: <20190131110541.3f3a808c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Bs_.GBX.hqlakDsFwUu5OIW"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+--Sig_/Bs_.GBX.hqlakDsFwUu5OIW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The current iowait boosting mechanism in intel_pstate_update_util()
-is quite aggressive, as it goes to the maximum P-state right away,
-and may cause excessive amounts of energy to be used, which is not
-desirable and arguably isn't necessary too.
+Hi all,
 
-Follow commit a5a0809bc58e ("cpufreq: schedutil: Make iowait boost
-more energy efficient") that reworked the analogous iowait boost
-mechanism in the schedutil governor and make the iowait boosting
-in intel_pstate_update_util() work along the same lines.
+In commit
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpufreq/intel_pstate.c |   46 +++++++++++++++++++++++++----------------
- 1 file changed, 29 insertions(+), 17 deletions(-)
+  86c7502b25ed ("mm/vmalloc.c: don't dereference possible NULL pointer in _=
+_vunmap()")
 
-Index: linux-pm/drivers/cpufreq/intel_pstate.c
-===================================================================
---- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-+++ linux-pm/drivers/cpufreq/intel_pstate.c
-@@ -50,6 +50,8 @@
- #define int_tofp(X) ((int64_t)(X) << FRAC_BITS)
- #define fp_toint(X) ((X) >> FRAC_BITS)
- 
-+#define ONE_EIGHTH_FP ((int64_t)1 << (FRAC_BITS - 3))
-+
- #define EXT_BITS 6
- #define EXT_FRAC_BITS (EXT_BITS + FRAC_BITS)
- #define fp_ext_toint(X) ((X) >> EXT_FRAC_BITS)
-@@ -1678,17 +1680,14 @@ static inline int32_t get_avg_pstate(str
- static inline int32_t get_target_pstate(struct cpudata *cpu)
- {
- 	struct sample *sample = &cpu->sample;
--	int32_t busy_frac, boost;
-+	int32_t busy_frac;
- 	int target, avg_pstate;
- 
- 	busy_frac = div_fp(sample->mperf << cpu->aperf_mperf_shift,
- 			   sample->tsc);
- 
--	boost = cpu->iowait_boost;
--	cpu->iowait_boost >>= 1;
--
--	if (busy_frac < boost)
--		busy_frac = boost;
-+	if (busy_frac < cpu->iowait_boost)
-+		busy_frac = cpu->iowait_boost;
- 
- 	sample->busy_scaled = busy_frac * 100;
- 
-@@ -1767,22 +1766,35 @@ static void intel_pstate_update_util(str
- 	if (smp_processor_id() != cpu->cpu)
- 		return;
- 
-+	delta_ns = time - cpu->last_update;
- 	if (flags & SCHED_CPUFREQ_IOWAIT) {
--		cpu->iowait_boost = int_tofp(1);
--		cpu->last_update = time;
--		/*
--		 * The last time the busy was 100% so P-state was max anyway
--		 * so avoid overhead of computation.
--		 */
--		if (fp_toint(cpu->sample.busy_scaled) == 100)
--			return;
--
--		goto set_pstate;
-+		/* Start over if the CPU may have been idle. */
-+		if (delta_ns > TICK_NSEC) {
-+			cpu->iowait_boost = ONE_EIGHTH_FP;
-+		} else if (cpu->iowait_boost) {
-+			cpu->iowait_boost <<= 1;
-+			if (cpu->iowait_boost >= int_tofp(1)) {
-+				cpu->iowait_boost = int_tofp(1);
-+				cpu->last_update = time;
-+				/*
-+				 * The last time the busy was 100% so P-state
-+				 * was max anyway, so avoid the overhead of
-+				 * computation.
-+				 */
-+				if (fp_toint(cpu->sample.busy_scaled) == 100)
-+					return;
-+
-+				goto set_pstate;
-+			}
-+		} else {
-+			cpu->iowait_boost = ONE_EIGHTH_FP;
-+		}
- 	} else if (cpu->iowait_boost) {
- 		/* Clear iowait_boost if the CPU may have been idle. */
--		delta_ns = time - cpu->last_update;
- 		if (delta_ns > TICK_NSEC)
- 			cpu->iowait_boost = 0;
-+		else
-+			cpu->iowait_boost >>= 1;
- 	}
- 	cpu->last_update = time;
- 	delta_ns = time - cpu->sample.time;
+Fixes tag
 
+  Fixes: f3c01d2f3ade ("mm: vmalloc: avoid racy handling of debugobjects
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes tags across more than 1 line.
+
+In commit
+
+  6e9ed490d190 ("mm/page_owner: fix for deferred struct page init")
+
+Fixes tag
+
+  Fixes: fe53ca54270 ("mm: use early_pfn_to_nid in page_ext_init")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Bs_.GBX.hqlakDsFwUu5OIW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxSO9UACgkQAVBC80lX
+0GxozAgAndA+eQEnyIjF0/CnyNghPTie31FJ5TohhccbNie055brleJjhC02zsjA
+IjcHqd37sEdDsJQbkUB6lOpDyQ3fkDHzJZ5nvZ8NUG9/64crxaCFoh4nFjrtuIYI
+EHIMV72poXCbXPXbM8ZhrvnG9TTpYtGYy2On3B0Q7awzZGqCa8mSvW4whtblES6a
+wDRIbK7GB8qmVAP+d/AXKWHwQM7Ttg0YfeOD4CK/mr8NTRVpzpohKbf+7lyELqcN
+Z5GOV0ajzb2jbWiTUHRdwqNxfkXu6n31XojBXrAsrEL253QTkvnFQTPYdH3W/NQ9
+hjiJjyeuusohJve8i88q14Vxvd/jIQ==
+=ouuW
+-----END PGP SIGNATURE-----
+
+--Sig_/Bs_.GBX.hqlakDsFwUu5OIW--
