@@ -2,158 +2,249 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38547C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CA7C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D1F218F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:25:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5nOl1Zr"
+	by mail.kernel.org (Postfix) with ESMTP id C913D20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:25:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388452AbfAaQZD (ORCPT
+        id S2388462AbfAaQZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:25:03 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33809 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387837AbfAaQZC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:25:02 -0500
-Received: by mail-lj1-f193.google.com with SMTP id u89-v6so3240467lje.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 08:25:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=LikxHqRWe3hjXCb7z4Z2tQt/qnU/bnpFMlaXM+BoVok=;
-        b=h5nOl1ZrqIDtZT5ELvlIWlWxX+VkQQvGj/ENOOkAh/20HMnikuTXkdjru37zdjcEj7
-         7CakwLLnjlv5QJU7GhUSlyoMVxgaC5mBVPZ7R1WPCCi7EPZYy4ghniGfVUiBgMYc9pTw
-         Om7nUSB8n39h31aqjbPLyn11T4LGTvfiWQuozCFMj9+2Jb/D8pAZhcUzfw7XrJtY6CTY
-         bI6zK0lb4Oqv17oktO9wQoufGW6XgKJ/4MKcUZi4JdjEnVb4PiteH67JppZ4ytY1rowE
-         vawQeP/J6oIdRUSaFFNEC+zVfHMav8WK4+peikRgXU/Tsdzdou4VREKoMstoQmRu17Fd
-         wO0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LikxHqRWe3hjXCb7z4Z2tQt/qnU/bnpFMlaXM+BoVok=;
-        b=FO10krdpgnqNn8NrZril/i0yQMSjraGXOckeKqKEtpY6ZlqVef9KcNp/x2/wiNt1tp
-         BpcfySViB648Tu305gEJvn7ZF0O8viQiJM01sk+FZzLNm/MILQ20iRAjm2CTm24LV2Ln
-         2sQyY4frgI/3p+9RlzDN/2KgFYaT/O0cMeEBZ3rfFf5P6GEayFeESNQ0yfnR+Trm1b3h
-         d6vSmJAj+qYI+kw4eC0DphyO2WLKRfZA4eehSHxUW7sdowxvAYbzg19Ijl/GN04b157h
-         Bi5DYao3z3auriFuQnzjfg7XkUj7rtOJ7N6QfZyzCOYhzKCYb2qZ8mF+DlGiC0ci/Doc
-         AasA==
-X-Gm-Message-State: AHQUAuag+fZJXx8k0ACUlMV4TUYwoI2QLuHk/JOECSY7afh8vXQluTe5
-        cMIKi6eK+Rq+Oa+f3Q6VygY=
-X-Google-Smtp-Source: AHgI3IZHJRUGTh6+ZKgbU+SIwrVuiqL06s4+JNKdmR3XYq04b0qpQWQVV7+Dec7XRQKI99eaQXEXmQ==
-X-Received: by 2002:a2e:8446:: with SMTP id u6-v6mr16709416ljh.74.1548951900903;
-        Thu, 31 Jan 2019 08:25:00 -0800 (PST)
-Received: from pc636.semobile.internal ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id z6sm909595lfd.50.2019.01.31.08.24.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 08:25:00 -0800 (PST)
-From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [PATCH 1/1] mm/vmalloc: convert vmap_lazy_nr to atomic_long_t
-Date:   Thu, 31 Jan 2019 17:24:52 +0100
-Message-Id: <20190131162452.25879-1-urezki@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 31 Jan 2019 11:25:22 -0500
+Received: from foss.arm.com ([217.140.101.70]:47452 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731284AbfAaQZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:25:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63CBD80D;
+        Thu, 31 Jan 2019 08:25:21 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 75EA83F557;
+        Thu, 31 Jan 2019 08:25:19 -0800 (PST)
+Subject: Re: [PATCH v5 3/5] arm64/kvm: context-switch ptrauth register
+To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
+References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
+ <1548658727-14271-4-git-send-email-amit.kachhap@arm.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <d862316b-5b2e-8187-04e0-c0be350c1624@arm.com>
+Date:   Thu, 31 Jan 2019 16:25:15 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <1548658727-14271-4-git-send-email-amit.kachhap@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vmap_lazy_nr variable has atomic_t type that is 4 bytes integer
-value on both 32 and 64 bit systems. lazy_max_pages() deals with
-"unsigned long" that is 8 bytes on 64 bit system, thus vmap_lazy_nr
-should be 8 bytes on 64 bit as well.
+Hi Amit,
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- mm/vmalloc.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
+> When pointer authentication is supported, a guest may wish to use it.
+> This patch adds the necessary KVM infrastructure for this to work, with
+> a semi-lazy context switch of the pointer auth state.
+> 
+> Pointer authentication feature is only enabled when VHE is built
+> into the kernel and present into CPU implementation so only VHE code
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index abe83f885069..755b02983d8d 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -632,7 +632,7 @@ static unsigned long lazy_max_pages(void)
- 	return log * (32UL * 1024 * 1024 / PAGE_SIZE);
- }
- 
--static atomic_t vmap_lazy_nr = ATOMIC_INIT(0);
-+static atomic_long_t vmap_lazy_nr = ATOMIC_LONG_INIT(0);
- 
- /*
-  * Serialize vmap purging.  There is no actual criticial section protected
-@@ -650,7 +650,7 @@ static void purge_fragmented_blocks_allcpus(void);
-  */
- void set_iounmap_nonlazy(void)
- {
--	atomic_set(&vmap_lazy_nr, lazy_max_pages()+1);
-+	atomic_long_set(&vmap_lazy_nr, lazy_max_pages()+1);
- }
- 
- /*
-@@ -658,10 +658,10 @@ void set_iounmap_nonlazy(void)
-  */
- static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
- {
-+	unsigned long resched_threshold;
- 	struct llist_node *valist;
- 	struct vmap_area *va;
- 	struct vmap_area *n_va;
--	int resched_threshold;
- 
- 	lockdep_assert_held(&vmap_purge_lock);
- 
-@@ -681,16 +681,16 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
- 	}
- 
- 	flush_tlb_kernel_range(start, end);
--	resched_threshold = (int) lazy_max_pages() << 1;
-+	resched_threshold = lazy_max_pages() << 1;
- 
- 	spin_lock(&vmap_area_lock);
- 	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
--		int nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
-+		unsigned long nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
- 
- 		__free_vmap_area(va);
--		atomic_sub(nr, &vmap_lazy_nr);
-+		atomic_long_sub(nr, &vmap_lazy_nr);
- 
--		if (atomic_read(&vmap_lazy_nr) < resched_threshold)
-+		if (atomic_long_read(&vmap_lazy_nr) < resched_threshold)
- 			cond_resched_lock(&vmap_area_lock);
- 	}
- 	spin_unlock(&vmap_area_lock);
-@@ -727,10 +727,10 @@ static void purge_vmap_area_lazy(void)
-  */
- static void free_vmap_area_noflush(struct vmap_area *va)
- {
--	int nr_lazy;
-+	unsigned long nr_lazy;
- 
--	nr_lazy = atomic_add_return((va->va_end - va->va_start) >> PAGE_SHIFT,
--				    &vmap_lazy_nr);
-+	nr_lazy = atomic_long_add_return((va->va_end - va->va_start) >>
-+				PAGE_SHIFT, &vmap_lazy_nr);
- 
- 	/* After this point, we may free va at any time */
- 	llist_add(&va->purge_list, &vmap_purge_list);
--- 
-2.11.0
+~s/into/in the/?
 
+> paths are modified.
+> 
+> When we schedule a vcpu, we disable guest usage of pointer
+> authentication instructions and accesses to the keys. While these are
+> disabled, we avoid context-switching the keys. When we trap the guest
+> trying to use pointer authentication functionality, we change to eagerly
+> context-switching the keys, and enable the feature. The next time the
+> vcpu is scheduled out/in, we start again.
+
+> Pointer authentication consists of address authentication and generic
+> authentication, and CPUs in a system might have varied support for
+> either. Where support for either feature is not uniform, it is hidden
+> from guests via ID register emulation, as a result of the cpufeature
+> framework in the host.
+
+
+> Unfortunately, address authentication and generic authentication cannot
+> be trapped separately, as the architecture provides a single EL2 trap
+> covering both. If we wish to expose one without the other, we cannot
+> prevent a (badly-written) guest from intermittently using a feature
+> which is not uniformly supported (when scheduled on a physical CPU which
+> supports the relevant feature). When the guest is scheduled on a
+> physical CPU lacking the feature, these attempts will result in an UNDEF
+> being taken by the guest.
+
+This won't be fun. Can't KVM check that both are supported on all CPUs to avoid
+this? ...
+
+
+> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+> index dfcfba7..e1bf2a5 100644
+> --- a/arch/arm64/include/asm/cpufeature.h
+> +++ b/arch/arm64/include/asm/cpufeature.h
+> @@ -612,6 +612,11 @@ static inline bool system_supports_generic_auth(void)
+>  		 cpus_have_const_cap(ARM64_HAS_GENERIC_AUTH_IMP_DEF));
+>  }
+>  
+> +static inline bool kvm_supports_ptrauth(void)
+> +{
+> +	return system_supports_address_auth() && system_supports_generic_auth();
+> +}
+
+... oh you do check. Could you cover this in the commit message? (to avoid an
+UNDEF being taken by the guest we ... )
+
+cpufeature.h is a strange place to put this, there are no other kvm symbols in
+there. But there are users of system_supports_foo() in kvm_host.h.
+
+
+> diff --git a/arch/arm64/kvm/hyp/ptrauth-sr.c b/arch/arm64/kvm/hyp/ptrauth-sr.c
+> new file mode 100644
+> index 0000000..0576c01
+> --- /dev/null
+> +++ b/arch/arm64/kvm/hyp/ptrauth-sr.c
+> @@ -0,0 +1,44 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * arch/arm64/kvm/hyp/ptrauth-sr.c: Guest/host ptrauth save/restore
+> + *
+> + * Copyright 2018 Arm Limited
+> + * Author: Mark Rutland <mark.rutland@arm.com>
+> + *         Amit Daniel Kachhap <amit.kachhap@arm.com>
+> + */
+> +#include <linux/compiler.h>
+> +#include <linux/kvm_host.h>
+> +
+> +#include <asm/cpucaps.h>
+> +#include <asm/cpufeature.h>
+> +#include <asm/kvm_asm.h>
+> +#include <asm/kvm_hyp.h>
+> +#include <asm/pointer_auth.h>
+> +
+> +static __always_inline bool __hyp_text __ptrauth_is_enabled(struct kvm_vcpu *vcpu)
+
+Why __always_inline? Doesn't the compiler decide for 'static' symbols in C files?
+
+
+> +{
+> +	return IS_ENABLED(CONFIG_ARM64_PTR_AUTH) &&
+> +			vcpu->arch.ctxt.hcr_el2 & (HCR_API | HCR_APK);
+> +}
+> +
+> +void __no_ptrauth __hyp_text __ptrauth_switch_to_guest(struct kvm_vcpu *vcpu,
+> +					  struct kvm_cpu_context *host_ctxt,
+> +					  struct kvm_cpu_context *guest_ctxt)
+> +{
+> +	if (!__ptrauth_is_enabled(vcpu))
+> +		return;
+> +
+
+> +	ptrauth_keys_store((struct ptrauth_keys *) &host_ctxt->sys_regs[APIAKEYLO_EL1]);
+
+We can't cast part of an array to a structure like this. What happens if the
+compiler inserts padding in struct-ptrauth_keys, or the struct randomization
+thing gets hold of it: https://lwn.net/Articles/722293/
+
+If we want to use the helpers that take a struct-ptrauth_keys, we need to keep
+the keys in a struct-ptrauth_keys. To do this we'd need to provide accessors so
+that GET_ONE_REG() of APIAKEYLO_EL1 comes from the struct-ptrauth_keys, instead
+of the sys_reg array.
+
+
+Wouldn't the host keys be available somewhere else? (they must get transfer to
+secondary CPUs somehow). Can we skip the save step when switching from the host?
+
+
+> +	ptrauth_keys_switch((struct ptrauth_keys *) &guest_ctxt->sys_regs[APIAKEYLO_EL1]);
+> +}
+
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 1f2d237..c798d0c 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -439,6 +451,18 @@ static inline bool kvm_arch_requires_vhe(void)
+>  	return false;
+>  }
+>
+> +void kvm_arm_vcpu_ptrauth_enable(struct kvm_vcpu *vcpu);
+> +void kvm_arm_vcpu_ptrauth_disable(struct kvm_vcpu *vcpu);
+> +
+> +static inline void kvm_arm_vcpu_ptrauth_reset(struct kvm_vcpu *vcpu)
+> +{
+> +	/* Disable ptrauth and use it in a lazy context via traps */
+> +	if (has_vhe() && kvm_supports_ptrauth())
+> +		kvm_arm_vcpu_ptrauth_disable(vcpu);
+> +}
+
+(Could you move 'has_vhe()' into kvm_supports_ptrauth()? It fits with testing
+the other cpufeatures, and makes this a little more readable when you add
+'allowed' to it later.)
+
+
+> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+> index 03b36f1..301d332 100644
+> --- a/arch/arm64/kvm/hyp/switch.c
+> +++ b/arch/arm64/kvm/hyp/switch.c
+> @@ -483,6 +483,8 @@ int kvm_vcpu_run_vhe(struct kvm_vcpu *vcpu)
+>  	sysreg_restore_guest_state_vhe(guest_ctxt);
+>  	__debug_switch_to_guest(vcpu);
+>  
+> +	__ptrauth_switch_to_guest(vcpu, host_ctxt, guest_ctxt);
+> +
+>  	__set_guest_arch_workaround_state(vcpu);
+>  
+>  	do {
+> @@ -494,6 +496,8 @@ int kvm_vcpu_run_vhe(struct kvm_vcpu *vcpu)
+>  
+>  	__set_host_arch_workaround_state(vcpu);
+>  
+> +	__ptrauth_switch_to_host(vcpu, host_ctxt, guest_ctxt);
+> +
+>  	sysreg_save_guest_state_vhe(guest_ctxt);
+>  
+>  	__deactivate_traps(vcpu);
+
+...This makes me nervous...
+
+__guest_enter() is a function that (might) change the keys, then we change them
+again here. We can't have any signed return address between these two points. I
+don't trust the compiler not to generate any.
+
+~
+
+I had a chat with some friendly compiler folk... because there are two identical
+sequences in kvm_vcpu_run_vhe() and __kvm_vcpu_run_nvhe(), the compiler could
+move the common code to a function it then calls. Apparently this is called
+'function outlining'.
+
+If the compiler does this, and the guest changes the keys, I think we would fail
+the return address check.
+
+Painting the whole thing with no_prauth would solve this, but this code then
+becomes a target.
+Because the compiler can't anticipate the keys changing, we ought to treat them
+the same way we do the callee saved registers, stack-pointer etc, and
+save/restore them in the __guest_enter() assembly code.
+
+(we can still keep the save/restore in C, but call it from assembly so we know
+nothing new is going on the stack).
+
+
+Thanks,
+
+James
