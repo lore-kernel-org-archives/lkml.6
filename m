@@ -2,217 +2,121 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB901C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7824DC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A27620870
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:15:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5184A20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:16:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="pW5BpTql"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ETFjcXcE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfAaGPa (ORCPT
+        id S1728261AbfAaGQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 01:15:30 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:4049 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfAaGPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 01:15:30 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43qqjC1Kp4z9v0yF;
-        Thu, 31 Jan 2019 07:15:27 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=pW5BpTql; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id MRg_k5zYARGE; Thu, 31 Jan 2019 07:15:27 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43qqjC0G9cz9v0yD;
-        Thu, 31 Jan 2019 07:15:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548915327; bh=+LZp8TSLqcSjHz52Ph+hKRgUaSnwMVC4auzg2+GR1XM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=pW5BpTqlpdKYshMzUZ5kuntZqMZ4so9JNnL0IAZlzdHUz4Z6yDx+AsS8e597MIohd
-         S75y6g5Vo/FICVohJxmPr7/ozEvjzLDghtf8O91TVTnXlp+2GKplJfJkKWbJ1spAJk
-         qPWvCLcJlOfNA12gGCuosoQEtwf10rI/ol7eFfOY=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D4C418B78D;
-        Thu, 31 Jan 2019 07:15:27 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id dCpysGh5O7aI; Thu, 31 Jan 2019 07:15:27 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D3A458B74C;
-        Thu, 31 Jan 2019 07:15:26 +0100 (CET)
-Subject: Re: linux-next: powerpc le qemu boot failure after merge of the akpm
- tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-References: <20190131163854.307e17ab@canb.auug.org.au>
- <20190131170629.2cc20600@canb.auug.org.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <962e7dd7-779b-2c32-59db-9ced6751dede@c-s.fr>
-Date:   Thu, 31 Jan 2019 07:15:26 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 01:16:33 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:1485 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbfAaGQd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 01:16:33 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5292c10000>; Wed, 30 Jan 2019 22:16:34 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 30 Jan 2019 22:16:32 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 30 Jan 2019 22:16:32 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
+ 2019 06:16:31 +0000
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
+ 2019 06:16:30 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 31 Jan 2019 06:16:30 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.165.12]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c5292bd0009>; Wed, 30 Jan 2019 22:16:30 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V8 1/5] i2c: tegra: Sort all the include headers alphabetically
+Date:   Wed, 30 Jan 2019 22:16:23 -0800
+Message-ID: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20190131170629.2cc20600@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548915394; bh=C3TTXG82kqku8JSiuXKBfY6bhWOvFOK0fGBKS3xKuvs=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=ETFjcXcEafLEtvd12aJrjPZS3jGRtWPHzcM9D8EfZh8GseEJjjDwaUf5C7vLuehUk
+         n4pxhiuUDSAUVPkvQ3cbgp1s6XdsY9FimYcChBk7zfl9c3AtgcFczljC/bDSXBR/8s
+         CvgydQJdoikq92djxcLL+D5eZAr+vCIb9IaKWsl5n2HmqsP60ClVvJPXFpvgb8Ng5u
+         PGi9YE9Jmr6o0X0iRfQ5BlZaXYHxx1lF+QOoJsmrY+yCVvchYx+wV06Tueok2RusPZ
+         DYD9jyecB+yMeRYjkzsrkoJ+jt6WFbhhcNbPQmPVExUgLhodssIRo4sIp+vNu0z1Kj
+         ECH8rQx2Bs0ng==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch sorts all the include headers alphabetically for the
+I2C tegra driver
 
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
+ [V2] : Added this in V2 to sort the headers in tegra I2C
 
-Le 31/01/2019 à 07:06, Stephen Rothwell a écrit :
-> Hi all,
-> 
-> On Thu, 31 Jan 2019 16:38:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> [I am guessing that is is something in Andrew's tree that has caused
->> this.]
->>
->> My qemu boot of the powerpc pseries_le_defconfig config failed like this:
->>
->> htab_hash_mask    = 0x1ffff
->> -----------------------------------------------------
->> numa:   NODE_DATA [mem 0x7ffe7000-0x7ffebfff]
->> Kernel panic - not syncing: sparse_buffer_init: Failed to allocate 2147483648 bytes align=0x10000 nid=0 from=fffffffffffffff
->> CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc4 #2
->> Call Trace:
->> [c00000000105bbd0] [c000000000b1345c] dump_stack+0xb0/0xf4 (unreliable)
->> [c00000000105bc10] [c000000000111120] panic+0x168/0x3b8
->> [c00000000105bcb0] [c000000000e701c8] sparse_init_nid+0x178/0x550
->> [c00000000105bd70] [c000000000e709b4] sparse_init+0x210/0x238
->> [c00000000105bdb0] [c000000000e468f4] initmem_init+0x1e0/0x260
->> [c00000000105be80] [c000000000e3b9b0] setup_arch+0x354/0x3d4
->> [c00000000105bef0] [c000000000e33afc] start_kernel+0x98/0x648
->> [c00000000105bf90] [c00000000000b270] start_here_common+0x1c/0x52c
-> 
-> A quick bisect leads to this:
-> 
-> 1c3c9328cde027eb875ba4692f0a5d66b0afe862 is the first bad commit
-> commit 1c3c9328cde027eb875ba4692f0a5d66b0afe862
-> Author: Mike Rapoport <rppt@linux.ibm.com>
-> Date:   Thu Jan 31 10:51:32 2019 +1100
-> 
->      treewide: add checks for the return value of memblock_alloc*()
->      
->      Add check for the return value of memblock_alloc*() functions and call
->      panic() in case of error.  The panic message repeats the one used by
->      panicing memblock allocators with adjustment of parameters to include only
->      relevant ones.
->      
->      The replacement was mostly automated with semantic patches like the one
->      below with manual massaging of format strings.
->      
->      @@
->      expression ptr, size, align;
->      @@
->      ptr = memblock_alloc(size, align);
->      + if (!ptr)
->      +       panic("%s: Failed to allocate %lu bytes align=0x%lx\n", __func__,
->      size, align);
->      
->      Link: http://lkml.kernel.org/r/1548057848-15136-20-git-send-email-rppt@linux.ibm.com
->      Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
->      Reviewed-by: Guo Ren <ren_guo@c-sky.com>                [c-sky]
->      Acked-by: Paul Burton <paul.burton@mips.com>            [MIPS]
->      Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>    [s390]
->      Reviewed-by: Juergen Gross <jgross@suse.com>            [Xen]
->      Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>  [m68k]
->      Cc: Catalin Marinas <catalin.marinas@arm.com>
->      Cc: Christophe Leroy <christophe.leroy@c-s.fr>
->      Cc: Christoph Hellwig <hch@lst.de>
->      Cc: "David S. Miller" <davem@davemloft.net>
->      Cc: Dennis Zhou <dennis@kernel.org>
->      Cc: Greentime Hu <green.hu@gmail.com>
->      Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->      Cc: Guan Xuetao <gxt@pku.edu.cn>
->      Cc: Guo Ren <guoren@kernel.org>
->      Cc: Mark Salter <msalter@redhat.com>
->      Cc: Matt Turner <mattst88@gmail.com>
->      Cc: Max Filippov <jcmvbkbc@gmail.com>
->      Cc: Michael Ellerman <mpe@ellerman.id.au>
->      Cc: Michal Simek <monstr@monstr.eu>
->      Cc: Petr Mladek <pmladek@suse.com>
->      Cc: Richard Weinberger <richard@nod.at>
->      Cc: Rich Felker <dalias@libc.org>
->      Cc: Rob Herring <robh+dt@kernel.org>
->      Cc: Rob Herring <robh@kernel.org>
->      Cc: Russell King <linux@armlinux.org.uk>
->      Cc: Stafford Horne <shorne@gmail.com>
->      Cc: Tony Luck <tony.luck@intel.com>
->      Cc: Vineet Gupta <vgupta@synopsys.com>
->      Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
->      Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> 
-> Which is just adding the panic we hit.  So, presumably, the bug is in a
-> preceding patch :-(
-> 
-> I have left the kernel not booting for today.
-> 
+ drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-No I think the error is really in that patch, see my other mail.
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index e417ebf7628c..15806c984859 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,21 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
+ 
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
+-- 
+2.7.4
 
-See 
-https://elixir.bootlin.com/linux/v5.0-rc4/source/mm/memblock.c#L1455, 
-memblock_alloc_try_nid_raw() is not supposed to panic, so the last hunk 
-of this patch should be reverted.
-
-Found in total three problematic hunks in that patch:
-
-@@ -48,6 +53,11 @@ static phys_addr_t __init kasan_alloc_raw_page(int node)
-  	void *p = memblock_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
-  						__pa(MAX_DMA_ADDRESS),
-  						MEMBLOCK_ALLOC_KASAN, node);
-+	if (!p)
-+		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%llx\n",
-+		      __func__, PAGE_SIZE, PAGE_SIZE, node,
-+		      __pa(MAX_DMA_ADDRESS));
-+
-  	return __pa(p);
-  }
-
-@@ -211,6 +211,9 @@ static int __init iob_init(struct device_node *dn)
-  	iob_l2_base = memblock_alloc_try_nid_raw(1UL << 21, 1UL << 21,
-  					MEMBLOCK_LOW_LIMIT, 0x80000000,
-  					NUMA_NO_NODE);
-+	if (!iob_l2_base)
-+		panic("%s: Failed to allocate %lu bytes align=0x%lx max_addr=%x\n",
-+		      __func__, 1UL << 21, 1UL << 21, 0x80000000);
-
-  	pr_info("IOBMAP L2 allocated at: %p\n", iob_l2_base);
-
-
-@@ -425,6 +436,10 @@ static void __init sparse_buffer_init(unsigned long 
-size, int nid)
-  		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
-  						__pa(MAX_DMA_ADDRESS),
-  						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
-+	if (!sparsemap_buf)
-+		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%lx\n",
-+		      __func__, size, PAGE_SIZE, nid, __pa(MAX_DMA_ADDRESS));
-+
-  	sparsemap_buf_end = sparsemap_buf + size;
-  }
-
-
-
-Christophe
