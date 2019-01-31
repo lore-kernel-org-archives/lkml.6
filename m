@@ -2,126 +2,136 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB71C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 004A1C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C3BE21939
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6D6D21939
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:28:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntOtFr5p"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="QeVhQt/Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728818AbfAaU1x (ORCPT
+        id S1728902AbfAaU2B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:27:53 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36635 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbfAaU1v (ORCPT
+        Thu, 31 Jan 2019 15:28:01 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:24204 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728182AbfAaU1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:27:51 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b85so2009625pfc.3;
-        Thu, 31 Jan 2019 12:27:50 -0800 (PST)
+        Thu, 31 Jan 2019 15:27:05 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0+R+sOwjvxkktDI2qKjnNKh9P8mjjTi1aFLaDo5oF34=;
-        b=ntOtFr5pHOK82wNoRRayr4kI3bstk2BPoo9oLa2aEXnR0hjtxzezx/OWTVRyIXfkJG
-         nAMJa0ylrLAkdEteuazt5xBHMoH/BFbWcaBF0estTf3z7YCQEllcMZDqIA/KREUJh7fx
-         wwOrpkh+sW7k+RBGjVl32jeo4ZMjM4AnOIstddQzuEdUTVhI//7qoNInS3bxDVfkW8qc
-         88ppGNiMjM/EmhbIgTkEroiYoX/kO7ErgPsEcf5TyWZjkz238EtNW1yqGR5Daag5yKYz
-         e6QlnBA2jJNpyV/5yAi+WWM+AyN5wAWuhrtw4GhUGnJcapxX4/ZDhxviXsRP7tCDQn0q
-         FBaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0+R+sOwjvxkktDI2qKjnNKh9P8mjjTi1aFLaDo5oF34=;
-        b=E5o6iHS3SrZM/zE0XjsaZjWU3wfdG6v6ABUgQrUdr3hVdy3RYypd9ShpYbnMh1Ihys
-         bP5lCvxPsUMQN8Xd8uvnLXQ7p0vOiEq8rAmkyxDkhvurQ+JpTicmwBeoenYS3FrfTgYL
-         H952/b0fBP56U5yct9JrNfBcAnE7JdgB0mxvd95jS/u6ZYIKyud0MboOAy5edSumZrkM
-         hHW86CIhb87pJPoNDXTz6FTFmHikk7E4UbHj7PUVfxmc1nTuoZn/iHehMg/pyCgL/k6J
-         WO9dYQ+UhwZEFMlIYt/sS7To0Z90e8jLCQlPh/Vqshfzp5vBaoyCZQRtJtKxuanHVCak
-         vDyw==
-X-Gm-Message-State: AJcUukdZOgmeZwAhlx4rX6DrciqAcwV/4tHYfpXQMEAnl8wwWsVhI2Tt
-        gmU5ujMiX2cnl/OeHRqeXpwJDawaQMRzaUHnqM0=
-X-Google-Smtp-Source: ALg8bN5v60lbXDq1i3BnkNTVGOsq0Ou0Gn2no84jla8i7tgqTaZ3LkrL5fXAtPqili7PWaFZkRe38rIKrvKvcbFwy4I=
-X-Received: by 2002:a63:5026:: with SMTP id e38mr32931296pgb.123.1548966470114;
- Thu, 31 Jan 2019 12:27:50 -0800 (PST)
-MIME-Version: 1.0
-References: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com> <20190125160056.GG6118@tassilo.jf.intel.com>
-In-Reply-To: <20190125160056.GG6118@tassilo.jf.intel.com>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Thu, 31 Jan 2019 12:27:38 -0800
-Message-ID: <CAM_iQpVtyCR=BTBkpDtbEFJ8REczpvYRTGPQnBsV=8rznXn6fg@mail.gmail.com>
-Subject: Re: System crash with perf_fuzzer (kernel: 5.0.0-rc3)
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        eranian@google.com, vincent.weaver@maine.edu,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1548966424; x=1580502424;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=9sgF47MrbxyAsS7U5ZelyCSmc8JbJdu5SVylQaC5hcI=;
+  b=QeVhQt/Q+ergf8evqtjBMulqQHZ1j1pVo6G/DGwGrTQNlWdiL1VUkmku
+   QmM2groth0WfoHqhVAB/OoX9+23oIlVEO+jmSWGoeYe8g8LbiYLs8onxr
+   yjNuDoAYnPYbqZrTEXJ+bURQ8AGGonoeCHxh6GabnHGCJUYTRjeiCffwf
+   Q=;
+X-IronPort-AV: E=Sophos;i="5.56,545,1539648000"; 
+   d="scan'208";a="656822797"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-8549039f.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 31 Jan 2019 20:27:01 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
+        by email-inbound-relay-2a-8549039f.us-west-2.amazon.com (Postfix) with ESMTPS id DE4B8A2185;
+        Thu, 31 Jan 2019 20:27:00 +0000 (UTC)
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x0VKQwAW028967;
+        Thu, 31 Jan 2019 21:26:58 +0100
+Received: (from karahmed@localhost)
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x0VKQv24028963;
+        Thu, 31 Jan 2019 21:26:57 +0100
+From:   KarimAllah Ahmed <karahmed@amazon.de>
+To:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     KarimAllah Ahmed <karahmed@amazon.de>
+Subject: [PATCH v6 06/14] KVM/nVMX: Use kvm_vcpu_map when mapping the L1 MSR bitmap
+Date:   Thu, 31 Jan 2019 21:24:36 +0100
+Message-Id: <1548966284-28642-7-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
+References: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 8:02 AM Andi Kleen <ak@linux.intel.com> wrote:
->
-> > [Fri Jan 25 10:28:53 2019] perf: interrupt took too long (2501 > 2500), lowering kernel.perf_event_max_sample_rate to 79750
-> > [Fri Jan 25 10:29:08 2019] perf: interrupt took too long (3136 > 3126), lowering kernel.perf_event_max_sample_rate to 63750
-> > [Fri Jan 25 10:29:11 2019] perf: interrupt took too long (4140 > 3920), lowering kernel.perf_event_max_sample_rate to 48250
-> > [Fri Jan 25 10:29:11 2019] perf: interrupt took too long (5231 > 5175), lowering kernel.perf_event_max_sample_rate to 38000
-> > [Fri Jan 25 10:29:11 2019] perf: interrupt took too long (6736 > 6538), lowering kernel.perf_event_max_sample_rate to 29500
->
-> These are fairly normal.
->
-> > [Fri Jan 25 10:32:44 2019] ------------[ cut here ]------------
-> > [Fri Jan 25 10:32:44 2019] perfevents: irq loop stuck!
->
-> I believe it's always possible to cause an irq loop. This happens when
-> the PMU is programmed to cause PMIs on multiple counters
-> too quickly. Maybe should just recover from it without printing such
-> scary messages.
+Use kvm_vcpu_map when mapping the L1 MSR bitmap since using
+kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory that has
+a "struct page".
 
-Yeah, a loop stuck looks really scary inside an NMI handler.
-Should I just go ahead to send a patch to remove this warning?
-Or probably turn it into a pr_info()?
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
+v4 -> v5:
+- unmap with dirty flag
 
->
-> Right now the scary message is justified because it resets the complete
-> PMU. Perhaps need to be a bit more selective resetting on only
-> the events that loop.
->
-> > [Fri Jan 25 10:32:44 2019] WARNING: CPU: 1 PID: 0 at arch/x86/events/intel/core.c:2440 intel_pmu_handle_irq+0x158/0x170
->
-> This looks independent.
->
-> I would apply the following patch (cut'n'pasted, so may need manual apply)
-> and then run with
->
+v1 -> v2:
+- Do not change the lifecycle of the mapping (pbonzini)
+---
+ arch/x86/kvm/vmx/nested.c | 11 +++++------
+ arch/x86/kvm/vmx/vmx.h    |  3 +++
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-I would like to help as we keep seeing this warning for a rather long time,
-but unfortunately the reproducer provided by Ravi doesn't trigger any warning
-or crash here. Maybe I don't use a right hardware to trigger it?
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 8fc327f..1813211 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -507,9 +507,10 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+ 						 struct vmcs12 *vmcs12)
+ {
+ 	int msr;
+-	struct page *page;
+ 	unsigned long *msr_bitmap_l1;
+ 	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
++	struct kvm_host_map *map = &to_vmx(vcpu)->nested.msr_bitmap_map;
++
+ 	/*
+ 	 * pred_cmd & spec_ctrl are trying to verify two things:
+ 	 *
+@@ -535,11 +536,10 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+ 	    !pred_cmd && !spec_ctrl)
+ 		return false;
+ 
+-	page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->msr_bitmap);
+-	if (is_error_page(page))
++	if (kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->msr_bitmap), map))
+ 		return false;
+ 
+-	msr_bitmap_l1 = (unsigned long *)kmap(page);
++	msr_bitmap_l1 = (unsigned long *)map->hva;
+ 	if (nested_cpu_has_apic_reg_virt(vmcs12)) {
+ 		/*
+ 		 * L0 need not intercept reads for MSRs between 0x800 and 0x8ff, it
+@@ -587,8 +587,7 @@ static inline bool nested_vmx_prepare_msr_bitmap(struct kvm_vcpu *vcpu,
+ 					MSR_IA32_PRED_CMD,
+ 					MSR_TYPE_W);
+ 
+-	kunmap(page);
+-	kvm_release_page_clean(page);
++	kvm_vcpu_unmap(vcpu, &to_vmx(vcpu)->nested.msr_bitmap_map, false);
+ 
+ 	return true;
+ }
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 9932895..6fb69d8 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -144,6 +144,9 @@ struct nested_vmx {
+ 	struct page *apic_access_page;
+ 	struct page *virtual_apic_page;
+ 	struct page *pi_desc_page;
++
++	struct kvm_host_map msr_bitmap_map;
++
+ 	struct pi_desc *pi_desc;
+ 	bool pi_pending;
+ 	u16 posted_intr_nv;
+-- 
+2.7.4
 
-[    0.132136] Performance Events: PEBS fmt2+, Broadwell events,
-16-deep LBR, full-width counters, Intel PMU driver.
-[    0.133003] ... version:                3
-[    0.134001] ... bit width:              48
-[    0.135001] ... generic registers:      4
-[    0.136001] ... value mask:             0000ffffffffffff
-[    0.137001] ... max period:             00007fffffffffff
-[    0.138001] ... fixed-purpose events:   3
-[    0.139001] ... event mask:             000000070000000f
-
-
-Thanks!
