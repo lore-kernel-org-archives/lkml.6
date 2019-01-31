@@ -2,85 +2,102 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17528C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 311A7C282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE4C02086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AB9D2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:52:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbfAaWvz (ORCPT
+        id S1727928AbfAaWwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 17:51:55 -0500
-Received: from dliviu.plus.com ([80.229.23.120]:59670 "EHLO smtp.dudau.co.uk"
+        Thu, 31 Jan 2019 17:52:21 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:51886 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbfAaWvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 17:51:55 -0500
-Received: from mail.dudau.co.uk (bart.dudau.co.uk [192.168.14.2])
-        by smtp.dudau.co.uk (Postfix) with SMTP id 8F20341D13D6;
-        Thu, 31 Jan 2019 22:51:52 +0000 (GMT)
-Received: by mail.dudau.co.uk (sSMTP sendmail emulation); Thu, 31 Jan 2019 22:51:52 +0000
-Date:   Thu, 31 Jan 2019 22:51:52 +0000
-From:   Liviu Dudau <liviu@dudau.co.uk>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tags needs some work in the akpm-current tree
-Message-ID: <20190131225151.GA3110@bart.dudau.co.uk>
-References: <20190131110541.3f3a808c@canb.auug.org.au>
- <6d110fc4-85b6-cf66-6045-dc81956ffc5c@lca.pw>
+        id S1725775AbfAaWwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 17:52:21 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gpLBr-0004zn-0x; Thu, 31 Jan 2019 15:52:11 -0700
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kselftest@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
+        Joerg Roedel <joro@8bytes.org>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Eric Pilmore <epilmore@gigaio.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+References: <20190131185656.17972-1-logang@deltatee.com>
+ <20190131185656.17972-3-logang@deltatee.com>
+ <20190131223932.GR229773@google.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <74993e67-cdc5-234a-d26c-5c0177a0299a@deltatee.com>
+Date:   Thu, 31 Jan 2019 15:52:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190131223932.GR229773@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6d110fc4-85b6-cf66-6045-dc81956ffc5c@lca.pw>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: marc.zyngier@arm.com, tglx@linutronix.de, epilmore@gigaio.com, fancer.lancer@gmail.com, dave.jiang@intel.com, allenbh@gmail.com, joro@8bytes.org, jdmason@kudzu.us, linux-kselftest@vger.kernel.org, iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH 2/9] PCI/MSI: Support allocating virtual MSI interrupts
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 08:51:42PM -0500, Qian Cai wrote:
+
+
+On 2019-01-31 3:39 p.m., Bjorn Helgaas wrote:
+> I assume you'll merge this along with the rest of the series, so:
 > 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+Thanks!
+
+>> diff --git a/include/linux/msi.h b/include/linux/msi.h
+>> index 784fb52b9900..6458ab049852 100644
+>> --- a/include/linux/msi.h
+>> +++ b/include/linux/msi.h
+>> @@ -88,6 +88,7 @@ struct msi_desc {
+>>  				__u8	multi_cap	: 3;
+>>  				__u8	maskbit		: 1;
+>>  				__u8	is_64		: 1;
+>> +				__u8    is_virtual      : 1;
 > 
-> On 1/30/19 7:05 PM, Stephen Rothwell wrote:
-> > In commit
-> > 
-> >   6e9ed490d190 ("mm/page_owner: fix for deferred struct page init")
-> > 
-> > Fixes tag
-> > 
-> >   Fixes: fe53ca54270 ("mm: use early_pfn_to_nid in page_ext_init")
-> > 
-> > has these problem(s):
-> > 
-> >   - SHA1 should be at least 12 digits long
-> >     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-> >     or later) just making sure it is not set (or set to "auto").
-> > 
+> You did the right thing by using the same style as what's already
+> here, but does anybody know why are we using __u8 and __u16 here?
 > 
-> I think it is better to replace with this version instead,
+> Those typedefs are in include/uapi/asm-generic/int-l64.h, which
+> suggests they're for things exported to user space, but I don't think
+> that's the case here, so I'm wondering if we could someday replace
+> these with u8 and u16.  Obviously that wouldn't be part of *this*
+> series.
+
+Yes, I was also confused by this. But I always follow the "when-in-rome"
+rule. My understanding is the same as yours is that __u8 should be used
+for userspace compatibility which doesn't apply here. If there is
+consensus on this being wrong, I'd be happy to write a cleanup patch
+that fixes it separate from this series.
+>> +/*
+>> + * Virtual interrupts allow for more interrupts to be allocated
+>> + * than the device has interrupts for. These are not programmed
+>> + * into the devices MSI-X table and must be handled by some
 > 
-> https://lore.kernel.org/lkml/20190115202812.75820-1-cai@lca.pw/
+> s/devices/device's/
 
+Fixed for when I send v2.
 
-That patch does not look related, afaict.
-
-Andrew, do you want me to re-send the patch with a fixed commit log, or are you OK to
-do some inline editing?
-
-Best regards,
-Liviu
-
-
--- 
-           ________________________________________________________
-  ________|                                                        |_______
-  \       |  With enough courage, you can do without a reputation  |      /
-   \      |                                  -- Rhett Butler       |     /
-   /      |________________________________________________________|     \
-  /__________)                                                  (_________\
+Logan
