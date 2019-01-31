@@ -2,103 +2,103 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02417C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 560AAC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C95392086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A9512086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:07:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PAP/0rOj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WC++vBNC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbfAaTHP (ORCPT
+        id S1728507AbfAaTHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:07:15 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:42652 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbfAaTHP (ORCPT
+        Thu, 31 Jan 2019 14:07:21 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:43508 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726488AbfAaTHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:07:15 -0500
-Received: by mail-yb1-f195.google.com with SMTP id l20so1747115ybl.9
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:07:14 -0800 (PST)
+        Thu, 31 Jan 2019 14:07:20 -0500
+Received: by mail-qt1-f196.google.com with SMTP id i7so4672819qtj.10;
+        Thu, 31 Jan 2019 11:07:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pS6q+Bhwt+X1yTD/cQHkERWtmyVyeezzzPlLtUGK/wo=;
-        b=PAP/0rOjKRUTX/auNM+qLl3u8973sF87Q5booOwpCO3ilQ3nTI2D6TehlWFSkUmBAP
-         Xb75VoK5+WZi6DTU7Og2/mWtNLdWF3jK9ub65ZhgmZYqFMTTsgmqV5IRMe7ZwcaTUBlj
-         M/E4J3mLU0fmD/vBr55JudJqc76AJiFPqfF+A=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=nRTkLSE7eY5XXFnTzAGig+Jd+mIj+eAMonYFMHXoeJk=;
+        b=WC++vBNCfO8uv2RBIp3KlpbWttUbWFGGL/1WtpjKpDkwx4ujvN68SW40v58xNFH2gD
+         GZiHvdVWTcl8y4zIuAIrm70enj/twikJ28+H2pnHNMDrgVF/y2SxNQyEhxsrDJRctct1
+         rpEmU0dBaGl65n8qF6JXvkXEV0f5OfXc15cxyCTqubyQPG9ze0ezcd1dMeNajijeYFjo
+         kwOnUxV+xH4rpY06CPIvDXVtiaCeX91jYDGZ5/A/uiB8iMcWujhSSJ/I6xqY3Y4UjM2M
+         9Cu38L39nBDxWiuWkh29rmUmq001q79PekcIDwOP3eodXsNjeL+iB5GWR71H1n06Vn9d
+         QfWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pS6q+Bhwt+X1yTD/cQHkERWtmyVyeezzzPlLtUGK/wo=;
-        b=R9iWPbGovPOAapCTY1/Bjz3uHv3Pfoleh1LqvVqD4UuTNgT34SatPTXLKovlACLw2I
-         M6OFhXnP7f1wOhVVnbfrbQq+BeXJ93Ax38wP6gLG6latx34mbyeL4nWZFmr0a3kQ5Ejj
-         r7qBE8v12ISaqx9SbrYGrIkdzEywsAvyzYQfFFfXD0aIutBBfOJF1oITcY+6yp1p1gKm
-         g2BETOUH2EoAoP+sDxiq4jNM/sfJWrW0XyjGbcn9GYp2YJ220lX/QbEs+AMXwsLupOgW
-         otIcLkygVxitE6jMIfc7BVqz//mODUZaMbIS7Rwrhkh+Vq3rU6cIQnrkpSQ7S4vmrC9R
-         4CfA==
-X-Gm-Message-State: AJcUukcRNrfos2YPLKdhnPYfA7gnv+Qssv0YqRxR+fCGDwdVdzJ+Ph4F
-        lAeimmRlH3jpAGUJQBtHSuTzghsDieYpzCqiu0WTPfQf
-X-Google-Smtp-Source: ALg8bN5KyErXR3S5n9rA6c1giNo6gMse1D9QQLZZC1vNvDstCp/XEtAiOf1qU7tm8VXyULAgnuy+ZB1Ff9JReoQ5jD4=
-X-Received: by 2002:a25:2f92:: with SMTP id v140mr34937032ybv.257.1548961633877;
- Thu, 31 Jan 2019 11:07:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20190108092525.12817-1-anders.roxell@linaro.org>
-In-Reply-To: <20190108092525.12817-1-anders.roxell@linaro.org>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Thu, 31 Jan 2019 20:07:02 +0100
-Message-ID: <CADYN=9JAogKRqz7jwKgFZvEMqJNo8QT2aJVuJ0jqB+Ce_g6J1Q@mail.gmail.com>
-Subject: Re: [PATCH] selftests/networking: remove timestamping clean target
-To:     David Miller <davem@davemloft.net>, Shuah Khan <shuah@kernel.org>
-Cc:     "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nRTkLSE7eY5XXFnTzAGig+Jd+mIj+eAMonYFMHXoeJk=;
+        b=SKETkCR5OaB9JTGsX+qjij1KXoZT5wvj4mEwClyNtIvbevO+x/rk2r/JWYcRE/iA7m
+         yg2Ui/F9OVCurAfwKfEYm6qpP7vV67AaY3POkGF1mksJYMKIhFfV01DzLoWwUQuzsSX5
+         W2VNiwCmLkjXw8lmMJO4PmkcP9LvMC+Gr5NtIAaRJ+jbyr2PEmkAhpwn1BsbW16xFBri
+         aQXo9Zn617idDopTzuLkUDuozGM8IgY7eM90ZXmwDOkoJjoiiuivPDdylGb/16J1F2s7
+         HLqpxeE+h3qw8GkcDBPTsY8Gfc+7+f+6PgL3474n3dk6jYcK0/2Tbes61T/UwC/uCr4/
+         H4yA==
+X-Gm-Message-State: AJcUukeL9bDaMrHMZMM7jGeedwX5fbj8SRIOMbHMnAtnBy97jjtbe3Az
+        /9cLc0e5U3oHVLZE2uL3J/Q=
+X-Google-Smtp-Source: ALg8bN7WYGhgxvjCmilvlDbf1agu22Xt6cw5pH64JXqwCQkJeOofH0Miz/ztT+L2sbexJxLwjGTlwQ==
+X-Received: by 2002:aed:2946:: with SMTP id s64mr35204710qtd.383.1548961639132;
+        Thu, 31 Jan 2019 11:07:19 -0800 (PST)
+Received: from luciana-K46CA.ime.usp.br ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id u67sm6561643qki.22.2019.01.31.11.07.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 11:07:17 -0800 (PST)
+From:   Luciana da Costa Marques <lucianadacostamarques@gmail.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-usp@googlegroups.com,
+        luciana <lucianadacostamarques@gmail.com>
+Subject: [PATCH] iio:accel:adxl345: Change alignment to match paranthesis
+Date:   Thu, 31 Jan 2019 17:07:01 -0200
+Message-Id: <20190131190701.9637-1-lucianadacostamarques@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 8 Jan 2019 at 10:25, Anders Roxell <anders.roxell@linaro.org> wrote:
->
-> Commit cda261f421ba ("selftests: add txtimestamp kselftest") introduced
-> a warning:
->
-> Makefile:14: warning: overriding recipe for target 'clean'
-> ../../lib.mk:137: warning: ignoring old recipe for target 'clean'
->
-> Theres no need for timestamping to have its own 'clean' target. The
-> lib.mk file's 'clean' target gets included to the timestamping Makefile
-> and that should be enough.
->
-> Fixes: cda261f421ba ("selftests: add txtimestamp kselftest")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  tools/testing/selftests/networking/timestamping/Makefile | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/tools/testing/selftests/networking/timestamping/Makefile b/tools/testing/selftests/networking/timestamping/Makefile
-> index 9050eeea5f5f..1de8bd8ccf5d 100644
-> --- a/tools/testing/selftests/networking/timestamping/Makefile
-> +++ b/tools/testing/selftests/networking/timestamping/Makefile
-> @@ -9,6 +9,3 @@ all: $(TEST_PROGS)
->  top_srcdir = ../../../../..
->  KSFT_KHDR_INSTALL := 1
->  include ../../lib.mk
-> -
-> -clean:
-> -       rm -fr $(TEST_GEN_FILES)
-> --
-> 2.20.1
->
+From: luciana <lucianadacostamarques@gmail.com>
 
-Does this make sense?
+Align broken line to match upper line parenthesis. Solves the
+checkpatch.pl's message:
 
-Cheers,
-Anders
+CHECK: Alignment should match open parenthesis
+
+Signed-off-by: luciana <lucianadacostamarques@gmail.com>
+---
+ drivers/iio/accel/adxl345_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
+index 780f87f72338..f03ed00685ea 100644
+--- a/drivers/iio/accel/adxl345_core.c
++++ b/drivers/iio/accel/adxl345_core.c
+@@ -150,8 +150,8 @@ static int adxl345_read_raw(struct iio_dev *indio_dev,
+ }
+ 
+ static int adxl345_write_raw(struct iio_dev *indio_dev,
+-			    struct iio_chan_spec const *chan,
+-			    int val, int val2, long mask)
++			     struct iio_chan_spec const *chan,
++			     int val, int val2, long mask)
+ {
+ 	struct adxl345_data *data = iio_priv(indio_dev);
+ 	s64 n;
+-- 
+2.17.1
+
