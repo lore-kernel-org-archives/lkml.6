@@ -2,123 +2,178 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D651C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA264C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF7E6218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:03:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rBzI7lL3"
+	by mail.kernel.org (Postfix) with ESMTP id BE101218DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:03:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732574AbfAaMDE (ORCPT
+        id S1732603AbfAaMDH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:03:04 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35204 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726153AbfAaMDD (ORCPT
+        Thu, 31 Jan 2019 07:03:07 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34558 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732334AbfAaMDF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:03:03 -0500
-Received: by mail-pf1-f194.google.com with SMTP id z9so1384536pfi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:03:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hEX6CnUmhXzm1WAUv3bYkGd5wIsrFdEZa5hXRATILmc=;
-        b=rBzI7lL3vAy0i+wePiDeA0aOdwl3/iSP+njZghPvB0jCMCzAL/BsfqvHdJXWpPctx8
-         2A38x2VJV1o4dI5Uoay60BdYhClgeWree7KC9EJxw9V/3WbGug0EhC0vthcSYME/jJFd
-         d6XWYlPN3HSwCi+DljS6Q119o7Vft31QNxPU8KgaEqlL5qV5Q4dZ8OM14cMxHAvJOYlJ
-         NNk+FpPIjmdB89Pi9haCsAcJqhsHA88F27jC0lrK26k7lyyKYJDdMFX+4IHpO9w7ve9K
-         Zxx6IEzisXx0uXdvdLakV62GNExn9ZuP4Kks8cBIDPPtXJ3Hv6ev8k3zbRrn6Qiu1Ovu
-         Iq9w==
+        Thu, 31 Jan 2019 07:03:05 -0500
+Received: by mail-lj1-f194.google.com with SMTP id u89-v6so2477939lje.1;
+        Thu, 31 Jan 2019 04:03:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hEX6CnUmhXzm1WAUv3bYkGd5wIsrFdEZa5hXRATILmc=;
-        b=DiysEtWps9QR9e/jvMw4QXDGF4d1Uxzyoc0GvCQUQ6LdyYvVeM7cjo9DjFFvNsHyfu
-         /2a6wfOs/1gbkbL0OEfjuxNBNWxnBMSRkHGB7TnTqn7rd3ul4hfWhCqlOr+FQB+belHM
-         quyyYRlMxlzPORwJu+G4Uy/D2gsZrAoPnT3AjNCetP7cvzFwYspOvvw7fvepRol5YQ+d
-         DdTog18ANxhDUVIe1+va42BNBFdSRDdrZNWooXhFwiFe8G7e/fMncl54/jZiN3rjoRYh
-         ceOEmT4tf+4BL1HYa6u3nwQXO5Zbkn4Zs1EMprtBeSOtAB9JSX8d3HufDsq6OiZ+gf8Q
-         9njA==
-X-Gm-Message-State: AJcUukfXqqOsdoSU1WGiM4paWxneHraoLzDMGLKF9FdATsiO25ILxTWB
-        UCHPbaGKKiQbf2Ref6iN5v4Y1N+7KWlTSGeFezc=
-X-Google-Smtp-Source: ALg8bN5I17KLlF3QiG7Px1QRsdxlAypZxbmkpmpA8ix5+rexopSR9tra0eWWTUylx6PK8n0N1nGZQ0buMqpLHyfzkfc=
-X-Received: by 2002:a63:6bc1:: with SMTP id g184mr31862428pgc.25.1548936182726;
- Thu, 31 Jan 2019 04:03:02 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FvEO4l3q1daWP1Hr7aRKN2wmuVFYtixXLAF2w7m5GoE=;
+        b=poS6EwD++TepBbPjfAzz09UFBZj5wJLeNWeLFlqxjQJp1DnxC3PioHYj53gI37xDTc
+         j51J9rwmZBGDn95T7oi+Sjkv/X13iVe+vftdzW8Q2jLRv+oeLTiYCauIoEpnHJDClv5d
+         u5WFGgudXACVK0ZKdDgfVdRf0MWGHwUNKcUraF/zDcb0Ai7RXMJND0VURjao/Y4sRfUT
+         s2QZkacWKNkbfon3swWqQuqa0RIDvRHgID5doYay7oOBP3WSmG7oMkAYAaY5xrYRK9sz
+         5i3MipJzXtuP4PUuTJlh41PpjSMYks7WJseXNQeU6pCtbMyF8M3zyYbRmL/STVc52+co
+         7oKg==
+X-Gm-Message-State: AJcUukeNMJExq7n50izy7wgosUSQ1ACRMXT93wlYOm2Mvtd0d4E1Gl8F
+        vLROFbZHlWHySIRFFJK6ZAQ=
+X-Google-Smtp-Source: ALg8bN62YYXGgQ7v6pNd6MFoRtulbcA9rpHybDvG66EE0JxeV2NtCYyMu36gvnvIP/qo6fysCXCZlA==
+X-Received: by 2002:a2e:87c3:: with SMTP id v3-v6mr27691792ljj.13.1548936182304;
+        Thu, 31 Jan 2019 04:03:02 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id f123sm115751lff.41.2019.01.31.04.03.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 04:03:01 -0800 (PST)
+Date:   Thu, 31 Jan 2019 14:02:49 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [RFC PATCH v4 02/10] regulator: bd718x7 use chip specific and
+ generic data structs
+Message-ID: <5c58562b069b8b09ae44b344bb20252ed385993b.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <1548929853-25877-1-git-send-email-Tianyu.Lan@microsoft.com>
- <1548929853-25877-2-git-send-email-Tianyu.Lan@microsoft.com> <20190131115756.GA19969@kroah.com>
-In-Reply-To: <20190131115756.GA19969@kroah.com>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Thu, 31 Jan 2019 20:02:51 +0800
-Message-ID: <CAOLK0py-5AmLwEtLveFAKnM_=hnjsCL18vdAk0n6_NPPyB20bA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] x86/Hyper-V: Set x2apic destination mode to physical
- when x2apic is available
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, mchehab+samsung@kernel.org,
-        sashal@kernel.org, sthemmin@microsoft.com,
-        Joerg Roedel <joro@8bytes.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        michael.h.kelley@microsoft.com, Ingo Molnar <mingo@redhat.com>,
-        Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        Arnd Bergmann <arnd@arndb.de>, haiyangz@microsoft.com,
-        Alex Williamson <alex.williamson@redhat.com>, bp@alien8.de,
-        Thomas Gleixner <tglx@linutronix.de>, vkuznets@redhat.com,
-        nicolas.ferre@microchip.com, iommu@lists.linux-foundation.org,
-        devel@linuxdriverproject.org, akpm@linux-foundation.org,
-        davem@davemloft.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg:
-             Thanks for your review.
+Header rohm-bd718x7.h was split to generic and component specific
+parts. This changed the struct bd718x7. Adapt the regulator driver to
+these changes.
 
-On Thu, Jan 31, 2019 at 7:57 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Jan 31, 2019 at 06:17:31PM +0800, lantianyu1986@gmail.com wrote:
-> > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> >
-> > Hyper-V doesn't provide irq remapping for IO-APIC. To enable x2apic,
-> > set x2apic destination mode to physcial mode when x2apic is available
-> > and Hyper-V IOMMU driver makes sure cpus assigned with IO-APIC irqs have
-> > 8-bit APIC id.
-> >
-> > Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> > ---
-> >  arch/x86/kernel/cpu/mshyperv.c | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-> > index e81a2db..9d62f33 100644
-> > --- a/arch/x86/kernel/cpu/mshyperv.c
-> > +++ b/arch/x86/kernel/cpu/mshyperv.c
-> > @@ -36,6 +36,8 @@
-> >  struct ms_hyperv_info ms_hyperv;
-> >  EXPORT_SYMBOL_GPL(ms_hyperv);
-> >
-> > +extern int x2apic_phys;
->
-> Shouldn't this be in a .h file somewhere instead?
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/bd718x7-regulator.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-You are right. I should use <asm/apic.h> here. Thanks.
-
-> thanks,
->
-> greg k-h
-
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index ccea133778c8..9109920b4a06 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -1018,11 +1018,11 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 	struct bd718xx *mfd;
+ 	struct regulator_config config = { 0 };
+ 	struct bd718xx_pmic_inits pmic_regulators[] = {
+-		[BD718XX_TYPE_BD71837] = {
++		[ROHM_CHIP_TYPE_BD71837] = {
+ 			.r_datas = bd71837_regulators,
+ 			.r_amount = ARRAY_SIZE(bd71837_regulators),
+ 		},
+-		[BD718XX_TYPE_BD71847] = {
++		[ROHM_CHIP_TYPE_BD71847] = {
+ 			.r_datas = bd71847_regulators,
+ 			.r_amount = ARRAY_SIZE(bd71847_regulators),
+ 		},
+@@ -1037,15 +1037,15 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	if (mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
+-	    !pmic_regulators[mfd->chip_type].r_datas) {
++	if (mfd->chip.chip_type >= ROHM_CHIP_TYPE_AMOUNT ||
++	    !pmic_regulators[mfd->chip.chip_type].r_datas) {
+ 		dev_err(&pdev->dev, "Unsupported chip type\n");
+ 		err = -EINVAL;
+ 		goto err;
+ 	}
+ 
+ 	/* Register LOCK release */
+-	err = regmap_update_bits(mfd->regmap, BD718XX_REG_REGLOCK,
++	err = regmap_update_bits(mfd->chip.regmap, BD718XX_REG_REGLOCK,
+ 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to unlock PMIC (%d)\n", err);
+@@ -1065,7 +1065,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 	 * for all reset types because OTP loading at READY will clear SEL
+ 	 * bit allowing HW defaults for power rails to be used
+ 	 */
+-	err = regmap_update_bits(mfd->regmap, BD718XX_REG_TRANS_COND1,
++	err = regmap_update_bits(mfd->chip.regmap, BD718XX_REG_TRANS_COND1,
+ 				 BD718XX_ON_REQ_POWEROFF_MASK |
+ 				 BD718XX_SWRESET_POWEROFF_MASK |
+ 				 BD718XX_WDOG_POWEROFF_MASK |
+@@ -1078,17 +1078,17 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		dev_dbg(&pdev->dev, "Changed all resets from SVNS to READY\n");
+ 	}
+ 
+-	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
++	for (i = 0; i < pmic_regulators[mfd->chip.chip_type].r_amount; i++) {
+ 
+ 		const struct regulator_desc *desc;
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
+ 
+-		r = &pmic_regulators[mfd->chip_type].r_datas[i];
++		r = &pmic_regulators[mfd->chip.chip_type].r_datas[i];
+ 		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
+-		config.regmap = mfd->regmap;
++		config.regmap = mfd->chip.regmap;
+ 
+ 		rdev = devm_regulator_register(&pdev->dev, desc, &config);
+ 		if (IS_ERR(rdev)) {
+@@ -1104,7 +1104,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		 * can now switch the control from PMIC state machine to the
+ 		 * register interface
+ 		 */
+-		err = regmap_update_bits(mfd->regmap, r->init.reg,
++		err = regmap_update_bits(mfd->chip.regmap, r->init.reg,
+ 					 r->init.mask, r->init.val);
+ 		if (err) {
+ 			dev_err(&pdev->dev,
+@@ -1113,7 +1113,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 			goto err;
+ 		}
+ 		for (j = 0; j < r->additional_init_amnt; j++) {
+-			err = regmap_update_bits(mfd->regmap,
++			err = regmap_update_bits(mfd->chip.regmap,
+ 						 r->additional_inits[j].reg,
+ 						 r->additional_inits[j].mask,
+ 						 r->additional_inits[j].val);
+-- 
+2.14.3
 
 
 -- 
-Best regards
-Tianyu Lan
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
