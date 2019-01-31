@@ -2,151 +2,175 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B625C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDECC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECF6E20863
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:34:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aeDWhHns";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j3p7wxhV"
+	by mail.kernel.org (Postfix) with ESMTP id 75EC8218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388606AbfAaQek (ORCPT
+        id S2388622AbfAaQey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:34:40 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37392 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388304AbfAaQek (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:34:40 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DD47D609CA; Thu, 31 Jan 2019 16:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548952478;
-        bh=TgSG6OLYr1Q8S+PQ4cO/OWuvT8OqQFjjsmfDy94JTkI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aeDWhHnsHaQuYLWt98ECOGVAvkybapV8tpGe+dhy2w1t97A98nlsmn2TN+aZEqtlb
-         PEPOLDyJRdzf8Tpq2YEhDd2f8WlmI/ARo841FT3D6ZlI747kgWpgVhvYLMqMXDzqWj
-         QohNeAdXhoXPVQrn5xVYIu9vHStW/8aH3adch7DI=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0D77660A73;
-        Thu, 31 Jan 2019 16:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548952476;
-        bh=TgSG6OLYr1Q8S+PQ4cO/OWuvT8OqQFjjsmfDy94JTkI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j3p7wxhVaH+Tel/TqWj5JvnxBETDFjhT3ME4Vf+6SjBDvVB6+kRhCjqcdJeoIhBw+
-         k5niEaeNPIalrgwYmzA2tkiYvvpgT960RNE79TmFac9IOrPqNkL18Z24dnACcKiVm6
-         ds0qb7qCV/g0isReaqBB9xAog8FudENFYCK6H3Nk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D77660A73
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Thu, 31 Jan 2019 09:34:35 -0700
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     evgreen@chromium.org, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
-        bjorn.andersson@linaro.org, dianders@chromium.org,
-        linus.walleij@linaro.org
-Subject: Re: [PATCH v2 5/8] drivers: pinctrl: msm: setup GPIO irqchip
- hierarchy
-Message-ID: <20190131163435.GB6069@codeaurora.org>
-References: <20190124202205.7940-1-ilina@codeaurora.org>
- <20190124202205.7940-6-ilina@codeaurora.org>
- <154888832839.169292.6913084380036629941@swboyd.mtv.corp.google.com>
+        Thu, 31 Jan 2019 11:34:54 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2716 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388304AbfAaQex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:34:53 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id F2E80C609D464C0C9BF1;
+        Fri,  1 Feb 2019 00:34:50 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.43) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
+ 00:34:42 +0800
+Subject: Re: [PATCH v2 7/7] scsi: libsas: fix issue of swapping two sas disks
+To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20190130082412.9357-1-yanaijie@huawei.com>
+ <20190130082412.9357-8-yanaijie@huawei.com>
+ <368786a4-9c18-7d5b-e62b-5dcdc634d3e6@huawei.com>
+ <5C5263BD.7060002@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        Xiaofei Tan <tanxiaofei@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <1135102e-e563-d3ab-9b44-d8691c3e6ccb@huawei.com>
+Date:   Thu, 31 Jan 2019 16:34:32 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <154888832839.169292.6913084380036629941@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <5C5263BD.7060002@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30 2019 at 15:45 -0700, Stephen Boyd wrote:
->Quoting Lina Iyer (2019-01-24 12:22:02)
->> To allow GPIOs to wakeup the system from suspend or deep idle, the
->> wakeup capable GPIOs are setup in hierarchy with interrupts from the
->> wakeup-parent irqchip.
+On 31/01/2019 02:55, Jason Yan wrote:
+>
+>
+> On 2019/1/31 1:53, John Garry wrote:
+>> On 30/01/2019 08:24, Jason Yan wrote:
+>>> The work flow of revalidation now is scanning expander phy by the
+>>> sequence of the phy and check if the phy have changed. This will leads
+>>> to an issue of swapping two sas disks on one expander.
+>>>
+>>> Assume we have two sas disks, connected with expander phy10 and phy11:
+>>>
+>>> phy10: 5000cca04eb1001d  port-0:0:10
+>>> phy11: 5000cca04eb043ad  port-0:0:11
+>>>
+>>> Swap these two disks, and imaging the following scenario:
+>>>
+>>> revalidation 1:
 >>
->> In older SoC's, the TLMM will handover detection to the parent irqchip
->> and in newer SoC's, the parent irqchip may also be active as well as the
->> TLMM and therefore the GPIOs need to be masked at TLMM to avoid
->> duplicate interrupts. To enable both these configurations to exist,
->> allow the parent irqchip to dictate the TLMM irqchip's behavior when
->> masking/unmasking the interrupt.
+>> What does "revalidation 1" actually mean?
+>
+> 'revalidation 1' means one entry in sas_discover_domain().
+>
 >>
->> Co-developed-by: Stephen Boyd <swboyd@chromium.org>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>>>   -->phy10: 0 --> delete phy10 domain device
+>>>   -->phy11: 5000cca04eb043ad (no change)
 >>
->> ---
->> Changes in v2:
->>         - Fix bug when unmaksing PDC interrupt
+>> so is disk 11 still inserted at this stage?
 >
->What was the bug? 
-The problem was an incorrect merge (possibly manual), causing the PDC to
-be not used at all. This is what I had -
-
- static void msm_gpio_irq_mask(struct irq_data *d)                                  
- {                                                                                  
-         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);                      
-         struct msm_pinctrl *pctrl = gpiochip_get_data(gc);                         
-         const struct msm_pingroup *g;                                              
-         unsigned long flags;                                                       
-         u32 val;                                                                   
-                                                                                    
-         g = &pctrl->soc->groups[d->hwirq];                                         
-                                                                                    
-         if (d->parent_data)                                                        
-                 irq_chip_unmask_parent(d);                                         
-                                                                                    
-         /* Monitored by parent wakeup controller? Keep masked */                   
-         if (test_bit(d->hwirq, pctrl->wakeup_masked_irqs))                         
-                 return;                                                            
-                                                                                    
-
-The above unmask_parent() call in an irq_mask() callback was the bug.
-
->Is that why the mask callback in this gpio chip no
->longer calls the parent irq chip? We should keep calling the parent
->irqchip from what I can tell. Otherwise, we may never mask the irq at
->the PDC and only mask it at the GPIO level, which may not even care
->about it if it's being monitored by the PDC.
+> Maybe, but that's what we read from the hardware.
 >
->This causes me to get a bunch of interrupts on my touchscreen when I
->touch it once vs. only a handful (like 4) when I fix it with the below
->patch:
+>>
+>>> revalidation done
+>>>
+>>> revalidation 2:
+>>
+>> is port-0:0:10 deleted now?
+>>
 >
-Hmm... I did not see an issue in my local testing :(
-Thanks for the fix.
+> Yes. But we don't care about it.
+>
+>>>   -->step 1, check phy10:
+>>>   -->phy10: 5000cca04eb043ad   --> add to wide port(port-0:0:11) (phy11
+>>>        address is still 5000cca04eb043ad now)
 
->Can you fold it in?
->
-Yes, I will fold it in and send a rev out with the fix.
+We do not want this to happen and it seems to be the crux of the problem.
 
-Thanks,
-Lina
+As an alternate to your solution, how about check if the PHY is an end 
+device. If so, it should not form/join a wideport; that is, apart from 
+dual-port disks, which I am not sure about - I think each port still has 
+a unique WWN, so should be ok.
 
->diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
->index dd72ec8fb8db..9b45219893bd 100644
->--- a/drivers/pinctrl/qcom/pinctrl-msm.c
->+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
->@@ -682,6 +682,9 @@ static void msm_gpio_irq_mask(struct irq_data *d)
-> 	clear_bit(d->hwirq, pctrl->enabled_irqs);
+>>
+>> So this should not happen. How are you physcially swapping them such
+>> that phy11 address is still 5000cca04eb043ad? I don't see how this would
+>> be true at revalidation 1.
+>>
 >
-> 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
->+
->+	if (d->parent_data)
->+		irq_chip_mask_parent(d);
-> }
+> This issue is because we always process the PHYs from 0 to max phy
+> number. And please be aware of the real physcial address of the PHY and
+> the address stored in the memory is not always the same.
+> Actually when you checking phy10, phy11 physcial address is not
+> 5000cca04eb043ad. But the address stored in domain device is still
+> 5000cca04eb043ad. We have not get a chance to to read it because we are
+> processing phy10 now, right?
 >
-> static void msm_gpio_irq_unmask(struct irq_data *d)
+
+I see.
+
+> It's very easy to reproduce. I suggest you to do it yourself and look at
+> the logs.
+>
+
+I can't physically access the backpane, and this is not the sort of 
+thing which is easy to fake by hacking the driver.
+
+And the log which you provided internally does not have much - if any - 
+libsas logs to help me understand it.
+
+>>>
+>>>   -->step 2, check phy11:
+>>>   -->phy11: 0  --> phy11 address is 0 now, but it's part of wide
+>>>        port(port-0:0:11), the domain device will not be deleted.
+>>> revalidation done
+>>>
+>>> revalidation 3:
+>>>   -->phy10, 5000cca04eb043ad (no change)
+>>>   -->phy11: 5000cca04eb1001d --> try to add port-0:0:11 but failed,
+>>>        port-0:0:11 already exist, trigger a warning as follows
+>>> revalidation done
+>>>
+>>> [14790.189699] sysfs: cannot create duplicate filename
+>>> '/devices/pci0000:74/0000:74:02.0/host0/port-0:0/expander-0:0/port-0:0:11'
+>>>
+>>>
+>>> [14790.201081] CPU: 25 PID: 5031 Comm: kworker/u192:3 Not tainted
+>>> 4.16.0-rc1-191134-g138f084-dirty #228
+>>> [14790.210199] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 EC UEFI
+>>> Nemo 2.0 RC0 - B303 05/16/2018
+>>> [14790.219323] Workqueue: 0000:74:02.0_disco_q sas_revalidate_domain
+>>> [14790.225404] Call trace:
+>>> [14790.227842]  dump_backtrace+0x0/0x18c
+>>> [14790.231492]  show_stack+0x14/0x1c
+>>> [14790.234798]  dump_stack+0x88/0xac
+>>> [14790.238101]  sysfs_warn_dup+0x64/0x7c
+>>> [14790.241751]  sysfs_create_dir_ns+0x90/0xa0
+>>> [14790.245835]  kobject_add_internal+0xa0/0x284
+>>> [14790.250092]  kobject_add+0xb8/0x11c
+>>> [14790.253570]  device_add+0xe8/0x598
+>>> [14790.256960]  sas_port_add+0x24/0x50
+>>> [14790.260436]  sas_ex_discover_devices+0xb10/0xc30
+>>> [14790.265040]  sas_ex_revalidate_domain+0x1d8/0x518
+>>> [14790.269731]  sas_revalidate_domain+0x12c/0x154
+>>> [14790.274163]  process_one_work+0x128/0x2b0
+>>> [14790.278160]  worker_thread+0x14c/0x408
+>>> [14790.281897]  kthread+0xfc/0x128
+>>> [14790.285026]  ret_from_fork+0x10/0x18
+>>> [14790.288598] ------------[ cut here ]------------
+>>>
+>>> At last, the disk 5000cca04eb1001d is lost.
+
