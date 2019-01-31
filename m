@@ -2,98 +2,136 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB33C282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E133BC282D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B7992084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:33:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=yehs2007@zoho.com header.b="dKClg84r"
+	by mail.kernel.org (Postfix) with ESMTP id BDEB020B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:34:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730846AbfAaCdK (ORCPT
+        id S1730088AbfAaCe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 21:33:10 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25417 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfAaCdJ (ORCPT
+        Wed, 30 Jan 2019 21:34:27 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:5712 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725535AbfAaCe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 21:33:09 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548901892; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=LDgy6MugAyxvHx80sLMn2iTsvyO7FIJPvN6b5Uxl+C5vSxKbCELW4c9ymRR7+rFPowiDD8KEpFjHwEvjoudnNvu5tuwPBDp/HcKmL9TizoHmWrRM1QPwx1ux2Gx/AkMoSt5gYhZS05AzW8A48sMyhShvzvzSMA+k8Rf3F7CNGfE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548901892; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=DeSXpkuBaRP5FZTknldkbxhMQMJx9Q4qwy3wT5Ssm1k=; 
-        b=Rfl3TdNzlrd8lngOI4Fk0VHGqWEAvfmDdyp5KH/r/xB12cy5v3mmedKgk5ROKR+qItRD9P3RHdUGpHSemFvU7XyOn/yp0KQC4BZwxdc4U+3snepVgUfa4Sek1OLHUWirmowRJp2exAkjp6dAQCdMEDBYwHCm7LSlmZONmUON4XU=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=yehs2007@zoho.com;
-        dmarc=pass header.from=<yehs2007@zoho.com> header.from=<yehs2007@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=WpEjR8C+TDFyTr6GwT4b6SnH3DxM6SJLnrxkYjPnL1UuMBeF2Hkr0s7isUQ7mxJXrH0BALBEueHW
-    POE53UgKTMdTRic2yHNPIjSJfj3DC+0HrYolLpwpCtTlDrdoq+tl  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548901892;
-        s=default; d=zoho.com; i=yehs2007@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=1009; bh=DeSXpkuBaRP5FZTknldkbxhMQMJx9Q4qwy3wT5Ssm1k=;
-        b=dKClg84rZYnrzufN1FKEICy7VAZdgifPw/2VyDfO1CzslIVF0QaFnjcuy8c6U4Xv
-        C3GSJFOWvfVYuTGZSNz+Dy0jVLKheYUFiNlPqWh4CUgLSSEX+psG3AQwFmzKQqcdTtE
-        elawTJegklis7p3BQPSX3OrGeqJJbbwUnYqJm9A8=
-Received: from YEHS1XR956R00D1.lenovo.com (106.38.1.115 [106.38.1.115]) by mx.zohomail.com
-        with SMTPS id 1548901890474272.2511908503543; Wed, 30 Jan 2019 18:31:30 -0800 (PST)
-From:   Huaisheng Ye <yehs2007@zoho.com>
-To:     mpatocka@redhat.com, snitzer@redhat.com, agk@redhat.com
-Cc:     dan.j.williams@intel.com, hch@lst.de, jack@suse.cz, corbet@lwn.net,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-doc@vger.kernel.org,
-        Huaisheng Ye <yehs1@lenovo.com>
-Subject: [PATCH v3 5/5] dm-writecache: output seq_count within status
-Date:   Thu, 31 Jan 2019 10:29:55 +0800
-Message-Id: <20190131022955.9920-6-yehs2007@zoho.com>
-X-Mailer: git-send-email 2.17.0.windows.1
-In-Reply-To: <20190131022955.9920-1-yehs2007@zoho.com>
-References: <20190131022955.9920-1-yehs2007@zoho.com>
-X-ZohoMailClient: External
+        Wed, 30 Jan 2019 21:34:26 -0500
+X-UUID: 244e67036a0c411e91eb3ee24e8c2c18-20190131
+X-UUID: 244e67036a0c411e91eb3ee24e8c2c18-20190131
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <erin.lo@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 773714994; Thu, 31 Jan 2019 10:34:12 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 31 Jan 2019 10:34:10 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 31 Jan 2019 10:34:10 +0800
+Message-ID: <1548902050.23230.4.camel@mtksdaap41>
+Subject: Re: [PATCH v6 6/6] arm64: dts: Add Mediatek SoC MT8183 and
+ evaluation board dts and Makefile
+From:   Erin Lo <erin.lo@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>, Ben Ho <Ben.Ho@mediatek.com>,
+        <mars.cheng@mediatek.com>,
+        Mengqi Zhang <Mengqi.Zhang@mediatek.com>,
+        <linux-clk@vger.kernel.org>,
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        "Seiya Wang" <seiya.wang@mediatek.com>,
+        <linux-serial@vger.kernel.org>, <yingjoe.chen@mediatek.com>,
+        <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        <linux-mediatek@lists.infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <eddie.huang@mediatek.com>, <linux-arm-kernel@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        <linux-kernel@vger.kernel.org>,
+        Zhiyong Tao <zhiyong.tao@mediatek.com>
+Date:   Thu, 31 Jan 2019 10:34:10 +0800
+In-Reply-To: <20190130162204.GA1521@bogus>
+References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
+         <1548317240-44682-7-git-send-email-erin.lo@mediatek.com>
+         <20190130162204.GA1521@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 14330CE4A278BEFC08A742B7265A20949BB9CE8105936BB5CFA505010BB319132000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huaisheng Ye <yehs1@lenovo.com>
+On Wed, 2019-01-30 at 10:22 -0600, Rob Herring wrote:
+> On Thu, Jan 24, 2019 at 04:07:20PM +0800, Erin Lo wrote:
+> > From: Ben Ho <Ben.Ho@mediatek.com>
+> > 
+> > Add basic chip support for Mediatek 8183, include
+> > pinctrl file, uart node with correct uart clocks, pwrap device
+> > 
+> > Add clock controller nodes, include topckgen, infracfg,
+> > apmixedsys and subsystem.
+> > 
+> > Signed-off-by: Ben Ho <Ben.Ho@mediatek.com>
+> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+> > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> > Signed-off-by: Mengqi Zhang <Mengqi.Zhang@mediatek.com>
+> > Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+> > Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
+> > ---
+> 
+> 
+> > +	sysirq: intpol-controller@c530a80 {
+> 
+> interrupt-controller@...
 
-seq_count is important for flush operations, output it within status
-for debugging and analyzing code behavior.
+I will modify it in next version.
+> 
+> 
+> Place all the MMIO peripherals under one or more simple-bus nodes.
+> 
+> Rob
+> 
 
-Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
----
- drivers/md/dm-writecache.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Do you mean need to add simple-bus like this?
 
-diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-index 2c1e825..3396710 100644
---- a/drivers/md/dm-writecache.c
-+++ b/drivers/md/dm-writecache.c
-@@ -2231,9 +2231,9 @@ static void writecache_status(struct dm_target *ti, status_type_t type,
- 
- 	switch (type) {
- 	case STATUSTYPE_INFO:
--		DMEMIT("%ld %llu %llu %llu", writecache_has_error(wc),
-+		DMEMIT("%ld %llu %llu %llu %llu", writecache_has_error(wc),
- 		       (unsigned long long)wc->n_blocks, (unsigned long long)wc->freelist_size,
--		       (unsigned long long)wc->writeback_size);
-+		       (unsigned long long)wc->writeback_size, wc->seq_count);
- 		break;
- 	case STATUSTYPE_TABLE:
- 		DMEMIT("%c %s %s %u ", WC_MODE_PMEM(wc) ? 'p' : 's',
--- 
-1.8.3.1
++   soc: soc {
++                #address-cells = <0x1>;
++                #size-cells = <0x1>;
++                ranges = <0 0 0 0xffffffff>;
++                compatible = "simple-bus";
+
+	        soc_data: soc_data@08000000 {
+	                compatible = "mediatek,mt8183-efuse",
+	                             "mediatek,efuse";
+	                reg = <0 0x08000000 0 0x0010>;
+	                #address-cells = <1>;
+	                #size-cells = <1>;
+	                status = "disabled";
+	        };
+
+	        gic: interrupt-controller@0c000000 {
+	                compatible = "arm,gic-v3";
+	                #interrupt-cells = <4>;
+	
+Best Regards,
+Erin
+
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
 
