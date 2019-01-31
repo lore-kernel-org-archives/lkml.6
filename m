@@ -2,82 +2,61 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F3AC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDB3C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 466682086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:07:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDD082086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732673AbfAaMHB (ORCPT
+        id S1732682AbfAaMHQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:07:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41114 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726977AbfAaMHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:07:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 327A4AC4B;
-        Thu, 31 Jan 2019 12:06:59 +0000 (UTC)
-Subject: Re: [PATCH 2/3] mm/filemap: initiate readahead even if IOCB_NOWAIT is
- set for the I/O
-To:     Daniel Gruss <daniel@gruss.cc>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>, Jiri Kosina <jkosina@suse.cz>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Chinner <david@fromorbit.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Jiri Kosina <jikos@kernel.org>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
- <20190130124420.1834-1-vbabka@suse.cz> <20190130124420.1834-3-vbabka@suse.cz>
- <aea9a09a-9d01-fd08-d210-96b94162aba6@gruss.cc>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <fb914afa-a76c-5678-81e8-ce5736f772be@suse.cz>
-Date:   Thu, 31 Jan 2019 13:06:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 07:07:16 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:55870 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726977AbfAaMHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 07:07:15 -0500
+Received: from wf0848.dip.tu-dresden.de ([141.76.183.80] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gpB7W-0003tR-GB; Thu, 31 Jan 2019 13:07:02 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        hjc@rock-chips.com, airlied@linux.ie, linux@armlinux.org.uk,
+        robin.murphy@arm.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCHv2 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use vm_insert_range
+Date:   Thu, 31 Jan 2019 13:07:05 +0100
+Message-ID: <8111278.aDhVmSDgJm@phil>
+In-Reply-To: <20190131031040.GA2320@jordon-HP-15-Notebook-PC>
+References: <20190131031040.GA2320@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <aea9a09a-9d01-fd08-d210-96b94162aba6@gruss.cc>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/19 1:04 PM, Daniel Gruss wrote:
-> On 1/30/19 1:44 PM, Vlastimil Babka wrote:
->> Close that sidechannel by always initiating readahead on the cache if we
->> encounter a cache miss for preadv2(RWF_NOWAIT); with that in place, probing
->> the pagecache residency itself will actually populate the cache, making the
->> sidechannel useless.
+Am Donnerstag, 31. Januar 2019, 04:10:40 CET schrieb Souptick Joarder:
+> Convert to use vm_insert_range() to map range of kernel
+> memory to user vma.
 > 
-> I fear this does not really close the side channel. You can time the
-> preadv2 function and infer which path it took, so you just bring it down
-> to the same as using mmap and timing accesses.
-> If I understood it correctly, this patch just removes the advantages of
-> preadv2 over mmmap+access for the attacker.
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
-But isn't that the same with mincore()? We can't simply remove the
-possibility of mmap+access, but we are closing the simpler methods?
+hmm, I'm missing a changelog here between v1 and v2.
+Nevertheless I managed to test v1 on Rockchip hardware
+and display is still working, including talking to Lima via prime.
 
-Vlastimil
+So if there aren't any big changes for v2, on Rockchip
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
+Heiko
 
-> Cheers,
-> Daniel
-> 
 
