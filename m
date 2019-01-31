@@ -2,121 +2,174 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 405D3C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C35CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 114F920B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:07:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C660620B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:07:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="askHYVdz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbfAaUHK (ORCPT
+        id S1727684AbfAaUH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:07:10 -0500
-Received: from mga01.intel.com ([192.55.52.88]:38537 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbfAaUHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:07:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:07:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
-   d="scan'208";a="296282719"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga005.jf.intel.com with ESMTP; 31 Jan 2019 12:07:08 -0800
-Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 31 Jan 2019 12:07:08 -0800
-Received: from hasmsx111.ger.corp.intel.com (10.184.198.39) by
- fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 31 Jan 2019 12:07:07 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
- HASMSX111.ger.corp.intel.com ([169.254.5.16]) with mapi id 14.03.0415.000;
- Thu, 31 Jan 2019 22:07:05 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: RE: Getting weird TPM error after rebasing my tree to
- security/next-general
-Thread-Topic: Getting weird TPM error after rebasing my tree to
- security/next-general
-Thread-Index: AQHUuWAtuzjHOvmUw0aX3ymhUWghKaXJaQyAgAARKoCAABj/gIAABFeAgAAAYICAAAUEAIAAKBgwgAAIYLA=
-Date:   Thu, 31 Jan 2019 20:07:04 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA8DA90@hasmsx108.ger.corp.intel.com>
-References: <20190122010218.GA26713@linux.intel.com>
- <20190122025836.GH25163@ziepe.ca> <20190122132910.GA2720@linux.intel.com>
- <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
- <20190123153638.GA8727@linux.intel.com>
- <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
- <20190129132016.GA1602@linux.intel.com>
- <20190131122606.GA12470@linux.intel.com>
- <20190131160437.GA5629@linux.intel.com>
- <20190131170603.GA18349@linux.intel.com>
- <20190131183530.GA27112@linux.intel.com>
- <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
- <CAHk-=whEb14V981ziWmMdcqR40x5xfhhDCaB2JYcOBQHnHmsgw@mail.gmail.com>
- <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com> 
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjAzYWIzZTUtZGNjOC00ZDg3LTkzNmUtYzNjZDJiOGE5MzU0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiOTBqK2tPbytadFVHVlB0U3ZwbWdTOWNPUGtpSW0rN3NkcE9lcWg2WG5GTkFZQlY3VVFIbFlTZUVSZ0lDRXpxRSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.254.159.176]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 31 Jan 2019 15:07:26 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:45026 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbfAaUHZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 15:07:25 -0500
+Received: by mail-yb1-f195.google.com with SMTP id k189so1815696yba.11
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 12:07:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JqGyq9owmf0ny2t5ItEDue6rqJ3d7AFmxUpUgXeaeQE=;
+        b=askHYVdzGJrAKR3bRpLPDCZ3CNGfRDxDfJCDDcS18y7MDeI8irtKLUAhIUYc10x71J
+         CEB9JI3THJ/SSP89xWonUeEciauPfWPkeYjfKc8ymUTBZp/e2uFAhBqciFg1e19Xyl88
+         wkHEF/37BaFzLJ/QPM7o0xd0WdnvxLI0ANfhdK3POkYtvgM4gK2U5iaC5/t3lb1hK0ql
+         eoc9GixdjpMVYCvPfnjTbsVqJQvdlDeFzcPXelEWxd8fjQfhDDpcOwYuCDNYmkWjzBEr
+         0p/TBiGt+qDO7W6cT6a4Itc8LkkYf0MaDrkF0J6BWzsUwEOaaFbBUuJonCXG/Y5ebkTO
+         ll9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JqGyq9owmf0ny2t5ItEDue6rqJ3d7AFmxUpUgXeaeQE=;
+        b=b7z+YIzAd8md8Skya61Z7m3ryIaORzqFsA1qntn/yHlqFENFW1lCcFlzSiTgn6C+QU
+         VZkmtKdaP95odpjFXhCO1OjMvHecdJW6EoP9rRLxIgxpA9wwUI9NcHQPYzEaoIeviPq7
+         t09HQuXzWUyS54wk0aWNFcE8EMPPQfja+LVI/eLUEyiFlCC3fkB6s37mnCmKcnO7niyo
+         PgNTMsd0+p/1PpZXvYsDo4y+y3UM9DjFllVVo+Z2sBiQ4NVs0hixO3CkV6VWqW6KP/Vn
+         YnnaNLAXiwE31QjmveIxMmENxRlOOh356Zo8zGKJRKtAKBP6xQNOelgbAFz93k7Ch3fe
+         zxTA==
+X-Gm-Message-State: AJcUukczKvZZMO5pwXJwOK15+CIHlZJJ8FgqmfXGW+CnNYCpvS90BoXu
+        UU+6uuflLmDbWAF+y+uPuiYo4w==
+X-Google-Smtp-Source: ALg8bN4QrI6MJLJG/DS5/IaToN8RlQ646LcKYCeIZy/g9TnEW3TULyRoZ1112/OmOBxnVvwsvRliVA==
+X-Received: by 2002:a25:a3c1:: with SMTP id e59mr34209373ybi.96.1548965244384;
+        Thu, 31 Jan 2019 12:07:24 -0800 (PST)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id b144sm3297343ywa.33.2019.01.31.12.07.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 12:07:23 -0800 (PST)
+Date:   Thu, 31 Jan 2019 15:07:23 -0500
+From:   Sean Paul <sean@poorly.run>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/19] drm/panel: drmP.h removal and DRM_DEV*
+Message-ID: <20190131200723.GZ114153@art_vandelay>
+References: <20190131192619.9763-1-sam@ravnborg.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131192619.9763-1-sam@ravnborg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogV2lua2xlciwgVG9tYXMN
-Cj4gU2VudDogVGh1cnNkYXksIEphbnVhcnkgMzEsIDIwMTkgMjE6NDcNCj4gVG86ICdMaW51cyBU
-b3J2YWxkcycgPHRvcnZhbGRzQGxpbnV4LWZvdW5kYXRpb24ub3JnPjsgSmFya2tvIFNha2tpbmVu
-DQo+IDxqYXJra28uc2Fra2luZW5AbGludXguaW50ZWwuY29tPg0KPiBDYzogSmFzb24gR3VudGhv
-cnBlIDxqZ2dAemllcGUuY2E+OyBKYW1lcyBCb3R0b21sZXkNCj4gPEphbWVzLkJvdHRvbWxleUBo
-YW5zZW5wYXJ0bmVyc2hpcC5jb20+OyBsaW51eC1pbnRlZ3JpdHlAdmdlci5rZXJuZWwub3JnOw0K
-PiBsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnOyBMaW51eCBMaXN0IEtlcm5l
-bCBNYWlsaW5nIDxsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDog
-UkU6IEdldHRpbmcgd2VpcmQgVFBNIGVycm9yIGFmdGVyIHJlYmFzaW5nIG15IHRyZWUgdG8gc2Vj
-dXJpdHkvbmV4dC0NCj4gZ2VuZXJhbA0KPiANCj4gDQo+ID4NCj4gPiBPbiBUaHUsIEphbiAzMSwg
-MjAxOSBhdCAxMDo1MiBBTSBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtDQo+ID4gZm91
-bmRhdGlvbi5vcmc+IHdyb3RlOg0KPiA+ID4NCj4gPiA+IEkgdGhpbmsgd2hhdCBJIHNob3VsZCBk
-byBpcyB0byBqdXN0IG1ha2UgIm1lbWNweV8qaW8oKSIgZG8gdGhlDQo+ID4gPiAiYWxpZ24gbmF0
-dXJhbGx5IiB0aGluZy4NCj4gPiA+DQo+ID4gPiBMZXQgbWUgY29vayB1cCBhIHBhdGNoIGZvciB5
-b3UgdG8gdGVzdC4NCj4gPg0KPiA+IERvZXMgdGhpcyB3b3JrIGZvciB5b3U/DQo+ID4NCj4gPiBJ
-IGhhdmVuJ3QgdGVzdGVkIGl0IGF0IGFsbCwgYnV0IEkgdmVyaWZpZWQgdGhhdCB0aGUgZ2VuZXJh
-dGVkIGNvZGUNCj4gPiBzZWVtcyB0byBtYWtlIGF0IGxlYXN0IHNvbWUgYW1vdW50IG9mIHNlbnNl
-Lg0KPiA+DQo+ID4gICAgICAgICAgICAgICAgTGludXMNCj4gDQo+IFNvIGRpZyBpbnRvIHRoZSBz
-cGVjIGFuZCBJIHRoaW5rIHRoaXMgaXMgYSBiaXQgcmVsZXZhbnQuDQo+IA0KPiBUUE0gVENHIGFj
-Y29yZGluZyB0aGUgc3BlYyByZXF1aXJlcyB0aGF0IGFsbCBidWZmZXIgYWNjZXNzIGlzIGRvbmUg
-c2VxdWVudGlhbGx5DQo+IGZyb20gdGhlIHN0YXJ0IHRvIGVuZCBvZiB0aGUgcGF5bG9hZCwgU2lt
-cGx5IEluIGNhc2Ugb2Ygc2tpcHBpbmcgb3IgZ29pbmcgYmFjaw0KPiB0aGUgdHJhbnNhY3Rpb24g
-aXMgYWJvcnRlZC4NCj4gVGhlIHdyaXRlIHRyYW5zYWN0aW9ucyBzaG91bGQgYmUgMSBvciBwb3dl
-ciBvZiAyLiBTbyBpbiBnZW5lcmFsIDYgYnl0ZSByZWFkDQo+IHNob3VsZCBub3Qgd29yay4gQnV0
-IEknbSBzdXJlIG91ciBodyByZWFsbHkgb2JleSB0aGlzIHJlc3RyaWN0aW9uLg0KDQpGb3IgYWxp
-Z25tZW50IG9mIHJlZ2lzdGVyIGFjY2VzcyB0aGUgc3BlYyBzcGVjaWZpZXM6DQoNClNvbWUgaW5z
-dGFudGlhdGluZyBoYXJkd2FyZSBtYXkgaGF2ZSBzaXplIGFuZCBhbGlnbm1lbnQgcmVzdHJpY3Rp
-b25zIHdoZW4gYWNjZXNzaW5nIGFueSBvZiB0aGUgZmllbGRzIGluIHRoaXMgaW50ZXJmYWNlLiBT
-b21lIGhhcmR3YXJlIG1heSByZXF1aXJlIGFjY2VzcyB0byBhbnkgb2YgZGF0YSB3aXRoaW4gYSBm
-aWVsZCBvciBidWZmZXIgYmUgcGVyZm9ybWVkIGJ5IHJlYWRzIG9yIHdyaXRlcyB3aGljaCBhcmUg
-bmF0dXJhbGx5IGFsaWduZWQuIEZvciB0aGlzIHJlYXNvbiwgc29mdHdhcmUgc2hvdWxkIGFjY2Vz
-cyB0aGUgZmllbGRzIGFuZCBidWZmZXJzIGRlZmluZWQgaW4gdGhpcyBpbnRlcmZhY2UgdXNpbmcg
-aW5zdHJ1Y3Rpb25zIHdoaWNoIGRvIG5vdCBjYXVzZSBhbiBhY2Nlc3MgdG8gY3Jvc3MgYW4gYWxp
-Z25tZW50IGJvdW5kYXJ5IGFuZCBzaG91bGQgbm90IHVzZSBzdHJpbmcgbW92ZSBpbnN0cnVjdGlv
-bnMNCg0KVGhpcyBpcyBmb3IgcmVnaXN0ZXIgYWRkcmVzcywgSSdtIG5vdCBzdXJlIHRoaXMgc3Bh
-bnMgYWxzbyBmb3IgcmVxdWVzdCByZXNwb25zZSBidWZmZXIsIGJ1dCBmcm9tIHRoZSBiZWhhdmlv
-ciBsb29rcyBsaWtlIGl0IGFwcGxpZXMgdGhlcmUgdHdvLg0KDQogDQpUaGFua3MNClRvbWFzDQo=
+On Thu, Jan 31, 2019 at 08:26:00PM +0100, Sam Ravnborg wrote:
+> Hi Thierry et al.
+> 
+> While reviewing a number of new panel drivers there was a
+> certain pattern in the feedback:
+> - the now deprecated drmP.h file was used
+> - dev_err() and friends was used
+> 
+> This patch-set address the above items in the panel
+> drivers in drm/panel/
+> The hope is that new panel drivers will no longer inherit bad
+> patterns from the existing drivers.
+> 
+> The use of DRM_DEV* is not accepted by everyone, so this conversion
+> was split up in smaller bits.
+> If some drivers do not want to use DRM_DEV* then just drop the relevant patch.
+> 
+> All patches are build tested on x86/arm.
+> 
+> The DRM_DEV* patches depends on the drmP.h removal.
+> 
+> One extra patch sneaked in "panel-innolux: drop unused variable"
+> This is a fix for an unused variable and was added to flush my panel patches.
+> 
+> Note: Waiting for key storage (for gpg key) before I start the process getting
+> commit rights, so I rely on someone else (Thierry?) to commit this.
+> 
+> Patches are made on top of drm-misc-next as of a few days ago.
+> 
+> Comments welcome!
+
+Hey Sam,
+Thanks for the patchset, this will make dmesg grepping easier! One comment, and
+you're going to hate me for it: Why use DRM_DEV* instead of DRM_*?
+
+When I introduced DRM_DEV, it was to cover the case where there are multiple
+instances of the same driver (ie: dual-channel mipi, multiple crtcs, etc). I
+suppose that _could_ happen in the panel space, but it seems more unlikely than
+not.
+
+It's quite possible I'm overthinking this, but just something I figured I would
+point out. Either way, I think this is an improvement over dev_*.
+
+Sean
+
+> 
+> 	Sam
+> 
+> Sam Ravnborg (19):
+>       drm/panel: drop drmP.h usage
+>       drm/panel: panel-innolux: drop unused variable
+>       drm/panel: samsung: use DRM_DEV*
+>       drm/panel: arm-versatile: use DRM_DEV*
+>       drm/panel: truly: use DRM_DEV*
+>       drm/panel: sitronix: use DRM_DEV*
+>       drm/panel: ilitek: use DRM_DEV*
+>       drm/panel: innolux: use DRM_DEV*
+>       drm/panel: jdi: use DRM_DEV*
+>       drm/panel: lg: use DRM_DEV*
+>       drm/panel: lvds: use DRM_DEV*
+>       drm/panel: olimex: use DRM_DEV*
+>       drm/panel: orisetech: use DRM_DEV*
+>       drm/panel: panasonic: use DRM_DEV*
+>       drm/panel: raspberrypi: use DRM_DEV*
+>       drm/panel: raydium: use DRM_DEV*
+>       drm/panel: seiko: use DRM_DEV*
+>       drm/panel: sharp: use DRM_DEV*
+>       drm/panel: simple: use DRM_DEV*
+> 
+>  drivers/gpu/drm/panel/panel-arm-versatile.c        | 21 +++--
+>  drivers/gpu/drm/panel/panel-ilitek-ili9322.c       | 97 ++++++++++++----------
+>  drivers/gpu/drm/panel/panel-ilitek-ili9881c.c      | 14 ++--
+>  drivers/gpu/drm/panel/panel-innolux-p079zca.c      | 17 ++--
+>  drivers/gpu/drm/panel/panel-jdi-lt070me05000.c     | 66 ++++++++-------
+>  drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c |  4 +-
+>  drivers/gpu/drm/panel/panel-lg-lg4573.c            | 25 +++---
+>  drivers/gpu/drm/panel/panel-lvds.c                 | 39 +++++----
+>  drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 28 ++++---
+>  drivers/gpu/drm/panel/panel-orisetech-otm8009a.c   | 15 ++--
+>  .../gpu/drm/panel/panel-panasonic-vvx10f034n00.c   | 19 +++--
+>  .../gpu/drm/panel/panel-raspberrypi-touchscreen.c  | 25 +++---
+>  drivers/gpu/drm/panel/panel-raydium-rm68200.c      | 11 ++-
+>  drivers/gpu/drm/panel/panel-samsung-ld9040.c       | 18 ++--
+>  drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 21 +++--
+>  drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c   | 15 ++--
+>  drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c      | 32 ++++---
+>  drivers/gpu/drm/panel/panel-seiko-43wvf1g.c        | 18 ++--
+>  drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c    | 66 ++++++++++-----
+>  drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c    | 27 +++---
+>  drivers/gpu/drm/panel/panel-simple.c               | 22 +++--
+>  drivers/gpu/drm/panel/panel-sitronix-st7789v.c     | 16 ++--
+>  drivers/gpu/drm/panel/panel-truly-nt35597.c        | 10 ++-
+>  23 files changed, 375 insertions(+), 251 deletions(-)
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
