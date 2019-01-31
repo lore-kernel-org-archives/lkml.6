@@ -2,124 +2,423 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED964C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E97C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A5A2087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC75D2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:54:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731802AbfAaIx6 (ORCPT
+        id S1731684AbfAaIxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:53:58 -0500
-Received: from mga17.intel.com ([192.55.52.151]:48988 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730977AbfAaIx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 03:53:56 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 00:53:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,543,1539673200"; 
-   d="scan'208";a="142997580"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 31 Jan 2019 00:53:53 -0800
-Received: by lahna (sSMTP sendmail emulation); Thu, 31 Jan 2019 10:53:52 +0200
-Date:   Thu, 31 Jan 2019 10:53:52 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 03/28] thunderbolt: Enable TMU access when accessing port
- space on legacy devices
-Message-ID: <20190131085352.GS7875@lahna.fi.intel.com>
-References: <20190129150143.12681-1-mika.westerberg@linux.intel.com>
- <20190129150143.12681-4-mika.westerberg@linux.intel.com>
- <20190129215858.c2yws2ce76d7qm62@wunner.de>
- <20190130093705.GF7875@lahna.fi.intel.com>
- <20190131082649.vat2epdhmuh4itt7@wunner.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131082649.vat2epdhmuh4itt7@wunner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 31 Jan 2019 03:53:39 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41568 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731541AbfAaIxh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 03:53:37 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V8hrku129127
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:53:35 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbw8f1w47-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:53:35 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
+        Thu, 31 Jan 2019 08:53:33 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Jan 2019 08:53:31 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V8rT415570852
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 08:53:29 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C8F242041;
+        Thu, 31 Jan 2019 08:53:29 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 065FE42047;
+        Thu, 31 Jan 2019 08:53:29 +0000 (GMT)
+Received: from s38lp84.lnxne.boe (unknown [9.152.108.100])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Jan 2019 08:53:28 +0000 (GMT)
+From:   Michael Mueller <mimu@linux.ibm.com>
+To:     KVM Mailing List <kvm@vger.kernel.org>
+Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        Michael Mueller <mimu@linux.ibm.com>
+Subject: [PATCH v7 13/15] KVM: s390: add gib_alert_irq_handler()
+Date:   Thu, 31 Jan 2019 09:52:44 +0100
+X-Mailer: git-send-email 2.13.4
+In-Reply-To: <20190131085247.13826-1-mimu@linux.ibm.com>
+References: <20190131085247.13826-1-mimu@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19013108-4275-0000-0000-000003083922
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013108-4276-0000-0000-0000381641B3
+Message-Id: <20190131085247.13826-14-mimu@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310070
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 09:26:49AM +0100, Lukas Wunner wrote:
-> On Wed, Jan 30, 2019 at 11:37:05AM +0200, Mika Westerberg wrote:
-> > On Tue, Jan 29, 2019 at 10:58:58PM +0100, Lukas Wunner wrote:
-> > > On Tue, Jan 29, 2019 at 06:01:18PM +0300, Mika Westerberg wrote:
-> > > > +int tb_port_find_cap(struct tb_port *port, enum tb_port_cap cap)
-> > > > +{
-> > > > +	int ret;
-> > > > +
-> > > > +	ret = tb_port_enable_tmu(port, true);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	ret = __tb_port_find_cap(port, cap);
-> > > > +
-> > > > +	tb_port_enable_tmu(port, false);
-> > > > +
-> > > > +	return ret;
-> > > > +}
-> > > 
-> > > Would there be a downside to setting the TMU bit on all ports all the time
-> > > (e.g. on switch enumeration)?
-> > 
-> > You mean turn it on once and keep it like that? Quick experimentation
-> > with a couple of LR devices did not show any side-effects so I guess we
-> > could just turn it on once during the enumeration in affected devices.
-> 
-> I guess I'm confused because I thought TMU is used for clock synchronization
-> across the daisy-chain, so I would expect it to be available only on ports
-> of type TB_TYPE_PORT, not on adapters of any type.  Yet a code comment in
-> the current implementation of tb_port_find_cap() talks about TMU on DP out
-> adapters?
+The patch implements a handler for GIB alert interruptions
+on the host. Its task is to alert guests that interrupts are
+pending for them.
 
-DP out adapters include TMU capability. We don't use it in Linux because
-it is not really needed for legacy hardware AFAIK.
+A GIB alert interrupt statistic counter is added as well:
 
-> This patch says that the bit that's being modified is used for "access"
-> to the TMU.  So apparently the bit is not about enablement of clock
-> synchronization, but only about granting access to the TMU?  (For whom?)
+$ cat /proc/interrupts
+          CPU0       CPU1
+  ...
+  GAL:      23         37   [I/O] GIB Alert
+  ...
 
-LR has the thing disabled which makes port space capability walk to
-fail. That's why we had the offset hack previously. Access here is for
-the SW CM (tb.c).
+Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+Acked-by: Halil Pasic <pasic@linux.ibm.com>
+---
+ arch/s390/include/asm/irq.h      |   1 +
+ arch/s390/include/asm/isc.h      |   1 +
+ arch/s390/include/asm/kvm_host.h |   3 +
+ arch/s390/kernel/irq.c           |   1 +
+ arch/s390/kvm/interrupt.c        | 169 ++++++++++++++++++++++++++++++++++++++-
+ arch/s390/kvm/kvm-s390.c         |   2 +
+ 6 files changed, 175 insertions(+), 2 deletions(-)
 
-> Doesn't TMU synchronization need to be enabled on all devices on the
-> daisy chain for Thunderbolt to function?  (BTW in MacBooks with dual
-> Alpine Ridge, e.g. MacBookPro13,3, the two controllers' TMU in and out
-> pins are wired together, presumably this allows for clock synchronization
-> across Thunderbolt chips in the same machine.)
+diff --git a/arch/s390/include/asm/irq.h b/arch/s390/include/asm/irq.h
+index 2f7f27e5493f..afaf5e3c57fd 100644
+--- a/arch/s390/include/asm/irq.h
++++ b/arch/s390/include/asm/irq.h
+@@ -62,6 +62,7 @@ enum interruption_class {
+ 	IRQIO_MSI,
+ 	IRQIO_VIR,
+ 	IRQIO_VAI,
++	IRQIO_GAL,
+ 	NMI_NMI,
+ 	CPU_RST,
+ 	NR_ARCH_IRQS
+diff --git a/arch/s390/include/asm/isc.h b/arch/s390/include/asm/isc.h
+index 6cb9e2ed05b6..b2cc1ec78d06 100644
+--- a/arch/s390/include/asm/isc.h
++++ b/arch/s390/include/asm/isc.h
+@@ -21,6 +21,7 @@
+ /* Adapter interrupts. */
+ #define QDIO_AIRQ_ISC IO_SCH_ISC	/* I/O subchannel in qdio mode */
+ #define PCI_ISC 2			/* PCI I/O subchannels */
++#define GAL_ISC 5			/* GIB alert */
+ #define AP_ISC 6			/* adjunct processor (crypto) devices */
+ 
+ /* Functions for registration of I/O interruption subclasses */
+diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+index 2cfff617cb21..c5f51566ecd6 100644
+--- a/arch/s390/include/asm/kvm_host.h
++++ b/arch/s390/include/asm/kvm_host.h
+@@ -825,6 +825,9 @@ struct kvm_s390_gisa_iam {
+ struct kvm_s390_gisa_interrupt {
+ 	struct kvm_s390_gisa *origin;
+ 	struct kvm_s390_gisa_iam alert;
++	struct hrtimer timer;
++	u64 expires;
++	DECLARE_BITMAP(kicked_mask, KVM_MAX_VCPUS);
+ };
+ 
+ struct kvm_arch{
+diff --git a/arch/s390/kernel/irq.c b/arch/s390/kernel/irq.c
+index 0e8d68bac82c..0cd5a5f96729 100644
+--- a/arch/s390/kernel/irq.c
++++ b/arch/s390/kernel/irq.c
+@@ -88,6 +88,7 @@ static const struct irq_class irqclass_sub_desc[] = {
+ 	{.irq = IRQIO_MSI,  .name = "MSI", .desc = "[I/O] MSI Interrupt" },
+ 	{.irq = IRQIO_VIR,  .name = "VIR", .desc = "[I/O] Virtual I/O Devices"},
+ 	{.irq = IRQIO_VAI,  .name = "VAI", .desc = "[I/O] Virtual I/O Devices AI"},
++	{.irq = IRQIO_GAL,  .name = "GAL", .desc = "[I/O] GIB Alert"},
+ 	{.irq = NMI_NMI,    .name = "NMI", .desc = "[NMI] Machine Check"},
+ 	{.irq = CPU_RST,    .name = "RST", .desc = "[CPU] CPU Restart"},
+ };
+diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+index 341664b94491..d322400ca587 100644
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -26,6 +26,7 @@
+ #include <asm/gmap.h>
+ #include <asm/switch_to.h>
+ #include <asm/nmi.h>
++#include <asm/airq.h>
+ #include "kvm-s390.h"
+ #include "gaccess.h"
+ #include "trace-s390.h"
+@@ -268,6 +269,38 @@ static inline void gisa_clear_ipm(struct kvm_s390_gisa *gisa)
+ 	} while (cmpxchg(&gisa->u64.word[0], word, _word) != word);
+ }
+ 
++/**
++ * gisa_get_ipm_or_restore_iam - return IPM or restore GISA IAM
++ *
++ * @gi: gisa interrupt struct to work on
++ *
++ * Atomically restores the interruption alert mask if none of the
++ * relevant ISCs are pending and return the IPM.
++ *
++ * Returns: the relevant pending ISCs
++ */
++static inline u8 gisa_get_ipm_or_restore_iam(struct kvm_s390_gisa_interrupt *gi)
++{
++	u8 pending_mask, alert_mask;
++	u64 word, _word;
++
++	do {
++		word = READ_ONCE(gi->origin->u64.word[0]);
++		alert_mask = READ_ONCE(gi->alert.mask);
++		pending_mask = (u8)(word >> 24) & alert_mask;
++		if (pending_mask)
++			return pending_mask;
++		_word = (word & ~0xffUL) | alert_mask;
++	} while (cmpxchg(&gi->origin->u64.word[0], word, _word) != word);
++
++	return 0;
++}
++
++static inline int gisa_in_alert_list(struct kvm_s390_gisa *gisa)
++{
++	return READ_ONCE(gisa->next_alert) != (u32)(u64)gisa;
++}
++
+ static inline void gisa_set_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
+ {
+ 	set_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
+@@ -1141,6 +1174,7 @@ static u64 __calculate_sltime(struct kvm_vcpu *vcpu)
+ 
+ int kvm_s390_handle_wait(struct kvm_vcpu *vcpu)
+ {
++	struct kvm_s390_gisa_interrupt *gi = &vcpu->kvm->arch.gisa_int;
+ 	u64 sltime;
+ 
+ 	vcpu->stat.exit_wait_state++;
+@@ -1154,6 +1188,11 @@ int kvm_s390_handle_wait(struct kvm_vcpu *vcpu)
+ 		return -EOPNOTSUPP; /* disabled wait */
+ 	}
+ 
++	if (gi->origin &&
++	    (gisa_get_ipm_or_restore_iam(gi) &
++	     vcpu->arch.sie_block->gcr[6] >> 24))
++		return 0;
++
+ 	if (!ckc_interrupts_enabled(vcpu) &&
+ 	    !cpu_timer_interrupts_enabled(vcpu)) {
+ 		VCPU_EVENT(vcpu, 3, "%s", "enabled wait w/o timer");
+@@ -2939,6 +2978,93 @@ int kvm_s390_get_irq_state(struct kvm_vcpu *vcpu, __u8 __user *buf, int len)
+ 	return n;
+ }
+ 
++static void __airqs_kick_single_vcpu(struct kvm *kvm, u8 deliverable_mask)
++{
++	int vcpu_id, online_vcpus = atomic_read(&kvm->online_vcpus);
++	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
++	struct kvm_vcpu *vcpu;
++
++	for_each_set_bit(vcpu_id, kvm->arch.idle_mask, online_vcpus) {
++		vcpu = kvm_get_vcpu(kvm, vcpu_id);
++		if (psw_ioint_disabled(vcpu))
++			continue;
++		deliverable_mask &= (u8)(vcpu->arch.sie_block->gcr[6] >> 24);
++		if (deliverable_mask) {
++			/* lately kicked but not yet running */
++			if (test_and_set_bit(vcpu_id, gi->kicked_mask))
++				return;
++			kvm_s390_vcpu_wakeup(vcpu);
++			return;
++		}
++	}
++}
++
++static enum hrtimer_restart gisa_vcpu_kicker(struct hrtimer *timer)
++{
++	struct kvm_s390_gisa_interrupt *gi =
++		container_of(timer, struct kvm_s390_gisa_interrupt, timer);
++	struct kvm *kvm =
++		container_of(gi->origin, struct sie_page2, gisa)->kvm;
++	u8 pending_mask;
++
++	pending_mask = gisa_get_ipm_or_restore_iam(gi);
++	if (pending_mask) {
++		__airqs_kick_single_vcpu(kvm, pending_mask);
++		hrtimer_forward_now(timer, ns_to_ktime(gi->expires));
++		return HRTIMER_RESTART;
++	};
++
++	return HRTIMER_NORESTART;
++}
++
++#define NULL_GISA_ADDR 0x00000000UL
++#define NONE_GISA_ADDR 0x00000001UL
++#define GISA_ADDR_MASK 0xfffff000UL
++
++static void process_gib_alert_list(void)
++{
++	struct kvm_s390_gisa_interrupt *gi;
++	struct kvm_s390_gisa *gisa;
++	struct kvm *kvm;
++	u32 final, origin = 0UL;
++
++	do {
++		/*
++		 * If the NONE_GISA_ADDR is still stored in the alert list
++		 * origin, we will leave the outer loop. No further GISA has
++		 * been added to the alert list by millicode while processing
++		 * the current alert list.
++		 */
++		final = (origin & NONE_GISA_ADDR);
++		/*
++		 * Cut off the alert list and store the NONE_GISA_ADDR in the
++		 * alert list origin to avoid further GAL interruptions.
++		 * A new alert list can be build up by millicode in parallel
++		 * for guests not in the yet cut-off alert list. When in the
++		 * final loop, store the NULL_GISA_ADDR instead. This will re-
++		 * enable GAL interruptions on the host again.
++		 */
++		origin = xchg(&gib->alert_list_origin,
++			      (!final) ? NONE_GISA_ADDR : NULL_GISA_ADDR);
++		/*
++		 * Loop through the just cut-off alert list and start the
++		 * gisa timers to kick idle vcpus to consume the pending
++		 * interruptions asap.
++		 */
++		while (origin & GISA_ADDR_MASK) {
++			gisa = (struct kvm_s390_gisa *)(u64)origin;
++			origin = gisa->next_alert;
++			gisa->next_alert = (u32)(u64)gisa;
++			kvm = container_of(gisa, struct sie_page2, gisa)->kvm;
++			gi = &kvm->arch.gisa_int;
++			if (hrtimer_active(&gi->timer))
++				hrtimer_cancel(&gi->timer);
++			hrtimer_start(&gi->timer, 0, HRTIMER_MODE_REL);
++		}
++	} while (!final);
++
++}
++
+ void kvm_s390_gisa_clear(struct kvm *kvm)
+ {
+ 	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
+@@ -2958,6 +3084,9 @@ void kvm_s390_gisa_init(struct kvm *kvm)
+ 	gi->origin = &kvm->arch.sie_page2->gisa;
+ 	gi->alert.mask = 0;
+ 	spin_lock_init(&gi->alert.ref_lock);
++	gi->expires = 50 * 1000; /* 50 usec */
++	hrtimer_init(&gi->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	gi->timer.function = gisa_vcpu_kicker;
+ 	memset(gi->origin, 0, sizeof(struct kvm_s390_gisa));
+ 	gi->origin->next_alert = (u32)(u64)gi->origin;
+ 	VM_EVENT(kvm, 3, "gisa 0x%pK initialized", gi->origin);
+@@ -2965,7 +3094,17 @@ void kvm_s390_gisa_init(struct kvm *kvm)
+ 
+ void kvm_s390_gisa_destroy(struct kvm *kvm)
+ {
+-	kvm->arch.gisa_int.origin = NULL;
++	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
++
++	if (!gi->origin)
++		return;
++	if (gi->alert.mask)
++		KVM_EVENT(3, "vm 0x%pK has unexpected iam 0x%02x",
++			  kvm, gi->alert.mask);
++	while (gisa_in_alert_list(gi->origin))
++		cpu_relax();
++	hrtimer_cancel(&gi->timer);
++	gi->origin = NULL;
+ }
+ 
+ /**
+@@ -3051,11 +3190,23 @@ int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc)
+ }
+ EXPORT_SYMBOL_GPL(kvm_s390_gisc_unregister);
+ 
++static void gib_alert_irq_handler(struct airq_struct *airq)
++{
++	inc_irq_stat(IRQIO_GAL);
++	process_gib_alert_list();
++}
++
++static struct airq_struct gib_alert_irq = {
++	.handler = gib_alert_irq_handler,
++	.lsi_ptr = &gib_alert_irq.lsi_mask,
++};
++
+ void kvm_s390_gib_destroy(void)
+ {
+ 	if (!gib)
+ 		return;
+ 	chsc_sgib(0);
++	unregister_adapter_interrupt(&gib_alert_irq);
+ 	free_page((unsigned long)gib);
+ 	gib = NULL;
+ }
+@@ -3075,16 +3226,30 @@ int kvm_s390_gib_init(u8 nisc)
+ 		goto out;
+ 	}
+ 
++	gib_alert_irq.isc = nisc;
++	if (register_adapter_interrupt(&gib_alert_irq)) {
++		pr_err("Registering the GIB alert interruption handler failed\n");
++		rc = -EIO;
++		goto out_free_gib;
++	}
++
+ 	gib->nisc = nisc;
+ 	if (chsc_sgib((u32)(u64)gib)) {
+ 		pr_err("Associating the GIB with the AIV facility failed\n");
+ 		free_page((unsigned long)gib);
+ 		gib = NULL;
+ 		rc = -EIO;
+-		goto out;
++		goto out_unreg_gal;
+ 	}
+ 
+ 	KVM_EVENT(3, "gib 0x%pK (nisc=%d) initialized", gib, gib->nisc);
++	goto out;
++
++out_unreg_gal:
++	unregister_adapter_interrupt(&gib_alert_irq);
++out_free_gib:
++	free_page((unsigned long)gib);
++	gib = NULL;
+ out:
+ 	return rc;
+ }
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index 67023d5656fd..0e6ba4d17207 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -3460,6 +3460,8 @@ static int vcpu_pre_run(struct kvm_vcpu *vcpu)
+ 		kvm_s390_patch_guest_per_regs(vcpu);
+ 	}
+ 
++	clear_bit(vcpu->vcpu_id, vcpu->kvm->arch.gisa_int.kicked_mask);
++
+ 	vcpu->arch.sie_block->icptcode = 0;
+ 	cpuflags = atomic_read(&vcpu->arch.sie_block->cpuflags);
+ 	VCPU_EVENT(vcpu, 6, "entering sie flags %x", cpuflags);
+-- 
+2.13.4
 
-For legacy hardware I don't think we need to do anything for the TMU
-(with the exception of the workaround during cap walk on LR/ER). For
-TBT 3 hardware it is taken care by the firmware.
-
-> > Main reason it is now in cap.c is because we only need it to be enabled
-> > during the cap walk and that allows keeping both workarounds in the same
-> > file close to the place where it is used.
-> 
-> I was only wondering whether the bit should be set all the time
-> because I was worrying that clock synchronization would otherwise
-> not be enabled.  And if tb_port_find_cap() is called frequently,
-> setting the bit only once provides for a small performance improvement.
-> OTOH it would then be necessary to restore the bit when coming out of
-> (runtime or system) suspend.  I guess I don't have a strong opinion
-> on this because I don't fully grasp what the bit is for.
-
-OK.
