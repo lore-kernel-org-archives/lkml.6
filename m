@@ -2,129 +2,155 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A352EC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D61CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76F7E2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4A552086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfAaXeu (ORCPT
+        id S1727483AbfAaXfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 18:34:50 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41109 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbfAaXeu (ORCPT
+        Thu, 31 Jan 2019 18:35:43 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:58520 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfAaXfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 18:34:50 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id F221980224; Fri,  1 Feb 2019 00:34:39 +0100 (CET)
-Date:   Fri, 1 Feb 2019 00:34:45 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Alan Cox <alan@llwyncelyn.cymru>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-serial@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 0/3] serdev support for n_gsm
-Message-ID: <20190131233445.GA21200@amd>
-References: <20190114012528.2367-1-tony@atomide.com>
- <20190118115958.GA5532@kroah.com>
- <20190121105735.GI3691@localhost>
- <20190121170116.GA5544@atomide.com>
- <20190124163932.GZ3691@localhost>
+        Thu, 31 Jan 2019 18:35:43 -0500
+Received: from 79.184.255.169.ipv4.supernova.orange.pl (79.184.255.169) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id a08ce94b43690ac3; Fri, 1 Feb 2019 00:35:40 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] cpufreq: Record stats when fast switching is enabled
+Date:   Fri, 01 Feb 2019 00:34:32 +0100
+Message-ID: <3268787.3OZuCagV1k@aspire.rjw.lan>
+In-Reply-To: <20190131183730.GN81583@google.com>
+References: <20190131015139.126890-1-mka@chromium.org> <CAJZ5v0gp2tqMR1vOvzakhMRmG15OqMZ=ndKoAkmxLbzohn8VbA@mail.gmail.com> <20190131183730.GN81583@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
-Content-Disposition: inline
-In-Reply-To: <20190124163932.GZ3691@localhost>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thursday, January 31, 2019 7:37:30 PM CET Matthias Kaehlcke wrote:
+> On Thu, Jan 31, 2019 at 11:14:03AM +0100, Rafael J. Wysocki wrote:
+> > On Thu, Jan 31, 2019 at 11:07 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > >
+> > > On 31-01-19, 11:03, Rafael J. Wysocki wrote:
+> > > > On Thu, Jan 31, 2019 at 9:30 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > > >
+> > > > > On 30-01-19, 17:51, Matthias Kaehlcke wrote:
+> > > > > > When fast switching is enabled currently no cpufreq stats are
+> > > > > > recorded and the corresponding sysfs attributes appear empty (see
+> > > > > > also commit 1aefc75b2449 ("cpufreq: stats: Make the stats code
+> > > > > > non-modular")).
+> > > > > >
+> > > > > > Record the stats after a successful fast switch and re-enable access
+> > > > > > through sysfs when fast switching is enabled. Since
+> > > > > > cpufreq_stats_update() can now be called in interrupt context (during
+> > > > > > a fast switch) disable local IRQs while holding the stats spinlock.
+> > > > > >
+> > > > > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > > > > ---
+> > > > > > The change is so simple that I wonder if I'm missing some important
+> > > > > > reason why the stats can't/shouldn't be updated during/after a fast
+> > > > > > switch ...
+> > > > > >
+> > > > > > I would expect that holding the stats spinlock briefly in
+> > > > > > cpufreq_stats_update() shouldn't be a problem. In theory it would
+> > > > > > also be an option to have a per stats lock, though it seems overkill
+> > > > > > from my (possibly ignorant) point of view.
+> > > > > > ---
+> > > > > >  drivers/cpufreq/cpufreq.c       |  8 +++++++-
+> > > > > >  drivers/cpufreq/cpufreq_stats.c | 11 +++--------
+> > > > > >  2 files changed, 10 insertions(+), 9 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > > > > > index e35a886e00bcf..63aadb0bbddfe 100644
+> > > > > > --- a/drivers/cpufreq/cpufreq.c
+> > > > > > +++ b/drivers/cpufreq/cpufreq.c
+> > > > > > @@ -1857,9 +1857,15 @@ EXPORT_SYMBOL(cpufreq_unregister_notifier);
+> > > > > >  unsigned int cpufreq_driver_fast_switch(struct cpufreq_policy *policy,
+> > > > > >                                       unsigned int target_freq)
+> > > > > >  {
+> > > > > > +     unsigned int freq;
+> > > > > > +
+> > > > > >       target_freq = clamp_val(target_freq, policy->min, policy->max);
+> > > > > >
+> > > > > > -     return cpufreq_driver->fast_switch(policy, target_freq);
+> > > > > > +     freq = cpufreq_driver->fast_switch(policy, target_freq);
+> > > > > > +     if (freq)
+> > > > > > +             cpufreq_stats_record_transition(policy, freq);
+> > > > > > +
+> > > > > > +     return freq;
+> > > > > >  }
+> > > > > >  EXPORT_SYMBOL_GPL(cpufreq_driver_fast_switch);
+> > > > > >
+> > > > > > diff --git a/drivers/cpufreq/cpufreq_stats.c b/drivers/cpufreq/cpufreq_stats.c
+> > > > > > index 1572129844a5b..21b919bfaeccf 100644
+> > > > > > --- a/drivers/cpufreq/cpufreq_stats.c
+> > > > > > +++ b/drivers/cpufreq/cpufreq_stats.c
+> > > > > > @@ -30,11 +30,12 @@ struct cpufreq_stats {
+> > > > > >  static void cpufreq_stats_update(struct cpufreq_stats *stats)
+> > > > > >  {
+> > > > > >       unsigned long long cur_time = get_jiffies_64();
+> > > > > > +     unsigned long flags;
+> > > > > >
+> > > > > > -     spin_lock(&cpufreq_stats_lock);
+> > > > > > +     spin_lock_irqsave(&cpufreq_stats_lock, flags);
+> > > > > >       stats->time_in_state[stats->last_index] += cur_time - stats->last_time;
+> > > > > >       stats->last_time = cur_time;
+> > > > > > -     spin_unlock(&cpufreq_stats_lock);
+> > > > > > +     spin_unlock_irqrestore(&cpufreq_stats_lock, flags);
+> > > > > >  }
+> > > > >
+> > > > > The only problem that I can think of (or recall) is that this routine
+> > > > > also gets called when time_in_state sysfs file is read and that can
+> > > > > end up taking lock which the scheduler's hotpath will wait for.
+> > > >
+> > > > What about the extra locking overhead in the scheduler context?
+> > >
+> > > What about using READ_ONCE/WRITE_ONCE here ? Not sure if we really
+> > > need locking in this particular case.
+> > 
+> > If that works, then fine, but ISTR some synchronization issues related to that.
+> 
+> I also think there would be synchronization issues :(
+> 
+> Is your main concern with the spin lock the contention case or the
+> general overhead of locking?
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The general overhead is bad enough.  The contention case would be a
+disaster.
 
-Hi!
+> It would be really nice to have cpufreq stats with schedutil. We
+> initially considered a sysfs attribute to allow to temporarily disable
+> fast switching, but at closer sight this seems messy (would require
+> quite some rework in cpufreq_schedutil.c), besides not recording the
+> actual behavior.
+> 
+> If another (rarely and only shortly held) lock in scheduler context
 
-> > And without the n_gsm serdev support, it's a mess of some app
-> > similar to [5] initializing n_gsm, trying to deal with the USB
-> > PHY PM, dealing with Motorola custom packet numbering, kicking
-> > GNSS device, feeding data to /dev/ugnss. Hmm I think I've already
-> > been there just to be able to type AT commands to the modem and
-> > it did not work :)
->=20
-> It's a mess indeed, but I'd rather see user-space dealing with until we
-> figure out how best to do it in the kernel. ;)
->=20
-> > Anyways, for the serdev kernel drivers, the criteria I've tried
-> > to follow is: "Can this serdev device driver make user space
-> > apps use standard Linux interfaces for the hardware?"
-> >=20
-> > So for the serdev Alsa ASoC driver, user space can use the standard
-> > Alsa interface for setting voice call volume. And for the serdev
-> > GNSS driver, user space can use /dev/gnss0.
->=20
-> I understand. Both drivers appears to be using AT commands for control.
-> It would be interesting to hear what Mark has to say about the codec
-> driver too. Moving AT handling into the kernel scares me a bit. If we
-> already have a telephony stack to deal with it in user-space, my
-> inclination is to let it continue to handle it.
+This is a global spinlock and you'd like to take it on every frequency
+change for each policy.  On x86, as a rule, there is a policy per logical
+CPU and systems with hundreds of these are not uncommon.  Come on.
 
-The userspace part of the telephony stack uses ALSA mixers to
-do... well... audio mixer configuration for phone calls, and it would
-be good if Droid 4 could keep the same interface.
+> is a no-go deferred recording could be an option, if that can be
+> implemented without locks in scheduler context.
 
-> Modem-managed GNSS is also different from receivers connected directly
-> to the host. It's really the modem that drives the GNSS receiver, and
-> offers a higher-level interface to the host, for example, by buffering
-> output which the host can later request. It may or may not be the
-> kernel's job to periodically poll the modem to recreate an NMEA feed so
-> to speak.
->=20
-> But the end-result of having it accessible through a standard interface
-> is of course appealing.
+Why do you need the stats at all in the fast switch case?
 
-Yes please. On N900, there's special (socket-based) interface to the
-GPS... and it si painful.
+There is the cpu_frequency tracepoint that can be used to callect
+all data that you need.  Why can't that be used?
 
-Plus, it will take some time before modem support on Droid 4
-stabilizes... and it would be very welcome to be able to use the GPS
-in the meantime.
-
-Best regards,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---RnlQjJ0d97Da+TV1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlxThhUACgkQMOfwapXb+vJx3ACgofj+yxrp/4p5cuhPEPiAS+O2
-nYkAoKvUwdB7quhD5kxVNlzcN+l4sJGs
-=jqTU
------END PGP SIGNATURE-----
-
---RnlQjJ0d97Da+TV1--
