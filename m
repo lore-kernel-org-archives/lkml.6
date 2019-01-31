@@ -2,115 +2,145 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2BC6C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FD2C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80685218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5620B20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:55:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="1PshaaEu"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="qupO14Rc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbfAaTvB (ORCPT
+        id S1726944AbfAaTzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:51:01 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41870 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbfAaTvA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:51:00 -0500
-Received: by mail-pg1-f194.google.com with SMTP id m1so1796319pgq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:50:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BrWqBFX8Sxzuvb7eYAR/Dr8ZYdGJ8ANkxgVoI0vKZPU=;
-        b=1PshaaEuoALyCYV1xYTbjz/ySkbnA0mrjUzdU6d4IkQ+51B0A06ekeKF6+8HgJTTB0
-         XbhDmFKn19ha1Ez4PedtOhi7pcgiqukD1jioxgw9yLc9Y0htGm/0cMI6HlTrQGCR1MXt
-         iU6PCC5994oYLvBT/3nmU2MeUIw5PzJeTwyzkGOdqAUjzakP79Y8NHBlQcpO0duJ8ZT3
-         F+CziaKi079LBRBTgtjKIx6HAys3obRwklk5NCbw1jPJF4nhV5uwD7SGEMjLymLXv3uk
-         cv0ChfUlsU65YPhNE/VV6C6p2Twrdb3IeG23FEulgpvhGbUJvFrpyHHH6u8J4M6l0itt
-         UxVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BrWqBFX8Sxzuvb7eYAR/Dr8ZYdGJ8ANkxgVoI0vKZPU=;
-        b=QWYEEUlqUz8+9Mg2s0yGkIewWK7GL8aUz1eYRxsKzFAgvFNM2W2NcIRIx07r//piwT
-         i0Oy5mdyY6fo4Qvmd09PcbGlmwrQalvkFzVyVAiC7lO/DhkbW4n165QlvubVDknFCf/n
-         X/QLTr+lkjtXWEggYdnLw6TQlbrjoVqOk+S32tSva5h2YsZe5e2eilYGnWvA1EdkDrxY
-         vQOD2sis8d+cxd6AOmZu9hKKRp7rTor390kvKtvRuUhp6YuMZrRYY9C0BnZG1AAamMCB
-         2lw3FfXaObGJdLH3Nvdm8RplVy+fZuru7hPwTIhIXGWdFqcr1KV6FiJcHIRixRR/OokY
-         u8QA==
-X-Gm-Message-State: AJcUukd0tgcgEQGb09a0TEZYOEzDFCYfLDkvOKrgBwqbCFNDovISjs0u
-        ZrxihnTAxeukXjIQB2SQ81MRcg==
-X-Google-Smtp-Source: ALg8bN4FiTwx/69TlwaH+fRrCoSW9ysBG2KtIqdMykSIyM6GDPQ1r/uwTLCOu4oPYs+YltsjpliN4g==
-X-Received: by 2002:a63:d252:: with SMTP id t18mr32992159pgi.133.1548964259231;
-        Thu, 31 Jan 2019 11:50:59 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id l74sm10051982pfb.145.2019.01.31.11.50.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 11:50:58 -0800 (PST)
-Subject: Re: [PATCH BUGFIX IMPROVEMENT 00/14] batch of patches for next linux
- release
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name, mancha@tower-research.com
-References: <20190129110638.12652-1-paolo.valente@linaro.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6e296dbe-7d3c-39fc-0e80-4e62ad13cc45@kernel.dk>
-Date:   Thu, 31 Jan 2019 12:50:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190129110638.12652-1-paolo.valente@linaro.org>
-Content-Type: text/plain; charset=utf-8
+        Thu, 31 Jan 2019 14:55:04 -0500
+Received: from mail-eopbgr30081.outbound.protection.outlook.com ([40.107.3.81]:14304
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725807AbfAaTzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 14:55:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4L3aEF8KGt5ebSlrF0Grkmew6Cb/Utd2G7BT2PIUE2A=;
+ b=qupO14RcjWHG/2gjR9Nthc9cl5BKQbDU+qwtOldQ5NUPOyLxHEYxrsDgAdEA3IEC1+L19Zk1XRKC7++MHavLfiTIOBVBQC5JMqleRmYLOnEHtA9tDBm4QnC7KDbiah8C9XFW5VL8wZHiAVzH+tjX5e5DNe/nX+qspJ53LIdm4/g=
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
+ DBBPR05MB6538.eurprd05.prod.outlook.com (20.179.43.209) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.17; Thu, 31 Jan 2019 19:54:59 +0000
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59]) by DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::24c2:321d:8b27:ae59%5]) with mapi id 15.20.1580.017; Thu, 31 Jan 2019
+ 19:54:59 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+CC:     Christoph Hellwig <hch@lst.de>, Jerome Glisse <jglisse@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Topic: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+Thread-Index: AQHUt/rA/dLikqWEmEaIytHIBNLPlqXGkyOAgAAJwICAAAX+AIAAEreAgAAFCQCAAAk3gIAABX0AgAATFYCAAA25AIAAGRqAgAAykICAAD3dAIAAukqAgAAK3wCAAAOzAIAAEXyAgAANnoCAABFLgIAAnPCAgAC1FQCAAATigIAACeKA
+Date:   Thu, 31 Jan 2019 19:54:59 +0000
+Message-ID: <20190131195453.GE7548@mellanox.com>
+References: <20190130080006.GB29665@lst.de>
+ <20190130190651.GC17080@mellanox.com>
+ <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
+ <20190130195900.GG17080@mellanox.com>
+ <35bad6d5-c06b-f2a3-08e6-2ed0197c8691@deltatee.com>
+ <20190130215019.GL17080@mellanox.com>
+ <07baf401-4d63-b830-57e1-5836a5149a0c@deltatee.com>
+ <20190131081355.GC26495@lst.de> <20190131190202.GC7548@mellanox.com>
+ <e4fd743f-61cb-a443-bc53-9a1c036ebe8c@deltatee.com>
+In-Reply-To: <e4fd743f-61cb-a443-bc53-9a1c036ebe8c@deltatee.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR15CA0047.namprd15.prod.outlook.com
+ (2603:10b6:300:ad::33) To DBBPR05MB6426.eurprd05.prod.outlook.com
+ (2603:10a6:10:c9::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DBBPR05MB6538;6:kIapYD9pRMMtOltM8UsCrgNS5TK4Hcmo57gmQANKSQmzNiD8mv+1eUBhn71sWYqvN5Mnn7Gt7sIe51N5QXD/kWU5PerEcc4/tF0WCuAiH+g697tP0+1aoWorS+V2YDvhHtIB6keVht+njr3exuZTsRGrBwyFCmBVde9b4GgpT/1vaA2TaBNbCv70qdVyR23spjwsWWMdu2+5Kc3nj3ALcM5VraSvtzR9A1qCYpg7JRQ2SrX93qa5O3WF/bKKXUJBVcTU73Pp/tcvZ6DVQs8BUNLoHvLZgJL1hYyur2nHEai9FeBicXMORLlNITbPzNlKYMeoTTUhJf9kWZx6NhKH7ZVrNH3A1yF+2T42ERDgPeBQtG0j33Y/fI5Uc8TV+1Wpeuz696aCH7JMTJMQsu0YCX9Vp7gw+XseCeWNRNCHwIaYJF2tKPaBO286mAY5PdgSzfOBsdlxiaUzUutoCIQm6Q==;5:zp829Chukjpc/dmb3wsLoUVkEda2Y/Fz1kBEuLTFGja957sOy/28OEp1umctS9rLH7ExUCfp92ux7nSM5dwlVqscUuaq3+ifgPx3SaZ9ydQrcX5rE24D5SAY/V8GnVT67xwL0S4xOd7DjMbTm6JD2SkOjom0YHmM6u+7koSej+00LL6t+gbxDUbXl4+YgnAoOQFAwZFZEv+d7MyUm8h3GQ==;7:xXdu+z+rFdqAXTgU0TY/MLv7xKzp4VjQJP0a0d81KGHznfVLV5+E8oijAW/l2fRa7vTQnabkyMLa40ChKTfXFRyRSffm4tqiZ60nSFk7z9KKLhKCDGat3Mj+B5thzGNLQzWmLHrLJU9Wbv19ppJXSg==
+x-ms-office365-filtering-correlation-id: 457401f2-83d9-483e-d36e-08d687b5fb41
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6538;
+x-ms-traffictypediagnostic: DBBPR05MB6538:
+x-microsoft-antispam-prvs: <DBBPR05MB6538830010A5167680BC8A63CF910@DBBPR05MB6538.eurprd05.prod.outlook.com>
+x-forefront-prvs: 09347618C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(376002)(136003)(396003)(346002)(189003)(199004)(97736004)(6916009)(2906002)(76176011)(66066001)(93886005)(26005)(316002)(4326008)(33656002)(1076003)(53936002)(217873002)(36756003)(6246003)(52116002)(6116002)(3846002)(256004)(14444005)(86362001)(7416002)(71190400001)(71200400001)(6436002)(7736002)(478600001)(106356001)(476003)(229853002)(6506007)(2616005)(25786009)(11346002)(446003)(6486002)(54906003)(53546011)(68736007)(99286004)(186003)(486006)(81156014)(81166006)(14454004)(8676002)(102836004)(105586002)(8936002)(386003)(6512007)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6538;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: wCWPMAz7RJ//53pPp8RHOUzbX4cRmPez8Ni7a5uPkvB9uoC+4oNzB2aZ4NR7R9WtFeEs9HnWhFR+HCBkWf2FR1Lrq0z1nsaGl1VoW5SKBCOD2G/tC6Kan/1bUEncuGLZApgQkeJbKM22Qpa6OzQ7AuNLOBNkXTNitpOHfzicD5Eiv/dw9aFAla8iDiBVpGuOKrjSZY6e8PYFv+3cZfsG+A/bNQ5pxwy07ZpkzdxJVfphyBb/t/u7Bg3mc71ZuVI/AhuflrJQrnttwT63nRQmX7GiobSiK1ocxOkoWwO0C4s/XyPMhDyuPSUk6aXSLHxdnoXc6jq9WSlqc2eEZPCa+ubHKzRVK6RSOgfQlI8nT1yZDKlYioidnJzs7SDZtnRuw0XyIyEKE7tqGfseXZk2pSkzPfSm4GYVD09+rbSVf3E=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <01E72E6BF04AD94ABCA85A4BF90D23C0@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 457401f2-83d9-483e-d36e-08d687b5fb41
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 19:54:59.3709
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6538
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/29/19 4:06 AM, Paolo Valente wrote:
-> Hi,
-> this batch of patches provides fixes and improvements for throughput
-> and latency. Every patch has been under test for at least one month,
-> some patches for much longer.
-> 
-> Thanks,
-> Paolo
-> 
-> Paolo Valente (14):
->   block, bfq: do not consider interactive queues in srt filtering
->   block, bfq: avoid selecting a queue w/o budget
->   block, bfq: make sure queue budgets are not below service received
->   block, bfq: remove case of redirected bic from insert_request
->   block, bfq: consider also ioprio classes in symmetry detection
->   block, bfq: split function bfq_better_to_idle
->   block, bfq: do not plug I/O of in-service queue when harmful
->   block, bfq: unconditionally plug I/O in asymmetric scenarios
->   block, bfq: fix sequential rq detection in rate estimation
->   block, bfq: fix queue removal from weights tree
->   block, bfq: reduce threshold for detecting command queueing
->   block, bfq: port commit "cfq-iosched: improve hw_tag detection"
->   block, bfq: do not overcharge writes in asymmetric scenarios
->   block, bfq: fix in-service-queue check for queue merging
-> 
->  block/bfq-iosched.c | 705 ++++++++++++++++++++++++--------------------
->  block/bfq-iosched.h |  11 +-
->  block/bfq-wf2q.c    |  18 +-
->  3 files changed, 400 insertions(+), 334 deletions(-)
+On Thu, Jan 31, 2019 at 12:19:31PM -0700, Logan Gunthorpe wrote:
+>=20
+>=20
+> On 2019-01-31 12:02 p.m., Jason Gunthorpe wrote:
+> > I still think the right direction is to build on what Logan has done -
+> > realize that he created a DMA-only SGL - make that a formal type of
+> > the kernel and provide the right set of APIs to work with this type,
+> > without being forced to expose struct page.
+>=20
+> > Basically invert the API flow - the DMA map would be done close to
+> > GUP, not buried in the driver. This absolutely doesn't work for every
+> > flow we have, but it does enable the ones that people seem to care
+> > about when talking about P2P.
+> > It also does present a path to solve some cases of the O_DIRECT
+> > problems if the block stack can develop some way to know if an IO will
+> > go down a DMA-only IO path or not... This seems less challenging that
+> > auditing every SGL user for iomem safety??
+>=20
+>=20
+> The DMA-only SGL will work for some use cases, but I think it's going to
+> be a challenge for others. We care most about NVMe and, therefore, the
+> block layer.
 
-Applied, thanks.
+The exercise here is not to enable O_DIRECT for P2P, it is to allow
+certain much simpler users to use P2P. We should not be saying that
+someone has to solve these complicated problems in the entire block
+stack just to make RDMA work. :(
 
--- 
-Jens Axboe
+If the block stack can use a 'dma sgl' or not, I don't know.
 
+However, it does look like it fits these RDMA, GPU and VFIO cases
+fairly well, and looks better than the hacky
+sgl-but-really-special-p2p hack we have in RDMA today.
+
+Jason
