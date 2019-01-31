@@ -2,181 +2,137 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0009CC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 239C3C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD596218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8B3F218F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548940930;
+	bh=lFyWlFY3OTw7YfcaS/SfOtQGEx6mDWcLEh4xCRpKnZE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=VjXu69xK7vWv0XE2+9xT76e8n5Q/vL+xdp0dBiIG0ljlAns1fQdc/jiUaxLcenReT
+	 DjaRwRY0qkaJDO9neF2upF5tGPbu+T6RNPvIBHQXphxi90+ciEeyp3gUFGZfCAw8d4
+	 quwpj9bySf4QmHJaCbD6kN0mANGMe6MTWxC2qvpc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733055AbfAaNT2 (ORCPT
+        id S1733266AbfAaNWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:19:28 -0500
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:43836 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726153AbfAaNT1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 08:19:27 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id pCFUgClmQNR5ypCFXgQExw; Thu, 31 Jan 2019 14:19:24 +0100
-Subject: Re: [PATCH v3 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-References: <20190124100419.26492-1-tfiga@chromium.org>
- <20190124100419.26492-2-tfiga@chromium.org>
- <a3b1b650-94d7-bb84-41ef-dc4cab0cdae1@xs4all.nl>
- <54430438-33a3-2c52-b6c8-4000a4088906@xs4all.nl>
- <1548938648.4585.3.camel@pengutronix.de>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <6aa88094-068a-089d-2d52-3f9ade5a396c@xs4all.nl>
-Date:   Thu, 31 Jan 2019 14:19:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 08:22:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60880 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732647AbfAaNWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 08:22:07 -0500
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E61C218D3;
+        Thu, 31 Jan 2019 13:22:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548940926;
+        bh=lFyWlFY3OTw7YfcaS/SfOtQGEx6mDWcLEh4xCRpKnZE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=sOveH2jxkiRTBgu/9fR9BcYqjlUKuUrgWFO/CsbYKTkRvtZ5MqnEZtojSfjWiqXex
+         zMC5qJhZtvlyd5TACGbr8BP65Z4B72MLyBvo58mi8LWxfHpXz1N88rrhWfzTv4pZEV
+         M4+9bx10afpjJ0yq6WnTrmeuVxvoqCuM/lY3tBpg=
+Date:   Thu, 31 Jan 2019 14:21:55 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 0/4] drm/atmel-hlcdc: fix plane clipping/rotation issues
+Message-ID: <20190131142155.574d1337@bbrezillon>
+In-Reply-To: <d2e24b73-dee1-b31a-dc87-02d2e75b6dd2@axentia.se>
+References: <20190110151020.30468-1-peda@axentia.se>
+        <20190127092709.3863c954@bbrezillon>
+        <d2e24b73-dee1-b31a-dc87-02d2e75b6dd2@axentia.se>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1548938648.4585.3.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfIfDuP/mMEibE6FEVNGpAX5t2Tzb55Yq9huiTr5e+FXdyRWuFEfsdjwhLLXgO4Jf55jpNXIPIy6970K9JVNJXuEQwf3xvyCBJfveCaM/Q3jDlOlnRfVh
- hwhRN6q8QNe0bgH6p+TUv09jqDVnDyRUNmAcC/Cy+727JW1M80yVAhQDJhH7M3nLz05fynvkghSRfXv6Yb6udvGXipkHlikzj4ptTH9kihkDVGhCzTaFePSJ
- Al/xY/PIy33hA0beXNggWnjBxtB3jZMpYnWwI5OtdOQeknI/jmwEqAjf+uyoueGUivyxfxhl7wRAbOjjK77MkdXvjjTck3Jj6zve9HoHERDdjx5qEzQCmF0i
- Cn83yxiUIT5phxAXFLX1BVHb1OOvTnrSRNSnI64i9FZCGbXKCwacEOdviLyVJ5HvcLEb22vWJ6cjKDLSLnFW1jZZF00swD30OOdmBwRju1OuJlvF6C8FBwqj
- R7gGbM3po+90VH6qSAfBo5/p9BMyzr0U1PnZee/kWtH+4yzRqB4j9aZOHKR/SS49A4Mr3zFjXfRuO0g7UQzmN7+wOqb5TwerGc21r37JDVCqBid20v+Um0y0
- 2x1kaYV5gOJo38RElqjcJREdSrdWCveMSQK4Fq+Bh7/xM4OK+QO3Ooy1q7iFAV/UoyvoZNFKa4fKrZf5gT1mcKcegVSEJ9960vYLwuW7hGsIL2sqqaMSeZw6
- eA3lYQS456Bi2aLgxE1Lp3Td9G2/7wxUEcg35nDSzMijd5TWh8G68iK30UOzEtAtw9Iw/fLbMiaiZJiMe7eIOrJtLfIF9RJP1lO6rWqVFUl2js4ccmc83ZKG
- P3pwid/OU8MRGacV0gFoHKt77GzBSRlwoaEmGj26okYTdYksTsrYofYLWg9+Y0EJxZCnYN9TzoP06H9SNQY=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/19 1:44 PM, Philipp Zabel wrote:
-> On Thu, 2019-01-31 at 13:30 +0100, Hans Verkuil wrote:
->> On 1/31/19 11:45 AM, Hans Verkuil wrote:
->>> On 1/24/19 11:04 AM, Tomasz Figa wrote:
->>>> Due to complexity of the video decoding process, the V4L2 drivers of
->>>> stateful decoder hardware require specific sequences of V4L2 API calls
->>>> to be followed. These include capability enumeration, initialization,
->>>> decoding, seek, pause, dynamic resolution change, drain and end of
->>>> stream.
->>>>
->>>> Specifics of the above have been discussed during Media Workshops at
->>>> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
->>>> Conference Europe 2014 in Düsseldorf. The de facto Codec API that
->>>> originated at those events was later implemented by the drivers we already
->>>> have merged in mainline, such as s5p-mfc or coda.
->>>>
->>>> The only thing missing was the real specification included as a part of
->>>> Linux Media documentation. Fix it now and document the decoder part of
->>>> the Codec API.
->>>>
->>>> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
->>>> ---
->>>>  Documentation/media/uapi/v4l/dev-decoder.rst  | 1076 +++++++++++++++++
->>>>  Documentation/media/uapi/v4l/dev-mem2mem.rst  |    5 +
->>>>  Documentation/media/uapi/v4l/pixfmt-v4l2.rst  |    5 +
->>>>  Documentation/media/uapi/v4l/v4l2.rst         |   10 +-
->>>>  .../media/uapi/v4l/vidioc-decoder-cmd.rst     |   40 +-
->>>>  Documentation/media/uapi/v4l/vidioc-g-fmt.rst |   14 +
->>>>  6 files changed, 1135 insertions(+), 15 deletions(-)
->>>>  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
->>>>
->>>
->>> <snip>
->>>
->>>> +4.  **This step only applies to coded formats that contain resolution information
->>>> +    in the stream.** Continue queuing/dequeuing bitstream buffers to/from the
->>>> +    ``OUTPUT`` queue via :c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`. The
->>>> +    buffers will be processed and returned to the client in order, until
->>>> +    required metadata to configure the ``CAPTURE`` queue are found. This is
->>>> +    indicated by the decoder sending a ``V4L2_EVENT_SOURCE_CHANGE`` event with
->>>> +    ``V4L2_EVENT_SRC_CH_RESOLUTION`` source change type.
->>>> +
->>>> +    * It is not an error if the first buffer does not contain enough data for
->>>> +      this to occur. Processing of the buffers will continue as long as more
->>>> +      data is needed.
->>>> +
->>>> +    * If data in a buffer that triggers the event is required to decode the
->>>> +      first frame, it will not be returned to the client, until the
->>>> +      initialization sequence completes and the frame is decoded.
->>>> +
->>>> +    * If the client sets width and height of the ``OUTPUT`` format to 0,
->>>> +      calling :c:func:`VIDIOC_G_FMT`, :c:func:`VIDIOC_S_FMT`,
->>>> +      :c:func:`VIDIOC_TRY_FMT` or :c:func:`VIDIOC_REQBUFS` on the ``CAPTURE``
->>>> +      queue will return the ``-EACCES`` error code, until the decoder
->>>> +      configures ``CAPTURE`` format according to stream metadata.
->>>
->>> I think this should also include the G/S_SELECTION ioctls, right?
->>
->> I've started work on adding compliance tests for codecs to v4l2-compliance and
->> I quickly discovered that this 'EACCES' error code is not nice at all.
->>
->> The problem is that it is really inconsistent with V4L2 behavior: the basic
->> rule is that there always is a format defined, i.e. G_FMT will always return
->> a format.
->>
->> Suddenly returning an error is actually quite painful to handle because it is
->> a weird exception just for the capture queue of a stateful decoder if no
->> output resolution is known.
->>
->> Just writing that sentence is painful.
->>
->> Why not just return some default driver defined format? It will automatically
->> be updated once the decoder parsed the bitstream and knows the new resolution.
->>
->> It really is just the same behavior as with a resolution change.
->>
->> It is also perfectly fine to request buffers for the capture queue for that
->> default format. It's pointless, but not a bug.
->>
->> Unless I am missing something I strongly recommend changing this behavior.
+On Thu, 31 Jan 2019 13:13:22 +0000
+Peter Rosin <peda@axentia.se> wrote:
+
+> On 2019-01-27 09:27, Boris Brezillon wrote:
+> > On Thu, 10 Jan 2019 15:10:28 +0000
+> > Peter Rosin <peda@axentia.se> wrote:
+> >   
+> >> Hi!
+> >>
+> >> I found an unfortunate issue while recoding plane handling to use
+> >> drm_atomic_helper_check_plane_state(). The driver rotates clockwise,
+> >> which is not correct. I simply fixed it (patch 1/4), but maybe that
+> >> will cause regressions for unsuspecting users who simply assumed
+> >> that the clockwise rotation was correct? I don't know what to do
+> >> about that? Adding an option to get the old broken behavior seems
+> >> useless, wouldn't it be just as easy to just fix whatever app to
+> >> rotate the other way instead of adding an option somewhere?
+> >>
+> >> I have only tested this series on sama5d3, but I did check the docs
+> >> for various other chips (sama5d2, sama5d4, sam9n12, sam9g15, sam9g35
+> >> and sam9x35) supported by the driver (relevant to patch 4/4).
+> >>
+> >> Cheers,
+> >> Peter
+> >>
+> >> Peter Rosin (4):
+> >>   drm/atmel-hlcdc: rotate planes counterclockwise
+> >>   drm/atmel-hlcdc: do not swap w/h of the crtc when a plane is rotated
+> >>   drm/atmel-hlcdc: fix clipping of planes  
+> > 
+> > Queued patches 1-3 to drm-misc-next.  
 > 
-> I just wrote the same in my reply to Nicolas, the CODA driver currently
-> sets the capture queue width/height to the output queue's crop rectangle
-> (rounded to macroblock size) without ever having seen the SPS.
+> Great, thanks.
+> 
+> >>   drm/atmel-hlcdc: do not immediately disable planes, wait for next
+> >>     frame  
+> > 
+> > Still waiting for Nicolas feedback on this one.  
+> 
+> [Adding back Nicolas, he seems to have gone missing from the list
+> recipients.]
+> 
+> I have done some testing of that patch and for me it's a definite
+> improvement. The test I did was removing a white plane from a white
+> background. Without the patch, the driver will output black where
+> the plane was for the current frame (since the driver does that
+> disc-area thing for the largest hidden part of the background).
+> With the patch, I get no visual glitches when removing a plane.
+> 
+> I use a plane to scroll a text, and if you know what to look for,
+> the black rectangle that flickers by as the plane with the scrolling
+> text is removed is little bit disturbing. Not a significant problem,
+> and maybe only geeks notice it, but still...
+> 
+> Just wanted to say that the resulting "black hole" mentioned in the
+> other thread really does exist and that the patch may make sense
+> beyond the fact that it removes usage of undocumented features.
+> 
+> I have not seen any bad side effects fro the patch, but admittedly
+> my testing was very limited and I did not try to remove the plane
+> while doing other stuff with the driver. So, there might still be
+> reasons for removing planes immediately...
 
-And thinking about the initial 0x0 width/height for the output queue:
+Since everything is now synchronized on vsync events thanks to the
+atomic modeset infra (including plane/crtc disable requests), I think
+the problem I was trying to fix at the time no longer exists (might
+re-appear if we start supporting async plane disable requests which is
+anyway not supported by the core). So I think I'll just apply your
+patch.
 
-that too is an exception, although less of a problem than the EACCES behavior.
+Thanks,
 
-It should be fine for an application to set width/height to 0 when calling
-S_FMT for the output queue of the decoder, but I would also prefer that it is
-just replaced by the driver with some default resolution. It really doesn't
-matter in practice, since you will wait for the SOURCE_CHANGE event regardless.
-
-Only then do you start to configure the CAPTURE queue.
-
-Using 0x0 and EACCES looks good on paper, but in the code it is a hassle and
-I'm not convinced there is any benefit.
-
-I like generic APIs and no where else do we ever return a 0 value for width
-or height, except in this corner case. It's just awkward.
-
-Regards,
-
-	Hans
+Boris
