@@ -2,125 +2,72 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCBDC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E2D6C282C7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31E04218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:50:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4BD621919
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:50:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klE/m9gS"
+	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="C7VLVJk2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732050AbfAaKue (ORCPT
+        id S1727089AbfAaKu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:50:34 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50462 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbfAaKud (ORCPT
+        Thu, 31 Jan 2019 05:50:29 -0500
+Received: from smtp.domeneshop.no ([194.63.252.55]:54143 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726221AbfAaKu3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:50:33 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n190so1988215wmd.0;
-        Thu, 31 Jan 2019 02:50:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CpOFQVTdPMzHuOrokx7Qka8a6O6m5/TkqZP0WYMyOK8=;
-        b=klE/m9gSRY88VvHTOuG39Zy16lgijK9uBeUd31Yp8D4BdjRH9I+NfNOODBYDJWH1Pm
-         wuMJaZ2scOqEe7CszcskzsgHBmV2GHNBvkTGGpfkiq5XzSmot/gg3q8+oUkMYeMdgOeR
-         yzTY6mnulF2+39f7k32nmv8gZn+juH8EJ9j3gfhjWJuh7IO6SoGnpWdsKQJAjnHcIwuA
-         Pjz137zzuYkbUcQWt/JKzXcWXsJEvVG9zs+13ETmGuCGJqdQgWU5Q6Y0nuEVEdF0Kz0d
-         Sg3cNDJ3R8s78jjx3ftiecKl9NOuGLmq0nxASWed/mN1KtM4eXuAFozdDZS11ozRTOWu
-         pjow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CpOFQVTdPMzHuOrokx7Qka8a6O6m5/TkqZP0WYMyOK8=;
-        b=Y9Wd3fdzQuptTX0YgaC5n66dI8QnBqtLpPWH14CHTuo75GAKQdjlqt7FJp0n0LaMEa
-         0VYsvAQf2puRS1mLPLHx5D/9E3SB27p1S15HEjG6K7X0RLfc3+xYFGWB9w77cTZl64er
-         VCuvUHO+jBvWSojafE4DuYu+C3sBFETWLwyFG1ATuBOVNHiaUgfYUPFkM91J7+gfCD0N
-         30qUfL4St9Dt/M2Yp02cnfe5Hn42sUUpqqp9deh1twDcHws5+lOTQ6qbrdMjadIAY24R
-         9l9V/gIU6z9DDvr+DsbtpdzbbUyW+0xi+yXfq9kppfv50D+YytR7guzCz7HxPwFB8veO
-         bnfQ==
-X-Gm-Message-State: AJcUukdokuyyGeWGI2SJcdQTeaC1NFjlUp2Sd0EP6UNtxePSuAgAmj/j
-        rS5IGCE3IJAZZ9NB2aQz5aQ=
-X-Google-Smtp-Source: ALg8bN6LBRclS+qbpKTjlzoT8ZVXFWxDRNa5ep7Lj8dlARe8gub6LeS+ORmS+T5VBucEpgxleG3zYg==
-X-Received: by 2002:a1c:9d57:: with SMTP id g84mr29524482wme.16.1548931830663;
-        Thu, 31 Jan 2019 02:50:30 -0800 (PST)
-Received: from localhost.localdomain (ip-37-201-6-149.hsi13.unitymediagroup.de. [37.201.6.149])
-        by smtp.googlemail.com with ESMTPSA id k23sm3377232wmj.32.2019.01.31.02.50.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 02:50:30 -0800 (PST)
-From:   Kai Renzig <k.renzig@gmail.com>
-To:     Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kai Renzig <k.renzig@gmail.com>
-Subject: [PATCH] platform/x86: silead_dmi: Add touchscreen platform data for the Chuwi Hi8 Air tablet
-Date:   Thu, 31 Jan 2019 11:49:07 +0100
-Message-Id: <20190131104907.9649-1-k.renzig@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Thu, 31 Jan 2019 05:50:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=CZ2EqIkkJ+k5aPJQbMXgWSGGCCpZSt7JD2cE7yH0X3E=;
+        b=C7VLVJk2Uh8lya3jtHUn6icbxstLPtHNWSOw1xztR4Mc3WmJ8IbR4lpodL1xlVNCop3fc65Rsw+9JtfR8L+RNzDTaHQ42Uh3m/kC2DBDitM0w5n3GvUEJS6nLzj3D/WBbXnTEeqEQNlzB+etrstmQQJweVqWNp8Nc4ey/hiUtYZDBiMoy5KavqGGsxkjFpqFKfQAbBG9eDFP+v6+lX4hMwGCF3+6wrzEcJe6ctoSKogfjnNLdTDlPaVbCCGsZT/7iBINq1ypV7wmi9ewnyWdZqWzYapMCpPiZycVrSIZyQiuGTZMO7HlR8OJY6z/zktzWVb39tOdTM88HVtWg+Px6Q==;
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:52655 helo=[192.168.10.176])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gp9vP-0007Jn-0h; Thu, 31 Jan 2019 11:50:27 +0100
+Subject: Re: [PATCH v2 5/6] drm/virtio: drop fencing in
+ virtio_gpu_resource_create_ioctl
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>
+References: <20190130094338.14203-1-kraxel@redhat.com>
+ <20190130094338.14203-6-kraxel@redhat.com>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <def6f74a-9817-1bc0-0c4e-b0e2a93a7eb2@tronnes.org>
+Date:   Thu, 31 Jan 2019 11:50:25 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
+In-Reply-To: <20190130094338.14203-6-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add touchscreen platform data for the Chuwi Hi8 Air tablet.
 
-Signed-off-by: Kai Renzig <k.renzig@gmail.com>
----
- drivers/platform/x86/touchscreen_dmi.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-index 8c5d47c0aea6..48e5d92040ab 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
-+++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -41,6 +41,20 @@ static const struct ts_dmi_data chuwi_hi8_data = {
- 	.properties     = chuwi_hi8_props,
- };
- 
-+static const struct property_entry chuwi_hi8_air_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-size-x", 1728),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 1148),
-+	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
-+	PROPERTY_ENTRY_STRING("firmware-name", "gsl3680-chuwi-hi8-air.fw"),
-+	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
-+	{ }
-+};
-+
-+static const struct ts_dmi_data chuwi_hi8_air_data = {
-+	.acpi_name	= "MSSL1680:00",
-+	.properties	= chuwi_hi8_air_props,
-+};
-+
- static const struct property_entry chuwi_hi8_pro_props[] = {
- 	PROPERTY_ENTRY_U32("touchscreen-min-x", 6),
- 	PROPERTY_ENTRY_U32("touchscreen-min-y", 3),
-@@ -497,6 +511,15 @@ static const struct dmi_system_id touchscreen_dmi_table[] = {
- 			DMI_MATCH(DMI_BIOS_VERSION, "H1D_S806_206"),
- 		},
- 	},
-+	{
-+		/* Chuwi Hi8 Air (CWI543) */
-+		.driver_data = (void *)&chuwi_hi8_air_data,
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_VENDOR, "Default string"),
-+			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Hi8 Air"),
-+		},
-+	},
- 	{
- 		/* Chuwi Hi8 Pro (CWI513) */
- 		.driver_data = (void *)&chuwi_hi8_pro_data,
--- 
-2.19.1
+Den 30.01.2019 10.43, skrev Gerd Hoffmann:
+> There is no need to wait for completion here.
+> 
+> The host will process commands in submit order, so commands can
+> reference the new resource just fine even when queued up before
+> completion.
+> 
+> On the guest side there is no need to wait for completion too.  Which
+> btw is different from resource destroy, where we have to make sure the
+> host has seen the destroy and thus doesn't use it any more before
+> releasing the pages backing the resource.
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
 
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
