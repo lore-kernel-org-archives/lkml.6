@@ -2,114 +2,276 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 418DEC282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD61CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F81D218DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:52:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="f/6ZWKqM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LFxA7GxU"
+	by mail.kernel.org (Postfix) with ESMTP id BA0E12087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:53:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbfAaIw5 (ORCPT
+        id S1728868AbfAaIxT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:52:57 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:45771 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725857AbfAaIw5 (ORCPT
+        Thu, 31 Jan 2019 03:53:19 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38900 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725857AbfAaIxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 03:52:57 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id BF6512015;
-        Thu, 31 Jan 2019 03:52:55 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 31 Jan 2019 03:52:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=B4i8qu8Fhn3wH5KYylYCfJYRSoB
-        WJG1mc5WVkWS3Sv0=; b=f/6ZWKqMpfmzi8BggP+kG7UclJd3TcKUp6aykC11Zlk
-        GuqTgTsaWBkm7/GShzosW+kiXEvjmNfDJLVARPleDfWsXtY0937zj1lQS6VjtAQs
-        s+ows7N3cR1tpkiqcjUDKp86n3XqQpwTMckQQwBtnDcc5OGTQWlHS6Ib28RUxbiy
-        4TmMeCrBo4wyU1BJ6dKk2DKlTEZJ3ehVjbAYwUVWst/rJEXbaA1ZdiCsykWEvnLq
-        oGXG4iuvI84q/JmZXciorj8vuVffeALbxIvgKRyJLY7vgvsigBtsoy8oxnlR9KrD
-        a3JmwxH4Serrpf1bvXu8sD32ckHZUWABPLA4gTpmhjQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=B4i8qu
-        8Fhn3wH5KYylYCfJYRSoBWJG1mc5WVkWS3Sv0=; b=LFxA7GxUQGCo/l67XrOaZB
-        j/AAxKqZhm0P7JsNO6J7+OGvIrfi4l0zMDA6OaWe6dWfXBavJqd1dFO1omVlRSGB
-        YFSsPPRdgCSsncXqIKFf1Owhfc+Za2qFJuF8xELS4xr5Lg2dFGo91WlzIowk+LMk
-        DTMa7UavBDh6OkaaWEu5t8rgJdRNXfff5WkuW9Xzy6sHAZb36Q4u51NHv+Cym/tc
-        ff9ze7GSG/xifQsiRJdzmRNVxGupCj22aww7cxiWBvbjUbl7/Qfd269p/rF1lmuf
-        goTPK1ehec5uvj3+HoNari2rjZZuRgXErqOIoVknT84Lg9r0x9z+6qNcWeoD6kGQ
-        ==
-X-ME-Sender: <xms:Z7dSXAel76isXfZW20rwCv9tR4kmKiNP2Sy-4sINVRIdbCY_1QdhEA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeehgdduvdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
-    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfghrlhcuvffnffculdeftd
-    dmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttdertdforedvnecuhfhrohhmpedf
-    vfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesthhosghinhdrtggtqeenucfkph
-    epuddukedrvdduuddrvddufedruddvvdenucfrrghrrghmpehmrghilhhfrhhomhepmhgv
-    sehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedu
-X-ME-Proxy: <xmx:Z7dSXOOLeVGNKHitqM-b2LiSRTL5g3tkzLCfLXJvYUeytV_wOSiJ_g>
-    <xmx:Z7dSXDvSdTbEiE6iLyJtEb8UqMSTYqtrkEesdCABBvLN0XmWZ9E7KQ>
-    <xmx:Z7dSXHBlIzaPbVbRRrNPAIZe9vPN_Jwcc8fLvPXjN6DEf5yVFRZXbw>
-    <xmx:Z7dSXJh0XY8j1K8Pkx3rHg3YAjnwf8-FpygCmlNUz2vT614UJEdWSw>
-Received: from localhost (ppp118-211-213-122.bras1.syd2.internode.on.net [118.211.213.122])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5EF431030F;
-        Thu, 31 Jan 2019 03:52:54 -0500 (EST)
-Date:   Thu, 31 Jan 2019 19:52:49 +1100
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Pekka Enberg <penberg@iki.fi>
-Cc:     Christopher Lameter <cl@linux.com>,
-        "Tobin C. Harding" <tobin@kernel.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] slub: Do trivial comments fixes
-Message-ID: <20190131085249.GC23538@eros.localdomain>
-References: <20190131041003.15772-1-me@tobin.cc>
- <01ec2c57-4ece-5ee1-4d0d-d2f24695f482@iki.fi>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01ec2c57-4ece-5ee1-4d0d-d2f24695f482@iki.fi>
-X-Mailer: Mutt 1.11.2 (2019-01-07)
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Thu, 31 Jan 2019 03:53:18 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V8hr93129081
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:53:17 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbw8f1vsj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:53:16 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
+        Thu, 31 Jan 2019 08:53:15 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Jan 2019 08:53:12 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V8rAvV42926208
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 08:53:10 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 55D5B4204B;
+        Thu, 31 Jan 2019 08:53:10 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D94E04204C;
+        Thu, 31 Jan 2019 08:53:09 +0000 (GMT)
+Received: from s38lp84.lnxne.boe (unknown [9.152.108.100])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Jan 2019 08:53:09 +0000 (GMT)
+From:   Michael Mueller <mimu@linux.ibm.com>
+To:     KVM Mailing List <kvm@vger.kernel.org>
+Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        Michael Mueller <mimu@linux.ibm.com>
+Subject: [PATCH v7 00/15] KVM: s390: make use of the GIB
+Date:   Thu, 31 Jan 2019 09:52:31 +0100
+X-Mailer: git-send-email 2.13.4
+X-TM-AS-GCONF: 00
+x-cbid: 19013108-4275-0000-0000-000003083919
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013108-4276-0000-0000-0000381641AA
+Message-Id: <20190131085247.13826-1-mimu@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310070
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 08:06:31AM +0200, Pekka Enberg wrote:
-> On 31/01/2019 6.10, Tobin C. Harding wrote:
-> > From: "Tobin C. Harding" <tobin@kernel.org>
-> > 
-> > Hi Christopher,
-> > 
-> > Here is a trivial patchset to wet my toes. This is my first patchset to
-> > mm, if there are some mm specific nuances in relation to when in the dev
-> > cycle (if ever) that minor (*cough* trivial) pathsets are acceptable
-> > please say so
-> > 
-> > This patchset fixes comments strings in the SLUB subsystem.
-> > 
-> > As per discussion at LCA I am working on getting my head around the SLUB
-> > allocator.  If you specifically do *not* want me to do minor clean up
-> > while I'm reading please say so, I will not be offended.
-> 
-> For the series:
-> 
-> Reviewed-by: Pekka Enberg <penberg@kernel.org>
+The Guest Information Area (GIB) and its mechanics is part of
+the AIV facility. It provides hardware support to process
+Adapter Interruptions (AI) for pagable storage mode guests. 
 
-Thanks for the review Pekka.
+Whenever a guest cannot process an AI because none of its
+vcpus is running in SIE context, a GIB alert interruption is
+sent to and handled by the host program to dispatch a vcpu of
+the respective guest.
 
+Eventually, the AI is handled by the guest.
 
-	Tobin
+v6->v7:
+  patches 1/15 to 7/15
+     prepare the existing Interruption and GISA code for
+     the introduction of the GIB code. (kept from v6)
+  patches 8/15 to 10/15
+     kept from v6.
+  patch 11/15
+     kvm_s390_gisc_register() now uses a single conditional
+     branch to extend IAM restore value and to set the IAM
+     in GISA. 
+  patch 12/15
+     kvm_s390_clear_gisa() now refactored in its own patch.
+  patch 13/15
+     I'm keeping the 50 usec timer expiration as the statistic
+     data shows a single timer restart only.
+       gisa_get_ipm_or_restore_iam() now called when entering
+     kvm_s390_handle_wait(). That saves some of the timer
+     restarts.
+       Some modifications in kvm_s390_gisa_destroy()
+  patch 14/15
+     kept from v6.
+  patch 15/15
+     additional test on non NULL gisa origin in pending_irqs()
+
+v5->v6:
+  Futher significant change was introduced with this version
+  now:
+
+  a) During the alert list processing now a hrtimer is
+     started to kick an idle vcpu with open I/O interrupt
+     mask. It then is restarted to monitor the interruption
+     consumption and when the IPM is clean (no relevant
+     ISCs pending anymore) atomically restores the IAM
+     and don't restarts or if new ISCs arrive kick other
+     idle vcpus.
+
+  patches 1/13 to 7/13:
+     prepare the existing Interruption and GISA code for
+     the introduction of the GIB code.
+  patches 8/13 to 10/13:
+     kept from v5.
+  patch 11/13:
+     Some comments added.
+  patch 12/13:
+     Significatly changed due to the hrtimer control.
+  patch 13/13:
+     Basically kept from v5 except for a slight reordering
+     that shortens the patch.
+
+v4->v5:
+  Between these two versions some significant change was
+  introduced:
+
+  a) During IPM look-up, the IAM gets atomically restored
+     if the IPM is clean. (The main strategy is: As soon no
+     airqs are pending anymore, get prepared for new ones
+     arriving).
+
+  b) Kick a set of vcpus in WAIT state, that will be able
+     to handle all ISCs in IPM if possible. The main loop
+     that processes the GIB alert list is unchanged.
+
+  patches 1/15 to 6/15:
+     prepare the existing Interruption and GISA code for
+     the introduction of the GIB code.
+  patches 7/15 to 9/15:
+     kept from v4. 
+  patch 10/15:
+     restores the IAM in get_ipm() when clean on request
+     with additional parameter irq_flags
+  patch 12/15:
+     modifies kvm_s390_deliver_pending_interrupts() such
+     that the IAM is not restored during the deliverable_irqs()
+     test as we are about to enter the SIE. Restoring the
+     IAM would trigger the alert mechanism unnecessarily
+     on SIE entry.
+  patch 13/15:
+     process_gib_alert_list() now triggers a minimal set
+     of idle vcpus capable the handle all pending ISCs.
+  patch 14/15:
+     the wiring is logical similar to v4 but uses different
+     routines
+  patch 15/15: 
+     kept from v4. 
+
+v3->v4:
+  The central change of v4 is that the metric "vcpus_in_sie"
+  has been dropped. A least agressive IAM restore strategy
+  is being followed now. The consequence is that potentially
+  more GAL interruptions are to be handled by the host program.
+  The assuption as made that as soon the first vcpu is trying
+  to go into wait state, this could be the last vcpu being
+  open for I/O interruptions. Thus, to not loose the initiative
+  to deliver I/O interruptions as soon as possible, the IAM
+  is restored. Adding better heuristics can be done in future.
+
+  I expect this to be the last version of the series.
+ 
+  patch 01/12: Kernel msg now printed when FLIC fails
+               to register during arch inititialization.
+  patch 03/12: Commit message slightly changed with the
+  	       hint that gib initialization is called
+	       by last patch of this serias.
+  patch 09/12: IAM now restored during kvm_s390_handle_wait()
+  patch 10/12: gib destroy case now handled upon unsuccessful
+  	       arch inititialization.
+
+All other patches are unchanged.
+
+v2->v3:
+  patch 01/12: Fixes a resource dealocation issue upon
+  	       unsuccessful exit from kvm_arch_init().
+	       It is relevant for patch 11/12 as well. 
+  patch 08/12: The function process_gib_alert_list() has
+               been rewritten to reduce the number of GAL
+	       interruptions on the host for many guest
+	       scenarios.
+  patch 10/12: The IAM is now never cleared before SIE entry.
+               It will be cleared by millicode as soon the
+	       first guest interruption is made pending and
+	       not directly processed in SIE. The IAM gets
+	       restored as soon a vm is idle, i.e. no vcpu
+	       of that guest is in SIE context anymore.
+  patch 11/12: now integrates with new patch 01/12
+  patch 12/12: This patch is just experimental and shall not
+               be part of the final series.
+
+The first patch of series v2: "leave AIs in IPM of GISA
+during vcpu_pre_run()" has been dropped.
+
+All other patches are unchanged.
+
+v1->v2:
+  patch 01/12: New patch. Tt can go also standalone without the
+  	       rest of the GIB series presented here but is a
+	       requirement 
+  patch 03/12: kvm_s390_gib_init() now has a return code
+  patch 06/12: unlink_gib_alert_list() now uses cmpxchg() instead
+    	       of atomic_xchg()
+  patch 08/12: New patch. Foctors out __find_vcpu_for_floating_irq()
+  patch 09/12: process_gib_alert_list() has been simplified
+               the GISA clear/destroy cases have been removed
+  patch 11/12: kvm_s390_gisa_clear/destroy() now clear the IAM
+               and process the alert list directly
+	       The IAM now gets restored in vcpu_post_run() only if
+	       the GISA is not in alert list
+  patch 12/12: during kvm_arch_init() now the return code of
+    	       kvm_s390_gib_init() is honored.
+
+All other patches are unchanged.
+
+Michael Mueller (15):
+  KVM: s390: drop obsolete else path
+  KVM: s390: make bitmap declaration consistent
+  KVM: s390: move bitmap idle_mask into arch struct top level
+  KVM: s390: coding style kvm_s390_gisa_init/clear()
+  KVM: s390: use pending_irqs_no_gisa() where appropriate
+  KVM: s390: remove kvm_s390_ from gisa static inline functions
+  KVM: s390: introduce struct kvm_s390_gisa_interrupt
+  s390/cio: add function chsc_sgib()
+  KVM: s390: add the GIB and its related life-cyle functions
+  KVM: s390: add kvm reference to struct sie_page2
+  KVM: s390: add functions to (un)register GISC with GISA
+  KVM: s390: kvm_s390_gisa_clear() now clears the IPM only
+  KVM: s390: add gib_alert_irq_handler()
+  KVM: s390: start using the GIB
+  KVM: s390: fix possible null pointer dereference in pending_irqs()
+
+ arch/s390/include/asm/cio.h      |   1 +
+ arch/s390/include/asm/irq.h      |   1 +
+ arch/s390/include/asm/isc.h      |   1 +
+ arch/s390/include/asm/kvm_host.h |  36 +++-
+ arch/s390/kernel/irq.c           |   1 +
+ arch/s390/kvm/interrupt.c        | 431 +++++++++++++++++++++++++++++++++++----
+ arch/s390/kvm/kvm-s390.c         |  13 +-
+ arch/s390/kvm/kvm-s390.h         |   4 +-
+ drivers/s390/cio/chsc.c          |  37 ++++
+ drivers/s390/cio/chsc.h          |   1 +
+ 10 files changed, 480 insertions(+), 46 deletions(-)
+
+-- 
+2.13.4
+
