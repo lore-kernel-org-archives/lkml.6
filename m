@@ -2,305 +2,230 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDD1C282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C71C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B53212087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 475AD218DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:09:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rmFE2gQC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732131AbfAaLG6 (ORCPT
+        id S1727761AbfAaLJs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 06:06:58 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37976 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726434AbfAaLG5 (ORCPT
+        Thu, 31 Jan 2019 06:09:48 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51431 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbfAaLJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 06:06:57 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VB08RI046869
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 06:06:56 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbxr9kest-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 06:06:56 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 31 Jan 2019 11:06:53 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 11:06:44 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VB6hb544302338
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 11:06:43 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 77784A4055;
-        Thu, 31 Jan 2019 11:06:43 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 05551A4057;
-        Thu, 31 Jan 2019 11:06:41 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 31 Jan 2019 11:06:40 +0000 (GMT)
-Date:   Thu, 31 Jan 2019 13:06:39 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
-        Kees Cook <keescook@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-Subject: Re: [PATCHv2 1/9] mm: Introduce new vm_insert_range and
- vm_insert_range_buggy API
-References: <20190131030812.GA2174@jordon-HP-15-Notebook-PC>
- <20190131083842.GE28876@rapoport-lnx>
- <CAFqt6zbG089qCYBoZ8HCHPaRm+Yi=gHNboxy9y_qw9eVpSFjag@mail.gmail.com>
+        Thu, 31 Jan 2019 06:09:48 -0500
+Received: by mail-it1-f193.google.com with SMTP id w18so3134234ite.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:09:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/a5PEZ4jb8RCGabdztmwVXWnQq+OV4s98oQlZgjXNUk=;
+        b=rmFE2gQCRCfgyRJo5eZ/jt6RPIWMjZVbHXnrLbMVX6D8oJddtooDXGgB3H/L7BODBU
+         ViwTWdo3EieDKmpPsF6BqlUQFoq6qKZ6XNPzW2nHmhacTfhoY9+x/QJz8MzVtE+imiCM
+         UU7NHmbdZk6pwrrLUlGGs7LuoC3O6GhRt7xR3PRNLvaPEifu5KB62BsnPh5OE6Nems4e
+         VBUS8R02Jfcu8zmty0A8jNizFOfcWfJAtWzk1kJefdo4Zulb6VJbuKGg2CDJ3Gi8nAPQ
+         w3P7s1Io/DtuFEU2kLCN6JzN5u2QJWYQi0HO7J5c8u9UlnrCiYqHf5aJwpbPTeCDXjtE
+         pWQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/a5PEZ4jb8RCGabdztmwVXWnQq+OV4s98oQlZgjXNUk=;
+        b=fWMkyL9kAE0pu9pHVxv1kdjulCvirh/jDKuVfcwt9nDrt2u4a1Jnr6if/3GX9Rsjo4
+         tqbmOr1GPIT0yQcOOvoCKjXMYewttp9ag1cBH3h88b5nrOYRgxGyTcDhDJmpkm/sbD9L
+         e0SndU6HkAuVJK37OAYLg0oCsqX9KleSnSE05Fnm4NRMoyIshsHgX3g0V6S7VJQSYKUv
+         rw2RNMn1beIB7xb8MDsTWwZrtn3jUrtixUtg7vO1NIZSaS4VElXjk9kOeEYUbfz4/hx3
+         RmpqiGO5CoDGG0C3CZL5t2eN3njiz+ccPQk/CO7smRo7x9sCfQ5MWh9JWhw3/9LSCbbE
+         7W4g==
+X-Gm-Message-State: AJcUukfuy7WJWKM7BvS/opvT/PyrrT8LIcW63LCF6yP+mxZA0RRskpfS
+        960H2tyCzGd5ntMZf8EGEjNZhHPnww2sUKu6PsCHck9l
+X-Google-Smtp-Source: ALg8bN4Geu/O7a8YIq+ZKV6UuIi8T3UfHCubNSpik2za6mgqPHErolfj86bpOsWGpAD5YZR/4JObWdjtbcVouC8t5rQ=
+X-Received: by 2002:a24:4641:: with SMTP id j62mr17641679itb.57.1548932986669;
+ Thu, 31 Jan 2019 03:09:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zbG089qCYBoZ8HCHPaRm+Yi=gHNboxy9y_qw9eVpSFjag@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19013111-0020-0000-0000-0000030F465E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013111-0021-0000-0000-000021604905
-Message-Id: <20190131110638.GK28876@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310088
+References: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
+ <1528987172-19810-3-git-send-email-yamada.masahiro@socionext.com>
+ <20180615004704.u5gofft7k6ehmhwi@ast-mbp.dhcp.thefacebook.com> <CAE=NcramE=kqqfq78aXtKLmFSctk7vo-P-478092Lt2c0op_aQ@mail.gmail.com>
+In-Reply-To: <CAE=NcramE=kqqfq78aXtKLmFSctk7vo-P-478092Lt2c0op_aQ@mail.gmail.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Thu, 31 Jan 2019 13:09:35 +0200
+Message-ID: <CAE=NcrZ2iRX6XQj1X6FZag8QK93a467eiyKsd5CEkGkQeMQERg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] bpfilter: include bpfilter_umh in assembly instead
+ of using objcopy
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 03:43:39PM +0530, Souptick Joarder wrote:
-> On Thu, Jan 31, 2019 at 2:09 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+Hi,
+
+Never mind, not enough coffee for the morning. Looks good addressing
+wise, but something goes haywire with the copy. Some size limitation?
+
+[   84.402647] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS 1.10.2-1ubuntu1 04/01/2014
+[   84.403899] RIP: 0010:__memcpy+0x12/0x20
+[   84.404441] Code: c1 e2 20 48 09 d0 48 31 c3 e9 76 ff ff ff 90 90
+90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 89 f8 48 89 d1 48 c1 e9 03
+83 e2 07 <f3> 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1
+f3 a4
+[   84.407004] RSP: 0018:ffffc90000ac39c0 EFLAGS: 00010246
+[   84.407714] RAX: ffff888041709000 RBX: 0000000000001000 RCX: 0000000000000200
+[   84.408667] RDX: 0000000000000000 RSI: ffffffff82a7cb4d RDI: ffff888041709000
+[   84.409668] RBP: ffffc90000ac3a08 R08: ffff888041709000 R09: 0000000000000000
+[   84.410621] R10: 0000000000000000 R11: 000015fffefa3dbf R12: 0000000000001000
+[   84.411710] R13: 0000000000001000 R14: ffffc90000ac3b28 R15: 0000000000001000
+[   84.412675] FS:  00007f6cd3a35740(0000) GS:ffff88807da00000(0000)
+knlGS:0000000000000000
+[   84.413805] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   84.414655] CR2: ffffffff82a7cb4d CR3: 0000000031344000 CR4: 00000000000006f0
+[   84.415656] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   84.416647] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   84.417619] Call Trace:
+[   84.417996]  ? iov_iter_copy_from_user_atomic+0x21b/0x360
+[   84.418754]  ? shmem_write_begin+0x4a/0x80
+[   84.419396]  generic_perform_write+0xdd/0x1b0
+[   84.419897]  __generic_file_write_iter+0x1ab/0x1d0
+[   84.420453]  ? apparmor_file_alloc_security+0x4c/0x230
+[   84.421082]  ? kmem_cache_alloc+0x1b5/0x1d0
+[   84.421677]  generic_file_write_iter+0xb3/0x150
+[   84.422353]  __vfs_write+0x145/0x1d0
+[   84.422907]  vfs_write+0xae/0x1a0
+[   84.423435]  kernel_write+0x55/0x70
+[   84.423996]  fork_usermode_blob+0x85/0x11b
+..
+
+ret = fork_usermode_blob(&test_umh_start,
+&test_umh_end - &test_umh_start, &um_info);
+
+Addresses indeed seem ok and the '-fpic -fpie -fPIE -static' compiled
+user mode blob sits in between those symbols correctly. Hummm ?
+
+
+--
+Janne
+
+On Thu, Jan 31, 2019 at 12:48 PM Janne Karhunen
+<janne.karhunen@gmail.com> wrote:
+>
+> Hi,
+>
+> Hmm, does this approach work if the code is not in a kernel module? I
+> tried to use it as part of the kernel image and looks to me the
+> bounding symbols _start and _end are not correctly relocated?
+>
+> --
+> Janne
+>
+> On Fri, Jun 15, 2018 at 3:48 AM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
 > >
-> > On Thu, Jan 31, 2019 at 08:38:12AM +0530, Souptick Joarder wrote:
-> > > Previouly drivers have their own way of mapping range of
-> > > kernel pages/memory into user vma and this was done by
-> > > invoking vm_insert_page() within a loop.
+> > On Thu, Jun 14, 2018 at 11:39:31PM +0900, Masahiro Yamada wrote:
+> > > What we want here is to embed a user-space program into the kernel.
+> > > Instead of the complex ELF magic, let's simply wrap it in the assembly
+> > > with the '.incbin' directive.
 > > >
-> > > As this pattern is common across different drivers, it can
-> > > be generalized by creating new functions and use it across
-> > > the drivers.
-> > >
-> > > vm_insert_range() is the API which could be used to mapped
-> > > kernel memory/pages in drivers which has considered vm_pgoff
-> > >
-> > > vm_insert_range_buggy() is the API which could be used to map
-> > > range of kernel memory/pages in drivers which has not considered
-> > > vm_pgoff. vm_pgoff is passed default as 0 for those drivers.
-> > >
-> > > We _could_ then at a later "fix" these drivers which are using
-> > > vm_insert_range_buggy() to behave according to the normal vm_pgoff
-> > > offsetting simply by removing the _buggy suffix on the function
-> > > name and if that causes regressions, it gives us an easy way to revert.
-> > >
-> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > > Suggested-by: Russell King <linux@armlinux.org.uk>
-> > > Suggested-by: Matthew Wilcox <willy@infradead.org>
+> > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > > > ---
-> > >  include/linux/mm.h |  4 +++
-> > >  mm/memory.c        | 81 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  mm/nommu.c         | 14 ++++++++++
-> > >  3 files changed, 99 insertions(+)
 > > >
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index 80bb640..25752b0 100644
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@ -2565,6 +2565,10 @@ unsigned long change_prot_numa(struct vm_area_struct *vma,
-> > >  int remap_pfn_range(struct vm_area_struct *, unsigned long addr,
-> > >                       unsigned long pfn, unsigned long size, pgprot_t);
-> > >  int vm_insert_page(struct vm_area_struct *, unsigned long addr, struct page *);
-> > > +int vm_insert_range(struct vm_area_struct *vma, struct page **pages,
-> > > +                             unsigned long num);
-> > > +int vm_insert_range_buggy(struct vm_area_struct *vma, struct page **pages,
-> > > +                             unsigned long num);
-> > >  vm_fault_t vmf_insert_pfn(struct vm_area_struct *vma, unsigned long addr,
-> > >                       unsigned long pfn);
-> > >  vm_fault_t vmf_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
-> > > diff --git a/mm/memory.c b/mm/memory.c
-> > > index e11ca9d..0a4bf57 100644
-> > > --- a/mm/memory.c
-> > > +++ b/mm/memory.c
-> > > @@ -1520,6 +1520,87 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
-> > >  }
-> > >  EXPORT_SYMBOL(vm_insert_page);
+> > > Changes in v2:
+> > >   - Rebase
 > > >
-> > > +/**
-> > > + * __vm_insert_range - insert range of kernel pages into user vma
-> > > + * @vma: user vma to map to
-> > > + * @pages: pointer to array of source kernel pages
-> > > + * @num: number of pages in page array
-> > > + * @offset: user's requested vm_pgoff
-> > > + *
-> > > + * This allows drivers to insert range of kernel pages they've allocated
-> > > + * into a user vma.
-> > > + *
-> > > + * If we fail to insert any page into the vma, the function will return
-> > > + * immediately leaving any previously inserted pages present.  Callers
-> > > + * from the mmap handler may immediately return the error as their caller
-> > > + * will destroy the vma, removing any successfully inserted pages. Other
-> > > + * callers should make their own arrangements for calling unmap_region().
-> > > + *
-> > > + * Context: Process context.
-> > > + * Return: 0 on success and error code otherwise.
-> > > + */
-> > > +static int __vm_insert_range(struct vm_area_struct *vma, struct page **pages,
-> > > +                             unsigned long num, unsigned long offset)
-> > > +{
-> > > +     unsigned long count = vma_pages(vma);
-> > > +     unsigned long uaddr = vma->vm_start;
-> > > +     int ret, i;
-> > > +
-> > > +     /* Fail if the user requested offset is beyond the end of the object */
-> > > +     if (offset > num)
-> > > +             return -ENXIO;
-> > > +
-> > > +     /* Fail if the user requested size exceeds available object size */
-> > > +     if (count > num - offset)
-> > > +             return -ENXIO;
-> > > +
-> > > +     for (i = 0; i < count; i++) {
-> > > +             ret = vm_insert_page(vma, uaddr, pages[offset + i]);
-> > > +             if (ret < 0)
-> > > +                     return ret;
-> > > +             uaddr += PAGE_SIZE;
-> > > +     }
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +/**
-> > > + * vm_insert_range - insert range of kernel pages starts with non zero offset
-> > > + * @vma: user vma to map to
-> > > + * @pages: pointer to array of source kernel pages
-> > > + * @num: number of pages in page array
-> > > + *
-> > > + * Maps an object consisting of `num' `pages', catering for the user's
-> > > + * requested vm_pgoff
-> > > + *
-> >
-> > The elaborate description you've added to __vm_insert_range() is better put
-> > here, as this is the "public" function.
-> 
-> Ok, will add it in v3. Which means __vm_insert_range() still needs a short
-> description ?
-
-It won't hurt ;-)
-
-> >
-> > > + * Context: Process context. Called by mmap handlers.
-> > > + * Return: 0 on success and error code otherwise.
-> > > + */
-> > > +int vm_insert_range(struct vm_area_struct *vma, struct page **pages,
-> > > +                             unsigned long num)
-> > > +{
-> > > +     return __vm_insert_range(vma, pages, num, vma->vm_pgoff);
-> > > +}
-> > > +EXPORT_SYMBOL(vm_insert_range);
-> > > +
-> > > +/**
-> > > + * vm_insert_range_buggy - insert range of kernel pages starts with zero offset
-> > > + * @vma: user vma to map to
-> > > + * @pages: pointer to array of source kernel pages
-> > > + * @num: number of pages in page array
-> > > + *
-> > > + * Maps a set of pages, always starting at page[0]
-> >
-> > Here I'd add something like:
-> >
-> > Similar to vm_insert_range(), except that it explicitly sets @vm_pgoff to
-> > 0. This function is intended for the drivers that did not consider
-> > @vm_pgoff.
-> 
-> Ok.
-> 
-> >
-> > > vm_insert_range_buggy() is the API which could be used to map
-> > > range of kernel memory/pages in drivers which has not considered
-> > > vm_pgoff. vm_pgoff is passed default as 0 for those drivers.
-> >
-> > > + *
-> > > + * Context: Process context. Called by mmap handlers.
-> > > + * Return: 0 on success and error code otherwise.
-> > > + */
-> > > +int vm_insert_range_buggy(struct vm_area_struct *vma, struct page **pages,
-> > > +                             unsigned long num)
-> > > +{
-> > > +     return __vm_insert_range(vma, pages, num, 0);
-> > > +}
-> > > +EXPORT_SYMBOL(vm_insert_range_buggy);
-> > > +
-> > >  static vm_fault_t insert_pfn(struct vm_area_struct *vma, unsigned long addr,
-> > >                       pfn_t pfn, pgprot_t prot, bool mkwrite)
-> > >  {
-> > > diff --git a/mm/nommu.c b/mm/nommu.c
-> > > index 749276b..21d101e 100644
-> > > --- a/mm/nommu.c
-> > > +++ b/mm/nommu.c
-> > > @@ -473,6 +473,20 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
-> > >  }
-> > >  EXPORT_SYMBOL(vm_insert_page);
+> > >  net/bpfilter/Makefile            | 15 ++-------------
+> > >  net/bpfilter/bpfilter_kern.c     | 11 +++++------
+> > >  net/bpfilter/bpfilter_umh_blob.S |  7 +++++++
+> > >  3 files changed, 14 insertions(+), 19 deletions(-)
+> > >  create mode 100644 net/bpfilter/bpfilter_umh_blob.S
 > > >
-> > > +int vm_insert_range(struct vm_area_struct *vma, struct page **pages,
-> > > +                     unsigned long num)
-> > > +{
-> > > +     return -EINVAL;
-> > > +}
-> > > +EXPORT_SYMBOL(vm_insert_range);
-> > > +
-> > > +int vm_insert_range_buggy(struct vm_area_struct *vma, struct page **pages,
-> > > +                             unsigned long num)
-> > > +{
-> > > +     return -EINVAL;
-> > > +}
-> > > +EXPORT_SYMBOL(vm_insert_range_buggy);
-> > > +
-> > >  /*
-> > >   *  sys_brk() for the most part doesn't need the global kernel
-> > >   *  lock, except when an application is doing something nasty
-> > > --
-> > > 1.9.1
+> > > diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
+> > > index e0bbe75..39c6980 100644
+> > > --- a/net/bpfilter/Makefile
+> > > +++ b/net/bpfilter/Makefile
+> > > @@ -15,18 +15,7 @@ ifeq ($(CONFIG_BPFILTER_UMH), y)
+> > >  HOSTLDFLAGS += -static
+> > >  endif
 > > >
+> > > -# a bit of elf magic to convert bpfilter_umh binary into a binary blob
+> > > -# inside bpfilter_umh.o elf file referenced by
+> > > -# _binary_net_bpfilter_bpfilter_umh_start symbol
+> > > -# which bpfilter_kern.c passes further into umh blob loader at run-time
+> > > -quiet_cmd_copy_umh = GEN $@
+> > > -      cmd_copy_umh = echo ':' > $(obj)/.bpfilter_umh.o.cmd; \
+> > > -      $(OBJCOPY) -I binary -O `$(OBJDUMP) -f $<|grep format|cut -d' ' -f8` \
+> > > -      -B `$(OBJDUMP) -f $<|grep architecture|cut -d, -f1|cut -d' ' -f2` \
+> > > -      --rename-section .data=.init.rodata $< $@
+> > > -
+> > > -$(obj)/bpfilter_umh.o: $(obj)/bpfilter_umh
+> > > -     $(call cmd,copy_umh)
+> > > +$(obj)/bpfilter_umh_blob.o: $(obj)/bpfilter_umh
+> > >
+> > >  obj-$(CONFIG_BPFILTER_UMH) += bpfilter.o
+> > > -bpfilter-objs += bpfilter_kern.o bpfilter_umh.o
+> > > +bpfilter-objs += bpfilter_kern.o bpfilter_umh_blob.o
+> > > diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+> > > index 0952257..6de3ae5 100644
+> > > --- a/net/bpfilter/bpfilter_kern.c
+> > > +++ b/net/bpfilter/bpfilter_kern.c
+> > > @@ -10,11 +10,8 @@
+> > >  #include <linux/file.h>
+> > >  #include "msgfmt.h"
+> > >
+> > > -#define UMH_start _binary_net_bpfilter_bpfilter_umh_start
+> > > -#define UMH_end _binary_net_bpfilter_bpfilter_umh_end
+> > > -
+> > > -extern char UMH_start;
+> > > -extern char UMH_end;
+> > > +extern char bpfilter_umh_start;
+> > > +extern char bpfilter_umh_end;
+> > >
+> > >  static struct umh_info info;
+> > >  /* since ip_getsockopt() can run in parallel, serialize access to umh */
+> > > @@ -93,7 +90,9 @@ static int __init load_umh(void)
+> > >       int err;
+> > >
+> > >       /* fork usermode process */
+> > > -     err = fork_usermode_blob(&UMH_start, &UMH_end - &UMH_start, &info);
+> > > +     err = fork_usermode_blob(&bpfilter_umh_end,
+> > > +                              &bpfilter_umh_end - &bpfilter_umh_start,
+> > > +                              &info);
+> > >       if (err)
+> > >               return err;
+> > >       pr_info("Loaded bpfilter_umh pid %d\n", info.pid);
+> > > diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
+> > > new file mode 100644
+> > > index 0000000..40311d1
+> > > --- /dev/null
+> > > +++ b/net/bpfilter/bpfilter_umh_blob.S
+> > > @@ -0,0 +1,7 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +     .section .init.rodata, "a"
+> > > +     .global bpfilter_umh_start
+> > > +bpfilter_umh_start:
+> > > +     .incbin "net/bpfilter/bpfilter_umh"
+> > > +     .global bpfilter_umh_end
+> > > +bpfilter_umh_end:
 > >
-> > --
-> > Sincerely yours,
-> > Mike.
+> > for some reason it doesn't work.
+> > fork_usermode_blob() returns ENOEXEC
+> > You should be able to test it simply running 'iptables -L'.
+> > Without this patch you should see:
+> > [   12.696937] bpfilter: Loaded bpfilter_umh pid 225
+> > Started bpfilter
 > >
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+> > where first line comes from kernel module and second from umh.
+> >
+> >
