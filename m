@@ -2,134 +2,130 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0730C282D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB70C282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A83DD2184D
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F9CC2184D
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:04:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tSgjerC4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbfAaDEF (ORCPT
+        id S1729722AbfAaDEs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 22:04:05 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:59877 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725771AbfAaDEE (ORCPT
+        Wed, 30 Jan 2019 22:04:48 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45502 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725771AbfAaDEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 22:04:04 -0500
-X-UUID: b7899a23e4d04701b4a4e31183bd13b0-20190131
-X-UUID: b7899a23e4d04701b4a4e31183bd13b0-20190131
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 498669996; Thu, 31 Jan 2019 11:03:55 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
- 2019 11:03:53 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 31 Jan 2019 11:03:53 +0800
-Message-ID: <1548903833.22019.26.camel@mhfsdcap03>
-Subject: Re: [PATCH] PCI: Mediatek: Use resource_size function on resource
- object
-From:   Honghui Zhang <honghui.zhang@mediatek.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     <lorenzo.pieralisi@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>,
-        <youlin.pei@mediatek.com>, <jianjun.wang@mediatek.com>
-Date:   Thu, 31 Jan 2019 11:03:53 +0800
-In-Reply-To: <20190130154950.GD229773@google.com>
-References: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
-         <20190130154950.GD229773@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 30 Jan 2019 22:04:48 -0500
+Received: by mail-pf1-f194.google.com with SMTP id g62so782025pfd.12
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 19:04:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=9UKheLNLSM7085+hYajJxzL+Wpldb3TOma8RXX0hjL4=;
+        b=tSgjerC4dK44S06W0OSTr53cNg28+6cUTE4HzPUKTdkevWVpDJ97JFTp+cPosrPNEV
+         D8rphH0u8PJiDjdQsW2TNjafYIBoOsL1lTpSoOkAZyJOLs4Vo+jTdmYEwU7Jl7hXgk8u
+         bhAoeiu1BDGFLMWPAWbdszIxVsMvwVSrmn9/NbkQyumWfBx94sOwPfkrdncoz+vMpmLN
+         GvJIbeBoL5m3lTrGsdAHY7E5Ffo5FQtSCX5JwL9a+t7uCBTkj1fO/HsLuTpU2zXaDEU3
+         Ob05VCxwKCGE7QtPagY4Sd1s9LT8xNY41xJLt1okURF5K+hRbPJY9tnqbjP0VDuMbxqy
+         h/+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=9UKheLNLSM7085+hYajJxzL+Wpldb3TOma8RXX0hjL4=;
+        b=VFzEyDC9YVQHs8erKH/zvRa21Y+8oAtk5N/n4m/lwvI+1RZSjGWDdAfo+Tqyqq4Qfy
+         A7xqOOQGvmpz78ZKCvuiQ0j/1aLgGJq/O4IWvCbu/arJYDSTa2QtRBziv9c6sDgwFIEm
+         tTM45mr8nIzROW3PhQgCj/mfH+tr9yYOmoeY7Cz85IpxnPSBvij2ncMoPlC5PldrrcbJ
+         heebQUoWry1uMix4G4rxHJP7AJsci2eBlqjkycrcx5sMIpD81epfo6Z55qu5qy6JwLgZ
+         fhRuve1IxhrF3J1Hq53JslsQ4dzmnT+o/R0JFwqsuXq5tvHREhUndUqLnODcdzGkKUG/
+         7Ewg==
+X-Gm-Message-State: AJcUukcBbjHWRsjBvx8QhebJC/KRmRgBkEW92RcHYckT64cR1X59lbSM
+        UFXk5qHmYGdAZFot2wnE8LI=
+X-Google-Smtp-Source: ALg8bN4FchuqbyYG65Y851K8FAAMbykpYxvta9bA6d520FyHakM49c32bL40WPlrtGU5T7jPX/J4QA==
+X-Received: by 2002:a63:7c6:: with SMTP id 189mr30429168pgh.129.1548903887364;
+        Wed, 30 Jan 2019 19:04:47 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([106.51.20.103])
+        by smtp.gmail.com with ESMTPSA id o13sm4055072pfk.57.2019.01.30.19.04.45
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 30 Jan 2019 19:04:46 -0800 (PST)
+Date:   Thu, 31 Jan 2019 08:39:00 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        linux@armlinux.org.uk, robin.murphy@arm.com,
+        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
+        m.szyprowski@samsung.com
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCHv2 2/9] arch/arm/mm/dma-mapping.c: Convert to use
+ vm_insert_range
+Message-ID: <20190131030900.GA2284@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-30 at 09:49 -0600, Bjorn Helgaas wrote:
-> On Wed, Jan 02, 2019 at 02:03:53PM +0800, honghui.zhang@mediatek.com wrote:
-> > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> > 
-> > drivers/pci/pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
-> > 
-> > Generated by: scripts/coccinelle/api/resource_size.cocci
-> > 
-> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> > ---
-> >  drivers/pci/controller/pcie-mediatek.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> > index e307166..0168376 100644
-> > --- a/drivers/pci/controller/pcie-mediatek.c
-> > +++ b/drivers/pci/controller/pcie-mediatek.c
-> > @@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
-> >  	struct resource *mem = &pcie->mem;
-> >  	const struct mtk_pcie_soc *soc = port->pcie->soc;
-> >  	u32 val;
-> > -	size_t size;
-> >  	int err;
-> >  
-> >  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
-> > @@ -706,8 +705,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
-> >  		mtk_pcie_enable_msi(port);
-> >  
-> >  	/* Set AHB to PCIe translation windows */
-> > -	size = mem->end - mem->start;
-> > -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
-> > +	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
-> 
-> This is actually a fairly interesting change because it effectively
-> changes this:
-> 
->   fls(mem->end - mem->start)
-> 
-> to this:
-> 
->   fls(mem->end - mem->start + 1)
-> 
-> And mem->end is the last valid address, so it changes something like
-> this:
-> 
->   fls(0xffff)         # == 15
-> 
-> to this:
-> 
->   fls(0x10000)        # == 16
-> 
-> So while this *looks* like a trivial warning fix, it likely fixes an
-> important bug, and it's worth pointing out what that bug is in the
-> changelog.
-> 
-> >  	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
-> >  
-> >  	val = upper_32_bits(mem->start);
+Convert to use vm_insert_range() to map range of kernel
+memory to user vma.
 
-This size will set the MMIO size, which means that the RC will translate
-the MMIO access from mem->start to mem->end.
-The real MMIO size is specified in devicetree, which is 0x1000_0000 for
-both mt2712 and mt7622.
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ arch/arm/mm/dma-mapping.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-This change make the size from fls(0x1000_0000) to fls(0x1000_0001), not
-really change the values.
-
-I will update the commit message and add the information mentioned
-above.
-
-Thanks for your kindly review.
-
->  > -- 
-> > 2.6.4
-> > 
-
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index f1e2922..915f701 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1575,31 +1575,21 @@ static int __arm_iommu_mmap_attrs(struct device *dev, struct vm_area_struct *vma
+ 		    void *cpu_addr, dma_addr_t dma_addr, size_t size,
+ 		    unsigned long attrs)
+ {
+-	unsigned long uaddr = vma->vm_start;
+-	unsigned long usize = vma->vm_end - vma->vm_start;
+ 	struct page **pages = __iommu_get_pages(cpu_addr, attrs);
+ 	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-	unsigned long off = vma->vm_pgoff;
++	int err;
+ 
+ 	if (!pages)
+ 		return -ENXIO;
+ 
+-	if (off >= nr_pages || (usize >> PAGE_SHIFT) > nr_pages - off)
++	if (vma->vm_pgoff >= nr_pages)
+ 		return -ENXIO;
+ 
+-	pages += off;
+-
+-	do {
+-		int ret = vm_insert_page(vma, uaddr, *pages++);
+-		if (ret) {
+-			pr_err("Remapping memory failed: %d\n", ret);
+-			return ret;
+-		}
+-		uaddr += PAGE_SIZE;
+-		usize -= PAGE_SIZE;
+-	} while (usize > 0);
++	err = vm_insert_range(vma, pages, nr_pages);
++	if (err)
++		pr_err("Remapping memory failed: %d\n", err);
+ 
+-	return 0;
++	return err;
+ }
+ static int arm_iommu_mmap_attrs(struct device *dev,
+ 		struct vm_area_struct *vma, void *cpu_addr,
+-- 
+1.9.1
 
