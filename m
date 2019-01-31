@@ -2,136 +2,139 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C418EC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABF3C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90099218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:40:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D27C2218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:41:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="oTlYPCBw"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KQ7ACXeo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbfAaSkM (ORCPT
+        id S1727579AbfAaSlS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:40:12 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50800 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbfAaSkM (ORCPT
+        Thu, 31 Jan 2019 13:41:18 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33347 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbfAaSlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 13:40:12 -0500
-Received: by mail-wm1-f66.google.com with SMTP id n190so3600696wmd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:40:11 -0800 (PST)
+        Thu, 31 Jan 2019 13:41:18 -0500
+Received: by mail-lf1-f67.google.com with SMTP id i26so3154902lfc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:41:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=owLbYclAuN3GBERSCEViDZYVHBagSDsGPMPw2l2m+P0=;
-        b=oTlYPCBwFzOpuwn9c8u1+7bH8vbYS2kxONB4bj0bpfn7Hoz1JGJ3g/ER3WQ86zYIid
-         w+LLnOxBNer1rhdOPn3VAab85kkQIsazlTYYqOtISv86jIWnUr8MSzObbexV4Nh4+KPt
-         dQgI+4/rAsne71YfnZdWiJuyaAIP1VkENzMftoaN19X01t8sCI0BS0Ri0B8UKlo3QhTj
-         XYAvPY7FahMVhjx7V42mIF+pBImhR1aJf/jOKl9s+rMWqjXAOWEJsjKaJ2BsYYDsPQvp
-         jRqohkarJ+JX94/0S5//8GFOJGNGvdAkOigyxYj3nEbqRS+EN+NNAveFpW5A0nklrG96
-         y4nw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=piYNYv4PDsYfyxUQBlLsMZX4BiSoVGoWHLxLb7BvlRs=;
+        b=KQ7ACXeoPHbZzGK3z5JqRup4ehfx5tPxaRbQpyWz3ZYfcE0X7cWs9KxiT0zddtYwNu
+         KaNeZB0IEsETe+qw8kSVZWTI982T3206iUAMOSCTlyrD8/f/7fjTnWkcdeDSfbAPD5K9
+         V1oEbO4Qxz+EKV0uej37DOyfWX1pmFiU8g8hY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=owLbYclAuN3GBERSCEViDZYVHBagSDsGPMPw2l2m+P0=;
-        b=PIYBvt8JH/LYeNf28JCU9vYON3mJ8oBT4CZsgfUrCYq5oEAtr6eLgh6f1g3WNjtGs7
-         RI101iV45x5VT6OtEpJwKH2BlaDKl8uBvRF10lggf5M3TWqlts6PpTkE/2paBH/pMUme
-         4YkcUJ9SIQFT5DtZC1tmxCLEln7osoTLd+bKXiFgFhbVigOFqeTZ7Cn/z/ABbssjp8i3
-         1DVancoPf63fJHDe1SUCCkGK2xRf7mqFIN4i+0M1izouGThXwZOg8HP0Zp7WgV5fENU0
-         zhcx5S/4qLvv5iDG6bHn1UryyxjuAMSz1RTbtyW3RHQGVuSzpv2uhCZJzaV7pFk8GEHQ
-         zXeQ==
-X-Gm-Message-State: AJcUukeIiCGWeKTUoa7WKlWl6nez6UxbvHAilNTMrPGvuOO7mbXc0FuR
-        etmgCLWu/k+cdYtnYIy35k384A==
-X-Google-Smtp-Source: ALg8bN6uhDo9QzubQQJ4RZYqY4J4n+S2oQ/BTN8Sr8SYIqAuTjFvF6uifoGd+mpBNZHX5lMzMhePSA==
-X-Received: by 2002:a1c:68d7:: with SMTP id d206mr29377794wmc.43.1548960010400;
-        Thu, 31 Jan 2019 10:40:10 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id z14sm3761305wrm.48.2019.01.31.10.40.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 31 Jan 2019 10:40:09 -0800 (PST)
-Message-ID: <97c2375f41fe7dabc4d71f66c9808912eb0ce611.camel@baylibre.com>
-Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-Date:   Thu, 31 Jan 2019 19:40:07 +0100
-In-Reply-To: <154888381385.169292.12776041058756822056@swboyd.mtv.corp.google.com>
-References: <20190129061021.94775-1-sboyd@kernel.org>
-         <20190129061021.94775-3-sboyd@kernel.org>
-         <e303573aefeaf6a7e3a4b1d820e801354ff900b4.camel@baylibre.com>
-         <154879654428.136743.10048771201181501034@swboyd.mtv.corp.google.com>
-         <ff76dcdb4ceb3209619e5348ed7b575a8ae9df8d.camel@baylibre.com>
-         <154888381385.169292.12776041058756822056@swboyd.mtv.corp.google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=piYNYv4PDsYfyxUQBlLsMZX4BiSoVGoWHLxLb7BvlRs=;
+        b=YfDf5O9Cu2aUTMYDuDFtgyjzB4KLfS/FY2bu5MK2iZT00InhQExeOoFRUoeL3w7en3
+         qf/lnJ7RQj0g0JI5+B2viIULQIkEpZUIySJ2Iy+/58SV4P20otQ71NLus7t6BIx7V4Al
+         SjID+dX438+SRrby4esJOXj2Nc25xp3vn8XPUGVb4RMFhbH17cugrt3OAFqvmGrKTyOw
+         6bYpr1L4FFVSeKoD1cKfeyJl/75qsRCbh03Mc4uv6DSnAT5RFL6U4E3/007A9oJ8kPDw
+         Hdmkyf+VMNG34EhlchFCi2uZtxC1JIC08ZuugHidyxUjjvJFPJxDw/RkomRff+S5Jwg+
+         d9UA==
+X-Gm-Message-State: AJcUukcMRyEDOn+vVehKiz+671rQon567O6hRBqoxhKej89sMICnBKQC
+        BcGvSNcIqZBLr4vq9mmtA1R2GQpZ80I=
+X-Google-Smtp-Source: ALg8bN7XYUHQ16Fn0i7HWJNQ9wK/M0kIoCUKX2FuvJ6LfwLct4DHVZuXbEHYiLrkHWqyqGLlEKhq7g==
+X-Received: by 2002:ac2:53b1:: with SMTP id j17mr27179624lfh.167.1548960075713;
+        Thu, 31 Jan 2019 10:41:15 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id k11-v6sm910155ljk.40.2019.01.31.10.41.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 10:41:14 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id a16so3145135lfg.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:41:14 -0800 (PST)
+X-Received: by 2002:a19:24c6:: with SMTP id k189mr28273278lfk.77.1548960074256;
+ Thu, 31 Jan 2019 10:41:14 -0800 (PST)
+MIME-Version: 1.0
+References: <20190130203036.11220-1-agruenba@redhat.com>
+In-Reply-To: <20190130203036.11220-1-agruenba@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 31 Jan 2019 10:40:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg87Y=39-_caKv6apLx4dfyC3ZdaoLvd3xz5zjONbw_Nw@mail.gmail.com>
+Message-ID: <CAHk-=wg87Y=39-_caKv6apLx4dfyC3ZdaoLvd3xz5zjONbw_Nw@mail.gmail.com>
+Subject: Re: [PATCH] gfs2: Revert "Fix loop in gfs2_rbm_find"
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-30 at 13:30 -0800, Stephen Boyd wrote:
-> > With this quirk, CCF is making an assumption that might be wrong.
-> > 
-> > The quirk is very easy put in the get_parent() callback of the said
-> > driver, or
-> > even better, don't provide the callback if it should not be called.
-> > 
-> > I understand the need for a cautious approach. It seems I'm only one with
-> > that
-> > issue right now and since I have a work around, there is no rush. But we
-> > must
-> > have plan to make it right.
-> > 
-> > To be clear, I'm not against your new API but I don't think it should be a
-> > reason to keep a broken behavior the framework.
-> > 
-> 
-> So do you think you can use this new clk_op and ignore the problems with
-> the .get_parent clk op? Putting effort into fixing the .get_parent
-> design isn't very useful from my perspective. There's more than just the
-> problem that we don't call it when .num_parents is 1. There's the
-> inability to return errors without doing weird things to return an index
-> out of range and there isn't any way for us to really know if the clk is
-> an orphan or not. If we can migrate all drivers to use the new clk op
-> then we can fix these problems too, and deprecate and eventually remove
-> the broken by design .get_parent clk op API.
+On Wed, Jan 30, 2019 at 12:30 PM Andreas Gruenbacher
+<agruenba@redhat.com> wrote:
+>
+> This reverts commit 2d29f6b96d8f80322ed2dd895bca590491c38d34.
+>
+> It turns out that the fix can lead to a ~20 percent performance regression
+> in initial writes to the page cache according to iozone.  Let's revert this
+> for now to have more time for a proper fix.
 
-Stephen, I have nothing against your new API, I'm sure it will solve many
-issues
+Ugh. I think part of the problem is that the
 
-I'm also quite sure that, like round_rate() and determine_rate(), migrating to
-the new API won't happen overnight. We are likely to still see get_parent()
-for a while. I don't understand why we would keep something wrong when it is
-that easy to fix.
+        n += (rbm->bii - initial_bii);
 
-I have spent quite sometime debugging this weird behavior of CCF, I'd prefer
-if it can avoided for others.
+doesn't make any sense when we just set rbm->bii to 0 a couple of
+lines earlier. So it's basically a really odd way to write
 
-Yes, fixing the case I reported does not solves all the problem you have
-mentionned. Keeping this bug does not help either, AFAICT.
+        n -= initial_bii;
 
-The fact is that get_parent() already return out of bound values on some
-occasion, and we already have to deal with this when converting the index to
-parent clk_hw pointer. Doing it in the same way when num_parent == 1 does not
-change anything.
+which in turn really doesn't make any sense _either_.
 
-I really don't understand why you insist on keeping this special case for
-num_parent == 1, when we know it is not coherent.
+So I'l all for reverting the commit because it caused a performance
+regression, but the end result really is all kinds of odd.
 
-Considering, that I already proposed the fix, what is the effort here ?
-If it is fixing the driver that rely this weird thing, I'd be happy to do it.
+Is the bug as simple as "we incremented the iterator counter twice"?
+Because in the -E2BIG case, we first increment it by the difference in
+bii, but then we *also* increment it in res_covered_end_of_rgrp()
+(which we do *not* do for the "ret > 0" case, which goes to
+next_iter).
 
-Regards
-Jerome
+So if somebody can run the performance test again, how does it look if
+*instead* of the revert, we do what looks at least _slightly_ more
+sensible, and move the "increment iteration count" up to the
+next-bitmap case instead?
 
+At that point, it will actually match the bii updates (because
+next_bitmap also updates rbm->bii). Hmm?
+
+Something like the whitespace-damaged thinig below. Completely
+untested. But *if* this works, it would make more sense than the
+revert..
+
+Hmm?
+
+                   Linus
+
+--- snip snip ---
+  diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
+  index 831d7cb5a49c..5b1006d5344f 100644
+  --- a/fs/gfs2/rgrp.c
+  +++ b/fs/gfs2/rgrp.c
+  @@ -1796,10 +1796,10 @@ static int gfs2_rbm_find(struct gfs2_rbm
+*rbm, u8 state, u32 *minext,
+                rbm->bii++;
+                if (rbm->bii == rbm->rgd->rd_length)
+                        rbm->bii = 0;
+  +             n++;
+   res_covered_end_of_rgrp:
+                if ((rbm->bii == 0) && nowrap)
+                        break;
+  -             n++;
+   next_iter:
+                if (n >= iters)
+                        break;
