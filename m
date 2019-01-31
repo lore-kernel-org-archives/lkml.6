@@ -2,121 +2,165 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8249DC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D03CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39FFD2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:45:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58D7E2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:45:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="WyQ84527"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Q2Sm5zwz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388554AbfAaQpj (ORCPT
+        id S2388613AbfAaQpp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:45:39 -0500
-Received: from mail-eopbgr750125.outbound.protection.outlook.com ([40.107.75.125]:19919
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728813AbfAaQpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:45:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BEPKGNjgbkThNkeaxXpr/K5NjYkxrOAkZOhOv0rzRwg=;
- b=WyQ84527mxfCfjWwhm7GlpuHnJ42URy8FvASOLXOGIB7uBDcDWruUopiDX6e/fJ9pFYEBasQW0cfRcskJzIGSCISZR3dDBH/FPIR4fSsDKr09kKvvZzBq/ycylGZgISa0NwfNUVnB8jiQ7BGsjYnmHphHsXBsfKcJLYASG0j80E=
-Received: from DM5PR2101MB0918.namprd21.prod.outlook.com (52.132.132.163) by
- DM5PR2101MB1063.namprd21.prod.outlook.com (52.132.128.39) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.4; Thu, 31 Jan 2019 16:45:35 +0000
-Received: from DM5PR2101MB0918.namprd21.prod.outlook.com
- ([fe80::15b:c868:d1bd:c781]) by DM5PR2101MB0918.namprd21.prod.outlook.com
- ([fe80::15b:c868:d1bd:c781%9]) with mapi id 15.20.1601.007; Thu, 31 Jan 2019
- 16:45:35 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     Sasha Levin <sashal@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        kimbrownkd <kimbrownkd@gmail.com>
-CC:     Long Li <longli@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show
- functions
-Thread-Topic: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show
- functions
-Thread-Index: AQHUsfdQr9slvBztV0itgZ+Z8timDaW6pkUAgAAxKgCAAMiIAIAJg9qAgAGHowCAAuF3AIAAFypQ
-Date:   Thu, 31 Jan 2019 16:45:35 +0000
-Message-ID: <DM5PR2101MB091847B2B68D7F9F2050CE45D7910@DM5PR2101MB0918.namprd21.prod.outlook.com>
-References: <20190122020759.GA4054@ubu-Virtual-Machine>
- <PU1P153MB0169EB8CFC0A69407A8AE2C2BF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20190122064246.GA28613@ubu-Virtual-Machine>
- <PU1P153MB01696D28CDDC098307EBD5AFBF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20190128195845.GA3723@ubu-Virtual-Machine>
- <PU1P153MB01699B96311157EA9DF515E6BF970@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20190131151958.GT3973@sasha-vm>
-In-Reply-To: <20190131151958.GT3973@sasha-vm>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-01-31T16:45:32.5707193Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=fb886720-697f-49cc-8821-d3a52c84d815;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-x-originating-ip: [24.22.167.197]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1063;6:LTcvlMw67CntkSWVODpGYzZPeOy0wlip9IZcZmAVLmmMKmcb2IgV1Nqa5Rq9HOljHpayzpAmYe5Tn+AMylTI/deNXYFBP+KvZG79QYS7G4uG1SoUEOAIRAeyVYUVee613wIn98Otjyf3mWUVnRhyRvj3bFUE0nbDGvFNlfUSVFi/vcnXdXXa8UdaoHLHqsMAdQZ7o8N9hoDgs8ABX3HaVfWRnvxKF2g7HJkqEAo2tGxbTh0QRzLRH7tHLnyyEyLuGf5RLelqBg261aZVt6kQRm6UiIONO1MdTL//2DypiQ5CPxn8Kipm2IEgHaopUloZ0ngUWPSQ1JdBAtKm01mhM+e4HercyHQDhvoyzP/xnLfwrJWwB6DQfUerppoNQy/IHWoPFQG83PhyNqywVi0xrf/QoZIf2LdJZzdHOC7vj1LZp/cZylbjcu2u89t3jQLhZD1q537kGKF3+OR0ZJBM/A==;5:fXtLT9oNXeyI0niXRQq1tlxhLBwGoVIpqhkQGRNpKtY6PXxAkcS/OKzanF/75WxlAr03brPEUAccPV6YWLtt+HEvrR6zrfRA/jtzK4vdy208l0K73ET+o7MBjF4rCjMwvILhthtMG0OPlJfG62pe4hkeLV8WdplHFNgip+ZeE+y3DDPbLjIL89WbNfQbn4t/Tehsggq+ASDhYw0gcH0wSg==;7:dV6uV3X4S9JdRF7dENDEM+6Da6Ez1wlYcjmLy28FicEzDwdoQaix9tkb8t4MrjMHk4RaOlR8aOQudMXDpyxe1Zn2EgSyAfJtyQXK2EIW3gvQn0ybkaiJysh6X2kpk33qlWhc7F1R8vkFT/FznqQGdA==
-x-ms-office365-filtering-correlation-id: 36e55795-705f-4565-2da8-08d6879b85c7
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM5PR2101MB1063;
-x-ms-traffictypediagnostic: DM5PR2101MB1063:
-x-ms-exchange-purlcount: -3
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <DM5PR2101MB10635D229D8CE0DB6E14BF7DD7910@DM5PR2101MB1063.namprd21.prod.outlook.com>
-x-forefront-prvs: 09347618C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(136003)(346002)(39860400002)(366004)(199004)(189003)(3846002)(10090500001)(68736007)(8990500004)(186003)(86612001)(71200400001)(4744005)(76176011)(97736004)(71190400001)(6346003)(6506007)(256004)(14444005)(99286004)(26005)(86362001)(7696005)(6116002)(102836004)(7736002)(81156014)(53936002)(478600001)(2906002)(81166006)(66066001)(22452003)(1511001)(105586002)(10290500003)(4326008)(229853002)(33656002)(39060400002)(6246003)(305945005)(106356001)(316002)(486006)(446003)(11346002)(476003)(9686003)(14454004)(6436002)(74316002)(93886005)(25786009)(54906003)(8676002)(55016002)(8936002)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1063;H:DM5PR2101MB0918.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: RDosqDiKNX62bwefjqlaaYjvTZ53VTcprN3e843+YnH261YpwiPndqFSmLq62AFVIx7iD1PMlOM03L4qgW8umDXcfDmV2qNCSM6JCzP7jhjjs1toLcvh9w+YO0NPLdHHILObK7pDPlZVHLDKi9KZ0Nq/ES6DDsnJAmm4MyLP5BaVX6AuVmZGz2nAgSiLJ5VeZFwIYBn61R32fWKZ6T2z7NXuwUQxuQgZDDiz1oZiZkdgkSc+lzQc/w9o0tMS4pigXNlQ0SgNS3A3zAfsHuE5fsL6GhRdU+BryAUeIGRQoz8UlbvD+u1dVHxzFIywVUo6W4caGbDjdAp7K8LQt3QxbCrHrQ45y+azeo9GgUkpekJVDpww9WrJ4N9x0K7Gw5PTivNPD8iTRBWPxgYlhr9GRiIoSLQutx5kSgjNgCB+Y6s=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 31 Jan 2019 11:45:45 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49108 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728813AbfAaQpm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:45:42 -0500
+Received: from pendragon.ideasonboard.com (85-76-34-136-nat.elisa-mobile.fi [85.76.34.136])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id ED13A41;
+        Thu, 31 Jan 2019 17:45:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1548953139;
+        bh=NrVecNyXK51VGu7P/mbRdvOqLoQktnXAnKwQ0R2KQmY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q2Sm5zwzUL5QyrHV+RAj+SOnqnXHvhLeq6tWHjzvFVRFcnEpcEC+Bdv6wWHnuxYA4
+         x/+rDGLRwo8Nf1tpAdxAW25o5as9aKUlDiue8UEPVdml1lyN5g0r0OL2BrSHP2+Wna
+         doRPNoI9hIeYa093bYIY4p3HsmNWoBBjNw2C0gA4=
+Date:   Thu, 31 Jan 2019 18:45:36 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     a.hajda@samsung.com, Philipp Zabel <p.zabel@pengutronix.de>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        maxime.ripard@bootlin.com, dri-devel@lists.freedesktop.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] drm/meson: Add support for HDMI2.0 4k60
+Message-ID: <20190131164536.GA4674@pendragon.ideasonboard.com>
+References: <20190115123315.11069-1-narmstrong@baylibre.com>
+ <a3de23a8-3fa4-f8c5-5b2a-33109c09a863@baylibre.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36e55795-705f-4565-2da8-08d6879b85c7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 16:45:35.2228
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1063
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a3de23a8-3fa4-f8c5-5b2a-33109c09a863@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sasha Levin <sashal@kernel.org> Sent: Thursday, January 31, 2019 7:20=
- AM
->=20
-> I've queued this one for hyper-fixes, thanks all!
->=20
+Hi Neil,
 
-Actually, please hold off on queuing this one.  In a conversation I had yes=
-terday with Kim, they had identified a deadlock.  Kim was going to be looki=
-ng at some revisions to avoid the deadlock.
+On Thu, Jan 31, 2019 at 02:25:30PM +0100, Neil Armstrong wrote:
+> On 15/01/2019 13:33, Neil Armstrong wrote:
+> > This patchset aims to add support for the following HDMI2.0 4k60 modes:
+> > - 594Mhz TMDS frequency needing TMDS Scramling and 1/40 rate for RGB/YUV4:4:4
+> > - 297MHz TMDS frequency with YUV4:2:0 encoding
+> > 
+> > The first mode uses the SCDC helpers introduced by intel to :
+> > - discover where the monitor support SCDC
+> > - setup the SCDC parameters
+> > This is implemented in the dw-hdmi bridge driver by handling scrambling
+> > support during the bridge setup and by exporting an helper for the PHY
+> > setup to setup the SCDC configuration for the 1/40 TMDS rate.
+> > This code will only be active if the encoder support a TMDS rate > 340MHz.
+> > 
+> > This patch could eventually break support on different SoC when connected
+> > on a 4k60 monitor with SCDC :
+> > - i.MX correctly discards pixel clocks > 216MHz
+> > - R-CAR discards discards pixel clocks > 297MHz since [1]
+> > - Rockchip discards invalid pixel clocks not in the rockchip_mpll_cfg table
+> > - sun8i correctly discards pixel clocks > 297MHz on a83t
+> > - sun8i discards discards pixel clocks > 594Mhz on h6, which is already broken
+> > 
+> > First patch should fix support for Allwinner H6.
+> > 
+> > The second mode is implemented by added the missing 4:2:0 bypass handling
+> > in the dw-hdmi bridge driver and adding a "mtmdsclock" separating the
+> > pixel clock from the tmds clock in the mode setup phase.
+> > We also enable support for these modes in the connector only if the platform
+> > glue code explicits the support.
+> 
+> Do you think patches 1-4 could be applied ?
 
-Kim -- please confirm.
+I would have liked it if there could be a way to avoid exporting
+dw_hdmi_set_high_tmds_clock_ratio() in patch 1/8, but if that's not
+possible, so be it (I haven't researched that myself). No issue with
+patches 2/8 to 4/8.
 
-Michael
+> Then we could focus on how we manage the bus format between the encoder
+> and the bridge ?
+> 
+> Especially patch 5 linked to patch 7.
+> 
+> Will one of you be at FOSDEM 2019 ? we could chat about this.
+
+I will be there on Sunday, likely from around 11:00.
+
+> Following subjects on the table will be :
+> - HDR metadata transmission aligned with the last patchset sent by intel-gfx
+> - Colorspace connector property aligned with the last patchset sent by intel-gfx
+> - HDCP 1.4 and 2.2 handling
+> 
+> > Only the meson DRM dw_hdmi glue allows ycbcr420 modes, so no breakage
+> > is expected here.
+> > 
+> > The remaining patches adds support for :
+> > - 1/40 TMDS rate aka DIV40 in the dw-hdmi meson PHY setup
+> > - 4:2:0 output and clock setup
+> > 
+> > The dw-hdmi support re-uses the support done by Rockchip engineers on the
+> > Linux 4.4 BSP kernel.
+> > 
+> > These modes has been validated using a MuxLab HDMI Signal Analyser in
+> > addition to different UHD TVs supporting full 4k60 or the 4:2:0 variant.
+> > 
+> > Changes since RFC v2 at [3]:
+> > - Collected tested-by and reviewed-by tags
+> > - Changed if condition in "add HDMI div40 TMDS mode"
+> > - Updated "Add YUV420 output support" with the same if condition
+> > 
+> > Changes since RFC v1 at [2]:
+> > - Fix all comments from Laurent :
+> > - Add define for HDMI 1.4 max tmds clock and SCDC supported version
+> > - Call dw_hdmi_set_high_tmds_clock_ratio() in dw_hdmi_phy_enable_powerdown()
+> > to unbreak Allwinner H6
+> > - Pass in_t(u8, bytes, SCDC_MIN_SOURCE_VERSION) as SCDC version
+> > - Finally add comments for SCDC and Scrambling process
+> > 
+> > [1] https://patchwork.freedesktop.org/patch/263616/
+> > [2] https://patchwork.freedesktop.org/series/52950/#rev1
+> > [3] https://patchwork.freedesktop.org/series/52950/#rev2
+> > 
+> > Neil Armstrong (7):
+> >   drm/bridge: dw-hdmi: Add SCDC and TMDS Scrambling support
+> >   drm/meson: add HDMI div40 TMDS mode
+> >   drm/meson: add support for HDMI2.0 2160p modes
+> >   drm/bridge: dw-hdmi: add support for YUV420 output
+> >   drm/bridge: dw-hdmi: allow ycbcr420 modes for >= 0x200a
+> >   drm/meson: Add YUV420 output support
+> >   drm/meson: Output in YUV444 if sink supports it
+> > 
+> > Zheng Yang (1):
+> >   drm/bridge: dw-hdmi: support dynamically get input/out color info
+> > 
+> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 182 +++++++++++++++++++---
+> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |   1 +
+> >  drivers/gpu/drm/meson/meson_dw_hdmi.c     | 128 ++++++++++++---
+> >  drivers/gpu/drm/meson/meson_vclk.c        |  93 ++++++++---
+> >  drivers/gpu/drm/meson/meson_vclk.h        |   7 +-
+> >  drivers/gpu/drm/meson/meson_venc.c        |   8 +-
+> >  drivers/gpu/drm/meson/meson_venc.h        |  11 ++
+> >  drivers/gpu/drm/meson/meson_venc_cvbs.c   |   3 +-
+> >  include/drm/bridge/dw_hdmi.h              |   7 +
+> >  9 files changed, 374 insertions(+), 66 deletions(-)
+
+-- 
+Regards,
+
+Laurent Pinchart
