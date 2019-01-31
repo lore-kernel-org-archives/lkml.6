@@ -2,139 +2,165 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABF3C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 603BEC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D27C2218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:41:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KQ7ACXeo"
+	by mail.kernel.org (Postfix) with ESMTP id 2FBDB218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:44:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548960255;
+	bh=li/wbQZqLc2GiajeYDvMLcmv5dmFcHfzQsmFERlq8k4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OwjjuoJQRKfUTkhI+FpwqbYQcBCTZcZS6wghTZcvdBD6RsvA11oLzaqmqvzQdnbK0
+	 ZHz151UNAsuf9j8Q8U/uwxxJgLqiEpy6rDkyuN4ohAG/xZ0qniit7JeVtMukF0QXIB
+	 f+eykvgFVR72YBoCgKklKpYgOSQ1nYIuE2EDODeQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbfAaSlS (ORCPT
+        id S1727516AbfAaSoN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:41:18 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33347 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfAaSlS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 13:41:18 -0500
-Received: by mail-lf1-f67.google.com with SMTP id i26so3154902lfc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:41:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=piYNYv4PDsYfyxUQBlLsMZX4BiSoVGoWHLxLb7BvlRs=;
-        b=KQ7ACXeoPHbZzGK3z5JqRup4ehfx5tPxaRbQpyWz3ZYfcE0X7cWs9KxiT0zddtYwNu
-         KaNeZB0IEsETe+qw8kSVZWTI982T3206iUAMOSCTlyrD8/f/7fjTnWkcdeDSfbAPD5K9
-         V1oEbO4Qxz+EKV0uej37DOyfWX1pmFiU8g8hY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=piYNYv4PDsYfyxUQBlLsMZX4BiSoVGoWHLxLb7BvlRs=;
-        b=YfDf5O9Cu2aUTMYDuDFtgyjzB4KLfS/FY2bu5MK2iZT00InhQExeOoFRUoeL3w7en3
-         qf/lnJ7RQj0g0JI5+B2viIULQIkEpZUIySJ2Iy+/58SV4P20otQ71NLus7t6BIx7V4Al
-         SjID+dX438+SRrby4esJOXj2Nc25xp3vn8XPUGVb4RMFhbH17cugrt3OAFqvmGrKTyOw
-         6bYpr1L4FFVSeKoD1cKfeyJl/75qsRCbh03Mc4uv6DSnAT5RFL6U4E3/007A9oJ8kPDw
-         Hdmkyf+VMNG34EhlchFCi2uZtxC1JIC08ZuugHidyxUjjvJFPJxDw/RkomRff+S5Jwg+
-         d9UA==
-X-Gm-Message-State: AJcUukcMRyEDOn+vVehKiz+671rQon567O6hRBqoxhKej89sMICnBKQC
-        BcGvSNcIqZBLr4vq9mmtA1R2GQpZ80I=
-X-Google-Smtp-Source: ALg8bN7XYUHQ16Fn0i7HWJNQ9wK/M0kIoCUKX2FuvJ6LfwLct4DHVZuXbEHYiLrkHWqyqGLlEKhq7g==
-X-Received: by 2002:ac2:53b1:: with SMTP id j17mr27179624lfh.167.1548960075713;
-        Thu, 31 Jan 2019 10:41:15 -0800 (PST)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id k11-v6sm910155ljk.40.2019.01.31.10.41.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 10:41:14 -0800 (PST)
-Received: by mail-lf1-f54.google.com with SMTP id a16so3145135lfg.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:41:14 -0800 (PST)
-X-Received: by 2002:a19:24c6:: with SMTP id k189mr28273278lfk.77.1548960074256;
- Thu, 31 Jan 2019 10:41:14 -0800 (PST)
+        Thu, 31 Jan 2019 13:44:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726233AbfAaSoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 13:44:13 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EF5A218AC;
+        Thu, 31 Jan 2019 18:44:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548960251;
+        bh=li/wbQZqLc2GiajeYDvMLcmv5dmFcHfzQsmFERlq8k4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qv4sOcLMVTmjxvIJ70UkJJRo7fLlkII4yZB7PNdrbh74IT/N+x9bWF0coIWefczps
+         h2MwrYXrAGx9yzcVydGQE0OceLWKwptifYoejapP0lR6pxQ+h7aqqBjt9Y7oohUI+k
+         U+XTDL7hHCI1sXbmflnqFL9SqhdwZcAeT3x8drT8=
+Date:   Thu, 31 Jan 2019 19:44:09 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Li,Rongqing" <lirongqing@baidu.com>
+Cc:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "gkohli@codeaurora.org" <gkohli@codeaurora.org>
+Subject: Re: =?utf-8?B?562U5aSNOiBbUEFUQ0hdW1Y1?= =?utf-8?Q?=5D?= tty: fix
+ race between flush_to_ldisc and tty_open
+Message-ID: <20190131184409.GA5238@kroah.com>
+References: <1548927796-11348-1-git-send-email-lirongqing@baidu.com>
+ <20190131105527.GB8271@kroah.com>
+ <22a5d8639b154119af7d7661e17025f2@baidu.com>
 MIME-Version: 1.0
-References: <20190130203036.11220-1-agruenba@redhat.com>
-In-Reply-To: <20190130203036.11220-1-agruenba@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 31 Jan 2019 10:40:58 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg87Y=39-_caKv6apLx4dfyC3ZdaoLvd3xz5zjONbw_Nw@mail.gmail.com>
-Message-ID: <CAHk-=wg87Y=39-_caKv6apLx4dfyC3ZdaoLvd3xz5zjONbw_Nw@mail.gmail.com>
-Subject: Re: [PATCH] gfs2: Revert "Fix loop in gfs2_rbm_find"
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <22a5d8639b154119af7d7661e17025f2@baidu.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 12:30 PM Andreas Gruenbacher
-<agruenba@redhat.com> wrote:
->
-> This reverts commit 2d29f6b96d8f80322ed2dd895bca590491c38d34.
->
-> It turns out that the fix can lead to a ~20 percent performance regression
-> in initial writes to the page cache according to iozone.  Let's revert this
-> for now to have more time for a proper fix.
+On Thu, Jan 31, 2019 at 11:15:48AM +0000, Li,Rongqing wrote:
+> 
+> 
+> > -----邮件原件-----
+> > 发件人: linux-kernel-owner@vger.kernel.org
+> > [mailto:linux-kernel-owner@vger.kernel.org] 代表 Greg Kroah-Hartman
+> > 发送时间: 2019年1月31日 18:55
+> > 收件人: Li,Rongqing <lirongqing@baidu.com>
+> > 抄送: linux-serial@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > jslaby@suse.com; gkohli@codeaurora.org
+> > 主题: Re: [PATCH][V5] tty: fix race between flush_to_ldisc and tty_open
+> > 
+> > On Thu, Jan 31, 2019 at 05:43:16PM +0800, Li RongQing wrote:
+> > > There still is a race window after the commit b027e2298bd588
+> > > ("tty: fix data race between tty_init_dev and flush of buf"), and we
+> > > encountered this crash issue if receive_buf call comes before tty
+> > > initialization completes in tty_open and
+> > > tty->driver_data may be NULL.
+> > >
+> > > CPU0                                    CPU1
+> > > ----                                    ----
+> > >                                   tty_open
+> > >                                    tty_init_dev
+> > >                                      tty_ldisc_unlock
+> > >                                        schedule flush_to_ldisc
+> > > receive_buf
+> > >   tty_port_default_receive_buf
+> > >    tty_ldisc_receive_buf
+> > >     n_tty_receive_buf_common
+> > >       __receive_buf
+> > >        uart_flush_chars
+> > >         uart_start
+> > >         /*tty->driver_data is NULL*/
+> > >                                    tty->ops->open
+> > >                                    /*init tty->driver_data*/
+> > >
+> > > it can be fixed by extending ldisc semaphore lock in tty_init_dev to
+> > > driver_data initialized completely after tty->ops->open(), but this
+> > > will lead to get lock on one function and unlock in some other
+> > > function, and hard to maintain, so fix this race only by checking
+> > > tty->driver_data when receiving, and return if tty->driver_data
+> > > is NULL, and n_tty_receive_buf_common maybe calls uart_unthrottle, so
+> > > add the same check
+> > >
+> > > Signed-off-by: Wang Li <wangli39@baidu.com>
+> > > Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
+> > > Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> > > ---
+> > > V5: move check into uart_start from n_tty_receive_buf_common
+> > > V4: add version information
+> > > V3: not used ldisc semaphore lock, only checking tty->driver_data with
+> > > NULL
+> > > V2: fix building error by EXPORT_SYMBOL tty_ldisc_unlock
+> > > V1: extend ldisc lock to protect that tty->driver_data is inited
+> > >
+> > >  drivers/tty/serial/serial_core.c | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > >
+> > > diff --git a/drivers/tty/serial/serial_core.c
+> > > b/drivers/tty/serial/serial_core.c
+> > > index 5c01bb6d1c24..556f50aa1b58 100644
+> > > --- a/drivers/tty/serial/serial_core.c
+> > > +++ b/drivers/tty/serial/serial_core.c
+> > > @@ -130,6 +130,9 @@ static void uart_start(struct tty_struct *tty)
+> > >  	struct uart_port *port;
+> > >  	unsigned long flags;
+> > >
+> > > +	if (!state)
+> > > +		return;
+> > > +
+> > >  	port = uart_port_lock(state, flags);
+> > >  	__uart_start(tty);
+> > >  	uart_port_unlock(port, flags);
+> > > @@ -727,6 +730,9 @@ static void uart_unthrottle(struct tty_struct *tty)
+> > >  	upstat_t mask = UPSTAT_SYNC_FIFO;
+> > >  	struct uart_port *port;
+> > >
+> > > +	if (!state)
+> > > +		return;
+> > > +
+> > >  	port = uart_port_ref(state);
+> > >  	if (!port)
+> > >  		return;
+> > > --
+> > > 2.16.2
+> > 
+> > 
+> > Hm, I wrote this patch, not you, right?  So shouldn't I get the
+> > credit/blame for it?  :)
+> > 
+> 
+> Welcome you to add your credit/blame/signature
+> and I am not clear the rule, and be afraid to become fake
 
-Ugh. I think part of the problem is that the
+No problem, I've fixed this up when committing this, and added some
+wording change to the changelog text.
 
-        n += (rbm->bii - initial_bii);
+Thanks so much for working through all of this, it's a bug that has
+always been there for forever it seems, nice catch!
 
-doesn't make any sense when we just set rbm->bii to 0 a couple of
-lines earlier. So it's basically a really odd way to write
-
-        n -= initial_bii;
-
-which in turn really doesn't make any sense _either_.
-
-So I'l all for reverting the commit because it caused a performance
-regression, but the end result really is all kinds of odd.
-
-Is the bug as simple as "we incremented the iterator counter twice"?
-Because in the -E2BIG case, we first increment it by the difference in
-bii, but then we *also* increment it in res_covered_end_of_rgrp()
-(which we do *not* do for the "ret > 0" case, which goes to
-next_iter).
-
-So if somebody can run the performance test again, how does it look if
-*instead* of the revert, we do what looks at least _slightly_ more
-sensible, and move the "increment iteration count" up to the
-next-bitmap case instead?
-
-At that point, it will actually match the bii updates (because
-next_bitmap also updates rbm->bii). Hmm?
-
-Something like the whitespace-damaged thinig below. Completely
-untested. But *if* this works, it would make more sense than the
-revert..
-
-Hmm?
-
-                   Linus
-
---- snip snip ---
-  diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
-  index 831d7cb5a49c..5b1006d5344f 100644
-  --- a/fs/gfs2/rgrp.c
-  +++ b/fs/gfs2/rgrp.c
-  @@ -1796,10 +1796,10 @@ static int gfs2_rbm_find(struct gfs2_rbm
-*rbm, u8 state, u32 *minext,
-                rbm->bii++;
-                if (rbm->bii == rbm->rgd->rd_length)
-                        rbm->bii = 0;
-  +             n++;
-   res_covered_end_of_rgrp:
-                if ((rbm->bii == 0) && nowrap)
-                        break;
-  -             n++;
-   next_iter:
-                if (n >= iters)
-                        break;
+greg k-h
