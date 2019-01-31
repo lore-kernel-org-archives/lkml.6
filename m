@@ -2,91 +2,120 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 422B0C282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D59C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:00:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC1720B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:58:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ABFC218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbfAaU6U (ORCPT
+        id S1728256AbfAaVAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:58:20 -0500
-Received: from mga12.intel.com ([192.55.52.136]:24553 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726802AbfAaU6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:58:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:58:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
-   d="scan'208";a="315311785"
-Received: from djiang5-mobl2.amr.corp.intel.com (HELO [10.255.72.219]) ([10.255.72.219])
-  by fmsmga006.fm.intel.com with ESMTP; 31 Jan 2019 12:58:19 -0800
-Subject: Re: [PATCH 0/9] Support using MSI interrupts in ntb_transport
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kselftest@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Allen Hubbe <allenbh@gmail.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>
-References: <20190131185656.17972-1-logang@deltatee.com>
- <345197a6-89e6-c0de-5f7b-a646b5f396c9@intel.com>
- <bafe9db4-6d5b-0453-d7e7-e49e9293dd01@deltatee.com>
-From:   Dave Jiang <dave.jiang@intel.com>
-Message-ID: <ea7b7c3c-8ed5-51ec-022a-7d28a5afce82@intel.com>
-Date:   Thu, 31 Jan 2019 13:58:18 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:65.0) Gecko/20100101
- Thunderbird/65.0
+        Thu, 31 Jan 2019 16:00:08 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:24663 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbfAaVAI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 16:00:08 -0500
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0VL06kl083929;
+        Fri, 1 Feb 2019 06:00:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Fri, 01 Feb 2019 06:00:06 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0VKxx1L083877
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 1 Feb 2019 06:00:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2] mm, oom: Tolerate processes sharing mm with different
+ view of oom_score_adj.
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+        Yong-Taek Lee <ytk.lee@samsung.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1547636121-9229-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20190116110937.GI24149@dhcp22.suse.cz>
+ <88e10029-f3d9-5bb5-be46-a3547c54de28@I-love.SAKURA.ne.jp>
+ <20190116121915.GJ24149@dhcp22.suse.cz>
+ <6118fa8a-7344-b4b2-36ce-d77d495fba69@i-love.sakura.ne.jp>
+ <20190116134131.GP24149@dhcp22.suse.cz>
+ <20190117155159.GA4087@dhcp22.suse.cz>
+ <edad66e0-1947-eb42-f4db-7f826d3157d7@i-love.sakura.ne.jp>
+ <20190131071130.GM18811@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <5fd73d87-3e4b-f793-1976-b937955663e3@i-love.sakura.ne.jp>
+Date:   Fri, 1 Feb 2019 05:59:55 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <bafe9db4-6d5b-0453-d7e7-e49e9293dd01@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190131071130.GM18811@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019/01/31 16:11, Michal Hocko wrote:
+> On Thu 31-01-19 07:49:35, Tetsuo Handa wrote:
+>> This patch reverts both commit 44a70adec910d692 ("mm, oom_adj: make sure
+>> processes sharing mm have same view of oom_score_adj") and commit
+>> 97fd49c2355ffded ("mm, oom: kill all tasks sharing the mm") in order to
+>> close a race and reduce the latency at __set_oom_adj(), and reduces the
+>> warning at __oom_kill_process() in order to minimize the latency.
+>>
+>> Commit 36324a990cf578b5 ("oom: clear TIF_MEMDIE after oom_reaper managed
+>> to unmap the address space") introduced the worst case mentioned in
+>> 44a70adec910d692. But since the OOM killer skips mm with MMF_OOM_SKIP set,
+>> only administrators can trigger the worst case.
+>>
+>> Since 44a70adec910d692 did not take latency into account, we can "hold RCU
+>> for minutes and trigger RCU stall warnings" by calling printk() on many
+>> thousands of thread groups. Also, current code becomes a DoS attack vector
+>> which will allow "stalling for more than one month in unkillable state"
+>> simply printk()ing same messages when many thousands of thread groups
+>> tried to iterate __set_oom_adj() on each other.
+>>
+>> I also noticed that 44a70adec910d692 is racy [1], and trying to fix the
+>> race will require a global lock which is too costly for rare events. And
+>> Michal Hocko is thinking to change the oom_score_adj implementation to per
+>> mm_struct (with shadowed score stored in per task_struct in order to
+>> support vfork() => __set_oom_adj() => execve() sequence) so that we don't
+>> need the global lock.
+>>
+>> If the worst case in 44a70adec910d692 happened, it is an administrator's
+>> request. Therefore, before changing the oom_score_adj implementation,
+>> let's eliminate the DoS attack vector first.
+> 
+> This is really ridiculous. I have already nacked the previous version
+> and provided two ways around. The simplest one is to drop the printk.
+> The second one is to move oom_score_adj to the mm struct. Could you
+> explain why do you still push for this?
 
-On 1/31/2019 1:48 PM, Logan Gunthorpe wrote:
->
-> On 2019-01-31 1:20 p.m., Dave Jiang wrote:
->> Does this work when the system moves the MSI vector either via software
->> (irqbalance) or BIOS APIC programming (some modes cause round robin
->> behavior)?
->
-> I don't know how irqbalance works, and I'm not sure what you are
-> referring to by BIOS APIC programming, however I would expect these
-> things would not be a problem.
->
-> The MSI code I'm presenting here doesn't do anything crazy with the
-> interrupts, it allocates and uses them just as any PCI driver would. The
-> only real difference here is that instead of a piece of hardware sending
-> the IRQ TLP, it will be sent through the memory window (which, from the
-> OS's perspective, is just coming from an NTB hardware proxy alias).
->
-> Logan
-Right. I did that as a hack a while back for some silicon errata 
-workaround. When the vector moves, the address for the LAPIC changes. So 
-unless it gets updated, you end up writing to the old location and lose 
-all the new interrupts. irqbalance is a user daemon that rotates the 
-system interrupts around to ensure that not all interrupts are pinned on 
-a single core. I think it's enabled by default on several distros. 
-Although MSIX has nothing to do with the IOAPIC, the mode that the APIC 
-is programmed can have an influence on how the interrupts are delivered. 
-There are certain Intel platforms (I don't know if AMD does anything 
-like that) puts the IOAPIC in a certain configuration that causes the 
-interrupts to be moved in a round robin fashion. I think it's physical 
-flat mode? I don't quite recall. Normally on the low end Xeons. It's 
-probably worth doing a test run with the irqbalance daemon running and 
-make sure you traffic stream doesn't all of sudden stop.
->
+Dropping printk() does not close the race.
+You must propose an alternative patch if you dislike this patch.
+
+> 
+>> [1] https://lkml.kernel.org/r/20181008011931epcms1p82dd01b7e5c067ea99946418bc97de46a@epcms1p8
+>>
+>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Reported-by: Yong-Taek Lee <ytk.lee@samsung.com>
+>> Nacked-by: Michal Hocko <mhocko@suse.com>
+>> ---
+>>  fs/proc/base.c     | 46 ----------------------------------------------
+>>  include/linux/mm.h |  2 --
+>>  mm/oom_kill.c      | 10 ++++++----
+>>  3 files changed, 6 insertions(+), 52 deletions(-)
+>>
