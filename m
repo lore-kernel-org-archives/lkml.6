@@ -2,194 +2,178 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63121C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 760BFC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 260EC218DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:47:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 420E1218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:48:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="MQrH/j/T"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYlUc6mT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732173AbfAaKrq (ORCPT
+        id S1731587AbfAaKsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:47:46 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:46554 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbfAaKrq (ORCPT
+        Thu, 31 Jan 2019 05:48:45 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37644 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726221AbfAaKsp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:47:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=psPKiR4qcw3FV2KUeSkw0WnRxB6bSvZ4S9WD8ziuXhI=;
-        b=MQrH/j/TVU+Uqvva1MRtSE5aytXOudLYU3x50Pb8MmXKc1VwwEo6sVOOgdyzRIHen/JWBYPdT7RsIyo6LLm6+176B+d5Fj5omGl21HqFEbPlGSJ3R0Wy8dLSlo8kYHixu56ssCpXYo6p01J9f0LYDQeDYPRJJFIvyYlPLv4hvd+AAPpg6wPyq3xJ1QbbakPWTon+Y+SGadL5WcgRkzkMB/HdhRq+ZaMJvVz+XhEnfiGqWfIHfU50RCDgqj8KOEQ4YP+4/D3XnYqoeHs5T+lJuXhiOCzYO3QFndZcAmaV7vfhRSD1bHskFOUvhHlelUmhEhrQBsUbjGt7Mh0Pql99bw==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:52651 helo=[192.168.10.176])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1gp9si-0005kY-OA; Thu, 31 Jan 2019 11:47:40 +0100
-Subject: Re: [PATCH v2 4/6] drm/virtio: params struct for
- virtio_gpu_cmd_create_resource_3d()
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>
-References: <20190130094338.14203-1-kraxel@redhat.com>
- <20190130094338.14203-5-kraxel@redhat.com>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <4d3064ef-9993-106a-74b5-73a29c08975e@tronnes.org>
-Date:   Thu, 31 Jan 2019 11:47:38 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 31 Jan 2019 05:48:45 -0500
+Received: by mail-io1-f65.google.com with SMTP id g8so2255609iok.4
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:48:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NOWeD1lffQFlCDDwymLyvgtIZYcUMxhiK45aZewETI0=;
+        b=gYlUc6mT6/fz5ZR8zRy9afeJLjc3P0BjczdHkHsuU2Ql12EWvXneLRBOtjlUqbPkcb
+         FvTnHMuLn0Dl/whbwfBObs0FuW0ju1/UancNiU88GxKHXw63UsO6Ogebr31/TRWigL2b
+         goHFSF1iJoSVwNj9XzkpE7GGLfLax5tpSH0QIjqVzbspfSkERGS+QDqrYsnlNTHg0q9N
+         rVVkfmnv0jJVvaI6KgpKT+/4KLik1BiAs/SVMwYT7uJxhzlnFYoqBH+7+1JN2Z11fmqa
+         8cluw2V2ZaJgZeRfh0J8XY+h+tD6can6KnUdMhvYztOUjRAC2chPCDi8cFZ9OG1Ottt1
+         kYXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NOWeD1lffQFlCDDwymLyvgtIZYcUMxhiK45aZewETI0=;
+        b=heDiZeh4wHqV8KPlcsaf4GNkDbrGTNLNo+n8unO1STBf6vV9wHG9cT5a3ACT1F1oFe
+         QUvSGWrxwhMpjgTFd6Sg7PHmh2i/k8pzQCIw9ZT8Laye1qxPghsrZRRW9xPBHNg02Yeg
+         N4GFERmHeg3VayBAlitOkBlFPrOabUBCc+AwNLoyJ+DY0uXwVJUhYhFSZUYWitVbN+N6
+         e5mQBWeSC8SqCLGrOjAuuDFPulK4HgfLFjCkFcvXzIyclRXoackOJM8klc0VvFsEzuh7
+         LX7mRh9dtqgowe5NGtRZIHmpLcSCI7xFE+POncuOpkMRiqThFlZHj0UY8wT7S+a8+aIo
+         l5Wg==
+X-Gm-Message-State: AHQUAuZbZLQYel1g11ys9w6eNBkf/ddKyNmhbHCzpLWUESaGr2y+AyX7
+        /1kbH7utrRgGdyLgR+cuW25wJfhULR0Rjbs6Okc=
+X-Google-Smtp-Source: AHgI3IaDtS2D+NlBqxxsH/R7SYrIurjsjCV9HsXNkZMTcxatVFVszy6KGK+L4JCE2WpcqxEFfLOx3rlIDW5cesD3r2g=
+X-Received: by 2002:a6b:14c6:: with SMTP id 189mr19651365iou.179.1548931724154;
+ Thu, 31 Jan 2019 02:48:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190130094338.14203-5-kraxel@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+References: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
+ <1528987172-19810-3-git-send-email-yamada.masahiro@socionext.com> <20180615004704.u5gofft7k6ehmhwi@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20180615004704.u5gofft7k6ehmhwi@ast-mbp.dhcp.thefacebook.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Thu, 31 Jan 2019 12:48:33 +0200
+Message-ID: <CAE=NcramE=kqqfq78aXtKLmFSctk7vo-P-478092Lt2c0op_aQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] bpfilter: include bpfilter_umh in assembly instead
+ of using objcopy
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+Hmm, does this approach work if the code is not in a kernel module? I
+tried to use it as part of the kernel image and looks to me the
+bounding symbols _start and _end are not correctly relocated?
 
-Den 30.01.2019 10.43, skrev Gerd Hoffmann:
-> Add 3d resource parameters to virtio_gpu_object_params struct.  With
-> that in place we can use it for virtio_gpu_cmd_resource_create_3d()
-> calls.
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
+--
+Janne
 
-You don't remove the struct virtio_gpu_resource_create_3d definition,
-but it looks like there's no users left?
-
-Noralf.
-
->  drivers/gpu/drm/virtio/virtgpu_drv.h   | 10 +++++++++-
->  drivers/gpu/drm/virtio/virtgpu_ioctl.c | 25 ++++++++++---------------
->  drivers/gpu/drm/virtio/virtgpu_vq.c    | 16 +++++++++++++---
->  3 files changed, 32 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> index a40215c10e..3265e62725 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> @@ -56,6 +56,14 @@ struct virtio_gpu_object_params {
->  	uint32_t height;
->  	unsigned long size;
->  	bool pinned;
-> +	/* 3d */
-> +	uint32_t target;
-> +	uint32_t bind;
-> +	uint32_t depth;
-> +	uint32_t array_size;
-> +	uint32_t last_level;
-> +	uint32_t nr_samples;
-> +	uint32_t flags;
->  };
->  
->  struct virtio_gpu_object {
-> @@ -310,7 +318,7 @@ void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_gpu_device *vgdev,
->  void
->  virtio_gpu_cmd_resource_create_3d(struct virtio_gpu_device *vgdev,
->  				  struct virtio_gpu_object *bo,
-> -				  struct virtio_gpu_resource_create_3d *rc_3d);
-> +				  struct virtio_gpu_object_params *params);
->  void virtio_gpu_ctrl_ack(struct virtqueue *vq);
->  void virtio_gpu_cursor_ack(struct virtqueue *vq);
->  void virtio_gpu_fence_ack(struct virtqueue *vq);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> index 84c2216fd4..431e5d767e 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> @@ -283,7 +283,6 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
->  	struct ttm_validate_buffer mainbuf;
->  	struct virtio_gpu_fence *fence = NULL;
->  	struct ww_acquire_ctx ticket;
-> -	struct virtio_gpu_resource_create_3d rc_3d;
->  	struct virtio_gpu_object_params params = { 0 };
->  
->  	if (vgdev->has_virgl_3d == false) {
-> @@ -307,7 +306,15 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
->  	params.width = rc->width;
->  	params.height = rc->height;
->  	params.size = rc->size;
-> -
-> +	if (vgdev->has_virgl_3d) {
-> +		params.target = rc->target;
-> +		params.bind = rc->bind;
-> +		params.depth = rc->depth;
-> +		params.array_size = rc->array_size;
-> +		params.last_level = rc->last_level;
-> +		params.nr_samples = rc->nr_samples;
-> +		params.flags = rc->flags;
-> +	}
->  	/* allocate a single page size object */
->  	if (params.size == 0)
->  		params.size = PAGE_SIZE;
-> @@ -333,25 +340,13 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
->  			goto fail_unref;
->  		}
->  
-> -		rc_3d.resource_id = cpu_to_le32(qobj->hw_res_handle);
-> -		rc_3d.target = cpu_to_le32(rc->target);
-> -		rc_3d.format = cpu_to_le32(rc->format);
-> -		rc_3d.bind = cpu_to_le32(rc->bind);
-> -		rc_3d.width = cpu_to_le32(rc->width);
-> -		rc_3d.height = cpu_to_le32(rc->height);
-> -		rc_3d.depth = cpu_to_le32(rc->depth);
-> -		rc_3d.array_size = cpu_to_le32(rc->array_size);
-> -		rc_3d.last_level = cpu_to_le32(rc->last_level);
-> -		rc_3d.nr_samples = cpu_to_le32(rc->nr_samples);
-> -		rc_3d.flags = cpu_to_le32(rc->flags);
-> -
->  		fence = virtio_gpu_fence_alloc(vgdev);
->  		if (!fence) {
->  			ret = -ENOMEM;
->  			goto fail_backoff;
->  		}
->  
-> -		virtio_gpu_cmd_resource_create_3d(vgdev, qobj, &rc_3d);
-> +		virtio_gpu_cmd_resource_create_3d(vgdev, qobj, &params);
->  		ret = virtio_gpu_object_attach(vgdev, qobj, fence);
->  		if (ret) {
->  			dma_fence_put(&fence->f);
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> index 363b8b8577..ca93ec6ca3 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-> @@ -826,7 +826,7 @@ void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
->  void
->  virtio_gpu_cmd_resource_create_3d(struct virtio_gpu_device *vgdev,
->  				  struct virtio_gpu_object *bo,
-> -				  struct virtio_gpu_resource_create_3d *rc_3d)
-> +				  struct virtio_gpu_object_params *params)
->  {
->  	struct virtio_gpu_resource_create_3d *cmd_p;
->  	struct virtio_gpu_vbuffer *vbuf;
-> @@ -834,9 +834,19 @@ virtio_gpu_cmd_resource_create_3d(struct virtio_gpu_device *vgdev,
->  	cmd_p = virtio_gpu_alloc_cmd(vgdev, &vbuf, sizeof(*cmd_p));
->  	memset(cmd_p, 0, sizeof(*cmd_p));
->  
-> -	*cmd_p = *rc_3d;
->  	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_RESOURCE_CREATE_3D);
-> -	cmd_p->hdr.flags = 0;
-> +	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
-> +	cmd_p->format = cpu_to_le32(params->format);
-> +	cmd_p->width = cpu_to_le32(params->width);
-> +	cmd_p->height = cpu_to_le32(params->height);
-> +
-> +	cmd_p->target = cpu_to_le32(params->target);
-> +	cmd_p->bind = cpu_to_le32(params->bind);
-> +	cmd_p->depth = cpu_to_le32(params->depth);
-> +	cmd_p->array_size = cpu_to_le32(params->array_size);
-> +	cmd_p->last_level = cpu_to_le32(params->last_level);
-> +	cmd_p->nr_samples = cpu_to_le32(params->nr_samples);
-> +	cmd_p->flags = cpu_to_le32(params->flags);
->  
->  	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
->  	bo->created = true;
-> 
+On Fri, Jun 15, 2018 at 3:48 AM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Thu, Jun 14, 2018 at 11:39:31PM +0900, Masahiro Yamada wrote:
+> > What we want here is to embed a user-space program into the kernel.
+> > Instead of the complex ELF magic, let's simply wrap it in the assembly
+> > with the '.incbin' directive.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> > Changes in v2:
+> >   - Rebase
+> >
+> >  net/bpfilter/Makefile            | 15 ++-------------
+> >  net/bpfilter/bpfilter_kern.c     | 11 +++++------
+> >  net/bpfilter/bpfilter_umh_blob.S |  7 +++++++
+> >  3 files changed, 14 insertions(+), 19 deletions(-)
+> >  create mode 100644 net/bpfilter/bpfilter_umh_blob.S
+> >
+> > diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
+> > index e0bbe75..39c6980 100644
+> > --- a/net/bpfilter/Makefile
+> > +++ b/net/bpfilter/Makefile
+> > @@ -15,18 +15,7 @@ ifeq ($(CONFIG_BPFILTER_UMH), y)
+> >  HOSTLDFLAGS += -static
+> >  endif
+> >
+> > -# a bit of elf magic to convert bpfilter_umh binary into a binary blob
+> > -# inside bpfilter_umh.o elf file referenced by
+> > -# _binary_net_bpfilter_bpfilter_umh_start symbol
+> > -# which bpfilter_kern.c passes further into umh blob loader at run-time
+> > -quiet_cmd_copy_umh = GEN $@
+> > -      cmd_copy_umh = echo ':' > $(obj)/.bpfilter_umh.o.cmd; \
+> > -      $(OBJCOPY) -I binary -O `$(OBJDUMP) -f $<|grep format|cut -d' ' -f8` \
+> > -      -B `$(OBJDUMP) -f $<|grep architecture|cut -d, -f1|cut -d' ' -f2` \
+> > -      --rename-section .data=.init.rodata $< $@
+> > -
+> > -$(obj)/bpfilter_umh.o: $(obj)/bpfilter_umh
+> > -     $(call cmd,copy_umh)
+> > +$(obj)/bpfilter_umh_blob.o: $(obj)/bpfilter_umh
+> >
+> >  obj-$(CONFIG_BPFILTER_UMH) += bpfilter.o
+> > -bpfilter-objs += bpfilter_kern.o bpfilter_umh.o
+> > +bpfilter-objs += bpfilter_kern.o bpfilter_umh_blob.o
+> > diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+> > index 0952257..6de3ae5 100644
+> > --- a/net/bpfilter/bpfilter_kern.c
+> > +++ b/net/bpfilter/bpfilter_kern.c
+> > @@ -10,11 +10,8 @@
+> >  #include <linux/file.h>
+> >  #include "msgfmt.h"
+> >
+> > -#define UMH_start _binary_net_bpfilter_bpfilter_umh_start
+> > -#define UMH_end _binary_net_bpfilter_bpfilter_umh_end
+> > -
+> > -extern char UMH_start;
+> > -extern char UMH_end;
+> > +extern char bpfilter_umh_start;
+> > +extern char bpfilter_umh_end;
+> >
+> >  static struct umh_info info;
+> >  /* since ip_getsockopt() can run in parallel, serialize access to umh */
+> > @@ -93,7 +90,9 @@ static int __init load_umh(void)
+> >       int err;
+> >
+> >       /* fork usermode process */
+> > -     err = fork_usermode_blob(&UMH_start, &UMH_end - &UMH_start, &info);
+> > +     err = fork_usermode_blob(&bpfilter_umh_end,
+> > +                              &bpfilter_umh_end - &bpfilter_umh_start,
+> > +                              &info);
+> >       if (err)
+> >               return err;
+> >       pr_info("Loaded bpfilter_umh pid %d\n", info.pid);
+> > diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
+> > new file mode 100644
+> > index 0000000..40311d1
+> > --- /dev/null
+> > +++ b/net/bpfilter/bpfilter_umh_blob.S
+> > @@ -0,0 +1,7 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +     .section .init.rodata, "a"
+> > +     .global bpfilter_umh_start
+> > +bpfilter_umh_start:
+> > +     .incbin "net/bpfilter/bpfilter_umh"
+> > +     .global bpfilter_umh_end
+> > +bpfilter_umh_end:
+>
+> for some reason it doesn't work.
+> fork_usermode_blob() returns ENOEXEC
+> You should be able to test it simply running 'iptables -L'.
+> Without this patch you should see:
+> [   12.696937] bpfilter: Loaded bpfilter_umh pid 225
+> Started bpfilter
+>
+> where first line comes from kernel module and second from umh.
+>
+>
