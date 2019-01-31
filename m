@@ -2,104 +2,251 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15484C282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44568C282D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE75A20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:33:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8C4220881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:33:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AIv/74FP"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="FIiOaO9e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbfAaBdC (ORCPT
+        id S1729929AbfAaBdO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 20:33:02 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37738 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbfAaBdB (ORCPT
+        Wed, 30 Jan 2019 20:33:14 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40811 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbfAaBdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 20:33:01 -0500
-Received: by mail-pg1-f195.google.com with SMTP id c25so645916pgb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 17:33:01 -0800 (PST)
+        Wed, 30 Jan 2019 20:33:14 -0500
+Received: by mail-ot1-f67.google.com with SMTP id s5so1435795oth.7
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 17:33:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=chNsm4tZb6h6R1hCqWpWWqH84+NHXdtjwPi0mDyvQUo=;
-        b=AIv/74FPykLqRDVZLUP/zzAxsj85Wrb1jAk+pcsK5IrMaylr7eMcqsoge4gX2xmLYR
-         AQ526RxNzlYsc1SoZS70Yanb3HyWOe2o+LhdOvPIepOhPLQ7r4n/6MeQ3C0B3mIkVLaR
-         zghOGoi7kDV69NUO7JGOv/WCRB8d1iAtRF5wk=
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=moC74vQmEJ3d13MbIuiMkLO8lGMcf3VTQM3VO7orQ6Q=;
+        b=FIiOaO9elsrSyDQ4ta84tW0vC+Nr9BD24+u47VzdKjgSf939xVmVGpq+9/fiHgxMin
+         h4sHyCA1HOHIt+gUyRQgMeU9B67/JYmrFbDr8jvWQ/xs5Tby6wv4+FcF4kmvVTsx2OlP
+         +Dg7IkZVczqf1KMfpVbT+UgGgeyQI48oPK+WAoGS7toWwz9yKvk5wHYMEY444IFyZe/m
+         YQIWNDhALD5JilqRqtgQE0L/oVhVNDk8sd2SrsnEQMMqlzvp7ck7q0176IF4iQYX1Eun
+         uF0XR8UwN6JkSHtttVox/g76pBMm38CUJHB8S1/b/fnG0IrPs8eE4OJYhPLNh9WygFeg
+         NOSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=chNsm4tZb6h6R1hCqWpWWqH84+NHXdtjwPi0mDyvQUo=;
-        b=GL8E2vqeSMEvvW7xnEiSbbgYxWKw00lkRBgPAlmQ74cPR+bvQSZ6AnkzJDmOpnMGde
-         QlwVoDEj3EbFlWRKSYzP9pp9NKtq1Y++yPHDYec8UWFgvmxeS/gWl1NBtMPKn9I/41Lc
-         bQe65P21Ci06kqaQRzYgcLUiQYsmkzSaFSjidZ69bT+KjCPJP9isET+vgq28OLgan/m4
-         RQHWGiM0E0e0+Fl2jlCd/j51BJcx55bN5EvN4xUTNYHPVoAK28TZlVw35yh1LsG7Nfhi
-         zbdlh/qwc4MMuFcBhLDkKf2u3v4j/EVuNChGDVDbSEkglo0yPA2qGoG7rDRTzujkvwM4
-         UK5A==
-X-Gm-Message-State: AJcUukcLGBCR60THW6nPmIU3HwN0wF/H28Kl7LE6D1Lg7NUhPgrE/hlW
-        ZiHvp3IyDpF3LVnKuIj235viPA==
-X-Google-Smtp-Source: ALg8bN4X7e22dn1XUtX8HpTz6jki9FEt6rIGHkPZ2XAMPBYj27h5+bGQFZsg4zd5apaswaCUqVAPOA==
-X-Received: by 2002:a63:8e43:: with SMTP id k64mr29316388pge.346.1548898380530;
-        Wed, 30 Jan 2019 17:33:00 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a65sm3592302pge.65.2019.01.30.17.32.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 17:32:59 -0800 (PST)
-Date:   Wed, 30 Jan 2019 17:32:44 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>, Rob Herring <robh@kernel.org>,
-        Alexander Graf <agraf@suse.de>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@roeck-us.net
-Subject: Re: [PATCH] soc: qcom: update config dependencies for QCOM_RPMPD
-Message-ID: <20190131013244.GC27190@builder>
-References: <20190118044801.7312-1-rnayak@codeaurora.org>
- <154783318835.169631.6614930101893188915@swboyd.mtv.corp.google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=moC74vQmEJ3d13MbIuiMkLO8lGMcf3VTQM3VO7orQ6Q=;
+        b=RU2XH9knPmUWJqxytokIhDqxoG1jjBhUrkDJu3xThEz4tARb6eHxIhXS7z2U61YnA0
+         TRW1yibPr4rI7O5ylMXh0gznwK1oQF50Tr9hFrAWRTsskpAD9cQyYLxvwq0PBgSdei7v
+         Gf0n37PK5nsQ+YfoLIM80OGtHqzFNWZAdLIDZSZ3TBlKxYVMxMD8sXsSCZUw3CjE+dc9
+         hdYq57YZbC9bgFSJtyQM6pX2XVL9WBWhm9AphFA4sFLVpbqKEY9FRUiuzTkl0RqNf59h
+         FN17bMD1YoIY3HPz2QHbj53gVmYtoLNkZgJmzP607HdBg1rAIYcZ4mD1c4n/V+Dymlwo
+         QCag==
+X-Gm-Message-State: AJcUukfn5gooysntDZVMG78urue2ARL2NJ+0oqjbR4Ff0DMq2RdWSN+5
+        wuWEg93AYAFgmZSAq4AWB6PWbh/6RraG9V/iFwT1aQ==
+X-Google-Smtp-Source: ALg8bN6P0P3N91WpZoh6gxZqsmeVGAKjJE5WQ1MApbhk0Gkn687AkstDHkeYwUL0Fct9i095nodZB7FZ8VX6Wb1DgFA=
+X-Received: by 2002:a9d:6a50:: with SMTP id h16mr22998793otn.95.1548898392781;
+ Wed, 30 Jan 2019 17:33:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154783318835.169631.6614930101893188915@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <154882453052.1338686.16411162273671426494.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154882453604.1338686.15108059741397800728.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190130190838.GG18811@dhcp22.suse.cz>
+In-Reply-To: <20190130190838.GG18811@dhcp22.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 30 Jan 2019 17:33:01 -0800
+Message-ID: <CAPcyv4jbQepv-a3Y9mBXs_MmkUBFnY0BJrmS7czjKMBVAi53OQ@mail.gmail.com>
+Subject: Re: [PATCH v9 1/3] mm: Shuffle initial free memory to improve
+ memory-side-cache utilization
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 18 Jan 09:39 PST 2019, Stephen Boyd wrote:
+On Wed, Jan 30, 2019 at 11:08 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Tue 29-01-19 21:02:16, Dan Williams wrote:
+> > Randomization of the page allocator improves the average utilization of
+> > a direct-mapped memory-side-cache. Memory side caching is a platform
+> > capability that Linux has been previously exposed to in HPC
+> > (high-performance computing) environments on specialty platforms. In
+> > that instance it was a smaller pool of high-bandwidth-memory relative to
+> > higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
+> > be found on general purpose server platforms where DRAM is a cache in
+> > front of higher latency persistent memory [1].
+> >
+> > Robert offered an explanation of the state of the art of Linux
+> > interactions with memory-side-caches [2], and I copy it here:
+> >
+> >     It's been a problem in the HPC space:
+> >     http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
+> >
+> >     A kernel module called zonesort is available to try to help:
+> >     https://software.intel.com/en-us/articles/xeon-phi-software
+> >
+> >     and this abandoned patch series proposed that for the kernel:
+> >     https://lkml.kernel.org/r/20170823100205.17311-1-lukasz.daniluk@intel.com
+> >
+> >     Dan's patch series doesn't attempt to ensure buffers won't conflict, but
+> >     also reduces the chance that the buffers will. This will make performance
+> >     more consistent, albeit slower than "optimal" (which is near impossible
+> >     to attain in a general-purpose kernel).  That's better than forcing
+> >     users to deploy remedies like:
+> >         "To eliminate this gradual degradation, we have added a Stream
+> >          measurement to the Node Health Check that follows each job;
+> >          nodes are rebooted whenever their measured memory bandwidth
+> >          falls below 300 GB/s."
+> >
+> > A replacement for zonesort was merged upstream in commit cc9aec03e58f
+> > "x86/numa_emulation: Introduce uniform split capability". With this
+> > numa_emulation capability, memory can be split into cache sized
+> > ("near-memory" sized) numa nodes. A bind operation to such a node, and
+> > disabling workloads on other nodes, enables full cache performance.
+> > However, once the workload exceeds the cache size then cache conflicts
+> > are unavoidable. While HPC environments might be able to tolerate
+> > time-scheduling of cache sized workloads, for general purpose server
+> > platforms, the oversubscribed cache case will be the common case.
+> >
+> > The worst case scenario is that a server system owner benchmarks a
+> > workload at boot with an un-contended cache only to see that performance
+> > degrade over time, even below the average cache performance due to
+> > excessive conflicts. Randomization clips the peaks and fills in the
+> > valleys of cache utilization to yield steady average performance.
+> >
+> > Here are some performance impact details of the patches:
+> >
+> > 1/ An Intel internal synthetic memory bandwidth measurement tool, saw a
+> > 3X speedup in a contrived case that tries to force cache conflicts. The
+> > contrived cased used the numa_emulation capability to force an instance
+> > of the benchmark to be run in two of the near-memory sized numa nodes.
+> > If both instances were placed on the same emulated they would fit and
+> > cause zero conflicts.  While on separate emulated nodes without
+> > randomization they underutilized the cache and conflicted unnecessarily
+> > due to the in-order allocation per node.
+> >
+> > 2/ A well known Java server application benchmark was run with a heap
+> > size that exceeded cache size by 3X. The cache conflict rate was 8% for
+> > the first run and degraded to 21% after page allocator aging. With
+> > randomization enabled the rate levelled out at 11%.
+> >
+> > 3/ A MongoDB workload did not observe measurable difference in
+> > cache-conflict rates, but the overall throughput dropped by 7% with
+> > randomization in one case.
+> >
+> > 4/ Mel Gorman ran his suite of performance workloads with randomization
+> > enabled on platforms without a memory-side-cache and saw a mix of some
+> > improvements and some losses [3].
+> >
+> > While there is potentially significant improvement for applications that
+> > depend on low latency access across a wide working-set, the performance
+> > may be negligible to negative for other workloads. For this reason the
+> > shuffle capability defaults to off unless a direct-mapped
+> > memory-side-cache is detected. Even then, the page_alloc.shuffle=0
+> > parameter can be specified to disable the randomization on those
+> > systems.
+> >
+> > Outside of memory-side-cache utilization concerns there is potentially
+> > security benefit from randomization. Some data exfiltration and
+> > return-oriented-programming attacks rely on the ability to infer the
+> > location of sensitive data objects. The kernel page allocator,
+> > especially early in system boot, has predictable first-in-first out
+> > behavior for physical pages. Pages are freed in physical address order
+> > when first onlined.
+> >
+> > Quoting Kees:
+> >     "While we already have a base-address randomization
+> >      (CONFIG_RANDOMIZE_MEMORY), attacks against the same hardware and
+> >      memory layouts would certainly be using the predictability of
+> >      allocation ordering (i.e. for attacks where the base address isn't
+> >      important: only the relative positions between allocated memory).
+> >      This is common in lots of heap-style attacks. They try to gain
+> >      control over ordering by spraying allocations, etc.
+> >
+> >      I'd really like to see this because it gives us something similar
+> >      to CONFIG_SLAB_FREELIST_RANDOM but for the page allocator."
+> >
+> > While SLAB_FREELIST_RANDOM reduces the predictability of some local slab
+> > caches it leaves vast bulk of memory to be predictably in order
+> > allocated.  However, it should be noted, the concrete security benefits
+> > are hard to quantify, and no known CVE is mitigated by this
+> > randomization.
+> >
+> > Introduce shuffle_free_memory(), and its helper shuffle_zone(), to
+> > perform a Fisher-Yates shuffle of the page allocator 'free_area' lists
+> > when they are initially populated with free memory at boot and at
+> > hotplug time. Do this based on either the presence of a
+> > page_alloc.shuffle=Y command line parameter, or autodetection of a
+> > memory-side-cache (to be added in a follow-on patch).
+> >
+> > The shuffling is done in terms of CONFIG_SHUFFLE_PAGE_ORDER sized free
+> > pages where the default CONFIG_SHUFFLE_PAGE_ORDER is MAX_ORDER-1 i.e.
+> > 10, 4MB this trades off randomization granularity for time spent
+> > shuffling.  MAX_ORDER-1 was chosen to be minimally invasive to the page
+> > allocator while still showing memory-side cache behavior improvements,
+> > and the expectation that the security implications of finer granularity
+> > randomization is mitigated by CONFIG_SLAB_FREELIST_RANDOM.
+> >
+> > The performance impact of the shuffling appears to be in the noise
+> > compared to other memory initialization work. Also the bulk of the work
+> > is done in the background as a part of deferred_init_memmap().
+>
+> The last part is not true with this version anymore, right?
 
-> Quoting Rajendra Nayak (2019-01-17 20:48:01)
-> >  drivers/soc/qcom/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> > index a5d5167c3f16..1ee298f6bf17 100644
-> > --- a/drivers/soc/qcom/Kconfig
-> > +++ b/drivers/soc/qcom/Kconfig
-> > @@ -109,7 +109,7 @@ config QCOM_RPMHPD
-> >  
-> >  config QCOM_RPMPD
-> >         bool "Qualcomm RPM Power domain driver"
-> 
-> Just curious, does it need to be bool for some reason?
-> 
+True, and given that page_alloc_init_late() is waiting for it complete
+the impact is no different from v8 to v9. I'll drop that sentence from
+the changelog.
 
-It's unfortunately not possible to have any genpd, iommu or pinctrl
-drivers compiled as modules, because once you pass lateinit probe
-deferral is purposefully broken. See
-driver_deferred_probe_check_state().
+>
+> > This initial randomization can be undone over time so a follow-on patch
+> > is introduced to inject entropy on page free decisions. It is reasonable
+> > to ask if the page free entropy is sufficient, but it is not enough due
+> > to the in-order initial freeing of pages. At the start of that process
+> > putting page1 in front or behind page0 still keeps them close together,
+> > page2 is still near page1 and has a high chance of being adjacent. As
+> > more pages are added ordering diversity improves, but there is still
+> > high page locality for the low address pages and this leads to no
+> > significant impact to the cache conflict rate.
+>
+> I find mm_shuffle_ctl a bit confusing because the mode of operation is
+> either AUTO (enabled when the HW is present) or FORCE_ENABLE when
+> explicitly enabled by the command line. Nothing earth shattering though.
 
-This also means that if you're unlucky and your kernel reached lateinit
-before the SMD communication with RPM is established and has brought up
-the rpmpd, you are left with a completely broken system. Unfortunately
-this isn't that hard to reproduce with a minimal defconfig.
+Yeah, it's named from the perspective of the kernel internal usage
+which is flipped from the user facing interaction. ENABLE is called
+from the command line handler and in a follow-on patch the parser of
+the platform-firmware table indicating the presence of a cache.
+FORCE_DISABLE is only called from the command line handler. I'll add a
+comment to this effect.
 
-Regards,
-Bjorn
+>
+> > [1]: https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
+> > [2]: https://lkml.kernel.org/r/AT5PR8401MB1169D656C8B5E121752FC0F8AB120@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM
+> > [3]: https://lkml.org/lkml/2018/10/12/309
+> >
+> > Cc: Michal Hocko <mhocko@suse.com>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: Mike Rapoport <rppt@linux.ibm.com>
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>
+> Other than that, I haven't spotted any fundamental issues. The feature
+> is a hack but I do agree that it might be useful for the specific HW it
+> is going to be used for. I still think that shuffling only top orders
+> has close to zero security benefits because it is not that hard to
+> control the memory fragmentation.
+>
+> With that
+> Acked-by: Michal Hocko <mhocko@suse.com>
+
+Much appreciated.
