@@ -2,199 +2,107 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3661C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0CCC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C68120B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:10:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="NH9auXy2"
+	by mail.kernel.org (Postfix) with ESMTP id 0DAB9218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:10:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548929407;
+	bh=ny3WccFhsCnB9MMWt3pqskHUVebOLE90q+eXx5MJpyE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=bwHzvyZopftvyhksNHDhruHqAtbK18LFP7vNrLRZSUdv0BWwF9csP0ijseML79ls5
+	 uj/aCGHwLvtsCVYAyZ7EHenjhC1zYXDv8czqK8SdNDmcsEYuBvK4Wd+j/pZR06zdYo
+	 iKvV0i7HlPBIGhtl7+elH4iEXqXbtmfxVggGrNN4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732313AbfAaKKC (ORCPT
+        id S1732338AbfAaKKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:10:02 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:58980 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732031AbfAaKI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:08:57 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43qwtZ2yNkz9tyxF;
-        Thu, 31 Jan 2019 11:08:54 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=NH9auXy2; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id uzVNCrDJ9K_M; Thu, 31 Jan 2019 11:08:54 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43qwtZ1cHLz9tyxB;
-        Thu, 31 Jan 2019 11:08:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548929334; bh=JLgk07EDXDkdSdozkE/N2+VcQpMyEB/ycEJ+LCnAuUk=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=NH9auXy2CMThSilpMkal1fnuIPgjyEFPdJACoju9XEBaHRMT3gXjIwcfaRHFFRPiP
-         z9btQewh2YYISPjxO5qtIAe0bIOgYXv16AMg3zICFG769/0YYAFt6BO9fmrJrnmRCb
-         /FbtH4FCVRwMG9bndzSHiFuTWEqoSW6ZJP0DB5Lg=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5962B8B819;
-        Thu, 31 Jan 2019 11:08:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id RF3R11c1YjL9; Thu, 31 Jan 2019 11:08:55 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1BC7D8B814;
-        Thu, 31 Jan 2019 11:08:55 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id AD67B72E14; Thu, 31 Jan 2019 10:08:54 +0000 (UTC)
-Message-Id: <b3d5109b8b34a51ec0c51eeb18d69ca07c44ed83.1548852243.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1548852242.git.christophe.leroy@c-s.fr>
-References: <cover.1548852242.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v15 06/13] powerpc: Rename THREAD_INFO to TASK_STACK
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 31 Jan 2019 10:08:54 +0000 (UTC)
+        Thu, 31 Jan 2019 05:10:05 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44097 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732031AbfAaKKD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 05:10:03 -0500
+Received: by mail-oi1-f196.google.com with SMTP id m6so2213804oig.11;
+        Thu, 31 Jan 2019 02:10:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JGtM6G9tEeSNZsYLEbgkdTS8afkAuGom1UMpBmISu+4=;
+        b=V0a+dC/2njRLTnRoP8EY3OJXbXH2nuzN+It4xtT33UfEbhpewvA2BFLGU3LiiRuPcZ
+         B4NWnRje7ytSGvaVOYRe7+Agxyow0BtR0PkJWiWE8/42RRK9elzr58QXk7lYB9V+DD22
+         FivsOUpNeG4Hwjygh7ot5aEWGwXrwOq26ompjUESEH7bDdPxYYWrzW+cQw6hONR6wcww
+         lhPM9+lrEfHzv+xEua08lUGVF3o52C0P3ZjEbXRwIEYAk6efT6nDZINY40gTFcKeDfBp
+         +cfwS5Tyk6Ptpd4/ml0rD6dxt2jwL1hvVtDYLhS8CySboeBgxnliU0Np3ownjIfKx+tq
+         PJWw==
+X-Gm-Message-State: AJcUukdXohINE7+1JzYhwvIjGhhAGqrWYeMa+zi3k8cgNmOphXXZNe2D
+        e0CRDMRmTQXBYIAF8ZO3+vs4TfcTHrVOn6FaX08=
+X-Google-Smtp-Source: ALg8bN6tplGrc5r4WyR9qGEEt/fRd/ATeIyauai7qip0xIarOYpBAnxhSeiI8Mj+9dhwyGnGvHEbjzwspYO1+dXKN7o=
+X-Received: by 2002:aca:195:: with SMTP id 143mr14123460oib.322.1548929402230;
+ Thu, 31 Jan 2019 02:10:02 -0800 (PST)
+MIME-Version: 1.0
+References: <2493187.oiOpCWJBV7@aspire.rjw.lan>
+In-Reply-To: <2493187.oiOpCWJBV7@aspire.rjw.lan>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 31 Jan 2019 11:09:51 +0100
+Message-ID: <CAJZ5v0hsBNYZ7mu6SrhBY+LiOQZKz2K_3OtsCb9Jt8QR1YRhOA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] driver core: Fix some issues related to device links
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch renames THREAD_INFO to TASK_STACK, because it is in fact
-the offset of the pointer to the stack in task_struct so this pointer
-will not be impacted by the move of THREAD_INFO.
+On Thu, Jan 24, 2019 at 12:25 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> Hi Greg at al,
+>
+> Recently I have been looking at the device links code because of the
+> recent discussion on possibly using them in the DRM subsystem (see for
+> example https://marc.info/?l=linux-pm&m=154832771905309&w=2) and I have
+> found a few issues in that code which should be addressed by this patch
+> series.  Please refer to the patch changelogs for details.
+>
+> None of the problems addressed here should be manifesting themselves in
+> mainline kernel today, but if there are more device links users in the
+> future, they most likely will be encountered sooner or later.  Also they
+> need to be fixed for the DRM use case to be supported IMO.
+>
+> This series does not fix all issues in device links that have become
+> apparent (generally speaking, the idea of returning an existing link
+> in case there is one already for the given consumer-supplier pair
+> doesn't play well with stateful links and their flags), so there will
+> be a follow-up series of patches to clean that up.  Still, I don't see
+> a reason to sit on these fixes while working on the other patches, so
+> here they go.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
----
- arch/powerpc/kernel/asm-offsets.c    | 2 +-
- arch/powerpc/kernel/entry_32.S       | 2 +-
- arch/powerpc/kernel/head_32.S        | 2 +-
- arch/powerpc/kernel/head_40x.S       | 4 ++--
- arch/powerpc/kernel/head_8xx.S       | 2 +-
- arch/powerpc/kernel/head_booke.h     | 4 ++--
- arch/powerpc/kernel/head_fsl_booke.S | 2 +-
- 7 files changed, 9 insertions(+), 9 deletions(-)
+Any concerns regarding this lot?
 
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
-index 9ffc72ded73a..23456ba3410a 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -90,7 +90,7 @@ int main(void)
- 	DEFINE(SIGSEGV, SIGSEGV);
- 	DEFINE(NMI_MASK, NMI_MASK);
- #else
--	OFFSET(THREAD_INFO, task_struct, stack);
-+	OFFSET(TASK_STACK, task_struct, stack);
- 	DEFINE(THREAD_INFO_GAP, _ALIGN_UP(sizeof(struct thread_info), 16));
- 	OFFSET(KSP_LIMIT, thread_struct, ksp_limit);
- #endif /* CONFIG_PPC64 */
-diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
-index d4c6186aa7e8..f1646d845404 100644
---- a/arch/powerpc/kernel/entry_32.S
-+++ b/arch/powerpc/kernel/entry_32.S
-@@ -1168,7 +1168,7 @@ ret_from_debug_exc:
- 	mfspr	r9,SPRN_SPRG_THREAD
- 	lwz	r10,SAVED_KSP_LIMIT(r1)
- 	stw	r10,KSP_LIMIT(r9)
--	lwz	r9,THREAD_INFO-THREAD(r9)
-+	lwz	r9,TASK_STACK-THREAD(r9)
- 	CURRENT_THREAD_INFO(r10, r1)
- 	lwz	r10,TI_PREEMPT(r10)
- 	stw	r10,TI_PREEMPT(r9)
-diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
-index 05b08db3901d..9268e5e87949 100644
---- a/arch/powerpc/kernel/head_32.S
-+++ b/arch/powerpc/kernel/head_32.S
-@@ -261,7 +261,7 @@ __secondary_hold_acknowledge:
- 	tophys(r11,r1);			/* use tophys(r1) if kernel */ \
- 	beq	1f;		\
- 	mfspr	r11,SPRN_SPRG_THREAD;	\
--	lwz	r11,THREAD_INFO-THREAD(r11);	\
-+	lwz	r11,TASK_STACK-THREAD(r11);	\
- 	addi	r11,r11,THREAD_SIZE;	\
- 	tophys(r11,r11);	\
- 1:	subi	r11,r11,INT_FRAME_SIZE	/* alloc exc. frame */
-diff --git a/arch/powerpc/kernel/head_40x.S b/arch/powerpc/kernel/head_40x.S
-index b19d78410511..3088c9f29f5e 100644
---- a/arch/powerpc/kernel/head_40x.S
-+++ b/arch/powerpc/kernel/head_40x.S
-@@ -115,7 +115,7 @@ _ENTRY(saved_ksp_limit)
- 	andi.	r11,r11,MSR_PR;						     \
- 	beq	1f;							     \
- 	mfspr	r1,SPRN_SPRG_THREAD;	/* if from user, start at top of   */\
--	lwz	r1,THREAD_INFO-THREAD(r1); /* this thread's kernel stack   */\
-+	lwz	r1,TASK_STACK-THREAD(r1); /* this thread's kernel stack   */\
- 	addi	r1,r1,THREAD_SIZE;					     \
- 1:	subi	r1,r1,INT_FRAME_SIZE;	/* Allocate an exception frame     */\
- 	tophys(r11,r1);							     \
-@@ -158,7 +158,7 @@ _ENTRY(saved_ksp_limit)
- 	beq	1f;							     \
- 	/* COMING FROM USER MODE */					     \
- 	mfspr	r11,SPRN_SPRG_THREAD;	/* if from user, start at top of   */\
--	lwz	r11,THREAD_INFO-THREAD(r11); /* this thread's kernel stack */\
-+	lwz	r11,TASK_STACK-THREAD(r11); /* this thread's kernel stack */\
- 1:	addi	r11,r11,THREAD_SIZE-INT_FRAME_SIZE; /* Alloc an excpt frm  */\
- 	tophys(r11,r11);						     \
- 	stw	r10,_CCR(r11);          /* save various registers	   */\
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index 20cc816b3508..ca9207013579 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -142,7 +142,7 @@ instruction_counter:
- 	tophys(r11,r1);			/* use tophys(r1) if kernel */ \
- 	beq	1f;		\
- 	mfspr	r11,SPRN_SPRG_THREAD;	\
--	lwz	r11,THREAD_INFO-THREAD(r11);	\
-+	lwz	r11,TASK_STACK-THREAD(r11);	\
- 	addi	r11,r11,THREAD_SIZE;	\
- 	tophys(r11,r11);	\
- 1:	subi	r11,r11,INT_FRAME_SIZE	/* alloc exc. frame */
-diff --git a/arch/powerpc/kernel/head_booke.h b/arch/powerpc/kernel/head_booke.h
-index 306e26c073a0..69e80e6d0d16 100644
---- a/arch/powerpc/kernel/head_booke.h
-+++ b/arch/powerpc/kernel/head_booke.h
-@@ -55,7 +55,7 @@ END_BTB_FLUSH_SECTION
- 	beq	1f;							     \
- 	BOOKE_CLEAR_BTB(r11)						\
- 	/* if from user, start at top of this thread's kernel stack */       \
--	lwz	r11, THREAD_INFO-THREAD(r10);				     \
-+	lwz	r11, TASK_STACK - THREAD(r10);				     \
- 	ALLOC_STACK_FRAME(r11, THREAD_SIZE);				     \
- 1 :	subi	r11, r11, INT_FRAME_SIZE; /* Allocate exception frame */     \
- 	stw	r13, _CCR(r11);		/* save various registers */	     \
-@@ -142,7 +142,7 @@ END_BTB_FLUSH_SECTION
- 	BOOKE_CLEAR_BTB(r10)						\
- 	andi.	r11,r11,MSR_PR;						     \
- 	mfspr	r11,SPRN_SPRG_THREAD;	/* if from user, start at top of   */\
--	lwz	r11,THREAD_INFO-THREAD(r11); /* this thread's kernel stack */\
-+	lwz	r11, TASK_STACK - THREAD(r11); /* this thread's kernel stack */\
- 	addi	r11,r11,EXC_LVL_FRAME_OVERHEAD;	/* allocate stack frame    */\
- 	beq	1f;							     \
- 	/* COMING FROM USER MODE */					     \
-diff --git a/arch/powerpc/kernel/head_fsl_booke.S b/arch/powerpc/kernel/head_fsl_booke.S
-index 2c21e8642a00..42d8d6fc00cb 100644
---- a/arch/powerpc/kernel/head_fsl_booke.S
-+++ b/arch/powerpc/kernel/head_fsl_booke.S
-@@ -719,7 +719,7 @@ finish_tlb_load:
- 
- 	/* Get the next_tlbcam_idx percpu var */
- #ifdef CONFIG_SMP
--	lwz	r12, THREAD_INFO-THREAD(r12)
-+	lwz	r12, TASK_STACK-THREAD(r12)
- 	lwz	r15, TI_CPU(r12)
- 	lis     r14, __per_cpu_offset@h
- 	ori     r14, r14, __per_cpu_offset@l
--- 
-2.13.3
+[Please note that patch 5 in the series was replaced with the v2 at
+https://patchwork.kernel.org/patch/10781205/]
 
+If not, and if you don't mind, I would like to queue it up next week,
+possibly along with the follow-up material posted on Monday
+(https://lore.kernel.org/lkml/2405639.4es7pRLqn0@aspire.rjw.lan/) if
+that is not problematic, so it gets some linux-next coverage before
+the next merge window.
+
+Cheers,
+Rafael
