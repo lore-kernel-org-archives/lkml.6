@@ -2,160 +2,193 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6D6C282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B67C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39BAF20823
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:11:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548969067;
-	bh=M8TqggX6bJmJ42B5/Ac86mIBJxlJxaEp9Yx65IUnl8U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=MQ2jlZEXeOA8nrF1pBPTpZKc05LPUjAm7P+1GREkvG9FIyHyUhabRwOenVQG131er
-	 kAIDNVyCYaKGlWUqGBsGkAhUMIX9BqSx9rQ+G1xzxpOp95mCYxdfX2vuin2t15EiOu
-	 ydiUfRC7ElEopDnb+sVINGOVIg+EeXhW5tmfvlRg=
+	by mail.kernel.org (Postfix) with ESMTP id CEB2720B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:33:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="ETNHltkH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbfAaVLF (ORCPT
+        id S1727762AbfAaVdi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 16:11:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbfAaVLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 16:11:05 -0500
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E1C8218AF;
-        Thu, 31 Jan 2019 21:11:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548969064;
-        bh=M8TqggX6bJmJ42B5/Ac86mIBJxlJxaEp9Yx65IUnl8U=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UqxItAaI7MSxj+FZVAiVCib9bu/t22fkZjQjKx1vFQUhRW1rWTZSEQRTu+Aq5iw7f
-         myirTh7MSstupMu63vcL/xxG9U14xtBmbFUIAgg6MS5K7zLogRlHqNx/T+46Ael+1c
-         ly+itsWHBpSuB/wcuUnAzTYYl08GrTqDb6b0wxvM=
-Received: by mail-qt1-f179.google.com with SMTP id l12so5123703qtf.8;
-        Thu, 31 Jan 2019 13:11:04 -0800 (PST)
-X-Gm-Message-State: AJcUukdfPwAS7cC0u3+3GbSaVdK5tECu5tjOBhhGP/tCp8dASkvOEOd3
-        2LEhaf6JOfDrrojn+U8wNLcIWGjmqQiQf1Zkkg==
-X-Google-Smtp-Source: ALg8bN5xVlARGZqxDOmh1ggNeMx4EYwm/oRtZilP3Y7NQRPyYLJpcipt+Yc17uKzBoZxttL2JbY8dRmIzIVwt62G9Hs=
-X-Received: by 2002:aed:29a6:: with SMTP id o35mr34761543qtd.257.1548969063278;
- Thu, 31 Jan 2019 13:11:03 -0800 (PST)
-MIME-Version: 1.0
-References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
- <1548317240-44682-7-git-send-email-erin.lo@mediatek.com> <20190130162204.GA1521@bogus>
- <1548902050.23230.4.camel@mtksdaap41>
-In-Reply-To: <1548902050.23230.4.camel@mtksdaap41>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 31 Jan 2019 15:10:52 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL1vQCgbb2yLL2E4KTDZve1vus5bDX75HGiOu14X26q7w@mail.gmail.com>
-Message-ID: <CAL_JsqL1vQCgbb2yLL2E4KTDZve1vus5bDX75HGiOu14X26q7w@mail.gmail.com>
-Subject: Re: [PATCH v6 6/6] arm64: dts: Add Mediatek SoC MT8183 and evaluation
- board dts and Makefile
-To:     Erin Lo <erin.lo@mediatek.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Ben Ho <Ben.Ho@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Mengqi Zhang <Mengqi.Zhang@mediatek.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Zhiyong Tao <zhiyong.tao@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 31 Jan 2019 16:33:38 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41118 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbfAaVdh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 16:33:37 -0500
+Received: by mail-pg1-f193.google.com with SMTP id m1so1909791pgq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 13:33:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ettus-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=zBtANhfwlHrkA9s4uLMxxoXbJiZYcxP3YKb55Uu2Jkk=;
+        b=ETNHltkHvzs2m8RnUOBZVmg23iuDjb1uvwnJlQ9lbyBGMqiXDcluNAjVoh2i7hMi5M
+         YztEneoQ6+i3A/ZmhhVctTHkoru5rxZdOcDvaaaSUPrrebf2G1c3C79p0OH7z7RnSX4y
+         9t++hEC7kUYMKMsnoDocGHt5b8l+ydEaZcSoqXs8DGLPAGWkegsXrdd9a8VPO8CFMI1I
+         qoKArtHYOnGPVHIFR8TiQi7LKPg5Gl5DMZ0PJHdJvm2y6WMJzsgtrDKPoLT9dYzlJ8vh
+         W3LRV1ftunJVoUZ4tiOPBAr6vNUhJistn82pJZ+BUpO0ym/Bz5RqDt9+qVfplsYchNWX
+         tBSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zBtANhfwlHrkA9s4uLMxxoXbJiZYcxP3YKb55Uu2Jkk=;
+        b=B+N9Hr0wOmOlGOgKmJT3aJKRZUpNXDRLewnE7xLxZjRz/l7vXAwJuRUwbXPEB1znz4
+         tNn5PYuEYVxTbahGzv5iLPJW3Og6rJ0rrR0S+9SQYWIDS42lNjQ4lnIEcDQCGkf8qBJE
+         aBMWpB8eSmBjjjFVukVRAEK7fdEdMezQTxGQ/0/E4zDXOjcSH/tqSfschVtEN9bsACei
+         XXKV000uLk0HvLAD4wuG13fSUp3JgEJx3vQxDno4c9XIRe1lBN2wdavnwX6pHawRTanR
+         kWVHsB/W2ZGQ3tAXlco8qWQDEB+Fio4xdT/Zr1wmo38Kd/JdkVvdtkKF01gQcj5KUm0W
+         LsXA==
+X-Gm-Message-State: AJcUuke/LAxliotsEBFzsJ0jEyqggzMmxoRNlGebk9CwD/2YBHaYzXeJ
+        y8EcNmIpAovZXJtlqURwk6ob7Q==
+X-Google-Smtp-Source: ALg8bN4i+wzXhdb50I+j173iuvXtJrYaj6ZWCvaDvuAzzDO55LkkinYdlWSkV3duULgJwcGcqjELmw==
+X-Received: by 2002:a62:444b:: with SMTP id r72mr37032456pfa.184.1548970416495;
+        Thu, 31 Jan 2019 13:33:36 -0800 (PST)
+Received: from localhost.localdomain (cpe-76-176-152-96.san.res.rr.com. [76.176.152.96])
+        by smtp.gmail.com with ESMTPSA id n21sm7513227pfg.84.2019.01.31.13.33.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 13:33:35 -0800 (PST)
+From:   alex.williams@ettus.com
+To:     davem@davemloft.net
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mdf@kernel.org,
+        mcgrof@kernel.org, keescook@chromium.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alex Williams <alex.williams@ni.com>
+Subject: [PATCH v2 net-next 1/2] net: nixge: Separate ctrl and dma resources
+Date:   Thu, 31 Jan 2019 13:33:27 -0800
+Message-Id: <20190131213328.11236-1-alex.williams@ettus.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 8:34 PM Erin Lo <erin.lo@mediatek.com> wrote:
->
-> On Wed, 2019-01-30 at 10:22 -0600, Rob Herring wrote:
-> > On Thu, Jan 24, 2019 at 04:07:20PM +0800, Erin Lo wrote:
-> > > From: Ben Ho <Ben.Ho@mediatek.com>
-> > >
-> > > Add basic chip support for Mediatek 8183, include
-> > > pinctrl file, uart node with correct uart clocks, pwrap device
-> > >
-> > > Add clock controller nodes, include topckgen, infracfg,
-> > > apmixedsys and subsystem.
-> > >
-> > > Signed-off-by: Ben Ho <Ben.Ho@mediatek.com>
-> > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > > Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
-> > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> > > Signed-off-by: Mengqi Zhang <Mengqi.Zhang@mediatek.com>
-> > > Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-> > > Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
-> > > ---
-> >
-> >
-> > > +   sysirq: intpol-controller@c530a80 {
-> >
-> > interrupt-controller@...
->
-> I will modify it in next version.
-> >
-> >
-> > Place all the MMIO peripherals under one or more simple-bus nodes.
-> >
-> > Rob
-> >
->
-> Do you mean need to add simple-bus like this?
+From: Alex Williams <alex.williams@ni.com>
 
-Yes.
+The DMA engine is a separate entity altogether, and this allows the DMA
+controller's address to float elsewhere in the FPGA's map.
 
->
-> +   soc: soc {
-> +                #address-cells = <0x1>;
-> +                #size-cells = <0x1>;
-> +                ranges = <0 0 0 0xffffffff>;
-> +                compatible = "simple-bus";
->
->                 soc_data: soc_data@08000000 {
->                         compatible = "mediatek,mt8183-efuse",
->                                      "mediatek,efuse";
->                         reg = <0 0x08000000 0 0x0010>;
->                         #address-cells = <1>;
->                         #size-cells = <1>;
->                         status = "disabled";
->                 };
->
->                 gic: interrupt-controller@0c000000 {
->                         compatible = "arm,gic-v3";
->                         #interrupt-cells = <4>;
->
-> Best Regards,
-> Erin
->
-> > _______________________________________________
-> > Linux-mediatek mailing list
-> > Linux-mediatek@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
->
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Signed-off-by: Alex Williams <alex.williams@ni.com>
+---
+ drivers/net/ethernet/ni/nixge.c | 74 ++++++++++++++++++++++++++++++++---------
+ 1 file changed, 58 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/ethernet/ni/nixge.c b/drivers/net/ethernet/ni/nixge.c
+index 1e408d1a9b5f..73a98bd2fcd2 100644
+--- a/drivers/net/ethernet/ni/nixge.c
++++ b/drivers/net/ethernet/ni/nixge.c
+@@ -105,6 +105,12 @@
+ #define NIXGE_MAX_JUMBO_FRAME_SIZE \
+ 	(NIXGE_JUMBO_MTU + NIXGE_HDR_SIZE + NIXGE_TRL_SIZE)
+ 
++enum nixge_version {
++	NIXGE_V2,
++	NIXGE_V3,
++	NIXGE_VERSION_COUNT
++};
++
+ struct nixge_hw_dma_bd {
+ 	u32 next_lo;
+ 	u32 next_hi;
+@@ -1225,11 +1231,59 @@ static void *nixge_get_nvmem_address(struct device *dev)
+ 	return mac;
+ }
+ 
++/* Match table for of_platform binding */
++static const struct of_device_id nixge_dt_ids[] = {
++	{ .compatible = "ni,xge-enet-2.00", .data = (void *)NIXGE_V2 },
++	{ .compatible = "ni,xge-enet-3.00", .data = (void *)NIXGE_V3 },
++	{},
++};
++MODULE_DEVICE_TABLE(of, nixge_dt_ids);
++
++static int nixge_of_get_resources(struct platform_device *pdev)
++{
++	const struct of_device_id *of_id;
++	enum nixge_version version;
++	struct resource *ctrlres;
++	struct resource *dmares;
++	struct net_device *ndev;
++	struct nixge_priv *priv;
++
++	ndev = platform_get_drvdata(pdev);
++	priv = netdev_priv(ndev);
++	of_id = of_match_node(nixge_dt_ids, pdev->dev.of_node);
++	if (!of_id)
++		return -ENODEV;
++
++	version = (enum nixge_version)of_id->data;
++	if (version <= NIXGE_V2)
++		dmares = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	else
++		dmares = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						      "dma");
++
++	priv->dma_regs = devm_ioremap_resource(&pdev->dev, dmares);
++	if (IS_ERR(priv->dma_regs)) {
++		netdev_err(ndev, "failed to map dma regs\n");
++		return PTR_ERR(priv->dma_regs);
++	}
++	if (version <= NIXGE_V2) {
++		priv->ctrl_regs = priv->dma_regs + NIXGE_REG_CTRL_OFFSET;
++	} else {
++		ctrlres = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						       "ctrl");
++		priv->ctrl_regs = devm_ioremap_resource(&pdev->dev, ctrlres);
++	}
++	if (IS_ERR(priv->ctrl_regs)) {
++		netdev_err(ndev, "failed to map ctrl regs\n");
++		return PTR_ERR(priv->ctrl_regs);
++	}
++	return 0;
++}
++
+ static int nixge_probe(struct platform_device *pdev)
+ {
+ 	struct nixge_priv *priv;
+ 	struct net_device *ndev;
+-	struct resource *dmares;
+ 	const u8 *mac_addr;
+ 	int err;
+ 
+@@ -1261,14 +1315,9 @@ static int nixge_probe(struct platform_device *pdev)
+ 	priv->dev = &pdev->dev;
+ 
+ 	netif_napi_add(ndev, &priv->napi, nixge_poll, NAPI_POLL_WEIGHT);
+-
+-	dmares = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->dma_regs = devm_ioremap_resource(&pdev->dev, dmares);
+-	if (IS_ERR(priv->dma_regs)) {
+-		netdev_err(ndev, "failed to map dma regs\n");
+-		return PTR_ERR(priv->dma_regs);
+-	}
+-	priv->ctrl_regs = priv->dma_regs + NIXGE_REG_CTRL_OFFSET;
++	err = nixge_of_get_resources(pdev);
++	if (err)
++		return err;
+ 	__nixge_hw_set_mac_address(ndev);
+ 
+ 	priv->tx_irq = platform_get_irq_byname(pdev, "tx");
+@@ -1337,13 +1386,6 @@ static int nixge_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-/* Match table for of_platform binding */
+-static const struct of_device_id nixge_dt_ids[] = {
+-	{ .compatible = "ni,xge-enet-2.00", },
+-	{},
+-};
+-MODULE_DEVICE_TABLE(of, nixge_dt_ids);
+-
+ static struct platform_driver nixge_driver = {
+ 	.probe		= nixge_probe,
+ 	.remove		= nixge_remove,
+-- 
+2.14.5
+
