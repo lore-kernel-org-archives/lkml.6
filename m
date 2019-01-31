@@ -2,117 +2,154 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B16C282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3470C282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DBA120870
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B963920989
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:43:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbfAaClW (ORCPT
+        id S1727753AbfAaCne (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 21:41:22 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:29664 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfAaClW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 21:41:22 -0500
-Received: from [10.28.18.236] (10.28.18.236) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 31 Jan
- 2019 10:42:04 +0800
-Subject: Re: [PATCH] mtd: rawnand: meson: Fix linking error on 32-bit
- platforms
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-CC:     Boris Brezillon <bbrezillon@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Kevin Hilman <khilman@baylibre.com>,
-        <linux-mtd@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20190129214657.5877-1-natechancellor@gmail.com>
- <42d2e92e-9f5a-62b2-c0af-b7f3544d79d2@amlogic.com>
- <20190130103220.27b13ab9@xps13> <20190130152706.GA31999@archlinux-ryzen>
-From:   Liang Yang <liang.yang@amlogic.com>
-Message-ID: <2b8866ac-073d-0077-79a7-67b47d79996f@amlogic.com>
-Date:   Thu, 31 Jan 2019 10:42:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190130152706.GA31999@archlinux-ryzen>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.28.18.236]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+        Wed, 30 Jan 2019 21:43:34 -0500
+Received: from mga07.intel.com ([134.134.136.100]:37466 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbfAaCne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 21:43:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 18:43:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,543,1539673200"; 
+   d="scan'208";a="129928534"
+Received: from shbuild999.sh.intel.com ([10.239.147.118])
+  by FMSMGA003.fm.intel.com with ESMTP; 30 Jan 2019 18:43:31 -0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Feng Tang <feng.tang@intel.com>
+Subject: [PATCH v4] async: Add cmdline option to specify drivers to be async probed
+Date:   Thu, 31 Jan 2019 10:43:50 +0800
+Message-Id: <1548902630-5550-1-git-send-email-feng.tang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miquel, Nathan,
+Asynchronous driver probing can help much on kernel fastboot, and
+this option can provide a flexible way to optimize and quickly verify
+async driver probe.
 
-On 2019/1/30 23:27, Nathan Chancellor wrote:
-> On Wed, Jan 30, 2019 at 10:32:20AM +0100, Miquel Raynal wrote:
->> Hi Liang, Nathan,
->>
->> Liang Yang <liang.yang@amlogic.com> wrote on Wed, 30 Jan 2019 17:26:39
->> +0800:
->>
->>> Hi Nathan,
->>>
->>> On 2019/1/30 5:46, Nathan Chancellor wrote:
->>>> On arm little endian allyesconfig:
->>>>
->>>>     ld.lld: error: undefined symbol: __aeabi_uldivmod
->>>>     >>> referenced by meson_nand.c
->>>>     >>> mtd/nand/raw/meson_nand.o:(meson_nfc_setup_data_interface) in archive drivers/built-in.a
->>>>
->>>> The dividend tBERS_max is u64, meaning we need to use DIV_ROUND_UP_ULL
->>>> (which wraps do_div) to prevent the compiler from emitting
->>>> __aebi_uldivmod.
->>>>
->>>> Fixes: 2d570b34b41a ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
->>>> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
->>>> ---
->>>>    drivers/mtd/nand/raw/meson_nand.c | 4 ++--
->>>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/mtd/nand/raw/meson_nand.c b/drivers/mtd/nand/raw/meson_nand.c
->>>> index e858d58d97b0..6f12a96195d1 100644
->>>> --- a/drivers/mtd/nand/raw/meson_nand.c
->>>> +++ b/drivers/mtd/nand/raw/meson_nand.c
->>>> @@ -1116,8 +1116,8 @@ int meson_nfc_setup_data_interface(struct nand_chip *nand, int csline,
->>>>    				       div * NFC_CLK_CYCLE);
->>>>    	meson_chip->tadl = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tADL_min),
->>>>    					div * NFC_CLK_CYCLE);
->>>> -	tbers_clocks = DIV_ROUND_UP(PSEC_TO_NSEC(timings->tBERS_max),
->>>> -				    div * NFC_CLK_CYCLE);
->>>> +	tbers_clocks = DIV_ROUND_UP_ULL(PSEC_TO_NSEC(timings->tBERS_max),
->>>> +					div * NFC_CLK_CYCLE);
->>>
->>> Looks good to me:
->>>
->>> Acked-by: Liang Yang <liang.yang@amlogic.com>
->>
->> This is nand/next material, so if you don't mind I would like to squash
->> this fix into the original commit inserting the driver.
->>
->>
->> Thanks,
->> Miquèl
-> 
-> Hi Miquel,
-> 
-> That is totally fine by me, thanks for the quick response!
-> 
-> Nathan
-> 
-it is ok with me.
-> .
-> 
+Also it will help in below cases:
+* Some driver actually covers several families of HWs, some of which
+  could use async probing while others don't. So we can't simply
+  turn on the PROBE_PREFER_ASYNCHRONOUS flag in driver, but use this
+  cmdline option, like igb driver async patch discussed at
+  https://www.spinics.net/lists/netdev/msg545986.html
+
+* For SOC (System on Chip) with multiple spi or i2c controllers, most
+  of the slave spi/i2c devices will be assigned with fixed controller
+  number, while async probing may make those controllers get different
+  index for each boot, which prevents those controller drivers to be
+  async probed. For platforms not using these spi/i2c slave devices,
+  they can use this cmdline option to benefit from the async probing.
+
+Suggested-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+---
+Changelog:
+  v4:
+     Add description to kernel-parameters.txt and refine the
+     prink message, as suggested by Randy Dunlap 
+
+  v3: 
+     move the cmdline_requested_async_probing() into "default:"
+     part to enforce the PROBE_FORCE_SYNCHRONOUS check, as suggested
+     by Alexander Duyck
+    
+  v2:
+    * change Alexander Duyck's email to alexander.h.duyck@linux.intel.com
+    * fix the parameter for strlcpy()
+
+ Documentation/admin-guide/kernel-parameters.txt |  4 ++++
+ drivers/base/dd.c                               | 24 ++++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b799bcf..a5b2112 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -910,6 +910,10 @@
+ 			The filter can be disabled or changed to another
+ 			driver later using sysfs.
+ 
++	driver_async_probe=  [KNL]
++			List of driver names to be probed asynchronously.
++			Format: <driver_name1>,<driver_name2>...
++
+ 	drm.edid_firmware=[<connector>:]<file>[,[<connector>:]<file>]
+ 			Broken monitors, graphic adapters, KVMs and EDIDless
+ 			panels may send no or incorrect EDID data sets.
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 8ac10af..279204a 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -57,6 +57,10 @@ static atomic_t deferred_trigger_count = ATOMIC_INIT(0);
+ static struct dentry *deferred_devices;
+ static bool initcalls_done;
+ 
++/* Save the async probe drivers' name from kernel cmdline */
++#define ASYNC_DRV_NAMES_MAX_LEN	256
++static char async_probe_drv_names[ASYNC_DRV_NAMES_MAX_LEN];
++
+ /*
+  * In some cases, like suspend to RAM or hibernation, It might be reasonable
+  * to prohibit probing of devices as it could be unsafe.
+@@ -674,6 +678,23 @@ int driver_probe_device(struct device_driver *drv, struct device *dev)
+ 	return ret;
+ }
+ 
++static inline bool cmdline_requested_async_probing(const char *drv_name)
++{
++	return parse_option_str(async_probe_drv_names, drv_name);
++}
++
++/* The option format is "driver_async_probe=drv_name1,drv_name2,..." */
++static int __init save_async_options(char *buf)
++{
++	if (strlen(buf) >= ASYNC_DRV_NAMES_MAX_LEN)
++		printk(KERN_WARNING
++			"Too long list of driver names for 'async_probe_drv_names'!\n");
++
++	strlcpy(async_probe_drv_names, buf, ASYNC_DRV_NAMES_MAX_LEN);
++	return 0;
++}
++__setup("driver_async_probe=", save_async_options);
++
+ bool driver_allows_async_probing(struct device_driver *drv)
+ {
+ 	switch (drv->probe_type) {
+@@ -684,6 +705,9 @@ bool driver_allows_async_probing(struct device_driver *drv)
+ 		return false;
+ 
+ 	default:
++		if (cmdline_requested_async_probing(drv->name))
++			return true;
++
+ 		if (module_requested_async_probing(drv->owner))
+ 			return true;
+ 
+-- 
+2.7.4
+
