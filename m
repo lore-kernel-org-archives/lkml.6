@@ -2,290 +2,242 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7C9C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0BD2C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6A6D2087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:05:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7429E2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:05:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R+/tNlVm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCyLQJkQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729169AbfAaLFH (ORCPT
+        id S1732105AbfAaLFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 06:05:07 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:43408 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbfAaLFG (ORCPT
+        Thu, 31 Jan 2019 06:05:36 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39715 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbfAaLFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 06:05:06 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0VB541T101988;
-        Thu, 31 Jan 2019 05:05:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548932704;
-        bh=xifPl3PMD9iaqfZ5zziSvBtlSTBVkfB5YsJhnB1ycQs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=R+/tNlVmFw1UGP+2ZKa7flhNhMrJ82D7sSJKmg2aZ92GbO1GBP33C2qliEYWsgVI4
-         7/Tu1CF/mYtYcpQmFDgydrxfzq5uc37sFzW08Lg/UMGe4EX9Qs5moRTF+ySQ+d1Gsk
-         yt4bwW4FfxwXjStGmVIQMV7Xkudd+Qr42qMIkh8Q=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0VB51v8021092
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 05:05:04 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 31
- Jan 2019 05:05:03 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 31 Jan 2019 05:05:03 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0VB51lM029522;
-        Thu, 31 Jan 2019 05:05:02 -0600
-Subject: Re: [PATCH] phy: ti-pipe3: Add set_mode callback to configure usb3
- phy as pcie phy
-To:     Roger Quadros <rogerq@ti.com>
-CC:     <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20190124104822.22411-1-kishon@ti.com> <5C51BBAD.3090304@ti.com>
- <66b1de88-dd11-178d-374b-09eb5739bfb3@ti.com> <5C52D0F1.2020807@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <0c39b4f6-98fd-9765-c90e-701387cf9e83@ti.com>
-Date:   Thu, 31 Jan 2019 16:34:27 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 31 Jan 2019 06:05:36 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y8so2054046wmi.4;
+        Thu, 31 Jan 2019 03:05:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7aWYIeDSRu37qcvD91X+mq+QeqQ7LiZZhZ13fw7hToQ=;
+        b=BCyLQJkQT8xTWi3+Tob/nuokrm3kEg4ZNjEkVRzGm3hYoTTDAtP5TGRdOo7Lxev8hn
+         2N9Lyf0NLGZsRYyC9u7eT9E/X2GkTZ2xq4SNfYJ88Ed3LshbgcR7ZHidhYHEC8FncQwS
+         ds/1mbhhzbQ35zVVUbcajOlzMwU3637B/5luBg7vlBZc3Khu6uFwb46KEHpjothlxvY+
+         vrPgoFheAONgWdGqiqMJD00cRrx7yOJKTD442QsymF6CcxrVjW55Zc6HgIyj04GhvQt9
+         mtP3eTb9o7MGhjBDPvCknX3xF+HgU7eGilB9OTRuse+47wdBl7zKN9FFnpjKo3EBsfpL
+         aM+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7aWYIeDSRu37qcvD91X+mq+QeqQ7LiZZhZ13fw7hToQ=;
+        b=Bxl6A6ydaK+xEcCGKUL9bv74Npzaf7hYubYaynIk5IV5fOf7rDh8xpvCeasa7bJC7o
+         gkRjkszOUthyvO14AGUCb2WFM3/lW7AV6rK4HQnXYUga4Elt8aOaUuWf0wQNUThlqRRX
+         z5feU8n5lC3mmukrt9Uy9FI1Z6IOtC5oe1VItgm5eiZmgu4UYNqV+TLfgOX+CLxjDtg+
+         90ZnZsGwZgUNrmqHfYidqUkDa13kAhqpDO8X4BtxxTBPPu+oaFkWPaKyFl2M5rz8RfYV
+         dpNuEjicno9J6jTOprhgr0u3xoIvKawAy+eVJigFTtO7g3aEfAXamsxmOdalQKqT2YKS
+         TkKA==
+X-Gm-Message-State: AJcUukc/UgLPQmTG7YlsXayTXepW8XHpzVagrmte5U1qskXq66VbuxVv
+        FYkcSfQ+Fi6ah7WHbUyIm6Q=
+X-Google-Smtp-Source: ALg8bN48D9M8sncpprcbTCWTiFEzMUf9GpCRFfcZ+HIYbxxMn6cElCsdBgc5veXZHSGxYmDN5abTZQ==
+X-Received: by 2002:a1c:c483:: with SMTP id u125mr28774121wmf.14.1548932733397;
+        Thu, 31 Jan 2019 03:05:33 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id v8sm5150081wrq.53.2019.01.31.03.05.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 03:05:32 -0800 (PST)
+Date:   Thu, 31 Jan 2019 12:05:30 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Takashi Iwai <tiwai@suse.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        pierre-louis.bossart@linux.intel.com,
+        Sameer Pujar <spujar@nvidia.com>, perex@perex.cz,
+        alsa-devel@alsa-project.org, mkumard@nvidia.com,
+        rlokhande@nvidia.com, sharadg@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
+Message-ID: <20190131110530.GA23438@ulmo>
+References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
+ <b631310f-93fa-ef4b-7014-d97fcfb2dcdf@nvidia.com>
+ <s5ha7jicd4l.wl-tiwai@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <5C52D0F1.2020807@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Disposition: inline
+In-Reply-To: <s5ha7jicd4l.wl-tiwai@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 31/01/19 4:11 PM, Roger Quadros wrote:
-> 
-> 
-> On 31/01/19 08:02, Kishon Vijay Abraham I wrote:
->> Roger,
->>
->> On 30/01/19 8:28 PM, Roger Quadros wrote:
->>> Kishon,
->>>
->>> On 24/01/19 12:48, Kishon Vijay Abraham I wrote:
->>>> DRA72 platform has the second instance of PHY shared between USB3
->>>> controller and PCIe controller with default as USB3 controller.
->>>> Since it is used with USB3 controller by default, it uses the
->>>> compatible specific to USB (ti,omap-usb3).
->>>>
->>>> Populate set_mode callback so that the USB3 PHY can be configured
->>>> to be used with PCIe controller.
->>>
->>> How about rewording this to,
->>>
->>> "On DRA72x SoCs, the USB3 PHY can be used either as USB Super-Speed
->>> lane or as PCIe Lane (i.e. second lane for PCIe_SS1 in 2 lane mode or single
->>> lane for PCIe_SS2). The default mode for the USB3 PHY is USB Super-Speed.
->>> Provide a way for the PHY user to choose the appropriate mode via the
->>> .set_mode hook"
->>
->> hmm okay
->>>
->>> More comments below.
->>>
->>>>
->>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>> ---
->>>>  drivers/phy/ti/phy-ti-pipe3.c | 66 ++++++++++++++++++++++++++++-------
->>>>  1 file changed, 54 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/drivers/phy/ti/phy-ti-pipe3.c b/drivers/phy/ti/phy-ti-pipe3.c
->>>> index 68ce4a082b9b..8c98f366416d 100644
->>>> --- a/drivers/phy/ti/phy-ti-pipe3.c
->>>> +++ b/drivers/phy/ti/phy-ti-pipe3.c
->>>> @@ -56,6 +56,12 @@
->>>>  
->>>>  #define SATA_PLL_SOFT_RESET	BIT(18)
->>>>  
->>>> +#define PHY_RX_ANA_PRGRAMMABILITY_REG	0xC
->>>> +#define MEM_EN_PLLBYP			BIT(7)
->>>> +
->>>> +#define PHY_TX_TEST_CONFIG		0x2C
->>>> +#define MEM_ENTESTCLK			BIT(31)
->>>> +
->>>>  #define PIPE3_PHY_PWRCTL_CLK_CMD_MASK	0x003FC000
->>>>  #define PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT	14
->>>>  
->>>> @@ -110,6 +116,8 @@
->>>>  #define PLL_IDLE_TIME	100	/* in milliseconds */
->>>>  #define PLL_LOCK_TIME	100	/* in milliseconds */
->>>>  
->>>> +#define PIPE3_PHY_DISABLE_SYNC_POWER	BIT(4)
->>>> +
->>>>  struct pipe3_dpll_params {
->>>>  	u16	m;
->>>>  	u8	n;
->>>> @@ -141,6 +149,7 @@ struct ti_pipe3 {
->>>>  	unsigned int		power_reg; /* power reg. index within syscon */
->>>>  	unsigned int		pcie_pcs_reg; /* pcs reg. index in syscon */
->>>>  	bool			sata_refclk_enabled;
->>>> +	u32			mode;
->>>>  };
->>>>  
->>>>  static struct pipe3_dpll_map dpll_map_usb[] = {
->>>> @@ -233,7 +242,10 @@ static int ti_pipe3_power_on(struct phy *x)
->>>>  	rate = rate / 1000000;
->>>>  	mask = OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_CMD_MASK |
->>>>  		  OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_FREQ_MASK;
->>>> -	val = PIPE3_PHY_TX_RX_POWERON << PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT;
->>>> +	val = PIPE3_PHY_TX_RX_POWERON;
->>>> +	if (phy->mode == PHY_MODE_PCIE)
->>>> +		val |= PIPE3_PHY_DISABLE_SYNC_POWER;
->>>
->>> Is this required only for the USB3 PHY being used as PCIe lane or can it
->>> be done for the PCIe PHY as well?
->>
->> This setting was given only for USB3 PHY. I did check PCIe PHY (1-lane) to see
->> if this is causing issues before posting the patch.
->>
->> Thinking again, it might be safer to just use this setting for USB3 PHY.
->>>
->>> I ask this because phy->mode can be PHY_MODE_PCIE for both USB3 PHY and PCIe PHY
->>> and it might break PCIe PHY as we don't do PIPE3_PHY_DISABLE_SYNC_POWER for that
->>> currently.
->>>
->>> Maybe this is safer?
->>>
->>> 	if (phy->mode == PHY_MODE_PCIE && of_device_is_compatible(node, "ti,phy-usb3"))
->>
->> yeah..
->>>
->>>> +	val <<= PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT;
->>>>  	val |= rate << OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_FREQ_SHIFT;
->>>>  
->>>>  	ret = regmap_update_bits(phy->phy_power_syscon, phy->power_reg,
->>>> @@ -328,13 +340,11 @@ static void ti_pipe3_calibrate(struct ti_pipe3 *phy)
->>>>  	ti_pipe3_writel(phy->phy_rx, PCIEPHYRX_EQUALIZER, val);
->>>>  }
->>>>  
->>>> -static int ti_pipe3_init(struct phy *x)
->>>> +static int ti_pipe3_pcie_init(struct ti_pipe3 *phy)
->>>>  {
->>>> -	struct ti_pipe3 *phy = phy_get_drvdata(x);
->>>> -	u32 val;
->>>>  	int ret = 0;
->>>> +	u32 val;
->>>>  
->>>> -	ti_pipe3_enable_clocks(phy);
->>>>  	/*
->>>>  	 * Set pcie_pcs register to 0x96 for proper functioning of phy
->>>>  	 * as recommended in AM572x TRM SPRUHZ6, section 18.5.2.2, table
->>>> @@ -353,10 +363,31 @@ static int ti_pipe3_init(struct phy *x)
->>>>  			return ret;
->>>>  
->>>>  		ti_pipe3_calibrate(phy);
->>>> -
->>>> -		return 0;
->>>> +	} else {
->>>
->>> How about
->>>
->>> 	else if (of_device_is_compatible(node, "ti,phy-usb3")) {
->>
->> This check is implicit no?
-> 
-> For now yes. But phy_set_mode can be called for SATA PHY as well
-> and that might need different settings than USB3 PHY?
+--+QahgC5+KEYLbs62
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This function will be invoked only for PCIe.
-> 
->>> 		/* USB3 PHY being used as PCIe Lane */
->>>
->>>> +		val = ti_pipe3_readl(phy->phy_rx,
->>>> +				     PHY_RX_ANA_PRGRAMMABILITY_REG);
->>>> +		val |= MEM_EN_PLLBYP;
->>>> +		ti_pipe3_writel(phy->phy_rx, PHY_RX_ANA_PRGRAMMABILITY_REG,
->>>> +				val);
->>>> +		val = ti_pipe3_readl(phy->phy_tx, PHY_TX_TEST_CONFIG);
->>>> +		val |= MEM_ENTESTCLK;
->>>> +		ti_pipe3_writel(phy->phy_tx, PHY_TX_TEST_CONFIG, val);
->>>>  	}
->>>>  
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int ti_pipe3_init(struct phy *x)
->>>> +{
->>>> +	struct ti_pipe3 *phy = phy_get_drvdata(x);
->>>> +	u32 val;
->>>> +	int ret = 0;
->>>> +
->>>> +	ti_pipe3_enable_clocks(phy);
->>>> +
->>>> +	if (phy->mode == PHY_MODE_PCIE)
->>>
->>> Here you expect PHY "ti,phy-pipe3-pcie" to have mode = PHY_MODE_PCIE.
->>> Should we set the mode to PCI_MODE_PCIE explicitly it in probe?
->>
->> The set_mode callback checks if the phy->mode is INVALID before setting the
->> mode. The phy_set_mode in the PCIe consumer driver will return error if it is
->> already set. The phy_set_mode will be called for both the lanes by the PCIe driver.
-> 
-> see below.
-> 
->>>
->>>> +		return ti_pipe3_pcie_init(phy);
->>>> +
->>>>  	/* Bring it out of IDLE if it is IDLE */
->>>>  	val = ti_pipe3_readl(phy->pll_ctrl_base, PLL_CONFIGURATION2);
->>>>  	if (val & PLL_IDLE) {
->>>> @@ -395,7 +426,7 @@ static int ti_pipe3_exit(struct phy *x)
->>>>  		return 0;
->>>>  
->>>>  	/* PCIe doesn't have internal DPLL */
->>>> -	if (!of_device_is_compatible(phy->dev->of_node, "ti,phy-pipe3-pcie")) {
->>>> +	if (!(phy->mode == PHY_MODE_PCIE)) {
->>>
->>> But this might be a USB3 PHY, which has DPLL.
->>
->> hmm. I have to check this. We should also then reset PLL_IDLE bit in phy_init.
->>>
->>>>  		/* Put DPLL in IDLE mode */
->>>>  		val = ti_pipe3_readl(phy->pll_ctrl_base, PLL_CONFIGURATION2);
->>>>  		val |= PLL_IDLE;
->>>> @@ -429,11 +460,25 @@ static int ti_pipe3_exit(struct phy *x)
->>>>  
->>>>  	return 0;
->>>>  }
->>>> +
->>>> +static int ti_pipe3_set_mode(struct phy *x, enum phy_mode mode, int submode)
->>>> +{
->>>> +	struct ti_pipe3 *phy = phy_get_drvdata(x);
->>>> +
->>>> +	if (phy->mode != PHY_MODE_INVALID)
->>>> +		return -EBUSY;
-> 
-> I think you are referring to this. Why is this necessary?
-> This will restrict the PHY to one mode per boot. We don't want to
-> impose that limitation.
+On Wed, Jan 30, 2019 at 05:40:42PM +0100, Takashi Iwai wrote:
+> On Wed, 30 Jan 2019 13:45:49 +0100,
+> Jon Hunter wrote:
+> >=20
+> >=20
+> > On 25/01/2019 11:06, Sameer Pujar wrote:
+> > > If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
+> > > will not be ON. This could cause issue during probe, where hda init
+> > > setup is done. This patch enables clocks unconditionally during probe.
+> > >=20
+> > > Along with above, follwoing changes are done.
+> > >   * enable runtime PM before exiting from probe work. This helps to a=
+void
+> > >     usage of pm_runtime_get_sync/pm_runtime_put() in probe work.
+> > >   * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
+> > >   * runtime PM callbacks moved out of CONFIG_PM check
+> > >=20
+> > > Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> > > Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
+> > > Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> > > ---
+> > >  sound/pci/hda/hda_tegra.c | 26 +++++++++++++++++---------
+> > >  1 file changed, 17 insertions(+), 9 deletions(-)
+> > >=20
+> > > diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+> > > index c8d18dc..ba6175f 100644
+> > > --- a/sound/pci/hda/hda_tegra.c
+> > > +++ b/sound/pci/hda/hda_tegra.c
+> > > @@ -219,7 +219,6 @@ static int hda_tegra_enable_clocks(struct hda_teg=
+ra *data)
+> > >  	return rc;
+> > >  }
+> > > =20
+> > > -#ifdef CONFIG_PM_SLEEP
+> > >  static void hda_tegra_disable_clocks(struct hda_tegra *data)
+> > >  {
+> > >  	clk_disable_unprepare(data->hda2hdmi_clk);
+> > > @@ -227,6 +226,7 @@ static void hda_tegra_disable_clocks(struct hda_t=
+egra *data)
+> > >  	clk_disable_unprepare(data->hda_clk);
+> > >  }
+> > > =20
+> > > +#ifdef CONFIG_PM_SLEEP
+> > >  /*
+> > >   * power management
+> > >   */
+> > > @@ -257,7 +257,6 @@ static int hda_tegra_resume(struct device *dev)
+> > >  }
+> > >  #endif /* CONFIG_PM_SLEEP */
+> > > =20
+> > > -#ifdef CONFIG_PM
+> > >  static int hda_tegra_runtime_suspend(struct device *dev)
+> > >  {
+> > >  	struct snd_card *card =3D dev_get_drvdata(dev);
+> > > @@ -283,7 +282,7 @@ static int hda_tegra_runtime_resume(struct device=
+ *dev)
+> > >  	int rc;
+> > > =20
+> > >  	rc =3D hda_tegra_enable_clocks(hda);
+> > > -	if (rc !=3D 0)
+> > > +	if (rc)
+> > >  		return rc;
+> > >  	if (chip && chip->running) {
+> > >  		hda_tegra_init(hda);
+> > > @@ -292,7 +291,6 @@ static int hda_tegra_runtime_resume(struct device=
+ *dev)
+> > > =20
+> > >  	return 0;
+> > >  }
+> > > -#endif /* CONFIG_PM */
+> > > =20
+> > >  static const struct dev_pm_ops hda_tegra_pm =3D {
+> > >  	SET_SYSTEM_SLEEP_PM_OPS(hda_tegra_suspend, hda_tegra_resume)
+> > > @@ -551,9 +549,9 @@ static int hda_tegra_probe(struct platform_device=
+ *pdev)
+> > > =20
+> > >  	dev_set_drvdata(&pdev->dev, card);
+> > > =20
+> > > -	pm_runtime_enable(hda->dev);
+> > > -	if (!azx_has_pm_runtime(chip))
+> > > -		pm_runtime_forbid(hda->dev);
+> > > +	err =3D hda_tegra_enable_clocks(hda);
+> > > +	if (err)
+> > > +		goto out_free;
+> >=20
+> > We also need to think about power-domains here. Enabling the clocks
+> > might not be enough as the appropriate power-domain needs to be enabled.
+> > For 64-bit Tegra runtime-pm will handle the power-domains (assuming they
+> > are populated in device-tree). So I still think it is better we call
+> > pm_runtime_get_sync() at some point rather than just replying on
+> > enabling the clocks.
+>=20
+> If I understand correctly the code, the pm domain is already activated
+> at calling driver's probe callback.
 
-Isn't that true? Our PHYs can work only in one mode right?
+As far as I can tell, the domain will also be powered off again after
+probe finished, unless the device grabs a runtime PM reference. This is
+what happens via the dev->pm_domain->sync() call after successful probe
+of a driver.
 
-Maybe we can add a check like below but there too we can't set the PHY mode of
-USB PHY to USB in probe, for the PHY that is shared with PCIe.
+It seems to me like it's not a very well defined case what to do when a
+device needs to be powered up but runtime PM is not enabled.
 
-if (phy->mode != PHY_MODE_INVALID) && (phy->mode != mode)
-	return -EBUSY.
+Adding Rafael and linux-pm, maybe they can provide some guidance on what
+to do in these situations.
 
-Thanks
-Kishon
+To summarize, what we're debating here is how to handle powering up a
+device if the pm_runtime infrastructure doesn't take care of it. Jon's
+proposal here was, and we use this elsewhere, to do something like this:
+
+	pm_runtime_enable(dev);
+	if (!pm_runtime_enabled(dev)) {
+		err =3D foo_runtime_resume(dev);
+		if (err < 0)
+			goto fail;
+	}
+
+So basically when runtime PM is not available, we explicitly "resume"
+the device to power it up.
+
+It seems to me like that's a fairly common problem, so I'm wondering if
+there's something that the runtime PM core could do to help with this.
+Or perhaps there's already a way to achieve this that we're all
+overlooking?
+
+Rafael, any suggestions?
+
+Thanks,
+Thierry
+
+--+QahgC5+KEYLbs62
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxS1ngACgkQ3SOs138+
+s6E8rBAAjzQAb31XTYdEsyXIwYmUXSryCimpXWKM58O4tV5wB8ulcFJDv5t87O4Z
+EfnmuVlQCFdXx1nbx6YIAHgOalzCjnhW16DUHOr7JDagX9xAjwqV0DRpBXfhp4/S
+fDb0zmeB3/Ecub3Oquh3dd2Fu/6AuULZR49XKszlbpoxk20q8VaeV6DI0U6VkudY
+isXcsjw6cPg1E1JpiZNYRYX5VEMvVRVYpz6zcVsz8RxkUWHgVuk0OI8izlJ6CbXK
+87bCjWty7fgW7Iz7tgJzSPo+pHo/9Jlns4zZkHTkX2+y7CE2jYpM+FwaiVVovcu3
+7mRapuI6np7t4YSRii/zdaPff39K1vtWo/NUJToufL7bI81MyNXTKkjC5n4+p9un
+xr8Mx+biAKFszOa1FU2WwkjOWZeeuQkPpo5mVOgXzPD1ObPGzsPqvdmUtmSao+31
+/s51KWvTsA0qpc80WM9xcq8Yu/VPQJvHOj4Al6fuBTXhfGL1sQKduMuKztYgZM6m
+C+KIFp3i4ddtb/VbwR1S4vw5ccI7Y1baw1k5F6ozpEpaFsie4VYuZuN5QXLgWw4Q
+texUkRLnZdZw32yKxyg0+e2co6ZbImRasciw/y8kYHc+Alxmhkl3RMWgEqyb36f7
+gyyD5Xf1EgPDCq2l9GDQGDAajPJr4v8wVtuEdcyZd4XEHLhQHno=
+=lotk
+-----END PGP SIGNATURE-----
+
+--+QahgC5+KEYLbs62--
