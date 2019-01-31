@@ -6,33 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9735C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0FABC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 983B120869
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:54:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ADDB20869
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:54:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732288AbfAaOy0 (ORCPT
+        id S1732382AbfAaOyc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 09:54:26 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45318 "EHLO
+        Thu, 31 Jan 2019 09:54:32 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45312 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732208AbfAaOyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 09:54:23 -0500
+        id S1732138AbfAaOyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 09:54:22 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E7BC15BF;
-        Thu, 31 Jan 2019 06:54:23 -0800 (PST)
-Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0BB483F59C;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C15C315AD;
         Thu, 31 Jan 2019 06:54:21 -0800 (PST)
+Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 838AC3F59C;
+        Thu, 31 Jan 2019 06:54:20 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, peterz@infradead.org, marc.zyngier@arm.com,
-        mingo@kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v6 4/4] irqdesc: Add domain handler for NMIs
-Date:   Thu, 31 Jan 2019 14:54:01 +0000
-Message-Id: <1548946441-38546-5-git-send-email-julien.thierry@arm.com>
+        mingo@kernel.org, Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v6 3/4] genirq: Provide NMI handlers
+Date:   Thu, 31 Jan 2019 14:54:00 +0000
+Message-Id: <1548946441-38546-4-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548946441-38546-1-git-send-email-julien.thierry@arm.com>
 References: <1548946441-38546-1-git-send-email-julien.thierry@arm.com>
@@ -41,85 +40,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NMI handling code should be executed between calls to nmi_enter and
-nmi_exit.
-
-Add a separate domain handler to properly setup NMI context when handling
-an interrupt requested as NMI.
+Provide flow handlers that are NMI safe for interrupts and percpu_devid
+interrupts.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- include/linux/irqdesc.h |  5 +++++
- kernel/irq/irqdesc.c    | 35 +++++++++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+ include/linux/irq.h |  3 +++
+ kernel/irq/chip.c   | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
-diff --git a/include/linux/irqdesc.h b/include/linux/irqdesc.h
-index dd1e40d..ba05b0d 100644
---- a/include/linux/irqdesc.h
-+++ b/include/linux/irqdesc.h
-@@ -171,6 +171,11 @@ static inline int handle_domain_irq(struct irq_domain *domain,
- {
- 	return __handle_domain_irq(domain, hwirq, true, regs);
- }
-+
-+#ifdef CONFIG_IRQ_DOMAIN
-+int handle_domain_nmi(struct irq_domain *domain, unsigned int hwirq,
-+		      struct pt_regs *regs);
-+#endif
- #endif
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index a7298e4..5e91f6b 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -601,6 +601,9 @@ static inline int irq_set_parent(int irq, int parent_irq)
+ extern void handle_bad_irq(struct irq_desc *desc);
+ extern void handle_nested_irq(unsigned int irq);
  
- /* Test to see if a driver has successfully requested an irq */
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index ee062b7..a1d7a7d 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -669,6 +669,41 @@ int __handle_domain_irq(struct irq_domain *domain, unsigned int hwirq,
- 	set_irq_regs(old_regs);
- 	return ret;
- }
++extern void handle_fasteoi_nmi(struct irq_desc *desc);
++extern void handle_percpu_devid_fasteoi_nmi(struct irq_desc *desc);
 +
-+#ifdef CONFIG_IRQ_DOMAIN
-+/**
-+ * handle_domain_nmi - Invoke the handler for a HW irq belonging to a domain
-+ * @domain:	The domain where to perform the lookup
-+ * @hwirq:	The HW irq number to convert to a logical one
-+ * @regs:	Register file coming from the low-level handling code
+ extern int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg);
+ extern int irq_chip_pm_get(struct irq_data *data);
+ extern int irq_chip_pm_put(struct irq_data *data);
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 34e9690..c32d5f3 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -730,6 +730,37 @@ void handle_fasteoi_irq(struct irq_desc *desc)
+ EXPORT_SYMBOL_GPL(handle_fasteoi_irq);
+ 
+ /**
++ *	handle_fasteoi_nmi - irq handler for NMI interrupt lines
++ *	@desc:	the interrupt description structure for this irq
 + *
-+ * Returns:	0 on success, or -EINVAL if conversion has failed
++ *	A simple NMI-safe handler, considering the restrictions
++ *	from request_nmi.
++ *
++ *	Only a single callback will be issued to the chip: an ->eoi()
++ *	call when the interrupt has been serviced. This enables support
++ *	for modern forms of interrupt handlers, which handle the flow
++ *	details in hardware, transparently.
 + */
-+int handle_domain_nmi(struct irq_domain *domain, unsigned int hwirq,
-+		      struct pt_regs *regs)
++void handle_fasteoi_nmi(struct irq_desc *desc)
 +{
-+	struct pt_regs *old_regs = set_irq_regs(regs);
-+	unsigned int irq;
-+	int ret = 0;
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	struct irqaction *action = desc->action;
++	unsigned int irq = irq_desc_get_irq(desc);
++	irqreturn_t res;
 +
-+	nmi_enter();
-+
-+	irq = irq_find_mapping(domain, hwirq);
-+
++	trace_irq_handler_entry(irq, action);
 +	/*
-+	 * ack_bad_irq is not NMI-safe, just report
-+	 * an invalid interrupt.
++	 * NMIs cannot be shared, there is only one action.
 +	 */
-+	if (likely(irq))
-+		generic_handle_irq(irq);
-+	else
-+		ret = -EINVAL;
++	res = action->handler(irq, action->dev_id);
++	trace_irq_handler_exit(irq, action, res);
 +
-+	nmi_exit();
-+	set_irq_regs(old_regs);
-+	return ret;
++	if (chip->irq_eoi)
++		chip->irq_eoi(&desc->irq_data);
 +}
-+#endif
- #endif
++EXPORT_SYMBOL_GPL(handle_fasteoi_nmi);
++
++/**
+  *	handle_edge_irq - edge type IRQ handler
+  *	@desc:	the interrupt description structure for this irq
+  *
+@@ -908,6 +939,29 @@ void handle_percpu_devid_irq(struct irq_desc *desc)
+ 		chip->irq_eoi(&desc->irq_data);
+ }
  
- /* Dynamic interrupt handling */
++/**
++ * handle_percpu_devid_fasteoi_nmi - Per CPU local NMI handler with per cpu
++ *				     dev ids
++ * @desc:	the interrupt description structure for this irq
++ *
++ * Similar to handle_fasteoi_nmi, but handling the dev_id cookie
++ * as a percpu pointer.
++ */
++void handle_percpu_devid_fasteoi_nmi(struct irq_desc *desc)
++{
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	struct irqaction *action = desc->action;
++	unsigned int irq = irq_desc_get_irq(desc);
++	irqreturn_t res;
++
++	trace_irq_handler_entry(irq, action);
++	res = action->handler(irq, raw_cpu_ptr(action->percpu_dev_id));
++	trace_irq_handler_exit(irq, action, res);
++
++	if (chip->irq_eoi)
++		chip->irq_eoi(&desc->irq_data);
++}
++
+ static void
+ __irq_do_set_handler(struct irq_desc *desc, irq_flow_handler_t handle,
+ 		     int is_chained, const char *name)
 -- 
 1.9.1
 
