@@ -2,60 +2,60 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98775C282DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E26C282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C3E32085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66A9A2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:42:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="FNEezZhL"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="is71jmpf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733008AbfAaNmW (ORCPT
+        id S2387998AbfAaNme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:42:22 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54299 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387607AbfAaNj4 (ORCPT
+        Thu, 31 Jan 2019 08:42:34 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54292 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387618AbfAaNjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 08:39:56 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so2531580wmh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 05:39:54 -0800 (PST)
+        Thu, 31 Jan 2019 08:39:52 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a62so2531376wmh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 05:39:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nfKl1oX5ii0RYJJLqp7zIGe4OVIyZURXgpjZsJl0h8c=;
-        b=FNEezZhLEyujXQxrHyX6JfOwxaB91fFSvIaIRtQON7fmiIhE1uASmQEZfxxdEYcUq9
-         dlu0IOzBMpnKCD21G9Ugar4o5s3wIJoQbxwbTAXlGaIVHD54UDnXaDOB/ni0X3ZhWLlW
-         J81rxlhPANr0Dkzm39i/ak5F3BTc7QrmI0Owb/Z+tG4zaq2VUKKAhciLBC0RjHmqdZkI
-         BFdHabIfa9YmexqZAgCUQwDGdqELhVgQUjTpD1Di0GeKbTXY3ac+XLAkpqLusqJureBc
-         Q1gWEl/MVtfIlZ1ouZukzfzNq5ZSoV3h/N+GRpwHmSyYYUzLCNwdF0EOB4qN/9HnqtHV
-         QFKw==
+        bh=FeUZdmMqEulmsWt+CTGGN+WuWiGWBoYv8p5WnxtUkMY=;
+        b=is71jmpf4E7Cgag1DWIc6Q7/suUD4IrcPAKB7qohSrkvOwdtsxeQ9GOiLGyOxAoRWj
+         z3efsOhf3j+nS60KZinWStD8iKC2HUxr+qXsL/gKzzYgJIZQhae5mO2YyifGGYtsEmc2
+         +5R9HPjXsa1eb3flpxPyU3FKy7+3Cx258sks5NUEgzGAZZEJYbDLGMUoCtjNcw6izEts
+         w9Vfu+EUfhRns+fTUVsjI+Otmwo6vVOEO7xbxwu8sezgVBR6IZWe6rya43VMMF2HeRqs
+         BF8nn5QFZC8E4ndGx0dTLPzai5dk01/DtPujmEZo78nvTUXIIy89Nb9mZDM1dLcKoDcc
+         ewzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nfKl1oX5ii0RYJJLqp7zIGe4OVIyZURXgpjZsJl0h8c=;
-        b=SZ7dprkpVnyXHxuHMujsoDf/ztSgf8m1wDk1QWSPYceIdqzugEHCA8SKCh/P8OJ4Af
-         QTXa9wV/FN4el+O7IgXJEKTxOlznOTDlgBZdVBpO3pWliOODvi8uWPQ6dQLsYkifDSrM
-         0fL9b/+gmmEDPtzuNSUF25fm2LPu6SvtHYHzAohiv+lYUekjtovkyvjvL9jWk+AO2oi0
-         VbKjqAM5uXL4VSDyqcnhRtAI7Be6ImsJsoTMsSFSkYiJTq86fbzcSFhzwtbY4Dd9HFs3
-         IENdtkTHx9xO+fMbgMxdtS1MYKEfAnY3Ewv8maOPNMGDmIDjhsTWd8KHIQMtNb5JA003
-         bAfQ==
-X-Gm-Message-State: AJcUukfRviWAI/ARkBLnWLyeGMFsO31gFL810xSzEr4/y6f/fJnHngFY
-        sSeYn8HuNKyo5LPnASxBpO1eiQ==
-X-Google-Smtp-Source: ALg8bN7/sHq7PUuVn5QuL+6e4f/2XuwIbwITVqY7dIndMErhK447Aix9Dgb1XjfYyqxnAKyeSsj4aA==
-X-Received: by 2002:a7b:c218:: with SMTP id x24mr29381474wmi.58.1548941993875;
-        Thu, 31 Jan 2019 05:39:53 -0800 (PST)
+        bh=FeUZdmMqEulmsWt+CTGGN+WuWiGWBoYv8p5WnxtUkMY=;
+        b=m0klz/iArJu3OdxH7TNs5ncTeCRYZz4pfpcHl/z9c3v+vxhxDCREUI+0B9oUUlvXCI
+         odpk0d3eDcTI1qSy7wHGyOXoskkkuzZb1R1yZgfFB+GLkKTet7/WenC93TbSHqDYd6tb
+         mIGzDWQ/nvshJrBMnBADKkofVFa/bK8p84PUHoE4e94KfIWVZ5igWbeZ/NqlZuQpgjSv
+         S1ZAlyF7LTIFm2D3NQTjbvOEL09Q5n4vkhT60UzmSUFj5p4g05ey9My8QQ+g/czeUqoC
+         wSmIGkE4O5aKtddDhcUEgW7JEW+cF24CIHcmaomJQxfig7hoszSai1VadKvvtN5Sk+28
+         ILWA==
+X-Gm-Message-State: AJcUukcyY+4CXVoJM36arXk3GlyiFdkM2gU16Eur/390dddxpzl/6/YY
+        qOMYgZzvumE35WSjfcv5fbjMkw==
+X-Google-Smtp-Source: ALg8bN7jtRH8eMgdJm4ttbU25j/eWH4yeXkHXVviv1v3ZdUuHF+9Lx8/WV40YBm8knaWa+fVq+8SZA==
+X-Received: by 2002:a1c:f613:: with SMTP id w19mr29675233wmc.0.1548941989101;
+        Thu, 31 Jan 2019 05:39:49 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id h10sm5479768wmf.44.2019.01.31.05.39.52
+        by smtp.gmail.com with ESMTPSA id h10sm5479768wmf.44.2019.01.31.05.39.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 05:39:53 -0800 (PST)
+        Thu, 31 Jan 2019 05:39:48 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -63,9 +63,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Marc Zyngier <marc.zyngier@arm.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 10/35] ARM: davinci: aintc: wrap davinci_irq_init() with a helper
-Date:   Thu, 31 Jan 2019 14:39:03 +0100
-Message-Id: <20190131133928.17985-11-brgl@bgdev.pl>
+Subject: [PATCH 06/35] ARM: davinci: wrap interrupt definitions with a macro for SPARSE_IRQ
+Date:   Thu, 31 Jan 2019 14:38:59 +0100
+Message-Id: <20190131133928.17985-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190131133928.17985-1-brgl@bgdev.pl>
 References: <20190131133928.17985-1-brgl@bgdev.pl>
@@ -78,229 +78,739 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We're going to extend the davinci_irq_init() function with a config
-structure so we can drop the intc-related fields from davinci_soc_info.
+This is done in preparation for selecting CONFIG_SPARSE_IRQ. The
+interrupt numbers will then start at the predefined NR_IRQS offset.
 
-Once we do it, we won't be able to use this routine directly as the
-init_irq callback. Wrap the calls in additional helpers that don't
-take parameters and can be assigned to init_irq.
+For now wrap all interrupt numbers with a macro and define
+DAVINCI_INTC_START to 0. Logically nothing changes for now.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-dm355-evm.c     | 2 +-
- arch/arm/mach-davinci/board-dm355-leopard.c | 2 +-
- arch/arm/mach-davinci/board-dm365-evm.c     | 2 +-
- arch/arm/mach-davinci/board-dm644x-evm.c    | 2 +-
- arch/arm/mach-davinci/board-dm646x-evm.c    | 4 ++--
- arch/arm/mach-davinci/board-neuros-osd2.c   | 2 +-
- arch/arm/mach-davinci/board-sffsdr.c        | 2 +-
- arch/arm/mach-davinci/davinci.h             | 4 ++++
- arch/arm/mach-davinci/dm355.c               | 5 +++++
- arch/arm/mach-davinci/dm365.c               | 5 +++++
- arch/arm/mach-davinci/dm644x.c              | 5 +++++
- arch/arm/mach-davinci/dm646x.c              | 5 +++++
- 12 files changed, 32 insertions(+), 8 deletions(-)
+ arch/arm/mach-davinci/include/mach/irqs.h | 689 +++++++++++-----------
+ 1 file changed, 346 insertions(+), 343 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-dm355-evm.c b/arch/arm/mach-davinci/board-dm355-evm.c
-index f7fa960c23e3..3d0303fb792f 100644
---- a/arch/arm/mach-davinci/board-dm355-evm.c
-+++ b/arch/arm/mach-davinci/board-dm355-evm.c
-@@ -438,7 +438,7 @@ static __init void dm355_evm_init(void)
- MACHINE_START(DAVINCI_DM355_EVM, "DaVinci DM355 EVM")
- 	.atag_offset  = 0x100,
- 	.map_io	      = dm355_evm_map_io,
--	.init_irq     = davinci_irq_init,
-+	.init_irq     = dm355_init_irqs,
- 	.init_time	= dm355_init_time,
- 	.init_machine = dm355_evm_init,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/board-dm355-leopard.c b/arch/arm/mach-davinci/board-dm355-leopard.c
-index 0fdf1d03eb11..91e9772b9399 100644
---- a/arch/arm/mach-davinci/board-dm355-leopard.c
-+++ b/arch/arm/mach-davinci/board-dm355-leopard.c
-@@ -273,7 +273,7 @@ static __init void dm355_leopard_init(void)
- MACHINE_START(DM355_LEOPARD, "DaVinci DM355 leopard")
- 	.atag_offset  = 0x100,
- 	.map_io	      = dm355_leopard_map_io,
--	.init_irq     = davinci_irq_init,
-+	.init_irq     = dm355_init_irqs,
- 	.init_time	= dm355_init_time,
- 	.init_machine = dm355_leopard_init,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/board-dm365-evm.c b/arch/arm/mach-davinci/board-dm365-evm.c
-index e3b0b701e395..be1cfcc412f7 100644
---- a/arch/arm/mach-davinci/board-dm365-evm.c
-+++ b/arch/arm/mach-davinci/board-dm365-evm.c
-@@ -834,7 +834,7 @@ static __init void dm365_evm_init(void)
- MACHINE_START(DAVINCI_DM365_EVM, "DaVinci DM365 EVM")
- 	.atag_offset	= 0x100,
- 	.map_io		= dm365_evm_map_io,
--	.init_irq	= davinci_irq_init,
-+	.init_irq	= dm365_init_irqs,
- 	.init_time	= dm365_init_time,
- 	.init_machine	= dm365_evm_init,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
-index 16ffed2525e6..f23a29e5116f 100644
---- a/arch/arm/mach-davinci/board-dm644x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm644x-evm.c
-@@ -890,7 +890,7 @@ MACHINE_START(DAVINCI_EVM, "DaVinci DM644x EVM")
- 	/* Maintainer: MontaVista Software <source@mvista.com> */
- 	.atag_offset  = 0x100,
- 	.map_io	      = davinci_evm_map_io,
--	.init_irq     = davinci_irq_init,
-+	.init_irq     = dm644x_init_irqs,
- 	.init_time	= dm644x_init_time,
- 	.init_machine = davinci_evm_init,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 8d5be6dd2019..ebf07d92224e 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -863,7 +863,7 @@ static __init void evm_init(void)
- MACHINE_START(DAVINCI_DM6467_EVM, "DaVinci DM646x EVM")
- 	.atag_offset  = 0x100,
- 	.map_io       = davinci_map_io,
--	.init_irq     = davinci_irq_init,
-+	.init_irq     = dm646x_init_irqs,
- 	.init_time	= dm646x_evm_init_time,
- 	.init_machine = evm_init,
- 	.init_late	= davinci_init_late,
-@@ -873,7 +873,7 @@ MACHINE_END
- MACHINE_START(DAVINCI_DM6467TEVM, "DaVinci DM6467T EVM")
- 	.atag_offset  = 0x100,
- 	.map_io       = davinci_map_io,
--	.init_irq     = davinci_irq_init,
-+	.init_irq     = dm646x_init_irqs,
- 	.init_time	= dm6467t_evm_init_time,
- 	.init_machine = evm_init,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/board-neuros-osd2.c b/arch/arm/mach-davinci/board-neuros-osd2.c
-index efdaa27241c5..fb4c5b3ba8f7 100644
---- a/arch/arm/mach-davinci/board-neuros-osd2.c
-+++ b/arch/arm/mach-davinci/board-neuros-osd2.c
-@@ -231,7 +231,7 @@ MACHINE_START(NEUROS_OSD2, "Neuros OSD2")
- 	/* Maintainer: Neuros Technologies <neuros@groups.google.com> */
- 	.atag_offset	= 0x100,
- 	.map_io		 = davinci_ntosd2_map_io,
--	.init_irq	= davinci_irq_init,
-+	.init_irq	= dm644x_init_irqs,
- 	.init_time	= dm644x_init_time,
- 	.init_machine = davinci_ntosd2_init,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/board-sffsdr.c b/arch/arm/mach-davinci/board-sffsdr.c
-index 792bb84d5011..2fc6f23285b5 100644
---- a/arch/arm/mach-davinci/board-sffsdr.c
-+++ b/arch/arm/mach-davinci/board-sffsdr.c
-@@ -153,7 +153,7 @@ static __init void davinci_sffsdr_init(void)
- MACHINE_START(SFFSDR, "Lyrtech SFFSDR")
- 	.atag_offset  = 0x100,
- 	.map_io	      = davinci_sffsdr_map_io,
--	.init_irq     = davinci_irq_init,
-+	.init_irq     = dm644x_init_irqs,
- 	.init_time	= dm644x_init_time,
- 	.init_machine = davinci_sffsdr_init,
- 	.init_late	= davinci_init_late,
-diff --git a/arch/arm/mach-davinci/davinci.h b/arch/arm/mach-davinci/davinci.h
-index db4c95ef4d5c..49958cc161d7 100644
---- a/arch/arm/mach-davinci/davinci.h
-+++ b/arch/arm/mach-davinci/davinci.h
-@@ -88,6 +88,7 @@ int davinci_init_wdt(void);
- /* DM355 function declarations */
- void dm355_init(void);
- void dm355_init_time(void);
-+void dm355_init_irqs(void);
- void dm355_register_clocks(void);
- void dm355_init_spi0(unsigned chipselect_mask,
- 		const struct spi_board_info *info, unsigned len);
-@@ -97,6 +98,7 @@ int dm355_gpio_register(void);
+diff --git a/arch/arm/mach-davinci/include/mach/irqs.h b/arch/arm/mach-davinci/include/mach/irqs.h
+index 03c446635301..14fa668d4e8d 100644
+--- a/arch/arm/mach-davinci/include/mach/irqs.h
++++ b/arch/arm/mach-davinci/include/mach/irqs.h
+@@ -30,371 +30,374 @@
+ /* Base address */
+ #define DAVINCI_ARM_INTC_BASE 0x01C48000
  
- /* DM365 function declarations */
- void dm365_init(void);
-+void dm365_init_irqs(void);
- void dm365_init_time(void);
- void dm365_register_clocks(void);
- void dm365_init_asp(void);
-@@ -110,6 +112,7 @@ int dm365_gpio_register(void);
- 
- /* DM644x function declarations */
- void dm644x_init(void);
-+void dm644x_init_irqs(void);
- void dm644x_init_devices(void);
- void dm644x_init_time(void);
- void dm644x_register_clocks(void);
-@@ -119,6 +122,7 @@ int dm644x_gpio_register(void);
- 
- /* DM646x function declarations */
- void dm646x_init(void);
-+void dm646x_init_irqs(void);
- void dm646x_init_time(unsigned long ref_clk_rate, unsigned long aux_clkin_rate);
- void dm646x_register_clocks(void);
- void dm646x_init_mcasp0(struct snd_platform_data *pdata);
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index a31f56c70d1d..2795b5ee0069 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -738,6 +738,11 @@ int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
- 	return 0;
- }
- 
-+void __init dm355_init_irqs(void)
-+{
-+	davinci_irq_init();
-+}
++#define DAVINCI_INTC_START		0
++#define DAVINCI_INTC_IRQ(_irqnum)	(DAVINCI_INTC_START + (_irqnum))
 +
- static int __init dm355_init_devices(void)
- {
- 	struct platform_device *edma_pdev;
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 42b2012d25cc..3222873ff9c6 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -995,6 +995,11 @@ int __init dm365_init_video(struct vpfe_config *vpfe_cfg,
- 	return 0;
- }
+ /* Interrupt lines */
+-#define IRQ_VDINT0       0
+-#define IRQ_VDINT1       1
+-#define IRQ_VDINT2       2
+-#define IRQ_HISTINT      3
+-#define IRQ_H3AINT       4
+-#define IRQ_PRVUINT      5
+-#define IRQ_RSZINT       6
+-#define IRQ_VFOCINT      7
+-#define IRQ_VENCINT      8
+-#define IRQ_ASQINT       9
+-#define IRQ_IMXINT       10
+-#define IRQ_VLCDINT      11
+-#define IRQ_USBINT       12
+-#define IRQ_EMACINT      13
++#define IRQ_VDINT0       DAVINCI_INTC_IRQ(0)
++#define IRQ_VDINT1       DAVINCI_INTC_IRQ(1)
++#define IRQ_VDINT2       DAVINCI_INTC_IRQ(2)
++#define IRQ_HISTINT      DAVINCI_INTC_IRQ(3)
++#define IRQ_H3AINT       DAVINCI_INTC_IRQ(4)
++#define IRQ_PRVUINT      DAVINCI_INTC_IRQ(5)
++#define IRQ_RSZINT       DAVINCI_INTC_IRQ(6)
++#define IRQ_VFOCINT      DAVINCI_INTC_IRQ(7)
++#define IRQ_VENCINT      DAVINCI_INTC_IRQ(8)
++#define IRQ_ASQINT       DAVINCI_INTC_IRQ(9)
++#define IRQ_IMXINT       DAVINCI_INTC_IRQ(10)
++#define IRQ_VLCDINT      DAVINCI_INTC_IRQ(11)
++#define IRQ_USBINT       DAVINCI_INTC_IRQ(12)
++#define IRQ_EMACINT      DAVINCI_INTC_IRQ(13)
  
-+void __init dm365_init_irqs(void)
-+{
-+	davinci_irq_init();
-+}
-+
- static int __init dm365_init_devices(void)
- {
- 	struct platform_device *edma_pdev;
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index bf7ebdcf6c18..cfc6e2d481d7 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -672,6 +672,11 @@ int __init dm644x_init_video(struct vpfe_config *vpfe_cfg,
- 	return 0;
- }
+-#define IRQ_CCINT0       16
+-#define IRQ_CCERRINT     17
+-#define IRQ_TCERRINT0    18
+-#define IRQ_TCERRINT     19
+-#define IRQ_PSCIN        20
++#define IRQ_CCINT0       DAVINCI_INTC_IRQ(16)
++#define IRQ_CCERRINT     DAVINCI_INTC_IRQ(17)
++#define IRQ_TCERRINT0    DAVINCI_INTC_IRQ(18)
++#define IRQ_TCERRINT     DAVINCI_INTC_IRQ(19)
++#define IRQ_PSCIN        DAVINCI_INTC_IRQ(20)
  
-+void __init dm644x_init_irqs(void)
-+{
-+	davinci_irq_init();
-+}
-+
- void __init dm644x_init_devices(void)
- {
- 	struct platform_device *edma_pdev;
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index 64b4ae5a4202..5cb087f68efe 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -633,6 +633,11 @@ void __init dm646x_register_clocks(void)
- 	platform_device_register(&dm646x_pll2_device);
- }
+-#define IRQ_IDE          22
+-#define IRQ_HPIINT       23
+-#define IRQ_MBXINT       24
+-#define IRQ_MBRINT       25
+-#define IRQ_MMCINT       26
+-#define IRQ_SDIOINT      27
+-#define IRQ_MSINT        28
+-#define IRQ_DDRINT       29
+-#define IRQ_AEMIFINT     30
+-#define IRQ_VLQINT       31
+-#define IRQ_TINT0_TINT12 32
+-#define IRQ_TINT0_TINT34 33
+-#define IRQ_TINT1_TINT12 34
+-#define IRQ_TINT1_TINT34 35
+-#define IRQ_PWMINT0      36
+-#define IRQ_PWMINT1      37
+-#define IRQ_PWMINT2      38
+-#define IRQ_I2C          39
+-#define IRQ_UARTINT0     40
+-#define IRQ_UARTINT1     41
+-#define IRQ_UARTINT2     42
+-#define IRQ_SPINT0       43
+-#define IRQ_SPINT1       44
++#define IRQ_IDE          DAVINCI_INTC_IRQ(22)
++#define IRQ_HPIINT       DAVINCI_INTC_IRQ(23)
++#define IRQ_MBXINT       DAVINCI_INTC_IRQ(24)
++#define IRQ_MBRINT       DAVINCI_INTC_IRQ(25)
++#define IRQ_MMCINT       DAVINCI_INTC_IRQ(26)
++#define IRQ_SDIOINT      DAVINCI_INTC_IRQ(27)
++#define IRQ_MSINT        DAVINCI_INTC_IRQ(28)
++#define IRQ_DDRINT       DAVINCI_INTC_IRQ(29)
++#define IRQ_AEMIFINT     DAVINCI_INTC_IRQ(30)
++#define IRQ_VLQINT       DAVINCI_INTC_IRQ(31)
++#define IRQ_TINT0_TINT12 DAVINCI_INTC_IRQ(32)
++#define IRQ_TINT0_TINT34 DAVINCI_INTC_IRQ(33)
++#define IRQ_TINT1_TINT12 DAVINCI_INTC_IRQ(34)
++#define IRQ_TINT1_TINT34 DAVINCI_INTC_IRQ(35)
++#define IRQ_PWMINT0      DAVINCI_INTC_IRQ(36)
++#define IRQ_PWMINT1      DAVINCI_INTC_IRQ(37)
++#define IRQ_PWMINT2      DAVINCI_INTC_IRQ(38)
++#define IRQ_I2C          DAVINCI_INTC_IRQ(39)
++#define IRQ_UARTINT0     DAVINCI_INTC_IRQ(40)
++#define IRQ_UARTINT1     DAVINCI_INTC_IRQ(41)
++#define IRQ_UARTINT2     DAVINCI_INTC_IRQ(42)
++#define IRQ_SPINT0       DAVINCI_INTC_IRQ(43)
++#define IRQ_SPINT1       DAVINCI_INTC_IRQ(44)
  
-+void __init dm646x_init_irqs(void)
-+{
-+	davinci_irq_init();
-+}
-+
- static int __init dm646x_init_devices(void)
- {
- 	int ret = 0;
+-#define IRQ_DSP2ARM0     46
+-#define IRQ_DSP2ARM1     47
+-#define IRQ_GPIO0        48
+-#define IRQ_GPIO1        49
+-#define IRQ_GPIO2        50
+-#define IRQ_GPIO3        51
+-#define IRQ_GPIO4        52
+-#define IRQ_GPIO5        53
+-#define IRQ_GPIO6        54
+-#define IRQ_GPIO7        55
+-#define IRQ_GPIOBNK0     56
+-#define IRQ_GPIOBNK1     57
+-#define IRQ_GPIOBNK2     58
+-#define IRQ_GPIOBNK3     59
+-#define IRQ_GPIOBNK4     60
+-#define IRQ_COMMTX       61
+-#define IRQ_COMMRX       62
+-#define IRQ_EMUINT       63
++#define IRQ_DSP2ARM0     DAVINCI_INTC_IRQ(46)
++#define IRQ_DSP2ARM1     DAVINCI_INTC_IRQ(47)
++#define IRQ_GPIO0        DAVINCI_INTC_IRQ(48)
++#define IRQ_GPIO1        DAVINCI_INTC_IRQ(49)
++#define IRQ_GPIO2        DAVINCI_INTC_IRQ(50)
++#define IRQ_GPIO3        DAVINCI_INTC_IRQ(51)
++#define IRQ_GPIO4        DAVINCI_INTC_IRQ(52)
++#define IRQ_GPIO5        DAVINCI_INTC_IRQ(53)
++#define IRQ_GPIO6        DAVINCI_INTC_IRQ(54)
++#define IRQ_GPIO7        DAVINCI_INTC_IRQ(55)
++#define IRQ_GPIOBNK0     DAVINCI_INTC_IRQ(56)
++#define IRQ_GPIOBNK1     DAVINCI_INTC_IRQ(57)
++#define IRQ_GPIOBNK2     DAVINCI_INTC_IRQ(58)
++#define IRQ_GPIOBNK3     DAVINCI_INTC_IRQ(59)
++#define IRQ_GPIOBNK4     DAVINCI_INTC_IRQ(60)
++#define IRQ_COMMTX       DAVINCI_INTC_IRQ(61)
++#define IRQ_COMMRX       DAVINCI_INTC_IRQ(62)
++#define IRQ_EMUINT       DAVINCI_INTC_IRQ(63)
+ 
+ #define DAVINCI_N_AINTC_IRQ	64
+ 
+ #define ARCH_TIMER_IRQ IRQ_TINT1_TINT34
+ 
+ /* DaVinci DM6467-specific Interrupts */
+-#define IRQ_DM646X_VP_VERTINT0  0
+-#define IRQ_DM646X_VP_VERTINT1  1
+-#define IRQ_DM646X_VP_VERTINT2  2
+-#define IRQ_DM646X_VP_VERTINT3  3
+-#define IRQ_DM646X_VP_ERRINT    4
+-#define IRQ_DM646X_RESERVED_1   5
+-#define IRQ_DM646X_RESERVED_2   6
+-#define IRQ_DM646X_WDINT        7
+-#define IRQ_DM646X_CRGENINT0    8
+-#define IRQ_DM646X_CRGENINT1    9
+-#define IRQ_DM646X_TSIFINT0     10
+-#define IRQ_DM646X_TSIFINT1     11
+-#define IRQ_DM646X_VDCEINT      12
+-#define IRQ_DM646X_USBINT       13
+-#define IRQ_DM646X_USBDMAINT    14
+-#define IRQ_DM646X_PCIINT       15
+-#define IRQ_DM646X_TCERRINT2    20
+-#define IRQ_DM646X_TCERRINT3    21
+-#define IRQ_DM646X_IDE          22
+-#define IRQ_DM646X_HPIINT       23
+-#define IRQ_DM646X_EMACRXTHINT  24
+-#define IRQ_DM646X_EMACRXINT    25
+-#define IRQ_DM646X_EMACTXINT    26
+-#define IRQ_DM646X_EMACMISCINT  27
+-#define IRQ_DM646X_MCASP0TXINT  28
+-#define IRQ_DM646X_MCASP0RXINT  29
+-#define IRQ_DM646X_MCASP1TXINT  30
+-#define IRQ_DM646X_RESERVED_3   31
+-#define IRQ_DM646X_VLQINT       38
+-#define IRQ_DM646X_UARTINT2     42
+-#define IRQ_DM646X_SPINT0       43
+-#define IRQ_DM646X_SPINT1       44
+-#define IRQ_DM646X_DSP2ARMINT   45
+-#define IRQ_DM646X_RESERVED_4   46
+-#define IRQ_DM646X_PSCINT       47
+-#define IRQ_DM646X_GPIO0        48
+-#define IRQ_DM646X_GPIO1        49
+-#define IRQ_DM646X_GPIO2        50
+-#define IRQ_DM646X_GPIO3        51
+-#define IRQ_DM646X_GPIO4        52
+-#define IRQ_DM646X_GPIO5        53
+-#define IRQ_DM646X_GPIO6        54
+-#define IRQ_DM646X_GPIO7        55
+-#define IRQ_DM646X_GPIOBNK0     56
+-#define IRQ_DM646X_GPIOBNK1     57
+-#define IRQ_DM646X_GPIOBNK2     58
+-#define IRQ_DM646X_DDRINT       59
+-#define IRQ_DM646X_AEMIFINT     60
++#define IRQ_DM646X_VP_VERTINT0  DAVINCI_INTC_IRQ(0)
++#define IRQ_DM646X_VP_VERTINT1  DAVINCI_INTC_IRQ(1)
++#define IRQ_DM646X_VP_VERTINT2  DAVINCI_INTC_IRQ(2)
++#define IRQ_DM646X_VP_VERTINT3  DAVINCI_INTC_IRQ(3)
++#define IRQ_DM646X_VP_ERRINT    DAVINCI_INTC_IRQ(4)
++#define IRQ_DM646X_RESERVED_1   DAVINCI_INTC_IRQ(5)
++#define IRQ_DM646X_RESERVED_2   DAVINCI_INTC_IRQ(6)
++#define IRQ_DM646X_WDINT        DAVINCI_INTC_IRQ(7)
++#define IRQ_DM646X_CRGENINT0    DAVINCI_INTC_IRQ(8)
++#define IRQ_DM646X_CRGENINT1    DAVINCI_INTC_IRQ(9)
++#define IRQ_DM646X_TSIFINT0     DAVINCI_INTC_IRQ(10)
++#define IRQ_DM646X_TSIFINT1     DAVINCI_INTC_IRQ(11)
++#define IRQ_DM646X_VDCEINT      DAVINCI_INTC_IRQ(12)
++#define IRQ_DM646X_USBINT       DAVINCI_INTC_IRQ(13)
++#define IRQ_DM646X_USBDMAINT    DAVINCI_INTC_IRQ(14)
++#define IRQ_DM646X_PCIINT       DAVINCI_INTC_IRQ(15)
++#define IRQ_DM646X_TCERRINT2    DAVINCI_INTC_IRQ(20)
++#define IRQ_DM646X_TCERRINT3    DAVINCI_INTC_IRQ(21)
++#define IRQ_DM646X_IDE          DAVINCI_INTC_IRQ(22)
++#define IRQ_DM646X_HPIINT       DAVINCI_INTC_IRQ(23)
++#define IRQ_DM646X_EMACRXTHINT  DAVINCI_INTC_IRQ(24)
++#define IRQ_DM646X_EMACRXINT    DAVINCI_INTC_IRQ(25)
++#define IRQ_DM646X_EMACTXINT    DAVINCI_INTC_IRQ(26)
++#define IRQ_DM646X_EMACMISCINT  DAVINCI_INTC_IRQ(27)
++#define IRQ_DM646X_MCASP0TXINT  DAVINCI_INTC_IRQ(28)
++#define IRQ_DM646X_MCASP0RXINT  DAVINCI_INTC_IRQ(29)
++#define IRQ_DM646X_MCASP1TXINT  DAVINCI_INTC_IRQ(30)
++#define IRQ_DM646X_RESERVED_3   DAVINCI_INTC_IRQ(31)
++#define IRQ_DM646X_VLQINT       DAVINCI_INTC_IRQ(38)
++#define IRQ_DM646X_UARTINT2     DAVINCI_INTC_IRQ(42)
++#define IRQ_DM646X_SPINT0       DAVINCI_INTC_IRQ(43)
++#define IRQ_DM646X_SPINT1       DAVINCI_INTC_IRQ(44)
++#define IRQ_DM646X_DSP2ARMINT   DAVINCI_INTC_IRQ(45)
++#define IRQ_DM646X_RESERVED_4   DAVINCI_INTC_IRQ(46)
++#define IRQ_DM646X_PSCINT       DAVINCI_INTC_IRQ(47)
++#define IRQ_DM646X_GPIO0        DAVINCI_INTC_IRQ(48)
++#define IRQ_DM646X_GPIO1        DAVINCI_INTC_IRQ(49)
++#define IRQ_DM646X_GPIO2        DAVINCI_INTC_IRQ(50)
++#define IRQ_DM646X_GPIO3        DAVINCI_INTC_IRQ(51)
++#define IRQ_DM646X_GPIO4        DAVINCI_INTC_IRQ(52)
++#define IRQ_DM646X_GPIO5        DAVINCI_INTC_IRQ(53)
++#define IRQ_DM646X_GPIO6        DAVINCI_INTC_IRQ(54)
++#define IRQ_DM646X_GPIO7        DAVINCI_INTC_IRQ(55)
++#define IRQ_DM646X_GPIOBNK0     DAVINCI_INTC_IRQ(56)
++#define IRQ_DM646X_GPIOBNK1     DAVINCI_INTC_IRQ(57)
++#define IRQ_DM646X_GPIOBNK2     DAVINCI_INTC_IRQ(58)
++#define IRQ_DM646X_DDRINT       DAVINCI_INTC_IRQ(59)
++#define IRQ_DM646X_AEMIFINT     DAVINCI_INTC_IRQ(60)
+ 
+ /* DaVinci DM355-specific Interrupts */
+-#define IRQ_DM355_CCDC_VDINT0	0
+-#define IRQ_DM355_CCDC_VDINT1	1
+-#define IRQ_DM355_CCDC_VDINT2	2
+-#define IRQ_DM355_IPIPE_HST	3
+-#define IRQ_DM355_H3AINT	4
+-#define IRQ_DM355_IPIPE_SDR	5
+-#define IRQ_DM355_IPIPEIFINT	6
+-#define IRQ_DM355_OSDINT	7
+-#define IRQ_DM355_VENCINT	8
+-#define IRQ_DM355_IMCOPINT	11
+-#define IRQ_DM355_RTOINT	13
+-#define IRQ_DM355_TINT4		13
+-#define IRQ_DM355_TINT2_TINT12	13
+-#define IRQ_DM355_UARTINT2	14
+-#define IRQ_DM355_TINT5		14
+-#define IRQ_DM355_TINT2_TINT34	14
+-#define IRQ_DM355_TINT6		15
+-#define IRQ_DM355_TINT3_TINT12	15
+-#define IRQ_DM355_SPINT1_0	17
+-#define IRQ_DM355_SPINT1_1	18
+-#define IRQ_DM355_SPINT2_0	19
+-#define IRQ_DM355_SPINT2_1	21
+-#define IRQ_DM355_TINT7		22
+-#define IRQ_DM355_TINT3_TINT34	22
+-#define IRQ_DM355_SDIOINT0	23
+-#define IRQ_DM355_MMCINT0	26
+-#define IRQ_DM355_MSINT		26
+-#define IRQ_DM355_MMCINT1	27
+-#define IRQ_DM355_PWMINT3	28
+-#define IRQ_DM355_SDIOINT1	31
+-#define IRQ_DM355_SPINT0_0	42
+-#define IRQ_DM355_SPINT0_1	43
+-#define IRQ_DM355_GPIO0		44
+-#define IRQ_DM355_GPIO1		45
+-#define IRQ_DM355_GPIO2		46
+-#define IRQ_DM355_GPIO3		47
+-#define IRQ_DM355_GPIO4		48
+-#define IRQ_DM355_GPIO5		49
+-#define IRQ_DM355_GPIO6		50
+-#define IRQ_DM355_GPIO7		51
+-#define IRQ_DM355_GPIO8		52
+-#define IRQ_DM355_GPIO9		53
+-#define IRQ_DM355_GPIOBNK0	54
+-#define IRQ_DM355_GPIOBNK1	55
+-#define IRQ_DM355_GPIOBNK2	56
+-#define IRQ_DM355_GPIOBNK3	57
+-#define IRQ_DM355_GPIOBNK4	58
+-#define IRQ_DM355_GPIOBNK5	59
+-#define IRQ_DM355_GPIOBNK6	60
++#define IRQ_DM355_CCDC_VDINT0	DAVINCI_INTC_IRQ(0)
++#define IRQ_DM355_CCDC_VDINT1	DAVINCI_INTC_IRQ(1)
++#define IRQ_DM355_CCDC_VDINT2	DAVINCI_INTC_IRQ(2)
++#define IRQ_DM355_IPIPE_HST	DAVINCI_INTC_IRQ(3)
++#define IRQ_DM355_H3AINT	DAVINCI_INTC_IRQ(4)
++#define IRQ_DM355_IPIPE_SDR	DAVINCI_INTC_IRQ(5)
++#define IRQ_DM355_IPIPEIFINT	DAVINCI_INTC_IRQ(6)
++#define IRQ_DM355_OSDINT	DAVINCI_INTC_IRQ(7)
++#define IRQ_DM355_VENCINT	DAVINCI_INTC_IRQ(8)
++#define IRQ_DM355_IMCOPINT	DAVINCI_INTC_IRQ(11)
++#define IRQ_DM355_RTOINT	DAVINCI_INTC_IRQ(13)
++#define IRQ_DM355_TINT4		DAVINCI_INTC_IRQ(13)
++#define IRQ_DM355_TINT2_TINT12	DAVINCI_INTC_IRQ(13)
++#define IRQ_DM355_UARTINT2	DAVINCI_INTC_IRQ(14)
++#define IRQ_DM355_TINT5		DAVINCI_INTC_IRQ(14)
++#define IRQ_DM355_TINT2_TINT34	DAVINCI_INTC_IRQ(14)
++#define IRQ_DM355_TINT6		DAVINCI_INTC_IRQ(15)
++#define IRQ_DM355_TINT3_TINT12	DAVINCI_INTC_IRQ(15)
++#define IRQ_DM355_SPINT1_0	DAVINCI_INTC_IRQ(17)
++#define IRQ_DM355_SPINT1_1	DAVINCI_INTC_IRQ(18)
++#define IRQ_DM355_SPINT2_0	DAVINCI_INTC_IRQ(19)
++#define IRQ_DM355_SPINT2_1	DAVINCI_INTC_IRQ(21)
++#define IRQ_DM355_TINT7		DAVINCI_INTC_IRQ(22)
++#define IRQ_DM355_TINT3_TINT34	DAVINCI_INTC_IRQ(22)
++#define IRQ_DM355_SDIOINT0	DAVINCI_INTC_IRQ(23)
++#define IRQ_DM355_MMCINT0	DAVINCI_INTC_IRQ(26)
++#define IRQ_DM355_MSINT		DAVINCI_INTC_IRQ(26)
++#define IRQ_DM355_MMCINT1	DAVINCI_INTC_IRQ(27)
++#define IRQ_DM355_PWMINT3	DAVINCI_INTC_IRQ(28)
++#define IRQ_DM355_SDIOINT1	DAVINCI_INTC_IRQ(31)
++#define IRQ_DM355_SPINT0_0	DAVINCI_INTC_IRQ(42)
++#define IRQ_DM355_SPINT0_1	DAVINCI_INTC_IRQ(43)
++#define IRQ_DM355_GPIO0		DAVINCI_INTC_IRQ(44)
++#define IRQ_DM355_GPIO1		DAVINCI_INTC_IRQ(45)
++#define IRQ_DM355_GPIO2		DAVINCI_INTC_IRQ(46)
++#define IRQ_DM355_GPIO3		DAVINCI_INTC_IRQ(47)
++#define IRQ_DM355_GPIO4		DAVINCI_INTC_IRQ(48)
++#define IRQ_DM355_GPIO5		DAVINCI_INTC_IRQ(49)
++#define IRQ_DM355_GPIO6		DAVINCI_INTC_IRQ(50)
++#define IRQ_DM355_GPIO7		DAVINCI_INTC_IRQ(51)
++#define IRQ_DM355_GPIO8		DAVINCI_INTC_IRQ(52)
++#define IRQ_DM355_GPIO9		DAVINCI_INTC_IRQ(53)
++#define IRQ_DM355_GPIOBNK0	DAVINCI_INTC_IRQ(54)
++#define IRQ_DM355_GPIOBNK1	DAVINCI_INTC_IRQ(55)
++#define IRQ_DM355_GPIOBNK2	DAVINCI_INTC_IRQ(56)
++#define IRQ_DM355_GPIOBNK3	DAVINCI_INTC_IRQ(57)
++#define IRQ_DM355_GPIOBNK4	DAVINCI_INTC_IRQ(58)
++#define IRQ_DM355_GPIOBNK5	DAVINCI_INTC_IRQ(59)
++#define IRQ_DM355_GPIOBNK6	DAVINCI_INTC_IRQ(60)
+ 
+ /* DaVinci DM365-specific Interrupts */
+-#define IRQ_DM365_INSFINT	7
+-#define IRQ_DM365_IMXINT1	8
+-#define IRQ_DM365_IMXINT0	10
+-#define IRQ_DM365_KLD_ARMINT	10
+-#define IRQ_DM365_IMCOPINT	11
+-#define IRQ_DM365_RTOINT	13
+-#define IRQ_DM365_TINT5		14
+-#define IRQ_DM365_TINT6		15
+-#define IRQ_DM365_SPINT2_1	21
+-#define IRQ_DM365_TINT7		22
+-#define IRQ_DM365_SDIOINT0	23
+-#define IRQ_DM365_MMCINT1	27
+-#define IRQ_DM365_PWMINT3	28
+-#define IRQ_DM365_RTCINT	29
+-#define IRQ_DM365_SDIOINT1	31
+-#define IRQ_DM365_SPIINT0_0	42
+-#define IRQ_DM365_SPIINT3_0	43
+-#define IRQ_DM365_GPIO0		44
+-#define IRQ_DM365_GPIO1		45
+-#define IRQ_DM365_GPIO2		46
+-#define IRQ_DM365_GPIO3		47
+-#define IRQ_DM365_GPIO4		48
+-#define IRQ_DM365_GPIO5		49
+-#define IRQ_DM365_GPIO6		50
+-#define IRQ_DM365_GPIO7		51
+-#define IRQ_DM365_EMAC_RXTHRESH	52
+-#define IRQ_DM365_EMAC_RXPULSE	53
+-#define IRQ_DM365_EMAC_TXPULSE	54
+-#define IRQ_DM365_EMAC_MISCPULSE 55
+-#define IRQ_DM365_GPIO12	56
+-#define IRQ_DM365_GPIO13	57
+-#define IRQ_DM365_GPIO14	58
+-#define IRQ_DM365_GPIO15	59
+-#define IRQ_DM365_ADCINT	59
+-#define IRQ_DM365_KEYINT	60
+-#define IRQ_DM365_TCERRINT2	61
+-#define IRQ_DM365_TCERRINT3	62
+-#define IRQ_DM365_EMUINT	63
++#define IRQ_DM365_INSFINT	DAVINCI_INTC_IRQ(7)
++#define IRQ_DM365_IMXINT1	DAVINCI_INTC_IRQ(8)
++#define IRQ_DM365_IMXINT0	DAVINCI_INTC_IRQ(10)
++#define IRQ_DM365_KLD_ARMINT	DAVINCI_INTC_IRQ(10)
++#define IRQ_DM365_IMCOPINT	DAVINCI_INTC_IRQ(11)
++#define IRQ_DM365_RTOINT	DAVINCI_INTC_IRQ(13)
++#define IRQ_DM365_TINT5		DAVINCI_INTC_IRQ(14)
++#define IRQ_DM365_TINT6		DAVINCI_INTC_IRQ(15)
++#define IRQ_DM365_SPINT2_1	DAVINCI_INTC_IRQ(21)
++#define IRQ_DM365_TINT7		DAVINCI_INTC_IRQ(22)
++#define IRQ_DM365_SDIOINT0	DAVINCI_INTC_IRQ(23)
++#define IRQ_DM365_MMCINT1	DAVINCI_INTC_IRQ(27)
++#define IRQ_DM365_PWMINT3	DAVINCI_INTC_IRQ(28)
++#define IRQ_DM365_RTCINT	DAVINCI_INTC_IRQ(29)
++#define IRQ_DM365_SDIOINT1	DAVINCI_INTC_IRQ(31)
++#define IRQ_DM365_SPIINT0_0	DAVINCI_INTC_IRQ(42)
++#define IRQ_DM365_SPIINT3_0	DAVINCI_INTC_IRQ(43)
++#define IRQ_DM365_GPIO0		DAVINCI_INTC_IRQ(44)
++#define IRQ_DM365_GPIO1		DAVINCI_INTC_IRQ(45)
++#define IRQ_DM365_GPIO2		DAVINCI_INTC_IRQ(46)
++#define IRQ_DM365_GPIO3		DAVINCI_INTC_IRQ(47)
++#define IRQ_DM365_GPIO4		DAVINCI_INTC_IRQ(48)
++#define IRQ_DM365_GPIO5		DAVINCI_INTC_IRQ(49)
++#define IRQ_DM365_GPIO6		DAVINCI_INTC_IRQ(50)
++#define IRQ_DM365_GPIO7		DAVINCI_INTC_IRQ(51)
++#define IRQ_DM365_EMAC_RXTHRESH	DAVINCI_INTC_IRQ(52)
++#define IRQ_DM365_EMAC_RXPULSE	DAVINCI_INTC_IRQ(53)
++#define IRQ_DM365_EMAC_TXPULSE	DAVINCI_INTC_IRQ(54)
++#define IRQ_DM365_EMAC_MISCPULSE DAVINCI_INTC_IRQ(55)
++#define IRQ_DM365_GPIO12	DAVINCI_INTC_IRQ(56)
++#define IRQ_DM365_GPIO13	DAVINCI_INTC_IRQ(57)
++#define IRQ_DM365_GPIO14	DAVINCI_INTC_IRQ(58)
++#define IRQ_DM365_GPIO15	DAVINCI_INTC_IRQ(59)
++#define IRQ_DM365_ADCINT	DAVINCI_INTC_IRQ(59)
++#define IRQ_DM365_KEYINT	DAVINCI_INTC_IRQ(60)
++#define IRQ_DM365_TCERRINT2	DAVINCI_INTC_IRQ(61)
++#define IRQ_DM365_TCERRINT3	DAVINCI_INTC_IRQ(62)
++#define IRQ_DM365_EMUINT	DAVINCI_INTC_IRQ(63)
+ 
+ /* DA8XX interrupts */
+-#define IRQ_DA8XX_COMMTX		0
+-#define IRQ_DA8XX_COMMRX		1
+-#define IRQ_DA8XX_NINT			2
+-#define IRQ_DA8XX_EVTOUT0		3
+-#define IRQ_DA8XX_EVTOUT1		4
+-#define IRQ_DA8XX_EVTOUT2		5
+-#define IRQ_DA8XX_EVTOUT3		6
+-#define IRQ_DA8XX_EVTOUT4		7
+-#define IRQ_DA8XX_EVTOUT5		8
+-#define IRQ_DA8XX_EVTOUT6		9
+-#define IRQ_DA8XX_EVTOUT7		10
+-#define IRQ_DA8XX_CCINT0		11
+-#define IRQ_DA8XX_CCERRINT		12
+-#define IRQ_DA8XX_TCERRINT0		13
+-#define IRQ_DA8XX_AEMIFINT		14
+-#define IRQ_DA8XX_I2CINT0		15
+-#define IRQ_DA8XX_MMCSDINT0		16
+-#define IRQ_DA8XX_MMCSDINT1		17
+-#define IRQ_DA8XX_ALLINT0		18
+-#define IRQ_DA8XX_RTC			19
+-#define IRQ_DA8XX_SPINT0		20
+-#define IRQ_DA8XX_TINT12_0		21
+-#define IRQ_DA8XX_TINT34_0		22
+-#define IRQ_DA8XX_TINT12_1		23
+-#define IRQ_DA8XX_TINT34_1		24
+-#define IRQ_DA8XX_UARTINT0		25
+-#define IRQ_DA8XX_KEYMGRINT		26
+-#define IRQ_DA8XX_SECINT		26
+-#define IRQ_DA8XX_SECKEYERR		26
+-#define IRQ_DA8XX_CHIPINT0		28
+-#define IRQ_DA8XX_CHIPINT1		29
+-#define IRQ_DA8XX_CHIPINT2		30
+-#define IRQ_DA8XX_CHIPINT3		31
+-#define IRQ_DA8XX_TCERRINT1		32
+-#define IRQ_DA8XX_C0_RX_THRESH_PULSE	33
+-#define IRQ_DA8XX_C0_RX_PULSE		34
+-#define IRQ_DA8XX_C0_TX_PULSE		35
+-#define IRQ_DA8XX_C0_MISC_PULSE		36
+-#define IRQ_DA8XX_C1_RX_THRESH_PULSE	37
+-#define IRQ_DA8XX_C1_RX_PULSE		38
+-#define IRQ_DA8XX_C1_TX_PULSE		39
+-#define IRQ_DA8XX_C1_MISC_PULSE		40
+-#define IRQ_DA8XX_MEMERR		41
+-#define IRQ_DA8XX_GPIO0			42
+-#define IRQ_DA8XX_GPIO1			43
+-#define IRQ_DA8XX_GPIO2			44
+-#define IRQ_DA8XX_GPIO3			45
+-#define IRQ_DA8XX_GPIO4			46
+-#define IRQ_DA8XX_GPIO5			47
+-#define IRQ_DA8XX_GPIO6			48
+-#define IRQ_DA8XX_GPIO7			49
+-#define IRQ_DA8XX_GPIO8			50
+-#define IRQ_DA8XX_I2CINT1		51
+-#define IRQ_DA8XX_LCDINT		52
+-#define IRQ_DA8XX_UARTINT1		53
+-#define IRQ_DA8XX_MCASPINT		54
+-#define IRQ_DA8XX_ALLINT1		55
+-#define IRQ_DA8XX_SPINT1		56
+-#define IRQ_DA8XX_UHPI_INT1		57
+-#define IRQ_DA8XX_USB_INT		58
+-#define IRQ_DA8XX_IRQN			59
+-#define IRQ_DA8XX_RWAKEUP		60
+-#define IRQ_DA8XX_UARTINT2		61
+-#define IRQ_DA8XX_DFTSSINT		62
+-#define IRQ_DA8XX_EHRPWM0		63
+-#define IRQ_DA8XX_EHRPWM0TZ		64
+-#define IRQ_DA8XX_EHRPWM1		65
+-#define IRQ_DA8XX_EHRPWM1TZ		66
+-#define IRQ_DA8XX_ECAP0			69
+-#define IRQ_DA8XX_ECAP1			70
+-#define IRQ_DA8XX_ECAP2			71
+-#define IRQ_DA8XX_ARMCLKSTOPREQ		90
++#define IRQ_DA8XX_COMMTX		DAVINCI_INTC_IRQ(0)
++#define IRQ_DA8XX_COMMRX		DAVINCI_INTC_IRQ(1)
++#define IRQ_DA8XX_NINT			DAVINCI_INTC_IRQ(2)
++#define IRQ_DA8XX_EVTOUT0		DAVINCI_INTC_IRQ(3)
++#define IRQ_DA8XX_EVTOUT1		DAVINCI_INTC_IRQ(4)
++#define IRQ_DA8XX_EVTOUT2		DAVINCI_INTC_IRQ(5)
++#define IRQ_DA8XX_EVTOUT3		DAVINCI_INTC_IRQ(6)
++#define IRQ_DA8XX_EVTOUT4		DAVINCI_INTC_IRQ(7)
++#define IRQ_DA8XX_EVTOUT5		DAVINCI_INTC_IRQ(8)
++#define IRQ_DA8XX_EVTOUT6		DAVINCI_INTC_IRQ(9)
++#define IRQ_DA8XX_EVTOUT7		DAVINCI_INTC_IRQ(10)
++#define IRQ_DA8XX_CCINT0		DAVINCI_INTC_IRQ(11)
++#define IRQ_DA8XX_CCERRINT		DAVINCI_INTC_IRQ(12)
++#define IRQ_DA8XX_TCERRINT0		DAVINCI_INTC_IRQ(13)
++#define IRQ_DA8XX_AEMIFINT		DAVINCI_INTC_IRQ(14)
++#define IRQ_DA8XX_I2CINT0		DAVINCI_INTC_IRQ(15)
++#define IRQ_DA8XX_MMCSDINT0		DAVINCI_INTC_IRQ(16)
++#define IRQ_DA8XX_MMCSDINT1		DAVINCI_INTC_IRQ(17)
++#define IRQ_DA8XX_ALLINT0		DAVINCI_INTC_IRQ(18)
++#define IRQ_DA8XX_RTC			DAVINCI_INTC_IRQ(19)
++#define IRQ_DA8XX_SPINT0		DAVINCI_INTC_IRQ(20)
++#define IRQ_DA8XX_TINT12_0		DAVINCI_INTC_IRQ(21)
++#define IRQ_DA8XX_TINT34_0		DAVINCI_INTC_IRQ(22)
++#define IRQ_DA8XX_TINT12_1		DAVINCI_INTC_IRQ(23)
++#define IRQ_DA8XX_TINT34_1		DAVINCI_INTC_IRQ(24)
++#define IRQ_DA8XX_UARTINT0		DAVINCI_INTC_IRQ(25)
++#define IRQ_DA8XX_KEYMGRINT		DAVINCI_INTC_IRQ(26)
++#define IRQ_DA8XX_SECINT		DAVINCI_INTC_IRQ(26)
++#define IRQ_DA8XX_SECKEYERR		DAVINCI_INTC_IRQ(26)
++#define IRQ_DA8XX_CHIPINT0		DAVINCI_INTC_IRQ(28)
++#define IRQ_DA8XX_CHIPINT1		DAVINCI_INTC_IRQ(29)
++#define IRQ_DA8XX_CHIPINT2		DAVINCI_INTC_IRQ(30)
++#define IRQ_DA8XX_CHIPINT3		DAVINCI_INTC_IRQ(31)
++#define IRQ_DA8XX_TCERRINT1		DAVINCI_INTC_IRQ(32)
++#define IRQ_DA8XX_C0_RX_THRESH_PULSE	DAVINCI_INTC_IRQ(33)
++#define IRQ_DA8XX_C0_RX_PULSE		DAVINCI_INTC_IRQ(34)
++#define IRQ_DA8XX_C0_TX_PULSE		DAVINCI_INTC_IRQ(35)
++#define IRQ_DA8XX_C0_MISC_PULSE		DAVINCI_INTC_IRQ(36)
++#define IRQ_DA8XX_C1_RX_THRESH_PULSE	DAVINCI_INTC_IRQ(37)
++#define IRQ_DA8XX_C1_RX_PULSE		DAVINCI_INTC_IRQ(38)
++#define IRQ_DA8XX_C1_TX_PULSE		DAVINCI_INTC_IRQ(39)
++#define IRQ_DA8XX_C1_MISC_PULSE		DAVINCI_INTC_IRQ(40)
++#define IRQ_DA8XX_MEMERR		DAVINCI_INTC_IRQ(41)
++#define IRQ_DA8XX_GPIO0			DAVINCI_INTC_IRQ(42)
++#define IRQ_DA8XX_GPIO1			DAVINCI_INTC_IRQ(43)
++#define IRQ_DA8XX_GPIO2			DAVINCI_INTC_IRQ(44)
++#define IRQ_DA8XX_GPIO3			DAVINCI_INTC_IRQ(45)
++#define IRQ_DA8XX_GPIO4			DAVINCI_INTC_IRQ(46)
++#define IRQ_DA8XX_GPIO5			DAVINCI_INTC_IRQ(47)
++#define IRQ_DA8XX_GPIO6			DAVINCI_INTC_IRQ(48)
++#define IRQ_DA8XX_GPIO7			DAVINCI_INTC_IRQ(49)
++#define IRQ_DA8XX_GPIO8			DAVINCI_INTC_IRQ(50)
++#define IRQ_DA8XX_I2CINT1		DAVINCI_INTC_IRQ(51)
++#define IRQ_DA8XX_LCDINT		DAVINCI_INTC_IRQ(52)
++#define IRQ_DA8XX_UARTINT1		DAVINCI_INTC_IRQ(53)
++#define IRQ_DA8XX_MCASPINT		DAVINCI_INTC_IRQ(54)
++#define IRQ_DA8XX_ALLINT1		DAVINCI_INTC_IRQ(55)
++#define IRQ_DA8XX_SPINT1		DAVINCI_INTC_IRQ(56)
++#define IRQ_DA8XX_UHPI_INT1		DAVINCI_INTC_IRQ(57)
++#define IRQ_DA8XX_USB_INT		DAVINCI_INTC_IRQ(58)
++#define IRQ_DA8XX_IRQN			DAVINCI_INTC_IRQ(59)
++#define IRQ_DA8XX_RWAKEUP		DAVINCI_INTC_IRQ(60)
++#define IRQ_DA8XX_UARTINT2		DAVINCI_INTC_IRQ(61)
++#define IRQ_DA8XX_DFTSSINT		DAVINCI_INTC_IRQ(62)
++#define IRQ_DA8XX_EHRPWM0		DAVINCI_INTC_IRQ(63)
++#define IRQ_DA8XX_EHRPWM0TZ		DAVINCI_INTC_IRQ(64)
++#define IRQ_DA8XX_EHRPWM1		DAVINCI_INTC_IRQ(65)
++#define IRQ_DA8XX_EHRPWM1TZ		DAVINCI_INTC_IRQ(66)
++#define IRQ_DA8XX_ECAP0			DAVINCI_INTC_IRQ(69)
++#define IRQ_DA8XX_ECAP1			DAVINCI_INTC_IRQ(70)
++#define IRQ_DA8XX_ECAP2			DAVINCI_INTC_IRQ(71)
++#define IRQ_DA8XX_ARMCLKSTOPREQ		DAVINCI_INTC_IRQ(90)
+ 
+ /* DA830 specific interrupts */
+-#define IRQ_DA830_MPUERR		27
+-#define IRQ_DA830_IOPUERR		27
+-#define IRQ_DA830_BOOTCFGERR		27
+-#define IRQ_DA830_EHRPWM2		67
+-#define IRQ_DA830_EHRPWM2TZ		68
+-#define IRQ_DA830_EQEP0			72
+-#define IRQ_DA830_EQEP1			73
+-#define IRQ_DA830_T12CMPINT0_0		74
+-#define IRQ_DA830_T12CMPINT1_0		75
+-#define IRQ_DA830_T12CMPINT2_0		76
+-#define IRQ_DA830_T12CMPINT3_0		77
+-#define IRQ_DA830_T12CMPINT4_0		78
+-#define IRQ_DA830_T12CMPINT5_0		79
+-#define IRQ_DA830_T12CMPINT6_0		80
+-#define IRQ_DA830_T12CMPINT7_0		81
+-#define IRQ_DA830_T12CMPINT0_1		82
+-#define IRQ_DA830_T12CMPINT1_1		83
+-#define IRQ_DA830_T12CMPINT2_1		84
+-#define IRQ_DA830_T12CMPINT3_1		85
+-#define IRQ_DA830_T12CMPINT4_1		86
+-#define IRQ_DA830_T12CMPINT5_1		87
+-#define IRQ_DA830_T12CMPINT6_1		88
+-#define IRQ_DA830_T12CMPINT7_1		89
++#define IRQ_DA830_MPUERR		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA830_IOPUERR		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA830_BOOTCFGERR		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA830_EHRPWM2		DAVINCI_INTC_IRQ(67)
++#define IRQ_DA830_EHRPWM2TZ		DAVINCI_INTC_IRQ(68)
++#define IRQ_DA830_EQEP0			DAVINCI_INTC_IRQ(72)
++#define IRQ_DA830_EQEP1			DAVINCI_INTC_IRQ(73)
++#define IRQ_DA830_T12CMPINT0_0		DAVINCI_INTC_IRQ(74)
++#define IRQ_DA830_T12CMPINT1_0		DAVINCI_INTC_IRQ(75)
++#define IRQ_DA830_T12CMPINT2_0		DAVINCI_INTC_IRQ(76)
++#define IRQ_DA830_T12CMPINT3_0		DAVINCI_INTC_IRQ(77)
++#define IRQ_DA830_T12CMPINT4_0		DAVINCI_INTC_IRQ(78)
++#define IRQ_DA830_T12CMPINT5_0		DAVINCI_INTC_IRQ(79)
++#define IRQ_DA830_T12CMPINT6_0		DAVINCI_INTC_IRQ(80)
++#define IRQ_DA830_T12CMPINT7_0		DAVINCI_INTC_IRQ(81)
++#define IRQ_DA830_T12CMPINT0_1		DAVINCI_INTC_IRQ(82)
++#define IRQ_DA830_T12CMPINT1_1		DAVINCI_INTC_IRQ(83)
++#define IRQ_DA830_T12CMPINT2_1		DAVINCI_INTC_IRQ(84)
++#define IRQ_DA830_T12CMPINT3_1		DAVINCI_INTC_IRQ(85)
++#define IRQ_DA830_T12CMPINT4_1		DAVINCI_INTC_IRQ(86)
++#define IRQ_DA830_T12CMPINT5_1		DAVINCI_INTC_IRQ(87)
++#define IRQ_DA830_T12CMPINT6_1		DAVINCI_INTC_IRQ(88)
++#define IRQ_DA830_T12CMPINT7_1		DAVINCI_INTC_IRQ(89)
+ 
+ #define DA830_N_CP_INTC_IRQ		96
+ 
+ /* DA850 speicific interrupts */
+-#define IRQ_DA850_MPUADDRERR0		27
+-#define IRQ_DA850_MPUPROTERR0		27
+-#define IRQ_DA850_IOPUADDRERR0		27
+-#define IRQ_DA850_IOPUPROTERR0		27
+-#define IRQ_DA850_IOPUADDRERR1		27
+-#define IRQ_DA850_IOPUPROTERR1		27
+-#define IRQ_DA850_IOPUADDRERR2		27
+-#define IRQ_DA850_IOPUPROTERR2		27
+-#define IRQ_DA850_BOOTCFG_ADDR_ERR	27
+-#define IRQ_DA850_BOOTCFG_PROT_ERR	27
+-#define IRQ_DA850_MPUADDRERR1		27
+-#define IRQ_DA850_MPUPROTERR1		27
+-#define IRQ_DA850_IOPUADDRERR3		27
+-#define IRQ_DA850_IOPUPROTERR3		27
+-#define IRQ_DA850_IOPUADDRERR4		27
+-#define IRQ_DA850_IOPUPROTERR4		27
+-#define IRQ_DA850_IOPUADDRERR5		27
+-#define IRQ_DA850_IOPUPROTERR5		27
+-#define IRQ_DA850_MIOPU_BOOTCFG_ERR	27
+-#define IRQ_DA850_SATAINT		67
+-#define IRQ_DA850_TINT12_2		68
+-#define IRQ_DA850_TINT34_2		68
+-#define IRQ_DA850_TINTALL_2		68
+-#define IRQ_DA850_MMCSDINT0_1		72
+-#define IRQ_DA850_MMCSDINT1_1		73
+-#define IRQ_DA850_T12CMPINT0_2		74
+-#define IRQ_DA850_T12CMPINT1_2		75
+-#define IRQ_DA850_T12CMPINT2_2		76
+-#define IRQ_DA850_T12CMPINT3_2		77
+-#define IRQ_DA850_T12CMPINT4_2		78
+-#define IRQ_DA850_T12CMPINT5_2		79
+-#define IRQ_DA850_T12CMPINT6_2		80
+-#define IRQ_DA850_T12CMPINT7_2		81
+-#define IRQ_DA850_T12CMPINT0_3		82
+-#define IRQ_DA850_T12CMPINT1_3		83
+-#define IRQ_DA850_T12CMPINT2_3		84
+-#define IRQ_DA850_T12CMPINT3_3		85
+-#define IRQ_DA850_T12CMPINT4_3		86
+-#define IRQ_DA850_T12CMPINT5_3		87
+-#define IRQ_DA850_T12CMPINT6_3		88
+-#define IRQ_DA850_T12CMPINT7_3		89
+-#define IRQ_DA850_RPIINT		91
+-#define IRQ_DA850_VPIFINT		92
+-#define IRQ_DA850_CCINT1		93
+-#define IRQ_DA850_CCERRINT1		94
+-#define IRQ_DA850_TCERRINT2		95
+-#define IRQ_DA850_TINT12_3		96
+-#define IRQ_DA850_TINT34_3		96
+-#define IRQ_DA850_TINTALL_3		96
+-#define IRQ_DA850_MCBSP0RINT		97
+-#define IRQ_DA850_MCBSP0XINT		98
+-#define IRQ_DA850_MCBSP1RINT		99
+-#define IRQ_DA850_MCBSP1XINT		100
++#define IRQ_DA850_MPUADDRERR0		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_MPUPROTERR0		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUADDRERR0		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUPROTERR0		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUADDRERR1		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUPROTERR1		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUADDRERR2		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUPROTERR2		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_BOOTCFG_ADDR_ERR	DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_BOOTCFG_PROT_ERR	DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_MPUADDRERR1		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_MPUPROTERR1		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUADDRERR3		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUPROTERR3		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUADDRERR4		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUPROTERR4		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUADDRERR5		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_IOPUPROTERR5		DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_MIOPU_BOOTCFG_ERR	DAVINCI_INTC_IRQ(27)
++#define IRQ_DA850_SATAINT		DAVINCI_INTC_IRQ(67)
++#define IRQ_DA850_TINT12_2		DAVINCI_INTC_IRQ(68)
++#define IRQ_DA850_TINT34_2		DAVINCI_INTC_IRQ(68)
++#define IRQ_DA850_TINTALL_2		DAVINCI_INTC_IRQ(68)
++#define IRQ_DA850_MMCSDINT0_1		DAVINCI_INTC_IRQ(72)
++#define IRQ_DA850_MMCSDINT1_1		DAVINCI_INTC_IRQ(73)
++#define IRQ_DA850_T12CMPINT0_2		DAVINCI_INTC_IRQ(74)
++#define IRQ_DA850_T12CMPINT1_2		DAVINCI_INTC_IRQ(75)
++#define IRQ_DA850_T12CMPINT2_2		DAVINCI_INTC_IRQ(76)
++#define IRQ_DA850_T12CMPINT3_2		DAVINCI_INTC_IRQ(77)
++#define IRQ_DA850_T12CMPINT4_2		DAVINCI_INTC_IRQ(78)
++#define IRQ_DA850_T12CMPINT5_2		DAVINCI_INTC_IRQ(79)
++#define IRQ_DA850_T12CMPINT6_2		DAVINCI_INTC_IRQ(80)
++#define IRQ_DA850_T12CMPINT7_2		DAVINCI_INTC_IRQ(81)
++#define IRQ_DA850_T12CMPINT0_3		DAVINCI_INTC_IRQ(82)
++#define IRQ_DA850_T12CMPINT1_3		DAVINCI_INTC_IRQ(83)
++#define IRQ_DA850_T12CMPINT2_3		DAVINCI_INTC_IRQ(84)
++#define IRQ_DA850_T12CMPINT3_3		DAVINCI_INTC_IRQ(85)
++#define IRQ_DA850_T12CMPINT4_3		DAVINCI_INTC_IRQ(86)
++#define IRQ_DA850_T12CMPINT5_3		DAVINCI_INTC_IRQ(87)
++#define IRQ_DA850_T12CMPINT6_3		DAVINCI_INTC_IRQ(88)
++#define IRQ_DA850_T12CMPINT7_3		DAVINCI_INTC_IRQ(89)
++#define IRQ_DA850_RPIINT		DAVINCI_INTC_IRQ(91)
++#define IRQ_DA850_VPIFINT		DAVINCI_INTC_IRQ(92)
++#define IRQ_DA850_CCINT1		DAVINCI_INTC_IRQ(93)
++#define IRQ_DA850_CCERRINT1		DAVINCI_INTC_IRQ(94)
++#define IRQ_DA850_TCERRINT2		DAVINCI_INTC_IRQ(95)
++#define IRQ_DA850_TINT12_3		DAVINCI_INTC_IRQ(96)
++#define IRQ_DA850_TINT34_3		DAVINCI_INTC_IRQ(96)
++#define IRQ_DA850_TINTALL_3		DAVINCI_INTC_IRQ(96)
++#define IRQ_DA850_MCBSP0RINT		DAVINCI_INTC_IRQ(97)
++#define IRQ_DA850_MCBSP0XINT		DAVINCI_INTC_IRQ(98)
++#define IRQ_DA850_MCBSP1RINT		DAVINCI_INTC_IRQ(99)
++#define IRQ_DA850_MCBSP1XINT		DAVINCI_INTC_IRQ(100)
+ 
+ #define DA850_N_CP_INTC_IRQ		101
+ 
 -- 
 2.20.1
 
