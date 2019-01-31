@@ -2,128 +2,156 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E16CC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCB5C282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C9AE2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:27:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TmPstpLK"
+	by mail.kernel.org (Postfix) with ESMTP id 97DB32086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:28:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbfAaX1R (ORCPT
+        id S1728201AbfAaX2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 18:27:17 -0500
-Received: from ozlabs.org ([203.11.71.1]:35075 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725876AbfAaX1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 18:27:16 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43rGbj4SgVz9s4Z;
-        Fri,  1 Feb 2019 10:27:13 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548977233;
-        bh=kmMrJrfSeHBcL143C0AFidOvv2G9Z/fr+PerbxyjfQE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TmPstpLKoi12vRWq7iAWeIYzel4wZQztm6Hy2UuQw51FeWu2veC4aflSPDLe0hINq
-         OTvKw2xim2yp6W6zl7ko7A+wszZNI2noLyGEX5tJeavfmzxWmGxfF8JE+18HnJVETy
-         7gTJWDxK+g9We96VyQFUBtmx7Rpbj2SaCsUaPqOCCe3WLMgmyPSzWBnCIZg1inrmHt
-         vER5MfnGCuUJOr1WHlvBShrUtIWWbR/mdTrcWBKfPBXMTffAeefad18tUwNceDuhQz
-         hOSP6OETaqiE8ZAWCZKE9FhAzdBU4+sPjv3xFEw/cZfSMlE52GQIFC/R1d0wttD4xZ
-         MaWve4Mp9lI1w==
-Date:   Fri, 1 Feb 2019 10:27:13 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Message-ID: <20190201102713.4c490de4@canb.auug.org.au>
-In-Reply-To: <20190201102233.4643f528@canb.auug.org.au>
-References: <20190201102233.4643f528@canb.auug.org.au>
+        Thu, 31 Jan 2019 18:28:52 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47236 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725915AbfAaX2w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 18:28:52 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VNSoAR062918
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 18:28:51 -0500
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qcam1076p-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 18:28:51 -0500
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Thu, 31 Jan 2019 23:28:50 -0000
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Jan 2019 23:28:46 -0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VNSf5e13238328
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Jan 2019 23:28:41 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D22E8BE053;
+        Thu, 31 Jan 2019 23:28:41 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 897FBBE04F;
+        Thu, 31 Jan 2019 23:28:40 +0000 (GMT)
+Received: from [9.80.226.197] (unknown [9.80.226.197])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Jan 2019 23:28:40 +0000 (GMT)
+Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
+To:     Sebastian Ott <sebott@linux.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        oberpar@linux.ibm.com, freude@linux.ibm.com, pmorel@linux.ibm.com,
+        pasic@linux.ibm.com, cohuck@redhat.com
+References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
+ <alpine.LFD.2.21.1901301912380.2372@schleppi>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Thu, 31 Jan 2019 18:28:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hLAhYLqJ32CnJYmwQxFWBMT"; protocol="application/pgp-signature"
+In-Reply-To: <alpine.LFD.2.21.1901301912380.2372@schleppi>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19013123-8235-0000-0000-00000E53FF49
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010512; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01154550; UDB=6.00602055; IPR=6.00934982;
+ MB=3.00025380; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-31 23:28:48
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013123-8236-0000-0000-0000444A730F
+Message-Id: <88b72363-9dca-4653-c326-9c37b6349a32@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/hLAhYLqJ32CnJYmwQxFWBMT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 1/30/19 1:32 PM, Sebastian Ott wrote:
+> On Wed, 30 Jan 2019, Tony Krowiak wrote:
+>> +#if IS_ENABLED(CONFIG_ZCRYPT)
+>> +void ap_bus_cfg_chg(void);
+>> +#else
+>> +#error "no CONFIG_ZCRYPT"
+>     ^
+> I don't think that's the right thing to do here.
 
-Hi all,
+I'd like to leave it. If somebody edits .config
+and sets CONFIG_ZCRYPT=n, then the build will
+fail. The preprocessor error above tells them
+why.
 
-On Fri, 1 Feb 2019 10:22:33 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the v4l-dvb tree got a conflict in:
->=20
->   drivers/media/platform/vim2m.c
->=20
-> between commit:
->=20
->   240809ef6630 ("media: vim2m: only cancel work if it is for right contex=
-t")
->=20
-> from Linus' tree and commit:
->=20
->   b3e64e5b0778 ("media: vim2m: use per-file handler work queue")
->=20
-> from the v4l-dvb tree.
->=20
-> I fixed it up (I think - see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
->=20
-> diff --cc drivers/media/platform/vim2m.c
-> index 89d9c4c21037,e31c14c7d37f..000000000000
-> --- a/drivers/media/platform/vim2m.c
-> +++ b/drivers/media/platform/vim2m.c
-> @@@ -806,10 -904,7 +904,9 @@@ static void vim2m_stop_streaming(struc
->   	struct vb2_v4l2_buffer *vbuf;
->   	unsigned long flags;
->  =20
->  -	cancel_delayed_work_sync(&ctx->work_run);
->  +	if (v4l2_m2m_get_curr_priv(dev->m2m_dev) =3D=3D ctx)
-> - 		cancel_delayed_work_sync(&dev->work_run);
-> ++		cancel_delayed_work_sync(&ctx->work_run);
->  +
->   	for (;;) {
->   		if (V4L2_TYPE_IS_OUTPUT(q->type))
->   			vbuf =3D v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+> 
+> 
+>> +++ b/drivers/s390/cio/chsc.h
+>> @@ -9,6 +9,7 @@
+>>   #include <asm/chsc.h>
+>>   #include <asm/schid.h>
+>>   #include <asm/qdio.h>
+>> +#include <asm/ap.h>
+> 
+> This should be moved to chsc.c
 
-Well, that wasn't right, so instead I just effectively reverted the
-commit from Linus' tree ...
+I can do that, but I'm curious why.
 
---=20
-Cheers,
-Stephen Rothwell
+> 
+> 
+>> +++ b/drivers/s390/crypto/ap_bus.c
+>> @@ -35,6 +35,7 @@
+>>   #include <linux/mod_devicetable.h>
+>>   #include <linux/debugfs.h>
+>>   #include <linux/ctype.h>
+>> +#include <asm/crw.h>
+> 
+> This is not needed here.
 
---Sig_/hLAhYLqJ32CnJYmwQxFWBMT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I'll remove it.
 
------BEGIN PGP SIGNATURE-----
+> 
+> 
+>>   /*
+>> +* A config change has happened, Force an ap bus rescan.
+>> +*/
+>> +void ap_bus_cfg_chg(void)
+>> +{
+>> +	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
+>> +
+>> +	ap_bus_force_rescan();
+>> +}
+>> +EXPORT_SYMBOL(ap_bus_cfg_chg);
+> 
+> There is no need for the export symbol - you don't call that function
+> from module code.
+> As an unrelated question, just to be sure: ap_bus.c is compiled as
+> built-in even with ZCRYPT=m, right?
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxThFEACgkQAVBC80lX
-0GyJQAf/TBZGTgKm2pqNXLG7G5nEfgLYsN0RnIbQcGjgesJIbjjsqprPuNpAyTp2
-8K1ePWvR4TkVna4xerbYBDCRo42vpJJxBTIJfyQShGmhliPnple+SMZNoWH/1jZE
-kq/jRXjVepGVwr21Nt0Vtyz41XPCtGmSecfPDM8DRQHV7kZaAae8Izu/MqW2lnSC
-tDYp92NZyTJKQj0kpcfYf7wMv1Ip4hTXahFbhHzPrb4FsuH6CvIK6wS2tA96J5Cg
-YVpu+YYjBBKWezJFLVUnNwUjQMcoMSzfbpNL/sWGgTOj4ksXzOZ/B5YjNQNq1ZUm
-Lt9SEHV53Xpy7SysLno/XtJMBDR+BA==
-=CiFi
------END PGP SIGNATURE-----
+No. If you edit .config and set CONFIG_ZCRYPT=m, ap_bus.c will be built
+into the zcrypt.ko module. Through some other magic, the zcrypt module
+is loaded when linux boots.
 
---Sig_/hLAhYLqJ32CnJYmwQxFWBMT--
+> 
+> Reviewed-by: Sebastian Ott <sebott@linux.ibm.com>
+> 
+> Regards,
+> Sebastian
+> 
+
