@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A18D3C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEACFC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C4842085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:39:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A33FC218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:39:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="xH1swiOa"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="o4FtxtKV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387619AbfAaNju (ORCPT
+        id S2387636AbfAaNjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:39:50 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38378 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387583AbfAaNjp (ORCPT
+        Thu, 31 Jan 2019 08:39:53 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39923 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387607AbfAaNjv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 08:39:45 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v13so3329073wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 05:39:43 -0800 (PST)
+        Thu, 31 Jan 2019 08:39:51 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t27so3326072wra.6
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 05:39:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5X77WcQ60mqtfJVB+WwYLABh83PR6pOA8m2PXMgwFcg=;
-        b=xH1swiOa4RczcuMoR3Lxo733EPEknZ6C/zYldttIK3Abr6t8wjUroF/hrx4zQL7mWj
-         5IfDh2jMdtUHGlCmIB3s9z2MCovHefOT+NshILcYymLv3qnhaCjdJ5PAxizUoj6ZYeq6
-         KLRQQqC0i//AE+nba07I/JVZpdyQVfA0dnOgbrxWJXa5OMcUSjlDQabcZzErbI03c8SV
-         YY0VEk2ReNILuf0zUvXLk/ooUFeRPefE/naFH+yg8yjJc6uwhPTlh+kso75ihEQF+mwS
-         8WlG2fCufcy9iI3kdhpmw7rpWD25s6XgQleMyRnw7BkZAuhPV74OhoVfuBZvXfBhrZX6
-         1+ww==
+        bh=9/cz8Dplt148narhGDwcsNPC9FgaTJHEYozu5GdxH00=;
+        b=o4FtxtKVns7Ab4eM3l8n3yJXPCWhqqQPxcZicRIxBPsTm1CgFyIHY4CLlItjb/Carz
+         E0Izn9pqd/q0NN+HKL+N7l747K4WMIJ5CP/N//vQVAanNvE8nGXJc60r8zs2+Tamexwg
+         2MwupL4B332jRXVOuGd5bndJYGfInDa8RFHiT+1sIwjWXIg9+ZkNbdIlxrMHa97BwQap
+         g9T1BvzD4YdosydT0asI1ldbWHGOfLD2uZvf0JBhV2GbO5lcknWXW7W1ue3bTTW2kve0
+         cckzmzvjZKSYdwyy2ambrEjlJPrOiVQHnzzxjmLuId7sQHSK0h18NbUEngWBiDbCZ5Vv
+         jxlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5X77WcQ60mqtfJVB+WwYLABh83PR6pOA8m2PXMgwFcg=;
-        b=ZPz/mxXoaiPYJFJDf7xh/VzSEZrWRA05WMpoZIU8Sr6u3JnieDgObpLc2MqUz9f5s3
-         iznu8cm5MMB03fzValwUXOhKBHM46SQa4xvPD1oGb58WZsj9QP9ocdnMZj7fhBILr+A6
-         yhdY3RoBT69PbgE/yCUytQVdvgel7+hPfZW+dioEoqGjbXf8sRmMTT0Jkv6hewEqfB3+
-         90bIau75WcIqaCG7275eK+QsSkeKco2z/Gav6ZEbrBzaiz4bKeJQuoI0IiroHxlZ/7JF
-         JUPwyWc8C62U0zPiwOF/2yvKHr1Iv+Q3qEPnrwcw9E9Sm9QgOrL/tM+IGTkTrahoICZx
-         UxaQ==
-X-Gm-Message-State: AJcUukek40AJiULCje9L2iSBEgf2J9hVKQ6jw9KvXcvfp+NIi4IMNzD3
-        y0D1OFYkaTEPqOSjy0FrP4URin4V/+M=
-X-Google-Smtp-Source: ALg8bN4lLGeIz/4xBx5SG7ISq6LF7eqnTZj9/OljxiiAqNRnLzoAy74tv1kNLZERE71s49xFPgLh1g==
-X-Received: by 2002:adf:b102:: with SMTP id l2mr33375505wra.296.1548941983116;
-        Thu, 31 Jan 2019 05:39:43 -0800 (PST)
+        bh=9/cz8Dplt148narhGDwcsNPC9FgaTJHEYozu5GdxH00=;
+        b=MH5xKUv9RpNm1BI8BiudC273RZPFcf0dsyGJFvjeYWjm9m2IR7Y56ur5KH1EvdkQE3
+         cUi+tfh1mgWtmk63XzlseqX35pJnbgLeYehBEy2MJNPUcfEHm+Ood2nolfCGS6/WK8si
+         04z3HSIJ/o+8r54Mc/h1sN7XekP9qIG+Vea0dwfIZDiTZuxvoI8m0tOysRdWjYo2PdM2
+         +b1hWfJOJCDTlHn1vi1FlhlqCuC7rZoknxtUo61I0o5W4r/gkMjluxjkypjc34hTTPuh
+         cHbRNV//FNyaJwagHPoAIAPSmdm3Y+DNEOw8yhKAROLM99P/h9O62rtXMpjO7XVUEyvd
+         ejgA==
+X-Gm-Message-State: AHQUAuY6+azq1IdaJuQjnA7FnjAs8E9u0El4Lmaq0RQ8/cepQwQ30kDt
+        I5neg8SEKSzs3MCt2HGNxQjdrw==
+X-Google-Smtp-Source: AHgI3IZGQJCeQU7MY9EV7hCTQ8T2fk20aSczwKXyyQjrYmS30/bzzlL+eXKztIp5rM3JEWeDDLyOXA==
+X-Received: by 2002:a5d:4d87:: with SMTP id b7mr10593083wru.316.1548941987491;
+        Thu, 31 Jan 2019 05:39:47 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id h10sm5479768wmf.44.2019.01.31.05.39.41
+        by smtp.gmail.com with ESMTPSA id h10sm5479768wmf.44.2019.01.31.05.39.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 05:39:42 -0800 (PST)
+        Thu, 31 Jan 2019 05:39:46 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -63,9 +63,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Marc Zyngier <marc.zyngier@arm.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 02/35] ARM: davinci: select GENERIC_IRQ_MULTI_HANDLER
-Date:   Thu, 31 Jan 2019 14:38:55 +0100
-Message-Id: <20190131133928.17985-3-brgl@bgdev.pl>
+Subject: [PATCH 05/35] ARM: davinci: drop irq defines from default_priorites
+Date:   Thu, 31 Jan 2019 14:38:58 +0100
+Message-Id: <20190131133928.17985-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190131133928.17985-1-brgl@bgdev.pl>
 References: <20190131133928.17985-1-brgl@bgdev.pl>
@@ -78,170 +78,657 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-In order to support SPARSE_IRQ we first need to make davinci use the
-generic irq handler for ARM. Translate the legacy assembly to C and
-put the irq handlers into their respective drivers (aintc and cp-intc).
+In order to select SPARSE_IRQ we need to make the interrupt numbers
+dynamic (at least at build-time for the top-level controller). The
+interrupt numbers are used as array indexes for irq priorities.
+
+Drop the defines and just initialize the arrays in a linear manner.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/Kconfig                              |  1 +
- arch/arm/mach-davinci/cp_intc.c               | 13 +++++++
- .../mach-davinci/include/mach/entry-macro.S   | 39 -------------------
- arch/arm/mach-davinci/irq.c                   | 21 ++++++++++
- 4 files changed, 35 insertions(+), 39 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/include/mach/entry-macro.S
+ arch/arm/mach-davinci/da830.c  | 107 ++++--------------------------
+ arch/arm/mach-davinci/da850.c  | 118 +++++----------------------------
+ arch/arm/mach-davinci/dm355.c  |  74 +++------------------
+ arch/arm/mach-davinci/dm365.c  |  76 +++------------------
+ arch/arm/mach-davinci/dm644x.c |  76 +++------------------
+ arch/arm/mach-davinci/dm646x.c |  76 +++------------------
+ 6 files changed, 69 insertions(+), 458 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 664e918e2624..f7770fdcad68 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -589,6 +589,7 @@ config ARCH_DAVINCI
- 	select GENERIC_ALLOCATOR
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_IRQ_CHIP
-+	select GENERIC_IRQ_MULTI_HANDLER
- 	select GPIOLIB
- 	select HAVE_IDE
- 	select PM_GENERIC_DOMAINS if PM
-diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp_intc.c
-index 67805ca74ff8..b9aec3c48a6a 100644
---- a/arch/arm/mach-davinci/cp_intc.c
-+++ b/arch/arm/mach-davinci/cp_intc.c
-@@ -19,6 +19,7 @@
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index 9e18b245266b..f1e7b6c644e5 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -624,98 +624,19 @@ const short da830_eqep1_pins[] __initconst = {
+ };
  
-+#include <asm/exception.h>
- #include <mach/common.h>
- #include "cp_intc.h"
+ /* FIQ are pri 0-1; otherwise 2-7, with 7 lowest priority */
+-static u8 da830_default_priorities[DA830_N_CP_INTC_IRQ] = {
+-	[IRQ_DA8XX_COMMTX]		= 7,
+-	[IRQ_DA8XX_COMMRX]		= 7,
+-	[IRQ_DA8XX_NINT]		= 7,
+-	[IRQ_DA8XX_EVTOUT0]		= 7,
+-	[IRQ_DA8XX_EVTOUT1]		= 7,
+-	[IRQ_DA8XX_EVTOUT2]		= 7,
+-	[IRQ_DA8XX_EVTOUT3]		= 7,
+-	[IRQ_DA8XX_EVTOUT4]		= 7,
+-	[IRQ_DA8XX_EVTOUT5]		= 7,
+-	[IRQ_DA8XX_EVTOUT6]		= 7,
+-	[IRQ_DA8XX_EVTOUT7]		= 7,
+-	[IRQ_DA8XX_CCINT0]		= 7,
+-	[IRQ_DA8XX_CCERRINT]		= 7,
+-	[IRQ_DA8XX_TCERRINT0]		= 7,
+-	[IRQ_DA8XX_AEMIFINT]		= 7,
+-	[IRQ_DA8XX_I2CINT0]		= 7,
+-	[IRQ_DA8XX_MMCSDINT0]		= 7,
+-	[IRQ_DA8XX_MMCSDINT1]		= 7,
+-	[IRQ_DA8XX_ALLINT0]		= 7,
+-	[IRQ_DA8XX_RTC]			= 7,
+-	[IRQ_DA8XX_SPINT0]		= 7,
+-	[IRQ_DA8XX_TINT12_0]		= 7,
+-	[IRQ_DA8XX_TINT34_0]		= 7,
+-	[IRQ_DA8XX_TINT12_1]		= 7,
+-	[IRQ_DA8XX_TINT34_1]		= 7,
+-	[IRQ_DA8XX_UARTINT0]		= 7,
+-	[IRQ_DA8XX_KEYMGRINT]		= 7,
+-	[IRQ_DA830_MPUERR]		= 7,
+-	[IRQ_DA8XX_CHIPINT0]		= 7,
+-	[IRQ_DA8XX_CHIPINT1]		= 7,
+-	[IRQ_DA8XX_CHIPINT2]		= 7,
+-	[IRQ_DA8XX_CHIPINT3]		= 7,
+-	[IRQ_DA8XX_TCERRINT1]		= 7,
+-	[IRQ_DA8XX_C0_RX_THRESH_PULSE]	= 7,
+-	[IRQ_DA8XX_C0_RX_PULSE]		= 7,
+-	[IRQ_DA8XX_C0_TX_PULSE]		= 7,
+-	[IRQ_DA8XX_C0_MISC_PULSE]	= 7,
+-	[IRQ_DA8XX_C1_RX_THRESH_PULSE]	= 7,
+-	[IRQ_DA8XX_C1_RX_PULSE]		= 7,
+-	[IRQ_DA8XX_C1_TX_PULSE]		= 7,
+-	[IRQ_DA8XX_C1_MISC_PULSE]	= 7,
+-	[IRQ_DA8XX_MEMERR]		= 7,
+-	[IRQ_DA8XX_GPIO0]		= 7,
+-	[IRQ_DA8XX_GPIO1]		= 7,
+-	[IRQ_DA8XX_GPIO2]		= 7,
+-	[IRQ_DA8XX_GPIO3]		= 7,
+-	[IRQ_DA8XX_GPIO4]		= 7,
+-	[IRQ_DA8XX_GPIO5]		= 7,
+-	[IRQ_DA8XX_GPIO6]		= 7,
+-	[IRQ_DA8XX_GPIO7]		= 7,
+-	[IRQ_DA8XX_GPIO8]		= 7,
+-	[IRQ_DA8XX_I2CINT1]		= 7,
+-	[IRQ_DA8XX_LCDINT]		= 7,
+-	[IRQ_DA8XX_UARTINT1]		= 7,
+-	[IRQ_DA8XX_MCASPINT]		= 7,
+-	[IRQ_DA8XX_ALLINT1]		= 7,
+-	[IRQ_DA8XX_SPINT1]		= 7,
+-	[IRQ_DA8XX_UHPI_INT1]		= 7,
+-	[IRQ_DA8XX_USB_INT]		= 7,
+-	[IRQ_DA8XX_IRQN]		= 7,
+-	[IRQ_DA8XX_RWAKEUP]		= 7,
+-	[IRQ_DA8XX_UARTINT2]		= 7,
+-	[IRQ_DA8XX_DFTSSINT]		= 7,
+-	[IRQ_DA8XX_EHRPWM0]		= 7,
+-	[IRQ_DA8XX_EHRPWM0TZ]		= 7,
+-	[IRQ_DA8XX_EHRPWM1]		= 7,
+-	[IRQ_DA8XX_EHRPWM1TZ]		= 7,
+-	[IRQ_DA830_EHRPWM2]		= 7,
+-	[IRQ_DA830_EHRPWM2TZ]		= 7,
+-	[IRQ_DA8XX_ECAP0]		= 7,
+-	[IRQ_DA8XX_ECAP1]		= 7,
+-	[IRQ_DA8XX_ECAP2]		= 7,
+-	[IRQ_DA830_EQEP0]		= 7,
+-	[IRQ_DA830_EQEP1]		= 7,
+-	[IRQ_DA830_T12CMPINT0_0]	= 7,
+-	[IRQ_DA830_T12CMPINT1_0]	= 7,
+-	[IRQ_DA830_T12CMPINT2_0]	= 7,
+-	[IRQ_DA830_T12CMPINT3_0]	= 7,
+-	[IRQ_DA830_T12CMPINT4_0]	= 7,
+-	[IRQ_DA830_T12CMPINT5_0]	= 7,
+-	[IRQ_DA830_T12CMPINT6_0]	= 7,
+-	[IRQ_DA830_T12CMPINT7_0]	= 7,
+-	[IRQ_DA830_T12CMPINT0_1]	= 7,
+-	[IRQ_DA830_T12CMPINT1_1]	= 7,
+-	[IRQ_DA830_T12CMPINT2_1]	= 7,
+-	[IRQ_DA830_T12CMPINT3_1]	= 7,
+-	[IRQ_DA830_T12CMPINT4_1]	= 7,
+-	[IRQ_DA830_T12CMPINT5_1]	= 7,
+-	[IRQ_DA830_T12CMPINT6_1]	= 7,
+-	[IRQ_DA830_T12CMPINT7_1]	= 7,
+-	[IRQ_DA8XX_ARMCLKSTOPREQ]	= 7,
++static u8 da830_cp_intc_prios[] = {
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
+ };
  
-@@ -97,6 +98,16 @@ static struct irq_chip cp_intc_irq_chip = {
+ static struct map_desc da830_io_desc[] = {
+@@ -807,7 +728,7 @@ static const struct davinci_soc_info davinci_soc_info_da830 = {
+ 	.pinmux_pins		= da830_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(da830_pins),
+ 	.intc_base		= DA8XX_CP_INTC_BASE,
+-	.intc_irq_prios		= da830_default_priorities,
++	.intc_irq_prios		= da830_cp_intc_prios,
+ 	.intc_irq_num		= DA830_N_CP_INTC_IRQ,
+ 	.timer_info		= &da830_timer_info,
+ 	.emac_pdata		= &da8xx_emac_pdata,
+diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+index e823b89e2b7a..40b90730e847 100644
+--- a/arch/arm/mach-davinci/da850.c
++++ b/arch/arm/mach-davinci/da850.c
+@@ -299,108 +299,20 @@ const short da850_vpif_display_pins[] __initconst = {
+ };
  
- static struct irq_domain *cp_intc_domain;
+ /* FIQ are pri 0-1; otherwise 2-7, with 7 lowest priority */
+-static u8 da850_default_priorities[DA850_N_CP_INTC_IRQ] = {
+-	[IRQ_DA8XX_COMMTX]		= 7,
+-	[IRQ_DA8XX_COMMRX]		= 7,
+-	[IRQ_DA8XX_NINT]		= 7,
+-	[IRQ_DA8XX_EVTOUT0]		= 7,
+-	[IRQ_DA8XX_EVTOUT1]		= 7,
+-	[IRQ_DA8XX_EVTOUT2]		= 7,
+-	[IRQ_DA8XX_EVTOUT3]		= 7,
+-	[IRQ_DA8XX_EVTOUT4]		= 7,
+-	[IRQ_DA8XX_EVTOUT5]		= 7,
+-	[IRQ_DA8XX_EVTOUT6]		= 7,
+-	[IRQ_DA8XX_EVTOUT7]		= 7,
+-	[IRQ_DA8XX_CCINT0]		= 7,
+-	[IRQ_DA8XX_CCERRINT]		= 7,
+-	[IRQ_DA8XX_TCERRINT0]		= 7,
+-	[IRQ_DA8XX_AEMIFINT]		= 7,
+-	[IRQ_DA8XX_I2CINT0]		= 7,
+-	[IRQ_DA8XX_MMCSDINT0]		= 7,
+-	[IRQ_DA8XX_MMCSDINT1]		= 7,
+-	[IRQ_DA8XX_ALLINT0]		= 7,
+-	[IRQ_DA8XX_RTC]			= 7,
+-	[IRQ_DA8XX_SPINT0]		= 7,
+-	[IRQ_DA8XX_TINT12_0]		= 7,
+-	[IRQ_DA8XX_TINT34_0]		= 7,
+-	[IRQ_DA8XX_TINT12_1]		= 7,
+-	[IRQ_DA8XX_TINT34_1]		= 7,
+-	[IRQ_DA8XX_UARTINT0]		= 7,
+-	[IRQ_DA8XX_KEYMGRINT]		= 7,
+-	[IRQ_DA850_MPUADDRERR0]		= 7,
+-	[IRQ_DA8XX_CHIPINT0]		= 7,
+-	[IRQ_DA8XX_CHIPINT1]		= 7,
+-	[IRQ_DA8XX_CHIPINT2]		= 7,
+-	[IRQ_DA8XX_CHIPINT3]		= 7,
+-	[IRQ_DA8XX_TCERRINT1]		= 7,
+-	[IRQ_DA8XX_C0_RX_THRESH_PULSE]	= 7,
+-	[IRQ_DA8XX_C0_RX_PULSE]		= 7,
+-	[IRQ_DA8XX_C0_TX_PULSE]		= 7,
+-	[IRQ_DA8XX_C0_MISC_PULSE]	= 7,
+-	[IRQ_DA8XX_C1_RX_THRESH_PULSE]	= 7,
+-	[IRQ_DA8XX_C1_RX_PULSE]		= 7,
+-	[IRQ_DA8XX_C1_TX_PULSE]		= 7,
+-	[IRQ_DA8XX_C1_MISC_PULSE]	= 7,
+-	[IRQ_DA8XX_MEMERR]		= 7,
+-	[IRQ_DA8XX_GPIO0]		= 7,
+-	[IRQ_DA8XX_GPIO1]		= 7,
+-	[IRQ_DA8XX_GPIO2]		= 7,
+-	[IRQ_DA8XX_GPIO3]		= 7,
+-	[IRQ_DA8XX_GPIO4]		= 7,
+-	[IRQ_DA8XX_GPIO5]		= 7,
+-	[IRQ_DA8XX_GPIO6]		= 7,
+-	[IRQ_DA8XX_GPIO7]		= 7,
+-	[IRQ_DA8XX_GPIO8]		= 7,
+-	[IRQ_DA8XX_I2CINT1]		= 7,
+-	[IRQ_DA8XX_LCDINT]		= 7,
+-	[IRQ_DA8XX_UARTINT1]		= 7,
+-	[IRQ_DA8XX_MCASPINT]		= 7,
+-	[IRQ_DA8XX_ALLINT1]		= 7,
+-	[IRQ_DA8XX_SPINT1]		= 7,
+-	[IRQ_DA8XX_UHPI_INT1]		= 7,
+-	[IRQ_DA8XX_USB_INT]		= 7,
+-	[IRQ_DA8XX_IRQN]		= 7,
+-	[IRQ_DA8XX_RWAKEUP]		= 7,
+-	[IRQ_DA8XX_UARTINT2]		= 7,
+-	[IRQ_DA8XX_DFTSSINT]		= 7,
+-	[IRQ_DA8XX_EHRPWM0]		= 7,
+-	[IRQ_DA8XX_EHRPWM0TZ]		= 7,
+-	[IRQ_DA8XX_EHRPWM1]		= 7,
+-	[IRQ_DA8XX_EHRPWM1TZ]		= 7,
+-	[IRQ_DA850_SATAINT]		= 7,
+-	[IRQ_DA850_TINTALL_2]		= 7,
+-	[IRQ_DA8XX_ECAP0]		= 7,
+-	[IRQ_DA8XX_ECAP1]		= 7,
+-	[IRQ_DA8XX_ECAP2]		= 7,
+-	[IRQ_DA850_MMCSDINT0_1]		= 7,
+-	[IRQ_DA850_MMCSDINT1_1]		= 7,
+-	[IRQ_DA850_T12CMPINT0_2]	= 7,
+-	[IRQ_DA850_T12CMPINT1_2]	= 7,
+-	[IRQ_DA850_T12CMPINT2_2]	= 7,
+-	[IRQ_DA850_T12CMPINT3_2]	= 7,
+-	[IRQ_DA850_T12CMPINT4_2]	= 7,
+-	[IRQ_DA850_T12CMPINT5_2]	= 7,
+-	[IRQ_DA850_T12CMPINT6_2]	= 7,
+-	[IRQ_DA850_T12CMPINT7_2]	= 7,
+-	[IRQ_DA850_T12CMPINT0_3]	= 7,
+-	[IRQ_DA850_T12CMPINT1_3]	= 7,
+-	[IRQ_DA850_T12CMPINT2_3]	= 7,
+-	[IRQ_DA850_T12CMPINT3_3]	= 7,
+-	[IRQ_DA850_T12CMPINT4_3]	= 7,
+-	[IRQ_DA850_T12CMPINT5_3]	= 7,
+-	[IRQ_DA850_T12CMPINT6_3]	= 7,
+-	[IRQ_DA850_T12CMPINT7_3]	= 7,
+-	[IRQ_DA850_RPIINT]		= 7,
+-	[IRQ_DA850_VPIFINT]		= 7,
+-	[IRQ_DA850_CCINT1]		= 7,
+-	[IRQ_DA850_CCERRINT1]		= 7,
+-	[IRQ_DA850_TCERRINT2]		= 7,
+-	[IRQ_DA850_TINTALL_3]		= 7,
+-	[IRQ_DA850_MCBSP0RINT]		= 7,
+-	[IRQ_DA850_MCBSP0XINT]		= 7,
+-	[IRQ_DA850_MCBSP1RINT]		= 7,
+-	[IRQ_DA850_MCBSP1XINT]		= 7,
+-	[IRQ_DA8XX_ARMCLKSTOPREQ]	= 7,
++static u8 da850_cp_intc_prios[] = {
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7,
+ };
  
-+static asmlinkage void __exception_irq_entry
-+cp_intc_handle_irq(struct pt_regs *regs)
-+{
-+	int irqnr = cp_intc_read(CP_INTC_PRIO_IDX);
-+
-+	irqnr &= 0xff;
-+
-+	handle_domain_irq(cp_intc_domain, irqnr, regs);
-+}
-+
- static int cp_intc_host_map(struct irq_domain *h, unsigned int virq,
- 			  irq_hw_number_t hw)
- {
-@@ -196,6 +207,8 @@ int __init cp_intc_of_init(struct device_node *node, struct device_node *parent)
- 		return -EINVAL;
- 	}
+ static struct map_desc da850_io_desc[] = {
+@@ -739,7 +651,7 @@ static const struct davinci_soc_info davinci_soc_info_da850 = {
+ 	.pinmux_pins		= da850_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(da850_pins),
+ 	.intc_base		= DA8XX_CP_INTC_BASE,
+-	.intc_irq_prios		= da850_default_priorities,
++	.intc_irq_prios		= da850_cp_intc_prios,
+ 	.intc_irq_num		= DA850_N_CP_INTC_IRQ,
+ 	.timer_info		= &da850_timer_info,
+ 	.emac_pdata		= &da8xx_emac_pdata,
+diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
+index 03ce5df28d87..a31f56c70d1d 100644
+--- a/arch/arm/mach-davinci/dm355.c
++++ b/arch/arm/mach-davinci/dm355.c
+@@ -154,69 +154,15 @@ MUX_CFG(DM355,	VIN_CINH_EN,	0,   8,     3,    3,	 false)
+ #endif
+ };
  
-+	set_handle_irq(cp_intc_handle_irq);
-+
- 	/* Enable global interrupt */
- 	cp_intc_write(1, CP_INTC_GLOBAL_ENABLE);
+-static u8 dm355_default_priorities[DAVINCI_N_AINTC_IRQ] = {
+-	[IRQ_DM355_CCDC_VDINT0]		= 2,
+-	[IRQ_DM355_CCDC_VDINT1]		= 6,
+-	[IRQ_DM355_CCDC_VDINT2]		= 6,
+-	[IRQ_DM355_IPIPE_HST]		= 6,
+-	[IRQ_DM355_H3AINT]		= 6,
+-	[IRQ_DM355_IPIPE_SDR]		= 6,
+-	[IRQ_DM355_IPIPEIFINT]		= 6,
+-	[IRQ_DM355_OSDINT]		= 7,
+-	[IRQ_DM355_VENCINT]		= 6,
+-	[IRQ_ASQINT]			= 6,
+-	[IRQ_IMXINT]			= 6,
+-	[IRQ_USBINT]			= 4,
+-	[IRQ_DM355_RTOINT]		= 4,
+-	[IRQ_DM355_UARTINT2]		= 7,
+-	[IRQ_DM355_TINT6]		= 7,
+-	[IRQ_CCINT0]			= 5,	/* dma */
+-	[IRQ_CCERRINT]			= 5,	/* dma */
+-	[IRQ_TCERRINT0]			= 5,	/* dma */
+-	[IRQ_TCERRINT]			= 5,	/* dma */
+-	[IRQ_DM355_SPINT2_1]		= 7,
+-	[IRQ_DM355_TINT7]		= 4,
+-	[IRQ_DM355_SDIOINT0]		= 7,
+-	[IRQ_MBXINT]			= 7,
+-	[IRQ_MBRINT]			= 7,
+-	[IRQ_MMCINT]			= 7,
+-	[IRQ_DM355_MMCINT1]		= 7,
+-	[IRQ_DM355_PWMINT3]		= 7,
+-	[IRQ_DDRINT]			= 7,
+-	[IRQ_AEMIFINT]			= 7,
+-	[IRQ_DM355_SDIOINT1]		= 4,
+-	[IRQ_TINT0_TINT12]		= 2,	/* clockevent */
+-	[IRQ_TINT0_TINT34]		= 2,	/* clocksource */
+-	[IRQ_TINT1_TINT12]		= 7,	/* DSP timer */
+-	[IRQ_TINT1_TINT34]		= 7,	/* system tick */
+-	[IRQ_PWMINT0]			= 7,
+-	[IRQ_PWMINT1]			= 7,
+-	[IRQ_PWMINT2]			= 7,
+-	[IRQ_I2C]			= 3,
+-	[IRQ_UARTINT0]			= 3,
+-	[IRQ_UARTINT1]			= 3,
+-	[IRQ_DM355_SPINT0_0]		= 3,
+-	[IRQ_DM355_SPINT0_1]		= 3,
+-	[IRQ_DM355_GPIO0]		= 3,
+-	[IRQ_DM355_GPIO1]		= 7,
+-	[IRQ_DM355_GPIO2]		= 4,
+-	[IRQ_DM355_GPIO3]		= 4,
+-	[IRQ_DM355_GPIO4]		= 7,
+-	[IRQ_DM355_GPIO5]		= 7,
+-	[IRQ_DM355_GPIO6]		= 7,
+-	[IRQ_DM355_GPIO7]		= 7,
+-	[IRQ_DM355_GPIO8]		= 7,
+-	[IRQ_DM355_GPIO9]		= 7,
+-	[IRQ_DM355_GPIOBNK0]		= 7,
+-	[IRQ_DM355_GPIOBNK1]		= 7,
+-	[IRQ_DM355_GPIOBNK2]		= 7,
+-	[IRQ_DM355_GPIOBNK3]		= 7,
+-	[IRQ_DM355_GPIOBNK4]		= 7,
+-	[IRQ_DM355_GPIOBNK5]		= 7,
+-	[IRQ_DM355_GPIOBNK6]		= 7,
+-	[IRQ_COMMTX]			= 7,
+-	[IRQ_COMMRX]			= 7,
+-	[IRQ_EMUINT]			= 7,
++static u8 dm355_aintc_prios[] = {
++	2, 6, 6, 6, 6, 6, 6, 7,
++	6, 6, 6, 4, 4, 7, 7, 5,
++	5, 5, 5, 7, 4, 7, 7, 7,
++	7, 7, 7, 7, 7, 4, 2, 2,
++	7, 7, 7, 7, 7, 3, 3, 3,
++	3, 3, 3, 7, 4, 4, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 0, 0,
+ };
  
-diff --git a/arch/arm/mach-davinci/include/mach/entry-macro.S b/arch/arm/mach-davinci/include/mach/entry-macro.S
-deleted file mode 100644
-index cf5f573eb5fd..000000000000
---- a/arch/arm/mach-davinci/include/mach/entry-macro.S
-+++ /dev/null
-@@ -1,39 +0,0 @@
--/*
-- * Low-level IRQ helper macros for TI DaVinci-based platforms
-- *
-- * Author: Kevin Hilman, MontaVista Software, Inc. <source@mvista.com>
-- *
-- * 2007 (c) MontaVista Software, Inc. This file is licensed under
-- * the terms of the GNU General Public License version 2. This program
-- * is licensed "as is" without any warranty of any kind, whether express
-- * or implied.
-- */
--#include <mach/irqs.h>
--
--		.macro  get_irqnr_preamble, base, tmp
--		ldr \base, =davinci_intc_base
--		ldr \base, [\base]
--		.endm
--
--		.macro	get_irqnr_and_base, irqnr, irqstat, base, tmp
--#if defined(CONFIG_AINTC) && defined(CONFIG_CP_INTC)
--		ldr \tmp, =davinci_intc_type
--		ldr \tmp, [\tmp]
--		cmp \tmp, #DAVINCI_INTC_TYPE_CP_INTC
--		beq 1001f
--#endif
--#if defined(CONFIG_AINTC)
--		ldr \tmp, [\base, #0x14]
--		movs \tmp, \tmp, lsr #2
--		sub \irqnr, \tmp, #1
--		b 1002f
--#endif
--#if defined(CONFIG_CP_INTC)
--1001:		ldr \irqnr, [\base, #0x80] /* get irq number */
--		mov \tmp, \irqnr, lsr #31
--		and \irqnr, \irqnr, #0xff  /* irq is in bits 0-9 */
--		and \tmp, \tmp, #0x1
--		cmp \tmp, #0x1
--#endif
--1002:
--		.endm
-diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-index 952dc126c390..3bbbef78d9ac 100644
---- a/arch/arm/mach-davinci/irq.c
-+++ b/arch/arm/mach-davinci/irq.c
-@@ -28,11 +28,13 @@
- #include <mach/cputype.h>
- #include <mach/common.h>
- #include <asm/mach/irq.h>
-+#include <asm/exception.h>
+ /*----------------------------------------------------------------------*/
+@@ -705,7 +651,7 @@ static const struct davinci_soc_info davinci_soc_info_dm355 = {
+ 	.pinmux_pins		= dm355_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm355_pins),
+ 	.intc_base		= DAVINCI_ARM_INTC_BASE,
+-	.intc_irq_prios		= dm355_default_priorities,
++	.intc_irq_prios		= dm355_aintc_prios,
+ 	.intc_irq_num		= DAVINCI_N_AINTC_IRQ,
+ 	.timer_info		= &dm355_timer_info,
+ 	.sram_dma		= 0x00010000,
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 3e034f0478d2..42b2012d25cc 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -382,71 +382,15 @@ static struct platform_device dm365_mdio_device = {
+ 	.resource	= dm365_mdio_resources,
+ };
  
- #define FIQ_REG0_OFFSET		0x0000
- #define FIQ_REG1_OFFSET		0x0004
- #define IRQ_REG0_OFFSET		0x0008
- #define IRQ_REG1_OFFSET		0x000C
-+#define IRQ_IRQENTRY_OFFSET	0x0014
- #define IRQ_ENT_REG0_OFFSET	0x0018
- #define IRQ_ENT_REG1_OFFSET	0x001C
- #define IRQ_INCTL_REG_OFFSET	0x0020
-@@ -45,6 +47,11 @@ static inline void davinci_irq_writel(unsigned long value, int offset)
- 	__raw_writel(value, davinci_intc_base + offset);
- }
+-static u8 dm365_default_priorities[DAVINCI_N_AINTC_IRQ] = {
+-	[IRQ_VDINT0]			= 2,
+-	[IRQ_VDINT1]			= 6,
+-	[IRQ_VDINT2]			= 6,
+-	[IRQ_HISTINT]			= 6,
+-	[IRQ_H3AINT]			= 6,
+-	[IRQ_PRVUINT]			= 6,
+-	[IRQ_RSZINT]			= 6,
+-	[IRQ_DM365_INSFINT]		= 7,
+-	[IRQ_VENCINT]			= 6,
+-	[IRQ_ASQINT]			= 6,
+-	[IRQ_IMXINT]			= 6,
+-	[IRQ_DM365_IMCOPINT]		= 4,
+-	[IRQ_USBINT]			= 4,
+-	[IRQ_DM365_RTOINT]		= 7,
+-	[IRQ_DM365_TINT5]		= 7,
+-	[IRQ_DM365_TINT6]		= 5,
+-	[IRQ_CCINT0]			= 5,
+-	[IRQ_CCERRINT]			= 5,
+-	[IRQ_TCERRINT0]			= 5,
+-	[IRQ_TCERRINT]			= 7,
+-	[IRQ_PSCIN]			= 4,
+-	[IRQ_DM365_SPINT2_1]		= 7,
+-	[IRQ_DM365_TINT7]		= 7,
+-	[IRQ_DM365_SDIOINT0]		= 7,
+-	[IRQ_MBXINT]			= 7,
+-	[IRQ_MBRINT]			= 7,
+-	[IRQ_MMCINT]			= 7,
+-	[IRQ_DM365_MMCINT1]		= 7,
+-	[IRQ_DM365_PWMINT3]		= 7,
+-	[IRQ_AEMIFINT]			= 2,
+-	[IRQ_DM365_SDIOINT1]		= 2,
+-	[IRQ_TINT0_TINT12]		= 7,
+-	[IRQ_TINT0_TINT34]		= 7,
+-	[IRQ_TINT1_TINT12]		= 7,
+-	[IRQ_TINT1_TINT34]		= 7,
+-	[IRQ_PWMINT0]			= 7,
+-	[IRQ_PWMINT1]			= 3,
+-	[IRQ_PWMINT2]			= 3,
+-	[IRQ_I2C]			= 3,
+-	[IRQ_UARTINT0]			= 3,
+-	[IRQ_UARTINT1]			= 3,
+-	[IRQ_DM365_RTCINT]		= 3,
+-	[IRQ_DM365_SPIINT0_0]		= 3,
+-	[IRQ_DM365_SPIINT3_0]		= 3,
+-	[IRQ_DM365_GPIO0]		= 3,
+-	[IRQ_DM365_GPIO1]		= 7,
+-	[IRQ_DM365_GPIO2]		= 4,
+-	[IRQ_DM365_GPIO3]		= 4,
+-	[IRQ_DM365_GPIO4]		= 7,
+-	[IRQ_DM365_GPIO5]		= 7,
+-	[IRQ_DM365_GPIO6]		= 7,
+-	[IRQ_DM365_GPIO7]		= 7,
+-	[IRQ_DM365_EMAC_RXTHRESH]	= 7,
+-	[IRQ_DM365_EMAC_RXPULSE]	= 7,
+-	[IRQ_DM365_EMAC_TXPULSE]	= 7,
+-	[IRQ_DM365_EMAC_MISCPULSE]	= 7,
+-	[IRQ_DM365_GPIO12]		= 7,
+-	[IRQ_DM365_GPIO13]		= 7,
+-	[IRQ_DM365_GPIO14]		= 7,
+-	[IRQ_DM365_GPIO15]		= 7,
+-	[IRQ_DM365_KEYINT]		= 7,
+-	[IRQ_DM365_TCERRINT2]		= 7,
+-	[IRQ_DM365_TCERRINT3]		= 7,
+-	[IRQ_DM365_EMUINT]		= 7,
++static u8 dm365_aintc_prios[] = {
++	2, 6, 6, 6, 6, 6, 6, 7,
++	6, 6, 6, 4, 4, 7, 7, 5,
++	5, 5, 5, 7, 4, 7, 7, 7,
++	7, 7, 7, 7, 7, 2, 2, 7,
++	7, 7, 7, 7, 3, 3, 3, 3,
++	3, 3, 3, 3, 3, 7, 4, 4,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
+ };
  
-+static inline unsigned long davinci_irq_readl(int offset)
-+{
-+	return __raw_readl(davinci_intc_base + offset);
-+}
-+
- static __init void
- davinci_alloc_gc(void __iomem *base, unsigned int irq_start, unsigned int num)
- {
-@@ -69,6 +76,19 @@ davinci_alloc_gc(void __iomem *base, unsigned int irq_start, unsigned int num)
- 			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
- }
+ /* Four Transfer Controllers on DM365 */
+@@ -722,7 +666,7 @@ static const struct davinci_soc_info davinci_soc_info_dm365 = {
+ 	.pinmux_pins		= dm365_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm365_pins),
+ 	.intc_base		= DAVINCI_ARM_INTC_BASE,
+-	.intc_irq_prios		= dm365_default_priorities,
++	.intc_irq_prios		= dm365_aintc_prios,
+ 	.intc_irq_num		= DAVINCI_N_AINTC_IRQ,
+ 	.timer_info		= &dm365_timer_info,
+ 	.emac_pdata		= &dm365_emac_pdata,
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 66bab4782c62..bf7ebdcf6c18 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -147,71 +147,15 @@ MUX_CFG(DM644X, LFLDEN,		0,   25,    1,	  1,	 false)
+ };
  
-+static asmlinkage void __exception_irq_entry
-+davinci_handle_irq(struct pt_regs *regs)
-+{
-+	int irqnr = davinci_irq_readl(IRQ_IRQENTRY_OFFSET);
-+	struct pt_regs *old_regs = set_irq_regs(regs);
-+
-+	irqnr >>= 2;
-+	irqnr -= 1;
-+
-+	generic_handle_irq(irqnr);
-+	set_irq_regs(old_regs);
-+}
-+
- /* ARM Interrupt Controller Initialization */
- void __init davinci_irq_init(void)
- {
-@@ -114,4 +134,5 @@ void __init davinci_irq_init(void)
- 		davinci_alloc_gc(davinci_intc_base + j, i, 32);
+ /* FIQ are pri 0-1; otherwise 2-7, with 7 lowest priority */
+-static u8 dm644x_default_priorities[DAVINCI_N_AINTC_IRQ] = {
+-	[IRQ_VDINT0]		= 2,
+-	[IRQ_VDINT1]		= 6,
+-	[IRQ_VDINT2]		= 6,
+-	[IRQ_HISTINT]		= 6,
+-	[IRQ_H3AINT]		= 6,
+-	[IRQ_PRVUINT]		= 6,
+-	[IRQ_RSZINT]		= 6,
+-	[7]			= 7,
+-	[IRQ_VENCINT]		= 6,
+-	[IRQ_ASQINT]		= 6,
+-	[IRQ_IMXINT]		= 6,
+-	[IRQ_VLCDINT]		= 6,
+-	[IRQ_USBINT]		= 4,
+-	[IRQ_EMACINT]		= 4,
+-	[14]			= 7,
+-	[15]			= 7,
+-	[IRQ_CCINT0]		= 5,	/* dma */
+-	[IRQ_CCERRINT]		= 5,	/* dma */
+-	[IRQ_TCERRINT0]		= 5,	/* dma */
+-	[IRQ_TCERRINT]		= 5,	/* dma */
+-	[IRQ_PSCIN]		= 7,
+-	[21]			= 7,
+-	[IRQ_IDE]		= 4,
+-	[23]			= 7,
+-	[IRQ_MBXINT]		= 7,
+-	[IRQ_MBRINT]		= 7,
+-	[IRQ_MMCINT]		= 7,
+-	[IRQ_SDIOINT]		= 7,
+-	[28]			= 7,
+-	[IRQ_DDRINT]		= 7,
+-	[IRQ_AEMIFINT]		= 7,
+-	[IRQ_VLQINT]		= 4,
+-	[IRQ_TINT0_TINT12]	= 2,	/* clockevent */
+-	[IRQ_TINT0_TINT34]	= 2,	/* clocksource */
+-	[IRQ_TINT1_TINT12]	= 7,	/* DSP timer */
+-	[IRQ_TINT1_TINT34]	= 7,	/* system tick */
+-	[IRQ_PWMINT0]		= 7,
+-	[IRQ_PWMINT1]		= 7,
+-	[IRQ_PWMINT2]		= 7,
+-	[IRQ_I2C]		= 3,
+-	[IRQ_UARTINT0]		= 3,
+-	[IRQ_UARTINT1]		= 3,
+-	[IRQ_UARTINT2]		= 3,
+-	[IRQ_SPINT0]		= 3,
+-	[IRQ_SPINT1]		= 3,
+-	[45]			= 7,
+-	[IRQ_DSP2ARM0]		= 4,
+-	[IRQ_DSP2ARM1]		= 4,
+-	[IRQ_GPIO0]		= 7,
+-	[IRQ_GPIO1]		= 7,
+-	[IRQ_GPIO2]		= 7,
+-	[IRQ_GPIO3]		= 7,
+-	[IRQ_GPIO4]		= 7,
+-	[IRQ_GPIO5]		= 7,
+-	[IRQ_GPIO6]		= 7,
+-	[IRQ_GPIO7]		= 7,
+-	[IRQ_GPIOBNK0]		= 7,
+-	[IRQ_GPIOBNK1]		= 7,
+-	[IRQ_GPIOBNK2]		= 7,
+-	[IRQ_GPIOBNK3]		= 7,
+-	[IRQ_GPIOBNK4]		= 7,
+-	[IRQ_COMMTX]		= 7,
+-	[IRQ_COMMRX]		= 7,
+-	[IRQ_EMUINT]		= 7,
++static u8 dm644x_aintc_prios[] = {
++	2, 6, 6, 6, 6, 6, 6, 7,
++	6, 6, 6, 6, 4, 4, 7, 7,
++	5, 5, 5, 5, 7, 7, 4, 7,
++	7, 7, 7, 7, 7, 7, 7, 4,
++	2, 2, 7, 7, 7, 7, 7, 3,
++	3, 3, 3, 3, 3, 7, 4, 4,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
+ };
  
- 	irq_set_handler(IRQ_TINT1_TINT34, handle_level_irq);
-+	set_handle_irq(davinci_handle_irq);
- }
+ /*----------------------------------------------------------------------*/
+@@ -646,7 +590,7 @@ static const struct davinci_soc_info davinci_soc_info_dm644x = {
+ 	.pinmux_pins		= dm644x_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm644x_pins),
+ 	.intc_base		= DAVINCI_ARM_INTC_BASE,
+-	.intc_irq_prios 	= dm644x_default_priorities,
++	.intc_irq_prios		= dm644x_aintc_prios,
+ 	.intc_irq_num		= DAVINCI_N_AINTC_IRQ,
+ 	.timer_info		= &dm644x_timer_info,
+ 	.emac_pdata		= &dm644x_emac_pdata,
+diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
+index 45efa715a2c1..64b4ae5a4202 100644
+--- a/arch/arm/mach-davinci/dm646x.c
++++ b/arch/arm/mach-davinci/dm646x.c
+@@ -146,71 +146,15 @@ MUX_CFG(DM646X, PTSIMUX_SERIAL,		0,   16,    3,    3,	 true)
+ #endif
+ };
+ 
+-static u8 dm646x_default_priorities[DAVINCI_N_AINTC_IRQ] = {
+-	[IRQ_DM646X_VP_VERTINT0]        = 7,
+-	[IRQ_DM646X_VP_VERTINT1]        = 7,
+-	[IRQ_DM646X_VP_VERTINT2]        = 7,
+-	[IRQ_DM646X_VP_VERTINT3]        = 7,
+-	[IRQ_DM646X_VP_ERRINT]          = 7,
+-	[IRQ_DM646X_RESERVED_1]         = 7,
+-	[IRQ_DM646X_RESERVED_2]         = 7,
+-	[IRQ_DM646X_WDINT]              = 7,
+-	[IRQ_DM646X_CRGENINT0]          = 7,
+-	[IRQ_DM646X_CRGENINT1]          = 7,
+-	[IRQ_DM646X_TSIFINT0]           = 7,
+-	[IRQ_DM646X_TSIFINT1]           = 7,
+-	[IRQ_DM646X_VDCEINT]            = 7,
+-	[IRQ_DM646X_USBINT]             = 7,
+-	[IRQ_DM646X_USBDMAINT]          = 7,
+-	[IRQ_DM646X_PCIINT]             = 7,
+-	[IRQ_CCINT0]                    = 7,    /* dma */
+-	[IRQ_CCERRINT]                  = 7,    /* dma */
+-	[IRQ_TCERRINT0]                 = 7,    /* dma */
+-	[IRQ_TCERRINT]                  = 7,    /* dma */
+-	[IRQ_DM646X_TCERRINT2]          = 7,
+-	[IRQ_DM646X_TCERRINT3]          = 7,
+-	[IRQ_DM646X_IDE]                = 7,
+-	[IRQ_DM646X_HPIINT]             = 7,
+-	[IRQ_DM646X_EMACRXTHINT]        = 7,
+-	[IRQ_DM646X_EMACRXINT]          = 7,
+-	[IRQ_DM646X_EMACTXINT]          = 7,
+-	[IRQ_DM646X_EMACMISCINT]        = 7,
+-	[IRQ_DM646X_MCASP0TXINT]        = 7,
+-	[IRQ_DM646X_MCASP0RXINT]        = 7,
+-	[IRQ_DM646X_RESERVED_3]         = 7,
+-	[IRQ_DM646X_MCASP1TXINT]        = 7,
+-	[IRQ_TINT0_TINT12]              = 7,    /* clockevent */
+-	[IRQ_TINT0_TINT34]              = 7,    /* clocksource */
+-	[IRQ_TINT1_TINT12]              = 7,    /* DSP timer */
+-	[IRQ_TINT1_TINT34]              = 7,    /* system tick */
+-	[IRQ_PWMINT0]                   = 7,
+-	[IRQ_PWMINT1]                   = 7,
+-	[IRQ_DM646X_VLQINT]             = 7,
+-	[IRQ_I2C]                       = 7,
+-	[IRQ_UARTINT0]                  = 7,
+-	[IRQ_UARTINT1]                  = 7,
+-	[IRQ_DM646X_UARTINT2]           = 7,
+-	[IRQ_DM646X_SPINT0]             = 7,
+-	[IRQ_DM646X_SPINT1]             = 7,
+-	[IRQ_DM646X_DSP2ARMINT]         = 7,
+-	[IRQ_DM646X_RESERVED_4]         = 7,
+-	[IRQ_DM646X_PSCINT]             = 7,
+-	[IRQ_DM646X_GPIO0]              = 7,
+-	[IRQ_DM646X_GPIO1]              = 7,
+-	[IRQ_DM646X_GPIO2]              = 7,
+-	[IRQ_DM646X_GPIO3]              = 7,
+-	[IRQ_DM646X_GPIO4]              = 7,
+-	[IRQ_DM646X_GPIO5]              = 7,
+-	[IRQ_DM646X_GPIO6]              = 7,
+-	[IRQ_DM646X_GPIO7]              = 7,
+-	[IRQ_DM646X_GPIOBNK0]           = 7,
+-	[IRQ_DM646X_GPIOBNK1]           = 7,
+-	[IRQ_DM646X_GPIOBNK2]           = 7,
+-	[IRQ_DM646X_DDRINT]             = 7,
+-	[IRQ_DM646X_AEMIFINT]           = 7,
+-	[IRQ_COMMTX]                    = 7,
+-	[IRQ_COMMRX]                    = 7,
+-	[IRQ_EMUINT]                    = 7,
++static u8 dm646x_aintc_prios[] = {
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
++	7, 7, 7, 7, 7, 7, 7, 7,
+ };
+ 
+ /*----------------------------------------------------------------------*/
+@@ -586,7 +530,7 @@ static const struct davinci_soc_info davinci_soc_info_dm646x = {
+ 	.pinmux_pins		= dm646x_pins,
+ 	.pinmux_pins_num	= ARRAY_SIZE(dm646x_pins),
+ 	.intc_base		= DAVINCI_ARM_INTC_BASE,
+-	.intc_irq_prios		= dm646x_default_priorities,
++	.intc_irq_prios		= dm646x_aintc_prios,
+ 	.intc_irq_num		= DAVINCI_N_AINTC_IRQ,
+ 	.timer_info		= &dm646x_timer_info,
+ 	.emac_pdata		= &dm646x_emac_pdata,
 -- 
 2.20.1
 
