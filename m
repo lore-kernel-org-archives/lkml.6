@@ -2,139 +2,241 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 337BDC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132A7C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E211D218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC8FE2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:40:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="3KTbYpOJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mcm6+oaK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732965AbfAaMkJ (ORCPT
+        id S1733031AbfAaMkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:40:09 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:28668 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732190AbfAaMkJ (ORCPT
+        Thu, 31 Jan 2019 07:40:20 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54471 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbfAaMkU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:40:09 -0500
-X-IronPort-AV: E=Sophos;i="5.56,544,1539673200"; 
-   d="scan'208";a="24062509"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jan 2019 05:40:08 -0700
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 31 Jan 2019 05:40:07 -0700
+        Thu, 31 Jan 2019 07:40:20 -0500
+Received: by mail-it1-f194.google.com with SMTP id i145so3432661ita.4
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:40:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cPP5EtC2RQCrxMPpZgCPgEsafF9RMaEPXCNV4k0Kgq0=;
- b=3KTbYpOJkrPkm+SYlr78peKlwZjFHPStQQzCLuTCMS6U50ZI0ALK5D2Om2frjpxky7utX2no7eNkVMlp7ZlqUysnjVwm9sZbVg/YzZqLm9qhoAhtLsf5IEVa1TGtrSCCRGdYbSGQPh7EMPuiwWdETLZSGU5QctBLwGGEvv3DUQY=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
- BN6PR11MB1779.namprd11.prod.outlook.com (10.175.98.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.17; Thu, 31 Jan 2019 12:40:04 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::847:4296:13b9:fc9f]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::847:4296:13b9:fc9f%8]) with mapi id 15.20.1580.017; Thu, 31 Jan 2019
- 12:40:04 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <bbrezillon@kernel.org>
-CC:     <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
-        <Ludovic.Desroches@microchip.com>, <broonie@kernel.org>,
-        <linux-mtd@lists.infradead.org>, <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 9/9] spi: atmel-quadspi: add support for sam9x60 qspi
- controller
-Thread-Topic: [PATCH 9/9] spi: atmel-quadspi: add support for sam9x60 qspi
- controller
-Thread-Index: AQHUuK2zcy+YTju2sU2WL87l1ywXpaXJRlGAgAAMeQA=
-Date:   Thu, 31 Jan 2019 12:40:04 +0000
-Message-ID: <5a91b6b2-0fed-f411-6e96-568e610f15fa@microchip.com>
-References: <20190130150818.24902-1-tudor.ambarus@microchip.com>
- <20190130150818.24902-10-tudor.ambarus@microchip.com>
- <20190131125504.3eff449d@bbrezillon>
-In-Reply-To: <20190131125504.3eff449d@bbrezillon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0901CA0100.eurprd09.prod.outlook.com
- (2603:10a6:800:7e::26) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:101::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1779;6:tyZs/Pu+L6GaLzUI1EeQ2Tc/8Mea7WKW1fu5X4cYn9lK8KDCaNUtoWPr6nkTgnkyxgLXeiYyuXil46OBifhPU5hcIy6hWJ4DD2VdLrXtjxxdGEFOmqgsjv1zGs4zB0hn34sqiqAFpmA7j0Q4pF0vlOZ4bBO1V1kzrtseH8veeZchhQPfG0ZElBA+VwrazMItU3Dm4pBuaaSCClzR14DpaZBnhjqGgW+si/mpfH6LE2wyWYOKsVGUiyCj/yZ+wYkofDfwbHm9xw/Qmqb9mYb2PrgQsnAPRcA7vNQ9p0Lf43CbNV53am59iqqc/zZtcbTq86xyE83qnKpxH1duuEAA8Z0nW+m029Tr9We4gX+gYo0vvfck0jEx7Hm4CPAIh/LR9fHkcYwLZtC3mOF3l/GlZIXUWHxmoYpux7kxVTylMc12cn1FFYDnErAIjwnL6A+E1I7AnxNkhkmt0rmKVvUhPg==;5:VHyvM1gVCB5QGXE3PNtBsCiV9iSM/rz4JTNwcww8AIbWjxF8P0RaXbf5gcDpMFN9JkqO8sdHfaDjaCCDu2GmQ3HykaLE+3D51wVXG7S/iEYxlJFcVreT80lj8qrzF5KPN8DxmGp22K/n/dHxEBk0yjbGQYMxKak2g9lnEZhPqYXZPAPmGkjnmYEWE3IZwpKC1J9wOJlBouoZlKTvh7HxEA==;7:P+eMofd7E2zur1WXvHk8HdwU2q80RHpskM/Oyec2vvp+xkFZ69+YmUKm9baZcVvVTHrDa4eYk7383/ZAOJcGpg0y0jJddfPqVdI2i348XYuCW7wfStsKeWYykIabCH3Qaev1BW9vMVCTJoTdXZ+XrA==
-x-ms-office365-filtering-correlation-id: ae864e42-49db-43d0-de75-08d687793964
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1779;
-x-ms-traffictypediagnostic: BN6PR11MB1779:
-x-microsoft-antispam-prvs: <BN6PR11MB17790526981C6026A0672447F0910@BN6PR11MB1779.namprd11.prod.outlook.com>
-x-forefront-prvs: 09347618C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(136003)(376002)(39860400002)(396003)(189003)(199004)(52116002)(81166006)(6916009)(31696002)(3846002)(8936002)(478600001)(11346002)(54906003)(316002)(476003)(446003)(8676002)(72206003)(76176011)(81156014)(99286004)(6436002)(6116002)(6512007)(86362001)(2616005)(6306002)(53936002)(71190400001)(26005)(71200400001)(7736002)(305945005)(229853002)(31686004)(14454004)(386003)(53546011)(186003)(106356001)(97736004)(966005)(6246003)(66066001)(105586002)(486006)(68736007)(2906002)(36756003)(14444005)(4326008)(25786009)(256004)(6506007)(102836004)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1779;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: bYFlxlpeN70qVr/LbxfUR5cNfysSc6KXeqzIbOUi8n0N1L3ZgMSLPjbpgbnVzcRzhJdquotqpWnF4ytCaPgV0/3Lnsiet+frcFG2VKR4ZfJdNjXVxJTEUy2uYvt0BmL6q/tzx3MZmgD7qMD06+vGh25vCRlqwLTSkSGcHzp/KYeHzNfFdsE9xAZy4loHmJTz1RafyWzAE880rLOPctw9Q4NWkdjWUHfudacCNzYYZ6VxsJPeN/kK42ilHmzXs1nY3wbPlp+6ADxx/uVkv1pis3RPGZGee1vxl1w6ZoIioRAeByeU63TutFRkiM/z7PMkhbA0U8cgU2ZquGbNH3Cbz+vp7qRow3FJcS2V1C6BH8XAMHLhEBYEZqxaFlWaqDbaIEdJq7BDD6Xca8qQYyMv1/1loT5tJinseJ2UfnF4RDk=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0D3620EBDEE88C4B8700FAC63CE881D0@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J4R22tyTJnmXji+dT1mB97b4tHqlE8m1aAJJuecNz4M=;
+        b=Mcm6+oaKGyNxp0/NfutGDEye6jCdwnG0ErgA5VxcBB9ds8gC5xUDFm0jQbDe4+ACPK
+         x99zBaMn0DFICm7mj7s1tR1OMIp20Oc28Q76SuZhzVZ04pZ0tnjimYBqYVzduzYzhXvu
+         0WM/12/7d4jT4aEKhI1Y5vTycyqhIk2irUGj+ZWA5ZDqeJ7C2EJIrUa5iNGwTCF6CfnW
+         +7sxmge668l2Hntrw5Xa9YfBdhpLoZtW/IP4iqajdbqWGaw7cNA53LC0YylFMmUBORhO
+         CK8AJqlvvKud4qDR+EbjZSgoLJILlgOQFynt49zidPFshcZpw0ScHDfCJqh8RjAHhpzr
+         ak3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J4R22tyTJnmXji+dT1mB97b4tHqlE8m1aAJJuecNz4M=;
+        b=NhmQ30EDk2mrdjZGZ4LOqZF9HXnOHowpa9tUACmrt7wZTq6n5dDWFH3eU+iZn0A+Jo
+         Rb6Y+jqQJ+02D7dmu0bV+CrOtMLJreFOqEEHczU81pkRkNRI8uyDJLMGIUVHiXbbX2dP
+         cakq7KyxStoJHO2pURjX5vSTGy2C6Fa1QLD+HaQQwRoVoEGEkqYJAT27qtB8pj/7joW0
+         xR+NAnXBv87+QTFGoCgzGltmAV9xfvqkjtfw3XcnC4sbNyMdhUHJVEQoRHM4tR0IEHQ9
+         dAoKPMO/7fSYy42mD3zYuEtiagmCQv7yNNT3itmfmJbkCWPpj+TyHpIV9KnEFym+KaVl
+         PYKw==
+X-Gm-Message-State: AJcUukdZcWu76ALfca464mrrZclRm6iljnH8ct4An1iJbZAYQk8H0HKG
+        Eg0kxU/eJhu21Flq2chaKsQdyNGoIIY+mzsxiGY=
+X-Google-Smtp-Source: ALg8bN7ZWkFwP4h8udMrLTU5gh8Ku94OMxBJDGWEHYtlyFWJJHdQsWmQLSp1ot4qfUzAl5yHx0S9Zcu/x0kvK15bbIc=
+X-Received: by 2002:a02:8c1d:: with SMTP id l29mr20593674jak.93.1548938418661;
+ Thu, 31 Jan 2019 04:40:18 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae864e42-49db-43d0-de75-08d687793964
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 12:40:02.8075
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1779
-X-OriginatorOrg: microchip.com
+References: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
+ <1528987172-19810-3-git-send-email-yamada.masahiro@socionext.com>
+ <20180615004704.u5gofft7k6ehmhwi@ast-mbp.dhcp.thefacebook.com>
+ <CAE=NcramE=kqqfq78aXtKLmFSctk7vo-P-478092Lt2c0op_aQ@mail.gmail.com> <CAE=NcrZ2iRX6XQj1X6FZag8QK93a467eiyKsd5CEkGkQeMQERg@mail.gmail.com>
+In-Reply-To: <CAE=NcrZ2iRX6XQj1X6FZag8QK93a467eiyKsd5CEkGkQeMQERg@mail.gmail.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Thu, 31 Jan 2019 14:40:07 +0200
+Message-ID: <CAE=NcrZ+rYYvjbpGGoUxD69d_DM1_536FCCQfL6b3nAfe47diw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] bpfilter: include bpfilter_umh in assembly instead
+ of using objcopy
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDAxLzMxLzIwMTkgMDE6NTUgUE0sIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gT24g
-V2VkLCAzMCBKYW4gMjAxOSAxNTowODo0NyArMDAwMA0KPiA8VHVkb3IuQW1iYXJ1c0BtaWNyb2No
-aXAuY29tPiB3cm90ZToNCj4gDQo+PiArDQo+PiArc3RhdGljIGludCBhdG1lbF9zYW05eDYwX3Fz
-cGlfc2V0X2NmZyhzdHJ1Y3QgYXRtZWxfcXNwaSAqYXEsDQo+PiArCQkJCSAgICAgIGNvbnN0IHN0
-cnVjdCBzcGlfbWVtX29wICpvcCwNCj4+ICsJCQkJICAgICAgc3RydWN0IGF0bWVsX3FzcGlfY2Zn
-ICpjZmcpDQo+PiArew0KPj4gKwlpbnQgcmV0ID0gYXRtZWxfcXNwaV9zZXRfbW9kZShjZmcsIG9w
-KTsNCj4+ICsNCj4+ICsJaWYgKHJldCkNCj4+ICsJCXJldHVybiByZXQ7DQo+PiArDQo+PiArCWNm
-Zy0+aWNyID0gUVNQSV9JQ1JfSU5TVChvcC0+Y21kLm9wY29kZSk7DQo+PiArDQo+PiArCWlmICgh
-b3AtPmFkZHIubmJ5dGVzKSB7DQo+PiArCQljZmctPmlmciB8PSBRU1BJX0lGUl9URlJUWVBfVFJT
-RlJfUkVHOw0KPj4gKwkJaWYgKG9wLT5kYXRhLmRpciA9PSBTUElfTUVNX0RBVEFfT1VUKQ0KPj4g
-KwkJCWNmZy0+aWZyIHw9IFFTUElfSUZSX0FQQlRGUlRZUF9XUklURTsNCj4+ICsJCWVsc2UNCj4+
-ICsJCQljZmctPmlmciB8PSBRU1BJX0lGUl9BUEJURlJUWVBfUkVBRDsNCj4+ICsJfSBlbHNlIHsN
-Cj4+ICsJCWNmZy0+aWZyIHw9IFFTUElfSUZSX1RGUlRZUF9UUlNGUl9NRU07DQo+IA0KPiBXaHkg
-ZG8geW91IHVzZSBhIE1FTSB0cmFuc2ZlciBoZXJlPyBXaGF0J3MgdGhlIGRpZmZlcmVuY2Ugd2l0
-aCBhDQo+IHJlZ3VsYXIgdHJhbnNmZXI/DQoNClFTUElfSUZSX1RGUlRZUF9UUlNGUl9NRU0gbXVz
-dCBiZSBzZXQgd2hlbiBvbmUgd2FudHMgdG8gcmVhZC93cml0ZSBpbiB0aGUgc2VyaWFsDQptZW1v
-cnksIGFuZCBwYXJ0aWN1bGFybHkgYSBtZW1vcnkgZGF0YS4NCg0KUVNQSV9JRlJfVEZSVFlQX1RS
-U0ZSX1JFRyBtdXN0IGJlIHNldCB3aGVuIG9uZSB3YW50cyB0byByZWFkIG9yIHdyaXRlIHRvIHNl
-cmlhbA0KbWVtb3J5LCBidXQgbm90IGEgbWVtb3J5IGRhdGEuDQpSZWFkIGV4YW1wbGVzOiBKRURF
-Q19JRCBvciBRU1BJX1NSDQpXcml0ZSBleGFtcGxlczogd3JpdGluZyB0aGUgY29uZmlndXJhdGlv
-biBvciB0aGUgUVNQSV9TUi4NCg0KRG9lcyB0aGlzIGFuc3dlcnMgeW91ciBxdWVzdGlvbj8NCg0K
-PiANCj4+ICsJfQ0KPj4gKw0KPj4gKwkvKiBTZXQgZGF0YSBlbmFibGUgKi8NCj4+ICsJaWYgKG9w
-LT5kYXRhLm5ieXRlcykNCj4+ICsJCWNmZy0+aWZyIHw9IFFTUElfSUZSX0RBVEFFTjsNCj4+ICsN
-Cj4+ICsJcmV0ID0gYXRtZWxfcXNwaV9zZXRfYWRkcmVzc19tb2RlKGNmZywgb3ApOw0KPj4gKwlp
-ZiAocmV0KQ0KPj4gKwkJcmV0dXJuIHJldDsNCj4+ICANCj4+ICAJLyogQ2xlYXIgcGVuZGluZyBp
-bnRlcnJ1cHRzICovDQo+PiAgCSh2b2lkKWF0bWVsX3FzcGlfcmVhZGwoYXEsIFFTUElfU1IpOw0K
-Pj4gIA0KPj4gIAkvKiBTZXQgUVNQSSBJbnN0cnVjdGlvbiBGcmFtZSByZWdpc3RlcnMgKi8NCj4+
-IC0JYXRtZWxfcXNwaV93cml0ZWwoYXEsIFFTUElfSUFSLCBpYXIpOw0KPj4gLQlhdG1lbF9xc3Bp
-X3dyaXRlbChhcSwgUVNQSV9JQ1IsIGljcik7DQo+PiAtCWF0bWVsX3FzcGlfd3JpdGVsKGFxLCBR
-U1BJX0lGUiwgaWZyKTsNCj4+ICsJYXRtZWxfcXNwaV93cml0ZWwoYXEsIFFTUElfSUFSLCBjZmct
-Pmlhcik7DQo+PiArCWlmIChvcC0+ZGF0YS5kaXIgPT0gU1BJX01FTV9EQVRBX09VVCkNCj4+ICsJ
-CWF0bWVsX3FzcGlfd3JpdGVsKGFxLCBRU1BJX0lDUiwgY2ZnLT5pY3IpOw0KPj4gKwllbHNlDQo+
-PiArCQlhdG1lbF9xc3BpX3dyaXRlbChhcSwgUVNQSV9SSUNSLCBjZmctPmljcik7DQo+PiArCWF0
-bWVsX3FzcGlfd3JpdGVsKGFxLCBRU1BJX0lGUiwgY2ZnLT5pZnIpOw0KPj4gKw0KPj4gKwlyZXR1
-cm4gMDsNCj4+ICt9DQo+IA0KPiANCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18NCj4gbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QNCj4gbGludXgt
-YXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQu
-b3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbA0KPiANCg==
+Hi,
+
+Okay my bad, proper __initconst declarations would do the trick, cool stuff.
+
+
+--
+Janne
+
+On Thu, Jan 31, 2019 at 1:09 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
+>
+> Hi,
+>
+> Never mind, not enough coffee for the morning. Looks good addressing
+> wise, but something goes haywire with the copy. Some size limitation?
+>
+> [   84.402647] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> BIOS 1.10.2-1ubuntu1 04/01/2014
+> [   84.403899] RIP: 0010:__memcpy+0x12/0x20
+> [   84.404441] Code: c1 e2 20 48 09 d0 48 31 c3 e9 76 ff ff ff 90 90
+> 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 89 f8 48 89 d1 48 c1 e9 03
+> 83 e2 07 <f3> 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1
+> f3 a4
+> [   84.407004] RSP: 0018:ffffc90000ac39c0 EFLAGS: 00010246
+> [   84.407714] RAX: ffff888041709000 RBX: 0000000000001000 RCX: 0000000000000200
+> [   84.408667] RDX: 0000000000000000 RSI: ffffffff82a7cb4d RDI: ffff888041709000
+> [   84.409668] RBP: ffffc90000ac3a08 R08: ffff888041709000 R09: 0000000000000000
+> [   84.410621] R10: 0000000000000000 R11: 000015fffefa3dbf R12: 0000000000001000
+> [   84.411710] R13: 0000000000001000 R14: ffffc90000ac3b28 R15: 0000000000001000
+> [   84.412675] FS:  00007f6cd3a35740(0000) GS:ffff88807da00000(0000)
+> knlGS:0000000000000000
+> [   84.413805] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   84.414655] CR2: ffffffff82a7cb4d CR3: 0000000031344000 CR4: 00000000000006f0
+> [   84.415656] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   84.416647] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   84.417619] Call Trace:
+> [   84.417996]  ? iov_iter_copy_from_user_atomic+0x21b/0x360
+> [   84.418754]  ? shmem_write_begin+0x4a/0x80
+> [   84.419396]  generic_perform_write+0xdd/0x1b0
+> [   84.419897]  __generic_file_write_iter+0x1ab/0x1d0
+> [   84.420453]  ? apparmor_file_alloc_security+0x4c/0x230
+> [   84.421082]  ? kmem_cache_alloc+0x1b5/0x1d0
+> [   84.421677]  generic_file_write_iter+0xb3/0x150
+> [   84.422353]  __vfs_write+0x145/0x1d0
+> [   84.422907]  vfs_write+0xae/0x1a0
+> [   84.423435]  kernel_write+0x55/0x70
+> [   84.423996]  fork_usermode_blob+0x85/0x11b
+> ..
+>
+> ret = fork_usermode_blob(&test_umh_start,
+> &test_umh_end - &test_umh_start, &um_info);
+>
+> Addresses indeed seem ok and the '-fpic -fpie -fPIE -static' compiled
+> user mode blob sits in between those symbols correctly. Hummm ?
+>
+>
+> --
+> Janne
+>
+> On Thu, Jan 31, 2019 at 12:48 PM Janne Karhunen
+> <janne.karhunen@gmail.com> wrote:
+> >
+> > Hi,
+> >
+> > Hmm, does this approach work if the code is not in a kernel module? I
+> > tried to use it as part of the kernel image and looks to me the
+> > bounding symbols _start and _end are not correctly relocated?
+> >
+> > --
+> > Janne
+> >
+> > On Fri, Jun 15, 2018 at 3:48 AM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Thu, Jun 14, 2018 at 11:39:31PM +0900, Masahiro Yamada wrote:
+> > > > What we want here is to embed a user-space program into the kernel.
+> > > > Instead of the complex ELF magic, let's simply wrap it in the assembly
+> > > > with the '.incbin' directive.
+> > > >
+> > > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > > > ---
+> > > >
+> > > > Changes in v2:
+> > > >   - Rebase
+> > > >
+> > > >  net/bpfilter/Makefile            | 15 ++-------------
+> > > >  net/bpfilter/bpfilter_kern.c     | 11 +++++------
+> > > >  net/bpfilter/bpfilter_umh_blob.S |  7 +++++++
+> > > >  3 files changed, 14 insertions(+), 19 deletions(-)
+> > > >  create mode 100644 net/bpfilter/bpfilter_umh_blob.S
+> > > >
+> > > > diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
+> > > > index e0bbe75..39c6980 100644
+> > > > --- a/net/bpfilter/Makefile
+> > > > +++ b/net/bpfilter/Makefile
+> > > > @@ -15,18 +15,7 @@ ifeq ($(CONFIG_BPFILTER_UMH), y)
+> > > >  HOSTLDFLAGS += -static
+> > > >  endif
+> > > >
+> > > > -# a bit of elf magic to convert bpfilter_umh binary into a binary blob
+> > > > -# inside bpfilter_umh.o elf file referenced by
+> > > > -# _binary_net_bpfilter_bpfilter_umh_start symbol
+> > > > -# which bpfilter_kern.c passes further into umh blob loader at run-time
+> > > > -quiet_cmd_copy_umh = GEN $@
+> > > > -      cmd_copy_umh = echo ':' > $(obj)/.bpfilter_umh.o.cmd; \
+> > > > -      $(OBJCOPY) -I binary -O `$(OBJDUMP) -f $<|grep format|cut -d' ' -f8` \
+> > > > -      -B `$(OBJDUMP) -f $<|grep architecture|cut -d, -f1|cut -d' ' -f2` \
+> > > > -      --rename-section .data=.init.rodata $< $@
+> > > > -
+> > > > -$(obj)/bpfilter_umh.o: $(obj)/bpfilter_umh
+> > > > -     $(call cmd,copy_umh)
+> > > > +$(obj)/bpfilter_umh_blob.o: $(obj)/bpfilter_umh
+> > > >
+> > > >  obj-$(CONFIG_BPFILTER_UMH) += bpfilter.o
+> > > > -bpfilter-objs += bpfilter_kern.o bpfilter_umh.o
+> > > > +bpfilter-objs += bpfilter_kern.o bpfilter_umh_blob.o
+> > > > diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+> > > > index 0952257..6de3ae5 100644
+> > > > --- a/net/bpfilter/bpfilter_kern.c
+> > > > +++ b/net/bpfilter/bpfilter_kern.c
+> > > > @@ -10,11 +10,8 @@
+> > > >  #include <linux/file.h>
+> > > >  #include "msgfmt.h"
+> > > >
+> > > > -#define UMH_start _binary_net_bpfilter_bpfilter_umh_start
+> > > > -#define UMH_end _binary_net_bpfilter_bpfilter_umh_end
+> > > > -
+> > > > -extern char UMH_start;
+> > > > -extern char UMH_end;
+> > > > +extern char bpfilter_umh_start;
+> > > > +extern char bpfilter_umh_end;
+> > > >
+> > > >  static struct umh_info info;
+> > > >  /* since ip_getsockopt() can run in parallel, serialize access to umh */
+> > > > @@ -93,7 +90,9 @@ static int __init load_umh(void)
+> > > >       int err;
+> > > >
+> > > >       /* fork usermode process */
+> > > > -     err = fork_usermode_blob(&UMH_start, &UMH_end - &UMH_start, &info);
+> > > > +     err = fork_usermode_blob(&bpfilter_umh_end,
+> > > > +                              &bpfilter_umh_end - &bpfilter_umh_start,
+> > > > +                              &info);
+> > > >       if (err)
+> > > >               return err;
+> > > >       pr_info("Loaded bpfilter_umh pid %d\n", info.pid);
+> > > > diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
+> > > > new file mode 100644
+> > > > index 0000000..40311d1
+> > > > --- /dev/null
+> > > > +++ b/net/bpfilter/bpfilter_umh_blob.S
+> > > > @@ -0,0 +1,7 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > > +     .section .init.rodata, "a"
+> > > > +     .global bpfilter_umh_start
+> > > > +bpfilter_umh_start:
+> > > > +     .incbin "net/bpfilter/bpfilter_umh"
+> > > > +     .global bpfilter_umh_end
+> > > > +bpfilter_umh_end:
+> > >
+> > > for some reason it doesn't work.
+> > > fork_usermode_blob() returns ENOEXEC
+> > > You should be able to test it simply running 'iptables -L'.
+> > > Without this patch you should see:
+> > > [   12.696937] bpfilter: Loaded bpfilter_umh pid 225
+> > > Started bpfilter
+> > >
+> > > where first line comes from kernel module and second from umh.
+> > >
+> > >
