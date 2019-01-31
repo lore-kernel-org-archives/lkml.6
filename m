@@ -2,146 +2,132 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FB8C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 821D3C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DC31218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:38:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4wibqGv"
+	by mail.kernel.org (Postfix) with ESMTP id 5D42A2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:39:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbfAaRie (ORCPT
+        id S1727725AbfAaRjB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:38:34 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41662 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbfAaRie (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:38:34 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k15-v6so3409096ljc.8;
-        Thu, 31 Jan 2019 09:38:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nEyrCYCZAX/QnDuvZa/k6XNYdumTEp8B2Yt06+IWm6M=;
-        b=E4wibqGv4Rhvt2LNwJGRDTzTJUaCzLZUwQJXw6UCi5AAXG3AuP2nrJM3vq9uT7ZQTt
-         B9vmQFloCL1jU0JL55E/mevrWNOgEYeB82rzE5cA7uGzB3BAGR39VN6rODLu0LOViBTG
-         CuVTePS40zLX15hi0egsABe0Me67Vx35M5IsTIHVhwV0n22HoGqZdxZK6npOpN9RhZuk
-         KCGtxoylY0T6/l56qyxRsCfd5NwgcOC8b/EPSRZgW5iESSUiDqnFFJU09KjqtcRZ0+t7
-         WCOVTgT2MPh+OzL8ZgfcZUgmal/yVWGh+WX5u2gy4RGXbOZv7Na5cxTY1bQC07pJwtUO
-         YR3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nEyrCYCZAX/QnDuvZa/k6XNYdumTEp8B2Yt06+IWm6M=;
-        b=nnVHFakTHyMjLMVbdJsf0AaGCBuRMKi7KqYp4CPU7K2qCzXrY2/bsuyxQ2qxXz3N0C
-         iAkGYi9q9UBHJKMzZh6kkmKKthYCN03v70sSO8ddkJQOHUsRHxV6aoQrbAE0Tr9PD/Uk
-         SUAwVWjmkfEimyHJN5u/+JT7n3el9mGOWHsQFm4IgDU6mZpupOOlJKLlLD/tHEQaebtg
-         OGVd+R5FaMTSfj8rvoDH8FMlclbZOsSnwWLQy8I2ulFpMNsAsAx4m8iShoKIrpwcoAOL
-         CHfrBEW7rJhq5E3khZf0cYXKU98uRNaARjRmTBv2q+kq8QbUpX1kffMmbTOOdB9t0PGa
-         0hxw==
-X-Gm-Message-State: AJcUukeOsWpuY6Q1oqHDp+MpIOz0O0qTdX+OZzzx4CJ/uxRxkXQ+b1rX
-        kLi9xlBgY8ZLyI/Uf7TwCj2Lh+bG
-X-Google-Smtp-Source: ALg8bN4LJ5gAmpax8qJggxOyyUflqLoYo5BC8xkwIBfpmaY2SIX+ewD+vopBqeCS7WwMGt0KecBGAA==
-X-Received: by 2002:a2e:3a04:: with SMTP id h4-v6mr30791003lja.81.1548956311600;
-        Thu, 31 Jan 2019 09:38:31 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id 85-v6sm897764lja.16.2019.01.31.09.38.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 09:38:30 -0800 (PST)
-Subject: Re: [PATCH V8 3/5] i2c: tegra: Add DMA Support
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
- <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
- <4663c7b9-d306-1cd4-1bdc-f7be84af0667@gmail.com>
- <8a88f8ee-24d3-00ac-f1fa-c43b576ed82c@gmail.com>
- <BYAPR12MB3398CFEE7E912513AE48DD2FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
- <e50a353c-94c4-1a47-92a4-5f41f4f64aa7@gmail.com>
- <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
-Message-ID: <f5b9acd6-3700-9595-9be7-066be1d4d77c@gmail.com>
-Date:   Thu, 31 Jan 2019 20:38:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 12:39:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57262 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726820AbfAaRjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 12:39:00 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 738888AE56;
+        Thu, 31 Jan 2019 17:38:59 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1375C1019627;
+        Thu, 31 Jan 2019 17:38:57 +0000 (UTC)
+Subject: Re: [PATCH 2/3] locking/qspinlock: Introduce CNA into the slow path
+ of qspinlock
+To:     Alex Kogan <alex.kogan@oracle.com>, linux@armlinux.org.uk,
+        peterz@infradead.org, mingo@redhat.com, will.deacon@arm.com,
+        arnd@arndb.de, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        dave.dice@oracle.com, rahul.x.yadav@oracle.com
+References: <20190131030136.56999-1-alex.kogan@oracle.com>
+ <20190131030136.56999-3-alex.kogan@oracle.com>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <2c8aabab-1bb0-0708-94c4-305fd860609e@redhat.com>
+Date:   Thu, 31 Jan 2019 12:38:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
+In-Reply-To: <20190131030136.56999-3-alex.kogan@oracle.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 31 Jan 2019 17:38:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-31.01.2019 20:25, Dmitry Osipenko пишет:
-> 31.01.2019 20:11, Dmitry Osipenko пишет:
->> 31.01.2019 19:56, Sowjanya Komatineni пишет:
->>>
->>>>>>  drivers/i2c/busses/Kconfig     |   2 +-
->>>>>>  drivers/i2c/busses/i2c-tegra.c | 362 
->>>>>> ++++++++++++++++++++++++++++++++++++++---
->>>>>>  2 files changed, 339 insertions(+), 25 deletions(-)
->>>>>
->>>>> Tegra20 crashes because of this patch:
->>>>>
->>>> [snip]
->>>>> <4>[    3.395915] ------------[ cut here ]------------
->>>>> <2>[    3.395919] kernel BUG at drivers/i2c/busses/i2c-tegra.c:810!
->>>> The BUG line is from:
->>>>
->>>> 	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
->>>> 		if (i2c_dev->is_curr_dma_xfer)
->>>> 			i2c_dev->msg_buf_remaining = 0;
->>>> 		BUG_ON(i2c_dev->msg_buf_remaining);
->>>> 		complete(&i2c_dev->msg_complete);
->>>> 	}
->>>>
->>> BUG_ON line is not part of this change. It was already there in existing driver.
->>> Based on log, I see DMA transfer is done for 224 bytes followed by 1 successful PIO transfer and then on next PIO transfer it received packet xfer complete interrupt with incomplete transfer bytes and that where it hit BUG_ON condition.
->>>
->>>
->>
->> Yes, that BUG_ON is caused by the DMA transferring. Everything works fine be setting dma=false in the code, hence it's likely not a bug in the code (at least for now it looks fine), but likely that HW is not programmed correctly.
->>
-> 
-> It works with this change:
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index fe5b89abc576..8e059e94b94e 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1170,10 +1170,11 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->                 time_left, completion_done(&i2c_dev->msg_complete),
->                 i2c_dev->msg_err);
->  
-> +       tegra_i2c_init(i2c_dev, true);
-> +
->         if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
->                 return 0;
->  
-> -       tegra_i2c_init(i2c_dev, true);
->         /* start recovery upon arbitration loss in single master mode */
->         if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
->                 if (!i2c_dev->is_multimaster_mode)
-> 
-> 
-> Which means that HW state is kept dirty after DMA transfer. Please check everything carefully.
-> 
+On 01/30/2019 10:01 PM, Alex Kogan wrote:
+> In CNA, spinning threads are organized in two queues, a main queue for
+> threads running on the same socket as the current lock holder, and a
+> secondary queue for threads running on other sockets. For details,
+> see https://arxiv.org/abs/1810.05600.
+>
+> Note that this variant of CNA may introduce starvation by continuously
+> passing the lock to threads running on the same socket. This issue
+> will be addressed later in the series.
+>
+> Signed-off-by: Alex Kogan <alex.kogan@oracle.com>
+> Reviewed-by: Steve Sistare <steven.sistare@oracle.com>
 
-Also, enforcing dma=true regardless of transfer size doesn't work as well.
+Just wondering if you have tried include PARVIRT_SPINLOCKS option to see
+if that patch may screw up the PV qspinlock code.
+
+Anyway, I do believe your claim that NUMA-aware qspinlock is good for
+large systems with many nodes. However, all these extra code are
+overhead for small systems that have a single node/socket, for instance.
+
+I will support doing something similar to what had been done to support
+PV qspinlock. IOW, a separate slowpath function that can be patched to
+become the default depending on the system being run on or a kernel boot
+option setting.
+
+I would like to keep the core slowpath function simple and easy to
+understand. So most of the CNA code should be encapsulated into some
+helper functions and put into a separated file.
+
+Thanks,
+Longman
+
