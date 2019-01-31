@@ -2,134 +2,186 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFAAC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C23C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:24:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B48420869
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:24:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r5Z8QD/t"
+	by mail.kernel.org (Postfix) with ESMTP id 7069C20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:24:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732184AbfAaPYb (ORCPT
+        id S1732493AbfAaPYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 10:24:31 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41181 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfAaPYa (ORCPT
+        Thu, 31 Jan 2019 10:24:45 -0500
+Received: from mail-gw01.fsdata.se ([89.221.252.212]:46000 "EHLO
+        mail-gw01.fsdata.se" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726060AbfAaPYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 10:24:30 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k15-v6so3006542ljc.8;
-        Thu, 31 Jan 2019 07:24:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xNGpCt0dFRJzvyMaqTiKTlg+Ocg7wC/TGrFxIAwI8mE=;
-        b=r5Z8QD/tyjlcCJXSonPOdyOxhlgnWqdsazdpSSNDYKbA33B8bSZwe4RR/A5pGclZoU
-         gAm2aYH6dNnlnUAi43nJOvOuKdSYIl4MyHz+t/jo0dvFgN2yKQTF9G603Hk4bq7VarRi
-         PKshG64NZT2qv1nF3/6dagh8i2vB+AboeNHEjWARJEpNKUy8g3IAuPMpcx3Kh+S2tiMj
-         Zoxp49+jHoJtMN200z3tdjOfifNAculQSEddpY097rP0nj2aYg9RhWuNwfmpf440m8Oa
-         UnE926z8xvW1WmcwD/E8Xu7U29w2tAmwRhe8SvAQgSfFTQXLDjKEBMtd7JhPfwk9CbxY
-         0zlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xNGpCt0dFRJzvyMaqTiKTlg+Ocg7wC/TGrFxIAwI8mE=;
-        b=fbPAmuAASIcgpSByqfB6BTb0R+dvhCMxajx6bHEXpRib5L52NmAnJ5QMZHHrijm7Um
-         Sft0ke5kOSvHZfbxZMgQelYclogjERk7WB4IcOCv9IyaM77OBZEtYnttlpwmxujdXnPr
-         +jaDHdqoY5bW7D0GcFZ6StElaSFPucFOqMTH4sJsNtrLb5wfhomPNf2NLQKNOp2uD9NT
-         1b6JQKEcz4QxHk7KR0qt/0/z1v4zHhO4lCzmHAXDwZ6b9IFHrMlxCVMW8+DnaQyt1VMe
-         nS8iAjVzjfd0g3RPcziQY4hkcs5Uda1QuN1sBlQIj08tl2aMl4f0MDBL/c8Yhv+ooOlM
-         CKiQ==
-X-Gm-Message-State: AJcUuke+C1URZcALJGB+8l66WMaC/GycKnF2JSAyK8r84wLsaI42cdhb
-        kffndLfWmNidZkzy/XSQbCEK1OpS
-X-Google-Smtp-Source: ALg8bN4pH9bhMxJ6rQpUFl6J+sJoOvyGiWGitIGQ/ri7B0riImj+mzjMuG6u0tpFehY5VesCDRlW9w==
-X-Received: by 2002:a2e:4a19:: with SMTP id x25-v6mr24990376lja.19.1548948268084;
-        Thu, 31 Jan 2019 07:24:28 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id z9sm865454lfj.79.2019.01.31.07.24.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 07:24:27 -0800 (PST)
-Subject: Re: [PATCH V8 3/5] i2c: tegra: Add DMA Support
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
- <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
- <4663c7b9-d306-1cd4-1bdc-f7be84af0667@gmail.com>
-Message-ID: <8a88f8ee-24d3-00ac-f1fa-c43b576ed82c@gmail.com>
-Date:   Thu, 31 Jan 2019 18:24:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 10:24:45 -0500
+Received: from localhost (94.234.43.47) by DAG01.HMC.local (192.168.46.11)
+ with Microsoft SMTP Server (TLS) id 15.0.1263.5; Thu, 31 Jan 2019 16:24:32
+ +0100
+Date:   Thu, 31 Jan 2019 16:24:29 +0100
+From:   Mattias Jacobsson <2pi@mok.nu>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Mario Limonciello <mario.limonciello@dell.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        <2pi@mok.nu>
+Subject: Re: [PATCH v3 3/3] platform/x86: wmi: use MODULE_DEVICE_TABLE()
+ instead of MODULE_ALIAS()
+Message-ID: <20190131152428.lnoy3ibxipnwlxxu@mok.nu>
+References: <cover.1548860212.git.2pi@mok.nu>
+ <830f6043839606c6ed04dfeaceeb0ce4d9cd1b54.1548860212.git.2pi@mok.nu>
+ <CAHp75VeRVThOnL8Lo2TENB0zdcW1Sd00CL88ha6h+QGceBr7sg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4663c7b9-d306-1cd4-1bdc-f7be84af0667@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAHp75VeRVThOnL8Lo2TENB0zdcW1Sd00CL88ha6h+QGceBr7sg@mail.gmail.com>
+X-Originating-IP: [94.234.43.47]
+X-ClientProxiedBy: PROXY05.HMC.local (192.168.46.55) To DAG01.HMC.local
+ (192.168.46.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-31.01.2019 18:12, Dmitry Osipenko пишет:
-> 31.01.2019 9:16, Sowjanya Komatineni пишет:
->> This patch adds DMA support for Tegra I2C.
->>
->> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
->> transfer size of the max FIFO depth and DMA mode is used for
->> transfer size higher than max FIFO depth to save CPU overhead.
->>
->> PIO mode needs full intervention of CPU to fill or empty FIFO's
->> and also need to service multiple data requests interrupt for the
->> same transaction. This adds delay between data bytes of the same
->> transfer when CPU is fully loaded and some slave devices has
->> internal timeout for no bus activity and stops transaction to
->> avoid bus hang. DMA mode is helpful in such cases.
->>
->> DMA mode is also helpful for Large transfers during downloading or
->> uploading FW over I2C to some external devices.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>  [V8] : Moved back dma init to i2c probe, removed ALL_PACKETS_XFER_COMPLETE
->> 	interrupt and using PACKETS_XFER_COMPLETE interrupt only and some
->> 	other fixes
->> 	Updated Kconfig for APB_DMA dependency
->>  [V7] : Same as V6
->>  [V6] : Updated for proper buffer allocation/freeing, channel release.
->> 	Updated to use exact xfer size for syncing dma buffer.
->>  [V5] : Same as V4
->>  [V4] : Updated to allocate DMA buffer only when DMA mode.
->> 	Updated to fall back to PIO mode when DMA channel request or
->> 	buffer allocation fails.
->>  [V3] : Updated without additional buffer allocation.
->>  [V2] : Updated based on V1 review feedback along with code cleanup for
->> 	proper implementation of DMA.
->>
->>  drivers/i2c/busses/Kconfig     |   2 +-
->>  drivers/i2c/busses/i2c-tegra.c | 362 ++++++++++++++++++++++++++++++++++++++---
->>  2 files changed, 339 insertions(+), 25 deletions(-)
+On 2019-01-30, Andy Shevchenko wrote:
+> On Wed, Jan 30, 2019 at 5:15 PM Mattias Jacobsson <2pi@mok.nu> wrote:
+> >
+> > WMI drivers can if they have specified an array of struct wmi_device_id
+> > use the MODULE_DEVICE_TABLE() macro to automatically generate the
+> > appropriate MODULE_ALIAS() output. Thus avoiding to keep both the array
+> > of struct wmi_device_id and the MODULE_ALIAS() declaration(s) in sync.
+> >
+> > Change all drivers that have specified an array of struct wmi_device_id
+> > to use MODULE_DEVICE_TABLE() instead of MODULE_ALIAS().
 > 
-> Tegra20 crashes because of this patch:
-> 
-[snip]
-> <4>[    3.395915] ------------[ cut here ]------------
-> <2>[    3.395919] kernel BUG at drivers/i2c/busses/i2c-tegra.c:810!
-The BUG line is from:
+> Please, split this per driver basis. It would help in maintenance phase...
 
-	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
-		if (i2c_dev->is_curr_dma_xfer)
-			i2c_dev->msg_buf_remaining = 0;
-		BUG_ON(i2c_dev->msg_buf_remaining);
-		complete(&i2c_dev->msg_complete);
-	}
+Sure.
+
+> 
+> > Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
+> 
+> > Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
+> 
+> ...and AFAIU Mario gave his tag only for Dell related stuff.
+
+Yes, that is correct. I applied the same reasoning as for the Acked-by:
+tag in [1]: "Acked-by: does not necessarily indicate acknowledgement of
+the entire patch.". Was that incorrect?
+
+Anyway, now that we are splitting the patch up;
+
+Mario: which files did you give the tag for? all involved *dell* files?
+
+> 
+> > ---
+> >  drivers/platform/x86/dell-smbios-wmi.c       | 2 +-
+> >  drivers/platform/x86/dell-wmi-descriptor.c   | 2 +-
+> >  drivers/platform/x86/dell-wmi.c              | 4 ++--
+> >  drivers/platform/x86/huawei-wmi.c            | 3 +--
+> >  drivers/platform/x86/intel-wmi-thunderbolt.c | 2 +-
+> >  drivers/platform/x86/wmi-bmof.c              | 2 +-
+> >  6 files changed, 7 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
+> > index cf2229ece9ff..c3ed3c8c17b9 100644
+> > --- a/drivers/platform/x86/dell-smbios-wmi.c
+> > +++ b/drivers/platform/x86/dell-smbios-wmi.c
+> > @@ -277,4 +277,4 @@ void exit_dell_smbios_wmi(void)
+> >         wmi_driver_unregister(&dell_smbios_wmi_driver);
+> >  }
+> >
+> > -MODULE_ALIAS("wmi:" DELL_WMI_SMBIOS_GUID);
+> > +MODULE_DEVICE_TABLE(wmi, dell_smbios_wmi_id_table);
+> > diff --git a/drivers/platform/x86/dell-wmi-descriptor.c b/drivers/platform/x86/dell-wmi-descriptor.c
+> > index 072821aa47fc..14ab250b7d5a 100644
+> > --- a/drivers/platform/x86/dell-wmi-descriptor.c
+> > +++ b/drivers/platform/x86/dell-wmi-descriptor.c
+> > @@ -207,7 +207,7 @@ static struct wmi_driver dell_wmi_descriptor_driver = {
+> >
+> >  module_wmi_driver(dell_wmi_descriptor_driver);
+> >
+> > -MODULE_ALIAS("wmi:" DELL_WMI_DESCRIPTOR_GUID);
+> > +MODULE_DEVICE_TABLE(wmi, dell_wmi_descriptor_id_table);
+> >  MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
+> >  MODULE_DESCRIPTION("Dell WMI descriptor driver");
+> >  MODULE_LICENSE("GPL");
+> > diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
+> > index 16c7f3d9a335..0602aba62b3f 100644
+> > --- a/drivers/platform/x86/dell-wmi.c
+> > +++ b/drivers/platform/x86/dell-wmi.c
+> > @@ -50,8 +50,6 @@ MODULE_LICENSE("GPL");
+> >
+> >  static bool wmi_requires_smbios_request;
+> >
+> > -MODULE_ALIAS("wmi:"DELL_EVENT_GUID);
+> > -
+> >  struct dell_wmi_priv {
+> >         struct input_dev *input_dev;
+> >         u32 interface_version;
+> > @@ -738,3 +736,5 @@ static void __exit dell_wmi_exit(void)
+> >         wmi_driver_unregister(&dell_wmi_driver);
+> >  }
+> >  module_exit(dell_wmi_exit);
+> > +
+> > +MODULE_DEVICE_TABLE(wmi, dell_wmi_id_table);
+> > diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
+> > index 59872f87b741..52fcac5b393a 100644
+> > --- a/drivers/platform/x86/huawei-wmi.c
+> > +++ b/drivers/platform/x86/huawei-wmi.c
+> > @@ -201,8 +201,7 @@ static struct wmi_driver huawei_wmi_driver = {
+> >
+> >  module_wmi_driver(huawei_wmi_driver);
+> >
+> > -MODULE_ALIAS("wmi:"WMI0_EVENT_GUID);
+> > -MODULE_ALIAS("wmi:"AMW0_EVENT_GUID);
+> > +MODULE_DEVICE_TABLE(wmi, huawei_wmi_id_table);
+> >  MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
+> >  MODULE_DESCRIPTION("Huawei WMI hotkeys");
+> >  MODULE_LICENSE("GPL v2");
+> > diff --git a/drivers/platform/x86/intel-wmi-thunderbolt.c b/drivers/platform/x86/intel-wmi-thunderbolt.c
+> > index 9ded8e2af312..4dfa61434a76 100644
+> > --- a/drivers/platform/x86/intel-wmi-thunderbolt.c
+> > +++ b/drivers/platform/x86/intel-wmi-thunderbolt.c
+> > @@ -88,7 +88,7 @@ static struct wmi_driver intel_wmi_thunderbolt_driver = {
+> >
+> >  module_wmi_driver(intel_wmi_thunderbolt_driver);
+> >
+> > -MODULE_ALIAS("wmi:" INTEL_WMI_THUNDERBOLT_GUID);
+> > +MODULE_DEVICE_TABLE(wmi, intel_wmi_thunderbolt_id_table);
+> >  MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
+> >  MODULE_DESCRIPTION("Intel WMI Thunderbolt force power driver");
+> >  MODULE_LICENSE("GPL v2");
+> > diff --git a/drivers/platform/x86/wmi-bmof.c b/drivers/platform/x86/wmi-bmof.c
+> > index c4530ba715e8..8751a13134be 100644
+> > --- a/drivers/platform/x86/wmi-bmof.c
+> > +++ b/drivers/platform/x86/wmi-bmof.c
+> > @@ -119,7 +119,7 @@ static struct wmi_driver wmi_bmof_driver = {
+> >
+> >  module_wmi_driver(wmi_bmof_driver);
+> >
+> > -MODULE_ALIAS("wmi:" WMI_BMOF_GUID);
+> > +MODULE_DEVICE_TABLE(wmi, wmi_bmof_id_table);
+> >  MODULE_AUTHOR("Andrew Lutomirski <luto@kernel.org>");
+> >  MODULE_DESCRIPTION("WMI embedded Binary MOF driver");
+> >  MODULE_LICENSE("GPL");
+> > --
+> > 2.20.1
+> >
+> 
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+
+Thanks,
+Mattias
