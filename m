@@ -2,132 +2,210 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C07C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE277C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6397D218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:03:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="vdNGGG9Q"
+	by mail.kernel.org (Postfix) with ESMTP id B287E20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:09:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733281AbfAaNDf (ORCPT
+        id S1733132AbfAaNJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:03:35 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:40358 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732877AbfAaNDf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 08:03:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1548939813; x=1580475813;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:mime-version:
-   content-transfer-encoding;
-  bh=MR2CIGZSrb0pZq1K25+yhV8AjK/XvaYq05hqngRriCc=;
-  b=vdNGGG9QlHw0YeBERYWYCySDdAh1i1ioP3M1UwCqapbt7kHb+EjL0/jQ
-   48lK0P4s5lDAODNPbOlDnlKCD7qAaUpUNRkLc2LrOLLbG44PReJAXZl5G
-   gX13lsX0qtyvi/GeYdK4M95zLrF4lcX5cxCyxrbDekvcVhMvq2f2dAp4m
-   4=;
-X-IronPort-AV: E=Sophos;i="5.56,544,1539648000"; 
-   d="scan'208";a="779924413"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jan 2019 13:03:30 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id x0VD3QMN006064
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 13:03:27 GMT
-Received: from EX13D01EUB003.ant.amazon.com (10.43.166.248) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 31 Jan 2019 13:03:27 +0000
-Received: from EX13D01EUB003.ant.amazon.com (10.43.166.248) by
- EX13D01EUB003.ant.amazon.com (10.43.166.248) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Thu, 31 Jan 2019 13:03:26 +0000
-Received: from EX13D01EUB003.ant.amazon.com ([10.43.166.248]) by
- EX13D01EUB003.ant.amazon.com ([10.43.166.248]) with mapi id 15.00.1367.000;
- Thu, 31 Jan 2019 13:03:26 +0000
-From:   "Raslan, KarimAllah" <karahmed@amazon.de>
-To:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-Subject: Re: [PATCH v5 00/13] KVM/X86: Introduce a new guest mapping interface
-Thread-Topic: [PATCH v5 00/13] KVM/X86: Introduce a new guest mapping
- interface
-Thread-Index: AQHUp/+dPJ/o/42K00OzVQHcAWMqaaW9P5GAgAMoFACAB8bBgIABTE6A
-Date:   Thu, 31 Jan 2019 13:03:26 +0000
-Message-ID: <1548939805.28936.9.camel@amazon.de>
-References: <1547026933-31226-1-git-send-email-karahmed@amazon.de>
-         <20190123181636.GR19289@Konrads-MacBook-Pro.local>
-         <1548440932.17444.29.camel@amazon.de>
-         <72d9954b-37f8-3f39-37f7-b292766da480@redhat.com>
-In-Reply-To: <72d9954b-37f8-3f39-37f7-b292766da480@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.164.222]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8AC95BC4D34D104FBD019CA8EAF3A9C0@amazon.com>
+        Thu, 31 Jan 2019 08:09:32 -0500
+Received: from protonic.xs4all.nl ([83.163.252.89]:58477 "EHLO protonic.nl"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726153AbfAaNJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 08:09:32 -0500
+Received: from erd987 (erd987.prtnl [192.168.237.3])
+        by sparta (Postfix) with ESMTP id CF06144A0058;
+        Thu, 31 Jan 2019 14:10:45 +0100 (CET)
+Date:   Thu, 31 Jan 2019 14:09:30 +0100
+From:   Robin van der Gracht <robin@protonic.nl>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Martin Kepplinger <martink@posteo.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: Re: [PATCH v4] mmc: mxs-mmc: Introduce regulator support
+Message-ID: <20190131140930.05c5b6a5@erd987>
+In-Reply-To: <CAPDyKFr=kcoGK0C2A8JH-nhfgUgoRVa-E=6KPRjFO51QQxjJLA@mail.gmail.com>
+References: <20190128144119.10092-1-martink@posteo.de>
+        <CAPDyKFo7949rcxEX5U2QUS0c2xhC_z+JGeOiF2HC6+QukVpEaQ@mail.gmail.com>
+        <20190131092006.363d1dd4@erd987>
+        <CAPDyKFr=kcoGK0C2A8JH-nhfgUgoRVa-E=6KPRjFO51QQxjJLA@mail.gmail.com>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE5LTAxLTMwIGF0IDE4OjE0ICswMTAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
-PiBPbiAyNS8wMS8xOSAxOToyOCwgUmFzbGFuLCBLYXJpbUFsbGFoIHdyb3RlOg0KPiA+IA0KPiA+
-IFNvIHRoZSBzaW1wbGUgd2F5IHRvIGRvIGl0IGlzOg0KPiA+IA0KPiA+IDEtIFBhc3MgJ21lbT0n
-IGluIHRoZSBrZXJuZWwgY29tbWFuZC1saW5lIHRvIGxpbWl0IHRoZSBhbW91bnQgb2YgbWVtb3J5
-IG1hbmFnZWTCoA0KPiA+IMKgIMKgYnkgdGhlIGtlcm5lbC4NCj4gPiAyLSBNYXAgdGhpcyBwaHlz
-aWNhbCBtZW1vcnkgeW91IHdhbnQgdG8gZ2l2ZSB0byB0aGUgZ3Vlc3Qgd2l0aA0KPiA+IMKgIMKg
-IMKgIG1tYXAoIi9kZXYvbWVtIiwgcGh5c2ljYWxfYWRkcmVzc19vZmZzZXQsIC4uKQ0KPiA+IDMt
-IFVzZSB0aGUgdXNlci1zcGFjZSB2aXJ0dWFsIGFkZHJlc3MgYXMgdGhlICJ1c2Vyc3BhY2VfYWRk
-ciIgZmllbGTCoA0KPiA+IMKgIMKgaW7CoEtWTV9TRVRfVVNFUl9NRU1PUllfUkVHSU9OIGlvY3Rs
-Lg0KPiA+IA0KPiA+IFlvdSB3aWxsIGFsc28gbmVlZCB0aGlzIHBhdGNoIChob3BlZnVsbHkgSSB3
-aWxsIHJlcG9zdCBuZXh0IHdlZWsgYXMgd2VsbCk6DQo+ID4gaHR0cHM6Ly9wYXRjaHdvcmsua2Vy
-bmVsLm9yZy9wYXRjaC85MTkxNzU1Lw0KPiANCj4gSSB0b29rIGEgbG9vayBhZ2FpbiBhdCB0aGF0
-IHBhdGNoIGFuZCBJIGd1ZXNzIEkndmUgY2hhbmdlZCBteSBtaW5kIG5vdw0KPiB0aGF0IHRoZSBr
-ZXJuZWwgcHJvdmlkZXMgZTgyMF9fbWFwcGVkX2FueSBhbmQgZTgyMF9fbWFwcGVkX2FsbC4NCj4g
-SG93ZXZlciwgcGxlYXNlIGRvIHVzZSBlODIwX19tYXBwZWRfYW55IGluc3RlYWQgb2YgYWRkaW5n
-IGEgbmV3IGZ1bmN0aW9uDQo+IGU4MjBfaXNfcmFtLg0KDQpUaGUgcHJvYmxlbSB3aXRowqBlODIw
-X19tYXBwZWRfKiBpcyB0aGF0IHRoZXkgYXJlIGl0ZXJhdGluZyBvdmVyICdlODIwX3RhYmxlJw0K
-d2hpY2ggaXMgYWxyZWFkeSB0cnVuY2F0ZWQgZnJvbSB0aGUgJ21lbT0nIGFuZCAnbWVtbWFwPScg
-cGFyYW1ldGVyczoNCg0KIiIiDQrCoCogLSAnZTgyMF90YWJsZSc6IHRoaXMgaXMgdGhlIG1haW4g
-RTgyMCB0YWJsZSB0aGF0IGlzIG1hc3NhZ2VkIGJ5IHRoZQ0KwqAqwqDCoMKgbG93IGxldmVsIHg4
-NiBwbGF0Zm9ybSBjb2RlLCBvciBtb2RpZmllZCBieSBib290IHBhcmFtZXRlcnMsIGJlZm9yZQ0K
-wqAqwqDCoMKgcGFzc2VkIG9uIHRvIGhpZ2hlciBsZXZlbCBNTSBsYXllcnMuDQoiIiINCg0KLi4g
-c28gSSByZWFsbHkgc3RpbGwgY2FuIG5vdCB1c2UgaXQgZm9yIHRoaXMgcHVycG9zZS4gVGhlIHN0
-cnVjdHVyZSB0aGF0IEkgd2FudA0KdG8gbG9vayBhdCBpcyBhY3R1YWxseSAnZTgyMF90YWJsZV9m
-aXJtd2FyZScgd2hpY2ggaXM6DQoNCiIiIg0KwqAqIC0gJ2U4MjBfdGFibGVfZmlybXdhcmUnOiB0
-aGUgb3JpZ2luYWwgZmlybXdhcmUgdmVyc2lvbiBwYXNzZWQgdG8gdXMgYnkgdGhlDQrCoCrCoMKg
-wqBib290bG9hZGVyIC0gbm90IG1vZGlmaWVkIGJ5IHRoZSBrZXJuZWwuIEl0IGlzIGNvbXBvc2Vk
-IG9mIHR3byBwYXJ0czoNCsKgKsKgwqDCoHRoZSBmaXJzdCAxMjggRTgyMCBtZW1vcnkgZW50cmll
-cyBpbiBib290X3BhcmFtcy5lODIwX3RhYmxlIGFuZCB0aGUNCnJlbWFpbmluZw0KwqAqwqDCoMKg
-KGlmIGFueSkgZW50cmllcyBvZiB0aGUgU0VUVVBfRTgyMF9FWFQgbm9kZXMuIFdlIHVzZSB0aGlz
-IHRvOg0KwqAqDQrCoCrCoMKgwqDCoMKgwqDCoC0gaW5mb3JtIHRoZSB1c2VyIGFib3V0IHRoZSBm
-aXJtd2FyZSdzIG5vdGlvbiBvZiBtZW1vcnkgbGF5b3V0DQrCoCrCoMKgwqDCoMKgwqDCoMKgwqB2
-aWEgL3N5cy9maXJtd2FyZS9tZW1tYXANCsKgKg0KwqAqwqDCoMKgwqDCoMKgwqAtIHRoZSBoaWJl
-cm5hdGlvbiBjb2RlIHVzZXMgaXQgdG8gZ2VuZXJhdGUgYSBrZXJuZWwtaW5kZXBlbmRlbnQgTUQ1
-DQrCoCrCoMKgwqDCoMKgwqDCoMKgwqBmaW5nZXJwcmludCBvZiB0aGUgcGh5c2ljYWwgbWVtb3J5
-IGxheW91dCBvZiBhIHN5c3RlbS4NCiIiIg0KDQpUaGUgdXNlcnMgb2bCoGU4MjBfX21hcHBlZF9h
-bnkgZXhwZWN0IHRoZXNlIHNlbWFudGljcywgc28gZXZlbiBjaGFuZ2luZyB0aGXCoA0KaW1wbGVt
-ZW50YXRpb24gb2YgdGhlc2UgZnVuY3Rpb25zIHRvIHVzZSAnZTgyMF90YWJsZV9maXJtd2FyZScg
-dG8gaGFuZGxlIHRoaXPCoA0Kd2lsbCBub3QgYmUgYW4gb3B0aW9uIQ0KDQpPbmUgb3B0aW9uIGhl
-cmUgd291bGQgYmUgdG8gYWRkICdlODIwX19tYXBwZWRfcmF3X2FueScgKG9yIHdoYXRldmVywqAN
-Cm90aGVyIG5hbWUpIGFuZCBtYWtlIGl0IGlkZW50aWNhbCB0byB0aGUgY3VycmVudCBpbXBsZW1l
-bnRhdGlvbiBvZsKgDQplODIwX19tYXBwZWRfYW55IGF0LiBXb3VsZCB0aGF0IGJlIHNsaWdodGx5
-IG1vcmUgYWNjZXB0YWJsZT8gOikNCg0KPiANCj4gVGhhbmtzLA0KPiANCj4gUGFvbG8NCj4gDQo+
-ID4gDQo+ID4gSSB3aWxsIG1ha2Ugc3VyZSB0byBleHBhbmQgb24gdGhpcyBpbiB0aGUgY292ZXIg
-bGV0dGVyIGluIHY2Lg0KPiANCgoKCkFtYXpvbiBEZXZlbG9wbWVudCBDZW50ZXIgR2VybWFueSBH
-bWJICktyYXVzZW5zdHIuIDM4CjEwMTE3IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJlcjogQ2hyaXN0
-aWFuIFNjaGxhZWdlciwgUmFsZiBIZXJicmljaApVc3QtSUQ6IERFIDI4OSAyMzcgODc5CkVpbmdl
-dHJhZ2VuIGFtIEFtdHNnZXJpY2h0IENoYXJsb3R0ZW5idXJnIEhSQiAxNDkxNzMgQgoK
+On Thu, 31 Jan 2019 13:17:23 +0100
+Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
+> On Thu, 31 Jan 2019 at 09:20, Robin van der Gracht <robin@protonic.nl> wrote:
+> >
+> > On Mon, 28 Jan 2019 22:15:23 +0100
+> > Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >  
+> > > On Mon, 28 Jan 2019 at 15:41, Martin Kepplinger <martink@posteo.de> wrote:  
+> > > >
+> > > > From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> > > >
+> > > > This adds support for explicitly switching the mmc's power on and off
+> > > > which is needed for example for WL1837 WL1271 wifi controllers on imx28.
+> > > >
+> > > > While the wifi's vmmc-supply regulator can be configured in devicetree,
+> > > > "ip link set wlan0 down" doesn't turn off the VMMC regulator which leads
+> > > > to hangs when loading firmware, for example.
+> > > >
+> > > > Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> > > > ---
+> > > >
+> > > >
+> > > > revision history
+> > > > ----------------
+> > > > v4: re-added forgotten regulator_enable() during probe
+> > > > v3: improve API usage as suggested by Ulf
+> > > > v2: tested patch with changes suggested by Robin
+> > > > v1: question, why https://patchwork.kernel.org/patch/4365751/ didn't get in
+> > > >
+> > > >
+> > > >  drivers/mmc/host/mxs-mmc.c | 34 +++++++++++++++++++++++++---------
+> > > >  1 file changed, 25 insertions(+), 9 deletions(-)
+> > > >
+> > > > diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+> > > > index add1e70195ea..23d275269d61 100644
+> > > > --- a/drivers/mmc/host/mxs-mmc.c
+> > > > +++ b/drivers/mmc/host/mxs-mmc.c
+> > > > @@ -517,6 +517,22 @@ static void mxs_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+> > > >         else
+> > > >                 host->bus_width = 0;
+> > > >
+> > > > +       switch (ios->power_mode) {
+> > > > +       case MMC_POWER_OFF:
+> > > > +               if (!IS_ERR(host->mmc->supply.vmmc))
+> > > > +                       mmc_regulator_set_ocr(host->mmc,
+> > > > +                                             host->mmc->supply.vmmc, 0);
+> > > > +               break;
+> > > > +       case MMC_POWER_UP:
+> > > > +               if (!IS_ERR(host->mmc->supply.vmmc))
+> > > > +                       mmc_regulator_set_ocr(host->mmc,
+> > > > +                                             host->mmc->supply.vmmc,
+> > > > +                                             ios->vdd);
+> > > > +               break;
+> > > > +       default:
+> > > > +               break;
+> > > > +       }
+> > > > +
+> > > >         if (ios->clock)
+> > > >                 mxs_ssp_set_clk_rate(&host->ssp, ios->clock);
+> > > >  }
+> > > > @@ -588,7 +604,6 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+> > > >         struct mmc_host *mmc;
+> > > >         struct resource *iores;
+> > > >         int ret = 0, irq_err;
+> > > > -       struct regulator *reg_vmmc;
+> > > >         struct mxs_ssp *ssp;
+> > > >
+> > > >         irq_err = platform_get_irq(pdev, 0);
+> > > > @@ -614,14 +629,15 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+> > > >         host->mmc = mmc;
+> > > >         host->sdio_irq_en = 0;
+> > > >
+> > > > -       reg_vmmc = devm_regulator_get(&pdev->dev, "vmmc");
+> > > > -       if (!IS_ERR(reg_vmmc)) {
+> > > > -               ret = regulator_enable(reg_vmmc);
+> > > > -               if (ret) {
+> > > > -                       dev_err(&pdev->dev,
+> > > > -                               "Failed to enable vmmc regulator: %d\n", ret);
+> > > > -                       goto out_mmc_free;
+> > > > -               }
+> > > > +       ret = mmc_regulator_get_supply(mmc);
+> > > > +       if (ret == -EPROBE_DEFER)
+> > > > +               goto out_mmc_free;
+> > > > +
+> > > > +       ret = regulator_enable(mmc->supply.vmmc);  
+> > >
+> > > This is wrong, as it may cause the regulator usage count to become
+> > > wrongly balanced.
+> > >
+> > > Instead, via ->set_ios() when calling mmc_regulator_set_ocr(), it will
+> > > take care of enabling and disabling the regulator depending of the
+> > > requested vdd voltage level.
+> > >  
+> > > > +       if (ret) {
+> > > > +               dev_err(&pdev->dev,
+> > > > +                       "Failed to enable vmmc regulator: %d\n", ret);
+> > > > +               goto out_mmc_free;
+> > > >         }
+> > > >
+> > > >         ssp->clk = devm_clk_get(&pdev->dev, NULL);
+> > > > --
+> > > > 2.20.1
+> > > >  
+> > >
+> > > BTW, you didn't really answer my earlier question about the TI WiFi
+> > > chip. Doesn't you need a special clock for WiFi chip as well? How do
+> > > you intend to manage that?  
+> >
+> > I used an external 32K oscillator (SLOW_CLK) for my wl1271. Other
+> > clocks ware generated on the module.  
+> 
+> Right. How do you control that clock? Did you model it as clock via
+> the common clock framework?
+
+No I didn't. The slow clock (sleep clock) was always 'on'.
+
+> 
+> >
+> > I had to supply a 'vmmc-supply' in your wl1271 devicetree node,
+> > which will be used to power on/off the wlan module. The supply should
+> > be a (delayed) GPIO controlled 'fixed-regulator' attached to the
+> > wlan_en pin on the module.  
+> 
+> Right, thanks for explaining.
+> 
+> >
+> > 1: Documentation/devicetree/bindings/net/wireless/ti,wlcore.txt
+> >  
+> 
+> This sounds like a good fit for mmc pwrseq simple. There are already
+> similar users for it.
+> 
+> Have a look at: /drivers/mmc/core/pwrseq*
+> If the mmc host driver calls mmc_of_parse() during ->probe(), a pwrseq
+> instance will be hooked up to it. Once the mmc core tries to power up
+> the card it will make use of the attached pwrseq for the mmc host in
+> question.
+> 
+> In this way, you can control the clock and GPIO line, in more exact
+> ways that is needed by the WiFi chip.
+
+Ack. Makes more sense than using a regulator (even without specifying
+'clocks').
+
+> 
+> Here is a DT example (look for "mmc-pwrseq-simple"):
+> arch/arm/boot/dts/imx6qdl-sr-som-ti.dtsi
+> 
+> This should do the trick for you. On the other hand, I don't mind that
+> you still add regulator support to the driver, along the lines of what
+> $subject patch does, however it may not be exactly what you need for
+> the WiFi case.
+
+@Martin; What do you think? Will you work this out with Ulf?
+Since I can't test this.
+
+Regards,
+Robin
