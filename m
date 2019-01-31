@@ -2,110 +2,100 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D45E1C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4294C282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A843620881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:18:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGJNYIwT"
+	by mail.kernel.org (Postfix) with ESMTP id 932D4218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:19:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfAaTSu (ORCPT
+        id S1728516AbfAaTTt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:18:50 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37883 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfAaTSt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:18:49 -0500
-Received: by mail-io1-f68.google.com with SMTP id g8so3655880iok.4;
-        Thu, 31 Jan 2019 11:18:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F7lArm+Zg+Knl9Mh6Xf+iTgOuuJHLA1Iko5WbkRJi0Y=;
-        b=RGJNYIwTh4aNNYD+eKWJ+D7CqfeAIqivXRypDWbIC8zvNOQVIt4FHVg+aMyFLQufVs
-         5uBPgViuMTIxxG4qSrk9ytDAMG6wEKFx3w4yElS1ITbTUySAfcCfcJuokLikXRBdexwa
-         DikUi0YDPEkLSD3YvLWP571W10qWILsPfjA5fIIqv3HFF2MVZf+miUQtgOI5AcTquj1o
-         DmF2Z7wmX4/sK8ASsUtL0aGHWU1cM8hFbMZU7oNX8/qstwgBDeFwMDn8OWN+K8vjCvtO
-         YHHvSJMabI7JLL3sQ7IzAIHi+dYyyBgci1UqQnV2dMFTI4AjoY5xaosMryAqxlYW5zOF
-         S9/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F7lArm+Zg+Knl9Mh6Xf+iTgOuuJHLA1Iko5WbkRJi0Y=;
-        b=NW1O0JcFWqd8OAmSsaZGzvzrC3F1sW6wqveSSKnkgF0dhNIYP9rmUXIrx1SPuDPoQl
-         2daWxQBMpsaDkrjAdkHN4JF85jbT4jd2JsqGuFIKj6Da5JXwm0SelmSnVjfNKtee1zuv
-         2GaugdCEWywg4Fm10bUYWh77tXpDfPyn/ngZXHSO5mfaPVFC9qQHdQPiWHPo4s+uiSaD
-         QBzUrdgKfIK8VDjlBYeoFZNECWAcsYuW7lILjbyl4nG5pkaemJETwyHujEADI8TiDnHD
-         lHvzLxJmJKbzvWP+FwoO3s3h6FvdUGfwvoOgmuNT6ANpTuwLRfOgtEFVHkp9TDm750lu
-         ZEGQ==
-X-Gm-Message-State: AHQUAua0V5eUDFKWusLTrYXmIMI0k25NxXpSm8yMj614nLhnADLvv1js
-        MYQvsevV7xVQxM+pGR/p1+tIrEcYsQu3Ejjfcsc=
-X-Google-Smtp-Source: AHgI3IZu24RaeFJ6HqqpVQLePCO6DfdEH6DwiIOay63aVndsWbrXsmN+irKPxjDv0vZFkjpblo1A+4QqXz3m2Hj1MKo=
-X-Received: by 2002:a5d:8b83:: with SMTP id p3mr5768005iol.275.1548962327470;
- Thu, 31 Jan 2019 11:18:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20190129133545.1931-1-brgl@bgdev.pl> <20190129133545.1931-14-brgl@bgdev.pl>
- <20190130185328.GA149208@dtor-ws> <CAMRc=McaqqmU6S_Yz35ZMvhWtWO4hTASA0fmL5CT4JizbYgu4Q@mail.gmail.com>
- <20190131122813.GB20797@sirena.org.uk>
-In-Reply-To: <20190131122813.GB20797@sirena.org.uk>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Thu, 31 Jan 2019 11:18:35 -0800
-Message-ID: <CAKdAkRQUAMsT7SA7oAaEmLrkZ6hOdAqCC9RC6HGRsjJ+TvASrQ@mail.gmail.com>
-Subject: Re: [PATCH v2 12/13] input: max77650: add onkey support
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
+        Thu, 31 Jan 2019 14:19:49 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:50232 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726233AbfAaTTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 14:19:48 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gpHsA-0002Rf-H6; Thu, 31 Jan 2019 12:19:39 -0700
+To:     Jason Gunthorpe <jgg@mellanox.com>, Christoph Hellwig <hch@lst.de>
+Cc:     Jerome Glisse <jglisse@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+References: <655a335c-ab91-d1fc-1ed3-b5f0d37c6226@deltatee.com>
+ <20190130041841.GB30598@mellanox.com> <20190130080006.GB29665@lst.de>
+ <20190130190651.GC17080@mellanox.com>
+ <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
+ <20190130195900.GG17080@mellanox.com>
+ <35bad6d5-c06b-f2a3-08e6-2ed0197c8691@deltatee.com>
+ <20190130215019.GL17080@mellanox.com>
+ <07baf401-4d63-b830-57e1-5836a5149a0c@deltatee.com>
+ <20190131081355.GC26495@lst.de> <20190131190202.GC7548@mellanox.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <e4fd743f-61cb-a443-bc53-9a1c036ebe8c@deltatee.com>
+Date:   Thu, 31 Jan 2019 12:19:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190131190202.GC7548@mellanox.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, jglisse@redhat.com, hch@lst.de, jgg@mellanox.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 4:28 AM Mark Brown <broonie@kernel.org> wrote:
->
-> On Thu, Jan 31, 2019 at 09:15:01AM +0100, Bartosz Golaszewski wrote:
->
-> > I'm not sure what the policy is on merging MFD drivers, but I'm seeing
-> > that Mark Brown has already picked up the regulator part into his tree
-> > (including the binding document). I think you can just pick up the
-> > input patches and it will simply not show up in Kconfig until the core
-> > mfd module is upstream.
->
-> > @Mark: could you please confirm it?
->
-> Right, as it's a new MFD the Kconfig will stop it causing build breakage
-> until the MFD is merged.  I'm doing it partly just to cut down on the
-> amount of mail from resends while the rest of the series gets reviewed.
 
-Ugh, I might have pulled it in if it did not reference the new header
-file. As a rule I try to enable all symbols that result in input
-devices being created so as much of input code is covered... I'd
-prefer input piece be merged with MFD.
 
-Thanks.
+On 2019-01-31 12:02 p.m., Jason Gunthorpe wrote:
+> I still think the right direction is to build on what Logan has done -
+> realize that he created a DMA-only SGL - make that a formal type of
+> the kernel and provide the right set of APIs to work with this type,
+> without being forced to expose struct page.
 
--- 
-Dmitry
+> Basically invert the API flow - the DMA map would be done close to
+> GUP, not buried in the driver. This absolutely doesn't work for every
+> flow we have, but it does enable the ones that people seem to care
+> about when talking about P2P.
+> It also does present a path to solve some cases of the O_DIRECT
+> problems if the block stack can develop some way to know if an IO will
+> go down a DMA-only IO path or not... This seems less challenging that
+> auditing every SGL user for iomem safety??
+
+
+The DMA-only SGL will work for some use cases, but I think it's going to
+be a challenge for others. We care most about NVMe and, therefore, the
+block layer.
+
+Given my understanding of the block layer, and it's queuing
+infrastructure, I don't think having a DMA-only IO path makes sense. I
+think it has to be the same path, but with a special DMA-only bio; and
+endpoints would have to indicate support for that bio. I can't say I
+have a deep enough understanding of the block layer to know how possible
+that would be.
+
+Logan
