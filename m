@@ -2,122 +2,146 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FCEC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF94FC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:33:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 193CF218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:33:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="wpZQtf3I"
+	by mail.kernel.org (Postfix) with ESMTP id C649821905
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:33:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbfAaOdJ (ORCPT
+        id S1728729AbfAaOdY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 09:33:09 -0500
-Received: from mail-eopbgr810053.outbound.protection.outlook.com ([40.107.81.53]:47432
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725787AbfAaOdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 09:33:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mnDICfok3t5sJqDzotg8N+qA2mExPVXetH46pPxPmbU=;
- b=wpZQtf3IRSwQSCEoWodc7E/0kviuoTXr2N09sEOII9nB8J0L+oiPHiagQ3oE1o8LvRFEV4+ZXvMqMgwGH8lQmzZcIIp6ezdfP8C1GtR/C+u3koQNiGYWHK6rpLvzQHjBZb29pVBqbciq2acpVRjmCItbaUVmkAQrHrX06xzwIJc=
-Received: from MN2PR12MB3631.namprd12.prod.outlook.com (20.178.243.19) by
- MN2PR12MB3184.namprd12.prod.outlook.com (20.179.82.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.17; Thu, 31 Jan 2019 14:33:06 +0000
-Received: from MN2PR12MB3631.namprd12.prod.outlook.com
- ([fe80::a861:43c0:476d:e044]) by MN2PR12MB3631.namprd12.prod.outlook.com
- ([fe80::a861:43c0:476d:e044%5]) with mapi id 15.20.1580.017; Thu, 31 Jan 2019
- 14:33:06 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] x86/microcode/amd: Don't attempt to load older microcode
- patch
-Thread-Topic: [PATCH] x86/microcode/amd: Don't attempt to load older microcode
- patch
-Thread-Index: AQHUuXHhUCHAzHW+REelJrKbNwilcA==
-Date:   Thu, 31 Jan 2019 14:33:06 +0000
-Message-ID: <154894518427.9406.8246222496874202773.stgit@tlendack-t1.amdoffice.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN6PR15CA0022.namprd15.prod.outlook.com
- (2603:10b6:805:16::35) To MN2PR12MB3631.namprd12.prod.outlook.com
- (2603:10b6:208:cc::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MN2PR12MB3184;20:qH8h1fhr2NGT5VRo/95aQ6wjpVyvOhmki4ic6VKkFGicdmOolhGpy+8jLPYS74wxp3uiNwU+M1zSHq6bipyOqyCdUuZt6PQMkrZcRzu2x7fIePp4KnsjXl53VzWmcwHk6YAt03NJLmnQdMI3a8QtDiXzLIaKdUDLcWjfdGGQX5G8yx0NTthFlyuh7KwBlDmPhlwkq9qDjgJb8b4q9NtxQ9L7wTiqTUTf6Av33CcBEOys/4J4EPbiKh51sQzcibJ7
-x-ms-office365-filtering-correlation-id: 569c4c04-7bf9-4804-91fb-08d6878903e4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:MN2PR12MB3184;
-x-ms-traffictypediagnostic: MN2PR12MB3184:
-x-microsoft-antispam-prvs: <MN2PR12MB318426C718CAC42C961E5184EC910@MN2PR12MB3184.namprd12.prod.outlook.com>
-x-forefront-prvs: 09347618C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(396003)(376002)(346002)(366004)(189003)(199004)(103116003)(110136005)(6436002)(3846002)(6116002)(26005)(186003)(305945005)(68736007)(7736002)(72206003)(81166006)(54906003)(86362001)(14454004)(478600001)(81156014)(316002)(386003)(53936002)(8676002)(102836004)(6506007)(6486002)(33896004)(106356001)(2906002)(25786009)(8936002)(14444005)(97736004)(2501003)(71190400001)(476003)(105586002)(256004)(4326008)(66066001)(9686003)(486006)(99286004)(52116002)(6512007)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3184;H:MN2PR12MB3631.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: AUuIkU2olJ9RsT33rIuiWC/wV0Cl/HPMa7j1PyUmOrzQqi714EJ6WQi7D4bpCbQ+mdx53QoZe1XHFLB2infI2o2ffCyh9bcgTad5KGRU1vTeBf2TgdFCmCOxmHvV+G52oqPWXbMzpFSbsFAe8FKxJGSD6XA6BzSiwyK3zp8z+j24r1MnWY/TBsbi4qoDncmgBIK0HJoGpLHROh+5NWFyUjvbm1kxqUBhyaC+7ITKnzaTJezuLdXnKCftJP0UFWTJrUOcRcawEy345xoQNZqCBllGEDuS/HMHk9fPV1Blm++BlKCjBMfUpJ4MJdeN91G2bERoKoeO1Vq0Enz9JrLIHxyRqWfVS7Fpw5SxvH6GKlC4fAJgFyxaWUXh/SETnuzg68ToKnsj0vvYO+X/v8ckNklElBSxYlFnmknQmti8Iqs=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A04227C132165746A1804EAC424F67E6@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 31 Jan 2019 09:33:24 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44439 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbfAaOdX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 09:33:23 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z13so2454582lfe.11;
+        Thu, 31 Jan 2019 06:33:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AAI3iAGxTIvgVC1skHcS3IaLf6SHSz14WV+Xwa/qpPM=;
+        b=f3JzS/+52NBZCQ6dh+DT9ngZmySS9xI2E0/sX4z/SYt0geR6RmWWJMstaFGxuNiyOW
+         AVkWf4FW0+uqsHU5hquIKNrj3r3wn9erpkkxwJFoTWw0Ze6raN8bx6LCDQG9B23Un5vx
+         3iMUENlZvS0I3SGQob6/rY+sAyzi5zVNqgsSVpsQeGa+xIMgx5sRtVEpD47VaGmEOEQm
+         D23HvfioKMAkoEzFhUdnLbTxwjIzZdh9shYahFJU9uNStsoAR+Kg3U3R9z8ZhebPJEUK
+         UM+/ERrLqHqY6gzBqlE+7pcUsiTwpzQTh/NkPOHDTJwr8RugEiAQHiY0ktVkDL8uE11s
+         XBSg==
+X-Gm-Message-State: AJcUukfwx14BzVWTPti1vScrzooU+qRfzaIF4wfUNVUxuCoDVW/4tayQ
+        gDnwN1szD99APn45coMsvc/nvTR853P4L9XCYAZhh0jS
+X-Google-Smtp-Source: ALg8bN4i2Y2lC1DfUcQyx/YPP/7NYEwg97uQuLiOt5lxc3108rXRTVYLmR6/KP4MxmW6x4GQhOjvCKxkkXTpBoiRhPM=
+X-Received: by 2002:a19:9e11:: with SMTP id h17mr27175229lfe.73.1548945201032;
+ Thu, 31 Jan 2019 06:33:21 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 569c4c04-7bf9-4804-91fb-08d6878903e4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 14:33:06.0020
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3184
+References: <20190128094931.4430-1-ricardo@ribalda.com> <20190128094931.4430-2-ricardo@ribalda.com>
+ <20190130170723.GA24708@bogus>
+In-Reply-To: <20190130170723.GA24708@bogus>
+From:   Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Date:   Thu, 31 Jan 2019 15:33:04 +0100
+Message-ID: <CAPybu_0Pd4xNzhR2RAdegomckcMxHeM8t7uCrNCXY4CZz2bZZg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] iio:dac:dac7612: device tree bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhlIGxvYWRfbWljcm9jb2RlX2FtZCgpIGZ1bmN0aW9uIHNlYXJjaGVzIGZvciBtaWNyb2NvZGUg
-cGF0Y2hlcyBhbmQNCmF0dGVtcHRzIHRvIGFwcGx5IGEgbWljcm9jb2RlIHBhdGNoIGlmIGlzIGEg
-ZGlmZmVyZW50IGxldmVsIHRoYW4gdGhlDQpjdXJyZW50bHkgaW5zdGFsbGVkIGxldmVsLiBXaGls
-ZSB0aGUgcHJvY2Vzc29yIHdvbid0IGFjdHVhbGx5IGxvYWQgYQ0KbGV2ZWwgdGhhdCBpcyBsZXNz
-IHRoYW4gd2hhdCBpcyBpbnN0YWxsZWQsIHRoZSBsb2dpYyBpcyBmb2xsb3dlZCBhcyBpZg0KdGhl
-IHBhdGNoIHNob3VsZCBiZSBpbnN0YWxsZWQuIElmIHRoZSBmaWxlLXN5c3RlbSBjb250YWlucyBh
-biBvbGRlcg0KdmVyc2lvbiBvZiBtaWNyb2NvZGUgdGhhbiB3aGF0IGlzIGN1cnJlbnRseSBydW5u
-aW5nLCBhIGxhdGUgbWljcm9jb2RlDQpsb2FkIGNoZWNrIGNhbiByZXN1bHQgaW4gdGhlIGZvbGxv
-d2luZyBtZXNzYWdlczoNCg0KeDg2L0NQVTogQ1BVIGZlYXR1cmVzIGhhdmUgY2hhbmdlZCBhZnRl
-ciBsb2FkaW5nIG1pY3JvY29kZSwgYnV0IG1pZ2h0IG5vdCB0YWtlIGVmZmVjdC4NCng4Ni9DUFU6
-IFBsZWFzZSBjb25zaWRlciBlaXRoZXIgZWFybHkgbG9hZGluZyB0aHJvdWdoIGluaXRyZC9idWls
-dC1pbiBvciBhIHBvdGVudGlhbCBCSU9TIHVwZGF0ZS4NCg0KVGhlc2UgbWVzc2FnZXMgd2VyZSBp
-c3N1ZWQgb24gYSBzeXN0ZW0gd2hlcmUgU01FL1NFViBhcmUgbm90IGVuYWJsZWQgYnkNCnRoZSBC
-SU9TIChNU1IgQzAwMV8wMDEwWzIzXSA9IDBiKS4gRHVyaW5nIGJvb3QsIGVhcmx5X2RldGVjdF9t
-ZW1fZW5jcnlwdCgpDQppcyBjYWxsZWQgYW5kIGNsZWFycyB0aGUgU01FIGFuZCBTRVYgZmVhdHVy
-ZXMuIEhvd2V2ZXIsIGFmdGVyIHRoZSAobm9uKQ0KbGF0ZSBsb2FkIG9mIHRoZSBmaXJtd2FyZSwg
-Z2V0X2NwdV9jYXAoKSBpcyBjYWxsZWQgYW5kIHJlc2V0cyB0aGUgU01FIGFuZA0KU0VWIGZlYXR1
-cmVzIHJlc3VsdGluZyBpbiB0aGUgbWVzc2FnZXMuDQoNClVwZGF0ZSB0aGUgbWljcm9jb2RlIGxl
-dmVsIGNoZWNrIHRvIG5vdCBhdHRlbXB0IG1pY3JvY29kZSBsb2FkaW5nIGlmDQp0aGUgY3VycmVu
-dCBsZXZlbCBpcyBncmVhdGVyIHRoYW4gb3IgZXF1YWwgdG8gdGhlIHBhdGNoIGxldmVsLg0KDQpT
-aWduZWQtb2ZmLWJ5OiBUb20gTGVuZGFja3kgPHRob21hcy5sZW5kYWNreUBhbWQuY29tPg0KLS0t
-DQogYXJjaC94ODYva2VybmVsL2NwdS9taWNyb2NvZGUvYW1kLmMgfCAgICAyICstDQogMSBmaWxl
-IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQoNCmRpZmYgLS1naXQgYS9h
-cmNoL3g4Ni9rZXJuZWwvY3B1L21pY3JvY29kZS9hbWQuYyBiL2FyY2gveDg2L2tlcm5lbC9jcHUv
-bWljcm9jb2RlL2FtZC5jDQppbmRleCA1MWFkZGUwYTBmMWEuLmUxZjNiYTE5YmE1NCAxMDA2NDQN
-Ci0tLSBhL2FyY2gveDg2L2tlcm5lbC9jcHUvbWljcm9jb2RlL2FtZC5jDQorKysgYi9hcmNoL3g4
-Ni9rZXJuZWwvY3B1L21pY3JvY29kZS9hbWQuYw0KQEAgLTg1NSw3ICs4NTUsNyBAQCBsb2FkX21p
-Y3JvY29kZV9hbWQoYm9vbCBzYXZlLCB1OCBmYW1pbHksIGNvbnN0IHU4ICpkYXRhLCBzaXplX3Qg
-c2l6ZSkNCiAJaWYgKCFwKSB7DQogCQlyZXR1cm4gcmV0Ow0KIAl9IGVsc2Ugew0KLQkJaWYgKGJv
-b3RfY3B1X2RhdGEubWljcm9jb2RlID09IHAtPnBhdGNoX2lkKQ0KKwkJaWYgKGJvb3RfY3B1X2Rh
-dGEubWljcm9jb2RlID49IHAtPnBhdGNoX2lkKQ0KIAkJCXJldHVybiByZXQ7DQogDQogCQlyZXQg
-PSBVQ09ERV9ORVc7DQoNCg==
+Hi Rob
+
+Thanks for your comments!
+
+On Wed, Jan 30, 2019 at 6:07 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Jan 28, 2019 at 10:49:31AM +0100, Ricardo Ribalda Delgado wrote:
+> > Bindings for dac7612.
+> >
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
+> > ---
+> >  .../bindings/iio/dac/ti,dac7612.txt           | 29 +++++++++++++++++++
+> >  MAINTAINERS                                   |  1 +
+> >  2 files changed, 30 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+> > new file mode 100644
+> > index 000000000000..e1b8158fab35
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+> > @@ -0,0 +1,29 @@
+> > +* Texas Instruments Dual, 12-Bit Serial Input Digital-to-Analog Converter
+> > +
+> > +The DAC7612 is a dual, 12-bit digital-to-analog converter (DAC) with guaranteed
+> > +12-bit monotonicity performance over the industrial temperature range.
+> > +Is is programmable through an SPI interface.
+> > +
+> > +The internal DACs are loaded when the LOADDACS pin is pulled down.
+> > +
+> > +http://www.ti.com/lit/ds/sbas106/sbas106.pdf
+> > +
+> > +Required Properties:
+> > +- compatible: Should be one of:
+> > +             "ti,dac7612"
+> > +             "ti,dac7612u"
+> > +             "ti,dac7612b"
+>
+> What's the difference? I can only find 'u' and 'ub' variants and nothing
+> about how those are different. So maybe just 1 string is enough?
+
+dac7612 is how it is named on the datasheet commercial name.
+dac7612u and dac7612ub being the variants. ub being slightly more
+accurante. Shall I leave only 7612?
+or keep the tree variants (fixing 7612b with 7612ub)?
+
+Thanks!
+
+>
+> > +- reg: Definition as per Documentation/devicetree/bindings/spi/spi-bus.txt
+> > +
+> > +Optional Properties:
+> > +- loaddacs-gpios: GPIO descriptor for the LOADDACS pin.
+>
+> Needs a 'ti' vendor prefix.
+>
+> > +- spi-*: Definition as per Documentation/devicetree/bindings/spi/spi-bus.txt
+> > +
+> > +Example:
+> > +
+> > +     dac7612@1 {
+>
+> dac@1
+>
+> > +             compatible = "ti,dac7612";
+> > +             reg = <0x1>;
+> > +             loaddacs-gpios = <&msmgpio 25 GPIO_ACTIVE_LOW>;
+> > +     };
+> > +
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 30ba5435906b..e28e5afaae16 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14882,6 +14882,7 @@ M:    Ricardo Ribalda <ricardo@ribalda.com>
+> >  L:   linux-iio@vger.kernel.org
+> >  S:   Supported
+> >  F:   drivers/iio/dac/ti-dac7612.c
+> > +F:   Documentation/devicetree/bindings/iio/dac/ti,dac7612.txt
+> >
+> >  THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+> >  M:   Hans Verkuil <hverkuil@xs4all.nl>
+> > --
+> > 2.20.1
+> >
+
+
+
+-- 
+Ricardo Ribalda
