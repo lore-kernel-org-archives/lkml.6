@@ -2,101 +2,273 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E79C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C61C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B7202087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:48:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F206E2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbfAaXsM (ORCPT
+        id S1728208AbfAaXvK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 18:48:12 -0500
-Received: from mga02.intel.com ([134.134.136.20]:47404 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725957AbfAaXsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 18:48:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 15:48:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,546,1539673200"; 
-   d="scan'208";a="315362362"
-Received: from djiang5-mobl2.amr.corp.intel.com (HELO [10.255.72.219]) ([10.255.72.219])
-  by fmsmga006.fm.intel.com with ESMTP; 31 Jan 2019 15:48:09 -0800
-Subject: Re: [PATCH 0/9] Support using MSI interrupts in ntb_transport
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kselftest@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Allen Hubbe <allenbh@gmail.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>
-References: <20190131185656.17972-1-logang@deltatee.com>
- <345197a6-89e6-c0de-5f7b-a646b5f396c9@intel.com>
- <bafe9db4-6d5b-0453-d7e7-e49e9293dd01@deltatee.com>
- <ea7b7c3c-8ed5-51ec-022a-7d28a5afce82@intel.com>
- <29f7e3fe-5354-6156-1243-7248ffb2249f@deltatee.com>
- <7e3eed52-8e3a-c472-392a-5dc5689290ae@intel.com>
- <5f8b1616-a005-7658-978f-16466fcc3886@deltatee.com>
-From:   Dave Jiang <dave.jiang@intel.com>
-Message-ID: <d46ce09c-d493-3d63-a854-b68a09345a75@intel.com>
-Date:   Thu, 31 Jan 2019 16:48:09 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:65.0) Gecko/20100101
- Thunderbird/65.0
+        Thu, 31 Jan 2019 18:51:10 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53988 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726132AbfAaXvJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 18:51:09 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VNnBRx027865
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 18:51:08 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qc8a36d3w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 18:51:07 -0500
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Thu, 31 Jan 2019 23:51:07 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Jan 2019 23:51:04 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VNoxPD17825944
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 23:50:59 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4643578063;
+        Thu, 31 Jan 2019 23:50:59 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CFE347805E;
+        Thu, 31 Jan 2019 23:50:57 +0000 (GMT)
+Received: from [9.80.226.197] (unknown [9.80.226.197])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Jan 2019 23:50:57 +0000 (GMT)
+Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        sebott@linux.ibm.com, oberpar@linux.ibm.com, freude@linux.ibm.com,
+        pmorel@linux.ibm.com, pasic@linux.ibm.com
+References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
+ <20190131105555.4af6d8ea.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Thu, 31 Jan 2019 18:50:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <5f8b1616-a005-7658-978f-16466fcc3886@deltatee.com>
+In-Reply-To: <20190131105555.4af6d8ea.cohuck@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19013123-0004-0000-0000-000014DADA4F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010512; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01154557; UDB=6.00602060; IPR=6.00934990;
+ MB=3.00025380; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-31 23:51:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013123-0005-0000-0000-00008A6E4B1F
+Message-Id: <2bb57977-bf03-f0c9-abd9-8baa74d31f8a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 1/31/19 4:55 AM, Cornelia Huck wrote:
+> On Wed, 30 Jan 2019 12:48:46 -0500
+> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> 
+>> The current AP bus implementation periodically polls the AP configuration
+>> to detect changes. When the AP configuration is dynamically changed via the
+>> SE or an SCLP instruction, the changes will not be reflected to sysfs until
+>> the next time the AP configuration is polled. The CHSC architecture
+>> provides a Store Event Information (SEI)command to make notification of an
+> 
+> missing blank ---------------------------^
 
-On 1/31/2019 4:41 PM, Logan Gunthorpe wrote:
->
-> On 2019-01-31 3:46 p.m., Dave Jiang wrote:
->> I believe irqbalance writes to the file /proc/irq/N/smp_affinity. So
->> maybe take a look at the code that starts from there and see if it would
->> have any impact on your stuff.
-> Ok, well on my system I can write to the smp_affinity all day and the
-> MSI interrupts still work fine.
+I'll insert it.
 
-Maybe your code is ok then. If the stats show up in /proc/interrupts 
-then you can see it moving to different cores.
+> 
+>> AP configuration change. This patch introduces a handler to process
+>> notification from the CHSC SEI command BY immediately kickING off an AP bus
+> 
+> s/BY/by/
+> 
+> s/kickING/kicking/
 
-> The MSI code is a bit difficult to trace and audit with all the
-> different chips and the parent chips which I don't have a good
-> understanding of. But I can definitely see that it could be possible for
-> some chips to change the address as smp_affinitiy will eventually
-> sometimes call msi_domain_set_affinity() which does seem to recompose
-> the message and write it back to the chip.
->
-> So, I could relatively easily add a callback to msi_desc to catch this
-> and resend the MSI address/data. However, I'm not sure how this is ever
-> done atomically. It seems like there would be a race while the device
-> updates its address where old interrupts could be triggered. This race
-> would be much longer for us when sending this information over the NTB
-> link. Though, I guess if the only change is that it encodes CPU
-> information in the address then that would not be an issue. However, I'm
-> not sure I can say that for certain without a comprehensive
-> understanding of all the IRQ chips.
->
-> Any thoughts on this?
+Will fix both.
 
-Yeah I'm not sure what to do about it either as I'm not super familiar 
-with that area either. Just making note of what I encountered. And you 
-are right, the updated info has to go over NTB for the other side to 
-write to the updated place. So there's a lot of latency involved.
+> 
+>> scan.
+> 
+> Scan-after-event sounds useful, yeah.
 
+sure
 
+> 
+> Two questions:
+> - Does the event cover _any_ change to the AP configuration, or can the
+>    periodic scan detect changes that are not signaled?
 
->
-> Logan
+It can detect any change, such as a change to the CRYCB masks.
+
+> - Do we want to generate such an event in QEMU on plugging/unplugging
+>    the vfio-ap device?
+
+We've discussed this quite a bit internally and decided not to implement
+that at this time. We will address it as a future enhancement.
+
+> 
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>> ---
+>>   arch/s390/include/asm/ap.h   | 12 ++++++++++++
+>>   drivers/s390/cio/chsc.c      | 12 ++++++++++++
+>>   drivers/s390/cio/chsc.h      |  1 +
+>>   drivers/s390/crypto/ap_bus.c | 12 ++++++++++++
+>>   4 files changed, 37 insertions(+)
+>>
+>> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+>> index 1a6a7092d942..c778593d509f 100644
+>> --- a/arch/s390/include/asm/ap.h
+>> +++ b/arch/s390/include/asm/ap.h
+>> @@ -360,4 +360,16 @@ static inline struct ap_queue_status ap_dqap(ap_qid_t qid,
+>>   	return reg1;
+>>   }
+>>   
+>> +/*
+>> + * Interface to tell the AP bus code that a configuration
+>> + * change has happened. The bus code should at least do
+>> + * an ap bus resource rescan.
+>> + */
+>> +#if IS_ENABLED(CONFIG_ZCRYPT)
+>> +void ap_bus_cfg_chg(void);
+>> +#else
+>> +#error "no CONFIG_ZCRYPT"
+> 
+> That #error looks like a development debugging leftover.
+> 
+>> +static void ap_bus_cfg_chg(void){};
+>> +#endif
+>> +
+>>   #endif /* _ASM_S390_AP_H_ */
+>> diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
+>> index a0baee25134c..dccccc337078 100644
+>> --- a/drivers/s390/cio/chsc.c
+>> +++ b/drivers/s390/cio/chsc.c
+>> @@ -586,6 +586,15 @@ static void chsc_process_sei_scm_avail(struct chsc_sei_nt0_area *sei_area)
+>>   			      " failed (rc=%d).\n", ret);
+>>   }
+>>   
+>> +static void chsc_process_sei_ap_cfg_chg(struct chsc_sei_nt0_area *sei_area)
+>> +{
+>> +	CIO_CRW_EVENT(3, "chsc: ap config changed\n");
+>> +	if (sei_area->rs != 5)
+>> +		return;
+> 
+> I'm guessing that a reporting source of 5 means ap, right? (The code is
+> silent on all those magic rs values :/)
+
+The 5 indicates the accessibility of one or more adjunct processors has
+changed. The reason this gets called is because the CC sent with the
+instruction indicates the AP configuration has changed, so the reporting
+belongs where it is. There is only one RS associated with it.
+
+> 
+> If so, should the debug logging be moved after the check?
+
+covered in the response above.
+
+> 
+>> +
+>> +	ap_bus_cfg_chg();
+>> +}
+>> +
+>>   static void chsc_process_sei_nt2(struct chsc_sei_nt2_area *sei_area)
+>>   {
+>>   	switch (sei_area->cc) {
+>> @@ -612,6 +621,9 @@ static void chsc_process_sei_nt0(struct chsc_sei_nt0_area *sei_area)
+>>   	case 2: /* i/o resource accessibility */
+>>   		chsc_process_sei_res_acc(sei_area);
+>>   		break;
+>> +	case 3: /* ap config changed */
+>> +		chsc_process_sei_ap_cfg_chg(sei_area);
+>> +		break;
+>>   	case 7: /* channel-path-availability information */
+>>   		chsc_process_sei_chp_avail(sei_area);
+>>   		break;
+>> diff --git a/drivers/s390/cio/chsc.h b/drivers/s390/cio/chsc.h
+>> index 78aba8d94eec..5651066c46e3 100644
+>> --- a/drivers/s390/cio/chsc.h
+>> +++ b/drivers/s390/cio/chsc.h
+>> @@ -9,6 +9,7 @@
+>>   #include <asm/chsc.h>
+>>   #include <asm/schid.h>
+>>   #include <asm/qdio.h>
+>> +#include <asm/ap.h>
+> 
+> I would probably include this in chsc.c instead.
+
+Already done per Sebastian's comment.
+
+> 
+>>   
+>>   #define CHSC_SDA_OC_MSS   0x2
+>>   
+>> diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
+>> index 48ea0004a56d..94f621783d6b 100644
+>> --- a/drivers/s390/crypto/ap_bus.c
+>> +++ b/drivers/s390/crypto/ap_bus.c
+>> @@ -35,6 +35,7 @@
+>>   #include <linux/mod_devicetable.h>
+>>   #include <linux/debugfs.h>
+>>   #include <linux/ctype.h>
+>> +#include <asm/crw.h>
+> 
+> Why are you adding this #include?
+
+Already removed per Sebastian's comment.
+
+> 
+>>   
+>>   #include "ap_bus.h"
+>>   #include "ap_debug.h"
+>> @@ -860,6 +861,17 @@ void ap_bus_force_rescan(void)
+>>   EXPORT_SYMBOL(ap_bus_force_rescan);
+>>   
+>>   /*
+>> +* A config change has happened, Force an ap bus rescan.
+> 
+> s/Force/force/
+
+Will do.
+
+> 
+>> +*/
+>> +void ap_bus_cfg_chg(void)
+>> +{
+>> +	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
+>> +
+>> +	ap_bus_force_rescan();
+>> +}
+>> +EXPORT_SYMBOL(ap_bus_cfg_chg);
+>> +
+>> +/*
+>>    * hex2bitmap() - parse hex mask string and set bitmap.
+>>    * Valid strings are "0x012345678" with at least one valid hex number.
+>>    * Rest of the bitmap to the right is padded with 0. No spaces allowed
+> 
+
