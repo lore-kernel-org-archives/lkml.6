@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC85EC282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8BEC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3F0D218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:47:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0BBA218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:47:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KyQeZo75"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OEitRYvb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbfAaSrY (ORCPT
+        id S1728273AbfAaSrc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:47:24 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35696 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727971AbfAaSrV (ORCPT
+        Thu, 31 Jan 2019 13:47:32 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37618 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728191AbfAaSr1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 13:47:21 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p8so1885044plo.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:47:20 -0800 (PST)
+        Thu, 31 Jan 2019 13:47:27 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y126so1887467pfb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:47:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Rjjbf1cJmQIDlEdQ4qHOJVKfCfY0jcPvMsMFKc7BZ/0=;
-        b=KyQeZo75idh6wUbOc+sIJDT1YPbQqSNmrhOGowHaaNrE+ksuGpHKu8E7RmlhnTJS7y
-         VrVVfqaDpFD45hUS4JIC7rsgDfsQcseS3jd4gV/+lAdYA4ImbK1QKX+Bc7pJNiMMM4yX
-         uantuxUhrXy1FrDJfUxi+fVBiv1b5u2DDYRO8=
+        bh=tgDBy5pU4TSH5DxOCpIvkhjQNbxctYyd7XLZVLAf0nI=;
+        b=OEitRYvbdt7M0rQEZwQ0hu+ke2w8T89lMjjsZruG8ofpjewHOgcDS5hxPEAP+vX1sO
+         d/YF2ewC8ZGswcUekRvxuUhYkaj7difJ/dM9j1X0+lxgL2AC0QAFahUvWVLvkxJt0JXV
+         ZGDf0aPWW6bIapvpzabnJQq4r7GTT8D8bPMNE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Rjjbf1cJmQIDlEdQ4qHOJVKfCfY0jcPvMsMFKc7BZ/0=;
-        b=nT8CZZp90rBV6B6mwDLpzvPsF0AUz8HhW313UCZrPuMzRWGI4DJpO7Q9dFyUAP2rBj
-         ZAi4PC/DSC6zpT7fNsD19EOAR12IxJ+CQxx5xhiAAbBTKobyjU72TD+gcmL4dtWEGov4
-         EviDU0k1JGMkPfB7cnwuRJSBYg+6K3Jx/E8CfX6R9MMJt/s/uTgfEUxt4JYAR7s6JR9V
-         DZB7AvnyYTI7DgtfmxFdLCZqUgZ6/krZyxCA0ahuNMQpl/db3vfpUi0s6YdCZRGUDbJA
-         P8DTdH7JreFJos1wGHQ4I7wixFdIZnnr8MZJKw7dLBV3EmRmVy0dKxPn0mbXaEFTZFMc
-         K1ww==
-X-Gm-Message-State: AJcUukc22VTxYUOMgghEIh+80LxyO+NG8afabeZvAhp74fsxc9J2vUhr
-        qwGh12uSnT49DfWN15gW3UfbHg==
-X-Google-Smtp-Source: ALg8bN6e7VCG7t4DhNviKR9KVJL4ofIBSSdCf8Bqu/XHyzKR9Yg/D3NIcN9M3RjpjVJ3Fskc8t/myQ==
-X-Received: by 2002:a17:902:ac8f:: with SMTP id h15mr34795790plr.245.1548960440532;
-        Thu, 31 Jan 2019 10:47:20 -0800 (PST)
+        bh=tgDBy5pU4TSH5DxOCpIvkhjQNbxctYyd7XLZVLAf0nI=;
+        b=lObWh219t3ixqfD/3HFkfqd4n/N+hDx8KdIWtKJ9wWnjTYyHzOjbwiKDwZsS9BYMzL
+         RbV7HOSf6ggTkuaqwhe0zp26mfNFPqIX5gWUOy7GGceR0jJKjlnsxoYu6J1Z9/CuESVY
+         t010gXENtAkTROoyOZq8zAqNw9LrdkXKEU9/4dE+pCkr4sgNlb7piBM0kRCmWByxTJ5R
+         Xx59EZSGTRdtVnEbiMlmSAOVMNXlG26vUnRpFpd6kZP1iY1nkGuDQ2u2OUuojP6Kd3Zv
+         HTrQBTk8uAXJTF9pXQLEdwW7O+njO/oEMiZxiUsswlRnGFdL2jRXZKAfmo9ajjYeYvLp
+         bAEQ==
+X-Gm-Message-State: AJcUukckbJ5rOa6gfG4k7TglH3sOULbjrsyCJIBn6ufgXtDrjNqx7dDf
+        1nSH5y/ixSXL+mdJYlzUForPSh/w9XTc5A==
+X-Google-Smtp-Source: ALg8bN5zCSvaw0TDn5aCH92YZ1sv62Z9CwcBzL5+6SWWfyCH0sDj8EUnOb0JFFBnpbtmsfRdB1Ph7Q==
+X-Received: by 2002:a63:2f86:: with SMTP id v128mr31458623pgv.407.1548960447382;
+        Thu, 31 Jan 2019 10:47:27 -0800 (PST)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id o66sm6236234pgo.75.2019.01.31.10.47.18
+        by smtp.gmail.com with ESMTPSA id o66sm6236234pgo.75.2019.01.31.10.47.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 10:47:19 -0800 (PST)
+        Thu, 31 Jan 2019 10:47:26 -0800 (PST)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     acme@kernel.org, peterz@infradead.org
 Cc:     suzuki.poulose@arm.com, gregkh@linuxfoundation.org,
@@ -62,9 +62,9 @@ Cc:     suzuki.poulose@arm.com, gregkh@linuxfoundation.org,
         adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
         linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 2/7] coresight: perf: Add "sinks" group to PMU directory
-Date:   Thu, 31 Jan 2019 11:47:09 -0700
-Message-Id: <20190131184714.20388-3-mathieu.poirier@linaro.org>
+Subject: [PATCH v3 6/7] perf tools: Removing CoreSight set_drv_config() API
+Date:   Thu, 31 Jan 2019 11:47:13 -0700
+Message-Id: <20190131184714.20388-7-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190131184714.20388-1-mathieu.poirier@linaro.org>
 References: <20190131184714.20388-1-mathieu.poirier@linaro.org>
@@ -73,221 +73,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a "sinks" directory entry so that users can see all the sinks
-available in the system in a single place.  Individual sink are added
-as they are registered with the coresight bus.
+Now that event's config2 attribute is used to communicate sink selection
+to the kernel, remove the old set_drv_config() implementation since it
+is no longer needed.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- .../hwtracing/coresight/coresight-etm-perf.c  | 82 +++++++++++++++++++
- .../hwtracing/coresight/coresight-etm-perf.h  |  6 +-
- drivers/hwtracing/coresight/coresight.c       | 18 ++++
- include/linux/coresight.h                     |  7 +-
- 4 files changed, 110 insertions(+), 3 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c | 54 -------------------------------
+ tools/perf/arch/arm/util/cs-etm.h |  3 --
+ tools/perf/arch/arm/util/pmu.c    |  2 --
+ 3 files changed, 59 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index f21eb28b6782..cdbdb28dc175 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -14,6 +14,7 @@
- #include <linux/perf_event.h>
- #include <linux/percpu-defs.h>
- #include <linux/slab.h>
-+#include <linux/stringhash.h>
- #include <linux/types.h>
- #include <linux/workqueue.h>
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index 4f31cf0d1e6d..911426721170 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -27,9 +27,6 @@
+ #include <stdlib.h>
+ #include <sys/stat.h>
  
-@@ -43,8 +44,18 @@ static const struct attribute_group etm_pmu_format_group = {
- 	.attrs  = etm_config_formats_attr,
- };
- 
-+static struct attribute *etm_config_sinks_attr[] = {
-+	NULL,
-+};
-+
-+static const struct attribute_group etm_pmu_sinks_group = {
-+	.name   = "sinks",
-+	.attrs  = etm_config_sinks_attr,
-+};
-+
- static const struct attribute_group *etm_pmu_attr_groups[] = {
- 	&etm_pmu_format_group,
-+	&etm_pmu_sinks_group,
- 	NULL,
- };
- 
-@@ -479,6 +490,77 @@ int etm_perf_symlink(struct coresight_device *csdev, bool link)
- 	return 0;
- }
- 
-+static ssize_t etm_perf_sink_name_show(struct device *dev,
-+				       struct device_attribute *dattr,
-+				       char *buf)
-+{
-+	struct dev_ext_attribute *ea;
-+
-+	ea = container_of(dattr, struct dev_ext_attribute, attr);
-+	return scnprintf(buf, PAGE_SIZE, "0x%lx\n", (unsigned long)(ea->var));
-+}
-+
-+int etm_perf_add_symlink_sink(struct coresight_device *csdev)
-+{
-+	int ret;
-+	unsigned long hash;
-+	const char *name;
-+	struct device *pmu_dev = etm_pmu.dev;
-+	struct device *pdev = csdev->dev.parent;
-+	struct dev_ext_attribute *ea;
-+
-+	if (csdev->type != CORESIGHT_DEV_TYPE_SINK &&
-+	    csdev->type != CORESIGHT_DEV_TYPE_LINKSINK)
-+		return -EINVAL;
-+
-+	if (csdev->ea != NULL)
-+		return -EINVAL;
-+
-+	if (!etm_perf_up)
-+		return -EPROBE_DEFER;
-+
-+	ea = devm_kzalloc(pdev, sizeof(*ea), GFP_KERNEL);
-+	if (!ea)
-+		return -ENOMEM;
-+
-+	name = dev_name(pdev);
-+	/* See function coresight_get_sink_by_id() to know where this is used */
-+	hash = hashlen_hash(hashlen_string(NULL, name));
-+
-+	ea->attr.attr.name = devm_kstrdup(pdev, name, GFP_KERNEL);
-+	if (!ea->attr.attr.name)
-+		return -ENOMEM;
-+
-+	ea->attr.attr.mode = 0444;
-+	ea->attr.show = etm_perf_sink_name_show;
-+	ea->var = (unsigned long *)hash;
-+
-+	ret = sysfs_add_file_to_group(&pmu_dev->kobj,
-+				      &ea->attr.attr, "sinks");
-+
-+	if (!ret)
-+		csdev->ea = ea;
-+
-+	return ret;
-+}
-+
-+void etm_perf_del_symlink_sink(struct coresight_device *csdev)
-+{
-+	struct device *pmu_dev = etm_pmu.dev;
-+	struct dev_ext_attribute *ea = csdev->ea;
-+
-+	if (csdev->type != CORESIGHT_DEV_TYPE_SINK &&
-+	    csdev->type != CORESIGHT_DEV_TYPE_LINKSINK)
-+		return;
-+
-+	if (!ea)
-+		return;
-+
-+	sysfs_remove_file_from_group(&pmu_dev->kobj,
-+				     &ea->attr.attr, "sinks");
-+	csdev->ea = NULL;
-+}
-+
- static int __init etm_perf_init(void)
- {
- 	int ret;
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
-index da7d9336a15c..015213abe00a 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.h
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
-@@ -59,6 +59,8 @@ struct etm_event_data {
- 
- #ifdef CONFIG_CORESIGHT
- int etm_perf_symlink(struct coresight_device *csdev, bool link);
-+int etm_perf_add_symlink_sink(struct coresight_device *csdev);
-+void etm_perf_del_symlink_sink(struct coresight_device *csdev);
- static inline void *etm_perf_sink_config(struct perf_output_handle *handle)
- {
- 	struct etm_event_data *data = perf_get_aux(handle);
-@@ -70,7 +72,9 @@ static inline void *etm_perf_sink_config(struct perf_output_handle *handle)
- #else
- static inline int etm_perf_symlink(struct coresight_device *csdev, bool link)
- { return -EINVAL; }
+-#define ENABLE_SINK_MAX	128
+-#define CS_BUS_DEVICE_PATH "/bus/coresight/devices/"
 -
-+int etm_perf_add_symlink_sink(struct coresight_device *csdev)
-+{ return -EINVAL; }
-+void etm_perf_del_symlink_sink(struct coresight_device *csdev) {}
- static inline void *etm_perf_sink_config(struct perf_output_handle *handle)
- {
+ struct cs_etm_recording {
+ 	struct auxtrace_record	itr;
+ 	struct perf_pmu		*cs_etm_pmu;
+@@ -642,54 +639,3 @@ struct auxtrace_record *cs_etm_record_init(int *err)
+ out:
  	return NULL;
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index 2b0df1a0a8df..d7fa90be6f42 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- #include <linux/pm_runtime.h>
+ }
+-
+-static FILE *cs_device__open_file(const char *name)
+-{
+-	struct stat st;
+-	char path[PATH_MAX];
+-	const char *sysfs;
+-
+-	sysfs = sysfs__mountpoint();
+-	if (!sysfs)
+-		return NULL;
+-
+-	snprintf(path, PATH_MAX,
+-		 "%s" CS_BUS_DEVICE_PATH "%s", sysfs, name);
+-
+-	if (stat(path, &st) < 0)
+-		return NULL;
+-
+-	return fopen(path, "w");
+-
+-}
+-
+-static int __printf(2, 3) cs_device__print_file(const char *name, const char *fmt, ...)
+-{
+-	va_list args;
+-	FILE *file;
+-	int ret = -EINVAL;
+-
+-	va_start(args, fmt);
+-	file = cs_device__open_file(name);
+-	if (file) {
+-		ret = vfprintf(file, fmt, args);
+-		fclose(file);
+-	}
+-	va_end(args);
+-	return ret;
+-}
+-
+-int cs_etm_set_drv_config(struct perf_evsel_config_term *term)
+-{
+-	int ret;
+-	char enable_sink[ENABLE_SINK_MAX];
+-
+-	snprintf(enable_sink, ENABLE_SINK_MAX, "%s/%s",
+-		 term->val.drv_cfg, "enable_sink");
+-
+-	ret = cs_device__print_file(enable_sink, "%d", 1);
+-	if (ret < 0)
+-		return ret;
+-
+-	return 0;
+-}
+diff --git a/tools/perf/arch/arm/util/cs-etm.h b/tools/perf/arch/arm/util/cs-etm.h
+index 1a12e64f5127..a3354bda4fe8 100644
+--- a/tools/perf/arch/arm/util/cs-etm.h
++++ b/tools/perf/arch/arm/util/cs-etm.h
+@@ -7,9 +7,6 @@
+ #ifndef INCLUDE__PERF_CS_ETM_H__
+ #define INCLUDE__PERF_CS_ETM_H__
  
-+#include "coresight-etm-perf.h"
- #include "coresight-priv.h"
+-#include "../../util/evsel.h"
+-
+ struct auxtrace_record *cs_etm_record_init(int *err);
+-int cs_etm_set_drv_config(struct perf_evsel_config_term *term);
  
- static DEFINE_MUTEX(coresight_mutex);
-@@ -1167,6 +1168,22 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
- 		goto err_out;
- 	}
+ #endif
+diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
+index e047571e6080..e4619f2fe7ce 100644
+--- a/tools/perf/arch/arm/util/pmu.c
++++ b/tools/perf/arch/arm/util/pmu.c
+@@ -8,7 +8,6 @@
+ #include <linux/coresight-pmu.h>
+ #include <linux/perf_event.h>
  
-+	if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
-+	    csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
-+		ret = etm_perf_add_symlink_sink(csdev);
-+
-+		if (ret) {
-+			device_unregister(&csdev->dev);
-+			/*
-+			 * As with the above, all resources are free'd
-+			 * explicitly via coresight_device_release() triggered
-+			 * from put_device(), which is in turn called from
-+			 * function device_unregister().
-+			 */
-+			goto err_out;
-+		}
-+	}
-+
- 	mutex_lock(&coresight_mutex);
+-#include "cs-etm.h"
+ #include "arm-spe.h"
+ #include "../../util/pmu.h"
  
- 	coresight_fixup_device_conns(csdev);
-@@ -1185,6 +1202,7 @@ EXPORT_SYMBOL_GPL(coresight_register);
- 
- void coresight_unregister(struct coresight_device *csdev)
- {
-+	etm_perf_del_symlink_sink(csdev);
- 	/* Remove references of that device in the topology */
- 	coresight_remove_conns(csdev);
- 	device_unregister(&csdev->dev);
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 46c67a764877..7b87965f7a65 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -154,8 +154,9 @@ struct coresight_connection {
-  * @orphan:	true if the component has connections that haven't been linked.
-  * @enable:	'true' if component is currently part of an active path.
-  * @activated:	'true' only if a _sink_ has been activated.  A sink can be
--		activated but not yet enabled.  Enabling for a _sink_
--		happens when a source has been selected for that it.
-+ *		activated but not yet enabled.  Enabling for a _sink_
-+ *		appens when a source has been selected for that it.
-+ * @ea:		Device attribute for sink representation under PMU directory.
-  */
- struct coresight_device {
- 	struct coresight_connection *conns;
-@@ -168,7 +169,9 @@ struct coresight_device {
- 	atomic_t *refcnt;
- 	bool orphan;
- 	bool enable;	/* true only if configured as part of a path */
-+	/* sink specific fields */
- 	bool activated;	/* true only if a sink is part of a path */
-+	struct dev_ext_attribute *ea;
- };
- 
- #define to_coresight_device(d) container_of(d, struct coresight_device, dev)
+@@ -19,7 +18,6 @@ struct perf_event_attr
+ 	if (!strcmp(pmu->name, CORESIGHT_ETM_PMU_NAME)) {
+ 		/* add ETM default config here */
+ 		pmu->selectable = true;
+-		pmu->set_drv_config = cs_etm_set_drv_config;
+ #if defined(__aarch64__)
+ 	} else if (strstarts(pmu->name, ARM_SPE_PMU_NAME)) {
+ 		return arm_spe_pmu_default_config(pmu);
 -- 
 2.17.1
 
