@@ -2,114 +2,200 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE516C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:36:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C7FC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE4CE218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548948986;
-	bh=mWopoVAjgMRfkLrl+BMNDnHxKYQbwDyd8WmgxzENBmA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hT0ujY0b2nUbNqGUzDYbDKQhFfqIVNQCgwTcAJops+ZsSrIXw0hl5YMdf7BUZL8sQ
-	 EEXYW7TLvfz+KgTfHHryRuWxGt/bD39VM3doeGSVdzhoMKh1509bAkzG4VH182pdFR
-	 xHkoczEre8nSnE3wYMFgJlXXVHwT6giFj8pKOSfM=
+	by mail.kernel.org (Postfix) with ESMTP id E17E420B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732801AbfAaPgZ (ORCPT
+        id S1732904AbfAaPhJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 10:36:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43966 "EHLO mail.kernel.org"
+        Thu, 31 Jan 2019 10:37:09 -0500
+Received: from relay.sw.ru ([185.231.240.75]:50392 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726714AbfAaPgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 10:36:24 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 786AE20B1F;
-        Thu, 31 Jan 2019 15:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548948984;
-        bh=mWopoVAjgMRfkLrl+BMNDnHxKYQbwDyd8WmgxzENBmA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i/kS357R/V/dgijJaOgSRkAg30aYhM32Wvu8uw+5OybtZSy5QijjBcMNBcD2JPl0y
-         RTKwujRGFEhIQLl/3n+TG17p9yfV/9Jw4/Xbl/63evcTLBg6VfbLdM1X70z+oTDhCw
-         90BqrrtXjnckI4GjOHjAGryJ7vnt8DN7M5mtPz40=
-Date:   Thu, 31 Jan 2019 16:36:21 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Liu Jian <liujian56@huawei.com>
-Cc:     xiubli@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] driver: uio: fix possible memory leak in uio_open
-Message-ID: <20190131153621.GA16678@kroah.com>
-References: <1548196704-352035-1-git-send-email-liujian56@huawei.com>
+        id S1726714AbfAaPhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 10:37:09 -0500
+Received: from [172.16.25.169] (helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gpEOl-00039g-7T; Thu, 31 Jan 2019 18:37:03 +0300
+Subject: [PATCH] mm: Do not allocate duplicate stack variables in
+ shrink_page_list()
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     akpm@linux-foundation.org, mhocko@suse.com, hannes@cmpxchg.org,
+        ktkhai@virtuozzo.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 31 Jan 2019 18:37:02 +0300
+Message-ID: <154894900030.5211.12104993874109647641.stgit@localhost.localdomain>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548196704-352035-1-git-send-email-liujian56@huawei.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 06:38:24AM +0800, Liu Jian wrote:
-> If 'idev->info' is NULL, we need to  free 'listener'
-> 
-> Fixes: 57c5f4df0a5a ("uio: fix crash after the device is unregistered")
-> Signed-off-by: Liu Jian <liujian56@huawei.com>
-> ---
-> v1->v2:
-> rename the "err_infoopen" to "err_idev_info"
-> v2->3:
-> put the extra info after the "--"
-> v3-v4:
-> add git log
-> v4-v5:
-> correct git log
-> 
->  drivers/uio/uio.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-> index 1313422..b4ae2d9 100644
-> --- a/drivers/uio/uio.c
-> +++ b/drivers/uio/uio.c
-> @@ -491,18 +491,19 @@ static int uio_open(struct inode *inode, struct file *filep)
->  	if (!idev->info) {
->  		mutex_unlock(&idev->info_lock);
->  		ret = -EINVAL;
-> -		goto err_alloc_listener;
-> +		goto err_idev_info;
->  	}
->  
->  	if (idev->info && idev->info->open)
->  		ret = idev->info->open(idev->info, inode);
->  	mutex_unlock(&idev->info_lock);
->  	if (ret)
-> -		goto err_infoopen;
-> +		goto err_idev_info;
->  
->  	return 0;
->  
-> -err_infoopen:
-> +err_idev_info:
-> +	filep->private_data = NULL;
->  	kfree(listener);
->  
->  err_alloc_listener:
-> -- 
-> 2.7.4
-> 
+On path shrink_inactive_list() ---> shrink_page_list()
+we allocate stack variables for the statistics twice.
+This is completely useless, and this just consumes stack
+much more, then we really need.
 
-This does not apply to my tree at all :(
+The patch kills duplicate stack variables from shrink_page_list(),
+and this reduce stack usage and object file size significantly:
 
-Please rebase it against the char-misc-next branch of my char-misc.git
-tree and resend.
+Stack usage:
+Before: vmscan.c:1122:22:shrink_page_list	648	static
+After:  vmscan.c:1122:22:shrink_page_list	616	static
 
-thanks,
+Size of vmscan.o:
+         text	   data	    bss	    dec	    hex	filename
+Before: 56866	   4720	    128	  61714	   f112	mm/vmscan.o
+After:  56770	   4720	    128	  61618	   f0b2	mm/vmscan.o
 
-greg k-h
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+---
+ mm/vmscan.c |   44 ++++++++++++++------------------------------
+ 1 file changed, 14 insertions(+), 30 deletions(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index dd9554f5d788..54a389fd91e2 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1128,16 +1128,9 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ {
+ 	LIST_HEAD(ret_pages);
+ 	LIST_HEAD(free_pages);
+-	int pgactivate = 0;
+-	unsigned nr_unqueued_dirty = 0;
+-	unsigned nr_dirty = 0;
+-	unsigned nr_congested = 0;
+ 	unsigned nr_reclaimed = 0;
+-	unsigned nr_writeback = 0;
+-	unsigned nr_immediate = 0;
+-	unsigned nr_ref_keep = 0;
+-	unsigned nr_unmap_fail = 0;
+ 
++	memset(stat, 0, sizeof(*stat));
+ 	cond_resched();
+ 
+ 	while (!list_empty(page_list)) {
+@@ -1181,10 +1174,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 		 */
+ 		page_check_dirty_writeback(page, &dirty, &writeback);
+ 		if (dirty || writeback)
+-			nr_dirty++;
++			stat->nr_dirty++;
+ 
+ 		if (dirty && !writeback)
+-			nr_unqueued_dirty++;
++			stat->nr_unqueued_dirty++;
+ 
+ 		/*
+ 		 * Treat this page as congested if the underlying BDI is or if
+@@ -1196,7 +1189,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 		if (((dirty || writeback) && mapping &&
+ 		     inode_write_congested(mapping->host)) ||
+ 		    (writeback && PageReclaim(page)))
+-			nr_congested++;
++			stat->nr_congested++;
+ 
+ 		/*
+ 		 * If a page at the tail of the LRU is under writeback, there
+@@ -1245,7 +1238,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 			if (current_is_kswapd() &&
+ 			    PageReclaim(page) &&
+ 			    test_bit(PGDAT_WRITEBACK, &pgdat->flags)) {
+-				nr_immediate++;
++				stat->nr_immediate++;
+ 				goto activate_locked;
+ 
+ 			/* Case 2 above */
+@@ -1263,7 +1256,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 				 * and it's also appropriate in global reclaim.
+ 				 */
+ 				SetPageReclaim(page);
+-				nr_writeback++;
++				stat->nr_writeback++;
+ 				goto activate_locked;
+ 
+ 			/* Case 3 above */
+@@ -1283,7 +1276,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 		case PAGEREF_ACTIVATE:
+ 			goto activate_locked;
+ 		case PAGEREF_KEEP:
+-			nr_ref_keep++;
++			stat->nr_ref_keep++;
+ 			goto keep_locked;
+ 		case PAGEREF_RECLAIM:
+ 		case PAGEREF_RECLAIM_CLEAN:
+@@ -1348,7 +1341,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 			if (unlikely(PageTransHuge(page)))
+ 				flags |= TTU_SPLIT_HUGE_PMD;
+ 			if (!try_to_unmap(page, flags)) {
+-				nr_unmap_fail++;
++				stat->nr_unmap_fail++;
+ 				goto activate_locked;
+ 			}
+ 		}
+@@ -1496,7 +1489,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 		VM_BUG_ON_PAGE(PageActive(page), page);
+ 		if (!PageMlocked(page)) {
+ 			SetPageActive(page);
+-			pgactivate++;
++			stat->nr_activate++;
+ 			count_memcg_page_event(page, PGACTIVATE);
+ 		}
+ keep_locked:
+@@ -1511,18 +1504,8 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 	free_unref_page_list(&free_pages);
+ 
+ 	list_splice(&ret_pages, page_list);
+-	count_vm_events(PGACTIVATE, pgactivate);
+-
+-	if (stat) {
+-		stat->nr_dirty = nr_dirty;
+-		stat->nr_congested = nr_congested;
+-		stat->nr_unqueued_dirty = nr_unqueued_dirty;
+-		stat->nr_writeback = nr_writeback;
+-		stat->nr_immediate = nr_immediate;
+-		stat->nr_activate = pgactivate;
+-		stat->nr_ref_keep = nr_ref_keep;
+-		stat->nr_unmap_fail = nr_unmap_fail;
+-	}
++	count_vm_events(PGACTIVATE, stat->nr_activate);
++
+ 	return nr_reclaimed;
+ }
+ 
+@@ -1534,6 +1517,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
+ 		.priority = DEF_PRIORITY,
+ 		.may_unmap = 1,
+ 	};
++	struct reclaim_stat dummy_stat;
+ 	unsigned long ret;
+ 	struct page *page, *next;
+ 	LIST_HEAD(clean_pages);
+@@ -1547,7 +1531,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
+ 	}
+ 
+ 	ret = shrink_page_list(&clean_pages, zone->zone_pgdat, &sc,
+-			TTU_IGNORE_ACCESS, NULL, true);
++			TTU_IGNORE_ACCESS, &dummy_stat, true);
+ 	list_splice(&clean_pages, page_list);
+ 	mod_node_page_state(zone->zone_pgdat, NR_ISOLATED_FILE, -ret);
+ 	return ret;
+@@ -1922,7 +1906,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
+ 	unsigned long nr_scanned;
+ 	unsigned long nr_reclaimed = 0;
+ 	unsigned long nr_taken;
+-	struct reclaim_stat stat = {};
++	struct reclaim_stat stat;
+ 	int file = is_file_lru(lru);
+ 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
+ 	struct zone_reclaim_stat *reclaim_stat = &lruvec->reclaim_stat;
+
