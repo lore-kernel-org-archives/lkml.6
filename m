@@ -2,171 +2,406 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DCAC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8563C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46D2820881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 767E020881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:18:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="owgUHeiT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbfAaRPJ (ORCPT
+        id S1726193AbfAaRRc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:15:09 -0500
-Received: from gateway33.websitewelcome.com ([192.185.146.21]:32094 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725855AbfAaRPJ (ORCPT
+        Thu, 31 Jan 2019 12:17:32 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:41954 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbfAaRRY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:15:09 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id DBBAA2C6168F
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:15:07 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id pFvfgrGWE2qH7pFvfgRiez; Thu, 31 Jan 2019 11:15:07 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.82.227] (port=42692 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gpFvf-003cCd-7M; Thu, 31 Jan 2019 11:15:07 -0600
-Subject: Re: [PATCH net-next] nfp: use struct_size() in kzalloc()
-To:     Joe Perches <joe@perches.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     oss-drivers@netronome.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190131003859.GA28539@embeddedor>
- <dc6d827c187cd228b917f8d9d984bd5ea578d712.camel@perches.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+        Thu, 31 Jan 2019 12:17:24 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0VHE0lw138153;
+        Thu, 31 Jan 2019 17:16:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=6e9y+XtmHtDEZ6oO8bOKuL6W/JYm9YxYi37a4kGNsSs=;
+ b=owgUHeiTQJ2wq2TUj/H5eM2SxfhqQTinQPzf0KyQ9YSRxvg24bOn8mxBNG1dfpvc0rj5
+ V7cJzoH8lbWcDwB9TQw9vE5xDNR1noiWjAurA88foz4Tx5F+66HoBV49qpENPp62RHO4
+ //KMSqG0OEuvr9rDmTeTwsDj1q6bMjN0ukC7OSHD19tGsq2aqIaPWU5TvdhM3sz+XTUD
+ oE4uD4fNsYf4ZywfZoJ10Do3gsX+jdqGUkxL1px6G0x5cKtpU9O5IuLiC3/xbz3oN23h
+ j0jgZwAkYxDI4ecsiov9fghbSCm0Oi47y2IMU4J5j3cBPmNAtgaF5NH1G1JNYxGxaL+H sQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2q8d2eja4s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Jan 2019 17:16:51 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0VHGo2O000956
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Jan 2019 17:16:50 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0VHGnur018166;
+        Thu, 31 Jan 2019 17:16:49 GMT
+Received: from localhost.localdomain (/10.159.155.84)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 31 Jan 2019 09:16:48 -0800
+Subject: Re: [PATCH v4 00/10] steal tasks to improve CPU utilization
+To:     Steven Sistare <steven.sistare@oracle.com>, mingo@redhat.com,
+        peterz@infradead.org
+Cc:     subhra.mazumdar@oracle.com, daniel.m.jordan@oracle.com,
+        pavel.tatashin@microsoft.com, matt@codeblueprint.co.uk,
+        umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
+        juri.lelli@redhat.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, quentin.perret@arm.com,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
+ <7375c70a-913f-a002-820b-495a1eaeb20b@oracle.com>
+From:   Dhaval Giani <dhaval.giani@oracle.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <714fd5ae-2738-c157-8497-0b6bdeef3ae7@embeddedor.com>
-Date:   Thu, 31 Jan 2019 11:15:05 -0600
+Autocrypt: addr=dhaval.giani@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ C6KaZ/kqFRg4lw==
+Message-ID: <9a9aeb65-7b68-ebc3-d6c7-e907efe6ed2a@oracle.com>
+Date:   Thu, 31 Jan 2019 09:16:46 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <dc6d827c187cd228b917f8d9d984bd5ea578d712.camel@perches.com>
+In-Reply-To: <7375c70a-913f-a002-820b-495a1eaeb20b@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.82.227
-X-Source-L: No
-X-Exim-ID: 1gpFvf-003cCd-7M
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.82.227]:42692
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9152 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901310133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
 
-On 1/31/19 11:11 AM, Joe Perches wrote:
-> On Wed, 2019-01-30 at 18:38 -0600, Gustavo A. R. Silva wrote:
->> One of the more common cases of allocation size calculations is finding
->> the size of a structure that has a zero-sized array at the end, along
->> with memory for some number of elements for that array. For example:
->>
->> struct foo {
->>     int stuff;
->>     struct boo entry[];
->> };
->>
->> instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
->>
->> Instead of leaving these open-coded and prone to type mistakes, we can
->> now use the new struct_size() helper:
->>
->> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
->>
->> This code was detected with the help of Coccinelle.
 > 
-> Might be useful to augment the script to include cases
-> where the computed size is saved to a temporary and
-> that temporary is used ala:
-> 
+> On 12/6/2018 4:28 PM, Steve Sistare wrote:
+>> When a CPU has no more CFS tasks to run, and idle_balance() fails to
+>> find a task, then attempt to steal a task from an overloaded CPU in the
+>> same LLC. Maintain and use a bitmap of overloaded CPUs to efficiently
+>> identify candidates.  To minimize search time, steal the first migratable
+>> task that is found when the bitmap is traversed.  For fairness, search
+>> for migratable tasks on an overloaded CPU in order of next to run.
+>>
+>> This simple stealing yields a higher CPU utilization than idle_balance()
+>> alone, because the search is cheap, so it may be called every time the CPU
+>> is about to go idle.  idle_balance() does more work because it searches
+>> widely for the busiest queue, so to limit its CPU consumption, it declines
+>> to search if the system is too busy.  Simple stealing does not offload the
+>> globally busiest queue, but it is much better than running nothing at all.
+>>
+>> The bitmap of overloaded CPUs is a new type of sparse bitmap, designed to
+>> reduce cache contention vs the usual bitmap when many threads concurrently
+>> set, clear, and visit elements.
+>>
+>> Patch 1 defines the sparsemask type and its operations.
+>>
+>> Patches 2, 3, and 4 implement the bitmap of overloaded CPUs.
+>>
+>> Patches 5 and 6 refactor existing code for a cleaner merge of later
+>>   patches.
+>>
+>> Patches 7 and 8 implement task stealing using the overloaded CPUs bitmap.
+>>
+>> Patch 9 disables stealing on systems with more than 2 NUMA nodes for the
+>> time being because of performance regressions that are not due to stealing
+>> per-se.  See the patch description for details.
+>>
+>> Patch 10 adds schedstats for comparing the new behavior to the old, and
+>>   provided as a convenience for developers only, not for integration.
+>>
+>> The patch series is based on kernel 4.20.0-rc1.  It compiles, boots, and
+>> runs with/without each of CONFIG_SCHED_SMT, CONFIG_SMP, CONFIG_SCHED_DEBUG,
+>> and CONFIG_PREEMPT.  It runs without error with CONFIG_DEBUG_PREEMPT +
+>> CONFIG_SLUB_DEBUG + CONFIG_DEBUG_PAGEALLOC + CONFIG_DEBUG_MUTEXES +
+>> CONFIG_DEBUG_SPINLOCK + CONFIG_DEBUG_ATOMIC_SLEEP.  CPU hot plug and CPU
+>> bandwidth control were tested.
+>>
+>> Stealing improves utilization with only a modest CPU overhead in scheduler
+>> code.  In the following experiment, hackbench is run with varying numbers
+>> of groups (40 tasks per group), and the delta in /proc/schedstat is shown
+>> for each run, averaged per CPU, augmented with these non-standard stats:
+>>
+>>   %find - percent of time spent in old and new functions that search for
+>>     idle CPUs and tasks to steal and set the overloaded CPUs bitmap.
+>>
+>>   steal - number of times a task is stolen from another CPU.
+>>
+>> X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
+>> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+>> hackbench <grps> process 100000
+>> sched_wakeup_granularity_ns=15000000
+>>
+>>   baseline
+>>   grps  time  %busy  slice   sched   idle     wake %find  steal
+>>   1    8.084  75.02   0.10  105476  46291    59183  0.31      0
+>>   2   13.892  85.33   0.10  190225  70958   119264  0.45      0
+>>   3   19.668  89.04   0.10  263896  87047   176850  0.49      0
+>>   4   25.279  91.28   0.10  322171  94691   227474  0.51      0
+>>   8   47.832  94.86   0.09  630636 144141   486322  0.56      0
+>>
+>>   new
+>>   grps  time  %busy  slice   sched   idle     wake %find  steal  %speedup
+>>   1    5.938  96.80   0.24   31255   7190    24061  0.63   7433  36.1
+>>   2   11.491  99.23   0.16   74097   4578    69512  0.84  19463  20.9
+>>   3   16.987  99.66   0.15  115824   1985   113826  0.77  24707  15.8
+>>   4   22.504  99.80   0.14  167188   2385   164786  0.75  29353  12.3
+>>   8   44.441  99.86   0.11  389153   1616   387401  0.67  38190   7.6
+>>
+>> Elapsed time improves by 8 to 36%, and CPU busy utilization is up
+>> by 5 to 22% hitting 99% for 2 or more groups (80 or more tasks).
+>> The cost is at most 0.4% more find time.
+>>
+>> Additional performance results follow.  A negative "speedup" is a
+>> regression.  Note: for all hackbench runs, sched_wakeup_granularity_ns
+>> is set to 15 msec.  Otherwise, preemptions increase at higher loads and
+>> distort the comparison between baseline and new.
+>>
+>> ------------------ 1 Socket Results ------------------
+>>
+>> X6-2: 1 socket * 10 cores * 2 hyperthreads = 20 CPUs
+>> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+>> Average of 10 runs of: hackbench <groups> process 100000
+>>
+>>             --- base --    --- new ---
+>>   groups    time %stdev    time %stdev  %speedup
+>>        1   8.008    0.1   5.905    0.2      35.6
+>>        2  13.814    0.2  11.438    0.1      20.7
+>>        3  19.488    0.2  16.919    0.1      15.1
+>>        4  25.059    0.1  22.409    0.1      11.8
+>>        8  47.478    0.1  44.221    0.1       7.3
+>>
+>> X6-2: 1 socket * 22 cores * 2 hyperthreads = 44 CPUs
+>> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+>> Average of 10 runs of: hackbench <groups> process 100000
+>>
+>>             --- base --    --- new ---
+>>   groups    time %stdev    time %stdev  %speedup
+>>        1   4.586    0.8   4.596    0.6      -0.3
+>>        2   7.693    0.2   5.775    1.3      33.2
+>>        3  10.442    0.3   8.288    0.3      25.9
+>>        4  13.087    0.2  11.057    0.1      18.3
+>>        8  24.145    0.2  22.076    0.3       9.3
+>>       16  43.779    0.1  41.741    0.2       4.8
+>>
+>> KVM 4-cpu
+>> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+>> tbench, average of 11 runs.
+>>
+>>   clients    %speedup
+>>         1        16.2
+>>         2        11.7
+>>         4         9.9
+>>         8        12.8
+>>        16        13.7
+>>
+>> KVM 2-cpu
+>> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+>>
+>>   Benchmark                     %speedup
+>>   specjbb2015_critical_jops          5.7
+>>   mysql_sysb1.0.14_mutex_2          40.6
+>>   mysql_sysb1.0.14_oltp_2            3.9
+>>
+>> ------------------ 2 Socket Results ------------------
+>>
+>> X6-2: 2 sockets * 10 cores * 2 hyperthreads = 40 CPUs
+>> Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz
+>> Average of 10 runs of: hackbench <groups> process 100000
+>>
+>>             --- base --    --- new ---
+>>   groups    time %stdev    time %stdev  %speedup
+>>        1   7.945    0.2   7.219    8.7      10.0
+>>        2   8.444    0.4   6.689    1.5      26.2
+>>        3  12.100    1.1   9.962    2.0      21.4
+>>        4  15.001    0.4  13.109    1.1      14.4
+>>        8  27.960    0.2  26.127    0.3       7.0
+>>
+>> X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
+>> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+>> Average of 10 runs of: hackbench <groups> process 100000
+>>
+>>             --- base --    --- new ---
+>>   groups    time %stdev    time %stdev  %speedup
+>>        1   5.826    5.4   5.840    5.0      -0.3
+>>        2   5.041    5.3   6.171   23.4     -18.4
+>>        3   6.839    2.1   6.324    3.8       8.1
+>>        4   8.177    0.6   7.318    3.6      11.7
+>>        8  14.429    0.7  13.966    1.3       3.3
+>>       16  26.401    0.3  25.149    1.5       4.9
+>>
+>>
+>> X6-2: 2 sockets * 22 cores * 2 hyperthreads = 88 CPUs
+>> Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+>> Oracle database OLTP, logging disabled, NVRAM storage
+>>
+>>   Customers   Users   %speedup
+>>     1200000      40       -1.2
+>>     2400000      80        2.7
+>>     3600000     120        8.9
+>>     4800000     160        4.4
+>>     6000000     200        3.0
+>>
+>> X6-2: 2 sockets * 14 cores * 2 hyperthreads = 56 CPUs
+>> Intel(R) Xeon(R) CPU E5-2690 v4 @ 2.60GHz
+>> Results from the Oracle "Performance PIT".
+>>
+>>   Benchmark                                           %speedup
+>>
+>>   mysql_sysb1.0.14_fileio_56_rndrd                        19.6
+>>   mysql_sysb1.0.14_fileio_56_seqrd                        12.1
+>>   mysql_sysb1.0.14_fileio_56_rndwr                         0.4
+>>   mysql_sysb1.0.14_fileio_56_seqrewr                      -0.3
+>>
+>>   pgsql_sysb1.0.14_fileio_56_rndrd                        19.5
+>>   pgsql_sysb1.0.14_fileio_56_seqrd                         8.6
+>>   pgsql_sysb1.0.14_fileio_56_rndwr                         1.0
+>>   pgsql_sysb1.0.14_fileio_56_seqrewr                       0.5
+>>
+>>   opatch_time_ASM_12.2.0.1.0_HP2M                          7.5
+>>   select-1_users-warm_asmm_ASM_12.2.0.1.0_HP2M             5.1
+>>   select-1_users_asmm_ASM_12.2.0.1.0_HP2M                  4.4
+>>   swingbenchv3_asmm_soebench_ASM_12.2.0.1.0_HP2M           5.8
+>>
+>>   lm3_memlat_L2                                            4.8
+>>   lm3_memlat_L1                                            0.0
+>>
+>>   ub_gcc_56CPUs-56copies_Pipe-based_Context_Switching     60.1
+>>   ub_gcc_56CPUs-56copies_Shell_Scripts_1_concurrent        5.2
+>>   ub_gcc_56CPUs-56copies_Shell_Scripts_8_concurrent       -3.0
+>>   ub_gcc_56CPUs-56copies_File_Copy_1024_bufsize_2000_maxblocks 2.4
+>>
+>> X5-2: 2 sockets * 18 cores * 2 hyperthreads = 72 CPUs
+>> Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+>>
+>>   NAS_OMP
+>>   bench class   ncpu    %improved(Mops)
+>>   dc    B       72      1.3
+>>   is    C       72      0.9
+>>   is    D       72      0.7
+>>
+>>   sysbench mysql, average of 24 runs
+>>           --- base ---     --- new ---
+>>   nthr   events  %stdev   events  %stdev %speedup
+>>      1    331.0    0.25    331.0    0.24     -0.1
+>>      2    661.3    0.22    661.8    0.22      0.0
+>>      4   1297.0    0.88   1300.5    0.82      0.2
+>>      8   2420.8    0.04   2420.5    0.04     -0.1
+>>     16   4826.3    0.07   4825.4    0.05     -0.1
+>>     32   8815.3    0.27   8830.2    0.18      0.1
+>>     64  12823.0    0.24  12823.6    0.26      0.0
+>>
+>> --------------------------------------------------------------
+>>
+>> Changes from v1 to v2:
+>>   - Remove stray find_time hunk from patch 5
+>>   - Fix "warning: label out defined but not used" for !CONFIG_SCHED_SMT
+>>   - Set SCHED_STEAL_NODE_LIMIT_DEFAULT to 2
+>>   - Steal iff avg_idle exceeds the cost of stealing
+>>
+>> Changes from v2 to v3:
+>>   - Update series for kernel 4.20.  Context changes only.
+>>
+>> Changes from v3 to v4:
+>>   - Avoid 64-bit division on 32-bit processors in compute_skid()
+>>   - Replace IF_SMP with inline functions to set idle_stamp
+>>   - Push ZALLOC_MASK body into calling function
+>>   - Set rq->cfs_overload_cpus in update_top_cache_domain instead of
+>>     cpu_attach_domain
+>>   - Rewrite sparsemask iterator for complete inlining
+>>   - Cull and clean up sparsemask functions and moved all into
+>>     sched/sparsemask.h
+>>
+>> Steve Sistare (10):
+>>   sched: Provide sparsemask, a reduced contention bitmap
+>>   sched/topology: Provide hooks to allocate data shared per LLC
+>>   sched/topology: Provide cfs_overload_cpus bitmap
+>>   sched/fair: Dynamically update cfs_overload_cpus
+>>   sched/fair: Hoist idle_stamp up from idle_balance
+>>   sched/fair: Generalize the detach_task interface
+>>   sched/fair: Provide can_migrate_task_llc
+>>   sched/fair: Steal work from an overloaded CPU when CPU goes idle
+>>   sched/fair: disable stealing if too many NUMA nodes
+>>   sched/fair: Provide idle search schedstats
+>>
+>>  include/linux/sched/topology.h |   1 +
+>>  kernel/sched/core.c            |  31 +++-
+>>  kernel/sched/fair.c            | 354 +++++++++++++++++++++++++++++++++++++----
+>>  kernel/sched/features.h        |   6 +
+>>  kernel/sched/sched.h           |  13 +-
+>>  kernel/sched/sparsemask.h      | 210 ++++++++++++++++++++++++
+>>  kernel/sched/stats.c           |  11 +-
+>>  kernel/sched/stats.h           |  13 ++
+>>  kernel/sched/topology.c        | 121 +++++++++++++-
+>>  9 files changed, 726 insertions(+), 34 deletions(-)
+>>  create mode 100644 kernel/sched/sparsemask.h
+>>
 
-Yep. That's already on my list.
+On 2019-01-14 8:55 a.m., Steven Sistare wrote:> Hi Peter and Ingo,
+>   I am waiting for one of you to review, ack, or reject this series. I
+> have addressed all known issues.  I have a reviewed-by from Valentin
+> and a
+> tested-by from Vincent which I will add to v5 if you approve the
+> patch.
+>
 
-> https://patchwork.kernel.org/patch/10782453/
-> 
-> On Sat, 2019-01-26 at 20:42 +0800, YueHaibing wrote:
->> Use kmemdup rather than duplicating its implementation
-> []
->> diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-> []
->> @@ -1196,13 +1196,9 @@ iwl_parse_nvm_mcc_info(struct device *dev, const struct iwl_cfg *cfg,
->>  	regd_to_copy = sizeof(struct ieee80211_regdomain) +
->>  		valid_rules * sizeof(struct ieee80211_reg_rule);
->> -	copy_rd = kzalloc(regd_to_copy, GFP_KERNEL);
->> -	if (!copy_rd) {
->> +	copy_rd = kmemdup(regd, regd_to_copy, GFP_KERNEL);
-> 
-> This should probably be
-> 
-> 	copy_rd = kmemdup(regd, struct_size(regd, reg_rules, valid_rules),
-> 			  GFP_KERNEL);
-> 
+Hi Thomas, Peter, Ingo,
 
-I agree.
+These patches have been around for a bit and have been reviewed by
+others. Could one of you please take a look at them, and let us know if
+we are heading in the right direction?
 
-Thanks
---
-Gustavo
+Dhaval
+
+
