@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FEDDC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA4DC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13F4D21939
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:29:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F03B21939
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:29:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbfAaU3A (ORCPT
+        id S1729218AbfAaU3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:29:00 -0500
-Received: from mga05.intel.com ([192.55.52.43]:4802 "EHLO mga05.intel.com"
+        Thu, 31 Jan 2019 15:29:25 -0500
+Received: from mga05.intel.com ([192.55.52.43]:4822 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729015AbfAaU2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:28:55 -0500
+        id S1729070AbfAaU26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 15:28:58 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:28:54 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:28:58 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
-   d="scan'208";a="143176568"
+   d="scan'208";a="143176588"
 Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by fmsmga001.fm.intel.com with ESMTP; 31 Jan 2019 12:28:54 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 31 Jan 2019 12:28:58 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
         mingo@redhat.com, linux-kernel@vger.kernel.org
 Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
         ak@linux.intel.com, luto@amacapital.net,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 06/13] perf mem: Clean up output format
-Date:   Thu, 31 Jan 2019 12:27:59 -0800
-Message-Id: <1548966486-49963-6-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH V4 10/13] perf tools: Add support for PERF_SAMPLE_CODE_PAGE_SIZE
+Date:   Thu, 31 Jan 2019 12:28:03 -0800
+Message-Id: <1548966486-49963-10-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
 References: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
@@ -45,147 +45,157 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Stephane Eranian <eranian@google.com>
 
-Now, "--phys-data" is the only option which impacts the output format.
-A simple "if else" is enough to handle the option. But there will be
-more options added, e.g. "--data-page-size", which also impact the
-output format. The code will become too complex to be maintained.
+Adds the infrastructure to sample the code address page size.
 
-Divide the big printf into several small pieces. Output the specific
-piece only if the related option is applied.
+Introduce a new --code-page-size option for perf record.
 
-No functional change.
-
+Signed-off-by: Stephane Eranian <eranian@google.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
-No changes since V3
+Changes since V3
+- Use the real page size to replace enum.
 
- tools/perf/builtin-mem.c | 93 ++++++++++++++++++++----------------------------
- 1 file changed, 38 insertions(+), 55 deletions(-)
+ tools/include/uapi/linux/perf_event.h    |  4 +++-
+ tools/perf/Documentation/perf-record.txt |  3 +++
+ tools/perf/builtin-record.c              |  2 ++
+ tools/perf/perf.h                        |  1 +
+ tools/perf/util/event.h                  |  1 +
+ tools/perf/util/evsel.c                  | 18 ++++++++++++++++++
+ 6 files changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
-index 0647bd7..24acc2a 100644
---- a/tools/perf/builtin-mem.c
-+++ b/tools/perf/builtin-mem.c
-@@ -153,7 +153,7 @@ dump_raw_samples(struct perf_tool *tool,
- {
- 	struct perf_mem *mem = container_of(tool, struct perf_mem, tool);
- 	struct addr_location al;
--	const char *fmt;
-+	const char *fmt, *field_sep;
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index 0e8d222..045e218 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -142,8 +142,9 @@ enum perf_event_sample_format {
+ 	PERF_SAMPLE_REGS_INTR			= 1U << 18,
+ 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
+ 	PERF_SAMPLE_DATA_PAGE_SIZE		= 1U << 20,
++	PERF_SAMPLE_CODE_PAGE_SIZE		= 1U << 21,
  
- 	if (machine__resolve(machine, &al, sample) < 0) {
- 		fprintf(stderr, "problem processing %d event, skipping it.\n",
-@@ -167,60 +167,41 @@ dump_raw_samples(struct perf_tool *tool,
- 	if (al.map != NULL)
- 		al.map->dso->hit = 1;
+-	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
++	PERF_SAMPLE_MAX = 1U << 22,		/* non-ABI */
  
--	if (mem->phys_addr) {
--		if (symbol_conf.field_sep) {
--			fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s0x%016"PRIx64
--			      "%s%"PRIu64"%s0x%"PRIx64"%s%s:%s\n";
--		} else {
--			fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64
--			      "%s0x%016"PRIx64"%s%5"PRIu64"%s0x%06"PRIx64
--			      "%s%s:%s\n";
--			symbol_conf.field_sep = " ";
--		}
--
--		printf(fmt,
--			sample->pid,
--			symbol_conf.field_sep,
--			sample->tid,
--			symbol_conf.field_sep,
--			sample->ip,
--			symbol_conf.field_sep,
--			sample->addr,
--			symbol_conf.field_sep,
--			sample->phys_addr,
--			symbol_conf.field_sep,
--			sample->weight,
--			symbol_conf.field_sep,
--			sample->data_src,
--			symbol_conf.field_sep,
--			al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
--			al.sym ? al.sym->name : "???");
-+	field_sep = symbol_conf.field_sep;
-+	if (field_sep) {
-+		fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s";
- 	} else {
--		if (symbol_conf.field_sep) {
--			fmt = "%d%s%d%s0x%"PRIx64"%s0x%"PRIx64"%s%"PRIu64
--			      "%s0x%"PRIx64"%s%s:%s\n";
--		} else {
--			fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64
--			      "%s%5"PRIu64"%s0x%06"PRIx64"%s%s:%s\n";
--			symbol_conf.field_sep = " ";
--		}
-+		fmt = "%5d%s%5d%s0x%016"PRIx64"%s0x016%"PRIx64"%s";
-+		symbol_conf.field_sep = " ";
-+	}
-+	printf(fmt,
-+		sample->pid,
-+		symbol_conf.field_sep,
-+		sample->tid,
-+		symbol_conf.field_sep,
-+		sample->ip,
-+		symbol_conf.field_sep,
-+		sample->addr,
-+		symbol_conf.field_sep);
+ 	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
+ };
+@@ -865,6 +866,7 @@ enum perf_event_type {
+ 	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
+ 	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
+ 	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
++	 *	{ u64			code_page_size;} && PERF_SAMPLE_CODE_PAGE_SIZE
+ 	 * };
+ 	 */
+ 	PERF_RECORD_SAMPLE			= 9,
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index c2a2875..edaaeca 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -267,6 +267,9 @@ OPTIONS
+ --data-page-size::
+ 	Record the sampled data address data page size
  
--		printf(fmt,
--			sample->pid,
--			symbol_conf.field_sep,
--			sample->tid,
--			symbol_conf.field_sep,
--			sample->ip,
--			symbol_conf.field_sep,
--			sample->addr,
--			symbol_conf.field_sep,
--			sample->weight,
--			symbol_conf.field_sep,
--			sample->data_src,
--			symbol_conf.field_sep,
--			al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
--			al.sym ? al.sym->name : "???");
-+	if (mem->phys_addr) {
-+		printf("0x%016"PRIx64"%s",
-+			sample->phys_addr,
-+			symbol_conf.field_sep);
++--code-page-size::
++	Record the sampled code address (ip) page size
++
+ -T::
+ --timestamp::
+ 	Record the sample timestamps. Use it with 'perf report -D' to see the
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index b9df9b9..cac5804 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -1872,6 +1872,8 @@ static struct option __record_options[] = {
+ 		    "Record the sample physical addresses"),
+ 	OPT_BOOLEAN(0, "data-page-size", &record.opts.sample_data_page_size,
+ 		    "Record the sampled data address data page size"),
++	OPT_BOOLEAN(0, "code-page-size", &record.opts.sample_code_page_size,
++		    "Record the sampled code address page size"),
+ 	OPT_BOOLEAN(0, "sample-cpu", &record.opts.sample_cpu, "Record the sample cpu"),
+ 	OPT_BOOLEAN_SET('T', "timestamp", &record.opts.sample_time,
+ 			&record.opts.sample_time_set,
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 87a345a..9a2348d 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -49,6 +49,7 @@ struct record_opts {
+ 	bool	     sample_address;
+ 	bool	     sample_phys_addr;
+ 	bool	     sample_data_page_size;
++	bool	     sample_code_page_size;
+ 	bool	     sample_weight;
+ 	bool	     sample_time;
+ 	bool	     sample_time_set;
+diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+index 7ef06fc..601e085 100644
+--- a/tools/perf/util/event.h
++++ b/tools/perf/util/event.h
+@@ -208,6 +208,7 @@ struct perf_sample {
+ 	u64 data_src;
+ 	u64 phys_addr;
+ 	u64 data_page_size;
++	u64 code_page_size;
+ 	u32 flags;
+ 	u16 insn_len;
+ 	u8  cpumode;
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 4d9e29e..541de5b 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1022,6 +1022,9 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+ 	if (opts->sample_data_page_size)
+ 		perf_evsel__set_sample_bit(evsel, DATA_PAGE_SIZE);
+ 
++	if (opts->sample_code_page_size)
++		perf_evsel__set_sample_bit(evsel, CODE_PAGE_SIZE);
++
+ 	if (opts->no_buffering) {
+ 		attr->watermark = 0;
+ 		attr->wakeup_events = 1;
+@@ -1565,6 +1568,7 @@ static void __p_sample_type(char *buf, size_t size, u64 value)
+ 		bit_name(BRANCH_STACK), bit_name(REGS_USER), bit_name(STACK_USER),
+ 		bit_name(IDENTIFIER), bit_name(REGS_INTR), bit_name(DATA_SRC),
+ 		bit_name(WEIGHT), bit_name(PHYS_ADDR), bit_name(DATA_PAGE_SIZE),
++		bit_name(CODE_PAGE_SIZE),
+ 		{ .name = NULL, }
+ 	};
+ #undef bit_name
+@@ -2401,6 +2405,12 @@ int perf_evsel__parse_sample(struct perf_evsel *evsel, union perf_event *event,
+ 		array++;
  	}
+ 
++	data->code_page_size = 0;
++	if (type & PERF_SAMPLE_CODE_PAGE_SIZE) {
++		data->code_page_size = *array;
++		array++;
++	}
 +
-+	if (field_sep)
-+		fmt = "%"PRIu64"%s0x%"PRIx64"%s%s:%s\n";
-+	else
-+		fmt = "%5"PRIu64"%s0x%06"PRIx64"%s%s:%s\n";
-+
-+	printf(fmt,
-+		sample->weight,
-+		symbol_conf.field_sep,
-+		sample->data_src,
-+		symbol_conf.field_sep,
-+		al.map ? (al.map->dso ? al.map->dso->long_name : "???") : "???",
-+		al.sym ? al.sym->name : "???");
- out_put:
- 	addr_location__put(&al);
  	return 0;
-@@ -262,10 +243,12 @@ static int report_raw_events(struct perf_mem *mem)
- 	if (ret < 0)
- 		goto out_delete;
+ }
  
-+	printf("# PID, TID, IP, ADDR, ");
-+
- 	if (mem->phys_addr)
--		printf("# PID, TID, IP, ADDR, PHYS ADDR, LOCAL WEIGHT, DSRC, SYMBOL\n");
--	else
--		printf("# PID, TID, IP, ADDR, LOCAL WEIGHT, DSRC, SYMBOL\n");
-+		printf("PHYS ADDR, ");
-+
-+	printf("LOCAL WEIGHT, DSRC, SYMBOL\n");
+@@ -2556,6 +2566,9 @@ size_t perf_event__sample_event_size(const struct perf_sample *sample, u64 type,
+ 	if (type & PERF_SAMPLE_DATA_PAGE_SIZE)
+ 		result += sizeof(u64);
  
- 	ret = perf_session__process_events(session);
++	if (type & PERF_SAMPLE_CODE_PAGE_SIZE)
++		result += sizeof(u64);
++
+ 	return result;
+ }
+ 
+@@ -2730,6 +2743,11 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type,
+ 		array++;
+ 	}
+ 
++	if (type & PERF_SAMPLE_CODE_PAGE_SIZE) {
++		*array = sample->code_page_size;
++		array++;
++	}
++
+ 	return 0;
+ }
  
 -- 
 2.7.4
