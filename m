@@ -2,92 +2,114 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B518C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 418DEC282C7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E87CB218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F81D218DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:52:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="f/6ZWKqM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LFxA7GxU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730064AbfAaIwW (ORCPT
+        id S1728132AbfAaIw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:52:22 -0500
-Received: from mga07.intel.com ([134.134.136.100]:2665 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725932AbfAaIwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 03:52:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 00:52:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,543,1539673200"; 
-   d="scan'208";a="139449698"
-Received: from sqa-gate.sh.intel.com (HELO p-demo5.tsp.org) ([10.239.48.212])
-  by fmsmga002.fm.intel.com with ESMTP; 31 Jan 2019 00:52:18 -0800
-From:   Luwei Kang <luwei.kang@intel.com>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH V3] KVM: x86: Sync the pending Posted-Interrupts
-Date:   Thu, 31 Jan 2019 16:52:02 +0800
-Message-Id: <1548924722-64060-1-git-send-email-luwei.kang@intel.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 31 Jan 2019 03:52:57 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:45771 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725857AbfAaIw5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 03:52:57 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id BF6512015;
+        Thu, 31 Jan 2019 03:52:55 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 31 Jan 2019 03:52:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=B4i8qu8Fhn3wH5KYylYCfJYRSoB
+        WJG1mc5WVkWS3Sv0=; b=f/6ZWKqMpfmzi8BggP+kG7UclJd3TcKUp6aykC11Zlk
+        GuqTgTsaWBkm7/GShzosW+kiXEvjmNfDJLVARPleDfWsXtY0937zj1lQS6VjtAQs
+        s+ows7N3cR1tpkiqcjUDKp86n3XqQpwTMckQQwBtnDcc5OGTQWlHS6Ib28RUxbiy
+        4TmMeCrBo4wyU1BJ6dKk2DKlTEZJ3ehVjbAYwUVWst/rJEXbaA1ZdiCsykWEvnLq
+        oGXG4iuvI84q/JmZXciorj8vuVffeALbxIvgKRyJLY7vgvsigBtsoy8oxnlR9KrD
+        a3JmwxH4Serrpf1bvXu8sD32ckHZUWABPLA4gTpmhjQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=B4i8qu
+        8Fhn3wH5KYylYCfJYRSoBWJG1mc5WVkWS3Sv0=; b=LFxA7GxUQGCo/l67XrOaZB
+        j/AAxKqZhm0P7JsNO6J7+OGvIrfi4l0zMDA6OaWe6dWfXBavJqd1dFO1omVlRSGB
+        YFSsPPRdgCSsncXqIKFf1Owhfc+Za2qFJuF8xELS4xr5Lg2dFGo91WlzIowk+LMk
+        DTMa7UavBDh6OkaaWEu5t8rgJdRNXfff5WkuW9Xzy6sHAZb36Q4u51NHv+Cym/tc
+        ff9ze7GSG/xifQsiRJdzmRNVxGupCj22aww7cxiWBvbjUbl7/Qfd269p/rF1lmuf
+        goTPK1ehec5uvj3+HoNari2rjZZuRgXErqOIoVknT84Lg9r0x9z+6qNcWeoD6kGQ
+        ==
+X-ME-Sender: <xms:Z7dSXAel76isXfZW20rwCv9tR4kmKiNP2Sy-4sINVRIdbCY_1QdhEA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeehgdduvdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
+    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenfghrlhcuvffnffculdeftd
+    dmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttdertdforedvnecuhfhrohhmpedf
+    vfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesthhosghinhdrtggtqeenucfkph
+    epuddukedrvdduuddrvddufedruddvvdenucfrrghrrghmpehmrghilhhfrhhomhepmhgv
+    sehtohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedu
+X-ME-Proxy: <xmx:Z7dSXOOLeVGNKHitqM-b2LiSRTL5g3tkzLCfLXJvYUeytV_wOSiJ_g>
+    <xmx:Z7dSXDvSdTbEiE6iLyJtEb8UqMSTYqtrkEesdCABBvLN0XmWZ9E7KQ>
+    <xmx:Z7dSXHBlIzaPbVbRRrNPAIZe9vPN_Jwcc8fLvPXjN6DEf5yVFRZXbw>
+    <xmx:Z7dSXJh0XY8j1K8Pkx3rHg3YAjnwf8-FpygCmlNUz2vT614UJEdWSw>
+Received: from localhost (ppp118-211-213-122.bras1.syd2.internode.on.net [118.211.213.122])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5EF431030F;
+        Thu, 31 Jan 2019 03:52:54 -0500 (EST)
+Date:   Thu, 31 Jan 2019 19:52:49 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Pekka Enberg <penberg@iki.fi>
+Cc:     Christopher Lameter <cl@linux.com>,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] slub: Do trivial comments fixes
+Message-ID: <20190131085249.GC23538@eros.localdomain>
+References: <20190131041003.15772-1-me@tobin.cc>
+ <01ec2c57-4ece-5ee1-4d0d-d2f24695f482@iki.fi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01ec2c57-4ece-5ee1-4d0d-d2f24695f482@iki.fi>
+X-Mailer: Mutt 1.11.2 (2019-01-07)
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some Posted-Interrupts from passthrough devices may be lost or
-overwritten when the vCPU is in runnable state.
+On Thu, Jan 31, 2019 at 08:06:31AM +0200, Pekka Enberg wrote:
+> On 31/01/2019 6.10, Tobin C. Harding wrote:
+> > From: "Tobin C. Harding" <tobin@kernel.org>
+> > 
+> > Hi Christopher,
+> > 
+> > Here is a trivial patchset to wet my toes. This is my first patchset to
+> > mm, if there are some mm specific nuances in relation to when in the dev
+> > cycle (if ever) that minor (*cough* trivial) pathsets are acceptable
+> > please say so
+> > 
+> > This patchset fixes comments strings in the SLUB subsystem.
+> > 
+> > As per discussion at LCA I am working on getting my head around the SLUB
+> > allocator.  If you specifically do *not* want me to do minor clean up
+> > while I'm reading please say so, I will not be offended.
+> 
+> For the series:
+> 
+> Reviewed-by: Pekka Enberg <penberg@kernel.org>
 
-The SN (Suppress Notification) of PID (Posted Interrupt Descriptor) will
-be set when the vCPU is preempted (vCPU in KVM_MP_STATE_RUNNABLE state
-but not running on physical CPU). If a posted interrupt coming at this
-time, the irq remmaping facility will set the bit of PIR (Posted
-Interrupt Requests) without ON (Outstanding Notification).
-So this interrupt can't be sync to APIC virtualization register and
-will not be handled by Guest because ON is zero.
+Thanks for the review Pekka.
 
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
----
- arch/x86/kvm/vmx/vmx.c | 5 +++++
- arch/x86/kvm/x86.c     | 2 +-
- 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 4341175..8ed9634 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1221,6 +1221,11 @@ static void vmx_vcpu_pi_load(struct kvm_vcpu *vcpu, int cpu)
- 		new.sn = 0;
- 	} while (cmpxchg64(&pi_desc->control, old.control,
- 			   new.control) != old.control);
-+
-+	smp_mb__after_atomic();
-+
-+	if (!bitmap_empty((unsigned long *)pi_desc->pir, NR_VECTORS))
-+		pi_test_and_set_on(pi_desc);
- }
- 
- /*
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 3d27206..5bcf2c4 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7794,7 +7794,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 	 * 1) We should set ->mode before checking ->requests.  Please see
- 	 * the comment in kvm_vcpu_exiting_guest_mode().
- 	 *
--	 * 2) For APICv, we should set ->mode before checking PIR.ON.  This
-+	 * 2) For APICv, we should set ->mode before checking PID.PIR. This
- 	 * pairs with the memory barrier implicit in pi_test_and_set_on
- 	 * (see vmx_deliver_posted_interrupt).
- 	 *
--- 
-1.8.3.1
-
+	Tobin
