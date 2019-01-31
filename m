@@ -2,156 +2,287 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCB5C282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54076C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:29:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97DB32086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:28:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 166D72086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:29:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="C3FfKWEM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbfAaX2w (ORCPT
+        id S1727513AbfAaX3i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 18:28:52 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47236 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725915AbfAaX2w (ORCPT
+        Thu, 31 Jan 2019 18:29:38 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:10298 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725915AbfAaX3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 18:28:52 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VNSoAR062918
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 18:28:51 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qcam1076p-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 18:28:51 -0500
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Thu, 31 Jan 2019 23:28:50 -0000
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 23:28:46 -0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VNSf5e13238328
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Jan 2019 23:28:41 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D22E8BE053;
-        Thu, 31 Jan 2019 23:28:41 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 897FBBE04F;
-        Thu, 31 Jan 2019 23:28:40 +0000 (GMT)
-Received: from [9.80.226.197] (unknown [9.80.226.197])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Jan 2019 23:28:40 +0000 (GMT)
-Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
-To:     Sebastian Ott <sebott@linux.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        oberpar@linux.ibm.com, freude@linux.ibm.com, pmorel@linux.ibm.com,
-        pasic@linux.ibm.com, cohuck@redhat.com
-References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
- <alpine.LFD.2.21.1901301912380.2372@schleppi>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Thu, 31 Jan 2019 18:28:39 -0500
+        Thu, 31 Jan 2019 18:29:37 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5384c30000>; Thu, 31 Jan 2019 15:29:07 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 31 Jan 2019 15:29:35 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 31 Jan 2019 15:29:35 -0800
+Received: from [172.17.136.14] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
+ 2019 23:29:34 +0000
+Subject: Re: [PATCH] arm64: tegra: add topology data for Tegra194 cpu
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <mark.rutland@arm.com>, <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1548959754-3941-1-git-send-email-byan@nvidia.com>
+ <20190131222517.GB13156@mithrandir>
+X-Nvconfidentiality: public
+From:   Bo Yan <byan@nvidia.com>
+Message-ID: <dc0055ca-b9eb-bcc6-1815-2aa482fa7c1f@nvidia.com>
+Date:   Thu, 31 Jan 2019 15:29:34 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.LFD.2.21.1901301912380.2372@schleppi>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190131222517.GB13156@mithrandir>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19013123-8235-0000-0000-00000E53FF49
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010512; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01154550; UDB=6.00602055; IPR=6.00934982;
- MB=3.00025380; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-31 23:28:48
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013123-8236-0000-0000-0000444A730F
-Message-Id: <88b72363-9dca-4653-c326-9c37b6349a32@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310169
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548977347; bh=fShSkGhR9I+0uaotTOFrDSaaZV9VxITLqhqy4Iw9z0k=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=C3FfKWEMuKuLN3kgw8hRT+VMt2iWEXh6nImdrALjaWCvT5UOPFg9mnXz0uySZ8nmP
+         tOdkkHcFT2wxQxZD0BD2Ul1rLdqCKkwegGcWXVzEf6/8M/AiEBr5Yq5v8YldZI8UHa
+         fOVUOTqDdwo8lz9EHgCt75pFZzAACaec1/SIYRXtsLbWN5THCgr7XUg4jWCNnHGkx2
+         hPd7kPU4DFaQQfl6lOnZLXNRacOcTLXRQ7iZni9TiXk9k00jCGFjmBIy3PbfyQnL1a
+         MBhAbOyJtbjmjr9vYAJKcn3bt/Ba4jX12St6UyOJWTkifxkQOZOjXpFYw+8ynpeLE1
+         6ODf7B3JbpXrQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/19 1:32 PM, Sebastian Ott wrote:
-> On Wed, 30 Jan 2019, Tony Krowiak wrote:
->> +#if IS_ENABLED(CONFIG_ZCRYPT)
->> +void ap_bus_cfg_chg(void);
->> +#else
->> +#error "no CONFIG_ZCRYPT"
->     ^
-> I don't think that's the right thing to do here.
 
-I'd like to leave it. If somebody edits .config
-and sets CONFIG_ZCRYPT=n, then the build will
-fail. The preprocessor error above tells them
-why.
+On 1/31/19 2:25 PM, Thierry Reding wrote:
+> On Thu, Jan 31, 2019 at 10:35:54AM -0800, Bo Yan wrote:
+>> The xavier CPU architecture includes 8 CPU cores organized in
+>> 4 clusters. Add cpu-map data for topology initialization, add
+>> cache data for cache node creation in sysfs.
+>>
+>> Signed-off-by: Bo Yan <byan@nvidia.com>
+>> ---
+>>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 148 +++++++++++++++++++++++++++++--
+>>   1 file changed, 140 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> index 6dfa1ca..7c2a1fb 100644
+>> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+>> @@ -870,63 +870,195 @@
+>>   		#address-cells = <1>;
+>>   		#size-cells = <0>;
 
-> 
-> 
->> +++ b/drivers/s390/cio/chsc.h
->> @@ -9,6 +9,7 @@
->>   #include <asm/chsc.h>
->>   #include <asm/schid.h>
->>   #include <asm/qdio.h>
->> +#include <asm/ap.h>
-> 
-> This should be moved to chsc.c
+> These don't seem to be well-defined. They are mentioned in a very weird
+> locations (Documentation/devicetree/booting-without-of.txt) but there
+> seem to be examples and other device tree files that use them so maybe
+> those are all valid. It might be worth mentioning these in other places
+> where people can more easily find them.
 
-I can do that, but I'm curious why.
+It might be logical to place a reference to this document 
+(booting-without-of.txt) in architecture specific documents, for 
+example, arm/cpus.txt. I see the need for improved documentation, but 
+this probably should be best done in a separate change.
+> 
+> According to the above document, {i,d}-cache-line-size are deprecated in
+> favour of {i,d}-cache-block-size.
 
-> 
-> 
->> +++ b/drivers/s390/crypto/ap_bus.c
->> @@ -35,6 +35,7 @@
->>   #include <linux/mod_devicetable.h>
->>   #include <linux/debugfs.h>
->>   #include <linux/ctype.h>
->> +#include <asm/crw.h>
-> 
-> This is not needed here.
-
-I'll remove it.
-
-> 
-> 
->>   /*
->> +* A config change has happened, Force an ap bus rescan.
->> +*/
->> +void ap_bus_cfg_chg(void)
->> +{
->> +	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
->> +
->> +	ap_bus_force_rescan();
->> +}
->> +EXPORT_SYMBOL(ap_bus_cfg_chg);
-> 
-> There is no need for the export symbol - you don't call that function
-> from module code.
-> As an unrelated question, just to be sure: ap_bus.c is compiled as
-> built-in even with ZCRYPT=m, right?
-
-No. If you edit .config and set CONFIG_ZCRYPT=m, ap_bus.c will be built
-into the zcrypt.ko module. Through some other magic, the zcrypt module
-is loaded when linux boots.
+Mostly, this seems to be derived from the oddity of PowerPC, which might 
+have different cache-line-size and cache-block-size. I don't know if 
+there are other examples? It looks like the {i,d}-cache-line-size are 
+being used in dts files for almost all architectures, the only exception 
+is arch/sh/boot/dts/j2_mimas_v2.dts. On ARM and ARM64, cache-line-size 
+is the same as cache-block-size. So I am wondering whether the 
+booting-without-of.txt should be fixed instead? just to keep it 
+consistent among dts files, especially in arm64.
 
 > 
-> Reviewed-by: Sebastian Ott <sebott@linux.ibm.com>
+> I also don't see any mention of {i,d}-cache_sets in the device tree
+> bindings, though riscv/cpus.txt mentions {i,d}-cache-sets (note the
+> hyphen instead of underscore) in the examples. arm/l2c2x0.txt and
+> arm/uniphier/cache-unifier.txt describe cache-sets, though that's
+> slightly different.
 > 
-> Regards,
-> Sebastian
+> Might make sense to document all these in more standard places. Maybe
+> adding them to arm/cpus.txt. For consistency with other properties, I
+> think there should be called {i,d}-cache-sets like for RISC-V.
 > 
+>> +			l2-cache = <&l2_0>;
+> 
+> This seems to be called next-level-cache everywhere else, though it's
+> only formally described in arm/uniphier/cache-uniphier.txt. So might
+> also make sense to add this to arm/cpus.txt.
 
+the improved documentation is certainly desired, I agree.
+> 
+>>   		};
+>>   
+>> -		cpu@1 {
+>> +		cl0_1: cpu@1 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x10001>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_0>;
+>>   		};
+>>   
+>> -		cpu@2 {
+>> +		cl1_0: cpu@2 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x100>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_1>;
+>>   		};
+>>   
+>> -		cpu@3 {
+>> +		cl1_1: cpu@3 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x101>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_1>;
+>>   		};
+>>   
+>> -		cpu@4 {
+>> +		cl2_0: cpu@4 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x200>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_2>;
+>>   		};
+>>   
+>> -		cpu@5 {
+>> +		cl2_1: cpu@5 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x201>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_2>;
+>>   		};
+>>   
+>> -		cpu@6 {
+>> +		cl3_0: cpu@6 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x10300>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_3>;
+>>   		};
+>>   
+>> -		cpu@7 {
+>> +		cl3_1: cpu@7 {
+>>   			compatible = "nvidia,tegra194-carmel", "arm,armv8";
+>>   			device_type = "cpu";
+>>   			reg = <0x10301>;
+>>   			enable-method = "psci";
+>> +			i-cache-size = <131072>;
+>> +			i-cache-line-size = <64>;
+>> +			i-cache-sets = <512>;
+>> +			d-cache-size = <65536>;
+>> +			d-cache-line-size = <64>;
+>> +			d-cache_sets = <256>;
+>> +			l2-cache = <&l2_3>;
+>>   		};
+>>   	};
+>>   
+>> +	l2_0: l2-cache0 {
+>> +		cache-size = <2097152>;
+>> +		cache-line-size = <64>;
+>> +		cache-sets = <2048>;
+>> +		next-level-cache = <&l3>;
+>> +	};
+> 
+> Does this need a compatible string? Also, are there controllers behind
+> these caches? I'm just wondering if these also need reg properties and
+> unit-addresses.
+
+No need for compatible string. No reg properties and addresses. These 
+will be parsed by drivers/of/base.c and drivers/base/cacheinfo.c, they 
+are generic.
+> 
+> arm/l2c2x0.txt and arm/uniphier/cache-uniphier.txt describe an
+> additional property that you don't specify here: cache-level. This
+> sounds useful to have so that we don't have to guess the cache level
+> from the name, which may or may not work depending on what people name
+> the nodes.
+
+the cache level property is implied in device tree hierarchy, so after 
+system boots up, I can find cache level in related sysfs nodes:
+
+     [root@alarm cache]# cat index*/level
+     1
+     1
+     2
+     3
+
+
+> 
+> Also, similar to the L1 cache, cache-block-size is preferred over
+> cache-line-size.
+> 
+>> +	l3: l3-cache {
+>> +		cache-size = <4194304>;
+>> +		cache-line-size = <64>;
+>> +		cache-sets = <4096>;
+>> +	};
+> 
+> The same comments apply as for the L2 caches.
+> 
+> Thierry
+> 
