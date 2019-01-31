@@ -2,51 +2,51 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B72F6C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0259BC4151A
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 891B320857
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:23:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8F032087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:24:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TtI6plUg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZdUADbMG"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gg7dGWii";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YsScmzYk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387831AbfAaOXy (ORCPT
+        id S2387865AbfAaOYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 09:23:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55290 "EHLO
+        Thu, 31 Jan 2019 09:24:06 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56350 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732438AbfAaOXw (ORCPT
+        with ESMTP id S1726775AbfAaOYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 09:23:52 -0500
+        Thu, 31 Jan 2019 09:24:04 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DDEC360F93; Thu, 31 Jan 2019 14:23:27 +0000 (UTC)
+        id 3517061094; Thu, 31 Jan 2019 14:23:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548944631;
-        bh=cOv1SdLBmv4fsD9RRLAErnqJHBc4ueOGqANHW2pMlig=;
+        s=default; t=1548944643;
+        bh=XRws+PX9K+dRZofUcw1/8OWV2YXiS1PN5N6cB98Ksng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TtI6plUgqHWAdR67fnawPVvSst2ctVtAcim5VOPi0upf+8d4j1pnrtTZFTAR7CXUE
-         xZYs+YvHvAxBO4AjGzffdpHNLMGYivUQ37MaQfjLxF8fY+FH42xadESIII8t/6JFQ+
-         4GBwq6ztsEPq78sUhf58l008y/hE1IRserorUBCc=
+        b=Gg7dGWiiqSX8iwcwgAvTnDDLHtFkeKp9Yc3V27iJQi3KudgPrbBQMk4PD5M2Kx37X
+         Osf/kzN3jYuv4qnx8PsphY50ZEGIy9JcUqjFFVVLms0lQQwoVSexPTAg1rKDXZSZE8
+         A0udrfXxxJyud1sJq/k6UvhwgSz4lCupackSdgWc=
 Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: saiprakash.ranjan@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A976560F90;
-        Thu, 31 Jan 2019 14:23:18 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E388A60F90;
+        Thu, 31 Jan 2019 14:23:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548944605;
-        bh=cOv1SdLBmv4fsD9RRLAErnqJHBc4ueOGqANHW2pMlig=;
+        s=default; t=1548944596;
+        bh=XRws+PX9K+dRZofUcw1/8OWV2YXiS1PN5N6cB98Ksng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZdUADbMGtyre/kDi9hqGjBv0mg1a6L9b5aKoZEilDd+mNYwZE5egTdnQqWPjBk92z
-         +6TNk0h65KYQkeAI6KVwfaDNf4DxbyGe5wiBsJ/dmVbkL4+FGY8YUxayV3hWNl5Dbs
-         3AvryYs9rcZ5NrQBN7uDHoKm9DAc7Qhb800S0PkA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A976560F90
+        b=YsScmzYkjh0FfWi9fMClDfT/J1zWvvEGlz4gUvhIOE+NTRluITmpkoQu0qRuK9tTV
+         9IfvnYal2O2GbAwNdwn2scoAyskxcIhr/ZRHVWkg4FoSWerVXxiudDhqF9LNpEUVXJ
+         P4fUOK3EUFl5/w7ZIIAk46shkMLi/PQxU/IJbAfg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E388A60F90
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
 From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
@@ -71,9 +71,9 @@ Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: [PATCHv6 5/6] coresight: etm4x: Add ETM PIDs for SDM845 and MSM8996
-Date:   Thu, 31 Jan 2019 19:52:23 +0530
-Message-Id: <c050252dc8eb3fea03119cd5efc422ed6e48834e.1548943727.git.saiprakash.ranjan@codeaurora.org>
+Subject: [PATCHv6 4/6] coresight: etm4x: Add support to enable ETMv4.2
+Date:   Thu, 31 Jan 2019 19:52:22 +0530
+Message-Id: <f5712a48f499d3b2e89f58a43eb30d3dff8b1103.1548943727.git.saiprakash.ranjan@codeaurora.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <cover.1548943727.git.saiprakash.ranjan@codeaurora.org>
 References: <cover.1548943727.git.saiprakash.ranjan@codeaurora.org>
@@ -84,50 +84,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of overriding the peripheral id(PID) check in AMBA
-by hardcoding them in DT, add the PIDs to the ETM4x driver.
-Here we use Unique Component Identifier(UCI) for MSM8996
-since the ETM and CPU debug module shares the same PIDs.
-SDM845 does not support CPU debug module.
+SDM845 has ETMv4.2 and can use the existing etm4x driver.
+But the current etm driver checks only for ETMv4.0 and
+errors out for other etm4x versions. This patch adds this
+missing support to enable SoC's with ETMv4x to use same
+driver by checking only the ETM architecture major version
+number.
+
+Without this change, we get below error during etm probe:
+
+/ # dmesg | grep etm
+[    6.660093] coresight-etm4x: probe of 7040000.etm failed with error -22
+[    6.666902] coresight-etm4x: probe of 7140000.etm failed with error -22
+[    6.673708] coresight-etm4x: probe of 7240000.etm failed with error -22
+[    6.680511] coresight-etm4x: probe of 7340000.etm failed with error -22
+[    6.687313] coresight-etm4x: probe of 7440000.etm failed with error -22
+[    6.694113] coresight-etm4x: probe of 7540000.etm failed with error -22
+[    6.700914] coresight-etm4x: probe of 7640000.etm failed with error -22
+[    6.707717] coresight-etm4x: probe of 7740000.etm failed with error -22
+
+With this change, etm probe is successful:
+
+/ # dmesg | grep etm
+[    6.659198] coresight-etm4x 7040000.etm: CPU0: ETM v4.2 initialized
+[    6.665848] coresight-etm4x 7140000.etm: CPU1: ETM v4.2 initialized
+[    6.672493] coresight-etm4x 7240000.etm: CPU2: ETM v4.2 initialized
+[    6.679129] coresight-etm4x 7340000.etm: CPU3: ETM v4.2 initialized
+[    6.685770] coresight-etm4x 7440000.etm: CPU4: ETM v4.2 initialized
+[    6.692403] coresight-etm4x 7540000.etm: CPU5: ETM v4.2 initialized
+[    6.699024] coresight-etm4x 7640000.etm: CPU6: ETM v4.2 initialized
+[    6.705646] coresight-etm4x 7740000.etm: CPU7: ETM v4.2 initialized
 
 Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
 ---
-For testing, all dependent patches are in below tree:
- * https://github.com/saiprakash-ranjan/linux/tree/coresight-next
-
-This patch depends on UCI support by Mike Leach in below link:
- * https://lore.kernel.org/lkml/20190130234051.2294-1-mike.leach@linaro.org/
----
- drivers/hwtracing/coresight/coresight-etm4x.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm4x.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
-index 08ce37c9475d..5819ced2beec 100644
+index dd9b9b5ebb84..08ce37c9475d 100644
 --- a/drivers/hwtracing/coresight/coresight-etm4x.c
 +++ b/drivers/hwtracing/coresight/coresight-etm4x.c
-@@ -1078,11 +1078,15 @@ static struct amba_cs_uci_id uci_id_etm4[] = {
- };
+@@ -55,7 +55,8 @@ static void etm4_os_unlock(struct etmv4_drvdata *drvdata)
  
- static const struct amba_id etm4_ids[] = {
--	CS_AMBA_ID(0x000bb95d),		/* Cortex-A53 */
--	CS_AMBA_ID(0x000bb95e),		/* Cortex-A57 */
--	CS_AMBA_ID(0x000bb95a),		/* Cortex-A72 */
--	CS_AMBA_ID(0x000bb959),		/* Cortex-A73 */
--	CS_AMBA_UCI_ID(0x000bb9da, uci_id_etm4),	/* Cortex-A35 */
-+	CS_AMBA_ID(0x000bb95d),			/* Cortex-A53 */
-+	CS_AMBA_ID(0x000bb95e),			/* Cortex-A57 */
-+	CS_AMBA_ID(0x000bb95a),			/* Cortex-A72 */
-+	CS_AMBA_ID(0x000bb959),			/* Cortex-A73 */
-+	CS_AMBA_UCI_ID(0x000bb9da, uci_id_etm4),/* Cortex-A35 */
-+	CS_AMBA_UCI_ID(0x000f0205, uci_id_etm4),/* Qualcomm Kryo */
-+	CS_AMBA_UCI_ID(0x000f0211, uci_id_etm4),/* Qualcomm Kryo */
-+	CS_AMBA_ID(0x000bb802),			/* Qualcomm Kryo 385 Cortex-A55 */
-+	CS_AMBA_ID(0x000bb803),			/* Qualcomm Kryo 385 Cortex-A75 */
- 	{},
- };
- 
+ static bool etm4_arch_supported(u8 arch)
+ {
+-	switch (arch) {
++	/* Mask out the minor version number */
++	switch (arch & 0xf0) {
+ 	case ETM_ARCH_V4:
+ 		break;
+ 	default:
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
