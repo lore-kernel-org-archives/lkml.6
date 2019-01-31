@@ -2,90 +2,152 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8ACC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B381C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A775020B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qBcetFC+"
+	by mail.kernel.org (Postfix) with ESMTP id 3C51D2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729102AbfAaWKD (ORCPT
+        id S1729188AbfAaWKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 17:10:03 -0500
-Received: from ozlabs.org ([203.11.71.1]:33487 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726284AbfAaWKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 17:10:02 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43rDtc2NfMz9sDX;
-        Fri,  1 Feb 2019 09:10:00 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548972600;
-        bh=2/ktIMrwkFcN/uRzwgPhqOKkapk2PffOcgOHIgKjkjE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qBcetFC+jLYy0dqxZvWlx9rl0eD3Eso+GvwQnJl6OC259s0JCkmPmeTOuYupqvpm3
-         T3Z0WifEO7FOeSNwmbIatbLVTVHqXyaYpVrD1f8jup36ADvnNcfwCNyCfaV8BbriYj
-         z1tQcf7xs1WTo1rLLiW1nexMWEdh/A0uV6grkYiAU8zYzNYgkhERTRAVUiPO0vGhWa
-         fwSgxODkBfI77QdmGN09IYuYrTU7OJp4dvs/uD84xEN5Zv8faYk7ExvMZBWtNJks4e
-         npXjQsaQhK6OY/2iCHSSe+tcEJl0yRqX1/l57Kt7flfJnPCen7HqDs843rsENaIhk3
-         +b8gI1h549tZA==
-Date:   Fri, 1 Feb 2019 09:09:39 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the ext3 tree
-Message-ID: <20190201090939.08eeda02@canb.auug.org.au>
-In-Reply-To: <20190131101122.GD19222@quack2.suse.cz>
-References: <20190131151411.7e8b89b3@canb.auug.org.au>
-        <20190131101122.GD19222@quack2.suse.cz>
+        Thu, 31 Jan 2019 17:10:35 -0500
+Received: from gateway34.websitewelcome.com ([192.185.148.164]:37651 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726284AbfAaWKf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 17:10:35 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id DD02251B5E
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 16:09:35 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id pKWdgEYq8dnCepKWdgG159; Thu, 31 Jan 2019 16:09:35 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.82.227] (port=47950 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gpKWd-0021BD-Fe; Thu, 31 Jan 2019 16:09:35 -0600
+Subject: Re: [PATCH] btrfs: qgroup: Fix inconsistent IS_ERR and PTR_ERR
+To:     dsterba@suse.cz, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190131023016.GA3413@embeddedor>
+ <20190131114926.GA2900@twin.jikos.cz>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <56a9b4fa-7a5a-a8b0-d1d0-b8de217de9ce@embeddedor.com>
+Date:   Thu, 31 Jan 2019 16:09:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n7C1yrq3FIFtrBcXeHrTUhh"; protocol="application/pgp-signature"
+In-Reply-To: <20190131114926.GA2900@twin.jikos.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.82.227
+X-Source-L: No
+X-Exim-ID: 1gpKWd-0021BD-Fe
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.82.227]:47950
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/n7C1yrq3FIFtrBcXeHrTUhh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jan,
 
-On Thu, 31 Jan 2019 11:11:22 +0100 Jan Kara <jack@suse.cz> wrote:
->
-> Yeah, I've fixed that already in my tree. Thanks for letting me know and
-> sorry for the breakage.
+On 1/31/19 5:49 AM, David Sterba wrote:
+> On Wed, Jan 30, 2019 at 08:30:16PM -0600, Gustavo A. R. Silva wrote:
+>> Fix inconsistent IS_ERR and PTR_ERR in btrfs_qgroup_trace_subtree_after_cow
+>>
+>> The proper pointer to be passed as argument is reloc_eb.
+>>
+>> This bug was detected with the help of Coccinelle.
+>>
+>> Fixes: 2b35a512e9cf ("btrfs: qgroup: Use delayed subtree rescan for balance")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  fs/btrfs/qgroup.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+>> index 8559ed92d708..16d7ec8e4a06 100644
+>> --- a/fs/btrfs/qgroup.c
+>> +++ b/fs/btrfs/qgroup.c
+>> @@ -3931,7 +3931,7 @@ int btrfs_qgroup_trace_subtree_after_cow(struct btrfs_trans_handle *trans,
+>>  				   block->reloc_generation, block->level,
+>>  				   &block->first_key);
+>>  	if (IS_ERR(reloc_eb)) {
+>> -		ret = PTR_ERR(subv_eb);
+>> +		ret = PTR_ERR(reloc_eb);
+> 
+> Thanks, this was reported and fixed but the change has not propagated to
+> for-next yet.
+> 
 
-Thanks.
+Great. Good to know it is fixed now.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/n7C1yrq3FIFtrBcXeHrTUhh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxTciQACgkQAVBC80lX
-0GwB7Qf/SkXfeq8qUGxf/3aLrQswVGAa2JKtF5tHUTMRuHgb5cWPX2V5smkC5smM
-qNHgTdM8YVnXHhbD73zKzRcNkWg/y5bEr0G842DKfqV0PmILO9uRBczyXtWMvcaR
-ahabaHgsH//+kwR1XXfy3ehCpNoi5U64+LWbhr8yc4YpLeOXLarY8V8EC7CgAkRB
-6QMC7sE9MSqry1FQtJ/BgJT4gFbQekCakI1ROEDkStkgW/eRPyVr5GCBDaZs7gGr
-UXoKx2lz/UJxpZmosKKB/V/wYOurGWcTAyb2e63qfCrtwFI9iZQbUbdtfQBRLow6
-7w+3qBt/58o9B6FFfGutng1x1btFSA==
-=y7+E
------END PGP SIGNATURE-----
-
---Sig_/n7C1yrq3FIFtrBcXeHrTUhh--
+Thanks
+--
+Gustavo
