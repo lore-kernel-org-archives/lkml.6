@@ -2,121 +2,180 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D598C282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E66FC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2107220B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DF0420B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:09:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="PJ6uJsN8"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NjqBS2E2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732240AbfAaKJ0 (ORCPT
+        id S1732268AbfAaKJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:09:26 -0500
-Received: from mail-eopbgr50045.outbound.protection.outlook.com ([40.107.5.45]:16598
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732048AbfAaKJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:09:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=whcIrtpf1u2eLoEXelIOOL7D42rL5WheiHiqPGAdgSc=;
- b=PJ6uJsN8ni3LXmJuhX9BxyrEO51VbpCy29FlF0TKXLSIB23mHIrlkf7sGf9u92JjBlXnSrtGloB1Z6fZScqvhHNJdn4Au2JsRnYoD0S5rHUYPZGSgBuGQf/ZkOq4CD4KQMVFOANjbWhcUi2+xss73Jh7j/53tyy77s8by6tgsBg=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5460.eurprd04.prod.outlook.com (20.178.115.92) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.21; Thu, 31 Jan 2019 10:09:15 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::bd44:e001:ab8d:1c51]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::bd44:e001:ab8d:1c51%2]) with mapi id 15.20.1580.019; Thu, 31 Jan 2019
- 10:09:15 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
-        "mkl@pengutronix.de" <mkl@pengutronix.de>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
-CC:     "wg@grandegger.com" <wg@grandegger.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] can: flexcan: fix timeout when set small bitrate
-Thread-Topic: [PATCH] can: flexcan: fix timeout when set small bitrate
-Thread-Index: AQHUuUiQ4yWIPYpxOkiOxPx7F+znnqXJJ0sw
-Date:   Thu, 31 Jan 2019 10:09:15 +0000
-Message-ID: <AM0PR04MB42118221E7FEC6EC2503A72B80910@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <20190131093509.12613-1-qiangqing.zhang@nxp.com>
-In-Reply-To: <20190131093509.12613-1-qiangqing.zhang@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5460;6:VnQRBJT4PIxgDLGRhl8DyEy0DsZ2Vr9tiPY2rOgzzYxxtsvm/W3FxsF2dY9RsdMuRRMB5dHmW74tdt6lp9P/8mA3xBGZUHNo+QDKnIY7lzjXZId0qvpcQEXPqSXZHhewWI+OnR9yze9gCBDiCqq989YN4s0eeNPvfot9yj+D0xlUS21oTSS6n5TOaBtbL9RKshSylwOwoik28QaUloBXuMstaMkL6gxHja+dL4LlLAZqWmcLjywXp1sTJiykr4xILtYykPR5CUliZQ9J7jYYqwXrJVuR/AIAUgylR2ANLB0nLe0TqXhuwkDq8/+S4ncsRP3PXbdpY0j+z02M12Ry4+P4dxWVG9Mvb+frRJ/f6zCVGzrjZS5LemkOdpe8Mwv0449H94hHPKOE+uEMh1cjA6Udxvv+/cQ4drHpdHRKc/4F0ULraMrkvlgl9v+TNt3a0iOforC3YYdPCQSomX4P4Q==;5:o4cR1mat7HoTFsdBr2m6GkIwTVs65+kqTqV2TGh5N479agodjDF9KlzROzDBH8PQeIq/wTunIk/uwg+3pODYrgybdaTXj6pKKjkTTzuAWVBaTDRifBpoH626k1aZotkn7vWILpDyCyCrBzwSfFQlI+jPQ2zyj4jq7+ck13TG0Wh/GBl+7TsdMJNsSO1aUY2HsDO38ZN9r2Drno06Sa0kaQ==;7:+2QUUiVgKeJp+DZCo0IrN7D8OGbxntWsZwGPYJV3HkApv4uUvMgRYXJ5R4vN/IOryCRMXwu7y6BjedY4ZGucoJCP/nNE+eZfuU2WPSl70oLTj97cNtR3U3E3umQXGMtLeR4v19WrFukEORyUjWcjmw==
-x-ms-office365-filtering-correlation-id: 87633cb3-681d-4b6f-3224-08d687642829
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5460;
-x-ms-traffictypediagnostic: AM0PR04MB5460:
-x-microsoft-antispam-prvs: <AM0PR04MB5460DEA910DCB3CFCC689C7880910@AM0PR04MB5460.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09347618C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(136003)(376002)(346002)(189003)(199004)(45904002)(13464003)(66066001)(76176011)(97736004)(6506007)(14444005)(8676002)(110136005)(68736007)(316002)(71190400001)(54906003)(44832011)(81166006)(25786009)(74316002)(9686003)(4326008)(81156014)(8936002)(53936002)(6246003)(55016002)(2201001)(305945005)(33656002)(256004)(71200400001)(99286004)(2501003)(14454004)(3846002)(105586002)(229853002)(53546011)(2906002)(6436002)(6116002)(476003)(26005)(486006)(7696005)(446003)(11346002)(186003)(86362001)(106356001)(478600001)(102836004)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5460;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 3hrdTkPx2Tl+0L5QyQIM+A52U/bbKzK5QabRmdVAfcpcpHf/pfbnIn4V8DIAUSvzGw/Kjd2Wu0JwYmxIV2pUbllUyHWw/Z7QqsYnpAR5K65hFSv8+SjriS3rHkkLpEvcvzKvEm14O/XXGxp5+FP0F2OEfixh7j6wrFFl9EZVzuLNB77vN1de8ABIW+1lmyiNx2P/4cTGoRSLZcpQ8+BlNLPK5v2/6Q1v1S6kCcg2UMolwoBmcTPF37ijyycC/PPRo8nQ83bjK7ggBhKSZeqHEAQaX/lGA/h/wnbKKN1RCguv/iA0P+AhUYB3g8F2uEDKKaq0H0DcoATjzenT196J2y/gdd/oLtHDYYy+dNupaEaUhQvS5TnVWTq5tfAE4PNz4tuOSLDz2kRI1KG4wanXnj7stomyFqngh7ljF6Xp9ds=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 31 Jan 2019 05:09:30 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44793 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732244AbfAaKJ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 05:09:27 -0500
+Received: by mail-vs1-f65.google.com with SMTP id u11so1591419vsp.11
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:09:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TqfcER/WpG3pVm3Pf9Lr3V74srT8wVWkZMeoFRsH8cc=;
+        b=NjqBS2E2dToPUfGhYJYq1Y/hMUpwrXDw6YR7RFfmUr0x4Fx7GecsCrGvG1ZO023P9O
+         zah7tCLaj7qS1Ow/jKYZ6qM9WLcTK4gKTBMO9hNGjjXlCrZ7wWg1u5/6wA2MlxW9fB1d
+         vf03gJuYTDIkzW9gHS1AZ9F+CVn4tTpTrlDB4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TqfcER/WpG3pVm3Pf9Lr3V74srT8wVWkZMeoFRsH8cc=;
+        b=bopvOTn7Va32ejNzgRqlxb+Q+IWijzZtBj9GO83XWSM5yAqWO8vbXBnY1Yyu0Cdwhe
+         cHsEP9vhgBsbqhCTtX1rkvHZXiWao30oJyvz9Tv8n8lVCIiRDyVW57swe6Z1c+o2SMZ6
+         T+VpgWRAQiL9/v1F5a5ng2MoR20W2chucYectKYMWBLnZv67NnrSD93vo4ylyaWqgsu/
+         qSv41NlKUuQCiHVhoURe57qYAe8SN/i+Cx/IrrPQp/8fha9UNOMI5mrR9aKeCvZbFWbg
+         y1BrLD8y2r+9iNehWL5HCw5+xCXg9IdNLv1+npTwl5bcAxQXJPV9/H6sbK9J+3KeW4J3
+         3AYQ==
+X-Gm-Message-State: AJcUukd39/s+/e2CSl7p81eJlz9C1iHAsmCSSy6vovQBdP3ZQFiI5j1A
+        g5h9YHTlZWvzmWlJqao9pQ3hOSYaAaM=
+X-Google-Smtp-Source: ALg8bN7oknSKMycjo/SKuEZ8McbI7CFWPMe5tn4/r/IwxCZd9Iy8llhmKaxlIwk4vFJDssFGCoTFeg==
+X-Received: by 2002:a67:1a84:: with SMTP id a126mr14360859vsa.165.1548929365968;
+        Thu, 31 Jan 2019 02:09:25 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id e67sm3811919vsd.32.2019.01.31.02.09.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 02:09:24 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id h78so1621898vsi.6
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:09:24 -0800 (PST)
+X-Received: by 2002:a67:7657:: with SMTP id r84mr14197755vsc.117.1548929363982;
+ Thu, 31 Jan 2019 02:09:23 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87633cb3-681d-4b6f-3224-08d687642829
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 10:09:15.8770
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5460
+References: <00000000000081e6cc0580aa76a2@google.com> <80e90ecd-77f5-00a3-4e91-5e9eea2aa117@I-love.SAKURA.ne.jp>
+ <27008e5f-9dfc-a09a-cdb9-824d470fb9dd@I-love.SAKURA.ne.jp> <20190130114052.GB30781@kroah.com>
+In-Reply-To: <20190130114052.GB30781@kroah.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 31 Jan 2019 23:09:11 +1300
+X-Gmail-Original-Message-ID: <CAGXu5jKezbEYNUEhMZi=4UhKV9m8wiJc1fo+fxNf5CaaBUMP8w@mail.gmail.com>
+Message-ID: <CAGXu5jKezbEYNUEhMZi=4UhKV9m8wiJc1fo+fxNf5CaaBUMP8w@mail.gmail.com>
+Subject: Re: BUG: unable to handle kernel paging request in dput (2)
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Omar Sandoval <osandov@fb.com>,
+        syzbot <syzbot+b382ba6a802a3d242790@syzkaller.appspotmail.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Joakim Zhang
-> Sent: Thursday, January 31, 2019 5:37 PM
-> To: mkl@pengutronix.de; linux-can@vger.kernel.org
-> Cc: wg@grandegger.com; netdev@vger.kernel.org;
-> linux-kernel@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; Joakim
-> Zhang <qiangqing.zhang@nxp.com>
-> Subject: [PATCH] can: flexcan: fix timeout when set small bitrate
->=20
-> Current we can meet timeout issue when setting a small bitrate like 10000=
- as
-> follows on i.MX6UL EVK board (ipg clock =3D 66MHZ, per clock =3D 30MHZ):
-> root@imx6ul7d:~# ip link set can0 up type can bitrate 10000 A link change
-> request failed with some changes committed already.
-> Interface can0 may have been left with an inconsistent configuration, ple=
-ase
-> check.
-> RTNETLINK answers: Connection timed out
->=20
-> It is caused by calling of flexcan_chip_unfreeze() timeout.
->=20
-> Originally the code is using usleep_range(10, 20) for unfreeze operation,=
- but
-> the patch (8badd65 can: flexcan: avoid calling usleep_range from interrup=
-t
-> context) changed it into udelay(10) which is only a half delay of before,
-> there're also some other delay changes.
->=20
-> After double to FLEXCAN_TIMEOUT_US to 100 can fix the issue.
->=20
-> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+On Thu, Jan 31, 2019 at 12:41 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Jan 30, 2019 at 08:26:24PM +0900, Tetsuo Handa wrote:
+> > On 2019/01/30 20:11, Tetsuo Handa wrote:
+> > > Hello, Omar.
+> > >
+> > > syzbot is reporting a crash due to dput(-EINVAL) [1]. I think the location is
+> > >
+> > >         dir = debugfs_lookup(buts->name, blk_debugfs_root);
+> > >         if (!dir)
+> > >                 bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
+> > >
+> > > added by commit 6ac93117ab009d39 ("blktrace: use existing disk debugfs directory").
+> > >
+> > > Currently, Greg Kroah-Hartman is posting patches:
+> > >
+> > >   When calling debugfs functions, there is no need to ever check the
+> > >   return value.  The function can work or not, but the code logic should
+> > >   never do something different based on this.
+> > >
+> > > Omar, what do you want to do for this case?
+> > >
+> > > [1] https://syzkaller.appspot.com/bug?extid=b382ba6a802a3d242790
+> > >
+> >
+> > The function which returned -EINVAL instead of NULL seems to be debugfs_lookup()
+> > modified by commit ff9fb72bc07705c0 ("debugfs: return error values, not NULL").
+>
+> Ok, the patch below should fix this up.
+>
+> thanks,
+>
+> greg k-h
+>
+> -------------------------
+>
+> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Subject: [PATCH] debugfs: debugfs_lookup() should return NULL if not found
+>
+> Lots of callers of debugfs_lookup() were just checking NULL to see if
+> the file/directory was found or not.  By changing this in ff9fb72bc077
+> ("debugfs: return error values, not NULL") we caused some subsystems to
+> easily crash.
+>
+> Fixes: ff9fb72bc077 ("debugfs: return error values, not NULL")
+> Reported-by: syzbot+b382ba6a802a3d242790@syzkaller.appspotmail.com
+> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Cc: Omar Sandoval <osandov@fb.com>
+> Cc: Jens Axboe <axboe@fb.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  fs/debugfs/inode.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+> index b16f8035b1af..29c68c5d44d5 100644
+> --- a/fs/debugfs/inode.c
+> +++ b/fs/debugfs/inode.c
+> @@ -254,8 +254,8 @@ MODULE_ALIAS_FS("debugfs");
+>   * @parent: a pointer to the parent dentry of the file.
+>   *
+>   * This function will return a pointer to a dentry if it succeeds.  If the file
+> - * doesn't exist or an error occurs, %ERR_PTR(-ERROR) will be returned.  The
+> - * returned dentry must be passed to dput() when it is no longer needed.
+> + * doesn't exist or an error occurs, %NULL will be returned.  The returned
+> + * dentry must be passed to dput() when it is no longer needed.
+>   *
+>   * If debugfs is not enabled in the kernel, the value -%ENODEV will be
+>   * returned.
+> @@ -265,17 +265,17 @@ struct dentry *debugfs_lookup(const char *name, struct dentry *parent)
+>         struct dentry *dentry;
+>
+>         if (IS_ERR(parent))
+> -               return parent;
+> +               return NULL;
+>
+>         if (!parent)
+>                 parent = debugfs_mount->mnt_root;
+>
+>         dentry = lookup_one_len_unlocked(name, parent, strlen(name));
+>         if (IS_ERR(dentry))
+> -               return dentry;
+> +               return NULL;
+>         if (!d_really_is_positive(dentry)) {
+>                 dput(dentry);
+> -               return ERR_PTR(-EINVAL);
+> +               return NULL;
+>         }
+>         return dentry;
+>  }
+> --
+> 2.20.1
+>
 
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+FYI, this patch does not fix the relay.c crash I bisected... I think
+more clean-up is needed?
 
-Regards
-Dong Aisheng
+-Kees
