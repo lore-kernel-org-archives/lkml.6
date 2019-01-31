@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA264C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A37DC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE101218DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:03:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34A50218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:03:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732603AbfAaMDH (ORCPT
+        id S1732620AbfAaMDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:03:07 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34558 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732334AbfAaMDF (ORCPT
+        Thu, 31 Jan 2019 07:03:34 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41275 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729892AbfAaMDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:03:05 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u89-v6so2477939lje.1;
-        Thu, 31 Jan 2019 04:03:03 -0800 (PST)
+        Thu, 31 Jan 2019 07:03:34 -0500
+Received: by mail-lj1-f193.google.com with SMTP id k15-v6so2432515ljc.8;
+        Thu, 31 Jan 2019 04:03:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FvEO4l3q1daWP1Hr7aRKN2wmuVFYtixXLAF2w7m5GoE=;
-        b=poS6EwD++TepBbPjfAzz09UFBZj5wJLeNWeLFlqxjQJp1DnxC3PioHYj53gI37xDTc
-         j51J9rwmZBGDn95T7oi+Sjkv/X13iVe+vftdzW8Q2jLRv+oeLTiYCauIoEpnHJDClv5d
-         u5WFGgudXACVK0ZKdDgfVdRf0MWGHwUNKcUraF/zDcb0Ai7RXMJND0VURjao/Y4sRfUT
-         s2QZkacWKNkbfon3swWqQuqa0RIDvRHgID5doYay7oOBP3WSmG7oMkAYAaY5xrYRK9sz
-         5i3MipJzXtuP4PUuTJlh41PpjSMYks7WJseXNQeU6pCtbMyF8M3zyYbRmL/STVc52+co
-         7oKg==
-X-Gm-Message-State: AJcUukeNMJExq7n50izy7wgosUSQ1ACRMXT93wlYOm2Mvtd0d4E1Gl8F
-        vLROFbZHlWHySIRFFJK6ZAQ=
-X-Google-Smtp-Source: ALg8bN62YYXGgQ7v6pNd6MFoRtulbcA9rpHybDvG66EE0JxeV2NtCYyMu36gvnvIP/qo6fysCXCZlA==
-X-Received: by 2002:a2e:87c3:: with SMTP id v3-v6mr27691792ljj.13.1548936182304;
-        Thu, 31 Jan 2019 04:03:02 -0800 (PST)
+        bh=RhIIaawKxXGdGw9tURA71dsUwy7rC8b83r901j6v9IA=;
+        b=isq4djzK42Zi61cnIwyDQzLs8OZenMA0aFgPDpX1gLwuH5EktqQVD2DXeO8zbZE4oG
+         Qj2qv2ENubBO67bX739neejCcLIqdZrQkxxGKdGP/qq8P4ZVRb6ZIXopTlY0IZ2QO1f0
+         XETID1TgiQWsxmwZwhFIJDKhzWe3VBGIlcBNvo4T/K5jpIfQJyCZY6ZJyHggpcOjWoCM
+         gx3qoaniYp3y5maFil6hrEf01zs2wq4JW0qqqtguXCP83ehJ1G/v7JZHp8pkLzTRdOo1
+         uQfl2ZfH+Rv7Ge9m1Y3Bg65NVGXJpu3hO8geEBrYnoDJi5i2jT/ivy7Nk07MKZCqHsLE
+         jFgw==
+X-Gm-Message-State: AJcUukdznd0ZbUZHtXMf1r0zme+g+BTRJk7f4rycsPMdROQRQ1KJIlrR
+        eaiDAjhGGETmBBAOARk2Yhc=
+X-Google-Smtp-Source: ALg8bN4wm6IZZxKzMIUBmBaMrNW3kGHT3R3tgzH0TtJiFcLMIyz2PztYy86YWLUfRRf/l0hmlfoK9A==
+X-Received: by 2002:a2e:8007:: with SMTP id j7-v6mr28184294ljg.50.1548936211077;
+        Thu, 31 Jan 2019 04:03:31 -0800 (PST)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id f123sm115751lff.41.2019.01.31.04.03.00
+        by smtp.gmail.com with ESMTPSA id d5sm779370lfi.65.2019.01.31.04.03.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 04:03:01 -0800 (PST)
-Date:   Thu, 31 Jan 2019 14:02:49 +0200
+        Thu, 31 Jan 2019 04:03:30 -0800 (PST)
+Date:   Thu, 31 Jan 2019 14:03:18 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
 Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
@@ -56,9 +56,9 @@ Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v4 02/10] regulator: bd718x7 use chip specific and
- generic data structs
-Message-ID: <5c58562b069b8b09ae44b344bb20252ed385993b.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [RFC PATCH v4 03/10] clk: bd718x7: use chip specific and generic
+ data structs
+Message-ID: <6003ef36e7aa8a55c58a3328af106d2955280a95.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -71,100 +71,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Header rohm-bd718x7.h was split to generic and component specific
-parts. This changed the struct bd718x7. Adapt the regulator driver to
+parts. This changed the struct bd718x7. Adapt the clk driver to
 these changes.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Acked-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/bd718x7-regulator.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/clk/clk-bd718x7.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
-index ccea133778c8..9109920b4a06 100644
---- a/drivers/regulator/bd718x7-regulator.c
-+++ b/drivers/regulator/bd718x7-regulator.c
-@@ -1018,11 +1018,11 @@ static int bd718xx_probe(struct platform_device *pdev)
- 	struct bd718xx *mfd;
- 	struct regulator_config config = { 0 };
- 	struct bd718xx_pmic_inits pmic_regulators[] = {
--		[BD718XX_TYPE_BD71837] = {
-+		[ROHM_CHIP_TYPE_BD71837] = {
- 			.r_datas = bd71837_regulators,
- 			.r_amount = ARRAY_SIZE(bd71837_regulators),
- 		},
--		[BD718XX_TYPE_BD71847] = {
-+		[ROHM_CHIP_TYPE_BD71847] = {
- 			.r_datas = bd71847_regulators,
- 			.r_amount = ARRAY_SIZE(bd71847_regulators),
- 		},
-@@ -1037,15 +1037,15 @@ static int bd718xx_probe(struct platform_device *pdev)
- 		goto err;
- 	}
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index 60422c72d142..461228ebf703 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -17,7 +17,7 @@ struct bd718xx_clk {
+ 	u8 reg;
+ 	u8 mask;
+ 	struct platform_device *pdev;
+-	struct bd718xx *mfd;
++	struct rohm_regmap_dev *mfd;
+ };
  
--	if (mfd->chip_type >= BD718XX_TYPE_AMOUNT ||
--	    !pmic_regulators[mfd->chip_type].r_datas) {
-+	if (mfd->chip.chip_type >= ROHM_CHIP_TYPE_AMOUNT ||
-+	    !pmic_regulators[mfd->chip.chip_type].r_datas) {
- 		dev_err(&pdev->dev, "Unsupported chip type\n");
- 		err = -EINVAL;
- 		goto err;
- 	}
+ static int bd71837_clk_set(struct clk_hw *hw, int status)
+@@ -68,7 +68,7 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	int rval = -ENOMEM;
+ 	const char *parent_clk;
+ 	struct device *parent = pdev->dev.parent;
+-	struct bd718xx *mfd = dev_get_drvdata(parent);
++	struct rohm_regmap_dev *mfd = dev_get_drvdata(parent);
+ 	struct clk_init_data init = {
+ 		.name = "bd718xx-32k-out",
+ 		.ops = &bd71837_clk_ops,
+@@ -119,5 +119,5 @@ static struct platform_driver bd71837_clk = {
+ module_platform_driver(bd71837_clk);
  
- 	/* Register LOCK release */
--	err = regmap_update_bits(mfd->regmap, BD718XX_REG_REGLOCK,
-+	err = regmap_update_bits(mfd->chip.regmap, BD718XX_REG_REGLOCK,
- 				 (REGLOCK_PWRSEQ | REGLOCK_VREG), 0);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to unlock PMIC (%d)\n", err);
-@@ -1065,7 +1065,7 @@ static int bd718xx_probe(struct platform_device *pdev)
- 	 * for all reset types because OTP loading at READY will clear SEL
- 	 * bit allowing HW defaults for power rails to be used
- 	 */
--	err = regmap_update_bits(mfd->regmap, BD718XX_REG_TRANS_COND1,
-+	err = regmap_update_bits(mfd->chip.regmap, BD718XX_REG_TRANS_COND1,
- 				 BD718XX_ON_REQ_POWEROFF_MASK |
- 				 BD718XX_SWRESET_POWEROFF_MASK |
- 				 BD718XX_WDOG_POWEROFF_MASK |
-@@ -1078,17 +1078,17 @@ static int bd718xx_probe(struct platform_device *pdev)
- 		dev_dbg(&pdev->dev, "Changed all resets from SVNS to READY\n");
- 	}
- 
--	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
-+	for (i = 0; i < pmic_regulators[mfd->chip.chip_type].r_amount; i++) {
- 
- 		const struct regulator_desc *desc;
- 		struct regulator_dev *rdev;
- 		const struct bd718xx_regulator_data *r;
- 
--		r = &pmic_regulators[mfd->chip_type].r_datas[i];
-+		r = &pmic_regulators[mfd->chip.chip_type].r_datas[i];
- 		desc = &r->desc;
- 
- 		config.dev = pdev->dev.parent;
--		config.regmap = mfd->regmap;
-+		config.regmap = mfd->chip.regmap;
- 
- 		rdev = devm_regulator_register(&pdev->dev, desc, &config);
- 		if (IS_ERR(rdev)) {
-@@ -1104,7 +1104,7 @@ static int bd718xx_probe(struct platform_device *pdev)
- 		 * can now switch the control from PMIC state machine to the
- 		 * register interface
- 		 */
--		err = regmap_update_bits(mfd->regmap, r->init.reg,
-+		err = regmap_update_bits(mfd->chip.regmap, r->init.reg,
- 					 r->init.mask, r->init.val);
- 		if (err) {
- 			dev_err(&pdev->dev,
-@@ -1113,7 +1113,7 @@ static int bd718xx_probe(struct platform_device *pdev)
- 			goto err;
- 		}
- 		for (j = 0; j < r->additional_init_amnt; j++) {
--			err = regmap_update_bits(mfd->regmap,
-+			err = regmap_update_bits(mfd->chip.regmap,
- 						 r->additional_inits[j].reg,
- 						 r->additional_inits[j].mask,
- 						 r->additional_inits[j].val);
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+-MODULE_DESCRIPTION("BD71837 chip clk driver");
++MODULE_DESCRIPTION("BD71837/BD71847 chip clk driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.14.3
 
