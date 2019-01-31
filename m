@@ -2,151 +2,110 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32273C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 05:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD4CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 05:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0090320857
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 05:01:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F6392087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 05:08:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XLJirbex"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UpjpKSIR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725905AbfAaFBl (ORCPT
+        id S1726116AbfAaFIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 00:01:41 -0500
-Received: from ozlabs.org ([203.11.71.1]:34365 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbfAaFBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 00:01:41 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43qp406C0jz9sBb;
-        Thu, 31 Jan 2019 16:01:36 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548910898;
-        bh=IjJV29n5nv2WrFCPjj7ygqYY88Mvh573ttnS2ebd+yo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XLJirbex1sEvN0PcO5ZN3yv8UcUEgzSi27qoHpBv1QUJqX2i53dB+raf0pdPEsYAC
-         zKu48p0MBg77Lhm4N803NV5d7IJmFPDuiW5Zd/WBQu3kDyyYUy3cFYjpJB0Pk41XWt
-         iiZA3QqAComn7c0D5zZdqYDaVhJFDTL5IMIKCbic5s1hEKhfCn3Y3uRXIRzaZtI8CV
-         Rr0L/jQ8b6vtoInuaHjv521I7mUTIkzeGLGxgRqasm4rXb+1hWRg5UZ9oNmp0w6/QA
-         W4Zs5Pi//4fRr9lK5n0NOXbA+RnJlqXwrIcfq3kIT4YzVyLY4Zwke82UZnNLjEQ7dO
-         m5Hbgjd8UTwoA==
-Date:   Thu, 31 Jan 2019 16:01:35 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        James Morris <jmorris@namei.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: linux-next: build warning after merge of the akpm-current tree
-Message-ID: <20190131160135.4a8ae70b@canb.auug.org.au>
+        Thu, 31 Jan 2019 00:08:47 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36198 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfAaFIr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 00:08:47 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g9so949450plo.3;
+        Wed, 30 Jan 2019 21:08:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KG2AV5CuLWGdXnt2HvHXI2jXxW3jh+qPOjX2cdS/c/0=;
+        b=UpjpKSIRhm9rpjDcXsjRNcUSd9mLdNkyFNHZVnFbsy+DwqC/DIc7LTf2dpNLQ9cR3B
+         Jkda6deq+zuBDgvLWG4ZluwdkILBQZKYcKdy3r9b8WrFejtTTlzLQHqdnCUPQ4daUx+P
+         T0kKeg4/ggLLo3eBVaU1BcDGS1WPBKtzZ+GvNpwwx4YF366tue8mDFeD1sgWapSvJyab
+         M39flzBK7mSraQ+ORYfBe8Z2Z6ZHzZgva1VE1hXVB+18MdLU7DmKPBirMvoJMiqOunV8
+         8dR8gZ2xdbX8fLdYna94DMN8vE8K9lkMD7mX3a3U4E0Ti0+mgyPOohz17iI1uwn6v5lQ
+         fAhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KG2AV5CuLWGdXnt2HvHXI2jXxW3jh+qPOjX2cdS/c/0=;
+        b=W5iFbasDe1kPKhRYnR2y5S4rHwPDuVwRQUGwnUOXnyvXaIDZjscb4oBoS3nebFlUdU
+         YZxIoNhPJj75VYLUUISE57zeUUfRiHqN9AqbVKouzGXJNYk5IrvGMNW+HiNWx1RXFlig
+         1DOVmCT6LBAeqslLRPfE40jqyUasf6um0e9MrHtNc3g5GJwiJN/pM+2ylaDM5quxFrND
+         E4ogmQMRNMxFoHGUdG0C90qH07ptRJPsuA1cZE2ex/zIoL2IhWiNKMcPAfQAAlkO+1wq
+         IoUk4vp1uBTxlLW1hQKj0XmXOTSMz3KbZZGacriraE+Of5m3BzGvLuI6sv/lt+yEoAd6
+         Ivtw==
+X-Gm-Message-State: AJcUukdCTY2ZcaxseH2a8rfA6f6r49aoA3zZQPJyaS8vF+CSV/5E2JtE
+        T13pPp3DxX2besrMnPzeoPo=
+X-Google-Smtp-Source: ALg8bN6+hhNDwtvGM7scN1cJoM2eY7V97sPcqJmM0jBSk63y7Wlab8fLJLZUHFS4MTyMPuwWUBc/8A==
+X-Received: by 2002:a17:902:848d:: with SMTP id c13mr33601376plo.257.1548911326615;
+        Wed, 30 Jan 2019 21:08:46 -0800 (PST)
+Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
+        by smtp.gmail.com with ESMTPSA id c67sm5000525pfg.170.2019.01.30.21.08.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 21:08:46 -0800 (PST)
+Date:   Wed, 30 Jan 2019 21:08:43 -0800
+From:   Myungho Jung <mhjungk@gmail.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Bluetooth: Add NULL check for tiocmget() and tiocmset()
+Message-ID: <20190131050842.GA31677@myunghoj-Precision-5530>
+References: <20190128065910.GA14959@myunghoj-Precision-5530>
+ <20190130095938.GP3691@localhost>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_XKVVmyKvVxz5fOvB+koE+H"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190130095938.GP3691@localhost>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/_XKVVmyKvVxz5fOvB+koE+H
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 30, 2019 at 10:59:38AM +0100, Johan Hovold wrote:
+> On Sun, Jan 27, 2019 at 10:59:13PM -0800, Myungho Jung wrote:
+> > tiocmget() and tiocmset() operations are optional and some tty drivers
+> > like pty miss the operations. We need NULL check before referencing
+> > them.
+> 
+> Good catch. I suggest splitting these fixes in two separate patches
+> (after addressing Marcel's comments).
+> 
+> Don't forget to CC stable and add a Fixes-tag for each, as we we want to
+> have this backported to stable.
+> 
+> > Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
+> 
+> Actually, these two bugs were never reported by sysbot AFAIKT so no need
+> to give credit to anyone else here.
+> 
+> > Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+> > ---
+> >  drivers/bluetooth/hci_ath.c   | 13 ++++++++-----
+> >  drivers/bluetooth/hci_ldisc.c |  5 +++++
+> >  2 files changed, 13 insertions(+), 5 deletions(-)
+> 
+> Johan
 
-Hi all,
+Hi Johan,
 
-After merging the akpm-current tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Thanks for reviewing my patch. This change is not directly related to the issue
+that syzbot reported but the test will keep crashing without this fix because it
+will finally reach ath_hci_uart_work(). I updated and resubmitted patch.
 
-In file included from arch/x86/include/asm/percpu.h:45,
-                 from arch/x86/include/asm/current.h:6,
-                 from include/linux/sched.h:12,
-                 from include/linux/uaccess.h:5,
-                 from fs/proc/base.c:51:
-fs/proc/base.c: In function 'proc_smack_attr_dir_lookup':
-include/linux/kernel.h:73:25: warning: passing argument 4 of 'proc_pident_l=
-ookup' makes pointer from integer without a cast [-Wint-conversion]
- #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(=
-arr))
-                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~
-fs/proc/base.c:2602:7: note: in expansion of macro 'ARRAY_SIZE'
-       ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-       ^~~~~~~~~~
-fs/proc/base.c:2615:1: note: in expansion of macro 'LSM_DIR_OPS'
- LSM_DIR_OPS(smack);
- ^~~~~~~~~~~
-fs/proc/base.c:2454:31: note: expected 'const struct pid_entry *' but argum=
-ent is of type 'long unsigned int'
-       const struct pid_entry *end)
-       ~~~~~~~~~~~~~~~~~~~~~~~~^~~
-
-Introduced by commit
-
-  f6e3521a4c5b ("proc: calculate end pointer for /proc/*/* lookup at compil=
-e time")
-
-interacting with commit
-
-  6d9c939dbe4d ("procfs: add smack subdir to attrs")
-
-from the security tree.
-
-I have applied the following merge fix patch
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 31 Jan 2019 15:56:56 +1100
-Subject: [PATCH] proc: merge fix for proc_pident_lookup() API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/proc/base.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 4ac7f32c1929..3daca4367d29 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -2599,7 +2599,7 @@ static struct dentry *proc_##LSM##_attr_dir_lookup(st=
-ruct inode *dir, \
- { \
- 	return proc_pident_lookup(dir, dentry, \
- 				  LSM##_attr_dir_stuff, \
--				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
-+				  LSM##_attr_dir_stuff + ARRAY_SIZE(LSM##_attr_dir_stuff)); \
- } \
- \
- static const struct inode_operations proc_##LSM##_attr_dir_inode_ops =3D {=
- \
---=20
-2.20.1
-
----
-Cheers,
-Stephen Rothwell
-
---Sig_/_XKVVmyKvVxz5fOvB+koE+H
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxSgS8ACgkQAVBC80lX
-0GxDTgf+LDv04yPNNHI0yhLXV/diqjIIChuPWpdcxSpxeJ+t+wuwd40Kyfh05262
-ijqCLsYOM7PHNch880MxlkS9hMx9xp1413piPHciVyG4aIY1nv3/aqL+B39HU3w1
-01NyNSIriTCwy8OEAbMasgJQd1HLXQOZBXJSXv7m4BqbccKKfTMEcsoV9Zb0x8AF
-eydYsECO/MJhldcqKAG8WL+pM4zV7RDBzeDhXKTk2M5NUdwZ7j+4McZUhiw5npBh
-0+zLjqmNS09qpfTJZIze1Mgv0v2OTgcqez1lNmFubdlZL3N1VPl0l7Oguh64dQZE
-KEfAPrhBkskhfrJVIym9k0YCbxZWJA==
-=pNhc
------END PGP SIGNATURE-----
-
---Sig_/_XKVVmyKvVxz5fOvB+koE+H--
+Thanks,
+Myungho
