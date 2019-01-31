@@ -2,216 +2,141 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68605C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B17C282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30F1C218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C54521904
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:51:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O/cMZ4kF"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cxIgLqno"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbfAaSsB (ORCPT
+        id S1727894AbfAaSvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:48:01 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:32924 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728023AbfAaSrW (ORCPT
+        Thu, 31 Jan 2019 13:51:24 -0500
+Received: from mail-lj1-f169.google.com ([209.85.208.169]:42633 "EHLO
+        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfAaSvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 13:47:22 -0500
-Received: by mail-pl1-f195.google.com with SMTP id z23so1887533plo.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:47:22 -0800 (PST)
+        Thu, 31 Jan 2019 13:51:24 -0500
+Received: by mail-lj1-f169.google.com with SMTP id l15-v6so3573978lja.9
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:51:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tD8VufzCQvXfpsNw9V8Ef8mQcXE6LoxMXAqIMu2r4YI=;
-        b=O/cMZ4kFAEzugVfW5UYIgT1/I/zv4JLH104R0wQ1gsXAXU5RhwbdA9LKMIAoIKnYAz
-         /KLU3bYxUv+vCI6WUo6wQbwU98HvfCdtZQzIOLwQyDR/RN13vCAPAV5hltWpR8guGeEt
-         U3IoWo3cpUj1u0kvgVo9FhoeWBQXf/MCZ6vTM=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y8TmXOKugmPf5PKjfFSY0+MtEECnoWuXrcfZ9WYj7sQ=;
+        b=cxIgLqnoURQzhPPQoVzTc3kGLEAW/JP1u2P5ucV1ZsVNhsd3LvJloBpP/vyQF0CN2i
+         cEyNMJhJx+4Bj+X64xrwKUVfdSW8NoNLeyWe/CvYWmSzGchNlYE6pA1qZdrp0ZetciRM
+         2Wox7w7BfbHIL5MET5xcChhZL9rFMbfTEYOJM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tD8VufzCQvXfpsNw9V8Ef8mQcXE6LoxMXAqIMu2r4YI=;
-        b=UfyZw9UkMZ9+jhFsAIMppSGP+8jyvMCiyblITl8rcXKcbpbTgwGflA+TwFzEmhg6US
-         agFX586W4wqd84AQF5b08Gdz66IRxxlKopaj8LfI85IM5xmfPm7hkjZ9o3/H33Nt806R
-         0ABrHb/a/FBsjyO58lMOLO+KUky5OCuX3rL2/aPVoFITshmj8SRvz4P8HGMHBWBlAI++
-         fcMiQhk+7n1AxVWIXUAU3D/gpPszgSNZI4F+b1kzlw4mQLh5fW0I/502lT3FG9n/Xcfz
-         Hr8phYyyL+B4DRQQifwZpyLtxvYOP3R2LWzF1mwRTbfmwpme6aY8sMBS/3KCbhACQN5f
-         CBhw==
-X-Gm-Message-State: AJcUukdtKgR95I91H6ZHRdMJLezB6GuGoXQ48Kh73pvdWz747A8NfCSU
-        pXYd9SuY9oJo/NzyoyhIfTUTIQ==
-X-Google-Smtp-Source: ALg8bN5peUYP5hnT4LfexVpxcB9k3T13yKoLVicCSb4nL7FezrSofM3FTl277KaB3XQ/wdKv0nTCxg==
-X-Received: by 2002:a17:902:ab84:: with SMTP id f4mr35168544plr.207.1548960442170;
-        Thu, 31 Jan 2019 10:47:22 -0800 (PST)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id o66sm6236234pgo.75.2019.01.31.10.47.20
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y8TmXOKugmPf5PKjfFSY0+MtEECnoWuXrcfZ9WYj7sQ=;
+        b=Xwu/p8vtAqtjN7s3zcjqRn2uWu1geH7BpXJe4i9g4akBdWLR8jy4fwQ2Pa2Cwqij54
+         Hg5fbmOwFPUqsLXQsftDE9L12T/H2Bk8pPGW4Dit46riiOSyeSzEZJELhNq99javGqsU
+         /8nqNXqfbgQflmd7K2mLsi4l8k3xScw0XRbYi36rvcmVGTXv60KXz8xSZavdKAp3yzDK
+         9id0kkRxvne52eCeUsbgbk/4cFC6EIbKrCwwbr/nFyRYMI7rP+pgd32dAvFFoxPWrLpc
+         7ijjlZsvMj/mjDV9e/7BaZlYQBVlqhmL/8tGF7P5PcpEAOI8y1LgZ+NqxnUrLPw6ecZT
+         /n+Q==
+X-Gm-Message-State: AJcUukeRkMLu8ukfuSDRE0JQz7bBcti6UuhYSrSBVMxaWpud96h2dZGA
+        kEKmJ8XWpH+w7ZLcOANCoCbXccKmP2M=
+X-Google-Smtp-Source: ALg8bN5X0CswN+gDml1+WTju0u0hhFECZrdcK22d/J7zOYZF8A1EUMYI+kfuqBJjJE4Ayi+uGaSVSA==
+X-Received: by 2002:a2e:880a:: with SMTP id x10-v6mr30667929ljh.174.1548960681668;
+        Thu, 31 Jan 2019 10:51:21 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id l17sm969956lfk.40.2019.01.31.10.51.20
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 10:47:21 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     acme@kernel.org, peterz@infradead.org
-Cc:     suzuki.poulose@arm.com, gregkh@linuxfoundation.org,
-        mingo@redhat.com, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, will.deacon@arm.com,
-        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
-        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 3/7] coresight: Use event attributes for sink selection
-Date:   Thu, 31 Jan 2019 11:47:10 -0700
-Message-Id: <20190131184714.20388-4-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190131184714.20388-1-mathieu.poirier@linaro.org>
-References: <20190131184714.20388-1-mathieu.poirier@linaro.org>
+        Thu, 31 Jan 2019 10:51:20 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id n18so3135435lfh.6
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:51:20 -0800 (PST)
+X-Received: by 2002:a19:4ed9:: with SMTP id u86mr28892472lfk.78.1548960680075;
+ Thu, 31 Jan 2019 10:51:20 -0800 (PST)
+MIME-Version: 1.0
+References: <20190122010218.GA26713@linux.intel.com> <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com> <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com> <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com> <20190131122606.GA12470@linux.intel.com>
+ <20190131160437.GA5629@linux.intel.com> <20190131170603.GA18349@linux.intel.com>
+ <20190131183530.GA27112@linux.intel.com>
+In-Reply-To: <20190131183530.GA27112@linux.intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 31 Jan 2019 10:51:03 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
+Message-ID: <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
+Subject: Re: Getting weird TPM error after rebasing my tree to security/next-general
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     tomas.winkler@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch uses the information conveyed by perf_event::attr::config2
-to select a sink to use for the session.  That way a sink can easily be
-selected to be used by more than one source, something that isn't currently
-possible with the sysfs implementation.
+On Thu, Jan 31, 2019 at 10:35 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> OK, so the length of the response is not trashed, but only the error
+> code. The attached patch fully fixes the issue.
+>
+> Here's the header again:
+>
+> struct tpm_output_header {
+>         __be16  tag;
+>         __be32  length;
+>         __be32  return_code;
+> } __packed;
+>
+> The first to fields *are* read correctly and the last field get 1's
+> (thus TPM error -1).
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- .../hwtracing/coresight/coresight-etm-perf.c  | 24 +++++------
- drivers/hwtracing/coresight/coresight-priv.h  |  1 +
- drivers/hwtracing/coresight/coresight.c       | 42 +++++++++++++++++++
- 3 files changed, 55 insertions(+), 12 deletions(-)
+Ok, so this makes sense, even though that patch is (I think) completely wrong.
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index cdbdb28dc175..8c88bf0a1e5f 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -31,11 +31,14 @@ static DEFINE_PER_CPU(struct coresight_device *, csdev_src);
- PMU_FORMAT_ATTR(cycacc,		"config:" __stringify(ETM_OPT_CYCACC));
- PMU_FORMAT_ATTR(timestamp,	"config:" __stringify(ETM_OPT_TS));
- PMU_FORMAT_ATTR(retstack,	"config:" __stringify(ETM_OPT_RETSTK));
-+/* Sink ID - same for all ETMs */
-+PMU_FORMAT_ATTR(sinkid,		"config2:0-31");
- 
- static struct attribute *etm_config_formats_attr[] = {
- 	&format_attr_cycacc.attr,
- 	&format_attr_timestamp.attr,
- 	&format_attr_retstack.attr,
-+	&format_attr_sinkid.attr,
- 	NULL,
- };
- 
-@@ -191,6 +194,7 @@ static void etm_free_aux(void *data)
- static void *etm_setup_aux(struct perf_event *event, void **pages,
- 			   int nr_pages, bool overwrite)
- {
-+	u32 id;
- 	int cpu = event->cpu;
- 	cpumask_t *mask;
- 	struct coresight_device *sink;
-@@ -201,18 +205,14 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
- 		return NULL;
- 	INIT_WORK(&event_data->work, free_event_data);
- 
--	/*
--	 * In theory nothing prevent tracers in a trace session from being
--	 * associated with different sinks, nor having a sink per tracer.  But
--	 * until we have HW with this kind of topology we need to assume tracers
--	 * in a trace session are using the same sink.  Therefore go through
--	 * the coresight bus and pick the first enabled sink.
--	 *
--	 * When operated from sysFS users are responsible to enable the sink
--	 * while from perf, the perf tools will do it based on the choice made
--	 * on the cmd line.  As such the "enable_sink" flag in sysFS is reset.
--	 */
--	sink = coresight_get_enabled_sink(true);
-+	/* First get the selected sink from user space. */
-+	if (event->attr.config2) {
-+		id = (u32)event->attr.config2;
-+		sink = coresight_get_sink_by_id(id);
-+	} else {
-+		sink = coresight_get_enabled_sink(true);
-+	}
-+
- 	if (!sink || !sink_ops(sink)->alloc_buffer)
- 		goto err;
- 
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-index 579f34943bf1..b936c6d7e13f 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -147,6 +147,7 @@ void coresight_disable_path(struct list_head *path);
- int coresight_enable_path(struct list_head *path, u32 mode, void *sink_data);
- struct coresight_device *coresight_get_sink(struct list_head *path);
- struct coresight_device *coresight_get_enabled_sink(bool reset);
-+struct coresight_device *coresight_get_sink_by_id(u32 id);
- struct list_head *coresight_build_path(struct coresight_device *csdev,
- 				       struct coresight_device *sink);
- void coresight_release_path(struct list_head *path);
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index d7fa90be6f42..29cef898afba 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -11,6 +11,7 @@
- #include <linux/err.h>
- #include <linux/export.h>
- #include <linux/slab.h>
-+#include <linux/stringhash.h>
- #include <linux/mutex.h>
- #include <linux/clk.h>
- #include <linux/coresight.h>
-@@ -541,6 +542,47 @@ struct coresight_device *coresight_get_enabled_sink(bool deactivate)
- 	return dev ? to_coresight_device(dev) : NULL;
- }
- 
-+static int coresight_sink_by_id(struct device *dev, void *data)
-+{
-+	struct coresight_device *csdev = to_coresight_device(dev);
-+	unsigned long hash;
-+
-+	if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
-+	     csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
-+
-+		if (!csdev->ea)
-+			return 0;
-+		/*
-+		 * See function etm_perf_add_symlink_sink() to know where
-+		 * this comes from.
-+		 */
-+		hash = (unsigned long)csdev->ea->var;
-+
-+		if ((u32)hash == *(u32 *)data)
-+			return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * coresight_get_sink_by_id - returns the sink that matches the id
-+ * @id: Id of the sink to match
-+ *
-+ * The name of a sink is unique, whether it is found on the AMBA bus or
-+ * otherwise.  As such the hash of that name can easily be used to identify
-+ * a sink.
-+ */
-+struct coresight_device *coresight_get_sink_by_id(u32 id)
-+{
-+	struct device *dev = NULL;
-+
-+	dev = bus_find_device(&coresight_bustype, NULL, &id,
-+			      coresight_sink_by_id);
-+
-+	return dev ? to_coresight_device(dev) : NULL;
-+}
-+
- /*
-  * coresight_grab_device - Power up this device and any of the helper
-  * devices connected to it for trace operation. Since the helper devices
--- 
-2.17.1
+What happens is that the 32-bit fields are mis-aligned: the "tag" is
+obviously properly 16-bit aligned, but then both "length" and
+"return_code" are 32-bit fields that are only aligned on a 16-bit
+alignment.
 
+What happens is that first you copy the two first fields:
+
+        memcpy_fromio(buf, priv->rsp, 6);
+
+which copies "tag" and "length", but it copies them by reading then as
+a 4-byte and then 2-byte value (in that order). So it actually reads
+'tag' and 'first two bytes of 'length', and then the second access
+reads the last two bytes of 'length'
+
+And it all works, because the accesses are aligned by address of
+access, even though they are *not* aligned in the 'struct
+tpm_output_header' fields.
+
+But then later on, when you read 'return_code', and do
+
+        memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+
+you now do a 4-byte memcpy at offset 6. So it does a 4-byte access,
+bit it's not 4-byte aligned.
+
+Honestly, memcpy() itself shouldn't have worked *either*, but you
+lucked out. Gcc doesn't know that it's a 4-byte access, so it actually
+calls out to the memcpy() routine. And that one happened to be "rep
+movsb" on your machine. And that happened to work.
+
+But it's really not supposed to work, and it really *wouldn't* have
+worked if somebody disabled the rep-string functions.
+
+In fact, we have another patch (that isn't applied) that makes even
+the memcpy_erms() just call the sw version of memcpy() for short
+copies (because "rep movsb" is slow for those cases). That would also
+have broken your driver.
+
+               Linus
