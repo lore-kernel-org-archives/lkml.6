@@ -2,126 +2,84 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB24C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 006FDC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF471218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:26:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548955619;
-	bh=hoVKnWiEPCXYjt8XO0AVUKrPsNfz8S5p7fA/qbZ/mSc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=tn4JGdWnC+0fJjPMkbwuhwNpWRrOidqWS9UX7RU3+BKyIERjOVAYvuYydG28PFmxB
-	 Eg/cLBUwkyL1TOeN+j1FVfx6xWXmOXoSD4r8Kz1EA8E7MJbxRoIvDTdC5IxjhFG/1K
-	 vFQ0BZh5HuZUoUlSpyzfc/10icbr/phu58wCoP2A=
+	by mail.kernel.org (Postfix) with ESMTP id D192420B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:28:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfAaR05 (ORCPT
+        id S1727304AbfAaR2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:26:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36346 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727181AbfAaR05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:26:57 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 525DE2086C;
-        Thu, 31 Jan 2019 17:26:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548955616;
-        bh=hoVKnWiEPCXYjt8XO0AVUKrPsNfz8S5p7fA/qbZ/mSc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lQlmALGr6m+AF2rXvc4pXWUuntU2PV6Ca2YR387qZlPdOEhwQf1sTPOYUQdmoQbJc
-         zxShWHDCsbow92FUZFU1XYwtPQ/gkNWWq+oTYaXOjO3mO1pll10VxSUBYi7LTI3iKH
-         mFVblEv7x28vID31FHObDylk9Ytos8ivjGeHfvzA=
-Date:   Thu, 31 Jan 2019 18:26:44 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH] mtd: rawnand: denali_dt: remove single anonymous clock
- support
-Message-ID: <20190131182644.366a54a5@bbrezillon>
-In-Reply-To: <da2ea926-30e9-c7b9-8b1f-ee65ccc0fb7a@kernel.org>
-References: <1547539894-12898-1-git-send-email-yamada.masahiro@socionext.com>
-        <20190115092229.59e09c2d@xps13>
-        <CAK7LNATnfTQXHrXJQp7732-e7hvd8ORcYubyDmz0KHaRXRMDqQ@mail.gmail.com>
-        <20190128112007.440046e6@xps13>
-        <da2ea926-30e9-c7b9-8b1f-ee65ccc0fb7a@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 31 Jan 2019 12:28:38 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48480 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726507AbfAaR2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 12:28:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AF0BA78;
+        Thu, 31 Jan 2019 09:28:37 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D43D53F59C;
+        Thu, 31 Jan 2019 09:28:35 -0800 (PST)
+Date:   Thu, 31 Jan 2019 17:28:30 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] PCI: dra7xx: Support PCIe x2 lane mode
+Message-ID: <20190131172830.GA31110@e107981-ln.cambridge.arm.com>
+References: <20190124082957.29077-1-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124082957.29077-1-kishon@ti.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dinh,
-
-On Thu, 31 Jan 2019 11:24:16 -0600
-Dinh Nguyen <dinguyen@kernel.org> wrote:
-
-> On 1/28/19 4:20 AM, Miquel Raynal wrote:
-> > Hi Dinh,
-> > 
-> > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Wed, 16 Jan
-> > 2019 10:27:11 +0900:
-> >   
-> >> (+CC Dinh Nguyen)
-> >>
-> >> On Tue, Jan 15, 2019 at 5:22 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:  
-> >>>
-> >>> Hi Masahiro,
-> >>>
-> >>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 15 Jan
-> >>> 2019 17:11:34 +0900:
-> >>>    
-> >>>> Commit 6f1fe97bec34 ("mtd: rawnand: denali_dt: add more clocks based
-> >>>> on IP datasheet") introduced a more correct binding that requires
-> >>>> three named clocks.
-> >>>>
-> >>>> Now that all upstream DT files migrated over to it, remove the single
-> >>>> anonymous clock support.    
-> >>>
-> >>> I would love to do that but I think this is against the "DT backward
-> >>> compatibility rule".    
-> >>
-> >> Yeah, I know this rule, but we break DT binding from time to time.
-> >>
-> >>
-> >>  
-> >>> Anyway, IIRC it is accepted that this kind of
-> >>> rule might be broken if decided per the arch-maintainer (in this
-> >>> case, you I suppose). So if this is really what you want, I'll queue
-> >>> it.    
-> >>
-> >> My platform is fine, but this driver is used by SOCFPGA boards as well.
-> >>
-> >> I CCed the SOCFPGA maintainer, Dinh Nguyen.
-> >>  
-> > 
-> > Gentle ping on this topic.
-> >   
+On Thu, Jan 24, 2019 at 01:59:54PM +0530, Kishon Vijay Abraham I wrote:
+> Previous version of the patch series can be found here [1]
 > 
-> This patch looks fine to be. Feel free to add:
+> Patch series adds support to enable x2 lane mode in dra74/dra76 and
+> dra72 based boards in pci-dra7xx driver. It introduces new compatible
+> strings in order to enable x2 lane mode support.
 > 
-> Tested-by: Dinh Nguyen <dinguyen@kernel.org>
+> Changes from v2:
+> *) Have a single syscon dt property for configuring x2 lanes
+> *) Fix minor comments given by Lorenzo (falling back to 1 lane mode,
+>    remove unused structure member).
+> 
+> Changes from v1:
+> *) Added ti prefix to syscon-lane-conf and syscon-lane-sel as
+>    suggested to Rob
+> *) Merged "PCI: dwc: dra7xx: Add support for SoC specific compatible
+>    strings" and "PCI: dwc: pci-dra7xx: Enable x2 mode support" into
+>    a single patch.
+> *) Fixed $subject as suggested by Bjorn
+> *) Added x2 lane mode support for DRA72x
+> 
+> The dts changes and phy changes will be sent as a separate series.
+> 
+> [1] ->  https://lkml.org/lkml/2017/12/19/175
+> 
+> Kishon Vijay Abraham I (3):
+>   dt-bindings: PCI: dra7xx: Add SoC specific compatible strings
+>   dt-bindings: PCI: dra7xx: Add properties to enable x2 lane in dra7
+>   PCI: dra7xx: Enable x2 mode support for dra74x, dra76x and dra72x
+> 
+>  .../devicetree/bindings/pci/ti-pci.txt        | 11 ++-
+>  drivers/pci/controller/dwc/pci-dra7xx.c       | 77 +++++++++++++++++++
+>  2 files changed, 86 insertions(+), 2 deletions(-)
 
-I think Miquel is waiting for an Acked-by to confirm that you're okay
-breaking backward compat with old DT.
+I have applied the series to pci/dwc for v5.1, thanks.
 
-Regards,
-
-Boris
+Lorenzo
