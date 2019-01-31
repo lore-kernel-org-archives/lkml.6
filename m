@@ -2,106 +2,125 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2BBC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A46D6C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 701A52082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:24:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JXmvUkXS"
+	by mail.kernel.org (Postfix) with ESMTP id 7FF8D2082F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:25:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732461AbfAaMYX (ORCPT
+        id S1732552AbfAaMZ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:24:23 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:34873 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726153AbfAaMYX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:24:23 -0500
-Received: by mail-vs1-f68.google.com with SMTP id e7so1842732vsc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:24:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=M/+bZ6/6gdCEtdJq/xtB+MgxD6XcWlf41pwuNrFTkFY=;
-        b=JXmvUkXS6Mz/5tdEQ6eVYd6MTFHQ9/LADGbIWxZRKwwmFRXevzpc/DrKcqFq52Tn6C
-         D0B3EV1ad6bZ62vM3d1PSgfhNpYDiT+lp21YhCfrZ1UTQc/YevGM8i1QIiwBV2wIAmdu
-         jr5hWn2M5WlLz1oeOCPJATtcKJxchPE7qi7jA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M/+bZ6/6gdCEtdJq/xtB+MgxD6XcWlf41pwuNrFTkFY=;
-        b=eulAFLJZVeOBIV8puiJtMMcTckAJmewwm05kZHYslisCfTvb6ai8LOELV4fLSX9flu
-         PGlQiNUEjLYlVrahf9+StEZWUcUBNugYqeKcx08aI8qTfcLqRCi5yLHVizUII4JKGRMT
-         E6nHxBR5gwAD2gFM5CMrk4JTuNROcv69v1yGStIvApG027UNsm2+N1BCPCIsHusUdvJz
-         JYf4TnSzgrWVaKlrLcc9R27Dxb9Mt6ATg8XvT8KDpAyz3txF8XC+0TQoRgA6jDO38Au+
-         ck2+0KXXQY6+FkvQUVp4ASxkZ3qsJh+d2xpQ3NNH4bUiba3g5izoWSG/2Sf+HXS3zA8X
-         zLSQ==
-X-Gm-Message-State: AJcUukdCQCJUZUHbfn2zHASOiti9qi3kY8oVZg0wv5w/Rp8Ps6iPNkSS
-        tyt3DnPWGVIVEsPc9n6Agnd3F6QnWWOntgjzU6yGmw==
-X-Google-Smtp-Source: ALg8bN4tQraiSEht+qB30uLbffXlsPwL4UOTjIMOSqEyrELw9nfD5lvQPEzCgBUnlG6P/qNtwRyPBbo138r/jXXjDi0=
-X-Received: by 2002:a67:1b04:: with SMTP id b4mr14287891vsb.141.1548937461981;
- Thu, 31 Jan 2019 04:24:21 -0800 (PST)
+        Thu, 31 Jan 2019 07:25:56 -0500
+Received: from foss.arm.com ([217.140.101.70]:42700 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726153AbfAaMZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 07:25:56 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E9AC180D;
+        Thu, 31 Jan 2019 04:25:55 -0800 (PST)
+Received: from [10.1.197.2] (ostrya.cambridge.arm.com [10.1.197.2])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07E893F589;
+        Thu, 31 Jan 2019 04:25:54 -0800 (PST)
+Subject: Re: [PATCH 2/2] iommu/amd: Remove clear_flush_young notifier
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Jerome Glisse <jglisse@redhat.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jason Wang <jasowang@redhat.com>
+References: <20190130055758.3994-1-peterx@redhat.com>
+ <20190130055758.3994-3-peterx@redhat.com>
+ <69af2b6f-bfc1-a4b9-675a-6fc93a7efef2@arm.com> <20190131075941.GB25119@xz-x1>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <926c28c2-66a0-8068-f7bc-2d8f9ce9f0ad@arm.com>
+Date:   Thu, 31 Jan 2019 12:25:40 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <1548740978-28495-1-git-send-email-sumit.garg@linaro.org>
- <20190131084142.GA21196@jax.urgonet> <20190131120542.g7wtnhzuz5nuqbcc@gondor.apana.org.au>
-In-Reply-To: <20190131120542.g7wtnhzuz5nuqbcc@gondor.apana.org.au>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Thu, 31 Jan 2019 17:54:10 +0530
-Message-ID: <CAFA6WYOHX7JKGALhV6nKRH18MFpgMc2g+2J3qLO5PH=sYNhKDA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] Introduce TEE bus driver framework
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Jens Wiklander <jens.wiklander@linaro.org>
-Cc:     Matt Mackall <mpm@selenic.com>, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>, tee-dev@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190131075941.GB25119@xz-x1>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Jan 2019 at 17:36, Herbert Xu <herbert@gondor.apana.org.au> wrote:
->
-> On Thu, Jan 31, 2019 at 09:41:43AM +0100, Jens Wiklander wrote:
-> >
-> > I think this patch series is good now. It has received comments which
-> > has been addressed and have also gathered a few R-B tags.
-> >
-> > All patches but "hwrng: add OP-TEE based rng driver" covers what I
-> > normally send pull requests to arm-soc for.
-> >
-> > Matt, Herbert, are you fine with the patch
-> > "hwrng: add OP-TEE based rng driver"?
-> > If so, is it also OK if I take it via my tree which I then will include
-> > in a pull request to arm-soc? An Acked-By tag would be nice to have.
->
-> Sure you can add my ack-by:
->
-> Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
->
+On 31/01/2019 07:59, Peter Xu wrote:
+> On Wed, Jan 30, 2019 at 12:27:40PM +0000, Jean-Philippe Brucker wrote:
+>> Hi Peter,
+> 
+> Hi, Jean,
+> 
+>>
+>> On 30/01/2019 05:57, Peter Xu wrote:
+>>> AMD IOMMU driver is using the clear_flush_young() to do cache flushing
+>>> but that's actually already covered by invalidate_range().  Remove the
+>>> extra notifier and the chunks.
+>>
+>> Aren't uses of clear_flush_young() and invalidate_range() orthogonal? If
+>> I understood correctly, when doing reclaim the kernel clears the young
+>> bit from the PTE. This requires flushing secondary TLBs (ATCs), so that
+>> new accesses from devices will go through the IOMMU, set the young bit
+>> again and the kernel can accurately track page use. I didn't see
+>> invalidate_range() being called by rmap or vmscan in this case, but
+>> might just be missing it.
+>>
+>> Two MMU notifiers are used for the young bit, clear_flush_young() and
+>> clear_young(). I believe the former should invalidate ATCs so that DMA
+>> accesses participate in PTE aging. Otherwise the kernel can't know that
+>> the device is still using entries marked 'old'. The latter,
+>> clear_young() is exempted from invalidating the secondary TLBs by
+>> mmu_notifier.h and the IOMMU driver doesn't need to implement it.
+> 
+> Yes I agree most of your analysis, but IMHO the problem is that the
+> AMD IOMMU is not really participating in the PTE aging after all.
+> Please have a look at mn_clear_flush_young() below at [1] - it's
+> always returning zero, no matter whether the page has been accessed by
+> device or not.  A real user of it could be someone like KVM (please
+> see kvm_mmu_notifier_clear_flush_young) where we'll try to lookup the
+> shadow PTEs and do test-and-clear on that, then return the result to
+> the core mm.  That's why I think currently the AMD driver was only
+> trying to use that as a way to do an extra flush however IMHO it's
+> redundant.
 
-Thanks Jens and Herbert for providing acceptance to this patch-set.
+Yes, in IOMMU drivers clear_flush_young() doesn't do the clear, only the
+flush, since the level-1 page table is shared with the CPU. But removing
+the flush gets you in the following situation:
 
--Sumit
+  (1) Devices wants to access $addr, sends ATS query, the IOMMU sets PTE
+young and the entry is cached in the ATC.
 
-> Cheers,
-> --
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+  (2) The CPU does ptep_clear_flush_young_notify(), clears young,
+notices that the page is being used.
+
+  (3) Device accesses $addr again. Given that we didn't invalidate the
+ATC in (2) it accesses the page directly, without going through the IOMMU.
+
+  (4) CPU does ptep_clear_flush_young_notify() again, the PTE doesn't
+have the young bit, which means the page isn't being used and can be
+reclaimed.
+
+That's not accurate since the page is being used by the device. At step
+(2) we should invalidate the ATC, so that (3) fetches the PTE again and
+marks it young.
+
+I can agree that the clear_flush_young() notifier is too brutal for this
+purpose, since we send spurious ATC invalidation even when the PTE
+wasn't young (and ATC inv is expensive). There should be another MMU
+notifier "flush_young()" that is called by
+ptep_clear_flush_young_notify() only when the page was actually young.
+But for the moment it's the best we have to avoid the situation above.
+
+I don't know enough about mm to understand exactly how the
+page_referenced() information is used, but I believe the problem is only
+about accuracy and not correctness. So applying this patch might not
+break anything (after all, intel-svm.c never implemented the notifier)
+but I think I'll keep the notifier in my SVA rework [1].
+
+Thanks,
+Jean
+
+[1] https://www.spinics.net/lists/iommu/msg30081.html
