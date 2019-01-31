@@ -2,119 +2,135 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7BFC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFD5C282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADBC520B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:33:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="p5t0c0v4"
+	by mail.kernel.org (Postfix) with ESMTP id 1A95F20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:36:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548970614;
+	bh=yzcBI/0W24G8x1f5Xr7NzrPSRHBlzH6cM6XBb1PH/E0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZHbFpKPy0pDiXdTvghgvegfsOs27vtkRqURQd4IQoqjpEqyvQxLeabGvvw4kvtIfN
+	 QBvvI6VdEDEoA0sDlELJfkdYq6yuBFLznnLxB/EJQIDDKVThhobSG2Du9OpnCmbD0e
+	 ORRrpRfWSQrl49knASUQmW/W1vTGQ+UcdC3iTBTc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbfAaVdn (ORCPT
+        id S1728485AbfAaVgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 16:33:43 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38741 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727962AbfAaVdm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 16:33:42 -0500
-Received: by mail-pg1-f195.google.com with SMTP id g189so1920929pgc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 13:33:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ettus-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wlcvbiL72Jc8Iz+RcmHbInQeojUnOtdkjgRRDx3HUhs=;
-        b=p5t0c0v4lWbBwMZ7CTozVDFGIbcTbyg8+PkvJl3NC47GkknFZLzShWuxidH+r784sE
-         PQlVbd3OnOpAvbcuNPctXs42PrIf60fU+ZvF+tPfnGgskSw+gzIAVAoIVzt4nRwvo3i3
-         SnxALNnI/2kCAuvKi4It5wXersySHRQnwXRimX8QoJobwk4DKJkavOX/5Kmg1c+SBqP6
-         HcPZvePFSBfinzBT5RbEZnQ/e4tZU9z0H3/l1CcvM98YjtSwpE/jX6VVGmuWSAJR0G5h
-         pm44iRSmSurMpqV/l6leBoNhKqBb/iFJ5awEK10SSFuQ7Q0i2j9PHd0g6820LAdv6SBe
-         FKbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=wlcvbiL72Jc8Iz+RcmHbInQeojUnOtdkjgRRDx3HUhs=;
-        b=dVn4aCUd8VM4NLCuWacS1EPVURNkoCeB81KBaHI26iLTCzDKOZQ6PZEjuOYuzCGTQV
-         FdfxinsI/AXtFIsnLXES48gYi8CsXvCZ+tUPj/da46iyOKzmERMQCWheDDlW6TtSIA/4
-         KVQSn73LbpUoIM/vL8Pr1TMzXpuoev8GYV18+9fdkFQXWp8m7C9zgVzXrw/IgpUM03Jy
-         ou1dBSs8F0vOFRFUJEFWeghBA6M5v2F4HommT45JA0LTr5r8WUbF6EReSC2sFi5ja2fL
-         aHJUjMaiXcLTlHUXbDF9A9ytvS4QTjZiyQwWhygFZjpZCkF/fA7J/yrfYXZQGxKh4TPU
-         j/dw==
-X-Gm-Message-State: AJcUukfriEXW22udcPNwWa49FcptMY6NymAKGvteQwhEOMnXjfANefyh
-        +pilOaZ7zMvd5Nrk9qMx+FRXVw==
-X-Google-Smtp-Source: ALg8bN7UTeCae1p33PbeE6AjL5NQJRvbkfAGXfCdUP2IiCr8nhEyKOkNf8bvj3vTDlBRYtALnT7dvQ==
-X-Received: by 2002:a62:9683:: with SMTP id s3mr36269753pfk.60.1548970421328;
-        Thu, 31 Jan 2019 13:33:41 -0800 (PST)
-Received: from localhost.localdomain (cpe-76-176-152-96.san.res.rr.com. [76.176.152.96])
-        by smtp.gmail.com with ESMTPSA id n21sm7513227pfg.84.2019.01.31.13.33.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 13:33:40 -0800 (PST)
-From:   alex.williams@ettus.com
-To:     davem@davemloft.net
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mdf@kernel.org,
-        mcgrof@kernel.org, keescook@chromium.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alex Williams <alex.williams@ni.com>
-Subject: [PATCH v2 net-next 2/2] net: nixge: Update device-tree bindings with v3.00
-Date:   Thu, 31 Jan 2019 13:33:28 -0800
-Message-Id: <20190131213328.11236-2-alex.williams@ettus.com>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20190131213328.11236-1-alex.williams@ettus.com>
-References: <20190131213328.11236-1-alex.williams@ettus.com>
+        Thu, 31 Jan 2019 16:36:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47568 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726278AbfAaVgu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 16:36:50 -0500
+Received: from localhost (unknown [64.22.249.253])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFD0D20B1F;
+        Thu, 31 Jan 2019 21:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548970609;
+        bh=yzcBI/0W24G8x1f5Xr7NzrPSRHBlzH6cM6XBb1PH/E0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CwYcQWONddNQY/fG6Ssf7+ZHJeTZIt7kJrFIKQljHYXDtt9ecaDAX37L+VfRQn8Ad
+         JQqt7DvgSEHAJLcuitY7wZWbYQOQNbMMqNYso5BKaxX421pFqFqX5Pe2J5AwX/GrAC
+         q0FUJ/3cd+K4JYK8trBbktRwTyEG8+gQiuLG8wn8=
+Date:   Thu, 31 Jan 2019 15:36:48 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     honghui.zhang@mediatek.com
+Cc:     lorenzo.pieralisi@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ryder.lee@mediatek.com,
+        youlin.pei@mediatek.com, poza@codeaurora.org, fred@fredlawl.com,
+        rafael.j.wysocki@intel.com, jianjun.wang@mediatek.com
+Subject: Re: [PATCH v2 1/2] PCI: mediatek: Use resource_size function on
+ resource object
+Message-ID: <20190131213647.GP229773@google.com>
+References: <1548921713-5355-1-git-send-email-honghui.zhang@mediatek.com>
+ <1548921713-5355-2-git-send-email-honghui.zhang@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548921713-5355-2-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Williams <alex.williams@ni.com>
+On Thu, Jan 31, 2019 at 04:01:52PM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> 
+> scripts/coccinelle/api/resource_size.cocci complain about the
+> following warning:
+> 
+> pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
+> 
+> Use resource_size(mem) instead of mem->end - mem->start to eliminate the
+> complain. Since the MMIO window size for both MT2712 and MT7622 are all
+> 0x1000_0000, this change also fix the AHB2PCIe window size smaller than
+> HW MMIO window size issue by change the values of fls(size) from
+> fls(0xfff_ffff) to fls(0x1000_0000).
 
-Now the DMA engine is free to float elsewhere in the system map.
+Good, I'm glad this actually fixes a bug.  The warning was actually
+useful!
 
-Signed-off-by: Alex Williams <alex.williams@ni.com>
----
- Documentation/devicetree/bindings/net/nixge.txt | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+Since that's the case, the *bug* is the important thing (not the
+warning), and the subject line should be about the bug fix.  The fact
+that it also happens to remove a warning is really just incidental.
 
-diff --git a/Documentation/devicetree/bindings/net/nixge.txt b/Documentation/devicetree/bindings/net/nixge.txt
-index e55af7f0881a..44a7358b4399 100644
---- a/Documentation/devicetree/bindings/net/nixge.txt
-+++ b/Documentation/devicetree/bindings/net/nixge.txt
-@@ -1,8 +1,14 @@
- * NI XGE Ethernet controller
- 
- Required properties:
--- compatible: Should be "ni,xge-enet-2.00"
--- reg: Address and length of the register set for the device
-+- compatible: Should be "ni,xge-enet-3.00", but can be "ni,xge-enet-2.00" for
-+              older device trees with DMA engines co-located in the address map,
-+              with the one reg entry to describe the whole device.
-+- reg: Address and length of the register set for the device. It contains the
-+       information of registers in the same order as described by reg-names.
-+- reg-names: Should contain the reg names
-+	"dma":  DMA engine control and status region
-+        "ctrl": MDIO and PHY control and status region
- - interrupts: Should contain tx and rx interrupt
- - interrupt-names: Should be "rx" and "tx"
- - phy-mode: See ethernet.txt file in the same directory.
-@@ -12,8 +18,10 @@ Required properties:
- 
- Examples (10G generic PHY):
- 	nixge0: ethernet@40000000 {
--		compatible = "ni,xge-enet-2.00";
--		reg = <0x40000000 0x6000>;
-+		compatible = "ni,xge-enet-3.00";
-+		reg = <0x40000000 0x4000
-+		       0x41002000 0x2000>;
-+		reg-names = "dma", "ctrl";
- 
- 		nvmem-cells = <&eth1_addr>;
- 		nvmem-cell-names = "address";
--- 
-2.14.5
+You say "the AHB2PCIe window size smaller than HW MMIO window size
+issue" as though it should be familiar to us.  But it's not :)
 
+So the changelog needs to start by explaining what the AHB2PCIe window
+size issue is, mention what user-visible problem that causes, then
+explain how you're fixing it by using resource_size().
+
+Then you can mention that this also incidentally removes a coccinelle
+warning.
+
+Bjorn
+
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 55e471c..01126b8 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+>  	struct resource *mem = &pcie->mem;
+>  	const struct mtk_pcie_soc *soc = port->pcie->soc;
+>  	u32 val;
+> -	size_t size;
+>  	int err;
+>  
+>  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
+> @@ -706,8 +705,8 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+>  		mtk_pcie_enable_msi(port);
+>  
+>  	/* Set AHB to PCIe translation windows */
+> -	size = mem->end - mem->start;
+> -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
+> +	val = lower_32_bits(mem->start)
+> +	      | AHB2PCIE_SIZE(fls(resource_size(mem)));
+
+Nit: I think it's more typical to put the "|" on the first line.
+
+>  	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
+>  
+>  	val = upper_32_bits(mem->start);
+> -- 
+> 2.6.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
