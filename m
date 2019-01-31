@@ -2,121 +2,70 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A0DC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7710C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBD11218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:33:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81DA9218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:34:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R2ww8ncy"
+	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="Ipi4WVIp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731932AbfAaKdh (ORCPT
+        id S1732063AbfAaKeb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:33:37 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:35889 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbfAaKdh (ORCPT
+        Thu, 31 Jan 2019 05:34:31 -0500
+Received: from smtp.domeneshop.no ([194.63.252.55]:35937 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727423AbfAaKea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:33:37 -0500
-Received: by mail-it1-f194.google.com with SMTP id c9so3296503itj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:33:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R5OCV2eb5TSImT0OCdqMh36XZu7SuJl/MJd5OK0pMpw=;
-        b=R2ww8ncyawJIWFf8Q5ydNy6tXXRHcFWBVkR7BPPiuTMYYZ6hZnE8t+oNIWkXzKslao
-         QK2QA+nlrVf/48Ace5I+FbgGCB0y0xFkRjhflY22ydOgpTH95t42Isk05+8m85l4Qu85
-         08+SaInSgNm4zQsoZOoWlCEGNnKCfcI1i/GstDVo0Q9wkqzJLKEYTBDfgGu/rcXaCA5N
-         au79HEP2JQlS105xIjXjDD17uUYGrZs25oNtEdlvZZguiq1LXr6Te4FD9tp0GrAoMdxb
-         RocOc/LL8cBOuxaQp6W9VUWAxSgOfcI8vz9EQLysTO8eVIR6HqA5DyDBn0OMSlQttMPr
-         ly7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R5OCV2eb5TSImT0OCdqMh36XZu7SuJl/MJd5OK0pMpw=;
-        b=hsFYMlf/iCo9fVccOjWWNws1YOJQ51VHlaNHVse2kTd075xPRwLWA4tQ5F4yOEoI/F
-         3NcgzZalknmojcjqaM6Y/Ms2MwgKJSreTk50Xx4Cj5v36t9SLstBrACOp9VHnZo5YkzT
-         FWrl26h+JHT+ryDZVlFdZcOKg97mLJz4k5bBaviyK+ctnvQM3Nqka5rsDHDCWXCEDx0P
-         7LQRtuK7MwJ1fdggcJx/JnOn1vzUkHZNxWCxtG2M6t2sk36ZiesE8znv1Ax+F2BoUVOT
-         wf2ncgJM18XbwH15Iq9SEmIey4YNdkvg4guJme6DbKtEBIGE7QE20Vow43K6L2fyiUU7
-         lr0A==
-X-Gm-Message-State: AJcUukdsNH+upqmeMjDMFl988Lkpp8+fmkYascHLLT/jZEUHVFsT4m8w
-        Itw7kBxjVTp7Xtc5htbmLVE7pKi0MHjnJPDMUaq/dg==
-X-Google-Smtp-Source: ALg8bN4SyszOI3ZUPf/49Jon29rSWSKs3cEA3J99dXanmp0TNW3+sAb4Sb29BA3ZWQPqhLLMCUSFF/vRP7c1dMl3hl4=
-X-Received: by 2002:a24:6511:: with SMTP id u17mr18444334itb.12.1548930815368;
- Thu, 31 Jan 2019 02:33:35 -0800 (PST)
+        Thu, 31 Jan 2019 05:34:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=DhDRi2YQZUl+67ggz7PcGmgcHRyoVakW483511IqMUU=;
+        b=Ipi4WVIpSy18CFZi4If3tryGW5Y5E5sk++l/hbeVvm01991G34PTnEIiFl1ShRYNvOgsBLdVQlTDbt/ehprwi3iF+kqYuAMzVIBBrYRD33kzlWM6m8IGaA1lW276z0nCUQje8mA5cgWJwpeirxS12ja5uaswowVDy8ifuvLspannzNB0jOeeDYkGK6m8tFpjBXKYf8O1vBOjakav3+Mf142Xpq3PfMQmvBjEKV7BimO00I1009e/QGAmT5LJZdSmEVifgncbiYH446BCtpjYmkGwBt0d3GCJN/QoIMv5oqtwcgbEZDt8caa1/I3pd/pYPHeguJ56QCMaPJS3blnN1w==;
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:23964 helo=[192.168.10.176])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gp9fw-0000fw-9k; Thu, 31 Jan 2019 11:34:28 +0100
+Subject: Re: [PATCH v2 1/6] drm/virtio: move virtio_gpu_object_{attach,
+ detach} calls.
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>
+References: <20190130094338.14203-1-kraxel@redhat.com>
+ <20190130094338.14203-2-kraxel@redhat.com>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <355f535c-8a5f-f3e8-f715-66ddcc52da5f@tronnes.org>
+Date:   Thu, 31 Jan 2019 11:34:26 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <1547634429-772-1-git-send-email-elena.reshetova@intel.com>
- <20190121123836.GC47506@lakrids.cambridge.arm.com> <CACT4Y+Y6JNyQ+SSZXDSYVcBXZ_e1Hf3OMpoz=1eqGNhNKqYikg@mail.gmail.com>
- <2236FBA76BA1254E88B949DDB74E612BA4B9BBF9@IRSMSX102.ger.corp.intel.com>
- <CACT4Y+Y5Y54iWn3w2jifjecDb+dZa_B=qZBsKTH8immHktij2Q@mail.gmail.com> <2236FBA76BA1254E88B949DDB74E612BA4B9BC4B@IRSMSX102.ger.corp.intel.com>
-In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4B9BC4B@IRSMSX102.ger.corp.intel.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 31 Jan 2019 11:33:24 +0100
-Message-ID: <CACT4Y+bboJysvOc2d2z7qTqyPR+2mjK3AGxC0nnp8kbGWqcuZQ@mail.gmail.com>
-Subject: Re: [PATCH] kcov: convert kcov.refcount to refcount_t
-To:     "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190130094338.14203-2-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 11:09 AM Reshetova, Elena
-<elena.reshetova@intel.com> wrote:
->
-> > On Thu, Jan 31, 2019 at 11:04 AM Reshetova, Elena
-> > <elena.reshetova@intel.com> wrote:
-> > >
-> > >  > Just to check, has this been tested with CONFIG_REFCOUNT_FULL and
-> > > > > something poking kcov?
-> > > > >
-> > > > > Given lib/refcount.c is instrumented, the refcount_*() calls will
-> > > > > recurse back into the kcov code. It looks like that's fine, given these
-> > > > > are only manipulated in setup/teardown paths, but it would be nice to be
-> > > > > sure.
-> > > >
-> > > > A simple program using KCOV is available here:
-> > > > https://elixir.bootlin.com/linux/v5.0-rc3/source/Documentation/dev-
-> > > > tools/kcov.rst#L42
-> > > > or here (it's like strace but collects and prints KCOV coverage):
-> > > > https://github.com/google/syzkaller/blob/master/tools/kcovtrace/kcovtrace.c
-> > > >
-> > >
-> > > Ok, so I finally got to compile kcov in and try the first test program
-> > > and it works fine as far as I can see: runs, prints results, and no WARNs anywhere
-> > > visible with regards to refcount_t.
-> > >
-> > > I did my test on 4.20 with CONFIG_REFCOUNT_FULL=y
-> > > since I have serious issues getting 5.0 running as it is even from
-> > > the stable branch, but unless kcov underwent some serious changes since
-> > December,
-> > > it should not affect.
-> >
-> > There were no changes that should affect this part.
-> >
-> > Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
->
->
-> Thank you! Will you be able to take this change forward as for
-> other normal kcov changes?
 
-Andrew, please take this patch to mm tree.
 
-+linux-mm mailing list for proper mm patch tracking
-I am not a maintainer, all other KCOV patches went through mm tree.
+Den 30.01.2019 10.43, skrev Gerd Hoffmann:
+> Drop the dummy ttm backend implementation, add a real one for
+> TTM_PL_FLAG_TT objects.  The bin/unbind callbacks will call
+> virtio_gpu_object_{attach,detach}, to update the object state
+> on the host side, instead of invoking those calls from the
+> move_notify() callback.
+> 
+> With that in place the move and move_notify callbacks are not
+> needed any more, so drop them.
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
