@@ -2,198 +2,219 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B7CC282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C979AC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2205A2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92217218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:22:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="0rtgpPE0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388423AbfAaQWL (ORCPT
+        id S2388434AbfAaQWw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:22:11 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47328 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727189AbfAaQWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:22:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87ACD80D;
-        Thu, 31 Jan 2019 08:22:10 -0800 (PST)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD7BB3F557;
-        Thu, 31 Jan 2019 08:22:08 -0800 (PST)
-Subject: Re: [PATCH v5 2/5] arm64/kvm: preserve host HCR_EL2/MDCR_EL2 value
-To:     Amit Daniel Kachhap <amit.kachhap@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
-References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
- <1548658727-14271-3-git-send-email-amit.kachhap@arm.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <e773a26d-98d1-fc01-5c04-cd5a258d85ec@arm.com>
-Date:   Thu, 31 Jan 2019 16:22:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 11:22:52 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:34043 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388155AbfAaQWv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:22:51 -0500
+Received: by mail-yw1-f65.google.com with SMTP id g75so1509254ywb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 08:22:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wE2aRl4Gjx5VjDxdFAhUakdsREIMx7y7W6lKaBxreOw=;
+        b=0rtgpPE0g4au+NVj91KUAPTbdwe5t34WNXNZTqBfjBzIZNnwPYO6rW2J51SVnzZFOs
+         BNG+tu2XURHJiNSJdqsO4KRcLJUdl5egJ5lxzfyp51h9DahrDRofAi6xQUzqcWME/moM
+         GEZYhCoGcc/hWFWTMYeHXoNenRGx2HVIxbfwe04JNo8Mo2Mwzl3v0B0PcgAkpbQuZiqC
+         w3F8tUT6Dr1ZjFhwSd1rEmmjOGzyg1DhqH1NcFCiwZf8f8vY1bqJkhSyZi8Nd/EdGHCt
+         LDhV1Msb3+4G2ttFqIwYk7Q5SBcdl/C0xaRT8cWDWZJMBwwB++D6WgRW0sgvK07bnHhh
+         tiTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wE2aRl4Gjx5VjDxdFAhUakdsREIMx7y7W6lKaBxreOw=;
+        b=L5CuBHiG/yg2UcXaLO2nYaDyVnga0L0fga7eumvqsF3RsGwlPiUe2THY9IIMmCmQ0H
+         6jjo/2WUEH1W8/Tc0ocWMXemug51Ti/AA/MtEiY51gLpjKzFgJuSmI7vma9ALVTsXA3o
+         rYgwXlK//Xj13Uy+aRRulAOit+4rSpv1JcijYBxmrhMUfTJaOLGMTzLIMJCz/vdZNCUn
+         ilxhLq6XaStCL5ccOMHNHMKes2JSkSa6AqiKmCF/1OxnMHcJg8P7kXTsiuwOHajpplv9
+         ArTF94blMrJzUBull2Evjqrr7WJ2HfAR98fxxDEVIClXi8cPBz4rikSslVXTOgtkeCb/
+         ZAsA==
+X-Gm-Message-State: AJcUuke70lAtBfbWOqbJmBJGmRjd62Z+TkaURg0gxl7ixud3YmlMS9Cs
+        htEPJe/PGTFY0BVKBbzReOlQRw==
+X-Google-Smtp-Source: ALg8bN4wp9NoIj9DgnKnqveg+P4bpJ/ATDCWU5WqLAXI2wZoSl3d1+BQjlnRWMFMwgLGHssggHUqYg==
+X-Received: by 2002:a81:6c51:: with SMTP id h78mr33955264ywc.116.1548951770271;
+        Thu, 31 Jan 2019 08:22:50 -0800 (PST)
+Received: from localhost ([2620:10d:c091:180::1:80c2])
+        by smtp.gmail.com with ESMTPSA id y1sm1948347ywe.86.2019.01.31.08.22.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 08:22:49 -0800 (PST)
+Date:   Thu, 31 Jan 2019 11:22:48 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Tejun Heo <tj@kernel.org>, Chris Down <chris@chrisdown.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+Message-ID: <20190131162248.GA17354@cmpxchg.org>
+References: <20190124182328.GA10820@cmpxchg.org>
+ <20190125074824.GD3560@dhcp22.suse.cz>
+ <20190125165152.GK50184@devbig004.ftw2.facebook.com>
+ <20190125173713.GD20411@dhcp22.suse.cz>
+ <20190125182808.GL50184@devbig004.ftw2.facebook.com>
+ <20190128125151.GI18811@dhcp22.suse.cz>
+ <20190130192345.GA20957@cmpxchg.org>
+ <20190130200559.GI18811@dhcp22.suse.cz>
+ <20190130213131.GA13142@cmpxchg.org>
+ <20190131085808.GO18811@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <1548658727-14271-3-git-send-email-amit.kachhap@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131085808.GO18811@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Amit,
-
-On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
-> When restoring HCR_EL2 for the host, KVM uses HCR_HOST_VHE_FLAGS, which
-> is a constant value. This works today, as the host HCR_EL2 value is
-> always the same, but this will get in the way of supporting extensions
-> that require HCR_EL2 bits to be set conditionally for the host.
+On Thu, Jan 31, 2019 at 09:58:08AM +0100, Michal Hocko wrote:
+> On Wed 30-01-19 16:31:31, Johannes Weiner wrote:
+> > On Wed, Jan 30, 2019 at 09:05:59PM +0100, Michal Hocko wrote:
+> [...]
+> > > I thought I have already mentioned an example. Say you have an observer
+> > > on the top of a delegated cgroup hierarchy and you setup limits (e.g. hard
+> > > limit) on the root of it. If you get an OOM event then you know that the
+> > > whole hierarchy might be underprovisioned and perform some rebalancing.
+> > > Now you really do not care that somewhere down the delegated tree there
+> > > was an oom. Such a spurious event would just confuse the monitoring and
+> > > lead to wrong decisions.
+> > 
+> > You can construct a usecase like this, as per above with OOM, but it's
+> > incredibly unlikely for something like this to exist. There is plenty
+> > of evidence on adoption rate that supports this: we know where the big
+> > names in containerization are; we see the things we run into that have
+> > not been reported yet etc.
+> > 
+> > Compare this to real problems this has already caused for
+> > us. Multi-level control and monitoring is a fundamental concept of the
+> > cgroup design, so naturally our infrastructure doesn't monitor and log
+> > at the individual job level (too much data, and also kind of pointless
+> > when the jobs are identical) but at aggregate parental levels.
+> > 
+> > Because of this wart, we have missed problematic configurations when
+> > the low, high, max events were not propagated as expected (we log oom
+> > separately, so we still noticed those). Even once we knew about it, we
+> > had trouble tracking these configurations down for the same reason -
+> > the data isn't logged, and won't be logged, at this level.
 > 
-> To allow such features to work without KVM having to explicitly handle
-> every possible host feature combination, this patch has KVM save/restore
-> the host HCR when switching to/from a guest HCR. The saving of the
-> register is done once during cpu hypervisor initialization state and is
-> just restored after switch from guest.
+> Yes, I do understand that you might be interested in the hierarchical
+> accounting.
 > 
-> For fetching HCR_EL2 during kvm initialisation, a hyp call is made using
-> kvm_call_hyp and is helpful in NHVE case.
+> > Adding a separate, hierarchical file would solve this one particular
+> > problem for us, but it wouldn't fix this pitfall for all future users
+> > of cgroup2 (which by all available evidence is still most of them) and
+> > would be a wart on the interface that we'd carry forever.
+> 
+> I understand even this reasoning but if I have to chose between a risk
+> of user breakage that would require to reimplement the monitoring or an
+> API incosistency I vote for the first option. It is unfortunate but this
+> is the way we deal with APIs and compatibility.
 
-> For the hyp TLB maintenance code, __tlb_switch_to_host_vhe() is updated
-> to toggle the TGE bit with a RMW sequence, as we already do in
-> __tlb_switch_to_guest_vhe().
+I don't know why you keep repeating this, it's simply not how Linux
+API is maintained in practice.
 
+In cgroup2, we fixed io.stat to not conflate discard IO and write IO:
+636620b66d5d4012c4a9c86206013964d3986c4f
 
-> While at it, host MDCR_EL2 value is fetched in a similar way and restored
-> after every switch from host to guest. There should not be any change in
-> functionality due to this.
+Linus changed the Vmalloc field semantics in /proc/meminfo after over
+a decade, without a knob to restore it in production:
 
-Could this step be done as a separate subsequent patch? It would make review
-easier! The MDCR stuff would be a simplification if done second, done in one go
-like this its pretty noisy.
+    If this breaks anything, we'll obviously have to re-introduce the code
+    to compute this all and add the caching patches on top.  But if given
+    the option, I'd really prefer to just remove this bad idea entirely
+    rather than add even more code to work around our historical mistake
+    that likely nobody really cares about.
+    a5ad88ce8c7fae7ddc72ee49a11a75aa837788e0
 
-There ought to be some justification for moving hcr/mdcr into the cpu_context in
-the commit message.
+Mel changed the zone_reclaim_mode default behavior after over a
+decade:
 
+    Those that require zone_reclaim_mode are likely to be able to
+    detect when it needs to be enabled and tune appropriately so lets
+    have a sensible default for the bulk of users.
+    4f9b16a64753d0bb607454347036dc997fd03b82
+    Acked-by: Michal Hocko <mhocko@suse.cz>
 
-If you're keeping Mark's 'Signed-off-by' its would be normal to keep Mark as the
-author in git. This shows up a an extra 'From:' when you post the patch, and
-gets picked up when the maintainer runs git-am.
+And then Mel changed the default zonelist ordering to pick saner
+behavior for most users, followed by a complete removal of the zone
+list ordering, after again, decades of existence of these things:
 
-This patch has changed substantially from Mark's version:
-https://lkml.org/lkml/2017/11/27/675
+    commit c9bff3eebc09be23fbc868f5e6731666d23cbea3
+    Author: Michal Hocko <mhocko@suse.com>
+    Date:   Wed Sep 6 16:20:13 2017 -0700
 
-If you keep the signed-off-by, could you add a [note] in the signed-off area
-with a terse summary. Something like:
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-[ Move hcr to cpu_context, added __cpu_copy_hyp_conf()]
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+        mm, page_alloc: rip out ZONELIST_ORDER_ZONE
 
-(9c06602b1b92 is a good picked-at-random example for both of these)
+And why did we do any of those things and risk user disruption every
+single time? Because the existing behavior was not a good default, a
+burden on people, and the risk of breakage was sufficiently low.
 
+I don't see how this case is different, and you haven't provided any
+arguments that would explain that.
 
-> diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-> index f5b79e9..2da6e43 100644
-> --- a/arch/arm64/include/asm/kvm_asm.h
-> +++ b/arch/arm64/include/asm/kvm_asm.h
-> @@ -80,6 +80,8 @@ extern void __vgic_v3_init_lrs(void);
->  
->  extern u32 __kvm_get_mdcr_el2(void);
->  
-> +extern u64 __kvm_get_hcr_el2(void);
+> > Adding a note in cgroup-v2.txt doesn't make up for the fact that this
+> > behavior flies in the face of basic UX concepts that underly the
+> > hierarchical monitoring and control idea of the cgroup2fs.
+> > 
+> > The fact that the current behavior MIGHT HAVE a valid application does
+> > not mean that THIS FILE should be providing it. It IS NOT an argument
+> > against this patch here, just an argument for a separate patch that
+> > adds this functionality in a way that is consistent with the rest of
+> > the interface (e.g. systematically adding .local files).
+> > 
+> > The current semantics have real costs to real users. You cannot
+> > dismiss them or handwave them away with a hypothetical regression.
+> > 
+> > I would really ask you to consider the real world usage and adoption
+> > data we have on cgroup2, rather than insist on a black and white
+> > answer to this situation.
+> 
+> Those users requiring the hierarchical beahvior can use the new file
+> without any risk of breakages so I really do not see why we should
+> undertake the risk and do it the other way around.
 
-Do we need these in separate helpers? For non-vhe this means two separate trips
-to EL2. Something like kvm_populate_host_context(void), and an __ version for
-the bit at EL2?
+Okay, so let's find a way forward here.
 
-We don't need to pass the host-context to EL2 as once kvm is loaded we can
-access host per-cpu variables at EL2 using __hyp_this_cpu_read(). This will save
-passing the vcpu around.
+1. A new memory.events_tree file or similar. This would give us a way
+to get the desired hierarchical behavior. The downside is that it's
+suggesting that ${x} and ${x}_tree are the local and hierarchical
+versions of a cgroup file, and that's false everywhere else. Saying we
+would document it is a cop-out and doesn't actually make the interface
+less confusing (most people don't look at errata documentation until
+they've been burned by unexpected behavior).
 
+2. A runtime switch (cgroup mount option, sysctl, what have you) that
+lets you switch between the local and the tree behavior. This would be
+able to provide the desired semantics in a clean interface, while
+still having the ability to support legacy users.
 
-> @@ -458,6 +457,25 @@ int kvm_arm_vcpu_arch_has_attr(struct kvm_vcpu *vcpu,
->  
->  static inline void __cpu_init_stage2(void) {}
->  
-> +/**
-> + * __cpu_copy_hyp_conf - copy the boot hyp configuration registers
-> + *
-> + * It is called once per-cpu during CPU hyp initialisation.
-> + */
-> +static inline void __cpu_copy_hyp_conf(void)
-> +{
-> +	kvm_cpu_context_t *host_cxt = this_cpu_ptr(&kvm_host_cpu_state);
-> +
-> +	host_cxt->hcr_el2 = kvm_call_hyp(__kvm_get_hcr_el2);
-> +
-> +	/*
-> +	 * Retrieve the initial value of mdcr_el2 so we can preserve
-> +	 * MDCR_EL2.HPMN which has presumably been set-up by some
-> +	 * knowledgeable bootcode.
-> +	 */
-> +	host_cxt->mdcr_el2 = kvm_call_hyp(__kvm_get_mdcr_el2);
-> +}
+2a. A runtime switch that defaults to the local behavior.
 
-Its strange to make this an inline in a header. kvm_arm_init_debug() is a
-static-inline for arch/arm, but a regular C function for arch/arm64. Can't we do
-the same?
+2b. A runtime switch that defaults to the tree behavior.
 
+The choice between 2a and 2b comes down to how big we evaluate the
+risk that somebody has an existing dependency on the local behavior.
 
-> diff --git a/arch/arm64/kvm/hyp/sysreg-sr.c b/arch/arm64/kvm/hyp/sysreg-sr.c
-> index 68d6f7c..22c854a 100644
-> --- a/arch/arm64/kvm/hyp/sysreg-sr.c
-> +++ b/arch/arm64/kvm/hyp/sysreg-sr.c
-> @@ -316,3 +316,14 @@ void __hyp_text __kvm_enable_ssbs(void)
->  	"msr	sctlr_el2, %0"
->  	: "=&r" (tmp) : "L" (SCTLR_ELx_DSSBS));
->  }
-> +
-> +/**
-> + * __read_hyp_hcr_el2 - Returns hcr_el2 register value
-> + *
-> + * This function acts as a function handler parameter for kvm_call_hyp and
-> + * may be called from EL1 exception level to fetch the register value.
-> + */
-> +u64 __hyp_text __kvm_get_hcr_el2(void)
-> +{
-> +	return read_sysreg(hcr_el2);
-> +}
-
-While I'm all in favour of kernel-doc comments for functions, it may be
-over-kill in this case!
-
-
-> diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-> index 9e350fd3..2d65ada 100644
-> --- a/virt/kvm/arm/arm.c
-> +++ b/virt/kvm/arm/arm.c
-> @@ -1327,10 +1327,10 @@ static void cpu_hyp_reinit(void)
->  	else
->  		cpu_init_hyp_mode(NULL);
->  
-> -	kvm_arm_init_debug();
-> -
->  	if (vgic_present)
->  		kvm_vgic_init_cpu_hardware();
-> +
-> +	__cpu_copy_hyp_conf();
->  }
-
-Was there a reason to make this call later than it originally was?
-(kvm_vgic_init_cpu_hardware() doesn't use any of those values, so its fine, just
-curious!)
-
-
-Thanks,
-
-James
+Given what we know about cgroup2 usage, and considering our previous
+behavior in such matters, I'd say 2b is reasonable and in line with
+how we tend to handle these things. On the tiny chance that somebody
+is using the current behavior, they can flick the switch (until we add
+the .local files, or simply use the switch forever).
