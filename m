@@ -2,118 +2,111 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D212C282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18534C282C7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5870120881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548917258;
-	bh=H7fjMS1op6TDONCNnQg0deCsxFPW1EnpjV8wGnZAmAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SR+ZHFIByjO3OyfYCT6y2veOx0T8mTL6+9CG0vigPUxOuiyiEutz2wDsM913PlzSp
-	 y0IsBxZMQrPpQS0Mv1QXXrvzSUcvDGtyJMLCCBoMhcyGj9sFx8gTZi0CHXbn2sS78a
-	 MXUpynfjOdm/uRNP3mETbRCNJxl2xQETvxxa4c6g=
+	by mail.kernel.org (Postfix) with ESMTP id ED573218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:50:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbfAaGrg (ORCPT
+        id S1729564AbfAaGt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 01:47:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40694 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725863AbfAaGrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 01:47:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C6088B0EF;
-        Thu, 31 Jan 2019 06:47:34 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 07:47:33 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC v2 PATCH] mm: vmscan: do not iterate all mem cgroups for
- global direct reclaim
-Message-ID: <20190131064733.GL18811@dhcp22.suse.cz>
-References: <1548799877-10949-1-git-send-email-yang.shi@linux.alibaba.com>
+        Thu, 31 Jan 2019 01:49:59 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43506 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725867AbfAaGt6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 01:49:58 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V6nhe0048340
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 01:49:57 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbtbyvbbw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 01:49:56 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Thu, 31 Jan 2019 06:49:55 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Jan 2019 06:49:51 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V6npjr1835270
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 06:49:51 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E09A811C050;
+        Thu, 31 Jan 2019 06:49:50 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 69D6A11C04C;
+        Thu, 31 Jan 2019 06:49:49 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.199.38.122])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Jan 2019 06:49:49 +0000 (GMT)
+X-Mailer: emacs 26.1 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>, lsf-pc@lists.linux-foundation.org
+Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org
+Subject: [LSF/MM ATTEND ] memory reclaim with NUMA rebalancing
+In-Reply-To: <20190130174847.GD18811@dhcp22.suse.cz>
+References: <20190130174847.GD18811@dhcp22.suse.cz>
+Date:   Thu, 31 Jan 2019 12:19:47 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548799877-10949-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 19013106-0008-0000-0000-000002B9278F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013106-0009-0000-0000-0000222528B6
+Message-Id: <87h8dpnwxg.fsf@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=822 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310053
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 30-01-19 06:11:17, Yang Shi wrote:
-> In current implementation, both kswapd and direct reclaim has to iterate
-> all mem cgroups.  It is not a problem before offline mem cgroups could
-> be iterated.  But, currently with iterating offline mem cgroups, it
-> could be very time consuming.  In our workloads, we saw over 400K mem
-> cgroups accumulated in some cases, only a few hundred are online memcgs.
-> Although kswapd could help out to reduce the number of memcgs, direct
-> reclaim still get hit with iterating a number of offline memcgs in some
-> cases.  We experienced the responsiveness problems due to this
-> occassionally.
-> 
-> A simple test with pref shows it may take around 220ms to iterate 8K memcgs
-> in direct reclaim:
->              dd 13873 [011]   578.542919: vmscan:mm_vmscan_direct_reclaim_begin
->              dd 13873 [011]   578.758689: vmscan:mm_vmscan_direct_reclaim_end
-> So for 400K, it may take around 11 seconds to iterate all memcgs.
-> 
-> Here just break the iteration once it reclaims enough pages as what
-> memcg direct reclaim does.  This may hurt the fairness among memcgs.  But
-> the cached iterator cookie could help to achieve the fairness more or
-> less.
-> 
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Michal Hocko <mhocko@kernel.org> writes:
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+> Hi,
+> I would like to propose the following topic for the MM track. Different
+> group of people would like to use NVIDMMs as a low cost & slower memory
+> which is presented to the system as a NUMA node. We do have a NUMA API
+> but it doesn't really fit to "balance the memory between nodes" needs.
+> People would like to have hot pages in the regular RAM while cold pages
+> might be at lower speed NUMA nodes. We do have NUMA balancing for
+> promotion path but there is notIhing for the other direction. Can we
+> start considering memory reclaim to move pages to more distant and idle
+> NUMA nodes rather than reclaim them? There are certainly details that
+> will get quite complicated but I guess it is time to start discussing
+> this at least.
 
-> ---
-> v2: Added some test data in the commit log
->     Updated commit log about iterator cookie could maintain fairness
->     Dropped !global_reclaim() since !current_is_kswapd() is good enough
-> 
->  mm/vmscan.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index a714c4f..5e35796 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -2764,16 +2764,15 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
->  				   sc->nr_reclaimed - reclaimed);
->  
->  			/*
-> -			 * Direct reclaim and kswapd have to scan all memory
-> -			 * cgroups to fulfill the overall scan target for the
-> -			 * node.
-> +			 * Kswapd have to scan all memory cgroups to fulfill
-> +			 * the overall scan target for the node.
->  			 *
->  			 * Limit reclaim, on the other hand, only cares about
->  			 * nr_to_reclaim pages to be reclaimed and it will
->  			 * retry with decreasing priority if one round over the
->  			 * whole hierarchy is not sufficient.
->  			 */
-> -			if (!global_reclaim(sc) &&
-> +			if (!current_is_kswapd() &&
->  					sc->nr_reclaimed >= sc->nr_to_reclaim) {
->  				mem_cgroup_iter_break(root, memcg);
->  				break;
-> -- 
-> 1.8.3.1
-> 
+I would be interested in this topic too. I would like to
+understand the API and how it can help exploit the different type of
+devices we have on OpenCAPI.
 
--- 
-Michal Hocko
-SUSE Labs
+IMHO there are few proposals related to this which we could discuss together
+
+1. HMAT series which want to expose these devices as Numa nodes
+2. The patch series from Dave Hansen which just uses Pmem as Numa node.
+3. The patch series from Fengguang Wu which does prevent default
+allocation from these numa nodes by excluding them from zone list.
+4. The patch series from Jerome Glisse which doesn't expose these as
+numa nodes.
+
+IMHO (3) is suggesting that we really don't want them as numa nodes. But
+since Numa is the only interface we currently have to present them as
+memory and control the allocation and migration we are forcing
+ourselves to Numa nodes and then excluding them from default allocation.
+
+-aneesh
+
