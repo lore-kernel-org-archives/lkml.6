@@ -2,152 +2,119 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7712EC282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8785AC282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C2A20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:38:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p5wOARGK"
+	by mail.kernel.org (Postfix) with ESMTP id 47CBA20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:40:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbfAaBiH (ORCPT
+        id S1727699AbfAaBka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 20:38:07 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37255 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbfAaBiH (ORCPT
+        Wed, 30 Jan 2019 20:40:30 -0500
+Received: from csm1.csm-office.com.au ([165.228.118.109]:59558 "EHLO
+        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfAaBka (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 20:38:07 -0500
-Received: by mail-lf1-f67.google.com with SMTP id y11so1090423lfj.4;
-        Wed, 30 Jan 2019 17:38:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kUuOw4fFoiE8PZh9sthB+A3XZIWmU6c9UsbDiDGVH0M=;
-        b=p5wOARGKAbYe0/JhQ5LeEC/12vxUUVQ2wcz41MZnB1/7kKYZzgw4U4YuJKorHw10/w
-         I43NbyWtQty7KRsawYQ9hXFe11Hc064KzCAlA1WDfEQ5h3CoK1NbYhukroVcckvOalQA
-         X1jdfHs1cFoxuipa3jRbFSoEuqszQHslispt/XZJ6J1NkxzLNJr0QIdxmNrF8dPFjt7s
-         CkrQdrJM6QuY7rP+h7UevCUdSHMRnjibEzlYCV1d0u5WAs409BSSd5kg4Ybtt8YON9F5
-         VNv9JsKa07fu1iwA8TP3NHuD4KHDzAvpG9v/1DzQcYu5/JMgxx/2BIopiURvh/xKwshV
-         QBuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kUuOw4fFoiE8PZh9sthB+A3XZIWmU6c9UsbDiDGVH0M=;
-        b=lt+KtS+lqsaFP9bZW+uup3TIwV91t7EUG6ihSWoaXjNFWcG8l9vITeT7dGgmwE4gOG
-         y5lAY/oO0OLfkmolAINOZkQx46o//DQPesh+Koxd0sEpVrINz82Aiptqnbm2Ig/E4si+
-         B6jloa6If4auYvxDch1f1pIavBYXZ2b3K1j/n9Ot59RW/uxArXSP7hZamYPaQyGZ8b65
-         RTyQXXU7y4J1uupAXVMpzP2dfZ9ga3kRZ1tz/mz2YOOEF36ZXZ8/KazWi4Ii4tAXXtKo
-         2I1CJd2T2RTjUTBiIh3fFsMfX96IKIaXJfWX5T3TyU26E327PEFGbUN3zNsSYKvtlr2H
-         jiOg==
-X-Gm-Message-State: AJcUukdExAkuyeNMk0q98O+97odGfBtjZkJQ4n52K80PzfCrfdUzDsjD
-        fXOzlbeAYRZZjpodk3o1CMCSKmuj
-X-Google-Smtp-Source: ALg8bN4u00Crv5tuV7rQl/pQdCnOKNAAWPI45sDqb1xnPgvBRUGhcWKHeEo408XX85RKJhjGHw2XfQ==
-X-Received: by 2002:a19:26ce:: with SMTP id m197mr25277284lfm.23.1548898683738;
-        Wed, 30 Jan 2019 17:38:03 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id b17-v6sm526992ljj.93.2019.01.30.17.38.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 17:38:02 -0800 (PST)
-Subject: Re: [PATCH V7 4/5] i2c: tegra: Update transfer timeout
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
- <1548864096-20974-4-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <80d5072c-b8b8-c263-bcda-ad008597469e@gmail.com>
-Date:   Thu, 31 Jan 2019 04:38:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 20:40:30 -0500
+X-Virus-Scanned: amavisd-new at aussec.com
+Received: from sneezy.aussec.com (sneezy.aussec.com [172.16.0.4])
+        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTP id x0V1eDLw014110;
+        Thu, 31 Jan 2019 12:40:18 +1100
+Received: from 1.132.106.237 ([1.132.106.237]) by www.aussec.com (Horde
+ Framework) with HTTP; Thu, 31 Jan 2019 12:40:08 +1100
+Message-ID: <20190131124008.64023l78rw406lfc@www.aussec.com>
+Date:   Thu, 31 Jan 2019 12:40:08 +1100
+From:   tom burkart <tom@aussec.com>
+To:     Rodolfo Giometti <giometti@enneenne.com>
+Cc:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Subject: Re: Fwd: [PATCH v14 0/3] PPS: pps-gpio PPS ECHO implementation
+References: <20190129124357.17396k708szaibbx@www.aussec.com>
+ <7abdee30-91fb-4d11-52e1-1778e418c7b8@enneenne.com>
+In-Reply-To: <7abdee30-91fb-4d11-52e1-1778e418c7b8@enneenne.com>
 MIME-Version: 1.0
-In-Reply-To: <1548864096-20974-4-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=UTF-8;
+ DelSp="Yes";
+ format="flowed"
+Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+User-Agent: Internet Messaging Program (IMP) H3 (4.3.9)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-30.01.2019 19:01, Sowjanya Komatineni пишет:
-> Tegra194 allows max of 64K bytes and Tegra186 and prior allows
-> max of 4K bytes of transfer per packet.
-> 
-> one sec timeout is not enough for transfers more than 10K bytes
-> at STD bus rate.
-> 
-> This patch updates I2C transfer timeout based on the transfer size
-> and I2C bus rate to allow enough time during max transfer size at
-> lower bus speed.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  [V5/V6/V7] : Same as V4
->  [V4] : V4 series includes bus clear support and this patch is updated with
-> 	fixed timeout of 1sec for bus clear operation.
->  [V3] : Same as V2
->  [V2] : Added this patch in V2 series to allow enough time for data transfer
-> 	to happen.
-> 	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
-> 	takes argument with this patch.
-> 
->  drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index b30b5da5ce6b..623bf4f275cd 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -25,7 +25,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/reset.h>
->  
-> -#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
-> +#define TEGRA_I2C_TIMEOUT(ms) (msecs_to_jiffies(ms))
->  #define BYTES_PER_FIFO_WORD 4
->  
->  #define I2C_CNFG				0x000
-> @@ -901,8 +901,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
->  		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
->  		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
->  
-> -		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-> -							TEGRA_I2C_TIMEOUT);
-> +		time_left = wait_for_completion_timeout(
-> +						&i2c_dev->msg_complete,
-> +						TEGRA_I2C_TIMEOUT(1000));
->  		if (time_left == 0) {
->  			dev_err(i2c_dev->dev, "timed out for bus clear\n");
->  			return -ETIMEDOUT;
-> @@ -929,6 +930,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  	u32 *buffer = 0;
->  	int ret = 0;
->  	bool dma = false;
-> +	u16 xfer_time = 100;
->  
->  	if (msg->flags & I2C_M_RD)
->  		xfer_size = msg->len;
-> @@ -936,6 +938,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
->  
->  	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
-> +	xfer_time += DIV_ROUND_CLOSEST((xfer_size * 9) * 1000,
-> +					i2c_dev->bus_clk_rate);
+Quoting Rodolfo Giometti <giometti@enneenne.com>:
 
-Could you please add a clarifying comment for the equation?
+> I answered to your message, see here:
+Whoops.  I missed it because I am not on the list, sorry.
 
-Shouldn't it be something like this?
+> https://lkml.org/lkml/2019/1/4/399
+------
+Subject	Re: [PATCH v14 3/3] pps: pps-gpio pps-echo implementation
 
-xfer_time = (P clocks) * DIV_ROUND_UP(xfer_size, (N bytes per P clocks)) / (bus_clk_rate / 1000)
+> +static void pps_gpio_echo(struct pps_device *pps, int event, void *data)
+> +{
+> +	/* add_timer() needs to write into info->echo_timer */
+> +	struct pps_gpio_device_data *info;
+> +
+> +	info = data;
+
+Maybe you can write as below and saving two lines and having better  
+readability:
+
+struct pps_gpio_device_data *info = data;
+
+-----
+Done.  Easy fix.
+------
+
+> +	/* fire the timer */
+> +	if (info->pps->params.mode & (PPS_ECHOASSERT | PPS_ECHOCLEAR)) {
+> +		info->echo_timer.expires = jiffies + info->echo_timeout;
+> +		add_timer(&info->echo_timer);
+> +	}
+> +}
+
+I think is better firing the timer if and only if we set the echo GPIO  
+otherwise
+it's useless...
+------
+Later in the patch:
+@@ -152,6 +219,11 @@ static int pps_gpio_probe(struct platform_device *pdev)
+         data->info.owner = THIS_MODULE;
+         snprintf(data->info.name, PPS_MAX_NAME_LEN - 1, "%s.%d",
+                  pdev->name, pdev->id);
++       if (data->echo_pin) {
++               data->info.echo = pps_gpio_echo;
++               data->echo_timeout = msecs_to_jiffies(data->echo_active_ms);
++               timer_setup(&data->echo_timer,  
+pps_gpio_echo_timer_callback, 0);
++       }
+
+         /* register PPS source */
+         pps_default_params = PPS_CAPTUREASSERT | PPS_OFFSETASSERT;
+
+The pps-gpio-echo function only becomes callable when the echo GPIO is  
+set hence I felt that the additional check here was superfluous.  Does  
+my reasoning make sense?
+
+> and here:
+> https://lkml.org/lkml/2019/1/4/398
+--------
+Subject	Re: [PATCH v14 2/3] dt-bindings: pps: pps-gpio PPS ECHO implementation
+
+I think this patch it's OK but I'm asking to myself if it should be  
+merged with
+next one... logically it describes what patch 3/3 does so why do we keep them
+separated?
+-------
+I have separated it because scripts/checkpatch.pl insists it needs to  
+be separated.
+
+Tom
 
