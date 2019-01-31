@@ -2,148 +2,147 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24510C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3CAC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE16B218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4893E218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:26:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="ZWpiw3i2"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1BPxKgr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbfAaTYa (ORCPT
+        id S1728686AbfAaT0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:24:30 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:46010 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728239AbfAaTYa (ORCPT
+        Thu, 31 Jan 2019 14:26:34 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40450 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728191AbfAaT0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:24:30 -0500
-Received: by mail-yb1-f196.google.com with SMTP id t11so1752959ybi.12
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:24:29 -0800 (PST)
+        Thu, 31 Jan 2019 14:26:34 -0500
+Received: by mail-lj1-f196.google.com with SMTP id n18-v6so3680455lji.7
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:26:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GOkTc082x66zQ8MWiASHM9atPoq5PEh05sfEPHmgtBg=;
-        b=ZWpiw3i2UHaie+rcOcp4cdVdERseP7Ir1KbtBad2OlJFiFswIDqFGJnwnnRP8XwRNR
-         syMdVZV6IoaE/sUB74/tgfuufIpPGavYvDe4VyR5Q0mAfqF5tV4qw0oE+9/mInGa0qVK
-         7lP+qhdn0D5/WvpxmVgWMM4TpTcVIbBuj6wfnQ9k3fyiKWF4TlpJUf+rJ+6O3myGQ9xg
-         pitITSmbhZLcO872zAn5OzO1qVpX4urszjqagqJDRopSqkHkad56qb6Rol7MdoCRWX9p
-         8VCEZ10l1u0hJVrCurBLBWPV1Oq79saCcAu7FIloCUIiZYCw32fIiABOSrny0XiqMoJP
-         p6Pg==
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=KVhTFpGFN6usKmuhNARu99Z+Px/nEIsJQCxHO9zQbdc=;
+        b=B1BPxKgruSsXx5MRo14dMGoSsoBE56fNoPrqmE+nfYJkv4eizAMdCuWWlnlbmBkchT
+         BoyGIMtQoyhLMXqk+kqukPYzG3MH18zhFix3ie2Ms0gjvhWwT8wpSvtBaCQbfOF9dS5H
+         2Conr+vZPbvxelYJLUFRKEYWJZ3IlrLuvlR+hhZP1hG+53SGj+8zlFI2wTqM0et1yqbR
+         Gsr96RkShpXMXZdKzJvFOKwWgZW/ftM3qgYN3D2kg1x3jloiluLNPXyDC7wT7QTXNf+6
+         csOUhBQg4z3sV+SNAtAWlXZkQLJqb1KW6JETqpxZe82swKqs/Ez7A5P46yEFaRg9OPFz
+         qGeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GOkTc082x66zQ8MWiASHM9atPoq5PEh05sfEPHmgtBg=;
-        b=BnzBtretl6IjTdHeBAhuTxRnfZYolq7harnzTFq6311FWMWMDqs5lHhpkAI7EacPZe
-         XTQQ8rH7oocGRmzZ5dRdqAZd2saqHOS8smUpjmdYpzgu2Rco0yufhlSPOeZewydUvBqD
-         X1OFD5yxPHpJ/peqhZ92iPaj+aOGAGu9Lq6bdoxoEH2Il2fyhKFKpNQ91b/5kNXch+Ur
-         fty8rBQVw9707kbtVUFrzwx/khGsBOsZqDG0GH42bwsuhSvDZitZd8WksRrEuKJyAbCc
-         wR7v2R9JGbMEFrdigK05D60lHvnpmSLWEtaAc55HVza72ZwbtV95r5BUNMwv2mE7Mo5S
-         YWJw==
-X-Gm-Message-State: AJcUukfM87W/ko44ui0EvtxFdyh7lC7GdpsM36ctt8o+8OFuDFK17UfK
-        iwvdNHTrKEoxZ/7liHNHA20cDQ==
-X-Google-Smtp-Source: ALg8bN4uSwX5ARKdB5q8/OAF374EkUepCTE0MiwaCESnFbG21oWlqDtsJ+W4dNUMPKjkxqghZIEPkw==
-X-Received: by 2002:a25:bfd2:: with SMTP id q18mr27698046ybm.271.1548962668925;
-        Thu, 31 Jan 2019 11:24:28 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id z37sm2058302ywj.3.2019.01.31.11.24.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 11:24:28 -0800 (PST)
-Date:   Thu, 31 Jan 2019 14:24:27 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>
-Subject: Re: [PATCH v5 0/8] drm/msm/dsi: Get PHY ref clocks from the DT
-Message-ID: <20190131192427.GY114153@art_vandelay>
-References: <20181219235528.114830-1-mka@chromium.org>
- <20190129000534.GJ81583@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129000534.GJ81583@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=KVhTFpGFN6usKmuhNARu99Z+Px/nEIsJQCxHO9zQbdc=;
+        b=uf8Rs5s8Id59jw2qEATgNqlUhcvy1Ba2Xn4g2F7zpy2JaVa9efyvT49RCJ9OnFW4/M
+         LZbgAkSWDbyCfBSd3P7FiCjjmuLdTmwYa0YInfsch4q42yfnQNJ/KzwCR+NQhLHzMtoa
+         NEqhCu/mP3oM4zRvxtwjV2Y1R7xdnT6wzKGYFb3Bt3dIsJRmnCtN03NWZG+Ewovm1u66
+         LgqKsB7fn6llxIE99JDLblPKAg9PR4+uj6b36Y0imckwQMB90zdRMYhfferjzV8m6V2k
+         XrwIhjoxwjSXoIM1H6DcN3cNEeMTTJQMTFeI7Gb5t2RYAWH6BTZtU0ar2m0yN4sYbbV2
+         YEQA==
+X-Gm-Message-State: AJcUukepAjVe00tEk7Z7DfXeSA5NWlLsn01X1ExSKfQR3Y5JrulMvtVH
+        zQz5VKtJVG524pyl5vyhFCkfMb+N
+X-Google-Smtp-Source: ALg8bN5tlHlCdnqQhVb1WUIrb3YCIMkMLTVtaeumjdcukqxYEb8I2p1wMBzgmn/Xd072SzOq/J6/+g==
+X-Received: by 2002:a2e:2416:: with SMTP id k22-v6mr26536679ljk.80.1548962792043;
+        Thu, 31 Jan 2019 11:26:32 -0800 (PST)
+Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
+        by smtp.gmail.com with ESMTPSA id f1sm987363lfm.22.2019.01.31.11.26.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 11:26:31 -0800 (PST)
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        dri-devel@lists.freedesktop.org
+Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/19] drm/panel: drmP.h removal and DRM_DEV*
+Date:   Thu, 31 Jan 2019 20:26:00 +0100
+Message-Id: <20190131192619.9763-1-sam@ravnborg.org>
+X-Mailer: git-send-email 2.12.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 04:05:34PM -0800, Matthias Kaehlcke wrote:
-> Hi,
-> 
-> this series has gone through multiple rounds of review and there are
-> no outstanding comments. It seems it should be ready to land, or is
-> there anything left that needs to be addressed?
+Hi Thierry et al.
 
-From the drm side, I think we'll need Andy to pick up the dt-bindings
-and dts changes, and then the msm/dsi changes can be picked once that's
-merged. We could also do a topic branch if that suits everyone.
+While reviewing a number of new panel drivers there was a
+certain pattern in the feedback:
+- the now deprecated drmP.h file was used
+- dev_err() and friends was used
 
-Sean
+This patch-set address the above items in the panel
+drivers in drm/panel/
+The hope is that new panel drivers will no longer inherit bad
+patterns from the existing drivers.
 
-> 
-> Thanks
-> 
-> Matthias
-> 
-> On Wed, Dec 19, 2018 at 03:55:20PM -0800, Matthias Kaehlcke wrote:
-> > The MSM DSI PHY drivers currently hardcode the name and the rate of
-> > the PHY ref clock. Get the ref clock from the device tree instead.
-> > 
-> > Note: testing of this series was limited to SDM845 and the 10nm PHY
-> > 
-> > Major changes in v5:
-> > - none (see per-patch change log for minor changes)
-> > 
-> > Major changes in v4:
-> > - always use parent rate for 28nm and 28nm 8960 PHYs
-> > 
-> > Major changes in v3:
-> > - keep supporting DTs without ref clock for the 28nm and the 28nm
-> >   8960 PHYs
-> > - added patch to add ref clock to qcom-apq8064.dtsi
-> > 
-> > Major changes in v2:
-> > - apply to all MSM DSI PHY drivers, not only 10nm
-> > 
-> > Matthias Kaehlcke (8):
-> >   dt-bindings: msm/dsi: Add ref clock for PHYs
-> >   drm/msm/dsi: 28nm 8960 PHY: Get ref clock from the DT
-> >   drm/msm/dsi: 28nm PHY: Get ref clock from the DT
-> >   drm/msm/dsi: 14nm PHY: Get ref clock from the DT
-> >   drm/msm/dsi: 10nm PHY: Get ref clock from the DT
-> >   arm64: dts: qcom: msm8916: Set 'xo_board' as ref clock of the DSI PHY
-> >   arm64: dts: sdm845: Set 'bi_tcxo' as ref clock of the DSI PHYs
-> >   ARM: dts: qcom-apq8064: Set 'xo_board' as ref clock of the DSI PHY
-> > 
-> >  .../devicetree/bindings/display/msm/dsi.txt   |  1 +
-> >  arch/arm/boot/dts/qcom-apq8064.dtsi           |  5 +--
-> >  arch/arm64/boot/dts/qcom/msm8916.dtsi         |  5 +--
-> >  arch/arm64/boot/dts/qcom/sdm845.dtsi          | 10 +++---
-> >  drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c    | 20 +++++++++--
-> >  drivers/gpu/drm/msm/dsi/pll/dsi_pll_14nm.c    | 23 +++++++++---
-> >  drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c    | 36 +++++++++++++------
-> >  .../gpu/drm/msm/dsi/pll/dsi_pll_28nm_8960.c   | 24 ++++++++++---
-> >  8 files changed, 92 insertions(+), 32 deletions(-)
-> > 
+The use of DRM_DEV* is not accepted by everyone, so this conversion
+was split up in smaller bits.
+If some drivers do not want to use DRM_DEV* then just drop the relevant patch.
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+All patches are build tested on x86/arm.
+
+The DRM_DEV* patches depends on the drmP.h removal.
+
+One extra patch sneaked in "panel-innolux: drop unused variable"
+This is a fix for an unused variable and was added to flush my panel patches.
+
+Note: Waiting for key storage (for gpg key) before I start the process getting
+commit rights, so I rely on someone else (Thierry?) to commit this.
+
+Patches are made on top of drm-misc-next as of a few days ago.
+
+Comments welcome!
+
+	Sam
+
+Sam Ravnborg (19):
+      drm/panel: drop drmP.h usage
+      drm/panel: panel-innolux: drop unused variable
+      drm/panel: samsung: use DRM_DEV*
+      drm/panel: arm-versatile: use DRM_DEV*
+      drm/panel: truly: use DRM_DEV*
+      drm/panel: sitronix: use DRM_DEV*
+      drm/panel: ilitek: use DRM_DEV*
+      drm/panel: innolux: use DRM_DEV*
+      drm/panel: jdi: use DRM_DEV*
+      drm/panel: lg: use DRM_DEV*
+      drm/panel: lvds: use DRM_DEV*
+      drm/panel: olimex: use DRM_DEV*
+      drm/panel: orisetech: use DRM_DEV*
+      drm/panel: panasonic: use DRM_DEV*
+      drm/panel: raspberrypi: use DRM_DEV*
+      drm/panel: raydium: use DRM_DEV*
+      drm/panel: seiko: use DRM_DEV*
+      drm/panel: sharp: use DRM_DEV*
+      drm/panel: simple: use DRM_DEV*
+
+ drivers/gpu/drm/panel/panel-arm-versatile.c        | 21 +++--
+ drivers/gpu/drm/panel/panel-ilitek-ili9322.c       | 97 ++++++++++++----------
+ drivers/gpu/drm/panel/panel-ilitek-ili9881c.c      | 14 ++--
+ drivers/gpu/drm/panel/panel-innolux-p079zca.c      | 17 ++--
+ drivers/gpu/drm/panel/panel-jdi-lt070me05000.c     | 66 ++++++++-------
+ drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c |  4 +-
+ drivers/gpu/drm/panel/panel-lg-lg4573.c            | 25 +++---
+ drivers/gpu/drm/panel/panel-lvds.c                 | 39 +++++----
+ drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 28 ++++---
+ drivers/gpu/drm/panel/panel-orisetech-otm8009a.c   | 15 ++--
+ .../gpu/drm/panel/panel-panasonic-vvx10f034n00.c   | 19 +++--
+ .../gpu/drm/panel/panel-raspberrypi-touchscreen.c  | 25 +++---
+ drivers/gpu/drm/panel/panel-raydium-rm68200.c      | 11 ++-
+ drivers/gpu/drm/panel/panel-samsung-ld9040.c       | 18 ++--
+ drivers/gpu/drm/panel/panel-samsung-s6e3ha2.c      | 21 +++--
+ drivers/gpu/drm/panel/panel-samsung-s6e63j0x03.c   | 15 ++--
+ drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c      | 32 ++++---
+ drivers/gpu/drm/panel/panel-seiko-43wvf1g.c        | 18 ++--
+ drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c    | 66 ++++++++++-----
+ drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c    | 27 +++---
+ drivers/gpu/drm/panel/panel-simple.c               | 22 +++--
+ drivers/gpu/drm/panel/panel-sitronix-st7789v.c     | 16 ++--
+ drivers/gpu/drm/panel/panel-truly-nt35597.c        | 10 ++-
+ 23 files changed, 375 insertions(+), 251 deletions(-)
