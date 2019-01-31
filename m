@@ -2,140 +2,231 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D59FDC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F40C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 697992087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:13:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="ZR5eaPYS"
+	by mail.kernel.org (Postfix) with ESMTP id C8364218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387415AbfAaNN1 (ORCPT
+        id S1733048AbfAaNPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:13:27 -0500
-Received: from mail-eopbgr60102.outbound.protection.outlook.com ([40.107.6.102]:63024
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727202AbfAaNN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 08:13:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BK5tZy1W9j3mtA/lZUtoYYOLJszdB6vdOOVsSgZgaXM=;
- b=ZR5eaPYSqWtKUS82So+RNVB/oVDcv2ozHOvx16d4JvrNa/Qc+2eOz6ZcFW78aJV9P4+iWk5nt9k279vwiYsecY+1gECsL+RouquZRklB3Ts98jpMLCPK6b/XTgeZZeFo6ieLLpfa25pl4m/jGQtqX+x62hQ6GGSksV2nwZXP/Fg=
-Received: from VI1PR0201MB2112.eurprd02.prod.outlook.com (10.169.131.25) by
- VI1PR0201MB2096.eurprd02.prod.outlook.com (10.169.131.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.18; Thu, 31 Jan 2019 13:13:22 +0000
-Received: from VI1PR0201MB2112.eurprd02.prod.outlook.com
- ([fe80::515d:5c88:762f:9d37]) by VI1PR0201MB2112.eurprd02.prod.outlook.com
- ([fe80::515d:5c88:762f:9d37%6]) with mapi id 15.20.1558.025; Thu, 31 Jan 2019
- 13:13:22 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Boris Brezillon <bbrezillon@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: [PATCH 0/4] drm/atmel-hlcdc: fix plane clipping/rotation issues
-Thread-Topic: [PATCH 0/4] drm/atmel-hlcdc: fix plane clipping/rotation issues
-Thread-Index: AQHUqPaeuHFV8522kE2kP/gCblgMKKXC4lQAgAaZNoA=
-Date:   Thu, 31 Jan 2019 13:13:22 +0000
-Message-ID: <d2e24b73-dee1-b31a-dc87-02d2e75b6dd2@axentia.se>
-References: <20190110151020.30468-1-peda@axentia.se>
- <20190127092709.3863c954@bbrezillon>
-In-Reply-To: <20190127092709.3863c954@bbrezillon>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        Thu, 31 Jan 2019 08:15:42 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:55194 "EHLO
+        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727452AbfAaNPl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 08:15:41 -0500
+Received: from [31.193.165.228] (port=48346 helo=mx-ginzinger.sigmacloud.services)
+        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <Martin.Kepplinger@ginzinger.com>)
+        id 1gpCBp-0006AK-25; Thu, 31 Jan 2019 14:15:33 +0100
+Received: from [10.10.1.120] (10.10.1.120) by exc1.buero.ginzinger.com
+ (10.1.1.204) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 31 Jan
+ 2019 14:15:33 +0100
+X-CTCH-RefID: str=0001.0A0B0207.5C52F4F5.007A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Subject: Re: [PATCH v4] mmc: mxs-mmc: Introduce regulator support
+To:     Robin van der Gracht <robin@protonic.nl>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Martin Kepplinger <martink@posteo.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190128144119.10092-1-martink@posteo.de>
+ <CAPDyKFo7949rcxEX5U2QUS0c2xhC_z+JGeOiF2HC6+QukVpEaQ@mail.gmail.com>
+ <20190131092006.363d1dd4@erd987>
+ <CAPDyKFr=kcoGK0C2A8JH-nhfgUgoRVa-E=6KPRjFO51QQxjJLA@mail.gmail.com>
+ <20190131140930.05c5b6a5@erd987>
+From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Message-ID: <e79cae34-7dfc-ba93-c79b-4d4abff3afbd@ginzinger.com>
+Date:   Thu, 31 Jan 2019 14:15:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1PR05CA0176.eurprd05.prod.outlook.com
- (2603:10a6:3:f8::24) To VI1PR0201MB2112.eurprd02.prod.outlook.com
- (2603:10a6:800:24::25)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0201MB2096;6:jcy4lA4Tiqjq/84J+7VKG4aUVjaP2R0fArkDQvvEhfkv3N2OpSDXqvfGzXcdyHeU3evOQL79HnKl5ab0u0BCdyPPGYLBI1yynC9rd5+YDBCMvu5MpQwP/89psxvyVy/t1I79THOYEg25QTkcLZI+oqWcGij7SNNfSK4Q8WxJiQdvOMUfVe87IlHqeJZcPaS16zCTa6AQX90w+LrXdhkowX8+lFeB2lqFLRALEVhaJY0gnhSh9AmVVtTTEt3wMvPRW57U+XX2PdJuU2x3NBsOU6xff7JUS0xfRTtH5SMRTnYx//ko38CYPRTHcUHzBj/DkrxrHzssZsd3cNGnjXMdjelCltmtM09FLUlphkbipegnLcr2YliMBUATxwdNCt+xJaMF8LR9V788LRhmGsPYWvBHM4Pnkcfl257OtHuWUycAP7RQ6yBgsNnTdRTn0P2LOt68RPEwazfuJSeCZzkWBQ==;5:B+GGnEbRt5wfKX3YvpEyLZKkjnZFZfHtLQZzZ5tKDXeloy4zCPfWCP5s4l7RzShIBUcqu5PvyyVtzbOaroOVqOhyp6iViUjKjFLkhNeVOfrgA+Z1rhmRLTHpVyUTuY0pX5z6kDYjWcUMKj2U8JlM9FamvA4E15L4Qt5zgJnq0Qek54xL6BH/SHG0m3zB3oBE2QsWjq8LgVPHLNabP2Th0A==;7:MSCth/pKLz73+sFpuibJ0S4ge5R44OyqzIwXO+7IAODx0TF0438Bp6aZxftoAHEm+DRIZk0JfsciNheug8rEUTh4kTGoKv3URH+sYas8MjZCM4Abo1UNV6x57z66f2NtDoS5y+LMaqnvR0dd/QGm2A==
-x-ms-office365-filtering-correlation-id: 751f425e-42b2-49f3-9d92-08d6877de004
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:VI1PR0201MB2096;
-x-ms-traffictypediagnostic: VI1PR0201MB2096:
-x-microsoft-antispam-prvs: <VI1PR0201MB209656A70ED2E398CF228202BC910@VI1PR0201MB2096.eurprd02.prod.outlook.com>
-x-forefront-prvs: 09347618C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(346002)(136003)(39830400003)(396003)(189003)(199004)(6506007)(2906002)(2616005)(3846002)(74482002)(6116002)(6246003)(14454004)(6916009)(11346002)(105586002)(71200400001)(106356001)(6486002)(486006)(36756003)(229853002)(446003)(86362001)(31686004)(476003)(6512007)(31696002)(97736004)(71190400001)(6436002)(7736002)(8936002)(66066001)(65806001)(53936002)(4326008)(64126003)(256004)(53546011)(8676002)(305945005)(386003)(52116002)(316002)(54906003)(58126008)(81166006)(81156014)(99286004)(68736007)(102836004)(26005)(25786009)(65826007)(14444005)(76176011)(65956001)(508600001)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0201MB2096;H:VI1PR0201MB2112.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: SWQdR8/hQu0KFEYnaBJ08G67Tk3YTyD9UoqALH4uifpKZju9gfQU7PJT0g7XB8FbrVNSBdfZIor2scbc33Vv4h6ky2ok4CIkhQwCqqwAtR8acw4QiCLSSMJnHAr/W/wvUhygqiIE5ZlY93hXWaHSN0bYMpPReMKoF8oPF2xIxmJ8UkzF/wv5zBhIHqMg6U9LGWFS4UvZlImetimjY23VYDHkmSy9d2dg9Sv4efq6TSjGzwooPf+cSagEw+HrBr4181CZtDNeLt0sbtX8XvossYSQ2Ecj4diHL+lZrKD8loccqc5cD+c5IuKmJngHDq7vkSi9s5txG0rj335J9utpd+lHbJomgVzpXr/Pb4uXBtzZOM7ueNg04UrPH1y/q23M5+1bemJhBaWSEgtNAIONnaT+iKfv/k7jsIJnswqG4Lw=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3FF5C38029451345A2864983E6C4930F@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+In-Reply-To: <20190131140930.05c5b6a5@erd987>
+X-Originating-IP: [10.10.1.120]
+X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
+ exc1.buero.ginzinger.com (10.1.1.204)
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NODISC][NOSIG]Re: [PATCH v4] mmc: mxs-mmc:
+ Introduce regulator support
+X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 751f425e-42b2-49f3-9d92-08d6877de004
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 13:13:21.2470
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0201MB2096
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----FF5873BDBA9B11459ED634B3E5BFCAC7"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0wMS0yNyAwOToyNywgQm9yaXMgQnJlemlsbG9uIHdyb3RlOg0KPiBPbiBUaHUsIDEw
-IEphbiAyMDE5IDE1OjEwOjI4ICswMDAwDQo+IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEuc2U+
-IHdyb3RlOg0KPiANCj4+IEhpIQ0KPj4NCj4+IEkgZm91bmQgYW4gdW5mb3J0dW5hdGUgaXNzdWUg
-d2hpbGUgcmVjb2RpbmcgcGxhbmUgaGFuZGxpbmcgdG8gdXNlDQo+PiBkcm1fYXRvbWljX2hlbHBl
-cl9jaGVja19wbGFuZV9zdGF0ZSgpLiBUaGUgZHJpdmVyIHJvdGF0ZXMgY2xvY2t3aXNlLA0KPj4g
-d2hpY2ggaXMgbm90IGNvcnJlY3QuIEkgc2ltcGx5IGZpeGVkIGl0IChwYXRjaCAxLzQpLCBidXQg
-bWF5YmUgdGhhdA0KPj4gd2lsbCBjYXVzZSByZWdyZXNzaW9ucyBmb3IgdW5zdXNwZWN0aW5nIHVz
-ZXJzIHdobyBzaW1wbHkgYXNzdW1lZA0KPj4gdGhhdCB0aGUgY2xvY2t3aXNlIHJvdGF0aW9uIHdh
-cyBjb3JyZWN0PyBJIGRvbid0IGtub3cgd2hhdCB0byBkbw0KPj4gYWJvdXQgdGhhdD8gQWRkaW5n
-IGFuIG9wdGlvbiB0byBnZXQgdGhlIG9sZCBicm9rZW4gYmVoYXZpb3Igc2VlbXMNCj4+IHVzZWxl
-c3MsIHdvdWxkbid0IGl0IGJlIGp1c3QgYXMgZWFzeSB0byBqdXN0IGZpeCB3aGF0ZXZlciBhcHAg
-dG8NCj4+IHJvdGF0ZSB0aGUgb3RoZXIgd2F5IGluc3RlYWQgb2YgYWRkaW5nIGFuIG9wdGlvbiBz
-b21ld2hlcmU/DQo+Pg0KPj4gSSBoYXZlIG9ubHkgdGVzdGVkIHRoaXMgc2VyaWVzIG9uIHNhbWE1
-ZDMsIGJ1dCBJIGRpZCBjaGVjayB0aGUgZG9jcw0KPj4gZm9yIHZhcmlvdXMgb3RoZXIgY2hpcHMg
-KHNhbWE1ZDIsIHNhbWE1ZDQsIHNhbTluMTIsIHNhbTlnMTUsIHNhbTlnMzUNCj4+IGFuZCBzYW05
-eDM1KSBzdXBwb3J0ZWQgYnkgdGhlIGRyaXZlciAocmVsZXZhbnQgdG8gcGF0Y2ggNC80KS4NCj4+
-DQo+PiBDaGVlcnMsDQo+PiBQZXRlcg0KPj4NCj4+IFBldGVyIFJvc2luICg0KToNCj4+ICAgZHJt
-L2F0bWVsLWhsY2RjOiByb3RhdGUgcGxhbmVzIGNvdW50ZXJjbG9ja3dpc2UNCj4+ICAgZHJtL2F0
-bWVsLWhsY2RjOiBkbyBub3Qgc3dhcCB3L2ggb2YgdGhlIGNydGMgd2hlbiBhIHBsYW5lIGlzIHJv
-dGF0ZWQNCj4+ICAgZHJtL2F0bWVsLWhsY2RjOiBmaXggY2xpcHBpbmcgb2YgcGxhbmVzDQo+IA0K
-PiBRdWV1ZWQgcGF0Y2hlcyAxLTMgdG8gZHJtLW1pc2MtbmV4dC4NCg0KR3JlYXQsIHRoYW5rcy4N
-Cg0KPj4gICBkcm0vYXRtZWwtaGxjZGM6IGRvIG5vdCBpbW1lZGlhdGVseSBkaXNhYmxlIHBsYW5l
-cywgd2FpdCBmb3IgbmV4dA0KPj4gICAgIGZyYW1lDQo+IA0KPiBTdGlsbCB3YWl0aW5nIGZvciBO
-aWNvbGFzIGZlZWRiYWNrIG9uIHRoaXMgb25lLg0KDQpbQWRkaW5nIGJhY2sgTmljb2xhcywgaGUg
-c2VlbXMgdG8gaGF2ZSBnb25lIG1pc3NpbmcgZnJvbSB0aGUgbGlzdA0KcmVjaXBpZW50cy5dDQoN
-CkkgaGF2ZSBkb25lIHNvbWUgdGVzdGluZyBvZiB0aGF0IHBhdGNoIGFuZCBmb3IgbWUgaXQncyBh
-IGRlZmluaXRlDQppbXByb3ZlbWVudC4gVGhlIHRlc3QgSSBkaWQgd2FzIHJlbW92aW5nIGEgd2hp
-dGUgcGxhbmUgZnJvbSBhIHdoaXRlDQpiYWNrZ3JvdW5kLiBXaXRob3V0IHRoZSBwYXRjaCwgdGhl
-IGRyaXZlciB3aWxsIG91dHB1dCBibGFjayB3aGVyZQ0KdGhlIHBsYW5lIHdhcyBmb3IgdGhlIGN1
-cnJlbnQgZnJhbWUgKHNpbmNlIHRoZSBkcml2ZXIgZG9lcyB0aGF0DQpkaXNjLWFyZWEgdGhpbmcg
-Zm9yIHRoZSBsYXJnZXN0IGhpZGRlbiBwYXJ0IG9mIHRoZSBiYWNrZ3JvdW5kKS4NCldpdGggdGhl
-IHBhdGNoLCBJIGdldCBubyB2aXN1YWwgZ2xpdGNoZXMgd2hlbiByZW1vdmluZyBhIHBsYW5lLg0K
-DQpJIHVzZSBhIHBsYW5lIHRvIHNjcm9sbCBhIHRleHQsIGFuZCBpZiB5b3Uga25vdyB3aGF0IHRv
-IGxvb2sgZm9yLA0KdGhlIGJsYWNrIHJlY3RhbmdsZSB0aGF0IGZsaWNrZXJzIGJ5IGFzIHRoZSBw
-bGFuZSB3aXRoIHRoZSBzY3JvbGxpbmcNCnRleHQgaXMgcmVtb3ZlZCBpcyBsaXR0bGUgYml0IGRp
-c3R1cmJpbmcuIE5vdCBhIHNpZ25pZmljYW50IHByb2JsZW0sDQphbmQgbWF5YmUgb25seSBnZWVr
-cyBub3RpY2UgaXQsIGJ1dCBzdGlsbC4uLg0KDQpKdXN0IHdhbnRlZCB0byBzYXkgdGhhdCB0aGUg
-cmVzdWx0aW5nICJibGFjayBob2xlIiBtZW50aW9uZWQgaW4gdGhlDQpvdGhlciB0aHJlYWQgcmVh
-bGx5IGRvZXMgZXhpc3QgYW5kIHRoYXQgdGhlIHBhdGNoIG1heSBtYWtlIHNlbnNlDQpiZXlvbmQg
-dGhlIGZhY3QgdGhhdCBpdCByZW1vdmVzIHVzYWdlIG9mIHVuZG9jdW1lbnRlZCBmZWF0dXJlcy4N
-Cg0KSSBoYXZlIG5vdCBzZWVuIGFueSBiYWQgc2lkZSBlZmZlY3RzIGZybyB0aGUgcGF0Y2gsIGJ1
-dCBhZG1pdHRlZGx5DQpteSB0ZXN0aW5nIHdhcyB2ZXJ5IGxpbWl0ZWQgYW5kIEkgZGlkIG5vdCB0
-cnkgdG8gcmVtb3ZlIHRoZSBwbGFuZQ0Kd2hpbGUgZG9pbmcgb3RoZXIgc3R1ZmYgd2l0aCB0aGUg
-ZHJpdmVyLiBTbywgdGhlcmUgbWlnaHQgc3RpbGwgYmUNCnJlYXNvbnMgZm9yIHJlbW92aW5nIHBs
-YW5lcyBpbW1lZGlhdGVseS4uLg0KDQpDaGVlcnMsDQpQZXRlcg0K
+This is an S/MIME signed message
+
+------FF5873BDBA9B11459ED634B3E5BFCAC7
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+
+On 31.01.19 14:09, Robin van der Gracht wrote:
+> On Thu, 31 Jan 2019 13:17:23 +0100
+> Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> 
+>> On Thu, 31 Jan 2019 at 09:20, Robin van der Gracht <robin@protonic.nl> wrote:
+>>>
+>>> On Mon, 28 Jan 2019 22:15:23 +0100
+>>> Ulf Hansson <ulf.hansson@linaro.org> wrote:
+
+...
+
+>>>>
+>>>> BTW, you didn't really answer my earlier question about the TI WiFi
+>>>> chip. Doesn't you need a special clock for WiFi chip as well? How do
+>>>> you intend to manage that?
+>>>
+>>> I used an external 32K oscillator (SLOW_CLK) for my wl1271. Other
+>>> clocks ware generated on the module.
+>>
+>> Right. How do you control that clock? Did you model it as clock via
+>> the common clock framework?
+> 
+> No I didn't. The slow clock (sleep clock) was always 'on'.
+> 
+>>
+>>>
+>>> I had to supply a 'vmmc-supply' in your wl1271 devicetree node,
+>>> which will be used to power on/off the wlan module. The supply should
+>>> be a (delayed) GPIO controlled 'fixed-regulator' attached to the
+>>> wlan_en pin on the module.
+>>
+>> Right, thanks for explaining.
+>>
+>>>
+>>> 1: Documentation/devicetree/bindings/net/wireless/ti,wlcore.txt
+>>>   
+>>
+>> This sounds like a good fit for mmc pwrseq simple. There are already
+>> similar users for it.
+>>
+>> Have a look at: /drivers/mmc/core/pwrseq*
+>> If the mmc host driver calls mmc_of_parse() during ->probe(), a pwrseq
+>> instance will be hooked up to it. Once the mmc core tries to power up
+>> the card it will make use of the attached pwrseq for the mmc host in
+>> question.
+>>
+>> In this way, you can control the clock and GPIO line, in more exact
+>> ways that is needed by the WiFi chip.
+> 
+> Ack. Makes more sense than using a regulator (even without specifying
+> 'clocks').
+> 
+
+Thanks Ulf! Sounds promising.
+
+>>
+>> Here is a DT example (look for "mmc-pwrseq-simple"):
+>> arch/arm/boot/dts/imx6qdl-sr-som-ti.dtsi
+>>
+>> This should do the trick for you. On the other hand, I don't mind that
+>> you still add regulator support to the driver, along the lines of what
+>> $subject patch does, however it may not be exactly what you need for
+>> the WiFi case.
+> 
+> @Martin; What do you think? Will you work this out with Ulf?
+> Since I can't test this.
+
+I'll test Ulf's suggestion and go that way if I get it to work. Give me 
+a few days though.
+
+Thanks a lot for your help so far Robin,
+
+                                martin
+
+------FF5873BDBA9B11459ED634B3E5BFCAC7
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
+hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
+Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
+bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
+dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
+R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
+ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
+U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
+UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
+fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
+KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
+03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
+k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
+AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
+HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
+EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
+oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
+b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
+cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
+AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
+GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
+ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
+WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
+NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
+2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
+BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
+fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
+cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
+2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
+csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
+AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
+b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
+Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
+H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
+kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
+fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
+voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
+h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
+6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
+BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
+14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
+MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
+Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
+TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
+gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
+YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
+bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
+A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
+hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
+b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
+3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
+udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
+I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
+1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
+MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
+BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
+NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
+aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMTMxMTMxNTM3
+WjAvBgkqhkiG9w0BCQQxIgQgz0KlctfX0eHjzWA11cjcny9Fhb1tjQWTUt/XeDXq
+Ri0weQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
+TyGwLaNYX9itupEYUgfoSKnHCgQjDCuE2NDpiykY8ORZPPySHndYKntgzpdEexW4
+f9DG47f9C35H6+6/UNw0jC+ykGwdssj62JCoA76qZkECvO2U1qwHAdOtUh1CFzIP
+STsr9iU+6BWzHngMaJB7klxf5U01VXkardO8WgWvqVftEUqxfkQwJ5xX2ud2+7+P
+rO3QbLV2LBHYIUFoBiMD9A+DhlJ5Qx363Z4eSLSTm4TkISMt2MkHUT0oOLXa+wnf
+OK4S9eQN10qA4vDv4Ysu/mnQN9ys6X3pqqX5t3nJLWz6wU3/IifMIQCoAuMFGUtk
+E63BOK0xp8FenTe3soHtUA==
+
+------FF5873BDBA9B11459ED634B3E5BFCAC7--
+
