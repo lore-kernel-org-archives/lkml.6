@@ -2,168 +2,221 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CB0C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43181C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3774218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:16:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0444B218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:21:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hcEz7N8k"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="l6wA7czb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbfAaOQF (ORCPT
+        id S1732523AbfAaOVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 09:16:05 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56198 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfAaOQE (ORCPT
+        Thu, 31 Jan 2019 09:21:46 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16984 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbfAaOVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 09:16:04 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y139so2639944wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 06:16:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8QSwmO+7UtDMUl2h5bXPkoUcbj9z4wWNhNk0IkYYWEw=;
-        b=hcEz7N8kKKaaS/V3KJhjoSjIwwPae2DwBzoJj0cdXpgjdjy8SHgN246zqrZN0GeUNS
-         cKpuUL24AflhsXRTVKIq9KjwCO45KxHOHT8fNOkkBBYuxVKRlf0z7hdgF8z5hku7ehcA
-         t4HoeDLXZDBlNG6pblaLZ+w37HtR8drwufDfZH55BQsvJgc2NITYf8Uo69yCF0LtDI+Z
-         QR9ZlAGNLnT+mLM/WLGLaj1prDk1pE9kr+mS8ef0BbnMbjgvLrgCPM5p7Q2wyq1/sY+I
-         BpRrXsFdbnc2eFOzlVR3yPXrL0AlMFJ74AQBNRbJvvF7EIBRh44G54Jt7u+Pwc/LYODe
-         fq7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8QSwmO+7UtDMUl2h5bXPkoUcbj9z4wWNhNk0IkYYWEw=;
-        b=COhmdBzS4U+BoB/2glOClNUSmkcCHu0uvHbbH4S4z8uPFCqgWWYM3QM2UaHFrXjxXw
-         dhDkVlDMW9uEcsxyGvTP6jW3eXE44fquuffNVR8uY0oc/z6Zc6CLQQM7bnW3PuXjjbGb
-         YuVO4wND4SDcM3JodvCED5mOezSLq31Mj5SGIBrtsjKWEqAgQvpB86/qCnsajHR/WieM
-         j6ptKzECvx9B+MRNzWniKwaykI2U/Mi16RNmhVMG7K0GmncxUXSMIPe7/BOzn/bIFNHx
-         bezYsS/RYqcVywuIiLnslvR9AYWU7hjN+DkFUntjIV5nelDbc7rFsqAo3kj4AhiXKZ7d
-         S1Sg==
-X-Gm-Message-State: AJcUukeZSPahWKpdtK97OSfv1qjCcezfHjJjzRRNM3+TybJwqY2j5Xqe
-        vRsHLvaQGJEiItQhQoCYeWfiB3rPlgUPW3EUeMS5dq68CsvJ
-X-Google-Smtp-Source: ALg8bN4YjEs8Nk5/Vz3sNiFpQVtBF6HkgDto10Wadwk2Huzt8gBIzAVS/ogE5Xap7DyHArj3MI9wvVXihXyQnt+MKrA=
-X-Received: by 2002:a1c:3d44:: with SMTP id k65mr29416104wma.76.1548944162606;
- Thu, 31 Jan 2019 06:16:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20190131134033.1ed0021d@canb.auug.org.au>
-In-Reply-To: <20190131134033.1ed0021d@canb.auug.org.au>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Thu, 31 Jan 2019 08:15:50 -0600
-Message-ID: <CAErSpo7y-PunYStmzvWvbfz-_CV0yoL2Pro3oC-+f47S3RPYAA@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the vhost tree with the pci tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Thu, 31 Jan 2019 09:21:46 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c53044f0000>; Thu, 31 Jan 2019 06:21:03 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 31 Jan 2019 06:21:44 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 31 Jan 2019 06:21:44 -0800
+Received: from [10.25.75.21] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
+ 2019 14:21:38 +0000
+Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Takashi Iwai <tiwai@suse.de>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, <mkumard@nvidia.com>,
+        <rlokhande@nvidia.com>, <sharadg@nvidia.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        <linux-tegra@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>
+References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
+ <b631310f-93fa-ef4b-7014-d97fcfb2dcdf@nvidia.com>
+ <s5ha7jicd4l.wl-tiwai@suse.de> <20190131110530.GA23438@ulmo>
+ <s5htvhpax8s.wl-tiwai@suse.de>
+ <CAJZ5v0i_G36Cw3ZvDxyU2F+pBpiw9i=3_wfQ3tDh3_JgOAb3zw@mail.gmail.com>
+ <s5hh8dpavhw.wl-tiwai@suse.de>
+ <CAJZ5v0hezV7et3VgD7yHa8MLiP0z3YtJ9stwSQL54-tyz_VXkQ@mail.gmail.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <ab7dbd95-6852-12e1-5fcb-8372c73bfdf6@nvidia.com>
+Date:   Thu, 31 Jan 2019 19:51:34 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <CAJZ5v0hezV7et3VgD7yHa8MLiP0z3YtJ9stwSQL54-tyz_VXkQ@mail.gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548944463; bh=njYyIG6apH9x6+J88NDrmgbazHY3VwxJaHqQG8RunUc=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=l6wA7czbXspX6fISgbXPcDGsKMziBKLD8KkRrVTz7WLZHJM557eNsRLsTPhglM5pO
+         ugoMGmT4phEhQ0m6SDJyp2Ibpps2p5HNqwWsgDDAj1pWT/YuCP6B5T9rlQEYH5yGmO
+         kPqS3gO34Nitk1p4tDyLCw7blA0nUw28A+DmMIs7iSq0vyIB+AA4i5CXZBcjVutQlR
+         Gll4vTKb/GnJVSaYYwTVEreISPRkZB/yX+q95OaQ6ZRiSg5VxO1Wx35mfw8k8xGkGI
+         DPhMxFGY7MCTSIPrGnyFCuuv9dIPK1OlFhcA/4YrTq7gnz7zAutI7UK7cUYIzc6oBN
+         WSYocvcqYRw9A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 8:40 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the vhost tree got a conflict in:
->
->   drivers/pci/setup-bus.c
->
-> between commit:
->
->   51c48b310183 ("PCI: Probe bridge window attributes once at enumeration-time")
->
-> from the pci tree and commit:
->
->   955156f34e7d ("PCI: avoid bridge feature re-probing on hotplug")
->
-> from the vhost tree.
->
-> I fixed it up (hopefully - see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
 
-51c48b310183 and 955156f34e7d are both to solve the same problem, so I
-think the best resolution is to drop 955156f34e7d from the vhost tree
-completely.
+On 1/31/2019 5:40 PM, Rafael J. Wysocki wrote:
+> On Thu, Jan 31, 2019 at 12:59 PM Takashi Iwai <tiwai@suse.de> wrote:
+>> On Thu, 31 Jan 2019 12:46:54 +0100,
+>> Rafael J. Wysocki wrote:
+>>> On Thu, Jan 31, 2019 at 12:21 PM Takashi Iwai <tiwai@suse.de> wrote:
+>>>> On Thu, 31 Jan 2019 12:05:30 +0100,
+>>>> Thierry Reding wrote:
+>>>>> On Wed, Jan 30, 2019 at 05:40:42PM +0100, Takashi Iwai wrote:
+>>> [cut]
+>>>
+>>>>>> If I understand correctly the code, the pm domain is already activated
+>>>>>> at calling driver's probe callback.
+>>>>> As far as I can tell, the domain will also be powered off again after
+>>>>> probe finished, unless the device grabs a runtime PM reference. This is
+>>>>> what happens via the dev->pm_domain->sync() call after successful probe
+>>>>> of a driver.
+>>>> Ah, a good point.  This can be a problem with a probe work like this
+>>>> case.
 
-The remaining wrinkle to work out is that we need a stable backport.
-51c48b310183 is technically a little large for a stable backport, so I
-want to have a solid justification for it.  As soon as I get a
-kernel.org bugzilla with those details (who's affected by the
-breakage, what the failure looks like, how to reproduce it, etc), I'll
-add that URL and the stable tag.
+Are you suggesting, whether runtime PM is enabled/disabled, after 
+successful probe the
+domain would be powered off?
+For CONFIG_PM enabled case, probe() can call get_sync() and put_sync() 
+can be in probe_work.
+How this needs to be handled for CONFG_PM disabled case? (just calling 
+clock_enable() may
+not be sufficient as per previous comments)
 
-Bjorn
+>>>>> It seems to me like it's not a very well defined case what to do when a
+>>>>> device needs to be powered up but runtime PM is not enabled.
+>>>>>
+>>>>> Adding Rafael and linux-pm, maybe they can provide some guidance on what
+>>>>> to do in these situations.
+>>>>>
+>>>>> To summarize, what we're debating here is how to handle powering up a
+>>>>> device if the pm_runtime infrastructure doesn't take care of it. Jon's
+>>>>> proposal here was, and we use this elsewhere, to do something like this:
+>>>>>
+>>>>>        pm_runtime_enable(dev);
+>>>>>        if (!pm_runtime_enabled(dev)) {
+>>>>>                err = foo_runtime_resume(dev);
+>>>>>                if (err < 0)
+>>>>>                        goto fail;
+>>>>>        }
+>>>>>
+>>>>> So basically when runtime PM is not available, we explicitly "resume"
+>>>>> the device to power it up.
+>>>>>
+>>>>> It seems to me like that's a fairly common problem, so I'm wondering if
+>>>>> there's something that the runtime PM core could do to help with this.
+>>>>> Or perhaps there's already a way to achieve this that we're all
+>>>>> overlooking?
+>>>>>
+>>>>> Rafael, any suggestions?
+>>>> If any, a common helper would be appreciated, indeed.
+>>> I'm not sure that I understand the problem correctly, so let me
+>>> restate it the way I understand it.
+>>>
+>>> What we're talking about is a driver ->probe() callback.  Runtime PM
+>>> is disabled initially and the device is off.  It needs to be powered
+>>> up, but the way to do that depends on some configuration of the board
+>>> etc., so ideally
+>>>
+>>> pm_runtime_enable(dev);
+>>> ret = pm_runtime_resume(dev);
+>>>
+>>> should just work, but the question is what to do if runtime PM doesn't
+>>> work as expected.  That is, CONFIG_PM_RUNTIME is unset?  Or something
+>>> else?
+>> Yes, the question is how to write the code for both with and without
+>> CONFIG_PM (or CONFIG_PM_RUNTIME).
+> This basically is about setup, because after that point all should
+> just work in both cases.
+>
+> Personally, I would do
+>
+> if (IS_ENABLED(CONFIG_PM)) {
+>    do setup based on pm-runtime
+> } else {
+>    do manual setup
+> }
 
-> diff --cc drivers/pci/setup-bus.c
-> index 1941bb0a6c13,d5c25d465d97..000000000000
-> --- a/drivers/pci/setup-bus.c
-> +++ b/drivers/pci/setup-bus.c
-> @@@ -735,17 -735,50 +735,26 @@@ int pci_claim_bridge_resource(struct pc
->      base/limit registers must be read-only and read as 0. */
->   static void pci_bridge_check_ranges(struct pci_bus *bus)
->   {
->  -      u16 io;
->  -      u32 pmem;
->         struct pci_dev *bridge = bus->self;
->  -      struct resource *b_res;
->  -
->  -      b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
->  +      struct resource *b_res = &bridge->resource[PCI_BRIDGE_RESOURCES];
+do we really need config check here?
+The debate was, whether to call hda_tegra_runtime_resume() or 
+hda_tegra_enable_clocks() unconditionally here.
+It would take care of both CONFIG_PM enabled/disabled cases. Then enable 
+runtime PM.
+
+>> Right now, we have a code like below, pushing the initialization in an
+>> async work and let the probe returning quickly.
+>>
+>>          hda_tegra_probe() {
+>>                  ....
+> So why don't you do
 >
-> +       /*
-> +        * Don't re-check after this was called once already:
-> +        * important since bridge might be in use.
-> +        * Note: this is only reliable because as per spec all PCI to PCI
-> +        * bridges support memory unconditionally so IORESOURCE_MEM is set.
-> +        */
-> +       if (b_res[1].flags & IORESOURCE_MEM)
-> +               return;
-> +
->         b_res[1].flags |= IORESOURCE_MEM;
+> if (!IS_ENABLED(CONFIG_PM)) {
+>    do manual clock setup
+> }
 >
->  -      pci_read_config_word(bridge, PCI_IO_BASE, &io);
->  -      if (!io) {
->  -              pci_write_config_word(bridge, PCI_IO_BASE, 0xe0f0);
->  -              pci_read_config_word(bridge, PCI_IO_BASE, &io);
->  -              pci_write_config_word(bridge, PCI_IO_BASE, 0x0);
->  -      }
->  -      if (io)
->  +      if (bridge->io_window)
->                 b_res[0].flags |= IORESOURCE_IO;
+> here?
 >
->  -      /*  DECchip 21050 pass 2 errata: the bridge may miss an address
->  -          disconnect boundary by one PCI data phase.
->  -          Workaround: do not use prefetching on this device. */
->  -      if (bridge->vendor == PCI_VENDOR_ID_DEC && bridge->device == 0x0001)
->  -              return;
->  -
->  -      pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
->  -      if (!pmem) {
->  -              pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
->  -                                             0xffe0fff0);
->  -              pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
->  -              pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE, 0x0);
->  -      }
->  -      if (pmem) {
->  +      if (bridge->pref_window) {
->                 b_res[2].flags |= IORESOURCE_MEM | IORESOURCE_PREFETCH;
->  -              if ((pmem & PCI_PREF_RANGE_TYPE_MASK) ==
->  -                  PCI_PREF_RANGE_TYPE_64) {
->  +              if (bridge->pref_64_window) {
->                         b_res[2].flags |= IORESOURCE_MEM_64;
->                         b_res[2].flags |= PCI_PREF_RANGE_TYPE_64;
->                 }
+>>                  pm_runtime_enable();
+>>                  schedule_work();
+>>                  return;
+>>          }
+>>
+>>          hda_tegra_probe_work() {
+>>                  pm_runtime_get_sync();
+>>                  ....
+>>                  pm_runtime_put_sync();
+>>          }
+>>
+>> Then it truned outhis code lacks of the clock initialization when
+>> runtime PM isn't enabled.  Normally it's done via runtime resume
+>>
+>>          hda_tegra_runtime_resume() {
+>>                  hda_tegra_enable_clocks();
+>>                  ....
+>>          }
+>>
+>> And now the question is what is the standard idiom in such a case.
+>>
+>> IMO, calling pm_runtime_resume() inside the probe function looks
+>> weird, and my preference was to initialize the clocks explicitly, then
+>> enable runtime PM.  But if using pm_runtime_resume() in the proc
+>> should be seen as a standard procedure, I'm fine with that.
+
+I think reference here is, whether calling hda_tegra_runtime_resume() in 
+probe() is
+a standard procedure or not.
+
+> Well, people do pm_runtime_resume() in ->probe() too, but
+> pm_runtime_resume() returns 1 for CONFIG_PM unset, so that won't give
+> you what you want anyway. :-)
+>
+> Cheers,
+> Rafael
