@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B836AC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AED3C282C7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 922662087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:54:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 533C12087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731511AbfAaIyU (ORCPT
+        id S1726233AbfAaIy0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:54:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48478 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731405AbfAaIxe (ORCPT
+        Thu, 31 Jan 2019 03:54:26 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52686 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731424AbfAaIxe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 Jan 2019 03:53:34 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V8hs5n111765
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V8htU8105905
         for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:53:33 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qbtrera27-1
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbwr60d27-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:53:32 -0500
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
-        Thu, 31 Jan 2019 08:53:31 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 31 Jan 2019 08:53:30 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 08:53:28 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V8rQbW27721900
+        Thu, 31 Jan 2019 08:53:26 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V8rPBl32047118
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 08:53:26 GMT
+        Thu, 31 Jan 2019 08:53:25 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DDED42049;
-        Thu, 31 Jan 2019 08:53:26 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0967142049;
+        Thu, 31 Jan 2019 08:53:25 +0000 (GMT)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1627E4204C;
-        Thu, 31 Jan 2019 08:53:26 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 9BBE042042;
+        Thu, 31 Jan 2019 08:53:24 +0000 (GMT)
 Received: from s38lp84.lnxne.boe (unknown [9.152.108.100])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Jan 2019 08:53:26 +0000 (GMT)
+        Thu, 31 Jan 2019 08:53:24 +0000 (GMT)
 From:   Michael Mueller <mimu@linux.ibm.com>
 To:     KVM Mailing List <kvm@vger.kernel.org>
 Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
@@ -61,228 +61,72 @@ Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
         Halil Pasic <pasic@linux.ibm.com>,
         Pierre Morel <pmorel@linux.ibm.com>,
         Michael Mueller <mimu@linux.ibm.com>
-Subject: [PATCH v7 11/15] KVM: s390: add functions to (un)register GISC with GISA
-Date:   Thu, 31 Jan 2019 09:52:42 +0100
+Subject: [PATCH v7 10/15] KVM: s390: add kvm reference to struct sie_page2
+Date:   Thu, 31 Jan 2019 09:52:41 +0100
 X-Mailer: git-send-email 2.13.4
 In-Reply-To: <20190131085247.13826-1-mimu@linux.ibm.com>
 References: <20190131085247.13826-1-mimu@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19013108-0020-0000-0000-0000030F360F
+x-cbid: 19013108-4275-0000-0000-00000308391F
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013108-0021-0000-0000-0000216037F8
-Message-Id: <20190131085247.13826-12-mimu@linux.ibm.com>
+x-cbparentid: 19013108-4276-0000-0000-0000381641B1
+Message-Id: <20190131085247.13826-11-mimu@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=990 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=944 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901310070
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the Interruption Alert Mask (IAM) to the architecture specific
-kvm struct. This mask in the GISA is used to define for which ISC
-a GIB alert will be issued.
+Adding the kvm reference to struct sie_page2 will allow to
+determine the kvm a given gisa belongs to:
 
-The functions kvm_s390_gisc_register() and kvm_s390_gisc_unregister()
-are used to (un)register a GISC (guest ISC) with a virtual machine and
-its GISA.
+  container_of(gisa, struct sie_page2, gisa)->kvm
 
-Upon successful completion, kvm_s390_gisc_register() returns the
-ISC to be used for GIB alert interruptions. A negative return code
-indicates an error during registration.
-
-Theses functions will be used by other adapter types like AP and PCI to
-request pass-through interruption support.
+This functionality will be required to process a gisa in
+gib alert interruption context.
 
 Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-Acked-by: Pierre Morel <pmorel@linux.ibm.com>
-Acked-by: Halil Pasic <pasic@linux.ibm.com>
+Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
 ---
- arch/s390/include/asm/kvm_host.h |  13 +++++
- arch/s390/kvm/interrupt.c        | 112 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 125 insertions(+)
+ arch/s390/include/asm/kvm_host.h | 3 ++-
+ arch/s390/kvm/kvm-s390.c         | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index 7077762ab460..2cfff617cb21 100644
+index 397af0d33539..7077762ab460 100644
 --- a/arch/s390/include/asm/kvm_host.h
 +++ b/arch/s390/include/asm/kvm_host.h
-@@ -781,6 +781,9 @@ struct kvm_s390_gisa {
- 			u8  reserved03[11];
- 			u32 airq_count;
- 		} g1;
-+		struct {
-+			u64 word[4];
-+		} u64;
- 	};
+@@ -801,7 +801,8 @@ struct sie_page2 {
+ 	__u64 fac_list[S390_ARCH_FAC_LIST_SIZE_U64];	/* 0x0000 */
+ 	struct kvm_s390_crypto_cb crycb;		/* 0x0800 */
+ 	struct kvm_s390_gisa gisa;			/* 0x0900 */
+-	u8 reserved920[0x1000 - 0x920];			/* 0x0920 */
++	struct kvm *kvm;				/* 0x0920 */
++	u8 reserved928[0x1000 - 0x928];			/* 0x0928 */
  };
  
-@@ -813,8 +816,15 @@ struct kvm_s390_vsie {
- 	struct page *pages[KVM_MAX_VCPUS];
- };
+ struct kvm_s390_vsie {
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index 118d4c0bbb8e..67023d5656fd 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -2210,6 +2210,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ 	if (!kvm->arch.sie_page2)
+ 		goto out_err;
  
-+struct kvm_s390_gisa_iam {
-+	u8 mask;
-+	spinlock_t ref_lock;
-+	u32 ref_count[MAX_ISC + 1];
-+};
-+
- struct kvm_s390_gisa_interrupt {
- 	struct kvm_s390_gisa *origin;
-+	struct kvm_s390_gisa_iam alert;
- };
++	kvm->arch.sie_page2->kvm = kvm;
+ 	kvm->arch.model.fac_list = kvm->arch.sie_page2->fac_list;
  
- struct kvm_arch{
-@@ -885,6 +895,9 @@ void kvm_arch_crypto_set_masks(struct kvm *kvm, unsigned long *apm,
- extern int sie64a(struct kvm_s390_sie_block *, u64 *);
- extern char sie_exit;
- 
-+extern int kvm_s390_gisc_register(struct kvm *kvm, u32 gisc);
-+extern int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc);
-+
- static inline void kvm_arch_hardware_disable(void) {}
- static inline void kvm_arch_check_processor_compat(void *rtn) {}
- static inline void kvm_arch_sync_events(struct kvm *kvm) {}
-diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-index 5efcd9e2cf8f..f37dfb01c63c 100644
---- a/arch/s390/kvm/interrupt.c
-+++ b/arch/s390/kvm/interrupt.c
-@@ -222,6 +222,33 @@ static inline u8 int_word_to_isc(u32 int_word)
-  */
- #define IPM_BIT_OFFSET (offsetof(struct kvm_s390_gisa, ipm) * BITS_PER_BYTE)
- 
-+/**
-+ * gisa_set_iam - change the GISA interruption alert mask
-+ *
-+ * @gisa: gisa to operate on
-+ * @iam: new IAM value to use
-+ *
-+ * Change the IAM atomically with the next alert address and the IPM
-+ * of the GISA if the GISA is not part of the GIB alert list. All three
-+ * fields are located in the first long word of the GISA.
-+ *
-+ * Returns: 0 on success
-+ *          -EBUSY in case the gisa is part of the alert list
-+ */
-+static inline int gisa_set_iam(struct kvm_s390_gisa *gisa, u8 iam)
-+{
-+	u64 word, _word;
-+
-+	do {
-+		word = READ_ONCE(gisa->u64.word[0]);
-+		if ((u64)gisa != word >> 32)
-+			return -EBUSY;
-+		_word = (word & ~0xffUL) | iam;
-+	} while (cmpxchg(&gisa->u64.word[0], word, _word) != word);
-+
-+	return 0;
-+}
-+
- static inline void gisa_set_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
- {
- 	set_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
-@@ -2911,6 +2938,8 @@ void kvm_s390_gisa_init(struct kvm *kvm)
- 	if (!css_general_characteristics.aiv)
- 		return;
- 	gi->origin = &kvm->arch.sie_page2->gisa;
-+	gi->alert.mask = 0;
-+	spin_lock_init(&gi->alert.ref_lock);
- 	kvm_s390_gisa_clear(kvm);
- 	VM_EVENT(kvm, 3, "gisa 0x%pK initialized", gi->origin);
- }
-@@ -2920,6 +2949,89 @@ void kvm_s390_gisa_destroy(struct kvm *kvm)
- 	kvm->arch.gisa_int.origin = NULL;
- }
- 
-+/**
-+ * kvm_s390_gisc_register - register a guest ISC
-+ *
-+ * @kvm:  the kernel vm to work with
-+ * @gisc: the guest interruption sub class to register
-+ *
-+ * The function extends the vm specific alert mask to use.
-+ * The effectve IAM mask in the GISA is updated as well
-+ * in case the GISA is not part of the GIB alert list.
-+ * It will be updated latest when the IAM gets restored
-+ * by gisa_get_ipm_or_restore_iam().
-+ *
-+ * Returns: the nonspecific ISC (NISC) the gib alert mechanism
-+ *          has registered with the channel subsystem.
-+ *          -ENODEV in case the vm uses no GISA
-+ *          -ERANGE in case the guest ISC is invalid
-+ */
-+int kvm_s390_gisc_register(struct kvm *kvm, u32 gisc)
-+{
-+	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
-+
-+	if (!gi->origin)
-+		return -ENODEV;
-+	if (gisc > MAX_ISC)
-+		return -ERANGE;
-+
-+	spin_lock(&gi->alert.ref_lock);
-+	gi->alert.ref_count[gisc]++;
-+	if (gi->alert.ref_count[gisc] == 1) {
-+		gi->alert.mask |= 0x80 >> gisc;
-+		gisa_set_iam(gi->origin, gi->alert.mask);
-+	}
-+	spin_unlock(&gi->alert.ref_lock);
-+
-+	return gib->nisc;
-+}
-+EXPORT_SYMBOL_GPL(kvm_s390_gisc_register);
-+
-+/**
-+ * kvm_s390_gisc_unregister - unregister a guest ISC
-+ *
-+ * @kvm:  the kernel vm to work with
-+ * @gisc: the guest interruption sub class to register
-+ *
-+ * The function reduces the vm specific alert mask to use.
-+ * The effectve IAM mask in the GISA is updated as well
-+ * in case the GISA is not part of the GIB alert list.
-+ * It will be updated latest when the IAM gets restored
-+ * by gisa_get_ipm_or_restore_iam().
-+ *
-+ * Returns: the nonspecific ISC (NISC) the gib alert mechanism
-+ *          has registered with the channel subsystem.
-+ *          -ENODEV in case the vm uses no GISA
-+ *          -ERANGE in case the guest ISC is invalid
-+ *          -EINVAL in case the guest ISC is not registered
-+ */
-+int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc)
-+{
-+	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
-+	int rc = 0;
-+
-+	if (!gi->origin)
-+		return -ENODEV;
-+	if (gisc > MAX_ISC)
-+		return -ERANGE;
-+
-+	spin_lock(&gi->alert.ref_lock);
-+	if (gi->alert.ref_count[gisc] == 0) {
-+		rc = -EINVAL;
-+		goto out;
-+	}
-+	gi->alert.ref_count[gisc]--;
-+	if (gi->alert.ref_count[gisc] == 0) {
-+		gi->alert.mask &= ~(0x80 >> gisc);
-+		gisa_set_iam(gi->origin, gi->alert.mask);
-+	}
-+out:
-+	spin_unlock(&gi->alert.ref_lock);
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL_GPL(kvm_s390_gisc_unregister);
-+
- void kvm_s390_gib_destroy(void)
- {
- 	if (!gib)
+ 	for (i = 0; i < kvm_s390_fac_size(); i++) {
 -- 
 2.13.4
 
