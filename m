@@ -2,214 +2,136 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A324FC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E8AC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 694D0218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:58:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CEF7218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:02:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vylig4sY";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vylig4sY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bHKXO1px"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388769AbfAaQ6f (ORCPT
+        id S1728499AbfAaRCa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:58:35 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:32896 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728401AbfAaQ6e (ORCPT
+        Thu, 31 Jan 2019 12:02:30 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34643 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725927AbfAaRCa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:58:34 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DFC5660398; Thu, 31 Jan 2019 16:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548953912;
-        bh=XzMGluJJbMmnytZqUKnR4Zt1OOvgguOn+yh6KRa0aFY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Vylig4sYBpfIEEX12vh8dZFW95VV1kStjdu378c3WOHyUqj5T73B9B24YlDh3Am9q
-         Dm46BkEPstWFdSzI1r//3VzX87qeY3j4jDbg4NPY6emAsXWMyJAzmHAWNmJxtdzZEf
-         n7zJ3WGoKtijyc+5Iyamq7UFezOgpk4rHJaJY3CY=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 2149F601CF;
-        Thu, 31 Jan 2019 16:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548953912;
-        bh=XzMGluJJbMmnytZqUKnR4Zt1OOvgguOn+yh6KRa0aFY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Vylig4sYBpfIEEX12vh8dZFW95VV1kStjdu378c3WOHyUqj5T73B9B24YlDh3Am9q
-         Dm46BkEPstWFdSzI1r//3VzX87qeY3j4jDbg4NPY6emAsXWMyJAzmHAWNmJxtdzZEf
-         n7zJ3WGoKtijyc+5Iyamq7UFezOgpk4rHJaJY3CY=
+        Thu, 31 Jan 2019 12:02:30 -0500
+Received: by mail-pl1-f194.google.com with SMTP id w4so1755687plz.1;
+        Thu, 31 Jan 2019 09:02:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CC7dp18dvRYsg3Sbt3psT+OJkvJ6lszubfG1FjM3SV8=;
+        b=bHKXO1pxIoVJAc5zlGsSzACX9lU1m0o2okOk6u5PRsMxQvW2IRD0i+8SzlZ79txFA8
+         P/meVfoabIpyGNkutZnudvWwWBXfC7LC5EM4Kfa2LrgYzUARu9wCiF/u4+BZZkmNKzOj
+         gea6d5hog20EzG87dWOOCmt8GuREFTOmiTAVhxc7aQoHoVHpo05oVMI0Lq0ff9kSd1H5
+         XVTRGcyfuc6+VExIMe8jb4OPuH79UxO7UrV0QVcPSCfYju4pVJkvUJ1MhixEKPDbhUSd
+         82hzywOBzjWzB3dQO6TV3DuKG4xecOIpLmy3xJn5xqcAU9n3+3IH9ifzZrTBwB0SbqaX
+         hjwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CC7dp18dvRYsg3Sbt3psT+OJkvJ6lszubfG1FjM3SV8=;
+        b=BatKF5p8rYfeklp9flkIB6WhWLUeTP0EM5vszMiXmWXguQ1JAJSw6s05yO6K0H4uqc
+         qyjujTJzc+hcomZ48JAno/YbSJnSSp2ICEj3tWoz7PCkSSGVXVlY0KgcIoTNiMEmjxor
+         xVyQOVp2R/W+LBB+RXbP6IjRdkOxZljEL7ERwLpi/0+Zi9M3UaEPsTWBPpgiSZKj6JFR
+         ZJGi24dAKdfJJURI10djlgzjh3mF0OheEZS3ByytU06BAuekf0IwgnAFg6GdqJ0Y1T9w
+         tH39ZP/mvmIw013v2JofEfkwgvUT2Su0KUE6QtLQVVk5r7wBPHafwWTo6ngNn/jyMzal
+         fxLQ==
+X-Gm-Message-State: AJcUukcZujMXbLDsN8/E1ZxyivpUropuq5dG0teYB+5qj0wtE+dK6x97
+        y16pxTdZJjxV75OCy31XXKOUvPfl2JwUFi14jVYDnBLy
+X-Google-Smtp-Source: ALg8bN44JYugLudkAmcD8/o53qvsGZuMCUw7ly6zX6ViNV+SE7QW0lyIcgVPcoJTe7yWdkKMeC3+OJgiXCg4Q7a9EH8=
+X-Received: by 2002:a17:902:4081:: with SMTP id c1mr36174319pld.87.1548954149545;
+ Thu, 31 Jan 2019 09:02:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 31 Jan 2019 22:28:32 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v5 01/10] arm64: dts: qcom: sdm845: Update reserved memory
- map
-In-Reply-To: <20190131003933.11436-2-bjorn.andersson@linaro.org>
-References: <20190131003933.11436-1-bjorn.andersson@linaro.org>
- <20190131003933.11436-2-bjorn.andersson@linaro.org>
-Message-ID: <0c5cc8f10e3c78f4d0eead81abb90d85@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <0b74e9ad12360b56bc0a3c2ca972798c424f2610.1548790896.git.lsun@mellanox.com>
+ <1548953587-12719-1-git-send-email-lsun@mellanox.com>
+In-Reply-To: <1548953587-12719-1-git-send-email-lsun@mellanox.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 31 Jan 2019 19:02:18 +0200
+Message-ID: <CAHp75Vfr7+NONzthw=E77BqLb06=wgfmNqu7D01fkcNQMqUCsQ@mail.gmail.com>
+Subject: Re: [PATCH v2] platform/mellanox: Add bootctl driver for Mellanox
+ BlueField Soc
+To:     Liming Sun <lsun@mellanox.com>
+Cc:     Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Vadim Pasternak <vadimp@mellanox.com>,
+        David Woods <dwoods@mellanox.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Bjorn,
+On Thu, Jan 31, 2019 at 6:53 PM Liming Sun <lsun@mellanox.com> wrote:
+>
+> This commit adds the bootctl platform driver for Mellanox BlueField
+> Soc, which controls the eMMC boot partition swapping and sends SMC
+> calls to ATF running at exception level EL3 to program some system
+> register. This register is only accessible in secure code and is
+> used to enable the watchdog after reboot.
+>
+> Below are the sequences of a typical use case.
+>
+>   1. User-space tool upgrades one eMMC boot partition and requests
+>      the boot partition swapping;
+>
+>   2. The bootctl driver handles such request and sends SMC call
+>      to ATF. ATF programs register BREADCRUMB0 which has value
+>      preserved during software reset. It also programs eMMC to
+>      swap the boot partition;
+>
+>   3. After software reset (rebooting), ATF BL1 (BootRom) checks
+>      register BREADCRUMB0 to enable watchdog if configured;
+>
+>   4. If booting fails, the watchdog timer will trigger rebooting.
+>      In such case, ATF BootRom will switch the boot partition
+>      to the previous one.
 
-On 2019-01-31 06:09, Bjorn Andersson wrote:
-> Update existing and add missing regions to the reserved memory map, as
-> described in version 10.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Thanks for an update. My comments below.
+
+
+> Reviewed-by: David Woods <dwoods@mellanox.com>
+
+I'm not sure I see this guy to review v2. Of course if you consider
+all changes minor, you may leave this tag.
+
+> Signed-off-by: Liming Sun <lsun@mellanox.com>
 > ---
-> 
-> Changes since v4:
-> - Labeled aop_mem, aop_cmd_db_mem and made tz_mem span the last TZ
-> related segment
-> 
-> Changes since v3:
-> - Added hyp and xbl memory nodes.
-> - Labeled all PIL nodes
-> 
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 72 +++++++++++++++++++++++++---
->  1 file changed, 66 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 33f5f4ba6160..45b1616392aa 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -73,12 +73,22 @@
->  		#size-cells = <2>;
->  		ranges;
-> 
-> -		memory@85fc0000 {
-> +		hyp_mem: memory@85700000 {
-> +			reg = <0x0 0x85700000 0 0x600000>;
-> +			no-map;
-> +		};
-> +
-> +		xbl_mem: memory@85e00000 {
-> +			reg = <0x0 0x85e00000 0 0x100000>;
-> +			no-map;
-> +		};
-> +
-> +		aop_mem: memory@85fc0000 {
->  			reg = <0 0x85fc0000 0 0x20000>;
->  			no-map;
->  		};
-> 
-> -		memory@85fe0000 {
-> +		aop_cmd_db_mem: memory@85fe0000 {
->  			compatible = "qcom,cmd-db";
->  			reg = <0x0 0x85fe0000 0x0 0x20000>;
->  			no-map;
-> @@ -89,13 +99,43 @@
->  			no-map;
->  		};
-> 
-> -		memory@86200000 {
-> -			reg = <0 0x86200000 0 0x2d00000>;
-> +		tz_mem: memory@86200000 {
-> +			reg = <0 0x86200000 0 0x3c00000>;
 
-should be 0x2d00000 instead of 0x3c00000
-tz_mem ends at 0x88F00000 :-)
+Here should be a changelog what had been done in new version.
+> +/* UUID used to probe ATF service. */
 
-nit: Also for hyp_mem and xbl_mem you could
-use 0 instead of 0x0
+> +static const char * const mlxbf_bootctl_svc_uuid_str =
+> +       "89c036b4-e7d7-11e6-8797-001aca00bfc4";
 
-Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+static const char *xxx = ...;
 
-> +			no-map;
-> +		};
-> +
-> +		qseecom_mem: memory@8ab00000 {
-> +			reg = <0 0x8ab00000 0 0x1400000>;
-> +			no-map;
-> +		};
-> +
-> +		camera_mem: memory@8bf00000 {
-> +			reg = <0 0x8bf00000 0 0x500000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_fw_mem: memory@8c400000 {
-> +			reg = <0 0x8c400000 0 0x10000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_gsi_mem: memory@8c410000 {
-> +			reg = <0 0x8c410000 0 0x5000>;
->  			no-map;
->  		};
-> 
-> -		wlan_msa_mem: memory@96700000 {
-> -			reg = <0 0x96700000 0 0x100000>;
-> +		gpu_mem: memory@8c415000 {
-> +			reg = <0 0x8c415000 0 0x2000>;
-> +			no-map;
-> +		};
-> +
-> +		adsp_mem: memory@8c500000 {
-> +			reg = <0 0x8c500000 0 0x1a00000>;
-> +			no-map;
-> +		};
-> +
-> +		wlan_msa_mem: memory@8df00000 {
-> +			reg = <0 0x8df00000 0 0x100000>;
->  			no-map;
->  		};
-> 
-> @@ -104,10 +144,30 @@
->  			no-map;
->  		};
-> 
-> +		venus_mem: memory@95800000 {
-> +			reg = <0 0x95800000 0 0x500000>;
-> +			no-map;
-> +		};
-> +
-> +		cdsp_mem: memory@95d00000 {
-> +			reg = <0 0x95d00000 0 0x800000>;
-> +			no-map;
-> +		};
-> +
->  		mba_region: memory@96500000 {
->  			reg = <0 0x96500000 0 0x200000>;
->  			no-map;
->  		};
-> +
-> +		slpi_mem: memory@96700000 {
-> +			reg = <0 0x96700000 0 0x1400000>;
-> +			no-map;
-> +		};
-> +
-> +		spss_mem: memory@97b00000 {
-> +			reg = <0 0x97b00000 0 0x100000>;
-> +			no-map;
-> +		};
->  	};
-> 
->  	cpus {
+> +/*
+> + * UUID structure used to match the returned value from ATF in
+> + * four 32-bit words. No need to do endian conversion here.
+> + */
+> +union mlxbf_bootctl_uuid {
+> +       guid_t guid;
+> +       u32 words[4];
+> +};
+
+I'm not sure it's the best you can do. instead of using union, better
+to use conversion from and to corresponding uuid type.
+
+The rest I will comment on v3.
 
 -- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+With Best Regards,
+Andy Shevchenko
