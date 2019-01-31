@@ -2,106 +2,96 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E55C282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98688C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC985218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:26:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F8E42082F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732656AbfAaM0L (ORCPT
+        id S1732732AbfAaM01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:26:11 -0500
-Received: from mga07.intel.com ([134.134.136.100]:20557 "EHLO mga07.intel.com"
+        Thu, 31 Jan 2019 07:26:27 -0500
+Received: from shell.v3.sk ([90.176.6.54]:37648 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726153AbfAaM0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:26:11 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 04:26:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,544,1539673200"; 
-   d="scan'208";a="134732579"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by orsmga001.jf.intel.com with ESMTP; 31 Jan 2019 04:26:07 -0800
-Date:   Thu, 31 Jan 2019 14:26:06 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        tomas.winkler@intel.com
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190131122606.GA12470@linux.intel.com>
-References: <20190118142559.GA4080@linux.intel.com>
- <1547849358.2794.90.camel@HansenPartnership.com>
- <20190120160413.GB30478@linux.intel.com>
- <20190122010218.GA26713@linux.intel.com>
- <20190122025836.GH25163@ziepe.ca>
- <20190122132910.GA2720@linux.intel.com>
- <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
- <20190123153638.GA8727@linux.intel.com>
- <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
- <20190129132016.GA1602@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190129132016.GA1602@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726153AbfAaM01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 07:26:27 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id DB64ACD109;
+        Thu, 31 Jan 2019 13:26:23 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id P03q6bcpyMLu; Thu, 31 Jan 2019 13:26:20 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 992FFCD10A;
+        Thu, 31 Jan 2019 13:26:20 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Sr6c69K4ldKn; Thu, 31 Jan 2019 13:26:20 +0100 (CET)
+Received: from nedofet (unknown [82.202.112.231])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 655BCCD109;
+        Thu, 31 Jan 2019 13:26:19 +0100 (CET)
+Message-ID: <0adff00d4c4797fe1f9d593a7ba7c772ac3312c4.camel@v3.sk>
+Subject: Re: [PATCH v5 2/7] x86, olpc: Use a correct version when making up
+ a battery node
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, x86@kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
+Date:   Thu, 31 Jan 2019 13:26:16 +0100
+In-Reply-To: <20190123205627.nbddtfuy6qdo2bgb@earth.universe>
+References: <20190110174005.1202564-1-lkundrak@v3.sk>
+         <20190110174005.1202564-3-lkundrak@v3.sk>
+         <20190123205627.nbddtfuy6qdo2bgb@earth.universe>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 03:20:16PM +0200, Jarkko Sakkinen wrote:
-> On Thu, Jan 24, 2019 at 07:43:30AM +1300, Linus Torvalds wrote:
-> > On Thu, Jan 24, 2019 at 4:36 AM Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > >
-> > > > Is it just that this particular hardware always happened to trigger
-> > > > the ERMS case (ie "rep movsb")?
-> > >
-> > > This is the particular snippet in question:
-> > >
-> > > memcpy_fromio(buf, priv->rsp, 6);
-> > > expected = be32_to_cpup((__be32 *) &buf[2]);
-> > > if (expected > count || expected < 6)
-> > >         return -EIO;
+Hi,
+
+On Wed, 2019-01-23 at 21:56 +0100, Sebastian Reichel wrote:
+> Hi,
+> 
+> On Thu, Jan 10, 2019 at 06:40:00PM +0100, Lubomir Rintel wrote:
+> > The XO-1 and XO-1.5 batteries apparently differ in an ability to report
+> > ambient temperature. Add a different compatible string to the 1.5
+> > battery.
 > > 
-> > Ok, strange.
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > Acked-by: Pavel Machek <pavel@ucw.cz>
 > > 
-> > So what *used* to happen is that the memcpy_fromio() would just expand
-> > as a "memcpy()", and in this case, gcc would then inline the memcpy().
-> > In fact, gcc does it as a 4-byte access and a two-byte access from
-> > what I can tell.
+> > ---
 > 
-> I verified, and it is exactly as you stated:
-> 
->    0xffffffff814aaa33 <+51>:	mov    (%rax),%edx
->    0xffffffff814aaa35 <+53>:	mov    %edx,0x0(%rbp)
->    0xffffffff814aaa38 <+56>:	movzwl 0x4(%rax),%eax
->    0xffffffff814aaa3c <+60>:	mov    %ax,0x4(%rbp)
-> 
-> And your new version does exactly the same thing to the first six bytes
-> (with different opcode, but the same memory access pattern).
+> I either need an Acked-by from the x86 platform maintainers, that I
+> can queue this through power-supply or a pull request for an immutable
+> branch (probably the better idea).
 
-I think I have found the root cause:
+I'm happy to prepare a branch that could be pulled from. In fact,
+here's a branch with fixes for issues pointed out by the review that
+could be pulled from:
 
-memcpy_fromio(&__rsp_pa, &priv->regs_t->ctrl_rsp_pa, 8);
+  git pull https://github.com/hackerspace/olpc-xo175-linux lr/olpc-xo175-battery-for-v5.1
 
-This is from crb_map_io(). This should be read as quad word.
+What do really not understand is how does this help. This is probably
+just my unfamiliarity with the process; but perhaps you could help me
+get less unfamiliar. Would it somehow help with a potential (though
+unlikely) conflict resolution? Would an Ack from x86 crowd serve as an
+altenative way off making sure things in their tree won't conflict with
+this one?
 
-I'll change it to ioread64() and see what happens. I don't know why it
-even has used memcpy_fromio() in the first place. I guess, when I first
-implemented the driver, I used that for no logical reason, and it has
-worked since up until now.
+> -- Sebastian
 
-/Jarkko
+Thank you
+Lubo
+
