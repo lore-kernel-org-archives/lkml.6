@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7248EC282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4921C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B71621B1A
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:28:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E67E21939
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbfAaU2w (ORCPT
+        id S1728672AbfAaU2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:28:52 -0500
+        Thu, 31 Jan 2019 15:28:55 -0500
 Received: from mga05.intel.com ([192.55.52.43]:4802 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727962AbfAaU2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:28:49 -0500
+        id S1727962AbfAaU2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 15:28:53 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:28:49 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:28:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
-   d="scan'208";a="143176552"
+   d="scan'208";a="143176563"
 Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by fmsmga001.fm.intel.com with ESMTP; 31 Jan 2019 12:28:49 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 31 Jan 2019 12:28:53 -0800
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
         mingo@redhat.com, linux-kernel@vger.kernel.org
 Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
         ak@linux.intel.com, luto@amacapital.net,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 02/13] perf tools: Support new sample type for data page size
-Date:   Thu, 31 Jan 2019 12:27:55 -0800
-Message-Id: <1548966486-49963-2-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH V4 05/13] perf mem: Factor out a function to generate sort order
+Date:   Thu, 31 Jan 2019 12:27:58 -0800
+Message-Id: <1548966486-49963-5-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
 References: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
@@ -47,156 +47,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-Support new sample type PERF_SAMPLE_DATA_PAGE_SIZE for page size.
+Now, "--phys-data" is the only option which impacts the sort order.
+A simple "if else" is enough to handle the option. But there will be
+more options added, e.g. "--data-page-size", which also impact the sort
+order. The code will become too complex to be maintained.
 
-Add new option --data-page-size to record sample data page size.
+Divide the sort order string into several small pieces.
+The first piece is always the default sort string for LOAD/STORE.
+Appends the specific sort string if related option is applied.
+
+No functional change.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
-Changes since V3
-- Use the real page size to replace enum.
+No changes since V3
 
- tools/include/uapi/linux/perf_event.h    |  4 +++-
- tools/perf/Documentation/perf-record.txt |  3 +++
- tools/perf/builtin-record.c              |  2 ++
- tools/perf/perf.h                        |  1 +
- tools/perf/util/event.h                  |  1 +
- tools/perf/util/evsel.c                  | 19 ++++++++++++++++++-
- 6 files changed, 28 insertions(+), 2 deletions(-)
+ tools/perf/builtin-mem.c | 41 +++++++++++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 14 deletions(-)
 
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 7198ddd..0e8d222 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -141,8 +141,9 @@ enum perf_event_sample_format {
- 	PERF_SAMPLE_TRANSACTION			= 1U << 17,
- 	PERF_SAMPLE_REGS_INTR			= 1U << 18,
- 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
-+	PERF_SAMPLE_DATA_PAGE_SIZE		= 1U << 20,
- 
--	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
-+	PERF_SAMPLE_MAX = 1U << 21,		/* non-ABI */
- 
- 	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1ULL << 63, /* non-ABI; internal use */
- };
-@@ -863,6 +864,7 @@ enum perf_event_type {
- 	 *	{ u64			abi; # enum perf_sample_regs_abi
- 	 *	  u64			regs[weight(mask)]; } && PERF_SAMPLE_REGS_INTR
- 	 *	{ u64			phys_addr;} && PERF_SAMPLE_PHYS_ADDR
-+	 *	{ u64			data_page_size;} && PERF_SAMPLE_DATA_PAGE_SIZE
- 	 * };
- 	 */
- 	PERF_RECORD_SAMPLE			= 9,
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index d232b13..c2a2875 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -264,6 +264,9 @@ OPTIONS
- --phys-data::
- 	Record the sample physical addresses.
- 
-+--data-page-size::
-+	Record the sampled data address data page size
-+
- -T::
- --timestamp::
- 	Record the sample timestamps. Use it with 'perf report -D' to see the
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 88ea11d..b9df9b9 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1870,6 +1870,8 @@ static struct option __record_options[] = {
- 	OPT_BOOLEAN('d', "data", &record.opts.sample_address, "Record the sample addresses"),
- 	OPT_BOOLEAN(0, "phys-data", &record.opts.sample_phys_addr,
- 		    "Record the sample physical addresses"),
-+	OPT_BOOLEAN(0, "data-page-size", &record.opts.sample_data_page_size,
-+		    "Record the sampled data address data page size"),
- 	OPT_BOOLEAN(0, "sample-cpu", &record.opts.sample_cpu, "Record the sample cpu"),
- 	OPT_BOOLEAN_SET('T', "timestamp", &record.opts.sample_time,
- 			&record.opts.sample_time_set,
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 5941fb6..87a345a 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -48,6 +48,7 @@ struct record_opts {
- 	bool	     raw_samples;
- 	bool	     sample_address;
- 	bool	     sample_phys_addr;
-+	bool	     sample_data_page_size;
- 	bool	     sample_weight;
- 	bool	     sample_time;
- 	bool	     sample_time_set;
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index feba1aa..53d1a41 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -207,6 +207,7 @@ struct perf_sample {
- 	u32 raw_size;
- 	u64 data_src;
- 	u64 phys_addr;
-+	u64 data_page_size;
- 	u32 flags;
- 	u16 insn_len;
- 	u8  cpumode;
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 684c893..4d9e29e 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1019,6 +1019,9 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 	if (opts->sample_phys_addr)
- 		perf_evsel__set_sample_bit(evsel, PHYS_ADDR);
- 
-+	if (opts->sample_data_page_size)
-+		perf_evsel__set_sample_bit(evsel, DATA_PAGE_SIZE);
-+
- 	if (opts->no_buffering) {
- 		attr->watermark = 0;
- 		attr->wakeup_events = 1;
-@@ -1561,7 +1564,7 @@ static void __p_sample_type(char *buf, size_t size, u64 value)
- 		bit_name(PERIOD), bit_name(STREAM_ID), bit_name(RAW),
- 		bit_name(BRANCH_STACK), bit_name(REGS_USER), bit_name(STACK_USER),
- 		bit_name(IDENTIFIER), bit_name(REGS_INTR), bit_name(DATA_SRC),
--		bit_name(WEIGHT), bit_name(PHYS_ADDR),
-+		bit_name(WEIGHT), bit_name(PHYS_ADDR), bit_name(DATA_PAGE_SIZE),
- 		{ .name = NULL, }
- 	};
- #undef bit_name
-@@ -2392,6 +2395,12 @@ int perf_evsel__parse_sample(struct perf_evsel *evsel, union perf_event *event,
- 		array++;
- 	}
- 
-+	data->data_page_size = 0;
-+	if (type & PERF_SAMPLE_DATA_PAGE_SIZE) {
-+		data->data_page_size = *array;
-+		array++;
-+	}
-+
- 	return 0;
+diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
+index 57393e9..0647bd7 100644
+--- a/tools/perf/builtin-mem.c
++++ b/tools/perf/builtin-mem.c
+@@ -273,11 +273,35 @@ static int report_raw_events(struct perf_mem *mem)
+ 	perf_session__delete(session);
+ 	return ret;
  }
- 
-@@ -2544,6 +2553,9 @@ size_t perf_event__sample_event_size(const struct perf_sample *sample, u64 type,
- 	if (type & PERF_SAMPLE_PHYS_ADDR)
- 		result += sizeof(u64);
- 
-+	if (type & PERF_SAMPLE_DATA_PAGE_SIZE)
-+		result += sizeof(u64);
++static char *get_sort_order(struct perf_mem *mem)
++{
++	bool has_extra_options = mem->phys_addr ? true : false;
++	char sort[128];
 +
- 	return result;
- }
- 
-@@ -2713,6 +2725,11 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type,
- 		array++;
- 	}
- 
-+	if (type & PERF_SAMPLE_DATA_PAGE_SIZE) {
-+		*array = sample->data_page_size;
-+		array++;
-+	}
++	/*
++	 * there is no weight (cost) associated with stores, so don't print
++	 * the column
++	 */
++	if (!(mem->operation & MEM_OPERATION_LOAD)) {
++		strcpy(sort, "--sort=mem,sym,dso,symbol_daddr,"
++			     "dso_daddr,tlb,locked");
++	} else if (has_extra_options) {
++		strcpy(sort, "--sort=local_weight,mem,sym,dso,symbol_daddr,"
++			     "dso_daddr,snoop,tlb,locked");
++	} else
++		return NULL;
 +
- 	return 0;
- }
++	if (mem->phys_addr)
++		strcat(sort, ",phys_daddr");
++
++	return strdup(sort);
++}
  
+ static int report_events(int argc, const char **argv, struct perf_mem *mem)
+ {
+ 	const char **rep_argv;
+ 	int ret, i = 0, j, rep_argc;
++	char *new_sort_order;
+ 
+ 	if (mem->dump_raw)
+ 		return report_raw_events(mem);
+@@ -291,20 +315,9 @@ static int report_events(int argc, const char **argv, struct perf_mem *mem)
+ 	rep_argv[i++] = "--mem-mode";
+ 	rep_argv[i++] = "-n"; /* display number of samples */
+ 
+-	/*
+-	 * there is no weight (cost) associated with stores, so don't print
+-	 * the column
+-	 */
+-	if (!(mem->operation & MEM_OPERATION_LOAD)) {
+-		if (mem->phys_addr)
+-			rep_argv[i++] = "--sort=mem,sym,dso,symbol_daddr,"
+-					"dso_daddr,tlb,locked,phys_daddr";
+-		else
+-			rep_argv[i++] = "--sort=mem,sym,dso,symbol_daddr,"
+-					"dso_daddr,tlb,locked";
+-	} else if (mem->phys_addr)
+-		rep_argv[i++] = "--sort=local_weight,mem,sym,dso,symbol_daddr,"
+-				"dso_daddr,snoop,tlb,locked,phys_daddr";
++	new_sort_order = get_sort_order(mem);
++	if (new_sort_order)
++		rep_argv[i++] = new_sort_order;
+ 
+ 	for (j = 1; j < argc; j++, i++)
+ 		rep_argv[i] = argv[j];
 -- 
 2.7.4
 
