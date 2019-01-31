@@ -2,116 +2,191 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FDFC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7FCC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:29:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C81142087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:28:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548937708;
-	bh=1CzuTC+oxsxNowDmUlRiw6hLbwbK1k4xbfELaN4CbpI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sDoPHIyu9JszQrn0w7RsV7nP1wHysxNyw/odU3hsV05e6X4QYvVuyabLh3OGbXrqa
-	 Wv4uMAwsOj4tJWTLC9Ch6464XrrqJKe3NakpQGspkJvtHNbpDrAeJpIT3cKFfD7R1w
-	 X6fnKibAKiVyzXc9mASTwQlB1JUUJ1zRblP0CZwY=
+	by mail.kernel.org (Postfix) with ESMTP id 825D4218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:29:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t9yUsQlF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732860AbfAaM21 (ORCPT
+        id S1732875AbfAaM3B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:28:27 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52858 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726153AbfAaM20 (ORCPT
+        Thu, 31 Jan 2019 07:29:01 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:46600 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726153AbfAaM3B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:28:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Z/I+BhyTuLJ6Ct4b2oN8wz1tfAGeA/5AsCtCpQIKpT4=; b=v3jgnF6AN0o7SoxGYAnyCqpfc
-        XNi59PsEMN1e14pZZxkY3OqLXMIg5X/7qs/P9DptYVCQ5qJ9eF8BHh+9bN82iglBwzaH8oNc/VbvV
-        WfOAoSeZ9W0aS+y99Z1pIXnDgt+5nPuWty2uIzKiCVQtumm1YXd2I2X/St2VCrEaAJWpQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gpBS2-0004pG-ER; Thu, 31 Jan 2019 12:28:14 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id AD996440082; Thu, 31 Jan 2019 12:28:13 +0000 (GMT)
-Date:   Thu, 31 Jan 2019 12:28:13 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v2 12/13] input: max77650: add onkey support
-Message-ID: <20190131122813.GB20797@sirena.org.uk>
-References: <20190129133545.1931-1-brgl@bgdev.pl>
- <20190129133545.1931-14-brgl@bgdev.pl>
- <20190130185328.GA149208@dtor-ws>
- <CAMRc=McaqqmU6S_Yz35ZMvhWtWO4hTASA0fmL5CT4JizbYgu4Q@mail.gmail.com>
+        Thu, 31 Jan 2019 07:29:01 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0VCSsUt007670;
+        Thu, 31 Jan 2019 06:28:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548937734;
+        bh=XGvTSiJVE2NrDfBue8YEIy9vouljmzIY6F3BynwSat0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=t9yUsQlF1bMSn59PpWCqBhYFMIjhwmN9x/GnWndV697JNoFMPrKgacbLai6zKPcd+
+         imfuF//M/Ed31tgV1k6XEE0Aw5nuEFLSJ0vT5jdnm7N3IrRUvWDKuy+XXsL0vA7DTu
+         HCMvtUip3sd+RJbjuNvfu/5t3gltUj1uBSAYjgjc=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0VCSsoX102352
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 06:28:54 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 31
+ Jan 2019 06:28:54 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 31 Jan 2019 06:28:54 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0VCSp5c022847;
+        Thu, 31 Jan 2019 06:28:51 -0600
+Subject: Re: [PATCH 1/7] mmc: sdhci: add support for using external DMA
+ devices
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+CC:     <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+References: <CAG2=9p_mUyY=hKLN4E-ZUaJNueE-h5hHKDnJV5cG5kjtLsEgPA@mail.gmail.com>
+ <20190130110548.19151-1-zhang.chunyan@linaro.org>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <708d8bb6-6c64-b63d-398f-19c7f784020c@ti.com>
+Date:   Thu, 31 Jan 2019 18:02:03 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="9zSXsLTf0vkW971A"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=McaqqmU6S_Yz35ZMvhWtWO4hTASA0fmL5CT4JizbYgu4Q@mail.gmail.com>
-X-Cookie: What!?  Me worry?
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190130110548.19151-1-zhang.chunyan@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Chunyan,
 
---9zSXsLTf0vkW971A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 30/01/19 4:35 PM, Chunyan Zhang wrote:
+> Some standard SD host controllers can support both external dma
+> controllers as well as ADMA/SDMA in which the SD host controller
+> acts as DMA master. TI's omap controller is the case as an example.
+> 
+> Currently the generic SDHCI code supports ADMA/SDMA integrated in
+> the host controller but does not have any support for external DMA
+> controllers implemented using dmaengine, meaning that custom code is
+> needed for any systems that use an external DMA controller with SDHCI.
+> 
+> Fixes by Faiz Abbas <faiz_abbas@ti.com>:
+> 1. Map scatterlists before dmaengine_prep_slave_sg()
+> 2. Use dma_async() functions inside of the send_command() path and
+> synchronize once at the start of each request.
+> 
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+> Changes from the last version:
+> * Moved sdhci_set_timeout() from _prepare_data() to its caller -
+>   sdhci_send_command();
+> * Factor out a new function sdhci_reset_data() which deal with sanity
+>   checks for mmc_data and reset for host->data, these processes were
+>   in _prepare_data();
+> * Factor out a new function sdhci_set_block_info() for configuring data
+>   blocks which were processing at bottom of _prepare_data();
+> * Added a new tasklet and functions for handling external dma  error case;
+> * Removed sdhci_external_dma_cleanup() which is not used;
+> * Added an empty sdhci_external_dma_channel definition for
+>   !IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA);
+> * Addressed some other comments from Adrian:
+> - Removed check for MMC_SET_BLOCK_COUNT, left checking !cmd->data only
+>   which is enough.
 
-On Thu, Jan 31, 2019 at 09:15:01AM +0100, Bartosz Golaszewski wrote:
+There should have been a v2 in the patch description. It lets reviewers
+know that they have seen this patch before and its not the same thing. I
+would have preferred you had me test this before posting it to the
+mailing list. Otherwise there should be a "not tested" in the description.
 
-> I'm not sure what the policy is on merging MFD drivers, but I'm seeing
-> that Mark Brown has already picked up the regulator part into his tree
-> (including the binding document). I think you can just pick up the
-> input patches and it will simply not show up in Kconfig until the core
-> mfd module is upstream.
+> ---
+>  drivers/mmc/host/Kconfig |   3 +
+>  drivers/mmc/host/sdhci.c | 333 +++++++++++++++++++++++++++++++++++----
+>  drivers/mmc/host/sdhci.h |  10 ++
+>  3 files changed, 317 insertions(+), 29 deletions
+[snip]
 
-> @Mark: could you please confirm it?
+> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> +					    struct mmc_command *cmd)
+> +{
+> +	struct mmc_data *data = cmd->data;
+> +	struct dma_chan *chan = sdhci_external_dma_channel(host, data);
+chan is not being used in this function.
+> +
+> +	if (!sdhci_external_dma_setup(host, cmd)) {
+> +		__sdhci_external_dma_prepare_data(host, cmd);
+>  	} else {
+> -		sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
+> +		sdhci_external_dma_release(host);
+> +		pr_err("%s: Cannot use external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
+> +		       mmc_hostname(host->mmc));
+> +		sdhci_prepare_data(host, cmd);
+> +	}
+> +}
+> +
+> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+> +					    struct mmc_command *cmd)
+> +{
+> +	struct dma_chan *chan;
 
-Right, as it's a new MFD the Kconfig will stop it causing build breakage
-until the MFD is merged.  I'm doing it partly just to cut down on the
-amount of mail from resends while the rest of the series gets reviewed.
+I think you wanted to initialize this one.
 
---9zSXsLTf0vkW971A
-Content-Type: application/pgp-signature; name="signature.asc"
+> +
+> +	if (!cmd->data)
+> +		return;
+> +
+> +	chan = sdhci_external_dma_channel(host, cmd->data);
+> +	if (chan)
+> +		dma_async_issue_pending(chan);
+> +}
+> +
+> +static bool sdhci_external_dma_request_done(struct sdhci_host *host)
+> +{
+> +	struct mmc_request *mrq;
+> +	struct dma_chan *chan;
+> +	int i;
+> +
+> +	spin_lock_irqsave(&host->lock, flags);
 
------BEGIN PGP SIGNATURE-----
+flags is not declared.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxS6dwACgkQJNaLcl1U
-h9BBNAf/Yq7Uoem9cGciS63O6v97feMamBfser9PLXATQwLIfr7vuvbz8Ig1I/jt
-1UQPV4xcX4J6Oj13T5hUuc6BgQ7eGEwwHE4fDLbSs5Ze2Hj1Brd9sM7ER/Ro3L3m
-Xuz7lFta+tF8gWGtdX8bKyJEcIfWOtawyLhIsCZ7qSWE44x5yUmUmV9kxSpXyAnI
-IfDJnfSW1E3XHt5WjfpIcDIxvup1fPxIstkHts7+OdsQcIcSUmrnFIvuzmbq94/z
-zvyu2vj0Qm0DkkGQDYfVMdINpac608CdtXlAUQ1F4+ImRgSDNn32QZ9Jde+1190c
-3HjaOajFH7egd9TFMTJxLaHaiEHaeA==
-=y+sH
------END PGP SIGNATURE-----
+> +
+> +	for (i = 0; i < SDHCI_MAX_MRQS; i++) {
+> +		mrq = host->mrqs_done[i];
+> +		if (mrq)
+> +			break;
+>  	}
+> +
+> +	spin_unlock_irqrestore(&host->lock, flags);
+> +
+> +	if (!mrq)
+> +		return true;
+> +
+> +	sdhci_tasklet_finish(host);
 
---9zSXsLTf0vkW971A--
+This doesn't even build. sdhci_tasklet_finish is declared below this. In
+the future, if you don't have a platform to test things on, at least
+build and use checkpatch before posting it to the mailing list.
+
+Should we even be calling a tasklet callback function directly?
+Shouldn't we do a tasklet_schedule()?
+
+Thanks,
+Faiz
