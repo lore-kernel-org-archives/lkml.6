@@ -2,231 +2,164 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FF0C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A67C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC86218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5761D20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:40:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5k+tBmfO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEz56Px2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728818AbfAaUkZ (ORCPT
+        id S1728922AbfAaUkb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:40:25 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60100 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727200AbfAaUkZ (ORCPT
+        Thu, 31 Jan 2019 15:40:31 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35707 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727200AbfAaUk3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:40:25 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0VKd2Tn164436;
-        Thu, 31 Jan 2019 20:39:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Lz5JHc+Ue+BmrKXLjFXGNF4LxQlSB+QOkl0q+V6XNq8=;
- b=5k+tBmfO1XidU4vgYSd65UjEKrHUAqzZMhZqcsOeT3jSvL64vmsgip7BagP6R8YlKjcX
- t20oDYvoY38zo9thiugJQkG0SK/SDhT9s1+VS4dZPYQB5qGCW/rCfAcLFgFBvs+MvK8w
- Tf6I6v8izo0WxFginA/R9rexuMJJYFlOjXjZai/RRayFChXfioT7yEYfmOuig3iA6RU4
- i6sRxi+YIXGirAPFW6sWdv5z1ZZfrGoZ+vp2lu4wwTWjRHzG0q9rtoYUcmTf70NeA8FX
- RLmy20EPZqNNSo66f4bgdRyJEl2NczbYnnDyo5EkiNYkQN9nEB61swfTwySXtyxejh1t Dg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2q8eyuu27k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Jan 2019 20:39:50 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0VKdiUt022582
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Jan 2019 20:39:44 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0VKdgEf006565;
-        Thu, 31 Jan 2019 20:39:42 GMT
-Received: from localhost (/10.159.246.84)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 31 Jan 2019 12:39:42 -0800
-Date:   Thu, 31 Jan 2019 12:39:40 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-alpha@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] fs: let filldir_t return bool instead of an error
- code
-Message-ID: <20190131203940.GA27972@magnolia>
-References: <20190118161440.220134-1-jannh@google.com>
- <20190118161440.220134-3-jannh@google.com>
- <20190120224059.GA4205@dastard>
- <CAG48ez3SgejgGbctHwxON1B1k26xk-z16xdozKZkx7=-Li0aHw@mail.gmail.com>
- <20190121222411.GD4205@dastard>
- <CAG48ez2UmgEkitbgyCCs9LLdgahweFFAJWCU_vcqES6YgN=gLw@mail.gmail.com>
+        Thu, 31 Jan 2019 15:40:29 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so3893755ljb.2;
+        Thu, 31 Jan 2019 12:40:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eC8JUjjOWAciHy3n+5RBBqZC4Ht27IbaQAgjXb8i0r8=;
+        b=IEz56Px2TElGN/HhHFKKm6Ije+9kD4c8xUaImpCq9StbAAsauuypzdBzSY4XbFI72v
+         Vj+3vmnuNRLDDPFeIU8fGEhzsNZl4AnEZrxPXxSzedYip9l82OlAN779p4upI5h48nYa
+         gSvVyuSde+BaWJLkhuIcHxT9syk2HeY3oV7bBTBGiYgsMQAe7WQkGoPC5D0ldXYO7uv1
+         /EARsybBWjsvUuYQ49tr7yiki5bDhwTQpxQdq+RgFlwIxVN3cuqk5XWd+HMnxwzMjSoz
+         0OOv6HLZZu74jUMXZJwPUUL2g6y4k2YoGbkCON1ODLGYeY1Ygi64dBFOblItNVMi26s1
+         PDQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eC8JUjjOWAciHy3n+5RBBqZC4Ht27IbaQAgjXb8i0r8=;
+        b=hiaZKsdazlmtk9Hzwgw5FjUcpl9hca6Ti1sRrtSyRpK4AhDNK9qyNLjkb+Aq4V7Ar7
+         G6Uco+J7EaA9qTx8KldNwvHnS75W46XaF+NBvSla7w8D5+j/hsAY9CrXHrGgxqKCYfWr
+         K56NJm8XYdPTG2ok5fmOR6pYR+BFE3Zm0oy0UxEujoHpLFAmux/1QTQo021uNgr9WfxR
+         8RYClL6CwrlAthJi/+y8NnQj757eGfsqFhT7ggp97EYRBNo/MJajzYj5AJ1KHeyReCN/
+         N40o23MUO+7WMAAegrF9EwSlHkwRKyB/zHa1dSRuinvidYYbuoXaFS7bEcjM+H6vonKG
+         PDBQ==
+X-Gm-Message-State: AJcUukfvZoADBEy7JuBQZkuSbHlRvxxI7T+1n/VexHFLymVWvspl36I5
+        jch+11tPFq6HtrJ0LW1BZiSAWrsa
+X-Google-Smtp-Source: ALg8bN7bk4qVj+mM2fa5ut4Sn8uemYBzrVeLSwlRc2SVD22i2WQRrREXTo0L+/4WOrwsBe+F3IY3oA==
+X-Received: by 2002:a2e:63cd:: with SMTP id s74-v6mr28553398lje.117.1548967227334;
+        Thu, 31 Jan 2019 12:40:27 -0800 (PST)
+Received: from localhost (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
+        by smtp.gmail.com with ESMTPSA id h22-v6sm967100ljg.24.2019.01.31.12.40.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 12:40:26 -0800 (PST)
+Date:   Thu, 31 Jan 2019 21:40:04 +0100
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Tomasz Duszynski <tduszyns@gmail.com>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh@kernel.org, jic23@jic23.retrosnub.co.uk
+Subject: Re: [PATCH v2 3/3] dt-bindings: iio: chemical: pms7003: add device
+ tree support
+Message-ID: <20190131204000.GA14750@arch>
+References: <20190127181916.19948-1-tduszyns@gmail.com>
+ <20190127181916.19948-4-tduszyns@gmail.com>
+ <20190128075819.GK3691@localhost>
+ <20190128184332.GA25627@arch>
+ <20190130091254.GN3691@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAG48ez2UmgEkitbgyCCs9LLdgahweFFAJWCU_vcqES6YgN=gLw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9153 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1901310152
+In-Reply-To: <20190130091254.GN3691@localhost>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 04:07:59PM +0100, Jann Horn wrote:
-> On Mon, Jan 21, 2019 at 11:24 PM Dave Chinner <david@fromorbit.com> wrote:
-> > On Mon, Jan 21, 2019 at 04:49:45PM +0100, Jann Horn wrote:
-> > > On Sun, Jan 20, 2019 at 11:41 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > > On Fri, Jan 18, 2019 at 05:14:40PM +0100, Jann Horn wrote:
-> > > > > As Al Viro pointed out, many filldir_t functions return error codes, but
-> > > > > all callers of filldir_t functions just check whether the return value is
-> > > > > non-zero (to determine whether to continue reading the directory); more
-> > > > > precise errors have to be signalled via struct dir_context.
-> > > > > Change all filldir_t functions to return bool instead of int.
-> > > > >
-> > > > > Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> > > > > Signed-off-by: Jann Horn <jannh@google.com>
-> > > > > ---
-> > > > >  arch/alpha/kernel/osf_sys.c | 12 +++----
-> > > > >  fs/afs/dir.c                | 30 +++++++++--------
-> > > > >  fs/ecryptfs/file.c          | 13 ++++----
-> > > > >  fs/exportfs/expfs.c         |  8 ++---
-> > > > >  fs/fat/dir.c                |  8 ++---
-> > > > >  fs/gfs2/export.c            |  6 ++--
-> > > > >  fs/nfsd/nfs4recover.c       |  8 ++---
-> > > > >  fs/nfsd/vfs.c               |  6 ++--
-> > > > >  fs/ocfs2/dir.c              | 10 +++---
-> > > > >  fs/ocfs2/journal.c          | 14 ++++----
-> > > > >  fs/overlayfs/readdir.c      | 24 +++++++-------
-> > > > >  fs/readdir.c                | 64 ++++++++++++++++++-------------------
-> > > > >  fs/reiserfs/xattr.c         | 20 ++++++------
-> > > > >  fs/xfs/scrub/dir.c          |  8 ++---
-> > > > >  fs/xfs/scrub/parent.c       |  4 +--
-> > > > >  include/linux/fs.h          | 10 +++---
-> > > > >  16 files changed, 125 insertions(+), 120 deletions(-)
-> > > > >
-> > > > > diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-> > > > > index db1c2144d477..14e5ae0dac50 100644
-> > > > > --- a/arch/alpha/kernel/osf_sys.c
-> > > > > +++ b/arch/alpha/kernel/osf_sys.c
-> > > > > @@ -108,7 +108,7 @@ struct osf_dirent_callback {
-> > > > >       int error;
-> > > > >  };
-> > > > >
-> > > > > -static int
-> > > > > +static bool
-> > > > >  osf_filldir(struct dir_context *ctx, const char *name, int namlen,
-> > > > >           loff_t offset, u64 ino, unsigned int d_type)
-> > > > >  {
-> > > > > @@ -120,14 +120,14 @@ osf_filldir(struct dir_context *ctx, const char *name, int namlen,
-> > > > >
-> > > > >       buf->error = check_dirent_name(name, namlen);
-> > > > >       if (unlikely(buf->error))
-> > > > > -             return -EFSCORRUPTED;
-> > > > > +             return false;
-> > > > >       buf->error = -EINVAL;   /* only used if we fail */
-> > > > >       if (reclen > buf->count)
-> > > > > -             return -EINVAL;
-> > > > > +             return false;
+On Wed, Jan 30, 2019 at 10:12:54AM +0100, Johan Hovold wrote:
+> On Mon, Jan 28, 2019 at 07:43:33PM +0100, Tomasz Duszynski wrote:
+> > On Mon, Jan 28, 2019 at 08:58:19AM +0100, Johan Hovold wrote:
+> > > On Sun, Jan 27, 2019 at 07:19:16PM +0100, Tomasz Duszynski wrote:
+> > > > Add device tree support for Plantower PMS7003 particulate matter sensor.
 > > > >
-> > > > Oh, it's because the error being returned is being squashed by
-> > > > dir_emit():
+> > > > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+> > > > ---
+> > > >  .../iio/chemical/plantower,pms7003.txt        | 19 +++++++++++++++++++
+> > > >  1 file changed, 19 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
+> > > > new file mode 100644
+> > > > index 000000000000..e4c7f2fb1e30
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
+> > > > @@ -0,0 +1,19 @@
+> > > > +* Plantower PMS7003 particulate matter sensor
+> > > > +
+> > > > +Required properties:
+> > > > +- compatible: must be "plantower,pms7003"
+> > > > +
+> > > > +Optional properties:
+> > > > +- vcc-supply: phandle to the regulator that provides power to the sensor
 > > >
-> > > Yeah.
+> > > Shouldn't this one be a required property?
 > > >
-> > > > >  struct dir_context {
-> > > > > @@ -3469,17 +3471,17 @@ static inline bool dir_emit(struct dir_context *ctx,
-> > > > >                           const char *name, int namelen,
-> > > > >                           u64 ino, unsigned type)
-> > > > >  {
-> > > > > -     return ctx->actor(ctx, name, namelen, ctx->pos, ino, type) == 0;
-> > > > > +     return ctx->actor(ctx, name, namelen, ctx->pos, ino, type);
-> > > > >  }
-> > > >
-> > > > /me wonders if it would be cleaner to do:
-> > > >
-> > > > static inline bool dir_emit(...)
-> > > > {
-> > > >         buf->error = ctx->actor(....)
-> > > >         if (buf->error)
-> > > >                 return false;
-> > > >         return true;
-> > > > }
-> > > >
-> > > > And clean up all filldir actors just to return the error state
-> > > > rather than have to jump through hoops to stash the error state in
-> > > > the context buffer and return the error state?
-> > >
-> > > One negative thing about that, IMO, is that it mixes up the request
-> > > for termination of the loop and the presence of an error.
 > >
-> > Doesn't the code already do that, only worse?
-> 
-> The current code does that, yes. But with this patch, I think that's
-> not really the case anymore?
-> 
-> > > > That then allows callers who want/need the full error info can
-> > > > continue to call ctx->actor directly,
+> > Driver does not use regulator framework hence to me this property fits
+> > here better.
+>
+> The device tree describes hardware, not any particular driver.
+>
+> That said, there is a bit of an on-going debate on whether mandatory
+> supplies (from a hardware perspective) should always be represented in
+> device tree or not.
+>
+> 	https://lore.kernel.org/lkml/20181123133126.GF2089@sirena.org.uk/T/#u
+>         https://lore.kernel.org/lkml/20180409102244.GB11532@sirena.org.uk/T/#u
+> 	https://lore.kernel.org/lkml/20180425171123.xhyoay3nu463btoq@rob-hp-laptop/T/#u
+>
+
+Even after going through this threads I am still unconvinced that
+vcc-supply should be a requirement. Making this a mandatory property
+would automatically imply using *_regulator_get() in a driver code
+(on condition one is adding regulator support). In case there
+isn't any physically connected we end up with a dummy one and a warning.
+
+Is it how this should work?
+
+> > > > +- set-gpios: phandle to the GPIO connected to the SET line
+> > > > +- reset-gpios: phandle to the GPIO connected to the RESET line
+> > > > +
+> > > > +Refer to serial/slave-device.txt for generic serial attached device bindings.
+> > > > +
+> > > > +Example:
+> > > > +
+> > > > +&uart0 {
+> > > > +	pms7003 {
 > > >
-> > > "continue to call ctx->actor directly"? I don't remember any code that
-> > > calls ctx->actor directly.
+> > > The node name should be generic and reflect the functionality rather
+> > > than model. Perhaps "pms" will do here.
 > >
-> > ovl_fill_real().
-> 
-> Ah, right.
-> 
-> 
-> > And the XFS directory scrubber could probably make better use of the
-> > error return from ctx->actor when validating the directory contents
-> > rather than just calling dir_emit() and aborting the scan at the
-> > first error encountered. We eventually want to know exactly what
-> > error was encountered here to determine if it is safe to continue,
-> > not just a "stop processing" flag. e.g. a bad name length will need
-> > to stop traversal because we can't trust the underlying structure,
-> > but an invalid file type isn't a structural flaw that prevents us
-> > from continuing to traverse and check the rest of the directory....
-> 
-> Sorry, maybe I'm a bit dense right now, I don't get your point. Are
-> you talking about filesystem errors detected in the actor? If so,
-> doesn't it make *more* sense for non-fatal errors to put a note that
-> an error happened into the xchk_dir_ctx (if that information should be
-> kept around), then return a value that says "please continue"?
+> > Agree, ideally we should have a generic dt name for this kind of sensors
+> > (something like air-pollution-sensor perhaps?). But unfortunately there isn't
+> > anything available now so I guess compatible part name should be okay
+> > (besides this is the type of naming commonly used in other iio bindings).
+>
+> What's wrong with particulate matter sensor ("pms")?
+>
+> Seems like a better fix than any particular model name to me at least.
+>
 
-As I understand the scrub code, we /do/ stash the error state elsewhere
-and set the xchk_dir_actor return value as appropriate to continue or
-stop the directory iteration.  Granted, it's not very nuanced since
-anything out of order sets the CORRUPT flag and aborts the iteration,
-but in principle xchk_dir_actor could set the scrub warning flag and
-return 0 if it wanted to.
+Personally I would vote for a more descriptive node name, for example:
+particulate-matter-sensor or air-pollution-sensor or other name
+which clearly shows what device we are dealing with.
 
-(So maybe I'm dense too, but I don't know what Dave is talking
-about...?)
-
---D
-
-> Or are you talking about filesystem errors detected in the readdir
-> implementation? In that case, you're AFAICS going to need special-case
-> logic gated on ctx->actor==xchk_dir_actor anyway if you want the
-> scrubber to continue while readdir() stops.
-> 
-> (But as I've said, I don't really care about this patch. If Al takes
-> patches 1 and 2 from this series, I'm happy; this patch is just in
-> response to <https://lore.kernel.org/lkml/20180731165112.GJ30522@ZenIV.linux.org.uk/>.)
+> > > > +		compatible = "plantower,pms7003";
+> > > > +	};
+> > > > +};
+>
+> Johan
