@@ -4,73 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A95CC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB1EC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16C5820B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C87A5218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UGN68F6Z"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="etRVmNzo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbfAaT3D (ORCPT
+        id S1729427AbfAaT3P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:29:03 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44493 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728007AbfAaT3B (ORCPT
+        Thu, 31 Jan 2019 14:29:15 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:32870 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbfAaT3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:29:01 -0500
-Received: by mail-pg1-f195.google.com with SMTP id t13so1762832pgr.11
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:29:00 -0800 (PST)
+        Thu, 31 Jan 2019 14:29:13 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c123so1946183pfb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:29:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ev8JPAf+GoLzOHws3FGQ46h+PQ2kpPn+0k5OrkzIAiY=;
-        b=UGN68F6ZcLmOxFwtzgS7fsHrX5YxpIwlbBo6TP7Fu9IW9TkcJwup0pITpRMnT+nuDf
-         w4uVcT3v7EO3VxAHFUNjGW+EnaOJTtgrWJXaaq86yPeAy8pj6KU8MV8M8h5PqTGfo9ga
-         2/GbaYCZllZLW9JbM9nvcbFpNgpUUiyzG27bA=
+        bh=Ck4amp7OnHo7Ifn15Ts8wtsI1iWVbBgOy0S1WKmzf3Q=;
+        b=etRVmNzoiz3MlAYioyU89t/zUrNe2jw0TBjr+o4LcpOlmZxaQjvg5VfKfJzaGbFufo
+         UUC2jQeAWprmYu71bFqIKOHc+sNzDi+HFmnk8sSQc68TjkuSz6q6bM4vqngK1b4eiBkN
+         89zlGy3hJ1rpt/RTo8ltHLbWgPIZM2U7Y0nok=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ev8JPAf+GoLzOHws3FGQ46h+PQ2kpPn+0k5OrkzIAiY=;
-        b=qNS/8W51xCzvf+i4/WWClY24YmxYNE/bwZZI0ZowxpN1+KQpuBrr/hYvab3YyHnZWD
-         F0p5qRGuHW7IG2riISHQoUdlFR/9YG+DrVQ9zbJgYe/mp9oIGVn2Bt02sMvmmtgd+9wr
-         IgNa3Sk8oTkkeXfFBD1opnlcMOpeDI3nmE1Ss5+a4YODeBTq7s37xm3Ez4wpJXHRUKUf
-         6NVi+cmX33c5Pw3We8dkXpfb+05TiEaigCwHKnJ5H18M8azOZe5AZ8dWM+Wkv1RGTNp0
-         gSiknRAFrZoFkWd5JuM/8FRIJD04TgedoZc1YOnAZROrm9LC8uWr8L1ifeKOb/SDw2BQ
-         3vNA==
-X-Gm-Message-State: AJcUuke9tR3ia8a0r+Cdynhd9dzV5NZtTpOuP3yAT6Q/8dkax8t4N7fn
-        jvWq3EnmXaQFOY+fO3iJ5oyJDlfkLQc=
-X-Google-Smtp-Source: ALg8bN4NDirLuK4HzuFomYq8ZzIZ6jTLOGbE6YQz67HSslDD7eHHzc2BLBM7I6v0SC+n1ZYpkGgPIw==
-X-Received: by 2002:a62:1f9d:: with SMTP id l29mr36074865pfj.14.1548962940145;
-        Thu, 31 Jan 2019 11:29:00 -0800 (PST)
+        bh=Ck4amp7OnHo7Ifn15Ts8wtsI1iWVbBgOy0S1WKmzf3Q=;
+        b=KJkXjbZGzueZa0AtGSJZ/S/YrOq5hzuHoQa9PwmvgscV8J9qUfY0hlW4TXSt3+Kozd
+         n03ukPoucOoblodFJ7/ZCjJEvZkwJyRpcySCBrNshpQKSV8p8/23QrTe+xYAuY7MMC6i
+         fUYxQOrwTH/PdLv2AYy4+TozV1qn5ZjZebkfWE7vyPorQ6xN7I705fw2A+As5PDskJLx
+         b28UvlShvwv8iGw03dDXaLD8zdS33EQvsV4p2ojejRRp5ycIrTtW7Ld2kNEEOxa+85XH
+         4zfMt1nknT9vjVDZEIavrwrz4gUkFXp+pI6OuX8e/rbyC361u7Gt6M9QVh/IhdiGhS3Y
+         yfpg==
+X-Gm-Message-State: AJcUukc7SuwNG83lR4PODZ++lX581om8amBgwLhAOSGOTzXKk9jAP0x7
+        aX0vkL14DD9qVvjgG3Qx01k21w==
+X-Google-Smtp-Source: ALg8bN7t+6GdtTajgNb/0J7nRTwizGNxaBmc65P7v/XpTUuRKKnfeGpTcZslGRao44dgdHEByEtI5A==
+X-Received: by 2002:a65:484c:: with SMTP id i12mr32410077pgs.309.1548962952418;
+        Thu, 31 Jan 2019 11:29:12 -0800 (PST)
 Received: from skynet.sea.corp.google.com ([2620:15c:17:4:29de:3bb1:1270:e679])
-        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.28.59
+        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.29.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 11:28:59 -0800 (PST)
+        Thu, 31 Jan 2019 11:29:11 -0800 (PST)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, Thomas Garnier <thgarnie@chromium.org>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
         Thomas Garnier <thgarnie@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Juergen Gross <jgross@suse.com>,
         Joerg Roedel <jroedel@suse.de>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 18/27] xen: Adapt assembly for PIE support
-Date:   Thu, 31 Jan 2019 11:24:25 -0800
-Message-Id: <20190131192533.34130-19-thgarnie@chromium.org>
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 20/27] x86: Support global stack cookie
+Date:   Thu, 31 Jan 2019 11:24:27 -0800
+Message-Id: <20190131192533.34130-21-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 In-Reply-To: <20190131192533.34130-1-thgarnie@chromium.org>
 References: <20190131192533.34130-1-thgarnie@chromium.org>
@@ -81,123 +81,276 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly code to use the new _ASM_MOVABS macro which get a
-symbol reference while being PIE compatible. Adapt the relocation tool
-to ignore 32-bit Xen code.
+Add an off-by-default configuration option to use a global stack cookie
+instead of the default TLS. This configuration option will only be used
+with PIE binaries.
 
-Position Independent Executable (PIE) support will allow to extend the
-KASLR randomization range below 0xffffffff80000000.
+For kernel stack cookie, the compiler uses the mcmodel=kernel to switch
+between the fs segment to gs segment. A PIE binary does not use
+mcmodel=kernel because it can be relocated anywhere, therefore the
+compiler will default to the fs segment register. This is fixed on the
+latest version of gcc.
+
+If the segment selector is available, it will be automatically added. If
+the automatic configuration was selected, a warning is written and the
+global variable stack cookie is used. If a specific stack mode was
+selected (regular or strong) and the compiler does not support selecting
+the segment register, an error is emitted.
 
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
-Reviewed-by: Juergen Gross <jgross@suse.com>
 ---
- arch/x86/platform/pvh/head.S | 14 ++++++++++----
- arch/x86/tools/relocs.c      | 16 +++++++++++++++-
- arch/x86/xen/xen-head.S      | 11 ++++++-----
- 3 files changed, 31 insertions(+), 10 deletions(-)
+ arch/x86/Kconfig                      | 12 ++++++++++++
+ arch/x86/Makefile                     |  9 +++++++++
+ arch/x86/entry/entry_32.S             |  3 ++-
+ arch/x86/entry/entry_64.S             |  3 ++-
+ arch/x86/include/asm/processor.h      |  3 ++-
+ arch/x86/include/asm/stackprotector.h | 19 ++++++++++++++-----
+ arch/x86/kernel/asm-offsets.c         |  3 ++-
+ arch/x86/kernel/asm-offsets_32.c      |  3 ++-
+ arch/x86/kernel/asm-offsets_64.c      |  3 ++-
+ arch/x86/kernel/cpu/common.c          |  3 ++-
+ arch/x86/kernel/head_32.S             |  3 ++-
+ arch/x86/kernel/process.c             |  5 +++++
+ 12 files changed, 56 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/head.S
-index 1f8825bbaffb..e52d8b31e01d 100644
---- a/arch/x86/platform/pvh/head.S
-+++ b/arch/x86/platform/pvh/head.S
-@@ -103,8 +103,8 @@ ENTRY(pvh_start_xen)
- 	call xen_prepare_pvh
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 0519da6f8ee4..263d81c570b2 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2221,6 +2221,18 @@ config RANDOMIZE_MEMORY_PHYSICAL_PADDING
  
- 	/* startup_64 expects boot_params in %rsi. */
--	mov $_pa(pvh_bootparams), %rsi
--	mov $_pa(startup_64), %rax
-+	movabs $_pa(pvh_bootparams), %rsi
-+	movabs $_pa(startup_64), %rax
- 	jmp *%rax
+ 	   If unsure, leave at the default value.
  
- #else /* CONFIG_X86_64 */
-@@ -150,10 +150,16 @@ END(pvh_start_xen)
++config X86_GLOBAL_STACKPROTECTOR
++	bool "Stack cookie using a global variable"
++	depends on CC_STACKPROTECTOR_AUTO
++	default n
++	help
++	   This option turns on the "stack-protector" GCC feature using a global
++	   variable instead of a segment register. It is useful when the
++	   compiler does not support custom segment registers when building a
++	   position independent (PIE) binary.
++
++	   If unsure, say N
++
+ config HOTPLUG_CPU
+ 	bool "Support for hot-pluggable CPUs"
+ 	depends on SMP
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 76bc4dc03d5e..65d6d9a1dd22 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -132,6 +132,15 @@ else
+         KBUILD_CFLAGS += -mcmodel=kernel
+ endif
  
- 	.section ".init.data","aw"
- 	.balign 8
-+	/*
-+	 * Use an ASM_PTR (quad on x64) for _pa(gdt_start) because PIE requires
-+	 * a pointer size storage value before applying the relocation. On
-+	 * 32-bit _ASM_PTR will be a long which is aligned the space needed for
-+	 * relocation.
-+	 */
- gdt:
- 	.word gdt_end - gdt_start
--	.long _pa(gdt_start)
--	.word 0
-+	_ASM_PTR _pa(gdt_start)
-+	.balign 8
- gdt_start:
- 	.quad 0x0000000000000000            /* NULL descriptor */
++ifdef CONFIG_X86_GLOBAL_STACKPROTECTOR
++        ifeq ($(call cc-option, -mstack-protector-guard=global),)
++                $(error Cannot use CONFIG_X86_GLOBAL_STACKPROTECTOR: \
++                        -mstack-protector-guard=global not supported \
++                        by compiler)
++        endif
++        KBUILD_CFLAGS += -mstack-protector-guard=global
++endif
++
+ ifdef CONFIG_X86_X32
+ 	x32_ld_ok := $(call try-run,\
+ 			/bin/echo -e '1: .quad 1b' | \
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index d309f30cf7af..1a4abb98664b 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -655,7 +655,8 @@ ENTRY(__switch_to_asm)
+ 	movl	%esp, TASK_threadsp(%eax)
+ 	movl	TASK_threadsp(%edx), %esp
+ 
+-#ifdef CONFIG_STACKPROTECTOR
++#if defined(CONFIG_STACKPROTECTOR) && \
++	!defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ 	movl	TASK_stack_canary(%edx), %ebx
+ 	movl	%ebx, PER_CPU_VAR(stack_canary)+stack_canary_offset
+ #endif
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index fc15fe058d3c..1ae9c85241dc 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -296,7 +296,8 @@ ENTRY(__switch_to_asm)
+ 	movq	%rsp, TASK_threadsp(%rdi)
+ 	movq	TASK_threadsp(%rsi), %rsp
+ 
+-#ifdef CONFIG_STACKPROTECTOR
++#if defined(CONFIG_STACKPROTECTOR) && \
++	!defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ 	movq	TASK_stack_canary(%rsi), %rbx
+ 	movq	%rbx, PER_CPU_VAR(irq_stack_union + stack_canary_offset)
+ #endif
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 18f1e8269ad7..d322b1789d94 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -416,7 +416,8 @@ extern asmlinkage void ignore_sysret(void);
+ void save_fsgs_for_kvm(void);
+ #endif
+ #else	/* X86_64 */
+-#ifdef CONFIG_STACKPROTECTOR
++#if defined(CONFIG_STACKPROTECTOR) && \
++	!defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ /*
+  * Make sure stack canary segment base is cached-aligned:
+  *   "For Intel Atom processors, avoid non zero segment base address
+diff --git a/arch/x86/include/asm/stackprotector.h b/arch/x86/include/asm/stackprotector.h
+index 8ec97a62c245..4e120cf36782 100644
+--- a/arch/x86/include/asm/stackprotector.h
++++ b/arch/x86/include/asm/stackprotector.h
+@@ -52,6 +52,10 @@
+ #define GDT_STACK_CANARY_INIT						\
+ 	[GDT_ENTRY_STACK_CANARY] = GDT_ENTRY_INIT(0x4090, 0, 0x18),
+ 
++#ifdef CONFIG_X86_GLOBAL_STACKPROTECTOR
++extern unsigned long __stack_chk_guard;
++#endif
++
+ /*
+  * Initialize the stackprotector canary value.
+  *
+@@ -63,7 +67,7 @@ static __always_inline void boot_init_stack_canary(void)
+ 	u64 canary;
+ 	u64 tsc;
+ 
+-#ifdef CONFIG_X86_64
++#if defined(CONFIG_X86_64) && !defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ 	BUILD_BUG_ON(offsetof(union irq_stack_union, stack_canary) != 40);
+ #endif
+ 	/*
+@@ -77,17 +81,22 @@ static __always_inline void boot_init_stack_canary(void)
+ 	canary += tsc + (tsc << 32UL);
+ 	canary &= CANARY_MASK;
+ 
++#ifdef CONFIG_X86_GLOBAL_STACKPROTECTOR
++	if (__stack_chk_guard == 0)
++		__stack_chk_guard = canary ?: 1;
++#else /* !CONFIG_X86_GLOBAL_STACKPROTECTOR */
+ 	current->stack_canary = canary;
  #ifdef CONFIG_X86_64
-diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
-index 2a3c703218cc..1b5ee38446b6 100644
---- a/arch/x86/tools/relocs.c
-+++ b/arch/x86/tools/relocs.c
-@@ -837,6 +837,16 @@ static int is_percpu_sym(ElfW(Sym) *sym, const char *symname)
- 		strncmp(symname, "init_per_cpu_", 13);
+ 	this_cpu_write(irq_stack_union.stack_canary, canary);
+-#else
++#else /* CONFIG_X86_32 */
+ 	this_cpu_write(stack_canary.canary, canary);
+ #endif
++#endif
  }
  
-+/*
-+ * Check if the 32-bit relocation is within the xenpvh 32-bit code.
-+ * If so, ignores it.
-+ */
-+static int is_in_xenpvh_assembly(Elf_Addr offset)
-+{
-+	Elf_Sym *sym = sym_lookup("pvh_start_xen");
-+	return sym && (offset >= sym->st_value) &&
-+		(offset < (sym->st_value + sym->st_size));
-+}
+ static inline void setup_stack_canary_segment(int cpu)
+ {
+-#ifdef CONFIG_X86_32
++#if defined(CONFIG_X86_32) && !defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ 	unsigned long canary = (unsigned long)&per_cpu(stack_canary, cpu);
+ 	struct desc_struct *gdt_table = get_cpu_gdt_rw(cpu);
+ 	struct desc_struct desc;
+@@ -100,7 +109,7 @@ static inline void setup_stack_canary_segment(int cpu)
  
- static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
- 		      const char *symname)
-@@ -909,8 +919,12 @@ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
- 		 * the relocations are processed.
- 		 * Make sure that the offset will fit.
- 		 */
--		if (r_type != R_X86_64_64 && (int32_t)offset != (int64_t)offset)
-+		if (r_type != R_X86_64_64 &&
-+		    (int32_t)offset != (int64_t)offset) {
-+			if (is_in_xenpvh_assembly(offset))
-+				break;
- 			die("Relocation offset doesn't fit in 32 bits\n");
-+		}
- 
- 		if (r_type == R_X86_64_64)
- 			add_reloc(&relocs64, offset);
-diff --git a/arch/x86/xen/xen-head.S b/arch/x86/xen/xen-head.S
-index 5077ead5e59c..4418ff0a1d96 100644
---- a/arch/x86/xen/xen-head.S
-+++ b/arch/x86/xen/xen-head.S
-@@ -28,14 +28,15 @@ ENTRY(startup_xen)
- 
- 	/* Clear .bss */
- 	xor %eax,%eax
--	mov $__bss_start, %_ASM_DI
--	mov $__bss_stop, %_ASM_CX
-+	_ASM_MOVABS $__bss_start, %_ASM_DI
-+	_ASM_MOVABS $__bss_stop, %_ASM_CX
- 	sub %_ASM_DI, %_ASM_CX
- 	shr $__ASM_SEL(2, 3), %_ASM_CX
- 	rep __ASM_SIZE(stos)
- 
--	mov %_ASM_SI, xen_start_info
--	mov $init_thread_union+THREAD_SIZE, %_ASM_SP
-+	_ASM_MOVABS $xen_start_info, %_ASM_AX
-+	_ASM_MOV %_ASM_SI, (%_ASM_AX)
-+	_ASM_MOVABS $init_thread_union+THREAD_SIZE, %_ASM_SP
- 
- #ifdef CONFIG_X86_64
- 	/* Set up %gs.
-@@ -46,7 +47,7 @@ ENTRY(startup_xen)
- 	 * init data section till per cpu areas are set up.
- 	 */
- 	movl	$MSR_GS_BASE,%ecx
--	movq	$INIT_PER_CPU_VAR(irq_stack_union),%rax
-+	movabsq	$INIT_PER_CPU_VAR(irq_stack_union),%rax
- 	cdq
- 	wrmsr
+ static inline void load_stack_canary_segment(void)
+ {
+-#ifdef CONFIG_X86_32
++#if defined(CONFIG_X86_32) && !defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ 	asm("mov %0, %%gs" : : "r" (__KERNEL_STACK_CANARY) : "memory");
  #endif
+ }
+@@ -116,7 +125,7 @@ static inline void setup_stack_canary_segment(int cpu)
+ 
+ static inline void load_stack_canary_segment(void)
+ {
+-#ifdef CONFIG_X86_32
++#if defined(CONFIG_X86_32) && !defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ 	asm volatile ("mov %0, %%gs" : : "r" (0));
+ #endif
+ }
+diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
+index 168543d077d7..bd6d7beffc1c 100644
+--- a/arch/x86/kernel/asm-offsets.c
++++ b/arch/x86/kernel/asm-offsets.c
+@@ -33,7 +33,8 @@ static void __used common(void)
+ {
+ 	BLANK();
+ 	OFFSET(TASK_threadsp, task_struct, thread.sp);
+-#ifdef CONFIG_STACKPROTECTOR
++#if defined(CONFIG_STACKPROTECTOR) && \
++	!defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ 	OFFSET(TASK_stack_canary, task_struct, stack_canary);
+ #endif
+ 
+diff --git a/arch/x86/kernel/asm-offsets_32.c b/arch/x86/kernel/asm-offsets_32.c
+index 82826f2275cc..775b0a7692f3 100644
+--- a/arch/x86/kernel/asm-offsets_32.c
++++ b/arch/x86/kernel/asm-offsets_32.c
+@@ -56,7 +56,8 @@ void foo(void)
+ 	       offsetof(struct cpu_entry_area, tss.x86_tss.sp1) -
+ 	       offsetofend(struct cpu_entry_area, entry_stack_page.stack));
+ 
+-#ifdef CONFIG_STACKPROTECTOR
++#if defined(CONFIG_STACKPROTECTOR) && \
++	!defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ 	BLANK();
+ 	OFFSET(stack_canary_offset, stack_canary, canary);
+ #endif
+diff --git a/arch/x86/kernel/asm-offsets_64.c b/arch/x86/kernel/asm-offsets_64.c
+index ddced33184b5..5bb1247afd6b 100644
+--- a/arch/x86/kernel/asm-offsets_64.c
++++ b/arch/x86/kernel/asm-offsets_64.c
+@@ -70,7 +70,8 @@ int main(void)
+ 	OFFSET(TSS_ist, tss_struct, x86_tss.ist);
+ 	BLANK();
+ 
+-#ifdef CONFIG_STACKPROTECTOR
++#if defined(CONFIG_STACKPROTECTOR) && \
++	!defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ 	DEFINE(stack_canary_offset, offsetof(union irq_stack_union, stack_canary));
+ 	BLANK();
+ #endif
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index cb28e98a0659..70aaf94fcf26 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1613,7 +1613,8 @@ DEFINE_PER_CPU(unsigned long, cpu_current_top_of_stack) =
+ 	(unsigned long)&init_thread_union + THREAD_SIZE;
+ EXPORT_PER_CPU_SYMBOL(cpu_current_top_of_stack);
+ 
+-#ifdef CONFIG_STACKPROTECTOR
++#if defined(CONFIG_STACKPROTECTOR) && \
++	!defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ DEFINE_PER_CPU_ALIGNED(struct stack_canary, stack_canary);
+ #endif
+ 
+diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
+index 30f9cb2c0b55..6afa948d211a 100644
+--- a/arch/x86/kernel/head_32.S
++++ b/arch/x86/kernel/head_32.S
+@@ -375,7 +375,8 @@ ENDPROC(startup_32_smp)
+  */
+ __INIT
+ setup_once:
+-#ifdef CONFIG_STACKPROTECTOR
++#if defined(CONFIG_STACKPROTECTOR) && \
++	!defined(CONFIG_X86_GLOBAL_STACKPROTECTOR)
+ 	/*
+ 	 * Configure the stack canary. The linker can't handle this by
+ 	 * relocation.  Manually set base address in stack canary
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 90ae0ca51083..582113ffb011 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -90,6 +90,11 @@ EXPORT_PER_CPU_SYMBOL(cpu_tss_rw);
+ DEFINE_PER_CPU(bool, __tss_limit_invalid);
+ EXPORT_PER_CPU_SYMBOL_GPL(__tss_limit_invalid);
+ 
++#ifdef CONFIG_X86_GLOBAL_STACKPROTECTOR
++unsigned long __stack_chk_guard __read_mostly;
++EXPORT_SYMBOL(__stack_chk_guard);
++#endif
++
+ /*
+  * this gets called so that we can store lazy state into memory and copy the
+  * current task into the new thread.
 -- 
 2.20.1.495.gaa96b0ce6b-goog
 
