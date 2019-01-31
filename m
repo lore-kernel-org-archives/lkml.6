@@ -2,115 +2,171 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D3EC282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DCAC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A92B22087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:11:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9BJzS4b"
+	by mail.kernel.org (Postfix) with ESMTP id 46D2820881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:15:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731912AbfAaRLl (ORCPT
+        id S1731033AbfAaRPJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:11:41 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33476 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbfAaRLj (ORCPT
+        Thu, 31 Jan 2019 12:15:09 -0500
+Received: from gateway33.websitewelcome.com ([192.185.146.21]:32094 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725855AbfAaRPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:11:39 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c123so1770494pfb.0;
-        Thu, 31 Jan 2019 09:11:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RsHTPDHzIpvQpPhcbjNfALgqq+QZ4bcuxaUfCA5XN7s=;
-        b=O9BJzS4bEZPZ+6+UkFYbxOLPVS3fV0NMRWNbsNCJtIYrwfdcxU+dvUprdicnGS87GY
-         m0g4WopUQmRvbhQKT43BH2BMfICQJJHlteZT4X4Ntse2Fg1rgw5v+mNbhhycHXXqripi
-         q1zI4rXtnWPAyVBRk3+etoLock/PMS2EJDtAyFmqTrnsrmCCV0SuIxmF4EJnvh9zu+tO
-         cwxpIyKtjB74sag8msD1D+eM2KjkKyA7haNuRRzCS0YeKdvgZB57J1OOyDEkCqz7Y1Ot
-         VQQ4Y+R1m5rFeC/1dVQBZYa5a1eiGQrFSBsq0dnpF9Asiftxz0dJlNudewooFloXXA5l
-         U+IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RsHTPDHzIpvQpPhcbjNfALgqq+QZ4bcuxaUfCA5XN7s=;
-        b=CK4Ve+4vwFvAw6QjutDZFi8ldDZVy2eeOuelODiaWF9wt+bDBG+b/GR4RHafHG8jog
-         RoCd5TLXyL05/5DdhEgS7ulFrQQCDJtQytR+7Zsov2lNn6Avtx2gb82DUOsNJcDt8afu
-         3NTOYod1QvDYu+/3wGYD9ansJw9cW3S51KIyPq3N7HCKmZBfXrlJb/LlSB+G3fkIqrem
-         iotBne4AJ+YHVyqpEINXmwnDM2wC+7CiCb029ksvsarhKTbFpysZwMIFCbrVsINsA/nE
-         US1IHDDHvgV90Sx8PoCAP6VYrRVWg5EdCCUv52D1GaUuY+/CeFe/xPqH28cwJRGiL/n5
-         rT9A==
-X-Gm-Message-State: AJcUukfNfdOr2heIpRWDreShLIsSKR8oPmbcv7ynuy/JXpytn5qY9wP2
-        EcpaKxs51tzfUTOqTlvrCg9lLG/1
-X-Google-Smtp-Source: ALg8bN6JVLrW0qGY7o3MfnEuCYW5ayhRCKzpA6v+DwtjMFCKTT5TDgocXDilhIo4hXSJr3ULIYXX4Q==
-X-Received: by 2002:a62:5301:: with SMTP id h1mr35304971pfb.17.1548954698521;
-        Thu, 31 Jan 2019 09:11:38 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id t67sm8048768pfd.90.2019.01.31.09.11.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 09:11:37 -0800 (PST)
-Subject: Re: [PATCH V8 3/5] i2c: tegra: Add DMA Support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
- <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
- <4663c7b9-d306-1cd4-1bdc-f7be84af0667@gmail.com>
- <8a88f8ee-24d3-00ac-f1fa-c43b576ed82c@gmail.com>
- <BYAPR12MB3398CFEE7E912513AE48DD2FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e50a353c-94c4-1a47-92a4-5f41f4f64aa7@gmail.com>
-Date:   Thu, 31 Jan 2019 20:11:29 +0300
+        Thu, 31 Jan 2019 12:15:09 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id DBBAA2C6168F
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:15:07 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id pFvfgrGWE2qH7pFvfgRiez; Thu, 31 Jan 2019 11:15:07 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.82.227] (port=42692 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gpFvf-003cCd-7M; Thu, 31 Jan 2019 11:15:07 -0600
+Subject: Re: [PATCH net-next] nfp: use struct_size() in kzalloc()
+To:     Joe Perches <joe@perches.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     oss-drivers@netronome.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190131003859.GA28539@embeddedor>
+ <dc6d827c187cd228b917f8d9d984bd5ea578d712.camel@perches.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <714fd5ae-2738-c157-8497-0b6bdeef3ae7@embeddedor.com>
+Date:   Thu, 31 Jan 2019 11:15:05 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB3398CFEE7E912513AE48DD2FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <dc6d827c187cd228b917f8d9d984bd5ea578d712.camel@perches.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.82.227
+X-Source-L: No
+X-Exim-ID: 1gpFvf-003cCd-7M
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.82.227]:42692
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-31.01.2019 19:56, Sowjanya Komatineni пишет:
-> 
->>>>  drivers/i2c/busses/Kconfig     |   2 +-
->>>>  drivers/i2c/busses/i2c-tegra.c | 362 
->>>> ++++++++++++++++++++++++++++++++++++++---
->>>>  2 files changed, 339 insertions(+), 25 deletions(-)
->>>
->>> Tegra20 crashes because of this patch:
->>>
->> [snip]
->>> <4>[    3.395915] ------------[ cut here ]------------
->>> <2>[    3.395919] kernel BUG at drivers/i2c/busses/i2c-tegra.c:810!
->> The BUG line is from:
+Hi Joe,
+
+On 1/31/19 11:11 AM, Joe Perches wrote:
+> On Wed, 2019-01-30 at 18:38 -0600, Gustavo A. R. Silva wrote:
+>> One of the more common cases of allocation size calculations is finding
+>> the size of a structure that has a zero-sized array at the end, along
+>> with memory for some number of elements for that array. For example:
 >>
->> 	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
->> 		if (i2c_dev->is_curr_dma_xfer)
->> 			i2c_dev->msg_buf_remaining = 0;
->> 		BUG_ON(i2c_dev->msg_buf_remaining);
->> 		complete(&i2c_dev->msg_complete);
->> 	}
+>> struct foo {
+>>     int stuff;
+>>     struct boo entry[];
+>> };
 >>
-> BUG_ON line is not part of this change. It was already there in existing driver.
-> Based on log, I see DMA transfer is done for 224 bytes followed by 1 successful PIO transfer and then on next PIO transfer it received packet xfer complete interrupt with incomplete transfer bytes and that where it hit BUG_ON condition.
+>> instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+>>
+>> Instead of leaving these open-coded and prone to type mistakes, we can
+>> now use the new struct_size() helper:
+>>
+>> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>>
+>> This code was detected with the help of Coccinelle.
 > 
+> Might be useful to augment the script to include cases
+> where the computed size is saved to a temporary and
+> that temporary is used ala:
 > 
 
-Yes, that BUG_ON is caused by the DMA transferring. Everything works fine be setting dma=false in the code, hence it's likely not a bug in the code (at least for now it looks fine), but likely that HW is not programmed correctly.
+Yep. That's already on my list.
+
+> https://patchwork.kernel.org/patch/10782453/
+> 
+> On Sat, 2019-01-26 at 20:42 +0800, YueHaibing wrote:
+>> Use kmemdup rather than duplicating its implementation
+> []
+>> diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+> []
+>> @@ -1196,13 +1196,9 @@ iwl_parse_nvm_mcc_info(struct device *dev, const struct iwl_cfg *cfg,
+>>  	regd_to_copy = sizeof(struct ieee80211_regdomain) +
+>>  		valid_rules * sizeof(struct ieee80211_reg_rule);
+>> -	copy_rd = kzalloc(regd_to_copy, GFP_KERNEL);
+>> -	if (!copy_rd) {
+>> +	copy_rd = kmemdup(regd, regd_to_copy, GFP_KERNEL);
+> 
+> This should probably be
+> 
+> 	copy_rd = kmemdup(regd, struct_size(regd, reg_rules, valid_rules),
+> 			  GFP_KERNEL);
+> 
+
+I agree.
+
+Thanks
+--
+Gustavo
