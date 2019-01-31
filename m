@@ -2,234 +2,149 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B5CC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C702C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 721F921939
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2452321939
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:30:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729268AbfAaU3q (ORCPT
+        id S1728882AbfAaUaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:29:46 -0500
-Received: from mga05.intel.com ([192.55.52.43]:4802 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728677AbfAaU2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:28:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:28:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
-   d="scan'208";a="143176554"
-Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by fmsmga001.fm.intel.com with ESMTP; 31 Jan 2019 12:28:51 -0800
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, acme@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, linux-kernel@vger.kernel.org
-Cc:     eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
-        ak@linux.intel.com, luto@amacapital.net,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 03/13] perf script: Support data page size
-Date:   Thu, 31 Jan 2019 12:27:56 -0800
-Message-Id: <1548966486-49963-3-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
-References: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
+        Thu, 31 Jan 2019 15:30:16 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.179]:44785 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727761AbfAaUaQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 15:30:16 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 57CE73A70
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 14:30:14 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id pIyUgCrB2dnCepIyUgEKD7; Thu, 31 Jan 2019 14:30:14 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.82.227] (port=44864 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gpIyT-001CQ4-RC; Thu, 31 Jan 2019 14:30:13 -0600
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+References: <20190125025639.GA13946@embeddedor>
+ <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
+ <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com>
+ <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com>
+ <1548964731.6107.28.camel@linux.ibm.com>
+ <a1cf3a2a-c8ad-fd33-47fb-9a9d8230c24f@embeddedor.com>
+ <1548966039.6107.29.camel@linux.ibm.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] security: mark expected switch fall-throughs
+Message-ID: <ece10676-4ee9-bf24-ab8d-7d69a678f234@embeddedor.com>
+Date:   Thu, 31 Jan 2019 14:30:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1548966039.6107.29.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.82.227
+X-Source-L: No
+X-Exim-ID: 1gpIyT-001CQ4-RC
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.82.227]:44864
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 17
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
 
-Display the data page size if it is available.
 
-Can be configured by the user, for example:
-  perf script --fields comm,event,phys_addr,data_page_size
-            dtlb mem-loads:uP:        3fec82ea8 4K
-            dtlb mem-loads:uP:        3fec82e90 4K
-            dtlb mem-loads:uP:        3e23700a4 4K
-            dtlb mem-loads:uP:        3fec82f20 4K
-            dtlb mem-loads:uP:        3e23700a4 4K
-            dtlb mem-loads:uP:        3b4211bec 4K
-            dtlb mem-loads:uP:        382205dc0 2M
-            dtlb mem-loads:uP:        36fa082c0 2M
-            dtlb mem-loads:uP:        377607340 2M
-            dtlb mem-loads:uP:        330010180 2M
-            dtlb mem-loads:uP:        33200fd80 2M
-            dtlb mem-loads:uP:        31b012b80 2M
+On 1/31/19 2:20 PM, Mimi Zohar wrote:
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
+>>>
+>>> This patch touches multiple LSMs and IMA.  As James has already picked
+>>> up similar patches, which are in his next-general branch, perhaps he
+>>> could also pick up an updated version of this one.
+>>>
+>>
+>> Yeah.  I can either integrate your recent fix and respin if you don't mind,
+>> or remove the fall-through comment and wait for James to take both patches,
+>> yours and mine.
+>>
+>> What do you prefer?
+> 
+> Either way is fine.
+> 
 
-Changes since V3
-- Use the real page size to replace enum.
-- Modify the get_page_size_name()
+OK.  Well, I think in this case less is more, so I will integrate our changes
+into a single patch.
 
- tools/perf/Documentation/perf-script.txt |  5 +++--
- tools/perf/builtin-script.c              | 19 +++++++++++++++++--
- tools/perf/util/event.h                  |  3 +++
- tools/perf/util/session.c                | 23 +++++++++++++++++++++++
- 4 files changed, 46 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 9e4def0..14ae84c1 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -116,8 +116,9 @@ OPTIONS
- --fields::
-         Comma separated list of fields to print. Options are:
-         comm, tid, pid, time, cpu, event, trace, ip, sym, dso, addr, symoff,
--        srcline, period, iregs, uregs, brstack, brstacksym, flags, bpf-output, brstackinsn,
--        brstackoff, callindent, insn, insnlen, synth, phys_addr, metric, misc, srccode.
-+        srcline, period, iregs, uregs, brstack, brstacksym, flags, bpf-output,
-+        brstackinsn, brstackoff, callindent, insn, insnlen, synth, phys_addr,
-+        metric, misc, srccode, data_page_size.
-         Field list can be prepended with the type, trace, sw or hw,
-         to indicate to which event type the field list applies.
-         e.g., -F sw:comm,tid,time,ip,sym  and -F trace:time,cpu,trace
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index d079f36..440ae80 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -27,6 +27,7 @@
- #include "util/thread-stack.h"
- #include "util/time-utils.h"
- #include "util/path.h"
-+#include "util/event.h"
- #include "print_binary.h"
- #include <linux/bitmap.h>
- #include <linux/kernel.h>
-@@ -97,6 +98,7 @@ enum perf_output_field {
- 	PERF_OUTPUT_METRIC	    = 1U << 28,
- 	PERF_OUTPUT_MISC            = 1U << 29,
- 	PERF_OUTPUT_SRCCODE	    = 1U << 30,
-+	PERF_OUTPUT_DATA_PAGE_SIZE  = 1U << 31,
- };
- 
- struct output_option {
-@@ -134,6 +136,7 @@ struct output_option {
- 	{.str = "metric", .field = PERF_OUTPUT_METRIC},
- 	{.str = "misc", .field = PERF_OUTPUT_MISC},
- 	{.str = "srccode", .field = PERF_OUTPUT_SRCCODE},
-+	{.str = "data_page_size", .field = PERF_OUTPUT_DATA_PAGE_SIZE},
- };
- 
- enum {
-@@ -204,7 +207,8 @@ static struct {
- 			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
- 			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD |
- 			      PERF_OUTPUT_ADDR | PERF_OUTPUT_DATA_SRC |
--			      PERF_OUTPUT_WEIGHT | PERF_OUTPUT_PHYS_ADDR,
-+			      PERF_OUTPUT_WEIGHT | PERF_OUTPUT_PHYS_ADDR |
-+			      PERF_OUTPUT_DATA_PAGE_SIZE,
- 
- 		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
- 	},
-@@ -468,6 +472,11 @@ static int perf_evsel__check_attr(struct perf_evsel *evsel,
- 					PERF_OUTPUT_PHYS_ADDR))
- 		return -EINVAL;
- 
-+	if (PRINT_FIELD(DATA_PAGE_SIZE) &&
-+		perf_evsel__check_stype(evsel, PERF_SAMPLE_DATA_PAGE_SIZE, "DATA_PAGE_SIZE",
-+					PERF_OUTPUT_DATA_PAGE_SIZE))
-+		return -EINVAL;
-+
- 	return 0;
- }
- 
-@@ -1762,6 +1771,7 @@ static void process_event(struct perf_script *script,
- 	unsigned int type = output_type(attr->type);
- 	struct perf_evsel_script *es = evsel->priv;
- 	FILE *fp = es->fp;
-+	char str[PAGE_SIZE_NAME_LEN];
- 
- 	if (output[type].fields == 0)
- 		return;
-@@ -1842,6 +1852,10 @@ static void process_event(struct perf_script *script,
- 
- 	if (PRINT_FIELD(PHYS_ADDR))
- 		fprintf(fp, "%16" PRIx64, sample->phys_addr);
-+
-+	if (PRINT_FIELD(DATA_PAGE_SIZE))
-+		fprintf(fp, " %s", get_page_size_name(sample->data_page_size, str));
-+
- 	fprintf(fp, "\n");
- 
- 	if (PRINT_FIELD(SRCCODE)) {
-@@ -3337,7 +3351,8 @@ int cmd_script(int argc, const char **argv)
- 		     "Fields: comm,tid,pid,time,cpu,event,trace,ip,sym,dso,"
- 		     "addr,symoff,srcline,period,iregs,uregs,brstack,"
- 		     "brstacksym,flags,bpf-output,brstackinsn,brstackoff,"
--		     "callindent,insn,insnlen,synth,phys_addr,metric,misc",
-+		     "callindent,insn,insnlen,synth,phys_addr,metric,misc,"
-+		     "data_page_size",
- 		     parse_output_fields),
- 	OPT_BOOLEAN('a', "all-cpus", &system_wide,
- 		    "system-wide collection from all CPUs"),
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 53d1a41..7ef06fc 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -846,4 +846,7 @@ extern int sysctl_perf_event_max_stack;
- extern int sysctl_perf_event_max_contexts_per_stack;
- extern unsigned int proc_map_timeout;
- 
-+#define PAGE_SIZE_NAME_LEN	10
-+char *get_page_size_name(u64 size, char *str);
-+
- #endif /* __PERF_RECORD_H */
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 24fd625..9ad3686 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1082,10 +1082,30 @@ static void dump_event(struct perf_evlist *evlist, union perf_event *event,
- 	       event->header.size, perf_event__name(event->header.type));
- }
- 
-+char *get_page_size_name(u64 size, char *str)
-+{
-+	const char suffixes[5] = { 'B', 'K', 'M', 'G', 'T' };
-+	int i;
-+
-+	if (size == 0) {
-+		snprintf(str, PAGE_SIZE_NAME_LEN, "%s", "N/A");
-+		return str;
-+	}
-+	for (i = 0; i < 5; i++) {
-+		if (size < 1024)
-+			break;
-+		size /= 1024;
-+	}
-+
-+	snprintf(str, PAGE_SIZE_NAME_LEN, "%lu%c", size, suffixes[i]);
-+	return str;
-+}
-+
- static void dump_sample(struct perf_evsel *evsel, union perf_event *event,
- 			struct perf_sample *sample)
- {
- 	u64 sample_type;
-+	char str[PAGE_SIZE_NAME_LEN];
- 
- 	if (!dump_trace)
- 		return;
-@@ -1120,6 +1140,9 @@ static void dump_sample(struct perf_evsel *evsel, union perf_event *event,
- 	if (sample_type & PERF_SAMPLE_PHYS_ADDR)
- 		printf(" .. phys_addr: 0x%"PRIx64"\n", sample->phys_addr);
- 
-+	if (sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)
-+		printf(" .. data page size: %s\n", get_page_size_name(sample->data_page_size, str));
-+
- 	if (sample_type & PERF_SAMPLE_TRANSACTION)
- 		printf("... transaction: %" PRIx64 "\n", sample->transaction);
- 
--- 
-2.7.4
-
+Thanks for your feedback.
+--
+Gustavo
