@@ -2,88 +2,132 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE05C282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FFBC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5136720B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56C6A20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:04:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731950AbfAaKEE (ORCPT
+        id S1731977AbfAaKEs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:04:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47846 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726316AbfAaKEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:04:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C4BCBADA2;
-        Thu, 31 Jan 2019 10:04:00 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5E9CB1E3FFD; Thu, 31 Jan 2019 11:04:00 +0100 (CET)
-Date:   Thu, 31 Jan 2019 11:04:00 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     "Weiny, Ira" <ira.weiny@intel.com>
-Cc:     'Jason Gunthorpe' <jgg@ziepe.ca>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "dledford@redhat.com" <dledford@redhat.com>,
-        "jack@suse.de" <jack@suse.de>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        "Marciniszyn, Mike" <mike.marciniszyn@intel.com>,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 3/6] drivers/IB,qib: do not use mmap_sem
-Message-ID: <20190131100400.GC19222@quack2.suse.cz>
-References: <20190121174220.10583-1-dave@stgolabs.net>
- <20190121174220.10583-4-dave@stgolabs.net>
- <20190128233140.GA12530@ziepe.ca>
- <20190129044607.GL25106@ziepe.ca>
- <20190129185005.GC10129@iweiny-DESK2.sc.intel.com>
- <20190129231903.GA5352@ziepe.ca>
- <2807E5FD2F6FDA4886F6618EAC48510E79BA6A27@CRSMSX101.amr.corp.intel.com>
+        Thu, 31 Jan 2019 05:04:48 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37478 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbfAaKEs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 05:04:48 -0500
+Received: by mail-ed1-f68.google.com with SMTP id h15so2090009edb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:04:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Rbj9ObnD7bSPC8kY3jXSsVZYuUdtw7GwULpldjY+Eo8=;
+        b=rwKGwul0JB7c622ANCOlEOsSmS6gPDp6pJMqVt43Et4a1u9uUaBJMlC9yg0igVF/xJ
+         k26UrIwXyk3EIPAU4EGajIMBSa48TOjMfh7hCfchqVYSUQ9I5EpD1pul5FWOhTXZFcB1
+         y4BWJemW8UXxtkuLSrIejR0ZflAlyUTdQFK3n7LVu8MB0Po3KUHRw5ZQDoZPP2+qhj+A
+         R8wPdNLS/81+pT9P2PTjiG/yqDefTDc/txEztgVLb2Q8yjJdIdUR9aQoXV/LQp4anPGz
+         x6h0/70M90mOgEfMPnafdzizWbwYCs3q3epvKqyqSfnoTmR6DGYS1eijhlmGsSDhNbvX
+         +DYw==
+X-Gm-Message-State: AJcUukdkFdx+yFq9w15AWRW990s3ZCKr69Xq3tB7uykoqQQioLY8tf+q
+        BpX8nNKX9trcSyi6Wg2JTj+Sspoy90s=
+X-Google-Smtp-Source: ALg8bN4Tz23gqVl6QHEZ3IF6b2YVtng/YpmxexifIHF6HhVTmcyZ4cI6InFCUXKHku8j7QwRx0aLkA==
+X-Received: by 2002:a05:6402:694:: with SMTP id f20mr25607719edy.99.1548929086352;
+        Thu, 31 Jan 2019 02:04:46 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id x30sm1150212edd.30.2019.01.31.02.04.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 02:04:45 -0800 (PST)
+Subject: Re: [PATCH 1/8] platform/x86: intel_cht_int33fe: Remove connection
+ for the alt mode mux
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
+        USB <linux-usb@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190125131519.88416-1-heikki.krogerus@linux.intel.com>
+ <20190125131519.88416-2-heikki.krogerus@linux.intel.com>
+ <CAHp75Vf1w6fOUp968S=5=-3jsG6x6JAcwR=uxzk9eMjXc7H_ZQ@mail.gmail.com>
+ <5642f1df-44b5-8293-3ce6-b244f95498ba@redhat.com>
+ <20190128152727.GG7262@kuha.fi.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <c6551374-8954-a940-6805-bceae3ccb543@redhat.com>
+Date:   Thu, 31 Jan 2019 11:04:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2807E5FD2F6FDA4886F6618EAC48510E79BA6A27@CRSMSX101.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190128152727.GG7262@kuha.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 30-01-19 18:01:33, Weiny, Ira wrote:
-> > 
-> > On Tue, Jan 29, 2019 at 10:50:05AM -0800, Ira Weiny wrote:
-> > > > .. and I'm looking at some of the other conversions here.. *most
-> > > > likely* any caller that is manipulating rlimit for get_user_pages
-> > > > should really be calling get_user_pages_longterm, so they should not
-> > > > be converted to use _fast?
-> > >
-> > > Is this a question?  I'm not sure I understand the meaning here?
-> > 
-> > More an invitation to disprove the statement
+Hi,
+
+On 28-01-19 16:27, Heikki Krogerus wrote:
+> Hi Hans,
 > 
-> Generally I agree.  But would be best if we could get fast GUP for
-> performance.  I have not worked out if that will be possible with the
-> final "longterm" solutions.
+> On Mon, Jan 28, 2019 at 11:44:29AM +0100, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 28-01-19 10:45, Andy Shevchenko wrote:
+>>> On Fri, Jan 25, 2019 at 3:17 PM Heikki Krogerus
+>>> <heikki.krogerus@linux.intel.com> wrote:
+>>>>
+>>>> Driver for fusb302 does not support alternate modes, so the
+>>>> connection is not really needed for now. Removing that
+>>>> connection description allows us to improve the USB Type-C
+>>>> mux API.
+>>>>
+>>>
+>>> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>>> supposed to go via USB tree.
+>>
+>> I missed the original posting of this, so let me reply here:
+>>
+>> Nack to this change, I've a patch-set in the works to
+>> make display-port over type-c work with 2 devices with a fusb302
+>> mux and that needs this connection.
+> 
+> I can add the connections back in this series after the API
+> modification patches, but should the connections be added back only
+> after we actually support the alt mode in the driver?
+> 
+> Btw. I'm preparing patches where I remove struct tcpc_config
+> completely. We can do that by taking advantage of the software fwnodes
+> (I'll send the patches RFC to give you an idea what I'm talking about).
+> 
+> That's related as we don't need struct tcpc_config for anything else
+> except for alternate modes (which no driver supports currently) after
+> that series, and even with the alt modes, it's only a question of
+> supplying DT bindings that define the appropriate device properties.
+> 
+> Also, as a "heads-up": As I explained in the cover-letter, my plan is
+> to take advantage of the software fwnodes also with the connections.
+> By adding support for reference handling to the software nodes, we
+> don't need to maintain the list of connections as we do today. And
+> more importantly, we don't need to match using device names, which is
+> always fragile.
+> 
+> That means we will change the connection registration, actually,
+> remove connection registration :-). The connections after that can
+> always be described in the fwnode for the device.
 
-Initially probably not, longer-term it might be added if there are
-performance data supporting that (i.e., showing real workload that would
-benefit). In principle there's nothing that would prevent gup_fast like
-functionality for long-term pins but I expect there will be always
-additional overhead (compared to plain gup_fast()) of establishing
-something like leases to identify long-term pins. But we haven't figured
-out the details yet. For now we concentrate on fixing short-term pins and
-issues with those.
+I see that you've posted a v2 series now and that you've kept the dev_name
+matching for platforms where there are no fwnodes to match on, thanks.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I've just reviewed the v2 series and it looks good to me, I will reply
+there.
+
+Regards,
+
+Hans
