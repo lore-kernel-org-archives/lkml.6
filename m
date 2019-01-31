@@ -2,93 +2,70 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1E6C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5410C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EF5820833
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:14:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZO8iZeIB"
+	by mail.kernel.org (Postfix) with ESMTP id 9655A20833
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:16:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548908167;
+	bh=/zZvhYd0VGdsV7BF7WxAJ7nWi1/WUUedIQYhmzPckzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iQ3BlLkL+wRN8kAfvWe8uILAvN33DO/H+loaOiFM3LSpjgqM9EiDWnyrASQookXeM
+	 j3toYqi4hTPUXFhxQDAq+L04mdUIal4ISdcVJUAKksK+aqthfoN5wNGhAQpDFIUb0O
+	 GLMXv9GQXCeZWJVKNE79TAxenI13uNbp3jqARd1Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729804AbfAaEOP (ORCPT
+        id S1730982AbfAaEQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 23:14:15 -0500
-Received: from ozlabs.org ([203.11.71.1]:42945 "EHLO ozlabs.org"
+        Wed, 30 Jan 2019 23:16:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725771AbfAaEOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 23:14:15 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726536AbfAaEQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 23:16:05 -0500
+Received: from localhost (unknown [171.76.100.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43qn1K22Qtz9sBb;
-        Thu, 31 Jan 2019 15:14:13 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548908053;
-        bh=c6xd4b1IgYiz06n3B9p8ejvsy4TWlW5IvVIROWMzprI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ZO8iZeIBRjAIloF8Gp8w0l2t0yaa45EOn9cWBKwDwzEmD4ZxlDakVITw71BOb/Emm
-         F+BGdV7B5+duey49WN/8zTwQKnBTkjAzW1aKo9Rc1QdnRrYeFDgS5zjlwdCMCOPKHm
-         KvKy8cqqysaSa2JWLuHHZNgg8C6bbxs5986K+wJhom7GziPfu7dnB/KEnx29Xh/3l1
-         eB+ekUL4Kp+npes0PAHA1MJrSj6lzJWvEZ1wza/Xd5DToE38DNPr5aOVUSdK3s53qz
-         6ZLMG7lWGqGpejpRjNX+14Zd9Ijsp2bIzzD7fMnR+I5e3jVb5mUgp0RVGVJzMJU1vi
-         HUvfTM8jT/4UQ==
-Date:   Thu, 31 Jan 2019 15:14:11 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ext3 tree
-Message-ID: <20190131151411.7e8b89b3@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B5DE20833;
+        Thu, 31 Jan 2019 04:16:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548908165;
+        bh=/zZvhYd0VGdsV7BF7WxAJ7nWi1/WUUedIQYhmzPckzM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mjplm7F4ctZyeoTqxVPugirNcK54s25NLrgcnH9qS2dZZBpTPWIPE7BpuziXmq7Q1
+         TRdaAofgsT4W70gpVY7EvWRisYHixAyioD6L+x/3mfUeNL/M7qX0GgmD3t1dmb9i+K
+         8ES9a5E/0oHeTnXTysaQ5sNjIAgnhspO79Hu8tWg=
+Date:   Thu, 31 Jan 2019 09:44:34 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Khasim Syed Mohammed <khasim.mohammed@linaro.org>
+Subject: Re: [PATCH] arm64: dts: qcom: qcs404: Add rpmcc node
+Message-ID: <20190131041434.GI4635@vkoul-mobl>
+References: <20190125181422.21434-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8o/_ST.PInOHu0vP8rsGp0e"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125181422.21434-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/8o/_ST.PInOHu0vP8rsGp0e
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 25-01-19, 10:14, Bjorn Andersson wrote:
+> Add the rpm clock controller node, to provide the low-noise baseband
+> clock for the USB PHYs, among other things.
 
-Hi Jan,
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-After merging the ext3 tree, today's linux-next build (powerpc
-ppc44x_defconfig) failed like this:
-
-ld: fs/ext2/super.o: in function `ext2_fill_super':
-super.c:(.text+0x1494): undefined reference to `__divdi3'
-ld: super.c:(.text+0x14bc): undefined reference to `__divdi3'
-
-Caused by commit
-
-  455d38a0e62f ("ext2: Fix underflow in ext2_max_size()")
-
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8o/_ST.PInOHu0vP8rsGp0e
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxSdhMACgkQAVBC80lX
-0GxR9gf9FEto0xpI7MLQl7zy+a/dkbLaUuljzr5mdaRNn39EFCQhiujoPRtDAtRZ
-rTGRelCJ9mMpnjXNmYFtCEmrGSsJs0zEMh2ZxdHjsj+QIAeBhXv+J+6Tof1U31OZ
-25fNTfjKk/uOUESQ/MtWg6k2LI5k7iguaWZajCK9B1Rb4HfGC8K198+T2brdC2Cy
-0Mp060+akFsii7J7x+ECvaX+9NSG1p6iR2tn4KC/JUJ0X6w8k8axc6artsm0FhUG
-/V1/i22SyPz0Kpyjl5nnaW4Bgt0kvyYSjW7VPo1vy3DXUQoYGlFQIf+lvb6bCmmR
-bs1Xzjiljm2YW5O56mGvtg3Ca1TUOA==
-=m/j+
------END PGP SIGNATURE-----
-
---Sig_/8o/_ST.PInOHu0vP8rsGp0e--
+-- 
+~Vinod
