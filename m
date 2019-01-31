@@ -2,289 +2,138 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FBAC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E26F1C282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA4C8218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:36:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="CGJZoTEw"
+	by mail.kernel.org (Postfix) with ESMTP id B4D32218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:36:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548959797;
+	bh=kh+DCS38nQzm2H80U31YN0MVmNJhkeniHj620CJKtdQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=cTzJb1gqyuKteCi9n0vv+Clj9FbELGzeYEXuuEe5k7uvS+jMaFzguHFzauuujWYUX
+	 79SpG43Wo9EKV+U5vagSXV+3rvYJCEWuukV/jeXaJ9Zx1VjUsvGqLJQQuulrMMG5s9
+	 ur5BY9VfbtV2plEsW2dbPVPCJImbAmS9f6/C1TfM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbfAaSgc (ORCPT
+        id S1727664AbfAaSgb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:36:32 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:18314 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727391AbfAaSgb (ORCPT
+        Thu, 31 Jan 2019 13:36:31 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45583 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727435AbfAaSgb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 Jan 2019 13:36:31 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c53402f0002>; Thu, 31 Jan 2019 10:36:31 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 31 Jan 2019 10:36:29 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 31 Jan 2019 10:36:29 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
- 2019 18:36:29 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
- 2019 18:36:28 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Thu, 31 Jan 2019 18:36:28 +0000
-Received: from byan-linux.NVIDIA.COM (Not Verified[172.17.136.14]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c53402c0005>; Thu, 31 Jan 2019 10:36:28 -0800
-From:   Bo Yan <byan@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>
-CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>, Bo Yan <byan@nvidia.com>
-Subject: [PATCH] arm64: tegra: add topology data for Tegra194 cpu
-Date:   Thu, 31 Jan 2019 10:35:54 -0800
-Message-ID: <1548959754-3941-1-git-send-email-byan@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+Received: by mail-oi1-f193.google.com with SMTP id y1so3559874oie.12;
+        Thu, 31 Jan 2019 10:36:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MB5RyipThStATvyXwlPu3v2jQVZ8FeAuu3uuc9iNAKQ=;
+        b=KygZxf17Z5ZqPmWdu3Il9DQWumKnC6brnt3Ct2AdpOde7OJuTZnbdMek0oGAnLEY2H
+         ND4bGpppAAX/SDJQX7VBSxmcXEkgfDzr3DFCqo8fGgpPdfG/e+qSUi9cq9D4TU/nAXpr
+         FFsjkW7udyKN5YK5QPY1U658F/oa+tpB57Ib7mgym8FxgWHOpgonU3k8xas9N/2Iqo36
+         /7kEicLNDBGOHdH9iLnm2T5BlCnQ01XMUJAZKyYljDt/dSMv9UWmANFlyKMqQKqIo/qJ
+         7wGtYIv/QObBQ05Gi0+AMxIqkzmictN9TA49Ayxlpwwyibv6tJYEfVj9sxsc4cedhaq5
+         qwMg==
+X-Gm-Message-State: AJcUukeQKKdKhjOnY2ZcsX3TMXhtgCGwVA2KKqr/zRLWF7jCmbslhjQg
+        PUZCI7MaBazwwtXKVXShY1XffJOFuPcyaDcWyvM=
+X-Google-Smtp-Source: ALg8bN4xfv8ChfNfB1sGvCG/BNvI6fAs5a9pzioGo2NflvD0PF6DgSUzyleEtQbCTJI5rGdyejTP3PeKxaG0h3tRXUU=
+X-Received: by 2002:a54:4d01:: with SMTP id v1mr15425996oix.246.1548959789728;
+ Thu, 31 Jan 2019 10:36:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548959791; bh=VScH3OFgtB7ecWCvWawJ3p1afFHfmelNMZa9uP4vm44=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=CGJZoTEwAGfpc46+VyUo9H+TpK7le7XrMJGpZ7GoUFa2gjdR+of6FoLM2Tf/VDzRv
-         THhZ1bkGi/cDLJ0ZrC+IpJnTnhoWzVTY2HNkZEGxd7euy1LwJlc6/Rfxj20nhnafqC
-         E3rcNhBijg78smhiBcqavwd1KxnM/kaNqiPgd1etvhjwsWjKMi1XceP9fjq5Lfg8RM
-         qECjvli48pDEsbFhQevz+DQ8NjGhkvx6SlcGxCZJupV/cYWNUxtg4iKa/beRD/BxL4
-         uQKgbhL703kSRzSxdv70ud24d4KvTftah4eZ7U/fW8XzGjvj8xhmN11zCRdpyq6MvD
-         UKzsiesRQch8Q==
+References: <2493187.oiOpCWJBV7@aspire.rjw.lan> <CAJZ5v0hsBNYZ7mu6SrhBY+LiOQZKz2K_3OtsCb9Jt8QR1YRhOA@mail.gmail.com>
+ <20190131132247.GA6837@kroah.com> <20190131132409.GA16084@kroah.com>
+ <CAJZ5v0geMbgNKBFT104o4Jf38q7yo46ha+qFbd+9Mbr+P8n--A@mail.gmail.com> <20190131182407.GA6191@kroah.com>
+In-Reply-To: <20190131182407.GA6191@kroah.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 31 Jan 2019 19:36:18 +0100
+Message-ID: <CAJZ5v0hbUahUbExUMY6-A2DZ6AK2aXh00UTTaiRvtPW9RBVeVg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] driver core: Fix some issues related to device links
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The xavier CPU architecture includes 8 CPU cores organized in
-4 clusters. Add cpu-map data for topology initialization, add
-cache data for cache node creation in sysfs.
+On Thu, Jan 31, 2019 at 7:24 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Jan 31, 2019 at 05:02:05PM +0100, Rafael J. Wysocki wrote:
+> > On Thu, Jan 31, 2019 at 2:24 PM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Thu, Jan 31, 2019 at 02:22:47PM +0100, Greg Kroah-Hartman wrote:
+> > > > On Thu, Jan 31, 2019 at 11:09:51AM +0100, Rafael J. Wysocki wrote:
+> > > > > On Thu, Jan 24, 2019 at 12:25 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > > > > >
+> > > > > > Hi Greg at al,
+> > > > > >
+> > > > > > Recently I have been looking at the device links code because of the
+> > > > > > recent discussion on possibly using them in the DRM subsystem (see for
+> > > > > > example https://marc.info/?l=linux-pm&m=154832771905309&w=2) and I have
+> > > > > > found a few issues in that code which should be addressed by this patch
+> > > > > > series.  Please refer to the patch changelogs for details.
+> > > > > >
+> > > > > > None of the problems addressed here should be manifesting themselves in
+> > > > > > mainline kernel today, but if there are more device links users in the
+> > > > > > future, they most likely will be encountered sooner or later.  Also they
+> > > > > > need to be fixed for the DRM use case to be supported IMO.
+> > > > > >
+> > > > > > This series does not fix all issues in device links that have become
+> > > > > > apparent (generally speaking, the idea of returning an existing link
+> > > > > > in case there is one already for the given consumer-supplier pair
+> > > > > > doesn't play well with stateful links and their flags), so there will
+> > > > > > be a follow-up series of patches to clean that up.  Still, I don't see
+> > > > > > a reason to sit on these fixes while working on the other patches, so
+> > > > > > here they go.
+> > > > >
+> > > > > Any concerns regarding this lot?
+> > > > >
+> > > > > [Please note that patch 5 in the series was replaced with the v2 at
+> > > > > https://patchwork.kernel.org/patch/10781205/]
+> > > > >
+> > > > > If not, and if you don't mind, I would like to queue it up next week,
+> > > > > possibly along with the follow-up material posted on Monday
+> > > > > (https://lore.kernel.org/lkml/2405639.4es7pRLqn0@aspire.rjw.lan/) if
+> > > > > that is not problematic, so it gets some linux-next coverage before
+> > > > > the next merge window.
+> > > >
+> > > > Can I queue it up in my tree, given that I have a number of other driver
+> > > > core patches in there, and I don't know how the merge issues will be if
+> > > > we start to diverge.
+> > > >
+> > > > Or do you need this for some other work?
+> > >
+> > > To make this clearer, I have no objection to take this through my tree
+> > > now, along with your second set of patches.  Is that ok?
+> >
+> > Yes, it is, AFAICS.  Thank you!
+> >
+> > Do you need me to resend all of this as one series?
+>
+> Yes, can you please do that.  Also, can you rebase it against my
+> driver-core-next branch as right now, patch 1/6 has conflicts due to
+> other patches that are in my tree :(
 
-Signed-off-by: Bo Yan <byan@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 148 +++++++++++++++++++++++++++++--
- 1 file changed, 140 insertions(+), 8 deletions(-)
+I'll do that, thanks!
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index 6dfa1ca..7c2a1fb 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -870,63 +870,195 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		cpu@0 {
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cl0_0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cl0_1>;
-+				};
-+			};
-+
-+			cluster1 {
-+				core0 {
-+					cpu = <&cl1_0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cl1_1>;
-+				};
-+			};
-+
-+			cluster2 {
-+				core0 {
-+					cpu = <&cl2_0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cl2_1>;
-+				};
-+			};
-+
-+			cluster3 {
-+				core0 {
-+					cpu = <&cl3_0>;
-+				};
-+
-+				core1 {
-+					cpu = <&cl3_1>;
-+				};
-+			};
-+		};
-+
-+		cl0_0: cpu@0 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x10000>;
- 			enable-method = "psci";
-+			i-cache-size = <131072>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <512>;
-+			d-cache-size = <65536>;
-+			d-cache-line-size = <64>;
-+			d-cache_sets = <256>;
-+			l2-cache = <&l2_0>;
- 		};
- 
--		cpu@1 {
-+		cl0_1: cpu@1 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x10001>;
- 			enable-method = "psci";
-+			i-cache-size = <131072>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <512>;
-+			d-cache-size = <65536>;
-+			d-cache-line-size = <64>;
-+			d-cache_sets = <256>;
-+			l2-cache = <&l2_0>;
- 		};
- 
--		cpu@2 {
-+		cl1_0: cpu@2 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x100>;
- 			enable-method = "psci";
-+			i-cache-size = <131072>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <512>;
-+			d-cache-size = <65536>;
-+			d-cache-line-size = <64>;
-+			d-cache_sets = <256>;
-+			l2-cache = <&l2_1>;
- 		};
- 
--		cpu@3 {
-+		cl1_1: cpu@3 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x101>;
- 			enable-method = "psci";
-+			i-cache-size = <131072>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <512>;
-+			d-cache-size = <65536>;
-+			d-cache-line-size = <64>;
-+			d-cache_sets = <256>;
-+			l2-cache = <&l2_1>;
- 		};
- 
--		cpu@4 {
-+		cl2_0: cpu@4 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x200>;
- 			enable-method = "psci";
-+			i-cache-size = <131072>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <512>;
-+			d-cache-size = <65536>;
-+			d-cache-line-size = <64>;
-+			d-cache_sets = <256>;
-+			l2-cache = <&l2_2>;
- 		};
- 
--		cpu@5 {
-+		cl2_1: cpu@5 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x201>;
- 			enable-method = "psci";
-+			i-cache-size = <131072>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <512>;
-+			d-cache-size = <65536>;
-+			d-cache-line-size = <64>;
-+			d-cache_sets = <256>;
-+			l2-cache = <&l2_2>;
- 		};
- 
--		cpu@6 {
-+		cl3_0: cpu@6 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x10300>;
- 			enable-method = "psci";
-+			i-cache-size = <131072>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <512>;
-+			d-cache-size = <65536>;
-+			d-cache-line-size = <64>;
-+			d-cache_sets = <256>;
-+			l2-cache = <&l2_3>;
- 		};
- 
--		cpu@7 {
-+		cl3_1: cpu@7 {
- 			compatible = "nvidia,tegra194-carmel", "arm,armv8";
- 			device_type = "cpu";
- 			reg = <0x10301>;
- 			enable-method = "psci";
-+			i-cache-size = <131072>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <512>;
-+			d-cache-size = <65536>;
-+			d-cache-line-size = <64>;
-+			d-cache_sets = <256>;
-+			l2-cache = <&l2_3>;
- 		};
- 	};
- 
-+	l2_0: l2-cache0 {
-+		cache-size = <2097152>;
-+		cache-line-size = <64>;
-+		cache-sets = <2048>;
-+		next-level-cache = <&l3>;
-+	};
-+
-+	l2_1: l2-cache1 {
-+		cache-size = <2097152>;
-+		cache-line-size = <64>;
-+		cache-sets = <2048>;
-+		next-level-cache = <&l3>;
-+	};
-+
-+	l2_2: l2-cache2 {
-+		cache-size = <2097152>;
-+		cache-line-size = <64>;
-+		cache-sets = <2048>;
-+		next-level-cache = <&l3>;
-+	};
-+
-+	l2_3: l2-cache3 {
-+		cache-size = <2097152>;
-+		cache-line-size = <64>;
-+		cache-sets = <2048>;
-+		next-level-cache = <&l3>;
-+	};
-+
-+	l3: l3-cache {
-+		cache-size = <4194304>;
-+		cache-line-size = <64>;
-+		cache-sets = <4096>;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0";
- 		status = "okay";
--- 
-2.7.4
-
+Cheers,
+Rafael
