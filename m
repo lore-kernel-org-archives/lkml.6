@@ -2,119 +2,158 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFADC282DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C517C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A13120869
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:49:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qmLpXeYW"
+	by mail.kernel.org (Postfix) with ESMTP id C9D5A2082C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:53:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbfAaVt1 (ORCPT
+        id S1729347AbfAaVxU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 16:49:27 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55052 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728758AbfAaVt1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 16:49:27 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so4046833wmh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 13:49:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/hX5KDMKgR+lXyknno+hpKg6MWnLWVX48Cnsfqsnspc=;
-        b=qmLpXeYWcHEWhyE7P2gE8DF4YSUTwEzDjJtWZ4xjtWa/n+5yaJocE08bYG7MrZjmXx
-         FS57NtnHJKecyUlQ7XiD//SLig7arDbjSmpEHLBDYXd1gcfi+mrT5IvggQDkAH+8w3CC
-         ZTi48CKGW0Eif/QZISdovqKXS3moSa9wKG8wWsfQaD1HSM1qzTlaj4fE2oGuKd6pu51v
-         ONhVNUzGg6v0dGGQa8QMQAsys5okLES0ZF9yvbGHF0UQ3QVP0mR6YQu84rDq/4BlGri6
-         fMqSS4Kmka4P5eE4JNxWIqJVt26gR7kpqrp0YinaGXZgfOrMBT5ryqlv6ZIDDT9jBL6d
-         F/mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/hX5KDMKgR+lXyknno+hpKg6MWnLWVX48Cnsfqsnspc=;
-        b=VYzKpy6Z3EQSuXzjG2MPqZyqY+RABP+iwjCLtMFKET8gW4iGv3o+gOxm/Vvea2thBK
-         90p1f52i0rLcouLf6Exlpf6x0UgP/LoLzDg7V50DXME3e+0CBGL+C1xh8nTi8IG0zkjc
-         i0VR9sr5MNmvFqI55AahxelwMRiwNW9kdas8uVUmRRpkPjar884EMjtBu8d/2dgtfC4Y
-         3QORglukaegwIci4sMl8xW5M+eTjX6wUWsudQJyhMZHJwd8cqOWAT6YvDR2pJZ+D908y
-         QYPy3oNms8W9LwZ8eqI675uBjVxPYGw4X9ttesKvmAZJe4FKlfBf25DFhVlreSzwvwOq
-         9Ecw==
-X-Gm-Message-State: AJcUukfiGbsxBeTJ7Pk/T5ERPcgsZrSPWEgjtMD6FUeL063zr8kgTnLh
-        4VVxTih6Xw7VJs+1bu7DmDT7MkJ/R6JyK7bVy/cG
-X-Google-Smtp-Source: ALg8bN5Ah3ZT1JZ+SMt+qcVsSqjJU0hrNqayrRYCOfJRbPx513PDcARp3sNYhB3qhFcAt8hqBWDgKCbjMeNJOxSlQKg=
-X-Received: by 2002:a1c:4046:: with SMTP id n67mr29743285wma.123.1548971364896;
- Thu, 31 Jan 2019 13:49:24 -0800 (PST)
+        Thu, 31 Jan 2019 16:53:20 -0500
+Received: from foss.arm.com ([217.140.101.70]:51540 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727067AbfAaVxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 16:53:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE6A6A78;
+        Thu, 31 Jan 2019 13:53:18 -0800 (PST)
+Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E44813F59C;
+        Thu, 31 Jan 2019 13:53:17 -0800 (PST)
+Subject: Re: [PATCH v4 07/12] arm64: add sysfs vulnerability show for meltdown
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, stefan.wahren@i2se.com,
+        mlangsdo@redhat.com, suzuki.poulose@arm.com, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, julien.thierry@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        steven.price@arm.com, ykaukab@suse.de, dave.martin@arm.com,
+        shankerd@codeaurora.org
+References: <20190125180711.1970973-1-jeremy.linton@arm.com>
+ <20190125180711.1970973-8-jeremy.linton@arm.com>
+ <20190131175418.24b7811c@donnerap.cambridge.arm.com>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <394041d0-a738-84f0-56a7-6803d4180113@arm.com>
+Date:   Thu, 31 Jan 2019 15:53:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <87o97wrbef.fsf@mntmn.com>
-In-Reply-To: <87o97wrbef.fsf@mntmn.com>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Thu, 31 Jan 2019 15:49:12 -0600
-Message-ID: <CAErSpo4T91kbXXuMSCqrDk=_HD+6GZ64WVZsvhSOtW=L89Pf0g@mail.gmail.com>
-Subject: Re: Linux Kernel Regression: HAPS quirk breaks PCIe on i.MX6QP
-To:     "Lukas F. Hartmann" <lukas@mntmn.com>
-Cc:     thinhn@synopsys.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190131175418.24b7811c@donnerap.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc linux-pci, linux-kernel]
+Hi,
 
-On Thu, Jan 31, 2019 at 11:21 AM Lukas F. Hartmann <lukas@mntmn.com> wrote:
->
-> Hi Thinh,
->
-> I'm writing you because you're the author in this commit:
-> https://github.com/torvalds/linux/commit/03e6742584af8866ba014874669d0440bed3a623
->
-> This quirk workaround breaks the PCIe on i.MX6QP, at least on my test
-> devices. The reason is because the Synposys PCIe IP in i.MX6QP has the
-> same device ID as the HAPS USB3 controller you are targeting in the
-> commit: 0xabcd.
->
-> Definition:
->
-> https://github.com/torvalds/linux/blob/master/include/linux/pci_ids.h#L2364
->
-> Here is a bit of lspci output on my i.MX6QP machine (without the problem):
->
-> mntmn@reform:~/code/linux$ lspci -v
-> 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
->                                           ^^^^
-> [Normal decode])
->         Flags: bus master, fast devsel, latency 0, IRQ 307
->         Memory at 01000000 (32-bit, non-prefetchable) [size=1M]
->         Bus: primary=00, secondary=01, subordinate=ff, sec-latency=0
-> ...
->
-> The failure mode is that the PCIe controller shows up as a USB
-> controller and my ath9k wireless PCIe card cannot be assigned the
-> proper resources anymore (-ENOMEM even for very small BARs).
->
-> Reverting this commit fixes the problem for me. I suggest to make the
-> check more specific to the platform/chipset you are targeting.
+On 01/31/2019 11:54 AM, Andre Przywara wrote:
+> On Fri, 25 Jan 2019 12:07:06 -0600
+> Jeremy Linton <jeremy.linton@arm.com> wrote:
+> 
+> Hi,
+> 
+>> Display the mitigation status if active, otherwise
+>> assume the cpu is safe unless it doesn't have CSV3
+>> and isn't in our whitelist.
+>>
+>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+>> ---
+>>   arch/arm64/kernel/cpufeature.c | 33 +++++++++++++++++++++++++++------
+>>   1 file changed, 27 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/cpufeature.c
+>> b/arch/arm64/kernel/cpufeature.c
+>> index a9e18b9cdc1e..624dfe0b5cdd 100644
+>> --- a/arch/arm64/kernel/cpufeature.c
+>> +++ b/arch/arm64/kernel/cpufeature.c
+>> @@ -944,6 +944,8 @@ has_useable_cnp(const struct arm64_cpu_capabilities *entry, int scope)
+>> 	return has_cpuid_feature(entry, scope);
+>> }
+>>   
+>> +/* default value is invalid until unmap_kernel_at_el0() runs */
+> 
+> Shall we somehow enforce this? For instance by making __meltdown_safe
+> an enum, initialised to UNKNOWN?
 
-So Synopsys apparently re-used Device ID 0xabcd?  That's a pretty bad problem.
+Hehe, well I think people complained about my "UNKNOWN" enum. But, in 
+the end this version is trying to make it clear we shouldn't have any 
+unknown states remaining.
 
-It looks like we merged 03e6742584af ("PCI: Override Synopsys USB 3.x
-HAPS device class") for v5.0, and v5.0-final hasn't been released yet,
-so if we don't hear from Thinh with a resolution, we can still revert
-it.
+> Then bail out with a BUG_ON or WARN_ON in the sysfs code?
 
-I set myself a reminder to revert this on Feb 11, but hopefully we'll
-have a better resolution before then.
+AFAIK, it shouldn't be possible to actually run the sysfs code before 
+this gets initialized. So, the comment is just making it clear/forcing 
+the understanding of that.
 
-Bjorn
+
+> 
+> I just want to avoid to accidentally report "safe" when we actually
+> aren't.
+> 
+>> +static bool __meltdown_safe = true;
+>>   static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
+>>   static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+>> @@ -962,6 +964,16 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+>> 		{ /* sentinel */ }
+>>   	};
+>>   	char const *str = "command line option";
+>> +	bool meltdown_safe;
+>> +
+>> +	meltdown_safe = is_midr_in_range_list(read_cpuid_id(), kpti_safe_list);
+>> +
+>> +	/* Defer to CPU feature registers */
+>> +	if (has_cpuid_feature(entry, scope))
+>> +		meltdown_safe = true;
+>> +
+>> +	if (!meltdown_safe)
+>> +		__meltdown_safe = false;
+>>   
+>>   	/*
+>>   	 * For reasons that aren't entirely clear, enabling KPTI on Cavium
+>> @@ -984,12 +996,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+>> 	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+>> 		return kaslr_offset() > 0;
+>>   
+>> -	/* Don't force KPTI for CPUs that are not vulnerable */
+>> -	if (is_midr_in_range_list(read_cpuid_id(), kpti_safe_list))
+>> -		return false;
+>> -
+>> -	/* Defer to CPU feature registers */
+>> -	return !has_cpuid_feature(entry, scope);
+>> +	return !meltdown_safe;
+>>   }
+>>   
+>>   static void
+>> @@ -2055,3 +2062,17 @@ static int __init enable_mrs_emulation(void)
+>>   }
+>>   
+>>   core_initcall(enable_mrs_emulation);
+>> +
+>> +#ifdef CONFIG_GENERIC_CPU_VULNERABILITIES
+>> +ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr,
+>> +		char *buf)
+> 
+> w/s issue.
+> 
+> Cheers,
+> Andre.
+> 
+>> +{
+>> +	if (arm64_kernel_unmapped_at_el0())
+>> +		return sprintf(buf, "Mitigation: KPTI\n");
+>> +
+>> +	if (__meltdown_safe)
+>> +		return sprintf(buf, "Not affected\n");
+>> +
+>> +	return sprintf(buf, "Vulnerable\n");
+>> +}
+>> +#endif
+> 
+
