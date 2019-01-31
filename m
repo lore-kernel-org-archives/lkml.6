@@ -2,107 +2,98 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA7AC4151A
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 944A9C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F60218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:34:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6066A218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:36:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dnDhz9XX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbfAaUeF (ORCPT
+        id S1728326AbfAaUgF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:34:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52712 "EHLO mx1.redhat.com"
+        Thu, 31 Jan 2019 15:36:05 -0500
+Received: from ozlabs.org ([203.11.71.1]:36321 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726848AbfAaUeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:34:05 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727855AbfAaUgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 15:36:05 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9B8B9432B8;
-        Thu, 31 Jan 2019 20:34:04 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 619A860BF7;
-        Thu, 31 Jan 2019 20:34:01 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 15:33:59 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jan Kara <jack@suse.cz>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 0/9] mmu notifier provide context informations
-Message-ID: <20190131203359.GA22145@redhat.com>
-References: <20190123222315.1122-1-jglisse@redhat.com>
- <20190131161006.GA16593@redhat.com>
- <20190131115535.7eeecf501615f8bad2f139eb@linux-foundation.org>
+        by ozlabs.org (Postfix) with ESMTPSA id 43rBp96qcqz9s4Z;
+        Fri,  1 Feb 2019 07:36:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548966962;
+        bh=w1uIdG+0mlzb7FIcgvsuUU3hCJg3VHfql3WCnef3HTs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=dnDhz9XXjcnavvUllsRwFsnkjRvCjTKw3oHYdcdZbr5T6Nyo5YpH+BoRVrtpmgCOW
+         4Xe6jftBK4ZgQtToS9iDrh9Nd6RxIoaOjsBjcxiEPZuWtY8Klo0bv5trO5BqPfJYUD
+         IGBFoSjpwgoKL0Y/pZnHZ8GyJSJdl1TvrBxiKlVnUCXafZxnJVvVpUBSOaeAGDfwRC
+         wlOmW7mNG8JSKxPNUenoNrIi9PUNjFpVv902e5AQWtYAZxv9Cz3PJr9yWDY5NwcFXQ
+         kufOtQyq/OetWSMzJ7i0sfPb8buUY0Bv+TajCd/aOHskfsnRSrGiXH4rjhfcN/2Hiq
+         H/NZYDBg4aIJw==
+Date:   Fri, 1 Feb 2019 07:35:53 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>
+Subject: linux-next: Fixes tag needs some work in the net-next tree
+Message-ID: <20190201073553.742ec57b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190131115535.7eeecf501615f8bad2f139eb@linux-foundation.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 31 Jan 2019 20:34:04 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/S12qAWD6jV+QVQr2h6xSvrI"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 11:55:35AM -0800, Andrew Morton wrote:
-> On Thu, 31 Jan 2019 11:10:06 -0500 Jerome Glisse <jglisse@redhat.com> wrote:
-> 
-> > Andrew what is your plan for this ? I had a discussion with Peter Xu
-> > and Andrea about change_pte() and kvm. Today the change_pte() kvm
-> > optimization is effectively disabled because of invalidate_range
-> > calls. With a minimal couple lines patch on top of this patchset
-> > we can bring back the kvm change_pte optimization and we can also
-> > optimize some other cases like for instance when write protecting
-> > after fork (but i am not sure this is something qemu does often so
-> > it might not help for real kvm workload).
-> > 
-> > I will be posting a the extra patch as an RFC, but in the meantime
-> > i wanted to know what was the status for this.
-> 
-> The various drm patches appear to be headed for collisions with drm
-> tree development so we'll need to figure out how to handle that and in
-> what order things happen.
-> 
-> It's quite unclear from the v4 patchset's changelogs that this has
-> anything to do with KVM and "the change_pte() kvm optimization" hasn't
-> been described anywhere(?).
-> 
-> So..  I expect the thing to do here is to get everything finished, get
-> the changelogs completed with this new information and do a resend.
-> 
-> Can we omit the drm and rdma patches for now?  Feed them in via the
-> subsystem maintainers when the dust has settled?
+--Sig_/S12qAWD6jV+QVQr2h6xSvrI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, i should have pointed out that you can ignore the driver patches
-i will resumit them through the appropriate tree once the mm bits are
-in. I just wanted to show case how i intended to use this. I will try
-not to forget next time to clearly tag things that are just there to
-show case and that will be merge latter through different tree.
+Hi all,
 
-I will do a v5 with kvm bits once we have enough testing and confidence.
-So i guess this all will be delayed to 5.2 and 5.3 for driver bits.
-The kvm bits are outcomes of private emails and previous face to face
-discussion around mmu notifier and kvm. I believe the context information
-will turn to be useful to more users than the ones i am doing it for.
+In commit
 
+  9fc55413270f ("net: hns3: fix improper error handling in the hclge_init_a=
+e_dev()")
+
+Fixes tag
+
+  Fixes: 288475b2ad01 ("{topost} net: hns3: refine umv space allocation")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+I can't even find it by simple searches for the subject ...
+
+--=20
 Cheers,
-Jérôme
+Stephen Rothwell
+
+--Sig_/S12qAWD6jV+QVQr2h6xSvrI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxTXCkACgkQAVBC80lX
+0Gxhngf9FKIehBrEVoYr4sGGy/mNTpCNov8jsP5bHQWyjGKH8wDsvg0jLB27nDDv
+FbajKS1lFA/2MXMc4k7nB0FoHPVlQ6rnliHId30YOJqQq3z5PKTMVo5050TvgGgR
+iMwQVdyjj2O5vdrLCNP0f8s5P3O0Bp9CP8tRj7G2+ajscd3VLtu78mB8d+sOtaux
+cmTVLDG9Uxtn3eM2koYd18qEMKhFdhj2qAiuoUpWHM/KGqHw3tQ+RzDe5g0sqDPU
+NnEymkXbxfThEZnI9Yv7g3RBGk7G+G9P/U1F1STH4obTsVmzVvpK66OVBaGEVrdt
+gRCvBRk//kgSMrqKx0XM2PE/2f27Jw==
+=1XpU
+-----END PGP SIGNATURE-----
+
+--Sig_/S12qAWD6jV+QVQr2h6xSvrI--
