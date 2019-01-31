@@ -2,109 +2,95 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E702C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8F6C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B0020870
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:48:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="evLMdsFr"
+	by mail.kernel.org (Postfix) with ESMTP id 159A8218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:51:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548921114;
+	bh=VkabEjVgX+eyt/E8og1efUnYv/VJd/sTANumcdSdW+g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ESKh9FocEoGXj4KODhjhZxEGz2dko/Wsh0l2h4eQRjlcvGWXsgXO5vvhyGnM699Wj
+	 dJU5xAtl9tqbEAq3/bFgsHNE1YpnO/4qbQiLCCyGsjsjtGroKhQdA3FOpLZSXgBcAB
+	 V7KUtv/vZJnYS8VENzXuq3QrCIM7zd6mWd/mh4Ts=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfAaHsH (ORCPT
+        id S1726543AbfAaHvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:48:07 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33473 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfAaHsH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:48:07 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v1-v6so1855239ljd.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 23:48:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9lIM8ir49OrTSg2y1eKhcO1EgOHEz2IUlbrYvCNzoms=;
-        b=evLMdsFrNVG/+UaI/arPOFnbCX7tMk3WokWyAqg5e6s1ZBzyAq4yOLVKPA0U5wnWuy
-         NPgllouKXSco40WHTQ6E64LgoTl20r4JAZq2lIRK6Qhluo8V8SrWnYU1+MUxRSLIBx4O
-         5HVfu1UhFTusCisFVHRMcBphE8r3Ws4G4RpyIRCZw/7fgF9H1g4IOUlBC2osIan1cqDM
-         JUSq7j5NIC8eC+0qP7rbolcxyWCCyd1tEyzudCu6vCi0qFGNs5SjgKNBR+N4rh+KZeH6
-         zXuceWmHlHLXj6jgoh2wWZaBLLt24ikVveL2+LPDnGf2TcZQp+1Sj8LlVTaYeIGs6181
-         q7Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9lIM8ir49OrTSg2y1eKhcO1EgOHEz2IUlbrYvCNzoms=;
-        b=cHkXVintUHcufyfWnz5dVnXogGDPL4mJeN3f3BXRoWr+/zJhm5r/sKQykxErxdm5Yz
-         OfAJn/reoc/QVDox3KEfEpUHzKQmBzX6aNx0BvEbgOrnvvfNnBx3pqaf/y6tY2X/ijTv
-         NkQxDrID8tuK0gHJwludWZOxM7/YLuJZ4YCe6hFwKRGp2xoU3nXqkwUP4xJPvkTgHZKd
-         za31iHbeBCKpf7kk5JrRMhYO9nLfFhjxKdNCMIbdLaD0qM85KLOVa1y08SEgSe9BP8P6
-         IC1UP7a/y0OVbs0nGnFiTEJE67GmndXBRKp4pcPshOzStArHOoLh/JecJGGsh5Q67F44
-         10Zw==
-X-Gm-Message-State: AJcUukcpqk/ajkYDDGuOkMNfQclBQ1mKJCiMhotrsTSHGdcGDeBKHDbk
-        gz1NxwiDLIpfu9Sl/7+GAvbRpg==
-X-Google-Smtp-Source: ALg8bN7UwKjyBO6J2PBVXEhDj7+ItFv9mScK14KPG2Ld/E6FrrUL3kpcLGfBznjXxGWjeo7Lv6UGlw==
-X-Received: by 2002:a2e:9556:: with SMTP id t22-v6mr26578360ljh.36.1548920885241;
-        Wed, 30 Jan 2019 23:48:05 -0800 (PST)
-Received: from [192.168.0.199] ([31.173.86.8])
-        by smtp.gmail.com with ESMTPSA id s62sm697116lfg.34.2019.01.30.23.48.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 23:48:04 -0800 (PST)
-Subject: Re: [PATCH v2] usb: chipidea: Grab the (legacy) USB PHY by phandle
- first
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Chen <Peter.Chen@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20190130163011.26437-1-paul.kocialkowski@bootlin.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <d8a66e38-ad7d-a919-905f-8bbbff1d7425@cogentembedded.com>
-Date:   Thu, 31 Jan 2019 10:47:52 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 02:51:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50216 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725836AbfAaHvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 02:51:52 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ADAD20870;
+        Thu, 31 Jan 2019 07:51:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548921111;
+        bh=VkabEjVgX+eyt/E8og1efUnYv/VJd/sTANumcdSdW+g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cG0KkA4sDrar5+oVY7bmFjOanIV8O2PxpY8Ba16UuKz2SyRRNRdnTa/2KZ4ZKWNIM
+         ZDIAy2q9Ud75Jq1wM0buOzen6dIpKPW9GR5Ig1fQyfmwKq4kwXBmYxGH3WcwDuV4LE
+         Gr6hJNRFoQPHzCHxOFKUv0Z7xZ9QozhCG8Rg/N+M=
+Date:   Thu, 31 Jan 2019 08:51:49 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/68] 4.14.97-stable review
+Message-ID: <20190131075149.GC8088@kroah.com>
+References: <20190129113131.751891514@linuxfoundation.org>
+ <f2147f04-09a1-e5a9-8e47-b9b195e3c04f@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <20190130163011.26437-1-paul.kocialkowski@bootlin.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2147f04-09a1-e5a9-8e47-b9b195e3c04f@nvidia.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
-
-On 30.01.2019 19:30, Paul Kocialkowski wrote:
-
-> According to the chipidea driver bindings, the USB PHY is specified via
-> the "phys" phandle node. However, this only takes effect for USB PHYs
-> that use the common PHY framework. For legacy USB PHYs, a simple lookup
-> based on the USB PHY type is done instead.
+On Wed, Jan 30, 2019 at 12:51:12PM +0000, Jon Hunter wrote:
 > 
-> This does not play out well when more than USB PHY is registered, since
-
-    More than one?
-
-> the first registered PHY matching the type will always be returned
-> regardless of what the driver was bound to.
+> On 29/01/2019 11:35, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.97 release.
+> > There are 68 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu Jan 31 11:31:10 UTC 2019.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.97-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> All tests are passing for Tegra ...
 > 
-> Fix this by looking up the PHY based on the "phys" phandle node.
-> Although generic PHYS and rather matched by their "phys-name" and not
-> the "phys" phandle directly, there is no helper for similar lookup on
-> legacy PHYs and it's probably not worth the effort to add it.
+> Test results for stable-v4.14:
+>     8 builds:	8 pass, 0 fail
+>     16 boots:	16 pass, 0 fail
+>     14 tests:	14 pass, 0 fail
 > 
-> When no legacy USB PHY is found by phandle, fallback to grabbing any
-> registered USB2 PHY. This ensures backward compatibility if some users
-> were actually relying on this mechanism.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-[...]
+> Linux version:	4.14.97-rc1-g958f665
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 
-MBR, Sergei
+Thanks for testing two of these and letting me know.
+
+greg k-h
