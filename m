@@ -2,131 +2,75 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56082C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E50BAC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235FA20B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:47:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORMLU9iX"
+	by mail.kernel.org (Postfix) with ESMTP id B67B320B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfAaRrM (ORCPT
+        id S1727579AbfAaRrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:47:12 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36739 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbfAaRrM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:47:12 -0500
-Received: by mail-io1-f67.google.com with SMTP id m19so3391878ioh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 09:47:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Yd3EYB9CxmABaQHZJKF+uIWLsaH4ep2DIxCWor39Niw=;
-        b=ORMLU9iXDVuB3AQl44W88pRun2lzoa2EQW2QcSyqBmtUov69GZ2MYlWyfnzUGAn91c
-         Xlh1asD6ldIjfimrOpUOjZQ2JbfHq7sws3cZpQtLu7U4Ta3t6Tw9dbK1B7KxCIPqvBA/
-         HAnKLF3n0rRsfSH09FB5EapW8mTYiCZ4wMplQJJhORMSplTzwyeSh2x5Q9Pff00TR4MK
-         +YqJ2sQbyDJZPOpuBnyCi1t51UuB/1cTSeiqPzY40NWKjixsGF/fPgsMvD70kHzSR5gP
-         l/HZgrOY0O5ur1iRcXqJVFoefMbChs5wC2UbnPGun7Qll8gRJ/2PxzPeMxwjicau3CbP
-         9wVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Yd3EYB9CxmABaQHZJKF+uIWLsaH4ep2DIxCWor39Niw=;
-        b=mCzzZxTkLMyfpKMvqDasTHcaj3/gqrds/TAHeNkrqwvnohIcTrWcLKr7RKTgxEsVa8
-         V0hqRTTxVSsTekYgCWrCjo+Zqwz9NIfebs88+n5ZDYTCUap9GFbgdOR4lt/of0gdGya4
-         D9rxtVPWszuOMWRvfqdOJXnOEjOZ1ZjmsU14ln7YzjnFnkQze3P1yGxxIIY6LTeC11KS
-         Q5D+IJee80X7uKYRoBtMISHLoeVcEnpWWBtkOr0znxjywU2jjny/lZjepWumXY+3k8XD
-         qqoUCwssW9Q66GNSCP9NWuVV1RjDd/1mamemmNWgKgfqz30Na/j9GA9iXAZD+tEoARj+
-         +keQ==
-X-Gm-Message-State: AHQUAubkqlIazWgQKKl/BnlDzpID4TzjiwSE0v3WfHB9vQ0s2HJdwQmB
-        fKEd0elTrzYKNpZOGORoRP0YlOp3XDI=
-X-Google-Smtp-Source: ALg8bN6WGB2aXij5ugHSHNjAxKMvv5fL1qKcwqrBDH5LkXhrKgRR6kbrDLGezdlKR8coMlzP3bZ1Bw==
-X-Received: by 2002:a5e:da49:: with SMTP id o9mr20754694iop.246.1548956831211;
-        Thu, 31 Jan 2019 09:47:11 -0800 (PST)
-Received: from ubu-Virtual-Machine (66-188-57-61.dhcp.bycy.mi.charter.com. [66.188.57.61])
-        by smtp.gmail.com with ESMTPSA id 85sm2341262iou.8.2019.01.31.09.47.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 09:47:10 -0800 (PST)
-Date:   Thu, 31 Jan 2019 12:47:07 -0500
-From:   Kimberly Brown <kimbrownkd@gmail.com>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     Sasha Levin <sashal@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Long Li <longli@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show
- functions
-Message-ID: <20190131174707.GA2055@ubu-Virtual-Machine>
-References: <20190122020759.GA4054@ubu-Virtual-Machine>
- <PU1P153MB0169EB8CFC0A69407A8AE2C2BF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20190122064246.GA28613@ubu-Virtual-Machine>
- <PU1P153MB01696D28CDDC098307EBD5AFBF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20190128195845.GA3723@ubu-Virtual-Machine>
- <PU1P153MB01699B96311157EA9DF515E6BF970@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20190131151958.GT3973@sasha-vm>
- <DM5PR2101MB091847B2B68D7F9F2050CE45D7910@DM5PR2101MB0918.namprd21.prod.outlook.com>
+        Thu, 31 Jan 2019 12:47:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48100 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725849AbfAaRrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 12:47:22 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3D10242BD8;
+        Thu, 31 Jan 2019 17:47:22 +0000 (UTC)
+Received: from gondolin (ovpn-116-34.ams2.redhat.com [10.36.116.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 98A6419492;
+        Thu, 31 Jan 2019 17:47:16 +0000 (UTC)
+Date:   Thu, 31 Jan 2019 18:47:12 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Michael Mueller <mimu@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Subject: Re: [PATCH v7 15/15] KVM: s390: fix possible null pointer
+ dereference in pending_irqs()
+Message-ID: <20190131184712.3fcd8c36.cohuck@redhat.com>
+In-Reply-To: <20190131085247.13826-16-mimu@linux.ibm.com>
+References: <20190131085247.13826-1-mimu@linux.ibm.com>
+        <20190131085247.13826-16-mimu@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM5PR2101MB091847B2B68D7F9F2050CE45D7910@DM5PR2101MB0918.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 31 Jan 2019 17:47:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 04:45:35PM +0000, Michael Kelley wrote:
-> From: Sasha Levin <sashal@kernel.org> Sent: Thursday, January 31, 2019 7:20 AM
-> > 
-> > I've queued this one for hyper-fixes, thanks all!
-> > 
+On Thu, 31 Jan 2019 09:52:46 +0100
+Michael Mueller <mimu@linux.ibm.com> wrote:
+
+> Assure a GISA is in use before accessing the IPM to avoid a
+> null pointer dereference issue.
+
+This series can hopefully make it into the next merge window;
+otherwise, queuing a patch fixing up the original code would be good.
+
 > 
-> Actually, please hold off on queuing this one.  In a conversation I had yesterday with Kim, they had identified a deadlock.  Kim was going to be looking at some revisions to avoid the deadlock.
-> 
-> Kim -- please confirm.
-> 
-> Michael
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> Reported-by: Halil Pasic <pasic@linux.ibm.com>
+> ---
+>  arch/s390/kvm/interrupt.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 
-This is correct. I need to send a v2 of this patch which addresses two
-issues:
-
-1) Check channel->state inside the mutex acquire/release in
-vmbus_chan_attr_show().
-
-2) Prevent a deadlock that can occur between the proposed mutex_lock()
-call in the vmbus_chan_attr_show() function and the sysfs/kernfs functions.
-
-
-I've identified two possible solutions to the deadlock:
-
-1) Add a new mutex to the vmbus_channel struct which protects changes to
-"channel->state". Use this new mutex in vmbus_chan_attr_show() instead of
-"vmbus_connection.channel_mutex".
-
-2) Use "vmbus_connection.channel_mutex" in vmbus_chan_attr_show() as
-originally proposed, and acquire it with mutex_trylock(). If the mutex
-cannot be acquired, return -EINVAL.
-
-
-I'm leaning towards (2), using mutex_trylock(). "vmbus_connection.channel_mutex"
-appears to be used only when a channel is being opened or closed, so
-vmbus_chan_attr_show() should be able to acquire the mutex when the
-channel is in use.
-
-If anyone has suggestions, please let me know.
-
-Thanks,
-Kim
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
