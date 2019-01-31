@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14B4C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07940C282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F369218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFFA5218DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:59:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730296AbfAaO7V (ORCPT
+        id S1731398AbfAaO7Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 31 Jan 2019 09:59:24 -0500
+Received: from foss.arm.com ([217.140.101.70]:45470 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730283AbfAaO7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 Jan 2019 09:59:21 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45458 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725787AbfAaO7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 09:59:19 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA16DEBD;
-        Thu, 31 Jan 2019 06:59:18 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2C421596;
+        Thu, 31 Jan 2019 06:59:20 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 46A6E3F59C;
-        Thu, 31 Jan 2019 06:59:16 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E95FD3F59C;
+        Thu, 31 Jan 2019 06:59:18 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         joel@joelfernandes.org, marc.zyngier@arm.com,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Julien Thierry <julien.thierry@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH v10 01/25] arm64: Fix HCR.TGE status for NMI contexts
-Date:   Thu, 31 Jan 2019 14:58:39 +0000
-Message-Id: <1548946743-38979-2-git-send-email-julien.thierry@arm.com>
+        Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v10 02/25] arm64: Remove unused daif related functions/macros
+Date:   Thu, 31 Jan 2019 14:58:40 +0000
+Message-Id: <1548946743-38979-3-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548946743-38979-1-git-send-email-julien.thierry@arm.com>
 References: <1548946743-38979-1-git-send-email-julien.thierry@arm.com>
@@ -45,127 +43,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using VHE, the host needs to clear HCR_EL2.TGE bit in order
-to interact with guest TLBs, switching from EL2&0 translation regime
-to EL1&0.
+There are some helpers to modify PSR.[DAIF] bits that are not referenced
+anywhere. The less these bits are available outside of local_irq_*
+functions the better.
 
-However, some non-maskable asynchronous event could happen while TGE is
-cleared like SDEI. Because of this address translation operations
-relying on EL2&0 translation regime could fail (tlb invalidation,
-userspace access, ...).
-
-Fix this by properly setting HCR_EL2.TGE when entering NMI context and
-clear it if necessary when returning to the interrupted context.
+Get rid of those unused helpers.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
 Cc: James Morse <james.morse@arm.com>
-Cc: linux-arch@vger.kernel.org
-Cc: stable@vger.kernel.org
 ---
- arch/arm64/include/asm/hardirq.h | 31 +++++++++++++++++++++++++++++++
- arch/arm64/kernel/irq.c          |  3 +++
- include/linux/hardirq.h          |  7 +++++++
- 3 files changed, 41 insertions(+)
+ arch/arm64/include/asm/assembler.h | 10 +---------
+ arch/arm64/include/asm/daifflags.h | 10 ----------
+ 2 files changed, 1 insertion(+), 19 deletions(-)
 
-diff --git a/arch/arm64/include/asm/hardirq.h b/arch/arm64/include/asm/hardirq.h
-index 1473fc2..89691c8 100644
---- a/arch/arm64/include/asm/hardirq.h
-+++ b/arch/arm64/include/asm/hardirq.h
-@@ -17,8 +17,12 @@
- #define __ASM_HARDIRQ_H
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 4feb611..7acf243 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -62,16 +62,8 @@
+ 	.endm
  
- #include <linux/cache.h>
-+#include <linux/percpu.h>
- #include <linux/threads.h>
-+#include <asm/barrier.h>
- #include <asm/irq.h>
-+#include <asm/kvm_arm.h>
-+#include <asm/sysreg.h>
- 
- #define NR_IPI	7
- 
-@@ -37,6 +41,33 @@
- 
- #define __ARCH_IRQ_EXIT_IRQS_DISABLED	1
- 
-+struct nmi_ctx {
-+	u64 hcr;
-+};
-+
-+DECLARE_PER_CPU(struct nmi_ctx, nmi_contexts);
-+
-+#define arch_nmi_enter()							\
-+	do {									\
-+		if (is_kernel_in_hyp_mode()) {					\
-+			struct nmi_ctx *nmi_ctx = this_cpu_ptr(&nmi_contexts);	\
-+			nmi_ctx->hcr = read_sysreg(hcr_el2);			\
-+			if (!(nmi_ctx->hcr & HCR_TGE)) {			\
-+				write_sysreg(nmi_ctx->hcr | HCR_TGE, hcr_el2);	\
-+				isb();						\
-+			}							\
-+		}								\
-+	} while (0)
-+
-+#define arch_nmi_exit()								\
-+	do {									\
-+		if (is_kernel_in_hyp_mode()) {					\
-+			struct nmi_ctx *nmi_ctx = this_cpu_ptr(&nmi_contexts);	\
-+			if (!(nmi_ctx->hcr & HCR_TGE))				\
-+				write_sysreg(nmi_ctx->hcr, hcr_el2);		\
-+		}								\
-+	} while (0)
-+
- static inline void ack_bad_irq(unsigned int irq)
- {
- 	extern unsigned long irq_err_count;
-diff --git a/arch/arm64/kernel/irq.c b/arch/arm64/kernel/irq.c
-index 780a12f..92fa817 100644
---- a/arch/arm64/kernel/irq.c
-+++ b/arch/arm64/kernel/irq.c
-@@ -33,6 +33,9 @@
- 
- unsigned long irq_err_count;
- 
-+/* Only access this in an NMI enter/exit */
-+DEFINE_PER_CPU(struct nmi_ctx, nmi_contexts);
-+
- DEFINE_PER_CPU(unsigned long *, irq_stack_ptr);
- 
- int arch_show_interrupts(struct seq_file *p, int prec)
-diff --git a/include/linux/hardirq.h b/include/linux/hardirq.h
-index 0fbbcdf..da0af63 100644
---- a/include/linux/hardirq.h
-+++ b/include/linux/hardirq.h
-@@ -60,8 +60,14 @@ static inline void rcu_nmi_exit(void)
+ /*
+- * Enable and disable interrupts.
++ * Save/restore interrupts.
   */
- extern void irq_exit(void);
+-	.macro	disable_irq
+-	msr	daifset, #2
+-	.endm
+-
+-	.macro	enable_irq
+-	msr	daifclr, #2
+-	.endm
+-
+ 	.macro	save_and_disable_irq, flags
+ 	mrs	\flags, daif
+ 	msr	daifset, #2
+diff --git a/arch/arm64/include/asm/daifflags.h b/arch/arm64/include/asm/daifflags.h
+index 8d91f22..546bc39 100644
+--- a/arch/arm64/include/asm/daifflags.h
++++ b/arch/arm64/include/asm/daifflags.h
+@@ -43,16 +43,6 @@ static inline unsigned long local_daif_save(void)
+ 	return flags;
+ }
  
-+#ifndef arch_nmi_enter
-+#define arch_nmi_enter()	do { } while (0)
-+#define arch_nmi_exit()		do { } while (0)
-+#endif
-+
- #define nmi_enter()						\
- 	do {							\
-+		arch_nmi_enter();				\
- 		printk_nmi_enter();				\
- 		lockdep_off();					\
- 		ftrace_nmi_enter();				\
-@@ -80,6 +86,7 @@ static inline void rcu_nmi_exit(void)
- 		ftrace_nmi_exit();				\
- 		lockdep_on();					\
- 		printk_nmi_exit();				\
-+		arch_nmi_exit();				\
- 	} while (0)
- 
- #endif /* LINUX_HARDIRQ_H */
+-static inline void local_daif_unmask(void)
+-{
+-	trace_hardirqs_on();
+-	asm volatile(
+-		"msr	daifclr, #0xf		// local_daif_unmask"
+-		:
+-		:
+-		: "memory");
+-}
+-
+ static inline void local_daif_restore(unsigned long flags)
+ {
+ 	if (!arch_irqs_disabled_flags(flags))
 -- 
 1.9.1
 
