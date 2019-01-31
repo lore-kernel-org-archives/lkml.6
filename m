@@ -2,215 +2,151 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F61EC282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B962C282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AA1820B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:24:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07C9020B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:24:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="eQlH0d45"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731138AbfAaJYB (ORCPT
+        id S1731317AbfAaJYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 04:24:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57180 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726316AbfAaJYA (ORCPT
+        Thu, 31 Jan 2019 04:24:20 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4684 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbfAaJYU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 04:24:00 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V9J0Uu073715
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:23:59 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qbvqjvger-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:23:58 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 31 Jan 2019 09:23:57 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 09:23:55 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V9Nrth2162962
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 09:23:54 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D89F6A405C;
-        Thu, 31 Jan 2019 09:23:53 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 70597A4054;
-        Thu, 31 Jan 2019 09:23:53 +0000 (GMT)
-Received: from [9.152.224.140] (unknown [9.152.224.140])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Jan 2019 09:23:53 +0000 (GMT)
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
-Reply-To: pmorel@linux.ibm.com
-To:     Tony Krowiak <akrowiak@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        sebott@linux.ibm.com, oberpar@linux.ibm.com, freude@linux.ibm.com,
-        pasic@linux.ibm.com, cohuck@redhat.com
-References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
-Date:   Thu, 31 Jan 2019 10:23:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 04:24:20 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c52bec50001>; Thu, 31 Jan 2019 01:24:21 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 31 Jan 2019 01:24:19 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 31 Jan 2019 01:24:19 -0800
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
+ 2019 09:24:18 +0000
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
+ 2019 09:24:19 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 31 Jan 2019 09:24:18 +0000
+Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c52bec10001>; Thu, 31 Jan 2019 01:24:18 -0800
+From:   Joseph Lo <josephl@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Joseph Lo <josephl@nvidia.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH V4 1/7] dt-bindings: timer: add Tegra210 timer
+Date:   Thu, 31 Jan 2019 17:24:04 +0800
+Message-ID: <20190131092410.28222-2-josephl@nvidia.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190131092410.28222-1-josephl@nvidia.com>
+References: <20190131092410.28222-1-josephl@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19013109-0028-0000-0000-00000341394E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013109-0029-0000-0000-000023FF3B06
-Message-Id: <a6d62c9d-f171-a45a-35c5-ffa87cd74479@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310074
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548926661; bh=AtUj36W3zYQHBmv+noQJcmd4x5qNY3mVboxC574zoyc=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+         Content-Transfer-Encoding:Content-Type;
+        b=eQlH0d45d7dFMrSrkIfyyJMxN4L0sqxMoQG6cGpNq0LMUZL7DoGTJaQVCvbgUfCiH
+         8fcbQlQ2/dQFYKcCzClaq/++HzOBVtuKV+k6XOzsoS+m1NXeE/zlGI8YfckhWizCHg
+         rCFperZMi9qRdmvV6dAVDCI2bL/dDgYdYfzKs7UHLLVTJ1MaKdDa2T5XTcneFy3vTB
+         yNox2a4fMLLrbOC+1WOsEl5RhNvMIQx3LAxvKSx6IZr2qcG4H4wQn5n8aXG2EjgpcB
+         T35aiZ9BRlz3rmPGKgUWsXBPYlPbZI0V/dRaCKZ1k4FhszngPpaTPiCF6U3nQSyNc1
+         b9XgVtTnjvkpQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/01/2019 18:48, Tony Krowiak wrote:
-> The current AP bus implementation periodically polls the AP configuration
-> to detect changes. When the AP configuration is dynamically changed via the
-> SE or an SCLP instruction, the changes will not be reflected to sysfs until
-> the next time the AP configuration is polled. The CHSC architecture
-> provides a Store Event Information (SEI)command to make notification of an
-> AP configuration change. This patch introduces a handler to process
-> notification from the CHSC SEI command BY immediately kickING off an AP bus
-> scan.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> ---
->   arch/s390/include/asm/ap.h   | 12 ++++++++++++
->   drivers/s390/cio/chsc.c      | 12 ++++++++++++
->   drivers/s390/cio/chsc.h      |  1 +
->   drivers/s390/crypto/ap_bus.c | 12 ++++++++++++
->   4 files changed, 37 insertions(+)
-> 
-> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
-> index 1a6a7092d942..c778593d509f 100644
-> --- a/arch/s390/include/asm/ap.h
-> +++ b/arch/s390/include/asm/ap.h
-> @@ -360,4 +360,16 @@ static inline struct ap_queue_status ap_dqap(ap_qid_t qid,
->   	return reg1;
->   }
->   
-> +/*
-> + * Interface to tell the AP bus code that a configuration
-> + * change has happened. The bus code should at least do
-> + * an ap bus resource rescan.
-> + */
-> +#if IS_ENABLED(CONFIG_ZCRYPT)
-> +void ap_bus_cfg_chg(void);
-> +#else
-> +#error "no CONFIG_ZCRYPT"
-> +static void ap_bus_cfg_chg(void){};
-> +#endif
-> +
->   #endif /* _ASM_S390_AP_H_ */
-> diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
-> index a0baee25134c..dccccc337078 100644
-> --- a/drivers/s390/cio/chsc.c
-> +++ b/drivers/s390/cio/chsc.c
-> @@ -586,6 +586,15 @@ static void chsc_process_sei_scm_avail(struct chsc_sei_nt0_area *sei_area)
->   			      " failed (rc=%d).\n", ret);
->   }
->   
-> +static void chsc_process_sei_ap_cfg_chg(struct chsc_sei_nt0_area *sei_area)
-> +{
-> +	CIO_CRW_EVENT(3, "chsc: ap config changed\n");
-> +	if (sei_area->rs != 5)
+The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+(TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
+or watchdog interrupts.
 
-Why just return if the rs code is 5?
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+V4:
+ * no change
+v3:
+ * no change
+v2:
+ * list all the interrupts that are supported by tegra210 timers block
+ * add RB tag from Rob.
+---
+ .../bindings/timer/nvidia,tegra210-timer.txt  | 36 +++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210=
+-timer.txt
 
-The event content code concerns the AP configuration change.
-
-Should the source of the reporting of this change hold us from 
-rescanning the available AP?
-
-
-Regards,
-Pierre
-
-
-> +		return;
-> +
-> +	ap_bus_cfg_chg();
-> +}
-> +
->   static void chsc_process_sei_nt2(struct chsc_sei_nt2_area *sei_area)
->   {
->   	switch (sei_area->cc) {
-> @@ -612,6 +621,9 @@ static void chsc_process_sei_nt0(struct chsc_sei_nt0_area *sei_area)
->   	case 2: /* i/o resource accessibility */
->   		chsc_process_sei_res_acc(sei_area);
->   		break;
-> +	case 3: /* ap config changed */
-> +		chsc_process_sei_ap_cfg_chg(sei_area);
-> +		break;
->   	case 7: /* channel-path-availability information */
->   		chsc_process_sei_chp_avail(sei_area);
->   		break;
-> diff --git a/drivers/s390/cio/chsc.h b/drivers/s390/cio/chsc.h
-> index 78aba8d94eec..5651066c46e3 100644
-> --- a/drivers/s390/cio/chsc.h
-> +++ b/drivers/s390/cio/chsc.h
-> @@ -9,6 +9,7 @@
->   #include <asm/chsc.h>
->   #include <asm/schid.h>
->   #include <asm/qdio.h>
-> +#include <asm/ap.h>
->   
->   #define CHSC_SDA_OC_MSS   0x2
->   
-> diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
-> index 48ea0004a56d..94f621783d6b 100644
-> --- a/drivers/s390/crypto/ap_bus.c
-> +++ b/drivers/s390/crypto/ap_bus.c
-> @@ -35,6 +35,7 @@
->   #include <linux/mod_devicetable.h>
->   #include <linux/debugfs.h>
->   #include <linux/ctype.h>
-> +#include <asm/crw.h>
->   
->   #include "ap_bus.h"
->   #include "ap_debug.h"
-> @@ -860,6 +861,17 @@ void ap_bus_force_rescan(void)
->   EXPORT_SYMBOL(ap_bus_force_rescan);
->   
->   /*
-> +* A config change has happened, Force an ap bus rescan.
-> +*/
-> +void ap_bus_cfg_chg(void)
-> +{
-> +	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
-> +
-> +	ap_bus_force_rescan();
-> +}
-> +EXPORT_SYMBOL(ap_bus_cfg_chg);
-> +
-> +/*
->    * hex2bitmap() - parse hex mask string and set bitmap.
->    * Valid strings are "0x012345678" with at least one valid hex number.
->    * Rest of the bitmap to the right is padded with 0. No spaces allowed
-> 
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.=
+txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+new file mode 100644
+index 000000000000..032cda96fe0d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+@@ -0,0 +1,36 @@
++NVIDIA Tegra210 timer
++
++The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
++timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
++from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
++(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
++or watchdog interrupts.
++
++Required properties:
++- compatible : "nvidia,tegra210-timer".
++- reg : Specifies base physical address and size of the registers.
++- interrupts : A list of 14 interrupts; one per each timer channels 0 thro=
+ugh
++  13.
++- clocks : Must contain one entry, for the module clock.
++  See ../clocks/clock-bindings.txt for details.
++
++timer@60005000 {
++	compatible =3D "nvidia,tegra210-timer";
++	reg =3D <0x0 0x60005000 0x0 0x400>;
++	interrupts =3D <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++		     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>;
++	clocks =3D <&tegra_car TEGRA210_CLK_TIMER>;
++	clock-names =3D "timer";
++};
+--=20
+2.20.1
 
