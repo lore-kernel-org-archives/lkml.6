@@ -2,105 +2,110 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BB6C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74B4C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B147720881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87C0D20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:43:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GaxTy9XL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbfAaUnJ (ORCPT
+        id S1728882AbfAaUns (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:43:09 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39592 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726784AbfAaUnH (ORCPT
+        Thu, 31 Jan 2019 15:43:48 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45956 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfAaUnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:43:07 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VKdLUm096036
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 15:43:05 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qc65t5vjy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 15:43:05 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Thu, 31 Jan 2019 20:43:04 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 20:43:00 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VKgw2O7536936
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 20:42:59 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D47B142047;
-        Thu, 31 Jan 2019 20:42:58 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DE8F42042;
-        Thu, 31 Jan 2019 20:42:58 +0000 (GMT)
-Received: from osiris (unknown [9.145.190.103])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 31 Jan 2019 20:42:58 +0000 (GMT)
-Date:   Thu, 31 Jan 2019 21:42:57 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Sebastian Sewior <bigeasy@linutronix.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
-        Stefan Liebler <stli@linux.ibm.com>
-Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggerede
-References: <alpine.DEB.2.21.1901301428390.5537@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1901301517220.1950@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1901301853290.1622@nanos.tec.linutronix.de>
- <20190130210733.mg6aascw2gzl3oqz@linutronix.de>
- <alpine.DEB.2.21.1901302314590.8200@nanos.tec.linutronix.de>
- <20190130233557.GA4240@linux.ibm.com>
- <alpine.DEB.2.21.1901310049440.8200@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1901310117110.8200@nanos.tec.linutronix.de>
- <20190131165228.GA32680@osiris>
- <20190131170653.spnrxsiblkssleyd@linutronix.de>
+        Thu, 31 Jan 2019 15:43:47 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so1845793pgc.12
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 12:43:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AsNqhd3AQ8kfGW/zqflxwaEu1SwORSDLfajLFA1ecCU=;
+        b=GaxTy9XLNm9jhcs+wAH5Cl5F9Ipnm2SN2TXJydN8fxbltt/t0GdeUvmDPdo3y4B+ND
+         rI7a9TEPoqlJTt5QQqDL/CtcMhovnZXszKi9zeBHIAePdzwuKpnxUrpsyAtFA2cihBap
+         TR84nw7vMteZaN6MOxRk5sj4GL3NK0KkZ0OXHUsmxUJ+NHbjw7Uk8MG1a2u+5WANJ5FO
+         DrEMPScj0wV84Z03eJhIdE/AZLOLma7wJYWoFj4hqnWPReLNBZYNPQJIpyq0jat7w1a6
+         Np9Clreut/3M+fpuMbEGlIkMJVJgXKmuXUnWcaCePjHHEqIA2HZK4suCQylb08/bXHNj
+         orMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AsNqhd3AQ8kfGW/zqflxwaEu1SwORSDLfajLFA1ecCU=;
+        b=AWSEyDuRgIN0U4+9nhws7xBkD0U3WKbYxCFcchX58pN2m9UU5Th3rE52VPtw9U902P
+         oAp6gnhtzXrVr8GveGQ8Q4XfgRvW92YcHsgLFF7vhvfZpuedZ6sR9XDPsu1wzjK/D8It
+         qnPUW1aN60nfJCxJ19nSko0FOaCtcRqwjuKfaMqiBL1OZk6g3DGjZvC3RXKB3thhe5Za
+         rEB+wzjB8LyyoxOZq4DB37nOvJghwF7OMJN7tr2Gq7TEtfyubVueee0at9oRSLTFWNvZ
+         XpfanU1Rsz3lh7aPJ33OJqwG/29A5rG68TzZ6gXNegNcBdbixmRUdEDe/JZKCwhBaC2F
+         hLBg==
+X-Gm-Message-State: AJcUukcXEmwUZEHfNRKmcouWQ1WbJlKKLqVm2SPPqxMu3lI74SGtQHwe
+        iQG3q/4rquOr467E8DJwx5E=
+X-Google-Smtp-Source: ALg8bN6o09sFrkB9q7ygq997cdHJTaNdKpagPeBV+8R5s7eDCd5OVuoK+ch11yfpJjdANgNXxNZ2fw==
+X-Received: by 2002:a63:e156:: with SMTP id h22mr32979730pgk.255.1548967426739;
+        Thu, 31 Jan 2019 12:43:46 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id s190sm7272034pfb.103.2019.01.31.12.43.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 12:43:45 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [RFC 0/5] PCIE support for i.MX8MQ (DT changes)
+Date:   Thu, 31 Jan 2019 12:43:28 -0800
+Message-Id: <20190131204333.31846-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190131170653.spnrxsiblkssleyd@linutronix.de>
-X-TM-AS-GCONF: 00
-x-cbid: 19013120-0012-0000-0000-000002EFA449
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013120-0013-0000-0000-00002126F10F
-Message-Id: <20190131204257.GA3636@osiris>
-Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 06:06:53PM +0100, Sebastian Sewior wrote:
-> On 2019-01-31 17:52:28 [+0100], Heiko Carstens wrote:
-> > ...nevertheless Stefan and I looked through the lovely disassembly of
-> > _pthread_mutex_lock_full() to verify if the compiler barriers are
-> > actually doing what they are supposed to do. The generated code
-> > however does look correct.
-> > So, it must be something different.
-> 
-> would it make sense to use one locking function instead all three (lock,
-> try-lock, timed) in the test case to figure out if this is related to
-> one of the locking function?
+Everyone:
 
-Sure, I will give that a try tomorrow.
+This series contains all of the i.MX Device Tree changes I made to
+enable support of PCIe on i.MX8MQ EVK. Marked as RFC since PCIe
+support patch series is still waiting to be applied to PCI tree. I
+anticipate that PCIe patches going through is just a maater of time,
+so this series should be mature enough to solicit feedback.
+
+NOTE: Immutable brach containing imx8mq-reset.h used in "arm64: dts:
+Add nodes for PCIe IP blocks" is availible in [reset-imx8mq]
+
+Feedback is welcome!
+
+Thanks,
+Andrey Smirnov
+
+[reset-imx8mq] git://git.pengutronix.de/pza/linux reset/imx8mq
+
+Andrey Smirnov (5):
+  arm64: dts: imx8mq: Mark iomuxc_gpr as i.MX6Q compatible
+  arm64: dts: imx8mq: Add a node for SRC IP block
+  arm64: dts: imx8mq: Combine PCIE power domains
+  arm64: dts: Add nodes for PCIe IP blocks
+  arm64: dts: imx8mq-evk: Enable PCIE0 interface
+
+ arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 23 +++++
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi    | 97 +++++++++++++++++++-
+ 2 files changed, 118 insertions(+), 2 deletions(-)
+
+-- 
+2.20.1
 
