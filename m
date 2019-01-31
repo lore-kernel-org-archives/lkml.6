@@ -2,324 +2,219 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 159ABC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34AF3C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9C9C218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:13:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7148218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:18:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gFD87IvT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732787AbfAaMNO (ORCPT
+        id S1732678AbfAaMSB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:13:14 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45388 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbfAaMNN (ORCPT
+        Thu, 31 Jan 2019 07:18:01 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:43766 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727259AbfAaMSB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:13:13 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s5-v6so2411375ljd.12;
-        Thu, 31 Jan 2019 04:13:10 -0800 (PST)
+        Thu, 31 Jan 2019 07:18:01 -0500
+Received: by mail-ua1-f65.google.com with SMTP id z11so932522uaa.10
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:18:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rMkf0gd68B0VNf8LFPErOfYHBzTvWTZG+O/rTFihV4I=;
+        b=gFD87IvTWMiYTaX30KLruBsENu70SjUoCtKw7J911orOOt5Ddm9wDSyGsu1pVrMfHX
+         y/O4khowAnb+sz2/xFi9VudhcqfKlOXfD3vQU92jqLcJwmOjRlCgYwN3fA6/nJDbjspr
+         nGO9f+MyuxEniJsWS+nnG/DLp6MtBSrNaP1uA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dVu3my73PXK2Naj+si694fS8rZkB5+dCruJopAIPzSg=;
-        b=GOJe8kSN0tbCIUFfuE4RK4E8bOUpIYfZW+bD0AgX5DvIlPYB1FjUw4UeI+pZSxQm1H
-         dc6QGVyu5e7TJ7BtFesftNuCA8YsJqkoHPjrmkT8PL2laiDqIEyuP8WuI8m2a8fNjx1w
-         LaLyxfG41sR+iJ4xuhL47KpNFcPiBVbd9xCKuyFdUcAEw0ZIG8mw+7RCwxO/1bVVaXv/
-         1E/zYTyJVbyHnSuqMVjR7kD0kUd5MtKT32jCHDzqRgzgds1zGB8CRGY8IThxnrZfZaZZ
-         oENI7gjnos0Jemo6Nz/22MlbOe/thLG5LcQ8uGVbuJXD4XMzLp+eLCWE8aFJjSLvZpJN
-         1byw==
-X-Gm-Message-State: AJcUukeLd2c6ejHOo09kxkKU+H0No6Icv9h+ZKIfdVbxvP5WSReV3+3X
-        GBDr0hlgQLZ07L+/Zj6TdBc=
-X-Google-Smtp-Source: ALg8bN4PBLsfaEkHsdvJ70BS1DcaMLpUZxkVPdjclIpe1zy8HHa2novcOYLIvc5J47vG2QYq8zYz9w==
-X-Received: by 2002:a2e:9a16:: with SMTP id o22-v6mr27891147lji.112.1548936789389;
-        Thu, 31 Jan 2019 04:13:09 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id q8-v6sm749052lji.69.2019.01.31.04.13.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 04:13:08 -0800 (PST)
-Date:   Thu, 31 Jan 2019 14:12:56 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v4 10/10] watchdog: bd70528: Initial support for ROHM
- BD70528 watchdog block
-Message-ID: <e28c79c094f15cd217c18855909f6a78554d2dd5.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rMkf0gd68B0VNf8LFPErOfYHBzTvWTZG+O/rTFihV4I=;
+        b=YSsN0KvSYdoQefa0gDsqNtf4w+lP7B6ccpiswuVsidcAZmELFtf472muSi+vtYcVA8
+         RB/aGTJMsABDD8p4CXariIuv8qtOSTHlvNS6zw2PkNpSIuqVzIaNk7kzdWsj4Tnn2/Ex
+         cLNiTAUBvAoJWVl2ieU5PKOCO/Xxz3MA4REjmu6ghuWnRPV9LAej6qlGxaxOj/J9ckK9
+         tWwImL1ucODZrwZWOp7NtUKxY/LRC1TOOn4VO/HA+/UXQZDxIIWX8Kgzmx9MFu5ynfNY
+         a2i8tmAVsaW//miQ6vSgzBHa5fbCzUbz0eFHVS9VAGOyTtksEKMqRFNHJ096AnwzFWNr
+         VV9A==
+X-Gm-Message-State: AJcUukciTO5+S61SWSCEC7RJ1SJSJxeSG3EawzpfZWqqx3UgjLdwRG7e
+        8kOuu+545TQchsGhypEqm7xlQ6M/IGL4CAORKJ0Oxw==
+X-Google-Smtp-Source: ALg8bN7ktqEXXIqjs7dcG1Y5IfwWm3F6nAamftV06uNn09EaLKy7ATV1Khoz1PWYVxgTRgaGBfqQgHkmoLD4xBww2dc=
+X-Received: by 2002:ab0:31d5:: with SMTP id e21mr14563931uan.107.1548937079489;
+ Thu, 31 Jan 2019 04:17:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20190128144119.10092-1-martink@posteo.de> <CAPDyKFo7949rcxEX5U2QUS0c2xhC_z+JGeOiF2HC6+QukVpEaQ@mail.gmail.com>
+ <20190131092006.363d1dd4@erd987>
+In-Reply-To: <20190131092006.363d1dd4@erd987>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 31 Jan 2019 13:17:23 +0100
+Message-ID: <CAPDyKFr=kcoGK0C2A8JH-nhfgUgoRVa-E=6KPRjFO51QQxjJLA@mail.gmail.com>
+Subject: Re: [PATCH v4] mmc: mxs-mmc: Introduce regulator support
+To:     Robin van der Gracht <robin@protonic.nl>
+Cc:     Martin Kepplinger <martink@posteo.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initial support for watchdog block included in ROHM BD70528
-power management IC.
+On Thu, 31 Jan 2019 at 09:20, Robin van der Gracht <robin@protonic.nl> wrote:
+>
+> On Mon, 28 Jan 2019 22:15:23 +0100
+> Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> > On Mon, 28 Jan 2019 at 15:41, Martin Kepplinger <martink@posteo.de> wrote:
+> > >
+> > > From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> > >
+> > > This adds support for explicitly switching the mmc's power on and off
+> > > which is needed for example for WL1837 WL1271 wifi controllers on imx28.
+> > >
+> > > While the wifi's vmmc-supply regulator can be configured in devicetree,
+> > > "ip link set wlan0 down" doesn't turn off the VMMC regulator which leads
+> > > to hangs when loading firmware, for example.
+> > >
+> > > Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> > > ---
+> > >
+> > >
+> > > revision history
+> > > ----------------
+> > > v4: re-added forgotten regulator_enable() during probe
+> > > v3: improve API usage as suggested by Ulf
+> > > v2: tested patch with changes suggested by Robin
+> > > v1: question, why https://patchwork.kernel.org/patch/4365751/ didn't get in
+> > >
+> > >
+> > >  drivers/mmc/host/mxs-mmc.c | 34 +++++++++++++++++++++++++---------
+> > >  1 file changed, 25 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+> > > index add1e70195ea..23d275269d61 100644
+> > > --- a/drivers/mmc/host/mxs-mmc.c
+> > > +++ b/drivers/mmc/host/mxs-mmc.c
+> > > @@ -517,6 +517,22 @@ static void mxs_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+> > >         else
+> > >                 host->bus_width = 0;
+> > >
+> > > +       switch (ios->power_mode) {
+> > > +       case MMC_POWER_OFF:
+> > > +               if (!IS_ERR(host->mmc->supply.vmmc))
+> > > +                       mmc_regulator_set_ocr(host->mmc,
+> > > +                                             host->mmc->supply.vmmc, 0);
+> > > +               break;
+> > > +       case MMC_POWER_UP:
+> > > +               if (!IS_ERR(host->mmc->supply.vmmc))
+> > > +                       mmc_regulator_set_ocr(host->mmc,
+> > > +                                             host->mmc->supply.vmmc,
+> > > +                                             ios->vdd);
+> > > +               break;
+> > > +       default:
+> > > +               break;
+> > > +       }
+> > > +
+> > >         if (ios->clock)
+> > >                 mxs_ssp_set_clk_rate(&host->ssp, ios->clock);
+> > >  }
+> > > @@ -588,7 +604,6 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+> > >         struct mmc_host *mmc;
+> > >         struct resource *iores;
+> > >         int ret = 0, irq_err;
+> > > -       struct regulator *reg_vmmc;
+> > >         struct mxs_ssp *ssp;
+> > >
+> > >         irq_err = platform_get_irq(pdev, 0);
+> > > @@ -614,14 +629,15 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+> > >         host->mmc = mmc;
+> > >         host->sdio_irq_en = 0;
+> > >
+> > > -       reg_vmmc = devm_regulator_get(&pdev->dev, "vmmc");
+> > > -       if (!IS_ERR(reg_vmmc)) {
+> > > -               ret = regulator_enable(reg_vmmc);
+> > > -               if (ret) {
+> > > -                       dev_err(&pdev->dev,
+> > > -                               "Failed to enable vmmc regulator: %d\n", ret);
+> > > -                       goto out_mmc_free;
+> > > -               }
+> > > +       ret = mmc_regulator_get_supply(mmc);
+> > > +       if (ret == -EPROBE_DEFER)
+> > > +               goto out_mmc_free;
+> > > +
+> > > +       ret = regulator_enable(mmc->supply.vmmc);
+> >
+> > This is wrong, as it may cause the regulator usage count to become
+> > wrongly balanced.
+> >
+> > Instead, via ->set_ios() when calling mmc_regulator_set_ocr(), it will
+> > take care of enabling and disabling the regulator depending of the
+> > requested vdd voltage level.
+> >
+> > > +       if (ret) {
+> > > +               dev_err(&pdev->dev,
+> > > +                       "Failed to enable vmmc regulator: %d\n", ret);
+> > > +               goto out_mmc_free;
+> > >         }
+> > >
+> > >         ssp->clk = devm_clk_get(&pdev->dev, NULL);
+> > > --
+> > > 2.20.1
+> > >
+> >
+> > BTW, you didn't really answer my earlier question about the TI WiFi
+> > chip. Doesn't you need a special clock for WiFi chip as well? How do
+> > you intend to manage that?
+>
+> I used an external 32K oscillator (SLOW_CLK) for my wl1271. Other
+> clocks ware generated on the module.
 
-Configurations for low power states are still to be checked.
+Right. How do you control that clock? Did you model it as clock via
+the common clock framework?
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/watchdog/Kconfig       |  12 +++
- drivers/watchdog/Makefile      |   1 +
- drivers/watchdog/bd70528_wdt.c | 187 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 200 insertions(+)
- create mode 100644 drivers/watchdog/bd70528_wdt.c
+>
+> I had to supply a 'vmmc-supply' in your wl1271 devicetree node,
+> which will be used to power on/off the wlan module. The supply should
+> be a (delayed) GPIO controlled 'fixed-regulator' attached to the
+> wlan_en pin on the module.
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 57f017d74a97..f30e3a3e886e 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -90,6 +90,18 @@ config SOFT_WATCHDOG_PRETIMEOUT
- 	  watchdog. Be aware that governors might affect the watchdog because it
- 	  is purely software, e.g. the panic governor will stall it!
- 
-+config BD70528_WATCHDOG
-+	tristate "ROHM BD70528 PMIC Watchdog"
-+	depends on MFD_ROHM_BD70528
-+	select WATCHDOG_CORE
-+	help
-+	  Support for the watchdog in the ROHM BD70528 PMIC. Watchdog trigger
-+	  cause system reset.
-+
-+	  Say Y here to include support for the ROHM BD70528 watchdog.
-+	  Alternatively say M to compile the driver as a module,
-+	  which will be called bd70528_wdt.
-+
- config DA9052_WATCHDOG
- 	tristate "Dialog DA9052 Watchdog"
- 	depends on PMIC_DA9052 || COMPILE_TEST
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index a0917ef28e07..1ce87a3b1172 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -204,6 +204,7 @@ obj-$(CONFIG_WATCHDOG_SUN4V)		+= sun4v_wdt.o
- obj-$(CONFIG_XEN_WDT) += xen_wdt.o
- 
- # Architecture Independent
-+obj-$(CONFIG_BD70528_WATCHDOG) += bd70528_wdt.o
- obj-$(CONFIG_DA9052_WATCHDOG) += da9052_wdt.o
- obj-$(CONFIG_DA9055_WATCHDOG) += da9055_wdt.o
- obj-$(CONFIG_DA9062_WATCHDOG) += da9062_wdt.o
-diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd70528_wdt.c
-new file mode 100644
-index 000000000000..c24d4cce5e9c
---- /dev/null
-+++ b/drivers/watchdog/bd70528_wdt.c
-@@ -0,0 +1,187 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// ROHM BD70528MWV watchdog driver
-+
-+#include <linux/bcd.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/rohm-bd70528.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/watchdog.h>
-+
-+struct wdtbd70528 {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct mutex *rtc_lock;
-+	struct watchdog_device wdt;
-+};
-+
-+static int bd70528_wdt_set_locked(struct wdtbd70528 *w, int enable)
-+{
-+	struct bd70528 *bd70528;
-+
-+	bd70528 = container_of(w->rtc_lock, struct bd70528, rtc_timer_lock);
-+	return bd70528->wdt_set(bd70528, enable, NULL);
-+}
-+static int bd70528_wdt_set(struct wdtbd70528 *w, int enable)
-+{
-+	int ret;
-+
-+	mutex_lock(w->rtc_lock);
-+	ret = bd70528_wdt_set_locked(w, enable);
-+	mutex_unlock(w->rtc_lock);
-+
-+	return ret;
-+}
-+
-+static int bd70528_wdt_start(struct watchdog_device *wdt)
-+{
-+	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-+
-+	dev_dbg(w->dev, "WDT ping...\n");
-+	return bd70528_wdt_set(w, 1);
-+}
-+
-+static int bd70528_wdt_stop(struct watchdog_device *wdt)
-+{
-+	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-+
-+	dev_dbg(w->dev, "WDT stopping...\n");
-+	return bd70528_wdt_set(w, 0);
-+}
-+
-+static int bd70528_wdt_set_timeout(struct watchdog_device *wdt,
-+				    unsigned int timeout)
-+{
-+	unsigned int hours;
-+	unsigned int minutes;
-+	unsigned int seconds;
-+	int ret;
-+	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-+
-+	seconds = timeout;
-+	hours = timeout / (60 * 60);
-+	/* Maximum timeout is 1h 59m 59s => hours is 1 or 0 */
-+	if (hours)
-+		seconds -= (60 * 60);
-+	minutes = seconds / 60;
-+	seconds = seconds % 60;
-+
-+	mutex_lock(w->rtc_lock);
-+
-+	ret = bd70528_wdt_set_locked(w, 0);
-+	if (ret)
-+		goto out_unlock;
-+
-+	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_HOUR,
-+				 BD70528_MASK_WDT_HOUR, hours);
-+	if (ret) {
-+		dev_err(w->dev, "Failed to set WDT hours\n");
-+		goto out_en_unlock;
-+	}
-+	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_MINUTE,
-+				 BD70528_MASK_WDT_MINUTE, bin2bcd(minutes));
-+	if (ret) {
-+		dev_err(w->dev, "Failed to set WDT minutes\n");
-+		goto out_en_unlock;
-+	}
-+	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_SEC,
-+				 BD70528_MASK_WDT_SEC, bin2bcd(seconds));
-+	if (ret)
-+		dev_err(w->dev, "Failed to set WDT seconds\n");
-+	else
-+		dev_dbg(w->dev, "WDT tmo set to %u\n", timeout);
-+
-+out_en_unlock:
-+	ret = bd70528_wdt_set_locked(w, 1);
-+out_unlock:
-+	mutex_unlock(w->rtc_lock);
-+
-+	return ret;
-+}
-+
-+static const struct watchdog_info bd70528_wdt_info = {
-+	.identity = "bd70528-wdt",
-+	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-+};
-+
-+static const struct watchdog_ops bd70528_wdt_ops = {
-+	.start		= bd70528_wdt_start,
-+	.stop		= bd70528_wdt_stop,
-+	.set_timeout	= bd70528_wdt_set_timeout,
-+};
-+
-+/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
-+#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
-+/* Minimum time is 1 second */
-+#define WDT_MIN_MS 1000
-+#define DEFAULT_TIMEOUT 60
-+
-+static int bd70528_wdt_probe(struct platform_device *pdev)
-+{
-+	struct bd70528 *bd70528;
-+	struct wdtbd70528 *w;
-+	int ret;
-+	unsigned int reg;
-+
-+	bd70528 = dev_get_drvdata(pdev->dev.parent);
-+	if (!bd70528) {
-+		dev_err(&pdev->dev, "No MFD driver data\n");
-+		return -EINVAL;
-+	}
-+	w = devm_kzalloc(&pdev->dev, sizeof(*w), GFP_KERNEL);
-+	if (!w)
-+		return -ENOMEM;
-+
-+	w->regmap = bd70528->chip.regmap;
-+	w->rtc_lock = &bd70528->rtc_timer_lock;
-+	w->dev = &pdev->dev;
-+
-+	w->wdt.info = &bd70528_wdt_info;
-+	w->wdt.ops =  &bd70528_wdt_ops;
-+	w->wdt.min_hw_heartbeat_ms = WDT_MIN_MS;
-+	w->wdt.max_hw_heartbeat_ms = WDT_MAX_MS;
-+	w->wdt.parent = pdev->dev.parent;
-+	w->wdt.timeout = DEFAULT_TIMEOUT;
-+	watchdog_set_drvdata(&w->wdt, w);
-+	watchdog_init_timeout(&w->wdt, 0, pdev->dev.parent);
-+
-+	ret = bd70528_wdt_set_timeout(&w->wdt, w->wdt.timeout);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to set the watchdog timeout\n");
-+		return ret;
-+	}
-+
-+	mutex_lock(w->rtc_lock);
-+	ret = regmap_read(w->regmap, BD70528_REG_WDT_CTRL, &reg);
-+	mutex_unlock(w->rtc_lock);
-+
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to get the watchdog state\n");
-+		return ret;
-+	}
-+	if (reg & BD70528_MASK_WDT_EN) {
-+		dev_dbg(&pdev->dev, "watchdog was running during probe\n");
-+		set_bit(WDOG_HW_RUNNING, &w->wdt.status);
-+	}
-+
-+	ret = devm_watchdog_register_device(&pdev->dev, &w->wdt);
-+	if (ret < 0)
-+		dev_err(&pdev->dev, "watchdog registration failed: %d\n", ret);
-+
-+	return ret;
-+}
-+static struct platform_driver bd70528_wdt = {
-+	.driver = {
-+		.name = "bd70528-wdt"
-+	},
-+	.probe = bd70528_wdt_probe,
-+};
-+
-+module_platform_driver(bd70528_wdt);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD70528 watchdog driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+Right, thanks for explaining.
 
+>
+> 1: Documentation/devicetree/bindings/net/wireless/ti,wlcore.txt
+>
 
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+This sounds like a good fit for mmc pwrseq simple. There are already
+similar users for it.
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Have a look at: /drivers/mmc/core/pwrseq*
+If the mmc host driver calls mmc_of_parse() during ->probe(), a pwrseq
+instance will be hooked up to it. Once the mmc core tries to power up
+the card it will make use of the attached pwrseq for the mmc host in
+question.
+
+In this way, you can control the clock and GPIO line, in more exact
+ways that is needed by the WiFi chip.
+
+Here is a DT example (look for "mmc-pwrseq-simple"):
+arch/arm/boot/dts/imx6qdl-sr-som-ti.dtsi
+
+This should do the trick for you. On the other hand, I don't mind that
+you still add regulator support to the driver, along the lines of what
+$subject patch does, however it may not be exactly what you need for
+the WiFi case.
+
+Kind regards
+Uffe
