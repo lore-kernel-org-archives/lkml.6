@@ -2,262 +2,208 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 049A4C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7459AC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B400420881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:53:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OlQ3jKPt"
+	by mail.kernel.org (Postfix) with ESMTP id 33D7F20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548950169;
+	bh=3DlCZocWfy6fuU0/Po8T1+iGUR9fZlmd3RGKESZlJKM=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=x3OvGOo1fAjvHV3UdAuRAXQkylDZxCu593wl+Ms/mItA+Dcb5ZWix5PQwPuZykZ+e
+	 NKnF/E0RgjWqzJMGwrieBJJo9aJoFzLkGPbbz0/i3FgUdw9x9jN+DDnA+71/QZchUA
+	 xddiDCL6a2sDKNtr7wvvSSt9fIMwLENGXiQCXmUE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387749AbfAaPxi (ORCPT
+        id S2387822AbfAaP4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 10:53:38 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39873 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732719AbfAaPxh (ORCPT
+        Thu, 31 Jan 2019 10:56:07 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:45258 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729342AbfAaP4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 10:53:37 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t27so3857272wra.6
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 07:53:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=dRc25rJI4tiY9YddNYzEMJbcEVjclgz0jDWxqWuLBkY=;
-        b=OlQ3jKPt0e+wq3C9F5WDwXSXYLFySYQaZ6OQwJE2w2EYhRHqF3aWfknP0xqKwzTDdw
-         HqBkaNpoEIad9OWzPv4CTryj856Iqu1ypGeOcuohgbLZuBG3+CYhdR9kf8pWoUgPPkgK
-         76xYVQirOZ0PvBOMfkUXuH8Rqb9NGa0KLCTsb3R8CySo5YXRtvh80LFbWPGBnNsjp7UO
-         qqPZB8L0l/9ICqngEBeu0kUTw0bGQfnYszLF5o+D/SFEDlCYb9a3mH5tXq88hywxXb7B
-         +FyUQlZHRjgUec+pfYOgaQmGXIncQiDWbV78G+yRUK4CgUTN9dgW043M31CfNuS7z4A4
-         caNA==
+        Thu, 31 Jan 2019 10:56:07 -0500
+Received: by mail-yb1-f196.google.com with SMTP id t11so1463977ybi.12;
+        Thu, 31 Jan 2019 07:56:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=dRc25rJI4tiY9YddNYzEMJbcEVjclgz0jDWxqWuLBkY=;
-        b=RgLdoLoI3CjNZDVrwb9mKfbqIuRibUOwM2xfcyx+tQhjbrBzXYzEdKlBMTfoE4MFnS
-         oqo1FTXwl7OqqKoEfo/yT0SiOw8HPqiVTIgq97uCXv35JlRL0wfu48vzHuvZpwuQ56yv
-         W7TXbcgddaU4w6ycS/5atlFocfyST+rDa6qA+IL0PHxpoSJsPa8EZuX85FMfZHHDUnGw
-         K7PAchqtiYuYp6D2l0xkpHb2AM+qk3br/I+ZGOjpU6/gI/FPhNxLKAtwt7XULIuvOCWP
-         F6rDCyseCugglhNL43KEIHvnI+4aYYMDp2S+Ql5SY7eNZ5aH4QO3L5acKO+OcZ4wIN5v
-         8Gvw==
-X-Gm-Message-State: AHQUAuaAbgaFIIEt465k+hE9NvspVTvTitzXClsqtDTt1zZgH6O7LFWZ
-        BgRQiNFBTTKRd6SxgsnGeY+6vd4lfYqUIg==
-X-Google-Smtp-Source: AHgI3IaZvF35krU5Qg3S0VCHbPpFKFze/vzbgQEdKDnaYwl468v1xil3psuQgla66MfRs7gYEPnLBg==
-X-Received: by 2002:a5d:4046:: with SMTP id w6mr14559070wrp.92.1548950015241;
-        Thu, 31 Jan 2019 07:53:35 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id s66sm3857891wmf.34.2019.01.31.07.53.34
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KOUqMKGYawSEtAAxvk5JTdZFfiRl2FI6STMycZiM81E=;
+        b=LrGjBigBJv+oRt8IVtQoJl5Ii+E9f+BnejW6AyOmiYOFxa/8JYDPcC0lT//XlZms2V
+         D05EWKKMGxklSWAFsoSka/6sDjIMYsVtwyCTFckgeKmz43Gjj2RAx48rr+cTupcb1CBA
+         A9QHGeDIAeHsSuhIfoJaVVoBydD94f8VREJO0M2U4Tp6Pt4VqwM+ySU18wUAMV2QCMq8
+         zs9zlXrOfUqhFg+JeA0H8IYWB53BAsBDZOiVDkFJyYw1LflzzOj1BpFYE87PKF+CORzU
+         P3Ma9yxcMBWO/dQWF64cGNW2qfeHQh+ML58jBK2WZ3Zgac9U2OL8J8YdVeD+YJ17liM+
+         709g==
+X-Gm-Message-State: AHQUAubbT0/dtGULx8XPTQAdGPjAereg6+pdOmfAfPu1xV3nSt8MEOjZ
+        CFtZfTftXZrOOKPQyu8pPYWyaLNIpj4=
+X-Google-Smtp-Source: AHgI3IbTWeTzr9/B5+kzFIfpGTeYVtztPoGZAE7NdCL/eaFyCZyXYWokfJhCwttAA11ENSxUee36DQ==
+X-Received: by 2002:a25:4d8b:: with SMTP id a133mr6143409ybb.165.1548950165822;
+        Thu, 31 Jan 2019 07:56:05 -0800 (PST)
+Received: from dennisz-mbp ([2620:10d:c091:200::6:84c2])
+        by smtp.gmail.com with ESMTPSA id y63sm2275306ywy.1.2019.01.31.07.56.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 07:53:34 -0800 (PST)
-Subject: Re: [PATCH] dt-bindings: gpu: add bindings for the ARM Mali Bifrost
- GPU
-To:     daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190131132939.2263-1-narmstrong@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <0d80f33a-32ba-4d87-0f40-bd5a4b7d23c0@baylibre.com>
-Date:   Thu, 31 Jan 2019 16:53:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 07:56:04 -0800 (PST)
+Date:   Thu, 31 Jan 2019 10:56:02 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     dsterba@suse.cz, Dennis Zhou <dennis@kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] btrfs: add zstd compression level support
+Message-ID: <20190131155602.GA90850@dennisz-mbp>
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190129171830.GP2900@twin.jikos.cz>
+ <20190130174059.GA18660@dennisz-mbp>
+ <20190131140436.GD2900@twin.jikos.cz>
 MIME-Version: 1.0
-In-Reply-To: <20190131132939.2263-1-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131140436.GD2900@twin.jikos.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/2019 14:29, Neil Armstrong wrote:
-> Add the bindings for the Bifrost family of ARM Mali GPUs.
+On Thu, Jan 31, 2019 at 03:04:36PM +0100, David Sterba wrote:
+> On Wed, Jan 30, 2019 at 12:40:59PM -0500, Dennis Zhou wrote:
+> > Hi David,
+> > 
+> > On Tue, Jan 29, 2019 at 06:18:30PM +0100, David Sterba wrote:
+> > > On Mon, Jan 28, 2019 at 04:24:26PM -0500, Dennis Zhou wrote:
+> > > > As mentioned above, a requirement that differs zstd from zlib is that
+> > > > higher levels of compression require more memory. To manage this, each
+> > > > compression level has its own queue of workspaces. A global LRU is used
+> > > > to help with reclaim. To guarantee forward progress, a max level
+> > > > workspace is preallocated and hidden from the LRU.
+> > > 
+> > > Here I'd like to bring up what was mentioned in previous iteration, the
+> > > workspace sizes.
+> > > 
+> > > Level   Compression Memory
+> > > 1       0.8 MB
+> > > 2       1.0 MB
+> > > 3       1.3 MB
+> > > 4       0.9 MB
+> > > 5       1.4 MB
+> > > 6       1.5 MB
+> > > 7       1.4 MB
+> > > 8       1.8 MB
+> > > 9       1.8 MB
+> > > 10      1.8 MB
+> > > 11      1.8 MB
+> > > 12      1.8 MB
+> > > 13      2.3 MB
+> > > 14      2.6 MB
+> > > 15      2.6 MB
+> > > 
+> > > and decompression needs memory of level 1. The sizes can be grouped
+> > > together to say 3 sizes, I'm not sure that we'd really need 15 distinct
+> > > workspaces. The reclaim mechanism helps, but I'd rather keep a smaller
+> > > number of workspaces that covers average use.
+> > > 
+> > > Default level is 3, that's 1.3 MiB, that also covers level 1, 2 and 4.
+> > > For 5 to 12 it's 1.8 and the rest is 2.6 MiB.
+> > > 
+> > 
+> > I realize the current implementation doesn't have a monotonic memory
+> > requirement guarantee. I've added that, and below is updated memory
+> > requirements per level. I've updated the commit to include this too.
+> > 
+> > Level     Memory (KB)
+> > 1            780 
+> > 2           1004
+> > 3           1260
+> > 4           1260
+> > 5           1388
+> > 6           1516
+> > 7           1516
+> > 8           1772
+> > 9           1772
+> > 10          1772
+> > 11          1772
+> > 12          1772
+> > 13          2284
+> > 14          2547
+> > 15          2547
+> > 
+> > > > btrfs filesystem 10 times and then read back after dropping the caches.
+> > > > The btrfs filesystem was on an SSD.
+> > > > 
+> > > > Level   Ratio   Compression (MB/s)  Decompression (MB/s)
+> > > > 1       2.658        438.47                910.51
+> > > > 2       2.744        364.86                886.55
+> > > > 3       2.801        336.33                828.41
+> > > > 4       2.858        286.71                886.55
+> > > > 5       2.916        212.77                556.84
+> > > > 6       2.363        119.82                990.85
+> > > > 7       3.000        154.06                849.30
+> > > > 8       3.011        159.54                875.03
+> > > > 9       3.025        100.51                940.15
+> > > > 10      3.033        118.97                616.26
+> > > > 11      3.036         94.19                802.11
+> > > > 12      3.037         73.45                931.49
+> > > > 13      3.041         55.17                835.26
+> > > > 14      3.087         44.70                716.78
+> > > > 15      3.126         37.30                878.84
+> > > 
+> > > From my casual user's perspective, I'd use the level 1 for speed, 7 for
+> > > better ratio and 15 for the best compression. Anything else does not
+> > > look good, though the results would vary based on the data set. I
+> > > assume that the silesia corpus serves as a good approximation of the
+> > > worst case average.
+> > > 
+> > > The levels 7-14 strike particularly obvious pattern: same ratio but the
+> > > speed gets worse with each level. Taking the default level into account,
+> > > (my) recommended levels would be 1, 3, 7, 15.
+> > > 
+> > 
+> > I do see why we want to limit the number of levels as the memory
+> > requirements do kind of bucket themselves. But, this means when zstd
+> > gets updated, we'd have to reevaluate the compression levels btrfs
+> > supports. I'm not sure it's a great idea to have that dependency.
+> > I imagine we could offer some level of guidance, but it really would be
+> > up to the user to figure out what works best for them.
 > 
-> The Bifrost GPU architecture is similar to the Midgard family,
-> but with a different Shader Core & Execution Engine structures.
-> 
-> Bindings are based on the Midgard family bindings, but the inner
-> architectural changes makes it a separate family needing separate
-> bindings.
-> 
-> The Bifrost GPUs are present in a number of recent SoCs, like the
-> Amlogic G12A Family, and many other vendors.
-> The Amlogic vendor specific compatible is added to handle the
-> specific IP integration differences and dependencies.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  .../bindings/gpu/arm,mali-bifrost.txt         | 94 +++++++++++++++++++
->  1 file changed, 94 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt
-> new file mode 100644
-> index 000000000000..a632f5136b08
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt
-> @@ -0,0 +1,94 @@
-> +ARM Mali Bifrost GPU
-> +====================
-> +
-> +Required properties:
-> +
-> +- compatible :
-> +  * Must contain one of the following:
-> +    + "arm,mali-g71"
-> +    + "arm,mali-g51"
-> +    + "arm,mali-g72"
-> +    + "arm,mali-g76"
-
-Wrong order and forgot the G31 and G52 cores.
-
-Neil
-
-> +  * which must be preceded by one of the following vendor specifics:
-> +    + "amlogic,meson-g12a-mali"
-> +
-> +- reg : Physical base address of the device and length of the register area.
-> +
-> +- interrupts : Contains the three IRQ lines required by Mali Bifrost devices.
-> +
-> +- interrupt-names : Contains the names of IRQ resources in the order they were
-> +  provided in the interrupts property. Must contain: "job", "mmu", "gpu".
-> +
-> +
-> +Optional properties:
-> +
-> +- clocks : Phandle to clock for the Mali Bifrost device.
-> +
-> +- mali-supply : Phandle to regulator for the Mali device. Refer to
-> +  Documentation/devicetree/bindings/regulator/regulator.txt for details.
-> +
-> +- operating-points-v2 : Refer to Documentation/devicetree/bindings/opp/opp.txt
-> +  for details.
-> +
-> +- resets : Phandle of the GPU reset line.
-> +
-> +Vendor-specific bindings
-> +------------------------
-> +
-> +The Mali GPU is integrated very differently from one SoC to
-> +another. In order to accomodate those differences, you have the option
-> +to specify one more vendor-specific compatible, among:
-> +
-> +- "amlogic,meson-g12a-mali"
-> +  Required properties:
-> +  - resets : Should contain phandles of :
-> +    + GPU reset line
-> +    + GPU APB glue reset line
-> +
-> +Example for a Mali-G71:
-> +
-> +gpu@ffa30000 {
-> +	compatible = "amlogic,meson-g12a-mali", "arm,mali-g71";
-
-
-It's a typo, it's a G31 on Amlogic G12A, anyway the example is still valid.
-
-> +	reg = <0xffe40000 0x10000>;
-> +	interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-> +		     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
-> +		     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
-> +	interrupt-names = "job", "mmu", "gpu";
-> +	clocks = <&clk CLKID_MALI>;
-> +	mali-supply = <&vdd_gpu>;
-> +	operating-points-v2 = <&gpu_opp_table>;
-> +	resets = <&reset RESET_DVALIN_CAPB3>, <&reset RESET_DVALIN>;
-> +};
-> +
-> +gpu_opp_table: opp_table0 {
-> +	compatible = "operating-points-v2";
-> +
-> +	opp@533000000 {
-> +		opp-hz = /bits/ 64 <533000000>;
-> +		opp-microvolt = <1250000>;
-> +	};
-> +	opp@450000000 {
-> +		opp-hz = /bits/ 64 <450000000>;
-> +		opp-microvolt = <1150000>;
-> +	};
-> +	opp@400000000 {
-> +		opp-hz = /bits/ 64 <400000000>;
-> +		opp-microvolt = <1125000>;
-> +	};
-> +	opp@350000000 {
-> +		opp-hz = /bits/ 64 <350000000>;
-> +		opp-microvolt = <1075000>;
-> +	};
-> +	opp@266000000 {
-> +		opp-hz = /bits/ 64 <266000000>;
-> +		opp-microvolt = <1025000>;
-> +	};
-> +	opp@160000000 {
-> +		opp-hz = /bits/ 64 <160000000>;
-> +		opp-microvolt = <925000>;
-> +	};
-> +	opp@100000000 {
-> +		opp-hz = /bits/ 64 <100000000>;
-> +		opp-microvolt = <912500>;
-> +	};
-> +};
+> If it was not clear, I did not mean to have only 4 levels, keep all 15
+> same as there are 9 for zlib. The guildelines would be desirable and I
+> don't want to make decision for the user which level to pick. So we
+> don't disagree.
 > 
 
+I see, that was my misunderstanding.
+
+> > The reclaim mechanism only keeps workspaces around if they are being
+> > used by the appropriate level. So, the memory overhead is actively used
+> > memory and if not, it is reclaimed after at most ~2 minutes later. I
+> > also scan up before allocating a workspace, so that should help limit
+> > the number of workspaces in circulation.
+> 
+> We'd need to observe that in practice before doing refinements, simpler
+> logic is better for the start.
+> 
+> There's some penalty caused by the allocation if there are no workspaces
+> at all, as the amount of memory is quite large for kernel.
+> This could stress the memory subsystem also because the memory has to be
+> either contiguous or vmalloced. As the memory is released soon, all the
+> work might need to be done again and again. So, more than one
+> preallocated workspace could be good but the number of levels does not
+> make it easy to choose which one.
+
+That makes sense. I don't have an answer for how to balance the number
+of workspaces, but am happy to iterate on this as we get more data.
+
+If no one has any other comments on the series after another day or so I
+can send v2 with the handful of things people have mentioned and the
+monotonic memory requirement patch.
+
+Thanks,
+Dennis
