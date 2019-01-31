@@ -2,120 +2,121 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1367C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8249DC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:45:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92D4D2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:41:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39FFD2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:45:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="TjYsNLBL"
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="WyQ84527"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388578AbfAaQlt (ORCPT
+        id S2388554AbfAaQpj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:41:49 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:43582 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388489AbfAaQlt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:41:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=C3amELg1Ujiw7elcsQ+TuZ1AZWH0mBbM9WqhTmkZo6Q=; b=TjYsNLBLB/oGj32yqL7L59/Xq
-        fD0//02sfr+A5Ej3KV1T1jr6IrTDZYZHUWkwF6kMrYdRX7j2T/bGiTzlE03bMkqWCX5qyA27mis4P
-        eWRKjGJvFcGJyCTCiM3XrXmOvGM8jZo4vip+j3nNW/3mMZiCLe73Hf0IZv615eabda/Rg=;
-Received: from [77.247.85.71] (helo=localhost)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gpFPD-00009K-5T; Thu, 31 Jan 2019 17:41:41 +0100
-Received: from localhost ([::1])
-        by localhost with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gpFOv-0001kK-36; Thu, 31 Jan 2019 17:41:17 +0100
-Date:   Thu, 31 Jan 2019 17:41:03 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        letux-kernel@openphoenux.org
-Subject: Re: [PATCH v2] arm: dts: gta04: add gps support
-Message-ID: <20190131174015.544a00f3@kemnade.info>
-In-Reply-To: <20190130090434.GM3691@localhost>
-References: <20190129073843.14979-1-andreas@kemnade.info>
-        <20190130090434.GM3691@localhost>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+        Thu, 31 Jan 2019 11:45:39 -0500
+Received: from mail-eopbgr750125.outbound.protection.outlook.com ([40.107.75.125]:19919
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728813AbfAaQpi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:45:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BEPKGNjgbkThNkeaxXpr/K5NjYkxrOAkZOhOv0rzRwg=;
+ b=WyQ84527mxfCfjWwhm7GlpuHnJ42URy8FvASOLXOGIB7uBDcDWruUopiDX6e/fJ9pFYEBasQW0cfRcskJzIGSCISZR3dDBH/FPIR4fSsDKr09kKvvZzBq/ycylGZgISa0NwfNUVnB8jiQ7BGsjYnmHphHsXBsfKcJLYASG0j80E=
+Received: from DM5PR2101MB0918.namprd21.prod.outlook.com (52.132.132.163) by
+ DM5PR2101MB1063.namprd21.prod.outlook.com (52.132.128.39) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.4; Thu, 31 Jan 2019 16:45:35 +0000
+Received: from DM5PR2101MB0918.namprd21.prod.outlook.com
+ ([fe80::15b:c868:d1bd:c781]) by DM5PR2101MB0918.namprd21.prod.outlook.com
+ ([fe80::15b:c868:d1bd:c781%9]) with mapi id 15.20.1601.007; Thu, 31 Jan 2019
+ 16:45:35 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     Sasha Levin <sashal@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        kimbrownkd <kimbrownkd@gmail.com>
+CC:     Long Li <longli@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show
+ functions
+Thread-Topic: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show
+ functions
+Thread-Index: AQHUsfdQr9slvBztV0itgZ+Z8timDaW6pkUAgAAxKgCAAMiIAIAJg9qAgAGHowCAAuF3AIAAFypQ
+Date:   Thu, 31 Jan 2019 16:45:35 +0000
+Message-ID: <DM5PR2101MB091847B2B68D7F9F2050CE45D7910@DM5PR2101MB0918.namprd21.prod.outlook.com>
+References: <20190122020759.GA4054@ubu-Virtual-Machine>
+ <PU1P153MB0169EB8CFC0A69407A8AE2C2BF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20190122064246.GA28613@ubu-Virtual-Machine>
+ <PU1P153MB01696D28CDDC098307EBD5AFBF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20190128195845.GA3723@ubu-Virtual-Machine>
+ <PU1P153MB01699B96311157EA9DF515E6BF970@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20190131151958.GT3973@sasha-vm>
+In-Reply-To: <20190131151958.GT3973@sasha-vm>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-01-31T16:45:32.5707193Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=fb886720-697f-49cc-8821-d3a52c84d815;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB1063;6:LTcvlMw67CntkSWVODpGYzZPeOy0wlip9IZcZmAVLmmMKmcb2IgV1Nqa5Rq9HOljHpayzpAmYe5Tn+AMylTI/deNXYFBP+KvZG79QYS7G4uG1SoUEOAIRAeyVYUVee613wIn98Otjyf3mWUVnRhyRvj3bFUE0nbDGvFNlfUSVFi/vcnXdXXa8UdaoHLHqsMAdQZ7o8N9hoDgs8ABX3HaVfWRnvxKF2g7HJkqEAo2tGxbTh0QRzLRH7tHLnyyEyLuGf5RLelqBg261aZVt6kQRm6UiIONO1MdTL//2DypiQ5CPxn8Kipm2IEgHaopUloZ0ngUWPSQ1JdBAtKm01mhM+e4HercyHQDhvoyzP/xnLfwrJWwB6DQfUerppoNQy/IHWoPFQG83PhyNqywVi0xrf/QoZIf2LdJZzdHOC7vj1LZp/cZylbjcu2u89t3jQLhZD1q537kGKF3+OR0ZJBM/A==;5:fXtLT9oNXeyI0niXRQq1tlxhLBwGoVIpqhkQGRNpKtY6PXxAkcS/OKzanF/75WxlAr03brPEUAccPV6YWLtt+HEvrR6zrfRA/jtzK4vdy208l0K73ET+o7MBjF4rCjMwvILhthtMG0OPlJfG62pe4hkeLV8WdplHFNgip+ZeE+y3DDPbLjIL89WbNfQbn4t/Tehsggq+ASDhYw0gcH0wSg==;7:dV6uV3X4S9JdRF7dENDEM+6Da6Ez1wlYcjmLy28FicEzDwdoQaix9tkb8t4MrjMHk4RaOlR8aOQudMXDpyxe1Zn2EgSyAfJtyQXK2EIW3gvQn0ybkaiJysh6X2kpk33qlWhc7F1R8vkFT/FznqQGdA==
+x-ms-office365-filtering-correlation-id: 36e55795-705f-4565-2da8-08d6879b85c7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM5PR2101MB1063;
+x-ms-traffictypediagnostic: DM5PR2101MB1063:
+x-ms-exchange-purlcount: -3
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <DM5PR2101MB10635D229D8CE0DB6E14BF7DD7910@DM5PR2101MB1063.namprd21.prod.outlook.com>
+x-forefront-prvs: 09347618C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(136003)(346002)(39860400002)(366004)(199004)(189003)(3846002)(10090500001)(68736007)(8990500004)(186003)(86612001)(71200400001)(4744005)(76176011)(97736004)(71190400001)(6346003)(6506007)(256004)(14444005)(99286004)(26005)(86362001)(7696005)(6116002)(102836004)(7736002)(81156014)(53936002)(478600001)(2906002)(81166006)(66066001)(22452003)(1511001)(105586002)(10290500003)(4326008)(229853002)(33656002)(39060400002)(6246003)(305945005)(106356001)(316002)(486006)(446003)(11346002)(476003)(9686003)(14454004)(6436002)(74316002)(93886005)(25786009)(54906003)(8676002)(55016002)(8936002)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1063;H:DM5PR2101MB0918.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: RDosqDiKNX62bwefjqlaaYjvTZ53VTcprN3e843+YnH261YpwiPndqFSmLq62AFVIx7iD1PMlOM03L4qgW8umDXcfDmV2qNCSM6JCzP7jhjjs1toLcvh9w+YO0NPLdHHILObK7pDPlZVHLDKi9KZ0Nq/ES6DDsnJAmm4MyLP5BaVX6AuVmZGz2nAgSiLJ5VeZFwIYBn61R32fWKZ6T2z7NXuwUQxuQgZDDiz1oZiZkdgkSc+lzQc/w9o0tMS4pigXNlQ0SgNS3A3zAfsHuE5fsL6GhRdU+BryAUeIGRQoz8UlbvD+u1dVHxzFIywVUo6W4caGbDjdAp7K8LQt3QxbCrHrQ45y+azeo9GgUkpekJVDpww9WrJ4N9x0K7Gw5PTivNPD8iTRBWPxgYlhr9GRiIoSLQutx5kSgjNgCB+Y6s=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vgmloT8=KlyDOyf+POR3ria"; protocol="application/pgp-signature"
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36e55795-705f-4565-2da8-08d6879b85c7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 16:45:35.2228
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/vgmloT8=KlyDOyf+POR3ria
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, 30 Jan 2019 10:04:34 +0100
-Johan Hovold <johan@kernel.org> wrote:
-
-> On Tue, Jan 29, 2019 at 08:38:43AM +0100, Andreas Kemnade wrote:
-> > The GTA04 has a w2sg0004 or w2sg0084 gps chip. Not detectable
-> > which one is mounted so use the compatibility entry for w2sg0004
-> > for all which will work for both.
-> >=20
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> > Changes in v2:
-> > - some s/gps/gnss/
-> > - not added vcc-supply because the regulator is not modelled
-> >   in dts at all =20
+From: Sasha Levin <sashal@kernel.org> Sent: Thursday, January 31, 2019 7:20=
+ AM
 >=20
-> I strongly suggest not sending revised patches before people have a
-> chance to comment on your previous version and resolve any issues that
-> may have been raised.
+> I've queued this one for hyper-fixes, thanks all!
+>=20
 
-for technical check there was already some small team review ahead,
-so I expect only formality issues and not something complicated and
-was not mentally prepared for more discussion.
+Actually, please hold off on queuing this one.  In a conversation I had yes=
+terday with Kim, they had identified a deadlock.  Kim was going to be looki=
+ng at some revisions to avoid the deadlock.
 
-At that point I had the impression that I am not allowed to have
-such driverless things into dtb, so I had the impression that I have
-to follow two conflicting rules at the same time.
-That leads to the impression that I worked a long way into a dead end
-which made me quite angry so I was not as contructive as I should be.
+Kim -- please confirm.
 
-Regards,
-Andreas
-
---Sig_/vgmloT8=KlyDOyf+POR3ria
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAlxTJR8ACgkQl4jFM1s/
-ye/4WxAApY3EPVu2dFHryhqT6YYsMDk+N6f2ERAo9HcBNIbOPGiz6FshPM7OygZU
-cpK/MUzxU/9Arar1F5zn31BfmQhsFlAEfyk5YLTq1k6qkCwkKcOQfeQT5eOvTh5w
-qJLJKGlQVX3nUz6gbANxUsRS9zhPrfbYjuI/lkEesOANXl95wBgTxouQb1TSK3Qz
-csKxCMXYAe2xEfaUcaC/bTPMSuxBCdra3O8o4m1rbMwc4cOihSUcuisKSkhv3402
-IBK3S4ctKd5UCaxmaEum90rjGkQ6l56EjJVrKC2L9IyrqA5pv9aet7ei4fS59NHg
-ciF9gjtw3eeqVM52byHQv5pv+enQE+y74wVuOr1BTUVHe3Uon8Io7JLWJ0aaSe3w
-ob3L66BYsqaR/Ub4J/TM4PGDXwTHNhpCGx2XayyDuGqPqiMWL40A8NEWSYQAfem8
-BUKT18OrjmUZjKu5vdqm3nzMqL/7L5Cm0jUGl1FWBPajNZbTBaSRSQxhjDzJTSuu
-B1vwirWlPelzFwtpy1cfcyVt5z8LVInQU3518EJJRwDohDuTkpKCjsO9SVT13FRw
-8t3/jAk9paA2SIOPZtRJvhHw0pUDsvMqoRQr3qqcamp3GAC/2MpzgDWDjjMN/7US
-3M0i/neoH3f1gP8uIppD7ScNlwLgTOHtz0w5bhPV3rvZF2ZGr+0=
-=2Hfv
------END PGP SIGNATURE-----
-
---Sig_/vgmloT8=KlyDOyf+POR3ria--
+Michael
