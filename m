@@ -2,440 +2,160 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC36C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9FFC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 044BC20B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D19620B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:28:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DPn0TSXC"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="NoI8HzZQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfAaT2v (ORCPT
+        id S1729354AbfAaT2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:28:51 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40896 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728194AbfAaT2q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:28:46 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z10so1774546pgp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:28:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cZ3PwRFdk33ELOE5qVb0l9Wki+krl/d+YpFTvIwA3rY=;
-        b=DPn0TSXCRoUeJKI4gsgZ10K/MnKeiLJ+EFzBgb3Ch/tm8psimjHRTs7HoNTrfefhvd
-         iZqDhuUH61hYqjIkZA5s4rQm+xj/NBvypxTsazmEY9t9Tf/YXXcIzqrHnCPBaCXhQyid
-         rNF7LuziiiMSfCidEPURL8FFTO/SXxGhxkogw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cZ3PwRFdk33ELOE5qVb0l9Wki+krl/d+YpFTvIwA3rY=;
-        b=tsBxCTXvtpKgYIdGQ1Z/bFJ9OqQkkyrMkMaCYURm5oDJa0fb4Mg8E5oMdfDbQzRRng
-         giZq6Lg2t9dAOYCGDxQn68uu6VFUiK91uhD+3aUgJnf43XVVme73GsFNSEUaW4T3UTNO
-         lbgcdTEU1RK2pP+nf5FGBSRrjbPc//9MxrEtfp2tqgAZrp70d/SBCDMCRc8pNcBPhSeC
-         2AVTqhYf93UeencZgYH6x16no1J2XqaSR5t0S2NJez6diB/uhgs5w7cwaSONmy1EU0Tq
-         3cJUSug63SWcPRPuO+D4gtrDG/XnMK945tHZLbAf6ssoULBtE492c7R64QyKEpft0/5y
-         /hiQ==
-X-Gm-Message-State: AJcUukeCUGufv+6HOnZudApMZic1VWRHGMVQhnXSfu0RDVR5eHQ9oZ7g
-        Fxw4yXb2TMj5MTo/w3Rh3Rya9Q==
-X-Google-Smtp-Source: ALg8bN7P0qVv36jaVLpawI3vrFNh0szzVf9xSSR1coWNemFH1rDX8qrOFCpO8ffM/RmTa4V1M5JqSw==
-X-Received: by 2002:a62:c302:: with SMTP id v2mr36383120pfg.155.1548962925744;
-        Thu, 31 Jan 2019 11:28:45 -0800 (PST)
-Received: from skynet.sea.corp.google.com ([2620:15c:17:4:29de:3bb1:1270:e679])
-        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.28.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 11:28:45 -0800 (PST)
-From:   Thomas Garnier <thgarnie@chromium.org>
-To:     kernel-hardening@lists.openwall.com
-Cc:     kristen@linux.intel.com, Thomas Garnier <thgarnie@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Subject: [PATCH v6 14/27] x86/percpu: Adapt percpu for PIE support
-Date:   Thu, 31 Jan 2019 11:24:21 -0800
-Message-Id: <20190131192533.34130-15-thgarnie@chromium.org>
-X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
-In-Reply-To: <20190131192533.34130-1-thgarnie@chromium.org>
-References: <20190131192533.34130-1-thgarnie@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 31 Jan 2019 14:28:55 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:16559 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729317AbfAaT2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 14:28:52 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43r9Jf259sz9vBJX;
+        Thu, 31 Jan 2019 20:28:50 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=NoI8HzZQ; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id aKAkTvAvNTuy; Thu, 31 Jan 2019 20:28:50 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43r9Jf0wyVz9vBJT;
+        Thu, 31 Jan 2019 20:28:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548962930; bh=aQhJWwaN99PD5WVxlF6MWDssLL3WHA0NK46/37sosQM=;
+        h=From:Subject:To:Cc:Date:From;
+        b=NoI8HzZQz9zT/vPJqWhubnJ0MpROUmj/grZtPXcd9CUhWkj5MHEwKkKyrge0snUQu
+         iDJd7lFVFW4qnWGkFJu+5Vi/QhDTDJhfjSYb3aSe/TInYLwtDu6Ym9poNk/4Yb4Qri
+         0q0aV6g8P6IkXLxEa/ph5q/+lmGyy718FxQjShh4=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2A6E78B842;
+        Thu, 31 Jan 2019 20:28:50 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id ODhGuRms3wTm; Thu, 31 Jan 2019 20:28:50 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id ED3B48B835;
+        Thu, 31 Jan 2019 20:28:49 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id EE85F72E25; Thu, 31 Jan 2019 19:28:49 +0000 (UTC)
+Message-Id: <a2cf0c09e15a3f8806096df73e41fae0fa10d2bf.1548962883.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc: drop page_is_ram() and walk_system_ram_range()
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 31 Jan 2019 19:28:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perpcu uses a clever design where the .percu ELF section has a virtual
-address of zero and the custom linux relocation code avoid relocating
-specific symbols. It makes the code simple and easily adaptable with or
-without SMP support.
+Since commit c40dd2f76644 ("powerpc: Add System RAM to /proc/iomem")
+it is possible to use the generic walk_system_ram_range() and
+the generic page_is_ram().
 
-This design is incompatible with PIE. While creating a PIE binary, the
-copmiler tries to make everything relative. The compiler will attempt to
-generate instructions with the distance between zero and any 64-bit
-virtual address. It will fail as the relocation range cannot fit within
-the possible instructions accessing a segment register.
-
-This patch solves tihs problem by removing the zero mapping. The .percpu
-symbols are now close to the base of the kernel and the compiler
-generates appropriate relocations. To accomodate this change, the GS base
-is adapted to be the difference between zero and the .percpu section
-address. These changes are done only when PIE is enabled. The original
-implementation is kept as-is by default.
-
-The assembly and PER_CPU macros are changed to use relative references
-when PIE is enabled.
-
-The KALLSYMS_ABSOLUTE_PERCPU configuration is disabled with PIE given
-percpu symbols are not absolute in this case.
-
-Position Independent Executable (PIE) support will allow to extend the
-KASLR randomization range below 0xffffffff80000000.
-
-Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
+Fixes: c40dd2f76644 ("powerpc: Add System RAM to /proc/iomem")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/x86/entry/calling.h         |  2 +-
- arch/x86/entry/entry_64.S        |  4 ++--
- arch/x86/include/asm/percpu.h    | 25 +++++++++++++++++++------
- arch/x86/include/asm/processor.h |  4 +++-
- arch/x86/kernel/head_64.S        |  4 ++++
- arch/x86/kernel/setup_percpu.c   |  5 ++++-
- arch/x86/kernel/vmlinux.lds.S    | 13 +++++++++++--
- arch/x86/lib/cmpxchg16b_emu.S    |  8 ++++----
- arch/x86/xen/xen-asm.S           | 12 ++++++------
- init/Kconfig                     |  2 +-
- 10 files changed, 55 insertions(+), 24 deletions(-)
+ arch/powerpc/Kconfig            |  3 ---
+ arch/powerpc/include/asm/page.h |  1 -
+ arch/powerpc/mm/mem.c           | 33 ---------------------------------
+ 3 files changed, 37 deletions(-)
 
-diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index efb0d1b1f15f..d5a6d3a0c24b 100644
---- a/arch/x86/entry/calling.h
-+++ b/arch/x86/entry/calling.h
-@@ -218,7 +218,7 @@ For 32-bit we have the following conventions - kernel is built with
- .endm
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 0a26e0075ce5..0006ca6a7664 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -479,9 +479,6 @@ config ARCH_CPU_PROBE_RELEASE
+ config ARCH_ENABLE_MEMORY_HOTPLUG
+ 	def_bool y
  
- #define THIS_CPU_user_pcid_flush_mask   \
--	PER_CPU_VAR(cpu_tlbstate) + TLB_STATE_user_pcid_flush_mask
-+	PER_CPU_VAR(cpu_tlbstate + TLB_STATE_user_pcid_flush_mask)
+-config ARCH_HAS_WALK_MEMORY
+-	def_bool y
+-
+ config ARCH_ENABLE_MEMORY_HOTREMOVE
+ 	def_bool y
  
- .macro SWITCH_TO_USER_CR3_NOSTACK scratch_reg:req scratch_reg2:req
- 	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 16a93eb4c11f..fc15fe058d3c 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -298,7 +298,7 @@ ENTRY(__switch_to_asm)
+diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+index 5c5ea2413413..aa4497175bd3 100644
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -326,7 +326,6 @@ struct page;
+ extern void clear_user_page(void *page, unsigned long vaddr, struct page *pg);
+ extern void copy_user_page(void *to, void *from, unsigned long vaddr,
+ 		struct page *p);
+-extern int page_is_ram(unsigned long pfn);
+ extern int devmem_is_allowed(unsigned long pfn);
  
- #ifdef CONFIG_STACKPROTECTOR
- 	movq	TASK_stack_canary(%rsi), %rbx
--	movq	%rbx, PER_CPU_VAR(irq_stack_union)+stack_canary_offset
-+	movq	%rbx, PER_CPU_VAR(irq_stack_union + stack_canary_offset)
+ #ifdef CONFIG_PPC_SMLPAR
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index 33cc6f676fa6..fa9916c2c662 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -80,11 +80,6 @@ static inline pte_t *virt_to_kpte(unsigned long vaddr)
+ #define TOP_ZONE ZONE_NORMAL
  #endif
  
- #ifdef CONFIG_RETPOLINE
-@@ -841,7 +841,7 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work_interrupt		smp_irq_work_interrupt
- /*
-  * Exception entry points.
-  */
--#define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw) + (TSS_ist + ((x) - 1) * 8)
-+#define CPU_TSS_IST(x) PER_CPU_VAR(cpu_tss_rw + (TSS_ist + ((x) - 1) * 8))
- 
- /**
-  * idtentry - Generate an IDT entry stub
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index 1a19d11cfbbd..608c15751f29 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -5,9 +5,11 @@
- #ifdef CONFIG_X86_64
- #define __percpu_seg		gs
- #define __percpu_mov_op		movq
-+#define __percpu_rel		(%rip)
- #else
- #define __percpu_seg		fs
- #define __percpu_mov_op		movl
-+#define __percpu_rel
- #endif
- 
- #ifdef __ASSEMBLY__
-@@ -28,10 +30,14 @@
- #define PER_CPU(var, reg)						\
- 	__percpu_mov_op %__percpu_seg:this_cpu_off, reg;		\
- 	lea var(reg), reg
--#define PER_CPU_VAR(var)	%__percpu_seg:var
-+/* Compatible with Position Independent Code */
-+#define PER_CPU_VAR(var)		%__percpu_seg:(var)##__percpu_rel
-+/* Rare absolute reference */
-+#define PER_CPU_VAR_ABS(var)		%__percpu_seg:var
- #else /* ! SMP */
- #define PER_CPU(var, reg)	__percpu_mov_op $var, reg
--#define PER_CPU_VAR(var)	var
-+#define PER_CPU_VAR(var)	(var)##__percpu_rel
-+#define PER_CPU_VAR_ABS(var)	var
- #endif	/* SMP */
- 
- #ifdef CONFIG_X86_64_SMP
-@@ -209,27 +215,34 @@ do {									\
- 	pfo_ret__;					\
- })
- 
-+/* Position Independent code uses relative addresses only */
-+#ifdef CONFIG_X86_PIE
-+#define __percpu_stable_arg __percpu_arg(a1)
-+#else
-+#define __percpu_stable_arg __percpu_arg(P1)
-+#endif
-+
- #define percpu_stable_op(op, var)			\
- ({							\
- 	typeof(var) pfo_ret__;				\
- 	switch (sizeof(var)) {				\
- 	case 1:						\
--		asm(op "b "__percpu_arg(P1)",%0"	\
-+		asm(op "b "__percpu_stable_arg ",%0"	\
- 		    : "=q" (pfo_ret__)			\
- 		    : "p" (&(var)));			\
- 		break;					\
- 	case 2:						\
--		asm(op "w "__percpu_arg(P1)",%0"	\
-+		asm(op "w "__percpu_stable_arg ",%0"	\
- 		    : "=r" (pfo_ret__)			\
- 		    : "p" (&(var)));			\
- 		break;					\
- 	case 4:						\
--		asm(op "l "__percpu_arg(P1)",%0"	\
-+		asm(op "l "__percpu_stable_arg ",%0"	\
- 		    : "=r" (pfo_ret__)			\
- 		    : "p" (&(var)));			\
- 		break;					\
- 	case 8:						\
--		asm(op "q "__percpu_arg(P1)",%0"	\
-+		asm(op "q "__percpu_stable_arg ",%0"	\
- 		    : "=r" (pfo_ret__)			\
- 		    : "p" (&(var)));			\
- 		break;					\
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index ce9851bf6778..18f1e8269ad7 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -24,6 +24,7 @@ struct vm86;
- #include <asm/special_insns.h>
- #include <asm/fpu/types.h>
- #include <asm/unwind_hints.h>
-+#include <asm/sections.h>
- 
- #include <linux/personality.h>
- #include <linux/cache.h>
-@@ -402,7 +403,8 @@ DECLARE_INIT_PER_CPU(irq_stack_union);
- 
- static inline unsigned long cpu_kernelmode_gs_base(int cpu)
+-int page_is_ram(unsigned long pfn)
+-{
+-	return memblock_is_memory(__pfn_to_phys(pfn));
+-}
+-
+ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+ 			      unsigned long size, pgprot_t vma_prot)
  {
--	return (unsigned long)per_cpu(irq_stack_union.gs_base, cpu);
-+	return (unsigned long)per_cpu(irq_stack_union.gs_base, cpu) -
-+		(unsigned long)__per_cpu_start;
- }
- 
- DECLARE_PER_CPU(char *, irq_stack_ptr);
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index b9b6c6aa0313..0f1739d7bff7 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -269,7 +269,11 @@ ENDPROC(start_cpu0)
- 	GLOBAL(initial_code)
- 	.quad	x86_64_start_kernel
- 	GLOBAL(initial_gs)
-+#ifdef CONFIG_X86_PIE
-+	.quad	0
-+#else
- 	.quad	INIT_PER_CPU_VAR(irq_stack_union)
-+#endif
- 	GLOBAL(initial_stack)
- 	/*
- 	 * The SIZEOF_PTREGS gap is a convention which helps the in-kernel
-diff --git a/arch/x86/kernel/setup_percpu.c b/arch/x86/kernel/setup_percpu.c
-index e8796fcd7e5a..cc66f3434da9 100644
---- a/arch/x86/kernel/setup_percpu.c
-+++ b/arch/x86/kernel/setup_percpu.c
-@@ -26,7 +26,7 @@
- DEFINE_PER_CPU_READ_MOSTLY(int, cpu_number);
- EXPORT_PER_CPU_SYMBOL(cpu_number);
- 
--#ifdef CONFIG_X86_64
-+#if defined(CONFIG_X86_64) && !defined(CONFIG_X86_PIE)
- #define BOOT_PERCPU_OFFSET ((unsigned long)__per_cpu_load)
- #else
- #define BOOT_PERCPU_OFFSET 0
-@@ -40,6 +40,9 @@ unsigned long __per_cpu_offset[NR_CPUS] __ro_after_init = {
- };
- EXPORT_SYMBOL(__per_cpu_offset);
- 
-+/* Used to calculate gs_base for each CPU */
-+EXPORT_SYMBOL(__per_cpu_start);
-+
- /*
-  * On x86_64 symbols referenced from code should be reachable using
-  * 32bit relocations.  Reserve space for static percpu variables in
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index bad8c51fee6e..7b461fa82107 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -222,9 +222,14 @@ SECTIONS
- 	/*
- 	 * percpu offsets are zero-based on SMP.  PERCPU_VADDR() changes the
- 	 * output PHDR, so the next output section - .init.text - should
--	 * start another segment - init.
-+	 * start another segment - init. For Position Independent Code, the
-+	 * per-cpu section cannot be zero-based because everything is relative.
- 	 */
-+#ifdef CONFIG_X86_PIE
-+	PERCPU_SECTION(INTERNODE_CACHE_BYTES)
-+#else
- 	PERCPU_VADDR(INTERNODE_CACHE_BYTES, 0, :percpu)
-+#endif
- 	ASSERT(SIZEOF(.data..percpu) < CONFIG_PHYSICAL_START,
- 	       "per-CPU data too large - increase CONFIG_PHYSICAL_START")
+@@ -176,34 +171,6 @@ int __meminit arch_remove_memory(int nid, u64 start, u64 size,
  #endif
-@@ -401,7 +406,11 @@ SECTIONS
-  * Per-cpu symbols which need to be offset from __per_cpu_load
-  * for the boot processor.
-  */
-+#ifdef CONFIG_X86_PIE
-+#define INIT_PER_CPU(x) init_per_cpu__##x = ABSOLUTE(x)
-+#else
- #define INIT_PER_CPU(x) init_per_cpu__##x = ABSOLUTE(x) + __per_cpu_load
-+#endif
- INIT_PER_CPU(gdt_page);
- INIT_PER_CPU(irq_stack_union);
+ #endif /* CONFIG_MEMORY_HOTPLUG */
  
-@@ -411,7 +420,7 @@ INIT_PER_CPU(irq_stack_union);
- . = ASSERT((_end - _text <= KERNEL_IMAGE_SIZE),
- 	   "kernel image bigger than KERNEL_IMAGE_SIZE");
- 
--#ifdef CONFIG_SMP
-+#if defined(CONFIG_SMP) && !defined(CONFIG_X86_PIE)
- . = ASSERT((irq_stack_union == 0),
-            "irq_stack_union is not at start of per-cpu area");
- #endif
-diff --git a/arch/x86/lib/cmpxchg16b_emu.S b/arch/x86/lib/cmpxchg16b_emu.S
-index 9b330242e740..254950604ae4 100644
---- a/arch/x86/lib/cmpxchg16b_emu.S
-+++ b/arch/x86/lib/cmpxchg16b_emu.S
-@@ -33,13 +33,13 @@ ENTRY(this_cpu_cmpxchg16b_emu)
- 	pushfq
- 	cli
- 
--	cmpq PER_CPU_VAR((%rsi)), %rax
-+	cmpq PER_CPU_VAR_ABS((%rsi)), %rax
- 	jne .Lnot_same
--	cmpq PER_CPU_VAR(8(%rsi)), %rdx
-+	cmpq PER_CPU_VAR_ABS(8(%rsi)), %rdx
- 	jne .Lnot_same
- 
--	movq %rbx, PER_CPU_VAR((%rsi))
--	movq %rcx, PER_CPU_VAR(8(%rsi))
-+	movq %rbx, PER_CPU_VAR_ABS((%rsi))
-+	movq %rcx, PER_CPU_VAR_ABS(8(%rsi))
- 
- 	popfq
- 	mov $1, %al
-diff --git a/arch/x86/xen/xen-asm.S b/arch/x86/xen/xen-asm.S
-index 8019edd0125c..a5d73d3218be 100644
---- a/arch/x86/xen/xen-asm.S
-+++ b/arch/x86/xen/xen-asm.S
-@@ -21,7 +21,7 @@
- ENTRY(xen_irq_enable_direct)
- 	FRAME_BEGIN
- 	/* Unmask events */
--	movb $0, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_mask
-+	movb $0, PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_mask)
- 
- 	/*
- 	 * Preempt here doesn't matter because that will deal with any
-@@ -30,7 +30,7 @@ ENTRY(xen_irq_enable_direct)
- 	 */
- 
- 	/* Test for pending */
--	testb $0xff, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_pending
-+	testb $0xff, PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_pending)
- 	jz 1f
- 
- 	call check_events
-@@ -45,7 +45,7 @@ ENTRY(xen_irq_enable_direct)
-  * non-zero.
-  */
- ENTRY(xen_irq_disable_direct)
--	movb $1, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_mask
-+	movb $1, PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_mask)
- 	ret
- ENDPROC(xen_irq_disable_direct)
- 
-@@ -59,7 +59,7 @@ ENDPROC(xen_irq_disable_direct)
-  * x86 use opposite senses (mask vs enable).
-  */
- ENTRY(xen_save_fl_direct)
--	testb $0xff, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_mask
-+	testb $0xff, PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_mask)
- 	setz %ah
- 	addb %ah, %ah
- 	ret
-@@ -80,7 +80,7 @@ ENTRY(xen_restore_fl_direct)
- #else
- 	testb $X86_EFLAGS_IF>>8, %ah
- #endif
--	setz PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_mask
-+	setz PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_mask)
- 	/*
- 	 * Preempt here doesn't matter because that will deal with any
- 	 * pending interrupts.  The pending check may end up being run
-@@ -88,7 +88,7 @@ ENTRY(xen_restore_fl_direct)
- 	 */
- 
- 	/* check for unmasked and pending */
--	cmpw $0x0001, PER_CPU_VAR(xen_vcpu_info) + XEN_vcpu_info_pending
-+	cmpw $0x0001, PER_CPU_VAR(xen_vcpu_info + XEN_vcpu_info_pending)
- 	jnz 1f
- 	call check_events
- 1:
-diff --git a/init/Kconfig b/init/Kconfig
-index 1486b913daeb..bb383615823a 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1453,7 +1453,7 @@ config KALLSYMS_ALL
- config KALLSYMS_ABSOLUTE_PERCPU
- 	bool
- 	depends on KALLSYMS
--	default X86_64 && SMP
-+	default X86_64 && SMP && !X86_PIE
- 
- config KALLSYMS_BASE_RELATIVE
- 	bool
+-/*
+- * walk_memory_resource() needs to make sure there is no holes in a given
+- * memory range.  PPC64 does not maintain the memory layout in /proc/iomem.
+- * Instead it maintains it in memblock.memory structures.  Walk through the
+- * memory regions, find holes and callback for contiguous regions.
+- */
+-int
+-walk_system_ram_range(unsigned long start_pfn, unsigned long nr_pages,
+-		void *arg, int (*func)(unsigned long, unsigned long, void *))
+-{
+-	struct memblock_region *reg;
+-	unsigned long end_pfn = start_pfn + nr_pages;
+-	unsigned long tstart, tend;
+-	int ret = -1;
+-
+-	for_each_memblock(memory, reg) {
+-		tstart = max(start_pfn, memblock_region_memory_base_pfn(reg));
+-		tend = min(end_pfn, memblock_region_memory_end_pfn(reg));
+-		if (tstart >= tend)
+-			continue;
+-		ret = (*func)(tstart, tend - tstart, arg);
+-		if (ret)
+-			break;
+-	}
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(walk_system_ram_range);
+-
+ #ifndef CONFIG_NEED_MULTIPLE_NODES
+ void __init mem_topology_setup(void)
+ {
 -- 
-2.20.1.495.gaa96b0ce6b-goog
+2.13.3
 
