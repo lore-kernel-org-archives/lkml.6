@@ -2,193 +2,122 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A36DCC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0B1C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73CDB218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:48:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="akTQCSLf"
+	by mail.kernel.org (Postfix) with ESMTP id 921552086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:48:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733209AbfAaMsS (ORCPT
+        id S1733269AbfAaMsf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:48:18 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33063 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732280AbfAaMsR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:48:17 -0500
-Received: by mail-wr1-f67.google.com with SMTP id p7so3190526wru.0;
-        Thu, 31 Jan 2019 04:48:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Yd43TovcFvn+gTu3MXDUxMgu2UPcVgf1mZ4D2qpgkmQ=;
-        b=akTQCSLfMZvazv1E64Dfc+P7eWHwUWlj1Xupp/q9WOhOnESLJaxTwrf5oAgIQR0eFp
-         vVHU++ndgynNBOVq6CT6HbpWewg9sadINV01Hbuuxod2pwbwq1e0MEPpoAI4HFPzvFmJ
-         lmERuDNPMk5ncL/gmpRKzDC28cnAxytltQpSSULrp7AueX5GQodI28yQBMRuX1ujqYBC
-         +goF1Z30NtvHUx2XwycMMHZINDi4dPmbXlW7tg+GLCdvOSWhKEilVrLLZ5quOAMPXslG
-         DlZqWD99lm9Zoh95uNDPeRqaoIvmNgHGvkTvqITA44j+rbVQsPqpj7Uzkw7IAKecFugI
-         dLXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Yd43TovcFvn+gTu3MXDUxMgu2UPcVgf1mZ4D2qpgkmQ=;
-        b=X+IDsp1X5QYAFzAAeeC8eLxz7/95f+UXjk1RvSDodOoF/6ZKVcqip8sGLB6ilZD6pK
-         +Tvod/A2NyA7b3TaSK/spJffSyzZ/sGLsv+nRSVO/PzIAsNF2PiV4Uc7iR2h4kVg5uDF
-         U0Er4iIDpdz/VFsHo6J/9o9jgC/e2SVIw3C0UXKU3L/62bHM+aJqG+KVqNRqs1UV/JuS
-         /PNclj7PBH5tWN+0RZCasHa2VbzuyR5NKONc/0e7r8a+lutBy4UG2XCFADpWaRRyBFMZ
-         LOObmi5nUVWWWogTFXlHbCa6yULy00FinovtHkYTjNJqJVwUq26khV5geNiY1qnIUnwk
-         gdLQ==
-X-Gm-Message-State: AJcUukdbHC5uZi4ylAmgHGA5OAciPmSwcEdZj+18tXFfj/J9hLgOz3Oa
-        MmuwT0IJasgr+muP1UW57c9O97+T+8c=
-X-Google-Smtp-Source: ALg8bN74ErqOd/ePEuO/9fNfd00nN4cFK+qtIHw9IudEJmhpTzFrbdzuTdwtwljepSxPFaYRnkzPMA==
-X-Received: by 2002:adf:f009:: with SMTP id j9mr33783666wro.170.1548938894549;
-        Thu, 31 Jan 2019 04:48:14 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id k19sm9630268wre.5.2019.01.31.04.48.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 04:48:13 -0800 (PST)
-Date:   Thu, 31 Jan 2019 13:48:13 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH V8 4/5] i2c: tegra: Update transfer timeout
-Message-ID: <20190131124813.GJ23438@ulmo>
-References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
- <1548915387-28826-4-git-send-email-skomatineni@nvidia.com>
+        Thu, 31 Jan 2019 07:48:35 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43166 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732280AbfAaMsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 07:48:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61030A78;
+        Thu, 31 Jan 2019 04:48:34 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 803203F589;
+        Thu, 31 Jan 2019 04:48:33 -0800 (PST)
+Subject: Re: [PATCH] irqchip/gic-v3-its: Fix probing for ITT_entry_size
+To:     Zenghui Yu <yuzenghui@huawei.com>
+Cc:     wanghaibin.wang@huawei.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <1548933583-12504-1-git-send-email-yuzenghui@huawei.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <b25b4419-d552-4829-027f-3b676afc7fbf@arm.com>
+Date:   Thu, 31 Jan 2019 12:48:32 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kr14OxHsRwZHHqxS"
-Content-Disposition: inline
-In-Reply-To: <1548915387-28826-4-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1548933583-12504-1-git-send-email-yuzenghui@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---kr14OxHsRwZHHqxS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jan 30, 2019 at 10:16:26PM -0800, Sowjanya Komatineni wrote:
-> Tegra194 allows max of 64K bytes and Tegra186 and prior allows
-> max of 4K bytes of transfer per packet.
->=20
-> one sec timeout is not enough for transfers more than 10K bytes
-> at STD bus rate.
->=20
-> This patch updates I2C transfer timeout based on the transfer size
-> and I2C bus rate to allow enough time during max transfer size at
-> lower bus speed.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+On 31/01/2019 11:19, Zenghui Yu wrote:
+> According to ARM IHI 0069C (ID070116), we should use GITS_TYPER's
+> bits [7:4] as ITT_entry_size.
+> 
+> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
 > ---
->  [V8] : Added comment with explaination of xfer time calculation
->  [V5/V6/V7] : Same as V4
->  [V4] : V4 series includes bus clear support and this patch is updated wi=
-th
-> 	fixed timeout of 1sec for bus clear operation.
->  [V3] : Same as V2
->  [V2] : Added this patch in V2 series to allow enough time for data trans=
-fer
-> 	to happen.
-> 	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
-> 	takes argument with this patch.
->=20
->  drivers/i2c/busses/i2c-tegra.c | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index 025d63972e50..435518cd91b6 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -25,7 +25,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/reset.h>
-> =20
-> -#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
-> +#define TEGRA_I2C_TIMEOUT(ms) (msecs_to_jiffies(ms))
+>  include/linux/irqchip/arm-gic-v3.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+> index 071b4cb..c848a7c 100644
+> --- a/include/linux/irqchip/arm-gic-v3.h
+> +++ b/include/linux/irqchip/arm-gic-v3.h
+> @@ -319,7 +319,7 @@
+>  #define GITS_TYPER_PLPIS		(1UL << 0)
+>  #define GITS_TYPER_VLPIS		(1UL << 1)
+>  #define GITS_TYPER_ITT_ENTRY_SIZE_SHIFT	4
+> -#define GITS_TYPER_ITT_ENTRY_SIZE(r)	((((r) >> GITS_TYPER_ITT_ENTRY_SIZE_SHIFT) & 0x1f) + 1)
+> +#define GITS_TYPER_ITT_ENTRY_SIZE(r)	((((r) >> GITS_TYPER_ITT_ENTRY_SIZE_SHIFT) & 0xf) + 1)
+>  #define GITS_TYPER_IDBITS_SHIFT		8
+>  #define GITS_TYPER_DEVBITS_SHIFT	13
+>  #define GITS_TYPER_DEVBITS(r)		((((r) >> GITS_TYPER_DEVBITS_SHIFT) & 0x1f) + 1)
+> 
 
-I think I would've just gone with direct usage of msecs_to_jiffies() but
-this is also fine.
+Well spotted. I've applied this as a fix after having added the relevant
+Fixes: tag and massaged the commit message a bit.
 
->  #define BYTES_PER_FIFO_WORD 4
-> =20
->  #define I2C_CNFG				0x000
-> @@ -901,8 +901,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c=
-_dev *i2c_dev)
->  		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
->  		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
-> =20
-> -		time_left =3D wait_for_completion_timeout(&i2c_dev->msg_complete,
-> -							TEGRA_I2C_TIMEOUT);
-> +		time_left =3D wait_for_completion_timeout(
-> +						&i2c_dev->msg_complete,
-> +						TEGRA_I2C_TIMEOUT(1000));
->  		if (time_left =3D=3D 0) {
->  			dev_err(i2c_dev->dev, "timed out for bus clear\n");
->  			return -ETIMEDOUT;
-> @@ -930,6 +931,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i=
-2c_dev,
->  	int err =3D 0;
->  	bool dma =3D false;
->  	struct dma_chan *chan;
-> +	u16 xfer_time =3D 100;
-> =20
->  	tegra_i2c_flush_fifos(i2c_dev);
-> =20
-> @@ -945,6 +947,13 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *=
-i2c_dev,
->  		xfer_size =3D msg->len + I2C_PACKET_HEADER_SIZE;
-> =20
->  	xfer_size =3D ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
-> +	/*
-> +	 * Transfer time =3D Total bits / transfer rate
-> +	 * Total bits =3D 9 bits per byte (including ACK bit) + Start & stop bi=
-ts
-> +	 */
-> +	xfer_time +=3D DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * 1000,
+Thanks,
 
-This doesn't really explain the factor of 1000 in there, which I assume
-is just to scale this to milliseconds required by msecs_to_jiffies().
-Might be worth to replace it by MSEC_PER_SEC to clarify the purpose.
-
-With that fixed:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---kr14OxHsRwZHHqxS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxS7owACgkQ3SOs138+
-s6E76xAAvSz9qAlZnj7BW53L1XZQeW7kegHf0EWkwPTJ4Y5xOBK/K6vmPzoiktAb
-B7IvwQs5MWFz1QN8T3ElgWKBffzpUrxk9jdMM77xqKEOuPPmpx4s1w5H9l47aSkc
-krq4Su92XeHGzbB8+kDJvTYEUjqgMI7r0gUEU1qnHyFb1Rzcz/vfgP7BHYPKMhKx
-hwWkPchG/TyVvKqhbaaUdMQt4Q5i9hNlN2ZftjQMHQOe1PTWaFV/yc+Y+xkCSTJB
-fXtz/iq9XD4TbJkbKAaeECkNaGsteq4kfmmG9v7yqiocEo0zz85NfoFNn97Ax8mU
-gJQvwNgQMbN5LW9oNfK0lg9t8ksMIaCA8WVGFXu8+2oDzp8PiAhrUNdzu1SWo+6s
-gW4JDdj5uEywtS/qOKm/Owjkhd2It5b+EyvFSr7N/lw1AnCZoXcC0BVNazqmBews
-iB8XYgOvN+lxGDhTynCDfWAEykArqfYYY3jLEdVD8wNI57QuTfRHZay6V5qW2i+Q
-lZz3NKjI8Pe117A2N/+QP7GHRLQub+9+6B9DaFW+aAmGnSSOL4yfW15pGSl2eXql
-Avd49+hSYtyJEb/S9dm7ywO0M35hIcPjU++7NrQFxhX6NSpAm/kNu6/jcQTvh9M8
-PW/74CRENFdPWyjX5zQ3Hn5Be0lqFs9++fIg1csSVcJvWDhVm7A=
-=yHym
------END PGP SIGNATURE-----
-
---kr14OxHsRwZHHqxS--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
