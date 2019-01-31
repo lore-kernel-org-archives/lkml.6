@@ -2,169 +2,103 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F8DC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BE7C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C4E7218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:36:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 864C2218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:37:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qwOOtGLF"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KHpYfEo+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731027AbfAaJg4 (ORCPT
+        id S1731463AbfAaJhI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 04:36:56 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:5490 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727523AbfAaJgy (ORCPT
+        Thu, 31 Jan 2019 04:37:08 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39424 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727523AbfAaJhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 04:36:54 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c52c1b60000>; Thu, 31 Jan 2019 01:36:54 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 31 Jan 2019 01:36:52 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 31 Jan 2019 01:36:52 -0800
-Received: from [10.24.44.212] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
- 2019 09:36:48 +0000
-Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
-To:     Takashi Iwai <tiwai@suse.de>, Jon Hunter <jonathanh@nvidia.com>
-CC:     <pierre-louis.bossart@linux.intel.com>, <perex@perex.cz>,
-        <alsa-devel@alsa-project.org>, <thierry.reding@gmail.com>,
-        <mkumard@nvidia.com>, <rlokhande@nvidia.com>, <sharadg@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
- <b631310f-93fa-ef4b-7014-d97fcfb2dcdf@nvidia.com>
- <s5ha7jicd4l.wl-tiwai@suse.de>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <1a248adf-2239-b6bd-1f17-270e6e579b72@nvidia.com>
-Date:   Thu, 31 Jan 2019 15:06:43 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 31 Jan 2019 04:37:08 -0500
+Received: by mail-pg1-f194.google.com with SMTP id r11so1126068pgp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 01:37:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tes1xOM6xvBzoz8vsWFdl1gZjnjCSAWcQcV+Fxh9rh0=;
+        b=KHpYfEo+JXhEzb5TasA5pOp9S+aIFFPYLGJHwRpBUswT0iYZkgrcdkoscHx5pg5gMr
+         mcKXhsiShR1L2+X4aEDQO27j8kystnfPz2s8XUw8ENWPU/cIuUOenALlkSXCgS0oGtID
+         RWYFSq4fh7dqffmWHl3ORJzflARyxUqVXjgrg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tes1xOM6xvBzoz8vsWFdl1gZjnjCSAWcQcV+Fxh9rh0=;
+        b=H6Y14834sSvFCyut3SzQuKPpgeKzkQ1LbRzD/Q5uH/I+Ka+89sBL/MveU2YKm4hIBn
+         fYKpimqcXeW0QcG3zPeGBYsIPDVqGmKOTPw4bJXMJXMqUsikoMYANpKLLTH6tykrRsSs
+         UlB7uahPNKST24wHNlw79p03wi0/hksw1wzjOzCX3hST1nBNRVxJutuuC+rnBYaWcFX8
+         zn6AsoakManM1x5Z0bCMjMnP06cH9dRF4Cyx74vJ20thy/S22/r7TQbsvRA53DrBh0iN
+         NNzc2j+XRX13EIidWwd/+NEu0UWLRgG5wEKX/QaXJV1DdKfSCdAaOxNa3KQoMg2iMmGQ
+         AYoQ==
+X-Gm-Message-State: AJcUukcKVNd3IDPePtUotdXrKydn8qozM45CiIooDty5dY/yap9+4geN
+        UJQhzq0+5FrqWCfv335AxfJTfg==
+X-Google-Smtp-Source: ALg8bN4Vd5QYGg/Bxhw0luhjSWJkPM/Xaw3w69itzt67uTY5Cq3rzivScoP4tcIwt7y0RPQwrasJhA==
+X-Received: by 2002:a63:e302:: with SMTP id f2mr31139128pgh.320.1548927427539;
+        Thu, 31 Jan 2019 01:37:07 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id x3sm9769773pgt.45.2019.01.31.01.37.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 01:37:06 -0800 (PST)
+Date:   Thu, 31 Jan 2019 15:07:04 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     Matthias Kaehlcke <mka@chromium.org>, sudeep.holla@arm.com,
+        rjw@rjwysocki.net, nm@ti.com, sboyd@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dietmar.eggemann@arm.com
+Subject: Re: [PATCH v2 1/5] PM / OPP: Introduce a power estimation helper
+Message-ID: <20190131093704.43wzrwshscvdtoj2@vireshk-i7>
+References: <20190130170506.20450-1-quentin.perret@arm.com>
+ <20190130170506.20450-2-quentin.perret@arm.com>
+ <20190130190703.GM81583@google.com>
+ <20190131072209.nhbgid3cystvr2p5@vireshk-i7>
+ <20190131093418.umsbh4eevgod42sh@queper01-lin>
 MIME-Version: 1.0
-In-Reply-To: <s5ha7jicd4l.wl-tiwai@suse.de>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548927414; bh=t7hU4BWbYrxt3i82S5lPVdAwUdq6EHwYAWrFk+zk1Kw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=qwOOtGLFGjIehM4Mowy0Otf3YwiEl3FwuXFONguulCEa6G1gDeOKhki0WKoQHyXZ6
-         Up0UYby/fDtBh6Jf9lsElikw23mnL3OZbSoAVGFZ33vVdQpCK9gZ/GFJcPfNuGk1mB
-         b4oqiYLRQGx3oK6neM0u7NSBLjzuwTLdsM9RRfIW64cXH+opq0daJnCyCwaBYrV3ed
-         oZ0cr80d1iDLqIooX+DDxpugz4y9YkfdN6XP6n320zn2WGmA5thVsWjclutfje9ewo
-         jmOUJK0eFhcJO9uBeblma/tsZpo6PS3pFISJ0oHdjp64tCN2z6ShaRpHKpTKHD97Ep
-         CF4B4aPICnRIw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131093418.umsbh4eevgod42sh@queper01-lin>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 31-01-19, 09:34, Quentin Perret wrote:
+> On Thursday 31 Jan 2019 at 12:52:09 (+0530), Viresh Kumar wrote:
+> > On 30-01-19, 11:07, Matthias Kaehlcke wrote:
+> > > On Wed, Jan 30, 2019 at 05:05:02PM +0000, Quentin Perret wrote:
+> > > > +static int __maybe_unused _get_cpu_power(unsigned long *mW, unsigned long *kHz,
+> > > > +					 int cpu)
+> > > 
+> > > why __maybe_unused?
+> > 
+> > Yeah, it isn't required I think. He probably added it for the case
+> > where CONFIG_ENERGY_MODEL=n, but even then an inline routine is
+> > defined which will accept it as argument and wouldn't do anything with
+> > it. Had it been a macro, we would have required __maybe_unused but not
+> > now.
+> 
+> The thing is, the EM_DATA_CB() macro _is_ stubbed for
+> CONFIG_ENERGY_MODEL=n:
+> 
+> https://elixir.bootlin.com/linux/v5.0-rc4/source/include/linux/energy_model.h#L165
+> 
+> So, without __maybe_unused you get do get a compiler warning.
 
-On 1/30/2019 10:10 PM, Takashi Iwai wrote:
-> On Wed, 30 Jan 2019 13:45:49 +0100,
-> Jon Hunter wrote:
->>
->> On 25/01/2019 11:06, Sameer Pujar wrote:
->>> If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
->>> will not be ON. This could cause issue during probe, where hda init
->>> setup is done. This patch enables clocks unconditionally during probe.
->>>
->>> Along with above, follwoing changes are done.
->>>    * enable runtime PM before exiting from probe work. This helps to avoid
->>>      usage of pm_runtime_get_sync/pm_runtime_put() in probe work.
->>>    * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
->>>    * runtime PM callbacks moved out of CONFIG_PM check
->>>
->>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->>> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
->>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->>> ---
->>>   sound/pci/hda/hda_tegra.c | 26 +++++++++++++++++---------
->>>   1 file changed, 17 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
->>> index c8d18dc..ba6175f 100644
->>> --- a/sound/pci/hda/hda_tegra.c
->>> +++ b/sound/pci/hda/hda_tegra.c
->>> @@ -219,7 +219,6 @@ static int hda_tegra_enable_clocks(struct hda_tegra *data)
->>>   	return rc;
->>>   }
->>>   
->>> -#ifdef CONFIG_PM_SLEEP
->>>   static void hda_tegra_disable_clocks(struct hda_tegra *data)
->>>   {
->>>   	clk_disable_unprepare(data->hda2hdmi_clk);
->>> @@ -227,6 +226,7 @@ static void hda_tegra_disable_clocks(struct hda_tegra *data)
->>>   	clk_disable_unprepare(data->hda_clk);
->>>   }
->>>   
->>> +#ifdef CONFIG_PM_SLEEP
->>>   /*
->>>    * power management
->>>    */
->>> @@ -257,7 +257,6 @@ static int hda_tegra_resume(struct device *dev)
->>>   }
->>>   #endif /* CONFIG_PM_SLEEP */
->>>   
->>> -#ifdef CONFIG_PM
->>>   static int hda_tegra_runtime_suspend(struct device *dev)
->>>   {
->>>   	struct snd_card *card = dev_get_drvdata(dev);
->>> @@ -283,7 +282,7 @@ static int hda_tegra_runtime_resume(struct device *dev)
->>>   	int rc;
->>>   
->>>   	rc = hda_tegra_enable_clocks(hda);
->>> -	if (rc != 0)
->>> +	if (rc)
->>>   		return rc;
->>>   	if (chip && chip->running) {
->>>   		hda_tegra_init(hda);
->>> @@ -292,7 +291,6 @@ static int hda_tegra_runtime_resume(struct device *dev)
->>>   
->>>   	return 0;
->>>   }
->>> -#endif /* CONFIG_PM */
->>>   
->>>   static const struct dev_pm_ops hda_tegra_pm = {
->>>   	SET_SYSTEM_SLEEP_PM_OPS(hda_tegra_suspend, hda_tegra_resume)
->>> @@ -551,9 +549,9 @@ static int hda_tegra_probe(struct platform_device *pdev)
->>>   
->>>   	dev_set_drvdata(&pdev->dev, card);
->>>   
->>> -	pm_runtime_enable(hda->dev);
->>> -	if (!azx_has_pm_runtime(chip))
->>> -		pm_runtime_forbid(hda->dev);
->>> +	err = hda_tegra_enable_clocks(hda);
->>> +	if (err)
->>> +		goto out_free;
->> We also need to think about power-domains here. Enabling the clocks
->> might not be enough as the appropriate power-domain needs to be enabled.
->> For 64-bit Tegra runtime-pm will handle the power-domains (assuming they
->> are populated in device-tree). So I still think it is better we call
->> pm_runtime_get_sync() at some point rather than just replying on
->> enabling the clocks.
-> If I understand correctly the code, the pm domain is already activated
-> at calling driver's probe callback.
+Yeah, I almost got to it and still missed it :)
 
-If there are no further concerns, can we consider this for approval?
-
-Thanks,
-Sameer.
-
->
-> thanks,
->
-> Takashi
+-- 
+viresh
