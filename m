@@ -7,71 +7,65 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0364C282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A819FC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 906BA20B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75CA5218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Co3V1O2w"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CVHCH361"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbfAaT27 (ORCPT
+        id S1729404AbfAaT3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:28:59 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37653 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729317AbfAaT24 (ORCPT
+        Thu, 31 Jan 2019 14:29:06 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37638 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729317AbfAaT3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:28:56 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y126so1938510pfb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:28:55 -0800 (PST)
+        Thu, 31 Jan 2019 14:29:02 -0500
+Received: by mail-pg1-f196.google.com with SMTP id c25so1783696pgb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:29:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=s01BexUIwWPAOZc8ULyS2OIx258H75BSpCIC9WlFXeA=;
-        b=Co3V1O2wLJokDkFdLVsjREI0nao2Jg7jlHpj2lNY+2lrpHZRzNneoqScxkhcIpLze5
-         8S7D+RePNeJ29sqQDnQbf7k4atEUy6m58s/U+MttCo8N5HwI4Wir5FMsTfYD8Q4YcON4
-         JPocWAj6c1SizKDGsVfD4L5MMLc91rT/EnQkQ=
+        bh=xWChR7F0A4W4AZDg/y9+mR/BGhN5+3zmASBqt7KIKCo=;
+        b=CVHCH361Hzk6Oo+z0ojJCfK8qTMcMvTvLaWBx+1y7/r+EdWqRjX+QpM/ZhfELfNiza
+         ej/mEuQS6Ai7vdacf65cmOWMrEZzGq21+HF3IrG2pm+QGQ2QPrIfDq7uWK2wUuq8Xu9X
+         0IrAqRsK/Wmy0KZdyiHLg8m/CuHQrsDJUzpCU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=s01BexUIwWPAOZc8ULyS2OIx258H75BSpCIC9WlFXeA=;
-        b=LEoH4Mq/GnB40C+eLyFNao5gaukLI+jDKT0Rx1SIqryCD0wWI56JsGZv+pLPVz7PFv
-         RAUdE/uvahH9A5WBxUirFlYhSDI/xjQAXKMFZ9hf2nGn5kWpyP9vVCt8T4h9CRRHNIVq
-         Zv4LqkACKZG9CYB/nGtXnHLMjV+XtiTfDu5y/Rn+/yiiReEweOGHtdTASCVxw/r9EWNS
-         dD4p9x2AN/E6UQPTPN270JUBgOcHG5NyQasJoQR1ur/SZhC4c+AQZrptNxGoUkdBnhbv
-         awDPVirivvmZtwd6VYvM0nzo0SIxuqUyodVK3l+ZT0K23LrEFrS7ukOsxaBTa71WEdsX
-         aTOA==
-X-Gm-Message-State: AJcUukec+Ek9/4CKCcf73q9Hkem8VpfgwyTc2YWDvuDTu3J5G2x1Cmey
-        iunz4PcJ3tPITC4gpSIYmVD5yQ==
-X-Google-Smtp-Source: ALg8bN6cmIR/qbhV/Uq/U9H2S0j+DXRELuumBvMvyw891Bchw+ZY/JtGEi73minvNQOLad44JyJxUA==
-X-Received: by 2002:a62:7042:: with SMTP id l63mr37555534pfc.89.1548962935607;
-        Thu, 31 Jan 2019 11:28:55 -0800 (PST)
+        bh=xWChR7F0A4W4AZDg/y9+mR/BGhN5+3zmASBqt7KIKCo=;
+        b=Is5k/8YPCnvOjTWrkV7gRbRpCcydPVXEvlrJVN6cGtD4cROD8ruWAKrta+6/Rm4FRs
+         flijGqEAL2wsCo+1CqOnPIMgDGL+IIh8v1pUDzAavOmcqcSyO3ZjMci4AMk1KWam2w5g
+         8eWehjLz+86sNnYQ16yqasu/57ROxPH/ykN6ijhBCNkKymTRHebpzOum5ygupTPCSxFF
+         WbNcZ2PlTj20HNPQ/dAngOwFOV3TXU9k6xUfIdpQDEH1LfWSb5oJBm9RR7vuRw14GJkz
+         3rqs1YEeGpa2rxGVMm6y15m7T4PE26oSysDM+AVwKKITdz5to2DW6OMJU7M0V4T48vp5
+         WVZg==
+X-Gm-Message-State: AJcUukdA4WebwIMgmLAZU/AYUuzcQOWcODs3SFpi3XsjxghHBW/hc5Fd
+        EJisEarAfa7buaC805D/RuqTuQ==
+X-Google-Smtp-Source: ALg8bN74o0ggzc/P0iSwfgNR6YNr2NZQekzoOvQ13BxsOsZTsAWEnE+xK+EWKCusU588USTRUjGpyw==
+X-Received: by 2002:a63:1a0c:: with SMTP id a12mr32101599pga.157.1548962941290;
+        Thu, 31 Jan 2019 11:29:01 -0800 (PST)
 Received: from skynet.sea.corp.google.com ([2620:15c:17:4:29de:3bb1:1270:e679])
-        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.28.54
+        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.29.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 11:28:55 -0800 (PST)
+        Thu, 31 Jan 2019 11:29:00 -0800 (PST)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, Thomas Garnier <thgarnie@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Michael Forney <forney@google.com>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 16/27] compiler: Option to add PROVIDE_HIDDEN replacement for weak symbols
-Date:   Thu, 31 Jan 2019 11:24:23 -0800
-Message-Id: <20190131192533.34130-17-thgarnie@chromium.org>
+Subject: [PATCH v6 19/27] kvm: Adapt assembly for PIE support
+Date:   Thu, 31 Jan 2019 11:24:26 -0800
+Message-Id: <20190131192533.34130-20-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 In-Reply-To: <20190131192533.34130-1-thgarnie@chromium.org>
 References: <20190131192533.34130-1-thgarnie@chromium.org>
@@ -82,67 +76,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide an option to have a PROVIDE_HIDDEN (linker script) entry for
-each weak symbol. This option solves an error in x86_64 where the linker
-optimizes PIE generated code to be non-PIE because --emit-relocs was used
-instead of -pie (to reduce dynamic relocations).
+Change the assembly code to use only relative references of symbols for the
+kernel to be PIE compatible. The new __ASM_MOVABS macro is used to
+get the address of a symbol on both 32 and 64-bit with PIE support.
+
+Position Independent Executable (PIE) support will allow to extend the
+KASLR randomization range below 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
 ---
- init/Kconfig            |  7 +++++++
- scripts/link-vmlinux.sh | 14 ++++++++++++++
- 2 files changed, 21 insertions(+)
+ arch/x86/include/asm/kvm_host.h | 8 ++++++--
+ arch/x86/kernel/kvm.c           | 6 ++++--
+ arch/x86/kvm/svm.c              | 4 ++--
+ arch/x86/kvm/vmx/vmx.c          | 2 +-
+ 4 files changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 116e0de4817f..2261c9891631 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -2104,6 +2104,13 @@ config ASN1
- 	  inform it as to what tags are to be expected in a stream and what
- 	  functions to call on what tags.
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 4660ce90de7f..fdb3307d5fe1 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1498,9 +1498,13 @@ asmlinkage void kvm_spurious_fault(void);
+ 	".pushsection .fixup, \"ax\" \n" \
+ 	"667: \n\t" \
+ 	cleanup_insn "\n\t"		      \
+-	"cmpb $0, kvm_rebooting \n\t"	      \
++	"cmpb $0, kvm_rebooting" __ASM_SEL(, (%%rip)) " \n\t" \
+ 	"jne 668b \n\t"      		      \
+-	__ASM_SIZE(push) " $666b \n\t"	      \
++	__ASM_SIZE(push) "$0 \n\t"		\
++	__ASM_SIZE(push) "%%" _ASM_AX " \n\t"		\
++	_ASM_MOVABS " $666b, %%" _ASM_AX "\n\t"	\
++	_ASM_MOV " %%" _ASM_AX ", " __ASM_SEL(4, 8) "(%%" _ASM_SP ") \n\t" \
++	__ASM_SIZE(pop) "%%" _ASM_AX " \n\t"		\
+ 	"jmp kvm_spurious_fault \n\t"	      \
+ 	".popsection \n\t" \
+ 	_ASM_EXTABLE(666b, 667b)
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 5c93a65ee1e5..f6eb02004e43 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -826,8 +826,10 @@ asm(
+ ".global __raw_callee_save___kvm_vcpu_is_preempted;"
+ ".type __raw_callee_save___kvm_vcpu_is_preempted, @function;"
+ "__raw_callee_save___kvm_vcpu_is_preempted:"
+-"movq	__per_cpu_offset(,%rdi,8), %rax;"
+-"cmpb	$0, " __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rax);"
++"leaq	__per_cpu_offset(%rip), %rax;"
++"movq	(%rax,%rdi,8), %rax;"
++"addq	" __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rip), %rax;"
++"cmpb	$0, (%rax);"
+ "setne	%al;"
+ "ret;"
+ ".popsection");
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index f13a3a24d360..26abb82b1b67 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -706,12 +706,12 @@ static u32 svm_msrpm_offset(u32 msr)
  
-+config WEAK_PROVIDE_HIDDEN
-+	bool
-+	help
-+	  Generate linker script PROVIDE_HIDDEN entries for all weak symbols. It
-+	  allows to prevent non-PIE code being replaced by the linker if the
-+	  emit-relocs option is used instead of PIE (useful for x86_64 PIE).
-+
- source "kernel/Kconfig.locks"
- 
- config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index bc7f1fc1f55b..abf44a804c79 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -119,6 +119,17 @@ kallsyms()
- 	${CC} ${aflags} -c -o ${2} ${afile}
+ static inline void clgi(void)
+ {
+-	asm volatile (__ex("clgi"));
++	asm volatile (__ex("clgi") : :);
  }
  
-+gen_weak_provide_hidden()
-+{
-+        if [ -n "${CONFIG_WEAK_PROVIDE_HIDDEN}" ]; then
-+                local pattern="s/^\s\+ w \(\w\+\)$/PROVIDE_HIDDEN(\1 = .);/gp"
-+                echo -e "SECTIONS {\n. = _end;" > .tmp_vmlinux_hiddenld
-+                ${NM} ${1} | sed -n "${pattern}" >> .tmp_vmlinux_hiddenld
-+                echo "}" >> .tmp_vmlinux_hiddenld
-+                LDFLAGS_vmlinux="${LDFLAGS_vmlinux} -T .tmp_vmlinux_hiddenld"
-+        fi
-+}
-+
- # Create map file with all symbols from ${1}
- # See mksymap for additional details
- mksysmap()
-@@ -200,6 +211,9 @@ modpost_link vmlinux.o
- # modpost vmlinux.o to check for section mismatches
- ${MAKE} -f "${srctree}/scripts/Makefile.modpost" vmlinux.o
+ static inline void stgi(void)
+ {
+-	asm volatile (__ex("stgi"));
++	asm volatile (__ex("stgi") : :);
+ }
  
-+# Generate weak linker script
-+gen_weak_provide_hidden vmlinux.o
-+
- kallsymso=""
- kallsyms_vmlinux=""
- if [ -n "${CONFIG_KALLSYMS}" ]; then
+ static inline void invlpga(unsigned long addr, u32 asid)
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 4341175339f3..3275761a7375 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -2161,7 +2161,7 @@ static void vmclear_local_loaded_vmcss(void)
+  */
+ static void kvm_cpu_vmxoff(void)
+ {
+-	asm volatile (__ex("vmxoff"));
++	asm volatile (__ex("vmxoff") :::);
+ 
+ 	intel_pt_handle_vmx(0);
+ 	cr4_clear_bits(X86_CR4_VMXE);
 -- 
 2.20.1.495.gaa96b0ce6b-goog
 
