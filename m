@@ -2,136 +2,125 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32153C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BA9C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04B3A2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:11:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NulEkyw7"
+	by mail.kernel.org (Postfix) with ESMTP id 8BF8F2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:11:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388152AbfAaQLE (ORCPT
+        id S2388166AbfAaQLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:11:04 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38965 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726355AbfAaQLD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:11:03 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n18so2739107lfh.6
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 08:11:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l8ZZE/CQHJf/B+Br/+OZnPG545feQjEVeVkqxdQKkp0=;
-        b=NulEkyw7WRGZfONt3e2rFzs9IFb84cAfNJcAgwD/UdiCtw/e5wReNIOU9KHl7SvheN
-         0I2NwQRGNpNE212NvAb3sBUsZi7MOhVHNSJviVZHs+BG9M6UVR3gV85ur9rCH1KMgKM/
-         f5fTxjcYk3zQnYAJC1Y/Gv+0HBQuJc+JJUGfE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=l8ZZE/CQHJf/B+Br/+OZnPG545feQjEVeVkqxdQKkp0=;
-        b=IIWTY516psBIQQr+w/h58WLtifpCs33oS3WB2CJp+Y4Qn0KvlywK6ZbybWynRf2HNG
-         eIb2F+zsCUFGnq3MuMV415hAMttD2ranTWODP93WIZHX/jPXeHS0o3zN7VjPUIMlDzbZ
-         3YZ41EJ1nbvZq9lu2SBZ9Igq2zovIJXOnZ5EUK+lvPomPxvwAQZK3zP+eQzMUY54xz2x
-         lkSvlOmDZcWb/z/7j3UpidmyJMoqfAshE5QfYpJKQlHt1Kb3ww2/nYexHhSnkM152GQf
-         V1lYoutsS1Ppr3KtiGZxUCVF2gAXSKiJb0AmoUb332mnCRxWTBVt6cwJVmCxanfZ2S/i
-         ciHQ==
-X-Gm-Message-State: AJcUukeGntH9vp7V6jXMTJS1i45K5KuOLOBpLvIyG3+SuemNGxL6OwDd
-        ecyjOINZDBFproNigdIep8RoaovaanXD/g==
-X-Google-Smtp-Source: ALg8bN5jFb2AXccaSAAVgnX28SjZIcZYLh7UGufvd6HCHsSuZONlbB9tZPsUROf8nbxDO1s9DUimXg==
-X-Received: by 2002:a19:4345:: with SMTP id m5mr27334183lfj.142.1548951061287;
-        Thu, 31 Jan 2019 08:11:01 -0800 (PST)
-Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
-        by smtp.gmail.com with ESMTPSA id z17sm324322lfh.9.2019.01.31.08.11.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 08:11:00 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     akpm@linux-foundation.org
-Cc:     rppt@linux.ibm.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] mm: sparse: Use '%pa' with 'phys_addr_t' type
-Date:   Thu, 31 Jan 2019 17:10:46 +0100
-Message-Id: <20190131161046.21886-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        Thu, 31 Jan 2019 11:11:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55710 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726355AbfAaQLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:11:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8D640B01C;
+        Thu, 31 Jan 2019 16:11:04 +0000 (UTC)
+Subject: Re: [PATCH 22/22] mm, compaction: Capture a page under direct
+ compaction
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+References: <20190118175136.31341-1-mgorman@techsingularity.net>
+ <20190118175136.31341-23-mgorman@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Message-ID: <2124d934-0678-6a4b-9991-7450b1e4e39a@suse.cz>
+Date:   Thu, 31 Jan 2019 17:11:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190118175136.31341-23-mgorman@techsingularity.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following build warning:
+On 1/18/19 6:51 PM, Mel Gorman wrote:
+> Compaction is inherently race-prone as a suitable page freed during
+> compaction can be allocated by any parallel task. This patch uses a
+> capture_control structure to isolate a page immediately when it is freed
+> by a direct compactor in the slow path of the page allocator. The intent
+> is to avoid redundant scanning.
+> 
+>                                      5.0.0-rc1              5.0.0-rc1
+>                                selective-v3r17          capture-v3r19
+> Amean     fault-both-1         0.00 (   0.00%)        0.00 *   0.00%*
+> Amean     fault-both-3      2582.11 (   0.00%)     2563.68 (   0.71%)
+> Amean     fault-both-5      4500.26 (   0.00%)     4233.52 (   5.93%)
+> Amean     fault-both-7      5819.53 (   0.00%)     6333.65 (  -8.83%)
+> Amean     fault-both-12     9321.18 (   0.00%)     9759.38 (  -4.70%)
+> Amean     fault-both-18     9782.76 (   0.00%)    10338.76 (  -5.68%)
+> Amean     fault-both-24    15272.81 (   0.00%)    13379.55 *  12.40%*
+> Amean     fault-both-30    15121.34 (   0.00%)    16158.25 (  -6.86%)
+> Amean     fault-both-32    18466.67 (   0.00%)    18971.21 (  -2.73%)
+> 
+> Latency is only moderately affected but the devil is in the details.
+> A closer examination indicates that base page fault latency is reduced
+> but latency of huge pages is increased as it takes creater care to
+> succeed. Part of the "problem" is that allocation success rates are close
+> to 100% even when under pressure and compaction gets harder
+> 
+>                                 5.0.0-rc1              5.0.0-rc1
+>                           selective-v3r17          capture-v3r19
+> Percentage huge-3        96.70 (   0.00%)       98.23 (   1.58%)
+> Percentage huge-5        96.99 (   0.00%)       95.30 (  -1.75%)
+> Percentage huge-7        94.19 (   0.00%)       97.24 (   3.24%)
+> Percentage huge-12       94.95 (   0.00%)       97.35 (   2.53%)
+> Percentage huge-18       96.74 (   0.00%)       97.30 (   0.58%)
+> Percentage huge-24       97.07 (   0.00%)       97.55 (   0.50%)
+> Percentage huge-30       95.69 (   0.00%)       98.50 (   2.95%)
+> Percentage huge-32       96.70 (   0.00%)       99.27 (   2.65%)
+> 
+> And scan rates are reduced as expected by 6% for the migration scanner
+> and 29% for the free scanner indicating that there is less redundant work.
+> 
+> Compaction migrate scanned    20815362    19573286
+> Compaction free scanned       16352612    11510663
+> 
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 
-mm/sparse.c: In function ‘sparse_buffer_init’:
-mm/sparse.c:438:69: warning: format ‘%lx’ expects argument of type ‘long
-  unsigned int’, but argument 6 has type ‘phys_addr_t’ {aka ‘long long
-  unsigned int’} [-Wformat=]
-   panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%lx\n",
-                                                                   ~~^
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Rework to use '%pa' and not '%lx'. Use a local variable of phys_addr_t
-to print the reference with '%pa'.
+Nit below:
 
-Fixes: 1c3c9328cde0 ("treewide: add checks for the return value of memblock_alloc*()")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- mm/sparse.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+...
 
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 1471f06c6468..6a2b0a9359d7 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -409,16 +409,17 @@ struct page __init *sparse_mem_map_populate(unsigned long pnum, int nid,
- {
- 	unsigned long size = section_map_size();
- 	struct page *map = sparse_buffer_alloc(size);
-+	phys_addr_t addr = __pa(MAX_DMA_ADDRESS);
- 
- 	if (map)
- 		return map;
- 
- 	map = memblock_alloc_try_nid(size,
--					  PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
-+					  PAGE_SIZE, addr,
- 					  MEMBLOCK_ALLOC_ACCESSIBLE, nid);
- 	if (!map)
--		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%lx\n",
--		      __func__, size, PAGE_SIZE, nid, __pa(MAX_DMA_ADDRESS));
-+		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%pa\n",
-+		      __func__, size, PAGE_SIZE, nid, &addr);
- 
- 	return map;
- }
-@@ -429,14 +430,15 @@ static void *sparsemap_buf_end __meminitdata;
- 
- static void __init sparse_buffer_init(unsigned long size, int nid)
- {
-+	phys_addr_t addr = __pa(MAX_DMA_ADDRESS);
- 	WARN_ON(sparsemap_buf);	/* forgot to call sparse_buffer_fini()? */
- 	sparsemap_buf =
- 		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
--						__pa(MAX_DMA_ADDRESS),
-+						addr,
- 						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
- 	if (!sparsemap_buf)
--		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%lx\n",
--		      __func__, size, PAGE_SIZE, nid, __pa(MAX_DMA_ADDRESS));
-+		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%pa\n",
-+		      __func__, size, PAGE_SIZE, nid, &addr);
- 
- 	sparsemap_buf_end = sparsemap_buf + size;
- }
--- 
-2.20.1
+> @@ -819,6 +870,7 @@ static inline void __free_one_page(struct page *page,
+>  	unsigned long uninitialized_var(buddy_pfn);
+>  	struct page *buddy;
+>  	unsigned int max_order;
+> +	struct capture_control *capc = task_capc(zone);
+>  
+>  	max_order = min_t(unsigned int, MAX_ORDER, pageblock_order + 1);
+>  
+> @@ -834,6 +886,12 @@ static inline void __free_one_page(struct page *page,
+>  
+>  continue_merging:
+>  	while (order < max_order - 1) {
+> +		if (compaction_capture(capc, page, order, migratetype)) {
+> +			if (likely(!is_migrate_isolate(migratetype)))
 
+compaction_capture() won't act on isolated migratetype, so this check is
+unnecessary?
+
+> +				__mod_zone_freepage_state(zone, -(1 << order),
+> +								migratetype);
+> +			return;
+> +		}
+>  		buddy_pfn = __find_buddy_pfn(pfn, order);
+>  		buddy = page + (buddy_pfn - pfn);
+>  
