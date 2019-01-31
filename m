@@ -2,107 +2,104 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B50A2C282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66379C282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830132087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548972216;
-	bh=5O6tf8N5YCpLZxA7BGLvaKNpvzCY1MEs5jBeREIgLZI=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=xyI8rOCWPMqX10dgoMNicPrELkI27if+mj4XXD0RX0zkXExyHkzIbduYHU+uwawdn
-	 1tTD1LshXAwWeocQSycH9qsvItItIm53qn6sA896wHHdqg/3A3ZTfuynWmCTS+ytUi
-	 +5AOgQop5Z12gX/2JqwGT0FKpuUVYMe/ixhSgOis=
+	by mail.kernel.org (Postfix) with ESMTP id 3569120833
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:06:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sweptlaser-com.20150623.gappssmtp.com header.i=@sweptlaser-com.20150623.gappssmtp.com header.b="S10wpksu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbfAaWDe (ORCPT
+        id S1729392AbfAaWG5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 17:03:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51740 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727017AbfAaWDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 17:03:34 -0500
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A22D20833;
-        Thu, 31 Jan 2019 22:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548972213;
-        bh=5O6tf8N5YCpLZxA7BGLvaKNpvzCY1MEs5jBeREIgLZI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pFceEO7StQZilq/MnQnp+r0vQjWAlH872eFOB+WwDXDhphPEHNE5Dkq44MHOWK53l
-         Vnw0GjUKrGYCHuqK6fbyezCxtK4Dju9ZMw5Dd3jq4RFRRKe+uLCEXXS3V4IIIHsLnN
-         CBz4wTt6QopwH1YjPKG5SyXyjFCQ1vtvxZJqbaY4=
-Date:   Thu, 31 Jan 2019 16:03:32 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Koen Vandeputte <koen.vandeputte@ncentric.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: [GIT PULL] PCI fixes for v5.0
-Message-ID: <20190131220332.GQ229773@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 31 Jan 2019 17:06:57 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:37765 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728923AbfAaWG4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 17:06:56 -0500
+Received: by mail-it1-f196.google.com with SMTP id b5so6872858iti.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 14:06:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sweptlaser-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id;
+        bh=s//WKIUtaIH0wRpbyXK/xy0gdxoHenTpSnbPv7jjHjg=;
+        b=S10wpksu3gKB0l02Esx08e6f2VmxjRuauKQ7Fd/NHM6PFR/8Fy1KSMSCVS9iQcQliM
+         /zOqM6Ko9b718S1B2/cKCD8kG2f8j1Exosub/+Y5EIThvE4MNnhi3zc1GSkZdDpWnEga
+         zMm3PrSiE9NIv+jM0LeotMKh5vQRMEGcurvLzK9EoUqd9pduS1AWZcdsrBeH4TjDFglt
+         7Fht+ZNYxt0Tp/xqZgRhfmsN1sKGBjoeUU4ikJRbpq630SIis5cfBn57Z3Be/QKldn2z
+         8nvZ6gIJYJ6+6adeOqzYXWjogzFbRv59Mjbl7d2k2G2e8GgHoZjY8b/d+uMYr175VqUy
+         xp3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=s//WKIUtaIH0wRpbyXK/xy0gdxoHenTpSnbPv7jjHjg=;
+        b=Bb68R0NyX8mKTixYFWShLBbRrcj8F/I5m7iUYNFwrspGF+Gc7vMyOBOrDgekHxy26M
+         xNSYOvNIFQbcI7qkFB6KBrq8S2F6+VWf+Hob0CXqDam8MBdRSl3N/RTuwKu9iCVGfkh7
+         3fZIdfwqP5AccrG5gg8vC+5keusy0OvZHdUoYww07kl2bagIt9V9jl8kLlC+Z73fZFbl
+         i5Mjgt/NWDtzUwXGg35CYhBymoe3xw3aSR2+DRTkOBb6io5aKBLcy+7hftqHf/Gkkv0K
+         0MTfEWSvQZVHLqKwj9t930d/vEX5IHfZZY/aHsgC+hd//L9b5egUeXpnfsQcNdlSmS/I
+         ET9Q==
+X-Gm-Message-State: AJcUuke3iceyZIsaYooa7h+UMnvthF92A31riVM0YbJbd9wZlCbBBnhW
+        ij5OFYZPq8tSBE2HSrfAL7BICAuLfak=
+X-Google-Smtp-Source: ALg8bN7xap+KRRH4zb+lS0wNlj/xrMMxrEG+riUmUos0/0BDwGvGrgitRFxo6k2fkdlluAoJ8BDGLA==
+X-Received: by 2002:a02:570d:: with SMTP id u13mr22402974jaa.71.1548972415953;
+        Thu, 31 Jan 2019 14:06:55 -0800 (PST)
+Received: from yngvi.hq.sweptlaser.com ([63.147.146.226])
+        by smtp.googlemail.com with ESMTPSA id l186sm286439itl.22.2019.01.31.14.06.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 14:06:55 -0800 (PST)
+From:   Jeremy Gebben <jgebben@sweptlaser.com>
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] hwmon: (lm85) add LM96000 high freqency pwm support
+Date:   Thu, 31 Jan 2019 15:06:14 -0700
+Message-Id: <20190131220617.15223-1-jgebben@sweptlaser.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI fixes:
+Hi,
 
-  - Revert armada8k GPIO reset change that broke Macchiatobin booting
-    (Baruch Siach)
+This patch adds support for the PWM frequencies from 22.5 to 30 kHz
+available on the LM96000.
 
-  - Use actual size config reads on ARM cns3xxx (Koen Vandeputte)
+It looks like this chip has been supported for a long time, but wasn't
+mentioned in the docs (which I have updated).
 
-  - Fix ARM cns3xxx config write alignment issue (Koen Vandeputte)
+Also, it has been using the generic 'lm85' prefix, which I have not
+changed to avoid breaking userspace or device tree files. AFAICT,
+lm85_detect() will only return 'lm85' for LM96000 chips, so it doesn't
+look like you can get a bare 'lm85' prefix with any other chips.
 
-  - Fix imx6 PHY device link error checking (Leonard Crestez)
+I stumbled on to a 10 year old thread discussing a patch which looks
+like an early attempt to add support for this chip, which may be of
+interest:
+https://lm-sensors.lm-sensors.narkive.com/1SIwaMDT/patch-hwmon-lm96000-support
 
-  - Fix imx6 probe failure on chips without separate PCI power domain
-    (Leonard Crestez)
+Thanks for reviewing,
 
+Jeremy
 
-The following changes since commit d2fd6e81912a665993b24dcdc1c1384a42a54f7e:
+Changes since v1:
+ - replace freq_map_mask with freq_map_size
 
-  PCI: Fix __initdata issue with "pci=disable_acs_redir" parameter (2019-01-17 08:46:34 -0600)
+Jeremy Gebben (3):
+  hwmon: (lm85) remove freq_map size hardcodes
+  hwmon: (lm85) Document the LM96000 as supported
+  hwmon: (lm85) add support for LM96000 high frequencies
 
-are available in the Git repository at:
+ Documentation/hwmon/lm85 |  9 ++++++++-
+ drivers/hwmon/lm85.c     | 32 ++++++++++++++++++++++----------
+ 2 files changed, 30 insertions(+), 11 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v5.0-fixes-3
+-- 
+2.17.1
 
-for you to fetch changes up to f14bcc0add3abecceca1a3fe538c4ec9566893f3:
-
-  Revert "PCI: armada8k: Add support for gpio controlled reset signal" (2019-01-31 15:07:29 -0600)
-
-----------------------------------------------------------------
-pci-v5.0-fixes-3
-
-----------------------------------------------------------------
-Baruch Siach (1):
-      Revert "PCI: armada8k: Add support for gpio controlled reset signal"
-
-Koen Vandeputte (2):
-      ARM: cns3xxx: Fix writing to wrong PCI config registers after alignment
-      ARM: cns3xxx: Use actual size reads for PCIe
-
-Leonard Crestez (2):
-      PCI: imx: Fix probe failure without power domain
-      PCI: imx: Fix checking pd_pcie_phy device link addition
-
- arch/arm/mach-cns3xxx/pcie.c               |  4 ++--
- drivers/pci/controller/dwc/pci-imx6.c      | 11 +++++++----
- drivers/pci/controller/dwc/pcie-armada8k.c | 16 ----------------
- 3 files changed, 9 insertions(+), 22 deletions(-)
