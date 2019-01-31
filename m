@@ -2,153 +2,115 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978F8C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D3EC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73FBD2087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:11:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A92B22087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:11:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9BJzS4b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730945AbfAaRLh (ORCPT
+        id S1731912AbfAaRLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:11:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51278 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726481AbfAaRLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:11:36 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 44F0F2F3;
-        Thu, 31 Jan 2019 17:11:35 +0000 (UTC)
-Received: from sky.random (ovpn-121-14.rdu2.redhat.com [10.10.121.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24AEB1048128;
-        Thu, 31 Jan 2019 17:11:07 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 12:11:06 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alistair Popple <alistair@popple.id.au>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] powerpc/powernv/npu: Remove redundant change_pte() hook
-Message-ID: <20190131171106.GD19324@redhat.com>
-References: <20190131103022.10218-1-peterx@redhat.com>
+        Thu, 31 Jan 2019 12:11:41 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33476 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726634AbfAaRLj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 12:11:39 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c123so1770494pfb.0;
+        Thu, 31 Jan 2019 09:11:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RsHTPDHzIpvQpPhcbjNfALgqq+QZ4bcuxaUfCA5XN7s=;
+        b=O9BJzS4bEZPZ+6+UkFYbxOLPVS3fV0NMRWNbsNCJtIYrwfdcxU+dvUprdicnGS87GY
+         m0g4WopUQmRvbhQKT43BH2BMfICQJJHlteZT4X4Ntse2Fg1rgw5v+mNbhhycHXXqripi
+         q1zI4rXtnWPAyVBRk3+etoLock/PMS2EJDtAyFmqTrnsrmCCV0SuIxmF4EJnvh9zu+tO
+         cwxpIyKtjB74sag8msD1D+eM2KjkKyA7haNuRRzCS0YeKdvgZB57J1OOyDEkCqz7Y1Ot
+         VQQ4Y+R1m5rFeC/1dVQBZYa5a1eiGQrFSBsq0dnpF9Asiftxz0dJlNudewooFloXXA5l
+         U+IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RsHTPDHzIpvQpPhcbjNfALgqq+QZ4bcuxaUfCA5XN7s=;
+        b=CK4Ve+4vwFvAw6QjutDZFi8ldDZVy2eeOuelODiaWF9wt+bDBG+b/GR4RHafHG8jog
+         RoCd5TLXyL05/5DdhEgS7ulFrQQCDJtQytR+7Zsov2lNn6Avtx2gb82DUOsNJcDt8afu
+         3NTOYod1QvDYu+/3wGYD9ansJw9cW3S51KIyPq3N7HCKmZBfXrlJb/LlSB+G3fkIqrem
+         iotBne4AJ+YHVyqpEINXmwnDM2wC+7CiCb029ksvsarhKTbFpysZwMIFCbrVsINsA/nE
+         US1IHDDHvgV90Sx8PoCAP6VYrRVWg5EdCCUv52D1GaUuY+/CeFe/xPqH28cwJRGiL/n5
+         rT9A==
+X-Gm-Message-State: AJcUukfNfdOr2heIpRWDreShLIsSKR8oPmbcv7ynuy/JXpytn5qY9wP2
+        EcpaKxs51tzfUTOqTlvrCg9lLG/1
+X-Google-Smtp-Source: ALg8bN6JVLrW0qGY7o3MfnEuCYW5ayhRCKzpA6v+DwtjMFCKTT5TDgocXDilhIo4hXSJr3ULIYXX4Q==
+X-Received: by 2002:a62:5301:: with SMTP id h1mr35304971pfb.17.1548954698521;
+        Thu, 31 Jan 2019 09:11:38 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id t67sm8048768pfd.90.2019.01.31.09.11.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 09:11:37 -0800 (PST)
+Subject: Re: [PATCH V8 3/5] i2c: tegra: Add DMA Support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
+ <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
+ <4663c7b9-d306-1cd4-1bdc-f7be84af0667@gmail.com>
+ <8a88f8ee-24d3-00ac-f1fa-c43b576ed82c@gmail.com>
+ <BYAPR12MB3398CFEE7E912513AE48DD2FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <e50a353c-94c4-1a47-92a4-5f41f4f64aa7@gmail.com>
+Date:   Thu, 31 Jan 2019 20:11:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131103022.10218-1-peterx@redhat.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 31 Jan 2019 17:11:35 +0000 (UTC)
+In-Reply-To: <BYAPR12MB3398CFEE7E912513AE48DD2FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 06:30:22PM +0800, Peter Xu wrote:
-> The change_pte() notifier was designed to use as a quick path to
-> update secondary MMU PTEs on write permission changes or PFN changes.
-> For KVM, it could reduce the vm-exits when vcpu faults on the pages
-> that was touched up by KSM.  It's not used to do cache invalidations,
-> for example, if we see the notifier will be called before the real PTE
-> update after all (please see set_pte_at_notify that set_pte_at was
-> called later).
+31.01.2019 19:56, Sowjanya Komatineni пишет:
 > 
-> All the necessary cache invalidation should all be done in
-> invalidate_range() already.
+>>>>  drivers/i2c/busses/Kconfig     |   2 +-
+>>>>  drivers/i2c/busses/i2c-tegra.c | 362 
+>>>> ++++++++++++++++++++++++++++++++++++++---
+>>>>  2 files changed, 339 insertions(+), 25 deletions(-)
+>>>
+>>> Tegra20 crashes because of this patch:
+>>>
+>> [snip]
+>>> <4>[    3.395915] ------------[ cut here ]------------
+>>> <2>[    3.395919] kernel BUG at drivers/i2c/busses/i2c-tegra.c:810!
+>> The BUG line is from:
+>>
+>> 	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
+>> 		if (i2c_dev->is_curr_dma_xfer)
+>> 			i2c_dev->msg_buf_remaining = 0;
+>> 		BUG_ON(i2c_dev->msg_buf_remaining);
+>> 		complete(&i2c_dev->msg_complete);
+>> 	}
+>>
+> BUG_ON line is not part of this change. It was already there in existing driver.
+> Based on log, I see DMA transfer is done for 224 bytes followed by 1 successful PIO transfer and then on next PIO transfer it received packet xfer complete interrupt with incomplete transfer bytes and that where it hit BUG_ON condition.
 > 
-> CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> CC: Paul Mackerras <paulus@samba.org>
-> CC: Michael Ellerman <mpe@ellerman.id.au>
-> CC: Alistair Popple <alistair@popple.id.au>
-> CC: Alexey Kardashevskiy <aik@ozlabs.ru>
-> CC: Mark Hairgrove <mhairgrove@nvidia.com>
-> CC: Balbir Singh <bsingharora@gmail.com>
-> CC: David Gibson <david@gibson.dropbear.id.au>
-> CC: Andrea Arcangeli <aarcange@redhat.com>
-> CC: Jerome Glisse <jglisse@redhat.com>
-> CC: Jason Wang <jasowang@redhat.com>
-> CC: linuxppc-dev@lists.ozlabs.org
-> CC: linux-kernel@vger.kernel.org
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  arch/powerpc/platforms/powernv/npu-dma.c | 10 ----------
->  1 file changed, 10 deletions(-)
-
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-
-It doesn't make sense to implement change_pte as an invalidate,
-change_pte is not compulsory to implement so if one wants to have
-invalidates only, change_pte method shouldn't be implemented in the
-first place and the common code will guarantee to invoke the range
-invalidates instead.
-
-Currently the whole change_pte optimization is effectively disabled as
-noted in past discussions with Jerome (because of the range
-invalidates that always surrounds it), so we need to revisit the whole
-change_pte logic and decide it to re-enable it or to drop it as a
-whole, but in the meantime it's good to cleanup spots like below that
-should leave change_pte alone.
-
-There are several examples of mmu_notifiers_ops in the kernel that
-don't implement change_pte, in fact it's the majority. Of all mmu
-notifier users, only nv_nmmu_notifier_ops, intel_mmuops_change and
-kvm_mmu_notifier_ops implements change_pte and as Peter found out by
-source review nv_nmmu_notifier_ops, intel_mmuops_change are wrong
-about it and should stop implementing it as an invalidate.
-
-In short change_pte is only implemented correctly from KVM which can
-really updates the spte and flushes the TLB but the spte update
-remains and could avoid a vmexit if we figure out how to re-enable the
-optimization safely (the TLB fill after change_pte in KVM EPT/shadow
-secondary MMU will be looked up by the CPU in hardware).
-
-If change_pte is implemented, it should update the mapping like KVM
-does and not do an invalidate.
-
-Thanks,
-Andrea
-
 > 
-> diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
-> index 3f58c7dbd581..c003b29d870e 100644
-> --- a/arch/powerpc/platforms/powernv/npu-dma.c
-> +++ b/arch/powerpc/platforms/powernv/npu-dma.c
-> @@ -917,15 +917,6 @@ static void pnv_npu2_mn_release(struct mmu_notifier *mn,
->  	mmio_invalidate(npu_context, 0, ~0UL);
->  }
->  
-> -static void pnv_npu2_mn_change_pte(struct mmu_notifier *mn,
-> -				struct mm_struct *mm,
-> -				unsigned long address,
-> -				pte_t pte)
-> -{
-> -	struct npu_context *npu_context = mn_to_npu_context(mn);
-> -	mmio_invalidate(npu_context, address, PAGE_SIZE);
-> -}
-> -
->  static void pnv_npu2_mn_invalidate_range(struct mmu_notifier *mn,
->  					struct mm_struct *mm,
->  					unsigned long start, unsigned long end)
-> @@ -936,7 +927,6 @@ static void pnv_npu2_mn_invalidate_range(struct mmu_notifier *mn,
->  
->  static const struct mmu_notifier_ops nv_nmmu_notifier_ops = {
->  	.release = pnv_npu2_mn_release,
-> -	.change_pte = pnv_npu2_mn_change_pte,
->  	.invalidate_range = pnv_npu2_mn_invalidate_range,
->  };
->  
-> -- 
-> 2.17.1
-> 
+
+Yes, that BUG_ON is caused by the DMA transferring. Everything works fine be setting dma=false in the code, hence it's likely not a bug in the code (at least for now it looks fine), but likely that HW is not programmed correctly.
