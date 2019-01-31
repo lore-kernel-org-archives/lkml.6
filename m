@@ -2,106 +2,139 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC74BC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E24E1C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C776C2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548925815;
-	bh=99u5P9hlgOJH5c8mwd6MHayR7X3qrh3knTyIoZEyHGU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=KZP3zvqVOF8Udol50wrP5Kd9xBAebWpD6A4ntNrMxUwc0xzQvVfMmXFCAcA0A0jrA
-	 4OAsFU0Ud+r8EesHse2c2A6K8vGDha/wLclOza5Rh2eAwJwtdAtqzZRTLwRhyCgPdt
-	 JyM+ONfmM+5bA5Vj5UXDBzyfEWbuMRXA5JFJfYtI=
+	by mail.kernel.org (Postfix) with ESMTP id C66DE2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729713AbfAaJKO (ORCPT
+        id S1730379AbfAaJKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 04:10:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35310 "EHLO mx1.suse.de"
+        Thu, 31 Jan 2019 04:10:47 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:32940 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726368AbfAaJKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 04:10:14 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8B6EFAE77;
-        Thu, 31 Jan 2019 09:10:12 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 10:10:11 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Chris Mason <clm@fb.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        Roman Gushchin <guro@fb.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH 1/2] Revert "mm: don't reclaim inodes with many attached
- pages"
-Message-ID: <20190131091011.GP18811@dhcp22.suse.cz>
-References: <20190130041707.27750-1-david@fromorbit.com>
- <20190130041707.27750-2-david@fromorbit.com>
- <25EAF93D-BC63-4409-AF21-F45B2DDF5D66@fb.com>
- <20190131013403.GI4205@dastard>
+        id S1726183AbfAaJKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 04:10:47 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 9A7FE94499B9AEA19806;
+        Thu, 31 Jan 2019 17:10:44 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.43) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Thu, 31 Jan 2019
+ 17:10:33 +0800
+Subject: Re: [PATCH v2 6/7] scsi: libsas: reset the phy address if discover
+ failed
+To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20190130082412.9357-1-yanaijie@huawei.com>
+ <20190130082412.9357-7-yanaijie@huawei.com>
+ <e6bb5696-b2ad-d546-5571-1e2fe39edb61@huawei.com> <5C5259B4.10005@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        Xiaofei Tan <tanxiaofei@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <8ca27632-bf8c-b8eb-bb56-00e04c559ac1@huawei.com>
+Date:   Thu, 31 Jan 2019 09:10:24 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131013403.GI4205@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5C5259B4.10005@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 31-01-19 12:34:03, Dave Chinner wrote:
-> On Wed, Jan 30, 2019 at 12:21:07PM +0000, Chris Mason wrote:
-> > 
-> > 
-> > On 29 Jan 2019, at 23:17, Dave Chinner wrote:
-> > 
-> > > From: Dave Chinner <dchinner@redhat.com>
-> > >
-> > > This reverts commit a76cf1a474d7dbcd9336b5f5afb0162baa142cf0.
-> > >
-> > > This change causes serious changes to page cache and inode cache
-> > > behaviour and balance, resulting in major performance regressions
-> > > when combining worklaods such as large file copies and kernel
-> > > compiles.
-> > >
-> > > https://bugzilla.kernel.org/show_bug.cgi?id=202441
-> > 
-> > I'm a little confused by the latest comment in the bz:
-> > 
-> > https://bugzilla.kernel.org/show_bug.cgi?id=202441#c24
-> 
-> Which says the first patch that changed the shrinker behaviour is
-> the underlying cause of the regression.
-> 
-> > Are these reverts sufficient?
-> 
-> I think so.
-> 
-> > Roman beat me to suggesting Rik's followup.  We hit a different problem 
-> > in prod with small slabs, and have a lot of instrumentation on Rik's 
-> > code helping.
-> 
-> I think that's just another nasty, expedient hack that doesn't solve
-> the underlying problem. Solving the underlying problem does not
-> require changing core reclaim algorithms and upsetting a page
-> reclaim/shrinker balance that has been stable and worked well for
-> just about everyone for years.
+On 31/01/2019 02:13, Jason Yan wrote:
+>
+>
+> On 2019/1/31 1:36, John Garry wrote:
+>> On 30/01/2019 08:24, Jason Yan wrote:
+>>> When we failed to discover the device, the phy address is still kept
 
-I tend to agree with Dave here. Slab pressure balancing is quite subtle
-and easy to get wrong. If we want to plug the problem with offline
-memcgs then the fix should be targeted at that problem. So maybe we want
-to emulate high pressure on offline memcgs only. There might be other
-issues to resolve for small caches but let's start with something more
-targeted first please.
--- 
-Michal Hocko
-SUSE Labs
+/s/phy/PHY/
+
+>>> in ex_phy. So when the next time we revalidate this phy the
+>>> address and device type is the same, it will be considered as flutter
+>>> and will not be discovered again. So the device will not be brought up.
+>>>
+>>> Fix this by reset the phy address to the initial value. Then
+>>> in the next revalidation the device will be discovered agian.
+>>
+>> Why fail to discover the device? I wonder in which scenario you have
+>> seen this, such that it is worth rediscovery.
+>>
+>
+> The test guys have seen this for several times, especially after LLDD
+> changed the logic of lldd_dev_found and may return error now.
+
+We're finding that a specific SATA disk stays in STP pending for some 
+time and we fail the init in lldd dev found, like you say.
+
+However, I think that we should ensure that this passes, as with your 
+change I find we get some looping of dev found and lost until it finally 
+recovers.
+
+Regardless, I think that your change on its own is ok, so:
+Reviewed-by: John Garry <john.garry@huawei.com>
+
+
+>
+>
+>>>
+>>> Tested-by: Chen Liangfei <chenliangfei1@huawei.com>
+>>> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+>>> CC: Xiaofei Tan <tanxiaofei@huawei.com>
+>>> CC: John Garry <john.garry@huawei.com>
+>>> CC: Johannes Thumshirn <jthumshirn@suse.de>
+>>> CC: Ewan Milne <emilne@redhat.com>
+>>> CC: Christoph Hellwig <hch@lst.de>
+>>> CC: Tomas Henzl <thenzl@redhat.com>
+>>> CC: Dan Williams <dan.j.williams@intel.com>
+>>> CC: Hannes Reinecke <hare@suse.com>
+>>> ---
+>>>  drivers/scsi/libsas/sas_expander.c | 7 +++++++
+>>>  1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/drivers/scsi/libsas/sas_expander.c
+>>> b/drivers/scsi/libsas/sas_expander.c
+>>> index 6e56ebdc2148..e781941a7088 100644
+>>> --- a/drivers/scsi/libsas/sas_expander.c
+>>> +++ b/drivers/scsi/libsas/sas_expander.c
+>>> @@ -1100,6 +1100,13 @@ static int sas_ex_discover_dev(struct
+>>> domain_device *dev, int phy_id)
+>>>                           i, SAS_ADDR(ex->ex_phy[i].attached_sas_addr));
+>>>              }
+>>>          }
+>>> +    } else {
+>>> +        /* if we failed to discover this device, we have to
+>>> +         * reset the expander phy attached address so that we
+>>> +         * will not treat the phy as flutter in the next
+>>> +         * revalidation
+>>> +         */
+>>> +        memset(ex_phy->attached_sas_addr, 0, SAS_ADDR_SIZE);
+>>>      }
+>>>
+>>>      return res;
+>>>
+>>
+>>
+>>
+>> .
+>>
+>
+>
+> .
+>
+
+
