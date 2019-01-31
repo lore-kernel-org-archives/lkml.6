@@ -2,230 +2,192 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922D9C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41488C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 665DD218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:40:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1575B218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731235AbfAaHka (ORCPT
+        id S1731472AbfAaHky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:40:30 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45672 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727112AbfAaHka (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:40:30 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V7d8A0029426
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:40:29 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbur637ug-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:40:28 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 31 Jan 2019 07:40:25 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 07:40:22 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V7eLhv7799146
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 07:40:21 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 56A1311C04A;
-        Thu, 31 Jan 2019 07:40:21 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 98BE011C05B;
-        Thu, 31 Jan 2019 07:40:20 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 31 Jan 2019 07:40:20 +0000 (GMT)
-Date:   Thu, 31 Jan 2019 09:40:18 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: Re: linux-next: powerpc le qemu boot failure after merge of the akpm
- tree
-References: <20190131163854.307e17ab@canb.auug.org.au>
- <20190131170629.2cc20600@canb.auug.org.au>
- <962e7dd7-779b-2c32-59db-9ced6751dede@c-s.fr>
+        Thu, 31 Jan 2019 02:40:54 -0500
+Received: from mx23.baidu.com ([61.135.165.120]:59985 "EHLO baidu.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726543AbfAaHky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 02:40:54 -0500
+Received: from M1-MAIL-EX14.internal.baidu.com (unknown [10.44.89.54])
+        by Forcepoint Email with ESMTPS id 9B834B471BE69;
+        Thu, 31 Jan 2019 15:40:48 +0800 (CST)
+Received: from BC-Mail-Ex13.internal.baidu.com (172.31.40.49) by
+ M1-MAIL-EX14.internal.baidu.com (10.44.89.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1531.3; Thu, 31 Jan 2019 15:40:48 +0800
+Received: from BC-Mail-Ex13.internal.baidu.com ([172.31.40.49]) by
+ Bc-Mail-Ex13.internal.baidu.com ([172.31.40.49]) with mapi id 15.01.1531.010;
+ Thu, 31 Jan 2019 15:40:48 +0800
+From:   "Li,Rongqing" <lirongqing@baidu.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "jslaby@suse.com" <jslaby@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "gkohli@codeaurora.org" <gkohli@codeaurora.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlOWkjTogW1BBVENIXVt2NF0gdHR5OiBmaXgg?=
+ =?utf-8?B?cmFjZSBiZXR3ZWVuIGZsdXNoX3RvX2xkaXNjIGFuZCB0dHlfb3Blbg==?=
+Thread-Topic: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSF1bdjRdIHR0eTogZml4IHJhY2UgYmV0?=
+ =?utf-8?B?d2VlbiBmbHVzaF90b19sZGlzYyBhbmQgdHR5X29wZW4=?=
+Thread-Index: AQHUrx28V3uRZzwha06OB03mJmgPUKXHJicAgACqo5D//4bxgIABUlsw///UkYCAAJM9QA==
+Date:   Thu, 31 Jan 2019 07:40:48 +0000
+Message-ID: <c8a2c4dc33834ee7bb0f5a3f606c4546@baidu.com>
+References: <1547803637-29135-1-git-send-email-lirongqing@baidu.com>
+ <20190130101914.GA30587@kroah.com>
+ <f13cb07ed77d428b8b43459ff71adcae@baidu.com>
+ <20190130131641.GA10795@kroah.com>
+ <b1388c835686492fbbfa91e9711470d4@baidu.com>
+ <20190131065215.GB30992@kroah.com>
+In-Reply-To: <20190131065215.GB30992@kroah.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.24.150.64]
+x-baidu-bdmsfe-datecheck: 1_M1-MAIL-EX14_2019-01-31 15:40:48:946
+x-baidu-bdmsfe-viruscheck: M1-MAIL-EX14_GRAY_Inside_WithoutAtta_2019-01-31
+ 15:40:48:930
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <962e7dd7-779b-2c32-59db-9ced6751dede@c-s.fr>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19013107-0020-0000-0000-0000030F2DC3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013107-0021-0000-0000-000021602F43
-Message-Id: <20190131074018.GD28876@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310061
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(added Andrey Konovalov)
-
-On Thu, Jan 31, 2019 at 07:15:26AM +0100, Christophe Leroy wrote:
-> 
-> Le 31/01/2019 à 07:06, Stephen Rothwell a écrit :
-> >Hi all,
-> >
-> >On Thu, 31 Jan 2019 16:38:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >>
-> >>[I am guessing that is is something in Andrew's tree that has caused
-> >>this.]
-> >>
-> >>My qemu boot of the powerpc pseries_le_defconfig config failed like this:
-> >>
-> >>htab_hash_mask    = 0x1ffff
-> >>-----------------------------------------------------
-> >>numa:   NODE_DATA [mem 0x7ffe7000-0x7ffebfff]
-> >>Kernel panic - not syncing: sparse_buffer_init: Failed to allocate 2147483648 bytes align=0x10000 nid=0 from=fffffffffffffff
-> >>CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc4 #2
-> >>Call Trace:
-> >>[c00000000105bbd0] [c000000000b1345c] dump_stack+0xb0/0xf4 (unreliable)
-> >>[c00000000105bc10] [c000000000111120] panic+0x168/0x3b8
-> >>[c00000000105bcb0] [c000000000e701c8] sparse_init_nid+0x178/0x550
-> >>[c00000000105bd70] [c000000000e709b4] sparse_init+0x210/0x238
-> >>[c00000000105bdb0] [c000000000e468f4] initmem_init+0x1e0/0x260
-> >>[c00000000105be80] [c000000000e3b9b0] setup_arch+0x354/0x3d4
-> >>[c00000000105bef0] [c000000000e33afc] start_kernel+0x98/0x648
-> >>[c00000000105bf90] [c00000000000b270] start_here_common+0x1c/0x52c
-> >
-> >A quick bisect leads to this:
-> >
-> >1c3c9328cde027eb875ba4692f0a5d66b0afe862 is the first bad commit
-> >commit 1c3c9328cde027eb875ba4692f0a5d66b0afe862
-> >Author: Mike Rapoport <rppt@linux.ibm.com>
-> >Date:   Thu Jan 31 10:51:32 2019 +1100
-> >
-> >     treewide: add checks for the return value of memblock_alloc*()
-> >     Add check for the return value of memblock_alloc*() functions and call
-> >     panic() in case of error.  The panic message repeats the one used by
-> >     panicing memblock allocators with adjustment of parameters to include only
-> >     relevant ones.
-> >
-> >Which is just adding the panic we hit.  So, presumably, the bug is in a
-> >preceding patch :-(
-> >
-> >I have left the kernel not booting for today.
-> >
-> 
-> No I think the error is really in that patch, see my other mail.
-> 
-> See https://elixir.bootlin.com/linux/v5.0-rc4/source/mm/memblock.c#L1455,
-> memblock_alloc_try_nid_raw() is not supposed to panic, so the last hunk of
-> this patch should be reverted.
-> 
-> Found in total three problematic hunks in that patch:
-> 
-> @@ -48,6 +53,11 @@ static phys_addr_t __init kasan_alloc_raw_page(int node)
->  	void *p = memblock_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
->  						__pa(MAX_DMA_ADDRESS),
->  						MEMBLOCK_ALLOC_KASAN, node);
-> +	if (!p)
-> +		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%llx\n",
-> +		      __func__, PAGE_SIZE, PAGE_SIZE, node,
-> +		      __pa(MAX_DMA_ADDRESS));
-> +
->  	return __pa(p);
->  }
- 
-I've looked more closely to the code that uses this function and it does
-not seem to handle allocation error.
-I can replace the panic with WARN(), but I think that panic() here is
-appropriate.
-
-Andrey, can you comment?
-
-
-> @@ -211,6 +211,9 @@ static int __init iob_init(struct device_node *dn)
->  	iob_l2_base = memblock_alloc_try_nid_raw(1UL << 21, 1UL << 21,
->  					MEMBLOCK_LOW_LIMIT, 0x80000000,
->  					NUMA_NO_NODE);
-> +	if (!iob_l2_base)
-> +		panic("%s: Failed to allocate %lu bytes align=0x%lx max_addr=%x\n",
-> +		      __func__, 1UL << 21, 1UL << 21, 0x80000000);
-> 
->  	pr_info("IOBMAP L2 allocated at: %p\n", iob_l2_base);
- 
-This one is actually fixes my own mistake from one of the previous patches
-that converted memblock_alloc_base() to memblock_alloc_try_nid_raw() without
-adding the panic() (commit 47e382eb08cfa0199c4ea9f9cc73f1b48a3a4b1d
-"powerpc: prefer memblock APIs returning virtual address")
- 
-> @@ -425,6 +436,10 @@ static void __init sparse_buffer_init(unsigned long
-> size, int nid)
->  		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
->  						__pa(MAX_DMA_ADDRESS),
->  						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
-> +	if (!sparsemap_buf)
-> +		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%lx\n",
-> +		      __func__, size, PAGE_SIZE, nid, __pa(MAX_DMA_ADDRESS));
-> +
->  	sparsemap_buf_end = sparsemap_buf + size;
->  }
- 
-This hunk was not needed as sparse can deal with this allocation failure.
-
-Andrew, can you please add the below patch to as a fixup to "treewide: add
-checks for the return value of memblock_alloc*()"?
- 
-From 854f54b9d4fe52f477765b905a4b2c421d30f46e Mon Sep 17 00:00:00 2001
-From: Mike Rapoport <rppt@linux.ibm.com>
-Date: Thu, 31 Jan 2019 09:18:50 +0200
-Subject: [PATCH] mm/sparse: don't panic if the allocation in
- sparse_buffer_init fails
-
-Addition of panic if memblock_alloc_try_nid_raw() call in
-sparse_buffer_init() fails was over enthusiastic as the system is perfectly
-capable to deal with that allocation failure.
-Remove the panic().
-
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- mm/sparse.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 1471f06..c11aba0 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -434,10 +434,6 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
- 		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
- 						__pa(MAX_DMA_ADDRESS),
- 						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
--	if (!sparsemap_buf)
--		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%lx\n",
--		      __func__, size, PAGE_SIZE, nid, __pa(MAX_DMA_ADDRESS));
--
- 	sparsemap_buf_end = sparsemap_buf + size;
- }
- 
--- 
-2.7.4
-
+DQoNCj4gLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0KPiDlj5Hku7bkuro6IEdyZWcgS0ggW21haWx0
+bzpncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZ10NCj4g5Y+R6YCB5pe26Ze0OiAyMDE55bm0Meac
+iDMx5pelIDE0OjUyDQo+IOaUtuS7tuS6ujogTGksUm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUu
+Y29tPg0KPiDmioTpgIE6IGpzbGFieUBzdXNlLmNvbTsgbGludXgta2VybmVsQHZnZXIua2VybmVs
+Lm9yZzsgZ2tvaGxpQGNvZGVhdXJvcmEub3JnOw0KPiBsaW51eC1zZXJpYWxAdmdlci5rZXJuZWwu
+b3JnDQo+IOS4u+mimDogUmU6IOetlOWkjTog562U5aSNOiBbUEFUQ0hdW3Y0XSB0dHk6IGZpeCBy
+YWNlIGJldHdlZW4gZmx1c2hfdG9fbGRpc2MgYW5kDQo+IHR0eV9vcGVuDQo+IA0KPiBPbiBUaHUs
+IEphbiAzMSwgMjAxOSBhdCAwMjoxNTozNUFNICswMDAwLCBMaSxSb25ncWluZyB3cm90ZToNCj4g
+Pg0KPiA+DQo+ID4gPiAtLS0tLemCruS7tuWOn+S7ti0tLS0tDQo+ID4gPiDlj5Hku7bkuro6IEdy
+ZWcgS0ggW21haWx0bzpncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZ10NCj4gPiA+IOWPkemAgeaX
+tumXtDogMjAxOeW5tDHmnIgzMOaXpSAyMToxNw0KPiA+ID4g5pS25Lu25Lq6OiBMaSxSb25ncWlu
+ZyA8bGlyb25ncWluZ0BiYWlkdS5jb20+DQo+ID4gPiDmioTpgIE6IGpzbGFieUBzdXNlLmNvbTsg
+bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gPiA+IGdrb2hsaUBjb2RlYXVyb3JhLm9y
+ZzsgbGludXgtc2VyaWFsQHZnZXIua2VybmVsLm9yZw0KPiA+ID4g5Li76aKYOiBSZTog562U5aSN
+OiBbUEFUQ0hdW3Y0XSB0dHk6IGZpeCByYWNlIGJldHdlZW4gZmx1c2hfdG9fbGRpc2MgYW5kDQo+
+ID4gPiB0dHlfb3Blbg0KPiA+ID4NCj4gPiA+IE9uIFdlZCwgSmFuIDMwLCAyMDE5IGF0IDEyOjQ4
+OjQyUE0gKzAwMDAsIExpLFJvbmdxaW5nIHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4g
+PiA+IC0tLS0t6YKu5Lu25Y6f5Lu2LS0tLS0NCj4gPiA+ID4gPiDlj5Hku7bkuro6IGxpbnV4LWtl
+cm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmcNCj4gPiA+ID4gPiBbbWFpbHRvOmxpbnV4LWtlcm5l
+bC1vd25lckB2Z2VyLmtlcm5lbC5vcmddIOS7o+ihqCBHcmVnIEtIDQo+ID4gPiA+ID4g5Y+R6YCB
+5pe26Ze0OiAyMDE55bm0MeaciDMw5pelIDE4OjE5DQo+ID4gPiA+ID4g5pS25Lu25Lq6OiBMaSxS
+b25ncWluZyA8bGlyb25ncWluZ0BiYWlkdS5jb20+DQo+ID4gPiA+ID4g5oqE6YCBOiBqc2xhYnlA
+c3VzZS5jb207IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiA+ID4gZ2tvaGxp
+QGNvZGVhdXJvcmEub3JnDQo+ID4gPiA+ID4g5Li76aKYOiBSZTogW1BBVENIXVt2NF0gdHR5OiBm
+aXggcmFjZSBiZXR3ZWVuIGZsdXNoX3RvX2xkaXNjIGFuZA0KPiA+ID4gPiA+IHR0eV9vcGVuDQo+
+ID4gPiA+ID4NCj4gPiA+ID4gPiBPbiBGcmksIEphbiAxOCwgMjAxOSBhdCAwNToyNzoxN1BNICsw
+ODAwLCBMaSBSb25nUWluZyB3cm90ZToNCj4gPiA+ID4gPiA+IFRoZXJlIHN0aWxsIGlzIGEgcmFj
+ZSB3aW5kb3cgYWZ0ZXIgdGhlIGNvbW1pdCBiMDI3ZTIyOThiZDU4OA0KPiA+ID4gPiA+ID4gKCJ0
+dHk6IGZpeCBkYXRhIHJhY2UgYmV0d2VlbiB0dHlfaW5pdF9kZXYgYW5kIGZsdXNoIG9mIGJ1ZiIp
+LA0KPiA+ID4gPiA+ID4gYW5kIHdlIGVuY291bnRlcmVkIHRoaXMgY3Jhc2ggaXNzdWUgaWYgcmVj
+ZWl2ZV9idWYgY2FsbCBjb21lcw0KPiA+ID4gPiA+ID4gYmVmb3JlIHR0eSBpbml0aWFsaXphdGlv
+biBjb21wbGV0ZXMgaW4gbl90dHlfb3BlbiBhbmQNCj4gPiA+ID4gPiA+IHR0eS0+ZHJpdmVyX2Rh
+dGEgbWF5IGJlIE5VTEwuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gQ1BVMCAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIENQVTENCj4gPiA+ID4gPiA+IC0tLS0gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAtLS0tDQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBuX3R0eV9vcGVuDQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHR0eV9pbml0X2Rldg0KPiA+ID4gPiA+ID4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHR0eV9sZGlzY191bmxvY2sNCj4gPiA+ID4gPiA+
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNjaGVkdWxlDQo+IGZsdXNo
+X3RvX2xkaXNjDQo+ID4gPiA+ID4gPiByZWNlaXZlX2J1Zg0KPiA+ID4gPiA+ID4gICB0dHlfcG9y
+dF9kZWZhdWx0X3JlY2VpdmVfYnVmDQo+ID4gPiA+ID4gPiAgICB0dHlfbGRpc2NfcmVjZWl2ZV9i
+dWYNCj4gPiA+ID4gPiA+ICAgICBuX3R0eV9yZWNlaXZlX2J1Zl9jb21tb24NCj4gPiA+ID4gPiA+
+ICAgICAgIF9fcmVjZWl2ZV9idWYNCj4gPiA+ID4gPiA+ICAgICAgICB1YXJ0X2ZsdXNoX2NoYXJz
+DQo+ID4gPiA+ID4gPiAgICAgICAgIHVhcnRfc3RhcnQNCj4gPiA+ID4gPiA+ICAgICAgICAgLyp0
+dHktPmRyaXZlcl9kYXRhIGlzIE5VTEwqLw0KPiA+ID4gPiA+ID4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICB0dHktPm9wcy0+b3Blbg0KPiA+ID4gPiA+ID4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAvKmluaXQgdHR5LT5kcml2ZXJfZGF0YSovDQo+ID4gPiA+
+ID4gPg0KPiA+ID4gPiA+ID4gaXQgY2FuIGJlIGZpeGVkIGJ5IGV4dGVuZGluZyBsZGlzYyBzZW1h
+cGhvcmUgbG9jayBpbg0KPiA+ID4gPiA+ID4gdHR5X2luaXRfZGV2IHRvIGRyaXZlcl9kYXRhIGlu
+aXRpYWxpemVkIGNvbXBsZXRlbHkgYWZ0ZXINCj4gPiA+ID4gPiA+IHR0eS0+b3BzLT5vcGVuKCks
+IGJ1dCB0aGlzIHdpbGwgbGVhZCB0byBwdXQgbG9jayBvbiBvbmUNCj4gPiA+ID4gPiA+IGZ1bmN0
+aW9uIGFuZCB1bmxvY2sgaW4gc29tZSBvdGhlciBmdW5jdGlvbiwgYW5kIGhhcmQgdG8NCj4gPiA+
+ID4gPiA+IG1haW50YWluLCBzbyBmaXggdGhpcyByYWNlIG9ubHkgYnkgY2hlY2tpbmcNCj4gPiA+
+ID4gPiA+IHR0eS0+ZHJpdmVyX2RhdGEgd2hlbiByZWNlaXZpbmcsIGFuZCByZXR1cm4gaWYNCj4g
+PiA+ID4gPiA+IHR0eS0+dHR5LT5kcml2ZXJfZGF0YQ0KPiA+ID4gPiA+ID4gaXMgTlVMTA0KPiA+
+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IFdhbmcgTGkgPHdhbmdsaTM5QGJh
+aWR1LmNvbT4NCj4gPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IFpoYW5nIFl1IDx6aGFuZ3l1MzFA
+YmFpZHUuY29tPg0KPiA+ID4gPiA+ID4gU2lnbmVkLW9mZi1ieTogTGkgUm9uZ1FpbmcgPGxpcm9u
+Z3FpbmdAYmFpZHUuY29tPg0KPiA+ID4gPiA+ID4gLS0tDQo+ID4gPiA+ID4gPiBWNDogYWRkIHZl
+cnNpb24gaW5mb3JtYXRpb24NCj4gPiA+ID4gPiA+IFYzOiBub3QgdXNlZCBsZGlzYyBzZW1hcGhv
+cmUgbG9jaywgb25seSBjaGVja2luZw0KPiA+ID4gPiA+ID4gdHR5LT5kcml2ZXJfZGF0YSB3aXRo
+IE5VTEwNCj4gPiA+ID4gPiA+IFYyOiBmaXggYnVpbGRpbmcgZXJyb3IgYnkgRVhQT1JUX1NZTUJP
+TCB0dHlfbGRpc2NfdW5sb2NrDQo+ID4gPiA+ID4gPiBWMTogZXh0ZW5kIGxkaXNjIGxvY2sgdG8g
+cHJvdGVjdCB0aGF0IHR0eS0+ZHJpdmVyX2RhdGEgaXMNCj4gPiA+ID4gPiA+IGluaXRlZA0KPiA+
+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IGRyaXZlcnMvdHR5L3R0eV9wb3J0LmMgfCAzICsrKw0KPiA+
+ID4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykNCj4gPiA+ID4gPiA+DQo+
+ID4gPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy90dHkvdHR5X3BvcnQuYyBiL2RyaXZlcnMv
+dHR5L3R0eV9wb3J0LmMNCj4gPiA+ID4gPiA+IGluZGV4DQo+ID4gPiA+ID4gPiAwNDRjM2NiZGNm
+YTQuLjg2ZDBiZWMzODMyMiAxMDA2NDQNCj4gPiA+ID4gPiA+IC0tLSBhL2RyaXZlcnMvdHR5L3R0
+eV9wb3J0LmMNCj4gPiA+ID4gPiA+ICsrKyBiL2RyaXZlcnMvdHR5L3R0eV9wb3J0LmMNCj4gPiA+
+ID4gPiA+IEBAIC0zMSw2ICszMSw5IEBAIHN0YXRpYyBpbnQNCj4gPiA+ID4gPiA+IHR0eV9wb3J0
+X2RlZmF1bHRfcmVjZWl2ZV9idWYoc3RydWN0DQo+ID4gPiA+ID4gPiB0dHlfcG9ydA0KPiA+ID4g
+PiA+ICpwb3J0LA0KPiA+ID4gPiA+ID4gIAlpZiAoIXR0eSkNCj4gPiA+ID4gPiA+ICAJCXJldHVy
+biAwOw0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ICsJaWYgKCF0dHktPmRyaXZlcl9kYXRhKQ0K
+PiA+ID4gPiA+ID4gKwkJcmV0dXJuIDA7DQo+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4NCj4gPiA+
+ID4gPiBIb3cgaXMgdGhpcyB3b3JraW5nPyAgV2hhdCBpcyBzZXR0aW5nIGRyaXZlcl9kYXRhIHRv
+IE5VTEwgdG8NCj4gPiA+ID4gPiAic3RvcCIgdGhpcw0KPiA+ID4gcmFjZT8NCj4gPiA+ID4gPg0K
+PiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiBpZiB0dHktPmRyaXZlcl9kYXRhIGlzIE5VTEwgYW5k
+IHJldHVybiwNCj4gPiA+ID4gdHR5X3BvcnRfZGVmYXVsdF9yZWNlaXZlX2J1ZiB3aWxsIG5vdCBz
+dGVwIHRvIHVhcnRfc3RhcnQgd2hpY2gNCj4gPiA+ID4gYWNjZXNzIHR0eS0+ZHJpdmVyX2RhdGEg
+YW5kIHRyaWdnZXIgcGFuaWMgYmVmb3JlIHR0eV9vcGVuLCBzbyBpdA0KPiA+ID4gPiBjYW4gZml4
+IHRoZSBzeXN0ZW0gcGFuaWMNCj4gPiA+ID4NCj4gPiA+ID4gPiBUaGVyZSdzIG5vIHJlcXVpcmVt
+ZW50IHRoYXQgYSB0dHkgZHJpdmVyIHNldCB0aGlzIGZpZWxkIHRvIE5VTEwNCj4gPiA+ID4gPiB3
+aGVuIGl0IGlzDQo+ID4gPiAiZG9uZSINCj4gPiA+ID4gPiB3aXRoIHRoZSB0dHkgZGV2aWNlLCBz
+byBJIHRoaW5rIHlvdSBhcmUganVzdCBnZXR0aW5nIGx1Y2t5IGluDQo+ID4gPiA+ID4gdGhhdCB5
+b3VyIHNwZWNpZmljIGRyaXZlciBoYXBwZW5zIHRvIGJlIGRvaW5nIHRoaXMuDQo+ID4gPiA+ID4N
+Cj4gPiA+ID4NCj4gPiA+ID4gd2hlbiB0dHlfb3BlbiBpcyBydW5uaW5nLCB0dHkgaXMgYWxsb2Nh
+dGVkIGJ5IGt6YWxsb2MgaW4NCj4gPiA+ID4gdHR5X2luaXRfZGV2IHdoaWNoIGNhbGxlZCBieSB0
+dHlfb3Blbl9ieV9kcml2ZXIsIHR0eSBpcyBpbml0ZWQgdG8NCj4gPiA+ID4gMA0KPiA+ID4gPg0K
+PiA+ID4gPiA+IFdoYXQgZHJpdmVyIGFyZSB5b3UgdGVzdGluZyB0aGlzIGFnYWluc3Q/DQo+ID4g
+PiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gODI1MA0KPiA+ID4NCj4gPiA+IE9rLCBhcyB0aGlzIGlz
+IHNwZWNpZmljIHRvIHRoZSB1YXJ0IGNvcmUsIGhvdyBhYm91dCB0aGlzIHBhdGNoIGluc3RlYWQ6
+DQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdHR5L3NlcmlhbC9zZXJpYWxfY29y
+ZS5jDQo+ID4gPiBiL2RyaXZlcnMvdHR5L3NlcmlhbC9zZXJpYWxfY29yZS5jDQo+ID4gPiBpbmRl
+eCA1YzAxYmI2ZDFjMjQuLmI1NmE2MjUwZGYzZiAxMDA2NDQNCj4gPiA+IC0tLSBhL2RyaXZlcnMv
+dHR5L3NlcmlhbC9zZXJpYWxfY29yZS5jDQo+ID4gPiArKysgYi9kcml2ZXJzL3R0eS9zZXJpYWwv
+c2VyaWFsX2NvcmUuYw0KPiA+ID4gQEAgLTEzMCw2ICsxMzAsOSBAQCBzdGF0aWMgdm9pZCB1YXJ0
+X3N0YXJ0KHN0cnVjdCB0dHlfc3RydWN0ICp0dHkpDQo+ID4gPiAgCXN0cnVjdCB1YXJ0X3BvcnQg
+KnBvcnQ7DQo+ID4gPiAgCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQo+ID4gPg0KPiA+ID4gKwlpZiAo
+IXN0YXRlKQ0KPiA+ID4gKwkJcmV0dXJuOw0KPiA+ID4gKw0KPiA+ID4gIAlwb3J0ID0gdWFydF9w
+b3J0X2xvY2soc3RhdGUsIGZsYWdzKTsNCj4gPiA+ICAJX191YXJ0X3N0YXJ0KHR0eSk7DQo+ID4g
+PiAgCXVhcnRfcG9ydF91bmxvY2socG9ydCwgZmxhZ3MpOw0KPiA+DQo+ID4NCj4gPiBJZiBtb3Zl
+IHRoZSBjaGVjayBpbnRvIHVhcnRfc3RhcnQsIGkgYW0gYWZyYWlkIHRoYXQgaXQgbWF5YmUgbm90
+IGZ1bGx5DQo+ID4gZml4IHRoaXMgaXNzdWUsIFNpbmNlIG5fdHR5X3JlY2VpdmVfYnVmX2NvbW1v
+biBtYXliZSBjYWxsDQo+ID4gbl90dHlfY2hlY2tfdGhyb3R0bGUvIHR0eV91bnRocm90dGxlX3Nh
+ZmUgd2hpY2ggbWF5YmUgdXNlIHRoZQ0KPiA+IHR0eS0+ZHJpdmVyX2RhdGENCj4gPg0KPiA+IGlm
+IHR0eSBpcyBub3QgZnVsbHkgb3BlbmVkLCBJIHRoaW5rIG5vIGdhaW4gdG8gc3RlcCBpbnRvIG1v
+cmUgZnVuY3Rpb24NCj4gDQo+IEJ1dCBhcyBJIHNhaWQsIHRoZSB0dHkgY29yZSBoYXMgbm8ga25v
+d2xlZGdlIG9mIHRoZSAiZHJpdmVyX2RhdGEiLCBmaWVsZC4gIEl0DQo+IGRvZXMgbm90IGtub3cg
+aWYgYSBkcml2ZXIgcmVhbGx5IGlzIGV2ZW4gdXNpbmcgdGhhdCBmaWVsZCwgc28gaXQgbWVhbnMg
+bm90aGluZyB0bw0KPiB0aGUgdHR5IGNvcmUsIHNvIGl0IGNhbiBub3QgY2hlY2sgaXQuICBZb3Vy
+IHNwZWNpZmljIHR0eSBkcml2ZXIgZG9lcyBoYXBwZW4gdG8gdXNlDQo+IGl0LCBzbyBpdCBjYW4g
+Y2hlY2sgaXQuDQo+IA0KPiBJZiB5b3UgYWxzbyBuZWVkIHRvIGNoZWNrIHRoaXMgaW4gdW50aHJv
+dHRsZSwgaG93IGFib3V0IHRoaXMgcGF0Y2ggdG9vPw0KPiBEb2VzIHRoZSBjb21iaW5hdGlvbiBv
+ZiB0aGVzZSB0d28gcGF0Y2hlcyBzb2x2ZSB0aGUgcHJvYmxlbSBmb3IgeW91cg0KPiBzeXN0ZW1z
+Pw0KPiANCj4gdGhhbmtzLA0KPiANCj4gZ3JlZyBrLWgNCj4gDQoNClRoYW5rcyBmb3IgeW91IGV4
+cGxhbmF0aW9uLCBJIHNlZSBub3cNCllvdXIgc3VnZ2VzdGlvbiBzaG91bGQgd29yaywgSSB3aWxs
+IHNlbmQgVjUgYmFzZWQgb24geW91ciBzdWdnZXN0aW9uDQoNCi1Sb25nUWluZw0KDQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy90dHkvc2VyaWFsL3NlcmlhbF9jb3JlLmMgYi9kcml2ZXJzL3R0
+eS9zZXJpYWwvc2VyaWFsX2NvcmUuYw0KPiBpbmRleCA1YzAxYmI2ZDFjMjQuLmUzM2Q0YzE4MTEy
+MyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy90dHkvc2VyaWFsL3NlcmlhbF9jb3JlLmMNCj4gKysr
+IGIvZHJpdmVycy90dHkvc2VyaWFsL3NlcmlhbF9jb3JlLmMNCj4gQEAgLTcyNyw2ICs3MjcsOSBA
+QCBzdGF0aWMgdm9pZCB1YXJ0X3VudGhyb3R0bGUoc3RydWN0IHR0eV9zdHJ1Y3QgKnR0eSkNCj4g
+IAl1cHN0YXRfdCBtYXNrID0gVVBTVEFUX1NZTkNfRklGTzsNCj4gIAlzdHJ1Y3QgdWFydF9wb3J0
+ICpwb3J0Ow0KPiANCj4gKwlpZiAoIXN0YXRlKQ0KPiArCQlyZXR1cm47DQo+ICsNCj4gIAlwb3J0
+ID0gdWFydF9wb3J0X3JlZihzdGF0ZSk7DQo+ICAJaWYgKCFwb3J0KQ0KPiAgCQlyZXR1cm47DQo=
