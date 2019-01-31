@@ -7,78 +7,79 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA83C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D11CFC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42755218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96C3B2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:53:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="cd/vml/0";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="Uf/JLtGu"
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="h5+MWGrd";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="Ls44Fu0h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732572AbfAaLxf (ORCPT
+        id S1732532AbfAaLxb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 06:53:35 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:59286 "EHLO
+        Thu, 31 Jan 2019 06:53:31 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:59280 "EHLO
         mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732223AbfAaLxd (ORCPT
+        by vger.kernel.org with ESMTP id S1732320AbfAaLx3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 06:53:33 -0500
+        Thu, 31 Jan 2019 06:53:29 -0500
 Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VBhk2S025357;
-        Thu, 31 Jan 2019 03:53:17 -0800
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VBhk2M025351;
+        Thu, 31 Jan 2019 03:53:12 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=dfayb8sN4LxyKiht7i2MxMmt7tpSOhpE02ovlwCHyk4=;
- b=cd/vml/0v8GSwYonKxEVjFxZ4KPnt4/9ehuK6N3Oa2UdN0O4SQaS4MjPdYH/U3dwaEnU
- iJus4zxRC1ZkUjwAIPvzahmlabk+ZSpxXtmC3a+4eX5s6zOeGLztJ74pnZAOZCWwmTRE
- ZcJNosObtiRv6T2BFLpskRa6U7n6S/4U4KqR3ian72Bo87vUWh+JRnnbMg7WFQR3wRUL
- hr7tLibuetMbVy0kCimMzA+sTF2bMM8CN36sgFVh90RqC6wTDvy8H+uo0Rur1Qc9ypfm
- lZPq862Q3qinygwz+qbJqxov6PdYVK0HBQdJIwYDO0++wEmsaCQzNmr2rCpZ7WbwRgKt zA== 
+ bh=MqK5u59Ffsmaf6zXuZRIswDw7yVPI+nrQE28untZ1PY=;
+ b=h5+MWGrdQfYIsEAuadfNk0P+1eozJn6d2TxF4WsaC/cySUtt6N4ZH+qiiBjDk0Cd6nwN
+ gg2rQxoqm44BB8lHPdb55TkeQUX/zj9XaGKP28XcqCxNE/HTXeZugXyuwPmz3eGLZBsz
+ WDVXPV2r0kzQiTI2TqNQkLj911v+k8EyYib1ygrNTp61vPF6WIBSd7qd1TDrx9BL/Rxk
+ xUR17jl2jA1thOgX2RLIAdnUXL+O+U3LTJrmC/P+7lCAQyLxsnSvm8Rb2oIZPcWb2o2F
+ an2wt3ubvzdIOM4HfGEhHjN5A0r+1WEL80JioixiHuMpaFTXbR/ScWEKrOlH7LfNI+I8 Tg== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam01-sn1-obe.outbound.protection.outlook.com (mail-sn1nam01lp2051.outbound.protection.outlook.com [104.47.32.51])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2qbn3fjye0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 31 Jan 2019 03:53:16 -0800
+Received: from nam01-sn1-obe.outbound.protection.outlook.com (mail-sn1nam01lp2058.outbound.protection.outlook.com [104.47.32.58])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2qbn3fjydt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 31 Jan 2019 03:53:11 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dfayb8sN4LxyKiht7i2MxMmt7tpSOhpE02ovlwCHyk4=;
- b=Uf/JLtGucSSTTgDwAXyiqBMepsSbYSZp4IalunWyH0O/+WbLiMPmhojGMdEUrPNaWQzrLTEGqPaARiFo+OCwGe/pZbCCyQTeS0hzcTXeJvZcMHttczxWF/2YXbWb2DcI3VnzvK/ndzPOKtWc95dgTcwZqKJJGG91ZtKTKucVgas=
-Received: from CO2PR07CA0082.namprd07.prod.outlook.com (2603:10b6:100::50) by
- BN6PR07MB3090.namprd07.prod.outlook.com (2603:10b6:404:a5::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Thu, 31 Jan 2019 11:53:13 +0000
-Received: from DM3NAM05FT003.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::208) by CO2PR07CA0082.outlook.office365.com
- (2603:10b6:100::50) with Microsoft SMTP Server (version=TLS1_2,
+ bh=MqK5u59Ffsmaf6zXuZRIswDw7yVPI+nrQE28untZ1PY=;
+ b=Ls44Fu0ha1AiVXT0io6nKGSWoA9GTyOJnMTnkpO/g82iduQtVZSykQTuHWtLKPCDlNm+gB0v6thCKHkx3kl0nqTY6H7LiqOsBuxwaN+f8RKb1UdS+p5o7WNPSiRRNyx4tt1vQ7E49XNj13cvI2v39xzq2PPh2yq+OZkbm6q1l4I=
+Received: from CY1PR07CA0029.namprd07.prod.outlook.com
+ (2a01:111:e400:c60a::39) by CY4PR07MB3096.namprd07.prod.outlook.com
+ (2603:10b6:903:ce::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1558.21; Thu, 31 Jan
+ 2019 11:53:10 +0000
+Received: from BY2NAM05FT036.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e52::206) by CY1PR07CA0029.outlook.office365.com
+ (2a01:111:e400:c60a::39) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.17 via Frontend
- Transport; Thu, 31 Jan 2019 11:53:12 +0000
+ Transport; Thu, 31 Jan 2019 11:53:10 +0000
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
 Received: from sjmaillnx1.cadence.com (158.140.1.28) by
- DM3NAM05FT003.mail.protection.outlook.com (10.152.98.108) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1580.2 via Frontend Transport; Thu, 31 Jan 2019 11:53:11 +0000
+ BY2NAM05FT036.mail.protection.outlook.com (10.152.100.173) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1580.2 via Frontend Transport; Thu, 31 Jan 2019 11:53:09 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x0VBr4Sm028139
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id x0VBr4Sk028139
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 31 Jan 2019 03:53:10 -0800
+        Thu, 31 Jan 2019 03:53:09 -0800
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Thu, 31 Jan 2019 12:53:06 +0100
+ 15.0.1367.3; Thu, 31 Jan 2019 12:53:04 +0100
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Thu, 31 Jan 2019 12:53:06 +0100
+ 15.0.1367.3 via Frontend Transport; Thu, 31 Jan 2019 12:53:04 +0100
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x0VBr6LV002339;
-        Thu, 31 Jan 2019 11:53:06 GMT
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x0VBr4J0002298;
+        Thu, 31 Jan 2019 11:53:04 GMT
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x0VBr6WK002334;
-        Thu, 31 Jan 2019 11:53:06 GMT
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x0VBr4Ia002292;
+        Thu, 31 Jan 2019 11:53:04 GMT
 From:   Pawel Laszczak <pawell@cadence.com>
 To:     <devicetree@vger.kernel.org>
 CC:     <gregkh@linuxfoundation.org>, <mark.rutland@arm.com>,
@@ -89,9 +90,9 @@ CC:     <gregkh@linuxfoundation.org>, <mark.rutland@arm.com>,
         <nsekhar@ti.com>, <nm@ti.com>, <sureshp@cadence.com>,
         <peter.chen@nxp.com>, <pjez@cadence.com>, <kurahul@cadence.com>,
         "Pawel Laszczak" <pawell@cadence.com>
-Subject: [PATCH v3 6/6] usb:cdns3 Fix for stuck packets in on-chip OUT buffer.
-Date:   Thu, 31 Jan 2019 11:52:33 +0000
-Message-ID: <1548935553-452-7-git-send-email-pawell@cadence.com>
+Subject: [PATCH v3 3/6] usb:common Patch simplify usb_decode_set_clear_feature function.
+Date:   Thu, 31 Jan 2019 11:52:30 +0000
+Message-ID: <1548935553-452-4-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1548935553-452-1-git-send-email-pawell@cadence.com>
 References: <1548935553-452-1-git-send-email-pawell@cadence.com>
@@ -99,50 +100,49 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39860400002)(136003)(346002)(396003)(2980300002)(199004)(189003)(36092001)(446003)(76176011)(316002)(11346002)(51416003)(8936002)(2616005)(476003)(126002)(336012)(30864003)(106466001)(105596002)(26005)(8676002)(426003)(2351001)(186003)(107886003)(4326008)(26826003)(87636003)(39060400002)(478600001)(54906003)(50226002)(16586007)(7416002)(42186006)(14444005)(86362001)(7636002)(50466002)(48376002)(36756003)(305945005)(2906002)(4720700003)(356004)(6666004)(246002)(486006)(47776003)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR07MB3090;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT003;1:gtDGiJV9DoV6Gi/qM5fiBP2UWFnw9qW327o+aDGvm0uDjK2fzqeUmS29EB6+hlE397FL7IzndIkUwiZkaRA84Tflf/pfZ+YniQ152lYzk0MrhuCt6o4mkrhnBMnq8xPnYVXtEkzZyKrATEtYvdyKJaIe9yWU/HiyRwjEG3zqx6g=
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(396003)(376002)(346002)(2980300002)(189003)(199004)(36092001)(107886003)(126002)(426003)(2616005)(36756003)(4720700003)(11346002)(305945005)(446003)(486006)(4326008)(105596002)(476003)(2906002)(26826003)(76176011)(6916009)(26005)(47776003)(106466001)(50466002)(42186006)(87636003)(39060400002)(7416002)(336012)(316002)(7636002)(186003)(51416003)(16586007)(86362001)(356004)(8676002)(48376002)(478600001)(8936002)(50226002)(246002)(6666004)(2351001)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR07MB3096;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM05FT036;1:9ASd9bXET7Rdyhmh1cei3CuiexrEiKUUdM36oJRYEqbjSzzIeVlGM/EuryYlzT8TWn6EVwVo/mPp1U5FHHZUMAEubQ6tjh9UY6QMcg840dniZwGWRASOdQV2vn6/kwl1Fy/Z4ibmkRTcEprYktYdubycW93p8hfu9TDPw/ulCe4=
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b066330c-eecc-4509-d510-08d68772ad2e
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060);SRVR:BN6PR07MB3090;
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB3090;3:E0V+HCNbqyLpYiJjngueA7ZO5QzBNu8N6vVNZWXWKDqGD53R6qGkQ71B0ppe3D1D1PdHwuHsjNggJS5+82hKsYfwpRkXpymZLPfOwv42LedtIbQgG2uoEhTiUs9bhYu+oGXd7xXBxIKLzXoGvTd++sNZnIgc7DaXXUtvYIePuLSH+doq1o9m3Rglu38ijkAndk0R1kGEba6UvuQM7BQWc/yuG1gQ2ltvprMJtGgn6Tvgz/BDprX7o5H3pHi0lGuKU+6ymg+Gk9h4x2afrQulvDVy153fhCDcPiU6B0OzNScx88BpGcjlMS2WlhM0z9KHzszqiYTnF5XsHVCPTIdPhcGDxsPBCFME/c/09RpxqxDG1B0/lm7jjUQC+yAKSybe;25:mCqbzQ2F96/i1j+SnxC+bqjLITzbHgsLn/lBfLRBdEDjX35c45q9cLD4EP5f4aLoz9fnfg0WzJu2AnxTbizWKDg4oo0F7hR04o/f/Jx4+5T1lacDoVQSpqf0zpBNwdvfaxXOyNzg1TG9j+Pfjv2vN9yeIBp550Ztr8J2o23FF+zg/TTpxOGUEj6kPSoJIqXShxg1PCLfKnc85BcQpRxugrKpKDYj7W63FM0lVziyYkmuDvOgSN6PHic2K9eIsTR7JPi6HaHCeAFlM2VWXo5wtO7s6EGBNFoRfbQiac3uCKXfSVdaSffy04Q7hP2ql4amkvfHjD7L+0FgRLDoposJBQ==
-X-MS-TrafficTypeDiagnostic: BN6PR07MB3090:
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB3090;31:pT5CdLLHSKVS2i0ARQUc+9PSejZDkgJBsu26SC5BuzwCDXciQ4I6st/X42iZGpURBKEbMIR+RDT3DHu3mrYZwurgane2pUBzoOFbP+dCCWh7qs0yX5hsF2LVWxfMcTFkIDTwADNavpCQ+FrWtn9bq4z3QUukwpvXGCCFadkbEYW+Pd6N8xKYzlWDWV3YW3S3fXswasG21wD6TzqP5f4woJQNEZKbVto4Oxwg3ye8vcM=;20:686coX6fHDpu2yGqst4pYN9W3S2pKlrhBMMSvZYyzStdMd3YBqzqvkuWnCOZ+Zm4Sv/wcQPqEkP1S1q23XVMmvIrGuzs/FfFqsJIRojoJhmP07jT5APeppb90Yr9GOrvtLmkBgH/zWhQtAb+ylhx7xK15arW5D74e0e0PlLP2Wih3Xfykyov+0P455Gb1nlgWMh+zt88AP/t0me+FGKyufOPdW/W28I7PtqXlzIfBnTWiqwXRJGKEUZigfatv4lIMUt5RNxS4CObKOjnuRk7DULcanI2CL3JYMpqDy+2K7FTTlolk+vM6HU+gX/FUTG9IcCkPK3h5ZVF93iJr/lQDVfPsqxFMfCQPDH0zT2r3x4rv4zjIb2dOD8vOPgJIyzlQqA1f3QxYVCWZ6zgmHSNScsmhH+zup1woTsWcI1Ndm/pOSFUbkcEoOEMJfYQzpP7w3cxWeQtfgTsiUX5ifK+iWR0la1sXSg2E/4QDprwzLVRHCFj7KeM5gKiNYLZ8fFj
-X-Microsoft-Antispam-PRVS: <BN6PR07MB3090352AB4141482C8922FB1DD910@BN6PR07MB3090.namprd07.prod.outlook.com>
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB3090;4:uOp/6JgAEZCQyyJGu18GQO9k1XkTKyQwYozvTzPYe1Kls38ARmqngC5scZ1P2feyZZkVHyYCPzpQJvnIy7wtPJsVf1H8IGNShuFWHRFsYGATt9ihQDetjAOOA4bjurIWjSD7v08WYZ7NUK1mqBSkOC4WyjCzMhwbeah8W3lLeqw4H3Ks1hzax3aAkO0js3WFqToonvBG5adqTmdGk/rTm+44U2t9iaGaflw90IusvEE780njB/ZuwowzaZwbSsvZW2G/vMtahN/Zp4L0Oa+vf58fEgLdr9jpUCQdp580v+U=
+X-MS-Office365-Filtering-Correlation-Id: 976eadf5-7dd6-409e-4e52-08d68772abbc
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060);SRVR:CY4PR07MB3096;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB3096;3:hPCdYArDZXpT/FnqAdy7ctm2hoMOV9yMj5EHhTz1KZfRKJjsyx8G2PJ1tbW3ujtLkcKPP4QS1QVcSnNXD0DW1Zh5V2q50PnwQ6NGpcxWf5b3Ley1oJjXR7eF79OSRSwl+otOo2wOz2pD9BY2pDg2pPfSbsHCejjFrvYn6x+MQFNeOQMsDLRtOH4wY+DwxJszAJirQyeNVJsv46CabVLwQQrjwdIFyDGYhX3WUKzS8Iut6xyBwqN3P3qufXxn0MWPILt+JSwNahvEjZ8JB9hoPYXd4uQYuuO0+xLrJQJjfei/rWdHQkMVt4RFRmRT5hD5UyJGq/oxTQw2Ydd0ZPUydcfAY+07VgE3x43p+QQDCzRtKJqACCdXo7Ek2neVl5yS;25:0Zp+cImwp9zBR6JMTyBokT0Duq+3G35E/DP4NM9eqeH3wfIVyQuI8co5FrTUzA2bGmCLKPFrO23nmBNn6t3UKaFk1wNxn4CRzo/0bEgSNdGwNasYHUKjex6gbsJaJ9npqnLkG1NBA3O1uHCPOe9cmhWW9v5sQ3s4SZH6OHSidRcoCGD/lESA2qDCZugPMEh+ttmFoZZdNL9nPoYYnzBCKfjpnRln/hltid+L7tCkXasui9vA7moBR/TKtXgRkUsM2XV1UZ2w3tfTTJdEqJn2JmhDD8t4pJOU6EaLwnzKhHvqj8qvHmUm5ezTqHyzpq5HPdo4kTPFwItfkwjBFv2POw==
+X-MS-TrafficTypeDiagnostic: CY4PR07MB3096:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB3096;31:y3b7fyW0mg0bxCdxVGuPpE2DvZPSvwp+gst3g/vzP0beJYf5ARzoykK9pMCWyG8QgFpq3zSEaz98AkVy/rrTtH0NR0mstoJ4hEcxy5ZEO4dOed+5YJnkwewE7gzt1HkyfMJqH8DQ2vupLtHkL08GvCbESy1UnvB5LyC7SIrV8JWKUFuSqFeCX0Q+pNNqTJ5WE0yhR22jmY45+///pn1Tt4PHo/3JnfIVA5NlrImbJqY=;20:L3D3P+uyixFecM77rOl+bvp+RikSfX6MDitO1GEE6hB8+GmKKq5kPB+MfzPj0LC0AUJExXaJ9BOW/kn04X9qjB5TUb9YfHOQm6CpOcTeUCOIxMcVzfoX9uNyTi7U7niS36JcrihLO2pkzW2rnB2nOwemNURunrVi6W9GZH5R/SWn0XTt1R4xICGz1RTEIRtI0ambmDsvsuLkR0je55SJtPZIwTFEnHoIftSjdCXrX1AQBtyE392diVxoT4VaJDCaPRNgvxjPPmdSs+TwEhlXsHK58hyLAnum7pE5bkXA9EwyLnsEtTr7akpngnigFqnqGAhcKFQCXpXD3WyUXb1oqa6r9vuQJO1tCJXZQYmMquD1wgqSRIjUcFxIL5v4Rg0nGClcFoKRAIB3gX6DWp9mGrk9lHVm2rf29rhtJ9XbrxUrJTkWfVx8hyyifpJZS/UskUsZxxLPI4QaPCuj9uTxVVdl2y6/0mIuXNvQ/Ptwd8ZEqc5K485ekEv0X2wDw5BY
+X-Microsoft-Antispam-PRVS: <CY4PR07MB3096802903FD6D6E27CC80EDDD910@CY4PR07MB3096.namprd07.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB3096;4:/QvD4Jfw5smy+D9iB1ZMmPwh/FejTfcumxcPF3nimOBO+gZZISvBsQtxEjTbduboKdBYbFkNWwzJeBYuc2kagwvDeP8K3MgHkIQAUgwaiwrTxFOKDYY2GsAgw/TgsyDmwdl/D1VqiQXYW5D+7E65KQmTskIiL2+C1xm8uzkKp8P5P0OA8X3UtxFjqvKzek4WN1O0kK1bE5EHQbHJCdImh7DUER1yWx11BTRGEXXOrCjmftaAvpK1SKHLizGL2grfgeew4wKr7Hgk7gbxN0c3oi7vUGLteLg5tezMe2FAKKM=
 X-Forefront-PRVS: 09347618C4
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR07MB3090;23:eYeirqn6KR/RZNIGBcFJ2wTESh69vv3TdYxr8Lrzg?=
- =?us-ascii?Q?Ovq3o6oKFkT+eL6t3nLPbQoV6C5udeBeX9SxLVo8BAsx+6YhPigfzrJxEs25?=
- =?us-ascii?Q?j6oGXuQFCqeK01kxrdREtx+CGb2tppiPlVaYvHPXt/fHE7S35LZ6z1dsFd0c?=
- =?us-ascii?Q?+CiMiCrtniGMRPmmbpZu+rQXzYvkskbTPqfvp9aLo+p69++JlI9D3akg4a/D?=
- =?us-ascii?Q?SQv5oAuv/6JqpNJjzwZU6ZzhMeziRXkQQxAJ7NjzeARURnqf/NOaYWEuhG3m?=
- =?us-ascii?Q?N95v20Lq1rnisuiLWG8Rm/RzeV13g1TSb+gJ360PvbS1upCfufRyvl6IYn9x?=
- =?us-ascii?Q?mQfLGI6PbzpTGFSDQt/xTg7HZJBNFnd7E8dXBCYwYULebpSKv6ZQje9JDXtb?=
- =?us-ascii?Q?f1OAVFrfh2IPKiAAiJRc5JsbV3n5jVd8a/I4Tzt3PqGAZRAzdYpp0MAKxdA0?=
- =?us-ascii?Q?ANnfV3jAh9x63A4h2Ice2wAVBZyscjEO9wrz05qBuh1tfWFMwuaNR5XIBGz7?=
- =?us-ascii?Q?nNNIrte4WEQA9S2UInF/3YUoDhECN/W8ZU2ZeFyl5QBv2hhlg81HTl+fb8Yp?=
- =?us-ascii?Q?gFhvvsSkQVWmGxCursJT5cPmv57FmqV2xijPyJyphMgPBhOORztztYAJEAcQ?=
- =?us-ascii?Q?7J0s/yHU+u+OfWS8cnQpa8bI9kGaghC1YvwwK9PyEE2hRTMXuzgQpy1CDzKW?=
- =?us-ascii?Q?jul8Q40/8WrOgmYxFl24UpnLjKFwRIloES4fJVahGPXhwqQNm2ejSEYuDGDM?=
- =?us-ascii?Q?PieuExwAx9eKGXNqPOE5hvmmV0z5XvATyin+xLRCJfYvZjB+qhPdIqZbFIvB?=
- =?us-ascii?Q?7sA0mXPS/0+RbY8ndstJBqYbrULxF3ICrhKGWLWvqti4SVG4W8Usals1M8OP?=
- =?us-ascii?Q?7mQebE38tFrx2XRxvv29DhWvPRwYqypLvA445ZdBdnpRw3xkvxytd9WVOMFB?=
- =?us-ascii?Q?u6GD/D/dYkZzJ55aoYNZBobFkKUNpvMaAAb/ciHw6neztNDjp6I621iAgkPF?=
- =?us-ascii?Q?FsLk31ilXvu2Gpvg5H/hxHdjVR57YRzAuVL8jS5WIqeabJlXUobutfo6YAXd?=
- =?us-ascii?Q?vubf4SvywREGAOG7V9C8vjqtu9zx+aFtb0+1nbZWwm8PAm1ZDiYsxnGhqh1o?=
- =?us-ascii?Q?n7BOnv8Yj7xBweFdis16ALFWuXtmVZBNWSAR3aiRuE13vbg5p7dvD9hNZ6xQ?=
- =?us-ascii?Q?TCEuVGRmmCuvCk=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR07MB3096;23:q3oDAnwBniTgzKXsKtggp0HKavxcHRwtpcZeHj3nJ?=
+ =?us-ascii?Q?+ABELWism4h9xBbfOZ5xPLmgIlQIsElhg4s6QFn6WKlqZrHlNXubQgNCJQ0v?=
+ =?us-ascii?Q?igmhrhl4eNMlVMGEc3Z7OP7kQcpOUA+ClcIdbvEnz++zXVsnYiok9b0hL/j6?=
+ =?us-ascii?Q?V0fglZBZl1JWl9kNPEL781DaVw958yUpVV0mXYCTyRPJtBpVK72NB4FC9ygZ?=
+ =?us-ascii?Q?beXEXZHiuZral81kZHDCKuopLFLHPiUByxyHJtGjPfSJBVOwU4aYqgkCk50p?=
+ =?us-ascii?Q?0ZbcgIwJ7lPjvqVQqFP2LAxaDvrHIjxE8ctmQ6upw8BqbPUen35onYDVhzJ+?=
+ =?us-ascii?Q?5l1corpZvStAEj8KzgNtcDcpYR5R7loaruQCraOLUgNOP0dCfp2Kj2ZW6PK6?=
+ =?us-ascii?Q?WZbsg5d+3bIi/aI180uypbriEI9EsTUHHv2XE4kCuVOupOCZrtkgjmzFCIbV?=
+ =?us-ascii?Q?3snXOP9UVIplPz0VRFZyyP/48PbTQpTortdC2D6hI87k5R23RUtocH0EwOgG?=
+ =?us-ascii?Q?pqTC56x+Ldp3ylq0yWqRrUWRNT6RRR3TelTr8dFZpXre6I33/07phRYfksZX?=
+ =?us-ascii?Q?u2yu39UbpDyz5xKwyQ4G19auew7YfDGc3z2WyVig4ZfwpfpMJFAkA3VVW2oM?=
+ =?us-ascii?Q?IqQqbivQX3qIS06vUM4Q0V24e1Nhy2zWxXDq5WVQWUhVS8jRihyFd+Z7YBZA?=
+ =?us-ascii?Q?TCr8P3Rha2zqm04776rr7RW/ILu3LizEczlpJs6ATZ6XUif2m8NtxWmC8zXo?=
+ =?us-ascii?Q?09YpSBcVzdS9qih+WnQ5MevrLv90osBKVXmeHe46ybWNQGorxQMalv3TJSVP?=
+ =?us-ascii?Q?SGSwTZDnEjS9Wl0t+mQr/9xmDvvTpK7/rbA2YutamQxzwPO/K2uqi/ztvMJf?=
+ =?us-ascii?Q?Tl80g2cmLz0uPzecGTA57xjUUP9cQRlLExiAkt85a5PzfzfUgGxKi1nEpbV1?=
+ =?us-ascii?Q?nPU7SEPHL7+4TnGe/H1Isfyy0w6Wa70hpg7UsN3iod46pf2+tTuLOtYsjzPo?=
+ =?us-ascii?Q?MC8hj6eeap2AAvt+h/YiiewYntc6fBhl9fPxc0OhFCEyRhgFl3NKZI3wyn4f?=
+ =?us-ascii?Q?OBZLYQKHjLB/WXvp6zAKvGpD2P63tiLL5B2vTKDrsWXMecQDK3WF40tKvA3I?=
+ =?us-ascii?Q?3tTMsHtYOBGyUqw0XdKFiMB7vyZeTnl?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: wqBrj5Axv76qORYL9w/nglCIoqw13cj18XnVY3sPeIuMCL3D5RotBR9HrA+xvcY7LNT2ZRqShokNWrsond16oB0dc11zseBJOpOTNXWpYlTm1Xxp5dDghJxkvuJaD9WLn224YF+zQrncZnl7P//7V5kNHKYPewcJmhXLb/gDGesSE8nNPYlyu6i8m0NUrFiTnHahCu81CMdCzBWH09mXizg4VIWSPWGZhbMosShxGRHCsvaS7Im5DzMXJI4DY4X3IGxc01eMiHyRW2H5p1MSrl9YEKuCSer4vhVyEEQRMOlwuiNl12YxERbj/ReIxiU6eQkL2Xh6wK7+pgom4QW+XK5m3eE9F5fg525+ekspTqXQwrq9FxeSGf8SFZcld2k/ShHZUFAo9Lb3ZBlPWecONtgz0sEIjV+xfYGeW8VPAoM=
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB3090;6:MPpGqfiJcOYM+XNuh8EDQ1ETGX28G483NGo2DFFwnwTXP6bcoa/EVLd4BihTkPs+DfgF+6ALJcEDldntNyecBBbHAcR/pO/qYyLc+dedcDukFGArDsog6LyJY/vYYVNh/ixlEL3Xkv5ONrbd9AUttAXS6UNNkhr4IAl/yxJyvPH1eaM3esRr3wjwlYpsBz2lWJiRfQIjD7ZLplF7iYkLk7vjTfkM178kw/po39GsjD7mam5ad0XtokAyVZSETo3SHbsMMX7Lw2o+EXhFvoVIpZDC5EqUDW+DShvEHBW/XQuk+3Ee1Dm0mbBG9+VB5CdRuVRV17BHNSXQwcUB9rUfxi0TSdlh0llDujA7y9tr5WaXzXfMe7IwQLdQont1fuvXboqSkO24HnEOuulut2XVMwRZ3qr4t4CVSIKaPpGYZ+4zywRI9Cjj9X3HA4wG8MbR1Se+maBZ3eqENrryW9gQvw==;5:VferFuAxaQhgkj5NFUxYUust7qzmjBMNx8sCDCqYxFwyAKS8U1yvxmY94wKYKqR087ehNneJg7szvJ2JHIjuZkr7DFuOU6d9xtE+LLxIM80tVsGupb3zDaECL+7VvxgJmlho1m3t1/M5JTAiZqmXf10QNQDrzYL/nXoB7XkNpkSWIcmLfZJX5BP9Lo6vdDjUfkJlyAPB9pUIFc9UvP6+0Q==;7:hwvIdkACHQ/zruNvTDN7m04qIgasvQXVLwjMTJ8Tejz+Gae8hfygKlpiViocxIvUoVQbX8dUA7WGxNVUNxaoUqF6a0Up2CYe2/E7ANeKYXaR+zxZt1ulFBBBacoYTXhnHnTuRsDm+gnPiwLpYMOuzw==
-X-Microsoft-Exchange-Diagnostics: 1;BN6PR07MB3090;20:CyXmOnBL3WvcStnpVdN0bn5Km6bccndJs/DEpmmlxyQFELBLc6GRjwYSaQLzrFmCk8D3CBb+2mSMWhdlDvt+LKFTsGWONP69Z5JVmcyJsK6RRLJBs0DaLX+DE1aOjsr7dDhFXbhsp/93x3CP6ixvgceT5gT9C4w2cjOXa82mEupf3k4zgf/TQs05WNsCD6I9c/9r2+0no+uebMgWGLcG/D8fX/yFIeQA99uH7nmb/O7XEUdsd8VIQQ47R3pabAaa
+X-Microsoft-Antispam-Message-Info: WoqdpZhd2zDRaIYLOZHODkzM56H+sIYtjlGAzJUZSg97Gg7iTODI2KZJ8OL8aE6UnCrPUof3aUohqcshpRGX2dAx8Y7SKXVA2LiC7KXkqiEk3Dx1D+y+dgmmx3f+bxmg15R9lcrSbxNR/4vQOqRUiJDTJQrms0kq7P0QuWqpEF8+uv82TI6joEmCmUUqcETCFltcvbnANY5S6PQELnOt7gYjw0KJTn7WKz/vV9/wELjy02YBXYlJcpjvP9yrHckBya1YPFhJNgnz2Hod5pzkIkaj2R0SXUgkNJ17Qw2ON+ybiha/F/IWjDW/2RLf009S6MGKp5uzPjI2QWTVDrbgsCxHyh2y8Tk2KS/YuZXUqmBrEN+aZ+cH7cA4SqTMdBelof/Ual2qrYV4o7ixvH7zFYqsHKRve/rTeNS3VMzyiqM=
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB3096;6:mlY9SgTlDbiTeKqYAvRLtnTvv19vnmTpUsYzrQ9RoZ2Y7Ys0crhnfC0V192glsKv0nyAP9WCmvKT46un70UhmF7nVZB15pZcDjP1hpELo18IpTJ8YMAuGpKqFio2qVMhx1JQ2/pViQEGf7ixPXPl5L69X6CWKMwZcBM9i+JjPpsB08ZrhBvhZk0bLGTzDl5eJcAQvhG6ohPnCjgnUadJT9lmgapau+x9B/NeLO8XS+ssWrq7MXttYCxscgP/DJxYjUCToDWpSHDKcakom3AOEiJIvXpqJi/iO6+R+55ojn3Qap1aoSIZqww1fnlzXmVgv5gLjPQeqPhu2Fcq935rVCXdeajVgwpHlwA2LoZ3YUNPxET5B//IcpAwxmFeoAbsYpRASu1HfMlcvbLY/+oDcz4f21ba25koebiZufmhFH0cMN9hkzTUTjZfGh5T7GHBOto3vmX3ODXIV62eqJ6YYA==;5:bRLg9cOzRCtJHNzMOTxCsjrmvIrHGL/8AiYzfsr+KcRueQTTUk2RehnsWoX47uLgDOzRUeeeCZOxqoDU572kkSrA95UbvGJfQAGgEE0YNZ+aJkQsZLfxm7irGHAcYzHPlRijzzfIWKaJW8ruH8BU6gM9NitMYZHnrdZd/j359FEFG+/l8gQvYgMdnWfmPLAEcOpnlvbTLRVScXAJ0nXS1g==;7:6xTtc4N2hKgIH4uIvV+cI5xkRb6ekJiaU8c8T7i3oJ8IBCPlCNG84gJW48kS/yeTThg6fqbvz5GBmRUv4F3HFj6JgBHvjsDrWwLmCQaLTZ7lwZoDcz0hEYyWN5t7bxeFl1lmGbCdP+UhPmUIyxc+0Q==
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR07MB3096;20:v79iewGuBcMTHsuWLyWh7k6kJBANfqhZXtpEM8z9vD69rvYfLfKWoHbkC0TI3NVGaur+S7bWJIzHzVFSFgTFtLYqkns2jcZVvecAUM5z+ONOWb44yukVfxYD5pj+edbAiCp7suEqvivXiFENtZS/xfPdRE4xav63MIfr3+9rQS527sEUqcm5a025nTahHQ4reTXLb7FzzNKFsvgeVChJsEIgf7+LIIEECJIuI6W3y7x+6MXFQS9wCCc/T9hNYw4c
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2019 11:53:11.2996
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2019 11:53:09.5459
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b066330c-eecc-4509-d510-08d68772ad2e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 976eadf5-7dd6-409e-4e52-08d68772abbc
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR07MB3090
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR07MB3096
 X-Proofpoint-SPF-Result: pass
 X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
  include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
@@ -150,467 +150,126 @@ X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ priorityscore=1501 malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=664 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901310094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Controller for OUT endpoints has shared on-chip buffers for all incoming
-packets, including ep0out. It's FIFO buffer, so packets must be handle
-by DMA in correct order. If the first packet in the buffer will not be
-handled, then the following packets directed for other endpoints and
-functions will be blocked.
-
-Additionally the packets directed to one endpoint can block entire on-chip
-buffers. In this case transfer to other endpoints also will blocked.
-
-To resolve this issue after raising the descriptor missing interrupt
-driver prepares internal usb_request object and use it to arm DMA
-transfer.
-
-The problematic situation was observed in case when endpoint has
-been enabled but no usb_request were queued. Driver try detects
-such endpoints and will use this workaround only for these endpoint.
-
-Driver use limited number of buffer. This number can be set by macro
-CDNS_WA2_NUM_BUFFERS.
-
-Such blocking situation was observed on ACM gadget. For this function
-host send OUT data packet but ACM function is not prepared for
-this packet. It's cause that buffer placed in on chip memory block
-transfer to other endpoints.
-
-It's limitation of controller but maybe this issues should be fixed in
-function driver.
-
-This work around can be disabled/enabled by means of quirk_internal_buffer
-module parameter. By default feature is enabled. It can has impact to
-transfer performance and in most case this feature can be disabled.
+Patch adds usb_decode_test_mode and usb_decode_device_feature functions,
+which allow to make more readable and simplify the
+usb_decode_set_clear_feature function.
 
 Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 ---
- drivers/usb/cdns3/gadget.c | 273 ++++++++++++++++++++++++++++++++++++-
- drivers/usb/cdns3/gadget.h |   7 +
- 2 files changed, 278 insertions(+), 2 deletions(-)
+ drivers/usb/common/debug.c | 83 ++++++++++++++++++--------------------
+ 1 file changed, 40 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-index 35985633470f..20e46d8e308e 100644
---- a/drivers/usb/cdns3/gadget.c
-+++ b/drivers/usb/cdns3/gadget.c
-@@ -27,6 +27,37 @@
-  * If (((Dequeue Ptr (i.e. EP_TRADDR) == Enqueue Ptr-1) or
-  *	(Dequeue Ptr (i.e. EP_TRADDR) == Enqueue Ptr))
-  *		and (DRBL==1 and (not EP0)))
-+ *
-+ * Work around 2:
-+ * Controller for OUT endpoints has shared on-chip buffers for all incoming
-+ * packets, including ep0out. It's FIFO buffer, so packets must be handle by DMA
-+ * in correct order. If the first packet in the buffer will not be handled,
-+ * then the following packets directed for other endpoints and  functions
-+ * will be blocked.
-+ * Additionally the packets directed to one endpoint can block entire on-chip
-+ * buffers. In this case transfer to other endpoints also will blocked.
-+ *
-+ * To resolve this issue after raising the descriptor missing interrupt
-+ * driver prepares internal usb_request object and use it to arm DMA transfer.
-+ *
-+ * The problematic situation was observed in case when endpoint has been enabled
-+ * but no usb_request were queued. Driver try detects such endpoints and will
-+ * use this workaround only for these endpoint.
-+ *
-+ * Driver use limited number of buffer. This number can be set by macro
-+ * CDNS_WA2_NUM_BUFFERS.
-+ *
-+ * Such blocking situation was observed on ACM gadget. For this function
-+ * host send OUT data packet but ACM function is not prepared for this packet.
-+ * It's cause that buffer placed in on chip memory block transfer to other
-+ * endpoints.
-+ *
-+ * It's limitation of controller but maybe this issues should be fixed in
-+ * function driver.
-+ *
-+ * This work around can be disabled/enabled by means of quirk_internal_buffer
-+ * module parameter. By default feature is enabled. It can has impact to
-+ * transfer performance and in most case this feature can be disabled.
-  */
- 
- #include <linux/dma-mapping.h>
-@@ -42,6 +73,14 @@ static int __cdns3_gadget_ep_queue(struct usb_ep *ep,
- 				   struct usb_request *request,
- 				   gfp_t gfp_flags);
- 
-+/*
-+ * Parameter allows to disable/enable handling of work around 2 feature.
-+ * By default this value is enabled.
-+ */
-+static bool quirk_internal_buffer = 1;
-+module_param(quirk_internal_buffer, bool, 0644);
-+MODULE_PARM_DESC(quirk_internal_buffer, "Disable/enable WA2 algorithm");
-+
- /**
-  * cdns3_handshake - spin reading  until handshake completes or fails
-  * @ptr: address of device controller register to be read
-@@ -105,6 +144,17 @@ struct usb_request *cdns3_next_request(struct list_head *list)
- 	return list_first_entry_or_null(list, struct usb_request, list);
+diff --git a/drivers/usb/common/debug.c b/drivers/usb/common/debug.c
+index 824b3d793745..bdd529a686e4 100644
+--- a/drivers/usb/common/debug.c
++++ b/drivers/usb/common/debug.c
+@@ -29,6 +29,44 @@ static void usb_decode_get_status(__u8 bRequestType, __u16 wIndex,
+ 	}
  }
  
-+/**
-+ * cdns3_next_priv_request - returns next request from list
-+ * @list: list containing requests
-+ *
-+ * Returns request or NULL if no requests in list
-+ */
-+struct cdns3_request *cdns3_next_priv_request(struct list_head *list)
++static const char *usb_decode_device_feature(u16 wValue)
 +{
-+	return list_first_entry_or_null(list, struct cdns3_request, list);
-+}
-+
- /**
-  * select_ep - selects endpoint
-  * @priv_dev:  extended gadget object
-@@ -384,6 +434,53 @@ static int cdns3_start_all_request(struct cdns3_device *priv_dev,
- 	return ret;
- }
- 
-+/**
-+ * cdns3_descmiss_copy_data copy data from internal requests to request queued
-+ * by class driver.
-+ * @priv_ep: extended endpoint object
-+ * @request: request object
-+ */
-+static void cdns3_descmiss_copy_data(struct cdns3_endpoint *priv_ep,
-+				     struct usb_request *request)
-+{
-+	struct usb_request *descmiss_req;
-+	struct cdns3_request *descmiss_priv_req;
-+
-+	while (!list_empty(&priv_ep->descmiss_req_list)) {
-+		int chunk_end;
-+		int length;
-+
-+		descmiss_priv_req =
-+			cdns3_next_priv_request(&priv_ep->descmiss_req_list);
-+		descmiss_req = &descmiss_priv_req->request;
-+
-+		/* driver can't touch pending request */
-+		if (descmiss_priv_req->flags & REQUEST_PENDING)
-+			break;
-+
-+		chunk_end = descmiss_priv_req->flags & REQUEST_INTERNAL_CH;
-+		length = request->actual + descmiss_req->actual;
-+
-+		if (length <= request->length) {
-+			memcpy(&((u8 *)request->buf)[request->actual],
-+			       descmiss_req->buf,
-+			       descmiss_req->actual);
-+			request->actual = length;
-+		} else {
-+			/* It should never occures */
-+			request->status = -ENOMEM;
-+		}
-+
-+		list_del_init(&descmiss_priv_req->list);
-+
-+		kfree(descmiss_req->buf);
-+		cdns3_gadget_ep_free_request(&priv_ep->endpoint, descmiss_req);
-+
-+		if (!chunk_end)
-+			break;
++	switch (wValue) {
++	case USB_DEVICE_SELF_POWERED:
++		return "Self Powered";
++	case USB_DEVICE_REMOTE_WAKEUP:
++		return "Remote Wakeup";
++	case USB_DEVICE_TEST_MODE:
++		return "Test Mode";
++	case USB_DEVICE_U1_ENABLE:
++		return "U1 Enable";
++	case USB_DEVICE_U2_ENABLE:
++		return "U2 Enable";
++	case USB_DEVICE_LTM_ENABLE:
++		return "LTM Enable";
++	default:
++		return "UNKNOWN";
 +	}
 +}
 +
- /**
-  * cdns3_gadget_giveback - call struct usb_request's ->complete callback
-  * @priv_ep: The endpoint to whom the request belongs to
-@@ -412,6 +509,32 @@ void cdns3_gadget_giveback(struct cdns3_endpoint *priv_ep,
- 	priv_req->flags &= ~REQUEST_PENDING;
- 	trace_cdns3_gadget_giveback(priv_req);
- 
-+	/* WA2: */
-+	if (priv_ep->flags & EP_QUIRK_EXTRA_BUF_EN &&
-+	    priv_req->flags & REQUEST_INTERNAL) {
-+		struct usb_request *req;
-+
-+		req = cdns3_next_request(&priv_ep->deferred_req_list);
-+		request = req;
-+		priv_ep->descmis_req = NULL;
-+
-+		if (!req)
-+			return;
-+
-+		cdns3_descmiss_copy_data(priv_ep, req);
-+		if (!(priv_ep->flags & EP_QUIRK_END_TRANSFER) &&
-+		    req->length != req->actual) {
-+			/* wait for next part of transfer */
-+			return;
-+		}
-+
-+		if (req->status == -EINPROGRESS)
-+			req->status = 0;
-+
-+		list_del_init(&req->list);
-+		cdns3_start_all_request(priv_dev, priv_ep);
-+	}
-+
- 	/* Start all not pending request */
- 	if (priv_ep->flags & EP_RING_FULL)
- 		cdns3_start_all_request(priv_dev, priv_ep);
-@@ -769,6 +892,59 @@ void cdns3_rearm_transfer(struct cdns3_endpoint *priv_ep, u8 rearm)
- 	}
- }
- 
-+/**
-+ * cdns3_descmissing_packet - handles descriptor missing event.
-+ * @priv_dev: extended gadget object
-+ *
-+ * This function is used only for WA2. For more information see Work around 2
-+ * description.
-+ */
-+static int cdns3_descmissing_packet(struct cdns3_endpoint *priv_ep)
++static const char *usb_decode_test_mode(u16 wIndex)
 +{
-+	struct cdns3_request *priv_req;
-+	struct usb_request *request;
-+
-+	if (priv_ep->flags & EP_QUIRK_EXTRA_BUF_DET) {
-+		priv_ep->flags &= ~EP_QUIRK_EXTRA_BUF_DET;
-+		priv_ep->flags |= EP_QUIRK_EXTRA_BUF_EN;
++	switch (wIndex) {
++	case TEST_J:
++		return ": TEST_J";
++	case TEST_K:
++		return ": TEST_K";
++	case TEST_SE0_NAK:
++		return ": TEST_SE0_NAK";
++	case TEST_PACKET:
++		return ": TEST_PACKET";
++	case TEST_FORCE_EN:
++		return ": TEST_FORCE_EN";
++	default:
++		return ": UNKNOWN";
 +	}
-+
-+	cdns3_dbg(priv_ep->cdns3_dev, "WA2: Description Missing detected\n");
-+
-+	request = cdns3_gadget_ep_alloc_request(&priv_ep->endpoint,
-+						GFP_ATOMIC);
-+	if (!request)
-+		return -ENOMEM;
-+
-+	priv_req = to_cdns3_request(request);
-+	priv_req->flags |= REQUEST_INTERNAL;
-+
-+	/* if this field is still assigned it indicate that transfer related
-+	 * with this request has not been finished yet. Driver in this
-+	 * case simply allocate next request and assign flag REQUEST_INTERNAL_CH
-+	 * flag to previous one. It will indicate that current request is
-+	 * part of the previous one.
-+	 */
-+	if (priv_ep->descmis_req)
-+		priv_ep->descmis_req->flags |= REQUEST_INTERNAL_CH;
-+
-+	priv_req->request.buf = kzalloc(CDNS3_DESCMIS_BUF_SIZE,
-+					GFP_ATOMIC);
-+	if (!priv_req) {
-+		cdns3_gadget_ep_free_request(&priv_ep->endpoint, request);
-+		return -ENOMEM;
-+	}
-+
-+	priv_req->request.length = CDNS3_DESCMIS_BUF_SIZE;
-+	priv_ep->descmis_req = priv_req;
-+
-+	__cdns3_gadget_ep_queue(&priv_ep->endpoint,
-+				&priv_ep->descmis_req->request,
-+				GFP_ATOMIC);
-+
-+	return 0;
 +}
 +
- /**
-  * cdns3_check_ep_interrupt_proceed - Processes interrupt related to endpoint
-  * @priv_ep: endpoint object
-@@ -801,8 +977,31 @@ static int cdns3_check_ep_interrupt_proceed(struct cdns3_endpoint *priv_ep)
- 			cdns3_rearm_transfer(priv_ep, priv_ep->wa1_set);
- 	}
- 
--	if ((ep_sts_reg & EP_STS_IOC) || (ep_sts_reg & EP_STS_ISP))
-+	if ((ep_sts_reg & EP_STS_IOC) || (ep_sts_reg & EP_STS_ISP)) {
-+		if (priv_ep->flags & EP_QUIRK_EXTRA_BUF_EN) {
-+			if (ep_sts_reg & EP_STS_ISP)
-+				priv_ep->flags |= EP_QUIRK_END_TRANSFER;
-+			else
-+				priv_ep->flags &= ~EP_QUIRK_END_TRANSFER;
-+		}
-+
- 		cdns3_transfer_completed(priv_dev, priv_ep);
-+	}
-+
-+	/*
-+	 * WA2: this condition should only be meet when
-+	 * priv_ep->flags & EP_QUIRK_EXTRA_BUF_DET or
-+	 * priv_ep->flags & EP_QUIRK_EXTRA_BUF_EN.
-+	 * In other cases this interrupt will be disabled/
-+	 */
-+	if (ep_sts_reg & EP_STS_DESCMIS) {
-+		int err;
-+
-+		err = cdns3_descmissing_packet(priv_ep);
-+		if (err)
-+			dev_err(priv_dev->dev,
-+				"Failed: No sufficient memory for DESCMIS\n");
-+	}
- 
- 	return 0;
- }
-@@ -1223,13 +1422,26 @@ static int cdns3_gadget_ep_enable(struct usb_ep *ep,
- 	/* enable interrupt for selected endpoint */
- 	cdns3_set_register_bit(&priv_dev->regs->ep_ien,
- 			       BIT(cdns3_ep_addr_to_index(bEndpointAddress)));
-+	/*
-+	 * WA2: Set flag for all not ISOC OUT endpoints. If this flag is set
-+	 * driver try to detect whether endpoint need additional internal
-+	 * buffer for unblocking on-chip FIFO buffer. This flag will be cleared
-+	 * if before first DESCMISS interrupt the DMA will be armed.
-+	 */
-+	if (quirk_internal_buffer) {
-+		if (!priv_ep->dir && priv_ep->type != USB_ENDPOINT_XFER_ISOC) {
-+			priv_ep->flags |= EP_QUIRK_EXTRA_BUF_DET;
-+			reg |= EP_STS_EN_DESCMISEN;
-+		}
-+	}
- 
- 	writel(reg, &priv_dev->regs->ep_sts_en);
- 
- 	cdns3_set_register_bit(&priv_dev->regs->ep_cfg, EP_CFG_ENABLE);
- 
- 	ep->desc = desc;
--	priv_ep->flags &= ~(EP_PENDING_REQUEST | EP_STALL);
-+	priv_ep->flags &= ~(EP_PENDING_REQUEST | EP_STALL |
-+			    EP_QUIRK_EXTRA_BUF_EN);
- 	priv_ep->flags |= EP_ENABLED | EP_UPDATE_EP_TRBADDR;
- 	priv_ep->wa1_set = 0;
- 	priv_ep->enqueue = 0;
-@@ -1254,6 +1466,7 @@ static int cdns3_gadget_ep_enable(struct usb_ep *ep,
- static int cdns3_gadget_ep_disable(struct usb_ep *ep)
- {
- 	struct cdns3_endpoint *priv_ep;
-+	struct cdns3_request *priv_req;
- 	struct cdns3_device *priv_dev;
- 	struct usb_request *request;
- 	unsigned long flags;
-@@ -1290,6 +1503,14 @@ static int cdns3_gadget_ep_disable(struct usb_ep *ep)
- 				      -ESHUTDOWN);
- 	}
- 
-+	while (!list_empty(&priv_ep->descmiss_req_list)) {
-+		priv_req = cdns3_next_priv_request(&priv_ep->descmiss_req_list);
-+
-+		kfree(priv_req->request.buf);
-+		cdns3_gadget_ep_free_request(&priv_ep->endpoint,
-+					     &priv_req->request);
-+	}
-+
- 	while (!list_empty(&priv_ep->deferred_req_list)) {
- 		request = cdns3_next_request(&priv_ep->deferred_req_list);
- 
-@@ -1330,6 +1551,53 @@ static int __cdns3_gadget_ep_queue(struct usb_ep *ep,
- 	priv_req = to_cdns3_request(request);
- 	trace_cdns3_ep_queue(priv_req);
- 
-+	/*
-+	 * WA2: if transfer was queued before DESCMISS appear than we
-+	 * can disable handling of DESCMISS interrupt. Driver assumes that it
-+	 * can disable special treatment for this endpoint.
-+	 */
-+	if (priv_ep->flags & EP_QUIRK_EXTRA_BUF_DET) {
-+		u32 reg;
-+
-+		cdns3_select_ep(priv_dev, priv_ep->num | priv_ep->dir);
-+		priv_ep->flags &= ~EP_QUIRK_EXTRA_BUF_DET;
-+		reg = readl(&priv_dev->regs->ep_sts_en);
-+		reg &= ~EP_STS_EN_DESCMISEN;
-+		writel(reg, &priv_dev->regs->ep_sts_en);
-+	}
-+
-+	/* WA2 */
-+	if (priv_ep->flags & EP_QUIRK_EXTRA_BUF_EN) {
-+		u8 pending_empty = list_empty(&priv_ep->pending_req_list);
-+		u8 descmiss_empty = list_empty(&priv_ep->descmiss_req_list);
-+
-+		/*
-+		 *  DESCMISS transfer has been finished, so data will be
-+		 *  directly copied from internal allocated usb_request
-+		 *  objects.
-+		 */
-+		if (pending_empty && !descmiss_empty &&
-+		    !(priv_req->flags & REQUEST_INTERNAL)) {
-+			cdns3_descmiss_copy_data(priv_ep, request);
-+			list_add_tail(&request->list,
-+				      &priv_ep->pending_req_list);
-+			cdns3_gadget_giveback(priv_ep, priv_req,
-+					      request->status);
-+			return ret;
-+		}
-+
-+		/*
-+		 * WA2 driver will wait for completion DESCMISS transfer,
-+		 * before starts new, not DESCMISS transfer.
-+		 */
-+		if (!pending_empty && !descmiss_empty)
-+			deferred = 1;
-+
-+		if (priv_req->flags & REQUEST_INTERNAL)
-+			list_add_tail(&priv_req->list,
-+				      &priv_ep->descmiss_req_list);
-+	}
-+
- 	ret = usb_gadget_map_request_by_dev(priv_dev->sysdev, request,
- 					    usb_endpoint_dir_in(ep->desc));
- 	if (ret)
-@@ -1764,6 +2032,7 @@ static int cdns3_init_eps(struct cdns3_device *priv_dev)
- 
- 		INIT_LIST_HEAD(&priv_ep->pending_req_list);
- 		INIT_LIST_HEAD(&priv_ep->deferred_req_list);
-+		INIT_LIST_HEAD(&priv_ep->descmiss_req_list);
- 	}
- 
- 	return 0;
-diff --git a/drivers/usb/cdns3/gadget.h b/drivers/usb/cdns3/gadget.h
-index 0f8fec39917e..386a2ac64331 100644
---- a/drivers/usb/cdns3/gadget.h
-+++ b/drivers/usb/cdns3/gadget.h
-@@ -1000,6 +1000,7 @@ struct cdns3_device;
-  * @endpoint: usb endpoint
-  * @pending_req_list: list of requests queuing on transfer ring.
-  * @deferred_req_list: list of requests waiting for queuing on transfer ring.
-+ * @descmiss_req_list: list of requests internally allocated by driver (WA2).
-  * @trb_pool: transfer ring - array of transaction buffers
-  * @trb_pool_dma: dma address of transfer ring
-  * @cdns3_dev: device associated with this endpoint
-@@ -1026,6 +1027,7 @@ struct cdns3_endpoint {
- 	struct usb_ep		endpoint;
- 	struct list_head	pending_req_list;
- 	struct list_head	deferred_req_list;
-+	struct list_head	descmiss_req_list;
- 
- 	struct cdns3_trb	*trb_pool;
- 	dma_addr_t		trb_pool_dma;
-@@ -1041,6 +1043,9 @@ struct cdns3_endpoint {
- #define EP_PENDING_REQUEST	BIT(5)
- #define EP_RING_FULL		BIT(6)
- #define EP_CLAIMED		BIT(7)
-+#define EP_QUIRK_EXTRA_BUF_DET	BIT(8)
-+#define EP_QUIRK_EXTRA_BUF_EN	BIT(9)
-+#define EP_QUIRK_END_TRANSFER	BIT(10)
- 
- 	u32			flags;
- 
-@@ -1074,6 +1079,7 @@ struct cdns3_endpoint {
-  * @start_trb: number of the first TRB in transfer ring
-  * @end_trb: number of the last TRB in transfer ring
-  * @flags: flag specifying special usage of request
-+ * @list: used by internally allocated request to add to descmiss_req_list.
-  */
- struct cdns3_request {
- 	struct usb_request	request;
-@@ -1086,6 +1092,7 @@ struct cdns3_request {
- #define REQUEST_INTERNAL_CH	BIT(2)
- #define REQUEST_ZLP		BIT(3)
- 	u32			flags;
-+	struct list_head	list;
- };
- 
- #define to_cdns3_request(r) (container_of(r, struct cdns3_request, request))
+ static void usb_decode_set_clear_feature(__u8 bRequestType,
+ 					 __u8 bRequest, __u16 wValue,
+ 					 __u16 wIndex, char *str)
+@@ -37,50 +75,9 @@ static void usb_decode_set_clear_feature(__u8 bRequestType,
+ 	case USB_RECIP_DEVICE:
+ 		sprintf(str, "%s Device Feature(%s%s)",
+ 			bRequest == USB_REQ_CLEAR_FEATURE ? "Clear" : "Set",
+-			({char *s;
+-				switch (wValue) {
+-				case USB_DEVICE_SELF_POWERED:
+-					s = "Self Powered";
+-					break;
+-				case USB_DEVICE_REMOTE_WAKEUP:
+-					s = "Remote Wakeup";
+-					break;
+-				case USB_DEVICE_TEST_MODE:
+-					s = "Test Mode";
+-					break;
+-				case USB_DEVICE_U1_ENABLE:
+-					s = "U1 Enable";
+-					break;
+-				case USB_DEVICE_U2_ENABLE:
+-					s = "U2 Enable";
+-					break;
+-				case USB_DEVICE_LTM_ENABLE:
+-					s = "LTM Enable";
+-					break;
+-				default:
+-					s = "UNKNOWN";
+-				} s; }),
++			usb_decode_device_feature(wValue),
+ 			wValue == USB_DEVICE_TEST_MODE ?
+-			({ char *s;
+-				switch (wIndex) {
+-				case TEST_J:
+-					s = ": TEST_J";
+-					break;
+-				case TEST_K:
+-					s = ": TEST_K";
+-					break;
+-				case TEST_SE0_NAK:
+-					s = ": TEST_SE0_NAK";
+-					break;
+-				case TEST_PACKET:
+-					s = ": TEST_PACKET";
+-					break;
+-				case TEST_FORCE_EN:
+-					s = ": TEST_FORCE_EN";
+-					break;
+-				default:
+-					s = ": UNKNOWN";
+-				} s; }) : "");
++			usb_decode_test_mode(wIndex) : "");
+ 		break;
+ 	case USB_RECIP_INTERFACE:
+ 		sprintf(str, "%s Interface Feature(%s)",
 -- 
 2.17.1
 
