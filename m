@@ -2,60 +2,60 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99AC4C4151A
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18D3C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64BE2218DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C4842085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:39:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="kR8b33Dw"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="xH1swiOa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387598AbfAaNjp (ORCPT
+        id S2387619AbfAaNju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:39:45 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34979 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbfAaNjn (ORCPT
+        Thu, 31 Jan 2019 08:39:50 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38378 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387583AbfAaNjp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 08:39:43 -0500
-Received: by mail-wr1-f67.google.com with SMTP id 96so3370109wrb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 05:39:42 -0800 (PST)
+        Thu, 31 Jan 2019 08:39:45 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v13so3329073wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 05:39:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gYOoz7sLfOmvnQTTTNScB4YjgZPjHnNJytRdhrJ93Tc=;
-        b=kR8b33DwbGVi80dq56qDYiOVzCpjcWmz+Oo4usclGpeR/XtgWNj2/0oG/J37mMKBc8
-         vibG6NIVXChxP94HL9cW+fVmTjJy+kwW/Pibxf17VuoG8gW0nKfgi0y2Io+ff6UWQQSM
-         sHv/8aKiT4J5c8qdUMgxnaG/vV9bFlhBMoANb3WtZ3gxXemgDIaRBFLdGhf93wEtyWCr
-         7zOHgGcwx/9eVh5X7G8tOx4dPbEU1iWdLDmY5IckhEUUTqsfMk8g0KMxzm9rlFPhgYCL
-         YdZ4VkSdWKJ9Frs6stYe1OuZL6ju9IOGDsW0TUpIErQrygTXCh+BHUC2mVJQ1tnti4Je
-         yv3w==
+        bh=5X77WcQ60mqtfJVB+WwYLABh83PR6pOA8m2PXMgwFcg=;
+        b=xH1swiOa4RczcuMoR3Lxo733EPEknZ6C/zYldttIK3Abr6t8wjUroF/hrx4zQL7mWj
+         5IfDh2jMdtUHGlCmIB3s9z2MCovHefOT+NshILcYymLv3qnhaCjdJ5PAxizUoj6ZYeq6
+         KLRQQqC0i//AE+nba07I/JVZpdyQVfA0dnOgbrxWJXa5OMcUSjlDQabcZzErbI03c8SV
+         YY0VEk2ReNILuf0zUvXLk/ooUFeRPefE/naFH+yg8yjJc6uwhPTlh+kso75ihEQF+mwS
+         8WlG2fCufcy9iI3kdhpmw7rpWD25s6XgQleMyRnw7BkZAuhPV74OhoVfuBZvXfBhrZX6
+         1+ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gYOoz7sLfOmvnQTTTNScB4YjgZPjHnNJytRdhrJ93Tc=;
-        b=fLV7b9zhyT+Huz8gkPLos8ob2XgImru6KCT/acCsyGNSwE78PIeqUfYlgSxBiiCtKo
-         jyQ/GO3pxerJHoB/Yc6m6wAEntRBXBZ3Qd9rvVlSNn7zNrWamvgxHxg2BJBlrPC6/Y7W
-         LNd8zDgvWcUIX8ZXwaaaVh6cmQp80dbUxoXCMKOnZzCwq8l81eR7Oqkf5/LV98M+f/Xn
-         /hdyfdA0j+nCu7YhZMoW+Sisjkp/YJ1zpAUNeRQLynasf0xzOQyzG47VH/ryc8INRZaw
-         ewVD/H7DUy+7XxvoXtkyBXBpihD2/tL+WIOsaLA/+F7dtBvFhqACwUVt7ogNoIcXjduL
-         /znA==
-X-Gm-Message-State: AJcUukczi6PQxEpKLe6dC3rFwFZVauUazKB/6Ps3MhnqLRoNU+G4JQp/
-        PXy3xl39RmbrLt4DY5gpA89+Ng==
-X-Google-Smtp-Source: ALg8bN4elrVkZx/+xtRZqyIM8PbE8pDnzz5A63wKiI9Vhou1RSuYQCaDYuX2DdSfLagFB8lDga9RyA==
-X-Received: by 2002:a05:6000:8a:: with SMTP id m10mr33726539wrx.79.1548941981798;
-        Thu, 31 Jan 2019 05:39:41 -0800 (PST)
+        bh=5X77WcQ60mqtfJVB+WwYLABh83PR6pOA8m2PXMgwFcg=;
+        b=ZPz/mxXoaiPYJFJDf7xh/VzSEZrWRA05WMpoZIU8Sr6u3JnieDgObpLc2MqUz9f5s3
+         iznu8cm5MMB03fzValwUXOhKBHM46SQa4xvPD1oGb58WZsj9QP9ocdnMZj7fhBILr+A6
+         yhdY3RoBT69PbgE/yCUytQVdvgel7+hPfZW+dioEoqGjbXf8sRmMTT0Jkv6hewEqfB3+
+         90bIau75WcIqaCG7275eK+QsSkeKco2z/Gav6ZEbrBzaiz4bKeJQuoI0IiroHxlZ/7JF
+         JUPwyWc8C62U0zPiwOF/2yvKHr1Iv+Q3qEPnrwcw9E9Sm9QgOrL/tM+IGTkTrahoICZx
+         UxaQ==
+X-Gm-Message-State: AJcUukek40AJiULCje9L2iSBEgf2J9hVKQ6jw9KvXcvfp+NIi4IMNzD3
+        y0D1OFYkaTEPqOSjy0FrP4URin4V/+M=
+X-Google-Smtp-Source: ALg8bN4lLGeIz/4xBx5SG7ISq6LF7eqnTZj9/OljxiiAqNRnLzoAy74tv1kNLZERE71s49xFPgLh1g==
+X-Received: by 2002:adf:b102:: with SMTP id l2mr33375505wra.296.1548941983116;
+        Thu, 31 Jan 2019 05:39:43 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id h10sm5479768wmf.44.2019.01.31.05.39.40
+        by smtp.gmail.com with ESMTPSA id h10sm5479768wmf.44.2019.01.31.05.39.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 05:39:41 -0800 (PST)
+        Thu, 31 Jan 2019 05:39:42 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -63,9 +63,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Marc Zyngier <marc.zyngier@arm.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 01/35] ARM: davinci: remove intc_host_map from davinci_soc_info struct
-Date:   Thu, 31 Jan 2019 14:38:54 +0100
-Message-Id: <20190131133928.17985-2-brgl@bgdev.pl>
+Subject: [PATCH 02/35] ARM: davinci: select GENERIC_IRQ_MULTI_HANDLER
+Date:   Thu, 31 Jan 2019 14:38:55 +0100
+Message-Id: <20190131133928.17985-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190131133928.17985-1-brgl@bgdev.pl>
 References: <20190131133928.17985-1-brgl@bgdev.pl>
@@ -78,50 +78,170 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This field is not used by any board. Remove it as part of the interrupt
-support cleanup.
+In order to support SPARSE_IRQ we first need to make davinci use the
+generic irq handler for ARM. Translate the legacy assembly to C and
+put the irq handlers into their respective drivers (aintc and cp-intc).
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/cp_intc.c             | 5 -----
- arch/arm/mach-davinci/include/mach/common.h | 1 -
- 2 files changed, 6 deletions(-)
+ arch/arm/Kconfig                              |  1 +
+ arch/arm/mach-davinci/cp_intc.c               | 13 +++++++
+ .../mach-davinci/include/mach/entry-macro.S   | 39 -------------------
+ arch/arm/mach-davinci/irq.c                   | 21 ++++++++++
+ 4 files changed, 35 insertions(+), 39 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/entry-macro.S
 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 664e918e2624..f7770fdcad68 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -589,6 +589,7 @@ config ARCH_DAVINCI
+ 	select GENERIC_ALLOCATOR
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_IRQ_CHIP
++	select GENERIC_IRQ_MULTI_HANDLER
+ 	select GPIOLIB
+ 	select HAVE_IDE
+ 	select PM_GENERIC_DOMAINS if PM
 diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp_intc.c
-index 94085d21018e..67805ca74ff8 100644
+index 67805ca74ff8..b9aec3c48a6a 100644
 --- a/arch/arm/mach-davinci/cp_intc.c
 +++ b/arch/arm/mach-davinci/cp_intc.c
-@@ -117,7 +117,6 @@ int __init cp_intc_of_init(struct device_node *node, struct device_node *parent)
- {
- 	u32 num_irq		= davinci_soc_info.intc_irq_num;
- 	u8 *irq_prio		= davinci_soc_info.intc_irq_prios;
--	u32 *host_map		= davinci_soc_info.intc_host_map;
- 	unsigned num_reg	= BITS_TO_LONGS(num_irq);
- 	int i, irq_base;
+@@ -19,6 +19,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
  
-@@ -182,10 +181,6 @@ int __init cp_intc_of_init(struct device_node *node, struct device_node *parent)
- 			cp_intc_write(0x0f0f0f0f, CP_INTC_CHAN_MAP(i));
++#include <asm/exception.h>
+ #include <mach/common.h>
+ #include "cp_intc.h"
+ 
+@@ -97,6 +98,16 @@ static struct irq_chip cp_intc_irq_chip = {
+ 
+ static struct irq_domain *cp_intc_domain;
+ 
++static asmlinkage void __exception_irq_entry
++cp_intc_handle_irq(struct pt_regs *regs)
++{
++	int irqnr = cp_intc_read(CP_INTC_PRIO_IDX);
++
++	irqnr &= 0xff;
++
++	handle_domain_irq(cp_intc_domain, irqnr, regs);
++}
++
+ static int cp_intc_host_map(struct irq_domain *h, unsigned int virq,
+ 			  irq_hw_number_t hw)
+ {
+@@ -196,6 +207,8 @@ int __init cp_intc_of_init(struct device_node *node, struct device_node *parent)
+ 		return -EINVAL;
  	}
  
--	if (host_map)
--		for (i = 0; host_map[i] != -1; i++)
--			cp_intc_write(host_map[i], CP_INTC_HOST_MAP(i));
++	set_handle_irq(cp_intc_handle_irq);
++
+ 	/* Enable global interrupt */
+ 	cp_intc_write(1, CP_INTC_GLOBAL_ENABLE);
+ 
+diff --git a/arch/arm/mach-davinci/include/mach/entry-macro.S b/arch/arm/mach-davinci/include/mach/entry-macro.S
+deleted file mode 100644
+index cf5f573eb5fd..000000000000
+--- a/arch/arm/mach-davinci/include/mach/entry-macro.S
++++ /dev/null
+@@ -1,39 +0,0 @@
+-/*
+- * Low-level IRQ helper macros for TI DaVinci-based platforms
+- *
+- * Author: Kevin Hilman, MontaVista Software, Inc. <source@mvista.com>
+- *
+- * 2007 (c) MontaVista Software, Inc. This file is licensed under
+- * the terms of the GNU General Public License version 2. This program
+- * is licensed "as is" without any warranty of any kind, whether express
+- * or implied.
+- */
+-#include <mach/irqs.h>
 -
- 	irq_base = irq_alloc_descs(-1, 0, num_irq, 0);
- 	if (irq_base < 0) {
- 		pr_warn("Couldn't allocate IRQ numbers\n");
-diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
-index b577e13a9c23..944afd57ee38 100644
---- a/arch/arm/mach-davinci/include/mach/common.h
-+++ b/arch/arm/mach-davinci/include/mach/common.h
-@@ -61,7 +61,6 @@ struct davinci_soc_info {
- 	int				intc_type;
- 	u8				*intc_irq_prios;
- 	unsigned long			intc_irq_num;
--	u32				*intc_host_map;
- 	struct davinci_timer_info	*timer_info;
- 	int				gpio_type;
- 	u32				gpio_base;
+-		.macro  get_irqnr_preamble, base, tmp
+-		ldr \base, =davinci_intc_base
+-		ldr \base, [\base]
+-		.endm
+-
+-		.macro	get_irqnr_and_base, irqnr, irqstat, base, tmp
+-#if defined(CONFIG_AINTC) && defined(CONFIG_CP_INTC)
+-		ldr \tmp, =davinci_intc_type
+-		ldr \tmp, [\tmp]
+-		cmp \tmp, #DAVINCI_INTC_TYPE_CP_INTC
+-		beq 1001f
+-#endif
+-#if defined(CONFIG_AINTC)
+-		ldr \tmp, [\base, #0x14]
+-		movs \tmp, \tmp, lsr #2
+-		sub \irqnr, \tmp, #1
+-		b 1002f
+-#endif
+-#if defined(CONFIG_CP_INTC)
+-1001:		ldr \irqnr, [\base, #0x80] /* get irq number */
+-		mov \tmp, \irqnr, lsr #31
+-		and \irqnr, \irqnr, #0xff  /* irq is in bits 0-9 */
+-		and \tmp, \tmp, #0x1
+-		cmp \tmp, #0x1
+-#endif
+-1002:
+-		.endm
+diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
+index 952dc126c390..3bbbef78d9ac 100644
+--- a/arch/arm/mach-davinci/irq.c
++++ b/arch/arm/mach-davinci/irq.c
+@@ -28,11 +28,13 @@
+ #include <mach/cputype.h>
+ #include <mach/common.h>
+ #include <asm/mach/irq.h>
++#include <asm/exception.h>
+ 
+ #define FIQ_REG0_OFFSET		0x0000
+ #define FIQ_REG1_OFFSET		0x0004
+ #define IRQ_REG0_OFFSET		0x0008
+ #define IRQ_REG1_OFFSET		0x000C
++#define IRQ_IRQENTRY_OFFSET	0x0014
+ #define IRQ_ENT_REG0_OFFSET	0x0018
+ #define IRQ_ENT_REG1_OFFSET	0x001C
+ #define IRQ_INCTL_REG_OFFSET	0x0020
+@@ -45,6 +47,11 @@ static inline void davinci_irq_writel(unsigned long value, int offset)
+ 	__raw_writel(value, davinci_intc_base + offset);
+ }
+ 
++static inline unsigned long davinci_irq_readl(int offset)
++{
++	return __raw_readl(davinci_intc_base + offset);
++}
++
+ static __init void
+ davinci_alloc_gc(void __iomem *base, unsigned int irq_start, unsigned int num)
+ {
+@@ -69,6 +76,19 @@ davinci_alloc_gc(void __iomem *base, unsigned int irq_start, unsigned int num)
+ 			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
+ }
+ 
++static asmlinkage void __exception_irq_entry
++davinci_handle_irq(struct pt_regs *regs)
++{
++	int irqnr = davinci_irq_readl(IRQ_IRQENTRY_OFFSET);
++	struct pt_regs *old_regs = set_irq_regs(regs);
++
++	irqnr >>= 2;
++	irqnr -= 1;
++
++	generic_handle_irq(irqnr);
++	set_irq_regs(old_regs);
++}
++
+ /* ARM Interrupt Controller Initialization */
+ void __init davinci_irq_init(void)
+ {
+@@ -114,4 +134,5 @@ void __init davinci_irq_init(void)
+ 		davinci_alloc_gc(davinci_intc_base + j, i, 32);
+ 
+ 	irq_set_handler(IRQ_TINT1_TINT34, handle_level_irq);
++	set_handle_irq(davinci_handle_irq);
+ }
 -- 
 2.20.1
 
