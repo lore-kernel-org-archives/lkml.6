@@ -2,117 +2,158 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C326C282DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A395C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A1B3218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:11:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5345B2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:12:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfAaPLu (ORCPT
+        id S1728390AbfAaPMq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 10:11:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:5855 "EHLO mx1.redhat.com"
+        Thu, 31 Jan 2019 10:12:46 -0500
+Received: from foss.arm.com ([217.140.101.70]:46278 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbfAaPLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 10:11:50 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B4551A08F0;
-        Thu, 31 Jan 2019 15:11:49 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 38D0660152;
-        Thu, 31 Jan 2019 15:11:47 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 10:11:45 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
- vma
-Message-ID: <20190131151145.GC4619@redhat.com>
-References: <20190129193250.GK10108@mellanox.com>
- <99c228c6-ef96-7594-cb43-78931966c75d@deltatee.com>
- <20190129205827.GM10108@mellanox.com>
- <20190130080208.GC29665@lst.de>
- <20190130174424.GA17080@mellanox.com>
- <bcbdfae6-cfc6-c34f-4ff2-7bb9a08f38af@deltatee.com>
- <20190130191946.GD17080@mellanox.com>
- <3793c115-2451-1479-29a9-04bed2831e4b@deltatee.com>
- <20190130204414.GH17080@mellanox.com>
- <20190131080501.GB26495@lst.de>
+        id S1725787AbfAaPMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 10:12:46 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 659C780D;
+        Thu, 31 Jan 2019 07:12:45 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 458303F557;
+        Thu, 31 Jan 2019 07:12:44 -0800 (PST)
+Subject: Re: [PATCH] irqchip/gic-v3-its: Lock its device list during find and
+ create its device
+To:     Zheng Xiang <zhengxiang9@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        jason@lakedaemon.net, wanghaibin.wang@huawei.com
+References: <20190126061624.5260-1-zhengxiang9@huawei.com>
+ <86bm438x8n.wl-marc.zyngier@arm.com>
+ <27e0b952-111f-f221-bcd7-1a7ceb2840b5@huawei.com>
+ <0dc03914-4c8a-4fa1-fb67-f51936c54836@arm.com>
+ <505e3257-3ef6-69d4-b996-5a1e200e1246@huawei.com>
+ <32354a2a-b1b3-e03b-c486-c17aee1bed8d@huawei.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <6c44c2d4-d507-e01a-eef5-894ae71209ef@arm.com>
+Date:   Thu, 31 Jan 2019 15:12:42 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190131080501.GB26495@lst.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 31 Jan 2019 15:11:50 +0000 (UTC)
+In-Reply-To: <32354a2a-b1b3-e03b-c486-c17aee1bed8d@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 09:05:01AM +0100, Christoph Hellwig wrote:
-> On Wed, Jan 30, 2019 at 08:44:20PM +0000, Jason Gunthorpe wrote:
-> > Not really, for MRs most drivers care about DMA addresses only. The
-> > only reason struct page ever gets involved is because it is part of
-> > the GUP, SGL and dma_map family of APIs.
+Hi Zeng,
+
+On 31/01/2019 14:47, Zheng Xiang wrote:
+> Hi Marc,
 > 
-> And the only way you get the DMA address is through the dma mapping
-> APIs.  Which except for the little oddball dma_map_resource expect
-> a struct page in some form.  And dma_map_resource isn't really up
-> to speed for full blown P2P.
+> On 2019/1/29 13:42, Zheng Xiang wrote:
+>> On 2019/1/28 21:51, Marc Zyngier wrote:
+>>> On 28/01/2019 07:13, Zheng Xiang wrote:
+>>>> Hi Marc,
+>>>>
+>>>> Thanks for your review.
+>>>>
+>>>> On 2019/1/26 19:38, Marc Zyngier wrote:
+>>>>> Hi Zheng,
+>>>>>
+>>>>> On Sat, 26 Jan 2019 06:16:24 +0000,
+>>>>> Zheng Xiang <zhengxiang9@huawei.com> wrote:
+>>>>>>
+>>>>>> Currently each PCI device under a PCI Bridge shares the same device id
+>>>>>> and ITS device. Assume there are two PCI devices call its_msi_prepare
+>>>>>> concurrently and they are both going to find and create their ITS
+>>>>>> device. There is a chance that the later one couldn't find ITS device
+>>>>>> before the other one creating the ITS device. It will cause the later
+>>>>>> one to create a different ITS device even if they have the same
+>>>>>> device_id.
+>>>>>
+>>>>> Interesting finding. Is this something you've actually seen in practice
+>>>>> with two devices being probed in parallel? Or something that you found
+>>>>> by inspection?
+>>>>
+>>>> Yes, I find this problem after analyzing the reason of VM hung. At last, I
+>>>> find that the virtio-gpu cannot receive the MSI interrupts due to sharing
+>>>> a same event_id as virtio-serial.
+>>>>
+>>>> See https://lkml.org/lkml/2019/1/10/299 for the bug report.
+>>>>
+>>>> This problem can be reproducted with high probability by booting a Qemu/KVM
+>>>> VM with a virtio-serial controller and a virtio-gpu adding to a PCI Bridge
+>>>> and also adding some delay before creating ITS device.
+>>>
+>>> Fair enough. Do you mind sharing your QEMU command line? It'd be useful
+>>> if I could reproduce it here (and would give me a way to check that it
+>>> doesn't regress).
+>>
 > 
-> Now we could and maybe eventually should change all this.  But that
-> is a pre-requisitive for doing anything more fancy, and not something
-> to be hacked around.
+> Have you reproduced it with my QEMU command line?
 > 
-> > O_DIRECT seems to be the justification for struct page, but nobody is
-> > signing up to make O_DIRECT have the required special GUP/SGL/P2P flow
-> > that would be needed to *actually* make that work - so it really isn't
-> > a justification today.
-> 
-> O_DIRECT is just the messenger.  Anything using GUP will need a struct
-> page, which is all our interfaces that do I/O directly to user pages.
+> If so, should I send a V2 patch with your suggestion?
 
-I do not want to allow GUP to pin I/O space this would open a pandora
-box that we do not want to open at all. Many driver manage their IO
-space and if they get random pinning because some other kernel bits
-they never heard of starts to do GUP on their stuff it is gonna cause
-havoc.
+I've queued the following, much more complete patch:
 
-So far mmap of device file have always been special and it has been
-reflected to userspace in all the instance i know of (media and GPU).
-Pretending we can handle them like any other vma is a lie because
-they were never designed that way in the first place and it would be
-disruptive to all those driver.
+https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/irqchip-next&id=9791ec7df0e7b4d80706ccea8f24b6542f6059e9
 
-Minimum disruption with minimun changes is what we should aim for and
-is what i am trying to do with this patchset. Using struct page and
-allowing GUP would mean rewritting huge chunk of GPU drivers (pretty
-much rewritting their whole memory management) with no benefit at the
-end.
+Can you check that it works for you? I didn't manage to get the right
+timing conditions, but I also had issues getting virtio-gpu running on
+my TX2, so one might explain the other.
 
-When something is special it is better to leave it that way.
+Thanks,
 
-Cheers,
-Jérôme
+	M.
+-- 
+Jazz is not dead. It just smells funny...
