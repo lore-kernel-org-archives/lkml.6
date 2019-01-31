@@ -2,124 +2,224 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C442C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558CDC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B62D20B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:31:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20F352086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbfAaXbk (ORCPT
+        id S1727829AbfAaXcn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 18:31:40 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:34183 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725915AbfAaXbk (ORCPT
+        Thu, 31 Jan 2019 18:32:43 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44940 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725915AbfAaXcm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 18:31:40 -0500
-Received: by mail-qt1-f196.google.com with SMTP id r14so5579908qtp.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 15:31:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=Pe3JfUlwQ9DE+qO37NBAuH3C75mbHhOAYws9WbGZWNg=;
-        b=MoasI7B4RYcSX2C8MMGLaM+aiuEwzuqFmOjaLIRF45nNxDYy8v0ySoe7MCmaShcz3E
-         4+VfNhv/g2Y/3F1moRtvyxw4YgsSz2fQZFcxxj5UT7yu8WQ04AKjO4nVKO5bf8vgwP7s
-         fo9RtzG75KDx8eMw+U1IKi1c6mqPwxToAyuE1pKa0tVifSz76viTaJf40I0w5x2k/K03
-         MmNGBcVOZ8uwL1lbxciC8lQHWiMJSYK7muxQn2lIq72jbYBAh7WbAmoT+iO04GBjLkJU
-         I7Vi1gyWNvY1mJVi5o5v4UKAGsKtTg/7OTecSRSUW4mFN8KHdPv1jjykTvK7LlvOd9lr
-         Qbaw==
-X-Gm-Message-State: AJcUukcU/GUIbEGSWSP6novda1mQGtR2uX2muXc063zdTSvDXSlLge9Q
-        1JGEcgGMjA+T0pRlIUH+KZCNwA==
-X-Google-Smtp-Source: ALg8bN5ogMk6mVWpbzJo181atL+GNdZbtbStLu/AvgDpoPINAR0Qz2RfZynz1upmKiB+yXYnB9ddEQ==
-X-Received: by 2002:a0c:f8cb:: with SMTP id h11mr35047361qvo.134.1548977498781;
-        Thu, 31 Jan 2019 15:31:38 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id k81sm13053024qkk.18.2019.01.31.15.31.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 15:31:38 -0800 (PST)
-Date:   Thu, 31 Jan 2019 16:31:36 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        tomas.winkler@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190131233136.3dhadb7a46lp2nu6@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        tomas.winkler@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20190129132016.GA1602@linux.intel.com>
- <20190131122606.GA12470@linux.intel.com>
- <20190131160437.GA5629@linux.intel.com>
- <20190131170603.GA18349@linux.intel.com>
- <20190131183530.GA27112@linux.intel.com>
- <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
- <CAHk-=whEb14V981ziWmMdcqR40x5xfhhDCaB2JYcOBQHnHmsgw@mail.gmail.com>
- <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com>
- <20190131204710.GB354@linux.intel.com>
- <CAHk-=wgPCL9WgkwvK5ehJxg7Df1DHQqGZ0KtBxtjN93QjzUyog@mail.gmail.com>
+        Thu, 31 Jan 2019 18:32:42 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VNSoRe055384
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 18:32:41 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qcaq205k5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 18:32:41 -0500
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Thu, 31 Jan 2019 23:32:40 -0000
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Jan 2019 23:32:37 -0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VNWWjU18284726
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 23:32:32 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7779513604F;
+        Thu, 31 Jan 2019 23:32:32 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F401A136055;
+        Thu, 31 Jan 2019 23:32:30 +0000 (GMT)
+Received: from [9.80.226.197] (unknown [9.80.226.197])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Jan 2019 23:32:30 +0000 (GMT)
+Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
+To:     pmorel@linux.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        sebott@linux.ibm.com, oberpar@linux.ibm.com, freude@linux.ibm.com,
+        pasic@linux.ibm.com, cohuck@redhat.com
+References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
+ <95a29dd5-11d5-0984-ffbd-73ef92ed1aba@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Thu, 31 Jan 2019 18:32:30 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgPCL9WgkwvK5ehJxg7Df1DHQqGZ0KtBxtjN93QjzUyog@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <95a29dd5-11d5-0984-ffbd-73ef92ed1aba@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19013123-0004-0000-0000-000014DAD8FF
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010512; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01154551; UDB=6.00602056; IPR=6.00934983;
+ MB=3.00025380; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-31 23:32:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013123-0005-0000-0000-00008A6E42B5
+Message-Id: <c8025bc5-91dc-98dc-63b0-e0617b781bb9@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu Jan 31 19, Linus Torvalds wrote:
->On Thu, Jan 31, 2019 at 12:47 PM Jarkko Sakkinen
-><jarkko.sakkinen@linux.intel.com> wrote:
+On 1/31/19 4:09 AM, Pierre Morel wrote:
+> On 30/01/2019 18:48, Tony Krowiak wrote:
+>> The current AP bus implementation periodically polls the AP configuration
+>> to detect changes. When the AP configuration is dynamically changed 
+>> via the
+>> SE or an SCLP instruction, the changes will not be reflected to sysfs 
+>> until
+>> the next time the AP configuration is polled. The CHSC architecture
+>> provides a Store Event Information (SEI)command to make notification 
+>> of an
+>> AP configuration change. This patch introduces a handler to process
+>> notification from the CHSC SEI command BY immediately kickING off an 
+>> AP bus
+>> scan.
 >>
->> I'll try it first thing when I wake up tomorrow (11PM in Finland ATM).
->
->Thanks.
->
->> Appreciate for taking time on this.
->
->Hey, it was my commit that broke it for you. Even if it happened to
->work before, and only did so by pure luck, it was a functional
->regression.
->
->I get very upset when other developers don't step up when *their*
->changes break something, and I don't consider "it shouldn't have
->worked in the first place" to be a valid excuse. You broke it, you'd
->better fix it.
->
->So I had better fix my own mess too, in order to not look too hypocritical.
->
->And I was very aware that hardcoding the memcpy_*io() access patterns
->might break something. I just _hoped_ it wouldn't, because we actually
->ended up going back to the very original access patterns (but it was
->from a long long time ago).
->
->In fact, while it's slightly annoying, in many ways it's actually good
->that we found breakage, and could pinpoint exactly *why* it broke.
->That does validate the whole "we shouldn't just depend on the random
->implementation detail of 'memcpy()'" argument.
->
->So I'll wait to hear back whether that patch fixes things for you, but
->I _think_ it will, and we'll be better off in the long range with this
->whole thing.
->
->              Linus
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>> ---
+>>   arch/s390/include/asm/ap.h   | 12 ++++++++++++
+>>   drivers/s390/cio/chsc.c      | 12 ++++++++++++
+>>   drivers/s390/cio/chsc.h      |  1 +
+>>   drivers/s390/crypto/ap_bus.c | 12 ++++++++++++
+>>   4 files changed, 37 insertions(+)
+>>
+>> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+>> index 1a6a7092d942..c778593d509f 100644
+>> --- a/arch/s390/include/asm/ap.h
+>> +++ b/arch/s390/include/asm/ap.h
+>> @@ -360,4 +360,16 @@ static inline struct ap_queue_status 
+>> ap_dqap(ap_qid_t qid,
+>>       return reg1;
+>>   }
+>> +/*
+>> + * Interface to tell the AP bus code that a configuration
+>> + * change has happened. The bus code should at least do
+>> + * an ap bus resource rescan.
+>> + */
+>> +#if IS_ENABLED(CONFIG_ZCRYPT)
+>> +void ap_bus_cfg_chg(void);
+>> +#else
+>> +#error "no CONFIG_ZCRYPT"
+>> +static void ap_bus_cfg_chg(void){};
+>> +#endif
+>> +
+>>   #endif /* _ASM_S390_AP_H_ */
+>> diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
+>> index a0baee25134c..dccccc337078 100644
+>> --- a/drivers/s390/cio/chsc.c
+>> +++ b/drivers/s390/cio/chsc.c
+>> @@ -586,6 +586,15 @@ static void chsc_process_sei_scm_avail(struct 
+>> chsc_sei_nt0_area *sei_area)
+>>                     " failed (rc=%d).\n", ret);
+>>   }
+>> +static void chsc_process_sei_ap_cfg_chg(struct chsc_sei_nt0_area 
+>> *sei_area)
+>> +{
+>> +    CIO_CRW_EVENT(3, "chsc: ap config changed\n");
+>> +    if (sei_area->rs != 5)
+> 
+> Why just return if the rs code is 5?
+> 
+> The event content code concerns the AP configuration change.
+> 
+> Should the source of the reporting of this change hold us from 
+> rescanning the available AP?
 
-I just did a quick test here of booting and running a couple commands
-(tpm2_getcap, tpm2_pcrlist), and the patch seems to work for me. I was
-seeing the error during tpm_crb initialization without the patch.
+Why rescan if the RS code does not indicate the AP configuration
+changed?
+
+> 
+> 
+> Regards,
+> Pierre
+> 
+> 
+>> +        return;
+>> +
+>> +    ap_bus_cfg_chg();
+>> +}
+>> +
+>>   static void chsc_process_sei_nt2(struct chsc_sei_nt2_area *sei_area)
+>>   {
+>>       switch (sei_area->cc) {
+>> @@ -612,6 +621,9 @@ static void chsc_process_sei_nt0(struct 
+>> chsc_sei_nt0_area *sei_area)
+>>       case 2: /* i/o resource accessibility */
+>>           chsc_process_sei_res_acc(sei_area);
+>>           break;
+>> +    case 3: /* ap config changed */
+>> +        chsc_process_sei_ap_cfg_chg(sei_area);
+>> +        break;
+>>       case 7: /* channel-path-availability information */
+>>           chsc_process_sei_chp_avail(sei_area);
+>>           break;
+>> diff --git a/drivers/s390/cio/chsc.h b/drivers/s390/cio/chsc.h
+>> index 78aba8d94eec..5651066c46e3 100644
+>> --- a/drivers/s390/cio/chsc.h
+>> +++ b/drivers/s390/cio/chsc.h
+>> @@ -9,6 +9,7 @@
+>>   #include <asm/chsc.h>
+>>   #include <asm/schid.h>
+>>   #include <asm/qdio.h>
+>> +#include <asm/ap.h>
+>>   #define CHSC_SDA_OC_MSS   0x2
+>> diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
+>> index 48ea0004a56d..94f621783d6b 100644
+>> --- a/drivers/s390/crypto/ap_bus.c
+>> +++ b/drivers/s390/crypto/ap_bus.c
+>> @@ -35,6 +35,7 @@
+>>   #include <linux/mod_devicetable.h>
+>>   #include <linux/debugfs.h>
+>>   #include <linux/ctype.h>
+>> +#include <asm/crw.h>
+>>   #include "ap_bus.h"
+>>   #include "ap_debug.h"
+>> @@ -860,6 +861,17 @@ void ap_bus_force_rescan(void)
+>>   EXPORT_SYMBOL(ap_bus_force_rescan);
+>>   /*
+>> +* A config change has happened, Force an ap bus rescan.
+>> +*/
+>> +void ap_bus_cfg_chg(void)
+>> +{
+>> +    AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", 
+>> __func__);
+>> +
+>> +    ap_bus_force_rescan();
+>> +}
+>> +EXPORT_SYMBOL(ap_bus_cfg_chg);
+>> +
+>> +/*
+>>    * hex2bitmap() - parse hex mask string and set bitmap.
+>>    * Valid strings are "0x012345678" with at least one valid hex number.
+>>    * Rest of the bitmap to the right is padded with 0. No spaces allowed
+>>
+> 
+> 
+
