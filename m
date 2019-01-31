@@ -2,100 +2,171 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A848C282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7E0C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 264AB20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:19:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 371BB218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731367AbfAaITE (ORCPT
+        id S1731530AbfAaIUJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:19:04 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38956 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbfAaITD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 03:19:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8AEF80D;
-        Thu, 31 Jan 2019 00:19:02 -0800 (PST)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 393D33F589;
-        Thu, 31 Jan 2019 00:19:02 -0800 (PST)
-Date:   Thu, 31 Jan 2019 09:19:00 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     James Morse <james.morse@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        daniel.thompson@linaro.org, joel@joelfernandes.org,
-        marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        mark.rutland@arm.com, Arnd Bergmann <arnd@arndb.de>,
-        linux-arch@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v9 01/26] arm64: Fix HCR.TGE status for NMI contexts
-Message-ID: <20190131081900.GM13482@e113682-lin.lund.arm.com>
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
- <1548084825-8803-2-git-send-email-julien.thierry@arm.com>
- <8e8c4f5b-5b83-7bbc-1b84-36d68e210968@arm.com>
- <847c54ef-ea41-eea5-8aff-72e0cea465f8@arm.com>
+        Thu, 31 Jan 2019 03:20:09 -0500
+Received: from protonic.xs4all.nl ([83.163.252.89]:57185 "EHLO protonic.nl"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725855AbfAaIUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 03:20:09 -0500
+Received: from erd987 (unknown [192.168.2.69])
+        by sparta (Postfix) with ESMTP id AB3D244A0058;
+        Thu, 31 Jan 2019 09:21:21 +0100 (CET)
+Date:   Thu, 31 Jan 2019 09:20:06 +0100
+From:   Robin van der Gracht <robin@protonic.nl>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Martin Kepplinger <martink@posteo.de>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: Re: [PATCH v4] mmc: mxs-mmc: Introduce regulator support
+Message-ID: <20190131092006.363d1dd4@erd987>
+In-Reply-To: <CAPDyKFo7949rcxEX5U2QUS0c2xhC_z+JGeOiF2HC6+QukVpEaQ@mail.gmail.com>
+References: <20190128144119.10092-1-martink@posteo.de>
+        <CAPDyKFo7949rcxEX5U2QUS0c2xhC_z+JGeOiF2HC6+QukVpEaQ@mail.gmail.com>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <847c54ef-ea41-eea5-8aff-72e0cea465f8@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 03:42:42PM +0000, Julien Thierry wrote:
-> Hi James,
-> 
-> On 28/01/2019 11:48, James Morse wrote:
-> > Hi Julien,
-> > 
-> > On 21/01/2019 15:33, Julien Thierry wrote:
-> >> When using VHE, the host needs to clear HCR_EL2.TGE bit in order
-> >> to interract with guest TLBs, switching from EL2&0 translation regime
-> > 
-> > (interact)
-> > 
-> > 
-> >> to EL1&0.
-> >>
-> >> However, some non-maskable asynchronous event could happen while TGE is
-> >> cleared like SDEI. Because of this address translation operations
-> >> relying on EL2&0 translation regime could fail (tlb invalidation,
-> >> userspace access, ...).
-> >>
-> >> Fix this by properly setting HCR_EL2.TGE when entering NMI context and
-> >> clear it if necessary when returning to the interrupted context.
-> > 
-> > Yes please. This would not have been fun to debug!
-> > 
-> > Reviewed-by: James Morse <james.morse@arm.com>
-> > 
-> > 
-> 
-> Thanks.
-> 
-> > 
-> > I was looking for why we need core code to do this, instead of updating the
-> > arch's call sites. Your 'irqdesc: Add domain handlers for NMIs' patch (pointed
-> > to from the cover letter) is the reason: core-code calls nmi_enter()/nmi_exit()
-> > itself.
-> > 
-> 
-> Yes, that's the main reason.
-> 
-I wondered the same thing, but I don't understand the explanation :(
+On Mon, 28 Jan 2019 22:15:23 +0100
+Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
-Why can't we do a local_daif_mask() around the (very small) calls that
-clear TGE instead?
+> On Mon, 28 Jan 2019 at 15:41, Martin Kepplinger <martink@posteo.de> wrote:
+> >
+> > From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> >
+> > This adds support for explicitly switching the mmc's power on and off
+> > which is needed for example for WL1837 WL1271 wifi controllers on imx28.
+> >
+> > While the wifi's vmmc-supply regulator can be configured in devicetree,
+> > "ip link set wlan0 down" doesn't turn off the VMMC regulator which leads
+> > to hangs when loading firmware, for example.
+> >
+> > Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> > ---
+> >
+> >
+> > revision history
+> > ----------------
+> > v4: re-added forgotten regulator_enable() during probe
+> > v3: improve API usage as suggested by Ulf
+> > v2: tested patch with changes suggested by Robin
+> > v1: question, why https://patchwork.kernel.org/patch/4365751/ didn't get in
+> >
+> >
+> >  drivers/mmc/host/mxs-mmc.c | 34 +++++++++++++++++++++++++---------
+> >  1 file changed, 25 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+> > index add1e70195ea..23d275269d61 100644
+> > --- a/drivers/mmc/host/mxs-mmc.c
+> > +++ b/drivers/mmc/host/mxs-mmc.c
+> > @@ -517,6 +517,22 @@ static void mxs_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+> >         else
+> >                 host->bus_width = 0;
+> >
+> > +       switch (ios->power_mode) {
+> > +       case MMC_POWER_OFF:
+> > +               if (!IS_ERR(host->mmc->supply.vmmc))
+> > +                       mmc_regulator_set_ocr(host->mmc,
+> > +                                             host->mmc->supply.vmmc, 0);
+> > +               break;
+> > +       case MMC_POWER_UP:
+> > +               if (!IS_ERR(host->mmc->supply.vmmc))
+> > +                       mmc_regulator_set_ocr(host->mmc,
+> > +                                             host->mmc->supply.vmmc,
+> > +                                             ios->vdd);
+> > +               break;
+> > +       default:
+> > +               break;
+> > +       }
+> > +
+> >         if (ios->clock)
+> >                 mxs_ssp_set_clk_rate(&host->ssp, ios->clock);
+> >  }
+> > @@ -588,7 +604,6 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+> >         struct mmc_host *mmc;
+> >         struct resource *iores;
+> >         int ret = 0, irq_err;
+> > -       struct regulator *reg_vmmc;
+> >         struct mxs_ssp *ssp;
+> >
+> >         irq_err = platform_get_irq(pdev, 0);
+> > @@ -614,14 +629,15 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+> >         host->mmc = mmc;
+> >         host->sdio_irq_en = 0;
+> >
+> > -       reg_vmmc = devm_regulator_get(&pdev->dev, "vmmc");
+> > -       if (!IS_ERR(reg_vmmc)) {
+> > -               ret = regulator_enable(reg_vmmc);
+> > -               if (ret) {
+> > -                       dev_err(&pdev->dev,
+> > -                               "Failed to enable vmmc regulator: %d\n", ret);
+> > -                       goto out_mmc_free;
+> > -               }
+> > +       ret = mmc_regulator_get_supply(mmc);
+> > +       if (ret == -EPROBE_DEFER)
+> > +               goto out_mmc_free;
+> > +
+> > +       ret = regulator_enable(mmc->supply.vmmc);  
+> 
+> This is wrong, as it may cause the regulator usage count to become
+> wrongly balanced.
+> 
+> Instead, via ->set_ios() when calling mmc_regulator_set_ocr(), it will
+> take care of enabling and disabling the regulator depending of the
+> requested vdd voltage level.
+> 
+> > +       if (ret) {
+> > +               dev_err(&pdev->dev,
+> > +                       "Failed to enable vmmc regulator: %d\n", ret);
+> > +               goto out_mmc_free;
+> >         }
+> >
+> >         ssp->clk = devm_clk_get(&pdev->dev, NULL);
+> > --
+> > 2.20.1
+> >  
+> 
+> BTW, you didn't really answer my earlier question about the TI WiFi
+> chip. Doesn't you need a special clock for WiFi chip as well? How do
+> you intend to manage that?
 
+I used an external 32K oscillator (SLOW_CLK) for my wl1271. Other
+clocks ware generated on the module.
 
-Thanks,
+I had to supply a 'vmmc-supply' in your wl1271 devicetree node,
+which will be used to power on/off the wlan module. The supply should
+be a (delayed) GPIO controlled 'fixed-regulator' attached to the
+wlan_en pin on the module.
 
-    Christoffer
+1: Documentation/devicetree/bindings/net/wireless/ti,wlcore.txt
+
+Kind regards,
+
+-- 
+Robin van der Gracht
+Protonic Holland
+tel.: +31 (0) 229 212928
+fax.: +31 (0) 229 210930
+Factorij 36 / 1689 AL Zwaag
