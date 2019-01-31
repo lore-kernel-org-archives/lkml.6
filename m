@@ -2,109 +2,316 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B9DC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44620C282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5208B20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0261E20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:39:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548974377;
+	bh=RO2dtx7QhvtYR54Y8i+rMbw1VqImL12jpev9WhDv/FM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=dJngsk7rcEa/8q0MAdeuU1dSspPPKERrS6exBmznHpUYUCKnR1hbnwiVNXIM+T4ju
+	 BjSvGvgX1Mv8RQ7p3/321Yf5Hpjoj6aHjiB+SOG9KeVQkGsi49syE4LaIt2L0x9jBN
+	 P8SLeILfromFROW9oXNcm8YzGEgTJZJ67C3DY9zQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbfAaW2C (ORCPT
+        id S1727476AbfAaWjf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 17:28:02 -0500
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:43092 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725776AbfAaW2C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 17:28:02 -0500
-Received: from pps.filterd (m0134424.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VMRZjL031650;
-        Thu, 31 Jan 2019 22:27:35 GMT
-Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2qc71yhats-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 31 Jan 2019 22:27:35 +0000
-Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
-        by g9t5008.houston.hpe.com (Postfix) with ESMTP id BDC7C4F;
-        Thu, 31 Jan 2019 22:27:34 +0000 (UTC)
-Received: from anatevka (anatevka.americas.hpqcorp.net [10.34.81.61])
-        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id 06B6749;
-        Thu, 31 Jan 2019 22:27:32 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 15:27:32 -0700
-From:   Jerry Hoemann <jerry.hoemann@hpe.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Dave Young <dyoung@redhat.com>, x86@kernel.org,
-        Baoquan He <bhe@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pingfan Liu <kernelfans@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, yinghai@kernel.org,
-        vgoyal@redhat.com
-Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-Message-ID: <20190131222732.GA946@anatevka>
-Reply-To: Jerry.Hoemann@hpe.com
-References: <1548047768-7656-1-git-send-email-kernelfans@gmail.com>
- <20190125103924.GB27998@zn.tnic>
- <20190125134518.GA23595@dhcp-128-65.nay.redhat.com>
- <20190125140823.GC27998@zn.tnic>
- <20190131075907.GB19091@dhcp-128-65.nay.redhat.com>
- <20190131105732.GC6749@zn.tnic>
+        Thu, 31 Jan 2019 17:39:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726190AbfAaWjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 17:39:35 -0500
+Received: from localhost (unknown [64.22.249.253])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE2092084A;
+        Thu, 31 Jan 2019 22:39:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548974373;
+        bh=RO2dtx7QhvtYR54Y8i+rMbw1VqImL12jpev9WhDv/FM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wdv3LCOryxADkOQeo+k03JKDsuj3l2H1BYlm7WSZCQ3Kctxxc7pNb3yJnmS8Ov1c7
+         TuG6/MwhhfLwfkm+JWYUkzkGX6yxuhVJCqFyiT7dWvCzgR0fznB5hNH+LKuqOtVlUk
+         efb9q/rPVZ7q9J3pJMhh2JuRptTZgI5eC/kaot34=
+Date:   Thu, 31 Jan 2019 16:39:32 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kselftest@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
+        Joerg Roedel <joro@8bytes.org>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Eric Pilmore <epilmore@gigaio.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 2/9] PCI/MSI: Support allocating virtual MSI interrupts
+Message-ID: <20190131223932.GR229773@google.com>
+References: <20190131185656.17972-1-logang@deltatee.com>
+ <20190131185656.17972-3-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190131105732.GC6749@zn.tnic>
+In-Reply-To: <20190131185656.17972-3-logang@deltatee.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=649 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 11:57:32AM +0100, Borislav Petkov wrote:
-> On Thu, Jan 31, 2019 at 03:59:07PM +0800, Dave Young wrote:
-> > As Pingfan/me mentioned in another reply, there are two reasons:
-> > 1. old kexec-tools can not load kernel to high memory
-> > 2. ,high will not work on some systems without some amounts of low
-> > memory so it nees reserve extra low memory, it is bad for people who do
-> > not want it.
+[+cc Thomas, Marc]
+
+On Thu, Jan 31, 2019 at 11:56:49AM -0700, Logan Gunthorpe wrote:
+> For NTB devices, we want to be able to trigger MSI interrupts
+> through a memory window. In these cases we may want to use
+> more interrupts than the NTB PCI device has available in its MSI-X
+> table.
 > 
-> Let's see: we don't enable high by default because of old kexec-tools
-> and some systems which do some funky reservations.
+> We allow for this by creating a new 'virtual' interrupt. These
+> interrupts are allocated as usual but are not programmed into the
+> MSI-X table (as there may not be space for them).
 > 
-> But this patch kinda enables high by trying a couple more regions.
+> The MSI address and data will then handled through an NTB MSI library
+> introduced later in this series.
 > 
-> So we don't really need this - we simply need to tell people to use high
-> if it fails with KASLR, AFAICT.
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
 
-Borris,
+I assume you'll merge this along with the rest of the series, so:
 
-The testing I've done shows that the allocation failure caused by KASLR 
-is intermittent.  On one SUT that I've seen this issue on, the crash
-kernel allocation fails less than 10% of the time.
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-So even if a system administrator is diligent and tests
-that a chosen kdump configuration works, that configuration
-might not work on some random reboot 7 months in the future.
-Unfortunately, that will be the time that the system crashes
-and we won't be able to collect the crash dump due to the
-crashkernel allocation failure.
+Minor question and typo below.
 
-Jerry
+> ---
+>  drivers/pci/msi.c   | 51 +++++++++++++++++++++++++++++++++++++--------
+>  include/linux/msi.h |  1 +
+>  include/linux/pci.h |  9 ++++++++
+>  3 files changed, 52 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+> index 4c0b47867258..145587da686c 100644
+> --- a/drivers/pci/msi.c
+> +++ b/drivers/pci/msi.c
+> @@ -192,6 +192,9 @@ static void msi_mask_irq(struct msi_desc *desc, u32 mask, u32 flag)
+>  
+>  static void __iomem *pci_msix_desc_addr(struct msi_desc *desc)
+>  {
+> +	if (desc->msi_attrib.is_virtual)
+> +		return NULL;
+> +
+>  	return desc->mask_base +
+>  		desc->msi_attrib.entry_nr * PCI_MSIX_ENTRY_SIZE;
+>  }
+> @@ -206,14 +209,19 @@ static void __iomem *pci_msix_desc_addr(struct msi_desc *desc)
+>  u32 __pci_msix_desc_mask_irq(struct msi_desc *desc, u32 flag)
+>  {
+>  	u32 mask_bits = desc->masked;
+> +	void __iomem *desc_addr;
+>  
+>  	if (pci_msi_ignore_mask)
+>  		return 0;
+> +	desc_addr = pci_msix_desc_addr(desc);
+> +	if (!desc_addr)
+> +		return 0;
+>  
+>  	mask_bits &= ~PCI_MSIX_ENTRY_CTRL_MASKBIT;
+>  	if (flag)
+>  		mask_bits |= PCI_MSIX_ENTRY_CTRL_MASKBIT;
+> -	writel(mask_bits, pci_msix_desc_addr(desc) + PCI_MSIX_ENTRY_VECTOR_CTRL);
+> +
+> +	writel(mask_bits, desc_addr + PCI_MSIX_ENTRY_VECTOR_CTRL);
+>  
+>  	return mask_bits;
+>  }
+> @@ -273,6 +281,11 @@ void __pci_read_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
+>  	if (entry->msi_attrib.is_msix) {
+>  		void __iomem *base = pci_msix_desc_addr(entry);
+>  
+> +		if (!base) {
+> +			WARN_ON(1);
+> +			return;
+> +		}
+> +
+>  		msg->address_lo = readl(base + PCI_MSIX_ENTRY_LOWER_ADDR);
+>  		msg->address_hi = readl(base + PCI_MSIX_ENTRY_UPPER_ADDR);
+>  		msg->data = readl(base + PCI_MSIX_ENTRY_DATA);
+> @@ -303,6 +316,9 @@ void __pci_write_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
+>  	} else if (entry->msi_attrib.is_msix) {
+>  		void __iomem *base = pci_msix_desc_addr(entry);
+>  
+> +		if (!base)
+> +			goto skip;
+> +
+>  		writel(msg->address_lo, base + PCI_MSIX_ENTRY_LOWER_ADDR);
+>  		writel(msg->address_hi, base + PCI_MSIX_ENTRY_UPPER_ADDR);
+>  		writel(msg->data, base + PCI_MSIX_ENTRY_DATA);
+> @@ -327,6 +343,8 @@ void __pci_write_msi_msg(struct msi_desc *entry, struct msi_msg *msg)
+>  					      msg->data);
+>  		}
+>  	}
+> +
+> +skip:
+>  	entry->msg = *msg;
+>  }
+>  
+> @@ -550,6 +568,7 @@ msi_setup_entry(struct pci_dev *dev, int nvec, const struct irq_affinity *affd)
+>  
+>  	entry->msi_attrib.is_msix	= 0;
+>  	entry->msi_attrib.is_64		= !!(control & PCI_MSI_FLAGS_64BIT);
+> +	entry->msi_attrib.is_virtual    = 0;
+>  	entry->msi_attrib.entry_nr	= 0;
+>  	entry->msi_attrib.maskbit	= !!(control & PCI_MSI_FLAGS_MASKBIT);
+>  	entry->msi_attrib.default_irq	= dev->irq;	/* Save IOAPIC IRQ */
+> @@ -674,6 +693,7 @@ static int msix_setup_entries(struct pci_dev *dev, void __iomem *base,
+>  	struct irq_affinity_desc *curmsk, *masks = NULL;
+>  	struct msi_desc *entry;
+>  	int ret, i;
+> +	int vec_count = pci_msix_vec_count(dev);
+>  
+>  	if (affd)
+>  		masks = irq_create_affinity_masks(nvec, affd);
+> @@ -696,6 +716,10 @@ static int msix_setup_entries(struct pci_dev *dev, void __iomem *base,
+>  			entry->msi_attrib.entry_nr = entries[i].entry;
+>  		else
+>  			entry->msi_attrib.entry_nr = i;
+> +
+> +		entry->msi_attrib.is_virtual =
+> +			entry->msi_attrib.entry_nr >= vec_count;
+> +
+>  		entry->msi_attrib.default_irq	= dev->irq;
+>  		entry->mask_base		= base;
+>  
+> @@ -714,12 +738,19 @@ static void msix_program_entries(struct pci_dev *dev,
+>  {
+>  	struct msi_desc *entry;
+>  	int i = 0;
+> +	void __iomem *desc_addr;
+>  
+>  	for_each_pci_msi_entry(entry, dev) {
+>  		if (entries)
+>  			entries[i++].vector = entry->irq;
+> -		entry->masked = readl(pci_msix_desc_addr(entry) +
+> -				PCI_MSIX_ENTRY_VECTOR_CTRL);
+> +
+> +		desc_addr = pci_msix_desc_addr(entry);
+> +		if (desc_addr)
+> +			entry->masked = readl(desc_addr +
+> +					      PCI_MSIX_ENTRY_VECTOR_CTRL);
+> +		else
+> +			entry->masked = 0;
+> +
+>  		msix_mask_irq(entry, 1);
+>  	}
+>  }
+> @@ -932,7 +963,8 @@ int pci_msix_vec_count(struct pci_dev *dev)
+>  EXPORT_SYMBOL(pci_msix_vec_count);
+>  
+>  static int __pci_enable_msix(struct pci_dev *dev, struct msix_entry *entries,
+> -			     int nvec, const struct irq_affinity *affd)
+> +			     int nvec, const struct irq_affinity *affd,
+> +			     int flags)
+>  {
+>  	int nr_entries;
+>  	int i, j;
+> @@ -943,7 +975,7 @@ static int __pci_enable_msix(struct pci_dev *dev, struct msix_entry *entries,
+>  	nr_entries = pci_msix_vec_count(dev);
+>  	if (nr_entries < 0)
+>  		return nr_entries;
+> -	if (nvec > nr_entries)
+> +	if (nvec > nr_entries && !(flags & PCI_IRQ_VIRTUAL))
+>  		return nr_entries;
+>  
+>  	if (entries) {
+> @@ -1086,7 +1118,8 @@ EXPORT_SYMBOL(pci_enable_msi);
+>  
+>  static int __pci_enable_msix_range(struct pci_dev *dev,
+>  				   struct msix_entry *entries, int minvec,
+> -				   int maxvec, const struct irq_affinity *affd)
+> +				   int maxvec, const struct irq_affinity *affd,
+> +				   int flags)
+>  {
+>  	int rc, nvec = maxvec;
+>  
+> @@ -1110,7 +1143,7 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
+>  				return -ENOSPC;
+>  		}
+>  
+> -		rc = __pci_enable_msix(dev, entries, nvec, affd);
+> +		rc = __pci_enable_msix(dev, entries, nvec, affd, flags);
+>  		if (rc == 0)
+>  			return nvec;
+>  
+> @@ -1141,7 +1174,7 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
+>  int pci_enable_msix_range(struct pci_dev *dev, struct msix_entry *entries,
+>  		int minvec, int maxvec)
+>  {
+> -	return __pci_enable_msix_range(dev, entries, minvec, maxvec, NULL);
+> +	return __pci_enable_msix_range(dev, entries, minvec, maxvec, NULL, 0);
+>  }
+>  EXPORT_SYMBOL(pci_enable_msix_range);
+>  
+> @@ -1181,7 +1214,7 @@ int pci_alloc_irq_vectors_affinity(struct pci_dev *dev, unsigned int min_vecs,
+>  
+>  	if (flags & PCI_IRQ_MSIX) {
+>  		msix_vecs = __pci_enable_msix_range(dev, NULL, min_vecs,
+> -						    max_vecs, affd);
+> +						    max_vecs, affd, flags);
+>  		if (msix_vecs > 0)
+>  			return msix_vecs;
+>  	}
+> diff --git a/include/linux/msi.h b/include/linux/msi.h
+> index 784fb52b9900..6458ab049852 100644
+> --- a/include/linux/msi.h
+> +++ b/include/linux/msi.h
+> @@ -88,6 +88,7 @@ struct msi_desc {
+>  				__u8	multi_cap	: 3;
+>  				__u8	maskbit		: 1;
+>  				__u8	is_64		: 1;
+> +				__u8    is_virtual      : 1;
 
--- 
+You did the right thing by using the same style as what's already
+here, but does anybody know why are we using __u8 and __u16 here?
 
------------------------------------------------------------------------------
-Jerry Hoemann                  Software Engineer   Hewlett Packard Enterprise
------------------------------------------------------------------------------
+Those typedefs are in include/uapi/asm-generic/int-l64.h, which
+suggests they're for things exported to user space, but I don't think
+that's the case here, so I'm wondering if we could someday replace
+these with u8 and u16.  Obviously that wouldn't be part of *this*
+series.
+
+>  				__u16	entry_nr;
+>  				unsigned default_irq;
+>  			} msi_attrib;
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 65f1d8c2f082..ce0815c2c498 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -1352,6 +1352,15 @@ int pci_set_vga_state(struct pci_dev *pdev, bool decode,
+>  #define PCI_IRQ_MSI		(1 << 1) /* Allow MSI interrupts */
+>  #define PCI_IRQ_MSIX		(1 << 2) /* Allow MSI-X interrupts */
+>  #define PCI_IRQ_AFFINITY	(1 << 3) /* Auto-assign affinity */
+> +
+> +/*
+> + * Virtual interrupts allow for more interrupts to be allocated
+> + * than the device has interrupts for. These are not programmed
+> + * into the devices MSI-X table and must be handled by some
+
+s/devices/device's/
+
+> + * other driver means.
+> + */
+> +#define PCI_IRQ_VIRTUAL		(1 << 4)
+> +
+>  #define PCI_IRQ_ALL_TYPES \
+>  	(PCI_IRQ_LEGACY | PCI_IRQ_MSI | PCI_IRQ_MSIX)
+>  
+> -- 
+> 2.19.0
+> 
