@@ -2,157 +2,162 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF7CC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA36FC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7423218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:58:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="iQCnayy/"
+	by mail.kernel.org (Postfix) with ESMTP id C1AA320B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732259AbfAaL6a (ORCPT
+        id S1732458AbfAaL7L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 06:58:30 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44438 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726153AbfAaL6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 06:58:30 -0500
-Received: from zn.tnic (p200300EC2BCC5900651C63FB93E4C575.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:5900:651c:63fb:93e4:c575])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C53F51EC03DB;
-        Thu, 31 Jan 2019 12:58:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548935908;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=8K0lEWgB2d25lq+ObAQSh9JKCNJdaTDRxsfALxxNP5Y=;
-        b=iQCnayy/gB+c9cRZS1Qkh3kEqu0PxtRnCStOEm7SeYvyEKIAp3DHZ4kQDbBkwxYP05KeHb
-        3tpN8luoxrhVBuQ6lHp2ZqzWrqwBNiRPixfZ4+UWwb4rX9RbC8V33iuy0eSx15A0HtbykG
-        cak4pUu3YDq5xooeVnCFZ0fm59MzbqE=
-Date:   Thu, 31 Jan 2019 12:58:20 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH] kbuild: Disable extra debugging info in .s output
-Message-ID: <20190131115820.GF6749@zn.tnic>
-References: <20190121095338.8565-1-bp@alien8.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190121095338.8565-1-bp@alien8.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 31 Jan 2019 06:59:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39788 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726153AbfAaL7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 06:59:10 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6652EAC66;
+        Thu, 31 Jan 2019 11:59:08 +0000 (UTC)
+Date:   Thu, 31 Jan 2019 12:59:07 +0100
+Message-ID: <s5hh8dpavhw.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, mkumard@nvidia.com,
+        rlokhande@nvidia.com, sharadg@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
+In-Reply-To: <CAJZ5v0i_G36Cw3ZvDxyU2F+pBpiw9i=3_wfQ3tDh3_JgOAb3zw@mail.gmail.com>
+References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
+        <b631310f-93fa-ef4b-7014-d97fcfb2dcdf@nvidia.com>
+        <s5ha7jicd4l.wl-tiwai@suse.de>
+        <20190131110530.GA23438@ulmo>
+        <s5htvhpax8s.wl-tiwai@suse.de>
+        <CAJZ5v0i_G36Cw3ZvDxyU2F+pBpiw9i=3_wfQ3tDh3_JgOAb3zw@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping?
+On Thu, 31 Jan 2019 12:46:54 +0100,
+Rafael J. Wysocki wrote:
+> 
+> On Thu, Jan 31, 2019 at 12:21 PM Takashi Iwai <tiwai@suse.de> wrote:
+> >
+> > On Thu, 31 Jan 2019 12:05:30 +0100,
+> > Thierry Reding wrote:
+> > >
+> > > On Wed, Jan 30, 2019 at 05:40:42PM +0100, Takashi Iwai wrote:
+> 
+> [cut]
+> 
+> > > > If I understand correctly the code, the pm domain is already activated
+> > > > at calling driver's probe callback.
+> > >
+> > > As far as I can tell, the domain will also be powered off again after
+> > > probe finished, unless the device grabs a runtime PM reference. This is
+> > > what happens via the dev->pm_domain->sync() call after successful probe
+> > > of a driver.
+> >
+> > Ah, a good point.  This can be a problem with a probe work like this
+> > case.
+> >
+> > > It seems to me like it's not a very well defined case what to do when a
+> > > device needs to be powered up but runtime PM is not enabled.
+> > >
+> > > Adding Rafael and linux-pm, maybe they can provide some guidance on what
+> > > to do in these situations.
+> > >
+> > > To summarize, what we're debating here is how to handle powering up a
+> > > device if the pm_runtime infrastructure doesn't take care of it. Jon's
+> > > proposal here was, and we use this elsewhere, to do something like this:
+> > >
+> > >       pm_runtime_enable(dev);
+> > >       if (!pm_runtime_enabled(dev)) {
+> > >               err = foo_runtime_resume(dev);
+> > >               if (err < 0)
+> > >                       goto fail;
+> > >       }
+> > >
+> > > So basically when runtime PM is not available, we explicitly "resume"
+> > > the device to power it up.
+> > >
+> > > It seems to me like that's a fairly common problem, so I'm wondering if
+> > > there's something that the runtime PM core could do to help with this.
+> > > Or perhaps there's already a way to achieve this that we're all
+> > > overlooking?
+> > >
+> > > Rafael, any suggestions?
+> >
+> > If any, a common helper would be appreciated, indeed.
+> 
+> I'm not sure that I understand the problem correctly, so let me
+> restate it the way I understand it.
+> 
+> What we're talking about is a driver ->probe() callback.  Runtime PM
+> is disabled initially and the device is off.  It needs to be powered
+> up, but the way to do that depends on some configuration of the board
+> etc., so ideally
+> 
+> pm_runtime_enable(dev);
+> ret = pm_runtime_resume(dev);
+> 
+> should just work, but the question is what to do if runtime PM doesn't
+> work as expected.  That is, CONFIG_PM_RUNTIME is unset?  Or something
+> else?
 
-On Mon, Jan 21, 2019 at 10:53:38AM +0100, Borislav Petkov wrote:
-> From: Borislav Petkov <bp@suse.de>
-> 
-> Modern gcc adds view assignments, reset assertion checking in .loc
-> directives and a couple more additional debug markers, which clutters
-> the asm output unnecessarily:
-> 
-> For example:
-> 
->   bsp_resume:
->   .LFB3466:
->           .loc 1 1868 1 is_stmt 1 view -0
->           .cfi_startproc
->           .loc 1 1869 2 view .LVU73
->   # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
->           .loc 1 1869 14 is_stmt 0 view .LVU74
->           movq    this_cpu(%rip), %rax    # this_cpu, this_cpu
->           movq    64(%rax), %rax  # this_cpu.94_1->c_bsp_resume, _2
->   # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
->           .loc 1 1869 5 view .LVU75
->           testq   %rax, %rax      # _2
->           je      .L8     #,
->           .loc 1 1870 3 is_stmt 1 view .LVU76
->           movq    $boot_cpu_data, %rdi    #,
->           jmp     __x86_indirect_thunk_rax
-> 
-> or
->   	.loc 2 57 9 view .LVU478
->   	.loc 2 57 9 view .LVU479
->   	.loc 2 57 9 view .LVU480
->   	.loc 2 57 9 view .LVU481
->   .LBB1385:
->   .LBB1383:
->   .LBB1379:
->   .LBB1377:
->   .LBB1375:
->   	.loc 2 57 9 view .LVU482
->   	.loc 2 57 9 view .LVU483
->   	movl	%edi, %edx	# cpu, cpu
->   .LVL87:
->   	.loc 2 57 9 is_stmt 0 view .LVU484
-> 
-> That MOV in there is drowned in debugging information and latter makes
-> it hard to follow the asm. And that DWARF info is not really needed for
-> asm output staring.
-> 
-> Disable the debug information generation which clutters the asm output
-> unnecessarily:
-> 
->   bsp_resume:
->   .LFB3466:
->           .loc 1 1868 1
->   # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
->           .loc 1 1869 14
->           movq    this_cpu(%rip), %rax    # this_cpu, this_cpu
->           movq    64(%rax), %rax  # this_cpu.94_1->c_bsp_resume, _2
->   # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
->           .loc 1 1869 5
->           testq   %rax, %rax      # _2
->           je      .L8     #,
->   # arch/x86/kernel/cpu/common.c:1870:            this_cpu->c_bsp_resume(&boot_cpu_data);
->           .loc 1 1870 3
->           movq    $boot_cpu_data, %rdi    #,
->           jmp     __x86_indirect_thunk_rax
-> 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: linux-kbuild@vger.kernel.org
-> ---
->  scripts/Makefile.build | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index fd03d60f6c5a..4f33fdab89d2 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -103,8 +103,12 @@ modkern_cflags =                                          \
->  		$(KBUILD_CFLAGS_KERNEL) $(CFLAGS_KERNEL))
->  quiet_modtag = $(if $(part-of-module),[M],   )
->  
-> +disable_extra_cc_dbg := $(call cc-option,-gno-as-locview-support)
-> +disable_extra_cc_dbg += $(call cc-option,-fno-dwarf2-cfi-asm)
-> +disable_extra_cc_dbg += $(call cc-option,-feliminate-unused-debug-symbols)
-> +disable_extra_cc_dbg += $(call cc-option,-gno-statement-frontiers)
->  quiet_cmd_cc_s_c = CC $(quiet_modtag)  $@
-> -cmd_cc_s_c       = $(CC) $(c_flags) $(DISABLE_LTO) -fverbose-asm -S -o $@ $<
-> +cmd_cc_s_c       = $(CC) $(c_flags) $(DISABLE_LTO) $(disable_extra_cc_dbg) -fverbose-asm -S -o $@ $<
->  
->  $(obj)/%.s: $(src)/%.c FORCE
->  	$(call if_changed_dep,cc_s_c)
-> -- 
-> 2.19.1
-> 
+Yes, the question is how to write the code for both with and without
+CONFIG_PM (or CONFIG_PM_RUNTIME).
 
--- 
-Regards/Gruss,
-    Boris.
+Right now, we have a code like below, pushing the initialization in an
+async work and let the probe returning quickly.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+	hda_tegra_probe() {
+		....
+		pm_runtime_enable();
+		schedule_work();
+		return;
+	}
+
+	hda_tegra_probe_work() {
+		pm_runtime_get_sync();
+		....
+		pm_runtime_put_sync();
+	}
+
+Then it truned outhis code lacks of the clock initialization when
+runtime PM isn't enabled.  Normally it's done via runtime resume
+
+	hda_tegra_runtime_resume() {
+		hda_tegra_enable_clocks();
+		....
+	}
+
+And now the question is what is the standard idiom in such a case.
+
+IMO, calling pm_runtime_resume() inside the probe function looks
+weird, and my preference was to initialize the clocks explicitly, then
+enable runtime PM.  But if using pm_runtime_resume() in the proc
+should be seen as a standard procedure, I'm fine with that.
+
+
+thanks,
+
+Takashi
