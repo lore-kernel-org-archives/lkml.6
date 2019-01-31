@@ -2,131 +2,113 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE03EC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0479BC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE9C220881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:03:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HTvkBGP6"
+	by mail.kernel.org (Postfix) with ESMTP id CF9BF20820
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:04:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387971AbfAaQDt (ORCPT
+        id S2388000AbfAaQEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:03:49 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:45643 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfAaQDs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:03:48 -0500
-Received: by mail-vs1-f67.google.com with SMTP id x28so2231737vsh.12
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 08:03:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dfkb2JVbRDTEbj1zSGa+POfZs3pStSG55ZC3VHRiOkI=;
-        b=HTvkBGP6bPF70CtpCEmhX1jTzjlerKIEBopJ3TENVCW+hbWgrWzC+tjWuj4MSytQ5S
-         hk8NJ7/CQs+vmANbU05MmbTXhj6vDcPq943G4CZnYnWfuAXSwII5g/Nb/YVcPvJqtKPH
-         7kdULbfT1To5TobCuxkHFN0tlmOw1NyhudXT4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dfkb2JVbRDTEbj1zSGa+POfZs3pStSG55ZC3VHRiOkI=;
-        b=NNuHQBmv8VuxEbpJtpN/SZM7TWAVcCvTgiTJTOfFMth0dPlksTZNJPHNOkDKu6hI8G
-         28X0BeyarwHln0mC/zoH9vQKij6iMdCvSUuR0IPHrxNPsPP06o9OPimaDj0gjJzsDaoL
-         ukMRcxt3HCCP7U8SUyoezzdwFJIStT9Bs/Fkbzazf9wWIkEBrQn9oXP569UbyRQCGdgm
-         waLJjUzTr/sIwo212ijLuUPcFdOYX2185g93GUU8lilO/MuHzhIMLYnxuqM8nb//HOh7
-         iHnCDdE8TwLKBCX72RNSegIrVUQ0GBSh+1koEjucHMCqtAMzqiA/f7yqcj/9JOLKBfNI
-         4yZw==
-X-Gm-Message-State: AJcUukd/4NFujtMfrIk87Kdn/qrxQ2rJOm0OKq/ltLpZZkwGqszm4HVf
-        N9/ZDaHpmvy83b9BYTmbfTMrTOd56cB9OeWEQxhncA==
-X-Google-Smtp-Source: ALg8bN41EZScf3vVgGuMEUkMKk4ZnQZv8XMmmKkN2urZTsBRtDJIs56Iag4DvsgqS2ga05uinlnJsV6keGUqD/OyQEA=
-X-Received: by 2002:a67:b245:: with SMTP id s5mr14627592vsh.200.1548950627580;
- Thu, 31 Jan 2019 08:03:47 -0800 (PST)
+        Thu, 31 Jan 2019 11:04:44 -0500
+Received: from mga05.intel.com ([192.55.52.43]:44828 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387870AbfAaQEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:04:44 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 08:04:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
+   d="scan'208";a="114241131"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
+  by orsmga008.jf.intel.com with ESMTP; 31 Jan 2019 08:04:38 -0800
+Date:   Thu, 31 Jan 2019 18:04:37 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        tomas.winkler@intel.com
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190131160437.GA5629@linux.intel.com>
+References: <1547849358.2794.90.camel@HansenPartnership.com>
+ <20190120160413.GB30478@linux.intel.com>
+ <20190122010218.GA26713@linux.intel.com>
+ <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com>
+ <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com>
+ <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com>
+ <20190131122606.GA12470@linux.intel.com>
 MIME-Version: 1.0
-References: <2493187.oiOpCWJBV7@aspire.rjw.lan> <CAJZ5v0hsBNYZ7mu6SrhBY+LiOQZKz2K_3OtsCb9Jt8QR1YRhOA@mail.gmail.com>
- <20190131132247.GA6837@kroah.com> <20190131132409.GA16084@kroah.com>
-In-Reply-To: <20190131132409.GA16084@kroah.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 31 Jan 2019 17:03:11 +0100
-Message-ID: <CAPDyKFr6gehF1iXq6BnUmfg3duDmCtXpQg97euAvH_dyJ785gg@mail.gmail.com>
-Subject: Re: [PATCH 0/6] driver core: Fix some issues related to device links
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131122606.GA12470@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Jan 2019 at 14:24, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Jan 31, 2019 at 02:22:47PM +0100, Greg Kroah-Hartman wrote:
-> > On Thu, Jan 31, 2019 at 11:09:51AM +0100, Rafael J. Wysocki wrote:
-> > > On Thu, Jan 24, 2019 at 12:25 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+On Thu, Jan 31, 2019 at 02:26:06PM +0200, Jarkko Sakkinen wrote:
+> On Tue, Jan 29, 2019 at 03:20:16PM +0200, Jarkko Sakkinen wrote:
+> > On Thu, Jan 24, 2019 at 07:43:30AM +1300, Linus Torvalds wrote:
+> > > On Thu, Jan 24, 2019 at 4:36 AM Jarkko Sakkinen
+> > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > >
+> > > > > Is it just that this particular hardware always happened to trigger
+> > > > > the ERMS case (ie "rep movsb")?
 > > > >
-> > > > Hi Greg at al,
+> > > > This is the particular snippet in question:
 > > > >
-> > > > Recently I have been looking at the device links code because of the
-> > > > recent discussion on possibly using them in the DRM subsystem (see for
-> > > > example https://marc.info/?l=linux-pm&m=154832771905309&w=2) and I have
-> > > > found a few issues in that code which should be addressed by this patch
-> > > > series.  Please refer to the patch changelogs for details.
-> > > >
-> > > > None of the problems addressed here should be manifesting themselves in
-> > > > mainline kernel today, but if there are more device links users in the
-> > > > future, they most likely will be encountered sooner or later.  Also they
-> > > > need to be fixed for the DRM use case to be supported IMO.
-> > > >
-> > > > This series does not fix all issues in device links that have become
-> > > > apparent (generally speaking, the idea of returning an existing link
-> > > > in case there is one already for the given consumer-supplier pair
-> > > > doesn't play well with stateful links and their flags), so there will
-> > > > be a follow-up series of patches to clean that up.  Still, I don't see
-> > > > a reason to sit on these fixes while working on the other patches, so
-> > > > here they go.
-> > >
-> > > Any concerns regarding this lot?
-> > >
-> > > [Please note that patch 5 in the series was replaced with the v2 at
-> > > https://patchwork.kernel.org/patch/10781205/]
-> > >
-> > > If not, and if you don't mind, I would like to queue it up next week,
-> > > possibly along with the follow-up material posted on Monday
-> > > (https://lore.kernel.org/lkml/2405639.4es7pRLqn0@aspire.rjw.lan/) if
-> > > that is not problematic, so it gets some linux-next coverage before
-> > > the next merge window.
-> >
-> > Can I queue it up in my tree, given that I have a number of other driver
-> > core patches in there, and I don't know how the merge issues will be if
-> > we start to diverge.
-> >
-> > Or do you need this for some other work?
->
-> To make this clearer, I have no objection to take this through my tree
-> now, along with your second set of patches.  Is that ok?
->
+> > > > memcpy_fromio(buf, priv->rsp, 6);
+> > > > expected = be32_to_cpup((__be32 *) &buf[2]);
+> > > > if (expected > count || expected < 6)
+> > > >         return -EIO;
+> > > 
+> > > Ok, strange.
+> > > 
+> > > So what *used* to happen is that the memcpy_fromio() would just expand
+> > > as a "memcpy()", and in this case, gcc would then inline the memcpy().
+> > > In fact, gcc does it as a 4-byte access and a two-byte access from
+> > > what I can tell.
+> > 
+> > I verified, and it is exactly as you stated:
+> > 
+> >    0xffffffff814aaa33 <+51>:	mov    (%rax),%edx
+> >    0xffffffff814aaa35 <+53>:	mov    %edx,0x0(%rbp)
+> >    0xffffffff814aaa38 <+56>:	movzwl 0x4(%rax),%eax
+> >    0xffffffff814aaa3c <+60>:	mov    %ax,0x4(%rbp)
+> > 
+> > And your new version does exactly the same thing to the first six bytes
+> > (with different opcode, but the same memory access pattern).
+> 
+> I think I have found the root cause:
+> 
+> memcpy_fromio(&__rsp_pa, &priv->regs_t->ctrl_rsp_pa, 8);
+> 
+> This is from crb_map_io(). This should be read as quad word.
+> 
+> I'll change it to ioread64() and see what happens. I don't know why it
+> even has used memcpy_fromio() in the first place. I guess, when I first
+> implemented the driver, I used that for no logical reason, and it has
+> worked since up until now.
 
-Greg, Rafael,
+No, cannot be it. If you couldn't read it in two dwords, then it would
+have been always broken with 32-bit build.
 
-FWIW, I intend to review these patches during tomorrow, or at latest
-on Monday as I have been a bit busy lately.
+Anyway, just in case, I will check what address it prints out.
 
-Kind regards
-Uffe
+/Jarkko
