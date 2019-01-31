@@ -2,127 +2,181 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E748C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0009CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C9D218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:16:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YvIXg1rB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ezgdqh8d"
+	by mail.kernel.org (Postfix) with ESMTP id BD596218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:19:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387436AbfAaNQx (ORCPT
+        id S1733055AbfAaNT2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:16:53 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40000 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726153AbfAaNQx (ORCPT
+        Thu, 31 Jan 2019 08:19:28 -0500
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:43836 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726153AbfAaNT1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 08:16:53 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0960C60960; Thu, 31 Jan 2019 13:16:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548940612;
-        bh=7j3uvsjDcR92+OTtXjcZ+22TSj38+BwxBrGrYSGDZ/4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YvIXg1rBOcxjD3R20T2Wqd/xvphh2IZ6mV7IhdVf9jlBj7gEi7vzvyrgkVC0ktECH
-         affdckBTY2vRUAkhC+4rnmeH+fs7BwqO+2tcr1m1mX6Z7+Ee5iDTZ548vb8e0o+IV7
-         kBZVJI2Y3Dry201RVRVlZq+/YkUjM2DInP18V0c4=
-Received: from [192.168.43.47] (unknown [27.59.108.190])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E01BF60909;
-        Thu, 31 Jan 2019 13:16:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548940609;
-        bh=7j3uvsjDcR92+OTtXjcZ+22TSj38+BwxBrGrYSGDZ/4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Ezgdqh8dUfNdGMmtMWMxpQQgz58Sb6Rq/n6kAYzlJdBHI7JZfyvJm1NBwfqemUKj7
-         adNEuVmd92DDHNv+jECV/bMpKEUXzy7Fp89AN5vrZ2iEeoozIdY9NnHvTimYcZJnv7
-         f3BnvH9Pdd+bKya5TuXydlVuzND2QAbdUAmLpOSw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E01BF60909
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCHv5 1/7] arm64: dts: qcom: sdm845: Add Coresight support
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <cover.1548419933.git.saiprakash.ranjan@codeaurora.org>
- <60ebf1617f0285c89e921bf3839cba6906d493c9.1548419933.git.saiprakash.ranjan@codeaurora.org>
- <20190130183723.GA19234@xps15>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <6ba118d5-5b54-8b91-d003-3f56fae5b925@codeaurora.org>
-Date:   Thu, 31 Jan 2019 18:46:38 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        Thu, 31 Jan 2019 08:19:27 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id pCFUgClmQNR5ypCFXgQExw; Thu, 31 Jan 2019 14:19:24 +0100
+Subject: Re: [PATCH v3 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Kamil Debski <kamil@wypas.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+References: <20190124100419.26492-1-tfiga@chromium.org>
+ <20190124100419.26492-2-tfiga@chromium.org>
+ <a3b1b650-94d7-bb84-41ef-dc4cab0cdae1@xs4all.nl>
+ <54430438-33a3-2c52-b6c8-4000a4088906@xs4all.nl>
+ <1548938648.4585.3.camel@pengutronix.de>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <6aa88094-068a-089d-2d52-3f9ade5a396c@xs4all.nl>
+Date:   Thu, 31 Jan 2019 14:19:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190130183723.GA19234@xps15>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1548938648.4585.3.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfIfDuP/mMEibE6FEVNGpAX5t2Tzb55Yq9huiTr5e+FXdyRWuFEfsdjwhLLXgO4Jf55jpNXIPIy6970K9JVNJXuEQwf3xvyCBJfveCaM/Q3jDlOlnRfVh
+ hwhRN6q8QNe0bgH6p+TUv09jqDVnDyRUNmAcC/Cy+727JW1M80yVAhQDJhH7M3nLz05fynvkghSRfXv6Yb6udvGXipkHlikzj4ptTH9kihkDVGhCzTaFePSJ
+ Al/xY/PIy33hA0beXNggWnjBxtB3jZMpYnWwI5OtdOQeknI/jmwEqAjf+uyoueGUivyxfxhl7wRAbOjjK77MkdXvjjTck3Jj6zve9HoHERDdjx5qEzQCmF0i
+ Cn83yxiUIT5phxAXFLX1BVHb1OOvTnrSRNSnI64i9FZCGbXKCwacEOdviLyVJ5HvcLEb22vWJ6cjKDLSLnFW1jZZF00swD30OOdmBwRju1OuJlvF6C8FBwqj
+ R7gGbM3po+90VH6qSAfBo5/p9BMyzr0U1PnZee/kWtH+4yzRqB4j9aZOHKR/SS49A4Mr3zFjXfRuO0g7UQzmN7+wOqb5TwerGc21r37JDVCqBid20v+Um0y0
+ 2x1kaYV5gOJo38RElqjcJREdSrdWCveMSQK4Fq+Bh7/xM4OK+QO3Ooy1q7iFAV/UoyvoZNFKa4fKrZf5gT1mcKcegVSEJ9960vYLwuW7hGsIL2sqqaMSeZw6
+ eA3lYQS456Bi2aLgxE1Lp3Td9G2/7wxUEcg35nDSzMijd5TWh8G68iK30UOzEtAtw9Iw/fLbMiaiZJiMe7eIOrJtLfIF9RJP1lO6rWqVFUl2js4ccmc83ZKG
+ P3pwid/OU8MRGacV0gFoHKt77GzBSRlwoaEmGj26okYTdYksTsrYofYLWg9+Y0EJxZCnYN9TzoP06H9SNQY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/2019 12:07 AM, Mathieu Poirier wrote:
-> On Tue, Jan 29, 2019 at 12:43:58AM +0530, Sai Prakash Ranjan wrote:
->> Add coresight components found on Qualcomm SDM845 SoC.
+On 1/31/19 1:44 PM, Philipp Zabel wrote:
+> On Thu, 2019-01-31 at 13:30 +0100, Hans Verkuil wrote:
+>> On 1/31/19 11:45 AM, Hans Verkuil wrote:
+>>> On 1/24/19 11:04 AM, Tomasz Figa wrote:
+>>>> Due to complexity of the video decoding process, the V4L2 drivers of
+>>>> stateful decoder hardware require specific sequences of V4L2 API calls
+>>>> to be followed. These include capability enumeration, initialization,
+>>>> decoding, seek, pause, dynamic resolution change, drain and end of
+>>>> stream.
+>>>>
+>>>> Specifics of the above have been discussed during Media Workshops at
+>>>> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
+>>>> Conference Europe 2014 in Düsseldorf. The de facto Codec API that
+>>>> originated at those events was later implemented by the drivers we already
+>>>> have merged in mainline, such as s5p-mfc or coda.
+>>>>
+>>>> The only thing missing was the real specification included as a part of
+>>>> Linux Media documentation. Fix it now and document the decoder part of
+>>>> the Codec API.
+>>>>
+>>>> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+>>>> ---
+>>>>  Documentation/media/uapi/v4l/dev-decoder.rst  | 1076 +++++++++++++++++
+>>>>  Documentation/media/uapi/v4l/dev-mem2mem.rst  |    5 +
+>>>>  Documentation/media/uapi/v4l/pixfmt-v4l2.rst  |    5 +
+>>>>  Documentation/media/uapi/v4l/v4l2.rst         |   10 +-
+>>>>  .../media/uapi/v4l/vidioc-decoder-cmd.rst     |   40 +-
+>>>>  Documentation/media/uapi/v4l/vidioc-g-fmt.rst |   14 +
+>>>>  6 files changed, 1135 insertions(+), 15 deletions(-)
+>>>>  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
+>>>>
+>>>
+>>> <snip>
+>>>
+>>>> +4.  **This step only applies to coded formats that contain resolution information
+>>>> +    in the stream.** Continue queuing/dequeuing bitstream buffers to/from the
+>>>> +    ``OUTPUT`` queue via :c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`. The
+>>>> +    buffers will be processed and returned to the client in order, until
+>>>> +    required metadata to configure the ``CAPTURE`` queue are found. This is
+>>>> +    indicated by the decoder sending a ``V4L2_EVENT_SOURCE_CHANGE`` event with
+>>>> +    ``V4L2_EVENT_SRC_CH_RESOLUTION`` source change type.
+>>>> +
+>>>> +    * It is not an error if the first buffer does not contain enough data for
+>>>> +      this to occur. Processing of the buffers will continue as long as more
+>>>> +      data is needed.
+>>>> +
+>>>> +    * If data in a buffer that triggers the event is required to decode the
+>>>> +      first frame, it will not be returned to the client, until the
+>>>> +      initialization sequence completes and the frame is decoded.
+>>>> +
+>>>> +    * If the client sets width and height of the ``OUTPUT`` format to 0,
+>>>> +      calling :c:func:`VIDIOC_G_FMT`, :c:func:`VIDIOC_S_FMT`,
+>>>> +      :c:func:`VIDIOC_TRY_FMT` or :c:func:`VIDIOC_REQBUFS` on the ``CAPTURE``
+>>>> +      queue will return the ``-EACCES`` error code, until the decoder
+>>>> +      configures ``CAPTURE`` format according to stream metadata.
+>>>
+>>> I think this should also include the G/S_SELECTION ioctls, right?
 >>
->> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+>> I've started work on adding compliance tests for codecs to v4l2-compliance and
+>> I quickly discovered that this 'EACCES' error code is not nice at all.
 >>
->> ---
->> Depends on AOSS QMP side channel patches and AMBA bus pclk change
->> by Bjorn Andersson [1][2].
->> Also depends on patch ("arm64: dts: qcom: sdm845: Increase address
->> and size cells for soc") [3].
+>> The problem is that it is really inconsistent with V4L2 behavior: the basic
+>> rule is that there always is a format defined, i.e. G_FMT will always return
+>> a format.
 >>
->> [1] https://lore.kernel.org/lkml/20190106080915.4493-1-bjorn.andersson@linaro.org/
->> [2] https://lore.kernel.org/lkml/20190106080915.4493-7-bjorn.andersson@linaro.org/
->> [3] https://lore.kernel.org/lkml/20190117042940.25487-2-bjorn.andersson@linaro.org/
+>> Suddenly returning an error is actually quite painful to handle because it is
+>> a weird exception just for the capture queue of a stateful decoder if no
+>> output resolution is known.
+>>
+>> Just writing that sentence is painful.
+>>
+>> Why not just return some default driver defined format? It will automatically
+>> be updated once the decoder parsed the bitstream and knows the new resolution.
+>>
+>> It really is just the same behavior as with a resolution change.
+>>
+>> It is also perfectly fine to request buffers for the capture queue for that
+>> default format. It's pointless, but not a bug.
+>>
+>> Unless I am missing something I strongly recommend changing this behavior.
 > 
-> This patch still doesn't compile for me.  In the above [1] is a cover letter and
-> [2] is a patch that is part of [1] - what do you want me to do?  Add all the
-> patches in [1]?  And how do those related to the dependencies you've listed in
-> the cover letter?
-> 
-> I can't continue reviewing your work until you provide me with a tree based on
-> coresight-next [3] with all the depencendies to get this set applied and
-> compiled.
-> 
+> I just wrote the same in my reply to Nicolas, the CODA driver currently
+> sets the capture queue width/height to the output queue's crop rectangle
+> (rounded to macroblock size) without ever having seen the SPS.
 
-Hi Mathieu,
+And thinking about the initial 0x0 width/height for the output queue:
 
-Sorry to have wasted your time. There were many dependencies
-with some nesting and getting updated as well, so in the next version, I 
-will have my patches rebased on top of coresight-next and also I will
-give a tree based on the same with all dependencies applied.
+that too is an exception, although less of a problem than the EACCES behavior.
 
-Thanks,
-Sai
+It should be fine for an application to set width/height to 0 when calling
+S_FMT for the output queue of the decoder, but I would also prefer that it is
+just replaced by the driver with some default resolution. It really doesn't
+matter in practice, since you will wait for the SOURCE_CHANGE event regardless.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Only then do you start to configure the CAPTURE queue.
+
+Using 0x0 and EACCES looks good on paper, but in the code it is a hassle and
+I'm not convinced there is any benefit.
+
+I like generic APIs and no where else do we ever return a 0 value for width
+or height, except in this corner case. It's just awkward.
+
+Regards,
+
+	Hans
