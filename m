@@ -2,107 +2,114 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0CCC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E870C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DAB9218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:10:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548929407;
-	bh=ny3WccFhsCnB9MMWt3pqskHUVebOLE90q+eXx5MJpyE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=bwHzvyZopftvyhksNHDhruHqAtbK18LFP7vNrLRZSUdv0BWwF9csP0ijseML79ls5
-	 uj/aCGHwLvtsCVYAyZ7EHenjhC1zYXDv8czqK8SdNDmcsEYuBvK4Wd+j/pZR06zdYo
-	 iKvV0i7HlPBIGhtl7+elH4iEXqXbtmfxVggGrNN4=
+	by mail.kernel.org (Postfix) with ESMTP id 03B1B20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:10:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="VzPNf6OS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732338AbfAaKKF (ORCPT
+        id S1732357AbfAaKKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:10:05 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:44097 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732031AbfAaKKD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:10:03 -0500
-Received: by mail-oi1-f196.google.com with SMTP id m6so2213804oig.11;
-        Thu, 31 Jan 2019 02:10:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JGtM6G9tEeSNZsYLEbgkdTS8afkAuGom1UMpBmISu+4=;
-        b=V0a+dC/2njRLTnRoP8EY3OJXbXH2nuzN+It4xtT33UfEbhpewvA2BFLGU3LiiRuPcZ
-         B4NWnRje7ytSGvaVOYRe7+Agxyow0BtR0PkJWiWE8/42RRK9elzr58QXk7lYB9V+DD22
-         FivsOUpNeG4Hwjygh7ot5aEWGwXrwOq26ompjUESEH7bDdPxYYWrzW+cQw6hONR6wcww
-         lhPM9+lrEfHzv+xEua08lUGVF3o52C0P3ZjEbXRwIEYAk6efT6nDZINY40gTFcKeDfBp
-         +cfwS5Tyk6Ptpd4/ml0rD6dxt2jwL1hvVtDYLhS8CySboeBgxnliU0Np3ownjIfKx+tq
-         PJWw==
-X-Gm-Message-State: AJcUukdXohINE7+1JzYhwvIjGhhAGqrWYeMa+zi3k8cgNmOphXXZNe2D
-        e0CRDMRmTQXBYIAF8ZO3+vs4TfcTHrVOn6FaX08=
-X-Google-Smtp-Source: ALg8bN6tplGrc5r4WyR9qGEEt/fRd/ATeIyauai7qip0xIarOYpBAnxhSeiI8Mj+9dhwyGnGvHEbjzwspYO1+dXKN7o=
-X-Received: by 2002:aca:195:: with SMTP id 143mr14123460oib.322.1548929402230;
- Thu, 31 Jan 2019 02:10:02 -0800 (PST)
-MIME-Version: 1.0
-References: <2493187.oiOpCWJBV7@aspire.rjw.lan>
-In-Reply-To: <2493187.oiOpCWJBV7@aspire.rjw.lan>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 31 Jan 2019 11:09:51 +0100
-Message-ID: <CAJZ5v0hsBNYZ7mu6SrhBY+LiOQZKz2K_3OtsCb9Jt8QR1YRhOA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] driver core: Fix some issues related to device links
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 31 Jan 2019 05:10:17 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:12741 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729232AbfAaKIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 05:08:49 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43qwtQ16QRz9tyxD;
+        Thu, 31 Jan 2019 11:08:46 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=VzPNf6OS; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Pd1lwmXEVKIQ; Thu, 31 Jan 2019 11:08:46 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43qwtQ04kRz9tyx9;
+        Thu, 31 Jan 2019 11:08:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548929326; bh=RKnLzg8KtVsjDsnOtBObMBW8+bwI3rJVtk1LBNKXIkw=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=VzPNf6OS1ys/wV4D+0lu/HG4lGXNQHCIg3GSF1eIhpb0mC7I39C3RPH/c19iorhtB
+         5OJlwpqM+l6jQRqazLbdvkJIGuJ2pC5G6v5h049n1ALzmR5ZRPc+k37kRT79cOL9fH
+         V+8ekJty9iBr1caiCb6b1pbTGiF04c7rsQLnRwgU=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1ED068B814;
+        Thu, 31 Jan 2019 11:08:47 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id aBh9T47M05TU; Thu, 31 Jan 2019 11:08:47 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E09A68B78D;
+        Thu, 31 Jan 2019 11:08:46 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 8A5E272E14; Thu, 31 Jan 2019 10:08:46 +0000 (UTC)
+Message-Id: <da718ce0da4303de0197b46570680843a188f216.1548852243.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1548852242.git.christophe.leroy@c-s.fr>
+References: <cover.1548852242.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v15 02/13] powerpc/32: Fix CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+ for 40x/booke
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 31 Jan 2019 10:08:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 12:25 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->
-> Hi Greg at al,
->
-> Recently I have been looking at the device links code because of the
-> recent discussion on possibly using them in the DRM subsystem (see for
-> example https://marc.info/?l=linux-pm&m=154832771905309&w=2) and I have
-> found a few issues in that code which should be addressed by this patch
-> series.  Please refer to the patch changelogs for details.
->
-> None of the problems addressed here should be manifesting themselves in
-> mainline kernel today, but if there are more device links users in the
-> future, they most likely will be encountered sooner or later.  Also they
-> need to be fixed for the DRM use case to be supported IMO.
->
-> This series does not fix all issues in device links that have become
-> apparent (generally speaking, the idea of returning an existing link
-> in case there is one already for the given consumer-supplier pair
-> doesn't play well with stateful links and their flags), so there will
-> be a follow-up series of patches to clean that up.  Still, I don't see
-> a reason to sit on these fixes while working on the other patches, so
-> here they go.
+40x/booke have another path to reach 3f from transfer_to_handler,
+make sure it also calls ACCOUNT_CPU_USER_ENTRY() when
+CONFIG_VIRT_CPU_ACCOUNTING_NATIVE is selected.
 
-Any concerns regarding this lot?
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/kernel/entry_32.S | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-[Please note that patch 5 in the series was replaced with the v2 at
-https://patchwork.kernel.org/patch/10781205/]
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index 0768dfd8a64e..d4c6186aa7e8 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -166,6 +166,13 @@ transfer_to_handler:
+ 	   internal debug mode bit to do this. */
+ 	lwz	r12,THREAD_DBCR0(r12)
+ 	andis.	r12,r12,DBCR0_IDM@h
++#endif
++#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
++	CURRENT_THREAD_INFO(r9, r1)
++	tophys(r9, r9)
++	ACCOUNT_CPU_USER_ENTRY(r9, r11, r12)
++#endif
++#if defined(CONFIG_40x) || defined(CONFIG_BOOKE)
+ 	beq+	3f
+ 	/* From user and task is ptraced - load up global dbcr0 */
+ 	li	r12,-1			/* clear all pending debug events */
+@@ -185,11 +192,6 @@ transfer_to_handler:
+ 	addi	r12,r12,-1
+ 	stw	r12,4(r11)
+ #endif
+-#ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+-	CURRENT_THREAD_INFO(r9, r1)
+-	tophys(r9, r9)
+-	ACCOUNT_CPU_USER_ENTRY(r9, r11, r12)
+-#endif
+ 
+ 	b	3f
+ 
+-- 
+2.13.3
 
-If not, and if you don't mind, I would like to queue it up next week,
-possibly along with the follow-up material posted on Monday
-(https://lore.kernel.org/lkml/2405639.4es7pRLqn0@aspire.rjw.lan/) if
-that is not problematic, so it gets some linux-next coverage before
-the next merge window.
-
-Cheers,
-Rafael
