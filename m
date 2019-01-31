@@ -7,69 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DE1C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B505C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40AD020B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6196218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:29:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cRyQFI2W"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O8USPGHL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbfAaT3a (ORCPT
+        id S1729499AbfAaT3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:29:30 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45166 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbfAaT32 (ORCPT
+        Thu, 31 Jan 2019 14:29:32 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39565 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727161AbfAaT3a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:29:28 -0500
-Received: by mail-pg1-f195.google.com with SMTP id y4so1762086pgc.12
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:29:27 -0800 (PST)
+        Thu, 31 Jan 2019 14:29:30 -0500
+Received: by mail-pf1-f194.google.com with SMTP id r136so1931393pfc.6
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:29:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9s0Jc+lgI+C1BSYL5mSt9awnQxS0L/t2p2g0lX4vn1Q=;
-        b=cRyQFI2WCS8FjD1FVnnc6pGqW7DxKqoEtMnP1mmIEFR3MaERnlX0Puu/0PhnlM+XnV
-         wj1Zu9JymVQIG0BQbr/QSfDksLbnH6IbwmpUkPyB4Rr9K9zCZS+DRK1IqDVDc/dEwJvJ
-         jtlmFRtnCcDFprijI1AGoinebjPLceATP7Zis=
+        bh=cc2VbcPAnTvMYqSuXC/5SyD9HzuHf6+788Td8DIExl8=;
+        b=O8USPGHL+EVbcuzWaPV8gvThOUyxvMnZPmjeZ6E77VUehYc3QeN/XcxgASbNVrTs42
+         8w3ijMSUFbe2x9Iz08Pls8aZ3mETduGUafDuiezpP0kVvIS6KwfNshVHK/8cpTgQdljn
+         KRiyOUJwKAjuiTL5bbspYTPmmQAzd+q/wQ4ns=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9s0Jc+lgI+C1BSYL5mSt9awnQxS0L/t2p2g0lX4vn1Q=;
-        b=C2YiDI+fA7vg4vTrSEav4G//3d6wLSDAJReMbBnjAd8X1ZvmiHXFA5u28IgoNqrGXW
-         zB3RzkN7TQal0yd90VFP1MersNMf0AFUodIR7u1o+ZNaEF8WuOG6EtmNWlMZzA5EQIN4
-         MAVWbVNpKqoV8HGrcDvukBNjPiEn9BG8s2HJKVPGUa1+kQXEhdki4rW5Y620JcAIK361
-         rH+KXXiTetBQtIgHbILoHLl4ORKkr+cm73Th5M6WXfKpjQi2J/86GChNVfO39cQqn5kV
-         wZ/vthIXHAUx2PngeGRySsmz1DudcCu29+5PSCkpoJd7T+VD73Z4NCUm8EWNsIsDu8Up
-         j7xQ==
-X-Gm-Message-State: AJcUukfbg87P/zbwPxFV26OPwHwQK9AQQNn6SPa3IoaC5pLu8Pl7CF4e
-        nbPNRjWt35qexR4ZXinZdLFjTBjRipc=
-X-Google-Smtp-Source: ALg8bN7y05ZWZkA8E4kxBIiqovexlhMvMxOCDxhr2UjvxJYUcSVRfW/5iY2KzYWPpZcaTG1skj0GFQ==
-X-Received: by 2002:a62:3c1:: with SMTP id 184mr36365576pfd.56.1548962967192;
-        Thu, 31 Jan 2019 11:29:27 -0800 (PST)
+        bh=cc2VbcPAnTvMYqSuXC/5SyD9HzuHf6+788Td8DIExl8=;
+        b=kVYZvu24rnJHUA1CJHOQ2K7kUW3ereUCNQ7CltSYQvkGCy/UYT4+9L8pR4+24YDqEb
+         dIHRdERoJbQ406D9Ph/KG3VRhFRSUmcOaxtL6qeHtB1nB7o7/oV6i7f03Lyi3I7SXBdJ
+         e1anQQbuRMAgsrMKNsfk6gszcoIwux6fk68DJs9IDVQS1EU6+78MBt/Sr1i2yoeNmDqW
+         qv7lkY2S+t0XyxYFHgQzTI4+sYDVJG+ClLRNpjoWHC08TPFrr0YoqvfUcUDBYgoiPzxf
+         cUuSSt8FNBDAcO27oF7WC5wUj4osDwFLcAVPEwJm7zpUwGHx+2sONNKWRyXyMJiVCde4
+         3JPg==
+X-Gm-Message-State: AJcUukeDd3Ki713YmCFK0bU5Svb5eE5MWE3UcFGeGxveAilkZRONtHid
+        feYhfRRsenUezzEr4yA6xbFIGA==
+X-Google-Smtp-Source: ALg8bN615vAl3iIUbU5++a6X7/luVf97JEhxe5afnzN3aSkSUJv2nH+xm6DEseUedsbi7akL6mMTyQ==
+X-Received: by 2002:a63:1a0c:: with SMTP id a12mr32102917pga.157.1548962969148;
+        Thu, 31 Jan 2019 11:29:29 -0800 (PST)
 Received: from skynet.sea.corp.google.com ([2620:15c:17:4:29de:3bb1:1270:e679])
-        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.29.26
+        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.29.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 11:29:26 -0800 (PST)
+        Thu, 31 Jan 2019 11:29:28 -0800 (PST)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, Thomas Garnier <thgarnie@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Thomas Garnier <thgarnie@google.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Francis Deslauriers <francis.deslauriers@efficios.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 23/27] x86/modules: Adapt module loading for PIE support
-Date:   Thu, 31 Jan 2019 11:24:30 -0800
-Message-Id: <20190131192533.34130-24-thgarnie@chromium.org>
+Subject: [PATCH v6 25/27] x86/pie: Add option to build the kernel as PIE
+Date:   Thu, 31 Jan 2019 11:24:32 -0800
+Message-Id: <20190131192533.34130-26-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 In-Reply-To: <20190131192533.34130-1-thgarnie@chromium.org>
 References: <20190131192533.34130-1-thgarnie@chromium.org>
@@ -80,309 +73,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adapt module loading to support PIE relocations. Generate dynamic GOT if
-a symbol requires it but no entry exists in the kernel GOT.
+Add the CONFIG_X86_PIE option which builds the kernel as a Position
+Independent Executable (PIE). The kernel is currently build with the
+mcmodel=kernel option which forces it to stay on the top 2G of the
+virtual address space. With PIE, the kernel will be able to move below
+the current limit.
 
-Position Independent Executable (PIE) support will allow to extend the
-KASLR randomization range below 0xffffffff80000000.
+The --emit-relocs linker option was kept instead of using -pie to limit
+the impact on mapped sections. Any incompatible relocation will be
+catch by the arch/x86/tools/relocs binary at compile time.
+
+If segment based stack cookies are enabled, try to use the compiler
+option to select the segment register. If not available, automatically
+enabled global stack cookie in auto mode. Otherwise, recommend
+compiler update or global stack cookie option.
+
+Performance/Size impact:
+
+Size of vmlinux (Default configuration):
+ File size:
+ - PIE disabled: +0.18%
+ - PIE enabled: -1.977% (less relocations)
+ .text section:
+ - PIE disabled: same
+ - PIE enabled: same
+
+Size of vmlinux (Ubuntu configuration):
+ File size:
+ - PIE disabled: +0.21%
+ - PIE enabled: +10%
+ .text section:
+ - PIE disabled: same
+ - PIE enabled: +0.001%
+
+The size increase is mainly due to not having access to the 32-bit signed
+relocation that can be used with mcmodel=kernel. A small part is due to reduced
+optimization for PIE code. This bug [1] was opened with gcc to provide a better
+code generation for kernel PIE.
+
+Hackbench (50% and 1600% on thread/process for pipe/sockets):
+ - PIE disabled: no significant change (avg -/+ 0.5% on latest test).
+ - PIE enabled: between -1% to +1% in average (default and Ubuntu config).
+
+Kernbench (average of 10 Half and Optimal runs):
+ Elapsed Time:
+ - PIE disabled: no significant change (avg -0.5%)
+ - PIE enabled: average -0.5% to +0.5%
+ System Time:
+ - PIE disabled: no significant change (avg -0.1%)
+ - PIE enabled: average -0.4% to +0.4%.
+
+[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82303
 
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
 ---
- arch/x86/Makefile               |   4 +
- arch/x86/include/asm/module.h   |  11 ++
- arch/x86/include/asm/sections.h |   4 +
- arch/x86/kernel/module.c        | 181 +++++++++++++++++++++++++++++++-
- arch/x86/kernel/module.lds      |   3 +
- 5 files changed, 198 insertions(+), 5 deletions(-)
- create mode 100644 arch/x86/kernel/module.lds
+ arch/x86/Kconfig  |  8 ++++++++
+ arch/x86/Makefile | 45 ++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 52 insertions(+), 1 deletion(-)
 
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c3ad1b0ae1a1..e4316b8ed130 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2237,6 +2237,14 @@ config X86_GLOBAL_STACKPROTECTOR
+ 
+ 	   If unsure, say N
+ 
++config X86_PIE
++	bool
++	depends on X86_64
++	select DEFAULT_HIDDEN_SYMS
++	select WEAK_PROVIDE_HIDDEN
++	select DYNAMIC_MODULE_BASE
++	select MODULE_REL_CRCS if MODVERSIONS
++
+ config HOTPLUG_CPU
+ 	bool "Support for hot-pluggable CPUs"
+ 	depends on SMP
 diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 65d6d9a1dd22..5e9c1b02cf87 100644
+index 5e9c1b02cf87..f72f78510059 100644
 --- a/arch/x86/Makefile
 +++ b/arch/x86/Makefile
-@@ -129,8 +129,12 @@ else
-         KBUILD_CFLAGS += $(cflags-y)
+@@ -60,6 +60,8 @@ endif
+ KBUILD_CFLAGS += -mno-sse -mno-mmx -mno-sse2 -mno-3dnow
+ KBUILD_CFLAGS += $(call cc-option,-mno-avx,)
+ 
++stackglobal := $(call cc-option-yn, -mstack-protector-guard=global)
++
+ ifeq ($(CONFIG_X86_32),y)
+         BITS := 32
+         UTS_MACHINE := i386
+@@ -130,14 +132,55 @@ else
  
          KBUILD_CFLAGS += -mno-red-zone
-+ifdef CONFIG_X86_PIE
-+        KBUILD_LDFLAGS_MODULE += -T $(srctree)/arch/x86/kernel/module.lds
-+else
+ ifdef CONFIG_X86_PIE
++        KBUILD_CFLAGS += -fPIE
+         KBUILD_LDFLAGS_MODULE += -T $(srctree)/arch/x86/kernel/module.lds
++
++        # Relax relocation in both CFLAGS and LDFLAGS to support older compilers
++        KBUILD_CFLAGS += $(call cc-option,-Wa$(comma)-mrelax-relocations=no)
++        LDFLAGS_vmlinux += $(call ld-option,--no-relax)
++        KBUILD_LDFLAGS_MODULE += $(call ld-option,--no-relax)
++
++        # Stack validation is not yet support due to self-referenced switches
++ifdef CONFIG_STACK_VALIDATION
++        $(warning CONFIG_STACK_VALIDATION is not yet supported for x86_64 pie \
++	        build.)
++        SKIP_STACK_VALIDATION := 1
++        export SKIP_STACK_VALIDATION
++endif
++
++ifndef CONFIG_CC_STACKPROTECTOR_NONE
++ifndef CONFIG_X86_GLOBAL_STACKPROTECTOR
++        stackseg-flag := -mstack-protector-guard-reg=%gs
++        ifeq ($(call cc-option-yn,$(stackseg-flag)),n)
++                # Try to enable global stack cookie if possible
++                ifeq ($(stackglobal), y)
++                        $(warning Cannot use CONFIG_CC_STACKPROTECTOR_* while \
++                                building a position independent kernel. \
++                                Default to global stack protector \
++                                (CONFIG_X86_GLOBAL_STACKPROTECTOR).)
++                        CONFIG_X86_GLOBAL_STACKPROTECTOR := y
++                        KBUILD_CFLAGS += -DCONFIG_X86_GLOBAL_STACKPROTECTOR
++                        KBUILD_AFLAGS += -DCONFIG_X86_GLOBAL_STACKPROTECTOR
++                else
++                        $(error echo Cannot use \
++                                CONFIG_CC_STACKPROTECTOR_(REGULAR|STRONG|AUTO) \
++                                while building a position independent binary. \
++                                Update your compiler or use \
++                                CONFIG_X86_GLOBAL_STACKPROTECTOR)
++                endif
++        else
++                KBUILD_CFLAGS += $(stackseg-flag)
++        endif
++endif
++endif
++
+ else
          KBUILD_CFLAGS += -mcmodel=kernel
  endif
-+endif
+ endif
  
  ifdef CONFIG_X86_GLOBAL_STACKPROTECTOR
-         ifeq ($(call cc-option, -mstack-protector-guard=global),)
-diff --git a/arch/x86/include/asm/module.h b/arch/x86/include/asm/module.h
-index 7948a17febb4..68ff05e14288 100644
---- a/arch/x86/include/asm/module.h
-+++ b/arch/x86/include/asm/module.h
-@@ -5,12 +5,23 @@
- #include <asm-generic/module.h>
- #include <asm/orc_types.h>
- 
-+#ifdef CONFIG_X86_PIE
-+struct mod_got_sec {
-+	struct elf64_shdr	*got;
-+	int			got_num_entries;
-+	int			got_max_entries;
-+};
-+#endif
-+
- struct mod_arch_specific {
- #ifdef CONFIG_UNWINDER_ORC
- 	unsigned int num_orcs;
- 	int *orc_unwind_ip;
- 	struct orc_entry *orc_unwind;
- #endif
-+#ifdef CONFIG_X86_PIE
-+	struct mod_got_sec	core;
-+#endif
- };
- 
- #ifdef CONFIG_X86_64
-diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
-index 8ea1cfdbeabc..d4468309d743 100644
---- a/arch/x86/include/asm/sections.h
-+++ b/arch/x86/include/asm/sections.h
-@@ -13,4 +13,8 @@ extern char __end_rodata_aligned[];
- extern char __end_rodata_hpage_align[];
- #endif
- 
-+#if defined(CONFIG_X86_PIE)
-+extern char __start_got[], __end_got[];
-+#endif
-+
- #endif	/* _ASM_X86_SECTIONS_H */
-diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
-index b052e883dd8c..f0d3ed92049e 100644
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -30,6 +30,7 @@
- #include <linux/gfp.h>
- #include <linux/jump_label.h>
- #include <linux/random.h>
-+#include <linux/sort.h>
- 
- #include <asm/text-patching.h>
- #include <asm/page.h>
-@@ -77,6 +78,173 @@ static unsigned long int get_module_load_offset(void)
- }
- #endif
- 
-+#ifdef CONFIG_X86_PIE
-+static u64 find_got_kernel_entry(Elf64_Sym *sym, const Elf64_Rela *rela)
-+{
-+	u64 *pos;
-+
-+	for (pos = (u64 *)__start_got; pos < (u64 *)__end_got; pos++) {
-+		if (*pos == sym->st_value)
-+			return (u64)pos + rela->r_addend;
-+	}
-+
-+	return 0;
-+}
-+
-+static u64 module_emit_got_entry(struct module *mod, void *loc,
-+				 const Elf64_Rela *rela, Elf64_Sym *sym)
-+{
-+	struct mod_got_sec *gotsec = &mod->arch.core;
-+	u64 *got = (u64 *)gotsec->got->sh_addr;
-+	int i = gotsec->got_num_entries;
-+	u64 ret;
-+
-+	/* Check if we can use the kernel GOT */
-+	ret = find_got_kernel_entry(sym, rela);
-+	if (ret)
-+		return ret;
-+
-+	got[i] = sym->st_value;
-+
-+	/*
-+	 * Check if the entry we just created is a duplicate. Given that the
-+	 * relocations are sorted, this will be the last entry we allocated.
-+	 * (if one exists).
-+	 */
-+	if (i > 0 && got[i] == got[i - 2]) {
-+		ret = (u64)&got[i - 1];
-+	} else {
-+		gotsec->got_num_entries++;
-+		BUG_ON(gotsec->got_num_entries > gotsec->got_max_entries);
-+		ret = (u64)&got[i];
-+	}
-+
-+	return ret + rela->r_addend;
-+}
-+
-+#define cmp_3way(a, b)	((a) < (b) ? -1 : (a) > (b))
-+
-+static int cmp_rela(const void *a, const void *b)
-+{
-+	const Elf64_Rela *x = a, *y = b;
-+	int i;
-+
-+	/* sort by type, symbol index and addend */
-+	i = cmp_3way(ELF64_R_TYPE(x->r_info), ELF64_R_TYPE(y->r_info));
-+	if (i == 0)
-+		i = cmp_3way(ELF64_R_SYM(x->r_info), ELF64_R_SYM(y->r_info));
-+	if (i == 0)
-+		i = cmp_3way(x->r_addend, y->r_addend);
-+	return i;
-+}
-+
-+static bool duplicate_rel(const Elf64_Rela *rela, int num)
-+{
-+	/*
-+	 * Entries are sorted by type, symbol index and addend. That means
-+	 * that, if a duplicate entry exists, it must be in the preceding
-+	 * slot.
-+	 */
-+	return num > 0 && cmp_rela(rela + num, rela + num - 1) == 0;
-+}
-+
-+static unsigned int count_gots(Elf64_Sym *syms, Elf64_Rela *rela, int num)
-+{
-+	unsigned int ret = 0;
-+	Elf64_Sym *s;
-+	int i;
-+
-+	for (i = 0; i < num; i++) {
-+		switch (ELF64_R_TYPE(rela[i].r_info)) {
-+		case R_X86_64_GOTPCREL:
-+			s = syms + ELF64_R_SYM(rela[i].r_info);
-+
-+			/*
-+			 * Use the kernel GOT when possible, else reserve a
-+			 * custom one for this module.
-+			 */
-+			if (!duplicate_rel(rela, i) &&
-+			    !find_got_kernel_entry(s, rela + i))
-+				ret++;
-+			break;
-+		}
-+	}
-+	return ret;
-+}
-+
-+/*
-+ * Generate GOT entries for GOTPCREL relocations that do not exists in the
-+ * kernel GOT. Based on arm64 module-plts implementation.
-+ */
-+int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
-+			      char *secstrings, struct module *mod)
-+{
-+	unsigned long gots = 0;
-+	Elf_Shdr *symtab = NULL;
-+	Elf64_Sym *syms = NULL;
-+	char *strings, *name;
-+	int i;
-+
-+	/*
-+	 * Find the empty .got section so we can expand it to store the PLT
-+	 * entries. Record the symtab address as well.
-+	 */
-+	for (i = 0; i < ehdr->e_shnum; i++) {
-+		if (!strcmp(secstrings + sechdrs[i].sh_name, ".got")) {
-+			mod->arch.core.got = sechdrs + i;
-+		} else if (sechdrs[i].sh_type == SHT_SYMTAB) {
-+			symtab = sechdrs + i;
-+			syms = (Elf64_Sym *)symtab->sh_addr;
-+		}
-+	}
-+
-+	if (!mod->arch.core.got) {
-+		pr_err("%s: module GOT section missing\n", mod->name);
-+		return -ENOEXEC;
-+	}
-+	if (!syms) {
-+		pr_err("%s: module symtab section missing\n", mod->name);
-+		return -ENOEXEC;
-+	}
-+
-+	for (i = 0; i < ehdr->e_shnum; i++) {
-+		Elf64_Rela *rels = (void *)ehdr + sechdrs[i].sh_offset;
-+		int numrels = sechdrs[i].sh_size / sizeof(Elf64_Rela);
-+
-+		if (sechdrs[i].sh_type != SHT_RELA)
-+			continue;
-+
-+		/* sort by type, symbol index and addend */
-+		sort(rels, numrels, sizeof(Elf64_Rela), cmp_rela, NULL);
-+
-+		gots += count_gots(syms, rels, numrels);
-+	}
-+
-+	mod->arch.core.got->sh_type = SHT_NOBITS;
-+	mod->arch.core.got->sh_flags = SHF_ALLOC;
-+	mod->arch.core.got->sh_addralign = L1_CACHE_BYTES;
-+	mod->arch.core.got->sh_size = (gots + 1) * sizeof(u64);
-+	mod->arch.core.got_num_entries = 0;
-+	mod->arch.core.got_max_entries = gots;
-+
-+	/*
-+	 * If a _GLOBAL_OFFSET_TABLE_ symbol exists, make it absolute for
-+	 * modules to correctly reference it. Similar to s390 implementation.
-+	 */
-+	strings = (void *) ehdr + sechdrs[symtab->sh_link].sh_offset;
-+	for (i = 0; i < symtab->sh_size/sizeof(Elf_Sym); i++) {
-+		if (syms[i].st_shndx != SHN_UNDEF)
-+			continue;
-+		name = strings + syms[i].st_name;
-+		if (!strcmp(name, "_GLOBAL_OFFSET_TABLE_")) {
-+			syms[i].st_shndx = SHN_ABS;
-+			break;
-+		}
-+	}
-+	return 0;
-+}
-+#endif
-+
- void *module_alloc(unsigned long size)
- {
- 	void *p;
-@@ -190,16 +358,20 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
- 			if ((s64)val != *(s32 *)loc)
- 				goto overflow;
- 			break;
-+#ifdef CONFIG_X86_PIE
-+		case R_X86_64_GOTPCREL:
-+			val = module_emit_got_entry(me, loc, rel + i, sym);
-+			/* fallthrough */
-+#endif
- 		case R_X86_64_PC32:
- 		case R_X86_64_PLT32:
- 			if (*(u32 *)loc != 0)
- 				goto invalid_relocation;
- 			val -= (u64)loc;
- 			*(u32 *)loc = val;
--#if 0
--			if ((s64)val != *(s32 *)loc)
-+			if (IS_ENABLED(CONFIG_X86_PIE) &&
-+			    (s64)val != *(s32 *)loc)
- 				goto overflow;
--#endif
- 			break;
- 		case R_X86_64_PC64:
- 			if (*(u64 *)loc != 0)
-@@ -223,8 +395,7 @@ int apply_relocate_add(Elf64_Shdr *sechdrs,
- overflow:
- 	pr_err("overflow in relocation type %d val %Lx\n",
- 	       (int)ELF64_R_TYPE(rel[i].r_info), val);
--	pr_err("`%s' likely not compiled with -mcmodel=kernel\n",
--	       me->name);
-+	pr_err("`%s' likely too far from the kernel\n", me->name);
- 	return -ENOEXEC;
- }
- #endif
-diff --git a/arch/x86/kernel/module.lds b/arch/x86/kernel/module.lds
-new file mode 100644
-index 000000000000..fd6e95a4b454
---- /dev/null
-+++ b/arch/x86/kernel/module.lds
-@@ -0,0 +1,3 @@
-+SECTIONS {
-+	.got (NOLOAD) : { BYTE(0) }
-+}
+-        ifeq ($(call cc-option, -mstack-protector-guard=global),)
++        ifeq ($(stackglobal), n)
+                 $(error Cannot use CONFIG_X86_GLOBAL_STACKPROTECTOR: \
+                         -mstack-protector-guard=global not supported \
+                         by compiler)
 -- 
 2.20.1.495.gaa96b0ce6b-goog
 
