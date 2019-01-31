@@ -3,297 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3048C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA406C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C9EC218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:29:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5E1C218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:30:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732005AbfAaK3j (ORCPT
+        id S1732031AbfAaKa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:29:39 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48572 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726434AbfAaK3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:29:39 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4934829A0929EE493CC4;
-        Thu, 31 Jan 2019 18:29:37 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.43) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Thu, 31 Jan 2019
- 18:29:27 +0800
-Subject: Re: [PATCH v2 4/7] scsi: libsas: split the replacement of sas disks
- in two steps
-To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20190130082412.9357-1-yanaijie@huawei.com>
- <20190130082412.9357-5-yanaijie@huawei.com>
- <17908564-35f2-4c5d-e9e4-4fe109fae4cc@huawei.com>
- <5C5257AC.3040303@huawei.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <7ad77303-9960-5b8c-f26e-fc825ac57621@huawei.com>
-Date:   Thu, 31 Jan 2019 10:29:17 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <5C5257AC.3040303@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+        Thu, 31 Jan 2019 05:30:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46196 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726434AbfAaKa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 05:30:29 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1341DC05E740;
+        Thu, 31 Jan 2019 10:30:29 +0000 (UTC)
+Received: from xz-x1.redhat.com (ovpn-12-72.pek2.redhat.com [10.72.12.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B15675D787;
+        Thu, 31 Jan 2019 10:30:23 +0000 (UTC)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterx@redhat.com,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alistair Popple <alistair@popple.id.au>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Mark Hairgrove <mhairgrove@nvidia.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] powerpc/powernv/npu: Remove redundant change_pte() hook
+Date:   Thu, 31 Jan 2019 18:30:22 +0800
+Message-Id: <20190131103022.10218-1-peterx@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 31 Jan 2019 10:30:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/2019 02:04, Jason Yan wrote:
->
->
-> On 2019/1/31 1:22, John Garry wrote:
->> On 30/01/2019 08:24, Jason Yan wrote:
->>> Now if a new device replaced a old device, the sas address will change.
->>
->> Hmmm... not if it's a SATA disk, which would have some same invented SAS
->> address.
->>
->
-> Yes, it's only for a SAS disk.
->
->>> We unregister the old device and discover the new device in one
->>> revalidation process. But after we deferred the sas_port_delete(), the
->>> sas port is not deleted when we registering the new port and device.
->>> The sas port cannot be added because the name of the new port is the
->>> same as the old.
->>>
->>> Fix this by doing the replacement in two steps. The first revalidation
->>> only delete the old device and trigger a new revalidation. The second
->>> revalidation discover the new device. To keep the event processing
->>> synchronised to the original event,
->>
->> Did I originally suggest this? It seems to needlessly make the code more
->> complicated.
->>
->
-> Yes, my first version was raise a new bcast event, and you said it's not
-> synchronised to the original event.  Shall I get back to that approach?
+The change_pte() notifier was designed to use as a quick path to
+update secondary MMU PTEs on write permission changes or PFN changes.
+For KVM, it could reduce the vm-exits when vcpu faults on the pages
+that was touched up by KSM.  It's not used to do cache invalidations,
+for example, if we see the notifier will be called before the real PTE
+update after all (please see set_pte_at_notify that set_pte_at was
+called later).
 
-Not sure. This patch seems to fix something closely related to that in 
-"scsi: libsas: fix issue of swapping two sas disks", which I will check 
-further.
+All the necessary cache invalidation should all be done in
+invalidate_range() already.
 
-EOM
+CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+CC: Paul Mackerras <paulus@samba.org>
+CC: Michael Ellerman <mpe@ellerman.id.au>
+CC: Alistair Popple <alistair@popple.id.au>
+CC: Alexey Kardashevskiy <aik@ozlabs.ru>
+CC: Mark Hairgrove <mhairgrove@nvidia.com>
+CC: Balbir Singh <bsingharora@gmail.com>
+CC: David Gibson <david@gibson.dropbear.id.au>
+CC: Andrea Arcangeli <aarcange@redhat.com>
+CC: Jerome Glisse <jglisse@redhat.com>
+CC: Jason Wang <jasowang@redhat.com>
+CC: linuxppc-dev@lists.ozlabs.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ arch/powerpc/platforms/powernv/npu-dma.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
->
->> we wrapped a loop and added a new
->>> parameter to see if we should revalidate again.
->>>
->>> Signed-off-by: Jason Yan <yanaijie@huawei.com>
->>> CC: chenxiang <chenxiang66@hisilicon.com>
->>> CC: John Garry <john.garry@huawei.com>
->>> CC: Johannes Thumshirn <jthumshirn@suse.de>
->>> CC: Ewan Milne <emilne@redhat.com>
->>> CC: Christoph Hellwig <hch@lst.de>
->>> CC: Tomas Henzl <thenzl@redhat.com>
->>> CC: Dan Williams <dan.j.williams@intel.com>
->>> CC: Hannes Reinecke <hare@suse.com>
->>> ---
->>>  drivers/scsi/libsas/sas_discover.c | 20 +++++++++++++++-----
->>>  drivers/scsi/libsas/sas_expander.c | 20 ++++++++++++++------
->>>  include/scsi/libsas.h              |  2 +-
->>>  3 files changed, 30 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/drivers/scsi/libsas/sas_discover.c
->>> b/drivers/scsi/libsas/sas_discover.c
->>> index ffc571a12916..c825c89fbddd 100644
->>> --- a/drivers/scsi/libsas/sas_discover.c
->>> +++ b/drivers/scsi/libsas/sas_discover.c
->>> @@ -498,12 +498,10 @@ static void sas_discover_domain(struct
->>> work_struct *work)
->>>           task_pid_nr(current), error);
->>>  }
->>>
->>> -static void sas_revalidate_domain(struct work_struct *work)
->>> +static void sas_do_revalidate_domain(struct asd_sas_port *port, bool
->>> *retry)
->>>  {
->>> -    struct sas_discovery_event *ev = to_sas_discovery_event(work);
->>> -    struct asd_sas_port *port = ev->port;
->>> -    struct sas_ha_struct *ha = port->ha;
->>>      struct domain_device *ddev = port->port_dev;
->>> +    struct sas_ha_struct *ha = port->ha;
->>>
->>>      /* prevent revalidation from finding sata links in recovery */
->>>      mutex_lock(&ha->disco_mutex);
->>> @@ -520,7 +518,7 @@ static void sas_revalidate_domain(struct
->>> work_struct *work)
->>>
->>>      if (ddev && (ddev->dev_type == SAS_FANOUT_EXPANDER_DEVICE ||
->>>               ddev->dev_type == SAS_EDGE_EXPANDER_DEVICE))
->>> -        sas_ex_revalidate_domain(ddev);
->>> +        sas_ex_revalidate_domain(ddev, retry);
->>>
->>>      pr_debug("done REVALIDATING DOMAIN on port %d, pid:%d\n",
->>>           port->id, task_pid_nr(current));
->>> @@ -532,6 +530,18 @@ static void sas_revalidate_domain(struct
->>> work_struct *work)
->>>      sas_probe_devices(port);
->>>  }
->>>
->>> +static void sas_revalidate_domain(struct work_struct *work)
->>> +{
->>> +    struct sas_discovery_event *ev = to_sas_discovery_event(work);
->>> +    struct asd_sas_port *port = ev->port;
->>> +    bool retry;
->>> +
->>> +    do {
->>> +        retry = false;
->>> +        sas_do_revalidate_domain(port, &retry);
->>> +    } while (retry);
->>> +}
->>> +
->>>  /* ---------- Events ---------- */
->>>
->>>  static void sas_chain_work(struct sas_ha_struct *ha, struct sas_work
->>> *sw)
->>> diff --git a/drivers/scsi/libsas/sas_expander.c
->>> b/drivers/scsi/libsas/sas_expander.c
->>> index 5cd720f93f96..cdbf8d8a28bf 100644
->>> --- a/drivers/scsi/libsas/sas_expander.c
->>> +++ b/drivers/scsi/libsas/sas_expander.c
->>> @@ -1994,7 +1994,8 @@ static bool dev_type_flutter(enum
->>> sas_device_type new, enum sas_device_type old)
->>>      return false;
->>>  }
->>>
->>> -static int sas_rediscover_dev(struct domain_device *dev, int phy_id,
->>> bool last)
->>> +static int sas_unregister(struct domain_device *dev, int phy_id, bool
->>> last,
->>> +                  bool *retry)
->>>  {
->>>      struct expander_device *ex = &dev->ex_dev;
->>>      struct ex_phy *phy = &ex->ex_phy[phy_id];
->>> @@ -2045,7 +2046,12 @@ static int sas_rediscover_dev(struct
->>> domain_device *dev, int phy_id, bool last)
->>>          SAS_ADDR(phy->attached_sas_addr));
->>>      sas_unregister_devs_sas_addr(dev, phy_id, last);
->>>
->>> -    return sas_discover_new(dev, phy_id);
->>> +    /* force the next revalidation find this phy and bring it up */
->>> +    phy->phy_change_count = -1;
->>> +    ex->ex_change_count = -1;
->>> +    *retry = true;
->>
->> Ohh, sorry to say, but that's a real hack :)
->>
->
-> This is the way sas_resume_port() already in use.
->
->> Could we just add a flag for the expander PHY to force a discovery
->> instead of this?
->>
->
-> of course we can add a flag instead of this, but I don't think it worth
-> to do this. We have to change the logic of sas_find_bcast_dev() and
-> sas_find_bcast_phy() to achieve this. Or we have to add a new function
-> to find out which PHY's flag is set.
->
->> I assume that you need to do this as the expander PHY change count will
->> not be modified for the next revalidation (so no discovery on that PHY).
->>
->
-> To save one instruction(assign), we have to add two(check and assign)?
-> And how to predict if the PHY change count will be modified or not?
-> It's unnessesary to do this.
->
->>> +
->>> +    return 0;
->>>  }
->>>
->>>  /**
->>> @@ -2062,7 +2068,8 @@ static int sas_rediscover_dev(struct
->>> domain_device *dev, int phy_id, bool last)
->>>   * first phy,for other phys in this port, we add it to the port to
->>>   * forming the wide-port.
->>>   */
->>> -static void sas_rediscover(struct domain_device *dev, const int phy_id)
->>> +static void sas_rediscover(struct domain_device *dev, const int phy_id,
->>> +               bool *retry)
->>>  {
->>>      struct expander_device *ex = &dev->ex_dev;
->>>      struct ex_phy *changed_phy = &ex->ex_phy[phy_id];
->>> @@ -2087,7 +2094,7 @@ static void sas_rediscover(struct domain_device
->>> *dev, const int phy_id)
->>>                  break;
->>>              }
->>>          }
->>> -        res = sas_rediscover_dev(dev, phy_id, last);
->>> +        res = sas_unregister(dev, phy_id, last, retry);
->>>      } else
->>>          res = sas_discover_new(dev, phy_id);
->>>
->>> @@ -2098,13 +2105,14 @@ static void sas_rediscover(struct
->>> domain_device *dev, const int phy_id)
->>>  /**
->>>   * sas_ex_revalidate_domain - revalidate the domain
->>>   * @port_dev: port domain device.
->>> + * @retry: do we need to revalidate again
->>>   *
->>>   * NOTE: this process _must_ quit (return) as soon as any connection
->>>   * errors are encountered.  Connection recovery is done elsewhere.
->>>   * Discover process only interrogates devices in order to discover the
->>>   * domain.
->>>   */
->>> -void sas_ex_revalidate_domain(struct domain_device *port_dev)
->>> +void sas_ex_revalidate_domain(struct domain_device *port_dev, bool
->>> *retry)
->>>  {
->>>      int res;
->>>      struct domain_device *dev = NULL;
->>> @@ -2119,7 +2127,7 @@ void sas_ex_revalidate_domain(struct
->>> domain_device *port_dev)
->>>              res = sas_find_bcast_phy(dev, &phy_id, i, true);
->>>              if (phy_id == -1)
->>>                  break;
->>> -            sas_rediscover(dev, phy_id);
->>> +            sas_rediscover(dev, phy_id, retry);
->>>              i = phy_id + 1;
->>>          } while (i < ex->num_phys);
->>>      }
->>> diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
->>> index e557bcb0c266..deb75765e555 100644
->>> --- a/include/scsi/libsas.h
->>> +++ b/include/scsi/libsas.h
->>> @@ -692,7 +692,7 @@ int  sas_discover_root_expander(struct
->>> domain_device *);
->>>
->>>  void sas_init_ex_attr(void);
->>>
->>> -void sas_ex_revalidate_domain(struct domain_device *);
->>> +void sas_ex_revalidate_domain(struct domain_device *port_dev, bool
->>> *retry);
->>>
->>>  void sas_unregister_domain_devices(struct asd_sas_port *port, int
->>> gone);
->>>  void sas_init_disc(struct sas_discovery *disc, struct asd_sas_port *);
->>>
->>
->>
->>
->> .
->>
->
->
-> .
->
-
+diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
+index 3f58c7dbd581..c003b29d870e 100644
+--- a/arch/powerpc/platforms/powernv/npu-dma.c
++++ b/arch/powerpc/platforms/powernv/npu-dma.c
+@@ -917,15 +917,6 @@ static void pnv_npu2_mn_release(struct mmu_notifier *mn,
+ 	mmio_invalidate(npu_context, 0, ~0UL);
+ }
+ 
+-static void pnv_npu2_mn_change_pte(struct mmu_notifier *mn,
+-				struct mm_struct *mm,
+-				unsigned long address,
+-				pte_t pte)
+-{
+-	struct npu_context *npu_context = mn_to_npu_context(mn);
+-	mmio_invalidate(npu_context, address, PAGE_SIZE);
+-}
+-
+ static void pnv_npu2_mn_invalidate_range(struct mmu_notifier *mn,
+ 					struct mm_struct *mm,
+ 					unsigned long start, unsigned long end)
+@@ -936,7 +927,6 @@ static void pnv_npu2_mn_invalidate_range(struct mmu_notifier *mn,
+ 
+ static const struct mmu_notifier_ops nv_nmmu_notifier_ops = {
+ 	.release = pnv_npu2_mn_release,
+-	.change_pte = pnv_npu2_mn_change_pte,
+ 	.invalidate_range = pnv_npu2_mn_invalidate_range,
+ };
+ 
+-- 
+2.17.1
 
