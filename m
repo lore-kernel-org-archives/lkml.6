@@ -2,107 +2,152 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEDEC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5035C4151A
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A08A7218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:52:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548921138;
-	bh=81mP5RuGzD7pa3A9kAEnrkYtKRGJM9tHWha+xK/P+ZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=isebaxQ7ib7mx1uAvVURJfhXcW62HHu0oFETVRv6jWqJT+2++RUcqdJYMJY4IExOZ
-	 Oc6Nj0C6bIJjIKwxKJlhoWH3A99VKPvZUZp8pq3c8ziqkdcjdDUVOA5VX482ut1LpV
-	 XExj7S4NbYpN6V6GVVd85jYbAIXq3zmSdX6QBYeA=
+	by mail.kernel.org (Postfix) with ESMTP id AC3A1218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:52:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbfAaHwR (ORCPT
+        id S1727879AbfAaHwp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:52:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfAaHwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:52:16 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6109220870;
-        Thu, 31 Jan 2019 07:52:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548921135;
-        bh=81mP5RuGzD7pa3A9kAEnrkYtKRGJM9tHWha+xK/P+ZA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pwnUOtQzpIGabfK9Z+L5mJH4GMkZ6zVoWaxJwJi2bOxtht0xUtOhVcQoy3NTFtq/C
-         vzq3AHOU4COcBEeuVHKtCxEQc+/HnoFgL2grhRCzY8QVWaa07dvMFhug5C/ziwPvQ0
-         lnkHJj1mnAmyFPm+5cwqXS2GT7O9+WzTTejtPZoY=
-Date:   Thu, 31 Jan 2019 08:52:13 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.20 000/117] 4.20.6-stable review
-Message-ID: <20190131075213.GD8088@kroah.com>
-References: <20190129113207.477505932@linuxfoundation.org>
- <CA+G9fYsUa=upA5=juDqNtU1tEEXoPzQbXRoajjSLyyaiOw9BSw@mail.gmail.com>
+        Thu, 31 Jan 2019 02:52:45 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:56555 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725829AbfAaHwo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 02:52:44 -0500
+X-UUID: 4d35d683486d44dabbd4a69edc55f157-20190131
+X-UUID: 4d35d683486d44dabbd4a69edc55f157-20190131
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1991872299; Thu, 31 Jan 2019 15:52:38 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N1.mediatek.inc
+ (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
+ 2019 15:52:37 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 31 Jan 2019 15:52:37 +0800
+Message-ID: <1548921156.4980.5.camel@mhfsdcap03>
+Subject: Re: [PATCH] PCI: Mediatek: Use resource_size function on resource
+ object
+From:   Honghui Zhang <honghui.zhang@mediatek.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     <lorenzo.pieralisi@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>,
+        <youlin.pei@mediatek.com>, <jianjun.wang@mediatek.com>
+Date:   Thu, 31 Jan 2019 15:52:36 +0800
+In-Reply-To: <1548903833.22019.26.camel@mhfsdcap03>
+References: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
+         <20190130154950.GD229773@google.com> <1548903833.22019.26.camel@mhfsdcap03>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYsUa=upA5=juDqNtU1tEEXoPzQbXRoajjSLyyaiOw9BSw@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 07:04:39PM +0530, Naresh Kamboju wrote:
-> On Tue, 29 Jan 2019 at 17:08, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 4.20.6 release.
-> > There are 117 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu Jan 31 11:31:34 UTC 2019.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.20.6-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.20.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Thu, 2019-01-31 at 11:03 +0800, Honghui Zhang wrote:
+> On Wed, 2019-01-30 at 09:49 -0600, Bjorn Helgaas wrote:
+> > On Wed, Jan 02, 2019 at 02:03:53PM +0800, honghui.zhang@mediatek.com wrote:
+> > > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > 
+> > > drivers/pci/pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
+> > > 
+> > > Generated by: scripts/coccinelle/api/resource_size.cocci
+> > > 
+> > > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> > > ---
+> > >  drivers/pci/controller/pcie-mediatek.c | 4 +---
+> > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> > > index e307166..0168376 100644
+> > > --- a/drivers/pci/controller/pcie-mediatek.c
+> > > +++ b/drivers/pci/controller/pcie-mediatek.c
+> > > @@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> > >  	struct resource *mem = &pcie->mem;
+> > >  	const struct mtk_pcie_soc *soc = port->pcie->soc;
+> > >  	u32 val;
+> > > -	size_t size;
+> > >  	int err;
+> > >  
+> > >  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
+> > > @@ -706,8 +705,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> > >  		mtk_pcie_enable_msi(port);
+> > >  
+> > >  	/* Set AHB to PCIe translation windows */
+> > > -	size = mem->end - mem->start;
+> > > -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
+> > > +	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
+> > 
+> > This is actually a fairly interesting change because it effectively
+> > changes this:
+> > 
+> >   fls(mem->end - mem->start)
+> > 
+> > to this:
+> > 
+> >   fls(mem->end - mem->start + 1)
+> > 
+> > And mem->end is the last valid address, so it changes something like
+> > this:
+> > 
+> >   fls(0xffff)         # == 15
+> > 
+> > to this:
+> > 
+> >   fls(0x10000)        # == 16
+> > 
+> > So while this *looks* like a trivial warning fix, it likely fixes an
+> > important bug, and it's worth pointing out what that bug is in the
+> > changelog.
+> > 
+> > >  	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
+> > >  
+> > >  	val = upper_32_bits(mem->start);
 > 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
+> This size will set the MMIO size, which means that the RC will translate
+> the MMIO access from mem->start to mem->end.
+> The real MMIO size is specified in devicetree, which is 0x1000_0000 for
+> both mt2712 and mt7622.
 > 
-> Summary
-> ------------------------------------------------------------------------
+> This change make the size from fls(0x1000_0000) to fls(0x1000_0001), not
+> really change the values.
 > 
-> kernel: 4.20.6-rc1
-> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> git branch: linux-4.20.y
-> git commit: ef18d4260339bf79aa387199f912d366aa7e4b93
-> git describe: v4.20.5-119-gef18d4260339
-> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.20-oe/build/v4.20.5-119-gef18d4260339
+> I will update the commit message and add the information mentioned
+> above.
 > 
-> No regressions (compared to build v4.20.5)
+> Thanks for your kindly review.
+
+I was wrong, after take a look at the resource parser function, that it
+will initialize the res->end as res->start + res->size - 1.
+
+But this change is still Ok since it will change the MMIO from
+fls(0xfff_ffff) to fls(0x1000_0000), this just enlarge the MMIO
+translate window size. The HW assigned MMIO is 0x1000_0000, but original
+code set this translate window to fls(0xfff_ffff) = 0x800_0000 is fine
+in most case since all the EP device we connect never asked a MMIO
+window bigger than 0x800_0000. (As a matter of fact, most EP device will
+only ask for 4MB MMIO window size.)
+
+I will put this in the commit message.
+
+thanks.
+> 
+> >  > -- 
+> > > 2.6.4
+> > > 
+> 
 > 
 
-Thanks for testing these and letting me know.
 
-greg k-h
