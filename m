@@ -2,154 +2,170 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A64E9C282D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 456FBC282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A8E120989
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:28:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="NHd8Q0gA"
+	by mail.kernel.org (Postfix) with ESMTP id 144D120989
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:28:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728557AbfAaD20 (ORCPT
+        id S1730796AbfAaD2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 22:28:26 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44321 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfAaD20 (ORCPT
+        Wed, 30 Jan 2019 22:28:38 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45471 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbfAaD2i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 22:28:26 -0500
-Received: by mail-oi1-f195.google.com with SMTP id m6so1542486oig.11
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 19:28:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LKR8wCp+72QzShfXC1ccPYHbtEsCxEmpDS1UMRW0uQ4=;
-        b=NHd8Q0gA+XED7qxPiMKJXGVHXZIoZZlQI/QO1qMb0suplz1GTmOybVqFc0dl21ScHZ
-         B9W9YkvPx3zI5v1m1a0V3eZZIAfH+72OAkvwHnpwFRSvR3+qU4BKWXQvoU1bb89pPN7z
-         oo9ghPe0jEqzJnu+Rx13QI9RiON8jHwrPtYroXNSb691XgB5xJCSYw6bZ4QQPKUWoKvB
-         BuCN/tBEhqrIwsWV97Xb/eGd3KSrXuoNHxykRGCTkVGY7GLXtxSjUynuB/Z1x94v1A6G
-         Qt5oB00Pq6BzewF96AkF9DbJK2I6TOBmTLmpiDL2bRVP/3P7eHWqR6QmAuKkz4ZcZ8Yd
-         RSJA==
+        Wed, 30 Jan 2019 22:28:38 -0500
+Received: by mail-ed1-f65.google.com with SMTP id d39so1367905edb.12;
+        Wed, 30 Jan 2019 19:28:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LKR8wCp+72QzShfXC1ccPYHbtEsCxEmpDS1UMRW0uQ4=;
-        b=WuMyIJh6G9M+kdngWlSsYllg8ez1n/XiDfRNne6Tqd5cVo3tBqu4bYONcrrEYi9iCd
-         /wPRFnY5i90PbAGg95zN47ady9OxaThs+cUxCspAmv0W9R0npNFSGfjTVzM8x/CIU4aI
-         nf6I0m8sbdm3Na0je/LNrDUhUm7TfPURjhEyxK8PL3rrEOrQ07f+KrBc/5hrwjMIeaii
-         Xb/dgSHhg+7HFCP4AO8qLyhvYIL5J5JD2YoXH8ucTti4Iy1okLDnmN41LKbYjg8kPQ45
-         vZxqRkNZnXo/gd/IfbJqyXZiSvgCUdAUGmdSLytlrAhBfeNmRmJR7fwH9LA4l3JvcZJa
-         3lUQ==
-X-Gm-Message-State: AJcUukfKkefgOwTGq60BRNlS6tz8gXB01OEjRPKDd88CbxDLIgnZgAxu
-        U42zrjX2uYgGRIa4WrhaermYal08rwxA2mpL/gjRxQ==
-X-Google-Smtp-Source: ALg8bN7cjiZrwHF036Im4cVIYRvgSt6s9CiP7Z1vDb0+J9ahKednROx5JuDby2jPMltGGv1GU6huMF/VdL52/MDG0cQ=
-X-Received: by 2002:aca:2dc8:: with SMTP id t191mr13551287oit.235.1548905305200;
- Wed, 30 Jan 2019 19:28:25 -0800 (PST)
+        bh=15XSS+f8Da6LSGwP1uW4xYq3+UFXhrjBBfi+sQNl2lY=;
+        b=f7pFVgJQLen1NRSM8huICsbneheLXX7ZpXGm6HhR0LUtNgntA4TazbvU7XrEMOsjIk
+         RR/UZVEkBHeHrecCkxL4fEd+3fBji66WPqGxBFkPtqVym2rswZneoohItzV5/J7Eg2i6
+         eyfH0i/2Bc6BU5OCodFAnVosoDcJDz/1r1gFlcR/Qjm/OGOErug8fbhVkT4QGljtXMb9
+         H7MHIgqAVEjovxycOz138wJZXpNFtGsYYZYFBfwB4PNowiKp9qj06mRAa6WhSK1zqt42
+         ha+PvToehk4BtkD7OSWjuHNfoa6FjohmQ1S0jln/ZBL/6HCvn5o43wVRQT5vMWNTIk3k
+         d3Ow==
+X-Gm-Message-State: AJcUukcDPkbsWrbvPc7ESTap/jiRqQKfekBmYewQWOPdLAjGxeAVgmHv
+        N0CSHRoHaruvCvoLTyiylgXvIwitbXI=
+X-Google-Smtp-Source: ALg8bN6iWpa6PWtbtlxcbGBOb23i0/fAszRk7MzbVjuD0uLZR4rXolUY+rxqWtScq0JfS4+AVYDqZg==
+X-Received: by 2002:a50:b5c6:: with SMTP id a64mr32917216ede.112.1548905314638;
+        Wed, 30 Jan 2019 19:28:34 -0800 (PST)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id p30sm940735eda.68.2019.01.30.19.28.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 19:28:34 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id g67so943602wmd.2;
+        Wed, 30 Jan 2019 19:28:33 -0800 (PST)
+X-Received: by 2002:a1c:494:: with SMTP id 142mr27581378wme.111.1548905313480;
+ Wed, 30 Jan 2019 19:28:33 -0800 (PST)
 MIME-Version: 1.0
-References: <20190129165428.3931-1-jglisse@redhat.com> <20190129165428.3931-10-jglisse@redhat.com>
- <CAPcyv4gNtDQf0mHwhZ8g3nX6ShsjA1tx2KLU_ZzTH1Z1AeA_CA@mail.gmail.com>
- <20190129193123.GF3176@redhat.com> <CAPcyv4gkYTZ-_Et1ZriAcoHwhtPEftOt2LnR_kW+hQM5-0G4HA@mail.gmail.com>
- <20190129212150.GP3176@redhat.com> <CAPcyv4hZMcJ6r0Pw5aJsx37+YKx4qAY0rV4Ascc9LX6eFY8GJg@mail.gmail.com>
- <20190130030317.GC10462@redhat.com> <CAPcyv4jS7Y=DLOjRHbdRfwBEpxe_r7wpv0ixTGmL7kL_ThaQFA@mail.gmail.com>
- <20190130183616.GB5061@redhat.com>
-In-Reply-To: <20190130183616.GB5061@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 30 Jan 2019 19:28:12 -0800
-Message-ID: <CAPcyv4hB4p6po1+-hJ4Podxoan35w+T6uZJzqbw=zvj5XdeNVQ@mail.gmail.com>
-Subject: Re: [PATCH 09/10] mm/hmm: allow to mirror vma of a file on a DAX
- backed filesystem
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20190130084203.25053-1-wens@csie.org> <20190130084203.25053-11-wens@csie.org>
+ <20190130092927.x65ihy3je5n6324w@flea> <CAGb2v64ZFZty-jeeKmPU8Ecg+rAE6zEm65tedb_ZZTTSXMEPOA@mail.gmail.com>
+In-Reply-To: <CAGb2v64ZFZty-jeeKmPU8Ecg+rAE6zEm65tedb_ZZTTSXMEPOA@mail.gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 31 Jan 2019 11:28:20 +0800
+X-Gmail-Original-Message-ID: <CAGb2v670VszWfTNK9vtoBFWAuHVVHXmwrA84YfBFLLM5XX_6xg@mail.gmail.com>
+Message-ID: <CAGb2v670VszWfTNK9vtoBFWAuHVVHXmwrA84YfBFLLM5XX_6xg@mail.gmail.com>
+Subject: Re: [PATCH 10/10] arm64: dts: allwinner: h5: Add CPU Operating
+ Performance Points table
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     linux-sunxi <linux-sunxi@googlegroups.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Emmanuel Vadot <manu@freebsd.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Sergey Matyukevich <geomatsi@gmail.com>,
+        Hauke Mehrtens <hauke@hauke-m.de>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 10:36 AM Jerome Glisse <jglisse@redhat.com> wrote:
-[..]
-> > > This
-> > > is one of the motivation behind HMM ie have it as an impedence layer
-> > > between mm and device drivers so that mm folks do not have to under-
-> > > stand every single device driver but only have to understand the
-> > > contract HMM has with all device driver that uses it.
+On Wed, Jan 30, 2019 at 5:41 PM Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> On Wed, Jan 30, 2019 at 5:29 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 > >
-> > This gets to heart of my critique of the approach taken with HMM. The
-> > above statement is antithetical to
-> > Documentation/process/stable-api-nonsense.rst. If HMM is trying to set
-> > expectations that device-driver projects can write to a "stable" HMM
-> > api then HMM is setting those device-drivers up for failure.
+> > On Wed, Jan 30, 2019 at 04:42:03PM +0800, Chen-Yu Tsai wrote:
+> > >                       enable-method = "psci";
+> > >                       clocks = <&ccu CLK_CPUX>;
+> > >                       clock-latency-ns = <244144>; /* 8 32k periods */
+> > > +                     operating-points-v2 = <&cpu_opp_table>;
+> > > +                     #cooling-cells = <2>;
+> > > +             };
+> > > +     };
+> > > +
+> > > +     cpu_opp_table: opp_table {
+> > > +             compatible = "operating-points-v2";
+> > > +             opp-shared;
+> > > +
+> > > +             opp@408000000 {
+> > > +                     opp-hz = /bits/ 64 <408000000>;
+> > > +                     opp-microvolt = <1000000 1000000 1310000>;
+> > > +                     clock-latency-ns = <244144>; /* 8 32k periods */
+> > > +             };
+> > > +
+> > > +             opp@648000000 {
+> > > +                     opp-hz = /bits/ 64 <648000000>;
+> > > +                     opp-microvolt = <1040000 1040000 1310000>;
+> > > +                     clock-latency-ns = <244144>; /* 8 32k periods */
+> > > +             };
+> > > +
+> > > +             opp@816000000 {
+> > > +                     opp-hz = /bits/ 64 <816000000>;
+> > > +                     opp-microvolt = <1080000 1080000 1310000>;
+> > > +                     clock-latency-ns = <244144>; /* 8 32k periods */
+> > > +             };
+> > > +
+> > > +             opp@912000000 {
+> > > +                     opp-hz = /bits/ 64 <912000000>;
+> > > +                     opp-microvolt = <1120000 1120000 1310000>;
+> > > +                     clock-latency-ns = <244144>; /* 8 32k periods */
+> > > +             };
+> > > +
+> > > +             opp@960000000 {
+> > > +                     opp-hz = /bits/ 64 <960000000>;
+> > > +                     opp-microvolt = <1160000 1160000 1310000>;
+> > > +                     clock-latency-ns = <244144>; /* 8 32k periods */
+> > > +             };
+> > > +
+> > > +             opp@1008000000 {
+> > > +                     opp-hz = /bits/ 64 <1008000000>;
+> > > +                     opp-microvolt = <1200000 1200000 1310000>;
+> > > +                     clock-latency-ns = <244144>; /* 8 32k periods */
+> > > +             };
+> > > +
+> > > +             opp@1056000000 {
+> > > +                     opp-hz = /bits/ 64 <1056000000>;
+> > > +                     opp-microvolt = <1240000 1240000 1310000>;
+> > > +                     clock-latency-ns = <244144>; /* 8 32k periods */
+> > > +             };
+> > > +
+> > > +             opp@1104000000 {
+> > > +                     opp-hz = /bits/ 64 <1104000000>;
+> > > +                     opp-microvolt = <1260000 1260000 1310000>;
+> > > +                     clock-latency-ns = <244144>; /* 8 32k periods */
+> > > +             };
+> > > +
+> > > +             opp@1152000000 {
+> > > +                     opp-hz = /bits/ 64 <1152000000>;
+> > > +                     opp-microvolt = <1300000 1300000 1310000>;
+> > > +                     clock-latency-ns = <244144>; /* 8 32k periods */
+> >
+> > What is the frequency and voltage that U-Boot sets up?
 >
-> So i am not expressing myself correctly. If someone want to change mm
-> in anyway that would affect HMM user, it can and it is welcome too
-> (assuming that those change are wanted by the community and motivated
-> for good reasons). Here by understanding HMM contract and preserving it
-> what i mean is that all you have to do is update the HMM API in anyway
-> that deliver the same result to the device driver. So what i means is
-> that instead of having to understand each device driver. For instance
-> you have HMM provide X so that driver can do Y; then what can be Z a
-> replacement for X that allow driver to do Y. The point here is that
-> HMM define what Y is and provide X for current kernel mm code. If X
-> ever need to change so that core mm can evolve than you can and are
-> more than welcome to do it. With HMM Y is defined and you only need to
-> figure out how to achieve the same end result for the device driver.
->
-> The point is that you do not have to go read each device driver to
-> figure out Y.driver_foo, Y.driver_bar, ... you only have HMM that
-> define what Y means and is ie this what device driver are trying to
-> do.
->
-> Obviously here i assume that we do not want to regress features ie
-> we want to keep device driver features intact when we modify anything.
+> 1008 MHz, and whatever voltage the board design defaults to (typically
+> the higher setting).
 
-The specific concern is HMM attempting to expand the regression
-boundary beyond drivers that exist in the kernel. The regression
-contract that has priority is the one established for in-tree users.
-If an in-tree change to mm semantics is fine for in-tree mm users, but
-breaks out of tree users the question to those out of tree users is
-"why isn't your use case upstream?". HMM is not that use case in and
-of itself.
+FYI I got this wrong. U-boot's default is 816 MHz. However it seems even
+this is misleading, as cpufreq in Linux reports:
 
-[..]
-> Again HMM API can evolve, i am happy to help with any such change, given
-> it provides benefit to either mm or device driver (ie changing the HMM
-> just for the sake of changing the HMM API would not make much sense to
-> me).
->
-> So if after converting driver A, B and C we see that it would be nicer
-> to change HMM in someway then i will definitly do that and this patchset
-> is a testimony of that. Converting ODP to use HMM is easier after this
-> patchset and this patchset changes the HMM API. I will be updating the
-> nouveau driver to the new API and use the new API for the other driver
-> patchset i am working on.
->
-> If i bump again into something that would be better done any differently
-> i will definitly change the HMM API and update all upstream driver
-> accordingly.
->
-> I am a strong believer in full freedom for internal kernel API changes
-> and my intention have always been to help and facilitate such process.
-> I am sorry this was unclear to any body :( and i am hopping that this
-> email make my intention clear.''
+    cpufreq: cpufreq_online: CPU0: Running at unlisted freq: 792000 KHz
+    cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed
+to: 816000 KHz
 
-A simple way to ensure that out-of-tree consumers don't come beat us
-up over a backwards incompatible HMM change is to mark all the exports
-with _GPL. I'm not requiring that, the devm_memremap_pages() fight was
-hard enough, but the pace of new exports vs arrival of consumers for
-those exports has me worried that this arrangement will fall over at
-some point.
+So there seems tp be an off-by-1 error in some multiplier calculation.
 
-Another way to help allay these worries is commit to no new exports
-without in-tree users. In general, that should go without saying for
-any core changes for new or future hardware.
+>
+> > We've had the issue with the A33 that it's started at 1008MHz, with
+> > the matching voltage, and ramping up the frequency to 1.2GHz on boards
+> > without PMIC support would increase the frequency but not the voltage,
+> > resulting in a brownout.
+>
+> Which is why I added the regulator to all boards before this patch. At
+> least for Linux, once the regulator supply is described in the device
+> tree, if the driver is missing, regulator_get_* and thus cpufreq should
+> fail with -EPROBE_DEFER.
+
+I believe despite the above, this still stands. So we should be OK.
