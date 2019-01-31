@@ -3,234 +3,130 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAB7C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F5AC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DB2A2087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:39:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 965D12087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:41:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbfAaGjl (ORCPT
+        id S1729706AbfAaGk7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 01:39:41 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52708 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725867AbfAaGjk (ORCPT
+        Thu, 31 Jan 2019 01:40:59 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41464 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfAaGk5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 01:39:40 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V6cYGI056546
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 01:39:39 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbute8bey-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 01:39:39 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 31 Jan 2019 06:39:37 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 06:39:33 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V6dXkp4325782
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 06:39:33 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB5C642042;
-        Thu, 31 Jan 2019 06:39:32 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4849342041;
-        Thu, 31 Jan 2019 06:39:32 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 31 Jan 2019 06:39:32 +0000 (GMT)
-Date:   Thu, 31 Jan 2019 08:39:30 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: linux-next: powerpc le qemu boot failure after merge of the akpm
- tree
-References: <20190131163854.307e17ab@canb.auug.org.au>
- <20190131170629.2cc20600@canb.auug.org.au>
- <962e7dd7-779b-2c32-59db-9ced6751dede@c-s.fr>
+        Thu, 31 Jan 2019 01:40:57 -0500
+Received: by mail-lf1-f66.google.com with SMTP id c16so1443202lfj.8;
+        Wed, 30 Jan 2019 22:40:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lGDb4pkEcCZN6uey1BsMGWCSOOTu/LeMIlzvAljy6eQ=;
+        b=DIjHBr45v8j2wknhWEzmkj6nWHOqHOlVUOUW9cusp3n2gKXp915gVncdMFMP6n8XhH
+         4jV5JJ+kM4mbOwYPt8ci9BisRUBdGIs+kxCNGwHjw+j8B85mz8hW4vzikTt/+KHC+ErG
+         4X3OPeuP1gUw566FMtAoACnN665LgyrvMxz0WWad8U4KQ9ILI/Tl2GImTF932tL3Yeu6
+         LHSdLexLrfsDyDFT3TyjXLo2n+Sh1IO91PcWom/loMjPMpW3Dod6uer1AyWCgt7DFBVr
+         zy5owTQcjipHygJPXyTRIdaUIBs4QM0OZ149jPTtqy1zI6WuJx+/XUnBhGDZ8w1f6OxL
+         6xGg==
+X-Gm-Message-State: AJcUukccfErRAOxPj0X9xmeC2e9LsxwkGEq6AFQR/m1PFZXHs1zLQKPj
+        +n6WMN9bPM8LbgxwBCWy/OU=
+X-Google-Smtp-Source: ALg8bN4eQsL6JP4CC5Iwu+nX2gwKq4Dli/jc1TM7dOP4sfWmQ8gUn2hZbWjjF+kchUNZu4HZHADKlw==
+X-Received: by 2002:a19:26ce:: with SMTP id m197mr25913108lfm.23.1548916854578;
+        Wed, 30 Jan 2019 22:40:54 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id t18sm647469lft.93.2019.01.30.22.40.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 22:40:53 -0800 (PST)
+Date:   Thu, 31 Jan 2019 08:40:51 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
+        mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH v3 06/10] devicetree: bindings: Document first ROHM
+ BD70528 bindings
+Message-ID: <20190131064050.GC23791@localhost.localdomain>
+References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+ <eb5d03f3adc72db580a10f95ff6cb07aefce5b47.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190130185344.GA14789@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <962e7dd7-779b-2c32-59db-9ced6751dede@c-s.fr>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19013106-0028-0000-0000-00000341266F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013106-0029-0000-0000-000023FF2773
-Message-Id: <20190131063930.GA28876@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310052
+In-Reply-To: <20190130185344.GA14789@bogus>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 07:15:26AM +0100, Christophe Leroy wrote:
-> 
-> 
-> Le 31/01/2019 à 07:06, Stephen Rothwell a écrit :
-> >Hi all,
-> >
-> >On Thu, 31 Jan 2019 16:38:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >>
-> >>[I am guessing that is is something in Andrew's tree that has caused
-> >>this.]
-> >>
-> >>My qemu boot of the powerpc pseries_le_defconfig config failed like this:
-> >>
-> >>htab_hash_mask    = 0x1ffff
-> >>-----------------------------------------------------
-> >>numa:   NODE_DATA [mem 0x7ffe7000-0x7ffebfff]
-> >>Kernel panic - not syncing: sparse_buffer_init: Failed to allocate 2147483648 bytes align=0x10000 nid=0 from=fffffffffffffff
+Hello Rob,
 
-This means that sparse_buffer_init tries to allocate 2G for the sparsemap_buf...
+Thanks for taking the carefull look once again =)
 
-Stephen, how many memory do you give to your VM?
+On Wed, Jan 30, 2019 at 12:53:44PM -0600, Rob Herring wrote:
+> On Wed, Jan 30, 2019 at 11:09:55AM +0200, Matti Vaittinen wrote:
+> > Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
+> > drivers) and 4 GPIO pins which can be configured for I/O or
+> > as interrupt sources withe configurable trigger levels.
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 104 +++++++++++++++++++++
 
-> >>CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc4 #2
-> >>Call Trace:
-> >>[c00000000105bbd0] [c000000000b1345c] dump_stack+0xb0/0xf4 (unreliable)
-> >>[c00000000105bc10] [c000000000111120] panic+0x168/0x3b8
-> >>[c00000000105bcb0] [c000000000e701c8] sparse_init_nid+0x178/0x550
-> >>[c00000000105bd70] [c000000000e709b4] sparse_init+0x210/0x238
-> >>[c00000000105bdb0] [c000000000e468f4] initmem_init+0x1e0/0x260
-> >>[c00000000105be80] [c000000000e3b9b0] setup_arch+0x354/0x3d4
-> >>[c00000000105bef0] [c000000000e33afc] start_kernel+0x98/0x648
-> >>[c00000000105bf90] [c00000000000b270] start_here_common+0x1c/0x52c
-> >
-> >A quick bisect leads to this:
-> >
-> >1c3c9328cde027eb875ba4692f0a5d66b0afe862 is the first bad commit
-> >commit 1c3c9328cde027eb875ba4692f0a5d66b0afe862
-> >Author: Mike Rapoport <rppt@linux.ibm.com>
-> >Date:   Thu Jan 31 10:51:32 2019 +1100
-> >
-> >     treewide: add checks for the return value of memblock_alloc*()
-> >     Add check for the return value of memblock_alloc*() functions and call
-> >     panic() in case of error.  The panic message repeats the one used by
-> >     panicing memblock allocators with adjustment of parameters to include only
-> >     relevant ones.
-> >     The replacement was mostly automated with semantic patches like the one
-> >     below with manual massaging of format strings.
-> >     @@
-> >     expression ptr, size, align;
-> >     @@
-> >     ptr = memblock_alloc(size, align);
-> >     + if (!ptr)
-> >     +       panic("%s: Failed to allocate %lu bytes align=0x%lx\n", __func__,
-> >     size, align);
-> >     Link: http://lkml.kernel.org/r/1548057848-15136-20-git-send-email-rppt@linux.ibm.com
-> >     Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> >     Reviewed-by: Guo Ren <ren_guo@c-sky.com>                [c-sky]
-> >     Acked-by: Paul Burton <paul.burton@mips.com>            [MIPS]
-> >     Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>    [s390]
-> >     Reviewed-by: Juergen Gross <jgross@suse.com>            [Xen]
-> >     Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>  [m68k]
-> >     Cc: Catalin Marinas <catalin.marinas@arm.com>
-> >     Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-> >     Cc: Christoph Hellwig <hch@lst.de>
-> >     Cc: "David S. Miller" <davem@davemloft.net>
-> >     Cc: Dennis Zhou <dennis@kernel.org>
-> >     Cc: Greentime Hu <green.hu@gmail.com>
-> >     Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >     Cc: Guan Xuetao <gxt@pku.edu.cn>
-> >     Cc: Guo Ren <guoren@kernel.org>
-> >     Cc: Mark Salter <msalter@redhat.com>
-> >     Cc: Matt Turner <mattst88@gmail.com>
-> >     Cc: Max Filippov <jcmvbkbc@gmail.com>
-> >     Cc: Michael Ellerman <mpe@ellerman.id.au>
-> >     Cc: Michal Simek <monstr@monstr.eu>
-> >     Cc: Petr Mladek <pmladek@suse.com>
-> >     Cc: Richard Weinberger <richard@nod.at>
-> >     Cc: Rich Felker <dalias@libc.org>
-> >     Cc: Rob Herring <robh+dt@kernel.org>
-> >     Cc: Rob Herring <robh@kernel.org>
-> >     Cc: Russell King <linux@armlinux.org.uk>
-> >     Cc: Stafford Horne <shorne@gmail.com>
-> >     Cc: Tony Luck <tony.luck@intel.com>
-> >     Cc: Vineet Gupta <vgupta@synopsys.com>
-> >     Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-> >     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> >
-> >Which is just adding the panic we hit.  So, presumably, the bug is in a
-> >preceding patch :-(
-> >
-> >I have left the kernel not booting for today.
-> >
-> 
-> No I think the error is really in that patch, see my other mail.
-> 
-> See https://elixir.bootlin.com/linux/v5.0-rc4/source/mm/memblock.c#L1455,
-> memblock_alloc_try_nid_raw() is not supposed to panic, so the last hunk of
-> this patch should be reverted.
+snip
 
-It is not supposed to panic, but it can still fail, so simply ignoring it's
-return value seems a bit odd at least.
- 
-> Found in total three problematic hunks in that patch:
+> > + - interrupt-parent	: Phandle to the parent interrupt controller.
 > 
-> @@ -48,6 +53,11 @@ static phys_addr_t __init kasan_alloc_raw_page(int node)
->  	void *p = memblock_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
->  						__pa(MAX_DMA_ADDRESS),
->  						MEMBLOCK_ALLOC_KASAN, node);
-> +	if (!p)
-> +		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%llx\n",
-> +		      __func__, PAGE_SIZE, PAGE_SIZE, node,
-> +		      __pa(MAX_DMA_ADDRESS));
-> +
->  	return __pa(p);
->  }
+> Don't document this. It is implied and could be in a parent node.
+
+Allright. I'll remove this then.
+
+> > + - clock-frequency	: Should be 32768
 > 
-> @@ -211,6 +211,9 @@ static int __init iob_init(struct device_node *dn)
->  	iob_l2_base = memblock_alloc_try_nid_raw(1UL << 21, 1UL << 21,
->  					MEMBLOCK_LOW_LIMIT, 0x80000000,
->  					NUMA_NO_NODE);
-> +	if (!iob_l2_base)
-> +		panic("%s: Failed to allocate %lu bytes align=0x%lx max_addr=%x\n",
-> +		      __func__, 1UL << 21, 1UL << 21, 0x80000000);
+> Forget to drop this?
+
+Well spotted. The rate should come from parent clock. I'll drop this
+too.
+
+> > +Example:
+> > +/* external oscillator */
+> > +osc: oscillator {
+> > +	compatible = "fixed-clock";
+> > +	#clock-cells = <1>;
+> > +	clock-frequency  = <32768>;
+> > +	clock-output-names = "osc";
+> > +};
+> > +
+> > +pmic: bd70528@4b {
 > 
->  	pr_info("IOBMAP L2 allocated at: %p\n", iob_l2_base);
+> pmic@4b
 > 
-> 
-> @@ -425,6 +436,10 @@ static void __init sparse_buffer_init(unsigned long
-> size, int nid)
->  		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
->  						__pa(MAX_DMA_ADDRESS),
->  						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
-> +	if (!sparsemap_buf)
-> +		panic("%s: Failed to allocate %lu bytes align=0x%lx nid=%d from=%lx\n",
-> +		      __func__, size, PAGE_SIZE, nid, __pa(MAX_DMA_ADDRESS));
-> +
->  	sparsemap_buf_end = sparsemap_buf + size;
->  }
-> 
-> 
-> 
-> Christophe
-> 
+> Node names should be generic.
+
+Ok. I will change this.
+
+Br,
+	Matti
 
 -- 
-Sincerely yours,
-Mike.
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
