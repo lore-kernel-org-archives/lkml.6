@@ -2,103 +2,91 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7F1C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28567C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4C53218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:08:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1wAVGnC"
+	by mail.kernel.org (Postfix) with ESMTP id 02DE9218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:08:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732702AbfAaMIO (ORCPT
+        id S1732717AbfAaMIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:08:14 -0500
-Received: from mail-pl1-f174.google.com ([209.85.214.174]:43957 "EHLO
-        mail-pl1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfAaMIN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:08:13 -0500
-Received: by mail-pl1-f174.google.com with SMTP id gn14so1375228plb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:08:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BEuhvtd/f6y/iKku12IDkhUOP7e1XXLeb72Q0TpTCQw=;
-        b=h1wAVGnCo5s5+SOuwQ5A5RGP8oswa9Goi9dJkS/HrmMueLvlaPpcfVgwlbAoNIKrAo
-         4SWHXEf2Q0sfJPYrc+FyEGtZI0EyR8xHJa08Hl4yV2we7DbwsZ30ttJ0aKNaJt3DJsq9
-         5BNXqeKFoQR2aDoJe5fHMElwherMvSeIQZllIJnPh05gDHqoR55tB8zamWE6gg++udF6
-         ybQE//udvpY03IZI5wxxqHLxdBUO7Nl4XWNfeFvjSjzPa6ZTYWL01+n5y8oa3ACDhaED
-         O3d3d4F6kYa8kg6zzaZLkE7bmMpa4uAMHqmGea3DGrTO4fmZDDLsSKttGksVzb5YloZs
-         OKTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BEuhvtd/f6y/iKku12IDkhUOP7e1XXLeb72Q0TpTCQw=;
-        b=aEDFCH2oOEWyIBj768VtwQ/ghNpEC1r/fnO1Bj2Q35x7Q9v14NMB0BAN9trINxsd/X
-         7TvdsJKyf050A9/EhrPfDD9G5KE47QOheftTbNc/aE3nFSCwh7Hl3fLJVLUSUr+y6ui+
-         zl4EVLCT1nzBKD8aBnEHYBzJJWgQN1YBTDhZUmyVnjfKzN9sAHiCVsxPgH1U/GJYCWyz
-         nBOiNNjNARL0dZzb2O3V2UFgwD2DSWDQ8kxpn9XVLbfpCeOUqm6J1/ZITxT7RNLApq+t
-         JFw3s9JeJ9CjNtrm73kDJCFzFOs5QdBXfsvUTjBpPQEeo8zgpzpFZ6yH05gDz9Wwnjg9
-         4MOw==
-X-Gm-Message-State: AJcUukd7tQzkMe4KWwGzGf+P0P8FJMFOoFEOf52PJJBkF8AAoOcy3Ir0
-        5PKYKsxLzdVMERG1KKHBOok/FeGTZbKcFIn/5lI=
-X-Google-Smtp-Source: ALg8bN7UYiKanvFuhGe1NsgTuqfqigfnJuhez4Y7avUrcSgLf0eIGq9iQiUqHAkQBX0EY9gPdihw4PvVxzDcoSZTiKU=
-X-Received: by 2002:a17:902:934a:: with SMTP id g10mr32961959plp.172.1548936493210;
- Thu, 31 Jan 2019 04:08:13 -0800 (PST)
+        Thu, 31 Jan 2019 07:08:20 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:55952 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726977AbfAaMIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 07:08:19 -0500
+Received: from wf0848.dip.tu-dresden.de ([141.76.183.80] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gpB7H-0003tN-Me; Thu, 31 Jan 2019 13:06:47 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz, riel@surriel.com,
+        sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
+        peterz@infradead.org, linux@armlinux.org.uk, robin.murphy@arm.com,
+        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
+        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
+        hjc@rock-chips.com, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Subject: Re: [PATCHv2 1/9] mm: Introduce new vm_insert_range and vm_insert_range_buggy API
+Date:   Thu, 31 Jan 2019 13:06:49 +0100
+Message-ID: <1701923.z6LKAITQJA@phil>
+In-Reply-To: <20190131030812.GA2174@jordon-HP-15-Notebook-PC>
+References: <20190131030812.GA2174@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-References: <1548929853-25877-1-git-send-email-Tianyu.Lan@microsoft.com>
- <1548929853-25877-3-git-send-email-Tianyu.Lan@microsoft.com> <20190131115944.GB19969@kroah.com>
-In-Reply-To: <20190131115944.GB19969@kroah.com>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Thu, 31 Jan 2019 20:08:02 +0800
-Message-ID: <CAOLK0pwve6spShSBt_jBwECJWTtTtHYRz+yLi4vz18GnznMw1g@mail.gmail.com>
-Subject: Re: [PATCH 2/3] HYPERV/IOMMU: Add Hyper-V stub IOMMU driver
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        Joerg Roedel <joro@8bytes.org>, mchehab+samsung@kernel.org,
-        davem@davemloft.net, akpm@linux-foundation.org,
-        nicolas.ferre@microchip.com, Arnd Bergmann <arnd@arndb.de>,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, vkuznets@redhat.com,
-        Alex Williamson <alex.williamson@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 7:59 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Jan 31, 2019 at 06:17:32PM +0800, lantianyu1986@gmail.com wrote:
-> > --- /dev/null
-> > +++ b/drivers/iommu/hyperv-iommu.c
-> > @@ -0,0 +1,189 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +#define pr_fmt(fmt)     "HYPERV-IR: " fmt
->
-> Minor nit, you never do any pr_*() calls, so this isn't needed, right?
+Am Donnerstag, 31. Januar 2019, 04:08:12 CET schrieb Souptick Joarder:
+> Previouly drivers have their own way of mapping range of
+> kernel pages/memory into user vma and this was done by
+> invoking vm_insert_page() within a loop.
+> 
+> As this pattern is common across different drivers, it can
+> be generalized by creating new functions and use it across
+> the drivers.
+> 
+> vm_insert_range() is the API which could be used to mapped
+> kernel memory/pages in drivers which has considered vm_pgoff
+> 
+> vm_insert_range_buggy() is the API which could be used to map
+> range of kernel memory/pages in drivers which has not considered
+> vm_pgoff. vm_pgoff is passed default as 0 for those drivers.
+> 
+> We _could_ then at a later "fix" these drivers which are using
+> vm_insert_range_buggy() to behave according to the normal vm_pgoff
+> offsetting simply by removing the _buggy suffix on the function
+> name and if that causes regressions, it gives us an easy way to revert.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Suggested-by: Russell King <linux@armlinux.org.uk>
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
 
-Yes, you are right. I will remove it. Sorry. I used pr_info() during
-development stage and removed
-them before sending patch out. Thanks.
+hmm, I'm missing a changelog here between v1 and v2.
+Nevertheless I managed to test v1 on Rockchip hardware
+and display is still working, including talking to Lima via prime.
 
->
-> > +static cpumask_t ioapic_max_cpumask = { CPU_BITS_NONE };
-> > +struct irq_domain *ioapic_ir_domain;
->
-> Global?  Why?
+So if there aren't any big changes for v2, on Rockchip
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-It should be "static" here.
+Heiko
 
--- 
-Best regards
-Tianyu Lan
+
