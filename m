@@ -2,102 +2,91 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C46F8C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE70C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABFCC20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A471218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbfAaHxo (ORCPT
+        id S1729548AbfAaHzs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:53:44 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:62739 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725829AbfAaHxo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:53:44 -0500
-X-UUID: ae5b0a36f6bf4a64b723f5e1b5941bb9-20190131
-X-UUID: ae5b0a36f6bf4a64b723f5e1b5941bb9-20190131
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <chaotian.jing@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 593196214; Thu, 31 Jan 2019 15:53:38 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 31 Jan 2019 15:53:36 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 31 Jan 2019 15:53:35 +0800
-From:   Chaotian Jing <chaotian.jing@mediatek.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        Kyle Roeschley <kyle.roeschley@ni.com>,
-        Hongjie Fang <hongjiefang@asrmicro.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Subject: [PATCH] mmc: mmc: Fix HS setting in mmc_hs400_to_hs200()
-Date:   Thu, 31 Jan 2019 15:53:31 +0800
-Message-ID: <1548921212-5219-1-git-send-email-chaotian.jing@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
+        Thu, 31 Jan 2019 02:55:48 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32848 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727614AbfAaHzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 02:55:47 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 35F7076C8FC4E4091E4A;
+        Thu, 31 Jan 2019 07:55:45 +0000 (GMT)
+Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
+ (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 31 Jan
+ 2019 07:55:36 +0000
+Subject: Re: [PATCH v8 5/7] tpm: move tpm_chip definition to
+ include/linux/tpm.h
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+References: <20190124154910.29948-1-roberto.sassu@huawei.com>
+ <20190124154910.29948-6-roberto.sassu@huawei.com>
+ <20190129203422.GD11615@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <011ba997-3a09-8c68-cad2-9733e79e6d0d@huawei.com>
+Date:   Thu, 31 Jan 2019 08:54:50 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <20190129203422.GD11615@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.149]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mmc_hs400_to_hs200() begins with the card and host in HS400 mode.
-Therefore, any commands sent to the card should use HS400 timing.
-It is incorrect to reduce frequency to 50Mhz before sending the switch
-command, in this case, only reduce clock frequency to 50Mhz but without
-host timming change, host is still in hs400 mode but clock changed from
-200Mhz to 50Mhz, which makes the tuning result unsuitable and cause
-the switch command gets response CRC error.
+On 1/29/2019 9:34 PM, Jarkko Sakkinen wrote:
+> On Thu, Jan 24, 2019 at 04:49:08PM +0100, Roberto Sassu wrote:
+>> -enum tpm_const {
+>> -	TPM_MINOR = 224,	/* officially assigned */
+>> -	TPM_BUFSIZE = 4096,
+>> -	TPM_NUM_DEVICES = 65536,
+>> -	TPM_RETRY = 50,		/* 5 seconds */
+>> -	TPM_NUM_EVENT_LOG_FILES = 3,
+>> -};
+> 
+> Here using enum has been a bad idea in the first place, as they don't
+> relate in any meaningful way.
+> 
+> Replace the definition with the following in drivers/char/tpm/tpm.h:
+> 
+> #define TPM_MINOR	224 /* misc backwards compatibility */
+> #define TPM_BUFSIZE	4096
+> #define TPM_NUM_DEVICES	65536
+> #define TPM_RETRY	5 /* seconds */
 
-this patch refers to mmc_select_hs400(), make the reduce clock frequency
-after card timing change.
+Is 5 correct? TPM_RETRY was 50 before.
 
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
----
- drivers/mmc/core/mmc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Roberto
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index da892a5..21b811e 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1239,10 +1239,6 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
- 	int err;
- 	u8 val;
- 
--	/* Reduce frequency to HS */
--	max_dtr = card->ext_csd.hs_max_dtr;
--	mmc_set_clock(host, max_dtr);
--
- 	/* Switch HS400 to HS DDR */
- 	val = EXT_CSD_TIMING_HS;
- 	err = __mmc_switch(card, EXT_CSD_CMD_SET_NORMAL, EXT_CSD_HS_TIMING,
-@@ -1253,6 +1249,10 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
- 
- 	mmc_set_timing(host, MMC_TIMING_MMC_DDR52);
- 
-+	/* Reduce frequency to HS */
-+	max_dtr = card->ext_csd.hs_max_dtr;
-+	mmc_set_clock(host, max_dtr);
-+
- 	err = mmc_switch_status(card);
- 	if (err)
- 		goto out_err;
+
+> And only add this to include/linux/tpm.h:
+> 
+> #define TPM_NUM_EVENT_LOG_FILES 3
+> 
+> Otherwise, this looks good.
+> 
+> /Jarkko
+> 
+
 -- 
-1.8.1.1.dirty
-
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
