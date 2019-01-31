@@ -2,78 +2,92 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4F5C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CABC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D3FF2082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:29:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 612F8218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:30:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cNqAgXRd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbfAaR3M (ORCPT
+        id S1727397AbfAaRaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:29:12 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48504 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbfAaR3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:29:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBFF6A78;
-        Thu, 31 Jan 2019 09:29:11 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AD2A93F59C;
-        Thu, 31 Jan 2019 09:29:10 -0800 (PST)
-Date:   Thu, 31 Jan 2019 17:29:07 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-omap@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: dra7xx: Invoke phy_set_mode API to set PHY mode to
- PHY_MODE_PCIE
-Message-ID: <20190131172907.GB31110@e107981-ln.cambridge.arm.com>
-References: <20190124104537.22271-1-kishon@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124104537.22271-1-kishon@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Thu, 31 Jan 2019 12:30:10 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35326 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726318AbfAaRaJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 12:30:09 -0500
+Received: by mail-pg1-f194.google.com with SMTP id s198so1649175pgs.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 09:30:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=N1TyQHj6pdO8zdfHOnph0MwaydyivV1NXjwR/LUXizo=;
+        b=cNqAgXRd/8i9g0UWadD8iE65xT93UjPY0BFb7BaCGIok9F45hcfpHjgu6bmpuJ4TYO
+         Mot1hfRqEazLstxQFhB0aI4lhogb/clvqvJknGc97QL5GQGkojY4vjJ1dGNVkVr+xWft
+         ppqgMoQF2ICWHOJBm5h55dSFb7TCbmHQHHFRM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=N1TyQHj6pdO8zdfHOnph0MwaydyivV1NXjwR/LUXizo=;
+        b=PoUcxUdMZkY+kcyeD3vHOgkgxUZSvMM/Fz8McYDWUDbgxvV/XI/Wq6lhSfqyPRZEJb
+         +5vSi8NGjCLo4BnHuxweH0FXs/JwGdwCPITiZlWKbr4OZY5Qdn4liELL3aKh7MG7rf9W
+         xhnVlry+mlAj0s89n8LilQZCV1l9HRduHNdCvjU3WGjJPcXuEWDKqP0qlIR39EDwuOsu
+         FZ6yR5znJBIiX5phAe30amuQGSsNBj6Zjw9ugLEuJ6xpY/yt4u9di9+Say8COXwzk1tI
+         s5zBKaFz5MMLvtJTUUCscRc/Q3iabrjkEp5CNVPSjBjC1uQW7dn3vsjIQSW3pNs6XdTb
+         fa1g==
+X-Gm-Message-State: AHQUAuZmmh+rDKP3qppBsPVdUd47E3Rr79wz561eXH/ao8C4xZzKulSh
+        LHARxkJONGLZhjXr7LV5itTLKg==
+X-Google-Smtp-Source: AHgI3IadKAr3PoQzMnJpcF71wBK1OyIIw1BMjiYlXOAhSQjK4wqFPQTHsDcL8hhUmgP0sTVI1F10DQ==
+X-Received: by 2002:a62:8a57:: with SMTP id y84mr4681345pfd.197.1548955808945;
+        Thu, 31 Jan 2019 09:30:08 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id l85sm13662645pfg.161.2019.01.31.09.30.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 09:30:08 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH] pinctrl: qcom: qcs404: Correct SDC tile
+Date:   Thu, 31 Jan 2019 09:29:53 -0800
+Message-Id: <20190131172953.27339-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 04:15:37PM +0530, Kishon Vijay Abraham I wrote:
-> Certain PHYs used with PCIe controller can also be used with other
-> controllers such as USB or SATA. In order to configure the PHY
-> to work with PCIe controller, invoke phy_set_mode API with mode
-> set to PHY_MODE_PCIE.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/pci/controller/dwc/pci-dra7xx.c | 4 ++++
->  1 file changed, 4 insertions(+)
+The SDC controls live in the south tile, not the north one. Correct this
+so that we program the right registers.
 
-Applied to pci/dwc for v5.1, thanks.
+Cc: stable@vger.kernel.org
+Fixes: 22eb8301dbc1 ("pinctrl: qcom: Add qcs404 pinctrl driver")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/pinctrl/qcom/pinctrl-qcs404.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Lorenzo
+diff --git a/drivers/pinctrl/qcom/pinctrl-qcs404.c b/drivers/pinctrl/qcom/pinctrl-qcs404.c
+index 7aae52a09ff0..4ffd56ff809e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-qcs404.c
++++ b/drivers/pinctrl/qcom/pinctrl-qcs404.c
+@@ -79,7 +79,7 @@ enum {
+ 		.intr_cfg_reg = 0,			\
+ 		.intr_status_reg = 0,			\
+ 		.intr_target_reg = 0,			\
+-		.tile = NORTH,				\
++		.tile = SOUTH,				\
+ 		.mux_bit = -1,				\
+ 		.pull_bit = pull,			\
+ 		.drv_bit = drv,				\
+-- 
+2.18.0
 
-> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-> index efb26096ccb5..b287dbf6914c 100644
-> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-> @@ -517,6 +517,10 @@ static int dra7xx_pcie_enable_phy(struct dra7xx_pcie *dra7xx)
->  	int i;
->  
->  	for (i = 0; i < phy_count; i++) {
-> +		ret = phy_set_mode(dra7xx->phy[i], PHY_MODE_PCIE);
-> +		if (ret < 0)
-> +			goto err_phy;
-> +
->  		ret = phy_init(dra7xx->phy[i]);
->  		if (ret < 0)
->  			goto err_phy;
-> -- 
-> 2.17.1
-> 
