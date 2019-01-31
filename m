@@ -2,142 +2,146 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02C5C282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42991C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3D1E20B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:06:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DPdxFMKO"
+	by mail.kernel.org (Postfix) with ESMTP id 1D7F720B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:06:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731997AbfAaKGd (ORCPT
+        id S1732008AbfAaKGh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:06:33 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43746 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731927AbfAaKGc (ORCPT
+        Thu, 31 Jan 2019 05:06:37 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43828 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731964AbfAaKGc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 Jan 2019 05:06:32 -0500
-Received: by mail-pl1-f196.google.com with SMTP id gn14so1250632plb.10
+Received: by mail-ed1-f67.google.com with SMTP id f9so2046941eds.10
         for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:06:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=liJiLXD990nItDduxgphW2/p5eBWRLLq8tBuK2uvFh4=;
-        b=DPdxFMKOyrIpEo9p8To/71lXGKNLd22hIHO5ahdQDvCbW4aRg7DPMO/gD2ppZhXoHv
-         flGbHbh/Z7tSHdjJZRzb1WV/+uksvJK2NMUY8JAkrE83dXucrooIwGCsCY5mDARPY5lm
-         gQBbPFmnizHOzNAszS68wLa+ib2qgfEPqLoa4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=liJiLXD990nItDduxgphW2/p5eBWRLLq8tBuK2uvFh4=;
-        b=uRLBxiDUJ1HFBSyiltlIQqEvHNo+t9nbglQaEtU/ewLMcBwOSzIJjZq9klhz/eQZMV
-         JPKvMwRrrqgJ9rtgRlHM+N86KTmPsbGmpilug1DKEZUboaRYjaxb8MGU0AQyJA7AE9HW
-         mRYcFz0DuKyIll40lY9x+c3u0vnVuVkn8Ne151Ff3+2a4Al1E0UGlRBmAKc7lbreNiTh
-         PD4rr0i6XGgJfqu6ld+k6PkEpWs193ciGmYrcbd1bmZd9NhCzdJeDgATve33qfmMJwMP
-         bS1odb3dVBvajlfWC9UYc807vn9dC/QDuwzNEryzly4/BSO2aNLvwBwePoqt919+DCKN
-         EtrQ==
-X-Gm-Message-State: AJcUukfzaR/eO61rShm59qfD7F4Jyx7gcbDf11AW5vg4JmZg6U5pDXnh
-        3DCzSBC2WYqx3jtCovU8UoEJVw==
-X-Google-Smtp-Source: ALg8bN7mkePrjw1qh55w0aIXAH/Dj8SA3ZHDOp7aHkkylR/KvA3d9kdmLHK4YOrjaBifH13qMghwoA==
-X-Received: by 2002:a17:902:934a:: with SMTP id g10mr32586245plp.172.1548929191204;
-        Thu, 31 Jan 2019 02:06:31 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id n21sm5749063pfg.84.2019.01.31.02.06.30
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SU79ejPGwFnEun6aFh2CYhWUo6nQS9OYkeS3fXTHHAU=;
+        b=dQVVGOGv9/u8hnLAsdz8YazTtslrYwGAsggZqCgg1yc5RWfah50zHIiw9iNHW+Jv+q
+         g9aESxMNnuversgx+UVTlnIIeK+2tG7ERJVfkn7L7P7YT5CXa4hw/rOxD/AchgQY7/Aa
+         nZ3n5JOnE5BthQVyibsX1pY6/ow5RoHbswP84GKT34+r9ILke9oo3H6BguqfM+voekaf
+         +SsKG2XcDzoZWRi2brhsXu3d6Tx9J+1WsLmUl8N7sCUTCDozXruRY5z6v2oGbQbsc6+Z
+         gWiM8UN2Z6mD/H9VxxeDtoKshROj634xSIUIZ6a64ZSot5MBRzSsp/MtsgaS6AUKQUtd
+         X0gg==
+X-Gm-Message-State: AJcUukdeEGXb1h07v+X5JkbLTMAe5dg4GTxt4N4se5P+IICmlPkWjgj8
+        9jAp1iA8pc9Zn6SOOy4YaEh2GBrC4NA=
+X-Google-Smtp-Source: ALg8bN45h0ErWKCmzKqoK/DBx38CgIUhuEnuuIj5x/F83jcXvCOvTU1LgaO2Pf5M+PEh6LYbnWrAdw==
+X-Received: by 2002:a17:906:a48f:: with SMTP id m15mr10925649ejz.234.1548929190727;
+        Thu, 31 Jan 2019 02:06:30 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id h8sm1146596edb.95.2019.01.31.02.06.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Thu, 31 Jan 2019 02:06:30 -0800 (PST)
-Date:   Thu, 31 Jan 2019 15:36:28 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        grahamr@codeaurora.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [RFC/PATCH 0/5] DVFS in the OPP core
-Message-ID: <20190131100628.6ex6ic3kspuxxxt7@vireshk-i7>
-References: <20190129015547.213276-1-swboyd@chromium.org>
- <20190131092349.fksfqemm23qddkhw@vireshk-i7>
- <CAJZ5v0jY5Zjg0R7uC6ewJT5Pi-15Mohotj=im9k8w4THJSM0Dw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] device connection: Add support for device graphs
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <07262cf3-c512-d3dd-f383-3795f035a2d5@redhat.com>
+Date:   Thu, 31 Jan 2019 11:06:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jY5Zjg0R7uC6ewJT5Pi-15Mohotj=im9k8w4THJSM0Dw@mail.gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31-01-19, 10:58, Rafael J. Wysocki wrote:
-> On Thu, Jan 31, 2019 at 10:23 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > Adding few folks to the thread who might be interested in this stuff.
-> >
-> > On 28-01-19, 17:55, Stephen Boyd wrote:
-> > > This patch series is an RFC around how we can implement DVFS for devices
-> > > that aren't your typical OPPish device (i.e. GPU/CPU). They don't have a
-> > > strict set of frequencies that they have been tested at to derive some
-> > > operating performance point. Instead they have a coarser set of
-> > > frequency max or 'fmax' OPPs that describe the maiximum frequency the
-> > > device can operate at with a given voltage.
-> > >
-> > > The approach we take is to let the devm_pm_opp_set_rate() API accept 0
-> > > as a valid frequency indicating the frequency isn't required anymore and
-> > > to make the same API use the clk framework to round the frequency passed
-> > > in instead of relying on the OPP table to specify each frequency that
-> > > can be used. Once we have these two patches in place, we can use the OPP
-> > > API to change clk rates instead of clk_set_rate() and use all the recent
-> > > OPP enhancements that have been made around required-opps and genpd
-> > > performance states to do DVFS for all devices.
-> >
-> > Generally speaking I am fine with such an approach but I am not sure
-> > about what others would say on this as they had objections to using
-> > OPP core for setting the rate itself.
-> >
-> > FWIW, I suggested exactly this solution sometime back [1]
-> >
-> > - Drivers need to use two API sets to change clock rate (OPP helpers)
-> >   and enable/disable them (CLK framework helpers) and this leads us to
-> >   exactly that combination. Is that acceptable ? It doesn't look great
-> >   to me as well..
-> 
-> I agree here.
-> 
-> > - Do we expect the callers will disable clk before calling
-> >   opp-set-rate with 0 ? We should remove the regulator requirements as
-> >   well along with perf-state.
-> 
-> Well, disabling clk affects HW in general, doesn't it?
+Hi,
 
-Yeah, but the regulator may be shared and is running at higher
-voltages just because of the clock requirement of the device getting
-disabled here. Or did I misunderstood what you wanted to say ?
-
-> > - What about enabling/disabling clock as well from OPP framework. We
-> >   can enable it on the very first call to opp-set-rate and disable
-> >   when freq is 0. That will simplify the drivers as well.
+On 30-01-19 17:02, Heikki Krogerus wrote:
+> Hi,
 > 
-> That sounds compelling, but I guess there are cases in which you can
-> gate the clock regardless of the frequency setting.  How would that
-> work then?
+> This is the second version of this series. On top the two code style
+> improvements requested by Andy, I also renamed the connection
+> identifiers used with the USB Type-C muxes for something that I felt
+> are better, especially after we start using them to name reference
+> device properties in fwnodes. That's why the first patch is now split
+> in two, 1/9 and 3/9.
+> 
+> Hans! Please note that there is no functional change. The alt mode
+> device is still getting a handle to the mux, just like before.
 
-Can you give any example here ? I am not sure I understood the concern
-here.
+Ack.
 
--- 
-viresh
+I've reviewed the entire series and it looks good to me.
+
+Patches 1-3 are:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+I'm slightly less familiar with the material in patches 4-9, so they
+are:
+
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+
+I will also add this series to my personal git tree for testing.
+
+Regards,
+
+Hans
+
+
+
+
+> That was actually happening also in the first version of the series.
+> 
+> The commit message from v1:
+> 
+> This series adds support for OF and ACPI device graph parsing to the
+> device connection API.
+> 
+> Handling the graph is straightforward, but because I'm adding that
+> fwnode member to struct device_connection, I had to make sure all the
+> existing users consider it.
+> 
+> The plan is to only support matching with fwnode in the future, so no
+> more device name matching. The software fwnodes that we now have in
+> kernel should make that possible, once we add support for references
+> to them.
+> 
+> The original RFC:
+> https://lkml.org/lkml/2018/10/24/619
+> 
+> thanks,
+> 
+> Heikki Krogerus (9):
+>    platform/x86: intel_cht_int33fe: Prepare for better mux naming scheme
+>    usb: typec: Rationalize the API for the muxes
+>    platform/x86: intel_cht_int33fe: Remove old style mux connections
+>    device connection: Add fwnode member to struct device_connection
+>    usb: typec: mux: Find the muxes by also matching against the device
+>      node
+>    usb: roles: Find the muxes by also matching against the device node
+>    usb: typec: Find the ports by also matching against the device node
+>    device connection: Prepare support for firmware described connections
+>    device connection: Find device connections also from device graphs
+> 
+>   drivers/base/devcon.c                    | 62 ++++++++++++++-
+>   drivers/platform/x86/intel_cht_int33fe.c | 15 ++--
+>   drivers/usb/roles/class.c                | 21 +++++-
+>   drivers/usb/typec/class.c                | 31 ++++++--
+>   drivers/usb/typec/mux.c                  | 96 ++++++++++++++++++++----
+>   include/linux/device.h                   |  6 ++
+>   include/linux/usb/role.h                 |  1 +
+>   include/linux/usb/typec_mux.h            |  3 +-
+>   8 files changed, 195 insertions(+), 40 deletions(-)
+> 
