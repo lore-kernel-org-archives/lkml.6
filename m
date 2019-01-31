@@ -2,111 +2,224 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18534C282C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FACC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED573218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:50:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C462218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:52:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548917542;
+	bh=hFXQnHSJyCrMpX7rfCcDc8vLjjuqPUjC32o0BrMBnts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=pcf6CiAW6HskQ7IHLrS2a5HQRFvS+gRPQQ27EKGvzFfu/fzQl5SBg5erPkVfNnEtT
+	 pW0R+gWMiEPno8vtJJc2ZT2IwZMniWmjL5E1iJ5mlIu1Hq79F5aEt7WswEstcGIkkd
+	 ODt5rig+l3HgDkgRVTk85ll2yjr638blw3uqWan0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729564AbfAaGt7 (ORCPT
+        id S1729441AbfAaGwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 01:49:59 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43506 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725867AbfAaGt6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 01:49:58 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V6nhe0048340
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 01:49:57 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbtbyvbbw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 01:49:56 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Thu, 31 Jan 2019 06:49:55 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 06:49:51 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V6npjr1835270
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 06:49:51 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E09A811C050;
-        Thu, 31 Jan 2019 06:49:50 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 69D6A11C04C;
-        Thu, 31 Jan 2019 06:49:49 +0000 (GMT)
-Received: from skywalker.linux.ibm.com (unknown [9.199.38.122])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Jan 2019 06:49:49 +0000 (GMT)
-X-Mailer: emacs 26.1 (via feedmail 11-beta-1 I)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>, lsf-pc@lists.linux-foundation.org
-Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org
-Subject: [LSF/MM ATTEND ] memory reclaim with NUMA rebalancing
-In-Reply-To: <20190130174847.GD18811@dhcp22.suse.cz>
-References: <20190130174847.GD18811@dhcp22.suse.cz>
-Date:   Thu, 31 Jan 2019 12:19:47 +0530
+        Thu, 31 Jan 2019 01:52:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57462 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbfAaGwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 01:52:20 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40F5320881;
+        Thu, 31 Jan 2019 06:52:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548917538;
+        bh=hFXQnHSJyCrMpX7rfCcDc8vLjjuqPUjC32o0BrMBnts=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VfK/LD95HioRF0zeDYURTJLro4JizA93EBLo1uvlWdYDuNbQRr79tDxBxuEkqsGcy
+         4/68scB36L5TUWSrUKUN2I/ockFTZkS2wGmv1RGVwA1FVGM/+GlFUsleIzmyPNCwnY
+         b5Z1uUAN3RR6SLZPNa/NiedLT2vKyZghXyNbOaqc=
+Date:   Thu, 31 Jan 2019 07:52:15 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "Li,Rongqing" <lirongqing@baidu.com>
+Cc:     "jslaby@suse.com" <jslaby@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "gkohli@codeaurora.org" <gkohli@codeaurora.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRD?= =?utf-8?B?SF1bdjRd?=
+ tty: fix race between flush_to_ldisc and tty_open
+Message-ID: <20190131065215.GB30992@kroah.com>
+References: <1547803637-29135-1-git-send-email-lirongqing@baidu.com>
+ <20190130101914.GA30587@kroah.com>
+ <f13cb07ed77d428b8b43459ff71adcae@baidu.com>
+ <20190130131641.GA10795@kroah.com>
+ <b1388c835686492fbbfa91e9711470d4@baidu.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19013106-0008-0000-0000-000002B9278F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013106-0009-0000-0000-0000222528B6
-Message-Id: <87h8dpnwxg.fsf@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=822 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310053
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b1388c835686492fbbfa91e9711470d4@baidu.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko <mhocko@kernel.org> writes:
+On Thu, Jan 31, 2019 at 02:15:35AM +0000, Li,Rongqing wrote:
+> 
+> 
+> > -----邮件原件-----
+> > 发件人: Greg KH [mailto:gregkh@linuxfoundation.org]
+> > 发送时间: 2019年1月30日 21:17
+> > 收件人: Li,Rongqing <lirongqing@baidu.com>
+> > 抄送: jslaby@suse.com; linux-kernel@vger.kernel.org; gkohli@codeaurora.org;
+> > linux-serial@vger.kernel.org
+> > 主题: Re: 答复: [PATCH][v4] tty: fix race between flush_to_ldisc and tty_open
+> > 
+> > On Wed, Jan 30, 2019 at 12:48:42PM +0000, Li,Rongqing wrote:
+> > >
+> > >
+> > > > -----邮件原件-----
+> > > > 发件人: linux-kernel-owner@vger.kernel.org
+> > > > [mailto:linux-kernel-owner@vger.kernel.org] 代表 Greg KH
+> > > > 发送时间: 2019年1月30日 18:19
+> > > > 收件人: Li,Rongqing <lirongqing@baidu.com>
+> > > > 抄送: jslaby@suse.com; linux-kernel@vger.kernel.org;
+> > > > gkohli@codeaurora.org
+> > > > 主题: Re: [PATCH][v4] tty: fix race between flush_to_ldisc and
+> > > > tty_open
+> > > >
+> > > > On Fri, Jan 18, 2019 at 05:27:17PM +0800, Li RongQing wrote:
+> > > > > There still is a race window after the commit b027e2298bd588
+> > > > > ("tty: fix data race between tty_init_dev and flush of buf"), and
+> > > > > we encountered this crash issue if receive_buf call comes before
+> > > > > tty initialization completes in n_tty_open and
+> > > > > tty->driver_data may be NULL.
+> > > > >
+> > > > > CPU0                                    CPU1
+> > > > > ----                                    ----
+> > > > >                                  n_tty_open
+> > > > >                                    tty_init_dev
+> > > > >                                      tty_ldisc_unlock
+> > > > >                                        schedule flush_to_ldisc
+> > > > > receive_buf
+> > > > >   tty_port_default_receive_buf
+> > > > >    tty_ldisc_receive_buf
+> > > > >     n_tty_receive_buf_common
+> > > > >       __receive_buf
+> > > > >        uart_flush_chars
+> > > > >         uart_start
+> > > > >         /*tty->driver_data is NULL*/
+> > > > >                                    tty->ops->open
+> > > > >                                    /*init tty->driver_data*/
+> > > > >
+> > > > > it can be fixed by extending ldisc semaphore lock in tty_init_dev
+> > > > > to driver_data initialized completely after tty->ops->open(), but
+> > > > > this will lead to put lock on one function and unlock in some
+> > > > > other function, and hard to maintain, so fix this race only by
+> > > > > checking
+> > > > > tty->driver_data when receiving, and return if tty->driver_data
+> > > > > is NULL
+> > > > >
+> > > > > Signed-off-by: Wang Li <wangli39@baidu.com>
+> > > > > Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
+> > > > > Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> > > > > ---
+> > > > > V4: add version information
+> > > > > V3: not used ldisc semaphore lock, only checking tty->driver_data
+> > > > > with NULL
+> > > > > V2: fix building error by EXPORT_SYMBOL tty_ldisc_unlock
+> > > > > V1: extend ldisc lock to protect that tty->driver_data is inited
+> > > > >
+> > > > > drivers/tty/tty_port.c | 3 +++
+> > > > >  1 file changed, 3 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c index
+> > > > > 044c3cbdcfa4..86d0bec38322 100644
+> > > > > --- a/drivers/tty/tty_port.c
+> > > > > +++ b/drivers/tty/tty_port.c
+> > > > > @@ -31,6 +31,9 @@ static int tty_port_default_receive_buf(struct
+> > > > > tty_port
+> > > > *port,
+> > > > >  	if (!tty)
+> > > > >  		return 0;
+> > > > >
+> > > > > +	if (!tty->driver_data)
+> > > > > +		return 0;
+> > > > > +
+> > > >
+> > > > How is this working?  What is setting driver_data to NULL to "stop" this
+> > race?
+> > > >
+> > >
+> > >
+> > > if tty->driver_data is NULL and return,  tty_port_default_receive_buf
+> > > will not step to uart_start which access tty->driver_data and trigger
+> > > panic before tty_open, so it can fix the system panic
+> > >
+> > > > There's no requirement that a tty driver set this field to NULL when it is
+> > "done"
+> > > > with the tty device, so I think you are just getting lucky in that
+> > > > your specific driver happens to be doing this.
+> > > >
+> > >
+> > > when tty_open is running, tty is allocated by kzalloc in tty_init_dev
+> > > which called by tty_open_by_driver, tty is inited to 0
+> > >
+> > > > What driver are you testing this against?
+> > > >
+> > >
+> > > 8250
+> > 
+> > Ok, as this is specific to the uart core, how about this patch instead:
+> > 
+> > diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+> > index 5c01bb6d1c24..b56a6250df3f 100644
+> > --- a/drivers/tty/serial/serial_core.c
+> > +++ b/drivers/tty/serial/serial_core.c
+> > @@ -130,6 +130,9 @@ static void uart_start(struct tty_struct *tty)
+> >  	struct uart_port *port;
+> >  	unsigned long flags;
+> > 
+> > +	if (!state)
+> > +		return;
+> > +
+> >  	port = uart_port_lock(state, flags);
+> >  	__uart_start(tty);
+> >  	uart_port_unlock(port, flags);
+> 
+> 
+> If move the check into uart_start, i am afraid that it maybe not fully fix this issue,
+> Since n_tty_receive_buf_common maybe call n_tty_check_throttle/ 
+> tty_unthrottle_safe which maybe use the tty->driver_data
+> 
+> if tty is not fully opened, I think no gain to step into more function
 
-> Hi,
-> I would like to propose the following topic for the MM track. Different
-> group of people would like to use NVIDMMs as a low cost & slower memory
-> which is presented to the system as a NUMA node. We do have a NUMA API
-> but it doesn't really fit to "balance the memory between nodes" needs.
-> People would like to have hot pages in the regular RAM while cold pages
-> might be at lower speed NUMA nodes. We do have NUMA balancing for
-> promotion path but there is notIhing for the other direction. Can we
-> start considering memory reclaim to move pages to more distant and idle
-> NUMA nodes rather than reclaim them? There are certainly details that
-> will get quite complicated but I guess it is time to start discussing
-> this at least.
+But as I said, the tty core has no knowledge of the "driver_data",
+field.  It does not know if a driver really is even using that field, so
+it means nothing to the tty core, so it can not check it.  Your specific
+tty driver does happen to use it, so it can check it.
 
-I would be interested in this topic too. I would like to
-understand the API and how it can help exploit the different type of
-devices we have on OpenCAPI.
+If you also need to check this in unthrottle, how about this patch too?
+Does the combination of these two patches solve the problem for your
+systems?
 
-IMHO there are few proposals related to this which we could discuss together
+thanks,
 
-1. HMAT series which want to expose these devices as Numa nodes
-2. The patch series from Dave Hansen which just uses Pmem as Numa node.
-3. The patch series from Fengguang Wu which does prevent default
-allocation from these numa nodes by excluding them from zone list.
-4. The patch series from Jerome Glisse which doesn't expose these as
-numa nodes.
+greg k-h
 
-IMHO (3) is suggesting that we really don't want them as numa nodes. But
-since Numa is the only interface we currently have to present them as
-memory and control the allocation and migration we are forcing
-ourselves to Numa nodes and then excluding them from default allocation.
 
--aneesh
-
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 5c01bb6d1c24..e33d4c181123 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -727,6 +727,9 @@ static void uart_unthrottle(struct tty_struct *tty)
+ 	upstat_t mask = UPSTAT_SYNC_FIFO;
+ 	struct uart_port *port;
+ 
++	if (!state)
++		return;
++
+ 	port = uart_port_ref(state);
+ 	if (!port)
+ 		return;
