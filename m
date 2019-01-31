@@ -2,177 +2,107 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BDAC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4868C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20FF2087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A90A2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:55:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJ/Sb0Mq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731886AbfAaIzD (ORCPT
+        id S1729402AbfAaIzo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:55:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57558 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729687AbfAaIxW (ORCPT
+        Thu, 31 Jan 2019 03:55:44 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39954 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726172AbfAaIzn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 03:53:22 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V8hv8T005525
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:53:21 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qbw2h2pq4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 03:53:21 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
-        Thu, 31 Jan 2019 08:53:19 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 08:53:16 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V8rECO57278706
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 08:53:14 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B10CF42045;
-        Thu, 31 Jan 2019 08:53:14 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5721942049;
-        Thu, 31 Jan 2019 08:53:14 +0000 (GMT)
-Received: from s38lp84.lnxne.boe (unknown [9.152.108.100])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Jan 2019 08:53:14 +0000 (GMT)
-From:   Michael Mueller <mimu@linux.ibm.com>
-To:     KVM Mailing List <kvm@vger.kernel.org>
-Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        Thu, 31 Jan 2019 03:55:43 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so2310231wrt.7
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 00:55:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Gybmd0zI2FuhEwlh/WUjOKbn6A7eyvCLAinW5T6Jumg=;
+        b=RJ/Sb0MqgdyoZABJKcVdK4uD3BJ/T0XLGpQzguTCfuLwFMN56QaIj9wtwYGQYwTWhT
+         PEN6+gSOYbpDMWLC+gsOKAhIrsfMZV4/FFUYSig/X0b3JVOVKLvF2y3XXSV67pJ7DYtC
+         9S55d/hcwRf1dbn6J2PXObyO1aX+OxkBhc9T2NADigGEn4m/ZyXUGSal/Usa+WOvxxqb
+         saEtWu0P+4OFFxiSHGySPFtRIrYF5FOqCNKSXECszVJmUoz1MAyaXpfX/CxDjzeYKddf
+         bNJtzTiwzuiz706NF3VzGlb6Sn2k/kZS0YJ4POGv7BiJcvEDUwex5iNlJMNBSLaD5V+T
+         7Yqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Gybmd0zI2FuhEwlh/WUjOKbn6A7eyvCLAinW5T6Jumg=;
+        b=j2hEu/RpLPU1hk/fIWowEFIxtC8xLvyAOQK63gh2ZfvbdDEeCWaK2RoQvvZW8xW9Vs
+         Jeym2HUvbZBpcJ0zWLovLsCo2giM3f7gNVFHEFLMupFTIgwcDJPvnmRYQi16Ud4cH3n8
+         MDt+wHfd+5ozjrqbe3/LSlvmePTCeMN9OfrnjJ3VI+eBbtQhvMMk3g/8xkj6IMXXTnxZ
+         xbdMgDJ0i26o9pvxO0JSBH6m9FcFmlb29XBzWHXGu7dRmnGEMliueoRfHmNnJOKuQERR
+         lbcMX3zlTfCpMiYZFpJzdVES+i5cK/MwoJxH03T9co0oo+435aQ55e7PFqu1ODwpErQQ
+         YzaA==
+X-Gm-Message-State: AJcUukefkvTKkk5bJyV/32tCyUznT5GCs32ElKdOt3HJ9WscvcUEa0rI
+        yz6qi887Mji0kI5DOSSbX5Y=
+X-Google-Smtp-Source: ALg8bN5uRTx5Nl9FJW/yaqIg0CVsFppDfrUR5TIyX3m6dGK1DSfQEwU9c3EQThT6LoUpwvh5/BBclg==
+X-Received: by 2002:adf:e5c4:: with SMTP id a4mr32141445wrn.157.1548924941780;
+        Thu, 31 Jan 2019 00:55:41 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
+        by smtp.gmail.com with ESMTPSA id p10sm12626295wmd.14.2019.01.31.00.55.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 00:55:40 -0800 (PST)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        Michael Mueller <mimu@linux.ibm.com>
-Subject: [PATCH v7 03/15] KVM: s390: move bitmap idle_mask into arch struct top level
-Date:   Thu, 31 Jan 2019 09:52:34 +0100
-X-Mailer: git-send-email 2.13.4
-In-Reply-To: <20190131085247.13826-1-mimu@linux.ibm.com>
-References: <20190131085247.13826-1-mimu@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19013108-0016-0000-0000-0000024E356C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013108-0017-0000-0000-000032A842D1
-Message-Id: <20190131085247.13826-4-mimu@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310070
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH] staging: rtl8188eu: cleanup ODM_CmnInfoPtrArrayHook()
+Date:   Thu, 31 Jan 2019 09:55:30 +0100
+Message-Id: <20190131085530.5697-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vcpu idle_mask state is used by but not specific
-to the emulated floating interruptions. The state is
-relevant to gisa related interruptions as well.
+Convert single case switch to if statement to cleanup and
+simplify code in ODM_CmnInfoPtrArrayHook().
 
-Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- arch/s390/include/asm/kvm_host.h |  2 +-
- arch/s390/kvm/interrupt.c        | 11 +++++------
- arch/s390/kvm/kvm-s390.h         |  2 +-
- 3 files changed, 7 insertions(+), 8 deletions(-)
+ drivers/staging/rtl8188eu/hal/odm.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index 3cba08f73dc6..c259a67c4298 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -591,7 +591,6 @@ struct kvm_s390_float_interrupt {
- 	struct kvm_s390_mchk_info mchk;
- 	struct kvm_s390_ext_info srv_signal;
- 	int next_rr_cpu;
--	DECLARE_BITMAP(idle_mask, KVM_MAX_VCPUS);
- 	struct mutex ais_lock;
- 	u8 simm;
- 	u8 nimm;
-@@ -838,6 +837,7 @@ struct kvm_arch{
- 	/* subset of available cpu features enabled by user space */
- 	DECLARE_BITMAP(cpu_feat, KVM_S390_VM_CPU_FEAT_NR_BITS);
- 	struct kvm_s390_gisa *gisa;
-+	DECLARE_BITMAP(idle_mask, KVM_MAX_VCPUS);
- };
+diff --git a/drivers/staging/rtl8188eu/hal/odm.c b/drivers/staging/rtl8188eu/hal/odm.c
+index 1165ee278536..ba3c3e5a8216 100644
+--- a/drivers/staging/rtl8188eu/hal/odm.c
++++ b/drivers/staging/rtl8188eu/hal/odm.c
+@@ -209,17 +209,8 @@ void ODM_DMWatchdog(struct odm_dm_struct *pDM_Odm)
  
- #define KVM_HVA_ERR_BAD		(-1UL)
-diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-index 167a3068ef84..2a3eb9f076c3 100644
---- a/arch/s390/kvm/interrupt.c
-+++ b/arch/s390/kvm/interrupt.c
-@@ -318,13 +318,13 @@ static unsigned long deliverable_irqs(struct kvm_vcpu *vcpu)
- static void __set_cpu_idle(struct kvm_vcpu *vcpu)
+ void ODM_CmnInfoPtrArrayHook(struct odm_dm_struct *pDM_Odm, enum odm_common_info_def CmnInfo, u16 Index, void *pValue)
  {
- 	kvm_s390_set_cpuflags(vcpu, CPUSTAT_WAIT);
--	set_bit(vcpu->vcpu_id, vcpu->kvm->arch.float_int.idle_mask);
-+	set_bit(vcpu->vcpu_id, vcpu->kvm->arch.idle_mask);
+-	/*  Hook call by reference pointer. */
+-	switch	(CmnInfo) {
+-	/*  Dynamic call by reference pointer. */
+-	case	ODM_CMNINFO_STA_STATUS:
++	if (CmnInfo == ODM_CMNINFO_STA_STATUS)
+ 		pDM_Odm->pODM_StaInfo[Index] = (struct sta_info *)pValue;
+-		break;
+-	/* To remove the compiler warning, must add an empty default statement to handle the other values. */
+-	default:
+-		/* do nothing */
+-		break;
+-	}
  }
  
- static void __unset_cpu_idle(struct kvm_vcpu *vcpu)
- {
- 	kvm_s390_clear_cpuflags(vcpu, CPUSTAT_WAIT);
--	clear_bit(vcpu->vcpu_id, vcpu->kvm->arch.float_int.idle_mask);
-+	clear_bit(vcpu->vcpu_id, vcpu->kvm->arch.idle_mask);
- }
- 
- static void __reset_intercept_indicators(struct kvm_vcpu *vcpu)
-@@ -1726,7 +1726,6 @@ static int __inject_io(struct kvm *kvm, struct kvm_s390_interrupt_info *inti)
-  */
- static void __floating_irq_kick(struct kvm *kvm, u64 type)
- {
--	struct kvm_s390_float_interrupt *fi = &kvm->arch.float_int;
- 	struct kvm_vcpu *dst_vcpu;
- 	int sigcpu, online_vcpus, nr_tries = 0;
- 
-@@ -1735,11 +1734,11 @@ static void __floating_irq_kick(struct kvm *kvm, u64 type)
- 		return;
- 
- 	/* find idle VCPUs first, then round robin */
--	sigcpu = find_first_bit(fi->idle_mask, online_vcpus);
-+	sigcpu = find_first_bit(kvm->arch.idle_mask, online_vcpus);
- 	if (sigcpu == online_vcpus) {
- 		do {
--			sigcpu = fi->next_rr_cpu;
--			fi->next_rr_cpu = (fi->next_rr_cpu + 1) % online_vcpus;
-+			sigcpu = kvm->arch.float_int.next_rr_cpu++;
-+			kvm->arch.float_int.next_rr_cpu %= online_vcpus;
- 			/* avoid endless loops if all vcpus are stopped */
- 			if (nr_tries++ >= online_vcpus)
- 				return;
-diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
-index 1f6e36cdce0d..72ef87799593 100644
---- a/arch/s390/kvm/kvm-s390.h
-+++ b/arch/s390/kvm/kvm-s390.h
-@@ -67,7 +67,7 @@ static inline int is_vcpu_stopped(struct kvm_vcpu *vcpu)
- 
- static inline int is_vcpu_idle(struct kvm_vcpu *vcpu)
- {
--	return test_bit(vcpu->vcpu_id, vcpu->kvm->arch.float_int.idle_mask);
-+	return test_bit(vcpu->vcpu_id, vcpu->kvm->arch.idle_mask);
- }
- 
- static inline int kvm_is_ucontrol(struct kvm *kvm)
+ void odm_CommonInfoSelfInit(struct odm_dm_struct *pDM_Odm)
 -- 
-2.13.4
+2.20.1
 
