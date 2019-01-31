@@ -1,97 +1,178 @@
-Return-Path: <SRS0=IQwf=QG=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 055DDC282D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113C0C282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD96D20882
-	for <linux-kernel@archiver.kernel.org>; Wed, 30 Jan 2019 23:59:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD60620B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:00:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MrmLOXAO"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d2mYM3oc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbfA3X7l (ORCPT
+        id S1727969AbfAaAAY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:59:41 -0500
-Received: from ozlabs.org ([203.11.71.1]:44473 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbfA3X7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:59:40 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43qgMZ2436z9s3q;
-        Thu, 31 Jan 2019 10:59:38 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548892778;
-        bh=pT+xd8mOxwfKhIVAMm0i3vGJTjRL0vJIVGUjQCFS0TQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=MrmLOXAOVqrpnSGDaEyqOvSmXldzQRMiRRQATOLDf/Hx3r6q1c8+tZKVUj7CHEDDj
-         j1yl7PJ3XQSTQV8F0U0nb8+fgCanWm+gitwCx4sj2SAvMzkELO1zaMzGx3MwQ9A4Ei
-         S6tAXQW0gyT0q7X/gLjQx3FZyi9l61Mo+5KVDOESeBcczjXhNF+jCsDmwkJXCgkYtg
-         7NfgJHUB8NOGGyehUqTJjQuqA3HrQKMrOWWPBauvSEp4pY9Wo4QI5kcZz7ZmP9i6vI
-         nPT2imYZxGxnR2QIEGkjW4nWtrq3mcqg1Nk/a5VHMQyL6VGsaClOMaOi57b6aeaQCP
-         mSzhSQdPijS1w==
-Date:   Thu, 31 Jan 2019 10:59:37 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: linux-next: Fixes tag needs some work in the akpm tree
-Message-ID: <20190131105937.62023ef1@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4/qwh/OMSLP_RdrmrC7MTMf"; protocol="application/pgp-signature"
+        Wed, 30 Jan 2019 19:00:24 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45858 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbfAaAAY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 19:00:24 -0500
+Received: by mail-pl1-f194.google.com with SMTP id a14so572980plm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 16:00:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=OaFD0M5dIEtSst8G4T5l3VJFNcduRZuMCC/2FAz5l/o=;
+        b=d2mYM3ocy/vz4UJO504AzF338dNMr5sjZ4pl9Pq96Palfh13lixX21yR94Cfl2NaYN
+         oAB8q8UBSBGwpEE/mlT8d64tW/4f9JZ+Uc41sheWHSU+Csl/QGK2CVT9ESMZAQ2BLtQ5
+         WWKYnhynQ42mry1GqnPZ+WRDKO+2wFncmFbyo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=OaFD0M5dIEtSst8G4T5l3VJFNcduRZuMCC/2FAz5l/o=;
+        b=OlXH7Nvpk2E4O4NoaXuMVsa5BOGoTy/dg+fexSMxchnMWtrzlp767e3OaelhSF7Su1
+         z56Sg0b7Cq6hZQ6HTpJTE1WVIlkRI/L9dIgsz8K1H+uLOaVrj603t1P/iBx5UwemMRdO
+         SDE528MWFou/R/QjFWLAFxvzwTjvGvVGI9h/fUWJek27apqxktyRlUgc6vWUxNJCbvxk
+         MHPqIlZe3g1jfbZ1qB42xaghUiUrweP9R2Pev27M5R1BTVWkLX5UEfSDJMtq93EFm43h
+         9VS1er8X/Mq/e30TykAQO4xx95K2gpXC/gY0zzAZY1AAeq7eY9s4y0OS+0ccjYOETQYn
+         pbdw==
+X-Gm-Message-State: AJcUukcpQWz0NFV1mXvQ2xWTUUpqV5Ix67B96EBzicmfi49IQJb7fAXI
+        beEAShr5cx381huXwFUlDyUkAw==
+X-Google-Smtp-Source: ALg8bN7khfj/o6pSi5Jesuf9ND8sCVrzEa/YreGlj8wluN63xZJ+RwsalYJTwQjtlvXyXbytS4b/Hw==
+X-Received: by 2002:a17:902:e08b:: with SMTP id cb11mr32825776plb.263.1548892822814;
+        Wed, 30 Jan 2019 16:00:22 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 15sm1007622pfs.113.2019.01.30.16.00.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 16:00:21 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thierry Escande <thierry.escande@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] arm64: dts: qcom: qcs404: Define APPS IOMMU
+Date:   Wed, 30 Jan 2019 16:00:06 -0800
+Message-Id: <20190131000006.11145-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/4/qwh/OMSLP_RdrmrC7MTMf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The APPS IOMMU provides contexts for FastRPC, MDP and WLAN, among other
+things. Define these.
 
-Hi all,
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 85 ++++++++++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-In patch
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index d90decd00f5c..c574e48c61d2 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -395,6 +395,91 @@
+ 			reg = <0x01905000 0x20000>;
+ 		};
+ 
++		apps_iommu: iommu@1e20000 {
++			compatible = "qcom,qcs404-iommu", "qcom,msm-iommu-v1";
++			clocks = <&gcc GCC_SMMU_CFG_CLK>,
++				 <&gcc GCC_APSS_TCU_CLK>;
++			clock-names = "iface", "bus";
++			qcom,iommu-secure-id = <17>;
++
++			#address-cells = <1>;
++			#size-cells = <1>;
++			#iommu-cells = <1>;
++
++			/* Define ranges such that the first bank is at 0x1000 */
++			ranges = <0 0x01e20000 0x40000>;
++
++			/* Bank 5: CDSP compute bank 1 */
++			iommu-ctx@5000 {
++				compatible = "qcom,msm-iommu-v1-ns";
++				reg = <0x5000 0x1000>;
++				interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			/* Bank 6: CDSP compute bank 2 */
++			iommu-ctx@6000 {
++				compatible = "qcom,msm-iommu-v1-ns";
++				reg = <0x6000 0x1000>;
++				interrupts = <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			/* Bank 7: CDSP compute bank 3 */
++			iommu-ctx@7000 {
++				compatible = "qcom,msm-iommu-v1-ns";
++				reg = <0x7000 0x1000>;
++				interrupts = <GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			/* Bank 8: CDSP compute bank 4 */
++			iommu-ctx@8000 {
++				compatible = "qcom,msm-iommu-v1-ns";
++				reg = <0x8000 0x1000>;
++				interrupts = <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			/* Bank 9: CDSP compute bank 5 */
++			iommu-ctx@9000 {
++				compatible = "qcom,msm-iommu-v1-ns";
++				reg = <0x9000 0x1000>;
++				interrupts = <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			/* Bank 10: MDP */
++			iommu-ctx@a000 {
++				compatible = "qcom,msm-iommu-v1-ns";
++				reg = <0xa000 0x1000>;
++				interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			/* Bank 21: WLAN 0 */
++			iommu-ctx@15000 {
++				compatible = "qcom,msm-iommu-v1-ns";
++				reg = <0x15000 0x1000>;
++				interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			/* Bank 23: ADSP compute bank 2 */
++			iommu-ctx@17000 {
++				compatible = "qcom,msm-iommu-v1-ns";
++				reg = <0x17000 0x1000>;
++				interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			/* Bank 24: ADSP compute bank 3 */
++			iommu-ctx@18000 {
++				compatible = "qcom,msm-iommu-v1-ns";
++				reg = <0x18000 0x1000>;
++				interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
++			};
++
++			/* Bank 25: ADSP compute bank 4 */
++			iommu-ctx@19000 {
++				compatible = "qcom,msm-iommu-v1-ns";
++				reg = <0x19000 0x1000>;
++				interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			};
++		};
++
+ 		spmi_bus: spmi@200f000 {
+ 			compatible = "qcom,spmi-pmic-arb";
+ 			reg = <0x0200f000 0x001000>,
+-- 
+2.18.0
 
-  "include/linux/relay.h: fix percpu annotation in struct rchan"
-
-Fixes tag
-
-  Fixes: 017c59c04 ("relay: Use per CPU constructs for the relay channel bu=
-ffer pointers")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/4/qwh/OMSLP_RdrmrC7MTMf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxSOmkACgkQAVBC80lX
-0GyuBgf/YOlmDAPUXTrmbX0wj4VBDgQemZtMhCN3pDtxmnnBHnsIDRo8xLGCBuMY
-dT4fxTr8JTBxfkDaL/kj95SsQNOI8EZ4s8kHChS0WZwTb8+MXgmCnirMwwXbNHTv
-eRRsmNRpZ+FDznBambn6k39EAI9Qq1iF+NuXygGbvc/SZBxGwcakrb1a5wMCYZ/N
-fYp83aMvG7m8QdtwUSpwP1jY52nzpALsGjPPXtaZxYYlwmqKhqPyB2uI2xTctMBd
-YFAsqZ10EhMzh3jDsMy3fqe5gdVNIf6ksM1wY7IvWctGAJ2Vhzr1y6Do7leD3xJQ
-WbdBBb2Y17+23lv/uaG9a4m/K5j4CQ==
-=bZSZ
------END PGP SIGNATURE-----
-
---Sig_/4/qwh/OMSLP_RdrmrC7MTMf--
