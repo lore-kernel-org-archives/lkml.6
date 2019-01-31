@@ -2,104 +2,104 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C512C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD27DC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:36:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5E4218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8916E2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:36:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732957AbfAaMfA (ORCPT
+        id S1732976AbfAaMgy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:35:00 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:56394 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726153AbfAaMfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:35:00 -0500
-Received: from wf0848.dip.tu-dresden.de ([141.76.183.80] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gpBXj-000441-H7; Thu, 31 Jan 2019 13:34:07 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Souptick Joarder <jrdr.linux@gmail.com>, hjc@rock-chips.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-Subject: Re: [PATCHv2 1/9] mm: Introduce new vm_insert_range and vm_insert_range_buggy API
-Date:   Thu, 31 Jan 2019 13:34:10 +0100
-Message-ID: <1572595.mVW1PIlZyR@phil>
-In-Reply-To: <CAFqt6zbxyMB3VCzbWo1rPdfKXLVTNx+RY0=guD5CRxD37gJzsA@mail.gmail.com>
-References: <20190131030812.GA2174@jordon-HP-15-Notebook-PC> <1701923.z6LKAITQJA@phil> <CAFqt6zbxyMB3VCzbWo1rPdfKXLVTNx+RY0=guD5CRxD37gJzsA@mail.gmail.com>
+        Thu, 31 Jan 2019 07:36:54 -0500
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:30583 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726153AbfAaMgx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 07:36:53 -0500
+X-IronPort-AV: E=Sophos;i="5.56,544,1539673200"; 
+   d="scan'208";a="27105251"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jan 2019 05:36:39 -0700
+Received: from localhost (10.10.76.4) by chn-sv-exch06.mchp-main.com
+ (10.10.76.107) with Microsoft SMTP Server id 14.3.352.0; Thu, 31 Jan 2019
+ 05:36:39 -0700
+Date:   Thu, 31 Jan 2019 13:36:30 +0100
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Claudiu Beznea - M18063 <Claudiu.Beznea@microchip.com>
+CC:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/7] dt-bindings: add bindings for SAM9X60
+Message-ID: <20190131123630.opxm5saomkp3b55h@M43218.corp.atmel.com>
+Mail-Followup-To: Claudiu Beznea - M18063 <Claudiu.Beznea@microchip.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1548937733-20189-1-git-send-email-claudiu.beznea@microchip.com>
+ <1548937733-20189-6-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1548937733-20189-6-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 31. Januar 2019, 13:31:52 CET schrieb Souptick Joarder:
-> On Thu, Jan 31, 2019 at 5:37 PM Heiko Stuebner <heiko@sntech.de> wrote:
-> >
-> > Am Donnerstag, 31. Januar 2019, 04:08:12 CET schrieb Souptick Joarder:
-> > > Previouly drivers have their own way of mapping range of
-> > > kernel pages/memory into user vma and this was done by
-> > > invoking vm_insert_page() within a loop.
-> > >
-> > > As this pattern is common across different drivers, it can
-> > > be generalized by creating new functions and use it across
-> > > the drivers.
-> > >
-> > > vm_insert_range() is the API which could be used to mapped
-> > > kernel memory/pages in drivers which has considered vm_pgoff
-> > >
-> > > vm_insert_range_buggy() is the API which could be used to map
-> > > range of kernel memory/pages in drivers which has not considered
-> > > vm_pgoff. vm_pgoff is passed default as 0 for those drivers.
-> > >
-> > > We _could_ then at a later "fix" these drivers which are using
-> > > vm_insert_range_buggy() to behave according to the normal vm_pgoff
-> > > offsetting simply by removing the _buggy suffix on the function
-> > > name and if that causes regressions, it gives us an easy way to revert.
-> > >
-> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > > Suggested-by: Russell King <linux@armlinux.org.uk>
-> > > Suggested-by: Matthew Wilcox <willy@infradead.org>
-> >
-> > hmm, I'm missing a changelog here between v1 and v2.
-> > Nevertheless I managed to test v1 on Rockchip hardware
-> > and display is still working, including talking to Lima via prime.
-> >
-> > So if there aren't any big changes for v2, on Rockchip
-> > Tested-by: Heiko Stuebner <heiko@sntech.de>
+On Thu, Jan 31, 2019 at 01:29:40PM +0100, Claudiu Beznea - M18063 wrote:
+> From: Claudiu Beznea <claudiu.beznea@microchip.com>
 > 
-> Change log is available in [0/9].
-> Patch [1/9] & [4/9] have no changes between v1 -> v2.
+> Add device tree binding for SAM9X60 pin controller.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+> index 40e33dfc36fd..c2d51ed86d47 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+> @@ -19,7 +19,7 @@ such as pull-up, multi drive, etc.
+>  
+>  Required properties for iomux controller:
+>  - compatible: "atmel,at91rm9200-pinctrl" or "atmel,at91sam9x5-pinctrl"
+> -		or "atmel,sama5d3-pinctrl"
+> +		or "atmel,sama5d3-pinctrl" or "microchip,sam9x60-pictrl"
 
-I never seem to get your cover-letters, so didn't see that, sorry.
+Typo s/microchip,sam9x60-pictrl/microchip,sam9x60-pinctrl
 
-But great that there weren't changes then :-)
-
-Heiko
-
-
+>  - atmel,mux-mask: array of mask (periph per bank) to describe if a pin can be
+>    configured in this periph mode. All the periph and bank need to be describe.
+>  
+> @@ -117,7 +117,8 @@ Some requirements for using atmel,at91rm9200-pinctrl binding:
+>  4. The gpio controller must be describe in the pinctrl simple-bus.
+>  
+>  For each bank the required properties are:
+> -- compatible: "atmel,at91sam9x5-gpio" or "atmel,at91rm9200-gpio"
+> +- compatible: "atmel,at91sam9x5-gpio" or "atmel,at91rm9200-gpio" or
+> +  "microchip,sam9x60-gpio"
+>  - reg: physical base address and length of the controller's registers
+>  - interrupts: interrupt outputs from the controller
+>  - interrupt-controller: marks the device node as an interrupt controller
+> -- 
+> 2.7.4
+> 
