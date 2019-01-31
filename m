@@ -2,146 +2,156 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42991C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DD7C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D7F720B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D55920B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:07:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BAjHNDMv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732008AbfAaKGh (ORCPT
+        id S1731852AbfAaKH6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:06:37 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43828 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731964AbfAaKGc (ORCPT
+        Thu, 31 Jan 2019 05:07:58 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41124 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726500AbfAaKH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:06:32 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f9so2046941eds.10
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:06:31 -0800 (PST)
+        Thu, 31 Jan 2019 05:07:57 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b7so1249926pfi.8
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:07:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=h1wdf+H62wX3SvTA/nPqdW0PpVoISzhXuV/VKcNWBnU=;
+        b=BAjHNDMv+tTR989hDvw2czbHz6npz3WZORx+UxsdOFA1s9TcYfiR9YqJ8tC4QTeOrc
+         Crpp4S17aM9D1BGD0zDUVuWG8R6ykApMizPybP3uQYtVq5bEfp1TTKNQPEwW4W41RTWq
+         WzCnZqrhOyiquRoadyiWeMe53kyjkl9G/wUuk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SU79ejPGwFnEun6aFh2CYhWUo6nQS9OYkeS3fXTHHAU=;
-        b=dQVVGOGv9/u8hnLAsdz8YazTtslrYwGAsggZqCgg1yc5RWfah50zHIiw9iNHW+Jv+q
-         g9aESxMNnuversgx+UVTlnIIeK+2tG7ERJVfkn7L7P7YT5CXa4hw/rOxD/AchgQY7/Aa
-         nZ3n5JOnE5BthQVyibsX1pY6/ow5RoHbswP84GKT34+r9ILke9oo3H6BguqfM+voekaf
-         +SsKG2XcDzoZWRi2brhsXu3d6Tx9J+1WsLmUl8N7sCUTCDozXruRY5z6v2oGbQbsc6+Z
-         gWiM8UN2Z6mD/H9VxxeDtoKshROj634xSIUIZ6a64ZSot5MBRzSsp/MtsgaS6AUKQUtd
-         X0gg==
-X-Gm-Message-State: AJcUukdeEGXb1h07v+X5JkbLTMAe5dg4GTxt4N4se5P+IICmlPkWjgj8
-        9jAp1iA8pc9Zn6SOOy4YaEh2GBrC4NA=
-X-Google-Smtp-Source: ALg8bN45h0ErWKCmzKqoK/DBx38CgIUhuEnuuIj5x/F83jcXvCOvTU1LgaO2Pf5M+PEh6LYbnWrAdw==
-X-Received: by 2002:a17:906:a48f:: with SMTP id m15mr10925649ejz.234.1548929190727;
-        Thu, 31 Jan 2019 02:06:30 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id h8sm1146596edb.95.2019.01.31.02.06.29
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=h1wdf+H62wX3SvTA/nPqdW0PpVoISzhXuV/VKcNWBnU=;
+        b=VjUjRsYqmIYfS82x5r34RPvi/0HQbpdrYPqcknurIpMeH8KnKmaAUycwUtUdYe98qU
+         a1sTutGpbzFAxdyqrIXp/rR/mb4smFcRGuA25XggZzWXBoPMr/LzAE2EZYb4BWszS/AZ
+         YtSMVCU8fftT7RZy+xX1NCeVUK26jFxkPEH3phaUrt/V5MAHtkYMswueZOTxV6FHjNr+
+         EcSAMcGxwH2/PCESbx3AgqCTq3Ky9fdaf0pOtTWleBbwiYAt7N0H2+CsihI398T95F/M
+         XgQNwQhRCxTJBcTuHC1r70qwRoKSV2el2mQJzu3ryqKentIw9tWVLjzYdfIzosLUWO3w
+         h55w==
+X-Gm-Message-State: AJcUukdJ8TQPFH4w3RVXfo2xzeVT+AmKoz7htvzd8xJZV6XLm6Xg4RRC
+        OqUUZVro42lgboERFndkJ5/E3A==
+X-Google-Smtp-Source: ALg8bN6IXQIHaFHUkuWGgKYNTBLCTccmZ0fBwnv4yluw1s8t0rsjQeiZkstswRwfdVpGPblEvO8Tkw==
+X-Received: by 2002:a63:3d49:: with SMTP id k70mr30932849pga.191.1548929276202;
+        Thu, 31 Jan 2019 02:07:56 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id w136sm7103696pfd.169.2019.01.31.02.07.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 02:06:30 -0800 (PST)
-Subject: Re: [PATCH v2 0/9] device connection: Add support for device graphs
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <07262cf3-c512-d3dd-f383-3795f035a2d5@redhat.com>
-Date:   Thu, 31 Jan 2019 11:06:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 02:07:55 -0800 (PST)
+Date:   Thu, 31 Jan 2019 15:37:53 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] cpufreq: Record stats when fast switching is enabled
+Message-ID: <20190131100753.fjh6o3smmcjedxmz@vireshk-i7>
+References: <20190131015139.126890-1-mka@chromium.org>
+ <20190131083004.rkxehycu4pbbx52s@vireshk-i7>
+ <CAJZ5v0hgBNY8cZgkn-u1qCCBrLxkS6T=srjMqsX50_H5V=ofHA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190130160259.46919-1-heikki.krogerus@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0hgBNY8cZgkn-u1qCCBrLxkS6T=srjMqsX50_H5V=ofHA@mail.gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 30-01-19 17:02, Heikki Krogerus wrote:
-> Hi,
+On 31-01-19, 11:03, Rafael J. Wysocki wrote:
+> On Thu, Jan 31, 2019 at 9:30 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > On 30-01-19, 17:51, Matthias Kaehlcke wrote:
+> > > When fast switching is enabled currently no cpufreq stats are
+> > > recorded and the corresponding sysfs attributes appear empty (see
+> > > also commit 1aefc75b2449 ("cpufreq: stats: Make the stats code
+> > > non-modular")).
+> > >
+> > > Record the stats after a successful fast switch and re-enable access
+> > > through sysfs when fast switching is enabled. Since
+> > > cpufreq_stats_update() can now be called in interrupt context (during
+> > > a fast switch) disable local IRQs while holding the stats spinlock.
+> > >
+> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > ---
+> > > The change is so simple that I wonder if I'm missing some important
+> > > reason why the stats can't/shouldn't be updated during/after a fast
+> > > switch ...
+> > >
+> > > I would expect that holding the stats spinlock briefly in
+> > > cpufreq_stats_update() shouldn't be a problem. In theory it would
+> > > also be an option to have a per stats lock, though it seems overkill
+> > > from my (possibly ignorant) point of view.
+> > > ---
+> > >  drivers/cpufreq/cpufreq.c       |  8 +++++++-
+> > >  drivers/cpufreq/cpufreq_stats.c | 11 +++--------
+> > >  2 files changed, 10 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > > index e35a886e00bcf..63aadb0bbddfe 100644
+> > > --- a/drivers/cpufreq/cpufreq.c
+> > > +++ b/drivers/cpufreq/cpufreq.c
+> > > @@ -1857,9 +1857,15 @@ EXPORT_SYMBOL(cpufreq_unregister_notifier);
+> > >  unsigned int cpufreq_driver_fast_switch(struct cpufreq_policy *policy,
+> > >                                       unsigned int target_freq)
+> > >  {
+> > > +     unsigned int freq;
+> > > +
+> > >       target_freq = clamp_val(target_freq, policy->min, policy->max);
+> > >
+> > > -     return cpufreq_driver->fast_switch(policy, target_freq);
+> > > +     freq = cpufreq_driver->fast_switch(policy, target_freq);
+> > > +     if (freq)
+> > > +             cpufreq_stats_record_transition(policy, freq);
+> > > +
+> > > +     return freq;
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(cpufreq_driver_fast_switch);
+> > >
+> > > diff --git a/drivers/cpufreq/cpufreq_stats.c b/drivers/cpufreq/cpufreq_stats.c
+> > > index 1572129844a5b..21b919bfaeccf 100644
+> > > --- a/drivers/cpufreq/cpufreq_stats.c
+> > > +++ b/drivers/cpufreq/cpufreq_stats.c
+> > > @@ -30,11 +30,12 @@ struct cpufreq_stats {
+> > >  static void cpufreq_stats_update(struct cpufreq_stats *stats)
+> > >  {
+> > >       unsigned long long cur_time = get_jiffies_64();
+> > > +     unsigned long flags;
+> > >
+> > > -     spin_lock(&cpufreq_stats_lock);
+> > > +     spin_lock_irqsave(&cpufreq_stats_lock, flags);
+> > >       stats->time_in_state[stats->last_index] += cur_time - stats->last_time;
+> > >       stats->last_time = cur_time;
+> > > -     spin_unlock(&cpufreq_stats_lock);
+> > > +     spin_unlock_irqrestore(&cpufreq_stats_lock, flags);
+> > >  }
+> >
+> > The only problem that I can think of (or recall) is that this routine
+> > also gets called when time_in_state sysfs file is read and that can
+> > end up taking lock which the scheduler's hotpath will wait for.
 > 
-> This is the second version of this series. On top the two code style
-> improvements requested by Andy, I also renamed the connection
-> identifiers used with the USB Type-C muxes for something that I felt
-> are better, especially after we start using them to name reference
-> device properties in fwnodes. That's why the first patch is now split
-> in two, 1/9 and 3/9.
-> 
-> Hans! Please note that there is no functional change. The alt mode
-> device is still getting a handle to the mux, just like before.
+> What about the extra locking overhead in the scheduler context?
 
-Ack.
+What about using READ_ONCE/WRITE_ONCE here ? Not sure if we really
+need locking in this particular case.
 
-I've reviewed the entire series and it looks good to me.
-
-Patches 1-3 are:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-I'm slightly less familiar with the material in patches 4-9, so they
-are:
-
-Acked-by: Hans de Goede <hdegoede@redhat.com>
-
-I will also add this series to my personal git tree for testing.
-
-Regards,
-
-Hans
-
-
-
-
-> That was actually happening also in the first version of the series.
-> 
-> The commit message from v1:
-> 
-> This series adds support for OF and ACPI device graph parsing to the
-> device connection API.
-> 
-> Handling the graph is straightforward, but because I'm adding that
-> fwnode member to struct device_connection, I had to make sure all the
-> existing users consider it.
-> 
-> The plan is to only support matching with fwnode in the future, so no
-> more device name matching. The software fwnodes that we now have in
-> kernel should make that possible, once we add support for references
-> to them.
-> 
-> The original RFC:
-> https://lkml.org/lkml/2018/10/24/619
-> 
-> thanks,
-> 
-> Heikki Krogerus (9):
->    platform/x86: intel_cht_int33fe: Prepare for better mux naming scheme
->    usb: typec: Rationalize the API for the muxes
->    platform/x86: intel_cht_int33fe: Remove old style mux connections
->    device connection: Add fwnode member to struct device_connection
->    usb: typec: mux: Find the muxes by also matching against the device
->      node
->    usb: roles: Find the muxes by also matching against the device node
->    usb: typec: Find the ports by also matching against the device node
->    device connection: Prepare support for firmware described connections
->    device connection: Find device connections also from device graphs
-> 
->   drivers/base/devcon.c                    | 62 ++++++++++++++-
->   drivers/platform/x86/intel_cht_int33fe.c | 15 ++--
->   drivers/usb/roles/class.c                | 21 +++++-
->   drivers/usb/typec/class.c                | 31 ++++++--
->   drivers/usb/typec/mux.c                  | 96 ++++++++++++++++++++----
->   include/linux/device.h                   |  6 ++
->   include/linux/usb/role.h                 |  1 +
->   include/linux/usb/typec_mux.h            |  3 +-
->   8 files changed, 195 insertions(+), 40 deletions(-)
-> 
+-- 
+viresh
