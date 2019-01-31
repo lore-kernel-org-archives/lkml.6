@@ -2,165 +2,65 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CE8C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6826DC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B16E7218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:58:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45CCF2082C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:59:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728632AbfAaS6M (ORCPT
+        id S1728404AbfAaS66 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:58:12 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:49838 "EHLO ale.deltatee.com"
+        Thu, 31 Jan 2019 13:58:58 -0500
+Received: from foss.arm.com ([217.140.101.70]:49930 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727189AbfAaS5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 13:57:17 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gpHWR-0001uy-Ff; Thu, 31 Jan 2019 11:57:14 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gpHWP-0004h6-G9; Thu, 31 Jan 2019 11:57:09 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kselftest@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Allen Hubbe <allenbh@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 31 Jan 2019 11:56:55 -0700
-Message-Id: <20190131185656.17972-9-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20190131185656.17972-1-logang@deltatee.com>
-References: <20190131185656.17972-1-logang@deltatee.com>
+        id S1726488AbfAaS66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 13:58:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCF9780D;
+        Thu, 31 Jan 2019 10:58:57 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E76AD3F59C;
+        Thu, 31 Jan 2019 10:58:53 -0800 (PST)
+Subject: Re: [PATCH v3 3/7] coresight: Use event attributes for sink selection
+To:     mathieu.poirier@linaro.org, acme@kernel.org, peterz@infradead.org
+Cc:     gregkh@linuxfoundation.org, mingo@redhat.com, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
+        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190131184714.20388-1-mathieu.poirier@linaro.org>
+ <20190131184714.20388-4-mathieu.poirier@linaro.org>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <6fa9c1f9-2952-f758-851d-4fe4335d561b@arm.com>
+Date:   Thu, 31 Jan 2019 18:58:50 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, jdmason@kudzu.us, bhelgaas@google.com, joro@8bytes.org, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, epilmore@gigaio.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH 8/9] NTB: Add ntb_msi_test support to ntb_test
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+In-Reply-To: <20190131184714.20388-4-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the ntb_msi_test module is available, the test code will trigger
-each of the interrupts and ensure the corresponding occurrences files
-gets incremented.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Jon Mason <jdmason@kudzu.us>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Allen Hubbe <allenbh@gmail.com>
----
- tools/testing/selftests/ntb/ntb_test.sh | 54 ++++++++++++++++++++++++-
- 1 file changed, 52 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/ntb/ntb_test.sh b/tools/testing/selftests/ntb/ntb_test.sh
-index 17ca36403d04..1a10b8f67727 100755
---- a/tools/testing/selftests/ntb/ntb_test.sh
-+++ b/tools/testing/selftests/ntb/ntb_test.sh
-@@ -87,10 +87,10 @@ set -e
- 
- function _modprobe()
- {
--	modprobe "$@"
-+	modprobe "$@" || return 1
- 
- 	if [[ "$REMOTE_HOST" != "" ]]; then
--		ssh "$REMOTE_HOST" modprobe "$@"
-+		ssh "$REMOTE_HOST" modprobe "$@" || return 1
- 	fi
- }
- 
-@@ -451,6 +451,30 @@ function pingpong_test()
- 	echo "  Passed"
- }
- 
-+function msi_test()
-+{
-+	LOC=$1
-+	REM=$2
-+
-+	write_file 1 $LOC/ready
-+
-+	echo "Running MSI interrupt tests on: $(subdirname $LOC) / $(subdirname $REM)"
-+
-+	CNT=$(read_file "$LOC/count")
-+	for ((i = 0; i < $CNT; i++)); do
-+		START=$(read_file $REM/../irq${i}_occurrences)
-+		write_file $i $LOC/trigger
-+		END=$(read_file $REM/../irq${i}_occurrences)
-+
-+		if [[ $(($END - $START)) != 1 ]]; then
-+			echo "MSI did not trigger the interrupt on the remote side!" >&2
-+			exit 1
-+		fi
-+	done
-+
-+	echo "  Passed"
-+}
-+
- function perf_test()
- {
- 	USE_DMA=$1
-@@ -529,6 +553,29 @@ function ntb_pingpong_tests()
- 	_modprobe -r ntb_pingpong
- }
- 
-+function ntb_msi_tests()
-+{
-+	LOCAL_MSI="$DEBUGFS/ntb_msi_test/$LOCAL_DEV"
-+	REMOTE_MSI="$REMOTE_HOST:$DEBUGFS/ntb_msi_test/$REMOTE_DEV"
-+
-+	echo "Starting ntb_msi_test tests..."
-+
-+	if ! _modprobe ntb_msi_test 2> /dev/null; then
-+		echo "  Not doing MSI tests seeing the module is not available."
-+		return
-+	fi
-+
-+	port_test $LOCAL_MSI $REMOTE_MSI
-+
-+	LOCAL_PEER="$LOCAL_MSI/peer$LOCAL_PIDX"
-+	REMOTE_PEER="$REMOTE_MSI/peer$REMOTE_PIDX"
-+
-+	msi_test $LOCAL_PEER $REMOTE_PEER
-+	msi_test $REMOTE_PEER $LOCAL_PEER
-+
-+	_modprobe -r ntb_msi_test
-+}
-+
- function ntb_perf_tests()
- {
- 	LOCAL_PERF="$DEBUGFS/ntb_perf/$LOCAL_DEV"
-@@ -550,6 +597,7 @@ function cleanup()
- 	_modprobe -r ntb_perf 2> /dev/null
- 	_modprobe -r ntb_pingpong 2> /dev/null
- 	_modprobe -r ntb_transport 2> /dev/null
-+	_modprobe -r ntb_msi_test 2> /dev/null
- 	set -e
- }
- 
-@@ -586,5 +634,7 @@ ntb_tool_tests
- echo
- ntb_pingpong_tests
- echo
-+ntb_msi_tests
-+echo
- ntb_perf_tests
- echo
--- 
-2.19.0
+On 31/01/2019 18:47, Mathieu Poirier wrote:
+> This patch uses the information conveyed by perf_event::attr::config2
+> to select a sink to use for the session.  That way a sink can easily be
+> selected to be used by more than one source, something that isn't currently
+> possible with the sysfs implementation.
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
 
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
