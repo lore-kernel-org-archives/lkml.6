@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143E2C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AD6C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBBDB20B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:27:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AB7A20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:27:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JF1r+X5H"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8rUGnym"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbfAaT1O (ORCPT
+        id S1728963AbfAaT10 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:27:14 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44466 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728831AbfAaT0x (ORCPT
+        Thu, 31 Jan 2019 14:27:26 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46449 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728806AbfAaT0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:26:53 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k19-v6so3652999lji.11
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:26:51 -0800 (PST)
+        Thu, 31 Jan 2019 14:26:49 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v15-v6so3641715ljh.13
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:26:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0AwLXrEd7M2yFDSfUFl2drBoNF7xy3205BXhalIm0O4=;
-        b=JF1r+X5Hcp3O5NJSqKVztcKULmcyNJYJ16TAEZrZv8TDJ6mTt+5i7ovjzRONPtwRL7
-         XMtgZKHkE2QyG/bbiOY0ynra4EmQ0w72Y6Mim44SVMTZtez7tY6U7VT83Q2b5wqZSnah
-         6x4w3yUhWqZfjuXbJahkQjQGBXjWl7E3kNADostTG2n3J2rB7uGPQmcXZyiiukhyMq2p
-         aiL0tXWc3dWuJEz3+7qs53Jt2DOVeNxbkfc+TCw1/AvtjW3DAYyhMz652RGHiUiS7S8l
-         W4whoiU6Ty+m6PRlfg9tSdZwfnch9NDtdfURod7Fi82rAmCZnzwuQmB1NyLpMbVgjMjf
-         51mA==
+        bh=kMX9PItUPMiQMxjRMyjWjmGwMlCh2Fm0sCIzyKUAS4U=;
+        b=X8rUGnymKqKmgKxfEoEt/PajSFAea8zBcQUh2t1Zm7WGSTGL2FNy3y8iERgD7oxhNe
+         EIysk0+x72Ibp7p1/ZF7rOMbmCw+1r7lBD5jFfdYoOqVQTLxGpZsXsbJ/Bat4evfuBki
+         BUwVWj2PqiYjlfgS5K4IzYrOjgVoxDk9On08f6Nx2ky5UkUBgUSANsMDT+lh75TzWBXU
+         qtrUcTaU1utvCIMveS5ozhmKP4nvtuWFqWjxoFj8+UPSjBk5LRbqPxXMEDUp3X8+S4AG
+         iBg5XSJm4/77u1UkbeW22pIbLBHH3+j7TVUKeHmrE1tGyukHct0+AY1aD5ALs1N8m/Xa
+         PYyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=0AwLXrEd7M2yFDSfUFl2drBoNF7xy3205BXhalIm0O4=;
-        b=fPHBWdXsyTXKYCzuPV4kzcz3I81HHTASIWrlu4o1QRS1gPKF0LUtsi/hSKV/V1JUhF
-         VFp/L1twak6s7HN7IgtG352vC9COXg1nY+1K7eFAnmPZgchoUPo8JDmwEfPJSJ3nigNg
-         qjZgSrgtpdol6Qphs8yXF4qseo0VJawXy3DwiQYW606x9r6hU/49kbSUh8JUB1XvviQn
-         YXh8wnWiJgHC9ETAERrliIZsVJl6mbcziF/QwcBF3Q/Cjh6BDhfXja1D/zX6U7K30ggI
-         5V3FcZ3ZtJrgmCeU5bbwQ5AiP6cQ44zdVKkq4GJLZKlygOTco2hRllXDZHkuTHseHN7E
-         r6XA==
-X-Gm-Message-State: AHQUAuYfSzE4jhsXeasLOzE5pDaOmvAoB1KZJele/e6nUyy6bWNRfX6n
-        Z5ssTTLRyIE2BngEVrSaJyM=
-X-Google-Smtp-Source: AHgI3IaAeoQyPNOlSXzLNvO3njgYOc8sjvpVB4vkLpmkuOngioFD/oVhu3FNnMm+L8JWxUZHMpbhzQ==
-X-Received: by 2002:a2e:744:: with SMTP id i4-v6mr6140083ljd.140.1548962811108;
-        Thu, 31 Jan 2019 11:26:51 -0800 (PST)
+        bh=kMX9PItUPMiQMxjRMyjWjmGwMlCh2Fm0sCIzyKUAS4U=;
+        b=efqbxLgZW92rgCYJTjm/sT21vM5kUMwKFgGluuWZDGZHz/UNa0SaKPOE5RlD/69GUc
+         Q7cHWsGpOb7eDmyTBi0poMooLXEdHP/d8+JTZs0Xb4KanHx9Is2W79UobUpZ4DlYA0WU
+         QTAl3AGtf6Wf71SjPjP0lMsP3icm3obhZn53QXqNfrFwj7NOKproyx5GDySBaWiWpepW
+         fzcj+AmibrOa6RG1DJ0ZPU/aReftNgS1OhPXaerLFmp8u5Ow7y49Hhx3PntZkzxppIFy
+         1gSXZXoDBv3nTatDR3iBu963bETd9c00alpn4SNcaBB2QJpsq8ZllY+9lLHldFHibFPc
+         jjiA==
+X-Gm-Message-State: AJcUukcj3iH3nJy2TqWan9HvcKkZtivKlMofUaOL9km5Gc5CYpHtpSHl
+        XLFx3/2BCac1ZB2pgqI6JC0=
+X-Google-Smtp-Source: ALg8bN6c+Y7wW4TSpHn36kae9r4f7NmHSm9JSf8D1HNHqy1pO8aBjxot+1ecHYeee+GIbhOad4mCIg==
+X-Received: by 2002:a2e:9783:: with SMTP id y3-v6mr27767798lji.167.1548962807398;
+        Thu, 31 Jan 2019 11:26:47 -0800 (PST)
 Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id f1sm987363lfm.22.2019.01.31.11.26.50
+        by smtp.gmail.com with ESMTPSA id f1sm987363lfm.22.2019.01.31.11.26.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 11:26:50 -0800 (PST)
+        Thu, 31 Jan 2019 11:26:46 -0800 (PST)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         dri-devel@lists.freedesktop.org
@@ -62,9 +62,9 @@ Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
         Linus Walleij <linus.walleij@linaro.org>,
         Stefan Mavrodiev <stefan@olimex.com>,
         linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v1 17/19] drm/panel: seiko: use DRM_DEV*
-Date:   Thu, 31 Jan 2019 20:26:17 +0100
-Message-Id: <20190131192619.9763-18-sam@ravnborg.org>
+Subject: [PATCH v1 13/19] drm/panel: orisetech: use DRM_DEV*
+Date:   Thu, 31 Jan 2019 20:26:13 +0100
+Message-Id: <20190131192619.9763-14-sam@ravnborg.org>
 X-Mailer: git-send-email 2.12.0
 In-Reply-To: <20190131192619.9763-1-sam@ravnborg.org>
 References: <20190131192619.9763-1-sam@ravnborg.org>
@@ -81,62 +81,48 @@ Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: David Airlie <airlied@linux.ie>
 Cc: Daniel Vetter <daniel@ffwll.ch>
 ---
- drivers/gpu/drm/panel/panel-seiko-43wvf1g.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-index c1348a687447..26da26d38241 100644
---- a/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-+++ b/drivers/gpu/drm/panel/panel-seiko-43wvf1g.c
-@@ -16,6 +16,7 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_device.h>
- #include <drm/drm_panel.h>
-+#include <drm/drm_print.h>
+diff --git a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
+index 5bacf3f2da05..e7920ae018bd 100644
+--- a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
++++ b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
+@@ -431,14 +431,14 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
  
- #include <video/display_timing.h>
- #include <video/videomode.h>
-@@ -73,8 +74,8 @@ static int seiko_panel_get_fixed_modes(struct seiko_panel *panel)
- 		videomode_from_timing(dt, &vm);
- 		mode = drm_mode_create(drm);
- 		if (!mode) {
--			dev_err(drm->dev, "failed to add mode %ux%u\n",
--				dt->hactive.typ, dt->vactive.typ);
-+			DRM_DEV_ERROR(drm->dev, "failed to add mode %ux%u\n",
-+				      dt->hactive.typ, dt->vactive.typ);
- 			continue;
- 		}
- 
-@@ -94,8 +95,9 @@ static int seiko_panel_get_fixed_modes(struct seiko_panel *panel)
- 
- 		mode = drm_mode_duplicate(drm, m);
- 		if (!mode) {
--			dev_err(drm->dev, "failed to add mode %ux%u@%u\n",
--				m->hdisplay, m->vdisplay, m->vrefresh);
-+			DRM_DEV_ERROR(drm->dev,
-+				      "failed to add mode %ux%u@%u\n",
-+				      m->hdisplay, m->vdisplay, m->vrefresh);
- 			continue;
- 		}
- 
-@@ -168,7 +170,7 @@ static int seiko_panel_prepare(struct drm_panel *panel)
- 
- 	err = regulator_enable(p->dvdd);
- 	if (err < 0) {
--		dev_err(panel->dev, "failed to enable dvdd: %d\n", err);
-+		DRM_DEV_ERROR(panel->dev, "failed to enable dvdd: %d\n", err);
- 		return err;
+ 	ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
+ 	if (IS_ERR(ctx->reset_gpio)) {
+-		dev_err(dev, "cannot get reset-gpio\n");
++		DRM_DEV_ERROR(dev, "cannot get reset-gpio\n");
+ 		return PTR_ERR(ctx->reset_gpio);
  	}
  
-@@ -177,7 +179,7 @@ static int seiko_panel_prepare(struct drm_panel *panel)
- 
- 	err = regulator_enable(p->avdd);
- 	if (err < 0) {
--		dev_err(panel->dev, "failed to enable avdd: %d\n", err);
-+		DRM_DEV_ERROR(panel->dev, "failed to enable avdd: %d\n", err);
- 		goto disable_dvdd;
+ 	ctx->supply = devm_regulator_get(dev, "power");
+ 	if (IS_ERR(ctx->supply)) {
+ 		ret = PTR_ERR(ctx->supply);
+-		dev_err(dev, "failed to request regulator: %d\n", ret);
++		DRM_DEV_ERROR(dev, "failed to request regulator: %d\n", ret);
+ 		return ret;
  	}
  
+@@ -461,7 +461,7 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
+ 						     NULL);
+ 	if (IS_ERR(ctx->bl_dev)) {
+ 		ret = PTR_ERR(ctx->bl_dev);
+-		dev_err(dev, "failed to register backlight: %d\n", ret);
++		DRM_DEV_ERROR(dev, "failed to register backlight: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -474,7 +474,7 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
+ 
+ 	ret = mipi_dsi_attach(dsi);
+ 	if (ret < 0) {
+-		dev_err(dev, "mipi_dsi_attach failed. Is host ready?\n");
++		DRM_DEV_ERROR(dev, "mipi_dsi_attach failed. Is host ready?\n");
+ 		drm_panel_remove(&ctx->panel);
+ 		backlight_device_unregister(ctx->bl_dev);
+ 		return ret;
 -- 
 2.12.0
 
