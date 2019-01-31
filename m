@@ -2,131 +2,130 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D51A0C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A972AC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B24FE20869
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7497D218F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548946586;
+	bh=bzMTTgRyGCbRDBHIrbsuD4dgSoDd5YrD4DzXeA71LWU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=oA83GWiht9S/0UKY74z/j2DThZkP4Q/bGxiEuk2uldO43cjBTlSMwxajIVYSIughQ
+	 HV7U0wWzedyTNDCWEhNDOVI3BZxWWeKqkx5TNvyc4UFacbnThfPXY2SrABi5MtilJz
+	 EeMi1VrcPjLI1nfG1d0iiApTgd9cKlIfauuL07XY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732401AbfAaOze (ORCPT
+        id S1732474AbfAaO4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 09:55:34 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45370 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbfAaOze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 09:55:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2A4C80D;
-        Thu, 31 Jan 2019 06:55:33 -0800 (PST)
-Received: from [10.1.197.2] (ostrya.cambridge.arm.com [10.1.197.2])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C1B43F59C;
-        Thu, 31 Jan 2019 06:55:32 -0800 (PST)
-Subject: Re: [PATCH RFC 1/1] iommu: set the default iommu-dma mode as
- non-strict
-To:     Zhen Lei <thunder.leizhen@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     Yunsheng Lin <linyunsheng@huawei.com>
-References: <20190131135211.6732-1-thunder.leizhen@huawei.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <94b9b0c9-1a24-63ba-5abe-5f6d79fed415@arm.com>
-Date:   Thu, 31 Jan 2019 14:55:17 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 09:56:24 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:45931 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfAaO4Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 09:56:24 -0500
+Received: by mail-yb1-f193.google.com with SMTP id t11so1375897ybi.12;
+        Thu, 31 Jan 2019 06:56:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wqkae5/SZUXV0XpHwrdhyDmdmZuXObNbFvC+52gNI10=;
+        b=T+tfKU9bLG/Ze8iEPeVXdRWijWD8iEUGg5hxZ7uE66Rm49Duni5enxE3uJgCj0ClBE
+         8OHx1m0Y2s0wwyJHaSsN76bNKEbEG0RWW2e/Ft212//gGXoVP+sO1/qflAXTBx+FwUiS
+         icEdvmjlo+NbU2KspZtxwijuTJEK40AKekvdtptVupBJ5hN23RQdGH9bPORrBFsiB59S
+         eA+FsM2mQKfMnbjlR3cIWbUHKOfV0+fGr8LQPdnG3qcRwTzAK8lcHMa37eXx9CWGuAn5
+         MvTn09SulsASG7+Bii1yDxsMlik+rv0QvEZYmbMwOyPxR9gviKae5xbVAcFtBvh+Xo0c
+         1HiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wqkae5/SZUXV0XpHwrdhyDmdmZuXObNbFvC+52gNI10=;
+        b=jClTGT5A/4PZLru3cFAGzfC51/g/84da9f9agQXCk5uqbaYEAnj/GBIFJ6I9tNykB5
+         K+D298pqATYxW/cJUITSEPh042bDD6bzN/ktkxqb6CJ1DhFctYW5zA94m/KLCUZBBm02
+         /7eV+rN2fXTvrb7iOamrPx3GE01YMKnXDJ9xUrlyD6DjCwMyT4B+GyBefbI758WlRNJ4
+         dmxRRlR8ggX91PhdWs+m41amZTBmZh1oVXZvXwWhiCJuOwpgSKXyNlPp2pqPFf+q/B3i
+         rrNhnjvO9+8RCaRM7Yc/Vaaa2HuS5LSVmGLp0j3MOZt2gw0DccyQijvKfT/YKDS8EH2g
+         i+2A==
+X-Gm-Message-State: AHQUAubgTzFlHoGd9QZfHjLykTtZ1Nq6sSe3f0Mqr/a1mZylhgbQw68C
+        TXlFZZvj8AYpyBA69gB9sq4=
+X-Google-Smtp-Source: AHgI3IbN//PVesytuT4ildCDrP3BYEXd6batBNJ0s56TIfUQfrflfE1eViTQwdfJVS6+wmyfKc03VA==
+X-Received: by 2002:a25:3503:: with SMTP id c3mr6148458yba.321.1548946582781;
+        Thu, 31 Jan 2019 06:56:22 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:b53a])
+        by smtp.gmail.com with ESMTPSA id r188sm1666201ywb.30.2019.01.31.06.56.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 06:56:21 -0800 (PST)
+Date:   Thu, 31 Jan 2019 06:56:20 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Herton Krzesinski <hkrzesin@redhat.com>,
+        Jan Stancek <jstancek@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cgroup/pids: turn cgroup_subsys->free() into
+ cgroup_subsys->release() to fix the accounting
+Message-ID: <20190131145620.GC50184@devbig004.ftw2.facebook.com>
+References: <20190128160013.GA21219@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190131135211.6732-1-thunder.leizhen@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128160013.GA21219@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Jan 28, 2019 at 05:00:13PM +0100, Oleg Nesterov wrote:
+> The only user of cgroup_subsys->free() callback is pids_cgrp_subsys which
+> needs pids_free() to uncharge the pid.
+> 
+> However, ->free() is called from __put_task_struct()->cgroup_free() and this
+> is too late. Even the trivial program which does
+> 
+> 	for (;;) {
+> 		int pid = fork();
+> 		assert(pid >= 0);
+> 		if (pid)
+> 			wait(NULL);
+> 		else
+> 			exit(0);
+> 	}
+> 
+> can run out of limits because release_task()->call_rcu(delayed_put_task_struct)
+> implies an RCU gp after the task/pid goes away and before the final put().
+> 
+> Test-case:
+> 
+> 	mkdir -p /tmp/CG
+> 	mount -t cgroup2 none /tmp/CG
+> 	echo '+pids' > /tmp/CG/cgroup.subtree_control
+> 
+> 	mkdir /tmp/CG/PID
+> 	echo 2 > /tmp/CG/PID/pids.max
+> 
+> 	perl -e 'while ($p = fork) { wait; } $p // die "fork failed: $!\n"' &
+> 	echo $! > /tmp/CG/PID/cgroup.procs
+> 
+> Without this patch the forking process fails soon after migration.
+> 
+> Rename cgroup_subsys->free() to cgroup_subsys->release() and move the callsite
+> into the new helper, cgroup_release(), called by release_task() which actually
+> frees the pid(s).
+> 
+> Reported-by: Herton R. Krzesinski <hkrzesin@redhat.com>
+> Reported-by: Jan Stancek <jstancek@redhat.com>
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 
-On 31/01/2019 13:52, Zhen Lei wrote:
-> Currently, many peripherals are faster than before. For example, the top
-> speed of the older netcard is 10Gb/s, and now it's more than 25Gb/s. But
-> when iommu page-table mapping enabled, it's hard to reach the top speed
-> in strict mode, because of frequently map and unmap operations. In order
-> to keep abreast of the times, I think it's better to set non-strict as
-> default.
+Applied to cgroup/for-5.0.
 
-Most users won't be aware of this relaxation and will have their system
-vulnerable to e.g. thunderbolt hotplug. See for example 4.3 Deferred
-Invalidation in
-http://www.cs.technion.ac.il/users/wwwb/cgi-bin/tr-get.cgi/2018/MSC/MSC-2018-21.pdf
+Thanks, Oleg.
 
-Why not keep the policy to secure by default, as we do for
-iommu.passthrough? And maybe add something similar to
-CONFIG_IOMMU_DEFAULT_PASSTRHOUGH? It's easy enough for experts to pass a
-command-line argument or change the default config.
-
-Thanks,
-Jean
-
-> 
-> Below it's our iperf performance data of 25Gb netcard:
-> strict mode: 18-20 Gb/s
-> non-strict mode: 23.5 Gb/s
-> 
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 4 ++--
->  drivers/iommu/iommu.c                           | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index b799bcf..667221f 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1779,13 +1779,13 @@
-> 
->  	iommu.strict=	[ARM64] Configure TLB invalidation behaviour
->  			Format: { "0" | "1" }
-> -			0 - Lazy mode.
-> +			0 - Lazy mode (default).
->  			  Request that DMA unmap operations use deferred
->  			  invalidation of hardware TLBs, for increased
->  			  throughput at the cost of reduced device isolation.
->  			  Will fall back to strict mode if not supported by
->  			  the relevant IOMMU driver.
-> -			1 - Strict mode (default).
-> +			1 - Strict mode.
->  			  DMA unmap operations invalidate IOMMU hardware TLBs
->  			  synchronously.
-> 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 3ed4db3..10e0b49 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -43,7 +43,7 @@
->  #else
->  static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
->  #endif
-> -static bool iommu_dma_strict __read_mostly = true;
-> +static bool iommu_dma_strict __read_mostly;
-> 
->  struct iommu_callback_data {
->  	const struct iommu_ops *ops;
-> --
-> 1.8.3
-> 
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-
+-- 
+tejun
