@@ -2,199 +2,374 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4CBC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D0CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAB2F2087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:14:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R6Ni4t6M"
+	by mail.kernel.org (Postfix) with ESMTP id 54BEA20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:14:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729601AbfAaWN7 (ORCPT
+        id S1729622AbfAaWOv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 17:13:59 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35982 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbfAaWN6 (ORCPT
+        Thu, 31 Jan 2019 17:14:51 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52226 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbfAaWOu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 17:13:58 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b85so2129441pfc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 14:13:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6gcXthu6vb+ihTFEPQTW8BXATfR0X3APAkCL8SfFcdU=;
-        b=R6Ni4t6MTpFAucDhvSxJfW+pJRURt8DS/lVpq1DQWhp5L5nA8lSUUWGVrgIqvH6dAD
-         gW+CmiknE9tX1GhGspe0U2oOdk2GzUqkLQAxIMrrwjANiOCZpBBw6mUp9Xwf16fZh0Qx
-         R4fpxhNg1NZWrubAYgSIZoEJ8L7gaD6lcPac8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6gcXthu6vb+ihTFEPQTW8BXATfR0X3APAkCL8SfFcdU=;
-        b=QuSNr9D/JlouH9suT/T/Zf8Pxeq7ofQwgpuVqE7muWZdvn++19O0XdCCb4LrZa+ylf
-         O0HTp+D2xtCnYXPbJgS7VyrMjH24WWmLZUBOjDs8TEGCfmG+N4fXZxdwe4e4ics+piMu
-         DFPFJXkJooU7L84mbCVkJ79GWw30cmqIiZWqqnRWUMnvkpGqaGyQkIhm5A1c46x9qyCo
-         9B31ThKipbXQ3mVCpW3saUTGEcXvkvJnoHBjtstpUTOAdNeYlziQZChAaGHUmmuDFnLP
-         CA797pPjTOytQ6Tcl9uTAAmtXGjZLyu2h40RzQgGXPJLLCG0v9kf2On/O39uFZsCacvn
-         KGRg==
-X-Gm-Message-State: AJcUukdsXT5ezIXDIxZ7yCtfHWNs59P3vxzYfiSRZhlXaQ1M77VOqfzF
-        ntgtKxESb7ZFWNANb0rQZJdIWg==
-X-Google-Smtp-Source: ALg8bN6bjHJeyN+XaFsdg3hkLi0eQSTj5yP6QzAEqSOY1L3X931hxZna7uobS/gzxiJjUm0hhSo96Q==
-X-Received: by 2002:a65:5c4b:: with SMTP id v11mr33081093pgr.333.1548972837427;
-        Thu, 31 Jan 2019 14:13:57 -0800 (PST)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id z10sm7961681pfg.120.2019.01.31.14.13.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 31 Jan 2019 14:13:56 -0800 (PST)
-From:   Evan Green <evgreen@chromium.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Gwendal Grignou <gwendal@chromium.org>,
-        Martin K Peterson <martin.peterson@oracle.com>,
-        Alexis Savery <asavery@chromium.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Evan Green <evgreen@chromium.org>, linux-block@vger.kernel.org,
+        Thu, 31 Jan 2019 17:14:50 -0500
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4BC14E44;
+        Thu, 31 Jan 2019 22:14:47 +0000 (UTC)
+Date:   Thu, 31 Jan 2019 14:14:46 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH 2/2] loop: Better discard support for block devices
-Date:   Thu, 31 Jan 2019 14:13:28 -0800
-Message-Id: <20190131221328.85343-3-evgreen@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190131221328.85343-1-evgreen@chromium.org>
-References: <20190131221328.85343-1-evgreen@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v9 1/3] mm: Shuffle initial free memory to improve
+ memory-side-cache utilization
+Message-Id: <20190131141446.46fe7019378ac064dff9183e@linux-foundation.org>
+In-Reply-To: <154882453604.1338686.15108059741397800728.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <154882453052.1338686.16411162273671426494.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <154882453604.1338686.15108059741397800728.stgit@dwillia2-desk3.amr.corp.intel.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the backing device for a loop device is a block device,
-then mirror the discard properties of the underlying block
-device into the loop device. While in there, differentiate
-between REQ_OP_DISCARD and REQ_OP_WRITE_ZEROES, which are
-different for block devices, but which the loop device had
-just been lumping together.
+On Tue, 29 Jan 2019 21:02:16 -0800 Dan Williams <dan.j.williams@intel.com> wrote:
 
-This change fixes blktest block/003, and removes an extraneous
-error print in block/013 when testing on a loop device backed
-by a block device that does not support discard.
+> Randomization of the page allocator improves the average utilization of
+> a direct-mapped memory-side-cache. Memory side caching is a platform
+> capability that Linux has been previously exposed to in HPC
+> (high-performance computing) environments on specialty platforms. In
+> that instance it was a smaller pool of high-bandwidth-memory relative to
+> higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
+> be found on general purpose server platforms where DRAM is a cache in
+> front of higher latency persistent memory [1].
+> 
+> Robert offered an explanation of the state of the art of Linux
+> interactions with memory-side-caches [2], and I copy it here:
+> 
+>     It's been a problem in the HPC space:
+>     http://www.nersc.gov/research-and-development/knl-cache-mode-performance-coe/
+> 
+>     A kernel module called zonesort is available to try to help:
+>     https://software.intel.com/en-us/articles/xeon-phi-software
+> 
+>     and this abandoned patch series proposed that for the kernel:
+>     https://lkml.kernel.org/r/20170823100205.17311-1-lukasz.daniluk@intel.com
+> 
+>     Dan's patch series doesn't attempt to ensure buffers won't conflict, but
+>     also reduces the chance that the buffers will. This will make performance
+>     more consistent, albeit slower than "optimal" (which is near impossible
+>     to attain in a general-purpose kernel).  That's better than forcing
+>     users to deploy remedies like:
+>         "To eliminate this gradual degradation, we have added a Stream
+>          measurement to the Node Health Check that follows each job;
+>          nodes are rebooted whenever their measured memory bandwidth
+>          falls below 300 GB/s."
+> 
+> A replacement for zonesort was merged upstream in commit cc9aec03e58f
+> "x86/numa_emulation: Introduce uniform split capability". With this
+> numa_emulation capability, memory can be split into cache sized
+> ("near-memory" sized) numa nodes. A bind operation to such a node, and
+> disabling workloads on other nodes, enables full cache performance.
+> However, once the workload exceeds the cache size then cache conflicts
+> are unavoidable. While HPC environments might be able to tolerate
+> time-scheduling of cache sized workloads, for general purpose server
+> platforms, the oversubscribed cache case will be the common case.
+> 
+> The worst case scenario is that a server system owner benchmarks a
+> workload at boot with an un-contended cache only to see that performance
+> degrade over time, even below the average cache performance due to
+> excessive conflicts. Randomization clips the peaks and fills in the
+> valleys of cache utilization to yield steady average performance.
+> 
+> Here are some performance impact details of the patches:
+> 
+> 1/ An Intel internal synthetic memory bandwidth measurement tool, saw a
+> 3X speedup in a contrived case that tries to force cache conflicts. The
+> contrived cased used the numa_emulation capability to force an instance
+> of the benchmark to be run in two of the near-memory sized numa nodes.
+> If both instances were placed on the same emulated they would fit and
+> cause zero conflicts.  While on separate emulated nodes without
+> randomization they underutilized the cache and conflicted unnecessarily
+> due to the in-order allocation per node.
+> 
+> 2/ A well known Java server application benchmark was run with a heap
+> size that exceeded cache size by 3X. The cache conflict rate was 8% for
+> the first run and degraded to 21% after page allocator aging. With
+> randomization enabled the rate levelled out at 11%.
+> 
+> 3/ A MongoDB workload did not observe measurable difference in
+> cache-conflict rates, but the overall throughput dropped by 7% with
+> randomization in one case.
+> 
+> 4/ Mel Gorman ran his suite of performance workloads with randomization
+> enabled on platforms without a memory-side-cache and saw a mix of some
+> improvements and some losses [3].
+> 
+> While there is potentially significant improvement for applications that
+> depend on low latency access across a wide working-set, the performance
+> may be negligible to negative for other workloads. For this reason the
+> shuffle capability defaults to off unless a direct-mapped
+> memory-side-cache is detected. Even then, the page_alloc.shuffle=0
+> parameter can be specified to disable the randomization on those
+> systems.
+> 
+> Outside of memory-side-cache utilization concerns there is potentially
+> security benefit from randomization. Some data exfiltration and
+> return-oriented-programming attacks rely on the ability to infer the
+> location of sensitive data objects. The kernel page allocator,
+> especially early in system boot, has predictable first-in-first out
+> behavior for physical pages. Pages are freed in physical address order
+> when first onlined.
+> 
+> Quoting Kees:
+>     "While we already have a base-address randomization
+>      (CONFIG_RANDOMIZE_MEMORY), attacks against the same hardware and
+>      memory layouts would certainly be using the predictability of
+>      allocation ordering (i.e. for attacks where the base address isn't
+>      important: only the relative positions between allocated memory).
+>      This is common in lots of heap-style attacks. They try to gain
+>      control over ordering by spraying allocations, etc.
+> 
+>      I'd really like to see this because it gives us something similar
+>      to CONFIG_SLAB_FREELIST_RANDOM but for the page allocator."
+> 
+> While SLAB_FREELIST_RANDOM reduces the predictability of some local slab
+> caches it leaves vast bulk of memory to be predictably in order
+> allocated.  However, it should be noted, the concrete security benefits
+> are hard to quantify, and no known CVE is mitigated by this
+> randomization.
+> 
+> Introduce shuffle_free_memory(), and its helper shuffle_zone(), to
+> perform a Fisher-Yates shuffle of the page allocator 'free_area' lists
+> when they are initially populated with free memory at boot and at
+> hotplug time. Do this based on either the presence of a
+> page_alloc.shuffle=Y command line parameter, or autodetection of a
+> memory-side-cache (to be added in a follow-on patch).
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
----
+This is unfortunate from a testing and coverage point of view.  At
+least initially it is desirable that all testers run this feature.
 
- drivers/block/loop.c | 61 +++++++++++++++++++++++++++++---------------
- 1 file changed, 41 insertions(+), 20 deletions(-)
+Also, it's unfortunate that enableing the feature requires a reboot. 
+What happens if we do away with the boot-time (and maybe hotplug-time)
+randomization and permit the feature to be switched on/off at runtime?
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index a1ba555e3b92..8c2b6885db56 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -417,19 +417,14 @@ static int lo_read_transfer(struct loop_device *lo, struct request *rq,
- 	return ret;
- }
- 
--static int lo_discard(struct loop_device *lo, struct request *rq, loff_t pos)
-+static int lo_discard(struct loop_device *lo, struct request *rq,
-+		int mode, loff_t pos)
- {
--	/*
--	 * We use punch hole to reclaim the free space used by the
--	 * image a.k.a. discard. However we do not support discard if
--	 * encryption is enabled, because it may give an attacker
--	 * useful information.
--	 */
- 	struct file *file = lo->lo_backing_file;
--	int mode = FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
-+	struct request_queue *q = lo->lo_queue;
- 	int ret;
- 
--	if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
-+	if (!blk_queue_discard(q)) {
- 		ret = -EOPNOTSUPP;
- 		goto out;
- 	}
-@@ -602,8 +597,13 @@ static int do_req_filebacked(struct loop_device *lo, struct request *rq)
- 	case REQ_OP_FLUSH:
- 		return lo_req_flush(lo, rq);
- 	case REQ_OP_DISCARD:
-+		return lo_discard(lo, rq,
-+			FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, pos);
-+
- 	case REQ_OP_WRITE_ZEROES:
--		return lo_discard(lo, rq, pos);
-+		return lo_discard(lo, rq,
-+			FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE, pos);
-+
- 	case REQ_OP_WRITE:
- 		if (lo->transfer)
- 			return lo_write_transfer(lo, rq, pos);
-@@ -857,6 +857,25 @@ static void loop_config_discard(struct loop_device *lo)
- 	struct file *file = lo->lo_backing_file;
- 	struct inode *inode = file->f_mapping->host;
- 	struct request_queue *q = lo->lo_queue;
-+	struct request_queue *backingq;
-+
-+	/*
-+	 * If the backing device is a block device, mirror its discard
-+	 * capabilities.
-+	 */
-+	if (S_ISBLK(inode->i_mode)) {
-+		backingq = bdev_get_queue(inode->i_bdev);
-+		blk_queue_max_discard_sectors(q,
-+			backingq->limits.max_discard_sectors);
-+
-+		blk_queue_max_write_zeroes_sectors(q,
-+			backingq->limits.max_write_zeroes_sectors);
-+
-+		q->limits.discard_granularity =
-+			backingq->limits.discard_granularity;
-+
-+		q->limits.discard_alignment =
-+			backingq->limits.discard_alignment;
- 
- 	/*
- 	 * We use punch hole to reclaim the free space used by the
-@@ -864,22 +883,24 @@ static void loop_config_discard(struct loop_device *lo)
- 	 * encryption is enabled, because it may give an attacker
- 	 * useful information.
- 	 */
--	if ((!file->f_op->fallocate) ||
--	    lo->lo_encrypt_key_size) {
-+	} else if ((!file->f_op->fallocate) || lo->lo_encrypt_key_size) {
- 		q->limits.discard_granularity = 0;
- 		q->limits.discard_alignment = 0;
- 		blk_queue_max_discard_sectors(q, 0);
- 		blk_queue_max_write_zeroes_sectors(q, 0);
--		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
--		return;
--	}
- 
--	q->limits.discard_granularity = inode->i_sb->s_blocksize;
--	q->limits.discard_alignment = 0;
-+	} else {
-+		q->limits.discard_granularity = inode->i_sb->s_blocksize;
-+		q->limits.discard_alignment = 0;
-+
-+		blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
-+		blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
-+	}
- 
--	blk_queue_max_discard_sectors(q, UINT_MAX >> 9);
--	blk_queue_max_write_zeroes_sectors(q, UINT_MAX >> 9);
--	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-+	if (q->limits.max_discard_sectors || q->limits.max_write_zeroes_sectors)
-+		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-+	else
-+		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
- }
- 
- static void loop_unprepare_queue(struct loop_device *lo)
--- 
-2.20.1
+> The shuffling is done in terms of CONFIG_SHUFFLE_PAGE_ORDER sized free
+> pages where the default CONFIG_SHUFFLE_PAGE_ORDER is MAX_ORDER-1 i.e.
+> 10, 4MB this trades off randomization granularity for time spent
+> shuffling.  MAX_ORDER-1 was chosen to be minimally invasive to the page
+> allocator while still showing memory-side cache behavior improvements,
+> and the expectation that the security implications of finer granularity
+> randomization is mitigated by CONFIG_SLAB_FREELIST_RANDOM.
+> 
+> The performance impact of the shuffling appears to be in the noise
+> compared to other memory initialization work. Also the bulk of the work
+> is done in the background as a part of deferred_init_memmap().
+> 
+> This initial randomization can be undone over time so a follow-on patch
+> is introduced to inject entropy on page free decisions. It is reasonable
+> to ask if the page free entropy is sufficient, but it is not enough due
+> to the in-order initial freeing of pages. At the start of that process
+> putting page1 in front or behind page0 still keeps them close together,
+> page2 is still near page1 and has a high chance of being adjacent. As
+> more pages are added ordering diversity improves, but there is still
+> high page locality for the low address pages and this leads to no
+> significant impact to the cache conflict rate.
+> 
+> ...
+>
+>  include/linux/list.h    |   17 ++++
+>  include/linux/mmzone.h  |    4 +
+>  include/linux/shuffle.h |   45 +++++++++++
+>  init/Kconfig            |   23 ++++++
+>  mm/Makefile             |    7 ++
+>  mm/memblock.c           |    1 
+>  mm/memory_hotplug.c     |    3 +
+>  mm/page_alloc.c         |    6 +-
+>  mm/shuffle.c            |  188 +++++++++++++++++++++++++++++++++++++++++++++++
+
+Can we get a Documentation update for the new kernel parameter?
+
+> 
+> ...
+>
+> --- /dev/null
+> +++ b/mm/shuffle.c
+> @@ -0,0 +1,188 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright(c) 2018 Intel Corporation. All rights reserved.
+> +
+> +#include <linux/mm.h>
+> +#include <linux/init.h>
+> +#include <linux/mmzone.h>
+> +#include <linux/random.h>
+> +#include <linux/shuffle.h>
+
+Does shuffle.h need to be available to the whole kernel or can we put
+it in mm/?
+
+> +#include <linux/moduleparam.h>
+> +#include "internal.h"
+> +
+> +DEFINE_STATIC_KEY_FALSE(page_alloc_shuffle_key);
+> +static unsigned long shuffle_state __ro_after_init;
+> +
+> +/*
+> + * Depending on the architecture, module parameter parsing may run
+> + * before, or after the cache detection. SHUFFLE_FORCE_DISABLE prevents,
+> + * or reverts the enabling of the shuffle implementation. SHUFFLE_ENABLE
+> + * attempts to turn on the implementation, but aborts if it finds
+> + * SHUFFLE_FORCE_DISABLE already set.
+> + */
+> +void page_alloc_shuffle(enum mm_shuffle_ctl ctl)
+> +{
+> +	if (ctl == SHUFFLE_FORCE_DISABLE)
+> +		set_bit(SHUFFLE_FORCE_DISABLE, &shuffle_state);
+> +
+> +	if (test_bit(SHUFFLE_FORCE_DISABLE, &shuffle_state)) {
+> +		if (test_and_clear_bit(SHUFFLE_ENABLE, &shuffle_state))
+> +			static_branch_disable(&page_alloc_shuffle_key);
+> +	} else if (ctl == SHUFFLE_ENABLE
+> +			&& !test_and_set_bit(SHUFFLE_ENABLE, &shuffle_state))
+> +		static_branch_enable(&page_alloc_shuffle_key);
+> +}
+
+Can this be __meminit?
+
+> +static bool shuffle_param;
+> +extern int shuffle_show(char *buffer, const struct kernel_param *kp)
+> +{
+> +	return sprintf(buffer, "%c\n", test_bit(SHUFFLE_ENABLE, &shuffle_state)
+> +			? 'Y' : 'N');
+> +}
+> +static int shuffle_store(const char *val, const struct kernel_param *kp)
+> +{
+> +	int rc = param_set_bool(val, kp);
+> +
+> +	if (rc < 0)
+> +		return rc;
+> +	if (shuffle_param)
+> +		page_alloc_shuffle(SHUFFLE_ENABLE);
+> +	else
+> +		page_alloc_shuffle(SHUFFLE_FORCE_DISABLE);
+> +	return 0;
+> +}
+> +module_param_call(shuffle, shuffle_store, shuffle_show, &shuffle_param, 0400);
+> 
+> ...
+>
+> +/*
+> + * Fisher-Yates shuffle the freelist which prescribes iterating through
+> + * an array, pfns in this case, and randomly swapping each entry with
+> + * another in the span, end_pfn - start_pfn.
+> + *
+> + * To keep the implementation simple it does not attempt to correct for
+> + * sources of bias in the distribution, like modulo bias or
+> + * pseudo-random number generator bias. I.e. the expectation is that
+> + * this shuffling raises the bar for attacks that exploit the
+> + * predictability of page allocations, but need not be a perfect
+> + * shuffle.
+
+Reflowing the comment to use all 80 cols would save a line :)
+
+> + */
+> +#define SHUFFLE_RETRY 10
+> +void __meminit __shuffle_zone(struct zone *z)
+> +{
+> +	unsigned long i, flags;
+> +	unsigned long start_pfn = z->zone_start_pfn;
+> +	unsigned long end_pfn = zone_end_pfn(z);
+> +	const int order = SHUFFLE_ORDER;
+> +	const int order_pages = 1 << order;
+> +
+> +	spin_lock_irqsave(&z->lock, flags);
+> +	start_pfn = ALIGN(start_pfn, order_pages);
+> +	for (i = start_pfn; i < end_pfn; i += order_pages) {
+> +		unsigned long j;
+> +		int migratetype, retry;
+> +		struct page *page_i, *page_j;
+> +
+> +		/*
+> +		 * We expect page_i, in the sub-range of a zone being
+> +		 * added (@start_pfn to @end_pfn), to more likely be
+> +		 * valid compared to page_j randomly selected in the
+> +		 * span @zone_start_pfn to @spanned_pages.
+> +		 */
+> +		page_i = shuffle_valid_page(i, order);
+> +		if (!page_i)
+> +			continue;
+> +
+> +		for (retry = 0; retry < SHUFFLE_RETRY; retry++) {
+> +			/*
+> +			 * Pick a random order aligned page from the
+> +			 * start of the zone. Use the *whole* zone here
+> +			 * so that if it is freed in tiny pieces that we
+> +			 * randomize in the whole zone, not just within
+> +			 * those fragments.
+
+Second sentence is hard to parse.
+
+> +			 *
+> +			 * Since page_j comes from a potentially sparse
+> +			 * address range we want to try a bit harder to
+> +			 * find a shuffle point for page_i.
+> +			 */
+
+Reflow the comment...
+
+> +			j = z->zone_start_pfn +
+> +				ALIGN_DOWN(get_random_long() % z->spanned_pages,
+> +						order_pages);
+> +			page_j = shuffle_valid_page(j, order);
+> +			if (page_j && page_j != page_i)
+> +				break;
+> +		}
+> +		if (retry >= SHUFFLE_RETRY) {
+> +			pr_debug("%s: failed to swap %#lx\n", __func__, i);
+> +			continue;
+> +		}
+> +
+> +		/*
+> +		 * Each migratetype corresponds to its own list, make
+> +		 * sure the types match otherwise we're moving pages to
+> +		 * lists where they do not belong.
+> +		 */
+
+Reflow.
+
+> +		migratetype = get_pageblock_migratetype(page_i);
+> +		if (get_pageblock_migratetype(page_j) != migratetype) {
+> +			pr_debug("%s: migratetype mismatch %#lx\n", __func__, i);
+> +			continue;
+> +		}
+> +
+> +		list_swap(&page_i->lru, &page_j->lru);
+> +
+> +		pr_debug("%s: swap: %#lx -> %#lx\n", __func__, i, j);
+> +
+> +		/* take it easy on the zone lock */
+> +		if ((i % (100 * order_pages)) == 0) {
+> +			spin_unlock_irqrestore(&z->lock, flags);
+> +			cond_resched();
+> +			spin_lock_irqsave(&z->lock, flags);
+> +		}
+> +	}
+> +	spin_unlock_irqrestore(&z->lock, flags);
+> +}
+> 
+> ...
+>
 
