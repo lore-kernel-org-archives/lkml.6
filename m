@@ -2,392 +2,280 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0EEC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F036C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1434020869
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:47:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Q1rwksqz"
+	by mail.kernel.org (Postfix) with ESMTP id 67F0920869
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:49:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731922AbfAaOrB (ORCPT
+        id S1728808AbfAaOt6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 09:47:01 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43331 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727336AbfAaOq7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 09:46:59 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f9so2755155eds.10
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 06:46:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=y4VCJ/qctc0hfu2Es6QvJA+1yEUBQ6lCRRjdPJuOX8M=;
-        b=Q1rwksqzaw5InubvHxs2QRrItZwSHrUjhmTIVA3jwjX90/+KTsv0q0Ak1AbCoaBtJ4
-         NmeF4waTKfl5Vff3vaol6dSPPHHxqq4qICTcYeqEJr8SRXW1E7aFQssKGCGQLFKCAL9k
-         BZyZ3nqh2pC+WXyHcoqQc4TGBVblx/bAu6N6M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=y4VCJ/qctc0hfu2Es6QvJA+1yEUBQ6lCRRjdPJuOX8M=;
-        b=rnSn36LxK3H1e0HTdFWsfqZxQsAyJHMUt1knhXaqDPnO/X7Ll+hZZDL4ZeGQJPAxVP
-         zIcltGhp5ZFOFhkXCJNNGfUTk5D2S/8MuxA1HWp6ipKZSmFTjdqRV94XKKfNO6hrjtUo
-         jXiHJAZo4DNE263uuEB/flH/+qzqIfOGP/aKIiJEpfpbpbAfcseNRGBevTCW6ZCkULGu
-         K89M06hNYwSJvv8tF8FIG2UUs5MVAdopi/AJ4vgMUKIqdkuMbE8edhBfxzJpW4QWBb/Q
-         Ws+eqwVDyG/Mmj1AUTMxaGNGSIBjHKEsU1B0AG9St1zVioZoW6qiLnyfJJmDDaDNQmng
-         gmeA==
-X-Gm-Message-State: AJcUukeraDGCHUj4isUVlqEHGj9Gbqwdf1B2XbATzDiIGbHJg5TJcoHX
-        ETwFW+3be0q8wpGhvzGojOYuOA==
-X-Google-Smtp-Source: ALg8bN5bCnIbNZVqCNtv4eeBVUQ8rJAabFJ8pSw2QxLnrTRHOlfzPN9++0jl5VKXzhGrQ6CLlof71g==
-X-Received: by 2002:a50:ac47:: with SMTP id w7mr35636715edc.260.1548946016140;
-        Thu, 31 Jan 2019 06:46:56 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id g37sm1353680edb.85.2019.01.31.06.46.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 06:46:55 -0800 (PST)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     DRI Development <dri-devel@lists.freedesktop.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>
-Subject: [PATCH 2/2] components: multiple components for a device
-Date:   Thu, 31 Jan 2019 15:46:40 +0100
-Message-Id: <20190131144640.17896-2-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190131144640.17896-1-daniel.vetter@ffwll.ch>
-References: <1548917996-28081-2-git-send-email-ramalingam.c@intel.com>
- <20190131144640.17896-1-daniel.vetter@ffwll.ch>
+        Thu, 31 Jan 2019 09:49:58 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2713 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725796AbfAaOt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 09:49:57 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 27ABF65216B089E04109;
+        Thu, 31 Jan 2019 22:49:55 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.32) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Thu, 31 Jan 2019
+ 22:49:45 +0800
+Subject: Re: [PATCH] irqchip/gic-v3-its: Lock its device list during find and
+ create its device
+From:   Zheng Xiang <zhengxiang9@huawei.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <wanghaibin.wang@huawei.com>
+References: <20190126061624.5260-1-zhengxiang9@huawei.com>
+ <86bm438x8n.wl-marc.zyngier@arm.com>
+ <27e0b952-111f-f221-bcd7-1a7ceb2840b5@huawei.com>
+ <0dc03914-4c8a-4fa1-fb67-f51936c54836@arm.com>
+ <505e3257-3ef6-69d4-b996-5a1e200e1246@huawei.com>
+Message-ID: <32354a2a-b1b3-e03b-c486-c17aee1bed8d@huawei.com>
+Date:   Thu, 31 Jan 2019 22:47:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <505e3257-3ef6-69d4-b996-5a1e200e1246@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.32]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Component framework is extended to support multiple components for
-a struct device. These will be matched with different masters based on
-its sub component value.
+Hi Marc,
 
-We are introducing this, as I915 needs two different components
-with different subcomponent value, which will be matched to two
-different component masters(Audio and HDCP) based on the subcomponent
-values.
+On 2019/1/29 13:42, Zheng Xiang wrote:
+> On 2019/1/28 21:51, Marc Zyngier wrote:
+>> On 28/01/2019 07:13, Zheng Xiang wrote:
+>>> Hi Marc,
+>>>
+>>> Thanks for your review.
+>>>
+>>> On 2019/1/26 19:38, Marc Zyngier wrote:
+>>>> Hi Zheng,
+>>>>
+>>>> On Sat, 26 Jan 2019 06:16:24 +0000,
+>>>> Zheng Xiang <zhengxiang9@huawei.com> wrote:
+>>>>>
+>>>>> Currently each PCI device under a PCI Bridge shares the same device id
+>>>>> and ITS device. Assume there are two PCI devices call its_msi_prepare
+>>>>> concurrently and they are both going to find and create their ITS
+>>>>> device. There is a chance that the later one couldn't find ITS device
+>>>>> before the other one creating the ITS device. It will cause the later
+>>>>> one to create a different ITS device even if they have the same
+>>>>> device_id.
+>>>>
+>>>> Interesting finding. Is this something you've actually seen in practice
+>>>> with two devices being probed in parallel? Or something that you found
+>>>> by inspection?
+>>>
+>>> Yes, I find this problem after analyzing the reason of VM hung. At last, I
+>>> find that the virtio-gpu cannot receive the MSI interrupts due to sharing
+>>> a same event_id as virtio-serial.
+>>>
+>>> See https://lkml.org/lkml/2019/1/10/299 for the bug report.
+>>>
+>>> This problem can be reproducted with high probability by booting a Qemu/KVM
+>>> VM with a virtio-serial controller and a virtio-gpu adding to a PCI Bridge
+>>> and also adding some delay before creating ITS device.
+>>
+>> Fair enough. Do you mind sharing your QEMU command line? It'd be useful
+>> if I could reproduce it here (and would give me a way to check that it
+>> doesn't regress).
+> 
 
-v2: Add documenation.
+Have you reproduced it with my QEMU command line?
 
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch> (v1 code)
-Signed-off-by: Ramalingam C <ramalingam.c@intel.com> (v1 commit message)
-Cc: Ramalingam C <ramalingam.c@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Rafael J. Wysocki <rafael@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
----
- drivers/base/component.c  | 159 +++++++++++++++++++++++++++++---------
- include/linux/component.h |  10 ++-
- 2 files changed, 130 insertions(+), 39 deletions(-)
+If so, should I send a V2 patch with your suggestion?
 
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index e5b04bce8544..eb7915fc5278 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -48,6 +48,7 @@ struct component;
- struct component_match_array {
- 	void *data;
- 	int (*compare)(struct device *, void *);
-+	int (*compare_typed)(struct device *, int, void *);
- 	void (*release)(struct device *, void *);
- 	struct component *component;
- 	bool duplicate;
-@@ -75,6 +76,7 @@ struct component {
- 	bool bound;
- 
- 	const struct component_ops *ops;
-+	int subcomponent;
- 	struct device *dev;
- };
- 
-@@ -159,7 +161,7 @@ static struct master *__master_find(struct device *dev,
- }
- 
- static struct component *find_component(struct master *master,
--	int (*compare)(struct device *, void *), void *compare_data)
-+	struct component_match_array *mc)
- {
- 	struct component *c;
- 
-@@ -167,8 +169,13 @@ static struct component *find_component(struct master *master,
- 		if (c->master && c->master != master)
- 			continue;
- 
--		if (compare(c->dev, compare_data))
-+		if (mc->compare_typed) {
-+			if (mc->compare_typed(c->dev, c->subcomponent,
-+					      mc->data))
-+				return c;
-+		} else if (mc->compare(c->dev, mc->data)) {
- 			return c;
-+		}
- 	}
- 
- 	return NULL;
-@@ -193,7 +200,7 @@ static int find_components(struct master *master)
- 		if (match->compare[i].component)
- 			continue;
- 
--		c = find_component(master, mc->compare, mc->data);
-+		c = find_component(master, mc);
- 		if (!c) {
- 			ret = -ENXIO;
- 			break;
-@@ -328,29 +335,12 @@ static int component_match_realloc(struct device *dev,
- 	return 0;
- }
- 
--/**
-- * component_match_add_release - add a compent match with release callback
-- * @master: device with the aggregate driver
-- * @matchptr: pointer to the list of component matches
-- * @release: release function for @compare_data
-- * @compare: compare function to match against all components
-- * @compare_data: opaque pointer passed to the @compare function
-- *
-- * This adds a new component match to the list stored in @matchptr, which the
-- * @master aggregate driver needs to function. @matchptr must be initialized to
-- * NULL before adding the first match.
-- *
-- * The allocated match list in @matchptr is automatically released using devm
-- * actions. At that point @release will be called, to free any references held
-- * by @compare_data, e.g. when @compare_data is a &device_node that must be
-- * released with of_node_put().
-- *
-- * See also component_match_add().
-- */
--void component_match_add_release(struct device *master,
-+static void __component_match_add(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
--	int (*compare)(struct device *, void *), void *compare_data)
-+	int (*compare)(struct device *, void *),
-+	int (*compare_typed)(struct device *, int, void *),
-+	void *compare_data)
- {
- 	struct component_match *match = *matchptr;
- 
-@@ -382,13 +372,69 @@ void component_match_add_release(struct device *master,
- 	}
- 
- 	match->compare[match->num].compare = compare;
-+	match->compare[match->num].compare_typed = compare_typed;
- 	match->compare[match->num].release = release;
- 	match->compare[match->num].data = compare_data;
- 	match->compare[match->num].component = NULL;
- 	match->num++;
- }
-+
-+/**
-+ * component_match_add_release - add a compent match with release callback
-+ * @master: device with the aggregate driver
-+ * @matchptr: pointer to the list of component matches
-+ * @release: release function for @compare_data
-+ * @compare: compare function to match against all components
-+ * @compare_data: opaque pointer passed to the @compare function
-+ *
-+ * This adds a new component match to the list stored in @matchptr, which the
-+ * @master aggregate driver needs to function. @matchptr must be initialized to
-+ * NULL before adding the first match.
-+ *
-+ * The allocated match list in @matchptr is automatically released using devm
-+ * actions. At that point @release will be called, to free any references held
-+ * by @compare_data, e.g. when @compare_data is a &device_node that must be
-+ * released with of_node_put(). This only matches against components
-+ * added with component_add().
-+ *
-+ * See also component_match_add() and component_match_add_typed().
-+ */
-+void component_match_add_release(struct device *master,
-+	struct component_match **matchptr,
-+	void (*release)(struct device *, void *),
-+	int (*compare)(struct device *, void *), void *compare_data)
-+{
-+	__component_match_add(master, matchptr, release, compare, NULL,
-+			      compare_data);
-+}
- EXPORT_SYMBOL(component_match_add_release);
- 
-+/**
-+ * component_match_add_typed - add a compent match for a typed component
-+ * @master: device with the aggregate driver
-+ * @matchptr: pointer to the list of component matches
-+ * @compare_typed: compare function to match against all typed components
-+ * @compare_data: opaque pointer passed to the @compare function
-+ *
-+ * This adds a new component match to the list stored in @matchptr, which the
-+ * @master aggregate driver needs to function. @matchptr must be initialized to
-+ * NULL before adding the first match. This only matches against components
-+ * added with component_add_typed().
-+ *
-+ * The allocated match list in @matchptr is automatically released using devm
-+ * actions.
-+ *
-+ * See also component_match_add_release() and component_match_add_typed().
-+ */
-+void component_match_add_typed(struct device *master,
-+	struct component_match **matchptr,
-+	int (*compare_typed)(struct device *, int, void *), void *compare_data)
-+{
-+	__component_match_add(master, matchptr, NULL, NULL, compare_typed,
-+			      compare_data);
-+}
-+EXPORT_SYMBOL(component_match_add_typed);
-+
- static void free_master(struct master *master)
- {
- 	struct component_match *match = master->match;
-@@ -617,19 +663,8 @@ int component_bind_all(struct device *master_dev, void *data)
- }
- EXPORT_SYMBOL_GPL(component_bind_all);
- 
--/**
-- * component_add - register a component
-- * @dev: component device
-- * @ops: component callbacks
-- *
-- * Register a new component for @dev. Functions in @ops will be call when the
-- * aggregate driver is ready to bind the overall driver by calling
-- * component_bind_all(). See also &struct component_ops.
-- *
-- * The component needs to be unregistered again at driver unload/disconnect by
-- * calling component_del().
-- */
--int component_add(struct device *dev, const struct component_ops *ops)
-+static int __component_add(struct device *dev, const struct component_ops *ops,
-+	int subcomponent)
- {
- 	struct component *component;
- 	int ret;
-@@ -640,6 +675,7 @@ int component_add(struct device *dev, const struct component_ops *ops)
- 
- 	component->ops = ops;
- 	component->dev = dev;
-+	component->subcomponent = subcomponent;
- 
- 	dev_dbg(dev, "adding component (ops %ps)\n", ops);
- 
-@@ -658,6 +694,55 @@ int component_add(struct device *dev, const struct component_ops *ops)
- 
- 	return ret < 0 ? ret : 0;
- }
-+
-+/**
-+ * component_add_typed - register a component
-+ * @dev: component device
-+ * @ops: component callbacks
-+ * @subcomponent: nonzero identifier for subcomponents
-+ *
-+ * Register a new component for @dev. Functions in @ops will be call when the
-+ * aggregate driver is ready to bind the overall driver by calling
-+ * component_bind_all(). See also &struct component_ops.
-+ *
-+ * @subcomponent must be nonzero and is used to differentiate between multiple
-+ * components registerd on the same device @dev. These components are match
-+ * using component_match_add_typed().
-+ *
-+ * The component needs to be unregistered again at driver unload/disconnect by
-+ * calling component_del().
-+ *
-+ * See also component_add().
-+ */
-+int component_add_typed(struct device *dev, const struct component_ops *ops,
-+	int subcomponent)
-+{
-+	if (WARN_ON(subcomponent == 0))
-+		return -EINVAL;
-+
-+	return __component_add(dev, ops, subcomponent);
-+}
-+EXPORT_SYMBOL_GPL(component_add_typed);
-+
-+/**
-+ * component_add - register a component
-+ * @dev: component device
-+ * @ops: component callbacks
-+ *
-+ * Register a new component for @dev. Functions in @ops will be call when the
-+ * aggregate driver is ready to bind the overall driver by calling
-+ * component_bind_all(). See also &struct component_ops.
-+ *
-+ * The component needs to be unregistered again at driver unload/disconnect by
-+ * calling component_del().
-+ *
-+ * See also component_add_typed() for a variant that allows multipled different
-+ * components on the same device.
-+ */
-+int component_add(struct device *dev, const struct component_ops *ops)
-+{
-+	return __component_add(dev, ops, 0);
-+}
- EXPORT_SYMBOL_GPL(component_add);
- 
- /**
-diff --git a/include/linux/component.h b/include/linux/component.h
-index 67a899dd2e10..9e69e2117f0b 100644
---- a/include/linux/component.h
-+++ b/include/linux/component.h
-@@ -34,6 +34,8 @@ struct component_ops {
- };
- 
- int component_add(struct device *, const struct component_ops *);
-+int component_add_typed(struct device *dev, const struct component_ops *ops,
-+	int subcomponent);
- void component_del(struct device *, const struct component_ops *);
- 
- int component_bind_all(struct device *master, void *master_data);
-@@ -91,6 +93,9 @@ void component_match_add_release(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
- 	int (*compare)(struct device *, void *), void *compare_data);
-+void component_match_add_typed(struct device *master,
-+	struct component_match **matchptr,
-+	int (*compare_typed)(struct device *, int, void *), void *compare_data);
- 
- /**
-  * component_match_add - add a compent match
-@@ -101,12 +106,13 @@ void component_match_add_release(struct device *master,
-  *
-  * This adds a new component match to the list stored in @matchptr, which the
-  * @master aggregate driver needs to function. @matchptr must be initialized to
-- * NULL before adding the first match.
-+ * NULL before adding the first match. This only matches against components
-+ * added with component_add().
-  *
-  * The allocated match list in @matchptr is automatically released using devm
-  * actions.
-  *
-- * See also component_match_add_release().
-+ * See also component_match_add_release() and component_match_add_typed().
-  */
- static inline void component_match_add(struct device *master,
- 	struct component_match **matchptr,
+> Yes of course, my QEMU command line is below:
+> 
+> qemu-system-aarch64 \
+>     -name guest=arm64 \
+>     -machine virt,accel=kvm,usb=off,gic-version=3 \
+>     -cpu host \
+>     -bios /usr/share/edk2/aarch64/QEMU_EFI.fd \
+>     -nodefaults \
+>     -m 2048 \
+>     -smp 1 \
+>     -device ioh3420,port=0x8,chassis=1,id=pci.1,bus=pcie.0,multifunction=on,addr=0x1 \
+>     -device i82801b11-bridge,id=pci.2,bus=pcie.0,addr=0x2 \
+>     -device pci-bridge,chassis_nr=3,id=pci.3,bus=pci.2,addr=0x0 \
+>     -device ioh3420,port=0x9,chassis=4,id=pci.4,bus=pcie.0,addr=0x1.0x1 \
+>     -device virtio-scsi-pci,id=scsi0,bus=pci.4,addr=0x0 \
+>     -drive file=/home/zhengxiang/tmp.raw,format=raw,if=none,id=drive-scsi0-0-0-0,cache=none,aio=threads \
+>     -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1 \
+>     -drive file=/dev/mapper/VolGroup00-lvol_7,format=raw,if=none,id=drive-virtio-disk0,cache=none,aio=threads \
+>     -device virtio-blk-pci,scsi=off,bus=pci.1,addr=0x0,drive=drive-virtio-disk0,id=virtio-disk0 \
+>     -device virtio-gpu-pci,id=video0,bus=pci.3,addr=0x2 \
+>     -device virtio-serial-pci,id=virtio-serial0,bus=pci.3,addr=0x3 \
+>     -device usb-ehci,id=usb,bus=pci.3,addr=0x1 \
+>     -device usb-kbd,id=input1,bus=usb.0,port=2 \
+>     -monitor telnet:0.0.0.0:22222,server,nowait \
+>     -vnc 0.0.0.0:8 \
+>     -msg timestamp=on \
+>     -serial stdio \
+> 
+> Add *msleep* between *its_find_device* and *its_create_device* to increase the
+> rate of probability, .
+> 
+>>
+>>>
+>>>>
+>>>> The whole RID aliasing is such a mess, I wish we never supported
+>>>> it. Anyway, comments below.
+>>>>
+>>>>>
+>>>>> Signed-off-by: Zheng Xiang <zhengxiang9@huawei.com>
+>>>>> ---
+>>>>>  drivers/irqchip/irq-gic-v3-its.c | 52 +++++++++++++++-------------------------
+>>>>>  1 file changed, 19 insertions(+), 33 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+>>>>> index db20e99..397edc8 100644
+>>>>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>>>>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>>>>> @@ -2205,25 +2205,6 @@ static void its_cpu_init_collections(void)
+>>>>>  	raw_spin_unlock(&its_lock);
+>>>>>  }
+>>>>>  
+>>>>> -static struct its_device *its_find_device(struct its_node *its, u32 dev_id)
+>>>>> -{
+>>>>> -	struct its_device *its_dev = NULL, *tmp;
+>>>>> -	unsigned long flags;
+>>>>> -
+>>>>> -	raw_spin_lock_irqsave(&its->lock, flags);
+>>>>> -
+>>>>> -	list_for_each_entry(tmp, &its->its_device_list, entry) {
+>>>>> -		if (tmp->device_id == dev_id) {
+>>>>> -			its_dev = tmp;
+>>>>> -			break;
+>>>>> -		}
+>>>>> -	}
+>>>>> -
+>>>>> -	raw_spin_unlock_irqrestore(&its->lock, flags);
+>>>>> -
+>>>>> -	return its_dev;
+>>>>> -}
+>>>>> -
+>>>>>  static struct its_baser *its_get_baser(struct its_node *its, u32 type)
+>>>>>  {
+>>>>>  	int i;
+>>>>> @@ -2321,7 +2302,7 @@ static bool its_alloc_vpe_table(u32 vpe_id)
+>>>>>  static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>>>>>  					    int nvecs, bool alloc_lpis)
+>>>>>  {
+>>>>> -	struct its_device *dev;
+>>>>> +	struct its_device *dev = NULL, *tmp;
+>>>>>  	unsigned long *lpi_map = NULL;
+>>>>>  	unsigned long flags;
+>>>>>  	u16 *col_map = NULL;
+>>>>> @@ -2331,6 +2312,24 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>>>>>  	int nr_ites;
+>>>>>  	int sz;
+>>>>>  
+>>>>> +	raw_spin_lock_irqsave(&its->lock, flags);
+>>>>> +	list_for_each_entry(tmp, &its->its_device_list, entry) {
+>>>>> +		if (tmp->device_id == dev_id) {
+>>>>> +			dev = tmp;
+>>>>> +			break;
+>>>>> +		}
+>>>>> +	}
+>>>>> +	if (dev) {
+>>>>> +		/*
+>>>>> +		 * We already have seen this ID, probably through
+>>>>> +		 * another alias (PCI bridge of some sort). No need to
+>>>>> +		 * create the device.
+>>>>> +		 */
+>>>>> +		pr_debug("Reusing ITT for devID %x\n", dev_id);
+>>>>> +		raw_spin_unlock_irqrestore(&its->lock, flags);
+>>>>> +		return dev;
+>>>>> +	}
+>>>>> +
+>>>>>  	if (!its_alloc_device_table(its, dev_id))
+>>>>
+>>>> You're now performing all sort of allocations in an atomic context,
+>>>> which is pretty horrible (and the kernel will shout at you for doing
+>>>> so).
+>>>>
+>>>> We could probably keep the current logic and wrap it around a mutex
+>>>> instead, which would give us the appropriate guarantees WRT allocations.
+>>>> Something along those lines (untested):>
+>>>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+>>>> index db20e992a40f..99feb62e63ba 100644
+>>>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>>>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>>>> @@ -97,9 +97,14 @@ struct its_device;
+>>>>   * The ITS structure - contains most of the infrastructure, with the
+>>>>   * top-level MSI domain, the command queue, the collections, and the
+>>>>   * list of devices writing to it.
+>>>> + *
+>>>> + * alloc_lock has to be taken for any allocation that can happen at
+>>>> + * run time, while the spinlock must be taken to parse data structures
+>>>> + * such as the device list.
+>>>>   */
+>>>>  struct its_node {
+>>>>  	raw_spinlock_t		lock;
+>>>> +	struct mutex		alloc_lock;
+>>>>  	struct list_head	entry;
+>>>>  	void __iomem		*base;
+>>>>  	phys_addr_t		phys_base;
+>>>> @@ -2421,6 +2426,7 @@ static int its_msi_prepare(struct irq_domain *domain, struct device *dev,
+>>>>  	struct its_device *its_dev;
+>>>>  	struct msi_domain_info *msi_info;
+>>>>  	u32 dev_id;
+>>>> +	int err = 0;
+>>>>  
+>>>>  	/*
+>>>>  	 * We ignore "dev" entierely, and rely on the dev_id that has
+>>>> @@ -2443,6 +2449,7 @@ static int its_msi_prepare(struct irq_domain *domain, struct device *dev,
+>>>>  		return -EINVAL;
+>>>>  	}
+>>>>  
+>>>> +	mutex_lock(&its->alloc_lock);
+>>>>  	its_dev = its_find_device(its, dev_id);
+>>>>  	if (its_dev) {
+>>>>  		/*
+>>>> @@ -2455,11 +2462,14 @@ static int its_msi_prepare(struct irq_domain *domain, struct device *dev,
+>>>>  	}
+>>>>  
+>>>>  	its_dev = its_create_device(its, dev_id, nvec, true);
+>>>> -	if (!its_dev)
+>>>> -		return -ENOMEM;
+>>>> +	if (!its_dev) {
+>>>> +		err = -ENOMEM;
+>>>> +		goto out;
+>>>> +	}
+>>>>  
+>>>>  	pr_debug("ITT %d entries, %d bits\n", nvec, ilog2(nvec));
+>>>>  out:
+>>>> +	mutex_unlock(&its->alloc_lock);
+>>>>  	info->scratchpad[0].ptr = its_dev;>>>  	return 0;
+>>>
+>>> Should it return *err* here?
+>>
+>> Absolutely. Does it fix the problem for you?
+> 
+> Yes, VM doesn't get hung anymore after thousands of times of boot/reboot.
+> 
+>>
+>> Thanks,
+>>
+>> 	M.
+>>
 -- 
-2.20.1
+
+Thanks,
+Xiang
+
 
