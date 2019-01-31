@@ -2,70 +2,105 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BE1C282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4251DC282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AAC4218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:59:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1B6A20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:00:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbfAaA67 (ORCPT
+        id S1729035AbfAaBAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 19:58:59 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53182 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725535AbfAaA67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 19:58:59 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 576E02D7E0;
-        Thu, 31 Jan 2019 00:58:59 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-22.phx2.redhat.com [10.3.112.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7DF6D608C6;
-        Thu, 31 Jan 2019 00:58:52 +0000 (UTC)
-Date:   Wed, 30 Jan 2019 19:58:50 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: actx not used?
-Message-ID: <20190131005849.fmwpsg2dvwwwmali@madcap2.tricolour.ca>
+        Wed, 30 Jan 2019 20:00:17 -0500
+Received: from gateway20.websitewelcome.com ([192.185.50.28]:23997 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725535AbfAaBAR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 20:00:17 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id DEA12400C593F
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 19:00:16 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id p0iGgbrf890onp0iGg1jpC; Wed, 30 Jan 2019 19:00:16 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=39140 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gp0iF-001w4H-Q5; Wed, 30 Jan 2019 19:00:15 -0600
+Date:   Wed, 30 Jan 2019 19:00:15 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/vc4: Use struct_size() in kzalloc()
+Message-ID: <20190131010015.GA32272@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 31 Jan 2019 00:58:59 +0000 (UTC)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gp0iF-001w4H-Q5
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:39140
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello users of *audit_rule_match(),
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-As far as I can tell, it appears that the audit_context *actx parameter
-to *audit_rule_match() is not used by any consumers in-tree upstream.
-This includes selinux, apparmour, integrity and smack.
-Might there be others out of tree that do use it (or did request it)?
+struct foo {
+    int stuff;
+    void *entry[];
+};
 
-I'm a bit puzzled that it was ever offered since it should be relatively
-opaque and accessed only by audit or its accessor functions.
+instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
 
-It was part of the 2008 commit 03d37d25e0f9 ("LSM/Audit: Introduce
-generic Audit LSM hooks").
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
 
-Would anyone object if I ripped out actx?
+instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
 
-- RGB
+This code was detected with the help of Coccinelle.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/vc4/vc4_perfmon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/vc4/vc4_perfmon.c b/drivers/gpu/drm/vc4/vc4_perfmon.c
+index 437e7a27f21d..495150415020 100644
+--- a/drivers/gpu/drm/vc4/vc4_perfmon.c
++++ b/drivers/gpu/drm/vc4/vc4_perfmon.c
+@@ -117,7 +117,7 @@ int vc4_perfmon_create_ioctl(struct drm_device *dev, void *data,
+ 			return -EINVAL;
+ 	}
+ 
+-	perfmon = kzalloc(sizeof(*perfmon) + (req->ncounters * sizeof(u64)),
++	perfmon = kzalloc(struct_size(perfmon, counters, req->ncounters),
+ 			  GFP_KERNEL);
+ 	if (!perfmon)
+ 		return -ENOMEM;
+-- 
+2.20.1
+
