@@ -2,111 +2,142 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D28CC282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10C2C282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D4BF218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D1FD218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:12:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NswK+pXy"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="h9BgMiMj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbfAaDKk (ORCPT
+        id S1727401AbfAaDMx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 22:10:40 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38269 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfAaDKk (ORCPT
+        Wed, 30 Jan 2019 22:12:53 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:32964 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbfAaDMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 22:10:40 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e5so809865plb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 19:10:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=iIOMyeYWlqivChsy2LGI2papAkfM6upHHEb8AWJyE+Q=;
-        b=NswK+pXyki9uV20jIt/KHa7HuTuS4V54Zl/q2CrjDYOjRi1VObkIq30U6glKytirnt
-         0uFEr/8IylNweVdpe6nAdkmQlUPc799Ng9XtT9HQWQtcaLU0vx0CH9uUKToZ0dcHIRRz
-         OFVjx5BG4zF32ejxpzEAhCQwoiiyqWhNOBnox42mca/EHqg56YYWJ57EMdY5Dk7uHoNG
-         1HnE1nbkcSa83Nzgv6xfPIkaG/VWmkT2hfc6BC5eKGqTkwfTAf8pJ4CnIVedn5x6zrD5
-         31z46YUAOPYiqGZEOMosBhObBe9Bewwh7SZJ7fyrkzS6ImMft7hMC24e0ZOxrrmU+AXX
-         zaXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=iIOMyeYWlqivChsy2LGI2papAkfM6upHHEb8AWJyE+Q=;
-        b=glLqO16rqcYePPNj1YWZ9WWW6AWvQUBbWctSIb+m0r+9jYPiSle5KBpTHniflztnUQ
-         X1KA2obPxAhAb/TV2uEvZHtroof0wKs04NXlF2Q2f5vAAbh6SwsTJSXxC2b4SCHeke1u
-         KYnbbdbpOtVztUyK28JCKhLIp75zmmSlX5eu7BfrJn2SMR5460/ts/8sUJmhXFT7pYXF
-         Gs3RAHPl3FC1ynXyVqtD9FFB30YoREWDeondKOLnE+ACUOxl5qmhDHhvaYtC8T/bk9TR
-         oyNv026ORX1EMAiyG9BaNlya7prBw73RGvDOVPzdZ69vzDMJXSdE+7JAPcOptjxPjqzK
-         nXjQ==
-X-Gm-Message-State: AJcUukcCHtI7wUs9EgpP611oKhds2lsLx3JpJWVVB9odSwbNUh/7X0+R
-        CJYGCUiSK0ziOHD3X/psX98=
-X-Google-Smtp-Source: ALg8bN7JWTDtmY7f0SD7kzOXbcjmQSyCFO1iAegZ9zKD6pwUOUT9KVciGd4lF1sfXawzVQ673btnEA==
-X-Received: by 2002:a17:902:4503:: with SMTP id m3mr33506912pld.23.1548904239727;
-        Wed, 30 Jan 2019 19:10:39 -0800 (PST)
-Received: from jordon-HP-15-Notebook-PC ([106.51.20.103])
-        by smtp.gmail.com with ESMTPSA id a65sm3802656pge.65.2019.01.30.19.10.38
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 30 Jan 2019 19:10:38 -0800 (PST)
-Date:   Thu, 31 Jan 2019 08:44:52 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        boris.ostrovsky@oracle.com, jgross@suse.com, linux@armlinux.org.uk,
-        robin.murphy@arm.com
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCHv2 9/9] xen/privcmd-buf.c: Convert to use vm_insert_range_buggy
-Message-ID: <20190131031452.GA2442@jordon-HP-15-Notebook-PC>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 30 Jan 2019 22:12:53 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0V346KH038858;
+        Thu, 31 Jan 2019 03:12:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=ZplTQZzydafeBnPD4u24Dgisox98ztxk94cpluzKZc8=;
+ b=h9BgMiMj62/58rCk8HoDR4fSLSmqUCgwgBpYJPMT1U0Luqc0fB1krarFGfn4c/R6XeyH
+ zwMkhd5kPg5qfJfHoFpr4AWLHzlhbVRuq877nGipTFMKKJpWL/pqAHKbG3UxVikCk2Em
+ UBSs1blCyN1wwR0jPUnpCQTVgZARJ+ZHkq9ec+3yyPr8q5Wn2isRb+ilwDE5vMLU/wS8
+ DPaSapjLYYziRncp/GfOs3vqFGdMpyHguWgMvTwLxuOqbKEGGVeqPxjuVEx30TME8n2q
+ 08Klpo7eK/chdjoFovj4XRT+MVcOp4Fbhb1GkvG36H2wQCQ3wASC0zSF90Mq3rsK3rrV /A== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2q8d2eebcf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Jan 2019 03:12:18 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0V3CIDd031689
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Jan 2019 03:12:18 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0V3CHiG017729;
+        Thu, 31 Jan 2019 03:12:17 GMT
+Received: from ol-bur-x5-4.us.oracle.com (/10.152.128.37)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Jan 2019 19:12:17 -0800
+From:   Alex Kogan <alex.kogan@oracle.com>
+To:     linux@armlinux.org.uk, peterz@infradead.org, mingo@redhat.com,
+        will.deacon@arm.com, arnd@arndb.de, longman@redhat.com,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        alex.kogan@oracle.com, dave.dice@oracle.com,
+        rahul.x.yadav@oracle.com
+Subject: [PATCH 1/3] locking/qspinlock: Make arch_mcs_spin_unlock_contended more generic
+Date:   Wed, 30 Jan 2019 22:01:33 -0500
+Message-Id: <20190131030136.56999-2-alex.kogan@oracle.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190131030136.56999-1-alex.kogan@oracle.com>
+References: <20190131030136.56999-1-alex.kogan@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9152 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901310023
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert to use vm_insert_range_buggy() to map range of kernel
-memory to user vma.
+The arch_mcs_spin_unlock_contended macro should accept the value to be
+stored into the lock argument as another argument. This allows using the
+same macro in cases where the value to be stored is different from 1.
 
-This driver has ignored vm_pgoff. We could later "fix" these drivers
-to behave according to the normal vm_pgoff offsetting simply by
-removing the _buggy suffix on the function name and if that causes
-regressions, it gives us an easy way to revert.
-
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Alex Kogan <alex.kogan@oracle.com>
+Reviewed-by: Steve Sistare <steven.sistare@oracle.com>
 ---
- drivers/xen/privcmd-buf.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ arch/arm/include/asm/mcs_spinlock.h | 4 ++--
+ kernel/locking/mcs_spinlock.h       | 6 +++---
+ kernel/locking/qspinlock.c          | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/xen/privcmd-buf.c b/drivers/xen/privcmd-buf.c
-index de01a6d..a9d7e97 100644
---- a/drivers/xen/privcmd-buf.c
-+++ b/drivers/xen/privcmd-buf.c
-@@ -166,12 +166,8 @@ static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
- 	if (vma_priv->n_pages != count)
- 		ret = -ENOMEM;
- 	else
--		for (i = 0; i < vma_priv->n_pages; i++) {
--			ret = vm_insert_page(vma, vma->vm_start + i * PAGE_SIZE,
--					     vma_priv->pages[i]);
--			if (ret)
--				break;
--		}
-+		ret = vm_insert_range_buggy(vma, vma_priv->pages,
-+						vma_priv->n_pages);
+diff --git a/arch/arm/include/asm/mcs_spinlock.h b/arch/arm/include/asm/mcs_spinlock.h
+index 529d2cf4d06f..ae6d763477f4 100644
+--- a/arch/arm/include/asm/mcs_spinlock.h
++++ b/arch/arm/include/asm/mcs_spinlock.h
+@@ -14,9 +14,9 @@ do {									\
+ 		wfe();							\
+ } while (0)								\
  
- 	if (ret)
- 		privcmd_buf_vmapriv_free(vma_priv);
+-#define arch_mcs_spin_unlock_contended(lock)				\
++#define arch_mcs_spin_unlock_contended(lock, val)			\
+ do {									\
+-	smp_store_release(lock, 1);					\
++	smp_store_release(lock, (val));					\
+ 	dsb_sev();							\
+ } while (0)
+ 
+diff --git a/kernel/locking/mcs_spinlock.h b/kernel/locking/mcs_spinlock.h
+index 5e10153b4d3c..bc6d3244e1af 100644
+--- a/kernel/locking/mcs_spinlock.h
++++ b/kernel/locking/mcs_spinlock.h
+@@ -41,8 +41,8 @@ do {									\
+  * operations in the critical section has been completed before
+  * unlocking.
+  */
+-#define arch_mcs_spin_unlock_contended(l)				\
+-	smp_store_release((l), 1)
++#define arch_mcs_spin_unlock_contended(l, val)				\
++	smp_store_release((l), (val))
+ #endif
+ 
+ /*
+@@ -115,7 +115,7 @@ void mcs_spin_unlock(struct mcs_spinlock **lock, struct mcs_spinlock *node)
+ 	}
+ 
+ 	/* Pass lock to next waiter. */
+-	arch_mcs_spin_unlock_contended(&next->locked);
++	arch_mcs_spin_unlock_contended(&next->locked, 1);
+ }
+ 
+ #endif /* __LINUX_MCS_SPINLOCK_H */
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index 8a8c3c208c5e..fc88e9685bdf 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -545,7 +545,7 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 	if (!next)
+ 		next = smp_cond_load_relaxed(&node->next, (VAL));
+ 
+-	arch_mcs_spin_unlock_contended(&next->locked);
++	arch_mcs_spin_unlock_contended(&next->locked, 1);
+ 	pv_kick_node(lock, next);
+ 
+ release:
 -- 
-1.9.1
+2.11.0 (Apple Git-81)
 
