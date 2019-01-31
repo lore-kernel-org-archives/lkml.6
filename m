@@ -7,70 +7,65 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07EE0C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 063CDC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAA7B20B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:28:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC86C20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:28:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YeyM2mZh"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DMIJ9SqT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbfAaT2k (ORCPT
+        id S1729268AbfAaT2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:28:40 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37996 "EHLO
+        Thu, 31 Jan 2019 14:28:34 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37985 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729161AbfAaT2h (ORCPT
+        with ESMTP id S1727537AbfAaT2a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:28:37 -0500
-Received: by mail-pg1-f196.google.com with SMTP id g189so1781427pgc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:28:37 -0800 (PST)
+        Thu, 31 Jan 2019 14:28:30 -0500
+Received: by mail-pg1-f196.google.com with SMTP id g189so1781296pgc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:28:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lYQCxiWY0ydX8ViY3WHUNLfCbgYkqllnTKd1RGLisYQ=;
-        b=YeyM2mZhe8SOiS5B502BvG0CG8pV3RgDUT20wQrb5qdkq0nJhxRsT0FtSbnpc233Np
-         zNcJmVGfDegctRup0/yIBEBiMWRApryac+IVPGGUd7ShBk1pyxYyNhaGwcA85XcF4qrD
-         OFNnOQnUmKoE5xs5q/FHIiZgD2mYJhZ12n1TU=
+        bh=A12aDa+5W9QhGLlMyggdoqeIT915Z4nL+XYgIaJs8iA=;
+        b=DMIJ9SqTyTde2e6/edb0iUiqB/YWAlTIXk1HF/cV82SJSRh6iHAS5wrDLvl1z06QKX
+         d/wlYIs1n1akJahncaDUsonXmlWuhQJ76+D5nH6z3BOs3FwOy5l4W8WKRwHCd8SbPPT+
+         UTLcz+Eev1GO58YgPJ9+nc1pytrfUM/jx0aw0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lYQCxiWY0ydX8ViY3WHUNLfCbgYkqllnTKd1RGLisYQ=;
-        b=b+wkDslW6/ip8/il+Ebwuz+1SIjeu69gTAicrB+qFx+yJpd3ZBP7l8v3tc4zE+A27R
-         xjcE9pV2FnBmN1N6FMoPBfgBouYcz9MCEQ3bKjkJWcUgsuHNpQoglAldXN8lHPCeTBlJ
-         2lX8Ou6KSi47oWN6hewlH3G7Y57eVVHKSrbZm/zT4G8QM4+jhHS//qukxwtSdR/HNgRI
-         6LHU2LykfA29027ZSm4Qk+v1cIYDACq1Pyil8BwqHkWpqvXq3NZQ6aUBtIxokNBeWC4R
-         tJYtBCooo0oMLk9y3a5Poc0i4LEsc1y8I8RkFa4a7Xgz/zrP5MHYF0Src6C+A9ZVeB+D
-         eD0g==
-X-Gm-Message-State: AJcUukc23oIARwQQmhgNe5FAXPXYvwhEOapiHthjCCP6EGMFWTnJolSw
-        TCBGc4GZyEErFHQQGa/fmjBfYQ==
-X-Google-Smtp-Source: ALg8bN6J2DMUmLRDDcqCh2Oj54V4ihCjp3x9pQPDzZwdoHY+vTmcv+jVJykw92EfmG8sy+wHJijtBQ==
-X-Received: by 2002:a62:1289:: with SMTP id 9mr36578574pfs.102.1548962916976;
-        Thu, 31 Jan 2019 11:28:36 -0800 (PST)
+        bh=A12aDa+5W9QhGLlMyggdoqeIT915Z4nL+XYgIaJs8iA=;
+        b=gnrRWq+xHMds+xBxMKyOY7VJDF08XPIev8MzqF4+F8hjjEp9DfJO2RUy3b3r78KON8
+         mOpY94i9eF1uLWKFoHqW9YyPa98p/slM2W11GFUyvrgY3SBIwPZ7wp5vKkEuHPWhmoW/
+         QZAI8FYXPKrilPINZr33HTuMc5YAor4oUcb83R9O85IWSVyiT6mrVqPWiZ2rJXFwKgh1
+         V5KJHo1PSzcGSx70HU6SRVn59AnGTaAYK2z6tiP91MtMieSjVecNGF77aT1WwMFAPX/W
+         32LLgVnQOFvdr6HlAZIFlxQg5bUMJz9okhycLqyKr9liD91JQjsgno4UlHTG5prdkTBY
+         r8Cw==
+X-Gm-Message-State: AJcUukclgEi8kTCpsmkxElETTNOsL5jc7cgpbu/KDpZENOirvzORySbN
+        ycmP5DU8KkVCHhjmkoi4ubT6+Q==
+X-Google-Smtp-Source: ALg8bN5IM0GYFT//+GQN2VFpKvrJY9g13VsgGe/d5fetq37bbsch0jTBo09cq86uNLrKDCQizOTqhg==
+X-Received: by 2002:a63:1408:: with SMTP id u8mr32850734pgl.271.1548962909228;
+        Thu, 31 Jan 2019 11:28:29 -0800 (PST)
 Received: from skynet.sea.corp.google.com ([2620:15c:17:4:29de:3bb1:1270:e679])
-        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.28.36
+        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.28.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 11:28:36 -0800 (PST)
+        Thu, 31 Jan 2019 11:28:28 -0800 (PST)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, Thomas Garnier <thgarnie@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
         Juergen Gross <jgross@suse.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Thomas Garnier <thgarnie@google.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 13/27] x86/boot/64: Build head64.c as mcmodel large when PIE is enabled
-Date:   Thu, 31 Jan 2019 11:24:20 -0800
-Message-Id: <20190131192533.34130-14-thgarnie@chromium.org>
+Subject: [PATCH v6 09/27] x86/boot/64: Adapt assembly for PIE support
+Date:   Thu, 31 Jan 2019 11:24:16 -0800
+Message-Id: <20190131192533.34130-10-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 In-Reply-To: <20190131192533.34130-1-thgarnie@chromium.org>
 References: <20190131192533.34130-1-thgarnie@chromium.org>
@@ -81,57 +76,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __startup_64 function assumes all symbols have relocated addresses
-instead of the current boot virtual address. PIE generated code favor
-relative addresses making all virtual and physical address math incorrect.
-If PIE is enabled, build head64.c as mcmodel large instead to ensure absolute
-references on all memory access. Add a global __force_order variable required
-when using a large model with read_cr* functions.
+Change the assembly code to use only relative references of symbols for the
+kernel to be PIE compatible.
 
-To build head64.c as mcmodel=large, disable the retpoline gcc flags.
-This code is used at early boot and removed later, it doesn't need
-retpoline mitigation.
+Early at boot, the kernel is mapped at a temporary address while preparing
+the page table. To know the changes needed for the page table with KASLR,
+the boot code calculate the difference between the expected address of the
+kernel and the one chosen by KASLR. It does not work with PIE because all
+symbols in code are relatives. Instead of getting the future relocated
+virtual address, you will get the current temporary mapping.
+Instructions were changed to have absolute 64-bit references.
 
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range below 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
 ---
- arch/x86/kernel/Makefile | 6 ++++++
- arch/x86/kernel/head64.c | 3 +++
- 2 files changed, 9 insertions(+)
+ arch/x86/kernel/head_64.S | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 00b7e27bc2b7..1f98f52eab9f 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -22,6 +22,12 @@ CFLAGS_REMOVE_early_printk.o = -pg
- CFLAGS_REMOVE_head64.o = -pg
- endif
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index d1dbe8e4eb82..b9b6c6aa0313 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -90,8 +90,10 @@ startup_64:
+ 	popq	%rsi
  
-+ifdef CONFIG_X86_PIE
-+# Remove PIE and retpoline flags that are incompatible with mcmodel=large
-+CFLAGS_REMOVE_head64.o += -fPIE -mindirect-branch=thunk-extern -mindirect-branch-register
-+CFLAGS_head64.o = -mcmodel=large
-+endif
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+-	addq	$(early_top_pgt - __START_KERNEL_map), %rax
++	movabs  $(early_top_pgt - __START_KERNEL_map), %rcx
++	addq    %rcx, %rax
+ 	jmp 1f
 +
- KASAN_SANITIZE_head$(BITS).o				:= n
- KASAN_SANITIZE_dumpstack.o				:= n
- KASAN_SANITIZE_dumpstack_$(BITS).o			:= n
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 16b1cbd3a61e..22e81275495b 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -63,6 +63,9 @@ EXPORT_SYMBOL(vmemmap_base);
+ ENTRY(secondary_startup_64)
+ 	UNWIND_HINT_EMPTY
+ 	/*
+@@ -120,7 +122,8 @@ ENTRY(secondary_startup_64)
+ 	popq	%rsi
  
- #define __head	__section(.head.text)
+ 	/* Form the CR3 value being sure to include the CR3 modifier */
+-	addq	$(init_top_pgt - __START_KERNEL_map), %rax
++	movabs	$(init_top_pgt - __START_KERNEL_map), %rcx
++	addq    %rcx, %rax
+ 1:
  
-+/* Required for read_cr3 when building as PIE */
-+unsigned long __force_order;
-+
- static void __head *fixup_pointer(void *ptr, unsigned long physaddr)
- {
- 	return ptr - (void *)_text + (void *)physaddr;
+ 	/* Enable PAE mode, PGE and LA57 */
+@@ -138,7 +141,7 @@ ENTRY(secondary_startup_64)
+ 	movq	%rax, %cr3
+ 
+ 	/* Ensure I am executing from virtual addresses */
+-	movq	$1f, %rax
++	movabs  $1f, %rax
+ 	ANNOTATE_RETPOLINE_SAFE
+ 	jmp	*%rax
+ 1:
+@@ -235,11 +238,12 @@ ENTRY(secondary_startup_64)
+ 	 *	REX.W + FF /5 JMP m16:64 Jump far, absolute indirect,
+ 	 *		address given in m16:64.
+ 	 */
+-	pushq	$.Lafter_lret	# put return address on stack for unwinder
++	movabs  $.Lafter_lret, %rax
++	pushq	%rax		# put return address on stack for unwinder
+ 	xorl	%ebp, %ebp	# clear frame pointer
+-	movq	initial_code(%rip), %rax
++	leaq	initial_code(%rip), %rax
+ 	pushq	$__KERNEL_CS	# set correct cs
+-	pushq	%rax		# target address in negative space
++	pushq	(%rax)		# target address in negative space
+ 	lretq
+ .Lafter_lret:
+ END(secondary_startup_64)
 -- 
 2.20.1.495.gaa96b0ce6b-goog
 
