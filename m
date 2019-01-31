@@ -2,219 +2,250 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34AF3C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94EBC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7148218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:18:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gFD87IvT"
+	by mail.kernel.org (Postfix) with ESMTP id 7D440218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:18:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732678AbfAaMSB (ORCPT
+        id S1732761AbfAaMSg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:18:01 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:43766 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbfAaMSB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:18:01 -0500
-Received: by mail-ua1-f65.google.com with SMTP id z11so932522uaa.10
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:18:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rMkf0gd68B0VNf8LFPErOfYHBzTvWTZG+O/rTFihV4I=;
-        b=gFD87IvTWMiYTaX30KLruBsENu70SjUoCtKw7J911orOOt5Ddm9wDSyGsu1pVrMfHX
-         y/O4khowAnb+sz2/xFi9VudhcqfKlOXfD3vQU92jqLcJwmOjRlCgYwN3fA6/nJDbjspr
-         nGO9f+MyuxEniJsWS+nnG/DLp6MtBSrNaP1uA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rMkf0gd68B0VNf8LFPErOfYHBzTvWTZG+O/rTFihV4I=;
-        b=YSsN0KvSYdoQefa0gDsqNtf4w+lP7B6ccpiswuVsidcAZmELFtf472muSi+vtYcVA8
-         RB/aGTJMsABDD8p4CXariIuv8qtOSTHlvNS6zw2PkNpSIuqVzIaNk7kzdWsj4Tnn2/Ex
-         cLNiTAUBvAoJWVl2ieU5PKOCO/Xxz3MA4REjmu6ghuWnRPV9LAej6qlGxaxOj/J9ckK9
-         tWwImL1ucODZrwZWOp7NtUKxY/LRC1TOOn4VO/HA+/UXQZDxIIWX8Kgzmx9MFu5ynfNY
-         a2i8tmAVsaW//miQ6vSgzBHa5fbCzUbz0eFHVS9VAGOyTtksEKMqRFNHJ096AnwzFWNr
-         VV9A==
-X-Gm-Message-State: AJcUukciTO5+S61SWSCEC7RJ1SJSJxeSG3EawzpfZWqqx3UgjLdwRG7e
-        8kOuu+545TQchsGhypEqm7xlQ6M/IGL4CAORKJ0Oxw==
-X-Google-Smtp-Source: ALg8bN7ktqEXXIqjs7dcG1Y5IfwWm3F6nAamftV06uNn09EaLKy7ATV1Khoz1PWYVxgTRgaGBfqQgHkmoLD4xBww2dc=
-X-Received: by 2002:ab0:31d5:: with SMTP id e21mr14563931uan.107.1548937079489;
- Thu, 31 Jan 2019 04:17:59 -0800 (PST)
+        Thu, 31 Jan 2019 07:18:36 -0500
+Received: from mga04.intel.com ([192.55.52.120]:12865 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726266AbfAaMSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 07:18:36 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 04:18:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,544,1539673200"; 
+   d="scan'208";a="143046012"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga001.fm.intel.com with ESMTP; 31 Jan 2019 04:18:31 -0800
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 2EB68206EA; Thu, 31 Jan 2019 14:18:30 +0200 (EET)
+Date:   Thu, 31 Jan 2019 14:18:30 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     "Mani, Rajmohan" <rajmohan.mani@intel.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        "Qiu, Tian Shu" <tian.shu.qiu@intel.com>,
+        "Cao, Bingbu" <bingbu.cao@intel.com>,
+        "Zhi@paasikivi.fi.intel.com" <Zhi@paasikivi.fi.intel.com>,
+        "Zhi, Yong" <yong.zhi@intel.com>,
+        "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+        "tfiga@chromium.org" <tfiga@chromium.org>
+Subject: Re: [PATCH] media: staging/intel-ipu3: Implement lock for stream
+ on/off operations
+Message-ID: <20190131121829.gqirocqkzw23jfbd@paasikivi.fi.intel.com>
+References: <20190129222736.6216-1-rajmohan.mani@intel.com>
+ <20190130085901.w2ogdoax7t4yfyj6@paasikivi.fi.intel.com>
+ <6F87890CF0F5204F892DEA1EF0D77A599B325222@fmsmsx122.amr.corp.intel.com>
 MIME-Version: 1.0
-References: <20190128144119.10092-1-martink@posteo.de> <CAPDyKFo7949rcxEX5U2QUS0c2xhC_z+JGeOiF2HC6+QukVpEaQ@mail.gmail.com>
- <20190131092006.363d1dd4@erd987>
-In-Reply-To: <20190131092006.363d1dd4@erd987>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 31 Jan 2019 13:17:23 +0100
-Message-ID: <CAPDyKFr=kcoGK0C2A8JH-nhfgUgoRVa-E=6KPRjFO51QQxjJLA@mail.gmail.com>
-Subject: Re: [PATCH v4] mmc: mxs-mmc: Introduce regulator support
-To:     Robin van der Gracht <robin@protonic.nl>
-Cc:     Martin Kepplinger <martink@posteo.de>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6F87890CF0F5204F892DEA1EF0D77A599B325222@fmsmsx122.amr.corp.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Jan 2019 at 09:20, Robin van der Gracht <robin@protonic.nl> wrote:
->
-> On Mon, 28 Jan 2019 22:15:23 +0100
-> Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> > On Mon, 28 Jan 2019 at 15:41, Martin Kepplinger <martink@posteo.de> wrote:
+Hi Raj,
+
+On Wed, Jan 30, 2019 at 05:17:15PM +0000, Mani, Rajmohan wrote:
+> Hi Sakari,
+> 
+> > -----Original Message-----
+> > From: Sakari Ailus [mailto:sakari.ailus@linux.intel.com]
+> > Sent: Wednesday, January 30, 2019 12:59 AM
+> > To: Mani, Rajmohan <rajmohan.mani@intel.com>
+> > Cc: Mauro Carvalho Chehab <mchehab@kernel.org>; Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org>; linux-media@vger.kernel.org;
+> > devel@driverdev.osuosl.org; linux-kernel@vger.kernel.org; Laurent Pinchart
+> > <laurent.pinchart@ideasonboard.com>; Jacopo Mondi <jacopo@jmondi.org>;
+> > Qiu, Tian Shu <tian.shu.qiu@intel.com>; Cao, Bingbu
+> > <bingbu.cao@intel.com>; Zhi@paasikivi.fi.intel.com; Zhi, Yong
+> > <yong.zhi@intel.com>; hverkuil@xs4all.nl; tfiga@chromium.org
+> > Subject: Re: [PATCH] media: staging/intel-ipu3: Implement lock for stream
+> > on/off operations
+> > 
+> > Hi Rajmohan,
+> > 
+> > On Tue, Jan 29, 2019 at 02:27:36PM -0800, Rajmohan Mani wrote:
+> > > Currently concurrent stream off operations on ImgU nodes are not
+> > > synchronized, leading to use-after-free bugs (as reported by KASAN).
 > > >
-> > > From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> > > [  250.090724] BUG: KASAN: use-after-free in
+> > > ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu] [  250.090726] Read of size 8
+> > > at addr ffff888127b29bc0 by task yavta/18836 [  250.090731] Hardware
+> > > name: HP Soraka/Soraka, BIOS Google_Soraka.10431.17.0 03/22/2018 [
+> > 250.090732] Call Trace:
+> > > [  250.090735]  dump_stack+0x6a/0xb1
+> > > [  250.090739]  print_address_description+0x8e/0x279
+> > > [  250.090743]  ? ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu] [
+> > > 250.090746]  kasan_report+0x260/0x28a [  250.090750]
+> > > ipu3_dmamap_free+0xc5/0x116 [ipu3_imgu] [  250.090754]
+> > > ipu3_css_pool_cleanup+0x24/0x37 [ipu3_imgu] [  250.090759]
+> > > ipu3_css_pipeline_cleanup+0x61/0xb9 [ipu3_imgu] [  250.090763]
+> > > ipu3_css_stop_streaming+0x1f2/0x321 [ipu3_imgu] [  250.090768]
+> > > imgu_s_stream+0x94/0x443 [ipu3_imgu] [  250.090772]  ?
+> > > ipu3_vb2_buf_queue+0x280/0x280 [ipu3_imgu] [  250.090775]  ?
+> > > vb2_dma_sg_unmap_dmabuf+0x16/0x6f [videobuf2_dma_sg] [  250.090778]
+> > ?
+> > > vb2_buffer_in_use+0x36/0x58 [videobuf2_common] [  250.090782]
+> > > ipu3_vb2_stop_streaming+0xf9/0x135 [ipu3_imgu]
 > > >
-> > > This adds support for explicitly switching the mmc's power on and off
-> > > which is needed for example for WL1837 WL1271 wifi controllers on imx28.
+> > > Implemented a lock to synchronize imgu stream on / off operations and
+> > > the modification of streaming flag (in struct imgu_device), to prevent
+> > > these issues.
 > > >
-> > > While the wifi's vmmc-supply regulator can be configured in devicetree,
-> > > "ip link set wlan0 down" doesn't turn off the VMMC regulator which leads
-> > > to hangs when loading firmware, for example.
+> > > Reported-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > > >
-> > > Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> > > Signed-off-by: Rajmohan Mani <rajmohan.mani@intel.com>
 > > > ---
+> > >  drivers/staging/media/ipu3/ipu3-v4l2.c | 6 ++++++
+> > >  drivers/staging/media/ipu3/ipu3.c      | 3 +++
+> > >  drivers/staging/media/ipu3/ipu3.h      | 4 ++++
+> > >  3 files changed, 13 insertions(+)
 > > >
+> > > diff --git a/drivers/staging/media/ipu3/ipu3-v4l2.c
+> > > b/drivers/staging/media/ipu3/ipu3-v4l2.c
+> > > index c7936032beb9..cf7e917cd0c8 100644
+> > > --- a/drivers/staging/media/ipu3/ipu3-v4l2.c
+> > > +++ b/drivers/staging/media/ipu3/ipu3-v4l2.c
+> > > @@ -507,12 +507,15 @@ static int ipu3_vb2_start_streaming(struct
+> > vb2_queue *vq, unsigned int count)
+> > >  			goto fail_stop_pipeline;
+> > >  	}
 > > >
-> > > revision history
-> > > ----------------
-> > > v4: re-added forgotten regulator_enable() during probe
-> > > v3: improve API usage as suggested by Ulf
-> > > v2: tested patch with changes suggested by Robin
-> > > v1: question, why https://patchwork.kernel.org/patch/4365751/ didn't get in
-> > >
-> > >
-> > >  drivers/mmc/host/mxs-mmc.c | 34 +++++++++++++++++++++++++---------
-> > >  1 file changed, 25 insertions(+), 9 deletions(-)
-> > >
-> > > diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
-> > > index add1e70195ea..23d275269d61 100644
-> > > --- a/drivers/mmc/host/mxs-mmc.c
-> > > +++ b/drivers/mmc/host/mxs-mmc.c
-> > > @@ -517,6 +517,22 @@ static void mxs_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
-> > >         else
-> > >                 host->bus_width = 0;
-> > >
-> > > +       switch (ios->power_mode) {
-> > > +       case MMC_POWER_OFF:
-> > > +               if (!IS_ERR(host->mmc->supply.vmmc))
-> > > +                       mmc_regulator_set_ocr(host->mmc,
-> > > +                                             host->mmc->supply.vmmc, 0);
-> > > +               break;
-> > > +       case MMC_POWER_UP:
-> > > +               if (!IS_ERR(host->mmc->supply.vmmc))
-> > > +                       mmc_regulator_set_ocr(host->mmc,
-> > > +                                             host->mmc->supply.vmmc,
-> > > +                                             ios->vdd);
-> > > +               break;
-> > > +       default:
-> > > +               break;
-> > > +       }
+> > > +	mutex_lock(&imgu->streaming_lock);
 > > > +
-> > >         if (ios->clock)
-> > >                 mxs_ssp_set_clk_rate(&host->ssp, ios->clock);
+> > 
+> > You appear to be using imgu_device.lock (while searching buffers to queue to
+> > the device) as well as imgu_video_device.lock (qbuf, dqbuf) to serialise access
+> > to imgu_video_device.buffers list.
+> 
+> Ack
+> 
+> > The two locks may be acquired at the same
+> > time but each by different processes. That needs to be addressed, but
+> > probably not in this patch.
+> > 
+> 
+> The node specific locks will be used by different processes and all of these processes
+> will be competing commonly (and successfully) for the imgu_device lock.
+> I will look into this more.
+
+Oops. I think I must have misread something; looking at the code again,
+indeed imgu_device.lock is acquired for all accesses. Please ignore this
+comment.
+
+> 
+> > I wonder if it'd be more simple to use imgu->lock here instead of adding a new
+> > one.
+> > 
+> 
+> Extending imgu->lock here, does not work in this case, as imgu_queue_buffers()
+> will be stuck acquiring imgu->lock, which was already acquired by imgu_s_stream()
+> through ipu3_vb2_start_streaming().
+> 
+> > >  	/* Start streaming of the whole pipeline now */
+> > >  	dev_dbg(dev, "IMGU streaming is ready to start");
+> > >  	r = imgu_s_stream(imgu, true);
+> > >  	if (!r)
+> > >  		imgu->streaming = true;
+> > >
+> > > +	mutex_unlock(&imgu->streaming_lock);
+> > >  	return 0;
+> > >
+> > >  fail_stop_pipeline:
+> > > @@ -543,6 +546,8 @@ static void ipu3_vb2_stop_streaming(struct
+> > vb2_queue *vq)
+> > >  		dev_err(&imgu->pci_dev->dev,
+> > >  			"failed to stop subdev streaming\n");
+> > >
+> > > +	mutex_lock(&imgu->streaming_lock);
+> > > +
+> > >  	/* Was this the first node with streaming disabled? */
+> > >  	if (imgu->streaming && ipu3_all_nodes_streaming(imgu, node)) {
+> > >  		/* Yes, really stop streaming now */ @@ -552,6 +557,7 @@
+> > static
+> > > void ipu3_vb2_stop_streaming(struct vb2_queue *vq)
+> > >  			imgu->streaming = false;
+> > >  	}
+> > >
+> > > +	mutex_unlock(&imgu->streaming_lock);
+> > >  	ipu3_return_all_buffers(imgu, node, VB2_BUF_STATE_ERROR);
+> > 
+> > >  	media_pipeline_stop(&node->vdev.entity);
 > > >  }
-> > > @@ -588,7 +604,6 @@ static int mxs_mmc_probe(struct platform_device *pdev)
-> > >         struct mmc_host *mmc;
-> > >         struct resource *iores;
-> > >         int ret = 0, irq_err;
-> > > -       struct regulator *reg_vmmc;
-> > >         struct mxs_ssp *ssp;
+> > > diff --git a/drivers/staging/media/ipu3/ipu3.c
+> > > b/drivers/staging/media/ipu3/ipu3.c
+> > > index d521b3afb8b1..2daee51cd845 100644
+> > > --- a/drivers/staging/media/ipu3/ipu3.c
+> > > +++ b/drivers/staging/media/ipu3/ipu3.c
+> > > @@ -635,6 +635,7 @@ static int imgu_pci_probe(struct pci_dev *pci_dev,
+> > >  		return r;
 > > >
-> > >         irq_err = platform_get_irq(pdev, 0);
-> > > @@ -614,14 +629,15 @@ static int mxs_mmc_probe(struct platform_device *pdev)
-> > >         host->mmc = mmc;
-> > >         host->sdio_irq_en = 0;
+> > >  	mutex_init(&imgu->lock);
+> > > +	mutex_init(&imgu->streaming_lock);
+> > >  	atomic_set(&imgu->qbuf_barrier, 0);
+> > >  	init_waitqueue_head(&imgu->buf_drain_wq);
 > > >
-> > > -       reg_vmmc = devm_regulator_get(&pdev->dev, "vmmc");
-> > > -       if (!IS_ERR(reg_vmmc)) {
-> > > -               ret = regulator_enable(reg_vmmc);
-> > > -               if (ret) {
-> > > -                       dev_err(&pdev->dev,
-> > > -                               "Failed to enable vmmc regulator: %d\n", ret);
-> > > -                       goto out_mmc_free;
-> > > -               }
-> > > +       ret = mmc_regulator_get_supply(mmc);
-> > > +       if (ret == -EPROBE_DEFER)
-> > > +               goto out_mmc_free;
+> > > @@ -699,6 +700,7 @@ static int imgu_pci_probe(struct pci_dev *pci_dev,
+> > >  	ipu3_css_set_powerdown(&pci_dev->dev, imgu->base);
+> > >  out_mutex_destroy:
+> > >  	mutex_destroy(&imgu->lock);
+> > > +	mutex_destroy(&imgu->streaming_lock);
+> > >
+> > >  	return r;
+> > >  }
+> > > @@ -716,6 +718,7 @@ static void imgu_pci_remove(struct pci_dev
+> > *pci_dev)
+> > >  	ipu3_dmamap_exit(imgu);
+> > >  	ipu3_mmu_exit(imgu->mmu);
+> > >  	mutex_destroy(&imgu->lock);
+> > > +	mutex_destroy(&imgu->streaming_lock);
+> > >  }
+> > >
+> > >  static int __maybe_unused imgu_suspend(struct device *dev) diff --git
+> > > a/drivers/staging/media/ipu3/ipu3.h
+> > > b/drivers/staging/media/ipu3/ipu3.h
+> > > index 04fc99f47ebb..f732315f0701 100644
+> > > --- a/drivers/staging/media/ipu3/ipu3.h
+> > > +++ b/drivers/staging/media/ipu3/ipu3.h
+> > > @@ -146,6 +146,10 @@ struct imgu_device {
+> > >  	 * vid_buf.list and css->queue
+> > >  	 */
+> > >  	struct mutex lock;
 > > > +
-> > > +       ret = regulator_enable(mmc->supply.vmmc);
-> >
-> > This is wrong, as it may cause the regulator usage count to become
-> > wrongly balanced.
-> >
-> > Instead, via ->set_ios() when calling mmc_regulator_set_ocr(), it will
-> > take care of enabling and disabling the regulator depending of the
-> > requested vdd voltage level.
-> >
-> > > +       if (ret) {
-> > > +               dev_err(&pdev->dev,
-> > > +                       "Failed to enable vmmc regulator: %d\n", ret);
-> > > +               goto out_mmc_free;
-> > >         }
-> > >
-> > >         ssp->clk = devm_clk_get(&pdev->dev, NULL);
-> > > --
-> > > 2.20.1
-> > >
-> >
-> > BTW, you didn't really answer my earlier question about the TI WiFi
-> > chip. Doesn't you need a special clock for WiFi chip as well? How do
-> > you intend to manage that?
->
-> I used an external 32K oscillator (SLOW_CLK) for my wl1271. Other
-> clocks ware generated on the module.
+> > > +	/* Lock to protect writes to streaming flag in this struct */
+> > > +	struct mutex streaming_lock;
+> > > +
+> > >  	/* Forbit streaming and buffer queuing during system suspend. */
+> > >  	atomic_t qbuf_barrier;
+> > >  	/* Indicate if system suspend take place while imgu is streaming. */
+> > 
+> > --
+> > Regards,
+> > 
+> > Sakari Ailus
+> > sakari.ailus@linux.intel.com
 
-Right. How do you control that clock? Did you model it as clock via
-the common clock framework?
-
->
-> I had to supply a 'vmmc-supply' in your wl1271 devicetree node,
-> which will be used to power on/off the wlan module. The supply should
-> be a (delayed) GPIO controlled 'fixed-regulator' attached to the
-> wlan_en pin on the module.
-
-Right, thanks for explaining.
-
->
-> 1: Documentation/devicetree/bindings/net/wireless/ti,wlcore.txt
->
-
-This sounds like a good fit for mmc pwrseq simple. There are already
-similar users for it.
-
-Have a look at: /drivers/mmc/core/pwrseq*
-If the mmc host driver calls mmc_of_parse() during ->probe(), a pwrseq
-instance will be hooked up to it. Once the mmc core tries to power up
-the card it will make use of the attached pwrseq for the mmc host in
-question.
-
-In this way, you can control the clock and GPIO line, in more exact
-ways that is needed by the WiFi chip.
-
-Here is a DT example (look for "mmc-pwrseq-simple"):
-arch/arm/boot/dts/imx6qdl-sr-som-ti.dtsi
-
-This should do the trick for you. On the other hand, I don't mind that
-you still add regulator support to the driver, along the lines of what
-$subject patch does, however it may not be exactly what you need for
-the WiFi case.
-
-Kind regards
-Uffe
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
